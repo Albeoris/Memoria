@@ -5,8 +5,10 @@ using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Data;
 using Memoria.Assets;
+using Memoria.Prime;
 using UnityEngine;
 using Object = System.Object;
+using static BubbleUI;
 
 public class QuadMistUI : UIScene
 {
@@ -28,8 +30,86 @@ public class QuadMistUI : UIScene
 				{
 					ButtonGroupState.ActiveGroup = QuadMistUI.CardGroupButton;
 				}
-			}
-			else
+                if (Configuration.TetraMaster.TripleTriad == 3)
+                {
+					if (QuadMistGame.SkipTripleTriadRules && QuadMistGame.HasTripleTrialRule_Random)
+					{
+						GeneratePlayerCardRandom();
+                    }
+					if (!QuadMistGame.SkipTripleTriadRules)
+					{
+                        String phrase = "[IMME]Liste des règles :";
+                        int numberline = 1;
+                        if (QuadMistGame.HasTripleTrialRule_One)
+                        {
+                            phrase += "\n[MOVE=18,0]One";
+                            numberline++;
+                        }
+                        if (QuadMistGame.HasTripleTrialRule_Direct)
+                        {
+                            phrase += "\n[MOVE=18,0]Direct";
+                            numberline++;
+                        }
+                        if (QuadMistGame.HasTripleTrialRule_Diff)
+                        {
+                            phrase += "\n[MOVE=18,0]Diff";
+                            numberline++;
+                        }
+                        if (QuadMistGame.HasTripleTrialRule_All)
+                        {
+                            phrase += "\n[MOVE=18,0]All";
+                            numberline++;
+                        }
+                        if (QuadMistGame.HasTripleTrialRule_Open)
+                        {
+                            phrase += "\n[MOVE=18,0]Open";
+                            numberline++;
+                        }
+                        if (QuadMistGame.HasTripleTrialRule_Random)
+                        {
+                            phrase += "\n[MOVE=18,0]Random";
+                            numberline++;
+                        }
+                        if (QuadMistGame.HasTripleTrialRule_SuddenDeath)
+                        {
+                            phrase += "\n[MOVE=18,0]SuddenDeath";
+                            numberline++;
+                        }
+                        if (QuadMistGame.HasTripleTrialRule_Same)
+                        {
+                            phrase += "\n[MOVE=18,0]Same";
+                            numberline++;
+                        }
+                        if (QuadMistGame.HasTripleTrialRule_Plus)
+                        {
+                            phrase += "\n[MOVE=18,0]Plus";
+                            numberline++;
+                        }
+                        if (QuadMistGame.HasTripleTrialRule_SameWall)
+                        {
+                            phrase += "\n[MOVE=18,0]SameWall";
+                            numberline++;
+                        }
+                        if (QuadMistGame.HasTripleTrialRule_Elemental)
+                        {
+                            phrase += "\n[MOVE=18,0]Elemental";
+                            numberline++;
+                        }
+                        if (numberline == 1)
+                        {
+                            phrase += "\n[MOVE=18,0]Aucune";
+                            numberline++;
+                        }
+                        phrase += "\n\n[CHOO][FEED=20]Zé parti !\n[FEED=20]Quitter[ENDN]";
+                        numberline += 3;
+                        cardInfoContentGameObject.SetActive(false);
+                        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(phrase, 100, numberline, Dialog.TailPosition.UpperCenter, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 40f), Dialog.CaptionType.None);
+                        ButtonGroupState.SetPointerOffsetToGroup(new Vector2(0f, 0f), Dialog.DialogGroupButton);
+                        dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(onConfirmDialogTripleTriadHidden);
+                    }
+                }
+            }
+            else
 			{
 				String phrase = Localization.Get("QuadMistDiscardNotice");
 				Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(phrase, 100, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(105f, 90f), Dialog.CaptionType.None);
@@ -69,7 +149,7 @@ public class QuadMistUI : UIScene
 			}
 			BackButton.SetActive(!flag);
 		}
-		else
+        else
 		{
 			TitleSprite.gameObject.SetActive(false);
 			DiscardTitle.SetActive(true);
@@ -180,7 +260,7 @@ public class QuadMistUI : UIScene
 		if (base.OnKeyCancel(go) && ButtonGroupState.ActiveGroup == QuadMistUI.CardGroupButton && currentState == QuadMistUI.CardState.CardSelection)
 		{
 			FF9Sfx.FF9SFX_Play(101);
-			if (selectedCardList.Count > 0)
+            if (selectedCardList.Count > 0)
 			{
 				DeselectCard(selectedCardList.Count - 1);
 				DisplayCardList();
@@ -330,7 +410,34 @@ public class QuadMistUI : UIScene
 		}
 	}
 
-	private void onQuitDialogHidden(Int32 choice)
+    private void onConfirmDialogTripleTriadHidden(Int32 choice)
+    {
+        ButtonGroupState.SetPointerOffsetToGroup(Dialog.DefaultOffset, Dialog.DialogGroupButton);
+        if (choice == 0)
+        {
+            QuadMistGame.SkipTripleTriadRules = true;
+            if (QuadMistGame.HasTripleTrialRule_Random)
+            {
+				GeneratePlayerCardRandom();
+            }
+			else
+			{
+                currentCardOffset = 0;
+                cardInfoContentGameObject.SetActive(true);
+                DisplayCardList();
+                DisplayCardDetail();
+                ButtonGroupState.ActiveGroup = QuadMistUI.CardGroupButton;
+            }
+        }
+        else
+        {
+            isNeedToBuildCard = true;
+            base.Loading = true;
+            QuadMistGame.main.QuitQuadMist();
+        }
+    }
+
+    private void onQuitDialogHidden(Int32 choice)
 	{
 		ButtonGroupState.SetPointerOffsetToGroup(Dialog.DefaultOffset, Dialog.DialogGroupButton);
 		if (choice == 0)
@@ -454,7 +561,7 @@ public class QuadMistUI : UIScene
 			loseCountLabel.text = num2.ToString();
 			drawCountLabel.text = num3.ToString();
 		}
-		else
+        else
 		{
 			PlayerInfoPanel.SetActive(false);
 		}
@@ -511,7 +618,28 @@ public class QuadMistUI : UIScene
 		DisplayCardList();
 	}
 
-	private void DeselectCard(Int32 index)
+    private void GeneratePlayerCardRandom() // For the rule "Random" from Triple Triad
+    {
+        int remainingcard = 5 - selectedCardList.Count < 0 ? 0 : 5 - selectedCardList.Count;
+        for (Int32 i = 0; i < remainingcard; ++i)
+        {
+            int randomindex = GameRandom.Next16() % (allCardList.Count);
+            QuadMistCard cardInfo = allCardList[randomindex];
+            selectedCardList.Add(cardInfo);
+            QuadMistUI.allCardList.Remove(cardInfo);
+            count[(Int32)allCardList[randomindex].id]--;
+            QuadMistGame.UpdateSelectedCardList(selectedCardList);
+            currentCardOffset = 0;
+        }
+        cardInfoContentGameObject.SetActive(false);
+        Hide(delegate
+        {
+            QuadMistGame.OnFinishSelectCardUI(selectedCardList);
+            isNeedToBuildCard = true;
+        });
+    }
+
+    private void DeselectCard(Int32 index)
 	{
 		QuadMistCard quadMistCard = selectedCardList[index];
 		selectedCardList.Remove(quadMistCard);

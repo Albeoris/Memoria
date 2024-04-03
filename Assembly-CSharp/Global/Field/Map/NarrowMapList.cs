@@ -8,20 +8,11 @@ public static class NarrowMapList
     public static Boolean IsCurrentMapNarrow(Int32 ScreenWidth) => IsNarrowMap(FF9StateSystem.Common.FF9.fldMapNo, PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1, ScreenWidth);
     public static Boolean IsNarrowMap(Int32 mapId, Int32 camId, Int32 ScreenWidth)
     {
-        
         if (SpecificScenesNarrow(mapId))
             return true;
 
         if (MapWidth(mapId) <= ScreenWidth)
             return true;
-
-
-        //if (ListFullNarrow.Contains(mapId))
-        //    return true;
-        
-        //if (ListPartialNarrow.TryGetValue(mapId, out HashSet<Int32> narrowCams) && narrowCams.Contains(camId))
-        //    return true;
-        //Log.Message("camId:" + camId + ", mapid:" + mapId);
 
         return false;
     }
@@ -32,14 +23,66 @@ public static class NarrowMapList
         {
             if (mapId == entry.Key && currIndex == entry.Value)
                 return true;
+            // hall alexandria: meeting garnet, zorn thorn, steiner calling
+            if (mapId == 153 && (currIndex == 325 || currIndex == 328 || currIndex == 316)) 
+                return true;
         }
         return false;
+    }
+
+    public static Int32 MapWidth(int mapId)
+    {
+        if (SpecificScenesNarrow(mapId))
+            return 320;
+
+        Int32 width = 900;
+
+        foreach (KeyValuePair<int, int> entry in WidthDictionary)
+        {
+            if (mapId == entry.Key && !SpecificScenesNarrow(entry.Key))
+                width = (Int32)entry.Value;
+        }
+
+        if (PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx == 1)
+        { 
+            foreach (KeyValuePair<int, int> entry in WidthDictionary_cam2)
+            {
+                if (mapId == entry.Key && !SpecificScenesNarrow(entry.Key))
+                    width = (Int32)entry.Value;
+            }
+        }
+
+        return width;
+    }
+    public static Int32 SmallestMapWidth(int mapId)
+    {
+        Int32 width = MapWidth(mapId);
+        foreach (KeyValuePair<int, int> entry in WidthDictionary)
+        {
+            if (mapId == entry.Key)
+                width = Math.Min((Int32)entry.Value, width);
+        }
+        foreach (KeyValuePair<int, int> entry in WidthDictionary_cam2)
+        {
+            if (mapId == entry.Key)
+                width = Math.Min((Int32)entry.Value, width);
+        }
+        //Log.Message("smallest width:" + width);
+        return width;
     }
 
     public static readonly Dictionary<int, int> SpecificScenesNarrow_List = new Dictionary<int, int>
     {
         // {mapNo,index}
+        {50,0},     // first scene
+        {150,325},  // Zidane infiltrate Alex Castle
+        {154,304},  // cutscene zorn&thorn
+        //{153,328},  // steiner guards call // can't have twice the same key TOFIX
         {352,3},    // Arrival at Dali: vivi visible before sleeping
+        {355,18},   // Steiner to the barmaid
+        {600,32},   // Throne, meet cid
+        {606,0},   // telescope
+        {615,57},   // Meet garnet on Lindblum castle
         {1602,16},  // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
         {1823,331}, // Garnet coronation, garnet visible
         {1815,0},   // Love quiproquo at the docks
@@ -51,650 +94,788 @@ public static class NarrowMapList
         {2708,-1}   // Pandemonium, you're not alone sequence, several glitches
     };
 
-    public static Int32 MapWidth(int mapId)
+    public static readonly Dictionary<int, int> WidthDictionary_cam2 = new Dictionary<int, int>
     {
-        Int32 width = 500;
-
-        if (ListFullNarrow.Contains(mapId) || SpecificScenesNarrow(mapId))
-            width = 320;
-
-        foreach (KeyValuePair<int, int> entry in actualNarrowMapWidthDict)
-        {
-            if (mapId == entry.Key && !SpecificScenesNarrow(entry.Key))
-                width = (Int32)entry.Value;
-        }
-
-        //if (mapId == 153 && PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx == 0)
-        //    width = 320;
-        //if (mapId == 154 && PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx == 1)
-        //    width = 640;
-
-        //Log.Message("width:" + width + "PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx" + PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx);
-        return width;
-    }
-
-
-    public static readonly Dictionary<Int32, HashSet<Int32>> ListPartialNarrow = new Dictionary<Int32, HashSet<Int32>>()
-    {
-        // Not yet implemented
-        // For now, using this "per camera" narrow list bugs, surely because of the camera position shift in FieldMap.CenterCameraOnPlayer
-        //{ 0154, new HashSet<Int32>() { 0 } }, // A. Castle/Hallway
-        //{ 1215, new HashSet<Int32>() { 0 } }, // A. Castle/Hallway
-        //{ 1807, new HashSet<Int32>() { 0 } }, // A. Castle/Hallway
-
-    };
-
-    public static readonly HashSet<Int32> ListFullNarrow = new HashSet<Int32>()
-    {
-        0052, // Prima Vista/Meeting Rm
-        0053, // Prima Vista/Meeting Rm
-        0055, // Prima Vista/Music Room
-        0056, // S. Gate
-        0058, // Prima Vista/Storage
-        0059, // Prima Vista/Interior
-        0060, // Prima Vista/Interior
-        0061, // Prima Vista/Interior
-        0062, // Prima Vista/Interior
-        0063, // Prima Vista/Interior
-        0065, // Prima Vista/Interior
-        0066, // Prima Vista/Interior
-        0067, // Prima Vista/Interior
-        0068, // A. Castle/Throne
-        0069, // A. Castle/Throne
-        0100, // Alexandria/Main Street
-        0102, // Alexandria/Main Street
-        0104, // Alexandria/Shop
-        0105, // Alexandria/Alley
-        0108, // Alexandria/Item Shop
-        0109, // Alexandria/Wpn. Shop
-        0114, // Alexandria/Residence
-        0116, // Alexandria/Rooftop
-        0150, // A. Castle/Guardhouse
-        0151, // A. Castle/Throne
-        0153, // A. Castle/Hallway
-        //0154,
-        0157, // A. Castle/Kitchen
-        0160, // A. Castle/Courtyard
-        0161, // A. Castle/Courtyard
-        0162, // A. Castle/West Tower
-        0163, // A. Castle/West Tower
-        0164, // A. Castle/West Tower
-        0165, // A. Castle/West Tower
-        0166, // A. Castle/West Tower
-        0167, // A. Castle/Library
-        0201, // Prima Vista/Bridge
-        0203, // Prima Vista/Meeting Rm
-        0205, // Prima Vista/Hallway
-        0206, // Prima Vista/Crash Site
-        0207, // Prima Vista/Cabin
-        0209, // Prima Vista/Event
-        0251, // Evil Forest/Trail
-        0252, // Evil Forest/Trail
-        0254, // Evil Forest/Swamp
-        0255, // Evil Forest/Riverbank
-        0256, // Evil Forest/Trail
-        0259, // Evil Forest/Trail
-        0261, // Evil Forest/Exit
-        0262, // Evil Forest/Exit
-        0300, // Ice Cavern/Entrance
-        0301, // Ice Cavern/Ice Path
-        0305, // Ice Cavern/Ice Path
-        0306, // Ice Cavern/Cave
-        0308, // Ice Cavern/Waterfall
-        0309, // Ice Cavern/Waterfall
-        0310, // Ice Cavern/Waterfall
-        0311, // Ice Cavern/Exit
-        0354, // Dali/Wpn. Shop
-        0357, // Dali/Windmill 2F
-        0358, // Dali/Windmill
-        0359, // Dali/???
-        0400, // Dali/Underground
-        0405,
-        0407,
-        0452, // Dali/Field
-        0453, // Dali/Field
-        0454, // Dali/Field
-        0455, // Mountain/Base
-        0456, // Mountain/Summit
-        0457, // Mountain/Shack
-        0500, // Cargo Ship/Deck
-        0502, // Cargo Ship/Bridge
-        0503, // Cargo Ship/Bridge
-        0505, // Cargo Ship/Rear Deck
-        0506, // Cargo Ship/Deck
-        0550,
-        0551, // Lindblum/B.D. Station
-        0553, // Lindblum/Inn
-        0556,
-        0560, // Lindblum/Synthesist
-        0561,
-        0565,
-        0566,
-        0567, // Lindblum/Theater Ave.
-        0568,
-        0569,
-        0570, // Lindblum/Industrial Wa
-        0571,
-        0574, // Lindblum/Festival
-        0576, // Lindblum/Festival
-        0600, // L. Castle/Royal Cham.
-        0601, // L. Castle/Lift
-        0606, // L. Castle/Event
-        0607, // L. Castle/Hangar
-        0609, // L. Castle/Castle Bridg
-        0613,
-        0620,
-        0656,
-        0657,
-        0658,
-        0659,
-        0663,
-        0701, // Gizamaluke/Entrance
-        0705,
-        0750, // Burmecia/Gate
-        0751,
-        0753,
-        0754, // Burmecia/Residence
-        0755,
-        0758, // Burmecia/Pathway
-        0760, // Burmecia/Uptown Area
-        0764, // Burmecia/Vault
-        0765, // Burmecia/Armory
-        0766, // Burmecia/Palace
-        0767, // Burmecia/Palace
-        0800, // S. Gate/Bohden Gate
-        0802, // S. Gate/Bohden Sta.
-        0803,
-        0806,
-        0813, // S. Gate/Berkmea
-        0814, // S. Gate/Berkmea
-        0816, // S. Gate/Berkmea
-        0851,
-        0855,
-        0901,
-        0911,
-        0913,
-        0930, // Treno/Tot Residence
-        0932, // Treno/Event
-        0950,
-        0951, // Gargan Roo/Passage
-        0954, // Gargan Roo/Tunnel
-        1000, // Cleyra/Tree Roots
-        1001, // Cleyra/Tree Roots
-        1002, // Cleyra/Tree Roots
-        1003, // Cleyra/Tree Trunk
-        1006, // Cleyra/Tree Trunk
-        1007, // Cleyra/Tree Trunk
-        1009, // Cleyra/Tree Trunk
-        1013, // Cleyra/Tree Trunk
-        1017, // Cleyra/Tree Trunk
-        1018,
-        1050, // Cleyra/Tree Trunk
-        1054, // Cleyra/Windmill Area
-        1058, // Cleyra/Cathedral
-        1100, // Cleyra/Tree Trunk
-        1104,
-        1108, // Cleyra/Cathedral
-        1150, // Red Rose/Deck
-        1151, // Red Rose/Cabin
-        1153, // Red Rose/Bridge
-        1200, // A. Castle/Throne
-        1201,
-        1205, // A. Castle/Chapel
-        1208, // A. Castle/Dungeon
-        1210, // A. Castle/West Tower
-        1212, // A. Castle/East Tower
-        1213, // A. Castle/Guardhouse
-        1214, // A. Castle/Hallway
-        1216,
-        1218,
-        1221, // A. Castle/Courtyard
-        1222, // A. Castle/Courtyard
-        1226, // A. Castle/Library
-        1250, // A. Castle/Event
-        1251, // Pinnacle Rocks/Hole
-        1252, // Pinnacle Rocks/Path
-        1253, // Pinnacle Rocks/Path
-        1254,
-        1300, // Lindblum/Hunter’s Gate
-        1301, // Lindblum/B.D. Station
-        1303, // Lindblum/Inn
-        1308, // Lindblum/Synthesist
-        1312,
-        1313,
-        1314, // Lindblum/Theater Ave.
-        1350,
-        1351,
-        1356,
-        1357, // L. Castle/Hangar
-        1359,
-        1363,
-        1370,
-        1401, // Fossil Roo/Cavern
-        1403, // Fossil Roo/Cavern
-        1404,
-        1406, // Fossil Roo/Nest
-        1408,
-        1410, // Fossil Roo/Nest
-        1414,
-        1424,
-        1452, // Mage Village/Cemetery
-        1453, // Mage Village/Cemetery
-        1455, // Mage Village/Synthesis
-        1456,
-        1457, // Mage Village/Rooftop
-        1458,
-        1459, // Mage Village/Water Mil
-        1463, // Dead Forest/Grove
-        1464, // Dead Forest/Dead End
-        1500,
-        1506,
-        1507, // Conde Petie/Pathway
-        1508,
-        1509, // Conde Petie/Item Shop
-        1556, // Mountain Path/Roots
-        1557, // Mountain Path/Roots
-        1600,
-        1601,
-        1602,
-        1604, // Mdn. Sari/Eidolon Wall
-        1605, // Mdn. Sari/Eidolon Wall
-        1606, // Mdn. Sari/Resting Room
-        1607, // Mdn. Sari/Kitchen
-        1608, // Mdn. Sari/Secret Room
-        1609, // Mdn. Sari/Cove
-        1610, // Mdn. Sari/Cove
-        1650,
-        1651, // Iifa Tree/Tree Roots
-        1652, // Iifa Tree/Roots
-        1655, // Iifa Tree/Tree Path
-        1656, // Iifa Tree/Eidolon Moun
-        1657, // Iifa Tree/Tree Roots
-        1658, // Iifa Tree/Silver Drago
-        1660,
-        1661,
-        1662,
-        1663,
-        1700,
-        1701,
-        1702,
-        1704, // Mdn. Sari/Eidolon Wall
-        1705, // Mdn. Sari/Resting Room
-        1706, // Mdn. Sari/Kitchen
-        1707, // Mdn. Sari/Secret Room
-        1750, // Iifa Tree/Hollow Roots
-        1751, // Iifa Tree/Inner Roots
-        1752, // Iifa Tree/Inner Roots
-        1753, // Iifa Tree/Inner Roots
-        1755, // Iifa Tree/Bottom
-        1756, // Iifa Tree/Bottom
-        1757,
-        1758, // Iifa Tree/Tree Roots
-        1800, // A. Castle/Tomb
-        1803, // A. Castle/Guardhouse
-        1806, // A. Castle/Hallway
-        1808,
-        1810,
-        1813, // A. Castle/Courtyard
-        1814, // A. Castle/Courtyard
-        //1816, // A. Castle/Courtyard
-        1817, // A. Castle/Neptune
-        1818, // A. Castle/Neptune
-        1820, // A. Castle/West Tower
-        1822, // A. Castle/Library
-        1850, // Alexandria/Main Street
-        1852,
-        1854, // Alexandria/Alley
-        1857, // Alexandria/Item Shop
-        1858, // Alexandria/Wpn. Shop
-        1863,
-        1866, // Alexandria/Dock
-        1901,
-        1911,
-        1913,
-        1951,
-        1952,
-        1953, // Quan’s/Fishing Area
-        2000, // Hilda Garde 2/Deck
-        2002,
-        2004,
-        2005, // A. Castle/Altar
-        2006,
-        2007, // A. Castle/Altar
-        2008, // A. Castle/Altar
-        2050, // Alexandria/Main Street
-        2052,
-        2055,
-        2101, // Lindblum/B.D. Station
-        2103, // Lindblum/Inn
-        2108, // Lindblum/Synthesist
-        2109, // Lindblum/Wpn. Shop
-        2112,
-        2113,
-        2114, // Lindblum/Theater Ave.
-        2150, // L. Castle/Royal Cham.
-        2151, // L. Castle/Lift
-        2157, // L. Castle/Hangar
-        2159, // L. Castle/Castle Bridg
-        2163,
-        2171,
-        2200,
-        2202, // Palace/Dungeon
-        2203, // Palace/Rack
-        2204, // Palace/Odyssey
-        2205, // Palace/Odyssey
-        2208, // Palace/Hallway
-        2212,
-        2213,
-        2217, // Palace/Stairwell
-        2222,
-        2250, // Oeilvert/Outside
-        2254, // Oeilvert/Ship Display
-        2255, // Oeilvert/Stairwell
-        2257, // Oeilvert/Display
-        2260, // Oeilvert/Tombstone
-        2261, // Oeilvert/Bridge
-        2303,
-        2305, // Esto Gaza/Path
-        2351, // Gulug/Well
-        2352,
-        2353,
-        2354, // Gulug/Room
-        2355,
-        2356, // Gulug/Room
-        2361, // Gulug/Well
-        2362,
-        2363, // Gulug/Path
-        2365,
-        2400, // A. Castle/Neptune
-        2405, // A. Castle/Courtyard
-        2406,
-        2450, // Alexandria/Main Street
-        2451,
-        2453, // Alexandria/Alley
-        2458, // Alexandria/Dock
-        2500, // I. Castle/Entrance
-        2501, // I. Castle/Entrance
-        2502, // I. Castle/Hall
-        2503,
-        2505, // I. Castle/Inverted Roo
-        2510, // I. Castle/Mural Room
-        2512, // I. Castle/Mural Room
-        2513,
-        2551,
-        2552, // Earth Shrine/Interior
-        2600, // Terra/Hilltop
-        2601,
-        2602, // Terra/Stepping Stones
-        2605, // Terra/Treetop
-        2606, // Terra/Tree base
-        2607, // Terra/Bridge
-        2608, // Terra/Event
-        2650,
-        2651, // Bran Bal/Entrance
-        2654, // Bran Bal/Pond
-        2657, // Bran Bal/Storage
-        2658,
-        2660, // Bran Bal/Hilltop
-        2701, // Pand./Path
-        2706,
-        2715, // Pand./Event
-        2719, // Pand./Exit
-        2752, // Invincible/Bridge
-        2756, // Red Rose/Bridge
-        2851, // Hilda Garde 3/Engine
-        2855,
-        2856,
-        2900, // Memoria/Outside
-        2901, // Memoria/Entrance
-        2902, // Memoria/Stairs of Time
-        2904, // Memoria/Outer Path
-        2905,
-        2906,
-        2908, // Memoria/Time Interval
-        2909, // Memoria/Ruins
-        2910, // Memoria/Lost Memory
-        2912, // Memoria/World Fusion
-        2913, // Memoria/Portal
-        2914, // Memoria/Birth
-        2915,
-        2917, // Memoria/Gaia’s Birth
-        2918, // Memoria/Stairs
-        2919, // Memoria/Gate to Space
-        2920,
-        2922,
-        2924,
-        2925,
-        2926,
-        2927, // Crystal World
-        2928,
-        2929, // last/cw mbg a
-        2930, // last/cw mbg 0
-        2932, // last/cw brg 0
-        2933, // last/cw mbg 1
-        2934, // last/cw mbg 2
-        2950, // Chocobo’s Forest
-        2953, // Chocobo’s Dream World
-        3001,
-        3005,
-        3008, // Ending/Prima Vista - Meeting Room
-        3009,
-        3010, // Ending/TH
-        3011, // Ending/TH
-        3052, // Mage Village/Cemetery
-        3054, // Mage Village/Synthesis
-        3055,
-        3056, // Mage Village/Rooftop
-        3057,
-        3058, // Mage Village/Water Mil
-        3100, // Mog Post
-    };
-
-    public static readonly Dictionary<int, int> mapCameraMargin = new Dictionary<int, int>
-    {
-        //{mapNo,pixels on each side to crop because of scrollable}
-        {1051,8},
-        {1057,16},
-        {1058,16},
-        {1060,16},
-        {1652,16},
-        {1653,16},
-        //{154,16},
-    };
-
-    public static readonly Dictionary<int, int> actualNarrowMapWidthDict = new Dictionary<int, int>
-    {
-        //{mapNo,(actualWidth - 2)}
-        //{153,430},
-        {203,334},
-        {502,334},
-        {503,334},
-        {760,334},
-        {814,334},
-        {816,334},
-        {1151,334},
-        {1458,334},
-        {1500,334},
-        {1506,334},
-        {1605,334},
-        {1606,334},
-        {1608,334},
-        {1660,334},
-        {1661,334},
-        {1662,334},
-        {1705,334},
-        {1707,334},
-        {1751,334},
-        {2202,334},
-        {2204,334},
-        {2205,334},
-        {2208,334},
-        {2254,334},
-        {2257,334},
-        {2303,334},
-        {2365,334},
-        {2513,334},
-        {2756,334},
-        {2932,334},
-        {3057,334},
-        {114,350},
-        {550,350},
-        {620,350},
-        {802,350},
-        {803,350},
-        {1212,350},
-        {1300,350},
-        {1370,350},
-        {1508,350},
-        {1650,350},
-        {1752,350},
-        {1757,350},
-        {1863,350},
-        {1951,350},
-        {1952,350},
-        {2000,350},
-        {2055,350},
-        {2771,350},
-        {2203,350},
-        {2261,350},
-        {2356,350},
-        {2362,350},
-        {2500,350},
-        {2501,350},
-        {2654,350},
-        {60,366},
-        {150,366},
-        {161,366},
-        {201,366},
-        {262,366},
-        {565,366},
-        {911,366},
-        {1213,366},
-        {1222,366},
-        {1251,366},
-        {1254,366},
-        {1312,366},
-        {1403,366},
-        {1803,366},
-        {1814,366},
-        {1817,366},
-        {1911,366},
-        {1953,366},
-        {2002,366},
-        {2004,366},
-        {2006,366},
-        {2112,366},
-        {2400,366},
-        {2502,366},
-        {2503,366},
-        {2650,366},
-        {2904,366},
-        {2913,366},
-        {2928,366},
-        {3100,366},
-        {102,382},
-        {109,382},
-        {162,382},
-        {206,382},
-        {207,382},
-        {251,382},
-        {252,382},
-        {407,382},
-        {553,382},
-        {556,382},
-        {705,382},
-        {751,382},
-        {813,382},
-        {950,382},
-        {1017,382},
-        {1018,382},
-        {1058,380},
-        {1108,380},
-        {1201,382},
-        {1210,382},
-        {1303,382},
-        {1404,382},
-        {1452,382},
-        {1453,382},
-        {1509,382},
-        {1656,382},
-        {1820,382},
-        {1852,382},
-        {1858,382},
-        {2052,382},
-        {2103,382},
-        {2200,382},
-        {2222,382},
-        {2355,382},
-        {2406,382},
-        {2451,382},
-        {2657,382},
-        {2851,382},
-        {2855,382},
-        {2856,382},
-        {2915,382},
-        {3052,382},
-        {55,398},
-        {157,398},
-        {405,398},
-        {456,398},
-        {505,398},
-        {561,398},
-        {566,398},
-        {568,398},
-        {569,398},
-        {571,398},
-        {613,398},
-        {656,398},
-        {657,398},
-        {658,398},
-        {659,398},
-        {663,398},
-        {753,398},
-        {755,398},
-        {806,398},
-        {851,398},
-        {855,398},
-        {901,398},
-        {913,398},
-        {1054,398},
-        {1104,398},
-        {1153,398},
-        {1218,398},
-        {1313,398},
-        {1363,398},
-        {1408,398},
-        {1414,398},
-        {1424,398},
-        {1456,398},
-        {1600,398},
-        {1601,398},
-        {1602,398},
-        {1700,398},
-        {1701,398},
-        {1702,398},
-        {1810,398},
-        {1901,398},
-        {1913,398},
-        {2113,398},
-        {2163,398},
-        {2212,398},
-        {2213,398},
-        {2352,398},
-        {2353,398},
-        {2551,398},
-        {2601,398},
-        {2658,398},
-        {2706,398},
-        {2906,398},
-        {3005,398},
-        {3055,398},
+        
+        //{map,width},
+        {51,640},
+        {52,320},
+        //{63,800},
+        //{65,320},
+        //{66,320},
+        //{116,320}, //I GIVE UP
+        {153,432},
+        {154,640},
+        //{355,320},
+        //{600,320},
+        //{615,320},
+        {801,336},
+        {951,336},
+        {953,336},
         {1205,384},
-        //{154,352},
-        {1215,352},
-        {1805,352},
-        {1807,352},
+        {1206,320},
+        {1208,640},
+        {1214,432},
+        {1215,640},
+        {1461,368},
+        {1462,512},
+        {1608,336},
         {1652,336},
+        {1663,416},
+        {1707,336},
+        {1759,336},
+        {1801,320},
+        {1806,432},
+        {1807,640},
+        {1823,320},
+        {2000,352},
+        {2150,320},
+        {2157,320},
+        {2172,320},
+        {2209,336},
+        {2217,320},
+        {2363,336},
+        //{2510,448},//464},
+        {2552,480},
+        {2553,480},
+        {2554,608},
+        {2755,336},
+        {2756,336},
+    };
+
+    public static readonly Dictionary<int, int> WidthDictionary = new Dictionary<int, int>
+    {
+        //{map,width},
+        {50,480},
+        {51,480},
+        {52,320},
+        {53,320},
+        {54,432},
+        {55,400},
+        {56,320},
+        {57,448},
+        {58,320},
+        {59,320},
+        {60,368},
+        {61,320},
+        {62,320},
+        {63,320},
+        {64,480},
+        {65,320},
+        {66,320},
+        {67,368},
+        {68,320},
+        {69,320},
+        {100,320},
+        {101,640},
+        {102,384},
+        {103,624},
+        {104,320},
+        {105,320},
+        {106,528},
+        {107,480},
+        {108,320},
+        {109,384},
+        {110,432},
+        {111,448},
+        {112,560},
+        {113,480},
+        {114,352},
+        {115,432},
+        {116,320},//416}, // I GIVE UP
+        {117,416},
+        {150,368},
+        {151,320},
+        {152,800},
+        {153,320},
+        {154,352},
+        {155,416},
+        {156,640},
+        {157,400},
+        {158,480},
+        {159,416},
+        {160,320},
+        {161,368},
+        {162,384},
+        {163,320},
+        {164,320},
+        {165,320},
+        {166,320},
+        {167,320},
+        {200,480},
+        {201,368},
+        {202,480},
+        {203,336},
+        {204,480},
+        {205,320},
+        {206,384},
+        {207,384},
+        {208,480},
+        {209,320},
+        {250,480},
+        {251,384},
+        {252,384},
+        {253,480},
+        {254,400},
+        {255,320},
+        {256,320},
+        {257,416},
+        {258,480},
+        {259,320},
+        {261,320},
+        {262,368},
+        {300,320},
+        {301,320},
+        {302,480},
+        {303,592},
+        {304,432},
+        {305,320},
+        {306,320},
+        {307,464},
+        {308,320},
+        {309,320},
+        {310,320},
+        {311,320},
+        {312,480},
+        {350,448},
+        {351,480},
+        {352,480},
+        {353,416},
+        {354,320},
+        {355,416},
+        {356,416},
+        {357,320},
+        {358,320},
+        {359,320},
+        {400,320},
+        {401,410}, //640}, // people appearing
+        {402,480},
+        {403,640},
+        {404,432},
+        {405,400},
+        {406,480},
+        {407,384},
+        {408,448},
+        {450,432},
+        {451,320}, //480},
+        {452,320},
+        {453,320},
+        {454,320},
+        {455,320},
+        {456,320}, //410},//640}, scrolling too far. // temp out
+        {457,320},
+        {500,320},
+        {501,320}, //512},
+        {502,336},
+        {503,336},
+        {504,430}, //432}, -2
+        {505,320}, //640},
+        {506,352},
+        {507,320}, //512},
+        {550,352},
+        {551,320},
+        {552,448},
+        {553,384},
+        {554,480},
+        {555,480},
+        {556,384},
+        {557,480},
+        {558,416},
+        {559,512},
+        {560,320},
+        {561,400},
+        {562,416},
+        {563,432},
+        {564,432},
+        {565,368},
+        {566,400},
+        {567,320},
+        {568,400},
+        {569,400},
+        {570,320},
+        {571,400},
+        {572,416},
+        {573,432},
+        {574,320},
+        {575,416},
+        {576,320},
+        {600,448},
+        {601,320},
+        {602,480},
+        {603,544},
+        {604,448},
+        {605,432},
+        {606,320},
+        {607,320},
+        {608,448},
+        {609,320},
+        {610,448},
+        {611,576},
+        {612,544},
+        {613,400},
+        {614,544},
+        {615,512},
+        {616,480},
+        {617,544},
+        {618,464},
+        {619,432},
+        {620,352},
+        {650,512},
+        {651,640},
+        {652,480},
+        {653,640},
+        {654,640},
+        {655,512},
+        {656,400},
+        {657,400},
+        {658,400},
+        {659,400},
+        {660,640},
+        {661,432},
+        {662,448},
+        {663,400},
+        {701,320},
+        {702,624},
+        {703,576},
+        {704,576},
+        {705,384},
+        {706,448},
+        {707,480},
+        {750,320},
+        {751,384},
+        {752,480},
+        {753,400},
+        {754,320},
+        {755,400},
+        {756,416},
+        {757,480},
+        {758,320},
+        {759,418},
+        {760,336},
+        {761,544},
+        {762,544},
+        {763,416},
+        {764,320},
+        {765,320},
+        {766,320},
+        {767,544},
+        {768,448},
+        {800,320},
+        {801,560},
+        {802,352},
+        {803,352},
+        {804,432},
+        {805,320}, //480}, //608}, PARALLAX
+        {806,400},
+        {807,432},
+        {808,320}, //480}, //608}, PARALLAX
+        {809,512},
+        {810,576},
+        {811,512},
+        {812,512},
+        {813,384},
+        {814,336},
+        {815,416},
+        {816,336},
+        {850,512},
+        {851,400},
+        {852,480},
+        {853,512},
+        {854,512},
+        {855,400},
+        {856,480},
+        {900,448},
+        {901,400},
+        {902,752},
+        {903,768},
+        {904,576},
+        {905,640},
+        {906,512},
+        {907,416},
+        {908,320}, //432}, //PARALLAX
+        {909,592},
+        {910,448},
+        {911,368},
+        {912,640},
+        {913,400},
+        {914,576},
+        {915,416},
+        {916,464},
+        {930,320},
+        {931,800},
+        {932,320},//416},
+        {950,384},
+        {951,512},
+        {952,512},
+        {953,448},
+        {954,720},
+        {956,448},
+        {1000,322},
+        {1001,320},
+        {1002,320},
+        {1003,320},
+        {1004,512},
+        {1005,512},
+        {1006,320},
+        {1007,320},
+        {1008,416},
+        {1009,320},
+        {1010,640},
+        {1011,528},
+        {1012,464},
+        {1013,320},
+        {1014,640},
+        {1015,528},
+        {1016,528},
+        {1017,384},
+        {1018,384},
+        {1050,320},
+        {1051,416},
+        {1052,592},
+        {1053,608},
+        {1054,400},
+        {1055,480},
+        {1056,464},
+        {1057,560},
+        {1058,384},
+        {1059,528},
+        {1060,640},
+        {1100,320},
+        {1101,416},
+        {1103,608},
+        {1104,400},
+        {1105,480},
+        {1107,560},
+        {1108,384},
+        {1109,528},
+        {1110,640},
+        {1150,368},
+        {1151,336},
+        {1152,448},
+        {1153,320}, //800},
+        {1200,320},
+        {1201,384},
+        {1202,432},
+        {1203,432},
+        {1204,480},
+        {1205,416},
+        {1206,416},
+        {1207,480},
+        {1208,320},
+        {1209,640},
+        {1210,384},
+        {1211,448},
+        {1212,352},
+        {1213,368},
+        {1214,320},
+        {1215,352},
+        {1216,416},
+        {1217,640},
+        {1218,400},
+        {1219,480},
+        {1220,416},
+        {1221,320},
+        {1222,368},
+        {1224,528},
+        {1226,320},
+        {1227,480},
+        {1250,320},
+        {1251,368},
+        {1252,320},
+        {1253,320},
+        {1254,368},
+        {1255,432},
+        {1256,432},
+        {1300,352},
+        {1302,448},
+        {1305,480},
+        {1306,416},
+        {1307,512},
+        {1309,416},
+        {1313,400},
+        {1314,320},
+        {1315,480},
+        {1357,320},
+        {1364,544},
+        {1400,640},
+        {1401,320},
+        {1402,640},
+        {1403,368},
+        {1404,384},
+        {1405,528},
+        {1406,320},
+        {1407,512},
+        {1408,400},
+        {1409,512},
+        {1410,320},
+        {1411,496},
+        {1412,640},
+        {1413,512},
+        {1414,400},
+        {1415,512},
+        {1416,640},
+        {1417,528},
+        {1418,512},
+        {1419,608},
+        {1420,448},
+        {1421,512},
+        {1422,528},
+        {1423,800},
+        {1424,400},
+        {1425,480},
+        {1450,480},
+        {1451,432},
+        {1452,384},
+        {1453,384},
+        {1454,512},
+        {1455,320},
+        {1456,400},
+        {1457,320},
+        {1458,336},
+        {1459,320},
+        {1460,512},
+        {1461,448},
+        {1462,320},
+        {1463,320},
+        {1464,432},
+        {1500,336},
+        {1501,528},
+        {1502,416},
+        {1503,416},
+        {1504,512},
+        {1505,512},
+        {1506,336},
+        {1507,320},
+        {1508,352},
+        {1509,384},
+        {1550,576},
+        {1551,416},
+        {1552,416},
+        {1553,624},
+        {1554,464},
+        {1555,640},
+        {1556,320},
+        {1557,320},
+        {1600,400},
+        {1601,400},
+        {1602,400},
+        {1603,512},
+        {1604,960},
+        {1605,336},
+        {1606,336},
+        {1607,320},
+        {1608,352},
+        {1609,320},
+        {1610,320},
+        {1650,352},
+        {1651,448},
+        {1652,480},
+        {1653,512},
+        {1654,512},
+        {1655,320},
+        {1656,384},
+        {1657,352},
+        {1658,368},
+        {1659,480},
+        {1660,336},
+        {1661,336},
+        {1662,336},
+        {1663,320},
+        {1700,400},
+        {1701,400},
+        {1702,400},
+        {1703,512},
+        {1704,960},
+        {1705,336},
+        {1706,320},
+        {1707,352},
+        {1750,320},
+        {1751,336},
+        {1752,352},
+        {1753,320},
+        {1754,640},
+        {1755,320},
+        {1756,320},
+        {1757,352},
+        {1758,448},
+        {1759,480},
+        {1800,320},
+        {1801,416},
+        {1803,368},
+        {1806,320},
+        {1807,352},
+        {1808,416},
+        {1809,640},
+        {1810,400},
+        {1816,416},
+        {1817,368},
+        {1818,320},
+        {1819,416},
+        {1821,528},
+        {1822,320},
+        {1823,432},
+        {1824,480},
+        {1850,320},
+        {1851,640},
+        {1852,384},
+        {1853,624},
+        {1854,320},
+        {1855,528},
+        {1856,480},
+        {1865,432},
+        {1866,320},
+        {1900,448},
+        {1901,400},
+        {1902,752},
+        {1903,768},
+        {1904,576},
+        {1905,640},
+        {1906,512},
+        {1907,416},
+        {1908,320}, //432}, //PARALLAX
+        {1909,592},
+        {1910,448},
+        {1911,368},
+        {1912,640},
+        {1913,400},
+        {1914,576},
+        {1915,416},
+        {1950,496},
+        {1951,352},
+        {1952,352},
+        {1953,384},
+        {2000,352},
+        {2001,480},
+        {2002,368},
+        {2003,448},
+        {2004,368},
+        {2005,320},
+        {2006,368},
+        {2007,432},
+        {2008,320},
+        {2009,320},
+        {2050,320},
+        {2051,640},
+        {2052,384},
+        {2053,624},
+        {2054,480},
+        {2055,352},
+        {2101,320},
+        {2102,448},
+        {2103,384},
+        {2104,480},
+        {2105,480},
+        {2106,416},
+        {2107,512},
+        {2108,320},
+        {2109,416},
+        {2110,432},
+        {2111,432},
+        {2112,368},
+        {2113,400},
+        {2114,320},
+        {2150,448},
+        {2151,320},
+        {2152,480},
+        {2153,544},
+        {2155,432},
+        {2157,320},
+        {2158,448},
+        {2159,320},
+        {2160,448},
+        {2161,576},
+        {2162,544},
+        {2163,400},
+        {2165,544},
+        {2167,480},
+        {2168,544},
+        {2169,464},
+        {2170,432},
+        {2172,512},
+        {2173,448},
+        {2200,384},
+        {2201,560},
+        {2202,336},
+        {2203,352},
+        {2204,336},
+        {2205,336},
+        {2206,560},
+        {2207,512},
+        {2208,336},
+        {2209,560},
+        {2211,928},
+        {2212,400},
+        {2213,400},
+        {2214,512},
+        {2215,480},
+        {2216,480},
+        {2217,432},
+        {2220,544},
+        {2221,512},
+        {2222,384},
+        {2250,320},
+        {2251,480},
+        {2252,480},
+        {2253,592},
+        {2254,336},
+        {2255,320},
+        {2256,672},
+        {2257,336},
+        {2258,592},
+        {2259,528},
+        {2260,320},
+        {2261,352},
+        {2300,512},
+        {2301,512},
+        {2303,336},
+        {2304,512},
+        {2305,320},
+        {2350,656},
+        {2351,320},
+        {2352,400},
+        {2353,400},
+        {2354,368},
+        {2355,384},
+        {2356,352},
+        {2357,464},
+        {2358,544},
+        {2359,416},
+        {2360,448},
+        {2361,320},
+        {2362,352},
+        {2363,384},
+        {2364,512},
+        {2365,336},
+        {2403,416},
+        {2404,416},
+        {2405,320},
+        {2406,384},
+        {2450,320},
+        {2451,384},
+        {2452,640},
+        {2453,320},
+        {2454,528},
+        {2455,448},
+        {2456,432},
+        {2458,320},
+        {2500,352},
+        {2501,352},
+        {2502,368},
+        {2503,368},
+        {2504,512},
+        {2505,448},
+        {2506,512},
+        {2507,592},
+        {2508,432},
+        {2509,512},
+        {2510,320},
+        {2512,320},
+        {2513,336},
+        {2550,496},
+        {2551,400},
         {2552,352},
+        {2553,416},
+        {2554,464},
+        {2600,416}, //464},
+        {2601,400},
+        {2602,384},
+        {2603,560},
+        {2604,416}, //512},
+        {2605,368}, //608},
+        {2606,398}, //512},
+        {2607,398}, //432},
+        {2608,320},
+        {2650,368},
+        {2651,320}, //528},
+        {2652,448},
+        {2653,512},
+        {2654,352},
+        {2655,416},
+        {2656,480},
+        {2657,384},
+        {2658,400},
+        {2659,464},
+        {2660,472}, //528},
+        {2661,480},
+        {2700,448},
+        {2701,320},
+        {2702,624},
+        {2703,464},
+        {2704,432},
+        {2705,320},
+        {2706,400},
+        {2707,640},
+        {2708,448},
+        {2709,480},
+        {2710,576},
+        {2711,624},
+        {2712,512},
+        {2713,592},
+        {2714,608},
+        {2715,320},
+        {2716,384}, //416},
+        {2717,528},
+        {2718,592},
+        {2719,320},
+        {2750,432},
+        {2751,432},
+        {2752,320},
+        {2753,448},
+        {2754,480},
+        {2755,496},
+        {2756,960},
+        {2800,512},
+        {2801,480},
+        {2802,480},
+        {2803,496},
+        {2850,496},
+        {2851,384},
+        {2852,464},
+        {2853,512},
+        {2854,496},
+        {2856,384},
+        {2900,320},
+        {2901,320},
+        {2902,320},
+        {2903,544},
+        {2904,368},
+        {2905,448},
+        {2906,400},
+        {2907,544},
+        {2908,320},
+        {2909,320},
+        {2910,320},
+        {2911,480},
+        {2912,320},
+        {2913,368},
+        {2914,320},
+        {2915,384},
+        {2916,437},
+        {2917,320},
+        {2918,320},
+        {2919,320},
+        {2920,336},
+        {2921,336},
+        {2922,384},
+        {2923,688},
+        {2924,320},
+        {2925,320},
+        {2926,320},
+        {2927,320},
+        {2928,368},
+        {2929,320},
+        {2930,320},
+        {2932,960},
+        {2933,320},
+        {2934,320},
+        {2950,320},
+        {2951,480},
+        {2952,512},
+        {2953,336},
+        {2954,480},
+        {2955,576},
+        {3011,320},
+        {3050,480},
+        {3100,368},
     };
 }

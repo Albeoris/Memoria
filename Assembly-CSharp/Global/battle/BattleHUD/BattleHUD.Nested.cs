@@ -124,6 +124,17 @@ public partial class BattleHUD : UIScene
         }
     }
 
+    private class CommandMPCondition
+    {
+        public Boolean CantCastCommand1;
+        public Boolean CantCastCommand2;
+
+        public Boolean Changed(CommandMPCondition other)
+        {
+            return CantCastCommand1 != other.CantCastCommand1 || CantCastCommand2 != other.CantCastCommand2;
+        }
+    }
+
     private class CommandDetail
     {
         public BattleCommandId CommandId;

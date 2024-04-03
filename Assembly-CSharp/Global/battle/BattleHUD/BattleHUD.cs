@@ -11,11 +11,15 @@ using Memoria.Prime;
 using Memoria.Scenes;
 using NCalc;
 using UnityEngine;
+using static Memoria.Assets.DataResources;
+using Memoria.Prime.PsdFile;
+using System.Collections;
 
 public partial class BattleHUD : UIScene
 {
     private readonly Dictionary<Int32, AbilityPlayerDetail> _abilityDetailDict;
     private readonly MagicSwordCondition _magicSwordCond;
+    private readonly CommandMPCondition _commandMPCond;
     private readonly List<ParameterStatus> _currentCharacterHp;
     private readonly List<Boolean> _currentEnemyDieState;
     private readonly List<DamageAnimationInfo> _hpInfoVal;
@@ -118,6 +122,9 @@ public partial class BattleHUD : UIScene
                     NCalcUtility.InitializeExpressionUnit(ref expr, new BattleUnit(cmd.regist), "Caster");
                     NCalcUtility.InitializeExpressionCommand(ref expr, new BattleCommand(cmd));
                     expr.Parameters["CommandTitle"] = str;
+                    expr.Parameters["IsEnemyCounter"] = cmd.cmd_no == BattleCommandId.EnemyCounter;
+                    expr.Parameters["IsPlayerCounter"] = cmd.cmd_no == BattleCommandId.Counter || cmd.cmd_no == BattleCommandId.MagicCounter;
+                    expr.Parameters["IsCounter"] = cmd.cmd_no == BattleCommandId.EnemyCounter || cmd.cmd_no == BattleCommandId.Counter || cmd.cmd_no == BattleCommandId.MagicCounter;
                     expr.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                     expr.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                     str = NCalcUtility.EvaluateNCalcString(expr.Evaluate(), str);
@@ -140,6 +147,25 @@ public partial class BattleHUD : UIScene
             {
                 _battleDialogWidget.height = 120;
                 _battleDialogWidget.transform.localPosition = new Vector3(-10f, 445f, 0.0f);
+            }
+
+            if (!String.IsNullOrEmpty(Configuration.Interface.BattleCommandTitleFormat))
+            {
+                try
+                {
+                    Expression expr = new Expression(Configuration.Interface.BattleCommandTitleFormat);
+                    expr.Parameters["CommandTitle"] = str;
+                    expr.Parameters["IsEnemyCounter"] = false;
+                    expr.Parameters["IsPlayerCounter"] = str == FF9TextTool.BattleFollowText(14).Substring(1) || str == FF9TextTool.BattleFollowText(15).Substring(1);
+                    expr.Parameters["IsCounter"] = str == FF9TextTool.BattleFollowText(14).Substring(1) || str == FF9TextTool.BattleFollowText(15).Substring(1); // BattleMesages.CounterAttack || BattleMesages.ReturnMagic
+                    expr.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    expr.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                    str = NCalcUtility.EvaluateNCalcString(expr.Evaluate(), str);
+                }
+                catch (Exception err)
+                {
+                    Log.Error(err);
+                }
             }
         }
 
@@ -334,8 +360,16 @@ public partial class BattleHUD : UIScene
 
     private Boolean CommandIsEnabled(BTL_DATA btl, BattleCommandId cmdId)
 	{
+        CharacterCommandType commandType = CharacterCommands.Commands[cmdId].Type;
         if (cmdId == BattleCommandId.None)
             return false;
+        if (commandType == CharacterCommandType.Normal && CharacterCommands.Commands[cmdId].MainEntry > 0)
+        {
+            BattleUnit unit = new BattleUnit(btl);
+            BattleAbilityId patchedID = PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(CharacterCommands.Commands[cmdId].MainEntry));
+            if (GetActionMpCost(FF9StateSystem.Battle.FF9Battle.aa_data[patchedID], unit) > btl.cur.mp)
+                return false;
+        }
         if (!btl.is_monster_transform)
             return true;
         BTL_DATA.MONSTER_TRANSFORM transform = btl.monster_transform;
@@ -415,12 +449,12 @@ public partial class BattleHUD : UIScene
             _isManualTrance = false;
         }
 
-        if (Configuration.Mod.TranceSeek) // TRANCE SEEK
+        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Special commands
         {
             if (presetId == CharacterPresetId.Zidane)
             {
                 CharacterCommands.CommandSets[presetId].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
-                command2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
+                command2 = btl.IsUnderAnyStatus(BattleStatus.Trance) ? CharacterCommands.CommandSets[presetId].Trance2 : btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
             }
             else if (presetId == CharacterPresetId.Steiner)
                 defendCmdId = (BattleCommandId)10015; // Gardien
@@ -553,7 +587,7 @@ public partial class BattleHUD : UIScene
             Int32 iconIndex = 0;
             foreach (KeyValuePair<BattleStatus, String> status in iconNames)
             {
-                if (!player.IsUnderAnyStatus(status.Key))
+                if (!player.IsUnderAnyStatus(status.Key) || iconIndex >= 8)
                     continue;
 
                 UISprite sprite = uiStatus.Icons[iconIndex].Sprite;
@@ -801,6 +835,7 @@ public partial class BattleHUD : UIScene
         Int32 playerCountOld = _playerCount;
         Int32 enemyCount = 0;
         Int32 playerCount = 0;
+        List<Int32> currentBattleIdEnemyList = new List<Int32>();
 
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
@@ -810,10 +845,13 @@ public partial class BattleHUD : UIScene
             if (unit.IsPlayer)
                 playerCount++;
             else
+            {
+                currentBattleIdEnemyList.Add(unit.GetIndex());
                 enemyCount++;
+            }       
         }
 
-        if (enemyCount != enemyCountOld || playerCount != playerCountOld)
+        if (enemyCount != enemyCountOld || playerCount != playerCountOld || !Enumerable.SequenceEqual(currentBattleIdEnemyList, _matchBattleIdEnemyList))
         {
             shouldUpdatePointer = true;
             _matchBattleIdPlayerList.Clear();
@@ -852,7 +890,7 @@ public partial class BattleHUD : UIScene
             }
             else
             {
-                Boolean enemyIsDead = unit.IsUnderStatus(BattleStatus.Death);
+                Boolean enemyIsDead = unit.IsUnderStatus(BattleStatus.Death);               
                 if (enemyIndex >= _currentEnemyDieState.Count)
                 {
                     _currentEnemyDieState.Add(enemyIsDead);
@@ -1177,8 +1215,14 @@ public partial class BattleHUD : UIScene
     private Int32 GetActionMpCost(AA_DATA aaData, BattleUnit unit)
     {
         Int32 mpCost = aaData.MP;
+        CharacterCommandSet command = CharacterCommands.CommandSets[FF9StateSystem.Common.FF9.party.GetCharacter(unit.Position).PresetId];
         if ((aaData.Type & 4) != 0 && FF9StateSystem.EventState.gEventGlobal[18] != 0)
             mpCost <<= 2;
+
+        if ((_currentCommandId == command.Regular1 || _currentCommandId == command.Trance1) && unit.Player.Data.mpCostFactorSkill1 != 100)
+            mpCost = mpCost * unit.Player.Data.mpCostFactorSkill1 / 100;
+        else if ((_currentCommandId == command.Regular2 || _currentCommandId == command.Trance2) && unit.Player.Data.mpCostFactorSkill2 != 100)
+            mpCost = mpCost * unit.Player.Data.mpCostFactorSkill2 / 100;
 
         mpCost = mpCost * unit.Player.Data.mpCostFactor / 100;
 
@@ -1218,7 +1262,8 @@ public partial class BattleHUD : UIScene
             playerIndex = CurrentPlayerIndex;
         AbilityPlayerDetail abilityPlayerDetail = _abilityDetailDict[playerIndex];
         BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
-        AA_DATA aaData = ff9abil.GetActionAbility(abilId);
+        BattleAbilityId patchedID = PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(abilId));
+        AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[patchedID];
 
         if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && abilityPlayerDetail.Player.Index != CharacterId.Quina && abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && ff9abil.IsAbilityActive(abilId))
             return AbilityStatus.None;
@@ -1242,6 +1287,11 @@ public partial class BattleHUD : UIScene
 
             if (unit.IsUnderAnyStatus(BattleStatus.Silence))
                 return AbilityStatus.Disable;
+        }
+
+        if ((aaData.Type & 16) != 0) // [DV] Unused (5) - To disable "Bandit !" if Zidane equip a Dagger, Mage Masher or Mythril Dagger.
+        {
+            return AbilityStatus.Disable;
         }
 
         if (GetActionMpCost(aaData, unit) > unit.CurrentMp)
@@ -1696,6 +1746,29 @@ public partial class BattleHUD : UIScene
                 };
                 testCommand.SetAAData(aaData);
                 testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
+
+                if (_currentCommandId == BattleCommandId.Throw) // [DV] Change TargetType for throwing items (magic scrolls for Trance Seek)
+                { // Or i can make it with the DictionaryPatch.txt instead ?
+                    ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
+                    if (((weapon.Category & WeaponCategory.Throw) != 0) && (weapon.ModelId == 65535 || weapon.ModelId == 0)) 
+                    { 
+                        switch (weapon.Offset2)
+                        {
+                            case 1:
+                                targetType = TargetType.SingleAlly;
+                                break;
+                            case 6:
+                                targetType = TargetType.All;
+                                break;
+                            case 7:
+                                targetType = TargetType.AllAlly;
+                                break;
+                            case 8:
+                                targetType = TargetType.AllEnemy;
+                                break;
+                        }
+                    }
+                }
 
                 SelectBestTarget(targetType, testCommand);
             }

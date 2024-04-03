@@ -73,17 +73,20 @@ public class QuadMistCardUI : MonoBehaviour
 			_data = value;
 			if (value != null)
 			{
-				gameObject.SetActive(true);
-				cardDisplay.Status = Data.ToString();
+                gameObject.SetActive(true);
+                cardDisplay.Status = Data.ToString();
 				cardDisplay.ID = (Int32)Data.id;
 				cardDisplay.Side = Data.side;
-				cardArrows.Arrow = Data.arrow;
+                cardArrows.Arrow = Data.arrow;
                 if (cardArrows.Arrow == Byte.MaxValue && QuadMistResourceManager.UseArrowGoldenFrame)
 					cardDisplay.frame.ID = 7 + Data.side;
+                 // cardDisplay.Element = 0;
+				 //cardDisplay.background.gameObject.SetActive(false);
+                 //cardDisplay.character.gameObject.SetActive(false);
             }
 			else
 			{
-				gameObject.SetActive(false);
+                gameObject.SetActive(false);
 			}
 		}
 	}
@@ -144,15 +147,15 @@ public class QuadMistCardUI : MonoBehaviour
 
 	public static Int32 ENEMY_SIDE = 1;
 	public static Int32 PLAYER_SIDE = 0;
-	public static Single SIZE_W = Board.USE_SMALL_BOARD ? 0.54f : 0.42f; // Card positions
-	public static Single SIZE_H = Board.USE_SMALL_BOARD ? 0.64f : 0.51f; // Card positions
+	public static Single SIZE_W = Board.USE_TRIPLETRIAD_BOARD ? 0.54f : 0.42f; // Card positions
+	public static Single SIZE_H = Board.USE_TRIPLETRIAD_BOARD ? 0.64f : 0.51f; // Card positions
 	public static Single SIZESMALL_W = 0.34f;
     public static Single SIZESMALL_H = 0.41f;
 
     public CardEffect cardEffect;
 	public CardDisplay cardDisplay;
 	public CardArrows cardArrows;
-	private Boolean isToDisplay;
+    private Boolean isToDisplay;
 
 	private Vector3 farAwayPosition = new Vector3(-10000f, -10000f, -10000f);
 	private Vector3 originalPosition = new Vector3(-0.015f, -0.195f, -0.25f);

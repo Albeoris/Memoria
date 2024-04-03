@@ -8,6 +8,7 @@ using Memoria.Prime;
 using Memoria.Data;
 using NCalc;
 using UnityEngine;
+using static SiliconStudio.Social.ResponseData;
 
 public static class btl2d
 {
@@ -125,6 +126,7 @@ public static class btl2d
                 BTL2D_ENT btl2D_ENT = btl2d.Btl2dReqHP(pBtl, pBtl.fig_poison_hp, 0, b);
                 btl2D_ENT.NoClip = 1;
                 btl2D_ENT.Yofs = -12;
+                // HonoluluBattleMain.battleSPS.ResetBtlSPSObj(pBtl, BattleStatus.Poison); // [DV] Reset the poison display every time it tick, as it tends to disappear randomly...
                 b += 4;
             }
             if ((fig_stat_info & Param.FIG_STAT_INFO_POISON_MP) != 0)
@@ -132,10 +134,18 @@ public static class btl2d
                 BTL2D_ENT btl2D_ENT = btl2d.Btl2dReqMP(pBtl, pBtl.fig_poison_mp, 0, b);
                 btl2D_ENT.NoClip = 1;
                 btl2D_ENT.Yofs = -12;
+                b += 4;
+            }
+            if ((fig_stat_info & Param.FIG_STAT_INFO_REGENE_MP) != 0)
+            {
+                BTL2D_ENT btl2D_ENT = btl2d.Btl2dReqMP(pBtl, pBtl.fig_regene_mp, 192, b);
+                btl2D_ENT.NoClip = 1;
+                btl2D_ENT.Yofs = -12;
             }
         }
         pBtl.fig_stat_info = 0;
         pBtl.fig_regene_hp = 0;
+        pBtl.fig_regene_mp = 0;
         pBtl.fig_poison_hp = 0;
         pBtl.fig_poison_mp = 0;
     }
