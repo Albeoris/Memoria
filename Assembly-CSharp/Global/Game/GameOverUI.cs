@@ -1,16 +1,35 @@
 ﻿using System;
 using System.Collections;
 using Assets.Scripts.Common;
+using Memoria.Assets;
 using UnityEngine;
 
 public class GameOverUI : UIScene
 {
 	public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
 	{
-		SceneDirector.FF9Wipe_FadeInEx(30);
+        SceneDirector.FF9Wipe_FadeInEx(30);
 		UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
 		{
-			SceneDirector.FF9Wipe_FadeInEx(24);
+			// Replace gameover screen with modded version if it exists
+            UI2DSprite sprite2D = this.GameOverSprite.GetComponent<UI2DSprite>();
+            Sprite sprite = sprite2D.sprite2D;
+            String externalPath = AssetManager.SearchAssetOnDisc("EmbeddedAsset/UI/Sprites/gameover", true, false);
+            if (!String.IsNullOrEmpty(externalPath))
+            {
+                Texture2D texture = StreamingResources.LoadTexture2D(externalPath);
+                sprite2D.sprite2D = Sprite.Create(texture, sprite.rect, sprite.pivot);
+                sprite2D.sprite2D.name = sprite.name;
+            }
+            externalPath = AssetManager.SearchAssetOnDisc("EmbeddedAsset/UI/Sprites/gameover.png", true, false); // also check .png for simplicity
+            if (!String.IsNullOrEmpty(externalPath))
+            {
+                Texture2D texture = StreamingResources.LoadTexture2D(externalPath);
+                sprite2D.sprite2D = Sprite.Create(texture, sprite.rect, sprite.pivot);
+                sprite2D.sprite2D.name = sprite.name;
+            }
+
+            SceneDirector.FF9Wipe_FadeInEx(24);
 			this.AnimatePanel(1);
 		};
 		TimerUI.SetEnable(false);
@@ -56,7 +75,7 @@ public class GameOverUI : UIScene
 
 	private void AnimatePanel(Int32 alpha)
 	{
-		TweenAlpha.Begin(this.GameOverSprite, this.duration, (Single)alpha);
+        TweenAlpha.Begin(this.GameOverSprite, this.duration, (Single)alpha);
 	}
 
 	private void GoToTitleScene()

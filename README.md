@@ -6,14 +6,18 @@
 
 - New launcher with easy options (for not included options: Memoria.ini)
 - Mod Manager, with integrated community catalog and 1 click install
-- Support for:
-    - Larger backgrounds resolution (e.g. Moguri)
-    - Widescreen (select any 16:9 resolution)
+- Optional features:
+    - Battle UI layouts (includes original PSX layout)
     - Configurable framerate (15, 30, 60fps...)
+    - Font change (includes original PSX font)
+    - Volume control
+    - Anti-aliasing
+    - Full analog movement
+- Support for:
+    - Larger backgrounds definition (e.g. Moguri)
+    - Widescreen (now for all resolutions)
     - Unlocks FMV framerate change (e.g. Moguri)
     - Voice acting (e.g. WIP project ECHO-S)
-    - Font change (includes original PSX font)
-    - Combat HUD layouts (includes original PSX layout)
     - Many limitations removed for mods
     - Some bugfixes
 - Faster battles:
@@ -21,21 +25,17 @@
     - Swirl duration
     - Waiting skip
     - Turn-based mode
-- QoL:
-    - Save/load anywhere (Alt+F5, Alt+F9)
-    - Full analog movement
-    - [LauncherBypass](https://github.com/Albeoris/Memoria/issues/70#issuecomment-626077188)
-    - [Change audio volume](https://github.com/Albeoris/Memoria/issues/36#issuecomment-626098739) (Ctrl+Alt+Shift+M)
-    - Anti-aliasing
-- Cheats:
-    - Stealing 100% rate
+- Optional Cheats:
+    - Stealing 100% success
     - Enable/Disable vanilla cheats
     - Easy minigames (rope, frogs, racing)
+    - Excalibur II time limit removal
 - Tetra Master (Card game):
-    - Choice to replace with a custom version of Triple Triad (FFVIII)
-    - Choice to replace with an hybrid of Tetra Master and Triple Triad
+    - (Option) replace with a custom version of Triple Triad (FFVIII) or Tetra Master/Triple Triad hybrid
+    - Raise card limit
     - Auto discard cards
     - Ways to tweak the randomness
+- Include individual mod assets in folders
 - Edit game data (look at the "StreamingAssets\Data" folder)
 - Change ability mechanics (look at the "StreamingAssets\Scripts" folder)
 - Make every character available (Alt+F2)
@@ -73,12 +73,14 @@
 
 
 ## Build & Contribute
-- Use Visual Studio Community (2019 or above) or JetBrains Rider.
-- Make sure you have [.NET 3.5 Developer Tools and .NET Framework 4.6.2](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks?cid=getdotnetsdk) installed.
+- Use Visual Studio Community (2019 or above). Install .NET dev tools when prompted.
+- In Visual Studio, install ".NET Framework 3.5 Development Tools" & "Visual Studio Tools for Unity" (in Tools > Get Tools and Functionalities > Individual Components <>)
+- Install [.NET Framework 3.5 SP1 and 4.6.2](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks?cid=getdotnetsdk).
 - Make a fork of the project and download it locally.
-- Open Powershell as administrator `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine`
+- Open Powershell as administrator and execute `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine`
 - Change directory to your Memoria Fork download location and run powershell script `.\SetupProjectEnvironment.ps1`
 - Once you've commited your changes to your fork, make it a Pull Request to the main repository.
+- I recommend Github Desktop for easy push to repository.
 
 
 ## Scripting
