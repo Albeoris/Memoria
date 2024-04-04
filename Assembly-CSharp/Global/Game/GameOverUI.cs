@@ -3,7 +3,6 @@ using System.Collections;
 using Assets.Scripts.Common;
 using Memoria.Assets;
 using UnityEngine;
-using Memoria.Prime;
 
 public class GameOverUI : UIScene
 {
