@@ -91,7 +91,8 @@ public static class NarrowMapList
         {2705,-1},  // Pandemonium, you're not alone sequence, several glitches
         {2706,-1},  // Pandemonium, you're not alone sequence, several glitches
         {2707,-1},  // Pandemonium, you're not alone sequence, several glitches
-        {2708,-1}   // Pandemonium, you're not alone sequence, several glitches
+        {2708,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2905,154}  //Memoria pink scene with MBG
     };
 
     public static readonly Dictionary<int, int> WidthDictionary_cam2 = new Dictionary<int, int>
