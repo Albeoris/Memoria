@@ -1082,7 +1082,6 @@ public class FieldMap : HonoBehavior
         this.curVRP[0] = centerOffsetX;
         this.parallaxOrg[1] = centerOffsetY;
         this.curVRP[1] = centerOffsetY;
-
         this.scrollWindowPos = new Int16[4][];
         this.scrollWindowDim = new Int16[4][];
         this.scrollWindowAlphaX = new Int16[4];
@@ -1487,6 +1486,7 @@ public class FieldMap : HonoBehavior
         List<BGSPRITE_LOC_DEF> spriteList = overlayPtr.spriteList;
         short screenX = (short)(overlayPtr.curX + bgScene.scrX);
         short screenY = (short)(overlayPtr.curY + bgScene.scrY);
+        //short num3 = (short)(overlayPtr.curZ + (ushort)bgScene.curZ);
         if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
         {
             short anchorX;
