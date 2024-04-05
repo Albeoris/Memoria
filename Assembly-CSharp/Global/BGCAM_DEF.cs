@@ -114,7 +114,7 @@ public class BGCAM_DEF
 		return new Vector3(this.t[0], this.t[1], this.t[2]);
     }
 
-    private void RefreshCache(Boolean force)
+    public void RefreshCache(Boolean force)
     {
         Int16 actualFieldWidth = FieldMap.PsxFieldWidth;
         if (!force && _knownFieldWidth == actualFieldWidth)

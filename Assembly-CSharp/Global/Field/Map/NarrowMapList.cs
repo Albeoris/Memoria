@@ -8,7 +8,6 @@ public static class NarrowMapList
     public static Boolean IsCurrentMapNarrow(Int32 ScreenWidth) => IsNarrowMap(FF9StateSystem.Common.FF9.fldMapNo, PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1, ScreenWidth);
     public static Boolean IsNarrowMap(Int32 mapId, Int32 camId, Int32 ScreenWidth)
     {
-        
         if (SpecificScenesNarrow(mapId))
             return true;
 
@@ -39,25 +38,6 @@ public static class NarrowMapList
         return false;
     }
 
-    public static readonly Dictionary<int, int> SpecificScenesNarrow_List = new Dictionary<int, int>
-    {
-        // {mapNo,index}
-        {50,0},     // first scene
-        {150,325},  // Zidane infiltrate Alex Castle
-        {154,304},  // cutscene zorn&thorn
-        //{153,328},  // steiner guards call // can't have twice the same key TOFIX
-        {352,3},    // Arrival at Dali: vivi visible before sleeping
-        {1602,16},  // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
-        {1823,331}, // Garnet coronation, garnet visible
-        {1815,0},   // Love quiproquo at the docks
-        {1816,315}, // Love quiproquo at the docks
-        {2211,8},   // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
-        {2705,-1},  // Pandemonium, you're not alone sequence, several glitches
-        {2706,-1},  // Pandemonium, you're not alone sequence, several glitches
-        {2707,-1},  // Pandemonium, you're not alone sequence, several glitches
-        {2708,-1}   // Pandemonium, you're not alone sequence, several glitches
-    };
-
     public static Int32 MapWidth(int mapId)
     {
         Int32 width = 500;
@@ -71,15 +51,37 @@ public static class NarrowMapList
                 width = (Int32)entry.Value;
         }
 
-        //if (mapId == 153 && PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx == 0)
-        //    width = 320;
-        //if (mapId == 154 && PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx == 1)
-        //    width = 640;
-
         //Log.Message("width:" + width + "PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx" + PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx);
         return width;
     }
 
+    public static readonly Dictionary<int, int> SpecificScenesNarrow_List = new Dictionary<int, int>
+    {
+        // {mapNo,index}
+        {50,0},      // first scene
+        {150,325},   // Zidane infiltrate Alex Castle
+        //{154,304},   // cutscene zorn&thorn
+        //{153,328}, // steiner guards call // can't have twice the same key TOFIX
+        {254,26},    // MBG103 - Evil Forest
+        {352,3},     // Arrival at Dali: vivi visible before sleeping
+        {355,18},    // Steiner to the barmaid
+        {600,32},    // Throne, meet cid
+        {606,0},     // telescope
+        {615,57},    // Meet garnet on Lindblum castle
+        {1554,7},    // MBG109 - roots
+        //{1600,9999}, // First time Madain Sari
+        {1602,16},   // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
+        {1823,331},  // Garnet coronation, garnet visible
+        {1815,0},    // Love quiproquo at the docks
+        {1816,315},  // Love quiproquo at the docks
+        {2007,2},    // MBG111 - Alex castle changing
+        {2211,8},    // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
+        {2705,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2706,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2707,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2708,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2905,154}   // MBG118 - Memoria pink castle
+    };
 
     public static readonly Dictionary<Int32, HashSet<Int32>> ListPartialNarrow = new Dictionary<Int32, HashSet<Int32>>()
     {
@@ -119,7 +121,7 @@ public static class NarrowMapList
         0150, // A. Castle/Guardhouse
         0151, // A. Castle/Throne
         0153, // A. Castle/Hallway
-        //0154,
+        0154,
         0157, // A. Castle/Kitchen
         0160, // A. Castle/Courtyard
         0161, // A. Castle/Courtyard
@@ -137,7 +139,7 @@ public static class NarrowMapList
         0209, // Prima Vista/Event
         0251, // Evil Forest/Trail
         0252, // Evil Forest/Trail
-        0254, // Evil Forest/Swamp
+        //0254, // Evil Forest/Swamp
         0255, // Evil Forest/Riverbank
         0256, // Evil Forest/Trail
         0259, // Evil Forest/Trail
@@ -253,6 +255,7 @@ public static class NarrowMapList
         1212, // A. Castle/East Tower
         1213, // A. Castle/Guardhouse
         1214, // A. Castle/Hallway
+        1215,
         1216,
         1218,
         1221, // A. Castle/Courtyard
@@ -340,6 +343,7 @@ public static class NarrowMapList
         1800, // A. Castle/Tomb
         1803, // A. Castle/Guardhouse
         1806, // A. Castle/Hallway
+        1807, // A. Castle/Hallway
         1808,
         1810,
         1813, // A. Castle/Courtyard
@@ -367,7 +371,7 @@ public static class NarrowMapList
         2004,
         2005, // A. Castle/Altar
         2006,
-        2007, // A. Castle/Altar
+        //2007, // A. Castle/Altar
         2008, // A. Castle/Altar
         2050, // Alexandria/Main Street
         2052,
@@ -698,9 +702,9 @@ public static class NarrowMapList
         {3055,398},
         {1205,384},
         //{154,352},
-        {1215,352},
+        //{1215,352},
         {1805,352},
-        {1807,352},
+        //{1807,352},
         {1652,336},
         {2552,352},
     };
