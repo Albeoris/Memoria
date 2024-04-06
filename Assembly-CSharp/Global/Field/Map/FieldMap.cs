@@ -316,6 +316,7 @@ public class FieldMap : HonoBehavior
         this.EBG_animationService();
         this.EBG_attachService();
     }
+
     public override void HonoLateUpdate()
     {
         this.EBG_sceneService2DScroll();
@@ -437,7 +438,6 @@ public class FieldMap : HonoBehavior
         String camIdxIfCam = this.scene.cameraList.Count > 1 ? "-" + this.camIdx : "";
         PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}{camIdxIfCam} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
         if (dbug) Log.Message(" |_ SetCurrentCameraIndex | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
-    
     }
 
     public static Boolean IsNarrowMap()
@@ -479,7 +479,6 @@ public class FieldMap : HonoBehavior
         this.walkMesh.BGI_simInit();
         FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
         if (dbug) Log.Message("_ LoadFieldMap | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
-
     }
 
     public void ActivateCamera()
@@ -696,8 +695,8 @@ public class FieldMap : HonoBehavior
         {
             Int32 mapWidth = NarrowMapList.MapWidth(map);
 
-            Int32 threshmargin = Math.Min(bgcam_DEF.w - PsxFieldWidth, 0); // Offset value for fields that are between 320 & 398
-            //Log.Message("PsxFieldWidth" + PsxFieldWidth);
+            Int32 threshmargin = Math.Min((Int32)bgcam_DEF.w - PsxFieldWidth, 0); // Offset value for fields that are between 320 & 398
+            //if (dbug) Log.Message("PsxFieldWidth" + PsxFieldWidth);
             if (mapWidth >= PsxFieldWidth && map != 507) // Cargo Ship/Deck
             {
                 foreach (KeyValuePair<Int32, Int32> entry in NarrowMapList.mapCameraMargin)
@@ -713,27 +712,28 @@ public class FieldMap : HonoBehavior
                 else if (map == 2923) // Exception in crystal world
                     threshmargin += 20;
 
-                CamPosition = (Int32)Math.Max(threshmargin, CamPosition);
-                CamPosition = (Int32)Math.Min(threshright, CamPosition);
+                CamPosition = (float)Math.Max(threshmargin, CamPosition);
+                CamPosition = (float)Math.Min(threshright, CamPosition);
             }
-            else if (map == 1205 || map == 1652 || map == 2552)
+            else if (map == 1205 || map == 1652 || map == 2552) // A. Castle/Chapel, Iifa Tree/Roots or Earth Shrine/Interior
             {
-                // A. Castle/Chapel, Iifa Tree/Roots or Earth Shrine/Interior
                 if (map == 1652 && this.camIdx == 0) // Iifa Tree/Roots
                     threshmargin += 16;
 
                 Int32 threshright = bgcam_DEF.w - PsxFieldWidth - threshmargin;
 
-                CamPosition = (Int32)Math.Max(threshmargin, CamPosition);
-                CamPosition = (Int32)Math.Min(threshright, CamPosition);
+                CamPosition = (float)Math.Max(threshmargin, CamPosition);
+                CamPosition = (float)Math.Min(threshright, CamPosition);
             }
             else if (IsNarrowMap())
             {
                 if (mapWidth <= PsxFieldWidth && mapWidth > 320)
                 {
-                    CamPosition = (Int32)((bgcam_DEF.w - mapWidth) / 2);
+                    CamPosition = (float)((bgcam_DEF.w - mapWidth) / 2);
                 }
-                
+            }
+            if (map == 456 || map == 505 || map == 1153) // scenes extended left or right despite scrolling sky
+            {
                 switch (map) // offsets for scrolling maps stretched to WS
                 {
                     case 456: // Dali Mountain/Summit
@@ -748,38 +748,41 @@ public class FieldMap : HonoBehavior
                     default:
                         break;
                 }
-            }
-            if (Configuration.Graphics.ScreenIs16to10())
-            {
-                switch (map) // offsets for scrolling maps stretched to WS
+                if (Configuration.Graphics.ScreenIs16to10())
                 {
-                    case 456: // Dali Mountain/Summit
-                        CamPosition = 160 + 35;
-                        break;
-                    case 505: // Cargo ship offset
-                        CamPosition = 105 - 35;
-                        break;
-                    case 1153: // Rose Rouge cockpit offset
-                        CamPosition = 175 - 35;
-                        break;
-                    default:
-                        break;
+                    switch (map) // offsets for scrolling maps stretched to WS
+                    {
+                        case 456: // Dali Mountain/Summit
+                            CamPosition = CamPosition + 35;
+                            break;
+                        case 505: // Cargo ship offset
+                            CamPosition = CamPosition - 35;
+                            break;
+                        case 1153: // Rose Rouge cockpit offset
+                            CamPosition = CamPosition - 35;
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
+            
         }
         localPosition.x = CamPosition;
         localPosition.y = bgcam_DEF.centerOffset[1] - this.charOffset.y;
-        
-        
-        if (CamPosition != _debug_latest_camposition)
+
+        if (dbug)
         {
-            _debug_latest_camposition = (Int32)CamPosition;
-            if (dbug) Log.Message("CamPosition: " + CamPosition + " (curCamIdx: " + curCamIdx + " | camIdx: " + camIdx + ")");
+            if (CamPosition != _debug_latest_camposition)
+            {
+                _debug_latest_camposition = (Int32)CamPosition;
+                Log.Message("CamPosition: " + CamPosition + " (curCamIdx: " + curCamIdx + " | camIdx: " + camIdx + ")");
+            }
         }
 
         camera.transform.localPosition = localPosition;
     }
-    private Int32 _debug_latest_camposition;
+    private float _debug_latest_camposition;
 
     public void ff9fieldInternalBattleEncountService()
     {
@@ -827,6 +830,7 @@ public class FieldMap : HonoBehavior
             return;
         this.EBG_animationInit();
         this.EBG_attachInit();
+        if (dbug) Log.Message("EBG_init()");
     }
 
     private void EBG_stateInit()
@@ -2143,496 +2147,93 @@ public class FieldMap : HonoBehavior
     private static readonly Dictionary<int, FieldMap.EbgCombineMeshData> combineMeshDict = new Dictionary<int, FieldMap.EbgCombineMeshData>
     {
         {351, (FieldMap.EbgCombineMeshData)null},
-        {358, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    13,
-                    14
-                } 
-            } 
-        },
+        {358, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 13, 14 }}},
         {450, (FieldMap.EbgCombineMeshData)null },
         {407, (FieldMap.EbgCombineMeshData)null },
-        {55, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    5
-                }
-            }
-        },
+        {55, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 5 }}},
         {57, (FieldMap.EbgCombineMeshData)null },
-        {60, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    15,
-                    16
-                }
-            }
-        },
-        {111, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    10
-                }
-            }
-        },
+        {60, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 15, 16 }}},
+        {111, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 10 }}},
         {153, (FieldMap.EbgCombineMeshData)null },
         {154, (FieldMap.EbgCombineMeshData)null },
-        {307, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    6,
-                    8
-                }
-            }
-        },
+        {307, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 6, 8 }}},
         {308, (FieldMap.EbgCombineMeshData)null },
         {309, (FieldMap.EbgCombineMeshData)null },
-        {507, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    8,
-                    9,
-                    10
-                }
-            }
-        },
-        {551, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    13
-                }
-            }
-        },
-        {556, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    27
-                }
-            }
-        },
+        {507, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 8, 9, 10 }}},
+        {551, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 13 }}},
+        {556, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 27 }}},
         {566, (FieldMap.EbgCombineMeshData)null },
         {576, (FieldMap.EbgCombineMeshData)null },
-        {603, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    35
-                }
-            }
-        },
+        {603, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 35 }}},
         {612, (FieldMap.EbgCombineMeshData)null },
         {662, (FieldMap.EbgCombineMeshData)null },
-        {705, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    25
-                }
-            }
-        },
-        {706, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    13
-                }
-            }
-        },
+        {705, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 25 }}},
+        {706, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 13 }}},
         {707, (FieldMap.EbgCombineMeshData)null },
         {751, (FieldMap.EbgCombineMeshData)null },
         {755, (FieldMap.EbgCombineMeshData)null },
         {766, (FieldMap.EbgCombineMeshData)null },
         {802, (FieldMap.EbgCombineMeshData)null },
-        {810, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    6,
-                    7
-                }
-            }
-        },
+        {810, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 6, 7 }}},
         {815, (FieldMap.EbgCombineMeshData)null },
-        {910, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    12,
-                    13,
-                    14,
-                    15,
-                    16,
-                    17,
-                    19
-                }
-            }
-        },
-        {1910, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    12,
-                    13,
-                    14,
-                    15,
-                    16,
-                    17,
-                    19
-                }
-            }
-        },
+        {910, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 12, 13, 14, 15, 16, 17, 19 }}},
+        {1910, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 12, 13, 14, 15, 16, 17, 19 }}},
         {916, (FieldMap.EbgCombineMeshData)null },
         {951, (FieldMap.EbgCombineMeshData)null },
         {952, (FieldMap.EbgCombineMeshData)null },
         {957, (FieldMap.EbgCombineMeshData)null },
-        {1056, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    19,
-                    24
-                }
-            }
-        },
-        {1106, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    19,
-                    24
-                }
-            }
-        },
-        {1153, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    6,
-                    7
-                }
-            }
-        },
-        {1206, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11
-                }
-            }
-        },
-        {1207, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    7,
-                    8
-                }
-            }
-        },
+        {1056, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 19, 24 }}},
+        {1106, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 19, 24 }}},
+        {1153, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 6, 7 }}},
+        {1206, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 5, 6, 7, 8, 9, 10, 11 }}},
+        {1207, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 7, 8 }}},
         {1214, (FieldMap.EbgCombineMeshData)null },
         {1215, (FieldMap.EbgCombineMeshData)null },
-        {1222, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    21,
-                    22,
-                    23,
-                    24,
-                    25
-                }
-            }
-        },
-        {1223, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11
-                }
-            }
-        },
-        {1301, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    13
-                }
-            }
-        },
+        {1222, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 21, 22, 23, 24, 25 }}},
+        {1223, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 5, 6, 7, 8, 9, 10, 11 }}},
+        {1301, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 13 }}},
         {1307, (FieldMap.EbgCombineMeshData)null },
         {1312, (FieldMap.EbgCombineMeshData)null },
         {1355, (FieldMap.EbgCombineMeshData)null },
         {1362, (FieldMap.EbgCombineMeshData)null },
         {1455, (FieldMap.EbgCombineMeshData)null },
         {3054, (FieldMap.EbgCombineMeshData)null },
-        {1505, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    0,
-                    8,
-                    13
-                }
-            }
-        },
+        {1505, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 0, 8, 13 }}},
         {1950, (FieldMap.EbgCombineMeshData)null },
-        {1225, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11
-                }
-            }
-        },
-        {1801, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11
-                }
-            }
-        },
-        {1802, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    7,
-                    8
-                }
-            }
-        },
-        {3002, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    7,
-                    8
-                }
-            }
-        },
+        {1225, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 5, 6, 7, 8, 9, 10, 11 }}},
+        {1801, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 5, 6, 7, 8, 9, 10, 11 }}},
+        {1802, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 7, 8 }}},
+        {3002, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 7, 8 }}},
         {1806, (FieldMap.EbgCombineMeshData)null },
         {1807, (FieldMap.EbgCombineMeshData)null },
-        {1814, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    21,
-                    22,
-                    23,
-                    24,
-                    25
-                }
-            }
-        },
-        {1816, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    15,
-                    16,
-                    17,
-                    18,
-                    19
-                }
-            }
-        },
+        {1814, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 21, 22, 23, 24, 25 }}},
+        {1816, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 15, 16, 17, 18, 19 }}},
         {1823, (FieldMap.EbgCombineMeshData)null },
         {1852, (FieldMap.EbgCombineMeshData)null },
-        {1860, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    10
-                }
-            }
-        },
-        {1865, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    17,
-                    18,
-                    20
-                }
-            }
-        },
+        {1860, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 10 }}},
+        {1865, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 17, 18, 20 }}},
         {2000, (FieldMap.EbgCombineMeshData)null },
-        {2001, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    7,
-                    8
-                }
-            }
-        },
-        {2101, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    13
-                }
-            }
-        },
+        {2001, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 7, 8 }}},
+        {2101, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 13 }}},
         {565, (FieldMap.EbgCombineMeshData)null },
         {2112, (FieldMap.EbgCombineMeshData)null },
         {605, (FieldMap.EbgCombineMeshData)null },
         {2155, (FieldMap.EbgCombineMeshData)null },
         {2162, (FieldMap.EbgCombineMeshData)null },
-        {2200, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    12,
-                    13,
-                    14,
-                    15,
-                    16,
-                    17,
-                    18,
-                    19,
-                    21,
-                    22,
-                    23,
-                    24,
-                    25
-                }
-            }
-        },
+        {2200, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 12, 13, 14, 15, 16, 17, 18, 19, 21, 22, 23, 24, 25 }}},
         {2217, (FieldMap.EbgCombineMeshData)null },
-        {2220, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    4,
-                    5,
-                    6,
-                    7
-                }
-            }
-        },
-        {2221, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    2,
-                    4,
-                    5,
-                    26,
-                    29
-                }
-            }
-        },
+        {2220, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 4, 5, 6, 7 }}},
+        {2221, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 2, 4, 5, 26, 29 }}},
         {2404, (FieldMap.EbgCombineMeshData)null },
-        {2453, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    1
-                }
-            }
-        },
-        {2853, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    4,
-                    5,
-                    6,
-                    7,
-                    8,
-                    9,
-                    10,
-                    11,
-                    12,
-                    13,
-                    14,
-                    15
-                }
-            }
-        },
+        {2453, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 1 }}},
+        {2853, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 }}},
         {2502, (FieldMap.EbgCombineMeshData)null },
         {2506, (FieldMap.EbgCombineMeshData)null },
-        {2509, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    2,
-                    3
-                }
-            }
-        },
-        {2652, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    4
-                }
-            }
-        },
+        {2509, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 2, 3 }}},
+        {2652, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 4 }}},
         {2906, (FieldMap.EbgCombineMeshData)null },
-        {3100, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    38,
-                    40,
-                    46,
-                    47,
-                    48,
-                    49,
-                    50,
-                    52
-                }
-            }
-        },
-        {2107, new FieldMap.EbgCombineMeshData
-            {
-                skipOverlayList = new List<int>
-                {
-                    0,
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    12
-                }
-            }
-        }
+        {3100, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 38, 40, 46, 47, 48, 49, 50, 52 }}},
+        {2107, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 0, 1, 2, 3, 4, 5, 12 }}}
     };
 
     public static readonly List<String> fieldMapNameWithAreaTitle = new List<String>
@@ -2735,7 +2336,7 @@ public class FieldMap : HonoBehavior
         ShaderMulY = CalcShaderMulY();
         Shader.SetGlobalFloat("_MulX", ShaderMulX);
         Shader.SetGlobalFloat("_MulY", ShaderMulY);
-
+        //Log.Message("OnWidescreenSupportChanged()");
         //Log.Message("HalfFieldWidth " + HalfFieldWidth + " HalfScreenWidth " + HalfScreenWidth + " ShaderMulX " + ShaderMulX + " PsxFieldWidth " + CalcShaderMulX() + " CalcShaderMulX() ");
     }
 
