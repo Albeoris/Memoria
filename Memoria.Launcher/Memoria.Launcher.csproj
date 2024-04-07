@@ -140,6 +140,7 @@
     </ContentWithTargetPath>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Languages\pt-BR.xml" />
     <Resource Include="Images\btnActivateAllimg.png" />
     <Resource Include="Images\btnCancelimg.png" />
     <Resource Include="Images\btnCheckCompatibilityimg.png" />
