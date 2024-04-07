@@ -11,7 +11,7 @@ namespace Global.Sound.SoLoud
     {
         private const Int32 AkbHeaderSize = 304;
 
-        private Soloud soloud;
+        private static Soloud soloud = null;
         private class StreamInfo
         {
             public AKB2Header akbHeader;
@@ -50,9 +50,12 @@ namespace Global.Sound.SoLoud
         {
             SoundLib.Log("Create");
             // Initialize SoLoud
-            soloud = new Soloud();
-            soloud.init(1, 0, 48000);
-            Memoria.Prime.Log.Message($"[Soloud] backend: {soloud.getBackendString()} samplerate:{soloud.getBackendSamplerate()}");
+            if (soloud == null)
+            {
+                soloud = new Soloud();
+                soloud.init(1, 0, 48000);
+                Memoria.Prime.Log.Message($"[Soloud] backend: {soloud.getBackendString()} samplerate:{soloud.getBackendSamplerate()}");
+            }
 
             return 0;
         }
@@ -60,7 +63,8 @@ namespace Global.Sound.SoLoud
         public override void SdSoundSystem_Release()
         {
             SoundLib.Log("Release");
-            soloud.deinit();
+            // Can cause crashes on close? Cleared by system anyway
+            // soloud.deinit();
         }
 
         public override Int32 SdSoundSystem_Suspend()
@@ -126,7 +130,7 @@ namespace Global.Sound.SoLoud
                 double start = stream.akbHeader.LoopStart / (double)stream.akbHeader.SampleRate;
                 double end = stream.akbHeader.LoopEnd / (double)stream.akbHeader.SampleRate;
 
-                SoundLib.Log($"LoopStart: ({start}) LoopEnd: {end}");
+                SoundLib.Log($"LoopStart: {start} LoopEnd: {end} Length: {stream.data.getLength()}");
 
                 soloud.setLoopStartPoint((uint)soundID, start);
                 soloud.setLoopEndPoint((uint)soundID, end);
