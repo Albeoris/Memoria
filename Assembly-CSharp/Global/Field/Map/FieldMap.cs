@@ -697,7 +697,7 @@ public class FieldMap : HonoBehavior
 
             Int32 threshmargin = Math.Min((Int32)bgcam_DEF.w - PsxFieldWidth, 0); // Offset value for fields that are between 320 & 398
             //if (dbug) Log.Message("PsxFieldWidth" + PsxFieldWidth);
-            if (mapWidth >= PsxFieldWidth && map != 507) // Cargo Ship/Deck
+            if (mapWidth > PsxFieldWidth && map != 507) // Cargo Ship/Deck
             {
                 foreach (KeyValuePair<Int32, Int32> entry in NarrowMapList.mapCameraMargin)
                     if (map == entry.Key)
