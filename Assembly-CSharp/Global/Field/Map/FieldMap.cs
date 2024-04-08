@@ -711,8 +711,6 @@ public class FieldMap : HonoBehavior
                     threshright -= 32;
                 else if (map == 2923) // Exception in crystal world
                     threshmargin += 20;
-                else if (map == 852)
-                    threshmargin += 4;
 
                 CamPosition = (float)Math.Max(threshmargin, CamPosition);
                 CamPosition = (float)Math.Min(threshright, CamPosition);
@@ -777,7 +775,7 @@ public class FieldMap : HonoBehavior
         {
             if (CamPosition != _debug_latest_camposition)
             {
-                _debug_latest_camposition = (Int32)CamPosition;
+                _debug_latest_camposition = CamPosition;
                 Log.Message("CamPosition: " + CamPosition + " (curCamIdx: " + curCamIdx + " | camIdx: " + camIdx + ")");
             }
         }
@@ -1759,28 +1757,44 @@ public class FieldMap : HonoBehavior
         Int16 currentFrame = this.curFrame;
         Int16 totalFrames = this.frameCount;
         BGCAM_DEF currentCamera = this.scene.cameraList[this.curCamIdx];
-        Int16 aimX = (Int16)(this.endPoint.x - currentCamera.centerOffset[0] - HalfFieldWidth - this.startPoint.x);
-        Int16 aimY = (Int16)(this.endPoint.y + currentCamera.centerOffset[1] - HalfFieldHeight - this.startPoint.y);
-        Single viewportX = this.curVRP.x;
-        Single viewportY = this.curVRP.y;
+        float aimX = (float)(this.endPoint.x - currentCamera.centerOffset[0] - HalfFieldWidth - this.startPoint.x);
+        float aimY = (float)(this.endPoint.y + currentCamera.centerOffset[1] - HalfFieldHeight - this.startPoint.y);
+        float viewportX = this.curVRP.x;
+        float viewportY = this.curVRP.y;
+
+        if (Configuration.Graphics.InitializeWidescreenSupport())
+        {
+            // margin for camera movements, to counteract viewport being larger
+            Int16 map = FF9StateSystem.Common.FF9.fldMapNo;
+            float CameraAimOffset = 0;
+            switch (map)
+            {
+                case 852:
+                    CameraAimOffset = 8; break;
+            }
+            aimX = aimX + CameraAimOffset;
+        }
+
         if (IsRotationScroll)
         {
             Int32 fixedPointAngle = 2048 * currentFrame / totalFrames + 2048;
             Int32 rcos = ff9.rcos(fixedPointAngle) + 4096;
-            Int32 rotX = aimX * rcos / 8192;
-            Int32 rotY = aimY * rcos / 8192;
-            this.curVRP[0] = this.startPoint[0] + rotX;
-            this.curVRP[1] = this.startPoint[1] + rotY;
+            float rotX = aimX * rcos / 8192;
+            float rotY = aimY * rcos / 8192;
+            this.curVRP[0] = (float)(this.startPoint[0] + rotX);
+            this.curVRP[1] = (float)(this.startPoint[1] + rotY);
+            //if (dbug) Log.Message("EBG_sceneService2DScroll(IsRotationScroll) | this.curVRP[0]:" + this.curVRP[0] + " this.curVRP[1]:" + this.curVRP[1]);
         }
         else
         {
             this.curVRP[0] = this.startPoint[0] + aimX * currentFrame / (Single)totalFrames;
             this.curVRP[1] = this.startPoint[1] + aimY * currentFrame / (Single)totalFrames;
+            //if (dbug) Log.Message("EBG_sceneService2DScroll | this.curVRP[0]:" + this.curVRP[0] + " this.curVRP[1]:" + this.curVRP[1]);
         }
 
         viewportX = this.curVRP[0] - viewportX;
         viewportY = this.curVRP[1] - viewportY;
-        if (dbug) Log.Message("EBG_sceneService2DScroll | viewportX:" + viewportX + " viewportY:" + viewportY);
+        //if (dbug) Log.Message("EBG_sceneService2DScroll | viewportX:" + viewportX + " viewportY:" + viewportY);
 
         UpdateOverlayXY((Int16)viewportX, (Int16)viewportY);
 
@@ -1973,6 +1987,7 @@ public class FieldMap : HonoBehavior
         }
         Single x = this.curVRP.x;
         Single y = this.curVRP.y;
+        if (dbug) Log.Message("EBG_lookAtPoint " + x + " " + y + " " + this.curVRP.x + " " + this.curVRP.y);
         if (aimX < (Single)camPtr.vrpMinX)
         {
             this.curVRP[0] = (Single)camPtr.vrpMinX;
@@ -2038,7 +2053,7 @@ public class FieldMap : HonoBehavior
             bgcam_DEF.vrpMinY = (Int16)this.SHRT_MIN;
             bgcam_DEF.vrpMaxY = (Int16)this.SHRT_MAX;
             IsLocked = false;
-            //Log.Message("EBG_charLookAtUnlock bgcam_DEF.vrpMinX " + bgcam_DEF.vrpMinX + " bgcam_DEF.vrpMaxX " + bgcam_DEF.vrpMaxX);
+            //if (dbug) Log.Message("EBG_charLookAtUnlock bgcam_DEF.vrpMinX " + bgcam_DEF.vrpMinX + " bgcam_DEF.vrpMaxX " + bgcam_DEF.vrpMaxX);
         }
     }
 
@@ -2056,7 +2071,7 @@ public class FieldMap : HonoBehavior
             bgcam_DEF.vrpMinY = this.origVRPMinY;
             bgcam_DEF.vrpMaxY = this.origVRPMaxY;
             IsLocked = true;
-            //Log.Message("EBG_charLookAtUnlock bgcam_DEF.vrpMinX " + bgcam_DEF.vrpMinX + " bgcam_DEF.vrpMaxX " + bgcam_DEF.vrpMaxX);
+            //if (dbug) Log.Message("EBG_charLookAtLock bgcam_DEF.vrpMinX " + bgcam_DEF.vrpMinX + " bgcam_DEF.vrpMaxX " + bgcam_DEF.vrpMaxX);
         }
     }
 
