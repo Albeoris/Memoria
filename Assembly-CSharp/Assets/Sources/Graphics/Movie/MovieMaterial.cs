@@ -591,7 +591,7 @@ namespace Assets.Sources.Graphics.Movie
 
 		public Action OnFinished;
 
-		private String movieKey;
+		public String movieKey;
 
 		private Boolean advance;
 
