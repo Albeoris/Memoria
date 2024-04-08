@@ -12,10 +12,14 @@ namespace Global.Sound.SoLoud
         private const Int32 AkbHeaderSize = 304;
 
         private static Soloud soloud = null;
+        private static Bus sfxBus = null;
+        private static Bus voiceBus = null;
+
         private class StreamInfo
         {
             public AKB2Header akbHeader;
             public WavStream data;
+            public SoundProfileType type;
         }
 
         private class Sound
@@ -55,6 +59,12 @@ namespace Global.Sound.SoLoud
                 soloud = new Soloud();
                 soloud.init(1, 0, 48000);
                 Memoria.Prime.Log.Message($"[Soloud] backend: {soloud.getBackendString()} samplerate:{soloud.getBackendSamplerate()}");
+
+                // Create buses
+                sfxBus = new Bus();
+                voiceBus = new Bus();
+                soloud.play(sfxBus, 1);
+                soloud.play(voiceBus, 1);
             }
 
             return 0;
@@ -81,7 +91,7 @@ namespace Global.Sound.SoLoud
             return 0;
         }
 
-        public override Int32 SdSoundSystem_AddData(IntPtr akb)
+        public override Int32 SdSoundSystem_AddData(IntPtr akb, SoundProfileType type)
         {
             SoundLib.Log($"AddData({akb})");
             unsafe
@@ -94,6 +104,7 @@ namespace Global.Sound.SoLoud
                 stream.akbHeader.ReadFromBytes(akbBin);
                 stream.data = new WavStream();
                 stream.data.loadMem((IntPtr)((Byte*)akb + AkbHeaderSize), (uint)stream.akbHeader.ContentSize, true, true);
+                stream.type = type;
 
                 Int32 bankID = (Int32)stream.data.objhandle;
                 streams.Add(bankID, stream);
@@ -118,12 +129,26 @@ namespace Global.Sound.SoLoud
         {
             SoundLib.Log($"CreateSound({bankID})");
             CleanUpSounds();
-            Int32 soundID = (Int32)soloud.play(streams[bankID].data, 1, 0, 1);
+
+            StreamInfo stream = streams[bankID];
+
+            Int32 soundID = 0;
+            switch (stream.type)
+            {
+                case SoundProfileType.Sfx:
+                    soundID = (Int32)sfxBus.play(streams[bankID].data, 1, 0, 1);
+                    break;
+                case SoundProfileType.Voice:
+                    soundID = (Int32)voiceBus.play(streams[bankID].data, 1, 0, 1);
+                    break;
+                default:
+                    soundID = (Int32)soloud.play(streams[bankID].data, 1, 0, 1);
+                    break;
+            }
 
             Sound voice = new Sound(bankID);
             sounds.Add(soundID, voice);
 
-            StreamInfo stream = streams[bankID];
             // Is it a loop?
             if (stream.akbHeader.LoopEnd > 0)
             {

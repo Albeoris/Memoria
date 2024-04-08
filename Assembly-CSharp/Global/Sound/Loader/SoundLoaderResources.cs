@@ -67,7 +67,7 @@ public class SoundLoaderResources : ISoundLoader
 			}
 			Marshal.Copy(akbHeader.WriteToBytes(), 0, intPtr, 304);
 		}
-		Int32 bankID = ISdLibAPIProxy.Instance.SdSoundSystem_AddData(intPtr);
+		Int32 bankID = ISdLibAPIProxy.Instance.SdSoundSystem_AddData(intPtr, profile.SoundProfileType);
 		profile.AkbBin = intPtr;
 		profile.BankID = bankID;
 		callback(profile, soundDatabase);
