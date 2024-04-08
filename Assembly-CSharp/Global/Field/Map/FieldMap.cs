@@ -711,6 +711,8 @@ public class FieldMap : HonoBehavior
                     threshright -= 32;
                 else if (map == 2923) // Exception in crystal world
                     threshmargin += 20;
+                else if (map == 852)
+                    threshmargin += 4;
 
                 CamPosition = (float)Math.Max(threshmargin, CamPosition);
                 CamPosition = (float)Math.Min(threshright, CamPosition);
