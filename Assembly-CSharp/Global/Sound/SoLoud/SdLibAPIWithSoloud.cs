@@ -234,6 +234,7 @@ namespace Global.Sound.SoLoud
             {
                 //Should a small fade (100ms) be added?
                 soloud.setPause(h, pauseOn);
+                soloud.setVolume(h, sounds[soundID].volume);
             }
         }
 
@@ -270,8 +271,23 @@ namespace Global.Sound.SoLoud
 
         public override void SdSoundSystem_SoundCtrl_SetPitch(Int32 soundID, Single pitch, Int32 transTimeMSec)
         {
-            // Soloud doesn't handle pitch
-            SoundLib.Log($"No Implementation - SoundCtrl_SetPitch({soundID}, {pitch}, {transTimeMSec})");
+            // Soloud doesn't handle pitch (yet)
+            SoundLib.Log($"SoundCtrl_SetPitch({soundID}, {pitch}, {transTimeMSec})");
+            //if (pitch != 1f) Memoria.Prime.Log.Message($"[SoLoud] SetPitch {soundID}, {sounds[soundID].bankID}, {pitch}");
+
+            // Play at higher speed for fast forward
+            float speed = soloud.getRelativePlaySpeed((uint)soundID);
+            if (pitch >= 1f && speed != pitch)
+            {
+                if (transTimeMSec > 0)
+                {
+                    soloud.fadeRelativePlaySpeed((uint)soundID, pitch, transTimeMSec / 1000d);
+                }
+                else
+                {
+                    soloud.setRelativePlaySpeed((uint)soundID, pitch);
+                }
+            }
         }
 
         public override void SdSoundSystem_SoundCtrl_SetPanning(Int32 soundID, Single panning, Int32 transTimeMSec)
