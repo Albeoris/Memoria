@@ -238,6 +238,7 @@ namespace Memoria.Data
                     }
                     catch (Exception err)
                     {
+                        Log.Error($"[VoiceActing] Couldn't evaluate condition: '{effect.Condition.Trim()}'");
                         Log.Error(err);
                         continue;
                     }
@@ -295,6 +296,7 @@ namespace Memoria.Data
                     }
                     catch (Exception err)
                     {
+                        Log.Error($"[VoiceActing] Couldn't evaluate condition: '{effect.Condition.Trim()}'");
                         Log.Error(err);
                         continue;
                     }
@@ -341,6 +343,7 @@ namespace Memoria.Data
                     }
                     catch (Exception err)
                     {
+                        Log.Error($"[VoiceActing] Couldn't evaluate condition: '{effect.Condition.Trim()}'");
                         Log.Error(err);
                         continue;
                     }
@@ -389,6 +392,7 @@ namespace Memoria.Data
                     }
                     catch (Exception err)
                     {
+                        Log.Error($"[VoiceActing] Couldn't evaluate condition: '{effect.Condition.Trim()}'");
                         Log.Error(err);
                         continue;
                     }
