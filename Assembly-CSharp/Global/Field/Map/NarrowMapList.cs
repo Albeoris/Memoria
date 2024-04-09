@@ -460,7 +460,7 @@ public static class NarrowMapList
         2901, // Memoria/Entrance
         2902, // Memoria/Stairs of Time
         2904, // Memoria/Outer Path
-        2905,
+        //2905,
         2906,
         2908, // Memoria/Time Interval
         2909, // Memoria/Ruins
