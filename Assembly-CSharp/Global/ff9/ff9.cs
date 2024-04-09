@@ -3878,8 +3878,8 @@ public static class ff9
 					}
 					else if (no == 25)
 					{
-						if (worldSPS.frame >= 3)
-							;
+						//if (worldSPS.frame >= 3)
+						//	;
 					}
 					else if (no == 32)
 					{
@@ -6522,13 +6522,13 @@ public static class ff9
 
 	private static void w_movementPlaneOperation()
 	{
-		Int32 num;
-		ff9.w_moveGetPadStateLX(out num);
-		Int32 num2;
-		ff9.w_moveGetPadStateLY(out num2);
-		Int32 num3;
-		ff9.w_moveGetPadStateR(out num3);
-		if (num3 < 0)
+		Int32 leftStickX;
+		ff9.w_moveGetPadStateLX(out leftStickX);
+		Int32 leftStickY;
+		ff9.w_moveGetPadStateLY(out leftStickY);
+		Int32 rightStick;
+		ff9.w_moveGetPadStateR(out rightStick);
+		if (rightStick < 0)
 		{
 			ff9.w_movePadDOWN = true;
 		}
@@ -6536,8 +6536,8 @@ public static class ff9
 		{
 			ff9.w_movePadDOWN = false;
 		}
-		num2 = -num2;
-		Int32 num4 = num;
+        leftStickY = -leftStickY;
+		Int32 cameraChangeThreshold = leftStickX;
 		ff9.w_moveCHRControl_LR = false;
 		ff9.Pad pad = ff9.w_getPad();
 		if (pad.kPadR1 && pad.kPadL1 && !ff9.w_cameraSysData.cameraNotrot && ff9.w_moveAutoPilot != 0)
@@ -6548,11 +6548,11 @@ public static class ff9
 		{
 			if (pad.kPadL1)
 			{
-				num = -127;
+                leftStickX = -127;
 			}
 			if (pad.kPadR1)
 			{
-				num = 127;
+                leftStickX = 127;
 			}
 		}
 		else
@@ -6569,12 +6569,12 @@ public static class ff9
 			}
 		}
 		ff9.w_cameraSysDataCamera.rotationRev = 0f;
-		ff9.w_moveCHRControl_RotSpeed = ff9.PsxRot(ff9.w_moveCHRControlPtr.speed_rotation * num >> 7);
-		Single num5 = ff9.S(-(Int32)ff9.w_moveCHRControlPtr.speed_updown * num2 / ff9.p1);
-		ff9.w_moveCHRControl_YAlpha += (num5 - ff9.w_moveCHRControl_YAlpha) / ff9.p2;
+		ff9.w_moveCHRControl_RotSpeed = ff9.PsxRot(ff9.w_moveCHRControlPtr.speed_rotation * leftStickX >> 7);
+		Single verticalMovementSpeed = ff9.S(-(Int32)ff9.w_moveCHRControlPtr.speed_updown * leftStickY / ff9.p1);
+		ff9.w_moveCHRControl_YAlpha += (verticalMovementSpeed - ff9.w_moveCHRControl_YAlpha) / ff9.p2;
 		ff9.w_moveCHRControl_YSpeed = ff9.w_moveCHRControl_YAlpha / ff9.p3;
-		num5 = ff9.S(ff9.w_moveCHRControlPtr.speed_move * num3 / ff9.p1);
-		ff9.w_moveCHRControl_XZAlpha += (num5 - ff9.w_moveCHRControl_XZAlpha) / ff9.p2;
+        verticalMovementSpeed = ff9.S(ff9.w_moveCHRControlPtr.speed_move * rightStick / ff9.p1);
+		ff9.w_moveCHRControl_XZAlpha += (verticalMovementSpeed - ff9.w_moveCHRControl_XZAlpha) / ff9.p2;
 		ff9.w_moveCHRControl_XZSpeed = ff9.w_moveCHRControl_XZAlpha / ff9.p3;
 		if (ff9.w_moveDoping)
 		{
@@ -6591,52 +6591,52 @@ public static class ff9
 			ff9.w_moveCHRControl_RotSpeed *= 580f - ff9.w_moveCHRControl_XZSpeed * 256f / 2f;
 			ff9.w_moveCHRControl_RotSpeed /= 256f;
 		}
-		if (num != 0 || num3 < 0)
+		if (leftStickX != 0 || rightStick < 0)
 		{
 			ff9.w_movementAutoPilotOFF();
 		}
-		Byte b = ff9.w_moveAutoPilot;
-		if (b != 1)
+		Byte autoPilotMode = ff9.w_moveAutoPilot;
+		if (autoPilotMode != 1)
 		{
-			if (b == 2)
+			if (autoPilotMode == 2)
 			{
-				Single num6 = -(ff9.S(ff9.w_naviLocationPos[ff9.w_naviMapno, ff9.w_frameAutoid].tx) - ff9.w_moveActorPtr.RealPosition[0]);
-				Single num7 = -(ff9.S(ff9.w_naviLocationPos[ff9.w_naviMapno, ff9.w_frameAutoid].ty) - ff9.w_moveActorPtr.RealPosition[2]);
-				if (num6 > ff9.S(196608))
+				Single horizontalMovementSpeed = -(ff9.S(ff9.w_naviLocationPos[ff9.w_naviMapno, ff9.w_frameAutoid].tx) - ff9.w_moveActorPtr.RealPosition[0]);
+				Single speedFactorUpDown = -(ff9.S(ff9.w_naviLocationPos[ff9.w_naviMapno, ff9.w_frameAutoid].ty) - ff9.w_moveActorPtr.RealPosition[2]);
+				if (horizontalMovementSpeed > ff9.S(196608))
 				{
-					num6 -= ff9.S(393216);
+                    horizontalMovementSpeed -= ff9.S(393216);
 				}
-				if (num6 < ff9.S(-196608))
+				if (horizontalMovementSpeed < ff9.S(-196608))
 				{
-					num6 += ff9.S(393216);
+                    horizontalMovementSpeed += ff9.S(393216);
 				}
-				if (num7 > ff9.S(163840))
+				if (speedFactorUpDown > ff9.S(163840))
 				{
-					num7 -= ff9.S(327680);
+                    speedFactorUpDown -= ff9.S(327680);
 				}
-				if (num7 < ff9.S(-163840))
+				if (speedFactorUpDown < ff9.S(-163840))
 				{
-					num7 += ff9.S(327680);
+                    speedFactorUpDown += ff9.S(327680);
 				}
-				Single num8 = (-ff9.ratan2(num7, num6) + ff9.PsxRot(1024)) % 360f;
+				Single speedFactorLR = (-ff9.ratan2(speedFactorUpDown, horizontalMovementSpeed) + ff9.PsxRot(1024)) % 360f;
 				Vector3 rot = ff9.w_moveActorPtr.rot;
-				Single num9 = num8;
-				num9 -= rot[1];
-				if (num9 < ff9.PsxRot(-2048))
+				Single speedFactorForwardBackward = speedFactorLR;
+                speedFactorForwardBackward -= rot[1];
+				if (speedFactorForwardBackward < ff9.PsxRot(-2048))
 				{
-					num9 += ff9.PsxRot(4096);
+                    speedFactorForwardBackward += ff9.PsxRot(4096);
 				}
-				if (num9 > ff9.PsxRot(2048))
+				if (speedFactorForwardBackward > ff9.PsxRot(2048))
 				{
-					num9 -= ff9.PsxRot(4096);
+                    speedFactorForwardBackward -= ff9.PsxRot(4096);
 				}
 				if (ff9.w_moveCHRControl_AutoPrev > ff9.S(50))
 				{
-					if (num9 > ff9.PsxRot(20))
+					if (speedFactorForwardBackward > ff9.PsxRot(20))
 					{
 						ff9.w_moveCHRControl_RotSpeed = ff9.PsxRot(20);
 					}
-					else if (num9 < ff9.PsxRot(-20))
+					else if (speedFactorForwardBackward < ff9.PsxRot(-20))
 					{
 						ff9.w_moveCHRControl_RotSpeed = ff9.PsxRot(-20);
 					}
@@ -6649,9 +6649,9 @@ public static class ff9
 		}
 		else
 		{
-			Single num10 = (ff9.S(ff9.w_naviLocationPos[ff9.w_naviMapno, ff9.w_frameAutoid].tx) - ff9.w_moveActorPtr.RealPosition[0]) / 32f;
-			Single num11 = (ff9.S(ff9.w_naviLocationPos[ff9.w_naviMapno, ff9.w_frameAutoid].ty) - ff9.w_moveActorPtr.RealPosition[2]) / 32f;
-			ff9.w_moveCHRControl_XZSpeed = ff9.SquareRoot0(num10 * num10 + num11 * num11);
+			Single distanceToTargetX = (ff9.S(ff9.w_naviLocationPos[ff9.w_naviMapno, ff9.w_frameAutoid].tx) - ff9.w_moveActorPtr.RealPosition[0]) / 32f;
+			Single distanceToTargetY = (ff9.S(ff9.w_naviLocationPos[ff9.w_naviMapno, ff9.w_frameAutoid].ty) - ff9.w_moveActorPtr.RealPosition[2]) / 32f;
+			ff9.w_moveCHRControl_XZSpeed = ff9.SquareRoot0(distanceToTargetX * distanceToTargetX + distanceToTargetY * distanceToTargetY);
 			if (ff9.w_moveCHRControl_XZSpeed > ff9.S(400))
 			{
 				ff9.w_moveCHRControl_XZSpeed = ff9.S(400);
@@ -6664,31 +6664,31 @@ public static class ff9
 		}
 		Vector3 rot2 = ff9.w_moveActorPtr.rot;
 		Int32 index2;
-		Single num12;
+		Single rotationChange;
 		if (rot2[2] > 180f)
 		{
 			Int32 index = index2 = 2;
-			num12 = rot2[index2];
-			rot2[index] = num12 - 360f;
+            rotationChange = rot2[index2];
+			rot2[index] = rotationChange - 360f;
 		}
 		Int32 index3 = index2 = 1;
-		num12 = rot2[index2];
-		rot2[index3] = num12 + ff9.w_moveCHRControl_RotSpeed;
+        rotationChange = rot2[index2];
+		rot2[index3] = rotationChange + ff9.w_moveCHRControl_RotSpeed;
 		Int32 index4 = index2 = 1;
-		num12 = rot2[index2];
-		rot2[index4] = num12 % 360f;
+        rotationChange = rot2[index2];
+		rot2[index4] = rotationChange % 360f;
 		ff9.w_moveCHRControl_RotTrue = rot2[1] % 360f;
-		if (ff9.w_moveCHRControl_RotSpeed > 0f && ff9.w_cameraRotAngle > ff9.PsxRot(-(num4 * 1)))
+		if (ff9.w_moveCHRControl_RotSpeed > 0f && ff9.w_cameraRotAngle > ff9.PsxRot(-(cameraChangeThreshold * 1)))
 		{
-			ff9.w_cameraRotAngle += ff9.PsxRot(num4 / 8);
+			ff9.w_cameraRotAngle += ff9.PsxRot(cameraChangeThreshold / 8);
 		}
-		if (ff9.w_moveCHRControl_RotSpeed < 0f && ff9.w_cameraRotAngle < ff9.PsxRot(-(num4 * 1)))
+		if (ff9.w_moveCHRControl_RotSpeed < 0f && ff9.w_cameraRotAngle < ff9.PsxRot(-(cameraChangeThreshold * 1)))
 		{
-			ff9.w_cameraRotAngle += ff9.PsxRot(num4 / 8);
+			ff9.w_cameraRotAngle += ff9.PsxRot(cameraChangeThreshold / 8);
 		}
 		if (ff9.UnityUnit(ff9.w_moveCHRControl_XZSpeed) == 0)
 		{
-			ff9.w_cameraRotAngle += ff9.PsxRot(num4 / 8);
+			ff9.w_cameraRotAngle += ff9.PsxRot(cameraChangeThreshold / 8);
 		}
 		if (ff9.w_cameraRotAngle > ff9.PsxRot(ff9.w_moveCHRControlPtr.speed_roll))
 		{
@@ -6698,17 +6698,17 @@ public static class ff9
 		{
 			ff9.w_cameraRotAngle = ff9.PsxRot(-ff9.w_moveCHRControlPtr.speed_roll);
 		}
-		if (ff9.w_moveCHRControl_RotSpeed > 0f && rot2[2] > ff9.PsxRot(-(num4 * 2)))
+		if (ff9.w_moveCHRControl_RotSpeed > 0f && rot2[2] > ff9.PsxRot(-(cameraChangeThreshold * 2)))
 		{
 			Int32 index5 = index2 = 2;
-			num12 = rot2[index2];
-			rot2[index5] = num12 + ff9.PsxRot(num4 / 4);
+            rotationChange = rot2[index2];
+			rot2[index5] = rotationChange + ff9.PsxRot(cameraChangeThreshold / 4);
 		}
-		if (ff9.w_moveCHRControl_RotSpeed < 0f && rot2[2] < ff9.PsxRot(-(num4 * 2)))
+		if (ff9.w_moveCHRControl_RotSpeed < 0f && rot2[2] < ff9.PsxRot(-(cameraChangeThreshold * 2)))
 		{
 			Int32 index6 = index2 = 2;
-			num12 = rot2[index2];
-			rot2[index6] = num12 + ff9.PsxRot(num4 / 4);
+            rotationChange = rot2[index2];
+			rot2[index6] = rotationChange + ff9.PsxRot(cameraChangeThreshold / 4);
 		}
 		if (rot2[2] > ff9.PsxRot(ff9.w_moveCHRControlPtr.speed_roll * 2))
 		{
@@ -6721,7 +6721,7 @@ public static class ff9
 		ff9.w_moveActorPtr.rot = rot2;
 		if ((ff9.w_frameCounter & 1) != 0)
 		{
-			Int64 num13 = ff9.m_GetIDTopograph(ff9.m_moveActorID);
+			Int64 rollSpeedThreshold = ff9.m_GetIDTopograph(ff9.m_moveActorID);
 			Boolean flag = ff9.w_movementCheckTopographID(ff9.w_movementWaterStatus, ff9.m_moveActorID);
 			switch (ff9.w_moveActorPtr.originalActor.index)
 			{
@@ -6731,8 +6731,8 @@ public static class ff9
 				{
 					ff9.w_effectRegist(ff9.w_moveActorPtr.pos[0], ff9.S(200), ff9.w_moveActorPtr.pos[2], 6, 19200);
 				}
-				Int32 num14 = (Int32)(ff9.w_moveCHRControl_XZSpeed * 256f);
-				if (num13 == 41L && num14 != 0 && ff9.w_moveActorPtr.pos[1] <= ff9.SH2)
+				Int32 rotationSpeed = (Int32)(ff9.w_moveCHRControl_XZSpeed * 256f);
+				if (rollSpeedThreshold == 41L && rotationSpeed != 0 && ff9.w_moveActorPtr.pos[1] <= ff9.SH2)
 				{
 					ff9.w_effectRegist(ff9.w_moveActorPtr.pos[0], ff9.w_moveActorPtr.pos[1] + ff9.S(-100), ff9.w_moveActorPtr.pos[2], 14, 25600);
 				}
@@ -6745,27 +6745,27 @@ public static class ff9
 				{
 					ff9.w_effectMoveStockHeight = 4096 - ff9.abs((Int32)(ff9.w_moveActorPtr.pos[1] * 256f) - 400) * 2;
 					ff9.w_effectRegist(ff9.w_moveActorPtr.pos[0], ff9.S(200), ff9.w_moveActorPtr.pos[2], 18, 32000);
-					Int32 num15 = ff9.abs((Int32)(ff9.w_moveCHRControl_XZSpeed * 256f));
-					if (num15 > 511)
+					Int32 effectStockHeight = ff9.abs((Int32)(ff9.w_moveCHRControl_XZSpeed * 256f));
+					if (effectStockHeight > 511)
 					{
-						num15 = 511;
+						effectStockHeight = 511;
 					}
-					Int32 num16 = (Int32)(ff9.abs(ff9.w_moveActorPtr.pos[1]) * 256f) >> 6;
-					if (num16 > 48)
+					Int32 heightThreshold = (Int32)(ff9.abs(ff9.w_moveActorPtr.pos[1]) * 256f) >> 6;
+					if (heightThreshold > 48)
 					{
-						num16 = 48;
+                                heightThreshold = 48;
 					}
-					num16 = 48 - num16;
-					num16 *= num15;
-					num16 >>= 9;
-					ff9.w_musicSEVolumeIntpl(38, 20, (Byte)num16);
+                    heightThreshold = 48 - heightThreshold;
+                    heightThreshold *= effectStockHeight;
+                    heightThreshold >>= 9;
+					ff9.w_musicSEVolumeIntpl(38, 20, (Byte)heightThreshold);
 				}
 				else
 				{
 					ff9.w_musicSEVolumeIntpl(38, 30, 0);
 				}
-				Int32 num17 = (Int32)(ff9.w_moveCHRControl_XZSpeed * 256f);
-				if (num13 == 41L && num17 != 0 && ff9.w_moveActorPtr.pos[1] <= ff9.SH1)
+				Int32 speedThreshold = (Int32)(ff9.w_moveCHRControl_XZSpeed * 256f);
+				if (rollSpeedThreshold == 41L && speedThreshold != 0 && ff9.w_moveActorPtr.pos[1] <= ff9.SH1)
 				{
 					ff9.w_effectMoveStockHeight = 4096 - ((Int32)(ff9.w_moveActorPtr.pos[1] * 256f) + 1300) * 2;
 					ff9.w_effectRegist(ff9.w_moveActorPtr.pos[0], ff9.w_moveActorPtr.pos[1] + ff9.S(-100), ff9.w_moveActorPtr.pos[2], 19, 32000);
@@ -6778,21 +6778,21 @@ public static class ff9
 
 	private static void w_movementHumanCamOperation()
 	{
-		Single num = (ff9.w_cameraSysDataCamera.rotation + ff9.w_cameraSysDataCamera.rotationRev) % 360f;
-		Single num2 = ff9.w_moveCHRControl_RotTrue % 360f;
-		if (num - num2 >= ff9.PsxRot(2048))
+		Single cameraRotation = (ff9.w_cameraSysDataCamera.rotation + ff9.w_cameraSysDataCamera.rotationRev) % 360f;
+		Single characterRotation = ff9.w_moveCHRControl_RotTrue % 360f;
+		if (cameraRotation - characterRotation >= ff9.PsxRot(2048))
 		{
-			num -= ff9.PsxRot(4096);
+            cameraRotation -= ff9.PsxRot(4096);
 		}
-		if (num - num2 < ff9.PsxRot(-2048))
+		if (cameraRotation - characterRotation < ff9.PsxRot(-2048))
 		{
-			num += ff9.PsxRot(4096);
+            cameraRotation += ff9.PsxRot(4096);
 		}
-		Single num3 = (ff9.w_moveCHRControl_RotTrue - num) * ff9.PsxRot(3072) / ff9.PsxRot(4096);
+		Single rotationDifference = (ff9.w_moveCHRControl_RotTrue - cameraRotation) * ff9.PsxRot(3072) / ff9.PsxRot(4096);
 		ff9.cn5 = ff9.abs(ff9.w_cameraSysDataCamera.rotationMax) / 8f;
-		if (ff9.abs(num3) < ff9.cn5)
+		if (ff9.abs(rotationDifference) < ff9.cn5)
 		{
-			num3 = 0f;
+            rotationDifference = 0f;
 		}
 		if (ff9.UnityUnit(ff9.w_moveCHRControl_XZSpeed) != 0)
 		{
@@ -6808,7 +6808,7 @@ public static class ff9
 		}
 		if (!ff9.w_moveCHRControl_LR && !ff9.w_cameraSysData.cameraNotrot && ff9.w_framePhase == 2)
 		{
-			ff9.cn2 = ff9.abs(num3);
+			ff9.cn2 = ff9.abs(rotationDifference);
 			if (ff9.cn2 < ff9.cn3)
 			{
 				ff9.cn2 = ff9.cn3;
@@ -6817,17 +6817,17 @@ public static class ff9
 			{
 				ff9.cn2 = ff9.cn4;
 			}
-			Single num4 = num3 * ff9.S(256) / ff9.cn2;
-			Single num5 = ((ff9.PsxRot(2048) - ff9.abs(num3)) * ff9.cn1 + 2048f) * 2f;
-			num5 = num5 * ff9.w_movementCamRemain / 4096f;
-			ff9.w_cameraSysDataCamera.rotation += num4 * num5 / 4096f;
+			Single rotationFactor = rotationDifference * ff9.S(256) / ff9.cn2;
+			Single rotationSpeedFactor = ((ff9.PsxRot(2048) - ff9.abs(rotationDifference)) * ff9.cn1 + 2048f) * 2f;
+            rotationSpeedFactor = rotationSpeedFactor * ff9.w_movementCamRemain / 4096f;
+			ff9.w_cameraSysDataCamera.rotation += rotationFactor * rotationSpeedFactor / 4096f;
 		}
 		ff9.w_cameraSysDataCamera.rotation %= 360f;
 	}
 
 	private static void w_movementPlaneCamOperation()
 	{
-		Single num = ff9.w_cameraSysDataCamera.rotation;
+		Single cameraRotation = ff9.w_cameraSysDataCamera.rotation;
 		if (ff9.w_cameraSysDataCamera.rotation - ff9.w_moveActorPtr.rot[1] > ff9.PsxRot(2048))
 		{
 			ff9.w_cameraSysDataCamera.rotation -= ff9.PsxRot(4096);
@@ -6836,58 +6836,58 @@ public static class ff9
 		{
 			ff9.w_cameraSysDataCamera.rotation += ff9.PsxRot(4096);
 		}
-		if (num < 0f)
+		if (cameraRotation < 0f)
 		{
-			num += ff9.PsxRot(4096);
+            cameraRotation += ff9.PsxRot(4096);
 		}
-		num %= ff9.PsxRot(4096);
-		if (num - ff9.w_moveActorPtr.rot[1] > ff9.PsxRot(2048))
+        cameraRotation %= ff9.PsxRot(4096);
+		if (cameraRotation - ff9.w_moveActorPtr.rot[1] > ff9.PsxRot(2048))
 		{
-			num -= ff9.PsxRot(4096);
+            cameraRotation -= ff9.PsxRot(4096);
 		}
-		if (num - ff9.w_moveActorPtr.rot[1] < ff9.PsxRot(-2048))
+		if (cameraRotation - ff9.w_moveActorPtr.rot[1] < ff9.PsxRot(-2048))
 		{
-			num += ff9.PsxRot(4096);
+            cameraRotation += ff9.PsxRot(4096);
 		}
-		Single num2 = ff9.w_moveActorPtr.rot[1] - num;
-		num2 %= ff9.PsxRot(4096);
+		Single rotationDifference = ff9.w_moveActorPtr.rot[1] - cameraRotation;
+        rotationDifference %= ff9.PsxRot(4096);
 		if (!ff9.w_moveCHRControl_LR && !ff9.w_cameraSysData.cameraNotrot)
 		{
-			Int32 num3 = ff9.UnityRot(num2);
-			Int32 num4 = 16;
+			Int32 rotationDelta = ff9.UnityRot(rotationDifference);
+			Int32 rotationFactor = 16;
 			if (ff9.w_movementSoftRot)
 			{
-				num4 = ff9.abs(num3) * 256 >> 12;
-				if (num4 == 0)
+                rotationFactor = ff9.abs(rotationDelta) * 256 >> 12;
+				if (rotationFactor == 0)
 				{
-					num4 = 1;
+                    rotationFactor = 1;
 				}
 			}
-			Int32 num5 = num3 % 4096 / num4;
-			if (num5 != 0)
+			Int32 rotationIncrement = rotationDelta % 4096 / rotationFactor;
+			if (rotationIncrement != 0)
 			{
-				ff9.w_cameraSysDataCamera.rotation += ff9.PsxRot((UInt16)num5);
+				ff9.w_cameraSysDataCamera.rotation += ff9.PsxRot((UInt16)rotationIncrement);
 			}
-			else if (num4 > 1)
+			else if (rotationFactor > 1)
 			{
 				do
 				{
-					num4 /= 2;
-					if (num4 == 0)
+                    rotationFactor /= 2;
+					if (rotationFactor == 0)
 					{
 						break;
 					}
-					num5 = num3 % 4096 / num4;
+                    rotationIncrement = rotationDelta % 4096 / rotationFactor;
 				}
-				while (num5 == 0);
-				ff9.w_cameraSysDataCamera.rotation += ff9.PsxRot((UInt16)num5);
+				while (rotationIncrement == 0);
+				ff9.w_cameraSysDataCamera.rotation += ff9.PsxRot((UInt16)rotationIncrement);
 			}
 			else
 			{
 				ff9.w_cameraSysDataCamera.rotation = ff9.w_moveActorPtr.rot[1];
 			}
 			ff9.w_cameraSysDataCamera.rotation %= 360f;
-			if (ff9.abs(num3) < 100)
+			if (ff9.abs(rotationDelta) < 100)
 			{
 				ff9.w_movementSoftRot = false;
 			}
@@ -7167,11 +7167,11 @@ public static class ff9
 		ff9.s_musicID s_musicID;
 		if (ff9.w_musicGetID(seno, out s_musicID))
 		{
-			Int32 num = s_musicID.attr;
+			Int32 attributeNum = s_musicID.attr;
 			for (Int32 i = 0; i < s_musicID.figure; i++)
 			{
-				FF9Snd.ff9wldsnd_sndeffect_play(s_musicID.id[i], num, vol, 127);
-				num >>= 1;
+				FF9Snd.ff9wldsnd_sndeffect_play(s_musicID.id[i], attributeNum, vol, 127);
+                attributeNum >>= 1;
 			}
 		}
 	}
@@ -7181,11 +7181,11 @@ public static class ff9
 		ff9.s_musicID s_musicID;
 		if (ff9.w_musicProgress == 0 && ff9.w_musicGetID(seno, out s_musicID))
 		{
-			Int32 num = s_musicID.attr;
+			Int32 attributeNum = s_musicID.attr;
 			for (Int32 i = 0; i < s_musicID.figure; i++)
 			{
-				FF9Snd.ff9wldsnd_sndeffect_vol(s_musicID.id[i], num, vol);
-				num >>= 1;
+				FF9Snd.ff9wldsnd_sndeffect_vol(s_musicID.id[i], attributeNum, vol);
+                attributeNum >>= 1;
 			}
 		}
 	}
@@ -7195,11 +7195,11 @@ public static class ff9
 		ff9.s_musicID s_musicID;
 		if (ff9.w_musicGetID(seno, out s_musicID))
 		{
-			Int32 num = s_musicID.attr;
+			Int32 attributeNum = s_musicID.attr;
 			for (Int32 i = 0; i < s_musicID.figure; i++)
 			{
-				FF9Snd.ff9wldsnd_sndeffect_vol_intpl(s_musicID.id[i], num, tick, vol);
-				num >>= 1;
+				FF9Snd.ff9wldsnd_sndeffect_vol_intpl(s_musicID.id[i], attributeNum, tick, vol);
+                attributeNum >>= 1;
 			}
 		}
 	}
@@ -7209,11 +7209,11 @@ public static class ff9
 		ff9.s_musicID s_musicID;
 		if (ff9.w_musicGetID(seno, out s_musicID))
 		{
-			Int32 num = s_musicID.attr;
+			Int32 attributeNum = s_musicID.attr;
 			for (Int32 i = 0; i < s_musicID.figure; i++)
 			{
-				FF9Snd.ff9wldsnd_sndeffect_stop(s_musicID.id[i], num);
-				num >>= 1;
+				FF9Snd.ff9wldsnd_sndeffect_stop(s_musicID.id[i], attributeNum);
+                attributeNum >>= 1;
 			}
 		}
 	}

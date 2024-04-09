@@ -238,7 +238,7 @@ namespace Memoria.Launcher
                 iniFile1 = File.ReadAllLines(iniPath1);
                 iniFile2 = File.ReadAllLines(iniPath2);
             }
-            catch (Exception err)
+            catch (Exception)
             {
                 yield break;
             }
@@ -298,10 +298,11 @@ namespace Memoria.Launcher
                 locFile1 = File.ReadAllLines(locPath1);
                 locFile2 = File.ReadAllLines(locPath2);
             }
-            catch (Exception err)
+            catch (Exception)
             {
                 yield break;
             }
+
             foreach (String line1 in locFile1)
             {
                 Int32 commaIndex = line1.IndexOf(',');
@@ -323,7 +324,7 @@ namespace Memoria.Launcher
                 csvFile1 = File.ReadAllLines(csvPath1);
                 csvFile2 = File.ReadAllLines(csvPath2);
             }
-            catch (Exception err)
+            catch (Exception)
             {
                 yield break;
             }

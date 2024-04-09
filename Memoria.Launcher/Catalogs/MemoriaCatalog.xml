@@ -21,14 +21,15 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Website>https://sites.google.com/view/moguri-mod</Website>
 	<!-- Download URL: https://www.moddb.com/downloads/mirror/216757/122/3381820ec0869d559baf7ca59abcc388 -->
 	<CompatibilityNotes>In most situations, it is better to keep 'MoguriFiles' at the lowest priority</CompatibilityNotes>
+	<PreviewFileUrl>https://i.imgur.com/nddT44g.jpg</PreviewFileUrl>
 </Mod>
 
 <Mod>
 	<Name>Alternate Fantasy</Name>
-	<Version>6.1</Version>
+	<Version>6.2</Version>
 	<InstallationPath>AlternateFantasy</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDate>11 Jun 2023</ReleaseDate>
+	<ReleaseDate>28 Sep 2023</ReleaseDate>
 	<PatchNotes>Requires Memoria v2023.06.11</PatchNotes>
 	<Description>This mod aims at increasing the difficulty and, above all, to give a new fresh experience of FF9 for those who already know the game well.
 It includes:
@@ -103,7 +104,7 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	<Name>Garnet is Main Character</Name>
 	<InstallationPath>GarnetIsMainCharacter</InstallationPath>
 	<Author>piano221</Author>
-	<ReleaseDate>5 Apr 2021</ReleaseDate>
+	<ReleaseDate>2021-04-05</ReleaseDate>
 	<Description>This mod allow you to change Zidane for Garnet as the field main character.</Description>
 	<Category>Character Swap</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=20605.0</Website>
@@ -116,7 +117,7 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	<Version>0.5</Version>
 	<InstallationPath>FreyaGamePlus</InstallationPath>
 	<Author>ChikoLad</Author>
-	<ReleaseDate>30 Jul 2020</ReleaseDate>
+	<ReleaseDate>2020-07-30</ReleaseDate>
 	<Description>Freya Game+ is a Final Fantasy IX mod that allows you to have Freya in your party at almost all times throughout the game.
 This mod removes the need to do any save editing or setting personal restrictions if you want to do a Freya Solo Run.
 
@@ -133,7 +134,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Version>0.1</Version>
 	<InstallationPath>PlayAsKuja</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDate>17 Apr 2021</ReleaseDate>
+	<ReleaseDate>2021-04-17</ReleaseDate>
 	<PatchNotes>Requires Memoria between v2021.05.10 and v2022.09.09 to work in battles</PatchNotes>
 	<Description>Turn Zidane's 3D model on the field and in battles into Kuja's 3D model.
 The animations on the field are messed up.
@@ -146,10 +147,10 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Playable Character Pack</Name>
-	<Version>1.0</Version>
+	<Version>1.1</Version>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDate>11 Jun 2023</ReleaseDate>
+	<ReleaseDate>2023-09-28</ReleaseDate>
 	<PatchNotes>Requires Memoria v2023.06.11</PatchNotes>
 	<Description>Add Kuja, Fratley and Lani as playable characters.
 You can press Alt+F2 in-game to access the party menu (changing the party at any time is a feature of Memoria, not related to this mod).
@@ -175,7 +176,7 @@ You should set the priority of this mod to be higher than the priority of the Mo
 	<Name>David Bowie Edition</Name>
 	<InstallationPath>DavidBowie</InstallationPath>
 	<Author>Clem Fandango</Author>
-	<ReleaseDate>18 Mar 2020</ReleaseDate>
+	<ReleaseDate>2020-03-18</ReleaseDate>
 	<Description>Final Fantasy IX: David Bowie Edition (DBE) is a gameplay mod that is meant to function as a rebalance, or better yet a remix of the original game. This mod includes new skills, items, enemy behavior, Chocograph rewards and a number of smaller tweaks.</Description>
 	<Category>Gameplay</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=19499.0</Website>
@@ -184,34 +185,40 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Mog Add-ons</Name>
-	<Version>3.1</Version>
+	<Version>3.3</Version>
 	<InstallationPath>MogAddons</InstallationPath>
-	<ReleaseDate>28 July 2023, 12:32PM</ReleaseDate>
+	<ReleaseDate>2023-12-01</ReleaseDate>
 	<Author>faospark</Author>
-	<Description>UI, Buttons , Portraits, and more... an Easy to install collection of enhancements for Final Fantasy IX Steam. 
-:: Requirements :: 
-- Memoria version  v2022.11.11 or higher 
-
+	<Description>UI, Buttons , Portraits, Tweaks and more... an Easy to install collection of enhancements for Final Fantasy IX Steam. 
 :: Features ::
 Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts 
+Tweaks : AP GAIN , EXP GAIN and Requirements 
 Portrait options : Default with extended cast, Opera Omnia and  Upscaled PS1 Portrait Artwork 
 Button Prompts Options:  PS Gloss , PS5 , Pixel Style, PlayStation Vanilla prompts,
 UI : Default , Darker UI and Flat 
 
 :: Submod activation ::
-Use the Mod Manager UI to activate each submods you like 
-
-:: 3.0 and 3.1  Log ::
-- Added 1 Gem Compatibility with Alternate Fantasy
-- Replaced Amaranth's Opera Omnia Portrait
-- Split default feature of halved EXP and 1 Gem passive ability to ech submod
-										 
-- Bump compatibility to the recent version of memoria 
+Use the Mod Manager UI to activate each submods you like and pick 
 
 :: Compatibility ::
 - Compatible with Alternate Fantasy
 - Not compatible for older versions of the game and repacks.
+Requires Memoria v2023.06.11
 	</Description>
+	<PatchNotes>::3.3 ::
+-Added 4x AP gain
+-Added 99 AP gain
+-Added 2x+ EXP gain
+-Added 4x+ EXP gain
+-Added NO EXP AND AP GAIN
+::3.2 ::
+-Added double exp and halved ability gems
+:: 3.0 and 3.1  Log ::
+- Added 1 Gem Compatibility with Alternate Fantasy
+- Replaced Amaranth's Opera Omnia Portrait
+- Split default feature of halved EXP and 1 Gem passive ability to ech submod
+- Bump compatibility to the recent version of memoria
+	</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1</DownloadUrl>
@@ -284,21 +291,63 @@ Use the Mod Manager UI to activate each submods you like
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak Enable : 1 Gem Ability </Name>
+		<Name>Tweak: 1 Gem Ability </Name>
 		<InstallationPath>Features/Tweaks/Ability</InstallationPath>
 		<Description>Enables 1 gem for passive abilities to be enabled </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak Enable : 1 Gem Ability for Alternate Fantasy  </Name>
+		<Name>Tweak: Halved Gem Ability </Name>
+		<InstallationPath>Features/Tweaks/AbilityHalf</InstallationPath>
+		<Description>Cuts ability gems to half for passive abilities to be enabled </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 1 Gem Ability for Alternate Fantasy  </Name>
 		<InstallationPath>Features/Tweaks/AF Ability</InstallationPath>
 		<Description>Enables 1 gem for passive abilities to be enabled for alternate fantasy </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak Enable :  Halved EXP </Name>
-		<InstallationPath>Features/Tweaks/Exp</InstallationPath>
-		<Description>Cuts the EXP requirement feature to level up by Half </Description>
+		<Name>Tweak: 4x AP Gain   </Name>
+		<InstallationPath>Features/Tweaks/AP4x</InstallationPath>
+		<Description>Gains 4x AP after battle </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 99 AP Gain   </Name>
+		<InstallationPath>Features/Tweaks/AP99</InstallationPath>
+		<Description>Gains 99 AP after battle </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 2x+ EXP Gain   </Name>
+		<InstallationPath>Features/Tweaks/EXP2x</InstallationPath>
+		<Description>Gains 2x+ EXP after battle </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 4x+ EXP Gain   </Name>
+		<InstallationPath>Features/Tweaks/EXP4x</InstallationPath>
+		<Description>Gains 4x+ EXP after battle </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: No / Zero AP and EXP Gain   </Name>
+		<InstallationPath>Features/Tweaks/EXPAP0</InstallationPath>
+		<Description>If you like things hard. </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: Halved EXP </Name>
+		<InstallationPath>Features/Tweaks/ExpHalf</InstallationPath>
+		<Description>Cuts the EXP requirement to level up faster</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: Doubled EXP </Name>
+		<InstallationPath>Features/Tweaks/ExpX2</InstallationPath>
+		<Description>Doubles EXP requirement so you level up slower </Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
@@ -307,21 +356,21 @@ Use the Mod Manager UI to activate each submods you like
 	<Name>High-Res Chocographs</Name>
 	<InstallationPath>HDChocographs</InstallationPath>
 	<Author>Caledor</Author>
-	<ReleaseDate>12 May 2021</ReleaseDate>
+	<ReleaseDate>2021-05-12</ReleaseDate>
 	<Description>Chocographs remade from scratch by taking actual screenshots in FF9 Steam modded with Moguri Mod 8.2.
 (English layout only)</Description>
 	<Category>Visual</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=20657.0</Website>
 	<DownloadUrl>https://i.imgur.com/tpdfrUQ.png</DownloadUrl>
 	<DownloadFormat>SingleFileWithPath:FF9_Data/EmbeddedAsset/UI/Atlas/Chocograph Atlas</DownloadFormat>
-	<PreviewFileUrl>https://i.imgur.com/M4ce7hE.png</PreviewFileUrl>
+	<PreviewFileUrl>https://i.imgur.com/RCVuINt.png</PreviewFileUrl>
 </Mod>
 
 <Mod>
 	<Name>Tweaked Portraits</Name>
 	<InstallationPath>TweakedPortraits</InstallationPath>
 	<Author>Lykon</Author>
-	<ReleaseDate>16 May 2020</ReleaseDate>
+	<ReleaseDate>2020-05-16</ReleaseDate>
 	<Description>This is a simple mod that slightly tweaks the portrait shown in the main menu.</Description>
 	<Category>Visual</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=19964.0</Website>
@@ -335,17 +384,16 @@ Use the Mod Manager UI to activate each submods you like
 	<Version>0.2.13</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<Author>DVlad666</Author>
-	<Description>
-		A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
-		A multitude of additional fights/bosses are also introduced.
-		(This is not an very hardcore difficult mod: it only adds a higher difficulty than the original version while keeping a constant progression.)
+	<Description>A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
+A multitude of additional fights/bosses are also introduced.
+(This is not an very hardcore difficult mod: it only adds a higher difficulty than the original version while keeping a constant progression.)
 
-		It's currently a demo : CD1 and CD2 only available, CD3 WIP.
-		Don't hesitate to try!
+It's currently a demo : CD1 and CD2 only available, CD3 WIP.
+Don't hesitate to try!
 	</Description>
 	<Category>Gameplay</Category>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/5362100202713255072/</Website>
-	<DownloadUrl>https://drive.google.com/uc?export=download&amp;id=1ONGayLWtVctUgM33aYWVvzSGqDBEsOIE&amp;confirm=t</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/6dz48odlx0hn1b2o0hp9w/TranceSeek-Demo-CD3-by-DV.zip?rlkey=dxnyl6me6d1cbatkkdjcvkowo&amp;dl=1</DownloadUrl>
 </Mod>
 
 <Mod>
@@ -353,13 +401,12 @@ Use the Mod Manager UI to activate each submods you like
 	<Version>2.0</Version>
 	<InstallationPath>PlaystationSounds</InstallationPath>
 	<Author>DVlad666</Author>
-	<Description>
-		Replace the sound assets by the PSX sounds (specially Battle + Tetra Master + Miscellaneous).
-		More than 1540 sound files fixed!
+	<Description>Replace the sound assets by the PSX sounds (specially Battle + Tetra Master + Miscellaneous).
+More than 1540 sound files fixed!
 	</Description>
 	<Category>Audio</Category>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3189117724409401717/</Website>
-	<DownloadUrl>https://drive.google.com/uc?export=download&amp;id=1RLcIQ9M6AB19IPGDXskoBGcC3siVbLQQ&amp;confirm=t</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/mm4tc5k1g2admrl5klw3g/FF9_Sounds_Fix-by-DV.zip?rlkey=d2q5gk289coixe9s4kcdat1ir&amp;dl=1</DownloadUrl>
 </Mod>
 
 <Mod>
@@ -367,12 +414,11 @@ Use the Mod Manager UI to activate each submods you like
 	<Version>1.0</Version>
 	<InstallationPath>TripleTriad</InstallationPath>
 	<Author>DVlad666</Author>
-	<Description>
-		Change the music and background to the Triple Triad FF8 version (based on Tripod !)
-		Change some card textures (add boss + characters)
+	<Description>Change the music and background to the Triple Triad FF8 version (based on Tripod !)
+Change some card textures (add boss + characters)
 	</Description>
 	<Category>Visual</Category>
-	<DownloadUrl>https://drive.google.com/uc?export=download&amp;id=1H2Z-a656qBdjht2h7UfhujzfW1znpJdU&amp;confirm=t</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/tgs1ivzinnhivry5zxac7/TripleTriad-by-DV.zip?rlkey=nnebxpvw10ovvk516xzr6xdcx&amp;dl=1</DownloadUrl>
 </Mod>
 
 <Mod>
@@ -391,12 +437,27 @@ many download links should be changed and several ones use the "[Import] Text" f
 <Mod>
 	<Name>Brazilian-Portuguese Translation</Name>
 	<InstallationPath>BrazilianTranslation</InstallationPath>
-	<Author>P.O.B.R.E. / Brigandier</Author>
-	<Description>Tradução do jogo em português do Brasil.
+	<Author>Harleyquinn / dkPsycho / JonasJTG</Author>
+	<Description>Tradução totalmente revisada e atualizada para ser usada somente com o Mod Moguri. O jogo está completamente traduzido, incluindo história principal, diálogos secundários, sidequests, informações e outras coisas.
+
+Informações Importantes
+- Não foram traduzidos os nomes dos Itens, equipamentos e magias. Fiz essa escolha para melhor experiência dos veteranos e iniciantes.
+- Ao baixar a tradução existe duas opções na pasta de instalação: 30 FPS e 60 FPS. Instale somente a versão correspondente que queira usar.
+- Alguns mods são imcompatíveis com a tradução pois susbstituem os arquivos de texto ou de textura. Então verifique bem antes de instala-los.
+- Para jogar a versão 60 FPS basta baixar e executar a útima versão do Memoria, encontrada aqui: (https://github.com/Albeoris/Memoria/releases/tag/v2023.06.11)
+
+Para ver o tutorial de como instalar a tradução e acompanhar atualizações e conteúdos de FFIX entrem no meu canal.
+(https://www.youtube.com/@dkpsycho/videos)
+
+Créditos:
+- Harleyquinn: Porte para versão Moguri
+- dkPsycho: Toda parte de tradução, revisão e melhoria
+- JonasJTG: Edição dos Gráficos
 
 Note: this mod doesn't support automatic installation yet. Download it from its website.</Description>
 	<Category>Translation</Category>
 	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2111796362</Website>
+	<PreviewFileUrl>https://i.imgur.com/wYsiAog.jpeg</PreviewFileUrl>
 </Mod>
 
 <Mod>

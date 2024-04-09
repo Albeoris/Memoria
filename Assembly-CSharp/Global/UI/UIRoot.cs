@@ -139,7 +139,7 @@ public class UIRoot : MonoBehaviour
 	{
 		try
 		{
-			UISprite pauseBackground =  gameObject
+			UISprite pauseBackground = gameObject
 				.FindChild("Pause Container")
 				.FindChild("Panel")
 				.FindChild("Dim Background")
@@ -151,7 +151,21 @@ public class UIRoot : MonoBehaviour
 		{
 			Log.Error(ex, "Failed to fix wide screen pause background.");
 		}
-	}
+        try
+        {
+            UISprite quitBackground = gameObject
+                .FindChild("Quit Container")
+                .FindChild("Panel")
+                .FindChild("Dim Background")
+                .GetComponent<UISprite>();
+
+            quitBackground.width = 4096;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, "Failed to fix wide screen quit background.");
+        }
+    }
 
 	protected virtual void OnEnable()
 	{

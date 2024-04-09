@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using Assets.Sources.Scripts.EventEngine.Utils;
 using FF9;
 using Memoria;
@@ -414,28 +415,28 @@ public class EBin
             args[i] = EvaluateValueExpression();
         _v0 = 0;
         switch (commandId)
-		{
-			case flexible_varfunc.ITEM_REGULAR_TO_ID:
-				_v0 = ff9item.GetItemIdFromRegularId((RegularItem)args[0]);
-				break;
+        {
+            case flexible_varfunc.ITEM_REGULAR_TO_ID:
+                _v0 = ff9item.GetItemIdFromRegularId((RegularItem)args[0]);
+                break;
             case flexible_varfunc.ITEM_ID_TO_REGULAR:
                 _v0 = (Int32)ff9item.GetRegularIdFromItemId(args[0]);
                 break;
             case flexible_varfunc.ITEM_KEY_TO_ID:
-				_v0 = ff9item.GetItemIdFromImportantId(args[0]);
-				break;
+                _v0 = ff9item.GetItemIdFromImportantId(args[0]);
+                break;
             case flexible_varfunc.ITEM_ID_TO_KEY:
                 _v0 = (Int32)ff9item.GetImportantIdFromItemId(args[0]);
                 break;
             case flexible_varfunc.ITEM_CARD_TO_ID:
-				_v0 = ff9item.GetItemIdFromCardId((TetraMasterCardId)args[0]);
-				break;
+                _v0 = ff9item.GetItemIdFromCardId((TetraMasterCardId)args[0]);
+                break;
             case flexible_varfunc.ITEM_ID_TO_CARD:
                 _v0 = (Int32)ff9item.GetCardIdFromItemId(args[0]);
                 break;
             case flexible_varfunc.ABILITY_ACTIVE_TO_ID:
-				_v0 = ff9abil.GetAbilityIdFromActiveAbility((BattleAbilityId)args[0]);
-				break;
+                _v0 = ff9abil.GetAbilityIdFromActiveAbility((BattleAbilityId)args[0]);
+                break;
             case flexible_varfunc.ABILITY_ID_TO_ACTIVE:
                 _v0 = (Int32)ff9abil.GetActiveAbilityFromAbilityId(args[0]);
                 break;
@@ -443,20 +444,20 @@ public class EBin
                 _v0 = ff9abil.GetAbilityIdFromSupportAbility((SupportAbility)args[0]);
                 break;
             case flexible_varfunc.ABILITY_ID_TO_SUPPORT:
-				_v0 = (Int32)ff9abil.GetSupportAbilityFromAbilityId(args[0]);
-				break;
-			case flexible_varfunc.PARTY_MEMBER:
-				_v0 = (Int32)ff9play.CharacterIDToOldIndex(FF9StateSystem.Common.FF9.party.GetCharacterId(args[0]));
-				break;
-			case flexible_varfunc.ITEM_FULL_COUNT:
-				_v0 = ff9item.FF9Item_GetAnyCount((RegularItem)args[0]);
-				break;
-			case flexible_varfunc.PLAYER_EQUIP:
-				_v0 = (Int32)(FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]))?.equip[args[1]] ?? RegularItem.NoItem);
-				break;
-			case flexible_varfunc.PLAYER_LEVEL:
-				_v0 = FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]))?.level ?? 0;
-				break;
+                _v0 = (Int32)ff9abil.GetSupportAbilityFromAbilityId(args[0]);
+                break;
+            case flexible_varfunc.PARTY_MEMBER:
+                _v0 = (Int32)ff9play.CharacterIDToOldIndex(FF9StateSystem.Common.FF9.party.GetCharacterId(args[0]));
+                break;
+            case flexible_varfunc.ITEM_FULL_COUNT:
+                _v0 = ff9item.FF9Item_GetAnyCount((RegularItem)args[0]);
+                break;
+            case flexible_varfunc.PLAYER_EQUIP:
+                _v0 = (Int32)(FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]))?.equip[args[1]] ?? RegularItem.NoItem);
+                break;
+            case flexible_varfunc.PLAYER_LEVEL:
+                _v0 = FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]))?.level ?? 0;
+                break;
             case flexible_varfunc.PLAYER_EXP:
                 _v0 = (Int32)(FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]))?.exp ?? 0);
                 break;
@@ -468,7 +469,7 @@ public class EBin
                 else
                     _v0 = (Int32)ff9level.CharacterLevelUps[args[0] - 1].ExperienceToLevel;
                 break;
-			case flexible_varfunc.PLAYER_ABILITY_LEARNT:
+            case flexible_varfunc.PLAYER_ABILITY_LEARNT:
             {
                 PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]));
                 if (player == null || !ff9abil.FF9Abil_HasAp(new Character(player)))
@@ -483,19 +484,31 @@ public class EBin
                             _v0 = 1;
                 break;
             }
-			case flexible_varfunc.PLAYER_SUPPORT_ENABLED:
+            case flexible_varfunc.PLAYER_SUPPORT_ENABLED:
             {
                 PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]));
                 _v0 = player != null && player.saExtended.Contains((SupportAbility)args[1]) ? 1 : 0;
                 break;
             }
-			case flexible_varfunc.SHOP_ITEM:
+            case flexible_varfunc.SHOP_ITEM:
                 _v0 = ff9buy.ShopItems.ContainsKey(args[0]) && ff9buy.ShopItems[args[0]].ItemIds.Contains((RegularItem)args[1]) ? 1 : 0;
                 break;
-			case flexible_varfunc.SHOP_SYNTH:
+            case flexible_varfunc.SHOP_SYNTH:
                 _v0 = ff9mix.SynthesisData.ContainsKey(args[1]) && ff9mix.SynthesisData[args[1]].Shops.Contains(args[0]) ? 1 : 0;
                 break;
-		}
+            case flexible_varfunc.VECTOR:
+                _s7.pushSubs(args[0], args[1]);
+                _s7.push(encodeTypeAndVarClass(VariableSource.Null, VariableType.Vector));
+                return;
+            case flexible_varfunc.VECTOR_SIZE:
+                _s7.pushSubs(args[0]);
+                _s7.push(encodeTypeAndVarClass(VariableSource.Null, VariableType.VectorSize));
+                return;
+            case flexible_varfunc.DICTIONARY:
+                _s7.pushSubs(args[0], args[1]);
+                _s7.push(encodeTypeAndVarClass(VariableSource.Null, VariableType.Dictionary));
+                return;
+        }
 		expr_Push_v0_Int24();
 	}
 
@@ -524,7 +537,7 @@ public class EBin
         varCode |= varArrayIndex;
         _s7.push(varCode);
         SetVariableValue(value);
-        varCode |= encodeTypeAndVarClass(7);
+        varCode |= encodeVarClass(VariableSource.Int26);
         _s7.push(varCode);
 
         return varCode;
@@ -684,7 +697,7 @@ public class EBin
                 _v0 = EvaluateValueExpression();
                 if (t3 == 0)
                 {
-                    expr_adZ();
+                    expr_Push_v0_Int24();
                 }
                 else
                 {
@@ -699,7 +712,7 @@ public class EBin
                 _v0 = EvaluateValueExpression();
                 if (t3 == 0)
                 {
-                    expr_adZ();
+                    expr_Push_v0_Int24();
                 }
                 else
                 {
@@ -891,8 +904,7 @@ public class EBin
             {
                 Int32 a0 = s1.getByteIP();
                 s1.ip++;
-                int a1 = encodeTypeAndVarClass(6);
-                a0 |= a1;
+                a0 |= encodeVarClass(VariableSource.Member);
                 _s7.push(a0);
                 break;
             }
@@ -977,7 +989,7 @@ public class EBin
                 _s7.advanceTopOfStack();
                 if (t3 == 0)
                 {
-                    expr_adZ();
+                    expr_Push_v0_Int24();
                 }
                 else
                 {
@@ -996,7 +1008,7 @@ public class EBin
                 _s7.advanceTopOfStack();
                 if (t3 == 0)
                 {
-                    expr_adZ();
+                    expr_Push_v0_Int24();
                 }
                 else
                 {
@@ -1236,54 +1248,33 @@ public class EBin
             }
             case op_binary.B_OBJSPECA:
             {
-                Int32 a0 = s1.getByteIP();
-                int a1 = s1.getByteIP(1);
+                _s7.push(s1.getByteIP(1) | (s1.getByteIP() << 8) | encodeVarClass(VariableSource.Object));
                 s1.ip += 2;
-                a0 <<= 8;
-                a0 |= a1;
-                a1 = encodeTypeAndVarClass(4);
-                a0 |= a1;
-                _s7.push(a0);
                 break;
             }
             case op_binary.B_SYSLIST:
             {
-                Int32 a0 = s1.getByteIP();
+                _s7.push(s1.getByteIP() | encodeVarClass(VariableSource.System));
                 s1.ip++;
-                int a1 = encodeTypeAndVarClass(5);
-                a0 |= a1;
-                _s7.push(a0);
                 break;
             }
             case op_binary.B_SYSVAR:
             {
-                Int32 a0 = s1.getByteIP();
+                _v0 = _eventEngine.GetSysvar(s1.getByteIP());
                 s1.ip++;
-                _v0 = _eventEngine.GetSysvar(a0);
-                a0 = 0x3FFFFFF; // 26 bit (unsigned?)
-                a0 = _v0 & a0;
-                int a1 = encodeTypeAndVarClass(7);
-                a0 |= a1;
-                _s7.push(a0);
+                _s7.push((_v0 & 0x3FFFFFF) | encodeVarClass(VariableSource.Int26)); // 26 bit (signed)
                 break;
             }
             case op_binary.B_CONST:
             {
-                Int32 a0 = s1.getShortIP();
+                _s7.push((Int32)s1.getShortIP() | encodeVarClass(VariableSource.Int26));
                 s1.ip += 2;
-                int a1 = encodeTypeAndVarClass(7);
-                a0 |= a1;
-                _s7.push(a0);
                 break;
             }
             case op_binary.B_CONST4:
             {
-                Int32 a0 = s1.getIntIP();
+                _s7.push((s1.getIntIP() & 0x3FFFFFF) | encodeVarClass(VariableSource.Int26)); // 26 bit (signed)
                 s1.ip += 4;
-                a0 &= 0x3FFFFFF; // 26 bit (unsigned?)
-                int a1 = encodeTypeAndVarClass(7);
-                a0 |= a1;
-                _s7.push(a0);
                 break;
             }
             case op_binary.B_EXPR_END:
@@ -1311,14 +1302,8 @@ public class EBin
 
     private void expr_Push_v0_Int24()
     {
-        int a1 = encodeTypeAndVarClass(7);
-        _v0 |= a1;
+        _v0 |= encodeVarClass(VariableSource.Int26);
         _s7.push(_v0);
-    }
-
-    private void expr_adZ()
-    {
-        expr_Push_v0_Int24();
     }
 
     public Int32 bra()
@@ -1677,8 +1662,8 @@ public class EBin
     public Int32 EvaluateValueExpression()
     {
         _s7.pop(out var t0);
-        VariableType varType = (VariableType)((getTypeAndVarClass(t0) >> 3) & 7);
-        VariableSource cls = (VariableSource)getVarClass(t0);
+        VariableType varType = getVarType(t0);
+        VariableSource cls = getVarClass(t0);
         switch (cls)
         {
             case VariableSource.Global:
@@ -1688,8 +1673,43 @@ public class EBin
             case VariableSource.Instance:
                 return GetVariableValueInternal(_instance, t0 & 0xFFFF, varType, _instanceVOfs);
             case VariableSource.Null:
-                if (varType == VariableType.SBit)
-                    return GetMemoriaCustomVariable((memoria_variable)(t0 & 0xFFFF));
+                switch (varType)
+                {
+                    case VariableType.Any:
+                        return GetMemoriaCustomVariable((memoria_variable)(t0 & 0xFFFF));
+                    case VariableType.Vector:
+                    {
+                        List<Int32> subs = _s7.getSubs();
+                        if (subs.Count < 2)
+                            return 0;
+                        Int32 vectID = subs[0];
+                        Int32 arrayIndex = subs[1];
+                        if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect) && arrayIndex >= 0 && arrayIndex < vect.Count)
+                            return vect[arrayIndex];
+                        return 0;
+                    }
+                    case VariableType.VectorSize:
+                    {
+                        List<Int32> subs = _s7.getSubs();
+                        if (subs.Count < 1)
+                            return 0;
+                        Int32 vectID = subs[0];
+                        if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect))
+                            return vect.Count;
+                        return 0;
+                    }
+                    case VariableType.Dictionary:
+                    {
+                        List<Int32> subs = _s7.getSubs();
+                        if (subs.Count < 2)
+                            return 0;
+                        Int32 dictID = subs[0];
+                        Int32 entryID = subs[1];
+                        if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictID, out Dictionary<Int32, Int32> dict) && dict.TryGetValue(entryID, out Int32 val))
+                            return val;
+                        return 0;
+                    }
+                }
                 return 0;
             case VariableSource.Object:
                 _v0 = getvobj(_eventEngine.GetObjUID((t0 >> 8) & 0xFF), t0 & 0xFF);
@@ -1890,8 +1910,8 @@ public class EBin
     {
         _s7.pop(out var t0);
         Int32 varValue = arg0;
-        VariableType varType = (VariableType)((getTypeAndVarClass(t0) >> 3) & 7);
-        VariableSource cls = (VariableSource)getVarClass(t0);
+        VariableType varType = getVarType(t0);
+        VariableSource cls = getVarClass(t0);
         switch (cls)
         {
             case VariableSource.Global:
@@ -1904,8 +1924,74 @@ public class EBin
                 SetVariableValueInternal(_instance, t0 & 0xFFFF, varType, varValue, _instanceVOfs);
                 break;
             case VariableSource.Null:
-                if (varType == VariableType.SBit)
-                    SetMemoriaCustomVariable((memoria_variable)(t0 & 0xFFFF), varValue);
+                switch (varType)
+                {
+                    case VariableType.Any:
+                        SetMemoriaCustomVariable((memoria_variable)(t0 & 0xFFFF), varValue);
+                        break;
+                    case VariableType.Vector:
+                    {
+                        List<Int32> subs = _s7.getSubs();
+                        if (subs.Count < 2)
+                            break;
+                        Int32 vectID = subs[0];
+                        Int32 arrayIndex = subs[1];
+                        if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect))
+                        {
+                            if (arrayIndex == vect.Count)
+                                vect.Add(varValue);
+                            else if (arrayIndex >= 0 && arrayIndex < vect.Count)
+                                vect[arrayIndex] = varValue;
+                        }
+                        else if (arrayIndex == 0)
+						{
+                            vect = new List<Int32>();
+                            vect.Add(varValue);
+                            FF9StateSystem.EventState.gScriptVector.Add(vectID, vect);
+                        }
+                        break;
+                    }
+                    case VariableType.VectorSize:
+                    {
+                        List<Int32> subs = _s7.getSubs();
+                        if (subs.Count < 1 || varValue < 0)
+                            break;
+                        Int32 vectID = subs[0];
+                        if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect))
+                        {
+                            if (varValue > vect.Count)
+                                vect.AddRange(Enumerable.Repeat(0, varValue - vect.Count));
+                            else if (varValue < vect.Count)
+                                vect.RemoveRange(varValue, vect.Count - varValue);
+                        }
+                        else
+                        {
+                            vect = new List<Int32>(varValue);
+                            vect.AddRange(Enumerable.Repeat(0, varValue));
+                            FF9StateSystem.EventState.gScriptVector.Add(vectID, vect);
+                        }
+                        break;
+                    }
+                    case VariableType.Dictionary:
+                    {
+                        List<Int32> subs = _s7.getSubs();
+                        if (subs.Count < 2)
+                            break;
+                        Int32 dictID = subs[0];
+                        Int32 entryID = subs[1];
+                        if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictID, out Dictionary<Int32, Int32> dict))
+                        {
+                            dict[entryID] = varValue;
+                        }
+                        else
+                        {
+                            dict = new Dictionary<Int32, Int32>();
+                            dict[entryID] = varValue;
+                            FF9StateSystem.EventState.gScriptDictionary.Add(dictID, dict);
+                        }
+                        break;
+                    }
+                }
                 break;
             case VariableSource.System:
                 _eventEngine.SetSysList(t0 & 0xFF, varValue);
@@ -1993,20 +2079,24 @@ public class EBin
         return _v0;
     }
 
-    private Int32 getVarClass(Int32 value)
+    private VariableSource getVarClass(Int32 value)
     {
-        Int32 typeAndVarClass = getTypeAndVarClass(value);
-        return typeAndVarClass & 7;
+        return (VariableSource)((value >> 26) & 7);
     }
 
-    private Int32 getTypeAndVarClass(Int32 value)
+    private VariableType getVarType(Int32 value)
     {
-        return value >> 26;
+        return (VariableType)((value >> 29) & 7);
     }
 
-    private Int32 encodeTypeAndVarClass(Int32 typeAndClass)
+    private Int32 encodeTypeAndVarClass(VariableSource varSrc, VariableType varType)
     {
-        return typeAndClass << 26;
+        return ((Int32)varSrc << 26) | ((Int32)varType << 29);
+    }
+
+    private Int32 encodeVarClass(VariableSource varSrc)
+    {
+        return (Int32)varSrc << 26;
     }
 
     public enum event_code_binary
@@ -2294,6 +2384,8 @@ public class EBin
         MOVE_EX,
         TURN_OBJ_EX,
         AANIM_EX,
+        VECTOR_CLEAR,
+        DICTIONARY_CLEAR,
     }
 
     public enum flexible_varfunc : ushort
@@ -2319,6 +2411,9 @@ public class EBin
         PLAYER_SUPPORT_ENABLED,
         SHOP_ITEM,
         SHOP_SYNTH,
+        VECTOR,
+        VECTOR_SIZE,
+        DICTIONARY,
     }
 
     public enum memoria_variable : ushort
@@ -2481,5 +2576,9 @@ public class EBin
         Byte = 5,
         Int16 = 6,
         UInt16 = 7,
+        Any = 0,
+        Vector = 1,
+        VectorSize = 2,
+        Dictionary = 3,
     }
 }

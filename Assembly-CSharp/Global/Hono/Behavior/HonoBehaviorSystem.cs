@@ -208,8 +208,9 @@ public class HonoBehaviorSystem : MonoBehaviour
 
 	private void LateUpdate()
 	{
-		// Dummied: the FPSManager always handles the regularity of the main loop
 		return;
+		/* //Dummied: the FPSManager always handles the regularity of the main loop
+		
 		if (!HonoBehaviorSystem.FrameSkipEnabled)
 			return;
 		Single deltaTime = Time.deltaTime;
@@ -227,7 +228,7 @@ public class HonoBehaviorSystem : MonoBehaviour
 		{
 			HonoBehaviorSystem._cumulativeTime -= HonoBehaviorSystem.TargetFrameTime * (Single)num;
 			HonoBehaviorSystem.ExtraLoopCount = num - 1;
-		}
+		}*/
 	}
 
 	private void OnGUI()

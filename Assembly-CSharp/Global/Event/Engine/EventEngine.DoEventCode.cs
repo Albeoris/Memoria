@@ -2853,6 +2853,20 @@ public partial class EventEngine
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue(anim));
                 return 0;
             }
+            case EBin.event_code_binary.VECTOR_CLEAR:
+			{
+                Int32 vectID = this.getv3();
+                if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect))
+                    vect.Clear();
+                return 0;
+            }
+            case EBin.event_code_binary.DICTIONARY_CLEAR:
+            {
+                Int32 dictID = this.getv3();
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictID, out Dictionary<Int32, Int32> dict))
+                    dict.Clear();
+                return 0;
+            }
             default:
             {
                 switch (this.gMode)

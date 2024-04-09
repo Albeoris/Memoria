@@ -145,8 +145,12 @@ public class HonoluluFieldMain : HonoBehavior
 			allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(0);
 		if (sndEffectResSoundID2 != -1 && sndEffectResSoundID2 == sndEffectResSoundID4)
 			allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(1);
-		PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}, Loc: {FF9StateSystem.Common.FF9.fldLocNo} Name: {FF9StateSystem.Common.FF9.mapNameStr}");
-		FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
+        Int32 camNumber = PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1;
+        String camNumberStr = "-" + camNumber;
+        if (camNumber == -1) { camNumberStr = ""; };
+        String camIdxIfCam = (PersistenSingleton<EventEngine>.Instance?.fieldmap?.scene?.cameraList.Count > 1 && PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx != -1) ? "-" + PersistenSingleton<EventEngine>.Instance.fieldmap.camIdx : "";
+        PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}{camIdxIfCam} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
+        FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
 	}
 
 	public override void HonoUpdate()

@@ -1,21 +1,99 @@
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
+using Memoria;
+using Memoria.Prime;
 public static class NarrowMapList
 {
-    public static Boolean IsCurrentMapNarrow() => IsNarrowMap(FF9StateSystem.Common.FF9.fldMapNo, PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1);
-    public static Boolean IsNarrowMap(Int32 mapId, Int32 camId) => ListFullNarrow.Contains(mapId) || (ListPartialNarrow.TryGetValue(mapId, out HashSet<Int32> narrowCams) && narrowCams.Contains(camId));
+    public static Boolean IsCurrentMapNarrow(Int32 ScreenWidth) => IsNarrowMap(FF9StateSystem.Common.FF9.fldMapNo, PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1, ScreenWidth);
+    public static Boolean IsNarrowMap(Int32 mapId, Int32 camId, Int32 ScreenWidth)
+    {
+        if (SpecificScenesNarrow(mapId))
+            return true;
 
-    private static readonly Dictionary<Int32, HashSet<Int32>> ListPartialNarrow = new Dictionary<Int32, HashSet<Int32>>()
+        if (MapWidth(mapId) <= ScreenWidth)
+            return true;
+
+
+        //if (ListFullNarrow.Contains(mapId))
+        //    return true;
+        
+        //if (ListPartialNarrow.TryGetValue(mapId, out HashSet<Int32> narrowCams) && narrowCams.Contains(camId))
+        //    return true;
+        //Log.Message("camId:" + camId + ", mapid:" + mapId);
+
+        return false;
+    }
+    public static Boolean SpecificScenesNarrow(Int32 mapId)
+    {
+        Int32 currIndex = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
+        foreach (KeyValuePair<int, int> entry in SpecificScenesNarrow_List)
+        {
+            if (mapId == entry.Key && currIndex == entry.Value)
+                return true;
+            // hall alexandria: meeting garnet, zorn thorn, steiner calling
+            if (mapId == 153 && (currIndex == 325 || currIndex == 328 || currIndex == 316)) 
+                return true;
+        }
+        return false;
+    }
+
+    public static Int32 MapWidth(int mapId)
+    {
+        Int32 width = 500;
+
+        if (ListFullNarrow.Contains(mapId) || SpecificScenesNarrow(mapId))
+            width = 320;
+
+        foreach (KeyValuePair<int, int> entry in actualNarrowMapWidthDict)
+        {
+            if (mapId == entry.Key && !SpecificScenesNarrow(entry.Key))
+                width = (Int32)entry.Value;
+        }
+
+        //Log.Message("width:" + width + "PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx" + PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx);
+        return width;
+    }
+
+    public static readonly Dictionary<int, int> SpecificScenesNarrow_List = new Dictionary<int, int>
+    {
+        // {mapNo,index}
+        {50,0},      // first scene
+        {150,325},   // Zidane infiltrate Alex Castle
+        //{154,304},   // cutscene zorn&thorn
+        //{153,328}, // steiner guards call // can't have twice the same key TOFIX
+        {254,26},    // MBG103 - Evil Forest
+        {352,3},     // Arrival at Dali: vivi visible before sleeping
+        {355,18},    // Steiner to the barmaid
+        {600,32},    // Throne, meet cid
+        {606,0},     // telescope
+        {615,57},    // Meet garnet on Lindblum castle
+        {1554,7},    // MBG109 - roots
+        //{1600,9999}, // First time Madain Sari
+        {1602,16},   // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
+        {1823,331},  // Garnet coronation, garnet visible
+        {1815,0},    // Love quiproquo at the docks
+        {1816,315},  // Love quiproquo at the docks
+        {2007,2},    // MBG111 - Alex castle changing
+        {2211,8},    // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
+        {2705,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2706,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2707,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2708,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2905,154}   // MBG118 - Memoria pink castle
+    };
+
+    public static readonly Dictionary<Int32, HashSet<Int32>> ListPartialNarrow = new Dictionary<Int32, HashSet<Int32>>()
     {
         // Not yet implemented
         // For now, using this "per camera" narrow list bugs, surely because of the camera position shift in FieldMap.CenterCameraOnPlayer
         //{ 0154, new HashSet<Int32>() { 0 } }, // A. Castle/Hallway
         //{ 1215, new HashSet<Int32>() { 0 } }, // A. Castle/Hallway
         //{ 1807, new HashSet<Int32>() { 0 } }, // A. Castle/Hallway
+
     };
 
-    private static readonly HashSet<Int32> ListFullNarrow = new HashSet<Int32>()
+    public static readonly HashSet<Int32> ListFullNarrow = new HashSet<Int32>()
     {
         0052, // Prima Vista/Meeting Rm
         0053, // Prima Vista/Meeting Rm
@@ -43,6 +121,7 @@ public static class NarrowMapList
         0150, // A. Castle/Guardhouse
         0151, // A. Castle/Throne
         0153, // A. Castle/Hallway
+        0154,
         0157, // A. Castle/Kitchen
         0160, // A. Castle/Courtyard
         0161, // A. Castle/Courtyard
@@ -60,7 +139,7 @@ public static class NarrowMapList
         0209, // Prima Vista/Event
         0251, // Evil Forest/Trail
         0252, // Evil Forest/Trail
-        0254, // Evil Forest/Swamp
+        //0254, // Evil Forest/Swamp
         0255, // Evil Forest/Riverbank
         0256, // Evil Forest/Trail
         0259, // Evil Forest/Trail
@@ -176,6 +255,7 @@ public static class NarrowMapList
         1212, // A. Castle/East Tower
         1213, // A. Castle/Guardhouse
         1214, // A. Castle/Hallway
+        1215,
         1216,
         1218,
         1221, // A. Castle/Courtyard
@@ -263,11 +343,12 @@ public static class NarrowMapList
         1800, // A. Castle/Tomb
         1803, // A. Castle/Guardhouse
         1806, // A. Castle/Hallway
+        1807, // A. Castle/Hallway
         1808,
         1810,
         1813, // A. Castle/Courtyard
         1814, // A. Castle/Courtyard
-        1816, // A. Castle/Courtyard
+        //1816, // A. Castle/Courtyard
         1817, // A. Castle/Neptune
         1818, // A. Castle/Neptune
         1820, // A. Castle/West Tower
@@ -290,7 +371,7 @@ public static class NarrowMapList
         2004,
         2005, // A. Castle/Altar
         2006,
-        2007, // A. Castle/Altar
+        //2007, // A. Castle/Altar
         2008, // A. Castle/Altar
         2050, // Alexandria/Main Street
         2052,
@@ -347,7 +428,6 @@ public static class NarrowMapList
         2501, // I. Castle/Entrance
         2502, // I. Castle/Hall
         2503,
-        2504, // I. Castle/Small Room
         2505, // I. Castle/Inverted Roo
         2510, // I. Castle/Mural Room
         2512, // I. Castle/Mural Room
@@ -418,6 +498,214 @@ public static class NarrowMapList
         3056, // Mage Village/Rooftop
         3057,
         3058, // Mage Village/Water Mil
-        3100,
+        3100, // Mog Post
+    };
+
+    public static readonly Dictionary<int, int> mapCameraMargin = new Dictionary<int, int>
+    {
+        //{mapNo,pixels on each side to crop because of scrollable}
+        {1051,8},
+        {1057,16},
+        {1058,16},
+        {1060,16},
+        {1652,16},
+        {1653,16},
+        //{154,16},
+    };
+
+    public static readonly Dictionary<int, int> actualNarrowMapWidthDict = new Dictionary<int, int>
+    {
+        //{mapNo,(actualWidth - 2)}
+        //{153,430},
+        {203,334},
+        //{502,334},
+        //{503,334},
+        {760,334},
+        {814,334},
+        {816,334},
+        {1151,334},
+        {1458,334},
+        {1500,334},
+        {1506,334},
+        {1605,334},
+        {1606,334},
+        {1608,334},
+        {1660,334},
+        {1661,334},
+        {1662,334},
+        {1705,334},
+        {1707,334},
+        {1751,334},
+        {2202,334},
+        {2204,334},
+        {2205,334},
+        {2208,334},
+        {2254,334},
+        {2257,334},
+        {2303,334},
+        {2365,334},
+        {2513,334},
+        {2756,334},
+        {2932,334},
+        {3057,334},
+        {114,350},
+        {550,350},
+        {620,350},
+        {802,350},
+        {803,350},
+        {1212,350},
+        {1300,350},
+        {1370,350},
+        {1508,350},
+        {1650,350},
+        {1752,350},
+        {1757,350},
+        {1863,350},
+        {1951,350},
+        {1952,350},
+        {2000,350},
+        {2055,350},
+        {2771,350},
+        {2203,350},
+        {2261,350},
+        {2356,350},
+        {2362,350},
+        {2500,350},
+        {2501,350},
+        {2654,350},
+        {60,366},
+        {150,366},
+        {161,366},
+        {201,366},
+        {262,366},
+        {565,366},
+        {911,366},
+        {1213,366},
+        {1222,366},
+        {1251,366},
+        {1254,366},
+        {1312,366},
+        {1403,366},
+        {1803,366},
+        {1814,366},
+        {1817,366},
+        {1911,366},
+        {1953,366},
+        {2002,366},
+        {2004,366},
+        {2006,366},
+        {2112,366},
+        {2400,366},
+        {2502,366},
+        {2503,366},
+        {2650,366},
+        {2904,366},
+        {2913,366},
+        {2928,366},
+        {3100,366},
+        {102,382},
+        {109,382},
+        {162,382},
+        {206,382},
+        {207,382},
+        {251,382},
+        {252,382},
+        {407,382},
+        {553,382},
+        {556,382},
+        {705,382},
+        {751,382},
+        {813,382},
+        {950,382},
+        {1017,382},
+        {1018,382},
+        {1058,380},
+        {1108,380},
+        {1201,382},
+        {1210,382},
+        {1303,382},
+        {1404,382},
+        {1452,382},
+        {1453,382},
+        {1509,382},
+        {1656,382},
+        {1820,382},
+        {1852,382},
+        {1858,382},
+        {2052,382},
+        {2103,382},
+        {2200,382},
+        {2222,382},
+        {2355,382},
+        {2406,382},
+        {2451,382},
+        {2657,382},
+        {2851,382},
+        {2855,382},
+        {2856,382},
+        {2915,382},
+        {3052,382},
+        {55,398},
+        {157,398},
+        {405,398},
+        {456,398},
+        {505,398},
+        {561,398},
+        {566,398},
+        {568,398},
+        {569,398},
+        {571,398},
+        {613,398},
+        {656,398},
+        {657,398},
+        {658,398},
+        {659,398},
+        {663,398},
+        {753,398},
+        {755,398},
+        {806,398},
+        {851,398},
+        {855,398},
+        {901,398},
+        {913,398},
+        {1054,398},
+        {1104,398},
+        {1153,398},
+        {1218,398},
+        {1313,398},
+        {1363,398},
+        {1408,398},
+        {1414,398},
+        {1424,398},
+        {1456,398},
+        {1600,398},
+        {1601,398},
+        {1602,398},
+        {1700,398},
+        {1701,398},
+        {1702,398},
+        {1810,398},
+        {1901,398},
+        {1913,398},
+        {2113,398},
+        {2163,398},
+        {2212,398},
+        {2213,398},
+        {2352,398},
+        {2353,398},
+        {2551,398},
+        {2601,398},
+        {2658,398},
+        {2706,398},
+        {2906,398},
+        {3005,398},
+        {3055,398},
+        {1205,384},
+        //{154,352},
+        //{1215,352},
+        {1805,352},
+        //{1807,352},
+        {1652,336},
+        {2552,352},
     };
 }

@@ -71,7 +71,6 @@ namespace Antlr.Runtime
         }
 
         /** <summary>Construction from a static array of longs</summary> */
-        [CLSCompliant( false )]
         public BitSet( ulong[] bits )
         {
             _bits = bits;

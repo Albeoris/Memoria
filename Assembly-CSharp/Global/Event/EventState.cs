@@ -10,6 +10,8 @@ public class EventState : MonoBehaviour
 	public Byte[] gEventGlobal = new Byte[2048];
 
 	public Dictionary<BattleAbilityId, Int32> gAbilityUsage = new Dictionary<BattleAbilityId, Int32>();
+	public Dictionary<Int32, List<Int32>> gScriptVector = new Dictionary<Int32, List<Int32>>();
+	public Dictionary<Int32, Dictionary<Int32, Int32>> gScriptDictionary = new Dictionary<Int32, Dictionary<Int32, Int32>>();
 
 	public Int32 ScenarioCounter
 	{
