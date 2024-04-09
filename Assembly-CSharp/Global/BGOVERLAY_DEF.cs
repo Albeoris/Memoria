@@ -50,10 +50,10 @@ public partial class BGOVERLAY_DEF
 		this.maxY = reader.ReadInt16();
 		this.scrX = reader.ReadInt16();
 		this.scrY = reader.ReadInt16();
-		this.dX = reader.ReadInt16();
-		this.dY = reader.ReadInt16();
-		this.fracX = reader.ReadInt16();
-		this.fracY = reader.ReadInt16();
+		this.dX = (float)reader.ReadInt16();
+		this.dY = (float)reader.ReadInt16();
+		this.fracX = (float)reader.ReadInt16();
+		this.fracY = (float)reader.ReadInt16();
 		Byte bitPos = 0;
 		buffer = reader.ReadUInt32();
 		this.camNdx = (Byte)BitUtil.ReadBits(buffer, ref bitPos, 8);
