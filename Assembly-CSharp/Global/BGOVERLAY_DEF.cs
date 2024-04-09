@@ -40,10 +40,10 @@ public partial class BGOVERLAY_DEF
 		this.orgZ = (UInt16)(buffer >> 20 & 0xFFFu);
 		this.w = reader.ReadUInt16();
 		this.h = reader.ReadUInt16();
-		this.orgX = reader.ReadInt16();
-		this.orgY = reader.ReadInt16();
-		this.curX = reader.ReadInt16();
-		this.curY = reader.ReadInt16();
+		this.orgX = (float)reader.ReadInt16();
+		this.orgY = (float)reader.ReadInt16();
+		this.curX = (float)reader.ReadInt16();
+		this.curY = (float)reader.ReadInt16();
 		this.minX = reader.ReadInt16();
 		this.maxX = reader.ReadInt16();
 		this.minY = reader.ReadInt16();
@@ -72,10 +72,10 @@ public partial class BGOVERLAY_DEF
 	public UInt16 orgZ;
 	public UInt16 w;
 	public UInt16 h;
-	public Int16 orgX;
-	public Int16 orgY;
-	public Int16 curX;
-	public Int16 curY;
+	public float orgX;
+	public float orgY;
+	public float curX;
+	public float curY;
 
 	public Int16 minX;
 	public Int16 maxX;

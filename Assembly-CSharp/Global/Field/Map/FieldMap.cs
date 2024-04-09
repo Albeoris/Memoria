@@ -1186,12 +1186,12 @@ public class FieldMap : HonoBehavior
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
         FieldMapInfo.fieldmapExtraOffset.UpdateOverlayOffset(this.mapName, overlayNdx, ref dz);
-        Int16 destX = (Int16)Mathf.Clamp(bgOverlay.orgX + dx, bgOverlay.minX, bgOverlay.maxX);
-        Int16 destY = (Int16)Mathf.Clamp(bgOverlay.orgY + dy, bgOverlay.minY, bgOverlay.maxY);
+        float destX = (float)Mathf.Clamp(bgOverlay.orgX + dx, bgOverlay.minX, bgOverlay.maxX);
+        float destY = (float)Mathf.Clamp(bgOverlay.orgY + dy, bgOverlay.minY, bgOverlay.maxY);
 
         // TODO Check Native: #147
         UInt16 destZ;
-        if (FF9StateSystem.Common.FF9.fldMapNo == 2351 && overlayNdx >= 3 && overlayNdx <= 17)
+        if (FF9StateSystem.Common.FF9.fldMapNo == 2351 && overlayNdx >= 3 && overlayNdx <= 17) // official fix of the mine bucket
             destZ = 3000;
         else
             destZ = (UInt16)(bgOverlay.orgZ + (UInt16)dz);
@@ -1212,8 +1212,8 @@ public class FieldMap : HonoBehavior
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
         bgOverlay.curX = (Int16)orgX;
         bgOverlay.curY = (Int16)orgY;
-        bgOverlay.orgX = bgOverlay.curX;
-        bgOverlay.orgY = bgOverlay.curY;
+        bgOverlay.orgX = (short)bgOverlay.curX;
+        bgOverlay.orgY = (short)bgOverlay.curY;
         this.flags |= FieldMapFlags.Unknown128;
         if (dbug) Log.Message("EBG_overlaySetOrigin | orgX:" + orgX + " orgY:" + orgY);
         return 1;
@@ -1646,9 +1646,9 @@ public class FieldMap : HonoBehavior
             {
                 Int16 x = ebg_ATTACH_DEF.x;
                 Int16 y = ebg_ATTACH_DEF.y;
-                Int16 overlayX = overlayList[index].curX = (Int16)(vertex.x - bgscene_DEF.curX - x + bgcam_DEF.vrpMinX);
-                Int16 overlayY = overlayList[index].curY = (Int16)(vertex.y - bgscene_DEF.curY - y + bgcam_DEF.vrpMinY);
-                overlayList[index].transform.localPosition = new Vector3(overlayX, overlayY, 0f);
+                float overlayX = overlayList[index].curX = (Int16)(vertex.x - bgscene_DEF.curX - x + bgcam_DEF.vrpMinX);
+                float overlayY = overlayList[index].curY = (Int16)(vertex.y - bgscene_DEF.curY - y + bgcam_DEF.vrpMinY);
+                overlayList[index].transform.localPosition = new Vector3((short)overlayX, (short)overlayY, 0f);
             }
         }
         if (dbug) Log.Message("EBG_attachService | vertex.x:" + vertex.x + " vertex.y:" + vertex.y);
@@ -1704,10 +1704,10 @@ public class FieldMap : HonoBehavior
             }
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Parallax) != 0)
             {
-                Int32 num = (Int32)((Single)(bgoverlay_DEF.orgX << 8) + (this.curVRP[0] - this.parallaxOrg[0]) * (Single)bgoverlay_DEF.dX);
+                Int32 num = (Int32)((Single)((short)(bgoverlay_DEF.orgX) << 8) + (this.curVRP[0] - this.parallaxOrg[0]) * (Single)bgoverlay_DEF.dX);
                 bgoverlay_DEF.curX = (Int16)(num >> 8);
                 bgoverlay_DEF.fracX = (Int16)(num & 255);
-                num = (Int32)((Single)(bgoverlay_DEF.orgY << 8) + (this.curVRP[1] - this.parallaxOrg[1]) * (Single)bgoverlay_DEF.dY);
+                num = (Int32)((Single)((short)(bgoverlay_DEF.orgY) << 8) + (this.curVRP[1] - this.parallaxOrg[1]) * (Single)bgoverlay_DEF.dY);
                 bgoverlay_DEF.curY = (Int16)(num >> 8);
                 bgoverlay_DEF.fracY = (Int16)(num & 255);
                 if (FF9StateSystem.Common.FF9.fldMapNo == 150
@@ -1857,7 +1857,7 @@ public class FieldMap : HonoBehavior
         Int32 ScaleFactor = (Int32)this.scrollWindowAlphaX[(Int32)oPtr.viewportNdx] << 8;
         if (ScaleFactor == 65536)
         {
-            return oPtr.curX;
+            return (short)oPtr.curX;
         }
         if (ScaleFactor < 0)
         {
@@ -1872,7 +1872,7 @@ public class FieldMap : HonoBehavior
             oPtr.curX = (Int16)(scaledValue >> 16);
             oPtr.fracX = (Int16)(scaledValue >> 8 & 255);
         }
-        return oPtr.curX;
+        return (short)oPtr.curX;
     }
 
     public Int16 EBG_alphaScaleY(BGOVERLAY_DEF oPtr, Int16 val)
@@ -1881,7 +1881,7 @@ public class FieldMap : HonoBehavior
         Int32 ScaleFactor = (Int32)this.scrollWindowAlphaY[(Int32)oPtr.viewportNdx] << 8;
         if (ScaleFactor == 65536)
         {
-            return oPtr.curY;
+            return (short)oPtr.curY;
         }
         if (ScaleFactor < 0)
         {
@@ -1896,7 +1896,7 @@ public class FieldMap : HonoBehavior
             oPtr.curY = (Int16)(scaledValue >> 16);
             oPtr.fracY = (Int16)(scaledValue >> 8 & 255);
         }
-        return oPtr.curY;
+        return (short)oPtr.curY;
     }
 
     private void EBG_sceneService3DScroll()
@@ -2398,5 +2398,5 @@ public class FieldMap : HonoBehavior
         }
     }
 
-    private bool dbug = false;
+    private bool dbug = true;
 }

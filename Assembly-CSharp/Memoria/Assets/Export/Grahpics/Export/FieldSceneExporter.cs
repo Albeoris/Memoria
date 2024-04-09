@@ -252,7 +252,7 @@ namespace Memoria.Assets
             TextureHelper.WriteTextureToFile(result, outputPath);
             layer.Name = Path.GetFileNameWithoutExtension(outputPath);
             layer.Opacity = 255;
-            layer.Rect = new Rectangle(overlay.curX * factor, overlay.curY * factor, textureWidth, textureHeight);
+            layer.Rect = new Rectangle((short)overlay.curX * factor, (short)overlay.curY * factor, textureWidth, textureHeight);
             layer.Masks = new MaskInfo();
             layer.BlendingRangesData = new BlendingRanges(layer);
             layer.CreateMissingChannels();
