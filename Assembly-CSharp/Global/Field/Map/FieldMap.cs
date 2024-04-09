@@ -1050,7 +1050,7 @@ public class FieldMap : HonoBehavior
         if (dbug) Log.Message("EBG_animAnimate");
         BGANIM_DEF bgAnim = this.scene.animList[animNdx];
         bgAnim.flags |= BGANIM_DEF.ANIM_FLAG.Animate;
-        bgAnim.curFrame = frameNdx << 8;
+        bgAnim.curFrame = frameNdx * 256;
         bgAnim.counter = 0;
         return 1;
     }
@@ -1124,7 +1124,7 @@ public class FieldMap : HonoBehavior
         BGANIM_DEF bgAnim = this.scene.animList[animNdx];
         List<BGANIMFRAME_DEF> frameList = bgAnim.frameList;
         bgAnim.flags |= BGANIM_DEF.ANIM_FLAG.StartPlay;
-        bgAnim.curFrame = frameStart << 8;
+        bgAnim.curFrame = frameStart * 256;
         bgAnim.counter = 0;
         frameList[frameEnd].value = -1;
         if ((bgAnim.frameRate > 0 && frameEnd < frameStart) || (bgAnim.frameRate < 0 && frameEnd > frameStart))
@@ -1264,6 +1264,7 @@ public class FieldMap : HonoBehavior
         //short num3 = (short)(overlayPtr.curZ + (ushort)bgScene.curZ);
         if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
         {
+            if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Loop");
             short anchorX;
             short anchorY;
             if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
@@ -1303,6 +1304,7 @@ public class FieldMap : HonoBehavior
                 Vector3 cacheLocalPos = bgsprite_LOC_DEF.cacheLocalPos;
                 if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
                 {
+                    if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored");
                     short anchoredX = (short)(screenX + (short)bgsprite_LOC_DEF.offX);
                     if (overlayPtr.dX != 0)
                     {
@@ -1381,13 +1383,15 @@ public class FieldMap : HonoBehavior
         }
         else if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
         {
+
+            if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset");
             short anchorX;
             short anchorY;
             if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
             {
                 anchorX = this.scrollWindowPos[(int)overlayPtr.viewportNdx][0];
                 anchorY = this.scrollWindowPos[(int)overlayPtr.viewportNdx][1];
-                if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset | anchorX:" + anchorX + " anchorY:" + anchorY);
+                //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset | anchorX:" + anchorX + " anchorY:" + anchorY);
             }
             else
             {
@@ -1475,13 +1479,13 @@ public class FieldMap : HonoBehavior
         overlayPtr.scrY = screenY;
     }
 
-    public void EBG_scene2DScroll(Int16 destX, Int16 destY, UInt16 frameCount, UInt32 scrollType)
+    public void EBG_scene2DScroll(float destX, float destY, UInt16 frameCount, UInt32 scrollType)
     {
         if (!IsActive)
             return;
 
-        this.startPoint[0] = (Int16)this.curVRP[0];
-        this.startPoint[1] = (Int16)this.curVRP[1];
+        this.startPoint[0] = this.curVRP[0];
+        this.startPoint[1] = this.curVRP[1];
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
         if (Configuration.Graphics.WidescreenSupport)
         {
@@ -1505,8 +1509,8 @@ public class FieldMap : HonoBehavior
             return;
 
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
-        this.startPoint[0] = (Int16)this.curVRP[0];
-        this.startPoint[1] = (Int16)this.curVRP[1];
+        this.startPoint[0] = (float)this.curVRP[0];
+        this.startPoint[1] = (float)this.curVRP[1];
         Vector3 vertex = Vector3.zero;
         if (FF9StateSystem.Common.FF9.fldMapNo == 1656 && this.playerController == null)
         {
@@ -1522,7 +1526,7 @@ public class FieldMap : HonoBehavior
                 this.playerController = ((Actor)PersistenSingleton<EventEngine>.Instance.GetObjUID(2)).fieldMapActorController;
             }
             vertex = this.playerController.curPos;
-            vertex.y += (Single)this.charAimHeight;
+            vertex.y += (float)this.charAimHeight;
             vertex = PSX.CalculateGTE_RTPT(vertex, Matrix4x4.identity, bgcam_DEF.GetMatrixRT(), bgcam_DEF.GetViewDistance(), this.offset);
         }
         else
@@ -1530,23 +1534,13 @@ public class FieldMap : HonoBehavior
             vertex.x += this.offset.x;
             vertex.y += this.offset.y;
         }
-        Single offsetX = (Int32)vertex.x;
-        Single offsetY = (Int32)vertex.y;
-        Single targetX = (bgcam_DEF.w >> 1) + bgcam_DEF.centerOffset[0] + (offsetX - HalfFieldWidth);
-        Single targetY = (bgcam_DEF.h >> 1) + bgcam_DEF.centerOffset[1] + (offsetY - HalfFieldHeight);
-        targetX -= this.offset.x - HalfFieldWidth;
-        targetY += this.offset.y - HalfFieldHeight;
-        targetY *= -1f;
-        if (targetX < bgcam_DEF.vrpMinX)
-            targetX = bgcam_DEF.vrpMinX;
-        else if (targetX > bgcam_DEF.vrpMaxX)
-            targetX = bgcam_DEF.vrpMaxX;
-        if (targetY < bgcam_DEF.vrpMinY)
-            targetY = bgcam_DEF.vrpMinY;
-        else if (targetY > bgcam_DEF.vrpMaxY)
-            targetY = bgcam_DEF.vrpMaxY;
-        this.endPoint[0] = (Int16)targetX;
-        this.endPoint[1] = (Int16)targetY;
+        float targetX = (bgcam_DEF.w / 2) + bgcam_DEF.centerOffset[0] + vertex.x - this.offset.x;
+        float targetY = -( (bgcam_DEF.h / 2) + bgcam_DEF.centerOffset[1] + vertex.y + this.offset.y - (2 * HalfFieldHeight) );
+        targetX = Mathf.Clamp(targetX, bgcam_DEF.vrpMinX, bgcam_DEF.vrpMaxX);
+        targetY = Mathf.Clamp(targetY, bgcam_DEF.vrpMinY, bgcam_DEF.vrpMaxY);
+        this.endPoint[0] = targetX;
+        this.endPoint[1] = targetY;
+
         if (frameCount == -1)
             this.frameCount = 30;
         else
@@ -1559,7 +1553,7 @@ public class FieldMap : HonoBehavior
         if (scrollType != UInt32.MaxValue)
             IsRotationScroll = scrollType == (UInt64)FieldMapFlags.RotationScroll;
 
-        if (dbug) Log.Message("EBG_scene2DScrollRelease | targetX:" + targetX + " targetX:" + targetX);
+        if (dbug) Log.Message("EBG_scene2DScrollRelease | targetX:" + targetX + " targetX:" + targetY);
     }
 
     public Int32 EBG_animationService()
