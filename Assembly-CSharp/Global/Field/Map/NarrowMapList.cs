@@ -80,6 +80,7 @@ public static class NarrowMapList
         {2706,-1},   // Pandemonium, you're not alone sequence, several glitches
         {2707,-1},   // Pandemonium, you're not alone sequence, several glitches
         {2708,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2711,0},    // Pandemonium, people are waiting in line after Kuja is defeated
         {2905,154}   // MBG118 - Memoria pink castle
     };
 
@@ -315,12 +316,12 @@ public static class NarrowMapList
         1609, // Mdn. Sari/Cove
         1610, // Mdn. Sari/Cove
         1650,
-        1651, // Iifa Tree/Tree Roots
+        //1651, // Iifa Tree/Tree Roots
         1652, // Iifa Tree/Roots
         1655, // Iifa Tree/Tree Path
         1656, // Iifa Tree/Eidolon Moun
         1657, // Iifa Tree/Tree Roots
-        1658, // Iifa Tree/Silver Drago
+        1658, // Iifa Tree/Silver Dragon
         1660,
         1661,
         1662,
@@ -339,7 +340,7 @@ public static class NarrowMapList
         1755, // Iifa Tree/Bottom
         1756, // Iifa Tree/Bottom
         1757,
-        1758, // Iifa Tree/Tree Roots
+        //1758, // Iifa Tree/Tree Roots
         1800, // A. Castle/Tomb
         1803, // A. Castle/Guardhouse
         1806, // A. Castle/Hallway
@@ -434,19 +435,14 @@ public static class NarrowMapList
         2513,
         2551,
         2552, // Earth Shrine/Interior
-        2600, // Terra/Hilltop
         2601,
         2602, // Terra/Stepping Stones
-        2605, // Terra/Treetop
         2606, // Terra/Tree base
-        2607, // Terra/Bridge
         2608, // Terra/Event
         2650,
-        2651, // Bran Bal/Entrance
         2654, // Bran Bal/Pond
         2657, // Bran Bal/Storage
         2658,
-        2660, // Bran Bal/Hilltop
         2701, // Pand./Path
         2706,
         2715, // Pand./Event
@@ -639,6 +635,7 @@ public static class NarrowMapList
         {2355,382},
         {2406,382},
         {2451,382},
+        {2602,382},
         {2657,382},
         {2851,382},
         {2855,382},

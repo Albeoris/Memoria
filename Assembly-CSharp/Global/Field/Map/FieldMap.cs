@@ -1659,7 +1659,7 @@ public class FieldMap : HonoBehavior
             BGOVERLAY_DEF bgoverlay_DEF = overlayList[i];
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
             {
-                if (dbug) Log.Message("EBG_sceneServiceScroll | BGOVERLAY_DEF.OVERLAY_FLAG.Loop");
+                if (dbug) Log.Message("EBG_sceneServiceScroll " + i + "  | BGOVERLAY_DEF.OVERLAY_FLAG.Loop");
                 if (bgoverlay_DEF.dX != 0 && bgoverlay_DEF.dX != 32767)
                 {
                     num = ((bgoverlay_DEF.curX - bgoverlay_DEF.orgX) * 256) + (bgoverlay_DEF.fracX % 256) + bgoverlay_DEF.dX;
@@ -1676,7 +1676,7 @@ public class FieldMap : HonoBehavior
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
             {
 
-                if (dbug) Log.Message("EBG_sceneServiceScroll | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset");
+                if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset");
                 if (bgoverlay_DEF.isXOffset != 0)
                 {
                     if (bgoverlay_DEF.dY != 32767)
@@ -1696,30 +1696,40 @@ public class FieldMap : HonoBehavior
             }
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Parallax) != 0)
             {
-                if (dbug) Log.Message("EBG_sceneServiceScroll | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax");
+                //if (dbug) Log.Message("EBG_sceneServiceScroll | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax");
                 num = (bgoverlay_DEF.orgX * 256) + (this.curVRP[0] - this.parallaxOrg[0]) * bgoverlay_DEF.dX;
                 bgoverlay_DEF.curX = num / 256;
                 bgoverlay_DEF.fracX = num % 256;
                 num = (bgoverlay_DEF.orgY * 256) + (this.curVRP[1] - this.parallaxOrg[1]) * bgoverlay_DEF.dY;
                 bgoverlay_DEF.curY = num / 256;
                 bgoverlay_DEF.fracY = num % 256;
-                //if (dbug) Log.Message("EBG_sceneServiceScroll | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax bgoverlay_DEF.fracX:" + bgoverlay_DEF.fracX + " bgoverlay_DEF.fracY:" + bgoverlay_DEF.fracY);
 
-                if (FF9StateSystem.Common.FF9.fldMapNo == 150
-                    || FF9StateSystem.Common.FF9.fldMapNo == 805
-                    || FF9StateSystem.Common.FF9.fldMapNo == 808
-                    || FF9StateSystem.Common.FF9.fldMapNo == 908
-                    || FF9StateSystem.Common.FF9.fldMapNo == 1009
-                    || FF9StateSystem.Common.FF9.fldMapNo == 1108
-                    || FF9StateSystem.Common.FF9.fldMapNo == 1251
-                    || FF9StateSystem.Common.FF9.fldMapNo == 1651
-                    || FF9StateSystem.Common.FF9.fldMapNo == 1758
-                    || FF9StateSystem.Common.FF9.fldMapNo == 2851
-                    || FF9StateSystem.Common.FF9.fldMapNo == 2952
-                    || FF9StateSystem.Common.FF9.fldMapNo == 2953
-                    || FF9StateSystem.Common.FF9.fldMapNo == 2720
-                    || FF9StateSystem.Common.FF9.fldMapNo == 3100
-                    || FF9StateSystem.Common.FF9.fldMapNo == 1908)
+                short map = FF9StateSystem.Common.FF9.fldMapNo;
+
+                if (Configuration.Graphics.InitializeWidescreenSupport())
+                {
+                    switch (map)
+                    {
+                        case 1758: // 448
+                            bgoverlay_DEF.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgoverlay_DEF.curX -= 4; break;
+                        case 2600: // 464/416
+                            bgoverlay_DEF.transform.localScale = new Vector3(1.12f, 1.12f, 1f); bgoverlay_DEF.curX -= 24; break;
+                        case 2602: // 384/328
+                            bgoverlay_DEF.transform.localScale = new Vector3(1.05f, 1.05f, 1f); bgoverlay_DEF.curX = 28; break;
+                        case 2605: // 400/368
+                            bgoverlay_DEF.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgoverlay_DEF.curX -= 16; break;
+                        case 2607: // 416/400
+                            bgoverlay_DEF.transform.localScale = new Vector3(1.05f, 1.05f, 1f); bgoverlay_DEF.curX -= 8; bgoverlay_DEF.curY -= 8; break;
+                        case 2651:
+                            bgoverlay_DEF.transform.localScale = new Vector3(1.2f, 1.2f, 1f); bgoverlay_DEF.curX -= 56; bgoverlay_DEF.curY -= 16; break;
+                        case 2660: // 536/528
+                            bgoverlay_DEF.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgoverlay_DEF.curX -= 8; break;
+                    }
+                }
+                if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax bgoverlay_DEF.fracX:" + bgoverlay_DEF.fracX + " bgoverlay_DEF.fracY:" + bgoverlay_DEF.fracY + " bgoverlay_DEF.transform.localScale:" + bgoverlay_DEF.transform.localScale.x + "/" + bgoverlay_DEF.transform.localScale.y);
+
+                if (map == 150 || map == 805 || map == 808 || map == 908 || map == 1009 || map == 1108 || map == 1251 || map == 1651 
+                    || map == 1758 || map == 1908 || map == 2720 || map == 2851 || map == 2952 || map == 2953 || map == 3100)
                 {
                     bgoverlay_DEF.isSpecialParallax = true;
                     bgoverlay_DEF.parallaxCurX = bgoverlay_DEF.curX;
@@ -1849,7 +1859,7 @@ public class FieldMap : HonoBehavior
         float ScaleFactor = (float)this.scrollWindowAlphaX[(Int32)oPtr.viewportNdx] * 256;
         if (ScaleFactor == 65536)
         {
-            return (float)oPtr.curX;
+            return oPtr.curX;
         }
         if (ScaleFactor < 0)
         {
@@ -1864,7 +1874,7 @@ public class FieldMap : HonoBehavior
             oPtr.curX = scaledValue / 65536;
             oPtr.fracX = (scaledValue / 256) % 256;
         }
-        return (float)oPtr.curX;
+        return oPtr.curX;
     }
 
     public float EBG_alphaScaleY(BGOVERLAY_DEF oPtr, float val)
