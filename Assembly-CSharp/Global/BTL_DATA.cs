@@ -172,7 +172,8 @@ public partial class BTL_DATA
 	public List<SupportingAbilityFeature> saMonster;
 
 	public Int32 fig_regene_hp;
-	public Int32 fig_poison_hp;
+    public Int32 fig_regene_mp;
+    public Int32 fig_poison_hp;
 	public Int32 fig_poison_mp;
 	public Byte fig_stat_info;
 

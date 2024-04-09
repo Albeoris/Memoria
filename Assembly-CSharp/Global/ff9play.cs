@@ -291,6 +291,8 @@ public static class ff9play
         play.max.hp = skill.max_hp;
         play.max.mp = skill.max_mp;
         play.mpCostFactor = 100;
+        play.mpCostFactorSkill1 = 100;
+        play.mpCostFactorSkill2 = 100;
         play.maxHpLimit = ff9play.FF9PLAY_HP_MAX;
         play.maxMpLimit = ff9play.FF9PLAY_MP_MAX;
         play.maxDamageLimit = ff9play.FF9PLAY_DAMAGE_MAX;
@@ -422,7 +424,7 @@ public static class ff9play
         CharacterEquipment newSet = DefaultEquipment[equipmentId];
         CharacterEquipment characterInitialSet = null;
         if (!isNewPlayer)
-		{
+        {
             if (equipmentId == EquipmentSetId.Blank2)
                 characterInitialSet = DefaultEquipment[EquipmentSetId.Blank];
             else if (equipmentId == EquipmentSetId.Marcus2)
@@ -491,7 +493,7 @@ public static class ff9play
         ff9play.FF9Play_UpdateSerialNumber(play);
         if (!update_lv && equipSetId == EquipmentSetId.NONE)
             return;
-        
+
         if (update_lv)
         {
             Int32 lv = Mathf.Max(play.level, FF9Play_GetAvgLevel(play.Index));
