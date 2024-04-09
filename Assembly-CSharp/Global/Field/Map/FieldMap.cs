@@ -1280,12 +1280,12 @@ public class FieldMap : HonoBehavior
             short viewportHeight = this.scrollWindowDim[(int)overlayPtr.viewportNdx][1];
             if (overlayPtr.dX < 0)
             {
-                short deltaX = (short)(256 - (overlayPtr.dX << 8 >> 8));
+                short deltaX = (short)(256 - ((short)(overlayPtr.dX) << 8 >> 8));
                 screenX = (short)((((int)overlayPtr.curX << 8 | (int)overlayPtr.fracX) + (int)deltaX >> 8) + (int)bgScene.scrX);
             }
             if (overlayPtr.dY < 0)
             {
-                short deltaY = (short)(256 - (overlayPtr.dX << 8 >> 8));
+                short deltaY = (short)(256 - ((short)(overlayPtr.dX) << 8 >> 8));
                 screenY = (short)((((int)overlayPtr.curY << 8 | (int)overlayPtr.fracY) + (int)deltaY >> 8) + (int)bgScene.scrY);
             }
             if (overlayPtr.dX != 0)
@@ -1422,7 +1422,7 @@ public class FieldMap : HonoBehavior
                     else if (yOffset <= -16)
                     {
                         yOffset = (short)(yOffset + (short)overlayPtr.h);
-                        xOffset = overlayPtr.dX;
+                        xOffset = (short)(overlayPtr.dX);
                     }
                     short xOffsetAdjusted = (short)(screenX + (short)bgsprite_LOC_DEF2.offX + xOffset);
                     localPosition.x = (float)xOffsetAdjusted;
@@ -1440,7 +1440,7 @@ public class FieldMap : HonoBehavior
                     else if (xOffsetAdjusted <= -16)
                     {
                         xOffsetAdjusted = (short)(xOffsetAdjusted + (short)overlayPtr.w);
-                        xOffset = overlayPtr.dY;
+                        xOffset = (short)(overlayPtr.dY);
                     }
                     short num14 = (short)(screenY + (short)bgsprite_LOC_DEF2.offY + xOffset);
                     localPosition.x = (float)(xOffsetAdjusted + anchorX);
@@ -1661,23 +1661,24 @@ public class FieldMap : HonoBehavior
         List<BGOVERLAY_DEF> overlayList = scenePtr.overlayList;
         for (Int32 i = 0; i < overlayCount; i++)
         {
+            float num;
             BGOVERLAY_DEF bgoverlay_DEF = overlayList[i];
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
             {
                 if (dbug) Log.Message("EBG_sceneServiceScroll | BGOVERLAY_DEF.OVERLAY_FLAG.Loop");
                 if (bgoverlay_DEF.dX != 0 && bgoverlay_DEF.dX != 32767)
                 {
-                    Int32 num = (Int32)(bgoverlay_DEF.curX - bgoverlay_DEF.orgX) << 8 | (Int32)(bgoverlay_DEF.fracX & 255);
+                    num = (Int32)(bgoverlay_DEF.curX - bgoverlay_DEF.orgX) * 256 | (Int32)((short)(bgoverlay_DEF.fracX) & 255);
                     num += (Int32)bgoverlay_DEF.dX;
-                    bgoverlay_DEF.curX = (Int16)((num >> 8) % (Int32)bgoverlay_DEF.w + (Int32)bgoverlay_DEF.orgX);
-                    bgoverlay_DEF.fracX = (Int16)(num & 255);
+                    bgoverlay_DEF.curX = (Int16)((num / 256) % (Int32)bgoverlay_DEF.w + (Int32)bgoverlay_DEF.orgX);
+                    bgoverlay_DEF.fracX = (Int16)(num % 256);
                 }
                 if (bgoverlay_DEF.dY != 0 && bgoverlay_DEF.dY != 32767)
                 {
-                    Int32 num = (Int32)(bgoverlay_DEF.curY - bgoverlay_DEF.orgY) << 8 | (Int32)(bgoverlay_DEF.fracY & 255);
+                    num = (Int32)(bgoverlay_DEF.curY - bgoverlay_DEF.orgY) * 256 | (Int32)((short)(bgoverlay_DEF.fracY) & 255);
                     num += (Int32)bgoverlay_DEF.dY;
-                    bgoverlay_DEF.curY = (Int16)((num >> 8) % (Int32)bgoverlay_DEF.h + (Int32)bgoverlay_DEF.orgY);
-                    bgoverlay_DEF.fracY = (Int16)(num & 255);
+                    bgoverlay_DEF.curY = (Int16)((num / 256) % (Int32)bgoverlay_DEF.h + (Int32)bgoverlay_DEF.orgY);
+                    bgoverlay_DEF.fracY = (Int16)(num % 256);
                 }
             }
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
@@ -1688,28 +1689,29 @@ public class FieldMap : HonoBehavior
                 {
                     if (bgoverlay_DEF.dY != 32767)
                     {
-                        Int32 num = (Int32)bgoverlay_DEF.curY << 8 | (Int32)(bgoverlay_DEF.fracY & 255);
+                        num = (Int32)bgoverlay_DEF.curY * 256 | (Int32)((short)(bgoverlay_DEF.fracY) % 256);
                         num += (Int32)bgoverlay_DEF.dY;
-                        bgoverlay_DEF.curY = (Int16)((num >> 8) % (Int32)bgoverlay_DEF.h);
-                        bgoverlay_DEF.fracY = (Int16)(num & 255);
+                        bgoverlay_DEF.curY = (Int16)((num / 256) % (Int32)bgoverlay_DEF.h);
+                        bgoverlay_DEF.fracY = (Int16)(num % 256);
                     }
                 }
                 else if (bgoverlay_DEF.dX != 32767)
                 {
-                    Int32 num = (Int32)bgoverlay_DEF.curX << 8 | (Int32)(bgoverlay_DEF.fracX & 255);
+                    num = (Int32)bgoverlay_DEF.curX * 256 | (Int32)((short)(bgoverlay_DEF.fracX) % 256);
                     num += (Int32)bgoverlay_DEF.dX;
-                    bgoverlay_DEF.curX = (Int16)((num >> 8) % (Int32)bgoverlay_DEF.w);
-                    bgoverlay_DEF.fracX = (Int16)(num & 255);
+                    bgoverlay_DEF.curX = (Int16)((num / 256) % (Int32)bgoverlay_DEF.w);
+                    bgoverlay_DEF.fracX = (Int16)(num % 256);
                 }
             }
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Parallax) != 0)
             {
-                Int32 num = (Int32)((Single)((short)(bgoverlay_DEF.orgX) << 8) + (this.curVRP[0] - this.parallaxOrg[0]) * (Single)bgoverlay_DEF.dX);
-                bgoverlay_DEF.curX = (Int16)(num >> 8);
-                bgoverlay_DEF.fracX = (Int16)(num & 255);
-                num = (Int32)((Single)((short)(bgoverlay_DEF.orgY) << 8) + (this.curVRP[1] - this.parallaxOrg[1]) * (Single)bgoverlay_DEF.dY);
-                bgoverlay_DEF.curY = (Int16)(num >> 8);
-                bgoverlay_DEF.fracY = (Int16)(num & 255);
+                if (dbug) Log.Message("EBG_sceneServiceScroll | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax");
+                num = (bgoverlay_DEF.orgX * 256) + (this.curVRP[0] - this.parallaxOrg[0]) * bgoverlay_DEF.dX;
+                bgoverlay_DEF.curX = num / 256;
+                bgoverlay_DEF.fracX = num % 256;
+                num = ((short)(bgoverlay_DEF.orgY) * 256) + (this.curVRP[1] - this.parallaxOrg[1]) * bgoverlay_DEF.dY;
+                bgoverlay_DEF.curY = num / 256;
+                bgoverlay_DEF.fracY = num % 256;
                 if (FF9StateSystem.Common.FF9.fldMapNo == 150
                     || FF9StateSystem.Common.FF9.fldMapNo == 805
                     || FF9StateSystem.Common.FF9.fldMapNo == 808
@@ -1727,12 +1729,12 @@ public class FieldMap : HonoBehavior
                     || FF9StateSystem.Common.FF9.fldMapNo == 1908)
                 {
                     bgoverlay_DEF.isSpecialParallax = true;
-                    Single num2 = (Single)(bgoverlay_DEF.orgX * 256) + (this.curVRP[0] - this.parallaxOrg[0]) * (Single)bgoverlay_DEF.dX;
-                    bgoverlay_DEF.parallaxCurX = num2 / 256f;
-                    bgoverlay_DEF.fracX = (Int16)((Int32)num2 & 255);
-                    num2 = (Single)(bgoverlay_DEF.orgY * 256) + (this.curVRP[1] - this.parallaxOrg[1]) * (Single)bgoverlay_DEF.dY;
-                    bgoverlay_DEF.parallaxCurY = num2 / 256f;
-                    bgoverlay_DEF.fracY = (Int16)((Int32)num2 & 255);
+                    num = (bgoverlay_DEF.orgX * 256) + (this.curVRP[0] - this.parallaxOrg[0]) * bgoverlay_DEF.dX;
+                    bgoverlay_DEF.parallaxCurX = num / 256f;
+                    bgoverlay_DEF.fracX = num % 256;
+                    num = (bgoverlay_DEF.orgY * 256) + (this.curVRP[1] - this.parallaxOrg[1]) * bgoverlay_DEF.dY;
+                    bgoverlay_DEF.parallaxCurY = num / 256f;
+                    bgoverlay_DEF.fracY = num % 256;
                 }
             }
         }

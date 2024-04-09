@@ -85,11 +85,11 @@ public partial class BGOVERLAY_DEF
 	public Int16 scrX;
 	public Int16 scrY;
 
-	public Int16 dX;
-	public Int16 dY;
+	public float dX;
+	public float dY;
 
-	public Int16 fracX;
-	public Int16 fracY;
+	public float fracX;
+	public float fracY;
 
 	public Byte camNdx;
 	public Byte isXOffset;
@@ -115,8 +115,8 @@ public partial class BGOVERLAY_DEF
 
     public Boolean isSpecialParallax;
 
-	public Single parallaxCurX;
-	public Single parallaxCurY;
+	public float parallaxCurX;
+	public float parallaxCurY;
 
 	public Boolean isMemoria = false;
 	public Vector2 memoriaSize;
