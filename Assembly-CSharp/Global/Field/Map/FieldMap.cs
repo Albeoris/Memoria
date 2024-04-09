@@ -1465,15 +1465,15 @@ public class FieldMap : HonoBehavior
             {
                 parallaxX = overlayPtr.parallaxCurX;
                 parallaxY = overlayPtr.parallaxCurY;
-                if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax && isSpecialParallax | parallaxX:" + parallaxX + " parallaxY:" + parallaxY);
+                //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax && isSpecialParallax | parallaxX:" + parallaxX + " parallaxY:" + parallaxY);
             }
             else
             {
                 parallaxX = overlayPtr.curX;
                 parallaxY = overlayPtr.curY;
-                if (dbug) Log.Message("UpdateOverlay | !BGOVERLAY_DEF.OVERLAY_FLAG.Parallax || !isSpecialParallax | parallaxX:" + parallaxX + " parallaxY:" + parallaxY);
+                //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax || !isSpecialParallax | parallaxX:" + parallaxX + " parallaxY:" + parallaxY);
             }
-            overlayPtr.transform.localPosition = new Vector3(parallaxX * 1f, parallaxY * 1f, overlayPtr.transform.localPosition.z);
+            overlayPtr.transform.localPosition = new Vector3(parallaxX, parallaxY, overlayPtr.transform.localPosition.z);
         }
         overlayPtr.scrX = screenX;
         overlayPtr.scrY = screenY;
@@ -1655,47 +1655,52 @@ public class FieldMap : HonoBehavior
         List<BGOVERLAY_DEF> overlayList = scenePtr.overlayList;
         for (Int32 i = 0; i < overlayCount; i++)
         {
-            float num;
+            
             BGOVERLAY_DEF bgoverlay_DEF = overlayList[i];
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
             {
+                Int32 num;
                 if (dbug) Log.Message("EBG_sceneServiceScroll " + i + "  | BGOVERLAY_DEF.OVERLAY_FLAG.Loop");
                 if (bgoverlay_DEF.dX != 0 && bgoverlay_DEF.dX != 32767)
                 {
-                    num = ((bgoverlay_DEF.curX - bgoverlay_DEF.orgX) * 256) + (bgoverlay_DEF.fracX % 256) + bgoverlay_DEF.dX;
-                    bgoverlay_DEF.curX = (num / 256) % bgoverlay_DEF.w + bgoverlay_DEF.orgX;
-                    bgoverlay_DEF.fracX = num % 256;
+                    num = (Int32)(bgoverlay_DEF.curX - bgoverlay_DEF.orgX) << 8 | (Int32)((short)(bgoverlay_DEF.fracX) & 255);
+                    num += (Int32)bgoverlay_DEF.dX;
+                    bgoverlay_DEF.curX = (Int16)((num >> 8) % (Int32)bgoverlay_DEF.w + (Int32)bgoverlay_DEF.orgX);
+                    bgoverlay_DEF.fracX = (Int16)(num & 255);
                 }
                 if (bgoverlay_DEF.dY != 0 && bgoverlay_DEF.dY != 32767)
                 {
-                    num = ((bgoverlay_DEF.curY - bgoverlay_DEF.orgY) * 256) + (bgoverlay_DEF.fracY % 256) + bgoverlay_DEF.dY;
-                    bgoverlay_DEF.curY = (num / 256) % bgoverlay_DEF.h + bgoverlay_DEF.orgY;
-                    bgoverlay_DEF.fracY = num % 256;
+                    num = (Int32)(bgoverlay_DEF.curY - bgoverlay_DEF.orgY) << 8 | (Int32)((short)(bgoverlay_DEF.fracY) & 255);
+                    num += (Int32)bgoverlay_DEF.dY;
+                    bgoverlay_DEF.curY = (Int16)((num >> 8) % (Int32)bgoverlay_DEF.h + (Int32)bgoverlay_DEF.orgY);
+                    bgoverlay_DEF.fracY = (Int16)(num & 255);
                 }
             }
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
             {
-
+                Int32 num;
                 if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset");
                 if (bgoverlay_DEF.isXOffset != 0)
                 {
                     if (bgoverlay_DEF.dY != 32767)
                     {
-                        num = (bgoverlay_DEF.curY * 256) + (bgoverlay_DEF.fracY % 256) + bgoverlay_DEF.dY;
-                        bgoverlay_DEF.curY = (num / 256) % bgoverlay_DEF.h;
-                        bgoverlay_DEF.fracY = num % 256;
+                        num = (Int32)bgoverlay_DEF.curY << 8 | (Int32)((short)(bgoverlay_DEF.fracY) & 255);
+                        num += (Int32)bgoverlay_DEF.dY;
+                        bgoverlay_DEF.curY = (Int16)((num >> 8) % (Int32)bgoverlay_DEF.h);
+                        bgoverlay_DEF.fracY = (Int16)(num & 255);
                     }
                 }
                 else if (bgoverlay_DEF.dX != 32767)
                 {
-                    num = bgoverlay_DEF.curX * 256 + (bgoverlay_DEF.fracX % 256);
-                    num += bgoverlay_DEF.dX;
-                    bgoverlay_DEF.curX = (num / 256) % (Int32)bgoverlay_DEF.w;
-                    bgoverlay_DEF.fracX = num % 256;
+                    num = (Int32)bgoverlay_DEF.curX << 8 | (Int32)((short)(bgoverlay_DEF.fracX) & 255);
+                    num += (Int32)bgoverlay_DEF.dX;
+                    bgoverlay_DEF.curX = (Int16)((num >> 8) % (Int32)bgoverlay_DEF.w);
+                    bgoverlay_DEF.fracX = (Int16)(num & 255);
                 }
             }
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Parallax) != 0)
             {
+                float num;
                 //if (dbug) Log.Message("EBG_sceneServiceScroll | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax");
                 num = (bgoverlay_DEF.orgX * 256) + (this.curVRP[0] - this.parallaxOrg[0]) * bgoverlay_DEF.dX;
                 bgoverlay_DEF.curX = num / 256;
@@ -1710,6 +1715,8 @@ public class FieldMap : HonoBehavior
                 {
                     switch (map)
                     {
+                        case 1651: // 448
+                            bgoverlay_DEF.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgoverlay_DEF.curX -= 4; break;
                         case 1758: // 448
                             bgoverlay_DEF.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgoverlay_DEF.curX -= 4; break;
                         case 2600: // 464/416
@@ -1726,7 +1733,7 @@ public class FieldMap : HonoBehavior
                             bgoverlay_DEF.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgoverlay_DEF.curX -= 8; break;
                     }
                 }
-                if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax bgoverlay_DEF.fracX:" + bgoverlay_DEF.fracX + " bgoverlay_DEF.fracY:" + bgoverlay_DEF.fracY + " bgoverlay_DEF.transform.localScale:" + bgoverlay_DEF.transform.localScale.x + "/" + bgoverlay_DEF.transform.localScale.y);
+                //if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax bgoverlay_DEF.fracX:" + bgoverlay_DEF.fracX + " bgoverlay_DEF.fracY:" + bgoverlay_DEF.fracY + " bgoverlay_DEF.transform.localScale:" + bgoverlay_DEF.transform.localScale.x + "/" + bgoverlay_DEF.transform.localScale.y);
 
                 if (map == 150 || map == 805 || map == 808 || map == 908 || map == 1009 || map == 1108 || map == 1251 || map == 1651 
                     || map == 1758 || map == 1908 || map == 2720 || map == 2851 || map == 2952 || map == 2953 || map == 3100)
