@@ -73,8 +73,10 @@ namespace Global.Sound.SoLoud
         public override void SdSoundSystem_Release()
         {
             SoundLib.Log("Release");
-            // Can cause crashes on close? Cleared by system anyway
-            // soloud.deinit();
+
+            soloud.stopAll();
+            streams.Clear();
+            soloud.deinit();
         }
 
         public override Int32 SdSoundSystem_Suspend()
@@ -122,7 +124,7 @@ namespace Global.Sound.SoLoud
         public override Int32 SdSoundSystem_RemoveData(Int32 bankID)
         {
             SoundLib.Log($"RemoveData({bankID})");
-            return sounds.Remove(bankID) ? 1 : 0;
+            return streams.Remove(bankID) ? 1 : 0;
         }
 
         public override Int32 SdSoundSystem_CreateSound(Int32 bankID)

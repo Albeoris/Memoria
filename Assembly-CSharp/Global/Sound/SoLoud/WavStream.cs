@@ -15,7 +15,7 @@ namespace Global.Sound.SoLoud
         }
 
         [DllImport("soloud", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern IntPtr WavStream_destroy(IntPtr aObjHandle);
+        internal static extern void WavStream_destroy(IntPtr aObjHandle);
         ~WavStream()
         {
             WavStream_destroy(objhandle);
