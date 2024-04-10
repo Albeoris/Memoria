@@ -1458,10 +1458,12 @@ public class FieldMap : HonoBehavior
             }
             overlayPtr.transform.localPosition = new Vector3((float)overlayPtr.curX * 1f, (float)overlayPtr.curY * 1f, overlayPtr.transform.localPosition.z);
         }
-        else if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Parallax) != 0)
+        else
         {
             overlayPtr.transform.localPosition = new Vector3(overlayPtr.curX, overlayPtr.curY, overlayPtr.transform.localPosition.z);
         }
+
+
         overlayPtr.scrX = screenX;
         overlayPtr.scrY = screenY;
     }
