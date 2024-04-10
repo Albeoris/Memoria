@@ -443,7 +443,7 @@ public class FieldMap : HonoBehavior
 
     public static Boolean IsNarrowMap()
     {
-        return NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxScreenWidth());
+        return NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxFieldWidth());
     }
 
     public void LoadFieldMap(String name)

@@ -66,10 +66,10 @@ public static class NarrowMapList
         {352,3},     // Arrival at Dali: vivi visible before sleeping
         {355,18},    // Steiner to the barmaid
         {600,32},    // Throne, meet cid
-        {606,0},     // telescope
+        //{606,0},     // telescope
         {615,57},    // Meet garnet on Lindblum castle
+        {1206,0},    // Queen and Kuja salon Alex, drug garnet
         {1554,7},    // MBG109 - roots
-        //{1600,9999}, // First time Madain Sari
         {1602,16},   // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
         {1823,331},  // Garnet coronation, garnet visible
         {1815,0},    // Love quiproquo at the docks
@@ -499,10 +499,11 @@ public static class NarrowMapList
     public static readonly Dictionary<int, int> mapCameraMargin = new Dictionary<int, int>
     {
         //{mapNo,pixels on each side to crop because of scrollable}
-        {1051,8},
-        {1057,16},
+        {1051,9},
+        {1054,16},
+        {1057,17},
         {1058,16},
-        {1060,16},
+        {1060,17},
         {1652,16},
         {1653,16},
         //{154,16},
@@ -511,6 +512,10 @@ public static class NarrowMapList
     public static readonly Dictionary<int, int> actualNarrowMapWidthDict = new Dictionary<int, int>
     {
         //{mapNo,(actualWidth - 2)}
+        {163,318},
+        {606,318},
+        {1050,316},
+
         {203,334},
         {760,334},
         {814,334},
@@ -550,7 +555,7 @@ public static class NarrowMapList
         {1370,350},
         {1508,350},
         {1650,350},
-        {1657,350},
+        {1657,348},
         {1752,350},
         {1757,350},
         {1863,350},
