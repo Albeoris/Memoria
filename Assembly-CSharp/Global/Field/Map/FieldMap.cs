@@ -715,7 +715,7 @@ public class FieldMap : HonoBehavior
                 CamPosition = (float)Math.Max(threshmargin, CamPosition);
                 CamPosition = (float)Math.Min(threshright, CamPosition);
             }
-            else if (map == 1205 || map == 1652 || map == 2552) // A. Castle/Chapel, Iifa Tree/Roots or Earth Shrine/Interior
+            else if (map == 1205 || map == 1652 || map == 2552 || map == 154 || map == 1215 || map == 1807) // A. Castle/Chapel, Iifa Tree/Roots, Earth Shrine/Interior, Alex grand hall
             {
                 if (map == 1652 && this.camIdx == 0) // Iifa Tree/Roots
                     threshmargin += 16;

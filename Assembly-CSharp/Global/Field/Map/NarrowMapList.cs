@@ -257,7 +257,7 @@ public static class NarrowMapList
         1213, // A. Castle/Guardhouse
         1214, // A. Castle/Hallway
         1215,
-        1216,
+        //1216,
         1218,
         1221, // A. Castle/Courtyard
         1222, // A. Castle/Courtyard
@@ -345,7 +345,7 @@ public static class NarrowMapList
         1803, // A. Castle/Guardhouse
         1806, // A. Castle/Hallway
         1807, // A. Castle/Hallway
-        1808,
+        //1808,
         1810,
         1813, // A. Castle/Courtyard
         1814, // A. Castle/Courtyard
@@ -456,7 +456,6 @@ public static class NarrowMapList
         2901, // Memoria/Entrance
         2902, // Memoria/Stairs of Time
         2904, // Memoria/Outer Path
-        //2905,
         2906,
         2908, // Memoria/Time Interval
         2909, // Memoria/Ruins
@@ -512,10 +511,7 @@ public static class NarrowMapList
     public static readonly Dictionary<int, int> actualNarrowMapWidthDict = new Dictionary<int, int>
     {
         //{mapNo,(actualWidth - 2)}
-        //{153,430},
         {203,334},
-        //{502,334},
-        //{503,334},
         {760,334},
         {814,334},
         {816,334},
@@ -699,10 +695,10 @@ public static class NarrowMapList
         {3005,398},
         {3055,398},
         {1205,384},
-        //{154,352},
-        //{1215,352},
+        {154,352},
+        {1215,352},
         {1805,352},
-        //{1807,352},
+        {1807,352},
         {1652,336},
         {2552,352},
     };
