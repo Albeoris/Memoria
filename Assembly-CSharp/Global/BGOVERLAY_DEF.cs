@@ -115,9 +115,6 @@ public partial class BGOVERLAY_DEF
 
     public Boolean isSpecialParallax;
 
-	public float parallaxCurX;
-	public float parallaxCurY;
-
 	public Boolean isMemoria = false;
 	public Vector2 memoriaSize;
 	public Texture2D memoriaImage;
