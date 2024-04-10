@@ -1659,26 +1659,22 @@ public class FieldMap : HonoBehavior
                 }
                 if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.Loop | curX:" + bgoverlay_DEF.curX + " curY:" + bgoverlay_DEF.curY);
             }
-            if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
+            if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0) // loop in diagonal. Example 816
             {
-                Int32 num;
+                float num;
                 if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset");
                 if (bgoverlay_DEF.isXOffset != 0)
                 {
-                    if (bgoverlay_DEF.dY != 32767)
+                    if (bgoverlay_DEF.dY != 32767f)
                     {
-                        num = (Int32)bgoverlay_DEF.curY << 8 | (Int32)((short)(bgoverlay_DEF.fracY) & 255);
-                        num += (Int32)bgoverlay_DEF.dY;
-                        bgoverlay_DEF.curY = (Int16)((num >> 8) % (Int32)bgoverlay_DEF.h);
-                        bgoverlay_DEF.fracY = (Int16)(num & 255);
+                        num = (bgoverlay_DEF.curY * 256) + bgoverlay_DEF.dY;
+                        bgoverlay_DEF.curY = (num / 256) % bgoverlay_DEF.h;
                     }
                 }
-                else if (bgoverlay_DEF.dX != 32767)
+                else if (bgoverlay_DEF.dX != 32767f)
                 {
-                    num = (Int32)bgoverlay_DEF.curX << 8 | (Int32)((short)(bgoverlay_DEF.fracX) & 255);
-                    num += (Int32)bgoverlay_DEF.dX;
-                    bgoverlay_DEF.curX = (Int16)((num >> 8) % (Int32)bgoverlay_DEF.w);
-                    bgoverlay_DEF.fracX = (Int16)(num & 255);
+                    num = (bgoverlay_DEF.curX * 256) + bgoverlay_DEF.dX;
+                    bgoverlay_DEF.curX = (num / 256) % bgoverlay_DEF.w;
                 }
             }
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Parallax) != 0)
@@ -1714,14 +1710,17 @@ public class FieldMap : HonoBehavior
                             bgoverlay_DEF.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgoverlay_DEF.curX -= 8; break;
                     }
                 }
+
+                if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax bgoverlay_DEF.curX" + bgoverlay_DEF.curX + " bgoverlay_DEF.fracY:" + bgoverlay_DEF.curY + " bgoverlay_DEF.transform.localScale:" + bgoverlay_DEF.transform.localScale);
+
                 //if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax bgoverlay_DEF.fracX:" + bgoverlay_DEF.fracX + " bgoverlay_DEF.fracY:" + bgoverlay_DEF.fracY + " bgoverlay_DEF.transform.localScale:" + bgoverlay_DEF.transform.localScale.x + "/" + bgoverlay_DEF.transform.localScale.y);
 
-                if (map == 150 || map == 805 || map == 808 || map == 908 || map == 1009 || map == 1108 || map == 1251 || map == 1651 
+                /*if (map == 150 || map == 805 || map == 808 || map == 908 || map == 1009 || map == 1108 || map == 1251 || map == 1651 
                     || map == 1758 || map == 1908 || map == 2720 || map == 2851 || map == 2952 || map == 2953 || map == 3100)
                 {
                     bgoverlay_DEF.isSpecialParallax = true;
-                }
-                
+                }*/
+
             }
         }
         if ((this.flags & FieldMapFlags.Unknown128) != 0u)

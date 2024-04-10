@@ -9,7 +9,7 @@ public partial class BGOVERLAY_DEF
 	{
 		this.startOffset = 0L;
 		this.spriteList = new List<BGSPRITE_LOC_DEF>();
-		this.isSpecialParallax = false;
+		//this.isSpecialParallax = false;
         this.canCombine = true;
         this.isCreated = false;
     }
@@ -113,7 +113,7 @@ public partial class BGOVERLAY_DEF
     public Boolean canCombine;
     public Boolean isCreated;
 
-    public Boolean isSpecialParallax;
+    //public Boolean isSpecialParallax;
 
 	public Boolean isMemoria = false;
 	public Vector2 memoriaSize;
