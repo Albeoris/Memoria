@@ -7,6 +7,7 @@ using Memoria;
 using Memoria.Scripts;
 using Object = System.Object;
 using Memoria.Prime;
+using Assets.Scripts.Common;
 
 [Flags]
 public enum FieldMapFlags : uint
@@ -2306,7 +2307,7 @@ public class FieldMap : HonoBehavior
             int mapId = FF9StateSystem.Common.FF9.fldMapNo;
             Int32 mapWidth = NarrowMapList.MapWidth(mapId);
             //Log.Message("Configuration.Graphics.WidescreenSupport " + Configuration.Graphics.WidescreenSupport + " CalcPsxFieldWidth() " + CalcPsxFieldWidth() + " PsxScreenWidth 1 " + CalcPsxScreenWidth() + " Screen.width " + Screen.width + " Screen.height " + Screen.height);
-            if (mapWidth <= PsxScreenWidth)
+            if (mapWidth <= PsxScreenWidth && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "BattleMap")
             {
                 PsxFieldWidth = (Int16)mapWidth;
                 PsxScreenWidth = (Int16)mapWidth;
