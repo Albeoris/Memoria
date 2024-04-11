@@ -9,7 +9,6 @@ public partial class BGOVERLAY_DEF
 	{
 		this.startOffset = 0L;
 		this.spriteList = new List<BGSPRITE_LOC_DEF>();
-		//this.isSpecialParallax = false;
         this.canCombine = true;
         this.isCreated = false;
     }
@@ -50,8 +49,8 @@ public partial class BGOVERLAY_DEF
 		this.maxY = reader.ReadInt16();
 		this.scrX = reader.ReadInt16();
 		this.scrY = reader.ReadInt16();
-		this.dX = (float)reader.ReadInt16();
-		this.dY = (float)reader.ReadInt16();
+		this.ParallaxDepthX = reader.ReadInt16();
+		this.ParallaxDepthY = reader.ReadInt16();
 		this.fracX = (float)reader.ReadInt16();
 		this.fracY = (float)reader.ReadInt16();
 		Byte bitPos = 0;
@@ -85,8 +84,8 @@ public partial class BGOVERLAY_DEF
 	public Int16 scrX;
 	public Int16 scrY;
 
-	public float dX;
-	public float dY;
+	public Int16 ParallaxDepthX; // negative is slower (further) than main, positive faster (closer)
+	public Int16 ParallaxDepthY;
 
 	public float fracX;
 	public float fracY;
@@ -112,8 +111,6 @@ public partial class BGOVERLAY_DEF
 
     public Boolean canCombine;
     public Boolean isCreated;
-
-    //public Boolean isSpecialParallax;
 
 	public Boolean isMemoria = false;
 	public Vector2 memoriaSize;

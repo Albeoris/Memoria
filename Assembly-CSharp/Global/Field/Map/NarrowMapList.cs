@@ -437,7 +437,7 @@ public static class NarrowMapList
         2552, // Earth Shrine/Interior
         2601,
         2602, // Terra/Stepping Stones
-        2606, // Terra/Tree base
+        //2606, // Terra/Tree base
         2608, // Terra/Event
         2650,
         2654, // Bran Bal/Pond
