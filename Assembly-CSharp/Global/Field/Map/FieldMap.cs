@@ -769,6 +769,16 @@ public class FieldMap : HonoBehavior
             }
             
         }
+        /*
+        if (CamPosition != Prev_CamPosition)
+        {
+            float delta = Prev_CamPosition - CamPosition;
+            CamPosition = CamPosition + (delta * 0.9f);
+
+
+            Prev_CamPosition = CamPosition;
+        }*/
+
         localPosition.x = CamPosition;
         localPosition.y = bgcam_DEF.centerOffset[1] - this.charOffset.y;
 
@@ -1710,10 +1720,12 @@ public class FieldMap : HonoBehavior
                 //if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax bgoverlay_DEF.curX" + bgoverlay_DEF.curX + " bgoverlay_DEF.fracY:" + bgoverlay_DEF.curY + " bgoverlay_DEF.transform.localScale:" + bgoverlay_DEF.transform.localScale);
             }
         }
+        if ((this.flags & FieldMapFlags.Unknown128) != 0u)
         {
             this.orgVRP[0] = this.curVRP[0];
             this.orgVRP[1] = this.curVRP[1];
             this.flags &= FieldMapFlags.Generic127;
+        }
         return 1;
     }
 
