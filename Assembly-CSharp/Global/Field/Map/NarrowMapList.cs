@@ -500,7 +500,6 @@ public static class NarrowMapList
     {
         //{mapNo,pixels on each side to crop because of scrollable}
         {1051,9},
-        {1054,16},
         {1057,17},
         {1058,16},
         {1060,17},

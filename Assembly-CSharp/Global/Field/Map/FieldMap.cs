@@ -1262,7 +1262,6 @@ public class FieldMap : HonoBehavior
         List<BGSPRITE_LOC_DEF> spriteList = overlayPtr.spriteList;
         short screenX = (short)(overlayPtr.curX + bgScene.scrX);
         short screenY = (short)(overlayPtr.curY + bgScene.scrY);
-        //short num3 = (short)(overlayPtr.curZ + (ushort)bgScene.curZ);
         if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
         {
             //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Loop"); // example: scrolling sky 505
@@ -1543,7 +1542,7 @@ public class FieldMap : HonoBehavior
         if (scrollType != UInt32.MaxValue)
             IsRotationScroll = scrollType == (UInt64)FieldMapFlags.RotationScroll;
 
-        if (dbug) Log.Message("EBG_scene2DScrollRelease | targetX:" + targetX + " targetX:" + targetY);
+        if (dbug) Log.Message("EBG_scene2DScrollRelease | targetX:" + targetX + " targetY:" + targetY);
     }
 
     public Int32 EBG_animationService()
@@ -1645,17 +1644,16 @@ public class FieldMap : HonoBehavior
         List<BGOVERLAY_DEF> overlayList = scenePtr.overlayList;
         for (Int32 i = 0; i < overlayCount; i++)
         {
-            
             BGOVERLAY_DEF bgoverlay_DEF = overlayList[i];
+            float num;
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
             {
-                float num;
-                if (bgoverlay_DEF.dX != 0 && bgoverlay_DEF.dX != 32767)
+                if (bgoverlay_DEF.dX != 0 && bgoverlay_DEF.dX != 32767f)
                 {
                     num = (bgoverlay_DEF.curX - bgoverlay_DEF.orgX) * 256 + bgoverlay_DEF.dX;
                     bgoverlay_DEF.curX = (num / 256) % bgoverlay_DEF.w + bgoverlay_DEF.orgX;
                 }
-                if (bgoverlay_DEF.dY != 0 && bgoverlay_DEF.dY != 32767)
+                if (bgoverlay_DEF.dY != 0 && bgoverlay_DEF.dY != 32767f)
                 {
                     num = (bgoverlay_DEF.curY - bgoverlay_DEF.orgY) * 256 + bgoverlay_DEF.dY;
                     bgoverlay_DEF.curY = (num / 256) % bgoverlay_DEF.h + bgoverlay_DEF.orgY;
@@ -1664,7 +1662,6 @@ public class FieldMap : HonoBehavior
             }
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0) // loop in diagonal. Example 816
             {
-                float num;
                 if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset");
                 if (bgoverlay_DEF.isXOffset != 0)
                 {
@@ -1682,8 +1679,6 @@ public class FieldMap : HonoBehavior
             }
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Parallax) != 0)
             {
-                float num;
-                //if (dbug) Log.Message("EBG_sceneServiceScroll | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax");
                 num = (bgoverlay_DEF.orgX * 256) + (this.curVRP[0] - this.parallaxOrg[0]) * bgoverlay_DEF.dX;
                 bgoverlay_DEF.curX = num / 256;
                 num = (bgoverlay_DEF.orgY * 256) + (this.curVRP[1] - this.parallaxOrg[1]) * bgoverlay_DEF.dY;
@@ -1715,15 +1710,6 @@ public class FieldMap : HonoBehavior
                 }
 
                 if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax bgoverlay_DEF.curX" + bgoverlay_DEF.curX + " bgoverlay_DEF.fracY:" + bgoverlay_DEF.curY + " bgoverlay_DEF.transform.localScale:" + bgoverlay_DEF.transform.localScale);
-
-                //if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax bgoverlay_DEF.fracX:" + bgoverlay_DEF.fracX + " bgoverlay_DEF.fracY:" + bgoverlay_DEF.fracY + " bgoverlay_DEF.transform.localScale:" + bgoverlay_DEF.transform.localScale.x + "/" + bgoverlay_DEF.transform.localScale.y);
-
-                /*if (map == 150 || map == 805 || map == 808 || map == 908 || map == 1009 || map == 1108 || map == 1251 || map == 1651 
-                    || map == 1758 || map == 1908 || map == 2720 || map == 2851 || map == 2952 || map == 2953 || map == 3100)
-                {
-                    bgoverlay_DEF.isSpecialParallax = true;
-                }*/
-
             }
         }
         if ((this.flags & FieldMapFlags.Unknown128) != 0u)
