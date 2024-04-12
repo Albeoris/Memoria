@@ -48,10 +48,10 @@ namespace UnityXInput
 				PlayerIndex playerIndex = (PlayerIndex)i;
 				if (XInputDotNetPure.GamePad.GetState(playerIndex).IsConnected)
 				{
-                    String arg = UnityEngine.Input.GetJoystickNames().Length <= 0 ? "Unknown Device" : UnityEngine.Input.GetJoystickNames()[0];
-                    global::Debug.Log(String.Format("GamePad found {0} => {1}", playerIndex, arg));
-                    UnityEngine.Input.ResetInputAxes();
-                    this.playerIndex = playerIndex;
+					String arg = UnityEngine.Input.GetJoystickNames().Length <= 0 ? "Unknown Device" : UnityEngine.Input.GetJoystickNames()[0];
+					global::Debug.Log(String.Format("GamePad found {0} => {1}", playerIndex, arg));
+					UnityEngine.Input.ResetInputAxes();
+					this.playerIndex = playerIndex;
 					this.playerIndexSet = true;
 					break;
 				}
@@ -63,8 +63,8 @@ namespace UnityXInput
 			if (this.resetAxesTime > 0f)
 			{
 				this.resetAxesTime -= Time.deltaTime;
-                UnityEngine.Input.ResetInputAxes();
-            }
+				UnityEngine.Input.ResetInputAxes();
+			}
 			if (this.waitTime > 0f)
 			{
 				this.waitTime -= Time.deltaTime;

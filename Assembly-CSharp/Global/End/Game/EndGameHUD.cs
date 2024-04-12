@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Assets.Scripts.Common;
+using System;
 using System.Collections.Generic;
-using Assets.Scripts.Common;
 using UnityEngine;
 
 public class EndGameHUD : UIScene
@@ -26,9 +26,9 @@ public class EndGameHUD : UIScene
 			this.splitButtonGo,
 			this.backButtonGo
 		};
-        this.BankRollLabel.text = EndGameMain.Instance.bankRoll.ToString();
-        this.WageAmountLabel.text = EndGameMain.Instance.wager.ToString();
-        foreach (GameObject go in this.buttonGoList)
+		this.BankRollLabel.text = EndGameMain.Instance.bankRoll.ToString();
+		this.WageAmountLabel.text = EndGameMain.Instance.wager.ToString();
+		foreach (GameObject go in this.buttonGoList)
 		{
 			UIEventListener uieventListener = UIEventListener.Get(go);
 			uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(this.onClick));

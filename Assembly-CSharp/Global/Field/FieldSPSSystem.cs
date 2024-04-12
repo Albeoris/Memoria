@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using Object = System.Object;
 
 public class FieldSPSSystem : HonoBehavior
 {

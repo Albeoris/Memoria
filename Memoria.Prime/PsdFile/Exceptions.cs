@@ -15,24 +15,28 @@ using System;
 
 namespace Memoria.Prime.PsdFile
 {
-  [Serializable]
-  public class PsdInvalidException : Exception
-  {
-    public PsdInvalidException()
-    {
-    }
+	[Serializable]
+	public class PsdInvalidException : Exception
+	{
+		public PsdInvalidException()
+		{
+		}
 
-    public PsdInvalidException(String message)
-      : base(message)
-    {
-    }
-  }
+		public PsdInvalidException(String message)
+		  : base(message)
+		{
+		}
+	}
 
-  [Serializable]
-  public class RleException : Exception
-  {
-    public RleException() { }
+	[Serializable]
+	public class RleException : Exception
+	{
+		public RleException()
+		{
+		}
 
-    public RleException(String message) : base(message) { }
-  }
+		public RleException(String message) : base(message)
+		{
+		}
+	}
 }

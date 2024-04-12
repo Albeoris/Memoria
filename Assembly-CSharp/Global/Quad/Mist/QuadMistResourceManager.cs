@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Memoria;
+﻿using Memoria;
 using Memoria.Assets;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class QuadMistResourceManager : MonoBehaviour

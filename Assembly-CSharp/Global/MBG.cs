@@ -1,11 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Sources.Graphics.Movie;
 using Memoria;
 using Memoria.Scripts;
 using SimpleJSON;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
 
@@ -192,9 +192,9 @@ public class MBG : HonoBehavior
 		MBG.MBGParms.oldBGCamNdx = this.currentFieldMap.GetCurrentCameraIndex();
 		Camera mainCamera = fieldMap.GetMainCamera();
 		this.SetMovieCamera(mainCamera);
-    }
+	}
 
-    public void Play()
+	public void Play()
 	{
 		this.tempTargetFrameRate = FPSManager.GetTargetFPS();
 		this.tempVirtualAnalogStatus = VirtualAnalog.IsEnable;
@@ -220,11 +220,11 @@ public class MBG : HonoBehavior
 			FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.HighSpeedMode, false);
 			PersistenSingleton<UIManager>.Instance.Booster.SetBoosterHudIcon(BoosterType.HighSpeedMode, false);
 		}
-        this.isWaitForPause = false;
-        this.played = true;
+		this.isWaitForPause = false;
+		this.played = true;
 		FPSManager.SetTargetFPS(Mathf.RoundToInt((Single)this.movieMaterial.FPS));
-        PlayerWindow.Instance.SetTitle($"FMV: {this.movieMaterial.movieKey} | Map: {FF9StateSystem.Common.FF9.fldMapNo} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
-        this.movieMaterial.Play();
+		PlayerWindow.Instance.SetTitle($"FMV: {this.movieMaterial.movieKey} | Map: {FF9StateSystem.Common.FF9.fldMapNo} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
+		this.movieMaterial.Play();
 	}
 
 	public void Pause(Boolean doPause)
@@ -238,42 +238,42 @@ public class MBG : HonoBehavior
 			}
 			else
 			{
-                this.isWaitForPause = false;
-                this.movieMaterial.Resume();
+				this.isWaitForPause = false;
+				this.movieMaterial.Resume();
 			}
 		}
-        else if (this.played)
-        {
-            if (doPause)
-            {
-                if (!this.isWaitForPause)
-                {
-                    this.isWaitForPause = true;
-                    base.StartCoroutine(this.WaitForPause());
-                }
-            }
-            else
-            {
-                this.isWaitForPause = false;
-            }
-        }
-    }
+		else if (this.played)
+		{
+			if (doPause)
+			{
+				if (!this.isWaitForPause)
+				{
+					this.isWaitForPause = true;
+					base.StartCoroutine(this.WaitForPause());
+				}
+			}
+			else
+			{
+				this.isWaitForPause = false;
+			}
+		}
+	}
 
-    private IEnumerator WaitForPause()
-    {
-        while ((MBG.Instance.IsPlaying() & 2UL) == 0UL)
-        {
-            yield return null;
-        }
-        if (this.isWaitForPause)
-        {
-            vib.VIB_actuatorReset(0);
-            this.movieMaterial.Pause();
-        }
-        yield break;
-    }
+	private IEnumerator WaitForPause()
+	{
+		while ((MBG.Instance.IsPlaying() & 2UL) == 0UL)
+		{
+			yield return null;
+		}
+		if (this.isWaitForPause)
+		{
+			vib.VIB_actuatorReset(0);
+			this.movieMaterial.Pause();
+		}
+		yield break;
+	}
 
-    public void Stop()
+	public void Stop()
 	{
 		if (PersistenSingleton<FF9StateSystem>.Instance.mode == 1 || PersistenSingleton<FF9StateSystem>.Instance.mode == 5)
 		{
@@ -312,10 +312,10 @@ public class MBG : HonoBehavior
 		PersistenSingleton<HonoInputManager>.Instance.SetVirtualAnalogEnable(this.tempVirtualAnalogStatus);
 		SceneDirector.ToggleFadeAll(true);
 		FPSManager.SetTargetFPS(this.tempTargetFrameRate);
-        //PlayerWindow.Instance.SetTitle(String.Empty);
-        PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
+		//PlayerWindow.Instance.SetTitle(String.Empty);
+		PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
 
-        vib.VIB_actuatorReset(0);
+		vib.VIB_actuatorReset(0);
 		this.movieMaterial.Transparency = 0f;
 		this.movieMaterial.Stop();
 		this.mbgCamera.depth = -4096f;
@@ -618,12 +618,12 @@ public class MBG : HonoBehavior
 		return this.movieMaterial == null || !this.movieMaterial.GetFirstFrame || (this.movieMaterial.GetFirstFrame && this.movieMaterial.Frame >= this.movieMaterial.TotalFrame) || this.isSkip;
 	}
 
-    public bool IsFinishedForDisableBooster()
-    {
-        return !this.played || this.isSkip;
-    }
+	public bool IsFinishedForDisableBooster()
+	{
+		return !this.played || this.isSkip;
+	}
 
-    public Int32 GetFrame
+	public Int32 GetFrame
 	{
 		get
 		{
@@ -693,9 +693,9 @@ public class MBG : HonoBehavior
 			}
 			if (PersistenSingleton<FF9StateSystem>.Instance.mode == 1 || PersistenSingleton<FF9StateSystem>.Instance.mode == 5)
 			{
-                FieldMap.FF9FieldAttr.ff9[1, 0] |= (UInt16)20;
-                FieldMap.FF9FieldAttr.field[1, 0] = (UInt16)9;
-            }
+				FieldMap.FF9FieldAttr.ff9[1, 0] |= (UInt16)20;
+				FieldMap.FF9FieldAttr.field[1, 0] = (UInt16)9;
+			}
 			this.renderQueue = 3001;
 		}
 		ObjList activeObjList = PersistenSingleton<EventEngine>.Instance.GetActiveObjList();
@@ -742,8 +742,8 @@ public class MBG : HonoBehavior
 		this.isEnding = false;
 		this.isTitle = false;
 		this.isMovieGallery = false;
-        this.isSkip = false;
-    }
+		this.isSkip = false;
+	}
 
 	public Int32 GetFrameCount
 	{
@@ -1064,9 +1064,9 @@ public class MBG : HonoBehavior
 
 	private Boolean played;
 
-    private Boolean isWaitForPause;
+	private Boolean isWaitForPause;
 
-    public static Boolean MarkCharacterDepth = false;
+	public static Boolean MarkCharacterDepth = false;
 
 	private Boolean tempVirtualAnalogStatus;
 

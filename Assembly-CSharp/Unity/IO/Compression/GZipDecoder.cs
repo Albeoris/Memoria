@@ -22,48 +22,48 @@ namespace Unity.IO.Compression
 			Int32 bits;
 			switch (this.gzipHeaderSubstate)
 			{
-			case GZipDecoder.GzipHeaderState.ReadingID1:
-				bits = input.GetBits(8);
-				if (bits < 0)
-				{
-					return false;
-				}
-				if (bits != 31)
-				{
-					throw new InvalidDataException(SR.GetString("Corrupted gzip header"));
-				}
-				this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingID2;
-				break;
-			case GZipDecoder.GzipHeaderState.ReadingID2:
-				break;
-			case GZipDecoder.GzipHeaderState.ReadingCM:
-				goto IL_BB;
-			case GZipDecoder.GzipHeaderState.ReadingFLG:
-				goto IL_EF;
-			case GZipDecoder.GzipHeaderState.ReadingMMTime:
-				goto IL_11A;
-			case GZipDecoder.GzipHeaderState.ReadingXFL:
-				goto IL_15F;
-			case GZipDecoder.GzipHeaderState.ReadingOS:
-				goto IL_17C;
-			case GZipDecoder.GzipHeaderState.ReadingXLen1:
-				goto IL_199;
-			case GZipDecoder.GzipHeaderState.ReadingXLen2:
-				goto IL_1CF;
-			case GZipDecoder.GzipHeaderState.ReadingXLenData:
-				goto IL_204;
-			case GZipDecoder.GzipHeaderState.ReadingFileName:
-				goto IL_24F;
-			case GZipDecoder.GzipHeaderState.ReadingComment:
-				goto IL_297;
-			case GZipDecoder.GzipHeaderState.ReadingCRC16Part1:
-				goto IL_2E0;
-			case GZipDecoder.GzipHeaderState.ReadingCRC16Part2:
-				goto IL_318;
-			case GZipDecoder.GzipHeaderState.Done:
-				return true;
-			default:
-				throw new InvalidDataException(SR.GetString("Unknown state"));
+				case GZipDecoder.GzipHeaderState.ReadingID1:
+					bits = input.GetBits(8);
+					if (bits < 0)
+					{
+						return false;
+					}
+					if (bits != 31)
+					{
+						throw new InvalidDataException(SR.GetString("Corrupted gzip header"));
+					}
+					this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingID2;
+					break;
+				case GZipDecoder.GzipHeaderState.ReadingID2:
+					break;
+				case GZipDecoder.GzipHeaderState.ReadingCM:
+					goto IL_BB;
+				case GZipDecoder.GzipHeaderState.ReadingFLG:
+					goto IL_EF;
+				case GZipDecoder.GzipHeaderState.ReadingMMTime:
+					goto IL_11A;
+				case GZipDecoder.GzipHeaderState.ReadingXFL:
+					goto IL_15F;
+				case GZipDecoder.GzipHeaderState.ReadingOS:
+					goto IL_17C;
+				case GZipDecoder.GzipHeaderState.ReadingXLen1:
+					goto IL_199;
+				case GZipDecoder.GzipHeaderState.ReadingXLen2:
+					goto IL_1CF;
+				case GZipDecoder.GzipHeaderState.ReadingXLenData:
+					goto IL_204;
+				case GZipDecoder.GzipHeaderState.ReadingFileName:
+					goto IL_24F;
+				case GZipDecoder.GzipHeaderState.ReadingComment:
+					goto IL_297;
+				case GZipDecoder.GzipHeaderState.ReadingCRC16Part1:
+					goto IL_2E0;
+				case GZipDecoder.GzipHeaderState.ReadingCRC16Part2:
+					goto IL_318;
+				case GZipDecoder.GzipHeaderState.Done:
+					return true;
+				default:
+					throw new InvalidDataException(SR.GetString("Unknown state"));
 			}
 			bits = input.GetBits(8);
 			if (bits < 0)
@@ -75,7 +75,7 @@ namespace Unity.IO.Compression
 				throw new InvalidDataException(SR.GetString("Corrupted gzip header"));
 			}
 			this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingCM;
-			IL_BB:
+		IL_BB:
 			bits = input.GetBits(8);
 			if (bits < 0)
 			{
@@ -86,7 +86,7 @@ namespace Unity.IO.Compression
 				throw new InvalidDataException(SR.GetString("Unknown compression mode"));
 			}
 			this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingFLG;
-			IL_EF:
+		IL_EF:
 			bits = input.GetBits(8);
 			if (bits < 0)
 			{
@@ -95,7 +95,7 @@ namespace Unity.IO.Compression
 			this.gzip_header_flag = bits;
 			this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingMMTime;
 			this.loopCounter = 0;
-			IL_11A:
+		IL_11A:
 			while (this.loopCounter < 4)
 			{
 				bits = input.GetBits(8);
@@ -107,21 +107,21 @@ namespace Unity.IO.Compression
 			}
 			this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingXFL;
 			this.loopCounter = 0;
-			IL_15F:
+		IL_15F:
 			bits = input.GetBits(8);
 			if (bits < 0)
 			{
 				return false;
 			}
 			this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingOS;
-			IL_17C:
+		IL_17C:
 			bits = input.GetBits(8);
 			if (bits < 0)
 			{
 				return false;
 			}
 			this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingXLen1;
-			IL_199:
+		IL_199:
 			if ((this.gzip_header_flag & 4) == 0)
 			{
 				goto IL_24F;
@@ -133,7 +133,7 @@ namespace Unity.IO.Compression
 			}
 			this.gzip_header_xlen = bits;
 			this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingXLen2;
-			IL_1CF:
+		IL_1CF:
 			bits = input.GetBits(8);
 			if (bits < 0)
 			{
@@ -142,7 +142,7 @@ namespace Unity.IO.Compression
 			this.gzip_header_xlen |= bits << 8;
 			this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingXLenData;
 			this.loopCounter = 0;
-			IL_204:
+		IL_204:
 			while (this.loopCounter < this.gzip_header_xlen)
 			{
 				bits = input.GetBits(8);
@@ -154,14 +154,14 @@ namespace Unity.IO.Compression
 			}
 			this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingFileName;
 			this.loopCounter = 0;
-			IL_24F:
+		IL_24F:
 			if ((this.gzip_header_flag & 8) == 0)
 			{
 				this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingComment;
 			}
 			else
 			{
-				for (;;)
+				for (; ; )
 				{
 					bits = input.GetBits(8);
 					if (bits < 0)
@@ -174,17 +174,17 @@ namespace Unity.IO.Compression
 					}
 				}
 				return false;
-				Block_20:
+			Block_20:
 				this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingComment;
 			}
-			IL_297:
+		IL_297:
 			if ((this.gzip_header_flag & 16) == 0)
 			{
 				this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingCRC16Part1;
 			}
 			else
 			{
-				for (;;)
+				for (; ; )
 				{
 					bits = input.GetBits(8);
 					if (bits < 0)
@@ -197,10 +197,10 @@ namespace Unity.IO.Compression
 					}
 				}
 				return false;
-				Block_23:
+			Block_23:
 				this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingCRC16Part1;
 			}
-			IL_2E0:
+		IL_2E0:
 			if ((this.gzip_header_flag & 2) == 0)
 			{
 				this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.Done;
@@ -212,7 +212,7 @@ namespace Unity.IO.Compression
 				return false;
 			}
 			this.gzipHeaderSubstate = GZipDecoder.GzipHeaderState.ReadingCRC16Part2;
-			IL_318:
+		IL_318:
 			bits = input.GetBits(8);
 			if (bits < 0)
 			{

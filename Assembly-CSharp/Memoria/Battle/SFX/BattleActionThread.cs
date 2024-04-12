@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using UnityEngine;
-using Memoria;
-using Memoria.Prime;
-using Memoria.Data;
+﻿using Memoria;
 using Memoria.Assets;
+using Memoria.Data;
+using Memoria.Prime;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
 public class BattleActionThread
 {
@@ -266,34 +266,34 @@ public class BattleActionThread
 						mainThread.code.AddLast(new BattleActionCode("PlayAnimation", "Char", "Caster", "Anim", animName));
 						break;
 					case 6: // SFX
-					{
-						BattleActionThread sfxThread = new BattleActionThread();
-						sfxNum = r.ReadInt16();
-						sfxBone0 = r.ReadByte();
-						sfxName = Enum.IsDefined(typeof(SpecialEffect), sfxNum) ? ((SpecialEffect)sfxNum).ToString() : sfxNum.ToString();
-						sfxThread.code.AddLast(new BattleActionCode("SetupReflect"));
-						sfxThread.code.AddLast(new BattleActionCode("LoadSFX", "SFX", sfxName, "FirstBone", sfxBone0.ToString(), "Reflect", true.ToString()));
-						sfxThread.code.AddLast(new BattleActionCode("Wait", "Time", (r.ReadByte() + 4).ToString(), "Reflect", true.ToString()));
-						sfxThread.code.AddLast(new BattleActionCode("WaitSFXLoaded", "Reflect", true.ToString()));
-						sfxThread.code.AddLast(new BattleActionCode("PlaySFX", "SkipSequence", (sfxBone0 != 0).ToString(), "Reflect", true.ToString()));
-						sfxThread.code.AddLast(new BattleActionCode("WaitSFXDone", "Reflect", true.ToString()));
-						mainThread.code.AddLast(new BattleActionCode("RunThread", "Thread", result.Count.ToString()));
-						result.Add(sfxThread);
-						break;
-					}
-					case 10: // Run Spell Animation
-					{
-						BattleActionThread sfxThread = mainThread;
-						if ((SpecialEffect)sfxNum == SpecialEffect.Special_Silver_Dragon_Death)
 						{
-							sfxThread = new BattleActionThread();
-							sfxThread.code.AddLast(new BattleActionCode("Wait", "Time", "44"));
+							BattleActionThread sfxThread = new BattleActionThread();
+							sfxNum = r.ReadInt16();
+							sfxBone0 = r.ReadByte();
+							sfxName = Enum.IsDefined(typeof(SpecialEffect), sfxNum) ? ((SpecialEffect)sfxNum).ToString() : sfxNum.ToString();
+							sfxThread.code.AddLast(new BattleActionCode("SetupReflect"));
+							sfxThread.code.AddLast(new BattleActionCode("LoadSFX", "SFX", sfxName, "FirstBone", sfxBone0.ToString(), "Reflect", true.ToString()));
+							sfxThread.code.AddLast(new BattleActionCode("Wait", "Time", (r.ReadByte() + 4).ToString(), "Reflect", true.ToString()));
+							sfxThread.code.AddLast(new BattleActionCode("WaitSFXLoaded", "Reflect", true.ToString()));
+							sfxThread.code.AddLast(new BattleActionCode("PlaySFX", "SkipSequence", (sfxBone0 != 0).ToString(), "Reflect", true.ToString()));
+							sfxThread.code.AddLast(new BattleActionCode("WaitSFXDone", "Reflect", true.ToString()));
 							mainThread.code.AddLast(new BattleActionCode("RunThread", "Thread", result.Count.ToString()));
 							result.Add(sfxThread);
+							break;
 						}
-						sfxThread.code.AddLast(new BattleActionCode("PlayMonsterSFX", "Reflect", true.ToString()));
-						break;
-					}
+					case 10: // Run Spell Animation
+						{
+							BattleActionThread sfxThread = mainThread;
+							if ((SpecialEffect)sfxNum == SpecialEffect.Special_Silver_Dragon_Death)
+							{
+								sfxThread = new BattleActionThread();
+								sfxThread.code.AddLast(new BattleActionCode("Wait", "Time", "44"));
+								mainThread.code.AddLast(new BattleActionCode("RunThread", "Thread", result.Count.ToString()));
+								result.Add(sfxThread);
+							}
+							sfxThread.code.AddLast(new BattleActionCode("PlayMonsterSFX", "Reflect", true.ToString()));
+							break;
+						}
 					case 7: // Wait Animation
 						mainThread.code.AddLast(new BattleActionCode("WaitAnimation", "Char", "Caster"));
 						break;
@@ -370,14 +370,14 @@ public class BattleActionThread
 						mainThread.code.AddLast(new BattleActionCode("ToggleStandAnimation", "Char", "Caster", "Alternate", (r.ReadByte() != 0).ToString()));
 						break;
 					case 19: // Walk Absolute
-					{
-						Byte time = r.ReadByte();
-						Vector3 pos = new Vector3(r.ReadInt16(), -r.ReadInt16(), r.ReadInt16());
-						mainThread.code.AddLast(new BattleActionCode("MoveToPosition", "Char", "Caster", "Time", time.ToString(), "AbsolutePosition", pos.ToString(), "MoveHeight", "true"));
-						mainThread.code.AddLast(new BattleActionCode("ChangeCharacterProperty", "Char", "Caster", "Property", "base_pos", "Value", pos.ToString()));
-						mainThread.code.AddLast(new BattleActionCode("WaitMove", "Char", "Caster"));
-						break;
-					}
+						{
+							Byte time = r.ReadByte();
+							Vector3 pos = new Vector3(r.ReadInt16(), -r.ReadInt16(), r.ReadInt16());
+							mainThread.code.AddLast(new BattleActionCode("MoveToPosition", "Char", "Caster", "Time", time.ToString(), "AbsolutePosition", pos.ToString(), "MoveHeight", "true"));
+							mainThread.code.AddLast(new BattleActionCode("ChangeCharacterProperty", "Char", "Caster", "Property", "base_pos", "Value", pos.ToString()));
+							mainThread.code.AddLast(new BattleActionCode("WaitMove", "Char", "Caster"));
+							break;
+						}
 					case 20: // Turn
 						UInt16 baseAngle = r.ReadUInt16();
 						String baseAngleName = (baseAngle & 32768) == 0 ? (baseAngle * 360f / 4096f).ToString()
@@ -404,14 +404,14 @@ public class BattleActionThread
 						result.Add(soundThread);
 						break;
 					case 27: // Walk Relative
-					{
-						Byte time = r.ReadByte();
-						Vector3 pos = new Vector3(r.ReadInt16(), -r.ReadInt16(), r.ReadInt16());
-						mainThread.code.AddLast(new BattleActionCode("MoveToPosition", "Char", "Caster", "Time", time.ToString(), "RelativePosition", pos.ToString(), "MoveHeight", "true"));
-						mainThread.code.AddLast(new BattleActionCode("ChangeCharacterProperty", "Char", "Caster", "Property", "base_pos", "Value", "+" + pos.ToString()));
-						mainThread.code.AddLast(new BattleActionCode("WaitMove", "Char", "Caster"));
-						break;
-					}
+						{
+							Byte time = r.ReadByte();
+							Vector3 pos = new Vector3(r.ReadInt16(), -r.ReadInt16(), r.ReadInt16());
+							mainThread.code.AddLast(new BattleActionCode("MoveToPosition", "Char", "Caster", "Time", time.ToString(), "RelativePosition", pos.ToString(), "MoveHeight", "true"));
+							mainThread.code.AddLast(new BattleActionCode("ChangeCharacterProperty", "Char", "Caster", "Property", "base_pos", "Value", "+" + pos.ToString()));
+							mainThread.code.AddLast(new BattleActionCode("WaitMove", "Char", "Caster"));
+							break;
+						}
 					case 28: // Change Target Bone
 						mainThread.code.AddLast(new BattleActionCode("ChangeCharacterProperty", "Char", "Caster", "Property", "tar_bone", "Value", r.ReadByte().ToString()));
 						break;

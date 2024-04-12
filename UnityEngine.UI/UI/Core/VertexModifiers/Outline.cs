@@ -1,44 +1,42 @@
-using System.Collections.Generic;
-
 namespace UnityEngine.UI
 {
-    [AddComponentMenu("UI/Effects/Outline", 15)]
-    public class Outline : Shadow
-    {
-        protected Outline()
-        {}
+	[AddComponentMenu("UI/Effects/Outline", 15)]
+	public class Outline : Shadow
+	{
+		protected Outline()
+		{ }
 
-        public override void ModifyMesh(VertexHelper vh)
-        {
-            if (!IsActive())
-                return;
+		public override void ModifyMesh(VertexHelper vh)
+		{
+			if (!IsActive())
+				return;
 
-            var verts = ListPool<UIVertex>.Get();
-            vh.GetUIVertexStream(verts);
+			var verts = ListPool<UIVertex>.Get();
+			vh.GetUIVertexStream(verts);
 
-            var neededCpacity = verts.Count * 5;
-            if (verts.Capacity < neededCpacity)
-                verts.Capacity = neededCpacity;
+			var neededCpacity = verts.Count * 5;
+			if (verts.Capacity < neededCpacity)
+				verts.Capacity = neededCpacity;
 
-            var start = 0;
-            var end = verts.Count;
-            ApplyShadowZeroAlloc(verts, effectColor, start, verts.Count, effectDistance.x, effectDistance.y);
+			var start = 0;
+			var end = verts.Count;
+			ApplyShadowZeroAlloc(verts, effectColor, start, verts.Count, effectDistance.x, effectDistance.y);
 
-            start = end;
-            end = verts.Count;
-            ApplyShadowZeroAlloc(verts, effectColor, start, verts.Count, effectDistance.x, -effectDistance.y);
+			start = end;
+			end = verts.Count;
+			ApplyShadowZeroAlloc(verts, effectColor, start, verts.Count, effectDistance.x, -effectDistance.y);
 
-            start = end;
-            end = verts.Count;
-            ApplyShadowZeroAlloc(verts, effectColor, start, verts.Count, -effectDistance.x, effectDistance.y);
+			start = end;
+			end = verts.Count;
+			ApplyShadowZeroAlloc(verts, effectColor, start, verts.Count, -effectDistance.x, effectDistance.y);
 
-            start = end;
-            end = verts.Count;
-            ApplyShadowZeroAlloc(verts, effectColor, start, verts.Count, -effectDistance.x, -effectDistance.y);
+			start = end;
+			end = verts.Count;
+			ApplyShadowZeroAlloc(verts, effectColor, start, verts.Count, -effectDistance.x, -effectDistance.y);
 
-            vh.Clear();
-            vh.AddUIVertexTriangleStream(verts);
-            ListPool<UIVertex>.Release(verts);
-        }
-    }
+			vh.Clear();
+			vh.AddUIVertexTriangleStream(verts);
+			ListPool<UIVertex>.Release(verts);
+		}
+	}
 }

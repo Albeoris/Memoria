@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Assets.Sources.Scripts.UI.Common;
+using System;
 using System.Collections;
-using Assets.Sources.Scripts.UI.Common;
 using UnityEngine;
-using Object = System.Object;
 
 public class QuadMistCardNameDialogSlider : MonoBehaviour
 {

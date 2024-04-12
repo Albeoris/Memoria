@@ -1,5 +1,4 @@
-﻿using System;
-using Memoria.Data;
+﻿using Memoria.Data;
 
 public class STAT_INFO
 {

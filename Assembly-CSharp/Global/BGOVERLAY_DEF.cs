@@ -10,9 +10,9 @@ public partial class BGOVERLAY_DEF
 		this.startOffset = 0L;
 		this.spriteList = new List<BGSPRITE_LOC_DEF>();
 		this.isSpecialParallax = false;
-        this.canCombine = true;
-        this.isCreated = false;
-    }
+		this.canCombine = true;
+		this.isCreated = false;
+	}
 
 	public void SetFlags(OVERLAY_FLAG flagDiff, Boolean isSet)
 	{
@@ -93,7 +93,7 @@ public partial class BGOVERLAY_DEF
 
 	public Byte camNdx;
 	public Byte isXOffset;
-    public UInt32 indnum;
+	public UInt32 indnum;
 	public Byte viewportNdx;
 
 	public UInt16 spriteCount;
@@ -110,10 +110,10 @@ public partial class BGOVERLAY_DEF
 
 	public Transform transform;
 
-    public Boolean canCombine;
-    public Boolean isCreated;
+	public Boolean canCombine;
+	public Boolean isCreated;
 
-    public Boolean isSpecialParallax;
+	public Boolean isSpecialParallax;
 
 	public Single parallaxCurX;
 	public Single parallaxCurY;

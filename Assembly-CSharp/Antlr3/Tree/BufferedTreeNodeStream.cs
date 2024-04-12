@@ -32,17 +32,17 @@
 
 namespace Antlr.Runtime.Tree
 {
-    using System.Collections.Generic;
+	using System.Collections.Generic;
 
-    using IList = System.Collections.IList;
-    using InvalidOperationException = System.InvalidOperationException;
-    using StringBuilder = System.Text.StringBuilder;
+	using IList = System.Collections.IList;
+	using InvalidOperationException = System.InvalidOperationException;
+	using StringBuilder = System.Text.StringBuilder;
 
 #if !PORTABLE
-    using Console = System.Console;
+	using Console = System.Console;
 #endif
 
-    /** <summary>A buffered stream of tree nodes.  Nodes can be from a tree of ANY kind.</summary>
+	/** <summary>A buffered stream of tree nodes.  Nodes can be from a tree of ANY kind.</summary>
      *
      *  This node stream sucks all nodes out of the tree specified in
      *  the constructor during construction and makes pointers into
@@ -64,71 +64,71 @@ namespace Antlr.Runtime.Tree
      *
      *  @see CommonTreeNodeStream
      */
-    public class BufferedTreeNodeStream : ITreeNodeStream, ITokenStreamInformation
-    {
-        public const int DEFAULT_INITIAL_BUFFER_SIZE = 100;
-        public const int INITIAL_CALL_STACK_SIZE = 10;
+	public class BufferedTreeNodeStream : ITreeNodeStream, ITokenStreamInformation
+	{
+		public const int DEFAULT_INITIAL_BUFFER_SIZE = 100;
+		public const int INITIAL_CALL_STACK_SIZE = 10;
 
-        protected sealed class StreamIterator : IEnumerator<object>
-        {
-            BufferedTreeNodeStream _outer;
-            int _index;
+		protected sealed class StreamIterator : IEnumerator<object>
+		{
+			BufferedTreeNodeStream _outer;
+			int _index;
 
-            public StreamIterator( BufferedTreeNodeStream outer )
-            {
-                _outer = outer;
-                _index = -1;
-            }
+			public StreamIterator(BufferedTreeNodeStream outer)
+			{
+				_outer = outer;
+				_index = -1;
+			}
 
-            #region IEnumerator<object> Members
+			#region IEnumerator<object> Members
 
-            public object Current
-            {
-                get
-                {
-                    if ( _index < _outer.nodes.Count )
-                        return _outer.nodes[_index];
+			public object Current
+			{
+				get
+				{
+					if (_index < _outer.nodes.Count)
+						return _outer.nodes[_index];
 
-                    return _outer.eof;
-                }
-            }
+					return _outer.eof;
+				}
+			}
 
-            #endregion
+			#endregion IEnumerator<object> Members
 
-            #region IDisposable Members
+			#region IDisposable Members
 
-            public void Dispose()
-            {
-            }
+			public void Dispose()
+			{
+			}
 
-            #endregion
+			#endregion IDisposable Members
 
-            #region IEnumerator Members
+			#region IEnumerator Members
 
-            public bool MoveNext()
-            {
-                if ( _index < _outer.nodes.Count )
-                    _index++;
+			public bool MoveNext()
+			{
+				if (_index < _outer.nodes.Count)
+					_index++;
 
-                return _index < _outer.nodes.Count;
-            }
+				return _index < _outer.nodes.Count;
+			}
 
-            public void Reset()
-            {
-                _index = -1;
-            }
+			public void Reset()
+			{
+				_index = -1;
+			}
 
-            #endregion
-        }
+			#endregion IEnumerator Members
+		}
 
-        // all these navigation nodes are shared and hence they
-        // cannot contain any line/column info
+		// all these navigation nodes are shared and hence they
+		// cannot contain any line/column info
 
-        protected object down;
-        protected object up;
-        protected object eof;
+		protected object down;
+		protected object up;
+		protected object eof;
 
-        /** <summary>The complete mapping from stream index to tree node.
+		/** <summary>The complete mapping from stream index to tree node.
          *  This buffer includes pointers to DOWN, UP, and EOF nodes.
          *  It is built upon ctor invocation.  The elements are type
          *  Object as we don't what the trees look like.</summary>
@@ -137,277 +137,277 @@ namespace Antlr.Runtime.Tree
          *  of interest for reverseIndexing.  Slows us down a wee bit to
          *  do all of the if p==-1 testing everywhere though.
          */
-        protected IList nodes;
+		protected IList nodes;
 
-        /** <summary>Pull nodes from which tree?</summary> */
-        protected object root;
+		/** <summary>Pull nodes from which tree?</summary> */
+		protected object root;
 
-        /** <summary>IF this tree (root) was created from a token stream, track it.</summary> */
-        protected ITokenStream tokens;
+		/** <summary>IF this tree (root) was created from a token stream, track it.</summary> */
+		protected ITokenStream tokens;
 
-        /** <summary>What tree adaptor was used to build these trees</summary> */
-        ITreeAdaptor adaptor;
+		/** <summary>What tree adaptor was used to build these trees</summary> */
+		ITreeAdaptor adaptor;
 
-        /** <summary>Reuse same DOWN, UP navigation nodes unless this is true</summary> */
-        bool uniqueNavigationNodes = false;
+		/** <summary>Reuse same DOWN, UP navigation nodes unless this is true</summary> */
+		bool uniqueNavigationNodes = false;
 
-        /** <summary>The index into the nodes list of the current node (next node
+		/** <summary>The index into the nodes list of the current node (next node
          *  to consume).  If -1, nodes array not filled yet.</summary>
          */
-        protected int p = -1;
+		protected int p = -1;
 
-        /** <summary>Track the last mark() call result value for use in rewind().</summary> */
-        protected int lastMarker;
+		/** <summary>Track the last mark() call result value for use in rewind().</summary> */
+		protected int lastMarker;
 
-        /** <summary>Stack of indexes used for push/pop calls</summary> */
-        protected Stack<int> calls;
+		/** <summary>Stack of indexes used for push/pop calls</summary> */
+		protected Stack<int> calls;
 
-        public BufferedTreeNodeStream( object tree )
-            : this( new CommonTreeAdaptor(), tree )
-        {
-        }
+		public BufferedTreeNodeStream(object tree)
+			: this(new CommonTreeAdaptor(), tree)
+		{
+		}
 
-        public BufferedTreeNodeStream( ITreeAdaptor adaptor, object tree )
-            : this( adaptor, tree, DEFAULT_INITIAL_BUFFER_SIZE )
-        {
-        }
+		public BufferedTreeNodeStream(ITreeAdaptor adaptor, object tree)
+			: this(adaptor, tree, DEFAULT_INITIAL_BUFFER_SIZE)
+		{
+		}
 
-        public BufferedTreeNodeStream( ITreeAdaptor adaptor, object tree, int initialBufferSize )
-        {
-            this.root = tree;
-            this.adaptor = adaptor;
-            nodes = new List<object>( initialBufferSize );
-            down = adaptor.Create( TokenTypes.Down, "DOWN" );
-            up = adaptor.Create( TokenTypes.Up, "UP" );
-            eof = adaptor.Create( TokenTypes.EndOfFile, "EOF" );
-        }
+		public BufferedTreeNodeStream(ITreeAdaptor adaptor, object tree, int initialBufferSize)
+		{
+			this.root = tree;
+			this.adaptor = adaptor;
+			nodes = new List<object>(initialBufferSize);
+			down = adaptor.Create(TokenTypes.Down, "DOWN");
+			up = adaptor.Create(TokenTypes.Up, "UP");
+			eof = adaptor.Create(TokenTypes.EndOfFile, "EOF");
+		}
 
-        #region Properties
+		#region Properties
 
-        public virtual int Count
-        {
-            get
-            {
-                if ( p == -1 )
-                {
-                    throw new InvalidOperationException( "Cannot determine the Count before the buffer is filled." );
-                }
-                return nodes.Count;
-            }
-        }
+		public virtual int Count
+		{
+			get
+			{
+				if (p == -1)
+				{
+					throw new InvalidOperationException("Cannot determine the Count before the buffer is filled.");
+				}
+				return nodes.Count;
+			}
+		}
 
-        public virtual object TreeSource
-        {
-            get
-            {
-                return root;
-            }
-        }
+		public virtual object TreeSource
+		{
+			get
+			{
+				return root;
+			}
+		}
 
-        public virtual string SourceName
-        {
-            get
-            {
-                return TokenStream.SourceName;
-            }
-        }
+		public virtual string SourceName
+		{
+			get
+			{
+				return TokenStream.SourceName;
+			}
+		}
 
-        public virtual ITokenStream TokenStream
-        {
-            get
-            {
-                return tokens;
-            }
-            set
-            {
-                tokens = value;
-            }
-        }
+		public virtual ITokenStream TokenStream
+		{
+			get
+			{
+				return tokens;
+			}
+			set
+			{
+				tokens = value;
+			}
+		}
 
-        public virtual ITreeAdaptor TreeAdaptor
-        {
-            get
-            {
-                return adaptor;
-            }
-            set
-            {
-                adaptor = value;
-            }
-        }
+		public virtual ITreeAdaptor TreeAdaptor
+		{
+			get
+			{
+				return adaptor;
+			}
+			set
+			{
+				adaptor = value;
+			}
+		}
 
-        public virtual bool UniqueNavigationNodes
-        {
-            get
-            {
-                return uniqueNavigationNodes;
-            }
-            set
-            {
-                uniqueNavigationNodes = value;
-            }
-        }
+		public virtual bool UniqueNavigationNodes
+		{
+			get
+			{
+				return uniqueNavigationNodes;
+			}
+			set
+			{
+				uniqueNavigationNodes = value;
+			}
+		}
 
-        public virtual IToken LastToken
-        {
-            get
-            {
-                return TreeAdaptor.GetToken(LB(1));
-            }
-        }
+		public virtual IToken LastToken
+		{
+			get
+			{
+				return TreeAdaptor.GetToken(LB(1));
+			}
+		}
 
-        public virtual IToken LastRealToken
-        {
-            get
-            {
-                int i = 0;
-                IToken token;
-                do
-                {
-                    i++;
-                    token = TreeAdaptor.GetToken(LB(i));
-                } while (token != null && token.Line <= 0);
+		public virtual IToken LastRealToken
+		{
+			get
+			{
+				int i = 0;
+				IToken token;
+				do
+				{
+					i++;
+					token = TreeAdaptor.GetToken(LB(i));
+				} while (token != null && token.Line <= 0);
 
-                return token;
-            }
-        }
+				return token;
+			}
+		}
 
-        public virtual int MaxLookBehind
-        {
-            get
-            {
-                return int.MaxValue;
-            }
-        }
+		public virtual int MaxLookBehind
+		{
+			get
+			{
+				return int.MaxValue;
+			}
+		}
 
-        #endregion
+		#endregion Properties
 
-        /** Walk tree with depth-first-search and fill nodes buffer.
+		/** Walk tree with depth-first-search and fill nodes buffer.
          *  Don't do DOWN, UP nodes if its a list (t is isNil).
          */
-        protected virtual void FillBuffer()
-        {
-            FillBuffer( root );
-            //Console.Out.WriteLine( "revIndex=" + tokenTypeToStreamIndexesMap );
-            p = 0; // buffer of nodes intialized now
-        }
+		protected virtual void FillBuffer()
+		{
+			FillBuffer(root);
+			//Console.Out.WriteLine( "revIndex=" + tokenTypeToStreamIndexesMap );
+			p = 0; // buffer of nodes intialized now
+		}
 
-        public virtual void FillBuffer( object t )
-        {
-            bool nil = adaptor.IsNil( t );
-            if ( !nil )
-            {
-                nodes.Add( t ); // add this node
-            }
-            // add DOWN node if t has children
-            int n = adaptor.GetChildCount( t );
-            if ( !nil && n > 0 )
-            {
-                AddNavigationNode( TokenTypes.Down );
-            }
-            // and now add all its children
-            for ( int c = 0; c < n; c++ )
-            {
-                object child = adaptor.GetChild( t, c );
-                FillBuffer( child );
-            }
-            // add UP node if t has children
-            if ( !nil && n > 0 )
-            {
-                AddNavigationNode( TokenTypes.Up );
-            }
-        }
+		public virtual void FillBuffer(object t)
+		{
+			bool nil = adaptor.IsNil(t);
+			if (!nil)
+			{
+				nodes.Add(t); // add this node
+			}
+			// add DOWN node if t has children
+			int n = adaptor.GetChildCount(t);
+			if (!nil && n > 0)
+			{
+				AddNavigationNode(TokenTypes.Down);
+			}
+			// and now add all its children
+			for (int c = 0; c < n; c++)
+			{
+				object child = adaptor.GetChild(t, c);
+				FillBuffer(child);
+			}
+			// add UP node if t has children
+			if (!nil && n > 0)
+			{
+				AddNavigationNode(TokenTypes.Up);
+			}
+		}
 
-        /** What is the stream index for node? 0..n-1
+		/** What is the stream index for node? 0..n-1
          *  Return -1 if node not found.
          */
-        protected virtual int GetNodeIndex( object node )
-        {
-            if ( p == -1 )
-            {
-                FillBuffer();
-            }
-            for ( int i = 0; i < nodes.Count; i++ )
-            {
-                object t = nodes[i];
-                if ( t == node )
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
+		protected virtual int GetNodeIndex(object node)
+		{
+			if (p == -1)
+			{
+				FillBuffer();
+			}
+			for (int i = 0; i < nodes.Count; i++)
+			{
+				object t = nodes[i];
+				if (t == node)
+				{
+					return i;
+				}
+			}
+			return -1;
+		}
 
-        /** As we flatten the tree, we use UP, DOWN nodes to represent
+		/** As we flatten the tree, we use UP, DOWN nodes to represent
          *  the tree structure.  When debugging we need unique nodes
          *  so instantiate new ones when uniqueNavigationNodes is true.
          */
-        protected virtual void AddNavigationNode( int ttype )
-        {
-            object navNode = null;
-            if ( ttype == TokenTypes.Down )
-            {
-                if ( UniqueNavigationNodes )
-                {
-                    navNode = adaptor.Create( TokenTypes.Down, "DOWN" );
-                }
-                else
-                {
-                    navNode = down;
-                }
-            }
-            else
-            {
-                if ( UniqueNavigationNodes )
-                {
-                    navNode = adaptor.Create( TokenTypes.Up, "UP" );
-                }
-                else
-                {
-                    navNode = up;
-                }
-            }
-            nodes.Add( navNode );
-        }
+		protected virtual void AddNavigationNode(int ttype)
+		{
+			object navNode = null;
+			if (ttype == TokenTypes.Down)
+			{
+				if (UniqueNavigationNodes)
+				{
+					navNode = adaptor.Create(TokenTypes.Down, "DOWN");
+				}
+				else
+				{
+					navNode = down;
+				}
+			}
+			else
+			{
+				if (UniqueNavigationNodes)
+				{
+					navNode = adaptor.Create(TokenTypes.Up, "UP");
+				}
+				else
+				{
+					navNode = up;
+				}
+			}
+			nodes.Add(navNode);
+		}
 
-        public virtual object this[int i]
-        {
-            get
-            {
-                if ( p == -1 )
-                {
-                    throw new InvalidOperationException( "Cannot get the node at index i before the buffer is filled." );
-                }
-                return nodes[i];
-            }
-        }
+		public virtual object this[int i]
+		{
+			get
+			{
+				if (p == -1)
+				{
+					throw new InvalidOperationException("Cannot get the node at index i before the buffer is filled.");
+				}
+				return nodes[i];
+			}
+		}
 
-        public virtual object LT( int k )
-        {
-            if ( p == -1 )
-            {
-                FillBuffer();
-            }
-            if ( k == 0 )
-            {
-                return null;
-            }
-            if ( k < 0 )
-            {
-                return LB( -k );
-            }
-            //System.out.print("LT(p="+p+","+k+")=");
-            if ( ( p + k - 1 ) >= nodes.Count )
-            {
-                return eof;
-            }
-            return nodes[p + k - 1];
-        }
+		public virtual object LT(int k)
+		{
+			if (p == -1)
+			{
+				FillBuffer();
+			}
+			if (k == 0)
+			{
+				return null;
+			}
+			if (k < 0)
+			{
+				return LB(-k);
+			}
+			//System.out.print("LT(p="+p+","+k+")=");
+			if ((p + k - 1) >= nodes.Count)
+			{
+				return eof;
+			}
+			return nodes[p + k - 1];
+		}
 
-        public virtual object GetCurrentSymbol()
-        {
-            return LT( 1 );
-        }
+		public virtual object GetCurrentSymbol()
+		{
+			return LT(1);
+		}
 
 #if false
         public virtual object getLastTreeNode()
@@ -430,242 +430,242 @@ namespace Antlr.Runtime.Tree
         }
 #endif
 
-        /** <summary>Look backwards k nodes</summary> */
-        protected virtual object LB( int k )
-        {
-            if ( k == 0 )
-            {
-                return null;
-            }
-            if ( ( p - k ) < 0 )
-            {
-                return null;
-            }
-            return nodes[p - k];
-        }
+		/** <summary>Look backwards k nodes</summary> */
+		protected virtual object LB(int k)
+		{
+			if (k == 0)
+			{
+				return null;
+			}
+			if ((p - k) < 0)
+			{
+				return null;
+			}
+			return nodes[p - k];
+		}
 
-        public virtual void Consume()
-        {
-            if ( p == -1 )
-            {
-                FillBuffer();
-            }
-            p++;
-        }
+		public virtual void Consume()
+		{
+			if (p == -1)
+			{
+				FillBuffer();
+			}
+			p++;
+		}
 
-        public virtual int LA( int i )
-        {
-            return adaptor.GetType( LT( i ) );
-        }
+		public virtual int LA(int i)
+		{
+			return adaptor.GetType(LT(i));
+		}
 
-        public virtual int Mark()
-        {
-            if ( p == -1 )
-            {
-                FillBuffer();
-            }
-            lastMarker = Index;
-            return lastMarker;
-        }
+		public virtual int Mark()
+		{
+			if (p == -1)
+			{
+				FillBuffer();
+			}
+			lastMarker = Index;
+			return lastMarker;
+		}
 
-        public virtual void Release( int marker )
-        {
-            // no resources to release
-        }
+		public virtual void Release(int marker)
+		{
+			// no resources to release
+		}
 
-        public virtual int Index
-        {
-            get
-            {
-                return p;
-            }
-        }
+		public virtual int Index
+		{
+			get
+			{
+				return p;
+			}
+		}
 
-        public virtual void Rewind( int marker )
-        {
-            Seek( marker );
-        }
+		public virtual void Rewind(int marker)
+		{
+			Seek(marker);
+		}
 
-        public virtual void Rewind()
-        {
-            Seek( lastMarker );
-        }
+		public virtual void Rewind()
+		{
+			Seek(lastMarker);
+		}
 
-        public virtual void Seek( int index )
-        {
-            if ( p == -1 )
-            {
-                FillBuffer();
-            }
-            p = index;
-        }
+		public virtual void Seek(int index)
+		{
+			if (p == -1)
+			{
+				FillBuffer();
+			}
+			p = index;
+		}
 
-        /** <summary>
+		/** <summary>
          *  Make stream jump to a new location, saving old location.
          *  Switch back with pop().
          *  </summary>
          */
-        public virtual void Push( int index )
-        {
-            if ( calls == null )
-            {
-                calls = new Stack<int>();
-            }
-            calls.Push( p ); // save current index
-            Seek( index );
-        }
+		public virtual void Push(int index)
+		{
+			if (calls == null)
+			{
+				calls = new Stack<int>();
+			}
+			calls.Push(p); // save current index
+			Seek(index);
+		}
 
-        /** <summary>
+		/** <summary>
          *  Seek back to previous index saved during last push() call.
          *  Return top of stack (return index).
          *  </summary>
          */
-        public virtual int Pop()
-        {
-            int ret = calls.Pop();
-            Seek( ret );
-            return ret;
-        }
+		public virtual int Pop()
+		{
+			int ret = calls.Pop();
+			Seek(ret);
+			return ret;
+		}
 
-        public virtual void Reset()
-        {
-            p = 0;
-            lastMarker = 0;
-            if ( calls != null )
-            {
-                calls.Clear();
-            }
-        }
+		public virtual void Reset()
+		{
+			p = 0;
+			lastMarker = 0;
+			if (calls != null)
+			{
+				calls.Clear();
+			}
+		}
 
-        public virtual IEnumerator<object> Iterator()
-        {
-            if ( p == -1 )
-            {
-                FillBuffer();
-            }
+		public virtual IEnumerator<object> Iterator()
+		{
+			if (p == -1)
+			{
+				FillBuffer();
+			}
 
-            return new StreamIterator( this );
-        }
+			return new StreamIterator(this);
+		}
 
-        // TREE REWRITE INTERFACE
+		// TREE REWRITE INTERFACE
 
-        public virtual void ReplaceChildren( object parent, int startChildIndex, int stopChildIndex, object t )
-        {
-            if ( parent != null )
-            {
-                adaptor.ReplaceChildren( parent, startChildIndex, stopChildIndex, t );
-            }
-        }
+		public virtual void ReplaceChildren(object parent, int startChildIndex, int stopChildIndex, object t)
+		{
+			if (parent != null)
+			{
+				adaptor.ReplaceChildren(parent, startChildIndex, stopChildIndex, t);
+			}
+		}
 
-        /** <summary>Used for testing, just return the token type stream</summary> */
-        public virtual string ToTokenTypeString()
-        {
-            if ( p == -1 )
-            {
-                FillBuffer();
-            }
-            StringBuilder buf = new StringBuilder();
-            for ( int i = 0; i < nodes.Count; i++ )
-            {
-                object t = nodes[i];
-                buf.Append( " " );
-                buf.Append( adaptor.GetType( t ) );
-            }
-            return buf.ToString();
-        }
+		/** <summary>Used for testing, just return the token type stream</summary> */
+		public virtual string ToTokenTypeString()
+		{
+			if (p == -1)
+			{
+				FillBuffer();
+			}
+			StringBuilder buf = new StringBuilder();
+			for (int i = 0; i < nodes.Count; i++)
+			{
+				object t = nodes[i];
+				buf.Append(" ");
+				buf.Append(adaptor.GetType(t));
+			}
+			return buf.ToString();
+		}
 
-        /** <summary>Debugging</summary> */
-        public virtual string ToTokenString( int start, int stop )
-        {
-            if ( p == -1 )
-            {
-                FillBuffer();
-            }
-            StringBuilder buf = new StringBuilder();
-            for ( int i = start; i < nodes.Count && i <= stop; i++ )
-            {
-                object t = nodes[i];
-                buf.Append( " " );
-                buf.Append( adaptor.GetToken( t ) );
-            }
-            return buf.ToString();
-        }
+		/** <summary>Debugging</summary> */
+		public virtual string ToTokenString(int start, int stop)
+		{
+			if (p == -1)
+			{
+				FillBuffer();
+			}
+			StringBuilder buf = new StringBuilder();
+			for (int i = start; i < nodes.Count && i <= stop; i++)
+			{
+				object t = nodes[i];
+				buf.Append(" ");
+				buf.Append(adaptor.GetToken(t));
+			}
+			return buf.ToString();
+		}
 
-        public virtual string ToString( object start, object stop )
-        {
+		public virtual string ToString(object start, object stop)
+		{
 #if !PORTABLE
-            Console.Out.WriteLine( "toString" );
+			Console.Out.WriteLine("toString");
 #endif
 
-            if ( start == null || stop == null )
-            {
-                return null;
-            }
-            if ( p == -1 )
-            {
-                throw new InvalidOperationException( "Buffer is not yet filled." );
-            }
+			if (start == null || stop == null)
+			{
+				return null;
+			}
+			if (p == -1)
+			{
+				throw new InvalidOperationException("Buffer is not yet filled.");
+			}
 #if !PORTABLE
-            //Console.Out.WriteLine( "stop: " + stop );
-            if ( start is CommonTree )
-                Console.Out.Write( "toString: " + ( (CommonTree)start ).Token + ", " );
-            else
-                Console.Out.WriteLine( start );
-            if ( stop is CommonTree )
-                Console.Out.WriteLine( ( (CommonTree)stop ).Token );
-            else
-                Console.Out.WriteLine( stop );
+			//Console.Out.WriteLine( "stop: " + stop );
+			if (start is CommonTree)
+				Console.Out.Write("toString: " + ((CommonTree)start).Token + ", ");
+			else
+				Console.Out.WriteLine(start);
+			if (stop is CommonTree)
+				Console.Out.WriteLine(((CommonTree)stop).Token);
+			else
+				Console.Out.WriteLine(stop);
 #endif
-            // if we have the token stream, use that to dump text in order
-            if ( tokens != null )
-            {
-                int beginTokenIndex = adaptor.GetTokenStartIndex( start );
-                int endTokenIndex = adaptor.GetTokenStopIndex( stop );
-                // if it's a tree, use start/stop index from start node
-                // else use token range from start/stop nodes
-                if ( adaptor.GetType( stop ) == TokenTypes.Up )
-                {
-                    endTokenIndex = adaptor.GetTokenStopIndex( start );
-                }
-                else if ( adaptor.GetType( stop ) == TokenTypes.EndOfFile )
-                {
-                    endTokenIndex = Count - 2; // don't use EOF
-                }
-                return tokens.ToString( beginTokenIndex, endTokenIndex );
-            }
-            // walk nodes looking for start
-            object t = null;
-            int i = 0;
-            for ( ; i < nodes.Count; i++ )
-            {
-                t = nodes[i];
-                if ( t == start )
-                {
-                    break;
-                }
-            }
-            // now walk until we see stop, filling string buffer with text
-            StringBuilder buf = new StringBuilder();
-            t = nodes[i];
-            while ( t != stop )
-            {
-                string text = adaptor.GetText( t );
-                if ( text == null )
-                {
-                    text = " " + adaptor.GetType( t ).ToString();
-                }
-                buf.Append( text );
-                i++;
-                t = nodes[i];
-            }
-            // include stop node too
-            string text2 = adaptor.GetText( stop );
-            if ( text2 == null )
-            {
-                text2 = " " + adaptor.GetType( stop ).ToString();
-            }
-            buf.Append( text2 );
-            return buf.ToString();
-        }
-    }
+			// if we have the token stream, use that to dump text in order
+			if (tokens != null)
+			{
+				int beginTokenIndex = adaptor.GetTokenStartIndex(start);
+				int endTokenIndex = adaptor.GetTokenStopIndex(stop);
+				// if it's a tree, use start/stop index from start node
+				// else use token range from start/stop nodes
+				if (adaptor.GetType(stop) == TokenTypes.Up)
+				{
+					endTokenIndex = adaptor.GetTokenStopIndex(start);
+				}
+				else if (adaptor.GetType(stop) == TokenTypes.EndOfFile)
+				{
+					endTokenIndex = Count - 2; // don't use EOF
+				}
+				return tokens.ToString(beginTokenIndex, endTokenIndex);
+			}
+			// walk nodes looking for start
+			object t = null;
+			int i = 0;
+			for (; i < nodes.Count; i++)
+			{
+				t = nodes[i];
+				if (t == start)
+				{
+					break;
+				}
+			}
+			// now walk until we see stop, filling string buffer with text
+			StringBuilder buf = new StringBuilder();
+			t = nodes[i];
+			while (t != stop)
+			{
+				string text = adaptor.GetText(t);
+				if (text == null)
+				{
+					text = " " + adaptor.GetType(t).ToString();
+				}
+				buf.Append(text);
+				i++;
+				t = nodes[i];
+			}
+			// include stop node too
+			string text2 = adaptor.GetText(stop);
+			if (text2 == null)
+			{
+				text2 = " " + adaptor.GetType(stop).ToString();
+			}
+			buf.Append(text2);
+			return buf.ToString();
+		}
+	}
 }

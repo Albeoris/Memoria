@@ -189,16 +189,16 @@ You should set the priority of this mod to be higher than the priority of the Mo
 	<InstallationPath>MogAddons</InstallationPath>
 	<ReleaseDate>2023-12-01</ReleaseDate>
 	<Author>faospark</Author>
-	<Description>UI, Buttons , Portraits, Tweaks and more... an Easy to install collection of enhancements for Final Fantasy IX Steam. 
+	<Description>UI, Buttons , Portraits, Tweaks and more... an Easy to install collection of enhancements for Final Fantasy IX Steam.
 :: Features ::
-Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts 
-Tweaks : AP GAIN , EXP GAIN and Requirements 
-Portrait options : Default with extended cast, Opera Omnia and  Upscaled PS1 Portrait Artwork 
+Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts
+Tweaks : AP GAIN , EXP GAIN and Requirements
+Portrait options : Default with extended cast, Opera Omnia and  Upscaled PS1 Portrait Artwork
 Button Prompts Options:  PS Gloss , PS5 , Pixel Style, PlayStation Vanilla prompts,
-UI : Default , Darker UI and Flat 
+UI : Default , Darker UI and Flat
 
 :: Submod activation ::
-Use the Mod Manager UI to activate each submods you like and pick 
+Use the Mod Manager UI to activate each submods you like and pick
 
 :: Compatibility ::
 - Compatible with Alternate Fantasy
@@ -496,5 +496,4 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Website>https://steamcommunity.com/app/377840/discussions/0/2956041222219522184/</Website>
 </Mod>
 -->
-
 </ModCatalog>

@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum PREGAME_STATE
+﻿public enum PREGAME_STATE
 {
 	SETUP,
 	SETUP_DONE,

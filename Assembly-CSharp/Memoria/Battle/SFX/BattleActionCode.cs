@@ -1,15 +1,15 @@
-﻿using System;
-using System.Globalization;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Assets.Sources.Scripts.UI.Common;
-using UnityEngine;
+﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Assets;
 using NCalc;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using UnityEngine;
 
 public class BattleActionCode
 {

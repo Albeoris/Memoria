@@ -32,143 +32,143 @@
 
 namespace Antlr.Runtime
 {
-    using ArgumentNullException = System.ArgumentNullException;
-    using Exception = System.Exception;
+	using ArgumentNullException = System.ArgumentNullException;
+	using Exception = System.Exception;
 
 #if !PORTABLE
-    using SecurityCriticalAttribute = System.Security.SecurityCriticalAttribute;
-    using SerializationInfo = System.Runtime.Serialization.SerializationInfo;
-    using StreamingContext = System.Runtime.Serialization.StreamingContext;
+	using SecurityCriticalAttribute = System.Security.SecurityCriticalAttribute;
+	using SerializationInfo = System.Runtime.Serialization.SerializationInfo;
+	using StreamingContext = System.Runtime.Serialization.StreamingContext;
 #endif
 
-    [System.Serializable]
-    public class NoViableAltException : RecognitionException
-    {
-        private readonly string _grammarDecisionDescription;
-        private readonly int _decisionNumber;
-        private readonly int _stateNumber;
+	[System.Serializable]
+	public class NoViableAltException : RecognitionException
+	{
+		private readonly string _grammarDecisionDescription;
+		private readonly int _decisionNumber;
+		private readonly int _stateNumber;
 
-        public NoViableAltException()
-        {
-        }
+		public NoViableAltException()
+		{
+		}
 
-        public NoViableAltException(string grammarDecisionDescription)
-        {
-            this._grammarDecisionDescription = grammarDecisionDescription;
-        }
+		public NoViableAltException(string grammarDecisionDescription)
+		{
+			this._grammarDecisionDescription = grammarDecisionDescription;
+		}
 
-        public NoViableAltException(string message, string grammarDecisionDescription)
-            : base(message)
-        {
-            this._grammarDecisionDescription = grammarDecisionDescription;
-        }
+		public NoViableAltException(string message, string grammarDecisionDescription)
+			: base(message)
+		{
+			this._grammarDecisionDescription = grammarDecisionDescription;
+		}
 
-        public NoViableAltException(string message, string grammarDecisionDescription, Exception innerException)
-            : base(message, innerException)
-        {
-            this._grammarDecisionDescription = grammarDecisionDescription;
-        }
+		public NoViableAltException(string message, string grammarDecisionDescription, Exception innerException)
+			: base(message, innerException)
+		{
+			this._grammarDecisionDescription = grammarDecisionDescription;
+		}
 
-        public NoViableAltException(string grammarDecisionDescription, int decisionNumber, int stateNumber, IIntStream input)
-            : this(grammarDecisionDescription, decisionNumber, stateNumber, input, 1)
-        {
-        }
+		public NoViableAltException(string grammarDecisionDescription, int decisionNumber, int stateNumber, IIntStream input)
+			: this(grammarDecisionDescription, decisionNumber, stateNumber, input, 1)
+		{
+		}
 
-        public NoViableAltException(string grammarDecisionDescription, int decisionNumber, int stateNumber, IIntStream input, int k)
-            : base(input, k)
-        {
-            this._grammarDecisionDescription = grammarDecisionDescription;
-            this._decisionNumber = decisionNumber;
-            this._stateNumber = stateNumber;
-        }
+		public NoViableAltException(string grammarDecisionDescription, int decisionNumber, int stateNumber, IIntStream input, int k)
+			: base(input, k)
+		{
+			this._grammarDecisionDescription = grammarDecisionDescription;
+			this._decisionNumber = decisionNumber;
+			this._stateNumber = stateNumber;
+		}
 
-        public NoViableAltException(string message, string grammarDecisionDescription, int decisionNumber, int stateNumber, IIntStream input)
-            : this(message, grammarDecisionDescription, decisionNumber, stateNumber, input, 1)
-        {
-        }
+		public NoViableAltException(string message, string grammarDecisionDescription, int decisionNumber, int stateNumber, IIntStream input)
+			: this(message, grammarDecisionDescription, decisionNumber, stateNumber, input, 1)
+		{
+		}
 
-        public NoViableAltException(string message, string grammarDecisionDescription, int decisionNumber, int stateNumber, IIntStream input, int k)
-            : base(message, input, k)
-        {
-            this._grammarDecisionDescription = grammarDecisionDescription;
-            this._decisionNumber = decisionNumber;
-            this._stateNumber = stateNumber;
-        }
+		public NoViableAltException(string message, string grammarDecisionDescription, int decisionNumber, int stateNumber, IIntStream input, int k)
+			: base(message, input, k)
+		{
+			this._grammarDecisionDescription = grammarDecisionDescription;
+			this._decisionNumber = decisionNumber;
+			this._stateNumber = stateNumber;
+		}
 
-        public NoViableAltException(string message, string grammarDecisionDescription, int decisionNumber, int stateNumber, IIntStream input, Exception innerException)
-            : this(message, grammarDecisionDescription, decisionNumber, stateNumber, input, 1, innerException)
-        {
-        }
+		public NoViableAltException(string message, string grammarDecisionDescription, int decisionNumber, int stateNumber, IIntStream input, Exception innerException)
+			: this(message, grammarDecisionDescription, decisionNumber, stateNumber, input, 1, innerException)
+		{
+		}
 
-        public NoViableAltException(string message, string grammarDecisionDescription, int decisionNumber, int stateNumber, IIntStream input, int k, Exception innerException)
-            : base(message, input, k, innerException)
-        {
-            this._grammarDecisionDescription = grammarDecisionDescription;
-            this._decisionNumber = decisionNumber;
-            this._stateNumber = stateNumber;
-        }
+		public NoViableAltException(string message, string grammarDecisionDescription, int decisionNumber, int stateNumber, IIntStream input, int k, Exception innerException)
+			: base(message, input, k, innerException)
+		{
+			this._grammarDecisionDescription = grammarDecisionDescription;
+			this._decisionNumber = decisionNumber;
+			this._stateNumber = stateNumber;
+		}
 
 #if !PORTABLE
-        protected NoViableAltException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            if (info == null)
-                throw new ArgumentNullException("info");
+		protected NoViableAltException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+			if (info == null)
+				throw new ArgumentNullException("info");
 
-            this._grammarDecisionDescription = info.GetString("GrammarDecisionDescription");
-            this._decisionNumber = info.GetInt32("DecisionNumber");
-            this._stateNumber = info.GetInt32("StateNumber");
-        }
+			this._grammarDecisionDescription = info.GetString("GrammarDecisionDescription");
+			this._decisionNumber = info.GetInt32("DecisionNumber");
+			this._stateNumber = info.GetInt32("StateNumber");
+		}
 #endif
 
-        public int DecisionNumber
-        {
-            get
-            {
-                return _decisionNumber;
-            }
-        }
+		public int DecisionNumber
+		{
+			get
+			{
+				return _decisionNumber;
+			}
+		}
 
-        public string GrammarDecisionDescription
-        {
-            get
-            {
-                return _grammarDecisionDescription;
-            }
-        }
+		public string GrammarDecisionDescription
+		{
+			get
+			{
+				return _grammarDecisionDescription;
+			}
+		}
 
-        public int StateNumber
-        {
-            get
-            {
-                return _stateNumber;
-            }
-        }
+		public int StateNumber
+		{
+			get
+			{
+				return _stateNumber;
+			}
+		}
 
 #if !PORTABLE
-        [SecurityCritical]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-                throw new ArgumentNullException("info");
+		[SecurityCritical]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException("info");
 
-            base.GetObjectData(info, context);
-            info.AddValue("GrammarDecisionDescription", _grammarDecisionDescription);
-            info.AddValue("DecisionNumber", _decisionNumber);
-            info.AddValue("StateNumber", _stateNumber);
-        }
+			base.GetObjectData(info, context);
+			info.AddValue("GrammarDecisionDescription", _grammarDecisionDescription);
+			info.AddValue("DecisionNumber", _decisionNumber);
+			info.AddValue("StateNumber", _stateNumber);
+		}
 #endif
 
-        public override string ToString()
-        {
-            if ( Input is ICharStream )
-            {
-                return "NoViableAltException('" + (char)UnexpectedType + "'@[" + GrammarDecisionDescription + "])";
-            }
-            else
-            {
-                return "NoViableAltException(" + UnexpectedType + "@[" + GrammarDecisionDescription + "])";
-            }
-        }
-    }
+		public override string ToString()
+		{
+			if (Input is ICharStream)
+			{
+				return "NoViableAltException('" + (char)UnexpectedType + "'@[" + GrammarDecisionDescription + "])";
+			}
+			else
+			{
+				return "NoViableAltException(" + UnexpectedType + "@[" + GrammarDecisionDescription + "])";
+			}
+		}
+	}
 }

@@ -156,7 +156,7 @@ namespace Unity.IO.Compression
 			this.EnsureNotDisposed();
 			Int32 num = offset;
 			Int32 num2 = count;
-			for (;;)
+			for (; ; )
 			{
 				Int32 num3 = this.inflater.Inflate(array, num, num2);
 				num += num3;
@@ -178,9 +178,9 @@ namespace Unity.IO.Compression
 				this.inflater.SetInput(this.buffer, 0, num4);
 			}
 			goto IL_BB;
-			Block_2:
+		Block_2:
 			Debug.Assert(this.inflater.AvailableOutput == 0, "We should have copied all stuff out!");
-			IL_BB:
+		IL_BB:
 			return count - num2;
 		}
 

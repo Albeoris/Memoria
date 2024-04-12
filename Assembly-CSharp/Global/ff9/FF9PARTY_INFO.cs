@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria.Data;
+using System;
 using System.Collections.Generic;
-using Memoria.Data;
 
 public class FF9PARTY_INFO
 {

@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Diagnostics;
-using System.Collections.Generic;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Memoria.Prime;
 using Memoria.Scripts;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using UnityEngine;
 
 namespace Memoria.Assets
@@ -306,7 +306,7 @@ namespace Memoria.Assets
 			{
 				if (ModelFactory.garnetShortHairTable.Contains(ModelViewerScene.geoList[index]))
 				{
-					Boolean garnetShortHair =  ModelViewerScene.geoList[index] == "GEO_MAIN_F1_GRN"
+					Boolean garnetShortHair = ModelViewerScene.geoList[index] == "GEO_MAIN_F1_GRN"
 											|| ModelViewerScene.geoList[index] == "GEO_MAIN_B0_004"
 											|| ModelViewerScene.geoList[index] == "GEO_MAIN_B0_005"
 											|| ModelViewerScene.geoList[index] == "GEO_MON_B3_169"

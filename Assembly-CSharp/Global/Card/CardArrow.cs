@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using Memoria;
 
 [RequireComponent(typeof(SpriteDisplay))]
 public class CardArrow : MonoBehaviour
@@ -46,34 +45,34 @@ public class CardArrow : MonoBehaviour
 		Int32 num2 = 0;
 		switch (arrow)
 		{
-		case CardArrow.Type.UP:
-			num2 = -1;
-			break;
-		case CardArrow.Type.RIGHT_UP:
-			num2 = -1;
-			num = 1;
-			break;
-		case CardArrow.Type.RIGHT:
-			num = 1;
-			break;
-		case CardArrow.Type.RIGHT_DOWN:
-			num = 1;
-			num2 = 1;
-			break;
-		case CardArrow.Type.DOWN:
-			num2 = 1;
-			break;
-		case CardArrow.Type.LEFT_DOWN:
-			num = -1;
-			num2 = 1;
-			break;
-		case CardArrow.Type.LEFT:
-			num = -1;
-			break;
-		case CardArrow.Type.LEFT_UP:
-			num = -1;
-			num2 = -1;
-			break;
+			case CardArrow.Type.UP:
+				num2 = -1;
+				break;
+			case CardArrow.Type.RIGHT_UP:
+				num2 = -1;
+				num = 1;
+				break;
+			case CardArrow.Type.RIGHT:
+				num = 1;
+				break;
+			case CardArrow.Type.RIGHT_DOWN:
+				num = 1;
+				num2 = 1;
+				break;
+			case CardArrow.Type.DOWN:
+				num2 = 1;
+				break;
+			case CardArrow.Type.LEFT_DOWN:
+				num = -1;
+				num2 = 1;
+				break;
+			case CardArrow.Type.LEFT:
+				num = -1;
+				break;
+			case CardArrow.Type.LEFT_UP:
+				num = -1;
+				num2 = -1;
+				break;
 		}
 		return new Vector3((Single)num, (Single)num2, 0f);
 	}

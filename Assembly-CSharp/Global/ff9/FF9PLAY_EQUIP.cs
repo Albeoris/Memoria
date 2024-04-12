@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum FF9PLAY_EQUIP
+﻿public enum FF9PLAY_EQUIP
 {
 	FF9PLAY_EQUIP_ID_ZIDANE,
 	FF9PLAY_EQUIP_ID_VIVI,

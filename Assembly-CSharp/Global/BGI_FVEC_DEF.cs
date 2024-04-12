@@ -45,7 +45,7 @@ public class BGI_FVEC_DEF
 		normal.coord[0] = (Int32)Math.Round(v.x * 65536f);
 		normal.coord[1] = (Int32)Math.Round(v.y * 65536f);
 		normal.coord[2] = (Int32)Math.Round(v.z * 65536f);
-		normal.oneOverY = Single.IsInfinity(1f/ v.y) ? 0 : (Int32)Math.Round(1f / v.y * 65536f);
+		normal.oneOverY = Single.IsInfinity(1f / v.y) ? 0 : (Int32)Math.Round(1f / v.y * 65536f);
 		return normal;
 	}
 

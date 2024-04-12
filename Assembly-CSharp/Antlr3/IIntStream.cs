@@ -32,26 +32,25 @@
 
 namespace Antlr.Runtime
 {
-
-    /** <summary>
+	/** <summary>
      *  A simple stream of integers used when all I care about is the char
      *  or token type sequence (such as interpretation).
      *  </summary>
      */
-    public interface IIntStream
-    {
-        void Consume();
+	public interface IIntStream
+	{
+		void Consume();
 
-        /** <summary>
+		/** <summary>
          *  Get int at current input pointer + i ahead where i=1 is next int.
          *  Negative indexes are allowed.  LA(-1) is previous token (token
          *  just matched).  LA(-i) where i is before first token should
          *  yield -1, invalid char / EOF.
          *  </summary>
          */
-        int LA( int i );
+		int LA(int i);
 
-        /** <summary>
+		/** <summary>
          *  Tell the stream to start buffering if it hasn't already.  Return
          *  current input position, Index, or some other marker so that
          *  when passed to rewind() you get back to the same spot.
@@ -60,20 +59,20 @@ namespace Antlr.Runtime
          *  not pure input indexes.  Same for tree node streams.
          *  </summary>
          */
-        int Mark();
+		int Mark();
 
-        /** <summary>
+		/** <summary>
          *  Return the current input symbol index 0..n where n indicates the
          *  last symbol has been read.  The index is the symbol about to be
          *  read not the most recently read symbol.
          *  </summary>
          */
-        int Index
-        {
-            get;
-        }
+		int Index
+		{
+			get;
+		}
 
-        /** <summary>
+		/** <summary>
          *  Reset the stream so that next call to index would return marker.
          *  The marker will usually be Index but it doesn't have to be.  It's
          *  just a marker to indicate what state the stream was in.  This is
@@ -83,9 +82,9 @@ namespace Antlr.Runtime
          *  was created.
          *  </summary>
          */
-        void Rewind( int marker );
+		void Rewind(int marker);
 
-        /** <summary>
+		/** <summary>
          *  Rewind to the input position of the last marker.
          *  Used currently only after a cyclic DFA and just
          *  before starting a sem/syn predicate to get the
@@ -96,9 +95,9 @@ namespace Antlr.Runtime
          *  the marker off.  It's like seek(last marker's input position).
          *  </summary>
          */
-        void Rewind();
+		void Rewind();
 
-        /** <summary>
+		/** <summary>
          *  You may want to commit to a backtrack but don't want to force the
          *  stream to keep bookkeeping objects around for a marker that is
          *  no longer necessary.  This will have the same behavior as
@@ -108,9 +107,9 @@ namespace Antlr.Runtime
          *  you have to release resources for depths 2..5.
          *  </summary>
          */
-        void Release( int marker );
+		void Release(int marker);
 
-        /** <summary>
+		/** <summary>
          *  Set the input cursor to the position indicated by index.  This is
          *  normally used to seek ahead in the input stream.  No buffering is
          *  required to do this unless you know your stream will use seek to
@@ -131,31 +130,31 @@ namespace Antlr.Runtime
          *
          *  The index is 0..n-1.  A seek to position i means that LA(1) will
          *  return the ith symbol.  So, seeking to 0 means LA(1) will return the
-         *  first element in the stream. 
+         *  first element in the stream.
          *  </remarks>
          */
-        void Seek( int index );
+		void Seek(int index);
 
-        /** <summary>
+		/** <summary>
          *  Only makes sense for streams that buffer everything up probably, but
          *  might be useful to display the entire stream or for testing.  This
          *  value includes a single EOF.
          *  </summary>
          */
-        int Count
-        {
-            get;
-        }
+		int Count
+		{
+			get;
+		}
 
-        /** <summary>
+		/** <summary>
          *  Where are you getting symbols from?  Normally, implementations will
          *  pass the buck all the way to the lexer who can ask its input stream
          *  for the file name or whatever.
          *  </summary>
          */
-        string SourceName
-        {
-            get;
-        }
-    }
+		string SourceName
+		{
+			get;
+		}
+	}
 }

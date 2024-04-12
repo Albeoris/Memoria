@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using Memoria;
+﻿using Memoria;
 using Memoria.Assets;
 using Memoria.Prime;
 using Memoria.Speedrun;
-using SiliconStudio;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace Assets.Scripts.Common
@@ -61,12 +59,12 @@ namespace Assets.Scripts.Common
 
 		public static void ReplaceNow(String nextScene)
 		{
-            MemoriaExport();
+			MemoriaExport();
 
-            if (String.IsNullOrEmpty(nextScene))
-                Log.Error($"[{nameof(SceneDirector)}] Someone tried to change the current scene [{Instance.CurrentScene}] to the invalid scene: [{nextScene}]. Stack: " + Environment.NewLine + Environment.StackTrace);
+			if (String.IsNullOrEmpty(nextScene))
+				Log.Error($"[{nameof(SceneDirector)}] Someone tried to change the current scene [{Instance.CurrentScene}] to the invalid scene: [{nextScene}]. Stack: " + Environment.NewLine + Environment.StackTrace);
 
-            if (nextScene != "MainMenu")
+			if (nextScene != "MainMenu")
 			{
 				if (Singleton<BubbleUI>.Instance != null)
 					Singleton<BubbleUI>.Instance.SetGameObjectActive(false);
@@ -78,7 +76,7 @@ namespace Assets.Scripts.Common
 			Application.LoadLevel("Loading");
 			Resources.UnloadUnusedAssets();
 			//GC.Collect();
-		    PersistenSingleton<SceneDirector>.Instance.LoadNextScene();
+			PersistenSingleton<SceneDirector>.Instance.LoadNextScene();
 			PersistenSingleton<SceneDirector>.Instance.LastScene = PersistenSingleton<SceneDirector>.Instance.CurrentScene;
 			PersistenSingleton<SceneDirector>.Instance.CurrentScene = PersistenSingleton<SceneDirector>.Instance.NextScene;
 			PersistenSingleton<SceneDirector>.Instance.PendingCurrentScene = String.Empty;
@@ -87,31 +85,31 @@ namespace Assets.Scripts.Common
 			global::Debug.Log("---------- Current Scene : " + PersistenSingleton<SceneDirector>.Instance.CurrentScene + " ----------");
 		}
 
-	    private void LoadNextScene()
-	    {
-	        try
-	        {
-	            String nextScene = this.NextScene;
-	            if (nextScene == null)
-                    throw new ArgumentNullException(nameof(nextScene));
+		private void LoadNextScene()
+		{
+			try
+			{
+				String nextScene = this.NextScene;
+				if (nextScene == null)
+					throw new ArgumentNullException(nameof(nextScene));
 
-                if (nextScene == String.Empty)
-	                throw new ArgumentException(nameof(nextScene));
+				if (nextScene == String.Empty)
+					throw new ArgumentException(nameof(nextScene));
 
-                Application.LoadLevel(this.NextScene);
+				Application.LoadLevel(this.NextScene);
 				AutoSplitterPipe.SignalLoadEnd();
 			}
-	        catch (Exception ex)
-	        {
-	            Log.Error(ex, "Failed to load next scene.");
-	            throw;
-	        }
-	    }
+			catch (Exception ex)
+			{
+				Log.Error(ex, "Failed to load next scene.");
+				throw;
+			}
+		}
 
-	    public static void Replace(String nextScene, SceneTransition transition = SceneTransition.FadeOutToBlack_FadeIn, Boolean needFade = true)
+		public static void Replace(String nextScene, SceneTransition transition = SceneTransition.FadeOutToBlack_FadeIn, Boolean needFade = true)
 		{
-		    if (String.IsNullOrEmpty(nextScene))
-		        Log.Error($"[{nameof(SceneDirector)}] Someone tried to change the current scene [{Instance.CurrentScene}] to the invalid scene: [{nextScene}]. Stack: " + Environment.NewLine + Environment.StackTrace);
+			if (String.IsNullOrEmpty(nextScene))
+				Log.Error($"[{nameof(SceneDirector)}] Someone tried to change the current scene [{Instance.CurrentScene}] to the invalid scene: [{nextScene}]. Stack: " + Environment.NewLine + Environment.StackTrace);
 
 			if (SceneDirector.IsBattleScene())
 				SmoothFrameUpdater_Battle.Skip = 1;
@@ -143,8 +141,8 @@ namespace Assets.Scripts.Common
 		public static void ReplacePending(SceneTransition transition = SceneTransition.FadeOutToBlack_FadeIn, Boolean needFade = true)
 		{
 			PersistenSingleton<SceneDirector>.Instance.NextScene = PersistenSingleton<SceneDirector>.Instance.PendingNextScene;
-            PersistenSingleton<SceneDirector>.Instance.PendingNextScene = String.Empty;
-            PersistenSingleton<SceneDirector>.Instance.Transition = transition;
+			PersistenSingleton<SceneDirector>.Instance.PendingNextScene = String.Empty;
+			PersistenSingleton<SceneDirector>.Instance.Transition = transition;
 			PersistenSingleton<SceneDirector>.Instance.Replace(needFade);
 		}
 
@@ -240,7 +238,7 @@ namespace Assets.Scripts.Common
 
 		private void _OnGUI_Fade()
 		{
-            Color color = this.curColor;
+			Color color = this.curColor;
 			color.a = this.fadeAmount;
 			GUI.color = color;
 		}
@@ -293,7 +291,7 @@ namespace Assets.Scripts.Common
 			Application.LoadLevel("Loading");
 			Resources.UnloadUnusedAssets();
 			//GC.Collect();
-		    LoadNextScene();
+			LoadNextScene();
 			if (this.CurrentScene != this.NextScene)
 			{
 				SoundLib.StopAllSoundEffects(); // Issue #140: don't stop sounds in field transitions
@@ -376,7 +374,7 @@ namespace Assets.Scripts.Common
 
 		private IEnumerator _Swirl(String nextScene, SceneTransition transition)
 		{
-            this.PendingCurrentScene = this.CurrentScene;
+			this.PendingCurrentScene = this.CurrentScene;
 			this.PendingNextScene = nextScene;
 			this.IsFading = true;
 			UIManager.Field.Loading = true;
@@ -575,15 +573,15 @@ namespace Assets.Scripts.Common
 
 		private static Color32 _prevColor;
 
-        private static Int32 _initialized;
+		private static Int32 _initialized;
 
-        private static void MemoriaExport()
-        {
-            if (Interlocked.CompareExchange(ref _initialized, 1, 0) == 0)
-            {
-                ResourceExporter.ExportSafe();
-                ResourceImporter.Initialize();
-            }
-        }
-    }
+		private static void MemoriaExport()
+		{
+			if (Interlocked.CompareExchange(ref _initialized, 1, 0) == 0)
+			{
+				ResourceExporter.ExportSafe();
+				ResourceImporter.Initialize();
+			}
+		}
+	}
 }

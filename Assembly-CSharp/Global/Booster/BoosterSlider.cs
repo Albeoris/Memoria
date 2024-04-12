@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Assets.Scripts.Common;
+using Memoria.Assets;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Common;
-using Memoria.Assets;
 using UnityEngine;
 using Object = System.Object;
 
@@ -55,17 +55,17 @@ public class BoosterSlider : MonoBehaviour
 				}
 				switch (boosterButton.BoosterType)
 				{
-				case BoosterType.BattleAssistance:
-				case BoosterType.HighSpeedMode:
-				case BoosterType.Rotation:
-				case BoosterType.Attack9999:
-				case BoosterType.NoRandomEncounter:
-				case BoosterType.Perspective:
-					FF9StateSystem.Settings.CallBoosterButtonFuntion(boosterButton.BoosterType, flag);
-					break;
-				case BoosterType.Help:
-					FF9StateSystem.Settings.CallBoosterButtonFuntion(boosterButton.BoosterType, true);
-					break;
+					case BoosterType.BattleAssistance:
+					case BoosterType.HighSpeedMode:
+					case BoosterType.Rotation:
+					case BoosterType.Attack9999:
+					case BoosterType.NoRandomEncounter:
+					case BoosterType.Perspective:
+						FF9StateSystem.Settings.CallBoosterButtonFuntion(boosterButton.BoosterType, flag);
+						break;
+					case BoosterType.Help:
+						FF9StateSystem.Settings.CallBoosterButtonFuntion(boosterButton.BoosterType, true);
+						break;
 				}
 			}
 		}
@@ -124,8 +124,8 @@ public class BoosterSlider : MonoBehaviour
 
 	private Boolean canSlideBooster()
 	{
-        Boolean flag = !MBG.IsNull && !MBG.Instance.IsFinishedForDisableBooster();
-        return (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.FieldHUD && !flag) || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.BattleHUD || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD || (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Pause && !flag);
+		Boolean flag = !MBG.IsNull && !MBG.Instance.IsFinishedForDisableBooster();
+		return (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.FieldHUD && !flag) || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.BattleHUD || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD || (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Pause && !flag);
 	}
 
 	private void AfterTweenIn()
@@ -160,30 +160,30 @@ public class BoosterSlider : MonoBehaviour
 	{
 		if (this.canSlideBooster())
 		{
-            this.animateHide = false;
-            this.OutsideBoosterHitPoint.SetActive(false);
-            base.StopCoroutine("WaitAndHideArrow");
-            this.boosterTween.StopAnimation();
-            this.ClearBooster();
-            this.boosterList[4].Self.SetActive(true);
-            int[] buttonId = new int[]
-            {
-                0,
-                1,
-                3,
-                4
-            };
-            this.GetButtonCurrentStatus(buttonId);
-            this.ArrowHitPoint.SetActive(false);
-            this.isArrowHitPointActive = false;
-            this.waitForDrag = false;
-            this.isSliderActive = true;
-            if (!this.boosterSliderPanel.activeSelf)
-            {
-                this.boosterSliderPanel.SetActive(true);
-            }
-            this.boosterSliderPanel.transform.localPosition = this.boosterTween.DestinationPosition[0];
-        }
+			this.animateHide = false;
+			this.OutsideBoosterHitPoint.SetActive(false);
+			base.StopCoroutine("WaitAndHideArrow");
+			this.boosterTween.StopAnimation();
+			this.ClearBooster();
+			this.boosterList[4].Self.SetActive(true);
+			int[] buttonId = new int[]
+			{
+				0,
+				1,
+				3,
+				4
+			};
+			this.GetButtonCurrentStatus(buttonId);
+			this.ArrowHitPoint.SetActive(false);
+			this.isArrowHitPointActive = false;
+			this.waitForDrag = false;
+			this.isSliderActive = true;
+			if (!this.boosterSliderPanel.activeSelf)
+			{
+				this.boosterSliderPanel.SetActive(true);
+			}
+			this.boosterSliderPanel.transform.localPosition = this.boosterTween.DestinationPosition[0];
+		}
 	}
 
 	public void CloseBoosterPanelImmediately()
@@ -255,34 +255,34 @@ public class BoosterSlider : MonoBehaviour
 		this.ClearBooster();
 		switch (unityScene)
 		{
-		case UIManager.Scene.Field:
-		{
-			this.boosterList[6].Self.SetActive(true);
-			this.boosterList[4].Self.SetActive(true);
-			this.currentThirdButton = this.boosterList[6].Self;
-			Int32[] buttonId = new Int32[]
-			{
+			case UIManager.Scene.Field:
+				{
+					this.boosterList[6].Self.SetActive(true);
+					this.boosterList[4].Self.SetActive(true);
+					this.currentThirdButton = this.boosterList[6].Self;
+					Int32[] buttonId = new Int32[]
+					{
 				0,
 				1,
 				3,
 				4
-			};
-			this.GetButtonCurrentStatus(buttonId);
-			break;
-		}
-		case UIManager.Scene.Battle:
-		{
-			this.boosterList[6].Self.SetActive(true);
-			this.currentThirdButton = this.boosterList[6].Self;
-			Int32[] buttonId = new Int32[]
-			{
+					};
+					this.GetButtonCurrentStatus(buttonId);
+					break;
+				}
+			case UIManager.Scene.Battle:
+				{
+					this.boosterList[6].Self.SetActive(true);
+					this.currentThirdButton = this.boosterList[6].Self;
+					Int32[] buttonId = new Int32[]
+					{
 				0,
 				1,
 				3
-			};
-			this.GetButtonCurrentStatus(buttonId);
-			break;
-		}
+					};
+					this.GetButtonCurrentStatus(buttonId);
+					break;
+				}
 		}
 	}
 
@@ -291,88 +291,88 @@ public class BoosterSlider : MonoBehaviour
 		this.ClearBooster();
 		switch (currentCharacterStateIndex)
 		{
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-		case 4:
-		case 5:
-		{
-			this.boosterList[4].Self.SetActive(true);
-			this.boosterList[2].Self.SetActive(false);
-			this.boosterList[5].Self.SetActive(false);
-			this.currentThirdButton = this.boosterList[2].Self;
-			this.boosterList[2].Icon.spriteName = "button_rotate";
-			this.boosterList[2].IconToggle.spriteName = "button_rotate_act";
-			Int32[] buttonId = new Int32[]
-			{
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+			case 4:
+			case 5:
+				{
+					this.boosterList[4].Self.SetActive(true);
+					this.boosterList[2].Self.SetActive(false);
+					this.boosterList[5].Self.SetActive(false);
+					this.currentThirdButton = this.boosterList[2].Self;
+					this.boosterList[2].Icon.spriteName = "button_rotate";
+					this.boosterList[2].IconToggle.spriteName = "button_rotate_act";
+					Int32[] buttonId = new Int32[]
+					{
 				0,
 				1,
 				2,
 				3,
 				4,
 				5
-			};
-			this.GetButtonCurrentStatus(buttonId);
-			break;
-		}
-		case 6:
-		{
-			this.boosterList[4].Self.SetActive(true);
-			this.boosterList[2].Self.SetActive(false);
-			this.currentThirdButton = this.boosterList[2].Self;
-			this.boosterList[2].Icon.spriteName = "button_align";
-			this.boosterList[2].IconToggle.spriteName = "button_align_act";
-			Int32[] buttonId = new Int32[]
-			{
+					};
+					this.GetButtonCurrentStatus(buttonId);
+					break;
+				}
+			case 6:
+				{
+					this.boosterList[4].Self.SetActive(true);
+					this.boosterList[2].Self.SetActive(false);
+					this.currentThirdButton = this.boosterList[2].Self;
+					this.boosterList[2].Icon.spriteName = "button_align";
+					this.boosterList[2].IconToggle.spriteName = "button_align_act";
+					Int32[] buttonId = new Int32[]
+					{
 				0,
 				1,
 				2,
 				3,
 				4
-			};
-			this.GetButtonCurrentStatus(buttonId);
-			break;
-		}
-		case 7:
-		{
-			this.boosterList[4].Self.SetActive(true);
-			this.boosterList[2].Self.SetActive(false);
-			this.boosterList[5].Self.SetActive(false);
-			this.currentThirdButton = this.boosterList[2].Self;
-			this.boosterList[2].Icon.spriteName = "button_align";
-			this.boosterList[2].IconToggle.spriteName = "button_align_act";
-			Int32[] buttonId = new Int32[]
-			{
+					};
+					this.GetButtonCurrentStatus(buttonId);
+					break;
+				}
+			case 7:
+				{
+					this.boosterList[4].Self.SetActive(true);
+					this.boosterList[2].Self.SetActive(false);
+					this.boosterList[5].Self.SetActive(false);
+					this.currentThirdButton = this.boosterList[2].Self;
+					this.boosterList[2].Icon.spriteName = "button_align";
+					this.boosterList[2].IconToggle.spriteName = "button_align_act";
+					Int32[] buttonId = new Int32[]
+					{
 				0,
 				1,
 				2,
 				3,
 				4,
 				5
-			};
-			this.GetButtonCurrentStatus(buttonId);
-			break;
-		}
-		case 8:
-		case 9:
-		{
-			this.boosterList[4].Self.SetActive(true);
-			this.boosterList[2].Self.SetActive(false);
-			this.currentThirdButton = this.boosterList[2].Self;
-			this.boosterList[2].Icon.spriteName = "button_align";
-			this.boosterList[2].IconToggle.spriteName = "button_align_act";
-			Int32[] buttonId = new Int32[]
-			{
+					};
+					this.GetButtonCurrentStatus(buttonId);
+					break;
+				}
+			case 8:
+			case 9:
+				{
+					this.boosterList[4].Self.SetActive(true);
+					this.boosterList[2].Self.SetActive(false);
+					this.currentThirdButton = this.boosterList[2].Self;
+					this.boosterList[2].Icon.spriteName = "button_align";
+					this.boosterList[2].IconToggle.spriteName = "button_align_act";
+					Int32[] buttonId = new Int32[]
+					{
 				0,
 				1,
 				2,
 				3,
 				4
-			};
-			this.GetButtonCurrentStatus(buttonId);
-			break;
-		}
+					};
+					this.GetButtonCurrentStatus(buttonId);
+					break;
+				}
 		}
 	}
 
@@ -384,15 +384,15 @@ public class BoosterSlider : MonoBehaviour
 			String text = String.Empty;
 			switch (type)
 			{
-			case BoosterType.MasterSkill:
-				text += Localization.Get("BoosterWarningMaster");
-				break;
-			case BoosterType.LvMax:
-				text += Localization.Get("BoosterWarningLvMax");
-				break;
-			case BoosterType.GilMax:
-				text += Localization.Get("BoosterWarningGilMax");
-				break;
+				case BoosterType.MasterSkill:
+					text += Localization.Get("BoosterWarningMaster");
+					break;
+				case BoosterType.LvMax:
+					text += Localization.Get("BoosterWarningLvMax");
+					break;
+				case BoosterType.GilMax:
+					text += Localization.Get("BoosterWarningGilMax");
+					break;
 			}
 			if (FF9StateSystem.aaaaPlatform)
 			{

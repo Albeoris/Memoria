@@ -1,9 +1,9 @@
 ﻿#if PORTABLE
 
-namespace System 
+namespace System
 {
     [AttributeUsage(AttributeTargets.Field, Inherited=false)]
-    internal sealed class NonSerializedAttribute : Attribute 
+    internal sealed class NonSerializedAttribute : Attribute
     {
     }
 }

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FF9;
+using Memoria.Data;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Memoria.Data;
-using FF9;
 
 public class BattlePlayerCharacter : MonoBehaviour
 {

@@ -1,6 +1,4 @@
-﻿using System;
-
-internal enum FF9FieldFMVServiceStatus
+﻿internal enum FF9FieldFMVServiceStatus
 {
 	FF9FIELD_FMVSERVICE_IDLE,
 	FF9FIELD_FMVSERVICE_INIT,

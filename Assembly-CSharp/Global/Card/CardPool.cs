@@ -1,7 +1,6 @@
+using Memoria.Data;
 using System;
 using UnityEngine;
-using Memoria;
-using Memoria.Data;
 
 public class CardPool : MonoBehaviour
 {

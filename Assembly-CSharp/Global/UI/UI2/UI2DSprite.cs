@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria.Scripts;
+﻿using Memoria.Scripts;
+using System;
 using UnityEngine;
 
 [AddComponentMenu("NGUI/UI/NGUI Unity2D Sprite")]

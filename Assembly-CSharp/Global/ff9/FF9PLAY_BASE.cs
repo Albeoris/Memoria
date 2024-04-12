@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum FF9PLAY_BASE
+﻿public enum FF9PLAY_BASE
 {
 	FF9PLAY_BASE_DEX,
 	FF9PLAY_BASE_STR,

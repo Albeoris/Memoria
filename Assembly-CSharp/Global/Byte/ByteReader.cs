@@ -49,39 +49,39 @@ public class ByteReader
 		return this.ReadLine(true);
 	}
 
-    public String ReadLine(Boolean skipEmptyLines)
-    {
-        Int32 length = this.mBuffer.Length;
-        if (skipEmptyLines)
-        {
-            while (this.mOffset < length && (Int32)this.mBuffer[this.mOffset] < 32)
-                ++this.mOffset;
-        }
-        Int32 mOffset = this.mOffset;
-        if (mOffset < length)
-        {
-            while (mOffset < length)
-            {
-                switch (this.mBuffer[mOffset++])
-                {
-                    case 10:
-                    case 13:
-                        goto label_7;
-                    default:
-                        continue;
-                }
-            }
-            ++mOffset;
-            label_7:
-            String str = ByteReader.ReadLine(this.mBuffer, this.mOffset, mOffset - this.mOffset - 1);
-            this.mOffset = mOffset;
-            return str;
-        }
-        this.mOffset = length;
-        return (String)null;
-    }
+	public String ReadLine(Boolean skipEmptyLines)
+	{
+		Int32 length = this.mBuffer.Length;
+		if (skipEmptyLines)
+		{
+			while (this.mOffset < length && (Int32)this.mBuffer[this.mOffset] < 32)
+				++this.mOffset;
+		}
+		Int32 mOffset = this.mOffset;
+		if (mOffset < length)
+		{
+			while (mOffset < length)
+			{
+				switch (this.mBuffer[mOffset++])
+				{
+					case 10:
+					case 13:
+						goto label_7;
+					default:
+						continue;
+				}
+			}
+			++mOffset;
+		label_7:
+			String str = ByteReader.ReadLine(this.mBuffer, this.mOffset, mOffset - this.mOffset - 1);
+			this.mOffset = mOffset;
+			return str;
+		}
+		this.mOffset = length;
+		return (String)null;
+	}
 
-    public Dictionary<String, String> ReadDictionary()
+	public Dictionary<String, String> ReadDictionary()
 	{
 		Dictionary<String, String> dictionary = new Dictionary<String, String>();
 		Char[] separator = new Char[]

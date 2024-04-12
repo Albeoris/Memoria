@@ -2,5 +2,5 @@ using UnityEngine;
 
 namespace Memoria.Test
 {
-    internal delegate ComponentMessage ComponentFactoryWrapDelegate(Component obj);
+	internal delegate ComponentMessage ComponentFactoryWrapDelegate(Component obj);
 }

@@ -89,18 +89,18 @@ namespace Memoria.Assets
 			{
 				// Order the columns to guide coefficient dependancies (and thus which "initialSolutions" coefficients will be used in priority)
 				Int32 index = 2 * i;
-				equationMatrix[index, reOrder[0]] = viewDistance * WorldPoint[i].x;			// m00
-				equationMatrix[index, reOrder[1]] = -viewDistance * WorldPoint[i].y;		// m01
-				equationMatrix[index, reOrder[2]] = viewDistance * WorldPoint[i].z;			// m02
-				equationMatrix[index, reOrder[3]] = viewDistance;							// m03
-				equationMatrix[index, reOrder[4]] = 0f;										// m10
-				equationMatrix[index, reOrder[5]] = 0f;										// m11
-				equationMatrix[index, reOrder[6]] = 0f;										// m12
-				equationMatrix[index, reOrder[7]] = 0f;										// m13
-				equationMatrix[index, reOrder[8]] = targetOffset[i].x * WorldPoint[i].x;	// m20
-				equationMatrix[index, reOrder[9]] = -targetOffset[i].x * WorldPoint[i].y;	// m21
-				equationMatrix[index, reOrder[10]] = targetOffset[i].x * WorldPoint[i].z;	// m22
-				equationMatrix[index, reOrder[11]] = targetOffset[i].x;						// m23
+				equationMatrix[index, reOrder[0]] = viewDistance * WorldPoint[i].x;         // m00
+				equationMatrix[index, reOrder[1]] = -viewDistance * WorldPoint[i].y;        // m01
+				equationMatrix[index, reOrder[2]] = viewDistance * WorldPoint[i].z;         // m02
+				equationMatrix[index, reOrder[3]] = viewDistance;                           // m03
+				equationMatrix[index, reOrder[4]] = 0f;                                     // m10
+				equationMatrix[index, reOrder[5]] = 0f;                                     // m11
+				equationMatrix[index, reOrder[6]] = 0f;                                     // m12
+				equationMatrix[index, reOrder[7]] = 0f;                                     // m13
+				equationMatrix[index, reOrder[8]] = targetOffset[i].x * WorldPoint[i].x;    // m20
+				equationMatrix[index, reOrder[9]] = -targetOffset[i].x * WorldPoint[i].y;   // m21
+				equationMatrix[index, reOrder[10]] = targetOffset[i].x * WorldPoint[i].z;   // m22
+				equationMatrix[index, reOrder[11]] = targetOffset[i].x;                     // m23
 				index++;
 				equationMatrix[index, reOrder[0]] = 0f;
 				equationMatrix[index, reOrder[1]] = 0f;

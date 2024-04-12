@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FF9
+﻿namespace FF9
 {
 	internal enum sub_window_index
 	{

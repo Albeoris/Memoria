@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using System.Collections.Generic;
-using Memoria;
 using UnityEngine;
-using Object = System.Object;
 using MLog = Memoria.Prime.Log;
+using Object = System.Object;
 
 public class SoundLib : MonoBehaviour
 {
@@ -11,20 +11,20 @@ public class SoundLib : MonoBehaviour
 	{
 		if (SoundLib.instance == (UnityEngine.Object)null)
 		{
-		    LogWarning("The instance is null.");
+			LogWarning("The instance is null.");
 			return;
 		}
 		if (SoundLib.MusicIsMute)
 		{
-            return;
+			return;
 		}
 		Int32 movieSoundIndex = SoundLib.GetMovieSoundIndex(movieName);
 		if (movieSoundIndex != -1)
 		{
 			//if (movieName == "FMV000")
-            //    SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
+			//    SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
 			//else
-            SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
+			SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
 		}
 		else
 		{
@@ -187,26 +187,26 @@ public class SoundLib : MonoBehaviour
 
 	public static void Log(Object message)
 	{
-        //MLog.Message("[SoundLib] " + message);
-    }
+		//MLog.Message("[SoundLib] " + message);
+	}
 
 	public static void VALog(Object message)
-    {
+	{
 		if (Configuration.VoiceActing.LogVoiceActing)
 			MLog.Message("[VoiceActing] " + message);
 	}
 
 	public static void LogError(Object message)
 	{
-        MLog.Error("[SoundLib] " + message);
-    }
+		MLog.Error("[SoundLib] " + message);
+	}
 
 	public static void LogWarning(Object message)
 	{
-	    MLog.Warning("[SoundLib] " + message);
+		MLog.Warning("[SoundLib] " + message);
 	}
 
-    public static Boolean MusicIsMute { get; private set; }
+	public static Boolean MusicIsMute { get; private set; }
 
 	public static Boolean SoundEffectIsMute { get; private set; }
 
@@ -570,19 +570,19 @@ public class SoundLib : MonoBehaviour
 		}
 	}
 
-    public static void ResumeMusic()
-    {
-        try
-        {
-            SoundLib.MusicPlayer.ResumeMusic();
-        }
-        catch (Exception message)
-        {
-            SoundLib.LogError(message);
-        }
-    }
+	public static void ResumeMusic()
+	{
+		try
+		{
+			SoundLib.MusicPlayer.ResumeMusic();
+		}
+		catch (Exception message)
+		{
+			SoundLib.LogError(message);
+		}
+	}
 
-    public static Int32 GetActiveMusicSoundID()
+	public static Int32 GetActiveMusicSoundID()
 	{
 		try
 		{
@@ -690,8 +690,7 @@ public class SoundLib : MonoBehaviour
 			SoundLib.LogError(message);
 		}
 	}
-	
-		
+
 	public static void TryUpdateSoundVolume()
 	{
 		if (FF9StateSystem.Settings.cfg.IsSoundEnabled)
@@ -907,7 +906,7 @@ public class SoundLib : MonoBehaviour
 	private Boolean m_isInitialized;
 
 	public static SoundEffectPlayer SoundEffectPlayer { get; private set; }
-	
+
 	public static VoicePlayer VoicePlayer { get; private set; }
 
 	public static MusicPlayer MusicPlayer { get; private set; }

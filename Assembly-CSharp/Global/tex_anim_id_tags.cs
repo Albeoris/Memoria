@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum tex_anim_id_tags
+﻿public enum tex_anim_id_tags
 {
 	EYE_ANIM_CLOSE,
 	EYE_ANIM_OPEN,

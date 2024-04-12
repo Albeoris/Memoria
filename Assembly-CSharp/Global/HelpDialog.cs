@@ -1,6 +1,6 @@
-﻿using System;
-using Memoria;
+﻿using Memoria;
 using Memoria.Assets;
+using System;
 using UnityEngine;
 
 public class HelpDialog : Singleton<HelpDialog>
@@ -121,7 +121,7 @@ public class HelpDialog : Singleton<HelpDialog>
 				this.dialogRect.y = 898f;
 				this.dialogRect.z = 478f;
 				this.dialogRect.w = 272f;
-				
+
 				// Old:
 				// this.dialogRect.x = 1306f;
 				// this.dialogRect.y = 880f;
@@ -137,7 +137,7 @@ public class HelpDialog : Singleton<HelpDialog>
 				this.dialogRect.y = 898f;
 				this.dialogRect.z = 808f;
 				this.dialogRect.w = 264f;
-				
+
 				// Old:
 				// this.dialogRect.x = 1116.5f;
 				// this.dialogRect.y = 880f;
@@ -253,18 +253,18 @@ public class HelpDialog : Singleton<HelpDialog>
 			this.tailSprite.transform.localPosition = localPosition;
 			switch (this.dialogTail)
 			{
-			case 0:
-				this.tailSprite.spriteName = "dialog_pointer_topleft";
-				break;
-			case 1:
-				this.tailSprite.spriteName = "dialog_pointer_topright";
-				break;
-			case 2:
-				this.tailSprite.spriteName = "dialog_pointer_downleft";
-				break;
-			case 3:
-				this.tailSprite.spriteName = "dialog_pointer_downright";
-				break;
+				case 0:
+					this.tailSprite.spriteName = "dialog_pointer_topleft";
+					break;
+				case 1:
+					this.tailSprite.spriteName = "dialog_pointer_topright";
+					break;
+				case 2:
+					this.tailSprite.spriteName = "dialog_pointer_downleft";
+					break;
+				case 3:
+					this.tailSprite.spriteName = "dialog_pointer_downright";
+					break;
 			}
 		}
 		else

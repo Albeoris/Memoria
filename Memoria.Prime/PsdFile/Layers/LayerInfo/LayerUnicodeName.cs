@@ -15,36 +15,36 @@ using System;
 
 namespace Memoria.Prime.PsdFile
 {
-  public class LayerUnicodeName : LayerInfo
-  {
-    public override String Signature
-    {
-      get { return "8BIM"; }
-    }
+	public class LayerUnicodeName : LayerInfo
+	{
+		public override String Signature
+		{
+			get { return "8BIM"; }
+		}
 
-    public override String Key
-    {
-      get { return "luni"; }
-    }
+		public override String Key
+		{
+			get { return "luni"; }
+		}
 
-    public String Name { get; set; }
+		public String Name { get; set; }
 
-    public LayerUnicodeName(String name)
-    {
-      Name = name;
-    }
+		public LayerUnicodeName(String name)
+		{
+			Name = name;
+		}
 
-    public LayerUnicodeName(PsdBinaryReader reader)
-    {
-      Name = reader.ReadUnicodeString();
-    }
+		public LayerUnicodeName(PsdBinaryReader reader)
+		{
+			Name = reader.ReadUnicodeString();
+		}
 
-    protected override void WriteData(PsdBinaryWriter writer)
-    {
-      var startPosition = writer.BaseStream.Position;
+		protected override void WriteData(PsdBinaryWriter writer)
+		{
+			var startPosition = writer.BaseStream.Position;
 
-      writer.WriteUnicodeString(Name);
-      writer.WritePadding(startPosition, 4);
-    }
-  }
+			writer.WriteUnicodeString(Name);
+			writer.WritePadding(startPosition, 4);
+		}
+	}
 }

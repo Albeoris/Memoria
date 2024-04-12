@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections;
-using Assets.Sources.Scripts.UI.Common;
-using UnityEngine;
+﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
+using System;
+using System.Collections;
+using UnityEngine;
 
 public class CardPreviewUI : MonoBehaviour
 {

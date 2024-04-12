@@ -1,5 +1,5 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
+using System;
 using UnityEngine;
 using XInputDotNetPure;
 using Object = System.Object;

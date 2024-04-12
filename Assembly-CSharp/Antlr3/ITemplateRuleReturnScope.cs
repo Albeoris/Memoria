@@ -32,11 +32,11 @@
 
 namespace Antlr.Runtime
 {
-    public interface ITemplateRuleReturnScope
-    {
-        object Template
-        {
-            get;
-        }
-    }
+	public interface ITemplateRuleReturnScope
+	{
+		object Template
+		{
+			get;
+		}
+	}
 }

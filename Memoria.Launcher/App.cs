@@ -68,8 +68,8 @@ namespace Memoria.Launcher
 				switch (e.Args[i].ToLower())
 				{
 					case "-autorun":
-					case "-autorungame":	// Same format as the option in "Settings.ini"
-					case "/launch":			// Same format as the similar option in FF7's 7th Heaven
+					case "-autorungame":    // Same format as the option in "Settings.ini"
+					case "/launch":         // Same format as the similar option in FF7's 7th Heaven
 						App.AutoRunGame = true;
 						break;
 				}

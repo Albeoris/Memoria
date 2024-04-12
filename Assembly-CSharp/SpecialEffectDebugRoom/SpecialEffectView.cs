@@ -1,9 +1,9 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
-using UnityEngine;
 using Memoria;
 using Memoria.Data;
+using System;
+using UnityEngine;
 
 namespace SpecialEffectDebugRoom
 {

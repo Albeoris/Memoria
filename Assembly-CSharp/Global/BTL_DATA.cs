@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using FF9;
+﻿using FF9;
 using Memoria.Data;
-using Memoria.Prime.Collections;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public partial class BTL_DATA

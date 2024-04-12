@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum CAMERA_NO
+﻿public enum CAMERA_NO
 {
 	CAMERA_NO_PLUNGE,
 	CAMERA_NO_DEFAULT,

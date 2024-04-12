@@ -3,27 +3,27 @@ using System.IO;
 
 namespace Memoria.Test
 {
-    public sealed class BooleanMessage : IValueMessage
-    {
-        public ValueMessageType ValueType => ValueMessageType.Boolean;
+	public sealed class BooleanMessage : IValueMessage
+	{
+		public ValueMessageType ValueType => ValueMessageType.Boolean;
 
-        ValueType IValueMessage.Object => Value;
+		ValueType IValueMessage.Object => Value;
 
-        public Boolean Value;
+		public Boolean Value;
 
-        public BooleanMessage(Boolean value)
-        {
-            Value = value;
-        }
+		public BooleanMessage(Boolean value)
+		{
+			Value = value;
+		}
 
-        public void Serialize(BinaryWriter bw)
-        {
-            bw.Write(Value);
-        }
+		public void Serialize(BinaryWriter bw)
+		{
+			bw.Write(Value);
+		}
 
-        public void Deserialize(BinaryReader br)
-        {
-            Value = br.ReadBoolean();
-        }
-    }
+		public void Deserialize(BinaryReader br)
+		{
+			Value = br.ReadBoolean();
+		}
+	}
 }

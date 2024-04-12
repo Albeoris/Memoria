@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine.SocialPlatforms;
+﻿using UnityEngine.SocialPlatforms;
 
 public static class SocialExtension
 {

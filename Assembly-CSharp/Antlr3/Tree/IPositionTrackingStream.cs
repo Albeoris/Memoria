@@ -29,13 +29,13 @@
 
 namespace Antlr.Runtime.Tree
 {
-    /**
+	/**
      *
      * @author Sam Harwell
      */
-    public interface IPositionTrackingStream
-    {
-        /**
+	public interface IPositionTrackingStream
+	{
+		/**
          * Returns an element containing concrete information about the current
          * position in the stream.
          *
@@ -43,9 +43,9 @@ namespace Antlr.Runtime.Tree
          * {@code null} if an element containing exact information about the current
          * position is not available
          */
-        object GetKnownPositionElement(bool allowApproximateLocation);
+		object GetKnownPositionElement(bool allowApproximateLocation);
 
-        /**
+		/**
          * Determines if the specified {@code element} contains concrete position
          * information.
          *
@@ -53,7 +53,6 @@ namespace Antlr.Runtime.Tree
          * @return {@code true} if {@code element} contains concrete position
          * information, otherwise {@code false}
          */
-        bool HasPositionInformation(object element);
-
-    }
+		bool HasPositionInformation(object element);
+	}
 }

@@ -1,6 +1,4 @@
-﻿using System;
-
-public abstract class ISoundLoader
+﻿public abstract class ISoundLoader
 {
 	public abstract void Initial();
 

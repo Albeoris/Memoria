@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Assets.SiliconSocial
+﻿namespace Assets.SiliconSocial
 {
 	public enum AcheivementKey
 	{

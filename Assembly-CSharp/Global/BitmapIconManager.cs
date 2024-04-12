@@ -1,5 +1,4 @@
-﻿using System;
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using UnityEngine;
 
 internal class BitmapIconManager : Singleton<BitmapIconManager>

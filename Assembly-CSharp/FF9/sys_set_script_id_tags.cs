@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FF9
+﻿namespace FF9
 {
 	internal enum sys_set_script_id_tags
 	{

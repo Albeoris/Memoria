@@ -1,5 +1,3 @@
-﻿using System;
-
-public abstract class ListDataTypeBase
+﻿public abstract class ListDataTypeBase
 {
 }

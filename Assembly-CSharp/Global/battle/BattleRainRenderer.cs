@@ -1,8 +1,8 @@
-﻿using System;
-using Assets.Scripts.Common;
-using Memoria.Scripts;
-using UnityEngine;
+﻿using Assets.Scripts.Common;
 using FF9;
+using Memoria.Scripts;
+using System;
+using UnityEngine;
 
 public class BattleRainRenderer : MonoBehaviour
 {

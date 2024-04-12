@@ -1,9 +1,9 @@
-﻿using System;
+﻿using FF9;
+using NCalc;
+using SimpleJSON;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using SimpleJSON;
-using NCalc;
-using FF9;
 
 public class ParametricMovement
 {

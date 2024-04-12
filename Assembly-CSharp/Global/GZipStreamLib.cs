@@ -97,7 +97,7 @@ public class GZipStreamLib : MonoBehaviour
 	{
 		Int32 offset = 0;
 		Int32 totalCount = 0;
-		for (;;)
+		for (; ; )
 		{
 			try
 			{

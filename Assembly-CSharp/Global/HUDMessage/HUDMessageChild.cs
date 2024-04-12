@@ -93,25 +93,25 @@ public class HUDMessageChild : MonoBehaviour
 		this.tweenAlpha.duration = this.tweenAlphaDuration / Singleton<HUDMessage>.Instance.Speed;
 		switch (style)
 		{
-		case HUDMessage.MessageStyle.DAMAGE:
-		case HUDMessage.MessageStyle.GUARD:
-		case HUDMessage.MessageStyle.MISS:
-		case HUDMessage.MessageStyle.DEATH:
-			this.DamageSetting();
-			break;
-		case HUDMessage.MessageStyle.RESTORE_HP:
-		case HUDMessage.MessageStyle.RESTORE_MP:
-			this.RestoreSetting();
-			break;
-		case HUDMessage.MessageStyle.DEATH_SENTENCE:
-			this.DeathSentencesSetting();
-			break;
-		case HUDMessage.MessageStyle.PETRIFY:
-			this.PetrifySetting();
-			break;
-		case HUDMessage.MessageStyle.CRITICAL:
-			this.CriticalSetting();
-			break;
+			case HUDMessage.MessageStyle.DAMAGE:
+			case HUDMessage.MessageStyle.GUARD:
+			case HUDMessage.MessageStyle.MISS:
+			case HUDMessage.MessageStyle.DEATH:
+				this.DamageSetting();
+				break;
+			case HUDMessage.MessageStyle.RESTORE_HP:
+			case HUDMessage.MessageStyle.RESTORE_MP:
+				this.RestoreSetting();
+				break;
+			case HUDMessage.MessageStyle.DEATH_SENTENCE:
+				this.DeathSentencesSetting();
+				break;
+			case HUDMessage.MessageStyle.PETRIFY:
+				this.PetrifySetting();
+				break;
+			case HUDMessage.MessageStyle.CRITICAL:
+				this.CriticalSetting();
+				break;
 		}
 		this.PlayAnimation();
 		this.PrintLog(true);

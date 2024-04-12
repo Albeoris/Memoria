@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using SiliconStudio;
 using UnityEngine;
 
 public abstract class ISharedDataSerializer : MonoBehaviour
@@ -53,19 +52,19 @@ public abstract class ISharedDataSerializer : MonoBehaviour
 
 	public static DataSerializerErrorCode ConvertCloudStatusToDataSerializerErrorCode(SiliconStudio.Social.ResponseData.Status input)
 	{
-        switch (input)
-        {
-            case SiliconStudio.Social.ResponseData.Status.UnknownError:
-                return DataSerializerErrorCode.CloudDataUnknownError;
-            case SiliconStudio.Social.ResponseData.Status.DocumentNotFound:
-                return DataSerializerErrorCode.CloudFileNotFound;
-            case SiliconStudio.Social.ResponseData.Status.DownloadTimeout:
-                return DataSerializerErrorCode.CloudConnectionTimeout;
-            case SiliconStudio.Social.ResponseData.Status.ConnectionError:
-                return DataSerializerErrorCode.CloudConnectionError;
-        }
-        return DataSerializerErrorCode.Success;
-    }
+		switch (input)
+		{
+			case SiliconStudio.Social.ResponseData.Status.UnknownError:
+				return DataSerializerErrorCode.CloudDataUnknownError;
+			case SiliconStudio.Social.ResponseData.Status.DocumentNotFound:
+				return DataSerializerErrorCode.CloudFileNotFound;
+			case SiliconStudio.Social.ResponseData.Status.DownloadTimeout:
+				return DataSerializerErrorCode.CloudConnectionTimeout;
+			case SiliconStudio.Social.ResponseData.Status.ConnectionError:
+				return DataSerializerErrorCode.CloudConnectionError;
+		}
+		return DataSerializerErrorCode.Success;
+	}
 
 	public static DataSerializerErrorCode LastErrno;
 

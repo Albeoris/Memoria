@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using Memoria.Assets;
+using System;
 using System.Collections.Generic;
-using Memoria.Assets;
+using System.Linq;
 using UnityEngine;
 
 public class ButtonGroupState : MonoBehaviour
@@ -513,7 +513,7 @@ public class ButtonGroupState : MonoBehaviour
 	}
 
 	public static void ToggleHelp(bool playSFX = true)
-    {
+	{
 		if (ButtonGroupState.activeGroup != String.Empty && ButtonGroupState.activeGroup != QuitUI.WarningMenuGroupButton && PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.WorldHUD)
 		{
 			ButtonGroupState.helpEnabled = !ButtonGroupState.helpEnabled;
@@ -525,16 +525,16 @@ public class ButtonGroupState : MonoBehaviour
 			if (!ButtonGroupState.helpEnabled)
 			{
 				Singleton<HelpDialog>.Instance.HideDialog();
-                if (playSFX)
-                {
-                    FF9Sfx.FF9SFX_Play(101);
-                }
-            }
-            else if (playSFX)
-            {
-                FF9Sfx.FF9SFX_Play(682);
-            }
-        }
+				if (playSFX)
+				{
+					FF9Sfx.FF9SFX_Play(101);
+				}
+			}
+			else if (playSFX)
+			{
+				FF9Sfx.FF9SFX_Play(682);
+			}
+		}
 	}
 
 	public static void UpdateActiveButton()

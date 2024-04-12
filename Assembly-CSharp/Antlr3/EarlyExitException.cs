@@ -32,82 +32,82 @@
 
 namespace Antlr.Runtime
 {
-    using ArgumentNullException = System.ArgumentNullException;
-    using Exception = System.Exception;
+	using ArgumentNullException = System.ArgumentNullException;
+	using Exception = System.Exception;
 
 #if !PORTABLE
-    using SecurityCriticalAttribute = System.Security.SecurityCriticalAttribute;
-    using SerializationInfo = System.Runtime.Serialization.SerializationInfo;
-    using StreamingContext = System.Runtime.Serialization.StreamingContext;
+	using SecurityCriticalAttribute = System.Security.SecurityCriticalAttribute;
+	using SerializationInfo = System.Runtime.Serialization.SerializationInfo;
+	using StreamingContext = System.Runtime.Serialization.StreamingContext;
 #endif
 
-    /** <summary>The recognizer did not match anything for a (..)+ loop.</summary> */
-    [System.Serializable]
-    public class EarlyExitException : RecognitionException
-    {
-        private readonly int _decisionNumber;
+	/** <summary>The recognizer did not match anything for a (..)+ loop.</summary> */
+	[System.Serializable]
+	public class EarlyExitException : RecognitionException
+	{
+		private readonly int _decisionNumber;
 
-        public EarlyExitException()
-        {
-        }
+		public EarlyExitException()
+		{
+		}
 
-        public EarlyExitException(string message)
-            : base(message)
-        {
-        }
+		public EarlyExitException(string message)
+			: base(message)
+		{
+		}
 
-        public EarlyExitException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+		public EarlyExitException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
 
-        public EarlyExitException(int decisionNumber, IIntStream input)
-            : base(input)
-        {
-            this._decisionNumber = decisionNumber;
-        }
+		public EarlyExitException(int decisionNumber, IIntStream input)
+			: base(input)
+		{
+			this._decisionNumber = decisionNumber;
+		}
 
-        public EarlyExitException(string message, int decisionNumber, IIntStream input)
-            : base(message, input)
-        {
-            this._decisionNumber = decisionNumber;
-        }
+		public EarlyExitException(string message, int decisionNumber, IIntStream input)
+			: base(message, input)
+		{
+			this._decisionNumber = decisionNumber;
+		}
 
-        public EarlyExitException(string message, int decisionNumber, IIntStream input, Exception innerException)
-            : base(message, input, innerException)
-        {
-            this._decisionNumber = decisionNumber;
-        }
+		public EarlyExitException(string message, int decisionNumber, IIntStream input, Exception innerException)
+			: base(message, input, innerException)
+		{
+			this._decisionNumber = decisionNumber;
+		}
 
 #if !PORTABLE
-        protected EarlyExitException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            if (info == null)
-                throw new ArgumentNullException("info");
+		protected EarlyExitException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+			if (info == null)
+				throw new ArgumentNullException("info");
 
-            this._decisionNumber = info.GetInt32("DecisionNumber");
-        }
+			this._decisionNumber = info.GetInt32("DecisionNumber");
+		}
 #endif
 
-        public int DecisionNumber
-        {
-            get
-            {
-                return _decisionNumber;
-            }
-        }
+		public int DecisionNumber
+		{
+			get
+			{
+				return _decisionNumber;
+			}
+		}
 
 #if !PORTABLE
-        [SecurityCritical]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-                throw new ArgumentNullException("info");
+		[SecurityCritical]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException("info");
 
-            base.GetObjectData(info, context);
-            info.AddValue("DecisionNumber", DecisionNumber);
-        }
+			base.GetObjectData(info, context);
+			info.AddValue("DecisionNumber", DecisionNumber);
+		}
 #endif
-    }
+	}
 }

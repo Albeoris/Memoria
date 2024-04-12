@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum WMPadType
+﻿public enum WMPadType
 {
 	Normal,
 	Push

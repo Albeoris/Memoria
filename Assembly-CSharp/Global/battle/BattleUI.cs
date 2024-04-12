@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
 using Memoria;
 using Memoria.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class BattleUI : MonoBehaviour
@@ -485,17 +485,17 @@ public class BattleUI : MonoBehaviour
 		Boolean isTrance = GUILayout.Toggle(FF9StateSystem.Battle.isTrance[FF9StateSystem.Battle.selectCharPosID], "Trance");
 		if (isTrance != FF9StateSystem.Battle.isTrance[FF9StateSystem.Battle.selectCharPosID])
 		{
-		    BattleUnit character = btl_scrp.FindBattleUnit((UInt16)(1 << FF9StateSystem.Battle.selectCharPosID));
+			BattleUnit character = btl_scrp.FindBattleUnit((UInt16)(1 << FF9StateSystem.Battle.selectCharPosID));
 			FF9StateSystem.Battle.isTrance[FF9StateSystem.Battle.selectCharPosID] = isTrance;
 			if (isTrance)
 			{
 				character.Trance = Byte.MaxValue;
-			    character.AlterStatus(BattleStatus.Trance);
+				character.AlterStatus(BattleStatus.Trance);
 			}
 			else
 			{
 				character.Trance = 0;
-			    character.RemoveStatus(BattleStatus.Trance);
+				character.RemoveStatus(BattleStatus.Trance);
 			}
 		}
 		if (GUILayout.Button("Attack"))

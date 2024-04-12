@@ -1,10 +1,9 @@
-﻿using System;
-using System.Threading;
-using System.Runtime.InteropServices;
+﻿using Memoria.Prime;
+using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Text;
-using System.Linq;
-using Memoria.Prime;
+using System.Threading;
 
 namespace Memoria.Speedrun
 {
@@ -204,7 +203,7 @@ namespace Memoria.Speedrun
 		private const UInt32 FILE_FLAG_WRITE_THROUGH = 0x80000000;
 		private const UInt32 PIPE_WAIT = 0;
 		private const UInt32 PIPE_TYPE_BYTE = 0;
-		
+
 		private static IntPtr StructToPtr(Object obj)
 		{
 			IntPtr intPtr = Marshal.AllocHGlobal(Marshal.SizeOf(obj));
@@ -307,8 +306,7 @@ namespace Memoria.Speedrun
 					}
 					Thread.Sleep(1000);
 				}
-				
-				
+
 				IntPtr pipe = CreateFile(@"\\.\pipe\LiveSplit", GENERIC_READ | GENERIC_WRITE, 0, IntPtr.Zero, OPEN_EXISTING, FILE_FLAG_OVERLAPPED, IntPtr.Zero);
 				if (pipe.ToInt32() == -1)
 					return;

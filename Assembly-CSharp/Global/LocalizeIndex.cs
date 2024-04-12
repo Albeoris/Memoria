@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum LocalizeIndex
+﻿public enum LocalizeIndex
 {
 	US,
 	JP,

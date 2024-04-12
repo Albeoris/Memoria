@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum player_menu_type_tags
+﻿public enum player_menu_type_tags
 {
 	MENU_TYPE_ZIDANE,
 	MENU_TYPE_VIVI,

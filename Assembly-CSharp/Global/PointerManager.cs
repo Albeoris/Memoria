@@ -124,11 +124,11 @@ public class PointerManager : Singleton<PointerManager>
 	public void RemovePointerFromGameObject(GameObject go)
 	{
 		UIPointer pointer;
-	    if (go != null && this.attachList.TryGetValue(go, out pointer))
-	    {
-	        this.ReleasePointerToPool(pointer);
-	        this.attachList.Remove(go);
-	    }
+		if (go != null && this.attachList.TryGetValue(go, out pointer))
+		{
+			this.ReleasePointerToPool(pointer);
+			this.attachList.Remove(go);
+		}
 	}
 
 	public void SetPointerVisibility(GameObject go, Boolean isVisible)

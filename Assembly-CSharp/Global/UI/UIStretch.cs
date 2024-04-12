@@ -101,7 +101,7 @@ public class UIStretch : MonoBehaviour
 				this.mRect = this.uiCamera.pixelRect;
 				if (this.mRoot != (UnityEngine.Object)null)
 				{
-                    widgetWidth = this.mRoot.pixelSizeAdjustment;
+					widgetWidth = this.mRoot.pixelSizeAdjustment;
 				}
 			}
 			Single scaleFactorX = this.mRect.width;
@@ -109,8 +109,8 @@ public class UIStretch : MonoBehaviour
 			if (widgetWidth != 1f && scaleFactorY > 1f)
 			{
 				Single pixelSizeAdjustment = (Single)this.mRoot.activeHeight / scaleFactorY;
-                scaleFactorX *= pixelSizeAdjustment;
-                scaleFactorY *= pixelSizeAdjustment;
+				scaleFactorX *= pixelSizeAdjustment;
+				scaleFactorY *= pixelSizeAdjustment;
 			}
 			Vector3 vector = (!(this.mWidget != (UnityEngine.Object)null)) ? this.mTrans.localScale : new Vector3((Single)this.mWidget.width, (Single)this.mWidget.height);
 			if (this.style == UIStretch.Style.BasedOnHeight)

@@ -1,9 +1,8 @@
-using System;
-using System.Collections.Generic;
 using Memoria;
 using Memoria.Data;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
-using Object = System.Object;
 
 public class BattleSPSSystem : MonoBehaviour
 {

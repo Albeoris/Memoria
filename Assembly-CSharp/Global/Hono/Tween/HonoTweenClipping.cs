@@ -166,26 +166,26 @@ public class HonoTweenClipping : MonoBehaviour
 	{
 		switch (clipPosition)
 		{
-		case HonoTweenClipping.ClipPos.TopLeft:
-			return new Vector2(0f, 0f);
-		case HonoTweenClipping.ClipPos.Top:
-			return new Vector2(defaultCenter.x, defaultCenter.y + defaultSize.y / 2f * (1f - ratio));
-		case HonoTweenClipping.ClipPos.TopRight:
-			return new Vector2(defaultSize.x * (1f - ratio), 0f);
-		case HonoTweenClipping.ClipPos.Left:
-			return new Vector2(0f, defaultCenter.y);
-		case HonoTweenClipping.ClipPos.Center:
-			return new Vector2(defaultCenter.x, defaultCenter.y);
-		case HonoTweenClipping.ClipPos.Right:
-			return new Vector2(defaultSize.x * (1f - ratio), defaultCenter.y);
-		case HonoTweenClipping.ClipPos.BottomLeft:
-			return new Vector2(0f, defaultSize.y * (1f - ratio));
-		case HonoTweenClipping.ClipPos.Bottom:
-			return new Vector2(defaultCenter.x, defaultSize.y * (1f - ratio));
-		case HonoTweenClipping.ClipPos.BottomRight:
-			return new Vector2(defaultSize.x / 2f * (1f - ratio) + defaultCenter.x, -(defaultSize.y / 2f) * (1f - ratio) + defaultCenter.y);
-		default:
-			return new Vector2(0f, 0f);
+			case HonoTweenClipping.ClipPos.TopLeft:
+				return new Vector2(0f, 0f);
+			case HonoTweenClipping.ClipPos.Top:
+				return new Vector2(defaultCenter.x, defaultCenter.y + defaultSize.y / 2f * (1f - ratio));
+			case HonoTweenClipping.ClipPos.TopRight:
+				return new Vector2(defaultSize.x * (1f - ratio), 0f);
+			case HonoTweenClipping.ClipPos.Left:
+				return new Vector2(0f, defaultCenter.y);
+			case HonoTweenClipping.ClipPos.Center:
+				return new Vector2(defaultCenter.x, defaultCenter.y);
+			case HonoTweenClipping.ClipPos.Right:
+				return new Vector2(defaultSize.x * (1f - ratio), defaultCenter.y);
+			case HonoTweenClipping.ClipPos.BottomLeft:
+				return new Vector2(0f, defaultSize.y * (1f - ratio));
+			case HonoTweenClipping.ClipPos.Bottom:
+				return new Vector2(defaultCenter.x, defaultSize.y * (1f - ratio));
+			case HonoTweenClipping.ClipPos.BottomRight:
+				return new Vector2(defaultSize.x / 2f * (1f - ratio) + defaultCenter.x, -(defaultSize.y / 2f) * (1f - ratio) + defaultCenter.y);
+			default:
+				return new Vector2(0f, 0f);
 		}
 	}
 
@@ -193,26 +193,26 @@ public class HonoTweenClipping : MonoBehaviour
 	{
 		switch (clipPosition)
 		{
-		case HonoTweenClipping.ClipPos.TopLeft:
-			return new Vector2(0f, 0f);
-		case HonoTweenClipping.ClipPos.Top:
-			return new Vector2(0f, this.defaultSpriteScale.y * ratio);
-		case HonoTweenClipping.ClipPos.TopRight:
-			return new Vector2(0f, 0f);
-		case HonoTweenClipping.ClipPos.Left:
-			return new Vector2(0f, this.defaultSpriteScale.y / 2f * ratio);
-		case HonoTweenClipping.ClipPos.Center:
-			return new Vector2(this.defaultSpriteScale.x / 2f * ratio, this.defaultSpriteScale.y / 2f * ratio);
-		case HonoTweenClipping.ClipPos.Right:
-			return new Vector2(this.defaultSpriteScale.x * ratio, this.defaultSpriteScale.y / 2f * ratio);
-		case HonoTweenClipping.ClipPos.BottomLeft:
-			return new Vector2(0f, this.defaultSpriteScale.y * ratio);
-		case HonoTweenClipping.ClipPos.Bottom:
-			return new Vector2(this.defaultSpriteScale.x / 2f * ratio, this.defaultSpriteScale.y * ratio);
-		case HonoTweenClipping.ClipPos.BottomRight:
-			return new Vector2(this.defaultSpriteScale.x * ratio, this.defaultSpriteScale.y * ratio);
-		default:
-			return new Vector2(0f, 0f);
+			case HonoTweenClipping.ClipPos.TopLeft:
+				return new Vector2(0f, 0f);
+			case HonoTweenClipping.ClipPos.Top:
+				return new Vector2(0f, this.defaultSpriteScale.y * ratio);
+			case HonoTweenClipping.ClipPos.TopRight:
+				return new Vector2(0f, 0f);
+			case HonoTweenClipping.ClipPos.Left:
+				return new Vector2(0f, this.defaultSpriteScale.y / 2f * ratio);
+			case HonoTweenClipping.ClipPos.Center:
+				return new Vector2(this.defaultSpriteScale.x / 2f * ratio, this.defaultSpriteScale.y / 2f * ratio);
+			case HonoTweenClipping.ClipPos.Right:
+				return new Vector2(this.defaultSpriteScale.x * ratio, this.defaultSpriteScale.y / 2f * ratio);
+			case HonoTweenClipping.ClipPos.BottomLeft:
+				return new Vector2(0f, this.defaultSpriteScale.y * ratio);
+			case HonoTweenClipping.ClipPos.Bottom:
+				return new Vector2(this.defaultSpriteScale.x / 2f * ratio, this.defaultSpriteScale.y * ratio);
+			case HonoTweenClipping.ClipPos.BottomRight:
+				return new Vector2(this.defaultSpriteScale.x * ratio, this.defaultSpriteScale.y * ratio);
+			default:
+				return new Vector2(0f, 0f);
 		}
 	}
 

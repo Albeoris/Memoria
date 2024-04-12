@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum DMSMapLightType : sbyte
+﻿public enum DMSMapLightType : sbyte
 {
 	DMS_MAPLIGHT_TYPE_FLOOR,
 	DMS_MAPLIGHT_TYPE_DEFAULT,

@@ -1,8 +1,7 @@
+using Memoria.Assets;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Memoria.Assets;
-using UnityEngine;
 
 public class FieldMapExtraOffset
 {

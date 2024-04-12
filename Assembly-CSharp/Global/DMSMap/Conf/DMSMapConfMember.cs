@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum DMSMapConfMember
+﻿public enum DMSMapConfMember
 {
 	DMS_MAPCONF_ATTR,
 	DMS_MAPCONF_VERSION,

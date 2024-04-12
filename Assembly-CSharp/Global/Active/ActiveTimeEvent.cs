@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections;
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria.Assets;
+using System;
+using System.Collections;
 using UnityEngine;
 using XInputDotNetPure;
 
@@ -209,20 +209,20 @@ public class ActiveTimeEvent : MonoBehaviour
 		String text = language;
 		switch (text)
 		{
-		case "English(US)":
-			return "ate_selective_text00_01_us_uk";
-		case "Japanese":
-			return String.Empty;
-		case "German":
-			return "ate_selective_text00_01_gr";
-		case "Spanish":
-			return "ate_selective_text00_01_es";
-		case "Italian":
-			return "ate_selective_text00_01_it";
-		case "French":
-			return "ate_selective_text00_01_fr";
-		case "English(UK)":
-			return "ate_selective_text00_01_us_uk";
+			case "English(US)":
+				return "ate_selective_text00_01_us_uk";
+			case "Japanese":
+				return String.Empty;
+			case "German":
+				return "ate_selective_text00_01_gr";
+			case "Spanish":
+				return "ate_selective_text00_01_es";
+			case "Italian":
+				return "ate_selective_text00_01_it";
+			case "French":
+				return "ate_selective_text00_01_fr";
+			case "English(UK)":
+				return "ate_selective_text00_01_us_uk";
 		}
 		return String.Empty;
 	}
@@ -233,20 +233,20 @@ public class ActiveTimeEvent : MonoBehaviour
 		String text = language;
 		switch (text)
 		{
-		case "English(US)":
-			return "ate_selective_text00_02_us_uk";
-		case "Japanese":
-			return "ate_selective_text00_02_jp";
-		case "German":
-			return "ate_selective_text00_02_gr";
-		case "Spanish":
-			return "ate_selective_text00_02_es";
-		case "Italian":
-			return String.Empty;
-		case "French":
-			return String.Empty;
-		case "English(UK)":
-			return "ate_selective_text00_02_us_uk";
+			case "English(US)":
+				return "ate_selective_text00_02_us_uk";
+			case "Japanese":
+				return "ate_selective_text00_02_jp";
+			case "German":
+				return "ate_selective_text00_02_gr";
+			case "Spanish":
+				return "ate_selective_text00_02_es";
+			case "Italian":
+				return String.Empty;
+			case "French":
+				return String.Empty;
+			case "English(UK)":
+				return "ate_selective_text00_02_us_uk";
 		}
 		return String.Empty;
 	}

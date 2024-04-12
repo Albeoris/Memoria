@@ -79,8 +79,8 @@ public class ProfileStats : MonoBehaviour
 			}
 		}
 		Int32 num = (from c in stringBuilder.ToString().ToList<Char>()
-		where c.Equals('\n')
-		select c).Count<Char>();
+					 where c.Equals('\n')
+					 select c).Count<Char>();
 		GUI.Box(new Rect(this.m_locX, this.m_locY, 250f, (Single)((Int32)(this.m_FontSizeBase * (Single)num) + 5)), String.Empty);
 		GUI.Label(new Rect(this.m_locX + 5f, this.m_locY + 2f, (Single)Screen.width, (Single)Screen.height), stringBuilder.ToString());
 	}

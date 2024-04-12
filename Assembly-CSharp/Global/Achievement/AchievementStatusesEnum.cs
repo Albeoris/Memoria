@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum AchievementStatusesEnum
+﻿public enum AchievementStatusesEnum
 {
 	NotUnlockYet,
 	ReadyToUnlock,

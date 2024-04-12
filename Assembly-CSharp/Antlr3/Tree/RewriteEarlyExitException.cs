@@ -32,46 +32,46 @@
 
 namespace Antlr.Runtime.Tree
 {
-    using Exception = System.Exception;
+	using Exception = System.Exception;
 
 #if !PORTABLE
-    using SerializationInfo = System.Runtime.Serialization.SerializationInfo;
-    using StreamingContext = System.Runtime.Serialization.StreamingContext;
+	using SerializationInfo = System.Runtime.Serialization.SerializationInfo;
+	using StreamingContext = System.Runtime.Serialization.StreamingContext;
 #endif
 
-    /** <summary>No elements within a (...)+ in a rewrite rule</summary> */
-    [System.Serializable]
-    public class RewriteEarlyExitException : RewriteCardinalityException
-    {
-        public RewriteEarlyExitException()
-        {
-        }
+	/** <summary>No elements within a (...)+ in a rewrite rule</summary> */
+	[System.Serializable]
+	public class RewriteEarlyExitException : RewriteCardinalityException
+	{
+		public RewriteEarlyExitException()
+		{
+		}
 
-        public RewriteEarlyExitException(string elementDescription)
-            : base(elementDescription)
-        {
-        }
-        
-        public RewriteEarlyExitException(string elementDescription, Exception innerException)
-            : base(elementDescription, innerException)
-        {
-        }
+		public RewriteEarlyExitException(string elementDescription)
+			: base(elementDescription)
+		{
+		}
 
-        public RewriteEarlyExitException(string message, string elementDescription)
-            : base(message, elementDescription)
-        {
-        }
+		public RewriteEarlyExitException(string elementDescription, Exception innerException)
+			: base(elementDescription, innerException)
+		{
+		}
 
-        public RewriteEarlyExitException(string message, string elementDescription, Exception innerException)
-            : base(message, elementDescription, innerException)
-        {
-        }
+		public RewriteEarlyExitException(string message, string elementDescription)
+			: base(message, elementDescription)
+		{
+		}
+
+		public RewriteEarlyExitException(string message, string elementDescription, Exception innerException)
+			: base(message, elementDescription, innerException)
+		{
+		}
 
 #if !PORTABLE
-        protected RewriteEarlyExitException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+		protected RewriteEarlyExitException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+		}
 #endif
-    }
+	}
 }

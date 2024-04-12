@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Assets.Scripts.Common
+﻿namespace Assets.Scripts.Common
 {
 	public enum SceneTransition
 	{

@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria.Assets;
+﻿using Memoria.Assets;
+using System;
 using UnityEngine;
 
 [AddComponentMenu("NGUI/UI/Localize")]
@@ -7,31 +7,31 @@ using UnityEngine;
 [RequireComponent(typeof(UIWidget))]
 public class UILocalize : MonoBehaviour
 {
-    public delegate String OverwriteTextDelegate(String key, String text);
+	public delegate String OverwriteTextDelegate(String key, String text);
 
-    public event OverwriteTextDelegate TextOverwriting;
+	public event OverwriteTextDelegate TextOverwriting;
 
-    private void EnablePrintIcon(UILabel lbl)
+	private void EnablePrintIcon(UILabel lbl)
 	{
 		lbl.PrintIconAfterProcessedText = true;
 	}
 
-    private string OverwriteText(string rawText)
-    {
-        string result = rawText;
-        if (this.key == "Collector" && Localization.CurrentLanguage == "German")
-        {
-            result = rawText.Substring(0, rawText.Length - 1);
-        }
+	private string OverwriteText(string rawText)
+	{
+		string result = rawText;
+		if (this.key == "Collector" && Localization.CurrentLanguage == "German")
+		{
+			result = rawText.Substring(0, rawText.Length - 1);
+		}
 
-        OverwriteTextDelegate h = TextOverwriting;
-        if (h != null)
-            result = h(this.key, result);
+		OverwriteTextDelegate h = TextOverwriting;
+		if (h != null)
+			result = h(this.key, result);
 
-        return result;
-    }
+		return result;
+	}
 
-    public String value
+	public String value
 	{
 		set
 		{
@@ -51,10 +51,10 @@ public class UILocalize : MonoBehaviour
 					{
 						Single num = 0f;
 						this.EnablePrintIcon(uilabel);
-                        string text = uilabel.PhrasePreOpcodeSymbol(value, ref num);
-                        text = this.OverwriteText(text);
-                        uilabel.text = text;
-                    }
+						string text = uilabel.PhrasePreOpcodeSymbol(value, ref num);
+						text = this.OverwriteText(text);
+						uilabel.text = text;
+					}
 				}
 				else if (uisprite != null)
 				{

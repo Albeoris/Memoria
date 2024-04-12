@@ -19,78 +19,78 @@ using System.IO;
 
 namespace Memoria.Prime.PsdFile
 {
-  public class RleReader
-  {
-    private Stream _stream;
+	public class RleReader
+	{
+		private Stream _stream;
 
-    public RleReader(Stream stream)
-    {
-      this._stream = stream;
-    }
+		public RleReader(Stream stream)
+		{
+			this._stream = stream;
+		}
 
-    /// <summary>
-    /// Decodes a PackBits RLE stream.
-    /// </summary>
-    /// <param name="buffer">Output buffer for decoded data.</param>
-    /// <param name="offset">Offset at which to begin writing.</param>
-    /// <param name="count">Number of bytes to decode from the stream.</param>
-    unsafe public Int32 Read(Byte[] buffer, Int32 offset, Int32 count)
-    {
-      if (!Util.CheckBufferBounds(buffer, offset, count))
-        throw new ArgumentOutOfRangeException();
+		/// <summary>
+		/// Decodes a PackBits RLE stream.
+		/// </summary>
+		/// <param name="buffer">Output buffer for decoded data.</param>
+		/// <param name="offset">Offset at which to begin writing.</param>
+		/// <param name="count">Number of bytes to decode from the stream.</param>
+		unsafe public Int32 Read(Byte[] buffer, Int32 offset, Int32 count)
+		{
+			if (!Util.CheckBufferBounds(buffer, offset, count))
+				throw new ArgumentOutOfRangeException();
 
-      // Pin the entire buffer now, so that we don't keep pinning and unpinning
-      // for each RLE packet.
-      fixed (Byte* ptrBuffer = &buffer[0])
-      {
-        Int32 bytesLeft = count;
-        Int32 bufferIdx = offset;
-        while (bytesLeft > 0)
-        {
-          // ReadByte returns an unsigned byte, but we want a signed byte.
-          var flagCounter = unchecked((SByte)_stream.ReadByte());
+			// Pin the entire buffer now, so that we don't keep pinning and unpinning
+			// for each RLE packet.
+			fixed (Byte* ptrBuffer = &buffer[0])
+			{
+				Int32 bytesLeft = count;
+				Int32 bufferIdx = offset;
+				while (bytesLeft > 0)
+				{
+					// ReadByte returns an unsigned byte, but we want a signed byte.
+					var flagCounter = unchecked((SByte)_stream.ReadByte());
 
-          // Raw packet
-          if (flagCounter > 0)
-          {
-            var readLength = flagCounter + 1;
-            if (bytesLeft < readLength)
-              throw new RleException("Raw packet overruns the decode window.");
+					// Raw packet
+					if (flagCounter > 0)
+					{
+						var readLength = flagCounter + 1;
+						if (bytesLeft < readLength)
+							throw new RleException("Raw packet overruns the decode window.");
 
-            _stream.Read(buffer, bufferIdx, readLength);
+						_stream.Read(buffer, bufferIdx, readLength);
 
-            bufferIdx += readLength;
-            bytesLeft -= readLength;
-          }
-          // RLE packet
-          else if (flagCounter > -128)
-          {
-            var runLength = 1 - flagCounter;
-            var byteValue = (Byte)_stream.ReadByte();
-            if (runLength > bytesLeft)
-              throw new RleException("RLE packet overruns the decode window.");
+						bufferIdx += readLength;
+						bytesLeft -= readLength;
+					}
+					// RLE packet
+					else if (flagCounter > -128)
+					{
+						var runLength = 1 - flagCounter;
+						var byteValue = (Byte)_stream.ReadByte();
+						if (runLength > bytesLeft)
+							throw new RleException("RLE packet overruns the decode window.");
 
-            Byte* ptr = ptrBuffer + bufferIdx;
-            Byte* ptrEnd = ptr + runLength;
-            while (ptr < ptrEnd)
-            {
-              *ptr = byteValue;
-              ptr++;
-            }
+						Byte* ptr = ptrBuffer + bufferIdx;
+						Byte* ptrEnd = ptr + runLength;
+						while (ptr < ptrEnd)
+						{
+							*ptr = byteValue;
+							ptr++;
+						}
 
-            bufferIdx += runLength;
-            bytesLeft -= runLength;
-          }
-          else
-          {
-            // The canonical PackBits algorithm will never emit 0x80 (-128), but
-            // some programs do.  Simply skip over the byte.
-          }
-        }
+						bufferIdx += runLength;
+						bytesLeft -= runLength;
+					}
+					else
+					{
+						// The canonical PackBits algorithm will never emit 0x80 (-128), but
+						// some programs do.  Simply skip over the byte.
+					}
+				}
 
-        Debug.Assert(bytesLeft == 0);
-        return count - bytesLeft;
-      }
-    }
-  }
+				Debug.Assert(bytesLeft == 0);
+				return count - bytesLeft;
+			}
+		}
+	}
 }

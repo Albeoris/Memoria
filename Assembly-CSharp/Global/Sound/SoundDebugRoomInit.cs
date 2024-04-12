@@ -1,5 +1,4 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using UnityEngine;
 
 public class SoundDebugRoomInit : MonoBehaviour

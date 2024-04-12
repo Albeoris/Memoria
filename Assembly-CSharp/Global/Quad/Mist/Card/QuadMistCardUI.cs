@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using UnityEngine;
-using Assets.Sources.Scripts.UI.Common;
-using Memoria;
 
 public class QuadMistCardUI : MonoBehaviour
 {
@@ -48,7 +46,7 @@ public class QuadMistCardUI : MonoBehaviour
 			cardDisplay.Side = value;
 			if (cardArrows.Arrow == Byte.MaxValue && QuadMistResourceManager.UseArrowGoldenFrame)
 				cardDisplay.frame.ID = 7 + value;
-        }
+		}
 	}
 
 	public Boolean Flip
@@ -78,9 +76,9 @@ public class QuadMistCardUI : MonoBehaviour
 				cardDisplay.ID = (Int32)Data.id;
 				cardDisplay.Side = Data.side;
 				cardArrows.Arrow = Data.arrow;
-                if (cardArrows.Arrow == Byte.MaxValue && QuadMistResourceManager.UseArrowGoldenFrame)
+				if (cardArrows.Arrow == Byte.MaxValue && QuadMistResourceManager.UseArrowGoldenFrame)
 					cardDisplay.frame.ID = 7 + Data.side;
-            }
+			}
 			else
 			{
 				gameObject.SetActive(false);
@@ -147,9 +145,9 @@ public class QuadMistCardUI : MonoBehaviour
 	public static Single SIZE_W = Board.USE_SMALL_BOARD ? 0.54f : 0.42f; // Card positions
 	public static Single SIZE_H = Board.USE_SMALL_BOARD ? 0.64f : 0.51f; // Card positions
 	public static Single SIZESMALL_W = 0.34f;
-    public static Single SIZESMALL_H = 0.41f;
+	public static Single SIZESMALL_H = 0.41f;
 
-    public CardEffect cardEffect;
+	public CardEffect cardEffect;
 	public CardDisplay cardDisplay;
 	public CardArrows cardArrows;
 	private Boolean isToDisplay;

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using AOT;
+using Assets.SiliconSocial;
+using System;
 using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
-using AOT;
-using Assets.SiliconSocial;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 using Object = System.Object;
@@ -71,12 +71,12 @@ namespace SiliconStudio
 				return;
 			}
 			global::Debug.Log("BEFORE calling SteamSdkWrapper.SetSendAchievementToCS(SendAchievementToCS)");
-		    unsafe
-		    {
-		        SteamSdkWrapper.SetSendAchievementToCS(new Social.SendAchievementToCSCallback(Social.SendAchievementToCS));
-		    }
-		    global::Debug.Log("AFTER calling SteamSdkWrapper.SetSendAchievementToCS(SendAchievementToCS)");
-			UnityEngine.Social.localUser.Authenticate(delegate(Boolean success)
+			unsafe
+			{
+				SteamSdkWrapper.SetSendAchievementToCS(new Social.SendAchievementToCSCallback(Social.SendAchievementToCS));
+			}
+			global::Debug.Log("AFTER calling SteamSdkWrapper.SetSendAchievementToCS(SendAchievementToCS)");
+			UnityEngine.Social.localUser.Authenticate(delegate (Boolean success)
 			{
 				global::Debug.Log("KF: authenticate's callback success = " + success);
 				if (success)
@@ -121,7 +121,7 @@ namespace SiliconStudio
 			else
 			{
 				global::Debug.Log("KF: ShowAchievement in ELSE");
-                UnityEngine.Social.ShowAchievementsUI();
+				UnityEngine.Social.ShowAchievementsUI();
 			}
 		}
 
@@ -131,7 +131,7 @@ namespace SiliconStudio
 			{
 				return;
 			}
-            UnityEngine.Social.ReportProgress(achievementId, (Double)percentageProgress, callback);
+			UnityEngine.Social.ReportProgress(achievementId, (Double)percentageProgress, callback);
 		}
 
 		public static void UpdateStatSteam(String statId, Int32 rawProgress, Action<Boolean> callback)
@@ -168,104 +168,104 @@ namespace SiliconStudio
 			return Social.IsSteamCloudEnabled();
 		}
 
-        public static IEnumerator Cloud_Save(MonoBehaviour owner, byte[] data, TimeSpan playTime, Action<bool, Social.ResponseData.Status> callback)
-        {
-            bool isSuccess = false;
-            Social.ResponseData.Status status = Social.ResponseData.Status.UnknownError;
-            object result = null;
-            if (Application.platform != RuntimePlatform.IPhonePlayer)
-            {
-                if (Application.platform != RuntimePlatform.Android)
-                {
-                    if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
-                    {
-                        Social.CoroutineWithData cd = new Social.CoroutineWithData(owner, Social.Steam_Save(data));
-                        yield return cd.coroutine;
-                        result = cd.result;
-                    }
-                }
-            }
-            if (result != null)
-            {
-                Social.ResponseData resultData = (Social.ResponseData)result;
-                if (resultData.m_data != null)
-                {
-                    isSuccess = (bool)resultData.m_data;
-                }
-                status = resultData.m_status;
-            }
-            callback(isSuccess, status);
-            yield break;
-        }
+		public static IEnumerator Cloud_Save(MonoBehaviour owner, byte[] data, TimeSpan playTime, Action<bool, Social.ResponseData.Status> callback)
+		{
+			bool isSuccess = false;
+			Social.ResponseData.Status status = Social.ResponseData.Status.UnknownError;
+			object result = null;
+			if (Application.platform != RuntimePlatform.IPhonePlayer)
+			{
+				if (Application.platform != RuntimePlatform.Android)
+				{
+					if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+					{
+						Social.CoroutineWithData cd = new Social.CoroutineWithData(owner, Social.Steam_Save(data));
+						yield return cd.coroutine;
+						result = cd.result;
+					}
+				}
+			}
+			if (result != null)
+			{
+				Social.ResponseData resultData = (Social.ResponseData)result;
+				if (resultData.m_data != null)
+				{
+					isSuccess = (bool)resultData.m_data;
+				}
+				status = resultData.m_status;
+			}
+			callback(isSuccess, status);
+			yield break;
+		}
 
-        public static IEnumerator Cloud_Load(MonoBehaviour owner, Action<byte[], Social.ResponseData.Status> callback)
-        {
-            global::Debug.Log("in Cloud_Load 1");
-            global::Debug.Log("in Cloud_Load 2");
-            object result = null;
-            Social.ResponseData.Status status = Social.ResponseData.Status.UnknownError;
-            byte[] readBytes = null;
-            if (Application.platform != RuntimePlatform.IPhonePlayer)
-            {
-                if (Application.platform != RuntimePlatform.Android)
-                {
-                    if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
-                    {
-                        Social.CoroutineWithData cd = new Social.CoroutineWithData(owner, Social.Steam_Load());
-                        yield return cd.coroutine;
-                        result = cd.result;
-                    }
-                }
-            }
-            global::Debug.Log("in Cloud_Load 5");
-            if (result != null)
-            {
-                Social.ResponseData resultData = (Social.ResponseData)result;
-                if (resultData.m_data != null)
-                {
-                    readBytes = (byte[])resultData.m_data;
-                }
-                status = resultData.m_status;
-            }
-            global::Debug.Log("in Cloud_Load 6");
-            callback(readBytes, status);
-            yield break;
-        }
+		public static IEnumerator Cloud_Load(MonoBehaviour owner, Action<byte[], Social.ResponseData.Status> callback)
+		{
+			global::Debug.Log("in Cloud_Load 1");
+			global::Debug.Log("in Cloud_Load 2");
+			object result = null;
+			Social.ResponseData.Status status = Social.ResponseData.Status.UnknownError;
+			byte[] readBytes = null;
+			if (Application.platform != RuntimePlatform.IPhonePlayer)
+			{
+				if (Application.platform != RuntimePlatform.Android)
+				{
+					if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+					{
+						Social.CoroutineWithData cd = new Social.CoroutineWithData(owner, Social.Steam_Load());
+						yield return cd.coroutine;
+						result = cd.result;
+					}
+				}
+			}
+			global::Debug.Log("in Cloud_Load 5");
+			if (result != null)
+			{
+				Social.ResponseData resultData = (Social.ResponseData)result;
+				if (resultData.m_data != null)
+				{
+					readBytes = (byte[])resultData.m_data;
+				}
+				status = resultData.m_status;
+			}
+			global::Debug.Log("in Cloud_Load 6");
+			callback(readBytes, status);
+			yield break;
+		}
 
-        public static IEnumerator Cloud_IsFileExist(MonoBehaviour owner, Action<bool, Social.ResponseData.Status> callback)
-        {
-            global::Debug.Log("IN CLOUD_ISFILEEXIST1");
-            bool isSuccess = false;
-            Social.ResponseData.Status status = Social.ResponseData.Status.UnknownError;
-            object result = null;
-            if (Application.platform != RuntimePlatform.IPhonePlayer)
-            {
-                if (Application.platform != RuntimePlatform.Android)
-                {
-                    if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
-                    {
-                        Social.CoroutineWithData cd = new Social.CoroutineWithData(owner, Social.Steam_FileExist());
-                        yield return cd.coroutine;
-                        result = cd.result;
-                    }
-                }
-            }
-            global::Debug.Log("IN CLOUD_ISFILEEXIST3");
-            if (result != null)
-            {
-                Social.ResponseData resultData = (Social.ResponseData)result;
-                if (resultData.m_data != null)
-                {
-                    isSuccess = (bool)resultData.m_data;
-                }
-                status = resultData.m_status;
-            }
-            global::Debug.Log("IN CLOUD_ISFILEEXIST4");
-            callback(isSuccess, status);
-            yield break;
-        }
+		public static IEnumerator Cloud_IsFileExist(MonoBehaviour owner, Action<bool, Social.ResponseData.Status> callback)
+		{
+			global::Debug.Log("IN CLOUD_ISFILEEXIST1");
+			bool isSuccess = false;
+			Social.ResponseData.Status status = Social.ResponseData.Status.UnknownError;
+			object result = null;
+			if (Application.platform != RuntimePlatform.IPhonePlayer)
+			{
+				if (Application.platform != RuntimePlatform.Android)
+				{
+					if (Application.platform == RuntimePlatform.WindowsPlayer || Application.platform == RuntimePlatform.WindowsEditor)
+					{
+						Social.CoroutineWithData cd = new Social.CoroutineWithData(owner, Social.Steam_FileExist());
+						yield return cd.coroutine;
+						result = cd.result;
+					}
+				}
+			}
+			global::Debug.Log("IN CLOUD_ISFILEEXIST3");
+			if (result != null)
+			{
+				Social.ResponseData resultData = (Social.ResponseData)result;
+				if (resultData.m_data != null)
+				{
+					isSuccess = (bool)resultData.m_data;
+				}
+				status = resultData.m_status;
+			}
+			global::Debug.Log("IN CLOUD_ISFILEEXIST4");
+			callback(isSuccess, status);
+			yield break;
+		}
 
-        private static void ClearTempData()
+		private static void ClearTempData()
 		{
 			Array.Clear(Social._saveData, 0, (Int32)Social._saveData.Length);
 			Array.Clear(Social._loadData, 0, (Int32)Social._loadData.Length);
@@ -273,18 +273,18 @@ namespace SiliconStudio
 			Social._totalPlayTime = default(TimeSpan);
 		}
 
-	    private static String GetCloudSaveFileName()
-	    {
-            if (SharedDataBytesStorage.MetaData.FilePath == String.Empty)
-                throw new Exception("SharedDataBytesStorage not initialized.");
+		private static String GetCloudSaveFileName()
+		{
+			if (SharedDataBytesStorage.MetaData.FilePath == String.Empty)
+				throw new Exception("SharedDataBytesStorage not initialized.");
 
-            if (SharedDataBytesStorage.MetaData.FilePath.EndsWith("_jp.dat"))
-	            return "FF9_CloudSaveFile_jp.sav";
+			if (SharedDataBytesStorage.MetaData.FilePath.EndsWith("_jp.dat"))
+				return "FF9_CloudSaveFile_jp.sav";
 
-            return "FF9_CloudSaveFile_ww.sav";
-	    }
+			return "FF9_CloudSaveFile_ww.sav";
+		}
 
-	 //   private static IEnumerator iCloud_Save(Byte[] data)
+		//   private static IEnumerator iCloud_Save(Byte[] data)
 		//{
 		//	JCloudDocumentOperation operation = JCloudDocument.DirectoryExists("FF9_SaveDocument");
 		//	while (!operation.finished)
@@ -464,8 +464,8 @@ namespace SiliconStudio
 		{
 			public CoroutineWithData(MonoBehaviour owner, IEnumerator target)
 			{
-                global::Debug.Log("IN COUROUTINEWITHDATA1");
-                this.target = target;
+				global::Debug.Log("IN COUROUTINEWITHDATA1");
+				this.target = target;
 				this.coroutine = owner.StartCoroutine(this.Run());
 			}
 
@@ -509,8 +509,8 @@ namespace SiliconStudio
 				}
 				else if (Application.platform != RuntimePlatform.Android)
 				{
-				    if (Application.platform != RuntimePlatform.IPhonePlayer)
-				        this.m_status = Social.ResponseData.Status.UnknownError;
+					if (Application.platform != RuntimePlatform.IPhonePlayer)
+						this.m_status = Social.ResponseData.Status.UnknownError;
 				}
 			}
 
@@ -525,8 +525,8 @@ namespace SiliconStudio
 				DocumentNotFound,
 				DownloadTimeout,
 				AutenticationError,
-                ConnectionError
-            }
+				ConnectionError
+			}
 		}
 
 		public unsafe delegate Int32 SendAchievementToCSCallback(void* p);

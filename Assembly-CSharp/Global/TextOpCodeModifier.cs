@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
+using System;
 using XInputDotNetPure;
 
 public class TextOpCodeModifier
@@ -44,30 +43,30 @@ public class TextOpCodeModifier
 			Int32 num3;
 			switch (currentLanguage)
 			{
-			case "German":
-				num2 = 0;
-				num3 = 3;
-				goto IL_E5;
-			case "Spanish":
-				num2 = 2;
-				num3 = 2;
-				goto IL_E5;
-			case "French":
-				num2 = 3;
-				num3 = 3;
-				goto IL_E5;
-			case "Italian":
-				num2 = 4;
-				num3 = 0;
-				goto IL_E5;
-			case "Japanese":
-				num2 = 5;
-				num3 = 1;
-				goto IL_E5;
+				case "German":
+					num2 = 0;
+					num3 = 3;
+					goto IL_E5;
+				case "Spanish":
+					num2 = 2;
+					num3 = 2;
+					goto IL_E5;
+				case "French":
+					num2 = 3;
+					num3 = 3;
+					goto IL_E5;
+				case "Italian":
+					num2 = 4;
+					num3 = 0;
+					goto IL_E5;
+				case "Japanese":
+					num2 = 5;
+					num3 = 1;
+					goto IL_E5;
 			}
 			num2 = 1;
 			num3 = 2;
-			IL_E5:
+		IL_E5:
 			String text = TextOpCodeModifier.ChanbaraTargetOpCode[num2];
 			if (source.Contains(text))
 			{
@@ -87,28 +86,28 @@ public class TextOpCodeModifier
 			Int32 num3;
 			switch (currentLanguage)
 			{
-			case "German":
-				return source;
-			case "Spanish":
-				num2 = 4;
-				num3 = 5;
-				goto IL_DC;
-			case "French":
-				num2 = 6;
-				num3 = 7;
-				goto IL_DC;
-			case "Italian":
-				num2 = 2;
-				num3 = 3;
-				goto IL_DC;
-			case "Japanese":
-				num2 = 8;
-				num3 = 10;
-				goto IL_DC;
+				case "German":
+					return source;
+				case "Spanish":
+					num2 = 4;
+					num3 = 5;
+					goto IL_DC;
+				case "French":
+					num2 = 6;
+					num3 = 7;
+					goto IL_DC;
+				case "Italian":
+					num2 = 2;
+					num3 = 3;
+					goto IL_DC;
+				case "Japanese":
+					num2 = 8;
+					num3 = 10;
+					goto IL_DC;
 			}
 			num2 = 0;
 			num3 = 1;
-			IL_DC:
+		IL_DC:
 			for (Int32 i = num2; i <= num3; i++)
 			{
 				String text = TextOpCodeModifier.PotionShopTargetOpCode[i];
@@ -148,30 +147,30 @@ public class TextOpCodeModifier
 			Int32 num3;
 			switch (currentLanguage)
 			{
-			case "German":
-				num2 = 6;
-				num3 = 8;
-				goto IL_F7;
-			case "Spanish":
-				num2 = 9;
-				num3 = 11;
-				goto IL_F7;
-			case "French":
-				num2 = 12;
-				num3 = 14;
-				goto IL_F7;
-			case "Italian":
-				num2 = 3;
-				num3 = 5;
-				goto IL_F7;
-			case "Japanese":
-				num2 = 15;
-				num3 = 17;
-				goto IL_F7;
+				case "German":
+					num2 = 6;
+					num3 = 8;
+					goto IL_F7;
+				case "Spanish":
+					num2 = 9;
+					num3 = 11;
+					goto IL_F7;
+				case "French":
+					num2 = 12;
+					num3 = 14;
+					goto IL_F7;
+				case "Italian":
+					num2 = 3;
+					num3 = 5;
+					goto IL_F7;
+				case "Japanese":
+					num2 = 15;
+					num3 = 17;
+					goto IL_F7;
 			}
 			num2 = 0;
 			num3 = 2;
-			IL_F7:
+		IL_F7:
 			for (Int32 i = num2; i <= num3; i++)
 			{
 				String text = TextOpCodeModifier.AuctionTargetOpCode[i];
@@ -193,30 +192,30 @@ public class TextOpCodeModifier
 			Int32 num3;
 			switch (currentLanguage)
 			{
-			case "German":
-				num2 = 4;
-				num3 = 5;
-				goto IL_E6;
-			case "Spanish":
-				num2 = 6;
-				num3 = 7;
-				goto IL_E6;
-			case "French":
-				num2 = 0;
-				num3 = -1;
-				goto IL_E6;
-			case "Italian":
-				num2 = 2;
-				num3 = 3;
-				goto IL_E6;
-			case "Japanese":
-				num2 = 8;
-				num3 = 9;
-				goto IL_E6;
+				case "German":
+					num2 = 4;
+					num3 = 5;
+					goto IL_E6;
+				case "Spanish":
+					num2 = 6;
+					num3 = 7;
+					goto IL_E6;
+				case "French":
+					num2 = 0;
+					num3 = -1;
+					goto IL_E6;
+				case "Italian":
+					num2 = 2;
+					num3 = 3;
+					goto IL_E6;
+				case "Japanese":
+					num2 = 8;
+					num3 = 9;
+					goto IL_E6;
 			}
 			num2 = 0;
 			num3 = 1;
-			IL_E6:
+		IL_E6:
 			for (Int32 i = num2; i <= num3; i++)
 			{
 				String text = TextOpCodeModifier.GysahlGreenTargetOpCode[i];
@@ -230,51 +229,51 @@ public class TextOpCodeModifier
 	}
 
 	private static String ReplaceOreShopText(String source)
-    {
-        if (FF9TextTool.FieldZoneId != 166)
-            return source;
+	{
+		if (FF9TextTool.FieldZoneId != 166)
+			return source;
 
-        String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
+		String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
 
-        Int32 num2;
-        Int32 num3;
-        switch (currentLanguage)
-        {
-            case "German":
-                num2 = 6;
-                num3 = 7;
-                break;
-            case "Spanish":
-                num2 = 4;
-                num3 = 5;
-                break;
-            case "French":
-                num2 = 2;
-                num3 = 3;
-                break;
-            case "Italian":
-                return source;
-            case "Japanese":
-                num2 = 0;
-                num3 = 1;
-                break;
-            default:
-                return source;
-        }
+		Int32 num2;
+		Int32 num3;
+		switch (currentLanguage)
+		{
+			case "German":
+				num2 = 6;
+				num3 = 7;
+				break;
+			case "Spanish":
+				num2 = 4;
+				num3 = 5;
+				break;
+			case "French":
+				num2 = 2;
+				num3 = 3;
+				break;
+			case "Italian":
+				return source;
+			case "Japanese":
+				num2 = 0;
+				num3 = 1;
+				break;
+			default:
+				return source;
+		}
 
-        for (Int32 i = num2; i <= num3; i++)
-        {
-            String text = TextOpCodeModifier.OreShopTargetOpCode[i];
-            if (source.Contains(text))
-            {
-                source = source.Replace(text, TextOpCodeModifier.OreShopReplacedOpCode[i]);
-            }
-        }
+		for (Int32 i = num2; i <= num3; i++)
+		{
+			String text = TextOpCodeModifier.OreShopTargetOpCode[i];
+			if (source.Contains(text))
+			{
+				source = source.Replace(text, TextOpCodeModifier.OreShopReplacedOpCode[i]);
+			}
+		}
 
-        return source;
-    }
+		return source;
+	}
 
-    private static String ReplaceEikoCookingText(String source)
+	private static String ReplaceEikoCookingText(String source)
 	{
 		if (FF9TextTool.FieldZoneId == 358)
 		{
@@ -283,28 +282,28 @@ public class TextOpCodeModifier
 			Int32 num3;
 			switch (currentLanguage)
 			{
-			case "German":
-				num2 = 8;
-				num3 = 9;
-				goto IL_DF;
-			case "Spanish":
-				num2 = 6;
-				num3 = 7;
-				goto IL_DF;
-			case "French":
-				num2 = 4;
-				num3 = 5;
-				goto IL_DF;
-			case "Italian":
-				return source;
-			case "Japanese":
-				num2 = 2;
-				num3 = 3;
-				goto IL_DF;
+				case "German":
+					num2 = 8;
+					num3 = 9;
+					goto IL_DF;
+				case "Spanish":
+					num2 = 6;
+					num3 = 7;
+					goto IL_DF;
+				case "French":
+					num2 = 4;
+					num3 = 5;
+					goto IL_DF;
+				case "Italian":
+					return source;
+				case "Japanese":
+					num2 = 2;
+					num3 = 3;
+					goto IL_DF;
 			}
 			num2 = 0;
 			num3 = 1;
-			IL_DF:
+		IL_DF:
 			for (Int32 i = num2; i <= num3; i++)
 			{
 				String text = TextOpCodeModifier.EikoCookingTargetOpCode[i];
@@ -319,24 +318,24 @@ public class TextOpCodeModifier
 
 	private static String ReplacePandoniumText(String source)
 	{
-	    if (FF9TextTool.FieldZoneId != 344)
-            return source;
+		if (FF9TextTool.FieldZoneId != 344)
+			return source;
 
-	    String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-	    if (currentLanguage != "Japanese")
-            return source;
+		String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
+		if (currentLanguage != "Japanese")
+			return source;
 
-	    Int32 num2 = 0;
-	    Int32 num3 = 1;
-	    for (Int32 i = num2; i <= num3; i++)
-	    {
-	        String text = TextOpCodeModifier.PandoniumTargetOpCode[i];
-	        if (source.Contains(text))
-	        {
-	            source = source.Replace(text, TextOpCodeModifier.PandoniumReplacedOpcode[i]);
-	        }
-	    }
-	    return source;
+		Int32 num2 = 0;
+		Int32 num3 = 1;
+		for (Int32 i = num2; i <= num3; i++)
+		{
+			String text = TextOpCodeModifier.PandoniumTargetOpCode[i];
+			if (source.Contains(text))
+			{
+				source = source.Replace(text, TextOpCodeModifier.PandoniumReplacedOpcode[i]);
+			}
+		}
+		return source;
 	}
 
 	public static String ReplaceChanbaraArrow(String source)

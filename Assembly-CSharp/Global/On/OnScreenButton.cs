@@ -57,8 +57,8 @@ public class OnScreenButton : MonoBehaviour
 			{
 				UIManager.Input.SendKeyCode(this.KeyCommand, false);
 				PersistenSingleton<HonoInputManager>.Instance.SetInputDownSources(SourceControl.Touch, this.KeyCommand);
-                Singleton<DialogManager>.Instance.PressMesId = PersistenSingleton<UIManager>.Instance.Dialogs.CurMesId;
-            }
+				Singleton<DialogManager>.Instance.PressMesId = PersistenSingleton<UIManager>.Instance.Dialogs.CurMesId;
+			}
 			else
 			{
 				this.isPress = false;
@@ -76,8 +76,8 @@ public class OnScreenButton : MonoBehaviour
 					UICamera.Notify(PersistenSingleton<UIManager>.Instance.gameObject, "OnScreenButtonPressed", base.gameObject);
 				}
 				UIManager.Input.ResetKeyCode();
-                Singleton<DialogManager>.Instance.ReleaseMesId = PersistenSingleton<UIManager>.Instance.Dialogs.CurMesId;
-            }
+				Singleton<DialogManager>.Instance.ReleaseMesId = PersistenSingleton<UIManager>.Instance.Dialogs.CurMesId;
+			}
 		}
 	}
 
@@ -98,13 +98,13 @@ public class OnScreenButton : MonoBehaviour
 			SourceControl sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetSource(this.KeyCommand);
 			switch (this.KeyCommand)
 			{
-			case Control.Up:
-			case Control.Down:
-			case Control.Left:
-			case Control.Right:
-				if (sourceControl == SourceControl.None)
-					sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetDirectionAxisSource();
-				break;
+				case Control.Up:
+				case Control.Down:
+				case Control.Left:
+				case Control.Right:
+					if (sourceControl == SourceControl.None)
+						sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetDirectionAxisSource();
+					break;
 			}
 			if (this.IgnoreAutoBattleButton(sourceControl))
 				return;

@@ -1,10 +1,8 @@
-﻿using System;
-using System.IO;
-using Assets.Sources.Scripts.UI.Common;
-using UnityEngine;
+﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Data;
-using Memoria.Assets;
+using System;
+using UnityEngine;
 using Object = System.Object;
 
 public class ETb
@@ -284,13 +282,13 @@ public class ETb
 			if (fldMapNo == 1652) // Iifa Tree/Roots
 			{
 				String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-			    switch (currentLanguage)
-			    {
-                    case "Japanese":
-                        return mes == 146;
-                    case "French":
-                        return mes == 144;
-                }
+				switch (currentLanguage)
+				{
+					case "Japanese":
+						return mes == 146;
+					case "French":
+						return mes == 144;
+				}
 				return mes == 142; // Zidane: "How far is it gonna go...?"
 			}
 			if (fldMapNo == 1659) // Iifa Tree/Seashore
@@ -382,25 +380,25 @@ public class ETb
 			ETb.SndCancel();
 	}
 
-    public static void ProcessDialog(Dialog dialog)
-    {
-        EventEngine instance = PersistenSingleton<EventEngine>.Instance;
-        if (instance == null)
-            return;
-        if (instance.gMode == 3) // World map
-        {
-            if (dialog.TextId == 40 || dialog.TextId == 41) // "Enter with [BTN]"
+	public static void ProcessDialog(Dialog dialog)
+	{
+		EventEngine instance = PersistenSingleton<EventEngine>.Instance;
+		if (instance == null)
+			return;
+		if (instance.gMode == 3) // World map
+		{
+			if (dialog.TextId == 40 || dialog.TextId == 41) // "Enter with [BTN]"
 				EIcon.HideDialogBubble();
-            ETb.CheckVehicleTutorial(dialog);
-        }
-        else if (instance.gMode == 1 && FF9StateSystem.Common.FF9.fldMapNo == 1850 && FF9StateSystem.AndroidTVPlatform && (dialog.TextId == 147 || dialog.TextId == 148))
-        {
+			ETb.CheckVehicleTutorial(dialog);
+		}
+		else if (instance.gMode == 1 && FF9StateSystem.Common.FF9.fldMapNo == 1850 && FF9StateSystem.AndroidTVPlatform && (dialog.TextId == 147 || dialog.TextId == 148))
+		{
 			// Alexandria/Main Street, "Press [BTN] and [BTN] alternately!"
 			NGUIText.ForceShowButton = false;
-        }
-    }
+		}
+	}
 
-    public static void ProcessATEDialog(Dialog dialog)
+	public static void ProcessATEDialog(Dialog dialog)
 	{
 		if (dialog.CapType == Dialog.CaptionType.ActiveTimeEvent)
 		{
@@ -440,15 +438,15 @@ public class ETb
 		{
 			switch (dialog.TextId)
 			{
-			case 70:
-			case 71:
-			case 72:
-			case 73:
-			case 74:
-			case 75:
-				EventInput.IsDialogConfirm = true;
-				UIManager.World.ForceShowButton();
-				break;
+				case 70:
+				case 71:
+				case 72:
+				case 73:
+				case 74:
+				case 75:
+					EventInput.IsDialogConfirm = true;
+					UIManager.World.ForceShowButton();
+					break;
 			}
 		}
 	}

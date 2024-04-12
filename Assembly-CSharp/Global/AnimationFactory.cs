@@ -15,8 +15,8 @@ public class AnimationFactory
 		animDB = animDB.Replace("\r", String.Empty);
 		if (!animDB.StartsWith("animation:"))
 			return;
-		String[] allLines = animDB.Split(new Char[]{ '\n' });
-		String[] allAnims = allLines[0].Replace("animation:", String.Empty).Split(new Char[]{ ',' });
+		String[] allLines = animDB.Split(new Char[] { '\n' });
+		String[] allAnims = allLines[0].Replace("animation:", String.Empty).Split(new Char[] { ',' });
 		for (Int32 i = 0; i < allAnims.Length; i++)
 		{
 			String animName = allAnims[i];
@@ -34,9 +34,9 @@ public class AnimationFactory
 			String modelAnimDB = allLines[i];
 			if (!String.IsNullOrEmpty(modelAnimDB))
 			{
-				String modelName = modelAnimDB.Split(new Char[]{ ':' })[0];
+				String modelName = modelAnimDB.Split(new Char[] { ':' })[0];
 				modelAnimDB = modelAnimDB.Replace(modelName + ":", String.Empty);
-				String[] animNames = modelAnimDB.Split(new Char[]{ ',' });
+				String[] animNames = modelAnimDB.Split(new Char[] { ',' });
 				AnimationFactory.animationMapping.Add(modelName, animNames);
 			}
 		}

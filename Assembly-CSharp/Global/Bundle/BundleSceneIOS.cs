@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Assets.Scripts.Common;
+using Assets.Sources.Scripts.Common;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using Assets.Scripts.Common;
-using Assets.Sources.Scripts.Common;
 using UnityEngine;
 using Object = System.Object;
 

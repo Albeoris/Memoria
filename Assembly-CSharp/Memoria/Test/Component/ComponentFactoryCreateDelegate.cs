@@ -1,4 +1,4 @@
 namespace Memoria.Test
 {
-    internal delegate ComponentMessage ComponentFactoryCreateDelegate();
+	internal delegate ComponentMessage ComponentFactoryCreateDelegate();
 }

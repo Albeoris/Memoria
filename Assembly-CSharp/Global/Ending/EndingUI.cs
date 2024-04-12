@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Assets.Scripts.Common;
+using System;
 using System.Collections.Generic;
-using Assets.Scripts.Common;
 using UnityEngine;
 
 public class EndingUI : UIScene

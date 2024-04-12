@@ -1,6 +1,4 @@
-﻿using System;
-
-internal enum ControllerType
+﻿internal enum ControllerType
 {
 	Keyboard,
 	Joystick

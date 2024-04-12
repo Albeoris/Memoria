@@ -1,6 +1,6 @@
-﻿using System;
-using Memoria;
+﻿using Memoria;
 using Memoria.Data;
+using System;
 
 public class PARTY_DATA
 {

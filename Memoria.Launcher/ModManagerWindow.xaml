@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:launcher="clr-namespace:Memoria.Launcher" 
+    xmlns:launcher="clr-namespace:Memoria.Launcher"
     d:DataContext="{d:DesignInstance Type=launcher:MemoriaIniControl}"
     Title="{Binding WindowTitle, FallbackValue='Memoria Mod Manager'}"
     Width="1100"
@@ -14,7 +14,7 @@
     WindowStartupLocation="CenterScreen"
     WindowState="Normal"
     mc:Ignorable="d">
-    
+
     <Window.Resources>
 
         <SolidColorBrush x:Key="WhiteUI" Color="#EEEEEE" />
@@ -157,10 +157,6 @@
             <Setter Property="Width" Value="44" />
         </Style>
 
-
-
-
-
         <Style TargetType="{x:Type TabItem}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -182,15 +178,11 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
-        
+
         <Style x:Key="GroupModInfo" TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}">
             <Setter Property="Background" Value="{StaticResource LightGreyUI}" />
             <Setter Property="Height" Value="0" />
         </Style>
-
-        
-
 
         <DataTemplate x:Key="FilterItemTemplate">
             <Border
@@ -397,7 +389,7 @@
     </Window.Resources>
     <Grid Background="#333">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto"  />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
@@ -405,7 +397,7 @@
             <ColumnDefinition Width="631*" />
             <ColumnDefinition Width="461*" />
         </Grid.ColumnDefinitions>
-        
+
         <TabControl
             x:Name="tabCtrlMain"
             Grid.Row="0"
@@ -422,7 +414,7 @@
                         x:Name="tabMyMods"
                         Padding="15,3,15,3"
                         Text="Installed Mods"
-                        Foreground="{StaticResource WhiteUI}"/>
+                        Foreground="{StaticResource WhiteUI}" />
                 </TabItem.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -441,16 +433,14 @@
                             Click="OnClickMoveUp"
                             MouseRightButtonUp="OnClickSendTop"
                             TabIndex="21"
-                            ToolTip="Move Up/Right-Click to Move to Top" >
+                            ToolTip="Move Up/Right-Click to Move to Top">
                             <Image
                                 x:Name="btnMoveUpimg"
                                 Width="36"
                                 Height="36"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Source="/Images/btnMoveUpimg.png"
-                                />
-
+                                Source="/Images/btnMoveUpimg.png" />
                         </Button>
                         <!--<Button
                             x:Name="btnMoveUp"
@@ -467,15 +457,14 @@
                             Click="OnClickMoveDown"
                             MouseRightButtonDown="OnClickSendBottom"
                             TabIndex="22"
-                            ToolTip="Move Down/Right-Click to Move to Bottom" >
+                            ToolTip="Move Down/Right-Click to Move to Bottom">
                         <Image
                                 x:Name="btnMoveDownimg"
                                 Width="36"
                                 Height="36"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Source="/Images/btnMoveDownimg.png"
-                                />
+                                Source="/Images/btnMoveDownimg.png" />
                         </Button>
                         <Button
                             x:Name="btnCheckCompatibility"
@@ -483,16 +472,14 @@
                             Click="OnClickCheckConflicts"
                             MouseRightButtonDown="OnClickCheckAllConflicts"
                             TabIndex="25"
-                            ToolTip="Check Mod Compatibilities/Right-Click to Check All" >
+                            ToolTip="Check Mod Compatibilities/Right-Click to Check All">
                             <Image
                                 x:Name="btnCheckCompatibilityimg"
                                 Width="36"
                                 Height="36"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Source="/Images/btnCheckCompatibilityimg.png"
-                                />
-
+                                Source="/Images/btnCheckCompatibilityimg.png" />
                         </Button>
                         <Button
                             x:Name="btnActivateAll"
@@ -500,16 +487,14 @@
                             Click="OnClickActivateAll"
                             MouseRightButtonDown="OnClickActivateAll"
                             TabIndex="26"
-                            ToolTip="Activate All Mods" >
+                            ToolTip="Activate All Mods">
                             <Image
                                 x:Name="btnActivateAllimg"
                                 Width="36"
                                 Height="36"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Source="/Images/btnActivateAllimg.png"
-                                />
-
+                                Source="/Images/btnActivateAllimg.png" />
                         </Button>
                         <Button
                             x:Name="btnDeactivateAll"
@@ -517,16 +502,14 @@
                             Click="OnClickDeactivateAll"
                             MouseRightButtonDown="OnClickDeactivateAll"
                             TabIndex="27"
-                            ToolTip="Deactivate All Mods" >
+                            ToolTip="Deactivate All Mods">
                             <Image
                                 x:Name="btnDeactivateAllimg"
                                 Width="36"
                                 Height="36"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Source="/Images/btnDeactivateAllimg.png"
-                                />
-
+                                Source="/Images/btnDeactivateAllimg.png" />
                         </Button>
                         <Button
                             x:Name="btnUninstall"
@@ -534,16 +517,14 @@
                             Click="OnClickUninstall"
                             MouseRightButtonDown="OnClickUninstall"
                             TabIndex="28"
-                            ToolTip="Uninstall Mod(s)" >
+                            ToolTip="Uninstall Mod(s)">
                             <Image
                                 x:Name="btnUninstallimg"
                                 Width="36"
                                 Height="36"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Source="/Images/btnUninstallimg.png"
-                                />
-
+                                Source="/Images/btnUninstallimg.png" />
                         </Button>
                     </StackPanel>
                     <ListView
@@ -623,8 +604,7 @@
                         x:Name="tabCatalog"
                         Padding="15,3,15,3"
                         Text="Catalog"
-                        Foreground="{StaticResource WhiteUI}"/>
-
+                        Foreground="{StaticResource WhiteUI}" />
                 </TabItem.Header>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -646,16 +626,14 @@
                             Margin="0,3,0,3"
                             MouseRightButtonDown="OnClickDownload"
                             TabIndex="11"
-                            ToolTip="Download Selected Mod(s)" >
+                            ToolTip="Download Selected Mod(s)">
                         <Image
                                 x:Name="btnDownloadimg"
                                 Width="36"
                                 Height="36"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Source="/Images/btnDownloadimg.png"
-                                />
-
+                                Source="/Images/btnDownloadimg.png" />
                         </Button>
                     </StackPanel>
                     <ListView
@@ -700,13 +678,13 @@
                                     Width="Auto"
                                     DisplayMemberBinding="{Binding Author}"
                                     Header="Author" />
-                                <!--<GridViewColumn x:Name="colCatalogReleaseDate" Header="Released" Width="90" DisplayMemberBinding="{Binding ReleaseDate}"/>-->
+                                <!--<GridViewColumn x:Name="colCatalogReleaseDate" Header="Released" Width="90" DisplayMemberBinding="{Binding ReleaseDate}" />-->
                                 <GridViewColumn
                                     x:Name="colCatalogCategory"
                                     Width="100"
                                     DisplayMemberBinding="{Binding Category}"
                                     Header="Category" />
-                                <!--<GridViewColumn x:Name="colCatalogDownloadSize" Header="Size" Width="60" DisplayMemberBinding="{Binding DownloadSize}"/>-->
+                                <!--<GridViewColumn x:Name="colCatalogDownloadSize" Header="Size" Width="60" DisplayMemberBinding="{Binding DownloadSize}" />-->
                                 <GridViewColumn
                                     x:Name="colCatalogInstalled"
                                     Width="50"
@@ -715,7 +693,6 @@
                             </GridView>
                         </ListView.View>
                     </ListView>
-
 
                     <StackPanel
                         Grid.Row="1"
@@ -730,16 +707,14 @@
                             MouseRightButtonDown="OnClickCancelAll"
                             TabIndex="14"
                             ToolTip="Cancel Current Download/Right-Click to Cancel All"
-                            ToolTipService.ShowOnDisabled="True"  >
+                            ToolTipService.ShowOnDisabled="True">
                             <Image
                                 x:Name="btnCancelimg"
                                 Width="36"
                                 Height="36"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Source="/Images/btnCancelimg.png"
-                                />
-
+                                Source="/Images/btnCancelimg.png" />
                         </Button>
                     </StackPanel>
                     <ListView
@@ -791,7 +766,6 @@
             </TabItem>
         </TabControl>
 
-
         <TabControl
             x:Name="GroupModInfoWrapper"
             Grid.Row="0"
@@ -802,22 +776,21 @@
             BorderThickness="0"
             Background="{StaticResource LightGreyUI}"
             SelectedIndex="0">
-            <TabItem x:Name="GroupModInfo" Style="{StaticResource GroupModInfo}" >
+            <TabItem x:Name="GroupModInfo" Style="{StaticResource GroupModInfo}">
 
                 <TabItem.Header>
                     <TextBlock
                         x:Name="tabyMods"
                         Padding="0"
-                        Text="Installed Mods" 
+                        Text="Installed Mods"
                         Background="#333" />
                 </TabItem.Header>
                 <Grid x:Name="gridOuterMod">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto" />
                     <RowDefinition Height="1*" />
-                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto" />
                 </Grid.RowDefinitions>
-
 
                 <Grid x:Name="gridModName">
                     <ScrollViewer
@@ -885,10 +858,8 @@
                                 x:Name="PreviewModAuthor"
                                 Style="{StaticResource ModInfoDetailsStyle}"
                                 Text="" />
-
                             </WrapPanel>
 
-                            
                             <WrapPanel
                             Grid.Row="2"
                             Grid.ColumnSpan="2"
@@ -923,12 +894,12 @@
                                     FontSize="12"
                                     Margin="0,0,0,0"
                                     MinWidth="120"
-                                    Background="Transparent"/>-->
+                                    Background="Transparent" />-->
                             <!--</WrapPanel>-->
                             <!--<Popup x:Name="popupModUpdateType"
                                StaysOpen="False"
                                PlacementTarget="{Binding ElementName=btnUpdateModType}"
-                               HorizontalOffset="-116"><Border x:Name="bd" BorderBrush="#1f1f1f" BorderThickness="1"><StackPanel><RadioButton FontSize="12" IsChecked="{Binding PreviewIsAutoUpdateModsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,3,5,3" GroupName="modUpdateType"/><RadioButton FontSize="12" IsChecked="{Binding PreviewIgnoreModUpdatesChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,3,5,3" GroupName="modUpdateType"/><RadioButton FontSize="12" IsChecked="{Binding PreviewIsNotifyAboutUpdatesChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,3,5,3" GroupName="modUpdateType"/></StackPanel></Border></Popup>-->
+                               HorizontalOffset="-116"><Border x:Name="bd" BorderBrush="#1f1f1f" BorderThickness="1"><StackPanel><RadioButton FontSize="12" IsChecked="{Binding PreviewIsAutoUpdateModsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,3,5,3" GroupName="modUpdateType" /><RadioButton FontSize="12" IsChecked="{Binding PreviewIgnoreModUpdatesChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,3,5,3" GroupName="modUpdateType" /><RadioButton FontSize="12" IsChecked="{Binding PreviewIsNotifyAboutUpdatesChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,3,5,3" GroupName="modUpdateType" /></StackPanel></Border></Popup>-->
                             <WrapPanel
                             Grid.Row="4"
                             Margin="0">
@@ -997,26 +968,25 @@
                             <ScrollViewer
                                 Grid.Row="6"
                                 HorizontalAlignment="Stretch"
-                                VerticalScrollBarVisibility="Auto" >
-                                
+                                VerticalScrollBarVisibility="Auto">
+
                                 <WrapPanel
-                                
+
                                 Background="{StaticResource DarkGreyUI}"
                                 Margin="0,7,6,0">
                                     <!--<TextBlock
                                 x:Name="CaptionModRelease"
                                 Style="{StaticResource ModInfoLabelStyle}"
                                 Text="Released:" />-->
-                                    <DockPanel
-                                        >
+                                    <DockPanel>
                                         <TextBlock
                                         x:Name="CaptionModReleaseNotes"
                                         Style="{StaticResource ModInfoLabelStyle}"
                                         Margin="5"
                                         Text="Release Notes:" />
-                                        
+
                                         <TextBlock
-                                        x:Name="PreviewModRelease" 
+                                        x:Name="PreviewModRelease"
                                         Style="{StaticResource ModInfoDetailsStyle}"
                                         Margin="5"
                                         Text="" />
@@ -1026,7 +996,6 @@
                                         Style="{StaticResource ModInfoDetailsStyle}"
                                         Margin="5,0,5,5"
                                         Text="" />
-                            
                             </WrapPanel>
                             </ScrollViewer>
                         </Grid>
@@ -1045,12 +1014,11 @@
                            Visibility="{Binding NoImageTextVisibility}"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
-                           Text="No Preview Image"/>
+                           Text="No Preview Image" />
                 -->
             </Grid>
             </TabItem>
         </TabControl>
-
 
         <Popup
             x:Name="popupFilters"

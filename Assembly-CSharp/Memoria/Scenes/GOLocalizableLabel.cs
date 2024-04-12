@@ -2,14 +2,14 @@
 
 namespace Memoria.Scenes
 {
-    internal sealed class GOLocalizableLabel : GOLabel
-    {
-        public readonly UILocalize Localize;
+	internal sealed class GOLocalizableLabel : GOLabel
+	{
+		public readonly UILocalize Localize;
 
-        public GOLocalizableLabel(GameObject obj)
-            : base(obj)
-        {
-            Localize = obj.GetExactComponent<UILocalize>();
-        }
-    }
+		public GOLocalizableLabel(GameObject obj)
+			: base(obj)
+		{
+			Localize = obj.GetExactComponent<UILocalize>();
+		}
+	}
 }

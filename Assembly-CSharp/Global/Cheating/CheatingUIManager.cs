@@ -1,5 +1,5 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
+using System;
 using UnityEngine;
 
 public class CheatingUIManager : MonoBehaviour

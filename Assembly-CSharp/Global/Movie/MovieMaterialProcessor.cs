@@ -1,5 +1,4 @@
-﻿using System;
-using Assets.Sources.Graphics.Movie;
+﻿using Assets.Sources.Graphics.Movie;
 using UnityEngine;
 
 public class MovieMaterialProcessor : MonoBehaviour

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections;
-using FF9;
+﻿using FF9;
 using Memoria.Data;
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class BattleTexAnimWatcher : MonoBehaviour

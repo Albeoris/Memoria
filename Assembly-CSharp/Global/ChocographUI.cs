@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Scenes;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
-using Object = System.Object;
 
 public class ChocographUI : UIScene
 {
@@ -335,16 +334,16 @@ public class ChocographUI : UIScene
 	{
 		switch (icon)
 		{
-		case ChocographUI.Icon.BoxOpen:
-			return "chocograph_box_open";
-		case ChocographUI.Icon.BoxDisableOpen:
-			return "chocograph_box_open_null";
-		case ChocographUI.Icon.BoxClose:
-			return "chocograph_box_close";
-		case ChocographUI.Icon.BoxDisableClose:
-			return "chocograph_box_close_null";
-		default:
-			return String.Empty;
+			case ChocographUI.Icon.BoxOpen:
+				return "chocograph_box_open";
+			case ChocographUI.Icon.BoxDisableOpen:
+				return "chocograph_box_open_null";
+			case ChocographUI.Icon.BoxClose:
+				return "chocograph_box_close";
+			case ChocographUI.Icon.BoxDisableClose:
+				return "chocograph_box_close_null";
+			default:
+				return String.Empty;
 		}
 	}
 
@@ -365,20 +364,20 @@ public class ChocographUI : UIScene
 	{
 		switch (iconIndex)
 		{
-		case 0:
-			return "chocograph_icon_field";
-		case 1:
-			return "chocograph_icon_reef";
-		case 2:
-			return "chocograph_icon_mt";
-		case 3:
-			return "chocograph_icon_sea";
-		case 4:
-			return "chocograph_icon_sky";
-		case 5:
-			return "chocograph_icon_unknown_null";
-		default:
-			return String.Empty;
+			case 0:
+				return "chocograph_icon_field";
+			case 1:
+				return "chocograph_icon_reef";
+			case 2:
+				return "chocograph_icon_mt";
+			case 3:
+				return "chocograph_icon_sea";
+			case 4:
+				return "chocograph_icon_sky";
+			case 5:
+				return "chocograph_icon_unknown_null";
+			default:
+				return String.Empty;
 		}
 	}
 

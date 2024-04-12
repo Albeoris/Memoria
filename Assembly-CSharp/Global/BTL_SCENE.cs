@@ -1,9 +1,9 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
+using FF9;
 using Memoria;
 using Memoria.Data;
-using FF9;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 public class BTL_SCENE
 {
@@ -133,7 +133,8 @@ public class BTL_SCENE
 				abilInfo.DefaultAlly = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
 				abilInfo.DisplayStats = (TargetDisplay)BitUtil.ReadBits(input, ref bitPos, 3);
 				abilInfo.VfxIndex = (Int16)BitUtil.ReadBits(input, ref bitPos, 9);
-				/*cmd_INFO.sfx_no = (Int16)*/ BitUtil.ReadBits(input, ref bitPos, 12);
+				/*cmd_INFO.sfx_no = (Int16)*/
+				BitUtil.ReadBits(input, ref bitPos, 12);
 				abilInfo.ForDead = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
 				abilInfo.DefaultCamera = BitUtil.ReadBits(input, ref bitPos, 1) != 0;
 				abilInfo.DefaultOnDead = BitUtil.ReadBits(input, ref bitPos, 1) != 0;

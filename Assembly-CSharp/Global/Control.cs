@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum Control
+﻿public enum Control
 {
 	Confirm,
 	Cancel,

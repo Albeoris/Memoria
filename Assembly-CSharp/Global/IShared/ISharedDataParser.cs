@@ -1,5 +1,4 @@
-﻿using System;
-using SimpleJSON;
+﻿using SimpleJSON;
 using UnityEngine;
 
 public abstract class ISharedDataParser : MonoBehaviour

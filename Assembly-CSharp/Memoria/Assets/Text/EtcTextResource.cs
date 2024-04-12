@@ -1,13 +1,13 @@
 namespace Memoria.Assets
 {
-    public enum EtcTextResource
-    {
-        CardLevels,
-        CardTitles,
-        BattleCommands,
-        BattleMessages,
-        Libra,
-        WorldLocations,
-        Chocobo
-    }
+	public enum EtcTextResource
+	{
+		CardLevels,
+		CardTitles,
+		BattleCommands,
+		BattleMessages,
+		Libra,
+		WorldLocations,
+		Chocobo
+	}
 }

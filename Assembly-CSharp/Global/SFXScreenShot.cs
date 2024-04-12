@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria.Data;
+using System;
 using UnityEngine;
-using Memoria.Data;
 
 public class SFXScreenShot : SFXMeshBase
 {

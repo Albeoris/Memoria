@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum WMWorldLoadState
+﻿public enum WMWorldLoadState
 {
 	Initializing,
 	ReadyToLoadBlocks,

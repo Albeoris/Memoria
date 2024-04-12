@@ -32,17 +32,17 @@
 
 namespace Antlr.Runtime
 {
-    using ArgumentNullException = System.ArgumentNullException;
-    using ConditionalAttribute = System.Diagnostics.ConditionalAttribute;
-    using IDebugEventListener = Antlr.Runtime.Debug.IDebugEventListener;
+	using ArgumentNullException = System.ArgumentNullException;
+	using ConditionalAttribute = System.Diagnostics.ConditionalAttribute;
+	using IDebugEventListener = Antlr.Runtime.Debug.IDebugEventListener;
 
 #if !PORTABLE
-    using Console = System.Console;
+	using Console = System.Console;
 #endif
 
-    public delegate int SpecialStateTransitionHandler( DFA dfa, int s, IIntStream input );
+	public delegate int SpecialStateTransitionHandler(DFA dfa, int s, IIntStream input);
 
-    /** <summary>A DFA implemented as a set of transition tables.</summary>
+	/** <summary>A DFA implemented as a set of transition tables.</summary>
      *
      *  <remarks>
      *  Any state that has a semantic predicate edge is special; those states
@@ -55,271 +55,271 @@ namespace Antlr.Runtime
      *  lexer's Tokens rule DFA has 326 states roughly.
      *  </remarks>
      */
-    public class DFA
-    {
-        protected short[] eot;
-        protected short[] eof;
-        protected char[] min;
-        protected char[] max;
-        protected short[] accept;
-        protected short[] special;
-        protected short[][] transition;
+	public class DFA
+	{
+		protected short[] eot;
+		protected short[] eof;
+		protected char[] min;
+		protected char[] max;
+		protected short[] accept;
+		protected short[] special;
+		protected short[][] transition;
 
-        protected int decisionNumber;
+		protected int decisionNumber;
 
-        /** <summary>Which recognizer encloses this DFA?  Needed to check backtracking</summary> */
-        protected BaseRecognizer recognizer;
+		/** <summary>Which recognizer encloses this DFA?  Needed to check backtracking</summary> */
+		protected BaseRecognizer recognizer;
 
-        public bool debug = false;
+		public bool debug = false;
 
-        public DFA()
-            : this(SpecialStateTransitionDefault)
-        {
-        }
+		public DFA()
+			: this(SpecialStateTransitionDefault)
+		{
+		}
 
-        public DFA( SpecialStateTransitionHandler specialStateTransition )
-        {
-            this.SpecialStateTransition = specialStateTransition ?? SpecialStateTransitionDefault;
-        }
+		public DFA(SpecialStateTransitionHandler specialStateTransition)
+		{
+			this.SpecialStateTransition = specialStateTransition ?? SpecialStateTransitionDefault;
+		}
 
-        public virtual string Description
-        {
-            get
-            {
-                return "n/a";
-            }
-        }
+		public virtual string Description
+		{
+			get
+			{
+				return "n/a";
+			}
+		}
 
-        /** <summary>
+		/** <summary>
          *  From the input stream, predict what alternative will succeed
          *  using this DFA (representing the covering regular approximation
          *  to the underlying CFL).  Return an alternative number 1..n.  Throw
          *  an exception upon error.
          *  </summary>
          */
-        public virtual int Predict( IIntStream input )
-        {
-            if (input == null)
-                throw new ArgumentNullException("input");
+		public virtual int Predict(IIntStream input)
+		{
+			if (input == null)
+				throw new ArgumentNullException("input");
 
-            DfaDebugMessage("Enter DFA.Predict for decision {0}", decisionNumber);
+			DfaDebugMessage("Enter DFA.Predict for decision {0}", decisionNumber);
 
-            int mark = input.Mark(); // remember where decision started in input
-            int s = 0; // we always start at s0
-            try
-            {
-                while (true)
-                {
-                    DfaDebugMessage("DFA {0} state {1} LA(1)={2}({3}), index={4}", decisionNumber, s, (char)input.LA(1), input.LA(1), input.Index);
+			int mark = input.Mark(); // remember where decision started in input
+			int s = 0; // we always start at s0
+			try
+			{
+				while (true)
+				{
+					DfaDebugMessage("DFA {0} state {1} LA(1)={2}({3}), index={4}", decisionNumber, s, (char)input.LA(1), input.LA(1), input.Index);
 
-                    int specialState = special[s];
-                    if ( specialState >= 0 )
-                    {
-                        DfaDebugMessage("DFA {0} state {1} is special state {2}", decisionNumber, s, specialState);
+					int specialState = special[s];
+					if (specialState >= 0)
+					{
+						DfaDebugMessage("DFA {0} state {1} is special state {2}", decisionNumber, s, specialState);
 
-                        s = SpecialStateTransition( this, specialState, input );
+						s = SpecialStateTransition(this, specialState, input);
 
-                        DfaDebugMessage("DFA {0} returns from special state {1} to {2}", decisionNumber, specialState, s);
+						DfaDebugMessage("DFA {0} returns from special state {1} to {2}", decisionNumber, specialState, s);
 
-                        if ( s == -1 )
-                        {
-                            NoViableAlt( s, input );
-                            return 0;
-                        }
+						if (s == -1)
+						{
+							NoViableAlt(s, input);
+							return 0;
+						}
 
-                        input.Consume();
-                        continue;
-                    }
+						input.Consume();
+						continue;
+					}
 
-                    if ( accept[s] >= 1 )
-                    {
-                        DfaDebugMessage("accept; predict {0} from state {1}", accept[s], s);
-                        return accept[s];
-                    }
+					if (accept[s] >= 1)
+					{
+						DfaDebugMessage("accept; predict {0} from state {1}", accept[s], s);
+						return accept[s];
+					}
 
-                    // look for a normal char transition
-                    char c = (char)input.LA( 1 ); // -1 == \uFFFF, all tokens fit in 65000 space
-                    if ( c >= min[s] && c <= max[s] )
-                    {
-                        int snext = transition[s][c - min[s]]; // move to next state
-                        if ( snext < 0 )
-                        {
-                            // was in range but not a normal transition
-                            // must check EOT, which is like the else clause.
-                            // eot[s]>=0 indicates that an EOT edge goes to another
-                            // state.
-                            if ( eot[s] >= 0 )
-                            {
-                                // EOT Transition to accept state?
-                                DfaDebugMessage("EOT transition");
-                                s = eot[s];
-                                input.Consume();
-                                // TODO: I had this as return accept[eot[s]]
-                                // which assumed here that the EOT edge always
-                                // went to an accept...faster to do this, but
-                                // what about predicated edges coming from EOT
-                                // target?
-                                continue;
-                            }
+					// look for a normal char transition
+					char c = (char)input.LA(1); // -1 == \uFFFF, all tokens fit in 65000 space
+					if (c >= min[s] && c <= max[s])
+					{
+						int snext = transition[s][c - min[s]]; // move to next state
+						if (snext < 0)
+						{
+							// was in range but not a normal transition
+							// must check EOT, which is like the else clause.
+							// eot[s]>=0 indicates that an EOT edge goes to another
+							// state.
+							if (eot[s] >= 0)
+							{
+								// EOT Transition to accept state?
+								DfaDebugMessage("EOT transition");
+								s = eot[s];
+								input.Consume();
+								// TODO: I had this as return accept[eot[s]]
+								// which assumed here that the EOT edge always
+								// went to an accept...faster to do this, but
+								// what about predicated edges coming from EOT
+								// target?
+								continue;
+							}
 
-                            NoViableAlt( s, input );
-                            return 0;
-                        }
+							NoViableAlt(s, input);
+							return 0;
+						}
 
-                        s = snext;
-                        input.Consume();
-                        continue;
-                    }
+						s = snext;
+						input.Consume();
+						continue;
+					}
 
-                    if ( eot[s] >= 0 )
-                    {
-                        // EOT Transition?
-                        DfaDebugMessage("EOT transition");
-                        s = eot[s];
-                        input.Consume();
-                        continue;
-                    }
+					if (eot[s] >= 0)
+					{
+						// EOT Transition?
+						DfaDebugMessage("EOT transition");
+						s = eot[s];
+						input.Consume();
+						continue;
+					}
 
-                    if ( c == unchecked( (char)TokenTypes.EndOfFile ) && eof[s] >= 0 )
-                    {
-                        // EOF Transition to accept state?
-                        DfaDebugMessage("accept via EOF; predict {0} from {1}", accept[eof[s]], eof[s]);
-                        return accept[eof[s]];
-                    }
+					if (c == unchecked((char)TokenTypes.EndOfFile) && eof[s] >= 0)
+					{
+						// EOF Transition to accept state?
+						DfaDebugMessage("accept via EOF; predict {0} from {1}", accept[eof[s]], eof[s]);
+						return accept[eof[s]];
+					}
 
-                    // not in range and not EOF/EOT, must be invalid symbol
-                    DfaDebugInvalidSymbol(s);
+					// not in range and not EOF/EOT, must be invalid symbol
+					DfaDebugInvalidSymbol(s);
 
-                    NoViableAlt( s, input );
-                    return 0;
-                }
-            }
-            finally
-            {
-                input.Rewind( mark );
-            }
-        }
+					NoViableAlt(s, input);
+					return 0;
+				}
+			}
+			finally
+			{
+				input.Rewind(mark);
+			}
+		}
 
-        [Conditional("DEBUG_DFA")]
-        private void DfaDebugMessage(string format, params object[] args)
-        {
+		[Conditional("DEBUG_DFA")]
+		private void DfaDebugMessage(string format, params object[] args)
+		{
 #if !PORTABLE
-            Console.Error.WriteLine(format, args);
+			Console.Error.WriteLine(format, args);
 #endif
-        }
+		}
 
-        [Conditional("DEBUG_DFA")]
-        private void DfaDebugInvalidSymbol(int s)
-        {
+		[Conditional("DEBUG_DFA")]
+		private void DfaDebugInvalidSymbol(int s)
+		{
 #if !PORTABLE
-            Console.Error.WriteLine("min[{0}]={1}", s, min[s]);
-            Console.Error.WriteLine("max[{0}]={1}", s, max[s]);
-            Console.Error.WriteLine("eot[{0}]={1}", s, eot[s]);
-            Console.Error.WriteLine("eof[{0}]={1}", s, eof[s]);
+			Console.Error.WriteLine("min[{0}]={1}", s, min[s]);
+			Console.Error.WriteLine("max[{0}]={1}", s, max[s]);
+			Console.Error.WriteLine("eot[{0}]={1}", s, eot[s]);
+			Console.Error.WriteLine("eof[{0}]={1}", s, eof[s]);
 
-            for (int p = 0; p < transition[s].Length; p++)
-                Console.Error.Write(transition[s][p] + " ");
+			for (int p = 0; p < transition[s].Length; p++)
+				Console.Error.Write(transition[s][p] + " ");
 
-            Console.Error.WriteLine();
+			Console.Error.WriteLine();
 #endif
-        }
+		}
 
-        protected virtual void NoViableAlt( int s, IIntStream input )
-        {
-            if ( recognizer.state.backtracking > 0 )
-            {
-                recognizer.state.failed = true;
-                return;
-            }
-            NoViableAltException nvae =
-                new NoViableAltException( Description,
-                                         decisionNumber,
-                                         s,
-                                         input );
-            Error( nvae );
-            throw nvae;
-        }
+		protected virtual void NoViableAlt(int s, IIntStream input)
+		{
+			if (recognizer.state.backtracking > 0)
+			{
+				recognizer.state.failed = true;
+				return;
+			}
+			NoViableAltException nvae =
+				new NoViableAltException(Description,
+										 decisionNumber,
+										 s,
+										 input);
+			Error(nvae);
+			throw nvae;
+		}
 
-        /** <summary>A hook for debugging interface</summary> */
-        public virtual void Error( NoViableAltException nvae )
-        {
-        }
+		/** <summary>A hook for debugging interface</summary> */
+		public virtual void Error(NoViableAltException nvae)
+		{
+		}
 
-        public SpecialStateTransitionHandler SpecialStateTransition
-        {
-            get;
-            private set;
-        }
-        //public virtual int specialStateTransition( int s, IntStream input )
-        //{
-        //    return -1;
-        //}
+		public SpecialStateTransitionHandler SpecialStateTransition
+		{
+			get;
+			private set;
+		}
+		//public virtual int specialStateTransition( int s, IntStream input )
+		//{
+		//    return -1;
+		//}
 
-        static int SpecialStateTransitionDefault( DFA dfa, int s, IIntStream input )
-        {
-            return -1;
-        }
+		static int SpecialStateTransitionDefault(DFA dfa, int s, IIntStream input)
+		{
+			return -1;
+		}
 
-        /** <summary>
+		/** <summary>
          *  Given a String that has a run-length-encoding of some unsigned shorts
          *  like "\1\2\3\9", convert to short[] {2,9,9,9}.  We do this to avoid
          *  static short[] which generates so much init code that the class won't
          *  compile. :(
          *  </summary>
          */
-        public static short[] UnpackEncodedString( string encodedString )
-        {
-            // walk first to find how big it is.
-            int size = 0;
-            for ( int i = 0; i < encodedString.Length; i += 2 )
-            {
-                size += encodedString[i];
-            }
-            short[] data = new short[size];
-            int di = 0;
-            for ( int i = 0; i < encodedString.Length; i += 2 )
-            {
-                char n = encodedString[i];
-                char v = encodedString[i + 1];
-                // add v n times to data
-                for ( int j = 1; j <= n; j++ )
-                {
-                    data[di++] = (short)v;
-                }
-            }
-            return data;
-        }
+		public static short[] UnpackEncodedString(string encodedString)
+		{
+			// walk first to find how big it is.
+			int size = 0;
+			for (int i = 0; i < encodedString.Length; i += 2)
+			{
+				size += encodedString[i];
+			}
+			short[] data = new short[size];
+			int di = 0;
+			for (int i = 0; i < encodedString.Length; i += 2)
+			{
+				char n = encodedString[i];
+				char v = encodedString[i + 1];
+				// add v n times to data
+				for (int j = 1; j <= n; j++)
+				{
+					data[di++] = (short)v;
+				}
+			}
+			return data;
+		}
 
-        /** <summary>Hideous duplication of code, but I need different typed arrays out :(</summary> */
-        public static char[] UnpackEncodedStringToUnsignedChars( string encodedString )
-        {
-            // walk first to find how big it is.
-            int size = 0;
-            for ( int i = 0; i < encodedString.Length; i += 2 )
-            {
-                size += encodedString[i];
-            }
-            char[] data = new char[size];
-            int di = 0;
-            for ( int i = 0; i < encodedString.Length; i += 2 )
-            {
-                char n = encodedString[i];
-                char v = encodedString[i + 1];
-                // add v n times to data
-                for ( int j = 1; j <= n; j++ )
-                {
-                    data[di++] = v;
-                }
-            }
-            return data;
-        }
+		/** <summary>Hideous duplication of code, but I need different typed arrays out :(</summary> */
+		public static char[] UnpackEncodedStringToUnsignedChars(string encodedString)
+		{
+			// walk first to find how big it is.
+			int size = 0;
+			for (int i = 0; i < encodedString.Length; i += 2)
+			{
+				size += encodedString[i];
+			}
+			char[] data = new char[size];
+			int di = 0;
+			for (int i = 0; i < encodedString.Length; i += 2)
+			{
+				char n = encodedString[i];
+				char v = encodedString[i + 1];
+				// add v n times to data
+				for (int j = 1; j <= n; j++)
+				{
+					data[di++] = v;
+				}
+			}
+			return data;
+		}
 
-        [Conditional("ANTLR_DEBUG")]
-        protected virtual void DebugRecognitionException(RecognitionException ex)
-        {
-            IDebugEventListener dbg = recognizer.DebugListener;
-            if (dbg != null)
-                dbg.RecognitionException(ex);
-        }
-    }
+		[Conditional("ANTLR_DEBUG")]
+		protected virtual void DebugRecognitionException(RecognitionException ex)
+		{
+			IDebugEventListener dbg = recognizer.DebugListener;
+			if (dbg != null)
+				dbg.RecognitionException(ex);
+		}
+	}
 }

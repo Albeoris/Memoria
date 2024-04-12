@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.SiliconSocial;
 using Memoria;
+using System;
+using System.Collections.Generic;
 
 public class EMinigame
 {
@@ -55,19 +55,19 @@ public class EMinigame
 			Boolean flag;
 			switch (currentLanguange)
 			{
-			case "French":
-			case "Italian":
-				flag = (messageId == 119);
-				goto IL_C2;
-			case "German":
-				flag = (messageId == 120);
-				goto IL_C2;
-			case "Japanese":
-				flag = (messageId == 122);
-				goto IL_C2;
+				case "French":
+				case "Italian":
+					flag = (messageId == 119);
+					goto IL_C2;
+				case "German":
+					flag = (messageId == 120);
+					goto IL_C2;
+				case "Japanese":
+					flag = (messageId == 122);
+					goto IL_C2;
 			}
 			flag = (messageId == 118);
-			IL_C2:
+		IL_C2:
 			if (flag)
 			{
 				AchievementManager.ReportAchievement(AcheivementKey.EidolonMural, 1);
@@ -81,19 +81,19 @@ public class EMinigame
 		if (fldMapNo == 352)
 		{
 			Boolean flag;
-            switch (currentLanguage)
-            {
-                case "English(UK)":
-                case "English(US)":
-                    flag = (messageId == 222);
-                    goto IL_B0;
-                case "Spanish":
-                    flag = (messageId == 230);
-                    goto IL_B0;
-            }
-            
+			switch (currentLanguage)
+			{
+				case "English(UK)":
+				case "English(US)":
+					flag = (messageId == 222);
+					goto IL_B0;
+				case "Spanish":
+					flag = (messageId == 230);
+					goto IL_B0;
+			}
+
 			flag = (messageId == 233);
-			IL_B0:
+		IL_B0:
 			if (flag)
 			{
 				AchievementManager.ReportAchievement(AcheivementKey.ExcellentLuck, 1);
@@ -151,51 +151,51 @@ public class EMinigame
 		}
 		if (fieldId == 2456 && lang != null)
 		{
-            switch (lang)
-            {
-                case "English(UK)":
-                case "English(US)":
-                default:
-                    result = (mesId == 259 || mesId == 69);
-                    break;
-                case "French":
+			switch (lang)
+			{
+				case "English(UK)":
+				case "English(US)":
+				default:
+					result = (mesId == 259 || mesId == 69);
+					break;
+				case "French":
 				case "Spanish":
 				case "German":
 				case "Italian":
 				case "Japanese":
-                    result = (mesId == 266 || mesId == 69);
-                    break;
-            }
+					result = (mesId == 266 || mesId == 69);
+					break;
+			}
 		}
 		return result;
 	}
 
 	public static void ProvokeMogAchievement(String currentLanguange, Int32 messageId)
-    {
-        if (PersistenSingleton<SceneDirector>.Instance.CurrentScene != SceneDirector.WorldMapSceneName)
-        {
-            return;
-        }
-        Boolean flag = false;
-        switch (currentLanguange)
-        {
-            case "English(US)":
-            case "English(UK)":
-            case "French":
-            case "Spanish":
-            case "German":
-            case "Italian":
-            case "Japanese":
-                flag = (messageId == 49);
-                break;
-        }
-        if (flag)
-        {
-            AchievementManager.ReportAchievement(AcheivementKey.ProvokeMoogle, 1);
-        }
-    }
+	{
+		if (PersistenSingleton<SceneDirector>.Instance.CurrentScene != SceneDirector.WorldMapSceneName)
+		{
+			return;
+		}
+		Boolean flag = false;
+		switch (currentLanguange)
+		{
+			case "English(US)":
+			case "English(UK)":
+			case "French":
+			case "Spanish":
+			case "German":
+			case "Italian":
+			case "Japanese":
+				flag = (messageId == 49);
+				break;
+		}
+		if (flag)
+		{
+			AchievementManager.ReportAchievement(AcheivementKey.ProvokeMoogle, 1);
+		}
+	}
 
-    public static void Catching99FrogAchievement(Int32 numFrog)
+	public static void Catching99FrogAchievement(Int32 numFrog)
 	{
 		AchievementManager.ReportAchievement(AcheivementKey.Frog99, numFrog);
 		if (numFrog == 99)
@@ -203,9 +203,9 @@ public class EMinigame
 		}
 	}
 
-    public const Int32 GoldenFrogModelId = 423;
+	public const Int32 GoldenFrogModelId = 423;
 
-    public static void CatchingGoldenFrogAchievement(Obj frogObj)
+	public static void CatchingGoldenFrogAchievement(Obj frogObj)
 	{
 		if (((PosObj)frogObj).model == GoldenFrogModelId)
 			AchievementManager.ReportAchievement(AcheivementKey.GoldenFrog, 1);
@@ -263,16 +263,16 @@ public class EMinigame
 		if (fldMapNo == 1858)
 		{
 			Boolean flag;
-            switch (lang)
-            {
-                case "English(US)":
-                case "English(UK)":
-                    flag = (mesId == 265);
-                    goto IL_8E;
-            }
+			switch (lang)
+			{
+				case "English(US)":
+				case "English(UK)":
+					flag = (mesId == 265);
+					goto IL_8E;
+			}
 
 			flag = (mesId == 264);
-			IL_8E:
+		IL_8E:
 			if (flag)
 			{
 				AchievementManager.ReportAchievement(AcheivementKey.Shuffle9, 1);
@@ -321,19 +321,19 @@ public class EMinigame
 		if (fldMapNo == 2950 || fldMapNo == 2951 || fldMapNo == 2952)
 		{
 			Boolean flag;
-            switch (language)
-            {
-                case "Japanese":
-                    flag = (mesId == 325 || mesId == 277);
-                    goto IL_F5;
-                case "English(US)":
-                case "English(UK)":
-                    flag = (mesId == 320 || mesId == 277);
-                    goto IL_F5;
-            }
-            
+			switch (language)
+			{
+				case "Japanese":
+					flag = (mesId == 325 || mesId == 277);
+					goto IL_F5;
+				case "English(US)":
+				case "English(UK)":
+					flag = (mesId == 320 || mesId == 277);
+					goto IL_F5;
+			}
+
 			flag = (mesId == 326 || mesId == 278);
-			IL_F5:
+		IL_F5:
 			if (flag)
 			{
 				Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(35796);
@@ -422,7 +422,7 @@ public class EMinigame
 			}
 			return;
 		}
-		IL_42:
+	IL_42:
 		EMinigame.quadmistOpponentId = 558002;
 	}
 

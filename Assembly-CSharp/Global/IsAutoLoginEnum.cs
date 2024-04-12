@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum IsAutoLoginEnum
+﻿public enum IsAutoLoginEnum
 {
 	Invalid = -1,
 	OnWithOldSaveData,

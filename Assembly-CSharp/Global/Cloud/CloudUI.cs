@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
-using Memoria.Data;
 using Memoria.Assets;
-using SiliconStudio;
+using Memoria.Data;
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class CloudUI : UIScene
@@ -309,28 +308,28 @@ public class CloudUI : UIScene
 			Double num3 = (Double)(file.PlayDuration % 360000f);
 			switch ((Int32)(file.PlayDuration / 360000f))
 			{
-			case 0:
-				color = FF9TextTool.White;
-				break;
-			case 1:
-				color = FF9TextTool.Red;
-				break;
-			case 2:
-				color = FF9TextTool.Yellow;
-				break;
-			case 3:
-				color = FF9TextTool.Cyan;
-				break;
-			case 4:
-				color = FF9TextTool.Magenta;
-				break;
-			case 5:
-				color = FF9TextTool.Green;
-				break;
-			default:
-				num3 = 359999.0;
-				color = FF9TextTool.Green;
-				break;
+				case 0:
+					color = FF9TextTool.White;
+					break;
+				case 1:
+					color = FF9TextTool.Red;
+					break;
+				case 2:
+					color = FF9TextTool.Yellow;
+					break;
+				case 3:
+					color = FF9TextTool.Cyan;
+					break;
+				case 4:
+					color = FF9TextTool.Magenta;
+					break;
+				case 5:
+					color = FF9TextTool.Green;
+					break;
+				default:
+					num3 = 359999.0;
+					color = FF9TextTool.Green;
+					break;
 			}
 			String text2 = ((Int32)(num3 / 3600.0)).ToString("0#");
 			String text3 = ((Int32)(num3 / 60.0) % 60).ToString("0#");
@@ -355,24 +354,24 @@ public class CloudUI : UIScene
 			{
 				switch (status)
 				{
-				case DataSerializerErrorCode.FileCorruption:
-				case DataSerializerErrorCode.DataCorruption:
-					fileHud.EmptySlotTextLabel.text = Localization.Get("LocalDecryptFailed");
-					fileHud.EmptySlotTextLabel.color = FF9TextTool.Red;
-					goto IL_3E7;
-				case DataSerializerErrorCode.CloudDataCorruption:
-					fileHud.EmptySlotTextLabel.text = Localization.Get("CloudDataCorrupt");
-					fileHud.EmptySlotTextLabel.color = FF9TextTool.Red;
-					goto IL_3E7;
-				case DataSerializerErrorCode.CloudConnectionTimeout:
-					fileHud.EmptySlotTextLabel.text = Localization.Get("CloudConnectionTimeout");
-					goto IL_3E7;
-				case DataSerializerErrorCode.CloudDataUnknownError:
-					fileHud.EmptySlotTextLabel.text = Localization.Get("CloudDataUnknownError");
-					goto IL_3E7;
+					case DataSerializerErrorCode.FileCorruption:
+					case DataSerializerErrorCode.DataCorruption:
+						fileHud.EmptySlotTextLabel.text = Localization.Get("LocalDecryptFailed");
+						fileHud.EmptySlotTextLabel.color = FF9TextTool.Red;
+						goto IL_3E7;
+					case DataSerializerErrorCode.CloudDataCorruption:
+						fileHud.EmptySlotTextLabel.text = Localization.Get("CloudDataCorrupt");
+						fileHud.EmptySlotTextLabel.color = FF9TextTool.Red;
+						goto IL_3E7;
+					case DataSerializerErrorCode.CloudConnectionTimeout:
+						fileHud.EmptySlotTextLabel.text = Localization.Get("CloudConnectionTimeout");
+						goto IL_3E7;
+					case DataSerializerErrorCode.CloudDataUnknownError:
+						fileHud.EmptySlotTextLabel.text = Localization.Get("CloudDataUnknownError");
+						goto IL_3E7;
 				}
 				fileHud.EmptySlotTextLabel.text = Localization.Get("EmptyFile");
-				IL_3E7:;
+			IL_3E7:;
 			}
 			else
 			{
@@ -403,19 +402,19 @@ public class CloudUI : UIScene
 		String language = Localization.CurrentLanguage;
 		switch (language)
 		{
-		case "English(US)":
-			format = "MM/dd/yyyy";
-			break;
-		case "English(UK)":
-		case "Spanish":
-		case "French":
-		case "German":
-		case "Italian":
-			format = "dd/MM/yyyy";
-			break;
-		case "Japanese":
-			format = "yyyy/MM/dd";
-			break;
+			case "English(US)":
+				format = "MM/dd/yyyy";
+				break;
+			case "English(UK)":
+			case "Spanish":
+			case "French":
+			case "German":
+			case "Italian":
+				format = "dd/MM/yyyy";
+				break;
+			case "Japanese":
+				format = "yyyy/MM/dd";
+				break;
 		}
 		if (this.localFileHud.Self.activeSelf)
 		{
@@ -476,22 +475,22 @@ public class CloudUI : UIScene
 		String key;
 		switch (ISharedDataSerializer.LastErrno)
 		{
-		case DataSerializerErrorCode.FileCorruption:
-		case DataSerializerErrorCode.DataCorruption:
-			key = "LocalDecryptFailed";
-			goto IL_66;
-		case DataSerializerErrorCode.CloudDataCorruption:
-			key = "CloudDataCorrupt";
-			goto IL_66;
-		case DataSerializerErrorCode.CloudConnectionTimeout:
-			key = "CloudConnectionTimeout";
-			goto IL_66;
-		case DataSerializerErrorCode.CloudFileNotFound:
-			key = "CloudFileNotFound";
-			goto IL_66;
+			case DataSerializerErrorCode.FileCorruption:
+			case DataSerializerErrorCode.DataCorruption:
+				key = "LocalDecryptFailed";
+				goto IL_66;
+			case DataSerializerErrorCode.CloudDataCorruption:
+				key = "CloudDataCorrupt";
+				goto IL_66;
+			case DataSerializerErrorCode.CloudConnectionTimeout:
+				key = "CloudConnectionTimeout";
+				goto IL_66;
+			case DataSerializerErrorCode.CloudFileNotFound:
+				key = "CloudFileNotFound";
+				goto IL_66;
 		}
 		key = "CloudDataUnknownError";
-		IL_66:
+	IL_66:
 		this.saveCorruptDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.Notice);
 		ButtonGroupState.DisableAllGroup(true);
 		base.StartCoroutine(this.HideCorruptAccessDialog(callback));
@@ -509,7 +508,7 @@ public class CloudUI : UIScene
 		if (this.syncState == CloudUI.Sync.Download)
 		{
 			yield return new WaitForSeconds(0.5f);
-			FF9StateSystem.Serializer.GetSelectedLanguage(delegate(DataSerializerErrorCode errNo, Int32 selectedLanguage)
+			FF9StateSystem.Serializer.GetSelectedLanguage(delegate (DataSerializerErrorCode errNo, Int32 selectedLanguage)
 			{
 				if (errNo == DataSerializerErrorCode.Success)
 				{

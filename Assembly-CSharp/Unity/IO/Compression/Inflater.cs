@@ -188,24 +188,24 @@ namespace Unity.IO.Compression
 		private Boolean DecodeUncompressedBlock(out Boolean end_of_block)
 		{
 			end_of_block = false;
-			for (;;)
+			for (; ; )
 			{
 				switch (this.state)
 				{
-				case InflaterState.UncompressedAligning:
-					this.input.SkipToByteBoundary();
-					this.state = InflaterState.UncompressedByte1;
-					goto IL_48;
-				case InflaterState.UncompressedByte1:
-				case InflaterState.UncompressedByte2:
-				case InflaterState.UncompressedByte3:
-				case InflaterState.UncompressedByte4:
-					goto IL_48;
-				case InflaterState.DecodingUncompressed:
-					goto IL_E4;
+					case InflaterState.UncompressedAligning:
+						this.input.SkipToByteBoundary();
+						this.state = InflaterState.UncompressedByte1;
+						goto IL_48;
+					case InflaterState.UncompressedByte1:
+					case InflaterState.UncompressedByte2:
+					case InflaterState.UncompressedByte3:
+					case InflaterState.UncompressedByte4:
+						goto IL_48;
+					case InflaterState.DecodingUncompressed:
+						goto IL_E4;
 				}
 				break;
-				IL_48:
+			IL_48:
 				Int32 bits = this.input.GetBits(8);
 				if (bits < 0)
 				{
@@ -224,9 +224,9 @@ namespace Unity.IO.Compression
 				this.state++;
 			}
 			throw new InvalidDataException(SR.GetString("Unknown state"));
-			Block_4:
+		Block_4:
 			throw new InvalidDataException(SR.GetString("Invalid block length"));
-			IL_E4:
+		IL_E4:
 			Int32 num2 = this.output.CopyFrom(this.input, this.blockLength);
 			this.blockLength -= num2;
 			if (this.blockLength == 0)
@@ -246,57 +246,57 @@ namespace Unity.IO.Compression
 			{
 				switch (this.state)
 				{
-				case InflaterState.DecodeTop:
-				{
-					Int32 num = this.literalLengthTree.GetNextSymbol(this.input);
-					if (num < 0)
-					{
-						return false;
-					}
-					if (num < 256)
-					{
-						this.output.Write((Byte)num);
-						i--;
-						continue;
-					}
-					if (num == 256)
-					{
-						end_of_block_code_seen = true;
-						this.state = InflaterState.ReadingBFinal;
-						return true;
-					}
-					num -= 257;
-					if (num < 8)
-					{
-						num += 3;
-						this.extraBits = 0;
-					}
-					else if (num == 28)
-					{
-						num = 258;
-						this.extraBits = 0;
-					}
-					else
-					{
-						if (num < 0 || num >= (Int32)Inflater.extraLengthBits.Length)
+					case InflaterState.DecodeTop:
 						{
-							throw new InvalidDataException(SR.GetString("Invalid data"));
+							Int32 num = this.literalLengthTree.GetNextSymbol(this.input);
+							if (num < 0)
+							{
+								return false;
+							}
+							if (num < 256)
+							{
+								this.output.Write((Byte)num);
+								i--;
+								continue;
+							}
+							if (num == 256)
+							{
+								end_of_block_code_seen = true;
+								this.state = InflaterState.ReadingBFinal;
+								return true;
+							}
+							num -= 257;
+							if (num < 8)
+							{
+								num += 3;
+								this.extraBits = 0;
+							}
+							else if (num == 28)
+							{
+								num = 258;
+								this.extraBits = 0;
+							}
+							else
+							{
+								if (num < 0 || num >= (Int32)Inflater.extraLengthBits.Length)
+								{
+									throw new InvalidDataException(SR.GetString("Invalid data"));
+								}
+								this.extraBits = (Int32)Inflater.extraLengthBits[num];
+							}
+							this.length = num;
+							goto IL_109;
 						}
-						this.extraBits = (Int32)Inflater.extraLengthBits[num];
-					}
-					this.length = num;
-					goto IL_109;
+					case InflaterState.HaveInitialLength:
+						goto IL_109;
+					case InflaterState.HaveFullLength:
+						goto IL_187;
+					case InflaterState.HaveDistCode:
+						break;
+					default:
+						throw new InvalidDataException(SR.GetString("Unknown state"));
 				}
-				case InflaterState.HaveInitialLength:
-					goto IL_109;
-				case InflaterState.HaveFullLength:
-					goto IL_187;
-				case InflaterState.HaveDistCode:
-					break;
-				default:
-					throw new InvalidDataException(SR.GetString("Unknown state"));
-				}
-				IL_1FA:
+			IL_1FA:
 				Int32 distance;
 				if (this.distanceCode > 3)
 				{
@@ -316,7 +316,7 @@ namespace Unity.IO.Compression
 				i -= this.length;
 				this.state = InflaterState.DecodeTop;
 				continue;
-				IL_187:
+			IL_187:
 				if (this.blockType == BlockType.Dynamic)
 				{
 					this.distanceCode = this.distanceTree.GetNextSymbol(this.input);
@@ -335,7 +335,7 @@ namespace Unity.IO.Compression
 				}
 				this.state = InflaterState.HaveDistCode;
 				goto IL_1FA;
-				IL_109:
+			IL_109:
 				if (this.extraBits > 0)
 				{
 					this.state = InflaterState.HaveInitialLength;
@@ -360,26 +360,26 @@ namespace Unity.IO.Compression
 		{
 			switch (this.state)
 			{
-			case InflaterState.ReadingNumLitCodes:
-				this.literalLengthCodeCount = this.input.GetBits(5);
-				if (this.literalLengthCodeCount < 0)
-				{
-					return false;
-				}
-				this.literalLengthCodeCount += 257;
-				this.state = InflaterState.ReadingNumDistCodes;
-				break;
-			case InflaterState.ReadingNumDistCodes:
-				break;
-			case InflaterState.ReadingNumCodeLengthCodes:
-				goto IL_A6;
-			case InflaterState.ReadingCodeLengthCodes:
-				goto IL_E7;
-			case InflaterState.ReadingTreeCodesBefore:
-			case InflaterState.ReadingTreeCodesAfter:
-				goto IL_199;
-			default:
-				throw new InvalidDataException(SR.GetString("Unknown state"));
+				case InflaterState.ReadingNumLitCodes:
+					this.literalLengthCodeCount = this.input.GetBits(5);
+					if (this.literalLengthCodeCount < 0)
+					{
+						return false;
+					}
+					this.literalLengthCodeCount += 257;
+					this.state = InflaterState.ReadingNumDistCodes;
+					break;
+				case InflaterState.ReadingNumDistCodes:
+					break;
+				case InflaterState.ReadingNumCodeLengthCodes:
+					goto IL_A6;
+				case InflaterState.ReadingCodeLengthCodes:
+					goto IL_E7;
+				case InflaterState.ReadingTreeCodesBefore:
+				case InflaterState.ReadingTreeCodesAfter:
+					goto IL_199;
+				default:
+					throw new InvalidDataException(SR.GetString("Unknown state"));
 			}
 			this.distanceCodeCount = this.input.GetBits(5);
 			if (this.distanceCodeCount < 0)
@@ -388,7 +388,7 @@ namespace Unity.IO.Compression
 			}
 			this.distanceCodeCount++;
 			this.state = InflaterState.ReadingNumCodeLengthCodes;
-			IL_A6:
+		IL_A6:
 			this.codeLengthCodeCount = this.input.GetBits(4);
 			if (this.codeLengthCodeCount < 0)
 			{
@@ -397,7 +397,7 @@ namespace Unity.IO.Compression
 			this.codeLengthCodeCount += 4;
 			this.loopCounter = 0;
 			this.state = InflaterState.ReadingCodeLengthCodes;
-			IL_E7:
+		IL_E7:
 			while (this.loopCounter < this.codeLengthCodeCount)
 			{
 				Int32 bits = this.input.GetBits(3);
@@ -416,7 +416,7 @@ namespace Unity.IO.Compression
 			this.codeArraySize = this.literalLengthCodeCount + this.distanceCodeCount;
 			this.loopCounter = 0;
 			this.state = InflaterState.ReadingTreeCodesBefore;
-			IL_199:
+		IL_199:
 			while (this.loopCounter < this.codeArraySize)
 			{
 				if (this.state == InflaterState.ReadingTreeCodesBefore && (this.lengthCode = this.codeLengthTree.GetNextSymbol(this.input)) < 0)

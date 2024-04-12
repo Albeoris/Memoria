@@ -1,11 +1,8 @@
-﻿using System;
+﻿using Memoria;
+using Memoria.Data;
+using System;
 using System.Collections;
 using UnityEngine;
-using Memoria;
-using Memoria.Prime;
-using FF9;
-using System.Reflection;
-using Memoria.Data;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -110,7 +107,6 @@ public class EnemyAI : MonoBehaviour
 					}
 				}
 			}
-
 		}
 		bestChoiceScore = MIN_POINTS;
 		result.x = 0;

@@ -178,12 +178,12 @@ public partial class WMActor : MonoBehaviour
 		}
 	}
 
-    public void UpdateAnimationViaScript()
+	public void UpdateAnimationViaScript()
 	{
 		this._smoothUpdatePlayingAnim = false;
 		GameObject go = this.originalActor.go;
-        if (go == null)
-            return;
+		if (go == null)
+			return;
 		String animName = FF9DBAll.AnimationDB.GetValue(this.originalActor.anim);
 		if (!go.GetComponent<Animation>().IsPlaying(animName))
 		{
@@ -201,10 +201,10 @@ public partial class WMActor : MonoBehaviour
 		this._smoothUpdateAnimTimePrevious = clipState.time;
 		this._smoothUpdateAnimTimeActual = time;
 		clipState.time = time;
-        go.GetComponent<Animation>().Sample();
-    }
+		go.GetComponent<Animation>().Sample();
+	}
 
-    public void LateUpdate()
+	public void LateUpdate()
 	{
 	}
 
@@ -497,49 +497,49 @@ public partial class WMActor : MonoBehaviour
 			String name = wmActor.name;
 			switch (name)
 			{
-			case "Zidane":
-				obj.index = 1;
-				wmActor.SetPosition(309934f, 1628f, -196612f);
-				wmActor.SetScale(67, 67, 67);
-				wmActor.Animation.AddClip(instance.ZidaneIdleClip, instance.ZidaneIdleClip.name);
-				wmActor.Animation.AddClip(instance.ZidaneRunClip, instance.ZidaneRunClip.name);
-				break;
-			case "Dagger":
-				obj.index = 2;
-				wmActor.SetPosition(271994f, 1802f, -245750f);
-				wmActor.SetScale(67, 67, 67);
-				wmActor.Animation.AddClip(instance.DaggerIdleClip, instance.DaggerIdleClip.name);
-				wmActor.Animation.AddClip(instance.DaggerRunClip, instance.DaggerRunClip.name);
-				break;
-			case "Chocobo":
-				obj.index = 3;
-				wmActor.SetPosition(269958f, 1072f, -246044f);
-				wmActor.SetScale(67, 67, 67);
-				wmActor.Animation.AddClip(instance.ChocoboFlyClip, instance.ChocoboFlyClip.name);
-				wmActor.Animation.AddClip(instance.ChocoboIdleClip, instance.ChocoboIdleClip.name);
-				wmActor.Animation.AddClip(instance.ChocoboRunClip, instance.ChocoboRunClip.name);
-				break;
-			case "Bluenalusisu":
-				obj.index = 8;
-				wmActor.SetPosition(280576f, 327f, -261120f);
-				wmActor.SetScale(106, 106, 106);
-				wmActor.Animation.AddClip(instance.BluenalusisuIdleClip, instance.BluenalusisuIdleClip.name);
-				wmActor.Animation.AddClip(instance.BluenalusisuTakeOffClip, instance.BluenalusisuTakeOffClip.name);
-				break;
-			case "Hirudagarude":
-				obj.index = 9;
-				wmActor.SetPosition((Single)ff9.UnityUnit(775.1f), (Single)ff9.UnityUnit(39.9f), (Single)ff9.UnityUnit(-317.3f));
-				wmActor.SetScale(110, 95, 110);
-				wmActor.Animation.AddClip(instance.HirudagarudeIdleClip, instance.HirudagarudeIdleClip.name);
-				wmActor.Animation.AddClip(instance.HirudagarudeTakeOffClip, instance.HirudagarudeTakeOffClip.name);
-				break;
-			case "Invincible":
-				obj.index = 10;
-				wmActor.SetPosition(272866f, 8550f, -244552f);
-				wmActor.SetScale(64, 64, 64);
-				wmActor.Animation.AddClip(instance.InvincibleIdleClip, instance.InvincibleIdleClip.name);
-				wmActor.Animation.AddClip(instance.InvincibleTakeOffClip, instance.InvincibleTakeOffClip.name);
-				break;
+				case "Zidane":
+					obj.index = 1;
+					wmActor.SetPosition(309934f, 1628f, -196612f);
+					wmActor.SetScale(67, 67, 67);
+					wmActor.Animation.AddClip(instance.ZidaneIdleClip, instance.ZidaneIdleClip.name);
+					wmActor.Animation.AddClip(instance.ZidaneRunClip, instance.ZidaneRunClip.name);
+					break;
+				case "Dagger":
+					obj.index = 2;
+					wmActor.SetPosition(271994f, 1802f, -245750f);
+					wmActor.SetScale(67, 67, 67);
+					wmActor.Animation.AddClip(instance.DaggerIdleClip, instance.DaggerIdleClip.name);
+					wmActor.Animation.AddClip(instance.DaggerRunClip, instance.DaggerRunClip.name);
+					break;
+				case "Chocobo":
+					obj.index = 3;
+					wmActor.SetPosition(269958f, 1072f, -246044f);
+					wmActor.SetScale(67, 67, 67);
+					wmActor.Animation.AddClip(instance.ChocoboFlyClip, instance.ChocoboFlyClip.name);
+					wmActor.Animation.AddClip(instance.ChocoboIdleClip, instance.ChocoboIdleClip.name);
+					wmActor.Animation.AddClip(instance.ChocoboRunClip, instance.ChocoboRunClip.name);
+					break;
+				case "Bluenalusisu":
+					obj.index = 8;
+					wmActor.SetPosition(280576f, 327f, -261120f);
+					wmActor.SetScale(106, 106, 106);
+					wmActor.Animation.AddClip(instance.BluenalusisuIdleClip, instance.BluenalusisuIdleClip.name);
+					wmActor.Animation.AddClip(instance.BluenalusisuTakeOffClip, instance.BluenalusisuTakeOffClip.name);
+					break;
+				case "Hirudagarude":
+					obj.index = 9;
+					wmActor.SetPosition((Single)ff9.UnityUnit(775.1f), (Single)ff9.UnityUnit(39.9f), (Single)ff9.UnityUnit(-317.3f));
+					wmActor.SetScale(110, 95, 110);
+					wmActor.Animation.AddClip(instance.HirudagarudeIdleClip, instance.HirudagarudeIdleClip.name);
+					wmActor.Animation.AddClip(instance.HirudagarudeTakeOffClip, instance.HirudagarudeTakeOffClip.name);
+					break;
+				case "Invincible":
+					obj.index = 10;
+					wmActor.SetPosition(272866f, 8550f, -244552f);
+					wmActor.SetScale(64, 64, 64);
+					wmActor.Animation.AddClip(instance.InvincibleIdleClip, instance.InvincibleIdleClip.name);
+					wmActor.Animation.AddClip(instance.InvincibleTakeOffClip, instance.InvincibleTakeOffClip.name);
+					break;
 			}
 			wmActor.Intialize();
 		}

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria.Scripts;
+using System;
 using System.Collections.Generic;
-using Memoria.Scripts;
 using UnityEngine;
 
 public class fldchar
@@ -22,133 +22,133 @@ public class fldchar
 		FF9Char ff9Char = FF9StateSystem.Common.FF9.charArray[uid];
 		switch (Parm)
 		{
-		case 0:
-			if ((Arg1 & 255) == 255)
-			{
-				ff9Char.attr = (UInt32)((UInt64)ff9Char.attr & 18446744073709486079UL);
-			}
-			else
-			{
-				if (Arg1 != (Int32)ff9FieldCharState.arate)
+			case 0:
+				if ((Arg1 & 255) == 255)
 				{
-					ff9Char.attr |= 262144u;
-				}
-				ff9Char.attr |= 65536u;
-			}
-			ff9FieldCharState.arate = (SByte)Arg1;
-			break;
-		case 4:
-			if (Arg1 != 0)
-			{
-				fldchar.geoSlice(ff9Char.geo, Arg2);
-				ff9Char.attr |= 1048576u;
-			}
-			else
-			{
-				ff9Char.attr = (UInt32)((UInt64)ff9Char.attr & 18446744073708503039UL);
-			}
-			break;
-		case 8:
-		case 9:
-		case 10:
-		case 11:
-		{
-			FF9FieldCharMirror ff9FieldCharMirror = ff9FieldCharState.mirror;
-			FF9Char ff9Char2;
-			if (ff9FieldCharMirror == null)
-			{
-				ff9FieldCharMirror = (ff9FieldCharState.mirror = new FF9FieldCharMirror());
-				ff9Char2 = (ff9FieldCharMirror.chr = ff9Char);
-				ff9Char2.attr = 0u;
-				ff9FieldCharMirror.geo = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue((Int32)ff9Char.evt.model), false);
-				ff9FieldCharMirror.geo.name = ff9Char.geo.name + "_mirror";
-			    Shader shader = ShadersLoader.Find("PSX/FieldMapActor");
-			    Renderer[] componentsInChildren = ff9FieldCharMirror.geo.GetComponentsInChildren<Renderer>();
-				Renderer[] array = componentsInChildren;
-				for (Int32 i = 0; i < (Int32)array.Length; i++)
-				{
-					Renderer renderer = array[i];
-					renderer.material.shader = shader;
-					renderer.material.SetColor("_Color", new Color(0.5f, 0.5f, 0.5f));
-					if (FF9StateSystem.Common.FF9.fldMapNo == 2653 || FF9StateSystem.Common.FF9.fldMapNo == 2654)
-					{
-						renderer.material.renderQueue = 2000;
-					}
-				}
-				ff9FieldCharMirror.geo.transform.SetParent(ff9Char.geo.transform.transform.parent);
-				ff9FieldCharMirror.evt = ff9Char.evt;
-				ff9FieldCharMirror.geo.transform.localScale = new Vector3(-1f, 1f, 1f);
-				ff9FieldCharMirror.geo.transform.localEulerAngles = Vector3.zero;
-				ff9FieldCharMirror.geo.transform.localPosition = Vector3.zero;
-				ff9FieldCharMirror.actor = ff9FieldCharMirror.geo.AddComponent<FieldMapActor>();
-				ff9FieldCharMirror.actor.meshRenderer = ff9FieldCharMirror.geo.GetComponentsInChildren<Renderer>();
-				ff9FieldCharMirror.parent = ff9Char;
-				ff9FieldCharMirror.point = Vector3.zero;
-				ff9FieldCharMirror.normal = Vector3.zero;
-				ff9FieldCharMirror.clr[0] = 0;
-			}
-			ff9Char2 = ff9FieldCharMirror.chr;
-			if (FF9Char.ff9charptr_attr_test(ff9FieldCharMirror.chr, 1) == 0)
-			{
-				ff9Char2.evt = ff9Char.evt;
-				FF9Char.ff9charptr_attr_set(ff9FieldCharMirror.chr, 33554433);
-			}
-			switch (Parm)
-			{
-			case 8:
-				if (Arg1 != 0)
-				{
-					FF9Char.ff9charptr_attr_set(ff9FieldCharMirror.chr, 16777216);
-					ff9FieldCharMirror.geo.SetActive(true);
+					ff9Char.attr = (UInt32)((UInt64)ff9Char.attr & 18446744073709486079UL);
 				}
 				else
 				{
-					FF9Char.ff9charptr_attr_clear(ff9FieldCharMirror.chr, 16777216);
-					ff9FieldCharMirror.geo.SetActive(false);
+					if (Arg1 != (Int32)ff9FieldCharState.arate)
+					{
+						ff9Char.attr |= 262144u;
+					}
+					ff9Char.attr |= 65536u;
+				}
+				ff9FieldCharState.arate = (SByte)Arg1;
+				break;
+			case 4:
+				if (Arg1 != 0)
+				{
+					fldchar.geoSlice(ff9Char.geo, Arg2);
+					ff9Char.attr |= 1048576u;
+				}
+				else
+				{
+					ff9Char.attr = (UInt32)((UInt64)ff9Char.attr & 18446744073708503039UL);
 				}
 				break;
+			case 8:
 			case 9:
-				ff9FieldCharMirror.point = new Vector3((Single)Arg1, (Single)Arg2, (Single)Arg3);
-				break;
 			case 10:
-				ff9FieldCharMirror.normal = new Vector3((Single)(Arg1 >> 12), (Single)(Arg2 >> 12), (Single)(Arg3 >> 12));
-				break;
 			case 11:
-				ff9FieldCharMirror.clr[0] = (Byte)Arg1;
-				ff9FieldCharMirror.clr[1] = (Byte)Arg2;
-				ff9FieldCharMirror.clr[2] = (Byte)Arg3;
-				ff9FieldCharMirror.clr[3] = 2;
-				break;
-			}
-			break;
-		}
-		case 16:
-		case 17:
-		case 18:
-		case 19:
-		{
-			FF9FieldCharSound ff9FieldCharSound;
-			if ((ff9FieldCharSound = FF9Snd.ff9fieldSoundGetChar(ff9Char, Arg1, Arg2)) == null && Parm != 19)
-			{
-				ff9FieldCharSound = FF9Snd.ff9fieldSoundNewChar(ff9Char, Arg1, Arg2);
-			}
-			switch (Parm)
-			{
+				{
+					FF9FieldCharMirror ff9FieldCharMirror = ff9FieldCharState.mirror;
+					FF9Char ff9Char2;
+					if (ff9FieldCharMirror == null)
+					{
+						ff9FieldCharMirror = (ff9FieldCharState.mirror = new FF9FieldCharMirror());
+						ff9Char2 = (ff9FieldCharMirror.chr = ff9Char);
+						ff9Char2.attr = 0u;
+						ff9FieldCharMirror.geo = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue((Int32)ff9Char.evt.model), false);
+						ff9FieldCharMirror.geo.name = ff9Char.geo.name + "_mirror";
+						Shader shader = ShadersLoader.Find("PSX/FieldMapActor");
+						Renderer[] componentsInChildren = ff9FieldCharMirror.geo.GetComponentsInChildren<Renderer>();
+						Renderer[] array = componentsInChildren;
+						for (Int32 i = 0; i < (Int32)array.Length; i++)
+						{
+							Renderer renderer = array[i];
+							renderer.material.shader = shader;
+							renderer.material.SetColor("_Color", new Color(0.5f, 0.5f, 0.5f));
+							if (FF9StateSystem.Common.FF9.fldMapNo == 2653 || FF9StateSystem.Common.FF9.fldMapNo == 2654)
+							{
+								renderer.material.renderQueue = 2000;
+							}
+						}
+						ff9FieldCharMirror.geo.transform.SetParent(ff9Char.geo.transform.transform.parent);
+						ff9FieldCharMirror.evt = ff9Char.evt;
+						ff9FieldCharMirror.geo.transform.localScale = new Vector3(-1f, 1f, 1f);
+						ff9FieldCharMirror.geo.transform.localEulerAngles = Vector3.zero;
+						ff9FieldCharMirror.geo.transform.localPosition = Vector3.zero;
+						ff9FieldCharMirror.actor = ff9FieldCharMirror.geo.AddComponent<FieldMapActor>();
+						ff9FieldCharMirror.actor.meshRenderer = ff9FieldCharMirror.geo.GetComponentsInChildren<Renderer>();
+						ff9FieldCharMirror.parent = ff9Char;
+						ff9FieldCharMirror.point = Vector3.zero;
+						ff9FieldCharMirror.normal = Vector3.zero;
+						ff9FieldCharMirror.clr[0] = 0;
+					}
+					ff9Char2 = ff9FieldCharMirror.chr;
+					if (FF9Char.ff9charptr_attr_test(ff9FieldCharMirror.chr, 1) == 0)
+					{
+						ff9Char2.evt = ff9Char.evt;
+						FF9Char.ff9charptr_attr_set(ff9FieldCharMirror.chr, 33554433);
+					}
+					switch (Parm)
+					{
+						case 8:
+							if (Arg1 != 0)
+							{
+								FF9Char.ff9charptr_attr_set(ff9FieldCharMirror.chr, 16777216);
+								ff9FieldCharMirror.geo.SetActive(true);
+							}
+							else
+							{
+								FF9Char.ff9charptr_attr_clear(ff9FieldCharMirror.chr, 16777216);
+								ff9FieldCharMirror.geo.SetActive(false);
+							}
+							break;
+						case 9:
+							ff9FieldCharMirror.point = new Vector3((Single)Arg1, (Single)Arg2, (Single)Arg3);
+							break;
+						case 10:
+							ff9FieldCharMirror.normal = new Vector3((Single)(Arg1 >> 12), (Single)(Arg2 >> 12), (Single)(Arg3 >> 12));
+							break;
+						case 11:
+							ff9FieldCharMirror.clr[0] = (Byte)Arg1;
+							ff9FieldCharMirror.clr[1] = (Byte)Arg2;
+							ff9FieldCharMirror.clr[2] = (Byte)Arg3;
+							ff9FieldCharMirror.clr[3] = 2;
+							break;
+					}
+					break;
+				}
 			case 16:
-				ff9FieldCharSound.sndEffectID[0] = (UInt16)Arg3;
-				break;
 			case 17:
-				ff9FieldCharSound.sndEffectID[1] = (UInt16)Arg3;
-				break;
 			case 18:
-				ff9FieldCharSound.pitchRand = (SByte)((Arg3 == 0) ? 0 : 1);
-				break;
 			case 19:
-				FF9Snd.ff9fieldSoundDeleteChar(ff9Char, Arg1, Arg2);
-				break;
-			}
-			break;
-		}
+				{
+					FF9FieldCharSound ff9FieldCharSound;
+					if ((ff9FieldCharSound = FF9Snd.ff9fieldSoundGetChar(ff9Char, Arg1, Arg2)) == null && Parm != 19)
+					{
+						ff9FieldCharSound = FF9Snd.ff9fieldSoundNewChar(ff9Char, Arg1, Arg2);
+					}
+					switch (Parm)
+					{
+						case 16:
+							ff9FieldCharSound.sndEffectID[0] = (UInt16)Arg3;
+							break;
+						case 17:
+							ff9FieldCharSound.sndEffectID[1] = (UInt16)Arg3;
+							break;
+						case 18:
+							ff9FieldCharSound.pitchRand = (SByte)((Arg3 == 0) ? 0 : 1);
+							break;
+						case 19:
+							FF9Snd.ff9fieldSoundDeleteChar(ff9Char, Arg1, Arg2);
+							break;
+					}
+					break;
+				}
 		}
 	}
 
@@ -196,9 +196,9 @@ public class fldchar
 							}
 							else
 							{
-							    Shader shader2 = ShadersLoader.Find("PSX/FieldMapActor");
+								Shader shader2 = ShadersLoader.Find("PSX/FieldMapActor");
 
-                                Renderer[] array2 = componentsInChildren;
+								Renderer[] array2 = componentsInChildren;
 								for (Int32 k = 0; k < (Int32)array2.Length; k++)
 								{
 									Renderer renderer2 = array2[k];

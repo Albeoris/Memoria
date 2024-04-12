@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using FF9;
+﻿using FF9;
 using Memoria;
 using Memoria.Data;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class FF9StateBattleSystem
@@ -36,7 +36,7 @@ public class FF9StateBattleSystem
 		this.btl2d_work_set = new BTL2D_WORK();
 		this.status_data = new Dictionary<Int32, STAT_DATA>();
 		this.aa_data = new Dictionary<BattleAbilityId, AA_DATA>();
-	    this.add_status = new Dictionary<BattleStatusIndex, BattleStatusEntry>();
+		this.add_status = new Dictionary<BattleStatusIndex, BattleStatusEntry>();
 		this.map = new FF9StateBattleMap();
 	}
 
@@ -124,10 +124,10 @@ public class FF9StateBattleSystem
 	public Dictionary<BattleStatusIndex, BattleStatusEntry> add_status;
 
 	public IEnumerable<BattleUnit> EnumerateBattleUnits()
-    {
-        for (BTL_DATA data = FF9StateSystem.Battle.FF9Battle.btl_list.next; data != null; data = data.next)
-            yield return new BattleUnit(data);
-    }
+	{
+		for (BTL_DATA data = FF9StateSystem.Battle.FF9Battle.btl_list.next; data != null; data = data.next)
+			yield return new BattleUnit(data);
+	}
 
 	public BattleUnit GetUnit(Int32 index)
 	{

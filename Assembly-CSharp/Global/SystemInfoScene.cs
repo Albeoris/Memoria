@@ -1,6 +1,6 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
+using System;
 using UnityEngine;
 
 public class SystemInfoScene : MonoBehaviour
@@ -132,7 +132,7 @@ public class SystemInfoScene : MonoBehaviour
 		GUILayout.Label("------------------------", new GUILayoutOption[0]);
 		GUILayout.Label(this.ApplicationInfoString[0, 0] + " : " + Application.dataPath, new GUILayoutOption[0]);
 		GUILayout.Label(this.ApplicationInfoString[1, 0] + " : " + AssetManagerUtil.GetPersistentDataPath(), new GUILayoutOption[0]);
-        GUILayout.Label(this.ApplicationInfoString[2, 0] + " : " + AssetManagerUtil.GetStreamingAssetsPath(), new GUILayoutOption[0]);
+		GUILayout.Label(this.ApplicationInfoString[2, 0] + " : " + AssetManagerUtil.GetStreamingAssetsPath(), new GUILayoutOption[0]);
 		GUILayout.Label(this.ApplicationInfoString[3, 0] + " : " + Application.temporaryCachePath, new GUILayoutOption[0]);
 		GUILayout.EndScrollView();
 		GUILayout.EndVertical();

@@ -11,11 +11,11 @@ public class CardDisplay : MonoBehaviour
 			status.Text = value;
 			if (Configuration.TetraMaster.TripleTriad > 0)
 			{
-                status.letters[0].transform.localPosition = new Vector3(0.05f, -0.05f, -0.02f);
-                status.letters[1].transform.localPosition = new Vector3(0.05f, -0.19f, -0.02f);
-                status.letters[2].transform.localPosition = new Vector3(0.02f, -0.12f, -0.02f);
-                status.letters[3].transform.localPosition = new Vector3(0.08f, -0.12f, -0.02f);
-            }
+				status.letters[0].transform.localPosition = new Vector3(0.05f, -0.05f, -0.02f);
+				status.letters[1].transform.localPosition = new Vector3(0.05f, -0.19f, -0.02f);
+				status.letters[2].transform.localPosition = new Vector3(0.02f, -0.12f, -0.02f);
+				status.letters[3].transform.localPosition = new Vector3(0.08f, -0.12f, -0.02f);
+			}
 		}
 	}
 
@@ -56,9 +56,9 @@ public class CardDisplay : MonoBehaviour
 			if (background != null)
 			{
 				background.ID = value;
-            }
+			}
 			if (frame != null)
-            {
+			{
 				frame.ID = value + 5;
 			}
 		}
@@ -83,7 +83,7 @@ public class CardDisplay : MonoBehaviour
 			if (value)
 			{
 				base.transform.localScale = new Vector3(QuadMistCardUI.SIZESMALL_W / QuadMistCardUI.SIZE_W, QuadMistCardUI.SIZESMALL_H / QuadMistCardUI.SIZE_H, 1f);
-                status.transform.localPosition = CardDisplay.STATUS_SMALL;
+				status.transform.localPosition = CardDisplay.STATUS_SMALL;
 			}
 			else
 			{

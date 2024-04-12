@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum SourceControl
+﻿public enum SourceControl
 {
 	None,
 	KeyBoard,

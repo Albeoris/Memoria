@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum PLAY_STATE
+﻿public enum PLAY_STATE
 {
 	INPUT_PLAYER,
 	TUTORIAL_02,

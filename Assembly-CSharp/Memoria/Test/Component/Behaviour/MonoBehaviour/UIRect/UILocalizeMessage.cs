@@ -3,32 +3,32 @@ using System.IO;
 
 namespace Memoria.Test
 {
-    public class UILocalizeMessage : MonoBehaviourMessage
-    {
-        public String Key;
+	public class UILocalizeMessage : MonoBehaviourMessage
+	{
+		public String Key;
 
-        public UILocalizeMessage()
-        {
-        }
+		public UILocalizeMessage()
+		{
+		}
 
-        public UILocalizeMessage(UILocalize uiLocalize)
-            : base(uiLocalize)
-        {
-            Key = uiLocalize.key;
-        }
+		public UILocalizeMessage(UILocalize uiLocalize)
+			: base(uiLocalize)
+		{
+			Key = uiLocalize.key;
+		}
 
-        public override void Serialize(BinaryWriter bw)
-        {
-            base.Serialize(bw);
+		public override void Serialize(BinaryWriter bw)
+		{
+			base.Serialize(bw);
 
-            bw.Write(Key);
-        }
+			bw.Write(Key);
+		}
 
-        public override void Deserialize(BinaryReader br)
-        {
-            base.Deserialize(br);
+		public override void Deserialize(BinaryReader br)
+		{
+			base.Deserialize(br);
 
-            Key = br.ReadString();
-        }
-    }
+			Key = br.ReadString();
+		}
+	}
 }

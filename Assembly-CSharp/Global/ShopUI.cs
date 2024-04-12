@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.SiliconSocial;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
-using Memoria.Data;
 using Memoria.Assets;
+using Memoria.Data;
 using Memoria.Scenes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ShopUI : UIScene
@@ -563,29 +563,29 @@ public class ShopUI : UIScene
 	{
 		switch (shopType)
 		{
-		case ShopUI.ShopType.Item:
-			FF9UIDataTool.DisplayTextLocalize(this.ShopTitleLabel, "ItemShop");
-			FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "BuyHelp");
-			break;
-		case ShopUI.ShopType.Weapon:
-			if (this.isGrocery)
-			{
+			case ShopUI.ShopType.Item:
 				FF9UIDataTool.DisplayTextLocalize(this.ShopTitleLabel, "ItemShop");
 				FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "BuyHelp");
-			}
-			else
-			{
-				FF9UIDataTool.DisplayTextLocalize(this.ShopTitleLabel, "WeaponShop");
-				FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "BuyHelp");
-			}
-			break;
-		case ShopUI.ShopType.Synthesis:
-			FF9UIDataTool.DisplayTextLocalize(this.ShopTitleLabel, "SynthesisShop");
-			FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "SynthHelp");
-			break;
-		case ShopUI.ShopType.Sell:
-			FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "SellHelp");
-			break;
+				break;
+			case ShopUI.ShopType.Weapon:
+				if (this.isGrocery)
+				{
+					FF9UIDataTool.DisplayTextLocalize(this.ShopTitleLabel, "ItemShop");
+					FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "BuyHelp");
+				}
+				else
+				{
+					FF9UIDataTool.DisplayTextLocalize(this.ShopTitleLabel, "WeaponShop");
+					FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "BuyHelp");
+				}
+				break;
+			case ShopUI.ShopType.Synthesis:
+				FF9UIDataTool.DisplayTextLocalize(this.ShopTitleLabel, "SynthesisShop");
+				FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "SynthHelp");
+				break;
+			case ShopUI.ShopType.Sell:
+				FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "SellHelp");
+				break;
 		}
 	}
 
@@ -681,9 +681,9 @@ public class ShopUI : UIScene
 		this.itemIdList.Clear();
 		this.isItemEnableList.Clear();
 		List<ListDataTypeBase> list = new List<ListDataTypeBase>();
-	    ShopItems assortiment = ff9buy.ShopItems[this.id];
+		ShopItems assortiment = ff9buy.ShopItems[this.id];
 
-        for (Int32 i = 0; i < assortiment.Length; i++)
+		for (Int32 i = 0; i < assortiment.Length; i++)
 		{
 			RegularItem itemId = assortiment[i];
 			FF9ITEM_DATA item = ff9item._FF9Item_Data[itemId];
@@ -742,9 +742,9 @@ public class ShopUI : UIScene
 		List<ListDataTypeBase> list = new List<ListDataTypeBase>();
 		if (this.type == ShopUI.ShopType.Weapon)
 		{
-		    ShopItems assortiment = ff9buy.ShopItems[this.id];
+			ShopItems assortiment = ff9buy.ShopItems[this.id];
 
-            for (Int32 i = 0; i < assortiment.Length; i++)
+			for (Int32 i = 0; i < assortiment.Length; i++)
 			{
 				RegularItem itemId = assortiment[i];
 				FF9ITEM_DATA item = ff9item._FF9Item_Data[itemId];
@@ -828,8 +828,8 @@ public class ShopUI : UIScene
 			}
 		}
 		foreach (KeyValuePair<RegularItem, Int32> keyValuePair in from key in this.soldItemIdDict
-		orderby key.Value
-		select key)
+																  orderby key.Value
+																  select key)
 		{
 			this.sellItemIdList.Insert(keyValuePair.Value, keyValuePair.Key);
 			ShopUI.ShopSellItemListData sellData = new ShopUI.ShopSellItemListData();
@@ -906,7 +906,7 @@ public class ShopUI : UIScene
 				}
 				else
 				{
-				    CharacterEquipment equipCopy = player.equip.Clone();
+					CharacterEquipment equipCopy = player.equip.Clone();
 					equipCopy[equipPart] = currentItemId;
 					oldRating = ff9shop.FF9Shop_GetDefence(equipPart, player.equip);
 					newRating = ff9shop.FF9Shop_GetDefence(equipPart, equipCopy);
@@ -1043,17 +1043,17 @@ public class ShopUI : UIScene
 				this.availableCharaList.Add(player.info.slot_no);
 	}
 
-    private void InitializeMixList()
-    {
-        foreach (FF9MIX_DATA data in ff9mix.SynthesisData.Values)
+	private void InitializeMixList()
+	{
+		foreach (FF9MIX_DATA data in ff9mix.SynthesisData.Values)
 			if (data.Shops.Contains(this.id) && data.Result != RegularItem.NoItem)
 				mixItemList.Add(data);
 
-        foreach (FF9MIX_DATA data in mixItemList)
+		foreach (FF9MIX_DATA data in mixItemList)
 			this.mixPartyList.Add((ff9item._FF9Item_Data[data.Result].type & ItemType.AnyEquipment) != 0);
-    }
+	}
 
-    private void StartCountItem()
+	private void StartCountItem()
 	{
 		RegularItem itemId = this.itemIdList[this.currentItemIndex];
 		Int32 itemCount = ff9item.FF9Item_GetCount(itemId);

@@ -1,9 +1,9 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria;
+using System;
 using UnityEngine;
 using UnityStandardAssets.ImageEffects;
-using Memoria;
 
 public class WMScriptDirector : HonoBehavior
 {
@@ -236,7 +236,7 @@ public class WMScriptDirector : HonoBehavior
 				Obj obj = objList.obj;
 				if (PersistenSingleton<EventEngine>.Instance.isPosObj(obj))
 				{
-					WMActor wmActor = ((Actor) obj).wmActor;
+					WMActor wmActor = ((Actor)obj).wmActor;
 					if (obj.cid == 4 && wmActor != null)
 						wmActor.UpdateAnimationViaScript();
 				}
@@ -247,7 +247,7 @@ public class WMScriptDirector : HonoBehavior
 		{
 			if (objList2.obj.cid == 4)
 			{
-				WMActor wmActor2 = ((Actor) objList2.obj).wmActor;
+				WMActor wmActor2 = ((Actor)objList2.obj).wmActor;
 				wmActor2.LateUpdateFunction();
 			}
 		}
@@ -441,9 +441,9 @@ public class WMScriptDirector : HonoBehavior
 		this.currentCharacterIndex++;
 		switch (this.currentCharacterIndex)
 		{
-		case 12:
-			this.currentCharacterIndex = 1;
-			break;
+			case 12:
+				this.currentCharacterIndex = 1;
+				break;
 		}
 		ff9.w_frameSetParameter(500, this.currentCharacterIndex);
 	}

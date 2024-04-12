@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Assets.Sources.Scripts.UI.Common;
+using Memoria;
+using Memoria.Assets;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading;
-using Assets.Sources.Scripts.UI.Common;
-using Memoria;
-using Memoria.Assets;
 using UnityEngine;
 
 public class VoicePlayer : SoundPlayer

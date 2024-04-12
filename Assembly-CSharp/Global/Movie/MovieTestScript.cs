@@ -1,7 +1,7 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Graphics.Movie;
 using Assets.Sources.Scripts.Common;
+using System;
 using UnityEngine;
 
 public class MovieTestScript : MonoBehaviour

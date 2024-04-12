@@ -1,5 +1,3 @@
-﻿using System;
-
-public static class WMSPSModel
+﻿public static class WMSPSModel
 {
 }

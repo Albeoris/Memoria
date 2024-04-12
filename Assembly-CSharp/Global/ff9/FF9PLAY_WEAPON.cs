@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum FF9PLAY_WEAPON
+﻿public enum FF9PLAY_WEAPON
 {
 	FF9PLAY_WEAPON_PSTR,
 	FF9PLAY_WEAPON_PDEF,

@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using FF9;
+﻿using FF9;
 using Memoria;
 using Memoria.Data;
+using System;
+using System.Collections.Generic;
 
 public static class ff9feqp
 {

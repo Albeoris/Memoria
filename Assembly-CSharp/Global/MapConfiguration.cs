@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using UnityEngine;
 
 public class MapConfiguration
 {
@@ -57,27 +56,27 @@ public class MapConfiguration
 	{
 		switch (ObjMember)
 		{
-		case DMSMapConfMember.DMS_MAPCONF_ATTR:
-			return (Int32)ObjPtr.attr;
-		case DMSMapConfMember.DMS_MAPCONF_VERSION:
-			return (Int32)ObjPtr.version;
-		case DMSMapConfMember.DMS_MAPCONF_BGNO:
-			return (Int32)ObjPtr.bgNo;
-		case DMSMapConfMember.DMS_MAPCONF_LIGHTCOUNT:
-			return (Int32)ObjPtr.lightCount;
-		case DMSMapConfMember.DMS_MAPCONF_LIGHTUSE:
-			return (Int32)ObjPtr.lightUse;
-		case DMSMapConfMember.DMS_MAPCONF_CHARCOUNT:
-			return (Int32)ObjPtr.charCount;
-		case DMSMapConfMember.DMS_MAPCONF_CHARUSE:
-			return (Int32)ObjPtr.charUse;
-		case DMSMapConfMember.DMS_MAPCONF_EVTCOUNT:
-			return (Int32)ObjPtr.evtCount;
-		case DMSMapConfMember.DMS_MAPCONF_EVTUSE:
-			return (Int32)ObjPtr.evtUse;
-		default:
-			global::Debug.LogError(new ArgumentNullException("Null DMSMapConfMember"));
-			return -1;
+			case DMSMapConfMember.DMS_MAPCONF_ATTR:
+				return (Int32)ObjPtr.attr;
+			case DMSMapConfMember.DMS_MAPCONF_VERSION:
+				return (Int32)ObjPtr.version;
+			case DMSMapConfMember.DMS_MAPCONF_BGNO:
+				return (Int32)ObjPtr.bgNo;
+			case DMSMapConfMember.DMS_MAPCONF_LIGHTCOUNT:
+				return (Int32)ObjPtr.lightCount;
+			case DMSMapConfMember.DMS_MAPCONF_LIGHTUSE:
+				return (Int32)ObjPtr.lightUse;
+			case DMSMapConfMember.DMS_MAPCONF_CHARCOUNT:
+				return (Int32)ObjPtr.charCount;
+			case DMSMapConfMember.DMS_MAPCONF_CHARUSE:
+				return (Int32)ObjPtr.charUse;
+			case DMSMapConfMember.DMS_MAPCONF_EVTCOUNT:
+				return (Int32)ObjPtr.evtCount;
+			case DMSMapConfMember.DMS_MAPCONF_EVTUSE:
+				return (Int32)ObjPtr.evtUse;
+			default:
+				global::Debug.LogError(new ArgumentNullException("Null DMSMapConfMember"));
+				return -1;
 		}
 	}
 }

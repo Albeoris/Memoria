@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum SoundLibResourceLocation
+﻿public enum SoundLibResourceLocation
 {
 	Resources,
 	ResourcesRecursive,

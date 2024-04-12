@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum WMActorStateDebug
+﻿public enum WMActorStateDebug
 {
 	Idle,
 	Running,

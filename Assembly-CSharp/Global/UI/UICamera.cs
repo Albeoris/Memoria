@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Assets.Scripts.Common;
+using Memoria;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Assets.Scripts.Common;
-using Memoria;
 using Object = System.Object;
 
 [RequireComponent(typeof(Camera))]
@@ -663,10 +663,10 @@ public class UICamera : MonoBehaviour
 											goto IL_260;
 										}
 									}
-									IL_2E1:
+								IL_2E1:
 									j++;
 									continue;
-									IL_260:
+								IL_260:
 									UICamera.mHit.depth = NGUITools.CalculateRaycastDepth(gameObject);
 									if (UICamera.mHit.depth != 2147483647)
 									{
@@ -777,10 +777,10 @@ public class UICamera : MonoBehaviour
 												goto IL_639;
 											}
 										}
-										IL_688:
+									IL_688:
 										l++;
 										continue;
-										IL_639:
+									IL_639:
 										UICamera.mHit.depth = NGUITools.CalculateRaycastDepth(gameObject3);
 										if (UICamera.mHit.depth != 2147483647)
 										{
@@ -837,7 +837,7 @@ public class UICamera : MonoBehaviour
 					}
 				}
 			}
-			IL_7E2:;
+		IL_7E2:;
 		}
 		return false;
 	}

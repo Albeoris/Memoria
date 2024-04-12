@@ -1,7 +1,7 @@
+using Memoria;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Memoria;
 
 public class BGI_DEF
 {

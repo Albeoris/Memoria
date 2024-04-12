@@ -159,19 +159,19 @@ public class WMBeeMovementAnimation : Singleton<WMBeeMovementAnimation>
 		controlledActor.bodyMaxRotationZ = controlledActor.RollMaxAngle;
 		if (x > 0f)
 		{
-		    Quaternion rotation = controlledActor.transform.rotation;
-            Vector3 angle = rotation.eulerAngles;
-            angle.y += controlledActor.RotateSpeed * Time.deltaTime;
-		    rotation.eulerAngles = angle;
-		    controlledActor.transform.rotation = rotation;
+			Quaternion rotation = controlledActor.transform.rotation;
+			Vector3 angle = rotation.eulerAngles;
+			angle.y += controlledActor.RotateSpeed * Time.deltaTime;
+			rotation.eulerAngles = angle;
+			controlledActor.transform.rotation = rotation;
 		}
 		else if (x < 0f)
 		{
-            Quaternion rotation = controlledActor.transform.rotation;
-            Vector3 angle = rotation.eulerAngles;
-            angle.y -= controlledActor.RotateSpeed * Time.deltaTime;
-            rotation.eulerAngles = angle;
-            controlledActor.transform.rotation = rotation;
+			Quaternion rotation = controlledActor.transform.rotation;
+			Vector3 angle = rotation.eulerAngles;
+			angle.y -= controlledActor.RotateSpeed * Time.deltaTime;
+			rotation.eulerAngles = angle;
+			controlledActor.transform.rotation = rotation;
 		}
 		else if (controlledActor.bodyRotationZ < 0f)
 		{

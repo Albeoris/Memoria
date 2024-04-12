@@ -189,36 +189,36 @@ public class UIButton : UIButtonColor
 		{
 			switch (state)
 			{
-			case UIButtonColor.State.Normal:
-				this.SetSprite(this.mNormalSprite);
-				break;
-			case UIButtonColor.State.Hover:
-				this.SetSprite((!String.IsNullOrEmpty(this.hoverSprite)) ? this.hoverSprite : this.mNormalSprite);
-				break;
-			case UIButtonColor.State.Pressed:
-				this.SetSprite(this.pressedSprite);
-				break;
-			case UIButtonColor.State.Disabled:
-				this.SetSprite(this.disabledSprite);
-				break;
+				case UIButtonColor.State.Normal:
+					this.SetSprite(this.mNormalSprite);
+					break;
+				case UIButtonColor.State.Hover:
+					this.SetSprite((!String.IsNullOrEmpty(this.hoverSprite)) ? this.hoverSprite : this.mNormalSprite);
+					break;
+				case UIButtonColor.State.Pressed:
+					this.SetSprite(this.pressedSprite);
+					break;
+				case UIButtonColor.State.Disabled:
+					this.SetSprite(this.disabledSprite);
+					break;
 			}
 		}
 		else if (this.mSprite2D != (UnityEngine.Object)null)
 		{
 			switch (state)
 			{
-			case UIButtonColor.State.Normal:
-				this.SetSprite(this.mNormalSprite2D);
-				break;
-			case UIButtonColor.State.Hover:
-				this.SetSprite((!(this.hoverSprite2D == (UnityEngine.Object)null)) ? this.hoverSprite2D : this.mNormalSprite2D);
-				break;
-			case UIButtonColor.State.Pressed:
-				this.SetSprite(this.pressedSprite2D);
-				break;
-			case UIButtonColor.State.Disabled:
-				this.SetSprite(this.disabledSprite2D);
-				break;
+				case UIButtonColor.State.Normal:
+					this.SetSprite(this.mNormalSprite2D);
+					break;
+				case UIButtonColor.State.Hover:
+					this.SetSprite((!(this.hoverSprite2D == (UnityEngine.Object)null)) ? this.hoverSprite2D : this.mNormalSprite2D);
+					break;
+				case UIButtonColor.State.Pressed:
+					this.SetSprite(this.pressedSprite2D);
+					break;
+				case UIButtonColor.State.Disabled:
+					this.SetSprite(this.disabledSprite2D);
+					break;
 			}
 		}
 	}

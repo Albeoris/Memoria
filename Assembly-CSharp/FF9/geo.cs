@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria.Data;
+using System;
 using UnityEngine;
-using Memoria.Data;
 
 namespace FF9
 {
@@ -72,7 +72,7 @@ namespace FF9
 				}
 			}
 			if (updateShadow)
-				btlshadow.FF9ShadowSetScaleBattle(btl, (Byte)Math.Round(btl.shadow_x * ssizex), (Byte)Math.Round(btl.shadow_z *ssizez));
+				btlshadow.FF9ShadowSetScaleBattle(btl, (Byte)Math.Round(btl.shadow_x * ssizex), (Byte)Math.Round(btl.shadow_z * ssizez));
 		}
 
 		public static void geoScaleSet(BTL_DATA btl, Int32 size, Boolean updateShadow = false, Boolean bypassMini = false)
@@ -146,10 +146,10 @@ namespace FF9
 				if (component != (UnityEngine.Object)null && component2 != (UnityEngine.Object)null && childByName != (UnityEngine.Object)null)
 				{
 					component.GeoAttach(component2, childByName);
-                    PosObj actor = component.actor;
-                    actor.attatchTargetUid = (int)component2.actor.uid;
-                    actor.attachTargetBoneIndex = bone_index;
-                }
+					PosObj actor = component.actor;
+					actor.attatchTargetUid = (int)component2.actor.uid;
+					actor.attachTargetBoneIndex = bone_index;
+				}
 			}
 			else if (PersistenSingleton<EventEngine>.Instance.gMode == 3)
 			{

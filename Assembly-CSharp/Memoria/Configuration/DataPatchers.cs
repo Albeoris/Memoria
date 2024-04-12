@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Assets.Sources.Scripts.UI.Common;
+using Memoria.Assets;
+using Memoria.Data;
+using Memoria.Prime;
+using Memoria.Prime.Text;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Collections.Generic;
 using UnityEngine;
-using Assets.Sources.Scripts.UI.Common;
-using Memoria.Data;
-using Memoria.Prime;
-using Memoria.Assets;
-using Memoria.Prime.Text;
 
 namespace Memoria
 {

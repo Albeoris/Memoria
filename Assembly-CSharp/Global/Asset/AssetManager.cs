@@ -1,13 +1,13 @@
+using Memoria;
+using Memoria.Assets;
+using Memoria.Prime;
+using Memoria.Prime.CSV;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using UnityEngine;
-using Memoria;
-using Memoria.Prime;
-using Memoria.Prime.CSV;
-using Memoria.Assets;
 using Object = System.Object;
 
 public static class AssetManager
@@ -269,34 +269,35 @@ public static class AssetManager
 		// Dummied
 		// Maybe remove the successfully parsed lines from the "info" array?
 		foreach (String s in memoriaInfo)
-        {
+		{
 			String[] textureCode = s.Split(' ');
 			if (textureCode.Length >= 2 && String.Compare(textureCode[0], "AnisotropicLevel") == 0)
 			{
 				Int32 anisoLevel;
 				if (Int32.TryParse(textureCode[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out anisoLevel) && anisoLevel >= 1 && anisoLevel <= 9)
 					texture.anisoLevel = anisoLevel;
-			} else if (textureCode.Length >= 2 && String.Compare(textureCode[0], "FilterMode") == 0)
+			}
+			else if (textureCode.Length >= 2 && String.Compare(textureCode[0], "FilterMode") == 0)
 			{
-				foreach (FilterMode m in (FilterMode[]) Enum.GetValues(typeof(FilterMode)))
+				foreach (FilterMode m in (FilterMode[])Enum.GetValues(typeof(FilterMode)))
 					if (String.Compare(textureCode[1], m.ToString()) == 0)
 						texture.filterMode = m;
 			}
-			else if(textureCode.Length >= 2 && String.Compare(textureCode[0], "HideFlags") == 0)
+			else if (textureCode.Length >= 2 && String.Compare(textureCode[0], "HideFlags") == 0)
 			{
-				foreach (HideFlags f in (HideFlags[]) Enum.GetValues(typeof(HideFlags)))
+				foreach (HideFlags f in (HideFlags[])Enum.GetValues(typeof(HideFlags)))
 					if (String.Compare(textureCode[1], f.ToString()) == 0)
 						texture.hideFlags = f;
 			}
-			else if(textureCode.Length >= 2 && String.Compare(textureCode[0], "MipMapBias") == 0)
+			else if (textureCode.Length >= 2 && String.Compare(textureCode[0], "MipMapBias") == 0)
 			{
 				Single mipMapBias;
 				if (Single.TryParse(textureCode[1], out mipMapBias))
 					texture.mipMapBias = mipMapBias;
 			}
-			else if(textureCode.Length >= 2 && String.Compare(textureCode[0], "WrapMode") == 0)
+			else if (textureCode.Length >= 2 && String.Compare(textureCode[0], "WrapMode") == 0)
 			{
-				foreach (TextureWrapMode m in (TextureWrapMode[]) Enum.GetValues(typeof(TextureWrapMode)))
+				foreach (TextureWrapMode m in (TextureWrapMode[])Enum.GetValues(typeof(TextureWrapMode)))
 					if (String.Compare(textureCode[1], m.ToString()) == 0)
 						texture.wrapMode = m;
 			}
@@ -459,7 +460,7 @@ public static class AssetManager
 			yield return result;
 		yield break;
 	}
-	
+
 	public static IEnumerable<String> LoadStringMultiple(String name)
 	{
 		TextAsset txt;
@@ -513,7 +514,7 @@ public static class AssetManager
 			yield return txt.text;
 		yield break;
 	}
-	
+
 	public static IEnumerable<Byte[]> LoadBytesMultiple(String name)
 	{
 		TextAsset txt;
@@ -790,7 +791,7 @@ public static class AssetManager
 		public Int32 version;
 		public String fullUrl;
 	}
-	
+
 	public class AssetFolder
 	{
 		public AssetFolder(String path)

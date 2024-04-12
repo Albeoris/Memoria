@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum EndGameState
+﻿public enum EndGameState
 {
 	None,
 	Start,

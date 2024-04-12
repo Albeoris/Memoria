@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum GEOTEX
+﻿public enum GEOTEX
 {
 	GEOTEX_FLAGS_PLAY = 1,
 	GEOTEX_FLAGS_ONCE,

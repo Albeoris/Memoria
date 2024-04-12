@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Memoria.Scripts;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Memoria.Scripts;
 using UnityEngine;
 
 public class BattleState : MonoBehaviour
@@ -21,7 +21,7 @@ public class BattleState : MonoBehaviour
 		String battleParamLine;
 		while ((battleParamLine = battleList.ReadLine()) != null)
 		{
-			String[] battleParams = battleParamLine.Split(new Char[]{ ',' });
+			String[] battleParams = battleParamLine.Split(new Char[] { ',' });
 			Int32.TryParse(battleParams[0], out Int32 battleId);
 			if (battleId != -1)
 				this.mapName.Add(battleId, battleParams[1]);
@@ -99,6 +99,6 @@ public class BattleState : MonoBehaviour
 	public FF9StateBattleSystem FF9Battle;
 
 	public Boolean IsPlayFieldBGMInCurrentBattle;
-	
+
 	public Boolean isEncount;
 }

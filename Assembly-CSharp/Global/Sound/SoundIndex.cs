@@ -1,6 +1,4 @@
-﻿using System;
-
-internal enum SoundIndex
+﻿internal enum SoundIndex
 {
 	SE_BT_AB01_00,
 	SE_BT_AB01_01,

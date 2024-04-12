@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum DataSerializerErrorCode
+﻿public enum DataSerializerErrorCode
 {
 	Success,
 	FileCorruption,
@@ -11,5 +9,5 @@ public enum DataSerializerErrorCode
 	CloudConnectionTimeout,
 	CloudFileNotFound,
 	CloudDataUnknownError,
-    CloudConnectionError
+	CloudConnectionError
 }

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Memoria.Scripts;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Memoria.Scripts;
 using UnityEngine;
 
 public class FieldSPS : MonoBehaviour
@@ -187,7 +187,7 @@ public class FieldSPS : MonoBehaviour
 			item.otz = 0;
 			this.spsPrims.Add(item);
 			reader.BaseStream.Seek(position, SeekOrigin.Begin);
-			
+
 			// TODO Check Native: #147
 			if ((ff9FldMapNo == 155 || ff9FldMapNo == 1216 || ff9FldMapNo == 1808) && base.name.Equals("SPS_0008"))
 				this.zOffset = 700;

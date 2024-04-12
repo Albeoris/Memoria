@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum ff9_item_subwin
+﻿public enum ff9_item_subwin
 {
 	FF9ITEM_SUBWIN_NONE,
 	FF9ITEM_SUBWIN_HP,

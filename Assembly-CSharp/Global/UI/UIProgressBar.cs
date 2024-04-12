@@ -408,34 +408,34 @@ public class UIProgressBar : UIWidgetContainer
 		{
 			switch (this.mFill)
 			{
-			case UIProgressBar.FillDirection.LeftToRight:
-			{
-				Single value = Mathf.Clamp01(this.mValue + delta.x);
-				this.value = value;
-				this.mValue = value;
-				break;
-			}
-			case UIProgressBar.FillDirection.RightToLeft:
-			{
-				Single value2 = Mathf.Clamp01(this.mValue - delta.x);
-				this.value = value2;
-				this.mValue = value2;
-				break;
-			}
-			case UIProgressBar.FillDirection.BottomToTop:
-			{
-				Single value3 = Mathf.Clamp01(this.mValue + delta.y);
-				this.value = value3;
-				this.mValue = value3;
-				break;
-			}
-			case UIProgressBar.FillDirection.TopToBottom:
-			{
-				Single value4 = Mathf.Clamp01(this.mValue - delta.y);
-				this.value = value4;
-				this.mValue = value4;
-				break;
-			}
+				case UIProgressBar.FillDirection.LeftToRight:
+					{
+						Single value = Mathf.Clamp01(this.mValue + delta.x);
+						this.value = value;
+						this.mValue = value;
+						break;
+					}
+				case UIProgressBar.FillDirection.RightToLeft:
+					{
+						Single value2 = Mathf.Clamp01(this.mValue - delta.x);
+						this.value = value2;
+						this.mValue = value2;
+						break;
+					}
+				case UIProgressBar.FillDirection.BottomToTop:
+					{
+						Single value3 = Mathf.Clamp01(this.mValue + delta.y);
+						this.value = value3;
+						this.mValue = value3;
+						break;
+					}
+				case UIProgressBar.FillDirection.TopToBottom:
+					{
+						Single value4 = Mathf.Clamp01(this.mValue - delta.y);
+						this.value = value4;
+						this.mValue = value4;
+						break;
+					}
 			}
 		}
 	}

@@ -20,7 +20,7 @@ public class BundleSceneSelector : MonoBehaviour
 			}
 			fileInfo.Delete();
 		}
-		
+
 		if (SteamSdkWrapper.SteamAPIRestartAppIfNecessary())
 		{
 			Application.Quit();
@@ -28,7 +28,7 @@ public class BundleSceneSelector : MonoBehaviour
 		}
 
 		SteamSdkWrapper.TryInitialize();
-		
+
 		if (Application.platform == RuntimePlatform.IPhonePlayer || flag)
 		{
 			if (BundleSceneIOS.Are3CompressedBundlesCached())

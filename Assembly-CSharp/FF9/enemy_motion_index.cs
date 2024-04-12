@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FF9
+﻿namespace FF9
 {
 	public enum enemy_motion_index
 	{

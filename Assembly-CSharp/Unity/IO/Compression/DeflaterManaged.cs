@@ -28,13 +28,13 @@ namespace Unity.IO.Compression
 			{
 				switch (this.processingState)
 				{
-				case DeflaterManaged.DeflaterState.NotStarted:
-				case DeflaterManaged.DeflaterState.CheckingForIncompressible:
-					this.processingState = DeflaterManaged.DeflaterState.StartingSmallData;
-					break;
-				case DeflaterManaged.DeflaterState.CompressThenCheck:
-					this.processingState = DeflaterManaged.DeflaterState.HandlingSmallData;
-					break;
+					case DeflaterManaged.DeflaterState.NotStarted:
+					case DeflaterManaged.DeflaterState.CheckingForIncompressible:
+						this.processingState = DeflaterManaged.DeflaterState.StartingSmallData;
+						break;
+					case DeflaterManaged.DeflaterState.CompressThenCheck:
+						this.processingState = DeflaterManaged.DeflaterState.HandlingSmallData;
+						break;
 				}
 			}
 		}
@@ -46,64 +46,64 @@ namespace Unity.IO.Compression
 			this.output.UpdateBuffer(outputBuffer);
 			switch (this.processingState)
 			{
-			case DeflaterManaged.DeflaterState.NotStarted:
-			{
-				Debug.Assert(this.deflateEncoder.BytesInHistory == 0, "have leftover bytes in window");
-				DeflateInput.InputState state = this.input.DumpState();
-				OutputBuffer.BufferState state2 = this.output.DumpState();
-				this.deflateEncoder.GetBlockHeader(this.output);
-				this.deflateEncoder.GetCompressedData(this.input, this.output);
-				if (!this.UseCompressed(this.deflateEncoder.LastCompressionRatio))
-				{
-					this.input.RestoreState(state);
-					this.output.RestoreState(state2);
-					this.copyEncoder.GetBlock(this.input, this.output, false);
-					this.FlushInputWindows();
-					this.processingState = DeflaterManaged.DeflaterState.CheckingForIncompressible;
-				}
-				else
-				{
-					this.processingState = DeflaterManaged.DeflaterState.CompressThenCheck;
-				}
-				goto IL_2A9;
-			}
-			case DeflaterManaged.DeflaterState.SlowDownForIncompressible1:
-				this.deflateEncoder.GetBlockFooter(this.output);
-				this.processingState = DeflaterManaged.DeflaterState.SlowDownForIncompressible2;
-				break;
-			case DeflaterManaged.DeflaterState.SlowDownForIncompressible2:
-				break;
-			case DeflaterManaged.DeflaterState.StartingSmallData:
-				this.deflateEncoder.GetBlockHeader(this.output);
-				this.processingState = DeflaterManaged.DeflaterState.HandlingSmallData;
-				goto IL_28D;
-			case DeflaterManaged.DeflaterState.CompressThenCheck:
-				this.deflateEncoder.GetCompressedData(this.input, this.output);
-				if (!this.UseCompressed(this.deflateEncoder.LastCompressionRatio))
-				{
-					this.processingState = DeflaterManaged.DeflaterState.SlowDownForIncompressible1;
-					this.inputFromHistory = this.deflateEncoder.UnprocessedInput;
-				}
-				goto IL_2A9;
-			case DeflaterManaged.DeflaterState.CheckingForIncompressible:
-			{
-				Debug.Assert(this.deflateEncoder.BytesInHistory == 0, "have leftover bytes in window");
-				DeflateInput.InputState state3 = this.input.DumpState();
-				OutputBuffer.BufferState state4 = this.output.DumpState();
-				this.deflateEncoder.GetBlock(this.input, this.output, 8072);
-				if (!this.UseCompressed(this.deflateEncoder.LastCompressionRatio))
-				{
-					this.input.RestoreState(state3);
-					this.output.RestoreState(state4);
-					this.copyEncoder.GetBlock(this.input, this.output, false);
-					this.FlushInputWindows();
-				}
-				goto IL_2A9;
-			}
-			case DeflaterManaged.DeflaterState.HandlingSmallData:
-				goto IL_28D;
-			default:
-				goto IL_2A9;
+				case DeflaterManaged.DeflaterState.NotStarted:
+					{
+						Debug.Assert(this.deflateEncoder.BytesInHistory == 0, "have leftover bytes in window");
+						DeflateInput.InputState state = this.input.DumpState();
+						OutputBuffer.BufferState state2 = this.output.DumpState();
+						this.deflateEncoder.GetBlockHeader(this.output);
+						this.deflateEncoder.GetCompressedData(this.input, this.output);
+						if (!this.UseCompressed(this.deflateEncoder.LastCompressionRatio))
+						{
+							this.input.RestoreState(state);
+							this.output.RestoreState(state2);
+							this.copyEncoder.GetBlock(this.input, this.output, false);
+							this.FlushInputWindows();
+							this.processingState = DeflaterManaged.DeflaterState.CheckingForIncompressible;
+						}
+						else
+						{
+							this.processingState = DeflaterManaged.DeflaterState.CompressThenCheck;
+						}
+						goto IL_2A9;
+					}
+				case DeflaterManaged.DeflaterState.SlowDownForIncompressible1:
+					this.deflateEncoder.GetBlockFooter(this.output);
+					this.processingState = DeflaterManaged.DeflaterState.SlowDownForIncompressible2;
+					break;
+				case DeflaterManaged.DeflaterState.SlowDownForIncompressible2:
+					break;
+				case DeflaterManaged.DeflaterState.StartingSmallData:
+					this.deflateEncoder.GetBlockHeader(this.output);
+					this.processingState = DeflaterManaged.DeflaterState.HandlingSmallData;
+					goto IL_28D;
+				case DeflaterManaged.DeflaterState.CompressThenCheck:
+					this.deflateEncoder.GetCompressedData(this.input, this.output);
+					if (!this.UseCompressed(this.deflateEncoder.LastCompressionRatio))
+					{
+						this.processingState = DeflaterManaged.DeflaterState.SlowDownForIncompressible1;
+						this.inputFromHistory = this.deflateEncoder.UnprocessedInput;
+					}
+					goto IL_2A9;
+				case DeflaterManaged.DeflaterState.CheckingForIncompressible:
+					{
+						Debug.Assert(this.deflateEncoder.BytesInHistory == 0, "have leftover bytes in window");
+						DeflateInput.InputState state3 = this.input.DumpState();
+						OutputBuffer.BufferState state4 = this.output.DumpState();
+						this.deflateEncoder.GetBlock(this.input, this.output, 8072);
+						if (!this.UseCompressed(this.deflateEncoder.LastCompressionRatio))
+						{
+							this.input.RestoreState(state3);
+							this.output.RestoreState(state4);
+							this.copyEncoder.GetBlock(this.input, this.output, false);
+							this.FlushInputWindows();
+						}
+						goto IL_2A9;
+					}
+				case DeflaterManaged.DeflaterState.HandlingSmallData:
+					goto IL_28D;
+				default:
+					goto IL_2A9;
 			}
 			if (this.inputFromHistory.Count > 0)
 			{
@@ -115,9 +115,9 @@ namespace Unity.IO.Compression
 				this.processingState = DeflaterManaged.DeflaterState.CheckingForIncompressible;
 			}
 			goto IL_2A9;
-			IL_28D:
+		IL_28D:
 			this.deflateEncoder.GetCompressedData(this.input, this.output);
-			IL_2A9:
+		IL_2A9:
 			return this.output.BytesWritten;
 		}
 

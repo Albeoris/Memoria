@@ -1,6 +1,4 @@
-﻿using System;
-
-public class EndSys
+﻿public class EndSys
 {
 	public static EndSys.ENDSYS_MODE_ENUM Endsys_GetMode()
 	{

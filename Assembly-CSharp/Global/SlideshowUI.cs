@@ -51,19 +51,19 @@ public class SlideshowUI : MonoBehaviour
 		String empty = String.Empty;
 		switch (language)
 		{
-		case "English(UK)":
-		case "English(US)":
-			return "_us";
-		case "German":
-			return "_gr";
-		case "Spanish":
-			return "_es";
-		case "French":
-			return "_fr";
-		case "Italian":
-			return "_it";
-		case "Japanese":
-			return "_jp";
+			case "English(UK)":
+			case "English(US)":
+				return "_us";
+			case "German":
+				return "_gr";
+			case "Spanish":
+				return "_es";
+			case "French":
+				return "_fr";
+			case "Italian":
+				return "_it";
+			case "Japanese":
+				return "_jp";
 		}
 		return "_us";
 	}

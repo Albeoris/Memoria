@@ -1296,10 +1296,10 @@ public class UIPanel : UIRect
 				goto IL_183;
 			}
 			goto IL_B6;
-			IL_183:
+		IL_183:
 			j++;
 			continue;
-			IL_B6:
+		IL_B6:
 			if (!(uiwidget.panel == this) || !uiwidget.enabled)
 			{
 				goto IL_183;

@@ -74,7 +74,7 @@ namespace SimpleJSON
 
 		public override void Add(String aKey, JSONNode aItem)
 		{
-            if (!String.IsNullOrEmpty(aKey))
+			if (!String.IsNullOrEmpty(aKey))
 			{
 				if (this.m_Dict.ContainsKey(aKey))
 				{
@@ -119,8 +119,8 @@ namespace SimpleJSON
 			try
 			{
 				KeyValuePair<String, JSONNode> keyValuePair = (from k in this.m_Dict
-				where k.Value == aNode
-				select k).First<KeyValuePair<String, JSONNode>>();
+															   where k.Value == aNode
+															   select k).First<KeyValuePair<String, JSONNode>>();
 				this.m_Dict.Remove(keyValuePair.Key);
 				result = aNode;
 			}

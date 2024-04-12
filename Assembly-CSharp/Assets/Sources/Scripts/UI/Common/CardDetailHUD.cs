@@ -1,5 +1,4 @@
-﻿using System;
-using Memoria;
+﻿using Memoria;
 using UnityEngine;
 
 namespace Assets.Sources.Scripts.UI.Common
@@ -29,23 +28,23 @@ namespace Assets.Sources.Scripts.UI.Common
 
 			if (Configuration.TetraMaster.TripleTriad > 0)
 			{
-                AtkParamSprite.BottomAnchorPosition = new UIRect.Position(0f, 190);
-                AtkParamSprite.TopAnchorPosition = new UIRect.Position(0f, 220);
-                AtkParamSprite.LeftAnchorPosition = new UIRect.Position(0f, 30);
-                AtkParamSprite.RightAnchorPosition = new UIRect.Position(0f, 60);
-                AtkTypeParamSprite.BottomAnchorPosition = new UIRect.Position(0f, -60);
-                AtkTypeParamSprite.TopAnchorPosition = new UIRect.Position(1f, -60);
-                AtkTypeParamSprite.LeftAnchorPosition = new UIRect.Position(0f, 0);
-                AtkTypeParamSprite.RightAnchorPosition = new UIRect.Position(1f, 0);
-                PhysicDefParamSprite.BottomAnchorPosition = new UIRect.Position(0f, 30);
-                PhysicDefParamSprite.TopAnchorPosition = new UIRect.Position(1f, 30);
-                PhysicDefParamSprite.LeftAnchorPosition = new UIRect.Position(0f, -15);
-                PhysicDefParamSprite.RightAnchorPosition = new UIRect.Position(1f, -15);
-                MagicDefParamSprite.BottomAnchorPosition = new UIRect.Position(0f, 0);
-                MagicDefParamSprite.TopAnchorPosition = new UIRect.Position(1f, 0);
-                MagicDefParamSprite.LeftAnchorPosition = new UIRect.Position(0f, 30);
-                MagicDefParamSprite.RightAnchorPosition = new UIRect.Position(1f, 30);
-            }
+				AtkParamSprite.BottomAnchorPosition = new UIRect.Position(0f, 190);
+				AtkParamSprite.TopAnchorPosition = new UIRect.Position(0f, 220);
+				AtkParamSprite.LeftAnchorPosition = new UIRect.Position(0f, 30);
+				AtkParamSprite.RightAnchorPosition = new UIRect.Position(0f, 60);
+				AtkTypeParamSprite.BottomAnchorPosition = new UIRect.Position(0f, -60);
+				AtkTypeParamSprite.TopAnchorPosition = new UIRect.Position(1f, -60);
+				AtkTypeParamSprite.LeftAnchorPosition = new UIRect.Position(0f, 0);
+				AtkTypeParamSprite.RightAnchorPosition = new UIRect.Position(1f, 0);
+				PhysicDefParamSprite.BottomAnchorPosition = new UIRect.Position(0f, 30);
+				PhysicDefParamSprite.TopAnchorPosition = new UIRect.Position(1f, 30);
+				PhysicDefParamSprite.LeftAnchorPosition = new UIRect.Position(0f, -15);
+				PhysicDefParamSprite.RightAnchorPosition = new UIRect.Position(1f, -15);
+				MagicDefParamSprite.BottomAnchorPosition = new UIRect.Position(0f, 0);
+				MagicDefParamSprite.TopAnchorPosition = new UIRect.Position(1f, 0);
+				MagicDefParamSprite.LeftAnchorPosition = new UIRect.Position(0f, 30);
+				MagicDefParamSprite.RightAnchorPosition = new UIRect.Position(1f, 30);
+			}
 		}
 
 		public GameObject Self;

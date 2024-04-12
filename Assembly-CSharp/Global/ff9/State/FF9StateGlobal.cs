@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Memoria.Data;
-using Memoria.Speedrun;
+﻿using Memoria.Data;
 using Memoria.Prime.Collections;
+using Memoria.Speedrun;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public partial class FF9StateGlobal
@@ -835,7 +835,7 @@ public partial class FF9StateGlobal
 		this.rare_item_obtained = new HashSet<Int32>();
 		this.rare_item_used = new HashSet<Int32>();
 		this.charArray = new Dictionary<Int32, FF9Char>();
-	    this.Frogs = new FrogHandler();
+		this.Frogs = new FrogHandler();
 		this.steal_no = 0;
 		this.categoryKillCount = new Int16[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
 		this.modelKillCount = new EntryCollection<Int16, Int16>(0);

@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Scenes;
 using Memoria.Scripts;
+using System;
+using System.Collections;
 using UnityEngine;
 
 public class UIManager : PersistenSingleton<UIManager>
@@ -63,12 +63,12 @@ public class UIManager : PersistenSingleton<UIManager>
 		get => this.state;
 		set
 		{
-            if (value == UIState.FieldHUD && FieldMap.IsNarrowMap())
-		        Configuration.Graphics.DisableWidescreenSupportForSingleMap();
-		    else
-		        Configuration.Graphics.RestoreDisabledWidescreenSupport();
+			if (value == UIState.FieldHUD && FieldMap.IsNarrowMap())
+				Configuration.Graphics.DisableWidescreenSupportForSingleMap();
+			else
+				Configuration.Graphics.RestoreDisabledWidescreenSupport();
 
-            this.state = value;
+			this.state = value;
 		}
 	}
 
@@ -86,18 +86,18 @@ public class UIManager : PersistenSingleton<UIManager>
 				return this.prevState;
 			switch (this.UnityScene)
 			{
-			case UIManager.Scene.Field:
-				return UIManager.UIState.FieldHUD;
-			case UIManager.Scene.World:
-				return UIManager.UIState.WorldHUD;
-			case UIManager.Scene.Battle:
-				return UIManager.UIState.BattleHUD;
-			case UIManager.Scene.Title:
-				return UIManager.UIState.Title;
-			case UIManager.Scene.QuadMist:
-				return UIManager.UIState.QuadMist;
-			default:
-				return this.prevState;
+				case UIManager.Scene.Field:
+					return UIManager.UIState.FieldHUD;
+				case UIManager.Scene.World:
+					return UIManager.UIState.WorldHUD;
+				case UIManager.Scene.Battle:
+					return UIManager.UIState.BattleHUD;
+				case UIManager.Scene.Title:
+					return UIManager.UIState.Title;
+				case UIManager.Scene.QuadMist:
+					return UIManager.UIState.QuadMist;
+				default:
+					return this.prevState;
 			}
 		}
 	}
@@ -123,58 +123,58 @@ public class UIManager : PersistenSingleton<UIManager>
 		{
 			switch (this.state)
 			{
-			case UIManager.UIState.Initial:
-				return "Initial";
-			case UIManager.UIState.FieldHUD:
-				return "Field HUD";
-			case UIManager.UIState.WorldHUD:
-				return "World HUD";
-			case UIManager.UIState.BattleHUD:
-				return "Battle HUD";
-			case UIManager.UIState.Pause:
-				return "Pause";
-			case UIManager.UIState.MainMenu:
-				return "MainMenu";
-			case UIManager.UIState.Item:
-				return "Item";
-			case UIManager.UIState.Ability:
-				return "Ability";
-			case UIManager.UIState.Equip:
-				return "Equip";
-			case UIManager.UIState.Status:
-				return "Status";
-			case UIManager.UIState.Card:
-				return "Card";
-			case UIManager.UIState.Config:
-				return "Config";
-			case UIManager.UIState.Serialize:
-				return "Save/Load";
-			case UIManager.UIState.Cloud:
-				return "Cloud";
-			case UIManager.UIState.Shop:
-				return "Shop";
-			case UIManager.UIState.NameSetting:
-				return "Name Setting";
-			case UIManager.UIState.BattleResult:
-				return "Battle Result";
-			case UIManager.UIState.Tutorial:
-				return "Tutorial";
-			case UIManager.UIState.GameOver:
-				return "GameOver";
-			case UIManager.UIState.Title:
-				return "Title";
-			case UIManager.UIState.QuadMist:
-				return "Card Select";
-			case UIManager.UIState.QuadMistBattle:
-				return "QuadMist";
-			case UIManager.UIState.Quit:
-				return "Quit";
-			case UIManager.UIState.Chocograph:
-				return "Chocograph";
-			case UIManager.UIState.PreEnding:
-				return "PreEnding";
-			case UIManager.UIState.Ending:
-				return "Ending";
+				case UIManager.UIState.Initial:
+					return "Initial";
+				case UIManager.UIState.FieldHUD:
+					return "Field HUD";
+				case UIManager.UIState.WorldHUD:
+					return "World HUD";
+				case UIManager.UIState.BattleHUD:
+					return "Battle HUD";
+				case UIManager.UIState.Pause:
+					return "Pause";
+				case UIManager.UIState.MainMenu:
+					return "MainMenu";
+				case UIManager.UIState.Item:
+					return "Item";
+				case UIManager.UIState.Ability:
+					return "Ability";
+				case UIManager.UIState.Equip:
+					return "Equip";
+				case UIManager.UIState.Status:
+					return "Status";
+				case UIManager.UIState.Card:
+					return "Card";
+				case UIManager.UIState.Config:
+					return "Config";
+				case UIManager.UIState.Serialize:
+					return "Save/Load";
+				case UIManager.UIState.Cloud:
+					return "Cloud";
+				case UIManager.UIState.Shop:
+					return "Shop";
+				case UIManager.UIState.NameSetting:
+					return "Name Setting";
+				case UIManager.UIState.BattleResult:
+					return "Battle Result";
+				case UIManager.UIState.Tutorial:
+					return "Tutorial";
+				case UIManager.UIState.GameOver:
+					return "GameOver";
+				case UIManager.UIState.Title:
+					return "Title";
+				case UIManager.UIState.QuadMist:
+					return "Card Select";
+				case UIManager.UIState.QuadMistBattle:
+					return "QuadMist";
+				case UIManager.UIState.Quit:
+					return "Quit";
+				case UIManager.UIState.Chocograph:
+					return "Chocograph";
+				case UIManager.UIState.PreEnding:
+					return "PreEnding";
+				case UIManager.UIState.Ending:
+					return "Ending";
 			}
 			return String.Empty;
 		}
@@ -287,8 +287,8 @@ public class UIManager : PersistenSingleton<UIManager>
 		else if (loadedLevelName == SceneDirector.BattleMapSceneName)
 		{
 			this.UnityScene = UIManager.Scene.Battle;
-		    InitializeBattleCamera();
-            this.ChangeUIState(UIManager.UIState.BattleHUD);
+			InitializeBattleCamera();
+			this.ChangeUIState(UIManager.UIState.BattleHUD);
 			TimerUI.Init();
 			this.BattleHUDScene.Loading = true;
 			active = true;
@@ -363,17 +363,17 @@ public class UIManager : PersistenSingleton<UIManager>
 		FF9StateSystem.Settings.SetFastForward(FF9StateSystem.Settings.IsFastForward);
 	}
 
-    private void InitializeBattleCamera()
-    {
-        GameObject cameraObject = GameObject.Find("BattleMap Root/Battle Camera");
-        //if (Configuration.Graphics.WidescreenSupport) // Always to switch an aspect in runtime by Alt+Space
-        {
-            cameraObject.EnsureExactComponent<PSXCameraAspect>();
-        }
-        this.battleCamera = cameraObject.GetComponent<Camera>();
-    }
+	private void InitializeBattleCamera()
+	{
+		GameObject cameraObject = GameObject.Find("BattleMap Root/Battle Camera");
+		//if (Configuration.Graphics.WidescreenSupport) // Always to switch an aspect in runtime by Alt+Space
+		{
+			cameraObject.EnsureExactComponent<PSXCameraAspect>();
+		}
+		this.battleCamera = cameraObject.GetComponent<Camera>();
+	}
 
-    public void AnchorToUIRoot(GameObject go)
+	public void AnchorToUIRoot(GameObject go)
 	{
 		UIWidget component = go.GetComponent<UIWidget>();
 		component.SetAnchor(base.gameObject);
@@ -383,54 +383,54 @@ public class UIManager : PersistenSingleton<UIManager>
 	{
 		switch (state)
 		{
-		case UIManager.UIState.FieldHUD:
-			return this.FieldHUDScene;
-		case UIManager.UIState.WorldHUD:
-			return this.WorldHUDScene;
-		case UIManager.UIState.BattleHUD:
-			return this.BattleHUDScene;
-		case UIManager.UIState.Pause:
-			return this.PauseScene;
-		case UIManager.UIState.MainMenu:
-			return this.MainMenuScene;
-		case UIManager.UIState.Item:
-			return this.ItemScene;
-		case UIManager.UIState.Ability:
-			return this.AbilityScene;
-		case UIManager.UIState.Equip:
-			return this.EquipScene;
-		case UIManager.UIState.Status:
-			return this.StatusScene;
-		case UIManager.UIState.Card:
-			return this.CardScene;
-		case UIManager.UIState.Config:
-			return this.ConfigScene;
-		case UIManager.UIState.Serialize:
-			return this.SaveLoadScene;
-		case UIManager.UIState.Cloud:
-			return this.CloudScene;
-		case UIManager.UIState.Shop:
-			return this.ShopScene;
-		case UIManager.UIState.NameSetting:
-			return this.NameSettingScene;
-		case UIManager.UIState.PartySetting:
-			return this.PartySettingScene;
-		case UIManager.UIState.BattleResult:
-			return this.BattleResultScene;
-		case UIManager.UIState.Tutorial:
-			return this.TutorialScene;
-		case UIManager.UIState.GameOver:
-			return this.GameOverScene;
-		case UIManager.UIState.Title:
-			return this.TitleScene;
-		case UIManager.UIState.QuadMist:
-			return this.QuadMistScene;
-		case UIManager.UIState.Chocograph:
-			return this.ChocographScene;
-		case UIManager.UIState.Ending:
-			return this.EndingScene;
-		case UIManager.UIState.EndGame:
-			return this.EndGameScene;
+			case UIManager.UIState.FieldHUD:
+				return this.FieldHUDScene;
+			case UIManager.UIState.WorldHUD:
+				return this.WorldHUDScene;
+			case UIManager.UIState.BattleHUD:
+				return this.BattleHUDScene;
+			case UIManager.UIState.Pause:
+				return this.PauseScene;
+			case UIManager.UIState.MainMenu:
+				return this.MainMenuScene;
+			case UIManager.UIState.Item:
+				return this.ItemScene;
+			case UIManager.UIState.Ability:
+				return this.AbilityScene;
+			case UIManager.UIState.Equip:
+				return this.EquipScene;
+			case UIManager.UIState.Status:
+				return this.StatusScene;
+			case UIManager.UIState.Card:
+				return this.CardScene;
+			case UIManager.UIState.Config:
+				return this.ConfigScene;
+			case UIManager.UIState.Serialize:
+				return this.SaveLoadScene;
+			case UIManager.UIState.Cloud:
+				return this.CloudScene;
+			case UIManager.UIState.Shop:
+				return this.ShopScene;
+			case UIManager.UIState.NameSetting:
+				return this.NameSettingScene;
+			case UIManager.UIState.PartySetting:
+				return this.PartySettingScene;
+			case UIManager.UIState.BattleResult:
+				return this.BattleResultScene;
+			case UIManager.UIState.Tutorial:
+				return this.TutorialScene;
+			case UIManager.UIState.GameOver:
+				return this.GameOverScene;
+			case UIManager.UIState.Title:
+				return this.TitleScene;
+			case UIManager.UIState.QuadMist:
+				return this.QuadMistScene;
+			case UIManager.UIState.Chocograph:
+				return this.ChocographScene;
+			case UIManager.UIState.Ending:
+				return this.EndingScene;
+			case UIManager.UIState.EndGame:
+				return this.EndGameScene;
 		}
 		if (this.QuitScene.isShowQuitUI)
 			return this.NoneScene;
@@ -442,15 +442,15 @@ public class UIManager : PersistenSingleton<UIManager>
 		Camera camera = null;
 		switch (this.UnityScene)
 		{
-		case UIManager.Scene.Field:
-			camera = this.fieldCamera;
-			break;
-		case UIManager.Scene.World:
-			camera = this.worldCamera;
-			break;
-		case UIManager.Scene.Battle:
-			camera = this.battleCamera;
-			break;
+			case UIManager.Scene.Field:
+				camera = this.fieldCamera;
+				break;
+			case UIManager.Scene.World:
+				camera = this.worldCamera;
+				break;
+			case UIManager.Scene.Battle:
+				camera = this.battleCamera;
+				break;
 		}
 		if (camera != null)
 			camera.enabled = isEnable;
@@ -666,30 +666,30 @@ public class UIManager : PersistenSingleton<UIManager>
 		}
 	}
 
-    public void InitFadeTexture()
-    {
-        GameObject addTexture = GameObject.Find("UI Root/Submenu Container/Event Fader Panel/Fading Texture Add");
+	public void InitFadeTexture()
+	{
+		GameObject addTexture = GameObject.Find("UI Root/Submenu Container/Event Fader Panel/Fading Texture Add");
 
-        if (addTexture != null)
-        {
-            this.eventFadeTextureAdd = addTexture.GetComponent<UITexture>();
-            this.eventFadeTextureAdd.mainTexture = Texture2D.whiteTexture;
-            this.eventFadeTextureAdd.material = new Material(ShadersLoader.Find("PSX/Fade_Abr_1 1"));
+		if (addTexture != null)
+		{
+			this.eventFadeTextureAdd = addTexture.GetComponent<UITexture>();
+			this.eventFadeTextureAdd.mainTexture = Texture2D.whiteTexture;
+			this.eventFadeTextureAdd.material = new Material(ShadersLoader.Find("PSX/Fade_Abr_1 1"));
 
-            if (Configuration.Graphics.WidescreenSupport)
-                eventFadeTextureAdd.width = eventFadeTextureAdd.height * Screen.width / Screen.height;
-        }
-        GameObject subTexture = GameObject.Find("UI Root/Submenu Container/Event Fader Panel/Fading Texture Sub");
+			if (Configuration.Graphics.WidescreenSupport)
+				eventFadeTextureAdd.width = eventFadeTextureAdd.height * Screen.width / Screen.height;
+		}
+		GameObject subTexture = GameObject.Find("UI Root/Submenu Container/Event Fader Panel/Fading Texture Sub");
 
-        if (subTexture != null)
-        {
-            this.eventFadeTextureSub = subTexture.GetComponent<UITexture>();
-            this.eventFadeTextureSub.mainTexture = Texture2D.whiteTexture;
-            this.eventFadeTextureSub.material = new Material(ShadersLoader.Find("PSX/Fade_Abr_2 1"));
+		if (subTexture != null)
+		{
+			this.eventFadeTextureSub = subTexture.GetComponent<UITexture>();
+			this.eventFadeTextureSub.mainTexture = Texture2D.whiteTexture;
+			this.eventFadeTextureSub.material = new Material(ShadersLoader.Find("PSX/Fade_Abr_2 1"));
 
-            if (Configuration.Graphics.WidescreenSupport)
-                eventFadeTextureSub.width = eventFadeTextureSub.height * Screen.width / Screen.height;
-        }
+			if (Configuration.Graphics.WidescreenSupport)
+				eventFadeTextureSub.width = eventFadeTextureSub.height * Screen.width / Screen.height;
+		}
 	}
 
 	public static Boolean IsUIStateMenu(UIManager.UIState state)
@@ -699,27 +699,27 @@ public class UIManager : PersistenSingleton<UIManager>
 
 	public static Vector2 UIContentSize = GetUIContentSize();
 
-    private static Vector2 GetUIContentSize()
-    {
-        const Int32 contentWidth = 1543;
-        const Int32 contentHeight = 1080;
-        if (Configuration.Graphics.InitializeWidescreenSupport())
-        {
-            Single aspect = (Single)Screen.width / Screen.height;
-            return new Vector2(contentHeight * aspect, contentHeight);
-        }
-        else
-        {
-            return new Vector2(contentWidth, contentHeight);
-        }
-    }
+	private static Vector2 GetUIContentSize()
+	{
+		const Int32 contentWidth = 1543;
+		const Int32 contentHeight = 1080;
+		if (Configuration.Graphics.InitializeWidescreenSupport())
+		{
+			Single aspect = (Single)Screen.width / Screen.height;
+			return new Vector2(contentHeight * aspect, contentHeight);
+		}
+		else
+		{
+			return new Vector2(contentWidth, contentHeight);
+		}
+	}
 
-    public static Vector2 OriginScreenSize = new Vector2(FieldMap.PsxFieldWidth, FieldMap.PsxFieldHeightNative);
+	public static Vector2 OriginScreenSize = new Vector2(FieldMap.PsxFieldWidth, FieldMap.PsxFieldHeightNative);
 
-    public static volatile Single ResourceXMultipier = CalcResourceXMultipier();
-    public static volatile Single ResourceYMultipier = CalcResourceYMultipier();
+	public static volatile Single ResourceXMultipier = CalcResourceXMultipier();
+	public static volatile Single ResourceYMultipier = CalcResourceYMultipier();
 
-    private static FieldMapActorController PlayerActorController;
+	private static FieldMapActorController PlayerActorController;
 
 	private static HonoluluBattleMain battleMainBehavior;
 
@@ -857,19 +857,19 @@ public class UIManager : PersistenSingleton<UIManager>
 		None
 	}
 
-    public void OnWidescreenSupportChanged()
-    {
-        UIContentSize = GetUIContentSize();
-        ResourceXMultipier = CalcResourceXMultipier();
-        ResourceYMultipier = CalcResourceYMultipier();
+	public void OnWidescreenSupportChanged()
+	{
+		UIContentSize = GetUIContentSize();
+		ResourceXMultipier = CalcResourceXMultipier();
+		ResourceYMultipier = CalcResourceYMultipier();
 
-        if (eventFadeTextureAdd != null)
-            eventFadeTextureAdd.width = eventFadeTextureAdd.height * Screen.width / Screen.height;
+		if (eventFadeTextureAdd != null)
+			eventFadeTextureAdd.width = eventFadeTextureAdd.height * Screen.width / Screen.height;
 
-        if (eventFadeTextureSub != null)
-            eventFadeTextureSub.width = eventFadeTextureSub.height * Screen.width / Screen.height;
-    }
+		if (eventFadeTextureSub != null)
+			eventFadeTextureSub.width = eventFadeTextureSub.height * Screen.width / Screen.height;
+	}
 
-    private static Single CalcResourceYMultipier() => UIContentSize.y / OriginScreenSize.y;
-    private static Single CalcResourceXMultipier() => UIContentSize.x / OriginScreenSize.x;
+	private static Single CalcResourceYMultipier() => UIContentSize.y / OriginScreenSize.y;
+	private static Single CalcResourceXMultipier() => UIContentSize.x / OriginScreenSize.x;
 }

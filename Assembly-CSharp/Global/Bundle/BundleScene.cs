@@ -1,12 +1,10 @@
-﻿using System;
+﻿using Assets.Scripts.Common;
+using Assets.Sources.Scripts.Common;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using Assets.Scripts.Common;
-using Assets.Sources.Scripts.Common;
-using Memoria;
 using UnityEngine;
-using Object = System.Object;
 
 public class BundleScene : MonoBehaviour
 {
@@ -340,9 +338,9 @@ public class BundleScene : MonoBehaviour
 
 	public const String SskkServerPath = "http://203.172.121.116:8080/";
 
-    public static string BundleVersion = "ver50_160720_1124";
+	public static string BundleVersion = "ver50_160720_1124";
 
-    private static Int32 bundleVersionInt = -999;
+	private static Int32 bundleVersionInt = -999;
 
 	private String _statusText;
 

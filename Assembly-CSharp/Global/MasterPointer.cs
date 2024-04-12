@@ -1,6 +1,4 @@
-﻿using System;
-
-public class MasterPointer
+﻿public class MasterPointer
 {
 	public MasterPointer()
 	{

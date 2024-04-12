@@ -1,12 +1,12 @@
-﻿using System;
-using Memoria.Data;
+﻿using Memoria.Data;
+using System;
 
 public class FF9PLAY_INFO
 {
 	public FF9PLAY_INFO()
 	{
 		this.Base = new PLAYER_BASE();
-	    this.equip = new CharacterEquipment();
+		this.equip = new CharacterEquipment();
 	}
 
 	public PLAYER_BASE Base;

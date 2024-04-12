@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Memoria;
+using Memoria.Speedrun;
+using SimpleJSON;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Memoria;
-using Memoria.Prime;
-using Memoria.Speedrun;
-using SiliconStudio;
-using SimpleJSON;
 using UnityEngine;
 using Object = System.Object;
 
@@ -170,7 +168,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 	private void ValidateCloudSaveData(Byte[] data, WinIosAndrSharedDataSerializer.OnValidateSaveDataFinish onFinishDelegate)
 	{
 		this.RawStorage.RawData = data;
-		this.RawStorage.GetDataSize(delegate(Boolean isSuccess, Int32 dataSize)
+		this.RawStorage.GetDataSize(delegate (Boolean isSuccess, Int32 dataSize)
 		{
 			this.RawStorage.RawData = null;
 			if (!isSuccess)
@@ -198,11 +196,11 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 		ISharedDataSerializer.LastErrno = DataSerializerErrorCode.Success;
 		this.ClearCloudSyncPreviewCache();
 		this.onSyncCloudSlotFinishDelegate = onFinishDelegate;
-		this.Storage.GetDataSize(delegate(Boolean isSuccess, Int32 dataSize)
+		this.Storage.GetDataSize(delegate (Boolean isSuccess, Int32 dataSize)
 		{
 			if (isSuccess)
 			{
-				this.Storage.GetLatestSlotAndSave(delegate(Int32 latestSlot, Int32 latestSave)
+				this.Storage.GetLatestSlotAndSave(delegate (Int32 latestSlot, Int32 latestSave)
 				{
 					this.latestSlotID = latestSlot;
 					this.latestSaveID = latestSave;
@@ -212,7 +210,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 					}
 					if (this.latestSlotID != -1)
 					{
-						this.LoadSlotPreview(this.latestSlotID, delegate(DataSerializerErrorCode errNo, Int32 slotID, List<SharedDataPreviewSlot> data)
+						this.LoadSlotPreview(this.latestSlotID, delegate (DataSerializerErrorCode errNo, Int32 slotID, List<SharedDataPreviewSlot> data)
 						{
 							if (data != null)
 							{
@@ -260,21 +258,21 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 
 	private void LoadCloudSyncPreviewOnCloudLoadCallBack(Byte[] data, SiliconStudio.Social.ResponseData.Status status)
 	{
-        global::Debug.Log("in LoadCloudSyncPreviewOnCloudLoadCallBack 1 " + status);
-        global::Debug.Log("in LoadCloudSyncPreviewOnCloudLoadCallBack 4");
+		global::Debug.Log("in LoadCloudSyncPreviewOnCloudLoadCallBack 1 " + status);
+		global::Debug.Log("in LoadCloudSyncPreviewOnCloudLoadCallBack 4");
 
-        if (data != null)
+		if (data != null)
 		{
-			this.ValidateCloudSaveData(data, delegate(Boolean isSuccess)
+			this.ValidateCloudSaveData(data, delegate (Boolean isSuccess)
 			{
 				if (isSuccess)
 				{
 					this.RawStorage.RawData = data;
-					this.RawStorage.GetLatestSlotAndSave(delegate(Int32 latestCloudSlotID, Int32 latestCloudSaveID)
+					this.RawStorage.GetLatestSlotAndSave(delegate (Int32 latestCloudSlotID, Int32 latestCloudSaveID)
 					{
 						if (latestCloudSlotID != -1 && latestCloudSaveID != -1)
 						{
-							this.RawStorage.LoadSlotPreview(latestCloudSlotID, delegate(Int32 slotID, List<SharedDataPreviewSlot> previewData)
+							this.RawStorage.LoadSlotPreview(latestCloudSlotID, delegate (Int32 slotID, List<SharedDataPreviewSlot> previewData)
 							{
 								this.loadCloudSyncPreviewRemotePreview = previewData[latestCloudSaveID];
 								this.onSyncCloudSlotFinishDelegate(ISharedDataSerializer.LastErrno, true, this.loadCloudSyncPreviewLocalPreview, this.loadCloudSyncPreviewRemotePreview);
@@ -325,16 +323,16 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 			onStartDelegate(ISharedDataSerializer.LastErrno);
 		}
 		this.uploadToCloudFinishDelegate = onFinishDelegate;
-		this.Storage.GetLatestSlotAndSave(delegate(Int32 latestSlot, Int32 latestSave)
+		this.Storage.GetLatestSlotAndSave(delegate (Int32 latestSlot, Int32 latestSave)
 		{
 			this.latestSlotID = latestSlot;
 			this.latestSaveID = latestSave;
-			this.Storage.LoadRawData(delegate(Byte[] rawData)
+			this.Storage.LoadRawData(delegate (Byte[] rawData)
 			{
 				if (rawData != null)
 				{
 					this.uploadToCloudRawData = rawData;
-					this.LoadSlotPreview(this.latestSlotID, delegate(DataSerializerErrorCode errNo, Int32 slotID, List<SharedDataPreviewSlot> data)
+					this.LoadSlotPreview(this.latestSlotID, delegate (DataSerializerErrorCode errNo, Int32 slotID, List<SharedDataPreviewSlot> data)
 					{
 						if (data != null)
 						{
@@ -347,7 +345,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 							Int32 days = num3 / 24;
 							num3 %= 24;
 							TimeSpan playTime = new TimeSpan(days, num3, num2, num);
-							base.StartCoroutine(SiliconStudio.Social.Cloud_Save(this, this.uploadToCloudRawData, playTime, delegate(Boolean isSuccess, SiliconStudio.Social.ResponseData.Status status)
+							base.StartCoroutine(SiliconStudio.Social.Cloud_Save(this, this.uploadToCloudRawData, playTime, delegate (Boolean isSuccess, SiliconStudio.Social.ResponseData.Status status)
 							{
 								if (isSuccess)
 								{
@@ -396,13 +394,13 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 			onStartDelegate(ISharedDataSerializer.LastErrno);
 		}
 		this.downloadFromCloudFinishDelegate = onFinishDelegate;
-		this.Storage.GetLatestSlotAndSave(delegate(Int32 latestSlot, Int32 latestSave)
+		this.Storage.GetLatestSlotAndSave(delegate (Int32 latestSlot, Int32 latestSave)
 		{
 			this.latestSlotID = latestSlot;
 			this.latestSaveID = latestSave;
 			if (this.latestSlotID != -1 && this.latestSaveID != -1)
 			{
-				this.LoadSlotPreview(this.latestSlotID, delegate(DataSerializerErrorCode errNo, Int32 slotID, List<SharedDataPreviewSlot> data)
+				this.LoadSlotPreview(this.latestSlotID, delegate (DataSerializerErrorCode errNo, Int32 slotID, List<SharedDataPreviewSlot> data)
 				{
 					if (data != null)
 					{
@@ -427,20 +425,20 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 	{
 		if (data != null)
 		{
-			this.ValidateCloudSaveData(data, delegate(Boolean isValidate)
+			this.ValidateCloudSaveData(data, delegate (Boolean isValidate)
 			{
 				if (isValidate)
 				{
 					this.RawStorage.RawData = data;
-					this.Storage.SaveRawData(data, delegate(Boolean isSuccess)
+					this.Storage.SaveRawData(data, delegate (Boolean isSuccess)
 					{
-						this.RawStorage.GetLatestSlotAndSave(delegate(Int32 latestSlotID, Int32 latestSaveID)
+						this.RawStorage.GetLatestSlotAndSave(delegate (Int32 latestSlotID, Int32 latestSaveID)
 						{
 							this.latestCloudSlotID = latestSlotID;
 							this.latestCloudSaveID = latestSaveID;
 							if (this.latestCloudSlotID != -1 && this.latestCloudSaveID != -1)
 							{
-								this.RawStorage.LoadSlotPreview(this.latestCloudSlotID, delegate(Int32 slotID, List<SharedDataPreviewSlot> previewData)
+								this.RawStorage.LoadSlotPreview(this.latestCloudSlotID, delegate (Int32 slotID, List<SharedDataPreviewSlot> previewData)
 								{
 									this.downloadFromCloudRemoteDataPreviewSlot = previewData[this.latestCloudSaveID];
 									this.downloadFromCloudLocalDataPreviewSlot = this.downloadFromCloudRemoteDataPreviewSlot;
@@ -477,7 +475,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 	public override void GetLocalSaveLatestTimestamp(ISharedDataSerializer.OnGetLatestSaveTimestamp onFinishDelegate)
 	{
 		ISharedDataSerializer.LastErrno = DataSerializerErrorCode.Success;
-		this.Storage.GetLatestTimestamp(delegate(Boolean isSuccess, Double timestamp)
+		this.Storage.GetLatestTimestamp(delegate (Boolean isSuccess, Double timestamp)
 		{
 			onFinishDelegate(ISharedDataSerializer.LastErrno, isSuccess, timestamp);
 		});
@@ -494,12 +492,12 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 	{
 		if (data != null)
 		{
-			this.ValidateCloudSaveData(data, delegate(Boolean isValidate)
+			this.ValidateCloudSaveData(data, delegate (Boolean isValidate)
 			{
 				if (isValidate)
 				{
 					this.RawStorage.RawData = data;
-					this.RawStorage.GetLatestTimestamp(delegate(Boolean isSuccess, Double timestamp)
+					this.RawStorage.GetLatestTimestamp(delegate (Boolean isSuccess, Double timestamp)
 					{
 						this.getCloudSaveLatestTimestampFinishDelegate(ISharedDataSerializer.LastErrno, isSuccess, timestamp);
 						this.RawStorage.RawData = null;
@@ -523,7 +521,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 	public override void GetGameFinishFlag(ISharedDataSerializer.OnGetGameFinishFlag onFinishDelegate)
 	{
 		ISharedDataSerializer.LastErrno = DataSerializerErrorCode.Success;
-		this.Storage.GetGameFinishFlag(delegate(Boolean isLoadSuccess, Boolean isFinished)
+		this.Storage.GetGameFinishFlag(delegate (Boolean isLoadSuccess, Boolean isFinished)
 		{
 			onFinishDelegate(ISharedDataSerializer.LastErrno, isLoadSuccess, isFinished);
 		});
@@ -532,7 +530,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 	public override void SetGameFinishFlagWithTrue(ISharedDataSerializer.OnSetGameFinishFlag onFinishDelegate)
 	{
 		ISharedDataSerializer.LastErrno = DataSerializerErrorCode.Success;
-		this.Storage.SetGameFinishFlagWithTrue(delegate(Boolean isSuccess)
+		this.Storage.SetGameFinishFlagWithTrue(delegate (Boolean isSuccess)
 		{
 			onFinishDelegate(ISharedDataSerializer.LastErrno, isSuccess);
 		});
@@ -541,7 +539,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 	public override void GetSelectedLanguage(ISharedDataSerializer.OnGetSelectedLanguage onFinishDelegate)
 	{
 		ISharedDataSerializer.LastErrno = DataSerializerErrorCode.Success;
-		this.Storage.GetSelectedLanguage(delegate(Int32 selectedLanguage)
+		this.Storage.GetSelectedLanguage(delegate (Int32 selectedLanguage)
 		{
 			onFinishDelegate(ISharedDataSerializer.LastErrno, selectedLanguage);
 		});
@@ -559,7 +557,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 	public override void GetIsAutoLogin(ISharedDataSerializer.OnGetIsAutoLogin onFinishDelegate)
 	{
 		ISharedDataSerializer.LastErrno = DataSerializerErrorCode.Success;
-		this.Storage.GetIsAutoLogin(delegate(SByte isAutoLogin)
+		this.Storage.GetIsAutoLogin(delegate (SByte isAutoLogin)
 		{
 			onFinishDelegate(ISharedDataSerializer.LastErrno, isAutoLogin);
 		});
@@ -577,7 +575,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 	public override void GetSystemAchievementStatuses(ISharedDataSerializer.OnGetSystemAchievementStatuses onFinishDelegate)
 	{
 		ISharedDataSerializer.LastErrno = DataSerializerErrorCode.Success;
-		this.Storage.GetSystemAchievementStatuses(delegate(Byte[] systemAchievementStatues)
+		this.Storage.GetSystemAchievementStatuses(delegate (Byte[] systemAchievementStatues)
 		{
 			onFinishDelegate(ISharedDataSerializer.LastErrno, systemAchievementStatues);
 		});
@@ -595,7 +593,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 	public override void GetScreenRotation(ISharedDataSerializer.OnGetScreenRotation onFinishDelegate)
 	{
 		ISharedDataSerializer.LastErrno = DataSerializerErrorCode.Success;
-		this.Storage.GetScreenRotation(delegate(Byte screenRotation)
+		this.Storage.GetScreenRotation(delegate (Byte screenRotation)
 		{
 			onFinishDelegate(ISharedDataSerializer.LastErrno, screenRotation);
 		});
@@ -622,7 +620,7 @@ public class WinIosAndrSharedDataSerializer : ISharedDataSerializer
 			", screen.orientation = ",
 			Screen.orientation
 		}));
-		this.Storage.ReadSystemData(delegate(SharedDataBytesStorage.MetaData metaData)
+		this.Storage.ReadSystemData(delegate (SharedDataBytesStorage.MetaData metaData)
 		{
 			global::Debug.Log(String.Concat(new Object[]
 			{

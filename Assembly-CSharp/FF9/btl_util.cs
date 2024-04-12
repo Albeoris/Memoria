@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Memoria;
+﻿using Memoria;
 using Memoria.Data;
 using Memoria.Scripts;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace FF9
@@ -137,15 +137,15 @@ namespace FF9
 		}
 
 		public static BattleUnit GetMasterEnemyBtlPtr()
-	    {
-	        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
-	            if (!unit.IsPlayer && !unit.IsSlave && unit.Enemy.Data.info.multiple != 0)
-	                return unit;
+		{
+			foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+				if (!unit.IsPlayer && !unit.IsSlave && unit.Enemy.Data.info.multiple != 0)
+					return unit;
 
-	        return null;
-	    }
+			return null;
+		}
 
-	    public static UInt32 SumOfTarget(UInt32 player)
+		public static UInt32 SumOfTarget(UInt32 player)
 		{
 			UInt32 count = 0u;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
@@ -221,17 +221,17 @@ namespace FF9
 				{
 					switch (list_no)
 					{
-					case 0u:
-						if (next.bi.player != 0)
+						case 0u:
+							if (next.bi.player != 0)
+								num = (UInt16)(num | next.btl_id);
+							break;
+						case 1u:
+							if (next.bi.player == 0)
+								num = (UInt16)(num | next.btl_id);
+							break;
+						case 2u:
 							num = (UInt16)(num | next.btl_id);
-						break;
-					case 1u:
-						if (next.bi.player == 0)
-							num = (UInt16)(num | next.btl_id);
-						break;
-					case 2u:
-						num = (UInt16)(num | next.btl_id);
-						break;
+							break;
 					}
 				}
 			}

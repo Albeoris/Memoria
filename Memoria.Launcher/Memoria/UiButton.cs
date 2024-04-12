@@ -2,7 +2,7 @@ using System.Windows.Controls;
 
 namespace Memoria.Launcher
 {
-    public class UiButton : Button
-    {
-    }
+	public class UiButton : Button
+	{
+	}
 }

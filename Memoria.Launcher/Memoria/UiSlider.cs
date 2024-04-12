@@ -2,7 +2,7 @@
 
 namespace Memoria.Launcher
 {
-    public class UiSlider : Slider
-    {
-    }
+	public class UiSlider : Slider
+	{
+	}
 }

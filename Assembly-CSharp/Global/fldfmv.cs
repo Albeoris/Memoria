@@ -51,42 +51,42 @@ public class fldfmv : Singleton<fldfmv>
 	{
 		switch (ParmType & 15)
 		{
-		case 0:
-		{
-			Int32 fmvdisc = Arg1 >> 8 & 255;
-			Int32 fmvno = Arg1 & 255;
-			this.ff9fieldFMVInit(fmvdisc, fmvno, Arg2);
-			break;
-		}
-		case 1:
-			this.ff9fieldFMVShutdown();
-			break;
-		case 2:
-			fldfmv.ff9fieldFMVAttr |= 1;
-			break;
-		case 3:
-		{
-			Int32 result;
-			if (fldfmv.fmvStatus == 8)
-			{
-				result = 1;
-			}
-			else if (fldfmv.fmvStatus >= 5)
-			{
-				result = 0;
-			}
-			else
-			{
-				result = 16;
-			}
-			return result;
-		}
-		case 4:
-			return this.mbg.GetFrame;
-		case 5:
-			fldfmv.fmvDepth = Arg1;
-			this.mbg.Set24BitMode(fldfmv.fmvDepth);
-			break;
+			case 0:
+				{
+					Int32 fmvdisc = Arg1 >> 8 & 255;
+					Int32 fmvno = Arg1 & 255;
+					this.ff9fieldFMVInit(fmvdisc, fmvno, Arg2);
+					break;
+				}
+			case 1:
+				this.ff9fieldFMVShutdown();
+				break;
+			case 2:
+				fldfmv.ff9fieldFMVAttr |= 1;
+				break;
+			case 3:
+				{
+					Int32 result;
+					if (fldfmv.fmvStatus == 8)
+					{
+						result = 1;
+					}
+					else if (fldfmv.fmvStatus >= 5)
+					{
+						result = 0;
+					}
+					else
+					{
+						result = 16;
+					}
+					return result;
+				}
+			case 4:
+				return this.mbg.GetFrame;
+			case 5:
+				fldfmv.fmvDepth = Arg1;
+				this.mbg.Set24BitMode(fldfmv.fmvDepth);
+				break;
 		}
 		return 0;
 	}
@@ -99,82 +99,82 @@ public class fldfmv : Singleton<fldfmv>
 	{
 		switch (fldfmv.fmvStatus)
 		{
-		case 1:
-			fldfmv.fmvStatus = 2;
-			break;
-		case 2:
-			fldfmv.ff9fieldFMVAttr |= 8;
-			fldfmv.fmvStatus = 3;
-			break;
-		case 3:
-			if ((fldfmv.ff9fieldFMVAttr & 8) != 0)
-			{
-				fldfmv.fmvStatus = 4;
-			}
-			break;
-		case 4:
-			fldfmv.fmvStatus = 5;
-			break;
-		case 5:
-			if ((fldfmv.ff9fieldFMVAttr & 1) != 0)
-			{
-				Int32 num = 1;
-				if (FF9StateSystem.Common.FF9.id != 0)
+			case 1:
+				fldfmv.fmvStatus = 2;
+				break;
+			case 2:
+				fldfmv.ff9fieldFMVAttr |= 8;
+				fldfmv.fmvStatus = 3;
+				break;
+			case 3:
+				if ((fldfmv.ff9fieldFMVAttr & 8) != 0)
 				{
-					num++;
+					fldfmv.fmvStatus = 4;
 				}
-				FieldMap.FF9FieldAttr.field[0, num - 1] = 1536;
-				FieldMap.FF9FieldAttr.ff9[0, num - 1] = 25;
-				if (!this.mbg.isFMV045)
+				break;
+			case 4:
+				fldfmv.fmvStatus = 5;
+				break;
+			case 5:
+				if ((fldfmv.ff9fieldFMVAttr & 1) != 0)
 				{
-                        FieldMap.FF9FieldAttr.field[0, num - 1] |= (UInt16)2048;
-                    }
-				if (fldfmv.fmvDepth != 0)
-				{
-                        FieldMap.FF9FieldAttr.ff9[0, num - 1] |= (UInt16)68;
-                        FieldMap.FF9FieldAttr.field[0, num - 1] |= (UInt16)1;
-                    }
-				FieldMap.FF9FieldAttr.fmv[0, num - 1] = 64;
-				FieldMap.FF9FieldAttr.fmv[1, num] = 64;
-				FieldMap.FF9FieldAttr.fmv[0, num] = 2;
-				this.mbg.SetFadeInParameters(2, 4, 1);
-				this.mbg.Set24BitMode(fldfmv.fmvDepth);
-				this.mbg.Play();
-				fldfmv.fmvStatus = 6;
-			}
-			break;
-		case 6:
-		{
-			UInt64 num2 = this.mbg.IsPlaying();
-			Int32 getFrame = this.mbg.GetFrame;
-			if ((fldfmv.ff9fieldFMVAttr & 2) != 0 && (num2 & 2UL) != 0UL && getFrame >= this.mbg.GetFrameCount)
-			{
-				if ((fldfmv.ff9fieldFMVAttr & 256) == 0)
-				{
-					if (getFrame <= fldfmv.ff9fieldFMVLastFrame)
+					Int32 num = 1;
+					if (FF9StateSystem.Common.FF9.id != 0)
 					{
-						FF9StateSystem.Common.FF9.attr &= 4294967266u;
-						FF9StateSystem.Field.FF9Field.attr &= 4294963710u;
+						num++;
 					}
-					else
+					FieldMap.FF9FieldAttr.field[0, num - 1] = 1536;
+					FieldMap.FF9FieldAttr.ff9[0, num - 1] = 25;
+					if (!this.mbg.isFMV045)
 					{
-						FieldMap.FF9FieldAttr.ff9[1, 0] = 29;
-						FieldMap.FF9FieldAttr.field[1, 0] = 7681;
+						FieldMap.FF9FieldAttr.field[0, num - 1] |= (UInt16)2048;
 					}
+					if (fldfmv.fmvDepth != 0)
+					{
+						FieldMap.FF9FieldAttr.ff9[0, num - 1] |= (UInt16)68;
+						FieldMap.FF9FieldAttr.field[0, num - 1] |= (UInt16)1;
+					}
+					FieldMap.FF9FieldAttr.fmv[0, num - 1] = 64;
+					FieldMap.FF9FieldAttr.fmv[1, num] = 64;
+					FieldMap.FF9FieldAttr.fmv[0, num] = 2;
+					this.mbg.SetFadeInParameters(2, 4, 1);
+					this.mbg.Set24BitMode(fldfmv.fmvDepth);
+					this.mbg.Play();
+					fldfmv.fmvStatus = 6;
 				}
-				fldfmv.ff9fieldFMVAttr |= 256;
-				this.ff9fieldFMVRestoreState();
-			}
-			fldfmv.ff9fieldFMVLastFrame = getFrame;
-			break;
-		}
-		case 7:
-			if ((fldfmv.ff9fieldFMVAttr & 4) != 0)
-			{
-				this.ff9fieldFMVRestoreState();
-				fldfmv.fmvStatus = 8;
-			}
-			break;
+				break;
+			case 6:
+				{
+					UInt64 num2 = this.mbg.IsPlaying();
+					Int32 getFrame = this.mbg.GetFrame;
+					if ((fldfmv.ff9fieldFMVAttr & 2) != 0 && (num2 & 2UL) != 0UL && getFrame >= this.mbg.GetFrameCount)
+					{
+						if ((fldfmv.ff9fieldFMVAttr & 256) == 0)
+						{
+							if (getFrame <= fldfmv.ff9fieldFMVLastFrame)
+							{
+								FF9StateSystem.Common.FF9.attr &= 4294967266u;
+								FF9StateSystem.Field.FF9Field.attr &= 4294963710u;
+							}
+							else
+							{
+								FieldMap.FF9FieldAttr.ff9[1, 0] = 29;
+								FieldMap.FF9FieldAttr.field[1, 0] = 7681;
+							}
+						}
+						fldfmv.ff9fieldFMVAttr |= 256;
+						this.ff9fieldFMVRestoreState();
+					}
+					fldfmv.ff9fieldFMVLastFrame = getFrame;
+					break;
+				}
+			case 7:
+				if ((fldfmv.ff9fieldFMVAttr & 4) != 0)
+				{
+					this.ff9fieldFMVRestoreState();
+					fldfmv.fmvStatus = 8;
+				}
+				break;
 		}
 	}
 

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Assets.Sources.Scripts.Common;
+using System;
 using System.IO;
-using Assets.Sources.Scripts.Common;
 using UnityEngine;
 using Object = System.Object;
 

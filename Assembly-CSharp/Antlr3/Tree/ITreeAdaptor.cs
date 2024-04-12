@@ -32,8 +32,7 @@
 
 namespace Antlr.Runtime.Tree
 {
-
-    /** <summary>
+	/** <summary>
      *  How to create and navigate trees.  Rather than have a separate factory
      *  and adaptor, I've merged them.  Makes sense to encapsulate.
      *  </summary>
@@ -46,11 +45,11 @@ namespace Antlr.Runtime.Tree
      *  generic Objects.  This may increase the amount of typecasting needed. :(
      *  </remarks>
      */
-    public interface ITreeAdaptor
-    {
-        #region Construction
+	public interface ITreeAdaptor
+	{
+		#region Construction
 
-        /** <summary>
+		/** <summary>
          *  Create a tree node from Token object; for CommonTree type trees,
          *  then the token just becomes the payload.  This is the most
          *  common create call.
@@ -60,9 +59,9 @@ namespace Antlr.Runtime.Tree
          *  Override if you want another kind of node to be built.
          *  </remarks>
          */
-        object Create(IToken payload);
+		object Create(IToken payload);
 
-        /** <summary>
+		/** <summary>
          *  Create a new node derived from a token, with a new token type.
          *  This is invoked from an imaginary node ref on right side of a
          *  rewrite rule as IMAG[$tokenLabel].
@@ -72,9 +71,9 @@ namespace Antlr.Runtime.Tree
          *  This should invoke createToken(Token).
          *  </remarks>
          */
-        object Create(int tokenType, IToken fromToken);
+		object Create(int tokenType, IToken fromToken);
 
-        /** <summary>
+		/** <summary>
          *  Same as create(tokenType,fromToken) except set the text too.
          *  This is invoked from an imaginary node ref on right side of a
          *  rewrite rule as IMAG[$tokenLabel, "IMAG"].
@@ -84,9 +83,9 @@ namespace Antlr.Runtime.Tree
          *  This should invoke createToken(Token).
          *  </remarks>
          */
-        object Create(int tokenType, IToken fromToken, string text);
+		object Create(int tokenType, IToken fromToken, string text);
 
-        /** <summary>
+		/** <summary>
          *  Same as create(fromToken) except set the text too.
          *  This is invoked when the <c>text</c> terminal option is set, as in
          *  IMAG&lt;text='IMAG'&gt;.
@@ -96,9 +95,9 @@ namespace Antlr.Runtime.Tree
          *  This should invoke createToken(Token).
          *  </remarks>
          */
-        object Create(IToken fromToken, string text);
+		object Create(IToken fromToken, string text);
 
-        /** <summary>
+		/** <summary>
          *  Create a new node derived from a token, with a new token type.
          *  This is invoked from an imaginary node ref on right side of a
          *  rewrite rule as IMAG["IMAG"].
@@ -108,31 +107,31 @@ namespace Antlr.Runtime.Tree
          *  This should invoke createToken(int,String).
          *  </remarks>
          */
-        object Create(int tokenType, string text);
+		object Create(int tokenType, string text);
 
-        /** <summary>Duplicate a single tree node.</summary>
+		/** <summary>Duplicate a single tree node.</summary>
          *  <remarks>Override if you want another kind of node to be built.</remarks>
          */
-        object DupNode(object treeNode);
+		object DupNode(object treeNode);
 
-        object DupNode(int type, object treeNode);
+		object DupNode(int type, object treeNode);
 
-        object DupNode(object treeNode, string text);
+		object DupNode(object treeNode, string text);
 
-        object DupNode(int type, object treeNode, string text);
+		object DupNode(int type, object treeNode, string text);
 
-        /** <summary>Duplicate tree recursively, using dupNode() for each node</summary> */
-        object DupTree( object tree );
+		/** <summary>Duplicate tree recursively, using dupNode() for each node</summary> */
+		object DupTree(object tree);
 
-        /** <summary>
+		/** <summary>
          *  Return a nil node (an empty but non-null node) that can hold
          *  a list of element as the children.  If you want a flat tree (a list)
          *  use "t=adaptor.nil(); t.addChild(x); t.addChild(y);"
          *  </summary>
          */
-        object Nil();
+		object Nil();
 
-        /** <summary>
+		/** <summary>
          *  Return a tree node representing an error.  This node records the
          *  tokens consumed during error recovery.  The start token indicates the
          *  input symbol at which the error was detected.  The stop token indicates
@@ -150,12 +149,12 @@ namespace Antlr.Runtime.Tree
          *  succeed.
          *  </remarks>
          */
-        object ErrorNode( ITokenStream input, IToken start, IToken stop, RecognitionException e );
+		object ErrorNode(ITokenStream input, IToken start, IToken stop, RecognitionException e);
 
-        /** <summary>Is tree considered a nil node used to make lists of child nodes?</summary> */
-        bool IsNil( object tree );
+		/** <summary>Is tree considered a nil node used to make lists of child nodes?</summary> */
+		bool IsNil(object tree);
 
-        /** <summary>
+		/** <summary>
          *  Add a child to the tree t.  If child is a flat tree (a list), make all
          *  in list children of t.  Warning: if t has no children, but child does
          *  and child isNil then you can decide it is ok to move children to t via
@@ -164,9 +163,9 @@ namespace Antlr.Runtime.Tree
          *  ASTs.  Do nothing if t or child is null.
          *  </summary>
          */
-        void AddChild( object t, object child );
+		void AddChild(object t, object child);
 
-        /** <summary>
+		/** <summary>
          *  If oldRoot is a nil root, just copy or move the children to newRoot.
          *  If not a nil root, make oldRoot a child of newRoot.
          *  </summary>
@@ -196,9 +195,9 @@ namespace Antlr.Runtime.Tree
          *  efficiency.
          *  </remarks>
          */
-        object BecomeRoot( object newRoot, object oldRoot );
+		object BecomeRoot(object newRoot, object oldRoot);
 
-        /** <summary>
+		/** <summary>
          *  Given the root of the subtree created for this rule, post process
          *  it to do any simplifications or whatever you want.  A required
          *  behavior is to convert ^(nil singleSubtree) to singleSubtree
@@ -215,9 +214,9 @@ namespace Antlr.Runtime.Tree
          *  before setTokenBoundaries().
          *  </remarks>
          */
-        object RulePostProcessing( object root );
+		object RulePostProcessing(object root);
 
-        /** <summary>For identifying trees.</summary>
+		/** <summary>For identifying trees.</summary>
          *
          *  <remarks>
          *  How to identify nodes so we can say "add node to a prior node"?
@@ -225,12 +224,11 @@ namespace Antlr.Runtime.Tree
          *  usually.
          *  </remarks>
          */
-        int GetUniqueID( object node );
+		int GetUniqueID(object node);
 
+		// R e w r i t e  R u l e s
 
-        // R e w r i t e  R u l e s
-
-        /** <summary>
+		/** <summary>
          *  Create a node for newRoot make it the root of oldRoot.
          *  If oldRoot is a nil root, just copy or move the children to newRoot.
          *  If not a nil root, make oldRoot a child of newRoot.
@@ -247,25 +245,24 @@ namespace Antlr.Runtime.Tree
          *  to not inherits from the TreeAdaptor.
          *  </remarks>
          */
-        object BecomeRoot( IToken newRoot, object oldRoot );
+		object BecomeRoot(IToken newRoot, object oldRoot);
 
-        #endregion
+		#endregion Construction
 
+		#region Content
 
-        #region Content
+		/** <summary>For tree parsing, I need to know the token type of a node</summary> */
+		int GetType(object t);
 
-        /** <summary>For tree parsing, I need to know the token type of a node</summary> */
-        int GetType( object t );
+		/** <summary>Node constructors can set the type of a node</summary> */
+		void SetType(object t, int type);
 
-        /** <summary>Node constructors can set the type of a node</summary> */
-        void SetType( object t, int type );
+		string GetText(object t);
 
-        string GetText( object t );
+		/** <summary>Node constructors can set the text of a node</summary> */
+		void SetText(object t, string text);
 
-        /** <summary>Node constructors can set the text of a node</summary> */
-        void SetText( object t, string text );
-
-        /** <summary>
+		/** <summary>
          *  Return the token object from which this node was created.
          *  Currently used only for printing an error message.
          *  The error display routine in BaseRecognizer needs to
@@ -276,9 +273,9 @@ namespace Antlr.Runtime.Tree
          *  BaseRecognizer.getErrorMessage().
          *  </summary>
          */
-        IToken GetToken( object t );
+		IToken GetToken(object t);
 
-        /** <summary>
+		/** <summary>
          *  Where are the bounds in the input token stream for this node and
          *  all children?  Each rule that creates AST nodes will call this
          *  method right before returning.  Flat trees (i.e., lists) will
@@ -286,50 +283,49 @@ namespace Antlr.Runtime.Tree
          *  That node would contain the start/stop indexes then.
          *  </summary>
          */
-        void SetTokenBoundaries( object t, IToken startToken, IToken stopToken );
+		void SetTokenBoundaries(object t, IToken startToken, IToken stopToken);
 
-        /** <summary>Get the token start index for this subtree; return -1 if no such index</summary> */
-        int GetTokenStartIndex( object t );
+		/** <summary>Get the token start index for this subtree; return -1 if no such index</summary> */
+		int GetTokenStartIndex(object t);
 
-        /** <summary>Get the token stop index for this subtree; return -1 if no such index</summary> */
-        int GetTokenStopIndex( object t );
+		/** <summary>Get the token stop index for this subtree; return -1 if no such index</summary> */
+		int GetTokenStopIndex(object t);
 
-        #endregion
+		#endregion Content
 
+		#region Navigation / Tree Parsing
 
-        #region Navigation / Tree Parsing
+		/** <summary>Get a child 0..n-1 node</summary> */
+		object GetChild(object t, int i);
 
-        /** <summary>Get a child 0..n-1 node</summary> */
-        object GetChild( object t, int i );
+		/** <summary>Set ith child (0..n-1) to t; t must be non-null and non-nil node</summary> */
+		void SetChild(object t, int i, object child);
 
-        /** <summary>Set ith child (0..n-1) to t; t must be non-null and non-nil node</summary> */
-        void SetChild( object t, int i, object child );
+		/** <summary>Remove ith child and shift children down from right.</summary> */
+		object DeleteChild(object t, int i);
 
-        /** <summary>Remove ith child and shift children down from right.</summary> */
-        object DeleteChild( object t, int i );
+		/** <summary>How many children?  If 0, then this is a leaf node</summary> */
+		int GetChildCount(object t);
 
-        /** <summary>How many children?  If 0, then this is a leaf node</summary> */
-        int GetChildCount( object t );
-
-        /** <summary>
+		/** <summary>
          *  Who is the parent node of this node; if null, implies node is root.
          *  If your node type doesn't handle this, it's ok but the tree rewrites
          *  in tree parsers need this functionality.
          *  </summary>
          */
-        object GetParent( object t );
-        void SetParent( object t, object parent );
+		object GetParent(object t);
+		void SetParent(object t, object parent);
 
-        /** <summary>
+		/** <summary>
          *  What index is this node in the child list? Range: 0..n-1
          *  If your node type doesn't handle this, it's ok but the tree rewrites
          *  in tree parsers need this functionality.
          *  </summary>
          */
-        int GetChildIndex( object t );
-        void SetChildIndex( object t, int index );
+		int GetChildIndex(object t);
+		void SetChildIndex(object t, int index);
 
-        /** <summary>
+		/** <summary>
          *  Replace from start to stop child index of parent with t, which might
          *  be a list.  Number of children may be different after this call.
          *  </summary>
@@ -339,8 +335,8 @@ namespace Antlr.Runtime.Tree
          *  Can't replace whatever points to the parent externally.  Do nothing.
          *  </remarks>
          */
-        void ReplaceChildren( object parent, int startChildIndex, int stopChildIndex, object t );
+		void ReplaceChildren(object parent, int startChildIndex, int stopChildIndex, object t);
 
-        #endregion
-    }
+		#endregion Navigation / Tree Parsing
+	}
 }

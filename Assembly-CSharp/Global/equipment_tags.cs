@@ -1,6 +1,4 @@
-﻿using System;
-
-internal enum equipment_tags
+﻿internal enum equipment_tags
 {
 	EQUIP_WEAPON,
 	EQUIP_ARMOR_HEAD,

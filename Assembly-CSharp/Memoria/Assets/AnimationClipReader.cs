@@ -1,10 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Text;
-using System.Collections.Generic;
-using UnityEngine;
-using Memoria.Prime;
+﻿using Memoria.Prime;
 using SimpleJSON;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
 namespace Memoria.Assets
 {

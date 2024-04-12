@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
 
@@ -17,11 +17,11 @@ public class EndGameMain : MonoBehaviour
 	public void IncreaseWager()
 	{
 		this.wager += 10L;
-        if (this.wager > EndGame.ff9endingGameBankroll)
-        {
-            this.wager = EndGame.ff9endingGameBankroll;
-        }
-        else if (this.wager > 1000L)
+		if (this.wager > EndGame.ff9endingGameBankroll)
+		{
+			this.wager = EndGame.ff9endingGameBankroll;
+		}
+		else if (this.wager > 1000L)
 		{
 			this.wager = 1000L;
 		}
@@ -46,11 +46,11 @@ public class EndGameMain : MonoBehaviour
 
 	public void ValidateWager()
 	{
-        if (this.wager > EndGame.ff9endingGameBankroll)
-        {
-            this.wager = EndGame.ff9endingGameBankroll;
-        }
-    }
+		if (this.wager > EndGame.ff9endingGameBankroll)
+		{
+			this.wager = EndGame.ff9endingGameBankroll;
+		}
+	}
 
 	public void CommitBet()
 	{
@@ -121,8 +121,8 @@ public class EndGameMain : MonoBehaviour
 		this.AssambleCards();
 		this.endGame = new EndGame();
 		this.endGame.Start(this);
-        this.bankRoll = EndGame.ff9endingGameBankroll;
-        this.wager = this.endGame.ff9endingGameWager;
+		this.bankRoll = EndGame.ff9endingGameBankroll;
+		this.wager = this.endGame.ff9endingGameWager;
 		this.aspectFit = new AspectFit(1543f, 1080f, this.CanvasCamera);
 		this.CanvasPlane.GetComponent<Renderer>().material.SetColor("_Color", Color.black);
 		RenderSettings.ambientLight = Color.white;
@@ -217,22 +217,22 @@ public class EndGameMain : MonoBehaviour
 					String text = String.Empty;
 					switch (k)
 					{
-					case 0:
-						str = "diamond";
-						text = "red";
-						break;
-					case 1:
-						str = "club";
-						text = "black";
-						break;
-					case 2:
-						str = "heart";
-						text = "red";
-						break;
-					case 3:
-						str = "spade";
-						text = "black";
-						break;
+						case 0:
+							str = "diamond";
+							text = "red";
+							break;
+						case 1:
+							str = "club";
+							text = "black";
+							break;
+						case 2:
+							str = "heart";
+							text = "red";
+							break;
+						case 3:
+							str = "spade";
+							text = "black";
+							break;
 					}
 					String text2 = String.Concat(new String[]
 					{
@@ -381,8 +381,8 @@ public class EndGameMain : MonoBehaviour
 			if (gameState == EndGameState.OnUpdate)
 			{
 				this.endGame.OnUpdate();
-                this.bankRoll = EndGame.ff9endingGameBankroll;
-            }
+				this.bankRoll = EndGame.ff9endingGameBankroll;
+			}
 			else if (gameState == EndGameState.Finish)
 			{
 				this.endGame.Finish();

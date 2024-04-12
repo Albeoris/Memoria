@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum POSTGAME_STATE
+﻿public enum POSTGAME_STATE
 {
 	SELECT_CARD,
 	PERFECT_SELECT_CARD,

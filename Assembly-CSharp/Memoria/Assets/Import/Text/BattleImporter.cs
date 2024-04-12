@@ -1,112 +1,112 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Prime;
 using Memoria.Prime.Threading;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Memoria.Assets
 {
-    public sealed class BattleImporter : TextImporter
-    {
-        private String TypeName => nameof(BattleImporter);
+	public sealed class BattleImporter : TextImporter
+	{
+		private String TypeName => nameof(BattleImporter);
 
-        private volatile Boolean _initialized;
-        private readonly Dictionary<Int32, String[]> _cache = new Dictionary<Int32, String[]>();
+		private volatile Boolean _initialized;
+		private readonly Dictionary<Int32, String[]> _cache = new Dictionary<Int32, String[]>();
 
-        public Task InitializationTask { get; private set; }
+		public Task InitializationTask { get; private set; }
 
-        public void InitializeAsync()
-        {
-            InitializationTask = Task.Run(Initialize);
-        }
+		public void InitializeAsync()
+		{
+			InitializationTask = Task.Run(Initialize);
+		}
 
-        private void Initialize()
-        {
-            Dictionary<String, String> dic;
-            if (!TryLoadReplacements(out dic))
-                return;
+		private void Initialize()
+		{
+			Dictionary<String, String> dic;
+			if (!TryLoadReplacements(out dic))
+				return;
 
-            Log.Message($"[{TypeName}] Loading...");
+			Log.Message($"[{TypeName}] Loading...");
 
-            foreach (KeyValuePair<String, Int32> pair in FF9BattleDB.SceneData)
-            {
-                Int32 index = pair.Value;
-                if (index == 220 || index == 238) // Junk?
-                    continue;
-                
-                String path = EmbadedTextResources.GetCurrentPath("/Battle/" + index + ".mes");
-                String[] text = EmbadedSentenseLoader.LoadSentense(path);
-                if (text != null)
-                {
-                    for (Int32 i = 0; i < text.Length; i++)
-                    {
-                        String key = BattleFormatter.GetKey(text[i]);
-                        String value;
-                        if (dic.TryGetValue(key, out value))
-                            text[i] = value;
-                    }
-                }
+			foreach (KeyValuePair<String, Int32> pair in FF9BattleDB.SceneData)
+			{
+				Int32 index = pair.Value;
+				if (index == 220 || index == 238) // Junk?
+					continue;
 
-                _cache[index] = text;
-            }
+				String path = EmbadedTextResources.GetCurrentPath("/Battle/" + index + ".mes");
+				String[] text = EmbadedSentenseLoader.LoadSentense(path);
+				if (text != null)
+				{
+					for (Int32 i = 0; i < text.Length; i++)
+					{
+						String key = BattleFormatter.GetKey(text[i]);
+						String value;
+						if (dic.TryGetValue(key, out value))
+							text[i] = value;
+					}
+				}
 
-            _initialized = true;
-        }
+				_cache[index] = text;
+			}
 
-        private Boolean TryLoadReplacements(out Dictionary<String, String> dic)
-        {
-            String importPath = ModTextResources.Import.Battle;
-            if (!File.Exists(importPath))
-            {
-                Log.Warning($"[{TypeName}] Import was skipped bacause a file does not exist: [{importPath}].");
-                dic = null;
-                return false;
-            }
+			_initialized = true;
+		}
 
-            Log.Message($"[{TypeName}] Loading from [{importPath}]...");
+		private Boolean TryLoadReplacements(out Dictionary<String, String> dic)
+		{
+			String importPath = ModTextResources.Import.Battle;
+			if (!File.Exists(importPath))
+			{
+				Log.Warning($"[{TypeName}] Import was skipped bacause a file does not exist: [{importPath}].");
+				dic = null;
+				return false;
+			}
 
-            TxtEntry[] entries = TxtReader.ReadStrings(importPath);
+			Log.Message($"[{TypeName}] Loading from [{importPath}]...");
 
-            BattleFormatter.Parse(entries, out dic);
+			TxtEntry[] entries = TxtReader.ReadStrings(importPath);
 
-            Log.Message($"[{TypeName}] Loading completed successfully.");
-            return true;
-        }
+			BattleFormatter.Parse(entries, out dic);
 
-        protected override Boolean LoadInternal()
-        {
-            Int32 battleZoneId = FF9TextTool.BattleZoneId;
-            String path = EmbadedTextResources.GetCurrentPath("/Battle/" + battleZoneId + ".mes");
-            String[] text = EmbadedSentenseLoader.LoadSentense(path);
-            if (text != null)
-                FF9TextTool.SetBattleText(text);
-            return true;
-        }
+			Log.Message($"[{TypeName}] Loading completed successfully.");
+			return true;
+		}
 
-        protected override Boolean LoadExternal()
-        {
-            try
-            {
-                if (!_initialized)
-                    return false;
+		protected override Boolean LoadInternal()
+		{
+			Int32 battleZoneId = FF9TextTool.BattleZoneId;
+			String path = EmbadedTextResources.GetCurrentPath("/Battle/" + battleZoneId + ".mes");
+			String[] text = EmbadedSentenseLoader.LoadSentense(path);
+			if (text != null)
+				FF9TextTool.SetBattleText(text);
+			return true;
+		}
 
-                Int32 battleZoneId = FF9TextTool.BattleZoneId;
+		protected override Boolean LoadExternal()
+		{
+			try
+			{
+				if (!_initialized)
+					return false;
 
-                String[] result;
-                if (!_cache.TryGetValue(battleZoneId, out result))
-                    return false;
+				Int32 battleZoneId = FF9TextTool.BattleZoneId;
 
-                if (result != null)
-                    FF9TextTool.SetBattleText(result);
+				String[] result;
+				if (!_cache.TryGetValue(battleZoneId, out result))
+					return false;
 
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log.Error(ex, $"[{TypeName}] Failed to import resource.");
-                return false;
-            }
-        }
-    }
+				if (result != null)
+					FF9TextTool.SetBattleText(result);
+
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Log.Error(ex, $"[{TypeName}] Failed to import resource.");
+				return false;
+			}
+		}
+	}
 }

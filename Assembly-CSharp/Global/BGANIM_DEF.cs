@@ -26,21 +26,21 @@ public class BGANIM_DEF
 		this.frameRate = 256;
 		this.counter = 0;
 		this.flags = BGANIM_DEF.ANIM_FLAG.SingleFrame;
-        this.CalculateActualFrameCount();
-    }
+		this.CalculateActualFrameCount();
+	}
 
-    public void CalculateActualFrameCount()
-    {
-        const Int32 defaultRate = 256;
-        Int32 completeCount = (this.frameCount - 1) * this.frameRate;
-        Int32 completeDefault = (this.frameCount - 1) * defaultRate;
-        this.actualFrameCount = this.frameCount;
-        Int32 excess = completeCount - completeDefault;
+	public void CalculateActualFrameCount()
+	{
+		const Int32 defaultRate = 256;
+		Int32 completeCount = (this.frameCount - 1) * this.frameRate;
+		Int32 completeDefault = (this.frameCount - 1) * defaultRate;
+		this.actualFrameCount = this.frameCount;
+		Int32 excess = completeCount - completeDefault;
 		if (Math.Abs(excess) >= defaultRate)
 			this.actualFrameCount = this.frameCount - excess / defaultRate;
 	}
 
-    public ANIM_FLAG flags;
+	public ANIM_FLAG flags;
 
 	public Byte camNdx;
 

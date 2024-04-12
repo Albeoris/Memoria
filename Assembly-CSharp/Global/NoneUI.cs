@@ -1,5 +1,3 @@
-﻿using System;
-
-public class NoneUI : UIScene
+﻿public class NoneUI : UIScene
 {
 }

@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class QuadMistDatabase : MonoBehaviour
@@ -513,7 +513,7 @@ public class QuadMistDatabase : MonoBehaviour
 		}
 		return ff9SAVE_MINIGAME;
 	}
-	
+
 	public const Int32 MINIGAME_CARDMAX = 100;
 	public const Int32 MINIGAME_NO_CARD = 255;
 

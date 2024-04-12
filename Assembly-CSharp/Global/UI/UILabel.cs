@@ -1,9 +1,7 @@
-﻿using System;
+﻿using Memoria.Assets;
+using System;
 using System.Collections.Generic;
-using Assets.Sources.Scripts.UI.Common;
-using Memoria.Assets;
 using UnityEngine;
-using Object = System.Object;
 
 [AddComponentMenu("NGUI/UI/NGUI Label")]
 [ExecuteInEditMode]
@@ -13,7 +11,7 @@ public class UILabel : UIWidget
 	{
 		this.imageList = new BetterList<Dialog.DialogImage>();
 		this.vertsLineOffsets = new BetterList<Int32>();
-		}
+	}
 
 	public BetterList<Dialog.DialogImage> ImageList
 	{
@@ -78,7 +76,7 @@ public class UILabel : UIWidget
 
 	public String PhrasePreOpcodeSymbol(String text, ref Single additionalWidth)
 	{
-	    return DialogLabelFilter.PhrasePreOpcodeSymbol(this, text.ToCharArray(), ref additionalWidth);
+		return DialogLabelFilter.PhrasePreOpcodeSymbol(this, text.ToCharArray(), ref additionalWidth);
 	}
 
 	public void ApplyIconOffset(BetterList<Dialog.DialogImage> imageList, Vector2 offset)
@@ -237,8 +235,8 @@ public class UILabel : UIWidget
 	{
 		get
 		{
-            return (UnityEngine.Object)this.mFont ?? (UnityEngine.Object)this.mTrueTypeFont;
-        }
+			return (UnityEngine.Object)this.mFont ?? (UnityEngine.Object)this.mTrueTypeFont;
+		}
 		set
 		{
 			UIFont uifont = value as UIFont;
@@ -1608,7 +1606,7 @@ public class UILabel : UIWidget
 		if (this.mFont != (UnityEngine.Object)null)
 		{
 			NGUIText.bitmapFont = this.mFont;
-			for (;;)
+			for (; ; )
 			{
 				UIFont replacement = NGUIText.bitmapFont.replacement;
 				if (replacement == (UnityEngine.Object)null)

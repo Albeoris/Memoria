@@ -1,7 +1,7 @@
-﻿using System;
-using FF9;
-using UnityEngine;
+﻿using FF9;
 using Memoria.Data;
+using System;
+using UnityEngine;
 
 public class btl_eqp
 {

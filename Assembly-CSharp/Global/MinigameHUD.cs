@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum MinigameHUD
+﻿public enum MinigameHUD
 {
 	None,
 	Chanbara,

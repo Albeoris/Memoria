@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using FF9;
 using Memoria.Data;
 using SimpleJSON;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
 using UnityEngine;
-using FF9;
 
 public class JsonParser : ISharedDataParser
 {
@@ -1280,7 +1280,7 @@ public class JsonParser : ISharedDataParser
 		if (jsonData["gil"] != null)
 			ffglobal.party.gil = (UInt32)jsonData["gil"].AsInt;
 		if (jsonData["frog_no"] != null)
-		    ffglobal.Frogs.Initialize((Int16)jsonData["frog_no"].AsInt);
+			ffglobal.Frogs.Initialize((Int16)jsonData["frog_no"].AsInt);
 		if (jsonData["steal_no"] != null)
 			ffglobal.steal_no = (Int16)jsonData["steal_no"].AsInt;
 		if (jsonData["humanoid_no"] != null)

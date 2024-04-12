@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using UnityEngine;
-using Memoria;
 
 internal class EIcon
 {
@@ -309,23 +309,23 @@ internal class EIcon
 	{
 		switch (WMUIData.ControlNo)
 		{
-		case 5:
-			actorOffset = EIcon.worldActorOffset * 1.4f;
-			goto IL_C3;
-		case 6:
-			actorOffset = EIcon.worldActorOffset * 1.9f;
-			goto IL_C3;
-		case 8:
-			actorOffset = EIcon.worldActorOffset * 2.2f;
-			uiOffset.x -= 70f;
-			goto IL_C3;
-		case 9:
-			actorOffset = EIcon.worldActorOffset * 1.7f;
-			uiOffset.x -= 70f;
-			goto IL_C3;
+			case 5:
+				actorOffset = EIcon.worldActorOffset * 1.4f;
+				goto IL_C3;
+			case 6:
+				actorOffset = EIcon.worldActorOffset * 1.9f;
+				goto IL_C3;
+			case 8:
+				actorOffset = EIcon.worldActorOffset * 2.2f;
+				uiOffset.x -= 70f;
+				goto IL_C3;
+			case 9:
+				actorOffset = EIcon.worldActorOffset * 1.7f;
+				uiOffset.x -= 70f;
+				goto IL_C3;
 		}
 		actorOffset = EIcon.worldActorOffset;
-		IL_C3:
+	IL_C3:
 		return actorOffset;
 	}
 
@@ -333,28 +333,28 @@ internal class EIcon
 	{
 		switch (pollCode)
 		{
-		case 0:
-			return new BubbleUI.Flag[]
-			{
+			case 0:
+				return new BubbleUI.Flag[]
+				{
 				BubbleUI.Flag.QUESTION
-			};
-		case 2:
-			return new BubbleUI.Flag[]
-			{
+				};
+			case 2:
+				return new BubbleUI.Flag[]
+				{
 				BubbleUI.Flag.EXCLAMATION,
 				BubbleUI.Flag.DUEL
-			};
-		case 3:
-			return new BubbleUI.Flag[]
-			{
+				};
+			case 3:
+				return new BubbleUI.Flag[]
+				{
 				BubbleUI.Flag.BEACH
-			};
-		case 4:
-			return new BubbleUI.Flag[]
-			{
+				};
+			case 4:
+				return new BubbleUI.Flag[]
+				{
 				BubbleUI.Flag.EXCLAMATION,
 				BubbleUI.Flag.BEACH
-			};
+				};
 		}
 		return new BubbleUI.Flag[1];
 	}
@@ -427,12 +427,12 @@ internal class EIcon
 		}, null);
 	}
 
-    public static int AIconMode
-    {
-        get { return EIcon.sAIconMode; }
-    }
+	public static int AIconMode
+	{
+		get { return EIcon.sAIconMode; }
+	}
 
-    public static ATEType CurrentATE
+	public static ATEType CurrentATE
 	{
 		get
 		{

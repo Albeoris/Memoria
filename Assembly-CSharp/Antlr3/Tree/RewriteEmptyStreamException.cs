@@ -32,46 +32,46 @@
 
 namespace Antlr.Runtime.Tree
 {
-    using Exception = System.Exception;
+	using Exception = System.Exception;
 
 #if !PORTABLE
-    using SerializationInfo = System.Runtime.Serialization.SerializationInfo;
-    using StreamingContext = System.Runtime.Serialization.StreamingContext;
+	using SerializationInfo = System.Runtime.Serialization.SerializationInfo;
+	using StreamingContext = System.Runtime.Serialization.StreamingContext;
 #endif
 
-    /** <summary>Ref to ID or expr but no tokens in ID stream or subtrees in expr stream</summary> */
-    [System.Serializable]
-    public class RewriteEmptyStreamException : RewriteCardinalityException
-    {
-        public RewriteEmptyStreamException()
-        {
-        }
+	/** <summary>Ref to ID or expr but no tokens in ID stream or subtrees in expr stream</summary> */
+	[System.Serializable]
+	public class RewriteEmptyStreamException : RewriteCardinalityException
+	{
+		public RewriteEmptyStreamException()
+		{
+		}
 
-        public RewriteEmptyStreamException(string elementDescription)
-            : base(elementDescription)
-        {
-        }
-        
-        public RewriteEmptyStreamException(string elementDescription, Exception innerException)
-            : base(elementDescription, innerException)
-        {
-        }
+		public RewriteEmptyStreamException(string elementDescription)
+			: base(elementDescription)
+		{
+		}
 
-        public RewriteEmptyStreamException(string message, string elementDescription)
-            : base(message, elementDescription)
-        {
-        }
+		public RewriteEmptyStreamException(string elementDescription, Exception innerException)
+			: base(elementDescription, innerException)
+		{
+		}
 
-        public RewriteEmptyStreamException(string message, string elementDescription, Exception innerException)
-            : base(message, elementDescription, innerException)
-        {
-        }
+		public RewriteEmptyStreamException(string message, string elementDescription)
+			: base(message, elementDescription)
+		{
+		}
+
+		public RewriteEmptyStreamException(string message, string elementDescription, Exception innerException)
+			: base(message, elementDescription, innerException)
+		{
+		}
 
 #if !PORTABLE
-        protected RewriteEmptyStreamException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
+		protected RewriteEmptyStreamException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+		}
 #endif
-    }
+	}
 }

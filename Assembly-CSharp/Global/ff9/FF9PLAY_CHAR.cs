@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum FF9PLAY_CHAR
+﻿public enum FF9PLAY_CHAR
 {
 	FF9PLAY_CHAR_ZIDANE,
 	FF9PLAY_CHAR_VIVI,

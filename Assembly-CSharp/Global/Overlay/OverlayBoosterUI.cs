@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using Memoria.Prime;
 using UnityEngine;
 using UnityEngine.UI;
-using Object = System.Object;
 
 public class OverlayBoosterUI : MonoBehaviour
 {
-    private void Awake()
+	private void Awake()
 	{
 		this.boosterImageList = new List<Image>
 		{
@@ -39,19 +37,19 @@ public class OverlayBoosterUI : MonoBehaviour
 		this.UpdateBoosterSize();
 	}
 
-    private void OnGUI()
-    {
-        if (!base.gameObject.activeSelf)
-            return;
+	private void OnGUI()
+	{
+		if (!base.gameObject.activeSelf)
+			return;
 
-        if (SettingsState.IsRapidEncounter)
-        {
-            if (GUI.Button(new Rect(0, 0, 30, 30), "↑E"))
-                SettingsState.IsRapidEncounter = false;
-        }
-    }
+		if (SettingsState.IsRapidEncounter)
+		{
+			if (GUI.Button(new Rect(0, 0, 30, 30), "↑E"))
+				SettingsState.IsRapidEncounter = false;
+		}
+	}
 
-    public void Restart()
+	public void Restart()
 	{
 		this.UpdateBoosterSize();
 	}

@@ -144,7 +144,7 @@ namespace Unity.IO.Compression
 						while (num4 != 0);
 						array2[num6] = (Int16)i;
 						goto IL_17E;
-						Block_6:
+					Block_6:
 						throw new InvalidDataException(SR.GetString("Invalid Huffman data"));
 					}
 					Int32 num8 = 1 << num2;
@@ -159,7 +159,7 @@ namespace Unity.IO.Compression
 						num3 += num8;
 					}
 				}
-				IL_17E:;
+			IL_17E:;
 			}
 		}
 

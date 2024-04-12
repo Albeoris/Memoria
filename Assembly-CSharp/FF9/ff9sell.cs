@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria.Data;
+﻿using Memoria.Data;
+using System;
 
 namespace FF9
 {

@@ -1,19 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
+using System;
+using System.Collections.Generic;
 
 public class PLAYER
 {
-    public PLAYER()
+	public PLAYER()
 	{
 		this.cur = new POINTS();
 		this.max = new POINTS();
 		this.elem = new ELEMENT();
 		this.defence = new ItemDefence();
 		this.basis = new PLAYER_BASE();
-	    this.equip = new CharacterEquipment();
+		this.equip = new CharacterEquipment();
 		this.bonus = new FF9LEVEL_BONUS();
 		this.sa = new UInt32[2];
 		this.sa[0] = 0u;
@@ -26,22 +26,22 @@ public class PLAYER
 		this.maxMpDamageLimit = ff9play.FF9PLAY_MPDAMAGE_MAX;
 	}
 
-    public CharacterId Index => info.slot_no;
-    public Boolean IsSubCharacter => (Category & CharacterCategory.Subpc) == CharacterCategory.Subpc;
+	public CharacterId Index => info.slot_no;
+	public Boolean IsSubCharacter => (Category & CharacterCategory.Subpc) == CharacterCategory.Subpc;
 
-    public CharacterPresetId PresetId
-    {
-        get => info.menu_type;
-        set => info.menu_type = value;
-    }
+	public CharacterPresetId PresetId
+	{
+		get => info.menu_type;
+		set => info.menu_type = value;
+	}
 
-    public CharacterCategory Category
-    {
-        get => (CharacterCategory)category;
-        set => category = (Byte)value;
-    }
+	public CharacterCategory Category
+	{
+		get => (CharacterCategory)category;
+		set => category = (Byte)value;
+	}
 
-    public void ValidateSupportAbility()
+	public void ValidateSupportAbility()
 	{
 		Int32 activeSupportAbilityPoint = this.GetActiveSupportAbilityPoint();
 		if (this.cur.capa != this.max.capa - activeSupportAbilityPoint)
@@ -128,7 +128,7 @@ public class PLAYER
 	public const Int32 SLOT_MAX = 9;
 	public const Int32 PARTY_MAX = 4;
 
-    public const Int32 PLAYER_NAME_MAX = 10;
+	public const Int32 PLAYER_NAME_MAX = 10;
 
 	public const Int32 EQUIP_WEAPON = 0;
 	public const Int32 EQUIP_ARMOR_HEAD = 1;

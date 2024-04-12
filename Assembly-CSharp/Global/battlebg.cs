@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using Memoria.Scripts;
+using System;
 using System.Collections.Generic;
-using Memoria.Scripts;
+using System.Linq;
 using UnityEngine;
 using Object = System.Object;
 
@@ -153,7 +153,7 @@ public class battlebg
 					Material[] materials = componentsInChildren[i].materials;
 					for (Int32 j = 0; j < (Int32)materials.Length; j++)
 					{
-							list.Add(materials[j]);
+						list.Add(materials[j]);
 					}
 				}
 			}
@@ -174,7 +174,7 @@ public class battlebg
 			battlebg.geoBGTexAnimService(battlebg.nf_BbgTabAddress);
 		}
 		GameObject gameObject = battlebg.btlModel;
-		for (;;)
+		for (; ; )
 		{
 			foreach (Object obj in gameObject.transform)
 			{
@@ -199,143 +199,143 @@ public class battlebg
 			Int16 bbgnumber = battlebg.nf_BbgInfoPtr.bbgnumber;
 			switch (bbgnumber)
 			{
-			case 168:
-				zero.x = 0f;
-				zero.z = 0f;
-				if (num2 == 1)
-				{
-					zero.y = (Single)((Int32)num4 / 16 & 4095);
-				}
-				else
-				{
-					zero.y = (Single)((Int32)num4 / 8 & 4095);
-				}
-				break;
-			case 169:
-			case 170:
-				IL_158:
-				switch (bbgnumber)
-				{
-				case 110:
-				{
-					Int32 num5 = (Int32)(num4 * 12f) & 4095;
-					num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
-					num5 /= 64;
-					zero.z = (Single)num5;
-					zero.y = 512f;
-					zero2.x = 1500f;
-					zero2.y = -7000f;
-					zero2.z = 3750f;
-					break;
-				}
-				case 111:
-					IL_16E:
-					if (bbgnumber != 7)
+				case 168:
+					zero.x = 0f;
+					zero.z = 0f;
+					if (num2 == 1)
 					{
-						if (bbgnumber != 68)
-						{
-							zero.y += 3f;
-							zero2.x = 0f;
-							zero2.y = -10f;
-							zero2.z = 0f;
-						}
-						else
-						{
-							Int32 num5 = (Int32)(num4 * 26f) & 4095;
-							num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
-							num5 /= 5;
-							zero.z = (Single)num5;
-							zero2.x = 1065f;
-							zero2.y = -1345f;
-							zero2.z = 3749f;
-						}
-					}
-					else if (num2 == 1)
-					{
-						if ((battlebg.nf_BbgTick + 31 & 63) == 0)
-						{
-							battlebg.nf_b007a = (battlebg.rand() & 511);
-						}
-						zero.y = (Single)(battlebg.nf_b007a + (battlebg.rand() & 63));
+						zero.y = (Single)((Int32)num4 / 16 & 4095);
 					}
 					else
 					{
-						if ((battlebg.nf_BbgTick & 63) == 0)
-						{
-							battlebg.nf_b007b = (battlebg.rand() & 1023);
-						}
-						zero.y = (Single)(battlebg.nf_b007b + (battlebg.rand() & 127));
+						zero.y = (Single)((Int32)num4 / 8 & 4095);
 					}
 					break;
-				case 112:
-					switch (num2)
+				case 169:
+				case 170:
+				IL_158:
+					switch (bbgnumber)
 					{
-					case 1:
-					{
-						Int32 num5 = (Int32)(num4 * 5f) & 4095;
-						zero.z = (Single)(4095 - num5);
-						num5 = ((Int32)(num4 * 3f) & 4095);
-						zero.y = (Single)(4095 - num5);
-						num5 = ((Int32)((num4 + 8f) * 22f) & 4095);
-						num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
-						zero2.x = -2100f;
-						zero2.y = (Single)(-250 + num5 / 45);
-						zero2.z = -850f;
-						break;
+						case 110:
+							{
+								Int32 num5 = (Int32)(num4 * 12f) & 4095;
+								num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
+								num5 /= 64;
+								zero.z = (Single)num5;
+								zero.y = 512f;
+								zero2.x = 1500f;
+								zero2.y = -7000f;
+								zero2.z = 3750f;
+								break;
+							}
+						case 111:
+						IL_16E:
+							if (bbgnumber != 7)
+							{
+								if (bbgnumber != 68)
+								{
+									zero.y += 3f;
+									zero2.x = 0f;
+									zero2.y = -10f;
+									zero2.z = 0f;
+								}
+								else
+								{
+									Int32 num5 = (Int32)(num4 * 26f) & 4095;
+									num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
+									num5 /= 5;
+									zero.z = (Single)num5;
+									zero2.x = 1065f;
+									zero2.y = -1345f;
+									zero2.z = 3749f;
+								}
+							}
+							else if (num2 == 1)
+							{
+								if ((battlebg.nf_BbgTick + 31 & 63) == 0)
+								{
+									battlebg.nf_b007a = (battlebg.rand() & 511);
+								}
+								zero.y = (Single)(battlebg.nf_b007a + (battlebg.rand() & 63));
+							}
+							else
+							{
+								if ((battlebg.nf_BbgTick & 63) == 0)
+								{
+									battlebg.nf_b007b = (battlebg.rand() & 1023);
+								}
+								zero.y = (Single)(battlebg.nf_b007b + (battlebg.rand() & 127));
+							}
+							break;
+						case 112:
+							switch (num2)
+							{
+								case 1:
+									{
+										Int32 num5 = (Int32)(num4 * 5f) & 4095;
+										zero.z = (Single)(4095 - num5);
+										num5 = ((Int32)(num4 * 3f) & 4095);
+										zero.y = (Single)(4095 - num5);
+										num5 = ((Int32)((num4 + 8f) * 22f) & 4095);
+										num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
+										zero2.x = -2100f;
+										zero2.y = (Single)(-250 + num5 / 45);
+										zero2.z = -850f;
+										break;
+									}
+								case 2:
+									{
+										zero.y = 0f;
+										zero.z = 0f;
+										Int32 num5 = (Int32)(num4 * 20f) & 4095;
+										num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
+										zero2.x = 1725f;
+										zero2.y = (Single)(-1500 + num5 / 64);
+										zero2.z = -75f;
+										break;
+									}
+								case 3:
+									{
+										Int32 num5 = (Int32)(num4 * 4f) & 4095;
+										zero.z = (Single)num5;
+										num5 = ((Int32)(num4 * 3f) & 4095);
+										zero.y = (Single)num5;
+										num5 = ((Int32)((num4 + 16f) * 21f) & 4095);
+										num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
+										zero2.x = 1750f;
+										zero2.y = (Single)(-775 + num5 / 50);
+										zero2.z = 1025f;
+										break;
+									}
+							}
+							break;
+						default:
+							goto IL_16E;
 					}
-					case 2:
+					break;
+				case 171:
+					num4 = (Single)(-(Single)(battlebg.nf_BbgTick * 2));
+					if (num2 == 1)
 					{
-						zero.y = 0f;
-						zero.z = 0f;
-						Int32 num5 = (Int32)(num4 * 20f) & 4095;
-						num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
-						zero2.x = 1725f;
-						zero2.y = (Single)(-1500 + num5 / 64);
-						zero2.z = -75f;
-						break;
-					}
-					case 3:
-					{
-						Int32 num5 = (Int32)(num4 * 4f) & 4095;
+						Int32 num5 = (Int32)(num4 * -12f) & 4095;
 						zero.z = (Single)num5;
-						num5 = ((Int32)(num4 * 3f) & 4095);
-						zero.y = (Single)num5;
-						num5 = ((Int32)((num4 + 16f) * 21f) & 4095);
-						num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
-						zero2.x = 1750f;
-						zero2.y = (Single)(-775 + num5 / 50);
-						zero2.z = 1025f;
-						break;
+						zero2.x = 0f;
+						zero2.y = -2375f;
+						zero2.z = 3750f;
 					}
+					else
+					{
+						Int32 num5 = (Int32)(num4 * -22f) & 4095;
+						zero.z = 3584f;
+						zero.y = (Single)num5;
+						zero2.x = 0f;
+						zero2.y = -2250f;
+						zero2.z = 7625f;
+						num3 = 1;
 					}
 					break;
 				default:
-					goto IL_16E;
-				}
-				break;
-			case 171:
-				num4 = (Single)(-(Single)(battlebg.nf_BbgTick * 2));
-				if (num2 == 1)
-				{
-					Int32 num5 = (Int32)(num4 * -12f) & 4095;
-					zero.z = (Single)num5;
-					zero2.x = 0f;
-					zero2.y = -2375f;
-					zero2.z = 3750f;
-				}
-				else
-				{
-					Int32 num5 = (Int32)(num4 * -22f) & 4095;
-					zero.z = 3584f;
-					zero.y = (Single)num5;
-					zero2.x = 0f;
-					zero2.y = -2250f;
-					zero2.z = 7625f;
-					num3 = 1;
-				}
-				break;
-			default:
-				goto IL_158;
+					goto IL_158;
 			}
 			zero2.y *= -1f;
 			zero.x = zero.x / 4096f * 360f;
@@ -357,14 +357,14 @@ public class battlebg
 	{
 		switch (name)
 		{
-		case "Group_0":
-			return 0;
-		case "Group_2":
-			return 2;
-		case "Group_4":
-			return 4;
-		case "Group_8":
-			return 8;
+			case "Group_0":
+				return 0;
+			case "Group_2":
+				return 2;
+			case "Group_4":
+				return 4;
+			case "Group_8":
+				return 8;
 		}
 		return 0;
 	}
@@ -479,7 +479,7 @@ public class battlebg
 					geotexanimheader.frame += (Int32)rate;
 				}
 			}
-			IL_2C3:;
+		IL_2C3:;
 		}
 	}
 

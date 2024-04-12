@@ -155,14 +155,14 @@ public abstract class UIBasicSprite : UIWidget
 		{
 			switch (this.mFlip)
 			{
-			case UIBasicSprite.Flip.Horizontally:
-				return new Vector4(this.mOuterUV.xMax, this.mOuterUV.yMin, this.mOuterUV.xMin, this.mOuterUV.yMax);
-			case UIBasicSprite.Flip.Vertically:
-				return new Vector4(this.mOuterUV.xMin, this.mOuterUV.yMax, this.mOuterUV.xMax, this.mOuterUV.yMin);
-			case UIBasicSprite.Flip.Both:
-				return new Vector4(this.mOuterUV.xMax, this.mOuterUV.yMax, this.mOuterUV.xMin, this.mOuterUV.yMin);
-			default:
-				return new Vector4(this.mOuterUV.xMin, this.mOuterUV.yMin, this.mOuterUV.xMax, this.mOuterUV.yMax);
+				case UIBasicSprite.Flip.Horizontally:
+					return new Vector4(this.mOuterUV.xMax, this.mOuterUV.yMin, this.mOuterUV.xMin, this.mOuterUV.yMax);
+				case UIBasicSprite.Flip.Vertically:
+					return new Vector4(this.mOuterUV.xMin, this.mOuterUV.yMax, this.mOuterUV.xMax, this.mOuterUV.yMin);
+				case UIBasicSprite.Flip.Both:
+					return new Vector4(this.mOuterUV.xMax, this.mOuterUV.yMax, this.mOuterUV.xMin, this.mOuterUV.yMin);
+				default:
+					return new Vector4(this.mOuterUV.xMin, this.mOuterUV.yMin, this.mOuterUV.xMax, this.mOuterUV.yMax);
 			}
 		}
 	}
@@ -193,21 +193,21 @@ public abstract class UIBasicSprite : UIWidget
 		this.mInnerUV = inner;
 		switch (this.type)
 		{
-		case UIBasicSprite.Type.Simple:
-			this.SimpleFill(verts, uvs, cols);
-			break;
-		case UIBasicSprite.Type.Sliced:
-			this.SlicedFill(verts, uvs, cols);
-			break;
-		case UIBasicSprite.Type.Tiled:
-			this.TiledFill(verts, uvs, cols);
-			break;
-		case UIBasicSprite.Type.Filled:
-			this.FilledFill(verts, uvs, cols);
-			break;
-		case UIBasicSprite.Type.Advanced:
-			this.AdvancedFill(verts, uvs, cols);
-			break;
+			case UIBasicSprite.Type.Simple:
+				this.SimpleFill(verts, uvs, cols);
+				break;
+			case UIBasicSprite.Type.Sliced:
+				this.SlicedFill(verts, uvs, cols);
+				break;
+			case UIBasicSprite.Type.Tiled:
+				this.TiledFill(verts, uvs, cols);
+				break;
+			case UIBasicSprite.Type.Filled:
+				this.FilledFill(verts, uvs, cols);
+				break;
+			case UIBasicSprite.Type.Advanced:
+				this.AdvancedFill(verts, uvs, cols);
+				break;
 		}
 	}
 

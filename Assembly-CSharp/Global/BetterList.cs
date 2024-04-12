@@ -189,7 +189,7 @@ public class BetterList<T>
 	}
 
 	[DebuggerHidden]
-    [DebuggerStepThrough]
+	[DebuggerStepThrough]
 	public void Sort(BetterList<T>.CompareFunc comparer)
 	{
 		Int32 num = 0;

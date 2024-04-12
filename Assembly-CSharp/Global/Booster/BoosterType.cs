@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum BoosterType
+﻿public enum BoosterType
 {
 	BattleAssistance,
 	HighSpeedMode,

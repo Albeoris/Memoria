@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Memoria;
 
 public class ModelButtonManager : MonoBehaviour
 {

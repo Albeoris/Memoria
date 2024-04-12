@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using Memoria;
 
 internal class ScrollItemKeyNavigation : MonoBehaviour
 {

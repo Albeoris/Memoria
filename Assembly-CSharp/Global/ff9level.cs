@@ -1,30 +1,29 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using FF9;
+﻿using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Prime.CSV;
 using NCalc;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 public static class ff9level
 {
 	public const Int32 LEVEL_COUNT = 99;
 
 	public static readonly Dictionary<CharacterId, CharacterBaseStats> CharacterBaseStats;
-    public static readonly CharacterLevelUp[] CharacterLevelUps;
+	public static readonly CharacterLevelUp[] CharacterLevelUps;
 
-    static ff9level()
-    {
-        CharacterBaseStats = LoadBaseStats();
-        CharacterLevelUps = LoadLeveling();
-    }
+	static ff9level()
+	{
+		CharacterBaseStats = LoadBaseStats();
+		CharacterLevelUps = LoadLeveling();
+	}
 
-    private static Dictionary<CharacterId, CharacterBaseStats> LoadBaseStats()
-    {
-        try
+	private static Dictionary<CharacterId, CharacterBaseStats> LoadBaseStats()
+	{
+		try
 		{
 			String inputPath = DataResources.Characters.PureDirectory + DataResources.Characters.BaseStatsFile;
 			Dictionary<CharacterId, CharacterBaseStats> result = new Dictionary<CharacterId, CharacterBaseStats>();
@@ -37,17 +36,17 @@ public static class ff9level
 				if (!result.ContainsKey((CharacterId)i))
 					throw new NotSupportedException($"You must set base stats for at least 12 characters, with IDs between 0 and 11.");
 			return result;
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "[ff9level] Load base stats of characters failed.");
-            UIManager.Input.ConfirmQuit();
-            return null;
-        }
-    }
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "[ff9level] Load base stats of characters failed.");
+			UIManager.Input.ConfirmQuit();
+			return null;
+		}
+	}
 
-    private static CharacterLevelUp[] LoadLeveling()
-    {
+	private static CharacterLevelUp[] LoadLeveling()
+	{
 		try
 		{
 			String inputPath = DataResources.Characters.PureDirectory + DataResources.Characters.Leveling;
@@ -67,9 +66,9 @@ public static class ff9level
 			UIManager.Input.ConfirmQuit();
 			return null;
 		}
-    }
+	}
 
-    public static Int32 FF9Level_GetDex(PLAYER player, Int32 lv, Boolean lvup)
+	public static Int32 FF9Level_GetDex(PLAYER player, Int32 lv, Boolean lvup)
 	{
 		FF9LEVEL_BONUS bonus = player.bonus;
 		CharacterBaseStats baseStats = ff9level.CharacterBaseStats[player.Index];
@@ -235,18 +234,18 @@ public static class ff9level
 				ItemStats equipPrivilege = ff9equip.ItemStatsData[itemData.bonus];
 				switch (base_type)
 				{
-				case 0:
-					bonus += equipPrivilege.dex;
-					break;
-				case 1:
-					bonus += equipPrivilege.str;
-					break;
-				case 2:
-					bonus += equipPrivilege.mgc;
-					break;
-				case 3:
-					bonus += equipPrivilege.wpr;
-					break;
+					case 0:
+						bonus += equipPrivilege.dex;
+						break;
+					case 1:
+						bonus += equipPrivilege.str;
+						break;
+					case 2:
+						bonus += equipPrivilege.mgc;
+						break;
+					case 3:
+						bonus += equipPrivilege.wpr;
+						break;
 				}
 			}
 		}

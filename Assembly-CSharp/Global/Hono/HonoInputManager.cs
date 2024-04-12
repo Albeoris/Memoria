@@ -1,17 +1,16 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using UnityXInput;
-using Memoria;
 using XInputDotNetPure;
 
 public class HonoInputManager : PersistenSingleton<HonoInputManager>
 {
 	public HonoInputManager()
 	{
-        this.analogControlEnabled = Configuration.AnalogControl.Enabled;
+		this.analogControlEnabled = Configuration.AnalogControl.Enabled;
 		KeyCode[] array = new KeyCode[3];
 		array[0] = KeyCode.KeypadEnter;
 		array[1] = KeyCode.Mouse1;
@@ -107,7 +106,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		this.hasVAxisSignalNotZero = new Boolean[2];
 		this.rightAnalogButtonStatus = new Boolean[3];
 		this.isButtonDown = new Boolean[10];
-		}
+	}
 
 	static HonoInputManager()
 	{
@@ -149,9 +148,9 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
 	private void ScanPauseCombinationKey()
 	{
-        Single axis = UnityEngine.Input.GetAxis(this.SpecificPlatformRightTriggerKey);
-        Single axis2 = UnityEngine.Input.GetAxis(this.SpecificPlatformLeftTriggerKey);
-        if (!this.isInputDown[8])
+		Single axis = UnityEngine.Input.GetAxis(this.SpecificPlatformRightTriggerKey);
+		Single axis2 = UnityEngine.Input.GetAxis(this.SpecificPlatformLeftTriggerKey);
+		if (!this.isInputDown[8])
 		{
 			if (axis > 0.19f && axis2 > 0.19f)
 			{
@@ -209,45 +208,45 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		this.ScanOnScreenSources();
 	}
 
-    private void ScanKeySources()
-    {
-        this.ResetSources();
-        if (this.isDisablePrimaryKey)
-        {
-            for (Int32 index = 0; index < 3 && (UnityEngine.Input.touchCount <= 1 || index != 1); ++index)
-            {
-                this.inputSources[index] = !UnityEngine.Input.GetButton(this.joystickKeysPrimary[index]) ? (UnityEngine.Input.GetKey(this.InputKeys2[index]) || UnityEngine.Input.GetKey(this.InputKeys3[index]) ? SourceControl.KeyBoard : SourceControl.None) : SourceControl.Joystick;
-                this.inputDownSources[index] = this.inputDownSources[index] != SourceControl.None || !UnityEngine.Input.GetButtonDown(this.joystickKeysPrimary[index]) ? (this.inputDownSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyDown(this.InputKeys2[index]) && !UnityEngine.Input.GetKeyDown(this.InputKeys3[index]) ? SourceControl.None : SourceControl.KeyBoard) : SourceControl.Joystick;
-                this.inputUpSources[index] = this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetButtonUp(this.joystickKeysPrimary[index]) ? (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyUp(this.InputKeys2[index]) && !UnityEngine.Input.GetKeyUp(this.InputKeys3[index]) ? SourceControl.None : SourceControl.KeyBoard) : SourceControl.Joystick;
-            }
-        }
-        else
-        {
-            for (Int32 index = 0; index < this.KeyName.Length && (UnityEngine.Input.touchCount <= 1 || index != 1); ++index)
-            {
-                this.inputSources[index] = this.joystickKeysPrimary[index] == this.SpecificPlatformLeftTriggerKey || this.joystickKeysPrimary[index] == this.SpecificPlatformRightTriggerKey ? (UnityEngine.Input.GetKey(this.inputKeysPrimary[index]) || index < 2 && (UnityEngine.Input.GetKey(this.InputKeys2[index]) || UnityEngine.Input.GetKey(this.InputKeys3[index])) ? SourceControl.KeyBoard : ((Double)UnityEngine.Input.GetAxisRaw(this.joystickKeysPrimary[index]) == 0.0 ? SourceControl.None : SourceControl.Joystick)) : (index >= 2 ? (!UnityEngine.Input.GetKey(this.inputKeysPrimary[index]) ? (!UnityEngine.Input.GetButton(this.joystickKeysPrimary[index]) ? SourceControl.None : SourceControl.Joystick) : SourceControl.KeyBoard) : (UnityEngine.Input.GetKey(this.inputKeysPrimary[index]) || UnityEngine.Input.GetKey(this.InputKeys2[index]) || UnityEngine.Input.GetKey(this.InputKeys3[index]) ? SourceControl.KeyBoard : (!UnityEngine.Input.GetButton(this.joystickKeysPrimary[index]) ? SourceControl.None : SourceControl.Joystick)));
-                if (this.joystickKeysPrimary[index] == this.SpecificPlatformLeftTriggerKey || this.joystickKeysPrimary[index] == this.SpecificPlatformRightTriggerKey)
-                {
-                    if (this.inputDownSources[index] == SourceControl.None && (UnityEngine.Input.GetKeyDown(this.inputKeysPrimary[index]) || index < 2 && (UnityEngine.Input.GetKeyDown(this.InputKeys2[index]) || UnityEngine.Input.GetKeyDown(this.InputKeys3[index]))))
-                        this.inputDownSources[index] = SourceControl.KeyBoard;
-                    else if (this.inputDownSources[index] == SourceControl.None && UnityEngine.Input.GetKeyDown(this.inputKeysPrimary[index]))
-                        this.inputDownSources[index] = SourceControl.KeyBoard;
-                    else if (this.inputDownSources[index] == SourceControl.None && (Double)UnityEngine.Input.GetAxisRaw(this.joystickKeysPrimary[index]) != 0.0)
-                    {
-                        if (!this.hasJoyAxisSignal[index])
-                            this.inputDownSources[index] = SourceControl.Joystick;
-                    }
-                    else
-                        this.inputDownSources[index] = SourceControl.None;
-                }
-                else
-                    this.inputDownSources[index] = index >= 2 ? (this.inputDownSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyDown(this.inputKeysPrimary[index]) ? (this.inputDownSources[index] != SourceControl.None || !UnityEngine.Input.GetButtonDown(this.joystickKeysPrimary[index]) ? SourceControl.None : SourceControl.Joystick) : SourceControl.KeyBoard) : (this.inputDownSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyDown(this.inputKeysPrimary[index]) && !UnityEngine.Input.GetKeyDown(this.InputKeys2[index]) && !UnityEngine.Input.GetKeyDown(this.InputKeys3[index]) ? (this.inputDownSources[index] != SourceControl.None || !UnityEngine.Input.GetButtonDown(this.joystickKeysPrimary[index]) ? SourceControl.None : SourceControl.Joystick) : SourceControl.KeyBoard);
-                this.inputUpSources[index] = this.joystickKeysPrimary[index] == this.SpecificPlatformLeftTriggerKey || this.joystickKeysPrimary[index] == this.SpecificPlatformRightTriggerKey ? (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyUp(this.inputKeysPrimary[index]) && (index >= 2 || !UnityEngine.Input.GetKeyUp(this.InputKeys2[index]) && !UnityEngine.Input.GetKeyUp(this.InputKeys3[index])) ? (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyUp(this.inputKeysPrimary[index]) ? (this.inputUpSources[index] != SourceControl.None || (Double)UnityEngine.Input.GetAxisRaw(this.joystickKeysPrimary[index]) != 0.0 ? SourceControl.None : (!this.hasJoyAxisSignalNotZero[index] ? SourceControl.None : SourceControl.Joystick)) : SourceControl.KeyBoard) : SourceControl.KeyBoard) : (index >= 2 ? (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyUp(this.inputKeysPrimary[index]) ? (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetButtonUp(this.joystickKeysPrimary[index]) ? SourceControl.None : SourceControl.Joystick) : SourceControl.KeyBoard) : (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyUp(this.inputKeysPrimary[index]) && !UnityEngine.Input.GetKeyUp(this.InputKeys2[index]) && !UnityEngine.Input.GetKeyUp(this.InputKeys3[index]) ? (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetButtonUp(this.joystickKeysPrimary[index]) ? SourceControl.None : SourceControl.Joystick) : SourceControl.KeyBoard));
-            }
-        }
-    }
+	private void ScanKeySources()
+	{
+		this.ResetSources();
+		if (this.isDisablePrimaryKey)
+		{
+			for (Int32 index = 0; index < 3 && (UnityEngine.Input.touchCount <= 1 || index != 1); ++index)
+			{
+				this.inputSources[index] = !UnityEngine.Input.GetButton(this.joystickKeysPrimary[index]) ? (UnityEngine.Input.GetKey(this.InputKeys2[index]) || UnityEngine.Input.GetKey(this.InputKeys3[index]) ? SourceControl.KeyBoard : SourceControl.None) : SourceControl.Joystick;
+				this.inputDownSources[index] = this.inputDownSources[index] != SourceControl.None || !UnityEngine.Input.GetButtonDown(this.joystickKeysPrimary[index]) ? (this.inputDownSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyDown(this.InputKeys2[index]) && !UnityEngine.Input.GetKeyDown(this.InputKeys3[index]) ? SourceControl.None : SourceControl.KeyBoard) : SourceControl.Joystick;
+				this.inputUpSources[index] = this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetButtonUp(this.joystickKeysPrimary[index]) ? (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyUp(this.InputKeys2[index]) && !UnityEngine.Input.GetKeyUp(this.InputKeys3[index]) ? SourceControl.None : SourceControl.KeyBoard) : SourceControl.Joystick;
+			}
+		}
+		else
+		{
+			for (Int32 index = 0; index < this.KeyName.Length && (UnityEngine.Input.touchCount <= 1 || index != 1); ++index)
+			{
+				this.inputSources[index] = this.joystickKeysPrimary[index] == this.SpecificPlatformLeftTriggerKey || this.joystickKeysPrimary[index] == this.SpecificPlatformRightTriggerKey ? (UnityEngine.Input.GetKey(this.inputKeysPrimary[index]) || index < 2 && (UnityEngine.Input.GetKey(this.InputKeys2[index]) || UnityEngine.Input.GetKey(this.InputKeys3[index])) ? SourceControl.KeyBoard : ((Double)UnityEngine.Input.GetAxisRaw(this.joystickKeysPrimary[index]) == 0.0 ? SourceControl.None : SourceControl.Joystick)) : (index >= 2 ? (!UnityEngine.Input.GetKey(this.inputKeysPrimary[index]) ? (!UnityEngine.Input.GetButton(this.joystickKeysPrimary[index]) ? SourceControl.None : SourceControl.Joystick) : SourceControl.KeyBoard) : (UnityEngine.Input.GetKey(this.inputKeysPrimary[index]) || UnityEngine.Input.GetKey(this.InputKeys2[index]) || UnityEngine.Input.GetKey(this.InputKeys3[index]) ? SourceControl.KeyBoard : (!UnityEngine.Input.GetButton(this.joystickKeysPrimary[index]) ? SourceControl.None : SourceControl.Joystick)));
+				if (this.joystickKeysPrimary[index] == this.SpecificPlatformLeftTriggerKey || this.joystickKeysPrimary[index] == this.SpecificPlatformRightTriggerKey)
+				{
+					if (this.inputDownSources[index] == SourceControl.None && (UnityEngine.Input.GetKeyDown(this.inputKeysPrimary[index]) || index < 2 && (UnityEngine.Input.GetKeyDown(this.InputKeys2[index]) || UnityEngine.Input.GetKeyDown(this.InputKeys3[index]))))
+						this.inputDownSources[index] = SourceControl.KeyBoard;
+					else if (this.inputDownSources[index] == SourceControl.None && UnityEngine.Input.GetKeyDown(this.inputKeysPrimary[index]))
+						this.inputDownSources[index] = SourceControl.KeyBoard;
+					else if (this.inputDownSources[index] == SourceControl.None && (Double)UnityEngine.Input.GetAxisRaw(this.joystickKeysPrimary[index]) != 0.0)
+					{
+						if (!this.hasJoyAxisSignal[index])
+							this.inputDownSources[index] = SourceControl.Joystick;
+					}
+					else
+						this.inputDownSources[index] = SourceControl.None;
+				}
+				else
+					this.inputDownSources[index] = index >= 2 ? (this.inputDownSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyDown(this.inputKeysPrimary[index]) ? (this.inputDownSources[index] != SourceControl.None || !UnityEngine.Input.GetButtonDown(this.joystickKeysPrimary[index]) ? SourceControl.None : SourceControl.Joystick) : SourceControl.KeyBoard) : (this.inputDownSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyDown(this.inputKeysPrimary[index]) && !UnityEngine.Input.GetKeyDown(this.InputKeys2[index]) && !UnityEngine.Input.GetKeyDown(this.InputKeys3[index]) ? (this.inputDownSources[index] != SourceControl.None || !UnityEngine.Input.GetButtonDown(this.joystickKeysPrimary[index]) ? SourceControl.None : SourceControl.Joystick) : SourceControl.KeyBoard);
+				this.inputUpSources[index] = this.joystickKeysPrimary[index] == this.SpecificPlatformLeftTriggerKey || this.joystickKeysPrimary[index] == this.SpecificPlatformRightTriggerKey ? (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyUp(this.inputKeysPrimary[index]) && (index >= 2 || !UnityEngine.Input.GetKeyUp(this.InputKeys2[index]) && !UnityEngine.Input.GetKeyUp(this.InputKeys3[index])) ? (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyUp(this.inputKeysPrimary[index]) ? (this.inputUpSources[index] != SourceControl.None || (Double)UnityEngine.Input.GetAxisRaw(this.joystickKeysPrimary[index]) != 0.0 ? SourceControl.None : (!this.hasJoyAxisSignalNotZero[index] ? SourceControl.None : SourceControl.Joystick)) : SourceControl.KeyBoard) : SourceControl.KeyBoard) : (index >= 2 ? (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyUp(this.inputKeysPrimary[index]) ? (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetButtonUp(this.joystickKeysPrimary[index]) ? SourceControl.None : SourceControl.Joystick) : SourceControl.KeyBoard) : (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetKeyUp(this.inputKeysPrimary[index]) && !UnityEngine.Input.GetKeyUp(this.InputKeys2[index]) && !UnityEngine.Input.GetKeyUp(this.InputKeys3[index]) ? (this.inputUpSources[index] != SourceControl.None || !UnityEngine.Input.GetButtonUp(this.joystickKeysPrimary[index]) ? SourceControl.None : SourceControl.Joystick) : SourceControl.KeyBoard));
+			}
+		}
+	}
 
-    private void ScanDirectionSources()
+	private void ScanDirectionSources()
 	{
 		Control lazyKey = UIManager.Input.GetLazyKey();
 		Single num;
@@ -260,10 +259,10 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		}
 		else
 		{
-            this.directionAxisSources = (Double)UnityEngine.Input.GetAxis(this.SpecificPlatformHorizontalInputKey) != 0.0 || (Double)UnityEngine.Input.GetAxis(this.SpecificPlatformVerticalInputKey) != 0.0 ? SourceControl.Joystick : ((Double)UnityEngine.Input.GetAxis(this.DefaultHorizontalInputKey) != 0.0 || (Double)UnityEngine.Input.GetAxis(this.DefaultVerticalInputKey) != 0.0 ? SourceControl.KeyBoard : SourceControl.None);
-            num = this.GetHorizontalNavigation();
-            num2 = this.GetVerticalNavigation();
-        }
+			this.directionAxisSources = (Double)UnityEngine.Input.GetAxis(this.SpecificPlatformHorizontalInputKey) != 0.0 || (Double)UnityEngine.Input.GetAxis(this.SpecificPlatformVerticalInputKey) != 0.0 ? SourceControl.Joystick : ((Double)UnityEngine.Input.GetAxis(this.DefaultHorizontalInputKey) != 0.0 || (Double)UnityEngine.Input.GetAxis(this.DefaultVerticalInputKey) != 0.0 ? SourceControl.KeyBoard : SourceControl.None);
+			num = this.GetHorizontalNavigation();
+			num2 = this.GetVerticalNavigation();
+		}
 		if (!this.IgnoreCheckingDirectionSources)
 		{
 			if (num > 0f)
@@ -482,10 +481,10 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 				return "Horizontal iOS";
 			}
 
-		    return "Horizontal";
+			return "Horizontal";
 
-            // I don't know what is that but for DualShock 4 it returns -0.085 for the X-Axis
-            // return "Horizontal NonMobile";
+			// I don't know what is that but for DualShock 4 it returns -0.085 for the X-Axis
+			// return "Horizontal NonMobile";
 		}
 	}
 
@@ -510,10 +509,10 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 				return "Vertical iOS";
 			}
 
-		    return "Vertical";
+			return "Vertical";
 
-		    // I don't know what is that but for DualShock 4 it returns -0.085 for the X-Axis
-		    // return "Vertical NonMobile";
+			// I don't know what is that but for DualShock 4 it returns -0.085 for the X-Axis
+			// return "Vertical NonMobile";
 		}
 	}
 
@@ -629,10 +628,10 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		{
 			return false;
 		}
-        int num;
-        HonoInputManager.GetWindowThreadProcessId(foregroundWindow, out num);
-        return num == HonoInputManager.procId;
-    }
+		int num;
+		HonoInputManager.GetWindowThreadProcessId(foregroundWindow, out num);
+		return num == HonoInputManager.procId;
+	}
 
 	private Boolean CheckRawXInput(String unityButton, GamePadState padState)
 	{
@@ -726,12 +725,12 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		return global::GamePad.GetState(PlayerIndex.One).IsConnected;
 	}
 
-    private void InitializeProcID()
-    {
-        HonoInputManager.procId = Process.GetCurrentProcess().Id;
-    }
+	private void InitializeProcID()
+	{
+		HonoInputManager.procId = Process.GetCurrentProcess().Id;
+	}
 
-    private Boolean IsMobileJoystickConnect()
+	private Boolean IsMobileJoystickConnect()
 	{
 		String[] joystickNames = UnityXInput.Input.GetJoystickNames();
 		return (Int32)joystickNames.Length > 0 && joystickNames[0].Length > 0;
@@ -741,8 +740,8 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 	{
 		base.Awake();
 		this.InitialInput();
-        this.InitializeProcID();
-    }
+		this.InitializeProcID();
+	}
 
 	private void Start()
 	{
@@ -1086,16 +1085,16 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 	{
 		switch (control)
 		{
-		case Control.Up:
-			return this.isVAxisTriggered[0];
-		case Control.Down:
-			return this.isVAxisTriggered[1];
-		case Control.Left:
-			return this.isHAxisTriggered[0];
-		case Control.Right:
-			return this.isHAxisTriggered[1];
-		default:
-			return false;
+			case Control.Up:
+				return this.isVAxisTriggered[0];
+			case Control.Down:
+				return this.isVAxisTriggered[1];
+			case Control.Left:
+				return this.isHAxisTriggered[0];
+			case Control.Right:
+				return this.isHAxisTriggered[1];
+			default:
+				return false;
 		}
 	}
 
@@ -1103,16 +1102,16 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 	{
 		switch (control)
 		{
-		case Control.Up:
-			return this.isVAxisUp[0];
-		case Control.Down:
-			return this.isVAxisUp[1];
-		case Control.Left:
-			return this.isHAxisUp[0];
-		case Control.Right:
-			return this.isHAxisUp[1];
-		default:
-			return false;
+			case Control.Up:
+				return this.isVAxisUp[0];
+			case Control.Down:
+				return this.isVAxisUp[1];
+			case Control.Left:
+				return this.isHAxisUp[0];
+			case Control.Right:
+				return this.isHAxisUp[1];
+			default:
+				return false;
 		}
 	}
 
@@ -1242,35 +1241,35 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		return VirtualAnalog.Value;
 	}
 
-    public Single GetHorizontalNavigation()
-    {
-        if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
-        {
-            Single axis2 = UnityXInput.Input.GetAxis(this.SpecificPlatformHorizontalInputKey);
-            if (Math.Abs(axis2) > 0.01)
-                return axis2;
-        }
-        return UnityXInput.Input.GetAxis(this.DefaultHorizontalInputKey);
-    }
-
-    public Single GetVerticalNavigation()
+	public Single GetHorizontalNavigation()
 	{
-	    if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
-	    {
-	        Single axis2 = UnityXInput.Input.GetAxis(this.SpecificPlatformVerticalInputKey);
-	        if (Math.Abs(axis2) > 0.01)
-	            return axis2;
-	    }
-        return UnityXInput.Input.GetAxis(this.DefaultVerticalInputKey);
+		if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+		{
+			Single axis2 = UnityXInput.Input.GetAxis(this.SpecificPlatformHorizontalInputKey);
+			if (Math.Abs(axis2) > 0.01)
+				return axis2;
+		}
+		return UnityXInput.Input.GetAxis(this.DefaultHorizontalInputKey);
+	}
+
+	public Single GetVerticalNavigation()
+	{
+		if (Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer)
+		{
+			Single axis2 = UnityXInput.Input.GetAxis(this.SpecificPlatformVerticalInputKey);
+			if (Math.Abs(axis2) > 0.01)
+				return axis2;
+		}
+		return UnityXInput.Input.GetAxis(this.DefaultVerticalInputKey);
 	}
 
 	private Vector2 GetJoyStickValue()
 	{
-        Vector2 inputAxis = new Vector2(this.GetHorizontalNavigation(), this.GetVerticalNavigation());
-        if (inputAxis.magnitude > 1 && analogControlEnabled)
-            inputAxis.Normalize();
-        return inputAxis;
-    }
+		Vector2 inputAxis = new Vector2(this.GetHorizontalNavigation(), this.GetVerticalNavigation());
+		if (inputAxis.magnitude > 1 && analogControlEnabled)
+			inputAxis.Normalize();
+		return inputAxis;
+	}
 
 	private Vector2 GetInputAxis()
 	{
@@ -1278,12 +1277,12 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 		{
 			return VirtualAnalog.Value;
 		}
-        Vector2 inputAxis = new Vector2(this.GetHorizontalNavigation(), this.GetVerticalNavigation());
-        if (inputAxis.magnitude > 1 && analogControlEnabled)
-        {
-            inputAxis.Normalize();
-        }
-        return inputAxis;
+		Vector2 inputAxis = new Vector2(this.GetHorizontalNavigation(), this.GetVerticalNavigation());
+		if (inputAxis.magnitude > 1 && analogControlEnabled)
+		{
+			inputAxis.Normalize();
+		}
+		return inputAxis;
 	}
 
 	private void ScanAndroidSecondarySelectKey()
@@ -1393,9 +1392,9 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
 	public static Single AnalogThreadhold = 0.1f;
 
-    private static Int32 procId;
+	private static Int32 procId;
 
-    [SerializeField]
+	[SerializeField]
 	private String[] KeyName = new String[]
 	{
 		"Confirm",
@@ -1471,7 +1470,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
 	private Boolean isDisablePrimaryKey;
 
-    private Boolean analogControlEnabled;
+	private Boolean analogControlEnabled;
 
 	[SerializeField]
 	private Boolean[] rightAnalogButtonStatus;

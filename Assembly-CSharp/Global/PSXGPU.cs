@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria.Scripts;
+using System;
 using System.IO;
-using Memoria.Scripts;
 using UnityEngine;
 using UnityEngine.Rendering;
 
@@ -95,93 +95,93 @@ public static class PSXGPU
 		PSXGPU.curMaterial = (PSXMaterial)null;
 		switch (PSXGPU.ff9debugGetPrimType((PSX_LIBGPU.P_TAG*)addr, true))
 		{
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_F3:
-			PSXGPU.exePolyF3((PSX_LIBGPU.POLY_F3*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_FT3:
-			PSXGPU.exePolyFT3((PSX_LIBGPU.POLY_FT3*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_G3:
-			PSXGPU.exePolyG3((PSX_LIBGPU.POLY_G3*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_GT3:
-			PSXGPU.exePolyGT3((PSX_LIBGPU.POLY_GT3*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_F4:
-			PSXGPU.exePolyF4((PSX_LIBGPU.POLY_F4*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_FT4:
-			PSXGPU.exePolyFT4((PSX_LIBGPU.POLY_FT4*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_G4:
-			PSXGPU.exePolyG4((PSX_LIBGPU.POLY_G4*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_GT4:
-			PSXGPU.exePolyGT4((PSX_LIBGPU.POLY_GT4*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_SPRT_8:
-			PSXGPU.exeSPRT_8((PSX_LIBGPU.SPRT_8*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_SPRT_16:
-			PSXGPU.exeSPRT_16((PSX_LIBGPU.SPRT_16*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_SPRT:
-			PSXGPU.exeSPRT((PSX_LIBGPU.SPRT*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_TILE_1:
-			PSXGPU.exeTILE_1((PSX_LIBGPU.TILE_1*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_TILE_8:
-			PSXGPU.exeTILE_8((PSX_LIBGPU.TILE_8*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_TILE_16:
-			PSXGPU.exeTILE_16((PSX_LIBGPU.TILE_16*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_TILE:
-			PSXGPU.exeTILE((PSX_LIBGPU.TILE*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_LINE_F2:
-			PSXGPU.exeLineF2((PSX_LIBGPU.LINE_F2*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_LINE_G2:
-			PSXGPU.exeLineG2((PSX_LIBGPU.LINE_G2*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_LINE_F3:
-			PSXGPU.exeLineF3((PSX_LIBGPU.LINE_F3*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_LINE_G3:
-			PSXGPU.exeLineG3((PSX_LIBGPU.LINE_G3*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_LINE_F4:
-			PSXGPU.exeLineF4((PSX_LIBGPU.LINE_F4*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_LINE_G4:
-			PSXGPU.exeLineG4((PSX_LIBGPU.LINE_G4*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_TWIN:
-			PSXGPU.exeDR_TWIN((PSX_LIBGPU.DR_TWIN*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_AREA:
-			PSXGPU.exeDR_AREA((PSX_LIBGPU.DR_AREA*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_OFFSET:
-			PSXGPU.exeDR_OFFSET((PSX_LIBGPU.DR_OFFSET*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_MODE:
-			PSXGPU.exeDR_MODE((PSX_LIBGPU.DR_MODE*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_ENV:
-			PSXGPU.exeDR_ENV((PSX_LIBGPU.DR_ENV*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_LOAD:
-			PSXGPU.exeDR_LOAD((PSX_LIBGPU.DR_LOAD*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_TPAGE:
-			PSXGPU.exeDR_TPAGE((PSX_LIBGPU.DR_TPAGE*)addr);
-			break;
-		case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_STP:
-			PSXGPU.exeDR_STP((PSX_LIBGPU.DR_STP*)addr);
-			break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_F3:
+				PSXGPU.exePolyF3((PSX_LIBGPU.POLY_F3*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_FT3:
+				PSXGPU.exePolyFT3((PSX_LIBGPU.POLY_FT3*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_G3:
+				PSXGPU.exePolyG3((PSX_LIBGPU.POLY_G3*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_GT3:
+				PSXGPU.exePolyGT3((PSX_LIBGPU.POLY_GT3*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_F4:
+				PSXGPU.exePolyF4((PSX_LIBGPU.POLY_F4*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_FT4:
+				PSXGPU.exePolyFT4((PSX_LIBGPU.POLY_FT4*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_G4:
+				PSXGPU.exePolyG4((PSX_LIBGPU.POLY_G4*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_POLY_GT4:
+				PSXGPU.exePolyGT4((PSX_LIBGPU.POLY_GT4*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_SPRT_8:
+				PSXGPU.exeSPRT_8((PSX_LIBGPU.SPRT_8*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_SPRT_16:
+				PSXGPU.exeSPRT_16((PSX_LIBGPU.SPRT_16*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_SPRT:
+				PSXGPU.exeSPRT((PSX_LIBGPU.SPRT*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_TILE_1:
+				PSXGPU.exeTILE_1((PSX_LIBGPU.TILE_1*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_TILE_8:
+				PSXGPU.exeTILE_8((PSX_LIBGPU.TILE_8*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_TILE_16:
+				PSXGPU.exeTILE_16((PSX_LIBGPU.TILE_16*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_TILE:
+				PSXGPU.exeTILE((PSX_LIBGPU.TILE*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_LINE_F2:
+				PSXGPU.exeLineF2((PSX_LIBGPU.LINE_F2*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_LINE_G2:
+				PSXGPU.exeLineG2((PSX_LIBGPU.LINE_G2*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_LINE_F3:
+				PSXGPU.exeLineF3((PSX_LIBGPU.LINE_F3*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_LINE_G3:
+				PSXGPU.exeLineG3((PSX_LIBGPU.LINE_G3*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_LINE_F4:
+				PSXGPU.exeLineF4((PSX_LIBGPU.LINE_F4*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_LINE_G4:
+				PSXGPU.exeLineG4((PSX_LIBGPU.LINE_G4*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_TWIN:
+				PSXGPU.exeDR_TWIN((PSX_LIBGPU.DR_TWIN*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_AREA:
+				PSXGPU.exeDR_AREA((PSX_LIBGPU.DR_AREA*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_OFFSET:
+				PSXGPU.exeDR_OFFSET((PSX_LIBGPU.DR_OFFSET*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_MODE:
+				PSXGPU.exeDR_MODE((PSX_LIBGPU.DR_MODE*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_ENV:
+				PSXGPU.exeDR_ENV((PSX_LIBGPU.DR_ENV*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_LOAD:
+				PSXGPU.exeDR_LOAD((PSX_LIBGPU.DR_LOAD*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_TPAGE:
+				PSXGPU.exeDR_TPAGE((PSX_LIBGPU.DR_TPAGE*)addr);
+				break;
+			case PSXGPU.FF9DebugPrimType.FF9DEBUG_PRIMTYPE_DR_STP:
+				PSXGPU.exeDR_STP((PSX_LIBGPU.DR_STP*)addr);
+				break;
 		}
 		if (PSXGPU.isNeedEnd)
 		{
@@ -769,9 +769,9 @@ public static class PSXGPU
 
 	private unsafe static void exeDR_OFFSET(PSX_LIBGPU.DR_OFFSET* ObjPtr)
 	{
-        PSXGPU.drOffset.x = ObjPtr->code[1] & 65535u;
-        PSXGPU.drOffset.y = ObjPtr->code[1] >> 16;
-    }
+		PSXGPU.drOffset.x = ObjPtr->code[1] & 65535u;
+		PSXGPU.drOffset.y = ObjPtr->code[1] >> 16;
+	}
 
 	private unsafe static void exeDR_LOAD(PSX_LIBGPU.DR_LOAD* ObjPtr)
 	{

@@ -1,8 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
+﻿using Memoria.Data;
 using Memoria.Scripts;
-using Memoria.Data;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class SFXMesh : SFXMeshBase
@@ -952,7 +952,7 @@ public class SFXMesh : SFXMeshBase
 	public static Int32 GPosIndex;
 	public static Int32 GTexIndex;
 	public static Int32 GColIndex;
-	
+
 	private static Vector3[] __gPos;
 	private static Vector2[] __gTex;
 	private static Color32[] __gCol;

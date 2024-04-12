@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using System.Collections;
 using Object = System.Object;
 
 public class SoundLibWndProc : MonoBehaviour
@@ -21,48 +21,47 @@ public class SoundLibWndProc : MonoBehaviour
 	[DllImport("user32.dll")]
 	private static extern IntPtr GetActiveWindow();
 
-    [DllImport("user32.dll")]
-    public static extern IntPtr FindWindow(string className, string windowName);
+	[DllImport("user32.dll")]
+	public static extern IntPtr FindWindow(string className, string windowName);
 
-    public Boolean Is64Bit()
+	public Boolean Is64Bit()
 	{
 		String environmentVariable = Environment.GetEnvironmentVariable("PROCESSOR_ARCHITECTURE");
 		return !String.IsNullOrEmpty(environmentVariable) && !(environmentVariable.Substring(0, 3) == "x86");
 	}
 
-    private void Start()
-    {
-        base.StartCoroutine(this.CaptureWindowProc());
-    }
+	private void Start()
+	{
+		base.StartCoroutine(this.CaptureWindowProc());
+	}
 
+	private IEnumerator CaptureWindowProc()
+	{
+		while (this.hMainWindow == IntPtr.Zero)
+		{
+			this.hMainWindow = SoundLibWndProc.FindWindow((string)null, Application.productName);
+			if (this.hMainWindow != IntPtr.Zero)
+			{
+				this.newWndProc = new WndProcDelegate(this.WndProc);
+				this.newWndProcPtr = Marshal.GetFunctionPointerForDelegate(this.newWndProc);
+				if (this.Is64Bit())
+				{
+					this.oldWndProcPtr = SoundLibWndProc.SetWindowLongPtr(this.hMainWindow, -4, this.newWndProcPtr);
+				}
+				else
+				{
+					this.oldWndProcPtr = SoundLibWndProc.SetWindowLong(this.hMainWindow, -4, this.newWndProcPtr);
+				}
+			}
+			else
+			{
+				yield return new WaitForEndOfFrame();
+			}
+		}
+		yield break;
+	}
 
-    private IEnumerator CaptureWindowProc()
-    {
-        while (this.hMainWindow == IntPtr.Zero)
-        {
-            this.hMainWindow = SoundLibWndProc.FindWindow((string)null, Application.productName);
-            if (this.hMainWindow != IntPtr.Zero)
-            {
-                this.newWndProc = new WndProcDelegate(this.WndProc);
-                this.newWndProcPtr = Marshal.GetFunctionPointerForDelegate(this.newWndProc);
-                if (this.Is64Bit())
-                {
-                    this.oldWndProcPtr = SoundLibWndProc.SetWindowLongPtr(this.hMainWindow, -4, this.newWndProcPtr);
-                }
-                else
-                {
-                    this.oldWndProcPtr = SoundLibWndProc.SetWindowLong(this.hMainWindow, -4, this.newWndProcPtr);
-                }
-            }
-            else
-            {
-                yield return new WaitForEndOfFrame();
-            }
-        }
-        yield break;
-    }
-
-    public static IntPtr GetWindowHandle()
+	public static IntPtr GetWindowHandle()
 	{
 		return SoundLibWndProc.GetActiveWindow();
 	}

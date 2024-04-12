@@ -1,9 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using Memoria.Scripts;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
-using Memoria.Scripts;
 
 namespace Memoria.Assets
 {

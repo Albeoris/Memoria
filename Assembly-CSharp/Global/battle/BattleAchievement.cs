@@ -1,8 +1,8 @@
-﻿using System;
-using System.Linq;
-using Assets.SiliconSocial;
-using Memoria.Data;
+﻿using Assets.SiliconSocial;
 using FF9;
+using Memoria.Data;
+using System;
+using System.Linq;
 
 public class BattleAchievement
 {
@@ -66,7 +66,7 @@ public class BattleAchievement
 
 	public static void UpdateCommandAchievement(CMD_DATA cmd)
 	{
-	    BattleCommandId cmd_no = cmd.cmd_no;
+		BattleCommandId cmd_no = cmd.cmd_no;
 		if (cmd_no == BattleCommandId.Defend)
 		{
 			BattleAchievement.IncreaseNumber(ref BattleAchievement.achievement.defence_no, 1);

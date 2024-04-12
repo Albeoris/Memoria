@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 public struct SFX_INIT_PARAM
 {
@@ -8,7 +6,7 @@ public struct SFX_INIT_PARAM
 
 	public const Int32 S_REQ_RTRGMAX = 4;
 
-	private unsafe fixed Byte pad0 [2];
+	private unsafe fixed Byte pad0[2];
 
 	public Byte btl_scene_FixedCamera1;
 
@@ -34,7 +32,7 @@ public struct SFX_INIT_PARAM
 
 	public BTL_DATA_INIT btl_data_init7;
 
-    public unsafe fixed Int16 camMat[9];
+	public unsafe fixed Int16 camMat[9];
 
 	public unsafe fixed Int32 camTrans[3];
 

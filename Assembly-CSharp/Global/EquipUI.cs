@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Scenes;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
-using Object = System.Object;
 // ReSharper disable InconsistentNaming
 
 public class EquipUI : UIScene
@@ -116,7 +115,7 @@ public class EquipUI : UIScene
 	{
 		if (!base.OnKeyConfirm(go))
 			return true;
-		
+
 		if (ButtonGroupState.ActiveGroup == SubMenuGroupButton)
 			OnKeyConfirmSubMenuGroupButton(go);
 		else if (ButtonGroupState.ActiveGroup == EquipmentGroupButton)
@@ -286,7 +285,7 @@ public class EquipUI : UIScene
 	{
 		if (!base.OnKeyCancel(go))
 			return true;
-		
+
 		if (ButtonGroupState.ActiveGroup == EquipUI.SubMenuGroupButton)
 		{
 			FF9Sfx.FF9SFX_Play(101);
@@ -325,7 +324,7 @@ public class EquipUI : UIScene
 	{
 		if (!base.OnItemSelect(go))
 			return true;
-		
+
 		if (ButtonGroupState.ActiveGroup == EquipUI.SubMenuGroupButton && this.currentMenu != this.GetSubMenuFromGameObject(go))
 		{
 			this.currentMenu = this.GetSubMenuFromGameObject(go);
@@ -376,10 +375,10 @@ public class EquipUI : UIScene
 	public override Boolean OnKeyLeftBumper(GameObject go)
 	{
 		if (!base.OnKeyLeftBumper(go)
-		    || (ButtonGroupState.ActiveGroup != EquipUI.SubMenuGroupButton && ButtonGroupState.ActiveGroup != EquipUI.EquipmentGroupButton)
-		    || !this.CharacterArrowPanel.activeSelf)
+			|| (ButtonGroupState.ActiveGroup != EquipUI.SubMenuGroupButton && ButtonGroupState.ActiveGroup != EquipUI.EquipmentGroupButton)
+			|| !this.CharacterArrowPanel.activeSelf)
 			return true;
-		
+
 		FF9Sfx.FF9SFX_Play(1047);
 		Int32 num = ff9play.FF9Play_GetPrev(this.currentPartyIndex);
 		if (num != this.currentPartyIndex)
@@ -403,10 +402,10 @@ public class EquipUI : UIScene
 	public override Boolean OnKeyRightBumper(GameObject go)
 	{
 		if (!base.OnKeyRightBumper(go)
-		    || (ButtonGroupState.ActiveGroup != SubMenuGroupButton && ButtonGroupState.ActiveGroup != EquipmentGroupButton)
-		    || !CharacterArrowPanel.activeSelf)
+			|| (ButtonGroupState.ActiveGroup != SubMenuGroupButton && ButtonGroupState.ActiveGroup != EquipmentGroupButton)
+			|| !CharacterArrowPanel.activeSelf)
 			return true;
-		
+
 		FF9Sfx.FF9SFX_Play(1047);
 		Int32 num = ff9play.FF9Play_GetNext(this.currentPartyIndex);
 		if (num != this.currentPartyIndex)
@@ -908,7 +907,7 @@ public class EquipUI : UIScene
 
 	private void DisplayInventoryInfo(Transform item, ListDataTypeBase data, Int32 index, Boolean isInit)
 	{
-		EquipInventoryListData equipInventoryListData = (EquipInventoryListData) data;
+		EquipInventoryListData equipInventoryListData = (EquipInventoryListData)data;
 		ItemListDetailWithIconHUD itemListDetailWithIconHUD = new ItemListDetailWithIconHUD(item.gameObject, true);
 		if (isInit)
 		{
@@ -1183,7 +1182,6 @@ public class EquipUI : UIScene
 				itemToAbilities.Add(itemId, learnableAbilities);
 			}
 
-
 			Dictionary<RegularItem, Int32> dic = new Dictionary<RegularItem, Int32>(keyToItem.Count);
 			foreach (var pair in keyToItem)
 			{
@@ -1253,7 +1251,6 @@ public class EquipUI : UIScene
 		leftAp = Int32.MaxValue;
 		return false;
 	}
-
 
 	private void EquipStrongest()
 	{

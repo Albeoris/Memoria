@@ -56,10 +56,10 @@ public class SlotPreviewReadWriterUtil : MonoBehaviour
 				goto IL_597;
 			}
 			goto IL_1CC;
-			IL_597:
+		IL_597:
 			i++;
 			continue;
-			IL_1CC:
+		IL_1CC:
 			Boolean isValidPreview = false;
 			SharedDataPreviewSlot preview = new SharedDataPreviewSlot();
 			using (MemoryStream memStram = new MemoryStream(plainText))

@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 
 namespace FF9
 {
@@ -34,21 +33,21 @@ namespace FF9
 			return 1u << numArray[index];
 		}
 
-        /// <summary>
-        /// Counts the number of set bits (bits with a value of 1) in an unsigned 64-bit integer.
-        /// </summary>
-        /// <param name="bitList">The unsigned 64-bit integer to count the set bits in.</param>
-        /// <returns>The count of set bits in the input integer.</returns>
-        public static Byte countBits(UInt64 bitList)
+		/// <summary>
+		/// Counts the number of set bits (bits with a value of 1) in an unsigned 64-bit integer.
+		/// </summary>
+		/// <param name="bitList">The unsigned 64-bit integer to count the set bits in.</param>
+		/// <returns>The count of set bits in the input integer.</returns>
+		public static Byte countBits(UInt64 bitList)
 		{
-            Byte count = 0;
-            while (bitList != 0)
-            {
-                count++;
-                bitList &= bitList - 1;
-            }
-            return count;
-        }
+			Byte count = 0;
+			while (bitList != 0)
+			{
+				count++;
+				bitList &= bitList - 1;
+			}
+			return count;
+		}
 
 		public static UInt64 firstBitSet(UInt64 bitList)
 		{

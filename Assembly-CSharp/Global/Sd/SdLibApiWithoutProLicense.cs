@@ -1,5 +1,3 @@
-﻿using System;
-
-public class SdLibApiWithoutProLicense : ISdLibAPI
+﻿public class SdLibApiWithoutProLicense : ISdLibAPI
 {
 }

@@ -1,7 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Collections.Generic;
-using Memoria.Prime;
+using System.IO;
 
 public class SFXBinaryFile
 {
@@ -133,9 +132,8 @@ public class SFXBinaryFile
 				akaoFileList.Add(new KeyValuePair<Int32, Int32>(currentChunk, seqCode.arg1));
 		} while (sequence[sequence.Count - 1].code != SequenceCode.CODE.END);
 
-
-        // DEBUG
-        /*if (false)
+		// DEBUG
+		/*if (false)
 		{
 			String[] EffectPointType = new String[] { "Effect", "Figure" };
 			Dictionary<Int32, String> CharacterCode = new Dictionary<Int32, String>{
@@ -223,9 +221,9 @@ public class SFXBinaryFile
 				}
 			}
 		}*/
-    }
+	}
 
-    public class SequenceCode
+	public class SequenceCode
 	{
 		public CODE code;
 		public Byte arg1;

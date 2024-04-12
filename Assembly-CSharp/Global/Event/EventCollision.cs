@@ -521,118 +521,118 @@ public class EventCollision
 			Int32 num = fldMapNo;
 			switch (num)
 			{
-			case 656:
-			case 657:
-			case 658:
-			case 659:
-				if (PersistenSingleton<EventEngine>.Instance.isPosObj(npc))
-				{
-					PosObj posObj = (PosObj)npc;
-					UInt16 model = posObj.model;
-					switch (model)
+				case 656:
+				case 657:
+				case 658:
+				case 659:
+					if (PersistenSingleton<EventEngine>.Instance.isPosObj(npc))
 					{
-					case 174:
-					case 175:
-					case 176:
-						break;
-					default:
-						if (model != EMinigame.GoldenFrogModelId)
+						PosObj posObj = (PosObj)npc;
+						UInt16 model = posObj.model;
+						switch (model)
 						{
-							goto IL_191;
-						}
-						break;
-					}
-					Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(157157);
-					flag = (varManually > 0);
-					if (fldMapNo == 657)
-					{
-						flag = (flag || npc.sid == 4);
-					}
-					return flag;
-				}
-				IL_191:
-				break;
-			default:
-				if (num != 350)
-				{
-					if (num != 507)
-					{
-						if (num != 566)
-						{
-							if (num != 611)
-							{
-								if (num != 1603)
+							case 174:
+							case 175:
+							case 176:
+								break;
+							default:
+								if (model != EMinigame.GoldenFrogModelId)
 								{
-									if (num != 1608)
+									goto IL_191;
+								}
+								break;
+						}
+						Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(157157);
+						flag = (varManually > 0);
+						if (fldMapNo == 657)
+						{
+							flag = (flag || npc.sid == 4);
+						}
+						return flag;
+					}
+				IL_191:
+					break;
+				default:
+					if (num != 350)
+					{
+						if (num != 507)
+						{
+							if (num != 566)
+							{
+								if (num != 611)
+								{
+									if (num != 1603)
 									{
-										if (num != 1856)
+										if (num != 1608)
 										{
-											if (num == 2950)
+											if (num != 1856)
 											{
-												if (npc.sid == 9)
+												if (num == 2950)
 												{
-													Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-													Int32 varManually3 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(8401);
-													return varManually2 != 2 && varManually3 == 1;
+													if (npc.sid == 9)
+													{
+														Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
+														Int32 varManually3 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(8401);
+														return varManually2 != 2 && varManually3 == 1;
+													}
 												}
 											}
+											else if (npc.uid == 4 && Singleton<BubbleUI>.Instance.IsActive && EIcon.SFIconType == 1)
+											{
+												flag = false;
+											}
 										}
-										else if (npc.uid == 4 && Singleton<BubbleUI>.Instance.IsActive && EIcon.SFIconType == 1)
+										else if (npc.sid == 15)
+										{
+											Int32 varManually4 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+											return 6850 <= varManually4;
+										}
+									}
+									else
+									{
+										Int32 varManually5 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+										if (npc.uid == 133 && varManually5 == 6810)
 										{
 											flag = false;
 										}
 									}
-									else if (npc.sid == 15)
-									{
-										Int32 varManually4 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-										return 6850 <= varManually4;
-									}
 								}
-								else
+								else if (npc.sid == 7)
 								{
 									Int32 varManually5 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-									if (npc.uid == 133 && varManually5 == 6810)
+									Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
+									if (varManually5 == 3140 && varManually2 == 40)
 									{
 										flag = false;
 									}
 								}
 							}
-							else if (npc.sid == 7)
+							else if (npc.uid == 10 && Singleton<BubbleUI>.Instance.IsActive && EIcon.SFIconType == 1)
 							{
-								Int32 varManually5 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-								Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-								if (varManually5 == 3140 && varManually2 == 40)
-								{
-									flag = false;
-								}
+								flag = false;
 							}
 						}
-						else if (npc.uid == 10 && Singleton<BubbleUI>.Instance.IsActive && EIcon.SFIconType == 1)
+						else if (npc.sid == 15)
 						{
-							flag = false;
+							Int32 varManually5 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+							Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
+							Obj objUID = PersistenSingleton<EventEngine>.Instance.GetObjUID(10);
+							if (varManually5 == 2915 && varManually2 == 3 && objUID != null)
+							{
+								flag = false;
+							}
 						}
 					}
-					else if (npc.sid == 15)
+					else if (npc.sid == 34)
 					{
 						Int32 varManually5 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
 						Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-						Obj objUID = PersistenSingleton<EventEngine>.Instance.GetObjUID(10);
-						if (varManually5 == 2915 && varManually2 == 3 && objUID != null)
+						if (varManually5 == 2600 && varManually2 == 2)
 						{
 							flag = false;
 						}
 					}
-				}
-				else if (npc.sid == 34)
-				{
-					Int32 varManually5 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-					Int32 varManually2 = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-					if (varManually5 == 2600 && varManually2 == 2)
-					{
-						flag = false;
-					}
-				}
-				break;
+					break;
 			}
 		}
 		return flag;

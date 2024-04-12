@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria.Prime.Collections;
+﻿using Memoria.Prime.Collections;
+using System;
 
 public static partial class FF9BattleDB
 {

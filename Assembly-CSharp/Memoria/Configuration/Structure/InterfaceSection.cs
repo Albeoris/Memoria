@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Memoria.Prime.Ini;
+﻿using Memoria.Prime.Ini;
+using System;
 
 namespace Memoria
 {
@@ -55,9 +54,9 @@ namespace Memoria
 				MenuAbilityRowCount = BindInt32(nameof(MenuAbilityRowCount), 6); // Default PC: 6, PSX: 8
 				MenuEquipRowCount = BindInt32(nameof(MenuEquipRowCount), 5); // Default PC: 5, PSX: 6
 				MenuChocographRowCount = BindInt32(nameof(MenuChocographRowCount), 5); // Default PC: 5, PSX: 7
-				// Shop menu -- Default PC: 5/8, PSX: 7/11 (with/without portraits)
-				// Status menu -- Default PC: 8, PSX: 8
-				// Config menu -- Default PC: 6/8, PSX: 9
+																					   // Shop menu -- Default PC: 5/8, PSX: 7/11 (with/without portraits)
+																					   // Status menu -- Default PC: 8, PSX: 8
+																					   // Config menu -- Default PC: 6/8, PSX: 9
 			}
 		}
 	}

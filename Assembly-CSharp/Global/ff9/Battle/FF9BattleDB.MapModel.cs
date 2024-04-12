@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public static partial class FF9BattleDB
 {
-    public static Dictionary<String, String> MapModel = new Dictionary<String, String>
+	public static Dictionary<String, String> MapModel = new Dictionary<String, String>
 	{
 		{"BSC_AC_E028F", "BBG_B065"},
 		{"BSC_AC_E028H", "BBG_B008"},

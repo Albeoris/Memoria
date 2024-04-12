@@ -1,13 +1,6 @@
-﻿using Assets.Sources.Scripts.UI.Common;
+﻿using Memoria.Assets;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using FF9;
-using Memoria;
-using Memoria.Data;
-using Memoria.Prime;
-using Memoria.Assets;
 
 namespace Memoria.Scenes
 {

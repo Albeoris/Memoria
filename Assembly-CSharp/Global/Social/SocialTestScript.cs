@@ -1,7 +1,6 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.SiliconSocial;
-using SiliconStudio;
+using System;
 using UnityEngine;
 using Object = System.Object;
 

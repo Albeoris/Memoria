@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using UnityEngine;
-using Memoria;
 
 public class CardArrows : MonoBehaviour
 {

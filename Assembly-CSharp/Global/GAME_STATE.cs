@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum GAME_STATE
+﻿public enum GAME_STATE
 {
 	PREGAME,
 	START,

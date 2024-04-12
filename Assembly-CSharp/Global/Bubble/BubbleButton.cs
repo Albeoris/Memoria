@@ -55,19 +55,19 @@ public class BubbleButton : MonoBehaviour
 			this.onScreenButton.AlwaysShow = true;
 			switch (this.buttonType)
 			{
-			case BubbleUI.Flag.DUEL:
-				this.onScreenButton.KeyCommand = Control.Special;
-				goto IL_FB;
-			case BubbleUI.Flag.BEACH:
-				this.onScreenButton.KeyCommand = Control.Cancel;
-				goto IL_FB;
+				case BubbleUI.Flag.DUEL:
+					this.onScreenButton.KeyCommand = Control.Special;
+					goto IL_FB;
+				case BubbleUI.Flag.BEACH:
+					this.onScreenButton.KeyCommand = Control.Cancel;
+					goto IL_FB;
 			}
 			if (this.onScreenButton.KeyCommand == Control.None)
 			{
 				this.onScreenButton.KeyCommand = Control.Confirm;
 			}
 		}
-		IL_FB:
+	IL_FB:
 		this.mStart = true;
 	}
 

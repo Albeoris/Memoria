@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum FF9BatteSoundWeaponSndEffectType
+﻿public enum FF9BatteSoundWeaponSndEffectType
 {
 	FF9BTLSND_WEAPONSNDEFFECTTYPE_ATTACK,
 	FF9BTLSND_WEAPONSNDEFFECTTYPE_HIT,

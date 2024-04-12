@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Memoria.Prime.Text;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using Memoria.Prime.Text;
 
 namespace SimpleJSON
 {
@@ -288,41 +288,41 @@ namespace SimpleJSON
 				Char c2 = c;
 				switch (c2)
 				{
-				case '\b':
-					text += "\\b";
-					break;
-				case '\t':
-					text += "\\t";
-					break;
-				case '\n':
-					text += "\\n";
-					break;
-				case '\v':
+					case '\b':
+						text += "\\b";
+						break;
+					case '\t':
+						text += "\\t";
+						break;
+					case '\n':
+						text += "\\n";
+						break;
+					case '\v':
 					IL_3B:
-					if (c2 != '"')
-					{
-						if (c2 != '\\')
+						if (c2 != '"')
 						{
-							text += c;
+							if (c2 != '\\')
+							{
+								text += c;
+							}
+							else
+							{
+								text += "\\\\";
+							}
 						}
 						else
 						{
-							text += "\\\\";
+							text += "\\\"";
 						}
-					}
-					else
-					{
-						text += "\\\"";
-					}
-					break;
-				case '\f':
-					text += "\\f";
-					break;
-				case '\r':
-					text += "\\r";
-					break;
-				default:
-					goto IL_3B;
+						break;
+					case '\f':
+						text += "\\f";
+						break;
+					case '\r':
+						text += "\\r";
+						break;
+					default:
+						goto IL_3B;
 				}
 			}
 			return text;
@@ -478,12 +478,12 @@ namespace SimpleJSON
 									nameBuilder.Append('\f');
 									break;
 								case 'u':
-								{
-									String s = json.Substring(i + 1, 4);
-									nameBuilder.Append((Char) Int32.Parse(s, NumberStyles.AllowHexSpecifier));
-									i += 4;
-									break;
-								}
+									{
+										String s = json.Substring(i + 1, 4);
+										nameBuilder.Append((Char)Int32.Parse(s, NumberStyles.AllowHexSpecifier));
+										i += 4;
+										break;
+									}
 								default:
 									nameBuilder.Append(ch);
 									break;
@@ -559,40 +559,40 @@ namespace SimpleJSON
 			JSONBinaryTag jsonbinaryTag = (JSONBinaryTag)aReader.ReadInt32();
 			switch (jsonbinaryTag)
 			{
-			case JSONBinaryTag.Array:
-			{
-				Int32 num = aReader.ReadInt32();
-				JSONArray jsonarray = new JSONArray();
-				for (Int32 i = 0; i < num; i++)
-				{
-					jsonarray.Add(JSONNode.Deserialize(aReader));
-				}
-				return jsonarray;
-			}
-			case JSONBinaryTag.Class:
-			{
-				Int32 num2 = aReader.ReadInt32();
-				JSONClass jsonclass = new JSONClass();
-				for (Int32 j = 0; j < num2; j++)
-				{
-					String aKey = aReader.ReadString();
-					JSONNode aItem = JSONNode.Deserialize(aReader);
-					jsonclass.Add(aKey, aItem);
-				}
-				return jsonclass;
-			}
-			case JSONBinaryTag.Value:
-				return new JSONData(aReader.ReadString());
-			case JSONBinaryTag.IntValue:
-				return new JSONData(aReader.ReadInt32());
-			case JSONBinaryTag.DoubleValue:
-				return new JSONData(aReader.ReadDouble());
-			case JSONBinaryTag.BoolValue:
-				return new JSONData(aReader.ReadBoolean());
-			case JSONBinaryTag.FloatValue:
-				return new JSONData(aReader.ReadSingle());
-			default:
-				throw new Exception("Error deserializing JSON. Unknown tag: " + jsonbinaryTag + " at " + aReader.BaseStream.Position.ToString("X"));
+				case JSONBinaryTag.Array:
+					{
+						Int32 num = aReader.ReadInt32();
+						JSONArray jsonarray = new JSONArray();
+						for (Int32 i = 0; i < num; i++)
+						{
+							jsonarray.Add(JSONNode.Deserialize(aReader));
+						}
+						return jsonarray;
+					}
+				case JSONBinaryTag.Class:
+					{
+						Int32 num2 = aReader.ReadInt32();
+						JSONClass jsonclass = new JSONClass();
+						for (Int32 j = 0; j < num2; j++)
+						{
+							String aKey = aReader.ReadString();
+							JSONNode aItem = JSONNode.Deserialize(aReader);
+							jsonclass.Add(aKey, aItem);
+						}
+						return jsonclass;
+					}
+				case JSONBinaryTag.Value:
+					return new JSONData(aReader.ReadString());
+				case JSONBinaryTag.IntValue:
+					return new JSONData(aReader.ReadInt32());
+				case JSONBinaryTag.DoubleValue:
+					return new JSONData(aReader.ReadDouble());
+				case JSONBinaryTag.BoolValue:
+					return new JSONData(aReader.ReadBoolean());
+				case JSONBinaryTag.FloatValue:
+					return new JSONData(aReader.ReadSingle());
+				default:
+					throw new Exception("Error deserializing JSON. Unknown tag: " + jsonbinaryTag + " at " + aReader.BaseStream.Position.ToString("X"));
 			}
 		}
 

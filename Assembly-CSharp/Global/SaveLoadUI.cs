@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.SiliconSocial;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
-using Memoria.Data;
 using Memoria.Assets;
+using Memoria.Data;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
 
@@ -111,11 +111,11 @@ public class SaveLoadUI : UIScene
 				SceneDirector.FF9Wipe_FadeInEx(24);
 			}
 		};
-        if (PersistenSingleton<UIManager>.Instance.PreviousState == UIManager.UIState.WorldHUD && ButtonGroupState.HelpEnabled)
-        {
-            ButtonGroupState.ToggleHelp(false);
-        }
-        if (afterFinished != null)
+		if (PersistenSingleton<UIManager>.Instance.PreviousState == UIManager.UIState.WorldHUD && ButtonGroupState.HelpEnabled)
+		{
+			ButtonGroupState.ToggleHelp(false);
+		}
+		if (afterFinished != null)
 		{
 			sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
 		}
@@ -364,28 +364,28 @@ public class SaveLoadUI : UIScene
 			Double num3 = (Double)(file.PlayDuration % 360000f);
 			switch ((Int32)(file.PlayDuration / 360000f))
 			{
-			case 0:
-				color = FF9TextTool.White;
-				break;
-			case 1:
-				color = FF9TextTool.Red;
-				break;
-			case 2:
-				color = FF9TextTool.Yellow;
-				break;
-			case 3:
-				color = FF9TextTool.Cyan;
-				break;
-			case 4:
-				color = FF9TextTool.Magenta;
-				break;
-			case 5:
-				color = FF9TextTool.Green;
-				break;
-			default:
-				num3 = 359999.0;
-				color = FF9TextTool.Green;
-				break;
+				case 0:
+					color = FF9TextTool.White;
+					break;
+				case 1:
+					color = FF9TextTool.Red;
+					break;
+				case 2:
+					color = FF9TextTool.Yellow;
+					break;
+				case 3:
+					color = FF9TextTool.Cyan;
+					break;
+				case 4:
+					color = FF9TextTool.Magenta;
+					break;
+				case 5:
+					color = FF9TextTool.Green;
+					break;
+				default:
+					num3 = 359999.0;
+					color = FF9TextTool.Green;
+					break;
 			}
 			String text4 = ((Int32)(num3 / 3600.0)).ToString("0#");
 			String text5 = ((Int32)(num3 / 60.0) % 60).ToString("0#");
@@ -471,29 +471,29 @@ public class SaveLoadUI : UIScene
 	private void DisplayCorruptAccessDialog(String group, SaveLoadUI.SerializeType serializeType, DataSerializerErrorCode errorCode)
 	{
 		String key;
-        switch (errorCode)
-        {
-            case DataSerializerErrorCode.FileCorruption:
-            case DataSerializerErrorCode.DataCorruption:
-                key = "LocalDecryptFailed";
-                break;
-            case DataSerializerErrorCode.CloudDataCorruption:
-                key = "CloudDataCorrupt";
-                break;
-            case DataSerializerErrorCode.CloudConnectionTimeout:
-                key = "CloudConnectionTimeout";
-                break;
-            case DataSerializerErrorCode.CloudFileNotFound:
-                key = "CloudFileNotFound";
-                break;
-            case DataSerializerErrorCode.CloudConnectionError:
-                key = "CloudDataUnknownError";
-                break;
-            default:
-                key = "CloudDataUnknownError";
-                break;
-        }
-        this.noSaveDataDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.Notice);
+		switch (errorCode)
+		{
+			case DataSerializerErrorCode.FileCorruption:
+			case DataSerializerErrorCode.DataCorruption:
+				key = "LocalDecryptFailed";
+				break;
+			case DataSerializerErrorCode.CloudDataCorruption:
+				key = "CloudDataCorrupt";
+				break;
+			case DataSerializerErrorCode.CloudConnectionTimeout:
+				key = "CloudConnectionTimeout";
+				break;
+			case DataSerializerErrorCode.CloudFileNotFound:
+				key = "CloudFileNotFound";
+				break;
+			case DataSerializerErrorCode.CloudConnectionError:
+				key = "CloudDataUnknownError";
+				break;
+			default:
+				key = "CloudDataUnknownError";
+				break;
+		}
+		this.noSaveDataDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.Notice);
 		ButtonGroupState.DisableAllGroup(true);
 		base.Loading = true;
 		base.StartCoroutine(this.HideSaveInfoDialog(group));
@@ -593,8 +593,8 @@ public class SaveLoadUI : UIScene
 			yield break;
 		}
 		FF9Sfx.FF9SFX_Play(1046);
-        global::Debug.Log("DISPLAYING CORRUPT DIALOG 1");
-        FF9UIDataTool.DisplayTextLocalize(this.HelpTitleLabel, "SaveHelpSlot");
+		global::Debug.Log("DISPLAYING CORRUPT DIALOG 1");
+		FF9UIDataTool.DisplayTextLocalize(this.HelpTitleLabel, "SaveHelpSlot");
 		this.LoadingPreviewDialog.SetActive(false);
 		this.DisplayCorruptAccessDialog(SaveLoadUI.SlotGroupButton, SaveLoadUI.SerializeType.Load, errNo);
 		this.slotNameLabelList[slotID].color = FF9TextTool.Red;
@@ -675,8 +675,8 @@ public class SaveLoadUI : UIScene
 		else
 		{
 			FF9Sfx.FF9SFX_Play(1046);
-            global::Debug.Log("DISPLAYING CORRUPT DIALOG 2");
-            FF9UIDataTool.DisplayTextLocalize(this.HelpTitleLabel, "SaveHelpBlock");
+			global::Debug.Log("DISPLAYING CORRUPT DIALOG 2");
+			FF9UIDataTool.DisplayTextLocalize(this.HelpTitleLabel, "SaveHelpBlock");
 			global::Debug.LogError("Cannot save file");
 			this.DisplayCorruptAccessDialog(SaveLoadUI.FileGroupButton, SaveLoadUI.SerializeType.Save, errNo);
 			this.isFileCorrupt[saveID] = true;

@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria.Data;
+﻿using Memoria.Data;
+using System;
 
 public class EventService
 {
@@ -7,22 +7,22 @@ public class EventService
 	{
 		switch (menuId)
 		{
-		case 0u:
-			EventService.OpenMainMenu();
-			break;
-		case 1u:
-			EventService.OpenNameMenu((CharacterId)subId);
-			break;
-		case 2u:
-			EventService.OpenShopMenu(Convert.ToInt32(subId));
-			break;
-		case 4u:
-			if (subId == 0u)
-				EventService.OpenSaveMenu();
-			break;
-		case 5u:
-			EventService.OpenChocoGraph(Convert.ToInt32(subId));
-			break;
+			case 0u:
+				EventService.OpenMainMenu();
+				break;
+			case 1u:
+				EventService.OpenNameMenu((CharacterId)subId);
+				break;
+			case 2u:
+				EventService.OpenShopMenu(Convert.ToInt32(subId));
+				break;
+			case 4u:
+				if (subId == 0u)
+					EventService.OpenSaveMenu();
+				break;
+			case 5u:
+				EventService.OpenChocoGraph(Convert.ToInt32(subId));
+				break;
 		}
 	}
 

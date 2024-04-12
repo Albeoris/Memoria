@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Unity.IO.Compression
+﻿namespace Unity.IO.Compression
 {
 	public enum CompressionMode
 	{

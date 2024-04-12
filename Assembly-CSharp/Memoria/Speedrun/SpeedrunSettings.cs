@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading;
+﻿using Memoria.Prime.Text;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using Memoria.Prime.Text;
+using System.Threading;
 
 namespace Memoria.Speedrun
 {

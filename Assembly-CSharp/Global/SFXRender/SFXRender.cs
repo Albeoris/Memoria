@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Memoria.Data;
+using Memoria.Prime;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Memoria.Data;
-using Memoria.Prime;
 
 public class SFXRender
 {
@@ -210,50 +210,50 @@ public class SFXRender
 		switch (tag->code & 252)
 		{
 			case 32:
-			{
-				UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
-				SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-				mesh.PolyF3((PSX_LIBGPU.POLY_F3*)tag);
-				return;
-			}
+				{
+					UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
+					SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
+					mesh.PolyF3((PSX_LIBGPU.POLY_F3*)tag);
+					return;
+				}
 			case 36:
 				//if (SFX.currentEffectID != SpecialEffect.Stop)
 				SFXRender.PolyFT3((PSX_LIBGPU.POLY_FT3*)tag);
 				return;
 			case 40:
-			{
-				SFXRender.PolyF4((PSX_LIBGPU.POLY_F4*)tag);
-				return;
-			}
+				{
+					SFXRender.PolyF4((PSX_LIBGPU.POLY_F4*)tag);
+					return;
+				}
 			case 44:
 				SFXRender.PolyFT4((PSX_LIBGPU.POLY_FT4*)tag, 0u);
 				return;
 			case 48:
-			{
-				UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
-				SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-				mesh.PolyG3((PSX_LIBGPU.POLY_G3*)tag);
-				return;
-			}
+				{
+					UInt32 meshKey = SFXKey.GetCurrentABR(tag->code);
+					SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
+					mesh.PolyG3((PSX_LIBGPU.POLY_G3*)tag);
+					return;
+				}
 			case 52:
 				SFXRender.PolyGT3((PSX_LIBGPU.POLY_GT3*)tag);
 				return;
 			case 56:
-			{
-				SFXRender.PolyG4((PSX_LIBGPU.POLY_G4*)tag);
-				return;
-			}
+				{
+					SFXRender.PolyG4((PSX_LIBGPU.POLY_G4*)tag);
+					return;
+				}
 			case 60:
 				//if (SFX.currentEffectID != SpecialEffect.Slow && SFX.currentEffectID != SpecialEffect.Stop && SFX.currentEffectID != SpecialEffect.Rippler)
 				SFXRender.PolyGT4((PSX_LIBGPU.POLY_GT4*)tag);
 				return;
 			case 64:
-			{
-				UInt32 meshKey = SFXKey.GetCurrentABR(tag->code) | SFXKey.LINE_POLYGON;
-				SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-				mesh.LineF2((PSX_LIBGPU.LINE_F2*)tag);
-				return;
-			}
+				{
+					UInt32 meshKey = SFXKey.GetCurrentABR(tag->code) | SFXKey.LINE_POLYGON;
+					SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
+					mesh.LineF2((PSX_LIBGPU.LINE_F2*)tag);
+					return;
+				}
 			case 68:
 				SFXRender.PolyBFT4((PSX_LIBGPU.POLY_FT4*)tag);
 				return;
@@ -264,12 +264,12 @@ public class SFXRender
 				SFXRender.PolyFT4((PSX_LIBGPU.POLY_FT4*)tag, SFXKey.FILLTER_POINT);
 				return;
 			case 80:
-			{
-				UInt32 meshKey = SFXKey.GetCurrentABR(tag->code) | SFXKey.LINE_POLYGON;
-				SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
-				mesh.LineG2((PSX_LIBGPU.LINE_G2*)tag);
-				return;
-			}
+				{
+					UInt32 meshKey = SFXKey.GetCurrentABR(tag->code) | SFXKey.LINE_POLYGON;
+					SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
+					mesh.LineG2((PSX_LIBGPU.LINE_G2*)tag);
+					return;
+				}
 			case 96:
 				SFXRender.TILE((PSX_LIBGPU.TILE*)tag, (Int32)((PSX_LIBGPU.TILE*)tag)->w, (Int32)((PSX_LIBGPU.TILE*)tag)->h);
 				return;
@@ -294,22 +294,22 @@ public class SFXRender
 		}
 		switch (tag->code)
 		{
-		case 225:
-			if (tag->getLen() == 1u)
-				SFXRender.DR_TPAGE((PSX_LIBGPU.DR_TPAGE*)tag);
-			else
-				SFXRender.DR_TPAGE((PSX_LIBGPU.DR_TPAGE*)tag);
-			break;
-		case 228:
-			SFXRender.DR_AREA((PSX_LIBGPU.DR_AREA*)tag);
-			break;
-		case 229:
-			SFXRender.DR_OFFSET((PSX_LIBGPU.DR_OFFSET*)tag);
-			break;
-		case 231:
-			//if (SFX.currentEffectID != SpecialEffect.Rippler && SFX.currentEffectID != SpecialEffect.Slow)
-			SFXRender.DR_MOVE((PSX_LIBGPU.DR_MOVE*)tag);
-			break;
+			case 225:
+				if (tag->getLen() == 1u)
+					SFXRender.DR_TPAGE((PSX_LIBGPU.DR_TPAGE*)tag);
+				else
+					SFXRender.DR_TPAGE((PSX_LIBGPU.DR_TPAGE*)tag);
+				break;
+			case 228:
+				SFXRender.DR_AREA((PSX_LIBGPU.DR_AREA*)tag);
+				break;
+			case 229:
+				SFXRender.DR_OFFSET((PSX_LIBGPU.DR_OFFSET*)tag);
+				break;
+			case 231:
+				//if (SFX.currentEffectID != SpecialEffect.Rippler && SFX.currentEffectID != SpecialEffect.Slow)
+				SFXRender.DR_MOVE((PSX_LIBGPU.DR_MOVE*)tag);
+				break;
 		}
 		return;
 	}

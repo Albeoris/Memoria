@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria;
+﻿using Memoria;
+using System;
 using UnityEngine;
 
 [ExecuteInEditMode]
@@ -115,11 +115,11 @@ public class UISprite : UIBasicSprite
 	{
 		get
 		{
-            // Black square
-            if (Configuration.Graphics.WidescreenSupport && (mSpriteName == "menu_bg" || mSpriteName == "dialog_hilight"))
-                return mHeight * Screen.width / Screen.height;
+			// Black square
+			if (Configuration.Graphics.WidescreenSupport && (mSpriteName == "menu_bg" || mSpriteName == "dialog_hilight"))
+				return mHeight * Screen.width / Screen.height;
 
-            if (this.type == UIBasicSprite.Type.Sliced || this.type == UIBasicSprite.Type.Advanced)
+			if (this.type == UIBasicSprite.Type.Sliced || this.type == UIBasicSprite.Type.Advanced)
 			{
 				Vector4 pixelBorder = this.border * this.pixelSize;
 				Int32 widthResult = Mathf.RoundToInt(pixelBorder.x + pixelBorder.z);

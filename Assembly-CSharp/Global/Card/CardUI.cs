@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scenes;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = System.Object;
 
@@ -106,13 +106,13 @@ public class CardUI : UIScene
 		switch (go.transform.GetSiblingIndex())
 		{
 			case 1: // Confirm
-			{
-				if (count[deleteCardId] < 1)
-					goto case 2;
+				{
+					if (count[deleteCardId] < 1)
+						goto case 2;
 
-				DiscardSeletctedCard();
-				break;
-			}
+					DiscardSeletctedCard();
+					break;
+				}
 			case 2: // Cancel
 				FF9Sfx.FF9SFX_Play(101);
 				break;

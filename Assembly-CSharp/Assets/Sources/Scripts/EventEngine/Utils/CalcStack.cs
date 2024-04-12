@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria.Prime;
+using System;
 using System.Collections.Generic;
-using Memoria.Prime;
 
 namespace Assets.Sources.Scripts.EventEngine.Utils
 {

@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using Memoria;
-using Memoria.Prime;
 using UnityEngine;
 
 public class Board : MonoBehaviour

@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.IO;
-using FF9;
-using Memoria;
+﻿using Memoria;
 using Memoria.Data;
 using Memoria.Scripts;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 public static class ModelFactory
@@ -108,15 +107,15 @@ public static class ModelFactory
 		}
 		if (ModelFactory.garnetShortHairTable.Contains(modelNameId))
 		{
-		    Boolean garnetShortHair;
-		    if (Configuration.Graphics.GarnetHair == 1)
-		        garnetShortHair = false;
-            else if (Configuration.Graphics.GarnetHair == 2)
-		        garnetShortHair = true;
-		    else
-		        garnetShortHair = FF9StateSystem.EventState.ScenarioCounter >= 10300;
+			Boolean garnetShortHair;
+			if (Configuration.Graphics.GarnetHair == 1)
+				garnetShortHair = false;
+			else if (Configuration.Graphics.GarnetHair == 2)
+				garnetShortHair = true;
+			else
+				garnetShortHair = FF9StateSystem.EventState.ScenarioCounter >= 10300;
 
-            if (garnetShortHair)
+			if (garnetShortHair)
 			{
 				Renderer[] renderers = gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
 				for (Int32 i = 0; i < renderers.Length; i++)
@@ -329,71 +328,71 @@ public static class ModelFactory
 	}
 
 	public static String GetNameFromFF9DBALL(String modelName)
-    {
-        String text = Path.GetFileNameWithoutExtension(modelName);
-        if (text == null)
-            return null;
+	{
+		String text = Path.GetFileNameWithoutExtension(modelName);
+		if (text == null)
+			return null;
 
-        switch (text)
-        {
-            case "GEO_MAIN_UP3_ZDN":
-                text = "GEO_MAIN_F3_ZDN";
-                break;
-            case "GEO_MAIN_UP4_ZDN":
-                text = "GEO_MAIN_F4_ZDN";
-                break;
-            case "GEO_MAIN_UP5_ZDN":
-                text = "GEO_MAIN_F5_ZDN";
-                break;
-            case "GEO_MAIN_UP3_ZDN_0":
-                text = "GEO_MAIN_F3_ZDN";
-                break;
-            case "GEO_MAIN_UP4_ZDN_0":
-                text = "GEO_MAIN_F4_ZDN";
-                break;
-            case "GEO_MAIN_UP5_ZDN_0":
-                text = "GEO_MAIN_F5_ZDN";
-                break;
-            case "GEO_MAIN_UP3_ZDN_1":
-                text = "GEO_MAIN_F3_ZDN";
-                break;
-            case "GEO_MAIN_UP4_ZDN_1":
-                text = "GEO_MAIN_F4_ZDN";
-                break;
-            case "GEO_MAIN_UP5_ZDN_1":
-                text = "GEO_MAIN_F5_ZDN";
-                break;
-            case "GEO_MAIN_UP4_GRN":
-                text = "GEO_MAIN_F4_GRN";
-                break;
-        }
+		switch (text)
+		{
+			case "GEO_MAIN_UP3_ZDN":
+				text = "GEO_MAIN_F3_ZDN";
+				break;
+			case "GEO_MAIN_UP4_ZDN":
+				text = "GEO_MAIN_F4_ZDN";
+				break;
+			case "GEO_MAIN_UP5_ZDN":
+				text = "GEO_MAIN_F5_ZDN";
+				break;
+			case "GEO_MAIN_UP3_ZDN_0":
+				text = "GEO_MAIN_F3_ZDN";
+				break;
+			case "GEO_MAIN_UP4_ZDN_0":
+				text = "GEO_MAIN_F4_ZDN";
+				break;
+			case "GEO_MAIN_UP5_ZDN_0":
+				text = "GEO_MAIN_F5_ZDN";
+				break;
+			case "GEO_MAIN_UP3_ZDN_1":
+				text = "GEO_MAIN_F3_ZDN";
+				break;
+			case "GEO_MAIN_UP4_ZDN_1":
+				text = "GEO_MAIN_F4_ZDN";
+				break;
+			case "GEO_MAIN_UP5_ZDN_1":
+				text = "GEO_MAIN_F5_ZDN";
+				break;
+			case "GEO_MAIN_UP4_GRN":
+				text = "GEO_MAIN_F4_GRN";
+				break;
+		}
 
-        String result;
-        if (ModelFactory.revertUpscaleTable.TryGetValue(text, out result))
-            text = result;
+		String result;
+		if (ModelFactory.revertUpscaleTable.TryGetValue(text, out result))
+			text = result;
 
-        return text;
-    }
+		return text;
+	}
 
-    public static Int32 GetGEOID(String modelName)
-    {
-        String fileNameWithoutExtension = Path.GetFileNameWithoutExtension(modelName);
-        if (fileNameWithoutExtension.Equals("GEO_MON_B3_110"))
-        {
-            return 347;
-        }
-        if (modelName.Equals("GEO_MON_B3_109"))
-        {
-            return 5461;
-        }
+	public static Int32 GetGEOID(String modelName)
+	{
+		String fileNameWithoutExtension = Path.GetFileNameWithoutExtension(modelName);
+		if (fileNameWithoutExtension.Equals("GEO_MON_B3_110"))
+		{
+			return 347;
+		}
+		if (modelName.Equals("GEO_MON_B3_109"))
+		{
+			return 5461;
+		}
 
-        Int32 id;
-        if (!FF9BattleDB.GEO.TryGetKey(modelName, out id))
-            id = -1;
-        return id;
-    }
+		Int32 id;
+		if (!FF9BattleDB.GEO.TryGetKey(modelName, out id))
+			id = -1;
+		return id;
+	}
 
-    public static ModelType GetModelType(String modelName)
+	public static ModelType GetModelType(String modelName)
 	{
 		Int32 num = modelName.IndexOf('_');
 		Int32 num2 = modelName.IndexOf('_', num + 1);

@@ -1,12 +1,11 @@
-﻿using System;
+﻿using Memoria.Assets;
+using Memoria.Prime;
+using SimpleJSON;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading;
-using Memoria.Assets;
-using Memoria.Prime;
-using SimpleJSON;
 using UnityEngine;
 using Object = System.Object;
 

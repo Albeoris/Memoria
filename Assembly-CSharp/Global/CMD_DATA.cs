@@ -1,6 +1,6 @@
-﻿using System;
+﻿using FF9;
 using Memoria.Data;
-using FF9;
+using System;
 
 public class CMD_DATA
 {

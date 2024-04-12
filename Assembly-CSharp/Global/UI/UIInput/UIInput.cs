@@ -197,14 +197,14 @@ public class UIInput : MonoBehaviour
 		StringBuilder stringBuilder = new StringBuilder(val.Length);
 		foreach (Char c in val)
 		{
-            Char ch = c;
+			Char ch = c;
 			if (this.onValidate != null)
 			{
-                ch = this.onValidate(stringBuilder.ToString(), stringBuilder.Length, ch);
+				ch = this.onValidate(stringBuilder.ToString(), stringBuilder.Length, ch);
 			}
 			else if (this.validation != UIInput.Validation.None)
 			{
-                ch = this.Validate(stringBuilder.ToString(), stringBuilder.Length, ch);
+				ch = this.Validate(stringBuilder.ToString(), stringBuilder.Length, ch);
 			}
 			if (ch != '\0')
 			{
@@ -507,201 +507,201 @@ public class UIInput : MonoBehaviour
 		KeyCode keyCode = ev.keyCode;
 		switch (keyCode)
 		{
-		case KeyCode.UpArrow:
-			ev.Use();
-			if (!String.IsNullOrEmpty(this.mValue))
-			{
-				this.mSelectionEnd = this.label.GetCharacterIndex(this.mSelectionEnd, KeyCode.UpArrow);
-				if (this.mSelectionEnd != 0)
+			case KeyCode.UpArrow:
+				ev.Use();
+				if (!String.IsNullOrEmpty(this.mValue))
 				{
-					this.mSelectionEnd += UIInput.mDrawStart;
-				}
-				if (!flag3)
-				{
-					this.mSelectionStart = this.mSelectionEnd;
-				}
-				this.UpdateLabel();
-			}
-			return true;
-		case KeyCode.DownArrow:
-			ev.Use();
-			if (!String.IsNullOrEmpty(this.mValue))
-			{
-				this.mSelectionEnd = this.label.GetCharacterIndex(this.mSelectionEnd, KeyCode.DownArrow);
-				if (this.mSelectionEnd != this.label.processedText.Length)
-				{
-					this.mSelectionEnd += UIInput.mDrawStart;
-				}
-				else
-				{
-					this.mSelectionEnd = this.mValue.Length;
-				}
-				if (!flag3)
-				{
-					this.mSelectionStart = this.mSelectionEnd;
-				}
-				this.UpdateLabel();
-			}
-			return true;
-		case KeyCode.RightArrow:
-			ev.Use();
-			if (!String.IsNullOrEmpty(this.mValue))
-			{
-				this.mSelectionEnd = Mathf.Min(this.mSelectionEnd + 1, this.mValue.Length);
-				if (!flag3)
-				{
-					this.mSelectionStart = this.mSelectionEnd;
-				}
-				this.UpdateLabel();
-			}
-			return true;
-		case KeyCode.LeftArrow:
-			ev.Use();
-			if (!String.IsNullOrEmpty(this.mValue))
-			{
-				this.mSelectionEnd = Mathf.Max(this.mSelectionEnd - 1, 0);
-				if (!flag3)
-				{
-					this.mSelectionStart = this.mSelectionEnd;
-				}
-				this.UpdateLabel();
-			}
-			return true;
-		case KeyCode.Insert:
-			IL_AD:
-			switch (keyCode)
-			{
-			case KeyCode.A:
-				if (flag2)
-				{
-					ev.Use();
-					this.mSelectionStart = 0;
-					this.mSelectionEnd = this.mValue.Length;
+					this.mSelectionEnd = this.label.GetCharacterIndex(this.mSelectionEnd, KeyCode.UpArrow);
+					if (this.mSelectionEnd != 0)
+					{
+						this.mSelectionEnd += UIInput.mDrawStart;
+					}
+					if (!flag3)
+					{
+						this.mSelectionStart = this.mSelectionEnd;
+					}
 					this.UpdateLabel();
 				}
 				return true;
-			case KeyCode.B:
-				IL_C3:
+			case KeyCode.DownArrow:
+				ev.Use();
+				if (!String.IsNullOrEmpty(this.mValue))
+				{
+					this.mSelectionEnd = this.label.GetCharacterIndex(this.mSelectionEnd, KeyCode.DownArrow);
+					if (this.mSelectionEnd != this.label.processedText.Length)
+					{
+						this.mSelectionEnd += UIInput.mDrawStart;
+					}
+					else
+					{
+						this.mSelectionEnd = this.mValue.Length;
+					}
+					if (!flag3)
+					{
+						this.mSelectionStart = this.mSelectionEnd;
+					}
+					this.UpdateLabel();
+				}
+				return true;
+			case KeyCode.RightArrow:
+				ev.Use();
+				if (!String.IsNullOrEmpty(this.mValue))
+				{
+					this.mSelectionEnd = Mathf.Min(this.mSelectionEnd + 1, this.mValue.Length);
+					if (!flag3)
+					{
+						this.mSelectionStart = this.mSelectionEnd;
+					}
+					this.UpdateLabel();
+				}
+				return true;
+			case KeyCode.LeftArrow:
+				ev.Use();
+				if (!String.IsNullOrEmpty(this.mValue))
+				{
+					this.mSelectionEnd = Mathf.Max(this.mSelectionEnd - 1, 0);
+					if (!flag3)
+					{
+						this.mSelectionStart = this.mSelectionEnd;
+					}
+					this.UpdateLabel();
+				}
+				return true;
+			case KeyCode.Insert:
+			IL_AD:
 				switch (keyCode)
 				{
-				case KeyCode.V:
-					if (flag2)
-					{
-						ev.Use();
-						this.Insert(NGUITools.clipboard);
-					}
-					return true;
-				case KeyCode.W:
-					IL_D9:
-					if (keyCode == KeyCode.Backspace)
-					{
-						ev.Use();
-						this.DoBackspace();
-						return true;
-					}
-					if (keyCode != KeyCode.Delete)
-					{
-						return false;
-					}
-					ev.Use();
-					if (!String.IsNullOrEmpty(this.mValue))
-					{
-						if (this.mSelectionStart == this.mSelectionEnd)
+					case KeyCode.A:
+						if (flag2)
 						{
-							if (this.mSelectionStart >= this.mValue.Length)
-							{
-								return true;
-							}
-							this.mSelectionEnd++;
+							ev.Use();
+							this.mSelectionStart = 0;
+							this.mSelectionEnd = this.mValue.Length;
+							this.UpdateLabel();
 						}
-						this.Insert(String.Empty);
-					}
-					return true;
-				case KeyCode.X:
-					if (flag2)
-					{
-						ev.Use();
-						NGUITools.clipboard = this.GetSelection();
-						this.Insert(String.Empty);
-					}
-					return true;
-				default:
-					goto IL_D9;
+						return true;
+					case KeyCode.B:
+					IL_C3:
+						switch (keyCode)
+						{
+							case KeyCode.V:
+								if (flag2)
+								{
+									ev.Use();
+									this.Insert(NGUITools.clipboard);
+								}
+								return true;
+							case KeyCode.W:
+							IL_D9:
+								if (keyCode == KeyCode.Backspace)
+								{
+									ev.Use();
+									this.DoBackspace();
+									return true;
+								}
+								if (keyCode != KeyCode.Delete)
+								{
+									return false;
+								}
+								ev.Use();
+								if (!String.IsNullOrEmpty(this.mValue))
+								{
+									if (this.mSelectionStart == this.mSelectionEnd)
+									{
+										if (this.mSelectionStart >= this.mValue.Length)
+										{
+											return true;
+										}
+										this.mSelectionEnd++;
+									}
+									this.Insert(String.Empty);
+								}
+								return true;
+							case KeyCode.X:
+								if (flag2)
+								{
+									ev.Use();
+									NGUITools.clipboard = this.GetSelection();
+									this.Insert(String.Empty);
+								}
+								return true;
+							default:
+								goto IL_D9;
+						}
+					case KeyCode.C:
+						if (flag2)
+						{
+							ev.Use();
+							NGUITools.clipboard = this.GetSelection();
+						}
+						return true;
+					default:
+						goto IL_C3;
 				}
-			case KeyCode.C:
-				if (flag2)
+			case KeyCode.Home:
+				ev.Use();
+				if (!String.IsNullOrEmpty(this.mValue))
 				{
-					ev.Use();
-					NGUITools.clipboard = this.GetSelection();
+					if (this.label.multiLine)
+					{
+						this.mSelectionEnd = this.label.GetCharacterIndex(this.mSelectionEnd, KeyCode.Home);
+					}
+					else
+					{
+						this.mSelectionEnd = 0;
+					}
+					if (!flag3)
+					{
+						this.mSelectionStart = this.mSelectionEnd;
+					}
+					this.UpdateLabel();
+				}
+				return true;
+			case KeyCode.End:
+				ev.Use();
+				if (!String.IsNullOrEmpty(this.mValue))
+				{
+					if (this.label.multiLine)
+					{
+						this.mSelectionEnd = this.label.GetCharacterIndex(this.mSelectionEnd, KeyCode.End);
+					}
+					else
+					{
+						this.mSelectionEnd = this.mValue.Length;
+					}
+					if (!flag3)
+					{
+						this.mSelectionStart = this.mSelectionEnd;
+					}
+					this.UpdateLabel();
+				}
+				return true;
+			case KeyCode.PageUp:
+				ev.Use();
+				if (!String.IsNullOrEmpty(this.mValue))
+				{
+					this.mSelectionEnd = 0;
+					if (!flag3)
+					{
+						this.mSelectionStart = this.mSelectionEnd;
+					}
+					this.UpdateLabel();
+				}
+				return true;
+			case KeyCode.PageDown:
+				ev.Use();
+				if (!String.IsNullOrEmpty(this.mValue))
+				{
+					this.mSelectionEnd = this.mValue.Length;
+					if (!flag3)
+					{
+						this.mSelectionStart = this.mSelectionEnd;
+					}
+					this.UpdateLabel();
 				}
 				return true;
 			default:
-				goto IL_C3;
-			}
-		case KeyCode.Home:
-			ev.Use();
-			if (!String.IsNullOrEmpty(this.mValue))
-			{
-				if (this.label.multiLine)
-				{
-					this.mSelectionEnd = this.label.GetCharacterIndex(this.mSelectionEnd, KeyCode.Home);
-				}
-				else
-				{
-					this.mSelectionEnd = 0;
-				}
-				if (!flag3)
-				{
-					this.mSelectionStart = this.mSelectionEnd;
-				}
-				this.UpdateLabel();
-			}
-			return true;
-		case KeyCode.End:
-			ev.Use();
-			if (!String.IsNullOrEmpty(this.mValue))
-			{
-				if (this.label.multiLine)
-				{
-					this.mSelectionEnd = this.label.GetCharacterIndex(this.mSelectionEnd, KeyCode.End);
-				}
-				else
-				{
-					this.mSelectionEnd = this.mValue.Length;
-				}
-				if (!flag3)
-				{
-					this.mSelectionStart = this.mSelectionEnd;
-				}
-				this.UpdateLabel();
-			}
-			return true;
-		case KeyCode.PageUp:
-			ev.Use();
-			if (!String.IsNullOrEmpty(this.mValue))
-			{
-				this.mSelectionEnd = 0;
-				if (!flag3)
-				{
-					this.mSelectionStart = this.mSelectionEnd;
-				}
-				this.UpdateLabel();
-			}
-			return true;
-		case KeyCode.PageDown:
-			ev.Use();
-			if (!String.IsNullOrEmpty(this.mValue))
-			{
-				this.mSelectionEnd = this.mValue.Length;
-				if (!flag3)
-				{
-					this.mSelectionStart = this.mSelectionEnd;
-				}
-				this.UpdateLabel();
-			}
-			return true;
-		default:
-			goto IL_AD;
+				goto IL_AD;
 		}
 	}
 

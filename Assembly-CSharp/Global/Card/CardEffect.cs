@@ -93,70 +93,70 @@ public class CardEffect : MonoBehaviour
 		offset *= -1f;
 		switch (arrow)
 		{
-		case CardArrow.Type.UP:
-			pos += new Vector3(0f, thickness / 2f * offset.y, 0f);
-			sca = new Vector3(width, thickness, 0f);
-			pos1f += new Vector3(0f, (height - thickness / 2f) * offset.y, 0f);
-			sca1f = sca;
-			break;
-		case CardArrow.Type.RIGHT_UP:
-			pos += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
-			sca = new Vector3(thickness, thickness, 1f);
-			pos2 += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
-			sca2 = new Vector3(thickness, thickness, 1f);
-			pos1f += new Vector3((width - thickness / 2f) * offset.x, height / 2f * offset.y, 0f);
-			sca1f = new Vector3(thickness, height, 0f);
-			pos2f += new Vector3(width / 2f * offset.x, (height - thickness / 2f) * offset.y, 0f);
-			sca2f = new Vector3(width, thickness, 0f);
-			break;
-		case CardArrow.Type.RIGHT:
-			pos2 += new Vector3(thickness / 2f * offset.x, 0f, 0f);
-			sca2 = new Vector3(thickness, height, 0f);
-			pos2f += new Vector3((width - thickness / 2f) * offset.x, 0f, 0f);
-			sca2f = sca2;
-			break;
-		case CardArrow.Type.RIGHT_DOWN:
-			pos += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
-			sca = new Vector3(thickness, thickness, 1f);
-			pos2 += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
-			sca2 = new Vector3(thickness, thickness, 1f);
-			pos1f += new Vector3((width - thickness / 2f) * offset.x, height / 2f * offset.y, 0f);
-			sca1f = new Vector3(thickness, height, 0f);
-			pos2f += new Vector3(width / 2f * offset.x, (height - thickness / 2f) * offset.y, 0f);
-			sca2f = new Vector3(width, thickness, 0f);
-			break;
-		case CardArrow.Type.DOWN:
-			pos += new Vector3(0f, thickness / 2f * offset.y, 0f);
-			sca = new Vector3(width, thickness, 0f);
-			pos1f += new Vector3(0f, (height - thickness / 2f) * offset.y, 0f);
-			sca1f = sca;
-			break;
-		case CardArrow.Type.LEFT_DOWN:
-			pos += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
-			sca = new Vector3(thickness, thickness, 1f);
-			pos2 += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
-			sca2 = new Vector3(thickness, thickness, 1f);
-			pos1f += new Vector3((width - thickness / 2f) * offset.x, height / 2f * offset.y, 0f);
-			sca1f = new Vector3(thickness, height, 0f);
-			pos2f += new Vector3(width / 2f * offset.x, (height - thickness / 2f) * offset.y, 0f);
-			sca2f = new Vector3(width, thickness, 0f);
-			break;
-		case CardArrow.Type.LEFT:
-			pos2 += new Vector3(thickness / 2f * offset.x, 0f, 0f);
-			sca2 = new Vector3(thickness, height, 0f);
-			pos2f += new Vector3((width - thickness / 2f) * offset.x, 0f, 0f);
-			sca2f = sca2;
-			break;
-		case CardArrow.Type.LEFT_UP:
-			pos += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
-			sca = new Vector3(thickness, thickness, 1f);
-			pos2 += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
-			sca2 = new Vector3(thickness, thickness, 1f);
-			pos1f += new Vector3((width - thickness / 2f) * offset.x, height / 2f * offset.y, 0f);
-			sca1f = new Vector3(thickness, height, 0f);
-			pos2f += new Vector3(width / 2f * offset.x, (height - thickness / 2f) * offset.y, 0f);
-			sca2f = new Vector3(width, thickness, 0f);
-			break;
+			case CardArrow.Type.UP:
+				pos += new Vector3(0f, thickness / 2f * offset.y, 0f);
+				sca = new Vector3(width, thickness, 0f);
+				pos1f += new Vector3(0f, (height - thickness / 2f) * offset.y, 0f);
+				sca1f = sca;
+				break;
+			case CardArrow.Type.RIGHT_UP:
+				pos += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
+				sca = new Vector3(thickness, thickness, 1f);
+				pos2 += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
+				sca2 = new Vector3(thickness, thickness, 1f);
+				pos1f += new Vector3((width - thickness / 2f) * offset.x, height / 2f * offset.y, 0f);
+				sca1f = new Vector3(thickness, height, 0f);
+				pos2f += new Vector3(width / 2f * offset.x, (height - thickness / 2f) * offset.y, 0f);
+				sca2f = new Vector3(width, thickness, 0f);
+				break;
+			case CardArrow.Type.RIGHT:
+				pos2 += new Vector3(thickness / 2f * offset.x, 0f, 0f);
+				sca2 = new Vector3(thickness, height, 0f);
+				pos2f += new Vector3((width - thickness / 2f) * offset.x, 0f, 0f);
+				sca2f = sca2;
+				break;
+			case CardArrow.Type.RIGHT_DOWN:
+				pos += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
+				sca = new Vector3(thickness, thickness, 1f);
+				pos2 += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
+				sca2 = new Vector3(thickness, thickness, 1f);
+				pos1f += new Vector3((width - thickness / 2f) * offset.x, height / 2f * offset.y, 0f);
+				sca1f = new Vector3(thickness, height, 0f);
+				pos2f += new Vector3(width / 2f * offset.x, (height - thickness / 2f) * offset.y, 0f);
+				sca2f = new Vector3(width, thickness, 0f);
+				break;
+			case CardArrow.Type.DOWN:
+				pos += new Vector3(0f, thickness / 2f * offset.y, 0f);
+				sca = new Vector3(width, thickness, 0f);
+				pos1f += new Vector3(0f, (height - thickness / 2f) * offset.y, 0f);
+				sca1f = sca;
+				break;
+			case CardArrow.Type.LEFT_DOWN:
+				pos += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
+				sca = new Vector3(thickness, thickness, 1f);
+				pos2 += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
+				sca2 = new Vector3(thickness, thickness, 1f);
+				pos1f += new Vector3((width - thickness / 2f) * offset.x, height / 2f * offset.y, 0f);
+				sca1f = new Vector3(thickness, height, 0f);
+				pos2f += new Vector3(width / 2f * offset.x, (height - thickness / 2f) * offset.y, 0f);
+				sca2f = new Vector3(width, thickness, 0f);
+				break;
+			case CardArrow.Type.LEFT:
+				pos2 += new Vector3(thickness / 2f * offset.x, 0f, 0f);
+				sca2 = new Vector3(thickness, height, 0f);
+				pos2f += new Vector3((width - thickness / 2f) * offset.x, 0f, 0f);
+				sca2f = sca2;
+				break;
+			case CardArrow.Type.LEFT_UP:
+				pos += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
+				sca = new Vector3(thickness, thickness, 1f);
+				pos2 += new Vector3(thickness / 2f * offset.x, thickness / 2f * offset.y, 0f);
+				sca2 = new Vector3(thickness, thickness, 1f);
+				pos1f += new Vector3((width - thickness / 2f) * offset.x, height / 2f * offset.y, 0f);
+				sca1f = new Vector3(thickness, height, 0f);
+				pos2f += new Vector3(width / 2f * offset.x, (height - thickness / 2f) * offset.y, 0f);
+				sca2f = new Vector3(width, thickness, 0f);
+				break;
 		}
 		combo[0].gameObject.SetActive(true);
 		combo[1].gameObject.SetActive(true);

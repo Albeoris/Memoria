@@ -1,9 +1,9 @@
+using Memoria.Assets;
+using SimpleJSON;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
-using Memoria.Assets;
-using SimpleJSON;
 using UnityEngine;
 
 public class SoundMetaData
@@ -114,47 +114,46 @@ public class SoundMetaData
 		SoundMetaData.MusicMetaData = SoundMetaData.ComposeMetaDataJsonString(list2);
 	}
 
-    private static void LoadMetaDataFromResourcesRecursively()
-    {
-        String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SoundEffectMetaData.txt");
-        String textAsset2 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SoundEffectExtendedMetaData.txt");
-        String textAsset3 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/MusicMetaData.txt");
-        String textAsset4 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/MovieAudioMetaData.txt");
-        String textAsset5 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SongMetaData.txt");
-        String textAsset6 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SpecialEffectMetaData.txt");
-        String textAsset7 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/ResidentSpecialEffectMetaData.txt");
+	private static void LoadMetaDataFromResourcesRecursively()
+	{
+		String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SoundEffectMetaData.txt");
+		String textAsset2 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SoundEffectExtendedMetaData.txt");
+		String textAsset3 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/MusicMetaData.txt");
+		String textAsset4 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/MovieAudioMetaData.txt");
+		String textAsset5 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SongMetaData.txt");
+		String textAsset6 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/SpecialEffectMetaData.txt");
+		String textAsset7 = AssetManager.LoadString("EmbeddedAsset/Manifest/Sounds/ResidentSpecialEffectMetaData.txt");
 
+		Exception exception = null;
 
-        Exception exception = null;
+		Thread thread = new Thread(() =>
+		{
+			try
+			{
+				SoundMetaData.soundEffectExtendedMetaData = textAsset2;
+				SoundMetaData.SoundEffectMetaData = textAsset;
+				SoundMetaData.MusicMetaData = textAsset3;
+				SoundMetaData.MovieAudioMetaData = textAsset4;
+				SoundMetaData.SongMetaData = textAsset5;
+				SoundMetaData.SfxSoundMetaData = textAsset6;
+				SoundMetaData.ResidentSfxSoundMetaData = textAsset7;
+			}
+			catch (Exception ex)
+			{
+				exception = ex;
+			}
+		}, 30 * 1024 * 1024); // Workaround for StackOverflowException: The requested operation caused a stack overflow
 
-        Thread thread = new Thread(() =>
-        {
-            try
-            {
-                SoundMetaData.soundEffectExtendedMetaData = textAsset2;
-                SoundMetaData.SoundEffectMetaData = textAsset;
-                SoundMetaData.MusicMetaData = textAsset3;
-                SoundMetaData.MovieAudioMetaData = textAsset4;
-                SoundMetaData.SongMetaData = textAsset5;
-                SoundMetaData.SfxSoundMetaData = textAsset6;
-                SoundMetaData.ResidentSfxSoundMetaData = textAsset7;
-            }
-            catch (Exception ex)
-            {
-                exception = ex;
-            }
-        }, 30 * 1024 * 1024); // Workaround for StackOverflowException: The requested operation caused a stack overflow
+		thread.Start();
+		thread.Join();
 
-        thread.Start();
-        thread.Join();
+		if (exception != null)
+			throw new Exception("Failed to recursively load a meta data from resources.", exception);
 
-        if (exception != null)
-            throw new Exception("Failed to recursively load a meta data from resources.", exception);
+		AudioResourceExporter.ExportSafe();
+	}
 
-        AudioResourceExporter.ExportSafe();
-    }
-
-    private static void LoadMetaDataFromDocumentDirectory()
+	private static void LoadMetaDataFromDocumentDirectory()
 	{
 		SoundLoaderProxy.Instance.Initial();
 		String path = Application.persistentDataPath + "/SoundEffect";

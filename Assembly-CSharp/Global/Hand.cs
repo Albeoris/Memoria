@@ -52,7 +52,7 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 		CardCursor.gameObject.transform.position = position;
 	}
 
-    public void HideShadowCard()
+	public void HideShadowCard()
 	{
 		shadowCard.gameObject.SetActive(false);
 	}
@@ -221,114 +221,114 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 			QuadMistCardUI quadMistCardUI = cardUIs[i];
 			switch (newState)
 			{
-			case Hand.STATE.ENEMY_HIDE:
-				quadMistCardUI.Flip = Configuration.TetraMaster.TripleTriad <= 1;
-				transform.localPosition = Hand.ENEMY_POSITION;
-				quadMistCardUI.transform.localPosition = new Vector3(0f, -3.2f, 0f);
-				break;
-			case Hand.STATE.ENEMY_SHOW:
-				quadMistCardUI.Flip = Configuration.TetraMaster.TripleTriad <= 1;
-				transform.localPosition = Hand.ENEMY_POSITION;
-				SlideToEnemyHand(quadMistCardUI.transform, Hand.ENEMY_TILING * i, i);
-				break;
-			case Hand.STATE.ENEMY_WAIT:
-				quadMistCardUI.Flip = Configuration.TetraMaster.TripleTriad <= 1;
-				transform.localPosition = Hand.ENEMY_POSITION;
-				quadMistCardUI.transform.localPosition = Hand.ENEMY_TILING * i;
-				break;
-			case Hand.STATE.ENEMY_PLAY:
-				quadMistCardUI.Flip = Configuration.TetraMaster.TripleTriad <= 1;
-				transform.localPosition = Hand.ENEMY_POSITION;
-				quadMistCardUI.transform.localPosition = Hand.ENEMY_TILING * i;
-				break;
-			case Hand.STATE.ENEMY_POSTGAME:
-				quadMistCardUI.Flip = false;
-				transform.localPosition = Hand.ENEMY_POST_POSITION;
-				SlideTo(quadMistCardUI.transform, Hand.DEFAULT_TILING(Count) * i, Anim.TickToTime(20));
-				break;
-			case Hand.STATE.PLAYER_PREGAME:
-				quadMistCardUI.Flip = false;
-				transform.localPosition = Hand.PLAYER_POSITION;
-                if (Board.USE_SMALL_BOARD)
-                {
-                    quadMistCardUI.transform.localPosition = new Vector3(Hand.PLAYER_TILING_L.x * i, Hand.PLAYER_TILING_L.y * i, -i);
-                    quadMistCardUI.transform.localScale = Vector3.one;
-                }
-				else
-				{
-                    quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_S * i;
-                    quadMistCardUI.transform.localScale = Hand.PLAYER_SCALE_S;
-                }
-				break;
-			case Hand.STATE.PLAYER_WAIT:
-				transform.localPosition = Hand.PLAYER_POSITION;
-				if (Board.USE_SMALL_BOARD)
-				{
-                        quadMistCardUI.transform.localPosition = new Vector3(Hand.PLAYER_TILING_L.x * i, Hand.PLAYER_TILING_L.y * i, -i);
-                        quadMistCardUI.transform.localScale = Vector3.one;
-                }
-				else
-				{
-					if (Count == 5)
-                    {
+				case Hand.STATE.ENEMY_HIDE:
+					quadMistCardUI.Flip = Configuration.TetraMaster.TripleTriad <= 1;
+					transform.localPosition = Hand.ENEMY_POSITION;
+					quadMistCardUI.transform.localPosition = new Vector3(0f, -3.2f, 0f);
+					break;
+				case Hand.STATE.ENEMY_SHOW:
+					quadMistCardUI.Flip = Configuration.TetraMaster.TripleTriad <= 1;
+					transform.localPosition = Hand.ENEMY_POSITION;
+					SlideToEnemyHand(quadMistCardUI.transform, Hand.ENEMY_TILING * i, i);
+					break;
+				case Hand.STATE.ENEMY_WAIT:
+					quadMistCardUI.Flip = Configuration.TetraMaster.TripleTriad <= 1;
+					transform.localPosition = Hand.ENEMY_POSITION;
+					quadMistCardUI.transform.localPosition = Hand.ENEMY_TILING * i;
+					break;
+				case Hand.STATE.ENEMY_PLAY:
+					quadMistCardUI.Flip = Configuration.TetraMaster.TripleTriad <= 1;
+					transform.localPosition = Hand.ENEMY_POSITION;
+					quadMistCardUI.transform.localPosition = Hand.ENEMY_TILING * i;
+					break;
+				case Hand.STATE.ENEMY_POSTGAME:
+					quadMistCardUI.Flip = false;
+					transform.localPosition = Hand.ENEMY_POST_POSITION;
+					SlideTo(quadMistCardUI.transform, Hand.DEFAULT_TILING(Count) * i, Anim.TickToTime(20));
+					break;
+				case Hand.STATE.PLAYER_PREGAME:
+					quadMistCardUI.Flip = false;
+					transform.localPosition = Hand.PLAYER_POSITION;
+					if (Board.USE_SMALL_BOARD)
+					{
+						quadMistCardUI.transform.localPosition = new Vector3(Hand.PLAYER_TILING_L.x * i, Hand.PLAYER_TILING_L.y * i, -i);
+						quadMistCardUI.transform.localScale = Vector3.one;
+					}
+					else
+					{
 						quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_S * i;
 						quadMistCardUI.transform.localScale = Hand.PLAYER_SCALE_S;
-                    }
-                    else
-                    {
+					}
+					break;
+				case Hand.STATE.PLAYER_WAIT:
+					transform.localPosition = Hand.PLAYER_POSITION;
+					if (Board.USE_SMALL_BOARD)
+					{
+						quadMistCardUI.transform.localPosition = new Vector3(Hand.PLAYER_TILING_L.x * i, Hand.PLAYER_TILING_L.y * i, -i);
+						quadMistCardUI.transform.localScale = Vector3.one;
+					}
+					else
+					{
+						if (Count == 5)
+						{
+							quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_S * i;
+							quadMistCardUI.transform.localScale = Hand.PLAYER_SCALE_S;
+						}
+						else
+						{
+							quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_L * i;
+							quadMistCardUI.transform.localScale = Vector3.one;
+						}
+					}
+					break;
+				case Hand.STATE.PLAYER_SELECT_CARD:
+					{
+						transform.localPosition = Hand.PLAYER_POSITION;
+						Single duration = SpeedFormula(quadMistCardUI.transform, Hand.PLAYER_TILING_S * i);
+						if (Board.USE_SMALL_BOARD)
+						{
+							StartCoroutine(SlideCardBackToTheFormerPosition(quadMistCardUI.transform, new Vector3(Hand.PLAYER_TILING_L.x * i, Hand.PLAYER_TILING_L.y * i, -i), duration));
+							break;
+						}
+						if (Count == 5)
+						{
+							StartCoroutine(SlideCardBackToTheFormerPosition(quadMistCardUI.transform, Hand.PLAYER_TILING_S * i, duration));
+							ScaleTo(quadMistCardUI.transform, Hand.PLAYER_SCALE_S, duration);
+						}
+						else
+						{
+							StartCoroutine(SlideCardBackToTheFormerPosition(quadMistCardUI.transform, Hand.PLAYER_TILING_L * i, duration));
+						}
+						CardCursor.Hide();
+						break;
+					}
+				case Hand.STATE.PLAYER_SELECT_BOARD:
+					transform.localPosition = Hand.PLAYER_POSITION;
+					if (Board.USE_SMALL_BOARD)
+					{
+						quadMistCardUI.transform.localPosition = new Vector3(Hand.PLAYER_TILING_L.x * i, Hand.PLAYER_TILING_L.y * i, -i);
+						quadMistCardUI.transform.localScale = Vector3.one;
+						break;
+					}
+					if (Count == 5)
+					{
+						quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_S * i;
+						quadMistCardUI.transform.localScale = Hand.PLAYER_SCALE_S;
+					}
+					else
+					{
 						quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_L * i;
 						quadMistCardUI.transform.localScale = Vector3.one;
-                    }
-				}
-				break;
-			case Hand.STATE.PLAYER_SELECT_CARD:
-			{
-				transform.localPosition = Hand.PLAYER_POSITION;
-				Single duration = SpeedFormula(quadMistCardUI.transform, Hand.PLAYER_TILING_S * i);
-                if (Board.USE_SMALL_BOARD)
-                {
-                    StartCoroutine(SlideCardBackToTheFormerPosition(quadMistCardUI.transform, new Vector3(Hand.PLAYER_TILING_L.x * i, Hand.PLAYER_TILING_L.y * i, -i), duration));
+					}
 					break;
-                }
-                if (Count == 5)
-				{
-					StartCoroutine(SlideCardBackToTheFormerPosition(quadMistCardUI.transform, Hand.PLAYER_TILING_S * i, duration));
-					ScaleTo(quadMistCardUI.transform, Hand.PLAYER_SCALE_S, duration);
-				}
-				else
-				{
-					StartCoroutine(SlideCardBackToTheFormerPosition(quadMistCardUI.transform, Hand.PLAYER_TILING_L * i, duration));
-				}
-				CardCursor.Hide();
-				break;
-			}
-			case Hand.STATE.PLAYER_SELECT_BOARD:
-				transform.localPosition = Hand.PLAYER_POSITION;
-                if (Board.USE_SMALL_BOARD)
-                {
-                    quadMistCardUI.transform.localPosition = new Vector3(Hand.PLAYER_TILING_L.x * i, Hand.PLAYER_TILING_L.y * i, -i);
-                    quadMistCardUI.transform.localScale = Vector3.one;
-					break;
-                }
-                if (Count == 5)
-				{
-					quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_S * i;
-					quadMistCardUI.transform.localScale = Hand.PLAYER_SCALE_S;
-				}
-				else
-				{
-					quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_L * i;
+				case Hand.STATE.PLAYER_POSTGAME:
+					transform.localPosition = Hand.PLAYER_POST_POSITION;
 					quadMistCardUI.transform.localScale = Vector3.one;
-				}
-				break;
-			case Hand.STATE.PLAYER_POSTGAME:
-				transform.localPosition = Hand.PLAYER_POST_POSITION;
-				quadMistCardUI.transform.localScale = Vector3.one;
-				SlideTo(quadMistCardUI.transform, Hand.DEFAULT_TILING(Count) * i, Anim.TickToTime(20));
-				break;
-			default:
-				transform.position = Hand.PLAYER_POSITION;
-				break;
+					SlideTo(quadMistCardUI.transform, Hand.DEFAULT_TILING(Count) * i, Anim.TickToTime(20));
+					break;
+				default:
+					transform.position = Hand.PLAYER_POSITION;
+					break;
 			}
 		}
 	}
@@ -407,39 +407,39 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 			quadMistCardUI.ResetEffect();
 			switch (State)
 			{
-			case Hand.STATE.PLAYER_SELECT_CARD:
-				if (i == newSelect)
-				{
-					if (cardAnimatingCount == 0 || lastSelectedCard != newSelect)
-						UpdateShadowCard(newSelect);
-					if (Count == 5 && Configuration.TetraMaster.TripleTriad <= 1)
-						cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_S;
+				case Hand.STATE.PLAYER_SELECT_CARD:
+					if (i == newSelect)
+					{
+						if (cardAnimatingCount == 0 || lastSelectedCard != newSelect)
+							UpdateShadowCard(newSelect);
+						if (Count == 5 && Configuration.TetraMaster.TripleTriad <= 1)
+							cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_S;
+						else
+							cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_L;
+						cursor.Active = true;
+						if (oldSelect != newSelect)
+							UpdateCursorToShadowCard();
+						lastSelectedCard = newSelect;
+					}
+					break;
+				case Hand.STATE.PLAYER_SELECT_BOARD:
+					if (i == newSelect)
+					{
+						cursor.Active = true;
+						cursor.Black = true;
+						quadMistCardUI.Black = false;
+						CardCursor.SetNormalState();
+						if (Count == 5 && Configuration.TetraMaster.TripleTriad <= 1)
+							cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_S;
+						else
+							cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_L;
+					}
 					else
-						cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_L;
-					cursor.Active = true;
-					if (oldSelect != newSelect)
-						UpdateCursorToShadowCard();
-					lastSelectedCard = newSelect;
-				}
-				break;
-			case Hand.STATE.PLAYER_SELECT_BOARD:
-				if (i == newSelect)
-				{
-					cursor.Active = true;
-					cursor.Black = true;
-					quadMistCardUI.Black = false;
-					CardCursor.SetNormalState();
-					if (Count == 5 && Configuration.TetraMaster.TripleTriad <= 1)
-						cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_S;
-					else
-						cursor.transform.position = quadMistCardUI.transform.position + Hand.CURSOR_OFFSET_L;
-				}
-				else
-				{
-					quadMistCardUI.Black = true;
-					CardCursor.SetBlackState();
-				}
-				break;
+					{
+						quadMistCardUI.Black = true;
+						CardCursor.SetBlackState();
+					}
+					break;
 			}
 			i++;
 		}
@@ -473,56 +473,56 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 			QuadMistCardUI quadMistCardUI = cardUIs[i];
 			switch (State)
 			{
-			case Hand.STATE.ENEMY_HIDE:
-				quadMistCardUI.Flip = true;
-				transform.localPosition = Hand.ENEMY_POSITION;
-				quadMistCardUI.transform.localPosition = new Vector3(0f, -3.2f, 0f);
-				break;
-			case Hand.STATE.ENEMY_PLAY:
-				quadMistCardUI.Flip = true;
-				transform.localPosition = Hand.ENEMY_POSITION;
-				quadMistCardUI.transform.localPosition = Hand.ENEMY_TILING * i;
-				break;
-			case Hand.STATE.ENEMY_POSTGAME:
-				quadMistCardUI.Flip = false;
-				transform.localPosition = Hand.ENEMY_POST_POSITION;
-				quadMistCardUI.transform.localPosition = Hand.DEFAULT_TILING(Count) * i;
-				break;
-			case Hand.STATE.PLAYER_PREGAME:
-				transform.localPosition = Hand.PLAYER_POSITION;
-                if (Board.USE_SMALL_BOARD)
-                {
-                    quadMistCardUI.transform.localPosition = new Vector3(Hand.PLAYER_TILING_L.x * i, Hand.PLAYER_TILING_L.y * i, -i);
-                    quadMistCardUI.transform.localScale = Vector3.one;
+				case Hand.STATE.ENEMY_HIDE:
+					quadMistCardUI.Flip = true;
+					transform.localPosition = Hand.ENEMY_POSITION;
+					quadMistCardUI.transform.localPosition = new Vector3(0f, -3.2f, 0f);
 					break;
-                }
-                quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_S * i;
-				quadMistCardUI.transform.localScale = Hand.PLAYER_SCALE_S;
-				break;
-			case Hand.STATE.PLAYER_SELECT_BOARD:
-				transform.localPosition = Hand.PLAYER_POSITION;
-                if (Board.USE_SMALL_BOARD)
-                {
-                    quadMistCardUI.transform.localPosition = new Vector3(Hand.PLAYER_TILING_L.x * i, Hand.PLAYER_TILING_L.y * i, -i);
-                    quadMistCardUI.transform.localScale = Vector3.one;
-                    break;
-                }
-                if (Count == 5)
-				{
+				case Hand.STATE.ENEMY_PLAY:
+					quadMistCardUI.Flip = true;
+					transform.localPosition = Hand.ENEMY_POSITION;
+					quadMistCardUI.transform.localPosition = Hand.ENEMY_TILING * i;
+					break;
+				case Hand.STATE.ENEMY_POSTGAME:
+					quadMistCardUI.Flip = false;
+					transform.localPosition = Hand.ENEMY_POST_POSITION;
+					quadMistCardUI.transform.localPosition = Hand.DEFAULT_TILING(Count) * i;
+					break;
+				case Hand.STATE.PLAYER_PREGAME:
+					transform.localPosition = Hand.PLAYER_POSITION;
+					if (Board.USE_SMALL_BOARD)
+					{
+						quadMistCardUI.transform.localPosition = new Vector3(Hand.PLAYER_TILING_L.x * i, Hand.PLAYER_TILING_L.y * i, -i);
+						quadMistCardUI.transform.localScale = Vector3.one;
+						break;
+					}
 					quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_S * i;
 					quadMistCardUI.transform.localScale = Hand.PLAYER_SCALE_S;
-				}
-				else
-				{
-					quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_L * i;
+					break;
+				case Hand.STATE.PLAYER_SELECT_BOARD:
+					transform.localPosition = Hand.PLAYER_POSITION;
+					if (Board.USE_SMALL_BOARD)
+					{
+						quadMistCardUI.transform.localPosition = new Vector3(Hand.PLAYER_TILING_L.x * i, Hand.PLAYER_TILING_L.y * i, -i);
+						quadMistCardUI.transform.localScale = Vector3.one;
+						break;
+					}
+					if (Count == 5)
+					{
+						quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_S * i;
+						quadMistCardUI.transform.localScale = Hand.PLAYER_SCALE_S;
+					}
+					else
+					{
+						quadMistCardUI.transform.localPosition = Hand.PLAYER_TILING_L * i;
+						quadMistCardUI.transform.localScale = Vector3.one;
+					}
+					break;
+				case Hand.STATE.PLAYER_POSTGAME:
+					transform.localPosition = Hand.PLAYER_POST_POSITION;
 					quadMistCardUI.transform.localScale = Vector3.one;
-				}
-				break;
-			case Hand.STATE.PLAYER_POSTGAME:
-				transform.localPosition = Hand.PLAYER_POST_POSITION;
-				quadMistCardUI.transform.localScale = Vector3.one;
-				quadMistCardUI.transform.localPosition = Hand.DEFAULT_TILING(Count) * i;
-				break;
+					quadMistCardUI.transform.localPosition = Hand.DEFAULT_TILING(Count) * i;
+					break;
 			}
 			i++;
 		}
@@ -533,15 +533,15 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 		StartCoroutine(Anim.MoveLerp(t, mov, time, true));
 	}
 
-    public int CardAnimatingCount
-    {
-        get
-        {
-            return cardAnimatingCount;
-        }
-    }
+	public int CardAnimatingCount
+	{
+		get
+		{
+			return cardAnimatingCount;
+		}
+	}
 
-    private IEnumerator SlideCardBackToTheFormerPosition(Transform origin, Vector3 target, Single duration)
+	private IEnumerator SlideCardBackToTheFormerPosition(Transform origin, Vector3 target, Single duration)
 	{
 		cardAnimatingCount++;
 		yield return StartCoroutine(Anim.MoveLerp(origin, target, duration, true));
@@ -581,7 +581,7 @@ public class Hand : MonoBehaviour, IEnumerable, IEnumerable<QuadMistCard>, IList
 		Vector3 pos = t.localPosition;
 		for (Int32 tick = 0; tick <= 40; tick++)
 		{
-            Int32 trans = 15 + i * 6 - tick;
+			Int32 trans = 15 + i * 6 - tick;
 			if (trans <= 0)
 				break;
 			t.transform.localPosition = new Vector3(pos.x, -(trans * trans + i * 14) * (Board.USE_SMALL_BOARD ? 0.03f : 0.01f), -i);

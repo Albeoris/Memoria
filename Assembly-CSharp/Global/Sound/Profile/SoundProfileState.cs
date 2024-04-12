@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum SoundProfileState
+﻿public enum SoundProfileState
 {
 	Idle,
 	Created,

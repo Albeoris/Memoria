@@ -63,97 +63,97 @@ public class WorldSPSSystem : MonoBehaviour
 					Int32 no = worldSPS.no;
 					switch (no)
 					{
-					case 14:
-					case 18:
-					case 19:
-					{
-						if (ff9.w_effectMoveStockHeight > 4095)
-						{
-							ff9.w_effectMoveStockHeight = 4095;
-						}
-						if (ff9.w_effectMoveStockHeight < 0)
-						{
-							ff9.w_effectMoveStockHeight = 0;
-						}
-						ff9.w_effectMoveStockHeightTrue += (ff9.w_effectMoveStockHeight - ff9.w_effectMoveStockHeightTrue) / 32;
-						Int32 num = ff9.w_effectMoveStockTrue * ff9.w_effectMoveStockHeightTrue >> 12;
-						ff9.w_frameShadowOTOffset = 50;
-						if (num > 24)
-						{
-							worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame, worldSPS.type, num, 0, 0);
-						}
-						break;
-					}
-					case 15:
-					case 22:
-						rot = new Vector3(1024f, 0f, 0f);
-						ff9.w_frameShadowOTOffset = 20;
-						worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame, worldSPS.type, ff9.w_effectMoveStockTrue, 0, 0);
-						break;
-					case 16:
-						rot = new Vector3(ff9.PsxRot(1024), 0f, 0f);
-						ff9.w_frameShadowOTOffset = 20;
-						position.y += ff9.S(400);
-						worldSPS.size = (8 - worldSPS.frame) * 4000;
-						if (ff9.effect16FrameCounter % 2 == 0)
-						{
-							rot.y = (Single)(worldSPS.frame * 128);
-							worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame, 1, -1, 0, 0);
-						}
-						else
-						{
-							rot.y = (Single)(worldSPS.frame * 200);
-							worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame, 2, -1, 0, 0);
-						}
-						ff9.effect16FrameCounter++;
-						break;
-					case 17:
-					case 20:
-					case 21:
-					case 23:
-					case 24:
-						IL_93:
-						if (no != 2)
-						{
-							if (no != 3)
+						case 14:
+						case 18:
+						case 19:
 							{
-								if (no != 8)
+								if (ff9.w_effectMoveStockHeight > 4095)
 								{
-									ff9.w_frameShadowOTOffset = 40;
-									worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame, worldSPS.type, -1, 0, 0);
+									ff9.w_effectMoveStockHeight = 4095;
+								}
+								if (ff9.w_effectMoveStockHeight < 0)
+								{
+									ff9.w_effectMoveStockHeight = 0;
+								}
+								ff9.w_effectMoveStockHeightTrue += (ff9.w_effectMoveStockHeight - ff9.w_effectMoveStockHeightTrue) / 32;
+								Int32 num = ff9.w_effectMoveStockTrue * ff9.w_effectMoveStockHeightTrue >> 12;
+								ff9.w_frameShadowOTOffset = 50;
+								if (num > 24)
+								{
+									worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame, worldSPS.type, num, 0, 0);
+								}
+								break;
+							}
+						case 15:
+						case 22:
+							rot = new Vector3(1024f, 0f, 0f);
+							ff9.w_frameShadowOTOffset = 20;
+							worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame, worldSPS.type, ff9.w_effectMoveStockTrue, 0, 0);
+							break;
+						case 16:
+							rot = new Vector3(ff9.PsxRot(1024), 0f, 0f);
+							ff9.w_frameShadowOTOffset = 20;
+							position.y += ff9.S(400);
+							worldSPS.size = (8 - worldSPS.frame) * 4000;
+							if (ff9.effect16FrameCounter % 2 == 0)
+							{
+								rot.y = (Single)(worldSPS.frame * 128);
+								worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame, 1, -1, 0, 0);
+							}
+							else
+							{
+								rot.y = (Single)(worldSPS.frame * 200);
+								worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame, 2, -1, 0, 0);
+							}
+							ff9.effect16FrameCounter++;
+							break;
+						case 17:
+						case 20:
+						case 21:
+						case 23:
+						case 24:
+						IL_93:
+							if (no != 2)
+							{
+								if (no != 3)
+								{
+									if (no != 8)
+									{
+										ff9.w_frameShadowOTOffset = 40;
+										worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame, worldSPS.type, -1, 0, 0);
+									}
+									else
+									{
+										global::Debug.LogWarning("Check this please!");
+									}
 								}
 								else
 								{
-									global::Debug.LogWarning("Check this please!");
+									ff9.w_frameShadowOTOffset = 0;
+									worldSPS.size = worldSPS.frame * 400 + 6000;
+									worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame / 2 % 23, worldSPS.type, -1, 0, 2);
 								}
 							}
 							else
 							{
 								ff9.w_frameShadowOTOffset = 0;
 								worldSPS.size = worldSPS.frame * 400 + 6000;
-								worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame / 2 % 23, worldSPS.type, -1, 0, 2);
+								worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame / 4 % 26, worldSPS.type, -1, 0, 2);
 							}
-						}
-						else
-						{
-							ff9.w_frameShadowOTOffset = 0;
-							worldSPS.size = worldSPS.frame * 400 + 6000;
-							worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame / 4 % 26, worldSPS.type, -1, 0, 2);
-						}
-						break;
-					case 25:
-					case 26:
-					{
-						rot = new Vector3(0f, 0f, 0f);
-						Single y = ff9.S(196657) - worldSPS.pos[0];
-						Single x = ff9.S(-81774) - worldSPS.pos[2];
-						rot.y = (Single)ff9.UnityRot((Single)((Int16)ff9.ratan2(y, x)));
-						ff9.w_frameShadowOTOffset = 0;
-						worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame, worldSPS.type, -1, 0, 0);
-						break;
-					}
-					default:
-						goto IL_93;
+							break;
+						case 25:
+						case 26:
+							{
+								rot = new Vector3(0f, 0f, 0f);
+								Single y = ff9.S(196657) - worldSPS.pos[0];
+								Single x = ff9.S(-81774) - worldSPS.pos[2];
+								rot.y = (Single)ff9.UnityRot((Single)((Int16)ff9.ratan2(y, x)));
+								ff9.w_frameShadowOTOffset = 0;
+								worldSPS.S_WoSpsPut(worldSPS.spsBin, pos, rot, worldSPS.size, worldSPS.frame, worldSPS.type, -1, 0, 0);
+								break;
+							}
+						default:
+							goto IL_93;
 					}
 					worldSPS.transform.position = position;
 					worldSPS.transform.rotation = Quaternion.Euler(worldSPS.rot);
@@ -341,39 +341,39 @@ public class WorldSPSSystem : MonoBehaviour
 		Int32 type;
 		switch (no)
 		{
-		case 14:
-			type = 1;
-			break;
-		case 15:
-			type = 1;
-			break;
-		case 16:
-			type = 255;
-			break;
-		default:
-			if (no != 2)
-			{
-				if (no != 3)
+			case 14:
+				type = 1;
+				break;
+			case 15:
+				type = 1;
+				break;
+			case 16:
+				type = 255;
+				break;
+			default:
+				if (no != 2)
 				{
-					if (no != 29)
+					if (no != 3)
 					{
-						type = 1;
+						if (no != 29)
+						{
+							type = 1;
+						}
+						else
+						{
+							type = 1;
+						}
 					}
 					else
 					{
-						type = 1;
+						type = 2;
 					}
 				}
 				else
 				{
 					type = 2;
 				}
-			}
-			else
-			{
-				type = 2;
-			}
-			break;
+				break;
 		}
 		WorldSPS worldSPS = this._spsList[num];
 		worldSPS.type = type;

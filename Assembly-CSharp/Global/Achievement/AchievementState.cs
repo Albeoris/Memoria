@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Assets.SiliconSocial;
+using System;
 using System.Collections.Generic;
-using Assets.SiliconSocial;
-using Memoria.Data;
 using UnityEngine;
 
 public class AchievementState : MonoBehaviour

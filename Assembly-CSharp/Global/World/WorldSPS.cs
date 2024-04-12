@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Memoria.Scripts;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Memoria.Scripts;
 using UnityEngine;
 
 public class WorldSPS : MonoBehaviour

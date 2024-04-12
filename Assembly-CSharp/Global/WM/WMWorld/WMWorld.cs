@@ -1,10 +1,10 @@
+using Assets.Scripts.Common;
+using Memoria;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Assets.Scripts.Common;
 using UnityEngine;
 using UnityStandardAssets.ImageEffects;
-using Memoria;
 using Object = System.Object;
 
 public class WMWorld : Singleton<WMWorld>
@@ -2028,15 +2028,15 @@ public class WMWorld : Singleton<WMWorld>
 		String str = String.Empty;
 		switch (index)
 		{
-		case 0:
-			str = "geo_sub_w0_003_0";
-			break;
-		case 1:
-			str = "geo_sub_w0_003_1";
-			break;
-		case 2:
-			str = "geo_sub_w0_003_2";
-			break;
+			case 0:
+				str = "geo_sub_w0_003_0";
+				break;
+			case 1:
+				str = "geo_sub_w0_003_1";
+				break;
+			case 2:
+				str = "geo_sub_w0_003_2";
+				break;
 		}
 		return AssetManager.Load<Texture2D>("EmbeddedAsset/WorldMap_Local/Characters/Chocobo/" + chocoboName + "/" + str, false);
 	}

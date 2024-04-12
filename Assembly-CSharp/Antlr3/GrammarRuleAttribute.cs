@@ -32,26 +32,26 @@
 
 namespace Antlr.Runtime
 {
-    using Attribute = System.Attribute;
-    using AttributeTargets = System.AttributeTargets;
-    using AttributeUsageAttribute = System.AttributeUsageAttribute;
+	using Attribute = System.Attribute;
+	using AttributeTargets = System.AttributeTargets;
+	using AttributeUsageAttribute = System.AttributeUsageAttribute;
 
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public sealed class GrammarRuleAttribute : Attribute
-    {
-        private readonly string _name;
+	[AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+	public sealed class GrammarRuleAttribute : Attribute
+	{
+		private readonly string _name;
 
-        public GrammarRuleAttribute(string name)
-        {
-            this._name = name;
-        }
+		public GrammarRuleAttribute(string name)
+		{
+			this._name = name;
+		}
 
-        public string Name
-        {
-            get
-            {
-                return _name;
-            }
-        }
-    }
+		public string Name
+		{
+			get
+			{
+				return _name;
+			}
+		}
+	}
 }

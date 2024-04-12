@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace AnimationOrTween
+﻿namespace AnimationOrTween
 {
 	public enum Direction
 	{

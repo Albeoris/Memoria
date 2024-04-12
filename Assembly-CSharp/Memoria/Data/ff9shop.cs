@@ -1,15 +1,15 @@
-﻿using System;
-using Memoria.Data;
+﻿using Memoria.Data;
+using System;
 
 namespace FF9
 {
 	public static class ff9shop
 	{
-	    public static Int32 FF9Shop_GetDefence(Int32 part, CharacterEquipment equip)
-	    {
-	        Int32 result = 0;
-	        for (Int32 i = 0; i < 5; i++)
-	        {
+		public static Int32 FF9Shop_GetDefence(Int32 part, CharacterEquipment equip)
+		{
+			Int32 result = 0;
+			for (Int32 i = 0; i < 5; i++)
+			{
 				if (equip[i] != RegularItem.NoItem && ff9item.HasItemArmor(equip[i]))
 				{
 					ItemDefence equipArmor = ff9item.GetItemArmor(equip[i]);
@@ -27,9 +27,9 @@ namespace FF9
 						case 4:
 							break;
 					}
-	            }
-	        }
-	        return result;
+				}
+			}
+			return result;
 		}
 
 		public static ShopUI.ShopType FF9Shop_GetType(Int32 shopId)

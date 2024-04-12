@@ -1,6 +1,4 @@
-﻿using System;
-
-public class FieldMapInfo
+﻿public class FieldMapInfo
 {
 	static FieldMapInfo()
 	{

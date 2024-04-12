@@ -1,6 +1,4 @@
-﻿using System;
-
-public class ObjList
+﻿public class ObjList
 {
 	public void copy(ObjList ol)
 	{

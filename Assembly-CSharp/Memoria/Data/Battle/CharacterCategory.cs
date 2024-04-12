@@ -2,16 +2,16 @@
 
 namespace Memoria.Data
 {
-    [Flags]
-    public enum CharacterCategory : byte
-    {
-        Male = 1,
-        Female = 2,
-        Gaia = 4,
-        Terra = 8,
-        Subpc = 16,
-        Reserve1 = 32,
-        Reserve2 = 64,
-        Reserve3 = 128
-    }
+	[Flags]
+	public enum CharacterCategory : byte
+	{
+		Male = 1,
+		Female = 2,
+		Gaia = 4,
+		Terra = 8,
+		Subpc = 16,
+		Reserve1 = 32,
+		Reserve2 = 64,
+		Reserve3 = 128
+	}
 }

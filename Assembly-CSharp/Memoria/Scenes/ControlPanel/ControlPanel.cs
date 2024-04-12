@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Assets.Sources.Scripts.UI.Common;
+using Memoria.Prime;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Memoria.Prime;
-using Assets.Sources.Scripts.UI.Common;
 
 namespace Memoria.Scenes
 {
@@ -221,7 +221,7 @@ namespace Memoria.Scenes
 			return panel;
 		}
 
-		public T CreateUIElementForPanel<T>(UIWidget panel) where T: Component
+		public T CreateUIElementForPanel<T>(UIWidget panel) where T : Component
 		{
 			T result = InstantiateUIElement<T>(out GameObject go, out Int32 defaultWidth, out Int32 lineCount);
 			if (go != null)

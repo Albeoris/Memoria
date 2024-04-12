@@ -1,8 +1,8 @@
 ﻿using Memoria.Assets;
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TutorialUI : UIScene
@@ -206,7 +206,7 @@ public class TutorialUI : UIScene
 		base.Loading = true;
 		String key = TutorialUI.QuadMistLocalizeKey + this.QuadmistTutorialID;
 		Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
-		dialog.AfterDialogShown = delegate(Int32 choice)
+		dialog.AfterDialogShown = delegate (Int32 choice)
 		{
 			base.Loading = false;
 		};
@@ -250,7 +250,7 @@ public class TutorialUI : UIScene
 			return;
 		String key = prefix + TutorialUI.BasicControlLocalizeKey + this.BasicControlTutorialID;
 		Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get(key), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
-		dialog.AfterDialogShown = delegate(Int32 choice)
+		dialog.AfterDialogShown = delegate (Int32 choice)
 		{
 			base.Loading = false;
 		};

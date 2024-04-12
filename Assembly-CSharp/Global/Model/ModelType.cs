@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum ModelType
+﻿public enum ModelType
 {
 	none,
 	acc,

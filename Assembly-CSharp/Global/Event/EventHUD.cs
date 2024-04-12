@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Sources.Scripts.UI.Common;
-using UnityEngine;
+﻿using Assets.Sources.Scripts.UI.Common;
+using System;
 
 public class EventHUD
 {
@@ -58,21 +56,21 @@ public class EventHUD
 				String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
 				switch (currentLanguage)
 				{
-				case "Japanese":
-				case "Italian":
-					flag = (mesId == 402);
-					break;
-				case "English(US)":
-				case "English(UK)":
-					flag = (mesId == 401);
-					break;
-				case "French":
-				case "German":
-					flag = (mesId == 400);
-					break;
-				case "Spanish":
-					flag = (mesId == 395);
-					break;
+					case "Japanese":
+					case "Italian":
+						flag = (mesId == 402);
+						break;
+					case "English(US)":
+					case "English(UK)":
+						flag = (mesId == 401);
+						break;
+					case "French":
+					case "German":
+						flag = (mesId == 400);
+						break;
+					case "Spanish":
+						flag = (mesId == 395);
+						break;
 				}
 				if (flag)
 				{
@@ -82,19 +80,19 @@ public class EventHUD
 			else if (FF9TextTool.FieldZoneId == 23)
 			{
 				String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-			    switch (currentLanguage)
-			    {
-                    case "Japanese":
-                    case "French":
-                        flag = (mesId == 153);
-                        goto IL_21A;
-                    case "Italian":
-                        flag = (mesId == 148);
-                        goto IL_21A;
-                }
-                
+				switch (currentLanguage)
+				{
+					case "Japanese":
+					case "French":
+						flag = (mesId == 153);
+						goto IL_21A;
+					case "Italian":
+						flag = (mesId == 148);
+						goto IL_21A;
+				}
+
 				flag = (mesId == 133);
-				IL_21A:
+			IL_21A:
 				if (flag)
 				{
 					hudtype = MinigameHUD.Auction;
@@ -126,16 +124,16 @@ public class EventHUD
 			else if (FF9TextTool.FieldZoneId == 70 || FF9TextTool.FieldZoneId == 741)
 			{
 				String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-			    switch (currentLanguage)
-			    {
-                    case "English(US)":
-                    case "English(UK)":
-                        flag = (mesId == 203);
-                        goto IL_324;
-                }
-			    
+				switch (currentLanguage)
+				{
+					case "English(US)":
+					case "English(UK)":
+						flag = (mesId == 203);
+						goto IL_324;
+				}
+
 				flag = (mesId == 204);
-				IL_324:
+			IL_324:
 				if (flag)
 				{
 					hudtype = MinigameHUD.Auction;
@@ -144,16 +142,16 @@ public class EventHUD
 			else if (FF9TextTool.FieldZoneId == 71)
 			{
 				String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                switch (currentLanguage)
-                {
-                    case "English(US)":
-                    case "English(UK)":
-                        flag = (mesId == 216);
-                        goto IL_3BB;
-                }
-                
+				switch (currentLanguage)
+				{
+					case "English(US)":
+					case "English(UK)":
+						flag = (mesId == 216);
+						goto IL_3BB;
+				}
+
 				flag = (mesId == 217);
-				IL_3BB:
+			IL_3BB:
 				if (flag)
 				{
 					hudtype = MinigameHUD.MogTutorial;
@@ -187,22 +185,22 @@ public class EventHUD
 				String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
 				switch (currentLanguage)
 				{
-				case "Japanese":
-				case "French":
-					flag = (mesId == 873);
-					goto IL_51C;
-				case "Spanish":
-					flag = (mesId == 858);
-					goto IL_51C;
-				case "German":
-					flag = (mesId == 874);
-					goto IL_51C;
-				case "Italian":
-					flag = (mesId == 888);
-					goto IL_51C;
+					case "Japanese":
+					case "French":
+						flag = (mesId == 873);
+						goto IL_51C;
+					case "Spanish":
+						flag = (mesId == 858);
+						goto IL_51C;
+					case "German":
+						flag = (mesId == 874);
+						goto IL_51C;
+					case "Italian":
+						flag = (mesId == 888);
+						goto IL_51C;
 				}
 				flag = (mesId == 860);
-				IL_51C:
+			IL_51C:
 				if (flag)
 				{
 					hudtype = MinigameHUD.Auction;
@@ -249,14 +247,14 @@ public class EventHUD
 				else
 				{
 					String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-				    if (currentLanguage == "Japanese")
-				    {
-				        flag = (mesId == 250);
-				        goto IL_639;
-				    }
-                    
+					if (currentLanguage == "Japanese")
+					{
+						flag = (mesId == 250);
+						goto IL_639;
+					}
+
 					flag = (mesId == 251);
-					IL_639:
+				IL_639:
 					if (flag)
 					{
 						hudtype = MinigameHUD.Auction;
@@ -266,29 +264,29 @@ public class EventHUD
 			else if (FF9TextTool.FieldZoneId == 946)
 			{
 				String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                switch (currentLanguage)
-                {
-                    case "English(US)":
-                    case "English(UK)":
-                        flag = (mesId == 250 || mesId == 251);
-                        if (!flag)
-                        {
-                            flag = (mesId == 264);
-                        }
-                        if (flag)
-                        {
-                            if ((mesId == 250 || mesId == 251) && !open)
-                            {
-                                open = true;
-                            }
-                            else if (mesId == 264 && open)
-                            {
-                                open = false;
-                            }
-                        }
-                        goto IL_789;
-                }
-                
+				switch (currentLanguage)
+				{
+					case "English(US)":
+					case "English(UK)":
+						flag = (mesId == 250 || mesId == 251);
+						if (!flag)
+						{
+							flag = (mesId == 264);
+						}
+						if (flag)
+						{
+							if ((mesId == 250 || mesId == 251) && !open)
+							{
+								open = true;
+							}
+							else if (mesId == 264 && open)
+							{
+								open = false;
+							}
+						}
+						goto IL_789;
+				}
+
 				flag = (mesId == 257 || mesId == 258);
 				if (!flag)
 				{
@@ -305,7 +303,7 @@ public class EventHUD
 						open = false;
 					}
 				}
-				IL_789:
+			IL_789:
 				if (flag)
 				{
 					hudtype = MinigameHUD.JumpingRope;
@@ -330,39 +328,39 @@ public class EventHUD
 		Boolean flag = false;
 		switch (HUDType)
 		{
-		case MinigameHUD.Chanbara:
-			flag = !UIManager.Field.IsDisplayChanbaraHUD();
-			break;
-		case MinigameHUD.Auction:
-			flag = !UIManager.Field.IsDisplayAuctionHUD();
-			break;
-		case MinigameHUD.MogTutorial:
-			flag = !UIManager.Field.IsDisplayTutorialHUD();
-			break;
-		case MinigameHUD.JumpingRope:
-			flag = !UIManager.Field.IsDisplayJumpRopeHUD();
-			break;
-		case MinigameHUD.Telescope:
-			flag = !UIManager.Field.IsDisplayTelescopeHUD();
-			break;
-		case MinigameHUD.RacingHippaul:
-			flag = !UIManager.Field.IsDisplayRacingHippaulHUD();
-			break;
-		case MinigameHUD.SwingACage:
-			flag = !UIManager.Field.IsDisplaySwingACageHUD();
-			break;
-		case MinigameHUD.GetTheKey:
-			flag = !UIManager.Field.IsDisplayGetTheKeyHUD();
-			break;
-		case MinigameHUD.ChocoHot:
-			flag = !UIManager.Field.IsDisplayChocoHot();
-			break;
-		case MinigameHUD.ChocoHotInstruction:
-			flag = !UIManager.Field.IsDisplayChocoHotInstruction();
-			break;
-		case MinigameHUD.PandoniumElevator:
-			flag = !UIManager.Field.IsDisplayPandoniumElevator();
-			break;
+			case MinigameHUD.Chanbara:
+				flag = !UIManager.Field.IsDisplayChanbaraHUD();
+				break;
+			case MinigameHUD.Auction:
+				flag = !UIManager.Field.IsDisplayAuctionHUD();
+				break;
+			case MinigameHUD.MogTutorial:
+				flag = !UIManager.Field.IsDisplayTutorialHUD();
+				break;
+			case MinigameHUD.JumpingRope:
+				flag = !UIManager.Field.IsDisplayJumpRopeHUD();
+				break;
+			case MinigameHUD.Telescope:
+				flag = !UIManager.Field.IsDisplayTelescopeHUD();
+				break;
+			case MinigameHUD.RacingHippaul:
+				flag = !UIManager.Field.IsDisplayRacingHippaulHUD();
+				break;
+			case MinigameHUD.SwingACage:
+				flag = !UIManager.Field.IsDisplaySwingACageHUD();
+				break;
+			case MinigameHUD.GetTheKey:
+				flag = !UIManager.Field.IsDisplayGetTheKeyHUD();
+				break;
+			case MinigameHUD.ChocoHot:
+				flag = !UIManager.Field.IsDisplayChocoHot();
+				break;
+			case MinigameHUD.ChocoHotInstruction:
+				flag = !UIManager.Field.IsDisplayChocoHotInstruction();
+				break;
+			case MinigameHUD.PandoniumElevator:
+				flag = !UIManager.Field.IsDisplayPandoniumElevator();
+				break;
 		}
 		Boolean isEnable = HUDType == MinigameHUD.Telescope || HUDType == MinigameHUD.ChocoHot || PersistenSingleton<EventEngine>.Instance.GetUserControl();
 		if (flag)
@@ -382,39 +380,39 @@ public class EventHUD
 		Boolean flag = false;
 		switch (HUDType)
 		{
-		case MinigameHUD.Chanbara:
-			flag = UIManager.Field.IsDisplayChanbaraHUD();
-			break;
-		case MinigameHUD.Auction:
-			flag = UIManager.Field.IsDisplayAuctionHUD();
-			break;
-		case MinigameHUD.MogTutorial:
-			flag = UIManager.Field.IsDisplayTutorialHUD();
-			break;
-		case MinigameHUD.JumpingRope:
-			flag = UIManager.Field.IsDisplayJumpRopeHUD();
-			break;
-		case MinigameHUD.Telescope:
-			flag = UIManager.Field.IsDisplayTelescopeHUD();
-			break;
-		case MinigameHUD.RacingHippaul:
-			flag = UIManager.Field.IsDisplayRacingHippaulHUD();
-			break;
-		case MinigameHUD.SwingACage:
-			flag = UIManager.Field.IsDisplaySwingACageHUD();
-			break;
-		case MinigameHUD.GetTheKey:
-			flag = UIManager.Field.IsDisplayGetTheKeyHUD();
-			break;
-		case MinigameHUD.ChocoHot:
-			flag = UIManager.Field.IsDisplayChocoHot();
-			break;
-		case MinigameHUD.ChocoHotInstruction:
-			flag = UIManager.Field.IsDisplayChocoHotInstruction();
-			break;
-		case MinigameHUD.PandoniumElevator:
-			flag = UIManager.Field.IsDisplayPandoniumElevator();
-			break;
+			case MinigameHUD.Chanbara:
+				flag = UIManager.Field.IsDisplayChanbaraHUD();
+				break;
+			case MinigameHUD.Auction:
+				flag = UIManager.Field.IsDisplayAuctionHUD();
+				break;
+			case MinigameHUD.MogTutorial:
+				flag = UIManager.Field.IsDisplayTutorialHUD();
+				break;
+			case MinigameHUD.JumpingRope:
+				flag = UIManager.Field.IsDisplayJumpRopeHUD();
+				break;
+			case MinigameHUD.Telescope:
+				flag = UIManager.Field.IsDisplayTelescopeHUD();
+				break;
+			case MinigameHUD.RacingHippaul:
+				flag = UIManager.Field.IsDisplayRacingHippaulHUD();
+				break;
+			case MinigameHUD.SwingACage:
+				flag = UIManager.Field.IsDisplaySwingACageHUD();
+				break;
+			case MinigameHUD.GetTheKey:
+				flag = UIManager.Field.IsDisplayGetTheKeyHUD();
+				break;
+			case MinigameHUD.ChocoHot:
+				flag = UIManager.Field.IsDisplayChocoHot();
+				break;
+			case MinigameHUD.ChocoHotInstruction:
+				flag = UIManager.Field.IsDisplayChocoHotInstruction();
+				break;
+			case MinigameHUD.PandoniumElevator:
+				flag = UIManager.Field.IsDisplayPandoniumElevator();
+				break;
 		}
 		Boolean isEnable = HUDType != MinigameHUD.Telescope && HUDType != MinigameHUD.ChocoHot && PersistenSingleton<EventEngine>.Instance.GetUserControl();
 		if (flag)

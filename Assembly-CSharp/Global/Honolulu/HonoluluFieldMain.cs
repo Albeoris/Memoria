@@ -1,8 +1,7 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
-using Memoria.Assets;
+using System;
 using UnityEngine;
 using Object = System.Object;
 
@@ -145,12 +144,12 @@ public class HonoluluFieldMain : HonoBehavior
 			allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(0);
 		if (sndEffectResSoundID2 != -1 && sndEffectResSoundID2 == sndEffectResSoundID4)
 			allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_RESTORE(1);
-        Int32 camNumber = PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1;
-        String camNumberStr = "-" + camNumber;
-        if (camNumber == -1) { camNumberStr = ""; };
-        String camIdxIfCam = (PersistenSingleton<EventEngine>.Instance?.fieldmap?.scene?.cameraList.Count > 1 && PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx != -1) ? "-" + PersistenSingleton<EventEngine>.Instance.fieldmap.camIdx : "";
-        PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}{camIdxIfCam} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
-        FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
+		Int32 camNumber = PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1;
+		String camNumberStr = "-" + camNumber;
+		if (camNumber == -1) { camNumberStr = ""; };
+		String camIdxIfCam = (PersistenSingleton<EventEngine>.Instance?.fieldmap?.scene?.cameraList.Count > 1 && PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx != -1) ? "-" + PersistenSingleton<EventEngine>.Instance.fieldmap.camIdx : "";
+		PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}{camIdxIfCam} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
+		FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
 	}
 
 	public override void HonoUpdate()
@@ -206,44 +205,44 @@ public class HonoluluFieldMain : HonoBehavior
 				this.updatePlayerObj();
 				switch (num)
 				{
-				case 3:
-					this.FF9Sys.attr |= 8u;
-					this.FF9FieldMap.nextMode = 2;
-					this.fieldmap.ff9fieldInternalBattleEncountStart();
-					this.ee.BackupPosObjData();
-					FF9StateSystem.Battle.isDebug = false;
-					FF9StateSystem.Battle.mappingBattleIDWithMapList = false;
-					NGUIDebug.Clear();
-					break;
-				case 4:
-					if (this.FF9FieldMap.nextMapNo == FF9Define.FLDSCRPT_EVTNO_ENDING)
-					{
-						this.FF9FieldMap.nextMode = 4;
-						this.FF9Sys.attr |= 2u;
-					}
-					else
-					{
-						this.FF9FieldMap.nextMode = 1;
+					case 3:
 						this.FF9Sys.attr |= 8u;
-					}
-					break;
-				case 5:
-					this.FF9FieldMap.nextMode = 3;
-					this.FF9Sys.attr |= 2u;
-					break;
-				case 7:
-					this.FF9FieldMap.nextMode = 9;
-					this.FF9Sys.attr |= 2u;
-					break;
-				case 8:
-					this.FF9FieldMap.nextMode = 7;
-					this.FF9Sys.attr |= 2u;
-					this.FF9.attr |= 2u;
-					PersistenSingleton<EventEngine>.Instance.eTb.InitMessage();
-					PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
-					this.shutdownField();
-					EventService.OpenGameOver();
-					break;
+						this.FF9FieldMap.nextMode = 2;
+						this.fieldmap.ff9fieldInternalBattleEncountStart();
+						this.ee.BackupPosObjData();
+						FF9StateSystem.Battle.isDebug = false;
+						FF9StateSystem.Battle.mappingBattleIDWithMapList = false;
+						NGUIDebug.Clear();
+						break;
+					case 4:
+						if (this.FF9FieldMap.nextMapNo == FF9Define.FLDSCRPT_EVTNO_ENDING)
+						{
+							this.FF9FieldMap.nextMode = 4;
+							this.FF9Sys.attr |= 2u;
+						}
+						else
+						{
+							this.FF9FieldMap.nextMode = 1;
+							this.FF9Sys.attr |= 8u;
+						}
+						break;
+					case 5:
+						this.FF9FieldMap.nextMode = 3;
+						this.FF9Sys.attr |= 2u;
+						break;
+					case 7:
+						this.FF9FieldMap.nextMode = 9;
+						this.FF9Sys.attr |= 2u;
+						break;
+					case 8:
+						this.FF9FieldMap.nextMode = 7;
+						this.FF9Sys.attr |= 2u;
+						this.FF9.attr |= 2u;
+						PersistenSingleton<EventEngine>.Instance.eTb.InitMessage();
+						PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
+						this.shutdownField();
+						EventService.OpenGameOver();
+						break;
 				}
 			}
 			if ((this.FF9.attr & 4u) == 0u && this.fieldmap != null)
@@ -419,33 +418,33 @@ public class HonoluluFieldMain : HonoBehavior
 				this.FF9Sys.prevMode = 1;
 				break;
 			case 4:
-			{
-				AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
-				allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_STOP_ALL(null);
-				allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
-				allSoundDispatchPlayer.FF9SOUND_STREAM_STOP();
-				break;
-			}
+				{
+					AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_STOP_ALL(null);
+					allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
+					allSoundDispatchPlayer.FF9SOUND_STREAM_STOP();
+					break;
+				}
 			case 7:
-			{
-				AllSoundDispatchPlayer allSoundDispatchPlayer2 = SoundLib.GetAllSoundDispatchPlayer();
-				allSoundDispatchPlayer2.FF9SOUND_SNDEFFECT_STOP_ALL(null);
-				allSoundDispatchPlayer2.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
-				allSoundDispatchPlayer2.FF9SOUND_STREAM_STOP();
-				this.FF9Sys.mode = 7;
-				this.FF9Sys.prevMode = 1;
-				break;
-			}
+				{
+					AllSoundDispatchPlayer allSoundDispatchPlayer2 = SoundLib.GetAllSoundDispatchPlayer();
+					allSoundDispatchPlayer2.FF9SOUND_SNDEFFECT_STOP_ALL(null);
+					allSoundDispatchPlayer2.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
+					allSoundDispatchPlayer2.FF9SOUND_STREAM_STOP();
+					this.FF9Sys.mode = 7;
+					this.FF9Sys.prevMode = 1;
+					break;
+				}
 			case 9:
-			{
-				Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
-				if (currentMusicId != -1)
-					FF9Snd.ff9fldsnd_song_suspend(currentMusicId);
-				FF9Snd.ff9fieldSoundSuspendAllResidentSndEffect();
-				AllSoundDispatchPlayer allSoundDispatchPlayer3 = SoundLib.GetAllSoundDispatchPlayer();
-				allSoundDispatchPlayer3.FF9SOUND_STREAM_STOP();
-				break;
-			}
+				{
+					Int32 currentMusicId = FF9Snd.GetCurrentMusicId();
+					if (currentMusicId != -1)
+						FF9Snd.ff9fldsnd_song_suspend(currentMusicId);
+					FF9Snd.ff9fieldSoundSuspendAllResidentSndEffect();
+					AllSoundDispatchPlayer allSoundDispatchPlayer3 = SoundLib.GetAllSoundDispatchPlayer();
+					allSoundDispatchPlayer3.FF9SOUND_STREAM_STOP();
+					break;
+				}
 		}
 	}
 

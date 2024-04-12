@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Memoria.Data;
+﻿using UnityEngine;
 
 public class CommonState : MonoBehaviour
 {

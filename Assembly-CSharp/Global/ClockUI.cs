@@ -109,28 +109,28 @@ public class ClockUI : MonoBehaviour
 	{
 		switch (number)
 		{
-		case 0:
-			return this.clock0Sprite;
-		case 1:
-			return this.clock1Sprite;
-		case 2:
-			return this.clock2Sprite;
-		case 3:
-			return this.clock3Sprite;
-		case 4:
-			return this.clock4Sprite;
-		case 5:
-			return this.clock5Sprite;
-		case 6:
-			return this.clock6Sprite;
-		case 7:
-			return this.clock7Sprite;
-		case 8:
-			return this.clock8Sprite;
-		case 9:
-			return this.clock9Sprite;
-		default:
-			return this.clock0Sprite;
+			case 0:
+				return this.clock0Sprite;
+			case 1:
+				return this.clock1Sprite;
+			case 2:
+				return this.clock2Sprite;
+			case 3:
+				return this.clock3Sprite;
+			case 4:
+				return this.clock4Sprite;
+			case 5:
+				return this.clock5Sprite;
+			case 6:
+				return this.clock6Sprite;
+			case 7:
+				return this.clock7Sprite;
+			case 8:
+				return this.clock8Sprite;
+			case 9:
+				return this.clock9Sprite;
+			default:
+				return this.clock0Sprite;
 		}
 	}
 

@@ -2,20 +2,20 @@
 
 namespace NCalc
 {
-    public class ParameterArgs : EventArgs
-    {
-        private object result;
+	public class ParameterArgs : EventArgs
+	{
+		private object result;
 
-        public object Result
-        {
-            get { return result; }
-            set
-            {
-                result = value;
-                HasResult = true;
-            }
-        }
+		public object Result
+		{
+			get { return result; }
+			set
+			{
+				result = value;
+				HasResult = true;
+			}
+		}
 
-        public bool HasResult { get; set; }
-    }
+		public bool HasResult { get; set; }
+	}
 }

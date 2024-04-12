@@ -1,6 +1,4 @@
-﻿using System;
-
-internal enum MenuLanguage
+﻿internal enum MenuLanguage
 {
 	EnglishUS,
 	Japanese,

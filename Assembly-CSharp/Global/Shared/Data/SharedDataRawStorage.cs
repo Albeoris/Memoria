@@ -1,8 +1,7 @@
-﻿using System;
+﻿using SimpleJSON;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Memoria.Prime;
-using SimpleJSON;
 
 public class SharedDataRawStorage : SharedDataBytesStorage
 {
@@ -89,7 +88,7 @@ public class SharedDataRawStorage : SharedDataBytesStorage
 
 	public override void Load(Int32 slotID, Int32 saveID, ISharedDataStorage.OnLoadFinish onFinishDelegate)
 	{
-        ISharedDataLog.LogWarning("No need implementation");
+		ISharedDataLog.LogWarning("No need implementation");
 	}
 
 	public override void Save(Int32 slotID, Int32 saveID, JSONClass rootNode, ISharedDataStorage.OnSaveFinish onFinishDelegate)

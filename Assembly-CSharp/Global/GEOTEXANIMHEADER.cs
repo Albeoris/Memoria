@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Memoria.Scripts;
+using System;
 using System.IO;
 using System.Text;
-using Memoria.Scripts;
 using UnityEngine;
 using Object = System.Object;
 

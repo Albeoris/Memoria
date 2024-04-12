@@ -32,11 +32,10 @@
 
 namespace Antlr.Runtime
 {
-    using System.Collections.Generic;
-    using CLSCompliant = System.CLSCompliantAttribute;
-    using ArgumentNullException = System.ArgumentNullException;
+	using System.Collections.Generic;
+	using ArgumentNullException = System.ArgumentNullException;
 
-    /** <summary>
+	/** <summary>
      *  The set of fields needed by an abstract recognizer to recognize input
      *  and recover from errors etc...  As a separate state object, it can be
      *  shared among multiple grammars; e.g., when one grammar imports another.
@@ -47,27 +46,27 @@ namespace Antlr.Runtime
      *  parser is protected.
      *  </remarks>
      */
-    public class RecognizerSharedState
-    {
-        /** <summary>
+	public class RecognizerSharedState
+	{
+		/** <summary>
          *  Track the set of token types that can follow any rule invocation.
          *  Stack grows upwards.  When it hits the max, it grows 2x in size
          *  and keeps going.
          *  </summary>
          */
-        //public List<BitSet> following;
-        public BitSet[] following;
-        public int _fsp;
+		//public List<BitSet> following;
+		public BitSet[] following;
+		public int _fsp;
 
-        /** <summary>
+		/** <summary>
          *  This is true when we see an error and before having successfully
          *  matched a token.  Prevents generation of more than one error message
          *  per error.
          *  </summary>
          */
-        public bool errorRecovery;
+		public bool errorRecovery;
 
-        /** <summary>
+		/** <summary>
          *  The index into the input stream where the last error occurred.
          * 	This is used to prevent infinite loops where an error is found
          *  but no token is consumed during recovery...another error is found,
@@ -75,26 +74,26 @@ namespace Antlr.Runtime
          *  one token/tree node is consumed for two errors.
          *  </summary>
          */
-        public int lastErrorIndex;
+		public int lastErrorIndex;
 
-        /** <summary>
+		/** <summary>
          *  In lieu of a return value, this indicates that a rule or token
          *  has failed to match.  Reset to false upon valid token match.
          *  </summary>
          */
-        public bool failed;
+		public bool failed;
 
-        /** <summary>Did the recognizer encounter a syntax error?  Track how many.</summary> */
-        public int syntaxErrors;
+		/** <summary>Did the recognizer encounter a syntax error?  Track how many.</summary> */
+		public int syntaxErrors;
 
-        /** <summary>
+		/** <summary>
          *  If 0, no backtracking is going on.  Safe to exec actions etc...
          *  If >0 then it's the level of backtracking.
          *  </summary>
          */
-        public int backtracking;
+		public int backtracking;
 
-        /** <summary>
+		/** <summary>
          *  An array[size num rules] of dictionaries that tracks
          *  the stop token index for each rule.  ruleMemo[ruleIndex] is
          *  the memoization table for ruleIndex.  For key ruleStartIndex, you
@@ -103,14 +102,12 @@ namespace Antlr.Runtime
          *
          *  <remarks>This is only used if rule memoization is on (which it is by default).</remarks>
          */
-        public IDictionary<int, int>[] ruleMemo;
+		public IDictionary<int, int>[] ruleMemo;
 
+		// LEXER FIELDS (must be in same state object to avoid casting
+		//               constantly in generated code and Lexer object) :(
 
-        // LEXER FIELDS (must be in same state object to avoid casting
-        //               constantly in generated code and Lexer object) :(
-
-
-        /** <summary>
+		/** <summary>
          *  The goal of all lexer rules/methods is to create a token object.
          *  This is an instance variable as multiple rules may collaborate to
          *  create a single token.  nextToken will return this object after
@@ -120,66 +117,66 @@ namespace Antlr.Runtime
          *  emit another token.
          *  </summary>
          */
-        public IToken token;
+		public IToken token;
 
-        /** <summary>
+		/** <summary>
          *  What character index in the stream did the current token start at?
          *  Needed, for example, to get the text for current token.  Set at
          *  the start of nextToken.
          *  </summary>
          */
-        public int tokenStartCharIndex;
+		public int tokenStartCharIndex;
 
-        /** <summary>The line on which the first character of the token resides</summary> */
-        public int tokenStartLine;
+		/** <summary>The line on which the first character of the token resides</summary> */
+		public int tokenStartLine;
 
-        /** <summary>The character position of first character within the line</summary> */
-        public int tokenStartCharPositionInLine;
+		/** <summary>The character position of first character within the line</summary> */
+		public int tokenStartCharPositionInLine;
 
-        /** <summary>The channel number for the current token</summary> */
-        public int channel;
+		/** <summary>The channel number for the current token</summary> */
+		public int channel;
 
-        /** <summary>The token type for the current token</summary> */
-        public int type;
+		/** <summary>The token type for the current token</summary> */
+		public int type;
 
-        /** <summary>
+		/** <summary>
          *  You can set the text for the current token to override what is in
          *  the input char buffer.  Use setText() or can set this instance var.
          *  </summary>
          */
-        public string text;
+		public string text;
 
-        public RecognizerSharedState()
-        {
-            //following = new List<BitSet>( BaseRecognizer.InitialFollowStackSize );
-            following = new BitSet[BaseRecognizer.InitialFollowStackSize];
-            _fsp = -1;
-            lastErrorIndex = -1;
-            tokenStartCharIndex = -1;
-        }
+		public RecognizerSharedState()
+		{
+			//following = new List<BitSet>( BaseRecognizer.InitialFollowStackSize );
+			following = new BitSet[BaseRecognizer.InitialFollowStackSize];
+			_fsp = -1;
+			lastErrorIndex = -1;
+			tokenStartCharIndex = -1;
+		}
 
-        public RecognizerSharedState( RecognizerSharedState state )
-        {
-            if (state == null)
-                throw new ArgumentNullException("state");
+		public RecognizerSharedState(RecognizerSharedState state)
+		{
+			if (state == null)
+				throw new ArgumentNullException("state");
 
-            following = (BitSet[])state.following.Clone();
-            _fsp = state._fsp;
-            errorRecovery = state.errorRecovery;
-            lastErrorIndex = state.lastErrorIndex;
-            failed = state.failed;
-            syntaxErrors = state.syntaxErrors;
-            backtracking = state.backtracking;
+			following = (BitSet[])state.following.Clone();
+			_fsp = state._fsp;
+			errorRecovery = state.errorRecovery;
+			lastErrorIndex = state.lastErrorIndex;
+			failed = state.failed;
+			syntaxErrors = state.syntaxErrors;
+			backtracking = state.backtracking;
 
-            if ( state.ruleMemo != null )
-                ruleMemo = (IDictionary<int, int>[])state.ruleMemo.Clone();
+			if (state.ruleMemo != null)
+				ruleMemo = (IDictionary<int, int>[])state.ruleMemo.Clone();
 
-            token = state.token;
-            tokenStartCharIndex = state.tokenStartCharIndex;
-            tokenStartCharPositionInLine = state.tokenStartCharPositionInLine;
-            channel = state.channel;
-            type = state.type;
-            text = state.text;
-        }
-    }
+			token = state.token;
+			tokenStartCharIndex = state.tokenStartCharIndex;
+			tokenStartCharPositionInLine = state.tokenStartCharPositionInLine;
+			channel = state.channel;
+			type = state.type;
+			text = state.text;
+		}
+	}
 }

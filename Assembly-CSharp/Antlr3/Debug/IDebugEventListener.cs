@@ -32,9 +32,9 @@
 
 namespace Antlr.Runtime.Debug
 {
-    using ITreeAdaptor = Antlr.Runtime.Tree.ITreeAdaptor;
+	using ITreeAdaptor = Antlr.Runtime.Tree.ITreeAdaptor;
 
-    /** <summary>All debugging events that a recognizer can trigger.</summary>
+	/** <summary>All debugging events that a recognizer can trigger.</summary>
      *
      *  <remarks>
      *  I did not create a separate AST debugging interface as it would create
@@ -45,11 +45,11 @@ namespace Antlr.Runtime.Debug
      *  for future. 4/26/2006.
      *  </remarks>
      */
-    public interface IDebugEventListener
-    {
-        void Initialize();
+	public interface IDebugEventListener
+	{
+		void Initialize();
 
-        /** <summary>
+		/** <summary>
          *  The parser has just entered a rule.  No decision has been made about
          *  which alt is predicted.  This is fired AFTER init actions have been
          *  executed.  Attributes are defined and available etc...
@@ -57,16 +57,16 @@ namespace Antlr.Runtime.Debug
          *  multiple grammar files.
          *  </summary>
          */
-        void EnterRule( string grammarFileName, string ruleName );
+		void EnterRule(string grammarFileName, string ruleName);
 
-        /** <summary>
+		/** <summary>
          *  Because rules can have lots of alternatives, it is very useful to
          *  know which alt you are entering.  This is 1..n for n alts.
          *  </summary>
          */
-        void EnterAlt( int alt );
+		void EnterAlt(int alt);
 
-        /** <summary>
+		/** <summary>
          *  This is the last thing executed before leaving a rule.  It is
          *  executed even if an exception is thrown.  This is triggered after
          *  error reporting and recovery have occurred (unless the exception is
@@ -75,14 +75,14 @@ namespace Antlr.Runtime.Debug
          *  multiple grammar files.
          *  </summary>
          */
-        void ExitRule( string grammarFileName, string ruleName );
+		void ExitRule(string grammarFileName, string ruleName);
 
-        /** <summary>Track entry into any (...) subrule other EBNF construct</summary> */
-        void EnterSubRule( int decisionNumber );
+		/** <summary>Track entry into any (...) subrule other EBNF construct</summary> */
+		void EnterSubRule(int decisionNumber);
 
-        void ExitSubRule( int decisionNumber );
+		void ExitSubRule(int decisionNumber);
 
-        /** <summary>
+		/** <summary>
          *  Every decision, fixed k or arbitrary, has an enter/exit event
          *  so that a GUI can easily track what LT/consume events are
          *  associated with prediction.  You will see a single enter/exit
@@ -90,26 +90,26 @@ namespace Antlr.Runtime.Debug
          *  loop iteration.
          *  </summary>
          */
-        void EnterDecision(int decisionNumber, bool couldBacktrack);
+		void EnterDecision(int decisionNumber, bool couldBacktrack);
 
-        void ExitDecision( int decisionNumber );
+		void ExitDecision(int decisionNumber);
 
-        /** <summary>
+		/** <summary>
          *  An input token was consumed; matched by any kind of element.
          *  Trigger after the token was matched by things like match(), matchAny().
          *  </summary>
          */
-        void ConsumeToken( IToken t );
+		void ConsumeToken(IToken t);
 
-        /** <summary>
+		/** <summary>
          *  An off-channel input token was consumed.
          *  Trigger after the token was matched by things like match(), matchAny().
          *  (unless of course the hidden token is first stuff in the input stream).
          *  </summary>
          */
-        void ConsumeHiddenToken( IToken t );
+		void ConsumeHiddenToken(IToken t);
 
-        /** <summary>
+		/** <summary>
          *  Somebody (anybody) looked ahead.  Note that this actually gets
          *  triggered by both LA and LT calls.  The debugger will want to know
          *  which Token object was examined.  Like consumeToken, this indicates
@@ -118,24 +118,24 @@ namespace Antlr.Runtime.Debug
          *  even if the info is redundant.
          *  </summary>
          */
-        void LT( int i, IToken t );
+		void LT(int i, IToken t);
 
-        /** <summary>
+		/** <summary>
          *  The parser is going to look arbitrarily ahead; mark this location,
          *  the token stream's marker is sent in case you need it.
          *  </summary>
          */
-        void Mark( int marker );
+		void Mark(int marker);
 
-        /** <summary>
+		/** <summary>
          *  After an arbitrairly long lookahead as with a cyclic DFA (or with
          *  any backtrack), this informs the debugger that stream should be
          *  rewound to the position associated with marker.
          *  </summary>
          */
-        void Rewind( int marker );
+		void Rewind(int marker);
 
-        /** <summary>
+		/** <summary>
          *  Rewind to the input position of the last marker.
          *  Used currently only after a cyclic DFA and just
          *  before starting a sem/syn predicate to get the
@@ -144,13 +144,13 @@ namespace Antlr.Runtime.Debug
          *  and rewind(i) should balance still.
          *  </summary>
          */
-        void Rewind();
+		void Rewind();
 
-        void BeginBacktrack( int level );
+		void BeginBacktrack(int level);
 
-        void EndBacktrack( int level, bool successful );
+		void EndBacktrack(int level, bool successful);
 
-        /** <summary>
+		/** <summary>
          *  To watch a parser move through the grammar, the parser needs to
          *  inform the debugger what line/charPos it is passing in the grammar.
          *  For now, this does not know how to switch from one grammar to the
@@ -162,9 +162,9 @@ namespace Antlr.Runtime.Debug
          *  the parser whenever it hits this line/pos.
          *  </remarks>
          */
-        void Location( int line, int pos );
+		void Location(int line, int pos);
 
-        /** <summary>
+		/** <summary>
          *  A recognition exception occurred such as NoViableAltException.  I made
          *  this a generic event so that I can alter the exception hierachy later
          *  without having to alter all the debug objects.
@@ -224,17 +224,17 @@ namespace Antlr.Runtime.Debug
          *		terminate
          *  </remarks>
          */
-        void RecognitionException( RecognitionException e );
+		void RecognitionException(RecognitionException e);
 
-        /** <summary>
+		/** <summary>
          *  Indicates the recognizer is about to consume tokens to resynchronize
          *  the parser.  Any consume events from here until the recovered event
          *  are not part of the parse--they are dead tokens.
          *  </summary>
          */
-        void BeginResync();
+		void BeginResync();
 
-        /** <summary>
+		/** <summary>
          *  Indicates that the recognizer has finished consuming tokens in order
          *  to resychronize.  There may be multiple beginResync/endResync pairs
          *  before the recognizer comes out of errorRecovery mode (in which
@@ -244,12 +244,12 @@ namespace Antlr.Runtime.Debug
          *  a beginResync/endResync pair was tossed out by the parser.
          *  </summary>
          */
-        void EndResync();
+		void EndResync();
 
-        /** <summary>A semantic predicate was evaluate with this result and action text</summary> */
-        void SemanticPredicate( bool result, string predicate );
+		/** <summary>A semantic predicate was evaluate with this result and action text</summary> */
+		void SemanticPredicate(bool result, string predicate);
 
-        /** <summary>
+		/** <summary>
          *  Announce that parsing has begun.  Not technically useful except for
          *  sending events over a socket.  A GUI for example will launch a thread
          *  to connect and communicate with a remote parser.  The thread will want
@@ -258,21 +258,20 @@ namespace Antlr.Runtime.Debug
          *  figure this out).
          *  </summary>
          */
-        void Commence();
+		void Commence();
 
-        /** <summary>
+		/** <summary>
          *  Parsing is over; successfully or not.  Mostly useful for telling
          *  remote debugging listeners that it's time to quit.  When the rule
          *  invocation level goes to zero at the end of a rule, we are done
          *  parsing.
          *  </summary>
          */
-        void Terminate();
+		void Terminate();
 
+		#region Tree Parsing
 
-        #region Tree Parsing
-
-        /** <summary>
+		/** <summary>
          *  Input for a tree parser is an AST, but we know nothing for sure
          *  about a node except its type and text (obtained from the adaptor).
          *  This is the analog of the consumeToken method.  Again, the ID is
@@ -284,22 +283,21 @@ namespace Antlr.Runtime.Debug
          *
          *  <param name="t" />
          */
-        void ConsumeNode( object t );
+		void ConsumeNode(object t);
 
-        /** <summary>
+		/** <summary>
          *  The tree parser lookedahead.  If the type is UP or DOWN,
          *  then the ID is not really meaningful as it's fixed--there is
          *  just one UP node and one DOWN navigation node.
          *  </summary>
          */
-        void LT( int i, object t );
+		void LT(int i, object t);
 
-        #endregion
+		#endregion Tree Parsing
 
+		#region AST Events
 
-        #region AST Events
-
-        /** <summary>
+		/** <summary>
          *  A nil was created (even nil nodes have a unique ID...
          *  they are not "null" per se).  As of 4/28/2006, this
          *  seems to be uniquely triggered when starting a new subtree
@@ -312,28 +310,28 @@ namespace Antlr.Runtime.Debug
          *  RemoteDebugEventSocketListener then only t.ID is set.
          *  </remarks>
          */
-        void NilNode( object t );
+		void NilNode(object t);
 
-        /** <summary>
+		/** <summary>
          *  Upon syntax error, recognizers bracket the error with an error node
          *  if they are building ASTs.
          *  </summary>
          *
          *  <param name="t"/>
          */
-        void ErrorNode( object t );
+		void ErrorNode(object t);
 
-        /** <summary>Announce a new node built from token elements such as type etc...</summary>
-         * 
+		/** <summary>Announce a new node built from token elements such as type etc...</summary>
+         *
          *  <remarks>
          *  If you are receiving this event over a socket via
          *  RemoteDebugEventSocketListener then only t.ID, type, text are
          *  set.
          *  </remarks>
          */
-        void CreateNode( object t );
+		void CreateNode(object t);
 
-        /** <summary>Announce a new node built from an existing token.</summary>
+		/** <summary>Announce a new node built from an existing token.</summary>
          *
          *  <remarks>
          *  If you are receiving this event over a socket via
@@ -341,9 +339,9 @@ namespace Antlr.Runtime.Debug
          *  are set.
          *  </remarks>
          */
-        void CreateNode( object node, IToken token );
+		void CreateNode(object node, IToken token);
 
-        /** <summary>Make a node the new root of an existing root.  See</summary>
+		/** <summary>Make a node the new root of an existing root.  See</summary>
          *
          *  <remarks>
          *  Note: the newRootID parameter is possibly different
@@ -354,16 +352,16 @@ namespace Antlr.Runtime.Debug
          *  The listener should assume that this event occurs
          *  only when the current subrule (or rule) subtree is
          *  being reset to newRootID.
-         * 
+         *
          *  If you are receiving this event over a socket via
          *  RemoteDebugEventSocketListener then only IDs are set.
          *  </remarks>
          *
          *  <seealso cref="ITreeAdaptor.BecomeRoot(object, object)"/>
          */
-        void BecomeRoot( object newRoot, object oldRoot );
+		void BecomeRoot(object newRoot, object oldRoot);
 
-        /** <summary>Make childID a child of rootID.</summary>
+		/** <summary>Make childID a child of rootID.</summary>
          *
          *  <remarks>
          *  If you are receiving this event over a socket via
@@ -372,17 +370,17 @@ namespace Antlr.Runtime.Debug
          *
          *  <seealso cref="ITreeAdaptor.AddChild(object, object)"/>
          */
-        void AddChild( object root, object child );
+		void AddChild(object root, object child);
 
-        /** <summary>Set the token start/stop token index for a subtree root or node.</summary>
+		/** <summary>Set the token start/stop token index for a subtree root or node.</summary>
          *
          *  <remarks>
          *  If you are receiving this event over a socket via
          *  RemoteDebugEventSocketListener then only t.ID is set.
          *  </remarks>
          */
-        void SetTokenBoundaries( object t, int tokenStartIndex, int tokenStopIndex );
+		void SetTokenBoundaries(object t, int tokenStartIndex, int tokenStopIndex);
 
-        #endregion
-    }
+		#endregion AST Events
+	}
 }

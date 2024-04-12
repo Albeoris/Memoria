@@ -1,9 +1,9 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Memoria;
+﻿using Memoria;
 using Memoria.Prime;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class SFXDataCamera
@@ -411,13 +411,13 @@ public class SFXDataCamera
 				public Byte orientation; // orientation angle: [0, 0x40] for [0 degree, 360 degrees]
 				public Byte roll; // roll angle: [0, 0x80] for [0 degree, 360 degrees]
 				public Byte distance; // 1 unit here is about 63 units in the usual coordinate system
-										// Considering the target position is 0 (distance = 0), the set doesn't use custom position (or the code ignores it, like 0x0B) and camera position is large enough:
-										// angles = (0, 0, 0) => camera is placed behind party members, facing the enemies
-										// angles = (0x20, 0, 0) => camera is watching from below
-										// angles = (0x60, 0, 0) => camera is watching from above
-										// angles = (0, 0x10, 0) => camera is watching from the left (wrt. the players)
-										// angles = (0, 0, 0x20) => camera is placed behind party members, rolled 90 degrees to the left, making the 1st player character be at top of screen
-										// Target position has the same kind of spherical coordinates but the rolling angle is less important or ignored
+									  // Considering the target position is 0 (distance = 0), the set doesn't use custom position (or the code ignores it, like 0x0B) and camera position is large enough:
+									  // angles = (0, 0, 0) => camera is placed behind party members, facing the enemies
+									  // angles = (0x20, 0, 0) => camera is watching from below
+									  // angles = (0x60, 0, 0) => camera is watching from above
+									  // angles = (0, 0x10, 0) => camera is watching from the left (wrt. the players)
+									  // angles = (0, 0, 0x20) => camera is placed behind party members, rolled 90 degrees to the left, making the 1st player character be at top of screen
+									  // Target position has the same kind of spherical coordinates but the rolling angle is less important or ignored
 			}
 
 			public class Movement

@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using System.Collections.Generic;
-using Memoria;
 using UnityEngine;
 
 public class BubbleUI : Singleton<BubbleUI>
@@ -109,46 +109,46 @@ public class BubbleUI : Singleton<BubbleUI>
 		Byte b = 0;
 		List<Byte> list = new List<Byte>(flags.Length);
 
-	    flags = FilterFlags(flags);
+		flags = FilterFlags(flags);
 
-	    for (Int32 i = 0; i < (Int32)flags.Length; i++)
-	    {
-	        BubbleUI.Flag flag = flags[i];
-	        switch (flag)
-	        {
-	            case Flag.CURSOR:
-	                this.cursor.Show();
-	                list.Add(0);
-	                continue;
-	            case BubbleUI.Flag.EXCLAMATION:
-	                this.ShowHud(flag);
-	                this.suspectedButton.Show();
-	                this.suspectedIndex = b;
-	                list.Add(1);
-	                break;
-	            case BubbleUI.Flag.QUESTION:
-	                this.ShowHud(flag);
-	                this.helpButton.Show();
-	                this.helpIndex = b;
-	                list.Add(2);
-	                break;
-	            case BubbleUI.Flag.DUEL:
-	                this.ShowHud(flag);
-	                this.duelButton.Show();
-	                this.duelIndex = b;
-	                list.Add(3);
-	                break;
-	            case BubbleUI.Flag.BEACH:
-	                this.ShowHud(flag);
-	                this.beachButton.Show();
-	                this.beachIndex = b;
-	                list.Add(4);
-	                break;
-	        }
-	        b = (Byte)(b + 1);
-	        this.currentFlag.Add(flag);
-	    }
-        Boolean flag2 = false;
+		for (Int32 i = 0; i < (Int32)flags.Length; i++)
+		{
+			BubbleUI.Flag flag = flags[i];
+			switch (flag)
+			{
+				case Flag.CURSOR:
+					this.cursor.Show();
+					list.Add(0);
+					continue;
+				case BubbleUI.Flag.EXCLAMATION:
+					this.ShowHud(flag);
+					this.suspectedButton.Show();
+					this.suspectedIndex = b;
+					list.Add(1);
+					break;
+				case BubbleUI.Flag.QUESTION:
+					this.ShowHud(flag);
+					this.helpButton.Show();
+					this.helpIndex = b;
+					list.Add(2);
+					break;
+				case BubbleUI.Flag.DUEL:
+					this.ShowHud(flag);
+					this.duelButton.Show();
+					this.duelIndex = b;
+					list.Add(3);
+					break;
+				case BubbleUI.Flag.BEACH:
+					this.ShowHud(flag);
+					this.beachButton.Show();
+					this.beachIndex = b;
+					list.Add(4);
+					break;
+			}
+			b = (Byte)(b + 1);
+			this.currentFlag.Add(flag);
+		}
+		Boolean flag2 = false;
 		BubbleUI.Flag[] array2 = this.allFlag;
 		for (Int32 j = 0; j < (Int32)array2.Length; j++)
 		{
@@ -171,48 +171,48 @@ public class BubbleUI : Singleton<BubbleUI>
 		this.grid.Reposition(list.ToArray());
 	}
 
-    private static Flag[] FilterFlags(Flag[] flags)
-    {
-        List<Flag> filtredFlags = new List<Flag>(flags.Length);
+	private static Flag[] FilterFlags(Flag[] flags)
+	{
+		List<Flag> filtredFlags = new List<Flag>(flags.Length);
 
-        foreach (Flag flag in flags)
-        {
-            if (flag == Flag.CURSOR)
-            {
-                filtredFlags.Clear();
-                if (!Configuration.Icons.HideCursos)
-                    filtredFlags.Add(Flag.CURSOR);
-                break;
-            }
+		foreach (Flag flag in flags)
+		{
+			if (flag == Flag.CURSOR)
+			{
+				filtredFlags.Clear();
+				if (!Configuration.Icons.HideCursos)
+					filtredFlags.Add(Flag.CURSOR);
+				break;
+			}
 
-            if (flag == Flag.EXCLAMATION)
-            {
-                if (Configuration.Icons.HideExclamation)
-                    continue;
-            }
-            else if (flag == Flag.QUESTION)
-            {
-                if (Configuration.Icons.HideQuestion)
-                    continue;
-            }
-            else if (flag == Flag.DUEL)
-            {
-                if (Configuration.Icons.HideCards)
-                    continue;
-            }
-            else if (flag == Flag.BEACH)
-            {
-                if (Configuration.Icons.HideBeach)
-                    continue;
-            }
+			if (flag == Flag.EXCLAMATION)
+			{
+				if (Configuration.Icons.HideExclamation)
+					continue;
+			}
+			else if (flag == Flag.QUESTION)
+			{
+				if (Configuration.Icons.HideQuestion)
+					continue;
+			}
+			else if (flag == Flag.DUEL)
+			{
+				if (Configuration.Icons.HideCards)
+					continue;
+			}
+			else if (flag == Flag.BEACH)
+			{
+				if (Configuration.Icons.HideBeach)
+					continue;
+			}
 
-            filtredFlags.Add(flag);
-        }
+			filtredFlags.Add(flag);
+		}
 
-        return filtredFlags.ToArray();
-    }
+		return filtredFlags.ToArray();
+	}
 
-    public void ChangePrimaryKey(Control keyCode)
+	public void ChangePrimaryKey(Control keyCode)
 	{
 		if (this.suspectedOnScreenButton != (UnityEngine.Object)null && this.primaryOnScreenButton != (UnityEngine.Object)null)
 		{
@@ -235,44 +235,44 @@ public class BubbleUI : Singleton<BubbleUI>
 		{
 			switch (EventHUD.CurrentHUD)
 			{
-			case MinigameHUD.MogTutorial:
-			case MinigameHUD.JumpingRope:
-			case MinigameHUD.Telescope:
-			case MinigameHUD.ChocoHot:
-				return;
+				case MinigameHUD.MogTutorial:
+				case MinigameHUD.JumpingRope:
+				case MinigameHUD.Telescope:
+				case MinigameHUD.ChocoHot:
+					return;
 			}
 			switch (flag)
 			{
-			case BubbleUI.Flag.EXCLAMATION:
-				this.primaryButton.SetActive(true);
-				this.primaryButtonSprite.spriteName = "button_minigame";
-				this.primaryButtonComponent.normalSprite = "button_minigame";
-				this.primaryButtonComponent.hoverSprite = "button_minigame_act";
-				this.primaryButtonComponent.pressedSprite = "button_minigame_act";
-				break;
-			case BubbleUI.Flag.QUESTION:
-				this.primaryButton.SetActive(true);
-				this.primaryButtonSprite.spriteName = "button_bubble_question_idle";
-				this.primaryButtonComponent.normalSprite = "button_bubble_question_idle";
-				this.primaryButtonComponent.hoverSprite = "button_bubble_question_act";
-				this.primaryButtonComponent.pressedSprite = "button_bubble_question_act";
-				break;
-			case BubbleUI.Flag.DUEL:
-				this.secondaryButton.SetActive(true);
-				this.secondaryButtonSprite.spriteName = "button_card_idle";
-				this.secondaryButtonComponent.normalSprite = "button_card_idle";
-				this.secondaryButtonComponent.hoverSprite = "button_card_act";
-				this.secondaryButtonComponent.pressedSprite = "button_card_act";
-				this.secondaryOnScreenButton.KeyCommand = Control.Special;
-				break;
-			case BubbleUI.Flag.BEACH:
-				this.secondaryButton.SetActive(true);
-				this.secondaryButtonSprite.spriteName = "button_beach_idle";
-				this.secondaryButtonComponent.normalSprite = "button_beach_idle";
-				this.secondaryButtonComponent.hoverSprite = "button_beach_act";
-				this.secondaryButtonComponent.pressedSprite = "button_beach_act";
-				this.secondaryOnScreenButton.KeyCommand = Control.Cancel;
-				break;
+				case BubbleUI.Flag.EXCLAMATION:
+					this.primaryButton.SetActive(true);
+					this.primaryButtonSprite.spriteName = "button_minigame";
+					this.primaryButtonComponent.normalSprite = "button_minigame";
+					this.primaryButtonComponent.hoverSprite = "button_minigame_act";
+					this.primaryButtonComponent.pressedSprite = "button_minigame_act";
+					break;
+				case BubbleUI.Flag.QUESTION:
+					this.primaryButton.SetActive(true);
+					this.primaryButtonSprite.spriteName = "button_bubble_question_idle";
+					this.primaryButtonComponent.normalSprite = "button_bubble_question_idle";
+					this.primaryButtonComponent.hoverSprite = "button_bubble_question_act";
+					this.primaryButtonComponent.pressedSprite = "button_bubble_question_act";
+					break;
+				case BubbleUI.Flag.DUEL:
+					this.secondaryButton.SetActive(true);
+					this.secondaryButtonSprite.spriteName = "button_card_idle";
+					this.secondaryButtonComponent.normalSprite = "button_card_idle";
+					this.secondaryButtonComponent.hoverSprite = "button_card_act";
+					this.secondaryButtonComponent.pressedSprite = "button_card_act";
+					this.secondaryOnScreenButton.KeyCommand = Control.Special;
+					break;
+				case BubbleUI.Flag.BEACH:
+					this.secondaryButton.SetActive(true);
+					this.secondaryButtonSprite.spriteName = "button_beach_idle";
+					this.secondaryButtonComponent.normalSprite = "button_beach_idle";
+					this.secondaryButtonComponent.hoverSprite = "button_beach_act";
+					this.secondaryButtonComponent.pressedSprite = "button_beach_act";
+					this.secondaryOnScreenButton.KeyCommand = Control.Cancel;
+					break;
 			}
 		}
 	}
@@ -293,21 +293,21 @@ public class BubbleUI : Singleton<BubbleUI>
 	{
 		switch (target)
 		{
-		case BubbleUI.Flag.EXCLAMATION:
-			this.suspectedButton.Hide();
-			break;
-		case BubbleUI.Flag.QUESTION:
-			this.helpButton.Hide();
-			break;
-		case BubbleUI.Flag.DUEL:
-			this.duelButton.Hide();
-			break;
-		case BubbleUI.Flag.CURSOR:
-			this.cursor.Hide();
-			break;
-		case BubbleUI.Flag.BEACH:
-			this.beachButton.Hide();
-			break;
+			case BubbleUI.Flag.EXCLAMATION:
+				this.suspectedButton.Hide();
+				break;
+			case BubbleUI.Flag.QUESTION:
+				this.helpButton.Hide();
+				break;
+			case BubbleUI.Flag.DUEL:
+				this.duelButton.Hide();
+				break;
+			case BubbleUI.Flag.CURSOR:
+				this.cursor.Hide();
+				break;
+			case BubbleUI.Flag.BEACH:
+				this.beachButton.Hide();
+				break;
 		}
 	}
 

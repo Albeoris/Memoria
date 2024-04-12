@@ -1,4 +1,4 @@
 ﻿namespace NCalc
 {
-    public delegate void EvaluateFunctionHandler(string name, FunctionArgs args);
+	public delegate void EvaluateFunctionHandler(string name, FunctionArgs args);
 }

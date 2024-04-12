@@ -254,18 +254,18 @@ public class UIButtonColor : UIWidgetContainer
 			TweenColor tweenColor;
 			switch (this.mState)
 			{
-			case UIButtonColor.State.Hover:
-				tweenColor = TweenColor.Begin(this.tweenTarget, this.duration, this.hover);
-				break;
-			case UIButtonColor.State.Pressed:
-				tweenColor = TweenColor.Begin(this.tweenTarget, this.duration, this.pressed);
-				break;
-			case UIButtonColor.State.Disabled:
-				tweenColor = TweenColor.Begin(this.tweenTarget, this.duration, this.disabledColor);
-				break;
-			default:
-				tweenColor = TweenColor.Begin(this.tweenTarget, this.duration, this.mDefaultColor);
-				break;
+				case UIButtonColor.State.Hover:
+					tweenColor = TweenColor.Begin(this.tweenTarget, this.duration, this.hover);
+					break;
+				case UIButtonColor.State.Pressed:
+					tweenColor = TweenColor.Begin(this.tweenTarget, this.duration, this.pressed);
+					break;
+				case UIButtonColor.State.Disabled:
+					tweenColor = TweenColor.Begin(this.tweenTarget, this.duration, this.disabledColor);
+					break;
+				default:
+					tweenColor = TweenColor.Begin(this.tweenTarget, this.duration, this.mDefaultColor);
+					break;
 			}
 			if (instant && tweenColor != (UnityEngine.Object)null)
 			{

@@ -1,15 +1,12 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Data;
-using Memoria.Prime;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
-using Object = System.Object;
-using Memoria.Assets;
 
 public class btlseq
 {

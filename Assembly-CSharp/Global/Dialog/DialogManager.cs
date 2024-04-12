@@ -1,15 +1,10 @@
-﻿using System;
+﻿using Assets.Sources.Scripts.UI.Common;
+using Memoria;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Sources.Scripts.UI.Common;
 using UnityEngine;
-using Assets.Scripts.Common;
-using Memoria;
-using Memoria.Assets;
-using Memoria.Scenes;
-using Memoria.Scripts;
-using Object = System.Object;
 
 public class DialogManager : Singleton<DialogManager>
 {
@@ -146,25 +141,25 @@ public class DialogManager : Singleton<DialogManager>
 		}
 	}
 
-    public int CurMesId
-    {
-        get { return this.curMesId; }
-        set { this.curMesId = value; }
-    }
+	public int CurMesId
+	{
+		get { return this.curMesId; }
+		set { this.curMesId = value; }
+	}
 
-    public int PressMesId
-    {
-        get { return this.pressMesId; }
-        set { this.pressMesId = value; }
-    }
+	public int PressMesId
+	{
+		get { return this.pressMesId; }
+		set { this.pressMesId = value; }
+	}
 
-    public int ReleaseMesId
-    {
-        get { return this.releaseMesId; }
-        set { this.releaseMesId = value; }
-    }
+	public int ReleaseMesId
+	{
+		get { return this.releaseMesId; }
+		set { this.releaseMesId = value; }
+	}
 
-    public Dialog AttachDialog(String phrase, Int32 width, Int32 lineCount, Dialog.TailPosition tailPos, Dialog.WindowStyle style, Vector2 pos, Dialog.CaptionType captionType = Dialog.CaptionType.None)
+	public Dialog AttachDialog(String phrase, Int32 width, Int32 lineCount, Dialog.TailPosition tailPos, Dialog.WindowStyle style, Vector2 pos, Dialog.CaptionType captionType = Dialog.CaptionType.None)
 	{
 		Dialog dialogFromPool = this.GetDialogFromPool();
 		if (dialogFromPool != null)
@@ -214,19 +209,19 @@ public class DialogManager : Singleton<DialogManager>
 			{
 				dialogFromPool.Phrase = FF9TextTool.FieldText(textId);
 
-                // Subscribe
-			    Action onFieldTextUpdated = () =>
-			    {
-                    dialogFromPool.Phrase = FF9TextTool.FieldText(textId);
-			        dialogFromPool.Show();
-			    };
-                FF9TextTool.FieldTextUpdated += onFieldTextUpdated;
+				// Subscribe
+				Action onFieldTextUpdated = () =>
+				{
+					dialogFromPool.Phrase = FF9TextTool.FieldText(textId);
+					dialogFromPool.Show();
+				};
+				FF9TextTool.FieldTextUpdated += onFieldTextUpdated;
 
-                // Unsubscribe
-                Dialog.DialogIntDelegate unsubscribe = (c) => FF9TextTool.FieldTextUpdated -= onFieldTextUpdated;
-                listener = listener != null ? (Dialog.DialogIntDelegate)Delegate.Combine(unsubscribe, listener) : unsubscribe;
-            }
-            dialogFromPool.Show();
+				// Unsubscribe
+				Dialog.DialogIntDelegate unsubscribe = (c) => FF9TextTool.FieldTextUpdated -= onFieldTextUpdated;
+				listener = listener != null ? (Dialog.DialogIntDelegate)Delegate.Combine(unsubscribe, listener) : unsubscribe;
+			}
+			dialogFromPool.Show();
 			dialogFromPool.AfterDialogHidden = listener;
 			if (!this.isActivate)
 				this.ActivateDialogScene();
@@ -262,7 +257,6 @@ public class DialogManager : Singleton<DialogManager>
 		Dialog dialog = null;
 		try
 		{
-
 			if (this.DialogPool.Count > 0)
 				dialog = this.DialogPool.Dequeue();
 			else
@@ -587,9 +581,9 @@ public class DialogManager : Singleton<DialogManager>
 
 	private UIWidget widget;
 
-    private int curMesId = -1;
+	private int curMesId = -1;
 
-    private int pressMesId = -1;
+	private int pressMesId = -1;
 
-    private int releaseMesId = -1;
+	private int releaseMesId = -1;
 }

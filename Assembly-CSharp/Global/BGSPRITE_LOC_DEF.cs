@@ -75,5 +75,5 @@ public class BGSPRITE_LOC_DEF
 
 	public Transform transform;
 
-    public Vector3 cacheLocalPos;
+	public Vector3 cacheLocalPos;
 }

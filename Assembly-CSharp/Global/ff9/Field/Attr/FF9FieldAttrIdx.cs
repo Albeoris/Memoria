@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum FF9FieldAttrIdx
+﻿public enum FF9FieldAttrIdx
 {
 	FF9FIELD_ATTRIDX_SET,
 	FF9FIELD_ATTRIDX_CLEAR,

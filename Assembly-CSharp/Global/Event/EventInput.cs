@@ -48,13 +48,13 @@ public class EventInput
 			Boolean result = PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect;
 			switch (currentInputSource)
 			{
-			case SourceControl.KeyBoard:
-			case SourceControl.Joystick:
-				result = true;
-				break;
-			case SourceControl.Touch:
-				result = false;
-				break;
+				case SourceControl.KeyBoard:
+				case SourceControl.Joystick:
+					result = true;
+					break;
+				case SourceControl.Touch:
+					result = false;
+					break;
 			}
 			return result;
 		}
@@ -389,8 +389,8 @@ public class EventInput
 		if (EventInput.lastTimeInput == RealTime.time)
 			if (fldMapNo != 1420 || eventMode != 1) // Fossil Roo/Cavern, climbing ivy
 				input &= ~EventInput.OperationMask;
-		else if (input != 0u)
-			EventInput.lastTimeInput = RealTime.time;
+			else if (input != 0u)
+				EventInput.lastTimeInput = RealTime.time;
 		if (EventHUD.CurrentHUD == MinigameHUD.RacingHippaul && (input & EventInput.HippualMask) == EventInput.HippualMask)
 			input = 0u;
 		return input;

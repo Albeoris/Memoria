@@ -1,6 +1,6 @@
-﻿using System;
+﻿using SimpleJSON;
+using System;
 using System.Collections.Generic;
-using SimpleJSON;
 using UnityEngine;
 
 public abstract class ISharedDataStorage : MonoBehaviour

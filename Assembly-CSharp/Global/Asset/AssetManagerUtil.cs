@@ -17,15 +17,15 @@ public static class AssetManagerUtil
 	}
 
 	public static string GetPersistentDataPath()
-    {
-        if (FF9StateSystem.PCEStorePlatform)
-        {
-            return string.Empty;
-        }
-        return Application.persistentDataPath;
-    }
+	{
+		if (FF9StateSystem.PCEStorePlatform)
+		{
+			return string.Empty;
+		}
+		return Application.persistentDataPath;
+	}
 
-    public static String GetBundleExtension()
+	public static String GetBundleExtension()
 	{
 		return ".bin";
 	}
@@ -89,30 +89,30 @@ public static class AssetManagerUtil
 		String result = String.Empty;
 		switch (moduleBundle)
 		{
-		case AssetManagerUtil.ModuleBundle.FieldMaps:
-			result = "FieldMaps/";
-			break;
-		case AssetManagerUtil.ModuleBundle.BattleMaps:
-			result = "BattleMap/";
-			break;
-		case AssetManagerUtil.ModuleBundle.WorldMaps:
-			result = "WorldMap/";
-			break;
-		case AssetManagerUtil.ModuleBundle.Models:
-			result = "Models/";
-			break;
-		case AssetManagerUtil.ModuleBundle.Animations:
-			result = "Animations/";
-			break;
-		case AssetManagerUtil.ModuleBundle.Sounds:
-			result = "Sounds/";
-			break;
-		case AssetManagerUtil.ModuleBundle.CommonAssets:
-			result = "CommonAsset/";
-			break;
-		default:
-			global::Debug.LogWarning("AssetManagerUtil::GetModuleBasePath::Unknown module bundle.");
-			break;
+			case AssetManagerUtil.ModuleBundle.FieldMaps:
+				result = "FieldMaps/";
+				break;
+			case AssetManagerUtil.ModuleBundle.BattleMaps:
+				result = "BattleMap/";
+				break;
+			case AssetManagerUtil.ModuleBundle.WorldMaps:
+				result = "WorldMap/";
+				break;
+			case AssetManagerUtil.ModuleBundle.Models:
+				result = "Models/";
+				break;
+			case AssetManagerUtil.ModuleBundle.Animations:
+				result = "Animations/";
+				break;
+			case AssetManagerUtil.ModuleBundle.Sounds:
+				result = "Sounds/";
+				break;
+			case AssetManagerUtil.ModuleBundle.CommonAssets:
+				result = "CommonAsset/";
+				break;
+			default:
+				global::Debug.LogWarning("AssetManagerUtil::GetModuleBasePath::Unknown module bundle.");
+				break;
 		}
 		return result;
 	}
@@ -122,30 +122,30 @@ public static class AssetManagerUtil
 		String result = String.Empty;
 		switch (moduleBundle)
 		{
-		case AssetManagerUtil.ModuleBundle.FieldMaps:
-			result = "Assets/Resources/FieldMaps/";
-			break;
-		case AssetManagerUtil.ModuleBundle.BattleMaps:
-			result = "Assets/Resources/BattleMap/";
-			break;
-		case AssetManagerUtil.ModuleBundle.WorldMaps:
-			result = "Assets/Resources/WorldMap/";
-			break;
-		case AssetManagerUtil.ModuleBundle.Models:
-			result = "Assets/Resources/Models/";
-			break;
-		case AssetManagerUtil.ModuleBundle.Animations:
-			result = "Assets/Resources/Animations/";
-			break;
-		case AssetManagerUtil.ModuleBundle.Sounds:
-			result = "Assets/Resources/Sounds/";
-			break;
-		case AssetManagerUtil.ModuleBundle.CommonAssets:
-			result = "Assets/Resources/CommonAsset/";
-			break;
-		default:
-			global::Debug.LogWarning("AssetManagerUtil::GetModuleBasePath::Unknown module bundle.");
-			break;
+			case AssetManagerUtil.ModuleBundle.FieldMaps:
+				result = "Assets/Resources/FieldMaps/";
+				break;
+			case AssetManagerUtil.ModuleBundle.BattleMaps:
+				result = "Assets/Resources/BattleMap/";
+				break;
+			case AssetManagerUtil.ModuleBundle.WorldMaps:
+				result = "Assets/Resources/WorldMap/";
+				break;
+			case AssetManagerUtil.ModuleBundle.Models:
+				result = "Assets/Resources/Models/";
+				break;
+			case AssetManagerUtil.ModuleBundle.Animations:
+				result = "Assets/Resources/Animations/";
+				break;
+			case AssetManagerUtil.ModuleBundle.Sounds:
+				result = "Assets/Resources/Sounds/";
+				break;
+			case AssetManagerUtil.ModuleBundle.CommonAssets:
+				result = "Assets/Resources/CommonAsset/";
+				break;
+			default:
+				global::Debug.LogWarning("AssetManagerUtil::GetModuleBasePath::Unknown module bundle.");
+				break;
 		}
 		return result;
 	}
@@ -155,30 +155,30 @@ public static class AssetManagerUtil
 		String result = String.Empty;
 		switch (moduleBundle)
 		{
-		case AssetManagerUtil.ModuleBundle.FieldMaps:
-			result = "BundledResources/FieldMaps/";
-			break;
-		case AssetManagerUtil.ModuleBundle.BattleMaps:
-			result = "BundledResources/BattleMap/";
-			break;
-		case AssetManagerUtil.ModuleBundle.WorldMaps:
-			result = "BundledResources/WorldMap/";
-			break;
-		case AssetManagerUtil.ModuleBundle.Models:
-			result = "BundledResources/Models/";
-			break;
-		case AssetManagerUtil.ModuleBundle.Animations:
-			result = "BundledResources/Animations/";
-			break;
-		case AssetManagerUtil.ModuleBundle.Sounds:
-			result = "BundledResources/Sounds/";
-			break;
-		case AssetManagerUtil.ModuleBundle.CommonAssets:
-			result = "BundledResources/CommonAsset/";
-			break;
-		default:
-			global::Debug.LogWarning("AssetManagerUtil::GetBundledResourcesBasePath::Unknown module bundle.");
-			break;
+			case AssetManagerUtil.ModuleBundle.FieldMaps:
+				result = "BundledResources/FieldMaps/";
+				break;
+			case AssetManagerUtil.ModuleBundle.BattleMaps:
+				result = "BundledResources/BattleMap/";
+				break;
+			case AssetManagerUtil.ModuleBundle.WorldMaps:
+				result = "BundledResources/WorldMap/";
+				break;
+			case AssetManagerUtil.ModuleBundle.Models:
+				result = "BundledResources/Models/";
+				break;
+			case AssetManagerUtil.ModuleBundle.Animations:
+				result = "BundledResources/Animations/";
+				break;
+			case AssetManagerUtil.ModuleBundle.Sounds:
+				result = "BundledResources/Sounds/";
+				break;
+			case AssetManagerUtil.ModuleBundle.CommonAssets:
+				result = "BundledResources/CommonAsset/";
+				break;
+			default:
+				global::Debug.LogWarning("AssetManagerUtil::GetBundledResourcesBasePath::Unknown module bundle.");
+				break;
 		}
 		return result;
 	}

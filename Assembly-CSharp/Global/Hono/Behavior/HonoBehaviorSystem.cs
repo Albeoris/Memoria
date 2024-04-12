@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Scripts.Common;
-using UnityEngine;
+﻿using Assets.Scripts.Common;
 using Memoria;
-using Memoria.Prime;
 using Memoria.Assets;
+using Memoria.Prime;
 using Memoria.Speedrun;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class HonoBehaviorSystem : MonoBehaviour
 {
@@ -210,7 +210,7 @@ public class HonoBehaviorSystem : MonoBehaviour
 	{
 		return;
 		/* //Dummied: the FPSManager always handles the regularity of the main loop
-		
+
 		if (!HonoBehaviorSystem.FrameSkipEnabled)
 			return;
 		Single deltaTime = Time.deltaTime;

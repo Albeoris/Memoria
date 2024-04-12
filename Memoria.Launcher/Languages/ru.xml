@@ -157,8 +157,7 @@
 		NewTitle="Новые"
 		NewDescription="Инициализирует все настройки значениями по умолчанию."
 		FileTitle="Из файла"
-		FileDescription="Считывает настройки приложения из файла {0}"
-		/>
+		FileDescription="Считывает настройки приложения из файла {0}" />
 
 		<GameLocation
 		Title="Каталог игры"
@@ -168,8 +167,7 @@
 		SteamRegistryTitle="Из реестр (Steam)"
 		SteamRegistryDescription="Получает информацию из реестра Windows, используя данные Steam."
 		UserTitle="Ручной выбор"
-		UserDescription="Позволяет вручную выбрать каталог, в который была установлена игра."
-		/>
+		UserDescription="Позволяет вручную выбрать каталог, в который была установлена игра." />
 
 		<WorkingLocation
 		Title="Рабочий каталог"
@@ -177,8 +175,7 @@
 		ConfigurationTitle="Из настроек"
 		ConfigurationDescription="Использует информацию, сохранённую в настроечном файле."
 		UserTitle="Ручной выбор"
-		UserDescription="Позволяет вручную выбрать рабочий каталог."
-		/>
+		UserDescription="Позволяет вручную выбрать рабочий каталог." />
 
 		<TextEncoding
 		Title="Кодировки"
@@ -188,38 +185,31 @@
 		WorkingLocationTitle="Из рабочего каталога"
 		WorkingLocationDescription="Считывает кодировку из рабочего каталога."
 		UserTitle="Редактировать"
-		UserDescription="Изменить текущую кодировку."
-		/>
+		UserDescription="Изменить текущую кодировку." />
 
 		<AudioSettings
 		Title="Настройки звука"
 		Description="Настройки аудио-устройства, используемого для воспроизведения звука."
 		NewTitle="Новые"
-		NewDescription="Инициализирует стандартные настройки аудио-устройства."
-		/>
-
+		NewDescription="Инициализирует стандартные настройки аудио-устройства." />
 	</InfoProvider>
 
 	<Dockable>
 
-		<DataSources Header="Источники данных"/>
+		<DataSources Header="Источники данных" />
 
 		<GameFileCommander
 		Header="Ресурсы игры"
 		Unpack="Распаковать"
 		Pack="Упаковать"
-		ArchivesNode ="Архивы"
-		/>
+		ArchivesNode ="Архивы" />
 
-		<GameFilePreview Header="Предпросмотр" >
+		<GameFilePreview Header="Предпросмотр">
 
 			<Ykd
 			ResourceRemovingTitle = "Удаление"
-			ConfirmResourceRemoving = "Вы уверены, что хотите удалить этот ресурс?"
-			/>
-
+			ConfirmResourceRemoving = "Вы уверены, что хотите удалить этот ресурс?" />
 		</GameFilePreview>
-
 	</Dockable>
 
 	<EncodingEditor>
@@ -229,15 +219,13 @@
 		Pattern = "Маска"
 		Encoding = "Кодировка"
 		Font = "Шрифт"
-		Edit = "Ред."
-		/>
+		Edit = "Ред." />
 
 		<EncodingSelectDialog
 		Title = "Выбор кодировки"
 		Watermark = "Введите имя кодировки..."
 		ConfirmMessageFormat = "Вы выбрали [{0}]. Верно?"
-		ErrorMessageFormat = "Не удалось распознать кодировку [{0}]."
-		/>
+		ErrorMessageFormat = "Не удалось распознать кодировку [{0}]." />
 
 		<EncodingEditDialog Title = "Настройка кодировки" />
 
@@ -246,16 +234,13 @@
 		Width = "Ширина:"
 		After = "После:"
 		FromText = "Из текста:"
-		ToText = "В текст:"
-		/>
+		ToText = "В текст:" />
 
 		<Extra
 		Row = "Ряд:"
 		Column = "Колонка:"
 		FromText = "Из текста:"
-		ToText = "В текст:"
-		/>
-
+		ToText = "В текст:" />
 	</EncodingEditor>
 
 	<ModEditor
@@ -287,13 +272,11 @@
     TooltipDeactivateAll = "Деактивировать Все"
     TooltipUninstall = "Удалить Мод(ы)"
     TooltipDownload = "Скачать Мод(ы)"
-    TooltipCancel = "Отменить Текущую Загрузка / Все Загрузок (правый клик)"
-    />
+    TooltipCancel = "Отменить Текущую Загрузка / Все Загрузок (правый клик)" />
 
 	<Dialogue>
 
 		<SaveAs Title = "Сохранить как..." />
-
 	</Dialogue>
 
 	<Message>
@@ -301,17 +284,14 @@
 		<Done
 		Title = "Готово!"
 		ExtractionCompleteFormat = "Распаковка завершена за {0:hh\:mm\:ss}."
-		InjectionCompleteFormat = "Упаковка завершена за {0:hh\:mm\:ss}."
-		/>
+		InjectionCompleteFormat = "Упаковка завершена за {0:hh\:mm\:ss}." />
 
 		<Question
 		Title = "Вопрос"
 		AreYouSureTitle = "Вы уверены?"
-		NewVersionIsAvailable = "Доступна новая версия. Скачать?"
-		/>
+		NewVersionIsAvailable = "Доступна новая версия. Скачать?" />
 
 		<Error Title = "Ошибка!" />
-
 	</Message>
 
 	<Error>
@@ -321,7 +301,5 @@
 		<Process CannotGetExecutablePath = "Не удаётся получить путь к исполняемому модулю процесса." />
 
 		<Text TooLongTagNameFormat = "Слишком длинное имя тэга: {0}" />
-
 	</Error>
-
 </Data>

@@ -3,27 +3,27 @@ using System.IO;
 
 namespace Memoria.Test
 {
-    public sealed class DecimalMessage : IValueMessage
-    {
-        public ValueMessageType ValueType => ValueMessageType.Decimal;
+	public sealed class DecimalMessage : IValueMessage
+	{
+		public ValueMessageType ValueType => ValueMessageType.Decimal;
 
-        ValueType IValueMessage.Object => Value;
+		ValueType IValueMessage.Object => Value;
 
-        public Decimal Value;
+		public Decimal Value;
 
-        public DecimalMessage(Decimal value)
-        {
-            Value = value;
-        }
+		public DecimalMessage(Decimal value)
+		{
+			Value = value;
+		}
 
-        public void Serialize(BinaryWriter bw)
-        {
-            bw.Write(Value);
-        }
+		public void Serialize(BinaryWriter bw)
+		{
+			bw.Write(Value);
+		}
 
-        public void Deserialize(BinaryReader br)
-        {
-            Value = br.ReadDecimal();
-        }
-    }
+		public void Deserialize(BinaryReader br)
+		{
+			Value = br.ReadDecimal();
+		}
+	}
 }

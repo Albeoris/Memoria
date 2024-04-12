@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Prime.Text;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = System.Object;
 
@@ -255,16 +255,16 @@ public class Dialog : MonoBehaviour
 			this.windowStyle = value;
 			switch (value)
 			{
-			case Dialog.WindowStyle.WindowStyleAuto:
-			case Dialog.WindowStyle.WindowStyleNoTail:
-				this.borderSprite.spriteName = "dialog_frame_chat";
-				break;
-			case Dialog.WindowStyle.WindowStylePlain:
-				this.borderSprite.spriteName = "dialog_frame_info";
-				break;
-			case Dialog.WindowStyle.WindowStyleTransparent:
-				this.borderSprite.spriteName = String.Empty;
-				break;
+				case Dialog.WindowStyle.WindowStyleAuto:
+				case Dialog.WindowStyle.WindowStyleNoTail:
+					this.borderSprite.spriteName = "dialog_frame_chat";
+					break;
+				case Dialog.WindowStyle.WindowStylePlain:
+					this.borderSprite.spriteName = "dialog_frame_info";
+					break;
+				case Dialog.WindowStyle.WindowStyleTransparent:
+					this.borderSprite.spriteName = String.Empty;
+					break;
 			}
 		}
 	}
@@ -291,7 +291,7 @@ public class Dialog : MonoBehaviour
 		set
 		{
 			String text = this.OverwritePrerenderText(value);
-            DialogBoxConstructor.PhrasePreOpcodeSymbol(text, this);
+			DialogBoxConstructor.PhrasePreOpcodeSymbol(text, this);
 			this.PrepareNextPage();
 		}
 	}
@@ -488,33 +488,33 @@ public class Dialog : MonoBehaviour
 				if (FF9TextTool.FieldZoneId == 23)
 				{
 					String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-				    switch (currentLanguage)
-				    {
-                        case "Japanese":
-                        case "French":
-                            this.isOverlayDialog = (this.textId == 154 || this.textId == 155);
-                            goto IL_136;
-                        case "Italian":
-                            this.isOverlayDialog = (this.textId == 149 || this.textId == 150);
-                            goto IL_136;
-                    }
-                    
+					switch (currentLanguage)
+					{
+						case "Japanese":
+						case "French":
+							this.isOverlayDialog = (this.textId == 154 || this.textId == 155);
+							goto IL_136;
+						case "Italian":
+							this.isOverlayDialog = (this.textId == 149 || this.textId == 150);
+							goto IL_136;
+					}
+
 					this.isOverlayDialog = (this.textId == 134 || this.textId == 135);
-					IL_136:;
+				IL_136:;
 				}
 				else if (FF9TextTool.FieldZoneId == 70 || FF9TextTool.FieldZoneId == 741)
 				{
 					String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-                    switch (currentLanguage)
-                    {
-                        case "English(US)":
-                        case "English(UK)":
-                            this.isOverlayDialog = (this.textId == 204 || this.textId == 205 || this.textId == 206);
-                            goto IL_22A;
-                    }
-                    
+					switch (currentLanguage)
+					{
+						case "English(US)":
+						case "English(UK)":
+							this.isOverlayDialog = (this.textId == 204 || this.textId == 205 || this.textId == 206);
+							goto IL_22A;
+					}
+
 					this.isOverlayDialog = (this.textId == 205 || this.textId == 206 || this.textId == 207);
-					IL_22A:;
+				IL_22A:;
 				}
 				else if (FF9TextTool.FieldZoneId == 166)
 				{
@@ -525,36 +525,36 @@ public class Dialog : MonoBehaviour
 					String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
 					switch (currentLanguage)
 					{
-					case "Japanese":
-					case "French":
-						this.isOverlayDialog = (this.textId == 874 || this.textId == 875);
-						goto IL_3DB;
-					case "Spanish":
-						this.isOverlayDialog = (this.textId == 859 || this.textId == 860);
-						goto IL_3DB;
-					case "German":
-						this.isOverlayDialog = (this.textId == 875 || this.textId == 876);
-						goto IL_3DB;
-					case "Italian":
-						this.isOverlayDialog = (this.textId == 889 || this.textId == 890);
-						goto IL_3DB;
+						case "Japanese":
+						case "French":
+							this.isOverlayDialog = (this.textId == 874 || this.textId == 875);
+							goto IL_3DB;
+						case "Spanish":
+							this.isOverlayDialog = (this.textId == 859 || this.textId == 860);
+							goto IL_3DB;
+						case "German":
+							this.isOverlayDialog = (this.textId == 875 || this.textId == 876);
+							goto IL_3DB;
+						case "Italian":
+							this.isOverlayDialog = (this.textId == 889 || this.textId == 890);
+							goto IL_3DB;
 					}
 					this.isOverlayDialog = (this.textId == 861 || this.textId == 862);
-					IL_3DB:;
+				IL_3DB:;
 				}
 				else if (FF9TextTool.FieldZoneId == 945)
 				{
 					String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-				    if (currentLanguage == "Japanese")
-				    {
-                        this.isOverlayDialog = (this.textId == 251 || this.textId == 252);
-                        goto IL_497;
-                    }
-                    
+					if (currentLanguage == "Japanese")
+					{
+						this.isOverlayDialog = (this.textId == 251 || this.textId == 252);
+						goto IL_497;
+					}
+
 					this.isOverlayDialog = (this.textId == 252 || this.textId == 253);
 				}
 			}
-			IL_497:
+		IL_497:
 			if (this.isOverlayDialog)
 			{
 				Vector3 localPosition = base.transform.localPosition;
@@ -592,8 +592,8 @@ public class Dialog : MonoBehaviour
 		this.SetMessageSpeed(-1, 0);
 		this.currentState = Dialog.State.OpenAnimation;
 		this.dialogAnimator.ShowDialog();
-        PersistenSingleton<UIManager>.Instance.Dialogs.CurMesId = this.textId;
-        this.StartSignalProcess();
+		PersistenSingleton<UIManager>.Instance.Dialogs.CurMesId = this.textId;
+		this.StartSignalProcess();
 	}
 
 	public void Hide()
@@ -625,9 +625,9 @@ public class Dialog : MonoBehaviour
 		}
 		this.currentState = Dialog.State.CloseAnimation;
 		this.dialogAnimator.HideDialog();
-        if (this.CapType == Dialog.CaptionType.Mognet && this.StartChoiceRow > -1)
-            UIManager.Input.ResetTriggerEvent();
-    }
+		if (this.CapType == Dialog.CaptionType.Mognet && this.StartChoiceRow > -1)
+			UIManager.Input.ResetTriggerEvent();
+	}
 
 	public void AfterShown()
 	{
@@ -668,8 +668,8 @@ public class Dialog : MonoBehaviour
 	public void AfterHidden()
 	{
 		EventHUD.CheckSpecialHUDFromMesId(this.textId, false);
-        ETb.ProcessDialog(this);
-        ETb.ProcessATEDialog(this);
+		ETb.ProcessDialog(this);
+		ETb.ProcessATEDialog(this);
 		Singleton<DialogManager>.Instance.ReleaseDialogToPool(this);
 		if (this.AfterDialogHidden != null)
 		{
@@ -681,31 +681,31 @@ public class Dialog : MonoBehaviour
 
 	public void OnKeyConfirm(GameObject go)
 	{
-        if (FF9StateSystem.Common.FF9.fldMapNo == 2951 || FF9StateSystem.Common.FF9.fldMapNo == 2952)
-        {
-            string symbol = Localization.GetSymbol();
-            if (symbol == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 226)
-            {
-                return;
-            }
-            if (Singleton<DialogManager>.Instance.PressMesId == 246 && Singleton<DialogManager>.Instance.ReleaseMesId == 227)
-            {
-                return;
-            }
-        }
-        else if (FF9StateSystem.Common.FF9.fldMapNo == 2950)
-        {
-            string symbol2 = Localization.GetSymbol();
-            if (symbol2 == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 225)
-            {
-                return;
-            }
-            if (Singleton<DialogManager>.Instance.PressMesId == 246 && Singleton<DialogManager>.Instance.ReleaseMesId == 226)
-            {
-                return;
-            }
-        }
-        if (this.currentState == Dialog.State.CompleteAnimation)
+		if (FF9StateSystem.Common.FF9.fldMapNo == 2951 || FF9StateSystem.Common.FF9.fldMapNo == 2952)
+		{
+			string symbol = Localization.GetSymbol();
+			if (symbol == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 226)
+			{
+				return;
+			}
+			if (Singleton<DialogManager>.Instance.PressMesId == 246 && Singleton<DialogManager>.Instance.ReleaseMesId == 227)
+			{
+				return;
+			}
+		}
+		else if (FF9StateSystem.Common.FF9.fldMapNo == 2950)
+		{
+			string symbol2 = Localization.GetSymbol();
+			if (symbol2 == "JP" && Singleton<DialogManager>.Instance.PressMesId == 245 && Singleton<DialogManager>.Instance.ReleaseMesId == 225)
+			{
+				return;
+			}
+			if (Singleton<DialogManager>.Instance.PressMesId == 246 && Singleton<DialogManager>.Instance.ReleaseMesId == 226)
+			{
+				return;
+			}
+		}
+		if (this.currentState == Dialog.State.CompleteAnimation)
 		{
 			if (this.startChoiceRow > -1)
 			{
@@ -774,21 +774,21 @@ public class Dialog : MonoBehaviour
 		Single waitTime = (Single)this.endMode / Configuration.Graphics.FieldTPS;
 		if (FF9StateSystem.Common.FF9.fldMapNo == 3009)
 		{
-            // Epilogue: Stage
-		    DialogManager.Instance.ForceControlByEvent(false);
-		    yield break;
+			// Epilogue: Stage
+			DialogManager.Instance.ForceControlByEvent(false);
+			yield break;
 		}
 		else if (FF9StateSystem.Common.FF9.fldMapNo == 3010)
 		{
-		    // Epilogue: Stage
-		    DialogManager.Instance.ForceControlByEvent(false);
-		    yield break;
+			// Epilogue: Stage
+			DialogManager.Instance.ForceControlByEvent(false);
+			yield break;
 		}
 		else if (FF9StateSystem.Common.FF9.fldMapNo == 3011)
 		{
-		    // Epilogue: Stage
-		    DialogManager.Instance.ForceControlByEvent(true);
-		    //yield break; // Leads to problems
+			// Epilogue: Stage
+			DialogManager.Instance.ForceControlByEvent(true);
+			//yield break; // Leads to problems
 			String lang = Localization.GetSymbol();
 			waitTime += lang != "US" && lang != "JP" ? 0.56f : -0.22f;
 		}
@@ -837,8 +837,8 @@ public class Dialog : MonoBehaviour
 				actor.mesofsY = Convert.ToInt16(this.offset.y);
 				actor.mesofsZ = Convert.ToInt16(this.offset.z);
 			}
-            ETb.GetMesPos(this.Po, out Single poPosX, out Single poPosY);
-            posX = poPosX;
+			ETb.GetMesPos(this.Po, out Single poPosX, out Single poPosY);
+			posX = poPosX;
 			posY = poPosY;
 			Boolean isTailLeft;
 			if (this.tailPosition == Dialog.TailPosition.AutoPosition)
@@ -862,8 +862,8 @@ public class Dialog : MonoBehaviour
 			}
 			else
 			{
-                isTailUpper = ((TailPosition)(((Int32)this.tailPosition) >> 1) & Dialog.TailPosition.LowerLeft) == Dialog.TailPosition.LowerLeft;
-                isTailLeft = (this.tailPosition & Dialog.TailPosition.LowerLeft) == Dialog.TailPosition.LowerLeft;
+				isTailUpper = ((TailPosition)(((Int32)this.tailPosition) >> 1) & Dialog.TailPosition.LowerLeft) == Dialog.TailPosition.LowerLeft;
+				isTailLeft = (this.tailPosition & Dialog.TailPosition.LowerLeft) == Dialog.TailPosition.LowerLeft;
 			}
 			if (!this.isForceTailPosition)
 			{
@@ -962,16 +962,16 @@ public class Dialog : MonoBehaviour
 	{
 		switch (this.windowStyle)
 		{
-		case Dialog.WindowStyle.WindowStylePlain:
-		case Dialog.WindowStyle.WindowStyleTransparent:
-		case Dialog.WindowStyle.WindowStyleNoTail:
-			this.tailSprite.alpha = 0f;
-			if (this.windowStyle == Dialog.WindowStyle.WindowStyleTransparent)
-			{
-				this.bodySprite.alpha = 0f;
-				this.borderSprite.alpha = 0f;
-			}
-			break;
+			case Dialog.WindowStyle.WindowStylePlain:
+			case Dialog.WindowStyle.WindowStyleTransparent:
+			case Dialog.WindowStyle.WindowStyleNoTail:
+				this.tailSprite.alpha = 0f;
+				if (this.windowStyle == Dialog.WindowStyle.WindowStyleTransparent)
+				{
+					this.bodySprite.alpha = 0f;
+					this.borderSprite.alpha = 0f;
+				}
+				break;
 		}
 	}
 
@@ -1176,18 +1176,18 @@ public class Dialog : MonoBehaviour
 	{
 		switch (_position)
 		{
-		case Dialog.TailPosition.LowerRight:
-		case Dialog.TailPosition.LowerLeft:
-		case Dialog.TailPosition.UpperRight:
-		case Dialog.TailPosition.UpperLeft:
-		case Dialog.TailPosition.LowerCenter:
-		case Dialog.TailPosition.UpperCenter:
-			return false;
-		case Dialog.TailPosition.LowerRightForce:
-		case Dialog.TailPosition.LowerLeftForce:
-		case Dialog.TailPosition.UpperRightForce:
-		case Dialog.TailPosition.UpperLeftForce:
-			return true;
+			case Dialog.TailPosition.LowerRight:
+			case Dialog.TailPosition.LowerLeft:
+			case Dialog.TailPosition.UpperRight:
+			case Dialog.TailPosition.UpperLeft:
+			case Dialog.TailPosition.LowerCenter:
+			case Dialog.TailPosition.UpperCenter:
+				return false;
+			case Dialog.TailPosition.LowerRightForce:
+			case Dialog.TailPosition.LowerLeftForce:
+			case Dialog.TailPosition.UpperRightForce:
+			case Dialog.TailPosition.UpperLeftForce:
+				return true;
 		}
 		return false;
 	}
@@ -1198,160 +1198,160 @@ public class Dialog : MonoBehaviour
 		UIWidget.Pivot pivot;
 		switch (_position)
 		{
-		case Dialog.TailPosition.LowerRight:
-		case Dialog.TailPosition.LowerLeft:
-		case Dialog.TailPosition.LowerCenter:
-		case Dialog.TailPosition.LowerRightForce:
-		case Dialog.TailPosition.LowerLeftForce:
-			pivot = UIWidget.Pivot.Top;
-			goto IL_5B;
-		case Dialog.TailPosition.UpperRight:
-		case Dialog.TailPosition.UpperLeft:
-		case Dialog.TailPosition.UpperCenter:
-		case Dialog.TailPosition.UpperRightForce:
-		case Dialog.TailPosition.UpperLeftForce:
-			pivot = UIWidget.Pivot.Bottom;
-			goto IL_5B;
+			case Dialog.TailPosition.LowerRight:
+			case Dialog.TailPosition.LowerLeft:
+			case Dialog.TailPosition.LowerCenter:
+			case Dialog.TailPosition.LowerRightForce:
+			case Dialog.TailPosition.LowerLeftForce:
+				pivot = UIWidget.Pivot.Top;
+				goto IL_5B;
+			case Dialog.TailPosition.UpperRight:
+			case Dialog.TailPosition.UpperLeft:
+			case Dialog.TailPosition.UpperCenter:
+			case Dialog.TailPosition.UpperRightForce:
+			case Dialog.TailPosition.UpperLeftForce:
+				pivot = UIWidget.Pivot.Bottom;
+				goto IL_5B;
 		}
 		pivot = UIWidget.Pivot.Center;
-		IL_5B:
+	IL_5B:
 		this.bodySprite.pivot = pivot;
 		this.borderSprite.pivot = pivot;
 		Vector2 v = new Vector2(0f, 0f);
 		switch (_position)
 		{
-		case Dialog.TailPosition.LowerRight:
-		case Dialog.TailPosition.LowerLeft:
-		case Dialog.TailPosition.LowerCenter:
-		case Dialog.TailPosition.LowerRightForce:
-		case Dialog.TailPosition.LowerLeftForce:
-			v.y = this.size.y / 2f - (Dialog.DialogYPadding / 2f - Dialog.BorderPadding);
-			break;
-		case Dialog.TailPosition.UpperRight:
-		case Dialog.TailPosition.UpperLeft:
-		case Dialog.TailPosition.UpperCenter:
-		case Dialog.TailPosition.UpperRightForce:
-		case Dialog.TailPosition.UpperLeftForce:
-			v.y = -this.size.y / 2f + (Dialog.DialogYPadding / 2f - Dialog.BorderPadding);
-			break;
+			case Dialog.TailPosition.LowerRight:
+			case Dialog.TailPosition.LowerLeft:
+			case Dialog.TailPosition.LowerCenter:
+			case Dialog.TailPosition.LowerRightForce:
+			case Dialog.TailPosition.LowerLeftForce:
+				v.y = this.size.y / 2f - (Dialog.DialogYPadding / 2f - Dialog.BorderPadding);
+				break;
+			case Dialog.TailPosition.UpperRight:
+			case Dialog.TailPosition.UpperLeft:
+			case Dialog.TailPosition.UpperCenter:
+			case Dialog.TailPosition.UpperRightForce:
+			case Dialog.TailPosition.UpperLeftForce:
+				v.y = -this.size.y / 2f + (Dialog.DialogYPadding / 2f - Dialog.BorderPadding);
+				break;
 		}
 		this.BodyGameObject.transform.localPosition = v;
 		Vector2 birthPosition = new Vector2(0f, 0f);
 		switch (_position)
 		{
-		case Dialog.TailPosition.LowerRight:
-		case Dialog.TailPosition.LowerLeft:
-		case Dialog.TailPosition.LowerCenter:
-		case Dialog.TailPosition.LowerRightForce:
-		case Dialog.TailPosition.LowerLeftForce:
-			birthPosition = new Vector2(this.size.x / 2f, this.size.y);
-			goto IL_205;
-		case Dialog.TailPosition.UpperRight:
-		case Dialog.TailPosition.UpperLeft:
-		case Dialog.TailPosition.UpperCenter:
-		case Dialog.TailPosition.UpperRightForce:
-		case Dialog.TailPosition.UpperLeftForce:
-			birthPosition = new Vector2(this.size.x / 2f, 0f);
-			goto IL_205;
+			case Dialog.TailPosition.LowerRight:
+			case Dialog.TailPosition.LowerLeft:
+			case Dialog.TailPosition.LowerCenter:
+			case Dialog.TailPosition.LowerRightForce:
+			case Dialog.TailPosition.LowerLeftForce:
+				birthPosition = new Vector2(this.size.x / 2f, this.size.y);
+				goto IL_205;
+			case Dialog.TailPosition.UpperRight:
+			case Dialog.TailPosition.UpperLeft:
+			case Dialog.TailPosition.UpperCenter:
+			case Dialog.TailPosition.UpperRightForce:
+			case Dialog.TailPosition.UpperLeftForce:
+				birthPosition = new Vector2(this.size.x / 2f, 0f);
+				goto IL_205;
 		}
 		birthPosition = new Vector2(this.size.x / 2f, this.size.y / 2f);
-		IL_205:
+	IL_205:
 		this.bodySprite.birthPosition = birthPosition;
 		Vector2 v2 = this.phraseWidget.transform.localPosition;
 		v2.y = (Single)(this.phraseWidget.height / 2);
 		switch (_position)
 		{
-		case Dialog.TailPosition.LowerRight:
-		case Dialog.TailPosition.LowerLeft:
-		case Dialog.TailPosition.LowerCenter:
-		case Dialog.TailPosition.LowerRightForce:
-		case Dialog.TailPosition.LowerLeftForce:
-			v2.y -= 36f;
-			goto IL_2C3;
-		case Dialog.TailPosition.UpperRight:
-		case Dialog.TailPosition.UpperLeft:
-		case Dialog.TailPosition.UpperCenter:
-		case Dialog.TailPosition.UpperRightForce:
-		case Dialog.TailPosition.UpperLeftForce:
-			v2.y += 6f;
-			goto IL_2C3;
+			case Dialog.TailPosition.LowerRight:
+			case Dialog.TailPosition.LowerLeft:
+			case Dialog.TailPosition.LowerCenter:
+			case Dialog.TailPosition.LowerRightForce:
+			case Dialog.TailPosition.LowerLeftForce:
+				v2.y -= 36f;
+				goto IL_2C3;
+			case Dialog.TailPosition.UpperRight:
+			case Dialog.TailPosition.UpperLeft:
+			case Dialog.TailPosition.UpperCenter:
+			case Dialog.TailPosition.UpperRightForce:
+			case Dialog.TailPosition.UpperLeftForce:
+				v2.y += 6f;
+				goto IL_2C3;
 		}
 		v2.y -= 18f;
-		IL_2C3:
+	IL_2C3:
 		this.phraseWidget.transform.localPosition = v2;
 		UIWidget.Pivot pivot2;
 		switch (_position)
 		{
-		case Dialog.TailPosition.LowerRight:
-		case Dialog.TailPosition.LowerRightForce:
-			pivot2 = UIWidget.Pivot.TopLeft;
-			goto IL_350;
-		case Dialog.TailPosition.LowerLeft:
-		case Dialog.TailPosition.LowerLeftForce:
-			pivot2 = UIWidget.Pivot.TopRight;
-			goto IL_350;
-		case Dialog.TailPosition.UpperRight:
-		case Dialog.TailPosition.UpperRightForce:
-			pivot2 = UIWidget.Pivot.BottomLeft;
-			goto IL_350;
-		case Dialog.TailPosition.UpperLeft:
-		case Dialog.TailPosition.UpperLeftForce:
-			pivot2 = UIWidget.Pivot.BottomRight;
-			goto IL_350;
-		case Dialog.TailPosition.LowerCenter:
-			pivot2 = UIWidget.Pivot.Top;
-			goto IL_350;
-		case Dialog.TailPosition.UpperCenter:
-			pivot2 = UIWidget.Pivot.Bottom;
-			goto IL_350;
+			case Dialog.TailPosition.LowerRight:
+			case Dialog.TailPosition.LowerRightForce:
+				pivot2 = UIWidget.Pivot.TopLeft;
+				goto IL_350;
+			case Dialog.TailPosition.LowerLeft:
+			case Dialog.TailPosition.LowerLeftForce:
+				pivot2 = UIWidget.Pivot.TopRight;
+				goto IL_350;
+			case Dialog.TailPosition.UpperRight:
+			case Dialog.TailPosition.UpperRightForce:
+				pivot2 = UIWidget.Pivot.BottomLeft;
+				goto IL_350;
+			case Dialog.TailPosition.UpperLeft:
+			case Dialog.TailPosition.UpperLeftForce:
+				pivot2 = UIWidget.Pivot.BottomRight;
+				goto IL_350;
+			case Dialog.TailPosition.LowerCenter:
+				pivot2 = UIWidget.Pivot.Top;
+				goto IL_350;
+			case Dialog.TailPosition.UpperCenter:
+				pivot2 = UIWidget.Pivot.Bottom;
+				goto IL_350;
 		}
 		pivot2 = UIWidget.Pivot.Center;
-		IL_350:
+	IL_350:
 		this.tailSprite.pivot = pivot2;
 		switch (_position)
 		{
-		case Dialog.TailPosition.LowerRight:
-		case Dialog.TailPosition.LowerRightForce:
-			this.tailSprite.spriteName = "dialog_pointer_topleft";
-			goto IL_405;
-		case Dialog.TailPosition.LowerLeft:
-		case Dialog.TailPosition.LowerCenter:
-		case Dialog.TailPosition.LowerLeftForce:
-			this.tailSprite.spriteName = "dialog_pointer_topright";
-			goto IL_405;
-		case Dialog.TailPosition.UpperRight:
-		case Dialog.TailPosition.UpperRightForce:
-			this.tailSprite.spriteName = "dialog_pointer_downleft";
-			goto IL_405;
-		case Dialog.TailPosition.UpperLeft:
-		case Dialog.TailPosition.UpperCenter:
-		case Dialog.TailPosition.UpperLeftForce:
-			this.tailSprite.spriteName = "dialog_pointer_downright";
-			goto IL_405;
+			case Dialog.TailPosition.LowerRight:
+			case Dialog.TailPosition.LowerRightForce:
+				this.tailSprite.spriteName = "dialog_pointer_topleft";
+				goto IL_405;
+			case Dialog.TailPosition.LowerLeft:
+			case Dialog.TailPosition.LowerCenter:
+			case Dialog.TailPosition.LowerLeftForce:
+				this.tailSprite.spriteName = "dialog_pointer_topright";
+				goto IL_405;
+			case Dialog.TailPosition.UpperRight:
+			case Dialog.TailPosition.UpperRightForce:
+				this.tailSprite.spriteName = "dialog_pointer_downleft";
+				goto IL_405;
+			case Dialog.TailPosition.UpperLeft:
+			case Dialog.TailPosition.UpperCenter:
+			case Dialog.TailPosition.UpperLeftForce:
+				this.tailSprite.spriteName = "dialog_pointer_downright";
+				goto IL_405;
 		}
 		this.tailSprite.spriteName = String.Empty;
-		IL_405:
+	IL_405:
 		Single x = this.tailSprite.localSize.x / 2f;
 		Single y;
 		switch (_position)
 		{
-		case Dialog.TailPosition.LowerRight:
-		case Dialog.TailPosition.LowerLeft:
-		case Dialog.TailPosition.LowerCenter:
-		case Dialog.TailPosition.LowerRightForce:
-		case Dialog.TailPosition.LowerLeftForce:
-			y = this.size.y / 2f + Dialog.DialogYPadding / 2f;
-			goto IL_4C2;
-		case Dialog.TailPosition.UpperRight:
-		case Dialog.TailPosition.UpperLeft:
-		case Dialog.TailPosition.UpperCenter:
-		case Dialog.TailPosition.UpperRightForce:
-		case Dialog.TailPosition.UpperLeftForce:
-			y = -(this.size.y / 2f) - Dialog.DialogYPadding / 2f + 1f;
-			goto IL_4C2;
+			case Dialog.TailPosition.LowerRight:
+			case Dialog.TailPosition.LowerLeft:
+			case Dialog.TailPosition.LowerCenter:
+			case Dialog.TailPosition.LowerRightForce:
+			case Dialog.TailPosition.LowerLeftForce:
+				y = this.size.y / 2f + Dialog.DialogYPadding / 2f;
+				goto IL_4C2;
+			case Dialog.TailPosition.UpperRight:
+			case Dialog.TailPosition.UpperLeft:
+			case Dialog.TailPosition.UpperCenter:
+			case Dialog.TailPosition.UpperRightForce:
+			case Dialog.TailPosition.UpperLeftForce:
+				y = -(this.size.y / 2f) - Dialog.DialogYPadding / 2f + 1f;
+				goto IL_4C2;
 		}
 		y = 0f;
-		IL_4C2:
+	IL_4C2:
 		this.tailTransform.localPosition = new Vector3(x, y, 0f);
 	}
 
@@ -1482,12 +1482,12 @@ public class Dialog : MonoBehaviour
 				if (this.overlayMessageNumber == i)
 					formattedValue = NGUIText.FF9PinkColor + formattedValue + NGUIText.FF9WhiteColor;
 
-                text = text.ReplaceAll(
-                new[]
-                {
-                    new KeyValuePair<String, TextReplacement>($"[NUMB={i}]", formattedValue),
-                    new KeyValuePair<String, TextReplacement>($"{{Variable {i}}}", formattedValue)
-                });
+				text = text.ReplaceAll(
+				new[]
+				{
+					new KeyValuePair<String, TextReplacement>($"[NUMB={i}]", formattedValue),
+					new KeyValuePair<String, TextReplacement>($"{{Variable {i}}}", formattedValue)
+				});
 
 				this.messageValues[i] = gMesValue[i];
 			}
@@ -1581,7 +1581,7 @@ public class Dialog : MonoBehaviour
 		this.phrase = this.subPage.Count <= this.currentPage ? String.Empty : this.subPage[this.currentPage++];
 		this.phrase = this.RewriteSentenceForExclamation(this.phrase);
 		this.ClearIcon();
-        DialogBoxController.PhraseOpcodeSymbol(this.phrase, this);
+		DialogBoxController.PhraseOpcodeSymbol(this.phrase, this);
 		this.phraseMessageValue = this.phrase;
 		this.phrase = NGUIText.ReplaceNumberValue(this.phrase, this);
 	}
@@ -1689,13 +1689,13 @@ public class Dialog : MonoBehaviour
 			if (EventHUD.CurrentHUD == MinigameHUD.ChocoHot && this.windowStyle == Dialog.WindowStyle.WindowStylePlain)
 			{
 				String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-			    switch (currentLanguage)
-			    {
-                    case "Japanese":
-                    case "English(UK)":
-                    case "English(US)":
-                        return this.textId != 275;
-                }
+				switch (currentLanguage)
+				{
+					case "Japanese":
+					case "English(UK)":
+					case "English(US)":
+						return this.textId != 275;
+				}
 
 				return this.textId != 276;
 			}

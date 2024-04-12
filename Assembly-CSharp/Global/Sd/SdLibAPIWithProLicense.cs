@@ -9,8 +9,8 @@ public class SdLibAPIWithProLicense : ISdLibAPI
 	[DllImport("SdLib", CharSet = CharSet.Ansi, EntryPoint = "SdSoundSystem_SoundCtrl_GetPlayTime")]
 	private static extern Int32 DLLSdSoundSystem_SoundCtrl_GetPlayTime(Int32 soundID);
 
-    public override Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID)
-    {
+	public override Int32 SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(Int32 soundID)
+	{
 		// The duration during which the sound has played; it turns back to 0 when the sound stops
 		return DLLSdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundID);
 	}

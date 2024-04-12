@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 [RequireComponent(typeof(UISlider))]
 [AddComponentMenu("NGUI/Interaction/Sound Volume")]

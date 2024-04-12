@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Memoria.Prime;
+using System;
 using System.Runtime.InteropServices;
-using Memoria.Prime;
-using SiliconStudio;
-using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
 public class SteamSdkWrapper : ISocialPlatform
@@ -143,7 +141,7 @@ public class SteamSdkWrapper : ISocialPlatform
 	{
 		throw new NotImplementedException();
 	}
-	
+
 	public static Boolean IsInitialized { get; private set; }
 
 	public static Boolean TryInitialize()

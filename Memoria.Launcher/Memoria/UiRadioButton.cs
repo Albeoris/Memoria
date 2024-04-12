@@ -2,7 +2,7 @@ using System.Windows.Controls;
 
 namespace Memoria.Launcher
 {
-    public class UiRadioButton : RadioButton
-    {
-    }
+	public class UiRadioButton : RadioButton
+	{
+	}
 }

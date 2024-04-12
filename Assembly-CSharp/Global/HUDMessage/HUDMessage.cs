@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using System.Collections;
 using UnityEngine;
-using Memoria;
 
 public class HUDMessage : Singleton<HUDMessage>
 {

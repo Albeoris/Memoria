@@ -171,10 +171,10 @@ public class PsxCamera
 
 	public static Matrix4x4 PsxProj2UnityProj(Single zNear, Single zFar)
 	{
-	    Single bottom = FieldMap.PsxScreenHeightNative / 2.2f;
-	    Single top = FieldMap.PsxScreenHeightNative - bottom;
+		Single bottom = FieldMap.PsxScreenHeightNative / 2.2f;
+		Single top = FieldMap.PsxScreenHeightNative - bottom;
 
-        return PsxCamera.PerspectiveOffCenter(-FieldMap.HalfScreenWidth, FieldMap.HalfScreenWidth, -bottom, top, zNear, zFar);
+		return PsxCamera.PerspectiveOffCenter(-FieldMap.HalfScreenWidth, FieldMap.HalfScreenWidth, -bottom, top, zNear, zFar);
 	}
 
 	public const Int32 DefaultClipDistance = 16383;

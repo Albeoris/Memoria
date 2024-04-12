@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using FF9;
-using Memoria;
+﻿using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
+using System;
 using Object = System.Object;
 
 public class QuadMistCard

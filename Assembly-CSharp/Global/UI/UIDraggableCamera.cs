@@ -107,7 +107,7 @@ public class UIDraggableCamera : MonoBehaviour
 			delta *= this.mRoot.pixelSizeAdjustment;
 		}
 		Vector2 vector = Vector2.Scale(delta, -this.scale);
-        this.mTrans.localPosition += (Vector3)vector;
+		this.mTrans.localPosition += (Vector3)vector;
 		this.mMomentum = Vector2.Lerp(this.mMomentum, this.mMomentum + vector * (0.01f * this.momentumAmount), 0.67f);
 		if (this.dragEffect != UIDragObject.DragEffect.MomentumAndSpring && this.ConstrainToBounds(true))
 		{
@@ -146,8 +146,8 @@ public class UIDraggableCamera : MonoBehaviour
 			this.mScroll = NGUIMath.SpringLerp(this.mScroll, 0f, 20f, deltaTime);
 			if (this.mMomentum.magnitude > 0.01f)
 			{
-                this.mTrans.localPosition += (Vector3)NGUIMath.SpringDampen(ref this.mMomentum, 9f, deltaTime);
-                this.mBounds = NGUIMath.CalculateAbsoluteWidgetBounds(this.rootForBounds);
+				this.mTrans.localPosition += (Vector3)NGUIMath.SpringDampen(ref this.mMomentum, 9f, deltaTime);
+				this.mBounds = NGUIMath.CalculateAbsoluteWidgetBounds(this.rootForBounds);
 				if (!this.ConstrainToBounds(this.dragEffect == UIDragObject.DragEffect.None))
 				{
 					SpringPosition component2 = base.GetComponent<SpringPosition>();

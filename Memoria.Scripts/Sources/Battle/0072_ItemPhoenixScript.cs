@@ -1,64 +1,64 @@
-using System;
 using Memoria.Data;
+using System;
 
 namespace Memoria.Scripts.Battle
 {
-    /// <summary>
-    ///  Phoenix Down, Phoenix Pinion
-    /// </summary>
-    [BattleScript(Id)]
-    public sealed class ItemPhoenixScript : IBattleScript, IEstimateBattleScript
-    {
-        public const Int32 Id = 0072;
+	/// <summary>
+	///  Phoenix Down, Phoenix Pinion
+	/// </summary>
+	[BattleScript(Id)]
+	public sealed class ItemPhoenixScript : IBattleScript, IEstimateBattleScript
+	{
+		public const Int32 Id = 0072;
 
-        private readonly BattleCalculator _v;
+		private readonly BattleCalculator _v;
 
-        public ItemPhoenixScript(BattleCalculator v)
-        {
-            _v = v;
-        }
+		public ItemPhoenixScript(BattleCalculator v)
+		{
+			_v = v;
+		}
 
-        public void Perform()
-        {
-            if (!_v.Target.CanBeRevived())
-                return;
-            
-            if (_v.Target.IsZombie)
-            {
-                if ((_v.Target.CurrentHp = (UInt32)(GameRandom.Next8() % 10)) == 0)
-                    _v.Target.Kill(_v.Caster);
-            }
-            else if (_v.Target.CheckIsPlayer())
-            {
-                if (_v.Target.IsUnderStatus(BattleStatus.Death))
-                    _v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 10);
+		public void Perform()
+		{
+			if (!_v.Target.CanBeRevived())
+				return;
 
-                _v.TryRemoveItemStatuses();
-            }
-        }
+			if (_v.Target.IsZombie)
+			{
+				if ((_v.Target.CurrentHp = (UInt32)(GameRandom.Next8() % 10)) == 0)
+					_v.Target.Kill(_v.Caster);
+			}
+			else if (_v.Target.CheckIsPlayer())
+			{
+				if (_v.Target.IsUnderStatus(BattleStatus.Death))
+					_v.Target.CurrentHp = (UInt32)(1 + GameRandom.Next8() % 10);
 
-        public Single RateTarget()
-        {
-            if (!_v.Target.CanBeRevived())
-                return 0;
+				_v.TryRemoveItemStatuses();
+			}
+		}
 
-            if (_v.Target.IsZombie)
-            {
-                Single result = BattleScriptStatusEstimate.RateStatus(BattleStatus.Death) * 0.1f;
-                if (!_v.Target.IsPlayer)
-                    result *= -1;
-                return result;
-            }
+		public Single RateTarget()
+		{
+			if (!_v.Target.CanBeRevived())
+				return 0;
 
-            if (!_v.Target.IsPlayer)
-                return 0;
+			if (_v.Target.IsZombie)
+			{
+				Single result = BattleScriptStatusEstimate.RateStatus(BattleStatus.Death) * 0.1f;
+				if (!_v.Target.IsPlayer)
+					result *= -1;
+				return result;
+			}
 
-            BattleStatus playerStatus = _v.Target.CurrentStatus;
-            BattleStatus removeStatus = _v.Command.ItemStatus;
-            BattleStatus removedStatus = playerStatus & removeStatus;
-            Int32 rating = BattleScriptStatusEstimate.RateStatuses(removedStatus);
+			if (!_v.Target.IsPlayer)
+				return 0;
 
-            return -1 * rating;
-        }
-    }
+			BattleStatus playerStatus = _v.Target.CurrentStatus;
+			BattleStatus removeStatus = _v.Command.ItemStatus;
+			BattleStatus removedStatus = playerStatus & removeStatus;
+			Int32 rating = BattleScriptStatusEstimate.RateStatuses(removedStatus);
+
+			return -1 * rating;
+		}
+	}
 }

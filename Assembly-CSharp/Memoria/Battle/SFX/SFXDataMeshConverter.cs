@@ -1,10 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Globalization;
+﻿using SimpleJSON;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
-using Memoria.Scripts;
-using SimpleJSON;
 
 // This class is used for debugging purposes only for now
 // It aims at exporting SFXMesh into a convenient format but mostly fails at doing so
@@ -169,7 +167,7 @@ public class SFXDataMeshConverter
 				jsonSprite += WriteIndent(--indentCount) + "},\n";
 				jsonSprite += WriteIndent(indentCount) + "\"Vertices\":[";
 				for (Int32 i = 0; i < mesh.spriteMesh.vertex.Length; i++)
-					jsonSprite += (i==0 ? " " : ", ") + $"\"{ConvertToString(mesh.spriteMesh.vertex[i])}\"";
+					jsonSprite += (i == 0 ? " " : ", ") + $"\"{ConvertToString(mesh.spriteMesh.vertex[i])}\"";
 				jsonSprite += " ],\n";
 				jsonSprite += WriteIndent(indentCount) + "\"Indices\":[";
 				for (Int32 i = 0; i < mesh.spriteMesh.index.Length; i++)
@@ -515,7 +513,6 @@ public class SFXDataMeshConverter
 		if (spriteMesh.duration == 0)
 			spriteMesh.duration = lastParticleFrame - firstParticleFrame + 1;
 		// TODO: vertex uv index scaling (diameter)
-
 
 		List<Int32> frameToDelete = new List<Int32>();
 		foreach (KeyValuePair<Int32, List<Int32>> p in spriteVList)

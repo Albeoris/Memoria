@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum SoundProfileType
+﻿public enum SoundProfileType
 {
 	Default,
 	Music,

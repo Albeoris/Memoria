@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Data;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
 
@@ -95,27 +95,27 @@ public class BattleResultUI : UIScene
 					this.currentState = BattleResultUI.ResultState.EXPAndAPTick;
 					break;
 				case BattleResultUI.ResultState.EXPAndAPTick:
-				{
-					FF9Sfx.FF9SFX_StopLoop(105);
-					this.currentState = BattleResultUI.ResultState.EndEXPAndAP;
-					BattleEndValue[] array = this.expValue;
-					for (Int32 i = 0; i < (Int32)array.Length; i++)
 					{
-						BattleEndValue battleEndValue = array[i];
-						battleEndValue.step = battleEndValue.value;
+						FF9Sfx.FF9SFX_StopLoop(105);
+						this.currentState = BattleResultUI.ResultState.EndEXPAndAP;
+						BattleEndValue[] array = this.expValue;
+						for (Int32 i = 0; i < (Int32)array.Length; i++)
+						{
+							BattleEndValue battleEndValue = array[i];
+							battleEndValue.step = battleEndValue.value;
+						}
+						this.UpdateExp();
+						BattleEndValue[] array2 = this.apValue;
+						for (Int32 j = 0; j < (Int32)array2.Length; j++)
+						{
+							BattleEndValue battleEndValue2 = array2[j];
+							battleEndValue2.step = battleEndValue2.value;
+						}
+						this.UpdateAp();
+						this.DisplayEXPAndAPInfo();
+						this.ApplyTweenAndFade();
+						break;
 					}
-					this.UpdateExp();
-					BattleEndValue[] array2 = this.apValue;
-					for (Int32 j = 0; j < (Int32)array2.Length; j++)
-					{
-						BattleEndValue battleEndValue2 = array2[j];
-						battleEndValue2.step = battleEndValue2.value;
-					}
-					this.UpdateAp();
-					this.DisplayEXPAndAPInfo();
-					this.ApplyTweenAndFade();
-					break;
-				}
 				case BattleResultUI.ResultState.EndEXPAndAP:
 					this.ApplyTweenAndFade();
 					break;

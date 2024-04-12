@@ -1,6 +1,4 @@
-﻿using System;
-
-public enum QuadMistSoundID
+﻿public enum QuadMistSoundID
 {
 	MINI_SE_CURSOL = 1,
 	MINI_SE_WARNING,

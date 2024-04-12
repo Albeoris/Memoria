@@ -4,6 +4,5 @@
              xmlns:local="clr-namespace:Memoria.Client"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
     </Application.Resources>
 </Application>

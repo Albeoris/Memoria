@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Assets;
-using Assets.Scripts.Common;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
 
@@ -241,11 +241,11 @@ public class WorldHUD : UIScene
 			{
 				return false;
 			}
-            if (!PersistenSingleton<SceneDirector>.Instance.PendingNextScene.Equals(string.Empty) || !PersistenSingleton<SceneDirector>.Instance.PendingCurrentScene.Equals(string.Empty))
-            {
-                return false;
-            }
-            if (this.isSelectEnable)
+			if (!PersistenSingleton<SceneDirector>.Instance.PendingNextScene.Equals(string.Empty) || !PersistenSingleton<SceneDirector>.Instance.PendingCurrentScene.Equals(string.Empty))
+			{
+				return false;
+			}
+			if (this.isSelectEnable)
 			{
 				if (!FF9StateSystem.Battle.isEncount && this.currentState == WorldHUD.State.HUD && this.enableMapButton)
 				{
@@ -517,14 +517,14 @@ public class WorldHUD : UIScene
 		String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
 		switch (currentLanguage)
 		{
-		case "Japanese":
-			return 70;
-		case "English(UK)":
-		case "English(US)":
-		case "Italian":
-			return 53;
-		case "Spanish":
-			return 85;
+			case "Japanese":
+				return 70;
+			case "English(UK)":
+			case "English(US)":
+			case "Italian":
+				return 53;
+			case "Spanish":
+				return 85;
 		}
 		return 77;
 	}
@@ -623,25 +623,25 @@ public class WorldHUD : UIScene
 	{
 		if (WMUIData.ActiveMapNo == 1)
 		{
-            String externalPath = AssetManager.SearchAssetOnDisc("EmbeddedAsset/UI/Sprites/world_map_full_all.png", true, false);
-            if (!String.IsNullOrEmpty(externalPath))
-                externalPath = "EmbeddedAsset/UI/Sprites/world_map_full_all.png";
+			String externalPath = AssetManager.SearchAssetOnDisc("EmbeddedAsset/UI/Sprites/world_map_full_all.png", true, false);
+			if (!String.IsNullOrEmpty(externalPath))
+				externalPath = "EmbeddedAsset/UI/Sprites/world_map_full_all.png";
 			else
-                externalPath = "EmbeddedAsset/UI/Sprites/world_map_full_all";
-            Sprite fullMapSprite = AssetManager.Load<Sprite>(externalPath, false);
-            this.miniMapSprite.spriteName = "world_map_mini_all";
+				externalPath = "EmbeddedAsset/UI/Sprites/world_map_full_all";
+			Sprite fullMapSprite = AssetManager.Load<Sprite>(externalPath, false);
+			this.miniMapSprite.spriteName = "world_map_mini_all";
 			this.miniMapButton.normalSprite = "world_map_mini_all";
 			this.mapSprite.sprite2D = fullMapSprite;
 			this.mapButton.normalSprite2D = fullMapSprite;
 		}
 		else
 		{
-            String externalPath = AssetManager.SearchAssetOnDisc("EmbeddedAsset/UI/Sprites/world_map_full_mistcontinent.png", true, false);
-            if (!String.IsNullOrEmpty(externalPath))
-                externalPath = "EmbeddedAsset/UI/Sprites/world_map_full_mistcontinent.png";
-            else
-                externalPath = "EmbeddedAsset/UI/Sprites/world_map_full_mistcontinent";
-            Sprite mistContinentMapSprite = AssetManager.Load<Sprite>(externalPath, false);
+			String externalPath = AssetManager.SearchAssetOnDisc("EmbeddedAsset/UI/Sprites/world_map_full_mistcontinent.png", true, false);
+			if (!String.IsNullOrEmpty(externalPath))
+				externalPath = "EmbeddedAsset/UI/Sprites/world_map_full_mistcontinent.png";
+			else
+				externalPath = "EmbeddedAsset/UI/Sprites/world_map_full_mistcontinent";
+			Sprite mistContinentMapSprite = AssetManager.Load<Sprite>(externalPath, false);
 			this.miniMapSprite.spriteName = "world_map_mini_mistcontinent";
 			this.miniMapButton.normalSprite = "world_map_mini_mistcontinent";
 			this.mapSprite.sprite2D = mistContinentMapSprite;
@@ -655,67 +655,67 @@ public class WorldHUD : UIScene
 		{
 			switch (this.currentCharacterStateIndex)
 			{
-			case 0:
-				FF9UIDataTool.DisplayTextLocalize(this.menuButtonLabelGameObject, "Menu");
-				if (!this.isTitleShowing)
-				{
-					this.specialButtonSprite.spriteName = "button_mog";
-					this.specialButton.KeyCommand = Control.Special;
+				case 0:
+					FF9UIDataTool.DisplayTextLocalize(this.menuButtonLabelGameObject, "Menu");
+					if (!this.isTitleShowing)
+					{
+						this.specialButtonSprite.spriteName = "button_mog";
+						this.specialButton.KeyCommand = Control.Special;
+						this.SpecialButtonGameObject.SetActive(true);
+					}
+					this.RotationLockButtonGameObject.SetActive(true);
+					this.PerspectiveButtonGameObject.SetActive(true);
+					this.CommonButtonPanel.SetActive(true);
+					this.ChocoboButtonPanel.SetActive(false);
+					this.PlaneButtonPanel.SetActive(false);
+					break;
+				case 1:
+				case 2:
+				case 3:
+				case 4:
+				case 5:
+					FF9UIDataTool.DisplayTextLocalize(this.menuButtonLabelGameObject, "Menu");
+					this.specialButtonSprite.spriteName = "button_dismount";
+					this.specialButton.KeyCommand = Control.Cancel;
 					this.SpecialButtonGameObject.SetActive(true);
-				}
-				this.RotationLockButtonGameObject.SetActive(true);
-				this.PerspectiveButtonGameObject.SetActive(true);
-				this.CommonButtonPanel.SetActive(true);
-				this.ChocoboButtonPanel.SetActive(false);
-				this.PlaneButtonPanel.SetActive(false);
-				break;
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-				FF9UIDataTool.DisplayTextLocalize(this.menuButtonLabelGameObject, "Menu");
-				this.specialButtonSprite.spriteName = "button_dismount";
-				this.specialButton.KeyCommand = Control.Cancel;
-				this.SpecialButtonGameObject.SetActive(true);
-				this.RotationLockButtonGameObject.SetActive(true);
-				this.PerspectiveButtonGameObject.SetActive(true);
-				this.CommonButtonPanel.SetActive(true);
-				this.ChocoboButtonPanel.SetActive(true);
-				this.PlaneButtonPanel.SetActive(false);
-				break;
-			case 6:
-				FF9UIDataTool.DisplayTextLocalize(this.menuButtonLabelGameObject, "Menu");
-				this.SpecialButtonGameObject.SetActive(false);
-				this.RotationLockButtonGameObject.SetActive(true);
-				this.PerspectiveButtonGameObject.SetActive(false);
-				this.CommonButtonPanel.SetActive(true);
-				this.ChocoboButtonPanel.SetActive(false);
-				this.PlaneButtonPanel.SetActive(true);
-				break;
-			case 7:
-				FF9UIDataTool.DisplayTextLocalize(this.menuButtonLabelGameObject, "Deck");
-				this.specialButtonSprite.spriteName = "button_dismount";
-				this.specialButton.KeyCommand = Control.Cancel;
-				this.SpecialButtonGameObject.SetActive(true);
-				this.RotationLockButtonGameObject.SetActive(true);
-				this.PerspectiveButtonGameObject.SetActive(true);
-				this.CommonButtonPanel.SetActive(true);
-				this.ChocoboButtonPanel.SetActive(false);
-				this.PlaneButtonPanel.SetActive(false);
-				break;
-			case 8:
-			case 9:
-				FF9UIDataTool.DisplayTextLocalize(this.menuButtonLabelGameObject, "Deck");
-				this.specialButtonSprite.spriteName = "button_dismount";
-				this.specialButton.KeyCommand = Control.Cancel;
-				this.SpecialButtonGameObject.SetActive(true);
-				this.RotationLockButtonGameObject.SetActive(true);
-				this.PerspectiveButtonGameObject.SetActive(false);
-				this.CommonButtonPanel.SetActive(true);
-				this.ChocoboButtonPanel.SetActive(false);
-				this.PlaneButtonPanel.SetActive(true);
-				break;
+					this.RotationLockButtonGameObject.SetActive(true);
+					this.PerspectiveButtonGameObject.SetActive(true);
+					this.CommonButtonPanel.SetActive(true);
+					this.ChocoboButtonPanel.SetActive(true);
+					this.PlaneButtonPanel.SetActive(false);
+					break;
+				case 6:
+					FF9UIDataTool.DisplayTextLocalize(this.menuButtonLabelGameObject, "Menu");
+					this.SpecialButtonGameObject.SetActive(false);
+					this.RotationLockButtonGameObject.SetActive(true);
+					this.PerspectiveButtonGameObject.SetActive(false);
+					this.CommonButtonPanel.SetActive(true);
+					this.ChocoboButtonPanel.SetActive(false);
+					this.PlaneButtonPanel.SetActive(true);
+					break;
+				case 7:
+					FF9UIDataTool.DisplayTextLocalize(this.menuButtonLabelGameObject, "Deck");
+					this.specialButtonSprite.spriteName = "button_dismount";
+					this.specialButton.KeyCommand = Control.Cancel;
+					this.SpecialButtonGameObject.SetActive(true);
+					this.RotationLockButtonGameObject.SetActive(true);
+					this.PerspectiveButtonGameObject.SetActive(true);
+					this.CommonButtonPanel.SetActive(true);
+					this.ChocoboButtonPanel.SetActive(false);
+					this.PlaneButtonPanel.SetActive(false);
+					break;
+				case 8:
+				case 9:
+					FF9UIDataTool.DisplayTextLocalize(this.menuButtonLabelGameObject, "Deck");
+					this.specialButtonSprite.spriteName = "button_dismount";
+					this.specialButton.KeyCommand = Control.Cancel;
+					this.SpecialButtonGameObject.SetActive(true);
+					this.RotationLockButtonGameObject.SetActive(true);
+					this.PerspectiveButtonGameObject.SetActive(false);
+					this.CommonButtonPanel.SetActive(true);
+					this.ChocoboButtonPanel.SetActive(false);
+					this.PlaneButtonPanel.SetActive(true);
+					break;
 			}
 			this.DisplayCameraOptionHud();
 		}
@@ -919,16 +919,16 @@ public class WorldHUD : UIScene
 		}
 	}
 
-    public void ClearFullMapLocations()
-    {
-        if (this.mapLocationPointerPanel != (UnityEngine.Object)null)
-        {
-            this.mapLocationPointerPanel.transform.DestroyChildren();
-        }
-        this.locationPointerList.Clear();
-    }
+	public void ClearFullMapLocations()
+	{
+		if (this.mapLocationPointerPanel != (UnityEngine.Object)null)
+		{
+			this.mapLocationPointerPanel.transform.DestroyChildren();
+		}
+		this.locationPointerList.Clear();
+	}
 
-    public void SetContinentTitleSprite(SByte titleId)
+	public void SetContinentTitleSprite(SByte titleId)
 	{
 		this.continentTitleText.sprite2D = FF9UIDataTool.LoadWorldTitle(titleId, false);
 		this.continentTitleShadow.sprite2D = FF9UIDataTool.LoadWorldTitle(titleId, true);
@@ -1092,26 +1092,26 @@ public class WorldHUD : UIScene
 		{
 			switch (this.currentCharacterStateIndex)
 			{
-			case 0:
-				this.rotationLockButtonSprite.spriteName = ((!isToggle) ? "button_rotate" : "button_rotate_act");
-				break;
-			case 1:
-			case 2:
-			case 3:
-			case 4:
-			case 5:
-				this.rotationLockButtonSprite.spriteName = ((!isToggle) ? "button_rotate" : "button_rotate_act");
-				break;
-			case 6:
-				this.rotationLockButtonSprite.spriteName = ((!isToggle) ? "button_align" : "button_align_act");
-				break;
-			case 7:
-				this.rotationLockButtonSprite.spriteName = ((!isToggle) ? "button_rotate" : "button_rotate_act");
-				break;
-			case 8:
-			case 9:
-				this.rotationLockButtonSprite.spriteName = ((!isToggle) ? "button_align" : "button_align_act");
-				break;
+				case 0:
+					this.rotationLockButtonSprite.spriteName = ((!isToggle) ? "button_rotate" : "button_rotate_act");
+					break;
+				case 1:
+				case 2:
+				case 3:
+				case 4:
+				case 5:
+					this.rotationLockButtonSprite.spriteName = ((!isToggle) ? "button_rotate" : "button_rotate_act");
+					break;
+				case 6:
+					this.rotationLockButtonSprite.spriteName = ((!isToggle) ? "button_align" : "button_align_act");
+					break;
+				case 7:
+					this.rotationLockButtonSprite.spriteName = ((!isToggle) ? "button_rotate" : "button_rotate_act");
+					break;
+				case 8:
+				case 9:
+					this.rotationLockButtonSprite.spriteName = ((!isToggle) ? "button_align" : "button_align_act");
+					break;
 			}
 		}
 		FF9StateSystem.Settings.IsBoosterButtonActive[2] = isToggle;

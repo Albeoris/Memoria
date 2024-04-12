@@ -1,8 +1,8 @@
-﻿using System;
+﻿using FF9;
+using Memoria.Assets;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using FF9;
-using Memoria.Assets;
 
 class SFXChannel
 {

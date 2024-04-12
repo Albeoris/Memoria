@@ -1,6 +1,6 @@
+using Memoria.Data;
 using System;
 using UnityEngine;
-using Memoria.Data;
 
 public class EnemyData : MonoBehaviour
 {
@@ -23,12 +23,12 @@ public class EnemyData : MonoBehaviour
 	{
 		Int32 rnd = UnityEngine.Random.Range(0, 256);
 		Int32 cardIndex = 15;
-		
+
 		for (Int32 i = probability.Length - 1; i >= 0; i--)
 		{
 			if (rnd >= probability[i])
 				break;
-			
+
 			cardIndex = i;
 		}
 		return (TetraMasterCardId)enemyData[cardLevel * 16 + cardIndex];

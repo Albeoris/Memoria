@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria.Prime;
+﻿using Memoria.Prime;
+using System;
 using UnityEngine;
 using Object = System.Object;
 
@@ -43,19 +43,19 @@ public static class TransformExtension
 		return root.transform.InverseTransformPoint(trans.position);
 	}
 
-    public static void SetX(this Transform self, Single value)
-    {
-        self.localPosition = self.localPosition.SetX(value);
-    }
+	public static void SetX(this Transform self, Single value)
+	{
+		self.localPosition = self.localPosition.SetX(value);
+	}
 
-    public static void SetY(this Transform self, Single value)
-    {
-        self.localPosition = self.localPosition.SetY(value);
-    }
+	public static void SetY(this Transform self, Single value)
+	{
+		self.localPosition = self.localPosition.SetY(value);
+	}
 
-    public static void SetZ(this Transform self, Single value)
-    {
-        self.localPosition = self.localPosition.SetZ(value);
+	public static void SetZ(this Transform self, Single value)
+	{
+		self.localPosition = self.localPosition.SetZ(value);
 	}
 
 	public static void SetXY(this Transform self, Single x, Single y)
@@ -74,21 +74,21 @@ public static class TransformExtension
 	}
 
 	public static void AddX(this Transform self, Single value)
-    {
-        Vector3 position = self.localPosition;
-        self.localPosition = position.SetX(position.x + value);
-    }
+	{
+		Vector3 position = self.localPosition;
+		self.localPosition = position.SetX(position.x + value);
+	}
 
-    public static void AddY(this Transform self, Single value)
-    {
-        Vector3 position = self.localPosition;
-        self.localPosition = position.SetY(position.y + value);
-    }
+	public static void AddY(this Transform self, Single value)
+	{
+		Vector3 position = self.localPosition;
+		self.localPosition = position.SetY(position.y + value);
+	}
 
-    public static void AddZ(this Transform self, Single value)
-    {
-        Vector3 position = self.localPosition;
-        self.localPosition = position.SetZ(position.z + value);
+	public static void AddZ(this Transform self, Single value)
+	{
+		Vector3 position = self.localPosition;
+		self.localPosition = position.SetZ(position.z + value);
 	}
 
 	public static void AddXY(this Transform self, Single x, Single y)

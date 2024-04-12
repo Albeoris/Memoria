@@ -2,34 +2,34 @@ using System;
 
 namespace Memoria.Scripts.Battle
 {
-    /// <summary>
-    /// Cherry Blossom, Climhazzard
-    /// </summary>
-    [BattleScript(Id)]
-    public sealed class OriginalMagicAttackScript : IBattleScript
-    {
-        public const Int32 Id = 0020;
+	/// <summary>
+	/// Cherry Blossom, Climhazzard
+	/// </summary>
+	[BattleScript(Id)]
+	public sealed class OriginalMagicAttackScript : IBattleScript
+	{
+		public const Int32 Id = 0020;
 
-        private readonly BattleCalculator _v;
+		private readonly BattleCalculator _v;
 
-        public OriginalMagicAttackScript(BattleCalculator v)
-        {
-            _v = v;
-        }
+		public OriginalMagicAttackScript(BattleCalculator v)
+		{
+			_v = v;
+		}
 
-        public void Perform()
-        {
-            _v.OriginalMagicParams();
-            _v.Caster.EnemyTranceBonusAttack();
-            _v.Caster.PenaltyMini();
-            _v.Target.PenaltyShellAttack();
-            _v.BonusElement();
+		public void Perform()
+		{
+			_v.OriginalMagicParams();
+			_v.Caster.EnemyTranceBonusAttack();
+			_v.Caster.PenaltyMini();
+			_v.Target.PenaltyShellAttack();
+			_v.BonusElement();
 
-            if (_v.CanAttackMagic())
-            {
-                _v.CalcHpDamage();
-                _v.TryAlterMagicStatuses();
-            }
-        }
-    }
+			if (_v.CanAttackMagic())
+			{
+				_v.CalcHpDamage();
+				_v.TryAlterMagicStatuses();
+			}
+		}
+	}
 }

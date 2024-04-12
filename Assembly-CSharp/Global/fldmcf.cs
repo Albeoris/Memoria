@@ -37,7 +37,7 @@ public class fldmcf
 		DMSMapChar[] dmsmapChar = ObjPtr.DMSMapChar;
 		Int32 num = (Int32)(ObjPtr.charUse - 1);
 		DMSMapChar value;
-		for (;;)
+		for (; ; )
 		{
 			value = dmsmapChar[num];
 			if (value.geoNo == (UInt16)model)
@@ -51,7 +51,7 @@ public class fldmcf
 			}
 		}
 		return new DMSMapChar?(value);
-		Block_3:
+	Block_3:
 		return null;
 	}
 
@@ -80,7 +80,7 @@ public class fldmcf
 					Int16 num2 = 0;
 					DMSMapChar? dmsmapChar3 = fldmcf.ff9fieldMCFGetCharByID(mcfPtr.Value, (Int32)activeActorByUID.model);
 					DMSMapLight? dmsmapLight3 = fldmcf.ff9fieldMCFGetLightByCharFloor(mcfPtr.Value, num, ref num2);
-                    UInt32 num3 = (UInt32)(ff9Char.attr & 4u);
+					UInt32 num3 = (UInt32)(ff9Char.attr & 4u);
 					Boolean flag = ((Int32)ff9FieldCharState.floor & 255) != (Int32)(num2 & 255) || ((Int64)num3 ^ (Int64)((UInt64)(ff9FieldCharState.attr & 4u))) != 0L || FF9Char.ff9charptr_attr_test(ff9Char, 256) == 0;
 					if (flag)
 					{
@@ -173,7 +173,7 @@ public class fldmcf
 		DMSMapLight[] dmsmapLight = ObjPtr.DMSMapLight;
 		Int32 num2 = (Int32)(ObjPtr.lightUse - 1);
 		DMSMapLight value;
-		for (;;)
+		for (; ; )
 		{
 			value = dmsmapLight[num2];
 			if ((Int32)value.type == 0)
@@ -194,9 +194,9 @@ public class fldmcf
 				goto Block_5;
 			}
 		}
-		Block_4:
+	Block_4:
 		return new DMSMapLight?(value);
-		Block_5:
+	Block_5:
 		return null;
 	}
 

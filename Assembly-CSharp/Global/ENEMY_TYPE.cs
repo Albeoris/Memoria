@@ -1,5 +1,4 @@
 ﻿using System;
-using Memoria.Data;
 
 public class ENEMY_TYPE
 {

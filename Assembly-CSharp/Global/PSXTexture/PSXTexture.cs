@@ -47,73 +47,73 @@ public class PSXTexture
 		Int32 uniIndex = 0;
 		switch (TP)
 		{
-		case 0:
-			for (Int32 y = 0; y < h; y++)
-			{
-				Int32 vramIndex = (TY + y << 10) + TX;
-				for (Int32 x = 0; x < (w >> 2); x++)
+			case 0:
+				for (Int32 y = 0; y < h; y++)
 				{
-					UInt16 paletteInfo = PSXTextureMgr.originalVram[vramIndex];
-					Int32 paletteIndex = paletteInfo & 0xF;
-					this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
-					uniIndex++;
-					paletteIndex = (paletteInfo >> 4 & 0xF);
-					this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
-					uniIndex++;
-					paletteIndex = (paletteInfo >> 8 & 0xF);
-					this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
-					uniIndex++;
-					paletteIndex = paletteInfo >> 12;
-					this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
-					uniIndex++;
-					vramIndex++;
+					Int32 vramIndex = (TY + y << 10) + TX;
+					for (Int32 x = 0; x < (w >> 2); x++)
+					{
+						UInt16 paletteInfo = PSXTextureMgr.originalVram[vramIndex];
+						Int32 paletteIndex = paletteInfo & 0xF;
+						this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
+						uniIndex++;
+						paletteIndex = (paletteInfo >> 4 & 0xF);
+						this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
+						uniIndex++;
+						paletteIndex = (paletteInfo >> 8 & 0xF);
+						this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
+						uniIndex++;
+						paletteIndex = paletteInfo >> 12;
+						this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
+						uniIndex++;
+						vramIndex++;
+					}
 				}
-			}
-			break;
-		case 1:
-			for (Int32 y = 0; y < h; y++)
-			{
-				Int32 vramIndex = (TY + y << 10) + TX;
-				for (Int32 x = 0; x < (w >> 1); x++)
+				break;
+			case 1:
+				for (Int32 y = 0; y < h; y++)
 				{
-					UInt16 paletteInfo = PSXTextureMgr.originalVram[vramIndex];
-					Int32 paletteIndex = paletteInfo & 0xFF;
-					this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
-					uniIndex++;
-					paletteIndex = paletteInfo >> 8;
-					this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
-					uniIndex++;
-					vramIndex++;
+					Int32 vramIndex = (TY + y << 10) + TX;
+					for (Int32 x = 0; x < (w >> 1); x++)
+					{
+						UInt16 paletteInfo = PSXTextureMgr.originalVram[vramIndex];
+						Int32 paletteIndex = paletteInfo & 0xFF;
+						this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
+						uniIndex++;
+						paletteIndex = paletteInfo >> 8;
+						this.ConvertABGR16toABGR32(uniIndex, psxIndexBase + paletteIndex);
+						uniIndex++;
+						vramIndex++;
+					}
 				}
-			}
-			break;
-		case 2:
-			for (Int32 y = 0; y < h; y++)
-			{
-				Int32 vramIndex = (TY + y << 10) + TX;
-				for (Int32 x = 0; x < w; x++)
+				break;
+			case 2:
+				for (Int32 y = 0; y < h; y++)
 				{
-					this.ConvertABGR16toABGR32(uniIndex, vramIndex);
-					uniIndex++;
-					vramIndex++;
+					Int32 vramIndex = (TY + y << 10) + TX;
+					for (Int32 x = 0; x < w; x++)
+					{
+						this.ConvertABGR16toABGR32(uniIndex, vramIndex);
+						uniIndex++;
+						vramIndex++;
+					}
 				}
-			}
-			break;
-		default:
-			for (Int32 y = 0; y < h; y++)
-			{
-				Int32 vramIndex = (TY + y << 10) + TX;
-				for (Int32 x = 0; x < w; x++)
+				break;
+			default:
+				for (Int32 y = 0; y < h; y++)
 				{
-					PSXTexture.pixels[uniIndex].r = (Byte)(PSXTextureMgr.originalVram[vramIndex] & 0xFF);
-					PSXTexture.pixels[uniIndex].g = (Byte)((PSXTextureMgr.originalVram[vramIndex] & 0xFF00) >> 8);
-					PSXTexture.pixels[uniIndex].b = 0;
-					PSXTexture.pixels[uniIndex].a = Byte.MaxValue;
-					uniIndex++;
-					vramIndex++;
+					Int32 vramIndex = (TY + y << 10) + TX;
+					for (Int32 x = 0; x < w; x++)
+					{
+						PSXTexture.pixels[uniIndex].r = (Byte)(PSXTextureMgr.originalVram[vramIndex] & 0xFF);
+						PSXTexture.pixels[uniIndex].g = (Byte)((PSXTextureMgr.originalVram[vramIndex] & 0xFF00) >> 8);
+						PSXTexture.pixels[uniIndex].b = 0;
+						PSXTexture.pixels[uniIndex].a = Byte.MaxValue;
+						uniIndex++;
+						vramIndex++;
+					}
 				}
-			}
-			break;
+				break;
 		}
 	}
 

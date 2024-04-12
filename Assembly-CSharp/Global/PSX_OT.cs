@@ -26,34 +26,34 @@ public class PSX_OT
 	{
 	}
 
-    public unsafe void DrawOTagR(UInt32* ot)
-    {
-        if (this.OT_array.Count == 0)
-        {
-            return;
-        }
-        this.OT_array.Reverse<KeyValuePair<UInt64, LinkedList<UInt64>>>();
-        foreach (KeyValuePair<UInt64, LinkedList<UInt64>> keyValuePair in this.OT_array)
-        {
-            Int32 otz = (Int32)((Int64)keyValuePair.Key - (Int64)ot);
-            LinkedList<UInt64> value = keyValuePair.Value;
-            foreach (UInt64 num in value)
-            {
-                PSX_PrimWithOTZ psx_PrimWithOTZ = new PSX_PrimWithOTZ();
-                psx_PrimWithOTZ.otz = otz;
-                psx_PrimWithOTZ.primAddr = (UInt64*)num;
-                this.primPtrList.Add(psx_PrimWithOTZ);
-            }
-        }
-    }
+	public unsafe void DrawOTagR(UInt32* ot)
+	{
+		if (this.OT_array.Count == 0)
+		{
+			return;
+		}
+		this.OT_array.Reverse<KeyValuePair<UInt64, LinkedList<UInt64>>>();
+		foreach (KeyValuePair<UInt64, LinkedList<UInt64>> keyValuePair in this.OT_array)
+		{
+			Int32 otz = (Int32)((Int64)keyValuePair.Key - (Int64)ot);
+			LinkedList<UInt64> value = keyValuePair.Value;
+			foreach (UInt64 num in value)
+			{
+				PSX_PrimWithOTZ psx_PrimWithOTZ = new PSX_PrimWithOTZ();
+				psx_PrimWithOTZ.otz = otz;
+				psx_PrimWithOTZ.primAddr = (UInt64*)num;
+				this.primPtrList.Add(psx_PrimWithOTZ);
+			}
+		}
+	}
 
-    public unsafe void AddPrim(void* ot, void* p)
+	public unsafe void AddPrim(void* ot, void* p)
 	{
 		if (ot < (void*)this.otAddr || ot >= (void*)(this.otAddr + this.otSize))
 		{
 		}
-        UInt64 key = (UInt64)ot;
-        LinkedList<UInt64> linkedList;
+		UInt64 key = (UInt64)ot;
+		LinkedList<UInt64> linkedList;
 		if (this.OT_array.ContainsKey(key))
 		{
 			linkedList = this.OT_array[key];
@@ -63,8 +63,8 @@ public class PSX_OT
 			linkedList = new LinkedList<UInt64>();
 			this.OT_array[key] = linkedList;
 		}
-        linkedList.AddFirst((UInt64)p);
-    }
+		linkedList.AddFirst((UInt64)p);
+	}
 
 	public unsafe UInt32* otAddr;
 

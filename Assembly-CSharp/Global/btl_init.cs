@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Assets.Sources.Scripts.UI.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class btl_init
@@ -360,7 +359,7 @@ public static class btl_init
 			btl_DATA3.pos[2] = num7;
 			next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, 180f, 180f));
 			next.rot = Quaternion.Euler(new Vector3(0f, (Single)num6, 180f));
-//			next.rot = (next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, num6, 180f)));
+			//			next.rot = (next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, num6, 180f)));
 			next.gameObject.transform.localPosition = next.pos;
 			next.gameObject.transform.localRotation = next.rot;
 			CharacterBattleParameter btlParam = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[charId].info.serial_no];

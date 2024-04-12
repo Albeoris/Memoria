@@ -1,5 +1,5 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
+using System;
 using UnityEngine;
 
 public class GUIManager : MonoBehaviour
@@ -50,7 +50,7 @@ public class GUIManager : MonoBehaviour
 			return;
 		}
 	}
-	
+
 	private void SetFieldMap(short no, int sc = 0, int id = -1)
 	{
 		FF9StateSystem.Common.FF9.fldMapNo = no;

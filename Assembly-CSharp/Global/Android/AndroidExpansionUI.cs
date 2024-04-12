@@ -94,38 +94,38 @@ public class AndroidExpansionUI : MonoBehaviour
 		this.currentState = state;
 		switch (state)
 		{
-		case ExpansionVerifier.State.ValidateDownloadOBB:
-		case ExpansionVerifier.State.ValidateDecompressOBB:
-		case ExpansionVerifier.State.DetermineAvailableSpace:
-		case ExpansionVerifier.State.DecompressOBB:
-		case ExpansionVerifier.State.ValidateDecompressedOBBSize:
-		case ExpansionVerifier.State.ReplaceCompressedOBBWithUncompressedOBB:
-			this.StatusTextSprite.spriteName = "text_decompress_" + this.GetSystemLanguageSymbol();
-			break;
-		case ExpansionVerifier.State.DecompressSuccess:
-			this.StatusTextSprite.spriteName = "text_success_" + this.GetSystemLanguageSymbol();
-			break;
-		case ExpansionVerifier.State.DecompressFailure:
-			switch (errorCode)
-			{
-			case ExpansionVerifier.ErrorCode.NotEnoughStorage:
-				this.StatusTextSprite.spriteName = "text_nospace_" + this.GetSystemLanguageSymbol();
-				goto IL_135;
-			case ExpansionVerifier.ErrorCode.FileTypeNotSupport:
-				global::Debug.LogError("File type not support, need to upload again");
-				goto IL_135;
-			case ExpansionVerifier.ErrorCode.DecompressionFailure:
-			case ExpansionVerifier.ErrorCode.MoveTempFileFailure:
-			case ExpansionVerifier.ErrorCode.ValidateFileSizeFailure:
-				this.StatusTextSprite.spriteName = "text_corrupt_" + this.GetSystemLanguageSymbol();
-				goto IL_135;
-			case ExpansionVerifier.ErrorCode.PatchOBBNotFound:
-				global::Debug.LogError("Patch not found, should not occurred");
-				goto IL_135;
-			}
-			global::Debug.LogError("Error code default, undefined error");
+			case ExpansionVerifier.State.ValidateDownloadOBB:
+			case ExpansionVerifier.State.ValidateDecompressOBB:
+			case ExpansionVerifier.State.DetermineAvailableSpace:
+			case ExpansionVerifier.State.DecompressOBB:
+			case ExpansionVerifier.State.ValidateDecompressedOBBSize:
+			case ExpansionVerifier.State.ReplaceCompressedOBBWithUncompressedOBB:
+				this.StatusTextSprite.spriteName = "text_decompress_" + this.GetSystemLanguageSymbol();
+				break;
+			case ExpansionVerifier.State.DecompressSuccess:
+				this.StatusTextSprite.spriteName = "text_success_" + this.GetSystemLanguageSymbol();
+				break;
+			case ExpansionVerifier.State.DecompressFailure:
+				switch (errorCode)
+				{
+					case ExpansionVerifier.ErrorCode.NotEnoughStorage:
+						this.StatusTextSprite.spriteName = "text_nospace_" + this.GetSystemLanguageSymbol();
+						goto IL_135;
+					case ExpansionVerifier.ErrorCode.FileTypeNotSupport:
+						global::Debug.LogError("File type not support, need to upload again");
+						goto IL_135;
+					case ExpansionVerifier.ErrorCode.DecompressionFailure:
+					case ExpansionVerifier.ErrorCode.MoveTempFileFailure:
+					case ExpansionVerifier.ErrorCode.ValidateFileSizeFailure:
+						this.StatusTextSprite.spriteName = "text_corrupt_" + this.GetSystemLanguageSymbol();
+						goto IL_135;
+					case ExpansionVerifier.ErrorCode.PatchOBBNotFound:
+						global::Debug.LogError("Patch not found, should not occurred");
+						goto IL_135;
+				}
+				global::Debug.LogError("Error code default, undefined error");
 			IL_135:
-			break;
+				break;
 		}
 	}
 
@@ -149,31 +149,31 @@ public class AndroidExpansionUI : MonoBehaviour
 		SystemLanguage systemLanguage = Application.systemLanguage;
 		switch (systemLanguage)
 		{
-		case SystemLanguage.English:
-			return "us";
-		case SystemLanguage.Estonian:
-		case SystemLanguage.Faroese:
-		case SystemLanguage.Finnish:
-			IL_27:
-			if (systemLanguage == SystemLanguage.Italian)
-			{
-				return "it";
-			}
-			if (systemLanguage == SystemLanguage.Japanese)
-			{
-				return "jp";
-			}
-			if (systemLanguage != SystemLanguage.Spanish)
-			{
+			case SystemLanguage.English:
 				return "us";
-			}
-			return "es";
-		case SystemLanguage.French:
-			return "fr";
-		case SystemLanguage.German:
-			return "gr";
-		default:
-			goto IL_27;
+			case SystemLanguage.Estonian:
+			case SystemLanguage.Faroese:
+			case SystemLanguage.Finnish:
+			IL_27:
+				if (systemLanguage == SystemLanguage.Italian)
+				{
+					return "it";
+				}
+				if (systemLanguage == SystemLanguage.Japanese)
+				{
+					return "jp";
+				}
+				if (systemLanguage != SystemLanguage.Spanish)
+				{
+					return "us";
+				}
+				return "es";
+			case SystemLanguage.French:
+				return "fr";
+			case SystemLanguage.German:
+				return "gr";
+			default:
+				goto IL_27;
 		}
 	}
 

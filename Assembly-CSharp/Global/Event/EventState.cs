@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Memoria.Data;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Memoria.Data;
 
 public class EventState : MonoBehaviour
 {
@@ -15,7 +15,7 @@ public class EventState : MonoBehaviour
 
 	public Int32 ScenarioCounter
 	{
-		get => gEventGlobal[1] << 8 | gEventGlobal [0];
+		get => gEventGlobal[1] << 8 | gEventGlobal[0];
 		set
 		{
 			gEventGlobal[0] = (Byte)(value & 0xFF);

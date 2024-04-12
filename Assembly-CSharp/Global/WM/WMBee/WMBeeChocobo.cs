@@ -33,36 +33,36 @@ public class WMBeeChocobo : MonoBehaviour
 		}
 		switch (status)
 		{
-		case 3:
-			this.renderers[0].material = this.NormalChocoboMaterials[0];
-			this.renderers[1].material = this.NormalChocoboMaterials[1];
-			this.renderers[2].material = this.NormalChocoboMaterials[2];
-			this.Actor.originalActor.index = 3;
-			break;
-		case 4:
-			this.renderers[0].material = this.AsaseChocoboMaterials[0];
-			this.renderers[1].material = this.AsaseChocoboMaterials[1];
-			this.renderers[2].material = this.AsaseChocoboMaterials[2];
-			this.Actor.originalActor.index = 4;
-			break;
-		case 5:
-			this.renderers[0].material = this.YamaChocoboMaterials[0];
-			this.renderers[1].material = this.YamaChocoboMaterials[1];
-			this.renderers[2].material = this.YamaChocoboMaterials[2];
-			this.Actor.originalActor.index = 5;
-			break;
-		case 6:
-			this.renderers[0].material = this.UmiChocoboMaterials[0];
-			this.renderers[1].material = this.UmiChocoboMaterials[1];
-			this.renderers[2].material = this.UmiChocoboMaterials[2];
-			this.Actor.originalActor.index = 6;
-			break;
-		case 7:
-			this.renderers[0].material = this.SoraChocoboMaterials[0];
-			this.renderers[1].material = this.SoraChocoboMaterials[1];
-			this.renderers[2].material = this.SoraChocoboMaterials[2];
-			this.Actor.originalActor.index = 7;
-			break;
+			case 3:
+				this.renderers[0].material = this.NormalChocoboMaterials[0];
+				this.renderers[1].material = this.NormalChocoboMaterials[1];
+				this.renderers[2].material = this.NormalChocoboMaterials[2];
+				this.Actor.originalActor.index = 3;
+				break;
+			case 4:
+				this.renderers[0].material = this.AsaseChocoboMaterials[0];
+				this.renderers[1].material = this.AsaseChocoboMaterials[1];
+				this.renderers[2].material = this.AsaseChocoboMaterials[2];
+				this.Actor.originalActor.index = 4;
+				break;
+			case 5:
+				this.renderers[0].material = this.YamaChocoboMaterials[0];
+				this.renderers[1].material = this.YamaChocoboMaterials[1];
+				this.renderers[2].material = this.YamaChocoboMaterials[2];
+				this.Actor.originalActor.index = 5;
+				break;
+			case 6:
+				this.renderers[0].material = this.UmiChocoboMaterials[0];
+				this.renderers[1].material = this.UmiChocoboMaterials[1];
+				this.renderers[2].material = this.UmiChocoboMaterials[2];
+				this.Actor.originalActor.index = 6;
+				break;
+			case 7:
+				this.renderers[0].material = this.SoraChocoboMaterials[0];
+				this.renderers[1].material = this.SoraChocoboMaterials[1];
+				this.renderers[2].material = this.SoraChocoboMaterials[2];
+				this.Actor.originalActor.index = 7;
+				break;
 		}
 	}
 

@@ -1,16 +1,13 @@
-﻿using System.Windows.Data;
-
-namespace Memoria.Launcher
+﻿namespace Memoria.Launcher
 {
-    public static class UiSliderFactory
-    {
-        public static UiSlider Create(int value)
-        {
-            return new UiSlider
-            {
-                Value = value
-            };
-        }
-    }
+	public static class UiSliderFactory
+	{
+		public static UiSlider Create(int value)
+		{
+			return new UiSlider
+			{
+				Value = value
+			};
+		}
+	}
 }
-

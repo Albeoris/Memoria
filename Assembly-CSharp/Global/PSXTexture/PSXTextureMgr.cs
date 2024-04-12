@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Memoria.Assets;
+using Memoria.Data;
+using System;
 using System.IO;
 using UnityEngine;
-using Memoria.Data;
-using Memoria.Assets;
 
 public static class PSXTextureMgr
 {
@@ -363,16 +363,16 @@ public static class PSXTextureMgr
 			{
 				switch (i)
 				{
-				case 3:
-				case 4:
-				case 5:
-					yw[0] = -128f;
-					yw[1] = -256f;
-					break;
-				default:
-					yw[0] = -256f;
-					yw[1] = -256f;
-					break;
+					case 3:
+					case 4:
+					case 5:
+						yw[0] = -128f;
+						yw[1] = -256f;
+						break;
+					default:
+						yw[0] = -256f;
+						yw[1] = -256f;
+						break;
 				}
 				return PSXTextureMgr.eff435Tex[i];
 			}

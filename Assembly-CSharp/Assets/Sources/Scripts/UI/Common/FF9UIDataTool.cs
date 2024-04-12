@@ -1,11 +1,10 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using FF9;
 using Memoria;
-using Memoria.Data;
 using Memoria.Assets;
-using Memoria.Prime;
+using Memoria.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using XInputDotNetPure;
 
@@ -335,17 +334,17 @@ namespace Assets.Sources.Scripts.UI.Common
 					case Control.RightBumper:
 					case Control.LeftTrigger:
 					case Control.RightTrigger:
-					{
-						KeyCode primaryKey;
-						if (tag == NGUIText.KeyboardButtonIcon)
-							primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
-						else if (checkFromConfig)
-							primaryKey = PersistenSingleton<HonoInputManager>.Instance.InputKeysPrimary[(Int32)key];
-						else
-							primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
-						result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, primaryKey);
-						break;
-					}
+						{
+							KeyCode primaryKey;
+							if (tag == NGUIText.KeyboardButtonIcon)
+								primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
+							else if (checkFromConfig)
+								primaryKey = PersistenSingleton<HonoInputManager>.Instance.InputKeysPrimary[(Int32)key];
+							else
+								primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultInputKeys[(Int32)key];
+							result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, primaryKey);
+							break;
+						}
 					case Control.Pause:
 						result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "keyboard_button_backspace");
 						break;
@@ -622,16 +621,16 @@ namespace Assets.Sources.Scripts.UI.Common
 					case Control.RightBumper:
 					case Control.LeftTrigger:
 					case Control.RightTrigger:
-					{
-						String primaryKey;
-						if (checkFromConfig)
-							primaryKey = PersistenSingleton<HonoInputManager>.Instance.JoystickKeysPrimary[(Int32)key];
-						else
-							primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultJoystickInputKeys[(Int32)key];
-						if (buttonSpriteDictionary.ContainsKey(primaryKey))
-							result = buttonSpriteDictionary[primaryKey];
-						break;
-					}
+						{
+							String primaryKey;
+							if (checkFromConfig)
+								primaryKey = PersistenSingleton<HonoInputManager>.Instance.JoystickKeysPrimary[(Int32)key];
+							else
+								primaryKey = PersistenSingleton<HonoInputManager>.Instance.DefaultJoystickInputKeys[(Int32)key];
+							if (buttonSpriteDictionary.ContainsKey(primaryKey))
+								result = buttonSpriteDictionary[primaryKey];
+							break;
+						}
 					case Control.Pause:
 						result = FF9UIDataTool.buttonSpriteNameJoystick["JoystickButton6"];
 						break;

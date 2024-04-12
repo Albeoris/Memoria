@@ -1,7 +1,7 @@
-﻿using System;
-using UnityEngine;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Memoria;
+using System;
+using UnityEngine;
 
 [AddComponentMenu("NGUI/Interaction/Key Navigation")]
 public class UIKeyNavigation : MonoBehaviour

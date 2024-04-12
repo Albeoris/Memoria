@@ -34,18 +34,18 @@ public class BattleMapCameraController : MonoBehaviour
 	{
 		switch (camID)
 		{
-		case 0:
-			this.SetDefaultPsxCamera0();
-			break;
-		case 1:
-			this.SetDefaultPsxCamera1();
-			break;
-		case 2:
-			this.SetDefaultPsxCamera2();
-			break;
-		default:
-			global::Debug.Log("Default Camera ID " + camID + " not found");
-			break;
+			case 0:
+				this.SetDefaultPsxCamera0();
+				break;
+			case 1:
+				this.SetDefaultPsxCamera1();
+				break;
+			case 2:
+				this.SetDefaultPsxCamera2();
+				break;
+			default:
+				global::Debug.Log("Default Camera ID " + camID + " not found");
+				break;
 		}
 	}
 

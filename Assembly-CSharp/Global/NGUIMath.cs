@@ -12,14 +12,14 @@ public static class NGUIMath
 	}
 
 	[DebuggerHidden]
-    [DebuggerStepThrough]
+	[DebuggerStepThrough]
 	public static Int32 ClampIndex(Int32 val, Int32 max)
 	{
 		return (Int32)((val >= 0) ? ((Int32)((val >= max) ? (max - 1) : val)) : 0);
 	}
 
 	[DebuggerHidden]
-    [DebuggerStepThrough]
+	[DebuggerStepThrough]
 	public static Int32 RepeatIndex(Int32 val, Int32 max)
 	{
 		if (max < 1)
@@ -38,7 +38,7 @@ public static class NGUIMath
 	}
 
 	[DebuggerHidden]
-    [DebuggerStepThrough]
+	[DebuggerStepThrough]
 	public static Single WrapAngle(Single angle)
 	{
 		while (angle > 180f)
@@ -53,78 +53,78 @@ public static class NGUIMath
 	}
 
 	[DebuggerHidden]
-    [DebuggerStepThrough]
+	[DebuggerStepThrough]
 	public static Single Wrap01(Single val)
 	{
 		return val - (Single)Mathf.FloorToInt(val);
 	}
 
 	[DebuggerHidden]
-    [DebuggerStepThrough]
+	[DebuggerStepThrough]
 	public static Int32 HexToDecimal(Char ch)
 	{
 		switch (ch)
 		{
-		case '0':
-			return 0;
-		case '1':
-			return 1;
-		case '2':
-			return 2;
-		case '3':
-			return 3;
-		case '4':
-			return 4;
-		case '5':
-			return 5;
-		case '6':
-			return 6;
-		case '7':
-			return 7;
-		case '8':
-			return 8;
-		case '9':
-			return 9;
-		case ':':
-		case ';':
-		case '<':
-		case '=':
-		case '>':
-		case '?':
-		case '@':
+			case '0':
+				return 0;
+			case '1':
+				return 1;
+			case '2':
+				return 2;
+			case '3':
+				return 3;
+			case '4':
+				return 4;
+			case '5':
+				return 5;
+			case '6':
+				return 6;
+			case '7':
+				return 7;
+			case '8':
+				return 8;
+			case '9':
+				return 9;
+			case ':':
+			case ';':
+			case '<':
+			case '=':
+			case '>':
+			case '?':
+			case '@':
 			IL_67:
-			switch (ch)
-			{
-			case 'a':
+				switch (ch)
+				{
+					case 'a':
+						break;
+					case 'b':
+						return 11;
+					case 'c':
+						return 12;
+					case 'd':
+						return 13;
+					case 'e':
+						return 14;
+					case 'f':
+						return 15;
+					default:
+						return 15;
+				}
 				break;
-			case 'b':
+			case 'A':
+				break;
+			case 'B':
 				return 11;
-			case 'c':
+			case 'C':
 				return 12;
-			case 'd':
+			case 'D':
 				return 13;
-			case 'e':
+			case 'E':
 				return 14;
-			case 'f':
+			case 'F':
 				return 15;
 			default:
-				return 15;
-			}
-			break;
-		case 'A':
-			break;
-		case 'B':
-			return 11;
-		case 'C':
-			return 12;
-		case 'D':
-			return 13;
-		case 'E':
-			return 14;
-		case 'F':
-			return 15;
-		default:
-			goto IL_67;
+				goto IL_67;
 		}
 		return 10;
 	}
@@ -145,7 +145,7 @@ public static class NGUIMath
 	}
 
 	[DebuggerHidden]
-    [DebuggerStepThrough]
+	[DebuggerStepThrough]
 	public static String DecimalToHex8(Int32 num)
 	{
 		num &= 255;
@@ -153,7 +153,7 @@ public static class NGUIMath
 	}
 
 	[DebuggerHidden]
-    [DebuggerStepThrough]
+	[DebuggerStepThrough]
 	public static String DecimalToHex24(Int32 num)
 	{
 		num &= 16777215;
@@ -161,14 +161,14 @@ public static class NGUIMath
 	}
 
 	[DebuggerHidden]
-    [DebuggerStepThrough]
+	[DebuggerStepThrough]
 	public static String DecimalToHex32(Int32 num)
 	{
 		return num.ToString("X8");
 	}
 
 	[DebuggerHidden]
-    [DebuggerStepThrough]
+	[DebuggerStepThrough]
 	public static Int32 ColorToInt(Color c)
 	{
 		Int32 num = 0;
@@ -179,7 +179,7 @@ public static class NGUIMath
 	}
 
 	[DebuggerHidden]
-    [DebuggerStepThrough]
+	[DebuggerStepThrough]
 	public static Color IntToColor(Int32 val)
 	{
 		Single num = 0.003921569f;
@@ -192,7 +192,7 @@ public static class NGUIMath
 	}
 
 	[DebuggerHidden]
-    [DebuggerStepThrough]
+	[DebuggerStepThrough]
 	public static String IntToBinary(Int32 val, Int32 bits)
 	{
 		String text = String.Empty;
@@ -209,7 +209,7 @@ public static class NGUIMath
 	}
 
 	[DebuggerHidden]
-    [DebuggerStepThrough]
+	[DebuggerStepThrough]
 	public static Color HexToColor(UInt32 val)
 	{
 		return NGUIMath.IntToColor((Int32)val);
@@ -775,30 +775,30 @@ public static class NGUIMath
 		point = Quaternion.Inverse(w.cachedTransform.localRotation) * point;
 		switch (pivot)
 		{
-		case UIWidget.Pivot.TopLeft:
-			NGUIMath.AdjustWidget(w, point.x, 0f, 0f, point.y, minWidth, minHeight, maxWidth, maxHeight);
-			break;
-		case UIWidget.Pivot.Top:
-			NGUIMath.AdjustWidget(w, 0f, 0f, 0f, point.y, minWidth, minHeight, maxWidth, maxHeight);
-			break;
-		case UIWidget.Pivot.TopRight:
-			NGUIMath.AdjustWidget(w, 0f, 0f, point.x, point.y, minWidth, minHeight, maxWidth, maxHeight);
-			break;
-		case UIWidget.Pivot.Left:
-			NGUIMath.AdjustWidget(w, point.x, 0f, 0f, 0f, minWidth, minHeight, maxWidth, maxHeight);
-			break;
-		case UIWidget.Pivot.Right:
-			NGUIMath.AdjustWidget(w, 0f, 0f, point.x, 0f, minWidth, minHeight, maxWidth, maxHeight);
-			break;
-		case UIWidget.Pivot.BottomLeft:
-			NGUIMath.AdjustWidget(w, point.x, point.y, 0f, 0f, minWidth, minHeight, maxWidth, maxHeight);
-			break;
-		case UIWidget.Pivot.Bottom:
-			NGUIMath.AdjustWidget(w, 0f, point.y, 0f, 0f, minWidth, minHeight, maxWidth, maxHeight);
-			break;
-		case UIWidget.Pivot.BottomRight:
-			NGUIMath.AdjustWidget(w, 0f, point.y, point.x, 0f, minWidth, minHeight, maxWidth, maxHeight);
-			break;
+			case UIWidget.Pivot.TopLeft:
+				NGUIMath.AdjustWidget(w, point.x, 0f, 0f, point.y, minWidth, minHeight, maxWidth, maxHeight);
+				break;
+			case UIWidget.Pivot.Top:
+				NGUIMath.AdjustWidget(w, 0f, 0f, 0f, point.y, minWidth, minHeight, maxWidth, maxHeight);
+				break;
+			case UIWidget.Pivot.TopRight:
+				NGUIMath.AdjustWidget(w, 0f, 0f, point.x, point.y, minWidth, minHeight, maxWidth, maxHeight);
+				break;
+			case UIWidget.Pivot.Left:
+				NGUIMath.AdjustWidget(w, point.x, 0f, 0f, 0f, minWidth, minHeight, maxWidth, maxHeight);
+				break;
+			case UIWidget.Pivot.Right:
+				NGUIMath.AdjustWidget(w, 0f, 0f, point.x, 0f, minWidth, minHeight, maxWidth, maxHeight);
+				break;
+			case UIWidget.Pivot.BottomLeft:
+				NGUIMath.AdjustWidget(w, point.x, point.y, 0f, 0f, minWidth, minHeight, maxWidth, maxHeight);
+				break;
+			case UIWidget.Pivot.Bottom:
+				NGUIMath.AdjustWidget(w, 0f, point.y, 0f, 0f, minWidth, minHeight, maxWidth, maxHeight);
+				break;
+			case UIWidget.Pivot.BottomRight:
+				NGUIMath.AdjustWidget(w, 0f, point.y, point.x, 0f, minWidth, minHeight, maxWidth, maxHeight);
+				break;
 		}
 	}
 

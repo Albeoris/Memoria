@@ -32,21 +32,21 @@
 
 namespace Antlr.Runtime.Tree
 {
-    /** <summary>A stream of tree nodes, accessing nodes from a tree of some kind</summary> */
-    public interface ITreeNodeStream : IIntStream
-    {
-        /** <summary>
+	/** <summary>A stream of tree nodes, accessing nodes from a tree of some kind</summary> */
+	public interface ITreeNodeStream : IIntStream
+	{
+		/** <summary>
          *  Get a tree node at an absolute index i; 0..n-1.
          *  If you don't want to buffer up nodes, then this method makes no
          *  sense for you.
          *  </summary>
          */
-        object this[int i]
-        {
-            get;
-        }
+		object this[int i]
+		{
+			get;
+		}
 
-        /** <summary>
+		/** <summary>
          * Get tree node at current input pointer + <paramref name="k"/> ahead where
          * <paramref name="k"/>==1 is next node. <paramref name="k"/>&lt;0 indicates nodes in the past. So
          * {@code LT(-1)} is previous node, but implementations are not required to
@@ -61,19 +61,19 @@ namespace Antlr.Runtime.Tree
          * parser and tree grammars.
          *  </remarks>
          */
-        object LT( int k );
+		object LT(int k);
 
-        /** <summary>
+		/** <summary>
          *  Where is this stream pulling nodes from?  This is not the name, but
          *  the object that provides node objects.
          *  </summary>
          */
-        object TreeSource
-        {
-            get;
-        }
+		object TreeSource
+		{
+			get;
+		}
 
-        /** <summary>
+		/** <summary>
          * If the tree associated with this stream was created from a
          * {@link TokenStream}, you can specify it here. Used to do rule
          * {@code $text} attribute in tree parser. Optional unless you use tree
@@ -81,22 +81,22 @@ namespace Antlr.Runtime.Tree
          * {@code rewrite=true} options.
          *  </summary>
          */
-        ITokenStream TokenStream
-        {
-            get;
-        }
+		ITokenStream TokenStream
+		{
+			get;
+		}
 
-        /** <summary>
+		/** <summary>
          *  What adaptor can tell me how to interpret/navigate nodes and
          *  trees.  E.g., get text of a node.
          *  </summary>
          */
-        ITreeAdaptor TreeAdaptor
-        {
-            get;
-        }
+		ITreeAdaptor TreeAdaptor
+		{
+			get;
+		}
 
-        /** <summary>
+		/** <summary>
          * As we flatten the tree, we use {@link Token#UP}, {@link Token#DOWN} nodes
          * to represent the tree structure. When debugging we need unique nodes so
          * we have to instantiate new ones. When doing normal tree parsing, it's
@@ -104,13 +104,13 @@ namespace Antlr.Runtime.Tree
          * should be {@code false}.
          *  </summary>
          */
-        bool UniqueNavigationNodes
-        {
-            get;
-            set;
-        }
+		bool UniqueNavigationNodes
+		{
+			get;
+			set;
+		}
 
-        /** <summary>
+		/** <summary>
          * Return the text of all nodes from {@code start} to {@code stop},
          * inclusive. If the stream does not buffer all the nodes then it can still
          * walk recursively from start until stop. You can always return
@@ -118,12 +118,11 @@ namespace Antlr.Runtime.Tree
          * {@code $ruleLabel.text} in an action of course in that case.
          *  </summary>
          */
-        string ToString( object start, object stop );
+		string ToString(object start, object stop);
 
+		#region REWRITING TREES (used by tree parser)
 
-        #region REWRITING TREES (used by tree parser)
-
-        /** <summary>
+		/** <summary>
          * Replace children of {@code parent} from index {@code startChildIndex} to
          * {@code stopChildIndex} with {@code t}, which might be a list. Number of
          * children may be different after this call. The stream is notified because
@@ -138,9 +137,8 @@ namespace Antlr.Runtime.Tree
          * nothing.
          *  </remarks>
          */
-        void ReplaceChildren( object parent, int startChildIndex, int stopChildIndex, object t );
+		void ReplaceChildren(object parent, int startChildIndex, int stopChildIndex, object t);
 
-        #endregion
-
-    }
+		#endregion REWRITING TREES (used by tree parser)
+	}
 }

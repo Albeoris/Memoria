@@ -32,8 +32,7 @@
 
 namespace Antlr.Runtime.Tree
 {
-
-    /** <summary>
+	/** <summary>
      *  A TreeAdaptor that works with any Tree implementation.  It provides
      *  really just factory methods; all the work is done by BaseTreeAdaptor.
      *  If you would like to have different tokens created than ClassicToken
@@ -47,14 +46,14 @@ namespace Antlr.Runtime.Tree
      *  dupNode is called to duplicate nodes during rewrite operations.
      *  </remarks>
      */
-    public class CommonTreeAdaptor : BaseTreeAdaptor
-    {
-        public override object Create( IToken payload )
-        {
-            return new CommonTree( payload );
-        }
+	public class CommonTreeAdaptor : BaseTreeAdaptor
+	{
+		public override object Create(IToken payload)
+		{
+			return new CommonTree(payload);
+		}
 
-        /** <summary>
+		/** <summary>
          *  Tell me how to create a token for use with imaginary token nodes.
          *  For example, there is probably no input symbol associated with imaginary
          *  token DECL, but you need to create it as a payload or whatever for
@@ -66,12 +65,12 @@ namespace Antlr.Runtime.Tree
          *  override this method and any other createToken variant.
          *  </remarks>
          */
-        public override IToken CreateToken( int tokenType, string text )
-        {
-            return new CommonToken( tokenType, text );
-        }
+		public override IToken CreateToken(int tokenType, string text)
+		{
+			return new CommonToken(tokenType, text);
+		}
 
-        /** <summary>
+		/** <summary>
          *  Tell me how to create a token for use with imaginary token nodes.
          *  For example, there is probably no input symbol associated with imaginary
          *  token DECL, but you need to create it as a payload or whatever for
@@ -89,24 +88,24 @@ namespace Antlr.Runtime.Tree
          *  override this method and any other createToken variant.
          *  </remarks>
          */
-        public override IToken CreateToken( IToken fromToken )
-        {
-            return new CommonToken( fromToken );
-        }
+		public override IToken CreateToken(IToken fromToken)
+		{
+			return new CommonToken(fromToken);
+		}
 
-        /** <summary>
+		/** <summary>
          *  What is the Token associated with this node?  If
          *  you are not using CommonTree, then you must
          *  override this in your own adaptor.
          *  </summary>
          */
-        public override IToken GetToken( object t )
-        {
-            if ( t is CommonTree )
-            {
-                return ( (CommonTree)t ).Token;
-            }
-            return null; // no idea what to do
-        }
-    }
+		public override IToken GetToken(object t)
+		{
+			if (t is CommonTree)
+			{
+				return ((CommonTree)t).Token;
+			}
+			return null; // no idea what to do
+		}
+	}
 }

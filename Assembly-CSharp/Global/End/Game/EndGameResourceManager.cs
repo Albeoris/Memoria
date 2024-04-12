@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria.Assets;
+﻿using Memoria.Assets;
+using System;
 using UnityEngine;
 
 public class EndGameResourceManager : MonoBehaviour
@@ -48,27 +48,27 @@ public class EndGameResourceManager : MonoBehaviour
 		String language = Localization.CurrentLanguage;
 		switch (language)
 		{
-		case "English(US)":
-			str = "quadmist_text_us";
-			break;
-		case "Japanese":
-			str = "quadmist_text_jp";
-			break;
-		case "German":
-			str = "quadmist_text_gr";
-			break;
-		case "Spanish":
-			str = "quadmist_text_es";
-			break;
-		case "Italian":
-			str = "quadmist_text_it";
-			break;
-		case "French":
-			str = "quadmist_text_fr";
-			break;
-		case "English(UK)":
-			str = "quadmist_text_uk";
-			break;
+			case "English(US)":
+				str = "quadmist_text_us";
+				break;
+			case "Japanese":
+				str = "quadmist_text_jp";
+				break;
+			case "German":
+				str = "quadmist_text_gr";
+				break;
+			case "Spanish":
+				str = "quadmist_text_es";
+				break;
+			case "Italian":
+				str = "quadmist_text_it";
+				break;
+			case "French":
+				str = "quadmist_text_fr";
+				break;
+			case "English(UK)":
+				str = "quadmist_text_uk";
+				break;
 		}
 		return "EmbeddedAsset/QuadMist/Atlas/" + str;
 	}

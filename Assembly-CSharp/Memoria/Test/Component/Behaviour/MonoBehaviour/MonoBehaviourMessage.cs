@@ -4,32 +4,32 @@ using UnityEngine;
 
 namespace Memoria.Test
 {
-    public class MonoBehaviourMessage : BehaviourMessage
-    {
-        public Boolean UseGUILayout;
+	public class MonoBehaviourMessage : BehaviourMessage
+	{
+		public Boolean UseGUILayout;
 
-        public MonoBehaviourMessage()
-        {
-        }
+		public MonoBehaviourMessage()
+		{
+		}
 
-        public MonoBehaviourMessage(MonoBehaviour monoBehaviour)
-            : base(monoBehaviour)
-        {
-            UseGUILayout = monoBehaviour.useGUILayout;
-        }
+		public MonoBehaviourMessage(MonoBehaviour monoBehaviour)
+			: base(monoBehaviour)
+		{
+			UseGUILayout = monoBehaviour.useGUILayout;
+		}
 
-        public override void Serialize(BinaryWriter bw)
-        {
-            base.Serialize(bw);
+		public override void Serialize(BinaryWriter bw)
+		{
+			base.Serialize(bw);
 
-            bw.Write(UseGUILayout);
-        }
+			bw.Write(UseGUILayout);
+		}
 
-        public override void Deserialize(BinaryReader br)
-        {
-            base.Deserialize(br);
+		public override void Deserialize(BinaryReader br)
+		{
+			base.Deserialize(br);
 
-            UseGUILayout = br.ReadBoolean();
-        }
-    }
+			UseGUILayout = br.ReadBoolean();
+		}
+	}
 }

@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Memoria.Data;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Memoria.Data;
 
 public class Collection : MonoBehaviour
 {

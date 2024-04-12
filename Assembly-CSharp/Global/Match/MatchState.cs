@@ -1,6 +1,4 @@
-﻿using System;
-
-internal enum MatchState
+﻿internal enum MatchState
 {
 	HasSymbol = 1,
 	HasMatch,

@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria;
+﻿using Memoria;
+using System;
 using UnityEngine;
 
 public class MusicPlayer : SoundPlayer
@@ -259,7 +259,7 @@ public class MusicPlayer : SoundPlayer
 		Single volume = 0f;
 		if (oldPlayerVolume != 0f)
 		{
-			Single factor =  newPlayerVolume / oldPlayerVolume;
+			Single factor = newPlayerVolume / oldPlayerVolume;
 			volume = factor * ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetVolume(soundProfile.SoundID);
 		}
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * volume, 0);

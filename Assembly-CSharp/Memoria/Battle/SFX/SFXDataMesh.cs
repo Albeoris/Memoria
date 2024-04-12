@@ -1,13 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Globalization;
-using System.Collections.Generic;
+﻿using FF9;
 using Memoria.Data;
 using Memoria.Scripts;
-using UnityEngine;
 using SimpleJSON;
-using FF9;
-
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using UnityEngine;
 using TextureKind = PSXTextureMgr.Kind;
 
 public abstract class SFXDataMesh
@@ -137,7 +136,7 @@ public abstract class SFXDataMesh
 						break;
 					}
 			if (textureKind == TextureKind.SCREENSHOT)
-				for (Int32 i = screenshot.Count - 1; i >= 0 ; i--)
+				for (Int32 i = screenshot.Count - 1; i >= 0; i--)
 					if (frame >= screenshot[i].frame)
 					{
 						SFXMeshBase.ssOffsetX = (Int32)screenshot[i].screen.x;

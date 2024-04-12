@@ -32,9 +32,7 @@
 
 namespace Antlr.Runtime
 {
-    using CLSCompliant = System.CLSCompliantAttribute;
-
-    /** <summary>
+	/** <summary>
      *  Rules that return more than a single value must return an object
      *  containing all the values.  Besides the properties defined in
      *  RuleLabelScope.predefinedRulePropertiesScope there may be user-defined
@@ -56,51 +54,51 @@ namespace Antlr.Runtime
      *  satisfy the superclass interface.
      *  </remarks>
      */
-    public class ParserRuleReturnScope<TToken> : IRuleReturnScope<TToken>
-    {
-        private TToken _start;
-        private TToken _stop;
+	public class ParserRuleReturnScope<TToken> : IRuleReturnScope<TToken>
+	{
+		private TToken _start;
+		private TToken _stop;
 
-        public TToken Start
-        {
-            get
-            {
-                return _start;
-            }
+		public TToken Start
+		{
+			get
+			{
+				return _start;
+			}
 
-            set
-            {
-                _start = value;
-            }
-        }
+			set
+			{
+				_start = value;
+			}
+		}
 
-        public TToken Stop
-        {
-            get
-            {
-                return _stop;
-            }
+		public TToken Stop
+		{
+			get
+			{
+				return _stop;
+			}
 
-            set
-            {
-                _stop = value;
-            }
-        }
+			set
+			{
+				_stop = value;
+			}
+		}
 
-        object IRuleReturnScope.Start
-        {
-            get
-            {
-                return Start;
-            }
-        }
+		object IRuleReturnScope.Start
+		{
+			get
+			{
+				return Start;
+			}
+		}
 
-        object IRuleReturnScope.Stop
-        {
-            get
-            {
-                return Stop;
-            }
-        }
-    }
+		object IRuleReturnScope.Stop
+		{
+			get
+			{
+				return Stop;
+			}
+		}
+	}
 }

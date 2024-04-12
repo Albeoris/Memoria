@@ -1,43 +1,40 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using Object = UnityEngine.Object;
 
 namespace Memoria.Test
 {
-    internal sealed partial class ChangeValueCommandMessage : CommandMessage
-    {
-        public override void Execute()
-        {
-            const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+	internal sealed partial class ChangeValueCommandMessage : CommandMessage
+	{
+		public override void Execute()
+		{
+			const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 
-            Object[] objects = Object.FindObjectsOfType<Object>();
-            Object obj = objects.FirstOrDefault(o => o.GetInstanceID() == InstanceId);
-            if (obj == null)
-                return;
+			Object[] objects = Object.FindObjectsOfType<Object>();
+			Object obj = objects.FirstOrDefault(o => o.GetInstanceID() == InstanceId);
+			if (obj == null)
+				return;
 
-            Type type = obj.GetType();
-            MemberInfo[] members = type.GetMember(MemberName, bindingFlags);
-            MemberInfo member = members.Single();
+			Type type = obj.GetType();
+			MemberInfo[] members = type.GetMember(MemberName, bindingFlags);
+			MemberInfo member = members.Single();
 
-            PropertyInfo property = member as PropertyInfo;
-            if (property != null)
-            {
-                property.SetValue(obj, Value.Object, null);
-                return;
-            }
+			PropertyInfo property = member as PropertyInfo;
+			if (property != null)
+			{
+				property.SetValue(obj, Value.Object, null);
+				return;
+			}
 
-            FieldInfo field = member as FieldInfo;
-            if (field != null)
-            {
-                field.SetValue(obj, Value.Object);
-                return;
-            }
+			FieldInfo field = member as FieldInfo;
+			if (field != null)
+			{
+				field.SetValue(obj, Value.Object);
+				return;
+			}
 
-            throw new NotSupportedException(member.GetType().FullName);
-        }
-    }
+			throw new NotSupportedException(member.GetType().FullName);
+		}
+	}
 }

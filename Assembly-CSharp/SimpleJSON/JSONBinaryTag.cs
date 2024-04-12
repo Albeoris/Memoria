@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace SimpleJSON
+﻿namespace SimpleJSON
 {
 	public enum JSONBinaryTag
 	{

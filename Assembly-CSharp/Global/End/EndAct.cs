@@ -1,6 +1,4 @@
-﻿using System;
-
-public class EndAct
+﻿public class EndAct
 {
 	public static EndAct.ENDACT_MODE_ENUM Endact_GetMode()
 	{

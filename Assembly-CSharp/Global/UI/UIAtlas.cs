@@ -1,18 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Memoria;
+﻿using Memoria;
 using Memoria.Assets;
 using Memoria.Assets.TexturePacker;
 using Memoria.Prime;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
 [AddComponentMenu("NGUI/UI/Atlas")]
 public class UIAtlas : MonoBehaviour
 {
-    public UIAtlas()
-    {
+	public UIAtlas()
+	{
 		GameLoopManager.Start += OverrideAtlas;
 	}
 
@@ -156,15 +156,15 @@ public class UIAtlas : MonoBehaviour
 		}
 	}
 
-    private void SetTexture(Texture newTexture)
-    {
-        if (this.mReplacement != null)
-            this.mReplacement.SetTexture(newTexture);
-        else if (this.material != null)
-            this.material.mainTexture = newTexture;
-    }
+	private void SetTexture(Texture newTexture)
+	{
+		if (this.mReplacement != null)
+			this.mReplacement.SetTexture(newTexture);
+		else if (this.material != null)
+			this.material.mainTexture = newTexture;
+	}
 
-    public Material spriteMaterial
+	public Material spriteMaterial
 	{
 		get
 		{

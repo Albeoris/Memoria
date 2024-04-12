@@ -13,7 +13,7 @@
                 <!--<Rectangle Visibility="{Binding BlueRectVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiModManagerButton}}}">
                     <Rectangle.Style>
                         <Style TargetType="{x:Type Rectangle}">
-                            <Setter Property="Fill" Value="#dd616033"/>
+                            <Setter Property="Fill" Value="#dd616033" />
                         </Style>
                     </Rectangle.Style>
                 </Rectangle>-->
@@ -34,7 +34,7 @@
 						                     StartPoint="0.5,0"
 						                     Opacity="0.885">
                             <GradientStop Color="#DDffffff"
-							              Offset="0.000"/>
+							              Offset="0.000" />
                         </LinearGradientBrush>
                     </TextBlock.Foreground>
                 </TextBlock>
@@ -55,7 +55,7 @@
                     <Rectangle.Style>
                         <Style TargetType="{x:Type Rectangle}">
                             <Setter Property="Fill"
-							        Value="Transparent"/>
+							        Value="Transparent" />
                             <Style.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Fill" Value="#33ffffff" />

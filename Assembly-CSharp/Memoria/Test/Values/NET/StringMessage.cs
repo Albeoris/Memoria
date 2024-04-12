@@ -3,27 +3,27 @@ using System.IO;
 
 namespace Memoria.Test
 {
-    public sealed class StringMessage : IReferenceMessage
-    {
-        public ReferenceMessageType ReferenceType => ReferenceMessageType.String;
+	public sealed class StringMessage : IReferenceMessage
+	{
+		public ReferenceMessageType ReferenceType => ReferenceMessageType.String;
 
-        Object IReferenceMessage.Object => Value;
+		Object IReferenceMessage.Object => Value;
 
-        public String Value;
+		public String Value;
 
-        public StringMessage(String value)
-        {
-            Value = value;
-        }
+		public StringMessage(String value)
+		{
+			Value = value;
+		}
 
-        public void Serialize(BinaryWriter bw)
-        {
-            bw.Write(Value);
-        }
+		public void Serialize(BinaryWriter bw)
+		{
+			bw.Write(Value);
+		}
 
-        public void Deserialize(BinaryReader br)
-        {
-            Value = br.ReadString();
-        }
-    }
+		public void Deserialize(BinaryReader br)
+		{
+			Value = br.ReadString();
+		}
+	}
 }

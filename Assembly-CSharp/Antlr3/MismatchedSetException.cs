@@ -32,86 +32,86 @@
 
 namespace Antlr.Runtime
 {
-    using ArgumentNullException = System.ArgumentNullException;
-    using Exception = System.Exception;
+	using ArgumentNullException = System.ArgumentNullException;
+	using Exception = System.Exception;
 
 #if !PORTABLE
-    using SecurityCriticalAttribute = System.Security.SecurityCriticalAttribute;
-    using SerializationInfo = System.Runtime.Serialization.SerializationInfo;
-    using StreamingContext = System.Runtime.Serialization.StreamingContext;
+	using SecurityCriticalAttribute = System.Security.SecurityCriticalAttribute;
+	using SerializationInfo = System.Runtime.Serialization.SerializationInfo;
+	using StreamingContext = System.Runtime.Serialization.StreamingContext;
 #endif
 
-    [System.Serializable]
-    public class MismatchedSetException : RecognitionException
-    {
-        private readonly BitSet _expecting;
+	[System.Serializable]
+	public class MismatchedSetException : RecognitionException
+	{
+		private readonly BitSet _expecting;
 
-        public MismatchedSetException()
-        {
-        }
+		public MismatchedSetException()
+		{
+		}
 
-        public MismatchedSetException(string message)
-            : base(message)
-        {
-        }
+		public MismatchedSetException(string message)
+			: base(message)
+		{
+		}
 
-        public MismatchedSetException(string message, Exception innerException)
-            : base(message, innerException)
-        {
-        }
+		public MismatchedSetException(string message, Exception innerException)
+			: base(message, innerException)
+		{
+		}
 
-        public MismatchedSetException( BitSet expecting, IIntStream input )
-            : base( input )
-        {
-            this._expecting = expecting;
-        }
+		public MismatchedSetException(BitSet expecting, IIntStream input)
+			: base(input)
+		{
+			this._expecting = expecting;
+		}
 
-        public MismatchedSetException(string message, BitSet expecting, IIntStream input)
-            : base(message, input)
-        {
-            this._expecting = expecting;
-        }
+		public MismatchedSetException(string message, BitSet expecting, IIntStream input)
+			: base(message, input)
+		{
+			this._expecting = expecting;
+		}
 
-        public MismatchedSetException(string message, BitSet expecting, IIntStream input, Exception innerException)
-            : base(message, input, innerException)
-        {
-            this._expecting = expecting;
-        }
+		public MismatchedSetException(string message, BitSet expecting, IIntStream input, Exception innerException)
+			: base(message, input, innerException)
+		{
+			this._expecting = expecting;
+		}
 
 #if !PORTABLE
-        protected MismatchedSetException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            if (info == null)
-                throw new ArgumentNullException("info");
+		protected MismatchedSetException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{
+			if (info == null)
+				throw new ArgumentNullException("info");
 
-            this._expecting = (BitSet)info.GetValue("Expecting", typeof(BitSet));
-        }
+			this._expecting = (BitSet)info.GetValue("Expecting", typeof(BitSet));
+		}
 #endif
 
-        public BitSet Expecting
-        {
-            get
-            {
-                return _expecting;
-            }
-        }
+		public BitSet Expecting
+		{
+			get
+			{
+				return _expecting;
+			}
+		}
 
 #if !PORTABLE
-        [SecurityCritical]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-                throw new ArgumentNullException("info");
+		[SecurityCritical]
+		public override void GetObjectData(SerializationInfo info, StreamingContext context)
+		{
+			if (info == null)
+				throw new ArgumentNullException("info");
 
-            base.GetObjectData(info, context);
-            info.AddValue("Expecting", _expecting);
-        }
+			base.GetObjectData(info, context);
+			info.AddValue("Expecting", _expecting);
+		}
 #endif
 
-        public override string ToString()
-        {
-            return "MismatchedSetException(" + UnexpectedType + "!=" + Expecting + ")";
-        }
-    }
+		public override string ToString()
+		{
+			return "MismatchedSetException(" + UnexpectedType + "!=" + Expecting + ")";
+		}
+	}
 }

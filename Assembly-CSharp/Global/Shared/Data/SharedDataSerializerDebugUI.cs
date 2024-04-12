@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SharedDataSerializerDebugUI : MonoBehaviour
@@ -404,11 +404,11 @@ public class SharedDataSerializerDebugUI : MonoBehaviour
 
 	private void GetLatestTimestamp()
 	{
-		FF9StateSystem.Serializer.GetLocalSaveLatestTimestamp(delegate(DataSerializerErrorCode errNo, Boolean isSuccess, Double timestamp)
+		FF9StateSystem.Serializer.GetLocalSaveLatestTimestamp(delegate (DataSerializerErrorCode errNo, Boolean isSuccess, Double timestamp)
 		{
 			OnScreenLog.Add("Local save timestamp " + ((!isSuccess) ? " not exist" : (" exist with timestamp: " + timestamp)));
 		});
-		FF9StateSystem.Serializer.GetCloudSaveLatestTimestamp(delegate(DataSerializerErrorCode errNo, Boolean isSuccess, Double timestamp)
+		FF9StateSystem.Serializer.GetCloudSaveLatestTimestamp(delegate (DataSerializerErrorCode errNo, Boolean isSuccess, Double timestamp)
 		{
 			OnScreenLog.Add("Cloud save timestamp " + ((!isSuccess) ? " not exist" : (" exist with timestamp: " + timestamp)));
 		});
@@ -416,7 +416,7 @@ public class SharedDataSerializerDebugUI : MonoBehaviour
 
 	private void IsGameFinish()
 	{
-		FF9StateSystem.Serializer.GetGameFinishFlag(delegate(DataSerializerErrorCode errNo, Boolean isLoadSuccess, Boolean isFinished)
+		FF9StateSystem.Serializer.GetGameFinishFlag(delegate (DataSerializerErrorCode errNo, Boolean isLoadSuccess, Boolean isFinished)
 		{
 			if (errNo == DataSerializerErrorCode.Success)
 			{
@@ -436,7 +436,7 @@ public class SharedDataSerializerDebugUI : MonoBehaviour
 
 	private void FinishGame()
 	{
-		FF9StateSystem.Serializer.SetGameFinishFlagWithTrue(delegate(DataSerializerErrorCode errNo, Boolean isSuccess)
+		FF9StateSystem.Serializer.SetGameFinishFlagWithTrue(delegate (DataSerializerErrorCode errNo, Boolean isSuccess)
 		{
 			if (!isSuccess)
 			{

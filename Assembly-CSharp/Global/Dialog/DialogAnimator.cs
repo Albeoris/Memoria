@@ -236,18 +236,18 @@ public class DialogAnimator : MonoBehaviour
 	{
 		switch (tailPosition)
 		{
-		case Dialog.TailPosition.LowerRight:
-		case Dialog.TailPosition.LowerLeft:
-		case Dialog.TailPosition.LowerCenter:
-		case Dialog.TailPosition.LowerRightForce:
-		case Dialog.TailPosition.LowerLeftForce:
-			return (this.dialog.ClipSize.y / 2f - Dialog.DialogYPadding / 2f) * (1f - ratio);
-		case Dialog.TailPosition.UpperRight:
-		case Dialog.TailPosition.UpperLeft:
-		case Dialog.TailPosition.UpperCenter:
-		case Dialog.TailPosition.UpperRightForce:
-		case Dialog.TailPosition.UpperLeftForce:
-			return -(this.dialog.ClipSize.y / 2f - Dialog.DialogYPadding / 2f) * (1f - ratio);
+			case Dialog.TailPosition.LowerRight:
+			case Dialog.TailPosition.LowerLeft:
+			case Dialog.TailPosition.LowerCenter:
+			case Dialog.TailPosition.LowerRightForce:
+			case Dialog.TailPosition.LowerLeftForce:
+				return (this.dialog.ClipSize.y / 2f - Dialog.DialogYPadding / 2f) * (1f - ratio);
+			case Dialog.TailPosition.UpperRight:
+			case Dialog.TailPosition.UpperLeft:
+			case Dialog.TailPosition.UpperCenter:
+			case Dialog.TailPosition.UpperRightForce:
+			case Dialog.TailPosition.UpperLeftForce:
+				return -(this.dialog.ClipSize.y / 2f - Dialog.DialogYPadding / 2f) * (1f - ratio);
 		}
 		return 0f;
 	}
@@ -256,16 +256,16 @@ public class DialogAnimator : MonoBehaviour
 	{
 		switch (tailPosition)
 		{
-		case Dialog.TailPosition.LowerRight:
-		case Dialog.TailPosition.LowerLeft:
-		case Dialog.TailPosition.LowerRightForce:
-		case Dialog.TailPosition.LowerLeftForce:
-			return new Vector2(this.dialog.Size.x / 2f * ratio, this.dialog.Size.y * ratio);
-		case Dialog.TailPosition.UpperRight:
-		case Dialog.TailPosition.UpperLeft:
-		case Dialog.TailPosition.UpperRightForce:
-		case Dialog.TailPosition.UpperLeftForce:
-			return new Vector2(this.dialog.Size.x / 2f * ratio, 0f);
+			case Dialog.TailPosition.LowerRight:
+			case Dialog.TailPosition.LowerLeft:
+			case Dialog.TailPosition.LowerRightForce:
+			case Dialog.TailPosition.LowerLeftForce:
+				return new Vector2(this.dialog.Size.x / 2f * ratio, this.dialog.Size.y * ratio);
+			case Dialog.TailPosition.UpperRight:
+			case Dialog.TailPosition.UpperLeft:
+			case Dialog.TailPosition.UpperRightForce:
+			case Dialog.TailPosition.UpperLeftForce:
+				return new Vector2(this.dialog.Size.x / 2f * ratio, 0f);
 		}
 		return new Vector2(this.dialog.Size.x / 2f * ratio, this.dialog.Size.y / 2f * ratio);
 	}

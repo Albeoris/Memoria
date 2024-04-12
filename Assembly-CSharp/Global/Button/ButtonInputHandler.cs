@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Memoria;
 
 public class ButtonInputHandler : InputHandler
 {
@@ -187,7 +187,7 @@ public class ButtonInputHandler : InputHandler
 				boardCursorPosition.y *= Board.USE_SMALL_BOARD ? -0.7f : -0.525f;
 				boardCursorPosition.x += Board.USE_SMALL_BOARD ? -1f : -1f;
 				boardCursorPosition.y += Board.USE_SMALL_BOARD ? 0.73f : 0.73f;
-                board.SetBoardCursorPosition(boardCursorPosition);
+				board.SetBoardCursorPosition(boardCursorPosition);
 				this.launched = true;
 			}
 			if (UIManager.Input.GetKeyTrigger(Control.Confirm))
@@ -277,11 +277,11 @@ public class ButtonInputHandler : InputHandler
 				SoundEffect.Play(QuadMistSoundID.MINI_SE_CURSOL);
 				board.PlaceCursor(this.boardSelectX, this.boardSelectY);
 				Vector2 boardCursorPosition = new Vector2(this.boardSelectX, this.boardSelectY);
-                boardCursorPosition.x *= Board.USE_SMALL_BOARD ? 0.572f : 0.429f;
-                boardCursorPosition.y *= Board.USE_SMALL_BOARD ? -0.7f : -0.525f;
-                boardCursorPosition.x += Board.USE_SMALL_BOARD ? -1f : -1f;
-                boardCursorPosition.y += Board.USE_SMALL_BOARD ? 0.73f : 0.73f;
-                board.SetBoardCursorPosition(boardCursorPosition);
+				boardCursorPosition.x *= Board.USE_SMALL_BOARD ? 0.572f : 0.429f;
+				boardCursorPosition.y *= Board.USE_SMALL_BOARD ? -0.7f : -0.525f;
+				boardCursorPosition.x += Board.USE_SMALL_BOARD ? -1f : -1f;
+				boardCursorPosition.y += Board.USE_SMALL_BOARD ? 0.73f : 0.73f;
+				board.SetBoardCursorPosition(boardCursorPosition);
 			}
 			if (UIManager.Input.GetKeyTrigger(Control.Confirm))
 			{

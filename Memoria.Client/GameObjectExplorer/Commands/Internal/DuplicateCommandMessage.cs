@@ -1,25 +1,24 @@
-﻿using System;
-using System.IO;
+﻿using Memoria.Client;
+using System;
 using System.Windows.Input;
-using Memoria.Client;
 
 namespace Memoria.Test
 {
-    internal sealed partial class DuplicateCommandMessage : CommandMessage, ICommand
-    {
-        public DuplicateCommandMessage(Int32 instanceId)
-            : base(CommandMessageType.Duplicate)
-        {
-            InstanceId = instanceId;
-        }
+	internal sealed partial class DuplicateCommandMessage : CommandMessage, ICommand
+	{
+		public DuplicateCommandMessage(Int32 instanceId)
+			: base(CommandMessageType.Duplicate)
+		{
+			InstanceId = instanceId;
+		}
 
-        public void Execute(Object parameter)
-        {
-            NetworkClient.Execute(this);
-        }
+		public void Execute(Object parameter)
+		{
+			NetworkClient.Execute(this);
+		}
 
-        public Boolean CanExecute(Object parameter) => true;
+		public Boolean CanExecute(Object parameter) => true;
 
-        public event EventHandler CanExecuteChanged;
-    }
+		public event EventHandler CanExecuteChanged;
+	}
 }

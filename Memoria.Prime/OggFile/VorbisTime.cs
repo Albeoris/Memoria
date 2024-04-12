@@ -7,44 +7,44 @@
  ***************************************************************************/
 
 using System;
-using System.IO;
 
 namespace Memoria.Prime.NVorbis
 {
-    abstract class VorbisTime
-    {
-        internal static VorbisTime Init(VorbisStreamDecoder vorbis, DataPacket packet)
-        {
-            var type = (int)packet.ReadBits(16);
+	abstract class VorbisTime
+	{
+		internal static VorbisTime Init(VorbisStreamDecoder vorbis, DataPacket packet)
+		{
+			var type = (int)packet.ReadBits(16);
 
-            VorbisTime time = null;
-            switch (type)
-            {
-                case 0: time = new Time0(vorbis); break;
-            }
-            if (time == null) throw new InvalidOperationException();
+			VorbisTime time = null;
+			switch (type)
+			{
+				case 0: time = new Time0(vorbis); break;
+			}
+			if (time == null) throw new InvalidOperationException();
 
-            time.Init(packet);
-            return time;
-        }
+			time.Init(packet);
+			return time;
+		}
 
-        VorbisStreamDecoder _vorbis;
+		VorbisStreamDecoder _vorbis;
 
-        protected VorbisTime(VorbisStreamDecoder vorbis)
-        {
-            _vorbis = vorbis;
-        }
+		protected VorbisTime(VorbisStreamDecoder vorbis)
+		{
+			_vorbis = vorbis;
+		}
 
-        abstract protected void Init(DataPacket packet);
+		abstract protected void Init(DataPacket packet);
 
-        class Time0 : VorbisTime
-        {
-            internal Time0(VorbisStreamDecoder vorbis) : base(vorbis) { }
+		class Time0 : VorbisTime
+		{
+			internal Time0(VorbisStreamDecoder vorbis) : base(vorbis)
+			{
+			}
 
-            protected override void Init(DataPacket packet)
-            {
-                
-            }
-        }
-    }
+			protected override void Init(DataPacket packet)
+			{
+			}
+		}
+	}
 }

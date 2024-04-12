@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria;
+﻿using Memoria;
+using System;
 
 public class MovieAudioPlayer : MusicPlayer
 {
@@ -9,5 +9,4 @@ public class MovieAudioPlayer : MusicPlayer
 	}
 
 	public override Single Volume => Configuration.Audio.MovieVolume / 100f;
-
 }

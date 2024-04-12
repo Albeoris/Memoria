@@ -1,6 +1,4 @@
-﻿using Memoria.Prime.Collections;
-using System;
-using System.Collections.Generic;
+﻿using System;
 
 public partial class FF9DBAll
 {

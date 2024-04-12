@@ -1,11 +1,11 @@
-﻿using System;
-using System.IO;
-using System.Threading;
-using System.Collections.Generic;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Memoria.Prime;
 using Memoria.Scenes;
 using Memoria.Scripts;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading;
 using UnityEngine;
 using Object = System.Object;
 
@@ -650,7 +650,7 @@ namespace Memoria.Assets
 
 		private static void CreateNewControlFile()
 		{
-			String controlFile =	"Background: Background.bgx\n" +
+			String controlFile = "Background: Background.bgx\n" +
 									"Walkmesh: Walkmesh.obj\n" +
 									"DummyModel: GEO_MAIN_F4_ZDN";
 			File.WriteAllText(ControlFilePath, controlFile);

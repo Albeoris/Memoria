@@ -1,6 +1,6 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Memoria;
+using System;
 using UnityEngine;
 
 public class PSXCameraAspect : MonoBehaviour
@@ -39,48 +39,48 @@ public class PSXCameraAspect : MonoBehaviour
 
 	private void LateUpdate()
 	{
-        Rect rect = base.GetComponent<Camera>().rect;
+		Rect rect = base.GetComponent<Camera>().rect;
 
-        if (Configuration.Graphics.WidescreenSupport)
-        {
-            this.Ratio = 1f;
+		if (Configuration.Graphics.WidescreenSupport)
+		{
+			this.Ratio = 1f;
 
-            rect.width = 1;
-	        rect.height = 1;
-	        rect.x = 0;
-	        rect.y = 0;
+			rect.width = 1;
+			rect.height = 1;
+			rect.x = 0;
+			rect.y = 0;
 
-            this.Size = new Vector2(Screen.width, Screen.height);
-        }
-        else
-	    {
-            Single originalWidth = FieldMap.PsxFieldWidth;
-            Single originalHeight = FieldMap.PsxFieldHeightNative;
+			this.Size = new Vector2(Screen.width, Screen.height);
+		}
+		else
+		{
+			Single originalWidth = FieldMap.PsxFieldWidth;
+			Single originalHeight = FieldMap.PsxFieldHeightNative;
 
-            if (PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMap" || PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMapDebug")
-            {
-                originalWidth = FieldMap.PsxScreenWidth;
-                originalHeight = FieldMap.PsxScreenHeightNative;
-            }
+			if (PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMap" || PersistenSingleton<SceneDirector>.Instance.CurrentScene == "BattleMapDebug")
+			{
+				originalWidth = FieldMap.PsxScreenWidth;
+				originalHeight = FieldMap.PsxScreenHeightNative;
+			}
 
-            this.Ratio = Mathf.Min((Single)Screen.width / originalWidth, (Single)Screen.height / originalHeight);
+			this.Ratio = Mathf.Min((Single)Screen.width / originalWidth, (Single)Screen.height / originalHeight);
 
-            Vector2 scaledSize = new Vector2(originalWidth * this.Ratio, originalHeight * this.Ratio);
-            Single normalizedWidth = ((Single)Screen.width - scaledSize.x) / (Single)Screen.width;
-            Single normalizedHeight = ((Single)Screen.height - scaledSize.y) / (Single)Screen.height;
-            rect.width = scaledSize.x / (Single)Screen.width;
-            rect.height = scaledSize.y / (Single)Screen.height;
-            rect.x = normalizedWidth / 2f;
-            rect.y = normalizedHeight / 2f;
-            
-            this.Size = new Vector2(scaledSize.x, scaledSize.y);
-        }
+			Vector2 scaledSize = new Vector2(originalWidth * this.Ratio, originalHeight * this.Ratio);
+			Single normalizedWidth = ((Single)Screen.width - scaledSize.x) / (Single)Screen.width;
+			Single normalizedHeight = ((Single)Screen.height - scaledSize.y) / (Single)Screen.height;
+			rect.width = scaledSize.x / (Single)Screen.width;
+			rect.height = scaledSize.y / (Single)Screen.height;
+			rect.x = normalizedWidth / 2f;
+			rect.y = normalizedHeight / 2f;
 
-        this.Border = new Vector2(rect.x * (Single)Screen.width, rect.y * (Single)Screen.height);
-        this.MainCamera.rect = rect;
+			this.Size = new Vector2(scaledSize.x, scaledSize.y);
+		}
+
+		this.Border = new Vector2(rect.x * (Single)Screen.width, rect.y * (Single)Screen.height);
+		this.MainCamera.rect = rect;
 	}
 
-    public Single Ratio;
+	public Single Ratio;
 
 	public Vector2 Border;
 

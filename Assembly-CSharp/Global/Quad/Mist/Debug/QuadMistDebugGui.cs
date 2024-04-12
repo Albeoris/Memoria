@@ -1,5 +1,5 @@
-﻿using System;
-using Assets.Sources.Scripts.Common;
+﻿using Assets.Sources.Scripts.Common;
+using System;
 using UnityEngine;
 
 public class QuadMistDebugGui : MonoBehaviour

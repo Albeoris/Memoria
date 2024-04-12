@@ -111,19 +111,19 @@ public class UIPointer : MonoBehaviour
 		}
 	}
 
-    public void SetBlinkActive(Boolean isActive)
-    {
-        if (!this.isHidden)
-        {
-            this.blinkActive = isActive;
-            if (this.pointerSprite != null)
-                this.pointerSprite.color = Color.white;
-            if (this.pointerTween != null)
-                this.pointerTween.enabled = isActive;
-        }
-    }
+	public void SetBlinkActive(Boolean isActive)
+	{
+		if (!this.isHidden)
+		{
+			this.blinkActive = isActive;
+			if (this.pointerSprite != null)
+				this.pointerSprite.color = Color.white;
+			if (this.pointerTween != null)
+				this.pointerTween.enabled = isActive;
+		}
+	}
 
-    public void SetHelpActive(Boolean isActive, Boolean isImmediate)
+	public void SetHelpActive(Boolean isActive, Boolean isImmediate)
 	{
 		if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Battle)
 		{
@@ -152,22 +152,22 @@ public class UIPointer : MonoBehaviour
 
 	public void SetNumberActive(Boolean isActive, Int32 number)
 	{
-	    UISprite sprite = this.numberSprite;
-	    if (sprite == null)
-	        return;
+		UISprite sprite = this.numberSprite;
+		if (sprite == null)
+			return;
 
-	    GameObject gameObj = sprite.gameObject;
-        if (ReferenceEquals(gameObj, null))
-	        return;
+		GameObject gameObj = sprite.gameObject;
+		if (ReferenceEquals(gameObj, null))
+			return;
 
-        if (isActive)
+		if (isActive)
 		{
-            gameObj.SetActive(true);
-            sprite.spriteName = (number != 1) ? "hand_battle_2" : "hand_battle_1";
+			gameObj.SetActive(true);
+			sprite.spriteName = (number != 1) ? "hand_battle_2" : "hand_battle_1";
 		}
 		else
 		{
-            gameObj.SetActive(false);
+			gameObj.SetActive(false);
 		}
 	}
 

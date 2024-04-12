@@ -1,4 +1,4 @@
 namespace Memoria
 {
-    public delegate IBattleScript BattleScriptFactory(BattleCalculator calc);
+	public delegate IBattleScript BattleScriptFactory(BattleCalculator calc);
 }

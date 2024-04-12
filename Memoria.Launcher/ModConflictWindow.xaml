@@ -11,13 +11,13 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="40"/>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="40"/>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="40" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="310"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="310" />
+            <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
         <TextBlock x:Name="OverallVerdict"
@@ -28,14 +28,14 @@
                    Text="Overall verdict"
                    TextAlignment="Center"
                    HorizontalAlignment="Center"
-                   VerticalAlignment="Center"/>
+                   VerticalAlignment="Center" />
 
         <ListBox x:Name="ModList"
                  Margin="3,5,3,0"
                  Grid.Row="1"
                  Grid.Column="0"
                  SelectionChanged="OnModSelection"
-                 DisplayMemberPath="Label"/>
+                 DisplayMemberPath="Label" />
 
         <TextBox x:Name="DetailedInfos"
                  Margin="3,5,3,0"
@@ -45,7 +45,7 @@
                  IsReadOnly="True"
                  ScrollViewer.HorizontalScrollBarVisibility="Auto"
                  ScrollViewer.VerticalScrollBarVisibility="Visible"
-                 TextWrapping="NoWrap"/>
+                 TextWrapping="NoWrap" />
 
         <WrapPanel Margin="3,5,3,5"
                    Grid.Row="2"
@@ -56,7 +56,7 @@
             <Button x:Name="OkButton"
                     Content="Ok"
                     MinWidth="100"
-                    Click="OnButtonClick"/>
+                    Click="OnButtonClick" />
         </WrapPanel>
     </Grid>
 </Window>

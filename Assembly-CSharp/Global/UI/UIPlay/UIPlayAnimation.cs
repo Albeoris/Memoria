@@ -1,6 +1,6 @@
-﻿using System;
+﻿using AnimationOrTween;
+using System;
 using System.Collections.Generic;
-using AnimationOrTween;
 using UnityEngine;
 
 [AddComponentMenu("NGUI/Interaction/Play Animation")]

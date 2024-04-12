@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria;
+﻿using Memoria;
+using System;
 using UnityEngine;
 using Object = System.Object;
 
@@ -71,10 +71,10 @@ public class PosObj : Obj
 		this.meshflags = po.meshflags;
 		this.garnet = po.garnet;
 		this.shortHair = po.shortHair;
-        this.attatchTargetUid = po.attatchTargetUid;
-        this.attachTargetBoneIndex = po.attachTargetBoneIndex;
-        this.isShadowOff = po.isShadowOff;
-        Actor actor = (Actor)po;
+		this.attatchTargetUid = po.attatchTargetUid;
+		this.attachTargetBoneIndex = po.attachTargetBoneIndex;
+		this.isShadowOff = po.isShadowOff;
+		Actor actor = (Actor)po;
 		this.charFlags = actor.charFlags;
 		this.activeTri = actor.activeTri;
 		this.activeFloor = actor.activeFloor;
@@ -126,16 +126,16 @@ public class PosObj : Obj
 				String b = "mesh" + mesh;
 				if (mesh == 1 && this.garnet)
 				{
-				    Boolean garnetShortHair;
+					Boolean garnetShortHair;
 
-                    if (Configuration.Graphics.GarnetHair == 1)
-				        garnetShortHair = false;
-				    else if (Configuration.Graphics.GarnetHair == 2)
-                        garnetShortHair = true;
-                    else
-                        garnetShortHair = this.shortHair;
+					if (Configuration.Graphics.GarnetHair == 1)
+						garnetShortHair = false;
+					else if (Configuration.Graphics.GarnetHair == 2)
+						garnetShortHair = true;
+					else
+						garnetShortHair = this.shortHair;
 
-                    if (garnetShortHair)
+					if (garnetShortHair)
 					{
 						b = "short_hair";
 					}
@@ -242,9 +242,9 @@ public class PosObj : Obj
 
 	public Vector3 geo_struct_lookat;
 
-    public Int32 attatchTargetUid = -1;
+	public Int32 attatchTargetUid = -1;
 
-    public Int32 attachTargetBoneIndex = -1;
+	public Int32 attachTargetBoneIndex = -1;
 
-    public Boolean isShadowOff;
+	public Boolean isShadowOff;
 }

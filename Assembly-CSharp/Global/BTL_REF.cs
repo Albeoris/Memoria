@@ -11,7 +11,7 @@ public class BTL_REF
 	[Memoria.PatchableFieldAttribute]
 	public Int32 Rate;
 
-    public BTL_REF()
+	public BTL_REF()
 	{
 		ScriptId = 0;
 		Power = 0;

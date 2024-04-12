@@ -1,6 +1,6 @@
+using Memoria;
 using System;
 using System.Collections.Generic;
-using Memoria;
 using UnityEngine;
 using Object = System.Object;
 
@@ -27,7 +27,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public void UpdatePlayingMusicVolume()
 	{
-		this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+		this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 		{
 			if (soundProfile != null)
 			{
@@ -79,7 +79,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 				}
 			}
 		}
-		this.GetSoundProfileIfExist(this.currentSongID, SoundProfileType.Song, delegate(SoundProfile soundProfile)
+		this.GetSoundProfileIfExist(this.currentSongID, SoundProfileType.Song, delegate (SoundProfile soundProfile)
 		{
 			if (soundProfile != null)
 			{
@@ -107,7 +107,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public void SetNextLoopRegion(Int32 ObjNo)
 	{
-		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 		{
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetNextLoopRegion(soundProfile.SoundID);
 		});
@@ -121,7 +121,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			{
 				if (this.currentMusicID != -1)
 				{
-					this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+					this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 					{
 						if (soundProfile != null)
 						{
@@ -130,7 +130,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 						this.currentMusicID = -1;
 					});
 				}
-				this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+				this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 				{
 					this.CreateSound(soundProfile);
 					soundProfile.SoundVolume = 1f;
@@ -151,12 +151,12 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		}
 		else
 		{
-			this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 			{
 			});
 		}
 	}
-	
+
 	public void StopAndClearSuspendBGM(int ObjNo, Boolean SetCurrentMusic = false)
 	{
 		if (this.suspendBgmNo != -1 && ObjNo != this.suspendBgmNo)
@@ -188,7 +188,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		{
 			if (this.currentMusicID != -1)
 			{
-				this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+				this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 				{
 					if (soundProfile != null)
 					{
@@ -197,7 +197,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 					this.currentMusicID = -1;
 				});
 			}
-			this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 			{
 				this.CreateSound(soundProfile);
 				soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
@@ -209,7 +209,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		}
 		else
 		{
-			this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 			{
 				if (soundProfile != null)
 				{
@@ -229,7 +229,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public void FF9SOUND_SONG_SUSPEND(int ObjNo, bool isSkipPause = false)
 	{
-		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 		{
 			if (soundProfile != null)
 			{
@@ -266,7 +266,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public void FF9SOUND_SONG_STOP(int ObjNo)
 	{
-		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 		{
 			if (soundProfile != null)
 			{
@@ -286,7 +286,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public void StopCurrentSong(Int32 ticks)
 	{
-		this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+		this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 		{
 			if (soundProfile != null)
 			{
@@ -300,7 +300,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	{
 		if (this.currentMusicID != -1)
 		{
-			this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 			{
 				if (soundProfile != null)
 				{
@@ -317,7 +317,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public void FF9SOUND_SONG_VOL(Int32 ObjNo, Int32 vol)
 	{
-		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 		{
 			if (soundProfile != null)
 			{
@@ -330,7 +330,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public void FF9SOUND_SONG_VOL_INTPL(Int32 ObjNo, Int32 ticks, Int32 to)
 	{
-		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 		{
 			if (soundProfile != null)
 			{
@@ -343,7 +343,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public void FF9SOUND_SONG_VOL_FADE(Int32 ObjNo, Int32 ticks, Int32 from, Int32 to)
 	{
-		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+		this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 		{
 			if (soundProfile != null)
 			{
@@ -363,7 +363,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		}
 		if (this.currentMusicID != -1)
 		{
-			this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 			{
 				if (soundProfile != null)
 				{
@@ -379,7 +379,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	{
 		if (this.currentMusicID != -1)
 		{
-			this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 			{
 				if (soundProfile != null)
 				{
@@ -394,7 +394,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	{
 		if (this.currentMusicID != -1)
 		{
-			this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 			{
 				if (soundProfile != null)
 				{
@@ -409,7 +409,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	{
 		if (this.currentMusicID != -1)
 		{
-			this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 			{
 				if (soundProfile != null)
 				{
@@ -425,7 +425,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	{
 		if (this.currentMusicID != -1)
 		{
-			this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			this.GetSoundProfileIfExist(ObjNo, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 			{
 				if (soundProfile != null)
 				{
@@ -443,7 +443,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	{
 		if (this.currentMusicID != -1)
 		{
-			this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 			{
 				if (soundProfile != null)
 				{
@@ -455,7 +455,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 
 	public void FF9SOUND_SONG_SKIPPHRASE_MILLISEC(Int32 ObjNo, Int32 offsetTimeMSec)
 	{
-		this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+		this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 		{
 			if (soundProfile != null)
 			{
@@ -471,7 +471,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	{
 		this.LimitPlayingSfxByObjNo(ObjNo, 2295, 1);
 		this.LimitPlayingSfxByObjNo(ObjNo, 1966, 3);
-		this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.SoundEffect, delegate(SoundProfile soundProfile)
+		this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.SoundEffect, delegate (SoundProfile soundProfile)
 		{
 			this.CreateSound(soundProfile);
 			soundProfile.Pitch = 1f;
@@ -694,7 +694,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 				this.sfxResSlot[slot].PrevSndEffectMapID = FF9StateSystem.Common.FF9.fldMapNo;
 				return;
 			}
-			this.GetSoundProfileIfExist(this.sfxResSlot[slot].ObjNo, SoundProfileType.SoundEffect, delegate(SoundProfile soundProfile)
+			this.GetSoundProfileIfExist(this.sfxResSlot[slot].ObjNo, SoundProfileType.SoundEffect, delegate (SoundProfile soundProfile)
 			{
 				if (soundProfile != null)
 				{
@@ -703,7 +703,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 				this.sfxResSlot[slot] = (AllSoundDispatchPlayer.PlayingSfx)null;
 			});
 		}
-		this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.SoundEffect, delegate(SoundProfile soundProfile)
+		this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.SoundEffect, delegate (SoundProfile soundProfile)
 		{
 			this.CreateSound(soundProfile);
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
@@ -878,7 +878,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		}
 		try
 		{
-			this.CreateSoundProfileIfNotExist(streamid, SoundProfileType.Song, delegate(SoundProfile soundProfile)
+			this.CreateSoundProfileIfNotExist(streamid, SoundProfileType.Song, delegate (SoundProfile soundProfile)
 			{
 				base.CreateSound(soundProfile);
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
@@ -896,7 +896,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	{
 		if (this.currentSongID != -1)
 		{
-			this.GetSoundProfileIfExist(this.currentSongID, SoundProfileType.Song, delegate(SoundProfile soundProfile)
+			this.GetSoundProfileIfExist(this.currentSongID, SoundProfileType.Song, delegate (SoundProfile soundProfile)
 			{
 				if (soundProfile != null)
 				{
@@ -915,7 +915,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	{
 		if (this.currentSongID != -1)
 		{
-			this.CreateSoundProfileIfNotExist(this.currentSongID, SoundProfileType.Song, delegate(SoundProfile soundProfile)
+			this.CreateSoundProfileIfNotExist(this.currentSongID, SoundProfileType.Song, delegate (SoundProfile soundProfile)
 			{
 				soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * SoundLib.SoundEffectPlayer.Volume, 0);
@@ -1203,7 +1203,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		{
 			if (this.currentMusicID != -1)
 			{
-				this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+				this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 				{
 					if (soundProfile != null)
 					{
@@ -1246,7 +1246,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		{
 			if (this.currentSongID != -1)
 			{
-				this.GetSoundProfileIfExist(this.currentSongID, SoundProfileType.Song, delegate(SoundProfile soundProfile)
+				this.GetSoundProfileIfExist(this.currentSongID, SoundProfileType.Song, delegate (SoundProfile soundProfile)
 				{
 					if (soundProfile != null)
 					{
@@ -1267,7 +1267,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		{
 			if (this.currentMusicID != -1)
 			{
-				this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+				this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 				{
 					if (soundProfile != null)
 					{
@@ -1310,7 +1310,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		{
 			if (this.currentSongID != -1)
 			{
-				this.GetSoundProfileIfExist(this.currentSongID, SoundProfileType.Song, delegate(SoundProfile soundProfile)
+				this.GetSoundProfileIfExist(this.currentSongID, SoundProfileType.Song, delegate (SoundProfile soundProfile)
 				{
 					if (soundProfile != null)
 					{
@@ -1329,7 +1329,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	{
 		if (this.currentMusicID != -1)
 		{
-			this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate(SoundProfile soundProfile)
+			this.GetSoundProfileIfExist(this.currentMusicID, SoundProfileType.Music, delegate (SoundProfile soundProfile)
 			{
 				if (soundProfile != null)
 				{
@@ -1338,11 +1338,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 					{
 						soundProfile.StartPlayTime %= 245000f;
 					}
-
 				}
-
 			});
-
 		}
 
 		foreach (AllSoundDispatchPlayer.PlayingSfx playingSfx in this.sfxChanels)
@@ -1397,9 +1394,9 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		}
 	}
 
-    public override Single Volume => throw new NotImplementedException();
+	public override Single Volume => throw new NotImplementedException();
 
-    public const Int32 VOLUME_MAX = 127;
+	public const Int32 VOLUME_MAX = 127;
 
 	public const Int32 SNDEFFECTRES_SLOT_MAX = 2;
 

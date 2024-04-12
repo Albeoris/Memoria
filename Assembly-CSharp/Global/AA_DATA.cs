@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria.Data;
+﻿using Memoria.Data;
+using System;
 public class AA_DATA
 {
 	public AA_DATA()

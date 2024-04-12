@@ -1,31 +1,30 @@
 using System;
 using System.IO;
 using UnityEngine;
-using Object = System.Object;
 
 namespace Memoria.Test
 {
-    public sealed class QuaternionMessage : IValueMessage
-    {
-        public ValueMessageType ValueType => ValueMessageType.Quaternion;
+	public sealed class QuaternionMessage : IValueMessage
+	{
+		public ValueMessageType ValueType => ValueMessageType.Quaternion;
 
-        ValueType IValueMessage.Object => Value;
+		ValueType IValueMessage.Object => Value;
 
-        public Quaternion Value;
+		public Quaternion Value;
 
-        public QuaternionMessage(Quaternion value)
-        {
-            Value = value;
-        }
+		public QuaternionMessage(Quaternion value)
+		{
+			Value = value;
+		}
 
-        public void Serialize(BinaryWriter bw)
-        {
-            bw.Write(Value);
-        }
+		public void Serialize(BinaryWriter bw)
+		{
+			bw.Write(Value);
+		}
 
-        public void Deserialize(BinaryReader br)
-        {
-            Value = br.ReadQuaternion();
-        }
-    }
+		public void Deserialize(BinaryReader br)
+		{
+			Value = br.ReadQuaternion();
+		}
+	}
 }

@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Memoria;
+﻿using Memoria;
 using Memoria.Prime;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
 
@@ -49,13 +49,13 @@ public class UIRoot : MonoBehaviour
 	{
 		get
 		{
-		    if (Configuration.Graphics.WidescreenSupport)
-		    {
-		        this.manualWidth = (Int32)UIManager.UIContentSize.x;
-                this.manualHeight = (Int32)UIManager.UIContentSize.y;
-            }
+			if (Configuration.Graphics.WidescreenSupport)
+			{
+				this.manualWidth = (Int32)UIManager.UIContentSize.x;
+				this.manualHeight = (Int32)UIManager.UIContentSize.y;
+			}
 
-		    if (this.activeScaling == UIRoot.Scaling.Flexible)
+			if (this.activeScaling == UIRoot.Scaling.Flexible)
 			{
 				Vector2 screenSize = NGUITools.screenSize;
 				Single num = screenSize.x / screenSize.y;
@@ -82,14 +82,14 @@ public class UIRoot : MonoBehaviour
 			Single num4 = (Single)this.manualWidth / (Single)this.manualHeight;
 			switch (constraint)
 			{
-			case UIRoot.Constraint.Fit:
-				return (Int32)((num4 <= num3) ? this.manualHeight : Mathf.RoundToInt((Single)this.manualWidth / num3));
-			case UIRoot.Constraint.Fill:
-				return (Int32)((num4 >= num3) ? this.manualHeight : Mathf.RoundToInt((Single)this.manualWidth / num3));
-			case UIRoot.Constraint.FitWidth:
-				return Mathf.RoundToInt((Single)this.manualWidth / num3);
-			default:
-				return this.manualHeight;
+				case UIRoot.Constraint.Fit:
+					return (Int32)((num4 <= num3) ? this.manualHeight : Mathf.RoundToInt((Single)this.manualWidth / num3));
+				case UIRoot.Constraint.Fill:
+					return (Int32)((num4 >= num3) ? this.manualHeight : Mathf.RoundToInt((Single)this.manualWidth / num3));
+				case UIRoot.Constraint.FitWidth:
+					return Mathf.RoundToInt((Single)this.manualWidth / num3);
+				default:
+					return this.manualHeight;
 			}
 		}
 	}
@@ -130,9 +130,9 @@ public class UIRoot : MonoBehaviour
 	protected virtual void Awake()
 	{
 		this.mTrans = base.transform;
-	    this.mPanel = this.gameObject.GetComponent<UIPanel>();
+		this.mPanel = this.gameObject.GetComponent<UIPanel>();
 
-	    FixWideScreenPauseBackground();
+		FixWideScreenPauseBackground();
 	}
 
 	private void FixWideScreenPauseBackground()
@@ -151,21 +151,21 @@ public class UIRoot : MonoBehaviour
 		{
 			Log.Error(ex, "Failed to fix wide screen pause background.");
 		}
-        try
-        {
-            UISprite quitBackground = gameObject
-                .FindChild("Quit Container")
-                .FindChild("Panel")
-                .FindChild("Dim Background")
-                .GetComponent<UISprite>();
+		try
+		{
+			UISprite quitBackground = gameObject
+				.FindChild("Quit Container")
+				.FindChild("Panel")
+				.FindChild("Dim Background")
+				.GetComponent<UISprite>();
 
-            quitBackground.width = 4096;
-        }
-        catch (Exception ex)
-        {
-            Log.Error(ex, "Failed to fix wide screen quit background.");
-        }
-    }
+			quitBackground.width = 4096;
+		}
+		catch (Exception ex)
+		{
+			Log.Error(ex, "Failed to fix wide screen quit background.");
+		}
+	}
 
 	protected virtual void OnEnable()
 	{
@@ -203,38 +203,38 @@ public class UIRoot : MonoBehaviour
 
 	public void UpdateScale(Boolean updateAnchors = true)
 	{
-	    if (this.mTrans == null)
-            return;
+		if (this.mTrans == null)
+			return;
 
-	    if (Configuration.Graphics.WidescreenSupport)
-	    {
-            if (mPanel != null)
-            {
-                Vector4 clipRegion = mPanel.baseClipRegion;
-                if (clipRegion.z < manualWidth || clipRegion.w < manualHeight)
-                {
-                    Log.Message("[UIRoot] Changing a clip region of the UI root.");
-                    clipRegion.z = manualWidth + 2;
-                    clipRegion.w = manualHeight + 2;
-                    mPanel.baseClipRegion = clipRegion;
-                }
-            }
-	    }
+		if (Configuration.Graphics.WidescreenSupport)
+		{
+			if (mPanel != null)
+			{
+				Vector4 clipRegion = mPanel.baseClipRegion;
+				if (clipRegion.z < manualWidth || clipRegion.w < manualHeight)
+				{
+					Log.Message("[UIRoot] Changing a clip region of the UI root.");
+					clipRegion.z = manualWidth + 2;
+					clipRegion.w = manualHeight + 2;
+					mPanel.baseClipRegion = clipRegion;
+				}
+			}
+		}
 
-	    Single num = (Single)this.activeHeight;
-	    if (num > 0f)
-	    {
-	        Single num2 = 2f / num;
-	        Vector3 localScale = this.mTrans.localScale;
-	        if (Mathf.Abs(localScale.x - num2) > 1.401298E-45f || Mathf.Abs(localScale.y - num2) > 1.401298E-45f || Mathf.Abs(localScale.z - num2) > 1.401298E-45f)
-	        {
-	            this.mTrans.localScale = new Vector3(num2, num2, num2);
-	            if (updateAnchors)
-	            {
-	                base.BroadcastMessage("UpdateAnchors");
-	            }
-	        }
-	    }
+		Single num = (Single)this.activeHeight;
+		if (num > 0f)
+		{
+			Single num2 = 2f / num;
+			Vector3 localScale = this.mTrans.localScale;
+			if (Mathf.Abs(localScale.x - num2) > 1.401298E-45f || Mathf.Abs(localScale.y - num2) > 1.401298E-45f || Mathf.Abs(localScale.z - num2) > 1.401298E-45f)
+			{
+				this.mTrans.localScale = new Vector3(num2, num2, num2);
+				if (updateAnchors)
+				{
+					base.BroadcastMessage("UpdateAnchors");
+				}
+			}
+		}
 	}
 
 	public static void Broadcast(String funcName)
@@ -296,7 +296,7 @@ public class UIRoot : MonoBehaviour
 
 	private Transform mTrans;
 
-    private UIPanel mPanel;
+	private UIPanel mPanel;
 
 	public enum Scaling
 	{

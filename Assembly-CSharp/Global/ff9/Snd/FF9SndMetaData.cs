@@ -1,7 +1,6 @@
+using SimpleJSON;
 using System;
 using System.Collections.Generic;
-using SimpleJSON;
-using UnityEngine;
 
 public static class FF9SndMetaData
 {

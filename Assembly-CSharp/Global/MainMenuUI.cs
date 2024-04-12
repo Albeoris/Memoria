@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Assets.Scripts.Common;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Assets;
+using Memoria.Data;
+using Memoria.Scenes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Common;
-using Assets.Sources.Scripts.UI.Common;
-using Memoria.Data;
-using Memoria.Assets;
-using Memoria.Scenes;
 using UnityEngine;
-using Object = System.Object;
 
 public class MainMenuUI : UIScene
 {
@@ -209,45 +208,45 @@ public class MainMenuUI : UIScene
 					{
 						switch (this.currentMenu)
 						{
-						case MainMenuUI.SubMenu.Ability:
-							this.characterMemorize = go;
-							this.NeedTweenAndHideSubMenu = false;
-							this.submenuTransition.ShiftContentClip = new Vector2(0f, 107f);
-							this.AbilitySubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
-							this.Hide(delegate
-							{
-								PersistenSingleton<UIManager>.Instance.AbilityScene.CurrentPartyIndex = this.currentCharacterIndex;
-								PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Ability);
-							});
-							break;
-						case MainMenuUI.SubMenu.Equip:
-							this.characterMemorize = go;
-							this.NeedTweenAndHideSubMenu = false;
-							this.submenuTransition.ShiftContentClip = new Vector2(0f, 205f);
-							this.EquipSubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
-							this.Hide(delegate
-							{
-								PersistenSingleton<UIManager>.Instance.EquipScene.CurrentPartyIndex = this.currentCharacterIndex;
-								PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Equip);
-							});
-							break;
-						case MainMenuUI.SubMenu.Status:
-							this.characterMemorize = go;
-							this.NeedTweenAndHideSubMenu = false;
-							this.submenuTransition.ShiftContentClip = new Vector2(0f, 303f);
-							this.StatusSubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
-							this.Hide(delegate
-							{
-								PersistenSingleton<UIManager>.Instance.StatusScene.CurrentPartyIndex = this.currentCharacterIndex;
-								PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Status);
-							});
-							break;
-						case MainMenuUI.SubMenu.Order:
-							this.characterOrderMemorize = go;
-							ButtonGroupState.SetCursorMemorize(this.CharacterOrderGameObjectList[this.currentCharacterIndex], MainMenuUI.OrderGroupButton);
-							ButtonGroupState.ActiveGroup = MainMenuUI.OrderGroupButton;
-							ButtonGroupState.HoldActiveStateOnGroup(MainMenuUI.CharacterGroupButton);
-							break;
+							case MainMenuUI.SubMenu.Ability:
+								this.characterMemorize = go;
+								this.NeedTweenAndHideSubMenu = false;
+								this.submenuTransition.ShiftContentClip = new Vector2(0f, 107f);
+								this.AbilitySubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
+								this.Hide(delegate
+								{
+									PersistenSingleton<UIManager>.Instance.AbilityScene.CurrentPartyIndex = this.currentCharacterIndex;
+									PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Ability);
+								});
+								break;
+							case MainMenuUI.SubMenu.Equip:
+								this.characterMemorize = go;
+								this.NeedTweenAndHideSubMenu = false;
+								this.submenuTransition.ShiftContentClip = new Vector2(0f, 205f);
+								this.EquipSubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
+								this.Hide(delegate
+								{
+									PersistenSingleton<UIManager>.Instance.EquipScene.CurrentPartyIndex = this.currentCharacterIndex;
+									PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Equip);
+								});
+								break;
+							case MainMenuUI.SubMenu.Status:
+								this.characterMemorize = go;
+								this.NeedTweenAndHideSubMenu = false;
+								this.submenuTransition.ShiftContentClip = new Vector2(0f, 303f);
+								this.StatusSubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
+								this.Hide(delegate
+								{
+									PersistenSingleton<UIManager>.Instance.StatusScene.CurrentPartyIndex = this.currentCharacterIndex;
+									PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Status);
+								});
+								break;
+							case MainMenuUI.SubMenu.Order:
+								this.characterOrderMemorize = go;
+								ButtonGroupState.SetCursorMemorize(this.CharacterOrderGameObjectList[this.currentCharacterIndex], MainMenuUI.OrderGroupButton);
+								ButtonGroupState.ActiveGroup = MainMenuUI.OrderGroupButton;
+								ButtonGroupState.HoldActiveStateOnGroup(MainMenuUI.CharacterGroupButton);
+								break;
 						}
 					}
 					else if (this.currentMenu == MainMenuUI.SubMenu.Order)
@@ -488,28 +487,28 @@ public class MainMenuUI : UIScene
 		Double num = FF9StateSystem.Settings.time % 360000.0;
 		switch ((Int32)(FF9StateSystem.Settings.time / 360000.0))
 		{
-		case 0:
-			color = FF9TextTool.White;
-			break;
-		case 1:
-			color = FF9TextTool.Red;
-			break;
-		case 2:
-			color = FF9TextTool.Yellow;
-			break;
-		case 3:
-			color = FF9TextTool.Cyan;
-			break;
-		case 4:
-			color = FF9TextTool.Magenta;
-			break;
-		case 5:
-			color = FF9TextTool.Green;
-			break;
-		default:
-			num = 359999.0;
-			color = FF9TextTool.Green;
-			break;
+			case 0:
+				color = FF9TextTool.White;
+				break;
+			case 1:
+				color = FF9TextTool.Red;
+				break;
+			case 2:
+				color = FF9TextTool.Yellow;
+				break;
+			case 3:
+				color = FF9TextTool.Cyan;
+				break;
+			case 4:
+				color = FF9TextTool.Magenta;
+				break;
+			case 5:
+				color = FF9TextTool.Green;
+				break;
+			default:
+				num = 359999.0;
+				color = FF9TextTool.Green;
+				break;
 		}
 		this.hourLabel.text = ((Int32)(num / 3600.0)).ToString("0#");
 		this.minuteLabel.text = ((Int32)(num / 60.0) % 60).ToString("0#");
@@ -532,22 +531,22 @@ public class MainMenuUI : UIScene
 	{
 		switch (subMenu)
 		{
-		case MainMenuUI.SubMenu.Item:
-			return this.ItemSubMenu;
-		case MainMenuUI.SubMenu.Ability:
-			return this.AbilitySubMenu;
-		case MainMenuUI.SubMenu.Equip:
-			return this.EquipSubMenu;
-		case MainMenuUI.SubMenu.Status:
-			return this.StatusSubMenu;
-		case MainMenuUI.SubMenu.Order:
-			return this.OrderSubMenu;
-		case MainMenuUI.SubMenu.Card:
-			return this.CardSubMenu;
-		case MainMenuUI.SubMenu.Config:
-			return this.ConfigSubMenu;
-		default:
-			return this.ItemSubMenu;
+			case MainMenuUI.SubMenu.Item:
+				return this.ItemSubMenu;
+			case MainMenuUI.SubMenu.Ability:
+				return this.AbilitySubMenu;
+			case MainMenuUI.SubMenu.Equip:
+				return this.EquipSubMenu;
+			case MainMenuUI.SubMenu.Status:
+				return this.StatusSubMenu;
+			case MainMenuUI.SubMenu.Order:
+				return this.OrderSubMenu;
+			case MainMenuUI.SubMenu.Card:
+				return this.CardSubMenu;
+			case MainMenuUI.SubMenu.Config:
+				return this.ConfigSubMenu;
+			default:
+				return this.ItemSubMenu;
 		}
 	}
 
@@ -663,31 +662,31 @@ public class MainMenuUI : UIScene
 		this.CardSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(5);
 		this.ConfigSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(6);
 
-        UIEventListener.Get(this.ItemSubMenu).Click += onClick;
-	    UIEventListener.Get(this.AbilitySubMenu).Click += onClick;
-	    UIEventListener.Get(this.EquipSubMenu).Click += onClick;
-	    UIEventListener.Get(this.StatusSubMenu).Click += onClick;
-	    UIEventListener.Get(this.OrderSubMenu).Click += onClick;
-	    UIEventListener.Get(this.CardSubMenu).Click += onClick;
-	    UIEventListener.Get(this.ConfigSubMenu).Click += onClick;
+		UIEventListener.Get(this.ItemSubMenu).Click += onClick;
+		UIEventListener.Get(this.AbilitySubMenu).Click += onClick;
+		UIEventListener.Get(this.EquipSubMenu).Click += onClick;
+		UIEventListener.Get(this.StatusSubMenu).Click += onClick;
+		UIEventListener.Get(this.OrderSubMenu).Click += onClick;
+		UIEventListener.Get(this.CardSubMenu).Click += onClick;
+		UIEventListener.Get(this.ConfigSubMenu).Click += onClick;
 
-	    foreach (Transform tr in this.CharacterListPanel.transform)
-	    {
-	        GameObject go = tr.gameObject;
-	        UIEventListener.Get(go).Click += onClick;
+		foreach (Transform tr in this.CharacterListPanel.transform)
+		{
+			GameObject go = tr.gameObject;
+			UIEventListener.Get(go).Click += onClick;
 
-	        CharacterDetailHUD item = new CharacterDetailHUD(go, false);
-	        this.CharacterHUDList.Add(item);
+			CharacterDetailHUD item = new CharacterDetailHUD(go, false);
+			this.CharacterHUDList.Add(item);
 
-	        GameObject child = go.GetChild(1);
-	        UIEventListener.Get(child).Click += onClick;
+			GameObject child = go.GetChild(1);
+			UIEventListener.Get(child).Click += onClick;
 
-	        this.CharacterOrderGameObjectList.Add(child);
-	        if (FF9StateSystem.MobilePlatform)
-	            go.GetComponent<ButtonGroupState>().Help.TextKey = "TargetHelpMobile";
-	    }
+			this.CharacterOrderGameObjectList.Add(child);
+			if (FF9StateSystem.MobilePlatform)
+				go.GetComponent<ButtonGroupState>().Help.TextKey = "TargetHelpMobile";
+		}
 
-	    this.gilLabel = this.GenericInfoPanel.GetChild(1).GetChild(1).GetComponent<UILabel>();
+		this.gilLabel = this.GenericInfoPanel.GetChild(1).GetChild(1).GetComponent<UILabel>();
 		this.hourLabel = this.GenericInfoPanel.GetChild(0).GetChild(1).GetComponent<UILabel>();
 		this.minuteLabel = this.GenericInfoPanel.GetChild(0).GetChild(3).GetComponent<UILabel>();
 		this.secondLabel = this.GenericInfoPanel.GetChild(0).GetChild(5).GetComponent<UILabel>();
