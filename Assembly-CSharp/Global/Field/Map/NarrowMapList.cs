@@ -66,10 +66,10 @@ public static class NarrowMapList
         {352,3},     // Arrival at Dali: vivi visible before sleeping
         {355,18},    // Steiner to the barmaid
         {600,32},    // Throne, meet cid
-        {606,0},     // telescope
+        //{606,0},     // telescope
         {615,57},    // Meet garnet on Lindblum castle
+        {1206,0},    // Queen and Kuja salon Alex, drug garnet
         {1554,7},    // MBG109 - roots
-        //{1600,9999}, // First time Madain Sari
         {1602,16},   // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
         {1823,331},  // Garnet coronation, garnet visible
         {1815,0},    // Love quiproquo at the docks
@@ -80,6 +80,7 @@ public static class NarrowMapList
         {2706,-1},   // Pandemonium, you're not alone sequence, several glitches
         {2707,-1},   // Pandemonium, you're not alone sequence, several glitches
         {2708,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2711,0},    // Pandemonium, people are waiting in line after Kuja is defeated
         {2905,154}   // MBG118 - Memoria pink castle
     };
 
@@ -256,7 +257,7 @@ public static class NarrowMapList
         1213, // A. Castle/Guardhouse
         1214, // A. Castle/Hallway
         1215,
-        1216,
+        //1216,
         1218,
         1221, // A. Castle/Courtyard
         1222, // A. Castle/Courtyard
@@ -315,12 +316,12 @@ public static class NarrowMapList
         1609, // Mdn. Sari/Cove
         1610, // Mdn. Sari/Cove
         1650,
-        1651, // Iifa Tree/Tree Roots
+        //1651, // Iifa Tree/Tree Roots
         1652, // Iifa Tree/Roots
         1655, // Iifa Tree/Tree Path
         1656, // Iifa Tree/Eidolon Moun
         1657, // Iifa Tree/Tree Roots
-        1658, // Iifa Tree/Silver Drago
+        1658, // Iifa Tree/Silver Dragon
         1660,
         1661,
         1662,
@@ -339,12 +340,12 @@ public static class NarrowMapList
         1755, // Iifa Tree/Bottom
         1756, // Iifa Tree/Bottom
         1757,
-        1758, // Iifa Tree/Tree Roots
+        //1758, // Iifa Tree/Tree Roots
         1800, // A. Castle/Tomb
         1803, // A. Castle/Guardhouse
         1806, // A. Castle/Hallway
         1807, // A. Castle/Hallway
-        1808,
+        //1808,
         1810,
         1813, // A. Castle/Courtyard
         1814, // A. Castle/Courtyard
@@ -434,19 +435,14 @@ public static class NarrowMapList
         2513,
         2551,
         2552, // Earth Shrine/Interior
-        2600, // Terra/Hilltop
         2601,
         2602, // Terra/Stepping Stones
-        2605, // Terra/Treetop
-        2606, // Terra/Tree base
-        2607, // Terra/Bridge
+        //2606, // Terra/Tree base
         2608, // Terra/Event
         2650,
-        2651, // Bran Bal/Entrance
         2654, // Bran Bal/Pond
         2657, // Bran Bal/Storage
         2658,
-        2660, // Bran Bal/Hilltop
         2701, // Pand./Path
         2706,
         2715, // Pand./Event
@@ -460,7 +456,6 @@ public static class NarrowMapList
         2901, // Memoria/Entrance
         2902, // Memoria/Stairs of Time
         2904, // Memoria/Outer Path
-        2905,
         2906,
         2908, // Memoria/Time Interval
         2909, // Memoria/Ruins
@@ -504,10 +499,10 @@ public static class NarrowMapList
     public static readonly Dictionary<int, int> mapCameraMargin = new Dictionary<int, int>
     {
         //{mapNo,pixels on each side to crop because of scrollable}
-        {1051,8},
-        {1057,16},
+        {1051,9},
+        {1057,17},
         {1058,16},
-        {1060,16},
+        {1060,17},
         {1652,16},
         {1653,16},
         //{154,16},
@@ -516,10 +511,11 @@ public static class NarrowMapList
     public static readonly Dictionary<int, int> actualNarrowMapWidthDict = new Dictionary<int, int>
     {
         //{mapNo,(actualWidth - 2)}
-        //{153,430},
+        {163,318},
+        {606,318},
+        {1050,316},
+
         {203,334},
-        //{502,334},
-        //{503,334},
         {760,334},
         {814,334},
         {816,334},
@@ -558,6 +554,7 @@ public static class NarrowMapList
         {1370,350},
         {1508,350},
         {1650,350},
+        {1657,348},
         {1752,350},
         {1757,350},
         {1863,350},
@@ -639,6 +636,7 @@ public static class NarrowMapList
         {2355,382},
         {2406,382},
         {2451,382},
+        {2602,382},
         {2657,382},
         {2851,382},
         {2855,382},
@@ -701,10 +699,10 @@ public static class NarrowMapList
         {3005,398},
         {3055,398},
         {1205,384},
-        //{154,352},
-        //{1215,352},
+        {154,352},
+        {1215,352},
         {1805,352},
-        //{1807,352},
+        {1807,352},
         {1652,336},
         {2552,352},
     };

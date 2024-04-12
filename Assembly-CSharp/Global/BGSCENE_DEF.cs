@@ -221,8 +221,8 @@ public class BGSCENE_DEF
         }
         else if (operation == "Position" && arguments.Length >= 3)
         {
-            Int16.TryParse(arguments[0], out bgOverlay.orgX);
-            Int16.TryParse(arguments[1], out bgOverlay.orgY);
+            float.TryParse(arguments[0], out bgOverlay.orgX);
+            float.TryParse(arguments[1], out bgOverlay.orgY);
             UInt16.TryParse(arguments[2], out bgOverlay.orgZ);
             bgOverlay.curX = bgOverlay.orgX;
             bgOverlay.curY = bgOverlay.orgY;
@@ -511,7 +511,7 @@ public class BGSCENE_DEF
                 bgsStr += $"Position: {this.orgX + bgOverlay.orgX + spriteMinX}, {this.orgY + bgOverlay.orgY + spriteMinY}, {this.orgZ + bgOverlay.orgZ + spriteMinZ}\n";
                 bgsStr += $"Size: {spriteMaxX - spriteMinX}, {spriteMaxY - spriteMinY}\n";
                 if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
-                    bgsStr += $"ScrollWithOffset: {bgOverlay.dX}, {bgOverlay.dY}\n";
+                    bgsStr += $"ScrollWithOffset: {bgOverlay.ParallaxDepthX}, {bgOverlay.ParallaxDepthY}\n";
                 bgsStr += $"Image: {textureName}\n";
                 bgsStr += $"Shader: PSX/FieldMap_Abr_{(bgFirstSprite.trans == 0 ? "None" : Math.Min(3, (Int32)bgFirstSprite.alpha).ToString())}\n";
                 TextureHelper.WriteTextureToFile(texture, folder + textureName);
@@ -522,7 +522,7 @@ public class BGSCENE_DEF
                 bgsStr += $"Position: {this.orgX + bgOverlay.orgX}, {bgOverlay.orgY}, {bgOverlay.orgZ}\n";
                 bgsStr += $"Size: {bgOverlay.memoriaSize.x}, {bgOverlay.memoriaSize.y}\n";
                 if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
-                    bgsStr += $"ScrollWithOffset: {bgOverlay.dX}, {bgOverlay.dY}\n";
+                    bgsStr += $"ScrollWithOffset: {bgOverlay.ParallaxDepthX}, {bgOverlay.ParallaxDepthY}\n";
                 bgsStr += $"Image: {textureName}\n";
                 bgsStr += $"Shader: {bgOverlay.memoriaMaterial.shader.name}\n";
                 TextureHelper.WriteTextureToFile(bgOverlay.memoriaImage, folder + textureName);
@@ -1425,8 +1425,8 @@ public class BGSCENE_DEF
 
                 // okay guise let's get a tile
 
-                int grabX = (overlayInfo.curX + spriteInfo.offX - tileSystem.MinX) / 16;
-                int grabY = (overlayInfo.curY + spriteInfo.offY - tileSystem.MinY) / 16;
+                int grabX = ((short)overlayInfo.curX + spriteInfo.offX - tileSystem.MinX) / 16;
+                int grabY = ((short)overlayInfo.curY + spriteInfo.offY - tileSystem.MinY) / 16;
                 Tile memoriaTile = memoriaOverlay.GetTile(grabX, grabY);
 
                 copyHelper.CopyTile(atlasArray, atlasSide, atlasX, atlasY, memoriaTile, memoriaOverlay, false);
