@@ -8,7 +8,6 @@ public static class NarrowMapList
     public static Boolean IsCurrentMapNarrow(Int32 ScreenWidth) => IsNarrowMap(FF9StateSystem.Common.FF9.fldMapNo, PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1, ScreenWidth);
     public static Boolean IsNarrowMap(Int32 mapId, Int32 camId, Int32 ScreenWidth)
     {
-        
         if (SpecificScenesNarrow(mapId))
             return true;
 
@@ -39,25 +38,6 @@ public static class NarrowMapList
         return false;
     }
 
-    public static readonly Dictionary<int, int> SpecificScenesNarrow_List = new Dictionary<int, int>
-    {
-        // {mapNo,index}
-        {50,0},     // first scene
-        {150,325},  // Zidane infiltrate Alex Castle
-        {154,304},  // cutscene zorn&thorn
-        //{153,328},  // steiner guards call // can't have twice the same key TOFIX
-        {352,3},    // Arrival at Dali: vivi visible before sleeping
-        {1602,16},  // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
-        {1823,331}, // Garnet coronation, garnet visible
-        {1815,0},   // Love quiproquo at the docks
-        {1816,315}, // Love quiproquo at the docks
-        {2211,8},   // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
-        {2705,-1},  // Pandemonium, you're not alone sequence, several glitches
-        {2706,-1},  // Pandemonium, you're not alone sequence, several glitches
-        {2707,-1},  // Pandemonium, you're not alone sequence, several glitches
-        {2708,-1}   // Pandemonium, you're not alone sequence, several glitches
-    };
-
     public static Int32 MapWidth(int mapId)
     {
         Int32 width = 500;
@@ -71,15 +51,38 @@ public static class NarrowMapList
                 width = (Int32)entry.Value;
         }
 
-        //if (mapId == 153 && PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx == 0)
-        //    width = 320;
-        //if (mapId == 154 && PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx == 1)
-        //    width = 640;
-
         //Log.Message("width:" + width + "PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx" + PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx);
         return width;
     }
 
+    public static readonly Dictionary<int, int> SpecificScenesNarrow_List = new Dictionary<int, int>
+    {
+        // {mapNo,index}
+        {50,0},      // first scene
+        {150,325},   // Zidane infiltrate Alex Castle
+        //{154,304},   // cutscene zorn&thorn
+        //{153,328}, // steiner guards call // can't have twice the same key TOFIX
+        {254,26},    // MBG103 - Evil Forest
+        {352,3},     // Arrival at Dali: vivi visible before sleeping
+        {355,18},    // Steiner to the barmaid
+        {600,32},    // Throne, meet cid
+        //{606,0},     // telescope
+        {615,57},    // Meet garnet on Lindblum castle
+        {1206,0},    // Queen and Kuja salon Alex, drug garnet
+        {1554,7},    // MBG109 - roots
+        {1602,16},   // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
+        {1823,331},  // Garnet coronation, garnet visible
+        {1815,0},    // Love quiproquo at the docks
+        {1816,315},  // Love quiproquo at the docks
+        {2007,2},    // MBG111 - Alex castle changing
+        {2211,8},    // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
+        {2705,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2706,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2707,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2708,-1},   // Pandemonium, you're not alone sequence, several glitches
+        {2711,0},    // Pandemonium, people are waiting in line after Kuja is defeated
+        {2905,154}   // MBG118 - Memoria pink castle
+    };
 
     public static readonly Dictionary<Int32, HashSet<Int32>> ListPartialNarrow = new Dictionary<Int32, HashSet<Int32>>()
     {
@@ -119,7 +122,7 @@ public static class NarrowMapList
         0150, // A. Castle/Guardhouse
         0151, // A. Castle/Throne
         0153, // A. Castle/Hallway
-        //0154,
+        0154,
         0157, // A. Castle/Kitchen
         0160, // A. Castle/Courtyard
         0161, // A. Castle/Courtyard
@@ -137,7 +140,7 @@ public static class NarrowMapList
         0209, // Prima Vista/Event
         0251, // Evil Forest/Trail
         0252, // Evil Forest/Trail
-        0254, // Evil Forest/Swamp
+        //0254, // Evil Forest/Swamp
         0255, // Evil Forest/Riverbank
         0256, // Evil Forest/Trail
         0259, // Evil Forest/Trail
@@ -253,7 +256,8 @@ public static class NarrowMapList
         1212, // A. Castle/East Tower
         1213, // A. Castle/Guardhouse
         1214, // A. Castle/Hallway
-        1216,
+        1215,
+        //1216,
         1218,
         1221, // A. Castle/Courtyard
         1222, // A. Castle/Courtyard
@@ -312,12 +316,12 @@ public static class NarrowMapList
         1609, // Mdn. Sari/Cove
         1610, // Mdn. Sari/Cove
         1650,
-        1651, // Iifa Tree/Tree Roots
+        //1651, // Iifa Tree/Tree Roots
         1652, // Iifa Tree/Roots
         1655, // Iifa Tree/Tree Path
         1656, // Iifa Tree/Eidolon Moun
         1657, // Iifa Tree/Tree Roots
-        1658, // Iifa Tree/Silver Drago
+        1658, // Iifa Tree/Silver Dragon
         1660,
         1661,
         1662,
@@ -336,11 +340,12 @@ public static class NarrowMapList
         1755, // Iifa Tree/Bottom
         1756, // Iifa Tree/Bottom
         1757,
-        1758, // Iifa Tree/Tree Roots
+        //1758, // Iifa Tree/Tree Roots
         1800, // A. Castle/Tomb
         1803, // A. Castle/Guardhouse
         1806, // A. Castle/Hallway
-        1808,
+        1807, // A. Castle/Hallway
+        //1808,
         1810,
         1813, // A. Castle/Courtyard
         1814, // A. Castle/Courtyard
@@ -367,7 +372,7 @@ public static class NarrowMapList
         2004,
         2005, // A. Castle/Altar
         2006,
-        2007, // A. Castle/Altar
+        //2007, // A. Castle/Altar
         2008, // A. Castle/Altar
         2050, // Alexandria/Main Street
         2052,
@@ -430,19 +435,14 @@ public static class NarrowMapList
         2513,
         2551,
         2552, // Earth Shrine/Interior
-        2600, // Terra/Hilltop
         2601,
         2602, // Terra/Stepping Stones
-        2605, // Terra/Treetop
-        2606, // Terra/Tree base
-        2607, // Terra/Bridge
+        //2606, // Terra/Tree base
         2608, // Terra/Event
         2650,
-        2651, // Bran Bal/Entrance
         2654, // Bran Bal/Pond
         2657, // Bran Bal/Storage
         2658,
-        2660, // Bran Bal/Hilltop
         2701, // Pand./Path
         2706,
         2715, // Pand./Event
@@ -456,7 +456,6 @@ public static class NarrowMapList
         2901, // Memoria/Entrance
         2902, // Memoria/Stairs of Time
         2904, // Memoria/Outer Path
-        2905,
         2906,
         2908, // Memoria/Time Interval
         2909, // Memoria/Ruins
@@ -500,10 +499,10 @@ public static class NarrowMapList
     public static readonly Dictionary<int, int> mapCameraMargin = new Dictionary<int, int>
     {
         //{mapNo,pixels on each side to crop because of scrollable}
-        {1051,8},
-        {1057,16},
+        {1051,9},
+        {1057,17},
         {1058,16},
-        {1060,16},
+        {1060,17},
         {1652,16},
         {1653,16},
         //{154,16},
@@ -512,10 +511,11 @@ public static class NarrowMapList
     public static readonly Dictionary<int, int> actualNarrowMapWidthDict = new Dictionary<int, int>
     {
         //{mapNo,(actualWidth - 2)}
-        //{153,430},
+        {163,318},
+        {606,318},
+        {1050,316},
+
         {203,334},
-        {502,334},
-        {503,334},
         {760,334},
         {814,334},
         {816,334},
@@ -554,6 +554,7 @@ public static class NarrowMapList
         {1370,350},
         {1508,350},
         {1650,350},
+        {1657,348},
         {1752,350},
         {1757,350},
         {1863,350},
@@ -635,6 +636,7 @@ public static class NarrowMapList
         {2355,382},
         {2406,382},
         {2451,382},
+        {2602,382},
         {2657,382},
         {2851,382},
         {2855,382},
@@ -697,7 +699,7 @@ public static class NarrowMapList
         {3005,398},
         {3055,398},
         {1205,384},
-        //{154,352},
+        {154,352},
         {1215,352},
         {1805,352},
         {1807,352},

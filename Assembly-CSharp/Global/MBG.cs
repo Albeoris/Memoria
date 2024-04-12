@@ -192,9 +192,9 @@ public class MBG : HonoBehavior
 		MBG.MBGParms.oldBGCamNdx = this.currentFieldMap.GetCurrentCameraIndex();
 		Camera mainCamera = fieldMap.GetMainCamera();
 		this.SetMovieCamera(mainCamera);
-	}
+    }
 
-	public void Play()
+    public void Play()
 	{
 		this.tempTargetFrameRate = FPSManager.GetTargetFPS();
 		this.tempVirtualAnalogStatus = VirtualAnalog.IsEnable;
@@ -223,8 +223,8 @@ public class MBG : HonoBehavior
         this.isWaitForPause = false;
         this.played = true;
 		FPSManager.SetTargetFPS(Mathf.RoundToInt((Single)this.movieMaterial.FPS));
-        PlayerWindow.Instance.SetTitle($"FPS: {FPSManager.GetTargetFPS()}");
-		this.movieMaterial.Play();
+        PlayerWindow.Instance.SetTitle($"FMV: {this.movieMaterial.movieKey} | Map: {FF9StateSystem.Common.FF9.fldMapNo} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
+        this.movieMaterial.Play();
 	}
 
 	public void Pause(Boolean doPause)
@@ -312,8 +312,10 @@ public class MBG : HonoBehavior
 		PersistenSingleton<HonoInputManager>.Instance.SetVirtualAnalogEnable(this.tempVirtualAnalogStatus);
 		SceneDirector.ToggleFadeAll(true);
 		FPSManager.SetTargetFPS(this.tempTargetFrameRate);
-		PlayerWindow.Instance.SetTitle(String.Empty);
-		vib.VIB_actuatorReset(0);
+        //PlayerWindow.Instance.SetTitle(String.Empty);
+        PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
+
+        vib.VIB_actuatorReset(0);
 		this.movieMaterial.Transparency = 0f;
 		this.movieMaterial.Stop();
 		this.mbgCamera.depth = -4096f;

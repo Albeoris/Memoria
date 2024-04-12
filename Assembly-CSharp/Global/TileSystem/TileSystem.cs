@@ -384,9 +384,9 @@ namespace Global.TileSystem
             long overlayWidth = overlayInfo.w * factor;
 
             Rectangle rect = layer.Rect;
-            long left = overlayInfo.curX;
+            long left = (short)overlayInfo.curX;
             long right = left + overlayInfo.w;
-            long top = overlayInfo.curY;
+            long top = (short)overlayInfo.curY;
             long bottom = top + overlayInfo.h;
             long product = overlayHeight * overlayWidth;
             long verticalOffset = (SPRITE_H - rect.Bottom % SPRITE_H) % SPRITE_H;
@@ -793,8 +793,8 @@ namespace Global.TileSystem
                 for (int k = 0; k < overlay.spriteList.Count; k++)
                 {
                     BGSPRITE_LOC_DEF sprite = overlay.spriteList[k];
-                    int offX = sprite.offX + overlay.curX;
-                    int offY = sprite.offY + overlay.curY;
+                    int offX = sprite.offX + (short)overlay.curX;
+                    int offY = sprite.offY + (short)overlay.curY;
                     if (offX < minX) minX = offX;
                     if (offX > maxX) maxX = offX;
                     if (offY < minY) minY = offY;
@@ -969,8 +969,8 @@ namespace Global.TileSystem
                 Tile tileToPush = new Tile();
                 tileToPush.info = info.spriteList[k];
                 BGSPRITE_LOC_DEF spriteInfo = info.spriteList[k];
-                tileToPush.x = (info.orgX + spriteInfo.offX - minX) / 16; // get global x
-                tileToPush.y = (info.orgY + spriteInfo.offY - minY) / 16; // get global y
+                tileToPush.x = ((short)(info.orgX) + spriteInfo.offX - minX) / 16; // get global x
+                tileToPush.y = ((short)(info.orgY) + spriteInfo.offY - minY) / 16; // get global y
                 tileToPush.overlay = this;
                 _map[tileToPush.x, tileToPush.y] = tileToPush;
             }
