@@ -1306,7 +1306,6 @@ public class FieldMap : HonoBehavior
             {
                 screenY = (short)((screenY - (viewportHeight - (short)overlayPtr.h)) % (short)overlayPtr.h + (viewportHeight - (short)overlayPtr.h));
             }
-            bool flag = this.mapName == "FBG_N18_GTRE_MAP360_GT_GRD_0"; // 1000
             for (short i = 0; i < (short)spriteCount; i = (short)(i + 1))
             {
                 BGSPRITE_LOC_DEF bgsprite_LOC_DEF = spriteList[(int)i];
@@ -1379,7 +1378,7 @@ public class FieldMap : HonoBehavior
                     }
                 }
                 cacheLocalPos.y += 16f;
-                if (flag)
+                if (this.mapName == "FBG_N18_GTRE_MAP360_GT_GRD_0") // map 1000
                 {
                     cacheLocalPos.x += 8f;
                 }
@@ -1465,6 +1464,11 @@ public class FieldMap : HonoBehavior
                 bgsprite_LOC_DEF2.transform.localPosition = localPosition;
             }
             overlayPtr.transform.localPosition = new Vector3((float)overlayPtr.curX * 1f, (float)overlayPtr.curY * 1f, overlayPtr.transform.localPosition.z);
+        }
+        else if (this.mapName == "FBG_N18_GTRE_MAP360_GT_GRD_0" && ovrNdx == 12) // Clayra's Trunk text fix #367
+        {
+            overlayPtr.curZ = 0;
+            overlayPtr.transform.localPosition = new Vector3(overlayPtr.curX, overlayPtr.curY, overlayPtr.curZ);
         }
         else
         {
