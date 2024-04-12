@@ -453,8 +453,8 @@ namespace Memoria.Assets
 				// Update the overlay Org positions with their Cur positions
 				foreach (BGOVERLAY_DEF bgOverlay in scene.overlayList)
 				{
-					bgOverlay.orgX = bgOverlay.curX;
-					bgOverlay.orgY = bgOverlay.curY;
+					bgOverlay.orgX = (short)bgOverlay.curX;
+					bgOverlay.orgY = (short)bgOverlay.curY;
 					bgOverlay.orgZ = bgOverlay.curZ;
 				}
 
