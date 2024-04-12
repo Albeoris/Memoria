@@ -508,6 +508,7 @@ public class FieldMap : HonoBehavior
         808,
         908,
         931,
+        951, // loop
         1908,
         2600,
         2602,
@@ -728,7 +729,7 @@ public class FieldMap : HonoBehavior
         float CamPositionY = bgcam_DEF.centerOffset[1] - this.charOffset.y;
         //Log.Message("bgcam_DEF.centerOffset[0] begin center camera on player " + bgcam_DEF.centerOffset[0]);
 
-        if (Configuration.Graphics.InitializeWidescreenSupport())
+        if (Configuration.Graphics.InitializeWidescreenSupport() && map != 931)
         {
             Int32 mapWidth = NarrowMapList.MapWidth(map);
 
@@ -828,8 +829,8 @@ public class FieldMap : HonoBehavior
                 Prev_CamPositionY = CamPositionY;
             }
         }
-        //if (map != 931)
-            localPosition.x = CamPositionX;
+            
+        localPosition.x = CamPositionX;
         localPosition.y = CamPositionY;
 
         if (dbug)
@@ -1742,15 +1743,18 @@ public class FieldMap : HonoBehavior
             {
                 if (bgoverlay_DEF.ParallaxDepthX != 0 && bgoverlay_DEF.ParallaxDepthX != 32767)
                 {
-                    num = (bgoverlay_DEF.curX - bgoverlay_DEF.orgX) * 256 + bgoverlay_DEF.ParallaxDepthX;
-                    bgoverlay_DEF.curX = (num / 256) % bgoverlay_DEF.w + bgoverlay_DEF.orgX;
+                    num = (Int32)(bgoverlay_DEF.curX - bgoverlay_DEF.orgX) << 8 | (Int32)((Int32)bgoverlay_DEF.fracX & 255);
+                    num += (Int32)bgoverlay_DEF.ParallaxDepthX;
+                    bgoverlay_DEF.curX = (Int16)(((Int32)num >> 8) % (Int32)bgoverlay_DEF.w + (Int32)bgoverlay_DEF.orgX);
+                    bgoverlay_DEF.fracX = (Int16)((Int32)num & 255);
                 }
                 if (bgoverlay_DEF.ParallaxDepthY != 0 && bgoverlay_DEF.ParallaxDepthY != 32767)
                 {
-                    num = (bgoverlay_DEF.curY - bgoverlay_DEF.orgY) * 256 + bgoverlay_DEF.ParallaxDepthY;
-                    bgoverlay_DEF.curY = (num / 256) % bgoverlay_DEF.h + bgoverlay_DEF.orgY;
+                    num = (Int32)(bgoverlay_DEF.curY - bgoverlay_DEF.orgY) << 8 | (Int32)((Int32)bgoverlay_DEF.fracY & 255);
+                    num += (Int32)bgoverlay_DEF.ParallaxDepthY;
+                    bgoverlay_DEF.curY = (Int16)(((Int32)num >> 8) % (Int32)bgoverlay_DEF.h + (Int32)bgoverlay_DEF.orgY);
+                    bgoverlay_DEF.fracY = (Int16)((Int32)num & 255);
                 }
-                if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.Loop | curX:" + bgoverlay_DEF.curX + " curY:" + bgoverlay_DEF.curY);
             }
             if ((bgoverlay_DEF.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0) // loop in diagonal. Example 816
             {
@@ -1778,12 +1782,6 @@ public class FieldMap : HonoBehavior
                 
 
                 short map = FF9StateSystem.Common.FF9.fldMapNo;
-
-                /*if (map == 805 ||map == 808)
-                {
-                    bgoverlay_DEF.curX = this.mainCamera.transform.position.x;
-                }*/
-
                 if (Configuration.Graphics.InitializeWidescreenSupport())
                 {
                     switch (map)
@@ -1809,7 +1807,7 @@ public class FieldMap : HonoBehavior
                     }
                 }
 
-                if (true)// (SmoothCamActive)
+                if (true) // (SmoothCamActive)
                 {
                     foreach (KeyValuePair<int, int> entry in ParallaxToSmooth)
                     {
