@@ -8,6 +8,7 @@ using Memoria.Scripts;
 using Object = System.Object;
 using Memoria.Prime;
 using Assets.Scripts.Common;
+using static BGOVERLAY_DEF;
 
 [Flags]
 public enum FieldMapFlags : uint
@@ -436,6 +437,15 @@ public class FieldMap : HonoBehavior
         this.flags |= FieldMapFlags.Unknown128;
         this.walkMesh.ProcessBGI();
         this.walkMesh.UpdateActiveCameraWalkmesh();
+        SmoothCamDelay = 4;
+        if (SmoothCamNoSupport.Contains(FF9StateSystem.Common.FF9.fldMapNo))
+        {
+            SmoothCamActive = false;
+        }
+        else
+        {
+            SmoothCamActive = true;
+        }
         String camIdxIfCam = this.scene.cameraList.Count > 1 ? "-" + this.camIdx : "";
         PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}{camIdxIfCam} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
         if (dbug) Log.Message(" |_ SetCurrentCameraIndex | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
@@ -478,9 +488,34 @@ public class FieldMap : HonoBehavior
         this.walkMesh.CreateWalkMesh();
         this.walkMesh.CreateProjectedWalkMesh();
         this.walkMesh.BGI_simInit();
+        SmoothCamDelay = 4;
+        if (SmoothCamNoSupport.Contains(FF9StateSystem.Common.FF9.fldMapNo))
+        {
+            SmoothCamActive = false;
+        }
+        else
+        {
+            SmoothCamActive = true;
+        }
         FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
         if (dbug) Log.Message("_ LoadFieldMap | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
     }
+    public static readonly HashSet<Int32> SmoothCamNoSupport = new HashSet<Int32>()
+    {
+        507,
+        767,
+        805,
+        808,
+        908,
+        931,
+        1908,
+        2600,
+        2602,
+        2604,
+        2605,
+        2607,
+        2651,
+    };
 
     public void ActivateCamera()
     {
@@ -689,7 +724,8 @@ public class FieldMap : HonoBehavior
             return;
         BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.camIdx];
         Vector3 localPosition = camera.transform.localPosition;
-        float CamPosition = bgcam_DEF.centerOffset[0] + this.charOffset.x;
+        float CamPositionX = bgcam_DEF.centerOffset[0] + this.charOffset.x;
+        float CamPositionY = bgcam_DEF.centerOffset[1] - this.charOffset.y;
         //Log.Message("bgcam_DEF.centerOffset[0] begin center camera on player " + bgcam_DEF.centerOffset[0]);
 
         if (Configuration.Graphics.InitializeWidescreenSupport())
@@ -713,8 +749,8 @@ public class FieldMap : HonoBehavior
                 else if (map == 2923) // Exception in crystal world
                     threshmargin += 20;
 
-                CamPosition = (float)Math.Max(threshmargin, CamPosition);
-                CamPosition = (float)Math.Min(threshright, CamPosition);
+                CamPositionX = (float)Math.Max(threshmargin, CamPositionX);
+                CamPositionX = (float)Math.Min(threshright, CamPositionX);
             }
             else if (map == 1205 || map == 1652 || map == 2552 || map == 154 || map == 1215 || map == 1807) // A. Castle/Chapel, Iifa Tree/Roots, Earth Shrine/Interior, Alex grand hall
             {
@@ -723,14 +759,14 @@ public class FieldMap : HonoBehavior
 
                 Int32 threshright = bgcam_DEF.w - PsxFieldWidth - threshmargin;
 
-                CamPosition = (float)Math.Max(threshmargin, CamPosition);
-                CamPosition = (float)Math.Min(threshright, CamPosition);
+                CamPositionX = (float)Math.Max(threshmargin, CamPositionX);
+                CamPositionX = (float)Math.Min(threshright, CamPositionX);
             }
             else if (IsNarrowMap())
             {
                 if (mapWidth <= PsxFieldWidth && mapWidth > 320)
                 {
-                    CamPosition = (float)((bgcam_DEF.w - mapWidth) / 2);
+                    CamPositionX = (float)((bgcam_DEF.w - mapWidth) / 2);
                 }
             }
             if (map == 456 || map == 505 || map == 1153) // scenes extended left or right despite scrolling sky
@@ -738,13 +774,13 @@ public class FieldMap : HonoBehavior
                 switch (map) // offsets for scrolling maps stretched to WS
                 {
                     case 456: // Dali Mountain/Summit
-                        CamPosition = 160;
+                        CamPositionX = 160;
                         break;
                     case 505: // Cargo ship offset
-                        CamPosition = 105;
+                        CamPositionX = 105;
                         break;
                     case 1153: // Rose Rouge cockpit offset
-                        CamPosition = 175;
+                        CamPositionX = 175;
                         break;
                     default:
                         break;
@@ -754,13 +790,13 @@ public class FieldMap : HonoBehavior
                     switch (map) // offsets for scrolling maps stretched to WS
                     {
                         case 456: // Dali Mountain/Summit
-                            CamPosition = CamPosition + 35;
+                            CamPositionX = CamPositionX + 35;
                             break;
                         case 505: // Cargo ship offset
-                            CamPosition = CamPosition - 35;
+                            CamPositionX = CamPositionX - 35;
                             break;
                         case 1153: // Rose Rouge cockpit offset
-                            CamPosition = CamPosition - 35;
+                            CamPositionX = CamPositionX - 35;
                             break;
                         default:
                             break;
@@ -769,31 +805,44 @@ public class FieldMap : HonoBehavior
             }
             
         }
-        /*
-        if (CamPosition != Prev_CamPosition)
+
+
+        if (SmoothCamActive)// && map != 2605)
         {
-            float delta = Prev_CamPosition - CamPosition;
-            CamPosition = CamPosition + (delta * 0.9f);
-
-
-            Prev_CamPosition = CamPosition;
-        }*/
-
-        localPosition.x = CamPosition;
-        localPosition.y = bgcam_DEF.centerOffset[1] - this.charOffset.y;
+            Log.Message(""+SmoothCamActive);
+            if (SmoothCamDelay <= 0)
+            {
+                SmoothCamDelta.x = (Prev_CamPositionX - CamPositionX) * (float)(SmoothCamPercent / 100f); ;
+                //Log.Message("SmoothCamDelta.x:" + SmoothCamDelta.x + " = Prev_CamPositionX:" + Prev_CamPositionX + " - CamPositionX:" + CamPositionX);
+                CamPositionX += SmoothCamDelta.x;
+                Prev_CamPositionX = CamPositionX;
+                //Log.Message("CamPositionX:" + CamPositionX + " SmoothCamPercent:" + SmoothCamPercent);
+                SmoothCamDelta.y = Prev_CamPositionY - CamPositionY;
+                CamPositionY += SmoothCamDelta.y * (float)(SmoothCamPercent / 100f);
+                Prev_CamPositionY = CamPositionY;
+            }
+            else // if (SmoothCamDelay < 1000)
+            {
+                SmoothCamDelay -= 1;
+                Prev_CamPositionX = CamPositionX;
+                Prev_CamPositionY = CamPositionY;
+            }
+        }
+        //if (map != 931)
+            localPosition.x = CamPositionX;
+        localPosition.y = CamPositionY;
 
         if (dbug)
         {
-            if (CamPosition != Prev_CamPosition)
+            if (CamPositionX != Prev_CamPositionX)
             {
-                Prev_CamPosition = CamPosition;
-                Log.Message("CamPosition: " + CamPosition + " (curCamIdx: " + curCamIdx + " | camIdx: " + camIdx + ")");
+                //Prev_CamPositionX = CamPositionX;
+                Log.Message("CamPositionX: " + CamPositionX + " (curCamIdx: " + curCamIdx + " | camIdx: " + camIdx + ")");
             }
         }
 
         camera.transform.localPosition = localPosition;
     }
-    private float Prev_CamPosition;
 
     public void ff9fieldInternalBattleEncountService()
     {
@@ -969,6 +1018,7 @@ public class FieldMap : HonoBehavior
         if (flag != 0u)
         {
             if (dbug) Log.Message("EBG_overlaySetLoop (flag != 0u)");
+            //SmoothCamActive = false;
             bgOverlay.flags |= BGOVERLAY_DEF.OVERLAY_FLAG.Loop;
             if (this.scene.combineMeshes)
                 this.scene.CreateSeparateOverlay(this, this.UseUpscalFM, overlayNdx);
@@ -1010,6 +1060,7 @@ public class FieldMap : HonoBehavior
         {
             if (dbug) Log.Message("EBG_overlaySetScrollWithOffset (flag != 0u)");
             bgOverlay.flags |= BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset;
+            //SmoothCamActive = false;
             if (this.scene.combineMeshes)
                 this.scene.CreateSeparateOverlay(this, this.UseUpscalFM, overlayNdx);
         }
@@ -1236,6 +1287,7 @@ public class FieldMap : HonoBehavior
         if (flag != 0u)
         {
             if (dbug) Log.Message("EBG_overlaySetParallax " + overlayNdx + " | + BGOVERLAY_DEF.OVERLAY_FLAG.Parallax | ParallaxDepthX:" + dx + " ParallaxDepthY:" + dy);
+            //SmoothCamActive = false;
             bgOverlay.flags |= BGOVERLAY_DEF.OVERLAY_FLAG.Parallax;
         }
         else
@@ -1265,6 +1317,7 @@ public class FieldMap : HonoBehavior
 
     private void UpdateOverlay(Int32 ovrNdx, BGOVERLAY_DEF overlayPtr, Vector2 realVrp)
     {
+        //if (dbug && ovrNdx == 24) Log.Message("before: overlayPtr.curX:" + overlayPtr.curX);
         BGSCENE_DEF bgScene = this.scene;
         ushort spriteCount = overlayPtr.spriteCount;
         List<BGSPRITE_LOC_DEF> spriteList = overlayPtr.spriteList;
@@ -1279,7 +1332,7 @@ public class FieldMap : HonoBehavior
             {
                 anchorX = this.scrollWindowPos[(int)overlayPtr.viewportNdx][0];
                 anchorY = this.scrollWindowPos[(int)overlayPtr.viewportNdx][1];
-                //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Loop anchorX:" + anchorX + " anchorY:" + anchorY);
+                if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Loop anchorX:" + anchorX + " anchorY:" + anchorY);
             }
             else
             {
@@ -1312,7 +1365,7 @@ public class FieldMap : HonoBehavior
                 Vector3 cacheLocalPos = bgsprite_LOC_DEF.cacheLocalPos;
                 if ((overlayPtr.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
                 {
-                    if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored");
+                    //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored"); // example: 507, 931
                     short anchoredX = (short)(screenX + (short)bgsprite_LOC_DEF.offX);
                     if (overlayPtr.ParallaxDepthX != 0)
                     {
@@ -1475,11 +1528,12 @@ public class FieldMap : HonoBehavior
             overlayPtr.transform.localPosition = new Vector3(overlayPtr.curX, overlayPtr.curY, overlayPtr.transform.localPosition.z);
         }
 
+        //if (dbug && ovrNdx == 24) Log.Message("after: overlayPtr.curX:" + overlayPtr.curX);
         overlayPtr.scrX = screenX;
         overlayPtr.scrY = screenY;
     }
 
-    public void EBG_scene2DScroll(float destX, float destY, UInt16 frameCount, UInt32 scrollType)
+    /*public void EBG_scene2DScroll(float destX, float destY, UInt16 frameCount, UInt32 scrollType)
     {
         if (!IsActive)
             return;
@@ -1501,6 +1555,33 @@ public class FieldMap : HonoBehavior
             IsRotationScroll = true;
         this.flags |= FieldMapFlags.Unknown1;
         if (dbug) Log.Message("EBG_scene2DScroll | destX:" + destX + " destY:" + destY);
+    }*/
+
+    public void EBG_scene2DScroll(Int16 destX, Int16 destY, UInt16 frameCount, UInt32 scrollType)
+    {
+        if (!IsActive)
+            return;
+
+        this.startPoint[0] = (Int16)this.curVRP[0];
+        this.startPoint[1] = (Int16)this.curVRP[1];
+        BGCAM_DEF bgcam_DEF = this.scene.cameraList[this.curCamIdx];
+
+        if (Configuration.Graphics.WidescreenSupport)
+        {
+            if (destX > bgcam_DEF.vrpMaxX)
+                destX = bgcam_DEF.vrpMaxX;
+            else if (destX < bgcam_DEF.vrpMinX)
+                destX = bgcam_DEF.vrpMinX;
+        }
+
+        this.endPoint[0] = destX;
+        this.endPoint[1] = destY;
+        this.frameCount = (Int16)frameCount;
+        this.curFrame = 1;
+        this.flags &= ~FieldMapFlags.Generic15;
+        if (scrollType == (UInt32)FieldMapFlags.RotationScroll)
+            IsRotationScroll = true;
+        this.flags |= FieldMapFlags.Unknown1;
     }
 
     public void EBG_scene2DScrollRelease(Int32 frameCount, UInt32 scrollType)
@@ -1694,8 +1775,14 @@ public class FieldMap : HonoBehavior
                 bgoverlay_DEF.curX = num / 256;
                 num = (bgoverlay_DEF.orgY * 256) + (this.curVRP[1] - this.parallaxOrg[1]) * bgoverlay_DEF.ParallaxDepthY;
                 bgoverlay_DEF.curY = num / 256;
+                
 
                 short map = FF9StateSystem.Common.FF9.fldMapNo;
+
+                /*if (map == 805 ||map == 808)
+                {
+                    bgoverlay_DEF.curX = this.mainCamera.transform.position.x;
+                }*/
 
                 if (Configuration.Graphics.InitializeWidescreenSupport())
                 {
@@ -1721,6 +1808,33 @@ public class FieldMap : HonoBehavior
                             bgoverlay_DEF.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgoverlay_DEF.curX -= 8; break;
                     }
                 }
+
+                if (true)// (SmoothCamActive)
+                {
+                    foreach (KeyValuePair<int, int> entry in ParallaxToSmooth)
+                    {
+                        if (entry.Key == map)
+                        {
+                            if (SmoothCamDelay <= 0)
+                            {
+                                float delta = (bgoverlay_DEF.prevX - bgoverlay_DEF.curX) * (entry.Value / 100f);
+                                bgoverlay_DEF.prevX = bgoverlay_DEF.curX;
+                                bgoverlay_DEF.curX += delta;
+                                Log.Message("" + delta);
+                                delta = (bgoverlay_DEF.prevY - bgoverlay_DEF.curY) * (entry.Value / 100f);
+                                bgoverlay_DEF.prevY = bgoverlay_DEF.curY;
+                                bgoverlay_DEF.curY += delta;
+                            }
+                            else
+                            {
+                                SmoothCamDelay -= 1;
+                                bgoverlay_DEF.prevX = bgoverlay_DEF.curX;
+                                bgoverlay_DEF.prevY = bgoverlay_DEF.curY;
+                            }
+                        }
+                    }
+                }
+
                 //if (dbug) Log.Message("EBG_sceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax bgoverlay_DEF.curX" + bgoverlay_DEF.curX + " bgoverlay_DEF.fracY:" + bgoverlay_DEF.curY + " bgoverlay_DEF.transform.localScale:" + bgoverlay_DEF.transform.localScale);
             }
         }
@@ -1732,6 +1846,15 @@ public class FieldMap : HonoBehavior
         }
         return 1;
     }
+
+    public static readonly Dictionary<int, int> ParallaxToSmooth = new Dictionary<int, int>
+    {
+        // map, parallax smoothing percent
+        //{805, 90},
+        //{808, 90},
+        //{908,90},
+        {1009,80},
+    };
 
     public void EBG_sceneService2DScroll()
     {
@@ -1860,6 +1983,7 @@ public class FieldMap : HonoBehavior
             oPtr.curX = scaledValue / 65536;
             oPtr.fracX = (scaledValue / 256) % 256;
         }
+        if (dbug) Log.Message("EBG_alphaScaleX | scaledValue:" + scaledValue + " ScaleFactor:" + ScaleFactor + " oPtr.curX:" + oPtr.curX); 
         return oPtr.curX;
     }
 
@@ -1895,7 +2019,6 @@ public class FieldMap : HonoBehavior
             || this.curCamIdx < 0 
             || this.curCamIdx > this.scene.cameraList.Count)
             return;
-
         if (FF9StateSystem.Common.FF9.fldMapNo == 2512 && this.playerController == null) // CrutchForIpsenMap EVT_IPSEN_IP_CNT_2
         {
             this.playerController = ((Actor)PersistenSingleton<EventEngine>.Instance.GetObjUID(2)).fieldMapActorController;
@@ -1971,6 +2094,7 @@ public class FieldMap : HonoBehavior
         {
             dX = 0;
             dY = 0;
+            if (dbug) Log.Message("EBG_lookAtPoint is inactive " + dX + " " + dY + " " + this.curVRP.x + " " + this.curVRP.y);
         }
         else
         {
@@ -1981,6 +2105,7 @@ public class FieldMap : HonoBehavior
             this.curVRP[1] = Mathf.Clamp(aimY, camPtr.vrpMinY, camPtr.vrpMaxY) + camPtr.centerOffset[1] - HalfFieldHeight;
             dX = this.curVRP.x - x;
             dY = this.curVRP.y - y;
+            if (dbug) Log.Message("EBG_lookAtPoint " + dX + " " + dY + " " + this.curVRP.x + " " + this.curVRP.y);
         }
         
         return 1;
@@ -2366,4 +2491,11 @@ public class FieldMap : HonoBehavior
     }
 
     private bool dbug = true;
+
+
+    private float Prev_CamPositionX, Prev_CamPositionY;
+    private Int16 SmoothCamPercent = 90;
+    private Int16 SmoothCamDelay;
+    private Vector2 SmoothCamDelta;
+    private Boolean SmoothCamActive;
 }

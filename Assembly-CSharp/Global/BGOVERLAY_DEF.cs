@@ -75,6 +75,8 @@ public partial class BGOVERLAY_DEF
 	public float orgY;
 	public float curX;
 	public float curY;
+	public float prevX;
+	public float prevY;
 
 	public Int16 minX;
 	public Int16 maxX;

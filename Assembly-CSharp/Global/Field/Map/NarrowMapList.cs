@@ -187,7 +187,7 @@ public static class NarrowMapList
         0571,
         0574, // Lindblum/Festival
         0576, // Lindblum/Festival
-        0600, // L. Castle/Royal Cham.
+        //0600, // L. Castle/Royal Cham.
         0601, // L. Castle/Lift
         0606, // L. Castle/Event
         0607, // L. Castle/Hangar
@@ -225,6 +225,7 @@ public static class NarrowMapList
         0911,
         0913,
         0930, // Treno/Tot Residence
+        0931, // Treno/Tot Residence
         0932, // Treno/Event
         0950,
         0951, // Gargan Roo/Passage
@@ -513,6 +514,7 @@ public static class NarrowMapList
         //{mapNo,(actualWidth - 2)}
         {163,318},
         {606,318},
+        {931,322},
         {1050,316},
 
         {203,334},
