@@ -35,38 +35,27 @@ public class BGSPRITE_LOC_DEF
 		this.offX = (UInt16)BitUtil.ReadBits(input, ref b, 10);
 	}
 
+	public UInt16 clutX;
 	public UInt16 clutY;
 
-	public UInt16 clutX;
-
-	public Byte texY;
-
 	public Byte texX;
-
+	public Byte texY;
 	public Byte res;
-
 	public Byte alpha;
-
+	public Byte u;
 	public Byte v;
 
-	public Byte u;
-
+	public UInt16 w;
 	public UInt16 h;
 
-	public UInt16 w;
-
 	public Byte trans;
-
 	public Byte pad;
 
 	public Int32 depth;
 
-	public UInt16 offY;
-
 	public UInt16 offX;
-
+	public UInt16 offY;
 	public UInt16 atlasX;
-
 	public UInt16 atlasY;
 
 	public Int64 startOffset;
@@ -75,5 +64,5 @@ public class BGSPRITE_LOC_DEF
 
 	public Transform transform;
 
-    public Vector3 cacheLocalPos;
+	public Vector3 cacheLocalPos;
 }

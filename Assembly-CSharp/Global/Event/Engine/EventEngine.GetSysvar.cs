@@ -16,7 +16,7 @@ public partial class EventEngine
                 num = Comn.random8();
                 break;
             case 1:
-                num = this.fieldmap.GetCurrentCameraIndex();
+                num = this.fieldmap.camIdx;
                 break;
             case 2:
                 num = (Int32)this._context.usercontrol;
