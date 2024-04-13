@@ -10,6 +10,7 @@ using Memoria.Assets.Import.Graphics;
 using Memoria.Scripts;
 using Global.TileSystem;
 using System.Linq;
+using System.Globalization;
 
 #pragma warning disable 169
 #pragma warning disable 414
@@ -221,8 +222,8 @@ public class BGSCENE_DEF
         }
         else if (operation == "Position" && arguments.Length >= 3)
         {
-            float.TryParse(arguments[0], out bgOverlay.orgX);
-            float.TryParse(arguments[1], out bgOverlay.orgY);
+            float.TryParse(arguments[0], NumberStyles.Any, CultureInfo.InvariantCulture, out bgOverlay.orgX);
+            float.TryParse(arguments[1], NumberStyles.Any, CultureInfo.InvariantCulture, out bgOverlay.orgY);
             UInt16.TryParse(arguments[2], out bgOverlay.orgZ);
             bgOverlay.curX = bgOverlay.orgX;
             bgOverlay.curY = bgOverlay.orgY;
