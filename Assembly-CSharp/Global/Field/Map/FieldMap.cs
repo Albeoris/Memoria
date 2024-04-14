@@ -955,16 +955,21 @@ public class FieldMap : HonoBehavior
 
     public Int32 EBG_overlayDefineViewport(Int32 viewportNdx, Int16 x, Int16 y, Int16 w, Int16 h)
     {
+        if (dbug) Log.Message("EBG_overlayDefineViewport " + viewportNdx + " | x:" + x + " y:" + y + " w:" + w + " h:" + h);
+
+        if (!(viewportNdx >= 0 && viewportNdx < 4))
+            viewportNdx = 0;
+
         this.scrollWindowPos[viewportNdx][0] = x;
         this.scrollWindowPos[viewportNdx][1] = y;
         this.scrollWindowDim[viewportNdx][0] = w;
         this.scrollWindowDim[viewportNdx][1] = h;
-        if (dbug) Log.Message("EBG_overlayDefineViewport | x:" + x + " y:" + y + " w:" + w +" h:" + h);
         return 1;
     }
 
     public Int32 EBG_overlayDefineViewportAlpha(Int32 viewportNdx, Int32 alphaX, Int32 alphaY)
     {
+        if (dbug) Log.Message("EBG_overlayDefineViewportAlpha " + viewportNdx + " | alphaX:" + alphaX + " alphaY:" + alphaY);
         this.scrollWindowAlphaX[viewportNdx] = (Int16)alphaX;
         this.scrollWindowAlphaY[viewportNdx] = (Int16)alphaY;
         return 1;
@@ -1402,7 +1407,6 @@ public class FieldMap : HonoBehavior
         }
         else if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
         {
-
             if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset - current map: " + FF9StateSystem.Common.FF9.fldMapNo);
             short anchorX;
             short anchorY;
@@ -1513,7 +1517,7 @@ public class FieldMap : HonoBehavior
         if (scrollType == (UInt32)FieldMapFlags.RotationScroll)
             IsRotationScroll = true;
         this.flags |= FieldMapFlags.Unknown1;
-        if (dbug) Log.Message("EBG_scene2DScroll | X:" + startPoint.x + " -> " + endPoint.x + " | Y:" + startPoint.y + " -> " + endPoint.y + " |  frameCount:" + frameCount);
+        if (dbug) Log.Message("EBG_scene2DScroll | X:" + startPoint.x + " -> " + endPoint.x + " | Y:" + startPoint.y + " -> " + endPoint.y + " |  frameCount:" + frameCount + " scrollType:" + scrollType);
     }
 
     public void EBG_scene2DScrollRelease(Int32 frameCount, UInt32 scrollType)
@@ -1664,6 +1668,7 @@ public class FieldMap : HonoBehavior
 
     public Int32 SceneServiceScroll(BGSCENE_DEF bgScene)
     {
+        Int16 map = FF9StateSystem.Common.FF9.fldMapNo;
         Int32 overlayCount = (Int32)bgScene.overlayCount;
         List<BGOVERLAY_DEF> overlayList = bgScene.overlayList;
         for (Int32 i = 0; i < overlayCount; i++)
@@ -1715,7 +1720,6 @@ public class FieldMap : HonoBehavior
                 bgOverlay.curY = num / 256;
                 if (dbug) Log.Message("SceneServiceScroll " + i + " | Parallax | X:" + bgOverlay.curX + " Y:" + bgOverlay.curY);
 
-                Int16 map = FF9StateSystem.Common.FF9.fldMapNo;
 
                 if (Configuration.Graphics.InitializeWidescreenSupport())
                 {
@@ -1978,7 +1982,7 @@ public class FieldMap : HonoBehavior
         this.curVRP.y = Mathf.Clamp(aimY, bgCamera.vrpMinY, bgCamera.vrpMaxY) + bgCamera.centerOffset[1] - HalfFieldHeight;
         float dx = this.curVRP.x - prevVRPx;
         float dy = this.curVRP.y - prevVRPy;
-        if (dbug) Log.Message("EBG_lookAtPoint " + dx + " " + dy + " " + this.curVRP.x + " " + this.curVRP.y);
+        if (dbug) Log.Message("SceneService3DScroll | dx:" + dx + " dy:" + dy + " curVRP.x:" + this.curVRP.x + " curVRP.y:" + this.curVRP.y);
 
         UpdateOverlayXY(dx, dy);
     }
