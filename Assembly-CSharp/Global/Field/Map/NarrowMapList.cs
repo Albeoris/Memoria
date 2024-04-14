@@ -27,12 +27,16 @@ public static class NarrowMapList
     public static Boolean SpecificScenesNarrow(Int32 mapId)
     {
         Int32 currIndex = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
-        foreach (KeyValuePair<int, int> entry in SpecificScenesNarrow_List)
+        Int32 currCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+        
+        foreach (int[] entry in Map_Index_Narrow_List)
         {
-            if (mapId == entry.Key && currIndex == entry.Value)
+            if (entry[0] == mapId && entry[1] == currIndex)
                 return true;
-            // hall alexandria: meeting garnet, zorn thorn, steiner calling
-            if (mapId == 153 && (currIndex == 325 || currIndex == 328 || currIndex == 316)) 
+        }
+        foreach (int[] entry in Map_Counter_Narrow_List)
+        {
+            if (entry[0] == mapId && entry[1] == currCounter)
                 return true;
         }
         return false;
@@ -55,43 +59,36 @@ public static class NarrowMapList
         return width;
     }
 
-    public static readonly Dictionary<int, int> SpecificScenesNarrow_List = new Dictionary<int, int>
+    public static readonly int[][] Map_Index_Narrow_List =
     {
-        // {mapNo,index}
-        {50,0},      // first scene
-        {150,325},   // Zidane infiltrate Alex Castle
-        //{154,304},   // cutscene zorn&thorn
-        //{153,328}, // steiner guards call // can't have twice the same key TOFIX
-        {254,26},    // MBG103 - Evil Forest
-        {352,3},     // Arrival at Dali: vivi visible before sleeping
-        {355,18},    // Steiner to the barmaid
-        {600,32},    // Throne, meet cid
-        //{606,0},     // telescope
-        {615,57},    // Meet garnet on Lindblum castle
-        {1206,0},    // Queen and Kuja salon Alex, drug garnet
-        {1554,7},    // MBG109 - roots
-        {1602,16},   // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
-        {1823,331},  // Garnet coronation, garnet visible
-        {1815,0},    // Love quiproquo at the docks
-        {1816,315},  // Love quiproquo at the docks
-        {2007,2},    // MBG111 - Alex castle changing
-        {2211,8},    // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
-        {2705,-1},   // Pandemonium, you're not alone sequence, several glitches
-        {2706,-1},   // Pandemonium, you're not alone sequence, several glitches
-        {2707,-1},   // Pandemonium, you're not alone sequence, several glitches
-        {2708,-1},   // Pandemonium, you're not alone sequence, several glitches
-        {2711,0},    // Pandemonium, people are waiting in line after Kuja is defeated
-        {2905,154}   // MBG118 - Memoria pink castle
+        // [mapNo,index],
+        [50,0],      // first scene
+        [150,325],   // Zidane infiltrate Alex Castle
+        [254,26],    // MBG103 - Evil Forest
+        [352,3],     // Arrival at Dali: vivi visible before sleeping
+        [355,18],    // Steiner to the barmaid
+        [600,32],    // Throne, meet cid
+        //[606,0],     // telescope
+        [615,57],    // Meet garnet on Lindblum castle
+        [1206,0],    // Queen and Kuja salon Alex, drug garnet
+        [1602,16],   // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
+        [1823,331],  // Garnet coronation, garnet visible
+        [1815,0],    // Love quiproquo at the docks
+        [1816,315],  // Love quiproquo at the docks
+        [2007,2],    // MBG111 - Alex castle changing
+        [2211,8],    // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
+        [2705,-1],   // Pandemonium, you're not alone sequence, several glitches
+        [2706,-1],   // Pandemonium, you're not alone sequence, several glitches
+        [2707,-1],   // Pandemonium, you're not alone sequence, several glitches
+        [2708,-1],   // Pandemonium, you're not alone sequence, several glitches
+        [2711,0],    // Pandemonium, people are waiting in line after Kuja is defeated
     };
-
-    public static readonly Dictionary<Int32, HashSet<Int32>> ListPartialNarrow = new Dictionary<Int32, HashSet<Int32>>()
+    public static readonly int[][] Map_Counter_Narrow_List =
     {
-        // Not yet implemented
-        // For now, using this "per camera" narrow list bugs, surely because of the camera position shift in FieldMap.CenterCameraOnPlayer
-        //{ 0154, new HashSet<Int32>() { 0 } }, // A. Castle/Hallway
-        //{ 1215, new HashSet<Int32>() { 0 } }, // A. Castle/Hallway
-        //{ 1807, new HashSet<Int32>() { 0 } }, // A. Castle/Hallway
-
+        // [mapNo,counter],
+        [1554,6300],    // MBG109 - roots
+        [1554,6305],    // MBG109 - roots
+        [2905,11620],   // MBG118 - Memoria pink castle
     };
 
     public static readonly HashSet<Int32> ListFullNarrow = new HashSet<Int32>()
@@ -514,7 +511,6 @@ public static class NarrowMapList
         //{mapNo,(actualWidth - 2)}
         {163,318},
         {606,318},
-        //{931,322},
         {1050,316},
 
         {203,334},
