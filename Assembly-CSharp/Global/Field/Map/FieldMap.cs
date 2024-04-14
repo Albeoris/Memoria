@@ -802,13 +802,13 @@ public class FieldMap : HonoBehavior
             //Log.Message(""+SmoothCamActive);
             if (SmoothCamDelay <= 0)
             {
-                SmoothCamDelta.x = (Prev_CamPositionX - CamPositionX) * (float)(SmoothCamPercent / 100f); ;
+                SmoothCamDelta.x = (Prev_CamPositionX - CamPositionX) * (float)(SmoothCamPercent() / 100f); ;
                 //Log.Message("SmoothCamDelta.x:" + SmoothCamDelta.x + " = Prev_CamPositionX:" + Prev_CamPositionX + " - CamPositionX:" + CamPositionX);
                 CamPositionX += SmoothCamDelta.x;
                 Prev_CamPositionX = CamPositionX;
                 //Log.Message("CamPositionX:" + CamPositionX + " SmoothCamPercent:" + SmoothCamPercent);
                 SmoothCamDelta.y = Prev_CamPositionY - CamPositionY;
-                CamPositionY += SmoothCamDelta.y * (float)(SmoothCamPercent / 100f);
+                CamPositionY += SmoothCamDelta.y * (float)(SmoothCamPercent() / 100f);
                 Prev_CamPositionY = CamPositionY;
             }
             else // if (SmoothCamDelay < 1000)
@@ -2370,7 +2370,10 @@ public class FieldMap : HonoBehavior
 
 
     private float Prev_CamPositionX, Prev_CamPositionY;
-    private Int16 SmoothCamPercent = 90;
+    private Int16 SmoothCamPercent()
+    {
+        return (Int16)Mathf.Clamp(Configuration.Graphics.SmoothPlayerCamera, 0, 99);
+    }
     private Int16 SmoothCamDelay;
     private Vector2 SmoothCamDelta;
     private Boolean SmoothCamActive;
