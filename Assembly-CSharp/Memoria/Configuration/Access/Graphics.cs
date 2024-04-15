@@ -20,7 +20,7 @@ namespace Memoria
             public static Int32 GarnetHair => Instance._graphics.GarnetHair;
             public static Int32 TileSize => Instance._graphics.TileSize;
             public static Int32 AntiAliasing => Instance._graphics.AntiAliasing;
-            public static Int32 SmoothPlayerCamera => Instance._graphics.SmoothPlayerCamera;
+            public static Int32 CameraStabilizer => Instance._graphics.CameraStabilizer;
 
             private static volatile Boolean _widescreenSupport = InitializeWidescreenSupport();
 

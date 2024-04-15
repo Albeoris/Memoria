@@ -317,10 +317,10 @@ public class FieldMap : HonoBehavior
     {
         this.SceneService2DScroll();
         this.SceneService3DScroll();
-        this.SceneServiceScroll(this.scene);
         if (Configuration.Graphics.InitializeWidescreenSupport())
             OnWidescreenSupportChanged();
         this.CenterCameraOnPlayer();
+        this.SceneServiceScroll(this.scene);
         this.UpdateOverlayAll();
     }
 
@@ -427,15 +427,7 @@ public class FieldMap : HonoBehavior
         this.walkMesh.ProcessBGI();
         this.walkMesh.UpdateActiveCameraWalkmesh();
         SmoothCamDelay = 4;
-
-        if (SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo))
-        {
-            SmoothCamActive = false;
-        }
-        else
-        {
-            SmoothCamActive = true;
-        }
+        SmoothCamActive = (!SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo));
         String camIdxIfCam = this.scene.cameraList.Count > 1 ? "-" + this.camIdx : "";
         PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}{camIdxIfCam} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
         if (dbug) Log.Message(" |_ SetCurrentCameraIndex | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
@@ -479,36 +471,12 @@ public class FieldMap : HonoBehavior
         this.walkMesh.CreateProjectedWalkMesh();
         this.walkMesh.BGI_simInit();
         SmoothCamDelay = 4;
-        if (SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo))
-        {
-            SmoothCamActive = false;
-        }
-        else
-        {
-            SmoothCamActive = true;
-        }
+        SmoothCamActive = (!SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo));
         FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
         if (dbug) Log.Message("_ LoadFieldMap | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
     }
     public static readonly HashSet<Int32> SmoothCamExcludeMaps = new HashSet<Int32>()
     {
-        507,
-        767,
-        805,
-        808,
-        908,
-        931,
-        951, // loop
-        1651,
-        1657,
-        1758,
-        1908,
-        2600,
-        2602,
-        2604,
-        2605,
-        2607,
-        2651,
     };
 
     public void ActivateCamera()
@@ -799,22 +767,19 @@ public class FieldMap : HonoBehavior
             
         }
 
-
-        if (SmoothCamActive)// && map != 2605)
+        if (SmoothCamActive)
         {
-            //Log.Message(""+SmoothCamActive);
             if (SmoothCamDelay <= 0)
             {
-                SmoothCamDelta.x = (Prev_CamPositionX - CamPositionX) * (float)(SmoothCamPercent() / 100f); ;
-                //Log.Message("SmoothCamDelta.x:" + SmoothCamDelta.x + " = Prev_CamPositionX:" + Prev_CamPositionX + " - CamPositionX:" + CamPositionX);
+                SmoothCamDelta.x = (Prev_CamPositionX - CamPositionX) * (float)(SmoothCamPercent() / 100f);
                 CamPositionX += SmoothCamDelta.x;
                 Prev_CamPositionX = CamPositionX;
-                //Log.Message("CamPositionX:" + CamPositionX + " SmoothCamPercent:" + SmoothCamPercent);
-                SmoothCamDelta.y = Prev_CamPositionY - CamPositionY;
-                CamPositionY += SmoothCamDelta.y * (float)(SmoothCamPercent() / 100f);
+
+                SmoothCamDelta.y = (Prev_CamPositionY - CamPositionY) * (float)(SmoothCamPercent() / 100f);
+                CamPositionY += SmoothCamDelta.y;
                 Prev_CamPositionY = CamPositionY;
             }
-            else // if (SmoothCamDelay < 1000)
+            else
             {
                 SmoothCamDelay -= 1;
                 Prev_CamPositionX = CamPositionX;
@@ -1405,6 +1370,7 @@ public class FieldMap : HonoBehavior
                 }
                 cacheLocalPos.x -= (float)(this.scene.scrX + bgOverlay.curX);
                 cacheLocalPos.y -= (float)(this.scene.scrY + bgOverlay.curY);
+                //cacheLocalPos.x += SmoothCamDelta.x;
                 bgsprite_LOC_DEF.cacheLocalPos = cacheLocalPos;
                 bgsprite_LOC_DEF.transform.localPosition = cacheLocalPos;
             }
@@ -1711,13 +1677,10 @@ public class FieldMap : HonoBehavior
             }
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Parallax) != 0)
             {
-                float num;
-                num = (bgOverlay.orgX * 256) + (this.curVRP.x - this.parallaxOrg.x) * bgOverlay.ParallaxDepthX;
-                bgOverlay.curX = num / 256;
-                num = (bgOverlay.orgY * 256) + (this.curVRP.y - this.parallaxOrg.y) * bgOverlay.ParallaxDepthY;
-                bgOverlay.curY = num / 256;
-                if (dbug) Log.Message("SceneServiceScroll " + i + " | Parallax | X:" + bgOverlay.curX + " Y:" + bgOverlay.curY);
+                bgOverlay.curX = bgOverlay.orgX + ((this.curVRP.x + SmoothCamDelta.x - this.parallaxOrg.x) * (bgOverlay.ParallaxDepthX / 256f));
+                bgOverlay.curY = bgOverlay.orgY + ((this.curVRP.y - SmoothCamDelta.y - this.parallaxOrg.y) * (bgOverlay.ParallaxDepthY / 256f));
 
+                if (dbug) Log.Message("SceneServiceScroll " + i + " | Parallax | X:" + bgOverlay.curX + " Y:" + bgOverlay.curY + " SmoothCamDelta.x " + SmoothCamDelta.x);
 
                 if (Configuration.Graphics.InitializeWidescreenSupport())
                 {
@@ -2372,7 +2335,7 @@ public class FieldMap : HonoBehavior
     private float Prev_CamPositionX, Prev_CamPositionY;
     private Int16 SmoothCamPercent()
     {
-        return (Int16)Mathf.Clamp(Configuration.Graphics.SmoothPlayerCamera, 0, 99);
+        return (Int16)Mathf.Clamp(Configuration.Graphics.CameraStabilizer, 0, 99);
     }
     private Int16 SmoothCamDelay;
     private Vector2 SmoothCamDelta;

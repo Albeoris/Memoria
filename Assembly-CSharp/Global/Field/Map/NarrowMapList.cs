@@ -77,6 +77,7 @@ public static class NarrowMapList
         [1816,315],  // Love quiproquo at the docks
         [2007,2],    // MBG111 - Alex castle changing
         [2211,8],    // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
+        [2404,25],   // Baku seen waiting on the docks too soon
         [2705,-1],   // Pandemonium, you're not alone sequence, several glitches
         [2706,-1],   // Pandemonium, you're not alone sequence, several glitches
         [2707,-1],   // Pandemonium, you're not alone sequence, several glitches
@@ -379,7 +380,7 @@ public static class NarrowMapList
         2101, // Lindblum/B.D. Station
         2103, // Lindblum/Inn
         2108, // Lindblum/Synthesist
-        2109, // Lindblum/Wpn. Shop
+        //2109, // Lindblum/Wpn. Shop
         2112,
         2113,
         2114, // Lindblum/Theater Ave.
