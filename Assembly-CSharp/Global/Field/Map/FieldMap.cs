@@ -1683,11 +1683,11 @@ public class FieldMap : HonoBehavior
             {
                 if (bgOverlay.ParallaxDepthX != 0 && bgOverlay.ParallaxDepthX != 32767)
                 {
-                    bgOverlay.curX += bgOverlay.ParallaxDepthX / 256f;
+                    bgOverlay.curX = (bgOverlay.curX % (Int32)bgOverlay.w) + (bgOverlay.ParallaxDepthX / 256f);
                 }
                 if (bgOverlay.ParallaxDepthY != 0 && bgOverlay.ParallaxDepthY != 32767)
                 {
-                    bgOverlay.curY += bgOverlay.ParallaxDepthY / 256f;
+                    bgOverlay.curY = (bgOverlay.curY % (Int32)bgOverlay.h) + (bgOverlay.ParallaxDepthY / 256f);
                 }
                 if (dbug) Log.Message("SceneServiceScroll " + i + " | Loop | curX:" + bgOverlay.curX + " fracX:" + bgOverlay.fracX + " / curY:" + bgOverlay.curY + " fracY:" + bgOverlay.fracY);
             }
