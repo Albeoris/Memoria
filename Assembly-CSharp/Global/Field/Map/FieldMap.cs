@@ -1238,8 +1238,10 @@ public class FieldMap : HonoBehavior
     public Int32 EBG_overlaySetOrigin(Int32 overlayNdx, Int32 orgX, Int32 orgY)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
-        bgOverlay.curX = bgOverlay.orgX = orgX;
-        bgOverlay.curY = bgOverlay.orgY = orgY;
+        bgOverlay.curX = (float)orgX;
+        bgOverlay.curY = (float)orgY;
+        bgOverlay.orgX = (float)orgX;
+        bgOverlay.orgY = (float)orgY;
         this.flags |= FieldMapFlags.Unknown128;
         if (dbug) Log.Message("EBG_overlaySetOrigin " + overlayNdx + " | orgX:" + orgX + " orgY:" + orgY);
         return 1;
@@ -1684,8 +1686,8 @@ public class FieldMap : HonoBehavior
                 {
                     num = (Int32)(bgOverlay.curX - bgOverlay.orgX) << 8 | (Int32)((Int32)bgOverlay.fracX & 255);
                     num += (Int32)bgOverlay.ParallaxDepthX;
+                    bgOverlay.curX = (float)(((Int32)num >> 8) % (Int32)bgOverlay.w + (Int32)bgOverlay.orgX);// + (bgOverlay.fracX / 256);
                     bgOverlay.fracX = (Int16)((Int32)num & 255);
-                    bgOverlay.curX = (float)(((Int32)num / 256) % (Int32)bgOverlay.w + (Int32)bgOverlay.orgX) + (bgOverlay.fracX / 256);
                 }
                 if (bgOverlay.ParallaxDepthY != 0 && bgOverlay.ParallaxDepthY != 32767)
                 {
