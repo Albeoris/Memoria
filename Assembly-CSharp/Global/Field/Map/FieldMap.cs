@@ -1681,20 +1681,13 @@ public class FieldMap : HonoBehavior
             BGOVERLAY_DEF bgOverlay = overlayList[i];
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
             {
-                Int32 num;
                 if (bgOverlay.ParallaxDepthX != 0 && bgOverlay.ParallaxDepthX != 32767)
                 {
-                    num = (Int32)(bgOverlay.curX - bgOverlay.orgX) << 8 | (Int32)((Int32)bgOverlay.fracX & 255);
-                    num += (Int32)bgOverlay.ParallaxDepthX;
-                    bgOverlay.curX = (float)(((Int32)num >> 8) % (Int32)bgOverlay.w + (Int32)bgOverlay.orgX);// + (bgOverlay.fracX / 256);
-                    bgOverlay.fracX = (Int16)((Int32)num & 255);
+                    bgOverlay.curX += bgOverlay.ParallaxDepthX / 256f;
                 }
                 if (bgOverlay.ParallaxDepthY != 0 && bgOverlay.ParallaxDepthY != 32767)
                 {
-                    num = (Int32)(bgOverlay.curY - bgOverlay.orgY) << 8 | (Int32)((Int32)bgOverlay.fracY & 255);
-                    num += (Int32)bgOverlay.ParallaxDepthY;
-                    bgOverlay.curY = (Int16)(((Int32)num >> 8) % (Int32)bgOverlay.h + (Int32)bgOverlay.orgY);
-                    bgOverlay.fracY = (Int16)((Int32)num & 255);
+                    bgOverlay.curY += bgOverlay.ParallaxDepthY / 256f;
                 }
                 if (dbug) Log.Message("SceneServiceScroll " + i + " | Loop | curX:" + bgOverlay.curX + " fracX:" + bgOverlay.fracX + " / curY:" + bgOverlay.curY + " fracY:" + bgOverlay.fracY);
             }
