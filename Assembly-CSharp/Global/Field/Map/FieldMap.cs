@@ -2329,8 +2329,7 @@ public class FieldMap : HonoBehavior
         }
     }
 
-    private bool dbug = true;
-
+    private bool dbug = false;
 
     private float Prev_CamPositionX, Prev_CamPositionY;
     private Int16 SmoothCamPercent()

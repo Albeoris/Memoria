@@ -114,6 +114,27 @@ namespace Memoria.Launcher
 
             row++;
 
+            UiTextBlock CameraStabilizerText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.CameraStabilizer), row, 0, 1, 8);
+            CameraStabilizerText.Foreground = Brushes.White;
+            CameraStabilizerText.Margin = rowMargin;
+            CameraStabilizerText.ToolTip = Lang.Settings.CameraStabilizer_Tooltip;
+
+            row++;
+
+            UiTextBlock CameraStabilizerIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
+            CameraStabilizerIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(CameraStabilizer)) { Mode = BindingMode.TwoWay });
+            CameraStabilizerIndex.Foreground = Brushes.White;
+            CameraStabilizerIndex.Margin = rowMargin;
+            Slider CameraStabilizerSlider = AddUiElement(UiSliderFactory.Create(0), row, 1, 1, 7);
+            CameraStabilizerSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(CameraStabilizer)) { Mode = BindingMode.TwoWay });
+            CameraStabilizerSlider.TickFrequency = 1;
+            CameraStabilizerSlider.IsSnapToTickEnabled = true;
+            CameraStabilizerSlider.Minimum = 0;
+            CameraStabilizerSlider.Maximum = 99;
+            CameraStabilizerSlider.Margin = new Thickness(0, 0, 3, 0);
+
+            row++;
+
             UiTextBlock battleInterfaceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleInterface), row, 0, 1, 4);
             battleInterfaceText.Foreground = Brushes.White;
             battleInterfaceText.Margin = rowMargin;
@@ -346,6 +367,18 @@ namespace Memoria.Launcher
                 if (_sharedfps != value)
                 {
                     _sharedfps = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public Int16 CameraStabilizer
+        {
+            get { return _camerastabilizer; }
+            set
+            {
+                if (_camerastabilizer != value)
+                {
+                    _camerastabilizer = value;
                     OnPropertyChanged();
                 }
             }
@@ -605,7 +638,7 @@ namespace Memoria.Launcher
             }
             return false;
         }
-        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usegarnetfont, _scaledbattleui, _sharedfps;
+        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usegarnetfont, _scaledbattleui, _sharedfps, _camerastabilizer;
         private double _scaledbattleuiscale;
         private String _fontChoice;
         private UiComboBox _fontChoiceBox;
@@ -677,6 +710,15 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _sharedfps))
                     _sharedfps = 30;
+
+                value = iniFile.ReadValue("Graphics", "CameraStabilizer");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 85";
+                    OnPropertyChanged(nameof(CameraStabilizer));
+                }
+                if (!Int16.TryParse(value, out _camerastabilizer))
+                    _camerastabilizer = 30;
 
                 String valueMenuPos = iniFile.ReadValue("Interface", "BattleMenuPosX");
                 String valuePSXMenu = iniFile.ReadValue("Interface", "PSXBattleMenu");
@@ -789,6 +831,7 @@ namespace Memoria.Launcher
 
                 Refresh(nameof(WidescreenSupport));
                 Refresh(nameof(SharedFPS));
+                Refresh(nameof(CameraStabilizer));
                 Refresh(nameof(BattleInterface));
                 Refresh(nameof(SkipIntros));
                 Refresh(nameof(OrchestralMusic));
@@ -929,6 +972,9 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Graphics", "FieldFPS ", " " + SharedFPS);
                         iniFile.WriteValue("Graphics", "WorldFPS ", " " + SharedFPS);
                         iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                        break;
+                    case nameof(CameraStabilizer):
+                        iniFile.WriteValue("Graphics", "CameraStabilizer ", " " + CameraStabilizer);
                         break;
                     case nameof(BattleInterface):
                         iniFile.WriteValue("Interface", "BattleMenuPosX ", " " + (Int32)BattleInterfaceMenu.X);
