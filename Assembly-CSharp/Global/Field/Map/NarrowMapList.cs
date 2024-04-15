@@ -227,6 +227,7 @@ public static class NarrowMapList
         0950,
         0951, // Gargan Roo/Passage
         0954, // Gargan Roo/Tunnel
+        0955,
         1000, // Cleyra/Tree Roots
         1001, // Cleyra/Tree Roots
         1002, // Cleyra/Tree Roots
@@ -552,7 +553,7 @@ public static class NarrowMapList
         {1370,350},
         {1508,350},
         {1650,350},
-        {1657,348},
+        {1657,346},
         {1752,350},
         {1757,350},
         {1863,350},

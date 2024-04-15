@@ -499,6 +499,9 @@ public class FieldMap : HonoBehavior
         908,
         931,
         951, // loop
+        1651,
+        1657,
+        1758,
         1908,
         2600,
         2602,
@@ -1727,6 +1730,8 @@ public class FieldMap : HonoBehavior
                     {
                         case 1651: // 448
                             bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4; break;
+                        case 1657:
+                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.ParallaxDepthX / 256); break;
                         case 1758: // 448
                             bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4; break;
                         case 2600: // 464/416
