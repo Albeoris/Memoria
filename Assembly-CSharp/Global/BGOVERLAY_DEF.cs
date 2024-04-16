@@ -83,8 +83,8 @@ public partial class BGOVERLAY_DEF
 	public Int16 minY;
 	public Int16 maxY;
 
-	public Int16 scrX;
-	public Int16 scrY;
+	public float scrX;
+	public float scrY;
 
 	public Int16 ParallaxDepthX; // negative is slower (further) than main, positive faster (closer)
 	public Int16 ParallaxDepthY;

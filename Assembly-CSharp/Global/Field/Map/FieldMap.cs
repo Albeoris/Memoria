@@ -477,6 +477,7 @@ public class FieldMap : HonoBehavior
     }
     public static readonly HashSet<Int32> SmoothCamExcludeMaps = new HashSet<Int32>()
     {
+        767,
     };
 
     public void ActivateCamera()
@@ -1251,8 +1252,8 @@ public class FieldMap : HonoBehavior
         BGSCENE_DEF bgScene = this.scene;
         ushort spriteCount = bgOverlay.spriteCount;
         List<BGSPRITE_LOC_DEF> spriteList = bgOverlay.spriteList;
-        short screenX = (short)(bgOverlay.curX + bgScene.scrX);
-        short screenY = (short)(bgOverlay.curY + bgScene.scrY);
+        float screenX = bgOverlay.curX + bgScene.scrX;
+        float screenY = bgOverlay.curY + bgScene.scrY;
         if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
         {
             //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Loop"); // example: scrolling sky 505
@@ -1260,8 +1261,8 @@ public class FieldMap : HonoBehavior
             short anchorY;
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
             {
-                anchorX = this.scrollWindowPos[(int)bgOverlay.viewportNdx][0];
-                anchorY = this.scrollWindowPos[(int)bgOverlay.viewportNdx][1];
+                anchorX = (short)(this.scrollWindowPos[(int)bgOverlay.viewportNdx][0]);
+                anchorY = (short)(this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
                 if (dbug) Log.Message("UpdateOverlay " + ovrNdx + " | BGOVERLAY_DEF.OVERLAY_FLAG.Loop anchorX:" + anchorX + " anchorY:" + anchorY);
             }
             else
@@ -1276,21 +1277,22 @@ public class FieldMap : HonoBehavior
             if (bgOverlay.ParallaxDepthX < 0)
             {
                 short deltaX = (short)(256 - ((short)(bgOverlay.ParallaxDepthX) << 8 >> 8));
-                screenX = (short)((((int)bgOverlay.curX << 8 | (int)bgOverlay.fracX) + (int)deltaX >> 8) + (int)bgScene.scrX);
+                screenX = (float)((((int)bgOverlay.curX << 8 | (int)bgOverlay.fracX) + (int)deltaX >> 8) + (int)bgScene.scrX);
             }
             if (bgOverlay.ParallaxDepthY < 0)
             {
                 short deltaY = (short)(256 - ((short)(bgOverlay.ParallaxDepthX) << 8 >> 8));
-                screenY = (short)((((int)bgOverlay.curY << 8 | (int)bgOverlay.fracY) + (int)deltaY >> 8) + (int)bgScene.scrY);
+                screenY = (float)((((int)bgOverlay.curY << 8 | (int)bgOverlay.fracY) + (int)deltaY >> 8) + (int)bgScene.scrY);
             }
             if (bgOverlay.ParallaxDepthX != 0)
             {
-                screenX = (short)((screenX - (viewportWidth - (short)bgOverlay.w)) % (short)bgOverlay.w + (viewportWidth - (short)bgOverlay.w));
+                screenX = (float)((screenX - (viewportWidth - (short)bgOverlay.w)) % (short)bgOverlay.w + (viewportWidth - (short)bgOverlay.w));
             }
             if (bgOverlay.ParallaxDepthY != 0)
             {
-                screenY = (short)((screenY - (viewportHeight - (short)bgOverlay.h)) % (short)bgOverlay.h + (viewportHeight - (short)bgOverlay.h));
+                screenY = (float)((screenY - (viewportHeight - (short)bgOverlay.h)) % (short)bgOverlay.h + (viewportHeight - (short)bgOverlay.h));
             }
+            //screenX += (short)SmoothCamDelta.x;
 
             for (short i = 0; i < (short)spriteCount; i = (short)(i + 1))
             {
@@ -1368,9 +1370,8 @@ public class FieldMap : HonoBehavior
                 {
                     cacheLocalPos.x += 8f;
                 }
-                cacheLocalPos.x -= (float)(this.scene.scrX + bgOverlay.curX);
-                cacheLocalPos.y -= (float)(this.scene.scrY + bgOverlay.curY);
-                //cacheLocalPos.x += SmoothCamDelta.x;
+                cacheLocalPos.x -= (this.scene.scrX + bgOverlay.curX);
+                cacheLocalPos.y -= (this.scene.scrY + bgOverlay.curY);
                 bgsprite_LOC_DEF.cacheLocalPos = cacheLocalPos;
                 bgsprite_LOC_DEF.transform.localPosition = cacheLocalPos;
             }
@@ -1445,8 +1446,8 @@ public class FieldMap : HonoBehavior
                     localPosition.y = (float)num14;
                 }
                 localPosition.y += 16f;
-                localPosition.x -= (float)(this.scene.scrX + bgOverlay.curX);
-                localPosition.y -= (float)(this.scene.scrY + bgOverlay.curY);
+                localPosition.x -= (this.scene.scrX + bgOverlay.curX);
+                localPosition.y -= (this.scene.scrY + bgOverlay.curY);
                 bgsprite_LOC_DEF2.transform.localPosition = localPosition;
             }
             bgOverlay.transform.localPosition = new Vector3((float)bgOverlay.curX * 1f, (float)bgOverlay.curY * 1f, bgOverlay.transform.localPosition.z);
@@ -2327,7 +2328,7 @@ public class FieldMap : HonoBehavior
         }
     }
 
-    private bool dbug = false;
+    private bool dbug = true;
 
     private float Prev_CamPositionX, Prev_CamPositionY;
     private Int16 SmoothCamPercent()
