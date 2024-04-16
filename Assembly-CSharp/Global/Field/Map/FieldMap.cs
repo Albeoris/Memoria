@@ -1297,11 +1297,11 @@ public class FieldMap : HonoBehavior
             {
                 BGSPRITE_LOC_DEF bgSprite = spriteList[i];
                 Vector3 cacheLocalPos = bgSprite.cacheLocalPos;
+                float anchoredX = screenX + bgSprite.offX;
+                float anchoredY = screenY + bgSprite.offY;
                 if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
                 {
                     //if (dbug) Log.Message("UpdateOverlay " + ovrNdx + " | BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored"); // example: 507, 931, 951
-                    float anchoredX = screenX + bgSprite.offX;
-                    float anchoredY = screenY + bgSprite.offY;
                     if (bgOverlay.ParallaxDepthX != 0) // is moving on X axis
                     {
                         if (anchoredX + 16f - SmoothCamDelta.x >= bgOverlay.w)
@@ -1329,15 +1329,13 @@ public class FieldMap : HonoBehavior
                 }
                 else
                 {
-                    float anchoredX = screenX + bgSprite.offX;
-                    float anchoredY = screenY + bgSprite.offY;
                     if (bgOverlay.ParallaxDepthX != 0)
                     {
-                        if (anchoredX + 16f - SmoothCamDelta.x >= bgOverlay.w)
+                        if (anchoredX + 16f >= bgOverlay.w) // - SmoothCamDelta.x
                         {
                             anchoredX -= bgOverlay.w;
                         }
-                        else if (anchoredX <= -16f + SmoothCamDelta.x)
+                        else if (anchoredX <= -16f) // + SmoothCamDelta.x)
                         {
                             anchoredX += bgOverlay.w;
                         }
@@ -1349,13 +1347,13 @@ public class FieldMap : HonoBehavior
                     }
                     if (bgOverlay.ParallaxDepthY != 0)
                     {
-                        if (anchoredY + 16f - SmoothCamDelta.y >= (short)bgOverlay.h)
+                        if (anchoredY + 16f >= (short)bgOverlay.h) // - SmoothCamDelta.y
                         {
-                            anchoredY = anchoredY - bgOverlay.h;
+                            anchoredY -= bgOverlay.h;
                         }
-                        else if (anchoredY <= -16f + SmoothCamDelta.y)
+                        else if (anchoredY <= -16f) // + SmoothCamDelta.y)
                         {
-                            anchoredY = anchoredY + bgOverlay.h;
+                            anchoredY += bgOverlay.h;
                         }
                         cacheLocalPos.y = anchoredY + anchorY;
                     }
