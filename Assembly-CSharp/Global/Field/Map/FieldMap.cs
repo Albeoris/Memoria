@@ -1239,8 +1239,8 @@ public class FieldMap : HonoBehavior
         Vector2 realVrp = new Vector2();
         realVrp.x = this.curVRP.x + bgCamera.centerOffset[0] + HalfFieldWidth;
         realVrp.y = this.curVRP.y - bgCamera.centerOffset[1] + HalfFieldHeight;
-        this.scene.scrX = (Int16)(this.scene.curX + HalfFieldWidth - realVrp.x);
-        this.scene.scrY = (Int16)(this.scene.curY + HalfFieldHeight - realVrp.y);
+        this.scene.scrX = this.scene.curX + HalfFieldWidth - realVrp.x;
+        this.scene.scrY = this.scene.curY + HalfFieldHeight - realVrp.y;
         List<BGOVERLAY_DEF> overlayList = this.scene.overlayList;
         for (int i = 0; i < this.scene.overlayCount; i++)
             this.UpdateOverlay(i, overlayList[i], realVrp);
@@ -1257,18 +1257,18 @@ public class FieldMap : HonoBehavior
         if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
         {
             //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Loop"); // example: scrolling sky 505
-            short anchorX;
-            short anchorY;
+            float anchorX;
+            float anchorY;
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
             {
-                anchorX = (short)(this.scrollWindowPos[(int)bgOverlay.viewportNdx][0]);
-                anchorY = (short)(this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
+                anchorX = (float)(this.scrollWindowPos[(int)bgOverlay.viewportNdx][0]);
+                anchorY = (float)(this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
                 if (dbug) Log.Message("UpdateOverlay " + ovrNdx + " | BGOVERLAY_DEF.OVERLAY_FLAG.Loop anchorX:" + anchorX + " anchorY:" + anchorY);
             }
             else
             {
-                anchorX = (short)(HalfFieldWidth - realVrp[0] + (float)this.scrollWindowPos[(int)bgOverlay.viewportNdx][0]);
-                anchorY = (short)(HalfFieldHeight - realVrp[1] + (float)this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
+                anchorX = (float)(HalfFieldWidth - realVrp.x + (float)this.scrollWindowPos[(int)bgOverlay.viewportNdx][0]);
+                anchorY = (float)(HalfFieldHeight - realVrp.y + (float)this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
             }
 
             short viewportWidth = this.scrollWindowDim[(int)bgOverlay.viewportNdx][0];
@@ -1286,83 +1286,82 @@ public class FieldMap : HonoBehavior
             }
             if (bgOverlay.ParallaxDepthX != 0)
             {
-                screenX = (float)((screenX - (viewportWidth - (short)bgOverlay.w)) % (short)bgOverlay.w + (viewportWidth - (short)bgOverlay.w));
+                screenX = (float)((screenX - (viewportWidth - (float)bgOverlay.w)) % (float)bgOverlay.w + (viewportWidth - (float)bgOverlay.w));
             }
             if (bgOverlay.ParallaxDepthY != 0)
             {
-                screenY = (float)((screenY - (viewportHeight - (short)bgOverlay.h)) % (short)bgOverlay.h + (viewportHeight - (short)bgOverlay.h));
+                screenY = (float)((screenY - (viewportHeight - (float)bgOverlay.h)) % (float)bgOverlay.h + (viewportHeight - (float)bgOverlay.h));
             }
-            //screenX += (short)SmoothCamDelta.x;
 
-            for (short i = 0; i < (short)spriteCount; i = (short)(i + 1))
+            for (short i = 0; i < spriteCount; i++)
             {
-                BGSPRITE_LOC_DEF bgsprite_LOC_DEF = spriteList[(int)i];
-                Vector3 cacheLocalPos = bgsprite_LOC_DEF.cacheLocalPos;
+                BGSPRITE_LOC_DEF bgSprite = spriteList[i];
+                Vector3 cacheLocalPos = bgSprite.cacheLocalPos;
                 if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
                 {
                     //if (dbug) Log.Message("UpdateOverlay " + ovrNdx + " | BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored"); // example: 507, 931, 951
-                    short anchoredX = (short)(screenX + bgsprite_LOC_DEF.offX);
-                    short anchoredY = (short)(screenY + bgsprite_LOC_DEF.offY);
+                    float anchoredX = screenX + bgSprite.offX;
+                    float anchoredY = screenY + bgSprite.offY;
                     if (bgOverlay.ParallaxDepthX != 0) // is moving on X axis
                     {
-                        if (anchoredX + 16 - (short)(SmoothCamDelta.x) >= (short)bgOverlay.w)
+                        if (anchoredX + 16f - SmoothCamDelta.x >= bgOverlay.w)
                         {
-                            anchoredX -= (short)bgOverlay.w;
+                            anchoredX -= bgOverlay.w;
                         }
-                        else if (anchoredX <= -16 + (short)(SmoothCamDelta.x))
+                        else if (anchoredX <= -16f + SmoothCamDelta.x)
                         {
-                            anchoredX += (short)bgOverlay.w;
+                            anchoredX += bgOverlay.w;
                         }
                     }
                     if (bgOverlay.ParallaxDepthY != 0) // is moving on Y axis
                     {
-                        if (anchoredY + 16 - (short)(SmoothCamDelta.y) >= (short)bgOverlay.h)
+                        if (anchoredY + 16f - SmoothCamDelta.y >= bgOverlay.h)
                         {
-                            anchoredY -= (short)bgOverlay.h;
+                            anchoredY -= bgOverlay.h;
                         }
-                        else if (anchoredY <= -16 + (short)(SmoothCamDelta.y))
+                        else if (anchoredY <= -16f + SmoothCamDelta.y)
                         {
-                            anchoredY += (short)bgOverlay.h;
+                            anchoredY += bgOverlay.h;
                         }
                     }
-                    cacheLocalPos.x = (float)(anchoredX + anchorX);
-                    cacheLocalPos.y = (float)(anchoredY + anchorY);
+                    cacheLocalPos.x = anchoredX + anchorX;
+                    cacheLocalPos.y = anchoredY + anchorY;
                 }
                 else
                 {
-                    short anchoredX = (short)(screenX + (short)bgsprite_LOC_DEF.offX);
+                    float anchoredX = screenX + bgSprite.offX;
+                    float anchoredY = screenY + bgSprite.offY;
                     if (bgOverlay.ParallaxDepthX != 0)
                     {
-                        if (anchoredX + 16 >= (short)bgOverlay.w)
+                        if (anchoredX + 16f - SmoothCamDelta.x >= bgOverlay.w)
                         {
-                            anchoredX -= (short)(bgOverlay.w);
+                            anchoredX -= bgOverlay.w;
                         }
-                        else if (anchoredX <= -16)
+                        else if (anchoredX <= -16f + SmoothCamDelta.x)
                         {
-                            anchoredX += (short)(bgOverlay.w);
+                            anchoredX += bgOverlay.w;
                         }
-                        cacheLocalPos.x = (float)(anchoredX + anchorX);
+                        cacheLocalPos.x = anchoredX + anchorX;
                     }
                     else
                     {
-                        cacheLocalPos.x = (float)anchoredX;
+                        cacheLocalPos.x = anchoredX;
                     }
-                    short anchoredY = (short)(screenY + (short)bgsprite_LOC_DEF.offY);
                     if (bgOverlay.ParallaxDepthY != 0)
                     {
-                        if (anchoredY + 16 >= (short)bgOverlay.h)
+                        if (anchoredY + 16f - SmoothCamDelta.y >= (short)bgOverlay.h)
                         {
-                            anchoredY = (short)(anchoredY - (short)bgOverlay.h);
+                            anchoredY = anchoredY - bgOverlay.h;
                         }
-                        else if (anchoredY <= -16)
+                        else if (anchoredY <= -16f + SmoothCamDelta.y)
                         {
-                            anchoredY = (short)(anchoredY + (short)bgOverlay.h);
+                            anchoredY = anchoredY + bgOverlay.h;
                         }
-                        cacheLocalPos.y = (float)(anchoredY + anchorY);
+                        cacheLocalPos.y = anchoredY + anchorY;
                     }
                     else
                     {
-                        cacheLocalPos.y = (float)anchoredY;
+                        cacheLocalPos.y = anchoredY;
                     }
                 }
                 cacheLocalPos.y += 16f;
@@ -1372,8 +1371,8 @@ public class FieldMap : HonoBehavior
                 }
                 cacheLocalPos.x -= (this.scene.scrX + bgOverlay.curX);
                 cacheLocalPos.y -= (this.scene.scrY + bgOverlay.curY);
-                bgsprite_LOC_DEF.cacheLocalPos = cacheLocalPos;
-                bgsprite_LOC_DEF.transform.localPosition = cacheLocalPos;
+                bgSprite.cacheLocalPos = cacheLocalPos;
+                bgSprite.transform.localPosition = cacheLocalPos;
             }
             bgOverlay.transform.localPosition = new Vector3((float)bgOverlay.curX, (float)bgOverlay.curY, bgOverlay.transform.localPosition.z);
         }
@@ -1405,14 +1404,14 @@ public class FieldMap : HonoBehavior
                 screenX = (short)((screenX - (num6 - (short)bgOverlay.w)) % (short)bgOverlay.w + (num6 - (short)bgOverlay.w));
                 screenY = (short)(screenY + screenX * bgOverlay.ParallaxDepthY / (short)bgOverlay.w % (short)bgOverlay.h);
             }
-            for (short i = 0; i < (short)spriteCount; i = (short)(i + 1))
+            for (short i = 0; i < spriteCount; i++)
             {
-                BGSPRITE_LOC_DEF bgsprite_LOC_DEF2 = spriteList[(int)i];
-                Vector3 localPosition = bgsprite_LOC_DEF2.transform.localPosition;
+                BGSPRITE_LOC_DEF bgSprite = spriteList[i];
+                Vector3 localPosition = bgSprite.transform.localPosition;
                 if (bgOverlay.isXOffset != 0)
                 {
                     short xOffset = 0;
-                    short yOffset = (short)(screenY + (short)bgsprite_LOC_DEF2.offY);
+                    short yOffset = (short)(screenY + (short)bgSprite.offY);
                     if (yOffset + 16 >= (short)bgOverlay.h)
                     {
                         yOffset = (short)(yOffset - (short)bgOverlay.h);
@@ -1423,14 +1422,14 @@ public class FieldMap : HonoBehavior
                         yOffset = (short)(yOffset + (short)bgOverlay.h);
                         xOffset = (short)(bgOverlay.ParallaxDepthX);
                     }
-                    short xOffsetAdjusted = (short)(screenX + (short)bgsprite_LOC_DEF2.offX + xOffset);
+                    short xOffsetAdjusted = (short)(screenX + (short)bgSprite.offX + xOffset);
                     localPosition.x = (float)xOffsetAdjusted;
                     localPosition.y = (float)(yOffset + anchorY);
                 }
                 else
                 {
                     short xOffset = 0;
-                    short xOffsetAdjusted = (short)(screenX + (short)bgsprite_LOC_DEF2.offX);
+                    short xOffsetAdjusted = (short)(screenX + (short)bgSprite.offX);
                     if (xOffsetAdjusted + 16 >= (short)bgOverlay.w)
                     {
                         xOffsetAdjusted = (short)(xOffsetAdjusted - (short)bgOverlay.w);
@@ -1441,14 +1440,14 @@ public class FieldMap : HonoBehavior
                         xOffsetAdjusted = (short)(xOffsetAdjusted + (short)bgOverlay.w);
                         xOffset = (short)(bgOverlay.ParallaxDepthY);
                     }
-                    short num14 = (short)(screenY + (short)bgsprite_LOC_DEF2.offY + xOffset);
+                    short num14 = (short)(screenY + (short)bgSprite.offY + xOffset);
                     localPosition.x = (float)(xOffsetAdjusted + anchorX);
                     localPosition.y = (float)num14;
                 }
                 localPosition.y += 16f;
                 localPosition.x -= (this.scene.scrX + bgOverlay.curX);
                 localPosition.y -= (this.scene.scrY + bgOverlay.curY);
-                bgsprite_LOC_DEF2.transform.localPosition = localPosition;
+                bgSprite.transform.localPosition = localPosition;
             }
             bgOverlay.transform.localPosition = new Vector3((float)bgOverlay.curX * 1f, (float)bgOverlay.curY * 1f, bgOverlay.transform.localPosition.z);
         }
