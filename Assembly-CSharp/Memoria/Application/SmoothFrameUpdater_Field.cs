@@ -76,7 +76,7 @@ namespace Memoria
 			{
 				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
 				{
-					if (bgLayer.transform != null && !((bgLayer.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0) ) // && (bgLayer.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Active) != 0)
+					if (bgLayer.transform != null && !((bgLayer.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0) && !((bgLayer.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0) ) // && (bgLayer.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Active) != 0)
 					{
 						if (bgLayer._smoothUpdateRegistered)
 							bgLayer._smoothUpdatePosPrevious = bgLayer._smoothUpdatePosActual;
