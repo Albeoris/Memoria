@@ -970,9 +970,7 @@ public class FieldMap : HonoBehavior
             if (dbug) Log.Message("EBG_overlaySetLoop " + overlayNdx + " | noloop | dx:" + dx + " dy:" + dy);
         }
         bgOverlay.ParallaxDepthX = (Int16)dx;
-        bgOverlay.fracX = 0;
         bgOverlay.ParallaxDepthY = (Int16)dy;
-        bgOverlay.fracY = 0;
         return 1;
     }
 
@@ -1024,8 +1022,6 @@ public class FieldMap : HonoBehavior
             bgOverlay.ParallaxDepthY = (Int16)offset;
             bgOverlay.isXOffset = 0;
         }
-        bgOverlay.fracX = 0;
-        bgOverlay.fracY = 0;
         return 1;
     }
 
@@ -1277,12 +1273,12 @@ public class FieldMap : HonoBehavior
             if (bgOverlay.ParallaxDepthX < 0)
             {
                 short deltaX = (short)(256 - ((short)(bgOverlay.ParallaxDepthX) << 8 >> 8));
-                screenX = (float)((((int)bgOverlay.curX << 8 | (int)bgOverlay.fracX) + (int)deltaX >> 8) + (int)bgScene.scrX);
+                screenX = (float)((((int)bgOverlay.curX << 8) + (int)deltaX >> 8) + (int)bgScene.scrX);
             }
             if (bgOverlay.ParallaxDepthY < 0)
             {
                 short deltaY = (short)(256 - ((short)(bgOverlay.ParallaxDepthX) << 8 >> 8));
-                screenY = (float)((((int)bgOverlay.curY << 8 | (int)bgOverlay.fracY) + (int)deltaY >> 8) + (int)bgScene.scrY);
+                screenY = (float)((((int)bgOverlay.curY << 8) + (int)deltaY >> 8) + (int)bgScene.scrY);
             }
             if (bgOverlay.ParallaxDepthX != 0)
             {
@@ -1653,23 +1649,20 @@ public class FieldMap : HonoBehavior
                 {
                     bgOverlay.curY = (bgOverlay.curY % (Int32)bgOverlay.h) + (bgOverlay.ParallaxDepthY / 256f);
                 }
-                if (dbug) Log.Message("SceneServiceScroll " + i + " | Loop | curX:" + bgOverlay.curX + " fracX:" + bgOverlay.fracX + " / curY:" + bgOverlay.curY + " fracY:" + bgOverlay.fracY);
+                if (dbug) Log.Message("SceneServiceScroll " + i + " | Loop | curX:" + bgOverlay.curX + " / curY:" + bgOverlay.curY);
             }
-            if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0) // loop in diagonal. Example 816
+            if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0) // loop in diagonal (816) or loop + parallax (2904)
             {
-                float num;
                 if (bgOverlay.isXOffset != 0)
                 {
                     if (bgOverlay.ParallaxDepthY != 32767)
                     {
-                        num = (bgOverlay.curY * 256) + bgOverlay.ParallaxDepthY;
-                        bgOverlay.curY = (num / 256) % bgOverlay.h;
+                        bgOverlay.curY = bgOverlay.curY % (Int32)bgOverlay.h + (bgOverlay.ParallaxDepthY / 256f);
                     }
                 }
                 else if (bgOverlay.ParallaxDepthX != 32767)
                 {
-                    num = (bgOverlay.curX * 256) + bgOverlay.ParallaxDepthX;
-                    bgOverlay.curX = (num / 256) % bgOverlay.w;
+                    bgOverlay.curX = bgOverlay.curX % (Int32)bgOverlay.w + (bgOverlay.ParallaxDepthX / 256f);
                 }
                 if (dbug) Log.Message("SceneServiceScroll " + i + " | ScrollWithOffset | X:" + bgOverlay.curX + " Y:" + bgOverlay.curY);
             }
@@ -1706,33 +1699,6 @@ public class FieldMap : HonoBehavior
                             bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 8; break;
                     }
                 }
-
-                if (true) // (SmoothCamActive)
-                {
-                    foreach (KeyValuePair<int, int> entry in ParallaxToSmooth)
-                    {
-                        if (entry.Key == map)
-                        {
-                            if (SmoothCamDelay <= 0)
-                            {
-                                float delta = (bgOverlay.prevX - bgOverlay.curX) * (entry.Value / 100f);
-                                bgOverlay.prevX = bgOverlay.curX;
-                                bgOverlay.curX += delta;
-                                delta = (bgOverlay.prevY - bgOverlay.curY) * (entry.Value / 100f);
-                                bgOverlay.prevY = bgOverlay.curY;
-                                bgOverlay.curY += delta;
-                            }
-                            else
-                            {
-                                SmoothCamDelay -= 1;
-                                bgOverlay.prevX = bgOverlay.curX;
-                                bgOverlay.prevY = bgOverlay.curY;
-                            }
-                        }
-                    }
-                }
-
-                //if (dbug) Log.Message("SceneServiceScroll " + i + " | BGOVERLAY_DEF.OVERLAY_FLAG.Parallax bgoverlay_DEF.curX" + bgoverlay_DEF.curX + " bgoverlay_DEF.fracY:" + bgoverlay_DEF.curY + " bgoverlay_DEF.transform.localScale:" + bgoverlay_DEF.transform.localScale);
             }
         }
         if ((this.flags & FieldMapFlags.Unknown128) != 0u)
@@ -1743,12 +1709,6 @@ public class FieldMap : HonoBehavior
         }
         return 1;
     }
-
-    public static readonly Dictionary<int, int> ParallaxToSmooth = new Dictionary<int, int>
-    {
-        // map, parallax smoothing percent
-        {1009,80},
-    };
 
     public void SceneService2DScroll()
     {
@@ -1852,8 +1812,7 @@ public class FieldMap : HonoBehavior
         }
         scaledValue = (bgOverlay.curX * 65536) - scaledValue * Math3D.Fixed2Float((int)Math.Abs(ScaleFactor));
         bgOverlay.curX = scaledValue / 65536;
-        //bgOverlay.fracX = (Int16)((Int32)scaledValue >> 8 & 255);
-        if (dbug) Log.Message("EBG_alphaScaleX | scaledValue:" + scaledValue + " ScaleFactor:" + ScaleFactor + " curX:" + bgOverlay.curX + " fracX:" + bgOverlay.fracX); 
+        if (dbug) Log.Message("EBG_alphaScaleX | scaledValue:" + scaledValue + " ScaleFactor:" + ScaleFactor + " curX:" + bgOverlay.curX); 
         return bgOverlay.curX;
     }
 
@@ -1867,8 +1826,7 @@ public class FieldMap : HonoBehavior
         }
         scaledValue = (bgOverlay.curY * 65536) - Math3D.Float2Fixed(Math3D.Fixed2Float((int)scaledValue) * Math3D.Fixed2Float((int)Math.Abs(ScaleFactor)));
         bgOverlay.curY = scaledValue / 65536;
-        //bgOverlay.fracY = (Int16)((Int32)scaledValue >> 8 & 255);
-        if (dbug) Log.Message("EBG_alphaScaleY | scaledValue:" + scaledValue + " ScaleFactor:" + ScaleFactor + " curY:" + bgOverlay.curY + " fracY:" + bgOverlay.fracY);
+        if (dbug) Log.Message("EBG_alphaScaleY | scaledValue:" + scaledValue + " ScaleFactor:" + ScaleFactor + " curY:" + bgOverlay.curY);
         return bgOverlay.curY;
     }
 
