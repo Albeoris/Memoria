@@ -1298,29 +1298,29 @@ public class FieldMap : HonoBehavior
                 Vector3 cacheLocalPos = bgsprite_LOC_DEF.cacheLocalPos;
                 if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
                 {
-                    //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored"); // example: 507, 931
-                    short anchoredX = (short)(screenX + (short)bgsprite_LOC_DEF.offX);
-                    if (bgOverlay.ParallaxDepthX != 0)
+                    //if (dbug) Log.Message("UpdateOverlay " + ovrNdx + " | BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored"); // example: 507, 931, 951
+                    short anchoredX = (short)(screenX + bgsprite_LOC_DEF.offX);
+                    short anchoredY = (short)(screenY + bgsprite_LOC_DEF.offY);
+                    if (bgOverlay.ParallaxDepthX != 0) // is moving on X axis
                     {
-                        if (anchoredX + 16 >= (short)bgOverlay.w)
+                        if (anchoredX + 16 - (short)(SmoothCamDelta.x) >= (short)bgOverlay.w)
                         {
-                            anchoredX = (short)(anchoredX - (short)bgOverlay.w);
+                            anchoredX -= (short)bgOverlay.w;
                         }
-                        else if (anchoredX <= -16)
+                        else if (anchoredX <= -16 + (short)(SmoothCamDelta.x))
                         {
-                            anchoredX = (short)(anchoredX + (short)bgOverlay.w);
+                            anchoredX += (short)bgOverlay.w;
                         }
                     }
-                    short anchoredY = (short)(screenY + (short)bgsprite_LOC_DEF.offY);
-                    if (bgOverlay.ParallaxDepthY != 0)
+                    if (bgOverlay.ParallaxDepthY != 0) // is moving on Y axis
                     {
-                        if (anchoredY + 16 >= (short)bgOverlay.h)
+                        if (anchoredY + 16 - (short)(SmoothCamDelta.y) >= (short)bgOverlay.h)
                         {
-                            anchoredY = (short)(anchoredY - (short)bgOverlay.h);
+                            anchoredY -= (short)bgOverlay.h;
                         }
-                        else if (anchoredY <= -16)
+                        else if (anchoredY <= -16 + (short)(SmoothCamDelta.y))
                         {
-                            anchoredY = (short)(anchoredY + (short)bgOverlay.h);
+                            anchoredY += (short)bgOverlay.h;
                         }
                     }
                     cacheLocalPos.x = (float)(anchoredX + anchorX);
@@ -1333,11 +1333,11 @@ public class FieldMap : HonoBehavior
                     {
                         if (anchoredX + 16 >= (short)bgOverlay.w)
                         {
-                            anchoredX = (short)(anchoredX - (short)bgOverlay.w);
+                            anchoredX -= (short)(bgOverlay.w);
                         }
                         else if (anchoredX <= -16)
                         {
-                            anchoredX = (short)(anchoredX + (short)bgOverlay.w);
+                            anchoredX += (short)(bgOverlay.w);
                         }
                         cacheLocalPos.x = (float)(anchoredX + anchorX);
                     }
@@ -1374,7 +1374,7 @@ public class FieldMap : HonoBehavior
                 bgsprite_LOC_DEF.cacheLocalPos = cacheLocalPos;
                 bgsprite_LOC_DEF.transform.localPosition = cacheLocalPos;
             }
-            bgOverlay.transform.localPosition = new Vector3((float)bgOverlay.curX * 1f, (float)bgOverlay.curY * 1f, bgOverlay.transform.localPosition.z);
+            bgOverlay.transform.localPosition = new Vector3((float)bgOverlay.curX, (float)bgOverlay.curY, bgOverlay.transform.localPosition.z);
         }
         else if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
         {
@@ -1827,8 +1827,7 @@ public class FieldMap : HonoBehavior
                     bgOverlay.curX += dx;
                 if (bgOverlay.ParallaxDepthY != 0)
                     bgOverlay.curY += dy;
-
-                if (dbug) Log.Message("UpdateOverlayXY " + overlayNdx + " | Loop | ParallaxDepthX:" + bgOverlay.ParallaxDepthX + " curX:" + bgOverlay.curX + " ParallaxDepthY:" + bgOverlay.ParallaxDepthY + " curY:" + bgOverlay.curY);
+                if (dbug) Log.Message("UpdateOverlayXY " + overlayNdx + " | Loop | dx:" + dx + " ParallaxDepthX:" + bgOverlay.ParallaxDepthX + " curX:" + bgOverlay.curX + " ParallaxDepthY:" + bgOverlay.ParallaxDepthY + " curY:" + bgOverlay.curY);
                 this.alphaScaleX(bgOverlay, dx);
                 this.alphaScaleY(bgOverlay, dy);
             }
@@ -1838,8 +1837,7 @@ public class FieldMap : HonoBehavior
                     bgOverlay.curY += dy;
                 else
                     bgOverlay.curX += dx;
-
-                if (dbug) Log.Message("UpdateOverlayXY " + overlayNdx + " | ScrollWithOffset | curX:" + bgOverlay.curX + " curY:" + bgOverlay.curY);
+                if (dbug) Log.Message("UpdateOverlayXY " + overlayNdx + " | dx:" + dx + " ScrollWithOffset | curX:" + bgOverlay.curX + " curY:" + bgOverlay.curY);
                 this.alphaScaleX(bgOverlay, dx);
                 this.alphaScaleY(bgOverlay, dy);
             }
@@ -1854,7 +1852,7 @@ public class FieldMap : HonoBehavior
         {
             return bgOverlay.curX;
         }
-        scaledValue = (bgOverlay.curX * 65536) - Math3D.Float2Fixed(Math3D.Fixed2Float((int)scaledValue) * Math3D.Fixed2Float((int)Math.Abs(ScaleFactor)));
+        scaledValue = (bgOverlay.curX * 65536) - scaledValue * Math3D.Fixed2Float((int)Math.Abs(ScaleFactor));
         bgOverlay.curX = scaledValue / 65536;
         bgOverlay.fracX = (Int16)((Int32)scaledValue >> 8 & 255);
         if (dbug) Log.Message("EBG_alphaScaleX | scaledValue:" + scaledValue + " ScaleFactor:" + ScaleFactor + " curX:" + bgOverlay.curX + " fracX:" + bgOverlay.fracX); 
