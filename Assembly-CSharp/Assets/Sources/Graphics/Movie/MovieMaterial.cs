@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Memoria;
+using Memoria.Prime;
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using UnityEngine;
@@ -161,57 +163,57 @@ namespace Assets.Sources.Graphics.Movie
 				this.m_hasFinished = MovieMaterial.HasFinished(this.m_nativeContext);
 				if (!this.m_hasFinished)
 				{
-					if (this.advance)
-					{
-						int soundID = SoundLib.MovieAudioPlayer.GetActiveSoundID();
-						double elapsedTime = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundID) / 1000.0;
+                    if (this.advance)
+                    {
+                        int soundID = SoundLib.MovieAudioPlayer.GetActiveSoundID();
+                        double elapsedTime = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetElapsedPlaybackTime(soundID) / 1000.0;
 
-						// We allow +/- 66ms of delay
-						if (elapsedTime > 0 && Math.Abs(elapsedTime - m_elapsedTime) > 0.066)
-						{
+                        // We allow +/- 66ms of delay
+                        if (elapsedTime > 0 && Math.Abs(elapsedTime - m_elapsedTime) > 0.066)
+                        {
 							// Forces sync with audio
-							this.m_elapsedTime = elapsedTime;
-						}
+                            this.m_elapsedTime = elapsedTime;
+                        }
 
-						if (this.isFMV)
-						{
-							if (this.preciseTimeCycleCounter == 0)
-							{
-								this.m_elapsedTime += 0.066 * (double)this.playSpeed;
-							}
-							else
-							{
-								this.m_elapsedTime += 0.067 * (double)this.playSpeed;
-							}
-							if (this.preciseTimeCycleCounter == 2)
-							{
-								this.preciseTimeCycleCounter = 0;
-							}
-							else
-							{
-								this.preciseTimeCycleCounter++;
-							}
-						}
-						else
-						{
-							this.m_elapsedTime += (double)(Mathf.Min(Time.deltaTime, 0.067f) * Mathf.Max(this.playSpeed, 0f));
-						}
-						/*if (this.shouldSync)
-						{
-							SoundLib.SeekMovieAudio(this.movieKey, this.PlayPosition);
-							this.shouldSync = false;
-						}
-						if (this.playSpeed > 1f)
-						{
-							this.syncElapsed += Time.deltaTime;
-							if (this.syncElapsed >= 4f)
-							{
-								SoundLib.SeekMovieAudio(this.movieKey, this.PlayPosition);
-								this.syncElapsed = 0f;
-							}
-						}*/
-					}
-				}
+                        if (this.isFMV)
+                        {
+                            if (this.preciseTimeCycleCounter == 0)
+                            {
+                                this.m_elapsedTime += 0.066 * (double)this.playSpeed;
+                            }
+                            else
+                            {
+                                this.m_elapsedTime += 0.067 * (double)this.playSpeed;
+                            }
+                            if (this.preciseTimeCycleCounter == 2)
+                            {
+                                this.preciseTimeCycleCounter = 0;
+                            }
+                            else
+                            {
+                                this.preciseTimeCycleCounter++;
+                            }
+                        }
+                        else
+                        {
+                            this.m_elapsedTime += (double)(Mathf.Min(Time.deltaTime, 0.067f) * Mathf.Max(this.playSpeed, 0f));
+                        }
+                        /*if (this.shouldSync)
+                        {
+                            SoundLib.SeekMovieAudio(this.movieKey, this.PlayPosition);
+                            this.shouldSync = false;
+                        }
+                        if (this.playSpeed > 1f)
+                        {
+                            this.syncElapsed += Time.deltaTime;
+                            if (this.syncElapsed >= 4f)
+                            {
+                                SoundLib.SeekMovieAudio(this.movieKey, this.PlayPosition);
+                                this.syncElapsed = 0f;
+                            }
+                        }*/
+                    }
+                }
 				else
 				{
 					if (this.loopCount - 1 <= 0 && this.loopCount != -1)
@@ -233,26 +235,26 @@ namespace Assets.Sources.Graphics.Movie
 					this.m_hasFinished = false;
 				}
 				MovieMaterial.SetTargetDisplayDecodeTime(this.m_nativeContext, this.m_elapsedTime);
-				if (!this.getFirstFrame)
-				{
-					double uploadedFrameTime = MovieMaterial.GetUploadedFrameTime(this.m_nativeContext);
-					double num2 = 0.066666666666666666;
-					if (uploadedFrameTime > num2)
-					{
-						this.m_elapsedTime = 0.0;
-						this.preciseTimeCycleCounter = 0;
-						this.getFirstFrame = true;
-						if (this.Material != null)
-						{
-							this.Material.SetColor("_TintColor", this.tintColor);
-						}
-						if (this.advance)
-						{
-							SoundLib.PlayMovieMusic(this.movieKey, 0);
-						}
-					}
-				}
-			}
+                if (!this.getFirstFrame)
+                {
+                    double uploadedFrameTime = MovieMaterial.GetUploadedFrameTime(this.m_nativeContext);
+                    double num2 = 0.066666666666666666;
+                    if (uploadedFrameTime > num2)
+                    {
+                        this.m_elapsedTime = 0.0;
+                        this.preciseTimeCycleCounter = 0;
+                        this.getFirstFrame = true;
+                        if (this.Material != null)
+                        {
+                            this.Material.SetColor("_TintColor", this.tintColor);
+                        }
+                        if (this.advance)
+                        {
+                            SoundLib.PlayMovieMusic(this.movieKey, 0);
+                        }
+                    }
+                }
+            }
 		}
 
 		private void Open()
@@ -264,23 +266,23 @@ namespace Assets.Sources.Graphics.Movie
 			Int64 fileLength = 0L;
 			switch (platform)
 			{
-				case RuntimePlatform.WindowsEditor:
-				case RuntimePlatform.IPhonePlayer:
-				case RuntimePlatform.WindowsPlayer:
-					foreach (AssetManager.AssetFolder folder in AssetManager.FolderHighToLow)
-						if (folder.TryFindAssetInModOnDisc(moviePath, out fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
-							break;
-					break;
-				case RuntimePlatform.Android:
-					fullPath = Application.dataPath;
-					if (!AssetStream.GetZipFileOffsetLength(Application.dataPath, moviePath, out fileOffset, out fileLength))
-						throw new Exception("[Movie.MovieMaterial.GLPlugin] Error opening movie via AssetStream");
-					break;
-				default:
-					throw new Exception("[Movie.MovieMaterial.GLPlugin]  Platform: " + Application.platform + " Not supported.");
+			case RuntimePlatform.WindowsEditor:
+			case RuntimePlatform.IPhonePlayer:
+			case RuntimePlatform.WindowsPlayer:
+				foreach (AssetManager.AssetFolder folder in AssetManager.FolderHighToLow)
+					if (folder.TryFindAssetInModOnDisc(moviePath, out fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+						break;
+				break;
+			case RuntimePlatform.Android:
+				fullPath = Application.dataPath;
+				if (!AssetStream.GetZipFileOffsetLength(Application.dataPath, moviePath, out fileOffset, out fileLength))
+					throw new Exception("[Movie.MovieMaterial.GLPlugin] Error opening movie via AssetStream");
+				break;
+			default:
+				throw new Exception("[Movie.MovieMaterial.GLPlugin]  Platform: " + Application.platform + " Not supported.");
 			}
 			this.isFMV = this.MovieFile.StartsWith("FMV");
-			if (this.m_nativeContext != IntPtr.Zero && MovieMaterial.OpenStream(this.m_nativeContext, fullPath, (Int32)fileOffset, (Int32)fileLength, false, this.scanDuration, 16))
+            if (this.m_nativeContext != IntPtr.Zero && MovieMaterial.OpenStream(this.m_nativeContext, fullPath, (Int32)fileOffset, (Int32)fileLength, false, this.scanDuration, 16))
 			{
 				this.Width = MovieMaterial.GetPicWidth(this.m_nativeContext);
 				this.Height = MovieMaterial.GetPicHeight(this.m_nativeContext);
@@ -292,7 +294,7 @@ namespace Assets.Sources.Graphics.Movie
 				this.m_uvHeight = MovieMaterial.GetUVHeight(this.m_nativeContext);
 				this.currentFPS = this.FPS;
 				this.currentDuration = MovieMaterial.GetDuration(this.m_nativeContext);
-				this.playSpeed = (Single)(15.0 / currentFPS);
+				this.playSpeed = (Single)(15.0 / currentFPS); 
 				this.CalculateUVScaleOffset();
 				return;
 			}
@@ -437,11 +439,11 @@ namespace Assets.Sources.Graphics.Movie
 		{
 			get
 			{
-				if (this.isFMV)
-				{
-					return Mathf.RoundToInt((float)(this.currentFPS * this.m_elapsedTime));
-				}
-				return Mathf.FloorToInt((Single)(this.currentFPS * this.m_elapsedTime));
+                if (this.isFMV)
+                {
+                    return Mathf.RoundToInt((float)(this.currentFPS * this.m_elapsedTime));
+                }
+                return Mathf.FloorToInt((Single)(this.currentFPS * this.m_elapsedTime));
 			}
 		}
 
@@ -510,8 +512,8 @@ namespace Assets.Sources.Graphics.Movie
 				this.Stop();
 			}
 			this.getFirstFrame = false;
-			this.preciseTimeCycleCounter = 0;
-			this.movieKey = movieKey;
+            this.preciseTimeCycleCounter = 0;
+            this.movieKey = movieKey;
 			try
 			{
 				this.m_elapsedTime = 0.0;
@@ -647,11 +649,11 @@ namespace Assets.Sources.Graphics.Movie
 
 		private Double currentDuration;
 
-		private int preciseTimeCycleCounter;
+        private int preciseTimeCycleCounter;
 
-		private bool isFMV;
+        private bool isFMV;
 
-		public static readonly Vector3 ScaleVector = Vector3.one;
+        public static readonly Vector3 ScaleVector = Vector3.one;
 
 		private Color tintColor = new Color(1f, 1f, 1f, 1f);
 

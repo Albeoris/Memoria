@@ -18,27 +18,27 @@ public class ISdLibAPIProxy
 			}
 			return ISdLibAPIProxy.instance;
 		}
-		set { ISdLibAPIProxy.instance = value; }
+	    set { ISdLibAPIProxy.instance = value; }
 	}
 
-	private static void Initialize()
-	{
-		if (Application.HasProLicense())
-		{
-			if (Configuration.Audio.Backend == 0)
-			{
-				ISdLibAPIProxy.instance = new SdLibAPIWithProLicense();
-			}
+    private static void Initialize()
+    {
+        if (Application.HasProLicense())
+        {
+			if(Configuration.Audio.Backend == 0)
+            {
+                ISdLibAPIProxy.instance = new SdLibAPIWithProLicense();
+            }
 			else
-			{
-				ISdLibAPIProxy.instance = new SdLibAPIWithSoloud();
-			}
-		}
-		else
-		{
+            {
+                ISdLibAPIProxy.instance = new SdLibAPIWithSoloud();
+            }
+        }
+        else
+        {
 			ISdLibAPIProxy.instance = new SdLibAPIWithSoloud();
-		}
-	}
+        }
+    }
 
-	private static ISdLibAPI instance;
+    private static ISdLibAPI instance;
 }

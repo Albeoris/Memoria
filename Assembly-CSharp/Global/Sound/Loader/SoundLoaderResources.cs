@@ -1,11 +1,11 @@
+using System;
+using System.IO;
+using System.Globalization;
+using System.Runtime.InteropServices;
 using Memoria;
 using Memoria.Prime;
 using Memoria.Prime.AKB2;
 using Memoria.Prime.NVorbis;
-using System;
-using System.Globalization;
-using System.IO;
-using System.Runtime.InteropServices;
 
 public class SoundLoaderResources : ISoundLoader
 {
@@ -44,7 +44,7 @@ public class SoundLoaderResources : ISoundLoader
 		if (!String.IsNullOrEmpty(akbInfoPath))
 			akbInfo = File.ReadAllLines(akbInfoPath);
 		if (akbInfo != null && akbInfo.Length > 0)
-		{
+        {
 			// Assume that AKB header is always of size 304 (split "intPtr" into AkbBin + OggBin if ever that changes)
 			// Maybe use a constant instead of 304 ("SoundImporter.AkbHeaderSize" or something defined at a better place?)
 			Byte[] akbBin = new byte[304];
@@ -52,7 +52,7 @@ public class SoundLoaderResources : ISoundLoader
 			AKB2Header akbHeader = new AKB2Header();
 			akbHeader.ReadFromBytes(akbBin);
 			foreach (String s in akbInfo)
-			{
+            {
 				String[] akbCode = s.Split(' ');
 				if (akbCode.Length >= 2 && String.Compare(akbCode[0], "LoopStart") == 0)
 					UInt32.TryParse(akbCode[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out akbHeader.LoopStart);
