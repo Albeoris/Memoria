@@ -1854,7 +1854,7 @@ public class FieldMap : HonoBehavior
         }
         scaledValue = (bgOverlay.curX * 65536) - scaledValue * Math3D.Fixed2Float((int)Math.Abs(ScaleFactor));
         bgOverlay.curX = scaledValue / 65536;
-        bgOverlay.fracX = (Int16)((Int32)scaledValue >> 8 & 255);
+        //bgOverlay.fracX = (Int16)((Int32)scaledValue >> 8 & 255);
         if (dbug) Log.Message("EBG_alphaScaleX | scaledValue:" + scaledValue + " ScaleFactor:" + ScaleFactor + " curX:" + bgOverlay.curX + " fracX:" + bgOverlay.fracX); 
         return bgOverlay.curX;
     }
@@ -1869,7 +1869,7 @@ public class FieldMap : HonoBehavior
         }
         scaledValue = (bgOverlay.curY * 65536) - Math3D.Float2Fixed(Math3D.Fixed2Float((int)scaledValue) * Math3D.Fixed2Float((int)Math.Abs(ScaleFactor)));
         bgOverlay.curY = scaledValue / 65536;
-        bgOverlay.fracY = (Int16)((Int32)scaledValue >> 8 & 255);
+        //bgOverlay.fracY = (Int16)((Int32)scaledValue >> 8 & 255);
         if (dbug) Log.Message("EBG_alphaScaleY | scaledValue:" + scaledValue + " ScaleFactor:" + ScaleFactor + " curY:" + bgOverlay.curY + " fracY:" + bgOverlay.fracY);
         return bgOverlay.curY;
     }
