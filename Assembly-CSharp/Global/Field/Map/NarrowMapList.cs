@@ -8,7 +8,7 @@ public static class NarrowMapList
     public static Boolean IsCurrentMapNarrow(Int32 ScreenWidth) => IsNarrowMap(FF9StateSystem.Common.FF9.fldMapNo, PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1, ScreenWidth);
     public static Boolean IsNarrowMap(Int32 mapId, Int32 camId, Int32 ScreenWidth)
     {
-        if (SpecificScenesNarrow(mapId))
+        if (SpecificScenesNarrow(mapId, camId))
             return true;
 
         if (MapWidth(mapId) <= ScreenWidth)
@@ -24,11 +24,11 @@ public static class NarrowMapList
 
         return false;
     }
-    public static Boolean SpecificScenesNarrow(Int32 mapId)
+    public static Boolean SpecificScenesNarrow(Int32 mapId, Int32 currCamera)
     {
         Int32 currIndex = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
         Int32 currCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-        
+
         foreach (int[] entry in Map_Index_Narrow_List)
         {
             if (entry[0] == mapId && entry[1] == currIndex)
@@ -39,19 +39,25 @@ public static class NarrowMapList
             if (entry[0] == mapId && entry[1] == currCounter)
                 return true;
         }
+        foreach (int[] entry in Map_Camera_Narrow_List)
+        {
+            if (entry[0] == mapId && entry[1] == currCamera)
+                return true;
+        }
         return false;
     }
 
-    public static Int32 MapWidth(int mapId)
+    public static Int32 MapWidth(Int32 mapId)
     {
         Int32 width = 500;
+        Int32 currCamera = PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1;
 
-        if (ListFullNarrow.Contains(mapId) || SpecificScenesNarrow(mapId))
+        if (ListFullNarrow.Contains(mapId) || SpecificScenesNarrow(mapId, currCamera))
             width = 320;
 
         foreach (KeyValuePair<int, int> entry in actualNarrowMapWidthDict)
         {
-            if (mapId == entry.Key && !SpecificScenesNarrow(entry.Key))
+            if (mapId == entry.Key && !SpecificScenesNarrow(entry.Key, currCamera))
                 width = (Int32)entry.Value;
         }
 
@@ -84,12 +90,20 @@ public static class NarrowMapList
         [2708,-1],   // Pandemonium, you're not alone sequence, several glitches
         [2711,0],    // Pandemonium, people are waiting in line after Kuja is defeated
     };
+
     public static readonly int[][] Map_Counter_Narrow_List =
     {
         // [mapNo,counter],
+        //[951,4500],     // Gargan roo, secondary screen is smaller, but only visible in 1 scene
         [1554,6300],    // MBG109 - roots
         [1554,6305],    // MBG109 - roots
         [2905,11620],   // MBG118 - Memoria pink castle
+    };
+
+    public static readonly int[][] Map_Camera_Narrow_List =
+    {
+        // [mapNo,camIdx],
+        //[951,1],    // // Gargan roo, secondary screen is smaller, but only visible in 1 scene
     };
 
     public static readonly HashSet<Int32> ListFullNarrow = new HashSet<Int32>()
@@ -317,7 +331,7 @@ public static class NarrowMapList
         1610, // Mdn. Sari/Cove
         1650,
         //1651, // Iifa Tree/Tree Roots
-        1652, // Iifa Tree/Roots
+        //1652, // Iifa Tree/Roots
         1655, // Iifa Tree/Tree Path
         1656, // Iifa Tree/Eidolon Moun
         1657, // Iifa Tree/Tree Roots
@@ -703,7 +717,7 @@ public static class NarrowMapList
         {1215,352},
         {1805,352},
         {1807,352},
-        {1652,336},
+        //{1652,336},
         {2552,352},
     };
 }

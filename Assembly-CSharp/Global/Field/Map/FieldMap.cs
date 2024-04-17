@@ -477,7 +477,8 @@ public class FieldMap : HonoBehavior
     }
     public static readonly HashSet<Int32> SmoothCamExcludeMaps = new HashSet<Int32>()
     {
-        767,
+        767, // Burmecia, the queen slides from her layer
+        1754, // fast scroll on Iifa platform buggy
     };
 
     public void ActivateCamera()
@@ -969,8 +970,8 @@ public class FieldMap : HonoBehavior
             bgOverlay.flags &= ~BGOVERLAY_DEF.OVERLAY_FLAG.Loop;
             if (dbug) Log.Message("EBG_overlaySetLoop " + overlayNdx + " | noloop | dx:" + dx + " dy:" + dy);
         }
-        bgOverlay.ParallaxDepthX = (Int16)dx;
-        bgOverlay.ParallaxDepthY = (Int16)dy;
+        bgOverlay.scrollX = (Int16)dx;
+        bgOverlay.scrollY = (Int16)dy;
         return 1;
     }
 
@@ -982,7 +983,6 @@ public class FieldMap : HonoBehavior
             if (dbug) Log.Message("EBG_overlaySetLoopType " + overlayNdx + " | + ScreenAnchored");
             bgOverlay.flags |= BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored;
         }
-            
         else
         {
             if (dbug) Log.Message("EBG_overlaySetLoopType " + overlayNdx + " | - ScreenAnchored");
@@ -1011,15 +1011,15 @@ public class FieldMap : HonoBehavior
         if (isXOffset != 0u)
         {
             if (dbug) Log.Message("EBG_overlaySetScrollWithOffset " + overlayNdx + " | isXOffset");
-            bgOverlay.ParallaxDepthX = (Int16)offset;
-            bgOverlay.ParallaxDepthY = (Int16)delta;
+            bgOverlay.scrollX = (Int16)offset;
+            bgOverlay.scrollY = (Int16)delta;
             bgOverlay.isXOffset = 1;
         }
         else
         {
             if (dbug) Log.Message("EBG_overlaySetScrollWithOffset " + overlayNdx + " | not isXOffset");
-            bgOverlay.ParallaxDepthX = (Int16)delta;
-            bgOverlay.ParallaxDepthY = (Int16)offset;
+            bgOverlay.scrollX = (Int16)delta;
+            bgOverlay.scrollY = (Int16)offset;
             bgOverlay.isXOffset = 0;
         }
         return 1;
@@ -1222,8 +1222,8 @@ public class FieldMap : HonoBehavior
             if (dbug) Log.Message("EBG_overlaySetParallax " + overlayNdx + " | - Parallax | dx:" + dx + " dy:" + dy);
             bgOverlay.flags &= BGOVERLAY_DEF.OVERLAY_FLAG.Parallax;
         }
-        bgOverlay.ParallaxDepthX = (Int16)dx;
-        bgOverlay.ParallaxDepthY = (Int16)dy;
+        bgOverlay.scrollX = (Int16)dx;
+        bgOverlay.scrollY = (Int16)dy;
         return 1;
     }
 
@@ -1250,6 +1250,8 @@ public class FieldMap : HonoBehavior
         List<BGSPRITE_LOC_DEF> spriteList = bgOverlay.spriteList;
         float screenX = bgOverlay.curX + bgScene.scrX;
         float screenY = bgOverlay.curY + bgScene.scrY;
+        Vector2 viewportSize = new Vector2(this.scrollWindowDim[(int)bgOverlay.viewportNdx][0], this.scrollWindowDim[(int)bgOverlay.viewportNdx][1]);
+        Vector2 viewportPos = new Vector2(this.scrollWindowPos[(int)bgOverlay.viewportNdx][0], this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
         if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
         {
             //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Loop"); // example: scrolling sky 505
@@ -1257,38 +1259,34 @@ public class FieldMap : HonoBehavior
             float anchorY;
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
             {
-                anchorX = (float)(this.scrollWindowPos[(int)bgOverlay.viewportNdx][0]);
-                anchorY = (float)(this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
-                if (dbug) Log.Message("UpdateOverlay " + ovrNdx + " | BGOVERLAY_DEF.OVERLAY_FLAG.Loop anchorX:" + anchorX + " anchorY:" + anchorY);
+                anchorX = viewportPos.x;
+                anchorY = viewportPos.y;
+                if (dbug) Log.Message("UpdateOverlay " + ovrNdx + " | Loop ScreenAnchored anchorX:" + anchorX + " anchorY:" + anchorY);
             }
             else
             {
-                anchorX = (float)(HalfFieldWidth - realVrp.x + (float)this.scrollWindowPos[(int)bgOverlay.viewportNdx][0]);
-                anchorY = (float)(HalfFieldHeight - realVrp.y + (float)this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
+                anchorX = (float)(HalfFieldWidth - realVrp.x + viewportPos.x);
+                anchorY = (float)(HalfFieldHeight - realVrp.y + viewportPos.y);
             }
-
-            short viewportWidth = this.scrollWindowDim[(int)bgOverlay.viewportNdx][0];
-            short viewportHeight = this.scrollWindowDim[(int)bgOverlay.viewportNdx][1];
+            if (bgOverlay.scrollX != 0)
+            {
+                if (bgOverlay.scrollX < 0)
+                {
+                    short deltaX = (short)(256 - ((short)(bgOverlay.scrollX) << 8 >> 8));
+                    screenX = (float)((((int)bgOverlay.curX << 8) + (int)deltaX >> 8) + (int)bgScene.scrX);
+                }
+                screenX = (float)((screenX - (viewportSize.x - (float)bgOverlay.w)) % (float)bgOverlay.w + (viewportSize.x - (float)bgOverlay.w));
+            }
+            if (bgOverlay.scrollY != 0)
+            {
+                if (bgOverlay.scrollY < 0)
+                {
+                    short deltaY = (short)(256 - ((short)(bgOverlay.scrollX) << 8 >> 8));
+                    screenY = (float)((((int)bgOverlay.curY << 8) + (int)deltaY >> 8) + (int)bgScene.scrY);
+                }
+                screenY = (float)((screenY - (viewportSize.y - (float)bgOverlay.h)) % (float)bgOverlay.h + (viewportSize.y - (float)bgOverlay.h));
+            }
             
-            if (bgOverlay.ParallaxDepthX < 0)
-            {
-                short deltaX = (short)(256 - ((short)(bgOverlay.ParallaxDepthX) << 8 >> 8));
-                screenX = (float)((((int)bgOverlay.curX << 8) + (int)deltaX >> 8) + (int)bgScene.scrX);
-            }
-            if (bgOverlay.ParallaxDepthY < 0)
-            {
-                short deltaY = (short)(256 - ((short)(bgOverlay.ParallaxDepthX) << 8 >> 8));
-                screenY = (float)((((int)bgOverlay.curY << 8) + (int)deltaY >> 8) + (int)bgScene.scrY);
-            }
-            if (bgOverlay.ParallaxDepthX != 0)
-            {
-                screenX = (float)((screenX - (viewportWidth - (float)bgOverlay.w)) % (float)bgOverlay.w + (viewportWidth - (float)bgOverlay.w));
-            }
-            if (bgOverlay.ParallaxDepthY != 0)
-            {
-                screenY = (float)((screenY - (viewportHeight - (float)bgOverlay.h)) % (float)bgOverlay.h + (viewportHeight - (float)bgOverlay.h));
-            }
-
             for (short i = 0; i < spriteCount; i++)
             {
                 BGSPRITE_LOC_DEF bgSprite = spriteList[i];
@@ -1297,25 +1295,25 @@ public class FieldMap : HonoBehavior
                 float anchoredY = screenY + bgSprite.offY;
                 if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
                 {
-                    //if (dbug) Log.Message("UpdateOverlay " + ovrNdx + " | BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored"); // example: 507, 931, 951
-                    if (bgOverlay.ParallaxDepthX != 0) // is moving on X axis
+                    //if (dbug) Log.Message("UpdateOverlay " + ovrNdx + " | ScreenAnchored"); // example: 507, 931, 951
+                    if (bgOverlay.scrollX != 0) // is moving on X axis
                     {
                         if (anchoredX + 16f - SmoothCamDelta.x >= bgOverlay.w)
                         {
                             anchoredX -= bgOverlay.w;
                         }
-                        else if (anchoredX <= -16f + SmoothCamDelta.x)
+                        else if (anchoredX - SmoothCamDelta.x <= -16f)
                         {
                             anchoredX += bgOverlay.w;
                         }
                     }
-                    if (bgOverlay.ParallaxDepthY != 0) // is moving on Y axis
+                    if (bgOverlay.scrollY != 0) // is moving on Y axis
                     {
-                        if (anchoredY + 16f - SmoothCamDelta.y >= bgOverlay.h)
+                        if (anchoredY + 16f + SmoothCamDelta.y >= bgOverlay.h)
                         {
                             anchoredY -= bgOverlay.h;
                         }
-                        else if (anchoredY <= -16f + SmoothCamDelta.y)
+                        else if (anchoredY + SmoothCamDelta.y <= -16f)
                         {
                             anchoredY += bgOverlay.h;
                         }
@@ -1325,7 +1323,8 @@ public class FieldMap : HonoBehavior
                 }
                 else
                 {
-                    if (bgOverlay.ParallaxDepthX != 0)
+                    //if (dbug) Log.Message("UpdateOverlay " + ovrNdx + " | not enchored"); // example: 507, 931, 951
+                    if (bgOverlay.scrollX != 0)
                     {
                         if (anchoredX + 16f >= bgOverlay.w) // - SmoothCamDelta.x
                         {
@@ -1341,7 +1340,7 @@ public class FieldMap : HonoBehavior
                     {
                         cacheLocalPos.x = anchoredX;
                     }
-                    if (bgOverlay.ParallaxDepthY != 0)
+                    if (bgOverlay.scrollY != 0)
                     {
                         if (anchoredY + 16f >= (short)bgOverlay.h) // - SmoothCamDelta.y
                         {
@@ -1360,9 +1359,7 @@ public class FieldMap : HonoBehavior
                 }
                 cacheLocalPos.y += 16f;
                 if (this.mapName == "FBG_N18_GTRE_MAP360_GT_GRD_0") // map 1000
-                {
                     cacheLocalPos.x += 8f;
-                }
                 cacheLocalPos.x -= (this.scene.scrX + bgOverlay.curX);
                 cacheLocalPos.y -= (this.scene.scrY + bgOverlay.curY);
                 bgSprite.cacheLocalPos = cacheLocalPos;
@@ -1373,30 +1370,28 @@ public class FieldMap : HonoBehavior
         else if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
         {
             if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset - current map: " + FF9StateSystem.Common.FF9.fldMapNo);
-            short anchorX;
-            short anchorY;
+            float anchorX;
+            float anchorY;
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
             {
-                anchorX = this.scrollWindowPos[(int)bgOverlay.viewportNdx][0];
-                anchorY = this.scrollWindowPos[(int)bgOverlay.viewportNdx][1];
+                anchorX = viewportPos.x;
+                anchorY = viewportPos.y;
                 //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset | anchorX:" + anchorX + " anchorY:" + anchorY);
             }
             else
             {
-                anchorX = (short)(HalfFieldWidth - realVrp[0] + (float)this.scrollWindowPos[(int)bgOverlay.viewportNdx][0]);
-                anchorY = (short)(HalfFieldHeight - realVrp[1] + (float)this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
+                anchorX = HalfFieldWidth - realVrp.x + viewportPos.x;
+                anchorY = HalfFieldHeight - realVrp.y + viewportPos.y;
             }
-            short num6 = this.scrollWindowDim[(int)bgOverlay.viewportNdx][0];
-            short num7 = this.scrollWindowDim[(int)bgOverlay.viewportNdx][1];
             if (bgOverlay.isXOffset != 0)
             {
-                screenY = (short)((screenY - (num7 - (short)bgOverlay.h)) % (short)bgOverlay.h + (num7 - (short)bgOverlay.h));
-                screenX = (short)(screenX + screenY * bgOverlay.ParallaxDepthX / (short)bgOverlay.h % (short)bgOverlay.w);
+                screenY = (screenY - (viewportSize.y - (short)bgOverlay.h)) % (short)bgOverlay.h + (viewportSize.y - (short)bgOverlay.h);
+                screenX = screenX + screenY * bgOverlay.scrollX / (short)bgOverlay.h % (short)bgOverlay.w;
             }
             else
             {
-                screenX = (short)((screenX - (num6 - (short)bgOverlay.w)) % (short)bgOverlay.w + (num6 - (short)bgOverlay.w));
-                screenY = (short)(screenY + screenX * bgOverlay.ParallaxDepthY / (short)bgOverlay.w % (short)bgOverlay.h);
+                screenX = (screenX - (viewportSize.x - (short)bgOverlay.w)) % (short)bgOverlay.w + (viewportSize.x - (short)bgOverlay.w);
+                screenY = screenY + screenX * bgOverlay.scrollY / (short)bgOverlay.w % (short)bgOverlay.h;
             }
             for (short i = 0; i < spriteCount; i++)
             {
@@ -1404,19 +1399,19 @@ public class FieldMap : HonoBehavior
                 Vector3 localPosition = bgSprite.transform.localPosition;
                 if (bgOverlay.isXOffset != 0)
                 {
-                    short xOffset = 0;
-                    short yOffset = (short)(screenY + (short)bgSprite.offY);
+                    float xOffset = 0;
+                    float yOffset = screenY + bgSprite.offY;
                     if (yOffset + 16 >= (short)bgOverlay.h)
                     {
-                        yOffset = (short)(yOffset - (short)bgOverlay.h);
-                        xOffset = (short)(-bgOverlay.ParallaxDepthX);
+                        yOffset = yOffset - bgOverlay.h;
+                        xOffset = -bgOverlay.scrollX;
                     }
                     else if (yOffset <= -16)
                     {
-                        yOffset = (short)(yOffset + (short)bgOverlay.h);
-                        xOffset = (short)(bgOverlay.ParallaxDepthX);
+                        yOffset = yOffset + bgOverlay.h;
+                        xOffset = bgOverlay.scrollX;
                     }
-                    short xOffsetAdjusted = (short)(screenX + (short)bgSprite.offX + xOffset);
+                    float xOffsetAdjusted = (screenX + (short)bgSprite.offX + xOffset);
                     localPosition.x = (float)xOffsetAdjusted;
                     localPosition.y = (float)(yOffset + anchorY);
                 }
@@ -1427,16 +1422,15 @@ public class FieldMap : HonoBehavior
                     if (xOffsetAdjusted + 16 >= (short)bgOverlay.w)
                     {
                         xOffsetAdjusted = (short)(xOffsetAdjusted - (short)bgOverlay.w);
-                        xOffset = (short)(-bgOverlay.ParallaxDepthY);
+                        xOffset = (short)(-bgOverlay.scrollY);
                     }
                     else if (xOffsetAdjusted <= -16)
                     {
                         xOffsetAdjusted = (short)(xOffsetAdjusted + (short)bgOverlay.w);
-                        xOffset = (short)(bgOverlay.ParallaxDepthY);
+                        xOffset = (short)(bgOverlay.scrollY);
                     }
-                    short num14 = (short)(screenY + (short)bgSprite.offY + xOffset);
                     localPosition.x = (float)(xOffsetAdjusted + anchorX);
-                    localPosition.y = (float)num14;
+                    localPosition.y = screenY + (float)bgSprite.offY + xOffset;
                 }
                 localPosition.y += 16f;
                 localPosition.x -= (this.scene.scrX + bgOverlay.curX);
@@ -1444,11 +1438,6 @@ public class FieldMap : HonoBehavior
                 bgSprite.transform.localPosition = localPosition;
             }
             bgOverlay.transform.localPosition = new Vector3((float)bgOverlay.curX * 1f, (float)bgOverlay.curY * 1f, bgOverlay.transform.localPosition.z);
-        }
-        else if (this.mapName == "FBG_N18_GTRE_MAP360_GT_GRD_0" && ovrNdx == 12) // Clayra's Trunk text fix #367
-        {
-            bgOverlay.curZ = 0;
-            bgOverlay.transform.localPosition = new Vector3(bgOverlay.curX, bgOverlay.curY, bgOverlay.curZ);
         }
         else
         {
@@ -1458,6 +1447,12 @@ public class FieldMap : HonoBehavior
         //if (dbug && ovrNdx == 24) Log.Message("after: overlayPtr.curX:" + overlayPtr.curX);
         bgOverlay.scrX = screenX;
         bgOverlay.scrY = screenY;
+
+        if (this.mapName == "FBG_N18_GTRE_MAP360_GT_GRD_0" && ovrNdx == 12) // Clayra's Trunk text fix #367
+        {
+            bgOverlay.curZ = 0;
+            bgOverlay.transform.localPosition = new Vector3(bgOverlay.transform.localPosition.x, bgOverlay.transform.localPosition.y, 0);
+        }
     }
 
     public void EBG_scene2DScroll(Int16 destX, Int16 destY, UInt16 frameCount, UInt32 scrollType)
@@ -1641,13 +1636,13 @@ public class FieldMap : HonoBehavior
             BGOVERLAY_DEF bgOverlay = overlayList[i];
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
             {
-                if (bgOverlay.ParallaxDepthX != 0 && bgOverlay.ParallaxDepthX != 32767)
+                if (bgOverlay.scrollX != 0 && bgOverlay.scrollX != 32767)
                 {
-                    bgOverlay.curX = (bgOverlay.curX % (Int32)bgOverlay.w) + (bgOverlay.ParallaxDepthX / 256f);
+                    bgOverlay.curX = (bgOverlay.curX % (Int32)bgOverlay.w) + (bgOverlay.scrollX / 256f);
                 }
-                if (bgOverlay.ParallaxDepthY != 0 && bgOverlay.ParallaxDepthY != 32767)
+                if (bgOverlay.scrollY != 0 && bgOverlay.scrollY != 32767)
                 {
-                    bgOverlay.curY = (bgOverlay.curY % (Int32)bgOverlay.h) + (bgOverlay.ParallaxDepthY / 256f);
+                    bgOverlay.curY = (bgOverlay.curY % (Int32)bgOverlay.h) + (bgOverlay.scrollY / 256f);
                 }
                 if (dbug) Log.Message("SceneServiceScroll " + i + " | Loop | curX:" + bgOverlay.curX + " / curY:" + bgOverlay.curY);
             }
@@ -1655,21 +1650,21 @@ public class FieldMap : HonoBehavior
             {
                 if (bgOverlay.isXOffset != 0)
                 {
-                    if (bgOverlay.ParallaxDepthY != 32767)
+                    if (bgOverlay.scrollY != 32767)
                     {
-                        bgOverlay.curY = bgOverlay.curY % (Int32)bgOverlay.h + (bgOverlay.ParallaxDepthY / 256f);
+                        bgOverlay.curY = bgOverlay.curY % (Int32)bgOverlay.h + (bgOverlay.scrollY / 256f);
                     }
                 }
-                else if (bgOverlay.ParallaxDepthX != 32767)
+                else if (bgOverlay.scrollX != 32767)
                 {
-                    bgOverlay.curX = bgOverlay.curX % (Int32)bgOverlay.w + (bgOverlay.ParallaxDepthX / 256f);
+                    bgOverlay.curX = bgOverlay.curX % (Int32)bgOverlay.w + (bgOverlay.scrollX / 256f);
                 }
                 if (dbug) Log.Message("SceneServiceScroll " + i + " | ScrollWithOffset | X:" + bgOverlay.curX + " Y:" + bgOverlay.curY);
             }
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Parallax) != 0)
             {
-                bgOverlay.curX = bgOverlay.orgX + ((this.curVRP.x + SmoothCamDelta.x - this.parallaxOrg.x) * (bgOverlay.ParallaxDepthX / 256f));
-                bgOverlay.curY = bgOverlay.orgY + ((this.curVRP.y - SmoothCamDelta.y - this.parallaxOrg.y) * (bgOverlay.ParallaxDepthY / 256f));
+                bgOverlay.curX = bgOverlay.orgX + ((this.curVRP.x + SmoothCamDelta.x - this.parallaxOrg.x) * (bgOverlay.scrollX / 256f));
+                bgOverlay.curY = bgOverlay.orgY + ((this.curVRP.y - SmoothCamDelta.y - this.parallaxOrg.y) * (bgOverlay.scrollY / 256f));
 
                 if (dbug) Log.Message("SceneServiceScroll " + i + " | Parallax | X:" + bgOverlay.curX + " Y:" + bgOverlay.curY + " SmoothCamDelta.x " + SmoothCamDelta.x);
 
@@ -1680,7 +1675,7 @@ public class FieldMap : HonoBehavior
                         case 1651: // 448
                             bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4; break;
                         case 1657:
-                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.ParallaxDepthX / 256); break;
+                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256); break;
                         case 1758: // 448
                             bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4; break;
                         case 2600: // 464/416
@@ -1690,7 +1685,7 @@ public class FieldMap : HonoBehavior
                         case 2605: // 400/368
                             bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX -= 16; break;
                         case 2606:
-                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.ParallaxDepthX / 256); break;
+                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256); break;
                         case 2607: // 416/400
                             bgOverlay.transform.localScale = new Vector3(1.05f, 1.05f, 1f); bgOverlay.curX -= 8; bgOverlay.curY -= 8; break;
                         case 2651:
@@ -1781,11 +1776,11 @@ public class FieldMap : HonoBehavior
 
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
             {
-                if (bgOverlay.ParallaxDepthX != 0)
+                if (bgOverlay.scrollX != 0)
                     bgOverlay.curX += dx;
-                if (bgOverlay.ParallaxDepthY != 0)
+                if (bgOverlay.scrollY != 0)
                     bgOverlay.curY += dy;
-                if (dbug) Log.Message("UpdateOverlayXY " + overlayNdx + " | Loop | dx:" + dx + " ParallaxDepthX:" + bgOverlay.ParallaxDepthX + " curX:" + bgOverlay.curX + " ParallaxDepthY:" + bgOverlay.ParallaxDepthY + " curY:" + bgOverlay.curY);
+                if (dbug) Log.Message("UpdateOverlayXY " + overlayNdx + " | Loop | dx:" + dx + " scrollX:" + bgOverlay.scrollX + " curX:" + bgOverlay.curX + " scrollY:" + bgOverlay.scrollY + " curY:" + bgOverlay.curY);
                 this.alphaScaleX(bgOverlay, dx);
                 this.alphaScaleY(bgOverlay, dy);
             }
@@ -2224,7 +2219,7 @@ public class FieldMap : HonoBehavior
         {
             int mapId = FF9StateSystem.Common.FF9.fldMapNo;
             Int32 mapWidth = NarrowMapList.MapWidth(mapId);
-            //Log.Message("Configuration.Graphics.WidescreenSupport " + Configuration.Graphics.WidescreenSupport + " CalcPsxFieldWidth() " + CalcPsxFieldWidth() + " PsxScreenWidth 1 " + CalcPsxScreenWidth() + " Screen.width " + Screen.width + " Screen.height " + Screen.height);
+            Log.Message("Configuration.Graphics.WidescreenSupport " + Configuration.Graphics.WidescreenSupport + " CalcPsxFieldWidth() " + CalcPsxFieldWidth() + " PsxScreenWidth 1 " + CalcPsxScreenWidth() + " Screen.width " + Screen.width + " Screen.height " + Screen.height + "mapWidth " + mapWidth);
             if (mapWidth <= PsxScreenWidth && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "BattleMap")
             {
                 PsxFieldWidth = (Int16)mapWidth;

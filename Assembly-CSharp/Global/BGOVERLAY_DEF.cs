@@ -49,8 +49,8 @@ public partial class BGOVERLAY_DEF
 		this.maxY = reader.ReadInt16();
 		this.scrX = (float)reader.ReadInt16();
 		this.scrY = (float)reader.ReadInt16();
-		this.ParallaxDepthX = reader.ReadInt16();
-		this.ParallaxDepthY = reader.ReadInt16();
+		this.scrollX = reader.ReadInt16();
+		this.scrollY = reader.ReadInt16();
 		this.fracX = reader.ReadInt16();
 		this.fracY = reader.ReadInt16();
 		Byte bitPos = 0;
@@ -86,8 +86,8 @@ public partial class BGOVERLAY_DEF
 	public float scrX;
 	public float scrY;
 
-	public Int16 ParallaxDepthX; // negative is slower (further) than main, positive faster (closer)
-	public Int16 ParallaxDepthY;
+	public Int16 scrollX; // negative is slower (further) than main, positive faster (closer)
+	public Int16 scrollY;
 
 	public Int16 fracX;
 	public Int16 fracY;
