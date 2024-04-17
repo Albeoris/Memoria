@@ -19,7 +19,7 @@ namespace Global.Sound.SoLoud
         {
             public AKB2Header akbHeader;
             public WavStream data;
-            public SoundProfileType type;
+            public SoundProfile profile;
         }
 
         private class Sound
@@ -34,7 +34,6 @@ namespace Global.Sound.SoLoud
 
         private Dictionary<Int32, StreamInfo> streams = new Dictionary<Int32, StreamInfo>();
         private Dictionary<Int32, Sound> sounds = new Dictionary<Int32, Sound>();
-
 
         private void CleanUpSounds()
         {
@@ -93,7 +92,7 @@ namespace Global.Sound.SoLoud
             return 0;
         }
 
-        public override Int32 SdSoundSystem_AddData(IntPtr akb, SoundProfileType type)
+        public override Int32 SdSoundSystem_AddData(IntPtr akb, SoundProfile profile)
         {
             SoundLib.Log($"AddData({akb})");
             unsafe
@@ -106,7 +105,7 @@ namespace Global.Sound.SoLoud
                 stream.akbHeader.ReadFromBytes(akbBin);
                 stream.data = new WavStream();
                 stream.data.loadMem((IntPtr)((Byte*)akb + AkbHeaderSize), (uint)stream.akbHeader.ContentSize, true, true);
-                stream.type = type;
+                stream.profile = profile;
 
                 Int32 bankID = (Int32)stream.data.objhandle;
                 streams.Add(bankID, stream);
@@ -135,7 +134,7 @@ namespace Global.Sound.SoLoud
             StreamInfo stream = streams[bankID];
 
             Int32 soundID = 0;
-            switch (stream.type)
+            switch (stream.profile.SoundProfileType)
             {
                 case SoundProfileType.Sfx:
                     soundID = (Int32)sfxBus.play(streams[bankID].data, 1, 0, 1);
@@ -189,6 +188,12 @@ namespace Global.Sound.SoLoud
                 soloud.seek((uint)soundID, offsetTimeMSec / 1000d);
             }
             soloud.setPause((uint)soundID, 0);
+
+            var stream = streams[sounds[soundID].bankID];
+            if (stream.akbHeader.LoopEnd > 0)
+            {
+                Memoria.Prime.Log.Message($"[SoLoud] Starting loop: {stream.profile.ResourceID}");
+            }
             return 1;
         }
 
@@ -273,11 +278,11 @@ namespace Global.Sound.SoLoud
         {
             // Soloud doesn't handle pitch (yet)
             SoundLib.Log($"SoundCtrl_SetPitch({soundID}, {pitch}, {transTimeMSec})");
-            //if (pitch != 1f) Memoria.Prime.Log.Message($"[SoLoud] SetPitch {soundID}, {sounds[soundID].bankID}, {pitch}");
+            //if (pitch != HonoBehaviorSystem.Instance.GetFastForwardFactor()) Memoria.Prime.Log.Message($"[SoLoud] SetPitch {streams[sounds[soundID].bankID].profile.ResourceID}, {pitch}\n{Environment.StackTrace}");
 
             // Play at higher speed for fast forward
             float speed = soloud.getRelativePlaySpeed((uint)soundID);
-            if (pitch >= 1f && speed != pitch)
+            if (pitch == HonoBehaviorSystem.Instance.GetFastForwardFactor() && speed != pitch)
             {
                 if (transTimeMSec > 0)
                 {

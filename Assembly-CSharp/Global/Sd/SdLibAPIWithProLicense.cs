@@ -41,7 +41,7 @@ public class SdLibAPIWithProLicense : ISdLibAPI
 		return SdLibAPI.SdSoundSystem_Resume();
 	}
 
-	public override Int32 SdSoundSystem_AddData(IntPtr akb, SoundProfileType type)
+	public override Int32 SdSoundSystem_AddData(IntPtr akb, SoundProfile profile)
 	{
 		return SdLibAPI.SdSoundSystem_AddData(akb);
 	}

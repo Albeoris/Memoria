@@ -43,7 +43,7 @@ namespace Memoria
 
                 try
                 {
-                    Int32 bankID = ISdLibAPIProxy.Instance.SdSoundSystem_AddData(akbData, profile.SoundProfileType);
+                    Int32 bankID = ISdLibAPIProxy.Instance.SdSoundSystem_AddData(akbData, profile);
                     profile.AkbBin = akbData;
                     profile.BankID = bankID;
                 }
