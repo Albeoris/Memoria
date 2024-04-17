@@ -791,7 +791,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		}
 		else if (playingSfx.PrevSndEffectMapID == (Int32)FF9StateSystem.Common.FF9.fldMapNo)
 		{
-			this.FF9SOUND_SNDEFFECTRES_PLAY(slot, playingSfx.ObjNo, 0, 0, AllSoundDispatchPlayer.ReverseNormalizeVolume((Single)playingSfx.SndEffectVol));
+			this.FF9SOUND_SNDEFFECTRES_PLAY(slot, playingSfx.ObjNo, 0, 0, playingSfx.SndEffectVol);
 		}
 	}
 
