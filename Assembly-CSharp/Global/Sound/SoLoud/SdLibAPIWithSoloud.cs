@@ -202,7 +202,7 @@ namespace Global.Sound.SoLoud
             SoundLib.Log($"SoundCtrl_Stop({soundID}, {transTimeMSec})");
             if (!sounds.ContainsKey(soundID)) return;
 
-            if (transTimeMSec <= 0) transTimeMSec = 100; // Add a small fade
+            if (transTimeMSec < 100) transTimeMSec = 100; // Add a small fade
 
             soloud.fadeVolume((uint)soundID, 0, transTimeMSec / 1000d);
             soloud.scheduleStop((uint)soundID, transTimeMSec / 1000d);

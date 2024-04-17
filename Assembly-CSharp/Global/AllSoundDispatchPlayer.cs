@@ -177,7 +177,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 				{
 					if (soundProfile != null)
 					{
-						ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
+						if (time < MINIMUM_SONG_FADE_MS) time = MINIMUM_SONG_FADE_MS; // Add a fadeout for smoother transition
+						ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, time);
 					}
 					this.currentMusicID = -1;
 				});
@@ -187,7 +188,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 				this.CreateSound(soundProfile);
 				soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * SoundLib.MusicPlayer.Volume, 0);
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, time * 1000);
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, time);
 				this.currentMusicID = ObjNo;
 				this.StopAndClearSuspendBGM(ObjNo, true);
 			});
@@ -198,7 +199,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			{
 				if (soundProfile != null)
 				{
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 0, time * 1000);
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 0, time);
 					soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
 					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * SoundLib.MusicPlayer.Volume, 0);
 					this.StopAndClearSuspendBGM(ObjNo, true);
@@ -255,7 +256,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		{
 			if (soundProfile != null)
 			{
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, MINIMUM_SONG_FADE_MS);
 			}
 			if (ObjNo == this.suspendBgmNo)
 			{
@@ -289,7 +290,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			{
 				if (soundProfile != null)
 				{
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, MINIMUM_SONG_FADE_MS);
 				}
 				this.currentMusicID = -1;
 			});
@@ -1405,6 +1406,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	public const Int32 VOLUME_MAX = 127;
 
 	public const Int32 SNDEFFECTRES_SLOT_MAX = 2;
+
+	public const Int32 MINIMUM_SONG_FADE_MS = 500;
 
 	private Int32 currentMusicID = -1;
 

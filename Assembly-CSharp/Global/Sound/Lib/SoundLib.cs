@@ -154,9 +154,7 @@ public class SoundLib : MonoBehaviour
 		}
 		else if (String.Equals(movieName, "FMV000"))
 		{
-			Int32 ticks = 90;
-			Int32 fadeOut = AllSoundDispatchPlayer.ConvertTickToMillisec(ticks);
-			SoundLib.MusicPlayer.StopMusic(fadeOut);
+			SoundLib.MusicPlayer.StopMusic(AllSoundDispatchPlayer.MINIMUM_SONG_FADE_MS);
 		}
 		else
 		{
