@@ -169,11 +169,11 @@ public class MusicPlayer : SoundPlayer
 			soundProfile.SoundID = 0;
 			return;
         }
-        ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
         ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, (Int32)(this.fadeInDuration * 1000f));
 		this.SetMusicPanning(this.playerPanning, soundProfile);
 		this.SetMusicPitch(this.playerPitch, soundProfile);
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 		this.upcomingSoundProfile = soundProfile;
 	}
 
@@ -307,9 +307,9 @@ public class MusicPlayer : SoundPlayer
 			Single volume = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetVolume(this.activeSoundProfile.SoundID);
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(this.activeSoundProfile.SoundID, 0);
             this.activeSoundProfile.SoundID = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(this.activeSoundProfile.BankID);
-            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(this.activeSoundProfile.SoundID, offsetTimeMSec);
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(this.activeSoundProfile.SoundID, volume, 0);
-        }
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(this.activeSoundProfile.SoundID, offsetTimeMSec);
+		}
 		else
         {
 			// This will seek with Soloud

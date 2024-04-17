@@ -138,7 +138,6 @@ public class SfxSoundPlayer : SoundPlayer
 		base.CreateSound(soundProfile);
         if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) != 0)
         {
-            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, 0);
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
             Int32 fastForwardFactor = HonoBehaviorSystem.Instance.GetFastForwardFactor();
@@ -148,7 +147,8 @@ public class SfxSoundPlayer : SoundPlayer
                 soundProfile.Pitch = pitch2;
             }
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
-        }
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
+		}
         else
         {
             SoundLib.Log("failed to play sound");

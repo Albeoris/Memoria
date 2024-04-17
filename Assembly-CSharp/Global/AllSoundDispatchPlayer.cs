@@ -134,7 +134,6 @@ public class AllSoundDispatchPlayer : SoundPlayer
 				{
 					this.CreateSound(soundProfile);
 					soundProfile.SoundVolume = 1f;
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, SoundLib.MusicPlayer.Volume, 0);
 					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 1, 0);
 					Int16 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
@@ -145,6 +144,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 						soundProfile.SoundVolume = 0f;
 						ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
 					}
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 					this.currentMusicID = ObjNo;
 					this.StopAndClearSuspendBGM(ObjNo, true);
 				});
@@ -202,8 +202,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			{
 				this.CreateSound(soundProfile);
 				soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, time * 1000);
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * SoundLib.MusicPlayer.Volume, 0);
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, time * 1000);
 				this.currentMusicID = ObjNo;
 				this.StopAndClearSuspendBGM(ObjNo, true);
 			});
@@ -465,8 +465,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 					Single volume = ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_GetVolume(soundProfile.SoundID);
 					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
 					soundProfile.SoundID = ISdLibAPIProxy.Instance.SdSoundSystem_CreateSound(soundProfile.BankID);
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, offsetTimeMSec);
 					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, volume, 0);
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, offsetTimeMSec);
 				}
 				else
 				{
@@ -487,9 +487,9 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			soundProfile.Pitch = 1f;
 			if (this.TuneUpSoundEffectByObjNo(ObjNo, soundProfile) == 0)
 			{
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, AllSoundDispatchPlayer.NormalizeVolume(vol) * SoundLib.SoundEffectPlayer.Volume, 0);
 				this.ShiftPitchIfFastForward(soundProfile);
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 			}
 			AllSoundDispatchPlayer.PlayingSfx playingSfx = new AllSoundDispatchPlayer.PlayingSfx();
 			playingSfx.ObjNo = ObjNo;
@@ -534,10 +534,10 @@ public class AllSoundDispatchPlayer : SoundPlayer
 	{
 		if (ObjNo == 1748)
 		{
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0.6f * SoundLib.SoundEffectPlayer.Volume, 0);
 			soundProfile.Pitch *= 0.6f; // Can't do that with Soloud yet - SamsamTS
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 			return 1;
 		}
 		// TODO: This special way to handle this sound (Fire effect) seems to crash the game when the INI option "[Import] Audio" is used
@@ -553,11 +553,11 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		//}
 		if (ObjNo == 58 && Configuration.Audio.Backend > 0)
 		{
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 900);
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0.7f * SoundLib.SoundEffectPlayer.Volume, 300);
 			soundProfile.Pitch *= 0.8f; // Can't do that with Soloud yet - SamsamTS
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 900);
 			return 1;
 		}
 		return 0;
@@ -725,8 +725,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.SoundEffect, delegate(SoundProfile soundProfile)
 		{
 			this.CreateSound(soundProfile);
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, AllSoundDispatchPlayer.NormalizeVolume(vol) * SoundLib.MusicPlayer.Volume, 0);
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 			AllSoundDispatchPlayer.PlayingSfx playingSfx = new AllSoundDispatchPlayer.PlayingSfx();
 			playingSfx.ObjNo = ObjNo;
 			playingSfx.SoundID = soundProfile.SoundID;
@@ -900,8 +900,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			this.CreateSoundProfileIfNotExist(streamid, SoundProfileType.Song, delegate(SoundProfile soundProfile)
 			{
 				base.CreateSound(soundProfile);
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, SoundLib.SoundEffectPlayer.Volume, 0);
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 				this.currentSongID = soundProfile.SoundIndex;
 			});
 		}
