@@ -34,6 +34,10 @@ public class AllSoundDispatchPlayer : SoundPlayer
 				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * SoundLib.MusicPlayer.Volume, 0);
 			}
 		});
+	}
+
+	public void UpdatePlayingSoundEffectVolume()
+	{
 		AllSoundDispatchPlayer.PlayingSfx[] array = this.sfxResSlot;
 		for (Int32 i = 0; i < (Int32)array.Length; i++)
 		{
@@ -42,39 +46,19 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			{
 				if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(playingSfx.SoundID) != 0)
 				{
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(playingSfx.SoundID, AllSoundDispatchPlayer.NormalizeVolume(playingSfx.SndEffectVol) * SoundLib.MusicPlayer.Volume, 0);
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(playingSfx.SoundID, AllSoundDispatchPlayer.NormalizeVolume(playingSfx.SndEffectVol) * SoundLib.SoundEffectPlayer.Volume, 0);
 				}
 			}
 		}
-		foreach (AllSoundDispatchPlayer.PlayingSfx playingSfx2 in this.sfxChanels)
-		{
-			if (playingSfx2 != null)
-			{
-				if (FF9Snd.GetIsExtEnvObjNo(playingSfx2.ObjNo))
-				{
-					if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(playingSfx2.SoundID) != 0)
-					{
-						ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(playingSfx2.SoundID, AllSoundDispatchPlayer.NormalizeVolume(playingSfx2.SndEffectVol) * SoundLib.MusicPlayer.Volume, 0);
-					}
-				}
-			}
-		}
-	}
-
-	public void UpdatePlayingSoundEffectVolume()
-	{
 		foreach (AllSoundDispatchPlayer.PlayingSfx playingSfx in this.sfxChanels)
 		{
 			if (playingSfx != null)
 			{
-				if (!FF9Snd.GetIsExtEnvObjNo(playingSfx.ObjNo))
+				if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(playingSfx.SoundID) != 0)
 				{
-					if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(playingSfx.SoundID) != 0)
+					if (playingSfx.ObjNo != 1261 && playingSfx.ObjNo != 3096) // Why? - SamsamTS
 					{
-						if (playingSfx.ObjNo != 1261 && playingSfx.ObjNo != 3096)
-						{
-							ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(playingSfx.SoundID, AllSoundDispatchPlayer.NormalizeVolume(playingSfx.SndEffectVol) * SoundLib.SoundEffectPlayer.Volume, 0);
-						}
+						ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(playingSfx.SoundID, AllSoundDispatchPlayer.NormalizeVolume(playingSfx.SndEffectVol) * SoundLib.SoundEffectPlayer.Volume, 0);
 					}
 				}
 			}
