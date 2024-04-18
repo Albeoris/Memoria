@@ -141,7 +141,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			});
 		}
 	}
-	
+
 	public void StopAndClearSuspendBGM(int ObjNo, Boolean SetCurrentMusic = false)
 	{
 		if (this.suspendBgmNo != -1 && ObjNo != this.suspendBgmNo)
@@ -710,7 +710,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		this.CreateSoundProfileIfNotExist(ObjNo, SoundProfileType.SoundEffect, delegate(SoundProfile soundProfile)
 		{
 			this.CreateSound(soundProfile);
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, AllSoundDispatchPlayer.NormalizeVolume(vol) * SoundLib.MusicPlayer.Volume, 0);
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, AllSoundDispatchPlayer.NormalizeVolume(vol) * SoundLib.SoundEffectPlayer.Volume, 0);
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 			AllSoundDispatchPlayer.PlayingSfx playingSfx = new AllSoundDispatchPlayer.PlayingSfx();
 			playingSfx.ObjNo = ObjNo;
@@ -810,7 +810,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 				if (playingSfx.ObjNo == ObjNo)
 				{
 					playingSfx.SndEffectVol = vol;
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(playingSfx.SoundID, AllSoundDispatchPlayer.NormalizeVolume(vol) * SoundLib.MusicPlayer.Volume, 0);
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(playingSfx.SoundID, AllSoundDispatchPlayer.NormalizeVolume(vol) * SoundLib.SoundEffectPlayer.Volume, 0);
 				}
 			}
 		}
@@ -830,7 +830,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 				if (playingSfx.ObjNo == ObjNo)
 				{
 					playingSfx.SndEffectVol = to;
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(playingSfx.SoundID, AllSoundDispatchPlayer.NormalizeVolume(to) * SoundLib.MusicPlayer.Volume, AllSoundDispatchPlayer.ConvertTickToMillisec(ticks));
+					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(playingSfx.SoundID, AllSoundDispatchPlayer.NormalizeVolume(to) * SoundLib.SoundEffectPlayer.Volume, AllSoundDispatchPlayer.ConvertTickToMillisec(ticks));
 				}
 			}
 		}
@@ -848,7 +848,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			if (playingSfx != null)
 			{
 				playingSfx.SndEffectVol = vol;
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(playingSfx.SoundID, AllSoundDispatchPlayer.NormalizeVolume(vol) * SoundLib.MusicPlayer.Volume, 0);
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(playingSfx.SoundID, AllSoundDispatchPlayer.NormalizeVolume(vol) * SoundLib.SoundEffectPlayer.Volume, 0);
 			}
 		}
 	}
@@ -865,7 +865,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 			if (playingSfx != null)
 			{
 				playingSfx.SndEffectVol = to;
-				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(playingSfx.SoundID, AllSoundDispatchPlayer.NormalizeVolume(to) * SoundLib.MusicPlayer.Volume, AllSoundDispatchPlayer.ConvertTickToMillisec(ticks));
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(playingSfx.SoundID, AllSoundDispatchPlayer.NormalizeVolume(to) * SoundLib.SoundEffectPlayer.Volume, AllSoundDispatchPlayer.ConvertTickToMillisec(ticks));
 			}
 		}
 	}
