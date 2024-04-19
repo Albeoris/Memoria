@@ -21,6 +21,7 @@ namespace Memoria
             public readonly IniValue<Int32> AntiAliasing;
             public readonly IniValue<Int32> SkipIntros;
             public readonly IniValue<Int32> GarnetHair;
+            public readonly IniValue<Int32> CameraStabilizer;
 
             public GraphicsSection() : base(nameof(GraphicsSection), false)
             {
@@ -38,6 +39,7 @@ namespace Memoria
                 AntiAliasing = BindInt32(nameof(AntiAliasing), 0);
                 SkipIntros = BindInt32(nameof(SkipIntros), 0);
                 GarnetHair = BindInt32(nameof(GarnetHair), 0);
+                CameraStabilizer = BindInt32(nameof(CameraStabilizer), 0);
             }
         }
     }

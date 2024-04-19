@@ -315,7 +315,8 @@ public partial class EventEngine
                         this.sOriginalFieldGameObjects.Clear();
                     }
                     BGCAM_DEF new_camera_view = this.fieldmap.scene.cameraList[this.fieldmap.camIdx];
-                    this.fieldmap.EBG_scene2DScroll((float)((new_camera_view.vrpMinX + new_camera_view.vrpMaxX) / 2), (float)((new_camera_view.vrpMinY + new_camera_view.vrpMaxY) / 2), 1, 0);
+                    this.fieldmap.EBG_scene2DScroll((Int16)((new_camera_view.vrpMinX + new_camera_view.vrpMaxX) / 2), (Int16)((new_camera_view.vrpMinY + new_camera_view.vrpMaxY) / 2), 1, 0);
+                    //this.fieldmap.EBG_scene2DScroll((float)((new_camera_view.vrpMinX + new_camera_view.vrpMaxX) / 2), (float)((new_camera_view.vrpMinY + new_camera_view.vrpMaxY) / 2), 1, 0);
                 }
                 else if (this.sExternalFieldFade < 510 && this.sExternalFieldFade + 25 >= 510)
                 {
@@ -430,7 +431,8 @@ public partial class EventEngine
                         new_camera_position.x += cameraMove.x * 5f;
                     new_camera_position.x = Mathf.Clamp(new_camera_position.x, bgCamera.vrpMinX, bgCamera.vrpMaxX);
                     new_camera_position.y = Mathf.Clamp(new_camera_position.y, bgCamera.vrpMinY, bgCamera.vrpMaxY);
-                    this.fieldmap.EBG_scene2DScroll(new_camera_position[0], new_camera_position[1], 1, 0);
+                    //this.fieldmap.EBG_scene2DScroll(new_camera_position[0], new_camera_position[1], 1, 0);
+                    this.fieldmap.EBG_scene2DScroll((Int16)new_camera_position[0], (Int16)new_camera_position[1], 1, 0);
                 }
             }
         }

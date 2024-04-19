@@ -10,6 +10,7 @@ using Memoria.Assets.Import.Graphics;
 using Memoria.Scripts;
 using Global.TileSystem;
 using System.Linq;
+using System.Globalization;
 
 #pragma warning disable 169
 #pragma warning disable 414
@@ -68,8 +69,8 @@ public class BGSCENE_DEF
     public Int16 minY;
     public Int16 maxY;
 
-    public Int16 scrX;
-    public Int16 scrY;
+    public float scrX;
+    public float scrY;
 
     public String name;
 
@@ -221,8 +222,8 @@ public class BGSCENE_DEF
         }
         else if (operation == "Position" && arguments.Length >= 3)
         {
-            float.TryParse(arguments[0], out bgOverlay.orgX);
-            float.TryParse(arguments[1], out bgOverlay.orgY);
+            float.TryParse(arguments[0], NumberStyles.Any, CultureInfo.InvariantCulture, out bgOverlay.orgX);
+            float.TryParse(arguments[1], NumberStyles.Any, CultureInfo.InvariantCulture, out bgOverlay.orgY);
             UInt16.TryParse(arguments[2], out bgOverlay.orgZ);
             bgOverlay.curX = bgOverlay.orgX;
             bgOverlay.curY = bgOverlay.orgY;
@@ -511,7 +512,7 @@ public class BGSCENE_DEF
                 bgsStr += $"Position: {this.orgX + bgOverlay.orgX + spriteMinX}, {this.orgY + bgOverlay.orgY + spriteMinY}, {this.orgZ + bgOverlay.orgZ + spriteMinZ}\n";
                 bgsStr += $"Size: {spriteMaxX - spriteMinX}, {spriteMaxY - spriteMinY}\n";
                 if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
-                    bgsStr += $"ScrollWithOffset: {bgOverlay.ParallaxDepthX}, {bgOverlay.ParallaxDepthY}\n";
+                    bgsStr += $"ScrollWithOffset: {bgOverlay.scrollX}, {bgOverlay.scrollY}\n";
                 bgsStr += $"Image: {textureName}\n";
                 bgsStr += $"Shader: PSX/FieldMap_Abr_{(bgFirstSprite.trans == 0 ? "None" : Math.Min(3, (Int32)bgFirstSprite.alpha).ToString())}\n";
                 TextureHelper.WriteTextureToFile(texture, folder + textureName);
@@ -522,7 +523,7 @@ public class BGSCENE_DEF
                 bgsStr += $"Position: {this.orgX + bgOverlay.orgX}, {bgOverlay.orgY}, {bgOverlay.orgZ}\n";
                 bgsStr += $"Size: {bgOverlay.memoriaSize.x}, {bgOverlay.memoriaSize.y}\n";
                 if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
-                    bgsStr += $"ScrollWithOffset: {bgOverlay.ParallaxDepthX}, {bgOverlay.ParallaxDepthY}\n";
+                    bgsStr += $"ScrollWithOffset: {bgOverlay.scrollX}, {bgOverlay.scrollY}\n";
                 bgsStr += $"Image: {textureName}\n";
                 bgsStr += $"Shader: {bgOverlay.memoriaMaterial.shader.name}\n";
                 TextureHelper.WriteTextureToFile(bgOverlay.memoriaImage, folder + textureName);
