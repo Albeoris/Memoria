@@ -9,15 +9,12 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Globalization;
-using System.Collections.Generic;
 using System.Drawing.Text;
 using Ini;
 using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using System.Text.RegularExpressions;
-using System.Linq;
-using System.Windows.Media.Effects;
 
 
 // ReSharper disable UnusedMember.Local
@@ -343,7 +340,6 @@ namespace Memoria.Launcher
                 sBUIScaleTextindex.Margin = new Thickness(8, 0, 0, 0);
             }
 
-            SanitizeMemoriaIni();
             LoadSettings();
         }
 
@@ -654,16 +650,20 @@ namespace Memoria.Launcher
         {
             LoadSettings();
         }
+
         private void LoadSettings()
         {
             try
             {
                 if (!File.Exists(_iniPath))
                 {
-                    Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("Ini.Memoria.ini");
-                    Stream output = File.Create(_iniPath);
-                    input.CopyTo(output, 8192);
+                    Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("Memoria.ini");
+                    StreamReader reader = new StreamReader(input);
+                    string text = reader.ReadToEnd();
+                    File.WriteAllText(_iniPath, text);
                 }
+
+                SanitizeMemoriaIni();
 
                 IniFile iniFile = new IniFile(_iniPath);
 
