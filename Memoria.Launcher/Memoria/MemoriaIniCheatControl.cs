@@ -26,7 +26,7 @@ namespace Memoria.Launcher
     {
         public MemoriaIniCheatControl()
         {
-            SetRows(12);
+            SetRows(14);
             SetCols(8);
             
             Width = 260;
@@ -118,6 +118,27 @@ namespace Memoria.Launcher
             speedFactor.Minimum = 2;
             speedFactor.Maximum = 12;
             speedFactor.Margin = new Thickness(0, 0, 3, 0);
+
+            row++;
+
+            UiTextBlock BattleTPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleTPS), row, 0, 1, 8);
+            BattleTPSText.Foreground = Brushes.White;
+            BattleTPSText.Margin = rowMargin;
+            BattleTPSText.ToolTip = Lang.Settings.BattleTPS_Tooltip;
+
+            row++;
+
+            UiTextBlock BattleTPSindex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
+            BattleTPSindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleTPS)) { Mode = BindingMode.TwoWay });
+            BattleTPSindex.Foreground = Brushes.White;
+            BattleTPSindex.Margin = rowMargin;
+            Slider BattleTPSFactor = AddUiElement(UiSliderFactory.Create(0), row, 1, 1, 7);
+            BattleTPSFactor.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleTPS)) { Mode = BindingMode.TwoWay });
+            BattleTPSFactor.TickFrequency = 15;
+            BattleTPSFactor.IsSnapToTickEnabled = true;
+            BattleTPSFactor.Minimum = 15;
+            BattleTPSFactor.Maximum = 150;
+            BattleTPSFactor.Margin = new Thickness(0, 0, 3, 0);
 
             row++;
 
@@ -229,6 +250,18 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public Int16 BattleTPS
+        {
+            get { return _battletpsfactor; }
+            set
+            {
+                if (_battletpsfactor != value)
+                {
+                    _battletpsfactor = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public Int16 BattleAssistance
         {
             get { return _battleassistance; }
@@ -280,7 +313,7 @@ namespace Memoria.Launcher
 
         
 
-        private Int16 _stealingalwaysworks, _garnetconcentrate, _breakDamageLimit, _accessBattleMenu, _speedmode, _speedfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill;
+        private Int16 _stealingalwaysworks, _garnetconcentrate, _breakDamageLimit, _accessBattleMenu, _speedmode, _speedfactor, _battletpsfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill;
 
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Memoria.ini";
 
@@ -345,6 +378,16 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _speedfactor))
                     _speedfactor = 2;
 
+                value = iniFile.ReadValue("Graphics", " " + nameof(BattleTPS));
+                if (String.IsNullOrEmpty(value))
+                {
+                    _battletpsfactor = 15;
+                    value = " 15";
+                    OnPropertyChanged(nameof(BattleTPS));
+                }
+                if (!Int16.TryParse(value, out _battletpsfactor))
+                    _battletpsfactor = 15;
+
                 value = iniFile.ReadValue("Cheats", nameof(BattleAssistance));
                 if (String.IsNullOrEmpty(value))
                 {
@@ -395,6 +438,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(AccessBattleMenu));
                 Refresh(nameof(SpeedMode));
                 Refresh(nameof(SpeedFactor));
+                Refresh(nameof(BattleTPS));
                 Refresh(nameof(BattleAssistance));
                 Refresh(nameof(Attack9999));
                 Refresh(nameof(NoRandomEncounter));
@@ -462,6 +506,11 @@ namespace Memoria.Launcher
                     case nameof(SpeedFactor):
                         if (SpeedFactor < 13)
                             iniFile.WriteValue("Cheats", propertyName + " ", " " + SpeedFactor);
+                        break;
+                    case nameof(BattleTPS):
+                        iniFile.WriteValue("Graphics", propertyName + " ", " " + BattleTPS);
+                        if (BattleTPS != 15)
+                            iniFile.WriteValue("Cheats", "Enabled ", " 1");
                         break;
                     case nameof(BattleAssistance):
                         iniFile.WriteValue("Cheats", propertyName + " ", " " + BattleAssistance);

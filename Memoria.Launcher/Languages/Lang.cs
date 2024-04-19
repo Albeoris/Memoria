@@ -222,6 +222,7 @@ namespace Memoria.Launcher
             public static readonly string Use30FpsVideo_Tooltip = GetSettings(nameof(Use30FpsVideo_Tooltip));
             public static readonly string Widescreen_Tooltip = GetSettings(nameof(Widescreen_Tooltip));
             public static readonly string AntiAliasing_Tooltip = GetSettings(nameof(AntiAliasing_Tooltip));
+            public static readonly string BattleTPS_Tooltip = GetSettings(nameof(BattleTPS_Tooltip));
             public static readonly string SharedFPS_Tooltip = GetSettings(nameof(SharedFPS_Tooltip));
             public static readonly string CameraStabilizer_Tooltip = GetSettings(nameof(CameraStabilizer_Tooltip));
             public static readonly string BattleInterface_Tooltip = GetSettings(nameof(BattleInterface_Tooltip));
