@@ -26,12 +26,12 @@ namespace Memoria.Launcher
     {
         public MemoriaIniCheatControl()
         {
-            SetRows(15);
+            SetRows(12);
             SetCols(8);
             
-            Width = 240;
-            VerticalAlignment = VerticalAlignment.Top;
-            HorizontalAlignment = HorizontalAlignment.Left;
+            Width = 260;
+            VerticalAlignment = VerticalAlignment.Bottom;
+            HorizontalAlignment = HorizontalAlignment.Center;
             Margin = new Thickness(0);
 
             DataContext = this;

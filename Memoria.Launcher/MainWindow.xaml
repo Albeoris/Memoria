@@ -4,8 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:launcher="clr-namespace:Memoria.Launcher"
     Title="{Binding LauncherWindowTitle, FallbackValue='Final Fantasy IX | Memoria Launcher'}"
-    Width="800"
-    Height="610"
+    Width="900"
+    Height="700"
     BorderThickness="0"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
@@ -13,17 +13,15 @@
     <Grid>
         <Image
             x:Name="Launcher"
-            Width="800"
-            Height="600"
+            Height="800"
             VerticalAlignment="Top"
             MouseDown="Launcher_MouseDown"
             Source="/Images/new_launcher_bg.png" />
 
         <launcher:GameSettingsControl
             x:Name="GameSettings"
-            Width="240"
-            Height="auto"
-            Margin="25,0,0,24"
+            Width="260"
+            Margin="30,0,0,30"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
 
@@ -31,10 +29,9 @@
 
 
         <launcher:MemoriaIniControl x:Name="MemoriaIniControl"
-            Width="240"
-            Height="auto"
-            Margin="270,0,0,24"
-            HorizontalAlignment="Left"
+            Width="260"
+            Margin="0,0,30,30"
+            HorizontalAlignment="Right"
             VerticalAlignment="Bottom" >
         </launcher:MemoriaIniControl>
         <!--<Rectangle Margin="519,261,274,10">
@@ -49,30 +46,21 @@
 
         <launcher:MemoriaIniCheatControl
             x:Name="MemoriaIniCheatControl"
-            Width="240"
-            Height="auto"
-            Margin="523,0,0,24"
-            HorizontalAlignment="Left"
+            Width="260"
+            Margin="0,0,0,30"
+            HorizontalAlignment="Center"
             VerticalAlignment="Bottom" />
-
-        <Rectangle Visibility="{Binding BlueRectVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiModManagerButton}}}" Margin="508,25,19,411">
-            <Rectangle.Style>
-                <Style TargetType="{x:Type Rectangle}">
-                    <Setter Property="Fill" Value="#bb111111"/>
-                </Style>
-            </Rectangle.Style>
-        </Rectangle>
         <launcher:UiLauncherPlayButton
             x:Name="PlayButton"
-            Width="240"
+            Width="260"
             Height="72"
-            Margin="0,0,27,466"
+            Margin="0,0,30,552"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom" />
         <launcher:UiLauncherModManagerButton
-            Width="240"
+            Width="260"
             Height="36"
-            Margin="0,0,27,422"
+            Margin="0,0,30,512"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Content="" />

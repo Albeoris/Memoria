@@ -44,11 +44,11 @@ namespace Memoria.Launcher
             foreach (UInt16 frequency in EnumerateAudioSettings())
                 _validSamplingFrequency.Add(frequency);
 
-            SetRows(28);
+            SetRows(20);
             SetCols(8);
 
-            Width = 240;
-            VerticalAlignment = VerticalAlignment.Top;
+            Width = 260;
+            VerticalAlignment = VerticalAlignment.Bottom;
             HorizontalAlignment = HorizontalAlignment.Left;
             Margin = new Thickness(5);
             DataContext = this;
@@ -90,23 +90,23 @@ namespace Memoria.Launcher
             audio.SetBinding(Selector.IsEnabledProperty, new Binding(nameof(AudioFrequencyEnabled)) {Mode = BindingMode.TwoWay});
             audio.Margin = rowMargin;*/
 
-            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 16, 0, 3, 4);
+            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 13, 0, 3, 4);
             x64.Margin = rowMargin;
             x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) { Mode = BindingMode.TwoWay });
             x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) { Mode = BindingMode.TwoWay });
             x64.ToolTip = Lang.Settings.Xsixfour_Tooltip;
 
-            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 16, 3, 3, 5);
+            UiCheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 13, 3, 3, 5);
             debuggableCheckBox.Margin = rowMargin;
             debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) { Mode = BindingMode.TwoWay });
             debuggableCheckBox.ToolTip = Lang.Settings.Debuggable_Tooltip;
 
-            UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 18, 0, 3, 8);
+            UiCheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 15, 0, 3, 8);
             checkUpdates.Margin = rowMargin;
             checkUpdates.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckUpdates)) { Mode = BindingMode.TwoWay });
             checkUpdates.ToolTip = Lang.Settings.CheckUpdates_Tooltip;
 
-            UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 20, 0, 3, 8);
+            UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 17, 0, 3, 8);
             steamOverlayFix.Margin = rowMargin;
             steamOverlayFix.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SteamOverlayFix)) { Mode = BindingMode.TwoWay });
             steamOverlayFix.ToolTip = Lang.Settings.SteamOverlayFix_Tooltip;

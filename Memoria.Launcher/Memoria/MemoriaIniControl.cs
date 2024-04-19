@@ -17,6 +17,7 @@ using Binding = System.Windows.Data.Binding;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using System.Text.RegularExpressions;
 using System.Linq;
+using System.Windows.Media.Effects;
 
 
 // ReSharper disable UnusedMember.Local
@@ -32,15 +33,14 @@ namespace Memoria.Launcher
     {
         public MemoriaIniControl()
         {
-            PsxFontInstalled = true || IsOptionPresentInIni("Graphics", "UseGarnetFont");
             SBUIInstalled = false && IsOptionPresentInIni("Graphics", "ScaledBattleUI");
 
             SetRows(17);
             SetCols(8);
             
-            Width = 240;
-            VerticalAlignment = VerticalAlignment.Top;
-            HorizontalAlignment = HorizontalAlignment.Left;
+            Width = 260;
+            VerticalAlignment = VerticalAlignment.Bottom;
+            HorizontalAlignment = HorizontalAlignment.Right;
             Margin = new Thickness(0);
 
             DataContext = this;
@@ -295,28 +295,32 @@ namespace Memoria.Launcher
             movieVolumeTextIndex.Margin = rowMargin;
             movieVolumeTextIndex.TextAlignment = TextAlignment.Right;
 
-            if (PsxFontInstalled)
-            {
-                row++;
+            row++;
 
-                UiTextBlock fontChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FontChoice), row, 0, 1, 2);
-                fontChoiceText.Foreground = Brushes.White;
-                fontChoiceText.Margin = rowMargin;
-                fontChoiceText.ToolTip = Lang.Settings.FontChoice_Tooltip;
-                _fontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 2, 1, 6);
-                _fontChoiceBox.Height = 20;
-                _fontChoiceBox.FontSize = 10;
-                _fontChoiceBox.Margin = rowMargin;
+            UiTextBlock fontChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FontChoice), row, 0, 1, 2);
+            fontChoiceText.Foreground = Brushes.White;
+            fontChoiceText.Margin = rowMargin;
+            fontChoiceText.ToolTip = Lang.Settings.FontChoice_Tooltip;
+            _fontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 2, 1, 6);
+            _fontChoiceBox.IsEnabled = false;
+            _fontChoiceBox.Height = 20;
+            _fontChoiceBox.FontSize = 10;
+            _fontChoiceBox.Margin = rowMargin;
 
-                FontCollection installedFonts = new InstalledFontCollection();
-                String[] fontNames = new String[installedFonts.Families.Length + 2];
-                fontNames[0] = _fontDefaultPC;
-                fontNames[1] = _fontDefaultPSX;
-                for (Int32 fontindex = 0; fontindex < installedFonts.Families.Length; ++fontindex)
-                    fontNames[fontindex+2] = installedFonts.Families[fontindex].Name;
-                _fontChoiceBox.ItemsSource = fontNames;
-                _fontChoiceBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(FontChoice)) { Mode = BindingMode.TwoWay });
-            }
+            FontCollection installedFonts = new InstalledFontCollection();
+            String[] fontNames = new String[installedFonts.Families.Length + 2];
+            fontNames[0] = _fontDefaultPC;
+            fontNames[1] = _fontDefaultPSX;
+            for (Int32 fontindex = 0; fontindex < installedFonts.Families.Length; ++fontindex)
+                fontNames[fontindex+2] = installedFonts.Families[fontindex].Name;
+            _fontChoiceBox.ItemsSource = fontNames;
+            _fontChoiceBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(FontChoice)) { Mode = BindingMode.TwoWay });
+
+            /*
+            _fontChoiceBox.Background = Brushes.Gray;
+            _fontChoiceBox.Foreground = Brushes.Gray;
+            fontChoiceText.Foreground = Brushes.Gray;
+            */
 
             if (SBUIInstalled)
             {
