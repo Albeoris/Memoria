@@ -2219,7 +2219,7 @@ public class FieldMap : HonoBehavior
         {
             int mapId = FF9StateSystem.Common.FF9.fldMapNo;
             Int32 mapWidth = NarrowMapList.MapWidth(mapId);
-            Log.Message("Configuration.Graphics.WidescreenSupport " + Configuration.Graphics.WidescreenSupport + " CalcPsxFieldWidth() " + CalcPsxFieldWidth() + " PsxScreenWidth 1 " + CalcPsxScreenWidth() + " Screen.width " + Screen.width + " Screen.height " + Screen.height + "mapWidth " + mapWidth);
+            // Log.Message("Configuration.Graphics.WidescreenSupport " + Configuration.Graphics.WidescreenSupport + " CalcPsxFieldWidth() " + CalcPsxFieldWidth() + " PsxScreenWidth 1 " + CalcPsxScreenWidth() + " Screen.width " + Screen.width + " Screen.height " + Screen.height + "mapWidth " + mapWidth);
             if (mapWidth <= PsxScreenWidth && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "BattleMap")
             {
                 PsxFieldWidth = (Int16)mapWidth;
@@ -2278,7 +2278,7 @@ public class FieldMap : HonoBehavior
         }
     }
 
-    private bool dbug = true;
+    private bool dbug = false;
 
     private float Prev_CamPositionX, Prev_CamPositionY;
     private Int16 SmoothCamPercent()
