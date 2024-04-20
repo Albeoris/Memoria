@@ -1,4 +1,5 @@
-﻿using Memoria.Prime.AKB2;
+﻿using Memoria.Prime;
+using Memoria.Prime.AKB2;
 using SoLoud;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ namespace Global.Sound.SoLoud
 {
     internal class SdLibAPIWithSoloud : ISdLibAPI
     {
+        public static bool isQuitting = false;
+
         private const Int32 AkbHeaderSize = 304;
 
         private static Soloud soloud = null;
@@ -57,13 +60,15 @@ namespace Global.Sound.SoLoud
             {
                 soloud = new Soloud();
                 soloud.init(1, 0, 48000);
-                Memoria.Prime.Log.Message($"[Soloud] backend: {soloud.getBackendString()} samplerate:{soloud.getBackendSamplerate()}");
+                Log.Message($"[Soloud] backend: {soloud.getBackendString()} samplerate:{soloud.getBackendSamplerate()}");
 
                 // Create buses
                 sfxBus = new Bus();
                 voiceBus = new Bus();
                 soloud.play(sfxBus, 1);
                 soloud.play(voiceBus, 1);
+
+                GameLoopManager.Quit += () => { isQuitting = true; };
             }
 
             return 0;
@@ -189,11 +194,6 @@ namespace Global.Sound.SoLoud
             }
             soloud.setPause((uint)soundID, 0);
 
-            var stream = streams[sounds[soundID].bankID];
-            if (stream.akbHeader.LoopEnd > 0)
-            {
-                Memoria.Prime.Log.Message($"[SoLoud] Starting loop: {stream.profile.ResourceID}");
-            }
             return 1;
         }
 
@@ -254,7 +254,7 @@ namespace Global.Sound.SoLoud
             SoundLib.Log($"SoundCtrl_SetVolume({soundID}, {volume}, {transTimeMSec})");
             if (!sounds.ContainsKey(soundID)) return;
 
-            if (volume < 0f || volume > 1f) Memoria.Prime.Log.Message($"[SoLoud] Warning! Unexpected volume value. Volume = {volume} SoundID = {soundID}\n{Environment.StackTrace}");
+            if (volume < 0f || volume > 1f) Log.Message($"[SoLoud] Warning! Unexpected volume value. Volume = {volume} SoundID = {soundID}\n{Environment.StackTrace}");
             volume = Mathf.Clamp01(volume);
             sounds[soundID].volume = volume;
 

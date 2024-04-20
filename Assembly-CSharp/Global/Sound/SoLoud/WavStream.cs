@@ -18,7 +18,8 @@ namespace Global.Sound.SoLoud
         internal static extern void WavStream_destroy(IntPtr aObjHandle);
         ~WavStream()
         {
-            WavStream_destroy(objhandle);
+            // Can cause a crash if called while quitting 
+            if (!SdLibAPIWithSoloud.isQuitting) WavStream_destroy(objhandle);
         }
 
         [DllImport("soloud", CallingConvention = CallingConvention.Cdecl, EntryPoint = "WavStream_load")]
