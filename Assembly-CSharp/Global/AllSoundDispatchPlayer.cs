@@ -520,7 +520,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		if (ObjNo == 1748)
 		{
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0.6f * SoundLib.SoundEffectPlayer.Volume, 0);
-			soundProfile.Pitch *= 0.6f; // Can't do that with Soloud yet - SamsamTS
+			soundProfile.Pitch *= 0.6f;
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
 			return 1;
@@ -539,8 +539,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 		if (ObjNo == 58 && Configuration.Audio.Backend > 0)
 		{
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
-			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0.7f * SoundLib.SoundEffectPlayer.Volume, 300);
-			soundProfile.Pitch *= 0.8f; // Can't do that with Soloud yet - SamsamTS
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, SoundLib.SoundEffectPlayer.Volume, 300);
+			soundProfile.Pitch *= 0.8f;
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 900);
 			return 1;

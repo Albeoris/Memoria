@@ -233,7 +233,7 @@ public class VoicePlayer : SoundPlayer
 			SoundProfileType = SoundProfileType.Voice,
 			SoundVolume = 1f,
 			Panning = 0f,
-			Pitch = 0.5f
+			Pitch = Configuration.Audio.Backend == 0 ? 0.5f : 1f // SdLib needs 0.5f for some reason
 		};
 
 		SoundLoaderProxy.Instance.Load(soundProfile,

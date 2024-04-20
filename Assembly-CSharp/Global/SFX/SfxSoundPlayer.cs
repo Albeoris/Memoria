@@ -143,8 +143,7 @@ public class SfxSoundPlayer : SoundPlayer
             Int32 fastForwardFactor = HonoBehaviorSystem.Instance.GetFastForwardFactor();
             if (fastForwardFactor != 1)
             {
-                Single pitch2 = (Single)fastForwardFactor * soundProfile.Pitch;
-                soundProfile.Pitch = pitch2;
+                soundProfile.Pitch = (Single)fastForwardFactor * soundProfile.Pitch;
             }
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
 			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);

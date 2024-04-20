@@ -278,20 +278,15 @@ namespace Global.Sound.SoLoud
         {
             // Soloud doesn't handle pitch (yet)
             SoundLib.Log($"SoundCtrl_SetPitch({soundID}, {pitch}, {transTimeMSec})");
-            //if (pitch != HonoBehaviorSystem.Instance.GetFastForwardFactor()) Memoria.Prime.Log.Message($"[SoLoud] SetPitch {streams[sounds[soundID].bankID].profile.ResourceID}, {pitch}\n{Environment.StackTrace}");
 
-            // Play at higher speed for fast forward
-            float speed = soloud.getRelativePlaySpeed((uint)soundID);
-            if (pitch == HonoBehaviorSystem.Instance.GetFastForwardFactor() && speed != pitch)
+            // Play at different speed (changes the pitch)
+            if (transTimeMSec > 0)
             {
-                if (transTimeMSec > 0)
-                {
-                    soloud.fadeRelativePlaySpeed((uint)soundID, pitch, transTimeMSec / 1000d);
-                }
-                else
-                {
-                    soloud.setRelativePlaySpeed((uint)soundID, pitch);
-                }
+                soloud.fadeRelativePlaySpeed((uint)soundID, pitch, transTimeMSec / 1000d);
+            }
+            else
+            {
+                soloud.setRelativePlaySpeed((uint)soundID, pitch);
             }
         }
 
