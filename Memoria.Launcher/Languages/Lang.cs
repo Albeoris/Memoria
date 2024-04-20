@@ -234,6 +234,7 @@ namespace Memoria.Launcher
             public static readonly string SoundVolume_Tooltip = GetSettings(nameof(SoundVolume_Tooltip));
             public static readonly string MusicVolume_Tooltip = GetSettings(nameof(MusicVolume_Tooltip));
             public static readonly string MovieVolume_Tooltip = GetSettings(nameof(MovieVolume_Tooltip));
+            public static readonly string UsePsxFont_Tooltip = GetSettings(nameof(UsePsxFont_Tooltip));
             public static readonly string FontChoice_Tooltip = GetSettings(nameof(FontChoice_Tooltip));
 
             // Memoria.ini Cheats tooltips
