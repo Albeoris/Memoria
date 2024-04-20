@@ -9,9 +9,9 @@ public partial class BGOVERLAY_DEF
 	{
 		this.startOffset = 0L;
 		this.spriteList = new List<BGSPRITE_LOC_DEF>();
-        this.canCombine = true;
-        this.isCreated = false;
-    }
+		this.canCombine = true;
+		this.isCreated = false;
+	}
 
 	public void SetFlags(OVERLAY_FLAG flagDiff, Boolean isSet)
 	{
@@ -47,12 +47,12 @@ public partial class BGOVERLAY_DEF
 		this.maxX = reader.ReadInt16();
 		this.minY = reader.ReadInt16();
 		this.maxY = reader.ReadInt16();
-		this.scrX = reader.ReadInt16();
-		this.scrY = reader.ReadInt16();
-		this.ParallaxDepthX = reader.ReadInt16();
-		this.ParallaxDepthY = reader.ReadInt16();
-		this.fracX = (float)reader.ReadInt16();
-		this.fracY = (float)reader.ReadInt16();
+		this.scrX = (float)reader.ReadInt16();
+		this.scrY = (float)reader.ReadInt16();
+		this.scrollX = reader.ReadInt16();
+		this.scrollY = reader.ReadInt16();
+		this.fracX = reader.ReadInt16();
+		this.fracY = reader.ReadInt16();
 		Byte bitPos = 0;
 		buffer = reader.ReadUInt32();
 		this.camNdx = (Byte)BitUtil.ReadBits(buffer, ref bitPos, 8);
@@ -75,24 +75,27 @@ public partial class BGOVERLAY_DEF
 	public float orgY;
 	public float curX;
 	public float curY;
+	public float prevX;
+	public float prevY;
 
 	public Int16 minX;
 	public Int16 maxX;
 	public Int16 minY;
 	public Int16 maxY;
 
-	public Int16 scrX;
-	public Int16 scrY;
+	public float scrX;
+	public float scrY;
 
-	public Int16 ParallaxDepthX; // negative is slower (further) than main, positive faster (closer)
-	public Int16 ParallaxDepthY;
+	public Int16 scrollX; // negative is slower (further) than main, positive faster (closer)
+	public Int16 scrollY;
 
-	public float fracX;
-	public float fracY;
-
+	public Int16 fracX;
+	public Int16 fracY;
+	
 	public Byte camNdx;
+
 	public Byte isXOffset;
-    public UInt32 indnum;
+	public UInt32 indnum;
 	public Byte viewportNdx;
 
 	public UInt16 spriteCount;
@@ -109,8 +112,8 @@ public partial class BGOVERLAY_DEF
 
 	public Transform transform;
 
-    public Boolean canCombine;
-    public Boolean isCreated;
+	public Boolean canCombine;
+	public Boolean isCreated;
 
 	public Boolean isMemoria = false;
 	public Vector2 memoriaSize;

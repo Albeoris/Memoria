@@ -6,25 +6,26 @@
 
 - New launcher with easy options (for not included options: Memoria.ini)
 - Mod Manager, with integrated community catalog and 1 click install
+- Smooth camera movement
 - Optional features:
     - Battle UI layouts (includes original PSX layout)
     - Configurable framerate (15, 30, 60fps...)
+    - Configurable camera stabilizer
     - Font change (includes original PSX font)
     - Volume control
     - Anti-aliasing
     - Full analog movement
 - Support for:
     - Larger backgrounds definition (e.g. Moguri)
-    - Widescreen (now for all resolutions)
+    - Widescreen (Supports 16:9 and 16:10)
     - Unlocks FMV framerate change (e.g. Moguri)
     - Voice acting (e.g. WIP project ECHO-S)
     - Many limitations removed for mods
     - Some bugfixes
 - Faster battles:
     - Speed change
-    - Swirl duration
-    - Waiting skip
-    - Turn-based mode
+    - Swirl duration / skip
+    - Turn-based mode / Waiting skip mode / Simultaneous attacks mode
 - Optional Cheats:
     - Stealing 100% success
     - Enable/Disable vanilla cheats

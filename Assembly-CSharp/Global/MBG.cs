@@ -189,7 +189,7 @@ public class MBG : HonoBehavior
 	{
 		this.mbgCamera.depth = -4096f;
 		this.currentFieldMap = fieldMap;
-		MBG.MBGParms.oldBGCamNdx = this.currentFieldMap.GetCurrentCameraIndex();
+		MBG.MBGParms.oldBGCamNdx = this.currentFieldMap.camIdx;
 		Camera mainCamera = fieldMap.GetMainCamera();
 		this.SetMovieCamera(mainCamera);
     }

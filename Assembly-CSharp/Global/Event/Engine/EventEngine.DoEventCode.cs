@@ -1386,7 +1386,8 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGSSCROLL:
             {
-                this.fieldmap.EBG_scene2DScroll((float)this.getv2(), (float)this.getv2(), (UInt16)this.getv1(), (UInt32)this.getv1());
+                //this.fieldmap.EBG_scene2DScroll((float)this.getv2(), (float)this.getv2(), (UInt16)this.getv1(), (UInt32)this.getv1());
+                this.fieldmap.EBG_scene2DScroll((Int16)this.getv2(), (Int16)this.getv2(), (UInt16)this.getv1(), (UInt32)this.getv1());
                 return 0;
             }
             case EBin.event_code_binary.BGSRELEASE:

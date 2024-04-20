@@ -204,6 +204,7 @@ namespace Memoria.Launcher
             public static readonly string SBUIenabled = GetSettings(nameof(SBUIenabled));
             public static readonly string BattleTPS = GetSettings(nameof(BattleTPS));
             public static readonly string SharedFPS = GetSettings(nameof(SharedFPS));
+            public static readonly string CameraStabilizer = GetSettings(nameof(CameraStabilizer));
             public static readonly string UseOrchestralMusic = GetSettings(nameof(UseOrchestralMusic));
             public static readonly string Use30FpsVideo = GetSettings(nameof(Use30FpsVideo));
 
@@ -222,6 +223,7 @@ namespace Memoria.Launcher
             public static readonly string Widescreen_Tooltip = GetSettings(nameof(Widescreen_Tooltip));
             public static readonly string AntiAliasing_Tooltip = GetSettings(nameof(AntiAliasing_Tooltip));
             public static readonly string SharedFPS_Tooltip = GetSettings(nameof(SharedFPS_Tooltip));
+            public static readonly string CameraStabilizer_Tooltip = GetSettings(nameof(CameraStabilizer_Tooltip));
             public static readonly string BattleInterface_Tooltip = GetSettings(nameof(BattleInterface_Tooltip));
             public static readonly string SkipIntrosToMainMenu_Tooltip = GetSettings(nameof(SkipIntrosToMainMenu_Tooltip));
             public static readonly string SkipBattleSwirl_Tooltip = GetSettings(nameof(SkipBattleSwirl_Tooltip));
