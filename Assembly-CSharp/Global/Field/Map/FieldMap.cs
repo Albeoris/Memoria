@@ -1254,7 +1254,16 @@ public class FieldMap : HonoBehavior
         this.scene.scrY = this.scene.curY + HalfFieldHeight - realVrp.y;
         List<BGOVERLAY_DEF> overlayList = this.scene.overlayList;
         for (int i = 0; i < this.scene.overlayCount; i++)
-            this.UpdateOverlay(i, overlayList[i], realVrp);
+        {
+            try
+            {
+                this.UpdateOverlay(i, overlayList[i], realVrp);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
+        }
     }
 
     private void UpdateOverlay(Int32 ovrNdx, BGOVERLAY_DEF bgOverlay, Vector2 realVrp)
