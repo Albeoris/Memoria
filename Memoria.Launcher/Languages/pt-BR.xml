@@ -126,6 +126,8 @@
 	BattleAssistance_Tooltip = "(Trapaças non-mod)&#xA;Transe instantâneo (F2)&#xA;Dano máximo (F3)"
 	NoRandomBattles_Tooltip = "(Trapaças non-mod)&#xA;Sem encontros aleatórios (F4)"
 	PermanentCheats_Tooltip = "(Trapaças non-mod)&#xA;Tudo no máximo F5/F6/F7&#xA;(estas trapaças ficarão no seu save e desativam as realizações do Steam)"
+	BattleTPS_Tooltip = "Velocidade base das batalhas, o normal é 15"
+	UsePsxFont_Tooltip = "Seleciona a fonte original do PSX (sem necessidade de instalação)"
 	/>
 
 	<SdLib

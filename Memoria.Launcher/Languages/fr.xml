@@ -127,6 +127,8 @@
 	BattleAssistance_Tooltip = "(Triche officielle)&#xA;Transe instantanée (F2)&#xA;Dégats maximum (F3)"
 	NoRandomBattles_Tooltip = "(Triche officielle)&#xA;Pas de combats aléatoires (F4)"
 	PermanentCheats_Tooltip = "(Triche officielle)&#xA;Tout au maximum F5/F6/F7&#xA;(Ces triches sont permanentes et restent sur votre sauvegarde, désactive les succès)"
+	BattleTPS_Tooltip = "Vitesse de base des combats, normale: 15"
+	UsePsxFont_Tooltip = "Sélectionne la police originale PS1 (pas d'installation nécessaire)"
 	/>
 
 	<SdLib
