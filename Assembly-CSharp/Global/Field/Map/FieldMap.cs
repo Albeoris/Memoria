@@ -435,6 +435,7 @@ public class FieldMap : HonoBehavior
 
     public static Boolean IsNarrowMap()
     {
+        Log.Message("NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxFieldWidth()) " + NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxFieldWidth()));
         return NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxFieldWidth());
     }
 
@@ -480,6 +481,19 @@ public class FieldMap : HonoBehavior
         575,  // Hunting festival
         767,  // Burmecia, the queen slides from her layer
         1754, // Fast scroll on Iifa platform buggy
+        3000, // ending
+        3001,
+        3002,
+        3003,
+        3004,
+        3005,
+        3006,
+        3007,
+        3008,
+        3009,
+        3010,
+        3011,
+        3012,
     };
 
     public void ActivateCamera()
@@ -2216,11 +2230,11 @@ public class FieldMap : HonoBehavior
     {
         PsxFieldWidth = CalcPsxFieldWidth();
         PsxScreenWidth = CalcPsxScreenWidth();
+        int map = FF9StateSystem.Common.FF9.fldMapNo;
         Log.Message("fldMapNo:" + FF9StateSystem.Common.FF9.fldMapNo + " MapWidth:" + NarrowMapList.MapWidth(FF9StateSystem.Common.FF9.fldMapNo) + " PsxFieldWidth:" + PsxFieldWidth + " PsxScreenWidth:" + PsxScreenWidth + " InitializeWidescreenSupport():" + Configuration.Graphics.InitializeWidescreenSupport() + " WidescreenSupport:" + Configuration.Graphics.WidescreenSupport);
         if (Configuration.Graphics.InitializeWidescreenSupport())
         {
-            int mapId = FF9StateSystem.Common.FF9.fldMapNo;
-            Int32 mapWidth = NarrowMapList.MapWidth(mapId);
+            Int32 mapWidth = NarrowMapList.MapWidth(map);
             //Log.Message("Configuration.Graphics.WidescreenSupport " + Configuration.Graphics.WidescreenSupport + " CalcPsxFieldWidth() " + CalcPsxFieldWidth() + " PsxScreenWidth 1 " + CalcPsxScreenWidth() + " Screen.width " + Screen.width + " Screen.height " + Screen.height + "mapWidth " + mapWidth);
 
             if (mapWidth <= PsxScreenWidth && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "BattleMap")
@@ -2228,6 +2242,23 @@ public class FieldMap : HonoBehavior
                 PsxFieldWidth = (Int16)mapWidth;
                 PsxScreenWidth = (Int16)mapWidth;
                 //Log.Message("PsxScreenWidth 2 " + PsxScreenWidth);
+            }
+        }
+
+        if (map >= 3000 && map <= 3012) //pre-#324 way of doing to fix narrows in ending
+        {
+            PsxFieldWidth = Configuration.Graphics.WidescreenSupport ? CalcPsxFieldWidth() : PsxFieldWidthNative;
+            PsxScreenWidth = Configuration.Graphics.WidescreenSupport ? CalcPsxScreenWidth() : PsxScreenWidthNative;
+            if (Configuration.Graphics.InitializeWidescreenSupport() && IsNarrowMap())
+            {
+                foreach (KeyValuePair<int, int> entry in NarrowMapList.actualNarrowMapWidthDict)
+                {
+                    if (FF9StateSystem.Common.FF9.fldMapNo == entry.Key)
+                    {
+                        PsxFieldWidth = (Int16)(entry.Value);
+                        PsxScreenWidth = PsxFieldWidth;
+                    }
+                }
             }
         }
         HalfFieldWidth = (Int16)(PsxFieldWidth / 2);

@@ -496,7 +496,9 @@ public static class NarrowMapList
         2950, // Chocobo’s Forest
         2953, // Chocobo’s Dream World
         3001,
+        3003,
         3005,
+        3006,
         3008, // Ending/Prima Vista - Meeting Room
         3009,
         3010, // Ending/TH
