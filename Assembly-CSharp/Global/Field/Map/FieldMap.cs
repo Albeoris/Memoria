@@ -477,8 +477,9 @@ public class FieldMap : HonoBehavior
     }
     public static readonly HashSet<Int32> SmoothCamExcludeMaps = new HashSet<Int32>()
     {
-        767, // Burmecia, the queen slides from her layer
-        1754, // fast scroll on Iifa platform buggy
+        575,  // Hunting festival
+        767,  // Burmecia, the queen slides from her layer
+        1754, // Fast scroll on Iifa platform buggy
     };
 
     public void ActivateCamera()
