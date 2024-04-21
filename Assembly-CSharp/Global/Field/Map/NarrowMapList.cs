@@ -74,8 +74,8 @@ public static class NarrowMapList
         [352,3],     // Arrival at Dali: vivi visible before sleeping
         [355,18],    // Steiner to the barmaid
         [600,32],    // Throne, meet cid
-        //[606,0],     // telescope
-        [615,57],    // Meet garnet on Lindblum castle
+        [615,57],    // Meet garnet on Lindblum Tower
+        [615,58],    // Meet garnet on Lindblum Tower (2)
         [1206,0],    // Queen and Kuja salon Alex, drug garnet
         [1602,16],   // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
         [1823,331],  // Garnet coronation, garnet visible
