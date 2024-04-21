@@ -30,9 +30,7 @@ namespace Memoria.Launcher
     {
         public MemoriaIniControl()
         {
-            SBUIInstalled = false && IsOptionPresentInIni("Graphics", "ScaledBattleUI");
-
-            SetRows(19);
+            SetRows(20);
             SetCols(8);
             
             Width = 260;
@@ -321,38 +319,8 @@ namespace Memoria.Launcher
             _fontChoiceBox.ItemsSource = fontNames;
             _fontChoiceBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(FontChoice)) { Mode = BindingMode.TwoWay });
 
-            /*
-            _fontChoiceBox.Background = Brushes.Gray;
-            _fontChoiceBox.Foreground = Brushes.Gray;
-            fontChoiceText.Foreground = Brushes.Gray;
-            */
-
-            if (SBUIInstalled)
-            {
-                row++;
-
-                UiCheckBox useSBUI = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SBUIenabled, null), row++, 0, 2, 8);
-                useSBUI.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(ScaledBattleUI)) { Mode = BindingMode.TwoWay });
-                useSBUI.Foreground = Brushes.White;
-                useSBUI.Margin = rowMargin;
-                Slider sBUIScale = AddUiElement(UiSliderFactory.Create(0), row, 1, 1, 7);
-                sBUIScale.SetBinding(Slider.ValueProperty, new Binding(nameof(ScaleUIFactor)) { Mode = BindingMode.TwoWay });
-                sBUIScale.TickFrequency = 0.1;
-                sBUIScale.IsSnapToTickEnabled = true;
-                sBUIScale.Minimum = 0.1;
-                sBUIScale.Maximum = 3.0;
-                sBUIScale.Margin = rowMargin;
-                UiTextBlock sBUIScaleTextindex = AddUiElement(UiTextBlockFactory.Create(""), row++, 0, 2, 1);
-                sBUIScaleTextindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(ScaleUIFactor)) { Mode = BindingMode.TwoWay });
-                sBUIScaleTextindex.Foreground = Brushes.White;
-                sBUIScaleTextindex.Margin = new Thickness(8, 0, 0, 0);
-            }
-
             LoadSettings();
         }
-
-        public bool PsxFontInstalled = false;
-        public bool SBUIInstalled = false;
 
         public Int16 WidescreenSupport
         {
@@ -842,61 +810,39 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _movievolume))
                     _movievolume = 100;
 
-                if (PsxFontInstalled) {
-                    value = iniFile.ReadValue("Font", "Enabled");
-                    Int16 enabledFont = 0;
-                    if (String.IsNullOrEmpty(value) || !Int16.TryParse(value, out enabledFont) || enabledFont == 0)
+                
+                value = iniFile.ReadValue("Font", "Enabled");
+                Int16 enabledFont = 0;
+                if (String.IsNullOrEmpty(value) || !Int16.TryParse(value, out enabledFont) || enabledFont == 0)
+                {
+                    _fontChoice = _fontDefaultPC;
+                    _usepsxfont = 0;
+                }
+                else
+                {
+                    value = iniFile.ReadValue("Font", "Names");
+                    if (String.IsNullOrEmpty(value) || value.Length < 2)
                     {
                         _fontChoice = _fontDefaultPC;
                         _usepsxfont = 0;
                     }
                     else
                     {
-                        value = iniFile.ReadValue("Font", "Names");
-                        if (String.IsNullOrEmpty(value) || value.Length < 2)
+                        String[] fontList = value.Trim('"').Split(new[] { "\", \"" }, StringSplitOptions.None);
+                        _fontChoice = fontList[0];
+                        if (_fontChoice.CompareTo("Alexandria") == 0 || _fontChoice.CompareTo("Garnet") == 0)
                         {
-                            _fontChoice = _fontDefaultPC;
-                            _usepsxfont = 0;
+                            _fontChoice = _fontDefaultPSX;
+                            _usepsxfont = 1;
                         }
                         else
                         {
-                            String[] fontList = value.Trim('"').Split(new[] { "\", \"" }, StringSplitOptions.None);
-                            _fontChoice = fontList[0];
-                            if (_fontChoice.CompareTo("Alexandria") == 0 || _fontChoice.CompareTo("Garnet") == 0)
-                            {
-                                _fontChoice = _fontDefaultPSX;
-                                _usepsxfont = 1;
-                            }
-                            else
-                            {
-                                _usepsxfont = 0;
-                            }
+                            _usepsxfont = 0;
                         }
                     }
-                    _fontChoiceBox.SelectedItem = _fontChoice;
                 }
-                if (SBUIInstalled)
-                {
-                    value = iniFile.ReadValue("Graphics", nameof(ScaledBattleUI));
-                    if (String.IsNullOrEmpty(value))
-                    {
-                        value = " 1";
-                        OnPropertyChanged(nameof(ScaledBattleUI));
-                    }
-                    if (!Int16.TryParse(value, out _scaledbattleui))
-                        _scaledbattleui = 1;
-                    OnPropertyChanged(nameof(ScaledBattleUI));
+                _fontChoiceBox.SelectedItem = _fontChoice;
 
-                    value = iniFile.ReadValue("Graphics", nameof(ScaleUIFactor));
-                    if (String.IsNullOrEmpty(value))
-                    {
-                        value = " 0.6";
-                        OnPropertyChanged(nameof(ScaleUIFactor));
-                    }
-                    if (!double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out _scaledbattleuiscale))
-                        _scaledbattleuiscale = 0.6;
-                    OnPropertyChanged(nameof(ScaleUIFactor));
-                }
                 Refresh(nameof(WidescreenSupport));
                 Refresh(nameof(SharedFPS));
                 Refresh(nameof(CameraStabilizer));
