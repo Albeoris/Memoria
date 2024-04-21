@@ -90,8 +90,11 @@
 	UsePsxFont = " Utiliser la police PS1"
 	FontChoice = "Police"
 	SBUIenabled = " Scaled Battle UI"
-	BattleTPS = "Vitesse combats (déf. 15)"
+	BattleTPS = "Vitesse combats"
 	SharedFPS = "Fréquence d'images / seconde"
+	BattleFPS = "Combat"
+	FieldFPS = "Décor"
+	WorldFPS = "Carte"
 	CameraStabilizer = "Stabilisateur de caméra"
 	UseOrchestralMusic = "Musique orchestrale (Moguri)"
 	Use30FpsVideo = "Video 30 FPS (Moguri)"
@@ -129,6 +132,9 @@
 	PermanentCheats_Tooltip = "(Triche officielle)&#xA;Tout au maximum F5/F6/F7&#xA;(Ces triches sont permanentes et restent sur votre sauvegarde, désactive les succès)"
 	BattleTPS_Tooltip = "Vitesse de base des combats, normale: 15"
 	UsePsxFont_Tooltip = "Sélectionne la police originale PS1 (pas d'installation nécessaire)"
+	BattleFPS_Tooltip = "Taux de rafraichissement d'image en combat (défaut: 30)"
+	FieldFPS_Tooltip = "Taux de rafraichissement d'image sur les décors (défaut: 30)"
+	WorldFPS_Tooltip = "Taux de rafraichissement d'image sur la mappemonde (défaut: 20)"
 	/>
 
 	<SdLib

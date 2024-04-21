@@ -91,6 +91,7 @@ namespace Memoria.Launcher
             };
             accessBattleMenuBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(AccessBattleMenu)) { Mode = BindingMode.TwoWay });
             accessBattleMenuBox.Height = 20;
+            accessBattleMenuBox.FontSize = 10;
             accessBattleMenuBox.Margin = rowMargin;
 
             row++;

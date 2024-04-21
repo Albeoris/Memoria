@@ -21,7 +21,7 @@
         <launcher:GameSettingsControl
             x:Name="GameSettings"
             Width="260"
-            Margin="30,0,0,30"
+            Margin="30,0,0,21"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
 
@@ -30,26 +30,30 @@
 
         <launcher:MemoriaIniControl x:Name="MemoriaIniControl"
             Width="260"
-            Margin="0,0,30,30"
+            Margin="0,0,30,21"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom" >
         </launcher:MemoriaIniControl>
-        <!--<Rectangle Margin="519,261,274,10">
+        <Rectangle Margin="0,0,0,0">
             <Rectangle.Style>
                 <Style TargetType="{x:Type Rectangle}">
-                    <Setter Property="Fill" Value="WhiteSmoke" />
-                    <Setter Property="Width" Value="1" />
-                            <Setter Property="Height" Value="300" />
+                    <Setter Property="Fill" Value="#000" />
+                    <Setter Property="Width" Value="290" />
+                    <Setter Property="Height" Value="275" />
+                    <Setter Property="VerticalAlignment" Value="Bottom" />
+                    <Setter Property="HorizontalAlignment" Value="Center" />
+
+                    <Setter Property="Opacity" Value=".4" />
                 </Style>
             </Rectangle.Style>
-        </Rectangle>-->
+        </Rectangle>
 
         <launcher:MemoriaIniCheatControl
             x:Name="MemoriaIniCheatControl"
             Width="260"
-            Margin="0,0,0,30"
+            Margin="0,417,0,0"
             HorizontalAlignment="Center"
-            VerticalAlignment="Bottom" />
+            VerticalAlignment="Top" />
         <launcher:UiLauncherPlayButton
             x:Name="PlayButton"
             Width="260"

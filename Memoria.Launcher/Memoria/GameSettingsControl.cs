@@ -62,6 +62,8 @@ namespace Memoria.Launcher
             monitor.ItemsSource = GetAvailableMonitors();
             monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) { Mode = BindingMode.TwoWay });
             monitor.Margin = rowMargin;
+            monitor.Height = 20;
+            monitor.FontSize = 10;
 
             UiTextBlock windowModetext = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 5, col: 0, rowSpan: 3, colSpan: 8);
             windowModetext.Margin = rowMargin;
@@ -70,6 +72,8 @@ namespace Memoria.Launcher
             windowMode.ItemsSource = EnumerateWindowModeSettings().ToArray();
             windowMode.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(WindowMode)) { Mode = BindingMode.TwoWay });
             windowMode.Margin = rowMargin;
+            windowMode.Height = 20;
+            windowMode.FontSize = 10;
 
             UiTextBlock resolutiontext = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 10, col: 0, rowSpan: 3, colSpan: 3);
             resolutiontext.Margin = rowMargin;
@@ -78,6 +82,8 @@ namespace Memoria.Launcher
             resolution.ItemsSource = EnumerateDisplaySettings().OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray();
             resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) { Mode = BindingMode.TwoWay });
             resolution.Margin = rowMargin;
+            resolution.Height = 20;
+            resolution.FontSize = 10;
 
             /*UiTextBlock _audioText = UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency);
             _audioText.FontSize *= 0.8;

@@ -89,8 +89,11 @@
 	UsePsxFont = "Use PSX font"
 	FontChoice = "Font"
 	SBUIenabled = "Scaled Battle UI"
-	BattleTPS = "Battle speed (def. 15)"
+	BattleTPS = "Battle speed"
 	SharedFPS = "Frames Per Second"
+	BattleFPS = "Battle"
+	FieldFPS = "Field"
+	WorldFPS = "World"
 	CameraStabilizer = "Camera stabilizer"
 	UseOrchestralMusic = "Orchestral music (Moguri)"
 	Use30FpsVideo = "30 FPS videos (Moguri)"
@@ -128,6 +131,9 @@
 	PermanentCheats_Tooltip = "(Non-mod cheats)&#xA;Maximum everything F5/F6/F7&#xA;(these cheats will stay on your save and disable achievements)"
 	BattleTPS_Tooltip = "Base speed of battles, normal is 15"
 	UsePsxFont_Tooltip = "Selects the original PSX font (no install needed)"
+	BattleFPS_Tooltip = "Image refresh rate in battle (default: 30)"
+	FieldFPS_Tooltip = "Image refresh rate on normal backgrounds (default: 30)"
+	WorldFPS_Tooltip = "Image refresh rate on the world map (default: 20)"
 	/>
 
 	<SdLib

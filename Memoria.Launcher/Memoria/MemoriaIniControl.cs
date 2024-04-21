@@ -30,7 +30,7 @@ namespace Memoria.Launcher
     {
         public MemoriaIniControl()
         {
-            SetRows(20);
+            SetRows(22);
             SetCols(8);
             
             Width = 260;
@@ -95,7 +95,7 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiTextBlock sharedFpsIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
+            /*UiTextBlock sharedFpsIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
             sharedFpsIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SharedFPS)) { Mode = BindingMode.TwoWay });
             sharedFpsIndex.Foreground = Brushes.White;
             sharedFpsIndex.Margin = rowMargin;
@@ -105,7 +105,69 @@ namespace Memoria.Launcher
             sharedFps.IsSnapToTickEnabled = true;
             sharedFps.Minimum = 15;
             sharedFps.Maximum = 120;
-            sharedFps.Margin = new Thickness(0, 0, 3, 0);
+            sharedFps.Margin = new Thickness(0, 0, 3, 0);*/
+
+            UiTextBlock battleFPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleFPS), row, 0, 1, 2);
+            battleFPSText.Foreground = Brushes.White;
+            battleFPSText.Margin = rowMargin;
+            battleFPSText.ToolTip = Lang.Settings.BattleFPS_Tooltip;
+            UiTextBlock battleFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 2, 1, 1);
+            battleFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
+            battleFPSIndex.Foreground = Brushes.White;
+            battleFPSIndex.Margin = rowMargin;
+            battleFPSIndex.TextAlignment = TextAlignment.Right;
+            Slider battleFPSSlider = AddUiElement(UiSliderFactory.Create(30), row, 3, 1, 5);
+            battleFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
+            battleFPSSlider.TickFrequency = 10;
+            battleFPSSlider.TickPlacement = TickPlacement.BottomRight;
+            battleFPSSlider.Height = 20;
+            battleFPSSlider.IsSnapToTickEnabled = true;
+            battleFPSSlider.Minimum = 20;
+            battleFPSSlider.Maximum = 120;
+            battleFPSSlider.Margin = rowMargin;
+
+            row++;
+
+            UiTextBlock fieldFPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FieldFPS), row, 0, 1, 2);
+            fieldFPSText.Foreground = Brushes.White;
+            fieldFPSText.Margin = rowMargin;
+            fieldFPSText.ToolTip = Lang.Settings.FieldFPS_Tooltip;
+            UiTextBlock fieldFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 2, 1, 1);
+            fieldFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(FieldFPS)) { Mode = BindingMode.TwoWay });
+            fieldFPSIndex.Foreground = Brushes.White;
+            fieldFPSIndex.Margin = rowMargin;
+            fieldFPSIndex.TextAlignment = TextAlignment.Right;
+            Slider fieldFPSSlider = AddUiElement(UiSliderFactory.Create(30), row, 3, 1, 5);
+            fieldFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(FieldFPS)) { Mode = BindingMode.TwoWay });
+            fieldFPSSlider.TickFrequency = 10;
+            fieldFPSSlider.TickPlacement = TickPlacement.BottomRight;
+            fieldFPSSlider.Height = 20;
+            fieldFPSSlider.IsSnapToTickEnabled = true;
+            fieldFPSSlider.Minimum = 20;
+            fieldFPSSlider.Maximum = 120;
+            fieldFPSSlider.Margin = rowMargin;
+
+            row++;
+
+            UiTextBlock worldFPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WorldFPS), row, 0, 1, 2);
+            worldFPSText.Foreground = Brushes.White;
+            worldFPSText.Margin = rowMargin;
+            worldFPSText.ToolTip = Lang.Settings.WorldFPS_Tooltip;
+            UiTextBlock worldFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 2, 1, 1);
+            worldFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(WorldFPS)) { Mode = BindingMode.TwoWay });
+            worldFPSIndex.Foreground = Brushes.White;
+            worldFPSIndex.Margin = rowMargin;
+            worldFPSIndex.TextAlignment = TextAlignment.Right;
+            Slider worldFPSSlider = AddUiElement(UiSliderFactory.Create(20), row, 3, 1, 5);
+            worldFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(WorldFPS)) { Mode = BindingMode.TwoWay });
+            worldFPSSlider.TickFrequency = 10;
+            worldFPSSlider.TickPlacement = TickPlacement.BottomRight;
+            worldFPSSlider.Height = 20;
+            worldFPSSlider.IsSnapToTickEnabled = true;
+            worldFPSSlider.Minimum = 20;
+            worldFPSSlider.Maximum = 120;
+            worldFPSSlider.Margin = rowMargin;
+
 
             row++;
 
@@ -343,6 +405,43 @@ namespace Memoria.Launcher
                 if (_sharedfps != value)
                 {
                     _sharedfps = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public Int16 BattleFPS
+        {
+            get { return _battlefps; }
+            set
+            {
+                if (_battlefps != value)
+                {
+                    _battlefps = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public Int16 FieldFPS
+        {
+            get { return _fieldfps; }
+            set
+            {
+                if (_fieldfps != value)
+                {
+                    _fieldfps = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public Int16 WorldFPS
+        {
+            get { return _worldfps; }
+            set
+            {
+                if (_worldfps != value)
+                {
+                    _worldfps = value;
                     OnPropertyChanged();
                 }
             }
@@ -615,7 +714,7 @@ namespace Memoria.Launcher
             }
             return false;
         }
-        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _scaledbattleui, _sharedfps, _camerastabilizer;
+        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _scaledbattleui, _sharedfps, _battlefps, _fieldfps, _worldfps, _camerastabilizer;
         private double _scaledbattleuiscale;
         private String _fontChoice;
         private UiComboBox _fontChoiceBox;
@@ -691,6 +790,33 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _sharedfps))
                     _sharedfps = 30;
+
+                value = iniFile.ReadValue("Graphics", "BattleFPS");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 30";
+                    OnPropertyChanged(nameof(BattleFPS));
+                }
+                if (!Int16.TryParse(value, out _battlefps))
+                    _battlefps = 30;
+
+                value = iniFile.ReadValue("Graphics", "FieldFPS");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 30";
+                    OnPropertyChanged(nameof(FieldFPS));
+                }
+                if (!Int16.TryParse(value, out _fieldfps))
+                    _fieldfps = 30;
+
+                value = iniFile.ReadValue("Graphics", "WorldFPS");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 20";
+                    OnPropertyChanged(nameof(WorldFPS));
+                }
+                if (!Int16.TryParse(value, out _worldfps))
+                    _worldfps = 20;
 
                 value = iniFile.ReadValue("Graphics", "CameraStabilizer");
                 if (String.IsNullOrEmpty(value))
@@ -845,6 +971,9 @@ namespace Memoria.Launcher
 
                 Refresh(nameof(WidescreenSupport));
                 Refresh(nameof(SharedFPS));
+                Refresh(nameof(BattleFPS));
+                Refresh(nameof(FieldFPS));
+                Refresh(nameof(WorldFPS));
                 Refresh(nameof(CameraStabilizer));
                 Refresh(nameof(BattleInterface));
                 Refresh(nameof(SkipIntros));
@@ -941,8 +1070,25 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Graphics", "WorldFPS ", " " + SharedFPS);
                         iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         break;
+                    case nameof(BattleFPS):
+                        iniFile.WriteValue("Graphics", "BattleFPS ", " " + BattleFPS);
+                        if (BattleFPS != 30)
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                        break;
+                    case nameof(FieldFPS):
+                        iniFile.WriteValue("Graphics", "FieldFPS ", " " + FieldFPS);
+                        if (FieldFPS != 30)
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                        break;
+                    case nameof(WorldFPS):
+                        iniFile.WriteValue("Graphics", "WorldFPS ", " " + WorldFPS);
+                        if (WorldFPS != 20)
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                        break;
                     case nameof(CameraStabilizer):
                         iniFile.WriteValue("Graphics", "CameraStabilizer ", " " + CameraStabilizer);
+                        if (CameraStabilizer != 0)
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         break;
                     case nameof(BattleInterface):
                         iniFile.WriteValue("Interface", "BattleMenuPosX ", " " + (Int32)BattleInterfaceMenu.X);
