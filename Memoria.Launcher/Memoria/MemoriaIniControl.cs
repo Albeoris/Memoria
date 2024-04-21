@@ -865,7 +865,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Graphics", nameof(AntiAliasing));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = " 1";
+                    value = " 8";
                     OnPropertyChanged(nameof(AntiAliasing));
                 }
                 if (!Int16.TryParse(value, out _antialiasing))

@@ -210,6 +210,7 @@ namespace Memoria.Launcher
             public static readonly string CameraStabilizer = GetSettings(nameof(CameraStabilizer));
             public static readonly string UseOrchestralMusic = GetSettings(nameof(UseOrchestralMusic));
             public static readonly string Use30FpsVideo = GetSettings(nameof(Use30FpsVideo));
+            public static readonly string MaxCardCount = GetSettings(nameof(MaxCardCount));
 
             // Settings.ini Tooltips
             public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));
@@ -253,7 +254,8 @@ namespace Memoria.Launcher
             public static readonly string BattleAssistance_Tooltip = GetSettings(nameof(BattleAssistance_Tooltip));
             public static readonly string NoRandomBattles_Tooltip = GetSettings(nameof(NoRandomBattles_Tooltip));
             public static readonly string PermanentCheats_Tooltip = GetSettings(nameof(PermanentCheats_Tooltip));
-            
+            public static readonly string MaxCardCount_Tooltip = GetSettings(nameof(MaxCardCount_Tooltip));
+
 
 
         }

@@ -26,7 +26,7 @@ namespace Memoria.Launcher
     {
         public MemoriaIniCheatControl()
         {
-            SetRows(14);
+            SetRows(15);
             SetCols(8);
             
             Width = 260;
@@ -170,6 +170,14 @@ namespace Memoria.Launcher
             masterSkill.Margin = rowMargin;
             masterSkill.ToolTip = Lang.Settings.PermanentCheats_Tooltip;
 
+            /*row++;
+
+            UiCheckBox maxTetraMasterCards = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.MaxCardCount, null), row, 0, 1, 8);
+            maxTetraMasterCards.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(MaxCardCount)) { Mode = BindingMode.TwoWay });
+            maxTetraMasterCards.Foreground = Brushes.White;
+            maxTetraMasterCards.Margin = rowMargin;
+            maxTetraMasterCards.ToolTip = Lang.Settings.MaxCardCount_Tooltip;
+            */
 
             /*AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row++, 0, 1, 8).Foreground = Brushes.White;*/
 
@@ -311,10 +319,20 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public Int16 MaxCardCount
+        {
+            get { return _maxcardcount; }
+            set
+            {
+                if (_maxcardcount != value)
+                {
+                    _maxcardcount = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
-        
-
-        private Int16 _stealingalwaysworks, _garnetconcentrate, _breakDamageLimit, _accessBattleMenu, _speedmode, _speedfactor, _battletpsfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill;
+        private Int16 _stealingalwaysworks, _garnetconcentrate, _breakDamageLimit, _accessBattleMenu, _speedmode, _speedfactor, _battletpsfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill, _maxcardcount;
 
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Memoria.ini";
 
@@ -425,13 +443,22 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _masterskill))
                     _masterskill = 0;
 
-                value = null;
+                /*value = null;
                 foreach (String prop in new String[] { "BattleFPS", "FieldFPS", "WorldFPS" })
                 {
                     value = iniFile.ReadValue("Graphics", prop);
                     if (!String.IsNullOrEmpty(value))
                         break;
+                }*/
+
+                value = iniFile.ReadValue("TetraMaster", nameof(MaxCardCount));
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 100";
+                    OnPropertyChanged(nameof(MaxCardCount));
                 }
+                if (!Int16.TryParse(value, out _maxcardcount))
+                    _maxcardcount = 1;
 
                 Refresh(nameof(StealingAlwaysWorks));
                 Refresh(nameof(GarnetConcentrate));
@@ -444,6 +471,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(Attack9999));
                 Refresh(nameof(NoRandomEncounter));
                 Refresh(nameof(MasterSkill));
+                Refresh(nameof(MaxCardCount));
             }
             catch (Exception ex){ UiHelper.ShowError(Application.Current.MainWindow, ex); }
         }
@@ -535,6 +563,17 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Cheats", "GilMax ", " " + MasterSkill);
                         if (MasterSkill == 1)
                             iniFile.WriteValue("Cheats", "Enabled ", " 1");
+                        break;
+                    case nameof(MaxCardCount):
+                        if (MaxCardCount == 1)
+                        {
+                            iniFile.WriteValue("TetraMaster", propertyName + " ", " 10000");
+                            iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
+                        }
+                        else if (MaxCardCount == 0)
+                        {
+                            iniFile.WriteValue("TetraMaster", propertyName + " ", " 100");
+                        }
                         break;
                 }
             }

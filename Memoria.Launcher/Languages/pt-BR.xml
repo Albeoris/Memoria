@@ -97,6 +97,7 @@
 	CameraStabilizer = "Estabilizador"
 	UseOrchestralMusic = "Música orquestral (Moguri)"
 	Use30FpsVideo = "Vídeos de 30 FPS (Moguri)"
+	MaxCardCount = "10k cards"
 	ActiveMonitor_Tooltip = "Escolha uma tela"
 	WindowMode_Tooltip = "-Modo Janela: Executa o jogo numa janela&#xA;-Tele Cheia: O jogo toma a tela inteira&#xA;-Tela Cheia Sem Borda: Toma a tela inteira mas como um processo de janela"
 	Resolution_Tooltip = "Resolução da tela&#xA;Suporte a Widescreen só em 16:9 e 16:10"
@@ -134,6 +135,7 @@
 	BattleFPS_Tooltip = "Image refresh rate in battle (default: 30)"
 	FieldFPS_Tooltip = "Image refresh rate on normal backgrounds (default: 30)"
 	WorldFPS_Tooltip = "Image refresh rate on the world map (default: 20)"
+	MaxCardCount_Tooltip = "Limit to cards in inventory raised to 10000"
 	/>
 
 	<SdLib

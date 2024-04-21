@@ -21,7 +21,7 @@
         <launcher:GameSettingsControl
             x:Name="GameSettings"
             Width="260"
-            Margin="30,0,0,21"
+            Margin="30,0,0,20"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
 
@@ -30,7 +30,7 @@
 
         <launcher:MemoriaIniControl x:Name="MemoriaIniControl"
             Width="260"
-            Margin="0,0,30,21"
+            Margin="0,0,30,20"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom" >
         </launcher:MemoriaIniControl>
@@ -51,9 +51,9 @@
         <launcher:MemoriaIniCheatControl
             x:Name="MemoriaIniCheatControl"
             Width="260"
-            Margin="0,417,0,0"
+            Margin="0,0,0,20"
             HorizontalAlignment="Center"
-            VerticalAlignment="Top" />
+            VerticalAlignment="Bottom" />
         <launcher:UiLauncherPlayButton
             x:Name="PlayButton"
             Width="260"
