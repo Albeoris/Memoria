@@ -1069,6 +1069,164 @@ namespace Memoria.Launcher
         }
         private async void SanitizeMemoriaIni()
         {
+            MakeSureSpacesAroundEqualsigns();
+
+            try
+            {
+                if (File.Exists(_iniPath))
+                {
+                    IniFile iniFile = new IniFile(_iniPath);
+                    String _checklatestadded = iniFile.ReadValue("Hacks", "ExcaliburIINoTimeLimit"); // check if the latest ini parameter is already there
+                    if (String.IsNullOrEmpty(_checklatestadded))
+                    {
+                        MakeIniNotNull("Mod", "FolderNames", "");
+                        MakeIniNotNull("Mod", "Priorities", "");
+                        MakeIniNotNull("Mod", "UseFileList", "1");
+
+                        MakeIniNotNull("Font", "Enabled", "1");
+                        MakeIniNotNull("Font", "Names", "\"Arial\", \"Times Bold\"");
+                        MakeIniNotNull("Font", "Size", "24");
+
+                        MakeIniNotNull("Graphics", "Enabled", "0");
+                        MakeIniNotNull("Graphics", "BattleFPS", "30");
+                        MakeIniNotNull("Graphics", "BattleTPS", "15");
+                        MakeIniNotNull("Graphics", "FieldFPS", "30");
+                        MakeIniNotNull("Graphics", "FieldTPS", "30");
+                        MakeIniNotNull("Graphics", "WorldFPS", "20");
+                        MakeIniNotNull("Graphics", "WorldTPS", "20");
+                        MakeIniNotNull("Graphics", "MenuFPS", "60");
+                        MakeIniNotNull("Graphics", "MenuTPS", "60");
+                        MakeIniNotNull("Graphics", "BattleSwirlFrames", "13");
+                        MakeIniNotNull("Graphics", "WidescreenSupport", "1");
+                        MakeIniNotNull("Graphics", "SkipIntros", "0");
+                        MakeIniNotNull("Graphics", "GarnetHair", "0");
+                        MakeIniNotNull("Graphics", "TileSize", "32");
+                        MakeIniNotNull("Graphics", "AntiAliasing", "8");
+                        MakeIniNotNull("Graphics", "CameraStabilizer", "85");
+
+                        MakeIniNotNull("Control", "Enabled", "1");
+                        MakeIniNotNull("Control", "DisableMouse", "0");
+                        MakeIniNotNull("Control", "DialogProgressButtons", "\"Confirm\"");
+                        MakeIniNotNull("Control", "WrapSomeMenus", "1");
+                        MakeIniNotNull("Control", "PSXScrollingMethod", "1");
+                        MakeIniNotNull("Control", "PSXMovementMethod", "0");
+
+                        MakeIniNotNull("Battle", "Enabled", "0");
+                        MakeIniNotNull("Battle", "SFXRework", "1");
+                        MakeIniNotNull("Battle", "Speed", "0");
+                        MakeIniNotNull("Battle", "NoAutoTrance", "0");
+                        MakeIniNotNull("Battle", "EncounterInterval", "960");
+                        MakeIniNotNull("Battle", "EncounterInitial", "-1440");
+                        MakeIniNotNull("Battle", "PersistentDangerValue", "0");
+                        MakeIniNotNull("Battle", "AutoPotionOverhealLimit", "-1");
+                        MakeIniNotNull("Battle", "GarnetConcentrate", "0");
+                        MakeIniNotNull("Battle", "SelectBestTarget", "1");
+                        MakeIniNotNull("Battle", "BreakDamageLimit", "0");
+                        MakeIniNotNull("Battle", "ViviAutoAttack", "0");
+                        MakeIniNotNull("Battle", "CountersBetterTarget", "0");
+                        MakeIniNotNull("Battle", "LockEquippedAbilities", "0");
+                        MakeIniNotNull("Battle", "FloatEvadeBonus", "0");
+                        MakeIniNotNull("Battle", "AccessMenus", "0");
+                        MakeIniNotNull("Battle", "CustomBattleFlagsMeaning", "0");
+
+                        MakeIniNotNull("Icons", "Enabled", "1");
+                        MakeIniNotNull("Icons", "HideCursor", "0");
+                        MakeIniNotNull("Icons", "HideCards", "0");
+                        MakeIniNotNull("Icons", "HideExclamation", "0");
+                        MakeIniNotNull("Icons", "HideQuestion", "0");
+                        MakeIniNotNull("Icons", "HideBeach", "0");
+                        MakeIniNotNull("Icons", "HideSteam", "0");
+
+                        MakeIniNotNull("Cheats", "Enabled", "1");
+                        MakeIniNotNull("Cheats", "Rotation", "1");
+                        MakeIniNotNull("Cheats", "Perspective", "1");
+                        MakeIniNotNull("Cheats", "SpeedMode", "1");
+                        MakeIniNotNull("Cheats", "SpeedFactor", "3");
+                        MakeIniNotNull("Cheats", "SpeedTimer", "0");
+                        MakeIniNotNull("Cheats", "BattleAssistance", "0");
+                        MakeIniNotNull("Cheats", "Attack9999", "0");
+                        MakeIniNotNull("Cheats", "NoRandomEncounter", "1");
+                        MakeIniNotNull("Cheats", "MasterSkill", "0");
+                        MakeIniNotNull("Cheats", "LvMax", "0");
+                        MakeIniNotNull("Cheats", "GilMax", "0");
+
+                        MakeIniNotNull("Hacks", "Enabled", "0");
+                        MakeIniNotNull("Hacks", "AllCharactersAvailable", "0");
+                        MakeIniNotNull("Hacks", "RopeJumpingIncrement", "1");
+                        MakeIniNotNull("Hacks", "FrogCatchingIncrement", "1");
+                        MakeIniNotNull("Hacks", "HippaulRacingViviSpeed", "33");
+                        MakeIniNotNull("Hacks", "StealingAlwaysWorks", "0");
+                        MakeIniNotNull("Hacks", "DisableNameChoice", "0");
+                        MakeIniNotNull("Hacks", "ExcaliburIINoTimeLimit", "0");
+
+                        MakeIniNotNull("TetraMaster", "Enabled", "1");
+                        MakeIniNotNull("TetraMaster", "TripleTriad", "0");
+                        MakeIniNotNull("TetraMaster", "ReduceRandom", "0");
+                        MakeIniNotNull("TetraMaster", "MaxCardCount", "100");
+                        MakeIniNotNull("TetraMaster", "DiscardAutoButton", "1");
+                        MakeIniNotNull("TetraMaster", "DiscardAssaultCards", "0");
+                        MakeIniNotNull("TetraMaster", "DiscardFlexibleCards", "1");
+                        MakeIniNotNull("TetraMaster", "DiscardMaxAttack", "224");
+                        MakeIniNotNull("TetraMaster", "DiscardMaxPDef", "255");
+                        MakeIniNotNull("TetraMaster", "DiscardMaxMDef", "255");
+                        MakeIniNotNull("TetraMaster", "DiscardMaxSum", "480");
+                        MakeIniNotNull("TetraMaster", "DiscardMinDeckSize", "10");
+                        MakeIniNotNull("TetraMaster", "DiscardKeepSameType", "1");
+                        MakeIniNotNull("TetraMaster", "DiscardKeepSameArrow", "0");
+                        MakeIniNotNull("TetraMaster", "DiscardExclusions", "56, 75, 76, 77, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 98, 99, 100");
+
+                        MakeIniNotNull("Interface", "BattleRowCount", "5");
+                        MakeIniNotNull("Interface", "BattleColumnCount", "1");
+                        MakeIniNotNull("Interface", "BattleMenuPosX", "-400");
+                        MakeIniNotNull("Interface", "BattleMenuPosY", "-362");
+                        MakeIniNotNull("Interface", "BattleMenuWidth", "630");
+                        MakeIniNotNull("Interface", "BattleMenuHeight", "236");
+                        MakeIniNotNull("Interface", "BattleDetailPosX", "345");
+                        MakeIniNotNull("Interface", "BattleDetailPosY", "-380");
+                        MakeIniNotNull("Interface", "BattleDetailWidth", "796");
+                        MakeIniNotNull("Interface", "BattleDetailHeight", "230");
+                        MakeIniNotNull("Interface", "PSXBattleMenu", "0");
+                        MakeIniNotNull("Interface", "ScanDisplay", "1");
+                        MakeIniNotNull("Interface", "BattleCommandTitleFormat", "");
+                        MakeIniNotNull("Interface", "BattleDamageTextFormat", "");
+                        MakeIniNotNull("Interface", "BattleRestoreTextFormat", "");
+                        MakeIniNotNull("Interface", "BattleMPDamageTextFormat", "");
+                        MakeIniNotNull("Interface", "BattleMPRestoreTextFormat", "");
+                        MakeIniNotNull("Interface", "MenuItemRowCount", "8");
+                        MakeIniNotNull("Interface", "MenuAbilityRowCount", "6");
+                        MakeIniNotNull("Interface", "MenuEquipRowCount", "5");
+                        MakeIniNotNull("Interface", "MenuChocographRowCount", "5");
+
+                        MakeIniNotNull("Fixes", "Enabled", "1");
+                        MakeIniNotNull("Fixes", "KeepRestTimeInBattle", "1");
+                        
+                        MakeIniNotNull("SaveFile", "DisableAutoSave", "0");
+                        MakeIniNotNull("SaveFile", "AutoSaveOnlyAtMoogle", "0");
+                        MakeIniNotNull("SaveFile", "SaveOnCloud", "0");
+
+                        MakeIniNotNull("Speedrun", "Enabled", "0");
+                        MakeIniNotNull("Speedrun", "SplitSettingsPath", "");
+                        MakeIniNotNull("Speedrun", "LogGameTimePath", "");
+
+                        MakeIniNotNull("Debug", "Enabled", "0");
+                        MakeIniNotNull("Debug", "SigningEventObjects", "0");
+                        MakeIniNotNull("Debug", "StartModelViewer", "0");
+                        MakeIniNotNull("Debug", "StartFieldCreator", "0");
+                        MakeIniNotNull("Debug", "RenderWalkmeshes", "0");
+
+                        MakeSureSpacesAroundEqualsigns();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+
+        }
+
+        private async void MakeSureSpacesAroundEqualsigns()
+        {
             try
             {
                 if (File.Exists(_iniPath))
@@ -1083,6 +1241,16 @@ namespace Memoria.Launcher
             catch (Exception ex)
             {
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+        }
+
+        private async void MakeIniNotNull(String Category, String Setting, String Defaultvalue)
+        {
+            IniFile iniFile = new IniFile(_iniPath);
+            String value = iniFile.ReadValue(Category, Setting);
+            if (String.IsNullOrEmpty(value))
+            {
+                iniFile.WriteValue(Category, Setting + " ", " " + Defaultvalue);
             }
         }
     }
