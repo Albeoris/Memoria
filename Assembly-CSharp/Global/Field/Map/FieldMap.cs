@@ -435,7 +435,7 @@ public class FieldMap : HonoBehavior
 
     public static Boolean IsNarrowMap()
     {
-        Log.Message("NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxFieldWidth()) " + NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxFieldWidth()));
+        //Log.Message("NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxFieldWidth()) " + NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxFieldWidth()));
         return NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxFieldWidth());
     }
 
@@ -1276,7 +1276,7 @@ public class FieldMap : HonoBehavior
         float screenY = bgOverlay.curY + bgScene.scrY;
         Vector2 viewportSize = new Vector2(this.scrollWindowDim[(int)bgOverlay.viewportNdx][0], this.scrollWindowDim[(int)bgOverlay.viewportNdx][1]);
         Vector2 viewportPos = new Vector2(this.scrollWindowPos[(int)bgOverlay.viewportNdx][0], this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
-        if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
+        /*if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
         {
             //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Loop"); // example: scrolling sky 505
             float anchorX;
@@ -1669,6 +1669,16 @@ public class FieldMap : HonoBehavior
                     bgOverlay.curY = (bgOverlay.curY % (Int32)bgOverlay.h) + (bgOverlay.scrollY / 256f);
                 }
                 if (dbug) Log.Message("SceneServiceScroll " + i + " | Loop | curX:" + bgOverlay.curX + " / curY:" + bgOverlay.curY);
+
+                if (Configuration.Graphics.InitializeWidescreenSupport())
+                {
+                    switch (map)
+                    {
+                        case 1651: // 448
+                            bgOverlay.curX = 200; break;
+                    }
+                    
+                }
             }
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0) // loop in diagonal (816) or loop + parallax (2904)
             {
@@ -1697,9 +1707,11 @@ public class FieldMap : HonoBehavior
                     switch (map)
                     {
                         case 1651: // 448
-                            bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4; break;
+                            //bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4; break;
+                            //bgOverlay.curX = this.mainCamera.transform.localPosition.x * (float)(bgOverlay.scrollX / 5120f); break;
+                            bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8; break;
                         case 1657:
-                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256); break;
+                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256f); break;
                         case 1758: // 448
                             bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4; break;
                         case 2600: // 464/416
@@ -1709,7 +1721,7 @@ public class FieldMap : HonoBehavior
                         case 2605: // 400/368
                             bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX -= 16; break;
                         case 2606:
-                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256); break;
+                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256f); break;
                         case 2607: // 416/400
                             bgOverlay.transform.localScale = new Vector3(1.05f, 1.05f, 1f); bgOverlay.curX -= 8; bgOverlay.curY -= 8; break;
                         case 2651:
@@ -2240,7 +2252,7 @@ public class FieldMap : HonoBehavior
         PsxFieldWidth = CalcPsxFieldWidth();
         PsxScreenWidth = CalcPsxScreenWidth();
         int map = FF9StateSystem.Common.FF9.fldMapNo;
-        Log.Message("fldMapNo:" + FF9StateSystem.Common.FF9.fldMapNo + " MapWidth:" + NarrowMapList.MapWidth(FF9StateSystem.Common.FF9.fldMapNo) + " PsxFieldWidth:" + PsxFieldWidth + " PsxScreenWidth:" + PsxScreenWidth + " InitializeWidescreenSupport():" + Configuration.Graphics.InitializeWidescreenSupport() + " WidescreenSupport:" + Configuration.Graphics.WidescreenSupport);
+        //Log.Message("fldMapNo:" + FF9StateSystem.Common.FF9.fldMapNo + " MapWidth:" + NarrowMapList.MapWidth(FF9StateSystem.Common.FF9.fldMapNo) + " PsxFieldWidth:" + PsxFieldWidth + " PsxScreenWidth:" + PsxScreenWidth + " InitializeWidescreenSupport():" + Configuration.Graphics.InitializeWidescreenSupport() + " WidescreenSupport:" + Configuration.Graphics.WidescreenSupport);
         if (Configuration.Graphics.InitializeWidescreenSupport())
         {
             Int32 mapWidth = NarrowMapList.MapWidth(map);
