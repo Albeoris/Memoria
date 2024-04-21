@@ -2216,6 +2216,7 @@ public class FieldMap : HonoBehavior
     {
         PsxFieldWidth = CalcPsxFieldWidth();
         PsxScreenWidth = CalcPsxScreenWidth();
+        Log.Message("fldMapNo:" + FF9StateSystem.Common.FF9.fldMapNo + " MapWidth:" + NarrowMapList.MapWidth(FF9StateSystem.Common.FF9.fldMapNo) + " PsxFieldWidth:" + PsxFieldWidth + " PsxScreenWidth:" + PsxScreenWidth + " InitializeWidescreenSupport():" + Configuration.Graphics.InitializeWidescreenSupport() + " WidescreenSupport:" + Configuration.Graphics.WidescreenSupport);
         if (Configuration.Graphics.InitializeWidescreenSupport())
         {
             int mapId = FF9StateSystem.Common.FF9.fldMapNo;
