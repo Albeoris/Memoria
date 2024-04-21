@@ -1276,7 +1276,7 @@ public class FieldMap : HonoBehavior
         float screenY = bgOverlay.curY + bgScene.scrY;
         Vector2 viewportSize = new Vector2(this.scrollWindowDim[(int)bgOverlay.viewportNdx][0], this.scrollWindowDim[(int)bgOverlay.viewportNdx][1]);
         Vector2 viewportPos = new Vector2(this.scrollWindowPos[(int)bgOverlay.viewportNdx][0], this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
-        /*if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
+        if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
         {
             //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Loop"); // example: scrolling sky 505
             float anchorX;

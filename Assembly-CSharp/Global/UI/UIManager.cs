@@ -65,8 +65,8 @@ public class UIManager : PersistenSingleton<UIManager>
 		{
             if (value == UIState.FieldHUD && FieldMap.IsNarrowMap())
 		        Configuration.Graphics.DisableWidescreenSupportForSingleMap();
-		    else
-		        Configuration.Graphics.RestoreDisabledWidescreenSupport();
+            else if (state == UIState.FieldHUD && value != UIState.Pause)
+                Configuration.Graphics.RestoreDisabledWidescreenSupport();
 
             this.state = value;
 		}
