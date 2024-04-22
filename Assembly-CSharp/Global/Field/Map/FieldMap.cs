@@ -426,7 +426,7 @@ public class FieldMap : HonoBehavior
         this.flags |= FieldMapFlags.Unknown128;
         this.walkMesh.ProcessBGI();
         this.walkMesh.UpdateActiveCameraWalkmesh();
-        SmoothCamDelay = 4;
+        SmoothCamDelay = 6;
         SmoothCamActive = (!SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo));
         String camIdxIfCam = this.scene.cameraList.Count > 1 ? "-" + this.camIdx : "";
         PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}{camIdxIfCam} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
@@ -435,6 +435,7 @@ public class FieldMap : HonoBehavior
 
     public static Boolean IsNarrowMap()
     {
+        //Log.Message("NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxFieldWidth()) " + NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxFieldWidth()));
         return NarrowMapList.IsCurrentMapNarrow((Int32)CalcPsxFieldWidth());
     }
 
@@ -470,15 +471,29 @@ public class FieldMap : HonoBehavior
         this.walkMesh.CreateWalkMesh();
         this.walkMesh.CreateProjectedWalkMesh();
         this.walkMesh.BGI_simInit();
-        SmoothCamDelay = 4;
+        SmoothCamDelay = 6;
         SmoothCamActive = (!SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo));
         FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
         if (dbug) Log.Message("_ LoadFieldMap | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
     }
     public static readonly HashSet<Int32> SmoothCamExcludeMaps = new HashSet<Int32>()
     {
-        767, // Burmecia, the queen slides from her layer
-        1754, // fast scroll on Iifa platform buggy
+        575,  // Hunting festival
+        767,  // Burmecia, the queen slides from her layer
+        1754, // Fast scroll on Iifa platform buggy
+        3000, // ending
+        3001,
+        3002,
+        3003,
+        3004,
+        3005,
+        3006,
+        3007,
+        3008,
+        3009,
+        3010,
+        3011,
+        3012,
     };
 
     public void ActivateCamera()
@@ -765,6 +780,10 @@ public class FieldMap : HonoBehavior
                             break;
                     }
                 }
+            }
+            if (map == 2716)
+            {
+                CamPositionY = (float)Math.Min(0, CamPositionY);
             }
             
         }
@@ -1239,7 +1258,16 @@ public class FieldMap : HonoBehavior
         this.scene.scrY = this.scene.curY + HalfFieldHeight - realVrp.y;
         List<BGOVERLAY_DEF> overlayList = this.scene.overlayList;
         for (int i = 0; i < this.scene.overlayCount; i++)
-            this.UpdateOverlay(i, overlayList[i], realVrp);
+        {
+            try
+            {
+                this.UpdateOverlay(i, overlayList[i], realVrp);
+            }
+            catch (Exception e)
+            {
+                Log.Error(e);
+            }
+        }
     }
 
     private void UpdateOverlay(Int32 ovrNdx, BGOVERLAY_DEF bgOverlay, Vector2 realVrp)
@@ -1250,8 +1278,6 @@ public class FieldMap : HonoBehavior
         List<BGSPRITE_LOC_DEF> spriteList = bgOverlay.spriteList;
         float screenX = bgOverlay.curX + bgScene.scrX;
         float screenY = bgOverlay.curY + bgScene.scrY;
-        Vector2 viewportSize = new Vector2(this.scrollWindowDim[(int)bgOverlay.viewportNdx][0], this.scrollWindowDim[(int)bgOverlay.viewportNdx][1]);
-        Vector2 viewportPos = new Vector2(this.scrollWindowPos[(int)bgOverlay.viewportNdx][0], this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
         if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
         {
             //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Loop"); // example: scrolling sky 505
@@ -1259,14 +1285,14 @@ public class FieldMap : HonoBehavior
             float anchorY;
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
             {
-                anchorX = viewportPos.x;
-                anchorY = viewportPos.y;
+                anchorX = this.scrollWindowPos[(int)bgOverlay.viewportNdx][0];
+                anchorY = this.scrollWindowPos[(int)bgOverlay.viewportNdx][1];
                 if (dbug) Log.Message("UpdateOverlay " + ovrNdx + " | Loop ScreenAnchored anchorX:" + anchorX + " anchorY:" + anchorY);
             }
             else
             {
-                anchorX = (float)(HalfFieldWidth - realVrp.x + viewportPos.x);
-                anchorY = (float)(HalfFieldHeight - realVrp.y + viewportPos.y);
+                anchorX = (float)(HalfFieldWidth - realVrp.x + this.scrollWindowPos[(int)bgOverlay.viewportNdx][0]);
+                anchorY = (float)(HalfFieldHeight - realVrp.y + this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
             }
             if (bgOverlay.scrollX != 0)
             {
@@ -1275,7 +1301,7 @@ public class FieldMap : HonoBehavior
                     short deltaX = (short)(256 - ((short)(bgOverlay.scrollX) << 8 >> 8));
                     screenX = (float)((((int)bgOverlay.curX << 8) + (int)deltaX >> 8) + (int)bgScene.scrX);
                 }
-                screenX = (float)((screenX - (viewportSize.x - (float)bgOverlay.w)) % (float)bgOverlay.w + (viewportSize.x - (float)bgOverlay.w));
+                screenX = (float)((screenX - (this.scrollWindowDim[(int)bgOverlay.viewportNdx][0] - (float)bgOverlay.w)) % (float)bgOverlay.w + (this.scrollWindowDim[(int)bgOverlay.viewportNdx][0] - (float)bgOverlay.w));
             }
             if (bgOverlay.scrollY != 0)
             {
@@ -1284,7 +1310,7 @@ public class FieldMap : HonoBehavior
                     short deltaY = (short)(256 - ((short)(bgOverlay.scrollX) << 8 >> 8));
                     screenY = (float)((((int)bgOverlay.curY << 8) + (int)deltaY >> 8) + (int)bgScene.scrY);
                 }
-                screenY = (float)((screenY - (viewportSize.y - (float)bgOverlay.h)) % (float)bgOverlay.h + (viewportSize.y - (float)bgOverlay.h));
+                screenY = (float)((screenY - (this.scrollWindowDim[(int)bgOverlay.viewportNdx][1] - (float)bgOverlay.h)) % (float)bgOverlay.h + (this.scrollWindowDim[(int)bgOverlay.viewportNdx][1] - (float)bgOverlay.h));
             }
             
             for (short i = 0; i < spriteCount; i++)
@@ -1374,23 +1400,23 @@ public class FieldMap : HonoBehavior
             float anchorY;
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
             {
-                anchorX = viewportPos.x;
-                anchorY = viewportPos.y;
+                anchorX = this.scrollWindowPos[(int)bgOverlay.viewportNdx][0];
+                anchorY = this.scrollWindowPos[(int)bgOverlay.viewportNdx][1];
                 //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset | anchorX:" + anchorX + " anchorY:" + anchorY);
             }
             else
             {
-                anchorX = HalfFieldWidth - realVrp.x + viewportPos.x;
-                anchorY = HalfFieldHeight - realVrp.y + viewportPos.y;
+                anchorX = HalfFieldWidth - realVrp.x + this.scrollWindowPos[(int)bgOverlay.viewportNdx][0];
+                anchorY = HalfFieldHeight - realVrp.y + this.scrollWindowPos[(int)bgOverlay.viewportNdx][0];
             }
             if (bgOverlay.isXOffset != 0)
             {
-                screenY = (screenY - (viewportSize.y - (short)bgOverlay.h)) % (short)bgOverlay.h + (viewportSize.y - (short)bgOverlay.h);
+                screenY = (screenY - (this.scrollWindowDim[(int)bgOverlay.viewportNdx][1] - (short)bgOverlay.h)) % (short)bgOverlay.h + (this.scrollWindowDim[(int)bgOverlay.viewportNdx][1] - (short)bgOverlay.h);
                 screenX = screenX + screenY * bgOverlay.scrollX / (short)bgOverlay.h % (short)bgOverlay.w;
             }
             else
             {
-                screenX = (screenX - (viewportSize.x - (short)bgOverlay.w)) % (short)bgOverlay.w + (viewportSize.x - (short)bgOverlay.w);
+                screenX = (screenX - (this.scrollWindowDim[(int)bgOverlay.viewportNdx][0] - (short)bgOverlay.w)) % (short)bgOverlay.w + (this.scrollWindowDim[(int)bgOverlay.viewportNdx][0] - (short)bgOverlay.w);
                 screenY = screenY + screenX * bgOverlay.scrollY / (short)bgOverlay.w % (short)bgOverlay.h;
             }
             for (short i = 0; i < spriteCount; i++)
@@ -1448,12 +1474,30 @@ public class FieldMap : HonoBehavior
         bgOverlay.scrX = screenX;
         bgOverlay.scrY = screenY;
 
-        if (this.mapName == "FBG_N18_GTRE_MAP360_GT_GRD_0" && ovrNdx == 12) // Clayra's Trunk text fix #367
+        foreach (int[] entry in FixDepthOfLayer)
         {
-            bgOverlay.curZ = 0;
-            bgOverlay.transform.localPosition = new Vector3(bgOverlay.transform.localPosition.x, bgOverlay.transform.localPosition.y, 0);
+            if (entry[0] == FF9StateSystem.Common.FF9.fldMapNo && entry[1] == this.camIdx && entry[2] == ovrNdx)
+            {
+                bgOverlay.curZ = (ushort)entry[3];
+                bgOverlay.transform.localPosition = new Vector3(bgOverlay.transform.localPosition.x, bgOverlay.transform.localPosition.y, entry[3]);
+            }
         }
     }
+
+    public static readonly Int32[][] FixDepthOfLayer =
+    {
+        // [mapNo,camIdx,ovrNdx,Z],
+        [403,0,23,560], // Dali underground wall over box
+        [403,0,27,1523], // Dali underground barrel
+        [951,0,2,1214], // Gargan Roo's railing
+        [1000,0,12,0], // Clayra's Trunk text
+        [1652,1,5,911], // Iifa platform
+        [1656,0,3,998], // Iifa statue glow (was not active on PSX)
+        [2922,0,8,4329], // Crystal world (was not active on PSX)
+        [2922,0,10,3179], // Crystal world (was not active on PSX)
+        [2922,0,11,3179], // Crystal world (was not active on PSX)
+        [2922,0,12,6080], // Crystal world (was not active on PSX)
+    };
 
     public void EBG_scene2DScroll(Int16 destX, Int16 destY, UInt16 frameCount, UInt32 scrollType)
     {
@@ -1645,6 +1689,18 @@ public class FieldMap : HonoBehavior
                     bgOverlay.curY = (bgOverlay.curY % (Int32)bgOverlay.h) + (bgOverlay.scrollY / 256f);
                 }
                 if (dbug) Log.Message("SceneServiceScroll " + i + " | Loop | curX:" + bgOverlay.curX + " / curY:" + bgOverlay.curY);
+
+                if (Configuration.Graphics.InitializeWidescreenSupport())
+                {
+                    switch (map)
+                    {
+                        case 1651: // Iifa roots 1
+                            bgOverlay.curX = 200; break;
+                        case 1758: // Iifa roots 2
+                            bgOverlay.curX = 200; bgOverlay.curY = 0; break;
+                    }
+                    
+                }
             }
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0) // loop in diagonal (816) or loop + parallax (2904)
             {
@@ -1672,12 +1728,12 @@ public class FieldMap : HonoBehavior
                 {
                     switch (map)
                     {
-                        case 1651: // 448
-                            bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4; break;
+                        case 1651: // Iifa roots 1
+                            bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8; break;
                         case 1657:
-                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256); break;
-                        case 1758: // 448
-                            bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4; break;
+                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256f) - (float)0.25; break;
+                        case 1758: // Iifa roots 2
+                            bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8; break;
                         case 2600: // 464/416
                             bgOverlay.transform.localScale = new Vector3(1.12f, 1.12f, 1f); bgOverlay.curX -= 24; break;
                         case 2602: // 384/328
@@ -1685,7 +1741,7 @@ public class FieldMap : HonoBehavior
                         case 2605: // 400/368
                             bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX -= 16; break;
                         case 2606:
-                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256); break;
+                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256f); break;
                         case 2607: // 416/400
                             bgOverlay.transform.localScale = new Vector3(1.05f, 1.05f, 1f); bgOverlay.curX -= 8; bgOverlay.curY -= 8; break;
                         case 2651:
@@ -2215,16 +2271,35 @@ public class FieldMap : HonoBehavior
     {
         PsxFieldWidth = CalcPsxFieldWidth();
         PsxScreenWidth = CalcPsxScreenWidth();
+        int map = FF9StateSystem.Common.FF9.fldMapNo;
+        //Log.Message("fldMapNo:" + FF9StateSystem.Common.FF9.fldMapNo + " MapWidth:" + NarrowMapList.MapWidth(FF9StateSystem.Common.FF9.fldMapNo) + " PsxFieldWidth:" + PsxFieldWidth + " PsxScreenWidth:" + PsxScreenWidth + " InitializeWidescreenSupport():" + Configuration.Graphics.InitializeWidescreenSupport() + " WidescreenSupport:" + Configuration.Graphics.WidescreenSupport);
         if (Configuration.Graphics.InitializeWidescreenSupport())
         {
-            int mapId = FF9StateSystem.Common.FF9.fldMapNo;
-            Int32 mapWidth = NarrowMapList.MapWidth(mapId);
-            // Log.Message("Configuration.Graphics.WidescreenSupport " + Configuration.Graphics.WidescreenSupport + " CalcPsxFieldWidth() " + CalcPsxFieldWidth() + " PsxScreenWidth 1 " + CalcPsxScreenWidth() + " Screen.width " + Screen.width + " Screen.height " + Screen.height + "mapWidth " + mapWidth);
+            Int32 mapWidth = NarrowMapList.MapWidth(map);
+            //Log.Message("Configuration.Graphics.WidescreenSupport " + Configuration.Graphics.WidescreenSupport + " CalcPsxFieldWidth() " + CalcPsxFieldWidth() + " PsxScreenWidth 1 " + CalcPsxScreenWidth() + " Screen.width " + Screen.width + " Screen.height " + Screen.height + "mapWidth " + mapWidth);
+
             if (mapWidth <= PsxScreenWidth && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "BattleMap")
             {
                 PsxFieldWidth = (Int16)mapWidth;
                 PsxScreenWidth = (Int16)mapWidth;
                 //Log.Message("PsxScreenWidth 2 " + PsxScreenWidth);
+            }
+        }
+
+        if (map >= 3000 && map <= 3012) //pre-#324 way of doing to fix narrows in ending
+        {
+            PsxFieldWidth = Configuration.Graphics.WidescreenSupport ? CalcPsxFieldWidth() : PsxFieldWidthNative;
+            PsxScreenWidth = Configuration.Graphics.WidescreenSupport ? CalcPsxScreenWidth() : PsxScreenWidthNative;
+            if (Configuration.Graphics.InitializeWidescreenSupport() && IsNarrowMap())
+            {
+                foreach (KeyValuePair<int, int> entry in NarrowMapList.actualNarrowMapWidthDict)
+                {
+                    if (FF9StateSystem.Common.FF9.fldMapNo == entry.Key)
+                    {
+                        PsxFieldWidth = (Int16)(entry.Value);
+                        PsxScreenWidth = PsxFieldWidth;
+                    }
+                }
             }
         }
         HalfFieldWidth = (Int16)(PsxFieldWidth / 2);

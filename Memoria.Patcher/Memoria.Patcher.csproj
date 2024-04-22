@@ -84,6 +84,126 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="memoria.key.pfx" />
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_alex1_at_pub.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_cleyra1_dun_05.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_eva2_iu_eug_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_eva2_iu_eug_1.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_eva2_iu_eug_2.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_suna_sp_rpw_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_alex1_at_pub.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_cleyra1_dun_05.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_eva2_iu_eug_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_eva2_iu_eug_1.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_eva2_iu_eug_2.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_suna_sp_rpw_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\gr\evt_alex1_at_pub.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\gr\evt_cleyra1_dun_05.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\gr\evt_eva2_iu_eug_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\gr\evt_eva2_iu_eug_1.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\gr\evt_eva2_iu_eug_2.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\gr\evt_suna_sp_rpw_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\it\evt_alex1_at_pub.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\it\evt_cleyra1_dun_05.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\it\evt_eva2_iu_eug_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\it\evt_eva2_iu_eug_1.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\it\evt_eva2_iu_eug_2.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\it\evt_suna_sp_rpw_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\jp\evt_eva2_iu_eug_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\jp\evt_suna_sp_rpw_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\uk\evt_alex1_at_pub.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\uk\evt_cleyra1_dun_05.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\uk\evt_eva2_iu_eug_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\uk\evt_eva2_iu_eug_1.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\uk\evt_eva2_iu_eug_2.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\uk\evt_suna_sp_rpw_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\us\evt_alex1_at_pub.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\us\evt_cleyra1_dun_05.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\us\evt_eva2_iu_eug_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\us\evt_eva2_iu_eug_1.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\us\evt_eva2_iu_eug_2.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\us\evt_suna_sp_rpw_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\Fieldmaps\fbg_n06_vgdl_map097_dl_viw_0\fbg_n06_vgdl_map097_dl_viw_0.bgs.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\Fieldmaps\fbg_n11_ldbm_map158_lb_plz_0\fbg_n11_ldbm_map158_lb_plz_0.bgs.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StreamingAssets\Assets\Resources\Sounds\Sounds02\SE02\reflect.akb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

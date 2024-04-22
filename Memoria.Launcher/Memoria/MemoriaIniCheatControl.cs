@@ -29,9 +29,9 @@ namespace Memoria.Launcher
             SetRows(15);
             SetCols(8);
             
-            Width = 240;
-            VerticalAlignment = VerticalAlignment.Top;
-            HorizontalAlignment = HorizontalAlignment.Left;
+            Width = 260;
+            VerticalAlignment = VerticalAlignment.Bottom;
+            HorizontalAlignment = HorizontalAlignment.Center;
             Margin = new Thickness(0);
 
             DataContext = this;
@@ -91,6 +91,7 @@ namespace Memoria.Launcher
             };
             accessBattleMenuBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(AccessBattleMenu)) { Mode = BindingMode.TwoWay });
             accessBattleMenuBox.Height = 20;
+            accessBattleMenuBox.FontSize = 10;
             accessBattleMenuBox.Margin = rowMargin;
 
             row++;
@@ -121,6 +122,27 @@ namespace Memoria.Launcher
 
             row++;
 
+            UiTextBlock BattleTPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleTPS), row, 0, 1, 8);
+            BattleTPSText.Foreground = Brushes.White;
+            BattleTPSText.Margin = rowMargin;
+            BattleTPSText.ToolTip = Lang.Settings.BattleTPS_Tooltip;
+
+            row++;
+
+            UiTextBlock BattleTPSindex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
+            BattleTPSindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleTPS)) { Mode = BindingMode.TwoWay });
+            BattleTPSindex.Foreground = Brushes.White;
+            BattleTPSindex.Margin = rowMargin;
+            Slider BattleTPSFactor = AddUiElement(UiSliderFactory.Create(0), row, 1, 1, 7);
+            BattleTPSFactor.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleTPS)) { Mode = BindingMode.TwoWay });
+            BattleTPSFactor.TickFrequency = 15;
+            BattleTPSFactor.IsSnapToTickEnabled = true;
+            BattleTPSFactor.Minimum = 15;
+            BattleTPSFactor.Maximum = 150;
+            BattleTPSFactor.Margin = new Thickness(0, 0, 3, 0);
+
+            row++;
+
             UiCheckBox battleAssistance = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.BattleAssistance, null), row, 0, 1, 8);
             battleAssistance.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(BattleAssistance)) { Mode = BindingMode.TwoWay });
             battleAssistance.Foreground = Brushes.White;
@@ -148,6 +170,14 @@ namespace Memoria.Launcher
             masterSkill.Margin = rowMargin;
             masterSkill.ToolTip = Lang.Settings.PermanentCheats_Tooltip;
 
+            /*row++;
+
+            UiCheckBox maxTetraMasterCards = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.MaxCardCount, null), row, 0, 1, 8);
+            maxTetraMasterCards.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(MaxCardCount)) { Mode = BindingMode.TwoWay });
+            maxTetraMasterCards.Foreground = Brushes.White;
+            maxTetraMasterCards.Margin = rowMargin;
+            maxTetraMasterCards.ToolTip = Lang.Settings.MaxCardCount_Tooltip;
+            */
 
             /*AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row++, 0, 1, 8).Foreground = Brushes.White;*/
 
@@ -229,6 +259,18 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public Int16 BattleTPS
+        {
+            get { return _battletpsfactor; }
+            set
+            {
+                if (_battletpsfactor != value)
+                {
+                    _battletpsfactor = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public Int16 BattleAssistance
         {
             get { return _battleassistance; }
@@ -277,10 +319,20 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public Int16 MaxCardCount
+        {
+            get { return _maxcardcount; }
+            set
+            {
+                if (_maxcardcount != value)
+                {
+                    _maxcardcount = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
-        
-
-        private Int16 _stealingalwaysworks, _garnetconcentrate, _breakDamageLimit, _accessBattleMenu, _speedmode, _speedfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill;
+        private Int16 _stealingalwaysworks, _garnetconcentrate, _breakDamageLimit, _accessBattleMenu, _speedmode, _speedfactor, _battletpsfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill, _maxcardcount;
 
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Memoria.ini";
 
@@ -345,6 +397,16 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _speedfactor))
                     _speedfactor = 2;
 
+                value = iniFile.ReadValue("Graphics", " " + nameof(BattleTPS));
+                if (String.IsNullOrEmpty(value))
+                {
+                    _battletpsfactor = 15;
+                    value = " 15";
+                    OnPropertyChanged(nameof(BattleTPS));
+                }
+                if (!Int16.TryParse(value, out _battletpsfactor))
+                    _battletpsfactor = 15;
+
                 value = iniFile.ReadValue("Cheats", nameof(BattleAssistance));
                 if (String.IsNullOrEmpty(value))
                 {
@@ -381,13 +443,22 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _masterskill))
                     _masterskill = 0;
 
-                value = null;
+                /*value = null;
                 foreach (String prop in new String[] { "BattleFPS", "FieldFPS", "WorldFPS" })
                 {
                     value = iniFile.ReadValue("Graphics", prop);
                     if (!String.IsNullOrEmpty(value))
                         break;
+                }*/
+
+                value = iniFile.ReadValue("TetraMaster", nameof(MaxCardCount));
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 100";
+                    OnPropertyChanged(nameof(MaxCardCount));
                 }
+                if (!Int16.TryParse(value, out _maxcardcount))
+                    _maxcardcount = 1;
 
                 Refresh(nameof(StealingAlwaysWorks));
                 Refresh(nameof(GarnetConcentrate));
@@ -395,10 +466,12 @@ namespace Memoria.Launcher
                 Refresh(nameof(AccessBattleMenu));
                 Refresh(nameof(SpeedMode));
                 Refresh(nameof(SpeedFactor));
+                Refresh(nameof(BattleTPS));
                 Refresh(nameof(BattleAssistance));
                 Refresh(nameof(Attack9999));
                 Refresh(nameof(NoRandomEncounter));
                 Refresh(nameof(MasterSkill));
+                Refresh(nameof(MaxCardCount));
             }
             catch (Exception ex){ UiHelper.ShowError(Application.Current.MainWindow, ex); }
         }
@@ -463,6 +536,11 @@ namespace Memoria.Launcher
                         if (SpeedFactor < 13)
                             iniFile.WriteValue("Cheats", propertyName + " ", " " + SpeedFactor);
                         break;
+                    case nameof(BattleTPS):
+                        iniFile.WriteValue("Graphics", propertyName + " ", " " + BattleTPS);
+                        if (BattleTPS != 15)
+                            iniFile.WriteValue("Cheats", "Enabled ", " 1");
+                        break;
                     case nameof(BattleAssistance):
                         iniFile.WriteValue("Cheats", propertyName + " ", " " + BattleAssistance);
                         iniFile.WriteValue("Cheats", "Attack9999 ", " " + BattleAssistance); // Merged
@@ -485,6 +563,17 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Cheats", "GilMax ", " " + MasterSkill);
                         if (MasterSkill == 1)
                             iniFile.WriteValue("Cheats", "Enabled ", " 1");
+                        break;
+                    case nameof(MaxCardCount):
+                        if (MaxCardCount == 1)
+                        {
+                            iniFile.WriteValue("TetraMaster", propertyName + " ", " 10000");
+                            iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
+                        }
+                        else if (MaxCardCount == 0)
+                        {
+                            iniFile.WriteValue("TetraMaster", propertyName + " ", " 100");
+                        }
                         break;
                 }
             }

@@ -9,14 +9,12 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Globalization;
-using System.Collections.Generic;
 using System.Drawing.Text;
 using Ini;
 using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using System.Text.RegularExpressions;
-using System.Linq;
 
 
 // ReSharper disable UnusedMember.Local
@@ -32,15 +30,12 @@ namespace Memoria.Launcher
     {
         public MemoriaIniControl()
         {
-            PsxFontInstalled = true || IsOptionPresentInIni("Graphics", "UseGarnetFont");
-            SBUIInstalled = false && IsOptionPresentInIni("Graphics", "ScaledBattleUI");
-
-            SetRows(17);
+            SetRows(22);
             SetCols(8);
             
-            Width = 240;
-            VerticalAlignment = VerticalAlignment.Top;
-            HorizontalAlignment = HorizontalAlignment.Left;
+            Width = 260;
+            VerticalAlignment = VerticalAlignment.Bottom;
+            HorizontalAlignment = HorizontalAlignment.Right;
             Margin = new Thickness(0);
 
             DataContext = this;
@@ -100,7 +95,7 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiTextBlock sharedFpsIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
+            /*UiTextBlock sharedFpsIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
             sharedFpsIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SharedFPS)) { Mode = BindingMode.TwoWay });
             sharedFpsIndex.Foreground = Brushes.White;
             sharedFpsIndex.Margin = rowMargin;
@@ -110,7 +105,69 @@ namespace Memoria.Launcher
             sharedFps.IsSnapToTickEnabled = true;
             sharedFps.Minimum = 15;
             sharedFps.Maximum = 120;
-            sharedFps.Margin = new Thickness(0, 0, 3, 0);
+            sharedFps.Margin = new Thickness(0, 0, 3, 0);*/
+
+            UiTextBlock battleFPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleFPS), row, 0, 1, 2);
+            battleFPSText.Foreground = Brushes.White;
+            battleFPSText.Margin = rowMargin;
+            battleFPSText.ToolTip = Lang.Settings.BattleFPS_Tooltip;
+            UiTextBlock battleFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 2, 1, 1);
+            battleFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
+            battleFPSIndex.Foreground = Brushes.White;
+            battleFPSIndex.Margin = rowMargin;
+            battleFPSIndex.TextAlignment = TextAlignment.Right;
+            Slider battleFPSSlider = AddUiElement(UiSliderFactory.Create(30), row, 3, 1, 5);
+            battleFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
+            battleFPSSlider.TickFrequency = 10;
+            battleFPSSlider.TickPlacement = TickPlacement.BottomRight;
+            battleFPSSlider.Height = 20;
+            battleFPSSlider.IsSnapToTickEnabled = true;
+            battleFPSSlider.Minimum = 20;
+            battleFPSSlider.Maximum = 120;
+            battleFPSSlider.Margin = rowMargin;
+
+            row++;
+
+            UiTextBlock fieldFPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FieldFPS), row, 0, 1, 2);
+            fieldFPSText.Foreground = Brushes.White;
+            fieldFPSText.Margin = rowMargin;
+            fieldFPSText.ToolTip = Lang.Settings.FieldFPS_Tooltip;
+            UiTextBlock fieldFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 2, 1, 1);
+            fieldFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(FieldFPS)) { Mode = BindingMode.TwoWay });
+            fieldFPSIndex.Foreground = Brushes.White;
+            fieldFPSIndex.Margin = rowMargin;
+            fieldFPSIndex.TextAlignment = TextAlignment.Right;
+            Slider fieldFPSSlider = AddUiElement(UiSliderFactory.Create(30), row, 3, 1, 5);
+            fieldFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(FieldFPS)) { Mode = BindingMode.TwoWay });
+            fieldFPSSlider.TickFrequency = 10;
+            fieldFPSSlider.TickPlacement = TickPlacement.BottomRight;
+            fieldFPSSlider.Height = 20;
+            fieldFPSSlider.IsSnapToTickEnabled = true;
+            fieldFPSSlider.Minimum = 20;
+            fieldFPSSlider.Maximum = 120;
+            fieldFPSSlider.Margin = rowMargin;
+
+            row++;
+
+            UiTextBlock worldFPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WorldFPS), row, 0, 1, 2);
+            worldFPSText.Foreground = Brushes.White;
+            worldFPSText.Margin = rowMargin;
+            worldFPSText.ToolTip = Lang.Settings.WorldFPS_Tooltip;
+            UiTextBlock worldFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 2, 1, 1);
+            worldFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(WorldFPS)) { Mode = BindingMode.TwoWay });
+            worldFPSIndex.Foreground = Brushes.White;
+            worldFPSIndex.Margin = rowMargin;
+            worldFPSIndex.TextAlignment = TextAlignment.Right;
+            Slider worldFPSSlider = AddUiElement(UiSliderFactory.Create(20), row, 3, 1, 5);
+            worldFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(WorldFPS)) { Mode = BindingMode.TwoWay });
+            worldFPSSlider.TickFrequency = 10;
+            worldFPSSlider.TickPlacement = TickPlacement.BottomRight;
+            worldFPSSlider.Height = 20;
+            worldFPSSlider.IsSnapToTickEnabled = true;
+            worldFPSSlider.Minimum = 20;
+            worldFPSSlider.Maximum = 120;
+            worldFPSSlider.Margin = rowMargin;
+
 
             row++;
 
@@ -295,56 +352,37 @@ namespace Memoria.Launcher
             movieVolumeTextIndex.Margin = rowMargin;
             movieVolumeTextIndex.TextAlignment = TextAlignment.Right;
 
-            if (PsxFontInstalled)
-            {
-                row++;
+            row++;
 
-                UiTextBlock fontChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FontChoice), row, 0, 1, 2);
-                fontChoiceText.Foreground = Brushes.White;
-                fontChoiceText.Margin = rowMargin;
-                fontChoiceText.ToolTip = Lang.Settings.FontChoice_Tooltip;
-                _fontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 2, 1, 6);
-                _fontChoiceBox.Height = 20;
-                _fontChoiceBox.FontSize = 10;
-                _fontChoiceBox.Margin = rowMargin;
+            UiCheckBox usePsxFont = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.UsePsxFont, null), row, 0, 1, 8);
+            usePsxFont.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(UsePsxFont)) { Mode = BindingMode.TwoWay });
+            usePsxFont.Foreground = Brushes.White;
+            usePsxFont.Margin = rowMargin;
+            usePsxFont.ToolTip = Lang.Settings.UsePsxFont_Tooltip;
 
-                FontCollection installedFonts = new InstalledFontCollection();
-                String[] fontNames = new String[installedFonts.Families.Length + 2];
-                fontNames[0] = _fontDefaultPC;
-                fontNames[1] = _fontDefaultPSX;
-                for (Int32 fontindex = 0; fontindex < installedFonts.Families.Length; ++fontindex)
-                    fontNames[fontindex+2] = installedFonts.Families[fontindex].Name;
-                _fontChoiceBox.ItemsSource = fontNames;
-                _fontChoiceBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(FontChoice)) { Mode = BindingMode.TwoWay });
-            }
+            row++;
 
-            if (SBUIInstalled)
-            {
-                row++;
+            UiTextBlock fontChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FontChoice), row, 0, 1, 2);
+            fontChoiceText.Foreground = Brushes.White;
+            fontChoiceText.Margin = rowMargin;
+            fontChoiceText.ToolTip = Lang.Settings.FontChoice_Tooltip;
+            _fontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 2, 1, 6);
+            //_fontChoiceBox.IsEnabled = false;
+            _fontChoiceBox.Height = 20;
+            _fontChoiceBox.FontSize = 10;
+            _fontChoiceBox.Margin = rowMargin;
 
-                UiCheckBox useSBUI = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SBUIenabled, null), row++, 0, 2, 8);
-                useSBUI.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(ScaledBattleUI)) { Mode = BindingMode.TwoWay });
-                useSBUI.Foreground = Brushes.White;
-                useSBUI.Margin = rowMargin;
-                Slider sBUIScale = AddUiElement(UiSliderFactory.Create(0), row, 1, 1, 7);
-                sBUIScale.SetBinding(Slider.ValueProperty, new Binding(nameof(ScaleUIFactor)) { Mode = BindingMode.TwoWay });
-                sBUIScale.TickFrequency = 0.1;
-                sBUIScale.IsSnapToTickEnabled = true;
-                sBUIScale.Minimum = 0.1;
-                sBUIScale.Maximum = 3.0;
-                sBUIScale.Margin = rowMargin;
-                UiTextBlock sBUIScaleTextindex = AddUiElement(UiTextBlockFactory.Create(""), row++, 0, 2, 1);
-                sBUIScaleTextindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(ScaleUIFactor)) { Mode = BindingMode.TwoWay });
-                sBUIScaleTextindex.Foreground = Brushes.White;
-                sBUIScaleTextindex.Margin = new Thickness(8, 0, 0, 0);
-            }
+            FontCollection installedFonts = new InstalledFontCollection();
+            String[] fontNames = new String[installedFonts.Families.Length + 2];
+            fontNames[0] = _fontDefaultPC;
+            fontNames[1] = _fontDefaultPSX;
+            for (Int32 fontindex = 0; fontindex < installedFonts.Families.Length; ++fontindex)
+                fontNames[fontindex+2] = installedFonts.Families[fontindex].Name;
+            _fontChoiceBox.ItemsSource = fontNames;
+            _fontChoiceBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(FontChoice)) { Mode = BindingMode.TwoWay });
 
-            SanitizeMemoriaIni();
             LoadSettings();
         }
-
-        public bool PsxFontInstalled = false;
-        public bool SBUIInstalled = false;
 
         public Int16 WidescreenSupport
         {
@@ -367,6 +405,43 @@ namespace Memoria.Launcher
                 if (_sharedfps != value)
                 {
                     _sharedfps = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public Int16 BattleFPS
+        {
+            get { return _battlefps; }
+            set
+            {
+                if (_battlefps != value)
+                {
+                    _battlefps = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public Int16 FieldFPS
+        {
+            get { return _fieldfps; }
+            set
+            {
+                if (_fieldfps != value)
+                {
+                    _fieldfps = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public Int16 WorldFPS
+        {
+            get { return _worldfps; }
+            set
+            {
+                if (_worldfps != value)
+                {
+                    _worldfps = value;
                     OnPropertyChanged();
                 }
             }
@@ -399,15 +474,32 @@ namespace Memoria.Launcher
 		{
             get
 			{
-                switch (BattleInterface)
-				{
-                    case 0:
-                    default:
-                        return new Rect(-400, -362, 630, 236);
-                    case 1:
-                        return new Rect(-602, -382, 530, 220);
-                    case 2:
-                        return new Rect(-552, -360, 650, 280);
+                if (WidescreenSupport == 0)
+                {
+                    switch (BattleInterface)
+                    {
+
+                        case 0:
+                        default:
+                            return new Rect(-400, -362, 630, 236);
+                        case 1:
+                            return new Rect(-400, -382, 530, 220);
+                        case 2:
+                            return new Rect(-400, -360, 650, 280);
+                    }
+                }
+                else
+                {
+                    switch (BattleInterface)
+                    {
+                        case 0:
+                        default:
+                            return new Rect(-400, -362, 630, 236);
+                        case 1:
+                            return new Rect(-500, -382, 530, 220);
+                        case 2:
+                            return new Rect(-500, -360, 650, 280);
+                    }
                 }
 			}
         }
@@ -415,15 +507,31 @@ namespace Memoria.Launcher
         {
             get
             {
-                switch (BattleInterface)
+                if (WidescreenSupport == 0)
                 {
-                    case 0:
-                    default:
-                        return new Rect(345, -380, 796, 230);
-                    case 1:
-                        return new Rect(558, -422, 672, 208);
-                    case 2:
-                        return new Rect(558, -422, 672, 208);
+                    switch (BattleInterface)
+                    {
+                        case 0:
+                        default:
+                            return new Rect(345, -380, 796, 230);
+                        case 1:
+                            return new Rect(345, -422, 672, 208);
+                        case 2:
+                            return new Rect(345, -422, 672, 208);
+                    }
+                }
+                else
+                {
+                    switch (BattleInterface)
+                    {
+                        case 0:
+                        default:
+                            return new Rect(345, -380, 796, 230);
+                        case 1:
+                            return new Rect(500, -422, 672, 208);
+                        case 2:
+                            return new Rect(500, -422, 672, 208);
+                    }
                 }
             }
         }
@@ -577,14 +685,14 @@ namespace Memoria.Launcher
                 }
             }
         }
-        public Int16 UseGarnetFont
+        public Int16 UsePsxFont
         {
-            get { return _usegarnetfont; }
+            get { return _usepsxfont; }
             set
             {
-                if (_usegarnetfont != value)
+                if (_usepsxfont != value)
                 {
-                    _usegarnetfont = value;
+                    _usepsxfont = value;
                     OnPropertyChanged();
                 }
             }
@@ -598,6 +706,7 @@ namespace Memoria.Launcher
                 {
                     _fontChoice = value;
                     OnPropertyChanged();
+                    OnPropertyChanged("UsePsxFont");
                 }
             }
         }
@@ -638,7 +747,7 @@ namespace Memoria.Launcher
             }
             return false;
         }
-        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usegarnetfont, _scaledbattleui, _sharedfps, _camerastabilizer;
+        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _scaledbattleui, _sharedfps, _battlefps, _fieldfps, _worldfps, _camerastabilizer;
         private double _scaledbattleuiscale;
         private String _fontChoice;
         private UiComboBox _fontChoiceBox;
@@ -650,16 +759,20 @@ namespace Memoria.Launcher
         {
             LoadSettings();
         }
+
         private void LoadSettings()
         {
             try
             {
                 if (!File.Exists(_iniPath))
                 {
-                    Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("Ini.Memoria.ini");
-                    Stream output = File.Create(_iniPath);
-                    input.CopyTo(output, 8192);
+                    Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("Memoria.ini");
+                    StreamReader reader = new StreamReader(input);
+                    string text = reader.ReadToEnd();
+                    File.WriteAllText(_iniPath, text);
                 }
+
+                SanitizeMemoriaIni();
 
                 IniFile iniFile = new IniFile(_iniPath);
 
@@ -711,6 +824,33 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _sharedfps))
                     _sharedfps = 30;
 
+                value = iniFile.ReadValue("Graphics", "BattleFPS");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 30";
+                    OnPropertyChanged(nameof(BattleFPS));
+                }
+                if (!Int16.TryParse(value, out _battlefps))
+                    _battlefps = 30;
+
+                value = iniFile.ReadValue("Graphics", "FieldFPS");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 30";
+                    OnPropertyChanged(nameof(FieldFPS));
+                }
+                if (!Int16.TryParse(value, out _fieldfps))
+                    _fieldfps = 30;
+
+                value = iniFile.ReadValue("Graphics", "WorldFPS");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 20";
+                    OnPropertyChanged(nameof(WorldFPS));
+                }
+                if (!Int16.TryParse(value, out _worldfps))
+                    _worldfps = 20;
+
                 value = iniFile.ReadValue("Graphics", "CameraStabilizer");
                 if (String.IsNullOrEmpty(value))
                 {
@@ -758,7 +898,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Graphics", nameof(AntiAliasing));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = " 1";
+                    value = " 8";
                     OnPropertyChanged(nameof(AntiAliasing));
                 }
                 if (!Int16.TryParse(value, out _antialiasing))
@@ -829,8 +969,44 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _movievolume))
                     _movievolume = 100;
 
+                
+                value = iniFile.ReadValue("Font", "Enabled");
+                Int16 enabledFont = 0;
+                if (String.IsNullOrEmpty(value) || !Int16.TryParse(value, out enabledFont) || enabledFont == 0)
+                {
+                    _fontChoice = _fontDefaultPC;
+                    _usepsxfont = 0;
+                }
+                else
+                {
+                    value = iniFile.ReadValue("Font", "Names");
+                    if (String.IsNullOrEmpty(value) || value.Length < 2)
+                    {
+                        _fontChoice = _fontDefaultPC;
+                        _usepsxfont = 0;
+                    }
+                    else
+                    {
+                        String[] fontList = value.Trim('"').Split(new[] { "\", \"" }, StringSplitOptions.None);
+                        _fontChoice = fontList[0];
+                        if (_fontChoice.CompareTo("Alexandria") == 0 || _fontChoice.CompareTo("Garnet") == 0)
+                        {
+                            _fontChoice = _fontDefaultPSX;
+                            _usepsxfont = 1;
+                        }
+                        else
+                        {
+                            _usepsxfont = 0;
+                        }
+                    }
+                }
+                _fontChoiceBox.SelectedItem = _fontChoice;
+
                 Refresh(nameof(WidescreenSupport));
                 Refresh(nameof(SharedFPS));
+                Refresh(nameof(BattleFPS));
+                Refresh(nameof(FieldFPS));
+                Refresh(nameof(WorldFPS));
                 Refresh(nameof(CameraStabilizer));
                 Refresh(nameof(BattleInterface));
                 Refresh(nameof(SkipIntros));
@@ -844,53 +1020,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(SoundVolume));
                 Refresh(nameof(MusicVolume));
                 Refresh(nameof(MovieVolume));
-
-                if (PsxFontInstalled) {
-                    value = iniFile.ReadValue("Font", "Enabled");
-                    Int16 enabledFont = 0;
-                    if (String.IsNullOrEmpty(value) || !Int16.TryParse(value, out enabledFont) || enabledFont == 0)
-                    {
-                        _fontChoice = _fontDefaultPC;
-                    }
-                    else
-                    {
-                        value = iniFile.ReadValue("Font", "Names");
-                        if (String.IsNullOrEmpty(value) || value.Length < 2)
-                        {
-                            _fontChoice = _fontDefaultPC;
-                        }
-                        else
-                        {
-                            String[] fontList = value.Trim('"').Split(new[] { "\", \"" }, StringSplitOptions.None);
-                            _fontChoice = fontList[0];
-                            if (_fontChoice.CompareTo("Alexandria") == 0 || _fontChoice.CompareTo("Garnet") == 0)
-                                _fontChoice = _fontDefaultPSX;
-                        }
-                    }
-                    _fontChoiceBox.SelectedItem = _fontChoice;
-                }
-                if (SBUIInstalled)
-                {
-                    value = iniFile.ReadValue("Graphics", nameof(ScaledBattleUI));
-                    if (String.IsNullOrEmpty(value))
-                    {
-                        value = " 1";
-                        OnPropertyChanged(nameof(ScaledBattleUI));
-                    }
-                    if (!Int16.TryParse(value, out _scaledbattleui))
-                        _scaledbattleui = 1;
-                    OnPropertyChanged(nameof(ScaledBattleUI));
-
-                    value = iniFile.ReadValue("Graphics", nameof(ScaleUIFactor));
-                    if (String.IsNullOrEmpty(value))
-                    {
-                        value = " 0.6";
-                        OnPropertyChanged(nameof(ScaleUIFactor));
-                    }
-                    if (!double.TryParse(value, NumberStyles.Any, CultureInfo.InvariantCulture, out _scaledbattleuiscale))
-                        _scaledbattleuiscale = 0.6;
-                    OnPropertyChanged(nameof(ScaleUIFactor));
-                }
+                Refresh(nameof(UsePsxFont));
             }
             catch (Exception ex)
             {
@@ -973,8 +1103,25 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Graphics", "WorldFPS ", " " + SharedFPS);
                         iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         break;
+                    case nameof(BattleFPS):
+                        iniFile.WriteValue("Graphics", "BattleFPS ", " " + BattleFPS);
+                        if (BattleFPS != 30)
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                        break;
+                    case nameof(FieldFPS):
+                        iniFile.WriteValue("Graphics", "FieldFPS ", " " + FieldFPS);
+                        if (FieldFPS != 30)
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                        break;
+                    case nameof(WorldFPS):
+                        iniFile.WriteValue("Graphics", "WorldFPS ", " " + WorldFPS);
+                        if (WorldFPS != 20)
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                        break;
                     case nameof(CameraStabilizer):
                         iniFile.WriteValue("Graphics", "CameraStabilizer ", " " + CameraStabilizer);
+                        if (CameraStabilizer != 0)
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         break;
                     case nameof(BattleInterface):
                         iniFile.WriteValue("Interface", "BattleMenuPosX ", " " + (Int32)BattleInterfaceMenu.X);
@@ -1053,23 +1200,35 @@ namespace Memoria.Launcher
                     case nameof(MovieVolume):
                         iniFile.WriteValue("Audio", propertyName + " ", " " + MovieVolume);
                         break;
-                    case nameof(UseGarnetFont):
-                        iniFile.WriteValue("Graphics", propertyName + " ", " " + UseGarnetFont);
-                        if (UseGarnetFont == 1)
-                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                    case nameof(UsePsxFont):
+                        if (UsePsxFont == 1)
+                        {
+                            iniFile.WriteValue("Font", "Enabled ", " 1");
+                            iniFile.WriteValue("Font", "Names ", " \"Alexandria\", \"Garnet\"");
+                            FontChoice = _fontDefaultPSX;
+                        }
+                        else if (UsePsxFont == 0)
+                        {
+                            _usepsxfont = 0;
+                        }
                         break;
                     case nameof(FontChoice):
                         if (FontChoice.CompareTo(_fontDefaultPC) == 0)
+                        {
                             iniFile.WriteValue("Font", "Enabled ", " 0");
+                            _usepsxfont = 0;
+                        }
                         else if (FontChoice.CompareTo(_fontDefaultPSX) == 0)
                         {
                             iniFile.WriteValue("Font", "Enabled ", " 1");
                             iniFile.WriteValue("Font", "Names ", " \"Alexandria\", \"Garnet\"");
+                            _usepsxfont = 1;
                         }
                         else
                         {
                             iniFile.WriteValue("Font", "Enabled ", " 1");
                             iniFile.WriteValue("Font", "Names ", " \"" + FontChoice + "\", \"Times Bold\"");
+                            _usepsxfont = 0;
                         }
                         break;
                     case nameof(ScaledBattleUI):
@@ -1089,6 +1248,164 @@ namespace Memoria.Launcher
         }
         private async void SanitizeMemoriaIni()
         {
+            MakeSureSpacesAroundEqualsigns();
+
+            try
+            {
+                if (File.Exists(_iniPath))
+                {
+                    IniFile iniFile = new IniFile(_iniPath);
+                    String _checklatestadded = iniFile.ReadValue("Hacks", "ExcaliburIINoTimeLimit"); // check if the latest ini parameter is already there
+                    if (String.IsNullOrEmpty(_checklatestadded))
+                    {
+                        MakeIniNotNull("Mod", "FolderNames", "");
+                        MakeIniNotNull("Mod", "Priorities", "");
+                        MakeIniNotNull("Mod", "UseFileList", "1");
+
+                        MakeIniNotNull("Font", "Enabled", "1");
+                        MakeIniNotNull("Font", "Names", "\"Arial\", \"Times Bold\"");
+                        MakeIniNotNull("Font", "Size", "24");
+
+                        MakeIniNotNull("Graphics", "Enabled", "0");
+                        MakeIniNotNull("Graphics", "BattleFPS", "30");
+                        MakeIniNotNull("Graphics", "BattleTPS", "15");
+                        MakeIniNotNull("Graphics", "FieldFPS", "30");
+                        MakeIniNotNull("Graphics", "FieldTPS", "30");
+                        MakeIniNotNull("Graphics", "WorldFPS", "20");
+                        MakeIniNotNull("Graphics", "WorldTPS", "20");
+                        MakeIniNotNull("Graphics", "MenuFPS", "60");
+                        MakeIniNotNull("Graphics", "MenuTPS", "60");
+                        MakeIniNotNull("Graphics", "BattleSwirlFrames", "13");
+                        MakeIniNotNull("Graphics", "WidescreenSupport", "1");
+                        MakeIniNotNull("Graphics", "SkipIntros", "0");
+                        MakeIniNotNull("Graphics", "GarnetHair", "0");
+                        MakeIniNotNull("Graphics", "TileSize", "32");
+                        MakeIniNotNull("Graphics", "AntiAliasing", "8");
+                        MakeIniNotNull("Graphics", "CameraStabilizer", "85");
+
+                        MakeIniNotNull("Control", "Enabled", "1");
+                        MakeIniNotNull("Control", "DisableMouse", "0");
+                        MakeIniNotNull("Control", "DialogProgressButtons", "\"Confirm\"");
+                        MakeIniNotNull("Control", "WrapSomeMenus", "1");
+                        MakeIniNotNull("Control", "PSXScrollingMethod", "1");
+                        MakeIniNotNull("Control", "PSXMovementMethod", "0");
+
+                        MakeIniNotNull("Battle", "Enabled", "0");
+                        MakeIniNotNull("Battle", "SFXRework", "1");
+                        MakeIniNotNull("Battle", "Speed", "0");
+                        MakeIniNotNull("Battle", "NoAutoTrance", "0");
+                        MakeIniNotNull("Battle", "EncounterInterval", "960");
+                        MakeIniNotNull("Battle", "EncounterInitial", "-1440");
+                        MakeIniNotNull("Battle", "PersistentDangerValue", "0");
+                        MakeIniNotNull("Battle", "AutoPotionOverhealLimit", "-1");
+                        MakeIniNotNull("Battle", "GarnetConcentrate", "0");
+                        MakeIniNotNull("Battle", "SelectBestTarget", "1");
+                        MakeIniNotNull("Battle", "BreakDamageLimit", "0");
+                        MakeIniNotNull("Battle", "ViviAutoAttack", "0");
+                        MakeIniNotNull("Battle", "CountersBetterTarget", "0");
+                        MakeIniNotNull("Battle", "LockEquippedAbilities", "0");
+                        MakeIniNotNull("Battle", "FloatEvadeBonus", "0");
+                        MakeIniNotNull("Battle", "AccessMenus", "0");
+                        MakeIniNotNull("Battle", "CustomBattleFlagsMeaning", "0");
+
+                        MakeIniNotNull("Icons", "Enabled", "1");
+                        MakeIniNotNull("Icons", "HideCursor", "0");
+                        MakeIniNotNull("Icons", "HideCards", "0");
+                        MakeIniNotNull("Icons", "HideExclamation", "0");
+                        MakeIniNotNull("Icons", "HideQuestion", "0");
+                        MakeIniNotNull("Icons", "HideBeach", "0");
+                        MakeIniNotNull("Icons", "HideSteam", "0");
+
+                        MakeIniNotNull("Cheats", "Enabled", "1");
+                        MakeIniNotNull("Cheats", "Rotation", "1");
+                        MakeIniNotNull("Cheats", "Perspective", "1");
+                        MakeIniNotNull("Cheats", "SpeedMode", "1");
+                        MakeIniNotNull("Cheats", "SpeedFactor", "3");
+                        MakeIniNotNull("Cheats", "SpeedTimer", "0");
+                        MakeIniNotNull("Cheats", "BattleAssistance", "0");
+                        MakeIniNotNull("Cheats", "Attack9999", "0");
+                        MakeIniNotNull("Cheats", "NoRandomEncounter", "1");
+                        MakeIniNotNull("Cheats", "MasterSkill", "0");
+                        MakeIniNotNull("Cheats", "LvMax", "0");
+                        MakeIniNotNull("Cheats", "GilMax", "0");
+
+                        MakeIniNotNull("Hacks", "Enabled", "0");
+                        MakeIniNotNull("Hacks", "AllCharactersAvailable", "0");
+                        MakeIniNotNull("Hacks", "RopeJumpingIncrement", "1");
+                        MakeIniNotNull("Hacks", "FrogCatchingIncrement", "1");
+                        MakeIniNotNull("Hacks", "HippaulRacingViviSpeed", "33");
+                        MakeIniNotNull("Hacks", "StealingAlwaysWorks", "0");
+                        MakeIniNotNull("Hacks", "DisableNameChoice", "0");
+                        MakeIniNotNull("Hacks", "ExcaliburIINoTimeLimit", "0");
+
+                        MakeIniNotNull("TetraMaster", "Enabled", "1");
+                        MakeIniNotNull("TetraMaster", "TripleTriad", "0");
+                        MakeIniNotNull("TetraMaster", "ReduceRandom", "0");
+                        MakeIniNotNull("TetraMaster", "MaxCardCount", "100");
+                        MakeIniNotNull("TetraMaster", "DiscardAutoButton", "1");
+                        MakeIniNotNull("TetraMaster", "DiscardAssaultCards", "0");
+                        MakeIniNotNull("TetraMaster", "DiscardFlexibleCards", "1");
+                        MakeIniNotNull("TetraMaster", "DiscardMaxAttack", "224");
+                        MakeIniNotNull("TetraMaster", "DiscardMaxPDef", "255");
+                        MakeIniNotNull("TetraMaster", "DiscardMaxMDef", "255");
+                        MakeIniNotNull("TetraMaster", "DiscardMaxSum", "480");
+                        MakeIniNotNull("TetraMaster", "DiscardMinDeckSize", "10");
+                        MakeIniNotNull("TetraMaster", "DiscardKeepSameType", "1");
+                        MakeIniNotNull("TetraMaster", "DiscardKeepSameArrow", "0");
+                        MakeIniNotNull("TetraMaster", "DiscardExclusions", "56, 75, 76, 77, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 98, 99, 100");
+
+                        MakeIniNotNull("Interface", "BattleRowCount", "5");
+                        MakeIniNotNull("Interface", "BattleColumnCount", "1");
+                        MakeIniNotNull("Interface", "BattleMenuPosX", "-400");
+                        MakeIniNotNull("Interface", "BattleMenuPosY", "-362");
+                        MakeIniNotNull("Interface", "BattleMenuWidth", "630");
+                        MakeIniNotNull("Interface", "BattleMenuHeight", "236");
+                        MakeIniNotNull("Interface", "BattleDetailPosX", "345");
+                        MakeIniNotNull("Interface", "BattleDetailPosY", "-380");
+                        MakeIniNotNull("Interface", "BattleDetailWidth", "796");
+                        MakeIniNotNull("Interface", "BattleDetailHeight", "230");
+                        MakeIniNotNull("Interface", "PSXBattleMenu", "0");
+                        MakeIniNotNull("Interface", "ScanDisplay", "1");
+                        MakeIniNotNull("Interface", "BattleCommandTitleFormat", "");
+                        MakeIniNotNull("Interface", "BattleDamageTextFormat", "");
+                        MakeIniNotNull("Interface", "BattleRestoreTextFormat", "");
+                        MakeIniNotNull("Interface", "BattleMPDamageTextFormat", "");
+                        MakeIniNotNull("Interface", "BattleMPRestoreTextFormat", "");
+                        MakeIniNotNull("Interface", "MenuItemRowCount", "8");
+                        MakeIniNotNull("Interface", "MenuAbilityRowCount", "6");
+                        MakeIniNotNull("Interface", "MenuEquipRowCount", "5");
+                        MakeIniNotNull("Interface", "MenuChocographRowCount", "5");
+
+                        MakeIniNotNull("Fixes", "Enabled", "1");
+                        MakeIniNotNull("Fixes", "KeepRestTimeInBattle", "1");
+                        
+                        MakeIniNotNull("SaveFile", "DisableAutoSave", "0");
+                        MakeIniNotNull("SaveFile", "AutoSaveOnlyAtMoogle", "0");
+                        MakeIniNotNull("SaveFile", "SaveOnCloud", "0");
+
+                        MakeIniNotNull("Speedrun", "Enabled", "0");
+                        MakeIniNotNull("Speedrun", "SplitSettingsPath", "");
+                        MakeIniNotNull("Speedrun", "LogGameTimePath", "");
+
+                        MakeIniNotNull("Debug", "Enabled", "0");
+                        MakeIniNotNull("Debug", "SigningEventObjects", "0");
+                        MakeIniNotNull("Debug", "StartModelViewer", "0");
+                        MakeIniNotNull("Debug", "StartFieldCreator", "0");
+                        MakeIniNotNull("Debug", "RenderWalkmeshes", "0");
+
+                        MakeSureSpacesAroundEqualsigns();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+
+        }
+
+        private async void MakeSureSpacesAroundEqualsigns()
+        {
             try
             {
                 if (File.Exists(_iniPath))
@@ -1103,6 +1420,16 @@ namespace Memoria.Launcher
             catch (Exception ex)
             {
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+        }
+
+        private async void MakeIniNotNull(String Category, String Setting, String Defaultvalue)
+        {
+            IniFile iniFile = new IniFile(_iniPath);
+            String value = iniFile.ReadValue(Category, Setting);
+            if (String.IsNullOrEmpty(value))
+            {
+                iniFile.WriteValue(Category, Setting + " ", " " + Defaultvalue);
             }
         }
     }
