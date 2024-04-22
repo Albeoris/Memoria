@@ -134,10 +134,10 @@
   <ItemGroup>
     <EmbeddedResource Include="Languages\fr.xml" />
     <None Include="app.config" />
-    <ContentWithTargetPath Include="Ini\Memoria.ini">
+    <EmbeddedResource Include="Ini\Memoria.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Memoria.ini</TargetPath>
-    </ContentWithTargetPath>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Languages\pt-BR.xml" />
