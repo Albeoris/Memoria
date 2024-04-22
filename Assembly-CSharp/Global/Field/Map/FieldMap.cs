@@ -1478,9 +1478,9 @@ public class FieldMap : HonoBehavior
 
         foreach (int[] entry in FixDepthOfLayer)
         {
-            if (entry[0] == FF9StateSystem.Common.FF9.fldMapNo && entry[1] == ovrNdx)
+            if (entry[0] == FF9StateSystem.Common.FF9.fldMapNo && entry[1] == this.camIdx && entry[2] == ovrNdx)
             {
-                bgOverlay.curZ = (ushort)entry[2];
+                bgOverlay.curZ = (ushort)entry[3];
                 bgOverlay.transform.localPosition = new Vector3(bgOverlay.transform.localPosition.x, bgOverlay.transform.localPosition.y, entry[2]);
             }
         }
@@ -1488,8 +1488,17 @@ public class FieldMap : HonoBehavior
 
     public static readonly Int32[][] FixDepthOfLayer =
     {
-        // [mapNo,ovrNdx,Z],
-        [1000,12,0], // Clayra's Trunk text
+        // [mapNo,camIdx,ovrNdx,Z],
+        [403,0,23,560], // Dali underground wall over box
+        [403,0,27,1523], // Dali underground barrel
+        [951,0,2,1214], // Gargan Roo's railing
+        [1000,0,12,0], // Clayra's Trunk text
+        [1652,1,5,911], // Iifa platform
+        [1656,0,3,998], // Iifa statue glow (was not active on PSX)
+        [2922,0,8,4329], // Crystal world (was not active on PSX)
+        [2922,0,10,3179], // Crystal world (was not active on PSX)
+        [2922,0,11,3179], // Crystal world (was not active on PSX)
+        [2922,0,12,6080], // Crystal world (was not active on PSX)
     };
 
     public void EBG_scene2DScroll(Int16 destX, Int16 destY, UInt16 frameCount, UInt32 scrollType)
