@@ -1278,8 +1278,6 @@ public class FieldMap : HonoBehavior
         List<BGSPRITE_LOC_DEF> spriteList = bgOverlay.spriteList;
         float screenX = bgOverlay.curX + bgScene.scrX;
         float screenY = bgOverlay.curY + bgScene.scrY;
-        Vector2 viewportSize = new Vector2(this.scrollWindowDim[(int)bgOverlay.viewportNdx][0], this.scrollWindowDim[(int)bgOverlay.viewportNdx][1]);
-        Vector2 viewportPos = new Vector2(this.scrollWindowPos[(int)bgOverlay.viewportNdx][0], this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
         if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Loop) != 0)
         {
             //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.Loop"); // example: scrolling sky 505
@@ -1287,14 +1285,14 @@ public class FieldMap : HonoBehavior
             float anchorY;
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
             {
-                anchorX = viewportPos.x;
-                anchorY = viewportPos.y;
+                anchorX = this.scrollWindowPos[(int)bgOverlay.viewportNdx][0];
+                anchorY = this.scrollWindowPos[(int)bgOverlay.viewportNdx][1];
                 if (dbug) Log.Message("UpdateOverlay " + ovrNdx + " | Loop ScreenAnchored anchorX:" + anchorX + " anchorY:" + anchorY);
             }
             else
             {
-                anchorX = (float)(HalfFieldWidth - realVrp.x + viewportPos.x);
-                anchorY = (float)(HalfFieldHeight - realVrp.y + viewportPos.y);
+                anchorX = (float)(HalfFieldWidth - realVrp.x + this.scrollWindowPos[(int)bgOverlay.viewportNdx][0]);
+                anchorY = (float)(HalfFieldHeight - realVrp.y + this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
             }
             if (bgOverlay.scrollX != 0)
             {
@@ -1303,7 +1301,7 @@ public class FieldMap : HonoBehavior
                     short deltaX = (short)(256 - ((short)(bgOverlay.scrollX) << 8 >> 8));
                     screenX = (float)((((int)bgOverlay.curX << 8) + (int)deltaX >> 8) + (int)bgScene.scrX);
                 }
-                screenX = (float)((screenX - (viewportSize.x - (float)bgOverlay.w)) % (float)bgOverlay.w + (viewportSize.x - (float)bgOverlay.w));
+                screenX = (float)((screenX - (this.scrollWindowDim[(int)bgOverlay.viewportNdx][0] - (float)bgOverlay.w)) % (float)bgOverlay.w + (this.scrollWindowDim[(int)bgOverlay.viewportNdx][0] - (float)bgOverlay.w));
             }
             if (bgOverlay.scrollY != 0)
             {
@@ -1312,7 +1310,7 @@ public class FieldMap : HonoBehavior
                     short deltaY = (short)(256 - ((short)(bgOverlay.scrollX) << 8 >> 8));
                     screenY = (float)((((int)bgOverlay.curY << 8) + (int)deltaY >> 8) + (int)bgScene.scrY);
                 }
-                screenY = (float)((screenY - (viewportSize.y - (float)bgOverlay.h)) % (float)bgOverlay.h + (viewportSize.y - (float)bgOverlay.h));
+                screenY = (float)((screenY - (this.scrollWindowDim[(int)bgOverlay.viewportNdx][1] - (float)bgOverlay.h)) % (float)bgOverlay.h + (this.scrollWindowDim[(int)bgOverlay.viewportNdx][1] - (float)bgOverlay.h));
             }
             
             for (short i = 0; i < spriteCount; i++)
@@ -1402,23 +1400,23 @@ public class FieldMap : HonoBehavior
             float anchorY;
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored) != 0)
             {
-                anchorX = viewportPos.x;
-                anchorY = viewportPos.y;
+                anchorX = this.scrollWindowPos[(int)bgOverlay.viewportNdx][0];
+                anchorY = this.scrollWindowPos[(int)bgOverlay.viewportNdx][1];
                 //if (dbug) Log.Message("UpdateOverlay | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset | anchorX:" + anchorX + " anchorY:" + anchorY);
             }
             else
             {
-                anchorX = HalfFieldWidth - realVrp.x + viewportPos.x;
-                anchorY = HalfFieldHeight - realVrp.y + viewportPos.y;
+                anchorX = HalfFieldWidth - realVrp.x + this.scrollWindowPos[(int)bgOverlay.viewportNdx][0];
+                anchorY = HalfFieldHeight - realVrp.y + this.scrollWindowPos[(int)bgOverlay.viewportNdx][0];
             }
             if (bgOverlay.isXOffset != 0)
             {
-                screenY = (screenY - (viewportSize.y - (short)bgOverlay.h)) % (short)bgOverlay.h + (viewportSize.y - (short)bgOverlay.h);
+                screenY = (screenY - (this.scrollWindowDim[(int)bgOverlay.viewportNdx][1] - (short)bgOverlay.h)) % (short)bgOverlay.h + (this.scrollWindowDim[(int)bgOverlay.viewportNdx][1] - (short)bgOverlay.h);
                 screenX = screenX + screenY * bgOverlay.scrollX / (short)bgOverlay.h % (short)bgOverlay.w;
             }
             else
             {
-                screenX = (screenX - (viewportSize.x - (short)bgOverlay.w)) % (short)bgOverlay.w + (viewportSize.x - (short)bgOverlay.w);
+                screenX = (screenX - (this.scrollWindowDim[(int)bgOverlay.viewportNdx][0] - (short)bgOverlay.w)) % (short)bgOverlay.w + (this.scrollWindowDim[(int)bgOverlay.viewportNdx][0] - (short)bgOverlay.w);
                 screenY = screenY + screenX * bgOverlay.scrollY / (short)bgOverlay.w % (short)bgOverlay.h;
             }
             for (short i = 0; i < spriteCount; i++)
