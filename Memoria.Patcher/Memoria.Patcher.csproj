@@ -84,6 +84,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="memoria.key.pfx" />
+    <None Include="StreamingAssets\Assets\Resources\Fieldmaps\fbg_n06_vgdl_map097_dl_viw_0\fbg_n06_vgdl_map097_dl_viw_0.bgs.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StreamingAssets\Assets\Resources\Sounds\Sounds02\SE02\reflect.akb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
