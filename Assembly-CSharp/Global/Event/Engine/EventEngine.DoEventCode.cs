@@ -1608,11 +1608,9 @@ public partial class EventEngine
             case EBin.event_code_binary.CFLAG:
             {
                 Int32 cflag = (Int32)(Byte)this.getv1();
-                    // Prevents hiding npc on Alexendria square
-                if (FF9StateSystem.Common.FF9.fldMapNo == 103 && cflag == 14)
-                {
+                // Hotfix: do not hide NPCs when they are offscreen for widescreen compatibility
+                if (cflag == 14 && FF9StateSystem.Common.FF9.fldMapNo == 103 && this.gCur.uid >= 6 && this.gCur.uid <= 17) // In Alexandria/Square, many NPCs and the Jump Rope
                     return 0;
-                }
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2934 && MBG.Instance.GetFrame < 10)
                 {
                     this.StartCoroutine(this.DelayedCFLAG(this.gCur, cflag));
