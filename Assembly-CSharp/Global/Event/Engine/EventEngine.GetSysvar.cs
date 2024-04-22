@@ -77,6 +77,13 @@ public partial class EventEngine
                 break;
             case 19:
                 num = FF9StateSystem.MiniGame.GetNumberOfCards();
+                // Hotfix: in non-modded scripts, number of cards are retrieved either:
+                // - in order to check if the player has at least 5 (for playing with NPCs)
+                // - in order to check if the player has less than 100 (for preventing a card pickup)
+                // - in very special cases (Ticketmaster gifts / finding Hippaul secret cards), in order to check if the player has less than 96 or 98
+                // So we use "Min(95, CardCount)" here except when the card count approaches the MaxCardCount
+                if (Configuration.TetraMaster.MaxCardCount != 100)
+                    num = num + 4 >= Configuration.TetraMaster.MaxCardCount ? 100 - (Configuration.TetraMaster.MaxCardCount - num) : Math.Min(num, 95);
                 //Debug.Log((object)("num of cards = " + (object)num));
                 break;
             case 20:
