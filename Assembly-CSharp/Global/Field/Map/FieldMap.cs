@@ -1481,7 +1481,7 @@ public class FieldMap : HonoBehavior
             if (entry[0] == FF9StateSystem.Common.FF9.fldMapNo && entry[1] == this.camIdx && entry[2] == ovrNdx)
             {
                 bgOverlay.curZ = (ushort)entry[3];
-                bgOverlay.transform.localPosition = new Vector3(bgOverlay.transform.localPosition.x, bgOverlay.transform.localPosition.y, entry[2]);
+                bgOverlay.transform.localPosition = new Vector3(bgOverlay.transform.localPosition.x, bgOverlay.transform.localPosition.y, entry[3]);
             }
         }
     }
