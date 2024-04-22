@@ -1476,12 +1476,21 @@ public class FieldMap : HonoBehavior
         bgOverlay.scrX = screenX;
         bgOverlay.scrY = screenY;
 
-        if (this.mapName == "FBG_N18_GTRE_MAP360_GT_GRD_0" && ovrNdx == 12) // Clayra's Trunk text fix #367
+        foreach (int[] entry in FixDepthOfLayer)
         {
-            bgOverlay.curZ = 0;
-            bgOverlay.transform.localPosition = new Vector3(bgOverlay.transform.localPosition.x, bgOverlay.transform.localPosition.y, 0);
+            if (entry[0] == FF9StateSystem.Common.FF9.fldMapNo && entry[1] == ovrNdx)
+            {
+                bgOverlay.curZ = (ushort)entry[2];
+                bgOverlay.transform.localPosition = new Vector3(bgOverlay.transform.localPosition.x, bgOverlay.transform.localPosition.y, entry[2]);
+            }
         }
     }
+
+    public static readonly Int32[][] FixDepthOfLayer =
+    {
+        // [mapNo,ovrNdx,Z],
+        [1000,12,0], // Clayra's Trunk text
+    };
 
     public void EBG_scene2DScroll(Int16 destX, Int16 destY, UInt16 frameCount, UInt32 scrollType)
     {
