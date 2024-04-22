@@ -568,6 +568,11 @@ public partial class EventEngine
                 {
                     num12 = 2970;
                 }
+                else if (FF9StateSystem.Common.FF9.fldMapNo == 53) // fix for scene where Blank jumps in hole, position adjustment
+                {
+                    if (num11 == 250 && num12 == 1200)
+                        num11 = 330;
+                }
                 Boolean flag2 = this.MoveToward_mixed((Single)num11, 0.0f, (Single)num12, 0, (PosObj)null);
                 eulerAngles1 = po.go.transform.localRotation.eulerAngles;
                 if (flag2)
