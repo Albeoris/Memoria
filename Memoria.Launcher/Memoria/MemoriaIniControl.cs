@@ -474,15 +474,32 @@ namespace Memoria.Launcher
 		{
             get
 			{
-                switch (BattleInterface)
-				{
-                    case 0:
-                    default:
-                        return new Rect(-400, -362, 630, 236);
-                    case 1:
-                        return new Rect(-602, -382, 530, 220);
-                    case 2:
-                        return new Rect(-552, -360, 650, 280);
+                if (WidescreenSupport == 0)
+                {
+                    switch (BattleInterface)
+                    {
+
+                        case 0:
+                        default:
+                            return new Rect(-400, -362, 630, 236);
+                        case 1:
+                            return new Rect(-400, -382, 530, 220);
+                        case 2:
+                            return new Rect(-400, -360, 650, 280);
+                    }
+                }
+                else
+                {
+                    switch (BattleInterface)
+                    {
+                        case 0:
+                        default:
+                            return new Rect(-400, -362, 630, 236);
+                        case 1:
+                            return new Rect(-602, -382, 530, 220);
+                        case 2:
+                            return new Rect(-552, -360, 650, 280);
+                    }
                 }
 			}
         }
@@ -490,15 +507,31 @@ namespace Memoria.Launcher
         {
             get
             {
-                switch (BattleInterface)
+                if (WidescreenSupport == 0)
                 {
-                    case 0:
-                    default:
-                        return new Rect(345, -380, 796, 230);
-                    case 1:
-                        return new Rect(558, -422, 672, 208);
-                    case 2:
-                        return new Rect(558, -422, 672, 208);
+                    switch (BattleInterface)
+                    {
+                        case 0:
+                        default:
+                            return new Rect(345, -380, 796, 230);
+                        case 1:
+                            return new Rect(345, -422, 672, 208);
+                        case 2:
+                            return new Rect(345, -422, 672, 208);
+                    }
+                }
+                else
+                {
+                    switch (BattleInterface)
+                    {
+                        case 0:
+                        default:
+                            return new Rect(345, -380, 796, 230);
+                        case 1:
+                            return new Rect(558, -422, 672, 208);
+                        case 2:
+                            return new Rect(558, -422, 672, 208);
+                    }
                 }
             }
         }
