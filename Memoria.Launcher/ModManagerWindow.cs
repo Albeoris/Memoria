@@ -581,7 +581,7 @@ namespace Memoria.Launcher
                 return true;
             }
 
-            String name = "";
+            String name = folderName;
             String author = "";
             String category = "";
             String description = "";

@@ -750,6 +750,7 @@
                         MaxHeight="150"
                         Margin="6,5,0,0"
                         Background="#333"
+                        Foreground="#FFF"
                         ItemContainerStyle="{StaticResource DownloadListViewItem}"
                         ItemsSource="{Binding downloadList, UpdateSourceTrigger=PropertyChanged}"
                         SelectedItem="{Binding SelectedDownload, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
