@@ -1603,6 +1603,11 @@ public partial class EventEngine
             case EBin.event_code_binary.CFLAG:
             {
                 Int32 cflag = (Int32)(Byte)this.getv1();
+                    // Prevents hiding npc on Alexendria square
+                if (FF9StateSystem.Common.FF9.fldMapNo == 103 && cflag == 14)
+                {
+                    return 0;
+                }
                 if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2934 && MBG.Instance.GetFrame < 10)
                 {
                     this.StartCoroutine(this.DelayedCFLAG(this.gCur, cflag));
