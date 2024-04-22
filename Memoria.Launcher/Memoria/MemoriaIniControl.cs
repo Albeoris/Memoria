@@ -496,9 +496,9 @@ namespace Memoria.Launcher
                         default:
                             return new Rect(-400, -362, 630, 236);
                         case 1:
-                            return new Rect(-602, -382, 530, 220);
+                            return new Rect(-500, -382, 530, 220);
                         case 2:
-                            return new Rect(-552, -360, 650, 280);
+                            return new Rect(-500, -360, 650, 280);
                     }
                 }
 			}
@@ -528,9 +528,9 @@ namespace Memoria.Launcher
                         default:
                             return new Rect(345, -380, 796, 230);
                         case 1:
-                            return new Rect(558, -422, 672, 208);
+                            return new Rect(500, -422, 672, 208);
                         case 2:
-                            return new Rect(558, -422, 672, 208);
+                            return new Rect(500, -422, 672, 208);
                     }
                 }
             }
