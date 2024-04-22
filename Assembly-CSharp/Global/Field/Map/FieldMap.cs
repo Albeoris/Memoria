@@ -1674,8 +1674,10 @@ public class FieldMap : HonoBehavior
                 {
                     switch (map)
                     {
-                        case 1651: // 448
+                        case 1651: // Iifa roots 1
                             bgOverlay.curX = 200; break;
+                        case 1758: // Iifa roots 2
+                            bgOverlay.curX = 200; bgOverlay.curY = 0; break;
                     }
                     
                 }
@@ -1706,14 +1708,12 @@ public class FieldMap : HonoBehavior
                 {
                     switch (map)
                     {
-                        case 1651: // 448
-                            //bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4; break;
-                            //bgOverlay.curX = this.mainCamera.transform.localPosition.x * (float)(bgOverlay.scrollX / 5120f); break;
+                        case 1651: // Iifa roots 1
                             bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8; break;
                         case 1657:
-                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256f); break;
-                        case 1758: // 448
-                            bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4; break;
+                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256f) - (float)0.25; break;
+                        case 1758: // Iifa roots 2
+                            bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8; break;
                         case 2600: // 464/416
                             bgOverlay.transform.localScale = new Vector3(1.12f, 1.12f, 1f); bgOverlay.curX -= 24; break;
                         case 2602: // 384/328
