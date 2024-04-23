@@ -21,9 +21,15 @@ namespace Memoria
             public static void SaveVolume()
             {
                 // We need to make sure VoiceActing is enabled otherwise the volume won't apply
-                // This can happen if a mod enable the VoiceActing
+                // This happens if a mod forces VoiceActing enabled
                 SaveValue(Instance._voiceActing.Name, Instance._voiceActing.Enabled);
                 SaveValue(Instance._voiceActing.Name, Instance._voiceActing.Volume);
+            }
+
+            public static void SaveAutoText()
+            {
+                Instance._voiceActing.AutoDismissDialogAfterCompletion.Value = AutoDismissDialogAfterCompletion;
+                SaveValue(Instance._voiceActing.Name, Instance._voiceActing.AutoDismissDialogAfterCompletion);
             }
         }
     }
