@@ -71,14 +71,14 @@ public partial class BattleHUD : UIScene
     [Flags]
     public enum LibraInformation : uint
     {
-        Name            = 0x1,
-        Level           = 0x2,
-        HP              = 0x4,
-        MP              = 0x8,
-        Category        = 0x10,
-        ElementWeak     = 0x20,
-        ItemSteal       = 0x40,
-        BlueLearn       = 0x80,
+        Name = 0x1,
+        Level = 0x2,
+        HP = 0x4,
+        MP = 0x8,
+        Category = 0x10,
+        ElementWeak = 0x20,
+        ItemSteal = 0x40,
+        BlueLearn = 0x80,
 
         NameLevel = Name | Level,
         HPMP = HP | MP,
@@ -124,6 +124,17 @@ public partial class BattleHUD : UIScene
         }
     }
 
+    private class CommandMPCondition
+    {
+        public Boolean CantCastCommand1;
+        public Boolean CantCastCommand2;
+
+        public Boolean Changed(CommandMPCondition other)
+        {
+            return CantCastCommand1 != other.CantCastCommand1 || CantCastCommand2 != other.CantCastCommand2;
+        }
+    }
+
     private class CommandDetail
     {
         public BattleCommandId CommandId;
@@ -138,7 +149,7 @@ public partial class BattleHUD : UIScene
         public BattleCommandId CommandId;
 
         public PairCharCommand(Int32 pi, BattleCommandId ci)
-		{
+        {
             PlayerIndex = pi;
             CommandId = ci;
         }
@@ -166,9 +177,9 @@ public partial class BattleHUD : UIScene
     }
 
     private class PlayerMemo
-	{
+    {
         public PlayerMemo(PLAYER p, Boolean updateRow)
-		{
+        {
             original = p;
             if (p == null)
                 return;
@@ -198,10 +209,10 @@ public partial class BattleHUD : UIScene
         }
 
         public PLAYER original;
-		public POINTS max;
-		public ELEMENT elem;
-		public ItemDefence defence;
-		public HashSet<SupportAbility> saExtended;
+        public POINTS max;
+        public ELEMENT elem;
+        public ItemDefence defence;
+        public HashSet<SupportAbility> saExtended;
         public CharacterSerialNumber serialNo;
         public Byte row;
         public Byte battleRow;

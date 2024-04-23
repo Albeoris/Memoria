@@ -198,45 +198,45 @@ public static class FF9Snd
 		return allSoundDispatchPlayer.GetCurrentMusicId();
 	}
 
-	public static void ParameterChanger(ref Int32 ParmType, ref Int32 ObjNo, ref Int32 Arg1, ref Int32 Arg2, ref Int32 Arg3)
-	{
-		if ((ParmType >> 12 & 3) == 0)
-		{
-			if (ObjNo == 93)
-				ObjNo = 5;
-			else if (ObjNo == 137)
-				ObjNo = 10;
-			else if (ObjNo == 78)
-				ObjNo = 22;
-		}
-		if ((ParmType >> 12 & 3) == 1)
-		{
-			if (ObjNo == 3067 || ObjNo == 3068)
-				ObjNo = 1748;
-			else if (ObjNo == 293)
-				ObjNo = 633;
-			else if (ObjNo == 1545)
-				ObjNo = 58;
-			else if (ObjNo == 679)
-				ObjNo = 9010197;
-			else if (ObjNo == 1230 || ObjNo == 1231)
-			{
-				FF9Snd.FF9AllSoundDispatch(ParmType, 9000023, Arg1, Arg2, Arg3);
-				FF9Snd.FF9AllSoundDispatch(ParmType, 9000024, Arg1, Arg2, Arg3);
-				FF9Snd.FF9AllSoundDispatch(ParmType, 9000025, Arg1, Arg2, Arg3);
-			}
-			else if (ObjNo == 681)
-				ObjNo = 3092;
-			else if (ObjNo == 672)
-				ObjNo = 9010138;
-			else if (ObjNo == 678)
-				ObjNo = 725;
-			else if (ObjNo == 3084)
-				ObjNo = 370;
-		}
-	}
+    public static void ParameterChanger(ref Int32 ParmType, ref Int32 ObjNo, ref Int32 Arg1, ref Int32 Arg2, ref Int32 Arg3)
+    {
+        if ((ParmType >> 12 & 3) == 0)
+        {
+            if (ObjNo == 93)
+                ObjNo = 5;
+            else if (ObjNo == 137)
+                ObjNo = 10;
+            else if (ObjNo == 78)
+                ObjNo = 22;
+        }
+        if ((ParmType >> 12 & 3) == 1)
+        {
+            if (ObjNo == 3067 || ObjNo == 3068)
+                ObjNo = 1748;
+            else if (ObjNo == 293)
+                ObjNo = 633;
+            //			else if (ObjNo == 1545) [DV] => When Vivi cast fire on Garnet's hood in CD1 (field n°67)
+            //				ObjNo = 58; => Third sound file of SFX Fire_Sword (se020006)
+            else if (ObjNo == 679)
+                ObjNo = 9010197;
+            else if (ObjNo == 1230 || ObjNo == 1231)
+            {
+                FF9Snd.FF9AllSoundDispatch(ParmType, 9000023, Arg1, Arg2, Arg3);
+                FF9Snd.FF9AllSoundDispatch(ParmType, 9000024, Arg1, Arg2, Arg3);
+                FF9Snd.FF9AllSoundDispatch(ParmType, 9000025, Arg1, Arg2, Arg3);
+            }
+            else if (ObjNo == 681)
+                ObjNo = 3092;
+            else if (ObjNo == 672)
+                ObjNo = 9010138;
+            //			else if (ObjNo == 678) // [DV] => Battle Sound Slam (ex : Edge from Tantarian)
+            //				ObjNo = 725; => Battle Sound Slap (ex : Strike from Zombie)
+            else if (ObjNo == 3084)
+                ObjNo = 370;
+        }
+    }
 
-	public static Boolean GetIsExtEnvObjNo(Int32 ObjNo)
+    public static Boolean GetIsExtEnvObjNo(Int32 ObjNo)
 	{
 		return ObjNo == 642 || ObjNo == 618 || ObjNo == 347 || ObjNo == 347 || ObjNo == 656 || ObjNo == 650 || ObjNo == 650 || ObjNo == 9060080 || ObjNo == 9060084 || ObjNo == 9060087 || ObjNo == 1495 || ObjNo == 9070035 || ObjNo == 9080033 || ObjNo == 1397 || ObjNo == 9080075 || ObjNo == 9090033 || ObjNo == 9090097 || ObjNo == 9100097 || ObjNo == 9100105 || ObjNo == 9100107 || ObjNo == 9110004 || ObjNo == 9110015 || ObjNo == 9120016 || ObjNo == 1887 || ObjNo == 410 || ObjNo == 1461;
 	}

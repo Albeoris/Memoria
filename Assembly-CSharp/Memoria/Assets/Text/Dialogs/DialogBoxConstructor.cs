@@ -279,6 +279,12 @@ namespace Memoria.Assets
                     index += 5;
                     return;
                 }
+                if (a == "[" + NGUIText.NoTurboDialog + "]")
+                {
+                    UIKeyTrigger.preventTurboKey = true;  // Disable turbo dialog manually. (for Trance Seek purpose)
+                    index += 5;
+                    return;
+                }
             }
 
             Int32 newIndex = index;
@@ -382,6 +388,7 @@ namespace Memoria.Assets
                 text3 == "[" + NGUIText.JoyStickButtonIcon ||
                 text3 == "[" + NGUIText.KeyboardButtonIcon)
             {
+                UIKeyTrigger.preventTurboKey = true;  // Disable turbo dialog when a special box appear (Gysahl Greens shop from Chocobo Forest, Eiko when she's cooking, ...)
                 newIndex = Array.IndexOf(_chars, ']', index + 4);
                 String text6 = new String(_chars, index + 6, newIndex - index - 6);
                 if (!FF9StateSystem.MobilePlatform ||
@@ -489,6 +496,7 @@ namespace Memoria.Assets
             }
             else if (text3 == "[" + NGUIText.Choose)
             {
+                UIKeyTrigger.preventTurboKey = true; // Disable turbo dialog when a choice appear
                 Int32 startIndex = Array.IndexOf(_chars, ']', index + 4);
                 OnChoice(startIndex);
             }

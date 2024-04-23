@@ -84,7 +84,7 @@ public static class btl_vfx
                 return SpecialEffect.Throw_Rod;
             else if (shape == 11)
                 return SpecialEffect.Throw_Fork;
-            else if (shape == 12)
+            else
                 return SpecialEffect.Throw_Disc;
         }
         else

@@ -114,7 +114,7 @@ namespace Memoria.Assets
         }
 
         public static class World
-		{
+        {
             public static readonly String PureDirectory = PureDataDirectory + "World/";
             public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 
@@ -158,6 +158,8 @@ namespace Memoria.Assets
             public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 
             public static String TripleTriadFile => "TripleTriad.csv";
+
+            public static String TripleTriadRulesFile => "TripleTriadRules.csv";
 
             public static String ModDirectory(String modFolder)
             {

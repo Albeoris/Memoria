@@ -470,26 +470,26 @@ public class EBin
                     _v0 = (Int32)ff9level.CharacterLevelUps[args[0] - 1].ExperienceToLevel;
                 break;
             case flexible_varfunc.PLAYER_ABILITY_LEARNT:
-            {
-                PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]));
-                if (player == null || !ff9abil.FF9Abil_HasAp(new Character(player)))
+                {
+                    PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]));
+                    if (player == null || !ff9abil.FF9Abil_HasAp(new Character(player)))
+                        break;
+                    Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, args[1]);
+                    if (abilIndex < 0)
+                        break;
+                    _v0 = player.pa[abilIndex] >= ff9abil._FF9Abil_PaData[player.PresetId][abilIndex].Ap ? 1 : 0;
+                    if (_v0 == 0 && args[2] != 0)
+                        for (Int32 i = 0; i < 5; i++)
+                            if (player.equip[i] != RegularItem.NoItem && ff9item._FF9Item_Data[player.equip[i]].ability.Any(id => id == args[1]))
+                                _v0 = 1;
                     break;
-                Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, args[1]);
-                if (abilIndex < 0)
-                    break;
-                _v0 = player.pa[abilIndex] >= ff9abil._FF9Abil_PaData[player.PresetId][abilIndex].Ap ? 1 : 0;
-                if (_v0 == 0 && args[2] != 0)
-                    for (Int32 i = 0; i < 5; i++)
-                        if (player.equip[i] != RegularItem.NoItem && ff9item._FF9Item_Data[player.equip[i]].ability.Any(id => id == args[1]))
-                            _v0 = 1;
-                break;
-            }
+                }
             case flexible_varfunc.PLAYER_SUPPORT_ENABLED:
-            {
-                PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]));
-                _v0 = player != null && player.saExtended.Contains((SupportAbility)args[1]) ? 1 : 0;
-                break;
-            }
+                {
+                    PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]));
+                    _v0 = player != null && player.saExtended.Contains((SupportAbility)args[1]) ? 1 : 0;
+                    break;
+                }
             case flexible_varfunc.SHOP_ITEM:
                 _v0 = ff9buy.ShopItems.ContainsKey(args[0]) && ff9buy.ShopItems[args[0]].ItemIds.Contains((RegularItem)args[1]) ? 1 : 0;
                 break;
@@ -509,10 +509,10 @@ public class EBin
                 _s7.push(encodeTypeAndVarClass(VariableSource.Null, VariableType.Dictionary));
                 return;
         }
-		expr_Push_v0_Int24();
-	}
+        expr_Push_v0_Int24();
+    }
 
-	private Int32 expr_varSpec(Int32 varOperation)
+    private Int32 expr_varSpec(Int32 varOperation)
     {
         _v0 = (varOperation & 3) << 26 | (varOperation & 0x1C) << 27;
         Int32 varArrayIndex = s1.getByteIP();
@@ -605,204 +605,204 @@ public class EBin
             case op_binary.B_BGIFLOOR:
             case op_binary.B_pad7b:
             case op_binary.B_PAD4:
-            {
-                _eventEngine.gCP = _s7;
-                _v0 = _eventEngine.DoCalcOperationExt(arg0);
-                _s7 = _eventEngine.gCP;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    _eventEngine.gCP = _s7;
+                    _v0 = _eventEngine.DoCalcOperationExt(arg0);
+                    _s7 = _eventEngine.gCP;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_POST_PLUS:
-            {
-                _v0 = EvaluateValueExpression();
-                Int32 t3 = _v0;
-                _s7.advanceTopOfStack();
-                Int32 a0 = _v0 + 1;
-                SetVariableValue(a0);
-                _v0 = t3;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    _v0 = EvaluateValueExpression();
+                    Int32 t3 = _v0;
+                    _s7.advanceTopOfStack();
+                    Int32 a0 = _v0 + 1;
+                    SetVariableValue(a0);
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_POST_MINUS:
-            {
-                _v0 = EvaluateValueExpression();
-                Int32 t3 = _v0;
-                _s7.advanceTopOfStack();
-                Int32 a0 = _v0 - 1;
-                SetVariableValue(a0);
-                _v0 = t3;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    _v0 = EvaluateValueExpression();
+                    Int32 t3 = _v0;
+                    _s7.advanceTopOfStack();
+                    Int32 a0 = _v0 - 1;
+                    SetVariableValue(a0);
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_PRE_PLUS:
-            {
-                _v0 = EvaluateValueExpression();
-                Int32 t3 = _v0 + 1;
-                _s7.advanceTopOfStack();
-                Int32 a0 = t3;
-                SetVariableValue(a0);
-                _v0 = t3;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    _v0 = EvaluateValueExpression();
+                    Int32 t3 = _v0 + 1;
+                    _s7.advanceTopOfStack();
+                    Int32 a0 = t3;
+                    SetVariableValue(a0);
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_PRE_MINUS:
-            {
-                _v0 = EvaluateValueExpression();
-                Int32 t3 = _v0 - 1;
-                _s7.advanceTopOfStack();
-                Int32 a0 = t3;
-                SetVariableValue(a0);
-                _v0 = t3;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    _v0 = EvaluateValueExpression();
+                    Int32 t3 = _v0 - 1;
+                    _s7.advanceTopOfStack();
+                    Int32 a0 = t3;
+                    SetVariableValue(a0);
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_SINGLE_PLUS:
-            {
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_SINGLE_MINUS:
-            {
-                _v0 = EvaluateValueExpression();
-                _v0 = 0 - _v0;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    _v0 = EvaluateValueExpression();
+                    _v0 = 0 - _v0;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_NOT:
-            {
-                _v0 = EvaluateValueExpression();
-                _v0 = 0 < _v0 ? 1 : 0;
-                _v0 ^= 1;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    _v0 = EvaluateValueExpression();
+                    _v0 = 0 < _v0 ? 1 : 0;
+                    _v0 ^= 1;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_COMP:
-            {
-                _v0 = EvaluateValueExpression();
-                _v0 = ~(0 | _v0);
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    _v0 = EvaluateValueExpression();
+                    _v0 = ~(0 | _v0);
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_MULT:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _v0 *= t3;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _v0 *= t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_DIV:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                if (t3 == 0)
                 {
-                    expr_Push_v0_Int24();
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    if (t3 == 0)
+                    {
+                        expr_Push_v0_Int24();
+                    }
+                    else
+                    {
+                        _v0 /= t3;
+                        expr_Push_v0_Int24();
+                    }
+                    break;
                 }
-                else
-                {
-                    _v0 /= t3;
-                    expr_Push_v0_Int24();
-                }
-                break;
-            }
             case op_binary.B_REM:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                if (t3 == 0)
                 {
-                    expr_Push_v0_Int24();
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    if (t3 == 0)
+                    {
+                        expr_Push_v0_Int24();
+                    }
+                    else
+                    {
+                        _v0 %= t3;
+                        expr_Push_v0_Int24();
+                    }
+                    break;
                 }
-                else
-                {
-                    _v0 %= t3;
-                    expr_Push_v0_Int24();
-                }
-                break;
-            }
             case op_binary.B_PLUS:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _v0 += t3;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _v0 += t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_MINUS:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _v0 -= t3;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _v0 -= t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_SHIFT_LEFT:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _v0 <<= t3;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _v0 <<= t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_SHIFT_RIGHT:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _v0 >>= t3;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _v0 >>= t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_LT: // B_LT = 24,
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                if (_eventEngine.gCur.uid == 13 && t3 == -300)
                 {
-                    t3 = -250;
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    if (_eventEngine.gCur.uid == 13 && t3 == -300)
+                    {
+                        t3 = -250;
+                    }
+                    _v0 = _v0 < t3 ? 1 : 0;
+                    expr_Push_v0_Int24();
+                    break;
                 }
-                _v0 = _v0 < t3 ? 1 : 0;
-                expr_Push_v0_Int24();
-                break;
-            }
             case op_binary.B_GT: // B_GT = 25,
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                if (FF9StateSystem.Common.FF9.fldMapNo == 657 && _eventEngine.gCur.sid == 17 // Marsh/Pond, Zidane
-                    && (_eventEngine.gCur.ip == 1413 || _eventEngine.gCur.ip == 1542 || _eventEngine.gCur.ip == 1666 || _eventEngine.gCur.ip == 1795 || _eventEngine.gCur.ip == 2172 || _eventEngine.gCur.ip == 2301 || _eventEngine.gCur.ip == 1919 || _eventEngine.gCur.ip == 2048 || _eventEngine.gCur.ip == 2425 || _eventEngine.gCur.ip == 2554 || _eventEngine.gCur.ip == 2683 || _eventEngine.gCur.ip == 2812 || _eventEngine.gCur.ip == 2941))
                 {
-                    _v0 = t3 <= _v0 ? 1 : 0;
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    if (FF9StateSystem.Common.FF9.fldMapNo == 657 && _eventEngine.gCur.sid == 17 // Marsh/Pond, Zidane
+                        && (_eventEngine.gCur.ip == 1413 || _eventEngine.gCur.ip == 1542 || _eventEngine.gCur.ip == 1666 || _eventEngine.gCur.ip == 1795 || _eventEngine.gCur.ip == 2172 || _eventEngine.gCur.ip == 2301 || _eventEngine.gCur.ip == 1919 || _eventEngine.gCur.ip == 2048 || _eventEngine.gCur.ip == 2425 || _eventEngine.gCur.ip == 2554 || _eventEngine.gCur.ip == 2683 || _eventEngine.gCur.ip == 2812 || _eventEngine.gCur.ip == 2941))
+                    {
+                        _v0 = t3 <= _v0 ? 1 : 0;
+                    }
+                    else if (t3 < _v0)
+                    {
+                        _v0 = 1;
+                    }
+                    else
+                    {
+                        _v0 = 0;
+                    }
+                    expr_Push_v0_Int24();
+                    break;
                 }
-                else if (t3 < _v0)
-                {
-                    _v0 = 1;
-                }
-                else
-                {
-                    _v0 = 0;
-                }
-                expr_Push_v0_Int24();
-                break;
-            }
             case op_binary.B_LE: // B_LE = 26,
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _v0 = t3 < _v0 ? 1 : 0;
-                _v0 ^= 1;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _v0 = t3 < _v0 ? 1 : 0;
+                    _v0 ^= 1;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_GE: // B_GE = 27,
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _v0 = _v0 < t3 ? 1 : 0;
-                _v0 ^= 1;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _v0 = _v0 < t3 ? 1 : 0;
+                    _v0 ^= 1;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_LT_E:
             case op_binary.B_GT_E:
             case op_binary.B_LE_E:
@@ -813,141 +813,141 @@ public class EBin
             case op_binary.B_NAND_E:
             case op_binary.B_XOR_E:
             case op_binary.B_OR_E:
-            {
-                if (s1.sid != 0 || s1.ip == 320)
                 {
+                    if (s1.sid != 0 || s1.ip == 320)
+                    {
+                    }
+                    _eventEngine.gCP = _s7;
+                    _v0 = _eventEngine.OperatorExtract(arg0);
+                    _s7 = _eventEngine.gCP;
+                    expr_Push_v0_Int24();
+                    break;
                 }
-                _eventEngine.gCP = _s7;
-                _v0 = _eventEngine.OperatorExtract(arg0);
-                _s7 = _eventEngine.gCP;
-                expr_Push_v0_Int24();
-                break;
-            }
             case op_binary.B_EQ:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _v0 ^= t3;
-                _v0 = Mathf.Abs(_v0) < 1 ? 1 : 0;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _v0 ^= t3;
+                    _v0 = Mathf.Abs(_v0) < 1 ? 1 : 0;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_NE:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _v0 ^= t3;
-                _v0 = 0 < Mathf.Abs(_v0) ? 1 : 0;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _v0 ^= t3;
+                    _v0 = 0 < Mathf.Abs(_v0) ? 1 : 0;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_AND:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _v0 &= t3;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _v0 &= t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_XOR:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _v0 ^= t3;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _v0 ^= t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_OR:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _v0 |= t3;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _v0 |= t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_ANDAND:
-            {
-                _v0 = EvaluateValueExpression();
-                _s7.retreatTopOfStack();
-                if (_v0 == 0)
                 {
-                    expr_Push_v0_Int24();
-                }
-                else
-                {
-                    _s7.advanceTopOfStack();
                     _v0 = EvaluateValueExpression();
-                    _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
-                    expr_Push_v0_Int24();
+                    _s7.retreatTopOfStack();
+                    if (_v0 == 0)
+                    {
+                        expr_Push_v0_Int24();
+                    }
+                    else
+                    {
+                        _s7.advanceTopOfStack();
+                        _v0 = EvaluateValueExpression();
+                        _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
+                        expr_Push_v0_Int24();
+                    }
+                    break;
                 }
-                break;
-            }
             case op_binary.B_OROR:
-            {
-                _v0 = EvaluateValueExpression();
-                _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
-                _s7.retreatTopOfStack();
-                if (_v0 != 0)
                 {
-                    expr_Push_v0_Int24();
-                }
-                else
-                {
-                    _s7.advanceTopOfStack();
                     _v0 = EvaluateValueExpression();
                     _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
-                    expr_Push_v0_Int24();
+                    _s7.retreatTopOfStack();
+                    if (_v0 != 0)
+                    {
+                        expr_Push_v0_Int24();
+                    }
+                    else
+                    {
+                        _s7.advanceTopOfStack();
+                        _v0 = EvaluateValueExpression();
+                        _v0 = ((0 >= Mathf.Abs(_v0)) ? 0 : 1);
+                        expr_Push_v0_Int24();
+                    }
+                    break;
                 }
-                break;
-            }
             case op_binary.B_MEMBER:
-            {
-                Int32 a0 = s1.getByteIP();
-                s1.ip++;
-                a0 |= encodeVarClass(VariableSource.Member);
-                _s7.push(a0);
-                break;
-            }
-            case op_binary.B_COUNT:
-            {
-                if (s1.sid != 0 || s1.ip == 321)
                 {
+                    Int32 a0 = s1.getByteIP();
+                    s1.ip++;
+                    a0 |= encodeVarClass(VariableSource.Member);
+                    _s7.push(a0);
+                    break;
                 }
-                _eventEngine.gCP = _s7;
-                _v0 = _eventEngine.OperatorCount();
-                _s7 = _eventEngine.gCP;
-                expr_Push_v0_Int24();
-                break;
-            }
+            case op_binary.B_COUNT:
+                {
+                    if (s1.sid != 0 || s1.ip == 321)
+                    {
+                    }
+                    _eventEngine.gCP = _s7;
+                    _v0 = _eventEngine.OperatorCount();
+                    _s7 = _eventEngine.gCP;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_PICK:
-            {
-                _eventEngine.gCP = _s7;
-                _v0 = _eventEngine.OperatorPick();
-                _s7 = _eventEngine.gCP;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    _eventEngine.gCP = _s7;
+                    _v0 = _eventEngine.OperatorPick();
+                    _s7 = _eventEngine.gCP;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_LET:
-            {
-                // -> ValueExpression
-                // ResultVariableId
-                // END
-                _v0 = EvaluateValueExpression();
+                {
+                    // -> ValueExpression
+                    // ResultVariableId
+                    // END
+                    _v0 = EvaluateValueExpression();
 
-                // -> ResultVariableId
-                // END
-                Int32 currentValue = _v0;
-                Int32 t3 = _v0;
-                SetVariableValue(currentValue);
+                    // -> ResultVariableId
+                    // END
+                    Int32 currentValue = _v0;
+                    Int32 t3 = _v0;
+                    SetVariableValue(currentValue);
 
-                // END
-                _v0 = t3;
-                expr_Push_v0_Int24();
+                    // END
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
 
-                // -> Int24ValueExpression
-                // END
-                break;
-            }
+                    // -> Int24ValueExpression
+                    // END
+                    break;
+                }
             case op_binary.B_LET_A:
             case op_binary.B_MULT_LET_A:
             case op_binary.B_DIV_LET_A:
@@ -959,331 +959,331 @@ public class EBin
             case op_binary.B_AND_LET_A:
             case op_binary.B_XOR_LET_A:
             case op_binary.B_OR_LET_A:
-            {
-                _eventEngine.gCP = _s7;
-                if (s1.sid == 0 && s1.ip == 411)
                 {
-                    //Debug.Log("Debug @all");
+                    _eventEngine.gCP = _s7;
+                    if (s1.sid == 0 && s1.ip == 411)
+                    {
+                        //Debug.Log("Debug @all");
+                    }
+                    _v0 = _eventEngine.OperatorAll(arg0);
+                    _s7 = _eventEngine.gCP;
+                    expr_Push_v0_Int24();
+                    break;
                 }
-                _v0 = _eventEngine.OperatorAll(arg0);
-                _s7 = _eventEngine.gCP;
-                expr_Push_v0_Int24();
-                break;
-            }
             case op_binary.B_MULT_LET:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                Int32 a0 = _v0 * t3;
-                _s7.advanceTopOfStack();
-                t3 = a0;
-                SetVariableValue(a0);
-                _v0 = t3;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    Int32 a0 = _v0 * t3;
+                    _s7.advanceTopOfStack();
+                    t3 = a0;
+                    SetVariableValue(a0);
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_DIV_LET:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _s7.advanceTopOfStack();
-                if (t3 == 0)
                 {
-                    expr_Push_v0_Int24();
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _s7.advanceTopOfStack();
+                    if (t3 == 0)
+                    {
+                        expr_Push_v0_Int24();
+                    }
+                    else
+                    {
+                        Int32 a0 = _v0 / t3;
+                        t3 = a0;
+                        SetVariableValue(a0);
+                        _v0 = t3;
+                        expr_Push_v0_Int24();
+                    }
+                    break;
                 }
-                else
-                {
-                    Int32 a0 = _v0 / t3;
-                    t3 = a0;
-                    SetVariableValue(a0);
-                    _v0 = t3;
-                    expr_Push_v0_Int24();
-                }
-                break;
-            }
             case op_binary.B_REM_LET:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                _s7.advanceTopOfStack();
-                if (t3 == 0)
                 {
-                    expr_Push_v0_Int24();
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    _s7.advanceTopOfStack();
+                    if (t3 == 0)
+                    {
+                        expr_Push_v0_Int24();
+                    }
+                    else
+                    {
+                        Int32 a0 = _v0 % t3;
+                        t3 = a0;
+                        SetVariableValue(a0);
+                        _v0 = t3;
+                        expr_Push_v0_Int24();
+                    }
+                    break;
                 }
-                else
+            case op_binary.B_PLUS_LET:
                 {
-                    Int32 a0 = _v0 % t3;
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    Int32 a0 = _v0 + t3;
+                    _s7.advanceTopOfStack();
                     t3 = a0;
                     SetVariableValue(a0);
                     _v0 = t3;
                     expr_Push_v0_Int24();
+                    break;
                 }
-                break;
-            }
-            case op_binary.B_PLUS_LET:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                Int32 a0 = _v0 + t3;
-                _s7.advanceTopOfStack();
-                t3 = a0;
-                SetVariableValue(a0);
-                _v0 = t3;
-                expr_Push_v0_Int24();
-                break;
-            }
             case op_binary.B_MINUS_LET:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                Int32 a0 = _v0 - t3;
-                _s7.advanceTopOfStack();
-                t3 = a0;
-                SetVariableValue(a0);
-                _v0 = t3;
-                expr_Push_v0_Int24();
-                break;
-            }
-            case op_binary.B_SHIFT_LEFT_LET:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                Int32 a0 = _v0 << t3;
-                _s7.advanceTopOfStack();
-                t3 = a0;
-                SetVariableValue(a0);
-                _v0 = t3;
-                expr_Push_v0_Int24();
-                break;
-            }
-            case op_binary.B_SHIFT_RIGHT_LET:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                Int32 a0 = _v0 >> t3;
-                _s7.advanceTopOfStack();
-                t3 = a0;
-                SetVariableValue(a0);
-                _v0 = t3;
-                expr_Push_v0_Int24();
-                break;
-            }
-            case op_binary.B_AND_LET:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                Int32 a0 = (_v0 & t3);
-                _s7.advanceTopOfStack();
-                t3 = a0;
-                SetVariableValue(a0);
-                _v0 = t3;
-                expr_Push_v0_Int24();
-                break;
-            }
-            case op_binary.B_XOR_LET:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                Int32 a0 = (_v0 ^ t3);
-                _s7.advanceTopOfStack();
-                t3 = a0;
-                SetVariableValue(a0);
-                _v0 = t3;
-                expr_Push_v0_Int24();
-                break;
-            }
-            case op_binary.B_OR_LET:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                Int32 a0 = (_v0 | t3);
-                _s7.advanceTopOfStack();
-                t3 = a0;
-                SetVariableValue(a0);
-                _v0 = t3;
-                expr_Push_v0_Int24();
-                break;
-            }
-            case op_binary.B_SELECT:
-            {
-                _eventEngine.gCP = _s7;
-                _v0 = _eventEngine.OperatorSelect();
-                _s7 = _eventEngine.gCP;
-                expr_Push_v0_Int24();
-                break;
-            }
-            case op_binary.B_KEYON: // B_KEYON = 79
-            {
-                VoicePlayer.scriptRequestedButtonPress = true;
-                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOn()) <= 0) ? 0 : 1;
-                expr_Push_v0_Int24();
-                break;
-            }
-            case op_binary.B_SIN2:
-            {
-                Int32 a0 = EvaluateValueExpression();
-                _v0 = ff9.rsin(a0);
-                expr_Push_v0_Int24();
-                break;
-            }
-            case op_binary.B_COS2:
-            {
-                Int32 a0 = EvaluateValueExpression();
-                _v0 = ff9.rcos(fixedPointAngle: a0);
-                expr_Push_v0_Int24();
-                break;
-            }
-            case op_binary.B_KEYOFF:
-            {
-                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOff()) <= 0) ? 0 : 1;
-                expr_Push_v0_Int24();
-                break;
-            }
-            case op_binary.B_KEY:
-            {
-                _v0 = (Mathf.Abs(EvaluateValueExpression() & _eTb.PadReadE()) <= 0) ? 0 : 1;
-                expr_Push_v0_Int24();
-                break;
-            }
-            case op_binary.B_ANGLE:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                Actor actor = (Actor)_eventEngine.gCur;
-                if (actor.fieldMapActorController == null)
                 {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    Int32 a0 = _v0 - t3;
+                    _s7.advanceTopOfStack();
+                    t3 = a0;
+                    SetVariableValue(a0);
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
+                    break;
                 }
-                _v0 = ConvertFloatAngleToFixedPoint(angleAsm(_v0 - actor.pos[0], t3 - actor.pos[2]));
-                _v0 <<= 20;
-                _v0 >>= 24;
-                expr_Push_v0_Int24();
-                break;
-            }
+            case op_binary.B_SHIFT_LEFT_LET:
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    Int32 a0 = _v0 << t3;
+                    _s7.advanceTopOfStack();
+                    t3 = a0;
+                    SetVariableValue(a0);
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
+            case op_binary.B_SHIFT_RIGHT_LET:
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    Int32 a0 = _v0 >> t3;
+                    _s7.advanceTopOfStack();
+                    t3 = a0;
+                    SetVariableValue(a0);
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
+            case op_binary.B_AND_LET:
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    Int32 a0 = (_v0 & t3);
+                    _s7.advanceTopOfStack();
+                    t3 = a0;
+                    SetVariableValue(a0);
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
+            case op_binary.B_XOR_LET:
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    Int32 a0 = (_v0 ^ t3);
+                    _s7.advanceTopOfStack();
+                    t3 = a0;
+                    SetVariableValue(a0);
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
+            case op_binary.B_OR_LET:
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    Int32 a0 = (_v0 | t3);
+                    _s7.advanceTopOfStack();
+                    t3 = a0;
+                    SetVariableValue(a0);
+                    _v0 = t3;
+                    expr_Push_v0_Int24();
+                    break;
+                }
+            case op_binary.B_SELECT:
+                {
+                    _eventEngine.gCP = _s7;
+                    _v0 = _eventEngine.OperatorSelect();
+                    _s7 = _eventEngine.gCP;
+                    expr_Push_v0_Int24();
+                    break;
+                }
+            case op_binary.B_KEYON: // B_KEYON = 79
+                {
+                    VoicePlayer.scriptRequestedButtonPress = true;
+                    _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOn()) <= 0) ? 0 : 1;
+                    expr_Push_v0_Int24();
+                    break;
+                }
+            case op_binary.B_SIN2:
+                {
+                    Int32 a0 = EvaluateValueExpression();
+                    _v0 = ff9.rsin(a0);
+                    expr_Push_v0_Int24();
+                    break;
+                }
+            case op_binary.B_COS2:
+                {
+                    Int32 a0 = EvaluateValueExpression();
+                    _v0 = ff9.rcos(fixedPointAngle: a0);
+                    expr_Push_v0_Int24();
+                    break;
+                }
+            case op_binary.B_KEYOFF:
+                {
+                    _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOff()) <= 0) ? 0 : 1;
+                    expr_Push_v0_Int24();
+                    break;
+                }
+            case op_binary.B_KEY:
+                {
+                    _v0 = (Mathf.Abs(EvaluateValueExpression() & _eTb.PadReadE()) <= 0) ? 0 : 1;
+                    expr_Push_v0_Int24();
+                    break;
+                }
+            case op_binary.B_ANGLE:
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    Actor actor = (Actor)_eventEngine.gCur;
+                    if (actor.fieldMapActorController == null)
+                    {
+                    }
+                    _v0 = ConvertFloatAngleToFixedPoint(angleAsm(_v0 - actor.pos[0], t3 - actor.pos[2]));
+                    _v0 <<= 20;
+                    _v0 >>= 24;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_DISTANCE:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                _v0 = EvaluateValueExpression();
-                Actor actor = (Actor)_eventEngine.gCur;
-                _v0 = (Int32)distance(_v0 - actor.pos[0], 0, t3 - actor.pos[2]);
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    _v0 = EvaluateValueExpression();
+                    Actor actor = (Actor)_eventEngine.gCur;
+                    _v0 = (Int32)distance(_v0 - actor.pos[0], 0, t3 - actor.pos[2]);
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_PTR:
-            {
-                Int32 a0 = s1.getByteIP();
-                s1.ip++;
-                Obj objUID = _eventEngine.GetObjUID(a0);
-                _v0 = objUID.uid;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 a0 = s1.getByteIP();
+                    s1.ip++;
+                    Obj objUID = _eventEngine.GetObjUID(a0);
+                    _v0 = objUID.uid;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_ANGLEA:
-            {
-                _v0 = EvaluateValueExpression();
-                Obj objUID2 = _eventEngine.GetObjUID(_v0);
-                Single num6 = ((PosObj)objUID2).pos[0];
-                Single num7 = ((PosObj)objUID2).pos[2];
-                Single num8 = ((PosObj)_eventEngine.gCur).pos[0];
-                Single num9 = ((PosObj)_eventEngine.gCur).pos[2];
-                Single floatAngle = angleAsm(num6 - num8, num7 - num9);
-                Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
-                _v0 = num3 >> 4;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    _v0 = EvaluateValueExpression();
+                    Obj objUID2 = _eventEngine.GetObjUID(_v0);
+                    Single num6 = ((PosObj)objUID2).pos[0];
+                    Single num7 = ((PosObj)objUID2).pos[2];
+                    Single num8 = ((PosObj)_eventEngine.gCur).pos[0];
+                    Single num9 = ((PosObj)_eventEngine.gCur).pos[2];
+                    Single floatAngle = angleAsm(num6 - num8, num7 - num9);
+                    Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
+                    _v0 = num3 >> 4;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_DISTANCEA:
-            {
-                _v0 = EvaluateValueExpression();
-                Obj objUID2 = _eventEngine.GetObjUID(_v0);
-                Obj gCur = _eventEngine.gCur;
-                Actor actor = (Actor)gCur;
-                //Int32 a0 = 524288000;
-                Single num4 = ((Actor)objUID2).pos[0] - actor.pos[0];
-                Single num5 = ((Actor)objUID2).pos[2] - actor.pos[2];
-                var y = 0;
-                _v0 = (Int32)distance(num4, y, num5);
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    _v0 = EvaluateValueExpression();
+                    Obj objUID2 = _eventEngine.GetObjUID(_v0);
+                    Obj gCur = _eventEngine.gCur;
+                    Actor actor = (Actor)gCur;
+                    //Int32 a0 = 524288000;
+                    Single num4 = ((Actor)objUID2).pos[0] - actor.pos[0];
+                    Single num5 = ((Actor)objUID2).pos[2] - actor.pos[2];
+                    var y = 0;
+                    _v0 = (Int32)distance(num4, y, num5);
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_SIN:
-            {
-                _v0 = EvaluateValueExpression();
-                Int32 a0 = _v0 << 4;
-                _v0 = ff9.rsin(a0);
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    _v0 = EvaluateValueExpression();
+                    Int32 a0 = _v0 << 4;
+                    _v0 = ff9.rsin(a0);
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_COS:
-            {
-                _v0 = EvaluateValueExpression();
-                Int32 a0 = _v0 << 4;
-                _v0 = ff9.rcos(fixedPointAngle: a0);
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    _v0 = EvaluateValueExpression();
+                    Int32 a0 = _v0 << 4;
+                    _v0 = ff9.rcos(fixedPointAngle: a0);
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_ANGLE2:
-            {
-                Int32 t3 = EvaluateValueExpression();
-                Int32 a0 = EvaluateValueExpression();
-                var deltaZ = t3;
-                Single floatAngle = angleAsm(a0, deltaZ);
-                Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
-                _v0 = num3 >> 4;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 t3 = EvaluateValueExpression();
+                    Int32 a0 = EvaluateValueExpression();
+                    var deltaZ = t3;
+                    Single floatAngle = angleAsm(a0, deltaZ);
+                    Int32 num3 = ConvertFloatAngleToFixedPoint(floatAngle);
+                    _v0 = num3 >> 4;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_PARTYCHK: // B_PARTYCHK
-            {
-                Int32 a0 = EvaluateValueExpression();
-                _v0 = _eventEngine.partychk(a0) ? 1 : 0;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 a0 = EvaluateValueExpression();
+                    _v0 = _eventEngine.partychk(a0) ? 1 : 0;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_PARTYADD:
-            {
-                Int32 a0 = EvaluateValueExpression();
-                _v0 = _eventEngine.partyadd(a0) ? 1 : 0;
-                expr_Push_v0_Int24();
-                break;
-            }
+                {
+                    Int32 a0 = EvaluateValueExpression();
+                    _v0 = _eventEngine.partyadd(a0) ? 1 : 0;
+                    expr_Push_v0_Int24();
+                    break;
+                }
             case op_binary.B_OBJSPECA:
-            {
-                _s7.push(s1.getByteIP(1) | (s1.getByteIP() << 8) | encodeVarClass(VariableSource.Object));
-                s1.ip += 2;
-                break;
-            }
+                {
+                    _s7.push(s1.getByteIP(1) | (s1.getByteIP() << 8) | encodeVarClass(VariableSource.Object));
+                    s1.ip += 2;
+                    break;
+                }
             case op_binary.B_SYSLIST:
-            {
-                _s7.push(s1.getByteIP() | encodeVarClass(VariableSource.System));
-                s1.ip++;
-                break;
-            }
+                {
+                    _s7.push(s1.getByteIP() | encodeVarClass(VariableSource.System));
+                    s1.ip++;
+                    break;
+                }
             case op_binary.B_SYSVAR:
-            {
-                _v0 = _eventEngine.GetSysvar(s1.getByteIP());
-                s1.ip++;
-                _s7.push((_v0 & 0x3FFFFFF) | encodeVarClass(VariableSource.Int26)); // 26 bit (signed)
-                break;
-            }
+                {
+                    _v0 = _eventEngine.GetSysvar(s1.getByteIP());
+                    s1.ip++;
+                    _s7.push((_v0 & 0x3FFFFFF) | encodeVarClass(VariableSource.Int26)); // 26 bit (signed)
+                    break;
+                }
             case op_binary.B_CONST:
-            {
-                _s7.push((Int32)s1.getShortIP() | encodeVarClass(VariableSource.Int26));
-                s1.ip += 2;
-                break;
-            }
+                {
+                    _s7.push((Int32)s1.getShortIP() | encodeVarClass(VariableSource.Int26));
+                    s1.ip += 2;
+                    break;
+                }
             case op_binary.B_CONST4:
-            {
-                _s7.push((s1.getIntIP() & 0x3FFFFFF) | encodeVarClass(VariableSource.Int26)); // 26 bit (signed)
-                s1.ip += 4;
-                break;
-            }
+                {
+                    _s7.push((s1.getIntIP() & 0x3FFFFFF) | encodeVarClass(VariableSource.Int26)); // 26 bit (signed)
+                    s1.ip += 4;
+                    break;
+                }
             case op_binary.B_EXPR_END:
-            {
-                _eventEngine.gCP = _s7;
-                //_s4 = _tempS4;
-                _exprLoop = false;
-                break;
-            }
+                {
+                    _eventEngine.gCP = _s7;
+                    //_s4 = _tempS4;
+                    _exprLoop = false;
+                    break;
+                }
         }
     }
 
@@ -1495,110 +1495,110 @@ public class EBin
             switch (arg0)
             {
                 case 1: // JMP
-                {
-                    bra();
-                    return 0;
-                }
-                case 2: // JMP_IFNOT
-                {
-                    beq();
-                    return 0;
-                }
-                case 3: // JMP_IF
-                {
-                    bne();
-                    return 0;
-                }
-                case 4: // return
-                {
-                    _eventEngine.Return(s1);
-                    adfr();
-                    return 0;
-                }
-                case 5: // set
-                {
-                    expr();
-                    return 0;
-                }
-                case 6: // JMP_SWITCHEX
-                {
-                    Int32 caseNumber = s1.getByteIP();
-                    _v0 = EvaluateValueExpression();
-                    _v0 &= 65535;
-                    Int32 caseOffset = 3;
-                    JMP_SWITCHEX(ref caseOffset, ref caseNumber);
-                    return 0;
-                }
-                case 11: // rsv0b, JMP_SWITCH
-                {
-                    Int32 caseNumber = s1.getByteIP();
-                    JMP_SWITCH(caseNumber);
-                    return 0;
-                }
-                case 13: // JMP_SWITCH with many cases (>255)
-                {
-                    Int32 t2 = s1.getShortIP();
-                    s1.ip++;
-                    JMP_SWITCH(t2);
-                    return 0;
-                }
-                case 28: // DELETE, TerminateEntry
-                {
-                    Int32 _a0 = s1.getByteIP(1);
-                    int a1 = 255;
-                    s1.ip += 2;
-                    if (_a0 == a1)
                     {
-                        ad21();
+                        bra();
+                        return 0;
                     }
-                    else
+                case 2: // JMP_IFNOT
                     {
-                        Obj objUID = _eventEngine.GetObjUID(_a0);
-                        if (s1 == objUID)
+                        beq();
+                        return 0;
+                    }
+                case 3: // JMP_IF
+                    {
+                        bne();
+                        return 0;
+                    }
+                case 4: // return
+                    {
+                        _eventEngine.Return(s1);
+                        adfr();
+                        return 0;
+                    }
+                case 5: // set
+                    {
+                        expr();
+                        return 0;
+                    }
+                case 6: // JMP_SWITCHEX
+                    {
+                        Int32 caseNumber = s1.getByteIP();
+                        _v0 = EvaluateValueExpression();
+                        _v0 &= 65535;
+                        Int32 caseOffset = 3;
+                        JMP_SWITCHEX(ref caseOffset, ref caseNumber);
+                        return 0;
+                    }
+                case 11: // rsv0b, JMP_SWITCH
+                    {
+                        Int32 caseNumber = s1.getByteIP();
+                        JMP_SWITCH(caseNumber);
+                        return 0;
+                    }
+                case 13: // JMP_SWITCH with many cases (>255)
+                    {
+                        Int32 t2 = s1.getShortIP();
+                        s1.ip++;
+                        JMP_SWITCH(t2);
+                        return 0;
+                    }
+                case 28: // DELETE, TerminateEntry
+                    {
+                        Int32 _a0 = s1.getByteIP(1);
+                        int a1 = 255;
+                        s1.ip += 2;
+                        if (_a0 == a1)
                         {
                             ad21();
                         }
                         else
                         {
-                            _eventEngine.DisposeObj(objUID);
+                            Obj objUID = _eventEngine.GetObjUID(_a0);
+                            if (s1 == objUID)
+                            {
+                                ad21();
+                            }
+                            else
+                            {
+                                _eventEngine.DisposeObj(objUID);
+                            }
                         }
+                        return 0;
                     }
-                    return 0;
-                }
                 case 34: // Wait
-                {
-                    wait();
-                    return 0;
-                }
+                    {
+                        wait();
+                        return 0;
+                    }
                 case 48: // PRINT1
-                {
-                    return 0;
-                }
+                    {
+                        return 0;
+                    }
                 case 49: // PRINTF
-                {
-                    return 0;
-                }
+                    {
+                        return 0;
+                    }
                 case 50: // LOCATE
-                {
-                    Int32 s5 = s1.getByteIP();
-                    s1.ip++;
-                    Int32 a0 = getv1i(ref s5);
-                    Int32 a1 = getv1i(ref s5);
-                    return 0;
-                }
+                    {
+                        Int32 s5 = s1.getByteIP();
+                        s1.ip++;
+                        Int32 a0 = getv1i(ref s5);
+                        Int32 a1 = getv1i(ref s5);
+                        return 0;
+                    }
                 case 108: // PPRINT
-                {
-                    return 0;
-                }
+                    {
+                        return 0;
+                    }
                 case 109: // PPRINTF
-                {
-                    return 0;
-                }
+                    {
+                        return 0;
+                    }
                 default:
-                {
-                    commandDefault();
-                    return 0;
-                }
+                    {
+                        commandDefault();
+                        return 0;
+                    }
             }
         }
         Debug.Log("EBin.jumpToCommand INVALID command " + arg0);
@@ -1678,37 +1678,37 @@ public class EBin
                     case VariableType.Any:
                         return GetMemoriaCustomVariable((memoria_variable)(t0 & 0xFFFF));
                     case VariableType.Vector:
-                    {
-                        List<Int32> subs = _s7.getSubs();
-                        if (subs.Count < 2)
+                        {
+                            List<Int32> subs = _s7.getSubs();
+                            if (subs.Count < 2)
+                                return 0;
+                            Int32 vectID = subs[0];
+                            Int32 arrayIndex = subs[1];
+                            if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect) && arrayIndex >= 0 && arrayIndex < vect.Count)
+                                return vect[arrayIndex];
                             return 0;
-                        Int32 vectID = subs[0];
-                        Int32 arrayIndex = subs[1];
-                        if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect) && arrayIndex >= 0 && arrayIndex < vect.Count)
-                            return vect[arrayIndex];
-                        return 0;
-                    }
+                        }
                     case VariableType.VectorSize:
-                    {
-                        List<Int32> subs = _s7.getSubs();
-                        if (subs.Count < 1)
+                        {
+                            List<Int32> subs = _s7.getSubs();
+                            if (subs.Count < 1)
+                                return 0;
+                            Int32 vectID = subs[0];
+                            if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect))
+                                return vect.Count;
                             return 0;
-                        Int32 vectID = subs[0];
-                        if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect))
-                            return vect.Count;
-                        return 0;
-                    }
+                        }
                     case VariableType.Dictionary:
-                    {
-                        List<Int32> subs = _s7.getSubs();
-                        if (subs.Count < 2)
+                        {
+                            List<Int32> subs = _s7.getSubs();
+                            if (subs.Count < 2)
+                                return 0;
+                            Int32 dictID = subs[0];
+                            Int32 entryID = subs[1];
+                            if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictID, out Dictionary<Int32, Int32> dict) && dict.TryGetValue(entryID, out Int32 val))
+                                return val;
                             return 0;
-                        Int32 dictID = subs[0];
-                        Int32 entryID = subs[1];
-                        if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictID, out Dictionary<Int32, Int32> dict) && dict.TryGetValue(entryID, out Int32 val))
-                            return val;
-                        return 0;
-                    }
+                        }
                 }
                 return 0;
             case VariableSource.Object:
@@ -1728,8 +1728,8 @@ public class EBin
     }
 
     private Int32 GetMemoriaCustomVariable(memoria_variable varCode)
-	{
-		switch (varCode)
+    {
+        switch (varCode)
         {
             case memoria_variable.TETRA_MASTER_WIN:
                 return FF9StateSystem.MiniGame.SavedData.sWin;
@@ -1738,13 +1738,15 @@ public class EBin
             case memoria_variable.TETRA_MASTER_DRAW:
                 return FF9StateSystem.MiniGame.SavedData.sDraw;
             case memoria_variable.TETRA_MASTER_POINTS:
-				return QuadMistDatabase.MiniGame_GetPlayerPoints();
-			case memoria_variable.TETRA_MASTER_RANK:
-				return QuadMistDatabase.MiniGame_GetCollectorLevel();
-			case memoria_variable.TREASURE_HUNTER_POINTS:
-				return FF9StateSystem.EventState.GetTreasureHunterPoints();
+                return QuadMistDatabase.MiniGame_GetPlayerPoints();
+            case memoria_variable.TETRA_MASTER_RANK:
+                return QuadMistDatabase.MiniGame_GetCollectorLevel();
+            case memoria_variable.TREASURE_HUNTER_POINTS:
+                return FF9StateSystem.EventState.GetTreasureHunterPoints();
+            case memoria_variable.BATTLE_RUNAWAY:
+                return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway ? 1 : 0;
         }
-		return 0;
+        return 0;
     }
 
     private void SetMemoriaCustomVariable(memoria_variable varCode, Int32 val)
@@ -1759,6 +1761,12 @@ public class EBin
                 break;
             case memoria_variable.TETRA_MASTER_DRAW:
                 FF9StateSystem.MiniGame.SavedData.sDraw = (Int16)val;
+                break;
+            case memoria_variable.BATTLE_RUNAWAY:
+                if (val == 0)
+                    FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway = false;
+                else
+                    FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway = true;
                 break;
         }
     }
@@ -1865,11 +1873,11 @@ public class EBin
         {
             case VariableType.SBit:
             case VariableType.Bit:
-            {
-                Byte bitFlags = buffer[(ofs >> 3) + bufferOffset]; // (767 bit >> 3) == (767 bit / 8) == 95 byte 
-                _v0 = (bitFlags >> (ofs & 7)) & 1; // (1 bit & 1) => result
-                return _v0;
-            }
+                {
+                    Byte bitFlags = buffer[(ofs >> 3) + bufferOffset]; // (767 bit >> 3) == (767 bit / 8) == 95 byte 
+                    _v0 = (bitFlags >> (ofs & 7)) & 1; // (1 bit & 1) => result
+                    return _v0;
+                }
             case VariableType.Int24:
             case VariableType.UInt24:
                 _v0 = buffer[ofs + bufferOffset] | (buffer[ofs + 1 + bufferOffset] << 8) | ((SByte)buffer[ofs + 2 + bufferOffset] << 16);
@@ -1930,67 +1938,67 @@ public class EBin
                         SetMemoriaCustomVariable((memoria_variable)(t0 & 0xFFFF), varValue);
                         break;
                     case VariableType.Vector:
-                    {
-                        List<Int32> subs = _s7.getSubs();
-                        if (subs.Count < 2)
-                            break;
-                        Int32 vectID = subs[0];
-                        Int32 arrayIndex = subs[1];
-                        if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect))
                         {
-                            if (arrayIndex == vect.Count)
+                            List<Int32> subs = _s7.getSubs();
+                            if (subs.Count < 2)
+                                break;
+                            Int32 vectID = subs[0];
+                            Int32 arrayIndex = subs[1];
+                            if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect))
+                            {
+                                if (arrayIndex == vect.Count)
+                                    vect.Add(varValue);
+                                else if (arrayIndex >= 0 && arrayIndex < vect.Count)
+                                    vect[arrayIndex] = varValue;
+                            }
+                            else if (arrayIndex == 0)
+                            {
+                                vect = new List<Int32>();
                                 vect.Add(varValue);
-                            else if (arrayIndex >= 0 && arrayIndex < vect.Count)
-                                vect[arrayIndex] = varValue;
+                                FF9StateSystem.EventState.gScriptVector.Add(vectID, vect);
+                            }
+                            break;
                         }
-                        else if (arrayIndex == 0)
-						{
-                            vect = new List<Int32>();
-                            vect.Add(varValue);
-                            FF9StateSystem.EventState.gScriptVector.Add(vectID, vect);
-                        }
-                        break;
-                    }
                     case VariableType.VectorSize:
-                    {
-                        List<Int32> subs = _s7.getSubs();
-                        if (subs.Count < 1 || varValue < 0)
+                        {
+                            List<Int32> subs = _s7.getSubs();
+                            if (subs.Count < 1 || varValue < 0)
+                                break;
+                            Int32 vectID = subs[0];
+                            if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect))
+                            {
+                                if (varValue > vect.Count)
+                                    vect.AddRange(Enumerable.Repeat(0, varValue - vect.Count));
+                                else if (varValue < vect.Count)
+                                    vect.RemoveRange(varValue, vect.Count - varValue);
+                            }
+                            else
+                            {
+                                vect = new List<Int32>(varValue);
+                                vect.AddRange(Enumerable.Repeat(0, varValue));
+                                FF9StateSystem.EventState.gScriptVector.Add(vectID, vect);
+                            }
                             break;
-                        Int32 vectID = subs[0];
-                        if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect))
-                        {
-                            if (varValue > vect.Count)
-                                vect.AddRange(Enumerable.Repeat(0, varValue - vect.Count));
-                            else if (varValue < vect.Count)
-                                vect.RemoveRange(varValue, vect.Count - varValue);
                         }
-                        else
-                        {
-                            vect = new List<Int32>(varValue);
-                            vect.AddRange(Enumerable.Repeat(0, varValue));
-                            FF9StateSystem.EventState.gScriptVector.Add(vectID, vect);
-                        }
-                        break;
-                    }
                     case VariableType.Dictionary:
-                    {
-                        List<Int32> subs = _s7.getSubs();
-                        if (subs.Count < 2)
+                        {
+                            List<Int32> subs = _s7.getSubs();
+                            if (subs.Count < 2)
+                                break;
+                            Int32 dictID = subs[0];
+                            Int32 entryID = subs[1];
+                            if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictID, out Dictionary<Int32, Int32> dict))
+                            {
+                                dict[entryID] = varValue;
+                            }
+                            else
+                            {
+                                dict = new Dictionary<Int32, Int32>();
+                                dict[entryID] = varValue;
+                                FF9StateSystem.EventState.gScriptDictionary.Add(dictID, dict);
+                            }
                             break;
-                        Int32 dictID = subs[0];
-                        Int32 entryID = subs[1];
-                        if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictID, out Dictionary<Int32, Int32> dict))
-                        {
-                            dict[entryID] = varValue;
                         }
-                        else
-                        {
-                            dict = new Dictionary<Int32, Int32>();
-                            dict[entryID] = varValue;
-                            FF9StateSystem.EventState.gScriptDictionary.Add(dictID, dict);
-                        }
-                        break;
-                    }
                 }
                 break;
             case VariableSource.System:
@@ -2009,14 +2017,14 @@ public class EBin
         {
             case VariableType.SBit:
             case VariableType.Bit:
-            {
-                Int32 byteIndex = (ofs >> 3) + bufferOffset;
-                if (value == 0)
-                    buffer[byteIndex] &= (Byte)~(1 << (ofs & 7));
-                else
-                    buffer[byteIndex] |= (Byte)(1 << (ofs & 7));
-                break;
-            }
+                {
+                    Int32 byteIndex = (ofs >> 3) + bufferOffset;
+                    if (value == 0)
+                        buffer[byteIndex] &= (Byte)~(1 << (ofs & 7));
+                    else
+                        buffer[byteIndex] |= (Byte)(1 << (ofs & 7));
+                    break;
+                }
 
             case VariableType.Int24:
             case VariableType.UInt24:
@@ -2425,6 +2433,7 @@ public class EBin
         TETRA_MASTER_POINTS,
         TETRA_MASTER_RANK,
         TREASURE_HUNTER_POINTS,
+        BATTLE_RUNAWAY,
     }
 
     public enum op_binary
