@@ -104,7 +104,7 @@
 	Xsixfour_Tooltip = "-X64 (recommanded)&#xA;-X86 (legacy)"
 	Debuggable_Tooltip = "For developers"
 	CheckUpdates_Tooltip = "Will ask you if you want to automatically download&#xA;the latest Memoria from github when you press play"
-	SteamOverlayFix_Tooltip = "Will patch the launcher for people&#xA;having problems displaying the Steam overlay&#xA;(Steam achievements also depend on it)"
+	SteamOverlayFix_Tooltip = "/!\ ONLY FOR WINDOWS /!\&#xA;Will patch the launcher for people&#xA;having problems displaying the Steam overlay&#xA;(Steam achievements also depend on it)"
 	UseOrchestralMusic_Tooltip = "Moguri mod: orchestral soundtrack by Pontus Hultgren,&#xA;not recommended for people who want the original experience"
 	Use30FpsVideo_Tooltip = "Moguri mod: 30fps FMVs (from original 15fps)&#xA;Inbetween images created by AI"
 	Widescreen_Tooltip = "Supported on 16:9 and 16:10 resolutions&#xA;Removes side bars when possible,&#xA;Shows a wider part of the backgrounds/worldmap/battles&#xA;Note: some backgrounds will still be displayed with black bars,&#xA;as the original game did not have more pixels"

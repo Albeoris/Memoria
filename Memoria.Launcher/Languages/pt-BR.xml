@@ -104,7 +104,7 @@
 	Xsixfour_Tooltip = "-X64 (recomendado)&#xA;-X86 (legado)"
 	Debuggable_Tooltip = "Pros desenvolvedores"
 	CheckUpdates_Tooltip = "Perguntará a você se você quer baixar automaticamente&#xA;o último Memoria do github quando você pressiona JOGAR"
-	SteamOverlayFix_Tooltip = "Aplicará o patch no executor pras pessoas&#xA;tendo problemas em exibir a sobreposição do Steam&#xA;(As realizações do Steam também dependem dele)"
+	SteamOverlayFix_Tooltip = "/!\ ONLY FOR WINDOWS /!\&#xA;Aplicará o patch no executor pras pessoas&#xA;tendo problemas em exibir a sobreposição do Steam&#xA;(As realizações do Steam também dependem dele)"
 	UseOrchestralMusic_Tooltip = "Mod Moguri: Trilha sonora orquestral do Pontus Hultgren,&#xA;não é recomendado pras pessoas que querem a experiência original"
 	Use30FpsVideo_Tooltip = "Mod Moguri: FMVs de 30 fps (dos 15 fps originais)&#xA;Imagens intermediárias criadas pela IA"
 	Widescreen_Tooltip = "Suportado nas resoluções 16:9 e 16:10&#xA;Remove as barras laterais quando possível,&#xA;Mostra uma parte mais larga das telas de fundo/mapa-múndi/batalhas&#xA;Nota: algumas telas de fundo ainda serão exibidas com barras pretas,&#xA;porque o jogo original não tinha mais pixels"
