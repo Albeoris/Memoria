@@ -98,21 +98,20 @@ public class BattleResultUI : UIScene
 				{
 					FF9Sfx.FF9SFX_StopLoop(105);
 					this.currentState = BattleResultUI.ResultState.EndEXPAndAP;
-					BattleEndValue[] array = this.expValue;
-					for (Int32 i = 0; i < (Int32)array.Length; i++)
+					for (Int32 i = 0; i < this.expValue.Length; i++)
 					{
-						BattleEndValue battleEndValue = array[i];
-						battleEndValue.step = battleEndValue.value;
+						BattleEndValue endValue = this.expValue[i];
+						endValue.step = endValue.value;
 					}
 					this.UpdateExp();
-					BattleEndValue[] array2 = this.apValue;
-					for (Int32 j = 0; j < (Int32)array2.Length; j++)
+					for (Int32 i = 0; i < this.apValue.Length; i++)
 					{
-						BattleEndValue battleEndValue2 = array2[j];
-						battleEndValue2.step = battleEndValue2.value;
+						BattleEndValue endValue = this.apValue[i];
+						endValue.step = endValue.value;
 					}
 					this.UpdateAp();
 					this.DisplayEXPAndAPInfo();
+					this.DisplayCharacterInfo();
 					this.ApplyTweenAndFade();
 					break;
 				}
@@ -223,20 +222,17 @@ public class BattleResultUI : UIScene
 			PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
 			if (player != null)
 			{
-				UInt64 num = (player.level >= ff9level.LEVEL_COUNT) ? player.exp : ff9level.CharacterLevelUps[player.level].ExperienceToLevel;
+				UInt64 nextLvl = (player.level >= ff9level.LEVEL_COUNT) ? player.exp : ff9level.CharacterLevelUps[player.level].ExperienceToLevel;
 				BattleResultUI.CharacterBattleResultInfoHUD characterBattleResultInfoHUD = this.characterBRInfoHudList[i];
 				characterBattleResultInfoHUD.Content.SetActive(true);
 				characterBattleResultInfoHUD.NameLabel.text = player.Name;
 				characterBattleResultInfoHUD.LevelLabel.text = player.level.ToString();
 				characterBattleResultInfoHUD.ExpLabel.text = player.exp.ToString();
-				characterBattleResultInfoHUD.NextLvLabel.text = (num - player.exp).ToString();
+				characterBattleResultInfoHUD.NextLvLabel.text = (nextLvl - player.exp).ToString();
 				FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), characterBattleResultInfoHUD.AvatarSprite, false);
 				UISprite[] statusesSpriteList = characterBattleResultInfoHUD.StatusesSpriteList;
 				for (Int32 j = 0; j < statusesSpriteList.Length; j++)
-				{
-					UISprite uisprite = statusesSpriteList[j];
-					uisprite.alpha = 0f;
-				}
+					statusesSpriteList[j].alpha = 0f;
 				Int32 spriteSlot = 0;
 				foreach (KeyValuePair<BattleStatus, Byte> kvp in BattleResultUI.BadIconDict)
 				{
@@ -277,7 +273,9 @@ public class BattleResultUI : UIScene
 	{
 		if (this.finishedLevelUpAnimation[index] >= this.totalLevelUp[index])
 			return;
-		FF9Sfx.FF9SFX_Play(683);
+		if (!this.isLevelUpSoundPlayed)
+			FF9Sfx.FF9SFX_Play(683);
+		this.isLevelUpSoundPlayed = true;
 		this.levelUpSpriteTween[index].TweenIn(new Byte[1], delegate
 		{
 			this.levelUpSpriteTween[index].dialogList[0].SetActive(false);
@@ -388,17 +386,14 @@ public class BattleResultUI : UIScene
 		this.abilityLearned[2] = new List<Int32>();
 		this.abilityLearned[3] = new List<Int32>();
 		this.isReadyToShowNextAbil = new Boolean[] { true, true, true, true };
-		Boolean flag = true;
-		for (Int32 i = 0; i < this.expValue.Length && flag; i++)
+		Boolean skipEXPAndAP = true;
+		for (Int32 i = 0; i < this.expValue.Length && skipEXPAndAP; i++)
 			if (this.expValue[i].value != 0u)
-				flag = false;
-		for (Int32 i = 0; i < this.apValue.Length && flag; i++)
+				skipEXPAndAP = false;
+		for (Int32 i = 0; i < this.apValue.Length && skipEXPAndAP; i++)
 			if (this.apValue[i].value != 0u)
-				flag = false;
-		for (Int32 i = 0; i < this.expValue.Length && flag; i++)
-			if (this.expValue[i].value != 0u)
-				flag = false;
-		if (!flag)
+				skipEXPAndAP = false;
+		if (!skipEXPAndAP)
 			this.currentState = BattleResultUI.ResultState.Start;
 		else
 			this.currentState = BattleResultUI.ResultState.EndEXPAndAP;
@@ -650,7 +645,9 @@ public class BattleResultUI : UIScene
 
 	private void ApLearned(Int32 id, Int32 abilId)
 	{
-		FF9Sfx.FF9SFX_Play(1043);
+		if (!this.isAbilityLearnSoundPlayed)
+			FF9Sfx.FF9SFX_Play(1043);
+		this.isAbilityLearnSoundPlayed = true;
 		this.abilityLearned[id].Add(abilId);
 		BattleAchievement.UpdateAbilitiesAchievement(abilId, true);
 	}
@@ -783,16 +780,15 @@ public class BattleResultUI : UIScene
 	{
 		if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.BattleResult)
 		{
+			this.isLevelUpSoundPlayed = false;
+			this.isAbilityLearnSoundPlayed = false;
 			BattleResultUI.ResultState resultState = this.currentState;
-			if (resultState != BattleResultUI.ResultState.EXPAndAPTick)
+			if (resultState == BattleResultUI.ResultState.GilTick)
 			{
-				if (resultState == BattleResultUI.ResultState.GilTick)
-				{
-					this.UpdateGil();
-					this.DisplayGilAndItemInfo();
-				}
+				this.UpdateGil();
+				this.DisplayGilAndItemInfo();
 			}
-			else
+			else if (resultState == BattleResultUI.ResultState.EXPAndAPTick)
 			{
 				this.UpdateExp();
 				this.UpdateAp();
@@ -933,6 +929,11 @@ public class BattleResultUI : UIScene
 	private Boolean apEndTick;
 
 	private Boolean isTimerDisplay;
+
+	[NonSerialized]
+	private Boolean isLevelUpSoundPlayed = false;
+	[NonSerialized]
+	private Boolean isAbilityLearnSoundPlayed = false;
 
 	public static Dictionary<BattleStatus, Byte> BadIconDict = new Dictionary<BattleStatus, Byte>
 	{

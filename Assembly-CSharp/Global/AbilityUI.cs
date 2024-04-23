@@ -230,10 +230,12 @@ public class AbilityUI : UIScene
                     Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
                     this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
                     Int32 abilId = this.aaIdList[this.currentAbilityIndex];
-                    this.canMultiTarget = this.IsMulti(abilId);
-                    if (abilId != 0 && ff9abil.IsAbilityActive(abilId))
-                    {
-                        if (this.CheckAAType(abilId, player) == AbilityType.Enable)
+					if (abilId != 0 && ff9abil.IsAbilityActive(abilId))
+					{
+						BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abilId);
+						BattleAbilityId patchedId = this.PatchAbility(battleAbilId);
+						this.canMultiTarget = this.IsMulti(patchedId);
+						if (this.CheckAAType(abilId, player) == AbilityType.Enable)
                         {
                             if (this.canMultiTarget)
                             {
@@ -259,7 +261,7 @@ public class AbilityUI : UIScene
                             {
                                 this.targetTransition.animatedInStartPosition = new Vector3(-1543f, 0.0f, 0.0f);
                                 this.targetTransition.animatedOutEndPosition = new Vector3(-1543f, 0.0f, 0.0f);
-                                this.TargetListPanel.transform.localPosition = new Vector3((Single)(-TargetPositionXOffset - 60.0), 0.0f, 0.0f);
+                                this.TargetListPanel.transform.localPosition = new Vector3(-TargetPositionXOffset - 60f, 0.0f, 0.0f);
                             }
                             this.targetTransition.DestinationPosition = new Vector3[1]
                             {
@@ -373,7 +375,8 @@ public class AbilityUI : UIScene
                 Int32 memberIndex = go.transform.GetSiblingIndex();
                 PLAYER caster = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
                 BattleAbilityId abilId = ff9abil.GetActiveAbilityFromAbilityId(this.aaIdList[this.currentAbilityIndex]);
-                AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[abilId];
+				BattleAbilityId patchedId = this.PatchAbility(abilId);
+				AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[patchedId];
                 if (!this.multiTarget)
                 {
                     canUseAbility = SFieldCalculator.FieldCalcMain(caster, FF9StateSystem.Common.FF9.party.member[memberIndex], aaData, aaData.Ref.ScriptId, 0U);
@@ -397,7 +400,7 @@ public class AbilityUI : UIScene
                         this.TargetListPanel.SetActive(false);
                         ButtonGroupState.ActiveGroup = ActionAbilityGroupButton;
                     }
-                    FF9StateSystem.EventState.IncreaseAAUsageCounter(abilId);
+                    FF9StateSystem.EventState.IncreaseAAUsageCounter(patchedId);
                     BattleAchievement.IncreaseNumber(ref FF9StateSystem.Achievement.whtMag_no, 1);
                     AchievementManager.ReportAchievement(AcheivementKey.WhtMag200, FF9StateSystem.Achievement.whtMag_no);
                     this.DisplayTarget();
@@ -905,8 +908,8 @@ public class AbilityUI : UIScene
             BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abilityListData.Id);
             itemListDetailHud.Content.SetActive(true);
             ButtonGroupState.SetButtonAnimation(itemListDetailHud.Self, abilityListData.Type == AbilityType.Enable);
-            Int32 mp = GetMp(FF9StateSystem.Battle.FF9Battle.aa_data[battleAbilId]);
-            BattleAbilityId patchedId = this.PatchAbility(battleAbilId);
+			BattleAbilityId patchedId = this.PatchAbility(battleAbilId);
+			Int32 mp = GetMp(FF9StateSystem.Battle.FF9Battle.aa_data[patchedId]);
             itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(patchedId);
             itemListDetailHud.NumberLabel.text = mp != 0 ? mp.ToString() : String.Empty;
             if (abilityListData.Type == AbilityType.CantSpell)
@@ -1046,7 +1049,8 @@ public class AbilityUI : UIScene
                 charHud.Content.SetActive(true);
                 FF9UIDataTool.DisplayCharacterDetail(player, charHud);
                 FF9UIDataTool.DisplayCharacterAvatar(player, new Vector2(), new Vector2(), charHud.AvatarSprite, false);
-                switch (ff9abil.GetActionAbility(this.aaIdList[this.currentAbilityIndex]).Info.DisplayStats)
+				AA_DATA patchedAbil = FF9StateSystem.Battle.FF9Battle.aa_data[this.PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(this.aaIdList[this.currentAbilityIndex]))];
+				switch (patchedAbil.Info.DisplayStats)
                 {
                     case TargetDisplay.None:
                     case TargetDisplay.Hp:
@@ -1071,9 +1075,8 @@ public class AbilityUI : UIScene
         this.SetAvailableCharacter();
     }
 
-    private Boolean IsMulti(Int32 abil_id)
+    private Boolean IsMulti(BattleAbilityId battleAbilityId)
     {
-        BattleAbilityId battleAbilityId = ff9abil.GetActiveAbilityFromAbilityId(abil_id);
         switch (FF9BattleDB.CharacterActions[battleAbilityId].Info.Target)
         {
             case TargetType.ManyAny:
@@ -1095,8 +1098,8 @@ public class AbilityUI : UIScene
 
     private AbilityType CheckAAType(Int32 abilityId, Character player)
     {
-        BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abilityId);
-        AA_DATA aa_data = FF9BattleDB.CharacterActions[battleAbilId];
+        BattleAbilityId patchedId = this.PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(abilityId));
+		AA_DATA patchedAbil = FF9BattleDB.CharacterActions[patchedId];
 
         if (!this.equipmentPartInAbilityDict.ContainsKey(abilityId))
         {
@@ -1115,7 +1118,7 @@ public class AbilityUI : UIScene
             }
         }
 
-        return (player.Data.status & BattleStatusConst.CannotUseAbilityInMenu) != 0 || (aa_data.Type & 1) == 0 || GetMp(aa_data) > player.Data.cur.mp ? AbilityType.CantSpell : AbilityType.Enable;
+        return (player.Data.status & BattleStatusConst.CannotUseAbilityInMenu) != 0 || (patchedAbil.Type & 1) == 0 || GetMp(patchedAbil) > player.Data.cur.mp ? AbilityType.CantSpell : AbilityType.Enable;
     }
 
     private AbilityType CheckSAType(Int32 abilityId, Character player)
@@ -1167,7 +1170,7 @@ public class AbilityUI : UIScene
             BattleCommandId cmdId = CharacterCommands.CommandSets[play.PresetId].GetRegular(commandNumber);
             CharacterCommand ff9Command = CharacterCommands.Commands[cmdId];
             foreach (BattleAbilityId abilId in ff9Command.EnumerateAbilities())
-                if (BattleAbilityHelper.Patch(abilId, play.Data) == battleAbilId)
+                if (abilId == battleAbilId)
                     return cmdId;
         }
         return BattleCommandId.None;

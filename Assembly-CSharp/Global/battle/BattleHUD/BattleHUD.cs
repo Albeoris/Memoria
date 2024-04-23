@@ -1218,9 +1218,9 @@ public partial class BattleHUD : UIScene
             playerIndex = CurrentPlayerIndex;
         AbilityPlayerDetail abilityPlayerDetail = _abilityDetailDict[playerIndex];
         BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
-        AA_DATA aaData = ff9abil.GetActionAbility(abilId);
+		AA_DATA patchedAbil = FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityHelper.Patch(ff9abil.GetActiveAbilityFromAbilityId(abilId), unit.Player.Data)];
 
-        if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && abilityPlayerDetail.Player.Index != CharacterId.Quina && abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && ff9abil.IsAbilityActive(abilId))
+		if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && abilityPlayerDetail.Player.Index != CharacterId.Quina && abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && ff9abil.IsAbilityActive(abilId))
             return AbilityStatus.None;
         if (abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && ff9abil.IsAbilityActive(abilId))
 		{
@@ -1235,7 +1235,7 @@ public partial class BattleHUD : UIScene
             }
         }
 
-        if ((aaData.Category & 2) != 0)
+        if ((patchedAbil.Category & 2) != 0)
         {
             if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoMagical)
                 return AbilityStatus.Disable;
@@ -1244,7 +1244,7 @@ public partial class BattleHUD : UIScene
                 return AbilityStatus.Disable;
         }
 
-        if (GetActionMpCost(aaData, unit) > unit.CurrentMp)
+        if (GetActionMpCost(patchedAbil, unit) > unit.CurrentMp)
             return AbilityStatus.Disable;
 
         return AbilityStatus.Enable;

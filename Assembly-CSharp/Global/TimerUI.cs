@@ -130,6 +130,8 @@ public class TimerUI : Singleton<TimerUI>
 		GameObject prefab = Resources.Load("EmbeddedAsset/UI/Prefabs/Timer Container") as GameObject;
 		GameObject gameObject = NGUITools.AddChild(PersistenSingleton<UIManager>.Instance.gameObject, prefab);
 		gameObject.name = "Timer Container";
+		if (Configuration.Graphics.WidescreenSupport)
+			gameObject.transform.AddX(-200f); // Fix https://github.com/Albeoris/Memoria/issues/366 (adapted to 16:9 widescreen only)
 		TimerUI.digit0 = gameObject.gameObject.FindChild("Digit Panel/Digit0").GetComponent<UISprite>();
 		TimerUI.digit1 = gameObject.gameObject.FindChild("Digit Panel/Digit1").GetComponent<UISprite>();
 		TimerUI.digit2 = gameObject.gameObject.FindChild("Digit Panel/Digit2").GetComponent<UISprite>();
