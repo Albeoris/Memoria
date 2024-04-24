@@ -105,17 +105,20 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiTextBlock speedFactorText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedFactor), row, 0, 1, 2);
-            speedFactorText.Foreground = Brushes.White;
-            speedFactorText.Margin = rowMargin;
-            speedFactorText.ToolTip = Lang.Settings.SpeedFactor_Tooltip;
-            UiTextBlock speedFactorTextindex = AddUiElement(UiTextBlockFactory.Create(""), row, 2, 1, 1);
-            speedFactorTextindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay });
+            //UiTextBlock speedFactorText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedFactor), row, 0, 1, 3);
+            //speedFactorText.Foreground = Brushes.White;
+            //speedFactorText.Margin = rowMargin;
+            //speedFactorText.ToolTip = Lang.Settings.SpeedFactor_Tooltip;
+            UiTextBlock speedFactorTextindex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
+            speedFactorTextindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay, StringFormat = "{0}x" });
             speedFactorTextindex.Foreground = Brushes.White;
-            Slider speedFactor = AddUiElement(UiSliderFactory.Create(0), row, 3, 1, 5);
+            speedFactorTextindex.Margin = rowMargin;
+            Slider speedFactor = AddUiElement(UiSliderFactory.Create(0), row, 1, 1, 7);
             speedFactor.SetBinding(Slider.ValueProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay });
             speedFactor.TickFrequency = 1;
             speedFactor.IsSnapToTickEnabled = true;
+            speedFactor.TickPlacement = TickPlacement.BottomRight;
+            speedFactor.Height = 20;
             speedFactor.Minimum = 2;
             speedFactor.Maximum = 12;
             speedFactor.Margin = new Thickness(0, 0, 3, 0);
@@ -137,6 +140,8 @@ namespace Memoria.Launcher
             BattleTPSFactor.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleTPS)) { Mode = BindingMode.TwoWay });
             BattleTPSFactor.TickFrequency = 15;
             BattleTPSFactor.IsSnapToTickEnabled = true;
+            BattleTPSFactor.TickPlacement = TickPlacement.BottomRight;
+            BattleTPSFactor.Height = 20;
             BattleTPSFactor.Minimum = 15;
             BattleTPSFactor.Maximum = 150;
             BattleTPSFactor.Margin = new Thickness(0, 0, 3, 0);

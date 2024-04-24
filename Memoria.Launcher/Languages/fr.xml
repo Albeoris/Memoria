@@ -105,7 +105,7 @@
 	Xsixfour_Tooltip = "-X64 (recommanded)&#xA;-X86 (legacy)"
 	Debuggable_Tooltip = "Pour les dévelopers"
 	CheckUpdates_Tooltip = "Vous demande si vous souhaitez télécharger automatiquement&#xA;la dernière version de Memoria depuis Github en appuyant sur Jouer"
-	SteamOverlayFix_Tooltip = "Modifie le launcher si vous avez des problèmes&#xA;pour afficher l'overlay de Steam&#xA;(Les succès steams dépendent aussi de l'overlay)"
+	SteamOverlayFix_Tooltip = "/!\ SEULEMENT POUR WINDOWS /!\&#xA;Modifie le launcher si vous avez des problèmes&#xA;pour afficher l'overlay de Steam&#xA;(Les succès steams dépendent aussi de l'overlay)"
 	UseOrchestralMusic_Tooltip = "Moguri mod: Bande son orchestrale par Pontus Hultgren,&#xA;Non-recommendée pour une expérience authentique"
 	Use30FpsVideo_Tooltip = "Moguri mod: vidéos à 30ips (original: 15ips)&#xA;Les images intermédiaires sont créées par IA"
 	Widescreen_Tooltip = "Supporté sur résolution 16:9 et 16:10&#xA;Enlève les bords sur les côtés, &#xA;montre une partie plus large des décors/combats/carte&#xA;Note: certains décors seront toujours affichés avec des bords&#xA;là où le jeu n'avait pas prévu plus de pixels"
