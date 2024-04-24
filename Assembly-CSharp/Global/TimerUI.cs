@@ -206,24 +206,30 @@ public class TimerUI : Singleton<TimerUI>
 	{
 		if (TimerUI.Play)
 		{
-			if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Pause && !PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI)
-				FF9StateSystem.Settings.UpdateTickTime();
-			Single diffTime = (Single)(FF9StateSystem.Settings.time - TimerUI.lastTime);
-			TimerUI.lastTime = FF9StateSystem.Settings.time;
-			if (FF9StateSystem.Settings.IsFastForward && Configuration.Cheats.SpeedTimer)
-				TimerUI.time -= diffTime * Configuration.Cheats.SpeedFactor;
-			else
-				TimerUI.time -= diffTime;
-			if (TimerUI.time < 0f)
-				TimerUI.time = 0f;
-			TimeSpan displayTime = TimeSpan.FromSeconds(TimerUI.time);
-			TimerUI.blinkState = displayTime.Milliseconds > 500;
-			if (TimerUI.lastBlinkState != TimerUI.blinkState)
-				TimerUI.UpdateBlinkState();
-			if (TimerUI.lastTimespan.Seconds != displayTime.Seconds)
-				TimerUI.SetDisplayTime(displayTime);
-			TimerUI.lastTimespan = displayTime;
-		}
+            if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Pause && !PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI)
+                FF9StateSystem.Settings.UpdateTickTime();
+            Single diffTime = (Single)(FF9StateSystem.Settings.time - TimerUI.lastTime);
+            Int32 Speedtimer = Configuration.Cheats.SpeedTimer == 0 ? 1 : Configuration.Cheats.SpeedTimer; // Prevent old Memoria.ini file to disable timer (0 by default)
+            TimerUI.lastTime = FF9StateSystem.Settings.time;
+            if (Configuration.Cheats.SpeedTimer != -1)
+            {
+                if (FF9StateSystem.Settings.IsFastForward && Configuration.Cheats.SpeedTimer >= 0)
+                    TimerUI.time -= diffTime * Configuration.Cheats.SpeedFactor * Speedtimer;
+                else if (Configuration.Cheats.SpeedTimer >= 0)
+                    TimerUI.time -= diffTime * Speedtimer;
+                else if (TimerUI.time < 0f)
+                    TimerUI.time = 0f;
+                else
+                    TimerUI.time -= diffTime;
+            }
+            TimeSpan displayTime = TimeSpan.FromSeconds(TimerUI.time);
+            TimerUI.blinkState = displayTime.Milliseconds > 500;
+            if (TimerUI.lastBlinkState != TimerUI.blinkState)
+                TimerUI.UpdateBlinkState();
+            if (TimerUI.lastTimespan.Seconds != displayTime.Seconds)
+                TimerUI.SetDisplayTime(displayTime);
+            TimerUI.lastTimespan = displayTime;
+        }
 		else if (TimerUI.enable)
 		{
 			if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Pause && !PersistenSingleton<UIManager>.Instance.QuitScene.isShowQuitUI)

@@ -83,7 +83,22 @@ public class BattlePlayerCharacter : MonoBehaviour
 		String path = btl_mot.BattleParameterList[serial].TranceModelId;
 		btl.tranceGo = ModelFactory.CreateModel(path, true);
 		BattlePlayerCharacter.CheckToHideBattleModel(btl.tranceGo, serial);
-		btl.tranceGo.transform.localPosition = new Vector3(btl.tranceGo.transform.localPosition.x, -10000f, btl.tranceGo.transform.localPosition.z);
+
+        // Set custom trance model
+        String modelPath = ModelFactory.GetRenameModelPath(path);
+        Renderer[] renderers = btl.tranceGo.GetComponentsInChildren<Renderer>();
+        for (Int32 i = 0; i < renderers.Length; i++)
+        {
+            Renderer renderer = renderers[i];
+            String textureName = renderer.material.mainTexture.name;
+            String textureId = textureName.Substring(textureName.LastIndexOf('_') + 1);
+            String texturePath = modelPath + "_trance_" + textureId;
+            Texture2D tranceTexture = AssetManager.Load<Texture2D>(texturePath, true);
+            if (tranceTexture != null)
+                renderer.material.SetTexture("_MainTex", tranceTexture);
+        }
+
+        btl.tranceGo.transform.localPosition = new Vector3(btl.tranceGo.transform.localPosition.x, -10000f, btl.tranceGo.transform.localPosition.z);
 		btl.tranceGo.SetActive(false);
 	}
 

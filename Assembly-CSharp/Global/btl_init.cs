@@ -189,7 +189,13 @@ public static class btl_init
 		enemy.steal_unsuccessful_counter = 0; // New field used for counting unsuccessful steals and force a successful steal when it becomes high enough
 		enemy.info.die_atk = (Byte)(((pParm.Flags & 1) == 0) ? 0 : 1);
 		enemy.info.die_dmg = (Byte)(((pParm.Flags & 2) == 0) ? 0 : 1);
-		enemy.info.flags = pParm.Flags;
+        enemy.info.die_vulnerable = (Byte)(((pParm.Flags & 4) == 0) ? 0 : 1);
+        enemy.info.die_unused4 = (Byte)(((pParm.Flags & 8) == 0) ? 0 : 1);
+        enemy.info.die_unused5 = (Byte)(((pParm.Flags & 16) == 0) ? 0 : 1);
+        enemy.info.die_unused6 = (Byte)(((pParm.Flags & 32) == 0) ? 0 : 1);
+        enemy.info.die_unused7 = (Byte)(((pParm.Flags & 64) == 0) ? 0 : 1);
+        enemy.info.die_unused8 = (Byte)(((pParm.Flags & 128) == 0) ? 0 : 1);
+        enemy.info.flags = pParm.Flags;
 		btl_util.SetShadow(pBtl, pParm.ShadowX, pParm.ShadowZ);
 		pBtl.shadow_bone[0] = pParm.ShadowBone;
 		pBtl.shadow_bone[1] = pParm.ShadowBone2;

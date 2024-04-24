@@ -128,28 +128,55 @@ public class BattleSPSSystem : MonoBehaviour
 		for (Int32 i = 0; i < this._specialSpsList.Count; i++)
 		{
 			BattleSPS special_sps = this._specialSpsList[i];
-			if ((special_sps.type != 0 || special_sps.spsBin != null) && (special_sps.attr & 1) != 0 && special_sps.isUpdate)
-			{
-				double rotation_cos = Math.Cos(2 * Math.PI * special_sps.curFrame / 10000) * this._specialSpsFadingList[i]; // 1 turn every 10 seconds
-				double rotation_sin = Math.Sin(2 * Math.PI * special_sps.curFrame / 10000) * this._specialSpsFadingList[i];
-				Vector3 rotated_pos = BattleSPSSystem.statusTextures[special_sps.refNo].extraPos;
-				float tmp = rotated_pos.x;
-				rotated_pos.x = (float)(rotation_cos * tmp - rotation_sin * rotated_pos.z);
-				rotated_pos.z = (float)(rotation_sin * tmp + rotation_cos * rotated_pos.z);
-				for (int j = 0; j < special_sps.shpGo.Length; j++)
-					special_sps.shpGo[j].transform.localPosition = rotated_pos;
-				special_sps.isUpdate = show_special;
-				special_sps.AnimateSHP();
-				special_sps.lastFrame = special_sps.curFrame;
-				if (this._specialSpsRemovingList[i])
-					this._specialSpsFadingList[i] -= 0.05f;
-				if (this._specialSpsFadingList[i] > 0.0f)
-					special_sps.isUpdate = true;
-				else
-					for (int j = 0; j < special_sps.shpGo.Length; j++)
-						special_sps.shpGo[j].SetActive(false);
-			}
-		}
+            if ((special_sps.type != 0 || special_sps.spsBin != null) && (special_sps.attr & 1) != 0 && special_sps.isUpdate)
+            {
+                if (special_sps.rotate)
+                {
+                    double rotation_cos = Math.Cos(2 * Math.PI * special_sps.curFrame / 10000) * this._specialSpsFadingList[i]; // 1 turn every 10 seconds
+                    double rotation_sin = Math.Sin(2 * Math.PI * special_sps.curFrame / 10000) * this._specialSpsFadingList[i];
+                    Vector3 rotated_pos = BattleSPSSystem.statusTextures[special_sps.refNo].extraPos;
+                    float tmp = rotated_pos.x;
+                    rotated_pos.x = (float)(rotation_cos * tmp - rotation_sin * rotated_pos.z);
+                    rotated_pos.z = (float)(rotation_sin * tmp + rotation_cos * rotated_pos.z);
+                    for (int j = 0; j < special_sps.shpGo.Length; j++)
+                        special_sps.shpGo[j].transform.localPosition = rotated_pos;
+                    special_sps.isUpdate = show_special;
+                    special_sps.AnimateSHP();
+                    special_sps.lastFrame = special_sps.curFrame;
+                    if (this._specialSpsRemovingList[i])
+                        this._specialSpsFadingList[i] -= 0.05f;
+                    if (this._specialSpsFadingList[i] > 0.0f)
+                        special_sps.isUpdate = true;
+                    else
+                        for (int j = 0; j < special_sps.shpGo.Length; j++)
+                            special_sps.shpGo[j].SetActive(false);
+                }
+                else
+                {
+                    Vector3 sps_pos = statusTextures[special_sps.refNo].extraPos;
+                    Vector3 bone_pos = special_sps.btl.gameObject.transform.GetChildByName("bone" + special_sps.bone.ToString("D3")).position;
+                    btl2d.GetIconPosition(special_sps.btl, out Byte[] iconBones, out SByte[] iconOffsY, out SByte[] iconOffsZ);
+                    Int16 dy = (Int16)(sps_pos.y * 8);
+                    Int16 dz = (Int16)(sps_pos.z * 8);
+                    Int32 angledx = ff9.rsin((Int32)(special_sps.btl.rot.eulerAngles.y / 360f * 4096f));
+                    Int32 angledz = ff9.rcos((Int32)(special_sps.btl.rot.eulerAngles.y / 360f * 4096f));
+                    bone_pos.x += dz * angledx >> 12;
+                    bone_pos.y -= dy;
+                    bone_pos.z += dz * angledz >> 12;
+                    special_sps.pos = bone_pos;
+                    special_sps.isUpdate = show_special;
+                    special_sps.AnimateSHP();
+                    special_sps.lastFrame = special_sps.curFrame;
+                    if (this._specialSpsRemovingList[i])
+                        this._specialSpsFadingList[i] -= 1f;
+                    if (this._specialSpsFadingList[i] > 0.0f)
+                        special_sps.isUpdate = true;
+                    else
+                        for (int j = 0; j < special_sps.shpGo.Length; j++)
+                            special_sps.shpGo[j].SetActive(false);
+                }
+            }
+        }
 	}
 
 	private Boolean _loadSPSTexture()
@@ -384,11 +411,11 @@ public class BattleSPSSystem : MonoBehaviour
 		return (Int32)(btl.bi.line_no * 12) + statusSPSIndex;
 	}
 
-	public void AddBtlSPSObj(BattleUnit btl, BattleStatus status)
-	{
+    public void AddBtlSPSObj(BTL_DATA btl, BattleStatus status)
+    {
 		Int32 statusSPSIndex = this.GetStatusSPSIndex(status);
-		Int32 objSpsIndex = this.GetObjSpsIndex(btl.Data, status);
-		btl2d.STAT_ICON_TBL stat_ICON_TBL = btl2d.wStatIconTbl[statusSPSIndex];
+        Int32 objSpsIndex = this.GetObjSpsIndex(btl, status);
+        btl2d.STAT_ICON_TBL stat_ICON_TBL = btl2d.wStatIconTbl[statusSPSIndex];
 		this.SetBtlStatus(objSpsIndex, statusSPSIndex, stat_ICON_TBL.Abr, (Int32)stat_ICON_TBL.Type);
 	}
 
@@ -400,7 +427,14 @@ public class BattleSPSSystem : MonoBehaviour
 		this.SetBtlStatus(objSpsIndex, -1, stat_ICON_TBL.Abr, (Int32)stat_ICON_TBL.Type);
 	}
 
-	public void SetActiveSHP(Boolean active)
+    public void ResetBtlSPSObj(BTL_DATA btl, BattleStatus status)
+    {
+        btl2d.STAT_ICON_TBL stat_ICON_TBL = btl2d.wStatIconTbl[GetStatusSPSIndex(status)];
+        SetBtlStatus(GetObjSpsIndex(btl, status), -1, stat_ICON_TBL.Abr, (Int32)stat_ICON_TBL.Type);
+        SetBtlStatus(GetObjSpsIndex(btl, status), GetStatusSPSIndex(status), stat_ICON_TBL.Abr, (Int32)stat_ICON_TBL.Type);
+    }
+
+    public void SetActiveSHP(Boolean active)
 	{
 		for (Int32 i = 0; i < this._spsList.Count; i++)
 		{
@@ -416,9 +450,9 @@ public class BattleSPSSystem : MonoBehaviour
 		}
 	}
 
-	public void AddSpecialSPSObj(int specialid, uint spstype, Vector3 pos, float scale)
-	{
-		BattleSPS special_sps;
+    public void AddSpecialSPSObj(int specialid, uint spstype, BTL_DATA btl, int bone, float scale, out int SPSid, Boolean rotate = false)
+    {
+        BattleSPS special_sps;
 		if (specialid < 0 || specialid > _specialSpsList.Count)
 			specialid = _specialSpsList.Count;
 		if (specialid == _specialSpsList.Count)
@@ -445,11 +479,20 @@ public class BattleSPSSystem : MonoBehaviour
 			this._specialSpsFadingList[specialid] = 1.0f;
 			this._specialSpsRemovingList[specialid] = false;
 		}
-		special_sps.pos = pos;
-		special_sps.curFrame = 0;
-		special_sps.lastFrame = 0;
-		special_sps.frameCount = 10000;
-		special_sps.attr |= 1;
+        if (bone < 0 || bone > FF9StateSystem.Battle.FF9Battle.enemy[btl.bi.slot_no].et.icon_bone[5])
+        {
+            btl2d.GetIconPosition(btl, out Byte[] iconBones, out _, out _);
+            bone = iconBones[3];
+        }
+        SPSid = specialid;
+        special_sps.pos = btl.gameObject.transform.GetChildByName("bone" + bone.ToString("D3")).position;
+        special_sps.curFrame = 0;
+        special_sps.lastFrame = 0;
+        special_sps.frameCount = 10000;
+        special_sps.rotate = rotate;
+        special_sps.btl = btl;
+        special_sps.bone = bone;
+        special_sps.attr |= 1;
 		special_sps.isUpdate = true;
 		special_sps.refNo = (int)spstype;
 		special_sps.type = (BattleSPSSystem.statusTextures[(int)spstype].type.Equals("shp") ? 1 : 0);
@@ -480,9 +523,9 @@ public class BattleSPSSystem : MonoBehaviour
 
 	public Vector3 rot;
 
-	public static BattleSPSSystem.SPSTexture[] statusTextures = new BattleSPSSystem.SPSTexture[]
-	{
-		new BattleSPSSystem.SPSTexture("poison", "sps", 1, Vector3.zero, 6f, 4f),
+    public static List<BattleSPSSystem.SPSTexture> statusTextures = new List<BattleSPSSystem.SPSTexture>()
+    {
+        new BattleSPSSystem.SPSTexture("poison", "sps", 1, Vector3.zero, 6f, 4f),
 		new BattleSPSSystem.SPSTexture("venom", "sps", 1, Vector3.zero, 2f, 1.5f),
 		new BattleSPSSystem.SPSTexture("slow", "shp", 6, new Vector3(212f, 0f, 0f), 4f, 5f),
 		new BattleSPSSystem.SPSTexture("haste", "shp", 6, new Vector3(-148f, 0f, 0f), 4f, 5f),
