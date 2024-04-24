@@ -124,7 +124,7 @@ namespace Memoria.Launcher
             battleFPSSlider.IsSnapToTickEnabled = true;
             battleFPSSlider.Minimum = 20;
             battleFPSSlider.Maximum = 120;
-            battleFPSSlider.Margin = rowMargin;
+            battleFPSSlider.Margin = new(3, 3, 3, 3);
 
             row++;
 
@@ -145,7 +145,7 @@ namespace Memoria.Launcher
             fieldFPSSlider.IsSnapToTickEnabled = true;
             fieldFPSSlider.Minimum = 20;
             fieldFPSSlider.Maximum = 120;
-            fieldFPSSlider.Margin = rowMargin;
+            fieldFPSSlider.Margin = new(3, 3, 3, 3);
 
             row++;
 
@@ -166,7 +166,7 @@ namespace Memoria.Launcher
             worldFPSSlider.IsSnapToTickEnabled = true;
             worldFPSSlider.Minimum = 20;
             worldFPSSlider.Maximum = 120;
-            worldFPSSlider.Margin = rowMargin;
+            worldFPSSlider.Margin = new(3, 3, 3, 3);
 
 
             row++;
@@ -185,10 +185,12 @@ namespace Memoria.Launcher
             Slider CameraStabilizerSlider = AddUiElement(UiSliderFactory.Create(0), row, 1, 1, 7);
             CameraStabilizerSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(CameraStabilizer)) { Mode = BindingMode.TwoWay });
             CameraStabilizerSlider.TickFrequency = 1;
+            CameraStabilizerSlider.TickPlacement = TickPlacement.BottomRight;
+            CameraStabilizerSlider.Height = 20;
             CameraStabilizerSlider.IsSnapToTickEnabled = true;
             CameraStabilizerSlider.Minimum = 0;
             CameraStabilizerSlider.Maximum = 99;
-            CameraStabilizerSlider.Margin = new Thickness(0, 0, 3, 0);
+            CameraStabilizerSlider.Margin = new(3, 3, 3, 3);
 
             row++;
 
@@ -255,11 +257,11 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiTextBlock speedChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedChoice), row, 0, 1, 3);
+            UiTextBlock speedChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedChoice), row, 0, 1, 4);
             speedChoiceText.Foreground = Brushes.White;
             speedChoiceText.Margin = rowMargin;
             speedChoiceText.ToolTip = Lang.Settings.SpeedChoice_Tooltip;
-            UiComboBox speedChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 3, 1, 5);
+            UiComboBox speedChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 4);
             speedChoiceBox.ItemsSource = new String[]{
                 Lang.Settings.SpeedChoiceType0,
                 Lang.Settings.SpeedChoiceType1,
@@ -275,11 +277,11 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiTextBlock tripleTriadText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.TripleTriad), row, 0, 1, 3);
+            UiTextBlock tripleTriadText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.TripleTriad), row, 0, 1, 4);
             tripleTriadText.Foreground = Brushes.White;
             tripleTriadText.Margin = rowMargin;
             tripleTriadText.ToolTip = Lang.Settings.TripleTriad_Tooltip;
-            UiComboBox tripleTriadBox = AddUiElement(UiComboBoxFactory.Create(), row, 3, 1, 5);
+            UiComboBox tripleTriadBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 4);
             tripleTriadBox.ItemsSource = new String[]{
                 Lang.Settings.TripleTriadType0,
                 Lang.Settings.TripleTriadType1,
@@ -301,18 +303,20 @@ namespace Memoria.Launcher
             soundVolumeText.Foreground = Brushes.White;
             soundVolumeText.Margin = rowMargin;
             soundVolumeText.ToolTip = Lang.Settings.SoundVolume_Tooltip;
-            Slider soundVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row, 3, 1, 6);
-            soundVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(SoundVolume)) { Mode = BindingMode.TwoWay });
-            soundVolumeSlider.TickFrequency = 5;
-            soundVolumeSlider.IsSnapToTickEnabled = true;
-            soundVolumeSlider.Minimum = 0;
-            soundVolumeSlider.Maximum = 100;
-            soundVolumeSlider.Margin = rowMargin;
-            UiTextBlock soundVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 1, 1, 2);
+            UiTextBlock soundVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 3, 1, 1);
             soundVolumeTextIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SoundVolume)) { Mode = BindingMode.TwoWay });
             soundVolumeTextIndex.Foreground = Brushes.White;
             soundVolumeTextIndex.Margin = rowMargin;
             soundVolumeTextIndex.TextAlignment = TextAlignment.Right;
+            Slider soundVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row, 4, 1, 4);
+            soundVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(SoundVolume)) { Mode = BindingMode.TwoWay });
+            soundVolumeSlider.TickFrequency = 5;
+            soundVolumeSlider.IsSnapToTickEnabled = true;
+            soundVolumeSlider.TickPlacement = TickPlacement.BottomRight;
+            soundVolumeSlider.Height = 20;
+            soundVolumeSlider.Minimum = 0;
+            soundVolumeSlider.Maximum = 100;
+            soundVolumeSlider.Margin = new(3, 3, 3, 3);
 
             row++;
 
@@ -320,37 +324,41 @@ namespace Memoria.Launcher
             musicVolumeText.Foreground = Brushes.White;
             musicVolumeText.Margin = rowMargin;
             musicVolumeText.ToolTip = Lang.Settings.MusicVolume_Tooltip;
-            Slider musicVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row, 3, 1, 6);
-            musicVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(MusicVolume)) { Mode = BindingMode.TwoWay });
-            musicVolumeSlider.TickFrequency = 5;
-            musicVolumeSlider.IsSnapToTickEnabled = true;
-            musicVolumeSlider.Minimum = 0;
-            musicVolumeSlider.Maximum = 100;
-            musicVolumeSlider.Margin = rowMargin;
-            UiTextBlock musicVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 1, 1, 2);
+            UiTextBlock musicVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 3, 1, 1);
             musicVolumeTextIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(MusicVolume)) { Mode = BindingMode.TwoWay });
             musicVolumeTextIndex.Foreground = Brushes.White;
             musicVolumeTextIndex.Margin = rowMargin;
             musicVolumeTextIndex.TextAlignment = TextAlignment.Right;
+            Slider musicVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row, 4, 1, 4);
+            musicVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(MusicVolume)) { Mode = BindingMode.TwoWay });
+            musicVolumeSlider.TickFrequency = 5;
+            musicVolumeSlider.IsSnapToTickEnabled = true;
+            musicVolumeSlider.TickPlacement = TickPlacement.BottomRight;
+            musicVolumeSlider.Height = 20;
+            musicVolumeSlider.Minimum = 0;
+            musicVolumeSlider.Maximum = 100;
+            musicVolumeSlider.Margin = new(3, 3, 3, 3);
 
             row++;
 
-            UiTextBlock movieVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.MovieVolume), row, 0, 1, 6);
+            UiTextBlock movieVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.MovieVolume), row, 0, 1, 3);
             movieVolumeText.Foreground = Brushes.White;
             movieVolumeText.Margin = rowMargin;
             movieVolumeText.ToolTip = Lang.Settings.MovieVolume_Tooltip;
-            Slider movieVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row, 3, 1, 6);
-            movieVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(MovieVolume)) { Mode = BindingMode.TwoWay });
-            movieVolumeSlider.TickFrequency = 5;
-            movieVolumeSlider.IsSnapToTickEnabled = true;
-            movieVolumeSlider.Minimum = 0;
-            movieVolumeSlider.Maximum = 100;
-            movieVolumeSlider.Margin = rowMargin;
-            UiTextBlock movieVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 1, 1, 2);
+            UiTextBlock movieVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 3, 1, 1);
             movieVolumeTextIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(MovieVolume)) { Mode = BindingMode.TwoWay });
             movieVolumeTextIndex.Foreground = Brushes.White;
             movieVolumeTextIndex.Margin = rowMargin;
             movieVolumeTextIndex.TextAlignment = TextAlignment.Right;
+            Slider movieVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row, 4, 1, 4);
+            movieVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(MovieVolume)) { Mode = BindingMode.TwoWay });
+            movieVolumeSlider.TickFrequency = 5;
+            movieVolumeSlider.IsSnapToTickEnabled = true;
+            movieVolumeSlider.TickPlacement = TickPlacement.BottomRight;
+            movieVolumeSlider.Height = 20;
+            movieVolumeSlider.Minimum = 0;
+            movieVolumeSlider.Maximum = 100;
+            movieVolumeSlider.Margin = new(3, 3, 3, 3);
 
             row++;
 
