@@ -747,45 +747,20 @@ public class FieldMap : HonoBehavior
                     CamPositionX = (float)((bgCamera.w - mapWidth) / 2);
                 }
             }
-            if (map == 456 || map == 505 || map == 1153) // scenes extended left or right despite scrolling sky
-            {
-                switch (map) // offsets for scrolling maps stretched to WS
-                {
-                    case 456: // Dali Mountain/Summit
-                        CamPositionX = 160;
-                        break;
-                    case 505: // Cargo ship offset
-                        CamPositionX = 105;
-                        break;
-                    case 1153: // Rose Rouge cockpit offset
-                        CamPositionX = 175;
-                        break;
-                    default:
-                        break;
-                }
-                if (Configuration.Graphics.ScreenIs16to10())
-                {
-                    switch (map) // offsets for scrolling maps stretched to WS
-                    {
-                        case 456: // Dali Mountain/Summit
-                            CamPositionX = CamPositionX + 35;
-                            break;
-                        case 505: // Cargo ship offset
-                            CamPositionX = CamPositionX - 35;
-                            break;
-                        case 1153: // Rose Rouge cockpit offset
-                            CamPositionX = CamPositionX - 35;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-            if (map == 2716)
-            {
-                CamPositionY = (float)Math.Min(0, CamPositionY);
-            }
             
+            switch (map) // offsets for scrolling maps stretched to WS
+            {
+                case 456: // Dali Mountain/Summit
+                    CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 195 : 160; break;
+                case 505: // Cargo ship offset
+                    CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 70 : 105; break;
+                case 1153: // Rose Rouge cockpit offset
+                    CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 140 : 175; break;
+                case 2716: // fix for Kuja descending camera too high
+                    CamPositionY = (float)Math.Min(0, CamPositionY); break;
+                default:
+                    break;
+            }
         }
 
         if (SmoothCamActive)
