@@ -16,7 +16,7 @@
 * Explanation on settings when hovering
 * New Launcher options: MovieVolume, Anti-Aliasing, PSX font, fast battle intro, FPS for each part, Moguri soundtrack/FMV, Camera smoothness, battle speed, menu skip
 * Better list of resolutions
-* Launcher Brazilian-pr translation
+* Launcher Brazilian-pr translation (Thanks to Felipefpl)
 * Version date on window title
 * New In-game sliders: ATB, volume
 * New ini Option: menu rows https://github.com/Albeoris/Memoria/commit/cfc7ccebf17d06aaba47e3d504ca4822c8b6d156#comments
