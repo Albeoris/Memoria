@@ -36,8 +36,8 @@ public static class AssetManager
 	{
         Version assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
         DateTime assemblyDate = new DateTime(2000, 1, 1).AddDays(assemblyVersion.Build).AddSeconds(assemblyVersion.Revision * 2);
-        Log.Message($"[Initialisation] Memoria version: {assemblyDate.ToString("yyyy-MM-dd")}");
-        Log.Message($"[Initialisation] OS version: {Environment.OSVersion}");
+        Log.Message($"[Initialization] Memoria version: {assemblyDate.ToString("yyyy-MM-dd")}");
+        Log.Message($"[Initialization] OS version: {Environment.OSVersion}");
 
         AssetManager.IsFullyInitialized = false;
 		Array moduleList = Enum.GetValues(typeof(AssetManagerUtil.ModuleBundle));
