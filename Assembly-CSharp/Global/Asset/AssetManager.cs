@@ -9,6 +9,7 @@ using Memoria.Prime;
 using Memoria.Prime.CSV;
 using Memoria.Assets;
 using Object = System.Object;
+using System.Reflection;
 
 public static class AssetManager
 {
@@ -33,7 +34,12 @@ public static class AssetManager
 
 	static AssetManager()
 	{
-		AssetManager.IsFullyInitialized = false;
+        Version assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+        DateTime assemblyDate = new DateTime(2000, 1, 1).AddDays(assemblyVersion.Build).AddSeconds(assemblyVersion.Revision * 2);
+        Log.Message($"[Initialisation] Memoria version: {assemblyDate.ToString("yyyy-MM-dd")}");
+        Log.Message($"[Initialisation] OS version: {Environment.OSVersion}");
+
+        AssetManager.IsFullyInitialized = false;
 		Array moduleList = Enum.GetValues(typeof(AssetManagerUtil.ModuleBundle));
 		String[] foldname = new String[Configuration.Mod.FolderNames.Length + 1];
 		String path;
