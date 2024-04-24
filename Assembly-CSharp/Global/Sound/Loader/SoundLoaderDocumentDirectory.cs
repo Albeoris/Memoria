@@ -43,7 +43,7 @@ internal class SoundLoaderDocumentDirectory : ISoundLoader
 		Byte[] source = File.ReadAllBytes(text);
 		IntPtr intPtr = Marshal.AllocHGlobal((Int32)fileInfo.Length);
 		Marshal.Copy(source, 0, intPtr, (Int32)fileInfo.Length);
-		Int32 bankID = ISdLibAPIProxy.Instance.SdSoundSystem_AddData(intPtr);
+		Int32 bankID = ISdLibAPIProxy.Instance.SdSoundSystem_AddData(intPtr, profile);
 		profile.AkbBin = intPtr;
 		profile.BankID = bankID;
 		callback(profile, soundDatabase);

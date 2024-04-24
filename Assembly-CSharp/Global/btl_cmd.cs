@@ -35,16 +35,16 @@ using NCalc;
 public class btl_cmd
 {
     /* Notes on commands:
-	Each BTL_DATA has 6 potential commands at the same time.
-	Only the first 3 are initialized for enemies by default (btl_cmd.InitCommand).
-	With Memoria: the 6 commands are all used even for enemies (the last 3 are used for btl_scrp.SetCharacterData(id == 114)).
-	btl.cmd[0] -> normal commands (including berserk/confuse)
-	btl.cmd[1] -> counter-attacks
-	btl.cmd[2] -> reserved for death/stone animation (cmd_no == 60/62, sub_no == 0)
-	btl.cmd[3] -> first cast of a double-cast command or Spear (saved duplicate) or Eidolon phantom
-	btl.cmd[4] -> reserved for trance animation (cmd_no == 59, sub_no == 0)
-	btl.cmd[5] -> reserved for reraise animation (cmd_no == 61, sub_no == 0)
-	*/
+    Each BTL_DATA has 6 potential commands at the same time.
+    Only the first 3 are initialized for enemies by default (btl_cmd.InitCommand).
+    With Memoria: the 6 commands are all used even for enemies (the last 3 are used for btl_scrp.SetCharacterData(id == 114)).
+    btl.cmd[0] -> normal commands (including berserk/confuse)
+    btl.cmd[1] -> counter-attacks
+    btl.cmd[2] -> reserved for death/stone animation (cmd_no == 60/62, sub_no == 0)
+    btl.cmd[3] -> first cast of a double-cast command or Spear (saved duplicate) or Eidolon phantom
+    btl.cmd[4] -> reserved for trance animation (cmd_no == 59, sub_no == 0)
+    btl.cmd[5] -> reserved for reraise animation (cmd_no == 61, sub_no == 0)
+    */
     public btl_cmd()
     {
     }
@@ -289,7 +289,7 @@ public class btl_cmd
     }
 
     public static UInt16 GetRandomTargetForCommand(BTL_DATA caster, BattleCommandId commandId, Int32 subNo)
-	{
+    {
         CMD_DATA testCmd = new CMD_DATA
         {
             regist = caster,
@@ -695,6 +695,10 @@ public class btl_cmd
                             if (btl_stat.CheckStatus(caster, BattleStatus.Berserk))
                                 BattleVoice.TriggerOnStatusChange(caster, "Used", BattleStatus.Berserk);
                         }
+                        else if (cmd.cmd_no == BattleCommandId.JumpAttack || cmd.cmd_no == BattleCommandId.JumpTrance)
+                        {
+                            BattleVoice.TriggerOnStatusChange(caster, "Used", BattleStatus.Jump);
+                        }
                         BattleVoice.TriggerOnBattleAct(caster, "CommandPerform", cmd);
                     }
                     btl_vfx.SelectCommandVfx(cmd);
@@ -846,7 +850,7 @@ public class btl_cmd
         cmdData.info.stat = 0;
         cmdData.info.priority = 0;
         if (escape_check && cmdData.cmd_no == BattleCommandId.SysEscape)
-            FF9StateSystem.Battle.FF9Battle.cmd_status &= 65534;
+            FF9StateSystem.Battle.FF9Battle.cmd_status &= 0xFFFE;
     }
 
     public static Boolean CheckSpecificCommand(BTL_DATA btl, BattleCommandId cmd_no)
@@ -1110,7 +1114,7 @@ public class btl_cmd
                 {
                     BattleMesages tranceMessage = BattleMesages.Trance;
                     if (caster.IsUnderPermanentStatus(BattleStatus.Trance))
-					{
+                    {
                         tranceMessage = BattleMesages.PermanentTrance;
                         String permTrance = FF9TextTool.BattleFollowText((Int32)tranceMessage + 7);
                         if (String.IsNullOrEmpty(permTrance) || permTrance.Length <= 1)
@@ -1203,7 +1207,7 @@ public class btl_cmd
             else
                 cp = ncp;
         }
-        btlsys.cmd_status &= 65523;
+        btlsys.cmd_status &= 0xFFF3;
         btlsys.phantom_no = BattleAbilityId.Void;
         btlsys.phantom_cnt = 0;
     }
@@ -1214,7 +1218,7 @@ public class btl_cmd
             return;
         FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
         KillSpecificCommand(btl, BattleCommandId.SysPhantom);
-        stateBattleSystem.cmd_status &= 65523;
+        stateBattleSystem.cmd_status &= 0xFFF3;
         stateBattleSystem.phantom_no = BattleAbilityId.Void;
         stateBattleSystem.phantom_cnt = 0;
     }
@@ -1348,7 +1352,7 @@ public class btl_cmd
             else if (commandId == BattleCommandId.JumpAttack)
             {
                 caster.RemoveStatus(BattleStatus.Jump);
-                FF9StateSystem.Battle.FF9Battle.cmd_status &= 65519;
+                FF9StateSystem.Battle.FF9Battle.cmd_status &= 0xFFEF;
             }
             else if (commandId == BattleCommandId.JumpTrance)
             {
@@ -1362,7 +1366,7 @@ public class btl_cmd
                     caster.Data.tar_mode = 2;
                     caster.Data.SetDisappear(true, 2);
                 }
-                FF9StateSystem.Battle.FF9Battle.cmd_status &= 65519;
+                FF9StateSystem.Battle.FF9Battle.cmd_status &= 0xFFEF;
             }
 
             if (IsNeedToDecreaseTrance(caster, commandId, cmd))
@@ -1398,7 +1402,7 @@ public class btl_cmd
                         caster.RemoveStatus(BattleStatus.Trance);
                 }
                 else
-				{
+                {
                     if (caster.Trance - tranceDelta < Byte.MaxValue)
                         caster.Trance += (Byte)(-tranceDelta);
                     else
@@ -1414,7 +1418,7 @@ public class btl_cmd
         }
         else if (cmd.cmd_no == BattleCommandId.SysPhantom)
         {
-            btlsys.cmd_status &= 65527;
+            btlsys.cmd_status &= 0xFFF7;
             btlsys.phantom_cnt = GetPhantomCount(caster);
         }
         else if (cmd.cmd_no < BattleCommandId.EnemyCounter && CheckUsingCommand(caster.Data.cmd[0]))

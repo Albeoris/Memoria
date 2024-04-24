@@ -27,6 +27,8 @@ namespace Memoria
 
             public static Boolean PriorityToOGG => Instance._audio.PriorityToOGG;
 
+            public static Int32 Backend => Instance._audio.Backend;
+
             public static void SaveSoundVolume()
             {
                 SaveValue(Instance._audio.Name, Instance._audio.SoundVolume);

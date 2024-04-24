@@ -134,9 +134,11 @@ namespace Memoria.Prime.Ini
                             vs.Value = ModFolders;
                         }
                     }
+                ResetDisabledSections();
             }
             finally
             {
+                ResetDisabledSections();
                 FlushSection();
                 _sections = null;
                 _values = null;
@@ -271,11 +273,17 @@ namespace Memoria.Prime.Ini
         {
             if (_currentSection != null && _currentSectionBinding != null)
             {
-                if (!_currentSection.Enabled.Value)
-                    _currentSection.Reset();
-
                 _currentSectionBinding.UpdateSection(_currentSection);
                 _sectionsRead[_currentSection.Name] = _currentSection;
+            }
+        }
+
+        private void ResetDisabledSections()
+        {
+            foreach (var section in _sectionsRead.Values)
+            {
+                if (!section.Enabled.Value)
+                    section.Reset();
             }
         }
     }
