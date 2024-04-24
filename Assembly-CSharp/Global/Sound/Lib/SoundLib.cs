@@ -21,10 +21,14 @@ public class SoundLib : MonoBehaviour
 		Int32 movieSoundIndex = SoundLib.GetMovieSoundIndex(movieName);
 		if (movieSoundIndex != -1)
 		{
-			//if (movieName == "FMV000")
-            //    SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
-			//else
-            SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
+			if (movieName == "FMV000")
+			{
+				SoundLib.MusicPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
+			}
+			else
+			{
+				SoundLib.MovieAudioPlayer.PlayMusic(movieSoundIndex, offsetTimeMSec, SoundProfileType.MovieAudio);
+			}
 		}
 		else
 		{
@@ -150,9 +154,7 @@ public class SoundLib : MonoBehaviour
 		}
 		else if (String.Equals(movieName, "FMV000"))
 		{
-			Int32 ticks = 90;
-			Int32 fadeOut = AllSoundDispatchPlayer.ConvertTickToMillisec(ticks);
-			SoundLib.MovieAudioPlayer.StopMusic(fadeOut);
+			SoundLib.MusicPlayer.StopMusic(AllSoundDispatchPlayer.MINIMUM_SONG_FADE_MS);
 		}
 		else
 		{
