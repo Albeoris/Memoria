@@ -6,3 +6,4 @@ ATBModeNormal,ATB: Normal,ATB: Normal,ATBモード: 通常,ATB: Normal,ATB : Nor
 ATBModeFast,ATB: Fast,ATB: Fast,ATBモード: 高速,ATB: Rápido,ATB : Rapide,ATB: Schneller,ATB: Veloce
 ATBModeTurnBased,ATB: Turn-Based,ATB: Turn-Based,ATBモード: ターン制,ATB: Por Turnos,ATB : Par Tour,ATB: Turn,ATB: A Turni
 ATBModeDynamic,ATB: Dynamic,ATB: Dynamic,ATBモード: 動的,ATB: Dinámico,ATB: Dynamique,ATB: Dynamischer,ATB: Dinamica
+AutoText,Auto Text,Auto Text,自動テキスト,Texto Automático,Texte Automatique,Autotext,Testo Automatico
