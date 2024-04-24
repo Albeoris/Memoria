@@ -934,7 +934,7 @@ public class JsonParser : ISharedDataParser
 		Int32 itemCount = oldSaveFormat ? 256 : data.item.Count;
 		for (Int32 i = 0; i < itemCount; i++)
 		{
-			if (i < data.item.Count)
+			if (i < data.item.Count && (!oldSaveFormat || (Int32)data.item[i].id < 256))
 			{
 				dataItemClass.Add(new JSONClass
 				{
