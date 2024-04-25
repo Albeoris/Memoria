@@ -181,7 +181,7 @@ public class BattleSPSSystem : MonoBehaviour
 
 	private Boolean _loadSPSTexture()
 	{
-		for (Int32 i = 0; i < BattleSPSSystem.statusTextures.Length; i++)
+		for (Int32 i = 0; i < statusTextures.Count; i++)
 		{
 			BattleSPSSystem.SPSTexture spstexture = BattleSPSSystem.statusTextures[i];
 			for (Int32 j = 0; j < spstexture.textures.Length; j++)
