@@ -707,6 +707,10 @@ public static class btl_stat
                 if (data.weapon_geo)
                     GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
             }
+            else
+            {
+                SetDefaultShader(data);
+            }
         }
         else if (CheckStatus(data, BattleStatus.Petrify))
         {
