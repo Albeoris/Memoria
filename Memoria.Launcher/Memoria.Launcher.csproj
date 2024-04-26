@@ -139,6 +139,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Languages\it.xml" />
     <EmbeddedResource Include="Languages\jp.xml" />
     <EmbeddedResource Include="Languages\fr.xml" />
     <EmbeddedResource Include="Languages\de.xml" />
