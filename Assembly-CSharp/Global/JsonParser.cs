@@ -1213,10 +1213,13 @@ public class JsonParser : ISharedDataParser
 					player.info.menu_type = (CharacterPresetId)playerInfoClass["menu_type"].AsInt;
 				if (playerClass["status"] != null)
 					player.status = (BattleStatus)playerClass["status"].AsInt;
-				if (playerClass["equip"] != null)
-					for (Int32 j = 0; j < playerClass["equip"].Count && j < CharacterEquipment.Length; j++)
-						player.equip[j] = (RegularItem)playerClass["equip"][j].AsInt;
-				JSONClass playerBonusClass = playerClass["bonus"].AsObject;
+                if (playerClass["equip"] != null)
+                    for (Int32 j = 0; j < playerClass["equip"].Count && j < CharacterEquipment.Length; j++)
+                        if (ff9item._FF9Item_Data.ContainsKey((RegularItem)playerClass["equip"][j].AsInt)) // Check if player has custom item equipped otherwise delete it
+                            player.equip[j] = (RegularItem)playerClass["equip"][j].AsInt;
+                        else
+                            player.equip[j] = RegularItem.NoItem;
+                JSONClass playerBonusClass = playerClass["bonus"].AsObject;
 				if (playerBonusClass["dex"] != null)
 					player.bonus.dex = (UInt16)playerBonusClass["dex"].AsInt;
 				if (playerBonusClass["str"] != null)
@@ -1262,12 +1265,13 @@ public class JsonParser : ISharedDataParser
 							if ((player.sa[j >> 5] & (1u << j)) != 0u)
 								player.saExtended.Add((SupportAbility)j);
 					}
-					else if (playerClass["sa_extended"] != null)
-					{
-						for (Int32 j = 0; j < playerClass["sa_extended"].Count; j++)
-							ff9abil.FF9Abil_SetEnableSA(player, (SupportAbility)playerClass["sa_extended"][j].AsInt, true);
-					}
-				}
+                    else if (playerClass["sa_extended"] != null)
+                    {
+                        for (Int32 j = 0; j < playerClass["sa_extended"].Count; j++)
+                            if (ff9abil.FF9Abil_GetIndex(player, playerClass["sa_extended"][j].AsInt) > 0) // Disable SA custom if activated on player
+                                ff9abil.FF9Abil_SetEnableSA(player, (SupportAbility)playerClass["sa_extended"][j].AsInt, true);
+                    }
+                }
 				if (playerBonusClass["maxHpLimit"] != null)
 					player.maxHpLimit = playerBonusClass["maxHpLimit"].AsUInt;
 				if (playerBonusClass["maxMpLimit"] != null)
