@@ -132,7 +132,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Languages\fr.xml" />
     <None Include="app.config" />
     <EmbeddedResource Include="Ini\Memoria.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -140,7 +139,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Languages\it.xml" />
+    <EmbeddedResource Include="Languages\jp.xml" />
+    <EmbeddedResource Include="Languages\fr.xml" />
+    <EmbeddedResource Include="Languages\de.xml" />
+    <EmbeddedResource Include="Languages\es.xml" />
     <EmbeddedResource Include="Languages\pt-BR.xml" />
+    <EmbeddedResource Include="Languages\en.xml" />
+    <EmbeddedResource Include="Languages\ru.xml" />
     <Resource Include="Images\btnActivateAllimg.png" />
     <Resource Include="Images\btnCancelimg.png" />
     <Resource Include="Images\btnCheckCompatibilityimg.png" />
@@ -152,8 +158,6 @@
     <None Include="Catalogs\MemoriaCatalog.xml" />
     <Content Include="ff9.ico" />
     <Resource Include="Images\new_launcher_bg.png" />
-    <EmbeddedResource Include="Languages\en.xml" />
-    <EmbeddedResource Include="Languages\ru.xml" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
