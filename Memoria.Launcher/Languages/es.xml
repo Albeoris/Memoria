@@ -207,7 +207,7 @@
 
 	</InfoProvider>
 	<Dockable>
-		<DataSources Header = "Data Sources" />
+		<DataSources Header = "Fuentes de Datos" />
 
 		<GameFileCommander
 		Header = "Recursos del juego"
