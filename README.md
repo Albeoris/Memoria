@@ -75,8 +75,9 @@
 
 ## Build & Contribute
 - Use Visual Studio Community (2019 or above). Install .NET dev tools when prompted.
+- Install [.NET Framework 4.7.2 SDK](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks?cid=getdotnetsdk).
+  - .NET Framework 3.5 SP1 SDK is available as a component of [Visual Studio](https://visualstudio.microsoft.com/downloads). See next step.
 - In Visual Studio, install ".NET Framework 3.5 Development Tools" & "Visual Studio Tools for Unity" (in Tools > Get Tools and Functionalities > Individual Components <>)
-- Install [.NET Framework 3.5 SP1 and 4.6.2](https://dotnet.microsoft.com/en-us/download/visual-studio-sdks?cid=getdotnetsdk).
 - Make a fork of the project and download it locally.
 - Open Powershell as administrator and execute `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine`
 - Change directory to your Memoria Fork download location and run powershell script `.\SetupProjectEnvironment.ps1`

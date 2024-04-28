@@ -1,0 +1,8 @@
+<Project>
+    <PropertyGroup>
+        <LangVersion>latest</LangVersion>
+        <EnableDefaultItems>false</EnableDefaultItems>
+        <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+        <Prefer32Bit>false</Prefer32Bit>
+    </PropertyGroup>
+</Project>
