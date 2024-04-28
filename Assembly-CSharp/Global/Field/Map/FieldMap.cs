@@ -478,6 +478,7 @@ public class FieldMap : HonoBehavior
     }
     public static readonly HashSet<Int32> SmoothCamExcludeMaps = new HashSet<Int32>()
     {
+        51,   // Candles fire moving away from candles
         575,  // Hunting festival
         767,  // Burmecia, the queen slides from her layer
         1754, // Fast scroll on Iifa platform buggy
@@ -1462,6 +1463,7 @@ public class FieldMap : HonoBehavior
     public static readonly Int32[][] FixDepthOfLayer =
     {
         // [mapNo,camIdx,ovrNdx,Z],
+        [51,1,20,600], // Kidnap scene, candle light
         [403,0,23,560], // Dali underground wall over box
         [403,0,27,1523], // Dali underground barrel
         [951,0,2,1214], // Gargan Roo's railing
