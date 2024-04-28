@@ -91,6 +91,20 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 </Mod>
 
 <Mod>
+	<Name>Switch Buttons</Name>
+	<Version>1.0</Version>
+	<InstallationPath>SwitchButtons</InstallationPath>
+	<ReleaseDate>28 April 2024</ReleaseDate>
+	<Author>SamsamTS</Author>
+	<Description>Replace Xbox buttons with the Nintendo Switch buttons.</Description>
+	<Category>Visual</Category>
+	<Website>https://github.com/SamsamTS/FF9-SwitchButtons/</Website>
+	<DownloadUrl>https://github.com/SamsamTS/FF9-SwitchButtons/releases/download/Main/SwitchButtons.zip</DownloadUrl>
+	<PreviewFileUrl>https://raw.githubusercontent.com/SamsamTS/FF9-SwitchButtons/main/PreviewImage.jpg</PreviewFileUrl>
+	<PreviewFile>PreviewImage.jpg</PreviewFile>
+</Mod>
+
+<Mod>
 	<Name>No Cutscene</Name>
 	<Version>0.5</Version>
 	<InstallationPath>NoCutsceneMemoria</InstallationPath>
