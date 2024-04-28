@@ -1268,8 +1268,11 @@ public class JsonParser : ISharedDataParser
                     else if (playerClass["sa_extended"] != null)
                     {
                         for (Int32 j = 0; j < playerClass["sa_extended"].Count; j++)
-                            if (ff9abil.FF9Abil_GetIndex(player, playerClass["sa_extended"][j].AsInt) > 0)
+                        {
+                            int id = ff9abil.GetAbilityIdFromSupportAbility((SupportAbility)playerClass["sa_extended"][j].AsInt);
+                            if (ff9abil.FF9Abil_GetIndex(player, id) > 0)
                                 ff9abil.FF9Abil_SetEnableSA(player, (SupportAbility)playerClass["sa_extended"][j].AsInt, true);
+                        }
                     }
                 }
 				if (playerBonusClass["maxHpLimit"] != null)
