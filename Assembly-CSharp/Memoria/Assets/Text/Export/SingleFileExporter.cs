@@ -7,7 +7,7 @@ namespace Memoria.Assets
     public abstract class SingleFileExporter : IExporter
     {
         protected abstract String TypeName { get; }
-        protected abstract String ExportPath { get; }
+        protected abstract TextResourcePath ExportPath { get; }
 
         protected abstract TxtEntry[] PrepareEntries();
 
@@ -15,8 +15,8 @@ namespace Memoria.Assets
         {
             try
             {
-                String exportPath = ExportPath;
-                if (File.Exists(exportPath))
+                TextResourcePath exportPath = ExportPath;
+                if (File.Exists(exportPath.Value))
                 {
                     Log.Warning($"[{TypeName}] Export was skipped bacause a file already exists: [{exportPath}].");
                     return;
@@ -24,10 +24,10 @@ namespace Memoria.Assets
 
                 Log.Message($"[{TypeName}] Exporting...");
 
-                TxtEntry[] abilities = PrepareEntries();
+                TxtEntry[] entries = PrepareEntries();
 
-                FileCommander.PrepareFileDirectory(exportPath);
-                TxtWriter.WriteStrings(exportPath, abilities);
+                FileCommander.PrepareFileDirectory(exportPath.Value);
+                exportPath.WriteAll(entries);
 
                 Log.Message($"[{TypeName}] Exporting completed successfully.");
             }

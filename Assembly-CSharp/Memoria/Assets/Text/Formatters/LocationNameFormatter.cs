@@ -36,7 +36,7 @@ namespace Memoria.Assets
         {
             if (parts.Length > 1)
             {
-                TxtEntry entry = new TxtEntry {Prefix = Prefix, Index = index, Value = parts[1]};
+                TxtEntry entry = new TxtEntry { Prefix = Prefix, Index = index, Value = parts[1] };
                 list.AddLast(entry);
             }
             else
@@ -55,7 +55,7 @@ namespace Memoria.Assets
             list = new LinkedList<TxtEntry>();
             dic.Add(fileName, list);
 
-            TxtEntry entry = new TxtEntry {Prefix = RootPrefix, Index = dic.Count, Value = fileName};
+            TxtEntry entry = new TxtEntry { Prefix = RootPrefix, Index = dic.Count, Value = fileName };
             list.AddLast(entry);
             return list;
         }
@@ -88,10 +88,16 @@ namespace Memoria.Assets
             }
             else
             {
-                TxtEntry firstEntry = entries[0];
-                locationNames[firstEntry.Index] = firstEntry.Value;
+                /*
+                 * {
+                        "$locationHeader0055": "Burmecia", => not used
+                        "$location0750": "Gate",           => 750 : Burmecia/Gate
+                        "$location0751": "Suburb",         => 751 : Burmecia/Suburb
+                    }
+                 */
+                TxtEntry header = entries[0];
 
-                String prefix = firstEntry.Value + '/';
+                String prefix = header.Value + '/';
                 for (Int32 i = 1; i < entries.Length; i++)
                 {
                     TxtEntry entry = entries[i];

@@ -185,16 +185,16 @@ namespace Memoria.Assets
                 if (!languageDic.TryGetValue(SymbolKey, out String symbol))
                     continue;
 
-                String importPath = ModTextResources.Import.GetSymbolPath(symbol, ModTextResources.SystemPath);
-                if (!File.Exists(importPath))
+                TextResourceReference importReference = ModTextResources.Import.GetSymbolPath(symbol, ModTextResources.SystemReference);
+                if (!importReference.IsExists(out TextResourcePath path))
                 {
-                    Log.Warning($"[LocalizationDictionary] Loading was skipped because a file does not exists: [{importPath}]...");
+                    Log.Warning($"[LocalizationDictionary] Loading was skipped because a file does not exists: [{importReference}]...");
                     return;
                 }
 
-                Log.Message($"[LocalizationDictionary] Loading from [{importPath}]...");
+                Log.Message($"[LocalizationDictionary] Loading from [{importReference}]...");
 
-                TxtEntry[] entries = TxtReader.ReadStrings(importPath);
+                TxtEntry[] entries = path.ReadAll();
                 foreach (TxtEntry entry in entries)
                 {
                     if (entry == null)

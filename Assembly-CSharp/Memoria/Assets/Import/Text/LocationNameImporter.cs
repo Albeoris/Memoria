@@ -27,7 +27,8 @@ namespace Memoria.Assets
                 Dictionary<Int32, String> locationNames = FF9TextTool.LocationNames;
                 foreach (String filePath in Directory.GetFiles(importDirectory, "Names of *", SearchOption.TopDirectoryOnly))
                 {
-                    TxtEntry[] entries = TxtReader.ReadStrings(filePath);
+                    TextResourcePath existingFile = TextResourcePath.ForImportExistingFile(filePath);
+                    TxtEntry[] entries = existingFile.ReadAll();
                     LocationNameFormatter.Fill(filePath, entries, locationNames);
                 }
 

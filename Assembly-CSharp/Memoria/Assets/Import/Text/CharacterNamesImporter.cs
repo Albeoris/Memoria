@@ -8,7 +8,7 @@ namespace Memoria.Assets
     public class CharacterNamesImporter : SingleFileImporter
     {
         protected override String TypeName => nameof(CharacterNamesImporter);
-        protected override String ImportPath => ModTextResources.Import.CharacterNames;
+        protected override TextResourceReference ImportPath => ModTextResources.Import.CharacterNames;
 
         protected override void ProcessEntries(TxtEntry[] entreis)
         {

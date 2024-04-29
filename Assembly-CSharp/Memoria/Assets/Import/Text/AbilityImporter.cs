@@ -7,7 +7,7 @@ namespace Memoria.Assets
     public class AbilityImporter : SingleFileImporter
     {
         protected override String TypeName => nameof(AbilityImporter);
-        protected override String ImportPath => ModTextResources.Import.Abilities;
+        protected override TextResourceReference ImportPath => ModTextResources.Import.Abilities;
 
         protected override void ProcessEntries(TxtEntry[] entreis)
         {
