@@ -476,26 +476,6 @@ public class FieldMap : HonoBehavior
         FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
         if (dbug) Log.Message("_ LoadFieldMap | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
     }
-    public static readonly HashSet<Int32> SmoothCamExcludeMaps = new HashSet<Int32>()
-    {
-        51,   // Candles fire moving away from candles
-        575,  // Hunting festival
-        767,  // Burmecia, the queen slides from her layer
-        1754, // Fast scroll on Iifa platform buggy
-        3000, // ending
-        3001,
-        3002,
-        3003,
-        3004,
-        3005,
-        3006,
-        3007,
-        3008,
-        3009,
-        3010,
-        3011,
-        3012,
-    };
 
     public void ActivateCamera()
     {
@@ -1460,24 +1440,6 @@ public class FieldMap : HonoBehavior
         }
     }
 
-    public static readonly Int32[][] FixDepthOfLayer =
-    {
-        // [mapNo,camIdx,ovrNdx,Z],
-        [51,1,20,600], // Kidnap scene, candle light
-        [403,0,23,560], // Dali underground wall over box
-        [403,0,27,1523], // Dali underground barrel
-        [951,0,2,1214], // Gargan Roo's railing
-        [1000,0,12,0], // Clayra's Trunk text (in English version)
-        [1406,0,20,2600], // Water layer masking actual water waves
-        [1418,0,10,500], // Light in mine
-        [1652,1,5,911], // Iifa platform
-        [1656,0,3,998], // Iifa statue glow (was not active on PSX)
-        [2922,0,8,4329], // Crystal world (was not active on PSX)
-        [2922,0,10,3179], // Crystal world (was not active on PSX)
-        [2922,0,11,3179], // Crystal world (was not active on PSX)
-        [2922,0,12,6080], // Crystal world (was not active on PSX)
-    };
-
     public void EBG_scene2DScroll(Int16 destX, Int16 destY, UInt16 frameCount, UInt32 scrollType)
     {
         if (!IsActive)
@@ -2342,4 +2304,43 @@ public class FieldMap : HonoBehavior
     private Int16 SmoothCamDelay;
     private Vector2 SmoothCamDelta;
     private Boolean SmoothCamActive;
+
+    public static readonly Int32[][] FixDepthOfLayer =
+    {
+        // [mapNo,camIdx,ovrNdx,Z],
+        [51,1,20,600], // Kidnap scene, candle light
+        [403,0,23,560], // Dali underground wall over box
+        [403,0,27,1523], // Dali underground barrel
+        [951,0,2,1214], // Gargan Roo's railing
+        [1000,0,12,0], // Clayra's Trunk text (in English version)
+        [1406,0,20,2600], // Water layer masking actual water waves
+        [1418,0,10,500], // Light in mine
+        [1652,1,5,911], // Iifa platform
+        [1656,0,3,998], // Iifa statue glow (was not active on PSX)
+        [2922,0,8,4329], // Crystal world (was not active on PSX)
+        [2922,0,10,3179], // Crystal world (was not active on PSX)
+        [2922,0,11,3179], // Crystal world (was not active on PSX)
+        [2922,0,12,6080], // Crystal world (was not active on PSX)
+    };
+
+    public static readonly HashSet<Int32> SmoothCamExcludeMaps = new HashSet<Int32>()
+    {
+        51,   // Candles fire moving away from candles
+        575,  // Hunting festival
+        767,  // Burmecia, the queen slides from her layer
+        1754, // Fast scroll on Iifa platform buggy
+        3000, // ending
+        3001,
+        3002,
+        3003,
+        3004,
+        3005,
+        3006,
+        3007,
+        3008,
+        3009,
+        3010,
+        3011,
+        3012,
+    };
 }
