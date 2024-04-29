@@ -18,7 +18,6 @@ namespace Memoria.Assets
         public static String[] ExtractSentenseEnd(String text)
         {
             String[] split = text.Split(DELIM, StringSplitOptions.None);
-            int oldsize = split.Length;
             if (split.Length > 0 && text.EndsWith(DELIM[0]))
                 Array.Resize(ref split, split.Length - 1);
             return split;

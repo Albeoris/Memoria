@@ -1,3 +1,4 @@
+using Memoria.Assets;
 using System;
 using Memoria.Prime.Ini;
 
@@ -12,6 +13,7 @@ namespace Memoria
             public readonly IniValue<String> Path;
             public readonly IniArray<String> Languages;
             public readonly IniValue<Boolean> Text;
+            public readonly IniValue<String> TextFileFormat;
             public readonly IniValue<Boolean> Graphics;
             public readonly IniValue<Boolean> Audio;
             public readonly IniValue<Boolean> Field;
@@ -22,6 +24,7 @@ namespace Memoria
                 Path = BindPath(nameof(Path), "%StreamingAssets%");
                 Languages = BindStringArray(nameof(Languages), DefaultLanguages);
                 Text = BindBoolean(nameof(Text), false);
+                TextFileFormat = BindString(nameof(TextFileFormat), TextResourceFormat.Strings.GetFileExtension());
                 Graphics = BindBoolean(nameof(Graphics), false);
                 Audio = BindBoolean(nameof(Audio), false);
                 Field = BindBoolean(nameof(Field), false);

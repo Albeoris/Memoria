@@ -7,7 +7,7 @@ namespace Memoria.Assets
         private const String Prefix = "$command";
 
         protected override String TypeName => nameof(CommandExporter);
-        protected override String ExportPath => ModTextResources.Export.Commands;
+        protected override TextResourcePath ExportPath => ModTextResources.Export.Commands;
 
         protected override TxtEntry[] PrepareEntries()
         {

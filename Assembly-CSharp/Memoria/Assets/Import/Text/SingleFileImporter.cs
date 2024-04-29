@@ -7,15 +7,15 @@ namespace Memoria.Assets
     public abstract class SingleFileImporter : TextImporter
     {
         protected abstract String TypeName { get; }
-        protected abstract String ImportPath { get; }
+        protected abstract TextResourceReference ImportPath { get; }
         protected abstract void ProcessEntries(TxtEntry[] entreis);
 
         protected override Boolean LoadExternal()
         {
             try
             {
-                String importPath = ImportPath;
-                if (!File.Exists(importPath))
+                TextResourceReference importPath = ImportPath;
+                if (!importPath.IsExists(out TextResourcePath existingFile))
                 {
                     Log.Warning($"[{TypeName}] Import was skipped bacause a file does not exist: [{importPath}].");
                     return false;
@@ -23,7 +23,7 @@ namespace Memoria.Assets
 
                 Log.Message($"[{TypeName}] Importing from [{importPath}]...");
 
-                TxtEntry[] entries = TxtReader.ReadStrings(importPath);
+                TxtEntry[] entries = existingFile.ReadAll();
 
                 ProcessEntries(entries);
 

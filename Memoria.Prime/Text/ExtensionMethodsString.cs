@@ -149,7 +149,7 @@ namespace Memoria.Prime.Text
             if (source == null)
                 return null;
 
-            Exceptions.Exceptions.CheckArgumentNullOrEmprty(sufix, nameof(sufix));
+            Exceptions.Exceptions.ThrowIfNullOrEmprty(sufix, nameof(sufix));
 
             Int32 sourceLength = source.Length;
             Int32 sufixLength = sufix.Length;

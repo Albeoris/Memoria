@@ -24,7 +24,7 @@ namespace Memoria.Prime.Exceptions
             return arg;
         }
 
-        public static String CheckArgumentNullOrEmprty(String arg, String name)
+        public static String ThrowIfNullOrEmprty(String arg, String name)
         {
             if (ReferenceEquals(arg, null))
                 throw new ArgumentNullException(name);
@@ -34,7 +34,7 @@ namespace Memoria.Prime.Exceptions
             return arg;
         }
 
-        public static T CheckArgumentNullOrEmprty<T>(T arg, String name) where T : IList
+        public static T ThrowIfNullOrEmprty<T>(T arg, String name) where T : IList
         {
             if (ReferenceEquals(arg, null))
                 throw new ArgumentNullException(name);
@@ -43,10 +43,18 @@ namespace Memoria.Prime.Exceptions
 
             return arg;
         }
+        
+        public static T ThrowIfDefault<T>(T arg, String name)
+        {
+            if (Equals(arg, default(T)))
+                throw new ArgumentException(name);
+
+            return arg;
+        }
 
         public static String CheckFileNotFoundException(String fullName)
         {
-            CheckArgumentNullOrEmprty(fullName, "fullName");
+            ThrowIfNullOrEmprty(fullName, "fullName");
             if (!File.Exists(fullName))
                 throw new FileNotFoundException(fullName);
 
@@ -55,7 +63,7 @@ namespace Memoria.Prime.Exceptions
 
         public static String CheckDirectoryNotFoundException(String fullName)
         {
-            CheckArgumentNullOrEmprty(fullName, "fullName");
+            ThrowIfNullOrEmprty(fullName, "fullName");
             if (!Directory.Exists(fullName))
                 throw new DirectoryNotFoundException(fullName);
 

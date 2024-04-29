@@ -7,7 +7,7 @@ namespace Memoria.Assets
         private const String Prefix = "$item";
 
         protected override String TypeName => nameof(ItemExporter);
-        protected override String ExportPath => ModTextResources.Export.Items;
+        protected override TextResourcePath ExportPath => ModTextResources.Export.Items;
 
         protected override TxtEntry[] PrepareEntries()
         {
