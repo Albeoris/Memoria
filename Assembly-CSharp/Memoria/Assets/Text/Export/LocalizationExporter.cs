@@ -7,7 +7,7 @@ namespace Memoria.Assets
     public sealed class LocalizationExporter : SingleFileExporter
     {
         protected override String TypeName => nameof(LocalizationExporter);
-        protected override String ExportPath => ModTextResources.Export.System;
+        protected override TextResourcePath ExportPath => ModTextResources.Export.System;
 
         protected override TxtEntry[] PrepareEntries()
         {

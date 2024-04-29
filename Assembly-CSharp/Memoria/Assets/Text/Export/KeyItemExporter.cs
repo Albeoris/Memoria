@@ -7,7 +7,7 @@ namespace Memoria.Assets
         private const String Prefix = "$key";
 
         protected override String TypeName => nameof(KeyItemExporter);
-        protected override String ExportPath => ModTextResources.Export.KeyItems;
+        protected override TextResourcePath ExportPath => ModTextResources.Export.KeyItems;
 
         protected override TxtEntry[] PrepareEntries()
         {

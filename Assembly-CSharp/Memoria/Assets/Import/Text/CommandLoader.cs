@@ -7,7 +7,7 @@ namespace Memoria.Assets
     public class CommandImporter : SingleFileImporter
     {
         protected override String TypeName => nameof(CommandImporter);
-        protected override String ImportPath => ModTextResources.Import.Commands;
+        protected override TextResourceReference ImportPath => ModTextResources.Import.Commands;
 
         protected override void ProcessEntries(TxtEntry[] entreis)
         {

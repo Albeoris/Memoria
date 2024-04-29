@@ -5,7 +5,7 @@ namespace Memoria.Assets
     public sealed class EtcExporter : SingleFileExporter
     {
         protected override String TypeName { get; }
-        protected override String ExportPath { get; }
+        protected override TextResourcePath ExportPath { get; }
 
         private readonly String _prefix;
         private readonly String _embadedPath;
