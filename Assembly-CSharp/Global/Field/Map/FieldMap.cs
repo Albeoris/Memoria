@@ -2315,6 +2315,7 @@ public class FieldMap : HonoBehavior
         [1000,0,12,0], // Clayra's Trunk text (in English version)
         [1406,0,20,2600], // Water layer masking actual water waves
         [1418,0,10,500], // Light in mine
+        [1502,0,0,1350], // Light in Conde Petite
         [1652,1,5,911], // Iifa platform
         [1656,0,3,998], // Iifa statue glow (was not active on PSX)
         [2922,0,8,4329], // Crystal world (was not active on PSX)

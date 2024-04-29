@@ -219,6 +219,9 @@
     <None Include="StreamingAssets\Assets\Resources\Fieldmaps\fbg_n11_ldbm_map158_lb_plz_0\fbg_n11_ldbm_map158_lb_plz_0.bgs.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Assets\Resources\Fieldmaps\fbg_n28_cdpt_map481_cp_gl1_0\fbg_n28_cdpt_map481_cp_gl1_0.bgs.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StreamingAssets\Assets\Resources\Sounds\Sounds02\SE02\reflect.akb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
