@@ -501,6 +501,15 @@ public class BubbleUI : Singleton<BubbleUI>
 
 	public static readonly Vector3 UIDefaultOffset = new Vector3(0f, 50f, 0f);
 
+    public enum IconType : int
+    {
+        Question = 0,
+        Exclamation = 1,
+        ExclamationAndDuel = 2,
+        Beach = 3,
+        ExclamationAndBeach = 4,
+    }
+    
 	public enum Flag
 	{
 		EXCLAMATION,
