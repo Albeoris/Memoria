@@ -29,8 +29,8 @@ dotnet_style_qualification_for_method = false
 dotnet_style_qualification_for_property = false
 
 # Language keywords vs BCL types preferences
-dotnet_style_predefined_type_for_locals_parameters_members = true
-dotnet_style_predefined_type_for_member_access = true
+dotnet_style_predefined_type_for_locals_parameters_members = false # Int32 value = 1;
+dotnet_style_predefined_type_for_member_access = false # Int32.Parse
 
 # Parentheses preferences
 dotnet_style_parentheses_in_arithmetic_binary_operators = always_for_clarity
