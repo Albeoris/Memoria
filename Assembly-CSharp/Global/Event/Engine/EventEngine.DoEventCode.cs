@@ -1362,11 +1362,11 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.FICON:
             {
-                Int32 type = this.getv1();
-                if ((Int32)FF9StateSystem.Common.FF9.fldMapNo == 2955)
+                BubbleUI.IconType type = (BubbleUI.IconType)this.getv1();
+                if (FF9StateSystem.Common.FF9.fldMapNo == 2955)
                 {
-                    if ((Int32)this.gCur.uid == 24)
-                        EIcon.PollFIcon(2);
+                    if (this.gCur.uid == 24)
+                        EIcon.PollFIcon(BubbleUI.IconType.ExclamationAndDuel);
                     else
                         EIcon.PollFIcon(type);
                 }

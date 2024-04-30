@@ -7,7 +7,7 @@ namespace Memoria.Assets
     public class SkillImporter : SingleFileImporter
     {
         protected override String TypeName => nameof(SkillImporter);
-        protected override String ImportPath => ModTextResources.Import.Skills;
+        protected override TextResourceReference ImportPath => ModTextResources.Import.Skills;
 
         protected override void ProcessEntries(TxtEntry[] entreis)
         {

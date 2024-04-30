@@ -73,7 +73,7 @@ internal class EIcon
 		}
 	}
 
-	public static Int32 SFIconType
+	public static BubbleUI.IconType SFIconType
 	{
 		get
 		{
@@ -92,7 +92,7 @@ internal class EIcon
 		EIcon.HideDelay = 0f;
 	}
 
-	public static void PollFIcon(Int32 type)
+	public static void PollFIcon(BubbleUI.IconType type)
 	{
 		EIcon.lastPollType = EIcon.PollType.EVENT_SCRIPT;
 		EIcon.sFIconPolled = true;
@@ -114,12 +114,12 @@ internal class EIcon
 			Boolean flag2 = instance.GetIP((Int32)targetObject.sid, 8, targetObject.ebData) != instance.nil && 1 < targetObject.level;
 			if (flag && flag2)
 			{
-				EIcon.PollFIcon(2);
+				EIcon.PollFIcon(BubbleUI.IconType.ExclamationAndDuel);
 				result = true;
 			}
 			else if (flag && instance.IsActuallyTalkable(targetObject))
 			{
-				EIcon.PollFIcon(1);
+				EIcon.PollFIcon(BubbleUI.IconType.Exclamation);
 				result = true;
 			}
 		}
@@ -129,9 +129,9 @@ internal class EIcon
 			if (flag)
 			{
 				if (EMinigame.CheckBeachMinigame() && !EventCollision.IsWorldTrigger())
-					EIcon.PollFIcon(4);
+					EIcon.PollFIcon(BubbleUI.IconType.ExclamationAndBeach);
 				else
-					EIcon.PollFIcon(1);
+					EIcon.PollFIcon(BubbleUI.IconType.Exclamation);
 				result = true;
 			}
 		}
@@ -200,20 +200,16 @@ internal class EIcon
 			EIcon.HideBubble();
 		}
 		else if (!EIcon.hereIconShow && instance2.IsActive)
-		{
-			Boolean flag = false;
-			if (EIcon.sFIconType != EIcon.sFIconLastType)
-			{
-				flag = true;
-			}
-			if (flag)
-			{
-				EIcon.HideBubble();
-				EIcon.sFIconPolled = false;
-				EIcon.sFIconLastPolled = EIcon.sFIconPolled;
-			}
-		}
-		EIcon.sFIconLastType = EIcon.sFIconType;
+        {
+            Boolean flag = sFIconType != sFIconLastType;
+            if (flag)
+            {
+                EIcon.HideBubble();
+                EIcon.sFIconPolled = false;
+                EIcon.sFIconLastPolled = EIcon.sFIconPolled;
+            }
+        }
+        EIcon.sFIconLastType = EIcon.sFIconType;
 	}
 
 	private static void ShowBubble()
@@ -295,7 +291,7 @@ internal class EIcon
 	{
 		EIcon.dialogBubble = true;
 		EIcon.dialogAlternativeKey = useAlternativeKey;
-		EIcon.sFIconType = 1;
+		EIcon.sFIconType = BubbleUI.IconType.Exclamation;
 		EIcon.ShowWorldBubble();
 	}
 
@@ -329,37 +325,20 @@ internal class EIcon
 		return actorOffset;
 	}
 
-	public static BubbleUI.Flag[] GetBubbleFlagData(Int32 pollCode)
-	{
-		switch (pollCode)
-		{
-		case 0:
-			return new BubbleUI.Flag[]
-			{
-				BubbleUI.Flag.QUESTION
-			};
-		case 2:
-			return new BubbleUI.Flag[]
-			{
-				BubbleUI.Flag.EXCLAMATION,
-				BubbleUI.Flag.DUEL
-			};
-		case 3:
-			return new BubbleUI.Flag[]
-			{
-				BubbleUI.Flag.BEACH
-			};
-		case 4:
-			return new BubbleUI.Flag[]
-			{
-				BubbleUI.Flag.EXCLAMATION,
-				BubbleUI.Flag.BEACH
-			};
-		}
-		return new BubbleUI.Flag[1];
-	}
+    public static BubbleUI.Flag[] GetBubbleFlagData(BubbleUI.IconType pollCode)
+    {
+        return pollCode switch
+        {
+            BubbleUI.IconType.Question => [BubbleUI.Flag.QUESTION],
+            BubbleUI.IconType.Exclamation => [BubbleUI.Flag.EXCLAMATION],
+            BubbleUI.IconType.ExclamationAndDuel => [BubbleUI.Flag.EXCLAMATION, BubbleUI.Flag.DUEL],
+            BubbleUI.IconType.Beach => [BubbleUI.Flag.BEACH],
+            BubbleUI.IconType.ExclamationAndBeach => [BubbleUI.Flag.EXCLAMATION, BubbleUI.Flag.BEACH],
+            _ => [BubbleUI.Flag.EXCLAMATION]
+        };
+    }
 
-	public static void SetHereIcon(Int32 f)
+    public static void SetHereIcon(Int32 f)
 	{
 		EventEngine instance = PersistenSingleton<EventEngine>.Instance;
 		if (f <= 0 || EventHUD.CurrentHUD == MinigameHUD.ChocoHot)
@@ -504,9 +483,9 @@ internal class EIcon
 
 	private static Boolean sFIconLastPolled;
 
-	private static Int32 sFIconType;
+	private static BubbleUI.IconType sFIconType;
 
-	private static Int32 sFIconLastType;
+	private static BubbleUI.IconType sFIconLastType;
 
 	private static EIcon.PollType lastPollType;
 

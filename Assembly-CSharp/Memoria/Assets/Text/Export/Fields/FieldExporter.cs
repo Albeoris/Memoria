@@ -42,8 +42,8 @@ namespace Memoria.Assets
                     TxtEntry[] commands = formatter.Build(name, lines);
 
                     Directory.CreateDirectory(directory);
-                    String outputPath = Path.Combine(directory, name + ".strings");
-                    TxtWriter.WriteStrings(outputPath, commands);
+                    TextResourcePath outputPath = TextResourcePath.ForExport(Path.Combine(directory, name));
+                    outputPath.WriteAll(commands);
                 }
 
                 ExportTags(directory, formatter);
@@ -69,7 +69,7 @@ namespace Memoria.Assets
         {
             TxtEntry[] generalNames = formatter.Names.General;
             if (generalNames != null)
-                TxtWriter.WriteStrings(ModTextResources.Export.FieldTags, generalNames);
+                ModTextResources.Export.FieldTags.WriteAll(generalNames);
         }
 
         private static void ExportFieldTags(String directory, FieldFormatter formatter)
@@ -80,8 +80,8 @@ namespace Memoria.Assets
 
             foreach (KeyValuePair<String, TxtEntry[]> pair in fieldNames)
             {
-                String fieldPath = Path.Combine(directory, pair.Key + "_Tags.strings");
-                TxtWriter.WriteStrings(fieldPath, pair.Value);
+                TextResourcePath fieldPath = TextResourcePath.ForExport(Path.Combine(directory, pair.Key + "_Tags"));
+                fieldPath.WriteAll(pair.Value);
             }
         }
 

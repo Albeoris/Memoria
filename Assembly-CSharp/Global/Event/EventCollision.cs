@@ -302,7 +302,7 @@ public class EventCollision
 			{
 				if (instance.GetIP((Int32)obj.sid, 8, obj.ebData) != instance.nil)
 				{
-					EIcon.PollFIcon(2);
+					EIcon.PollFIcon(BubbleUI.IconType.ExclamationAndDuel);
 				}
 				else
 				{
@@ -311,7 +311,7 @@ public class EventCollision
 					{
 						if (EventCollision.CheckQuadTalk(po, obj))
 						{
-							EIcon.PollFIcon(1);
+							EIcon.PollFIcon(BubbleUI.IconType.Exclamation);
 						}
 					}
 				}
@@ -326,11 +326,11 @@ public class EventCollision
 		{
 			if (EventCollision.IsChocoboWalkingOrFlyingInForestArea())
 			{
-				EIcon.PollFIcon(1);
+				EIcon.PollFIcon(BubbleUI.IconType.Exclamation);
 			}
 			else if (!flag && EMinigame.CheckBeachMinigame())
 			{
-				EIcon.PollFIcon(3);
+				EIcon.PollFIcon(BubbleUI.IconType.Beach);
 			}
 		}
 	}
@@ -577,7 +577,7 @@ public class EventCollision
 												}
 											}
 										}
-										else if (npc.uid == 4 && Singleton<BubbleUI>.Instance.IsActive && EIcon.SFIconType == 1)
+										else if (npc.uid == 4 && Singleton<BubbleUI>.Instance.IsActive && EIcon.SFIconType == BubbleUI.IconType.Exclamation)
 										{
 											flag = false;
 										}
@@ -607,7 +607,7 @@ public class EventCollision
 								}
 							}
 						}
-						else if (npc.uid == 10 && Singleton<BubbleUI>.Instance.IsActive && EIcon.SFIconType == 1)
+						else if (npc.uid == 10 && Singleton<BubbleUI>.Instance.IsActive && EIcon.SFIconType == BubbleUI.IconType.Exclamation)
 						{
 							flag = false;
 						}

@@ -41,14 +41,14 @@ namespace Memoria.Assets
                 Char[] invalidChars = Path.GetInvalidFileNameChars();
                 foreach (KeyValuePair<String, LinkedList<TxtEntry>> pair in entries)
                 {
-                    String outputPath = Path.Combine(directory, "Names of " + pair.Key.ReplaceChars("_", invalidChars) + ".strings");
-                    if (File.Exists(outputPath))
+                    TextResourcePath outputPath = TextResourcePath.ForExport(Path.Combine(directory, "Names of " + pair.Key.ReplaceChars("_", invalidChars)));
+                    if (File.Exists(outputPath.Value))
                     {
                         skipped++;
                         continue;
                     }
 
-                    TxtWriter.WriteStrings(outputPath, pair.Value.ToArray());
+                    outputPath.WriteAll(pair.Value.ToArray());
                 }
 
                 if (skipped > 0)

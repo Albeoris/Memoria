@@ -73,7 +73,7 @@ namespace Memoria.Assets
 
                     if (!ReadExternalText(out _external))
                     {
-                        Log.Warning($"[{TypeName}] External file not found: [{Path.Combine(ModTextResources.Import.FieldsDirectory, _fieldFileName + ".strings")}]");
+                        Log.Warning($"[{TypeName}] External file not found: [{Path.Combine(ModTextResources.Import.FieldsDirectory, _fieldFileName)}]");
                         _cache[_fieldZoneId] = _original;
                         continue;
                     }
@@ -98,7 +98,7 @@ namespace Memoria.Assets
                     _watcherEvent = new AutoResetEvent(false);
                     _watcherTask = Task.Run(DoWatch);
 
-                    _watcher = new FileSystemWatcher(directory, "*.strings");
+                    _watcher = new FileSystemWatcher(directory, "*.*");
                     GameLoopManager.Quit += _watcher.Dispose;
 
                     _watcher.Changed += OnChangedFileInDirectory;
@@ -166,13 +166,15 @@ namespace Memoria.Assets
 
         private void OnChangedFileInDirectory(Object sender, FileSystemEventArgs e)
         {
-            _watcherEvent.Set();
+            String extension = Path.GetExtension(e.Name);
+            if (TextResourceFormatHelper.TryResolveFileFormat(extension, out _))
+                _watcherEvent.Set();
         }
 
         private static IList<KeyValuePair<String, TextReplacement>> LoadCustomTags()
         {
-            String inputPath = ModTextResources.Import.FieldTags;
-            return ReadTagReplacements(inputPath);
+            TextResourceReference inputReference = ModTextResources.Import.FieldTags;
+            return ReadTagReplacements(inputReference);
         }
 
         private static Dictionary<String, IList<KeyValuePair<String, TextReplacement>>> LoadFieldTags()
@@ -181,34 +183,38 @@ namespace Memoria.Assets
             if (!Directory.Exists(fieldsDirectory))
                 return new Dictionary<String, IList<KeyValuePair<String, TextReplacement>>>(0);
 
-            String[] filePathes = Directory.GetFiles(fieldsDirectory, "*_Tags.strings");
-            Dictionary<String, IList<KeyValuePair<String, TextReplacement>>> fieldNames = new Dictionary<String, IList<KeyValuePair<String, TextReplacement>>>(filePathes.Length);
-            foreach (String path in filePathes)
+            String[] filePaths = Directory.GetFiles(fieldsDirectory, "*_Tags.*");
+            Dictionary<String, IList<KeyValuePair<String, TextReplacement>>> fieldNames = new(filePaths.Length);
+            foreach (String path in filePaths)
             {
-                String fileName = Path.GetFileName(path);
-                if (fileName == null)
-                {
-                    Log.Warning($"[{TypeName}] Invalid file path: [{path}].");
-                    continue;
-                }
+                String fileName = Path.GetFileName(path); // 0074_EVT_BATTLE_SIOTES01_Tags.strings
+                String extension = Path.GetExtension(fileName); // .strings
 
-                fileName = fileName.Substring(0, fileName.Length - "_Tags.strings".Length);
-                fieldNames[fileName] = ReadTagReplacements(path);
+                fileName = fileName.Substring(0, fileName.Length - "_Tags".Length - extension.Length); // 0074_EVT_BATTLE_SIOTES01
+                TextResourceFormat format = TextResourceFormatHelper.ResolveFileFormat(extension);
+
+                TextResourcePath inputPath = new(new TextResourceReference(path), format);
+                fieldNames[fileName] = ReadTagReplacements(inputPath);
             }
 
             return fieldNames;
         }
 
-        private static IList<KeyValuePair<String, TextReplacement>> ReadTagReplacements(String inputPath)
+        private static IList<KeyValuePair<String, TextReplacement>> ReadTagReplacements(TextResourceReference inputReference)
         {
-            if (!File.Exists(inputPath))
+            if (!inputReference.IsExists(out TextResourcePath existingFile))
                 return new List<KeyValuePair<String, TextReplacement>>();
 
-            TxtEntry[] generalNames = TxtReader.ReadStrings(inputPath);
+            return ReadTagReplacements(existingFile);
+        }
+        
+        private static IList<KeyValuePair<String, TextReplacement>> ReadTagReplacements(TextResourcePath existingFile)
+        {
+            TxtEntry[] generalNames = existingFile.ReadAll();
             if (generalNames.IsNullOrEmpty())
                 return new List<KeyValuePair<String, TextReplacement>>();
 
-            TextReplacements result = new TextReplacements(generalNames.Length);
+            TextReplacements result = new(generalNames.Length);
             foreach (TxtEntry entry in generalNames)
                 result.Add(entry.Prefix, entry.Value);
 
@@ -359,14 +365,14 @@ namespace Memoria.Assets
 
         private Boolean ReadExternalText(out TxtEntry[] entries)
         {
-            String inputPath = Path.Combine(ModTextResources.Import.FieldsDirectory, _fieldFileName + ".strings");
-            if (!File.Exists(inputPath))
+            TextResourceReference inputReference = new(Path.Combine(ModTextResources.Import.FieldsDirectory, _fieldFileName));
+            if (!inputReference.IsExists(out TextResourcePath existingFile))
             {
                 entries = null;
                 return false;
             }
 
-            entries = TxtReader.ReadStrings(inputPath);
+            entries = existingFile.ReadAll();
             return !entries.IsNullOrEmpty();
         }
 
