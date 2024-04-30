@@ -1,13 +1,13 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FF9;
 using Memoria;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scenes;
-using Memoria.Assets;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = System.Object;
 
@@ -19,6 +19,7 @@ public partial class BattleHUD : UIScene
     public Boolean BtlWorkPeep => _currentPeepingMessageCount > 0;
     public GameObject PlayerTargetPanel => TargetPanel.GetChild(0);
     public GameObject EnemyTargetPanel => TargetPanel.GetChild(1);
+    public Boolean IsDoubleCast => DoubleCastSet.Contains(_currentCommandId);
     public List<Int32> ReadyQueue { get; }
     public List<Int32> InputFinishList { get; }
     public Int32 CurrentPlayerIndex { get; private set; }
@@ -26,7 +27,7 @@ public partial class BattleHUD : UIScene
         BattleCommandId.DoubleBlackMagic,
         BattleCommandId.DoubleWhiteMagic
     };
-    public Boolean IsDoubleCast => DoubleCastSet.Contains(_currentCommandId);
+    public static Boolean ForceNextTurn;
 
     public BattleHUD()
     {
@@ -662,6 +663,26 @@ public partial class BattleHUD : UIScene
         Boolean isMenuing = _commandPanel.IsActive || _targetPanel.IsActive || _itemPanel.IsActive || _abilityPanel.IsActive;
         Boolean isEnemyActing = FF9StateSystem.Battle.FF9Battle.cur_cmd != null && FF9StateSystem.Battle.FF9Battle.cur_cmd.regist?.bi.player == 0;
         Boolean hasQueue = btl_cmd.GetFirstCommandReadyToDequeue(FF9StateSystem.Battle.FF9Battle) != null;
+
+        if (ForceNextTurn)
+        {
+            // Making sure a player needs an ATB
+            foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+            {
+                BTL_DATA btl = unit.Data;
+
+                if (btl.sel_mode != 0 || btl.sel_menu != 0 || unit.CurrentHp == 0 || btl.bi.atb == 0 || !unit.IsPlayer)
+                    continue;
+
+                if (unit.CurrentAtb < unit.MaximumAtb)
+                    return true;
+            }
+
+            // No one needs ATB, we wait for anything else to happen instead
+            if (!hasQueue) return true;
+            ForceNextTurn = false;
+        }
+
         return !(isMenuing || hasQueue || isEnemyActing);
     }
 
@@ -806,7 +827,7 @@ public partial class BattleHUD : UIScene
     }
 
     public Boolean IsAbilityAvailable(BattleUnit unit, Int32 abilId)
-	{
+    {
         if (!unit.IsPlayer)
             return true;
         return GetAbilityState(abilId, unit.GetIndex()) == AbilityStatus.Enable;

@@ -1,13 +1,13 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria;
+using Memoria.Data;
+using Memoria.Database;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Memoria;
-using Memoria.Data;
-using Memoria.Database;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -455,7 +455,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                         canContinute = true;
 
                     changed = true;
-                    current.at += (Int16)Math.Max(1, current.at_coef * 4 );
+                    current.at += (Int16)Math.Max(1, current.at_coef * 4);
                 }
 
                 if (needContinue)
@@ -475,6 +475,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     {
                         if (changed)
                         {
+                            BattleHUD.ForceNextTurn = false;
                             needContinue = false;
                         }
                     }
