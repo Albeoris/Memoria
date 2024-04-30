@@ -1170,8 +1170,8 @@ public class FieldMap : HonoBehavior
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
         FieldMapInfo.fieldmapExtraOffset.UpdateOverlayOffset(this.mapName, overlayNdx, ref dz);
-        float destX = (float)Mathf.Clamp(bgOverlay.orgX + dx, bgOverlay.minX, bgOverlay.maxX);
-        float destY = (float)Mathf.Clamp(bgOverlay.orgY + dy, bgOverlay.minY, bgOverlay.maxY);
+        Single destX = Mathf.Clamp(bgOverlay.orgX + dx, bgOverlay.minX, bgOverlay.maxX);
+        Single destY = Mathf.Clamp(bgOverlay.orgY + dy, bgOverlay.minY, bgOverlay.maxY);
 
         // TODO Check Native: #147
         UInt16 destZ;
@@ -1189,6 +1189,16 @@ public class FieldMap : HonoBehavior
         bgOverlay.transform.localPosition = new Vector3(destX, destY, destZ);
         if (dbug) Log.Message("EBG_overlayMove " + overlayNdx + " | destX:" + destX + " destY:" + destY + " destZ:" + destZ);
         return 1;
+    }
+
+    public void EBG_overlayMoveTimed(Int32 overlayNdx, Int32 dx, Int32 dy, Int32 dz, Int32 t)
+    {
+        BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
+        bgOverlay.dxTimed = (Single)dx / t;
+        bgOverlay.dyTimed = (Single)dy / t;
+        bgOverlay.dzTimed = (Int16)(dz / t);
+        bgOverlay.timedMoveDuration = t;
+        if (dbug) Log.Message($"EBG_overlayMoveTimed {overlayNdx} | dx:{dx} dy:{dy} dz:{dz} t:{t}");
     }
 
     public Int32 EBG_overlaySetOrigin(Int32 overlayNdx, Int32 orgX, Int32 orgY)
@@ -1725,6 +1735,18 @@ public class FieldMap : HonoBehavior
                             bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 8; break;
                     }
                 }
+            }
+            if (bgOverlay.timedMoveDuration > 0)
+            {
+                bgOverlay.orgX += bgOverlay.dxTimed;
+                bgOverlay.orgY += bgOverlay.dyTimed;
+                bgOverlay.orgZ = (UInt16)Mathf.Clamp(bgOverlay.orgZ + bgOverlay.dzTimed, 0, UInt16.MaxValue);
+                bgOverlay.curX = bgOverlay.orgX;
+                bgOverlay.curY = bgOverlay.orgY;
+                bgOverlay.curZ = bgOverlay.orgZ;
+                bgOverlay.transform.localPosition = new Vector3(bgOverlay.orgX, bgOverlay.orgY, bgOverlay.orgZ);
+                bgOverlay.timedMoveDuration--;
+                if (dbug) Log.Message($"SceneServiceScroll {i} | TimedMove | X:{bgOverlay.curX} Y:{bgOverlay.curY} Z:{bgOverlay.curZ}");
             }
         }
         if ((this.flags & FieldMapFlags.Unknown128) != 0u)

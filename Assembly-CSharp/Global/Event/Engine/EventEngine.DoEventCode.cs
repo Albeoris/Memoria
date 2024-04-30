@@ -2876,6 +2876,11 @@ public partial class EventEngine
                     dict.Clear();
                 return 0;
             }
+            case EBin.event_code_binary.BGLMOVE_TIMED:
+            {
+                this.fieldmap.EBG_overlayMoveTimed(this.getv3(), this.getv3(), this.getv3(), this.getv3(), this.getv3());
+                return 0;
+            }
             default:
             {
                 switch (this.gMode)

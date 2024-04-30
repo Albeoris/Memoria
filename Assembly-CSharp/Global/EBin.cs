@@ -114,93 +114,58 @@ public class EBin
         while (_objectExists)
         {
             s1 = s0.obj;
-            int a1 = s1.state;
-            if (a1 == EventEngine.stateNew)
+            if (s1.state == EventEngine.stateNew)
             {
-                Int32 state = EventEngine.stateInit;
-                s1.state = (Byte)state;
+                s1.state = EventEngine.stateInit;
                 next0();
                 continue;
             }
 
-            Int32 a0 = EventEngine.stateSuspend;
             _s2 = 0;
-            if (a1 == a0)
+            if (s1.state == EventEngine.stateSuspend)
             {
                 next0();
                 continue;
             }
 
             _nextCodeIndex = s1.ip;
-            a0 = s1.wait;
             if (_nextCodeIndex == _eventEngine.nil)
             {
                 next0();
                 continue;
             }
 
-            Int32 a2 = 1;
-            if (a0 != 0)
+            if (s1.wait != 0)
             {
-                a1 = 255;
-                if (a0 != 254)
+                if (s1.wait == 254) // Wait for a window to close
                 {
-                    if (a0 == a1)
+                    if (s1.winnum == 255)
                     {
-                        next0();
+                        s1.wait = 0;
                     }
-                    else
+                    else if (!_eTb.MesWinActive(s1.winnum))
                     {
-                        a0 = s1.wait;
-                        a0--;
-                        s1.wait = (Byte)a0;
-                        next0();
+                        s1.winnum = 255;
+                        s1.wait = 0;
                     }
                 }
                 else
                 {
-                    a0 = s1.winnum;
-                    if (a0 == 255)
-                    {
-                        ad4();
-                    }
-                    else
-                    {
-                        Boolean flag = _eTb.MesWinActive(a0);
-                        a0 = 255;
-                        if (flag)
-                        {
-                            next0();
-                        }
-                        else
-                        {
-                            s1.winnum = (Byte)a0;
-                            ad4();
-                        }
-                    }
+                    if (s1.wait != 255) // Wait indefinitely / during X frames
+                        s1.wait--;
                 }
+                next0();
                 continue;
             }
 
-            a1 = s1.vofs;
             _eventEngine.gExec = s1;
-            a1 <<= 2;
-            a0 = s1.cid;
             _instance = s1.buffer;
-            _instanceVOfs = a1;
+            _instanceVOfs = s1.vofs << 2;
             objV0 = s1;
             _v0 = s1.ip;
-            if (a0 != a2)
-            {
-                result = ad3(a0);
-            }
-            else
-            {
-                a0 = s1.uid;
-                a0 -= 64;
-                objV0 = _eventEngine.FindObjByUID(a0);
-                result = ad3(a0);
-            }
+            if (s1.cid == 1) // Script executed with "STARTSEQ" (aka. "RunSharedScript")
+                objV0 = _eventEngine.FindObjByUID(s1.uid - EventEngine.cSeqOfs);
+            result = ad3();
             objV0 = null;
         }
         return result;
@@ -212,28 +177,13 @@ public class EBin
         _objectExists = false;
     }
 
-    public Int32 ad3(Int32 arg0)
+    public Int32 ad3()
     {
         Int32 gMode = _eventEngine.gMode;
         _eventEngine.gCur = objV0;
-        Int32 result;
-        if (gMode != 2)
-        {
-            result = next(gMode);
-        }
-        else
-        {
+        if (gMode == 2)
             _eventEngine.ProcessCodeExt(s1);
-            result = next(gMode);
-        }
-        return result;
-    }
-
-    private void ad4()
-    {
-        Int32 a0 = 0;
-        s1.wait = (Byte)a0;
-        next0();
+        return next(gMode);
     }
 
     public Int32 next(Int32 gMode)
@@ -1743,6 +1693,8 @@ public class EBin
 				return QuadMistDatabase.MiniGame_GetCollectorLevel();
 			case memoria_variable.TREASURE_HUNTER_POINTS:
 				return FF9StateSystem.EventState.GetTreasureHunterPoints();
+            case memoria_variable.BATTLE_RUNAWAY:
+                return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway ? 1 : 0;
         }
 		return 0;
     }
@@ -1759,6 +1711,9 @@ public class EBin
                 break;
             case memoria_variable.TETRA_MASTER_DRAW:
                 FF9StateSystem.MiniGame.SavedData.sDraw = (Int16)val;
+                break;
+            case memoria_variable.BATTLE_RUNAWAY:
+                FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway = val != 0;
                 break;
         }
     }
@@ -2386,6 +2341,7 @@ public class EBin
         AANIM_EX,
         VECTOR_CLEAR,
         DICTIONARY_CLEAR,
+        BGLMOVE_TIMED,
     }
 
     public enum flexible_varfunc : ushort
@@ -2425,6 +2381,7 @@ public class EBin
         TETRA_MASTER_POINTS,
         TETRA_MASTER_RANK,
         TREASURE_HUNTER_POINTS,
+        BATTLE_RUNAWAY,
     }
 
     public enum op_binary
