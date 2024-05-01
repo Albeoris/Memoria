@@ -27,7 +27,8 @@ public partial class BattleHUD : UIScene
         BattleCommandId.DoubleBlackMagic,
         BattleCommandId.DoubleWhiteMagic
     };
-    public static Boolean ForceNextTurn;
+    public static Boolean ForceNextTurn = false;
+    public static Int32 switchBtlId = -1;
 
     public BattleHUD()
     {

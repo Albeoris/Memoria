@@ -554,9 +554,10 @@ public class UIKeyTrigger : MonoBehaviour
             }
             if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger) || keyCommand == Control.LeftTrigger)
             {
-                if (!PersistenSingleton<UIManager>.Instance.IsPause)
+                if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.BattleHUD && !BattleHUD.ForceNextTurn && FF9StateSystem.Battle.FF9Battle.cur_cmd == null)
                 {
                     BattleHUD.ForceNextTurn = true;
+                    FF9Sfx.FF9SFX_Play(103);
                 }
                 keyCommand = Control.None;
                 sceneFromState.OnKeyLeftTrigger(activeButton);

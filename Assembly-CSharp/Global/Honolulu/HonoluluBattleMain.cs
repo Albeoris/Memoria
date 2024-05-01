@@ -421,7 +421,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         Int32 battleSpeed = Configuration.Battle.Speed;
 
         BTL_DATA source = btl;
-        Boolean canContinute = false;
+        Boolean canContinue = false;
         Boolean needContinue = false;
 
         if (battleSpeed == 1 || battleSpeed == 2)
@@ -467,8 +467,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 Boolean changed = false;
                 if (current.at < maximum.at)
                 {
-                    if (btl.bi.player != 0)
-                        canContinute = true;
+                    if (btl.bi.player != 0 || (battleSpeed == 2 && BattleHUD.ForceNextTurn))
+                        canContinue = true;
 
                     changed = true;
                     current.at += (Int16)Math.Max(1, current.at_coef * 4);
@@ -492,13 +492,14 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                         if (changed)
                         {
                             BattleHUD.ForceNextTurn = false;
+                            BattleHUD.switchBtlId = btl.btl_id;
                             needContinue = false;
                         }
                     }
-                    else
+                    else if (!btl_stat.CheckStatus(btl, BattleStatusConst.PreventATBConfirm))
                     {
-                        if (!btl_stat.CheckStatus(btl, BattleStatusConst.PreventATBConfirm))
-                            needContinue = false;
+                        if (changed) BattleHUD.ForceNextTurn = false;
+                        needContinue = false;
                     }
                 }
                 else if (battleSpeed != 1 || !btl_stat.CheckStatus(btl, BattleStatusConst.PreventATBConfirm))
@@ -549,7 +550,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                         break;
                 }
             }
-        } while (canContinute && needContinue);
+        } while (canContinue && needContinue);
     }
 
     private void Update()
