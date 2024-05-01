@@ -422,7 +422,23 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
         BTL_DATA source = btl;
         Boolean canContinute = false;
-        Boolean needContinue = battleSpeed == 1 || battleSpeed == 2;
+        Boolean needContinue = false;
+
+        if (battleSpeed == 1 || battleSpeed == 2)
+        {
+            // Check if someone has some atb, we don't want to advance atb instantly in some cases
+            // This is necessary for some fights starting with a conversation where atb is forced to 0
+            foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+            {
+                if (!unit.IsPlayer) continue;
+                if (unit.CurrentAtb > 0)
+                {
+                    needContinue = true;
+                    break;
+                }
+            }
+        }
+
         do
         {
             HonoluluBattleMain.counterATB++;
