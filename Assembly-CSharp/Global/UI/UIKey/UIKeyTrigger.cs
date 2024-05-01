@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Common;
+using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
@@ -554,7 +555,7 @@ public class UIKeyTrigger : MonoBehaviour
             }
             if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger) || keyCommand == Control.LeftTrigger)
             {
-                if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.BattleHUD && !BattleHUD.ForceNextTurn && FF9StateSystem.Battle.FF9Battle.cur_cmd == null)
+                if (UIManager.Battle.FF9BMenu_IsEnable() && !BattleHUD.ForceNextTurn && FF9StateSystem.Battle.FF9Battle.cur_cmd == null && FF9StateSystem.Battle.FF9Battle.cmd_queue.next == null)
                 {
                     BattleHUD.ForceNextTurn = true;
                     FF9Sfx.FF9SFX_Play(103);

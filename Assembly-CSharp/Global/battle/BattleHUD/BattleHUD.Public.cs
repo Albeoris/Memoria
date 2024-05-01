@@ -665,24 +665,7 @@ public partial class BattleHUD : UIScene
         Boolean isEnemyActing = FF9StateSystem.Battle.FF9Battle.cur_cmd != null && FF9StateSystem.Battle.FF9Battle.cur_cmd.regist?.bi.player == 0;
         Boolean hasQueue = btl_cmd.GetFirstCommandReadyToDequeue(FF9StateSystem.Battle.FF9Battle) != null;
 
-        if (ForceNextTurn)
-        {
-            // Making sure a player needs an ATB
-            foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
-            {
-                BTL_DATA btl = unit.Data;
-
-                if (btl.sel_mode != 0 || btl.sel_menu != 0 || unit.CurrentHp == 0 || btl.bi.atb == 0 || !unit.IsPlayer)
-                    continue;
-
-                if (unit.CurrentAtb < unit.MaximumAtb)
-                    return true;
-            }
-
-            // No one needs ATB, we wait for anything else to happen instead
-            if (!hasQueue) return true;
-            ForceNextTurn = false;
-        }
+        if (ForceNextTurn && !hasQueue && !isEnemyActing) return true;
 
         return !(isMenuing || hasQueue || isEnemyActing);
     }
