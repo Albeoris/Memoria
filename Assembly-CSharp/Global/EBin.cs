@@ -151,7 +151,7 @@ public class EBin
                 }
                 else
                 {
-                    if (s1.wait != 255) // Wait indefinitely / during X frames
+                    if (s1.wait != 255) // Wait indefinitely (255) or during N frames
                         s1.wait--;
                 }
                 next0();
