@@ -624,6 +624,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
 	public static Boolean ApplicationIsActivated()
 	{
+        if (Configuration.Control.AlwaysCaptureGamepad) return true;
 		IntPtr foregroundWindow = HonoInputManager.GetForegroundWindow();
 		if (foregroundWindow == IntPtr.Zero)
 		{

@@ -1215,7 +1215,7 @@ public class JsonParser : ISharedDataParser
 					player.status = (BattleStatus)playerClass["status"].AsInt;
                 if (playerClass["equip"] != null)
                     for (Int32 j = 0; j < playerClass["equip"].Count && j < CharacterEquipment.Length; j++)
-                        if (ff9item._FF9Item_Data.ContainsKey((RegularItem)playerClass["equip"][j].AsInt))
+                        if (ff9item._FF9Item_Data.ContainsKey((RegularItem)playerClass["equip"][j].AsInt)) // Check if custom items exist, otherwhise remove it from player equipment.
                             player.equip[j] = (RegularItem)playerClass["equip"][j].AsInt;
                         else
                             player.equip[j] = RegularItem.NoItem;
@@ -1268,7 +1268,7 @@ public class JsonParser : ISharedDataParser
                     else if (playerClass["sa_extended"] != null)
                     {
                         for (Int32 j = 0; j < playerClass["sa_extended"].Count; j++)
-                            if (ff9abil.FF9Abil_GetIndex(player, playerClass["sa_extended"][j].AsInt) > 0)
+                            if (ff9abil._FF9Abil_SaData.ContainsKey((SupportAbility)playerClass["sa_extended"][j].AsInt)) // Check if SA exist (specially custom SA otherwise loading save can softlock).
                                 ff9abil.FF9Abil_SetEnableSA(player, (SupportAbility)playerClass["sa_extended"][j].AsInt, true);
                     }
                 }

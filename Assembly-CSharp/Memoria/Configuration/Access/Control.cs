@@ -30,6 +30,7 @@ namespace Memoria
             If that is true, it results in characters moving faster on steep slopes for the remaster version, and in characters moving either a bit slower or a bit faster on irregular walkmeshes ("irregular" = triangles are not aligned on the same plane)
             */
             public static Boolean PSXMovementMethod => Instance._control.PSXMovementMethod;
+            public static Boolean AlwaysCaptureGamepad => Instance._control.AlwaysCaptureGamepad;
         }
     }
 }
