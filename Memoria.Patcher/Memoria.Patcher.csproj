@@ -102,9 +102,6 @@
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_eva2_iu_eug_2.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_inv_g3_brg_2.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_last_cw_mbg_0.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -139,9 +136,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_eva2_iu_eug_2.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_inv_g3_brg_2.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_last_cw_mbg_0.eb.bytes">
@@ -180,9 +174,6 @@
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\gr\evt_eva2_iu_eug_2.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\gr\evt_inv_g3_brg_2.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\gr\evt_last_cw_mbg_0.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -219,9 +210,6 @@
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\it\evt_eva2_iu_eug_2.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\it\evt_inv_g3_brg_2.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\it\evt_last_cw_mbg_0.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -244,6 +232,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\jp\evt_eva2_iu_eug_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\jp\evt_last_cw_2ly_0.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\jp\evt_last_cw_mbg_0.eb.bytes">
@@ -280,9 +271,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\uk\evt_eva2_iu_eug_2.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\uk\evt_inv_g3_brg_2.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\uk\evt_last_cw_mbg_0.eb.bytes">
