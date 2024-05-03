@@ -119,8 +119,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
 					this.CreateSound(soundProfile);
 					soundProfile.SoundVolume = 1f;
 					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, SoundLib.MusicPlayer.Volume, 0);
-					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 1, 0);
-					Int16 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
+                    Int16 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
 					if (fldMapNo == 503 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2970 && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 11 && ObjNo == 35)
 					{
 						// What is this for ? - SamsamTS
@@ -129,7 +128,8 @@ public class AllSoundDispatchPlayer : SoundPlayer
 						ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
 					}
 					ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
-					this.currentMusicID = ObjNo;
+                    ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 1, 0);
+                    this.currentMusicID = ObjNo;
 					this.StopAndClearSuspendBGM(ObjNo, true);
 				});
 			}

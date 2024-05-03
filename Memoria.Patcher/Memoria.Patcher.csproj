@@ -114,10 +114,28 @@
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_pandemo_pd_mcd_0.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_fossil_fr_dn2_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_suna_sp_rpw_0.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_tera_ta_ivk_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_fossil_fr_dn2_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\gr\evt_fossil_fr_dn2_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\it\evt_fossil_fr_dn2_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\uk\evt_fossil_fr_dn2_0.eb.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\us\evt_fossil_fr_dn2_0.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_alex1_at_pub.eb.bytes">
@@ -346,6 +364,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\Fieldmaps\fbg_n11_ldbm_map158_lb_plz_0\fbg_n11_ldbm_map158_lb_plz_0.bgs.bytes">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Assets\Resources\Fieldmaps\fbg_n28_cdpt_map481_cp_gl1_0\fbg_n28_cdpt_map481_cp_gl1_0.bgs.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\Sounds\Sounds02\SE02\reflect.akb.bytes">

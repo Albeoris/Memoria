@@ -33,6 +33,7 @@ namespace Global.Sound.SoLoud
             }
             public Int32 bankID;
             public Single volume = 1f;
+            public Boolean manuallyPaused = false;
         }
 
         private Dictionary<Int32, StreamInfo> streams = new Dictionary<Int32, StreamInfo>();
@@ -192,7 +193,8 @@ namespace Global.Sound.SoLoud
             {
                 soloud.seek((uint)soundID, offsetTimeMSec / 1000d);
             }
-            soloud.setPause((uint)soundID, 0);
+            if (!sounds[soundID].manuallyPaused) // SdLib doesn't resume paused sounds, we replicate the behavior
+                soloud.setPause((uint)soundID, 0);
 
             return 1;
         }
@@ -217,6 +219,8 @@ namespace Global.Sound.SoLoud
         {
             SoundLib.Log($"SoundCtrl_SetPause({soundID}, {pauseOn}, {transTimeMSec})");
             if (!sounds.ContainsKey(soundID)) return;
+
+            sounds[soundID].manuallyPaused = pauseOn > 0;
 
             uint h = (uint)soundID;
             double t = transTimeMSec / 1000d;
