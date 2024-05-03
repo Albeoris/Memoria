@@ -2307,42 +2307,59 @@ public class FieldMap : HonoBehavior
 
     public static readonly Int32[][] FixDepthOfLayer =
     {
-        // [mapNo,camIdx,ovrNdx,Z],
-        [51,1,20,600], // Kidnap scene, candle light
-        [403,0,23,560], // Dali underground wall over box
-        [403,0,27,1523], // Dali underground barrel
-        [951,0,2,1214], // Gargan Roo's railing
-        [1000,0,12,0], // Clayra's Trunk text (in English version)
-        [1406,0,20,2600], // Water layer masking actual water waves
-        [1418,0,10,500], // Light in mine
-        [1501,0,3,920], // Head crop through rock in Conde Petite
-        [1502,0,0,1350], // Light in Conde Petite
-        [1652,1,5,911], // Iifa platform
-        [1656,0,3,998], // Iifa statue glow (was not active on PSX)
-        [2922,0,8,4329], // Crystal world (was not active on PSX)
-        [2922,0,10,3179], // Crystal world (was not active on PSX)
-        [2922,0,11,3179], // Crystal world (was not active on PSX)
-        [2922,0,12,6080], // Crystal world (was not active on PSX)
+        // [mapNo,camIdx,LayerIndex,Depth],
+        [51,1,20,600],      // Kidnap scene, candle light
+        [252,0,6,1600],     // Evil Forest light
+        [403,0,23,560],     // Dali underground wall over box
+        [403,0,27,1523],    // Dali underground barrel
+        //[403,0,33,0],     // Dali light on eggs
+        [408,0,9,2000],     // Dali underground light
+        [408,0,10,2000],    // Dali underground light
+        [408,0,12,2500],    // Dali underground light
+        [609,0,7,3900],     // Lindblum castle anim
+        [609,0,8,3900],     // Lindblum castle anim
+        [609,0,9,3900],     // Lindblum castle anim
+        [609,0,10,3900],    // Lindblum castle anim
+        [609,0,11,3900],    // Lindblum castle anim
+        [1359,0,7,3900],    // Lindblum castle anim
+        [1359,0,8,3900],    // Lindblum castle anim
+        [1359,0,9,3900],    // Lindblum castle anim
+        [1359,0,10,3900],   // Lindblum castle anim
+        [1359,0,11,3900],   // Lindblum castle anim
+        [900,0,20,500],     // Treno Thug Inn light
+        [913,0,0,100],      // Treno Tower lights
+        [913,0,3,0],        // Treno Tower lights
+        [913,0,4,0],        // Treno Tower lights
+        [951,0,2,1214],     // Gargan Roo's railing
+        [1000,0,12,0],      // Clayra's Trunk text (in English version)
+        [1206,0,21,800],    // Alexandria, purple chadelier
+        [1406,0,20,2600],   // Water layer masking actual water waves
+        [1418,0,10,500],    // Light in mine
+        [1501,0,3,920],     // Head crop through rock in Conde Petite
+        [1502,0,0,1350],    // Light in Conde Petite
+        [1652,1,5,911],     // Iifa platform
+        [1656,0,3,998],     // Iifa statue glow (was not active on PSX)
+        [2008,0,41,600],    // Candle light behind statues in Alex Castle
+        [2207,0,0,0],       // Desert palace teleporter light 0
+        [2207,0,1,0],       // Desert palace teleporter light 1
+        [2207,0,2,0],       // Desert palace teleporter light 2
+        [2207,0,3,0],       // Desert palace teleporter light 3
+        [2207,0,4,0],       // Desert palace teleporter light 4
+        [2207,0,5,0],       // Desert palace teleporter light 5
+        [2209,0,0,0],       // Desert palace teleporter light
+        [2211,0,8,400],     // Desert palace teleporter light
+        [2922,0,8,4329],    // Crystal world (was not active on PSX)
+        [2922,0,10,3179],   // Crystal world (was not active on PSX)
+        [2922,0,11,3179],   // Crystal world (was not active on PSX)
+        [2922,0,12,6080],   // Crystal world (was not active on PSX)
     };
 
     public static readonly HashSet<Int32> SmoothCamExcludeMaps = new HashSet<Int32>()
     {
-        51,   // Candles fire moving away from candles
-        575,  // Hunting festival
+        51,   // Candle fire moving away from candles
+        575,  // Hunting festival glich
         767,  // Burmecia, the queen slides from her layer
         1754, // Fast scroll on Iifa platform buggy
-        3000, // ending
-        3001,
-        3002,
-        3003,
-        3004,
-        3005,
-        3006,
-        3007,
-        3008,
-        3009,
-        3010,
-        3011,
-        3012,
+        3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012, // ending glitches
     };
 }
