@@ -2340,7 +2340,6 @@ public class FieldMap : HonoBehavior
         [1652,1,5,911],     // Iifa platform
         [1656,0,3,998],     // Iifa statue glow (was not active on PSX)
         [2008,0,41,600],    // Candle light behind statues in Alex Castle
-        [2207,0,0,0],       // Desert palace teleporter light 0
         [2207,0,1,0],       // Desert palace teleporter light 1
         [2207,0,2,0],       // Desert palace teleporter light 2
         [2207,0,3,0],       // Desert palace teleporter light 3
@@ -2348,6 +2347,11 @@ public class FieldMap : HonoBehavior
         [2207,0,5,0],       // Desert palace teleporter light 5
         [2209,0,0,0],       // Desert palace teleporter light
         [2211,0,8,400],     // Desert palace teleporter light
+        [2221,0,17,2200],   // Candle light
+        [2222,0,2,1000],    // Desert palace teleporter light
+        [2502,0,14,1400],   // Ypsen, entrance light
+        [2605,0,3,2200],    // Branbal, light of light net
+        [2657,0,4,2040],    // Branbal, light in the room
         [2922,0,8,4329],    // Crystal world (was not active on PSX)
         [2922,0,10,3179],   // Crystal world (was not active on PSX)
         [2922,0,11,3179],   // Crystal world (was not active on PSX)
