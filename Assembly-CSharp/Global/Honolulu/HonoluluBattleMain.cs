@@ -441,6 +441,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
         do
         {
+            Boolean stopAtb = !UIManager.Battle.TurnBased_IsEnableAtb();
             HonoluluBattleMain.counterATB++;
             for (btl = source; btl != null; btl = btl.next)
             {
@@ -457,7 +458,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                         canContinue = true;
 
                     changed = true;
-                    if (UIManager.Battle.TurnBased_IsEnableAtb())
+                    if (!stopAtb)
                         current.at += (Int16)Math.Max(1, current.at_coef * 4);
                     else
                         needContinue = false;
@@ -516,7 +517,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                             UIManager.Battle.AddPlayerToReady(playerId);
                     }
                 }
-                else if (!FF9StateSystem.Battle.isDebug)
+                else if (!FF9StateSystem.Battle.isDebug && !stopAtb)
                 {
                     if (PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyAtk, btl.btl_id, 0, 0, 0))
                         btl.sel_mode = 1;
