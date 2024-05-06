@@ -1410,15 +1410,15 @@ public class FieldMap : HonoBehavior
                 else
                 {
                     short xOffset = 0;
-                    short xOffsetAdjusted = (short)(screenX + (short)bgSprite.offX);
-                    if (xOffsetAdjusted + 16 >= (short)bgOverlay.w)
+                    float xOffsetAdjusted = (float)(screenX + (float)bgSprite.offX);
+                    if (xOffsetAdjusted + 16f >= (short)bgOverlay.w)
                     {
-                        xOffsetAdjusted = (short)(xOffsetAdjusted - (short)bgOverlay.w);
+                        xOffsetAdjusted = (float)(xOffsetAdjusted - (float)bgOverlay.w);
                         xOffset = (short)(-bgOverlay.scrollY);
                     }
-                    else if (xOffsetAdjusted <= -16)
+                    else if (xOffsetAdjusted <= -16f)
                     {
-                        xOffsetAdjusted = (short)(xOffsetAdjusted + (short)bgOverlay.w);
+                        xOffsetAdjusted = (float)(xOffsetAdjusted + (float)bgOverlay.w);
                         xOffset = (short)(bgOverlay.scrollY);
                     }
                     localPosition.x = (float)(xOffsetAdjusted + anchorX);
