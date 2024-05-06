@@ -447,20 +447,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 if (btl.cur.hp == 0)
                     continue;
 
-                if (btl.sel_mode != 0 || btl.sel_menu != 0 || btl.bi.atb == 0)
-                {
-                    // We need to refresh status for any alive characters in the fast or the turn-based mode
-                    if (needContinue)
-                    {
-                        // ============ Warning ============
-                        btl_para.CheckPointData(btl);
-                        btl_stat.CheckStatusLoop(btl, true);
-                        // =================================
-                    }
-
-                    continue;
-                }
-
                 POINTS current = btl.cur;
                 POINTS maximum = btl.max;
 
@@ -471,15 +457,10 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                         canContinue = true;
 
                     changed = true;
-                    current.at += (Int16)Math.Max(1, current.at_coef * 4);
-                }
-
-                if (needContinue)
-                {
-                    // ============ Warning ============
-                    btl_para.CheckPointData(btl);
-                    btl_stat.CheckStatusLoop(btl, true);
-                    // =================================
+                    if (UIManager.Battle.TurnBased_IsEnableAtb())
+                        current.at += (Int16)Math.Max(1, current.at_coef * 4);
+                    else
+                        needContinue = false;
                 }
 
                 if (current.at < maximum.at)
@@ -545,9 +526,21 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     if (Array.IndexOf(FF9StateSystem.Battle.FF9Battle.seq_work_set.AnmOfsList, this.btlIDList[btl_scrp.FindBattleUnit(btl.btl_id).Data.typeNo]) < 0)
                         Debug.LogError("Index out of range");
 
-                    UnityEngine.Random.Range(0, 4);
+                    UnityEngine.Random.Range(0, 4); // Useless?
                     if (FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
-                        break;
+                    {
+                        return;
+                    }
+                }
+            }
+
+            if (canContinue && needContinue)
+            {
+                // Update statuses before looping
+                for (btl = source; btl != null; btl = btl.next)
+                {
+                    btl_para.CheckPointData(btl);
+                    btl_stat.CheckStatusLoop(btl);
                 }
             }
         } while (canContinue && needContinue);

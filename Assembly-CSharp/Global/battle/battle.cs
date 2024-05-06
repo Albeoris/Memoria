@@ -223,11 +223,8 @@ public static class battle
             }
 
             btl_para.CheckPointData(next);
-
-            // ============ Warning ============
-            if (Configuration.Battle.Speed == 0 || Configuration.Battle.Speed >= 3 || next.sel_mode != 0 || next.sel_menu != 0 || next.cur.hp == 0 || next.bi.atb == 0)
-                btl_stat.CheckStatusLoop(next, false);
-            // =================================
+            btl_stat.CheckStatusLoop(next);
+            btl_stat.RotateAfterCheckStatusLoop(next);
         }
         if (flag)
         {

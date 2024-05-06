@@ -654,9 +654,9 @@ public partial class BattleHUD : UIScene
         return _commandEnable;
     }
 
-    public Boolean FF9BMenu_IsEnableAtb()
+    public Boolean TurnBased_IsEnableAtb()
     {
-        if (!IsNativeEnableAtb())
+        if (!FF9BMenu_IsEnableAtb())
             return false;
 
         if (Configuration.Battle.Speed != 2 || FF9StateSystem.Battle.FF9Battle.btl_escape_key != 0)
@@ -667,12 +667,13 @@ public partial class BattleHUD : UIScene
         Boolean isEnemyActing = FF9StateSystem.Battle.FF9Battle.cur_cmd != null && FF9StateSystem.Battle.FF9Battle.cur_cmd.regist?.bi.player == 0;
         Boolean hasQueue = btl_cmd.GetFirstCommandReadyToDequeue(FF9StateSystem.Battle.FF9Battle) != null;
 
-        if (ForceNextTurn && !hasQueue && !isEnemyActing) return true;
+        if (ForceNextTurn && !hasQueue && !isEnemyActing)
+            return true;
 
         return !(isMenuing || hasQueue || isEnemyActing);
     }
 
-    internal Boolean IsNativeEnableAtb()
+    public Boolean FF9BMenu_IsEnableAtb()
     {
         if (!_commandEnable)
             return false;
