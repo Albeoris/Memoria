@@ -2332,9 +2332,19 @@ public class FieldMap : HonoBehavior
         // [mapNo,camIdx,LayerIndex,Depth],
         [51,1,20,600],      // Kidnap scene, candle light
         [252,0,6,1600],     // Evil Forest light
+        [350,0,0,730],      // Dali shop door cropped
+        [350,0,4,805],      // Dali shop door cropped
+        [350,0,6,820],      // Dali shop door cropped
+        [350,0,7,820],      // Dali shop door cropped
+        [350,0,26,1300],    // Dali windmill shadow cropped
+        [350,0,27,1300],    // Dali windmill shadow cropped
+        [350,0,28,1300],    // Dali windmill shadow cropped
+        [350,0,29,1300],    // Dali windmill shadow cropped
+        [350,0,30,1300],    // Dali windmill shadow cropped
+        [350,0,31,1300],    // Dali windmill shadow cropped
+        [355,0,5,1880],     // Dali pub left light
         [403,0,23,560],     // Dali underground wall over box
         [403,0,27,1523],    // Dali underground barrel
-        //[403,0,33,0],     // Dali light on eggs
         [408,0,9,2000],     // Dali underground light
         [408,0,10,2000],    // Dali underground light
         [408,0,12,2500],    // Dali underground light
