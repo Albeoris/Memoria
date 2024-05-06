@@ -2401,6 +2401,7 @@ public class FieldMap : HonoBehavior
         51,   // Candle fire moving away from candles
         575,  // Hunting festival glich
         767,  // Burmecia, the queen slides from her layer
+        931,  // Treno on the boat
         1754, // Fast scroll on Iifa platform buggy
         3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012, // ending glitches
     };
