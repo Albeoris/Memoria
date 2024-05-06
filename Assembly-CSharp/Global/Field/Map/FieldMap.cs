@@ -2348,6 +2348,8 @@ public class FieldMap : HonoBehavior
         [408,0,9,2000],     // Dali underground light
         [408,0,10,2000],    // Dali underground light
         [408,0,12,2500],    // Dali underground light
+        [562,0,23,0],       // Lindblum armorer light
+        [562,0,24,1],       // Lindblum armorer armor
         [609,0,7,3900],     // Lindblum castle anim
         [609,0,8,3900],     // Lindblum castle anim
         [609,0,9,3900],     // Lindblum castle anim
@@ -2365,6 +2367,8 @@ public class FieldMap : HonoBehavior
         [951,0,2,1214],     // Gargan Roo's railing
         [1000,0,12,0],      // Clayra's Trunk text (in English version)
         [1206,0,21,800],    // Alexandria, purple chadelier
+        [1309,0,23,0],      // Lindblum armorer light
+        [1309,0,24,1],      // Lindblum armorer armor
         [1406,0,20,2600],   // Water layer masking actual water waves
         [1418,0,10,500],    // Light in mine
         [1501,0,3,920],     // Head crop through rock in Conde Petite
@@ -2372,6 +2376,8 @@ public class FieldMap : HonoBehavior
         [1652,1,5,911],     // Iifa platform
         [1656,0,3,998],     // Iifa statue glow (was not active on PSX)
         [2008,0,41,600],    // Candle light behind statues in Alex Castle
+        [2109,0,23,0],      // Lindblum armorer light
+        [2109,0,24,1],      // Lindblum armorer armor
         [2207,0,1,0],       // Desert palace teleporter light 1
         [2207,0,2,0],       // Desert palace teleporter light 2
         [2207,0,3,0],       // Desert palace teleporter light 3
