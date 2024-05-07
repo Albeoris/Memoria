@@ -582,7 +582,7 @@ public class btl_cmd
                     return;
 
         CMD_DATA cmd = GetFirstCommandReadyToDequeue(btlsys);
-        if (cmd == null || !FF9StateSystem.Battle.isDebug && !UIManager.Battle.FF9BMenu_IsEnableAtb() && btl_util.IsCommandDeclarable(cmd.cmd_no))
+        if (cmd == null || !FF9StateSystem.Battle.isDebug && !UIManager.Battle.IsNativeEnableAtb() && btl_util.IsCommandDeclarable(cmd.cmd_no))
             return;
         if (Configuration.Battle.Speed == 3 && cmd.regist != null && btl_util.IsBtlBusy(cmd.regist, btl_util.BusyMode.ANY_CURRENT))
             return;

@@ -654,9 +654,9 @@ public partial class BattleHUD : UIScene
         return _commandEnable;
     }
 
-    public Boolean TurnBased_IsEnableAtb()
+    public Boolean FF9BMenu_IsEnableAtb()
     {
-        if (!FF9BMenu_IsEnableAtb())
+        if (!IsNativeEnableAtb())
             return false;
 
         if (Configuration.Battle.Speed != 2 || FF9StateSystem.Battle.FF9Battle.btl_escape_key != 0)
@@ -673,7 +673,7 @@ public partial class BattleHUD : UIScene
         return !(isMenuing || hasQueue || isEnemyActing);
     }
 
-    public Boolean FF9BMenu_IsEnableAtb()
+    public Boolean IsNativeEnableAtb()
     {
         if (!_commandEnable)
             return false;

@@ -319,7 +319,7 @@ namespace FF9
             }
             else
             {
-                if (calc_check && UIManager.Battle.FF9BMenu_IsEnableAtb())
+                if (calc_check && UIManager.Battle.IsNativeEnableAtb())
                     SBattleCalculator.CalcMain(null, null, null, fleeScriptId);
             }
         }

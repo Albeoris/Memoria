@@ -542,7 +542,7 @@ public static class btl_stat
         if (!unit.IsUnderAnyStatus(BattleStatus.Stop | BattleStatus.Jump))
             btl.bi.atb = 1;
 
-        if (!UIManager.Battle.FF9BMenu_IsEnableAtb() || !UIManager.Battle.TurnBased_IsEnableAtb())
+        if (!UIManager.Battle.FF9BMenu_IsEnableAtb())
             return;
 
         if (btl.bi.atb == 0)

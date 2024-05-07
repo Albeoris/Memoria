@@ -4,6 +4,7 @@ using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Database;
+using Memoria.Prime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -412,7 +413,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     {
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next;
         UIManager.Battle.UpdateSlidingButtonState();
-        if (UIManager.Battle.FF9BMenu_IsEnableAtb())
+        if (UIManager.Battle.IsNativeEnableAtb())
             ProcessActiveTime(btl);
     }
 
@@ -423,29 +424,32 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         BTL_DATA source = btl;
         Boolean canContinue = false;
         Boolean needContinue = false;
-
-        if (battleSpeed == 1 || battleSpeed == 2)
-        {
-            // Check if someone has some atb, we don't want to advance atb instantly in some cases
-            // This is necessary for some fights starting with a conversation where atb is forced to 0
-            foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
-            {
-                if (!unit.IsPlayer) continue;
-                if (unit.CurrentAtb > 0)
-                {
-                    needContinue = true;
-                    break;
-                }
-            }
-        }
-
+        Int32 maxLoop = 1000;
+        
         do
         {
-            Boolean stopAtb = !UIManager.Battle.TurnBased_IsEnableAtb();
-            HonoluluBattleMain.counterATB++;
+            if (battleSpeed == 1 || battleSpeed == 2)
+            {
+                // Check if someone has some atb, we don't want to advance atb instantly in some cases
+                // This is necessary for some fights starting with a conversation where atb is forced to 0 (see issue #430)
+                needContinue = false;
+                foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+                {
+                    if (!unit.IsPlayer) continue;
+                    if (unit.CurrentAtb > 0)
+                    {
+                        needContinue = true;
+                        break;
+                    }
+                }
+            }
+
+            Boolean advanceAtb = UIManager.Battle.FF9BMenu_IsEnableAtb();
+            if (advanceAtb) HonoluluBattleMain.counterATB++;
+
             for (btl = source; btl != null; btl = btl.next)
             {
-                if (btl.cur.hp == 0)
+                if (btl.cur.hp == 0 || btl.sel_mode != 0 || btl.bi.atb == 0)
                     continue;
 
                 POINTS current = btl.cur;
@@ -458,7 +462,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                         canContinue = true;
 
                     changed = true;
-                    if (!stopAtb)
+                    if (advanceAtb)
                         current.at += (Int16)Math.Max(1, current.at_coef * 4);
                     else
                         needContinue = false;
@@ -517,7 +521,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                             UIManager.Battle.AddPlayerToReady(playerId);
                     }
                 }
-                else if (!FF9StateSystem.Battle.isDebug && !stopAtb)
+                else if (!FF9StateSystem.Battle.isDebug && advanceAtb)
                 {
                     if (PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyAtk, btl.btl_id, 0, 0, 0))
                         btl.sel_mode = 1;
@@ -527,12 +531,16 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     if (Array.IndexOf(FF9StateSystem.Battle.FF9Battle.seq_work_set.AnmOfsList, this.btlIDList[btl_scrp.FindBattleUnit(btl.btl_id).Data.typeNo]) < 0)
                         Debug.LogError("Index out of range");
 
-                    UnityEngine.Random.Range(0, 4); // Useless?
                     if (FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
-                    {
                         return;
-                    }
                 }
+            }
+
+            // Failsafe - some events might produce infinite loops (i.e. atb never advance)
+            if (--maxLoop <= 0)
+            {
+                Log.Warning($"[ProcessActiveTime] Failsafe activated - btlMapNo: {FF9StateSystem.Common.FF9.btlMapNo} fldMapNo: {FF9StateSystem.Common.FF9.fldMapNo} wldMapNo: {FF9StateSystem.Common.FF9.wldMapNo}");
+                return;
             }
 
             if (canContinue && needContinue)
@@ -543,6 +551,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     btl_para.CheckPointData(btl);
                     btl_stat.CheckStatusLoop(btl);
                 }
+                // Events need to be processed (i.e. atb reset to 0, see issue #430)
+                PersistenSingleton<EventEngine>.Instance.ServiceEvents();
             }
         } while (canContinue && needContinue);
     }
