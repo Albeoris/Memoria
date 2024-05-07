@@ -11,8 +11,8 @@ using UnityEngine;
 [AddComponentMenu("NGUI/UI/Atlas")]
 public class UIAtlas : MonoBehaviour
 {
-    public UIAtlas()
-    {
+	public UIAtlas()
+	{
 		GameLoopManager.Start += OverrideAtlas;
 	}
 
@@ -71,8 +71,16 @@ public class UIAtlas : MonoBehaviour
 			String[] modPath = Configuration.Mod.FolderNames;
 			String atlasFilePath = GraphicResources.AtlasList[name];
 			foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
+			{
 				if (folder.TryFindAssetInModOnDisc(atlasFilePath, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+				{
 					ReadFromDisc(fullPath);
+				}
+				else if (folder.TryFindAssetInModOnDisc(atlasFilePath + ".png", out String fullPathpng, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+				{
+					ReadFromDisc(fullPathpng);
+				}
+			}
 		}
 	}
 
@@ -156,15 +164,15 @@ public class UIAtlas : MonoBehaviour
 		}
 	}
 
-    private void SetTexture(Texture newTexture)
-    {
-        if (this.mReplacement != null)
-            this.mReplacement.SetTexture(newTexture);
-        else if (this.material != null)
-            this.material.mainTexture = newTexture;
-    }
+	private void SetTexture(Texture newTexture)
+	{
+		if (this.mReplacement != null)
+			this.mReplacement.SetTexture(newTexture);
+		else if (this.material != null)
+			this.material.mainTexture = newTexture;
+	}
 
-    public Material spriteMaterial
+	public Material spriteMaterial
 	{
 		get
 		{
