@@ -521,7 +521,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                             UIManager.Battle.AddPlayerToReady(playerId);
                     }
                 }
-                else if (!FF9StateSystem.Battle.isDebug && advanceAtb)
+                else if (!FF9StateSystem.Battle.isDebug)
                 {
                     if (PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyAtk, btl.btl_id, 0, 0, 0))
                         btl.sel_mode = 1;
