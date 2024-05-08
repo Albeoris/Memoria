@@ -29,6 +29,8 @@ public static class btl_stat
 
     public static void StatusCommandCancel(BTL_DATA btl, BattleStatus status)
     {
+        if (Configuration.Mod.TranceSeek && CheckStatus(btl, BattleStatus.EasyKill) && (status & BattleStatus.Sleep) != 0) // [DV] Prevent command cancel for boss.
+            return;
         if (btl.bi.player != 0)
             UIManager.Battle.RemovePlayerFromAction(btl.btl_id, true);
         if (!btl_cmd.KillCommand2(btl))
@@ -221,7 +223,7 @@ public static class btl_stat
             btl.stat.cnt.conti[statusIndex] = (Int16)(btl.stat_duration_factor[status] * btl.stat.cnt.conti[statusIndex]);
             if ((status & (BattleStatus.Doom | BattleStatus.GradualPetrify)) != 0u)
             {
-                if (Configuration.Mod.TranceSeek && unit.HasSupportAbility(SupportAbility1.AutoRegen))
+                if (Configuration.Mod.TranceSeek && unit.HasSupportAbility(SupportAbility1.AutoRegen)) // [DV] - SA Resilience
                 {
                     btl.stat.cnt.conti[statusIndex] = (Int16)(statusData[statusIndex].conti_cnt * defaultFactor * 2);
                     btl.stat.cnt.cdown_max = (Int16)Math.Max(1, btl.stat.cnt.conti[statusIndex] / 2);
@@ -403,17 +405,17 @@ public static class btl_stat
     {
         UInt16 oprIndex;
         UInt16 defaultFactor;
-        if (statTblNo == 1)
+        if (statTblNo == 1) // Venom
         {
             oprIndex = 0;
             defaultFactor = (UInt16)((UInt32)btl.elem.wpr << 2);
         }
-        else if (statTblNo == 16)
+        else if (statTblNo == 16) // Poison
         {
             oprIndex = 1;
             defaultFactor = (UInt16)((UInt32)btl.elem.wpr << 2);
         }
-        else
+        else // Regen
         {
             oprIndex = 2;
             defaultFactor = (UInt16)(60 - btl.elem.wpr << 2);
@@ -654,9 +656,19 @@ public static class btl_stat
                 if (data.weapon_geo)
                     btl_util.GeoSetColor2DrawPacket(data.weapon_geo, data.add_col[0], data.add_col[1], data.add_col[2], Byte.MaxValue);
             }
-            else if (data.special_status_old)
+            else if (data.special_status_old) // [DV] - Add a glow effect
             {
-                btl_util.GeoSetColor2DrawPacket(data.gameObject, 255, 255, 255);
+                if (!FF9StateSystem.Battle.isFade)
+                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                Byte counter = (Byte)(ff9Battle.btl_cnt % 24);
+                Byte strength = (Byte)(counter >= 8 ? (counter >= 16 ? (24 - counter) : 8) : (counter + 2));
+                Int32 OldGlow = -192;
+                Int16 r = (Int16)((bbgInfoPtr.chr_r - OldGlow) * strength >> 3);
+                Int16 g = (Int16)((bbgInfoPtr.chr_g - OldGlow) * strength >> 3);
+                Int16 b = (Int16)((bbgInfoPtr.chr_b - OldGlow) * strength >> 3);
+                GeoAddColor2DrawPacket(data.gameObject, r, g, b);
+                if (data.weapon_geo)
+                    GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
             }
             else if (CheckStatus(data, BattleStatus.Shell | BattleStatus.Protect))
             {
@@ -688,30 +700,6 @@ public static class btl_stat
                 GeoAddColor2DrawPacket(data.gameObject, r, g, b);
                 if (data.weapon_geo)
                     GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
-            }
-            else
-            {
-                // TRANCE SEEK - Friendly Ladybug (Miskoxy), swap wings colors
-                SetDefaultShader(data);
-                if (Configuration.Mod.TranceSeek && data.dms_geo_id == 405)
-                {
-                    if (unit.Strength == 31)
-                    {
-                        SetupCustomEnemyPartColor(data.gameObject, 255, 0, 0, true, 3);
-                    }
-                    else if (unit.Strength == 32)
-                    {
-                        SetupCustomEnemyPartColor(data.gameObject, 0, 255, 255, true, 3);
-                    }
-                    else if (unit.Strength == 33)
-                    {
-                        SetupCustomEnemyPartColor(data.gameObject, 255, 255, 0, true, 3);
-                    }
-                    else if (unit.Strength == 34)
-                    {
-                        SetupCustomEnemyPartColor(data.gameObject, 0, 0, 255, true, 3);
-                    }
-                }
             }
         }
         else if (CheckStatus(data, BattleStatus.Petrify))
@@ -806,88 +794,14 @@ public static class btl_stat
         }
     }
 
-    public static void SetupCustomEnemyPartColor(GameObject go, short r, short g, short b, bool skinned, int partindex, bool uselight = true)
-    {
-        if (uselight)
-        {
-            BBGINFO bBGINFO = battlebg.nf_GetBbgInfoPtr(); // On prend en compte la lumière ambiante
-            r += (short)bBGINFO.chr_r;
-            g += (short)bBGINFO.chr_g;
-            b += (short)bBGINFO.chr_b;
-        }
-        if (r < 0)
-        {
-            r = 0;
-        }
-        if (g < 0)
-        {
-            g = 0;
-        }
-        if (b < 0)
-        {
-            b = 0;
-        }
-        if (r > 255)
-        {
-            r = 255;
-        }
-        if (g > 255)
-        {
-            g = 255;
-        }
-        if (b > 255)
-        {
-            b = 255;
-        }
-        if (skinned)
-        {
-            SkinnedMeshRenderer[] componentsInChildren = go.GetComponentsInChildren<SkinnedMeshRenderer>();
-            if (partindex < componentsInChildren.Length)
-            {
-                if (r == 0 && g == 0 && b == 0)
-                {
-                    componentsInChildren[partindex].tag = "RGBZero";
-                    componentsInChildren[partindex].enabled = false;
-                }
-                else
-                {
-                    if (!componentsInChildren[partindex].enabled && componentsInChildren[partindex].CompareTag("RGBZero"))
-                    {
-                        componentsInChildren[partindex].enabled = true;
-                        componentsInChildren[partindex].tag = string.Empty;
-                    }
-                    componentsInChildren[partindex].material.SetColor("_Color", new Color32((byte)r, (byte)g, (byte)b, 255));
-                }
-            }
-        }
-        else
-        {
-            MeshRenderer[] componentsInChildren2 = go.GetComponentsInChildren<MeshRenderer>();
-            if (partindex < componentsInChildren2.Length)
-            {
-                if (r == 0 && g == 0 && b == 0)
-                {
-                    componentsInChildren2[partindex].enabled = false;
-                }
-                else
-                {
-                    componentsInChildren2[partindex].enabled = true;
-                    Material[] materials = componentsInChildren2[partindex].materials;
-                    for (int i = 0; i < materials.Length; i++)
-                    {
-                        Material material = materials[i];
-                        material.SetColor("_Color", new Color32((byte)r, (byte)g, (byte)b, 255));
-                    }
-                }
-            }
-        }
-    }
     private static void ActiveTimeStatus(BTL_DATA btl)
     {
         for (Int32 index = 0; index < 32; ++index)
         {
+            if (btl.stat.cnt.conti[index] >= 0) // [DV] For Trance Seek purpose, to make some status dissapear for bosses.
+                btl.stat.cnt.conti[index] -= btl.cur.at_coef;
             BattleStatus status = (BattleStatus)(1 << index);
-            if ((btl.stat.cur & BattleStatusConst.ContiCount & status) != 0 && (btl.stat.cnt.conti[index] -= btl.cur.at_coef) < 0)
+            if ((btl.stat.cur & BattleStatusConst.ContiCount & status) != 0 && btl.stat.cnt.conti[index] < 0)
             {
                 if ((status & BattleStatus.GradualPetrify) != 0)
                 {
@@ -909,23 +823,46 @@ public static class btl_stat
                 {
                     if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
                     {
-                        // Enemies affected by Doom but with Easy kill proof (doesn't exist in vanilla) lose 1/5 of their Max HP instead (non-capped, except for avoiding softlocks)
-                        // Might want to add a Configuration option for that effect...
-                        Int32 doom_damage = (Int32)btl_para.GetLogicalHP(btl, true) / 5;
-                        if (doom_damage > Math.Max(btl.cur.hp - 1, 9999))
-                            doom_damage = (Int32)btl.cur.hp - 1;
-                        if (doom_damage > 0)
+                        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Add 2 random status at the end of countdown.
                         {
-                            BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Doom);
-                            btl_stat.RemoveStatus(btl, status);
-                            btl.fig_info = Param.FIG_INFO_DISP_HP;
-                            btl_para.SetDamage(new BattleUnit(btl), doom_damage, (Byte)(btl_mot.checkMotion(btl, btl.bi.def_idle) ? 1 : 0));
-                            btl2d.Btl2dReq(btl);
+                            List<BattleStatus> statuschoosen = new List<BattleStatus>{ BattleStatus.Poison, BattleStatus.Venom, BattleStatus.Blind, BattleStatus.Silence, BattleStatus.Trouble,
+                            BattleStatus.Sleep, BattleStatus.Freeze, BattleStatus.Heat, BattleStatus.Mini, BattleStatus.Petrify, BattleStatus.GradualPetrify,
+                            BattleStatus.Berserk, BattleStatus.Confuse, BattleStatus.Stop, BattleStatus.Zombie, BattleStatus.Slow };
+
+                            for (Int32 i = 0; i < (statuschoosen.Count - 1); i++)
+                            {
+                                if ((statuschoosen[i] & btl.stat.invalid) != 0)
+                                {
+                                    statuschoosen.Remove(statuschoosen[i]);
+                                }
+                            }
+
+                            for (Int32 i = 0; i < 2; i++)
+                            {
+                                AlterStatus(btl, statuschoosen[GameRandom.Next16() % statuschoosen.Count]);
+                            }
+                            RemoveStatus(btl, status);
                         }
                         else
                         {
-                            btl.fig_info |= Param.FIG_INFO_MISS;
-                            btl2d.Btl2dReq(btl);
+                            // Enemies affected by Doom but with Easy kill proof (doesn't exist in vanilla) lose 1/5 of their Max HP instead (non-capped, except for avoiding softlocks)
+                            // Might want to add a Configuration option for that effect...
+                            Int32 doom_damage = (Int32)btl_para.GetLogicalHP(btl, true) / 5;
+                            if (doom_damage > Math.Max(btl.cur.hp - 1, 9999))
+                                doom_damage = (Int32)btl.cur.hp - 1;
+                            if (doom_damage > 0)
+                            {
+                                BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Doom);
+                                btl_stat.RemoveStatus(btl, status);
+                                btl.fig_info = Param.FIG_INFO_DISP_HP;
+                                btl_para.SetDamage(new BattleUnit(btl), doom_damage, (Byte)(btl_mot.checkMotion(btl, btl.bi.def_idle) ? 1 : 0));
+                                btl2d.Btl2dReq(btl);
+                            }
+                            else
+                            {
+                                btl.fig_info |= Param.FIG_INFO_MISS;
+                                btl2d.Btl2dReq(btl);
+                            }
                         }
                     }
                     else
