@@ -87,7 +87,7 @@ namespace Memoria
         public static Int32 BattleUnitCount(Boolean isPlayer)
         {
             Int32 count = 0;
-            Byte playerByte = isPlayer ? (Byte)1: (Byte)0;
+            Byte playerByte = isPlayer ? (Byte)1 : (Byte)0;
             for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
                 if (next.bi.player == playerByte)
                     count++;
