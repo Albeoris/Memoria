@@ -522,45 +522,54 @@ public class ff9item
         return itemId % 1000;
     }
 
-    public static Int32 GetItemProperty(RegularItem itemId, String propertyName)
+    public static Object GetItemProperty(RegularItem itemId, String propertyName)
     {
         if (!_FF9Item_Data.TryGetValue(itemId, out FF9ITEM_DATA item))
-            return -1;
-        FieldInfo field = typeof(FF9ITEM_DATA).GetField(propertyName);
-        if (field != null)
-            return Convert.ToInt32(field.GetValue(item));
-        // TODO: allow to retrieve fields from deeper fields, like ItemAttack.Ref.ScriptId or ITEM_DATA.Ref.ScriptId
-        // Maybe use a preset static Dictionary<String, FieldInfo> instead?
-        field = typeof(ItemAttack).GetField(propertyName);
-        if (field != null)
+            return null;
+        Boolean hasWeapon = HasItemWeapon(itemId);
+        Boolean hasArmor = HasItemArmor(itemId);
+        Boolean hasEffect = HasItemEffect(itemId);
+        switch (propertyName)
         {
-            if (!HasItemWeapon(itemId))
-            {
-                Log.Error($"[ff9item] Trying to retrieve the weapon property \"{propertyName}\" from {itemId} which is not a weapon");
-                return -1;
-            }
-            return Convert.ToInt32(field.GetValue(GetItemWeapon(itemId)));
+            case "Price": return item.price;
+            case "Shape": return (Int32)item.shape;
+            case "Color": return (Int32)item.color;
+            case "EquipLevel": return item.eq_lv;
+            case "SortOrder": return item.sort;
+            case "Type": return (Int32)item.type;
+            case "WeaponCategory": return hasWeapon ? (Int32)GetItemWeapon(itemId).Category : null;
+            case "WeaponStatus": return hasWeapon ? (UInt32)FF9BattleDB.StatusSets[GetItemWeapon(itemId).StatusIndex].Value : null;
+            case "WeaponModelId": return hasWeapon ? (Int32)GetItemWeapon(itemId).ModelId : null;
+            case "WeaponScriptId": return hasWeapon ? GetItemWeapon(itemId).Ref.ScriptId : null;
+            case "WeaponPower": return hasWeapon ? GetItemWeapon(itemId).Ref.Power : null;
+            case "WeaponElement": return hasWeapon ? (Int32)GetItemWeapon(itemId).Ref.Elements : null;
+            case "WeaponStatusRate": return hasWeapon ? GetItemWeapon(itemId).Ref.Rate : null;
+            case "WeaponOffset1": return hasWeapon ? (Int32)GetItemWeapon(itemId).Offset1 : null;
+            case "WeaponOffset2": return hasWeapon ? (Int32)GetItemWeapon(itemId).Offset2 : null;
+            case "WeaponHitSfx": return hasWeapon ? (Int32)GetItemWeapon(itemId).HitSfx : null;
+            case "ArmorDefence": return hasArmor ? GetItemArmor(itemId).PhysicalDefence : null;
+            case "ArmorEvade": return hasArmor ? GetItemArmor(itemId).PhysicalEvade : null;
+            case "ArmorMagicDefence": return hasArmor ? GetItemArmor(itemId).MagicalDefence : null;
+            case "ArmorMagicEvade": return hasArmor ? GetItemArmor(itemId).MagicalEvade : null;
+            case "EffectTargetType": return hasEffect ? (Int32)GetItemEffect(itemId).info.Target : null;
+            case "EffectDefaultAlly": return hasEffect ? GetItemEffect(itemId).info.DefaultAlly : null;
+            case "EffectDisplayStats": return hasEffect ? (Int32)GetItemEffect(itemId).info.DisplayStats : null;
+            case "EffectVfxIndex": return hasEffect ? (Int32)GetItemEffect(itemId).info.VfxIndex : null;
+            case "EffectForDead": return hasEffect ? GetItemEffect(itemId).info.ForDead : null;
+            case "EffectDefaultCamera": return hasEffect ? GetItemEffect(itemId).info.DefaultCamera : null;
+            case "EffectDefaultOnDead": return hasEffect ? GetItemEffect(itemId).info.DefaultOnDead : null;
+            case "EffectScriptId": return hasEffect ? GetItemEffect(itemId).Ref.ScriptId : null;
+            case "EffectPower": return hasEffect ? GetItemEffect(itemId).Ref.Power : null;
+            case "EffectElement": return hasEffect ? (Int32)GetItemEffect(itemId).Ref.Elements : null;
+            case "EffectRate": return hasEffect ? GetItemEffect(itemId).Ref.Rate : null;
+            case "EffectStatus": return hasEffect ? (UInt32)GetItemEffect(itemId).status : null;
         }
-        field = typeof(ItemDefence).GetField(propertyName);
-        if (field != null)
-        {
-            if (!HasItemArmor(itemId))
-            {
-                Log.Error($"[ff9item] Trying to retrieve the armor property \"{propertyName}\" from {itemId} which is not an armor");
-                return -1;
-            }
-            return Convert.ToInt32(field.GetValue(GetItemArmor(itemId)));
-        }
-        field = typeof(ITEM_DATA).GetField(propertyName);
-        if (field != null)
-        {
-            if (!HasItemEffect(itemId))
-            {
-                Log.Error($"[ff9item] Trying to retrieve the effect property \"{propertyName}\" from {itemId} which has no use-effect");
-                return -1;
-            }
-            return Convert.ToInt32(field.GetValue(GetItemEffect(itemId)));
-        }
+        if (propertyName.StartsWith("Ability ") && Int32.TryParse(propertyName.Substring("Ability ".Length), out Int32 index))
+            return index >= 0 && index < item.ability.Length ? item.ability[index] : -1;
+        if (propertyName.StartsWith("HasActiveAbility ") && Int32.TryParse(propertyName.Substring("HasActiveAbility ".Length), out Int32 abilId))
+            return new List<Int32>(item.ability).Contains(ff9abil.GetAbilityIdFromActiveAbility((BattleAbilityId)abilId));
+        if (propertyName.StartsWith("HasSupportAbility ") && Int32.TryParse(propertyName.Substring("HasSupportAbility ".Length), out Int32 supportId))
+            return new List<Int32>(item.ability).Contains(ff9abil.GetAbilityIdFromSupportAbility((SupportAbility)supportId));
         Log.Error($"[ff9item] Unrecognized item property \"{propertyName}\"");
         return -1;
     }

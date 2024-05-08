@@ -1,8 +1,5 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
@@ -10,9 +7,10 @@ using Memoria.Database;
 using Memoria.Prime;
 using Memoria.Scenes;
 using NCalc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using static SFX;
-using System.Reflection;
 
 public partial class BattleHUD : UIScene
 {
@@ -1178,13 +1176,10 @@ public partial class BattleHUD : UIScene
         }
     }
 
-    private Int32 GetActionMpCost(AA_DATA aaData, BattleUnit unit, BattleAbilityId abilId = BattleAbilityId.Void)
+    private Int32 GetActionMpCost(AA_DATA aaData, BattleUnit unit, BattleAbilityId abilId = BattleAbilityId.Void, Boolean considerCommandMenu = true)
     {
         Int32 mpCost = aaData.MP;
-        if (CurrentPlayerIndex >= 0 && unit.Data == FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex]) // The check is a bit hacky to see if the MP cost request is in the context of a command menu
-            BattleAbilityHelper.GetPatchedMPCost(abilId, unit, ref mpCost, ability: aaData, menu: _currentCommandIndex);
-        else
-            BattleAbilityHelper.GetPatchedMPCost(abilId, unit, ref mpCost, ability: aaData);
+        BattleAbilityHelper.GetPatchedMPCost(abilId, unit, ref mpCost, ability: aaData, menu: considerCommandMenu ? _currentCommandIndex : BattleCommandMenu.None);
 
         if ((aaData.Type & 4) != 0 && battle.GARNET_SUMMON_FLAG != 0)
             mpCost *= 4;
@@ -1196,7 +1191,8 @@ public partial class BattleHUD : UIScene
 
     private AbilityStatus GetMonsterTransformAbilityState(Int32 abilId, Int32 playerIndex = -1)
     {
-        if (playerIndex < 0)
+        Boolean checkCurrentPlayer = playerIndex < 0;
+        if (checkCurrentPlayer)
             playerIndex = CurrentPlayerIndex;
         BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
         if (!unit.IsMonsterTransform)
@@ -1215,7 +1211,7 @@ public partial class BattleHUD : UIScene
                 return AbilityStatus.Disable;
         }
 
-        if (GetActionMpCost(aaData, unit) > unit.CurrentMp)
+        if (GetActionMpCost(aaData, unit, considerCommandMenu: checkCurrentPlayer) > unit.CurrentMp)
             return AbilityStatus.Disable;
 
         return AbilityStatus.Enable;
@@ -1223,7 +1219,8 @@ public partial class BattleHUD : UIScene
 
     private AbilityStatus GetAbilityState(Int32 abilId, Int32 playerIndex = -1)
     {
-        if (playerIndex < 0)
+        Boolean checkCurrentPlayer = playerIndex < 0;
+        if (checkCurrentPlayer)
             playerIndex = CurrentPlayerIndex;
         AbilityPlayerDetail abilityPlayerDetail = _abilityDetailDict[playerIndex];
         BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
@@ -1254,7 +1251,7 @@ public partial class BattleHUD : UIScene
                 return AbilityStatus.Disable;
         }
 
-        if (GetActionMpCost(patchedAbil, unit, patchedId) > unit.CurrentMp)
+        if (GetActionMpCost(patchedAbil, unit, patchedId, checkCurrentPlayer) > unit.CurrentMp)
             return AbilityStatus.Disable;
 
         return AbilityStatus.Enable;

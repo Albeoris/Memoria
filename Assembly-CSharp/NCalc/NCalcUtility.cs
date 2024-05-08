@@ -1,12 +1,11 @@
-﻿using System;
-using System.Reflection;
-using System.Collections.Generic;
-using System.Linq;
-using FF9;
+﻿using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime.Text;
-using static SFX;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 // NCalc source code embedded in Assembly-CSharp.dll for avoiding a DLL dependency
 // Original author of NCalc: sebastienros, https://archive.codeplex.com/?p=ncalc
@@ -14,7 +13,7 @@ using static SFX;
 
 namespace NCalc
 {
-	public static class NCalcUtility
+    public static class NCalcUtility
     {
         public static readonly Type[] UsableEnumTypes = new Type[]
         {
@@ -92,7 +91,7 @@ namespace NCalc
             else if (name == "GetItemCount" && args.Parameters.Length == 1)
                 args.Result = GameState.ItemCount((RegularItem)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)RegularItem.NoItem));
             else if (name == "GetItemProperty" && args.Parameters.Length == 2)
-                args.Result = ff9item.GetItemProperty((RegularItem)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)RegularItem.NoItem), NCalcUtility.EvaluateNCalcString(args.Parameters[1].Evaluate(), ""));
+                args.Result = ff9item.GetItemProperty((RegularItem)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)RegularItem.NoItem), NCalcUtility.EvaluateNCalcString(args.Parameters[1].Evaluate(), "Invalid"));
             else if (name == "GetPartyMemberLevel" && args.Parameters.Length == 1)
                 args.Result = GameState.PartyLevel((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1));
             else if (name == "GetPartyMemberIndex" && args.Parameters.Length == 1)
