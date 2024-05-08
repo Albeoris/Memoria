@@ -53,6 +53,11 @@ public class CMD_DATA
 		}
 	}
 
+    public Int32 GetCommandMPCost()
+    {
+        return info.CustomMPCost ?? aa?.MP ?? 0;
+    }
+
 	public class SELECT_INFO
 	{
 		public Byte cursor;
@@ -65,17 +70,23 @@ public class CMD_DATA
 		public Byte short_summon;
 		public Byte mon_reflec;
 
-		// Custom fields
-		public command_mode_index mode;
+        // Custom fields
+        public BattleCommandMenu cmdMenu;
+        public command_mode_index mode;
 		public Boolean cmd_motion;
 		// For multi-hit attacks (this counter allows to keep track of the hit number, for having different effects)
 		public Int32 effect_counter;
-		public Boolean IsZeroMP { get; set; }
-		public Int32 CustomMPCost { get; set; }
+		public Int32? CustomMPCost { get; set; }
 		public Boolean ReflectNull { get; set; }
 		public Boolean HasCheckedReflect { get; set; }
 
-		public void Reset()
+        public Boolean IsZeroMP
+        {
+            get => CustomMPCost == 0;
+            set => CustomMPCost = value ? 0 : null;
+        }
+
+        public void Reset()
 		{
 			cursor = 0;
 			stat = 0;
@@ -86,11 +97,12 @@ public class CMD_DATA
 			meteor_miss = 0;
 			short_summon = 0;
 			mon_reflec = 0;
-			mode = command_mode_index.CMD_MODE_INSPECTION;
+            cmdMenu = BattleCommandMenu.None;
+            mode = command_mode_index.CMD_MODE_INSPECTION;
 			cmd_motion = true;
 			effect_counter = 0;
 			IsZeroMP = false;
-			CustomMPCost = -1;
+			CustomMPCost = null;
 			ReflectNull = false;
 			HasCheckedReflect = false;
 		}

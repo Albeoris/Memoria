@@ -6,6 +6,7 @@ using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime.Text;
+using static SFX;
 
 // NCalc source code embedded in Assembly-CSharp.dll for avoiding a DLL dependency
 // Original author of NCalc: sebastienros, https://archive.codeplex.com/?p=ncalc
@@ -18,8 +19,9 @@ namespace NCalc
         public static readonly Type[] UsableEnumTypes = new Type[]
         {
             typeof(CharacterId),
-            typeof(BattleCommandId),
             typeof(BattleAbilityId),
+            typeof(BattleCommandId),
+            typeof(BattleCommandMenu),
             typeof(WeaponItem),
             typeof(AccessoryItem),
             typeof(GemItem),
@@ -89,6 +91,8 @@ namespace NCalc
                 args.Result = GameState.AbilityUsage((BattleAbilityId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0));
             else if (name == "GetItemCount" && args.Parameters.Length == 1)
                 args.Result = GameState.ItemCount((RegularItem)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)RegularItem.NoItem));
+            else if (name == "GetItemProperty" && args.Parameters.Length == 2)
+                args.Result = ff9item.GetItemProperty((RegularItem)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)RegularItem.NoItem), NCalcUtility.EvaluateNCalcString(args.Parameters[1].Evaluate(), ""));
             else if (name == "GetPartyMemberLevel" && args.Parameters.Length == 1)
                 args.Result = GameState.PartyLevel((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1));
             else if (name == "GetPartyMemberIndex" && args.Parameters.Length == 1)
@@ -219,6 +223,7 @@ namespace NCalc
             else if (name == "CurrentPartyAverageLevel") args.Result = GameState.PartyAverageLevel;
             else if (name == "CurrentTargetablePartyCount") args.Result = Memoria.BattleState.TargetCount(true);
             else if (name == "CurrentTargetableEnemyCount") args.Result = Memoria.BattleState.TargetCount(false);
+            else if (name == "BattleGroupIndex") args.Result = (Int32)(FF9StateSystem.Battle?.FF9Battle?.btl_scene?.PatNum ?? -1);
             else if (name == "IsBattlePreemptive") args.Result = FF9StateSystem.Battle?.FF9Battle?.btl_scene?.Info != null && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK;
             else if (name == "IsBattleBackAttack") args.Result = FF9StateSystem.Battle?.FF9Battle?.btl_scene?.Info != null && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK;
             else if (name == "ScenarioCounter") args.Result = (Int32)GameState.ScenarioCounter;
@@ -530,11 +535,29 @@ namespace NCalc
             expr.Parameters["IsMeteorMiss"] = command.IsMeteorMiss;
             expr.Parameters["IsCounterableCommand"] = btl_util.IsCommandDeclarable(command.Id);
             expr.Parameters["AbilityCategory"] = (Int32)command.AbilityCategory;
-            expr.Parameters["MPCost"] = (Int32)command.Data.aa.MP;
+            expr.Parameters["CommandMenu"] = (Int32)command.CommandMenu;
+            expr.Parameters["MPCost"] = (Int32)command.CommandMPCost;
             expr.Parameters["AbilityFlags"] = (Int32)command.AbilityType;
             expr.Parameters["CommandTargetId"] = (Int32)command.Data.tar_id;
             expr.Parameters["CommandTargetCount"] = command.TargetCount;
             expr.Parameters["CalcMainCounter"] = (Int32)command.Data.info.effect_counter;
+        }
+
+        public static void InitializeExpressionRawAbility(ref Expression expr, AA_DATA aa, BattleAbilityId abilId = BattleAbilityId.Void)
+        {
+            // These must be restricted to fields initialized with "InitializeExpressionCommand"
+            // It can be used when the ability is known but there is no CMD_DATA sent (yet)
+            expr.Parameters["AbilityId"] = (Int32)abilId;
+            expr.Parameters["ScriptId"] = aa.Ref.ScriptId;
+            expr.Parameters["Power"] = aa.Ref.Power;
+            expr.Parameters["AbilityStatus"] = (UInt32)(FF9BattleDB.StatusSets.TryGetValue(aa.AddStatusNo, out BattleStatusEntry stat) ? stat.Value : 0);
+            expr.Parameters["AbilityElement"] = (Int32)aa.Ref.Elements;
+            expr.Parameters["AbilityElementForBonus"] = (Int32)aa.Ref.Elements;
+            expr.Parameters["SpecialEffectId"] = (Int32)aa.Info.VfxIndex;
+            expr.Parameters["TargetType"] = (Int32)aa.Info.Target;
+            expr.Parameters["AbilityCategory"] = (Int32)aa.Category;
+            expr.Parameters["MPCost"] = (Int32)aa.MP;
+            expr.Parameters["AbilityFlags"] = (Int32)aa.Type;
         }
     }
 }

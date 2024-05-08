@@ -1,14 +1,13 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using Assets.SiliconSocial;
+﻿using Assets.SiliconSocial;
 using FF9;
-using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Prime.CSV;
 using Memoria.Prime.Text;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 
 // ReSharper disable FieldCanBeMadeReadOnly.Global
 // ReSharper disable UnusedMember.Global
@@ -194,7 +193,7 @@ public class ff9item
         if (IsItemImportant(id))
         {
             if (count > 0 && FF9Item_IsExistImportant(GetImportantIdFromItemId(id)))
-			{
+            {
                 FF9Item_RemoveImportant(GetImportantIdFromItemId(id));
                 return 1;
             }
@@ -272,14 +271,14 @@ public class ff9item
     public static Int32 FF9Item_GetEquipPart(RegularItem id)
     {
         FF9ITEM_DATA itemData = _FF9Item_Data[id];
-		ItemType[] partMask = new ItemType[]
-		{
-			ItemType.Weapon,
-			ItemType.Helmet,
-			ItemType.Armlet,
-			ItemType.Armor,
-			ItemType.Accessory
-		};
+        ItemType[] partMask = new ItemType[]
+        {
+            ItemType.Weapon,
+            ItemType.Helmet,
+            ItemType.Armlet,
+            ItemType.Armor,
+            ItemType.Accessory
+        };
         for (Int32 i = 0; i < 5; ++i)
             if ((itemData.type & partMask[i]) != 0)
                 return i;
@@ -298,7 +297,7 @@ public class ff9item
     }
 
     public static Int32 FF9Item_GetAnyCount(RegularItem id)
-	{
+    {
         return FF9Item_GetCount(id) + FF9Item_GetEquipCount(id);
     }
 
@@ -399,7 +398,7 @@ public class ff9item
     }
 
     public static Boolean IsItemRegular(Int32 itemId)
-	{
+    {
         return GetItemModuledId(itemId) < 256;
     }
 
@@ -523,8 +522,51 @@ public class ff9item
         return itemId % 1000;
     }
 
+    public static Int32 GetItemProperty(RegularItem itemId, String propertyName)
+    {
+        if (!_FF9Item_Data.TryGetValue(itemId, out FF9ITEM_DATA item))
+            return -1;
+        FieldInfo field = typeof(FF9ITEM_DATA).GetField(propertyName);
+        if (field != null)
+            return Convert.ToInt32(field.GetValue(item));
+        // TODO: allow to retrieve fields from deeper fields, like ItemAttack.Ref.ScriptId or ITEM_DATA.Ref.ScriptId
+        // Maybe use a preset static Dictionary<String, FieldInfo> instead?
+        field = typeof(ItemAttack).GetField(propertyName);
+        if (field != null)
+        {
+            if (!HasItemWeapon(itemId))
+            {
+                Log.Error($"[ff9item] Trying to retrieve the weapon property \"{propertyName}\" from {itemId} which is not a weapon");
+                return -1;
+            }
+            return Convert.ToInt32(field.GetValue(GetItemWeapon(itemId)));
+        }
+        field = typeof(ItemDefence).GetField(propertyName);
+        if (field != null)
+        {
+            if (!HasItemArmor(itemId))
+            {
+                Log.Error($"[ff9item] Trying to retrieve the armor property \"{propertyName}\" from {itemId} which is not an armor");
+                return -1;
+            }
+            return Convert.ToInt32(field.GetValue(GetItemArmor(itemId)));
+        }
+        field = typeof(ITEM_DATA).GetField(propertyName);
+        if (field != null)
+        {
+            if (!HasItemEffect(itemId))
+            {
+                Log.Error($"[ff9item] Trying to retrieve the effect property \"{propertyName}\" from {itemId} which has no use-effect");
+                return -1;
+            }
+            return Convert.ToInt32(field.GetValue(GetItemEffect(itemId)));
+        }
+        Log.Error($"[ff9item] Unrecognized item property \"{propertyName}\"");
+        return -1;
+    }
+
     private static void ApplyItemEquipabilityPatchFile(Dictionary<RegularItem, FF9ITEM_DATA> itemDatabase, String[] allLines)
-	{
+    {
         foreach (String line in allLines)
         {
             // eg.: Garnet Add 1 2 Remove 56
@@ -547,10 +589,10 @@ public class ff9item
             Int32 itemId;
             UInt64 charMask = ff9feqp.GetCharacterEquipMaskFromId((CharacterId)charId);
             for (Int32 wordIndex = 1; wordIndex < allWords.Length; wordIndex++)
-			{
+            {
                 String word = allWords[wordIndex].Trim();
                 if (String.Compare(word, "Add") == 0)
-				{
+                {
                     isAdd = true;
                     isRemove = false;
                 }

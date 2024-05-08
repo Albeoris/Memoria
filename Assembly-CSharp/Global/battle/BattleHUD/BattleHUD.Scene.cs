@@ -75,15 +75,15 @@ public partial class BattleHUD : UIScene
             {
                 Single rowCount = _commandPanel.AccessMenu == null ? 4f : 5f;
                 Single row;
-                if (_currentCommandIndex == CommandMenu.Attack)
+                if (_currentCommandIndex == BattleCommandMenu.Attack)
                     row = 0f;
-                else if (_currentCommandIndex == CommandMenu.Ability1)
+                else if (_currentCommandIndex == BattleCommandMenu.Ability1)
                     row = 1f;
-                else if (_currentCommandIndex == CommandMenu.Ability2)
+                else if (_currentCommandIndex == BattleCommandMenu.Ability2)
                     row = 2f;
-                else if (_currentCommandIndex == CommandMenu.Item)
+                else if (_currentCommandIndex == BattleCommandMenu.Item)
                     row = 3f;
-                else if (_currentCommandIndex == CommandMenu.AccessMenu)
+                else if (_currentCommandIndex == BattleCommandMenu.AccessMenu)
                     row = 4f;
                 else
                     return;
@@ -93,7 +93,7 @@ public partial class BattleHUD : UIScene
                 _buttonSliding.IsActive = true;
                 _commandPanel.GetCommandButton(_buttonSlideInitial).SetActive(false);
                 ButtonGroupState.ActiveButton = _buttonSliding;
-                _currentCommandIndex = (CommandMenu)_buttonSliding.Transform.GetSiblingIndex();
+                _currentCommandIndex = (BattleCommandMenu)_buttonSliding.Transform.GetSiblingIndex();
             }
         }
         if (_buttonSliding != null)
@@ -147,8 +147,8 @@ public partial class BattleHUD : UIScene
         if (ButtonGroupState.ActiveGroup == CommandGroupButton)
         {
             FF9Sfx.FF9SFX_Play(103);
-            _currentCommandIndex = (CommandMenu)go.transform.GetSiblingIndex();
-            CommandMenu menuType = _currentCommandIndex;
+            _currentCommandIndex = (BattleCommandMenu)go.transform.GetSiblingIndex();
+            BattleCommandMenu menuType = _currentCommandIndex;
             _currentCommandId = GetCommandFromCommandIndex(ref menuType, CurrentPlayerIndex);
             ResetSlidingButton();
             TryMemorizeCommand();
@@ -158,17 +158,17 @@ public partial class BattleHUD : UIScene
 
             switch (menuType)
             {
-                case CommandMenu.Attack:
+                case BattleCommandMenu.Attack:
                     SetCommandVisibility(false, false);
                     SetTargetVisibility(true);
                     break;
-                case CommandMenu.Defend:
+                case BattleCommandMenu.Defend:
                     _targetCursor = 0;
                     SendCommand(ProcessCommand(CurrentPlayerIndex, CursorGroup.Individual));
                     SetIdle();
                     break;
-                case CommandMenu.Ability1:
-                case CommandMenu.Ability2:
+                case BattleCommandMenu.Ability1:
+                case BattleCommandMenu.Ability2:
                     CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
                     if (ff9Command.Type == CharacterCommandType.Normal)
                     {
@@ -191,12 +191,12 @@ public partial class BattleHUD : UIScene
                         SetItemPanelVisibility(true, false);
                     }
                     break;
-                case CommandMenu.Item:
+                case BattleCommandMenu.Item:
                     DisplayItem(false);
                     SetCommandVisibility(false, false);
                     SetItemPanelVisibility(true, false);
                     break;
-                case CommandMenu.Change:
+                case BattleCommandMenu.Change:
                     _targetCursor = 0;
                     if (_isManualTrance)
                     {
@@ -211,7 +211,7 @@ public partial class BattleHUD : UIScene
                         SetIdle();
                     }
                     break;
-                case CommandMenu.AccessMenu:
+                case BattleCommandMenu.AccessMenu:
                     OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex)?.Player?.Data : null);
                     break;
             }
@@ -287,18 +287,18 @@ public partial class BattleHUD : UIScene
         {
             if (ButtonGroupState.ActiveGroup == TargetGroupButton)
             {
-                CommandMenu menuType = _currentCommandIndex;
+                BattleCommandMenu menuType = _currentCommandIndex;
                 GetCommandFromCommandIndex(ref menuType, CurrentPlayerIndex);
                 FF9Sfx.FF9SFX_Play(101);
                 SetTargetVisibility(false);
                 ClearModelPointer();
                 switch (menuType)
                 {
-                    case CommandMenu.Attack:
+                    case BattleCommandMenu.Attack:
                         SetCommandVisibility(true, true);
                         break;
-                    case CommandMenu.Ability1:
-                    case CommandMenu.Ability2:
+                    case BattleCommandMenu.Ability1:
+                    case BattleCommandMenu.Ability2:
                         if (_subMenuType == SubMenuType.Ability)
                         {
                             SetAbilityPanelVisibility(true, true);
@@ -311,7 +311,7 @@ public partial class BattleHUD : UIScene
                         }
                         SetCommandVisibility(true, true);
                         break;
-                    case CommandMenu.Item:
+                    case BattleCommandMenu.Item:
                         SetItemPanelVisibility(true, true);
                         break;
                 }
@@ -473,8 +473,8 @@ public partial class BattleHUD : UIScene
         {
             if (ButtonGroupState.ActiveGroup == CommandGroupButton)
             {
-                _currentCommandIndex = (CommandMenu)go.transform.GetSiblingIndex();
-                if (_currentCommandIndex != CommandMenu.Defend && _currentCommandIndex != CommandMenu.Change)
+                _currentCommandIndex = (BattleCommandMenu)go.transform.GetSiblingIndex();
+                if (_currentCommandIndex != BattleCommandMenu.Defend && _currentCommandIndex != BattleCommandMenu.Change)
                     ResetSlidingButton(false);
             }
             else if (ButtonGroupState.ActiveGroup == AbilityGroupButton || ButtonGroupState.ActiveGroup == ItemGroupButton)

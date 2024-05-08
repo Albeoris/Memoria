@@ -1157,7 +1157,7 @@ public class AbilityUI : UIScene
     private static Int32 GetMp(AA_DATA aa_data)
     {
         Int32 mpCost = aa_data.MP;
-        if ((aa_data.Type & 4) != 0 && FF9StateSystem.EventState.gEventGlobal[18] != 0)
+        if ((aa_data.Type & 4) != 0 && battle.GARNET_SUMMON_FLAG != 0)
             mpCost <<= 2;
         return mpCost;
     }
