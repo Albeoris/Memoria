@@ -165,6 +165,7 @@ public class AbilityUI : UIScene
         _supportPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _supportPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.8f, relRight: 0.92f);
         _supportPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
         _supportPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _supportPanel.SubPanel.ButtonPrefab.IconSprite.width = _supportPanel.SubPanel.ButtonPrefab.IconSprite.height;
         _supportPanel.SubPanel.RecycleListPopulator.RefreshTableView();
     }
 

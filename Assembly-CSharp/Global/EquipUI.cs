@@ -87,6 +87,7 @@ public class EquipUI : UIScene
 		_equipSelectPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _equipSelectPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.144f, relTop: 0.856f, relLeft: 0.8f, relRight: 0.92f);
 		_equipSelectPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
 		_equipSelectPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+		_equipSelectPanel.SubPanel.ButtonPrefab.IconSprite.width = _equipSelectPanel.SubPanel.ButtonPrefab.IconSprite.height;
 		_equipSelectPanel.SubPanel.RecycleListPopulator.RefreshTableView();
 	}
 
@@ -376,8 +377,8 @@ public class EquipUI : UIScene
 	public override Boolean OnKeyLeftBumper(GameObject go)
 	{
 		if (!base.OnKeyLeftBumper(go)
-		    || (ButtonGroupState.ActiveGroup != EquipUI.SubMenuGroupButton && ButtonGroupState.ActiveGroup != EquipUI.EquipmentGroupButton)
-		    || !this.CharacterArrowPanel.activeSelf)
+			|| (ButtonGroupState.ActiveGroup != EquipUI.SubMenuGroupButton && ButtonGroupState.ActiveGroup != EquipUI.EquipmentGroupButton)
+			|| !this.CharacterArrowPanel.activeSelf)
 			return true;
 		
 		FF9Sfx.FF9SFX_Play(1047);
@@ -403,8 +404,8 @@ public class EquipUI : UIScene
 	public override Boolean OnKeyRightBumper(GameObject go)
 	{
 		if (!base.OnKeyRightBumper(go)
-		    || (ButtonGroupState.ActiveGroup != SubMenuGroupButton && ButtonGroupState.ActiveGroup != EquipmentGroupButton)
-		    || !CharacterArrowPanel.activeSelf)
+			|| (ButtonGroupState.ActiveGroup != SubMenuGroupButton && ButtonGroupState.ActiveGroup != EquipmentGroupButton)
+			|| !CharacterArrowPanel.activeSelf)
 			return true;
 		
 		FF9Sfx.FF9SFX_Play(1047);
