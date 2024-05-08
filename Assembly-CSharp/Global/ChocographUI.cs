@@ -64,6 +64,7 @@ public class ChocographUI : UIScene
 			button.IconSprite.SetAnchor(target: button.Transform, relBottom: 0.5f, relTop: 0.5f, bottom: -36f * scaleFactor, top: 36f * scaleFactor, relLeft: 0.064f, relRight: 0.064f, right: 72f * scaleFactor);
 			button.NameLabel.SetAnchor(target: button.Transform, relBottom: 0.081f, relTop: 0.919f, relLeft: 0.064f, left: 90f * scaleFactor, relRight: 1f);
 			button.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+			button.NameLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
 		}
 	}
 

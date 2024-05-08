@@ -81,13 +81,18 @@ public class EquipUI : UIScene
 		Int32 linePerPage = Configuration.Interface.MenuEquipRowCount;
 		Int32 lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
 		Single scaleFactor = lineHeight / buttonOriginalHeight;
+
 		_equipSelectPanel.SubPanel.ChangeDims(1, linePerPage, panelOriginalWidth, lineHeight);
 		_equipSelectPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _equipSelectPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.144f, relTop: 0.856f, relLeft: 0.044f, relRight: 0.13f);
-		_equipSelectPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _equipSelectPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.144f, relTop: 0.856f, relLeft: 0.154f, relRight: 0.795f);
-		_equipSelectPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _equipSelectPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.144f, relTop: 0.856f, relLeft: 0.8f, relRight: 0.92f);
-		_equipSelectPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
-		_equipSelectPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
 		_equipSelectPanel.SubPanel.ButtonPrefab.IconSprite.width = _equipSelectPanel.SubPanel.ButtonPrefab.IconSprite.height;
+
+		_equipSelectPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _equipSelectPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.144f, relTop: 0.856f, relLeft: 0.154f, relRight: 0.795f);
+		_equipSelectPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+		_equipSelectPanel.SubPanel.ButtonPrefab.NameLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
+
+		_equipSelectPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _equipSelectPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.144f, relTop: 0.856f, relLeft: 0.8f, relRight: 0.92f);
+		_equipSelectPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+		_equipSelectPanel.SubPanel.ButtonPrefab.NumberLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
 		_equipSelectPanel.SubPanel.RecycleListPopulator.RefreshTableView();
 	}
 
