@@ -269,6 +269,16 @@ public partial class BattleHUD : UIScene
             }
         }
 
+        if(switchBtlId >= 0)
+        {
+            // Switch to player ready when ForceNextTurn (turn-based)
+            Int32 playerId = 0;
+            while (1 << playerId != switchBtlId)
+                ++playerId;
+            SwitchPlayer(playerId);
+            switchBtlId = -1;
+        }
+
         if (ReadyQueue.Count <= 0 || CurrentPlayerIndex != -1)
             return;
 

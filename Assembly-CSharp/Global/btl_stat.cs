@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using FF9;
+﻿using FF9;
 using Memoria;
 using Memoria.Data;
 using NCalc;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable EmptyConstructor
@@ -505,13 +505,7 @@ public static class btl_stat
         return (btl.stat.permanent & status) != 0 || (btl.stat.cur & status) != 0;
     }
 
-    public static void CheckStatusLoop(BTL_DATA btl, Boolean ignoreAtb)
-    {
-        CheckStatuses(btl, ignoreAtb);
-        RotateAfterCheckStatusLoop(btl);
-    }
-
-    private static void CheckStatuses(BTL_DATA btl, Boolean ignoreAtb)
+    public static void CheckStatusLoop(BTL_DATA btl)
     {
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
         STAT_INFO stat = btl.stat;
@@ -548,7 +542,7 @@ public static class btl_stat
         if (!unit.IsUnderAnyStatus(BattleStatus.Stop | BattleStatus.Jump))
             btl.bi.atb = 1;
 
-        if (!ignoreAtb && !UIManager.Battle.FF9BMenu_IsEnableAtb())
+        if (!UIManager.Battle.FF9BMenu_IsEnableAtb())
             return;
 
         if (btl.bi.atb == 0)
@@ -604,7 +598,7 @@ public static class btl_stat
             else
             {
                 stat.cnt.opr[2] -= btl.cur.at_coef;
-            }          
+            }
         }
         if (Configuration.Mod.TranceSeek)
         {
@@ -631,7 +625,7 @@ public static class btl_stat
         ActiveTimeStatus(btl);
     }
 
-    private static void RotateAfterCheckStatusLoop(BTL_DATA btl)
+    public static void RotateAfterCheckStatusLoop(BTL_DATA btl)
     {
         if (CheckStatus(btl, BattleStatus.Confuse)
             && !btl_util.IsBtlUsingCommand(btl)

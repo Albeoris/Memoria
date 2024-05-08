@@ -1,14 +1,15 @@
 ﻿using Assets.Scripts.Common;
-using System;
-using System.Linq;
-using System.Collections.Generic;
+using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.Text;
 using Memoria.Scenes;
-using Memoria.Test;
 using Memoria.Speedrun;
+using Memoria.Test;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -554,6 +555,11 @@ public class UIKeyTrigger : MonoBehaviour
             }
             if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger) || keyCommand == Control.LeftTrigger)
             {
+                if (UIManager.Battle.CanForceNextTurn)
+                {
+                    BattleHUD.ForceNextTurn = true;
+                    FF9Sfx.FF9SFX_Play(103);
+                }
                 keyCommand = Control.None;
                 sceneFromState.OnKeyLeftTrigger(activeButton);
                 return true;

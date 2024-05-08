@@ -1,13 +1,13 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Memoria;
 using Memoria.Data;
 using Memoria.Scripts;
-using UnityEngine;
 using NCalc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 // ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable EmptyConstructor

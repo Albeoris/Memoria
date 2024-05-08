@@ -1,13 +1,14 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria;
+using Memoria.Data;
+using Memoria.Database;
+using Memoria.Prime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Memoria;
-using Memoria.Data;
-using Memoria.Database;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -412,7 +413,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     {
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next;
         UIManager.Battle.UpdateSlidingButtonState();
-        if (UIManager.Battle.FF9BMenu_IsEnableAtb())
+        if (UIManager.Battle.IsNativeEnableAtb())
             ProcessActiveTime(btl);
     }
 
@@ -421,29 +422,35 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         Int32 battleSpeed = Configuration.Battle.Speed;
 
         BTL_DATA source = btl;
-        Boolean canContinute = false;
-        Boolean needContinue = battleSpeed == 1 || battleSpeed == 2;
+        Boolean canContinue = false;
+        Boolean needContinue = false;
+        Int32 maxLoop = 1000;
+        
         do
         {
-            HonoluluBattleMain.counterATB++;
+            if (battleSpeed == 1 || battleSpeed == 2)
+            {
+                // Check if someone has some atb, we don't want to advance atb instantly in some cases
+                // This is necessary for some fights starting with a conversation where atb is forced to 0 (see issue #430)
+                needContinue = false;
+                foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+                {
+                    if (!unit.IsPlayer) continue;
+                    if (unit.CurrentAtb > 0)
+                    {
+                        needContinue = true;
+                        break;
+                    }
+                }
+            }
+
+            Boolean advanceAtb = UIManager.Battle.FF9BMenu_IsEnableAtb();
+            if (advanceAtb) HonoluluBattleMain.counterATB++;
+
             for (btl = source; btl != null; btl = btl.next)
             {
-                if (btl.cur.hp == 0)
+                if (btl.cur.hp == 0 || btl.sel_mode != 0 || btl.bi.atb == 0)
                     continue;
-
-                if (btl.sel_mode != 0 || btl.sel_menu != 0 || btl.bi.atb == 0)
-                {
-                    // We need to refresh status for any alive characters in the fast or the turn-based mode
-                    if (needContinue)
-                    {
-                        // ============ Warning ============
-                        btl_para.CheckPointData(btl);
-                        btl_stat.CheckStatusLoop(btl, true);
-                        // =================================
-                    }
-
-                    continue;
-                }
 
                 POINTS current = btl.cur;
                 POINTS maximum = btl.max;
@@ -451,19 +458,14 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 Boolean changed = false;
                 if (current.at < maximum.at)
                 {
-                    if (btl.bi.player != 0)
-                        canContinute = true;
+                    if (btl.bi.player != 0 || (battleSpeed == 2 && BattleHUD.ForceNextTurn))
+                        canContinue = true;
 
                     changed = true;
-                    current.at += (Int16)Math.Max(1, current.at_coef * 4 );
-                }
-
-                if (needContinue)
-                {
-                    // ============ Warning ============
-                    btl_para.CheckPointData(btl);
-                    btl_stat.CheckStatusLoop(btl, true);
-                    // =================================
+                    if (advanceAtb)
+                        current.at += (Int16)Math.Max(1, current.at_coef * 4);
+                    else
+                        needContinue = false;
                 }
 
                 if (current.at < maximum.at)
@@ -475,13 +477,15 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     {
                         if (changed)
                         {
+                            BattleHUD.ForceNextTurn = false;
+                            BattleHUD.switchBtlId = btl.btl_id;
                             needContinue = false;
                         }
                     }
-                    else
+                    else if (!btl_stat.CheckStatus(btl, BattleStatusConst.PreventATBConfirm))
                     {
-                        if (!btl_stat.CheckStatus(btl, BattleStatusConst.PreventATBConfirm))
-                            needContinue = false;
+                        if (changed) BattleHUD.ForceNextTurn = false;
+                        needContinue = false;
                     }
                 }
                 else if (battleSpeed != 1 || !btl_stat.CheckStatus(btl, BattleStatusConst.PreventATBConfirm))
@@ -527,12 +531,30 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     if (Array.IndexOf(FF9StateSystem.Battle.FF9Battle.seq_work_set.AnmOfsList, this.btlIDList[btl_scrp.FindBattleUnit(btl.btl_id).Data.typeNo]) < 0)
                         Debug.LogError("Index out of range");
 
-                    UnityEngine.Random.Range(0, 4);
                     if (FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
-                        break;
+                        return;
                 }
             }
-        } while (canContinute && needContinue);
+
+            // Failsafe - some events might produce infinite loops (i.e. atb never advance)
+            if (--maxLoop <= 0)
+            {
+                Log.Warning($"[ProcessActiveTime] Failsafe activated - btlMapNo: {FF9StateSystem.Common.FF9.btlMapNo} fldMapNo: {FF9StateSystem.Common.FF9.fldMapNo} wldMapNo: {FF9StateSystem.Common.FF9.wldMapNo}");
+                return;
+            }
+
+            if (canContinue && needContinue)
+            {
+                // Update statuses before looping
+                for (btl = source; btl != null; btl = btl.next)
+                {
+                    btl_para.CheckPointData(btl);
+                    btl_stat.CheckStatusLoop(btl);
+                }
+                // Events need to be processed (i.e. atb reset to 0, see issue #430)
+                PersistenSingleton<EventEngine>.Instance.ServiceEvents();
+            }
+        } while (canContinue && needContinue);
     }
 
     private void Update()

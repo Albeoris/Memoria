@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using FF9;
+﻿using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Scenes;
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public partial class BattleHUD : UIScene
@@ -58,7 +58,7 @@ public partial class BattleHUD : UIScene
     }
 
     public void UpdateSlidingButtonState()
-	{
+    {
         if (!Configuration.Interface.PSXBattleMenu || ButtonGroupState.ActiveGroup != CommandGroupButton)
             return;
         Boolean leftPressed = (ETb.sKey0 & (EventInput.Lleft | EventInput.Pleft)) != 0;
@@ -97,7 +97,7 @@ public partial class BattleHUD : UIScene
             }
         }
         if (_buttonSliding != null)
-		{
+        {
             if (_buttonSliding == _commandPanel.Change && leftPressed)
                 _buttonSlideFactor += 0.3f;
             else if (_buttonSliding == _commandPanel.Defend && rightPressed)
@@ -376,14 +376,20 @@ public partial class BattleHUD : UIScene
                         }
                     }
                     if (Configuration.Battle.Speed == 2)
-                        // We defend if we end up with the same player
-                        return OnKeyConfirm(_commandPanel.Defend.GameObject);
+                    {
+                        // If we end up with the same player
+                        BattleHUD.ForceNextTurn = true;
+                        return true;
+                    }
                 }
                 else if (ReadyQueue.Count == 1)
                 {
                     if (Configuration.Battle.Speed == 2)
-                        // We defend if no other players are ready
-                        return OnKeyConfirm(_commandPanel.Defend.GameObject);
+                    {
+                        // If no other players are ready
+                        BattleHUD.ForceNextTurn = true;
+                        return true;
+                    }
                     else
                         SwitchPlayer(ReadyQueue[0]);
                 }
@@ -568,7 +574,7 @@ public partial class BattleHUD : UIScene
             {
                 foreach (GONavigationButton button in _targetPanel.AllTargets)
                     ButtonGroupState.SetButtonAnimation(button, true);
-                
+
                 ButtonGroupState.ActiveButton = ButtonGroupState.GetCursorStartSelect(TargetGroupButton);
             }
             _cursorType = CursorGroup.Individual;

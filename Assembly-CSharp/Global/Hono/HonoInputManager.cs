@@ -624,7 +624,6 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
 	public static Boolean ApplicationIsActivated()
 	{
-        if (Configuration.Control.AlwaysCaptureGamepad) return true;
 		IntPtr foregroundWindow = HonoInputManager.GetForegroundWindow();
 		if (foregroundWindow == IntPtr.Zero)
 		{
@@ -680,16 +679,14 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 	{
 		if (!this.isDisablePrimaryKey)
 		{
-			GamePadState state = global::GamePad.GetState(PlayerIndex.One);
+			GamePadState state = GamePad.GetState(PlayerIndex.One);
 			for (Int32 i = 0; i < (Int32)this.KeyName.Length; i++)
 			{
-				Boolean flag = false;
-				if (HonoInputManager.VKKeyCodeMapping.ContainsKey(this.inputKeysPrimary[i]))
+				if (ApplicationIsActivated() && VKKeyCodeMapping.ContainsKey(this.inputKeysPrimary[i]) && GetAsyncKeyState(VKKeyCodeMapping[this.inputKeysPrimary[i]]) != 0)
 				{
-					flag = (HonoInputManager.GetAsyncKeyState(HonoInputManager.VKKeyCodeMapping[this.inputKeysPrimary[i]]) != 0);
+                    this.isInput[i] = true;
 				}
-				Boolean flag2 = this.CheckRawXInput(this.joystickKeysPrimary[i], state);
-				if (HonoInputManager.ApplicationIsActivated() && (flag || flag2))
+                if((Configuration.Control.AlwaysCaptureGamepad || ApplicationIsActivated()) && this.CheckRawXInput(this.joystickKeysPrimary[i], state))
 				{
 					this.isInput[i] = true;
 				}
