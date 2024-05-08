@@ -1763,10 +1763,7 @@ public class EBin
                 FF9StateSystem.MiniGame.SavedData.sDraw = (Int16)val;
                 break;
             case memoria_variable.BATTLE_RUNAWAY:
-                if (val == 0)
-                    FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway = false;
-                else
-                    FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway = true;
+                FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway = val != 0;
                 break;
         }
     }
