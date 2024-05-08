@@ -517,24 +517,7 @@ public static class btl_stat
 
         if (unit.IsUnderStatus(BattleStatus.Death))
         {
-            if (Configuration.Mod.TranceSeek && unit.IsPlayer)
-            {
-                // TRANCE SEEK - Refresh stats on Death
-                btl.elem.str = unit.Player.Data.elem.str;
-                btl.elem.wpr = unit.Player.Data.elem.wpr;
-                btl.elem.mgc = unit.Player.Data.elem.mgc;
-                btl.defence.PhysicalDefence = unit.Player.Data.defence.PhysicalDefence;
-                btl.defence.PhysicalEvade = unit.Player.Data.defence.PhysicalEvade;
-                btl.defence.MagicalDefence = unit.Player.Data.defence.MagicalDefence;
-                btl.defence.MagicalEvade = unit.Player.Data.defence.MagicalEvade;
-            }
             btl_mot.DieSequence(btl);
-            return;
-        }
-        if (Configuration.Mod.TranceSeek && !unit.IsUnderStatus(BattleStatus.Death | BattleStatus.Trance) && unit.Trance == 255)
-        {
-            unit.RemoveStatus(BattleStatus.Petrify);
-            unit.AlterStatus(BattleStatus.Trance);
             return;
         }
 
@@ -700,6 +683,10 @@ public static class btl_stat
                 GeoAddColor2DrawPacket(data.gameObject, r, g, b);
                 if (data.weapon_geo)
                     GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
+            }
+            else
+            {
+                SetDefaultShader(data);
             }
         }
         else if (CheckStatus(data, BattleStatus.Petrify))
