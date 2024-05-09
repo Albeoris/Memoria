@@ -153,18 +153,43 @@ public class AbilityUI : UIScene
         Int32 linePerPage = Configuration.Interface.MenuAbilityRowCount;
         Int32 lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
         Single scaleFactor = lineHeight / buttonOriginalHeight;
-        _abilityPanel.SubPanel.ChangeDims(2, linePerPage, panelOriginalWidth / 2f, lineHeight);
+        Int32 columnPerPage = (Int32)Math.Floor(2 / scaleFactor);
+
+        if (columnPerPage > 2)
+        {
+            _abilityPanel.Background.Panel.Name.Label.alpha = 0f;
+            _abilityPanel.Background.Panel.Info.Label.alpha = 0f;
+            _abilityPanel.Background.Panel.Name2.Label.alpha = 0f;
+            _abilityPanel.Background.Panel.Info2.Label.alpha = 0f;
+            _abilityPanel.ScrollButton.Panel.alpha = 0.5f;
+            _supportPanel.Background.Panel.Name.Label.alpha = 0f;
+            _supportPanel.Background.Panel.Info.Label.alpha = 0f;
+            _supportPanel.Background.Panel.Name2.Label.alpha = 0f;
+            _supportPanel.Background.Panel.Info2.Label.alpha = 0f;
+            _supportPanel.ScrollButton.Panel.alpha = 0.5f;
+        }
+
+        _abilityPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, panelOriginalWidth / columnPerPage, lineHeight);
         _abilityPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.091f, relRight: 0.795f);
-        _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.8f, relRight: 0.92f);
         _abilityPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _abilityPanel.SubPanel.ButtonPrefab.NameLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
+
+        _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.8f, relRight: 0.92f);
         _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
         _abilityPanel.SubPanel.RecycleListPopulator.RefreshTableView();
-        _supportPanel.SubPanel.ChangeDims(2, linePerPage, panelOriginalWidth / 2f, lineHeight);
+
+        _supportPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, panelOriginalWidth / columnPerPage, lineHeight);
         _supportPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _supportPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.09f, relRight: 0.176f);
+        _supportPanel.SubPanel.ButtonPrefab.IconSprite.width = _supportPanel.SubPanel.ButtonPrefab.IconSprite.height;
+
         _supportPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _supportPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.24f, relRight: 0.795f);
-        _supportPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _supportPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.8f, relRight: 0.92f);
         _supportPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _supportPanel.SubPanel.ButtonPrefab.NameLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
+
+        _supportPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _supportPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.8f, relRight: 0.92f);
         _supportPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _supportPanel.SubPanel.ButtonPrefab.NumberLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
         _supportPanel.SubPanel.RecycleListPopulator.RefreshTableView();
     }
 

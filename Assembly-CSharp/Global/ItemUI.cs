@@ -145,20 +145,46 @@ public class ItemUI : UIScene
         Int32 linePerPage = Configuration.Interface.MenuItemRowCount;
         Int32 lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
         Single scaleFactor = lineHeight / buttonOriginalHeight;
-        KeyItemDetailHUD keyItemPrefab = new KeyItemDetailHUD(_keyItemPanel.SubPanel.ButtonPrefab.GameObject);
-        _itemPanel.SubPanel.ChangeDims(2, linePerPage, panelOriginalWidth / 2f, lineHeight);
+        Int32 columnPerPage = (Int32)Math.Floor(2 / scaleFactor);
+
+        if (columnPerPage > 2)
+        {
+            _itemPanel.Background.Panel.Name.Label.alpha = 0f;
+            _itemPanel.Background.Panel.Info.Label.alpha = 0f;
+            _itemPanel.Background.Panel.Name2.Label.alpha = 0f;
+            _itemPanel.Background.Panel.Info2.Label.alpha = 0f;
+            _itemPanel.ScrollButton.Panel.alpha = 0.5f;
+            _keyItemPanel.Background.Panel.Name.Label.alpha = 0f;
+            _keyItemPanel.Background.Panel.Info.Label.alpha = 0f;
+            _keyItemPanel.ScrollButton.Panel.alpha = 0.5f;
+        }
+
+        _itemPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, panelOriginalWidth / columnPerPage, lineHeight);
         _itemPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.105f, relRight: 0.191f);
+        _itemPanel.SubPanel.ButtonPrefab.IconSprite.width = _itemPanel.SubPanel.ButtonPrefab.IconSprite.height;
+
         _itemPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.215f, relRight: 0.795f);
-        _itemPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.8f, relRight: 0.9f);
         _itemPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _itemPanel.SubPanel.ButtonPrefab.NameLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
+
+        _itemPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.8f, relRight: 0.9f);
         _itemPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _itemPanel.SubPanel.ButtonPrefab.NumberLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
+
         _itemPanel.SubPanel.RecycleListPopulator.RefreshTableView();
+
+        KeyItemDetailHUD keyItemPrefab = new KeyItemDetailHUD(_keyItemPanel.SubPanel.ButtonPrefab.GameObject);
         _keyItemPanel.SubPanel.ChangeDims(2, linePerPage, panelOriginalWidth / 2f, lineHeight);
+        //snouz: can't make these icons work when extending the key item menu, so 2 columns it stays
+        //_keyItemPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _keyItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.105f, relRight: 0.75f);
+        //keyItemPrefab.NewIcon.SetAnchor(target: _keyItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.75f, relRight: 0.9f);
         keyItemPrefab.NewIcon.SetDimensions((Int32)Math.Round(117f * scaleFactor), (Int32)Math.Round(64f * scaleFactor));
         keyItemPrefab.NewIconSprite.SetDimensions((Int32)Math.Round(44f * scaleFactor), (Int32)Math.Round(58f * scaleFactor));
         keyItemPrefab.NewIconLabelSprite.SetDimensions((Int32)Math.Round(90f * scaleFactor), (Int32)Math.Round(58f * scaleFactor));
         keyItemPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        keyItemPrefab.NameLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
         _keyItemPanel.SubPanel.RecycleListPopulator.RefreshTableView();
+
     }
 
     [DebuggerHidden]

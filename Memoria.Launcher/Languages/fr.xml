@@ -266,7 +266,7 @@
 	</EncodingEditor>
 	
 	<ModEditor
-	WindowTitle = "Configuration des Mods"
+	WindowTitle = "Gestionnaire de mods"
 	ModInfos = "Informations"
 	TabMyMods = "Mods Installés"
 	TabCatalog = "Catalogue"
