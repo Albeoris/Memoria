@@ -145,6 +145,17 @@ namespace NCalc
                 BattleUnit killer = killed?.GetKiller();
                 args.Result = killer != null && killer.Id == killerId;
             }
+            else if (name == "BattleUnitFilter" && args.Parameters.Length >= 1)
+            {
+                UInt16 filterId = 0;
+                foreach (BattleUnit btlUnit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+                {
+                    NCalcUtility.InitializeExpressionUnit(ref args.Parameters[0], btlUnit, "Candidate");
+                    if (NCalcUtility.EvaluateNCalcCondition(args.Parameters[0].Evaluate(), false))
+                        filterId |= btlUnit.Id;
+                }
+                args.Result = filterId;
+            }
             else if (name == "BattleFilter" && args.Parameters.Length >= 1)
             {
                 UInt16 btlId = (UInt16)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0);
@@ -321,6 +332,7 @@ namespace NCalc
         {
             ENEMY enemy = unit.IsPlayer ? null : unit.Enemy.Data;
             expr.Parameters[prefix + "Name"] = unit.Name;
+            expr.Parameters[prefix + "BattleId"] = (Int32)unit.Id;
             expr.Parameters[prefix + "MaxHP"] = unit.MaximumHp;
             expr.Parameters[prefix + "MaxMP"] = unit.MaximumMp;
             expr.Parameters[prefix + "MaxATB"] = (Int32)unit.MaximumAtb;
@@ -406,6 +418,7 @@ namespace NCalc
                 return;
             }
             expr.Parameters[prefix + "Name"] = String.Empty;
+            expr.Parameters[prefix + "BattleId"] = 0;
             expr.Parameters[prefix + "MaxHP"] = 0;
             expr.Parameters[prefix + "MaxMP"] = 0;
             expr.Parameters[prefix + "MaxATB"] = 0;
