@@ -199,41 +199,33 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Mog Add-ons</Name>
-	<Version>3.3</Version>
+	<Version>3.4</Version>
 	<InstallationPath>MogAddons</InstallationPath>
-	<ReleaseDate>2023-12-01</ReleaseDate>
+	<ReleaseDate>2024-05-09</ReleaseDate>
 	<Author>faospark</Author>
-	<Description>UI, Buttons , Portraits, Tweaks and more... an Easy to install collection of enhancements for Final Fantasy IX Steam. 
-:: Features ::
-Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts 
-Tweaks : AP GAIN , EXP GAIN and Requirements 
-Portrait options : Default with extended cast, Opera Omnia and  Upscaled PS1 Portrait Artwork 
-Button Prompts Options:  PS Gloss , PS5 , Pixel Style, PlayStation Vanilla prompts,
-UI : Default , Darker UI and Flat 
+	<Description>:: Features ::
+|- Tweaks : AP GAIN , EXP GAIN and Requirements , and Gil rewards
+|- Portrait options : Default with extended cast, Opera Omnia and  Upscaled PS1 Portrait Artwork 
+|- Button Prompts Options:  PS Gloss , PS5 , Pixel Style, PlayStation Vanilla prompts,
+|- UI : Default , Darker UI and Flat 
+-|- Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts you can disable them anytime 
 
 :: Submod activation ::
-Use the Mod Manager UI to activate each submods you like and pick 
+Use the Mod Manager UI to activate each submods you like and pick. 
+MogAddons is essentially showcase of what can the Memoria Engine for your gameplay 
 
 :: Compatibility ::
 - Compatible with Alternate Fantasy
 - Not compatible for older versions of the game and repacks.
-Requires Memoria v2023.06.11
+Requires Memoria v2023.06.11 or later
 	</Description>
-	<PatchNotes>::3.3 ::
--Added 4x AP gain
--Added 99 AP gain
--Added 2x+ EXP gain
--Added 4x+ EXP gain
--Added NO EXP AND AP GAIN
-::3.2 ::
--Added double exp and halved ability gems
-:: 3.0 and 3.1  Log ::
-- Added 1 Gem Compatibility with Alternate Fantasy
-- Replaced Amaranth's Opera Omnia Portrait
-- Split default feature of halved EXP and 1 Gem passive ability to ech submod
-- Bump compatibility to the recent version of memoria
+	<PatchNotes>-Fixed formula for AP and EXP tweaks 
+-added tweaks : 2x AP , 2x Gil , 4x Gil 
+-added alternative title screen 
+-added tiple triad matt 
+-added remove mist on disc4
 	</PatchNotes>
-	<Category>Visual</Category>
+	<Category>Various</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1</DownloadUrl>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1687258501-1210392332.png</PreviewFileUrl>
@@ -269,99 +261,141 @@ Requires Memoria v2023.06.11
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Portraits : Default Extended Cast </Name>
+		<Name>Portraits : Default Extended Cast</Name>
 		<InstallationPath>Features/Portraits/PortraitDefault</InstallationPath>
-		<Description>Default Portraits that includes Kuja, Fratly and Lani </Description>
+		<Description>Default Portraits that includes Kuja, Fratly and Lani</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Portraits : PSX Upscaled</Name>
 		<InstallationPath>Features/Portraits/PortraitPSXUpscale</InstallationPath>
-		<Description>Portraits based from the original psx release Upscaled using waifu2x and giga pixel </Description>
+		<Description>Portraits based from the original psx release Upscaled using waifu2x and giga pixel</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Portraits : Opera Omnia </Name>
+		<Name>Portraits : Opera Omnia</Name>
 		<InstallationPath>Features/Portraits/PortraitOperaOmnia</InstallationPath>
-		<Description>Only activate this when base is buggy </Description>
+		<Description>Only activate this when base is buggy</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Dialogue Box : Default </Name>
+		<Name>Dialogue Box : Default</Name>
 		<InstallationPath>Features/DialogueBox/DxDefault</InstallationPath>
-		<Description>Disables Darker UI </Description>
+		<Description>Disables Darker UI</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Dialogue Box : Darker UI </Name>
+		<Name>Dialogue Box : Darker UI</Name>
 		<InstallationPath>Features/DialogueBox/DarkerUI</InstallationPath>
-		<Description>Forces Darker UI </Description>
+		<Description>Forces Darker UI</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Dialogue Box : Flat </Name>
+		<Name>Dialogue Box : Flat</Name>
 		<InstallationPath>Features/DialogueBox/FlatUI</InstallationPath>
-		<Description>Just a Full Solid colors like the old games </Description>
+		<Description>Just a Full Solid colors like the old games</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: 1 Gem Ability </Name>
+		<Name>Tweak: 1 Gem Ability</Name>
 		<InstallationPath>Features/Tweaks/Ability</InstallationPath>
-		<Description>Enables 1 gem for passive abilities to be enabled </Description>
+		<Description>Enables 1 gem for passive abilities to be enabled</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: Halved Gem Ability </Name>
+		<Name>Tweak: Halved Gem Ability</Name>
 		<InstallationPath>Features/Tweaks/AbilityHalf</InstallationPath>
-		<Description>Cuts ability gems to half for passive abilities to be enabled </Description>
+		<Description>Cuts ability gems to half for passive abilities to be enabled</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: 1 Gem Ability for Alternate Fantasy  </Name>
+		<Name>Tweak: 1 Gem Ability for Alternate Fantasy</Name>
 		<InstallationPath>Features/Tweaks/AF Ability</InstallationPath>
-		<Description>Enables 1 gem for passive abilities to be enabled for alternate fantasy </Description>
+		<Description>Enables 1 gem for passive abilities to be enabled for alternate fantasy</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: 4x AP Gain   </Name>
+		<Name>Tweak: 2x AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP4x</InstallationPath>
-		<Description>Gains 4x AP after battle </Description>
+		<Description>Gains 2x AP after battle (Ignores AbilityUp)</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: 99 AP Gain   </Name>
+		<Name>Tweak: 4x AP Gain</Name>
+		<InstallationPath>Features/Tweaks/AP4x</InstallationPath>
+		<Description>Gains 4x AP after battle</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 99 AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP99</InstallationPath>
-		<Description>Gains 99 AP after battle </Description>
+		<Description>Gains 99 AP after battle</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: 2x+ EXP Gain   </Name>
+		<Name>Tweak: 2x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP2x</InstallationPath>
-		<Description>Gains 2x+ EXP after battle </Description>
+		<Description>Gains 2x EXP after battle</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: 4x+ EXP Gain   </Name>
+		<Name>Tweak: 4x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP4x</InstallationPath>
-		<Description>Gains 4x+ EXP after battle </Description>
+		<Description>Gains 4x EXP after battle</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: No / Zero AP and EXP Gain   </Name>
+		<Name>Tweak: No / Zero AP and EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXPAP0</InstallationPath>
-		<Description>If you like things hard. </Description>
+		<Description>If you like things hard.</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: Halved EXP </Name>
+		<Name>Tweak: Halved EXP</Name>
 		<InstallationPath>Features/Tweaks/ExpHalf</InstallationPath>
 		<Description>Cuts the EXP requirement to level up faster</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: Doubled EXP </Name>
+		<Name>Tweak: Doubled EXP</Name>
 		<InstallationPath>Features/Tweaks/ExpX2</InstallationPath>
-		<Description>Doubles EXP requirement so you level up slower </Description>
+		<Description>Doubles EXP requirement so you level up slower</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 2x gil</Name>
+		<InstallationPath>Features/Tweaks/2xgil</InstallationPath>
+		<Description>Doubles Gil recieved after battle</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 4x gil</Name>
+		<InstallationPath>Features/Tweaks/4xgil</InstallationPath>
+		<Description>4x Gil recieved after battle</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 2x of Any item Drop</Name>
+		<InstallationPath>Features/Tweaks/2xitemdrop</InstallationPath>
+		<Description>Recieve 2 items of each item drop(cant go beyond 2)</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Memoria : Alternate Title Screen</Name>
+		<InstallationPath>/Features/TitleLogo</InstallationPath>
+		<Description>Shows an Alternative title screen and Memoria Indicator</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Memoria: Triple Triad Mat</Name>
+		<InstallationPath>/Features/Cards</InstallationPath>
+		<Description>Shows Triple triad inspired matt and UI for cards</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Memoria: No/low Mist on Disc 4</Name>
+		<InstallationPath>/Features/Worlds</InstallationPath>
+		<Description>Only activate once you get access to the invincible</Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
