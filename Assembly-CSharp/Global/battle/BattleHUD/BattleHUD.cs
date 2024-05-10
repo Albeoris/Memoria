@@ -1,8 +1,5 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
-using System;
-using System.Linq;
-using System.Collections.Generic;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
@@ -10,6 +7,9 @@ using Memoria.Database;
 using Memoria.Prime;
 using Memoria.Scenes;
 using NCalc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public partial class BattleHUD : UIScene
@@ -20,7 +20,7 @@ public partial class BattleHUD : UIScene
     private readonly List<Boolean> _currentEnemyDieState;
     private readonly List<DamageAnimationInfo> _hpInfoVal;
     private readonly List<DamageAnimationInfo> _mpInfoVal;
-    private readonly Dictionary<Int32, CommandMenu> _commandCursorMemorize;
+    private readonly Dictionary<Int32, BattleCommandMenu> _commandCursorMemorize;
     private readonly Dictionary<PairCharCommand, Int32> _abilityCursorMemorize;
     private readonly List<Int32> _matchBattleIdPlayerList;
     private readonly List<Int32> _matchBattleIdEnemyList;
@@ -69,7 +69,7 @@ public partial class BattleHUD : UIScene
     private Boolean _beforePauseCommandEnable;
     private Boolean _isFromPause;
     private Boolean _isNeedToInit;
-    private CommandMenu _currentCommandIndex;
+    private BattleCommandMenu _currentCommandIndex;
     private BattleCommandId _currentCommandId;
     private String _currentButtonGroup;
     private Int32 _currentSubMenuIndex;
@@ -95,7 +95,7 @@ public partial class BattleHUD : UIScene
     private Boolean _oneTime;
     private Single _buttonSlideFactor;
     private Vector2 _buttonSlidePos;
-    private CommandMenu _buttonSlideInitial;
+    private BattleCommandMenu _buttonSlideInitial;
     private GONavigationButton _buttonSliding;
     private Int32 CurrentBattlePlayerIndex => _matchBattleIdPlayerList.IndexOf(CurrentPlayerIndex);
 
@@ -177,9 +177,10 @@ public partial class BattleHUD : UIScene
 
         if (_currentLibraMessageNumber == 1)
         {
+            Single additionalWidth = 0.0f;
             String str = String.Empty;
             if ((_libraEnabledMessage & LibraInformation.Name) != 0)
-                str += _libraBtlData.Name;
+                str += Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(_libraBtlData.Name, ref additionalWidth);
             if ((_libraEnabledMessage & LibraInformation.Level) != 0)
                 str += FF9TextTool.BattleLibraText(10) + _libraBtlData.Level.ToString();
             SetBattleMessage(str, 3);
@@ -694,17 +695,18 @@ public partial class BattleHUD : UIScene
         return btl.Data.is_monster_transform && btl.Data.monster_transform.new_command == cmdId;
     }
 
-    private AA_DATA GetSelectedActiveAbility(Int32 playerIndex, BattleCommandId cmdId, Int32 abilityIndex, out Int32 subNo)
+    private AA_DATA GetSelectedActiveAbility(Int32 playerIndex, BattleCommandId cmdId, Int32 abilityIndex, out Int32 subNo, out BattleAbilityId abilId)
     {
         CharacterCommand ff9Command = CharacterCommands.Commands[cmdId];
         if (CommandIsMonsterTransformCommand(playerIndex, cmdId, out BTL_DATA.MONSTER_TRANSFORM transform))
         {
             subNo = ff9Command.ListEntry[abilityIndex];
+            abilId = BattleAbilityId.Void;
             return transform.spell[subNo];
         }
-        BattleAbilityId abilityId = PatchAbility(ff9Command.GetAbilityId(abilityIndex));
-        subNo = (Int32)abilityId;
-        return FF9StateSystem.Battle.FF9Battle.aa_data[abilityId];
+        abilId = PatchAbility(ff9Command.GetAbilityId(abilityIndex));
+        subNo = (Int32)abilId;
+        return FF9StateSystem.Battle.FF9Battle.aa_data[abilId];
     }
 
     private void DisplayAbility()
@@ -773,7 +775,7 @@ public partial class BattleHUD : UIScene
             else
             {
                 BattleAbilityId patchedID = PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(battleAbilityListData.Id));
-                mp = GetActionMpCost(FF9StateSystem.Battle.FF9Battle.aa_data[patchedID], curUnit);
+                mp = GetActionMpCost(FF9StateSystem.Battle.FF9Battle.aa_data[patchedID], curUnit, patchedID);
                 itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(patchedID);
                 itemListDetailHud.Button.Help.Text = FF9TextTool.ActionAbilityHelpDescription(patchedID);
             }
@@ -958,7 +960,7 @@ public partial class BattleHUD : UIScene
                                 Int32 nextValidTarget = GetFirstAliveEnemyIndex();
                                 if (nextValidTarget != -1)
                                 {
-                                    if (_currentCommandIndex == CommandMenu.Attack && FF9StateSystem.PCPlatform && _enemyCount > 1)
+                                    if (_currentCommandIndex == BattleCommandMenu.Attack && FF9StateSystem.PCPlatform && _enemyCount > 1)
                                     {
                                         if (_currentTargetIndex == nextValidTarget && nextValidTarget + 1 < _targetPanel.AllTargets.Length)
                                             nextValidTarget++;
@@ -1174,11 +1176,13 @@ public partial class BattleHUD : UIScene
         }
     }
 
-    private Int32 GetActionMpCost(AA_DATA aaData, BattleUnit unit)
+    private Int32 GetActionMpCost(AA_DATA aaData, BattleUnit unit, BattleAbilityId abilId = BattleAbilityId.Void, Boolean considerCommandMenu = true)
     {
         Int32 mpCost = aaData.MP;
-        if ((aaData.Type & 4) != 0 && FF9StateSystem.EventState.gEventGlobal[18] != 0)
-            mpCost <<= 2;
+        BattleAbilityHelper.GetPatchedMPCost(abilId, unit, ref mpCost, ability: aaData, menu: considerCommandMenu ? _currentCommandIndex : BattleCommandMenu.None);
+
+        if ((aaData.Type & 4) != 0 && battle.GARNET_SUMMON_FLAG != 0)
+            mpCost *= 4;
 
         mpCost = mpCost * unit.Player.Data.mpCostFactor / 100;
 
@@ -1187,7 +1191,8 @@ public partial class BattleHUD : UIScene
 
     private AbilityStatus GetMonsterTransformAbilityState(Int32 abilId, Int32 playerIndex = -1)
     {
-        if (playerIndex < 0)
+        Boolean checkCurrentPlayer = playerIndex < 0;
+        if (checkCurrentPlayer)
             playerIndex = CurrentPlayerIndex;
         BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
         if (!unit.IsMonsterTransform)
@@ -1206,7 +1211,7 @@ public partial class BattleHUD : UIScene
                 return AbilityStatus.Disable;
         }
 
-        if (GetActionMpCost(aaData, unit) > unit.CurrentMp)
+        if (GetActionMpCost(aaData, unit, considerCommandMenu: checkCurrentPlayer) > unit.CurrentMp)
             return AbilityStatus.Disable;
 
         return AbilityStatus.Enable;
@@ -1214,11 +1219,13 @@ public partial class BattleHUD : UIScene
 
     private AbilityStatus GetAbilityState(Int32 abilId, Int32 playerIndex = -1)
     {
-        if (playerIndex < 0)
+        Boolean checkCurrentPlayer = playerIndex < 0;
+        if (checkCurrentPlayer)
             playerIndex = CurrentPlayerIndex;
         AbilityPlayerDetail abilityPlayerDetail = _abilityDetailDict[playerIndex];
         BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
-		AA_DATA patchedAbil = FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityHelper.Patch(ff9abil.GetActiveAbilityFromAbilityId(abilId), unit.Player.Data)];
+        BattleAbilityId patchedId = BattleAbilityHelper.Patch(ff9abil.GetActiveAbilityFromAbilityId(abilId), unit.Player.Data);
+        AA_DATA patchedAbil = FF9StateSystem.Battle.FF9Battle.aa_data[patchedId];
 
 		if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && abilityPlayerDetail.Player.Index != CharacterId.Quina && abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && ff9abil.IsAbilityActive(abilId))
             return AbilityStatus.None;
@@ -1244,7 +1251,7 @@ public partial class BattleHUD : UIScene
                 return AbilityStatus.Disable;
         }
 
-        if (GetActionMpCost(patchedAbil, unit) > unit.CurrentMp)
+        if (GetActionMpCost(patchedAbil, unit, patchedId, checkCurrentPlayer) > unit.CurrentMp)
             return AbilityStatus.Disable;
 
         return AbilityStatus.Enable;
@@ -1377,7 +1384,7 @@ public partial class BattleHUD : UIScene
 
     private void InitialBattle()
     {
-        _currentCommandIndex = CommandMenu.Attack;
+        _currentCommandIndex = BattleCommandMenu.Attack;
         _currentSubMenuIndex = 0;
         CurrentPlayerIndex = -1;
         _subMenuType = SubMenuType.Normal;
@@ -1435,9 +1442,11 @@ public partial class BattleHUD : UIScene
     {
         CommandDetail commandDetail = new CommandDetail
         {
+            Menu = _currentCommandIndex,
             CommandId = _currentCommandId,
             SubId = 0
         };
+        GetCommandFromCommandIndex(ref commandDetail.Menu, CurrentPlayerIndex);
 
         BattleCommandId cmdId = commandDetail.CommandId;
 
@@ -1526,6 +1535,7 @@ public partial class BattleHUD : UIScene
 
         if (bestRating > 0)
         {
+            commandDetail.Menu = BattleCommandMenu.None;
             commandDetail.CommandId = BattleCommandId.BlackMagic;
             commandDetail.SubId = (Int32)bestAbility;
             caster.Data.cmd[0].info.IsZeroMP = true;
@@ -1537,19 +1547,20 @@ public partial class BattleHUD : UIScene
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
         CMD_DATA cmd = btl.cmd[0];
         cmd.regist.sel_mode = 1;
-        btl_cmd.SetCommand(cmd, command.CommandId, command.SubId, command.TargetId, command.TargetType);
+        btl_cmd.SetCommand(cmd, command.CommandId, command.SubId, command.TargetId, command.TargetType, cmdMenu: command.Menu);
         SetPartySwapButtonActive(false);
         InputFinishList.Add(CurrentPlayerIndex);
 
         _partyDetail.SetBlink(CurrentPlayerIndex, false);
     }
 
-    private void SendDoubleCastCommand(CommandDetail first, CommandDetail secondCommand)
+    private void SendDoubleCastCommand(CommandDetail first, CommandDetail second)
     {
-        CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].cmd[3];
-        cmd.regist.sel_mode = 1;
-        btl_cmd.SetCommand(cmd, first.CommandId, first.SubId, first.TargetId, first.TargetType);
-        btl_cmd.SetCommand(FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].cmd[0], secondCommand.CommandId, secondCommand.SubId, secondCommand.TargetId, secondCommand.TargetType);
+        CMD_DATA cmd1 = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].cmd[3];
+        CMD_DATA cmd2 = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].cmd[0]; // The second command sent/performed is the main one (it resets the ATB correctly amongst other things)
+        cmd1.regist.sel_mode = 1;
+        btl_cmd.SetCommand(cmd1, first.CommandId, first.SubId, first.TargetId, first.TargetType, cmdMenu: first.Menu);
+        btl_cmd.SetCommand(cmd2, second.CommandId, second.SubId, second.TargetId, second.TargetType, cmdMenu: second.Menu);
         SetPartySwapButtonActive(false);
         InputFinishList.Add(CurrentPlayerIndex);
 
@@ -1600,7 +1611,7 @@ public partial class BattleHUD : UIScene
 
     private void TryMemorizeCommand()
     {
-        if (Configuration.Interface.PSXBattleMenu && (_currentCommandIndex == CommandMenu.Defend || _currentCommandIndex == CommandMenu.Change))
+        if (Configuration.Interface.PSXBattleMenu && (_currentCommandIndex == BattleCommandMenu.Defend || _currentCommandIndex == BattleCommandMenu.Change))
             return;
         _commandCursorMemorize[CurrentPlayerIndex] = _currentCommandIndex;
     }
@@ -1610,7 +1621,7 @@ public partial class BattleHUD : UIScene
         if (!forceCursorMemo && (Int64)FF9StateSystem.Settings.cfg.cursor == 0L)
             return;
 
-        CommandMenu memorizedCommand;
+        BattleCommandMenu memorizedCommand;
         if (_commandCursorMemorize.TryGetValue(CurrentPlayerIndex, out memorizedCommand))
             commandObject = _commandPanel.GetCommandButton(memorizedCommand);
     }
@@ -1679,9 +1690,9 @@ public partial class BattleHUD : UIScene
             _defaultTargetDead = false;
             _targetDead = false;
             _bestTargetIndex = -1;
-            if (_currentCommandIndex == CommandMenu.Ability1 || _currentCommandIndex == CommandMenu.Ability2 || CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out _))
+            if (_currentCommandIndex == BattleCommandMenu.Ability1 || _currentCommandIndex == BattleCommandMenu.Ability2 || CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out _))
             {
-                AA_DATA aaData = GetSelectedActiveAbility(CurrentPlayerIndex, _currentCommandId, _currentSubMenuIndex, out Int32 subNo);
+                AA_DATA aaData = GetSelectedActiveAbility(CurrentPlayerIndex, _currentCommandId, _currentSubMenuIndex, out Int32 subNo, out _);
                 targetType = aaData.Info.Target;
                 _defaultTargetAlly = aaData.Info.DefaultAlly;
                 _defaultTargetDead = aaData.Info.DefaultOnDead;
@@ -1699,7 +1710,7 @@ public partial class BattleHUD : UIScene
 
                 SelectBestTarget(targetType, testCommand);
             }
-            else if (_currentCommandIndex == CommandMenu.Item)
+            else if (_currentCommandIndex == BattleCommandMenu.Item)
             {
                 RegularItem itemId = _itemIdList[_currentSubMenuIndex];
                 ITEM_DATA itemData = ff9item.GetItemEffect(itemId);
@@ -1720,7 +1731,7 @@ public partial class BattleHUD : UIScene
 
                 SelectBestTarget(targetType, testCommand);
             }
-            else if (_currentCommandIndex == CommandMenu.Attack && CurrentPlayerIndex > -1)
+            else if (_currentCommandIndex == BattleCommandMenu.Attack && CurrentPlayerIndex > -1)
             {
                 BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
                 if (btl.IsHealingRod || btl.HasSupportAbility(SupportAbility1.Healer)) // Todo: should be coded as a SA feature instead of being hard-coded
@@ -1942,7 +1953,7 @@ public partial class BattleHUD : UIScene
                 if (targetIndex > -1)
                 {
                     targetIndex += HonoluluBattleMain.EnemyStartIndex;
-                    if (_currentCommandIndex == CommandMenu.Attack && FF9StateSystem.PCPlatform)
+                    if (_currentCommandIndex == BattleCommandMenu.Attack && FF9StateSystem.PCPlatform)
                         ValidateDefaultTarget(ref targetIndex);
                     GONavigationButton targetEnemy = _targetPanel.AllTargets[targetIndex];
                     ButtonGroupState.SetCursorStartSelect(targetEnemy, TargetGroupButton);
@@ -1978,7 +1989,7 @@ public partial class BattleHUD : UIScene
                     targetIndex = GetFirstAliveEnemyIndex();
                     if (targetIndex != -1)
                     {
-                        if (_currentCommandIndex == CommandMenu.Attack && FF9StateSystem.PCPlatform)
+                        if (_currentCommandIndex == BattleCommandMenu.Attack && FF9StateSystem.PCPlatform)
                             ValidateDefaultTarget(ref targetIndex);
                         GONavigationButton currentEnemy = _targetPanel.AllTargets[targetIndex];
                         ButtonGroupState.SetCursorStartSelect(currentEnemy, TargetGroupButton);

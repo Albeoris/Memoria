@@ -1,18 +1,22 @@
-using System;
 using FF9;
 using Memoria.Data;
+using System;
 
 namespace Memoria
 {
     public sealed class BattleTarget : BattleUnit
     {
         private readonly CalcContext _context;
+        private readonly BattleStatus _initialCheckPoint;
 
         public BattleTarget(BTL_DATA data, CalcContext context)
             : base(data)
         {
             _context = context;
+            _initialCheckPoint = CheckPointData();
         }
+
+        public BattleStatus AddededCheckPointStatuses => CheckPointData() & ~_initialCheckPoint;
 
         public EffectElement GuardElement
         {
@@ -268,6 +272,8 @@ namespace Memoria
         {
             if (!IsUnderAnyStatus(BattleStatus.Freeze) || IsUnderAnyStatus(BattleStatus.Petrify))
                 return false;
+            if (IsUnderAnyStatus(BattleStatus.EasyKill)) // Behaviour added by Memoria with no influence on vanilla - Boss can't die when frozen
+                return false;
 
             BattleVoice.TriggerOnStatusChange(Data, "Used", BattleStatus.Freeze);
             btl_cmd.KillSpecificCommand(Data, BattleCommandId.SysStone);
@@ -281,6 +287,16 @@ namespace Memoria
             // Dummied
             if (_context.DefensePower != 0 && HasSupportAbility(SupportAbility1.GambleDefence))
                 _context.DefensePower = (Int16)(Comn.random16() % (_context.DefensePower << 1));
+        }
+
+        private BattleStatus CheckPointData()
+        {
+            BattleStatus status = 0;
+            if (Data.cur.hp == 0) // Using this instead of "CurrentHp" avoids considering bosses under 10 000 HP as dead here
+                status |= BattleStatus.Death;
+            else if (IsPlayer && CurrentHp * 6 <= MaximumHp)
+                status |= BattleStatus.LowHP;
+            return status;
         }
     }
 }

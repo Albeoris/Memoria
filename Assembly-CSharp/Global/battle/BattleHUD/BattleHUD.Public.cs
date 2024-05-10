@@ -52,7 +52,7 @@ public partial class BattleHUD : UIScene
         InputFinishList = new List<Int32>();
         _unconsciousStateList = new List<Int32>();
         _firstCommand = new CommandDetail();
-        _commandCursorMemorize = new Dictionary<Int32, CommandMenu>();
+        _commandCursorMemorize = new Dictionary<Int32, BattleCommandMenu>();
         _abilityCursorMemorize = new Dictionary<PairCharCommand, Int32>();
         _matchBattleIdPlayerList = new List<Int32>();
         _matchBattleIdEnemyList = new List<Int32>();
@@ -170,9 +170,10 @@ public partial class BattleHUD : UIScene
     {
         if (Configuration.Interface.ScanDisplay)
         {
+            Single additionalWidth = 0.0f;
             String libraMessage = $"[{NGUIText.Center}]";
             if ((infos & LibraInformation.Name) != 0)
-                libraMessage += pBtl.Name;
+                libraMessage += Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(pBtl.Name, ref additionalWidth);
             if ((infos & LibraInformation.Level) != 0)
                 libraMessage += FF9TextTool.BattleLibraText(10) + pBtl.Level.ToString();
             if ((infos & LibraInformation.NameLevel) != 0)
@@ -256,7 +257,7 @@ public partial class BattleHUD : UIScene
             _currentButtonGroup = !_hidingHud ? ButtonGroupState.ActiveGroup : _currentButtonGroup;
             FF9BMenu_EnableMenu(false);
             TutorialUI tutorialUI = PersistenSingleton<UIManager>.Instance.TutorialScene;
-            tutorialUI.libraTitle = pBtl.Name;
+            tutorialUI.libraTitle = Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(pBtl.Name, ref additionalWidth);
             tutorialUI.libraMessage = libraMessage;
             tutorialUI.libraPhoto = photo;
             tutorialUI.DisplayMode = TutorialUI.Mode.Libra;
@@ -781,7 +782,7 @@ public partial class BattleHUD : UIScene
         BackButton.SetActive(false);
         _currentSilenceStatus = false;
         _currentMpValue = -1;
-        _currentCommandIndex = CommandMenu.Attack;
+        _currentCommandIndex = BattleCommandMenu.Attack;
         _currentSubMenuIndex = -1;
         CurrentPlayerIndex = -1;
         //currentTranceTrigger = false;

@@ -116,23 +116,23 @@ namespace Memoria.Data
                         NCalcUtility.InitializeExpressionPlayer(ref e, play);
                         e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                         e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                        if (String.Compare(formula.Key, "MaxHP") == 0) play.max.hp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.max.hp);
-                        else if (String.Compare(formula.Key, "MaxMP") == 0) play.max.mp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.max.mp);
-                        else if (String.Compare(formula.Key, "Speed") == 0) play.basis.dex = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.basis.dex);
-                        else if (String.Compare(formula.Key, "Strength") == 0) play.basis.str = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.basis.str);
-                        else if (String.Compare(formula.Key, "Magic") == 0) play.basis.mgc = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.basis.mgc);
-                        else if (String.Compare(formula.Key, "Spirit") == 0) play.basis.wpr = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.basis.wpr);
-                        else if (String.Compare(formula.Key, "Defence") == 0) play.defence.PhysicalDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.defence.PhysicalDefence);
-                        else if (String.Compare(formula.Key, "Evade") == 0) play.defence.PhysicalEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.defence.PhysicalEvade);
-                        else if (String.Compare(formula.Key, "MagicDefence") == 0) play.defence.MagicalDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.defence.MagicalDefence);
-                        else if (String.Compare(formula.Key, "MagicEvade") == 0) play.defence.MagicalEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.defence.MagicalEvade);
-                        else if (String.Compare(formula.Key, "PlayerCategory") == 0) play.category = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.category);
-                        else if (String.Compare(formula.Key, "MPCostFactor") == 0) play.mpCostFactor = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.mpCostFactor);
-                        else if (String.Compare(formula.Key, "MaxHPLimit") == 0) play.maxHpLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxHpLimit);
-                        else if (String.Compare(formula.Key, "MaxMPLimit") == 0) play.maxMpLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxMpLimit);
-                        else if (String.Compare(formula.Key, "MaxDamageLimit") == 0) play.maxDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxDamageLimit);
-                        else if (String.Compare(formula.Key, "MaxMPDamageLimit") == 0) play.maxMpDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxMpDamageLimit);
-                        else if (String.Compare(formula.Key, "PlayerPermanentStatus") == 0) play.SetPermanentStatus((BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)play.permanent_status));
+                        if (String.Equals(formula.Key, "MaxHP")) play.max.hp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.max.hp);
+                        else if (String.Equals(formula.Key, "MaxMP")) play.max.mp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.max.mp);
+                        else if (String.Equals(formula.Key, "Speed")) play.basis.dex = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.basis.dex);
+                        else if (String.Equals(formula.Key, "Strength")) play.basis.str = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.basis.str);
+                        else if (String.Equals(formula.Key, "Magic")) play.basis.mgc = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.basis.mgc);
+                        else if (String.Equals(formula.Key, "Spirit")) play.basis.wpr = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.basis.wpr);
+                        else if (String.Equals(formula.Key, "Defence")) play.defence.PhysicalDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.defence.PhysicalDefence);
+                        else if (String.Equals(formula.Key, "Evade")) play.defence.PhysicalEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.defence.PhysicalEvade);
+                        else if (String.Equals(formula.Key, "MagicDefence")) play.defence.MagicalDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.defence.MagicalDefence);
+                        else if (String.Equals(formula.Key, "MagicEvade")) play.defence.MagicalEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.defence.MagicalEvade);
+                        else if (String.Equals(formula.Key, "PlayerCategory")) play.category = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.category);
+                        else if (String.Equals(formula.Key, "MPCostFactor")) play.mpCostFactor = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.mpCostFactor);
+                        else if (String.Equals(formula.Key, "MaxHPLimit")) play.maxHpLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxHpLimit);
+                        else if (String.Equals(formula.Key, "MaxMPLimit")) play.maxMpLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxMpLimit);
+                        else if (String.Equals(formula.Key, "MaxDamageLimit")) play.maxDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxDamageLimit);
+                        else if (String.Equals(formula.Key, "MaxMPDamageLimit")) play.maxMpDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.maxMpDamageLimit);
+                        else if (String.Equals(formula.Key, "PlayerPermanentStatus")) play.SetPermanentStatus((BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)play.permanent_status));
                     }
                 }
             }
@@ -161,8 +161,8 @@ namespace Memoria.Data
                         Expression e = new Expression(formula.Value);
                         e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                         e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                        if (String.Compare(formula.Key, "BackAttack") == 0) backAttackChance = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), backAttackChance);
-                        else if (String.Compare(formula.Key, "Preemptive") == 0) preemptiveChance = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), preemptiveChance);
+                        if (String.Equals(formula.Key, "BackAttack")) backAttackChance = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), backAttackChance);
+                        else if (String.Equals(formula.Key, "Preemptive")) preemptiveChance = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), preemptiveChance);
                     }
                     preemptivePriority += BattleStartEffect[i].PreemptivePriorityDelta;
                 }
@@ -180,7 +180,7 @@ namespace Memoria.Data
             {
                 for (Int32 i = 0; i < BattleResultEffect.Count; i++)
                 {
-                    if (String.Compare(BattleResultEffect[i].When, when) == 0)
+                    if (String.Equals(BattleResultEffect[i].When, when))
                     {
                         if (BattleResultEffect[i].Condition.Length > 0)
                         {
@@ -208,14 +208,14 @@ namespace Memoria.Data
                             e.Parameters["Status"] = (UInt32)play.status;
                             e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                             e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                            if (String.Compare(formula.Key, "FleeGil") == 0) fleeGil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), fleeGil);
-                            else if (String.Compare(formula.Key, "HP") == 0) play.cur.hp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.cur.hp);
-                            else if (String.Compare(formula.Key, "MP") == 0) play.cur.mp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.cur.mp);
-                            else if (String.Compare(formula.Key, "Status") == 0) play.status = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)play.status);
-                            else if (String.Compare(formula.Key, "BonusAP") == 0) bonus.ap = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), bonus.ap);
-                            else if (String.Compare(formula.Key, "BonusCard") == 0) bonus.card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)bonus.card);
-                            else if (String.Compare(formula.Key, "BonusExp") == 0) bonus.exp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), bonus.exp);
-                            else if (String.Compare(formula.Key, "BonusGil") == 0) bonus.gil = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), bonus.gil);
+                            if (String.Equals(formula.Key, "FleeGil")) fleeGil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), fleeGil);
+                            else if (String.Equals(formula.Key, "HP")) play.cur.hp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.cur.hp);
+                            else if (String.Equals(formula.Key, "MP")) play.cur.mp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.cur.mp);
+                            else if (String.Equals(formula.Key, "Status")) play.status = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)play.status);
+                            else if (String.Equals(formula.Key, "BonusAP")) bonus.ap = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), bonus.ap);
+                            else if (String.Equals(formula.Key, "BonusCard")) bonus.card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)bonus.card);
+                            else if (String.Equals(formula.Key, "BonusExp")) bonus.exp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), bonus.exp);
+                            else if (String.Equals(formula.Key, "BonusGil")) bonus.gil = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), bonus.gil);
                             else
                             {
                                 for (Int32 j = 0; j < BattleResultUI.ItemMax; j++)
@@ -314,7 +314,7 @@ namespace Memoria.Data
                 Boolean canMove = asTarget ? !calc.Target.IsUnderAnyStatus(BattleStatusConst.NoReaction) : !calc.Caster.IsUnderAnyStatus(BattleStatusConst.NoReaction);
                 for (Int32 i = 0; i < AbilityEffect.Count; i++)
                 {
-                    if (AbilityEffect[i].AsTarget == asTarget && (canMove || AbilityEffect[i].EvenImmobilized) && String.Compare(AbilityEffect[i].When, when) == 0)
+                    if (AbilityEffect[i].AsTarget == asTarget && (canMove || AbilityEffect[i].EvenImmobilized) && String.Equals(AbilityEffect[i].When, when))
                     {
                         BattleCaster caster = calc.Caster;
                         BattleTarget target = calc.Target;
@@ -335,126 +335,152 @@ namespace Memoria.Data
                         BattleStatus tCurStat = target.CurrentStatus, tAutoStat = target.PermanentStatus, tResistStat = target.ResistStatus;
                         foreach (KeyValuePair<String, String> formula in AbilityEffect[i].Effect)
                         {
-                            Expression e = new Expression(formula.Value);
+                            String[] formulaSplit = formula.Value.Split(';');
+                            if (formulaSplit.Length == 0)
+                                continue;
+                            Expression e = new Expression(formulaSplit[0]);
                             NCalcUtility.InitializeExpressionUnit(ref e, caster, "Caster");
                             NCalcUtility.InitializeExpressionUnit(ref e, target, "Target");
                             NCalcUtility.InitializeExpressionAbilityContext(ref e, calc);
                             e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                             e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                            if (String.Compare(formula.Key, "CasterHP") == 0) caster.CurrentHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CurrentHp);
-                            else if (String.Compare(formula.Key, "CasterMP") == 0) caster.CurrentMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CurrentMp);
-                            else if (String.Compare(formula.Key, "CasterMaxHP") == 0) caster.MaximumHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MaximumHp);
-                            else if (String.Compare(formula.Key, "CasterMaxMP") == 0) caster.MaximumMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MaximumMp);
-                            else if (String.Compare(formula.Key, "CasterATB") == 0) caster.CurrentAtb = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CurrentAtb);
-                            else if (String.Compare(formula.Key, "CasterTrance") == 0) caster.Trance = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Trance);
-                            else if (String.Compare(formula.Key, "CasterCurrentStatus") == 0) cCurStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)cCurStat);
-                            else if (String.Compare(formula.Key, "CasterPermanentStatus") == 0) cAutoStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)cAutoStat);
-                            else if (String.Compare(formula.Key, "CasterResistStatus") == 0) cResistStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)cResistStat);
-                            else if (String.Compare(formula.Key, "CasterHalfElement") == 0) caster.HalfElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)caster.HalfElement);
-                            else if (String.Compare(formula.Key, "CasterGuardElement") == 0) caster.GuardElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)caster.GuardElement);
-                            else if (String.Compare(formula.Key, "CasterAbsorbElement") == 0) caster.AbsorbElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)caster.AbsorbElement);
-                            else if (String.Compare(formula.Key, "CasterWeakElement") == 0) caster.WeakElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)caster.WeakElement);
-                            else if (String.Compare(formula.Key, "CasterBonusElement") == 0) caster.BonusElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)caster.BonusElement);
-                            else if (String.Compare(formula.Key, "CasterSpeed") == 0) caster.Dexterity = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Dexterity);
-                            else if (String.Compare(formula.Key, "CasterStrength") == 0) caster.Strength = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Strength);
-                            else if (String.Compare(formula.Key, "CasterMagic") == 0) caster.Magic = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Magic);
-                            else if (String.Compare(formula.Key, "CasterSpirit") == 0) caster.Will = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Will);
-                            else if (String.Compare(formula.Key, "CasterDefence") == 0) caster.PhysicalDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.PhysicalDefence);
-                            else if (String.Compare(formula.Key, "CasterEvade") == 0) caster.PhysicalEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.PhysicalEvade);
-                            else if (String.Compare(formula.Key, "CasterMagicDefence") == 0) caster.MagicDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MagicDefence);
-                            else if (String.Compare(formula.Key, "CasterMagicEvade") == 0) caster.MagicEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MagicEvade);
-                            else if (String.Compare(formula.Key, "CasterRow") == 0) caster.Row = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Row);
-                            else if (String.Compare(formula.Key, "CasterSummonCount") == 0) caster.SummonCount = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.SummonCount);
-                            else if (String.Compare(formula.Key, "CasterIsStrengthModified") == 0) caster.StatModifier[0] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[0]);
-                            else if (String.Compare(formula.Key, "CasterIsMagicModified") == 0) caster.StatModifier[1] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[1]);
-                            else if (String.Compare(formula.Key, "CasterIsDefenceModified") == 0) caster.StatModifier[2] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[2]);
-                            else if (String.Compare(formula.Key, "CasterIsEvadeModified") == 0) caster.StatModifier[3] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[3]);
-                            else if (String.Compare(formula.Key, "CasterIsMagicDefenceModified") == 0) caster.StatModifier[4] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[4]);
-                            else if (String.Compare(formula.Key, "CasterIsMagicEvadeModified") == 0) caster.StatModifier[5] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[5]);
-                            else if (String.Compare(formula.Key, "CasterCriticalRateBonus") == 0) caster.CriticalRateBonus = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CriticalRateBonus);
-                            else if (String.Compare(formula.Key, "CasterCriticalRateWeakening") == 0) caster.CriticalRateWeakening = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CriticalRateWeakening);
-                            else if (String.Compare(formula.Key, "CasterMaxDamageLimit") == 0) caster.MaxDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MaxDamageLimit);
-                            else if (String.Compare(formula.Key, "CasterMaxMPDamageLimit") == 0) caster.MaxMpDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MaxMpDamageLimit);
-                            else if (String.Compare(formula.Key, "CasterBonusExp") == 0 && !caster.IsPlayer) caster.Enemy.Data.bonus_exp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Enemy.Data.bonus_exp);
-                            else if (String.Compare(formula.Key, "CasterBonusGil") == 0 && !caster.IsPlayer) caster.Enemy.Data.bonus_gil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Enemy.Data.bonus_gil);
-                            else if (String.Compare(formula.Key, "CasterBonusCard") == 0 && !caster.IsPlayer) caster.Enemy.Data.bonus_card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)caster.Enemy.Data.bonus_card);
-                            else if (String.Compare(formula.Key, "TargetHP") == 0) target.CurrentHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CurrentHp);
-                            else if (String.Compare(formula.Key, "TargetMP") == 0) target.CurrentMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CurrentMp);
-                            else if (String.Compare(formula.Key, "TargetMaxHP") == 0) target.MaximumHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MaximumHp);
-                            else if (String.Compare(formula.Key, "TargetMaxMP") == 0) target.MaximumMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MaximumMp);
-                            else if (String.Compare(formula.Key, "TargetATB") == 0) target.CurrentAtb = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CurrentAtb);
-                            else if (String.Compare(formula.Key, "TargetTrance") == 0) target.Trance = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Trance);
-                            else if (String.Compare(formula.Key, "TargetCurrentStatus") == 0) tCurStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)tCurStat);
-                            else if (String.Compare(formula.Key, "TargetPermanentStatus") == 0) tAutoStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)tAutoStat);
-                            else if (String.Compare(formula.Key, "TargetResistStatus") == 0) tResistStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)tResistStat);
-                            else if (String.Compare(formula.Key, "TargetHalfElement") == 0) target.HalfElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)target.HalfElement);
-                            else if (String.Compare(formula.Key, "TargetGuardElement") == 0) target.GuardElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)target.GuardElement);
-                            else if (String.Compare(formula.Key, "TargetAbsorbElement") == 0) target.AbsorbElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)target.AbsorbElement);
-                            else if (String.Compare(formula.Key, "TargetWeakElement") == 0) target.WeakElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)target.WeakElement);
-                            else if (String.Compare(formula.Key, "TargetBonusElement") == 0) target.BonusElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)target.BonusElement);
-                            else if (String.Compare(formula.Key, "TargetSpeed") == 0) target.Dexterity = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Dexterity);
-                            else if (String.Compare(formula.Key, "TargetStrength") == 0) target.Strength = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Strength);
-                            else if (String.Compare(formula.Key, "TargetMagic") == 0) target.Magic = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Magic);
-                            else if (String.Compare(formula.Key, "TargetSpirit") == 0) target.Will = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Will);
-                            else if (String.Compare(formula.Key, "TargetDefence") == 0) target.PhysicalDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.PhysicalDefence);
-                            else if (String.Compare(formula.Key, "TargetEvade") == 0) target.PhysicalEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.PhysicalEvade);
-                            else if (String.Compare(formula.Key, "TargetMagicDefence") == 0) target.MagicDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MagicDefence);
-                            else if (String.Compare(formula.Key, "TargetMagicEvade") == 0) target.MagicEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MagicEvade);
-                            else if (String.Compare(formula.Key, "TargetRow") == 0) target.Row = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Row);
-                            else if (String.Compare(formula.Key, "TargetSummonCount") == 0) target.SummonCount = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.SummonCount);
-                            else if (String.Compare(formula.Key, "TargetIsStrengthModified") == 0) target.StatModifier[0] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[0]);
-                            else if (String.Compare(formula.Key, "TargetIsMagicModified") == 0) target.StatModifier[1] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[1]);
-                            else if (String.Compare(formula.Key, "TargetIsDefenceModified") == 0) target.StatModifier[2] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[2]);
-                            else if (String.Compare(formula.Key, "TargetIsEvadeModified") == 0) target.StatModifier[3] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[3]);
-                            else if (String.Compare(formula.Key, "TargetIsMagicDefenceModified") == 0) target.StatModifier[4] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[4]);
-                            else if (String.Compare(formula.Key, "TargetIsMagicEvadeModified") == 0) target.StatModifier[5] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[5]);
-                            else if (String.Compare(formula.Key, "TargetCriticalRateBonus") == 0) target.CriticalRateBonus = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CriticalRateBonus);
-                            else if (String.Compare(formula.Key, "TargetCriticalRateWeakening") == 0) target.CriticalRateWeakening = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CriticalRateWeakening);
-                            else if (String.Compare(formula.Key, "TargetMaxDamageLimit") == 0) target.MaxDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MaxDamageLimit);
-                            else if (String.Compare(formula.Key, "TargetMaxMPDamageLimit") == 0) target.MaxMpDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MaxMpDamageLimit);
-                            else if (String.Compare(formula.Key, "TargetBonusExp") == 0 && !target.IsPlayer) target.Enemy.Data.bonus_exp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Enemy.Data.bonus_exp);
-                            else if (String.Compare(formula.Key, "TargetBonusGil") == 0 && !target.IsPlayer) target.Enemy.Data.bonus_gil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Enemy.Data.bonus_gil);
-                            else if (String.Compare(formula.Key, "TargetBonusCard") == 0 && !target.IsPlayer) target.Enemy.Data.bonus_card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)target.Enemy.Data.bonus_card);
-                            else if (String.Compare(formula.Key, "EffectCasterFlags") == 0) caster.Flags = (CalcFlag)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)caster.Flags);
-                            else if (String.Compare(formula.Key, "CasterHPDamage") == 0) caster.HpDamage = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.HpDamage);
-                            else if (String.Compare(formula.Key, "CasterMPDamage") == 0) caster.MpDamage = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MpDamage);
-                            else if (String.Compare(formula.Key, "EffectTargetFlags") == 0) target.Flags = (CalcFlag)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)target.Flags);
-                            else if (String.Compare(formula.Key, "HPDamage") == 0) target.HpDamage = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.HpDamage);
-                            else if (String.Compare(formula.Key, "MPDamage") == 0) target.MpDamage = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MpDamage);
-                            else if (String.Compare(formula.Key, "FigureInfo") == 0) target.Data.fig_info = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Data.fig_info);
-                            else if (String.Compare(formula.Key, "Power") == 0) command.Power = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.Power);
-                            else if (String.Compare(formula.Key, "AbilityStatus") == 0) command.AbilityStatus = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)command.AbilityStatus);
-                            else if (String.Compare(formula.Key, "AbilityElement") == 0) command.Element = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
-                            else if (String.Compare(formula.Key, "AbilityElementForBonus") == 0) command.Element = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
-                            else if (String.Compare(formula.Key, "IsShortRanged") == 0) command.IsShortRange = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsShortRange);
-                            else if (String.Compare(formula.Key, "IsDrain") == 0) context.IsDrain = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), context.IsDrain);
-                            else if (String.Compare(formula.Key, "AbilityCategory") == 0) command.AbilityCategory = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.AbilityCategory);
-                            else if (String.Compare(formula.Key, "AbilityFlags") == 0) command.AbilityType = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.AbilityType);
-                            else if (String.Compare(formula.Key, "Attack") == 0) context.Attack = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.Attack);
-                            else if (String.Compare(formula.Key, "AttackPower") == 0) context.AttackPower = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.AttackPower);
-                            else if (String.Compare(formula.Key, "DefencePower") == 0) context.DefensePower = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.DefensePower);
-                            else if (String.Compare(formula.Key, "StatusRate") == 0) context.StatusRate = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.StatusRate);
-                            else if (String.Compare(formula.Key, "HitRate") == 0) context.HitRate = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.HitRate);
-                            else if (String.Compare(formula.Key, "Evade") == 0) context.Evade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.Evade);
-                            else if (String.Compare(formula.Key, "EffectFlags") == 0) context.Flags = (BattleCalcFlags)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt16)context.Flags);
-                            else if (String.Compare(formula.Key, "DamageModifierCount") == 0) context.DamageModifierCount = (SByte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.DamageModifierCount);
-                            else if (String.Compare(formula.Key, "TranceIncrease") == 0) context.TranceIncrease = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.TranceIncrease);
-                            else if (String.Compare(formula.Key, "ItemSteal") == 0) context.ItemSteal = (RegularItem)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)context.ItemSteal);
-                            else if (String.Compare(formula.Key, "Gil") == 0) GameState.Gil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), GameState.Gil);
-                            else if (String.Compare(formula.Key, "BattleBonusAP") == 0) battle.btl_bonus.ap = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), battle.btl_bonus.ap);
-                            else if (String.Compare(formula.Key, "Counter") == 0)
+                            if (String.Equals(formula.Key, "CasterHP")) caster.CurrentHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CurrentHp);
+                            else if (String.Equals(formula.Key, "CasterMP")) caster.CurrentMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CurrentMp);
+                            else if (String.Equals(formula.Key, "CasterMaxHP")) caster.MaximumHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MaximumHp);
+                            else if (String.Equals(formula.Key, "CasterMaxMP")) caster.MaximumMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MaximumMp);
+                            else if (String.Equals(formula.Key, "CasterATB")) caster.CurrentAtb = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CurrentAtb);
+                            else if (String.Equals(formula.Key, "CasterTrance")) caster.Trance = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Trance);
+                            else if (String.Equals(formula.Key, "CasterCurrentStatus")) cCurStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)cCurStat);
+                            else if (String.Equals(formula.Key, "CasterPermanentStatus")) cAutoStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)cAutoStat);
+                            else if (String.Equals(formula.Key, "CasterResistStatus")) cResistStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)cResistStat);
+                            else if (String.Equals(formula.Key, "CasterHalfElement")) caster.HalfElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)caster.HalfElement);
+                            else if (String.Equals(formula.Key, "CasterGuardElement")) caster.GuardElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)caster.GuardElement);
+                            else if (String.Equals(formula.Key, "CasterAbsorbElement")) caster.AbsorbElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)caster.AbsorbElement);
+                            else if (String.Equals(formula.Key, "CasterWeakElement")) caster.WeakElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)caster.WeakElement);
+                            else if (String.Equals(formula.Key, "CasterBonusElement")) caster.BonusElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)caster.BonusElement);
+                            else if (String.Equals(formula.Key, "CasterSpeed")) caster.Dexterity = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Dexterity);
+                            else if (String.Equals(formula.Key, "CasterStrength")) caster.Strength = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Strength);
+                            else if (String.Equals(formula.Key, "CasterMagic")) caster.Magic = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Magic);
+                            else if (String.Equals(formula.Key, "CasterSpirit")) caster.Will = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Will);
+                            else if (String.Equals(formula.Key, "CasterDefence")) caster.PhysicalDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.PhysicalDefence);
+                            else if (String.Equals(formula.Key, "CasterEvade")) caster.PhysicalEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.PhysicalEvade);
+                            else if (String.Equals(formula.Key, "CasterMagicDefence")) caster.MagicDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MagicDefence);
+                            else if (String.Equals(formula.Key, "CasterMagicEvade")) caster.MagicEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MagicEvade);
+                            else if (String.Equals(formula.Key, "CasterRow")) caster.Row = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Row);
+                            else if (String.Equals(formula.Key, "CasterSummonCount")) caster.SummonCount = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.SummonCount);
+                            else if (String.Equals(formula.Key, "CasterIsStrengthModified")) caster.StatModifier[0] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[0]);
+                            else if (String.Equals(formula.Key, "CasterIsMagicModified")) caster.StatModifier[1] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[1]);
+                            else if (String.Equals(formula.Key, "CasterIsDefenceModified")) caster.StatModifier[2] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[2]);
+                            else if (String.Equals(formula.Key, "CasterIsEvadeModified")) caster.StatModifier[3] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[3]);
+                            else if (String.Equals(formula.Key, "CasterIsMagicDefenceModified")) caster.StatModifier[4] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[4]);
+                            else if (String.Equals(formula.Key, "CasterIsMagicEvadeModified")) caster.StatModifier[5] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), caster.StatModifier[5]);
+                            else if (String.Equals(formula.Key, "CasterCriticalRateBonus")) caster.CriticalRateBonus = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CriticalRateBonus);
+                            else if (String.Equals(formula.Key, "CasterCriticalRateWeakening")) caster.CriticalRateWeakening = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.CriticalRateWeakening);
+                            else if (String.Equals(formula.Key, "CasterMaxDamageLimit")) caster.MaxDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MaxDamageLimit);
+                            else if (String.Equals(formula.Key, "CasterMaxMPDamageLimit")) caster.MaxMpDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MaxMpDamageLimit);
+                            else if (String.Equals(formula.Key, "CasterBonusExp") && !caster.IsPlayer) caster.Enemy.Data.bonus_exp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Enemy.Data.bonus_exp);
+                            else if (String.Equals(formula.Key, "CasterBonusGil") && !caster.IsPlayer) caster.Enemy.Data.bonus_gil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.Enemy.Data.bonus_gil);
+                            else if (String.Equals(formula.Key, "CasterBonusCard") && !caster.IsPlayer) caster.Enemy.Data.bonus_card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)caster.Enemy.Data.bonus_card);
+                            else if (String.Equals(formula.Key, "TargetHP")) target.CurrentHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CurrentHp);
+                            else if (String.Equals(formula.Key, "TargetMP")) target.CurrentMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CurrentMp);
+                            else if (String.Equals(formula.Key, "TargetMaxHP")) target.MaximumHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MaximumHp);
+                            else if (String.Equals(formula.Key, "TargetMaxMP")) target.MaximumMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MaximumMp);
+                            else if (String.Equals(formula.Key, "TargetATB")) target.CurrentAtb = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CurrentAtb);
+                            else if (String.Equals(formula.Key, "TargetTrance")) target.Trance = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Trance);
+                            else if (String.Equals(formula.Key, "TargetCurrentStatus")) tCurStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)tCurStat);
+                            else if (String.Equals(formula.Key, "TargetPermanentStatus")) tAutoStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)tAutoStat);
+                            else if (String.Equals(formula.Key, "TargetResistStatus")) tResistStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)tResistStat);
+                            else if (String.Equals(formula.Key, "TargetHalfElement")) target.HalfElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)target.HalfElement);
+                            else if (String.Equals(formula.Key, "TargetGuardElement")) target.GuardElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)target.GuardElement);
+                            else if (String.Equals(formula.Key, "TargetAbsorbElement")) target.AbsorbElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)target.AbsorbElement);
+                            else if (String.Equals(formula.Key, "TargetWeakElement")) target.WeakElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)target.WeakElement);
+                            else if (String.Equals(formula.Key, "TargetBonusElement")) target.BonusElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)target.BonusElement);
+                            else if (String.Equals(formula.Key, "TargetSpeed")) target.Dexterity = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Dexterity);
+                            else if (String.Equals(formula.Key, "TargetStrength")) target.Strength = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Strength);
+                            else if (String.Equals(formula.Key, "TargetMagic")) target.Magic = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Magic);
+                            else if (String.Equals(formula.Key, "TargetSpirit")) target.Will = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Will);
+                            else if (String.Equals(formula.Key, "TargetDefence")) target.PhysicalDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.PhysicalDefence);
+                            else if (String.Equals(formula.Key, "TargetEvade")) target.PhysicalEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.PhysicalEvade);
+                            else if (String.Equals(formula.Key, "TargetMagicDefence")) target.MagicDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MagicDefence);
+                            else if (String.Equals(formula.Key, "TargetMagicEvade")) target.MagicEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MagicEvade);
+                            else if (String.Equals(formula.Key, "TargetRow")) target.Row = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Row);
+                            else if (String.Equals(formula.Key, "TargetSummonCount")) target.SummonCount = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.SummonCount);
+                            else if (String.Equals(formula.Key, "TargetIsStrengthModified")) target.StatModifier[0] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[0]);
+                            else if (String.Equals(formula.Key, "TargetIsMagicModified")) target.StatModifier[1] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[1]);
+                            else if (String.Equals(formula.Key, "TargetIsDefenceModified")) target.StatModifier[2] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[2]);
+                            else if (String.Equals(formula.Key, "TargetIsEvadeModified")) target.StatModifier[3] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[3]);
+                            else if (String.Equals(formula.Key, "TargetIsMagicDefenceModified")) target.StatModifier[4] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[4]);
+                            else if (String.Equals(formula.Key, "TargetIsMagicEvadeModified")) target.StatModifier[5] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), target.StatModifier[5]);
+                            else if (String.Equals(formula.Key, "TargetCriticalRateBonus")) target.CriticalRateBonus = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CriticalRateBonus);
+                            else if (String.Equals(formula.Key, "TargetCriticalRateWeakening")) target.CriticalRateWeakening = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.CriticalRateWeakening);
+                            else if (String.Equals(formula.Key, "TargetMaxDamageLimit")) target.MaxDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MaxDamageLimit);
+                            else if (String.Equals(formula.Key, "TargetMaxMPDamageLimit")) target.MaxMpDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MaxMpDamageLimit);
+                            else if (String.Equals(formula.Key, "TargetBonusExp") && !target.IsPlayer) target.Enemy.Data.bonus_exp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Enemy.Data.bonus_exp);
+                            else if (String.Equals(formula.Key, "TargetBonusGil") && !target.IsPlayer) target.Enemy.Data.bonus_gil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Enemy.Data.bonus_gil);
+                            else if (String.Equals(formula.Key, "TargetBonusCard") && !target.IsPlayer) target.Enemy.Data.bonus_card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)target.Enemy.Data.bonus_card);
+                            else if (String.Equals(formula.Key, "EffectCasterFlags")) caster.Flags = (CalcFlag)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)caster.Flags);
+                            else if (String.Equals(formula.Key, "CasterHPDamage")) caster.HpDamage = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.HpDamage);
+                            else if (String.Equals(formula.Key, "CasterMPDamage")) caster.MpDamage = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), caster.MpDamage);
+                            else if (String.Equals(formula.Key, "EffectTargetFlags")) target.Flags = (CalcFlag)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)target.Flags);
+                            else if (String.Equals(formula.Key, "HPDamage")) target.HpDamage = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.HpDamage);
+                            else if (String.Equals(formula.Key, "MPDamage")) target.MpDamage = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MpDamage);
+                            else if (String.Equals(formula.Key, "FigureInfo")) target.Data.fig_info = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Data.fig_info);
+                            else if (String.Equals(formula.Key, "Power")) command.Power = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.Power);
+                            else if (String.Equals(formula.Key, "AbilityStatus")) command.AbilityStatus = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)command.AbilityStatus);
+                            else if (String.Equals(formula.Key, "AbilityElement")) command.Element = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
+                            else if (String.Equals(formula.Key, "AbilityElementForBonus")) command.Element = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
+                            else if (String.Equals(formula.Key, "IsShortRanged")) command.IsShortRange = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsShortRange);
+                            else if (String.Equals(formula.Key, "IsDrain")) context.IsDrain = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), context.IsDrain);
+                            else if (String.Equals(formula.Key, "AbilityCategory")) command.AbilityCategory = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.AbilityCategory);
+                            else if (String.Equals(formula.Key, "AbilityFlags")) command.AbilityType = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.AbilityType);
+                            else if (String.Equals(formula.Key, "Attack")) context.Attack = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.Attack);
+                            else if (String.Equals(formula.Key, "AttackPower")) context.AttackPower = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.AttackPower);
+                            else if (String.Equals(formula.Key, "DefencePower")) context.DefensePower = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.DefensePower);
+                            else if (String.Equals(formula.Key, "StatusRate")) context.StatusRate = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.StatusRate);
+                            else if (String.Equals(formula.Key, "HitRate")) context.HitRate = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.HitRate);
+                            else if (String.Equals(formula.Key, "Evade")) context.Evade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.Evade);
+                            else if (String.Equals(formula.Key, "EffectFlags")) context.Flags = (BattleCalcFlags)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt16)context.Flags);
+                            else if (String.Equals(formula.Key, "DamageModifierCount")) context.DamageModifierCount = (SByte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.DamageModifierCount);
+                            else if (String.Equals(formula.Key, "TranceIncrease")) context.TranceIncrease = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), context.TranceIncrease);
+                            else if (String.Equals(formula.Key, "ItemSteal")) context.ItemSteal = (RegularItem)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)context.ItemSteal);
+                            else if (String.Equals(formula.Key, "Gil")) GameState.Gil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), GameState.Gil);
+                            else if (String.Equals(formula.Key, "BattleBonusAP")) battle.btl_bonus.ap = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), battle.btl_bonus.ap);
+                            else if (String.Equals(formula.Key, "Counter"))
                             {
+                                List<Expression> allArgs = new List<Expression>(formulaSplit.Length);
+                                allArgs.Add(e);
+                                for (Int32 argi = 1; argi < formulaSplit.Length; argi++)
+                                {
+                                    Expression arge = new Expression(formulaSplit[argi]);
+                                    NCalcUtility.InitializeExpressionUnit(ref arge, caster, "Caster");
+                                    NCalcUtility.InitializeExpressionUnit(ref arge, target, "Target");
+                                    NCalcUtility.InitializeExpressionAbilityContext(ref arge, calc);
+                                    arge.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                                    arge.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                                    allArgs.Add(arge);
+                                }
                                 Int32 attackId = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)BattleAbilityId.Attack);
-                                if (attackId == (Int32)BattleAbilityId.Void && !EnableAsEnemy && !EnableAsMonsterTransform)
+                                BattleCommandId counterCmd = EnableAsEnemy || EnableAsMonsterTransform ? BattleCommandId.EnemyCounter : BattleCommandId.Counter;
+                                if (allArgs.Count > 1)
+                                    counterCmd = (BattleCommandId)NCalcUtility.ConvertNCalcResult(allArgs[1].Evaluate(), (Int32)BattleCommandId.Counter);
+                                if (attackId == (Int32)BattleAbilityId.Void && counterCmd != BattleCommandId.EnemyCounter && counterCmd != BattleCommandId.MagicCounter)
                                     continue;
                                 BTL_DATA counterer = asTarget ? target.Data : caster.Data;
                                 UInt16 countered = asTarget ? caster.Id : target.Id;
-                                if (EnableAsEnemy || EnableAsMonsterTransform)
-                                    btl_cmd.SetCounter(counterer, BattleCommandId.EnemyCounter, attackId, countered);
-                                else
-                                    btl_cmd.SetCounter(counterer, BattleCommandId.Counter, attackId, countered);
+                                if (allArgs.Count > 2)
+                                    countered = (UInt16)NCalcUtility.ConvertNCalcResult(allArgs[2].Evaluate(), 0);
+                                if (allArgs.Count > 3)
+                                {
+                                    UInt16 countererId = (UInt16)NCalcUtility.ConvertNCalcResult(allArgs[3].Evaluate(), 0);
+                                    if (countererId == 0)
+                                        continue;
+                                    counterer = btl_scrp.FindBattleUnit((UInt16)Comn.firstBitSet(countererId))?.Data ?? null;
+                                    if (counterer == null)
+                                        continue;
+                                }
+                                btl_cmd.SetCounter(counterer, counterCmd, attackId, countered);
                             }
-                            else if (String.Compare(formula.Key, "ReturnMagic") == 0)
+                            else if (String.Equals(formula.Key, "ReturnMagic"))
                             {
                                 //NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)BattleAbilityId.Attack);
                                 if (asTarget)
@@ -462,7 +488,7 @@ namespace Memoria.Data
                                 else
                                     btl_abil.TryReturnMagic(caster, target, command);
                             }
-                            else if (String.Compare(formula.Key, "AutoItem") == 0)
+                            else if (String.Equals(formula.Key, "AutoItem"))
                             {
                                 BTL_DATA counterer = asTarget ? target.Data : caster.Data;
                                 if (counterer.is_monster_transform && counterer.monster_transform.disable_commands.Contains(BattleCommandId.Item))
@@ -553,58 +579,58 @@ namespace Memoria.Data
                             e.Parameters["AreCasterAndTargetAllies"] = caster != null && (caster.IsPlayer && (command.Data.tar_id & 0xF) == command.Data.tar_id || !caster.IsPlayer && (command.Data.tar_id & 0x0F) == command.Data.tar_id);
                             e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                             e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                            if (String.Compare(formula.Key, "Power") == 0) command.Power = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.Power);
-                            else if (String.Compare(formula.Key, "AbilityStatus") == 0) command.AbilityStatus = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)command.AbilityStatus);
-                            else if (String.Compare(formula.Key, "AbilityElement") == 0) command.Element = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
-                            else if (String.Compare(formula.Key, "AbilityElementForBonus") == 0) command.Element = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
-                            else if (String.Compare(formula.Key, "IsShortRanged") == 0) command.IsShortRange = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsShortRange);
-                            else if (String.Compare(formula.Key, "AbilityCategory") == 0) command.AbilityCategory = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.AbilityCategory);
-                            else if (String.Compare(formula.Key, "AbilityFlags") == 0) command.AbilityType = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.AbilityType);
-                            else if (String.Compare(formula.Key, "IsReflectNull") == 0) command.IsReflectNull = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsReflectNull);
-                            else if (String.Compare(formula.Key, "IsMeteorMiss") == 0) command.Data.info.meteor_miss = (Byte)(NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsReflectNull) ? 1 : 0);
-                            else if (String.Compare(formula.Key, "IsShortSummon") == 0) command.IsShortSummon = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsShortSummon);
-                            else if (String.Compare(formula.Key, "TryCover") == 0) tryCover |= NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), false) ? abilityUser.Id : (UInt16)0;
-                            else if (String.Compare(formula.Key, "ScriptId") == 0) command.ScriptId = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.ScriptId);
-                            else if (String.Compare(formula.Key, "HitRate") == 0) command.HitRate = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.HitRate);
-                            else if (String.Compare(formula.Key, "CommandTargetId") == 0) command.Data.tar_id = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.Data.tar_id);
-                            else if (String.Compare(formula.Key, "HP") == 0) abilityUser.CurrentHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.CurrentHp);
-                            else if (String.Compare(formula.Key, "MP") == 0) abilityUser.CurrentMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.CurrentMp);
-                            else if (String.Compare(formula.Key, "MaxHP") == 0) abilityUser.MaximumHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MaximumHp);
-                            else if (String.Compare(formula.Key, "MaxMP") == 0) abilityUser.MaximumMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MaximumMp);
-                            else if (String.Compare(formula.Key, "ATB") == 0) abilityUser.CurrentAtb = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.CurrentAtb);
-                            else if (String.Compare(formula.Key, "Trance") == 0) abilityUser.Trance = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Trance);
-                            else if (String.Compare(formula.Key, "CurrentStatus") == 0) uCurStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)uCurStat);
-                            else if (String.Compare(formula.Key, "PermanentStatus") == 0) uAutoStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)uAutoStat);
-                            else if (String.Compare(formula.Key, "ResistStatus") == 0) uResistStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)uResistStat);
-                            else if (String.Compare(formula.Key, "HalfElement") == 0) abilityUser.HalfElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)abilityUser.HalfElement);
-                            else if (String.Compare(formula.Key, "GuardElement") == 0) abilityUser.GuardElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)abilityUser.GuardElement);
-                            else if (String.Compare(formula.Key, "AbsorbElement") == 0) abilityUser.AbsorbElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)abilityUser.AbsorbElement);
-                            else if (String.Compare(formula.Key, "WeakElement") == 0) abilityUser.WeakElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)abilityUser.WeakElement);
-                            else if (String.Compare(formula.Key, "BonusElement") == 0) abilityUser.BonusElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)abilityUser.BonusElement);
-                            else if (String.Compare(formula.Key, "Speed") == 0) abilityUser.Dexterity = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Dexterity);
-                            else if (String.Compare(formula.Key, "Strength") == 0) abilityUser.Strength = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Strength);
-                            else if (String.Compare(formula.Key, "Magic") == 0) abilityUser.Magic = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Magic);
-                            else if (String.Compare(formula.Key, "Spirit") == 0) abilityUser.Will = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Will);
-                            else if (String.Compare(formula.Key, "Defence") == 0) abilityUser.PhysicalDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.PhysicalDefence);
-                            else if (String.Compare(formula.Key, "Evade") == 0) abilityUser.PhysicalEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.PhysicalEvade);
-                            else if (String.Compare(formula.Key, "MagicDefence") == 0) abilityUser.MagicDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MagicDefence);
-                            else if (String.Compare(formula.Key, "MagicEvade") == 0) abilityUser.MagicEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MagicEvade);
-                            else if (String.Compare(formula.Key, "Row") == 0) abilityUser.Row = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Row);
-                            else if (String.Compare(formula.Key, "IsStrengthModified") == 0) abilityUser.StatModifier[0] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), abilityUser.StatModifier[0]);
-                            else if (String.Compare(formula.Key, "IsMagicModified") == 0) abilityUser.StatModifier[1] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), abilityUser.StatModifier[1]);
-                            else if (String.Compare(formula.Key, "IsDefenceModified") == 0) abilityUser.StatModifier[2] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), abilityUser.StatModifier[2]);
-                            else if (String.Compare(formula.Key, "IsEvadeModified") == 0) abilityUser.StatModifier[3] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), abilityUser.StatModifier[3]);
-                            else if (String.Compare(formula.Key, "IsMagicDefenceModified") == 0) abilityUser.StatModifier[4] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), abilityUser.StatModifier[4]);
-                            else if (String.Compare(formula.Key, "IsMagicEvadeModified") == 0) abilityUser.StatModifier[5] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), abilityUser.StatModifier[5]);
-                            else if (String.Compare(formula.Key, "CriticalRateBonus") == 0) abilityUser.CriticalRateBonus = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.CriticalRateBonus);
-                            else if (String.Compare(formula.Key, "CriticalRateWeakening") == 0) abilityUser.CriticalRateWeakening = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.CriticalRateWeakening);
-                            else if (String.Compare(formula.Key, "MaxDamageLimit") == 0) abilityUser.MaxDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MaxDamageLimit);
-                            else if (String.Compare(formula.Key, "MaxMPDamageLimit") == 0) abilityUser.MaxMpDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MaxMpDamageLimit);
-                            else if (String.Compare(formula.Key, "BonusExp") == 0 && !abilityUser.IsPlayer) abilityUser.Enemy.Data.bonus_exp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Enemy.Data.bonus_exp);
-                            else if (String.Compare(formula.Key, "BonusGil") == 0 && !abilityUser.IsPlayer) abilityUser.Enemy.Data.bonus_gil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Enemy.Data.bonus_gil);
-                            else if (String.Compare(formula.Key, "BonusCard") == 0 && !abilityUser.IsPlayer) abilityUser.Enemy.Data.bonus_card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)abilityUser.Enemy.Data.bonus_card);
-                            else if (String.Compare(formula.Key, "BattleBonusAP") == 0) battle.btl_bonus.ap = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), battle.btl_bonus.ap);
-                            else if (String.Compare(formula.Key, "Counter") == 0)
+                            if (String.Equals(formula.Key, "Power")) command.Power = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.Power);
+                            else if (String.Equals(formula.Key, "AbilityStatus")) command.AbilityStatus = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)command.AbilityStatus);
+                            else if (String.Equals(formula.Key, "AbilityElement")) command.Element = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
+                            else if (String.Equals(formula.Key, "AbilityElementForBonus")) command.Element = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
+                            else if (String.Equals(formula.Key, "IsShortRanged")) command.IsShortRange = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsShortRange);
+                            else if (String.Equals(formula.Key, "AbilityCategory")) command.AbilityCategory = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.AbilityCategory);
+                            else if (String.Equals(formula.Key, "AbilityFlags")) command.AbilityType = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.AbilityType);
+                            else if (String.Equals(formula.Key, "IsReflectNull")) command.IsReflectNull = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsReflectNull);
+                            else if (String.Equals(formula.Key, "IsMeteorMiss")) command.Data.info.meteor_miss = (Byte)(NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsReflectNull) ? 1 : 0);
+                            else if (String.Equals(formula.Key, "IsShortSummon")) command.IsShortSummon = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsShortSummon);
+                            else if (String.Equals(formula.Key, "TryCover")) tryCover |= NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), false) ? abilityUser.Id : (UInt16)0;
+                            else if (String.Equals(formula.Key, "ScriptId")) command.ScriptId = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.ScriptId);
+                            else if (String.Equals(formula.Key, "HitRate")) command.HitRate = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.HitRate);
+                            else if (String.Equals(formula.Key, "CommandTargetId")) command.Data.tar_id = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.Data.tar_id);
+                            else if (String.Equals(formula.Key, "HP")) abilityUser.CurrentHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.CurrentHp);
+                            else if (String.Equals(formula.Key, "MP")) abilityUser.CurrentMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.CurrentMp);
+                            else if (String.Equals(formula.Key, "MaxHP")) abilityUser.MaximumHp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MaximumHp);
+                            else if (String.Equals(formula.Key, "MaxMP")) abilityUser.MaximumMp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MaximumMp);
+                            else if (String.Equals(formula.Key, "ATB")) abilityUser.CurrentAtb = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.CurrentAtb);
+                            else if (String.Equals(formula.Key, "Trance")) abilityUser.Trance = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Trance);
+                            else if (String.Equals(formula.Key, "CurrentStatus")) uCurStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)uCurStat);
+                            else if (String.Equals(formula.Key, "PermanentStatus")) uAutoStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)uAutoStat);
+                            else if (String.Equals(formula.Key, "ResistStatus")) uResistStat = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)uResistStat);
+                            else if (String.Equals(formula.Key, "HalfElement")) abilityUser.HalfElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)abilityUser.HalfElement);
+                            else if (String.Equals(formula.Key, "GuardElement")) abilityUser.GuardElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)abilityUser.GuardElement);
+                            else if (String.Equals(formula.Key, "AbsorbElement")) abilityUser.AbsorbElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)abilityUser.AbsorbElement);
+                            else if (String.Equals(formula.Key, "WeakElement")) abilityUser.WeakElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)abilityUser.WeakElement);
+                            else if (String.Equals(formula.Key, "BonusElement")) abilityUser.BonusElement = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)abilityUser.BonusElement);
+                            else if (String.Equals(formula.Key, "Speed")) abilityUser.Dexterity = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Dexterity);
+                            else if (String.Equals(formula.Key, "Strength")) abilityUser.Strength = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Strength);
+                            else if (String.Equals(formula.Key, "Magic")) abilityUser.Magic = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Magic);
+                            else if (String.Equals(formula.Key, "Spirit")) abilityUser.Will = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Will);
+                            else if (String.Equals(formula.Key, "Defence")) abilityUser.PhysicalDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.PhysicalDefence);
+                            else if (String.Equals(formula.Key, "Evade")) abilityUser.PhysicalEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.PhysicalEvade);
+                            else if (String.Equals(formula.Key, "MagicDefence")) abilityUser.MagicDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MagicDefence);
+                            else if (String.Equals(formula.Key, "MagicEvade")) abilityUser.MagicEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MagicEvade);
+                            else if (String.Equals(formula.Key, "Row")) abilityUser.Row = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Row);
+                            else if (String.Equals(formula.Key, "IsStrengthModified")) abilityUser.StatModifier[0] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), abilityUser.StatModifier[0]);
+                            else if (String.Equals(formula.Key, "IsMagicModified")) abilityUser.StatModifier[1] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), abilityUser.StatModifier[1]);
+                            else if (String.Equals(formula.Key, "IsDefenceModified")) abilityUser.StatModifier[2] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), abilityUser.StatModifier[2]);
+                            else if (String.Equals(formula.Key, "IsEvadeModified")) abilityUser.StatModifier[3] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), abilityUser.StatModifier[3]);
+                            else if (String.Equals(formula.Key, "IsMagicDefenceModified")) abilityUser.StatModifier[4] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), abilityUser.StatModifier[4]);
+                            else if (String.Equals(formula.Key, "IsMagicEvadeModified")) abilityUser.StatModifier[5] = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), abilityUser.StatModifier[5]);
+                            else if (String.Equals(formula.Key, "CriticalRateBonus")) abilityUser.CriticalRateBonus = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.CriticalRateBonus);
+                            else if (String.Equals(formula.Key, "CriticalRateWeakening")) abilityUser.CriticalRateWeakening = (Int16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.CriticalRateWeakening);
+                            else if (String.Equals(formula.Key, "MaxDamageLimit")) abilityUser.MaxDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MaxDamageLimit);
+                            else if (String.Equals(formula.Key, "MaxMPDamageLimit")) abilityUser.MaxMpDamageLimit = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.MaxMpDamageLimit);
+                            else if (String.Equals(formula.Key, "BonusExp") && !abilityUser.IsPlayer) abilityUser.Enemy.Data.bonus_exp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Enemy.Data.bonus_exp);
+                            else if (String.Equals(formula.Key, "BonusGil") && !abilityUser.IsPlayer) abilityUser.Enemy.Data.bonus_gil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), abilityUser.Enemy.Data.bonus_gil);
+                            else if (String.Equals(formula.Key, "BonusCard") && !abilityUser.IsPlayer) abilityUser.Enemy.Data.bonus_card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)abilityUser.Enemy.Data.bonus_card);
+                            else if (String.Equals(formula.Key, "BattleBonusAP")) battle.btl_bonus.ap = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), battle.btl_bonus.ap);
+                            else if (String.Equals(formula.Key, "Counter"))
                             {
                                 Int32 attackId = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)BattleAbilityId.Attack);
                                 if (attackId == (Int32)BattleAbilityId.Void && !EnableAsEnemy && !EnableAsMonsterTransform)
@@ -649,19 +675,19 @@ namespace Memoria.Data
                 else
                     endPos = codeMatches[i + 1].Groups[1].Captures[0].Index;
                 String saArgs = featureCode.Substring(startPos, endPos - startPos);
-                if (String.Compare(saCode, "Permanent") == 0)
+                if (String.Equals(saCode, "Permanent"))
                 {
                     SupportingAbilityEffectPermanent newEffect = new SupportingAbilityEffectPermanent();
                     foreach (Match formula in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(saArgs))
                     {
-                        if (String.Compare(formula.Groups[1].Value, "Condition") == 0)
+                        if (String.Equals(formula.Groups[1].Value, "Condition"))
                             newEffect.Condition = formula.Groups[2].Value;
                         else
                             newEffect.Formula[formula.Groups[1].Value] = formula.Groups[2].Value;
                     }
                     PermanentEffect.Add(newEffect);
                 }
-                else if (String.Compare(saCode, "BattleStart") == 0)
+                else if (String.Equals(saCode, "BattleStart"))
                 {
                     SupportingAbilityEffectBattleStartType newEffect = new SupportingAbilityEffectBattleStartType();
                     Match priorityDelta = new Regex(@"\bPreemptivePriority\s+([\+-]?\d+)").Match(saArgs);
@@ -669,14 +695,14 @@ namespace Memoria.Data
                         Int32.TryParse(priorityDelta.Groups[1].Value, out newEffect.PreemptivePriorityDelta);
                     foreach (Match formula in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(saArgs))
                     {
-                        if (String.Compare(formula.Groups[1].Value, "Condition") == 0)
+                        if (String.Equals(formula.Groups[1].Value, "Condition"))
                             newEffect.Condition = formula.Groups[2].Value;
                         else
                             newEffect.Formula[formula.Groups[1].Value] = formula.Groups[2].Value;
                     }
                     BattleStartEffect.Add(newEffect);
                 }
-                else if (String.Compare(saCode, "BattleResult") == 0)
+                else if (String.Equals(saCode, "BattleResult"))
                 {
                     SupportingAbilityEffectBattleResult newEffect = new SupportingAbilityEffectBattleResult();
                     Match when = new Regex(@"\bWhen(\w+)\b").Match(saArgs);
@@ -684,20 +710,20 @@ namespace Memoria.Data
                         newEffect.When = when.Groups[1].Value;
                     foreach (Match formula in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(saArgs))
                     {
-                        if (String.Compare(formula.Groups[1].Value, "Condition") == 0)
+                        if (String.Equals(formula.Groups[1].Value, "Condition"))
                             newEffect.Condition = formula.Groups[2].Value;
                         else
                             newEffect.Formula[formula.Groups[1].Value] = formula.Groups[2].Value;
                     }
                     BattleResultEffect.Add(newEffect);
                 }
-                else if (String.Compare(saCode, "StatusInit") == 0)
+                else if (String.Equals(saCode, "StatusInit"))
                 {
                     SupportingAbilityEffectBattleInitStatus newEffect = new SupportingAbilityEffectBattleInitStatus();
                     foreach (Match formula in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(saArgs))
                     {
                         String codeName = formula.Groups[1].Value;
-                        if (String.Compare(codeName, "Condition") == 0)
+                        if (String.Equals(codeName, "Condition"))
                         {
                             newEffect.Condition = formula.Groups[2].Value;
                         }
@@ -714,7 +740,7 @@ namespace Memoria.Data
                     }
                     foreach (Match statusMatch in new Regex(@"\b((Auto|Initial|Resist)Status|InitialATB)\s+(\w+|\d+)\b").Matches(saArgs))
                     {
-                        if (String.Compare(statusMatch.Groups[1].Value, "InitialATB") == 0)
+                        if (String.Equals(statusMatch.Groups[1].Value, "InitialATB"))
                         {
                             Int32.TryParse(statusMatch.Groups[3].Value, out newEffect.InitialATB);
                         }
@@ -722,18 +748,18 @@ namespace Memoria.Data
                         {
                             if (statusMatch.Groups[3].Value.TryEnumParse(out BattleStatus status))
                             {
-                                if (String.Compare(statusMatch.Groups[2].Value, "Auto") == 0)
+                                if (String.Equals(statusMatch.Groups[2].Value, "Auto"))
                                     newEffect.PermanentStatus |= status;
-                                else if (String.Compare(statusMatch.Groups[2].Value, "Initial") == 0)
+                                else if (String.Equals(statusMatch.Groups[2].Value, "Initial"))
                                     newEffect.InitialStatus |= status;
-                                else if (String.Compare(statusMatch.Groups[2].Value, "Resist") == 0)
+                                else if (String.Equals(statusMatch.Groups[2].Value, "Resist"))
                                     newEffect.ResistStatus |= status;
                             }
                         }
                     }
                     StatusEffect.Add(newEffect);
                 }
-                else if (String.Compare(saCode, "Ability") == 0)
+                else if (String.Equals(saCode, "Ability"))
                 {
                     SupportingAbilityEffectAbilityUse newEffect = new SupportingAbilityEffectAbilityUse();
                     Match when = new Regex(@"\bWhen(\w+)\b").Match(saArgs);
@@ -741,7 +767,7 @@ namespace Memoria.Data
                         newEffect.When = when.Groups[1].Value;
                     foreach (Match effect in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(saArgs))
                     {
-                        if (String.Compare(effect.Groups[1].Value, "Condition") == 0)
+                        if (String.Equals(effect.Groups[1].Value, "Condition"))
                             newEffect.Condition = effect.Groups[2].Value;
                         else
                             newEffect.Effect[effect.Groups[1].Value] = effect.Groups[2].Value;
@@ -756,12 +782,12 @@ namespace Memoria.Data
                                 newEffect.DisableSA.Add((SupportAbility)saValue);
                     AbilityEffect.Add(newEffect);
                 }
-                else if (String.Compare(saCode, "Command") == 0)
+                else if (String.Equals(saCode, "Command"))
                 {
                     SupportingAbilityEffectCommandStart newEffect = new SupportingAbilityEffectCommandStart();
                     foreach (Match effect in new Regex(@"\[code=(.*?)\](.*?)\[/code\]").Matches(saArgs))
                     {
-                        if (String.Compare(effect.Groups[1].Value, "Condition") == 0)
+                        if (String.Equals(effect.Groups[1].Value, "Condition"))
                             newEffect.Condition = effect.Groups[2].Value;
                         else
                             newEffect.Effect[effect.Groups[1].Value] = effect.Groups[2].Value;
@@ -769,11 +795,11 @@ namespace Memoria.Data
                     if (new Regex(@"\bEvenImmobilized\b").Match(saArgs).Success) newEffect.EvenImmobilized = true;
                     CommandEffect.Add(newEffect);
                 }
-                else if (String.Compare(saCode, "EnemyFeature") == 0)
+                else if (String.Equals(saCode, "EnemyFeature"))
 				{
                     EnableAsEnemy = true;
                 }
-                else if (String.Compare(saCode, "MorphFeature") == 0)
+                else if (String.Equals(saCode, "MorphFeature"))
                 {
                     EnableAsMonsterTransform = true;
                 }

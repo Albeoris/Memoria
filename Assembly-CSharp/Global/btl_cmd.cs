@@ -145,7 +145,7 @@ public class btl_cmd
         }
     }
 
-    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false)
+    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false, BattleCommandMenu cmdMenu = BattleCommandMenu.None)
     {
         if (btl_cmd.CheckUsingCommand(cmd))
             return;
@@ -164,6 +164,7 @@ public class btl_cmd
                 FF9StateSystem.Battle.FF9Battle.cmd_status |= 16;
                 break;
         }
+        cmd.info.cmdMenu = cmdMenu;
         cmd.SetAAData(btl_util.GetCommandAction(cmd));
         cmd.ScriptId = btl_util.GetCommandScriptId(cmd);
         // ScriptId 80: Double cast with AA specified by "Power" and "Rate"
@@ -239,8 +240,8 @@ public class btl_cmd
             first_cmd.regist.sel_mode = 1;
             first_cmd.info.CustomMPCost = cmd.aa.MP;
             second_cmd.info.CustomMPCost = 0;
-            btl_cmd.SetCommand(first_cmd, commandId, cmd.Power, first_tar_id, first_cursor);
-            btl_cmd.SetCommand(second_cmd, commandId, cmd.HitRate, second_tar_id, second_cursor);
+            btl_cmd.SetCommand(first_cmd, commandId, cmd.Power, first_tar_id, first_cursor, cmdMenu: cmdMenu);
+            btl_cmd.SetCommand(second_cmd, commandId, cmd.HitRate, second_tar_id, second_cursor, cmdMenu: cmdMenu);
             return;
         }
 
@@ -1247,9 +1248,10 @@ public class btl_cmd
 
     private static Boolean CheckMpCondition(CMD_DATA cmd)
     {
-        Int32 mp = cmd.info.CustomMPCost >= 0 ? cmd.info.CustomMPCost : cmd.aa.MP;
-        if (cmd.info.IsZeroMP)
-            mp = 0;
+        Int32 mp = cmd.GetCommandMPCost();
+        if (cmd.regist != null)
+            if (BattleAbilityHelper.GetPatchedMPCost(btl_util.GetCommandMainActionIndex(cmd), new BattleUnit(cmd.regist), ref mp, cmd: cmd))
+                cmd.info.CustomMPCost = mp;
 
         if (battle.GARNET_SUMMON_FLAG != 0 && (cmd.AbilityType & 4) != 0)
             mp *= 4;

@@ -1,14 +1,13 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using Assets.SiliconSocial;
+﻿using Assets.SiliconSocial;
 using FF9;
-using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Prime.CSV;
 using Memoria.Prime.Text;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 
 // ReSharper disable FieldCanBeMadeReadOnly.Global
 // ReSharper disable UnusedMember.Global
@@ -194,7 +193,7 @@ public class ff9item
         if (IsItemImportant(id))
         {
             if (count > 0 && FF9Item_IsExistImportant(GetImportantIdFromItemId(id)))
-			{
+            {
                 FF9Item_RemoveImportant(GetImportantIdFromItemId(id));
                 return 1;
             }
@@ -272,14 +271,14 @@ public class ff9item
     public static Int32 FF9Item_GetEquipPart(RegularItem id)
     {
         FF9ITEM_DATA itemData = _FF9Item_Data[id];
-		ItemType[] partMask = new ItemType[]
-		{
-			ItemType.Weapon,
-			ItemType.Helmet,
-			ItemType.Armlet,
-			ItemType.Armor,
-			ItemType.Accessory
-		};
+        ItemType[] partMask = new ItemType[]
+        {
+            ItemType.Weapon,
+            ItemType.Helmet,
+            ItemType.Armlet,
+            ItemType.Armor,
+            ItemType.Accessory
+        };
         for (Int32 i = 0; i < 5; ++i)
             if ((itemData.type & partMask[i]) != 0)
                 return i;
@@ -298,7 +297,7 @@ public class ff9item
     }
 
     public static Int32 FF9Item_GetAnyCount(RegularItem id)
-	{
+    {
         return FF9Item_GetCount(id) + FF9Item_GetEquipCount(id);
     }
 
@@ -399,7 +398,7 @@ public class ff9item
     }
 
     public static Boolean IsItemRegular(Int32 itemId)
-	{
+    {
         return GetItemModuledId(itemId) < 256;
     }
 
@@ -523,8 +522,60 @@ public class ff9item
         return itemId % 1000;
     }
 
+    public static Object GetItemProperty(RegularItem itemId, String propertyName)
+    {
+        if (!_FF9Item_Data.TryGetValue(itemId, out FF9ITEM_DATA item))
+            return null;
+        Boolean hasWeapon = HasItemWeapon(itemId);
+        Boolean hasArmor = HasItemArmor(itemId);
+        Boolean hasEffect = HasItemEffect(itemId);
+        switch (propertyName)
+        {
+            case "Price": return item.price;
+            case "Shape": return (Int32)item.shape;
+            case "Color": return (Int32)item.color;
+            case "EquipLevel": return item.eq_lv;
+            case "SortOrder": return item.sort;
+            case "Type": return (Int32)item.type;
+            case "WeaponCategory": return hasWeapon ? (Int32)GetItemWeapon(itemId).Category : null;
+            case "WeaponStatus": return hasWeapon ? (UInt32)FF9BattleDB.StatusSets[GetItemWeapon(itemId).StatusIndex].Value : null;
+            case "WeaponModelId": return hasWeapon ? (Int32)GetItemWeapon(itemId).ModelId : null;
+            case "WeaponScriptId": return hasWeapon ? GetItemWeapon(itemId).Ref.ScriptId : null;
+            case "WeaponPower": return hasWeapon ? GetItemWeapon(itemId).Ref.Power : null;
+            case "WeaponElement": return hasWeapon ? (Int32)GetItemWeapon(itemId).Ref.Elements : null;
+            case "WeaponStatusRate": return hasWeapon ? GetItemWeapon(itemId).Ref.Rate : null;
+            case "WeaponOffset1": return hasWeapon ? (Int32)GetItemWeapon(itemId).Offset1 : null;
+            case "WeaponOffset2": return hasWeapon ? (Int32)GetItemWeapon(itemId).Offset2 : null;
+            case "WeaponHitSfx": return hasWeapon ? (Int32)GetItemWeapon(itemId).HitSfx : null;
+            case "ArmorDefence": return hasArmor ? GetItemArmor(itemId).PhysicalDefence : null;
+            case "ArmorEvade": return hasArmor ? GetItemArmor(itemId).PhysicalEvade : null;
+            case "ArmorMagicDefence": return hasArmor ? GetItemArmor(itemId).MagicalDefence : null;
+            case "ArmorMagicEvade": return hasArmor ? GetItemArmor(itemId).MagicalEvade : null;
+            case "EffectTargetType": return hasEffect ? (Int32)GetItemEffect(itemId).info.Target : null;
+            case "EffectDefaultAlly": return hasEffect ? GetItemEffect(itemId).info.DefaultAlly : null;
+            case "EffectDisplayStats": return hasEffect ? (Int32)GetItemEffect(itemId).info.DisplayStats : null;
+            case "EffectVfxIndex": return hasEffect ? (Int32)GetItemEffect(itemId).info.VfxIndex : null;
+            case "EffectForDead": return hasEffect ? GetItemEffect(itemId).info.ForDead : null;
+            case "EffectDefaultCamera": return hasEffect ? GetItemEffect(itemId).info.DefaultCamera : null;
+            case "EffectDefaultOnDead": return hasEffect ? GetItemEffect(itemId).info.DefaultOnDead : null;
+            case "EffectScriptId": return hasEffect ? GetItemEffect(itemId).Ref.ScriptId : null;
+            case "EffectPower": return hasEffect ? GetItemEffect(itemId).Ref.Power : null;
+            case "EffectElement": return hasEffect ? (Int32)GetItemEffect(itemId).Ref.Elements : null;
+            case "EffectRate": return hasEffect ? GetItemEffect(itemId).Ref.Rate : null;
+            case "EffectStatus": return hasEffect ? (UInt32)GetItemEffect(itemId).status : null;
+        }
+        if (propertyName.StartsWith("Ability ") && Int32.TryParse(propertyName.Substring("Ability ".Length), out Int32 index))
+            return index >= 0 && index < item.ability.Length ? item.ability[index] : -1;
+        if (propertyName.StartsWith("HasActiveAbility ") && Int32.TryParse(propertyName.Substring("HasActiveAbility ".Length), out Int32 abilId))
+            return new List<Int32>(item.ability).Contains(ff9abil.GetAbilityIdFromActiveAbility((BattleAbilityId)abilId));
+        if (propertyName.StartsWith("HasSupportAbility ") && Int32.TryParse(propertyName.Substring("HasSupportAbility ".Length), out Int32 supportId))
+            return new List<Int32>(item.ability).Contains(ff9abil.GetAbilityIdFromSupportAbility((SupportAbility)supportId));
+        Log.Error($"[ff9item] Unrecognized item property \"{propertyName}\"");
+        return -1;
+    }
+
     private static void ApplyItemEquipabilityPatchFile(Dictionary<RegularItem, FF9ITEM_DATA> itemDatabase, String[] allLines)
-	{
+    {
         foreach (String line in allLines)
         {
             // eg.: Garnet Add 1 2 Remove 56
@@ -547,10 +598,10 @@ public class ff9item
             Int32 itemId;
             UInt64 charMask = ff9feqp.GetCharacterEquipMaskFromId((CharacterId)charId);
             for (Int32 wordIndex = 1; wordIndex < allWords.Length; wordIndex++)
-			{
+            {
                 String word = allWords[wordIndex].Trim();
                 if (String.Compare(word, "Add") == 0)
-				{
+                {
                     isAdd = true;
                     isRemove = false;
                 }
