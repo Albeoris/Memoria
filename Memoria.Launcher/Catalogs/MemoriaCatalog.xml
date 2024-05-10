@@ -208,6 +208,7 @@ You should set the priority of this mod to be higher than the priority of the Mo
 |- Portrait options : Default with extended cast, Opera Omnia and  Upscaled PS1 Portrait Artwork 
 |- Button Prompts Options:  PS Gloss , PS5 , Pixel Style, PlayStation Vanilla prompts,
 |- UI : Default , Darker UI and Flat 
+|- Card Limit Number : 999
 -|- Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts you can disable them anytime 
 
 :: Submod activation ::
@@ -217,14 +218,14 @@ MogAddons is essentially showcase of what can the Memoria Engine for your gamepl
 :: Compatibility ::
 - Compatible with Alternate Fantasy
 - Not compatible for older versions of the game and repacks.
-Requires Memoria v2023.06.11 or later
-	</Description>
+Requires Memoria v2023.06.11 or later</Description>
 	<PatchNotes>-Fixed formula for AP and EXP tweaks 
+-increased card limit to total to 999
 -added tweaks : 2x AP , 2x Gil , 4x Gil 
+-added get random card after battle
 -added alternative title screen 
 -added tiple triad matt 
--added remove mist on disc4
-	</PatchNotes>
+-added remove mist on disc4</PatchNotes>
 	<Category>Various</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1</DownloadUrl>
@@ -375,9 +376,9 @@ Requires Memoria v2023.06.11 or later
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: 2x of Any item Drop</Name>
-		<InstallationPath>Features/Tweaks/2xitemdrop</InstallationPath>
-		<Description>Recieve 2 items of each item drop(cant go beyond 2)</Description>
+		<Name>Tweak: Get random card after battle</Name>
+		<InstallationPath>Features/Tweaks/RandomCard</InstallationPath>
+		<Description>Recieve a Random Card after value</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
