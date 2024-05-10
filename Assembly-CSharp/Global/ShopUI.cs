@@ -80,27 +80,72 @@ public class ShopUI : UIScene
 		Int32 lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
 		Int32 reducedLinePerPage = (Int32)Math.Round(linePerPage * 0.65f);
 		Int32 reducedLineHeight = (Int32)Math.Round(panelReducedOriginalHeight / reducedLinePerPage);
-		Single scaleFactor = lineHeight / buttonOriginalHeight;
-		_shopItemPanel.SubPanel.ChangeDims(1, linePerPage, buyPanelOriginalWidth, lineHeight);
+        Single scaleFactor = lineHeight / buttonOriginalHeight;
+        Int32 columnPerPage = (Int32)Math.Floor(1 / scaleFactor);
+
+        if (columnPerPage > 1)
+        {
+            _shopItemPanel.Background.Panel.Name.Label.alpha = 0f;
+            _shopItemPanel.Background.Panel.Info.Label.alpha = 0f;
+            _shopItemPanel.ScrollButton.Panel.alpha = 0.5f;
+            _shopWeaponPanel.Background.Panel.Name.Label.alpha = 0f;
+            _shopWeaponPanel.Background.Panel.Info.Label.alpha = 0f;
+            _shopWeaponPanel.ScrollButton.Panel.alpha = 0.5f;
+        }
+
+        _shopItemPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, buyPanelOriginalWidth / columnPerPage, lineHeight);
 		_shopItemPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _shopItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.085f, relRight: 0.155f);
-		_shopItemPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _shopItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.175f, relRight: 0.65f);
-		_shopItemPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _shopItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.65f, relRight: 0.92f);
-		_shopItemPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
-		_shopItemPanel.SubPanel.RecycleListPopulator.RefreshTableView();
-		_shopWeaponPanel.SubPanel.ChangeDims(1, reducedLinePerPage, buyPanelOriginalWidth, reducedLineHeight);
+        _shopItemPanel.SubPanel.ButtonPrefab.IconSprite.width = _shopItemPanel.SubPanel.ButtonPrefab.IconSprite.height;
+        //_shopItemPanel.SubPanel.ButtonPrefab.IconSprite.keepAspectRatio = UIWidget.AspectRatioSource.BasedOnHeight;
+
+        _shopItemPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _shopItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.175f, relRight: 0.65f);
+        _shopItemPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _shopItemPanel.SubPanel.ButtonPrefab.NameLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
+
+        _shopItemPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _shopItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.65f, relRight: 0.92f);
+        _shopItemPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _shopItemPanel.SubPanel.ButtonPrefab.NumberLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
+        _shopItemPanel.SubPanel.RecycleListPopulator.RefreshTableView();
+
+		_shopWeaponPanel.SubPanel.ChangeDims(columnPerPage, reducedLinePerPage, buyPanelOriginalWidth / columnPerPage, reducedLineHeight);
 		_shopWeaponPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _shopWeaponPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.085f, relRight: 0.155f);
-		_shopWeaponPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _shopWeaponPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.175f, relRight: 0.65f);
-		_shopWeaponPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _shopWeaponPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.65f, relRight: 0.92f);
-		_shopWeaponPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
-		_shopWeaponPanel.SubPanel.RecycleListPopulator.RefreshTableView();
-		const Single sellPanelOriginalWidth = 1490f;
-		_shopSellItemPanel.SubPanel.ChangeDims(2, linePerPage, sellPanelOriginalWidth / 2f, lineHeight);
+        _shopWeaponPanel.SubPanel.ButtonPrefab.IconSprite.width = _shopWeaponPanel.SubPanel.ButtonPrefab.IconSprite.height;
+
+        _shopWeaponPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _shopWeaponPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.175f, relRight: 0.65f);
+        _shopWeaponPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _shopWeaponPanel.SubPanel.ButtonPrefab.NameLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
+
+        _shopWeaponPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _shopWeaponPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.65f, relRight: 0.92f);
+        _shopWeaponPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _shopWeaponPanel.SubPanel.ButtonPrefab.NumberLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
+        _shopWeaponPanel.SubPanel.RecycleListPopulator.RefreshTableView();
+
+
+
+        columnPerPage = (Int32)Math.Floor(2 / scaleFactor);
+
+        if (columnPerPage > 2)
+        {
+            _shopSellItemPanel.Background.Panel.Name.Label.alpha = 0f;
+            _shopSellItemPanel.Background.Panel.Info.Label.alpha = 0f;
+            _shopSellItemPanel.Background.Panel.Name2.Label.alpha = 0f;
+            _shopSellItemPanel.Background.Panel.Info2.Label.alpha = 0f;
+            _shopSellItemPanel.ScrollButton.Panel.alpha = 0.5f;
+        }
+
+        const Single sellPanelOriginalWidth = 1490f;
+		_shopSellItemPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, sellPanelOriginalWidth / columnPerPage, lineHeight);
 		_shopSellItemPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _shopSellItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.105f, relRight: 0.191f);
-		_shopSellItemPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _shopSellItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.215f, relRight: 0.795f);
-		_shopSellItemPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _shopSellItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.8f, relRight: 0.9f);
-		_shopSellItemPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
-		_shopSellItemPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
-		_shopSellItemPanel.SubPanel.RecycleListPopulator.RefreshTableView();
+        _shopSellItemPanel.SubPanel.ButtonPrefab.IconSprite.width = _shopSellItemPanel.SubPanel.ButtonPrefab.IconSprite.height;
+
+        _shopSellItemPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _shopSellItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.215f, relRight: 0.795f);
+        _shopSellItemPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _shopSellItemPanel.SubPanel.ButtonPrefab.NameLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
+
+        _shopSellItemPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _shopSellItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.8f, relRight: 0.9f);
+        _shopSellItemPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _shopSellItemPanel.SubPanel.ButtonPrefab.NumberLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
+        _shopSellItemPanel.SubPanel.RecycleListPopulator.RefreshTableView();
 	}
 
 	public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
