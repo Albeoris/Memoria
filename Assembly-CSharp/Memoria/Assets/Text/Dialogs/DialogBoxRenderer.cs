@@ -247,7 +247,7 @@ namespace Memoria.Assets
             else if (tag == NGUIText.Shadow)
             {
                 closingBracket = Array.IndexOf(text, ']', index + 4);
-                highShadow = true;
+                highShadow = !highShadow;
             }
             else if (tag == NGUIText.NoShadow)
             {
