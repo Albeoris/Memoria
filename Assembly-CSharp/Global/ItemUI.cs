@@ -132,32 +132,42 @@ public class ItemUI : UIScene
         HelpDespLabelGameObject.SetActive(FF9StateSystem.PCPlatform);
         _itemScrollList.ScrollButton.DisplayScrollButton(false, false);
         _keyItemScrollList.ScrollButton.DisplayScrollButton(false, false);
+        UpdateUserInterface();
     }
 
     public void UpdateUserInterface()
     {
         if (!Configuration.Interface.IsEnabled)
             return;
+        _itemPanel.ScrollButton.Panel.alpha = 0.5f;
+        _keyItemPanel.ScrollButton.Panel.alpha = 0.5f;
         const Int32 originalLineCount = 8;
+        const Int32 originalColumnCount = 2;
         const Single buttonOriginalHeight = 98f;
         const Single panelOriginalWidth = 1490f;
         const Single panelOriginalHeight = originalLineCount * buttonOriginalHeight;
+
         Int32 linePerPage = Configuration.Interface.MenuItemRowCount;
+        Int32 columnPerPage = (Int32)Math.Floor((Single)(originalColumnCount * ((Single)linePerPage / originalLineCount)));
+        if (originalColumnCount * originalLineCount >= this._itemIdList.Count) // 2 columns suffice
+        {
+            linePerPage = originalLineCount;
+            columnPerPage = originalColumnCount;
+        }
+        else if (linePerPage >= originalLineCount * 2 && (originalColumnCount + 1) * (originalLineCount + originalLineCount / originalColumnCount) >= this._itemIdList.Count) // 3 columns suffice
+        {
+            linePerPage = originalLineCount + originalLineCount / originalColumnCount;
+            columnPerPage = originalColumnCount + 1;
+        }
+
         Int32 lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
         Single scaleFactor = lineHeight / buttonOriginalHeight;
-        Int32 columnPerPage = (Int32)Math.Floor(2 / scaleFactor);
 
-        if (columnPerPage > 2)
-        {
-            _itemPanel.Background.Panel.Name.Label.alpha = 0f;
-            _itemPanel.Background.Panel.Info.Label.alpha = 0f;
-            _itemPanel.Background.Panel.Name2.Label.alpha = 0f;
-            _itemPanel.Background.Panel.Info2.Label.alpha = 0f;
-            _itemPanel.ScrollButton.Panel.alpha = 0.5f;
-            _keyItemPanel.Background.Panel.Name.Label.alpha = 0f;
-            _keyItemPanel.Background.Panel.Info.Label.alpha = 0f;
-            _keyItemPanel.ScrollButton.Panel.alpha = 0.5f;
-        }
+        Single alphaColumnTitles = (columnPerPage > originalColumnCount) ? 0f : 1f;
+        _itemPanel.Background.Panel.Name.Label.alpha = alphaColumnTitles;
+        _itemPanel.Background.Panel.Info.Label.alpha = alphaColumnTitles;
+        _itemPanel.Background.Panel.Name2.Label.alpha = alphaColumnTitles;
+        _itemPanel.Background.Panel.Info2.Label.alpha = alphaColumnTitles;
 
         _itemPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, panelOriginalWidth / columnPerPage, lineHeight);
         _itemPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _itemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.105f, relRight: 0.191f);
