@@ -508,7 +508,8 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2111796362</Website>
 	<PreviewFileUrl>https://i.imgur.com/wYsiAog.jpeg</PreviewFileUrl>
 </Mod>
-
+	 
+<!-- DEAD LINK 
 <Mod>
 	<Name>Polish Translation</Name>
 	<InstallationPath>PolishTranslation</InstallationPath>
@@ -519,16 +520,32 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Category>Translation</Category>
 	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2621590946</Website>
 </Mod>
+-->
 
+<!-- DEAD LINK
+Note to Albeoris: you know better about the genesis of it (to fix/correct/contact the author)
 <Mod>
 	<Name>Russian Translation</Name>
 	<InstallationPath>RussianTranslation</InstallationPath>
-	<Author>RGR Studio</Author> <!-- Note to Albeoris: you know better about the genesis of it -->
+	<Author>RGR Studio</Author>
 	<Description>Перевод игры на русский язык.
 
 Note: this mod doesn't support automatic installation yet. Download it from its website.</Description>
 	<Category>Translation</Category>
 	<Website>https://ff9.ffrtt.ru/viewtopic.php?f=14&amp;t=38</Website>
+</Mod>
+-->
+	 
+<Mod>
+	<Name>Ukrainian Translation</Name>
+	<InstallationPath>UkrainianTranslation</InstallationPath>
+	<Author>Дракон Сходу (DragonOfTheEast)</Author> 
+	<Description>Українська локалізація гри.
+
+Note: this mod doesn't support automatic installation yet. Download it from its website.</Description>
+	<Category>Translation</Category>
+	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=3237680302</Website>
+	<PreviewFileUrl>https://steamuserimages-a.akamaihd.net/ugc/2512522269181333788/6A0BBB6B3E86DCD437AB8F6AA159E776DF7BCEA6/</PreviewFileUrl>
 </Mod>
 
 <!--
