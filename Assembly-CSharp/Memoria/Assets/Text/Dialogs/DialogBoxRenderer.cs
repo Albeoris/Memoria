@@ -247,7 +247,7 @@ namespace Memoria.Assets
             else if (tag == NGUIText.Shadow)
             {
                 closingBracket = Array.IndexOf(text, ']', index + 4);
-                highShadow = !highShadow; // The tag seems to be used as a toogle (see issue #397)
+                highShadow = !highShadow; // The tag seems to be used as a toggle (see issue #397)
             }
             else if (tag == NGUIText.NoShadow)
             {
