@@ -26,6 +26,8 @@ public class UIKeyTrigger : MonoBehaviour
     private Single fastEventCounter;
     private Boolean triggleEventDialog;
     private Boolean quitConfirm;
+    private Boolean TurboKey;
+    public static Boolean preventTurboKey;
 
     public static Boolean IsShiftKeyPressed { get; private set; }
 
@@ -264,8 +266,9 @@ public class UIKeyTrigger : MonoBehaviour
 
             PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.GilMax);
         }
-        if (Configuration.Mod.TranceSeek && UnityXInput.Input.GetKeyDown(KeyCode.F8) && PersistenSingleton<UIManager>.Instance.IsPause) // TRANCE SEEK - Reset game, back to main menu
+        if (Configuration.Mod.TranceSeek && UnityXInput.Input.GetKeyDown(KeyCode.F8) && PersistenSingleton<UIManager>.Instance.IsPause) // TRANCE SEEK - Hard reset, back to main menu
         {
+            preventTurboKey = false;
             PersistenSingleton<UIManager>.Instance.Dialogs.PauseAllDialog(true);
             PersistenSingleton<UIManager>.Instance.HideAllHUD();
             ButtonGroupState.DisableAllGroup(true);
@@ -278,6 +281,13 @@ public class UIKeyTrigger : MonoBehaviour
             SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
             SceneDirector.Replace("Title", SceneTransition.FadeOutToBlack_FadeIn, true);
             return;
+        }
+        if (UnityXInput.Input.GetKeyDown(KeyCode.F9) && Configuration.Cheats.TurboDialog)
+        {
+            if (TurboKey)
+                TurboKey = false;
+            else
+                TurboKey = true;
         }
     }
 
@@ -645,10 +655,11 @@ public class UIKeyTrigger : MonoBehaviour
         foreach (String key in Configuration.Control.DialogProgressButtons)
             if (key.TryEnumParse<Control>(out Control ctrl))
                 dialogConfirmKeys.Add(ctrl);
-        if (dialogConfirmKeys.Any(ctrl => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(ctrl) || keyCommand == ctrl))
+        if (dialogConfirmKeys.Any(ctrl => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(ctrl) || keyCommand == ctrl) || shouldTurboDialog(dialogConfirmKeys))
         {
             keyCommand = Control.None;
             PersistenSingleton<UIManager>.Instance.Dialogs.OnKeyConfirm(activeButton);
+            preventTurboKey = false;
             if (PersistenSingleton<UIManager>.Instance.Dialogs.IsDialogNeedControl() || !PersistenSingleton<UIManager>.Instance.Dialogs.CompletlyVisible)
                 return;
 
@@ -659,6 +670,7 @@ public class UIKeyTrigger : MonoBehaviour
         {
             keyCommand = Control.None;
             PersistenSingleton<UIManager>.Instance.Dialogs.OnKeyCancel(activeButton);
+            preventTurboKey = false;
         }
         else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) || keyCommand == Control.Pause)
         {
@@ -779,6 +791,25 @@ public class UIKeyTrigger : MonoBehaviour
     {
         if (Application.platform != RuntimePlatform.Android || !UnityXInput.Input.GetKey(KeyCode.Escape))
         {
+        }
+        return false;
+    }
+
+    private Boolean shouldTurboDialog(List<Control> confirmKeys)
+    {
+        if (!Configuration.Cheats.TurboDialog || preventTurboKey || TimerUI.Enable || PreventTurboOnFields())
+            return false;
+
+        return TurboKey || ((HonoInputManager.Instance.IsInput(Control.RightBumper) || ShiftKey) && confirmKeys.Any(HonoInputManager.Instance.IsInput));
+    }
+
+    public Boolean PreventTurboOnFields() // [DV] TODO: Make it compatible with DictionaryPatch
+    {
+        List<Int32> fieldidpreventturbo = new List<Int32> { 656, 657, 658, 659, 2950, 2951, 2952 }; // Kwe Marsh + Chocobo Minigame places
+        foreach (Int32 id in fieldidpreventturbo)
+        {
+            if (FF9StateSystem.Common.FF9.fldMapNo == id)
+                return true;
         }
         return false;
     }

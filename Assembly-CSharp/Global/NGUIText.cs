@@ -2726,6 +2726,7 @@ public static class NGUIText
     public const String SpacingY = "SPAY";
     public const String KeyboardButtonIcon = "KCBT";
     public const String JoyStickButtonIcon = "JCBT";
+    public const String NoTurboDialog = "NTUR";
 
     public static readonly String[] RenderOpcodeSymbols;
 
