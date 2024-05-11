@@ -148,7 +148,7 @@ public class ItemUI : UIScene
         const Single panelOriginalHeight = originalLineCount * buttonOriginalHeight;
 
         Int32 linePerPage = Configuration.Interface.MenuItemRowCount;
-        Int32 columnPerPage = (Int32)Math.Floor((Single)(originalColumnCount * (Single)(linePerPage / originalLineCount)));
+        Int32 columnPerPage = (Int32)Math.Floor((Single)(originalColumnCount * ((Single)linePerPage / originalLineCount)));
         if (originalColumnCount * originalLineCount >= this._itemIdList.Count) // 2 columns suffice
         {
             linePerPage = originalLineCount;
