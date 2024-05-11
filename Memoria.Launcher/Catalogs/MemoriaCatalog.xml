@@ -522,8 +522,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 </Mod>
 -->
 
-<!-- DEAD LINK
-Note to Albeoris: you know better about the genesis of it (to fix/correct/contact the author)
+<!-- Note to Albeoris: you know better about the genesis of it (to fix/correct/contact the author)-->
 <Mod>
 	<Name>Russian Translation</Name>
 	<InstallationPath>RussianTranslation</InstallationPath>
@@ -534,7 +533,7 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Category>Translation</Category>
 	<Website>https://ff9.ffrtt.ru/viewtopic.php?f=14&amp;t=38</Website>
 </Mod>
--->
+
 	 
 <Mod>
 	<Name>Ukrainian Translation</Name>
