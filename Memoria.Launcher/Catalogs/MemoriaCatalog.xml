@@ -511,34 +511,28 @@ Change some card textures (add boss + characters)
 	<Category>Gameplay</Category>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/jeu88un3m1e0f4qff5b40/BetterCardDrop-by-DV.zip?rlkey=4woy4rml3pwv65wg6tyionc90&amp;dl=1</DownloadUrl>
 	<SubMod>
-		<Name>Normal</Name>
-		<InstallationPath>Normal</InstallationPath>
-		<Description>Drop rate of 12,5%.</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
 		<Name>Drop x 2</Name>
 		<InstallationPath>Dropx2</InstallationPath>
 		<Description>Drop rate of 25%</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Drop x 3</Name>
 		<InstallationPath>Dropx3</InstallationPath>
 		<Description>Drop rate of 37,5%</Description>
-		<Priority>3</Priority>
+		<Priority>2</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Drop x 4</Name>
 		<InstallationPath>Dropx4</InstallationPath>
 		<Description>Drop rate of 50%</Description>
-		<Priority>4</Priority>
+		<Priority>3</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Drop 100%</Name>
 		<InstallationPath>Drop100</InstallationPath>
 		<Description>Drop rate of 100%</Description>
-		<Priority>5</Priority>
+		<Priority>4</Priority>
 	</SubMod>
 </Mod>
 <Mod>
