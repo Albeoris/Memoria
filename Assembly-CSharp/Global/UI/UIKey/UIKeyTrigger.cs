@@ -797,21 +797,10 @@ public class UIKeyTrigger : MonoBehaviour
 
     private Boolean shouldTurboDialog(List<Control> confirmKeys)
     {
-        if (!Configuration.Cheats.TurboDialog || preventTurboKey || TimerUI.Enable || PreventTurboOnFields())
+        if (!Configuration.Cheats.TurboDialog || preventTurboKey || !UIManager.Instance.Dialogs.IsDialogNeedControl() || !UIManager.Instance.Dialogs.CompletlyVisible)
             return false;
 
         return TurboKey || ((HonoInputManager.Instance.IsInput(Control.RightBumper) || ShiftKey) && confirmKeys.Any(HonoInputManager.Instance.IsInput));
-    }
-
-    public Boolean PreventTurboOnFields() // [DV] TODO: Make it compatible with DictionaryPatch
-    {
-        List<Int32> fieldidpreventturbo = new List<Int32> { 656, 657, 658, 659, 2950, 2951, 2952 }; // Kwe Marsh + Chocobo Minigame places
-        foreach (Int32 id in fieldidpreventturbo)
-        {
-            if (FF9StateSystem.Common.FF9.fldMapNo == id)
-                return true;
-        }
-        return false;
     }
 
     private void Start()
