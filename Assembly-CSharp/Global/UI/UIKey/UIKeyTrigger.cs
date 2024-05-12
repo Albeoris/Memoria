@@ -131,10 +131,10 @@ public class UIKeyTrigger : MonoBehaviour
         if (!UnityXInput.Input.anyKey && !isLockLazyInput)
             ResetKeyCode();
         AccelerateKeyNavigation();
-        if (handleMenuControlKeyPressCustomInput())
+        if (HandleMenuControlKeyPressCustomInput())
             return;
         HandleBoosterButton();
-        handleDialogControlKeyPressCustomInput();
+        HandleDialogControlKeyPressCustomInput();
     }
 
     private void AccelerateKeyNavigation()
@@ -494,7 +494,7 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
-    private Boolean handleMenuControlKeyPressCustomInput(GameObject activeButton = null)
+    private Boolean HandleMenuControlKeyPressCustomInput(GameObject activeButton = null)
     {
         IsShiftKeyPressed = ShiftKey;
 
@@ -646,7 +646,7 @@ public class UIKeyTrigger : MonoBehaviour
         return false;
     }
 
-    private void handleDialogControlKeyPressCustomInput(GameObject activeButton = null)
+    private void HandleDialogControlKeyPressCustomInput(GameObject activeButton = null)
     {
         if (activeButton == null)
             activeButton = UICamera.selectedObject;
@@ -655,7 +655,7 @@ public class UIKeyTrigger : MonoBehaviour
         foreach (String key in Configuration.Control.DialogProgressButtons)
             if (key.TryEnumParse<Control>(out Control ctrl))
                 dialogConfirmKeys.Add(ctrl);
-        if (dialogConfirmKeys.Any(ctrl => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(ctrl) || keyCommand == ctrl) || shouldTurboDialog(dialogConfirmKeys))
+        if (dialogConfirmKeys.Any(ctrl => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(ctrl) || keyCommand == ctrl) || ShouldTurboDialog(dialogConfirmKeys))
         {
             keyCommand = Control.None;
             PersistenSingleton<UIManager>.Instance.Dialogs.OnKeyConfirm(activeButton);
@@ -795,7 +795,7 @@ public class UIKeyTrigger : MonoBehaviour
         return false;
     }
 
-    private Boolean shouldTurboDialog(List<Control> confirmKeys)
+    private Boolean ShouldTurboDialog(List<Control> confirmKeys)
     {
         if (!Configuration.Cheats.TurboDialog || preventTurboKey || !UIManager.Instance.Dialogs.IsDialogNeedControl() || !UIManager.Instance.Dialogs.CompletlyVisible)
             return false;
