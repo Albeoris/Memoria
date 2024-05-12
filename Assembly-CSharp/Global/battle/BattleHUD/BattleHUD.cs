@@ -1249,7 +1249,7 @@ public partial class BattleHUD : UIScene
             return AbilityStatus.Disable;
         }
 
-        if (GetActionMpCost(patchedAbil, unit) > unit.CurrentMp)
+        if (GetActionMpCost(patchedAbil, unit, patchedId, checkCurrentPlayer) > unit.CurrentMp)
             return AbilityStatus.Disable;
 
         return AbilityStatus.Enable;
