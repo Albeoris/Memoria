@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts.Common;
-using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
@@ -26,6 +25,7 @@ public class UIKeyTrigger : MonoBehaviour
     private Single fastEventCounter;
     private Boolean triggleEventDialog;
     private Boolean quitConfirm;
+    private Single autoConfirmDownTime = 0;
     private Boolean TurboKey;
     public static Boolean preventTurboKey;
 
@@ -499,6 +499,7 @@ public class UIKeyTrigger : MonoBehaviour
         IsShiftKeyPressed = ShiftKey;
 
         UIScene sceneFromState = PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State);
+        Boolean battelAutoConfirm = Configuration.Control.BattleAutoConfirm && (UIManager.Instance.State == UIManager.UIState.BattleHUD || UIManager.Instance.State == UIManager.UIState.BattleResult);
         if (ButtonGroupState.ActiveButton && ButtonGroupState.ActiveButton != PersistenSingleton<UIManager>.Instance.gameObject)
             activeButton = ButtonGroupState.ActiveButton;
         else if (activeButton == null)
@@ -519,9 +520,26 @@ public class UIKeyTrigger : MonoBehaviour
             }
             if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm) || keyCommand == Control.Confirm)
             {
+                if (battelAutoConfirm)
+                    autoConfirmDownTime = Time.time;
                 keyCommand = Control.None;
                 sceneFromState.OnKeyConfirm(activeButton);
                 return true;
+            }
+            if (battelAutoConfirm && PersistenSingleton<HonoInputManager>.Instance.IsInput(Control.Confirm))
+            {
+                // If confirm is held more than 300ms it will auto confirm at an interval of 100ms
+                const Single delay = 0.3f;
+                if (autoConfirmDownTime > 0 && Time.time - autoConfirmDownTime > delay)
+                {
+                    autoConfirmDownTime = Time.time - delay + 0.1f;
+                    sceneFromState.OnKeyConfirm(activeButton);
+                    return true;
+                }
+            }
+            if (battelAutoConfirm && PersistenSingleton<HonoInputManager>.Instance.IsInputUp(Control.Confirm))
+            {
+                autoConfirmDownTime = 0;
             }
             if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) || keyCommand == Control.Pause)
             {
