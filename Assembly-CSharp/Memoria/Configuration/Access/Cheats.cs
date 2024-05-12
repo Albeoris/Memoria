@@ -18,6 +18,7 @@ namespace Memoria
             public static Boolean MasterSkill => Instance._cheats.MasterSkill;
             public static Boolean LvMax => Instance._cheats.LvMax;
             public static Boolean GilMax => Instance._cheats.GilMax;
+            public static Boolean TurboDialog => Instance._cheats.TurboDialog;
         }
     }
 }
