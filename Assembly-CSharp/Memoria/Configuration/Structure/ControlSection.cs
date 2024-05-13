@@ -34,7 +34,7 @@ namespace Memoria
                 DisableMouse = BindInt32(nameof(DisableMouse), 0);
                 DialogProgressButtons = BindStringArray(nameof(DialogProgressButtons), new String[1] { "Confirm" });
                 WrapSomeMenus = BindBoolean(nameof(WrapSomeMenus), true);
-                BattleAutoConfirm = BindBoolean(nameof(WrapSomeMenus), true);
+                BattleAutoConfirm = BindBoolean(nameof(BattleAutoConfirm), true);
                 PSXScrollingMethod = BindBoolean(nameof(PSXScrollingMethod), true);
                 PSXMovementMethod = BindBoolean(nameof(PSXMovementMethod), false);
                 AlwaysCaptureGamepad = BindBoolean(nameof(AlwaysCaptureGamepad), false);
