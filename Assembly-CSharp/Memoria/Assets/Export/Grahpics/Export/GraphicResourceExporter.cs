@@ -28,6 +28,8 @@ namespace Memoria.Assets
                         ExportAtlasSafe(path, atlas);
                     }
                 }
+
+                FieldSPSSystem.ExportAllSPSTextures(Path.Combine(Configuration.Export.Path, "FieldSPS"));
             }
             catch (Exception ex)
             {
