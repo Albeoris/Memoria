@@ -425,7 +425,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         Boolean canContinue = false;
         Boolean needContinue = false;
         Int32 maxLoop = 1000;
-        
+
         do
         {
             if (battleSpeed == 1 || battleSpeed == 2)
@@ -477,8 +477,11 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     {
                         if (changed)
                         {
-                            BattleHUD.ForceNextTurn = false;
-                            BattleHUD.switchBtlId = btl.btl_id;
+                            if (BattleHUD.ForceNextTurn)
+                            {
+                                BattleHUD.ForceNextTurn = false;
+                                BattleHUD.switchBtlId = btl.btl_id;
+                            }
                             needContinue = false;
                         }
                     }
