@@ -685,6 +685,7 @@ public class AbilityUI : UIScene
                             this.ShowPointerWhenLoading = false;
                         });
                         this.SwitchCharacter(false);
+                        UpdateUserInterface();
                     }
                 }
             }
@@ -694,7 +695,6 @@ public class AbilityUI : UIScene
                 this.ToggleMultipleTarget();
             }
         }
-        this.UpdateUserInterface();
         return true;
     }
 
@@ -726,6 +726,7 @@ public class AbilityUI : UIScene
                             this.ShowPointerWhenLoading = false;
                         });
                         this.SwitchCharacter(false);
+                        UpdateUserInterface();
                     }
                 }
             }
@@ -735,7 +736,6 @@ public class AbilityUI : UIScene
                 this.ToggleMultipleTarget();
             }
         }
-        this.UpdateUserInterface();
         return true;
     }
 
