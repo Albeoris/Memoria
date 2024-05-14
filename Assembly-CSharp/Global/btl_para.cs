@@ -194,64 +194,56 @@ public class btl_para
 
     public static void SetPoisonDamage(BTL_DATA btl)
     {
-        BattleUnit unit = new BattleUnit(btl);
+        BattleUnit battleUnit = new BattleUnit(btl);
+        UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            UInt32 damage = GetLogicalHP(btl, true) >> 4;
-            if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
-                damage >>= 2;
-            if (Configuration.Mod.TranceSeek && !String.IsNullOrEmpty(Configuration.Battle.PoisonHPDamage))
+            if (Configuration.Mod.TranceSeek)
             {
-                Expression e = new Expression(Configuration.Battle.PoisonHPDamage);
-                e.Parameters["IsZombie"] = unit.IsZombie;
-                e.Parameters["IsEasyKill"] = ((btl.stat.cur & BattleStatus.EasyKill) != 0 || (btl.stat.permanent & BattleStatus.EasyKill) != 0);
-                e.Parameters["IsPoison"] = ((btl.stat.cur & BattleStatus.Poison) != 0 || (btl.stat.permanent & BattleStatus.Poison) != 0);
-                e.Parameters["IsVenom"] = ((btl.stat.cur & BattleStatus.Venom) != 0 || (btl.stat.permanent & BattleStatus.Venom) != 0);
-                e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Target");
-                Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), Int64.MinValue);
-                if (val != Int64.MinValue)
-                {
-                    if (val < 0)
-                    {
-                        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
-                        val = Math.Abs(val);
-                    }
-                    damage = (UInt32)val;
-                }
+                damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 15 : 5);
+                if (battleUnit.IsUnderStatus(BattleStatus.Venom))
+                    damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 12 : 4);
+            }
+            else
+            {
+                damage = GetLogicalHP(btl, true) >> 4;
+                if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
+                    damage >>= 2;
             }
             if (!FF9StateSystem.Battle.isDebug)
             {
-                if ((btl.fig_stat_info & Param.FIG_STAT_INFO_REGENE_HP) != 0)
+                if (Configuration.Mod.TranceSeek && battleUnit.IsZombie) 
                 {
-                    if (btl.cur.hp + damage < btl.max.hp)
+                    if (battleUnit.IsUnderStatus(BattleStatus.Poison)) // [DV] Zombie get healed by Poison in Trance Seek.
                     {
                         btl.cur.hp += damage;
+                        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
+                        btl.fig_regene_hp = (Int32)damage;
+                        return;
                     }
-                    else
+                    if (battleUnit.IsUnderStatus(BattleStatus.Venom)) // [DV] Zombie get half damage by Venom in Trance Seek.
                     {
-                        btl.cur.hp = btl.max.hp;
+                        damage /= 2U;
+                        btl.cur.hp -= damage;
+                        btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_HP;
+                        btl.fig_poison_hp = (Int32)damage;
+                        return;
                     }
-                    btl.fig_regene_hp = (Int32)damage;
+                }
+                if (GetLogicalHP(btl, false) > damage)
+                {
+                    if (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull)
+                        btl.cur.hp -= damage;
                 }
                 else
                 {
-                    if (GetLogicalHP(btl, false) > damage)
-                    {
-                        if (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull)
-                            btl.cur.hp -= damage;
-                    }
-                    else
-                    {
-                        new BattleUnit(btl).Kill();
-                    }
-                    btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_HP;
-                    btl.fig_poison_hp = (Int32)damage;
+                    new BattleUnit(btl).Kill();
                 }
             }
-            BattleVoice.TriggerOnStatusChange(btl, "Used", btl_stat.CheckStatus(btl, BattleStatus.Venom) ? BattleStatus.Venom : BattleStatus.Poison);
         }
+        btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_HP;
+        btl.fig_poison_hp = (Int32)damage;
+        BattleVoice.TriggerOnStatusChange(btl, "Used", btl_stat.CheckStatus(btl, BattleStatus.Venom) ? BattleStatus.Venom : BattleStatus.Poison);
     }
 
     public static void SetRegeneRecover(BTL_DATA btl)
@@ -259,68 +251,26 @@ public class btl_para
         UInt32 recover = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            recover = GetLogicalHP(btl, true) >> 4;
-            if (Configuration.Mod.TranceSeek && !String.IsNullOrEmpty(Configuration.Battle.RegenHPRecovery))
+            recover = GetLogicalHP(btl, true) >> (Configuration.Mod.TranceSeek ? (btl_stat.CheckStatus(btl, BattleStatus.EasyKill) ? 12 : 5) : 4);
+            if (btl_stat.CheckStatus(btl, BattleStatus.Zombie) || btl_util.CheckEnemyCategory(btl, 16))
             {
-                btl.fig_stat_info = Param.FIG_STAT_INFO_REGENE_HP;
-                Expression e = new Expression(Configuration.Battle.RegenHPRecovery);
-                e.Parameters["IsZombie"] = ((btl.stat.cur & BattleStatus.Zombie) != 0 || (btl.stat.permanent & BattleStatus.Zombie) != 0);
-                e.Parameters["IsEasyKill"] = ((btl.stat.cur & BattleStatus.EasyKill) != 0 || (btl.stat.permanent & BattleStatus.EasyKill) != 0);
-                e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Target");
-                Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), Int64.MinValue);
-                if (val != Int64.MinValue)
-                {
-                    if (val < 0)
-                    {
-                        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_DMG;
-                        val = Math.Abs(val);
-                    }
-                    recover = (UInt32)val;
-                }
-                if (!FF9StateSystem.Battle.isDebug)
-                {
-                    if ((btl.fig_stat_info & Param.FIG_STAT_INFO_REGENE_DMG) != 0)
-                    {
-                        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_DMG;
-                        if (GetLogicalHP(btl, false) > recover)
-                            btl.cur.hp -= recover;
-                        else
-                            new BattleUnit(btl).Kill();
-                    }
-                    else
-                    {
-                        if (btl.cur.hp + recover < btl.max.hp)
-                            btl.cur.hp += recover;
-                        else
-                            btl.cur.hp = btl.max.hp;
-                    }
-                    btl.fig_regene_hp = (Int32)recover;
-                }
+                btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_DMG;
+                if (GetLogicalHP(btl, false) > recover)
+                    btl.cur.hp -= recover;
+                else
+                    new BattleUnit(btl).Kill();
+            }
+            else if (btl.cur.hp + recover < btl.max.hp)
+            {
+                btl.cur.hp += recover;
             }
             else
             {
-                if (btl_stat.CheckStatus(btl, BattleStatus.Zombie) || btl_util.CheckEnemyCategory(btl, 16))
-                {
-                    btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_DMG;
-                    if (GetLogicalHP(btl, false) > recover)
-                        btl.cur.hp -= recover;
-                    else
-                        new BattleUnit(btl).Kill();
-                }
-                else if (btl.cur.hp + recover < btl.max.hp)
-                {
-                    btl.cur.hp += recover;
-                }
-                else
-                {
-                    btl.cur.hp = btl.max.hp;
-                }
-                btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
-                btl.fig_regene_hp = (Int32)recover;
+                btl.cur.hp = btl.max.hp;
             }
         }
+        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
+        btl.fig_regene_hp = (Int32)recover;
         BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Regen);
     }
 
@@ -331,53 +281,21 @@ public class btl_para
         UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            damage = btl.max.mp >> 4;
+            damage = btl.max.mp >> (Configuration.Mod.TranceSeek ? 5 : 4);
             if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
                 damage >>= 2;
-            if (Configuration.Mod.TranceSeek && !String.IsNullOrEmpty(Configuration.Battle.PoisonMPDamage))
-            {
-                Expression e = new Expression(Configuration.Battle.PoisonMPDamage);
-                e.Parameters["IsZombie"] = ((btl.stat.cur & BattleStatus.Zombie) != 0 || (btl.stat.permanent & BattleStatus.Zombie) != 0);
-                e.Parameters["IsEasyKill"] = ((btl.stat.cur & BattleStatus.EasyKill) != 0 || (btl.stat.permanent & BattleStatus.EasyKill) != 0);
-                e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Target");
-                Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), Int64.MinValue);
-                if (val != Int64.MinValue)
-                {
-                    if (val < 0)
-                    {
-                        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
-                        val = Math.Abs(val);
-                    }
-                    damage = (UInt32)val;
-                }
-            }
+            if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.Venom))
+                damage = btl.max.mp >> 4;
             if (!FF9StateSystem.Battle.isDebug && (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull))
             {
-                if ((btl.fig_stat_info & Param.FIG_STAT_INFO_REGENE_MP) != 0)
-                {
-                    if (btl.cur.mp + damage < btl.max.mp)
-                    {
-                        btl.cur.mp += damage;
-                    }
-                    else
-                    {
-                        btl.cur.mp = btl.max.mp;
-                    }
-                    btl.fig_regene_mp = (Int32)damage;
-                }
+                if (btl.cur.mp > damage)
+                    btl.cur.mp -= damage;
                 else
-                {
-                    if (btl.cur.mp > damage)
-                        btl.cur.mp -= damage;
-                    else
-                        btl.cur.mp = 0;
-                    btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_MP;
-                    btl.fig_poison_mp = (Int32)damage;
-                }
+                    btl.cur.mp = 0;
             }
         }
+        btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_MP;
+        btl.fig_poison_mp = (Int32)damage;
     }
 
     public static void SetTroubleDamage(BattleUnit btl, Int32 dmg)

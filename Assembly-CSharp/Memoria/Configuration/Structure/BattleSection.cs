@@ -48,9 +48,6 @@ namespace Memoria
             */
             public readonly IniValue<String> StatusDurationFormula;
             public readonly IniValue<String> StatusTickFormula;
-            public readonly IniValue<String> PoisonHPDamage;
-            public readonly IniValue<String> PoisonMPDamage;
-            public readonly IniValue<String> RegenHPRecovery;
             public readonly IniValue<String> SpeedStatFormula;
             public readonly IniValue<String> StrengthStatFormula;
             public readonly IniValue<String> MagicStatFormula;
@@ -83,9 +80,6 @@ namespace Memoria
                 SpareChangeGilSpentFormula = BindString(nameof(SpareChangeGilSpentFormula), "");
                 StatusDurationFormula = BindString(nameof(StatusDurationFormula), "");
                 StatusTickFormula = BindString(nameof(StatusTickFormula), "");
-                PoisonHPDamage = BindString(nameof(PoisonHPDamage), "");
-                PoisonMPDamage = BindString(nameof(PoisonMPDamage), "");
-                RegenHPRecovery = BindString(nameof(RegenHPRecovery), "");
                 SpeedStatFormula = BindString(nameof(SpeedStatFormula), "");
                 StrengthStatFormula = BindString(nameof(StrengthStatFormula), "");
                 MagicStatFormula = BindString(nameof(MagicStatFormula), "");
