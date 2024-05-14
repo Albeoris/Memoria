@@ -140,31 +140,100 @@ public class AbilityUI : UIScene
         this.DisplayAllButton();
         this.activeAbilityScrollList.ScrollButton.DisplayScrollButton(false, false);
         this.supportAbilityScrollList.ScrollButton.DisplayScrollButton(false, false);
+        this.UpdateUserInterface();
     }
 
     public void UpdateUserInterface()
     {
         if (!Configuration.Interface.IsEnabled)
             return;
+
+        _abilityPanel.ScrollButton.Panel.alpha = 0.5f;
+        _supportPanel.ScrollButton.Panel.alpha = 0.5f;
         const Int32 originalLineCount = 6;
+        const Int32 originalColumnCount = 2;
         const Single buttonOriginalHeight = 92f;
         const Single panelOriginalWidth = 1488f;
         const Single panelOriginalHeight = originalLineCount * buttonOriginalHeight;
+
+        // ----------- ACTIVE ABILITIES ----------- //
+
         Int32 linePerPage = Configuration.Interface.MenuAbilityRowCount;
+        Int32 columnPerPage = (Int32)Math.Floor((Single)(originalColumnCount * ((Single)linePerPage / originalLineCount)));
+
+        if (originalColumnCount * originalLineCount >= this.aaIdList.Count) // 2 columns suffice
+        {
+            linePerPage = originalLineCount;
+            columnPerPage = originalColumnCount;
+        }
+        else if (linePerPage >= originalLineCount * 2 && (originalColumnCount + 1) * (originalLineCount + originalLineCount / originalColumnCount) >= this.aaIdList.Count) // 3 columns suffice
+        {
+            linePerPage = originalLineCount + originalLineCount / originalColumnCount;
+            columnPerPage = originalColumnCount + 1;
+        }
         Int32 lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
         Single scaleFactor = lineHeight / buttonOriginalHeight;
-        _abilityPanel.SubPanel.ChangeDims(2, linePerPage, panelOriginalWidth / 2f, lineHeight);
+
+        Single alphaColumnTitles = (columnPerPage > originalColumnCount) ? 0f : 1f;
+        _abilityPanel.Background.Panel.Name.Label.alpha = alphaColumnTitles;
+        _abilityPanel.Background.Panel.Info.Label.alpha = alphaColumnTitles;
+        _abilityPanel.Background.Panel.Name2.Label.alpha = alphaColumnTitles;
+        _abilityPanel.Background.Panel.Info2.Label.alpha = alphaColumnTitles;
+
+        if (columnPerPage * linePerPage >= this.aaIdList.Count)
+        {
+            _abilityPanel.ScrollButton.Panel.alpha = 0f;
+        }
+
+        _abilityPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, panelOriginalWidth / columnPerPage, lineHeight);
         _abilityPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.091f, relRight: 0.795f);
-        _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.8f, relRight: 0.92f);
         _abilityPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _abilityPanel.SubPanel.ButtonPrefab.NameLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
+
+        _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.8f, relRight: 0.92f);
         _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _abilityPanel.SubPanel.ButtonPrefab.NumberLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
         _abilityPanel.SubPanel.RecycleListPopulator.RefreshTableView();
-        _supportPanel.SubPanel.ChangeDims(2, linePerPage, panelOriginalWidth / 2f, lineHeight);
+
+        // ----------- SUPPORT ABILITIES ----------- //
+
+        linePerPage = Configuration.Interface.MenuAbilityRowCount;
+        columnPerPage = (Int32)Math.Floor((Single)(originalColumnCount * ((Single)linePerPage / originalLineCount)));
+        if (originalColumnCount * originalLineCount >= this.saIdList.Count) // 2 columns suffice
+        {
+            linePerPage = originalLineCount;
+            columnPerPage = originalColumnCount;
+        }
+        else if (linePerPage >= originalLineCount * 2 && (originalColumnCount + 1) * (originalLineCount + originalLineCount / originalColumnCount) >= this.saIdList.Count) // 3 columns suffice
+        {
+            linePerPage = originalLineCount + originalLineCount / originalColumnCount;
+            columnPerPage = originalColumnCount + 1;
+        }
+        lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
+        scaleFactor = lineHeight / buttonOriginalHeight;
+
+        alphaColumnTitles = (columnPerPage > originalColumnCount) ? 0f : 1f;
+        _supportPanel.Background.Panel.Name.Label.alpha = alphaColumnTitles;
+        _supportPanel.Background.Panel.Info.Label.alpha = alphaColumnTitles;
+        _supportPanel.Background.Panel.Name2.Label.alpha = alphaColumnTitles;
+        _supportPanel.Background.Panel.Info2.Label.alpha = alphaColumnTitles;
+
+        if (columnPerPage * linePerPage >= this.saIdList.Count)
+        {
+            _supportPanel.ScrollButton.Panel.alpha = 0f;
+        }
+
+        _supportPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, panelOriginalWidth / columnPerPage, lineHeight);
         _supportPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _supportPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.09f, relRight: 0.176f);
+        _supportPanel.SubPanel.ButtonPrefab.IconSprite.width = _supportPanel.SubPanel.ButtonPrefab.IconSprite.height;
+
         _supportPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _supportPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.24f, relRight: 0.795f);
-        _supportPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _supportPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.8f, relRight: 0.92f);
         _supportPanel.SubPanel.ButtonPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _supportPanel.SubPanel.ButtonPrefab.NameLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
+
+        _supportPanel.SubPanel.ButtonPrefab.NumberLabel.SetAnchor(target: _supportPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.8f, relRight: 0.92f);
         _supportPanel.SubPanel.ButtonPrefab.NumberLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
+        _supportPanel.SubPanel.ButtonPrefab.NumberLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
         _supportPanel.SubPanel.RecycleListPopulator.RefreshTableView();
     }
 
@@ -230,12 +299,12 @@ public class AbilityUI : UIScene
                     Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
                     this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
                     Int32 abilId = this.aaIdList[this.currentAbilityIndex];
-					if (abilId != 0 && ff9abil.IsAbilityActive(abilId))
-					{
-						BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abilId);
-						BattleAbilityId patchedId = this.PatchAbility(battleAbilId);
-						this.canMultiTarget = this.IsMulti(patchedId);
-						if (this.CheckAAType(abilId, player) == AbilityType.Enable)
+                    if (abilId != 0 && ff9abil.IsAbilityActive(abilId))
+                    {
+                        BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abilId);
+                        BattleAbilityId patchedId = this.PatchAbility(battleAbilId);
+                        this.canMultiTarget = this.IsMulti(patchedId);
+                        if (this.CheckAAType(abilId, player) == AbilityType.Enable)
                         {
                             if (this.canMultiTarget)
                             {
@@ -321,7 +390,7 @@ public class AbilityUI : UIScene
                                 List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(supportId);
                                 Boolean enableNext = boostLevel < boostMaxLevel;
                                 if (enableNext)
-								{
+                                {
                                     CharacterAbilityGems nextBoost = ff9abil._FF9Abil_SaData[boostedList[boostLevel]];
                                     enableNext = this.CheckSAType(ff9abil.GetAbilityIdFromSupportAbility(nextBoost.Id), player) == AbilityType.Enable;
                                     if (enableNext)
@@ -333,14 +402,14 @@ public class AbilityUI : UIScene
                                 if (!enableNext)
                                 {
                                     foreach (SupportAbility boosted in boostedList)
-									{
+                                    {
                                         if (ff9abil.FF9Abil_IsEnableSA(player.Data.saExtended, boosted))
                                         {
                                             CharacterAbilityGems boostedGem = ff9abil._FF9Abil_SaData[boosted];
                                             ff9abil.FF9Abil_SetEnableSA(player.Data, boosted, false);
                                             player.Data.cur.capa += boostedGem.GemsCount;
                                         }
-									}
+                                    }
                                     ff9abil.FF9Abil_SetEnableSA(player.Data, supportId, false);
                                     player.Data.cur.capa += saData.GemsCount;
                                 }
@@ -375,8 +444,8 @@ public class AbilityUI : UIScene
                 Int32 memberIndex = go.transform.GetSiblingIndex();
                 PLAYER caster = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
                 BattleAbilityId abilId = ff9abil.GetActiveAbilityFromAbilityId(this.aaIdList[this.currentAbilityIndex]);
-				BattleAbilityId patchedId = this.PatchAbility(abilId);
-				AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[patchedId];
+                BattleAbilityId patchedId = this.PatchAbility(abilId);
+                AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[patchedId];
                 if (!this.multiTarget)
                 {
                     canUseAbility = SFieldCalculator.FieldCalcMain(caster, FF9StateSystem.Common.FF9.party.member[memberIndex], aaData, aaData.Ref.ScriptId, 0U);
@@ -513,9 +582,9 @@ public class AbilityUI : UIScene
                                     player.Data.cur.capa -= boostedGem.GemsCount;
                                 }
                                 else
-								{
+                                {
                                     break;
-								}
+                                }
                             }
                         }
                         ff9play.FF9Play_Update(player.Data);
@@ -595,6 +664,7 @@ public class AbilityUI : UIScene
                 this.ToggleMultipleTarget();
             }
         }
+        this.UpdateUserInterface();
         return true;
     }
 
@@ -635,6 +705,7 @@ public class AbilityUI : UIScene
                 this.ToggleMultipleTarget();
             }
         }
+        this.UpdateUserInterface();
         return true;
     }
 
@@ -908,8 +979,8 @@ public class AbilityUI : UIScene
             BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abilityListData.Id);
             itemListDetailHud.Content.SetActive(true);
             ButtonGroupState.SetButtonAnimation(itemListDetailHud.Self, abilityListData.Type == AbilityType.Enable);
-			BattleAbilityId patchedId = this.PatchAbility(battleAbilId);
-			Int32 mp = GetMp(FF9StateSystem.Battle.FF9Battle.aa_data[patchedId]);
+            BattleAbilityId patchedId = this.PatchAbility(battleAbilId);
+            Int32 mp = GetMp(FF9StateSystem.Battle.FF9Battle.aa_data[patchedId]);
             itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(patchedId);
             itemListDetailHud.NumberLabel.text = mp != 0 ? mp.ToString() : String.Empty;
             if (abilityListData.Type == AbilityType.CantSpell)
@@ -1049,8 +1120,8 @@ public class AbilityUI : UIScene
                 charHud.Content.SetActive(true);
                 FF9UIDataTool.DisplayCharacterDetail(player, charHud);
                 FF9UIDataTool.DisplayCharacterAvatar(player, new Vector2(), new Vector2(), charHud.AvatarSprite, false);
-				AA_DATA patchedAbil = FF9StateSystem.Battle.FF9Battle.aa_data[this.PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(this.aaIdList[this.currentAbilityIndex]))];
-				switch (patchedAbil.Info.DisplayStats)
+                AA_DATA patchedAbil = FF9StateSystem.Battle.FF9Battle.aa_data[this.PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(this.aaIdList[this.currentAbilityIndex]))];
+                switch (patchedAbil.Info.DisplayStats)
                 {
                     case TargetDisplay.None:
                     case TargetDisplay.Hp:
@@ -1099,7 +1170,7 @@ public class AbilityUI : UIScene
     private AbilityType CheckAAType(Int32 abilityId, Character player)
     {
         BattleAbilityId patchedId = this.PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(abilityId));
-		AA_DATA patchedAbil = FF9BattleDB.CharacterActions[patchedId];
+        AA_DATA patchedAbil = FF9BattleDB.CharacterActions[patchedId];
 
         if (!this.equipmentPartInAbilityDict.ContainsKey(abilityId))
         {
@@ -1157,7 +1228,7 @@ public class AbilityUI : UIScene
     private static Int32 GetMp(AA_DATA aa_data)
     {
         Int32 mpCost = aa_data.MP;
-        if ((aa_data.Type & 4) != 0 && FF9StateSystem.EventState.gEventGlobal[18] != 0)
+        if ((aa_data.Type & 4) != 0 && battle.GARNET_SUMMON_FLAG != 0)
             mpCost <<= 2;
         return mpCost;
     }

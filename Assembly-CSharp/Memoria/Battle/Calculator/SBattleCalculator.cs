@@ -1,10 +1,9 @@
-using System;
-using System.Reflection;
-using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scripts;
+using System;
+using System.Reflection;
 using UnityEngine;
 // ReSharper disable PossibleNullReferenceException
 
@@ -115,6 +114,7 @@ namespace Memoria
             BTL_DATA target = v.Target.Data;
             BTL_DATA caster = v.Caster.Data;
             CMD_DATA cmd = v.Command.Data;
+            v.Context.AddedStatuses |= v.Target.AddededCheckPointStatuses;
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster))
                 saFeature.TriggerOnAbility(v, "BattleScriptEnd", false);
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target))
@@ -294,6 +294,7 @@ namespace Memoria
                     target.cur.mp = target.max.mp;
                 }
             }
+            v.Context.AddedStatuses |= v.Target.AddededCheckPointStatuses;
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster))
                 saFeature.TriggerOnAbility(v, "EffectDone", false);
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target))

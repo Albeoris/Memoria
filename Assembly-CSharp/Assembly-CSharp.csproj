@@ -43,7 +43,8 @@
       <HintPath>..\References\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization">
-      <Private>True</Private> <!-- Don't remove, for Newtonsoft.Json  -->
+      <Private>True</Private>
+      <!-- Don't remove, for Newtonsoft.Json  -->
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\References\UnityEngine.dll</HintPath>
@@ -351,6 +352,7 @@
     <Compile Include="Memoria\Assets\Text\Strings\TextResjsonFormatter.cs" />
     <Compile Include="Memoria\Configuration\Access\Interface.cs" />
     <Compile Include="Memoria\Configuration\Structure\InterfaceSection.cs" />
+    <Compile Include="Memoria\Data\Battle\BattleCommandMenu.cs" />
     <Compile Include="Memoria\Data\Battle\BattleMagicSwordSet.cs" />
     <Compile Include="Memoria\Data\TetraMaster\TripleTriad.cs" />
     <Compile Include="Memoria\Data\TetraMaster\TripleTriadCard.cs" />

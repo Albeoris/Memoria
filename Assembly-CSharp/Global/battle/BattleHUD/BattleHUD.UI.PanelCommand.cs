@@ -6,6 +6,7 @@ using Memoria.Assets;
 using Memoria.Scenes;
 using UnityEngine;
 using Object = System.Object;
+using Memoria.Data;
 
 public partial class BattleHUD : UIScene
 {
@@ -80,23 +81,23 @@ public partial class BattleHUD : UIScene
                 yield break;
             }
 
-            public GameObject GetCommandButton(CommandMenu menu)
+            public GameObject GetCommandButton(BattleCommandMenu menu)
             {
                 switch (menu)
                 {
-                    case CommandMenu.Attack:
+                    case BattleCommandMenu.Attack:
                         return Attack;
-                    case CommandMenu.Defend:
+                    case BattleCommandMenu.Defend:
                         return Defend;
-                    case CommandMenu.Ability1:
+                    case BattleCommandMenu.Ability1:
                         return Skill1;
-                    case CommandMenu.Ability2:
+                    case BattleCommandMenu.Ability2:
                         return Skill2;
-                    case CommandMenu.Item:
+                    case BattleCommandMenu.Item:
                         return Item;
-                    case CommandMenu.Change:
+                    case BattleCommandMenu.Change:
                         return Change;
-                    case CommandMenu.AccessMenu:
+                    case BattleCommandMenu.AccessMenu:
                         return AccessMenu;
                     default:
                         return Attack;

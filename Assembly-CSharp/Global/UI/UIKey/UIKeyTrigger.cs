@@ -26,6 +26,8 @@ public class UIKeyTrigger : MonoBehaviour
     private Single fastEventCounter;
     private Boolean triggleEventDialog;
     private Boolean quitConfirm;
+    private Boolean TurboKey;
+    public static Boolean preventTurboKey;
 
     public static Boolean IsShiftKeyPressed { get; private set; }
 
@@ -129,10 +131,10 @@ public class UIKeyTrigger : MonoBehaviour
         if (!UnityXInput.Input.anyKey && !isLockLazyInput)
             ResetKeyCode();
         AccelerateKeyNavigation();
-        if (handleMenuControlKeyPressCustomInput())
+        if (HandleMenuControlKeyPressCustomInput())
             return;
         HandleBoosterButton();
-        handleDialogControlKeyPressCustomInput();
+        HandleDialogControlKeyPressCustomInput();
     }
 
     private void AccelerateKeyNavigation()
@@ -264,8 +266,9 @@ public class UIKeyTrigger : MonoBehaviour
 
             PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.GilMax);
         }
-        if (Configuration.Mod.TranceSeek && UnityXInput.Input.GetKeyDown(KeyCode.F8) && PersistenSingleton<UIManager>.Instance.IsPause) // TRANCE SEEK - Reset game, back to main menu
+        if (Configuration.Mod.TranceSeek && UnityXInput.Input.GetKeyDown(KeyCode.F8) && PersistenSingleton<UIManager>.Instance.IsPause) // TRANCE SEEK - Hard reset, back to main menu
         {
+            preventTurboKey = false;
             PersistenSingleton<UIManager>.Instance.Dialogs.PauseAllDialog(true);
             PersistenSingleton<UIManager>.Instance.HideAllHUD();
             ButtonGroupState.DisableAllGroup(true);
@@ -278,6 +281,13 @@ public class UIKeyTrigger : MonoBehaviour
             SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
             SceneDirector.Replace("Title", SceneTransition.FadeOutToBlack_FadeIn, true);
             return;
+        }
+        if (UnityXInput.Input.GetKeyDown(KeyCode.F9) && Configuration.Cheats.TurboDialog)
+        {
+            if (TurboKey)
+                TurboKey = false;
+            else
+                TurboKey = true;
         }
     }
 
@@ -484,7 +494,7 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
-    private Boolean handleMenuControlKeyPressCustomInput(GameObject activeButton = null)
+    private Boolean HandleMenuControlKeyPressCustomInput(GameObject activeButton = null)
     {
         IsShiftKeyPressed = ShiftKey;
 
@@ -636,7 +646,7 @@ public class UIKeyTrigger : MonoBehaviour
         return false;
     }
 
-    private void handleDialogControlKeyPressCustomInput(GameObject activeButton = null)
+    private void HandleDialogControlKeyPressCustomInput(GameObject activeButton = null)
     {
         if (activeButton == null)
             activeButton = UICamera.selectedObject;
@@ -645,10 +655,11 @@ public class UIKeyTrigger : MonoBehaviour
         foreach (String key in Configuration.Control.DialogProgressButtons)
             if (key.TryEnumParse<Control>(out Control ctrl))
                 dialogConfirmKeys.Add(ctrl);
-        if (dialogConfirmKeys.Any(ctrl => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(ctrl) || keyCommand == ctrl))
+        if (dialogConfirmKeys.Any(ctrl => PersistenSingleton<HonoInputManager>.Instance.IsInputDown(ctrl) || keyCommand == ctrl) || ShouldTurboDialog(dialogConfirmKeys))
         {
             keyCommand = Control.None;
             PersistenSingleton<UIManager>.Instance.Dialogs.OnKeyConfirm(activeButton);
+            preventTurboKey = false;
             if (PersistenSingleton<UIManager>.Instance.Dialogs.IsDialogNeedControl() || !PersistenSingleton<UIManager>.Instance.Dialogs.CompletlyVisible)
                 return;
 
@@ -659,6 +670,7 @@ public class UIKeyTrigger : MonoBehaviour
         {
             keyCommand = Control.None;
             PersistenSingleton<UIManager>.Instance.Dialogs.OnKeyCancel(activeButton);
+            preventTurboKey = false;
         }
         else if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) || keyCommand == Control.Pause)
         {
@@ -781,6 +793,14 @@ public class UIKeyTrigger : MonoBehaviour
         {
         }
         return false;
+    }
+
+    private Boolean ShouldTurboDialog(List<Control> confirmKeys)
+    {
+        if (!Configuration.Cheats.TurboDialog || preventTurboKey || !UIManager.Instance.Dialogs.IsDialogNeedControl() || !UIManager.Instance.Dialogs.CompletlyVisible)
+            return false;
+
+        return TurboKey || ((HonoInputManager.Instance.IsInput(Control.RightBumper) || ShiftKey) && confirmKeys.Any(HonoInputManager.Instance.IsInput));
     }
 
     private void Start()

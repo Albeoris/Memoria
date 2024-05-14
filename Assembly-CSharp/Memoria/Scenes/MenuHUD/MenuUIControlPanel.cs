@@ -14,13 +14,13 @@ namespace Memoria.Scenes
 	public class MenuUIControlPanel : ControlPanel
 	{
 		public const Int32 ITEM_ROW_MIN = 6;
-		public const Int32 ITEM_ROW_MAX = 12;
+		public const Int32 ITEM_ROW_MAX = 16;
 		public const Int32 ABILITY_ROW_MIN = 4;
-		public const Int32 ABILITY_ROW_MAX = 10;
+		public const Int32 ABILITY_ROW_MAX = 12;
 		public const Int32 EQUIP_ROW_MIN = 4;
-		public const Int32 EQUIP_ROW_MAX = 8;
+		public const Int32 EQUIP_ROW_MAX = 10;
 		public const Int32 CHOCOGRAPH_ROW_MIN = 4;
-		public const Int32 CHOCOGRAPH_ROW_MAX = 8;
+		public const Int32 CHOCOGRAPH_ROW_MAX = 10;
 
 		public UIScene Scene;
 

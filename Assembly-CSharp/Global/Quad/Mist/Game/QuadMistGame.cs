@@ -1357,7 +1357,7 @@ public class QuadMistGame : MonoBehaviour
             case MatchResult.Type.WIN:
                 if (result.perfect)
                 {
-                    sound = QuadMistSoundID.MINI_SE_PARFECT;
+                    sound = QuadMistSoundID.MINI_SE_PERFECT;
                     id = 3;
                 }
                 else

@@ -200,17 +200,17 @@ public partial class BattleHUD : UIScene
         return false;
     }
 
-    private static BattleCommandId GetCommandFromCommandIndex(ref CommandMenu commandIndex, Int32 playerIndex)
+    private static BattleCommandId GetCommandFromCommandIndex(ref BattleCommandMenu commandIndex, Int32 playerIndex)
     {
         BattleUnit player = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
         CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.GetCharacter(player.Position).PresetId;
         BattleCommandId result = BattleCommandId.None;
         switch (commandIndex)
         {
-            case CommandMenu.Attack:
+            case BattleCommandMenu.Attack:
                 result = BattleCommandId.Attack;
                 break;
-            case CommandMenu.Defend:
+            case BattleCommandMenu.Defend:
                 result = BattleCommandId.Defend;
                 if (Configuration.Mod.TranceSeek) // [DV] - Change Steiner/Amarant's Defend Command 
                 {
@@ -220,31 +220,31 @@ public partial class BattleHUD : UIScene
                         result = (BattleCommandId)10016;
                 }
                 break;
-            case CommandMenu.Ability1:
+            case BattleCommandMenu.Ability1:
             {
                 CharacterCommandSet commandSet = CharacterCommands.CommandSets[presetId];
                 Boolean underTrance = player.IsUnderAnyStatus(BattleStatus.Trance);
                 result = commandSet.Get(underTrance, 0);
                 break;
             }
-            case CommandMenu.Ability2:
+            case BattleCommandMenu.Ability2:
             {
                 CharacterCommandSet commandSet = CharacterCommands.CommandSets[presetId];
                 Boolean underTrance = player.IsUnderAnyStatus(BattleStatus.Trance);
                 result = commandSet.Get(underTrance, 1);
                 break;
             }
-            case CommandMenu.Item:
+            case BattleCommandMenu.Item:
                 result = BattleCommandId.Item;
                 break;
-            case CommandMenu.Change:
+            case BattleCommandMenu.Change:
                 result = BattleCommandId.Change;
                 break;
         }
         if (player.Data.is_monster_transform && result == player.Data.monster_transform.base_command)
         {
             result = player.Data.monster_transform.new_command;
-            commandIndex = CommandMenu.Ability1;
+            commandIndex = BattleCommandMenu.Ability1;
         }
         return result;
     }
