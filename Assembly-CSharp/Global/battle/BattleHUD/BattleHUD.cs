@@ -416,12 +416,12 @@ public partial class BattleHUD : UIScene
             _isManualTrance = false;
         }
 
-        if (Configuration.Mod.TranceSeek) // TRANCE SEEK
+        if (Configuration.Mod.TranceSeek) // [DV] - Special commands
         {
-            if (presetId == CharacterPresetId.Zidane)
+            if (presetId == CharacterPresetId.Zidane) // Change Zidane's commands depending the weapon
             {
                 CharacterCommands.CommandSets[presetId].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
-                command2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
+                command2 = btl.IsUnderAnyStatus(BattleStatus.Trance) ? CharacterCommands.CommandSets[presetId].Trance2 : btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
             }
             else if (presetId == CharacterPresetId.Steiner)
                 defendCmdId = (BattleCommandId)10015; // Gardien
@@ -1251,6 +1251,11 @@ public partial class BattleHUD : UIScene
                 return AbilityStatus.Disable;
         }
 
+        if (Configuration.Mod.TranceSeek && (patchedAbil.Type & 16) != 0) // [DV] Unused (5) - To disable "Bandit !" if Zidane equip a Dagger, Mage Masher or Mythril Dagger.
+        {
+            return AbilityStatus.Disable;
+        }
+
         if (GetActionMpCost(patchedAbil, unit, patchedId, checkCurrentPlayer) > unit.CurrentMp)
             return AbilityStatus.Disable;
 
@@ -1728,6 +1733,29 @@ public partial class BattleHUD : UIScene
                 };
                 testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityId.Void]);
                 testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
+
+                if (Configuration.Mod.TranceSeek && _currentCommandId == BattleCommandId.Throw) // [DV] Change TargetType for throwing items (magic scrolls for Trance Seek)
+                { // Or i can make it with the DictionaryPatch.txt instead ?
+                    ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
+                    if (((weapon.Category & WeaponCategory.Throw) != 0) && (weapon.ModelId == 65535 || weapon.ModelId == 0))
+                    {
+                        switch (weapon.Offset2)
+                        {
+                            case 1:
+                                targetType = TargetType.SingleAlly;
+                                break;
+                            case 6:
+                                targetType = TargetType.All;
+                                break;
+                            case 7:
+                                targetType = TargetType.AllAlly;
+                                break;
+                            case 8:
+                                targetType = TargetType.AllEnemy;
+                                break;
+                        }
+                    }
+                }
 
                 SelectBestTarget(targetType, testCommand);
             }

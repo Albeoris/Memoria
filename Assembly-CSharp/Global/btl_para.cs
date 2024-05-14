@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Memoria;
 using Memoria.Data;
 using Object = System.Object;
+using NCalc;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable ClassNeverInstantiated.Global
@@ -199,28 +200,28 @@ public class btl_para
         {
             if (Configuration.Mod.TranceSeek)
             {
-                damage = GetLogicalHP(btl, true) >> 5;
+                damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 15 : 5);
                 if (battleUnit.IsUnderStatus(BattleStatus.Venom))
-                    damage = GetLogicalHP(btl, true) >> 4;
+                    damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 12 : 4);
             }
             else
             {
                 damage = GetLogicalHP(btl, true) >> 4;
+                if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
+                    damage >>= 2;
             }
-            if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
-                damage >>= 2;
             if (!FF9StateSystem.Battle.isDebug)
             {
                 if (Configuration.Mod.TranceSeek && battleUnit.IsZombie)
                 {
-                    if (battleUnit.IsUnderStatus(BattleStatus.Poison))
+                    if (battleUnit.IsUnderStatus(BattleStatus.Poison)) // [DV] Zombie get healed by Poison in Trance Seek.
                     {
                         btl.cur.hp += damage;
                         btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
                         btl.fig_regene_hp = (Int32)damage;
                         return;
                     }
-                    if (battleUnit.IsUnderStatus(BattleStatus.Venom))
+                    if (battleUnit.IsUnderStatus(BattleStatus.Venom)) // [DV] Zombie get half damage by Venom in Trance Seek.
                     {
                         damage /= 2U;
                         btl.cur.hp -= damage;
@@ -250,7 +251,7 @@ public class btl_para
         UInt32 recover = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            recover = GetLogicalHP(btl, true) >> (Configuration.Mod.TranceSeek ? 5 : 4);
+            recover = GetLogicalHP(btl, true) >> (Configuration.Mod.TranceSeek ? (btl_stat.CheckStatus(btl, BattleStatus.EasyKill) ? 12 : 5) : 4);
             if (btl_stat.CheckStatus(btl, BattleStatus.Zombie) || btl_util.CheckEnemyCategory(btl, 16))
             {
                 btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_DMG;
@@ -275,6 +276,8 @@ public class btl_para
 
     public static void SetPoisonMpDamage(BTL_DATA btl)
     {
+        if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill)) // TRANCE SEEK - Venom didn't remove MP on bosses.
+            return;
         UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
@@ -319,7 +322,7 @@ public class btl_para
 
     public static Boolean IsNonDyingVanillaBoss(BTL_DATA btl)
 	{
-        if (Configuration.Battle.CustomBattleFlagsMeaning != 0 || btl.bi.player != 0)
+        if (Configuration.Battle.CustomBattleFlagsMeaning != 0 || btl.bi.player != 0 || btl_util.getEnemyPtr(btl).info.die_unused3 == 1) // [DV & Tirlititi] - TODO => Replace it with CustomBattleFlagsMeaning
             return false;
         if (NonDyingBossBattles.Contains(FF9StateSystem.Battle.battleMapIndex))
 		{

@@ -275,6 +275,9 @@ namespace Memoria
             if (IsUnderAnyStatus(BattleStatus.EasyKill)) // Behaviour added by Memoria with no influence on vanilla - Boss can't die when frozen
                 return false;
 
+            if (Configuration.Mod.TranceSeek && IsUnderAnyStatus(BattleStatus.EasyKill)) // [DV] - Boss can't die when freeze. Can't move in Memoria.Scripts because depending with SBattleCalculator :(
+                return false;
+
             BattleVoice.TriggerOnStatusChange(Data, "Used", BattleStatus.Freeze);
             btl_cmd.KillSpecificCommand(Data, BattleCommandId.SysStone);
             Kill();
