@@ -96,13 +96,16 @@ public class UIAtlas : MonoBehaviour
 			if (newFullAtlas == null)
 				newFullAtlas = new Texture2D(1, 1, AssetManager.DefaultTextureFormat, false);
 
-			ReadTPSheetFromDisc(newFullAtlas, inputPath + ".tpsheet");
+            if (inputPath.Contains(".png") && File.Exists(inputPath.Remove(inputPath.Length - 4) + ".tpsheet"))
+                inputPath = inputPath.Remove(inputPath.Length - 4);
 
-			return true;
+            ReadTPSheetFromDisc(newFullAtlas, inputPath + ".tpsheet");
+
+            return true;
 		}
 		catch (Exception ex)
 		{
-			Log.Error(ex, "[UIAtlas] Failed to override atlas.");
+			Log.Error(ex, "[UIAtlas] Failed to override atlas: " + inputPath);
 			return false;
 		}
 	}

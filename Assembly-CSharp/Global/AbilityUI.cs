@@ -223,8 +223,6 @@ public class AbilityUI : UIScene
         {
             linePerPage = originalLineCount + originalLineCount / originalColumnCount;
             columnPerPage = originalColumnCount + 1;
-
-            Log.Message("3");
         }
         else if (columnPerPage == 4 && this.saIdList.Count > 27 && this.saIdList.Count <= 30)
         {
