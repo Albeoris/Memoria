@@ -199,37 +199,35 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Mog Add-ons</Name>
-	<Version>3.4</Version>
+	<Version>3.5</Version>
 	<InstallationPath>MogAddons</InstallationPath>
-	<ReleaseDate>2024-05-09</ReleaseDate>
+	<ReleaseDate>2024-05-14</ReleaseDate>
 	<Author>faospark</Author>
 	<Description>:: Features ::
 |- Tweaks : AP GAIN , EXP GAIN and Requirements , and Gil rewards
 |- Portrait options : Default with extended cast, Opera Omnia and  Upscaled PS1 Portrait Artwork 
 |- Button Prompts Options:  PS Gloss , PS5 , Pixel Style, PlayStation Vanilla prompts,
 |- UI : Default , Darker UI and Flat 
-|- Card Limit Number : 999
 -|- Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts you can disable them anytime 
 
 :: Submod activation ::
-Use the Mod Manager UI to activate each submods you like and pick. 
+Use the Mod Manager UI to activate each submods by using the drop down menu  
 MogAddons is essentially showcase of what can the Memoria Engine for your gameplay 
 
 :: Compatibility ::
-- Compatible with Alternate Fantasy
+- Compatible-ish with Alternate Fantasy
 - Not compatible for older versions of the game and repacks.
 Requires Memoria v2023.06.11 or later</Description>
-	<PatchNotes>-Fixed formula for AP and EXP tweaks 
--increased card limit to total to 999
--added tweaks : 2x AP , 2x Gil , 4x Gil 
--added get random card after battle
--added alternative title screen 
--added tiple triad matt 
--added remove mist on disc4</PatchNotes>
+	<PatchNotes>- added Alternative colored world Maps
+	- added Millennial Decay as default for Eiko's summon skill 
+	- added Freya Jump do 3x damage 
+	- added Resistance to zombie and virus status
+	- replaced file preview url and preview file
+	- striped extra slash declared submod folders</PatchNotes>
 	<Category>Various</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1</DownloadUrl>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1687258501-1210392332.png</PreviewFileUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1715702142-1980695436.png</PreviewFileUrl>
 	<PreviewFile>preview/mog-addons.png</PreviewFile>
 	<SubMod>
 		<Name>Buttons : PS5</Name>
@@ -383,20 +381,44 @@ Requires Memoria v2023.06.11 or later</Description>
 	</SubMod>
 	<SubMod>
 		<Name>Memoria : Alternate Title Screen</Name>
-		<InstallationPath>/Features/TitleLogo</InstallationPath>
+		<InstallationPath>Features/TitleLogo</InstallationPath>
 		<Description>Shows an Alternative title screen and Memoria Indicator</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
+		<Name>Memoria: Alternate World Maps [Select]</Name>
+		<InstallationPath>Features/Maps</InstallationPath>
+		<Description>Alternative Overworld Map</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
 		<Name>Memoria: Triple Triad Mat</Name>
-		<InstallationPath>/Features/Cards</InstallationPath>
+		<InstallationPath>Features/Cards</InstallationPath>
 		<Description>Shows Triple triad inspired matt and UI for cards</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Memoria: No/low Mist on Disc 4</Name>
-		<InstallationPath>/Features/Worlds</InstallationPath>
-		<Description>Only activate once you get access to the invincible</Description>
+		<InstallationPath>Features/Worlds</InstallationPath>
+		<Description>Only activate once you get access to the Invincible (Disc 4)</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance: Make Millenial Decay (Fenrir) as default [Eiko]</Name>
+		<InstallationPath>Features/Enhance/Eiko</InstallationPath>
+		<Description>Equip Sapphire in order to summon Terrestrial Rage (Golem)</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance: Stronger Jump [Freya]</Name>
+		<InstallationPath>Features/Enhance/Freya</InstallationPath>
+		<Description>Make Freya's Jump do 3x damage</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance: Add Resistance to Zombie and Virus</Name>
+		<InstallationPath>Features/Enhance/All</InstallationPath>
+		<Description>Auto-life resists Zombie , Anti-body Resists Virus</Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
