@@ -528,8 +528,8 @@ public class UIKeyTrigger : MonoBehaviour
             }
             if (battelAutoConfirm && PersistenSingleton<HonoInputManager>.Instance.IsInput(Control.Confirm))
             {
-                // If confirm is held more than 300ms it will auto confirm at an interval of 100ms
-                const Single delay = 0.3f;
+                // If confirm is held more than 500ms it will auto confirm at an interval of 100ms
+                const Single delay = 0.5f;
                 if (autoConfirmDownTime > 0 && Time.time - autoConfirmDownTime > delay)
                 {
                     autoConfirmDownTime = Time.time - delay + 0.1f;
