@@ -212,7 +212,7 @@ public class btl_para
             }
             if (!FF9StateSystem.Battle.isDebug)
             {
-                if (Configuration.Mod.TranceSeek && battleUnit.IsZombie) 
+                if (Configuration.Mod.TranceSeek && battleUnit.IsZombie)
                 {
                     if (battleUnit.IsUnderStatus(BattleStatus.Poison)) // [DV] Zombie get healed by Poison in Trance Seek.
                     {
