@@ -815,7 +815,7 @@ public class UIKeyTrigger : MonoBehaviour
 
     private Boolean ShouldTurboDialog(List<Control> confirmKeys)
     {
-        if (!Configuration.Cheats.TurboDialog || preventTurboKey || !UIManager.Instance.Dialogs.IsDialogNeedControl() || !UIManager.Instance.Dialogs.CompletlyVisible)
+        if (!Configuration.Cheats.TurboDialog || preventTurboKey || !UIManager.Instance.Dialogs.IsDialogNeedControl())
             return false;
 
         return TurboKey || ((HonoInputManager.Instance.IsInput(Control.RightBumper) || ShiftKey) && confirmKeys.Any(HonoInputManager.Instance.IsInput));
