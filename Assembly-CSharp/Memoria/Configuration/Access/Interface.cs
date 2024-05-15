@@ -97,10 +97,10 @@ namespace Memoria
 				set => Instance._interface.MenuChocographRowCount.Value = value;
 			}
 
-            public static Boolean DisableFading
+            public static Single FadeDuration
             {
-                get => Instance._interface.DisableFading;
-                set => Instance._interface.DisableFading.Value = value;
+                get => Mathf.Clamp(Instance._interface.FadeDuration / 1000f, 0f, 5f);
+                set => Instance._interface.FadeDuration.Value = (Int32)(value * 1000f);
             }
 
             public static void SaveBattleValues()

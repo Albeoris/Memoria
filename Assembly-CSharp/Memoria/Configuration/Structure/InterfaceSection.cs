@@ -30,7 +30,7 @@ namespace Memoria
             public readonly IniValue<Int32> MenuEquipRowCount;
             public readonly IniValue<Int32> MenuChocographRowCount;
 
-            public readonly IniValue<Boolean> DisableFading;
+            public readonly IniValue<Int32> FadeDuration;
 
             public InterfaceSection() : base(nameof(InterfaceSection), true)
             {
@@ -60,7 +60,7 @@ namespace Memoria
                 // Status menu -- Default PC: 8, PSX: 8
                 // Config menu -- Default PC: 6/8, PSX: 9
 
-                DisableFading = BindBoolean(nameof(DisableFading), false);
+                FadeDuration = BindInt32(nameof(FadeDuration), 300);
             }
         }
     }
