@@ -350,6 +350,7 @@
     <Compile Include="Memoria\Assets\Text\Strings\TextResourcePath.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\TextResourceReference.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\TextResjsonFormatter.cs" />
+    <Compile Include="Memoria\Battle\Calculator\EatResult.cs" />
     <Compile Include="Memoria\Configuration\Access\Interface.cs" />
     <Compile Include="Memoria\Configuration\Structure\InterfaceSection.cs" />
     <Compile Include="Memoria\Data\Battle\BattleCommandMenu.cs" />
