@@ -180,7 +180,13 @@ public class ConfigUI : UIScene
 
     private OnScreenButton hitpointScreenButton;
 
+    [NonSerialized]
+    private GameObject controlTutorialGameObject;
+    [NonSerialized]
+    private GameObject combatTutorialGameObject;
     private GameObject toTitleGameObject;
+    [NonSerialized]
+    private GameObject quitGameGameObject;
     private GameObject masterSkillButtonGameObject;
     private GameObject lvMaxButtonGameObject;
     private GameObject gilMaxButtonGameObject;
@@ -673,6 +679,19 @@ public class ConfigUI : UIScene
         }
         ButtonGroupState.HelpEnabled = false;
         HelpDespLabelGameObject.SetActive(false);
+        // Disable soft-reset and tutorials in battles (it leads to bugs because things are not cleaned correctly yet)
+        if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+        {
+            controlTutorialGameObject.GetChild(0).GetComponent<UILabel>().color = FF9TextTool.Gray;
+            combatTutorialGameObject.GetChild(0).GetComponent<UILabel>().color = FF9TextTool.Gray;
+            toTitleGameObject.GetChild(0).GetComponent<UILabel>().color = FF9TextTool.Gray;
+        }
+        else
+        {
+            controlTutorialGameObject.GetChild(0).GetComponent<UILabel>().color = FF9TextTool.White;
+            combatTutorialGameObject.GetChild(0).GetComponent<UILabel>().color = FF9TextTool.White;
+            toTitleGameObject.GetChild(0).GetComponent<UILabel>().color = FF9TextTool.White;
+        }
         NGUIText.ForceShowButton = true;
     }
 
@@ -724,6 +743,11 @@ public class ConfigUI : UIScene
                 }
                 else if (config?.Configurator == Configurator.Title)
                 {
+                    if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+                    {
+                        FF9Sfx.FF9SFX_Play(102);
+                        return true;
+                    }
                     FF9Sfx.FF9SFX_Play(103);
                     hitpointScreenButton.KeyCommand = Control.None;
                     WarningDialogHitPoint.SetActive(true);
@@ -738,6 +762,11 @@ public class ConfigUI : UIScene
                 }
                 else if (config?.Configurator == Configurator.ControlTutorial)
                 {
+                    if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+                    {
+                        FF9Sfx.FF9SFX_Play(102);
+                        return true;
+                    }
                     FF9Sfx.FF9SFX_Play(103);
                     hitpointScreenButton.KeyCommand = Control.Confirm;
                     WarningDialogHitPoint.SetActive(true);
@@ -754,6 +783,11 @@ public class ConfigUI : UIScene
                 }
                 else if (config?.Configurator == Configurator.CombatTutorial)
                 {
+                    if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+                    {
+                        FF9Sfx.FF9SFX_Play(102);
+                        return true;
+                    }
                     FF9Sfx.FF9SFX_Play(103);
                     NextSceneIsModal = true;
                     fastSwitch = true;
@@ -1656,8 +1690,19 @@ public class ConfigUI : UIScene
                 toTitleGameObject = configTopObj;
                 UIEventListener.Get(configTopObj).onClick += onClick;
             }
-            else if (configField.Configurator == Configurator.ControlTutorial || configField.Configurator == Configurator.CombatTutorial || configField.Configurator == Configurator.QuitGame)
+            else if (configField.Configurator == Configurator.ControlTutorial)
             {
+                controlTutorialGameObject = configTopObj;
+                UIEventListener.Get(configTopObj).onClick += onClick;
+            }
+            else if (configField.Configurator == Configurator.CombatTutorial)
+            {
+                combatTutorialGameObject = configTopObj;
+                UIEventListener.Get(configTopObj).onClick += onClick;
+            }
+            else if (configField.Configurator == Configurator.QuitGame)
+            {
+                quitGameGameObject = configTopObj;
                 UIEventListener.Get(configTopObj).onClick += onClick;
             }
             else

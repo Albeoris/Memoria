@@ -522,7 +522,6 @@ public partial class BattleHUD : UIScene
         FF9BMenu_EnableMenu(false);
         UpdatePlayersForMainMenu();
         PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, null);
-        PersistenSingleton<UIManager>.Instance.SetUIPauseEnable(false);
         Hide(OpenMainMenuAfterHide);
     }
 
