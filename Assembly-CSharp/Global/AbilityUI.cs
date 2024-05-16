@@ -171,6 +171,21 @@ public class AbilityUI : UIScene
             linePerPage = originalLineCount + originalLineCount / originalColumnCount;
             columnPerPage = originalColumnCount + 1;
         }
+        else if (columnPerPage == 4 && this.aaIdList.Count > 27 && this.aaIdList.Count <= 30)
+        {
+            columnPerPage = 3;
+            linePerPage = 10;
+        }
+        else if (columnPerPage == 4 && this.aaIdList.Count > 30 && this.aaIdList.Count <= 33)
+        {
+            columnPerPage = 3;
+            linePerPage = 11;
+        }
+        else if (columnPerPage == 4 && this.aaIdList.Count > 33 && this.aaIdList.Count <= 36)
+        {
+            columnPerPage = 3;
+            linePerPage = 12;
+        }
         Int32 lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
         Single scaleFactor = lineHeight / buttonOriginalHeight;
 
@@ -208,6 +223,21 @@ public class AbilityUI : UIScene
         {
             linePerPage = originalLineCount + originalLineCount / originalColumnCount;
             columnPerPage = originalColumnCount + 1;
+        }
+        else if (columnPerPage == 4 && this.saIdList.Count > 27 && this.saIdList.Count <= 30)
+        {
+            columnPerPage = 3;
+            linePerPage = 10;
+        }
+        else if (columnPerPage == 4 && this.saIdList.Count > 30 && this.saIdList.Count <= 33)
+        {
+            columnPerPage = 3;
+            linePerPage = 11;
+        }
+        else if (columnPerPage == 4 && this.saIdList.Count > 33 && this.saIdList.Count <= 36)
+        {
+            columnPerPage = 3;
+            linePerPage = 12;
         }
         lineHeight = (Int32)Math.Round(panelOriginalHeight / linePerPage);
         scaleFactor = lineHeight / buttonOriginalHeight;
@@ -655,6 +685,7 @@ public class AbilityUI : UIScene
                             this.ShowPointerWhenLoading = false;
                         });
                         this.SwitchCharacter(false);
+                        UpdateUserInterface();
                     }
                 }
             }
@@ -664,7 +695,6 @@ public class AbilityUI : UIScene
                 this.ToggleMultipleTarget();
             }
         }
-        this.UpdateUserInterface();
         return true;
     }
 
@@ -696,6 +726,7 @@ public class AbilityUI : UIScene
                             this.ShowPointerWhenLoading = false;
                         });
                         this.SwitchCharacter(false);
+                        UpdateUserInterface();
                     }
                 }
             }
@@ -705,7 +736,6 @@ public class AbilityUI : UIScene
                 this.ToggleMultipleTarget();
             }
         }
-        this.UpdateUserInterface();
         return true;
     }
 
