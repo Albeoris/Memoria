@@ -47,19 +47,6 @@ namespace Memoria
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                     saFeature.TriggerOnAbility(v, "BattleScriptStart", true);
 
-                // Checking if enemy has an ability that can be learned
-                Int32 blueMagicId = 0;
-                if (command.Id == BattleCommandId.Eat)
-                {
-                    v.Context.EatResult = EatResult.Failed;
-                    BattleEnemyPrototype enemyPrototype = BattleEnemyPrototype.Find(v.Target);
-                    blueMagicId = enemyPrototype.BlueMagicId;
-                    if(blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(v.Caster.Player, blueMagicId))
-                    {
-                        blueMagicId = 0;
-                    }
-                }
-
                 if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
                 {
                     if (command.IsShortRange)
@@ -92,16 +79,6 @@ namespace Memoria
                 {
                     if (scriptId != 64) // Script 64 is extensively used for enemy moves that have no effect or only an event scripted effect
                         Log.Warning($"[{nameof(CalcMain)}] Unknown script id: {scriptId}");
-                }
-
-                if (command.Id == BattleCommandId.Eat)
-                {
-                    if (!v.Target.CheckUnsafetyOrMiss() || !v.Target.CanBeAttacked() || v.Target.HasCategory(EnemyCategory.Humanoid))
-                        v.Context.EatResult = EatResult.CannotEat;
-                    else if (blueMagicId != 0 && ff9abil.FF9Abil_IsMaster(v.Caster.Player, blueMagicId))
-                        v.Context.EatResult = EatResult.Yummy;
-                    else if ((v.Target.AddededCheckPointStatuses & BattleStatus.Death) != 0)
-                        v.Context.EatResult = EatResult.TasteBad;
                 }
 
                 if (v.PerformCalcResult)
