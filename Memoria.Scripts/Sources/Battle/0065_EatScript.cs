@@ -24,12 +24,14 @@ namespace Memoria.Scripts.Battle
         {
             if (!_v.Target.CheckUnsafetyOrMiss() || !_v.Target.CanBeAttacked() || _v.Target.HasCategory(EnemyCategory.Humanoid))
             {
+                _v.Context.EatResult = EatResult.CannotEat;
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEat);
                 return;
             }
 
             if (_v.Target.CurrentHp > _v.Target.MaximumHp / _v.Command.Power)
             {
+                _v.Context.EatResult = EatResult.Failed;
                 UiState.SetBattleFollowFormatMessage(BattleMesages.CannotEatStrong);
                 return;
             }
@@ -40,9 +42,12 @@ namespace Memoria.Scripts.Battle
 
             if (blueMagicId == 0 || ff9abil.FF9Abil_IsMaster(_v.Caster.Player, blueMagicId))
             {
+                _v.Context.EatResult = EatResult.TasteBad;
                 UiState.SetBattleFollowFormatMessage(BattleMesages.TasteBad);
                 return;
             }
+
+            _v.Context.EatResult = EatResult.Yummy;
 
             ff9abil.FF9Abil_SetMaster(_v.Caster.Player, blueMagicId);
             BattleState.RaiseAbilitiesAchievement(blueMagicId);
