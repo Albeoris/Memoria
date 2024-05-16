@@ -33,7 +33,7 @@ namespace Global.Sound.SoLoud
             }
             public Int32 bankID;
             public Single volume = 1f;
-            public Boolean manuallyPaused = false;
+            public Int32 pauseStack = 0;
         }
 
         private Dictionary<Int32, StreamInfo> streams = new Dictionary<Int32, StreamInfo>();
@@ -87,14 +87,16 @@ namespace Global.Sound.SoLoud
         public override Int32 SdSoundSystem_Suspend()
         {
             SoundLib.Log("Suspend");
-            soloud.setPauseAll(1);
+            foreach (var sound in sounds)
+                SdSoundSystem_SoundCtrl_SetPause(sound.Key, 1, 0);
             return 0;
         }
 
         public override Int32 SdSoundSystem_Resume()
         {
             SoundLib.Log("Resume");
-            soloud.setPauseAll(0);
+            foreach (var sound in sounds)
+                SdSoundSystem_SoundCtrl_SetPause(sound.Key, 0, 0);
             return 0;
         }
 
@@ -193,7 +195,7 @@ namespace Global.Sound.SoLoud
             {
                 soloud.seek((uint)soundID, offsetTimeMSec / 1000d);
             }
-            if (!sounds[soundID].manuallyPaused) // SdLib doesn't resume paused sounds, we replicate the behavior
+            if (sounds[soundID].pauseStack == 0) // SdLib doesn't resume paused sounds, we replicate the behavior
                 soloud.setPause((uint)soundID, 0);
 
             return 1;
@@ -220,7 +222,12 @@ namespace Global.Sound.SoLoud
             SoundLib.Log($"SoundCtrl_SetPause({soundID}, {pauseOn}, {transTimeMSec})");
             if (!sounds.ContainsKey(soundID)) return;
 
-            sounds[soundID].manuallyPaused = pauseOn > 0;
+            if (pauseOn > 0)
+                sounds[soundID].pauseStack++;
+            else if(sounds[soundID].pauseStack > 0)
+                sounds[soundID].pauseStack--;
+
+            if (pauseOn == 0 && sounds[soundID].pauseStack != 0) return;
 
             uint h = (uint)soundID;
             double t = transTimeMSec / 1000d;
