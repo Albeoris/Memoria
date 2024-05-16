@@ -61,7 +61,7 @@ public partial class BattleHUD : UIScene
         _oneTime = true;
     }
 
-    public void SetBattleFollowMessage(BattleMesages pMes, params Object[] args)
+    public void SetBattleFollowMessage(BattleMesages pMes, Object arg = null, CMD_DATA msgCmd = null)
     {
         Int32 pMesNo = (Int32)pMes;
         String fmtMessage = FF9TextTool.BattleFollowText(pMesNo + 7);
@@ -71,15 +71,14 @@ public partial class BattleHUD : UIScene
         Byte priority = (Byte)Char.GetNumericValue(fmtMessage[0]);
         String parsedMessage = fmtMessage.Substring(1);
 
-        if (args.Length > 0)
+        if (arg != null)
         {
-            String str3 = args[0].ToString();
-            Int32 result;
-            parsedMessage = !Int32.TryParse(str3, out result) ? parsedMessage.Replace("%", str3) : parsedMessage.Replace("&", str3);
+            String argStr = arg.ToString();
+            parsedMessage = !Int32.TryParse(argStr, out _) ? parsedMessage.Replace("%", argStr) : parsedMessage.Replace("&", argStr);
         }
 
         VoicePlayer.PlayBattleVoice(pMesNo + 7, fmtMessage, true);
-        SetBattleMessage(parsedMessage, priority);
+        SetBattleMessage(parsedMessage, priority, msgCmd);
     }
 
     public void SetBattleFollowMessage(Byte priority, String formatMessage, params Object[] args)
@@ -322,7 +321,7 @@ public partial class BattleHUD : UIScene
         DisplayBattleMessage(asMessage);
     }
 
-    public void SetBattleMessage(String str, Byte strPriority)
+    public void SetBattleMessage(String str, Byte strPriority, CMD_DATA cmd = null)
     {
         Message asMessage = new Message()
         {
@@ -330,7 +329,7 @@ public partial class BattleHUD : UIScene
             priority = strPriority,
             counter = 0f,
             isRect = false,
-            titleCmd = null
+            titleCmd = cmd
         };
         _messageQueue[str] = asMessage;
 

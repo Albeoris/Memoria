@@ -545,7 +545,6 @@ public class btl_cmd
                 || Configuration.Battle.Speed >= 4 && btl_util.IsBtlUsingCommandMotion(cmd.regist)
                 || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0
                 || (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill) && btl_stat.CheckStatus(cmd.regist, BattleStatus.Sleep))) // [DV] Prevent command cancel for boss.
-
             {
                 if (Configuration.Battle.Speed == 4)
                 {
@@ -1060,10 +1059,10 @@ public class btl_cmd
                 cmd.tar_id = caster.Id;
                 break;
             case BattleCommandId.MagicCounter:
-                UIManager.Battle.SetBattleFollowMessage(BattleMesages.ReturnMagic);
+                UIManager.Battle.SetBattleFollowMessage(BattleMesages.ReturnMagic, msgCmd: cmd);
                 break;
             case BattleCommandId.AutoPotion:
-                UIManager.Battle.SetBattleFollowMessage(BattleMesages.AutoPotion);
+                UIManager.Battle.SetBattleFollowMessage(BattleMesages.AutoPotion, msgCmd: cmd);
                 break;
             case BattleCommandId.SummonGarnet:
             case BattleCommandId.SummonEiko:
@@ -1074,7 +1073,7 @@ public class btl_cmd
                 return DecideMagicSword(caster, cmd.aa.MP);
             case BattleCommandId.Counter:
                 if (btl_util.GetCommandMainActionIndex(cmd) == BattleAbilityId.Attack)
-                    UIManager.Battle.SetBattleFollowMessage(BattleMesages.CounterAttack);
+                    UIManager.Battle.SetBattleFollowMessage(BattleMesages.CounterAttack, msgCmd: cmd);
                 break;
             case BattleCommandId.SysEscape:
                 if (btlsys.btl_phase == 4)
