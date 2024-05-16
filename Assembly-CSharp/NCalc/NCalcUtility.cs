@@ -31,7 +31,8 @@ namespace NCalc
             typeof(CharacterCategory),
             typeof(EnemyCategory),
             typeof(BattleCalcFlags),
-            typeof(CalcFlag)
+            typeof(CalcFlag),
+            typeof(EatResult)
         };
 
         public static Int64 ConvertNCalcResult(Object obj, Int64 noChangeValue)
@@ -520,6 +521,7 @@ namespace NCalc
             expr.Parameters["TranceIncrease"] = (Int32)context.TranceIncrease;
             expr.Parameters["ItemSteal"] = (Int32)context.ItemSteal;
             expr.Parameters["IsDrain"] = context.IsDrain;
+            expr.Parameters["EatResult"] = (Int32)context.EatResult;
             InitializeExpressionCommand(ref expr, calc.Command);
         }
 
