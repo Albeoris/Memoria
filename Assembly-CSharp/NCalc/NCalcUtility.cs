@@ -555,6 +555,7 @@ namespace NCalc
             expr.Parameters["CommandTargetId"] = (Int32)command.Data.tar_id;
             expr.Parameters["CommandTargetCount"] = command.TargetCount;
             expr.Parameters["CalcMainCounter"] = (Int32)command.Data.info.effect_counter;
+            expr.Parameters["CommandIsCounter"] = command.Id == BattleCommandId.EnemyCounter || command.Id == BattleCommandId.Counter || command.Id == BattleCommandId.MagicCounter; // Might check also if command.Data == command.Data.regist?.cmd[1] except for JumpAttack/JumpTrance
         }
 
         public static void InitializeExpressionRawAbility(ref Expression expr, AA_DATA aa, BattleAbilityId abilId = BattleAbilityId.Void)
