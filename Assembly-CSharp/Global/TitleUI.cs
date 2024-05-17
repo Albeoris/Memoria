@@ -1456,9 +1456,10 @@ public class TitleUI : UIScene
             ButtonGroupState.ActiveGroup = MenuGroupButton;
 
             if (Configuration.Graphics.SkipIntros > 2)
-            Configuration.Graphics.SkipIntros = 0;
-            
-            this.timer.Start();
+                this.timer.Stop();
+            else
+                this.timer.Start();
+
             if (this.IsJustLaunchApp)
             {
                 SiliconStudio.Social.Authenticate(true);
@@ -2081,25 +2082,22 @@ public class TitleUI : UIScene
                 this.logoSprite.spriteName = this.logoIndex == 0 ? "logo_sqex" : "logo_sst";
                 this.honoFading.Fade(1f, 0f, 0.7f, 1.3f, this.honoFading.fadeInCurve, this.preLogoFadeOut);
             };
-            if (Configuration.Graphics.SkipIntros > 1)
-                this.onLogoFinish = delegate { this.onMovieFinish(); };
-            else
-                this.onLogoFinish = delegate
+            this.onLogoFinish = delegate
+            {
+                this.type = Type.Movie1;
+                postMenuFadeOut();
+                this.logoContainer.gameObject.SetActive(false);
+                this.honoFading.Fade(1f, 0f, 1f, 0f, this.honoFading.fadeInCurve, delegate
                 {
-                    this.type = Type.Movie1;
-                    postMenuFadeOut();
-                    this.logoContainer.gameObject.SetActive(false);
-                    this.honoFading.Fade(1f, 0f, 1f, 0f, this.honoFading.fadeInCurve, delegate
-                    {
-                    });
+                });
 
-                    MBG.Instance.SetFinishCallback(this.onMovieFinish);
-                    MBG.Instance.gameObject.SetActive(true);
-                    MBG.Instance.LoadMovie("FMV000");
-                    MBG.Instance.SetDepthForTitle();
-                    MBG.Instance.Play();
-                    this.stopEnable = true;
-                };
+                MBG.Instance.SetFinishCallback(this.onMovieFinish);
+                MBG.Instance.gameObject.SetActive(true);
+                MBG.Instance.LoadMovie("FMV000");
+                MBG.Instance.SetDepthForTitle();
+                MBG.Instance.Play();
+                this.stopEnable = true;
+            };
             this.onMovieFinish = delegate
             {
                 this.honoFading.Fade(0f, 1f, 1f, 0f, this.honoFading.fadeInCurve, delegate
@@ -2107,6 +2105,23 @@ public class TitleUI : UIScene
                     this.preMenuFadeIn();
                 });
             };
+            if (Configuration.Graphics.SkipIntros == 1 && kind == Type.Logo)
+            {
+                postMenuFadeOut();
+                this.logoIndex = 2;
+                this.honoFading.Fade(0f, 1f, this.skipFadeInTime, 0f, this.honoFading.fadeOutCurve, this.onLogoFinish);
+                return;
+            }
+            else if (Configuration.Graphics.SkipIntros > 0 && (kind == Type.SplashScreen || kind == Type.Logo))
+            {
+                postMenuFadeOut();
+                postIdleScreenFadeOut();
+                this.stopEnable = false;
+                this.honoFading.Fade(1f, 0f, this.skipFadeInTime, 0f, this.honoFading.fadeInCurve, delegate {
+                    postMenuFadeIn();
+                });
+                return;
+            }
             switch (kind)
             {
                 case Type.SplashScreen:

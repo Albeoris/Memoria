@@ -31,12 +31,6 @@ public class HonoFading : MonoBehaviour
 
 	public void Fade(Single alphaFrom, Single alphaTo, Single duration, Single delay, AnimationCurve animCurve, UIScene.SceneVoidDelegate callback = null)
 	{
-	    if (Configuration.Graphics.SkipIntros > 0)
-	    {
-	        duration = 0;
-	        delay = 0;
-	    }
-
         if (base.gameObject.activeInHierarchy && !this.busy)
 		{
 			if (Configuration.Graphics.WidescreenSupport && widescreenRescale)
