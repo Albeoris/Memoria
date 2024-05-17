@@ -93,6 +93,7 @@ namespace Memoria.Assets
                     OnCharacterName(CharacterId.Steiner);
                     break;
                 case FFIXTextTagCode.Freya:
+                case FFIXTextTagCode.Fraya:
                     OnCharacterName(CharacterId.Freya);
                     break;
                 case FFIXTextTagCode.Quina:
