@@ -98,6 +98,10 @@
 	UseOrchestralMusic = "Orchestral music (Moguri)"
 	Use30FpsVideo = "30 FPS videos (Moguri)"
 	MaxCardCount = "10k cards"
+	UIColumnsChoice = "UI lines/columns"
+	UIColumnsChoice0 = "Default"
+	UIColumnsChoice1 = "x1.5 (max 3 columns)"
+	UIColumnsChoice2 = "x2 (max 4 columns)"
 	ActiveMonitor_Tooltip = "Choose a screen"
 	WindowMode_Tooltip = "-Windowed: run the game in a window&#xA;-Fullscreen: Game takes the whole display&#xA;-Borderless Fullscreen: Takes the whole display but as a windowed process"
 	Resolution_Tooltip = "Screen resolution&#xA;Only 16:9 and 16:10 support Widescreen"
@@ -136,6 +140,7 @@
 	FieldFPS_Tooltip = "Image refresh rate on normal backgrounds (default: 30)"
 	WorldFPS_Tooltip = "Image refresh rate on the world map (default: 20)"
 	MaxCardCount_Tooltip = "Limit to cards in inventory raised to 10000"
+	UIColumnsChoice_Tooltip = "Number of columns: if you want more items/abilities on one screen"
 	/>
 
 	<SdLib

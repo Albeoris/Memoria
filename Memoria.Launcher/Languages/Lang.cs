@@ -211,6 +211,10 @@ namespace Memoria.Launcher
             public static readonly string UseOrchestralMusic = GetSettings(nameof(UseOrchestralMusic));
             public static readonly string Use30FpsVideo = GetSettings(nameof(Use30FpsVideo));
             public static readonly string MaxCardCount = GetSettings(nameof(MaxCardCount));
+            public static readonly string UIColumnsChoice = GetSettings(nameof(UIColumnsChoice));
+            public static readonly string UIColumnsChoice0 = GetSettings(nameof(UIColumnsChoice0));
+            public static readonly string UIColumnsChoice1 = GetSettings(nameof(UIColumnsChoice1));
+            public static readonly string UIColumnsChoice2 = GetSettings(nameof(UIColumnsChoice2));
 
             // Settings.ini Tooltips
             public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));
@@ -243,6 +247,7 @@ namespace Memoria.Launcher
             public static readonly string MovieVolume_Tooltip = GetSettings(nameof(MovieVolume_Tooltip));
             public static readonly string UsePsxFont_Tooltip = GetSettings(nameof(UsePsxFont_Tooltip));
             public static readonly string FontChoice_Tooltip = GetSettings(nameof(FontChoice_Tooltip));
+            public static readonly string UIColumnsChoice_Tooltip = GetSettings(nameof(UIColumnsChoice_Tooltip));
 
             // Memoria.ini Cheats tooltips
             public static readonly string MaxStealRate_Tooltip = GetSettings(nameof(MaxStealRate_Tooltip));
