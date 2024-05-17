@@ -910,7 +910,7 @@ public static class UnifiedBattleSequencer
 								c.fig_info = 0;
 								c.fig = c.m_fig = 0;
 							}
-							btl_cmd.ExecVfxCommand(btl, cmd);
+                            btl_cmd.ExecVfxCommand(btl, cmd, runningThread);
 							foreach (BTL_DATA c in allBtl)
 							{
 								if (c.fig_info != 0)

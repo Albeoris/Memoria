@@ -20,9 +20,13 @@ namespace Memoria
         public HashSet<SupportAbility> DisabledSA = new HashSet<SupportAbility>(); // The support abilities that are disabled by successfully applied SA features
         public Boolean IsDrain = false; // Keep the Caster.Hp/MpDamage at the same value of Target.Hp/MpDamage even when modified by external effects
         public EatResult EatResult = 0;
+
+        // Current sfxthread at the moment of the effect point (from UnifiedBattleSequencer, in SFXRework mode only)
+        // This field may be removed and replaced by another system in the future
+        public BattleActionThread sfxThread = null; // Warning: can be null
+
         public Int32 PowerDifference => AttackPower - DefensePower;
         public Boolean IsAbsorb => (Flags & BattleCalcFlags.Absorb) != 0;
-
         public Int32 EnsureAttack => Attack < 1 ? (Attack = 1) : Attack;
         public Int32 EnsurePowerDifference => PowerDifference < 1 ? 1 : PowerDifference;
     }

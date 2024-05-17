@@ -1606,7 +1606,7 @@ public class btl_cmd
         }
     }
 
-    public static void ExecVfxCommand(BTL_DATA target, CMD_DATA cmd = null)
+    public static void ExecVfxCommand(BTL_DATA target, CMD_DATA cmd = null, BattleActionThread sfxThread = null)
     {
         if (cmd == null)
             cmd = btl_util.getCurCmdPtr();
@@ -1638,7 +1638,7 @@ public class btl_cmd
                         KillAllCommand(btlsys);
                     }
                 }
-                SBattleCalculator.CalcMain(caster, target, cmd);
+                SBattleCalculator.CalcMain(caster, target, cmd, sfxThread);
                 return;
             case BattleCommandId.SysTrans:
             {
@@ -1664,7 +1664,7 @@ public class btl_cmd
             case BattleCommandId.Item:
             case BattleCommandId.AutoPotion:
             default:
-                SBattleCalculator.CalcMain(caster, target, cmd);
+                SBattleCalculator.CalcMain(caster, target, cmd, sfxThread);
                 return;
         }
     }
