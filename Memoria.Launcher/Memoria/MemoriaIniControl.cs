@@ -1278,7 +1278,7 @@ namespace Memoria.Launcher
                 if (File.Exists(_iniPath))
                 {
                     IniFile iniFile = new IniFile(_iniPath);
-                    String _checklatestadded = iniFile.ReadValue("Hacks", "ExcaliburIINoTimeLimit"); // check if the latest ini parameter is already there
+                    String _checklatestadded = iniFile.ReadValue("Interface", "FadeDuration"); // check if the latest ini parameter is already there
                     if (String.IsNullOrEmpty(_checklatestadded))
                     {
                         MakeIniNotNull("Mod", "FolderNames", "");
@@ -1310,8 +1310,10 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Control", "DisableMouse", "0");
                         MakeIniNotNull("Control", "DialogProgressButtons", "\"Confirm\"");
                         MakeIniNotNull("Control", "WrapSomeMenus", "1");
+                        MakeIniNotNull("Control", "BattleAutoConfirm", "1");
                         MakeIniNotNull("Control", "PSXScrollingMethod", "1");
                         MakeIniNotNull("Control", "PSXMovementMethod", "0");
+                        MakeIniNotNull("Control", "AlwaysCaptureGamepad", "0");
 
                         MakeIniNotNull("Battle", "Enabled", "0");
                         MakeIniNotNull("Battle", "SFXRework", "1");
@@ -1351,6 +1353,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Cheats", "MasterSkill", "0");
                         MakeIniNotNull("Cheats", "LvMax", "0");
                         MakeIniNotNull("Cheats", "GilMax", "0");
+                        MakeIniNotNull("Cheats", "TurboDialog", "0");
 
                         MakeIniNotNull("Hacks", "Enabled", "0");
                         MakeIniNotNull("Hacks", "AllCharactersAvailable", "0");
@@ -1398,6 +1401,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Interface", "MenuAbilityRowCount", "6");
                         MakeIniNotNull("Interface", "MenuEquipRowCount", "5");
                         MakeIniNotNull("Interface", "MenuChocographRowCount", "5");
+                        MakeIniNotNull("Interface", "FadeDuration", "300");
 
                         MakeIniNotNull("Fixes", "Enabled", "1");
                         MakeIniNotNull("Fixes", "KeepRestTimeInBattle", "1");
