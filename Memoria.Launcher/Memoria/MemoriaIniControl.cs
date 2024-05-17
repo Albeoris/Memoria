@@ -1460,7 +1460,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Interface", "MenuAbilityRowCount", "6");
                         MakeIniNotNull("Interface", "MenuEquipRowCount", "5");
                         MakeIniNotNull("Interface", "MenuChocographRowCount", "5");
-                        MakeIniNotNull("Interface", "FadeDuration", "300");
+                        MakeIniNotNull("Interface", "FadeDuration", "40");
 
                         MakeIniNotNull("Fixes", "Enabled", "1");
                         MakeIniNotNull("Fixes", "KeepRestTimeInBattle", "1");
