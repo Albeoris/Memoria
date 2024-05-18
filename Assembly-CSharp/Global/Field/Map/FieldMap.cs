@@ -1679,6 +1679,8 @@ public class FieldMap : HonoBehavior
                 {
                     switch (map)
                     {
+                        case 1108: // Clayra temple light
+                            bgOverlay.curX = 0; break;
                         case 1651: // Iifa roots 1
                             bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8; break;
                         case 1657:
