@@ -82,7 +82,24 @@ public static class ModelFactory
 				renderer.material.SetTexture("_MainTex", texture);
 			}
 		}
-		Shader shader;
+        if (CustomModelField.Count > 0 && !isBattle)
+        {
+            foreach (KeyValuePair<String, String[]> CustomModelFieldEntry in CustomModelField)
+            {
+                if (CustomModelFieldEntry.Key.Contains(modelNameId))
+                {
+                    string[] SplitEntry = CustomModelFieldEntry.Key.Split('#');
+                    Int32 FieldID = Int32.Parse(SplitEntry[0]);
+                    Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+                    if (FF9StateSystem.Common.FF9.fldMapNo == FieldID)
+                    {
+                        CustomModelField.TryGetValue(CustomModelFieldEntry.Key, out String[] NewTextures);
+                        ChangeModelTexture(gameObject, NewTextures);
+                    }
+                }
+            }
+        }
+        Shader shader;
 		if (modelNameId.Contains("GEO_SUB_W0"))
 			shader = ShadersLoader.Find(modelNameId.Contains("GEO_SUB_W0_025") ? "WorldMap/ShadowActor" : "WorldMap/Actor");
 		else
@@ -1684,4 +1701,6 @@ public static class ModelFactory
 		"GEO_MAIN_B0_026",
 		"GEO_MAIN_B0_027"
 	};
+
+    public static Dictionary<String, String[]> CustomModelField = new Dictionary<String, String[]>();
 }
