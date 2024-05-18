@@ -89,11 +89,11 @@ public static class ModelFactory
                 if (CustomModelFieldEntry.Key.Contains(modelNameId))
                 {
                     string[] SplitEntry = CustomModelFieldEntry.Key.Split('#');
-                    Int32 FieldID = Int32.Parse(SplitEntry[0]);
+                    Int32.TryParse(SplitEntry[0], out Int32 FieldID);
                     Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
                     if (FF9StateSystem.Common.FF9.fldMapNo == FieldID)
                     {
-                        CustomModelField.TryGetValue(CustomModelFieldEntry.Key, out String[] NewTextures);
+                        String[] NewTextures = CustomModelFieldEntry.Value;
                         ChangeModelTexture(gameObject, NewTextures);
                     }
                 }
