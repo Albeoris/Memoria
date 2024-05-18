@@ -21,7 +21,6 @@ namespace Memoria
             public readonly IniValue<Boolean> MasterSkill;
             public readonly IniValue<Boolean> LvMax;
             public readonly IniValue<Boolean> GilMax;
-            public readonly IniValue<Boolean> TurboDialog;
 
             public CheatsSection() : base(nameof(CheatsSection), false)
             {
@@ -38,7 +37,6 @@ namespace Memoria
                 MasterSkill = BindBoolean(nameof(MasterSkill), false);
                 LvMax = BindBoolean(nameof(LvMax), false);
                 GilMax = BindBoolean(nameof(GilMax), false);
-                TurboDialog = BindBoolean(nameof(TurboDialog), false);
             }
         }
     }

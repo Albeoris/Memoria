@@ -282,7 +282,7 @@ public class UIKeyTrigger : MonoBehaviour
             SceneDirector.Replace("Title", SceneTransition.FadeOutToBlack_FadeIn, true);
             return;
         }
-        if (UnityXInput.Input.GetKeyDown(KeyCode.F9) && Configuration.Cheats.TurboDialog)
+        if (UnityXInput.Input.GetKeyDown(KeyCode.F9) && Configuration.Control.TurboDialog)
         {
             if (TurboKey)
                 TurboKey = false;
@@ -815,7 +815,7 @@ public class UIKeyTrigger : MonoBehaviour
 
     private Boolean ShouldTurboDialog(List<Control> confirmKeys)
     {
-        if (!Configuration.Cheats.TurboDialog || preventTurboKey || !UIManager.Instance.Dialogs.IsDialogNeedControl())
+        if (!Configuration.Control.TurboDialog || preventTurboKey || !UIManager.Instance.Dialogs.IsDialogNeedControl())
             return false;
 
         return TurboKey || ((HonoInputManager.Instance.IsInput(Control.RightBumper) || ShiftKey) && confirmKeys.Any(HonoInputManager.Instance.IsInput));

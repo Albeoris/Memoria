@@ -1370,6 +1370,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Control", "DialogProgressButtons", "\"Confirm\"");
                         MakeIniNotNull("Control", "WrapSomeMenus", "1");
                         MakeIniNotNull("Control", "BattleAutoConfirm", "1");
+                        MakeIniNotNull("Control", "TurboDialog", "1");
                         MakeIniNotNull("Control", "PSXScrollingMethod", "1");
                         MakeIniNotNull("Control", "PSXMovementMethod", "0");
                         MakeIniNotNull("Control", "AlwaysCaptureGamepad", "0");
@@ -1412,7 +1413,6 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Cheats", "MasterSkill", "0");
                         MakeIniNotNull("Cheats", "LvMax", "0");
                         MakeIniNotNull("Cheats", "GilMax", "0");
-                        MakeIniNotNull("Cheats", "TurboDialog", "0");
 
                         MakeIniNotNull("Hacks", "Enabled", "0");
                         MakeIniNotNull("Hacks", "AllCharactersAvailable", "0");

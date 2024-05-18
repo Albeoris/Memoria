@@ -25,6 +25,7 @@ namespace Memoria
             public readonly IniArray<String> DialogProgressButtons;
             public readonly IniValue<Boolean> WrapSomeMenus;
             public readonly IniValue<Boolean> BattleAutoConfirm;
+            public readonly IniValue<Boolean> TurboDialog;
             public readonly IniValue<Boolean> PSXScrollingMethod;
             public readonly IniValue<Boolean> PSXMovementMethod;
             public readonly IniValue<Boolean> AlwaysCaptureGamepad;
@@ -35,6 +36,7 @@ namespace Memoria
                 DialogProgressButtons = BindStringArray(nameof(DialogProgressButtons), new String[1] { "Confirm" });
                 WrapSomeMenus = BindBoolean(nameof(WrapSomeMenus), true);
                 BattleAutoConfirm = BindBoolean(nameof(BattleAutoConfirm), true);
+                TurboDialog = BindBoolean(nameof(TurboDialog), false);
                 PSXScrollingMethod = BindBoolean(nameof(PSXScrollingMethod), true);
                 PSXMovementMethod = BindBoolean(nameof(PSXMovementMethod), false);
                 AlwaysCaptureGamepad = BindBoolean(nameof(AlwaysCaptureGamepad), false);
