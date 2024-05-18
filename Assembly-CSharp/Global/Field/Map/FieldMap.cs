@@ -1679,6 +1679,8 @@ public class FieldMap : HonoBehavior
                 {
                     switch (map)
                     {
+                        case 1108: // Clayra temple light
+                            bgOverlay.curX = 0; break;
                         case 1651: // Iifa roots 1
                             bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8; break;
                         case 1657:
@@ -2376,6 +2378,7 @@ public class FieldMap : HonoBehavior
         [1502,0,0,1350],    // Light in Conde Petite
         [1652,1,5,911],     // Iifa platform
         [1656,0,3,998],     // Iifa statue glow (was not active on PSX)
+        [1950,0,11,1100],   // Qwan's dwelling cropped anim.
         [2008,0,41,600],    // Candle light behind statues in Alex Castle
         [2109,0,23,0],      // Lindblum armorer light
         [2109,0,24,1],      // Lindblum armorer armor

@@ -225,6 +225,23 @@ namespace Memoria.Launcher
 
             row++;
 
+            UiTextBlock UIColumnsChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.UIColumnsChoice), row, 0, 1, 4);
+            UIColumnsChoiceText.Foreground = Brushes.White;
+            UIColumnsChoiceText.Margin = rowMargin;
+            UIColumnsChoiceText.ToolTip = Lang.Settings.UIColumnsChoice_Tooltip;
+            UiComboBox UIColumnsChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
+            UIColumnsChoiceBox.ItemsSource = new String[]{
+                Lang.Settings.UIColumnsChoice0, // default 8 - 6
+                Lang.Settings.UIColumnsChoice1, // 3 columns
+                Lang.Settings.UIColumnsChoice2 // 4 columns
+            };
+            UIColumnsChoiceBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(UIColumnsChoice)) { Mode = BindingMode.TwoWay });
+            UIColumnsChoiceBox.Height = 20;
+            UIColumnsChoiceBox.FontSize = 10;
+            UIColumnsChoiceBox.Margin = rowMargin;
+
+            row++;
+
             UiCheckBox isSkipIntros = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SkipIntrosToMainMenu, null), row, 0, 1, 9);
             isSkipIntros.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SkipIntros)) { Mode = BindingMode.TwoWay });
             isSkipIntros.Foreground = Brushes.White;
@@ -489,6 +506,18 @@ namespace Memoria.Launcher
                 if (_battleInterface != value)
                 {
                     _battleInterface = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public Int16 UIColumnsChoice
+        {
+            get { return _uicolumnschoice; }
+            set
+            {
+                if (_uicolumnschoice != value)
+                {
+                    _uicolumnschoice = value;
                     OnPropertyChanged();
                 }
             }
@@ -770,7 +799,7 @@ namespace Memoria.Launcher
             }
             return false;
         }
-        private Int16 _iswidescreensupport, _battleInterface, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _scaledbattleui, _sharedfps, _battlefps, _fieldfps, _worldfps, _camerastabilizer;
+        private Int16 _iswidescreensupport, _battleInterface, _uicolumnschoice, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _scaledbattleui, _sharedfps, _battlefps, _fieldfps, _worldfps, _camerastabilizer;
         private double _scaledbattleuiscale;
         private String _fontChoice;
         private UiComboBox _fontChoiceBox;
@@ -909,6 +938,16 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _isskipintros))
                     _isskipintros = 0;
 
+                value = iniFile.ReadValue("Interface", "MenuItemRowCount");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 8";
+                    OnPropertyChanged(nameof(UIColumnsChoice));
+                }
+                String newvalue = ((Int16.Parse(value) / 4) - 2).ToString();
+                if (!Int16.TryParse(newvalue, out _uicolumnschoice))
+                    _uicolumnschoice = 0;
+
                 value = iniFile.ReadValue("Graphics", nameof(BattleSwirlFrames));
                 if (String.IsNullOrEmpty(value))
                 {
@@ -1032,6 +1071,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(WorldFPS));
                 Refresh(nameof(CameraStabilizer));
                 Refresh(nameof(BattleInterface));
+                Refresh(nameof(UIColumnsChoice));
                 Refresh(nameof(SkipIntros));
                 Refresh(nameof(OrchestralMusic));
                 Refresh(nameof(HighFpsVideo));
@@ -1159,6 +1199,25 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Interface", "BattleColumnCount ", " " + (BattleInterface == 2 ? 1 : 1));
                         iniFile.WriteValue("Interface", "PSXBattleMenu ", " " + (BattleInterface == 2 ? 1 : 0));
                         break;
+                    case nameof(UIColumnsChoice):
+                        iniFile.WriteValue("Interface", "MenuItemRowCount ", " " + (Int32)((UIColumnsChoice + 2) * 4));
+                        iniFile.WriteValue("Interface", "MenuAbilityRowCount ", " " + (Int32)((UIColumnsChoice + 2) * 3));
+                        if (UIColumnsChoice == 0)
+                        {
+                            iniFile.WriteValue("Interface", "MenuEquipRowCount ", " 5");
+                            iniFile.WriteValue("Interface", "MenuChocographRowCount ", " 5");
+                        }
+                        else if (UIColumnsChoice == 1)
+                        {
+                            iniFile.WriteValue("Interface", "MenuEquipRowCount ", " 7");
+                            iniFile.WriteValue("Interface", "MenuChocographRowCount ", " 7");
+                        }
+                        else if (UIColumnsChoice == 2)
+                        {
+                            iniFile.WriteValue("Interface", "MenuEquipRowCount ", " 8");
+                            iniFile.WriteValue("Interface", "MenuChocographRowCount ", " 8");
+                        }
+                        break;
                     case nameof(SkipIntros):
                         if (SkipIntros == 3)
                         {
@@ -1278,7 +1337,7 @@ namespace Memoria.Launcher
                 if (File.Exists(_iniPath))
                 {
                     IniFile iniFile = new IniFile(_iniPath);
-                    String _checklatestadded = iniFile.ReadValue("Hacks", "ExcaliburIINoTimeLimit"); // check if the latest ini parameter is already there
+                    String _checklatestadded = iniFile.ReadValue("Interface", "FadeDuration"); // check if the latest ini parameter is already there
                     if (String.IsNullOrEmpty(_checklatestadded))
                     {
                         MakeIniNotNull("Mod", "FolderNames", "");
@@ -1310,8 +1369,11 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Control", "DisableMouse", "0");
                         MakeIniNotNull("Control", "DialogProgressButtons", "\"Confirm\"");
                         MakeIniNotNull("Control", "WrapSomeMenus", "1");
+                        MakeIniNotNull("Control", "BattleAutoConfirm", "1");
+                        MakeIniNotNull("Control", "TurboDialog", "1");
                         MakeIniNotNull("Control", "PSXScrollingMethod", "1");
                         MakeIniNotNull("Control", "PSXMovementMethod", "0");
+                        MakeIniNotNull("Control", "AlwaysCaptureGamepad", "0");
 
                         MakeIniNotNull("Battle", "Enabled", "0");
                         MakeIniNotNull("Battle", "SFXRework", "1");
@@ -1398,6 +1460,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Interface", "MenuAbilityRowCount", "6");
                         MakeIniNotNull("Interface", "MenuEquipRowCount", "5");
                         MakeIniNotNull("Interface", "MenuChocographRowCount", "5");
+                        MakeIniNotNull("Interface", "FadeDuration", "40");
 
                         MakeIniNotNull("Fixes", "Enabled", "1");
                         MakeIniNotNull("Fixes", "KeepRestTimeInBattle", "1");
