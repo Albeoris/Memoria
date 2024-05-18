@@ -273,7 +273,6 @@ public class UIKeyTrigger : MonoBehaviour
             PersistenSingleton<UIManager>.Instance.HideAllHUD();
             ButtonGroupState.DisableAllGroup(true);
             UIManager.Battle.FF9BMenu_EnableMenu(false);
-            Configuration.Graphics.SkipIntros = 3;
             PersistenSingleton<UIManager>.Instance.PauseScene.Hide(null);
             EventHUD.Cleanup();
             EventInput.ClearPadMask();

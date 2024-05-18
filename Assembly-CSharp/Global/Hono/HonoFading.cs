@@ -31,12 +31,6 @@ public class HonoFading : MonoBehaviour
 
 	public void Fade(Single alphaFrom, Single alphaTo, Single duration, Single delay, AnimationCurve animCurve, UIScene.SceneVoidDelegate callback = null)
 	{
-	    if (Configuration.Graphics.SkipIntros > 0)
-	    {
-	        duration = 0;
-	        delay = 0;
-	    }
-
         if (base.gameObject.activeInHierarchy && !this.busy)
 		{
 			if (Configuration.Graphics.WidescreenSupport && widescreenRescale)
@@ -65,12 +59,14 @@ public class HonoFading : MonoBehaviour
 
 	public void FadeIn(UIScene.SceneVoidDelegate callback = null)
 	{
-		this.Fade(this.fadeInFrom, this.fadeInTo, this.fadeInDuration, this.fadeInDelay, this.fadeInCurve, callback);
+        // We don't fade to black if fadeInDuration is too short to avoid flashing
+        this.Fade(this.fadeInFrom, (this.fadeInDuration > 0.05f) ? this.fadeInTo : this.fadeInFrom, this.fadeInDuration, this.fadeInDelay, this.fadeInCurve, callback);
 	}
 
 	public void FadeOut(UIScene.SceneVoidDelegate callback = null)
-	{
-		this.Fade(this.fadeOutFrom, this.fadeOutTo, this.fadeOutDuration, this.fadeOutDelay, this.fadeOutCurve, callback);
+    {
+        // We don't fade from black if fadeInDuration is too short to avoid flashing
+        this.Fade((this.fadeOutDuration > 0.05f) ? this.fadeOutFrom : this.fadeOutTo, this.fadeOutTo, this.fadeOutDuration, this.fadeOutDelay, this.fadeOutCurve, callback);
 	}
 
 	public void FadePingPong(UIScene.SceneVoidDelegate blackSceneCallback = null, UIScene.SceneVoidDelegate finishCallback = null)
