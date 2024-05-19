@@ -333,7 +333,7 @@ namespace NCalc
         {
             ENEMY enemy = unit.IsPlayer ? null : unit.Enemy.Data;
             expr.Parameters[prefix + "Name"] = unit.Name;
-            expr.Parameters[prefix + "BattleId"] = (Int32)unit.Id;
+            expr.Parameters[prefix + "UnitId"] = (Int32)unit.Id;
             expr.Parameters[prefix + "MaxHP"] = unit.MaximumHp;
             expr.Parameters[prefix + "MaxMP"] = unit.MaximumMp;
             expr.Parameters[prefix + "MaxATB"] = (Int32)unit.MaximumAtb;
@@ -419,7 +419,7 @@ namespace NCalc
                 return;
             }
             expr.Parameters[prefix + "Name"] = String.Empty;
-            expr.Parameters[prefix + "BattleId"] = 0;
+            expr.Parameters[prefix + "UnitId"] = 0;
             expr.Parameters[prefix + "MaxHP"] = 0;
             expr.Parameters[prefix + "MaxMP"] = 0;
             expr.Parameters[prefix + "MaxATB"] = 0;
