@@ -200,9 +200,9 @@ public class btl_para
         {
             if (Configuration.Mod.TranceSeek)
             {
-                damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 15 : 5);
+                damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 8 : 5);
                 if (battleUnit.IsUnderStatus(BattleStatus.Venom))
-                    damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 12 : 4);
+                    damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 7 : 4);
             }
             else
             {
@@ -251,7 +251,7 @@ public class btl_para
         UInt32 recover = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            recover = GetLogicalHP(btl, true) >> (Configuration.Mod.TranceSeek ? (btl_stat.CheckStatus(btl, BattleStatus.EasyKill) ? 12 : 5) : 4);
+            recover = GetLogicalHP(btl, true) >> (Configuration.Mod.TranceSeek ? (btl_stat.CheckStatus(btl, BattleStatus.EasyKill) ? 7 : 5) : 4);
             if (btl_stat.CheckStatus(btl, BattleStatus.Zombie) || btl_util.CheckEnemyCategory(btl, 16))
             {
                 btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_DMG;
