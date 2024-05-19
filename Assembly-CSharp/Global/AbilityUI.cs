@@ -140,6 +140,8 @@ public class AbilityUI : UIScene
         this.DisplayAllButton();
         this.activeAbilityScrollList.ScrollButton.DisplayScrollButton(false, false);
         this.supportAbilityScrollList.ScrollButton.DisplayScrollButton(false, false);
+        this.CommandPanel.SetActive(true);
+        this.MagicStonePanel.SetActive(false);
         this.UpdateUserInterface();
     }
 

@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria;
 using Memoria.Data;
 using Memoria.Assets;
 using Memoria.Scenes;
 using UnityEngine;
-using Object = System.Object;
 
 public class MainMenuUI : UIScene
 {
@@ -101,7 +101,7 @@ public class MainMenuUI : UIScene
 		else
 		{
 			this.screenFadePanel.depth = 7;
-			this.submenuTransition.AnimationTime = FF9StateSystem.Settings.IsFastForward ? 0.1f : 0.2f;
+			this.submenuTransition.AnimationTime = (!FF9StateSystem.Settings.IsFastForward) ? Configuration.Interface.FadeDuration : Configuration.Interface.FadeDuration / FF9StateSystem.Settings.FastForwardFactor;
 			this.submenuTransition.TweenOut(null);
 		}
 		base.Hide(afterHideAction);
@@ -109,7 +109,7 @@ public class MainMenuUI : UIScene
 
 	public void StartSubmenuTweenIn()
 	{
-		this.submenuTransition.AnimationTime = ((!FF9StateSystem.Settings.IsFastForward) ? 0.2f : 0.1f);
+		this.submenuTransition.AnimationTime = (!FF9StateSystem.Settings.IsFastForward) ? Configuration.Interface.FadeDuration : Configuration.Interface.FadeDuration / FF9StateSystem.Settings.FastForwardFactor;
 		this.submenuTransition.TweenIn((Action)null);
 	}
 
