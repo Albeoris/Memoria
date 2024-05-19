@@ -481,8 +481,6 @@ namespace Memoria
                     List<string> TexturesList = new List<string>();
                     if (!Int32.TryParse(entry[1], out Int32 FieldID))
                         continue;
-                    if (entry[1] == null || entry[2] == null)
-                        continue;
                     for (Int32 i = 3; i < entry.Length; i++)
                     {
                         TexturesList.Add(entry[i]);
@@ -493,9 +491,6 @@ namespace Memoria
                 else if (String.Compare(entry[0], "SPSTexture") == 0)
                 {
                     // eg.: SPSTexture customfireorb shp 3 400 0 0 5 5
-                    if (entry[1] == null || entry[2] == null)
-                        continue;
-
                     if (!Int32.TryParse(entry[3], out Int32 numbertexture))
                         continue;
                     if (!float.TryParse(entry[4], out float posx))
