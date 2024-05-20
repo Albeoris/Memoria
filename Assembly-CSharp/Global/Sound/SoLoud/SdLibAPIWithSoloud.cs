@@ -265,7 +265,7 @@ namespace Global.Sound.SoLoud
             SoundLib.Log($"SoundCtrl_SetVolume({soundID}, {volume}, {transTimeMSec})");
             if (!sounds.ContainsKey(soundID)) return;
 
-            if (volume < 0f || volume > 1f) Log.Message($"[SoLoud] Warning! Unexpected volume value. Volume = {volume} SoundID = {soundID}\n{Environment.StackTrace}");
+            if (volume < 0f || volume > 1f) Log.Warning($"[SoLoud] Unexpected volume value. ResourceID = {streams[sounds[soundID].bankID].profile.ResourceID} Volume = {volume}\n{Environment.StackTrace}");
             volume = Mathf.Clamp01(volume);
             sounds[soundID].volume = volume;
 
