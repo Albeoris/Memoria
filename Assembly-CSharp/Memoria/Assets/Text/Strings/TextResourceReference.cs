@@ -12,7 +12,7 @@ namespace Memoria.Assets
         public TextResourceReference(String filePath)
         {
             Exceptions.ThrowIfNullOrEmprty(filePath, nameof(filePath));
-            Value = Path.ChangeExtension(filePath, null);
+            Value = filePath;
         }
 
         public Boolean Equals(TextResourceReference other) => Value == other.Value;
