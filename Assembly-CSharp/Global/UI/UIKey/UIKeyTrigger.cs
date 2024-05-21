@@ -821,8 +821,8 @@ public class UIKeyTrigger : MonoBehaviour
         {
             if (UIManager.Instance.Dialogs.IsDialogNeedControl())
                 return true;
-            
-            if (VoicePlayer.scriptRequestedButtonPress && !TimerUI.Enable && DialogManager.Instance.ActiveDialogList.Any(dial => dial.gameObject.activeInHierarchy && dial.CurrentState == Dialog.State.CompleteAnimation))
+
+            if (VoicePlayer.scriptRequestedButtonPress && !BubbleUI.Instance.IsActive && DialogManager.Instance.ActiveDialogList.Any(dial => dial.gameObject.activeInHierarchy && dial.CurrentState == Dialog.State.CompleteAnimation))
             {
                 EventInput.ReceiveInput(EventInput.Pcircle | EventInput.Lcircle);
             }
