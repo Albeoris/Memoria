@@ -16,44 +16,56 @@ public class FieldSPSSystem : HonoBehavior
             this.GenerateSPS();
     }
 
+    private void InitSPSInstance(Int32 index)
+    {
+        if (index < 0 || index > this._spsList.Count)
+            return;
+        if (index < this._spsList.Count)
+        {
+            this._spsList[index].Init();
+            this._spsList[index].fieldMap = this._fieldMap;
+            return;
+        }
+        GameObject spsGo = new GameObject($"SPS_{index:D4}");
+        spsGo.transform.parent = base.transform;
+        spsGo.transform.localScale = Vector3.one;
+        spsGo.transform.localPosition = Vector3.zero;
+        MeshRenderer meshRenderer = spsGo.AddComponent<MeshRenderer>();
+        MeshFilter meshFilter = spsGo.AddComponent<MeshFilter>();
+        FieldSPS fieldSPS = spsGo.AddComponent<FieldSPS>();
+        fieldSPS.Init();
+        fieldSPS.fieldMap = this._fieldMap;
+        fieldSPS.spsIndex = index;
+        fieldSPS.spsTransform = spsGo.transform;
+        fieldSPS.meshRenderer = meshRenderer;
+        fieldSPS.meshFilter = meshFilter;
+        FieldSPSActor fieldSPSActor = spsGo.AddComponent<FieldSPSActor>();
+        fieldSPSActor.sps = fieldSPS;
+        fieldSPS.spsActor = fieldSPSActor;
+        this._spsList.Add(fieldSPS);
+    }
+
     public void Init(FieldMap fieldMap)
     {
         this.rot = new Vector3(0f, 0f, 0f);
         this._isReady = false;
         this._spsList = new List<FieldSPS>();
-        this._spsBinDict = new Dictionary<Int32, KeyValuePair<Int32, Byte[]>>();
+        this._spsBinDict = new Dictionary<Int32, KeyValuePair<String, Byte[]>>();
         this._fieldMap = fieldMap;
-        for (Int32 i = 0; i < FieldSPSConst.FF9FIELDSPS_MAX_OBJCOUNT; i++)
-        {
-            GameObject gameObject = new GameObject($"SPS_{i:D4}");
-            gameObject.transform.parent = base.transform;
-            gameObject.transform.localScale = Vector3.one;
-            gameObject.transform.localPosition = Vector3.zero;
-            MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-            MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-            FieldSPS fieldSPS = gameObject.AddComponent<FieldSPS>();
-            fieldSPS.Init();
-            fieldSPS.fieldMap = fieldMap;
-            fieldSPS.spsIndex = i;
-            fieldSPS.spsTransform = gameObject.transform;
-            fieldSPS.meshRenderer = meshRenderer;
-            fieldSPS.meshFilter = meshFilter;
-            this._spsList.Add(fieldSPS);
-            FieldSPSActor fieldSPSActor = gameObject.AddComponent<FieldSPSActor>();
-            fieldSPSActor.sps = fieldSPS;
-            fieldSPS.spsActor = fieldSPSActor;
-        }
+        Int32 initCount = Math.Max(FieldSPSConst.FF9FIELDSPS_DEFAULT_OBJCOUNT, this._spsList.Count);
+        for (Int32 i = 0; i < initCount; i++)
+            this.InitSPSInstance(i);
         this.MapName = FF9StateSystem.Field.SceneName;
         FieldMapInfo.fieldmapSPSExtraOffset.SetSPSOffset(this.MapName, this._spsList);
         this._isReady = this._loadSPSTexture();
     }
 
-    public void ChangeFieldOrigin(Int32 fieldId)
+    public void ChangeFieldOrigin(String newMapName)
     {
         foreach (FieldSPS fieldSPS in this._spsList)
-            fieldSPS.Unload();
-        this._spsBinDict.Clear();
-        this.MapName = EventEngineUtils.eventIDToFBGID[fieldId];
+            if (fieldSPS.pngTexture == null)
+                fieldSPS.Unload();
+        this.MapName = newMapName;
         FieldMapInfo.fieldmapSPSExtraOffset.SetSPSOffset(this.MapName, this._spsList);
         this._isReady = this._loadSPSTexture();
     }
@@ -65,7 +77,7 @@ public class FieldSPSSystem : HonoBehavior
         for (Int32 i = 0; i < this._spsList.Count; i++)
         {
             FieldSPS fieldSPS = this._spsList[i];
-            if (fieldSPS.spsBin != null && (fieldSPS.attr & 1) != 0)
+            if (fieldSPS.spsBin != null && (fieldSPS.attr & FieldSPSConst.FF9FIELDSPSOBJ_ATTR_VISIBLE) != 0)
             {
                 if (fieldSPS.lastFrame != -1)
                 {
@@ -87,7 +99,7 @@ public class FieldSPSSystem : HonoBehavior
         for (Int32 i = 0; i < this._spsList.Count; i++)
         {
             FieldSPS fieldSPS = this._spsList[i];
-            if (fieldSPS.spsBin != null && (fieldSPS.attr & 1) != 0)
+            if (fieldSPS.spsBin != null && (fieldSPS.attr & FieldSPSConst.FF9FIELDSPSOBJ_ATTR_VISIBLE) != 0)
             {
                 if (fieldSPS.charTran != null && fieldSPS.boneTran != null)
                 {
@@ -119,7 +131,7 @@ public class FieldSPSSystem : HonoBehavior
         Byte[] binAsset = AssetManager.LoadBytes($"FieldMaps/{this.MapName}/{spsNo}.sps");
         if (binAsset == null)
             return false;
-        this._spsBinDict.Add(spsNo, new KeyValuePair<Int32, Byte[]>(FieldSPSSystem._getSpsFrameCount(binAsset), binAsset));
+        this._spsBinDict.Add(spsNo, new KeyValuePair<String, Byte[]>(this.MapName, binAsset));
         return true;
     }
 
@@ -127,30 +139,28 @@ public class FieldSPSSystem : HonoBehavior
     {
         if (ParmType == FieldSPSConst.FF9FIELDSPS_PARMTYPE_FIELD)
         {
-            // TODO: Somehow find a way to have SPS from multiple fields simultaneously, which requires something better than PSXTextureMgr
-            this.ChangeFieldOrigin(Arg0);
+            this.ChangeFieldOrigin(EventEngineUtils.eventIDToFBGID[Arg0]);
             return;
         }
+        if (ObjNo == this._spsList.Count)
+            this.InitSPSInstance(ObjNo);
+        if (ObjNo < 0 || ObjNo >= this._spsList.Count)
+            return;
         FieldSPS fieldSPS = this._spsList[ObjNo];
         if (ParmType == FieldSPSConst.FF9FIELDSPS_PARMTYPE_REF)
         {
-            if (Arg0 != -1)
+            if (Arg0 != FieldSPSConst.FF9FIELDSPS_PARM_REF_DELETE)
             {
                 if (this._loadSPSBin(Arg0))
                 {
+                    fieldSPS.mapName = this._spsBinDict[Arg0].Key;
                     fieldSPS.spsBin = this._spsBinDict[Arg0].Value;
                     fieldSPS.curFrame = 0;
                     fieldSPS.lastFrame = -1;
-                    fieldSPS.frameCount = this._spsBinDict[Arg0].Key;
-                    String pngTexturePath = $"StreamingAssets/FieldSPS/{this.MapName}/{Arg0}.png";
-                    if (File.Exists(pngTexturePath))
-                    {
-                        fieldSPS.pngTexture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-                        if (!fieldSPS.pngTexture.LoadImage(File.ReadAllBytes(pngTexturePath)))
-                            fieldSPS.pngTexture = null;
-                    }
+                    fieldSPS.frameCount = FieldSPSSystem._getSpsFrameCount(fieldSPS.spsBin);
                 }
                 fieldSPS.refNo = Arg0;
+                fieldSPS.LoadTexture();
                 if (FF9StateSystem.Common.FF9.fldMapNo == 2553 && (fieldSPS.refNo == 464 || fieldSPS.refNo == 467 || fieldSPS.refNo == 506 || fieldSPS.refNo == 510))
                 {
                     // Wind Shrine/Interior
@@ -163,7 +173,7 @@ public class FieldSPSSystem : HonoBehavior
                 {
                     // Treno/Queen's House
                     fieldSPS.pos = Vector3.zero;
-                    fieldSPS.scale = 4096;
+                    fieldSPS.scale = FieldSPSConst.FF9FIELDSPS_PARM_SCALE_ONE;
                     fieldSPS.rot = Vector3.zero;
                     fieldSPS.rotArg = Vector3.zero;
                 }
@@ -177,7 +187,7 @@ public class FieldSPSSystem : HonoBehavior
             else
                 fieldSPS.attr |= (Byte)Arg0;
 
-            if ((fieldSPS.attr & 1) == 0)
+            if ((fieldSPS.attr & FieldSPSConst.FF9FIELDSPSOBJ_ATTR_VISIBLE) == 0)
             {
                 fieldSPS.meshRenderer.enabled = false;
             }
@@ -228,7 +238,7 @@ public class FieldSPSSystem : HonoBehavior
         }
         else if (ParmType == FieldSPSConst.FF9FIELDSPS_PARMTYPE_ARATE)
         {
-            fieldSPS.arate = (Byte)Arg0;
+            fieldSPS.abr = (Byte)Arg0;
         }
         else if (ParmType == FieldSPSConst.FF9FIELDSPS_PARMTYPE_FRAMERATE)
         {
@@ -253,7 +263,7 @@ public class FieldSPSSystem : HonoBehavior
     private Boolean _isReady;
     private FieldMap _fieldMap;
     private List<FieldSPS> _spsList;
-    private Dictionary<Int32, KeyValuePair<Int32, Byte[]>> _spsBinDict;
+    private Dictionary<Int32, KeyValuePair<String, Byte[]>> _spsBinDict;
 
     public Vector3 rot;
 
@@ -301,8 +311,7 @@ public class FieldSPSSystem : HonoBehavior
 
     public static void ExportAllSPSTextures(String exportFolder)
     {
-        if (AssetManager.FolderLowToHigh.Length == 0)
-            return;
+        HashSet<String> uniqueTexture = new HashSet<String>(FieldSPSConst.SPSTexture.Values);
         GameObject sharedSPSgo = new GameObject("AllSPSTexturesExporter");
         FieldSPS sharedSPS = sharedSPSgo.AddComponent<FieldSPS>();
         sharedSPS.Init();
@@ -325,6 +334,8 @@ public class FieldSPSSystem : HonoBehavior
                     String mapName = path[3];
                     if (!Int32.TryParse(path[4].Remove(path[4].Length - 10), out Int32 spsId))
                         continue;
+                    if (!uniqueTexture.Contains($"{mapName}/{spsId}"))
+                        continue;
                     if (!String.Equals(tcbLoaded, mapName))
                     {
                         Byte[] tcbBin = bundle.assetBundle.LoadAsset<TextAsset>($"Assets/Resources/FieldMaps/{mapName}/spt.tcb.bytes")?.bytes;
@@ -337,22 +348,13 @@ public class FieldSPSSystem : HonoBehavior
                     sharedSPS.spsBin = bundle.assetBundle.LoadAsset<TextAsset>(assetName)?.bytes;
                     if (sharedSPS.spsBin == null)
                         continue;
+                    sharedSPS.mapName = mapName;
                     sharedSPS.refNo = spsId;
                     sharedSPS.curFrame = 0;
                     sharedSPS.frameCount = FieldSPSSystem._getSpsFrameCount(sharedSPS.spsBin);
-                    sharedSPS.LoadSPS();
-                    FieldSPS.PSX_TPage worktpage = sharedSPS.works.tpage;
-                    FieldSPS.PSX_Clut workclut = sharedSPS.works.clut;
-                    Texture2D fulltexture = PSXTextureMgr.GetTexture(worktpage.FlagTP, worktpage.FlagTY, worktpage.FlagTX, workclut.FlagClutY, workclut.FlagClutX)?.texture;
-                    if (fulltexture == null)
+                    Texture2D spstexture = sharedSPS.GetTextureFromCurrentTCB();
+                    if (spstexture == null)
                         continue;
-                    Rect spsArea = sharedSPS.GetRelevantPartOfTCB();
-                    if (spsArea.width == 0 || spsArea.height == 0)
-                        continue;
-                    Color[] relevantPart = fulltexture.GetPixels((Int32)spsArea.x, (Int32)spsArea.y, (Int32)spsArea.width, (Int32)spsArea.height);
-                    Texture2D spstexture = new Texture2D((Int32)spsArea.width, (Int32)spsArea.height, TextureFormat.ARGB32, false);
-                    spstexture.SetPixels(relevantPart);
-                    spstexture.Apply();
                     // Like all the TIM images, TCB textures are upside-down (vertical mirror)... not that it matters as there seldom are any up and down sides in these ones
                     // So we don't bother mirroring them back and forth
                     Directory.CreateDirectory($"{exportFolder}/{mapName}");

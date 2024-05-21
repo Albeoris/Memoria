@@ -8,18 +8,19 @@ public class FieldSPS : MonoBehaviour
 {
     public void Init()
     {
-        this.attr = 1;
-        this.arate = 15;
+        this.attr = FieldSPSConst.FF9FIELDSPSOBJ_ATTR_VISIBLE;
+        this.abr = FieldSPSConst.FF9FIELDSPS_PARM_ABR_OFF;
         this.fade = 128;
+        this.mapName = null;
         this.refNo = -1;
         this.charNo = -1;
         this.boneNo = 0;
         this.lastFrame = -1;
         this.curFrame = 0;
         this.frameCount = 0;
-        this.frameRate = 16;
+        this.frameRate = FieldSPSConst.FF9FIELDSPS_PARM_FRAMERATE_ONE;
         this.pos = Vector3.zero;
-        this.scale = 4096;
+        this.scale = FieldSPSConst.FF9FIELDSPS_PARM_SCALE_ONE;
         this.rot = Vector3.zero;
         this.rotArg = Vector3.zero;
         this.zOffset = 0;
@@ -51,6 +52,7 @@ public class FieldSPS : MonoBehaviour
 
     public void Unload()
     {
+        this.mapName = null;
         this.spsBin = null;
         if (this.meshRenderer != null)
             this.meshRenderer.enabled = false;
@@ -90,6 +92,40 @@ public class FieldSPS : MonoBehaviour
         return tcbArea;
     }
 
+    public Texture2D GetTextureFromCurrentTCB()
+    {
+        Rect spsArea = this.GetRelevantPartOfTCB();
+        if (spsArea.width == 0 || spsArea.height == 0)
+            return null;
+        FieldSPS.PSX_TPage worktpage = this.works.tpage;
+        FieldSPS.PSX_Clut workclut = this.works.clut;
+        Texture2D fulltexture = PSXTextureMgr.GetTexture(worktpage.FlagTP, worktpage.FlagTY, worktpage.FlagTX, workclut.FlagClutY, workclut.FlagClutX)?.texture;
+        if (fulltexture == null)
+            return null;
+        Color[] relevantPart = fulltexture.GetPixels((Int32)spsArea.x, (Int32)spsArea.y, (Int32)spsArea.width, (Int32)spsArea.height);
+        Texture2D spstexture = new Texture2D((Int32)spsArea.width, (Int32)spsArea.height, TextureFormat.ARGB32, false);
+        spstexture.SetPixels(relevantPart);
+        spstexture.Apply();
+        return spstexture;
+    }
+
+    public void LoadTexture()
+    {
+        String texturePath = FieldSPSConst.GetSPSTexture(this.refNo);
+        if (texturePath == null)
+            return;
+        this.pngTexture = AssetManager.Load<Texture2D>($"FieldMaps/{texturePath}.png", true);
+        if (this.pngTexture == null)
+        {
+            FieldSPSSystem spsSystem = PersistenSingleton<EventEngine>.Instance.fieldSps;
+            if (spsSystem == null || String.IsNullOrEmpty(this.mapName))
+                return;
+            if (!String.Equals(spsSystem.MapName, this.mapName))
+                spsSystem.ChangeFieldOrigin(this.mapName);
+            this.pngTexture = this.GetTextureFromCurrentTCB();
+        }
+    }
+
     public void GenerateSPS()
     {
         this.LoadSPS();
@@ -111,7 +147,7 @@ public class FieldSPS : MonoBehaviour
             this.works.pt = workOffset + 2;
             this.works.rgb = this.works.pt + rgbOffset * 2 + 2;
             binaryReader.BaseStream.Seek(2, SeekOrigin.Begin);
-            Byte shaderABR = this.arate > 3 ? Byte.MaxValue : this.arate;
+            Byte shaderABR = this.abr > 3 ? Byte.MaxValue : this.abr;
             this.works.tpage.value = (UInt16)(binaryReader.ReadUInt16() | (shaderABR & 3) << 5);
             this.works.clut.value = binaryReader.ReadUInt16();
             this.works.w = (binaryReader.ReadByte() - 1) * 2;
@@ -289,7 +325,7 @@ public class FieldSPS : MonoBehaviour
         this.meshFilter.mesh = mesh;
         PSX_TPage worktpage = this.works.tpage;
         PSX_Clut workclut = this.works.clut;
-        Int32 shindex = Math.Min((Int32)this.arate, 4);
+        Int32 shindex = Math.Min((Int32)this.abr, 4);
         if (usePNGTexture)
         {
             pngTexture.filterMode = FilterMode.Bilinear;
@@ -325,7 +361,7 @@ public class FieldSPS : MonoBehaviour
     public Transform boneTran;
 
     public Byte attr;
-    public Byte arate;
+    public Byte abr;
     public Byte fade;
 
     public Int32 refNo;
@@ -352,6 +388,8 @@ public class FieldSPS : MonoBehaviour
     private List<Int32> _indices;
 
     // Memoria fields
+    [NonSerialized]
+    public String mapName;
     [NonSerialized]
     public Texture2D pngTexture = null;
     [NonSerialized]
