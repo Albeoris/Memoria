@@ -452,7 +452,7 @@ Requires Memoria v2023.06.11 or later</Description>
 
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.19</Version>
+	<Version>0.3.20</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDate>2024-02-27</ReleaseDate>
 	<Author>DV</Author>
@@ -477,16 +477,17 @@ Requires Memoria v2023.06.11 or later</Description>
 	/_!_\ IMPORTANT : Please read the README file inside the mod folder, the installation is not YET fully automatic ! (Just move 1 or 2 files, don't worry !)
 	</Description>
 	<PatchNotes>
-	- The second hit with Zidane's dagger didn't trigger if target is under Death.
-	- Fix an issue on some .csv files, specially the AbilityGems.csv one (thanks to Tigrex for the report)
-	- Fix a softlock on the script "Map 559, Loc 276 Name Lindblum/Square." in English (US), where the wrong window appear when timer is running out during the Festival Hunt.
-	- Fix the menu when naming Beatrix at Burmecia/Palace in English (US) and Japenese.
-	- Fix the script on "Map 908, Loc 70 Name: Treno/Gate" where you can get unlimited Elixir on the pond.
-	- Additional information added to "README (installation + update).txt".
-	- Updated the Assembly-CSharp.dll file to take benefit of the latest Memoria release.
-	- Added Memoria.Prime.dll file (which also needs replacing, more information in the Readme)
-	- [WIP] Dragon status new texture (thanks to @Maxi for his work!)
-	- Slight modification to title screen image
+	- Trance Seek is now compatible with Memoria v2024.05.19 => All features are integrated into Memoria, no need for custom .dll anymore! (Thanks to the Memoria team!)
+	- [WIP] New Mogster dialog boxes about mod information!
+	- Slight correction to the fight against the Guardian of the Earth.
+	- Slight correction of a fight against Zorn and Thorn in the cavern of Gizamaluke where a softlock was possible with Petrify.
+	- Correction of the rocks quest in Passe Condéa.
+	- Fixed a major bug in Meltigemini mechanics.
+	- Correction of Zombies animations on the Iifa Tree/Roots (1652 + 1759).
+	- Fixed Zombies' "Arsenic" spell on the Iifa Tree/Roots (1652 + 1759).
+	- Correction of SA "EX Mode" and "EX Mode+".
+	- Corrected English (US) dialogues on field 352 (Dali/Inn)
+	- Added an extra dialog box at the start of the game concerning Zidane's Trance.
 	</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/NTbTds6/Logo-Trance-Seek.png</PreviewFileUrl>
