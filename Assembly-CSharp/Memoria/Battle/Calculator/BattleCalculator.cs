@@ -18,7 +18,7 @@ namespace Memoria
 
         public static void SetBattleFollowFormatMessage(BattleMesages message, params Object[] args)
         {
-            UIManager.Battle.SetBattleFollowMessage(message, args);
+            UIManager.Battle.SetBattleFollowMessage(message, args != null && args.Length > 0 ? args[0] : null);
         }
 
         public static void SetBattleFollowFormatMessage(Byte priority, String formatMessage, params Object[] args)
@@ -87,7 +87,7 @@ namespace Memoria
         public static Int32 BattleUnitCount(Boolean isPlayer)
         {
             Int32 count = 0;
-            Byte playerByte = isPlayer ? (Byte)1: (Byte)0;
+            Byte playerByte = isPlayer ? (Byte)1 : (Byte)0;
             for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
                 if (next.bi.player == playerByte)
                     count++;

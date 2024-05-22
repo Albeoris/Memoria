@@ -741,12 +741,18 @@ public class SharedDataBytesStorage : ISharedDataStorage
 				return (JSONClass)null;
 			}
 			JSONClass tree = this.ParseDataListToJsonTree(list, this.rootSchemaNode);
-			if (File.Exists(MetaData.GetMemoriaExtraSaveFilePath(isAutoload, slotID, saveID)))
-			{
-				JSONNode memoriaNode = JSONNode.LoadFromFile(MetaData.GetMemoriaExtraSaveFilePath(isAutoload, slotID, saveID));
-				if (memoriaNode != null)
-					tree.Add("MemoriaExtraData", memoriaNode);
-			}
+            String memoriaSavePath = MetaData.GetMemoriaExtraSaveFilePath(isAutoload, slotID, saveID);
+            if (!String.IsNullOrEmpty(memoriaSavePath) && File.Exists(memoriaSavePath))
+            {
+                JSONNode memoriaNode = JSONNode.LoadFromFile(memoriaSavePath);
+                if (memoriaNode != null)
+                {
+                    memoriaNode.Add("MetaDataSlotID", slotID.ToString());
+                    memoriaNode.Add("MetaDataSaveID", saveID.ToString());
+                    memoriaNode.Add("MetaDataFileName", Path.GetFileName(memoriaSavePath));
+                    tree.Add("MemoriaExtraData", memoriaNode);
+                }
+            }
 			return tree;
 		}
 		catch (Exception message3)

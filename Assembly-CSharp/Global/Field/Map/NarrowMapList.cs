@@ -528,6 +528,8 @@ public static class NarrowMapList
     {
         //{mapNo,(actualWidth - 2)}
         {163,318},
+        {164,318},
+        {455,318},
         {606,318},
         {1050,316},
 

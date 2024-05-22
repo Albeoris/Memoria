@@ -25,17 +25,6 @@ public partial class BattleHUD : UIScene
         public Int32 Id;
     }
 
-    private enum CommandMenu
-    {
-        Attack,
-        Defend,
-        Ability1,
-        Ability2,
-        Item,
-        Change,
-        AccessMenu = 7,
-    }
-
     private enum CursorGroup
     {
         Individual,
@@ -126,6 +115,7 @@ public partial class BattleHUD : UIScene
 
     private class CommandDetail
     {
+        public BattleCommandMenu Menu;
         public BattleCommandId CommandId;
         public Int32 SubId;
         public UInt16 TargetId;
@@ -168,7 +158,7 @@ public partial class BattleHUD : UIScene
     private class PlayerMemo
 	{
         public PlayerMemo(PLAYER p, Boolean updateRow)
-		{
+        {
             original = p;
             if (p == null)
                 return;
@@ -198,10 +188,10 @@ public partial class BattleHUD : UIScene
         }
 
         public PLAYER original;
-		public POINTS max;
-		public ELEMENT elem;
-		public ItemDefence defence;
-		public HashSet<SupportAbility> saExtended;
+        public POINTS max;
+        public ELEMENT elem;
+        public ItemDefence defence;
+        public HashSet<SupportAbility> saExtended;
         public CharacterSerialNumber serialNo;
         public Byte row;
         public Byte battleRow;

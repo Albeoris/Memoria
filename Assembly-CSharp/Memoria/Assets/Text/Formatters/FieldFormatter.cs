@@ -25,7 +25,7 @@ namespace Memoria.Assets
                 }
                 else if (!Cache.TryGetValue(line, out key))
                 {
-                    key = StringsFormatter.FormatKeyIndex(postfix, entries.Count);
+                    key = TextFormatterHelper.CreateKey(postfix, entries.Count);
                     Cache.Add(line, key);
                     entry.Value = FormatValue(name, line);
                 }
@@ -40,7 +40,7 @@ namespace Memoria.Assets
 
         private String GetLine(String[] lines, ref Int32 index)
         {
-            if (Configuration.Export.TextFormat <= 1)
+            if (Configuration.Export.TextContentFormat <= 1)
                 return lines[index];
 
             // Not supported https://github.com/Albeoris/Memoria/wiki/Different-identifiers-in-different-languages

@@ -58,10 +58,10 @@ namespace Memoria.Prime.AKB2
         public UInt32 SampleCount; // Ignored?
         public UInt32 LoopStart; // Samples
         public UInt32 LoopEnd; // Samples
-        public UInt16 Constant36;
+        public UInt32 Constant36;
         public UInt32 LoopStartAlternate; // Samples; used when there are several loop regions (Final Battle)
         public UInt32 LoopEndAlternate; // Samples; used when there are several loop regions (Final Battle)
-        public UInt32 Zero38;
+        public UInt16 Zero38;
         public UInt32 Constant39;
         public UInt32 Constant40;
         public UInt32 Constant41;
@@ -181,10 +181,10 @@ namespace Memoria.Prime.AKB2
                 this.SampleCount = binaryReader.ReadUInt32();
                 this.LoopStart = binaryReader.ReadUInt32();
                 this.LoopEnd = binaryReader.ReadUInt32();
-                this.Constant36 = binaryReader.ReadUInt16();
+                this.Constant36 = binaryReader.ReadUInt32();
                 this.LoopStartAlternate = binaryReader.ReadUInt32();
                 this.LoopEndAlternate = binaryReader.ReadUInt32();
-                this.Zero38 = binaryReader.ReadUInt32();
+                this.Zero38 = binaryReader.ReadUInt16();
                 this.Constant39 = binaryReader.ReadUInt32();
                 this.Constant40 = binaryReader.ReadUInt32();
                 this.Constant41 = binaryReader.ReadUInt32();

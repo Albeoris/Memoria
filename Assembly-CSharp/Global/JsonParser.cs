@@ -5,6 +5,7 @@ using Memoria.Data;
 using SimpleJSON;
 using UnityEngine;
 using FF9;
+using Memoria.Prime;
 
 public class JsonParser : ISharedDataParser
 {
@@ -249,6 +250,7 @@ public class JsonParser : ISharedDataParser
 
 	public void ParseToFF9StateSystem(JSONNode rootNode)
 	{
+        Boolean hasTime = false;
 		JSONNode rootMainClass = rootNode["Data"];
 		if (rootMainClass == null)
 			return;
@@ -276,13 +278,12 @@ public class JsonParser : ISharedDataParser
 				player.bonus.cap = (UInt16)rootMainClass["94000_Common"]["00001_player_bonus"][i].AsUInt;
 			}
 		}
-		if (rootMainClass["50000_Setting"] != null && rootMainClass["95000_Setting"] != null && rootMainClass["50000_Setting"]["time"] != null && rootMainClass["95000_Setting"]["00001_time"] != null)
-		{
-			if (rootMainClass["50000_Setting"]["time"].AsFloat >= 0.0)
-				FF9StateSystem.Settings.time = rootMainClass["50000_Setting"]["time"].AsFloat;
-			else
-				FF9StateSystem.Settings.time = rootMainClass["95000_Setting"]["00001_time"].AsDouble;
-		}
+        if (rootMainClass["95000_Setting"] != null && rootMainClass["95000_Setting"]["00001_time"] != null)
+        {
+            //FF9StateSystem.Settings.time = rootMainClass["50000_Setting"]["time"].AsFloat; // This one is dummied (always saved as "-1f")
+            FF9StateSystem.Settings.time = rootMainClass["95000_Setting"]["00001_time"].AsDouble;
+            hasTime = true;
+        }
 		if (rootMainClass["98000_Achievement"]["00001_abnormal_status"] != null)
 			FF9StateSystem.Achievement.abnormal_status = rootMainClass["98000_Achievement"]["00001_abnormal_status"].AsUInt;
 		if (rootMainClass["98000_Achievement"]["00002_summon_shiva"] != null)
@@ -319,11 +320,18 @@ public class JsonParser : ISharedDataParser
 			FF9StateSystem.Achievement.summon_arc = rootMainClass["98000_Achievement"]["000017_summon_arc"].AsBool;
 
 		JSONNode memoriaClass = rootNode["MemoriaExtraData"];
-		Boolean isMemoriaValid = true;
-		if (memoriaClass["95000_Setting"] != null)
-		{
-			// Maybe check if memoriaClass["95000_Setting"]["00001_time"].AsDOuble == FF9StateSystem.Settings.time
-		}
+        Boolean isMemoriaValid = memoriaClass != null;
+        if (memoriaClass["95000_Setting"] != null)
+        {
+            if (hasTime && memoriaClass["95000_Setting"]["00001_time"] != null && Math.Abs(memoriaClass["95000_Setting"]["00001_time"].AsDouble - FF9StateSystem.Settings.time) > 1.0)
+            {
+                // The Memoria part of the save and the vanilla part were not generated at the same time
+                // It typically happens after retrieving a save from the cloud that overwrotes another save
+                isMemoriaValid = false;
+                if (memoriaClass["MetaDataFileName"] != null)
+                    Log.Message($"[{nameof(JsonParser)}] Ignoring the Memoria save {memoriaClass["MetaDataFileName"]} because its internal save time ({TimeSpan.FromSeconds(memoriaClass["95000_Setting"]["00001_time"].AsDouble)}) differs from the base save time ({TimeSpan.FromSeconds(FF9StateSystem.Settings.time)})");
+            }
+        }
 		if (isMemoriaValid)
 		{
 			if (memoriaClass["20000_Event"] != null)
@@ -519,7 +527,7 @@ public class JsonParser : ISharedDataParser
 			for (Int32 i = 0; i < jsonData["gAbilityUsage"].Count; i++)
 			{
 				JSONClass abilClass = jsonData["gAbilityUsage"][i].AsObject;
-				if (abilClass != null && abilClass["id"] != null && abilClass["count"] != null)
+				if (abilClass != null && abilClass["id"] != null && abilClass["count"] != null) // Regardless of whether the ability exists or not with the current settings
 					eventState.gAbilityUsage[(BattleAbilityId)abilClass["id"].AsInt] = abilClass["count"].AsInt;
 			}
 		}
@@ -640,9 +648,12 @@ public class JsonParser : ISharedDataParser
 				JSONClass asObject = jsonData["MiniGameCard"][i].AsObject;
 				if (asObject["id"] != null && (TetraMasterCardId)asObject["id"].AsInt != TetraMasterCardId.NONE)
 				{
+					Int32 cardId = asObject["id"].AsInt;
+					if ((TetraMasterCardId)cardId == TetraMasterCardId.NONE || cardId >= CardPool.TOTAL_CARDS) // Cards that don't exist (not possible yet) are discarded
+						continue;
 					QuadMistCard card = new QuadMistCard();
 					if (asObject["id"] != null)
-						card.id = (TetraMasterCardId)asObject["id"].AsInt;
+						card.id = (TetraMasterCardId)cardId;
 					if (asObject["side"] != null)
 						card.side = (Byte)asObject["side"].AsInt;
 					if (asObject["atk"] != null)
@@ -683,11 +694,18 @@ public class JsonParser : ISharedDataParser
 		dataProfileClass.Add("sDraw", data.sDraw.ToString());
 		JSONArray dataProfileArray = new JSONArray();
 		Int32 count = oldSaveFormat ? 100 : data.MiniGameCard.Count;
+		Int32 cardIndex = 0;
 		for (Int32 i = 0; i < count; i++)
 		{
-			if (i < data.MiniGameCard.Count)
+			if (oldSaveFormat)
 			{
-				QuadMistCard card = data.MiniGameCard[i];
+				// Prevent adding cards with non-vanilla IDs at all (not yet possible)
+				while (cardIndex < data.MiniGameCard.Count && (Int32)data.MiniGameCard[cardIndex].id >= 100)
+					cardIndex++;
+			}
+			if (cardIndex < data.MiniGameCard.Count)
+			{
+				QuadMistCard card = data.MiniGameCard[cardIndex];
 				JSONClass cardClass = new JSONClass();
 				cardClass.Add("id", ((Int32)card.id).ToString());
 				cardClass.Add("side", "0");
@@ -713,6 +731,7 @@ public class JsonParser : ISharedDataParser
 					{ "arrow", "255" }
 				});
 			}
+			cardIndex++;
 		}
 		dataProfileClass.Add("MiniGameCard", dataProfileArray);
 		dataNode.Add("30000_MiniGame", dataProfileClass);
@@ -932,14 +951,21 @@ public class JsonParser : ISharedDataParser
 		}
 		JSONArray dataItemClass = new JSONArray();
 		Int32 itemCount = oldSaveFormat ? 256 : data.item.Count;
+		Int32 itemIndex = 0;
 		for (Int32 i = 0; i < itemCount; i++)
 		{
-			if (i < data.item.Count)
+			if (oldSaveFormat)
+			{
+				// Prevent adding items with non-vanilla IDs at all
+				while (itemIndex < data.item.Count && (Int32)data.item[itemIndex].id >= 256)
+					itemIndex++;
+			}
+			if (itemIndex < data.item.Count)
 			{
 				dataItemClass.Add(new JSONClass
 				{
-					{ "id", ((Int32)data.item[i].id).ToString() },
-					{ "count", data.item[i].count.ToString() }
+					{ "id", ((Int32)data.item[itemIndex].id).ToString() },
+					{ "count", data.item[itemIndex].count.ToString() }
 				});
 			}
 			else
@@ -947,9 +973,10 @@ public class JsonParser : ISharedDataParser
 				dataItemClass.Add(new JSONClass
 				{
 					{ "id", "255" },
-					{ "count", "255" }
+					{ "count", "0" }
 				});
 			}
+			itemIndex++;
 		}
 		dataProfileClass.Add("items", dataItemClass);
 		if (oldSaveFormat)
@@ -1109,7 +1136,7 @@ public class JsonParser : ISharedDataParser
 				if (playerInfoClass != null && playerInfoClass["slot_no"] != null)
 					charId = (CharacterId)playerInfoClass["slot_no"].AsInt;
 				PLAYER player = ffglobal.GetPlayer(charId);
-				if (player == null)
+				if (player == null) // Discard playable characters that don't exist
 					continue;
 				if (oldSaveFormat && playerClass["category"] != null)
 				{
@@ -1193,10 +1220,13 @@ public class JsonParser : ISharedDataParser
 					player.info.menu_type = (CharacterPresetId)playerInfoClass["menu_type"].AsInt;
 				if (playerClass["status"] != null)
 					player.status = (BattleStatus)playerClass["status"].AsInt;
-				if (playerClass["equip"] != null)
-					for (Int32 j = 0; j < playerClass["equip"].Count && j < CharacterEquipment.Length; j++)
-						player.equip[j] = (RegularItem)playerClass["equip"][j].AsInt;
-				JSONClass playerBonusClass = playerClass["bonus"].AsObject;
+                if (playerClass["equip"] != null)
+                    for (Int32 j = 0; j < playerClass["equip"].Count && j < CharacterEquipment.Length; j++)
+                        if (ff9item._FF9Item_Data.ContainsKey((RegularItem)playerClass["equip"][j].AsInt)) // Check if custom items exist, otherwhise remove it from player equipment.
+                            player.equip[j] = (RegularItem)playerClass["equip"][j].AsInt;
+                        else
+                            player.equip[j] = RegularItem.NoItem;
+                JSONClass playerBonusClass = playerClass["bonus"].AsObject;
 				if (playerBonusClass["dex"] != null)
 					player.bonus.dex = (UInt16)playerBonusClass["dex"].AsInt;
 				if (playerBonusClass["str"] != null)
@@ -1242,12 +1272,13 @@ public class JsonParser : ISharedDataParser
 							if ((player.sa[j >> 5] & (1u << j)) != 0u)
 								player.saExtended.Add((SupportAbility)j);
 					}
-					else if (playerClass["sa_extended"] != null)
-					{
-						for (Int32 j = 0; j < playerClass["sa_extended"].Count; j++)
-							ff9abil.FF9Abil_SetEnableSA(player, (SupportAbility)playerClass["sa_extended"][j].AsInt, true);
-					}
-				}
+                    else if (playerClass["sa_extended"] != null)
+                    {
+                        for (Int32 j = 0; j < playerClass["sa_extended"].Count; j++)
+                            if (ff9abil._FF9Abil_SaData.ContainsKey((SupportAbility)playerClass["sa_extended"][j].AsInt)) // Check if SA exist (specially custom SA otherwise loading save can softlock).
+                                ff9abil.FF9Abil_SetEnableSA(player, (SupportAbility)playerClass["sa_extended"][j].AsInt, true);
+                    }
+                }
 				if (playerBonusClass["maxHpLimit"] != null)
 					player.maxHpLimit = playerBonusClass["maxHpLimit"].AsUInt;
 				if (playerBonusClass["maxMpLimit"] != null)
@@ -1319,7 +1350,7 @@ public class JsonParser : ISharedDataParser
 				if (itemClass != null)
 				{
 					RegularItem itemId = (RegularItem)itemClass["id"].AsInt;
-					if (itemId != RegularItem.NoItem)
+					if (itemId != RegularItem.NoItem && ff9item._FF9Item_Data.ContainsKey(itemId)) // Discard items that are registerd in the save but that don't exist with the current settings
 						ffglobal.item.Add(new FF9ITEM(itemId, (Byte)itemClass["count"].AsInt));
 				}
 			}
@@ -1340,7 +1371,7 @@ public class JsonParser : ISharedDataParser
 					JSONClass rareItemClass = jsonData["rareItemsEx"][i].AsObject;
 					if (rareItemClass == null || rareItemClass["id"] == null)
 						continue;
-					Int32 rareItemId = rareItemClass["id"].AsInt;
+					Int32 rareItemId = rareItemClass["id"].AsInt; // Rare items that don't exist (typically because a mod was disabled) appear as blank rare items; they are not discarded
 					if (rareItemClass["obtained"] != null && rareItemClass["obtained"].AsBool)
 						ffglobal.rare_item_obtained.Add(rareItemId);
 					if (rareItemClass["used"] != null && rareItemClass["used"].AsBool)

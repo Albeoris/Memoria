@@ -421,13 +421,13 @@ namespace FF9
             for (Int32 i = 0; i < abilMatches.Count; i++)
 			{
                 Int32 abilIndex;
-                if (String.Compare(abilMatches[i].Groups[2].Value, "Global") == 0)
+                if (String.Equals(abilMatches[i].Groups[2].Value, "Global"))
                     abilIndex = -1;
-                else if (String.Compare(abilMatches[i].Groups[2].Value, "GlobalLast") == 0)
+                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalLast"))
                     abilIndex = -2;
-                else if (String.Compare(abilMatches[i].Groups[2].Value, "GlobalEnemy") == 0)
+                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalEnemy"))
                     abilIndex = -3;
-                else if (String.Compare(abilMatches[i].Groups[2].Value, "GlobalEnemyLast") == 0)
+                else if (String.Equals(abilMatches[i].Groups[2].Value, "GlobalEnemyLast"))
                     abilIndex = -4;
                 else if (!Int32.TryParse(abilMatches[i].Groups[2].Value, out abilIndex))
                     continue;
@@ -443,11 +443,20 @@ namespace FF9
                         entries[(SupportAbility)abilIndex] = new SupportingAbilityFeature();
                     entries[(SupportAbility)abilIndex].ParseFeatures((SupportAbility)abilIndex, input.Substring(startPos, endPos - startPos));
                 }
-                else if (abilIndex >= 0)
+                else
 				{
-                    if (!cumulate)
-                        BattleAbilityHelper.ClearAbilityFeature((BattleAbilityId)abilIndex);
-                    BattleAbilityHelper.ParseAbilityFeature((BattleAbilityId)abilIndex, input.Substring(startPos, endPos - startPos));
+                    if (abilIndex > 0)
+                    {
+                        if (!cumulate)
+                            BattleAbilityHelper.ClearAbilityFeature((BattleAbilityId)abilIndex);
+                        BattleAbilityHelper.ParseAbilityFeature((BattleAbilityId)abilIndex, input.Substring(startPos, endPos - startPos));
+                    }
+                    else if (abilIndex == -1)
+                    {
+                        if (!cumulate)
+                            BattleAbilityHelper.ClearFlexibleAbilityFeature();
+                        BattleAbilityHelper.ParseAbilityFeature(input.Substring(startPos, endPos - startPos));
+                    }
                 }
             }
 		}

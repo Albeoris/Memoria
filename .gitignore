@@ -2,13 +2,14 @@
 # Данный GITIGNORE-файл был автоматически создан Microsoft(R) Visual Studio.
 ################################################################################
 
+.idea/
+.vs/
 bin/
 obj/
 /packages/
 /Output/
-/.idea/
-/.vs/
 /ipch/
+/References
 *.suo
 *.user
 *.DotSettings*
@@ -19,5 +20,4 @@ obj/
 *.sdf
 *.tlog
 *.meta
-/References
 *.log

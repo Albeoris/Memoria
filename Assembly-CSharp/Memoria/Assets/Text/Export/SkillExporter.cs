@@ -7,7 +7,7 @@ namespace Memoria.Assets
         private const String Prefix = "$skill";
 
         protected override String TypeName => nameof(SkillExporter);
-        protected override String ExportPath => ModTextResources.Export.Skills;
+        protected override TextResourcePath ExportPath => ModTextResources.Export.Skills;
 
         protected override TxtEntry[] PrepareEntries()
         {

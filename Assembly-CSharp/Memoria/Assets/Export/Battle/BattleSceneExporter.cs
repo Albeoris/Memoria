@@ -654,8 +654,8 @@ namespace Memoria.Assets
 
                 foreach (KeyValuePair<String, List<TxtEntry>> pair in localizationCsv)
                 {
-                    String outputPath = outputDirectory + $"Enemies.{pair.Key}.strings";
-                    TxtWriter.WriteStrings(outputPath, pair.Value.ToArray());
+                    TextResourcePath outputPath = TextResourcePath.ForExport(outputDirectory + $"Enemies.{pair.Key}");
+                    outputPath.WriteAll(pair.Value);
                 }
             }
         }
@@ -755,8 +755,8 @@ namespace Memoria.Assets
 
                 foreach (KeyValuePair<String, List<TxtEntry>> pair in localizationCsv)
                 {
-                    String outputPath = outputDirectory + $"Actions.{pair.Key}.strings";
-                    TxtWriter.WriteStrings(outputPath, pair.Value.ToArray());
+                    TextResourcePath outputPath = TextResourcePath.ForExport(outputDirectory + $"Actions.{pair.Key}.tmp"); // Don't remove .tmp or "key" will be truncated
+                    outputPath.WriteAll(pair.Value);
                 }
             }
         }

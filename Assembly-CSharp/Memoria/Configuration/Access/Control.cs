@@ -22,6 +22,8 @@ namespace Memoria
             public static Boolean DisableMouseInBattles => (DisableMouse & 4) != 0;
             public static String[] DialogProgressButtons => Instance._control.DialogProgressButtons;
             public static Boolean WrapSomeMenus => Instance._control.WrapSomeMenus;
+            public static Boolean BattleAutoConfirm => Instance._control.BattleAutoConfirm;
+            public static Boolean TurboDialog => Instance._control.TurboDialog;
             public static Boolean PSXScrollingMethod => Instance._control.PSXScrollingMethod;
             /*
             The PSX movement algorithm is different than the remaster's movement algorithm
@@ -30,6 +32,7 @@ namespace Memoria
             If that is true, it results in characters moving faster on steep slopes for the remaster version, and in characters moving either a bit slower or a bit faster on irregular walkmeshes ("irregular" = triangles are not aligned on the same plane)
             */
             public static Boolean PSXMovementMethod => Instance._control.PSXMovementMethod;
+            public static Boolean AlwaysCaptureGamepad => Instance._control.AlwaysCaptureGamepad;
         }
     }
 }

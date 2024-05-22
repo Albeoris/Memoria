@@ -116,6 +116,8 @@ namespace Memoria
             set => Data.info.short_summon = (Byte)(value ? 1 : 0);
         }
         public Boolean IsZeroMP => Data.info.IsZeroMP;
+        public Int32 CommandMPCost => Data.GetCommandMPCost(); // This takes AA features into account but not increased summon cost early on or player MP cost factor
+        public BattleCommandMenu CommandMenu => Data.info.cmdMenu;
 
         public Boolean IsDevided => IsManyTarget && (Int32)Data.aa.Info.Target > 2 && (Int32)Data.aa.Info.Target < 6;
 

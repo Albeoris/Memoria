@@ -1,5 +1,5 @@
-using System;
 using Assets.Sources.Scripts.UI.Common;
+using System;
 using UnityEngine;
 
 namespace Memoria.Assets
@@ -184,6 +184,7 @@ namespace Memoria.Assets
                 case FFIXTextTagCode.Dagger:
                 case FFIXTextTagCode.Steiner:
                 case FFIXTextTagCode.Freya:
+                case FFIXTextTagCode.Fraya:
                 case FFIXTextTagCode.Quina:
                 case FFIXTextTagCode.Eiko:
                 case FFIXTextTagCode.Amarant:
@@ -247,7 +248,7 @@ namespace Memoria.Assets
             else if (tag == NGUIText.Shadow)
             {
                 closingBracket = Array.IndexOf(text, ']', index + 4);
-                highShadow = true;
+                highShadow = !highShadow; // The tag seems to be used as a toggle (see issue #397)
             }
             else if (tag == NGUIText.NoShadow)
             {

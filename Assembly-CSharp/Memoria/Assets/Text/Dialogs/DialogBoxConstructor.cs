@@ -184,6 +184,7 @@ namespace Memoria.Assets
                     OnCharacterName(CharacterId.Steiner);
                     break;
                 case FFIXTextTagCode.Freya:
+                case FFIXTextTagCode.Fraya:
                     OnCharacterName(CharacterId.Freya);
                     break;
                 case FFIXTextTagCode.Quina:
@@ -276,6 +277,12 @@ namespace Memoria.Assets
                 if (a == "[" + NGUIText.EndSentence + "]")
                 {
                     _dlg.EndMode = -1;
+                    index += 5;
+                    return;
+                }
+                if (a == "[" + NGUIText.NoTurboDialog + "]")
+                {
+                    UIKeyTrigger.preventTurboKey = true;  // Disable turbo dialog manually. (for Trance Seek purpose)
                     index += 5;
                     return;
                 }
@@ -382,6 +389,7 @@ namespace Memoria.Assets
                 text3 == "[" + NGUIText.JoyStickButtonIcon ||
                 text3 == "[" + NGUIText.KeyboardButtonIcon)
             {
+                UIKeyTrigger.preventTurboKey = true;  // Disable turbo dialog when a special box appear (Gysahl Greens shop from Chocobo Forest, Eiko when she's cooking, ...)
                 newIndex = Array.IndexOf(_chars, ']', index + 4);
                 String text6 = new String(_chars, index + 6, newIndex - index - 6);
                 if (!FF9StateSystem.MobilePlatform ||
@@ -489,6 +497,7 @@ namespace Memoria.Assets
             }
             else if (text3 == "[" + NGUIText.Choose)
             {
+                UIKeyTrigger.preventTurboKey = true; // Disable turbo dialog when a choice appearc
                 Int32 startIndex = Array.IndexOf(_chars, ']', index + 4);
                 OnChoice(startIndex);
             }
@@ -552,7 +561,7 @@ namespace Memoria.Assets
         {
             _sb.Append("[C8B040][HSHD]");
             _sb.Append(ETb.GetItemName(_textEngine.gMesValue[oneParameterFromTag6]));
-            _sb.Append("[C8C8C8]");
+            _sb.Append("[C8C8C8][HSHD]");
         }
 
         private void OnVariable(Int32 oneParameterFromTag5)

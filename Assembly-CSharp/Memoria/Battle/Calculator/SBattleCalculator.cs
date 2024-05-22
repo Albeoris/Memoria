@@ -1,10 +1,9 @@
-using System;
-using System.Reflection;
-using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scripts;
+using System;
+using System.Reflection;
 using UnityEngine;
 // ReSharper disable PossibleNullReferenceException
 
@@ -12,6 +11,7 @@ namespace Memoria
 {
     public static class SBattleCalculator
     {
+        // Note: no optional parameters in these methods, at least yet, for retro-compatibility purpose
         public static void CalcMain(BattleUnit caster, BattleUnit target, BattleCommand command)
         {
             CalcMain(caster.Data, target.Data, command, command.ScriptId);
@@ -19,10 +19,20 @@ namespace Memoria
 
         public static void CalcMain(BTL_DATA caster, BTL_DATA target, CMD_DATA cmd)
         {
-            CalcMain(caster, target, new BattleCommand(cmd), cmd.ScriptId);
+            CalcMain(caster, target, new BattleCommand(cmd), cmd.ScriptId, null);
+        }
+
+        public static void CalcMain(BTL_DATA caster, BTL_DATA target, CMD_DATA cmd, BattleActionThread sfxThread)
+        {
+            CalcMain(caster, target, new BattleCommand(cmd), cmd.ScriptId, sfxThread);
         }
 
         public static void CalcMain(BTL_DATA caster, BTL_DATA target, BattleCommand command, Int32 scriptId)
+        {
+            CalcMain(caster, target, command, scriptId, null);
+        }
+
+        public static void CalcMain(BTL_DATA caster, BTL_DATA target, BattleCommand command, Int32 scriptId, BattleActionThread sfxThread)
         {
             try
             {
@@ -42,6 +52,7 @@ namespace Memoria
                 }
                 command.ScriptId = scriptId;
                 BattleCalculator v = new BattleCalculator(caster, target, command);
+                v.Context.sfxThread = sfxThread;
                 BattleScriptFactory factory = FindScriptFactory(scriptId);
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Caster))
                     saFeature.TriggerOnAbility(v, "BattleScriptStart", false);
@@ -115,6 +126,7 @@ namespace Memoria
             BTL_DATA target = v.Target.Data;
             BTL_DATA caster = v.Caster.Data;
             CMD_DATA cmd = v.Command.Data;
+            v.Context.AddedStatuses |= v.Target.AddededCheckPointStatuses;
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster))
                 saFeature.TriggerOnAbility(v, "BattleScriptEnd", false);
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target))
@@ -294,6 +306,7 @@ namespace Memoria
                     target.cur.mp = target.max.mp;
                 }
             }
+            v.Context.AddedStatuses |= v.Target.AddededCheckPointStatuses;
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster))
                 saFeature.TriggerOnAbility(v, "EffectDone", false);
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target))

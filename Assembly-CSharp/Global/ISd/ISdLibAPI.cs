@@ -25,7 +25,7 @@ public class ISdLibAPI
 		return 0;
 	}
 
-	public virtual Int32 SdSoundSystem_AddData(IntPtr akb)
+	public virtual Int32 SdSoundSystem_AddData(IntPtr akb, SoundProfile profile)
 	{
 		SoundLib.Log("No Implementation");
 		return 0;

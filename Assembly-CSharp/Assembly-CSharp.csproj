@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <UsingTask AssemblyFile="$(SolutionDir)\References\Memoria.MSBuild.dll" TaskName="Memoria.MSBuild.Deploy" />
   <PropertyGroup>
@@ -15,7 +15,6 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FrameworkPathOverride>$(SolutionDir)\References\</FrameworkPathOverride>
-    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -28,7 +27,6 @@
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>CS0414;CS0649;CS0169;CS0108;CS0618</NoWarn>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -39,11 +37,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\References\Assembly-CSharp-firstpass.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.Serialization">
+      <Private>True</Private>
+      <!-- Don't remove, for Newtonsoft.Json  -->
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\References\UnityEngine.dll</HintPath>
@@ -333,11 +334,26 @@
     <Compile Include="Global\Card\CardUI.cs" />
     <Compile Include="Global\ff9\State\FF9StateGlobal.FrogHandler.cs" />
     <Compile Include="Global\Field\Map\NarrowMapList.cs" />
+    <Compile Include="Global\Sound\SoLoud\Bus.cs" />
+    <Compile Include="Global\Sound\SoLoud\Queue.cs" />
+    <Compile Include="Global\Sound\SoLoud\Soloud.cs" />
+    <Compile Include="Global\Sound\SoLoud\SdLibAPIWithSoloud.cs" />
+    <Compile Include="Global\Sound\SoLoud\WavStream.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\FieldCreatorScene.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\PointScreenAnchor.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\WavefrontObject.cs" />
+    <Compile Include="Memoria\Assets\Text\Strings\ITextReader.cs" />
+    <Compile Include="Memoria\Assets\Text\Strings\ITextWriter.cs" />
+    <Compile Include="Memoria\Assets\Text\Strings\TextFormatterHelper.cs" />
+    <Compile Include="Memoria\Assets\Text\Strings\TextResourceFormat.cs" />
+    <Compile Include="Memoria\Assets\Text\Strings\TextResourceFormatHelper.cs" />
+    <Compile Include="Memoria\Assets\Text\Strings\TextResourcePath.cs" />
+    <Compile Include="Memoria\Assets\Text\Strings\TextResourceReference.cs" />
+    <Compile Include="Memoria\Assets\Text\Strings\TextResjsonFormatter.cs" />
+    <Compile Include="Memoria\Battle\Calculator\EatResult.cs" />
     <Compile Include="Memoria\Configuration\Access\Interface.cs" />
     <Compile Include="Memoria\Configuration\Structure\InterfaceSection.cs" />
+    <Compile Include="Memoria\Data\Battle\BattleCommandMenu.cs" />
     <Compile Include="Memoria\Data\Battle\BattleMagicSwordSet.cs" />
     <Compile Include="Memoria\Data\TetraMaster\TripleTriad.cs" />
     <Compile Include="Memoria\Data\TetraMaster\TripleTriadCard.cs" />
@@ -1210,11 +1226,9 @@
     <Compile Include="Memoria\Assets\Text\ModTextResources.cs" />
     <Compile Include="Memoria\Assets\Text\ResourceExporter.cs" />
     <Compile Include="Memoria\Assets\Text\ResourceImporter.cs" />
-    <Compile Include="Memoria\Assets\Text\Strings\ITxtFormatter.cs" />
-    <Compile Include="Memoria\Assets\Text\Strings\StringsFormatter.cs" />
+    <Compile Include="Memoria\Assets\Text\Strings\ITextFormatter.cs" />
+    <Compile Include="Memoria\Assets\Text\Strings\TextStringsFormatter.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\TxtEntry.cs" />
-    <Compile Include="Memoria\Assets\Text\Strings\TxtReader.cs" />
-    <Compile Include="Memoria\Assets\Text\Strings\TxtWriter.cs" />
     <Compile Include="Memoria\Assets\Text\TextureHelper.cs" />
     <Compile Include="Memoria\Battle\Calculator\BattleCalcFlags.cs" />
     <Compile Include="Memoria\Battle\Calculator\BattleCalculator.cs" />
@@ -1371,7 +1385,17 @@
     <EmbeddedResource Include="Memoria\Configuration\Memoria.ini" />
     <None Include="NCalc\Grammar\NCalc.g" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Global\Sound\SoLoud\x64\soloud.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Global\Sound\SoLoud\x86\soloud.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterBuild">
     <Deploy SolutionDir="$(SolutionDir)" TargetPath="$(TargetPath)" TargetDir="$(TargetDir)" TargetName="$(TargetName)" />

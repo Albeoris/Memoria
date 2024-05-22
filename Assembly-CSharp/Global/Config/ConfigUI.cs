@@ -67,7 +67,8 @@ public class ConfigUI : UIScene
         MusicVolume,
         MovieVolume,
         VoiceVolume,
-        ATBMode
+        ATBMode,
+        AutoText
     }
 
     public enum ATBMode
@@ -179,7 +180,13 @@ public class ConfigUI : UIScene
 
     private OnScreenButton hitpointScreenButton;
 
+    [NonSerialized]
+    private GameObject controlTutorialGameObject;
+    [NonSerialized]
+    private GameObject combatTutorialGameObject;
     private GameObject toTitleGameObject;
+    [NonSerialized]
+    private GameObject quitGameGameObject;
     private GameObject masterSkillButtonGameObject;
     private GameObject lvMaxButtonGameObject;
     private GameObject gilMaxButtonGameObject;
@@ -672,6 +679,19 @@ public class ConfigUI : UIScene
         }
         ButtonGroupState.HelpEnabled = false;
         HelpDespLabelGameObject.SetActive(false);
+        // Disable soft-reset and tutorials in battles (it leads to bugs because things are not cleaned correctly yet)
+        if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+        {
+            controlTutorialGameObject.GetChild(0).GetComponent<UILabel>().color = FF9TextTool.Gray;
+            combatTutorialGameObject.GetChild(0).GetComponent<UILabel>().color = FF9TextTool.Gray;
+            toTitleGameObject.GetChild(0).GetComponent<UILabel>().color = FF9TextTool.Gray;
+        }
+        else
+        {
+            controlTutorialGameObject.GetChild(0).GetComponent<UILabel>().color = FF9TextTool.White;
+            combatTutorialGameObject.GetChild(0).GetComponent<UILabel>().color = FF9TextTool.White;
+            toTitleGameObject.GetChild(0).GetComponent<UILabel>().color = FF9TextTool.White;
+        }
         NGUIText.ForceShowButton = true;
     }
 
@@ -723,6 +743,11 @@ public class ConfigUI : UIScene
                 }
                 else if (config?.Configurator == Configurator.Title)
                 {
+                    if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+                    {
+                        FF9Sfx.FF9SFX_Play(102);
+                        return true;
+                    }
                     FF9Sfx.FF9SFX_Play(103);
                     hitpointScreenButton.KeyCommand = Control.None;
                     WarningDialogHitPoint.SetActive(true);
@@ -737,6 +762,11 @@ public class ConfigUI : UIScene
                 }
                 else if (config?.Configurator == Configurator.ControlTutorial)
                 {
+                    if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+                    {
+                        FF9Sfx.FF9SFX_Play(102);
+                        return true;
+                    }
                     FF9Sfx.FF9SFX_Play(103);
                     hitpointScreenButton.KeyCommand = Control.Confirm;
                     WarningDialogHitPoint.SetActive(true);
@@ -753,6 +783,11 @@ public class ConfigUI : UIScene
                 }
                 else if (config?.Configurator == Configurator.CombatTutorial)
                 {
+                    if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+                    {
+                        FF9Sfx.FF9SFX_Play(102);
+                        return true;
+                    }
                     FF9Sfx.FF9SFX_Play(103);
                     NextSceneIsModal = true;
                     fastSwitch = true;
@@ -1269,6 +1304,9 @@ public class ConfigUI : UIScene
                     int mode = Configuration.Battle.ATBMode >= 3 ? 3 : Configuration.Battle.ATBMode;
                     current.Value = mode / 3f;
                     break;
+                case Configurator.AutoText:
+                    current.Value = Configuration.VoiceActing.AutoDismissDialogAfterCompletion ? 0 : 1;
+                    break;
                 default:
                     current.Value = 0f;
                     break;
@@ -1451,6 +1489,10 @@ public class ConfigUI : UIScene
                         Configuration.Battle.ATBMode = mode >= 3 ? 5 : mode;
                         Configuration.Battle.SaveBattleSpeed();
                         break;
+                    case Configurator.AutoText:
+                        Configuration.VoiceActing.AutoDismissDialogAfterCompletion = configField.Value == 0;
+                        Configuration.VoiceActing.SaveAutoText();
+                        break;
                     default:
                         configField.Value = 0f;
                         break;
@@ -1509,6 +1551,34 @@ public class ConfigUI : UIScene
             }
         }
     }*/
+
+    private GameObject CreateChoice(GameObject template, Configurator id, String choice1, String choice2, int siblingIndex)
+    {
+        try
+        {
+            GameObject go = Instantiate(template);
+            go.transform.parent = template.transform.parent;
+            go.transform.localPosition = template.transform.localPosition;
+            go.transform.localScale = template.transform.localScale;
+            go.transform.SetSiblingIndex(siblingIndex);
+            go.name = $"{id} Panel - Choice";
+            go.GetComponent<ScrollItemKeyNavigation>().ID = (int)id;
+            if (siblingIndex <= fieldMessageConfigIndex)
+                fieldMessageConfigIndex++;
+
+            var locs = go.GetComponentsInChildren<UILocalize>();
+            locs[0].key = id.ToString();
+            if (!String.IsNullOrEmpty(choice1)) locs[1].key = choice1;
+            if (!String.IsNullOrEmpty(choice2)) locs[2].key = choice2;
+
+            return go;
+        }
+        catch (Exception ex)
+        {
+            Log.Error($"[ConfigUI] Couldn't create silder\n{ex.Message}\n{ex.StackTrace}");
+        }
+        return null;
+    }
 
     private GameObject CreateSlider(GameObject template, Configurator id, int siblingIndex)
     {
@@ -1572,15 +1642,20 @@ public class ConfigUI : UIScene
         FadingComponent = ScreenFadeGameObject.GetComponent<HonoFading>();
         ConfigFieldList = new List<ConfigField>();
 
-        // Adding the volume sliders
-        GameObject template = SliderMenuTemplate;
-        CreateVolumeSlider(template, Configurator.SoundVolume, 0);
-        CreateVolumeSlider(template, Configurator.MusicVolume, 1);
-        CreateVolumeSlider(template, Configurator.MovieVolume, 2);
-        if (Configuration.VoiceActing.Enabled)
-            CreateVolumeSlider(template, Configurator.VoiceVolume, 3);
+        // Adding the volume sliders and auto-text
+        GameObject sliderTemplate = SliderMenuTemplate;
+        GameObject choiceTemplate = ConfigList.GetChild(1).GetChild(0).GetChild(0);
 
-        CreateATBModeSlider(template, Configurator.ATBMode, 9);
+        CreateVolumeSlider(sliderTemplate, Configurator.SoundVolume, 0);
+        CreateVolumeSlider(sliderTemplate, Configurator.MusicVolume, 1);
+        CreateVolumeSlider(sliderTemplate, Configurator.MovieVolume, 2);
+        if (Configuration.VoiceActing.Enabled)
+        {
+            CreateVolumeSlider(sliderTemplate, Configurator.VoiceVolume, 3);
+            CreateChoice(choiceTemplate, Configurator.AutoText, null, null, 4);
+        }
+
+        CreateATBModeSlider(sliderTemplate, Configurator.ATBMode, 9);
 
         foreach (Transform trans in ConfigList.GetChild(1).GetChild(0).transform)
         {
@@ -1615,8 +1690,19 @@ public class ConfigUI : UIScene
                 toTitleGameObject = configTopObj;
                 UIEventListener.Get(configTopObj).onClick += onClick;
             }
-            else if (configField.Configurator == Configurator.ControlTutorial || configField.Configurator == Configurator.CombatTutorial || configField.Configurator == Configurator.QuitGame)
+            else if (configField.Configurator == Configurator.ControlTutorial)
             {
+                controlTutorialGameObject = configTopObj;
+                UIEventListener.Get(configTopObj).onClick += onClick;
+            }
+            else if (configField.Configurator == Configurator.CombatTutorial)
+            {
+                combatTutorialGameObject = configTopObj;
+                UIEventListener.Get(configTopObj).onClick += onClick;
+            }
+            else if (configField.Configurator == Configurator.QuitGame)
+            {
+                quitGameGameObject = configTopObj;
                 UIEventListener.Get(configTopObj).onClick += onClick;
             }
             else

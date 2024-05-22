@@ -97,7 +97,13 @@ namespace Memoria
 				set => Instance._interface.MenuChocographRowCount.Value = value;
 			}
 
-			public static void SaveBattleValues()
+            public static Single FadeDuration
+            {
+                get => Mathf.Clamp(Instance._interface.FadeDuration / 1000f, 0f, 5f);
+                set => Instance._interface.FadeDuration.Value = (Int32)(value * 1000f);
+            }
+
+            public static void SaveBattleValues()
 			{
 				//SaveValue(Instance._interface.Name, Instance._interface.Enabled);
 				SaveValue(Instance._interface.Name, Instance._interface.PSXBattleMenu);

@@ -1,8 +1,8 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
-using UnityEngine;
 using Memoria;
+using System;
+using UnityEngine;
 
 public class UIScene : MonoBehaviour
 {
@@ -64,7 +64,8 @@ public class UIScene : MonoBehaviour
 		}
 		if (this.fading != (UnityEngine.Object)null && this.isNeedFade)
 		{
-			this.fading.fadeOutDuration = ((!FF9StateSystem.Settings.IsFastForward) ? 0.3f : 0.15f);
+			this.fading.fadeOutDuration = ((!FF9StateSystem.Settings.IsFastForward) ? Configuration.Interface.FadeDuration : Configuration.Interface.FadeDuration / FF9StateSystem.Settings.FastForwardFactor); ;
+
 			this.fading.FadeOut(this.AfterSceneShown);
 			this.Loading = true;
 		}
@@ -95,7 +96,8 @@ public class UIScene : MonoBehaviour
 		}
 		if (this.fading != (UnityEngine.Object)null && this.isNeedFade)
 		{
-			this.fading.fadeInDuration = ((!FF9StateSystem.Settings.IsFastForward) ? 0.3f : 0.15f);
+			this.fading.fadeInDuration = ((!FF9StateSystem.Settings.IsFastForward) ? Configuration.Interface.FadeDuration : Configuration.Interface.FadeDuration / FF9StateSystem.Settings.FastForwardFactor);
+
 			this.fading.FadeIn(this.AfterSceneHidden);
 			this.Loading = true;
 		}
@@ -265,31 +267,31 @@ public class UIScene : MonoBehaviour
 			Int32 currentTouchID = UICamera.currentTouchID;
 			switch (currentTouchID + 2)
 			{
-			case 1:
-				this.OnKeyConfirm(go);
-				break;
-			case 2:
-			case 3:
-				if (ButtonGroupState.ContainButtonInSecondaryGroup(go))
-				{
+				case 1:
 					this.OnKeyConfirm(go);
-				}
-				else
-				{
-					ButtonGroupState component = go.GetComponent<ButtonGroupState>();
-					if (component)
+					break;
+				case 2:
+				case 3:
+					if (ButtonGroupState.ContainButtonInSecondaryGroup(go))
 					{
-						if (component.ProcessTouch())
+						this.OnKeyConfirm(go);
+					}
+					else
+					{
+						ButtonGroupState component = go.GetComponent<ButtonGroupState>();
+						if (component)
+						{
+							if (component.ProcessTouch())
+							{
+								this.OnKeyConfirm(go);
+							}
+						}
+						else
 						{
 							this.OnKeyConfirm(go);
 						}
 					}
-					else
-					{
-						this.OnKeyConfirm(go);
-					}
-				}
-				break;
+					break;
 			}
 		}
 	}

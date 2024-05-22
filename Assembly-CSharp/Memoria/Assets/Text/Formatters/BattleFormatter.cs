@@ -18,7 +18,7 @@ namespace Memoria.Assets
             {"[VIVI]", "{Vivi}"},
             {"[DGGR]", "{Dagger}"},
             {"[STNR]", "{Steiner}"},
-            {"[FRYA]", "{Fraya}"},
+            {"[FRYA]", "{Freya}"},
             {"[QUIN]", "{Quina}"},
             {"[EIKO]", "{Eiko}"},
             {"[AMRT]", "{Amarant}"}
@@ -30,7 +30,7 @@ namespace Memoria.Assets
             {"[VIVI]", "{Vivi}"},
             {"[DGGR]", "{Dagger}"},
             {"[STNR]", "{Steiner}"},
-            {"[FRYA]", "{Fraya}"},
+            {"[FRYA]", "{Freya}"},
             {"[QUIN]", "{Quina}"},
             {"[EIKO]", "{Eiko}"},
             {"[AMRT]", "{Amarant}"},

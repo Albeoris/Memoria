@@ -56,8 +56,8 @@ namespace Memoria.Assets
 
         private Boolean TryLoadReplacements(out Dictionary<String, String> dic)
         {
-            String importPath = ModTextResources.Import.Battle;
-            if (!File.Exists(importPath))
+            TextResourceReference importPath = ModTextResources.Import.Battle;
+            if (!importPath.IsExists(out TextResourcePath existingFile))
             {
                 Log.Warning($"[{TypeName}] Import was skipped bacause a file does not exist: [{importPath}].");
                 dic = null;
@@ -66,7 +66,7 @@ namespace Memoria.Assets
 
             Log.Message($"[{TypeName}] Loading from [{importPath}]...");
 
-            TxtEntry[] entries = TxtReader.ReadStrings(importPath);
+            TxtEntry[] entries = existingFile.ReadAll();
 
             BattleFormatter.Parse(entries, out dic);
 

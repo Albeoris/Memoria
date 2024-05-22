@@ -181,10 +181,15 @@ namespace Memoria.Assets
             sb.Append('{');
             if (EnumCache<FFIXTextTagCode>.IsDefined(Code))
             {
-                sb.Append(Code);
+                if (Code == FFIXTextTagCode.Fraya)
+                    sb.Append(FFIXTextTagCode.Freya);
+                else
+                    sb.Append(Code);
             }
             else
+            {
                 sb.Append("Unknown ").Append(((Byte)Code).ToString("X2"));
+            }
 
             if (Param?.Length > 0)
             {

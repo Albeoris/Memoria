@@ -7,7 +7,7 @@ namespace Memoria.Assets
     public sealed class EtcImporter : SingleFileImporter
     {
         protected override String TypeName { get; }
-        protected override String ImportPath { get; }
+        protected override TextResourceReference ImportPath { get; }
 
         private readonly Action<String[]> _setter;
         private readonly String _embadedPath;

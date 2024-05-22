@@ -90,12 +90,8 @@ namespace FF9
                             {
                                 BattleUnit unit = new BattleUnit(next);
                                 Character player = unit.Player;
-                                if (player.Equipment.Accessory == RegularItem.PhoenixDown && ff9item.FF9Item_GetCount(RegularItem.PhoenixDown) > 9 && ff9item.FF9Item_GetCount(RegularItem.PhoenixDown) > (Comn.random16() % 100))
-                                {
-                                    ff9item.FF9Item_Remove(RegularItem.PhoenixDown, 99);
-                                    ff9item.FF9Item_Add(RegularItem.PhoenixDown, Comn.random16() % 10);
+                                if (player.Equipment.Accessory == RegularItem.PhoenixPinion && ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8())
                                     procRebirthFlame = true;
-                                }
                             }
                             else
                             {
@@ -319,7 +315,7 @@ namespace FF9
             }
             else
             {
-                if (calc_check && UIManager.Battle.FF9BMenu_IsEnableAtb())
+                if (calc_check && UIManager.Battle.IsNativeEnableAtb())
                     SBattleCalculator.CalcMain(null, null, null, fleeScriptId);
             }
         }

@@ -4,6 +4,7 @@
 // MVID: 9E13D328-CC20-4729-BE81-A583B120F83A
 // Compiler-generated code is shown
 
+using Memoria;
 using System;
 using UnityEngine;
 using XInputDotNetPure;
@@ -51,7 +52,7 @@ namespace UnityXInput
 
         private static Single GetXAxis(String axisName)
         {
-            if (!HonoInputManager.ApplicationIsActivated() || !PersistenSingleton<XInputManager>.Instance.CurrentState.IsConnected)
+            if ((!Configuration.Control.AlwaysCaptureGamepad && !HonoInputManager.ApplicationIsActivated()) || !PersistenSingleton<XInputManager>.Instance.CurrentState.IsConnected)
                 return 0.0f;
             if (axisName.Contains("Horizontal"))
             {
@@ -78,7 +79,7 @@ namespace UnityXInput
 
         private static Boolean GetXButton(String keyName)
         {
-            if (!HonoInputManager.ApplicationIsActivated())
+            if (!Configuration.Control.AlwaysCaptureGamepad && !HonoInputManager.ApplicationIsActivated())
                 return false;
             GamePadState currentState = PersistenSingleton<XInputManager>.Instance.CurrentState;
             GamePadState previousState = PersistenSingleton<XInputManager>.Instance.PreviousState;
@@ -141,7 +142,7 @@ namespace UnityXInput
 
         private static Boolean GetXButtonUp(String keyName)
         {
-            if (!HonoInputManager.ApplicationIsActivated())
+            if (!Configuration.Control.AlwaysCaptureGamepad && !HonoInputManager.ApplicationIsActivated())
                 return false;
             GamePadState currentState = PersistenSingleton<XInputManager>.Instance.CurrentState;
             GamePadState previousState = PersistenSingleton<XInputManager>.Instance.PreviousState;
@@ -208,7 +209,7 @@ namespace UnityXInput
 
         private static Boolean GetXButtonDown(String keyName)
         {
-            if (!HonoInputManager.ApplicationIsActivated())
+            if (!Configuration.Control.AlwaysCaptureGamepad && !HonoInputManager.ApplicationIsActivated())
                 return false;
             GamePadState currentState = PersistenSingleton<XInputManager>.Instance.CurrentState;
             GamePadState previousState = PersistenSingleton<XInputManager>.Instance.PreviousState;

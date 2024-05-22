@@ -269,6 +269,16 @@ public partial class BattleHUD : UIScene
             }
         }
 
+        if(switchBtlId >= 0)
+        {
+            // Switch to player ready when ForceNextTurn (turn-based)
+            Int32 playerId = 0;
+            while (1 << playerId != switchBtlId)
+                ++playerId;
+            SwitchPlayer(playerId);
+            switchBtlId = -1;
+        }
+
         if (ReadyQueue.Count <= 0 || CurrentPlayerIndex != -1)
             return;
 
@@ -441,9 +451,9 @@ public partial class BattleHUD : UIScene
 
         if (_subMenuType == SubMenuType.Ability)
         {
-            AA_DATA aaData = GetSelectedActiveAbility(CurrentPlayerIndex, _currentCommandId, _currentSubMenuIndex, out _);
+            AA_DATA aaData = GetSelectedActiveAbility(CurrentPlayerIndex, _currentCommandId, _currentSubMenuIndex, out _, out BattleAbilityId abilId);
 
-            if (btl.CurrentMp < GetActionMpCost(aaData, btl))
+            if (btl.CurrentMp < GetActionMpCost(aaData, btl, abilId))
             {
                 FF9Sfx.FF9SFX_Play(101);
                 DisplayAbility();
@@ -592,7 +602,7 @@ public partial class BattleHUD : UIScene
         if (cmd != null && btl_cmd.CheckUsingCommand(cmd))
             return;
         CurrentPlayerIndex = playerIndex;
-        _currentCommandIndex = CommandMenu.Attack;
+        _currentCommandIndex = BattleCommandMenu.Attack;
         
         BattleUnit enemy = GetFirstAliveEnemy();
         if (enemy != null)

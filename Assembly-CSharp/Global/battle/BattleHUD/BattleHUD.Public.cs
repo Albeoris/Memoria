@@ -1,13 +1,13 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using FF9;
 using Memoria;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scenes;
-using Memoria.Assets;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Object = System.Object;
 
@@ -19,6 +19,9 @@ public partial class BattleHUD : UIScene
     public Boolean BtlWorkPeep => _currentPeepingMessageCount > 0;
     public GameObject PlayerTargetPanel => TargetPanel.GetChild(0);
     public GameObject EnemyTargetPanel => TargetPanel.GetChild(1);
+    public Boolean IsDoubleCast => DoubleCastSet.Contains(_currentCommandId);
+    public Boolean CanForceNextTurn => Configuration.Battle.Speed == 2 && UIManager.Battle.FF9BMenu_IsEnable() && !ForceNextTurn
+        && ReadyQueue.Count > 0 && FF9StateSystem.Battle.FF9Battle.cur_cmd == null && btl_cmd.GetFirstCommandReadyToDequeue(FF9StateSystem.Battle.FF9Battle) == null;
     public List<Int32> ReadyQueue { get; }
     public List<Int32> InputFinishList { get; }
     public Int32 CurrentPlayerIndex { get; private set; }
@@ -26,7 +29,8 @@ public partial class BattleHUD : UIScene
         BattleCommandId.DoubleBlackMagic,
         BattleCommandId.DoubleWhiteMagic
     };
-    public Boolean IsDoubleCast => DoubleCastSet.Contains(_currentCommandId);
+    public static Boolean ForceNextTurn = false;
+    public static Int32 switchBtlId = -1;
 
     public BattleHUD()
     {
@@ -48,7 +52,7 @@ public partial class BattleHUD : UIScene
         InputFinishList = new List<Int32>();
         _unconsciousStateList = new List<Int32>();
         _firstCommand = new CommandDetail();
-        _commandCursorMemorize = new Dictionary<Int32, CommandMenu>();
+        _commandCursorMemorize = new Dictionary<Int32, BattleCommandMenu>();
         _abilityCursorMemorize = new Dictionary<PairCharCommand, Int32>();
         _matchBattleIdPlayerList = new List<Int32>();
         _matchBattleIdEnemyList = new List<Int32>();
@@ -57,7 +61,7 @@ public partial class BattleHUD : UIScene
         _oneTime = true;
     }
 
-    public void SetBattleFollowMessage(BattleMesages pMes, params Object[] args)
+    public void SetBattleFollowMessage(BattleMesages pMes, Object arg = null, CMD_DATA msgCmd = null)
     {
         Int32 pMesNo = (Int32)pMes;
         String fmtMessage = FF9TextTool.BattleFollowText(pMesNo + 7);
@@ -67,15 +71,14 @@ public partial class BattleHUD : UIScene
         Byte priority = (Byte)Char.GetNumericValue(fmtMessage[0]);
         String parsedMessage = fmtMessage.Substring(1);
 
-        if (args.Length > 0)
+        if (arg != null)
         {
-            String str3 = args[0].ToString();
-            Int32 result;
-            parsedMessage = !Int32.TryParse(str3, out result) ? parsedMessage.Replace("%", str3) : parsedMessage.Replace("&", str3);
+            String argStr = arg.ToString();
+            parsedMessage = !Int32.TryParse(argStr, out _) ? parsedMessage.Replace("%", argStr) : parsedMessage.Replace("&", argStr);
         }
 
         VoicePlayer.PlayBattleVoice(pMesNo + 7, fmtMessage, true);
-        SetBattleMessage(parsedMessage, priority);
+        SetBattleMessage(parsedMessage, priority, msgCmd);
     }
 
     public void SetBattleFollowMessage(Byte priority, String formatMessage, params Object[] args)
@@ -166,9 +169,10 @@ public partial class BattleHUD : UIScene
     {
         if (Configuration.Interface.ScanDisplay)
         {
+            Single additionalWidth = 0.0f;
             String libraMessage = $"[{NGUIText.Center}]";
             if ((infos & LibraInformation.Name) != 0)
-                libraMessage += pBtl.Name;
+                libraMessage += Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(pBtl.Name, ref additionalWidth);
             if ((infos & LibraInformation.Level) != 0)
                 libraMessage += FF9TextTool.BattleLibraText(10) + pBtl.Level.ToString();
             if ((infos & LibraInformation.NameLevel) != 0)
@@ -252,7 +256,7 @@ public partial class BattleHUD : UIScene
             _currentButtonGroup = !_hidingHud ? ButtonGroupState.ActiveGroup : _currentButtonGroup;
             FF9BMenu_EnableMenu(false);
             TutorialUI tutorialUI = PersistenSingleton<UIManager>.Instance.TutorialScene;
-            tutorialUI.libraTitle = pBtl.Name;
+            tutorialUI.libraTitle = Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(pBtl.Name, ref additionalWidth);
             tutorialUI.libraMessage = libraMessage;
             tutorialUI.libraPhoto = photo;
             tutorialUI.DisplayMode = TutorialUI.Mode.Libra;
@@ -317,7 +321,7 @@ public partial class BattleHUD : UIScene
         DisplayBattleMessage(asMessage);
     }
 
-    public void SetBattleMessage(String str, Byte strPriority)
+    public void SetBattleMessage(String str, Byte strPriority, CMD_DATA cmd = null)
     {
         Message asMessage = new Message()
         {
@@ -325,7 +329,7 @@ public partial class BattleHUD : UIScene
             priority = strPriority,
             counter = 0f,
             isRect = false,
-            titleCmd = null
+            titleCmd = cmd
         };
         _messageQueue[str] = asMessage;
 
@@ -662,10 +666,14 @@ public partial class BattleHUD : UIScene
         Boolean isMenuing = _commandPanel.IsActive || _targetPanel.IsActive || _itemPanel.IsActive || _abilityPanel.IsActive;
         Boolean isEnemyActing = FF9StateSystem.Battle.FF9Battle.cur_cmd != null && FF9StateSystem.Battle.FF9Battle.cur_cmd.regist?.bi.player == 0;
         Boolean hasQueue = btl_cmd.GetFirstCommandReadyToDequeue(FF9StateSystem.Battle.FF9Battle) != null;
+
+        if (ForceNextTurn && !hasQueue && !isEnemyActing)
+            return true;
+
         return !(isMenuing || hasQueue || isEnemyActing);
     }
 
-    internal Boolean IsNativeEnableAtb()
+    public Boolean IsNativeEnableAtb()
     {
         if (!_commandEnable)
             return false;
@@ -773,7 +781,7 @@ public partial class BattleHUD : UIScene
         BackButton.SetActive(false);
         _currentSilenceStatus = false;
         _currentMpValue = -1;
-        _currentCommandIndex = CommandMenu.Attack;
+        _currentCommandIndex = BattleCommandMenu.Attack;
         _currentSubMenuIndex = -1;
         CurrentPlayerIndex = -1;
         //currentTranceTrigger = false;
@@ -806,7 +814,7 @@ public partial class BattleHUD : UIScene
     }
 
     public Boolean IsAbilityAvailable(BattleUnit unit, Int32 abilId)
-	{
+    {
         if (!unit.IsPlayer)
             return true;
         return GetAbilityState(abilId, unit.GetIndex()) == AbilityStatus.Enable;

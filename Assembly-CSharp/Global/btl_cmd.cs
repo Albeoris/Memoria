@@ -1,13 +1,13 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Memoria;
 using Memoria.Data;
 using Memoria.Scripts;
-using UnityEngine;
 using NCalc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
 
 // ReSharper disable SuspiciousTypeConversion.Global
 // ReSharper disable EmptyConstructor
@@ -145,7 +145,7 @@ public class btl_cmd
         }
     }
 
-    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false)
+    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false, BattleCommandMenu cmdMenu = BattleCommandMenu.None)
     {
         if (btl_cmd.CheckUsingCommand(cmd))
             return;
@@ -164,6 +164,7 @@ public class btl_cmd
                 FF9StateSystem.Battle.FF9Battle.cmd_status |= 16;
                 break;
         }
+        cmd.info.cmdMenu = cmdMenu;
         cmd.SetAAData(btl_util.GetCommandAction(cmd));
         cmd.ScriptId = btl_util.GetCommandScriptId(cmd);
         // ScriptId 80: Double cast with AA specified by "Power" and "Rate"
@@ -239,8 +240,8 @@ public class btl_cmd
             first_cmd.regist.sel_mode = 1;
             first_cmd.info.CustomMPCost = cmd.aa.MP;
             second_cmd.info.CustomMPCost = 0;
-            btl_cmd.SetCommand(first_cmd, commandId, cmd.Power, first_tar_id, first_cursor);
-            btl_cmd.SetCommand(second_cmd, commandId, cmd.HitRate, second_tar_id, second_cursor);
+            btl_cmd.SetCommand(first_cmd, commandId, cmd.Power, first_tar_id, first_cursor, cmdMenu: cmdMenu);
+            btl_cmd.SetCommand(second_cmd, commandId, cmd.HitRate, second_tar_id, second_cursor, cmdMenu: cmdMenu);
             return;
         }
 
@@ -542,7 +543,8 @@ public class btl_cmd
                 || btl_stat.CheckStatus(cmd.regist, BattleStatusConst.Immobilized) && cmd.cmd_no != BattleCommandId.SysDead && cmd.cmd_no != BattleCommandId.SysReraise && cmd.cmd_no != BattleCommandId.SysStone && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysLastPhoenix
                 || Status.checkCurStat(cmd.regist, BattleStatus.Death) && cmd.cmd_no == BattleCommandId.SysPhantom
                 || Configuration.Battle.Speed >= 4 && btl_util.IsBtlUsingCommandMotion(cmd.regist)
-                || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0)
+                || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0
+                || (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill) && btl_stat.CheckStatus(cmd.regist, BattleStatus.Sleep))) // [DV] Prevent command cancel for boss.
             {
                 if (Configuration.Battle.Speed == 4)
                 {
@@ -610,13 +612,16 @@ public class btl_cmd
             //}
             if (btl_stat.CheckStatus(btl, BattleStatus.Heat))
             {
-                if (!Configuration.Mod.TranceSeek || btl.dms_geo_id != 512) // TRANCE SEEK - Ark overheat
+                if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill)) // TRANCE SEEK - Boss don't die with Heat.
                 {
-                    /*int num = (int)*/
-                    BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Heat);
-                    btl_stat.AlterStatus(btl, BattleStatus.Death);
+                    btlsys.cur_cmd_list.Add(cmd);
+                    KillCommand(cmd);
                     return;
                 }
+                /*int num = (int)*/
+                BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Heat);
+                btl_stat.AlterStatus(btl, BattleStatus.Death);
+                return;
             }
         }
         btlsys.cur_cmd_list.Add(cmd);
@@ -1054,10 +1059,10 @@ public class btl_cmd
                 cmd.tar_id = caster.Id;
                 break;
             case BattleCommandId.MagicCounter:
-                UIManager.Battle.SetBattleFollowMessage(BattleMesages.ReturnMagic);
+                UIManager.Battle.SetBattleFollowMessage(BattleMesages.ReturnMagic, msgCmd: cmd);
                 break;
             case BattleCommandId.AutoPotion:
-                UIManager.Battle.SetBattleFollowMessage(BattleMesages.AutoPotion);
+                UIManager.Battle.SetBattleFollowMessage(BattleMesages.AutoPotion, msgCmd: cmd);
                 break;
             case BattleCommandId.SummonGarnet:
             case BattleCommandId.SummonEiko:
@@ -1068,7 +1073,7 @@ public class btl_cmd
                 return DecideMagicSword(caster, cmd.aa.MP);
             case BattleCommandId.Counter:
                 if (btl_util.GetCommandMainActionIndex(cmd) == BattleAbilityId.Attack)
-                    UIManager.Battle.SetBattleFollowMessage(BattleMesages.CounterAttack);
+                    UIManager.Battle.SetBattleFollowMessage(BattleMesages.CounterAttack, msgCmd: cmd);
                 break;
             case BattleCommandId.SysEscape:
                 if (btlsys.btl_phase == 4)
@@ -1178,6 +1183,8 @@ public class btl_cmd
     {
         if (!btl_stat.CheckStatus(cmd.regist, BattleStatus.Silence) || (cmd.AbilityCategory & 2) == 0)
             return true;
+        if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill)) // [DV] - Bosses can use magic under silence but have malus.
+            return true;
         UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotCast);
         BattleVoice.TriggerOnStatusChange(cmd.regist, "Used", BattleStatus.Silence);
         return false;
@@ -1247,9 +1254,10 @@ public class btl_cmd
 
     private static Boolean CheckMpCondition(CMD_DATA cmd)
     {
-        Int32 mp = cmd.info.CustomMPCost >= 0 ? cmd.info.CustomMPCost : cmd.aa.MP;
-        if (cmd.info.IsZeroMP)
-            mp = 0;
+        Int32 mp = cmd.GetCommandMPCost();
+        if (cmd.regist != null)
+            if (BattleAbilityHelper.GetPatchedMPCost(btl_util.GetCommandMainActionIndex(cmd), new BattleUnit(cmd.regist), ref mp, cmd: cmd))
+                cmd.info.CustomMPCost = mp;
 
         if (battle.GARNET_SUMMON_FLAG != 0 && (cmd.AbilityType & 4) != 0)
             mp *= 4;
@@ -1356,7 +1364,7 @@ public class btl_cmd
             }
             else if (commandId == BattleCommandId.JumpTrance)
             {
-                if (Configuration.Mod.TranceSeek)
+                if (Configuration.Mod.TranceSeek) // [DV] - Freyja come back after Jump when in Trance
                 {
                     caster.RemoveStatus(BattleStatus.Jump);
                 }
@@ -1598,7 +1606,7 @@ public class btl_cmd
         }
     }
 
-    public static void ExecVfxCommand(BTL_DATA target, CMD_DATA cmd = null)
+    public static void ExecVfxCommand(BTL_DATA target, CMD_DATA cmd = null, BattleActionThread sfxThread = null)
     {
         if (cmd == null)
             cmd = btl_util.getCurCmdPtr();
@@ -1630,7 +1638,7 @@ public class btl_cmd
                         KillAllCommand(btlsys);
                     }
                 }
-                SBattleCalculator.CalcMain(caster, target, cmd);
+                SBattleCalculator.CalcMain(caster, target, cmd, sfxThread);
                 return;
             case BattleCommandId.SysTrans:
             {
@@ -1656,7 +1664,7 @@ public class btl_cmd
             case BattleCommandId.Item:
             case BattleCommandId.AutoPotion:
             default:
-                SBattleCalculator.CalcMain(caster, target, cmd);
+                SBattleCalculator.CalcMain(caster, target, cmd, sfxThread);
                 return;
         }
     }
