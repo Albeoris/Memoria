@@ -111,7 +111,6 @@ namespace Memoria.Launcher
             battleFPSText.Foreground = Brushes.White;
             battleFPSText.Margin = rowMargin;
             battleFPSText.ToolTip = Lang.Settings.BattleFPS_Tooltip;
-            battleFPSText.TextAlignment = TextAlignment.Center;
 
             UiTextBlock fieldFPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FieldFPS), row, 3, 1, 3);
             fieldFPSText.Foreground = Brushes.White;
@@ -134,7 +133,7 @@ namespace Memoria.Launcher
             UiTextBlock battleFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
             battleFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
             battleFPSIndex.Foreground = Brushes.White;
-            battleFPSIndex.Margin = new(8, 2, 0, 2);
+            battleFPSIndex.Margin = new(8, 0, 0, 2);
             //battleFPSIndex.TextAlignment = TextAlignment.Right;
             Slider battleFPSSlider = AddUiElement(UiSliderFactory.Create(60), row, 1, 1, 2);
             battleFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
@@ -152,7 +151,7 @@ namespace Memoria.Launcher
             UiTextBlock fieldFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 3, 1, 1);
             fieldFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(FieldFPS)) { Mode = BindingMode.TwoWay });
             fieldFPSIndex.Foreground = Brushes.White;
-            fieldFPSIndex.Margin = new(2, 2, 0, 2);
+            fieldFPSIndex.Margin = new(8, 0, 0, 2);
             //fieldFPSIndex.TextAlignment = TextAlignment.Right;
             Slider fieldFPSSlider = AddUiElement(UiSliderFactory.Create(60), row, 4, 1, 2);
             fieldFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(FieldFPS)) { Mode = BindingMode.TwoWay });
@@ -170,8 +169,8 @@ namespace Memoria.Launcher
             UiTextBlock worldFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 6, 1, 1);
             worldFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(WorldFPS)) { Mode = BindingMode.TwoWay });
             worldFPSIndex.Foreground = Brushes.White;
-            worldFPSIndex.Margin = new(2, 2, 0, 2);
-            worldFPSIndex.TextAlignment = TextAlignment.Right;
+            worldFPSIndex.Margin = new(8, 0, 0, 2);
+            //worldFPSIndex.TextAlignment = TextAlignment.Right;
             Slider worldFPSSlider = AddUiElement(UiSliderFactory.Create(60), row, 7, 1, 2);
             worldFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(WorldFPS)) { Mode = BindingMode.TwoWay });
             worldFPSSlider.TickFrequency = 10;
