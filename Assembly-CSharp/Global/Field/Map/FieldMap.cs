@@ -2366,6 +2366,8 @@ public class FieldMap : HonoBehavior
         [609,0,9,3900],     // Lindblum castle anim
         [609,0,10,3900],    // Lindblum castle anim
         [609,0,11,3900],    // Lindblum castle anim
+        [1206,0,5,1280],    // Fireplace under floor 1 tile
+        [1801,0,5,1280],    // Fireplace under floor 1 tile
         [1359,0,7,3900],    // Lindblum castle anim
         [1359,0,8,3900],    // Lindblum castle anim
         [1359,0,9,3900],    // Lindblum castle anim
