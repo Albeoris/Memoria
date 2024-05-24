@@ -2390,6 +2390,7 @@ public class FieldMap : HonoBehavior
         [1656,0,3,998],     // Iifa statue glow (was not active on PSX)
         [1950,0,11,1100],   // Qwan's dwelling cropped anim.
         [2008,0,41,600],    // Candle light behind statues in Alex Castle
+        [2107,0,15,1862],   // Lindblum plaza smoke layer
         [2109,0,23,0],      // Lindblum armorer light
         [2109,0,24,1],      // Lindblum armorer armor
         [2207,0,1,0],       // Desert palace teleporter light 1
