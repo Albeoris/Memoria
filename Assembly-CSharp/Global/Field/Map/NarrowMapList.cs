@@ -104,6 +104,7 @@ public static class NarrowMapList
         [2007,8340],    // MBG111 - Alex castle changing
         [2007,8400],    // MBG111 - Alex castle changing
         [2172,9050],    // Scene with Garnet on tower
+        [2173,9050],    // ATE Quina
         [2905,11620],   // MBG118 - Memoria pink castle
     };
 
