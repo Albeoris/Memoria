@@ -322,7 +322,15 @@ public class FieldMap : HonoBehavior
         this.CenterCameraOnPlayer();
         this.SceneServiceScroll(this.scene);
         this.UpdateOverlayAll();
+
+        if (PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) != currentCounterNumber)
+        {
+            currentCounterNumber = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+            Log.Message("Map: " + FF9StateSystem.Common.FF9.fldMapNo + " | Scenario counter: " + PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR));
+        }
     }
+
+    public int currentCounterNumber = 0;
 
     public override void HonoOnGUI()
     {
