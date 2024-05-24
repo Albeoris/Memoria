@@ -81,7 +81,7 @@ public static class NarrowMapList
         [1823,331],  // Garnet coronation, garnet visible
         [1815,0],    // Love quiproquo at the docks
         [1816,315],  // Love quiproquo at the docks
-        [2007,2],    // MBG111 - Alex castle changing
+        //[2007,2],    // MBG111 - Alex castle changing
         [2211,8],    // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
         [2404,25],   // Baku seen waiting on the docks too soon
         [2705,-1],   // Pandemonium, you're not alone sequence, several glitches
@@ -101,6 +101,8 @@ public static class NarrowMapList
         [1652,6700],    // Iifa entrance
         [1652,6710],    // Iifa entrance
         [1901,7550],    // Treno scene, people staying there
+        [2007,8340],    // MBG111 - Alex castle changing
+        [2007,8400],    // MBG111 - Alex castle changing
         [2905,11620],   // MBG118 - Memoria pink castle
     };
 
