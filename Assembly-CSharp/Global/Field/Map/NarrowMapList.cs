@@ -100,6 +100,7 @@ public static class NarrowMapList
         [1554,6305],    // MBG109 - roots
         [1652,6700],    // Iifa entrance
         [1652,6710],    // Iifa entrance
+        [1901,7550],    // Treno scene, people staying there
         [2905,11620],   // MBG118 - Memoria pink castle
     };
 
