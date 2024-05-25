@@ -953,8 +953,9 @@ namespace Memoria.Launcher
                     value = " 1";
                     OnPropertyChanged(nameof(BattleSwirlFrames));
                 }
-                if (!Int16.TryParse(value, out _battleswirlframes))
-                    _battleswirlframes = 1;
+                newvalue = (Int16.Parse(value) == 0) ? "1" : "0";
+                if (!Int16.TryParse(newvalue, out _battleswirlframes))
+                    _battleswirlframes = 0;
 
                 value = iniFile.ReadValue("Graphics", nameof(AntiAliasing));
                 if (String.IsNullOrEmpty(value))
@@ -1253,7 +1254,7 @@ namespace Memoria.Launcher
                         }
                         else if (BattleSwirlFrames == 0)
                         {
-                            iniFile.WriteValue("Graphics", propertyName + " ", " 90");
+                            iniFile.WriteValue("Graphics", propertyName + " ", " 70");
                         }
                         break;
                     case nameof(AntiAliasing):
@@ -1356,7 +1357,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Graphics", "WorldTPS", "20");
                         MakeIniNotNull("Graphics", "MenuFPS", "60");
                         MakeIniNotNull("Graphics", "MenuTPS", "60");
-                        MakeIniNotNull("Graphics", "BattleSwirlFrames", "13");
+                        MakeIniNotNull("Graphics", "BattleSwirlFrames", "0");
                         MakeIniNotNull("Graphics", "WidescreenSupport", "1");
                         MakeIniNotNull("Graphics", "SkipIntros", "0");
                         MakeIniNotNull("Graphics", "GarnetHair", "0");
