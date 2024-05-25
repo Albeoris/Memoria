@@ -1348,11 +1348,11 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Font", "Size", "24");
 
                         MakeIniNotNull("Graphics", "Enabled", "0");
-                        MakeIniNotNull("Graphics", "BattleFPS", "30");
+                        MakeIniNotNull("Graphics", "BattleFPS", "60");
                         MakeIniNotNull("Graphics", "BattleTPS", "15");
-                        MakeIniNotNull("Graphics", "FieldFPS", "30");
+                        MakeIniNotNull("Graphics", "FieldFPS", "60");
                         MakeIniNotNull("Graphics", "FieldTPS", "30");
-                        MakeIniNotNull("Graphics", "WorldFPS", "20");
+                        MakeIniNotNull("Graphics", "WorldFPS", "60");
                         MakeIniNotNull("Graphics", "WorldTPS", "20");
                         MakeIniNotNull("Graphics", "MenuFPS", "60");
                         MakeIniNotNull("Graphics", "MenuTPS", "60");
@@ -1371,7 +1371,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Control", "BattleAutoConfirm", "1");
                         MakeIniNotNull("Control", "TurboDialog", "1");
                         MakeIniNotNull("Control", "PSXScrollingMethod", "1");
-                        MakeIniNotNull("Control", "PSXMovementMethod", "0");
+                        MakeIniNotNull("Control", "PSXMovementMethod", "1");
                         MakeIniNotNull("Control", "AlwaysCaptureGamepad", "0");
 
                         MakeIniNotNull("Battle", "Enabled", "0");
