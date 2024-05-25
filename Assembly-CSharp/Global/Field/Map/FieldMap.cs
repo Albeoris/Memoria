@@ -1693,6 +1693,8 @@ public class FieldMap : HonoBehavior
                             bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8; break;
                         case 1657:
                             bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256f) - (float)0.25; break;
+                        case 1660:
+                            bgOverlay.curX = 0; break;
                         case 1758: // Iifa roots 2
                             bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8; break;
                         case 2600: // 464/416
