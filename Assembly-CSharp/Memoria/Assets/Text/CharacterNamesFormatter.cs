@@ -136,7 +136,7 @@ namespace Memoria.Assets
             TxtEntry[] names = new TxtEntry[characterNames.Count];
             Int32 index = 0;
             foreach (KeyValuePair<CharacterId, String> pair in characterNames)
-                names[index] = new TxtEntry { Index = (Int32)pair.Key, Prefix = prefix, Value = pair.Value };
+                names[index++] = new TxtEntry { Index = (Int32)pair.Key, Prefix = prefix, Value = pair.Value };
             return names;
         }
 
