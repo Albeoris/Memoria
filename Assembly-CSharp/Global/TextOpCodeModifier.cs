@@ -129,10 +129,13 @@ public class TextOpCodeModifier
 			Int32 num2 = 1;
 			for (Int32 i = num; i <= num2; i++)
 			{
+				Int16 actualPos = (i == 0) ? (Int16)(FieldMap.PsxScreenWidth - 90) : (Int16)(FieldMap.PsxScreenWidth - 102);
 				String text = TextOpCodeModifier.FossilRouteTargetOpCode[i];
 				if (source.Contains(text))
 				{
-					source = source.Replace(text, TextOpCodeModifier.FossilRouteReplacedOpCode[i]);
+					//source = source.Replace(text, TextOpCodeModifier.FossilRouteReplacedOpCode[i]);
+					source = source.Replace(text, $"[MPOS={actualPos},16]");
+					source = source.Replace("                     ", "                                          "); // fix for exit sign offset with some fonts
 				}
 			}
 		}
@@ -230,51 +233,51 @@ public class TextOpCodeModifier
 	}
 
 	private static String ReplaceOreShopText(String source)
-    {
-        if (FF9TextTool.FieldZoneId != 166)
-            return source;
+	{
+		if (FF9TextTool.FieldZoneId != 166)
+			return source;
 
-        String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
+		String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
 
-        Int32 num2;
-        Int32 num3;
-        switch (currentLanguage)
-        {
-            case "German":
-                num2 = 6;
-                num3 = 7;
-                break;
-            case "Spanish":
-                num2 = 4;
-                num3 = 5;
-                break;
-            case "French":
-                num2 = 2;
-                num3 = 3;
-                break;
-            case "Italian":
-                return source;
-            case "Japanese":
-                num2 = 0;
-                num3 = 1;
-                break;
-            default:
-                return source;
-        }
+		Int32 num2;
+		Int32 num3;
+		switch (currentLanguage)
+		{
+			case "German":
+				num2 = 6;
+				num3 = 7;
+				break;
+			case "Spanish":
+				num2 = 4;
+				num3 = 5;
+				break;
+			case "French":
+				num2 = 2;
+				num3 = 3;
+				break;
+			case "Italian":
+				return source;
+			case "Japanese":
+				num2 = 0;
+				num3 = 1;
+				break;
+			default:
+				return source;
+		}
 
-        for (Int32 i = num2; i <= num3; i++)
-        {
-            String text = TextOpCodeModifier.OreShopTargetOpCode[i];
-            if (source.Contains(text))
-            {
-                source = source.Replace(text, TextOpCodeModifier.OreShopReplacedOpCode[i]);
-            }
-        }
+		for (Int32 i = num2; i <= num3; i++)
+		{
+			String text = TextOpCodeModifier.OreShopTargetOpCode[i];
+			if (source.Contains(text))
+			{
+				source = source.Replace(text, TextOpCodeModifier.OreShopReplacedOpCode[i]);
+			}
+		}
 
-        return source;
-    }
+		return source;
+	}
 
-    private static String ReplaceEikoCookingText(String source)
+	private static String ReplaceEikoCookingText(String source)
 	{
 		if (FF9TextTool.FieldZoneId == 358)
 		{
@@ -319,24 +322,24 @@ public class TextOpCodeModifier
 
 	private static String ReplacePandoniumText(String source)
 	{
-	    if (FF9TextTool.FieldZoneId != 344)
-            return source;
+		if (FF9TextTool.FieldZoneId != 344)
+			return source;
 
-	    String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
-	    if (currentLanguage != "Japanese")
-            return source;
+		String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
+		if (currentLanguage != "Japanese")
+			return source;
 
-	    Int32 num2 = 0;
-	    Int32 num3 = 1;
-	    for (Int32 i = num2; i <= num3; i++)
-	    {
-	        String text = TextOpCodeModifier.PandoniumTargetOpCode[i];
-	        if (source.Contains(text))
-	        {
-	            source = source.Replace(text, TextOpCodeModifier.PandoniumReplacedOpcode[i]);
-	        }
-	    }
-	    return source;
+		Int32 num2 = 0;
+		Int32 num3 = 1;
+		for (Int32 i = num2; i <= num3; i++)
+		{
+			String text = TextOpCodeModifier.PandoniumTargetOpCode[i];
+			if (source.Contains(text))
+			{
+				source = source.Replace(text, TextOpCodeModifier.PandoniumReplacedOpcode[i]);
+			}
+		}
+		return source;
 	}
 
 	public static String ReplaceChanbaraArrow(String source)
@@ -376,11 +379,11 @@ public class TextOpCodeModifier
 		"[MPOS=212,12]"
 	};
 
-	public static readonly String[] FossilRouteReplacedOpCode = new String[]
-	{
-		"[MPOS=230,16]",
-		"[MPOS=218,16]"
-	};
+	//public static readonly String[] FossilRouteReplacedOpCode = new String[]
+	//{
+	//	"[MPOS=230,16]",
+	//	"[MPOS=218,16]"
+	//};
 
 	public static readonly String[] AuctionTargetOpCode = new String[]
 	{

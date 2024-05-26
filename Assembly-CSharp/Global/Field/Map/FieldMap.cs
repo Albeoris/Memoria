@@ -322,7 +322,15 @@ public class FieldMap : HonoBehavior
         this.CenterCameraOnPlayer();
         this.SceneServiceScroll(this.scene);
         this.UpdateOverlayAll();
+
+        if (PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) != currentCounterNumber)
+        {
+            currentCounterNumber = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+            Log.Message("Map: " + FF9StateSystem.Common.FF9.fldMapNo + " | Scenario counter: " + PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR));
+        }
     }
+
+    public int currentCounterNumber = 0;
 
     public override void HonoOnGUI()
     {
@@ -426,7 +434,7 @@ public class FieldMap : HonoBehavior
         this.flags |= FieldMapFlags.Unknown128;
         this.walkMesh.ProcessBGI();
         this.walkMesh.UpdateActiveCameraWalkmesh();
-        SmoothCamDelay = 6;
+        SmoothCamDelay = 4;
         SmoothCamActive = (!SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo));
         String camIdxIfCam = this.scene.cameraList.Count > 1 ? "-" + this.camIdx : "";
         PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}{camIdxIfCam} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
@@ -1685,6 +1693,8 @@ public class FieldMap : HonoBehavior
                             bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8; break;
                         case 1657:
                             bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256f) - (float)0.25; break;
+                        case 1660:
+                            bgOverlay.curX = 0; break;
                         case 1758: // Iifa roots 2
                             bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8; break;
                         case 2600: // 464/416
@@ -2358,6 +2368,8 @@ public class FieldMap : HonoBehavior
         [609,0,9,3900],     // Lindblum castle anim
         [609,0,10,3900],    // Lindblum castle anim
         [609,0,11,3900],    // Lindblum castle anim
+        [1206,0,5,1280],    // Fireplace under floor 1 tile
+        [1801,0,5,1280],    // Fireplace under floor 1 tile
         [1359,0,7,3900],    // Lindblum castle anim
         [1359,0,8,3900],    // Lindblum castle anim
         [1359,0,9,3900],    // Lindblum castle anim
@@ -2380,6 +2392,7 @@ public class FieldMap : HonoBehavior
         [1656,0,3,998],     // Iifa statue glow (was not active on PSX)
         [1950,0,11,1100],   // Qwan's dwelling cropped anim.
         [2008,0,41,600],    // Candle light behind statues in Alex Castle
+        [2107,0,15,1862],   // Lindblum plaza smoke layer
         [2109,0,23,0],      // Lindblum armorer light
         [2109,0,24,1],      // Lindblum armorer armor
         [2207,0,1,0],       // Desert palace teleporter light 1
@@ -2406,7 +2419,10 @@ public class FieldMap : HonoBehavior
         575,  // Hunting festival glich
         767,  // Burmecia, the queen slides from her layer
         931,  // Treno on the boat
+        1655, // scrolling root
         1754, // Fast scroll on Iifa platform buggy
+        //1953, // Scene with Quan flashback
+        2200, // Desert palace cells
         3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012, // ending glitches
     };
 }

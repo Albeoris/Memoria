@@ -81,7 +81,7 @@ public static class NarrowMapList
         [1823,331],  // Garnet coronation, garnet visible
         [1815,0],    // Love quiproquo at the docks
         [1816,315],  // Love quiproquo at the docks
-        [2007,2],    // MBG111 - Alex castle changing
+        //[2007,2],    // MBG111 - Alex castle changing
         [2211,8],    // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
         [2404,25],   // Baku seen waiting on the docks too soon
         [2705,-1],   // Pandemonium, you're not alone sequence, several glitches
@@ -95,8 +95,16 @@ public static class NarrowMapList
     {
         // [mapNo,counter],
         //[951,4500],     // Gargan roo, secondary screen is smaller, but only visible in 1 scene
+        [1550,6270],    // Mountain path - Quina stays there
         [1554,6300],    // MBG109 - roots
         [1554,6305],    // MBG109 - roots
+        [1652,6700],    // Iifa entrance
+        [1652,6710],    // Iifa entrance
+        [1901,7550],    // Treno scene, people staying there
+        [2007,8340],    // MBG111 - Alex castle changing
+        [2007,8400],    // MBG111 - Alex castle changing
+        [2172,9050],    // Scene with Garnet on tower
+        [2173,9050],    // ATE Quina
         [2905,11620],   // MBG118 - Memoria pink castle
     };
 
@@ -310,6 +318,7 @@ public static class NarrowMapList
         1457, // Mage Village/Rooftop
         1458,
         1459, // Mage Village/Water Mil
+        1461, // Memory Lindblum
         1463, // Dead Forest/Grove
         1464, // Dead Forest/Dead End
         1500,
@@ -322,7 +331,7 @@ public static class NarrowMapList
         1600,
         1601,
         1602,
-        1604, // Mdn. Sari/Eidolon Wall
+        //1604, // Mdn. Sari/Eidolon Wall
         1605, // Mdn. Sari/Eidolon Wall
         1606, // Mdn. Sari/Resting Room
         1607, // Mdn. Sari/Kitchen
@@ -531,7 +540,9 @@ public static class NarrowMapList
         {164,318},
         {455,318},
         {606,318},
+        {931,318},
         {1050,316},
+        {1507,318},
 
         {203,334},
         {760,334},
