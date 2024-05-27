@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria.Prime;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -74,6 +75,7 @@ namespace Memoria
 				_cameraRotActual = ff9.world.MainCamera.transform.rotation;
 				_cameraRegistered = true;
 			}
+			Apply(0f);
 		}
 
 		public static void Apply(Single smoothFactor)
@@ -81,7 +83,6 @@ namespace Memoria
 			if (_skipCount > 0)
 				return;
 			SFXData.LoadLoop();
-			Single unclampedFactor = 1f + smoothFactor;
 			for (ObjList objList = ff9.GetActiveObjList(); objList != null; objList = objList.next)
 			{
 				Obj obj = objList.obj;
@@ -90,9 +91,7 @@ namespace Memoria
 					WMActor wmActor = (obj as Actor)?.wmActor;
 					if (wmActor != null && wmActor._smoothUpdateRegistered && ff9.objIsVisible(obj))
 					{
-						Vector3 frameMove = wmActor._smoothUpdatePosActual - wmActor._smoothUpdatePosPrevious;
-						if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < ActorSmoothMovementMaxSqr)
-							wmActor.transform.position = wmActor._smoothUpdatePosActual + smoothFactor * frameMove;
+						wmActor.transform.position = Vector3.Lerp(wmActor._smoothUpdatePosPrevious, wmActor._smoothUpdatePosActual, smoothFactor);
 						if (wmActor._smoothUpdatePlayingAnim)
 						{
 							GameObject go = wmActor.originalActor.go;
@@ -100,9 +99,16 @@ namespace Memoria
 							AnimationState anim = go.GetComponent<Animation>()[animName];
 							if (anim != null)
 							{
-								Single animTime = Mathf.LerpUnclamped(wmActor._smoothUpdateAnimTimePrevious, wmActor._smoothUpdateAnimTimeActual, unclampedFactor);
-								animTime = Mathf.Max(0f, Mathf.Min(anim.length, animTime));
-								anim.time = animTime;
+								Single animTime;
+								if (wmActor._smoothUpdateAnimTimePrevious > wmActor._smoothUpdateAnimTimeActual)
+									animTime = Mathf.Lerp(wmActor._smoothUpdateAnimTimePrevious, anim.length, smoothFactor);
+								else
+									animTime = Mathf.Lerp(wmActor._smoothUpdateAnimTimePrevious, wmActor._smoothUpdateAnimTimeActual, smoothFactor);
+
+								/*if(wmActor.name == "obj14_WM")
+									Log.Message($"[DEBUG] {wmActor.name} prev: {wmActor._smoothUpdateAnimTimePrevious} actual:{wmActor._smoothUpdateAnimTimeActual} length: {anim.length} t:{smoothFactor} animTime: {animTime}");*/
+
+								anim.time = Mathf.Clamp(anim.length, 0f, animTime);
 								go.GetComponent<Animation>().Sample();
 							}
 						}
@@ -111,9 +117,9 @@ namespace Memoria
 			}
 			if (_cameraRegistered && ff9.world.MainCamera != null)
 			{
-				ff9.world.MainCamera.fieldOfView = Mathf.LerpUnclamped(_cameraFieldOfViewPrevious, _cameraFieldOfViewActual, unclampedFactor);
-				ff9.world.MainCamera.transform.position = Vector3.LerpUnclamped(_cameraPosPrevious, _cameraPosActual, unclampedFactor);
-				ff9.world.MainCamera.transform.rotation = Quaternion.LerpUnclamped(_cameraRotPrevious, _cameraRotActual, unclampedFactor);
+				ff9.world.MainCamera.fieldOfView = Mathf.LerpUnclamped(_cameraFieldOfViewPrevious, _cameraFieldOfViewActual, smoothFactor);
+				ff9.world.MainCamera.transform.position = Vector3.LerpUnclamped(_cameraPosPrevious, _cameraPosActual, smoothFactor);
+				ff9.world.MainCamera.transform.rotation = Quaternion.LerpUnclamped(_cameraRotPrevious, _cameraRotActual, smoothFactor);
 			}
 		}
 
