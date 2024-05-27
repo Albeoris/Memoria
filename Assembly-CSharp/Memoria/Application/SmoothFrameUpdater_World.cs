@@ -48,10 +48,17 @@ namespace Memoria
 					if (wmActor != null)
 					{
 						if (wmActor._smoothUpdateRegistered)
+						{
 							wmActor._smoothUpdatePosPrevious = wmActor._smoothUpdatePosActual + ff9.world.BlockShift;
+							wmActor._smoothUpdateRotPrevious = wmActor._smoothUpdateRotActual;
+						}
 						else
+						{
 							wmActor._smoothUpdatePosPrevious = wmActor.transform.position;
+							wmActor._smoothUpdateRotPrevious = wmActor.transform.rotation;
+						}
 						wmActor._smoothUpdatePosActual = wmActor.transform.position;
+						wmActor._smoothUpdateRotActual = wmActor.transform.rotation;
 						wmActor._smoothUpdateRegistered = true;
 					}
 				}
@@ -92,6 +99,7 @@ namespace Memoria
 					if (wmActor != null && wmActor._smoothUpdateRegistered && ff9.objIsVisible(obj))
 					{
 						wmActor.transform.position = Vector3.Lerp(wmActor._smoothUpdatePosPrevious, wmActor._smoothUpdatePosActual, smoothFactor);
+						wmActor.transform.rotation = Quaternion.Lerp(wmActor._smoothUpdateRotPrevious, wmActor._smoothUpdateRotActual, smoothFactor);
 						if (wmActor._smoothUpdatePlayingAnim)
 						{
 							GameObject go = wmActor.originalActor.go;
@@ -170,6 +178,8 @@ partial class WMActor
 	public Boolean _smoothUpdateRegistered = false;
 	public Vector3 _smoothUpdatePosPrevious;
 	public Vector3 _smoothUpdatePosActual;
+	public Quaternion _smoothUpdateRotPrevious;
+	public Quaternion _smoothUpdateRotActual;
 	public Boolean _smoothUpdatePlayingAnim = false;
 	public Single _smoothUpdateAnimTimePrevious;
 	public Single _smoothUpdateAnimTimeActual;
