@@ -222,18 +222,27 @@ namespace FF9
 			Int32 animLoopFrame = GeoAnim.getAnimationLoopFrame(btl);
 			clipState.speed = 0f;
 			btl._smoothUpdatePlayingAnim = true;
-			btl._smoothUpdateAnimTimePrevious = clipState.time;
+			btl._smoothUpdateAnimTimePrevious = btl._smoothUpdateAnimTimeActual = time;
+
+			if (btl.evt.animFrame == 0 && !reverseSpeed)
+				btl._smoothUpdateAnimTimePrevious = 0;
+			else if (btl.evt.animFrame == animLoopFrame && reverseSpeed)
+				btl._smoothUpdateAnimTimePrevious = clipState.length;
+
 			if (animMaxFrame != 0 && btl.bi.disappear == 0 && !btl_mot.IsAnimationFrozen(btl))
 			{
-				if (btl.evt.animFrame == 0 && !reverseSpeed)
-					btl._smoothUpdateAnimTimePrevious = time - btl.animSpeed / animMaxFrame * clipState.length;
-				else if (btl.evt.animFrame == animLoopFrame && reverseSpeed)
-					btl._smoothUpdateAnimTimePrevious = time + btl.animSpeed / animMaxFrame * clipState.length;
+				btl._smoothUpdateAnimTimeActual = Mathf.Clamp(time + btl.animSpeed / animMaxFrame * clipState.length, 0f, clipState.length);
 			}
-			btl._smoothUpdateAnimTimeActual = time;
 			clipState.time = time;
+
+			/*if ((btl._smoothUpdateAnimTimePrevious == 0 || btl._smoothUpdateAnimTimePrevious == clipState.length) && btl.btl_id == 1)
+			{
+				Log.Message($"[PlayAnim] {clipState.name} length: {clipState.length} prev: {btl._smoothUpdateAnimTimePrevious} actual: {btl._smoothUpdateAnimTimeActual}");
+			}*/
+
 			gameObject.GetComponent<Animation>().Sample();
-			if (btl.evt.animFrame == animLoopFrame && !reverseSpeed)
+			// Couldn't see a difference:
+			/*if (btl.evt.animFrame == animLoopFrame && !reverseSpeed)
 			{
 				// Try to smoothen standard animation chains
 				if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_RUN))
@@ -261,7 +270,7 @@ namespace FF9
 					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL], 1f / FPSManager.GetMainLoopSpeed());
 					btl._smoothUpdatePlayingAnim = false;
 				}
-			}
+			}*/
 		}
 
 		public static Int32 GetDirection(BTL_DATA btl)

@@ -31,7 +31,7 @@ namespace Memoria
 		// A smooth effect runs during frames at which the main loop doesn't run, for smoothing visual effects without updating the states of objects
 		public static void AddSmoothEffect(UpdaterDelegate eff)
 		{
-			FPSManager._activeSmooth.Add(eff);
+			FPSManager._activeSmooth = eff;
 		}
 
 		public static void DelayMainLoop(Single timeSkip)
@@ -106,13 +106,13 @@ namespace Memoria
 
 		private static void RunSmoothUpdaters()
 		{
-			foreach (UpdaterDelegate updater in FPSManager._activeSmooth)
-				updater(FPSManager._smoothUpdateFactor);
+			if (FPSManager._activeSmooth != null)
+				FPSManager._activeSmooth(FPSManager._smoothUpdateFactor);
 		}
 
 		private static void FlushSmoothUpdaters()
 		{
-			FPSManager._activeSmooth.Clear();
+			FPSManager._activeSmooth = null;
 		}
 
 		private static void CollectDelayedInputs()
@@ -138,7 +138,7 @@ namespace Memoria
 		private static Int32 _currentTick = 0;
 		private static Int32 _currentLoopCount = 0;
 		private static Single _smoothUpdateFactor = 0f;
-		private static List<UpdaterDelegate> _activeSmooth = new List<UpdaterDelegate>();
+		private static UpdaterDelegate _activeSmooth;
 		private static UInt32 _delayedInputs = 0;
 		private static UInt32 _delayedInputsOn = 0;
 		private static UInt32 _delayedInputsOff = 0;

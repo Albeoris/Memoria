@@ -301,6 +301,10 @@ public class btlseq
 				btl.animation.enabled = true;
 			if (advanceAnim)
 				btl.animFrameFrac += Math.Abs(btl.animSpeed);
+
+			AnimationState clipState = btl.gameObject.GetComponent<Animation>()[btl.currentAnimationName];
+			evt.animFrame = (byte)Mathf.RoundToInt(clipState.time / clipState.length * GeoAnim.geoAnimGetNumFrames(btl, btl.currentAnimationName));
+
 			while (btl.animFrameFrac >= 1f)
 			{
 				btl.animFrameFrac--;
@@ -315,6 +319,16 @@ public class btlseq
 			btl.animation.enabled = false;
 		}
 		btl.animEndFrame = false;
+
+		// Hack - Not happy with this
+		// Animations ends 1 tps too soon unless it's a loop (or maybe idle)
+		if (btl._smoothUpdateDelayEnd)
+		{
+			if (reverseSpeed) evt.animFrame++;
+			else evt.animFrame--;
+		}
+		// -Hack
+
 		if (btl_mot.IsAnimationFrozen(btl) || (!reverseSpeed && evt.animFrame > animLoopFrame) || (reverseSpeed && evt.animFrame < 0))
 		{
 			btl.endedAnimationName = btl.currentAnimationName;
@@ -342,6 +356,17 @@ public class btlseq
 			btl.evt.animFrame = Math.Min(btl.evt.animFrame, (Byte)animLoopFrame);
 			btl.animEndFrame = true;
 		}
+
+		// Hack - Not happy with this
+		if (btl._smoothUpdateDelayEnd)
+		{
+			if (reverseSpeed) evt.animFrame--;
+			else evt.animFrame++;
+		}
+		if (btl_mot.IsAnimationFrozen(btl) || (!reverseSpeed && evt.animFrame > animLoopFrame) || (reverseSpeed && evt.animFrame < 0))
+			btl._smoothUpdateDelayEnd = false;
+		// -Hack
+
 		if (btl.monster_transform != null && btl.monster_transform.fade_counter > 0)
 		{
 			btl.monster_transform.fade_counter--;

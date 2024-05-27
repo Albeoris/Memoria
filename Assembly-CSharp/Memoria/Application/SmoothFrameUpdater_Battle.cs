@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using FF9;
+using Memoria.Prime;
 
 namespace Memoria
 {
 	static class SmoothFrameUpdater_Battle
 	{
 		// Max (squared) distance per frame to be considered as a smooth movement for battle units
-		private const Single ActorSmoothMovementMaxSqr = 600f * 600f;
+		private const Single ActorSmoothMovementMaxSqr = 2000f * 2000f;
 		// Max degree turn per frame to be considered as a smooth movement for field actors
-		private const Single ActorSmoothTurnMaxDeg = 30f;
-		// Max scaling factor per frame to be considered as a smooth movement for field actors
-		private const Single ActorSmoothScaleMaxChange = 1.3f;
-		private const Single ActorSmoothScaleMinChange = 1f / 1.3f;
+		private const Single ActorSmoothTurnMaxDeg = 90f;
 		// Max (squared) distance per frame to be considered as a smooth movement for the camera
 		private const Single CameraSmoothMovementMaxSqr = 450f * 450f;
 		// Max degree turn per frame to be considered as a smooth movement for the camera
@@ -82,6 +80,7 @@ namespace Memoria
 				_cameraProjMatrixActual = camera.projectionMatrix;
 				_cameraRegistered = true;
 			}
+			Apply(0f);
 		}
 
 		public static void Apply(Single smoothFactor)
@@ -89,61 +88,40 @@ namespace Memoria
 			if (_skipCount > 0)
 				return;
 			SFXData.LoadLoop();
-			Single unclampedFactor = 1f + smoothFactor;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			{
 				if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy && !HonoluluBattleMain.IsAttachedModel(next))
 				{
 					Vector3 frameMove = next._smoothUpdatePosActual - next._smoothUpdatePosPrevious;
 					if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < ActorSmoothMovementMaxSqr)
-						next.gameObject.transform.position = next._smoothUpdatePosActual + smoothFactor * frameMove;
+						next.gameObject.transform.position = Vector3.Lerp(next._smoothUpdatePosPrevious, next._smoothUpdatePosActual, smoothFactor);
+
 					if (Quaternion.Angle(next._smoothUpdateRotPrevious, next._smoothUpdateRotActual) < ActorSmoothTurnMaxDeg)
-						next.gameObject.transform.rotation = Quaternion.LerpUnclamped(next._smoothUpdateRotPrevious, next._smoothUpdateRotActual, unclampedFactor);
-					Single minScaleFactor, maxScaleFactor;
-					if (next._smoothUpdateScalePrevious.x != 0f)
-					{
-						minScaleFactor = next._smoothUpdateScaleActual.x / next._smoothUpdateScalePrevious.x;
-						maxScaleFactor = minScaleFactor;
-					}
-					else
-					{
-						minScaleFactor = ActorSmoothScaleMinChange;
-						maxScaleFactor = ActorSmoothScaleMaxChange;
-					}
-					if (next._smoothUpdateScalePrevious.y != 0f)
-					{
-						Single ratio = next._smoothUpdateScaleActual.y / next._smoothUpdateScalePrevious.y;
-						minScaleFactor = Mathf.Min(minScaleFactor, ratio);
-						maxScaleFactor = Mathf.Max(maxScaleFactor, ratio);
-					}
-					else
-					{
-						minScaleFactor = ActorSmoothScaleMinChange;
-						maxScaleFactor = ActorSmoothScaleMaxChange;
-					}
-					if (next._smoothUpdateScalePrevious.z != 0f)
-					{
-						Single ratio = next._smoothUpdateScaleActual.z / next._smoothUpdateScalePrevious.z;
-						minScaleFactor = Mathf.Min(minScaleFactor, ratio);
-						maxScaleFactor = Mathf.Max(maxScaleFactor, ratio);
-					}
-					else
-					{
-						minScaleFactor = ActorSmoothScaleMinChange;
-						maxScaleFactor = ActorSmoothScaleMaxChange;
-					}
-					if (minScaleFactor > ActorSmoothScaleMinChange && maxScaleFactor < ActorSmoothScaleMaxChange)
-						next.gameObject.transform.localScale = unclampedFactor * next._smoothUpdateScaleActual - smoothFactor * next._smoothUpdateScalePrevious;
+						next.gameObject.transform.rotation = Quaternion.Lerp(next._smoothUpdateRotPrevious, next._smoothUpdateRotActual, smoothFactor);
+
+					next.gameObject.transform.localScale = Vector3.Lerp(next._smoothUpdateScalePrevious, next._smoothUpdateScaleActual, smoothFactor);
+
 					if (next._smoothUpdatePlayingAnim)
 					{
 						GameObject go = next.gameObject;
 						AnimationState anim = go.GetComponent<Animation>()[next.currentAnimationName];
 						if (anim != null)
 						{
-							Single animTime = Mathf.LerpUnclamped(next._smoothUpdateAnimTimePrevious, next._smoothUpdateAnimTimeActual, unclampedFactor);
-							animTime = Mathf.Max(0f, Mathf.Min(anim.length, animTime));
+							if (!anim.enabled)
+							{
+								btl_mot.PlayAnim(next);
+								next.evt.animFrame++;
+								next._smoothUpdateDelayEnd = true;
+							}
+							Single animTime = Mathf.Lerp(next._smoothUpdateAnimTimePrevious, next._smoothUpdateAnimTimeActual, smoothFactor);
+							
+							animTime = Mathf.Clamp(animTime, 0f, anim.length);
 							anim.time = animTime;
 							go.GetComponent<Animation>().Sample();
+							/*if (next.btl_id == 1)
+							{
+								Log.Message($"[DEBUG] anim: {anim.name} {anim.enabled} animTime: {animTime} animLength: {anim.length} t:{smoothFactor} prev:{next._smoothUpdateAnimTimePrevious} actual: {next._smoothUpdateAnimTimeActual}");
+							}*/
 						}
 					}
 				}
@@ -157,8 +135,8 @@ namespace Memoria
 				//Single cameraAngle = Quaternion.Angle(MatrixGetRotation(_cameraW2CMatrixActual), MatrixGetRotation(_cameraW2CMatrixPrevious));
 				//if (cameraAngle >= CameraSmoothTurnMaxDeg)
 				//	return;
-				camera.worldToCameraMatrix = MatrixLerpUnclamped(_cameraW2CMatrixPrevious, _cameraW2CMatrixActual, unclampedFactor);
-				camera.projectionMatrix = MatrixLerpUnclamped(_cameraProjMatrixPrevious, _cameraProjMatrixActual, unclampedFactor);
+				camera.worldToCameraMatrix = MatrixLerpUnclamped(_cameraW2CMatrixPrevious, _cameraW2CMatrixActual, smoothFactor);
+				camera.projectionMatrix = MatrixLerpUnclamped(_cameraProjMatrixPrevious, _cameraProjMatrixActual, smoothFactor);
 			}
 		}
 
@@ -231,6 +209,7 @@ namespace Memoria
 
 partial class BTL_DATA
 {
+	public Boolean _smoothUpdateDelayEnd = false;
 	public Boolean _smoothUpdateRegistered = false;
 	public Vector3 _smoothUpdatePosPrevious;
 	public Vector3 _smoothUpdatePosActual;
