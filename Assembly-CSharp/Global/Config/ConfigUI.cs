@@ -679,6 +679,7 @@ public class ConfigUI : UIScene
         }
         ButtonGroupState.HelpEnabled = false;
         HelpDespLabelGameObject.SetActive(false);
+        WarningDialog.SetActive(false);
         // Disable soft-reset and tutorials in battles (it leads to bugs because things are not cleaned correctly yet)
         if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
         {

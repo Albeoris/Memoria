@@ -814,10 +814,20 @@ public class UIKeyTrigger : MonoBehaviour
 
     private Boolean ShouldTurboDialog(List<Control> confirmKeys)
     {
-        if (!Configuration.Control.TurboDialog || preventTurboKey || !UIManager.Instance.Dialogs.IsDialogNeedControl())
+        if (!Configuration.Control.TurboDialog || preventTurboKey)
             return false;
 
-        return TurboKey || ((HonoInputManager.Instance.IsInput(Control.RightBumper) || ShiftKey) && confirmKeys.Any(HonoInputManager.Instance.IsInput));
+        if(TurboKey || ((HonoInputManager.Instance.IsInput(Control.RightBumper) || ShiftKey) && confirmKeys.Any(HonoInputManager.Instance.IsInput)))
+        {
+            if (UIManager.Instance.Dialogs.IsDialogNeedControl())
+                return true;
+
+            if (VoicePlayer.scriptRequestedButtonPress && !BubbleUI.Instance.IsActive && DialogManager.Instance.ActiveDialogList.Any(dial => dial.gameObject.activeInHierarchy && dial.CurrentState == Dialog.State.CompleteAnimation))
+            {
+                EventInput.ReceiveInput(EventInput.Pcircle | EventInput.Lcircle);
+            }
+        }
+        return false;
     }
 
     private void Start()
