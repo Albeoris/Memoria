@@ -899,6 +899,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - set if overlay is active (inactive isn't visible</summary>
     public Int32 EBG_overlaySetActive(Int32 overlayNdx, Int32 activeFlag)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
@@ -937,6 +938,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - set if overlay is type LOOP</summary>
     public Int32 EBG_overlaySetLoop(Int32 overlayNdx, UInt32 flag, Int32 dx, Int32 dy)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
@@ -975,6 +977,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - set overlay is scrolling - potentially in diagonal</summary>
     public Int32 EBG_overlaySetScrollWithOffset(Int32 overlayNdx, UInt32 flag, Int32 delta, Int32 offset, UInt32 isXOffset)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
@@ -1027,6 +1030,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - anim - define if animation is running in a loop | TODO get the difference with EBG_animSetActive</summary>
     public Int32 EBG_animAnimate(Int32 animNdx, Int32 frameNdx)
     {
         if (dbug) Log.Message("EBG_animAnimate | anim:" + animNdx + " frame:" + frameNdx);
@@ -1037,6 +1041,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - anim - show specific frame</summary>
     public Int32 EBG_animShowFrame(Int32 animNdx, Int32 frameNdx)
     {
         if (dbug) Log.Message("EBG_animShowFrame | anim:" + animNdx + " frame:" + frameNdx);
@@ -1049,6 +1054,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - anim - define if animation is running in a loop</summary>
     public Int32 EBG_animSetActive(Int32 animNdx, Int32 flag)
     {
         BGANIM_DEF bgAnim = this.scene.animList[animNdx];
@@ -1065,6 +1071,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - anim - define animation framerate</summary>
     public Int32 EBG_animSetFrameRate(Int32 animNdx, Int32 frameRate)
     {
         if (dbug) Log.Message("EBG_animSetFrameRate | anim:" + animNdx + " frameRate:" + frameRate);
@@ -1155,6 +1162,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - set position of overlay </summary>
     public Int32 EBG_overlayMove(Int32 overlayNdx, Int16 dx, Int16 dy, Int16 dz)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
@@ -1180,6 +1188,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>New EBG - set position of overlay, with movement for a time (</summary>
     public void EBG_overlayMoveTimed(Int32 overlayNdx, Int32 dx, Int32 dy, Int32 dz, Int32 t)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
@@ -1629,6 +1638,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>Move special overlays (scroll / parallax / timedmove)</summary>
     public Int32 SceneServiceScroll(BGSCENE_DEF bgScene)
     {
         Int16 map = FF9StateSystem.Common.FF9.fldMapNo;
@@ -1736,6 +1746,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>Move camera to point - with or without cosinus effect</summary>
     public void SceneService2DScroll()
     {
         if (!IsActive)

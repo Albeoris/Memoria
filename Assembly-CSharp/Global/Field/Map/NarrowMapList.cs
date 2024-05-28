@@ -68,20 +68,19 @@ public static class NarrowMapList
     public static readonly int[][] Map_Index_Narrow_List =
     {
         // [mapNo,index],
-        [50,0],      // first scene
+        //[50,0],      // first scene
         [150,325],   // Zidane infiltrate Alex Castle
         [254,26],    // MBG103 - Evil Forest
         [352,3],     // Arrival at Dali: vivi visible before sleeping
-        [355,18],    // Steiner to the barmaid
-        [600,32],    // Throne, meet cid
-        [615,57],    // Meet garnet on Lindblum Tower
-        [615,58],    // Meet garnet on Lindblum Tower (2)
-        [1206,0],    // Queen and Kuja salon Alex, drug garnet
+        //[355,18],    // Steiner to the barmaid
+        //[600,32],    // Throne, meet cid
+        //[615,57],    // Meet garnet on Lindblum Tower
+        //[615,58],    // Meet garnet on Lindblum Tower (2)
+        //[1206,0],    // Queen and Kuja salon Alex, drug garnet
         [1602,16],   // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
-        [1823,331],  // Garnet coronation, garnet visible
+        //[1823,331],  // Garnet coronation, garnet visible
         [1815,0],    // Love quiproquo at the docks
         [1816,315],  // Love quiproquo at the docks
-        //[2007,2],    // MBG111 - Alex castle changing
         [2211,8],    // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
         [2404,25],   // Baku seen waiting on the docks too soon
         [2705,-1],   // Pandemonium, you're not alone sequence, several glitches
@@ -98,12 +97,12 @@ public static class NarrowMapList
         [1550,6270],    // Mountain path - Quina stays there
         [1554,6300],    // MBG109 - roots
         [1554,6305],    // MBG109 - roots
-        [1652,6700],    // Iifa entrance
-        [1652,6710],    // Iifa entrance
+        //[1652,6700],    // Iifa entrance
+        //[1652,6710],    // Iifa entrance
         [1901,7550],    // Treno scene, people staying there
         [2007,8340],    // MBG111 - Alex castle changing
         [2007,8400],    // MBG111 - Alex castle changing
-        [2172,9050],    // Scene with Garnet on tower
+        //[2172,9050],    // Scene with Garnet on tower
         [2173,9050],    // ATE Quina
         [2905,11620],   // MBG118 - Memoria pink castle
     };
@@ -112,6 +111,44 @@ public static class NarrowMapList
     {
         // [mapNo,camIdx],
         //[951,1],    // // Gargan roo, secondary screen is smaller, but only visible in 1 scene
+        //[153,0],
+        //[154,0],
+
+    };
+
+    public static readonly int[][] RestrictedCams =
+    {
+        // [mapNo,cam,width],
+        [50,1,320],
+        [63,0,320],
+        [116,1,320],
+        [153,0,320],
+        [154,0,352],
+        [355,1,320],
+        [600,1,320],
+        [615,1,320],
+        [801,1,336],
+        [932,1,320],
+        [951,1,336],
+        [1205,1,384],
+        [1206,1,320],
+        [1214,0,320],
+        [1215,0,352],
+        [1462,0,320],
+        [1652,1,336],
+        [1759,1,336],
+        [1801,1,320],
+        [1806,0,320],
+        [1807,0,352],
+        [1823,1,320],
+        [2150,1,320],
+        [2172,1,320],
+        [2217,1,320],
+        [2217,2,320],
+        [2363,0,384],
+        [2363,1,336],
+        [2510,0,320],
+        [2755,1,336],
     };
 
     public static readonly HashSet<Int32> ListFullNarrow = new HashSet<Int32>()
@@ -125,7 +162,7 @@ public static class NarrowMapList
         0060, // Prima Vista/Interior
         0061, // Prima Vista/Interior
         0062, // Prima Vista/Interior
-        0063, // Prima Vista/Interior
+        //0063, // Prima Vista/Interior
         0065, // Prima Vista/Interior
         0066, // Prima Vista/Interior
         0067, // Prima Vista/Interior
@@ -138,11 +175,11 @@ public static class NarrowMapList
         0108, // Alexandria/Item Shop
         0109, // Alexandria/Wpn. Shop
         0114, // Alexandria/Residence
-        0116, // Alexandria/Rooftop
+        //0116, // Alexandria/Rooftop
         0150, // A. Castle/Guardhouse
         0151, // A. Castle/Throne
-        0153, // A. Castle/Hallway
-        0154,
+        //0153, // A. Castle/Hallway
+        //0154,
         0157, // A. Castle/Kitchen
         0160, // A. Castle/Courtyard
         0161, // A. Castle/Courtyard
@@ -246,9 +283,9 @@ public static class NarrowMapList
         0913,
         0930, // Treno/Tot Residence
         0931, // Treno/Tot Residence
-        0932, // Treno/Event
+        //0932, // Treno/Event
         0950,
-        0951, // Gargan Roo/Passage
+        //0951, // Gargan Roo/Passage
         0954, // Gargan Roo/Tunnel
         0955,
         1000, // Cleyra/Tree Roots
@@ -272,13 +309,13 @@ public static class NarrowMapList
         1153, // Red Rose/Bridge
         1200, // A. Castle/Throne
         1201,
-        1205, // A. Castle/Chapel
+        //1205, // A. Castle/Chapel
         1208, // A. Castle/Dungeon
         1210, // A. Castle/West Tower
         1212, // A. Castle/East Tower
         1213, // A. Castle/Guardhouse
         1214, // A. Castle/Hallway
-        1215,
+        //1215,
         //1216,
         1218,
         1221, // A. Castle/Courtyard
@@ -366,8 +403,8 @@ public static class NarrowMapList
         //1758, // Iifa Tree/Tree Roots
         1800, // A. Castle/Tomb
         1803, // A. Castle/Guardhouse
-        1806, // A. Castle/Hallway
-        1807, // A. Castle/Hallway
+        //1806, // A. Castle/Hallway
+        //1807, // A. Castle/Hallway
         //1808,
         1810,
         1813, // A. Castle/Courtyard
@@ -407,7 +444,7 @@ public static class NarrowMapList
         2112,
         2113,
         2114, // Lindblum/Theater Ave.
-        2150, // L. Castle/Royal Cham.
+        //2150, // L. Castle/Royal Cham.
         2151, // L. Castle/Lift
         2157, // L. Castle/Hangar
         2159, // L. Castle/Castle Bridg
@@ -421,7 +458,7 @@ public static class NarrowMapList
         2208, // Palace/Hallway
         2212,
         2213,
-        2217, // Palace/Stairwell
+        //2217, // Palace/Stairwell
         2222,
         2250, // Oeilvert/Outside
         2254, // Oeilvert/Ship Display
@@ -439,7 +476,7 @@ public static class NarrowMapList
         2356, // Gulug/Room
         2361, // Gulug/Well
         2362,
-        2363, // Gulug/Path
+        //2363, // Gulug/Path
         2365,
         2400, // A. Castle/Neptune
         2405, // A. Castle/Courtyard
@@ -727,11 +764,11 @@ public static class NarrowMapList
         {2906,398},
         {3005,398},
         {3055,398},
-        {1205,384},
-        {154,352},
-        {1215,352},
+        //{1205,384},
+        //{154,352},
+        //{1215,352},
         {1805,352},
-        {1807,352},
+        //{1807,352},
         //{1652,336},
         {2552,352},
     };
