@@ -303,7 +303,7 @@ public class CloudUI : UIScene
 			}
 			fileHud.LeaderNameLabel.text = text;
 			fileHud.LeaderLvLabel.text = num.ToString();
-			fileHud.GilLabel.text = file.Gil.ToString() + "[YSUB=1.3][sub]G";
+			fileHud.GilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", file.Gil.ToString());
 			fileHud.LocationNameLabel.text = file.Location;
 			Color color = FF9TextTool.White;
 			Double num3 = (Double)(file.PlayDuration % 360000f);

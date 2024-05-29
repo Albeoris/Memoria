@@ -6,6 +6,7 @@ using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Data;
+using Memoria.Assets;
 using UnityEngine;
 using Object = System.Object;
 
@@ -185,8 +186,8 @@ public class BattleResultUI : UIScene
 	{
 		this.EXPAndAPPhrasePanel.SetActive(false);
 		this.GilAndItemPhrasePanel.SetActive(true);
-		this.receiveGilLabel.text = (this.gilValue.value - this.gilValue.current).ToString() + "[YSUB=1.3][sub]G";
-		this.currentGilLabel.text = Mathf.Min(FF9StateSystem.Common.FF9.party.gil, 9999999f).ToString() + "[YSUB=1.3][sub]G";
+		this.receiveGilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", (this.gilValue.value - this.gilValue.current).ToString());
+		this.currentGilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", Mathf.Min(FF9StateSystem.Common.FF9.party.gil, 9999999f).ToString());
 		FF9UIDataTool.DisplayTextLocalize(this.infoLabelGameObject, "BattleResultInfoGilItem");
 		if (this.itemList.Count > 0)
 		{
