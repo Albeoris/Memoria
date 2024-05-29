@@ -103,25 +103,19 @@ namespace Memoria
 
 					if (next._smoothUpdatePlayingAnim)
 					{
-						GameObject go = next.gameObject;
-						AnimationState anim = go.GetComponent<Animation>()[next.currentAnimationName];
-						if (anim != null)
+						Animation anim = next.gameObject.GetComponent<Animation>();
+						AnimationState animState = anim[next._smoothUpdateAnimNameActual];
+						if (animState != null)
 						{
-							if (!anim.enabled)
-							{
-								btl_mot.PlayAnim(next);
-								next.evt.animFrame++;
-								next._smoothUpdateDelayEnd = true;
-							}
-							Single animTime = Mathf.Lerp(next._smoothUpdateAnimTimePrevious, next._smoothUpdateAnimTimeActual, smoothFactor);
+							animState.time = Mathf.Lerp(next._smoothUpdateAnimTimePrevious, next._smoothUpdateAnimTimeActual, smoothFactor);
+
+							if (animState.time > animState.length)
+								animState.time -= animState.length;
+							else if(animState.time < 0f)
+								animState.time += animState.length;
 							
-							animTime = Mathf.Clamp(animTime, 0f, anim.length);
-							anim.time = animTime;
-							go.GetComponent<Animation>().Sample();
-							/*if (next.btl_id == 1)
-							{
-								Log.Message($"[DEBUG] anim: {anim.name} {anim.enabled} animTime: {animTime} animLength: {anim.length} t:{smoothFactor} prev:{next._smoothUpdateAnimTimePrevious} actual: {next._smoothUpdateAnimTimeActual}");
-							}*/
+							anim.Sample();
+							// if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} curName: {next.currentAnimationName} actualName: {next._smoothUpdateAnimNameActual} prevName: {next._smoothUpdateAnimNameActual} speed{next._smoothUpdateAnimSpeed} {animState.enabled} animTime: {animState.time} animLength: {animState.length} t:{smoothFactor} prev:{next._smoothUpdateAnimTimePrevious} actual: {next._smoothUpdateAnimTimeActual}");
 						}
 					}
 				}
@@ -156,9 +150,16 @@ namespace Memoria
 					}
 					if (next._smoothUpdatePlayingAnim)
 					{
-						AnimationState anim = next.gameObject.GetComponent<Animation>()[next.currentAnimationName];
-						if (anim != null)
-							anim.time = next._smoothUpdateAnimTimeActual;
+						AnimationState animState = next.gameObject.GetComponent<Animation>()[next._smoothUpdateAnimNameActual];
+						if (animState != null)
+						{
+							animState.time = next._smoothUpdateAnimTimeActual;
+
+							if (animState.time > animState.length)
+								animState.time -= animState.length;
+							else if (animState.time < 0f)
+								animState.time += animState.length;
+						}
 					}
 				}
 			}
@@ -209,7 +210,6 @@ namespace Memoria
 
 partial class BTL_DATA
 {
-	public Boolean _smoothUpdateDelayEnd = false;
 	public Boolean _smoothUpdateRegistered = false;
 	public Vector3 _smoothUpdatePosPrevious;
 	public Vector3 _smoothUpdatePosActual;
@@ -218,6 +218,10 @@ partial class BTL_DATA
 	public Vector3 _smoothUpdateScalePrevious;
 	public Vector3 _smoothUpdateScaleActual;
 	public Boolean _smoothUpdatePlayingAnim = false;
-	public Single _smoothUpdateAnimTimePrevious;
+	public String _smoothUpdateAnimNamePrevious;
+	public String _smoothUpdateAnimNameActual;
+    public String _smoothUpdateAnimNameNext;
+    public Single _smoothUpdateAnimTimePrevious;
 	public Single _smoothUpdateAnimTimeActual;
+	public Single _smoothUpdateAnimSpeed;
 }

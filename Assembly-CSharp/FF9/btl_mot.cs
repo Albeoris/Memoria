@@ -204,73 +204,91 @@ namespace FF9
 		public static void PlayAnim(BTL_DATA btl)
 		{
 			btl._smoothUpdatePlayingAnim = false;
-			if (btl.currentAnimationName == null)
+			if (btl.currentAnimationName == null || btl.bi.stop_anim != 0)
 				return;
-			GameObject gameObject = btl.gameObject;
-			String currentAnimationName = btl.currentAnimationName;
-			UInt16 animMaxFrame = GeoAnim.geoAnimGetNumFrames(btl, currentAnimationName);
-			Boolean reverseSpeed = btl.animSpeed < 0f;
-			Single animFrame = btl.evt.animFrame; // + (reverseSpeed ? -btl.animFrameFrac : btl.animFrameFrac);
-			if (!gameObject.GetComponent<Animation>().IsPlaying(currentAnimationName))
+
+			Animation anim = btl.gameObject.GetComponent<Animation>();
+			AnimationState animState = anim[btl.currentAnimationName];
+			Int32 animMaxFrame = GeoAnim.geoAnimGetNumFrames(btl, btl.currentAnimationName);
+			Single animFrame = btl.evt.animFrame;
+			Single time = animFrame / animMaxFrame * animState.length;
+
+			if (!anim.IsPlaying(btl.currentAnimationName))
 			{
-				if (gameObject.GetComponent<Animation>().GetClip(currentAnimationName) == null)
-					return;
-				gameObject.GetComponent<Animation>().Play(currentAnimationName);
+				if (btl._smoothUpdateAnimNameActual != null && btl._smoothUpdateAnimNameActual != btl._smoothUpdateAnimNamePrevious && btl._smoothUpdateAnimNameNext == null)
+				{
+					// Don't switch animation quite yet so we can smooth the end of it
+					// if (btl.btl_id == 1) Log.Message($"[PlayAnim] waiting curr {btl.currentAnimationName} actual {btl._smoothUpdateAnimNameActual} prev {btl._smoothUpdateAnimNamePrevious}");
+					animState.time = time;
+					animState = anim[btl._smoothUpdateAnimNameActual];
+
+					time = btl._smoothUpdateAnimTimeActual + btl._smoothUpdateAnimSpeed;
+					btl._smoothUpdateAnimNamePrevious = btl._smoothUpdateAnimNameActual;
+					btl._smoothUpdateAnimNameNext = btl.currentAnimationName;
+				}
+				else
+				{
+					// Now we can switch
+					String next = btl._smoothUpdateAnimNameNext ?? btl.currentAnimationName;
+					if (anim.GetClip(next) == null)
+						return;
+					anim.Play(next);
+
+					if (btl._smoothUpdateAnimNameNext != null && btl._smoothUpdateAnimNameNext != btl.currentAnimationName)
+					{
+						// Special case, animation lasted only one tps
+						// We switch AND wait
+						// if (btl.btl_id == 1) Log.Message($"[PlayAnim] switching and wait curr {btl.currentAnimationName} actual {btl._smoothUpdateAnimNameActual} prev {btl._smoothUpdateAnimNamePrevious} next {btl._smoothUpdateAnimNameNext}");
+						animState.time = time;
+						animState = anim[next];
+
+						// We need to advance the time one step
+						Single step = animState.length / GeoAnim.getAnimationLoopFrame(btl, next);
+						if (animState.time <= 0f)
+							time = animState.time + step;
+						else
+							time = animState.time - step;
+						time = Mathf.Clamp(time, 0f, animState.length);
+
+						btl._smoothUpdateAnimNamePrevious = btl._smoothUpdateAnimNameActual;
+						btl._smoothUpdateAnimNameActual = btl._smoothUpdateAnimNameNext;
+						btl._smoothUpdateAnimNameNext = btl.currentAnimationName;
+					}
+					else
+					{
+						// if (btl.btl_id == 1) Log.Message($"[PlayAnim] switching curr {btl.currentAnimationName} actual {btl._smoothUpdateAnimNameActual} prev {btl._smoothUpdateAnimNamePrevious} next {btl._smoothUpdateAnimNameNext}");
+						btl._smoothUpdateAnimNamePrevious = btl._smoothUpdateAnimNameActual;
+						btl._smoothUpdateAnimNameActual = btl.currentAnimationName;
+						btl._smoothUpdateAnimNameNext = null;
+					}
+				}
 			}
-			AnimationState clipState = gameObject.GetComponent<Animation>()[currentAnimationName];
-			Single time = animMaxFrame == 0 ? 0f : Mathf.Clamp(animFrame / animMaxFrame * clipState.length, 0f, clipState.length);
-			Int32 animLoopFrame = GeoAnim.getAnimationLoopFrame(btl);
-			clipState.speed = 0f;
+
+			btl._smoothUpdateAnimTimeActual = time;
+			btl._smoothUpdateAnimTimePrevious = animState.time;
+
+			// Did the animation loop?
+			Single speed = time - animState.time;
+			if (btl._smoothUpdateAnimSpeed > 0f && speed < 0f)
+			{
+				btl._smoothUpdateAnimTimeActual += animState.length;
+				btl._smoothUpdateAnimSpeed = btl._smoothUpdateAnimTimeActual - btl._smoothUpdateAnimTimePrevious;
+			}
+			else if (btl._smoothUpdateAnimSpeed < 0f && speed > 0f)
+			{
+				btl._smoothUpdateAnimTimePrevious += animState.length;
+				btl._smoothUpdateAnimSpeed = btl._smoothUpdateAnimTimeActual - btl._smoothUpdateAnimTimePrevious;
+			}
+			else
+			{
+				btl._smoothUpdateAnimSpeed = speed;
+			}
+
+			animState.speed = 0f;
+			animState.time = time;
+			anim.Sample();
+
 			btl._smoothUpdatePlayingAnim = true;
-			btl._smoothUpdateAnimTimePrevious = btl._smoothUpdateAnimTimeActual = time;
-
-			if (btl.evt.animFrame == 0 && !reverseSpeed)
-				btl._smoothUpdateAnimTimePrevious = 0;
-			else if (btl.evt.animFrame == animLoopFrame && reverseSpeed)
-				btl._smoothUpdateAnimTimePrevious = clipState.length;
-
-			if (animMaxFrame != 0 && btl.bi.disappear == 0 && !btl_mot.IsAnimationFrozen(btl))
-			{
-				btl._smoothUpdateAnimTimeActual = Mathf.Clamp(time + btl.animSpeed / animMaxFrame * clipState.length, 0f, clipState.length);
-			}
-			clipState.time = time;
-
-			/*if ((btl._smoothUpdateAnimTimePrevious == 0 || btl._smoothUpdateAnimTimePrevious == clipState.length) && btl.btl_id == 1)
-			{
-				Log.Message($"[PlayAnim] {clipState.name} length: {clipState.length} prev: {btl._smoothUpdateAnimTimePrevious} actual: {btl._smoothUpdateAnimTimeActual}");
-			}*/
-
-			gameObject.GetComponent<Animation>().Sample();
-			// Couldn't see a difference:
-			/*if (btl.evt.animFrame == animLoopFrame && !reverseSpeed)
-			{
-				// Try to smoothen standard animation chains
-				if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_RUN))
-				{
-					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK], 1f / FPSManager.GetMainLoopSpeed());
-					btl._smoothUpdatePlayingAnim = false;
-				}
-				else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK))
-				{
-					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK], 1f / FPSManager.GetMainLoopSpeed());
-					btl._smoothUpdatePlayingAnim = false;
-				}
-				else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK))
-				{
-					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_BACK], 1f / FPSManager.GetMainLoopSpeed());
-					btl._smoothUpdatePlayingAnim = false;
-				}
-				else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_BACK))
-				{
-					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL], 1f / FPSManager.GetMainLoopSpeed());
-					btl._smoothUpdatePlayingAnim = false;
-				}
-				else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL))
-				{
-					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL], 1f / FPSManager.GetMainLoopSpeed());
-					btl._smoothUpdatePlayingAnim = false;
-				}
-			}*/
 		}
 
 		public static Int32 GetDirection(BTL_DATA btl)
