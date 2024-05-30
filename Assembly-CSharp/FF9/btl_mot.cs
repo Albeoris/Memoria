@@ -203,7 +203,6 @@ namespace FF9
 
 		public static void PlayAnim(BTL_DATA btl)
 		{
-			btl._smoothUpdatePlayingAnim = false;
 			if (btl.currentAnimationName == null || btl.bi.stop_anim != 0)
 				return;
 
@@ -287,8 +286,6 @@ namespace FF9
 			animState.speed = 0f;
 			animState.time = time;
 			anim.Sample();
-
-			btl._smoothUpdatePlayingAnim = true;
 		}
 
 		public static Int32 GetDirection(BTL_DATA btl)

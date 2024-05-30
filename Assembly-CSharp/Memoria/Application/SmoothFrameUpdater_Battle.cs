@@ -32,7 +32,6 @@ namespace Memoria
 						if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy && !HonoluluBattleMain.IsAttachedModel(next))
 						{
 							next._smoothUpdateRegistered = false;
-							next._smoothUpdatePlayingAnim = false;
 						}
 					}
 				}
@@ -92,31 +91,33 @@ namespace Memoria
 			{
 				if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy && !HonoluluBattleMain.IsAttachedModel(next))
 				{
+					//var pos = next.gameObject.transform.position;
 					Vector3 frameMove = next._smoothUpdatePosActual - next._smoothUpdatePosPrevious;
 					if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < ActorSmoothMovementMaxSqr)
 						next.gameObject.transform.position = Vector3.Lerp(next._smoothUpdatePosPrevious, next._smoothUpdatePosActual, smoothFactor);
+
+					//var mag = (next.gameObject.transform.position - pos).magnitude;
+					//var ang = Vector3.Angle(pos, next.gameObject.transform.position);
+					//if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} magnitude {mag} angle {ang} pos {next.gameObject.transform.position} prev {next._smoothUpdatePosPrevious} actual {next._smoothUpdatePosActual} t {smoothFactor}");
 
 					if (Quaternion.Angle(next._smoothUpdateRotPrevious, next._smoothUpdateRotActual) < ActorSmoothTurnMaxDeg)
 						next.gameObject.transform.rotation = Quaternion.Lerp(next._smoothUpdateRotPrevious, next._smoothUpdateRotActual, smoothFactor);
 
 					next.gameObject.transform.localScale = Vector3.Lerp(next._smoothUpdateScalePrevious, next._smoothUpdateScaleActual, smoothFactor);
 
-					if (next._smoothUpdatePlayingAnim)
+					Animation anim = next.gameObject.GetComponent<Animation>();
+					AnimationState animState = anim[next._smoothUpdateAnimNameActual];
+					if (animState != null)
 					{
-						Animation anim = next.gameObject.GetComponent<Animation>();
-						AnimationState animState = anim[next._smoothUpdateAnimNameActual];
-						if (animState != null)
-						{
-							animState.time = Mathf.Lerp(next._smoothUpdateAnimTimePrevious, next._smoothUpdateAnimTimeActual, smoothFactor);
+						animState.time = Mathf.Lerp(next._smoothUpdateAnimTimePrevious, next._smoothUpdateAnimTimeActual, smoothFactor);
 
-							if (animState.time > animState.length)
-								animState.time -= animState.length;
-							else if(animState.time < 0f)
-								animState.time += animState.length;
-							
-							anim.Sample();
-							// if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} curName: {next.currentAnimationName} actualName: {next._smoothUpdateAnimNameActual} prevName: {next._smoothUpdateAnimNameActual} speed{next._smoothUpdateAnimSpeed} {animState.enabled} animTime: {animState.time} animLength: {animState.length} t:{smoothFactor} prev:{next._smoothUpdateAnimTimePrevious} actual: {next._smoothUpdateAnimTimeActual}");
-						}
+						if (animState.time > animState.length)
+							animState.time -= animState.length;
+						else if (animState.time < 0f)
+							animState.time += animState.length;
+
+						anim.Sample();
+						// if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} curName {next.currentAnimationName} actualName {next._smoothUpdateAnimNameActual} prevName {next._smoothUpdateAnimNameActual} speed {next._smoothUpdateAnimSpeed} {animState.enabled} animTime {animState.time} animLength {animState.length} t {smoothFactor} prev {next._smoothUpdateAnimTimePrevious} actual {next._smoothUpdateAnimTimeActual}");
 					}
 				}
 			}
@@ -147,9 +148,7 @@ namespace Memoria
 						next.gameObject.transform.position = next._smoothUpdatePosActual;
 						next.gameObject.transform.rotation = next._smoothUpdateRotActual;
 						next.gameObject.transform.localScale = next._smoothUpdateScaleActual;
-					}
-					if (next._smoothUpdatePlayingAnim)
-					{
+
 						AnimationState animState = next.gameObject.GetComponent<Animation>()[next._smoothUpdateAnimNameActual];
 						if (animState != null)
 						{
@@ -217,11 +216,10 @@ partial class BTL_DATA
 	public Quaternion _smoothUpdateRotActual;
 	public Vector3 _smoothUpdateScalePrevious;
 	public Vector3 _smoothUpdateScaleActual;
-	public Boolean _smoothUpdatePlayingAnim = false;
 	public String _smoothUpdateAnimNamePrevious;
 	public String _smoothUpdateAnimNameActual;
-    public String _smoothUpdateAnimNameNext;
-    public Single _smoothUpdateAnimTimePrevious;
+	public String _smoothUpdateAnimNameNext;
+	public Single _smoothUpdateAnimTimePrevious;
 	public Single _smoothUpdateAnimTimeActual;
 	public Single _smoothUpdateAnimSpeed;
 }
