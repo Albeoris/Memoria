@@ -60,6 +60,7 @@ namespace Memoria
 					next._smoothUpdateRotActual = next.gameObject.transform.rotation;
 					next._smoothUpdateScaleActual = next.gameObject.transform.localScale;
 					next._smoothUpdateRegistered = true;
+					geo.geoScaleUpdate(next, true);
 				}
 			}
 			Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
@@ -107,7 +108,7 @@ namespace Memoria
 
 					Animation anim = next.gameObject.GetComponent<Animation>();
 					AnimationState animState = anim[next._smoothUpdateAnimNameActual];
-					if (animState != null)
+					if (animState != null && next.bi.stop_anim == 0)
 					{
 						animState.time = Mathf.Lerp(next._smoothUpdateAnimTimePrevious, next._smoothUpdateAnimTimeActual, smoothFactor);
 
