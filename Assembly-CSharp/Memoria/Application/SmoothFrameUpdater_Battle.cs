@@ -92,13 +92,13 @@ namespace Memoria
 				if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy && !HonoluluBattleMain.IsAttachedModel(next))
 				{
 					//var pos = next.gameObject.transform.position;
-					Vector3 frameMove = next._smoothUpdatePosActual - next._smoothUpdatePosPrevious;
+					Vector3 frameMove = next._smoothUpdatePosActual + next._smoothUpdateBoneDelta - next._smoothUpdatePosPrevious;
 					if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < ActorSmoothMovementMaxSqr)
-						next.gameObject.transform.position = Vector3.Lerp(next._smoothUpdatePosPrevious, next._smoothUpdatePosActual, smoothFactor);
+						next.gameObject.transform.position = Vector3.Lerp(next._smoothUpdatePosPrevious, next._smoothUpdatePosActual + next._smoothUpdateBoneDelta, smoothFactor);
 
 					//var mag = (next.gameObject.transform.position - pos).magnitude;
 					//var ang = Vector3.Angle(pos, next.gameObject.transform.position);
-					//if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} magnitude {mag} angle {ang} pos {next.gameObject.transform.position} prev {next._smoothUpdatePosPrevious} actual {next._smoothUpdatePosActual} t {smoothFactor}");
+					//if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} magnitude {mag} boneDelta {next._smoothUpdateBoneDelta} bone {next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3)} pos {next.gameObject.transform.position} prev {next._smoothUpdatePosPrevious} actual {next._smoothUpdatePosActual + next._smoothUpdateBoneDelta} t {smoothFactor}");
 
 					if (Quaternion.Angle(next._smoothUpdateRotPrevious, next._smoothUpdateRotActual) < ActorSmoothTurnMaxDeg)
 						next.gameObject.transform.rotation = Quaternion.Lerp(next._smoothUpdateRotPrevious, next._smoothUpdateRotActual, smoothFactor);
@@ -222,4 +222,5 @@ partial class BTL_DATA
 	public Single _smoothUpdateAnimTimePrevious;
 	public Single _smoothUpdateAnimTimeActual;
 	public Single _smoothUpdateAnimSpeed;
+	public Vector3 _smoothUpdateBoneDelta;
 }
