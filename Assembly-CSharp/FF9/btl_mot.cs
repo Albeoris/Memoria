@@ -221,8 +221,13 @@ namespace FF9
 					animState.time = time;
 					animState = anim[btl._smoothUpdateAnimNameActual];
 
-					// Switch temporarily to get bone position
+					// Sample bone position at the next frame of the current animation
+					time = btl._smoothUpdateAnimTimeActual + btl._smoothUpdateAnimSpeed;
+					animState.time = Mathf.Clamp(time, 0f, animState.length);
+					anim.Sample();
 					Vector3 curBonePos = btl.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
+
+					// Switch temporarily to get next animation bone position
 					anim.Play(btl.currentAnimationName);
 					anim.Sample();
 					Vector3 nextBonePos = btl.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
@@ -230,12 +235,9 @@ namespace FF9
 					animState.time = btl._smoothUpdateAnimTimeActual;
 
 					btl._smoothUpdateBoneDelta = nextBonePos - curBonePos;
-					if(btl._smoothUpdateBoneDelta.sqrMagnitude < 10000f)
-						btl._smoothUpdateBoneDelta = Vector3.zero;
 
 					// if (btl.btl_id == 1) Log.Message($"[PlayAnim] waiting boneMag {(nextBonePos - curBonePos).sqrMagnitude} curr {btl.currentAnimationName} actual {btl._smoothUpdateAnimNameActual} prev {btl._smoothUpdateAnimNamePrevious}");
 
-					time = btl._smoothUpdateAnimTimeActual + btl._smoothUpdateAnimSpeed;
 					btl._smoothUpdateAnimNamePrevious = btl._smoothUpdateAnimNameActual;
 					btl._smoothUpdateAnimNameNext = btl.currentAnimationName;
 				}
