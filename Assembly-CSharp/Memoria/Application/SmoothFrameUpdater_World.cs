@@ -7,11 +7,8 @@ namespace Memoria
 {
 	static class SmoothFrameUpdater_World
 	{
-		// Max (squared) distance per frame to be considered as a smooth movement for wmActors
-		private static readonly Single ActorSmoothMovementMaxSqr = ff9.S(800) * ff9.S(800);
-
-		// Disable smooth effects for the duration of a couple of main loop ticks
-		public static Int32 Skip
+        // Disable smooth effects for the duration of a couple of main loop ticks
+        public static Int32 Skip
 		{
 			get => _skipCount;
 			set
@@ -29,7 +26,6 @@ namespace Memoria
 							if (wmActor != null)
 							{
 								wmActor._smoothUpdateRegistered = false;
-								wmActor._smoothUpdatePlayingAnim = false;
 							}
 						}
 					}
@@ -99,26 +95,22 @@ namespace Memoria
 					if (wmActor != null && wmActor._smoothUpdateRegistered && ff9.objIsVisible(obj))
 					{
 						wmActor.transform.position = Vector3.Lerp(wmActor._smoothUpdatePosPrevious, wmActor._smoothUpdatePosActual, smoothFactor);
-						wmActor.transform.rotation = Quaternion.Lerp(wmActor._smoothUpdateRotPrevious, wmActor._smoothUpdateRotActual, smoothFactor);
-						if (wmActor._smoothUpdatePlayingAnim)
+                        wmActor.transform.rotation = Quaternion.Lerp(wmActor._smoothUpdateRotPrevious, wmActor._smoothUpdateRotActual, smoothFactor);
+
+						String animName = FF9DBAll.AnimationDB.GetValue(wmActor.originalActor.anim);
+						Animation anim = wmActor.originalActor.go.GetComponent<Animation>();
+						AnimationState animState = anim[animName];
+						if (anim != null)
 						{
-							GameObject go = wmActor.originalActor.go;
-							String animName = FF9DBAll.AnimationDB.GetValue(wmActor.originalActor.anim);
-							AnimationState anim = go.GetComponent<Animation>()[animName];
-							if (anim != null)
-							{
-								Single animTime;
-								if (wmActor._smoothUpdateAnimTimePrevious > wmActor._smoothUpdateAnimTimeActual)
-									animTime = Mathf.Lerp(wmActor._smoothUpdateAnimTimePrevious, anim.length, smoothFactor);
-								else
-									animTime = Mathf.Lerp(wmActor._smoothUpdateAnimTimePrevious, wmActor._smoothUpdateAnimTimeActual, smoothFactor);
+							animState.time = Mathf.Lerp(wmActor._smoothUpdateAnimTimePrevious, wmActor._smoothUpdateAnimTimeActual, smoothFactor);
 
-								/*if(wmActor.name == "obj14_WM")
-									Log.Message($"[DEBUG] {wmActor.name} prev: {wmActor._smoothUpdateAnimTimePrevious} actual:{wmActor._smoothUpdateAnimTimeActual} length: {anim.length} t:{smoothFactor} animTime: {animTime}");*/
+							if (animState.time > animState.length)
+								animState.time -= animState.length;
+							else if (animState.time < 0f)
+								animState.time += animState.length;
+							anim.Sample();
 
-								anim.time = Mathf.Clamp(anim.length, 0f, animTime);
-								go.GetComponent<Animation>().Sample();
-							}
+							/*if (wmActor.name == "obj14_WM") Log.Message($"[DEBUG] curTime {animState.time} prev {wmActor._smoothUpdateAnimTimePrevious} actual {wmActor._smoothUpdateAnimTimeActual} length {animState.length} t {smoothFactor}")*/
 						}
 					}
 				}
@@ -145,11 +137,16 @@ namespace Memoria
 					{
 						if (wmActor._smoothUpdateRegistered && ff9.objIsVisible(obj))
 							wmActor.transform.position = wmActor._smoothUpdatePosActual;
-						if (wmActor._smoothUpdatePlayingAnim)
+
+						AnimationState animState = wmActor.originalActor.go.gameObject.GetComponent<Animation>()[wmActor._smoothUpdateAnimNameActual];
+						if (animState != null)
 						{
-							AnimationState anim = wmActor.originalActor.go.GetComponent<Animation>()[FF9DBAll.AnimationDB.GetValue(wmActor.originalActor.anim)];
-							if (anim != null)
-								anim.time = wmActor._smoothUpdateAnimTimeActual;
+							animState.time = wmActor._smoothUpdateAnimTimeActual;
+
+							if (animState.time > animState.length)
+								animState.time -= animState.length;
+							else if (animState.time < 0f)
+								animState.time += animState.length;
 						}
 					}
 				}
@@ -180,7 +177,10 @@ partial class WMActor
 	public Vector3 _smoothUpdatePosActual;
 	public Quaternion _smoothUpdateRotPrevious;
 	public Quaternion _smoothUpdateRotActual;
-	public Boolean _smoothUpdatePlayingAnim = false;
+	public String _smoothUpdateAnimNamePrevious;
+	public String _smoothUpdateAnimNameActual;
+	public String _smoothUpdateAnimNameNext;
 	public Single _smoothUpdateAnimTimePrevious;
 	public Single _smoothUpdateAnimTimeActual;
+	public Single _smoothUpdateAnimSpeed;
 }

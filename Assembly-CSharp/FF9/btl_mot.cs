@@ -284,6 +284,8 @@ namespace FF9
 
 			// Did the animation loop?
 			Single speed = time - animState.time;
+			if (Mathf.Abs(btl._smoothUpdateAnimSpeed) > Mathf.Abs(speed) + 0.001f)
+				btl._smoothUpdateAnimSpeed = 0;
 			if (btl._smoothUpdateAnimSpeed > 0f && speed < 0f)
 			{
 				btl._smoothUpdateAnimTimeActual += animState.length;

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FF9;
+using System;
 using UnityEngine;
 using Object = System.Object;
 
@@ -178,33 +179,73 @@ public partial class WMActor : MonoBehaviour
 		}
 	}
 
-    public void UpdateAnimationViaScript()
+	public void UpdateAnimationViaScript()
 	{
-		this._smoothUpdatePlayingAnim = false;
 		GameObject go = this.originalActor.go;
-        if (go == null)
-            return;
+		if (go == null)
+			return;
+
 		String animName = FF9DBAll.AnimationDB.GetValue(this.originalActor.anim);
-		if (!go.GetComponent<Animation>().IsPlaying(animName))
+		Animation anim = go.GetComponent<Animation>();
+		AnimationState animState = anim[animName];
+		Int32 animMaxFrame = originalActor.frameN;
+		Single animFrame = originalActor.animFrame;
+		Single time = animFrame / animMaxFrame * animState.length;
+
+		if (!anim.IsPlaying(animName))
 		{
-			if (go.GetComponent<Animation>().GetClip(animName) == null)
-				return;
-			go.GetComponent<Animation>().Play(animName);
+			if (this._smoothUpdateAnimNameActual != null && this._smoothUpdateAnimNameActual != this._smoothUpdateAnimNamePrevious && this._smoothUpdateAnimNameNext == null)
+			{
+				// Don't switch animation quite yet so we can smooth the end of it
+				animState.time = time;
+				animState = anim[this._smoothUpdateAnimNameActual];
+
+				time = this._smoothUpdateAnimTimeActual + this._smoothUpdateAnimSpeed;
+				this._smoothUpdateAnimNamePrevious = this._smoothUpdateAnimNameActual;
+				this._smoothUpdateAnimNameNext = animName;
+			}
+			else
+			{
+				// Now we can switch
+				String next = this._smoothUpdateAnimNameNext ?? animName;
+				if (anim.GetClip(next) == null)
+					return;
+				anim.Play(next);
+
+				this._smoothUpdateAnimNamePrevious = this._smoothUpdateAnimNameActual;
+				this._smoothUpdateAnimNameActual = animName;
+				this._smoothUpdateAnimNameNext = null;
+			}
+		}
+
+		this._smoothUpdateAnimTimeActual = time;
+		this._smoothUpdateAnimTimePrevious = animState.time;
+
+		// Did the animation loop?
+		Single speed = time - animState.time;
+		if (Mathf.Abs(this._smoothUpdateAnimSpeed) > Mathf.Abs(speed) + 0.001f)
+			this._smoothUpdateAnimSpeed = 0;
+		if (this._smoothUpdateAnimSpeed > 0f && speed < 0f)
+		{
+			this._smoothUpdateAnimTimeActual += animState.length;
+			this._smoothUpdateAnimSpeed = this._smoothUpdateAnimTimeActual - this._smoothUpdateAnimTimePrevious;
+		}
+		else if (this._smoothUpdateAnimSpeed < 0f && speed > 0f)
+		{
+			this._smoothUpdateAnimTimePrevious += animState.length;
+			this._smoothUpdateAnimSpeed = this._smoothUpdateAnimTimeActual - this._smoothUpdateAnimTimePrevious;
 		}
 		else
 		{
-			this._smoothUpdatePlayingAnim = true;
+			this._smoothUpdateAnimSpeed = speed;
 		}
-		AnimationState clipState = go.GetComponent<Animation>()[animName];
-		Single time = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * clipState.length;
-		clipState.speed = 0f;
-		this._smoothUpdateAnimTimePrevious = clipState.time;
-		this._smoothUpdateAnimTimeActual = time;
-		clipState.time = time;
-        go.GetComponent<Animation>().Sample();
-    }
 
-    public void LateUpdate()
+		animState.speed = 0f;
+		animState.time = time;
+		anim.Sample();
+	}
+
+	public void LateUpdate()
 	{
 	}
 
