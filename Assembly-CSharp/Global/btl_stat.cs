@@ -364,7 +364,7 @@ public static class btl_stat
                 btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysStone);
                 break;
         }
-        HonoluluBattleMain.battleSPS.RemoveBtlSPSObj(btl, status);
+        // HonoluluBattleMain.battleSPS.RemoveBtlSPSObj(btl, status); [DV] Somehow, fix a bug when Poison SPS randomly dissapear in battle.
         BattleVoice.TriggerOnStatusChange(btl, "Removed", status);
         return 2;
     }
