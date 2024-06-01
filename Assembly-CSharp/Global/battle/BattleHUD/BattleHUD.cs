@@ -801,21 +801,31 @@ public partial class BattleHUD : UIScene
         Boolean shouldUpdatePointer = false;
         Int32 enemyCountOld = _enemyCount;
         Int32 playerCountOld = _playerCount;
+        List<Int32> matchBattleIdPlayerCurrentList = new List<Int32>();
+        List<Int32> matchBattleIdEnemyCurrentList = new List<Int32>();
         Int32 enemyCount = 0;
         Int32 playerCount = 0;
 
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (!unit.IsTargetable)
-                continue;
+            Int32 index = unit.GetIndex();
 
-            if (unit.IsPlayer)
-                playerCount++;
-            else
-                enemyCount++;
+            if (unit.IsTargetable)
+            {
+                if (unit.IsPlayer)
+                {
+                    playerCount++;
+                    matchBattleIdPlayerCurrentList.Add(index);
+                }                 
+                else
+                {
+                    enemyCount++;
+                    matchBattleIdEnemyCurrentList.Add(index);
+                }                   
+            }
         }
 
-        if (enemyCount != enemyCountOld || playerCount != playerCountOld)
+        if (enemyCount != enemyCountOld || playerCount != playerCountOld || !Enumerable.SequenceEqual(matchBattleIdPlayerCurrentList, _matchBattleIdPlayerList) || !Enumerable.SequenceEqual(matchBattleIdEnemyCurrentList, _matchBattleIdEnemyList))
         {
             shouldUpdatePointer = true;
             _matchBattleIdPlayerList.Clear();
