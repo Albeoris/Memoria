@@ -138,7 +138,7 @@ namespace Memoria.Launcher
             BattleTPSindex.Margin = rowMargin;
             Slider BattleTPSFactor = AddUiElement(UiSliderFactory.Create(0), row, 1, 1, 7);
             BattleTPSFactor.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleTPS)) { Mode = BindingMode.TwoWay });
-            BattleTPSFactor.TickFrequency = 15;
+            BattleTPSFactor.TickFrequency = 1;
             BattleTPSFactor.IsSnapToTickEnabled = true;
             BattleTPSFactor.TickPlacement = TickPlacement.BottomRight;
             BattleTPSFactor.Height = 20;

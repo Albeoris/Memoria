@@ -15,7 +15,7 @@ namespace Memoria.Assets
             Exceptions.ThrowIfNullOrEmprty(reference.Value, nameof(reference));
             Exceptions.ThrowIfDefault(format, nameof(format));
 
-            Value = Path.ChangeExtension(reference.Value, format.GetFileExtension());
+            Value = reference.Value + format.GetFileExtension();
             Format = format;
         }
 

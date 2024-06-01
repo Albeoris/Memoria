@@ -358,7 +358,7 @@ public class SaveLoadUI : UIScene
 			}
 			fileInfoHUD.LeaderNameLabel.text = text;
 			fileInfoHUD.LeaderLvLabel.text = num.ToString();
-			fileInfoHUD.GilLabel.text = file.Gil.ToString() + "[YSUB=1.3][sub]G";
+			fileInfoHUD.GilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", file.Gil.ToString());
 			fileInfoHUD.LocationNameLabel.text = file.Location;
 			Color color = FF9TextTool.White;
 			Double num3 = (Double)(file.PlayDuration % 360000f);

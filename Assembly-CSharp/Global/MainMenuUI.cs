@@ -478,7 +478,7 @@ public class MainMenuUI : UIScene
 
 	private void DisplayGeneralInfo()
 	{
-		this.gilLabel.text = FF9StateSystem.Common.FF9.party.gil.ToString() + "[YSUB=1.3][sub]G";
+		this.gilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", FF9StateSystem.Common.FF9.party.gil.ToString());
 		this.locationNameLabel.text = FF9StateSystem.Common.FF9.mapNameStr;
 	}
 

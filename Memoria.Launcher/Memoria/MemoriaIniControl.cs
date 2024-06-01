@@ -111,7 +111,6 @@ namespace Memoria.Launcher
             battleFPSText.Foreground = Brushes.White;
             battleFPSText.Margin = rowMargin;
             battleFPSText.ToolTip = Lang.Settings.BattleFPS_Tooltip;
-            battleFPSText.TextAlignment = TextAlignment.Center;
 
             UiTextBlock fieldFPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FieldFPS), row, 3, 1, 3);
             fieldFPSText.Foreground = Brushes.White;
@@ -134,7 +133,7 @@ namespace Memoria.Launcher
             UiTextBlock battleFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
             battleFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
             battleFPSIndex.Foreground = Brushes.White;
-            battleFPSIndex.Margin = new(8, 2, 0, 2);
+            battleFPSIndex.Margin = new(8, 0, 0, 2);
             //battleFPSIndex.TextAlignment = TextAlignment.Right;
             Slider battleFPSSlider = AddUiElement(UiSliderFactory.Create(60), row, 1, 1, 2);
             battleFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
@@ -152,7 +151,7 @@ namespace Memoria.Launcher
             UiTextBlock fieldFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 3, 1, 1);
             fieldFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(FieldFPS)) { Mode = BindingMode.TwoWay });
             fieldFPSIndex.Foreground = Brushes.White;
-            fieldFPSIndex.Margin = new(2, 2, 0, 2);
+            fieldFPSIndex.Margin = new(8, 0, 0, 2);
             //fieldFPSIndex.TextAlignment = TextAlignment.Right;
             Slider fieldFPSSlider = AddUiElement(UiSliderFactory.Create(60), row, 4, 1, 2);
             fieldFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(FieldFPS)) { Mode = BindingMode.TwoWay });
@@ -170,8 +169,8 @@ namespace Memoria.Launcher
             UiTextBlock worldFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 6, 1, 1);
             worldFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(WorldFPS)) { Mode = BindingMode.TwoWay });
             worldFPSIndex.Foreground = Brushes.White;
-            worldFPSIndex.Margin = new(2, 2, 0, 2);
-            worldFPSIndex.TextAlignment = TextAlignment.Right;
+            worldFPSIndex.Margin = new(8, 0, 0, 2);
+            //worldFPSIndex.TextAlignment = TextAlignment.Right;
             Slider worldFPSSlider = AddUiElement(UiSliderFactory.Create(60), row, 7, 1, 2);
             worldFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(WorldFPS)) { Mode = BindingMode.TwoWay });
             worldFPSSlider.TickFrequency = 10;
@@ -954,8 +953,9 @@ namespace Memoria.Launcher
                     value = " 1";
                     OnPropertyChanged(nameof(BattleSwirlFrames));
                 }
-                if (!Int16.TryParse(value, out _battleswirlframes))
-                    _battleswirlframes = 1;
+                newvalue = (Int16.Parse(value) == 0) ? "1" : "0";
+                if (!Int16.TryParse(newvalue, out _battleswirlframes))
+                    _battleswirlframes = 0;
 
                 value = iniFile.ReadValue("Graphics", nameof(AntiAliasing));
                 if (String.IsNullOrEmpty(value))
@@ -1254,7 +1254,7 @@ namespace Memoria.Launcher
                         }
                         else if (BattleSwirlFrames == 0)
                         {
-                            iniFile.WriteValue("Graphics", propertyName + " ", " 90");
+                            iniFile.WriteValue("Graphics", propertyName + " ", " 70");
                         }
                         break;
                     case nameof(AntiAliasing):
@@ -1349,15 +1349,15 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Font", "Size", "24");
 
                         MakeIniNotNull("Graphics", "Enabled", "0");
-                        MakeIniNotNull("Graphics", "BattleFPS", "30");
+                        MakeIniNotNull("Graphics", "BattleFPS", "60");
                         MakeIniNotNull("Graphics", "BattleTPS", "15");
-                        MakeIniNotNull("Graphics", "FieldFPS", "30");
+                        MakeIniNotNull("Graphics", "FieldFPS", "60");
                         MakeIniNotNull("Graphics", "FieldTPS", "30");
-                        MakeIniNotNull("Graphics", "WorldFPS", "20");
+                        MakeIniNotNull("Graphics", "WorldFPS", "60");
                         MakeIniNotNull("Graphics", "WorldTPS", "20");
                         MakeIniNotNull("Graphics", "MenuFPS", "60");
                         MakeIniNotNull("Graphics", "MenuTPS", "60");
-                        MakeIniNotNull("Graphics", "BattleSwirlFrames", "13");
+                        MakeIniNotNull("Graphics", "BattleSwirlFrames", "0");
                         MakeIniNotNull("Graphics", "WidescreenSupport", "1");
                         MakeIniNotNull("Graphics", "SkipIntros", "0");
                         MakeIniNotNull("Graphics", "GarnetHair", "0");
@@ -1372,7 +1372,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Control", "BattleAutoConfirm", "1");
                         MakeIniNotNull("Control", "TurboDialog", "1");
                         MakeIniNotNull("Control", "PSXScrollingMethod", "1");
-                        MakeIniNotNull("Control", "PSXMovementMethod", "0");
+                        MakeIniNotNull("Control", "PSXMovementMethod", "1");
                         MakeIniNotNull("Control", "AlwaysCaptureGamepad", "0");
 
                         MakeIniNotNull("Battle", "Enabled", "0");
