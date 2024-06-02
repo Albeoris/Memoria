@@ -4,7 +4,7 @@ using System.IO;
 using Memoria.Scripts;
 using UnityEngine;
 
-public class FieldSPS : MonoBehaviour
+public partial class FieldSPS : MonoBehaviour
 {
 	public void Init()
 	{
