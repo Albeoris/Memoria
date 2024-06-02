@@ -1587,7 +1587,7 @@ public partial class BattleHUD : UIScene
         CMD_DATA cmd2 = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].cmd[0]; // The second command sent/performed is the main one (it resets the ATB correctly amongst other things)
         cmd1.regist.sel_mode = 1;
         btl_cmd.SetCommand(cmd1, first.CommandId, first.SubId, first.TargetId, first.TargetType, cmdMenu: first.Menu);
-        btl_cmd.SetCommand(cmd2, second.CommandId, second.SubId, second.TargetId, second.TargetType, cmdMenu: second.Menu);
+        btl_cmd.SetCommand(cmd2, second.CommandId, second.SubId, second.TargetId, second.TargetType, cmdMenu: second.Menu, IdleAnim: false); // Disable IdleAnim otherwise, the animation will skip to MP_IDLE_CMD
         SetPartySwapButtonActive(false);
         InputFinishList.Add(CurrentPlayerIndex);
 

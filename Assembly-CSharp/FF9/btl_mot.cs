@@ -547,7 +547,7 @@ namespace FF9
 			BattlePlayerCharacter.PlayerMotionIndex currentAnim = btl_mot.getMotion(btl);
 			if (btl_stat.CheckStatus(btl, BattleStatusConst.Immobilized))
 			{
-				if (btl.bi.player != 0 && !btl.is_monster_transform && btl_stat.CheckStatus(btl, BattleStatus.Venom & BattleStatusConst.IdleDying))
+				if (btl.bi.player != 0 && !btl.is_monster_transform && btl_stat.CheckStatus(btl, BattleStatusConst.IdleDying))
 				{
 					btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
 					btl.evt.animFrame = 0;
@@ -599,15 +599,15 @@ namespace FF9
 				targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE;
 			else if (btl.bi.cmd_idle == 1)
 				targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD;
-			if (currentAnim == targetAnim)
+            if (currentAnim == targetAnim)
 			{
 				if (isEndOfAnim)
 					btl.evt.animFrame = 0;
 				return;
 			}
-			BattlePlayerCharacter.PlayerMotionStance previousStance = btl_mot.EndingMotionStance(currentAnim);
+            BattlePlayerCharacter.PlayerMotionStance previousStance = btl_mot.EndingMotionStance(currentAnim);
 			BattlePlayerCharacter.PlayerMotionStance nextStance = btl_mot.StartingMotionStance(targetAnim);
-			if (previousStance == BattlePlayerCharacter.PlayerMotionStance.SPECIAL_ANY_IDLE)
+            if (previousStance == BattlePlayerCharacter.PlayerMotionStance.SPECIAL_ANY_IDLE)
 			{
 				if (nextStance == BattlePlayerCharacter.PlayerMotionStance.NORMAL || nextStance == BattlePlayerCharacter.PlayerMotionStance.CMD || nextStance == BattlePlayerCharacter.PlayerMotionStance.DYING || nextStance == BattlePlayerCharacter.PlayerMotionStance.DEFEND)
 				{

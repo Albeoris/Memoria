@@ -145,7 +145,7 @@ public class btl_cmd
         }
     }
 
-    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false, BattleCommandMenu cmdMenu = BattleCommandMenu.None)
+    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false, BattleCommandMenu cmdMenu = BattleCommandMenu.None, Boolean IdleAnim = true)
     {
         if (btl_cmd.CheckUsingCommand(cmd))
             return;
@@ -276,7 +276,7 @@ public class btl_cmd
             //    }
             //}
             caster.bi.cmd_idle = 1;
-            if (Configuration.Battle.Speed < 3 && caster != null && caster.bi.player != 0)
+            if (Configuration.Battle.Speed < 3 && caster != null && caster.bi.player != 0 && IdleAnim)
                 btl_mot.SetDefaultIdle(caster); // Don't wait for the "Idle" animation to finish its cycle to get ready
         }
         if (commandId == BattleCommandId.SummonGarnet || commandId == BattleCommandId.Phantom || commandId == BattleCommandId.SummonEiko)
