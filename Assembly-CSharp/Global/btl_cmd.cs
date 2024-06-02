@@ -145,7 +145,7 @@ public class btl_cmd
         }
     }
 
-    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false, BattleCommandMenu cmdMenu = BattleCommandMenu.None, Boolean IdleAnim = true)
+    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false, BattleCommandMenu cmdMenu = BattleCommandMenu.None, Boolean IdleAnim = true, Int32 ItemMix = -1)
     {
         if (btl_cmd.CheckUsingCommand(cmd))
             return;
@@ -243,6 +243,21 @@ public class btl_cmd
             btl_cmd.SetCommand(first_cmd, commandId, cmd.Power, first_tar_id, first_cursor, cmdMenu: cmdMenu);
             btl_cmd.SetCommand(second_cmd, commandId, cmd.HitRate, second_tar_id, second_cursor, cmdMenu: cmdMenu);
             return;
+        }
+        // Mix Command
+        if (caster != null && caster.bi.player != 0 && ItemMix >= 0)
+        {
+            RegularItem ingredient1 = (RegularItem)sub_no;
+            RegularItem ingredient2 = (RegularItem)ItemMix;
+
+            foreach (MixItems mixitem in ff9mixitem.MixItemsData.Values)
+            {
+                if (mixitem.Ingredients.Contains(ingredient1) && mixitem.Ingredients.Contains(ingredient2))
+                {
+                    cmd.sub_no = mixitem.Result;
+                    break;
+                }
+            }
         }
 
         cmd.tar_id = tar_id;

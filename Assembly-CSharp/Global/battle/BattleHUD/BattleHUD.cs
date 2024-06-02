@@ -1599,6 +1599,17 @@ public partial class BattleHUD : UIScene
         _partyDetail.SetBlink(CurrentPlayerIndex, false);
     }
 
+    private void SendMixCommand(CommandDetail first, CommandDetail second)
+    {
+        BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
+        CMD_DATA cmd = btl.cmd[0];
+        cmd.regist.sel_mode = 1;
+        btl_cmd.SetCommand(cmd, first.CommandId, first.SubId, first.TargetId, first.TargetType, cmdMenu: first.Menu, ItemMix: second.SubId);
+        SetPartySwapButtonActive(false);
+        InputFinishList.Add(CurrentPlayerIndex);
+        _partyDetail.SetBlink(CurrentPlayerIndex, false);
+    }
+
     private void SetCommandVisibility(Boolean isVisible, Boolean forceCursorMemo)
     {
         SetPartySwapButtonActive(isVisible);
@@ -2392,7 +2403,9 @@ public partial class BattleHUD : UIScene
             }
         }
 
-        if (IsDoubleCast)
+        if (MixCommandSet.Contains(_currentCommandId))
+            SendMixCommand(_firstCommand, ProcessCommand(battleIndex, _cursorType));
+        else if (IsDoubleCast)
             SendDoubleCastCommand(_firstCommand, ProcessCommand(battleIndex, _cursorType));
         else
             SendCommand(ProcessCommand(battleIndex, _cursorType));
