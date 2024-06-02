@@ -334,8 +334,17 @@ public partial class BattleHUD : UIScene
             else if (ButtonGroupState.ActiveGroup == ItemGroupButton)
             {
                 FF9Sfx.FF9SFX_Play(101);
-                SetItemPanelVisibility(false, false);
-                SetCommandVisibility(true, true);
+                if (IsDoubleCast && _doubleCastCount > 0)
+                    --_doubleCastCount;
+                if (_doubleCastCount == 0)
+                {
+                    SetItemPanelVisibility(false, false);
+                    SetCommandVisibility(true, true);
+                }
+                else
+                {
+                    SetItemPanelVisibility(true, false);
+                }
             }
             else if (ButtonGroupState.ActiveGroup == String.Empty && UIManager.Input.ContainsAndroidQuitKey())
             {

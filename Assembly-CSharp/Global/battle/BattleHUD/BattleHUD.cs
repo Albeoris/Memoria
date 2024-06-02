@@ -1126,11 +1126,23 @@ public partial class BattleHUD : UIScene
 
             ++_doubleCastCount;
             _firstCommand = ProcessCommand(battleIndex, cursorGroup);
-            _subMenuType = SubMenuType.Ability;
 
-            DisplayAbility();
-            SetTargetVisibility(false);
-            SetAbilityPanelVisibility(true, true);
+            CharacterCommandType commandType = CharacterCommands.Commands[_firstCommand.CommandId].Type;
+
+            if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
+            {
+                _subMenuType = commandType == CharacterCommandType.Item ? SubMenuType.Item : SubMenuType.Throw;
+                DisplayItem(commandType == CharacterCommandType.Throw);
+                SetTargetVisibility(false);
+                SetItemPanelVisibility(true, true);
+            }                
+            else
+            {
+                _subMenuType = SubMenuType.Ability;
+                DisplayAbility();
+                SetTargetVisibility(false);
+                SetAbilityPanelVisibility(true, true);
+            }
             BackButton.SetActive(FF9StateSystem.MobilePlatform);
         }
     }
@@ -1645,15 +1657,24 @@ public partial class BattleHUD : UIScene
     {
         if (isVisible)
         {
-            ItemPanel.SetActive(true);
-            ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);
-            PairCharCommand cursorKey = new PairCharCommand(CurrentPlayerIndex, _currentCommandId);
-            if (_abilityCursorMemorize.ContainsKey(cursorKey) && FF9StateSystem.Settings.cfg.cursor != 0 || forceCursorMemo)
-                _itemScrollList.JumpToIndex(_abilityCursorMemorize[cursorKey], true);
+            if (!ItemPanel.activeSelf)
+            {
+                ItemPanel.SetActive(true);
+                ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);
+                PairCharCommand cursorKey = new PairCharCommand(CurrentPlayerIndex, _currentCommandId);
+                if (_abilityCursorMemorize.ContainsKey(cursorKey) && FF9StateSystem.Settings.cfg.cursor != 0 || forceCursorMemo)
+                    _itemScrollList.JumpToIndex(_abilityCursorMemorize[cursorKey], true);
+                else
+                    _itemScrollList.JumpToIndex(0, false);
+            }
+            if (IsDoubleCast && _doubleCastCount == 1)
+                ButtonGroupState.SetPointerNumberToGroup(1, ItemGroupButton);
+            else if (IsDoubleCast && _doubleCastCount == 2)
+                ButtonGroupState.SetPointerNumberToGroup(2, ItemGroupButton);
             else
-                _itemScrollList.JumpToIndex(0, false);
-            ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);
+                ButtonGroupState.SetPointerNumberToGroup(0, ItemGroupButton);
             ButtonGroupState.ActiveGroup = ItemGroupButton;
+            ButtonGroupState.UpdateActiveButton();
         }
         else
         {
