@@ -536,7 +536,6 @@ namespace NCalc
             expr.Parameters["AbilityElementForBonus"] = (Int32)command.ElementForBonus;
             expr.Parameters["ItemUseId"] = (Int32)command.ItemId;
             expr.Parameters["WeaponThrowShape"] = command.Id == BattleCommandId.Throw ? ff9item._FF9Item_Data[command.ItemId].shape : -1;
-            expr.Parameters["WeaponThrowColor"] = command.Id == BattleCommandId.Throw ? ff9item._FF9Item_Data[command.ItemId].color : -1;
             expr.Parameters["SpecialEffectId"] = (Int32)command.SpecialEffect;
             expr.Parameters["TargetType"] = (Int32)command.TargetType;
             expr.Parameters["IsATBCommand"] = command.IsATBCommand;

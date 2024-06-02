@@ -1734,7 +1734,7 @@ public partial class BattleHUD : UIScene
     private void SetTargetVisibility(Boolean isVisible)
     {
         if (isVisible)
-        {
+        {     
             TargetType targetType = 0;
             TargetDisplay subMode = 0;
             _defaultTargetAlly = false;
@@ -1760,27 +1760,6 @@ public partial class BattleHUD : UIScene
                 testCommand.SetAAData(aaData);
                 testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
 
-                SelectBestTarget(targetType, testCommand);
-            }
-            else if (_currentCommandIndex == BattleCommandMenu.Item)
-            {
-                RegularItem itemId = _itemIdList[_currentSubMenuIndex];
-                ITEM_DATA itemData = ff9item.GetItemEffect(itemId);
-                targetType = itemData.info.Target;
-                _defaultTargetAlly = itemData.info.DefaultAlly;
-                _defaultTargetDead = itemData.info.ForDead;
-                _targetDead = itemData.info.ForDead;
-                subMode = itemData.info.DisplayStats;
-
-                CMD_DATA testCommand = new CMD_DATA
-                {
-                    regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
-                    cmd_no = _currentCommandId,
-                    sub_no = (Int32)itemId
-                };
-                testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityId.Void]);
-                testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
-
                 if (Configuration.Mod.TranceSeek && _currentCommandId == BattleCommandId.Throw) // [DV] Change TargetType for throwing items (magic scrolls for Trance Seek)
                 { // Or i can make it with the DictionaryPatch.txt instead ?
                     ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
@@ -1803,6 +1782,26 @@ public partial class BattleHUD : UIScene
                         }
                     }
                 }
+                SelectBestTarget(targetType, testCommand);
+            }
+            else if (_currentCommandIndex == BattleCommandMenu.Item)
+            {
+                RegularItem itemId = _itemIdList[_currentSubMenuIndex];
+                ITEM_DATA itemData = ff9item.GetItemEffect(itemId);
+                targetType = itemData.info.Target;
+                _defaultTargetAlly = itemData.info.DefaultAlly;
+                _defaultTargetDead = itemData.info.ForDead;
+                _targetDead = itemData.info.ForDead;
+                subMode = itemData.info.DisplayStats;
+
+                CMD_DATA testCommand = new CMD_DATA
+                {
+                    regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
+                    cmd_no = _currentCommandId,
+                    sub_no = (Int32)itemId
+                };
+                testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityId.Void]);
+                testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
 
                 SelectBestTarget(targetType, testCommand);
             }
