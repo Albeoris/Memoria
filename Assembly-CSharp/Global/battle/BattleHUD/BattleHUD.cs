@@ -656,6 +656,12 @@ public partial class BattleHUD : UIScene
                     Count = ff9Item.count,
                     Id = ff9Item.id
                 };
+                if (_doubleCastCount == 2 && battleItemListData.Id == (RegularItem)_firstCommand.SubId)
+                {
+                    battleItemListData.Count--;
+                    if (battleItemListData.Count <= 0)
+                        continue;
+                }
                 inDataList.Add(battleItemListData);
             }
         }
@@ -1126,7 +1132,6 @@ public partial class BattleHUD : UIScene
 
             ++_doubleCastCount;
             _firstCommand = ProcessCommand(battleIndex, cursorGroup);
-
             CharacterCommandType commandType = CharacterCommands.Commands[_firstCommand.CommandId].Type;
 
             if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)

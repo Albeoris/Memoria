@@ -344,6 +344,7 @@ public partial class BattleHUD : UIScene
                 else
                 {
                     SetItemPanelVisibility(true, false);
+                    DisplayItem(CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Throw);
                 }
             }
             else if (ButtonGroupState.ActiveGroup == String.Empty && UIManager.Input.ContainsAndroidQuitKey())
