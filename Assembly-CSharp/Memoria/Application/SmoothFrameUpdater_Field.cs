@@ -137,7 +137,8 @@ namespace Memoria
 				fieldSPS._smoothUpdateRegistered = true;
 			}
 			// Layers
-			if (fieldmap?.scene?.overlayList != null)
+            // Interfere with snouz's "Camera stabilizer"
+			/*if (fieldmap?.scene?.overlayList != null)
 			{
 				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
 				{
@@ -151,7 +152,7 @@ namespace Memoria
 						bgLayer._smoothUpdateRegistered = true;
 					}
 				}
-			}
+			}*/
 			// Camera
 			Camera mainCamera = fieldmap?.GetMainCamera();
 			if (mainCamera != null)
@@ -220,7 +221,7 @@ namespace Memoria
 				fieldSPS.rot = Quaternion.Lerp(fieldSPS._smoothUpdateRotPrevious, fieldSPS._smoothUpdateRotActual, smoothFactor).eulerAngles;
 				fieldSPS.scale = (Int32)Mathf.Lerp(fieldSPS._smoothUpdateScalePrevious, fieldSPS._smoothUpdateScaleActual, smoothFactor);
 			}
-			if (fieldmap?.scene?.overlayList != null)
+			/*if (fieldmap?.scene?.overlayList != null)
 			{
 				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
 				{
@@ -228,10 +229,10 @@ namespace Memoria
 					{
 						//Vector3 frameMove = bgLayer._smoothUpdatePosActual - bgLayer._smoothUpdatePosPrevious;
 						//if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < OverlaySmoothMovementMaxSqr)
-						bgLayer.transform.position = Vector3.Lerp(bgLayer._smoothUpdatePosPrevious, bgLayer._smoothUpdatePosActual, smoothFactor);
+						bgLayer.transform.position = Vector3.LerpUnclamped(bgLayer._smoothUpdatePosPrevious, bgLayer._smoothUpdatePosActual, 1f + smoothFactor);
 					}
 				}
-			}
+			}*/
 			if (_cameraRegistered && !_cameraReverseMove)
 			{
 				Camera mainCamera = fieldmap?.GetMainCamera();
@@ -265,10 +266,10 @@ namespace Memoria
 					}
 				}
 			}
-			if (fieldmap?.scene?.overlayList != null)
+			/*if (fieldmap?.scene?.overlayList != null)
 				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
 					if (bgLayer.transform != null && bgLayer._smoothUpdateRegistered) // && (bgLayer.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Active) != 0
-						bgLayer.transform.position = bgLayer._smoothUpdatePosActual;
+						bgLayer.transform.position = bgLayer._smoothUpdatePosActual;*/
 			if (_cameraRegistered)
 			{
 				Camera mainCamera = fieldmap?.GetMainCamera();
@@ -311,9 +312,9 @@ partial class FieldSPS
 	public Int32 _smoothUpdateScalePrevious;
 	public Int32 _smoothUpdateScaleActual;
 }
-partial class BGOVERLAY_DEF
+/*partial class BGOVERLAY_DEF
 {
 	public Boolean _smoothUpdateRegistered = false;
 	public Vector3 _smoothUpdatePosPrevious;
 	public Vector3 _smoothUpdatePosActual;
-}
+}*/
