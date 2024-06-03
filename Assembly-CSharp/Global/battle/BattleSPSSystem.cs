@@ -500,8 +500,9 @@ public class BattleSPSSystem : MonoBehaviour
 	}
 
 	public String MapName;
+    public List<BattleSPS> SpsList { get => _spsList; }
 
-	private Boolean _isReady;
+    private Boolean _isReady;
 
 	private List<BattleSPS> _spsList;
 

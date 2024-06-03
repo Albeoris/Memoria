@@ -4,7 +4,7 @@ using System.IO;
 using Memoria.Scripts;
 using UnityEngine;
 
-public class BattleSPS : MonoBehaviour
+public partial class BattleSPS : MonoBehaviour
 {
 	public void Init()
 	{

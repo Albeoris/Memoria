@@ -63,6 +63,31 @@ namespace Memoria
 					geo.geoScaleUpdate(next, true);
 				}
 			}
+			// SPS
+			foreach (BattleSPS battleSPS in HonoluluBattleMain.battleSPS.SpsList)
+			{
+				if (battleSPS == null || !battleSPS.enabled)
+					continue;
+
+				if (battleSPS._smoothUpdateRegistered)
+				{
+					battleSPS._smoothUpdatePosPrevious = battleSPS._smoothUpdatePosActual;
+					battleSPS._smoothUpdateRotPrevious = battleSPS._smoothUpdateRotActual;
+					battleSPS._smoothUpdateScalePrevious = battleSPS._smoothUpdateScaleActual;
+				}
+				else
+				{
+					battleSPS._smoothUpdatePosPrevious = battleSPS.pos;
+					battleSPS._smoothUpdateRotPrevious = Quaternion.Euler(battleSPS.rot.x, battleSPS.rot.y, battleSPS.rot.z);
+					battleSPS._smoothUpdateScalePrevious = battleSPS.scale;
+				}
+
+				battleSPS._smoothUpdatePosActual = battleSPS.pos;
+				battleSPS._smoothUpdateRotActual = Quaternion.Euler(battleSPS.rot.x, battleSPS.rot.y, battleSPS.rot.z);
+				battleSPS._smoothUpdateScaleActual = battleSPS.scale;
+
+				battleSPS._smoothUpdateRegistered = true;
+			}
 			Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
 			if (camera != null)
 			{
@@ -121,6 +146,15 @@ namespace Memoria
 						// if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} curName {next.currentAnimationName} actualName {next._smoothUpdateAnimNameActual} prevName {next._smoothUpdateAnimNameActual} speed {next._smoothUpdateAnimSpeed} {animState.enabled} animTime {animState.time} animLength {animState.length} t {smoothFactor} prev {next._smoothUpdateAnimTimePrevious} actual {next._smoothUpdateAnimTimeActual}");
 					}
 				}
+			}
+			foreach (BattleSPS battleSPS in HonoluluBattleMain.battleSPS.SpsList)
+			{
+				if (battleSPS == null || !battleSPS.enabled)
+					continue;
+
+				battleSPS.pos = Vector3.Lerp(battleSPS._smoothUpdatePosPrevious, battleSPS._smoothUpdatePosActual, smoothFactor);
+				battleSPS.rot = Quaternion.Lerp(battleSPS._smoothUpdateRotPrevious, battleSPS._smoothUpdateRotActual, smoothFactor).eulerAngles;
+				battleSPS.scale = (Int32)Mathf.Lerp(battleSPS._smoothUpdateScalePrevious, battleSPS._smoothUpdateScaleActual, smoothFactor);
 			}
 			Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
 			if (_cameraRegistered && camera != null)
@@ -208,6 +242,16 @@ namespace Memoria
 	}
 }
 
+partial class BattleSPS
+{
+	public Boolean _smoothUpdateRegistered = false;
+	public Vector3 _smoothUpdatePosPrevious;
+	public Vector3 _smoothUpdatePosActual;
+	public Quaternion _smoothUpdateRotPrevious;
+	public Quaternion _smoothUpdateRotActual;
+	public Int32 _smoothUpdateScalePrevious;
+	public Int32 _smoothUpdateScaleActual;
+}
 partial class BTL_DATA
 {
 	public Boolean _smoothUpdateRegistered = false;
