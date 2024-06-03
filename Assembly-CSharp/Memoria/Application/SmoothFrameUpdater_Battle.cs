@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 using FF9;
 using Memoria.Prime;
@@ -88,6 +87,26 @@ namespace Memoria
 
 				battleSPS._smoothUpdateRegistered = true;
 			}
+			// Sky
+			if (_bg == null && !_cameraRegistered)
+			{
+				foreach (Transform transform in FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.gameObject.transform)
+				{
+					if (battlebg.getBbgAttr(transform.name) == 8 && battlebg.nf_BbgSkyRotation != 0)
+					{
+						_bg = transform;
+						_bgRotPrevious = _bg.localRotation;
+						_bgRotActual = _bg.localRotation;
+						break;
+					}
+				}
+			}
+            if (_bg != null)
+            {
+				_bgRotPrevious = _bgRotActual;
+				_bgRotActual = _bg.localRotation;
+			}
+			// Camera
 			Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
 			if (camera != null)
 			{
@@ -147,6 +166,7 @@ namespace Memoria
 					}
 				}
 			}
+			// SPS
 			foreach (BattleSPS battleSPS in HonoluluBattleMain.battleSPS.SpsList)
 			{
 				if (battleSPS == null || !battleSPS.enabled)
@@ -156,6 +176,12 @@ namespace Memoria
 				battleSPS.rot = Quaternion.Lerp(battleSPS._smoothUpdateRotPrevious, battleSPS._smoothUpdateRotActual, smoothFactor).eulerAngles;
 				battleSPS.scale = (Int32)Mathf.Lerp(battleSPS._smoothUpdateScalePrevious, battleSPS._smoothUpdateScaleActual, smoothFactor);
 			}
+			// Sky
+			if(_bg != null)
+			{
+				_bg.localRotation = Quaternion.Lerp(_bgRotPrevious, _bgRotActual, smoothFactor);
+			}
+			// Camera
 			Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
 			if (_cameraRegistered && camera != null)
 			{
@@ -239,6 +265,10 @@ namespace Memoria
 		private static Matrix4x4 _cameraW2CMatrixActual;
 		private static Matrix4x4 _cameraProjMatrixPrevious;
 		private static Matrix4x4 _cameraProjMatrixActual;
+
+		private static Transform _bg;
+		private static Quaternion _bgRotPrevious;
+		private static Quaternion _bgRotActual;
 	}
 }
 

@@ -301,6 +301,12 @@ namespace FF9
 				btl._smoothUpdateAnimSpeed = speed;
 			}
 
+            if(btl._smoothUpdateAnimSpeed > 0 && btl._smoothUpdateAnimTimePrevious >= animState.length)
+            {
+                btl._smoothUpdateAnimTimePrevious -= animState.length;
+                btl._smoothUpdateAnimTimeActual -= animState.length;
+            }
+
 			animState.speed = 0f;
 			animState.time = time;
 			anim.Sample();
