@@ -9,7 +9,7 @@ namespace Memoria
 		// TODO: add a smooth effect for field SPS (FieldSPSSystem._spsList[].pos etc)
 
 		// Max (squared) distance per frame to be considered as a smooth movement for field actors
-		private const Single ActorSmoothMovementMaxSqr = 200f * 200f;
+		private const Single ActorSmoothMovementMaxSqr = 400f * 400f; // Iifa tree leaf spiral moves at ~350
 		// Max degree turn per frame to be considered as a smooth movement for field actors
 		// private const Single ActorSmoothTurnMaxDeg = 45f;
 		// Max (squared) distance per frame to be considered as a smooth movement for EBG overlays
@@ -137,7 +137,7 @@ namespace Memoria
 				fieldSPS._smoothUpdateRegistered = true;
 			}
 			// Layers
-            // Interfere with snouz's "Camera stabilizer"
+			// Interfere with snouz's "Camera stabilizer"
 			/*if (fieldmap?.scene?.overlayList != null)
 			{
 				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
@@ -193,6 +193,7 @@ namespace Memoria
 							go.transform.position = Vector3.Lerp(actor._smoothUpdatePosPrevious, actor._smoothUpdatePosActual, smoothFactor);
 							(objList.obj as Actor).fieldMapActor.shadowTran.position = Vector3.Lerp(actor._smoothUpdateShadowPrevious, actor._smoothUpdateShadowActual, smoothFactor);
 						}
+						//if (frameMove.sqrMagnitude >= ActorSmoothMovementMaxSqr) Log.Message($"[DEBUG] {Time.frameCount} {actor.name}_{actor.GetInstanceID()} {frameMove.sqrMagnitude} cur {go.transform.position} prev {actor._smoothUpdatePosPrevious} {actor._smoothUpdatePosActual} t {smoothFactor}");
 
 						//if (Quaternion.Angle(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual) < ActorSmoothTurnMaxDeg)
 						go.transform.rotation = Quaternion.Lerp(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual, smoothFactor);
@@ -205,6 +206,7 @@ namespace Memoria
 							else if (animState.time < 0f)
 								animState.time += animState.length;
 							anim.Sample();
+							//if(actor.name == "obj15") Log.Message($"[DEBUG] {Time.frameCount} {actor.name} {animState.name} mag {frameMove.sqrMagnitude} ang {Quaternion.Angle(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual)} cur {go.transform.position} prev {actor._smoothUpdatePosPrevious} {actor._smoothUpdatePosActual} t {smoothFactor}");
 						}
 						// if (actor.isPlayer) Log.Message($"[DEBUG] {Time.frameCount} {frameMove.sqrMagnitude} anim {animState.name} curTime {animState.time} prev {actor._smoothUpdateAnimTimePrevious} actual {actor._smoothUpdateAnimTimeActual} speed {actor._smoothUpdateAnimSpeed} length {animState.length} rot {go.transform.GetChildByName("bone000").rotation.eulerAngles.y} t {smoothFactor}");
 					}
@@ -229,7 +231,8 @@ namespace Memoria
 					{
 						//Vector3 frameMove = bgLayer._smoothUpdatePosActual - bgLayer._smoothUpdatePosPrevious;
 						//if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < OverlaySmoothMovementMaxSqr)
-						bgLayer.transform.position = Vector3.LerpUnclamped(bgLayer._smoothUpdatePosPrevious, bgLayer._smoothUpdatePosActual, 1f + smoothFactor);
+						bgLayer.transform.position = Vector3.Lerp(bgLayer._smoothUpdatePosPrevious, bgLayer._smoothUpdatePosActual, smoothFactor);
+						Log.Message($"[DEBUG] {Time.frameCount} {bgLayer.transform.name} mag {(bgLayer._smoothUpdatePosActual-bgLayer._smoothUpdatePosPrevious).magnitude} cur {bgLayer.transform.position} prev {bgLayer._smoothUpdatePosPrevious} {bgLayer._smoothUpdatePosActual} t {smoothFactor}");
 					}
 				}
 			}*/

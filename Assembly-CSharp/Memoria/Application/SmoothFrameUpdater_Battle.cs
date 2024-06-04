@@ -12,7 +12,7 @@ namespace Memoria
 		// Max degree turn per frame to be considered as a smooth movement for field actors
 		private const Single ActorSmoothTurnMaxDeg = 90f;
 		// Max (squared) distance per frame to be considered as a smooth movement for the camera
-		private const Single CameraSmoothMovementMaxSqr = 450f * 450f;
+		private const Single CameraSmoothMovementMaxSqr = 1000f * 1000f;
 		// Max degree turn per frame to be considered as a smooth movement for the camera
 		private const Single CameraSmoothTurnMaxDeg = 15f;
 
@@ -101,8 +101,8 @@ namespace Memoria
 					}
 				}
 			}
-            if (_bg != null)
-            {
+			if (_bg != null)
+			{
 				_bgRotPrevious = _bgRotActual;
 				_bgRotActual = _bg.localRotation;
 			}
@@ -180,6 +180,7 @@ namespace Memoria
 			if(_bg != null)
 			{
 				_bg.localRotation = Quaternion.Lerp(_bgRotPrevious, _bgRotActual, smoothFactor);
+				// Log.Message($"[DEBUG {Time.frameCount} cur {_bg.localRotation.eulerAngles} prev {_bgRotPrevious.eulerAngles} actual {_bgRotActual.eulerAngles} t {smoothFactor}");
 			}
 			// Camera
 			Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
