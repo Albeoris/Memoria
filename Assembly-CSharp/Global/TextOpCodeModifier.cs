@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
+using UnityEngine;
 using XInputDotNetPure;
 
 public class TextOpCodeModifier
@@ -125,19 +126,21 @@ public class TextOpCodeModifier
 	{
 		if (FF9TextTool.FieldZoneId == 361)
 		{
-			Int32 num = 0;
-			Int32 num2 = 1;
-			for (Int32 i = num; i <= num2; i++)
+			Int16 RealScreenSize = Math.Max(FieldMap.PsxScreenWidth, (Int16)(FieldMap.PsxScreenHeightNative * Screen.width / Screen.height));
+
+			if (source.Contains("[MPOS=224,12]")) // switch 1
 			{
-				Int16 actualPos = (i == 0) ? (Int16)(FieldMap.PsxScreenWidth - 90) : (Int16)(FieldMap.PsxScreenWidth - 102);
-				String text = TextOpCodeModifier.FossilRouteTargetOpCode[i];
-				if (source.Contains(text))
-				{
-					//source = source.Replace(text, TextOpCodeModifier.FossilRouteReplacedOpCode[i]);
-					source = source.Replace(text, $"[MPOS={actualPos},16]");
-					source = source.Replace("                     ", "                                          "); // fix for exit sign offset with some fonts
-				}
+				source = source.Replace("[MPOS=224,12]", $"[MPOS={(Int16)(RealScreenSize - 90)},16]");
 			}
+			if (source.Contains("[MPOS=212,12]")) // switch 3/4
+			{
+				source = source.Replace("[STRT=84,6][NANI][MPOS=212,12][IMME]                     ", "[STRT=84,6][NANI][MPOS=212,12][IMME]                                          ");
+				source = source.Replace("[MPOS=212,12]", $"[MPOS={(Int16)(RealScreenSize - 102)},16]");
+			}
+
+			// was:
+			// "[MPOS=224,12]" -> "[MPOS=230,16]",
+			// "[MPOS=212,12]" -> "[MPOS=218,16]"
 		}
 		return source;
 	}
@@ -372,18 +375,6 @@ public class TextOpCodeModifier
 		"[XTAB=72][YADD=1][DBTN=UP][MOBI=268][XTAB=121][DBTN=TRIANGLE][MOBI=272]\n[XTAB=59][DBTN=LEFT][MOBI=267][FEED=14][DBTN=RIGHT][MOBI=269][FEED=11][DBTN=SQUARE][MOBI=271][FEED=13][DBTN=CIRCLE][MOBI=273]\n[XTAB=72][YSUB=1][DBTN=DOWN][MOBI=270][XTAB=121][DBTN=CROSS][MOBI=274]",
 		"[XTAB=77][YADD=1][DBTN=UP][MOBI=268][XTAB=126][DBTN=TRIANGLE][MOBI=272]\n[XTAB=64][DBTN=LEFT][MOBI=267][FEED=14][DBTN=RIGHT][MOBI=269][FEED=11][DBTN=SQUARE][MOBI=271][FEED=13][DBTN=CIRCLE][MOBI=273]\n[XTAB=77][YSUB=1][DBTN=DOWN][MOBI=270][XTAB=126][DBTN=CROSS][MOBI=274]"
 	};
-
-	public static readonly String[] FossilRouteTargetOpCode = new String[]
-	{
-		"[MPOS=224,12]",
-		"[MPOS=212,12]"
-	};
-
-	//public static readonly String[] FossilRouteReplacedOpCode = new String[]
-	//{
-	//	"[MPOS=230,16]",
-	//	"[MPOS=218,16]"
-	//};
 
 	public static readonly String[] AuctionTargetOpCode = new String[]
 	{

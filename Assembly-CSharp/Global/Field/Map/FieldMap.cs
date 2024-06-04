@@ -899,7 +899,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
-    /// <summary>EBG - set if overlay is active (inactive isn't visible</summary>
+    /// <summary>EBG - set if overlay is active (inactive isn't visible)</summary>
     public Int32 EBG_overlaySetActive(Int32 overlayNdx, Int32 activeFlag)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
