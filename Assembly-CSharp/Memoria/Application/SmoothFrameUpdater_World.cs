@@ -28,6 +28,15 @@ namespace Memoria
 							}
 						}
 					}
+					if (WMWorld.Instance?.Shadows != null)
+					{
+						foreach (WMShadow shadow in WMWorld.Instance.Shadows)
+						{
+							if (shadow == null)
+								continue;
+							shadow._smoothUpdateRegistered = false;
+						}
+					}
 				}
 			}
 		}
@@ -132,33 +141,33 @@ namespace Memoria
 				if (obj.cid == 4)
 				{
 					WMActor actor = (obj as Actor)?.wmActor;
-					if (actor != null && actor._smoothUpdateRegistered && ff9.objIsVisible(obj) && actor._smoothUpdateAnimNamePrevious == actor._smoothUpdateAnimNameActual)
+					if (actor == null || !actor._smoothUpdateRegistered || actor._smoothUpdateAnimNamePrevious != actor._smoothUpdateAnimNameActual)
+						continue;
+
+					Animation anim = actor.Animation;
+					AnimationState animState = anim[actor._smoothUpdateAnimNameActual];
+
+					//Vector3 frameMove = actor._smoothUpdatePosActual - actor._smoothUpdatePosPrevious;
+					//if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < ActorSmoothMovementMaxSqr)
+					actor.transform.position = Vector3.Lerp(actor._smoothUpdatePosPrevious, actor._smoothUpdatePosActual, smoothFactor);
+
+					//if (Quaternion.Angle(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual) < ActorSmoothTurnMaxDeg)
+					actor.transform.rotation = Quaternion.Lerp(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual, smoothFactor);
+
+					if (anim != null)
 					{
-						Animation anim = actor.Animation;
-						AnimationState animState = anim[actor._smoothUpdateAnimNameActual];
-
-						Vector3 frameMove = actor._smoothUpdatePosActual - actor._smoothUpdatePosPrevious;
-						//if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < ActorSmoothMovementMaxSqr)
-						actor.transform.position = Vector3.Lerp(actor._smoothUpdatePosPrevious, actor._smoothUpdatePosActual, smoothFactor);
-
-						//if (Quaternion.Angle(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual) < ActorSmoothTurnMaxDeg)
-						actor.transform.rotation = Quaternion.Lerp(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual, smoothFactor);
-
-						if (anim != null)
-						{
-							animState.time = Mathf.Lerp(actor._smoothUpdateAnimTimePrevious, actor._smoothUpdateAnimTimePrevious + actor._smoothUpdateAnimSpeed, smoothFactor);
-							if (animState.time > animState.length)
-								animState.time -= animState.length;
-							else if (animState.time < 0f)
-								animState.time += animState.length;
-							anim.Sample();
-						}
+						animState.time = Mathf.Lerp(actor._smoothUpdateAnimTimePrevious, actor._smoothUpdateAnimTimePrevious + actor._smoothUpdateAnimSpeed, smoothFactor);
+						if (animState.time > animState.length)
+							animState.time -= animState.length;
+						else if (animState.time < 0f)
+							animState.time += animState.length;
+						anim.Sample();
 					}
 				}
 			}
 			foreach (WMShadow shadow in WMWorld.Instance.Shadows)
 			{
-				if (shadow == null || !shadow.enabled)
+				if (shadow == null || !shadow._smoothUpdateRegistered)
 					continue;
 				shadow.transform.position = Vector3.Lerp(shadow._smoothUpdatePosPrevious, shadow._smoothUpdatePosActual, smoothFactor);
 			}
@@ -180,22 +189,30 @@ namespace Memoria
 				if (obj.cid == 4)
 				{
 					WMActor wmActor = (obj as Actor)?.wmActor;
-					if (wmActor != null)
+					if (wmActor == null || !wmActor._smoothUpdateRegistered)
+						continue;
+					wmActor.transform.position = wmActor._smoothUpdatePosActual;
+					wmActor.transform.rotation = wmActor._smoothUpdateRotActual;
+
+					AnimationState animState = wmActor.originalActor.go.gameObject.GetComponent<Animation>()[wmActor._smoothUpdateAnimNameActual];
+					if (animState != null)
 					{
-						if (wmActor._smoothUpdateRegistered && ff9.objIsVisible(obj))
-							wmActor.transform.position = wmActor._smoothUpdatePosActual;
+						animState.time = wmActor._smoothUpdateAnimTimeActual;
 
-						AnimationState animState = wmActor.originalActor.go.gameObject.GetComponent<Animation>()[wmActor._smoothUpdateAnimNameActual];
-						if (animState != null)
-						{
-							animState.time = wmActor._smoothUpdateAnimTimeActual;
-
-							if (animState.time > animState.length)
-								animState.time -= animState.length;
-							else if (animState.time < 0f)
-								animState.time += animState.length;
-						}
+						if (animState.time > animState.length)
+							animState.time -= animState.length;
+						else if (animState.time < 0f)
+							animState.time += animState.length;
 					}
+				}
+			}
+			if (WMWorld.Instance?.Shadows != null)
+			{
+				foreach (WMShadow shadow in WMWorld.Instance.Shadows)
+				{
+					if (shadow == null || !shadow._smoothUpdateRegistered)
+						continue;
+					shadow.transform.position = shadow._smoothUpdatePosActual;
 				}
 			}
 			if (_cameraRegistered && ff9.world.MainCamera != null)

@@ -10,7 +10,7 @@ namespace Memoria
 		// Max (squared) distance per frame to be considered as a smooth movement for battle units
 		private const Single ActorSmoothMovementMaxSqr = 2000f * 2000f;
 		// Max degree turn per frame to be considered as a smooth movement for field actors
-		private const Single ActorSmoothTurnMaxDeg = 90f;
+		private const Single ActorSmoothTurnMaxDeg = 45f;
 		// Max (squared) distance per frame to be considered as a smooth movement for the camera
 		private const Single CameraSmoothMovementMaxSqr = 1000f * 1000f;
 		// Max degree turn per frame to be considered as a smooth movement for the camera
@@ -28,9 +28,15 @@ namespace Memoria
 					_cameraRegistered = false;
 					for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 					{
-						if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy && !HonoluluBattleMain.IsAttachedModel(next))
+						next._smoothUpdateRegistered = false;
+					}
+					if (HonoluluBattleMain.battleSPS?.SpsList != null)
+					{
+						foreach (BattleSPS battleSPS in HonoluluBattleMain.battleSPS.SpsList)
 						{
-							next._smoothUpdateRegistered = false;
+							if (battleSPS == null)
+								continue;
+							battleSPS._smoothUpdateRegistered = false;
 						}
 					}
 				}
@@ -41,26 +47,25 @@ namespace Memoria
 		{
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			{
-				if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy && !HonoluluBattleMain.IsAttachedModel(next))
+				if (next.bi.slave != 0 || next.gameObject == null || !next.gameObject.activeInHierarchy || HonoluluBattleMain.IsAttachedModel(next))
+					continue;
+				if (next._smoothUpdateRegistered)
 				{
-					if (next._smoothUpdateRegistered)
-					{
-						next._smoothUpdatePosPrevious = next._smoothUpdatePosActual;
-						next._smoothUpdateRotPrevious = next._smoothUpdateRotActual;
-						next._smoothUpdateScalePrevious = next._smoothUpdateScaleActual;
-					}
-					else
-					{
-						next._smoothUpdatePosPrevious = next.gameObject.transform.position;
-						next._smoothUpdateRotPrevious = next.gameObject.transform.rotation;
-						next._smoothUpdateScalePrevious = next.gameObject.transform.localScale;
-					}
-					next._smoothUpdatePosActual = next.gameObject.transform.position;
-					next._smoothUpdateRotActual = next.gameObject.transform.rotation;
-					next._smoothUpdateScaleActual = next.gameObject.transform.localScale;
-					next._smoothUpdateRegistered = true;
-					geo.geoScaleUpdate(next, true);
+					next._smoothUpdatePosPrevious = next._smoothUpdatePosActual;
+					next._smoothUpdateRotPrevious = next._smoothUpdateRotActual;
+					next._smoothUpdateScalePrevious = next._smoothUpdateScaleActual;
 				}
+				else
+				{
+					next._smoothUpdatePosPrevious = next.gameObject.transform.position;
+					next._smoothUpdateRotPrevious = next.gameObject.transform.rotation;
+					next._smoothUpdateScalePrevious = next.gameObject.transform.localScale;
+				}
+				next._smoothUpdatePosActual = next.gameObject.transform.position;
+				next._smoothUpdateRotActual = next.gameObject.transform.rotation;
+				next._smoothUpdateScaleActual = next.gameObject.transform.localScale;
+				next._smoothUpdateRegistered = true;
+				geo.geoScaleUpdate(next, true);
 			}
 			// SPS
 			foreach (BattleSPS battleSPS in HonoluluBattleMain.battleSPS.SpsList)
@@ -80,7 +85,6 @@ namespace Memoria
 					battleSPS._smoothUpdateRotPrevious = Quaternion.Euler(battleSPS.rot.x, battleSPS.rot.y, battleSPS.rot.z);
 					battleSPS._smoothUpdateScalePrevious = battleSPS.scale;
 				}
-
 				battleSPS._smoothUpdatePosActual = battleSPS.pos;
 				battleSPS._smoothUpdateRotActual = Quaternion.Euler(battleSPS.rot.x, battleSPS.rot.y, battleSPS.rot.z);
 				battleSPS._smoothUpdateScaleActual = battleSPS.scale;
@@ -134,42 +138,42 @@ namespace Memoria
 			SFXData.LoadLoop();
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			{
-				if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy && !HonoluluBattleMain.IsAttachedModel(next))
+				if (next.gameObject == null || !next._smoothUpdateRegistered)
+					continue;
+
+				//var pos = next.gameObject.transform.position;
+				Vector3 frameMove = next._smoothUpdatePosActual + next._smoothUpdateBoneDelta - next._smoothUpdatePosPrevious;
+				if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < ActorSmoothMovementMaxSqr)
+					next.gameObject.transform.position = Vector3.Lerp(next._smoothUpdatePosPrevious, next._smoothUpdatePosActual + next._smoothUpdateBoneDelta, smoothFactor);
+
+				//var mag = (next.gameObject.transform.position - pos).magnitude;
+				//var ang = Vector3.Angle(pos, next.gameObject.transform.position);
+				//if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} magnitude {mag} boneDelta {next._smoothUpdateBoneDelta} bone {next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3)} pos {next.gameObject.transform.position} prev {next._smoothUpdatePosPrevious} actual {next._smoothUpdatePosActual + next._smoothUpdateBoneDelta} t {smoothFactor}");
+
+				if (Quaternion.Angle(next._smoothUpdateRotPrevious, next._smoothUpdateRotActual) < ActorSmoothTurnMaxDeg)
+					next.gameObject.transform.rotation = Quaternion.Lerp(next._smoothUpdateRotPrevious, next._smoothUpdateRotActual, smoothFactor);
+
+				next.gameObject.transform.localScale = Vector3.Lerp(next._smoothUpdateScalePrevious, next._smoothUpdateScaleActual, smoothFactor);
+
+				Animation anim = next.gameObject.GetComponent<Animation>();
+				AnimationState animState = anim[next._smoothUpdateAnimNameActual];
+				if (animState != null && next.bi.stop_anim == 0)
 				{
-					//var pos = next.gameObject.transform.position;
-					Vector3 frameMove = next._smoothUpdatePosActual + next._smoothUpdateBoneDelta - next._smoothUpdatePosPrevious;
-					if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < ActorSmoothMovementMaxSqr)
-						next.gameObject.transform.position = Vector3.Lerp(next._smoothUpdatePosPrevious, next._smoothUpdatePosActual + next._smoothUpdateBoneDelta, smoothFactor);
+					animState.time = Mathf.Lerp(next._smoothUpdateAnimTimePrevious, next._smoothUpdateAnimTimeActual, smoothFactor);
 
-					//var mag = (next.gameObject.transform.position - pos).magnitude;
-					//var ang = Vector3.Angle(pos, next.gameObject.transform.position);
-					//if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} magnitude {mag} boneDelta {next._smoothUpdateBoneDelta} bone {next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3)} pos {next.gameObject.transform.position} prev {next._smoothUpdatePosPrevious} actual {next._smoothUpdatePosActual + next._smoothUpdateBoneDelta} t {smoothFactor}");
+					if (animState.time > animState.length)
+						animState.time -= animState.length;
+					else if (animState.time < 0f)
+						animState.time += animState.length;
 
-					if (Quaternion.Angle(next._smoothUpdateRotPrevious, next._smoothUpdateRotActual) < ActorSmoothTurnMaxDeg)
-						next.gameObject.transform.rotation = Quaternion.Lerp(next._smoothUpdateRotPrevious, next._smoothUpdateRotActual, smoothFactor);
-
-					next.gameObject.transform.localScale = Vector3.Lerp(next._smoothUpdateScalePrevious, next._smoothUpdateScaleActual, smoothFactor);
-
-					Animation anim = next.gameObject.GetComponent<Animation>();
-					AnimationState animState = anim[next._smoothUpdateAnimNameActual];
-					if (animState != null && next.bi.stop_anim == 0)
-					{
-						animState.time = Mathf.Lerp(next._smoothUpdateAnimTimePrevious, next._smoothUpdateAnimTimeActual, smoothFactor);
-
-						if (animState.time > animState.length)
-							animState.time -= animState.length;
-						else if (animState.time < 0f)
-							animState.time += animState.length;
-
-						anim.Sample();
-						// if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} curName {next.currentAnimationName} actualName {next._smoothUpdateAnimNameActual} prevName {next._smoothUpdateAnimNameActual} speed {next._smoothUpdateAnimSpeed} {animState.enabled} animTime {animState.time} animLength {animState.length} t {smoothFactor} prev {next._smoothUpdateAnimTimePrevious} actual {next._smoothUpdateAnimTimeActual}");
-					}
+					anim.Sample();
+					// if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} curName {next.currentAnimationName} actualName {next._smoothUpdateAnimNameActual} prevName {next._smoothUpdateAnimNameActual} speed {next._smoothUpdateAnimSpeed} {animState.enabled} animTime {animState.time} animLength {animState.length} t {smoothFactor} prev {next._smoothUpdateAnimTimePrevious} actual {next._smoothUpdateAnimTimeActual}");
 				}
 			}
 			// SPS
 			foreach (BattleSPS battleSPS in HonoluluBattleMain.battleSPS.SpsList)
 			{
-				if (battleSPS == null || !battleSPS.enabled)
+				if (battleSPS == null || !battleSPS.enabled || !battleSPS._smoothUpdateRegistered)
 					continue;
 
 				battleSPS.pos = Vector3.Lerp(battleSPS._smoothUpdatePosPrevious, battleSPS._smoothUpdatePosActual, smoothFactor);
@@ -203,26 +207,39 @@ namespace Memoria
 				_skipCount--;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			{
-				if (next.bi.slave == 0 && next.gameObject != null && next.gameObject.activeInHierarchy && !HonoluluBattleMain.IsAttachedModel(next))
+				if (next.gameObject == null || !next._smoothUpdateRegistered)
+					continue;
+
+				next.gameObject.transform.position = next._smoothUpdatePosActual;
+				next.gameObject.transform.rotation = next._smoothUpdateRotActual;
+				next.gameObject.transform.localScale = next._smoothUpdateScaleActual;
+
+				AnimationState animState = next.gameObject.GetComponent<Animation>()[next._smoothUpdateAnimNameActual];
+				if (animState != null)
 				{
-					if (next._smoothUpdateRegistered)
-					{
-						next.gameObject.transform.position = next._smoothUpdatePosActual;
-						next.gameObject.transform.rotation = next._smoothUpdateRotActual;
-						next.gameObject.transform.localScale = next._smoothUpdateScaleActual;
+					animState.time = next._smoothUpdateAnimTimeActual;
 
-						AnimationState animState = next.gameObject.GetComponent<Animation>()[next._smoothUpdateAnimNameActual];
-						if (animState != null)
-						{
-							animState.time = next._smoothUpdateAnimTimeActual;
-
-							if (animState.time > animState.length)
-								animState.time -= animState.length;
-							else if (animState.time < 0f)
-								animState.time += animState.length;
-						}
-					}
+					if (animState.time > animState.length)
+						animState.time -= animState.length;
+					else if (animState.time < 0f)
+						animState.time += animState.length;
 				}
+			}
+			if (HonoluluBattleMain.battleSPS?.SpsList != null)
+			{
+				foreach (BattleSPS battleSPS in HonoluluBattleMain.battleSPS.SpsList)
+				{
+					if (battleSPS == null || !battleSPS._smoothUpdateRegistered)
+						continue;
+
+					battleSPS.pos = battleSPS._smoothUpdatePosActual;
+					battleSPS.rot = battleSPS._smoothUpdateRotActual.eulerAngles;
+					battleSPS.scale = battleSPS._smoothUpdateScaleActual;
+				}
+			}
+			if (_bg != null)
+			{
+				_bg.localRotation = _bgRotActual;
 			}
 			Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
 			if (_cameraRegistered && camera != null)
