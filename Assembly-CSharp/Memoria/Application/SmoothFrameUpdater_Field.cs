@@ -7,6 +7,8 @@ namespace Memoria
 	static class SmoothFrameUpdater_Field
 	{
 		// TODO: add a smooth effect for field SPS (FieldSPSSystem._spsList[].pos etc)
+		// [SamsamTS] SPS interpolation doesn't work great for things like rain drops in Brumecia
+		// SPSs have low frame rate to begin with, they'll look low frame rate regardless
 
 		// Max (squared) distance per frame to be considered as a smooth movement for field actors
 		private const Single ActorSmoothMovementMaxSqr = 400f * 400f; // Iifa tree leaf spiral moves at ~350
@@ -38,12 +40,6 @@ namespace Memoria
 								actor._smoothUpdateRegistered = false;
 							}
 						}
-					}
-					foreach (FieldSPS fieldSPS in EventEngine.Instance.fieldSps.SpsList)
-					{
-						if (fieldSPS == null || !fieldSPS.enabled)
-							continue;
-						fieldSPS._smoothUpdateRegistered = false;
 					}
 				}
 			}
@@ -110,31 +106,6 @@ namespace Memoria
 						actor._smoothUpdateRegistered = true;
 					}
 				}
-			}
-			// SPS
-			foreach (FieldSPS fieldSPS in EventEngine.Instance.fieldSps.SpsList)
-			{
-				if (fieldSPS == null || !fieldSPS.enabled)
-					continue;
-
-				if (fieldSPS._smoothUpdateRegistered)
-				{
-					fieldSPS._smoothUpdatePosPrevious = fieldSPS._smoothUpdatePosActual;
-					fieldSPS._smoothUpdateRotPrevious = fieldSPS._smoothUpdateRotActual;
-					fieldSPS._smoothUpdateScalePrevious = fieldSPS._smoothUpdateScaleActual;
-				}
-				else
-				{
-					fieldSPS._smoothUpdatePosPrevious = fieldSPS.pos;
-					fieldSPS._smoothUpdateRotPrevious = Quaternion.Euler(fieldSPS.rot.x, fieldSPS.rot.y, fieldSPS.rot.z);
-					fieldSPS._smoothUpdateScalePrevious = fieldSPS.scale;
-				}
-
-				fieldSPS._smoothUpdatePosActual = fieldSPS.pos;
-				fieldSPS._smoothUpdateRotActual = Quaternion.Euler(fieldSPS.rot.x, fieldSPS.rot.y, fieldSPS.rot.z);
-				fieldSPS._smoothUpdateScaleActual = fieldSPS.scale;
-
-				fieldSPS._smoothUpdateRegistered = true;
 			}
 			// Layers
 			// Interfere with snouz's "Camera stabilizer"
@@ -214,15 +185,6 @@ namespace Memoria
 			}
 			foreach (FF9FieldCharState charState in FF9StateSystem.Field.FF9Field.loc.map.charStateArray.Values)
 				fldchar.updateMirrorPosAndAnim(charState.mirror);
-			foreach (FieldSPS fieldSPS in EventEngine.Instance.fieldSps.SpsList)
-			{
-				if (fieldSPS == null || !fieldSPS.enabled)
-					continue;
-
-				fieldSPS.pos = Vector3.Lerp(fieldSPS._smoothUpdatePosPrevious, fieldSPS._smoothUpdatePosActual, smoothFactor);
-				fieldSPS.rot = Quaternion.Lerp(fieldSPS._smoothUpdateRotPrevious, fieldSPS._smoothUpdateRotActual, smoothFactor).eulerAngles;
-				fieldSPS.scale = (Int32)Mathf.Lerp(fieldSPS._smoothUpdateScalePrevious, fieldSPS._smoothUpdateScaleActual, smoothFactor);
-			}
 			/*if (fieldmap?.scene?.overlayList != null)
 			{
 				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
@@ -304,16 +266,6 @@ partial class FieldMapActorController
 	public Single _smoothUpdateAnimTimePrevious;
 	public Single _smoothUpdateAnimTimeActual;
 	public Single _smoothUpdateAnimSpeed;
-}
-partial class FieldSPS
-{
-	public Boolean _smoothUpdateRegistered = false;
-	public Vector3 _smoothUpdatePosPrevious;
-	public Vector3 _smoothUpdatePosActual;
-	public Quaternion _smoothUpdateRotPrevious;
-	public Quaternion _smoothUpdateRotActual;
-	public Int32 _smoothUpdateScalePrevious;
-	public Int32 _smoothUpdateScaleActual;
 }
 /*partial class BGOVERLAY_DEF
 {
