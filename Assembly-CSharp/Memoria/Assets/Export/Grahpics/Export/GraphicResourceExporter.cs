@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Memoria.Prime;
 using UnityEngine;
+using Assets.Sources.Scripts.UI.Common;
 
 namespace Memoria.Assets
 {
@@ -29,7 +30,7 @@ namespace Memoria.Assets
                     }
                 }
 
-                FieldSPSSystem.ExportAllSPSTextures(Path.Combine(Configuration.Export.Path, "FieldSPS"));
+                CommonSPSSystem.ExportAllSPSTextures(Path.Combine(Configuration.Export.Path, "EffectSPS"));
             }
             catch (Exception ex)
             {
@@ -43,14 +44,14 @@ namespace Memoria.Assets
             {
                 if (Directory.Exists(outputDirectory))
                 {
-                    Log.Warning("[GraphicResourceExporter] Export was skipped bacause a directory already exists: [{0}].", outputDirectory);
+                    Log.Warning("[GraphicResourceExporter] Export was skipped because a directory already exists: [{0}].", outputDirectory);
                     return;
                 }
 
                 String outputPath = outputDirectory + ".png";
                 if (File.Exists(outputPath))
                 {
-                    Log.Warning("[GraphicResourceExporter] Export was skipped bacause a file already exists: [{0}].", outputPath);
+                    Log.Warning("[GraphicResourceExporter] Export was skipped because a file already exists: [{0}].", outputPath);
                     return;
                 }
 

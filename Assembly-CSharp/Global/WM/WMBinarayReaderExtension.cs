@@ -51,16 +51,14 @@ public static class WMBinarayReaderExtension
 		sNWBBlockHeader.areaid = reader.ReadSByte();
 		sNWBBlockHeader.special = reader.ReadByte();
 		sNWBBlockHeader.offsettexture = reader.ReadUInt32();
-		sNWBBlockHeader.offsetcell = new UInt32[(Int32)sNWBBlockHeader.cellno];
-		sNWBBlockHeader.cellHeader = new ff9.sNWBCellHeader[(Int32)sNWBBlockHeader.cellno];
-		for (Int32 i = 0; i < (Int32)sNWBBlockHeader.cellno; i++)
-		{
+		sNWBBlockHeader.offsetcell = new UInt32[sNWBBlockHeader.cellno];
+		sNWBBlockHeader.cellHeader = new ff9.sNWBCellHeader[sNWBBlockHeader.cellno];
+		for (Int32 i = 0; i < sNWBBlockHeader.cellno; i++)
 			sNWBBlockHeader.offsetcell[i] = reader.ReadUInt32();
-		}
-		for (Int32 j = 0; j < (Int32)sNWBBlockHeader.cellno; j++)
+		for (Int32 i = 0; i < sNWBBlockHeader.cellno; i++)
 		{
-			reader.BaseStream.Position = (Int64)((UInt64)sNWBBlockHeader.offsetcell[j] + (UInt64)position);
-			sNWBBlockHeader.cellHeader[j] = reader.ReadNWBCellHeader();
+			reader.BaseStream.Position = (Int64)(sNWBBlockHeader.offsetcell[i] + (UInt64)position);
+			sNWBBlockHeader.cellHeader[i] = reader.ReadNWBCellHeader();
 		}
 		return sNWBBlockHeader;
 	}
@@ -74,48 +72,36 @@ public static class WMBinarayReaderExtension
 		sNWBCellHeader.offsetvertex = reader.ReadUInt32();
 		sNWBCellHeader.offsetsurface = reader.ReadUInt32();
 		for (Int32 i = 0; i < 20; i++)
-		{
 			sNWBCellHeader.checkpoint[i] = reader.ReadByte();
-		}
 		sNWBCellHeader.checkfig = reader.ReadByte();
-		for (Int32 j = 0; j < 3; j++)
-		{
-			sNWBCellHeader.special[j] = reader.ReadByte();
-		}
+		for (Int32 i = 0; i < 3; i++)
+			sNWBCellHeader.special[i] = reader.ReadByte();
 		return sNWBCellHeader;
 	}
 
 	public static EncountData[] ReadEncountData(this BinaryReader reader)
 	{
-		EncountData[] array = new EncountData[355];
+		EncountData[] encountDatabase = new EncountData[355];
 		for (Int32 i = 0; i < 355; i++)
 		{
-			array[i] = new EncountData();
+			encountDatabase[i] = new EncountData();
 			for (Int32 j = 0; j < 4; j++)
-			{
-				array[i].scene[j] = reader.ReadUInt16();
-			}
-			array[i].pattern = reader.ReadByte();
-			array[i].pad = reader.ReadByte();
+				encountDatabase[i].scene[j] = reader.ReadUInt16();
+			encountDatabase[i].pattern = reader.ReadByte();
+			encountDatabase[i].pad = reader.ReadByte();
 		}
-		return array;
+		return encountDatabase;
 	}
 
 	public static ff9.stextureProject ReadTextureProjWork(this BinaryReader reader)
 	{
 		ff9.stextureProject stextureProject = new ff9.stextureProject();
 		for (Int32 i = 0; i < 8; i++)
-		{
 			stextureProject.texturePixelScroll[i] = reader.ReadTexturePixelScroll();
-		}
-		for (Int32 j = 0; j < 4; j++)
-		{
-			stextureProject.texturePixelAnime[j] = reader.ReadTexturePixelAnime();
-		}
-		for (Int32 k = 0; k < 18; k++)
-		{
-			stextureProject.texturePaletScroll[k] = reader.ReadTexturePaletScroll();
-		}
+		for (Int32 i = 0; i < 4; i++)
+			stextureProject.texturePixelAnime[i] = reader.ReadTexturePixelAnime();
+		for (Int32 i = 0; i < 18; i++)
+			stextureProject.texturePaletScroll[i] = reader.ReadTexturePaletScroll();
 		return stextureProject;
 	}
 
@@ -157,16 +143,14 @@ public static class WMBinarayReaderExtension
 
 	public static ff9.sworldEncountSpecial[] ReadWorldEncountSpecial(this BinaryReader reader)
 	{
-		ff9.sworldEncountSpecial[] array = new ff9.sworldEncountSpecial[9];
+		ff9.sworldEncountSpecial[] friendlyDatabase = new ff9.sworldEncountSpecial[9];
 		for (Int32 i = 0; i < 9; i++)
 		{
-			array[i] = new ff9.sworldEncountSpecial();
+			friendlyDatabase[i] = new ff9.sworldEncountSpecial();
 			for (Int32 j = 0; j < 12; j++)
-			{
-				array[i].area[j] = reader.ReadUInt16();
-			}
+				friendlyDatabase[i].area[j] = reader.ReadUInt16();
 		}
-		return array;
+		return friendlyDatabase;
 	}
 
 	public static ff9.s_effectData ReadEffectData(this BinaryReader reader)
@@ -184,14 +168,12 @@ public static class WMBinarayReaderExtension
 		s_effectData.ax = reader.ReadInt16();
 		s_effectData.ay = reader.ReadInt16();
 		s_effectData.az = reader.ReadInt16();
-		s_effectData.no = reader.ReadInt16();
+		s_effectData.no = (SPSConst.WorldSPSEffect)reader.ReadInt16();
 		s_effectData.size = reader.ReadInt16();
 		s_effectData.rnd = reader.ReadInt16();
 		s_effectData.temp = reader.ReadInt16();
 		for (Int32 i = 0; i < 5; i++)
-		{
 			s_effectData.pad[i] = reader.ReadInt32();
-		}
 		return s_effectData;
 	}
 
@@ -199,7 +181,7 @@ public static class WMBinarayReaderExtension
 	{
 		ff9.s_effectDataList s_effectDataList = new ff9.s_effectDataList();
 		ff9.s_effectData s_effectData = reader.ReadEffectData();
-		while (s_effectData.no != -1)
+		while (s_effectData.no != SPSConst.WorldSPSEffect.NOT_REGISTERED)
 		{
 			s_effectDataList.effectData.Add(s_effectData);
 			s_effectData = reader.ReadEffectData();

@@ -590,7 +590,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         {
             if (!IsPaused)
                 SmoothFrameUpdater_Battle.ResetState();
-            battleSPS.Service();
+            battleSPS.EffectUpdate();
             if (IsOver)
                 UpdateOverFrame();
             else

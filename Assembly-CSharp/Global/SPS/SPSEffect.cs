@@ -1,63 +1,95 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Memoria.Assets;
 using Memoria.Scripts;
 using UnityEngine;
 
-public class FieldSPS : MonoBehaviour
+public class SPSEffect : MonoBehaviour
 {
-    public void Init()
+    public void Init(Int32 mode)
     {
-        this.attr = FieldSPSConst.FF9FIELDSPSOBJ_ATTR_VISIBLE;
-        this.abr = FieldSPSConst.FF9FIELDSPS_PARM_ABR_OFF;
+        this.gMode = mode;
+        this.attr = SPSConst.ATTR_VISIBLE;
+        this.abr = SPSConst.ABR_OFF;
         this.fade = 128;
-        this.mapName = null;
-        this.refNo = -1;
+        this.spsId = -1;
         this.charNo = -1;
         this.boneNo = 0;
         this.lastFrame = -1;
         this.curFrame = 0;
         this.frameCount = 0;
-        this.frameRate = FieldSPSConst.FF9FIELDSPS_PARM_FRAMERATE_ONE;
+        this.frameRate = SPSConst.FRAMERATE_ONE;
+        this.prm0 = 0;
         this.pos = Vector3.zero;
-        this.scale = FieldSPSConst.FF9FIELDSPS_PARM_SCALE_ONE;
+        this.scale = SPSConst.SCALE_ONE;
         this.rot = Vector3.zero;
         this.rotArg = Vector3.zero;
         this.zOffset = 0;
         this.posOffset = Vector3.zero;
         this.depthOffset = 0;
+        this.battleDistanceFactor = 5f;
         this.spsIndex = -1;
         this.spsTransform = null;
         this.meshRenderer = null;
         this.meshFilter = null;
         this.spsBin = null;
-        this.works = new FieldSPS.FieldSPSWork();
-        this.spsPrims = new List<FieldSPS.FieldSPSPrim>();
+        this.works = new SPSEffect.FieldSPSWork();
+        this.works.shtsc = 0;
+        this.spsPrims = new List<SPSEffect.FieldSPSPrim>();
         this.spsActor = null;
         this._vertices = new List<Vector3>();
         this._colors = new List<Color>();
         this._uv = new List<Vector2>();
         this._indices = new List<Int32>();
-        this.materials =
-        [
-            new Material(ShadersLoader.Find("PSX/FieldSPS_Abr_0")),
-            new Material(ShadersLoader.Find("PSX/FieldSPS_Abr_1")),
-            new Material(ShadersLoader.Find("PSX/FieldSPS_Abr_2")),
-            new Material(ShadersLoader.Find("PSX/FieldSPS_Abr_3")),
-            new Material(ShadersLoader.Find("PSX/FieldSPS_Abr_None"))
-        ];
+        switch (mode)
+        {
+            case 1: // Field
+                this.materials =
+                [
+                    ShadersLoader.CreateShaderMaterial("PSX/FieldSPS_Abr_0"),
+                    ShadersLoader.CreateShaderMaterial("PSX/FieldSPS_Abr_1"),
+                    ShadersLoader.CreateShaderMaterial("PSX/FieldSPS_Abr_2"),
+                    ShadersLoader.CreateShaderMaterial("PSX/FieldSPS_Abr_3"),
+                    ShadersLoader.CreateShaderMaterial("PSX/FieldSPS_Abr_None")
+                ];
+                break;
+            case 2: // Battle
+                this.materials =
+                [
+                    ShadersLoader.CreateShaderMaterial("PSX/FieldSPS_Abr_0"),
+                    ShadersLoader.CreateShaderMaterial("PSX/FieldSPS_Abr_1"),
+                    ShadersLoader.CreateShaderMaterial("PSX/FieldSPS_Abr_2"),
+                    ShadersLoader.CreateShaderMaterial("PSX/FieldSPS_Abr_3"),
+                    ShadersLoader.CreateShaderMaterial("PSX/FieldSPS_Abr_None")
+                ];
+                break;
+            case 3: // World
+                this.materials =
+                [
+                    ShadersLoader.CreateShaderMaterial("WorldMap/SPS_Abr_0"),
+                    ShadersLoader.CreateShaderMaterial("WorldMap/SPS_Abr_1"),
+                    ShadersLoader.CreateShaderMaterial("WorldMap/SPS_Abr_2"),
+                    ShadersLoader.CreateShaderMaterial("WorldMap/SPS_Abr_3"),
+                    ShadersLoader.CreateShaderMaterial("WorldMap/SPS_Abr_None")
+                ];
+                break;
+        }
         this.charTran = null;
         this.boneTran = null;
+        this.mapName = null;
+        this.pngTexture = null;
+        this.tcbAreaComputed = false;
     }
 
     public void Unload()
     {
-        this.mapName = null;
         this.spsBin = null;
         if (this.meshRenderer != null)
             this.meshRenderer.enabled = false;
         this.charTran = null;
         this.boneTran = null;
+        this.mapName = null;
         this.pngTexture = null;
         this.tcbAreaComputed = false;
     }
@@ -71,11 +103,9 @@ public class FieldSPS : MonoBehaviour
         Single maxx = Single.MinValue;
         Single maxy = Single.MinValue;
         Int32 frameCnt = this.frameCount >> 4;
-        Int32 framebackup = this.curFrame;
         for (Int32 frame = 0; frame < frameCnt; frame++)
         {
-            this.curFrame = frame << 4;
-            this.LoadSPS();
+            this.LoadSPS(frame);
             foreach (FieldSPSPrim prim in this.spsPrims)
             {
                 minx = Math.Min(minx, prim.uv0.x);
@@ -84,7 +114,6 @@ public class FieldSPS : MonoBehaviour
                 maxy = Math.Max(maxy, prim.uv3.y);
             }
         }
-        this.curFrame = framebackup;
         if (minx == Single.MaxValue)
             tcbArea = new Rect(0, 0, 0, 0);
         tcbArea = new Rect(minx, miny, maxx - minx, maxy - miny);
@@ -97,8 +126,8 @@ public class FieldSPS : MonoBehaviour
         Rect spsArea = this.GetRelevantPartOfTCB();
         if (spsArea.width == 0 || spsArea.height == 0)
             return null;
-        FieldSPS.PSX_TPage worktpage = this.works.tpage;
-        FieldSPS.PSX_Clut workclut = this.works.clut;
+        TIMUtils.TPage worktpage = this.works.tpage;
+        TIMUtils.Clut workclut = this.works.clut;
         Texture2D fulltexture = PSXTextureMgr.GetTexture(worktpage.FlagTP, worktpage.FlagTY, worktpage.FlagTX, workclut.FlagClutY, workclut.FlagClutX)?.texture;
         if (fulltexture == null)
             return null;
@@ -109,34 +138,16 @@ public class FieldSPS : MonoBehaviour
         return spstexture;
     }
 
-    public void LoadTexture()
-    {
-        String texturePath = FieldSPSConst.GetSPSTexture(this.refNo);
-        if (texturePath == null)
-            return;
-        this.pngTexture = AssetManager.Load<Texture2D>($"FieldMaps/{texturePath}.png", true);
-        if (this.pngTexture == null)
-        {
-            FieldSPSSystem spsSystem = PersistenSingleton<EventEngine>.Instance.fieldSps;
-            if (spsSystem == null || String.IsNullOrEmpty(this.mapName))
-                return;
-            if (!String.Equals(spsSystem.MapName, this.mapName))
-                spsSystem.ChangeFieldOrigin(this.mapName);
-            this.pngTexture = this.GetTextureFromCurrentTCB();
-        }
-    }
-
     public void GenerateSPS()
     {
-        this.LoadSPS();
+        this.LoadSPS(this.curFrame >> 4);
         this._GenerateSPSMesh();
     }
 
-    public void LoadSPS()
+    public void LoadSPS(Int32 frame)
     {
         using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(this.spsBin)))
         {
-            Int32 frame = this.curFrame >> 4;
             Int32 frameCnt = binaryReader.ReadUInt16() & 0x7FFF;
             if (frame >= frameCnt)
                 frame %= frameCnt;
@@ -150,8 +161,8 @@ public class FieldSPS : MonoBehaviour
             Byte shaderABR = this.abr > 3 ? Byte.MaxValue : this.abr;
             this.works.tpage.value = (UInt16)(binaryReader.ReadUInt16() | (shaderABR & 3) << 5);
             this.works.clut.value = binaryReader.ReadUInt16();
-            this.works.w = (binaryReader.ReadByte() - 1) * 2;
             this.works.h = (binaryReader.ReadByte() - 1) * 2;
+            this.works.w = (binaryReader.ReadByte() - 1) * 2;
             this.works.code = (Byte)(0x2C | ((shaderABR != Byte.MaxValue) ? 2 : 0));
             this.works.fade = this.fade << 4;
             binaryReader.BaseStream.Seek(frameOffset, SeekOrigin.Begin);
@@ -164,23 +175,29 @@ public class FieldSPS : MonoBehaviour
 
     private void _GenerateSPSPrims(BinaryReader reader, Int32 primOffset)
     {
-        Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
-        FieldSPS.FieldSPSPrim prim = default;
+        Int32 fldMapNo = this.gMode == 1 ? FF9StateSystem.Common.FF9.fldMapNo : -1;
+        SPSEffect.FieldSPSPrim prim = default;
         this.spsPrims.Clear();
         reader.BaseStream.Seek(primOffset, SeekOrigin.Begin);
+        Single distanceFactor = 1f;
+        if (this.gMode == 2 && this.mapName.StartsWith("PNG:"))
+        {
+            Camera battleCamera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
+            Vector3 cameraPosition = battleCamera.worldToCameraMatrix.inverse.GetColumn(3);
+            Single distanceToCamera = Vector3.Distance(cameraPosition, base.transform.localPosition);
+            distanceFactor = Math.Max(0.33f, 1f / Math.Max(1f, distanceToCamera * this.battleDistanceFactor * 0.000259551482f));
+        }
         for (Int32 i = 0; i < this.works.primCount; i++)
         {
             prim.code = this.works.code;
             prim.tpage = this.works.tpage;
             prim.clut = this.works.clut;
-            Int32 posX = reader.ReadSByte() << 2;
-            Int32 posY = reader.ReadSByte() << 2;
-            // w and h are switched there
-            // More generally, the X/Y coordinates of TIM images (from PSX image format) seem to be mixed up in many places
-            Int32 xmin = posX - this.works.h;
-            Int32 xmax = posX + this.works.h;
-            Int32 ymin = posY - this.works.w;
-            Int32 ymax = posY + this.works.w;
+            Int32 posX = (Int32)((reader.ReadSByte() << 2) * distanceFactor);
+            Int32 posY = (Int32)((reader.ReadSByte() << 2) * distanceFactor);
+            Int32 xmin = posX - (this.works.w << this.works.shtsc);
+            Int32 xmax = posX + (this.works.w << this.works.shtsc);
+            Int32 ymin = posY - (this.works.h << this.works.shtsc);
+            Int32 ymax = posY + (this.works.h << this.works.shtsc);
             prim.v0 = new Vector3(xmin, ymin, 0f);
             prim.v1 = new Vector3(xmax, ymin, 0f);
             prim.v2 = new Vector3(xmin, ymax, 0f);
@@ -191,8 +208,8 @@ public class FieldSPS : MonoBehaviour
             reader.BaseStream.Seek(uvpos, SeekOrigin.Begin);
             Int32 uvminx = reader.ReadByte();
             Int32 uvminy = reader.ReadByte();
-            Int32 uvmaxx = uvminx + (this.works.h >> 1); // w and h are switched there as well
-            Int32 uvmaxy = uvminy + (this.works.w >> 1);
+            Int32 uvmaxx = uvminx + (this.works.w >> 1);
+            Int32 uvmaxy = uvminy + (this.works.h >> 1);
             prim.uv0 = new Vector2(uvminx, uvminy);
             prim.uv1 = new Vector2(uvmaxx, uvminy);
             prim.uv2 = new Vector2(uvminx, uvmaxy);
@@ -209,15 +226,14 @@ public class FieldSPS : MonoBehaviour
                 r = Math.Min(r * ufade >> 12, 0x7FFF);
                 g = Math.Min(g * ufade >> 12, 0x7FFF);
                 b = Math.Min(b * ufade >> 12, 0x7FFF);
-                if ((fldMapNo == 2901 && (this.refNo == 644 || this.refNo == 736)) // Memoria/Entrance, save sphere
-                 || (fldMapNo == 2913 && (this.refNo == 646 || this.refNo == 737)) // Memoria/Portal, save sphere
-                 || (fldMapNo == 2925 && (this.refNo == 990 || this.refNo == 988))) // Crystal World, save sphere
+                if ((fldMapNo == 2901 && (this.spsId == 644 || this.spsId == 736)) // Memoria/Entrance, save sphere
+                 || (fldMapNo == 2913 && (this.spsId == 646 || this.spsId == 737)) // Memoria/Portal, save sphere
+                 || (fldMapNo == 2925 && (this.spsId == 990 || this.spsId == 988))) // Crystal World, save sphere
                 {
                     basef = 255f;
                 }
             }
             prim.color = new Color(r / basef, g / basef, b / basef, 1f);
-            prim.otz = 0;
             this.spsPrims.Add(prim);
             reader.BaseStream.Seek(nextprimpos, SeekOrigin.Begin);
 
@@ -232,15 +248,41 @@ public class FieldSPS : MonoBehaviour
     {
         if (this.spsPrims.Count == 0)
             return;
-        Boolean usePNGTexture = pngTexture != null;
-        Boolean useScreenPositionHack = FF9StateSystem.Common.FF9.fldMapNo == 2929; // last/cw mbg a, teleportation SPS after Necron battle
-        BGCAM_DEF currentBgCamera = this.fieldMap.GetCurrentBgCamera();
-        if (currentBgCamera == null)
-            return;
+        Boolean usePNGTexture = this.pngTexture != null;
+        Boolean useScreenPositionHack = this.gMode == 1 && FF9StateSystem.Common.FF9.fldMapNo == 2929; // last/cw mbg a, teleportation SPS after Necron battle
+        Single uvShrink = this.gMode == 1 ? 0.5f : 0f;
+        BGCAM_DEF currentBgCamera = null;
+        if (this.gMode == 1)
+        {
+            currentBgCamera = this.fieldMap.GetCurrentBgCamera();
+            if (currentBgCamera == null)
+                return;
+        }
         Single scalef = this.scale / 4096f;
         Matrix4x4 localRTS = Matrix4x4.identity;
         Boolean isBehindCamera = false;
-        if (useScreenPositionHack)
+        if (this.gMode == 3)
+        {
+            scalef *= 0.00390625f;
+            base.transform.position = this.pos;
+            base.transform.localScale = new Vector3(scalef, scalef, scalef);
+        }
+        else if (this.gMode == 2)
+        {
+            Camera battleCamera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
+            Matrix4x4 cameraMatrix = battleCamera.worldToCameraMatrix.inverse;
+            Single distanceToCamera = Vector3.Distance(cameraMatrix.GetColumn(3), this.pos);
+            Single distanceFactor = Math.Min(3f, distanceToCamera * this.battleScaleFactor * 0.000259551482f);
+            scalef *= distanceFactor;
+            base.transform.localScale = new Vector3(-scalef, -scalef, scalef);
+            base.transform.localRotation = Quaternion.Euler(this.rot.x, this.rot.y, this.rot.z);
+            base.transform.localPosition = this.pos;
+            Vector3 directionForward = cameraMatrix.MultiplyVector(Vector3.forward);
+            Vector3 directionRight = cameraMatrix.MultiplyVector(Vector3.right);
+            Vector3 directionDown = Vector3.Cross(directionForward, directionRight);
+            base.transform.LookAt(base.transform.position + directionForward, -directionDown);
+        }
+        else if (useScreenPositionHack)
         {
             localRTS = Matrix4x4.TRS(this.pos * 0.9925f, Quaternion.Euler(-this.rot.x / 2f, -this.rot.y / 2f, this.rot.z / 2f), new Vector3(scalef, -scalef, 1f));
         }
@@ -264,7 +306,7 @@ public class FieldSPS : MonoBehaviour
         {
             if (isBehindCamera)
                 break;
-            FieldSPS.FieldSPSPrim prim = this.spsPrims[i];
+            SPSEffect.FieldSPSPrim prim = this.spsPrims[i];
             Int32 vertCounter = this._vertices.Count;
             if (useScreenPositionHack)
             {
@@ -295,19 +337,30 @@ public class FieldSPS : MonoBehaviour
             this._colors.Add(prim.color);
             if (usePNGTexture)
             {
-                Rect tcbArea = this.GetRelevantPartOfTCB();
-                Vector2 pngRatio = new Vector2(1f / tcbArea.width, 1f / tcbArea.height);
-                this._uv.Add(Vector2.Scale(prim.uv0 - tcbArea.min + new Vector2(0.5f, 0.5f), pngRatio));
-                this._uv.Add(Vector2.Scale(prim.uv1 - tcbArea.min + new Vector2(-0.5f, 0.5f), pngRatio));
-                this._uv.Add(Vector2.Scale(prim.uv2 - tcbArea.min + new Vector2(0.5f, -0.5f), pngRatio));
-                this._uv.Add(Vector2.Scale(prim.uv3 - tcbArea.min + new Vector2(-0.5f, -0.5f), pngRatio));
+                if (this.mapName.StartsWith("PNG:") && this.pngTexture.width == 256 && this.pngTexture.height == 256)
+                {
+                    // In this situation, assume the status SPS texture is a VRam screenshot
+                    this._uv.Add(prim.uv0 * 0.00390625f);
+                    this._uv.Add(prim.uv1 * 0.00390625f);
+                    this._uv.Add(prim.uv2 * 0.00390625f);
+                    this._uv.Add(prim.uv3 * 0.00390625f);
+                }
+                else
+                {
+                    Rect tcbArea = this.GetRelevantPartOfTCB();
+                    Vector2 pngRatio = new Vector2(1f / tcbArea.width, 1f / tcbArea.height);
+                    this._uv.Add(Vector2.Scale(prim.uv0 - tcbArea.min + new Vector2(uvShrink, uvShrink), pngRatio));
+                    this._uv.Add(Vector2.Scale(prim.uv1 - tcbArea.min + new Vector2(-uvShrink, uvShrink), pngRatio));
+                    this._uv.Add(Vector2.Scale(prim.uv2 - tcbArea.min + new Vector2(uvShrink, -uvShrink), pngRatio));
+                    this._uv.Add(Vector2.Scale(prim.uv3 - tcbArea.min + new Vector2(-uvShrink, -uvShrink), pngRatio));
+                }
             }
             else
             {
-                this._uv.Add((prim.uv0 + new Vector2(0.5f, 0.5f)) * 0.00390625f); // 1/256 (texture dimension)
-                this._uv.Add((prim.uv1 + new Vector2(-0.5f, 0.5f)) * 0.00390625f);
-                this._uv.Add((prim.uv2 + new Vector2(0.5f, -0.5f)) * 0.00390625f);
-                this._uv.Add((prim.uv3 + new Vector2(-0.5f, -0.5f)) * 0.00390625f);
+                this._uv.Add((prim.uv0 + new Vector2(uvShrink, uvShrink)) * 0.00390625f); // 1/256 (texture dimension)
+                this._uv.Add((prim.uv1 + new Vector2(-uvShrink, uvShrink)) * 0.00390625f);
+                this._uv.Add((prim.uv2 + new Vector2(uvShrink, -uvShrink)) * 0.00390625f);
+                this._uv.Add((prim.uv3 + new Vector2(-uvShrink, -uvShrink)) * 0.00390625f);
             }
             this._indices.Add(vertCounter);
             this._indices.Add(vertCounter + 1);
@@ -323,13 +376,12 @@ public class FieldSPS : MonoBehaviour
         mesh.uv = this._uv.ToArray();
         mesh.triangles = this._indices.ToArray();
         this.meshFilter.mesh = mesh;
-        PSX_TPage worktpage = this.works.tpage;
-        PSX_Clut workclut = this.works.clut;
+        TIMUtils.TPage worktpage = this.works.tpage;
+        TIMUtils.Clut workclut = this.works.clut;
         Int32 shindex = Math.Min((Int32)this.abr, 4);
         if (usePNGTexture)
         {
-            pngTexture.filterMode = FilterMode.Bilinear;
-            this.materials[shindex].mainTexture = pngTexture;
+            this.materials[shindex].mainTexture = this.pngTexture;
         }
         else
         {
@@ -342,9 +394,22 @@ public class FieldSPS : MonoBehaviour
             this.spsActor.spsPos = this.pos;
     }
 
+    public Int32 gMode; // 1: Field - 2: Battle - 3: World
     public FieldMap fieldMap;
 
     public Int32 spsIndex;
+    public Int32 spsId;
+    public SPSConst.WorldSPSEffect worldSpsId
+    {
+        get
+        {
+            if (spsId == -1)
+                return SPSConst.WorldSPSEffect.NOT_REGISTERED;
+            if (String.Equals(mapName, "WorldMap"))
+                return (SPSConst.WorldSPSEffect)spsId;
+            return SPSConst.WorldSPSEffect.NOT_WORLD_SPS;
+        }
+    }
 
     public Transform spsTransform;
     public MeshRenderer meshRenderer;
@@ -352,8 +417,8 @@ public class FieldSPS : MonoBehaviour
 
     public Byte[] spsBin;
 
-    public FieldSPS.FieldSPSWork works;
-    public List<FieldSPS.FieldSPSPrim> spsPrims;
+    public SPSEffect.FieldSPSWork works;
+    public List<SPSEffect.FieldSPSPrim> spsPrims;
     public FieldSPSActor spsActor;
 
     public Material[] materials;
@@ -362,9 +427,8 @@ public class FieldSPS : MonoBehaviour
 
     public Byte attr;
     public Byte abr;
-    public Byte fade;
+    public Int32 fade;
 
-    public Int32 refNo;
     public Int32 charNo;
     public Int32 boneNo;
 
@@ -378,38 +442,36 @@ public class FieldSPS : MonoBehaviour
     public Vector3 rot;
     public Int32 zOffset;
     public Vector3 rotArg;
-
     public Vector3 posOffset;
     public Int32 depthOffset;
+    public Single battleDistanceFactor; // This doesn't change the scale of sprites but rather their closeness to each other
+    public Single battleScaleFactor;
+    public Int32 prm0; // Dummied? for twister circular movement
 
     private List<Vector3> _vertices;
     private List<Color> _colors;
     private List<Vector2> _uv;
     private List<Int32> _indices;
 
-    // Memoria fields
-    [NonSerialized]
     public String mapName;
-    [NonSerialized]
-    public Texture2D pngTexture = null;
-    [NonSerialized]
-    private Boolean tcbAreaComputed = false;
-    [NonSerialized]
-    private Rect tcbArea = default;
+    public Texture2D pngTexture;
+    private Boolean tcbAreaComputed;
+    private Rect tcbArea;
 
     public class FieldSPSWork
     {
         public Int32 pt;
         public Int32 rgb;
 
-        public Int32 w;
         public Int32 h;
-        public PSX_TPage tpage;
-        public PSX_Clut clut;
+        public Int32 w;
+        public TIMUtils.TPage tpage;
+        public TIMUtils.Clut clut;
 
         public Int32 fade;
         public Int32 primCount;
         public Byte code;
+        public Int32 shtsc;
     }
 
     public struct FieldSPSPrim
@@ -418,9 +480,8 @@ public class FieldSPS : MonoBehaviour
         public Boolean FlagShadeTex => (this.code & 1) != 0;
 
         public Byte code;
-        public PSX_TPage tpage;
-        public PSX_Clut clut;
-        public Int32 otz;
+        public TIMUtils.TPage tpage;
+        public TIMUtils.Clut clut;
         public Color color;
 
         public Vector3 v0;
@@ -434,24 +495,5 @@ public class FieldSPS : MonoBehaviour
 
         public Vector3 v3;
         public Vector2 uv3;
-    }
-
-    // TODO: create a separate file for them and use them in other TIM image related structures
-    public struct PSX_TPage
-    {
-        public Int32 FlagTP => this.value >> 7 & 3;
-        public Int32 FlagABR => this.value >> 5 & 3;
-        public Int32 FlagTY => this.value >> 4 & 1;
-        public Int32 FlagTX => this.value & 0xF;
-
-        public UInt16 value;
-    }
-
-    public struct PSX_Clut
-    {
-        public Int32 FlagClutY => this.value >> 6 & 0x1FF;
-        public Int32 FlagClutX => this.value & 0x3F;
-
-        public UInt16 value;
     }
 }

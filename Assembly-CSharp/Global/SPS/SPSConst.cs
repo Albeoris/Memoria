@@ -1,48 +1,96 @@
 ﻿using System;
 using System.Collections.Generic;
 
-public static class FieldSPSConst
+public static class SPSConst
 {
-	public const Int32 FF9FIELDSPSSTATE_ATTR_INITED = 1;
+	public const Byte ATTR_VISIBLE = 1;
+    public const Byte ATTR_UPDATE_PER_FRAME = 2;
 
-	public const Int32 FF9FIELDSPSOBJ_ATTR_VISIBLE = 1;
+    public const Int32 FIELD_DEFAULT_OBJCOUNT = 16;
+    public const Int32 BATTLE_DEFAULT_OBJCOUNT = 96;
+    public const Int32 WORLD_DEFAULT_OBJCOUNT = 50;
+    public const Int32 WORLD_DEFAULT_OBJLOAD = 40;
 
-	public const Int32 FF9FIELDSPS_DEFAULT_OBJCOUNT = 16;
+    public const Int32 REF_DELETE = -1;
+	public const Int32 SCALE_ONE = 4096;
+	public const Int32 FRAMERATE_ONE = 16;
+    public const Int32 ABR_50ADD = 0;
+    public const Int32 ABR_ADD = 1;
+    public const Int32 ABR_SUB = 2;
+    public const Int32 ABR_25ADD = 3;
+    public const Int32 ABR_OFF = 15;
 
-	public const Int32 FF9FIELDSPS_PARM_REF_DELETE = -1;
-	public const Int32 FF9FIELDSPS_PARM_SCALE_ONE = 4096;
-	public const Int32 FF9FIELDSPS_PARM_FRAMERATE_ONE = 16;
-	public const Int32 FF9FIELDSPS_PARM_ABR_50P50 = 0;
-	public const Int32 FF9FIELDSPS_PARM_ABR_100P100 = 1;
-	public const Int32 FF9FIELDSPS_PARM_ABR_100M100 = 2;
-	public const Int32 FF9FIELDSPS_PARM_ABR_100P25 = 3;
-	public const Int32 FF9FIELDSPS_PARM_ABR_OFF = 15;
+    public const Int32 OPERATION_CHANGE_FIELD = 129;
+	public const Int32 OPERATION_LOAD = 130;
+	public const Int32 OPERATION_ATTR = 131;
+	public const Int32 OPERATION_POS = 135;
+	public const Int32 OPERATION_POS_X = 136;
+	public const Int32 OPERATION_POS_Y = 137;
+	public const Int32 OPERATION_POS_Z = 138;
+	public const Int32 OPERATION_ROT = 140;
+	public const Int32 OPERATION_ROT_X = 141;
+	public const Int32 OPERATION_ROT_Y = 142;
+	public const Int32 OPERATION_ROT_Z = 143;
+	public const Int32 OPERATION_SCALE = 145;
+	public const Int32 OPERATION_CHAR = 150;
+	public const Int32 OPERATION_BONE = 151;
+	public const Int32 OPERATION_FADE = 155;
+	public const Int32 OPERATION_ABR = 156;
+	public const Int32 OPERATION_FRAMERATE = 160;
+	public const Int32 OPERATION_FRAME = 161;
+	public const Int32 OPERATION_POSOFFSET = 165;
+	public const Int32 OPERATION_POSOFFSET_X = 166;
+	public const Int32 OPERATION_POSOFFSET_Y = 167;
+	public const Int32 OPERATION_POSOFFSET_Z = 168;
+	public const Int32 OPERATION_DEPTHOFFSET = 170;
 
-	public const Int32 FF9FIELDSPS_PARMTYPE_FIELD = 129;
-	public const Int32 FF9FIELDSPS_PARMTYPE_REF = 130;
-	public const Int32 FF9FIELDSPS_PARMTYPE_ATTR = 131;
-	public const Int32 FF9FIELDSPS_PARMTYPE_POS = 135;
-	public const Int32 FF9FIELDSPS_PARMTYPE_POS_X = 136;
-	public const Int32 FF9FIELDSPS_PARMTYPE_POS_Y = 137;
-	public const Int32 FF9FIELDSPS_PARMTYPE_POS_Z = 138;
-	public const Int32 FF9FIELDSPS_PARMTYPE_ROT = 140;
-	public const Int32 FF9FIELDSPS_PARMTYPE_ROT_X = 141;
-	public const Int32 FF9FIELDSPS_PARMTYPE_ROT_Y = 142;
-	public const Int32 FF9FIELDSPS_PARMTYPE_ROT_Z = 143;
-	public const Int32 FF9FIELDSPS_PARMTYPE_SCALE = 145;
-	public const Int32 FF9FIELDSPS_PARMTYPE_CHAR = 150;
-	public const Int32 FF9FIELDSPS_PARMTYPE_BONE = 151;
-	public const Int32 FF9FIELDSPS_PARMTYPE_FADE = 155;
-	public const Int32 FF9FIELDSPS_PARMTYPE_ARATE = 156;
-	public const Int32 FF9FIELDSPS_PARMTYPE_FRAMERATE = 160;
-	public const Int32 FF9FIELDSPS_PARMTYPE_FRAME = 161;
-	public const Int32 FF9FIELDSPS_PARMTYPE_POSOFFSET = 165;
-	public const Int32 FF9FIELDSPS_PARMTYPE_POSOFFSET_X = 166;
-	public const Int32 FF9FIELDSPS_PARMTYPE_POSOFFSET_Y = 167;
-	public const Int32 FF9FIELDSPS_PARMTYPE_POSOFFSET_Z = 168;
-	public const Int32 FF9FIELDSPS_PARMTYPE_DEPTHOFFSET = 170;
+    public enum WorldSPSEffect
+    {
+        NOT_WORLD_SPS = -2,
+        NOT_REGISTERED = -1,
+        SMOKE_LARGE = 0, // Used when opening a treasure with sleeping smoke and when Moguo runs fast
+        SMOKE_NORMAL = 1, // Used for various purposes
+        SMOKE_SOUTH_GATE = 2,
+        SMOKE_FIRE_SHRINE = 3,
+        SMOKE_SAND_PIT = 4,
+        CHOCOBO_PEPPER_SKY = 5,
+        MOVE_CHOCOBO_ABOVE_WATER = 6,
+        MOVE_BEACH = 7,
+        CHEST_LAND = 8,
+        CHOCOBO_BEAK = 9,
+        MOVE_SHIP_TRAIL = 10,
+        UNKNOWN11 = 11,
+        UNKNOWN12 = 12,
+        CHOCOBO_PEPPER_WATER = 13,
+        MOVE_CHOCOBO_ABOVE_DESERT = 14,
+        MOVE_SHIP = 15,
+        MOVE_FOREST = 16,
+        UNKNOWN17 = 17,
+        MOVE_AIRSHIP_ABOVE_WATER = 18,
+        MOVE_AIRSHIP_ABOVE_DESERT = 19,
+        WATERFALL = 20,
+        UNKNOWN21 = 21,
+        MOVE_WATER = 22,
+        SANDSTORM = 23, // Unused?
+        WIND_SHRINE = 24, // Unused?
+        MEMORIA = 25,
+        UNKNOWN26 = 26,
+        MOVE_DESERT = 27,
+        CHOCOBO_PEPPER_GROUND = 28,
+        WATER_SHRINE = 29,
+        UNKNOWN30 = 30,
+        UNKNOWN31 = 31,
+        UNKNOWN32 = 32,
+        UNKNOWN33 = 33,
+        UNKNOWN34 = 34,
+        UNKNOWN35 = 35,
+        UNKNOWN36 = 36,
+        UNKNOWN37 = 37,
+        UNKNOWN38 = 38,
+        UNKNOWN39 = 39,
+    }
 
-    public static String GetSPSTexture(Int32 spsId)
+    public static String GetFieldSPSTexture(Int32 spsId)
     {
         Int32 refId;
         if (!SPSReference.TryGetValue(spsId, out refId))
@@ -861,7 +909,7 @@ public static class FieldSPSConst
     };
 
     // List of the different IDs for the same SPS (the comparison has been done by checking if the .sps binaries are the same)
-    private static Dictionary<Int32, Int32> SPSReference = new Dictionary<Int32, Int32>()
+    public static Dictionary<Int32, Int32> SPSReference = new Dictionary<Int32, Int32>()
     {
         { 4, 0 },
         { 252, 0 },
