@@ -659,7 +659,7 @@ public partial class BattleHUD : UIScene
                 if (_doubleCastCount == 2 && battleItemListData.Id == (RegularItem)_firstCommand.SubId)
                 {
                     battleItemListData.Count--;
-                    if (battleItemListData.Count <= 0)
+                    if (battleItemListData.Count <= 0) // TODO : Conflict with magic scrolls from Trance Seek.
                         continue;
                 }
                 inDataList.Add(battleItemListData);
@@ -1601,10 +1601,22 @@ public partial class BattleHUD : UIScene
 
     private void SendMixCommand(CommandDetail first, CommandDetail second)
     {
+        RegularItem ingredient1 = (RegularItem)first.SubId;
+        RegularItem ingredient2 = (RegularItem)second.SubId;
+
+        foreach (MixItems mixitem in ff9mixitem.MixItemsData.Values)
+        {
+            if (mixitem.Ingredients[0] == ingredient1 && mixitem.Ingredients[1] == ingredient2 || mixitem.Ingredients[0] == ingredient2 && mixitem.Ingredients[1] == ingredient1)
+            {
+                first.SubId = mixitem.Result;
+                break;
+            }
+        }
+
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
         CMD_DATA cmd = btl.cmd[0];
         cmd.regist.sel_mode = 1;
-        btl_cmd.SetCommand(cmd, first.CommandId, first.SubId, first.TargetId, first.TargetType, cmdMenu: first.Menu, ItemMix: second.SubId);
+        btl_cmd.SetCommand(cmd, second.CommandId, first.SubId, second.TargetId, second.TargetType, cmdMenu: second.Menu); // First command is only used for menu but we use first.SubId in case the mix failed.
         SetPartySwapButtonActive(false);
         InputFinishList.Add(CurrentPlayerIndex);
         _partyDetail.SetBlink(CurrentPlayerIndex, false);
@@ -2402,7 +2414,7 @@ public partial class BattleHUD : UIScene
             }
         }
 
-        if (MixCommandSet.Contains(_currentCommandId))
+        if (IsMixCast)
             SendMixCommand(_firstCommand, ProcessCommand(battleIndex, _cursorType));
         else if (IsDoubleCast)
             SendDoubleCastCommand(_firstCommand, ProcessCommand(battleIndex, _cursorType));

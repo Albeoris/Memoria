@@ -20,6 +20,7 @@ public partial class BattleHUD : UIScene
     public GameObject PlayerTargetPanel => TargetPanel.GetChild(0);
     public GameObject EnemyTargetPanel => TargetPanel.GetChild(1);
     public Boolean IsDoubleCast => DoubleCastSet.Contains(_currentCommandId) || MixCommandSet.Contains(_currentCommandId);
+    public Boolean IsMixCast => MixCommandSet.Contains(_currentCommandId);
     public Boolean CanForceNextTurn => Configuration.Battle.Speed == 2 && UIManager.Battle.FF9BMenu_IsEnable() && !ForceNextTurn
         && ReadyQueue.Count > 0 && FF9StateSystem.Battle.FF9Battle.cur_cmd == null && btl_cmd.GetFirstCommandReadyToDequeue(FF9StateSystem.Battle.FF9Battle) == null;
     public List<Int32> ReadyQueue { get; }

@@ -267,8 +267,18 @@ public partial class BattleHUD : UIScene
                 FF9Sfx.FF9SFX_Play(103);
                 _currentSubMenuIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
                 _abilityCursorMemorize[new PairCharCommand(CurrentPlayerIndex, _currentCommandId)] = _currentSubMenuIndex;
-                SetItemPanelVisibility(false, false);
-                SetTargetVisibility(true);
+                if (IsMixCast && _doubleCastCount < 2)
+                {
+                    ++_doubleCastCount;
+                    _firstCommand = ProcessCommand(1, _cursorType);
+                    DisplayItem(CharacterCommands.Commands[_firstCommand.CommandId].Type == CharacterCommandType.Throw);
+                    SetItemPanelVisibility(true, true);
+                }
+                else
+                {
+                    SetItemPanelVisibility(false, false);
+                    SetTargetVisibility(true);
+                }
             }
             else
             {
