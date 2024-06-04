@@ -939,6 +939,8 @@ public class SFXData
                 Matrix4x4 matrix4x;
                 try
                 {
+                    if (SFXData.BattleCallbackReaderTrackBtlMovement)
+                        btl_mot.PlayAnim(btl);
                     matrix4x = btl.gameObject.transform.GetChildByName("bone" + arg1.ToString("D3")).localToWorldMatrix;
                 }
                 catch (NullReferenceException)

@@ -290,7 +290,6 @@ public class FieldSPSSystem : HonoBehavior
 	}
 
 	public String MapName;
-	public List<FieldSPS> SpsList { get => _spsList; }
 
 	private Boolean _isReady;
 	private FieldMap _fieldMap;

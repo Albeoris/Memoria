@@ -343,7 +343,11 @@ public class btlseq
 			btl.evt.animFrame = Math.Min(btl.evt.animFrame, (Byte)animLoopFrame);
 			btl.animEndFrame = true;
 		}
-
+		if (btl.monster_transform != null && btl.monster_transform.fade_counter > 0)
+		{
+			btl.monster_transform.fade_counter--;
+			MonsterTransformFading(btl);
+		}
 		Int32 meshcnt = btl.meshCount;
 		Int32 meshoffcnt = 0;
 		Int32 meshoncnt = 0;
