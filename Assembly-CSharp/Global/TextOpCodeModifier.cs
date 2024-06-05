@@ -122,6 +122,7 @@ public class TextOpCodeModifier
 		return source;
 	}
 
+    /// <summary>Correcting position of yellow text path in Fossil Roo switches 1,3,4</summary>
 	private static String ReplaceFossilRouteText(String source)
 	{
 		if (FF9TextTool.FieldZoneId == 361)

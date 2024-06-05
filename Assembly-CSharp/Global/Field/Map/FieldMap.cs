@@ -2278,12 +2278,11 @@ public class FieldMap : HonoBehavior
             PsxScreenWidth = Configuration.Graphics.WidescreenSupport ? CalcPsxScreenWidth() : PsxScreenWidthNative;
             if (Configuration.Graphics.InitializeWidescreenSupport() && IsNarrowMap())
             {
-                foreach (KeyValuePair<int, int> entry in NarrowMapList.actualNarrowMapWidthDict)
+                foreach (int[] entry in NarrowMapList.MapWidthList)
                 {
-                    if (FF9StateSystem.Common.FF9.fldMapNo == entry.Key)
+                    if (entry[0] == FF9StateSystem.Common.FF9.fldMapNo)
                     {
-                        PsxFieldWidth = (Int16)(entry.Value);
-                        PsxScreenWidth = PsxFieldWidth;
+                        PsxFieldWidth = PsxScreenWidth = (Int16)entry[1];
                     }
                 }
             }
