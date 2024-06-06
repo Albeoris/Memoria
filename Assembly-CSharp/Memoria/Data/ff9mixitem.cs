@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
@@ -9,22 +8,23 @@ namespace FF9
 {
     public class ff9mixitem
     {
-        public static readonly Dictionary<RegularItem, MixItems> MixItemsData;
+        public static readonly Dictionary<Int32, MixItems> MixItemsData;
 
         static ff9mixitem()
         {
             MixItemsData = LoadSynthesis();
         }
 
-        private static Dictionary<RegularItem, MixItems> LoadSynthesis()
+        private static Dictionary<Int32, MixItems> LoadSynthesis()
         {
             try
             {
                 String inputPath = DataResources.Items.PureDirectory + DataResources.Items.MixItemsFile;
-                Dictionary<RegularItem, MixItems> result = new Dictionary<RegularItem, MixItems>();
-                foreach (MixItems[] ingredients in AssetManager.EnumerateCsvFromLowToHigh<MixItems>(inputPath))
-                    foreach (MixItems ItemMixed in ingredients)
-                        result[(RegularItem)ItemMixed.Result] = ItemMixed;
+                Dictionary<Int32, MixItems> result = new Dictionary<Int32, MixItems>();
+                foreach (MixItems[] mixDatabase in AssetManager.EnumerateCsvFromLowToHigh<MixItems>(inputPath))
+                    foreach (MixItems mix in mixDatabase)
+                        result[mix.Id] = mix;
+                        
                 return result;
             }
             catch (Exception ex)

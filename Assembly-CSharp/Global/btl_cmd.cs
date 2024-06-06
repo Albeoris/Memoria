@@ -145,7 +145,7 @@ public class btl_cmd
         }
     }
 
-    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false, BattleCommandMenu cmdMenu = BattleCommandMenu.None, Boolean IdleAnim = true)
+    public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false, BattleCommandMenu cmdMenu = BattleCommandMenu.None)
     {
         if (btl_cmd.CheckUsingCommand(cmd))
             return;
@@ -255,7 +255,7 @@ public class btl_cmd
             cmd.info.priority = 1;
         else
             btl_stat.RemoveStatus(caster, BattleStatus.Defend);
-        if (commandId < BattleCommandId.EnemyReaction || commandId > BattleCommandId.BoundaryUpperCheck)
+        if ((commandId < BattleCommandId.EnemyReaction || commandId > BattleCommandId.BoundaryUpperCheck) && cmd != caster.cmd[3]) // cmd != caster.cmd[3] => Prevent cancel animation with Double Cast.
         {
             //if (btl_util.getCurCmdPtr() != btl.cmd[4])
             //{
@@ -276,7 +276,7 @@ public class btl_cmd
             //    }
             //}
             caster.bi.cmd_idle = 1;
-            if (Configuration.Battle.Speed < 3 && caster != null && caster.bi.player != 0 && IdleAnim)
+            if (Configuration.Battle.Speed < 3 && caster != null && caster.bi.player != 0)
                 btl_mot.SetDefaultIdle(caster); // Don't wait for the "Idle" animation to finish its cycle to get ready
         }
         if (commandId == BattleCommandId.SummonGarnet || commandId == BattleCommandId.Phantom || commandId == BattleCommandId.SummonEiko)
@@ -716,12 +716,8 @@ public class btl_cmd
                     }
                     RegularItem itemId = btl_util.GetCommandItem(cmd);
                     if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
-                    {
-                        for (Int32 index = 0; index < ff9mixitem.MixItemsData[itemId].Ingredients.Count; ++index)
-                        {
-                            UIManager.Battle.ItemUse(ff9mixitem.MixItemsData[itemId].Ingredients[index]);
-                        }      
-                    }
+                        foreach (RegularItem ingredient in ff9mixitem.MixItemsData[cmd.sub_no].Ingredients)
+                            UIManager.Battle.ItemUse(ingredient);
                     else if (itemId != RegularItem.NoItem)
                         UIManager.Battle.ItemUse(itemId);
 
@@ -1044,8 +1040,21 @@ public class btl_cmd
         if (btl_util.IsCommandMonsterTransform(cmd))
             return true;
 
-        RegularItem itemId = btl_util.GetCommandItem(cmd);
-        if (itemId != RegularItem.NoItem && ff9item.FF9Item_GetCount(itemId) == 0 && !BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
+        Boolean notEnoughItems = false;
+        if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
+        {
+            Dictionary<RegularItem, Int32> allIngredients = ff9mixitem.MixItemsData[cmd.sub_no].GetIngredientsAsDict();
+            foreach (KeyValuePair<RegularItem, Int32> requirement in allIngredients)
+                if (ff9item.FF9Item_GetCount(requirement.Key) < requirement.Value)
+                    notEnoughItems = true;
+        }
+        else
+        {
+            RegularItem itemId = btl_util.GetCommandItem(cmd);
+            if (itemId != RegularItem.NoItem && ff9item.FF9Item_GetCount(itemId) == 0)
+                notEnoughItems = true;
+        }
+        if (notEnoughItems)
         {
             UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughItems);
             return false;

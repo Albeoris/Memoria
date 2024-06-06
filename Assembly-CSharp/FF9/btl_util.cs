@@ -282,7 +282,7 @@ namespace FF9
 
 		public static BattleAbilityId GetCommandMainActionIndex(CMD_DATA cmd)
 		{
-			if (cmd.regist != null && cmd.regist.bi.player == 0)
+            if (cmd.regist != null && cmd.regist.bi.player == 0)
 				return BattleAbilityId.Void;
 			if (IsCommandMonsterTransform(cmd))
 				return BattleAbilityId.Void;
@@ -307,24 +307,26 @@ namespace FF9
 			}
 		}
 
-		public static RegularItem GetCommandItem(CMD_DATA cmd)
-		{
-			if (cmd.regist != null && cmd.regist.bi.player == 0)
-				return RegularItem.NoItem;
-			if (IsCommandMonsterTransform(cmd) || IsCommandMonsterTransformAttack(cmd))
-				return RegularItem.NoItem;
-			switch (cmd.cmd_no)
-			{
-				case BattleCommandId.Throw:
-				case BattleCommandId.Item:
-				case BattleCommandId.AutoPotion:
-					return (RegularItem)cmd.sub_no;
-				default:
-					return RegularItem.NoItem;
-			}
-		}
+        public static RegularItem GetCommandItem(CMD_DATA cmd)
+        {
+            if (cmd.regist != null && cmd.regist.bi.player == 0)
+                return RegularItem.NoItem;
+            if (IsCommandMonsterTransform(cmd) || IsCommandMonsterTransformAttack(cmd))
+                return RegularItem.NoItem;
+            if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
+                return ff9mixitem.MixItemsData[cmd.sub_no].Result;
+            switch (cmd.cmd_no)
+            {
+                case BattleCommandId.Throw:
+                case BattleCommandId.Item:
+                case BattleCommandId.AutoPotion:
+                    return (RegularItem)cmd.sub_no;
+                default:
+                    return RegularItem.NoItem;
+            }
+        }
 
-		public static AA_DATA GetCommandMonsterAttack(CMD_DATA cmd)
+        public static AA_DATA GetCommandMonsterAttack(CMD_DATA cmd)
 		{
 			if (IsCommandMonsterTransform(cmd))
 				return cmd.regist.monster_transform.spell[cmd.sub_no];
@@ -347,7 +349,9 @@ namespace FF9
 
 		public static Int32 GetCommandScriptId(CMD_DATA cmd)
 		{
-			switch (cmd.cmd_no)
+            if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
+                return ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).Ref.ScriptId;
+            switch (cmd.cmd_no)
 			{
 				case BattleCommandId.Jump:
 				case BattleCommandId.Jump2:
