@@ -1,4 +1,5 @@
-﻿using FF9;
+﻿using Assets.Sources.Scripts.UI.Common;
+using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Database;
@@ -264,6 +265,12 @@ public partial class BattleHUD : UIScene
         {
             if (_itemIdList[_currentSubMenuIndex] != RegularItem.NoItem)
             {
+                ItemListDetailWithIconHUD detailHUD = new ItemListDetailWithIconHUD(go, true);
+                if (detailHUD.NameLabel.color == FF9TextTool.Gray || detailHUD.NameLabel.color == FF9TextTool.DarkYellow)
+                {
+                    FF9Sfx.FF9SFX_Play(102);
+                    return true;
+                }
                 FF9Sfx.FF9SFX_Play(103);
                 _currentSubMenuIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
                 _abilityCursorMemorize[new PairCharCommand(CurrentPlayerIndex, _currentCommandId)] = _currentSubMenuIndex;
