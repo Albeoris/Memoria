@@ -215,6 +215,7 @@ namespace Memoria.Launcher
             public static readonly string UIColumnsChoice0 = GetSettings(nameof(UIColumnsChoice0));
             public static readonly string UIColumnsChoice1 = GetSettings(nameof(UIColumnsChoice1));
             public static readonly string UIColumnsChoice2 = GetSettings(nameof(UIColumnsChoice2));
+            public static readonly string EnableCustomShader = GetSettings(nameof(EnableCustomShader));
 
             // Settings.ini Tooltips
             public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));
@@ -248,6 +249,7 @@ namespace Memoria.Launcher
             public static readonly string UsePsxFont_Tooltip = GetSettings(nameof(UsePsxFont_Tooltip));
             public static readonly string FontChoice_Tooltip = GetSettings(nameof(FontChoice_Tooltip));
             public static readonly string UIColumnsChoice_Tooltip = GetSettings(nameof(UIColumnsChoice_Tooltip));
+            public static readonly string EnableCustomShader_Tooltip = GetSettings(nameof(EnableCustomShader_Tooltip));
 
             // Memoria.ini Cheats tooltips
             public static readonly string MaxStealRate_Tooltip = GetSettings(nameof(MaxStealRate_Tooltip));

@@ -94,6 +94,7 @@
 	BattleFPS = "Battle"
 	FieldFPS = "Field"
 	WorldFPS = "World"
+	EnableCustomShader = "Enable Custom Shader"
 	CameraStabilizer = "Camera stabilizer"
 	UseOrchestralMusic = "Orchestral music (Moguri)"
 	Use30FpsVideo = "30 FPS videos (Moguri)"
@@ -141,6 +142,7 @@
 	WorldFPS_Tooltip = "Image refresh rate on the world map (default: 20)"
 	MaxCardCount_Tooltip = "Limit to cards in inventory raised to 10000"
 	UIColumnsChoice_Tooltip = "Number of columns: if you want more items/abilities on one screen"
+	EnableCustomShader_Tooltip = "Whether to enable per-pixel lighting shader for field and battle character"
 	/>
 
 	<SdLib

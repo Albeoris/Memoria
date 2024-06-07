@@ -3474,6 +3474,13 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ff9.ico" />
+    <Content Include="StreamingAssets\Shaders\PSX\BattleMap_CustomStatusEffect.txt" />
+    <Content Include="StreamingAssets\Shaders\PSX\BattleMap_StatusEffect_RealLighting.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="StreamingAssets\Shaders\PSX\FieldMapActor_RealLighting.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="StreamingAssets\Data\Text\LocalizationPatch.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
