@@ -656,6 +656,10 @@ public partial class BattleHUD : UIScene
                     Count = ff9Item.count,
                     Id = ff9Item.id
                 };
+                if (_doubleCastCount == 2 && battleItemListData.Id == (RegularItem)_firstCommand.SubId)
+                {
+                    battleItemListData.Count--;
+                }
                 inDataList.Add(battleItemListData);
             }
         }
@@ -1126,11 +1130,22 @@ public partial class BattleHUD : UIScene
 
             ++_doubleCastCount;
             _firstCommand = ProcessCommand(battleIndex, cursorGroup);
-            _subMenuType = SubMenuType.Ability;
+            CharacterCommandType commandType = CharacterCommands.Commands[_firstCommand.CommandId].Type;
 
-            DisplayAbility();
-            SetTargetVisibility(false);
-            SetAbilityPanelVisibility(true, true);
+            if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
+            {
+                _subMenuType = commandType == CharacterCommandType.Item ? SubMenuType.Item : SubMenuType.Throw;
+                DisplayItem(commandType == CharacterCommandType.Throw);
+                SetTargetVisibility(false);
+                SetItemPanelVisibility(true, true);
+            }                
+            else
+            {
+                _subMenuType = SubMenuType.Ability;
+                DisplayAbility();
+                SetTargetVisibility(false);
+                SetAbilityPanelVisibility(true, true);
+            }
             BackButton.SetActive(FF9StateSystem.MobilePlatform);
         }
     }
@@ -1582,6 +1597,40 @@ public partial class BattleHUD : UIScene
         _partyDetail.SetBlink(CurrentPlayerIndex, false);
     }
 
+    private void SendMixCommand(CommandDetail[] allInputs)
+    {
+        CommandDetail lastInput = allInputs[allInputs.Length - 1];
+        MixItems mixRequest = new MixItems()
+        {
+            Id = -1,
+            Result = RegularItem.NoItem,
+            Ingredients = allInputs.Select(detail => (RegularItem)detail.SubId).ToList()         
+        };
+        Dictionary<RegularItem, Int32> requestIngredients = mixRequest.GetIngredientsAsDict();
+        Int32 mixId = -1;
+        foreach (MixItems mixCandidate in ff9mixitem.MixItemsData.Values)
+        {
+            if (mixCandidate.Length != mixRequest.Length)
+                continue;
+            Dictionary<RegularItem, Int32> candidateIngredients = mixCandidate.GetIngredientsAsDict();
+            if (candidateIngredients.All(kvp => requestIngredients.TryGetValue(kvp.Key, out Int32 cnt) && cnt == kvp.Value))
+            {
+                mixId = mixCandidate.Id;
+                break;
+            }
+        }
+        BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
+        CMD_DATA cmd = btl.cmd[0];
+        cmd.regist.sel_mode = 1;     
+        if (mixId >= 0) 
+            btl_cmd.SetCommand(cmd, lastInput.CommandId, mixId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+        else // In case of mix fail, we use CommandId.Item with the first item picked instead
+            btl_cmd.SetCommand(cmd, BattleCommandId.Item, allInputs[0].SubId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+        SetPartySwapButtonActive(false);
+        InputFinishList.Add(CurrentPlayerIndex);
+        _partyDetail.SetBlink(CurrentPlayerIndex, false);
+    }
+
     private void SetCommandVisibility(Boolean isVisible, Boolean forceCursorMemo)
     {
         SetPartySwapButtonActive(isVisible);
@@ -1645,15 +1694,24 @@ public partial class BattleHUD : UIScene
     {
         if (isVisible)
         {
-            ItemPanel.SetActive(true);
-            ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);
-            PairCharCommand cursorKey = new PairCharCommand(CurrentPlayerIndex, _currentCommandId);
-            if (_abilityCursorMemorize.ContainsKey(cursorKey) && FF9StateSystem.Settings.cfg.cursor != 0 || forceCursorMemo)
-                _itemScrollList.JumpToIndex(_abilityCursorMemorize[cursorKey], true);
+            if (!ItemPanel.activeSelf)
+            {
+                ItemPanel.SetActive(true);
+                ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);
+                PairCharCommand cursorKey = new PairCharCommand(CurrentPlayerIndex, _currentCommandId);
+                if (_abilityCursorMemorize.ContainsKey(cursorKey) && FF9StateSystem.Settings.cfg.cursor != 0 || forceCursorMemo)
+                    _itemScrollList.JumpToIndex(_abilityCursorMemorize[cursorKey], true);
+                else
+                    _itemScrollList.JumpToIndex(0, false);
+            }
+            if (IsDoubleCast && _doubleCastCount == 1)
+                ButtonGroupState.SetPointerNumberToGroup(1, ItemGroupButton);
+            else if (IsDoubleCast && _doubleCastCount == 2)
+                ButtonGroupState.SetPointerNumberToGroup(2, ItemGroupButton);
             else
-                _itemScrollList.JumpToIndex(0, false);
-            ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);
+                ButtonGroupState.SetPointerNumberToGroup(0, ItemGroupButton);
             ButtonGroupState.ActiveGroup = ItemGroupButton;
+            ButtonGroupState.UpdateActiveButton();
         }
         else
         {
@@ -1697,7 +1755,7 @@ public partial class BattleHUD : UIScene
     private void SetTargetVisibility(Boolean isVisible)
     {
         if (isVisible)
-        {
+        {     
             TargetType targetType = 0;
             TargetDisplay subMode = 0;
             _defaultTargetAlly = false;
@@ -1723,27 +1781,6 @@ public partial class BattleHUD : UIScene
                 testCommand.SetAAData(aaData);
                 testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
 
-                SelectBestTarget(targetType, testCommand);
-            }
-            else if (_currentCommandIndex == BattleCommandMenu.Item)
-            {
-                RegularItem itemId = _itemIdList[_currentSubMenuIndex];
-                ITEM_DATA itemData = ff9item.GetItemEffect(itemId);
-                targetType = itemData.info.Target;
-                _defaultTargetAlly = itemData.info.DefaultAlly;
-                _defaultTargetDead = itemData.info.ForDead;
-                _targetDead = itemData.info.ForDead;
-                subMode = itemData.info.DisplayStats;
-
-                CMD_DATA testCommand = new CMD_DATA
-                {
-                    regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
-                    cmd_no = _currentCommandId,
-                    sub_no = (Int32)itemId
-                };
-                testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityId.Void]);
-                testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
-
                 if (Configuration.Mod.TranceSeek && _currentCommandId == BattleCommandId.Throw) // [DV] Change TargetType for throwing items (magic scrolls for Trance Seek)
                 { // Or i can make it with the DictionaryPatch.txt instead ?
                     ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
@@ -1766,8 +1803,30 @@ public partial class BattleHUD : UIScene
                         }
                     }
                 }
-
                 SelectBestTarget(targetType, testCommand);
+            }
+            else if (_currentCommandIndex == BattleCommandMenu.Item)
+            {
+                RegularItem itemId = _itemIdList[_currentSubMenuIndex];
+                ITEM_DATA itemData = ff9item.GetItemEffect(itemId);
+                targetType = itemData.info.Target;
+                _defaultTargetAlly = itemData.info.DefaultAlly;
+                _defaultTargetDead = itemData.info.ForDead;
+                _targetDead = itemData.info.ForDead;
+                subMode = itemData.info.DisplayStats;
+                if (!MixCommandSet.Contains(_currentCommandId))
+                {
+                    CMD_DATA testCommand = new CMD_DATA
+                    {
+                        regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
+                        cmd_no = _currentCommandId,
+                        sub_no = (Int32)itemId
+                    };
+
+                    testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityId.Void]);
+                    testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
+                    SelectBestTarget(targetType, testCommand);
+                }
             }
             else if (_currentCommandIndex == BattleCommandMenu.Attack && CurrentPlayerIndex > -1)
             {
@@ -2366,7 +2425,10 @@ public partial class BattleHUD : UIScene
             }
         }
 
-        if (IsDoubleCast)
+        if (IsMixCast)
+            try { SendMixCommand([_firstCommand, ProcessCommand(battleIndex, _cursorType)]); } catch (Exception err) { Log.Error(err); }
+        
+        else if (IsDoubleCast)
             SendDoubleCastCommand(_firstCommand, ProcessCommand(battleIndex, _cursorType));
         else
             SendCommand(ProcessCommand(battleIndex, _cursorType));
@@ -2392,6 +2454,8 @@ public partial class BattleHUD : UIScene
     {
         BattleItemListData battleItemListData = (BattleItemListData)data;
         ItemListDetailWithIconHUD detailWithIconHud = new ItemListDetailWithIconHUD(item.gameObject, true);
+        Boolean FirstIngredientMixed = _doubleCastCount == 2 && battleItemListData.Id == (RegularItem)_firstCommand.SubId;
+
         if (isInit)
             DisplayWindowBackground(item.gameObject, null);
 
@@ -2408,6 +2472,8 @@ public partial class BattleHUD : UIScene
         {
             FF9UIDataTool.DisplayItem(battleItemListData.Id, detailWithIconHud.IconSprite, detailWithIconHud.NameLabel, true);
             detailWithIconHud.NumberLabel.text = battleItemListData.Count.ToString();
+            detailWithIconHud.NameLabel.color = FirstIngredientMixed ? (battleItemListData.Count == 0 ? FF9TextTool.DarkYellow : FF9TextTool.Yellow) : (battleItemListData.Count == 0 ? FF9TextTool.Gray : FF9TextTool.White);
+            detailWithIconHud.NumberLabel.color = FirstIngredientMixed ? (battleItemListData.Count == 0 ? FF9TextTool.DarkYellow : FF9TextTool.Yellow) : (battleItemListData.Count == 0 ? FF9TextTool.Gray : FF9TextTool.White);
             detailWithIconHud.Button.Help.Enable = true;
             detailWithIconHud.Button.Help.TextKey = String.Empty;
             detailWithIconHud.Button.Help.Text = FF9TextTool.ItemBattleDescription(battleItemListData.Id);

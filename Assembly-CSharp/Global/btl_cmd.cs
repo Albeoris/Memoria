@@ -255,7 +255,7 @@ public class btl_cmd
             cmd.info.priority = 1;
         else
             btl_stat.RemoveStatus(caster, BattleStatus.Defend);
-        if (commandId < BattleCommandId.EnemyReaction || commandId > BattleCommandId.BoundaryUpperCheck)
+        if ((commandId < BattleCommandId.EnemyReaction || commandId > BattleCommandId.BoundaryUpperCheck) && cmd != caster.cmd[3]) // cmd != caster.cmd[3] => Prevent cancel animation with Double Cast.
         {
             //if (btl_util.getCurCmdPtr() != btl.cmd[4])
             //{
@@ -715,7 +715,10 @@ public class btl_cmd
                             FF9StateSystem.EventState.IncreaseAAUsageCounter(aaIndex);
                     }
                     RegularItem itemId = btl_util.GetCommandItem(cmd);
-                    if (itemId != RegularItem.NoItem)
+                    if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
+                        foreach (RegularItem ingredient in ff9mixitem.MixItemsData[cmd.sub_no].Ingredients)
+                            UIManager.Battle.ItemUse(ingredient);
+                    else if (itemId != RegularItem.NoItem)
                         UIManager.Battle.ItemUse(itemId);
 
                     cmd.info.mode = command_mode_index.CMD_MODE_LOOP;
@@ -1037,8 +1040,21 @@ public class btl_cmd
         if (btl_util.IsCommandMonsterTransform(cmd))
             return true;
 
-        RegularItem itemId = btl_util.GetCommandItem(cmd);
-        if (itemId != RegularItem.NoItem && ff9item.FF9Item_GetCount(itemId) == 0)
+        Boolean notEnoughItems = false;
+        if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
+        {
+            Dictionary<RegularItem, Int32> allIngredients = ff9mixitem.MixItemsData[cmd.sub_no].GetIngredientsAsDict();
+            foreach (KeyValuePair<RegularItem, Int32> requirement in allIngredients)
+                if (ff9item.FF9Item_GetCount(requirement.Key) < requirement.Value)
+                    notEnoughItems = true;
+        }
+        else
+        {
+            RegularItem itemId = btl_util.GetCommandItem(cmd);
+            if (itemId != RegularItem.NoItem && ff9item.FF9Item_GetCount(itemId) == 0)
+                notEnoughItems = true;
+        }
+        if (notEnoughItems)
         {
             UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughItems);
             return false;
