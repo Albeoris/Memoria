@@ -27,20 +27,14 @@ namespace Memoria
 
             public static Boolean InitializeWidescreenSupport()
             {
-                if (!Instance._graphics.WidescreenSupport)
-                    return false;
-                if (Instance._debug.Enabled && Instance._debug.StartFieldCreator)
-                    return false;
-
-                if ((Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 9d)) < 0.01) || (Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 10d)) < 0.01))
+                if (!Instance._graphics.WidescreenSupport || (Instance._debug.Enabled && Instance._debug.StartFieldCreator))
                 {
-                    //Log.Message("WIDESCREEN | Screen.width:" + (Double)Screen.width + " Screen.height:" + (Double)Screen.height);
-                    return true;
+                    return false;
                 }
-
-                //Log.Message("Not Widescreen | Screen.width:" + (Double)Screen.width + " Screen.height:" + (Double)Screen.height);
-                return false;
+                return true;
+                // if ((Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 9d)) < 0.01) || (Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 10d)) < 0.01))
             }
+
             public static Boolean ScreenIs16to10()
             {
                 if (Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 10d)) < 0.01)

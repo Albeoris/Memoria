@@ -44,7 +44,7 @@ public class PSXCameraAspect : MonoBehaviour
 
         foreach (int[] entry in NarrowMapList.RestrictedCams)
         {
-            if (entry[0] == FF9StateSystem.Common.FF9.fldMapNo && entry[1] == (PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1))
+            if (entry[0] == FF9StateSystem.Common.FF9.fldMapNo && entry[1] == (PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1) && FieldMap.ActualPsxScreenWidth < 401)
             {
                 camRestrictionRatio = Mathf.Min(((Single)entry[2] / (Single)FieldMap.PsxFieldWidth), 1f);
             }
