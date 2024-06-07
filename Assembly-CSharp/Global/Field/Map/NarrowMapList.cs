@@ -1,47 +1,24 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using Memoria;
-using Memoria.Prime;
 public static class NarrowMapList
 {
-    public static Boolean IsCurrentMapNarrow(Int32 ScreenWidth) => IsNarrowMap(FF9StateSystem.Common.FF9.fldMapNo, PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1, ScreenWidth);
-    public static Boolean IsNarrowMap(Int32 mapId, Int32 camId, Int32 ScreenWidth)
+    /// <summary>is mapId <= ScreenWidth</summary>
+    public static Boolean IsCurrentMapNarrow(Int32 ScreenWidth)
     {
-        if (SpecificScenesNarrow(mapId, camId))
-            return true;
-
+        Int32 mapId = FF9StateSystem.Common.FF9.fldMapNo;
         if (MapWidth(mapId) <= ScreenWidth)
             return true;
 
-
-        //if (ListFullNarrow.Contains(mapId))
-        //    return true;
-        
-        //if (ListPartialNarrow.TryGetValue(mapId, out HashSet<Int32> narrowCams) && narrowCams.Contains(camId))
-        //    return true;
-        //Log.Message("camId:" + camId + ", mapid:" + mapId);
-
         return false;
     }
-    public static Boolean SpecificScenesNarrow(Int32 mapId, Int32 currCamera)
+    public static Boolean SpecificScenesNarrow(Int32 mapId)
     {
         Int32 currIndex = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
         Int32 currCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
 
-        foreach (int[] entry in Map_Index_Narrow_List)
+        foreach (int[] entry in RestrictedWidthScenesList)
         {
-            if (entry[0] == mapId && entry[1] == currIndex)
-                return true;
-        }
-        foreach (int[] entry in Map_Counter_Narrow_List)
-        {
-            if (entry[0] == mapId && entry[1] == currCounter)
-                return true;
-        }
-        foreach (int[] entry in Map_Camera_Narrow_List)
-        {
-            if (entry[0] == mapId && entry[1] == currCamera)
+            if (entry[0] == mapId && (entry[1] == currIndex || entry[2] == currCounter))
                 return true;
         }
         return false;
@@ -49,478 +26,897 @@ public static class NarrowMapList
 
     public static Int32 MapWidth(Int32 mapId)
     {
-        Int32 width = 500;
-        Int32 currCamera = PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1;
+        if (SpecificScenesNarrow(mapId))
+            return 320;
 
-        if (ListFullNarrow.Contains(mapId) || SpecificScenesNarrow(mapId, currCamera))
-            width = 320;
-
-        foreach (KeyValuePair<int, int> entry in actualNarrowMapWidthDict)
+        foreach (int[] entry in MapWidthList)
         {
-            if (mapId == entry.Key && !SpecificScenesNarrow(entry.Key, currCamera))
-                width = (Int32)entry.Value;
+            if (entry[0] == mapId)
+                return entry[1];
         }
 
-        //Log.Message("width:" + width + "PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx" + PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx);
-        return width;
+        return 500;
     }
 
-    public static readonly int[][] Map_Index_Narrow_List =
+    /// <summary>Make these scenes widescreen (based on index [1] or counter [2]), -5 is ignored</summary>
+    public static readonly int[][] RestrictedWidthScenesList =
     {
-        // [mapNo,index],
-        [50,0],      // first scene
-        [150,325],   // Zidane infiltrate Alex Castle
-        [254,26],    // MBG103 - Evil Forest
-        [352,3],     // Arrival at Dali: vivi visible before sleeping
-        [355,18],    // Steiner to the barmaid
-        [600,32],    // Throne, meet cid
-        [615,57],    // Meet garnet on Lindblum Tower
-        [615,58],    // Meet garnet on Lindblum Tower (2)
-        [1206,0],    // Queen and Kuja salon Alex, drug garnet
-        [1602,16],   // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
-        [1823,331],  // Garnet coronation, garnet visible
-        [1815,0],    // Love quiproquo at the docks
-        [1816,315],  // Love quiproquo at the docks
-        //[2007,2],    // MBG111 - Alex castle changing
-        [2211,8],    // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
-        [2404,25],   // Baku seen waiting on the docks too soon
-        [2705,-1],   // Pandemonium, you're not alone sequence, several glitches
-        [2706,-1],   // Pandemonium, you're not alone sequence, several glitches
-        [2707,-1],   // Pandemonium, you're not alone sequence, several glitches
-        [2708,-1],   // Pandemonium, you're not alone sequence, several glitches
-        [2711,0],    // Pandemonium, people are waiting in line after Kuja is defeated
+        // [mapNo, EBin.MAP_INDEX_SVR, EBin.SC_COUNTER_SVR],
+        [150,325,-5],      // Zidane infiltrate Alex Castle
+        [254,26,-5],       // MBG103 - Evil Forest
+        [352,3,-5],        // Arrival at Dali: vivi visible before sleeping
+        [1550,-5,6270],    // Mountain path - Quina stays there
+        [1554,-5,6300],    // MBG109 - roots
+        [1554,-5,6305],    // MBG109 - roots
+        [1602,16,-5],      // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
+        [1815,0,-5],       // Love quiproquo at the docks
+        [1816,315,-5],     // Love quiproquo at the docks
+        [1901,-5,7550],    // Treno scene, people staying there
+        [2007,-5,8340],    // MBG111 - Alex castle changing
+        [2007,-5,8400],    // MBG111 - Alex castle changing
+        [2173,-5,9050],    // ATE Quina
+        [2211,8,-5],       // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
+        [2404,25,-5],      // Baku seen waiting on the docks too soon
+        [2705,-1,-5],      // Pandemonium, you're not alone sequence, several glitches
+        [2706,-1,-5],      // Pandemonium, you're not alone sequence, several glitches
+        [2707,-1,-5],      // Pandemonium, you're not alone sequence, several glitches
+        [2708,-1,-5],      // Pandemonium, you're not alone sequence, several glitches
+        [2711,0,-5],       // Pandemonium, people are waiting in line after Kuja is defeated
+        [2905,-5,11620],   // MBG118 - Memoria pink castle
     };
 
-    public static readonly int[][] Map_Counter_Narrow_List =
+    /// <summary>List of fields with narrower cams than widescreen, [field#, cam#, PSXWidth]</summary>
+    public static readonly int[][] RestrictedCams =
     {
-        // [mapNo,counter],
-        //[951,4500],     // Gargan roo, secondary screen is smaller, but only visible in 1 scene
-        [1550,6270],    // Mountain path - Quina stays there
-        [1554,6300],    // MBG109 - roots
-        [1554,6305],    // MBG109 - roots
-        [1652,6700],    // Iifa entrance
-        [1652,6710],    // Iifa entrance
-        [1901,7550],    // Treno scene, people staying there
-        [2007,8340],    // MBG111 - Alex castle changing
-        [2007,8400],    // MBG111 - Alex castle changing
-        [2172,9050],    // Scene with Garnet on tower
-        [2173,9050],    // ATE Quina
-        [2905,11620],   // MBG118 - Memoria pink castle
+        // [mapNo,cam,width],
+        [50,1,320],
+        [63,0,320],
+        [116,1,320],
+        [153,0,320],
+        [154,0,352],
+        [355,1,320],
+        [600,1,320],
+        [615,1,320],
+        [801,1,336],
+        [932,1,320],
+        [951,1,336],
+        [1205,1,384],
+        [1206,1,320],
+        [1214,0,320],
+        [1215,0,352],
+        [1462,0,320],
+        [1652,1,336],
+        [1759,1,336],
+        [1801,1,320],
+        [1806,0,320],
+        [1807,0,352],
+        [1823,1,320],
+        [2150,1,320],
+        [2172,1,320],
+        [2217,1,320],
+        [2217,2,320],
+        [2363,0,384],
+        [2363,1,336],
+        [2510,0,320],
+        [2755,1,336],
     };
 
-    public static readonly int[][] Map_Camera_Narrow_List =
+    /// <summary>List of fields of width smaller than widescreen, [field#,PSXWidth]</summary>
+    public static readonly int[][] MapWidthList =
     {
-        // [mapNo,camIdx],
-        //[951,1],    // // Gargan roo, secondary screen is smaller, but only visible in 1 scene
+        [50,480],
+        [51,480],
+        [52,320],
+        [53,320],
+        [54,432],
+        [55,398],
+        [56,320],
+        [57,448],
+        [58,320],
+        [59,320],
+        [60,366],
+        [61,320],
+        [62,320],
+        [63,320],
+        [64,480],
+        [65,320],
+        [66,320],
+        [67,320],
+        [68,320],
+        [69,320],
+        [100,320],
+        [101,640],
+        [102,382],
+        [103,624],
+        [104,320],
+        [105,320],
+        [106,528],
+        [107,480],
+        [108,320],
+        [109,382],
+        [110,432],
+        [111,448],
+        [112,560],
+        [113,480],
+        [114,350],
+        [115,432],
+        [116,416],
+        [117,416],
+        [150,366],
+        [151,320],
+        [152,800],
+        [153,432],
+        [154,640],
+        [155,416],
+        [156,640],
+        [157,398],
+        [158,480],
+        [159,416],
+        [160,320],
+        [161,366],
+        [162,382],
+        [163,318],
+        [164,318],
+        [165,320],
+        [166,320],
+        [167,320],
+        [200,480],
+        [201,366],
+        [202,480],
+        [203,334],
+        [204,480],
+        [205,320],
+        [206,382],
+        [207,382],
+        [208,480],
+        [209,320],
+        [250,480],
+        [251,382],
+        [252,382],
+        [253,480],
+        [254,398],
+        [255,320],
+        [256,320],
+        [257,416],
+        [258,480],
+        [259,320],
+        [261,320],
+        [262,366],
+        [300,320],
+        [301,320],
+        [302,480],
+        [303,592],
+        [304,432],
+        [305,320],
+        [306,320],
+        [307,464],
+        [308,320],
+        [309,320],
+        [310,320],
+        [311,320],
+        [312,478],
+        [350,448],
+        [351,480],
+        [352,480],
+        [353,416],
+        [354,320],
+        [355,416],
+        [356,416],
+        [357,320],
+        [358,320],
+        [359,320],
+        [400,320],
+        [401,640],
+        [402,480],
+        [403,640],
+        [404,432],
+        [405,398],
+        [406,480],
+        [407,382],
+        [408,448],
+        [450,432],
+        [451,480],
+        [452,320],
+        [453,320],
+        [454,320],
+        [455,318],
+        [456,398],
+        [457,320],
+        [500,320],
+        [501,512],
+        [502,320],
+        [503,320],
+        [504,432],
+        [505,398],
+        [506,320],
+        [507,512],
+        [550,350],
+        [551,320],
+        [552,448],
+        [553,382],
+        [554,480],
+        [555,480],
+        [556,382],
+        [557,480],
+        [558,416],
+        [559,512],
+        [560,320],
+        [561,398],
+        [562,416],
+        [563,432],
+        [564,432],
+        [565,366],
+        [566,398],
+        [567,320],
+        [568,398],
+        [569,398],
+        [570,320],
+        [571,398],
+        [572,416],
+        [573,432],
+        [574,320],
+        [575,416],
+        [576,320],
+        [600,448],
+        [601,320],
+        [602,480],
+        [603,544],
+        [604,448],
+        [605,432],
+        [606,318],
+        [607,320],
+        [608,448],
+        [609,320],
+        [610,448],
+        [611,576],
+        [612,544],
+        [613,398],
+        [614,544],
+        [615,512],
+        [616,480],
+        [617,544],
+        [618,464],
+        [619,432],
+        [620,350],
+        [650,512],
+        [651,640],
+        [652,480],
+        [653,640],
+        [654,640],
+        [655,512],
+        [656,398],
+        [657,398],
+        [658,398],
+        [659,398],
+        [660,640],
+        [661,432],
+        [662,448],
+        [663,398],
+        [701,320],
+        [702,624],
+        [703,576],
+        [704,576],
+        [705,382],
+        [706,448],
+        [707,480],
+        [750,320],
+        [751,382],
+        [752,480],
+        [753,398],
+        [754,320],
+        [755,398],
+        [756,416],
+        [757,480],
+        [758,320],
+        [759,418],
+        [760,334],
+        [761,544],
+        [762,544],
+        [763,416],
+        [764,320],
+        [765,320],
+        [766,320],
+        [767,320],
+        [768,448],
+        [800,320],
+        [801,560],
+        [802,350],
+        [803,350],
+        [804,432],
+        [805,608],
+        [806,398],
+        [807,432],
+        [808,608],
+        [809,512],
+        [810,576],
+        [811,512],
+        [812,512],
+        [813,382],
+        [814,334],
+        [815,416],
+        [816,334],
+        [850,512],
+        [851,398],
+        [852,480],
+        [853,512],
+        [854,512],
+        [855,398],
+        [856,480],
+        [900,448],
+        [901,398],
+        [902,752],
+        [903,768],
+        [904,576],
+        [905,640],
+        [906,512],
+        [907,416],
+        [908,432],
+        [909,592],
+        [910,448],
+        [911,366],
+        [912,640],
+        [913,398],
+        [914,576],
+        [915,416],
+        [916,464],
+        [930,320],
+        [931,318],
+        [932,416],
+        [950,382],
+        [951,512],
+        [952,512],
+        [953,448],
+        [954,320],
+        [955,320],
+        [956,448],
+        [1000,320],
+        [1001,320],
+        [1002,320],
+        [1003,320],
+        [1004,512],
+        [1005,512],
+        [1006,320],
+        [1007,320],
+        [1008,416],
+        [1009,320],
+        [1010,640],
+        [1011,528],
+        [1012,464],
+        [1013,320],
+        [1014,640],
+        [1015,528],
+        [1016,528],
+        [1017,382],
+        [1018,382],
+        [1050,316],
+        [1051,416],
+        [1052,592],
+        [1053,608],
+        [1054,398],
+        [1055,478],
+        [1056,464],
+        [1057,560],
+        [1058,380],
+        [1059,526],
+        [1060,640],
+        [1100,320],
+        [1101,416],
+        [1102,592],
+        [1103,608],
+        [1104,398],
+        [1105,480],
+        [1106,464],
+        [1107,560],
+        [1108,380],
+        [1109,528],
+        [1110,638],
+        [1150,320],
+        [1151,334],
+        [1152,448],
+        [1153,398],
+        [1200,320],
+        [1201,382],
+        [1202,432],
+        [1203,432],
+        [1204,480],
+        [1205,416],
+        [1206,416],
+        [1207,480],
+        [1208,320],
+        [1209,640],
+        [1210,382],
+        [1211,448],
+        [1212,350],
+        [1213,366],
+        [1214,432],
+        [1215,640],
+        [1216,416],
+        [1217,640],
+        [1218,398],
+        [1219,480],
+        [1220,416],
+        [1221,320],
+        [1222,366],
+        [1223,416],
+        [1224,528],
+        [1225,416],
+        [1226,320],
+        [1227,480],
+        [1250,320],
+        [1251,366],
+        [1252,320],
+        [1253,320],
+        [1254,366],
+        [1255,432],
+        [1256,432],
+        [1300,350],
+        [1301,320],
+        [1302,448],
+        [1303,382],
+        [1304,480],
+        [1305,480],
+        [1306,416],
+        [1307,512],
+        [1308,320],
+        [1309,416],
+        [1310,432],
+        [1311,432],
+        [1312,366],
+        [1313,398],
+        [1314,320],
+        [1315,480],
+        [1350,320],
+        [1351,320],
+        [1352,480],
+        [1353,544],
+        [1354,448],
+        [1355,432],
+        [1356,320],
+        [1357,320],
+        [1358,448],
+        [1359,320],
+        [1360,448],
+        [1361,576],
+        [1362,544],
+        [1363,398],
+        [1364,544],
+        [1365,512],
+        [1366,480],
+        [1367,544],
+        [1368,464],
+        [1369,432],
+        [1370,350],
+        [1400,640],
+        [1401,320],
+        [1402,640],
+        [1403,366],
+        [1404,382],
+        [1405,528],
+        [1406,320],
+        [1407,512],
+        [1408,398],
+        [1409,512],
+        [1410,320],
+        [1411,496],
+        [1412,640],
+        [1413,512],
+        [1414,398],
+        [1415,512],
+        [1416,640],
+        [1417,528],
+        [1418,512],
+        [1419,608],
+        [1420,448],
+        [1421,512],
+        [1422,528],
+        [1423,800],
+        [1424,398],
+        [1425,480],
+        [1450,480],
+        [1451,432],
+        [1452,382],
+        [1453,382],
+        [1454,512],
+        [1455,320],
+        [1456,398],
+        [1457,320],
+        [1458,334],
+        [1459,320],
+        [1460,512],
+        [1461,320],
+        [1462,512],
+        [1463,320],
+        [1464,320],
+        [1500,334],
+        [1501,528],
+        [1502,416],
+        [1503,416],
+        [1504,512],
+        [1505,512],
+        [1506,334],
+        [1507,318],
+        [1508,350],
+        [1509,382],
+        [1550,576],
+        [1551,416],
+        [1552,416],
+        [1553,624],
+        [1554,464],
+        [1555,640],
+        [1556,320],
+        [1557,320],
+        [1600,398],
+        [1601,398],
+        [1602,398],
+        [1603,512],
+        [1604,398],
+        [1605,334],
+        [1606,334],
+        [1607,320],
+        [1608,334],
+        [1609,320],
+        [1610,320],
+        [1650,350],
+        [1651,434],
+        [1652,480],
+        [1653,512],
+        [1654,512],
+        [1655,320],
+        [1656,382],
+        [1657,346],
+        [1658,320],
+        [1659,480],
+        [1660,334],
+        [1661,334],
+        [1662,334],
+        [1663,320],
+        [1700,398],
+        [1701,398],
+        [1702,398],
+        [1703,512],
+        [1704,398],
+        [1705,334],
+        [1706,320],
+        [1707,334],
+        [1750,320],
+        [1751,334],
+        [1752,350],
+        [1753,320],
+        [1754,398],
+        [1755,320],
+        [1756,320],
+        [1757,350],
+        [1758,434],
+        [1759,480],
+        [1800,320],
+        [1801,416],
+        [1802,480],
+        [1803,366],
+        [1805,352],
+        [1806,432],
+        [1807,640],
+        [1808,416],
+        [1809,640],
+        [1810,398],
+        [1811,480],
+        [1812,416],
+        [1813,320],
+        [1814,366],
+        [1815,416],
+        [1816,416],
+        [1817,366],
+        [1818,320],
+        [1819,416],
+        [1820,382],
+        [1821,528],
+        [1822,320],
+        [1823,432],
+        [1824,480],
+        [1850,320],
+        [1851,640],
+        [1852,382],
+        [1853,624],
+        [1854,320],
+        [1855,528],
+        [1856,480],
+        [1857,320],
+        [1858,382],
+        [1859,432],
+        [1860,448],
+        [1861,560],
+        [1862,480],
+        [1863,350],
+        [1864,416],
+        [1865,432],
+        [1866,320],
+        [1900,448],
+        [1901,398],
+        [1902,752],
+        [1903,768],
+        [1904,576],
+        [1905,640],
+        [1906,512],
+        [1907,416],
+        [1908,432],
+        [1909,592],
+        [1910,448],
+        [1911,366],
+        [1912,640],
+        [1913,398],
+        [1914,576],
+        [1915,416],
+        [1950,496],
+        [1951,350],
+        [1952,350],
+        [1953,366],
+        [2000,350],
+        [2001,480],
+        [2002,366],
+        [2003,448],
+        [2004,366],
+        [2005,320],
+        [2006,366],
+        [2007,432],
+        [2008,320],
+        [2009,320],
+        [2050,320],
+        [2051,640],
+        [2052,382],
+        [2053,624],
+        [2054,480],
+        [2055,350],
+        [2101,320],
+        [2102,448],
+        [2103,382],
+        [2104,480],
+        [2105,480],
+        [2106,416],
+        [2107,512],
+        [2108,320],
+        [2109,416],
+        [2110,432],
+        [2111,432],
+        [2112,366],
+        [2113,398],
+        [2114,320],
+        [2150,448],
+        [2151,320],
+        [2152,480],
+        [2154,448],
+        [2153,544],
+        [2155,432],
+        [2157,320],
+        [2158,448],
+        [2159,320],
+        [2160,448],
+        [2161,576],
+        [2162,544],
+        [2163,398],
+        [2165,544],
+        [2166,512],
+        [2167,480],
+        [2168,544],
+        [2169,464],
+        [2170,432],
+        [2171,320],
+        [2172,512],
+        [2173,448],
+        [2200,382],
+        [2201,560],
+        [2202,334],
+        [2203,350],
+        [2204,334],
+        [2205,334],
+        [2206,560],
+        [2207,512],
+        [2208,334],
+        [2209,560],
+        [2211,928],
+        [2212,398],
+        [2213,398],
+        [2214,512],
+        [2215,480],
+        [2216,480],
+        [2217,432],
+        [2220,544],
+        [2221,512],
+        [2222,382],
+        [2250,320],
+        [2251,480],
+        [2252,480],
+        [2253,592],
+        [2254,334],
+        [2255,320],
+        [2256,672],
+        [2257,334],
+        [2258,592],
+        [2259,528],
+        [2260,320],
+        [2261,350],
+        [2300,512],
+        [2301,512],
+        [2302,512],
+        [2303,334],
+        [2304,512],
+        [2305,320],
+        [2350,656],
+        [2351,320],
+        [2352,398],
+        [2353,398],
+        [2354,320],
+        [2355,382],
+        [2356,350],
+        [2357,464],
+        [2358,544],
+        [2359,416],
+        [2360,448],
+        [2361,320],
+        [2362,350],
+        [2363,384],
+        [2364,512],
+        [2365,334],
+        [2400,366],
+        [2401,320],
+        [2402,416],
+        [2403,416],
+        [2404,416],
+        [2405,320],
+        [2406,382],
+        [2450,320],
+        [2451,382],
+        [2452,640],
+        [2453,320],
+        [2454,528],
+        [2455,448],
+        [2456,432],
+        [2457,416],
+        [2458,320],
+        [2500,350],
+        [2501,350],
+        [2502,366],
+        [2503,366],
+        [2504,512],
+        [2505,448],
+        [2506,512],
+        [2507,592],
+        [2508,432],
+        [2509,512],
+        [2510,320],
+        [2512,320],
+        [2513,334],
+        [2550,496],
+        [2551,398],
+        [2552,352],
+        [2553,416],
+        [2554,464],
+        [2600,464],
+        [2601,398],
+        [2602,382],
+        [2603,560],
+        [2604,512],
+        [2605,606],
+        [2606,512],
+        [2607,432],
+        [2608,320],
+        [2650,366],
+        [2651,520],
+        [2652,448],
+        [2653,512],
+        [2654,350],
+        [2655,416],
+        [2656,480],
+        [2657,382],
+        [2658,398],
+        [2659,464],
+        [2660,520],
+        [2661,480],
+        [2700,448],
+        [2701,320],
+        [2702,624],
+        [2703,464],
+        [2704,432],
+        [2705,320],
+        [2706,398],
+        [2707,640],
+        [2708,448],
+        [2709,480],
+        [2710,576],
+        [2711,624],
+        [2712,512],
+        [2713,592],
+        [2714,608],
+        [2715,320],
+        [2716,416],
+        [2717,528],
+        [2718,592],
+        [2719,320],
+        [2750,432],
+        [2751,432],
+        [2752,320],
+        [2753,448],
+        [2754,480],
+        [2755,496],
+        [2756,334],
+        [2771,350],
+        [2800,512],
+        [2801,480],
+        [2802,480],
+        [2803,496],
+        [2850,496],
+        [2851,382],
+        [2852,464],
+        [2853,512],
+        [2854,496],
+        [2855,382],
+        [2856,382],
+        [2900,320],
+        [2901,320],
+        [2902,320],
+        [2903,510],
+        [2904,366],
+        [2905,448],
+        [2906,398],
+        [2907,544],
+        [2908,320],
+        [2909,320],
+        [2910,320],
+        [2911,480],
+        [2912,320],
+        [2913,366],
+        [2914,320],
+        [2915,382],
+        [2916,414],
+        [2917,320],
+        [2918,320],
+        [2919,320],
+        [2920,320],
+        [2921,336],
+        [2922,384],
+        [2923,688],
+        [2924,320],
+        [2925,320],
+        [2926,320],
+        [2927,320],
+        [2928,366],
+        [2929,320],
+        [2930,320],
+        [2931,496],
+        [2932,334],
+        [2933,320],
+        [2934,320],
+        [2950,320],
+        [2951,480],
+        [2952,512],
+        [2953,320],
+        [2954,480],
+        [2955,576],
+        [3000,320],
+        [3001,320],
+        [3002,320],
+        [3003,320],
+        [3004,320],
+        [3005,320],
+        [3006,320],
+        [3007,320],
+        [3008,320],
+        [3009,320],
+        [3010,320],
+        [3011,320],
+        [3012,320],
+        [3050,480],
+        [3051,432],
+        [3052,382],
+        [3053,512],
+        [3054,320],
+        [3055,398],
+        [3056,320],
+        [3057,334],
+        [3058,320],
+        [3059,512],
+        [3100,366],
     };
 
-    public static readonly HashSet<Int32> ListFullNarrow = new HashSet<Int32>()
-    {
-        0052, // Prima Vista/Meeting Rm
-        0053, // Prima Vista/Meeting Rm
-        0055, // Prima Vista/Music Room
-        0056, // S. Gate
-        0058, // Prima Vista/Storage
-        0059, // Prima Vista/Interior
-        0060, // Prima Vista/Interior
-        0061, // Prima Vista/Interior
-        0062, // Prima Vista/Interior
-        0063, // Prima Vista/Interior
-        0065, // Prima Vista/Interior
-        0066, // Prima Vista/Interior
-        0067, // Prima Vista/Interior
-        0068, // A. Castle/Throne
-        0069, // A. Castle/Throne
-        0100, // Alexandria/Main Street
-        0102, // Alexandria/Main Street
-        0104, // Alexandria/Shop
-        0105, // Alexandria/Alley
-        0108, // Alexandria/Item Shop
-        0109, // Alexandria/Wpn. Shop
-        0114, // Alexandria/Residence
-        0116, // Alexandria/Rooftop
-        0150, // A. Castle/Guardhouse
-        0151, // A. Castle/Throne
-        0153, // A. Castle/Hallway
-        0154,
-        0157, // A. Castle/Kitchen
-        0160, // A. Castle/Courtyard
-        0161, // A. Castle/Courtyard
-        0162, // A. Castle/West Tower
-        0163, // A. Castle/West Tower
-        0164, // A. Castle/West Tower
-        0165, // A. Castle/West Tower
-        0166, // A. Castle/West Tower
-        0167, // A. Castle/Library
-        0201, // Prima Vista/Bridge
-        0203, // Prima Vista/Meeting Rm
-        0205, // Prima Vista/Hallway
-        0206, // Prima Vista/Crash Site
-        0207, // Prima Vista/Cabin
-        0209, // Prima Vista/Event
-        0251, // Evil Forest/Trail
-        0252, // Evil Forest/Trail
-        //0254, // Evil Forest/Swamp
-        0255, // Evil Forest/Riverbank
-        0256, // Evil Forest/Trail
-        0259, // Evil Forest/Trail
-        0261, // Evil Forest/Exit
-        0262, // Evil Forest/Exit
-        0300, // Ice Cavern/Entrance
-        0301, // Ice Cavern/Ice Path
-        0305, // Ice Cavern/Ice Path
-        0306, // Ice Cavern/Cave
-        0308, // Ice Cavern/Waterfall
-        0309, // Ice Cavern/Waterfall
-        0310, // Ice Cavern/Waterfall
-        0311, // Ice Cavern/Exit
-        0354, // Dali/Wpn. Shop
-        0357, // Dali/Windmill 2F
-        0358, // Dali/Windmill
-        0359, // Dali/???
-        0400, // Dali/Underground
-        0405,
-        0407,
-        0452, // Dali/Field
-        0453, // Dali/Field
-        0454, // Dali/Field
-        0455, // Mountain/Base
-        0456, // Mountain/Summit
-        0457, // Mountain/Shack
-        0500, // Cargo Ship/Deck
-        0502, // Cargo Ship/Bridge
-        0503, // Cargo Ship/Bridge
-        0505, // Cargo Ship/Rear Deck
-        0506, // Cargo Ship/Deck
-        0550,
-        0551, // Lindblum/B.D. Station
-        0553, // Lindblum/Inn
-        0556,
-        0560, // Lindblum/Synthesist
-        0561,
-        0565,
-        0566,
-        0567, // Lindblum/Theater Ave.
-        0568,
-        0569,
-        0570, // Lindblum/Industrial Wa
-        0571,
-        0574, // Lindblum/Festival
-        0576, // Lindblum/Festival
-        //0600, // L. Castle/Royal Cham.
-        0601, // L. Castle/Lift
-        0606, // L. Castle/Event
-        0607, // L. Castle/Hangar
-        0609, // L. Castle/Castle Bridg
-        0613,
-        0620,
-        0656,
-        0657,
-        0658,
-        0659,
-        0663,
-        0701, // Gizamaluke/Entrance
-        0705,
-        0750, // Burmecia/Gate
-        0751,
-        0753,
-        0754, // Burmecia/Residence
-        0755,
-        0758, // Burmecia/Pathway
-        0760, // Burmecia/Uptown Area
-        0764, // Burmecia/Vault
-        0765, // Burmecia/Armory
-        0766, // Burmecia/Palace
-        0767, // Burmecia/Palace
-        0800, // S. Gate/Bohden Gate
-        0802, // S. Gate/Bohden Sta.
-        0803,
-        0806,
-        0813, // S. Gate/Berkmea
-        0814, // S. Gate/Berkmea
-        0816, // S. Gate/Berkmea
-        0851,
-        0855,
-        0901,
-        0911,
-        0913,
-        0930, // Treno/Tot Residence
-        0931, // Treno/Tot Residence
-        0932, // Treno/Event
-        0950,
-        0951, // Gargan Roo/Passage
-        0954, // Gargan Roo/Tunnel
-        0955,
-        1000, // Cleyra/Tree Roots
-        1001, // Cleyra/Tree Roots
-        1002, // Cleyra/Tree Roots
-        1003, // Cleyra/Tree Trunk
-        1006, // Cleyra/Tree Trunk
-        1007, // Cleyra/Tree Trunk
-        1009, // Cleyra/Tree Trunk
-        1013, // Cleyra/Tree Trunk
-        1017, // Cleyra/Tree Trunk
-        1018,
-        1050, // Cleyra/Tree Trunk
-        1054, // Cleyra/Windmill Area
-        1058, // Cleyra/Cathedral
-        1100, // Cleyra/Tree Trunk
-        1104,
-        1108, // Cleyra/Cathedral
-        1150, // Red Rose/Deck
-        1151, // Red Rose/Cabin
-        1153, // Red Rose/Bridge
-        1200, // A. Castle/Throne
-        1201,
-        1205, // A. Castle/Chapel
-        1208, // A. Castle/Dungeon
-        1210, // A. Castle/West Tower
-        1212, // A. Castle/East Tower
-        1213, // A. Castle/Guardhouse
-        1214, // A. Castle/Hallway
-        1215,
-        //1216,
-        1218,
-        1221, // A. Castle/Courtyard
-        1222, // A. Castle/Courtyard
-        1226, // A. Castle/Library
-        1250, // A. Castle/Event
-        1251, // Pinnacle Rocks/Hole
-        1252, // Pinnacle Rocks/Path
-        1253, // Pinnacle Rocks/Path
-        1254,
-        1300, // Lindblum/Hunter’s Gate
-        1301, // Lindblum/B.D. Station
-        1303, // Lindblum/Inn
-        1308, // Lindblum/Synthesist
-        1312,
-        1313,
-        1314, // Lindblum/Theater Ave.
-        1350,
-        1351,
-        1356,
-        1357, // L. Castle/Hangar
-        1359,
-        1363,
-        1370,
-        1401, // Fossil Roo/Cavern
-        1403, // Fossil Roo/Cavern
-        1404,
-        1406, // Fossil Roo/Nest
-        1408,
-        1410, // Fossil Roo/Nest
-        1414,
-        1424,
-        1452, // Mage Village/Cemetery
-        1453, // Mage Village/Cemetery
-        1455, // Mage Village/Synthesis
-        1456,
-        1457, // Mage Village/Rooftop
-        1458,
-        1459, // Mage Village/Water Mil
-        1461, // Memory Lindblum
-        1463, // Dead Forest/Grove
-        1464, // Dead Forest/Dead End
-        1500,
-        1506,
-        1507, // Conde Petie/Pathway
-        1508,
-        1509, // Conde Petie/Item Shop
-        1556, // Mountain Path/Roots
-        1557, // Mountain Path/Roots
-        1600,
-        1601,
-        1602,
-        //1604, // Mdn. Sari/Eidolon Wall
-        1605, // Mdn. Sari/Eidolon Wall
-        1606, // Mdn. Sari/Resting Room
-        1607, // Mdn. Sari/Kitchen
-        1608, // Mdn. Sari/Secret Room
-        1609, // Mdn. Sari/Cove
-        1610, // Mdn. Sari/Cove
-        1650,
-        //1651, // Iifa Tree/Tree Roots
-        //1652, // Iifa Tree/Roots
-        1655, // Iifa Tree/Tree Path
-        1656, // Iifa Tree/Eidolon Moun
-        1657, // Iifa Tree/Tree Roots
-        1658, // Iifa Tree/Silver Dragon
-        1660,
-        1661,
-        1662,
-        1663,
-        1700,
-        1701,
-        1702,
-        1704, // Mdn. Sari/Eidolon Wall
-        1705, // Mdn. Sari/Resting Room
-        1706, // Mdn. Sari/Kitchen
-        1707, // Mdn. Sari/Secret Room
-        1750, // Iifa Tree/Hollow Roots
-        1751, // Iifa Tree/Inner Roots
-        1752, // Iifa Tree/Inner Roots
-        1753, // Iifa Tree/Inner Roots
-        1755, // Iifa Tree/Bottom
-        1756, // Iifa Tree/Bottom
-        1757,
-        //1758, // Iifa Tree/Tree Roots
-        1800, // A. Castle/Tomb
-        1803, // A. Castle/Guardhouse
-        1806, // A. Castle/Hallway
-        1807, // A. Castle/Hallway
-        //1808,
-        1810,
-        1813, // A. Castle/Courtyard
-        1814, // A. Castle/Courtyard
-        //1816, // A. Castle/Courtyard
-        1817, // A. Castle/Neptune
-        1818, // A. Castle/Neptune
-        1820, // A. Castle/West Tower
-        1822, // A. Castle/Library
-        1850, // Alexandria/Main Street
-        1852,
-        1854, // Alexandria/Alley
-        1857, // Alexandria/Item Shop
-        1858, // Alexandria/Wpn. Shop
-        1863,
-        1866, // Alexandria/Dock
-        1901,
-        1911,
-        1913,
-        1951,
-        1952,
-        1953, // Quan’s/Fishing Area
-        2000, // Hilda Garde 2/Deck
-        2002,
-        2004,
-        2005, // A. Castle/Altar
-        2006,
-        //2007, // A. Castle/Altar
-        2008, // A. Castle/Altar
-        2050, // Alexandria/Main Street
-        2052,
-        2055,
-        2101, // Lindblum/B.D. Station
-        2103, // Lindblum/Inn
-        2108, // Lindblum/Synthesist
-        //2109, // Lindblum/Wpn. Shop
-        2112,
-        2113,
-        2114, // Lindblum/Theater Ave.
-        2150, // L. Castle/Royal Cham.
-        2151, // L. Castle/Lift
-        2157, // L. Castle/Hangar
-        2159, // L. Castle/Castle Bridg
-        2163,
-        2171,
-        2200,
-        2202, // Palace/Dungeon
-        2203, // Palace/Rack
-        2204, // Palace/Odyssey
-        2205, // Palace/Odyssey
-        2208, // Palace/Hallway
-        2212,
-        2213,
-        2217, // Palace/Stairwell
-        2222,
-        2250, // Oeilvert/Outside
-        2254, // Oeilvert/Ship Display
-        2255, // Oeilvert/Stairwell
-        2257, // Oeilvert/Display
-        2260, // Oeilvert/Tombstone
-        2261, // Oeilvert/Bridge
-        2303,
-        2305, // Esto Gaza/Path
-        2351, // Gulug/Well
-        2352,
-        2353,
-        2354, // Gulug/Room
-        2355,
-        2356, // Gulug/Room
-        2361, // Gulug/Well
-        2362,
-        2363, // Gulug/Path
-        2365,
-        2400, // A. Castle/Neptune
-        2405, // A. Castle/Courtyard
-        2406,
-        2450, // Alexandria/Main Street
-        2451,
-        2453, // Alexandria/Alley
-        2458, // Alexandria/Dock
-        2500, // I. Castle/Entrance
-        2501, // I. Castle/Entrance
-        2502, // I. Castle/Hall
-        2503,
-        2505, // I. Castle/Inverted Roo
-        2510, // I. Castle/Mural Room
-        2512, // I. Castle/Mural Room
-        2513,
-        2551,
-        2552, // Earth Shrine/Interior
-        2601,
-        2602, // Terra/Stepping Stones
-        //2606, // Terra/Tree base
-        2608, // Terra/Event
-        2650,
-        2654, // Bran Bal/Pond
-        2657, // Bran Bal/Storage
-        2658,
-        2701, // Pand./Path
-        2706,
-        2715, // Pand./Event
-        2719, // Pand./Exit
-        2752, // Invincible/Bridge
-        2756, // Red Rose/Bridge
-        2851, // Hilda Garde 3/Engine
-        2855,
-        2856,
-        2900, // Memoria/Outside
-        2901, // Memoria/Entrance
-        2902, // Memoria/Stairs of Time
-        2904, // Memoria/Outer Path
-        2906,
-        2908, // Memoria/Time Interval
-        2909, // Memoria/Ruins
-        2910, // Memoria/Lost Memory
-        2912, // Memoria/World Fusion
-        2913, // Memoria/Portal
-        2914, // Memoria/Birth
-        2915,
-        2917, // Memoria/Gaia’s Birth
-        2918, // Memoria/Stairs
-        2919, // Memoria/Gate to Space
-        2920,
-        2922,
-        2924,
-        2925,
-        2926,
-        2927, // Crystal World
-        2928,
-        2929, // last/cw mbg a
-        2930, // last/cw mbg 0
-        2932, // last/cw brg 0
-        2933, // last/cw mbg 1
-        2934, // last/cw mbg 2
-        2950, // Chocobo’s Forest
-        2953, // Chocobo’s Dream World
-        3001,
-        3003,
-        3005,
-        3006,
-        3008, // Ending/Prima Vista - Meeting Room
-        3009,
-        3010, // Ending/TH
-        3011, // Ending/TH
-        3052, // Mage Village/Cemetery
-        3054, // Mage Village/Synthesis
-        3055,
-        3056, // Mage Village/Rooftop
-        3057,
-        3058, // Mage Village/Water Mil
-        3100, // Mog Post
-    };
-
+    /// <summary>Left and right margin of camera (because it goes too far), [field#,PSXmargin]</summary>
     public static readonly Dictionary<int, int> mapCameraMargin = new Dictionary<int, int>
     {
         //{mapNo,pixels on each side to crop because of scrollable}
@@ -530,209 +926,5 @@ public static class NarrowMapList
         {1060,17},
         {1652,16},
         {1653,16},
-        //{154,16},
-    };
-
-    public static readonly Dictionary<int, int> actualNarrowMapWidthDict = new Dictionary<int, int>
-    {
-        //{mapNo,(actualWidth - 2)}
-        {163,318},
-        {164,318},
-        {455,318},
-        {606,318},
-        {931,318},
-        {1050,316},
-        {1507,318},
-
-        {203,334},
-        {760,334},
-        {814,334},
-        {816,334},
-        {1151,334},
-        {1458,334},
-        {1500,334},
-        {1506,334},
-        {1605,334},
-        {1606,334},
-        {1608,334},
-        {1660,334},
-        {1661,334},
-        {1662,334},
-        {1705,334},
-        {1707,334},
-        {1751,334},
-        {2202,334},
-        {2204,334},
-        {2205,334},
-        {2208,334},
-        {2254,334},
-        {2257,334},
-        {2303,334},
-        {2365,334},
-        {2513,334},
-        {2756,334},
-        {2932,334},
-        {3057,334},
-        {114,350},
-        {550,350},
-        {620,350},
-        {802,350},
-        {803,350},
-        {1212,350},
-        {1300,350},
-        {1370,350},
-        {1508,350},
-        {1650,350},
-        {1657,346},
-        {1752,350},
-        {1757,350},
-        {1863,350},
-        {1951,350},
-        {1952,350},
-        {2000,350},
-        {2055,350},
-        {2771,350},
-        {2203,350},
-        {2261,350},
-        {2356,350},
-        {2362,350},
-        {2500,350},
-        {2501,350},
-        {2654,350},
-        {60,366},
-        {150,366},
-        {161,366},
-        {201,366},
-        {262,366},
-        {565,366},
-        {911,366},
-        {1213,366},
-        {1222,366},
-        {1251,366},
-        {1254,366},
-        {1312,366},
-        {1403,366},
-        {1803,366},
-        {1814,366},
-        {1817,366},
-        {1911,366},
-        {1953,366},
-        {2002,366},
-        {2004,366},
-        {2006,366},
-        {2112,366},
-        {2400,366},
-        {2502,366},
-        {2503,366},
-        {2650,366},
-        {2904,366},
-        {2913,366},
-        {2928,366},
-        {3100,366},
-        {102,382},
-        {109,382},
-        {162,382},
-        {206,382},
-        {207,382},
-        {251,382},
-        {252,382},
-        {407,382},
-        {553,382},
-        {556,382},
-        {705,382},
-        {751,382},
-        {813,382},
-        {950,382},
-        {1017,382},
-        {1018,382},
-        {1058,380},
-        {1108,380},
-        {1201,382},
-        {1210,382},
-        {1303,382},
-        {1404,382},
-        {1452,382},
-        {1453,382},
-        {1509,382},
-        {1656,382},
-        {1820,382},
-        {1852,382},
-        {1858,382},
-        {2052,382},
-        {2103,382},
-        {2200,382},
-        {2222,382},
-        {2355,382},
-        {2406,382},
-        {2451,382},
-        {2602,382},
-        {2657,382},
-        {2851,382},
-        {2855,382},
-        {2856,382},
-        {2915,382},
-        {3052,382},
-        {55,398},
-        {157,398},
-        {405,398},
-        {456,398},
-        {505,398},
-        {561,398},
-        {566,398},
-        {568,398},
-        {569,398},
-        {571,398},
-        {613,398},
-        {656,398},
-        {657,398},
-        {658,398},
-        {659,398},
-        {663,398},
-        {753,398},
-        {755,398},
-        {806,398},
-        {851,398},
-        {855,398},
-        {901,398},
-        {913,398},
-        {1054,398},
-        {1104,398},
-        {1153,398},
-        {1218,398},
-        {1313,398},
-        {1363,398},
-        {1408,398},
-        {1414,398},
-        {1424,398},
-        {1456,398},
-        {1600,398},
-        {1601,398},
-        {1602,398},
-        {1700,398},
-        {1701,398},
-        {1702,398},
-        {1810,398},
-        {1901,398},
-        {1913,398},
-        {2113,398},
-        {2163,398},
-        {2212,398},
-        {2213,398},
-        {2352,398},
-        {2353,398},
-        {2551,398},
-        {2601,398},
-        {2658,398},
-        {2706,398},
-        {2906,398},
-        {3005,398},
-        {3055,398},
-        {1205,384},
-        {154,352},
-        {1215,352},
-        {1805,352},
-        {1807,352},
-        //{1652,336},
-        {2552,352},
     };
 }

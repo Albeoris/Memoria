@@ -40,8 +40,17 @@ public class PSXCameraAspect : MonoBehaviour
 	private void LateUpdate()
 	{
         Rect rect = base.GetComponent<Camera>().rect;
+        Single camRestrictionRatio = 1f;
 
-        if (Configuration.Graphics.WidescreenSupport)
+        foreach (int[] entry in NarrowMapList.RestrictedCams)
+        {
+            if (entry[0] == FF9StateSystem.Common.FF9.fldMapNo && entry[1] == (PersistenSingleton<EventEngine>.Instance?.fieldmap?.camIdx ?? -1) && FieldMap.ActualPsxScreenWidth < 401)
+            {
+                camRestrictionRatio = Mathf.Min(((Single)entry[2] / (Single)FieldMap.PsxFieldWidth), 1f);
+            }
+        }
+
+        if (Configuration.Graphics.WidescreenSupport && camRestrictionRatio == 1f)
         {
             this.Ratio = 1f;
 
@@ -65,7 +74,7 @@ public class PSXCameraAspect : MonoBehaviour
 
             this.Ratio = Mathf.Min((Single)Screen.width / originalWidth, (Single)Screen.height / originalHeight);
 
-            Vector2 scaledSize = new Vector2(originalWidth * this.Ratio, originalHeight * this.Ratio);
+            Vector2 scaledSize = new Vector2(originalWidth * this.Ratio * camRestrictionRatio, originalHeight * this.Ratio);
             Single normalizedWidth = ((Single)Screen.width - scaledSize.x) / (Single)Screen.width;
             Single normalizedHeight = ((Single)Screen.height - scaledSize.y) / (Single)Screen.height;
             rect.width = scaledSize.x / (Single)Screen.width;
