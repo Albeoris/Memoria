@@ -316,7 +316,7 @@ public class btlseq
 		}
 		btl.animEndFrame = false;
 
-		if (btl_mot.IsAnimationFrozen(btl) || (!reverseSpeed && btl.evt.animFrame >= animLoopFrame) || (reverseSpeed && btl.evt.animFrame < 0))
+		if (btl_mot.IsAnimationFrozen(btl) || (!reverseSpeed && btl.evt.animFrame > animLoopFrame) || (reverseSpeed && btl.evt.animFrame < 0))
 		{
 			btl.endedAnimationName = btl.currentAnimationName;
 			if (btl.bi.dmg_mot_f != 0)

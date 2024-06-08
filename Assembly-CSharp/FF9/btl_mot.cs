@@ -217,7 +217,7 @@ namespace FF9
 			}
 			AnimationState animState = anim[animName];
 			animState.speed = 0f;
-			animState.time = (Single)btl.evt.animFrame / (animMaxFrame - 1) * animState.length;
+			animState.time = (Single)btl.evt.animFrame / animMaxFrame * animState.length;
 			anim.Sample();
 		}
 
