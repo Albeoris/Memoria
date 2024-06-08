@@ -49,21 +49,83 @@ namespace Memoria
 			{
 				if (next.bi.slave != 0 || next.gameObject == null || !next.gameObject.activeInHierarchy || HonoluluBattleMain.IsAttachedModel(next))
 					continue;
+
+				String curAnim = next.currentAnimationName;
+				Animation anim = next.gameObject.GetComponent<Animation>();
+				AnimationState animState = anim[curAnim];
+				next._smoothUpdateBoneDelta = Vector3.zero;
+
+				foreach (AnimationState state in anim)
+				{
+					if (state != null && state.enabled)
+					{
+						curAnim = state.name;
+						animState = state;
+                        break;
+					}
+				}
+
 				if (next._smoothUpdateRegistered)
 				{
 					next._smoothUpdatePosPrevious = next._smoothUpdatePosActual;
 					next._smoothUpdateRotPrevious = next._smoothUpdateRotActual;
 					next._smoothUpdateScalePrevious = next._smoothUpdateScaleActual;
+
+					next._smoothUpdateAnimNamePrevious = next._smoothUpdateAnimNameActual;
+					next._smoothUpdateAnimTimePrevious = next._smoothUpdateAnimTimeActual;
+
+					if (next._smoothUpdateAnimNamePrevious == curAnim)
+					{
+						if (next._smoothUpdateAnimNameNext == null)
+						{
+							Single speed = animState.time - next._smoothUpdateAnimTimePrevious;
+							Single direction = next._smoothUpdateAnimSpeed;
+							Boolean hasLooped =
+								(direction < 0 && speed > 0f) ||
+								(direction > 0 && speed < 0f);
+							if (!hasLooped)
+								next._smoothUpdateAnimSpeed = speed;
+						}
+						else
+						{
+							anim.Play(next._smoothUpdateAnimNameNext);
+							next._smoothUpdateAnimSpeed = animState.time - next._smoothUpdateAnimTimePrevious;
+							next._smoothUpdateAnimNameNext = null;
+						}
+					}
+					else
+					{
+						if (!anim.IsPlaying(next._smoothUpdateAnimNamePrevious))
+						{
+							Vector3 nextBonePos = next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
+							anim.Play(next._smoothUpdateAnimNamePrevious);
+							AnimationState prevState = anim[next._smoothUpdateAnimNamePrevious];
+							prevState.time = next._smoothUpdateAnimTimePrevious + next._smoothUpdateAnimSpeed;
+							anim.Sample();
+							Vector3 curBonePos = next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
+
+							next._smoothUpdateBoneDelta = nextBonePos - curBonePos;
+							next._smoothUpdateAnimNameNext = next.currentAnimationName;
+						}
+					}
 				}
 				else
 				{
 					next._smoothUpdatePosPrevious = next.gameObject.transform.position;
 					next._smoothUpdateRotPrevious = next.gameObject.transform.rotation;
 					next._smoothUpdateScalePrevious = next.gameObject.transform.localScale;
+
+					next._smoothUpdateAnimNamePrevious = curAnim;
+					next._smoothUpdateAnimTimePrevious = animState.time;
+					next._smoothUpdateAnimSpeed = 0f;
 				}
 				next._smoothUpdatePosActual = next.gameObject.transform.position;
 				next._smoothUpdateRotActual = next.gameObject.transform.rotation;
 				next._smoothUpdateScaleActual = next.gameObject.transform.localScale;
+
+				next._smoothUpdateAnimNameActual = curAnim;
+				next._smoothUpdateAnimTimeActual = animState.time;
+
 				next._smoothUpdateRegistered = true;
 				geo.geoScaleUpdate(next, true);
 			}
@@ -156,10 +218,10 @@ namespace Memoria
 				next.gameObject.transform.localScale = Vector3.Lerp(next._smoothUpdateScalePrevious, next._smoothUpdateScaleActual, smoothFactor);
 
 				Animation anim = next.gameObject.GetComponent<Animation>();
-				AnimationState animState = anim[next._smoothUpdateAnimNameActual];
+				AnimationState animState = anim[next._smoothUpdateAnimNamePrevious];
 				if (animState != null && next.bi.stop_anim == 0)
 				{
-					animState.time = Mathf.Lerp(next._smoothUpdateAnimTimePrevious, next._smoothUpdateAnimTimeActual, smoothFactor);
+					animState.time = Mathf.Lerp(next._smoothUpdateAnimTimePrevious, next._smoothUpdateAnimTimePrevious + next._smoothUpdateAnimSpeed, smoothFactor);
 
 					if (animState.time > animState.length)
 						animState.time -= animState.length;
@@ -167,7 +229,7 @@ namespace Memoria
 						animState.time += animState.length;
 
 					anim.Sample();
-					// if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} curName {next.currentAnimationName} actualName {next._smoothUpdateAnimNameActual} prevName {next._smoothUpdateAnimNameActual} speed {next._smoothUpdateAnimSpeed} {animState.enabled} animTime {animState.time} animLength {animState.length} t {smoothFactor} prev {next._smoothUpdateAnimTimePrevious} actual {next._smoothUpdateAnimTimeActual}");
+					// if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} curName {next.currentAnimationName} actualName {next._smoothUpdateAnimNameActual} prevName {next._smoothUpdateAnimNamePrevious} nextName {next._smoothUpdateAnimNameNext} speed {next._smoothUpdateAnimSpeed} {animState.enabled} animTime {animState.time} animLength {animState.length} t {smoothFactor} prev {next._smoothUpdateAnimTimePrevious} actual {next._smoothUpdateAnimTimeActual}");
 				}
 			}
 			// SPS

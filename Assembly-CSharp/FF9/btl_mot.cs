@@ -207,108 +207,17 @@ namespace FF9
 				return;
 
 			Animation anim = btl.gameObject.GetComponent<Animation>();
-			AnimationState animState = anim[btl.currentAnimationName];
-			Int32 animMaxFrame = GeoAnim.geoAnimGetNumFrames(btl, btl.currentAnimationName);
-			Single animFrame = btl.evt.animFrame;
-			Single time = animFrame / animMaxFrame * animState.length;
-			btl._smoothUpdateBoneDelta = Vector3.zero;
-
-			if (!anim.IsPlaying(btl.currentAnimationName))
+			String animName = btl.currentAnimationName;
+			Int32 animMaxFrame = GeoAnim.geoAnimGetNumFrames(btl, animName);
+			if (!anim.IsPlaying(animName))
 			{
-				if (btl._smoothUpdateAnimNameActual != null && btl._smoothUpdateAnimNameActual != btl._smoothUpdateAnimNamePrevious && btl._smoothUpdateAnimNameNext == null)
-				{
-					// Don't switch animation quite yet so we can smooth the end of it
-					animState.time = time;
-					animState = anim[btl._smoothUpdateAnimNameActual];
-
-					// Sample bone position at the next frame of the current animation
-					time = btl._smoothUpdateAnimTimeActual + btl._smoothUpdateAnimSpeed;
-					animState.time = Mathf.Clamp(time, 0f, animState.length);
-					anim.Sample();
-					Vector3 curBonePos = btl.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
-
-					// Switch temporarily to get next animation bone position
-					anim.Play(btl.currentAnimationName);
-					anim.Sample();
-					Vector3 nextBonePos = btl.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
-					anim.Play(btl._smoothUpdateAnimNameActual);
-					animState.time = btl._smoothUpdateAnimTimeActual;
-
-					btl._smoothUpdateBoneDelta = nextBonePos - curBonePos;
-
-					// if (btl.btl_id == 1) Log.Message($"[PlayAnim] waiting boneMag {(nextBonePos - curBonePos).sqrMagnitude} curr {btl.currentAnimationName} actual {btl._smoothUpdateAnimNameActual} prev {btl._smoothUpdateAnimNamePrevious}");
-
-					btl._smoothUpdateAnimNamePrevious = btl._smoothUpdateAnimNameActual;
-					btl._smoothUpdateAnimNameNext = btl.currentAnimationName;
-				}
-				else
-				{
-					// Now we can switch
-					String next = btl._smoothUpdateAnimNameNext ?? btl.currentAnimationName;
-					if (anim.GetClip(next) == null)
-						return;
-					anim.Play(next);
-
-					if (btl._smoothUpdateAnimNameNext != null && btl._smoothUpdateAnimNameNext != btl.currentAnimationName)
-					{
-						// Special case, animation lasted only one tps
-						// We switch AND wait
-						// if (btl.btl_id == 1) Log.Message($"[PlayAnim] switching and wait curr {btl.currentAnimationName} actual {btl._smoothUpdateAnimNameActual} prev {btl._smoothUpdateAnimNamePrevious} next {btl._smoothUpdateAnimNameNext}");
-						animState.time = time;
-						animState = anim[next];
-
-						// We need to advance the time one step
-						Single step = animState.length / GeoAnim.getAnimationLoopFrame(btl, next);
-						if (animState.time <= 0f)
-							time = animState.time + step;
-						else
-							time = animState.time - step;
-						time = Mathf.Clamp(time, 0f, animState.length);
-
-						btl._smoothUpdateAnimNamePrevious = btl._smoothUpdateAnimNameActual;
-						btl._smoothUpdateAnimNameActual = btl._smoothUpdateAnimNameNext;
-						btl._smoothUpdateAnimNameNext = btl.currentAnimationName;
-					}
-					else
-					{
-						// if (btl.btl_id == 1) Log.Message($"[PlayAnim] switching curr {btl.currentAnimationName} actual {btl._smoothUpdateAnimNameActual} prev {btl._smoothUpdateAnimNamePrevious} next {btl._smoothUpdateAnimNameNext}");
-						btl._smoothUpdateAnimNamePrevious = btl._smoothUpdateAnimNameActual;
-						btl._smoothUpdateAnimNameActual = btl.currentAnimationName;
-						btl._smoothUpdateAnimNameNext = null;
-					}
-				}
+				if (anim.GetClip(animName) == null)
+					return;
+				anim.Play(animName);
 			}
-
-			btl._smoothUpdateAnimTimeActual = time;
-			btl._smoothUpdateAnimTimePrevious = animState.time;
-
-			// Did the animation loop?
-			Single speed = time - animState.time;
-			if (Mathf.Abs(btl._smoothUpdateAnimSpeed) > Mathf.Abs(speed) + 0.001f)
-				btl._smoothUpdateAnimSpeed = 0;
-			if (btl._smoothUpdateAnimSpeed > 0f && speed < 0f)
-			{
-				btl._smoothUpdateAnimTimeActual += animState.length;
-				btl._smoothUpdateAnimSpeed = btl._smoothUpdateAnimTimeActual - btl._smoothUpdateAnimTimePrevious;
-			}
-			else if (btl._smoothUpdateAnimSpeed < 0f && speed > 0f)
-			{
-				btl._smoothUpdateAnimTimePrevious += animState.length;
-				btl._smoothUpdateAnimSpeed = btl._smoothUpdateAnimTimeActual - btl._smoothUpdateAnimTimePrevious;
-			}
-			else
-			{
-				btl._smoothUpdateAnimSpeed = speed;
-			}
-
-            if(btl._smoothUpdateAnimSpeed > 0 && btl._smoothUpdateAnimTimePrevious >= animState.length)
-            {
-                btl._smoothUpdateAnimTimePrevious -= animState.length;
-                btl._smoothUpdateAnimTimeActual -= animState.length;
-            }
-
+			AnimationState animState = anim[animName];
 			animState.speed = 0f;
-			animState.time = time;
+			animState.time = (Single)btl.evt.animFrame / (animMaxFrame - 1) * animState.length;
 			anim.Sample();
 		}
 

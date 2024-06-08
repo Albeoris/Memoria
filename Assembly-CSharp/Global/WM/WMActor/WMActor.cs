@@ -193,7 +193,7 @@ public partial class WMActor : MonoBehaviour
 		}
 		AnimationState animState = anim[animName];
 		animState.speed = 0f;
-		animState.time = (Single)this.originalActor.animFrame / this.originalActor.frameN * animState.length; ;
+		animState.time = (Single)this.originalActor.animFrame / (this.originalActor.frameN - 1) * animState.length;
 		anim.Sample();
 	}
 

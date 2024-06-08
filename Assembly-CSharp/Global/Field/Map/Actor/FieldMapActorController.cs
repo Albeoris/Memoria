@@ -415,7 +415,7 @@ public partial class FieldMapActorController : HonoBehavior
 				this.animation.clip = clip;
 				this.animation.Play(curAnim);
 				this.animation[curAnim].speed = 0f;
-				this.animation[curAnim].time = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * this.animation[curAnim].length;
+				this.animation[curAnim].time = (Single)this.originalActor.animFrame / (Single)(this.originalActor.frameN - 1) * this.animation[curAnim].length;
 				this.animation.Sample();
 				if (this.originalActor.frameN == 1 && base.IsVisibled())
 					this.animation.Stop();
@@ -423,7 +423,7 @@ public partial class FieldMapActorController : HonoBehavior
 		}
 		else
 		{
-			Single time = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * this.animation[curAnim].length;
+			Single time = (Single)this.originalActor.animFrame / (Single)(this.originalActor.frameN - 1) * this.animation[curAnim].length;
 			this.animation[curAnim].speed = 0f;
 			this.animation[curAnim].time = time;
 			this.animation.Sample();

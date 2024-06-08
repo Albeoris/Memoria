@@ -182,7 +182,7 @@ namespace Memoria
 						anim.Sample();
 						//if(actor.name == "obj15") Log.Message($"[DEBUG] {Time.frameCount} {actor.name} {animState.name} mag {frameMove.sqrMagnitude} ang {Quaternion.Angle(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual)} cur {go.transform.position} prev {actor._smoothUpdatePosPrevious} {actor._smoothUpdatePosActual} t {smoothFactor}");
 					}
-					// if (actor.isPlayer) Log.Message($"[DEBUG] {Time.frameCount} {frameMove.sqrMagnitude} anim {animState.name} curTime {animState.time} prev {actor._smoothUpdateAnimTimePrevious} actual {actor._smoothUpdateAnimTimeActual} speed {actor._smoothUpdateAnimSpeed} length {animState.length} rot {go.transform.GetChildByName("bone000").rotation.eulerAngles.y} t {smoothFactor}");
+					// if (actor.isPlayer) Log.Message($"[DEBUG] {Time.frameCount} {actor.name} framerate {animState?.clip?.frameRate} actualName {actor._smoothUpdateAnimNameActual} speed {actor._smoothUpdateAnimSpeed} {animState.enabled} animTime {animState.time} animLength {animState.length} t {smoothFactor} prev {actor._smoothUpdateAnimTimePrevious} actual {actor._smoothUpdateAnimTimePrevious + actor._smoothUpdateAnimSpeed}");
 				}
 			}
 			foreach (FF9FieldCharState charState in FF9StateSystem.Field.FF9Field.loc.map.charStateArray.Values)

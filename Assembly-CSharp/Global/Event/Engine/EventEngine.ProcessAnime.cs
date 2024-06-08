@@ -104,11 +104,7 @@ public partial class EventEngine
             }
             else
             {
-                int num3 = this.NextFrame(actor);
-                if (actor.sid == 17)
-                {
-                }
-                if (num3 >= (int)actor.frameN)
+                if (NextFrame(actor) >= actor.frameN - 1)
                 {
                     actor.animFrame = 0;
                     if (actor.anim == actor.idle)

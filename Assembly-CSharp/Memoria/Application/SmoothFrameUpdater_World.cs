@@ -163,6 +163,7 @@ namespace Memoria
 							animState.time += animState.length;
 						anim.Sample();
 					}
+					//if (actor.name == "obj12_WM") Log.Message($"[DEBUG] {Time.frameCount} {actor.name} framerate {animState?.clip?.frameRate} actualName {actor._smoothUpdateAnimNameActual} speed {actor._smoothUpdateAnimSpeed} {animState.enabled} animTime {animState.time} animLength {animState.length} t {smoothFactor} prev {actor._smoothUpdateAnimTimePrevious} actual {actor._smoothUpdateAnimTimePrevious + actor._smoothUpdateAnimSpeed}");
 				}
 			}
 			foreach (WMShadow shadow in WMWorld.Instance.Shadows)
