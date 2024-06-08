@@ -990,7 +990,7 @@ public class AbilityUI : UIScene
             this.activeAbilityScrollList.SetOriginalData(inDataList);
             if (ButtonGroupState.HaveCursorMemorize(ActionAbilityGroupButton))
                 return;
-            this.activeAbilityScrollList.JumpToIndex(this.firstActiveAbility, false);
+            this.activeAbilityScrollList.JumpToIndex(this.firstActiveAbility, true);
         }
     }
 
@@ -1067,7 +1067,7 @@ public class AbilityUI : UIScene
             this.supportAbilityScrollList.SetOriginalData(inDataList);
             if (ButtonGroupState.HaveCursorMemorize(SupportAbilityGroupButton))
                 return;
-            this.supportAbilityScrollList.JumpToIndex(this.firstActiveAbility, false);
+            this.supportAbilityScrollList.JumpToIndex(this.firstActiveAbility, true);
         }
     }
 
