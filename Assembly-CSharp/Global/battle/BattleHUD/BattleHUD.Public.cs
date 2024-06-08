@@ -668,13 +668,13 @@ public partial class BattleHUD : UIScene
 
         // Stops the ATB if any of these are true
         Boolean isMenuing = _commandPanel.IsActive || _targetPanel.IsActive || _itemPanel.IsActive || _abilityPanel.IsActive;
-        Boolean isEnemyActing = FF9StateSystem.Battle.FF9Battle.cur_cmd != null && FF9StateSystem.Battle.FF9Battle.cur_cmd.regist?.bi.player == 0;
+        //Boolean isEnemyActing = FF9StateSystem.Battle.FF9Battle.cur_cmd != null && FF9StateSystem.Battle.FF9Battle.cur_cmd.regist?.bi.player == 0;
         Boolean hasQueue = btl_cmd.GetFirstCommandReadyToDequeue(FF9StateSystem.Battle.FF9Battle) != null;
 
-        if (ForceNextTurn && !hasQueue && !isEnemyActing)
+        if (ForceNextTurn && !hasQueue /*&& !isEnemyActing*/)
             return true;
 
-        return !(isMenuing || hasQueue || isEnemyActing);
+        return !(isMenuing || hasQueue /*|| isEnemyActing*/);
     }
 
     public Boolean IsNativeEnableAtb()
