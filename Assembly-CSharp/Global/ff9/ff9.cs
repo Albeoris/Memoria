@@ -6372,6 +6372,8 @@ public static class ff9
 			ff9.w_moveCHRControl_LR = true;
 			ff9.w_cameraSysDataCamera.rotation += ff9.PsxRot(32);
 		}
+		var RightStick = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right;
+		ff9.w_cameraSysDataCamera.rotation += RightStick.X * 6.0f;
 		ff9.w_cameraSysDataCamera.rotation %= 360f;
 		if (num4 != 0 || ff9.w_movePadLR)
 		{
@@ -6473,6 +6475,8 @@ public static class ff9
 			ff9.w_cameraSysDataCamera.rotation += ff9.PsxRot(32);
 			ff9.w_moveCHRControl_LR = true;
 		}
+		var RightStick = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right;
+		ff9.w_cameraSysDataCamera.rotation += RightStick.X * 6.0f;
 		ff9.w_cameraSysDataCamera.rotation %= 360f;
 		ff9.w_cameraSysDataCamera.rotationRev = 0f;
 		Single num4 = ff9.S(ff9.w_moveCHRControlPtr.speed_move * num3 / ff9.p1);
@@ -6568,6 +6572,9 @@ public static class ff9
 				ff9.w_moveCHRControl_LR = true;
 			}
 		}
+		var RightStick = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right;
+		ff9.w_cameraSysDataCamera.rotation += RightStick.X * 6.0f;
+		ff9.w_cameraSysDataCamera.rotation %= 360f;
 		ff9.w_cameraSysDataCamera.rotationRev = 0f;
 		ff9.w_moveCHRControl_RotSpeed = ff9.PsxRot(ff9.w_moveCHRControlPtr.speed_rotation * leftStickX >> 7);
 		Single verticalMovementSpeed = ff9.S(-(Int32)ff9.w_moveCHRControlPtr.speed_updown * leftStickY / ff9.p1);
