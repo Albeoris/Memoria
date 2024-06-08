@@ -203,65 +203,22 @@ namespace FF9
 
 		public static void PlayAnim(BTL_DATA btl)
 		{
-			btl._smoothUpdatePlayingAnim = false;
-			if (btl.currentAnimationName == null)
+			if (btl.currentAnimationName == null || btl.bi.stop_anim != 0)
 				return;
-			GameObject gameObject = btl.gameObject;
-			String currentAnimationName = btl.currentAnimationName;
-			UInt16 animMaxFrame = GeoAnim.geoAnimGetNumFrames(btl, currentAnimationName);
-			Boolean reverseSpeed = btl.animSpeed < 0f;
-			Single animFrame = btl.evt.animFrame; // + (reverseSpeed ? -btl.animFrameFrac : btl.animFrameFrac);
-			if (!gameObject.GetComponent<Animation>().IsPlaying(currentAnimationName))
+
+			Animation anim = btl.gameObject.GetComponent<Animation>();
+			String animName = btl.currentAnimationName;
+			Int32 animMaxFrame = GeoAnim.geoAnimGetNumFrames(btl, animName);
+			if (!anim.IsPlaying(animName))
 			{
-				if (gameObject.GetComponent<Animation>().GetClip(currentAnimationName) == null)
+				if (anim.GetClip(animName) == null)
 					return;
-				gameObject.GetComponent<Animation>().Play(currentAnimationName);
+				anim.Play(animName);
 			}
-			AnimationState clipState = gameObject.GetComponent<Animation>()[currentAnimationName];
-			Single time = animMaxFrame == 0 ? 0f : Mathf.Clamp(animFrame / animMaxFrame * clipState.length, 0f, clipState.length);
-			Int32 animLoopFrame = GeoAnim.getAnimationLoopFrame(btl);
-			clipState.speed = 0f;
-			btl._smoothUpdatePlayingAnim = true;
-			btl._smoothUpdateAnimTimePrevious = clipState.time;
-			if (animMaxFrame != 0 && btl.bi.disappear == 0 && !btl_mot.IsAnimationFrozen(btl))
-			{
-				if (btl.evt.animFrame == 0 && !reverseSpeed)
-					btl._smoothUpdateAnimTimePrevious = time - btl.animSpeed / animMaxFrame * clipState.length;
-				else if (btl.evt.animFrame == animLoopFrame && reverseSpeed)
-					btl._smoothUpdateAnimTimePrevious = time + btl.animSpeed / animMaxFrame * clipState.length;
-			}
-			btl._smoothUpdateAnimTimeActual = time;
-			clipState.time = time;
-			gameObject.GetComponent<Animation>().Sample();
-			if (btl.evt.animFrame == animLoopFrame && !reverseSpeed)
-			{
-				// Try to smoothen standard animation chains
-				if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_RUN))
-				{
-					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK], 1f / FPSManager.GetMainLoopSpeed());
-					btl._smoothUpdatePlayingAnim = false;
-				}
-				else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_RUN_TO_ATTACK))
-				{
-					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK], 1f / FPSManager.GetMainLoopSpeed());
-					btl._smoothUpdatePlayingAnim = false;
-				}
-				else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ATTACK))
-				{
-					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_BACK], 1f / FPSManager.GetMainLoopSpeed());
-					btl._smoothUpdatePlayingAnim = false;
-				}
-				else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_BACK))
-				{
-					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL], 1f / FPSManager.GetMainLoopSpeed());
-					btl._smoothUpdatePlayingAnim = false;
-				}
-				else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ATK_TO_NORMAL))
-				{
-					gameObject.GetComponent<Animation>().CrossFade(btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL], 1f / FPSManager.GetMainLoopSpeed());
-					btl._smoothUpdatePlayingAnim = false;
-				}
-			}
+			AnimationState animState = anim[animName];
+			animState.speed = 0f;
+			animState.time = (Single)btl.evt.animFrame / animMaxFrame * animState.length;
+			anim.Sample();
 		}
 
 		public static Int32 GetDirection(BTL_DATA btl)

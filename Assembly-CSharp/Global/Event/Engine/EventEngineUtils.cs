@@ -1839,15 +1839,7 @@ internal class EventEngineUtils
         if (go.GetComponent<Animation>().GetClip(name) == null)
             return -1;
         Single f = go.GetComponent<Animation>()[name].clip.length * go.GetComponent<Animation>()[name].clip.frameRate;
-        Int32 int1 = Mathf.CeilToInt(f);
-        Int32 int2 = Mathf.FloorToInt(f);
-        Int32 int3 = Mathf.RoundToInt(f);
-        Int32 num = int1;
-        if (int3 == int1)
-            num = int1;
-        else if (int3 == int2)
-            num = int2;
-        return num + 1;
+        return Mathf.RoundToInt(f) + 1;
     }
 
     public static Byte[] loadEventData(String ebFileName, String ebSubFolder)
@@ -1930,7 +1922,7 @@ internal class EventEngineUtils
         public List<Entry> entries;
 
         public BinaryScript(Byte[] raw)
-		{
+        {
             if (raw.Length < 4)
                 return;
             if (raw[0] != 'E' || raw[1] != 'V')
@@ -1980,7 +1972,7 @@ internal class EventEngineUtils
         }
 
         public static Boolean IsVariableInUsage(HashSet<UInt32> pool, UInt32 specific)
-		{
+        {
             if (pool.Contains(specific))
                 return true;
             if ((specific & NON_BOOLEAN_FLAG) != 0)
@@ -1992,10 +1984,10 @@ internal class EventEngineUtils
             else if (pool.Contains((specific & 0xFFFFFFF8u) | NON_BOOLEAN_FLAG))
                 return true;
             return false;
-		}
+        }
 
         public static UInt32 GetVariableFromIndex(EBin.VariableSource source, UInt16 index, Boolean isBoolType = false)
-		{
+        {
             if (isBoolType)
                 return index | ((UInt32)source << 26);
             return NON_BOOLEAN_FLAG | (UInt32)(index << 3) | ((UInt32)source << 26);
@@ -2009,16 +2001,16 @@ internal class EventEngineUtils
             public Byte flags;
             public List<Function> functions;
             public Entry(Byte[] raw, ref UInt32 pos, Byte id, Byte lvc, Byte fl, UInt32 maxPosEntry)
-			{
+            {
                 sid = id;
                 localVarCount = lvc;
                 flags = fl;
                 functions = new List<Function>();
                 if (maxPosEntry <= pos)
-				{
+                {
                     type = 0xFF;
                     return;
-				}
+                }
                 type = raw[pos++];
                 Int32 funcCount = raw[pos++];
                 UInt16[] funcTag = new UInt16[funcCount];
@@ -2054,7 +2046,7 @@ internal class EventEngineUtils
             }
 
             public class Function
-			{
+            {
                 public Int32 tagNumber;
                 public List<Code> codes;
 
@@ -2067,28 +2059,28 @@ internal class EventEngineUtils
                 }
 
                 public HashSet<UInt32> GetVariableUsage(Boolean withGeneral = true, Boolean withGlobal = true, Boolean withLocal = true)
-				{
+                {
                     HashSet<UInt32> result = new HashSet<UInt32>();
                     HashSet<UInt32> piece;
                     Int32 i;
                     foreach (Code c in codes)
                         for (i = 0; i < c.arguments.Count; i++)
-						{
+                        {
                             piece = c.arguments[i].GetVariableUsage(withGeneral, withGlobal, withLocal);
                             if (piece != null)
                                 result.UnionWith(piece);
-						}
+                        }
                     return result;
                 }
 
                 public class Code
-				{
+                {
                     public UInt16 opcode;
                     public Byte argFlag;
                     public List<Argument> arguments;
 
                     public Code(Byte[] raw, ref UInt32 pos)
-					{
+                    {
                         arguments = new List<Argument>();
                         opcode = raw[pos++];
                         if (opcode == 0xFF)
@@ -2115,7 +2107,7 @@ internal class EventEngineUtils
                     }
 
                     public UInt32 GetBinarySize()
-					{
+                    {
                         UInt32 size = opcode >= 0x100 ? 2u : 1u;
                         if (opcode >= 0x10 && opArgCount[opcode] != 0)
                             size++;
@@ -2148,7 +2140,7 @@ internal class EventEngineUtils
                     };
 
                     Byte GetArgTypeSize(UInt16 op, Int32 i)
-					{
+                    {
                         if (op == 0x29)
                             return 4;
                         if (op == 0x06 || op == 0x0B || op == 0x0D)
@@ -2178,14 +2170,14 @@ internal class EventEngineUtils
                     };
 
                     public abstract class Argument
-					{
+                    {
                         public abstract Boolean IsConstantValue();
                         public abstract HashSet<UInt32> GetVariableUsage(Boolean withGeneral = true, Boolean withGlobal = true, Boolean withLocal = true);
                         public abstract UInt32 GetBinarySize();
                     }
 
                     public class ArgumentConstant : Argument
-					{
+                    {
                         public Int64 value;
                         public Byte size;
                         public override Boolean IsConstantValue() => true;
@@ -2193,7 +2185,7 @@ internal class EventEngineUtils
                         public override UInt32 GetBinarySize() => size;
 
                         public ArgumentConstant(Byte[] raw, ref UInt32 pos, Byte sz)
-						{
+                        {
                             size = sz;
                             if (size == 1)
                                 value = raw[pos++];
@@ -2211,7 +2203,7 @@ internal class EventEngineUtils
                         public List<ExpressionOperation> operations;
 
                         public ArgumentExpression(Byte[] raw, ref UInt32 pos)
-						{
+                        {
                             operations = new List<ExpressionOperation>();
                             do
                                 operations.Add(new ExpressionOperation(raw, ref pos));
@@ -2220,10 +2212,10 @@ internal class EventEngineUtils
 
                         public override Boolean IsConstantValue() => false;
                         public override HashSet<UInt32> GetVariableUsage(Boolean withGeneral = true, Boolean withGlobal = true, Boolean withLocal = true)
-						{
+                        {
                             HashSet<UInt32> result = new HashSet<UInt32>();
                             foreach (ExpressionOperation op in operations)
-							{
+                            {
                                 if ((op.IsGeneralVariable() && withGeneral) || (op.IsGlobalVariable() && withGlobal) || (op.IsLocalVariable() && withLocal))
                                 {
                                     UInt32 variable = op.IsGeneralVariable() ? (UInt32)EBin.VariableSource.Global << 26 : (op.IsGlobalVariable() ? (UInt32)EBin.VariableSource.Map << 26 : (UInt32)EBin.VariableSource.Instance << 26);
@@ -2249,11 +2241,11 @@ internal class EventEngineUtils
                                         result.Add(variable);
                                     }
                                 }
-							}
+                            }
                             return result;
                         }
                         public override UInt32 GetBinarySize()
-						{
+                        {
                             UInt32 result = 0;
                             foreach (ExpressionOperation op in operations)
                                 result += 1u + (op.arguments == null ? 0u : (UInt32)op.arguments.Length);
@@ -2262,12 +2254,12 @@ internal class EventEngineUtils
                     }
 
                     public class ExpressionOperation
-					{
+                    {
                         public Byte operation;
                         public Byte[] arguments;
 
                         public ExpressionOperation(Byte[] raw, ref UInt32 pos)
-						{
+                        {
                             operation = raw[pos++];
                             if (!IsConstantValue() && !IsVariable())
                             {
@@ -2304,10 +2296,10 @@ internal class EventEngineUtils
                         public Boolean IsConstantValue() => operation == 0x7D || operation == 0x7E;
                     }
                 }
-			}
-		}
+            }
+        }
 
         private const UInt32 NON_BOOLEAN_FLAG = 0x40000u;
-	}
-	#endregion
+    }
+    #endregion
 }
