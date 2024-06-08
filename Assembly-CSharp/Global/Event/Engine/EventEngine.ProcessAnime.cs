@@ -104,7 +104,7 @@ public partial class EventEngine
             }
             else
             {
-                if (NextFrame(actor) >= actor.frameN - 1)
+                if (NextFrame(actor) >= actor.frameN)
                 {
                     actor.animFrame = 0;
                     if (actor.anim == actor.idle)
