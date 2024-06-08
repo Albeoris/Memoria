@@ -41,28 +41,30 @@ public static class NarrowMapList
     /// <summary>Make these scenes widescreen (based on index [1] or counter [2]), -5 is ignored</summary>
     public static readonly int[][] RestrictedWidthScenesList =
     {
-        // [mapNo, EBin.MAP_INDEX_SVR, EBin.SC_COUNTER_SVR],
-        [150,325,-5],      // Zidane infiltrate Alex Castle
-        [254,26,-5],       // MBG103 - Evil Forest
-        [352,3,-5],        // Arrival at Dali: vivi visible before sleeping
-        [1550,-5,6270],    // Mountain path - Quina stays there
-        [1554,-5,6300],    // MBG109 - roots
-        [1554,-5,6305],    // MBG109 - roots
-        [1602,16,-5],      // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping, bugged if you see too much
-        [1815,0,-5],       // Love quiproquo at the docks
-        [1816,315,-5],     // Love quiproquo at the docks
-        [1901,-5,7550],    // Treno scene, people staying there
-        [2007,-5,8340],    // MBG111 - Alex castle changing
-        [2007,-5,8400],    // MBG111 - Alex castle changing
-        [2173,-5,9050],    // ATE Quina
-        [2211,8,-5],       // Lindblum meeting after Alexander scene: ATE with kuja at his ship, Zorn & Thorn visible too soon and blending
-        [2404,25,-5],      // Baku seen waiting on the docks too soon
-        [2705,-1,-5],      // Pandemonium, you're not alone sequence, several glitches
-        [2706,-1,-5],      // Pandemonium, you're not alone sequence, several glitches
-        [2707,-1,-5],      // Pandemonium, you're not alone sequence, several glitches
-        [2708,-1,-5],      // Pandemonium, you're not alone sequence, several glitches
-        [2711,0,-5],       // Pandemonium, people are waiting in line after Kuja is defeated
-        [2905,-5,11620],   // MBG118 - Memoria pink castle
+        // [mapNo,  EBin.MAP_INDEX_SVR,  EBin.SC_COUNTER_SVR], 
+        [150, 325, -5],       // Zidane infiltrate Alex Castle
+        [254, 26, -5],        // MBG103 - Evil Forest
+        [352, 3, -5],         // Arrival at Dali: vivi visible before sleeping
+        [1550, -5, 6270],     // Mountain path - Quina stays there
+        [1554, -5, 6300],     // MBG109 - roots
+        [1554, -5, 6305],     // MBG109 - roots
+        [1602, 16, -5],       // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping,  bugged if you see too much
+        [1652, -5, 6700],     // Iifa entrance
+        [1652, -5, 6710],     // Iifa entrance
+        [1815, 0, -5],        // Love quiproquo at the docks
+        [1816, 315, -5],      // Love quiproquo at the docks
+        [1901, -5, 7550],     // Treno scene,  people staying there
+        [2007, -5, 8340],     // MBG111 - Alex castle changing
+        [2007, -5, 8400],     // MBG111 - Alex castle changing
+        [2173, -5, 9050],     // ATE Quina
+        [2211, 8, -5],        // Lindblum meeting after Alexander scene: ATE with kuja at his ship,  Zorn & Thorn visible too soon and blending
+        [2404, 25, -5],       // Baku seen waiting on the docks too soon
+        [2705, -1, -5],       // Pandemonium,  you're not alone sequence,  several glitches
+        [2706, -1, -5],       // Pandemonium,  you're not alone sequence,  several glitches
+        [2707, -1, -5],       // Pandemonium,  you're not alone sequence,  several glitches
+        [2708, -1, -5],       // Pandemonium,  you're not alone sequence,  several glitches
+        [2711, 0, -5],        // Pandemonium,  people are waiting in line after Kuja is defeated
+        [2905, -5, 11620],    // MBG118 - Memoria pink castle
     };
 
     /// <summary>List of fields with narrower cams than widescreen, [field#, cam#, PSXWidth]</summary>
@@ -85,7 +87,7 @@ public static class NarrowMapList
         [1214,0,320],
         [1215,0,352],
         [1462,0,320],
-        [1652,1,336],
+        //[1652,1,336], // resorted back to limiting the scene, as there's still a ~23px offset with 3D objects
         [1759,1,336],
         [1801,1,320],
         [1806,0,320],
@@ -924,7 +926,6 @@ public static class NarrowMapList
         {1057,17},
         {1058,16},
         {1060,17},
-        {1652,16},
         {1653,16},
     };
 }
