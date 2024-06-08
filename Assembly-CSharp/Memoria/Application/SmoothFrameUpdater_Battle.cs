@@ -61,7 +61,7 @@ namespace Memoria
 					{
 						curAnim = state.name;
 						animState = state;
-                        break;
+						break;
 					}
 				}
 
