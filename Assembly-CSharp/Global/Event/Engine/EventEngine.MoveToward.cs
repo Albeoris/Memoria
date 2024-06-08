@@ -137,7 +137,7 @@ public partial class EventEngine
         }
 
         EventEngine.GetMoveVector(out Vector3 moveVec, movingPitch, movingAngle, speed);
-        if (Configuration.Control.PSXMovementMethod && (flags & 2) == 0 && actorController != null)
+        if (Configuration.Control.PSXMovementMethod && (flags & 2) == 0 && actorController != null && (FF9StateSystem.Common.FF9.fldMapNo != 758))
             moveVec *= actorController.fieldMap.walkMesh.GetTriangleSlopeFactor(actorController.activeTri);
 
         if (actorController != null && actorController.name == actorController.fieldMap.debugObjName)

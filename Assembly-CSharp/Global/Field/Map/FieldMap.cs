@@ -701,7 +701,17 @@ public class FieldMap : HonoBehavior
 
             Int32 threshmargin = Math.Min((Int32)bgCamera.w - PsxFieldWidth, 0); // Offset value for fields that are between 320 & 398
             //if (dbug) Log.Message("PsxFieldWidth" + PsxFieldWidth);
-            if (mapWidth > PsxFieldWidth && map != 507) // Cargo Ship/Deck
+            if (map == 1205 || map == 1652 || map == 2552 || map == 154 || map == 1215 || map == 1807) // A. Castle/Chapel, Iifa Tree/Roots, Earth Shrine/Interior, Alex grand hall
+            {
+                if (map == 1652 && this.camIdx == 0) // Iifa Tree/Roots
+                    threshmargin += 16;
+
+                Int32 threshright = bgCamera.w - PsxFieldWidth - threshmargin;
+
+                CamPositionX = (float)Math.Max(threshmargin, CamPositionX);
+                CamPositionX = (float)Math.Min(threshright, CamPositionX);
+            }
+            else if (mapWidth > PsxFieldWidth && map != 507) // Cargo Ship/Deck
             {
                 foreach (KeyValuePair<Int32, Int32> entry in NarrowMapList.mapCameraMargin)
                     if (map == entry.Key)
@@ -719,16 +729,6 @@ public class FieldMap : HonoBehavior
                 CamPositionX = (float)Math.Max(threshmargin, CamPositionX);
                 CamPositionX = (float)Math.Min(threshright, CamPositionX);
             }
-            else if (map == 1205 || map == 1652 || map == 2552 || map == 154 || map == 1215 || map == 1807) // A. Castle/Chapel, Iifa Tree/Roots, Earth Shrine/Interior, Alex grand hall
-            {
-                if (map == 1652 && this.camIdx == 0) // Iifa Tree/Roots
-                    threshmargin += 16;
-
-                Int32 threshright = bgCamera.w - PsxFieldWidth - threshmargin;
-
-                CamPositionX = (float)Math.Max(threshmargin, CamPositionX);
-                CamPositionX = (float)Math.Min(threshright, CamPositionX);
-            }
             else if (IsNarrowMap())
             {
                 if (mapWidth <= PsxFieldWidth && mapWidth > 320)
@@ -736,7 +736,6 @@ public class FieldMap : HonoBehavior
                     CamPositionX = (float)((bgCamera.w - mapWidth) / 2);
                 }
             }
-            
             switch (map) // offsets for scrolling maps stretched to WS
             {
                 case 456: // Dali Mountain/Summit
