@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
+/// <summary>Defines individual background layers</summary>
 public partial class BGOVERLAY_DEF
 {
     public BGOVERLAY_DEF()
@@ -70,28 +71,27 @@ public partial class BGOVERLAY_DEF
 
     public UInt16 curZ;
     public UInt16 orgZ;
+    /// <summary>Overlay width</summary>
     public UInt16 w;
+    /// <summary>Overlay height</summary>
     public UInt16 h;
     public float orgX;
     public float orgY;
     public float curX;
     public float curY;
-    public float prevX;
-    public float prevY;
 
-    public Int16 minX;
-    public Int16 maxX;
-    public Int16 minY;
-    public Int16 maxY;
+    /// <summary>Limits overlay's movement (Fieldmap.EBG_overlayMove)</summary>
+    public Int16 minX, maxX, minY, maxY;
 
     public float scrX;
     public float scrY;
 
-    public Int16 scrollX; // negative is slower (further) than main, positive faster (closer)
-    public Int16 scrollY;
+    /// <summary>Scroll: Overlay horizontal scrolling speed, (negative: left) / Parallax: position ratio to player (256 = half speed, -256 = double speed)</summary>
+    public Int16 scrollX, scrollY;
 
-    public Int16 fracX;
-    public Int16 fracY;
+
+    /// <summary>(Obsolete) used to contain fractional position value</summary>
+    public Int16 fracX, fracY;
 
     public Byte camNdx;
 

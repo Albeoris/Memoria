@@ -268,7 +268,6 @@ public class btlseq
 
 	public static void DispCharacter(BTL_DATA btl, Boolean advanceAnim = true)
 	{
-		PosObj evt = btl.evt;
 		if (btl.bi.slave != 0)
 		{
 			btl_mot.DieSequence(btl);
@@ -301,13 +300,14 @@ public class btlseq
 				btl.animation.enabled = true;
 			if (advanceAnim)
 				btl.animFrameFrac += Math.Abs(btl.animSpeed);
+
 			while (btl.animFrameFrac >= 1f)
 			{
 				btl.animFrameFrac--;
-				if (reverseSpeed && evt.animFrame >= 0)
-					evt.animFrame--;
-				else if (!reverseSpeed && evt.animFrame <= animLoopFrame)
-					evt.animFrame++;
+				if (reverseSpeed && btl.evt.animFrame >= 0)
+					btl.evt.animFrame--;
+				else if (!reverseSpeed && btl.evt.animFrame <= animLoopFrame)
+					btl.evt.animFrame++;
 			}
 		}
 		else if (btl.animation != null)
@@ -315,7 +315,8 @@ public class btlseq
 			btl.animation.enabled = false;
 		}
 		btl.animEndFrame = false;
-		if (btl_mot.IsAnimationFrozen(btl) || (!reverseSpeed && evt.animFrame > animLoopFrame) || (reverseSpeed && evt.animFrame < 0))
+
+		if (btl_mot.IsAnimationFrozen(btl) || (!reverseSpeed && btl.evt.animFrame > animLoopFrame) || (reverseSpeed && btl.evt.animFrame < 0))
 		{
 			btl.endedAnimationName = btl.currentAnimationName;
 			if (btl.bi.dmg_mot_f != 0)
@@ -367,36 +368,34 @@ public class btlseq
 		}
 		if (meshoffcnt == meshcnt)
 		{
-			String modelName;
 			btl.SetIsEnabledBattleModelRenderer(false);
-			if (FF9BattleDB.GEO.TryGetValue(btl.dms_geo_id, out modelName) && ModelFactory.garnetShortHairTable.Contains(modelName))
+			if (FF9BattleDB.GEO.TryGetValue(btl.dms_geo_id, out String modelName) && ModelFactory.garnetShortHairTable.Contains(modelName))
 			{
 				Renderer[] longHairRenderers = btl.gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
-				for (Int32 i = 0; i < longHairRenderers.Length; i++)
-					longHairRenderers[i].enabled = false;
+				foreach (Renderer renderer in longHairRenderers)
+					renderer.enabled = false;
 				Renderer[] shortHairRenderers = btl.gameObject.transform.GetChildByName("short_hair").GetComponentsInChildren<Renderer>();
-				for (Int32 i = 0; i < shortHairRenderers.Length; i++)
-					shortHairRenderers[i].enabled = false;
+				foreach (Renderer renderer in shortHairRenderers)
+					renderer.enabled = false;
 			}
 		}
 		if (meshoncnt == meshcnt)
 		{
-			String modelName;
 			btl.SetIsEnabledBattleModelRenderer(true);
 			CharacterSerialNumber serialNumber = btl_util.getSerialNumber(btl);
-			if (FF9BattleDB.GEO.TryGetValue(btl.dms_geo_id, out modelName) && ModelFactory.garnetShortHairTable.Contains(modelName))
+			if (FF9BattleDB.GEO.TryGetValue(btl.dms_geo_id, out String modelName) && ModelFactory.garnetShortHairTable.Contains(modelName))
 			{
 				if (Configuration.Graphics.GarnetHair != 2 && (serialNumber == CharacterSerialNumber.GARNET_LH_ROD || serialNumber == CharacterSerialNumber.GARNET_LH_KNIFE || Configuration.Graphics.GarnetHair == 1))
 				{
 					Renderer[] longHairRenderers = btl.gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
-					for (Int32 i = 0; i < longHairRenderers.Length; i++)
-						longHairRenderers[i].enabled = true;
+					foreach (Renderer renderer in longHairRenderers)
+						renderer.enabled = true;
 				}
 				else
 				{
 					Renderer[] shortHairRenderers = btl.gameObject.transform.GetChildByName("short_hair").GetComponentsInChildren<Renderer>();
-					for (Int32 i = 0; i < shortHairRenderers.Length; i++)
-						shortHairRenderers[i].enabled = true;
+					foreach (Renderer renderer in shortHairRenderers)
+						renderer.enabled = true;
 				}
 			}
 			else if (btl.bi.player != 0 && btl.bi.slot_no == (Byte)CharacterId.Zidane && serialNumber == CharacterSerialNumber.ZIDANE_SWORD)

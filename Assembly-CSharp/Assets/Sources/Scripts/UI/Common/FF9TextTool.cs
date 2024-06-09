@@ -19,6 +19,7 @@ namespace Assets.Sources.Scripts.UI.Common
         public static Color Cyan => new Color(0.407843143f, 0.7529412f, 0.847058833f);
         public static Color Red => new Color(0.8156863f, 0.3764706f, 0.3137255f);
         public static Color Yellow => new Color(0.784313738f, 0.6901961f, 0.2509804f);
+        public static Color DarkYellow => new Color(0.588f, 0.584f, 0.267f);
         public static Color Magenta => new Color(0.721568644f, 0.5019608f, 0.8784314f);
 
         public static Int32 FieldZoneId => fieldZoneId;

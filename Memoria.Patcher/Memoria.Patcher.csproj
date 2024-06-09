@@ -507,6 +507,9 @@
     <None Include="StreamingAssets\Data\Items\InitialItems.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\Items\MixItems.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StreamingAssets\Data\Items\ShopItems.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -294,7 +294,24 @@ namespace Memoria
 						}
 					}
 				}
-				else if (String.Compare(entry[0], "WorldMusicList") == 0 && entry.Length >= 7)
+                else if (String.Compare(entry[0], "MixCommand") == 0)
+                {
+                    // eg.: MixCommand Add 1000
+                    Boolean add = String.Compare(entry[1], "Remove") != 0;
+                    if (String.Compare(entry[1], "Set") == 0)
+                        BattleHUD.MixCommandSet.Clear();
+                    for (Int32 i = 2; i < entry.Length; i++)
+                    {
+                        if (entry[i].TryEnumParse(out BattleCommandId cmdId))
+                        {
+                            if (add)
+                                BattleHUD.MixCommandSet.Add(cmdId);
+                            else
+                                BattleHUD.MixCommandSet.Remove(cmdId);
+                        }
+                    }
+                }
+                else if (String.Compare(entry[0], "WorldMusicList") == 0 && entry.Length >= 7)
 				{
 					// eg.: WorldMusicList 69 22 112 45 95 96 61 62
 					if (ff9.w_musicSet == null)

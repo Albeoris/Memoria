@@ -405,7 +405,6 @@ public partial class FieldMapActorController : HonoBehavior
 	private void PlayAnimationViaEventScript()
 	{
 		String curAnim = FF9DBAll.AnimationDB.GetValue(this.originalActor.anim);
-		this._smoothUpdatePlayingAnim = false;
 		if (!this.animation.IsPlaying(curAnim))
 		{
 			AnimationClip clip = this.animation.GetClip(curAnim);
@@ -426,9 +425,6 @@ public partial class FieldMapActorController : HonoBehavior
 		{
 			Single time = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * this.animation[curAnim].length;
 			this.animation[curAnim].speed = 0f;
-			this._smoothUpdatePlayingAnim = true;
-			this._smoothUpdateAnimTimePrevious = this.animation[curAnim].time;
-			this._smoothUpdateAnimTimeActual = time;
 			this.animation[curAnim].time = time;
 			this.animation.Sample();
 		}
