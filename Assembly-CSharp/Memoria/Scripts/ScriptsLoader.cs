@@ -67,23 +67,21 @@ namespace Memoria.Scripts
                 String rootPath = DataResources.ShadersDirectory;
                 String[] dir = Configuration.Mod.AllFolderNames;
                 Boolean foundOneDir = false;
-                for (Int32 i = dir.Length - 1; i >= 0; i--)
+                s_shaders = new Dictionary<String, Shader>();
+                for (Int32 i = 0; i < dir.Length; i++)
                 {
                     rootPath = DataResources.ShadersModDirectory(dir[i]);
                     if (Directory.Exists(rootPath))
                     {
                         String[] shaderFiles = Directory.GetFiles(rootPath, "*", SearchOption.AllDirectories);
-                        Dictionary<String, Shader> shaders = new Dictionary<String, Shader>(shaderFiles.Length);
 
                         foreach (String shaderPath in shaderFiles)
-                            InitializeMaterial(shaderPath, rootPath, shaders);
+                            InitializeMaterial(shaderPath, rootPath, s_shaders);
 
-                        // Create a watcher only for the first valid directory (most likely the default one out of any mod)
+                        // Create a watcher only for the shader folder that has priority
                         if (!foundOneDir)
                         {
                             // ReSharper disable once InconsistentlySynchronizedField
-                            s_shaders = shaders;
-
                             s_watcher = new FileSystemWatcher(rootPath, "*");
                             GameLoopManager.Quit += s_watcher.Dispose;
 
@@ -108,18 +106,15 @@ namespace Memoria.Scripts
         private static void InitializeMaterial(String shaderPath, String rootPath, Dictionary<String, Shader> shaders)
         {
             String shaderName = Path.ChangeExtension(shaderPath.Substring(rootPath.Length), extension: null).Replace('\\', '/');
+            if (shaders.ContainsKey(shaderName))
+                return;
+
             String shaderCode = File.ReadAllText(shaderPath);
             Material newShader = new Material(shaderCode);
-
             if (newShader.shader.isSupported)
-            {
                 shaders[shaderName] = newShader.shader;
-            }
             else
-            {
-                shaders[shaderName] = null;
                 Log.Warning("[ShadersLoader] Shader isn't supported: " + shaderPath);
-            }
         }
 
         private static void OnChangedFileInDirectory(Object sender, FileSystemEventArgs e)

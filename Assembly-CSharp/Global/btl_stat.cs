@@ -82,6 +82,7 @@ public static class btl_stat
                     }
                     stat.cur |= status;
                     btl.bi.atb = 0;
+                    RemoveStatuses(btl, BattleStatus.GradualPetrify);
                     SetStatusClut(btl, true);
                     if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2 && (status & BattleStatusConst.CmdCancel) != 0)
                         StatusCommandCancel(btl, status);
