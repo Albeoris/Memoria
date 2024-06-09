@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Memoria;
 using Memoria.Data;
+using Memoria.Prime;
 using UnityEngine;
 
 public class BattleSPSSystem : MonoBehaviour
@@ -50,29 +51,49 @@ public class BattleSPSSystem : MonoBehaviour
                 sps.lastFrame = sps.curFrame;
                 sps.curFrame += sps.frameRate;
                 if (sps.curFrame >= sps.frameCount)
+                {
                     sps.curFrame = 0;
+                    if ((sps.attr & SPSConst.ATTR_UNLOAD_ON_FINISH) != 0)
+                        sps.Unload();
+                }
                 else if (sps.curFrame < 0)
+                {
                     sps.curFrame = (sps.frameCount >> 4) - 1 << 4;
+                }
+                if (sps.duration > 0)
+                    sps.duration--;
+                if (sps.duration == 0)
+                    sps.Unload();
             }
         }
-		//for (Int32 i = 0; i < this._specialSpsList.Count; i++)
-		//{
-		//	BattleSPS special_sps = this._specialSpsList[i];
-		//	if ((special_sps.type != 0 || special_sps.spsBin != null) && (special_sps.attr & 1) != 0 && special_sps.lastFrame != -1 && special_sps.isUpdate)
-		//	{
-		//		special_sps.lastFrame = special_sps.curFrame;
-		//		special_sps.curFrame += special_sps.frameRate;
-		//		if (special_sps.curFrame >= special_sps.frameCount)
-		//		{
-		//			special_sps.curFrame = 0;
-		//		}
-		//		else if (special_sps.curFrame < 0)
-		//		{
-		//			special_sps.curFrame = (special_sps.frameCount >> 4) - 1 << 4;
-		//		}
-		//	}
-		//}
-	}
+        foreach (SHPEffect shp in this._shpEffects)
+        {
+            shp.frame++;
+            if (shp.cycleDuration > 0 && shp.frame >= shp.cycleDuration && (shp.attr & SPSConst.ATTR_UNLOAD_ON_FINISH) != 0)
+                shp.Unload();
+            if (shp.duration > 0)
+                shp.duration--;
+            if (shp.duration == 0)
+                shp.Unload();
+        }
+        //for (Int32 i = 0; i < this._specialSpsList.Count; i++)
+        //{
+        //	BattleSPS special_sps = this._specialSpsList[i];
+        //	if ((special_sps.type != 0 || special_sps.spsBin != null) && (special_sps.attr & 1) != 0 && special_sps.lastFrame != -1 && special_sps.isUpdate)
+        //	{
+        //		special_sps.lastFrame = special_sps.curFrame;
+        //		special_sps.curFrame += special_sps.frameRate;
+        //		if (special_sps.curFrame >= special_sps.frameCount)
+        //		{
+        //			special_sps.curFrame = 0;
+        //		}
+        //		else if (special_sps.curFrame < 0)
+        //		{
+        //			special_sps.curFrame = (special_sps.frameCount >> 4) - 1 << 4;
+        //		}
+        //	}
+        //}
+    }
 
 	public void GenerateSPS()
     {
@@ -82,11 +103,11 @@ public class BattleSPSSystem : MonoBehaviour
             {
                 if (sps.charTran != null && sps.boneTran != null)
                     sps.pos = sps.boneTran.position + sps.posOffset;
-                if ((sps.attr & SPSConst.ATTR_UPDATE_PER_FRAME) != 0)
+                if ((sps.attr & (SPSConst.ATTR_UPDATE_THIS_FRAME | SPSConst.ATTR_UPDATE_ANY_FRAME)) != 0)
                 {
                     sps.meshRenderer.enabled = true;
                     sps.GenerateSPS();
-                    sps.attr &= unchecked((Byte)~SPSConst.ATTR_UPDATE_PER_FRAME);
+                    sps.attr &= unchecked((Byte)~SPSConst.ATTR_UPDATE_THIS_FRAME);
                 }
                 else
                 {
@@ -134,61 +155,61 @@ public class BattleSPSSystem : MonoBehaviour
         {
             if (ParmType != SPSConst.OPERATION_LOAD && ParmType != SPSConst.OPERATION_CHANGE_FIELD)
                 return;
-            slot = this._FindFreeEffectSlot();
+            slot = this._FindFreeSPSSlot();
             this._eventNoToIndex[ObjNo] = slot;
         }
         Utility.SetObjParm(Utility.SpsList[slot], ParmType, Arg0, Arg1, Arg2);
-	}
+        if (ParmType == SPSConst.OPERATION_LOAD && Arg0 == SPSConst.REF_DELETE)
+            this._eventNoToIndex.Remove(ObjNo);
+    }
 
-	public void UpdateBtlStatus(BTL_DATA btl, BattleStatus status, Vector3 pos, Vector3 rot, Int32 frame)
+	public void UpdateBtlStatus(BTL_DATA btl, BattleStatus status, Vector3? pos = null, Int32? frame = null)
     {
         KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(btl.bi.line_no, (Int32)status);
         if (this._statusToSPSIndex.TryGetValue(effectCode, out Int32 spsIndex))
         {
             SPSEffect sps = Utility.SpsList[spsIndex];
-            sps.pos = pos;
-            sps.curFrame = frame << 4;
-            sps.attr |= SPSConst.ATTR_VISIBLE | SPSConst.ATTR_UPDATE_PER_FRAME;
+            sps.attr |= SPSConst.ATTR_VISIBLE | SPSConst.ATTR_UPDATE_THIS_FRAME;
+            if (pos.HasValue)
+                sps.pos = pos.Value;
+            if (frame.HasValue)
+                sps.curFrame = frame.Value << 4;
         }
         if (this._statusToSHPIndex.TryGetValue(effectCode, out Int32 shpIndex))
         {
             SHPEffect shp = this._shpEffects[shpIndex];
-            shp.pos = pos;
-            shp.frame = frame;
-            shp.attr |= SPSConst.ATTR_VISIBLE | SPSConst.ATTR_UPDATE_PER_FRAME;
+            shp.attr |= SPSConst.ATTR_VISIBLE | SPSConst.ATTR_UPDATE_THIS_FRAME;
+            if (pos.HasValue)
+                shp.pos = pos.Value;
+            if (frame.HasValue)
+                shp.frame = frame.Value;
         }
-	}
-
-	public static btl2d.STAT_ICON_TBL GetStatusStatIcon(BattleStatus status)
-	{
-		for (Int32 i = 0; i < btl2d.wStatIconTbl.Length; i++)
-			if (btl2d.wStatIconTbl[i].Mask == status)
-				return btl2d.wStatIconTbl[i];
-		return null;
 	}
 
 	public void AddBtlSPSObj(BattleUnit unit, BattleStatus status)
     {
-        if (!BattleSPSSystem.StatusVisualEffects.TryGetValue(status, out BattleSPSSystem.StatusEffect effect))
+        if (!BattleSPSSystem.StatusVisualEffects.TryGetValue(status, out BattleSPSSystem.StatusVisualEffect effect))
             return;
         KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(unit.Position, (Int32)status);
         if (effect.spsIndex >= 0)
         {
-            if (!this._statusToSPSIndex.ContainsKey(effectCode))
+            if (this._statusToSPSIndex.TryGetValue(effectCode, out Int32 spsIndex))
             {
-                KeyValuePair<String, Int32> spsID = new KeyValuePair<String, Int32>($"PNG:EmbeddedAsset/BattleMap/Status/{status}", effect.spsIndex);
-                Int32 slot = this._FindFreeEffectSlot();
+                Utility.SpsList[spsIndex].attr |= SPSConst.ATTR_VISIBLE;
+            }
+            else
+            {
+                if (!CommonSPSSystem.SPSPrototypes.ContainsKey(effect.spsIndex))
+                {
+                    Log.Error($"[{nameof(BattleSPSSystem)}] Status {status} tries to use the SPS {effect.spsIndex} which does not exists");
+                    return;
+                }
+                KeyValuePair<String, Int32> spsID = new KeyValuePair<String, Int32>($"FromPrototype", effect.spsIndex);
+                Int32 slot = this._FindFreeSPSSlot();
                 this._statusToSPSIndex[effectCode] = slot;
                 SPSEffect sps = Utility.SpsList[slot];
                 if (Utility.SetupSPSBinary(sps, spsID, true))
-                {
-                    btl2d.STAT_ICON_TBL table = BattleSPSSystem.GetStatusStatIcon(status);
-                    sps.abr = table?.Abr ?? 0;
-                    sps.attr = 0;
                     sps.meshRenderer.enabled = false;
-                    sps.battleScaleFactor = effect.spsScale;
-                    sps.battleDistanceFactor = effect.spsDistance;
-                }
             }
         }
         if (effect.shpIndex >= 0)
@@ -199,38 +220,86 @@ public class BattleSPSSystem : MonoBehaviour
             }
             else
             {
-                Int32 slot = this._shpEffects.Count;
-                this._statusToSHPIndex[effectCode] = slot;
-                GameObject shpGo = new GameObject($"SHP_{slot:D4}");
-                shpGo.transform.parent = base.transform;
-                shpGo.transform.localScale = Vector3.one;
-                shpGo.transform.localPosition = Vector3.zero;
-                shpGo.AddComponent<MeshRenderer>();
-                shpGo.AddComponent<MeshFilter>();
-                SHPEffect shp = shpGo.AddComponent<SHPEffect>();
-                shp.Init(SHPEffect.Database[effect.shpIndex]);
-                this._shpEffects.Add(shp);
+                if (!CommonSPSSystem.SPSPrototypes.ContainsKey(effect.shpIndex))
+                {
+                    Log.Error($"[{nameof(BattleSPSSystem)}] Status {status} tries to use the SHP {effect.shpIndex} which does not exists");
+                    return;
+                }
+                Int32 slot = this._FindFreeSHPSlot();
+                this._shpEffects[slot].Init(CommonSPSSystem.SHPPrototypes[effect.shpIndex]);
             }
         }
 	}
 
 	public void RemoveBtlSPSObj(BTL_DATA btl, BattleStatus status)
     {
+        // Don't unload the SPS / SHP; assume there's a relatively high probability it can be re-used
         KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(btl.bi.line_no, (Int32)status);
         if (this._statusToSPSIndex.TryGetValue(effectCode, out Int32 spsIndex))
         {
-            Utility.SpsList[spsIndex].Unload();
-            this._statusToSPSIndex.Remove(effectCode);
+            Utility.SpsList[spsIndex].attr = 0;
+            Utility.SpsList[spsIndex].meshRenderer.enabled = false;
+            //Utility.SpsList[spsIndex].Unload();
+            //this._statusToSPSIndex.Remove(effectCode);
         }
         if (this._statusToSHPIndex.TryGetValue(effectCode, out Int32 shpIndex))
         {
             this._shpEffects[shpIndex].attr = 0;
             foreach (GameObject go in this._shpEffects[shpIndex].shpGo)
                 go.SetActive(false);
+            //this._shpEffects[shpIndex].Unload();
+            //this._statusToSHPIndex.Remove(effectCode);
         }
-	}
+    }
 
-	public void AddSpecialSPSObj(int specialid, uint spstype, Vector3 pos, float scale)
+    public SPSEffect AddSequenceSPS(Int32 spsId, Int32 duration, Single speed)
+    {
+        if (!CommonSPSSystem.SPSPrototypes.ContainsKey(spsId))
+        {
+            Log.Error($"[{nameof(BattleSPSSystem)}] A custom SFX sequence tries to use the SPS {spsId} which does not exists");
+            return null;
+        }
+        KeyValuePair<String, Int32> spsID = new KeyValuePair<String, Int32>($"FromPrototype", spsId);
+        Int32 slot = this._FindFreeSPSSlot();
+        SPSEffect sps = Utility.SpsList[slot];
+        if (!Utility.SetupSPSBinary(sps, spsID, true))
+            return null;
+        sps.meshRenderer.enabled = false;
+        sps.frameRate = (Int32)(sps.frameRate * speed);
+        sps.attr |= SPSConst.ATTR_UPDATE_ANY_FRAME;
+        if (duration < 0 && sps.frameRate > 0)
+            sps.attr |= SPSConst.ATTR_UNLOAD_ON_FINISH;
+        else if (duration >= 0)
+            sps.duration = duration;
+        else if (sps.frameRate < 0)
+            sps.duration = sps.frameCount / -sps.frameRate;
+        else
+            sps.duration = 0;
+        return sps;
+    }
+
+    public SHPEffect AddSequenceSHP(Int32 shpId, Int32 duration, Single speed)
+    {
+        if (!CommonSPSSystem.SHPPrototypes.ContainsKey(shpId))
+        {
+            Log.Error($"[{nameof(BattleSPSSystem)}] A custom SFX sequence tries to use the SHP {shpId} which does not exists");
+            return null;
+        }
+        Int32 slot = this._FindFreeSHPSlot();
+        SHPEffect shp = this._shpEffects[slot];
+        shp.Init(CommonSPSSystem.SHPPrototypes[shpId]);
+        shp.cycleDuration = (speed >= 0 ? 1 : -1) * Math.Max(1, Math.Abs((Int32)(shp.cycleDuration / Math.Abs(speed))));
+        shp.attr |= SPSConst.ATTR_UPDATE_ANY_FRAME;
+        if (duration < 0 && shp.cycleDuration > 0)
+            shp.attr |= SPSConst.ATTR_UNLOAD_ON_FINISH;
+        else if (duration >= 0)
+            shp.duration = duration;
+        else
+            shp.duration = -shp.cycleDuration;
+        return shp;
+    }
+
+    public void AddSpecialSPSObj(int specialid, uint spstype, Vector3 pos, float scale)
 	{
 		//BattleSPS special_sps;
 		//if (specialid < 0 || specialid > _specialSpsList.Count)
@@ -279,13 +348,30 @@ public class BattleSPSSystem : MonoBehaviour
 		//this._specialSpsRemovingList[specialid] = true;
     }
 
-    private Int32 _FindFreeEffectSlot()
+    private Int32 _FindFreeSPSSlot()
     {
         for (Int32 i = 0; i < Utility.SpsList.Count; i++)
             if (Utility.SpsList[i].spsId == -1)
                 return i;
         Int32 slot = Utility.SpsList.Count;
         this.InitSPSInstance(slot);
+        return slot;
+    }
+
+    private Int32 _FindFreeSHPSlot()
+    {
+        for (Int32 i = 0; i < this._shpEffects.Count; i++)
+            if (this._shpEffects[i].shpId == -1)
+                return i;
+        Int32 slot = this._shpEffects.Count;
+        GameObject shpGo = new GameObject($"SHP_{slot:D4}");
+        shpGo.transform.parent = base.transform;
+        shpGo.transform.localScale = Vector3.one;
+        shpGo.transform.localPosition = Vector3.zero;
+        shpGo.AddComponent<MeshRenderer>();
+        shpGo.AddComponent<MeshFilter>();
+        SHPEffect shp = shpGo.AddComponent<SHPEffect>();
+        this._shpEffects.Add(shp);
         return slot;
     }
 
@@ -300,48 +386,31 @@ public class BattleSPSSystem : MonoBehaviour
     [NonSerialized]
     private Dictionary<KeyValuePair<Int32, Int32>, Int32> _statusToSHPIndex;
 
-    //public String MapName;
-    //private Boolean _isReady;
-    //private List<BattleSPS> _spsList;
-    //
-    //// Custom fields: special SPS effects
-    //private List<BattleSPS> _specialSpsList;
-    //private List<float> _specialSpsFadingList;
-    //private List<bool> _specialSpsRemovingList;
-    //
-    //private Dictionary<Int32, KeyValuePair<Int32, Byte[]>> _spsBinDict;
-    //public Vector3 rot;
-
-	public class StatusEffect
+	public class StatusVisualEffect
 	{
-		public StatusEffect(Int32 shpIndex, Int32 spsIndex, Single scale = 4f, Single distance = 5f)
+		public StatusVisualEffect(Int32 shpIndex, Int32 spsIndex)
 		{
 			this.shpIndex = shpIndex;
 			this.spsIndex = spsIndex;
-			this.spsScale = scale;
-			this.spsDistance = distance;
 		}
 
         public Int32 shpIndex;
         public Int32 spsIndex;
-
-		public Single spsScale;
-		public Single spsDistance;
 	}
 
-    public static Dictionary<BattleStatus, BattleSPSSystem.StatusEffect> StatusVisualEffects = new Dictionary<BattleStatus, BattleSPSSystem.StatusEffect>()
+    public static Dictionary<BattleStatus, StatusVisualEffect> StatusVisualEffects = new Dictionary<BattleStatus, StatusVisualEffect>()
     {
-        { BattleStatus.Slow, new BattleSPSSystem.StatusEffect(0, -1) },
-        { BattleStatus.Haste, new BattleSPSSystem.StatusEffect(1, -1) },
-        { BattleStatus.Silence, new BattleSPSSystem.StatusEffect(2, -1) },
-        { BattleStatus.Trouble, new BattleSPSSystem.StatusEffect(3, -1) },
-        { BattleStatus.Poison, new BattleSPSSystem.StatusEffect(-1, 0, 6f, 4f) },
-        { BattleStatus.Venom, new BattleSPSSystem.StatusEffect(-1, 1, 6f, 4f) },
-        { BattleStatus.Sleep, new BattleSPSSystem.StatusEffect(-1, 2, 6f, 4f) },
-        { BattleStatus.Heat, new BattleSPSSystem.StatusEffect(-1, 3, 6f, 4f) },
-        { BattleStatus.Freeze, new BattleSPSSystem.StatusEffect(-1, 4, 6f, 4f) },
-        { BattleStatus.Reflect, new BattleSPSSystem.StatusEffect(-1, 5, 6f, 4f) },
-        { BattleStatus.Blind, new BattleSPSSystem.StatusEffect(-1, 6, 6f, 4f) },
-        { BattleStatus.Berserk, new BattleSPSSystem.StatusEffect(-1, 7, 6f, 4f) }
+        { BattleStatus.Slow, new StatusVisualEffect(0, -1) },
+        { BattleStatus.Haste, new StatusVisualEffect(1, -1) },
+        { BattleStatus.Silence, new StatusVisualEffect(2, -1) },
+        { BattleStatus.Trouble, new StatusVisualEffect(3, -1) },
+        { BattleStatus.Poison, new StatusVisualEffect(-1, 0) },
+        { BattleStatus.Venom, new StatusVisualEffect(-1, 1) },
+        { BattleStatus.Sleep, new StatusVisualEffect(-1, 2) },
+        { BattleStatus.Heat, new StatusVisualEffect(-1, 3) },
+        { BattleStatus.Freeze, new StatusVisualEffect(-1, 4) },
+        { BattleStatus.Reflect, new StatusVisualEffect(-1, 5) },
+        { BattleStatus.Blind, new StatusVisualEffect(-1, 6) },
+        { BattleStatus.Berserk, new StatusVisualEffect(-1, 7) }
     };
 }

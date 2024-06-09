@@ -66,9 +66,19 @@ public class FieldSPSSystem : HonoBehavior
                 sps.lastFrame = sps.curFrame;
                 sps.curFrame += sps.frameRate;
                 if (sps.curFrame >= sps.frameCount)
+                {
                     sps.curFrame = 0;
+                    if ((sps.attr & SPSConst.ATTR_UNLOAD_ON_FINISH) != 0)
+                        sps.Unload();
+                }
                 else if (sps.curFrame < 0)
+                {
                     sps.curFrame = (sps.frameCount >> 4) - 1 << 4;
+                }
+                if (sps.duration > 0)
+                    sps.duration--;
+                if (sps.duration == 0)
+                    sps.Unload();
             }
         }
     }
@@ -81,6 +91,12 @@ public class FieldSPSSystem : HonoBehavior
         {
             if (sps.spsBin != null && (sps.attr & SPSConst.ATTR_VISIBLE) != 0)
             {
+                if ((sps.attr & (SPSConst.ATTR_UPDATE_THIS_FRAME | SPSConst.ATTR_UPDATE_ANY_FRAME)) == 0)
+                {
+                    sps.meshRenderer.enabled = false;
+                    continue;
+                }
+                sps.attr &= unchecked((Byte)~SPSConst.ATTR_UPDATE_THIS_FRAME);
                 if (sps.charTran != null && sps.boneTran != null)
                 {
                     FieldMapActor component = sps.charTran.GetComponent<FieldMapActor>();
@@ -108,11 +124,4 @@ public class FieldSPSSystem : HonoBehavior
     private CommonSPSSystem Utility;
 
     private FieldMap _fieldMap;
-
-    // Dummied; should not be used
-    //public String MapName;
-    //private Boolean _isReady;
-    //private List<SPSEffect> _spsList;
-    //private Dictionary<KeyValuePair<String, Int32>, Byte[]> _spsBinDict;
-    //public Vector3 rot;
 }

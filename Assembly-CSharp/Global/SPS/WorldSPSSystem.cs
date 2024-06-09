@@ -97,21 +97,20 @@ public class WorldSPSSystem : MonoBehaviour
                     if (curFrame > 8)
                         this.EffectRelease(sps);
                 }
-                else if (no == SPSConst.WorldSPSEffect.MEMORIA)
-                {
-                    //if (curFrame >= 3)
-                    //	;
-                }
                 else if (no == SPSConst.WorldSPSEffect.UNKNOWN32)
                 {
                     if (ff9.abs(sps.pos[0] - ff9.w_moveActorPtr.pos[0]) > ff9.S(32000) || ff9.abs(sps.pos[2] - ff9.w_moveActorPtr.pos[2]) > ff9.S(32000))
                         this.EffectRelease(sps);
                 }
-                else if (no != SPSConst.WorldSPSEffect.NOT_WORLD_SPS)
+                else if ((sps.attr & SPSConst.ATTR_UNLOAD_ON_FINISH) != 0)
                 {
                     if (sps.curFrame >= sps.frameCount)
                         this.EffectRelease(sps);
                 }
+                if (sps.duration > 0)
+                    sps.duration--;
+                if (sps.duration == 0)
+                    sps.Unload();
             }
         }
         if (ff9.w_evaCoreSPS != null)
@@ -133,6 +132,15 @@ public class WorldSPSSystem : MonoBehaviour
         {
             if (sps.spsBin != null && sps.spsId != -1)
             {
+                if ((sps.attr & (SPSConst.ATTR_UPDATE_THIS_FRAME | SPSConst.ATTR_UPDATE_ANY_FRAME)) == 0)
+                {
+                    sps.meshRenderer.enabled = false;
+                    continue;
+                }
+                sps.meshRenderer.enabled = true;
+                sps.attr &= unchecked((Byte)~SPSConst.ATTR_UPDATE_THIS_FRAME);
+                if (sps.charTran != null && sps.boneTran != null)
+                    sps.pos = sps.boneTran.position + sps.posOffset;
                 SPSConst.WorldSPSEffect no = sps.worldSpsId;
                 Vector3 goPos = sps.pos;
                 Int32 curFrame = sps.curFrame >> 4;
@@ -149,14 +157,16 @@ public class WorldSPSSystem : MonoBehaviour
                         ff9.w_frameShadowOTOffset = 0;
                         sps.fade = -1;
                         sps.scale = curFrame * 400 + 6000;
-                        sps.works.shtsc = 2;
+                        sps.works.wFactor = 2f;
+                        sps.works.hFactor = 2f;
                         sps.GenerateSPS();
                         break;
                     case SPSConst.WorldSPSEffect.SMOKE_FIRE_SHRINE:
                         ff9.w_frameShadowOTOffset = 0;
                         sps.fade = -1;
                         sps.scale = curFrame * 400 + 6000;
-                        sps.works.shtsc = 2;
+                        sps.works.wFactor = 2f;
+                        sps.works.hFactor = 2f;
                         sps.GenerateSPS();
                         break;
                     case SPSConst.WorldSPSEffect.CHEST_LAND:
@@ -277,7 +287,9 @@ public class WorldSPSSystem : MonoBehaviour
                 sps.abr = SPSConst.ABR_ADD;
                 break;
         }
-		sps.pos.x = x;
+        if (no != SPSConst.WorldSPSEffect.MEMORIA)
+            sps.attr |= SPSConst.ATTR_UNLOAD_ON_FINISH;
+        sps.pos.x = x;
 		sps.pos.y = y;
 		sps.pos.z = z;
         sps.rot = Vector3.zero;
@@ -372,7 +384,19 @@ public class WorldSPSSystem : MonoBehaviour
             slot = this._FindFreeEffectSlot();
             this._eventNoToIndex[ObjNo] = slot;
         }
+        if (ParmType == SPSConst.OPERATION_POS)
+        {
+            Single x = ff9.S(Arg0);
+            Single y = ff9.S(-Arg1);
+            Single z = ff9.S(Arg2);
+            ff9.world.SetAbsolutePositionOf(out Vector3 absPos, new Vector3(x, y, z));
+            Arg0 = (Int32)absPos.x;
+            Arg1 = -(Int32)absPos.y;
+            Arg2 = (Int32)absPos.z;
+        }
         Utility.SetObjParm(Utility.SpsList[slot], ParmType, Arg0, Arg1, Arg2);
+        if (ParmType == SPSConst.OPERATION_LOAD && Arg0 == SPSConst.REF_DELETE)
+            this._eventNoToIndex.Remove(ObjNo);
     }
 
     private Boolean _IsSlotAvailable(Int32 index)
@@ -394,9 +418,4 @@ public class WorldSPSSystem : MonoBehaviour
     private CommonSPSSystem Utility;
     [NonSerialized]
     private Dictionary<Int32, Int32> _eventNoToIndex;
-
-    // Dummied; should not be used
-    //private Boolean _isReady;
-	//private List<SPSEffect> _spsList;
-	//private Dictionary<KeyValuePair<String, Int32>, Byte[]> _spsBinDict;
 }

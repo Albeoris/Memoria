@@ -4,7 +4,9 @@ using System.Collections.Generic;
 public static class SPSConst
 {
 	public const Byte ATTR_VISIBLE = 1;
-    public const Byte ATTR_UPDATE_PER_FRAME = 2;
+    public const Byte ATTR_UPDATE_ANY_FRAME = 2;
+    public const Byte ATTR_UPDATE_THIS_FRAME = 4;
+    public const Byte ATTR_UNLOAD_ON_FINISH = 8;
 
     public const Int32 FIELD_DEFAULT_OBJCOUNT = 16;
     public const Int32 BATTLE_DEFAULT_OBJCOUNT = 96;
@@ -48,46 +50,46 @@ public static class SPSConst
     {
         NOT_WORLD_SPS = -2,
         NOT_REGISTERED = -1,
-        SMOKE_LARGE = 0, // Used when opening a treasure with sleeping smoke and when Moguo runs fast
-        SMOKE_NORMAL = 1, // Used for various purposes
-        SMOKE_SOUTH_GATE = 2,
-        SMOKE_FIRE_SHRINE = 3,
-        SMOKE_SAND_PIT = 4,
-        CHOCOBO_PEPPER_SKY = 5,
-        MOVE_CHOCOBO_ABOVE_WATER = 6,
-        MOVE_BEACH = 7,
-        CHEST_LAND = 8,
-        CHOCOBO_BEAK = 9,
-        MOVE_SHIP_TRAIL = 10,
-        UNKNOWN11 = 11,
-        UNKNOWN12 = 12,
-        CHOCOBO_PEPPER_WATER = 13,
-        MOVE_CHOCOBO_ABOVE_DESERT = 14,
-        MOVE_SHIP = 15,
-        MOVE_FOREST = 16,
-        UNKNOWN17 = 17,
-        MOVE_AIRSHIP_ABOVE_WATER = 18,
-        MOVE_AIRSHIP_ABOVE_DESERT = 19,
-        WATERFALL = 20,
-        UNKNOWN21 = 21,
-        MOVE_WATER = 22,
-        SANDSTORM = 23, // Unused?
-        WIND_SHRINE = 24, // Unused?
-        MEMORIA = 25,
-        UNKNOWN26 = 26,
-        MOVE_DESERT = 27,
-        CHOCOBO_PEPPER_GROUND = 28,
-        WATER_SHRINE = 29,
-        UNKNOWN30 = 30,
-        UNKNOWN31 = 31,
-        UNKNOWN32 = 32,
-        UNKNOWN33 = 33,
-        UNKNOWN34 = 34,
-        UNKNOWN35 = 35,
-        UNKNOWN36 = 36,
-        UNKNOWN37 = 37,
-        UNKNOWN38 = 38,
-        UNKNOWN39 = 39,
+        SMOKE_LARGE = 0, // 11 frames - Used when opening a treasure with sleeping smoke and when Moguo runs fast
+        SMOKE_NORMAL = 1, // 18 frames - Used for various purposes
+        SMOKE_SOUTH_GATE = 2, // 26 frames
+        SMOKE_FIRE_SHRINE = 3, // 23 frames
+        SMOKE_SAND_PIT = 4, // 19 frames
+        CHOCOBO_PEPPER_SKY = 5, // 12 frames
+        MOVE_CHOCOBO_ABOVE_WATER = 6, // 12 frames
+        MOVE_BEACH = 7, // 9 frames
+        CHEST_LAND = 8, // 9 frames
+        CHOCOBO_BEAK = 9, // 11 frames
+        MOVE_SHIP_TRAIL = 10, // 11 frames
+        UNKNOWN11 = 11, // 11 frames
+        UNKNOWN12 = 12, // 11 frames
+        CHOCOBO_PEPPER_WATER = 13, // 13 frames
+        MOVE_CHOCOBO_ABOVE_DESERT = 14, // 12 frames
+        MOVE_SHIP = 15, // 13 frames
+        MOVE_FOREST = 16, // 2 frames
+        UNKNOWN17 = 17, // 2 frames
+        MOVE_AIRSHIP_ABOVE_WATER = 18, // 17 frames
+        MOVE_AIRSHIP_ABOVE_DESERT = 19, // 17 frames
+        WATERFALL = 20, // 13 frames
+        UNKNOWN21 = 21, // 19 frames
+        MOVE_WATER = 22, // 8 frames
+        SANDSTORM = 23, // 25 frames - Unused?
+        WIND_SHRINE = 24, // 12 frames - Unused?
+        MEMORIA = 25, // 13 frames
+        UNKNOWN26 = 26, // 13 frames - Purple particles
+        MOVE_DESERT = 27, // 10 frames
+        CHOCOBO_PEPPER_GROUND = 28, // 15 frames
+        WATER_SHRINE = 29, // 11 frames
+        UNKNOWN30 = 30, // 13 frames - White aura
+        UNKNOWN31 = 31, // 13 frames - White aura pulsing
+        UNKNOWN32 = 32, // 19 frames - Glitched fire
+        UNKNOWN33 = 33, // 17 frames - Glitched fire
+        UNKNOWN34 = 34, // 19 frames - Glitched fire
+        UNKNOWN35 = 35, // 19 frames - Glitched fire
+        UNKNOWN36 = 36, // 19 frames - Glitched fire
+        UNKNOWN37 = 37, // 19 frames - Glitched fire
+        UNKNOWN38 = 38, // 9 frames - Glitched fire explosion
+        UNKNOWN39 = 39, // 23 frames - Glitched fire away
     }
 
     public static String GetFieldSPSTexture(Int32 spsId)

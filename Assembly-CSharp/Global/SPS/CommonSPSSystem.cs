@@ -3,6 +3,8 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using Memoria.Assets;
+using Memoria.Data;
+using Memoria.Prime;
 
 public class CommonSPSSystem
 {
@@ -32,6 +34,14 @@ public class CommonSPSSystem
         sps.frameCount = CommonSPSSystem.GetSpsFrameCount(sps.spsBin);
         sps.spsId = spsID.Value;
         this.SetupSPSTexture(sps);
+        if (String.Equals(sps.mapName, "FromPrototype"))
+        {
+            SPSPrototype prototype = CommonSPSSystem.SPSPrototypes[sps.spsId];
+            sps.abr = prototype.ShaderType;
+            sps.useBattleFactors = true;
+            sps.battleScaleFactor = prototype.BattleScale;
+            sps.battleDistanceFactor = prototype.BattleDistance;
+        }
         return true;
     }
 
@@ -48,7 +58,7 @@ public class CommonSPSSystem
 
     public void LoadMapTextureInVram(String mapName)
     {
-        Byte[] binAsset = AssetManager.LoadBytes(CommonSPSSystem.GetTCBPath(mapName));
+        Byte[] binAsset = AssetManager.LoadBytes(CommonSPSSystem.GetTCBPath(mapName), true);
         if (binAsset == null)
             return;
         PSXTextureMgr.LoadTCBInVram(binAsset);
@@ -60,20 +70,20 @@ public class CommonSPSSystem
     {
         Boolean canRetrieveFromTCB = true;
         String texturePath;
-        if (String.Equals(sps.mapName, "WorldMap"))
+        if (String.Equals(sps.mapName, "FromPrototype"))
+        {
+            canRetrieveFromTCB = false;
+            texturePath = CommonSPSSystem.SPSPrototypes[sps.spsId].TexturePath;
+            if (this._spsTextureDict.TryGetValue(texturePath, out sps.pngTexture))
+                return true;
+            sps.pngTexture = AssetManager.Load<Texture2D>(texturePath, false);
+        }
+        else if (String.Equals(sps.mapName, "WorldMap"))
         {
             texturePath = $"WorldSPS/fx{sps.spsId:D2}";
             if (this._spsTextureDict.TryGetValue(texturePath, out sps.pngTexture))
                 return true;
             sps.pngTexture = AssetManager.Load<Texture2D>($"EmbeddedAsset/{texturePath}.png", true);
-        }
-        else if (sps.mapName != null && sps.mapName.StartsWith("PNG:"))
-        {
-            canRetrieveFromTCB = false;
-            texturePath = sps.mapName.Substring("PNG:".Length);
-            if (this._spsTextureDict.TryGetValue(texturePath, out sps.pngTexture))
-                return true;
-            sps.pngTexture = AssetManager.Load<Texture2D>(texturePath, false);
         }
         else
         {
@@ -114,8 +124,14 @@ public class CommonSPSSystem
         {
             if (Arg0 != SPSConst.REF_DELETE)
             {
-                KeyValuePair<String, Int32> spsID = new KeyValuePair<String, Int32>(this._loadedTCBMapName, Arg0);
+                KeyValuePair<String, Int32> spsID = new KeyValuePair<String, Int32>(Arg1 == 0 ? this._loadedTCBMapName : "FromPrototype", Arg0);
+                if (Arg1 != 0 && !CommonSPSSystem.SPSPrototypes.ContainsKey(Arg0))
+                {
+                    Log.Error($"[{nameof(CommonSPSSystem)}] Event script tries to use the SPS {Arg0} which does not exists");
+                    return;
+                }
                 this.SetupSPSBinary(sps, spsID, true);
+                sps.attr |= SPSConst.ATTR_UPDATE_ANY_FRAME;
                 if (FF9StateSystem.Common.FF9.fldMapNo == 2553 && (sps.spsId == 464 || sps.spsId == 467 || sps.spsId == 506 || sps.spsId == 510))
                 {
                     // Wind Shrine/Interior
@@ -220,17 +236,58 @@ public class CommonSPSSystem
     private Dictionary<KeyValuePair<String, Int32>, Byte[]> _spsBinDict = new Dictionary<KeyValuePair<String, Int32>, Byte[]>();
     private Dictionary<String, Texture2D> _spsTextureDict = new Dictionary<String, Texture2D>();
 
-    private static String[] _statusSPSNames =
-    [
-        "st_doku",
-        "st_mdoku",
-        "st_nemu",
-        "st_heat",
-        "st_friz",
-        "st_rif",
-        "st_moum",
-        "st_basak"
-    ];
+    public static Dictionary<Int32, SPSPrototype> SPSPrototypes;
+    public static Dictionary<Int32, SHPPrototype> SHPPrototypes;
+
+    static CommonSPSSystem()
+    {
+        SPSPrototypes = LoadSPSPrototypes();
+        SHPPrototypes = LoadSHPPrototypes();
+    }
+
+    private static Dictionary<Int32, SPSPrototype> LoadSPSPrototypes()
+    {
+        try
+        {
+            String inputPath = DataResources.SpecialEffects.PureDirectory + DataResources.SpecialEffects.SPSPrototypeFile;
+            Dictionary<Int32, SPSPrototype> result = new Dictionary<Int32, SPSPrototype>();
+            foreach (SPSPrototype[] prototypeList in AssetManager.EnumerateCsvFromLowToHigh<SPSPrototype>(inputPath))
+                foreach (SPSPrototype prototype in prototypeList)
+                    result[prototype.Id] = prototype;
+            for (Int32 i = 0; i < 8; i++)
+                if (!result.ContainsKey(i))
+                    throw new NotSupportedException($"You must define at least the 8 SPS, with IDs between 0 and 7.");
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, $"[{nameof(CommonSPSSystem)}] Load SPS prototypes failed.");
+            UIManager.Input.ConfirmQuit();
+            return null;
+        }
+    }
+
+    private static Dictionary<Int32, SHPPrototype> LoadSHPPrototypes()
+    {
+        try
+        {
+            String inputPath = DataResources.SpecialEffects.PureDirectory + DataResources.SpecialEffects.SHPPrototypeFile;
+            Dictionary<Int32, SHPPrototype> result = new Dictionary<Int32, SHPPrototype>();
+            foreach (SHPPrototype[] prototypeList in AssetManager.EnumerateCsvFromLowToHigh<SHPPrototype>(inputPath))
+                foreach (SHPPrototype prototype in prototypeList)
+                    result[prototype.Id] = prototype;
+            for (Int32 i = 0; i < 4; i++)
+                if (!result.ContainsKey(i))
+                    throw new NotSupportedException($"You must define at least the 4 SHP, with IDs between 0 and 3.");
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Log.Error(ex, $"[{nameof(CommonSPSSystem)}] Load SHP prototypes failed.");
+            UIManager.Input.ConfirmQuit();
+            return null;
+        }
+    }
 
     public static Int32 GetSpsFrameCount(Byte[] spsBin)
     {
@@ -246,10 +303,10 @@ public class CommonSPSSystem
 
     public static String GetBinaryPath(KeyValuePair<String, Int32> spsID)
     {
+        if (String.Equals(spsID.Key, "FromPrototype"))
+            return CommonSPSSystem.SPSPrototypes[spsID.Value].BinaryPath;
         if (String.Equals(spsID.Key, "WorldMap"))
             return $"EmbeddedAsset/WorldSPS/fx{spsID.Value:D2}.sps";
-        if (spsID.Key.StartsWith("PNG:"))
-            return $"BattleMap/BattleSPS/{CommonSPSSystem._statusSPSNames[spsID.Value]}.sps";
         return $"FieldMaps/{spsID.Key}/{spsID.Value}.sps";
     }
 
@@ -328,27 +385,29 @@ public class CommonSPSSystem
             Directory.CreateDirectory($"{exportFolder}/WorldSPS");
             File.WriteAllBytes($"{exportFolder}/WorldSPS/fx{spsNo:D2}.png", spstexture.EncodeToPNG());
         }
-        // Battle SPS and SHP
-        foreach (var effect in BattleSPSSystem.StatusVisualEffects)
+        // Prototype SPS and SHP (battle statuses)
+        foreach (SHPPrototype prototype in CommonSPSSystem.SHPPrototypes.Values)
         {
-            if (effect.Value.shpIndex >= 0)
+            Directory.CreateDirectory($"{exportFolder}/Status/{prototype.Comment}");
+            for (Int32 i = 0; i < prototype.TextureCount; i++)
             {
-                Texture2D[] shpTextures = SHPEffect.Database[effect.Value.shpIndex].textures;
-                Directory.CreateDirectory($"{exportFolder}/Status/{effect.Key}");
-                for (Int32 i = 0; i < shpTextures.Length; i++)
-                    File.WriteAllBytes($"{exportFolder}/Status/{effect.Key}/{effect.Key}_{i + 1}", TextureHelper.CopyAsReadable(shpTextures[i]).EncodeToPNG());
+                Texture2D shpTexture = AssetManager.Load<Texture2D>($"{prototype.TextureBasePath}_{i + 1}");
+                if (shpTexture == null)
+                    continue;
+                File.WriteAllBytes($"{exportFolder}/Status/{prototype.Comment}/{Path.GetFileName(prototype.TextureBasePath)}_{i + 1}", TextureHelper.CopyAsReadable(shpTexture).EncodeToPNG());
             }
-            if (effect.Value.spsIndex < 0)
-                continue;
+        }
+        foreach (SPSPrototype prototype in CommonSPSSystem.SPSPrototypes.Values)
+        {
             sharedSPS.Unload();
-            KeyValuePair<String, Int32> spsID = new KeyValuePair<String, Int32>($"PNG:EmbeddedAsset/BattleMap/Status/{effect.Key}", effect.Value.spsIndex);
+            KeyValuePair<String, Int32> spsID = new KeyValuePair<String, Int32>($"FromPrototype", prototype.Id);
             sharedSPS.spsBin = AssetManager.LoadBytes(CommonSPSSystem.GetBinaryPath(spsID));
             if (sharedSPS.spsBin == null)
                 continue;
-            sharedSPS.spsId = effect.Value.spsIndex;
+            sharedSPS.spsId = prototype.Id;
             sharedSPS.curFrame = 0;
             sharedSPS.frameCount = CommonSPSSystem.GetSpsFrameCount(sharedSPS.spsBin);
-            Texture2D spstexture = AssetManager.Load<Texture2D>(spsID.Key.Substring(4));
+            Texture2D spstexture = AssetManager.Load<Texture2D>(prototype.TexturePath);
             if (spstexture == null)
                 continue;
             if (spstexture.width == 256 && spstexture.height == 256)
@@ -357,7 +416,9 @@ public class CommonSPSSystem
                 spstexture = TextureHelper.GetFragment(TextureHelper.CopyAsReadable(spstexture), (Int32)area.x, (Int32)area.y, (Int32)area.width, (Int32)area.height);
             }
             Directory.CreateDirectory($"{exportFolder}/Status");
-            File.WriteAllBytes($"{exportFolder}/Status/{effect.Key}", spstexture.EncodeToPNG());
+            File.WriteAllBytes($"{exportFolder}/Status/{Path.GetFileName(prototype.TexturePath)}", spstexture.EncodeToPNG());
+            //sharedSPS.pngTexture = spstexture;
+            //sharedSPS.ExportAsSFXModel($"{exportFolder}/Status/{Path.GetFileName(prototype.BinaryPath)}.sfxmodel", Path.GetFileName(prototype.TexturePath));
         }
         GameObject.Destroy(sharedSPSgo);
     }

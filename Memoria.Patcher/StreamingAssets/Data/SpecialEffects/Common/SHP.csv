@@ -1,0 +1,10 @@
+# This file contains a set of SHP prototypes.
+# You must set at least 4 different SHP, used by statuses.
+# -----------------------------------------------
+# Comment;Id;Texture;TextureCount;ShaderIndex;CycleDuration;Offset;Scale
+# ;Int32;String;Int32;UInt8;Int32;Vector2;Vector2
+# -----------------------------------------------
+Slow;0;EmbeddedAsset/BattleMap/Status/Slow/Slow;6;0;9
+Haste;1;EmbeddedAsset/BattleMap/Status/Haste/Haste;6;0;9
+Silence;2;EmbeddedAsset/BattleMap/Status/Silence/Silence;3;0;9
+Trouble;3;EmbeddedAsset/BattleMap/Status/Trouble/Trouble;4;0;9

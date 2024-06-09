@@ -193,7 +193,8 @@ public static class UnifiedBattleSequencer
 					return;
 				}
 			}
-			Single tmpSingle;
+            Transform tmpBone;
+            Single tmpSingle;
 			Boolean tmpBool;
 			UInt16 tmpChar;
 			UInt16 tmpTarg;
@@ -298,9 +299,9 @@ public static class UnifiedBattleSequencer
 						BTL_DATA caster = cmd.regist;
 						UInt16 mcasterId;
 						sfxArg = new Int16[4];
-						code.TryGetArgInt32("FirstBone", out tmpInt2);
+						code.TryGetArgBone("FirstBone", caster, out _, out tmpInt2);
 						sfxArg[0] = (Int16)tmpInt2;
-						code.TryGetArgInt32("SecondBone", out tmpInt2);
+                        code.TryGetArgBone("SecondBone", caster, out _, out tmpInt2);
 						sfxArg[1] = (Int16)tmpInt2;
 						code.TryGetArgInt32("Args", out tmpInt2);
 						sfxArg[2] = (Int16)tmpInt2;
@@ -371,6 +372,47 @@ public static class UnifiedBattleSequencer
 							}
 						}
 					break;
+                case "CreateVisualEffect":
+                    code.TryGetArgBoolean("UseSHP", out tmpBool);
+                    if (!code.TryGetArgInt32("SPS", out tmpInt))
+                    {
+                        if (!code.TryGetArgInt32("SHP", out tmpInt))
+                            break;
+                        tmpBool = true;
+                    }
+                    code.TryGetArgVector("Offset", out tmpVec);
+                    if (!code.TryGetArgInt32("Time", out tmpInt2))
+                        tmpInt2 = -1;
+                    if (!code.TryGetArgSingle("Size", out tmpSingle))
+                        tmpSingle = 1f;
+                    if (!code.TryGetArgSingle("Speed", out Single spsSpeed))
+                        spsSpeed = 1f;
+                    code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar);
+                    foreach (BTL_DATA btl in btl_util.findAllBtlData(tmpChar))
+                    {
+                        if (!code.TryGetArgBone("Bone", btl, out tmpBone, out _))
+                            tmpBone = btl.gameObject.transform;
+                        if (tmpBool)
+                        {
+                            SHPEffect shp = HonoluluBattleMain.battleSPS.AddSequenceSHP(tmpInt, tmpInt2, spsSpeed);
+                            if (shp == null)
+                                continue;
+                            shp.attach = tmpBone;
+                            shp.posOffset = tmpVec;
+                            shp.scale *= tmpSingle;
+                        }
+                        else
+                        {
+                            SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(tmpInt, tmpInt2, spsSpeed);
+                            if (sps == null)
+                                continue;
+                            sps.charTran = btl.gameObject.transform;
+                            sps.boneTran = tmpBone;
+                            sps.posOffset = tmpVec;
+                            sps.scale = (Int32)(sps.scale * tmpSingle);
+                        }
+                    }
+                    break;
 				case "Turn":
 					Single tmpBaseAngle;
 					Boolean hasSingleAngle = code.TryGetArgSingle("Angle", out tmpSingle);

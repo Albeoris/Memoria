@@ -567,6 +567,7 @@ namespace Memoria
             Data.mesh_current = monsterParam.Mesh[0];
             Data.mesh_banish = monsterParam.Mesh[1];
             Data.tar_bone = monsterParam.Bone[3];
+            Data.weapon_bone = (Byte)monsterParam.WeaponAttachment;
             Data.shadow_bone[0] = monsterParam.ShadowBone;
             Data.shadow_bone[1] = monsterParam.ShadowBone2;
             btl_util.SetShadow(Data, monsterParam.ShadowX, monsterParam.ShadowZ);
@@ -848,6 +849,7 @@ namespace Memoria
             Data.mesh_current = 0;
             Data.mesh_banish = UInt16.MaxValue;
             Data.tar_bone = 0;
+            Data.weapon_bone = p.wep_bone;
             CharacterBattleParameter btlParam = btl_mot.BattleParameterList[p.info.serial_no];
             Data.shadow_bone[0] = btlParam.ShadowData[0];
             Data.shadow_bone[1] = btlParam.ShadowData[1];

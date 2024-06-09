@@ -31,7 +31,8 @@ namespace Memoria
 		// A smooth effect runs during frames at which the main loop doesn't run, for smoothing visual effects without updating the states of objects
 		public static void AddSmoothEffect(UpdaterDelegate eff)
 		{
-			FPSManager._activeSmooth.Add(eff);
+			if (!FPSManager._activeSmooth.Contains(eff))
+				FPSManager._activeSmooth.Add(eff);
 		}
 
 		public static void DelayMainLoop(Single timeSkip)

@@ -19,6 +19,7 @@ public class SPSEffect : MonoBehaviour
         this.lastFrame = -1;
         this.curFrame = 0;
         this.frameCount = 0;
+        this.duration = -1;
         this.frameRate = SPSConst.FRAMERATE_ONE;
         this.prm0 = 0;
         this.pos = Vector3.zero;
@@ -28,6 +29,8 @@ public class SPSEffect : MonoBehaviour
         this.zOffset = 0;
         this.posOffset = Vector3.zero;
         this.depthOffset = 0;
+        this.useBattleFactors = false;
+        this.battleScaleFactor = 4f;
         this.battleDistanceFactor = 5f;
         this.spsIndex = -1;
         this.spsTransform = null;
@@ -35,7 +38,8 @@ public class SPSEffect : MonoBehaviour
         this.meshFilter = null;
         this.spsBin = null;
         this.works = new SPSEffect.FieldSPSWork();
-        this.works.shtsc = 0;
+        this.works.wFactor = 1f;
+        this.works.hFactor = 1f;
         this.spsPrims = new List<SPSEffect.FieldSPSPrim>();
         this.spsActor = null;
         this._vertices = new List<Vector3>();
@@ -180,13 +184,15 @@ public class SPSEffect : MonoBehaviour
         this.spsPrims.Clear();
         reader.BaseStream.Seek(primOffset, SeekOrigin.Begin);
         Single distanceFactor = 1f;
-        if (this.gMode == 2 && this.mapName.StartsWith("PNG:"))
+        if (this.gMode == 2 && this.useBattleFactors)
         {
             Camera battleCamera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
             Vector3 cameraPosition = battleCamera.worldToCameraMatrix.inverse.GetColumn(3);
             Single distanceToCamera = Vector3.Distance(cameraPosition, base.transform.localPosition);
             distanceFactor = Math.Max(0.33f, 1f / Math.Max(1f, distanceToCamera * this.battleDistanceFactor * 0.000259551482f));
         }
+        Int32 halfWidth = (Int32)(this.works.w * this.works.wFactor);
+        Int32 halfHeight = (Int32)(this.works.h * this.works.hFactor);
         for (Int32 i = 0; i < this.works.primCount; i++)
         {
             prim.code = this.works.code;
@@ -194,10 +200,10 @@ public class SPSEffect : MonoBehaviour
             prim.clut = this.works.clut;
             Int32 posX = (Int32)((reader.ReadSByte() << 2) * distanceFactor);
             Int32 posY = (Int32)((reader.ReadSByte() << 2) * distanceFactor);
-            Int32 xmin = posX - (this.works.w << this.works.shtsc);
-            Int32 xmax = posX + (this.works.w << this.works.shtsc);
-            Int32 ymin = posY - (this.works.h << this.works.shtsc);
-            Int32 ymax = posY + (this.works.h << this.works.shtsc);
+            Int32 xmin = posX - halfWidth;
+            Int32 xmax = posX + halfWidth;
+            Int32 ymin = posY - halfHeight;
+            Int32 ymax = posY + halfHeight;
             prim.v0 = new Vector3(xmin, ymin, 0f);
             prim.v1 = new Vector3(xmax, ymin, 0f);
             prim.v2 = new Vector3(xmin, ymax, 0f);
@@ -271,15 +277,18 @@ public class SPSEffect : MonoBehaviour
         {
             Camera battleCamera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
             Matrix4x4 cameraMatrix = battleCamera.worldToCameraMatrix.inverse;
-            Single distanceToCamera = Vector3.Distance(cameraMatrix.GetColumn(3), this.pos);
-            Single distanceFactor = Math.Min(3f, distanceToCamera * this.battleScaleFactor * 0.000259551482f);
-            scalef *= distanceFactor;
-            base.transform.localScale = new Vector3(-scalef, -scalef, scalef);
-            base.transform.localRotation = Quaternion.Euler(this.rot.x, this.rot.y, this.rot.z);
-            base.transform.localPosition = this.pos;
             Vector3 directionForward = cameraMatrix.MultiplyVector(Vector3.forward);
             Vector3 directionRight = cameraMatrix.MultiplyVector(Vector3.right);
             Vector3 directionDown = Vector3.Cross(directionForward, directionRight);
+            if (this.useBattleFactors)
+            {
+                Single distanceToCamera = Vector3.Distance(cameraMatrix.GetColumn(3), this.pos);
+                Single distanceFactor = Math.Min(3f, distanceToCamera * this.battleScaleFactor * 0.000259551482f);
+                scalef *= distanceFactor;
+            }
+            base.transform.localScale = new Vector3(-scalef, -scalef, scalef);
+            base.transform.localRotation = Quaternion.Euler(this.rot.x, this.rot.y, this.rot.z);
+            base.transform.localPosition = this.pos;
             base.transform.LookAt(base.transform.position + directionForward, -directionDown);
         }
         else if (useScreenPositionHack)
@@ -337,7 +346,7 @@ public class SPSEffect : MonoBehaviour
             this._colors.Add(prim.color);
             if (usePNGTexture)
             {
-                if (this.mapName.StartsWith("PNG:") && this.pngTexture.width == 256 && this.pngTexture.height == 256)
+                if (this.useBattleFactors && this.pngTexture.width == 256 && this.pngTexture.height == 256)
                 {
                     // In this situation, assume the status SPS texture is a VRam screenshot
                     this._uv.Add(prim.uv0 * 0.00390625f);
@@ -394,6 +403,50 @@ public class SPSEffect : MonoBehaviour
             this.spsActor.spsPos = this.pos;
     }
 
+    /// <summary>Not really operational in the current state</summary>
+    public void ExportAsSFXModel(String exportPath, String texturePath)
+    {
+        String shaderName = new String[] { "SFX_OPA_GT", "SFX_ADD_GT", "SFX_SUB_GT" }[Math.Min((Byte)2, this.abr)];
+        String result = $"{{\r\n\t\"Sprite\":\r\n\t[{{\r\n\t\t\"Material\":\r\n\t\t{{\r\n\t\t\t\"TextureKind\":\"1\",\r\n\t\t\t\"TexturePath\":\"{texturePath}\",\r\n\t\t\t\"TextureParameter\":\"(0, 0, {this.pngTexture?.width ?? 256}, {this.pngTexture?.height ?? 256})\",\r\n\t\t\t\"Shader\":\"{shaderName}\",\r\n\t\t\t\"GlobalColor\":\"(1, 1, 1, 1)\",\r\n\t\t\t\"Threshold\":\"0.0295\"\r\n\t\t}},\r\n\t\t\"ScreenSize\":\"false\",\r\n";
+        List<String> textureAnimStr = new List<String>();
+        List<String> colorAnimStr = new List<String>();
+        List<String> infoStr = new List<String>();
+        Int32 frameCnt = this.frameCount >> 4;
+        Vector3 firstPos = default;
+        Vector3 lastPos = default;
+        Boolean firstPosSet = false;
+        if (this.works.w != this.works.h)
+            result += $"\t\t\"Vertices\":[\"({-this.works.w}, {-this.works.h})\", \"({this.works.w}, {-this.works.h})\", \"({-this.works.w}, {this.works.h})\", \"({this.works.w}, {this.works.h})\"],\r\n";
+        else
+            result += $"\t\t\"Scale\":\"{this.works.w}\",\r\n";
+        for (Int32 frame = 0; frame < frameCnt; frame++)
+        {
+            this.LoadSPS(frame);
+            if (this.spsPrims.Count > 0)
+            {
+                Rect tcbArea = this.GetRelevantPartOfTCB();
+                Vector4 colorVector = new Vector4(this.spsPrims[0].color.r, this.spsPrims[0].color.g, this.spsPrims[0].color.b, this.spsPrims[0].color.a);
+                textureAnimStr.Add($"{{\r\n\t\t\t\"Frame\":\"{frame}\",\r\n\t\t\t\"UV\":[\"{this.spsPrims[0].uv0 - tcbArea.min:F0}\", \"{this.spsPrims[0].uv1 - tcbArea.min:F0}\", \"{this.spsPrims[0].uv2 - tcbArea.min:F0}\", \"{this.spsPrims[0].uv3 - tcbArea.min:F0}\"]\r\n\t\t}}");
+                colorAnimStr.Add($"{{\r\n\t\t\t\"Frame\":\"{frame}\",\r\n\t\t\t\"VertexColors\":[\"{colorVector}\", \"{colorVector}\", \"{colorVector}\", \"{colorVector}\"]\r\n\t\t}}");
+                infoStr.Add($"\t\t\t{{ \"Frame\":\"{frame}\", \"PrimCount\":\"{this.spsPrims.Count}\" }}");
+                lastPos = (this.spsPrims[0].v0 + this.spsPrims[0].v3) / 2f;
+                if (!firstPosSet)
+                {
+                    firstPos = lastPos;
+                    firstPosSet = true;
+                }
+            }
+        }
+        result += "\t\t\"TextureAnimation\":\r\n\t\t[" + String.Join(",\r\n\t\t", textureAnimStr.ToArray()) + "],\r\n";
+        result += "\t\t\"ColorAnimation\":\r\n\t\t[" + String.Join(",\r\n\t\t", colorAnimStr.ToArray()) + "],\r\n";
+        result += $"\t\t\"Movement\":\r\n\t\t{{\r\n\t\t\t\"Duration\":\"{frameCnt}\",\r\n\t\t\t\"OriginX\":\"CasterPositionX + {firstPos.x:F0}\",\r\n\t\t\t\"OriginY\":\"CasterPositionY + {firstPos.y:F0}\",\r\n\t\t\t\"OriginZ\":\"CasterPositionZ + {firstPos.z:F0}\",\r\n\t\t\t\"DestinationX\":\"CasterPositionX + {lastPos.x:F0}\",\r\n\t\t\t\"DestinationY\":\"CasterPositionY + {lastPos.y:F0}\",\r\n\t\t\t\"DestinationZ\":\"CasterPositionZ + {lastPos.z:F0}\"\r\n\t\t}},\r\n";
+        result += $"\t\t\"Duration\":\"{frameCnt}\",\r\n";
+        result += $"\t\t\"Emission\":\r\n\t\t[{{\r\n\t\t\t\"Frame\":\"0\",\r\n\t\t\t\"Count\":\"1\",\r\n\t\t\t\"ParameterMin1\":\"0.0\",\r\n\t\t\t\"ParameterMax1\":\"1.0\"\r\n\t\t}}],\r\n";
+        result += "\t\t\"Infos\":\r\n\t\t[\r\n" + String.Join(",\r\n", infoStr.ToArray()) + "\r\n\t\t]\r\n";
+        result += $"\t}}]\r\n}}\r\n";
+        File.WriteAllText(exportPath, result);
+    }
+
     public Int32 gMode; // 1: Field - 2: Battle - 3: World
     public FieldMap fieldMap;
 
@@ -436,6 +489,7 @@ public class SPSEffect : MonoBehaviour
     public Int32 curFrame;
     public Int32 frameCount;
     public Int32 frameRate;
+    public Int32 duration;
 
     public Vector3 pos;
     public Int32 scale;
@@ -444,6 +498,7 @@ public class SPSEffect : MonoBehaviour
     public Vector3 rotArg;
     public Vector3 posOffset;
     public Int32 depthOffset;
+    public Boolean useBattleFactors;
     public Single battleDistanceFactor; // This doesn't change the scale of sprites but rather their closeness to each other
     public Single battleScaleFactor;
     public Int32 prm0; // Dummied? for twister circular movement
@@ -471,7 +526,8 @@ public class SPSEffect : MonoBehaviour
         public Int32 fade;
         public Int32 primCount;
         public Byte code;
-        public Int32 shtsc;
+        public Single wFactor;
+        public Single hFactor;
     }
 
     public struct FieldSPSPrim

@@ -441,6 +441,12 @@
     <None Include="StreamingAssets\Data\SpecialEffects\Common\SequenceDefend.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\Common\SHP.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Data\SpecialEffects\Common\SPS.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StreamingAssets\Data\SpecialEffects\ef000\PlayerSequence.seq">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

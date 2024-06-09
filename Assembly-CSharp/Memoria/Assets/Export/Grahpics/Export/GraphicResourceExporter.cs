@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Memoria.Prime;
 using UnityEngine;
-using Assets.Sources.Scripts.UI.Common;
 
 namespace Memoria.Assets
 {
