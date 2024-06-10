@@ -288,7 +288,9 @@ namespace FF9
 				return BattleAbilityId.Void;
 			if (IsCommandMonsterTransformAttack(cmd))
 				return BattleAbilityId.Attack;
-			switch (cmd.cmd_no)
+            if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
+                return BattleAbilityId.Void;
+            switch (cmd.cmd_no)
 			{
 				case BattleCommandId.SysEscape:
 					return BattleAbilityId.Flee2;

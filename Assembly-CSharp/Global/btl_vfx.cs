@@ -43,7 +43,7 @@ public static class btl_vfx
     {
         BTL_DATA regist = cmd.regist;
         BattleCommandId cmd_no = cmd.cmd_no;
-        if (cmd_no == BattleCommandId.AutoPotion || cmd_no == BattleCommandId.Item)
+        if (cmd_no == BattleCommandId.AutoPotion || cmd_no == BattleCommandId.Item || BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
             return (SpecialEffect)ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).info.VfxIndex;
         else if (cmd_no == BattleCommandId.SysTrans)
             return btl_stat.CheckStatus(regist, BattleStatus.Trance) ? SpecialEffect.Special_Trance_Activate : SpecialEffect.Special_Trance_End;

@@ -191,6 +191,13 @@ public partial class BattleHUD : UIScene
                         SetCommandVisibility(false, false);
                         SetItemPanelVisibility(true, false);
                     }
+                    else if (ff9Command.Type == CharacterCommandType.Item)
+                    {
+                        _subMenuType = SubMenuType.Item;
+                        DisplayItem(false);
+                        SetCommandVisibility(false, false);
+                        SetItemPanelVisibility(true, false);
+                    }
                     break;
                 case BattleCommandMenu.Item:
                     DisplayItem(false);

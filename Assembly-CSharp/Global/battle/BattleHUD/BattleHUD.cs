@@ -2426,8 +2426,7 @@ public partial class BattleHUD : UIScene
         }
 
         if (IsMixCast)
-            try { SendMixCommand([_firstCommand, ProcessCommand(battleIndex, _cursorType)]); } catch (Exception err) { Log.Error(err); }
-        
+            SendMixCommand([_firstCommand, ProcessCommand(battleIndex, _cursorType)]);
         else if (IsDoubleCast)
             SendDoubleCastCommand(_firstCommand, ProcessCommand(battleIndex, _cursorType));
         else
