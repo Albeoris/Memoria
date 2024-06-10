@@ -199,16 +199,16 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Mog Add-ons</Name>
-	<Version>3.5</Version>
+	<Version>3.5.1</Version>
 	<InstallationPath>MogAddons</InstallationPath>
-	<ReleaseDate>2024-05-14</ReleaseDate>
+	<ReleaseDate>2024-06-10</ReleaseDate>
 	<Author>faospark</Author>
 	<Description>:: Features ::
-|- Tweaks : AP GAIN , EXP GAIN and Requirements , and Gil rewards
-|- Portrait options : Default with extended cast, Opera Omnia and  Upscaled PS1 Portrait Artwork 
-|- Button Prompts Options:  PS Gloss , PS5 , Pixel Style, PlayStation Vanilla prompts,
-|- UI : Default , Darker UI and Flat 
--|- Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts you can disable them anytime 
+- Tweaks : AP GAIN , EXP GAIN and Requirements , and Gil rewards
+- Portrait options : Default with extended cast, Opera Omnia and  Upscaled PS1 Portrait Artwork 
+- Button Prompts Options:  PS Gloss , PS5 , Pixel Style, PlayStation Vanilla prompts,
+- UI : Default , Darker UI and Flat 
+-- Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts you can disable them anytime 
 
 :: Submod activation ::
 Use the Mod Manager UI to activate each submods by using the drop down menu  
@@ -218,7 +218,9 @@ MogAddons is essentially showcase of what can the Memoria Engine for your gamepl
 - Compatible-ish with Alternate Fantasy
 - Not compatible for older versions of the game and repacks.
 Requires Memoria v2023.06.11 or later</Description>
-	<PatchNotes>- added Alternative colored world Maps
+	<PatchNotes>- Fixed AP Tweak Bug 
+	- added deffered Tweak 2x Item drop 
+	- added Alternative colored world Maps
 	- added Millennial Decay as default for Eiko's summon skill 
 	- added Freya Jump do 3x damage 
 	- added Resistance to zombie and virus status
@@ -315,7 +317,7 @@ Requires Memoria v2023.06.11 or later</Description>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 2x AP Gain</Name>
-		<InstallationPath>Features/Tweaks/AP4x</InstallationPath>
+		<InstallationPath>Features/Tweaks/AP2x</InstallationPath>
 		<Description>Gains 2x AP after battle (Ignores AbilityUp)</Description>
 		<Priority>1</Priority>
 	</SubMod>
@@ -380,6 +382,13 @@ Requires Memoria v2023.06.11 or later</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
+		<Name>Tweak: Get 2x of any item drop after battle </Name>
+		<InstallationPath>Features/Tweaks/2xitem</InstallationPath>
+		<Description>Any item recieved after battle would be mutltiplied by 2 , hence if a monster drops 2 poition you get 4  </Description>
+		<Priority>1</Priority>
+	</SubMod>
+
+	<SubMod>
 		<Name>Memoria : Alternate Title Screen</Name>
 		<InstallationPath>Features/TitleLogo</InstallationPath>
 		<Description>Shows an Alternative title screen and Memoria Indicator</Description>
@@ -418,7 +427,7 @@ Requires Memoria v2023.06.11 or later</Description>
 	<SubMod>
 		<Name>Enhance: Add Resistance to Zombie and Virus</Name>
 		<InstallationPath>Features/Enhance/All</InstallationPath>
-		<Description>Auto-life resists Zombie , Anti-body Resists Virus</Description>
+		<Description>Auto-life resists Zombie, Anti-body Resists Virus</Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
