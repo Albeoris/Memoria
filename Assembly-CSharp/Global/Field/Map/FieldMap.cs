@@ -2508,6 +2508,9 @@ public class FieldMap : HonoBehavior
         [2221,0,17,2200],   // Candle light
         [2222,0,2,1000],    // Desert palace teleporter light
         [2502,0,14,1400],   // Ypsen, entrance light
+        [2504,0,44,0],      // Ypsen left light
+        [2504,0,45,0],      // Ypsen left light
+        [2505,0,32,1880],   // Ypsen left light
         [2600,0,1,5000],    // Branbal, background
         [2600,0,2,5000],    // Branbal, background
         [2600,0,3,5000],    // Branbal, background
