@@ -1800,6 +1800,15 @@ public class FieldMap : HonoBehavior
                                 bgOverlay.curX = 0f;
                             }
                             break;
+                        case 2851:
+                            if (ActualPsxScreenWidth >= 384)
+                            {
+                                if (i == 8)
+                                    bgOverlay.curX = 128f;
+                                if (i == 9)
+                                    bgOverlay.curX = 80f;
+                            }
+                            break;
                         case 2916:
                             bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4f;
                             if (ActualPsxScreenWidth > 400)
