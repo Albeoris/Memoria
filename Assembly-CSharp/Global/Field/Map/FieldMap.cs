@@ -1801,6 +1801,7 @@ public class FieldMap : HonoBehavior
                             }
                             break;
                         case 2851:
+                            bgOverlay.curY -= 12f;
                             if (ActualPsxScreenWidth >= 384)
                             {
                                 if (i == 8)
