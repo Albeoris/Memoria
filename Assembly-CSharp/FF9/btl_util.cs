@@ -315,8 +315,8 @@ namespace FF9
                 return RegularItem.NoItem;
             if (IsCommandMonsterTransform(cmd) || IsCommandMonsterTransformAttack(cmd))
                 return RegularItem.NoItem;
-            if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
-                return ff9mixitem.MixItemsData[cmd.sub_no].Result;
+            if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
+                return MixChoosen.Result;
             switch (cmd.cmd_no)
             {
                 case BattleCommandId.Throw:

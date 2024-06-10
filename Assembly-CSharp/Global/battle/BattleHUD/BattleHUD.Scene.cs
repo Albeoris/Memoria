@@ -333,7 +333,10 @@ public partial class BattleHUD : UIScene
                             SetItemPanelVisibility(true, true);
                             break;
                         }
-                        SetCommandVisibility(true, true);
+                        if (IsMixCast)
+                            SetItemPanelVisibility(true, true);
+                        else
+                            SetCommandVisibility(true, true);
                         break;
                     case BattleCommandMenu.Item:
                         SetItemPanelVisibility(true, true);
