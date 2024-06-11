@@ -178,33 +178,26 @@ public partial class WMActor : MonoBehaviour
 		}
 	}
 
-    public void UpdateAnimationViaScript()
+	public void UpdateAnimationViaScript()
 	{
-		this._smoothUpdatePlayingAnim = false;
 		GameObject go = this.originalActor.go;
-        if (go == null)
-            return;
+		if (go == null)
+			return;
+		Animation anim = go.GetComponent<Animation>();
 		String animName = FF9DBAll.AnimationDB.GetValue(this.originalActor.anim);
-		if (!go.GetComponent<Animation>().IsPlaying(animName))
+		if (!anim.IsPlaying(animName))
 		{
-			if (go.GetComponent<Animation>().GetClip(animName) == null)
+			if (anim.GetClip(animName) == null)
 				return;
-			go.GetComponent<Animation>().Play(animName);
+			anim.Play(animName);
 		}
-		else
-		{
-			this._smoothUpdatePlayingAnim = true;
-		}
-		AnimationState clipState = go.GetComponent<Animation>()[animName];
-		Single time = (Single)this.originalActor.animFrame / (Single)this.originalActor.frameN * clipState.length;
-		clipState.speed = 0f;
-		this._smoothUpdateAnimTimePrevious = clipState.time;
-		this._smoothUpdateAnimTimeActual = time;
-		clipState.time = time;
-        go.GetComponent<Animation>().Sample();
-    }
+		AnimationState animState = anim[animName];
+		animState.speed = 0f;
+		animState.time = (Single)this.originalActor.animFrame / this.originalActor.frameN * animState.length;
+		anim.Sample();
+	}
 
-    public void LateUpdate()
+	public void LateUpdate()
 	{
 	}
 

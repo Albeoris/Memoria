@@ -1,9 +1,8 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class WMShadow : MonoBehaviour
+public partial class WMShadow : MonoBehaviour
 {
-	public PosObj PosObj;
+    public PosObj PosObj;
 
-	public Material Material;
+    public Material Material;
 }

@@ -250,6 +250,7 @@ public class JsonParser : ISharedDataParser
 
 	public void ParseToFF9StateSystem(JSONNode rootNode)
 	{
+        Boolean hasTime = false;
 		JSONNode rootMainClass = rootNode["Data"];
 		if (rootMainClass == null)
 			return;
@@ -277,13 +278,12 @@ public class JsonParser : ISharedDataParser
 				player.bonus.cap = (UInt16)rootMainClass["94000_Common"]["00001_player_bonus"][i].AsUInt;
 			}
 		}
-		if (rootMainClass["50000_Setting"] != null && rootMainClass["95000_Setting"] != null && rootMainClass["50000_Setting"]["time"] != null && rootMainClass["95000_Setting"]["00001_time"] != null)
-		{
-			if (rootMainClass["50000_Setting"]["time"].AsFloat >= 0.0)
-				FF9StateSystem.Settings.time = rootMainClass["50000_Setting"]["time"].AsFloat;
-			else
-				FF9StateSystem.Settings.time = rootMainClass["95000_Setting"]["00001_time"].AsDouble;
-		}
+        if (rootMainClass["95000_Setting"] != null && rootMainClass["95000_Setting"]["00001_time"] != null)
+        {
+            //FF9StateSystem.Settings.time = rootMainClass["50000_Setting"]["time"].AsFloat; // This one is dummied (always saved as "-1f")
+            FF9StateSystem.Settings.time = rootMainClass["95000_Setting"]["00001_time"].AsDouble;
+            hasTime = true;
+        }
 		if (rootMainClass["98000_Achievement"]["00001_abnormal_status"] != null)
 			FF9StateSystem.Achievement.abnormal_status = rootMainClass["98000_Achievement"]["00001_abnormal_status"].AsUInt;
 		if (rootMainClass["98000_Achievement"]["00002_summon_shiva"] != null)
@@ -320,11 +320,18 @@ public class JsonParser : ISharedDataParser
 			FF9StateSystem.Achievement.summon_arc = rootMainClass["98000_Achievement"]["000017_summon_arc"].AsBool;
 
 		JSONNode memoriaClass = rootNode["MemoriaExtraData"];
-		Boolean isMemoriaValid = true;
-		if (memoriaClass["95000_Setting"] != null)
-		{
-			// Maybe check if memoriaClass["95000_Setting"]["00001_time"].AsDOuble == FF9StateSystem.Settings.time
-		}
+        Boolean isMemoriaValid = memoriaClass != null;
+        if (memoriaClass["95000_Setting"] != null)
+        {
+            if (hasTime && memoriaClass["95000_Setting"]["00001_time"] != null && Math.Abs(memoriaClass["95000_Setting"]["00001_time"].AsDouble - FF9StateSystem.Settings.time) > 1.0)
+            {
+                // The Memoria part of the save and the vanilla part were not generated at the same time
+                // It typically happens after retrieving a save from the cloud that overwrotes another save
+                isMemoriaValid = false;
+                if (memoriaClass["MetaDataFileName"] != null)
+                    Log.Message($"[{nameof(JsonParser)}] Ignoring the Memoria save {memoriaClass["MetaDataFileName"]} because its internal save time ({TimeSpan.FromSeconds(memoriaClass["95000_Setting"]["00001_time"].AsDouble)}) differs from the base save time ({TimeSpan.FromSeconds(FF9StateSystem.Settings.time)})");
+            }
+        }
 		if (isMemoriaValid)
 		{
 			if (memoriaClass["20000_Event"] != null)

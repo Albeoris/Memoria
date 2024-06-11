@@ -4,6 +4,7 @@ using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Speedrun;
+using static Memoria.Prime.PsdFile.ResolutionInfo;
 
 public class btl_scrp
 {
@@ -395,8 +396,20 @@ public class btl_scrp
 		case 145:
 			result = (Int32)btl.rot.eulerAngles.z;
 			break;
-		}
-		return result;
+        case 146:
+            if (btl.bi.player == 0)
+            {
+                result = (Int32)btl_util.getEnemyPtr(btl).bonus_exp;
+            }
+            break;
+        case 147:
+            if (btl.bi.player == 0)
+            {
+                result = (Int32)btl_util.getEnemyPtr(btl).bonus_gil;
+            }
+            break;
+        }
+        return result;
 	}
 
 	public static void SetCharacterData(BTL_DATA btl, UInt32 id, Int32 val)
@@ -647,11 +660,11 @@ public class btl_scrp
 		case 130u: // Note: Very crafty. Creates elemental orbs (special SPS) rotating around the BTL_DATA...
 			if (val == 3)
 			{
-				UnityEngine.Vector3 btl_pos = btl.gameObject.transform.GetChildByName("bone000").position;
-				HonoluluBattleMain.battleSPS.AddSpecialSPSObj(0, 12, btl_pos, 4.0f);
-				HonoluluBattleMain.battleSPS.AddSpecialSPSObj(1, 13, btl_pos, 4.0f);
-				HonoluluBattleMain.battleSPS.AddSpecialSPSObj(2, 14, btl_pos, 4.0f);
-			}
+                UnityEngine.Vector3 btl_pos = btl.gameObject.transform.GetChildByName("bone000").position;
+                HonoluluBattleMain.battleSPS.AddSpecialSPSObj(0, 12, btl_pos, 4.0f);
+                HonoluluBattleMain.battleSPS.AddSpecialSPSObj(1, 13, btl_pos, 4.0f);
+                HonoluluBattleMain.battleSPS.AddSpecialSPSObj(2, 14, btl_pos, 4.0f);
+            }
 			else if (val == 2) // ... and remove them 1 by 1
 				HonoluluBattleMain.battleSPS.RemoveSpecialSPSObj(2);
 			else if (val == 1)
@@ -686,7 +699,15 @@ public class btl_scrp
 			btl.rot.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, btl.rot.eulerAngles.y, val);
 			btl.evt.rotBattle.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, btl.rot.eulerAngles.y, val);
 			break;
-		}
+        case 146:
+            if (btl.bi.player == 0)
+                btl_util.getEnemyPtr(btl).bonus_exp = (uint)val;
+            break;
+        case 147:
+            if (btl.bi.player == 0)
+                btl_util.getEnemyPtr(btl).bonus_gil = (uint)val;
+            break;
+        }
 	}
 
 	public static UInt32 GetBattleData(Int32 id)
@@ -747,7 +768,10 @@ public class btl_scrp
 		case 43:
 			result = curCmd != null ? (UInt32)curCmd.info.effect_counter : 0; // The number of times the effect point has been reached for the current attack, for multi-hit pattern changes
 			break;
-		}
+        case 44:
+            result = battle.btl_bonus.ap;
+            break;
+        }
 		return result;
 	}
 
@@ -840,6 +864,9 @@ public class btl_scrp
 			if (curCmd != null)
 				curCmd.info.effect_counter = val;
 			break;
-		}
+        case 44u:
+            battle.btl_bonus.ap = (ushort)val;
+            break;
+        }
 	}
 }

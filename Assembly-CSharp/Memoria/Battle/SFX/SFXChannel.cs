@@ -87,7 +87,7 @@ class SFXChannel
 		foreach (SFXChannel reflect in SFXChannel.CurrentPlayReflect)
 		{
 			if (reflect.frame == 0)
-				SoundLib.PlaySoundEffect(SFX.REFLECT_SOUND_ID, 5f, 0f, 1f); // DEBUG: using 5f as sound volume (same as SFX.SoundPlayChant)
+				SoundLib.PlaySoundEffect(SFX.REFLECT_SOUND_ID, 1f, 0f, 1f);
 			reflect.frame++;
 		}
 	}

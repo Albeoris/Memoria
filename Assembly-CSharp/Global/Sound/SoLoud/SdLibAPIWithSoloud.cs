@@ -33,7 +33,7 @@ namespace Global.Sound.SoLoud
             }
             public Int32 bankID;
             public Single volume = 1f;
-            public Boolean manuallyPaused = false;
+            public Int32 pauseStack = 0;
         }
 
         private Dictionary<Int32, StreamInfo> streams = new Dictionary<Int32, StreamInfo>();
@@ -87,14 +87,16 @@ namespace Global.Sound.SoLoud
         public override Int32 SdSoundSystem_Suspend()
         {
             SoundLib.Log("Suspend");
-            soloud.setPauseAll(1);
+            foreach (var sound in sounds)
+                SdSoundSystem_SoundCtrl_SetPause(sound.Key, 1, 0);
             return 0;
         }
 
         public override Int32 SdSoundSystem_Resume()
         {
             SoundLib.Log("Resume");
-            soloud.setPauseAll(0);
+            foreach (var sound in sounds)
+                SdSoundSystem_SoundCtrl_SetPause(sound.Key, 0, 0);
             return 0;
         }
 
@@ -134,14 +136,16 @@ namespace Global.Sound.SoLoud
 
         public override Int32 SdSoundSystem_CreateSound(Int32 bankID)
         {
-            SoundLib.Log($"CreateSound({bankID})");
+            if (!streams.ContainsKey(bankID)) return 0;
+            SoundLib.Log($"CreateSound({streams[bankID].profile.ResourceID})");
             CleanUpSounds();
 
             StreamInfo stream = streams[bankID];
 
-            Int32 soundID = 0;
+            Int32 soundID;
             switch (stream.profile.SoundProfileType)
             {
+                case SoundProfileType.SoundEffect:
                 case SoundProfileType.Sfx:
                     soundID = (Int32)sfxBus.play(streams[bankID].data, 1, 0, 1);
                     break;
@@ -186,14 +190,50 @@ namespace Global.Sound.SoLoud
 
         public override Int32 SdSoundSystem_SoundCtrl_Start(Int32 soundID, Int32 offsetTimeMSec)
         {
-            SoundLib.Log($"SoundCtrl_Start({soundID}, {offsetTimeMSec})");
             if (!sounds.ContainsKey(soundID)) return 0;
+            SoundLib.Log($"SoundCtrl_Start({streams[sounds[soundID].bankID].profile.ResourceID}({soundID}), {offsetTimeMSec})");
+
+            Int32 bankID = sounds[soundID].bankID;
+            Int32 count = 0;
+            Int32 stopSoundID = 0;
+            Double maxPos = 0d;
+            foreach (var sound in sounds)
+            {
+                if (sound.Value.bankID == bankID && soloud.getPause((uint)sound.Key) == 0)
+                {
+                    Double pos = soloud.getStreamTime((uint)sound.Key);
+                    if (pos < 0.01d)
+                    {
+                        // Prevent same sound to play more than once at very close interval (<10ms)
+                        SoundLib.Log($"Sound already playing ({streams[bankID].profile.ResourceID}). Stopping {sound.Key} pos {(Int32)(pos * 1000)}ms");
+                        soloud.stop((uint)sound.Key);
+                    }
+                    else
+                    {
+                        SoundLib.Log($"Sound already playing ({streams[bankID].profile.ResourceID}). Id {sound.Key} pos {(Int32)(pos * 1000)}ms");
+                        count++;
+                        if (pos > maxPos)
+                        {
+                            stopSoundID = sound.Key;
+                            maxPos = pos;
+                        }
+                    }
+                }
+            }
+
+            if (count >= 2)
+            {
+                // Prevent same sound to play more than twice at the same time by stopping the oldest
+                SoundLib.Log($"Stopping {stopSoundID} pos {(Int32)(maxPos * 1000)}ms");
+                soloud.fadeVolume((uint)stopSoundID, 0, 100 / 1000d);
+                soloud.scheduleStop((uint)stopSoundID, 100 / 1000d);
+            }
 
             if (offsetTimeMSec > 0)
             {
                 soloud.seek((uint)soundID, offsetTimeMSec / 1000d);
             }
-            if (!sounds[soundID].manuallyPaused) // SdLib doesn't resume paused sounds, we replicate the behavior
+            if (sounds[soundID].pauseStack == 0) // SdLib doesn't resume paused sounds, we replicate the behavior
                 soloud.setPause((uint)soundID, 0);
 
             return 1;
@@ -201,8 +241,8 @@ namespace Global.Sound.SoLoud
 
         public override void SdSoundSystem_SoundCtrl_Stop(Int32 soundID, Int32 transTimeMSec)
         {
-            SoundLib.Log($"SoundCtrl_Stop({soundID}, {transTimeMSec})");
             if (!sounds.ContainsKey(soundID)) return;
+            SoundLib.Log($"SoundCtrl_Stop({streams[sounds[soundID].bankID].profile.ResourceID}({soundID}), {transTimeMSec})");
 
             if (transTimeMSec < 100) transTimeMSec = 100; // Add a small fade
 
@@ -217,10 +257,15 @@ namespace Global.Sound.SoLoud
 
         public override void SdSoundSystem_SoundCtrl_SetPause(Int32 soundID, Int32 pauseOn, Int32 transTimeMSec)
         {
-            SoundLib.Log($"SoundCtrl_SetPause({soundID}, {pauseOn}, {transTimeMSec})");
             if (!sounds.ContainsKey(soundID)) return;
+            SoundLib.Log($"SoundCtrl_SetPause({streams[sounds[soundID].bankID].profile.ResourceID}({soundID}), {pauseOn}, {transTimeMSec})");
 
-            sounds[soundID].manuallyPaused = pauseOn > 0;
+            if (pauseOn > 0)
+                sounds[soundID].pauseStack++;
+            else if (sounds[soundID].pauseStack > 0)
+                sounds[soundID].pauseStack--;
+
+            if (pauseOn == 0 && sounds[soundID].pauseStack != 0) return;
 
             uint h = (uint)soundID;
             double t = transTimeMSec / 1000d;
@@ -255,10 +300,10 @@ namespace Global.Sound.SoLoud
 
         public override void SdSoundSystem_SoundCtrl_SetVolume(Int32 soundID, Single volume, Int32 transTimeMSec)
         {
-            SoundLib.Log($"SoundCtrl_SetVolume({soundID}, {volume}, {transTimeMSec})");
             if (!sounds.ContainsKey(soundID)) return;
+            SoundLib.Log($"SoundCtrl_SetVolume({streams[sounds[soundID].bankID].profile.ResourceID}({soundID}), {volume}, {transTimeMSec})");
 
-            if (volume < 0f || volume > 1f) Log.Message($"[SoLoud] Warning! Unexpected volume value. Volume = {volume} SoundID = {soundID}\n{Environment.StackTrace}");
+            if (volume < 0f || volume > 1f) Log.Warning($"[SoLoud] Unexpected volume value. ResourceID = {streams[sounds[soundID].bankID].profile.ResourceID} Volume = {volume}\n{Environment.StackTrace}");
             volume = Mathf.Clamp01(volume);
             sounds[soundID].volume = volume;
 
@@ -281,7 +326,8 @@ namespace Global.Sound.SoLoud
         public override void SdSoundSystem_SoundCtrl_SetPitch(Int32 soundID, Single pitch, Int32 transTimeMSec)
         {
             // Soloud doesn't handle pitch (yet)
-            SoundLib.Log($"SoundCtrl_SetPitch({soundID}, {pitch}, {transTimeMSec})");
+            if (!sounds.ContainsKey(soundID)) return;
+            SoundLib.Log($"SoundCtrl_SetPitch({streams[sounds[soundID].bankID].profile.ResourceID}({soundID}), {pitch}, {transTimeMSec})");
 
             // Play at different speed (changes the pitch)
             if (transTimeMSec > 0)
@@ -296,8 +342,8 @@ namespace Global.Sound.SoLoud
 
         public override void SdSoundSystem_SoundCtrl_SetPanning(Int32 soundID, Single panning, Int32 transTimeMSec)
         {
-            SoundLib.Log($"SoundCtrl_SetPanning({soundID}, {panning}, {transTimeMSec})");
             if (!sounds.ContainsKey(soundID)) return;
+            SoundLib.Log($"SoundCtrl_SetPanning({streams[sounds[soundID].bankID].profile.ResourceID}({soundID}), {panning}, {transTimeMSec})");
 
             if (transTimeMSec > 0)
             {
@@ -311,8 +357,8 @@ namespace Global.Sound.SoLoud
 
         public override void SdSoundSystem_SoundCtrl_SetNextLoopRegion(Int32 soundID)
         {
-            SoundLib.Log($"SoundCtrl_SetNextLoopRegion({soundID})");
             if (!sounds.ContainsKey(soundID)) return;
+            SoundLib.Log($"SoundCtrl_SetNextLoopRegion({streams[sounds[soundID].bankID].profile.ResourceID}({soundID}))");
 
             StreamInfo stream = streams[sounds[soundID].bankID];
             if (stream.akbHeader.LoopEndAlternate > 0)

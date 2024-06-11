@@ -322,7 +322,15 @@ public class FieldMap : HonoBehavior
         this.CenterCameraOnPlayer();
         this.SceneServiceScroll(this.scene);
         this.UpdateOverlayAll();
+
+        if (PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) != currentCounterNumber)
+        {
+            currentCounterNumber = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+            Log.Message("Map: " + FF9StateSystem.Common.FF9.fldMapNo + " | Scenario counter: " + PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR));
+        }
     }
+
+    public int currentCounterNumber = 0;
 
     public override void HonoOnGUI()
     {
@@ -426,7 +434,7 @@ public class FieldMap : HonoBehavior
         this.flags |= FieldMapFlags.Unknown128;
         this.walkMesh.ProcessBGI();
         this.walkMesh.UpdateActiveCameraWalkmesh();
-        SmoothCamDelay = 6;
+        SmoothCamDelay = 4;
         SmoothCamActive = (!SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo));
         String camIdxIfCam = this.scene.cameraList.Count > 1 ? "-" + this.camIdx : "";
         PlayerWindow.Instance.SetTitle($"Map: {FF9StateSystem.Common.FF9.fldMapNo}{camIdxIfCam} ({FF9StateSystem.Common.FF9.mapNameStr}) | Index/Counter: {PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR)}/{PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR)} | Loc: {FF9StateSystem.Common.FF9.fldLocNo}");
@@ -693,7 +701,17 @@ public class FieldMap : HonoBehavior
 
             Int32 threshmargin = Math.Min((Int32)bgCamera.w - PsxFieldWidth, 0); // Offset value for fields that are between 320 & 398
             //if (dbug) Log.Message("PsxFieldWidth" + PsxFieldWidth);
-            if (mapWidth > PsxFieldWidth && map != 507) // Cargo Ship/Deck
+            if (map == 1205 || map == 1652 || map == 2552 || map == 154 || map == 1215 || map == 1807) // A. Castle/Chapel, Iifa Tree/Roots, Earth Shrine/Interior, Alex grand hall
+            {
+                if (map == 1652 && this.camIdx == 0) // Iifa Tree/Roots
+                    threshmargin += 16;
+
+                Int32 threshright = bgCamera.w - PsxFieldWidth - threshmargin;
+
+                CamPositionX = (float)Math.Max(threshmargin, CamPositionX);
+                CamPositionX = (float)Math.Min(threshright, CamPositionX);
+            }
+            else if (mapWidth > PsxFieldWidth && map != 507) // Cargo Ship/Deck
             {
                 foreach (KeyValuePair<Int32, Int32> entry in NarrowMapList.mapCameraMargin)
                     if (map == entry.Key)
@@ -711,16 +729,6 @@ public class FieldMap : HonoBehavior
                 CamPositionX = (float)Math.Max(threshmargin, CamPositionX);
                 CamPositionX = (float)Math.Min(threshright, CamPositionX);
             }
-            else if (map == 1205 || map == 1652 || map == 2552 || map == 154 || map == 1215 || map == 1807) // A. Castle/Chapel, Iifa Tree/Roots, Earth Shrine/Interior, Alex grand hall
-            {
-                if (map == 1652 && this.camIdx == 0) // Iifa Tree/Roots
-                    threshmargin += 16;
-
-                Int32 threshright = bgCamera.w - PsxFieldWidth - threshmargin;
-
-                CamPositionX = (float)Math.Max(threshmargin, CamPositionX);
-                CamPositionX = (float)Math.Min(threshright, CamPositionX);
-            }
             else if (IsNarrowMap())
             {
                 if (mapWidth <= PsxFieldWidth && mapWidth > 320)
@@ -728,7 +736,6 @@ public class FieldMap : HonoBehavior
                     CamPositionX = (float)((bgCamera.w - mapWidth) / 2);
                 }
             }
-            
             switch (map) // offsets for scrolling maps stretched to WS
             {
                 case 456: // Dali Mountain/Summit
@@ -739,6 +746,9 @@ public class FieldMap : HonoBehavior
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 140 : 175; break;
                 case 2716: // fix for Kuja descending camera too high
                     CamPositionY = (float)Math.Min(0, CamPositionY); break;
+                case 2903: // Dali Mountain/Summit
+                    if (ActualPsxScreenWidth > 510)
+                        CamPositionX = 0; break;
                 default:
                     break;
             }
@@ -891,6 +901,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - set if overlay is active (inactive isn't visible)</summary>
     public Int32 EBG_overlaySetActive(Int32 overlayNdx, Int32 activeFlag)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
@@ -929,6 +940,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - set if overlay is type LOOP</summary>
     public Int32 EBG_overlaySetLoop(Int32 overlayNdx, UInt32 flag, Int32 dx, Int32 dy)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
@@ -967,6 +979,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - set overlay is scrolling - potentially in diagonal</summary>
     public Int32 EBG_overlaySetScrollWithOffset(Int32 overlayNdx, UInt32 flag, Int32 delta, Int32 offset, UInt32 isXOffset)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
@@ -1019,6 +1032,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - anim - define if animation is running in a loop | TODO get the difference with EBG_animSetActive</summary>
     public Int32 EBG_animAnimate(Int32 animNdx, Int32 frameNdx)
     {
         if (dbug) Log.Message("EBG_animAnimate | anim:" + animNdx + " frame:" + frameNdx);
@@ -1029,6 +1043,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - anim - show specific frame</summary>
     public Int32 EBG_animShowFrame(Int32 animNdx, Int32 frameNdx)
     {
         if (dbug) Log.Message("EBG_animShowFrame | anim:" + animNdx + " frame:" + frameNdx);
@@ -1041,6 +1056,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - anim - define if animation is running in a loop</summary>
     public Int32 EBG_animSetActive(Int32 animNdx, Int32 flag)
     {
         BGANIM_DEF bgAnim = this.scene.animList[animNdx];
@@ -1057,6 +1073,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - anim - define animation framerate</summary>
     public Int32 EBG_animSetFrameRate(Int32 animNdx, Int32 frameRate)
     {
         if (dbug) Log.Message("EBG_animSetFrameRate | anim:" + animNdx + " frameRate:" + frameRate);
@@ -1147,6 +1164,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>EBG - set position of overlay </summary>
     public Int32 EBG_overlayMove(Int32 overlayNdx, Int16 dx, Int16 dy, Int16 dz)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
@@ -1172,6 +1190,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>New EBG - set position of overlay, with movement for a time (</summary>
     public void EBG_overlayMoveTimed(Int32 overlayNdx, Int32 dx, Int32 dy, Int32 dz, Int32 t)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
@@ -1260,6 +1279,7 @@ public class FieldMap : HonoBehavior
                 anchorX = (float)(HalfFieldWidth - realVrp.x + this.scrollWindowPos[(int)bgOverlay.viewportNdx][0]);
                 anchorY = (float)(HalfFieldHeight - realVrp.y + this.scrollWindowPos[(int)bgOverlay.viewportNdx][1]);
             }
+
             if (bgOverlay.scrollX != 0)
             {
                 if (bgOverlay.scrollX < 0)
@@ -1621,6 +1641,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>Move special overlays (scroll / parallax / timedmove)</summary>
     public Int32 SceneServiceScroll(BGSCENE_DEF bgScene)
     {
         Int16 map = FF9StateSystem.Common.FF9.fldMapNo;
@@ -1645,12 +1666,15 @@ public class FieldMap : HonoBehavior
                 {
                     switch (map)
                     {
-                        case 1651: // Iifa roots 1
-                            bgOverlay.curX = 200; break;
-                        case 1758: // Iifa roots 2
-                            bgOverlay.curX = 200; bgOverlay.curY = 0; break;
+                        case 1651: case 1758: // Iifa roots
+                            bgOverlay.curX = 200;
+                            if (ActualPsxScreenWidth > 400)
+                            {
+                                bgOverlay.transform.localScale = new Vector3(1.7f, 1f, 1f);
+                                bgOverlay.curX = 300;
+                            }
+                            break;
                     }
-                    
                 }
             }
             if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0) // loop in diagonal (816) or loop + parallax (2904)
@@ -1679,26 +1703,126 @@ public class FieldMap : HonoBehavior
                 {
                     switch (map)
                     {
-                        case 1651: // Iifa roots 1
-                            bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8; break;
+                        case 312:
+                            if (ActualPsxScreenWidth > 400)
+                            {
+                                bgOverlay.curX = 0f;
+                            }
+                            break;
+                        case 805: case 808:
+                            if (ActualPsxScreenWidth > 400)
+                            {
+                                bgOverlay.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
+                                bgOverlay.curX = 0f;
+                            }
+                            break;
+                        case 908: case 1908:
+                            if (i == 14 && ActualPsxScreenWidth > 400)
+                            {
+                                bgOverlay.curX = 0f;
+                            }
+                            break;
+                        case 1108: // Clayra temple light
+                            bgOverlay.curX = 0f; break;
+                        case 1651: case 1758:// Iifa roots
+                            bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8f; break;
                         case 1657:
-                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256f) - (float)0.25; break;
-                        case 1758: // Iifa roots 2
-                            bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8; break;
+                            bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256f) - 0.25f; break;
+                        case 1660:
+                            bgOverlay.curX = 0f; break;
+                        case 2251:
+                            if (ActualPsxScreenWidth > 400)
+                            {
+                                bgOverlay.curX = 0f;
+                            }
+                            break;
+                        case 2252:
+                            if (ActualPsxScreenWidth >= 480)
+                            {
+                                bgOverlay.curX = 0f;
+                            }
+                            break;
                         case 2600: // 464/416
-                            bgOverlay.transform.localScale = new Vector3(1.12f, 1.12f, 1f); bgOverlay.curX -= 24; break;
+                            if ((i > 0 && i <= 7) || i == 13)
+                            {
+                                bgOverlay.transform.localScale = new Vector3(1.14f, 1.14f, 1f); bgOverlay.curX -= 24f;
+                                if (ActualPsxScreenWidth >= 464) bgOverlay.curX = -12f;
+                            }
+                            break;
                         case 2602: // 384/328
-                            bgOverlay.transform.localScale = new Vector3(1.05f, 1.05f, 1f); bgOverlay.curX = 28; break;
+                            bgOverlay.transform.localScale = new Vector3(1.05f, 1.05f, 1f); bgOverlay.curX = 28f; break;
+                        case 2604: // 512/448
+                            if (ActualPsxScreenWidth >= 448)
+                            {
+                                bgOverlay.transform.localScale = new Vector3(1.15f, 1.15f, 1f);
+                                bgOverlay.curX = 0f;
+                            }
+                            break;
                         case 2605: // 400/368
-                            bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX -= 16; break;
+                            bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX -= 16f;
+                            if (ActualPsxScreenWidth > 400)
+                            {
+                                bgOverlay.transform.localScale = new Vector3(1.45f, 1.45f, 1f);
+                                bgOverlay.curX = -16f;
+                            }
+                            if (ActualPsxScreenWidth >= 500)
+                            {
+                                bgOverlay.transform.localScale = new Vector3(1.75f, 1.75f, 1f);
+                                bgOverlay.curX = -16f;
+                            }
+                            break;
                         case 2606:
                             bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256f); break;
                         case 2607: // 416/400
-                            bgOverlay.transform.localScale = new Vector3(1.05f, 1.05f, 1f); bgOverlay.curX -= 8; bgOverlay.curY -= 8; break;
+                            bgOverlay.transform.localScale = new Vector3(1.05f, 1.05f, 1f); bgOverlay.curX -= 8f; bgOverlay.curY -= 8f;
+                            if (ActualPsxScreenWidth > 400)
+                            {
+                                bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f);
+                                bgOverlay.curX = 0f;
+                            }
+                            break;
                         case 2651:
-                            bgOverlay.transform.localScale = new Vector3(1.2f, 1.2f, 1f); bgOverlay.curX -= 56; bgOverlay.curY -= 16; break;
+                            if (i == 3 || i == 4) // exclude parallax text
+                            {
+                                bgOverlay.transform.localScale = new Vector3(1.2f, 1.2f, 1f); bgOverlay.curX -= 56f; bgOverlay.curY -= 16f;
+                                if (ActualPsxScreenWidth > 400)
+                                {
+                                    bgOverlay.transform.localScale = new Vector3(1.5f, 1.5f, 1f);
+                                    bgOverlay.curX -= 70f;
+                                }
+                            }
+                            break;
                         case 2660: // 536/528
-                            bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 8; break;
+                            bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 8f;
+                            if (ActualPsxScreenWidth > 400)
+                            {
+                                bgOverlay.transform.localScale = new Vector3(1.15f, 1.15f, 1f);
+                                bgOverlay.curX = 0f;
+                            }
+                            break;
+                        case 2916:
+                            bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4f;
+                            if (ActualPsxScreenWidth > 400)
+                            {
+                                bgOverlay.curX = -4f;
+                            }
+                            break;
+                        case 2922:
+                            if (ActualPsxScreenWidth > 364 && (i < 4 || i == 8 || i == 9))
+                            {
+                                bgOverlay.curX = 0;
+                            }
+                            break;
+                        case 2923:
+                            if (ActualPsxScreenWidth > 400 && (i == 2 || (i >= 4 && i <= 13) || i == 19))
+                            {
+                                bgOverlay.curX = 48;
+                            }
+                            if (ActualPsxScreenWidth > 400 && (i == 1 || i == 3))
+                            {
+                                bgOverlay.curX = 0;
+                            }
+                            break;
                     }
                 }
             }
@@ -1724,6 +1848,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>Move camera to point - with or without cosinus effect</summary>
     public void SceneService2DScroll()
     {
         if (!IsActive)
@@ -2224,6 +2349,7 @@ public class FieldMap : HonoBehavior
     internal static readonly Int16 PsxScreenHeightNative = 220;
 
     internal static volatile Int16 PsxScreenWidth = CalcPsxScreenWidth();
+    internal static volatile Int16 ActualPsxScreenWidth = CalcActualPsxScreenWidth();
     internal static readonly Int16 HalfScreenHeight = (Int16)(PsxScreenHeightNative / 2);
     internal static volatile Int16 HalfScreenWidth = (Int16)(PsxScreenWidth / 2);
 
@@ -2241,29 +2367,17 @@ public class FieldMap : HonoBehavior
             Int32 mapWidth = NarrowMapList.MapWidth(map);
             //Log.Message("Configuration.Graphics.WidescreenSupport " + Configuration.Graphics.WidescreenSupport + " CalcPsxFieldWidth() " + CalcPsxFieldWidth() + " PsxScreenWidth 1 " + CalcPsxScreenWidth() + " Screen.width " + Screen.width + " Screen.height " + Screen.height + "mapWidth " + mapWidth);
 
-            if (mapWidth <= PsxScreenWidth && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "BattleMap")
+            if (mapWidth <= PsxScreenWidth && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "BattleMap" && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "WorldMap" )
             {
                 PsxFieldWidth = (Int16)mapWidth;
                 PsxScreenWidth = (Int16)mapWidth;
                 //Log.Message("PsxScreenWidth 2 " + PsxScreenWidth);
             }
         }
-
         if (map >= 3000 && map <= 3012) //pre-#324 way of doing to fix narrows in ending
         {
-            PsxFieldWidth = Configuration.Graphics.WidescreenSupport ? CalcPsxFieldWidth() : PsxFieldWidthNative;
-            PsxScreenWidth = Configuration.Graphics.WidescreenSupport ? CalcPsxScreenWidth() : PsxScreenWidthNative;
-            if (Configuration.Graphics.InitializeWidescreenSupport() && IsNarrowMap())
-            {
-                foreach (KeyValuePair<int, int> entry in NarrowMapList.actualNarrowMapWidthDict)
-                {
-                    if (FF9StateSystem.Common.FF9.fldMapNo == entry.Key)
-                    {
-                        PsxFieldWidth = (Int16)(entry.Value);
-                        PsxScreenWidth = PsxFieldWidth;
-                    }
-                }
-            }
+            PsxFieldWidth = PsxScreenWidth = 320;
+            Configuration.Graphics.DisableWidescreenSupportForSingleMap();
         }
         HalfFieldWidth = (Int16)(PsxFieldWidth / 2);
         HalfScreenWidth = (Int16)(PsxScreenWidth / 2);
@@ -2277,6 +2391,7 @@ public class FieldMap : HonoBehavior
 
     private static Int16 CalcPsxFieldWidth() => Configuration.Graphics.InitializeWidescreenSupport() ? (Int16)(PsxFieldHeightNative * Screen.width / Screen.height) : PsxFieldWidthNative;
     private static Int16 CalcPsxScreenWidth() => Configuration.Graphics.InitializeWidescreenSupport() ? (Int16)(PsxScreenHeightNative * Screen.width / Screen.height) : PsxScreenWidthNative;
+    private static Int16 CalcActualPsxScreenWidth() => (Int16)(PsxScreenHeightNative * Screen.width / Screen.height);
     private static Single CalcShaderMulX() => 1f / HalfFieldWidth;
     private static Single CalcShaderMulY() => 1f / HalfFieldHeight;
 
@@ -2356,6 +2471,8 @@ public class FieldMap : HonoBehavior
         [609,0,9,3900],     // Lindblum castle anim
         [609,0,10,3900],    // Lindblum castle anim
         [609,0,11,3900],    // Lindblum castle anim
+        [1206,0,5,1280],    // Fireplace under floor 1 tile
+        [1801,0,5,1280],    // Fireplace under floor 1 tile
         [1359,0,7,3900],    // Lindblum castle anim
         [1359,0,8,3900],    // Lindblum castle anim
         [1359,0,9,3900],    // Lindblum castle anim
@@ -2376,7 +2493,9 @@ public class FieldMap : HonoBehavior
         [1502,0,0,1350],    // Light in Conde Petite
         [1652,1,5,911],     // Iifa platform
         [1656,0,3,998],     // Iifa statue glow (was not active on PSX)
+        [1950,0,11,1100],   // Qwan's dwelling cropped anim.
         [2008,0,41,600],    // Candle light behind statues in Alex Castle
+        [2107,0,15,1862],   // Lindblum plaza smoke layer
         [2109,0,23,0],      // Lindblum armorer light
         [2109,0,24,1],      // Lindblum armorer armor
         [2207,0,1,0],       // Desert palace teleporter light 1
@@ -2389,6 +2508,14 @@ public class FieldMap : HonoBehavior
         [2221,0,17,2200],   // Candle light
         [2222,0,2,1000],    // Desert palace teleporter light
         [2502,0,14,1400],   // Ypsen, entrance light
+        [2600,0,1,5000],    // Branbal, background
+        [2600,0,2,5000],    // Branbal, background
+        [2600,0,3,5000],    // Branbal, background
+        [2600,0,4,5000],    // Branbal, background
+        [2600,0,5,5000],    // Branbal, background
+        [2600,0,6,5000],    // Branbal, background
+        [2600,0,7,5000],    // Branbal, background
+        [2600,0,13,8000],   // Branbal, background
         [2605,0,3,2200],    // Branbal, light of light net
         [2657,0,4,2040],    // Branbal, light in the room
         [2922,0,8,4329],    // Crystal world (was not active on PSX)
@@ -2403,7 +2530,10 @@ public class FieldMap : HonoBehavior
         575,  // Hunting festival glich
         767,  // Burmecia, the queen slides from her layer
         931,  // Treno on the boat
+        1655, // scrolling root
         1754, // Fast scroll on Iifa platform buggy
+        //1953, // Scene with Quan flashback
+        2200, // Desert palace cells
         3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008, 3009, 3010, 3011, 3012, // ending glitches
     };
 }

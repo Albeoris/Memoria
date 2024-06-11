@@ -6,6 +6,7 @@ using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Data;
+using Memoria.Assets;
 using UnityEngine;
 using Object = System.Object;
 
@@ -185,8 +186,8 @@ public class BattleResultUI : UIScene
 	{
 		this.EXPAndAPPhrasePanel.SetActive(false);
 		this.GilAndItemPhrasePanel.SetActive(true);
-		this.receiveGilLabel.text = (this.gilValue.value - this.gilValue.current).ToString() + "[YSUB=1.3][sub]G";
-		this.currentGilLabel.text = Mathf.Min(FF9StateSystem.Common.FF9.party.gil, 9999999f).ToString() + "[YSUB=1.3][sub]G";
+		this.receiveGilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", (this.gilValue.value - this.gilValue.current).ToString());
+		this.currentGilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", Mathf.Min(FF9StateSystem.Common.FF9.party.gil, 9999999f).ToString());
 		FF9UIDataTool.DisplayTextLocalize(this.infoLabelGameObject, "BattleResultInfoGilItem");
 		if (this.itemList.Count > 0)
 		{
@@ -433,17 +434,17 @@ public class BattleResultUI : UIScene
 	{
 		this.AnalyzeBonusItem();
 		PLAYER[] party = FF9StateSystem.Common.FF9.party.member;
-		HashSet<SupportAbility> triggeredSA = new HashSet<SupportAbility>();
+		HashSet<SupportingAbilityFeature> triggeredSA = new HashSet<SupportingAbilityFeature>();
 		for (Int32 playIndex = 0; playIndex < 4; playIndex++)
 		{
 			if (party[playIndex] == null)
 				continue;
 			foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(party[playIndex]))
 			{
-				if (triggeredSA.Contains(saFeature.Id))
+				if (triggeredSA.Contains(saFeature))
 					continue;
 				if (saFeature.TriggerOnBattleResult(party[playIndex], battle.btl_bonus, this.itemList, "RewardAll", 0U))
-					triggeredSA.Add(saFeature.Id);
+					triggeredSA.Add(saFeature);
 			}
 		}
 		this.AnalyzeArgument();
@@ -501,7 +502,8 @@ public class BattleResultUI : UIScene
 		else
 			this.gilValue.step = (UInt32)BattleResultUI.GilDefaultAdd;
 		this.gilValue.current = 0u;
-	}
+        this.PostProcessItems();
+    }
 
 	public void ShutdownBattleResultUI()
 	{
@@ -544,9 +546,25 @@ public class BattleResultUI : UIScene
 		this.defaultAp = battle.btl_bonus.ap;
 		this.defaultGil = battle.btl_bonus.gil;
 		this.defaultCard = QuadMistDatabase.MiniGame_GetAllCardCount() < Configuration.TetraMaster.MaxCardCount ? battle.btl_bonus.card : TetraMasterCardId.NONE;
-	}
+    }
 
-	private void UpdateExp()
+    private void PostProcessItems()
+    {
+        for (Int32 i = 0; i < this.itemList.Count; i++)
+        {
+            for (Int32 j = i + 1; j < this.itemList.Count; j++)
+            {
+                if (this.itemList[i].id == this.itemList[j].id)
+                {
+                    this.itemList[i].count = (Byte)Math.Min(this.itemList[i].count + this.itemList[j].count, Byte.MaxValue);
+                    this.itemList[j].count = 0;
+                }
+            }
+        }
+        this.itemList.RemoveAll(it => it.id == RegularItem.NoItem || it.count == 0);
+    }
+
+    private void UpdateExp()
 	{
 		this.expEndTick = true;
 		for (Int32 i = 0; i < 4; i++)

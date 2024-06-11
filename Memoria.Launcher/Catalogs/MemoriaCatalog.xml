@@ -199,37 +199,37 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Mog Add-ons</Name>
-	<Version>3.4</Version>
+	<Version>3.5.1</Version>
 	<InstallationPath>MogAddons</InstallationPath>
-	<ReleaseDate>2024-05-09</ReleaseDate>
+	<ReleaseDate>2024-06-10</ReleaseDate>
 	<Author>faospark</Author>
 	<Description>:: Features ::
-|- Tweaks : AP GAIN , EXP GAIN and Requirements , and Gil rewards
-|- Portrait options : Default with extended cast, Opera Omnia and  Upscaled PS1 Portrait Artwork 
-|- Button Prompts Options:  PS Gloss , PS5 , Pixel Style, PlayStation Vanilla prompts,
-|- UI : Default , Darker UI and Flat 
-|- Card Limit Number : 999
--|- Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts you can disable them anytime 
+- Tweaks : AP GAIN , EXP GAIN and Requirements , and Gil rewards
+- Portrait options : Default with extended cast, Opera Omnia and  Upscaled PS1 Portrait Artwork 
+- Button Prompts Options:  PS Gloss , PS5 , Pixel Style, PlayStation Vanilla prompts,
+- UI : Default , Darker UI and Flat 
+-- Default : FFXI Darker/Sane UI , Opera Omnia Style Portraits , PlayStation Gloss prompts you can disable them anytime 
 
 :: Submod activation ::
-Use the Mod Manager UI to activate each submods you like and pick. 
+Use the Mod Manager UI to activate each submods by using the drop down menu  
 MogAddons is essentially showcase of what can the Memoria Engine for your gameplay 
 
 :: Compatibility ::
-- Compatible with Alternate Fantasy
+- Compatible-ish with Alternate Fantasy
 - Not compatible for older versions of the game and repacks.
 Requires Memoria v2023.06.11 or later</Description>
-	<PatchNotes>-Fixed formula for AP and EXP tweaks 
--increased card limit to total to 999
--added tweaks : 2x AP , 2x Gil , 4x Gil 
--added get random card after battle
--added alternative title screen 
--added tiple triad matt 
--added remove mist on disc4</PatchNotes>
+	<PatchNotes>- Fixed AP Tweak Bug 
+	- added deffered Tweak 2x Item drop 
+	- added Alternative colored world Maps
+	- added Millennial Decay as default for Eiko's summon skill 
+	- added Freya Jump do 3x damage 
+	- added Resistance to zombie and virus status
+	- replaced file preview url and preview file
+	- striped extra slash declared submod folders</PatchNotes>
 	<Category>Various</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1</DownloadUrl>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1687258501-1210392332.png</PreviewFileUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1715702142-1980695436.png</PreviewFileUrl>
 	<PreviewFile>preview/mog-addons.png</PreviewFile>
 	<SubMod>
 		<Name>Buttons : PS5</Name>
@@ -317,7 +317,7 @@ Requires Memoria v2023.06.11 or later</Description>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 2x AP Gain</Name>
-		<InstallationPath>Features/Tweaks/AP4x</InstallationPath>
+		<InstallationPath>Features/Tweaks/AP2x</InstallationPath>
 		<Description>Gains 2x AP after battle (Ignores AbilityUp)</Description>
 		<Priority>1</Priority>
 	</SubMod>
@@ -382,21 +382,52 @@ Requires Memoria v2023.06.11 or later</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
+		<Name>Tweak: Get 2x of any item drop after battle </Name>
+		<InstallationPath>Features/Tweaks/2xitem</InstallationPath>
+		<Description>Any item recieved after battle would be mutltiplied by 2 , hence if a monster drops 2 poition you get 4  </Description>
+		<Priority>1</Priority>
+	</SubMod>
+
+	<SubMod>
 		<Name>Memoria : Alternate Title Screen</Name>
-		<InstallationPath>/Features/TitleLogo</InstallationPath>
+		<InstallationPath>Features/TitleLogo</InstallationPath>
 		<Description>Shows an Alternative title screen and Memoria Indicator</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
+		<Name>Memoria: Alternate World Maps [Select]</Name>
+		<InstallationPath>Features/Maps</InstallationPath>
+		<Description>Alternative Overworld Map</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
 		<Name>Memoria: Triple Triad Mat</Name>
-		<InstallationPath>/Features/Cards</InstallationPath>
+		<InstallationPath>Features/Cards</InstallationPath>
 		<Description>Shows Triple triad inspired matt and UI for cards</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Memoria: No/low Mist on Disc 4</Name>
-		<InstallationPath>/Features/Worlds</InstallationPath>
-		<Description>Only activate once you get access to the invincible</Description>
+		<InstallationPath>Features/Worlds</InstallationPath>
+		<Description>Only activate once you get access to the Invincible (Disc 4)</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance: Make Millenial Decay (Fenrir) as default [Eiko]</Name>
+		<InstallationPath>Features/Enhance/Eiko</InstallationPath>
+		<Description>Equip Sapphire in order to summon Terrestrial Rage (Golem)</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance: Stronger Jump [Freya]</Name>
+		<InstallationPath>Features/Enhance/Freya</InstallationPath>
+		<Description>Make Freya's Jump do 3x damage</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance: Add Resistance to Zombie and Virus</Name>
+		<InstallationPath>Features/Enhance/All</InstallationPath>
+		<Description>Auto-life resists Zombie, Anti-body Resists Virus</Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
@@ -430,7 +461,7 @@ Requires Memoria v2023.06.11 or later</Description>
 
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.19</Version>
+	<Version>0.3.20</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDate>2024-02-27</ReleaseDate>
 	<Author>DV</Author>
@@ -455,16 +486,17 @@ Requires Memoria v2023.06.11 or later</Description>
 	/_!_\ IMPORTANT : Please read the README file inside the mod folder, the installation is not YET fully automatic ! (Just move 1 or 2 files, don't worry !)
 	</Description>
 	<PatchNotes>
-	- The second hit with Zidane's dagger didn't trigger if target is under Death.
-	- Fix an issue on some .csv files, specially the AbilityGems.csv one (thanks to Tigrex for the report)
-	- Fix a softlock on the script "Map 559, Loc 276 Name Lindblum/Square." in English (US), where the wrong window appear when timer is running out during the Festival Hunt.
-	- Fix the menu when naming Beatrix at Burmecia/Palace in English (US) and Japenese.
-	- Fix the script on "Map 908, Loc 70 Name: Treno/Gate" where you can get unlimited Elixir on the pond.
-	- Additional information added to "README (installation + update).txt".
-	- Updated the Assembly-CSharp.dll file to take benefit of the latest Memoria release.
-	- Added Memoria.Prime.dll file (which also needs replacing, more information in the Readme)
-	- [WIP] Dragon status new texture (thanks to @Maxi for his work!)
-	- Slight modification to title screen image
+	- Trance Seek is now compatible with Memoria v2024.05.19 => All features are integrated into Memoria, no need for custom .dll anymore! (Thanks to the Memoria team!)
+	- [WIP] New Mogster dialog boxes about mod information!
+	- Slight correction to the fight against the Guardian of the Earth.
+	- Slight correction of a fight against Zorn and Thorn in the cavern of Gizamaluke where a softlock was possible with Petrify.
+	- Correction of the rocks quest in Passe Condéa.
+	- Fixed a major bug in Meltigemini mechanics.
+	- Correction of Zombies animations on the Iifa Tree/Roots (1652 + 1759).
+	- Fixed Zombies' "Arsenic" spell on the Iifa Tree/Roots (1652 + 1759).
+	- Correction of SA "EX Mode" and "EX Mode+".
+	- Corrected English (US) dialogues on field 352 (Dali/Inn)
+	- Added an extra dialog box at the start of the game concerning Zidane's Trance.
 	</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/NTbTds6/Logo-Trance-Seek.png</PreviewFileUrl>

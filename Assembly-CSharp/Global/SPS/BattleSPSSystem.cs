@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class BattleSPSSystem : MonoBehaviour
 {
+    public List<SPSEffect> SpsList => this.Utility.SpsList;
+
 	public void Init()
     {
         this.Utility = new CommonSPSSystem();

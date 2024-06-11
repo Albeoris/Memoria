@@ -183,7 +183,7 @@ public class battlebg
 				{
 					battlebg.nf_BbgSkyAngle_Y += battlebg.nf_BbgSkyRotation;
 					Vector3 eulerAngles = transform.localRotation.eulerAngles;
-					eulerAngles.y = (Single)(battlebg.nf_BbgSkyAngle_Y >> 3) / 4096f * 360f;
+					eulerAngles.y = (battlebg.nf_BbgSkyAngle_Y / 8f) / 4096f * 360f;
 					transform.localRotation = Quaternion.Euler(eulerAngles);
 					num++;
 				}

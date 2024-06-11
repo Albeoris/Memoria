@@ -19,7 +19,8 @@ public partial class BattleHUD : UIScene
     public Boolean BtlWorkPeep => _currentPeepingMessageCount > 0;
     public GameObject PlayerTargetPanel => TargetPanel.GetChild(0);
     public GameObject EnemyTargetPanel => TargetPanel.GetChild(1);
-    public Boolean IsDoubleCast => DoubleCastSet.Contains(_currentCommandId);
+    public Boolean IsDoubleCast => DoubleCastSet.Contains(_currentCommandId) || MixCommandSet.Contains(_currentCommandId);
+    public Boolean IsMixCast => MixCommandSet.Contains(_currentCommandId);
     public Boolean CanForceNextTurn => Configuration.Battle.Speed == 2 && UIManager.Battle.FF9BMenu_IsEnable() && !ForceNextTurn
         && ReadyQueue.Count > 0 && FF9StateSystem.Battle.FF9Battle.cur_cmd == null && btl_cmd.GetFirstCommandReadyToDequeue(FF9StateSystem.Battle.FF9Battle) == null;
     public List<Int32> ReadyQueue { get; }
@@ -29,6 +30,7 @@ public partial class BattleHUD : UIScene
         BattleCommandId.DoubleBlackMagic,
         BattleCommandId.DoubleWhiteMagic
     };
+    public static HashSet<BattleCommandId> MixCommandSet = new HashSet<BattleCommandId>();
     public static Boolean ForceNextTurn = false;
     public static Int32 switchBtlId = -1;
 
@@ -61,7 +63,7 @@ public partial class BattleHUD : UIScene
         _oneTime = true;
     }
 
-    public void SetBattleFollowMessage(BattleMesages pMes, params Object[] args)
+    public void SetBattleFollowMessage(BattleMesages pMes, Object arg = null, CMD_DATA msgCmd = null)
     {
         Int32 pMesNo = (Int32)pMes;
         String fmtMessage = FF9TextTool.BattleFollowText(pMesNo + 7);
@@ -71,15 +73,14 @@ public partial class BattleHUD : UIScene
         Byte priority = (Byte)Char.GetNumericValue(fmtMessage[0]);
         String parsedMessage = fmtMessage.Substring(1);
 
-        if (args.Length > 0)
+        if (arg != null)
         {
-            String str3 = args[0].ToString();
-            Int32 result;
-            parsedMessage = !Int32.TryParse(str3, out result) ? parsedMessage.Replace("%", str3) : parsedMessage.Replace("&", str3);
+            String argStr = arg.ToString();
+            parsedMessage = !Int32.TryParse(argStr, out _) ? parsedMessage.Replace("%", argStr) : parsedMessage.Replace("&", argStr);
         }
 
         VoicePlayer.PlayBattleVoice(pMesNo + 7, fmtMessage, true);
-        SetBattleMessage(parsedMessage, priority);
+        SetBattleMessage(parsedMessage, priority, msgCmd);
     }
 
     public void SetBattleFollowMessage(Byte priority, String formatMessage, params Object[] args)
@@ -112,6 +113,8 @@ public partial class BattleHUD : UIScene
                 return aaData.Name;
             return String.Empty;
         }
+        if (MixCommandSet.Contains(pCmd.cmd_no))
+            return FF9TextTool.ItemName(ff9mixitem.MixItemsData[pCmd.sub_no].Result);
         switch (pCmd.cmd_no)
         {
             case BattleCommandId.Item:
@@ -322,7 +325,7 @@ public partial class BattleHUD : UIScene
         DisplayBattleMessage(asMessage);
     }
 
-    public void SetBattleMessage(String str, Byte strPriority)
+    public void SetBattleMessage(String str, Byte strPriority, CMD_DATA cmd = null)
     {
         Message asMessage = new Message()
         {
@@ -330,7 +333,7 @@ public partial class BattleHUD : UIScene
             priority = strPriority,
             counter = 0f,
             isRect = false,
-            titleCmd = null
+            titleCmd = cmd
         };
         _messageQueue[str] = asMessage;
 
@@ -665,13 +668,13 @@ public partial class BattleHUD : UIScene
 
         // Stops the ATB if any of these are true
         Boolean isMenuing = _commandPanel.IsActive || _targetPanel.IsActive || _itemPanel.IsActive || _abilityPanel.IsActive;
-        Boolean isEnemyActing = FF9StateSystem.Battle.FF9Battle.cur_cmd != null && FF9StateSystem.Battle.FF9Battle.cur_cmd.regist?.bi.player == 0;
+        //Boolean isEnemyActing = FF9StateSystem.Battle.FF9Battle.cur_cmd != null && FF9StateSystem.Battle.FF9Battle.cur_cmd.regist?.bi.player == 0;
         Boolean hasQueue = btl_cmd.GetFirstCommandReadyToDequeue(FF9StateSystem.Battle.FF9Battle) != null;
 
-        if (ForceNextTurn && !hasQueue && !isEnemyActing)
+        if (ForceNextTurn && !hasQueue /*&& !isEnemyActing*/)
             return true;
 
-        return !(isMenuing || hasQueue || isEnemyActing);
+        return !(isMenuing || hasQueue /*|| isEnemyActing*/);
     }
 
     public Boolean IsNativeEnableAtb()

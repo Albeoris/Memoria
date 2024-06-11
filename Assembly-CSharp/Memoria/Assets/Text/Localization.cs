@@ -30,5 +30,21 @@ namespace Memoria.Assets
         {
             return Provider.Get(key);
         }
+
+        /// <summary>For keys not present in vanilla</summary>
+        public static String GetWithDefault(String key)
+        {
+            String value = Provider.Get(key);
+            if (!String.Equals(value, key))
+                return value;
+            if (_defaultDictionary.TryGetValue(key, out value))
+                return value;
+            return key;
+        }
+
+        private static Dictionary<String, String> _defaultDictionary = new Dictionary<String, String>()
+        {
+            { "GilSymbol", "%[YSUB=1.3][sub]G" }
+        };
     }
 }

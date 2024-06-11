@@ -358,7 +358,7 @@ public class SaveLoadUI : UIScene
 			}
 			fileInfoHUD.LeaderNameLabel.text = text;
 			fileInfoHUD.LeaderLvLabel.text = num.ToString();
-			fileInfoHUD.GilLabel.text = file.Gil.ToString() + "[YSUB=1.3][sub]G";
+			fileInfoHUD.GilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", file.Gil.ToString());
 			fileInfoHUD.LocationNameLabel.text = file.Location;
 			Color color = FF9TextTool.White;
 			Double num3 = (Double)(file.PlayDuration % 360000f);
@@ -446,7 +446,6 @@ public class SaveLoadUI : UIScene
 
 	private IEnumerator HideSuccessfulAccessDialog()
 	{
-		yield return new WaitForSeconds(1.5f);
 		this.SuccessfulAccessPanel.SetActive(false);
 		FF9UIDataTool.DisplayTextLocalize(this.HelpTitleLabel, "SaveHelpBlock");
 		if (this.type == SaveLoadUI.SerializeType.Save)
@@ -459,12 +458,7 @@ public class SaveLoadUI : UIScene
 
 	private IEnumerator RunProgressBar()
 	{
-		this.progressBar.value = 0f;
-		while ((Double)this.progressBar.value < 0.95)
-		{
-			yield return new WaitForSeconds(0.01f);
-			this.progressBar.value += 0.01f;
-		}
+		this.progressBar.value = 1f;
 		yield break;
 	}
 
@@ -544,8 +538,6 @@ public class SaveLoadUI : UIScene
 
 	private IEnumerator OnFinishedLoadPreview_delay(DataSerializerErrorCode errNo, Int32 slotID, List<SharedDataPreviewSlot> data)
 	{
-		Single remainTime = Mathf.Max(2f - (Time.time - this.timeCounter), 0f);
-		yield return new WaitForSeconds(remainTime);
 		base.Loading = false;
 		if (errNo == DataSerializerErrorCode.Success)
 		{
@@ -608,10 +600,7 @@ public class SaveLoadUI : UIScene
 
 	private IEnumerator OnFinishedLoadFile_delay(DataSerializerErrorCode errNo, Int32 slotID, Int32 saveID, Boolean isSuccess)
 	{
-		Single remainTime = Mathf.Max(2f - (Time.time - this.timeCounter), 0f);
-		yield return new WaitForSeconds(remainTime);
 		this.progressBar.value = 1f;
-		yield return new WaitForSeconds(0.1f);
 		this.LoadingAccessPanel.SetActive(false);
 		if (isSuccess && errNo == DataSerializerErrorCode.Success)
 		{
@@ -658,10 +647,7 @@ public class SaveLoadUI : UIScene
 
 	private IEnumerator OnFinishedSaveFile_delay(DataSerializerErrorCode errNo, Int32 slotID, Int32 saveID, Boolean isSuccess, SharedDataPreviewSlot data)
 	{
-		Single remainTime = Mathf.Max(2f - (Time.time - this.timeCounter), 0f);
-		yield return new WaitForSeconds(remainTime);
 		this.progressBar.value = 1f;
-		yield return new WaitForSeconds(0.1f);
 		base.Loading = false;
 		this.LoadingAccessPanel.SetActive(false);
 		if (isSuccess && errNo == DataSerializerErrorCode.Success)
@@ -686,10 +672,7 @@ public class SaveLoadUI : UIScene
 
 	private IEnumerator OnFinishedUploadToCloud_delay(DataSerializerErrorCode errNo, Boolean isSuccess, SharedDataPreviewSlot localData, SharedDataPreviewSlot cloudData)
 	{
-		Single remainTime = Mathf.Max(2f - (Time.time - this.timeCounter), 0f);
-		yield return new WaitForSeconds(remainTime);
 		this.progressBar.value = 1f;
-		yield return new WaitForSeconds(0.1f);
 		base.Loading = false;
 		this.LoadingAccessPanel.SetActive(false);
 		if (isSuccess && errNo == DataSerializerErrorCode.Success)

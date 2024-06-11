@@ -294,7 +294,24 @@ namespace Memoria
 						}
 					}
 				}
-				else if (String.Compare(entry[0], "WorldMusicList") == 0 && entry.Length >= 7)
+                else if (String.Compare(entry[0], "MixCommand") == 0)
+                {
+                    // eg.: MixCommand Add 1000
+                    Boolean add = String.Compare(entry[1], "Remove") != 0;
+                    if (String.Compare(entry[1], "Set") == 0)
+                        BattleHUD.MixCommandSet.Clear();
+                    for (Int32 i = 2; i < entry.Length; i++)
+                    {
+                        if (entry[i].TryEnumParse(out BattleCommandId cmdId))
+                        {
+                            if (add)
+                                BattleHUD.MixCommandSet.Add(cmdId);
+                            else
+                                BattleHUD.MixCommandSet.Remove(cmdId);
+                        }
+                    }
+                }
+                else if (String.Compare(entry[0], "WorldMusicList") == 0 && entry.Length >= 7)
 				{
 					// eg.: WorldMusicList 69 22 112 45 95 96 61 62
 					if (ff9.w_musicSet == null)
@@ -475,7 +492,20 @@ namespace Memoria
 						FF9BattleDB.Animation[ID[idindex]] = entry[entry.Length - 1];
 					}
 				}
-			}
+                else if (String.Compare(entry[0], "SwapFieldModelTexture") == 0)
+                {
+                    // eg.: SwapFieldModelTexture 2250 GEO_MON_B3_093 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
+                    List<string> TexturesList = new List<string>();
+                    if (!Int32.TryParse(entry[1], out Int32 FieldID))
+                        continue;
+                    for (Int32 i = 3; i < entry.Length; i++)
+                    {
+                        TexturesList.Add(entry[i]);
+                    }
+                    String[] TexturesCustomModel = TexturesList.ToArray();
+                    ModelFactory.CustomModelField.Add(entry[1] + "#" + entry[2], TexturesCustomModel);
+                }
+            }
 			if (shouldUpdateBattleStatus)
 				BattleStatusConst.Update();
 		}

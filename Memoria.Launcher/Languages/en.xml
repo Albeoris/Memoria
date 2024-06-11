@@ -43,7 +43,7 @@
 	Debuggable = " Debuggable"
 	CheckUpdates = " Check for updates"
 	IniOptions = "Options"
-	Widescreen = " Widescreen (16:9 or 16:10)"
+	Widescreen = " Widescreen"
 	BattleInterface = "Battle HUD"
 	BattleInterfaceType0 = "Big"
 	BattleInterfaceType1 = "Small"
@@ -98,6 +98,10 @@
 	UseOrchestralMusic = "Orchestral music (Moguri)"
 	Use30FpsVideo = "30 FPS videos (Moguri)"
 	MaxCardCount = "10k cards"
+	UIColumnsChoice = "UI lines/columns"
+	UIColumnsChoice0 = "Default"
+	UIColumnsChoice1 = "x1.5 (max 3 columns)"
+	UIColumnsChoice2 = "x2 (max 4 columns)"
 	ActiveMonitor_Tooltip = "Choose a screen"
 	WindowMode_Tooltip = "-Windowed: run the game in a window&#xA;-Fullscreen: Game takes the whole display&#xA;-Borderless Fullscreen: Takes the whole display but as a windowed process"
 	Resolution_Tooltip = "Screen resolution&#xA;Only 16:9 and 16:10 support Widescreen"
@@ -107,7 +111,7 @@
 	SteamOverlayFix_Tooltip = "/!\ ONLY FOR WINDOWS /!\&#xA;Will patch the launcher for people&#xA;having problems displaying the Steam overlay&#xA;(Steam achievements also depend on it)"
 	UseOrchestralMusic_Tooltip = "Moguri mod: orchestral soundtrack by Pontus Hultgren,&#xA;not recommended for people who want the original experience"
 	Use30FpsVideo_Tooltip = "Moguri mod: 30fps FMVs (from original 15fps)&#xA;Inbetween images created by AI"
-	Widescreen_Tooltip = "Supported on 16:9 and 16:10 resolutions&#xA;Removes side bars when possible,&#xA;Shows a wider part of the backgrounds/worldmap/battles&#xA;Note: some backgrounds will still be displayed with black bars,&#xA;as the original game did not have more pixels"
+	Widescreen_Tooltip = "Removes side bars when possible,&#xA;Shows a wider part of the backgrounds/worldmap/battles&#xA;Note: some backgrounds will still be displayed with black bars,&#xA;as the original game did not have more pixels"
 	AntiAliasing_Tooltip = "Activate anti-aliasing"
 	SharedFPS_Tooltip = "Game FPS (frequency of images)&#xA;original was between 15 and 30&#xA;Standard of screens: 60"
 	CameraStabilizer_Tooltip = "Value of the delay between the player and the camera&#xA;Makes the game smoother to play&#xA;0 disables the feature&#xA;Recommended value: between 80 and 90"
@@ -136,6 +140,7 @@
 	FieldFPS_Tooltip = "Image refresh rate on normal backgrounds (default: 30)"
 	WorldFPS_Tooltip = "Image refresh rate on the world map (default: 20)"
 	MaxCardCount_Tooltip = "Limit to cards in inventory raised to 10000"
+	UIColumnsChoice_Tooltip = "Number of columns: if you want more items/abilities on one screen"
 	/>
 
 	<SdLib

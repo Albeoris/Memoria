@@ -22,6 +22,7 @@ namespace Memoria.Assets
         /// [FRYA]
         /// </summary>
         Freya,
+        Fraya, // For retro-compatibility
         /// <summary>
         /// [QUIN]
         /// </summary>

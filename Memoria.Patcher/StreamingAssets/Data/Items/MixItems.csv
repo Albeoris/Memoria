@@ -1,0 +1,7 @@
+# This file contains a set of game items that can be mixed in battle.
+# You can set any number of different items.
+# -----------------------------------------------
+# Comment;Id;Result;Ingredients
+# String;Int32;Int32;Int32[]
+# -----------------------------------------------
+Hi-Potion;0;237;236, 236

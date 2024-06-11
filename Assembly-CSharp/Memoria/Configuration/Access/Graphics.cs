@@ -17,7 +17,7 @@ namespace Memoria
             public static Int32 MenuFPS => Instance._graphics.MenuFPS;
             public static Int32 MenuTPS => Instance._graphics.MenuTPS;
             public static Int32 BattleSwirlFrames => Instance._graphics.BattleSwirlFrames;
-            public static Int32 SkipIntros = Instance._graphics.SkipIntros;
+            public static Int32 SkipIntros => Instance._graphics.SkipIntros;
             public static Int32 GarnetHair => Instance._graphics.GarnetHair;
             public static Int32 TileSize => Instance._graphics.TileSize;
             public static Int32 AntiAliasing => Instance._graphics.AntiAliasing;
@@ -27,20 +27,14 @@ namespace Memoria
 
             public static Boolean InitializeWidescreenSupport()
             {
-                if (!Instance._graphics.WidescreenSupport)
-                    return false;
-                if (Instance._debug.Enabled && Instance._debug.StartFieldCreator)
-                    return false;
-
-                if ((Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 9d)) < 0.01) || (Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 10d)) < 0.01))
+                if (!Instance._graphics.WidescreenSupport || (Instance._debug.Enabled && Instance._debug.StartFieldCreator))
                 {
-                    //Log.Message("WIDESCREEN | Screen.width:" + (Double)Screen.width + " Screen.height:" + (Double)Screen.height);
-                    return true;
+                    return false;
                 }
-
-                //Log.Message("Not Widescreen | Screen.width:" + (Double)Screen.width + " Screen.height:" + (Double)Screen.height);
-                return false;
+                return true;
+                // if ((Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 9d)) < 0.01) || (Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 10d)) < 0.01))
             }
+
             public static Boolean ScreenIs16to10()
             {
                 if (Math.Abs(((Double)Screen.width / (Double)Screen.height) - (16d / 10d)) < 0.01)

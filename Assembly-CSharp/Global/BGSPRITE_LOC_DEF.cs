@@ -2,6 +2,7 @@
 using System.IO;
 using UnityEngine;
 
+/// <summary>Class for individual tiles in an overlay</summary>
 public class BGSPRITE_LOC_DEF
 {
 	public void ReadData_BGSPRITE_DEF(BinaryReader reader)

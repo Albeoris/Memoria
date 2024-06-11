@@ -416,12 +416,12 @@ public partial class BattleHUD : UIScene
             _isManualTrance = false;
         }
 
-        if (Configuration.Mod.TranceSeek) // TRANCE SEEK
+        if (Configuration.Mod.TranceSeek) // [DV] - Special commands
         {
-            if (presetId == CharacterPresetId.Zidane)
+            if (presetId == CharacterPresetId.Zidane) // Change Zidane's commands depending the weapon
             {
                 CharacterCommands.CommandSets[presetId].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
-                command2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
+                command2 = btl.IsUnderAnyStatus(BattleStatus.Trance) ? CharacterCommands.CommandSets[presetId].Trance2 : btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
             }
             else if (presetId == CharacterPresetId.Steiner)
                 defendCmdId = (BattleCommandId)10015; // Gardien
@@ -656,6 +656,10 @@ public partial class BattleHUD : UIScene
                     Count = ff9Item.count,
                     Id = ff9Item.id
                 };
+                if (_doubleCastCount == 2 && battleItemListData.Id == (RegularItem)_firstCommand.SubId)
+                {
+                    battleItemListData.Count--;
+                }
                 inDataList.Add(battleItemListData);
             }
         }
@@ -801,21 +805,31 @@ public partial class BattleHUD : UIScene
         Boolean shouldUpdatePointer = false;
         Int32 enemyCountOld = _enemyCount;
         Int32 playerCountOld = _playerCount;
+        List<Int32> matchBattleIdPlayerCurrentList = new List<Int32>();
+        List<Int32> matchBattleIdEnemyCurrentList = new List<Int32>();
         Int32 enemyCount = 0;
         Int32 playerCount = 0;
 
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            if (!unit.IsTargetable)
-                continue;
+            Int32 index = unit.GetIndex();
 
-            if (unit.IsPlayer)
-                playerCount++;
-            else
-                enemyCount++;
+            if (unit.IsTargetable)
+            {
+                if (unit.IsPlayer)
+                {
+                    playerCount++;
+                    matchBattleIdPlayerCurrentList.Add(index);
+                }                 
+                else
+                {
+                    enemyCount++;
+                    matchBattleIdEnemyCurrentList.Add(index);
+                }                   
+            }
         }
 
-        if (enemyCount != enemyCountOld || playerCount != playerCountOld)
+        if (enemyCount != enemyCountOld || playerCount != playerCountOld || !Enumerable.SequenceEqual(matchBattleIdPlayerCurrentList, _matchBattleIdPlayerList) || !Enumerable.SequenceEqual(matchBattleIdEnemyCurrentList, _matchBattleIdEnemyList))
         {
             shouldUpdatePointer = true;
             _matchBattleIdPlayerList.Clear();
@@ -1116,11 +1130,22 @@ public partial class BattleHUD : UIScene
 
             ++_doubleCastCount;
             _firstCommand = ProcessCommand(battleIndex, cursorGroup);
-            _subMenuType = SubMenuType.Ability;
+            CharacterCommandType commandType = CharacterCommands.Commands[_firstCommand.CommandId].Type;
 
-            DisplayAbility();
-            SetTargetVisibility(false);
-            SetAbilityPanelVisibility(true, true);
+            if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
+            {
+                _subMenuType = commandType == CharacterCommandType.Item ? SubMenuType.Item : SubMenuType.Throw;
+                DisplayItem(commandType == CharacterCommandType.Throw);
+                SetTargetVisibility(false);
+                SetItemPanelVisibility(true, true);
+            }                
+            else
+            {
+                _subMenuType = SubMenuType.Ability;
+                DisplayAbility();
+                SetTargetVisibility(false);
+                SetAbilityPanelVisibility(true, true);
+            }
             BackButton.SetActive(FF9StateSystem.MobilePlatform);
         }
     }
@@ -1249,6 +1274,11 @@ public partial class BattleHUD : UIScene
 
             if (unit.IsUnderAnyStatus(BattleStatus.Silence))
                 return AbilityStatus.Disable;
+        }
+
+        if (Configuration.Mod.TranceSeek && (patchedAbil.Type & 16) != 0) // [DV] Unused (5) - To disable "Bandit !" if Zidane equip a Dagger, Mage Masher or Mythril Dagger.
+        {
+            return AbilityStatus.Disable;
         }
 
         if (GetActionMpCost(patchedAbil, unit, patchedId, checkCurrentPlayer) > unit.CurrentMp)
@@ -1567,6 +1597,40 @@ public partial class BattleHUD : UIScene
         _partyDetail.SetBlink(CurrentPlayerIndex, false);
     }
 
+    private void SendMixCommand(CommandDetail[] allInputs)
+    {
+        CommandDetail lastInput = allInputs[allInputs.Length - 1];
+        MixItems mixRequest = new MixItems()
+        {
+            Id = -1,
+            Result = RegularItem.NoItem,
+            Ingredients = allInputs.Select(detail => (RegularItem)detail.SubId).ToList()         
+        };
+        Dictionary<RegularItem, Int32> requestIngredients = mixRequest.GetIngredientsAsDict();
+        Int32 mixId = -1;
+        foreach (MixItems mixCandidate in ff9mixitem.MixItemsData.Values)
+        {
+            if (mixCandidate.Length != mixRequest.Length)
+                continue;
+            Dictionary<RegularItem, Int32> candidateIngredients = mixCandidate.GetIngredientsAsDict();
+            if (candidateIngredients.All(kvp => requestIngredients.TryGetValue(kvp.Key, out Int32 cnt) && cnt == kvp.Value))
+            {
+                mixId = mixCandidate.Id;
+                break;
+            }
+        }
+        BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
+        CMD_DATA cmd = btl.cmd[0];
+        cmd.regist.sel_mode = 1;     
+        if (mixId >= 0) 
+            btl_cmd.SetCommand(cmd, lastInput.CommandId, mixId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+        else // In case of mix fail, we use CommandId.Item with the first item picked instead
+            btl_cmd.SetCommand(cmd, BattleCommandId.Item, allInputs[0].SubId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+        SetPartySwapButtonActive(false);
+        InputFinishList.Add(CurrentPlayerIndex);
+        _partyDetail.SetBlink(CurrentPlayerIndex, false);
+    }
+
     private void SetCommandVisibility(Boolean isVisible, Boolean forceCursorMemo)
     {
         SetPartySwapButtonActive(isVisible);
@@ -1630,15 +1694,24 @@ public partial class BattleHUD : UIScene
     {
         if (isVisible)
         {
-            ItemPanel.SetActive(true);
-            ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);
-            PairCharCommand cursorKey = new PairCharCommand(CurrentPlayerIndex, _currentCommandId);
-            if (_abilityCursorMemorize.ContainsKey(cursorKey) && FF9StateSystem.Settings.cfg.cursor != 0 || forceCursorMemo)
-                _itemScrollList.JumpToIndex(_abilityCursorMemorize[cursorKey], true);
+            if (!ItemPanel.activeSelf)
+            {
+                ItemPanel.SetActive(true);
+                ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);
+                PairCharCommand cursorKey = new PairCharCommand(CurrentPlayerIndex, _currentCommandId);
+                if (_abilityCursorMemorize.ContainsKey(cursorKey) && FF9StateSystem.Settings.cfg.cursor != 0 || forceCursorMemo)
+                    _itemScrollList.JumpToIndex(_abilityCursorMemorize[cursorKey], true);
+                else
+                    _itemScrollList.JumpToIndex(0, false);
+            }
+            if (IsDoubleCast && _doubleCastCount == 1)
+                ButtonGroupState.SetPointerNumberToGroup(1, ItemGroupButton);
+            else if (IsDoubleCast && _doubleCastCount == 2)
+                ButtonGroupState.SetPointerNumberToGroup(2, ItemGroupButton);
             else
-                _itemScrollList.JumpToIndex(0, false);
-            ButtonGroupState.RemoveCursorMemorize(ItemGroupButton);
+                ButtonGroupState.SetPointerNumberToGroup(0, ItemGroupButton);
             ButtonGroupState.ActiveGroup = ItemGroupButton;
+            ButtonGroupState.UpdateActiveButton();
         }
         else
         {
@@ -1682,7 +1755,7 @@ public partial class BattleHUD : UIScene
     private void SetTargetVisibility(Boolean isVisible)
     {
         if (isVisible)
-        {
+        {     
             TargetType targetType = 0;
             TargetDisplay subMode = 0;
             _defaultTargetAlly = false;
@@ -1708,6 +1781,28 @@ public partial class BattleHUD : UIScene
                 testCommand.SetAAData(aaData);
                 testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
 
+                if (Configuration.Mod.TranceSeek && _currentCommandId == BattleCommandId.Throw) // [DV] Change TargetType for throwing items (magic scrolls for Trance Seek)
+                { // Or i can make it with the DictionaryPatch.txt instead ?
+                    ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
+                    if (((weapon.Category & WeaponCategory.Throw) != 0) && (weapon.ModelId == 65535 || weapon.ModelId == 0))
+                    {
+                        switch (weapon.Offset2)
+                        {
+                            case 1:
+                                targetType = TargetType.SingleAlly;
+                                break;
+                            case 6:
+                                targetType = TargetType.All;
+                                break;
+                            case 7:
+                                targetType = TargetType.AllAlly;
+                                break;
+                            case 8:
+                                targetType = TargetType.AllEnemy;
+                                break;
+                        }
+                    }
+                }
                 SelectBestTarget(targetType, testCommand);
             }
             else if (_currentCommandIndex == BattleCommandMenu.Item)
@@ -1719,17 +1814,19 @@ public partial class BattleHUD : UIScene
                 _defaultTargetDead = itemData.info.ForDead;
                 _targetDead = itemData.info.ForDead;
                 subMode = itemData.info.DisplayStats;
-
-                CMD_DATA testCommand = new CMD_DATA
+                if (!MixCommandSet.Contains(_currentCommandId))
                 {
-                    regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
-                    cmd_no = _currentCommandId,
-                    sub_no = (Int32)itemId
-                };
-                testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityId.Void]);
-                testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
+                    CMD_DATA testCommand = new CMD_DATA
+                    {
+                        regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
+                        cmd_no = _currentCommandId,
+                        sub_no = (Int32)itemId
+                    };
 
-                SelectBestTarget(targetType, testCommand);
+                    testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityId.Void]);
+                    testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
+                    SelectBestTarget(targetType, testCommand);
+                }
             }
             else if (_currentCommandIndex == BattleCommandMenu.Attack && CurrentPlayerIndex > -1)
             {
@@ -2328,7 +2425,10 @@ public partial class BattleHUD : UIScene
             }
         }
 
-        if (IsDoubleCast)
+        if (IsMixCast)
+            try { SendMixCommand([_firstCommand, ProcessCommand(battleIndex, _cursorType)]); } catch (Exception err) { Log.Error(err); }
+        
+        else if (IsDoubleCast)
             SendDoubleCastCommand(_firstCommand, ProcessCommand(battleIndex, _cursorType));
         else
             SendCommand(ProcessCommand(battleIndex, _cursorType));
@@ -2354,6 +2454,8 @@ public partial class BattleHUD : UIScene
     {
         BattleItemListData battleItemListData = (BattleItemListData)data;
         ItemListDetailWithIconHUD detailWithIconHud = new ItemListDetailWithIconHUD(item.gameObject, true);
+        Boolean FirstIngredientMixed = _doubleCastCount == 2 && battleItemListData.Id == (RegularItem)_firstCommand.SubId;
+
         if (isInit)
             DisplayWindowBackground(item.gameObject, null);
 
@@ -2370,6 +2472,8 @@ public partial class BattleHUD : UIScene
         {
             FF9UIDataTool.DisplayItem(battleItemListData.Id, detailWithIconHud.IconSprite, detailWithIconHud.NameLabel, true);
             detailWithIconHud.NumberLabel.text = battleItemListData.Count.ToString();
+            detailWithIconHud.NameLabel.color = FirstIngredientMixed ? (battleItemListData.Count == 0 ? FF9TextTool.DarkYellow : FF9TextTool.Yellow) : (battleItemListData.Count == 0 ? FF9TextTool.Gray : FF9TextTool.White);
+            detailWithIconHud.NumberLabel.color = FirstIngredientMixed ? (battleItemListData.Count == 0 ? FF9TextTool.DarkYellow : FF9TextTool.Yellow) : (battleItemListData.Count == 0 ? FF9TextTool.Gray : FF9TextTool.White);
             detailWithIconHud.Button.Help.Enable = true;
             detailWithIconHud.Button.Help.TextKey = String.Empty;
             detailWithIconHud.Button.Help.Text = FF9TextTool.ItemBattleDescription(battleItemListData.Id);

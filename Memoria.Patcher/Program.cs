@@ -43,6 +43,8 @@ namespace Memoria.Patcher
                             process?.WaitForExit();
                         }
 
+                        // Send a command "FF9_Launcher.exe" even when the Steam overlay fix redirects to "FF9_Launcher.fix"
+                        launcherProcessPath = Path.ChangeExtension(launcherProcessPath, ".exe");
                         Process.Start(launcherProcessPath);
                     }
                     else

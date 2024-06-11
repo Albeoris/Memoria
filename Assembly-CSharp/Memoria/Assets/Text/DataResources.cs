@@ -41,6 +41,7 @@ namespace Memoria.Assets
             public static String ItemEffectsFile => "ItemEffects.csv";
             public static String ShopItems => "ShopItems.csv";
             public static String InitialItemsFile => "InitialItems.csv";
+            public static String MixItemsFile => "MixItems.csv";
             public static String ItemEquipPatchFile => "ItemEquipPatch.txt";
 
             public static String ModDirectory(String modFolder)

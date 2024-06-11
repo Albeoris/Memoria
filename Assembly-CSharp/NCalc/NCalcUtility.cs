@@ -31,7 +31,8 @@ namespace NCalc
             typeof(CharacterCategory),
             typeof(EnemyCategory),
             typeof(BattleCalcFlags),
-            typeof(CalcFlag)
+            typeof(CalcFlag),
+            typeof(EatResult)
         };
 
         public static Int64 ConvertNCalcResult(Object obj, Int64 noChangeValue)
@@ -332,7 +333,7 @@ namespace NCalc
         {
             ENEMY enemy = unit.IsPlayer ? null : unit.Enemy.Data;
             expr.Parameters[prefix + "Name"] = unit.Name;
-            expr.Parameters[prefix + "BattleId"] = (Int32)unit.Id;
+            expr.Parameters[prefix + "UnitId"] = (Int32)unit.Id;
             expr.Parameters[prefix + "MaxHP"] = unit.MaximumHp;
             expr.Parameters[prefix + "MaxMP"] = unit.MaximumMp;
             expr.Parameters[prefix + "MaxATB"] = (Int32)unit.MaximumAtb;
@@ -418,7 +419,7 @@ namespace NCalc
                 return;
             }
             expr.Parameters[prefix + "Name"] = String.Empty;
-            expr.Parameters[prefix + "BattleId"] = 0;
+            expr.Parameters[prefix + "UnitId"] = 0;
             expr.Parameters[prefix + "MaxHP"] = 0;
             expr.Parameters[prefix + "MaxMP"] = 0;
             expr.Parameters[prefix + "MaxATB"] = 0;
@@ -520,6 +521,7 @@ namespace NCalc
             expr.Parameters["TranceIncrease"] = (Int32)context.TranceIncrease;
             expr.Parameters["ItemSteal"] = (Int32)context.ItemSteal;
             expr.Parameters["IsDrain"] = context.IsDrain;
+            expr.Parameters["EatResult"] = (Int32)context.EatResult;
             InitializeExpressionCommand(ref expr, calc.Command);
         }
 
@@ -553,6 +555,7 @@ namespace NCalc
             expr.Parameters["CommandTargetId"] = (Int32)command.Data.tar_id;
             expr.Parameters["CommandTargetCount"] = command.TargetCount;
             expr.Parameters["CalcMainCounter"] = (Int32)command.Data.info.effect_counter;
+            expr.Parameters["CommandIsCounter"] = command.Id == BattleCommandId.EnemyCounter || command.Id == BattleCommandId.Counter || command.Id == BattleCommandId.MagicCounter; // Might check also if command.Data == command.Data.regist?.cmd[1] except for JumpAttack/JumpTrance
         }
 
         public static void InitializeExpressionRawAbility(ref Expression expr, AA_DATA aa, BattleAbilityId abilId = BattleAbilityId.Void)

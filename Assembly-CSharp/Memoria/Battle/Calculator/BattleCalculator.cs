@@ -18,7 +18,7 @@ namespace Memoria
 
         public static void SetBattleFollowFormatMessage(BattleMesages message, params Object[] args)
         {
-            UIManager.Battle.SetBattleFollowMessage(message, args);
+            UIManager.Battle.SetBattleFollowMessage(message, args != null && args.Length > 0 ? args[0] : null);
         }
 
         public static void SetBattleFollowFormatMessage(Byte priority, String formatMessage, params Object[] args)

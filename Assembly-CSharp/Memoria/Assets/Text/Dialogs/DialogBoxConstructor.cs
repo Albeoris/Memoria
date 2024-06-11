@@ -184,6 +184,7 @@ namespace Memoria.Assets
                     OnCharacterName(CharacterId.Steiner);
                     break;
                 case FFIXTextTagCode.Freya:
+                case FFIXTextTagCode.Fraya:
                     OnCharacterName(CharacterId.Freya);
                     break;
                 case FFIXTextTagCode.Quina:
@@ -560,7 +561,7 @@ namespace Memoria.Assets
         {
             _sb.Append("[C8B040][HSHD]");
             _sb.Append(ETb.GetItemName(_textEngine.gMesValue[oneParameterFromTag6]));
-            _sb.Append("[C8C8C8]");
+            _sb.Append("[C8C8C8][HSHD]");
         }
 
         private void OnVariable(Int32 oneParameterFromTag5)

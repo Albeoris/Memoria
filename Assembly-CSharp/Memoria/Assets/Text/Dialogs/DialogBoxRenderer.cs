@@ -184,6 +184,7 @@ namespace Memoria.Assets
                 case FFIXTextTagCode.Dagger:
                 case FFIXTextTagCode.Steiner:
                 case FFIXTextTagCode.Freya:
+                case FFIXTextTagCode.Fraya:
                 case FFIXTextTagCode.Quina:
                 case FFIXTextTagCode.Eiko:
                 case FFIXTextTagCode.Amarant:

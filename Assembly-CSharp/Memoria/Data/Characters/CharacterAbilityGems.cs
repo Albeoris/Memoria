@@ -199,7 +199,10 @@ namespace Memoria.Data
                         triggeredAtLeastOnce = true;
                         foreach (KeyValuePair<String, String> formula in BattleResultEffect[i].Formula)
                         {
-                            Expression e = new Expression(formula.Value);
+                            String[] formulaSplit = formula.Value.Split(';');
+                            if (formulaSplit.Length == 0)
+                                continue;
+                            Expression e = new Expression(formulaSplit[0]);
                             NCalcUtility.InitializeExpressionPlayer(ref e, play);
                             NCalcUtility.InitializeExpressionBonus(ref e, bonus, bonus_item);
                             e.Parameters["IsFlee"] = FF9StateSystem.Common.FF9.btl_result == 4;
@@ -216,6 +219,71 @@ namespace Memoria.Data
                             else if (String.Equals(formula.Key, "BonusCard")) bonus.card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)bonus.card);
                             else if (String.Equals(formula.Key, "BonusExp")) bonus.exp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), bonus.exp);
                             else if (String.Equals(formula.Key, "BonusGil")) bonus.gil = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), bonus.gil);
+                            else if (String.Equals(formula.Key, "BonusItemAdd"))
+                            {
+                                List<Expression> allArgs = new List<Expression>(formulaSplit.Length);
+                                allArgs.Add(e);
+                                for (Int32 argi = 1; argi < formulaSplit.Length; argi++)
+                                {
+                                    Expression arge = new Expression(formulaSplit[argi]);
+                                    NCalcUtility.InitializeExpressionPlayer(ref arge, play);
+                                    NCalcUtility.InitializeExpressionBonus(ref arge, bonus, bonus_item);
+                                    arge.Parameters["IsFlee"] = FF9StateSystem.Common.FF9.btl_result == 4;
+                                    arge.Parameters["IsFleeByLuck"] = FF9StateSystem.Common.FF9.btl_result == 4 && (FF9StateSystem.Common.FF9.btl_flag & 4) == 0;
+                                    arge.Parameters["FleeGil"] = fleeGil;
+                                    arge.Parameters["Status"] = (UInt32)play.status;
+                                    arge.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                                    arge.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                                    allArgs.Add(arge);
+                                }
+                                for (Int32 itcounter = 0; itcounter < allArgs.Count; itcounter += 2)
+                                {
+                                    RegularItem itType = (RegularItem)NCalcUtility.ConvertNCalcResult(allArgs[itcounter].Evaluate(), (Int32)RegularItem.NoItem);
+                                    if (itType == RegularItem.NoItem)
+                                        continue;
+                                    UInt32 count = 1;
+                                    if (allArgs.Count > itcounter + 1)
+                                        count = (UInt32)NCalcUtility.ConvertNCalcResult(allArgs[itcounter + 1].Evaluate(), 1);
+                                    for (Int32 j = 0; j < BattleResultUI.ItemMax; j++)
+                                    {
+                                        if (bonus_item.Count <= j)
+                                            bonus_item.Add(new FF9ITEM(itType, 0));
+                                        if (bonus_item[j].id == RegularItem.NoItem)
+                                        {
+                                            bonus_item[j].id = itType;
+                                            bonus_item[j].count = 0;
+                                        }
+                                        if (bonus_item[j].id == itType)
+                                        {
+                                            bonus_item[j].count = (Byte)Math.Min(bonus_item[j].count + count, Byte.MaxValue);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            else if (String.Equals(formula.Key, "EachBonusItem"))
+                            {
+                                for (Int32 j = 0; j < bonus_item.Count; j++)
+                                {
+                                    if (bonus_item[j].id == RegularItem.NoItem)
+                                        continue;
+                                    e.Parameters["EachBonusItem"] = (Int32)bonus_item[j].id;
+                                    e.Parameters["EachBonusItemCount"] = (Int32)bonus_item[j].count;
+                                    RegularItem oldit = bonus_item[j].id;
+                                    bonus_item[j].id = (RegularItem)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)bonus_item[j].id);
+                                }
+                            }
+                            else if (String.Equals(formula.Key, "EachBonusItemCount"))
+                            {
+                                for (Int32 j = 0; j < bonus_item.Count; j++)
+                                {
+                                    if (bonus_item[j].id == RegularItem.NoItem || bonus_item[j].count == 0)
+                                        continue;
+                                    e.Parameters["EachBonusItem"] = (Int32)bonus_item[j].id;
+                                    e.Parameters["EachBonusItemCount"] = (Int32)bonus_item[j].count;
+                                    bonus_item[j].count = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), 0);
+                                }
+                            }
                             else
                             {
                                 for (Int32 j = 0; j < BattleResultUI.ItemMax; j++)
@@ -230,7 +298,6 @@ namespace Memoria.Data
                                     {
                                         while (bonus_item.Count <= j) bonus_item.Add(new FF9ITEM(RegularItem.NoItem, 0));
                                         bonus_item[j].count = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), bonus_item[j].count);
-                                        if (bonus_item[j].count == 0) bonus_item[j].id = RegularItem.NoItem;
                                     }
                                 }
                             }
@@ -428,7 +495,7 @@ namespace Memoria.Data
                             else if (String.Equals(formula.Key, "Power")) command.Power = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.Power);
                             else if (String.Equals(formula.Key, "AbilityStatus")) command.AbilityStatus = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)command.AbilityStatus);
                             else if (String.Equals(formula.Key, "AbilityElement")) command.Element = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
-                            else if (String.Equals(formula.Key, "AbilityElementForBonus")) command.Element = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
+                            else if (String.Equals(formula.Key, "AbilityElementForBonus")) command.ElementForBonus = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
                             else if (String.Equals(formula.Key, "IsShortRanged")) command.IsShortRange = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsShortRange);
                             else if (String.Equals(formula.Key, "IsDrain")) context.IsDrain = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), context.IsDrain);
                             else if (String.Equals(formula.Key, "AbilityCategory")) command.AbilityCategory = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.AbilityCategory);
@@ -582,7 +649,7 @@ namespace Memoria.Data
                             if (String.Equals(formula.Key, "Power")) command.Power = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.Power);
                             else if (String.Equals(formula.Key, "AbilityStatus")) command.AbilityStatus = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)command.AbilityStatus);
                             else if (String.Equals(formula.Key, "AbilityElement")) command.Element = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
-                            else if (String.Equals(formula.Key, "AbilityElementForBonus")) command.Element = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
+                            else if (String.Equals(formula.Key, "AbilityElementForBonus")) command.ElementForBonus = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);
                             else if (String.Equals(formula.Key, "IsShortRanged")) command.IsShortRange = NCalcUtility.EvaluateNCalcCondition(e.Evaluate(), command.IsShortRange);
                             else if (String.Equals(formula.Key, "AbilityCategory")) command.AbilityCategory = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.AbilityCategory);
                             else if (String.Equals(formula.Key, "AbilityFlags")) command.AbilityType = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.AbilityType);

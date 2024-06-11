@@ -255,7 +255,7 @@ public class btl_cmd
             cmd.info.priority = 1;
         else
             btl_stat.RemoveStatus(caster, BattleStatus.Defend);
-        if (commandId < BattleCommandId.EnemyReaction || commandId > BattleCommandId.BoundaryUpperCheck)
+        if ((commandId < BattleCommandId.EnemyReaction || commandId > BattleCommandId.BoundaryUpperCheck) && cmd != caster.cmd[3]) // cmd != caster.cmd[3] => Prevent cancel animation with Double Cast.
         {
             //if (btl_util.getCurCmdPtr() != btl.cmd[4])
             //{
@@ -543,7 +543,8 @@ public class btl_cmd
                 || btl_stat.CheckStatus(cmd.regist, BattleStatusConst.Immobilized) && cmd.cmd_no != BattleCommandId.SysDead && cmd.cmd_no != BattleCommandId.SysReraise && cmd.cmd_no != BattleCommandId.SysStone && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysLastPhoenix
                 || Status.checkCurStat(cmd.regist, BattleStatus.Death) && cmd.cmd_no == BattleCommandId.SysPhantom
                 || Configuration.Battle.Speed >= 4 && btl_util.IsBtlUsingCommandMotion(cmd.regist)
-                || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0)
+                || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0
+                || (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill) && btl_stat.CheckStatus(cmd.regist, BattleStatus.Sleep))) // [DV] Prevent command cancel for boss.
             {
                 if (Configuration.Battle.Speed == 4)
                 {
@@ -611,13 +612,16 @@ public class btl_cmd
             //}
             if (btl_stat.CheckStatus(btl, BattleStatus.Heat))
             {
-                if (!Configuration.Mod.TranceSeek || btl.dms_geo_id != 512) // TRANCE SEEK - Ark overheat
+                if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill)) // TRANCE SEEK - Boss don't die with Heat.
                 {
-                    /*int num = (int)*/
-                    BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Heat);
-                    btl_stat.AlterStatus(btl, BattleStatus.Death);
+                    btlsys.cur_cmd_list.Add(cmd);
+                    KillCommand(cmd);
                     return;
                 }
+                /*int num = (int)*/
+                BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Heat);
+                btl_stat.AlterStatus(btl, BattleStatus.Death);
+                return;
             }
         }
         btlsys.cur_cmd_list.Add(cmd);
@@ -711,7 +715,10 @@ public class btl_cmd
                             FF9StateSystem.EventState.IncreaseAAUsageCounter(aaIndex);
                     }
                     RegularItem itemId = btl_util.GetCommandItem(cmd);
-                    if (itemId != RegularItem.NoItem)
+                    if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
+                        foreach (RegularItem ingredient in ff9mixitem.MixItemsData[cmd.sub_no].Ingredients)
+                            UIManager.Battle.ItemUse(ingredient);
+                    else if (itemId != RegularItem.NoItem)
                         UIManager.Battle.ItemUse(itemId);
 
                     cmd.info.mode = command_mode_index.CMD_MODE_LOOP;
@@ -1033,8 +1040,21 @@ public class btl_cmd
         if (btl_util.IsCommandMonsterTransform(cmd))
             return true;
 
-        RegularItem itemId = btl_util.GetCommandItem(cmd);
-        if (itemId != RegularItem.NoItem && ff9item.FF9Item_GetCount(itemId) == 0)
+        Boolean notEnoughItems = false;
+        if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
+        {
+            Dictionary<RegularItem, Int32> allIngredients = ff9mixitem.MixItemsData[cmd.sub_no].GetIngredientsAsDict();
+            foreach (KeyValuePair<RegularItem, Int32> requirement in allIngredients)
+                if (ff9item.FF9Item_GetCount(requirement.Key) < requirement.Value)
+                    notEnoughItems = true;
+        }
+        else
+        {
+            RegularItem itemId = btl_util.GetCommandItem(cmd);
+            if (itemId != RegularItem.NoItem && ff9item.FF9Item_GetCount(itemId) == 0)
+                notEnoughItems = true;
+        }
+        if (notEnoughItems)
         {
             UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughItems);
             return false;
@@ -1055,10 +1075,10 @@ public class btl_cmd
                 cmd.tar_id = caster.Id;
                 break;
             case BattleCommandId.MagicCounter:
-                UIManager.Battle.SetBattleFollowMessage(BattleMesages.ReturnMagic);
+                UIManager.Battle.SetBattleFollowMessage(BattleMesages.ReturnMagic, msgCmd: cmd);
                 break;
             case BattleCommandId.AutoPotion:
-                UIManager.Battle.SetBattleFollowMessage(BattleMesages.AutoPotion);
+                UIManager.Battle.SetBattleFollowMessage(BattleMesages.AutoPotion, msgCmd: cmd);
                 break;
             case BattleCommandId.SummonGarnet:
             case BattleCommandId.SummonEiko:
@@ -1069,7 +1089,7 @@ public class btl_cmd
                 return DecideMagicSword(caster, cmd.aa.MP);
             case BattleCommandId.Counter:
                 if (btl_util.GetCommandMainActionIndex(cmd) == BattleAbilityId.Attack)
-                    UIManager.Battle.SetBattleFollowMessage(BattleMesages.CounterAttack);
+                    UIManager.Battle.SetBattleFollowMessage(BattleMesages.CounterAttack, msgCmd: cmd);
                 break;
             case BattleCommandId.SysEscape:
                 if (btlsys.btl_phase == 4)
@@ -1178,6 +1198,8 @@ public class btl_cmd
     public static Boolean CheckMagicCondition(CMD_DATA cmd)
     {
         if (!btl_stat.CheckStatus(cmd.regist, BattleStatus.Silence) || (cmd.AbilityCategory & 2) == 0)
+            return true;
+        if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill)) // [DV] - Bosses can use magic under silence but have malus.
             return true;
         UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotCast);
         BattleVoice.TriggerOnStatusChange(cmd.regist, "Used", BattleStatus.Silence);
@@ -1358,7 +1380,7 @@ public class btl_cmd
             }
             else if (commandId == BattleCommandId.JumpTrance)
             {
-                if (Configuration.Mod.TranceSeek)
+                if (Configuration.Mod.TranceSeek) // [DV] - Freyja come back after Jump when in Trance
                 {
                     caster.RemoveStatus(BattleStatus.Jump);
                 }
@@ -1600,7 +1622,7 @@ public class btl_cmd
         }
     }
 
-    public static void ExecVfxCommand(BTL_DATA target, CMD_DATA cmd = null)
+    public static void ExecVfxCommand(BTL_DATA target, CMD_DATA cmd = null, BattleActionThread sfxThread = null)
     {
         if (cmd == null)
             cmd = btl_util.getCurCmdPtr();
@@ -1632,7 +1654,7 @@ public class btl_cmd
                         KillAllCommand(btlsys);
                     }
                 }
-                SBattleCalculator.CalcMain(caster, target, cmd);
+                SBattleCalculator.CalcMain(caster, target, cmd, sfxThread);
                 return;
             case BattleCommandId.SysTrans:
             {
@@ -1658,7 +1680,7 @@ public class btl_cmd
             case BattleCommandId.Item:
             case BattleCommandId.AutoPotion:
             default:
-                SBattleCalculator.CalcMain(caster, target, cmd);
+                SBattleCalculator.CalcMain(caster, target, cmd, sfxThread);
                 return;
         }
     }
