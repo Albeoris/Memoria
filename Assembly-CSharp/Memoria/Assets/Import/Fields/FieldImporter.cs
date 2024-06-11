@@ -191,9 +191,8 @@ namespace Memoria.Assets
                 String extension = Path.GetExtension(fileName); // .strings
 
                 fileName = fileName.Substring(0, fileName.Length - "_Tags".Length - extension.Length); // 0074_EVT_BATTLE_SIOTES01
-                TextResourceFormat format = TextResourceFormatHelper.ResolveFileFormat(extension);
 
-                TextResourcePath inputPath = new(new TextResourceReference(path), format);
+                TextResourcePath inputPath = TextResourcePath.ForImportExistingFile(path);
                 fieldNames[fileName] = ReadTagReplacements(inputPath);
             }
 
