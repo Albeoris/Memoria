@@ -11,42 +11,36 @@ public class FieldMapSPSExtraOffset
 		String name = "EmbeddedAsset/Manifest/FieldMap/mapSPSExtraOffsetList.txt";
 		String textAsset = AssetManager.LoadString(name);
 		StringReader stringReader = new StringReader(textAsset);
-		String text;
-		while ((text = stringReader.ReadLine()) != null)
+		String line;
+		while ((line = stringReader.ReadLine()) != null)
 		{
-			String[] array = text.Split(new Char[]
+			String[] entries = line.Split(',');
+			String key = entries[0];
+			Int32.TryParse(entries[1], out Int32 offsetCount);
+			if (offsetCount > 0)
 			{
-				','
-			});
-			String key = array[0];
-			Int32 num = 0;
-			Int32.TryParse(array[1], out num);
-			if (num > 0)
-			{
-				FieldMapSPSExtraOffset.SPSExtraOffset[] array2 = new FieldMapSPSExtraOffset.SPSExtraOffset[num];
-				for (Int32 i = 0; i < num; i++)
+				FieldMapSPSExtraOffset.SPSExtraOffset[] offsetList = new FieldMapSPSExtraOffset.SPSExtraOffset[offsetCount];
+				for (Int32 i = 0; i < offsetCount; i++)
 				{
-					array2[i] = new FieldMapSPSExtraOffset.SPSExtraOffset();
-					Int32.TryParse(array[i * 2 + 2], out array2[i].spsIndex);
-					Int32.TryParse(array[i * 2 + 3], out array2[i].zOffset);
+					offsetList[i] = new FieldMapSPSExtraOffset.SPSExtraOffset();
+					Int32.TryParse(entries[i * 2 + 2], out offsetList[i].spsIndex);
+					Int32.TryParse(entries[i * 2 + 3], out offsetList[i].zOffset);
 				}
-				this.offsetDict.Add(key, array2);
+				this.offsetDict.Add(key, offsetList);
 			}
 		}
 	}
 
-	public void SetSPSOffset(String name, List<FieldSPS> spsList)
+	public void SetSPSOffset(String name, List<SPSEffect> spsList)
 	{
 		if (this.offsetDict.ContainsKey(name))
 		{
-			FieldMapSPSExtraOffset.SPSExtraOffset[] array = this.offsetDict[name];
-			for (Int32 i = 0; i < (Int32)array.Length; i++)
+			FieldMapSPSExtraOffset.SPSExtraOffset[] offsetList = this.offsetDict[name];
+			for (Int32 i = 0; i < offsetList.Length; i++)
 			{
-				FieldMapSPSExtraOffset.SPSExtraOffset spsextraOffset = array[i];
+				FieldMapSPSExtraOffset.SPSExtraOffset spsextraOffset = offsetList[i];
 				if (spsextraOffset.spsIndex >= 0)
-				{
 					spsList[spsextraOffset.spsIndex].zOffset = spsextraOffset.zOffset;
-				}
 			}
 		}
 	}
@@ -56,7 +50,6 @@ public class FieldMapSPSExtraOffset
 	public class SPSExtraOffset
 	{
 		public Int32 spsIndex;
-
 		public Int32 zOffset;
 	}
 }

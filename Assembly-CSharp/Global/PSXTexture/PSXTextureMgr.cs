@@ -411,7 +411,44 @@ public static class PSXTextureMgr
 		File.WriteAllBytes(filename + ".bin", array2);
 	}
 
-	public static String GetDebugExportPath()
+    public static void LoadTCBInVram(Byte[] tcbBin)
+    {
+        using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(tcbBin)))
+        {
+            UInt32 secondBatchOffset = binaryReader.ReadUInt32();
+            UInt32 firstBatchOffset = binaryReader.ReadUInt32();
+            Int32 firstBatchCount = binaryReader.ReadInt32();
+            for (Int32 i = 0; i < firstBatchCount; i++)
+            {
+                binaryReader.BaseStream.Seek(firstBatchOffset, SeekOrigin.Begin);
+                Int32 x = binaryReader.ReadInt16();
+                Int32 y = binaryReader.ReadInt16();
+                Int32 w = binaryReader.ReadInt16();
+                Int32 h = binaryReader.ReadInt16();
+                PSXTextureMgr.LoadImageBin(x, y, w, h, binaryReader);
+                firstBatchOffset += (UInt32)(w * h * 2 + 8);
+            }
+            binaryReader.BaseStream.Seek(secondBatchOffset, SeekOrigin.Begin);
+            UInt32 secondBatchImgOffset = binaryReader.ReadUInt32();
+            Int32 secondBatchCount = binaryReader.ReadInt32();
+            secondBatchOffset += 8u;
+            for (Int32 i = 0; i < secondBatchCount; i++)
+            {
+                binaryReader.BaseStream.Seek(secondBatchOffset, SeekOrigin.Begin);
+                Int32 x = binaryReader.ReadInt16();
+                Int32 y = binaryReader.ReadInt16();
+                Int32 w = binaryReader.ReadInt16();
+                Int32 h = binaryReader.ReadInt16();
+                binaryReader.BaseStream.Seek(secondBatchImgOffset, SeekOrigin.Begin);
+                PSXTextureMgr.LoadImageBin(x, y, w, h, binaryReader);
+                secondBatchImgOffset += (UInt32)(w * h * 2);
+                secondBatchOffset += 8u;
+            }
+        }
+        PSXTextureMgr.ClearObject();
+    }
+
+    public static String GetDebugExportPath()
 	{
 		String path = "SpecialEffects/" + (SFX.currentEffectID == SpecialEffect.Special_No_Effect ? "Common" : "ef" + ((Int32)SFX.currentEffectID).ToString("D3"));
 		Directory.CreateDirectory(path);

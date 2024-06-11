@@ -1985,7 +1985,17 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.SPS:
             {
-                this.fieldSps.FF9FieldSPSSetObjParm(this.getv1(), this.getv1(), this.getv2(), this.getv2(), this.getv2());
+                Int32 objNo = this.getv1();
+                Int32 parmType = this.getv1();
+                Int32 arg0 = this.getv2();
+                Int32 arg1 = this.getv2();
+                Int32 arg2 = this.getv2();
+                if (this.gMode == 1)
+                    this.fieldSps.SetObjParm(objNo, parmType, arg0, arg1, arg2);
+                else if (this.gMode == 2)
+                    HonoluluBattleMain.battleSPS.SetObjParm(objNo, parmType, arg0, arg1, arg2);
+                else if (this.gMode == 3)
+                    ff9.world.WorldSPSSystem.SetObjParm(objNo, parmType, arg0, arg1, arg2);
                 return 0;
             }
             case EBin.event_code_binary.FULLMEMBER:
@@ -2286,7 +2296,17 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.SPS2:
             {
-                this.fieldSps.FF9FieldSPSSetObjParm(this.getv1(), this.getv1(), this.getv1(), this.getv2(), this.getv2());
+                Int32 objNo = this.getv1();
+                Int32 parmType = this.getv1();
+                Int32 arg0 = this.getv1();
+                Int32 arg1 = this.getv2();
+                Int32 arg2 = this.getv2();
+                if (this.gMode == 1)
+                    this.fieldSps.SetObjParm(objNo, parmType, arg0, arg1, arg2);
+                else if (this.gMode == 2)
+                    HonoluluBattleMain.battleSPS.SetObjParm(objNo, parmType, arg0, arg1, arg2);
+                else if (this.gMode == 3)
+                    ff9.world.WorldSPSSystem.SetObjParm(objNo, parmType, arg0, arg1, arg2);
                 return 0;
             }
             case EBin.event_code_binary.WINPOSE:

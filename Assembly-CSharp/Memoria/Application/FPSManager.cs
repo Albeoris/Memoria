@@ -28,11 +28,11 @@ namespace Memoria
 			return (FPSManager._delayedInputsOn & eventInputCode) != 0;
 		}
 
-		// A smooth effect runs during frames at which the main loop doesn't run, for smoothing visual effects without updating the states of objects
-		public static void AddSmoothEffect(UpdaterDelegate eff)
-		{
-			FPSManager._activeSmooth = eff;
-		}
+        // A smooth effect runs during frames at which the main loop doesn't run, for smoothing visual effects without updating the states of objects
+        public static void AddSmoothEffect(UpdaterDelegate eff)
+        {
+            FPSManager._activeSmooth = eff;
+        }
 
 		public static void DelayMainLoop(Single timeSkip)
 		{

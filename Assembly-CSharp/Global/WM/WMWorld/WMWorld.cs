@@ -366,8 +366,8 @@ public class WMWorld : Singleton<WMWorld>
 		Int32 peak = 0;
 		for (Int32 i = 0; i < this.WorldSPSSystem.SpsList.Count; i++)
 		{
-			WorldSPS worldSPS = this.WorldSPSSystem.SpsList[i];
-			if (worldSPS.spsBin != null && worldSPS.no != -1)
+            SPSEffect worldSPS = this.WorldSPSSystem.SpsList[i];
+			if (worldSPS.spsBin != null && worldSPS.spsId != -1)
 				peak++;
 		}
 		if (this.activeSpsPeak < peak)

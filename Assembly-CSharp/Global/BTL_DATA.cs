@@ -148,7 +148,8 @@ public partial class BTL_DATA
 	public Single animSpeed;
 	public Single animFrameFrac;
 
-	public GameObject weapon_geo;
+    public Byte weapon_bone;
+    public GameObject weapon_geo;
 
 	public UInt16 mesh_current;
 	public UInt16 mesh_banish;

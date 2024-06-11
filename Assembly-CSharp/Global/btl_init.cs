@@ -166,8 +166,9 @@ public static class btl_init
 		pBtl.mesh_current = pParm.Mesh[0];
 		pBtl.mesh_banish = pParm.Mesh[1];
 		pBtl.tar_bone = pParm.Bone[3];
-		// New field "out_of_reach"
-		pBtl.out_of_reach = pParm.OutOfReach || FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoNeighboring;
+        pBtl.weapon_bone = (Byte)pParm.WeaponAttachment;
+        // New field "out_of_reach"
+        pBtl.out_of_reach = pParm.OutOfReach || FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoNeighboring;
 		ENEMY enemy = FF9StateSystem.Battle.FF9Battle.enemy[pBtl.bi.slot_no];
 		enemy.bonus_gil = pParm.WinGil;
 		enemy.bonus_exp = pParm.WinExp;
@@ -400,7 +401,8 @@ public static class btl_init
 			btl.trance = p.trance;
 		}
 		btl.tar_bone = 0;
-		btl.sa = p.sa;
+        btl.weapon_bone = btl_mot.BattleParameterList[p.info.serial_no].WeaponBone;
+        btl.sa = p.sa;
 		btl.saExtended = p.saExtended;
 		btl.saMonster = new List<SupportingAbilityFeature>();
 		btl.elem.dex = p.elem.dex;
