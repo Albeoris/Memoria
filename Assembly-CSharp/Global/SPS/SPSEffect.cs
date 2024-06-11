@@ -48,6 +48,7 @@ public class SPSEffect : MonoBehaviour
         this._indices = new List<Int32>();
         switch (mode)
         {
+            case 0: // Model Viewer
             case 1: // Field
                 this.materials =
                 [
@@ -168,7 +169,6 @@ public class SPSEffect : MonoBehaviour
             this.works.h = (binaryReader.ReadByte() - 1) * 2;
             this.works.w = (binaryReader.ReadByte() - 1) * 2;
             this.works.code = (Byte)(0x2C | ((shaderABR != Byte.MaxValue) ? 2 : 0));
-            this.works.fade = this.fade << 4;
             binaryReader.BaseStream.Seek(frameOffset, SeekOrigin.Begin);
             Int32 primOffset = binaryReader.ReadUInt16();
             binaryReader.BaseStream.Seek(primOffset, SeekOrigin.Begin);
@@ -226,12 +226,12 @@ public class SPSEffect : MonoBehaviour
             UInt32 g = reader.ReadByte();
             UInt32 b = reader.ReadByte();
             Single basef = 127f;
-            if (this.works.fade >= 0)
+            if (this.fade >= 0)
             {
-                UInt32 ufade = (UInt32)this.works.fade;
-                r = Math.Min(r * ufade >> 12, 0x7FFF);
-                g = Math.Min(g * ufade >> 12, 0x7FFF);
-                b = Math.Min(b * ufade >> 12, 0x7FFF);
+                UInt32 ufade = (UInt32)this.fade;
+                r = Math.Min(r * ufade >> 8, 0x7FFF);
+                g = Math.Min(g * ufade >> 8, 0x7FFF);
+                b = Math.Min(b * ufade >> 8, 0x7FFF);
                 if ((fldMapNo == 2901 && (this.spsId == 644 || this.spsId == 736)) // Memoria/Entrance, save sphere
                  || (fldMapNo == 2913 && (this.spsId == 646 || this.spsId == 737)) // Memoria/Portal, save sphere
                  || (fldMapNo == 2925 && (this.spsId == 990 || this.spsId == 988))) // Crystal World, save sphere
@@ -256,7 +256,7 @@ public class SPSEffect : MonoBehaviour
             return;
         Boolean usePNGTexture = this.pngTexture != null;
         Boolean useScreenPositionHack = this.gMode == 1 && FF9StateSystem.Common.FF9.fldMapNo == 2929; // last/cw mbg a, teleportation SPS after Necron battle
-        Single uvShrink = this.gMode == 1 ? 0.5f : 0f;
+        Single uvShrink = this.gMode <= 1 ? 0.5f : 0f;
         BGCAM_DEF currentBgCamera = null;
         if (this.gMode == 1)
         {
@@ -295,7 +295,7 @@ public class SPSEffect : MonoBehaviour
         {
             localRTS = Matrix4x4.TRS(this.pos * 0.9925f, Quaternion.Euler(-this.rot.x / 2f, -this.rot.y / 2f, this.rot.z / 2f), new Vector3(scalef, -scalef, 1f));
         }
-        else
+        else if (this.gMode == 1)
         {
             Vector3 localPos = PSX.CalculateGTE_RTPT_POS(this.pos, Matrix4x4.identity, currentBgCamera.GetMatrixRT(), currentBgCamera.GetViewDistance(), this.fieldMap.GetProjectionOffset(), true);
             scalef *= currentBgCamera.GetViewDistance() / localPos.z;
@@ -306,6 +306,17 @@ public class SPSEffect : MonoBehaviour
             base.transform.localPosition = new Vector3(localPos.x, localPos.y, localPos.z + this.zOffset);
             base.transform.localScale = new Vector3(scalef, -scalef, 1f);
             base.transform.localRotation = Quaternion.Euler(this.rot.x, this.rot.y, -this.rot.z);
+        }
+        else
+        {
+            Camera viewerCamera = Camera.main ? Camera.main : GameObject.Find("FieldMap Camera").GetComponent<Camera>();
+            Matrix4x4 cameraMatrix = viewerCamera.worldToCameraMatrix.inverse;
+            Vector3 directionForward = cameraMatrix.MultiplyVector(Vector3.forward);
+            Vector3 directionRight = cameraMatrix.MultiplyVector(Vector3.right);
+            Vector3 directionDown = Vector3.Cross(directionForward, directionRight);
+            base.transform.localScale = new Vector3(-scalef, -scalef, scalef);
+            base.transform.localPosition = this.pos;
+            base.transform.LookAt(base.transform.position + directionForward, -directionDown);
         }
         this._vertices.Clear();
         this._colors.Clear();
@@ -523,7 +534,6 @@ public class SPSEffect : MonoBehaviour
         public TIMUtils.TPage tpage;
         public TIMUtils.Clut clut;
 
-        public Int32 fade;
         public Int32 primCount;
         public Byte code;
         public Single wFactor;
