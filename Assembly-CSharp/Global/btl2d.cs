@@ -514,17 +514,18 @@ public static class btl2d
 
     public static btl2d.STAT_ICON_TBL[] wStatIconTbl = new btl2d.STAT_ICON_TBL[]
     {
+        // TODO: bring back the extra position (will be done with status rework)
         new btl2d.STAT_ICON_TBL(BattleStatus.Poison, 0u, 0),
         new btl2d.STAT_ICON_TBL(BattleStatus.Venom, 0u, 0),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Slow, 0u, 0), // extra pos (?): 212, 0
-        new btl2d.STAT_ICON_TBL(BattleStatus.Haste, 0u, 0), // extra pos (?): -148, 0
+        new btl2d.STAT_ICON_TBL(BattleStatus.Slow, 0u, 0), // extra pos: 212, 0
+        new btl2d.STAT_ICON_TBL(BattleStatus.Haste, 0u, 0), // extra pos: -148, 0
         new btl2d.STAT_ICON_TBL(BattleStatus.Sleep, 0u, 0),
         new btl2d.STAT_ICON_TBL(BattleStatus.Heat, 0u, 1),
         new btl2d.STAT_ICON_TBL(BattleStatus.Freeze, 0u, 1),
         new btl2d.STAT_ICON_TBL(BattleStatus.Reflect, BattleStatus.Petrify, 1),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Silence, 0u, 2), // extra pos (?): -92, 0
+        new btl2d.STAT_ICON_TBL(BattleStatus.Silence, 0u, 2), // extra pos: -92, 0
         new btl2d.STAT_ICON_TBL(BattleStatus.Blind, 0u, 3),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Trouble, 0u, 4), // extra pos (?): 92, 0
+        new btl2d.STAT_ICON_TBL(BattleStatus.Trouble, 0u, 4), // extra pos: 92, 0
         new btl2d.STAT_ICON_TBL(BattleStatus.Berserk, 0u, 4)
     };
 

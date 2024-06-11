@@ -24,7 +24,7 @@ namespace Memoria.Data
                 textures = new Texture2D[TextureCount];
                 for (Int32 i = 0; i < TextureCount; i++)
                 {
-                    textures[i] = AssetManager.Load<Texture2D>($"{TextureBasePath}_{i + 1}");
+                    textures[i] = AssetManager.Load<Texture2D>(TextureBasePath.Replace("%", (i + 1).ToString()));
                     if (textures[i] == null)
                         textures[i] = new Texture2D(0, 0);
                 }

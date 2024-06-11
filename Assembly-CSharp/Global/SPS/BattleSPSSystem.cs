@@ -226,6 +226,7 @@ public class BattleSPSSystem : MonoBehaviour
                     return;
                 }
                 Int32 slot = this._FindFreeSHPSlot();
+                this._statusToSHPIndex[effectCode] = slot;
                 this._shpEffects[slot].Init(CommonSPSSystem.SHPPrototypes[effect.shpIndex]);
             }
         }

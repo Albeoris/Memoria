@@ -1,8 +1,8 @@
 # This file contains a set of SPS prototypes.
 # You must set at least 8 different SPS, used by statuses.
 # -----------------------------------------------
-# Comment;Id;SPS;Texture;ShaderIndex;Offset;Scale;BattleScale;BattleDistance
-# ;Int32;String;String;UInt8;Vector2;Vector2;Single;Single
+# Comment;Id;SPS;Texture;ShaderIndex;BattleScale;BattleDistance
+# ;Int32;String;String;UInt8;Single;Single
 # -----------------------------------------------
 Poison;0;BattleMap/BattleSPS/st_doku.sps;EmbeddedAsset/BattleMap/Status/poison;1;6;4
 Venom;1;BattleMap/BattleSPS/st_mdoku.sps;EmbeddedAsset/BattleMap/Status/venom;1;2;1.5
