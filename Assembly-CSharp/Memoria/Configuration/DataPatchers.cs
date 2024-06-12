@@ -300,29 +300,18 @@ namespace Memoria
                     if (!entry[1].TryEnumParse(out BattleCommandId cmdId))
                         continue;
 
-                    BattleHUD.MixFallBackType MixType = BattleHUD.MixFallBackType.FIRST_ITEM;
+                    if (!entry[2].TryEnumParse(out BattleHUD.MixFailType MixType))
+                        continue;
 
-                    if (entry.Length > 2)
+                    RegularItem FailItem = RegularItem.NoItem;
+                    if (entry.Length > 3)
                     {
-                        if (String.Compare(entry[2], "FallBackSecondItem") == 0)
-                        {
-                            MixType = BattleHUD.MixFallBackType.SECOND_ITEM;
-                        }
-                        else if (String.Compare(entry[2], "FallBackSkipTurn") == 0)
-                        {
-                            MixType = BattleHUD.MixFallBackType.SKIPTURN;
-                        }
-                        else if (String.Compare(entry[2], "FallbackUseItems") == 0)
-                        {
-                            MixType = BattleHUD.MixFallBackType.USE_ITEMS;
-                        }
-                        else if (String.Compare(entry[2], "FallbackFailItem") == 0)
-                        {
-                            MixType = BattleHUD.MixFallBackType.FAIL_ITEM;
-                        }
+                        if (Int32.TryParse(entry[3], out Int32 FailItemID))
+                            FailItem = (RegularItem)FailItemID;
                     }
-
-                    BattleHUD.MixCommandSet.Add(cmdId, MixType);
+                    Dictionary<BattleHUD.MixFailType, RegularItem> MixData = new Dictionary<BattleHUD.MixFailType, RegularItem>();
+                    MixData.Add(MixType, FailItem);
+                    BattleHUD.MixCommandSet.Add(cmdId, MixData);
                 }
                 else if (String.Compare(entry[0], "WorldMusicList") == 0 && entry.Length >= 7)
 				{

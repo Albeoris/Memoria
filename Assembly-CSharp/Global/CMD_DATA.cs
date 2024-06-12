@@ -69,6 +69,7 @@ public class CMD_DATA
 		public Byte meteor_miss;
 		public Byte short_summon;
 		public Byte mon_reflec;
+        public Byte mix_failed;
 
         // Custom fields
         public BattleCommandMenu cmdMenu;
@@ -97,6 +98,7 @@ public class CMD_DATA
 			meteor_miss = 0;
 			short_summon = 0;
 			mon_reflec = 0;
+            mix_failed = 0;
             cmdMenu = BattleCommandMenu.None;
             mode = command_mode_index.CMD_MODE_INSPECTION;
 			cmd_motion = true;

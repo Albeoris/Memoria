@@ -31,11 +31,11 @@ public partial class BattleHUD : UIScene
         BattleCommandId.DoubleBlackMagic,
         BattleCommandId.DoubleWhiteMagic
     };
-    public static Dictionary<BattleCommandId, MixFallBackType> MixCommandSet = new Dictionary<BattleCommandId, MixFallBackType>();
+    public static Dictionary<BattleCommandId, Dictionary<MixFailType, RegularItem>> MixCommandSet = new Dictionary<BattleCommandId, Dictionary<MixFailType, RegularItem>>();
     public static Boolean ForceNextTurn = false;
     public static Int32 switchBtlId = -1;
 
-    public enum MixFallBackType
+    public enum MixFailType
     {
         FIRST_ITEM,
         SECOND_ITEM,

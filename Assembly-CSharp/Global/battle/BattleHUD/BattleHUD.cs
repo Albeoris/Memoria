@@ -1624,8 +1624,16 @@ public partial class BattleHUD : UIScene
         cmd.regist.sel_mode = 1;     
         if (mixId >= 0)
             btl_cmd.SetCommand(cmd, lastInput.CommandId, mixId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
-        else // In case of mix fail, we use CommandId.Item with the first item picked instead
-            btl_cmd.SetCommand(cmd, BattleCommandId.Item, MixCommandSet[lastInput.CommandId] == MixFallBackType.SECOND_ITEM ? allInputs[1].SubId : allInputs[0].SubId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+        else
+        {
+            int ItemIdChoosen = MixCommandSet[lastInput.CommandId].ContainsKey(MixFailType.SECOND_ITEM) ? allInputs[1].SubId : allInputs[0].SubId;
+            if (MixCommandSet[lastInput.CommandId].ContainsKey(MixFailType.FAIL_ITEM) && MixCommandSet[lastInput.CommandId][MixFailType.FAIL_ITEM] != RegularItem.NoItem)
+            {
+                ItemIdChoosen = (Int32)MixCommandSet[lastInput.CommandId][MixFailType.FAIL_ITEM];
+                cmd.info.mix_failed = 1; // Prevent to consume the item in btl_cmd.CommandEngine
+            }
+            btl_cmd.SetCommand(cmd, BattleCommandId.Item, ItemIdChoosen, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+        }
         SetPartySwapButtonActive(false);
         InputFinishList.Add(CurrentPlayerIndex);
         _partyDetail.SetBlink(CurrentPlayerIndex, false);

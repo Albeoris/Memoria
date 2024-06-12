@@ -716,9 +716,11 @@ public class btl_cmd
                     }
                     RegularItem itemId = btl_util.GetCommandItem(cmd);
                     if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no))
+                    {
                         foreach (RegularItem ingredient in ff9mixitem.MixItemsData[cmd.sub_no].Ingredients)
                             UIManager.Battle.ItemUse(ingredient);
-                    else if (itemId != RegularItem.NoItem)
+                    }
+                    else if (itemId != RegularItem.NoItem && cmd.info.mix_failed == 0)
                         UIManager.Battle.ItemUse(itemId);
 
                     cmd.info.mode = command_mode_index.CMD_MODE_LOOP;
