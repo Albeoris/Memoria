@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Memoria;
 using Memoria.Data;
+using Memoria.Database;
 using Memoria.Scripts;
 using UnityEngine;
 
@@ -288,8 +289,14 @@ namespace FF9
 				return BattleAbilityId.Void;
 			if (IsCommandMonsterTransformAttack(cmd))
 				return BattleAbilityId.Attack;
-            if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
-                return BattleAbilityId.Void;
+            if (cmd.regist.bi.player != 0)
+            {
+                if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no))
+                    return BattleAbilityId.Void;
+                if (CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand commandplayer))
+                    if (commandplayer.Type == CharacterCommandType.Item)
+                        return BattleAbilityId.Void;
+            }
             switch (cmd.cmd_no)
 			{
 				case BattleCommandId.SysEscape:
@@ -315,8 +322,14 @@ namespace FF9
                 return RegularItem.NoItem;
             if (IsCommandMonsterTransform(cmd) || IsCommandMonsterTransformAttack(cmd))
                 return RegularItem.NoItem;
-            if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
-                return MixChoosen.Result;
+            if (cmd.regist.bi.player != 0)
+            {
+                if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no))
+                    return ff9mixitem.MixItemsData[cmd.sub_no].Result;
+                if (CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand commandplayer))
+                    if (commandplayer.Type == CharacterCommandType.Item)
+                        return (RegularItem)cmd.sub_no;
+            }
             switch (cmd.cmd_no)
             {
                 case BattleCommandId.Throw:
@@ -351,8 +364,14 @@ namespace FF9
 
 		public static Int32 GetCommandScriptId(CMD_DATA cmd)
 		{
-            if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
-                return ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).Ref.ScriptId;
+            if (cmd.regist.bi.player != 0)
+            {
+                if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no))
+                    return ff9item.GetItemEffect(GetCommandItem(cmd)).Ref.ScriptId;
+                if (CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand commandplayer))
+                    if (commandplayer.Type == CharacterCommandType.Item)
+                        return ff9item.GetItemEffect(GetCommandItem(cmd)).Ref.ScriptId;
+            }
             switch (cmd.cmd_no)
 			{
 				case BattleCommandId.Jump:
@@ -361,9 +380,9 @@ namespace FF9
 					return 0;
 				case BattleCommandId.Item:
 				case BattleCommandId.AutoPotion:
-					return ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).Ref.ScriptId;
+					return ff9item.GetItemEffect(GetCommandItem(cmd)).Ref.ScriptId;
 				default:
-					if (cmd.regist?.weapon != null && btl_util.GetCommandMainActionIndex(cmd) == BattleAbilityId.Attack && !btl_util.IsCommandMonsterTransformAttack(cmd))
+					if (cmd.regist?.weapon != null && GetCommandMainActionIndex(cmd) == BattleAbilityId.Attack && !IsCommandMonsterTransformAttack(cmd))
 						return cmd.regist.weapon.Ref.ScriptId;
 					return cmd.ScriptId;
 			}

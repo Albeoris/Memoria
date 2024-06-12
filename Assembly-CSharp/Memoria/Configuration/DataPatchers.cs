@@ -296,20 +296,33 @@ namespace Memoria
 				}
                 else if (String.Compare(entry[0], "MixCommand") == 0)
                 {
-                    // eg.: MixCommand Add 1000
-                    Boolean add = String.Compare(entry[1], "Remove") != 0;
-                    if (String.Compare(entry[1], "Set") == 0)
-                        BattleHUD.MixCommandSet.Clear();
-                    for (Int32 i = 2; i < entry.Length; i++)
+                    // eg.: MixCommand 10017 FallbackFailItem
+                    if (!entry[1].TryEnumParse(out BattleCommandId cmdId))
+                        continue;
+
+                    BattleHUD.MixFallBackType MixType = BattleHUD.MixFallBackType.FIRST_ITEM;
+
+                    if (entry.Length > 2)
                     {
-                        if (entry[i].TryEnumParse(out BattleCommandId cmdId))
+                        if (String.Compare(entry[2], "FallBackSecondItem") == 0)
                         {
-                            if (add)
-                                BattleHUD.MixCommandSet.Add(cmdId);
-                            else
-                                BattleHUD.MixCommandSet.Remove(cmdId);
+                            MixType = BattleHUD.MixFallBackType.SECOND_ITEM;
+                        }
+                        else if (String.Compare(entry[2], "FallBackSkipTurn") == 0)
+                        {
+                            MixType = BattleHUD.MixFallBackType.SKIPTURN;
+                        }
+                        else if (String.Compare(entry[2], "FallbackUseItems") == 0)
+                        {
+                            MixType = BattleHUD.MixFallBackType.USE_ITEMS;
+                        }
+                        else if (String.Compare(entry[2], "FallbackFailItem") == 0)
+                        {
+                            MixType = BattleHUD.MixFallBackType.FAIL_ITEM;
                         }
                     }
+
+                    BattleHUD.MixCommandSet.Add(cmdId, MixType);
                 }
                 else if (String.Compare(entry[0], "WorldMusicList") == 0 && entry.Length >= 7)
 				{

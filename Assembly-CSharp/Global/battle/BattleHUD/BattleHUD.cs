@@ -1622,10 +1622,10 @@ public partial class BattleHUD : UIScene
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
         CMD_DATA cmd = btl.cmd[0];
         cmd.regist.sel_mode = 1;     
-        if (mixId >= 0) 
+        if (mixId >= 0)
             btl_cmd.SetCommand(cmd, lastInput.CommandId, mixId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
         else // In case of mix fail, we use CommandId.Item with the first item picked instead
-            btl_cmd.SetCommand(cmd, BattleCommandId.Item, allInputs[0].SubId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+            btl_cmd.SetCommand(cmd, BattleCommandId.Item, MixCommandSet[lastInput.CommandId] == MixFallBackType.SECOND_ITEM ? allInputs[1].SubId : allInputs[0].SubId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);         
         SetPartySwapButtonActive(false);
         InputFinishList.Add(CurrentPlayerIndex);
         _partyDetail.SetBlink(CurrentPlayerIndex, false);
@@ -1765,45 +1765,71 @@ public partial class BattleHUD : UIScene
             _bestTargetIndex = -1;
             if (_currentCommandIndex == BattleCommandMenu.Ability1 || _currentCommandIndex == BattleCommandMenu.Ability2 || CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out _))
             {
-                AA_DATA aaData = GetSelectedActiveAbility(CurrentPlayerIndex, _currentCommandId, _currentSubMenuIndex, out Int32 subNo, out _);
-                targetType = aaData.Info.Target;
-                _defaultTargetAlly = aaData.Info.DefaultAlly;
-                _defaultTargetDead = aaData.Info.DefaultOnDead;
-                _targetDead = aaData.Info.ForDead;
-                subMode = aaData.Info.DisplayStats;
-
-                CMD_DATA testCommand = new CMD_DATA
+                if (CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Item)
                 {
-                    regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
-                    cmd_no = _currentCommandId,
-                    sub_no = subNo
-                };
-                testCommand.SetAAData(aaData);
-                testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
-
-                if (Configuration.Mod.TranceSeek && _currentCommandId == BattleCommandId.Throw) // [DV] Change TargetType for throwing items (magic scrolls for Trance Seek)
-                { // Or i can make it with the DictionaryPatch.txt instead ?
-                    ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
-                    if (((weapon.Category & WeaponCategory.Throw) != 0) && (weapon.ModelId == 65535 || weapon.ModelId == 0))
+                    RegularItem itemId = _itemIdList[_currentSubMenuIndex];
+                    ITEM_DATA itemData = ff9item.GetItemEffect(itemId);
+                    targetType = itemData.info.Target;
+                    _defaultTargetAlly = itemData.info.DefaultAlly;
+                    _defaultTargetDead = itemData.info.ForDead;
+                    _targetDead = itemData.info.ForDead;
+                    subMode = itemData.info.DisplayStats;
+                    if (!MixCommandSet.ContainsKey(_currentCommandId))
                     {
-                        switch (weapon.Offset2)
+                        CMD_DATA testCommand = new CMD_DATA
                         {
-                            case 1:
-                                targetType = TargetType.SingleAlly;
-                                break;
-                            case 6:
-                                targetType = TargetType.All;
-                                break;
-                            case 7:
-                                targetType = TargetType.AllAlly;
-                                break;
-                            case 8:
-                                targetType = TargetType.AllEnemy;
-                                break;
-                        }
+                            regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
+                            cmd_no = _currentCommandId,
+                            sub_no = (Int32)itemId
+                        };
+
+                        testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityId.Void]);
+                        testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
+                        SelectBestTarget(targetType, testCommand);
                     }
                 }
-                SelectBestTarget(targetType, testCommand);
+                else
+                {
+                    AA_DATA aaData = GetSelectedActiveAbility(CurrentPlayerIndex, _currentCommandId, _currentSubMenuIndex, out Int32 subNo, out _);
+                    targetType = aaData.Info.Target;
+                    _defaultTargetAlly = aaData.Info.DefaultAlly;
+                    _defaultTargetDead = aaData.Info.DefaultOnDead;
+                    _targetDead = aaData.Info.ForDead;
+                    subMode = aaData.Info.DisplayStats;
+
+                    CMD_DATA testCommand = new CMD_DATA
+                    {
+                        regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
+                        cmd_no = _currentCommandId,
+                        sub_no = subNo
+                    };
+                    testCommand.SetAAData(aaData);
+                    testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
+
+                    if (Configuration.Mod.TranceSeek && _currentCommandId == BattleCommandId.Throw) // [DV] Change TargetType for throwing items (magic scrolls for Trance Seek)
+                    { // Or i can make it with the DictionaryPatch.txt instead ?
+                        ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
+                        if (((weapon.Category & WeaponCategory.Throw) != 0) && (weapon.ModelId == 65535 || weapon.ModelId == 0))
+                        {
+                            switch (weapon.Offset2)
+                            {
+                                case 1:
+                                    targetType = TargetType.SingleAlly;
+                                    break;
+                                case 6:
+                                    targetType = TargetType.All;
+                                    break;
+                                case 7:
+                                    targetType = TargetType.AllAlly;
+                                    break;
+                                case 8:
+                                    targetType = TargetType.AllEnemy;
+                                    break;
+                            }
+                        }
+                    }
+                    SelectBestTarget(targetType, testCommand);
+                }
             }
             else if (_currentCommandIndex == BattleCommandMenu.Item)
             {
@@ -1814,7 +1840,7 @@ public partial class BattleHUD : UIScene
                 _defaultTargetDead = itemData.info.ForDead;
                 _targetDead = itemData.info.ForDead;
                 subMode = itemData.info.DisplayStats;
-                if (!MixCommandSet.Contains(_currentCommandId))
+                if (!MixCommandSet.ContainsKey(_currentCommandId))
                 {
                     CMD_DATA testCommand = new CMD_DATA
                     {
