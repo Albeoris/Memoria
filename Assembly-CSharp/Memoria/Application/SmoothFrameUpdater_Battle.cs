@@ -32,11 +32,11 @@ namespace Memoria
 					}
 					if (HonoluluBattleMain.battleSPS?.SpsList != null)
 					{
-						foreach (BattleSPS battleSPS in HonoluluBattleMain.battleSPS.SpsList)
+						foreach (SPSEffect sps in HonoluluBattleMain.battleSPS.SpsList)
 						{
-							if (battleSPS == null)
+							if (sps == null)
 								continue;
-							battleSPS._smoothUpdateRegistered = false;
+							sps._smoothUpdateRegistered = false;
 						}
 					}
 				}
@@ -130,28 +130,28 @@ namespace Memoria
 				geo.geoScaleUpdate(next, true);
 			}
 			// SPS
-			foreach (BattleSPS battleSPS in HonoluluBattleMain.battleSPS.SpsList)
+			foreach (SPSEffect sps in HonoluluBattleMain.battleSPS.SpsList)
 			{
-				if (battleSPS == null || !battleSPS.enabled)
+				if (sps == null || !sps.enabled)
 					continue;
 
-				if (battleSPS._smoothUpdateRegistered)
+				if (sps._smoothUpdateRegistered)
 				{
-					battleSPS._smoothUpdatePosPrevious = battleSPS._smoothUpdatePosActual;
-					battleSPS._smoothUpdateRotPrevious = battleSPS._smoothUpdateRotActual;
-					battleSPS._smoothUpdateScalePrevious = battleSPS._smoothUpdateScaleActual;
+					sps._smoothUpdatePosPrevious = sps._smoothUpdatePosActual;
+					sps._smoothUpdateRotPrevious = sps._smoothUpdateRotActual;
+					sps._smoothUpdateScalePrevious = sps._smoothUpdateScaleActual;
 				}
 				else
 				{
-					battleSPS._smoothUpdatePosPrevious = battleSPS.pos;
-					battleSPS._smoothUpdateRotPrevious = Quaternion.Euler(battleSPS.rot.x, battleSPS.rot.y, battleSPS.rot.z);
-					battleSPS._smoothUpdateScalePrevious = battleSPS.scale;
+					sps._smoothUpdatePosPrevious = sps.pos;
+					sps._smoothUpdateRotPrevious = Quaternion.Euler(sps.rot.x, sps.rot.y, sps.rot.z);
+					sps._smoothUpdateScalePrevious = sps.scale;
 				}
-				battleSPS._smoothUpdatePosActual = battleSPS.pos;
-				battleSPS._smoothUpdateRotActual = Quaternion.Euler(battleSPS.rot.x, battleSPS.rot.y, battleSPS.rot.z);
-				battleSPS._smoothUpdateScaleActual = battleSPS.scale;
+				sps._smoothUpdatePosActual = sps.pos;
+				sps._smoothUpdateRotActual = Quaternion.Euler(sps.rot.x, sps.rot.y, sps.rot.z);
+				sps._smoothUpdateScaleActual = sps.scale;
 
-				battleSPS._smoothUpdateRegistered = true;
+				sps._smoothUpdateRegistered = true;
 			}
 			// Sky
 			if (_bg == null && !_cameraRegistered)
@@ -233,14 +233,14 @@ namespace Memoria
 				}
 			}
 			// SPS
-			foreach (BattleSPS battleSPS in HonoluluBattleMain.battleSPS.SpsList)
+			foreach (SPSEffect sps in HonoluluBattleMain.battleSPS.SpsList)
 			{
-				if (battleSPS == null || !battleSPS.enabled || !battleSPS._smoothUpdateRegistered)
+				if (sps == null || !sps.enabled || !sps._smoothUpdateRegistered)
 					continue;
 
-				battleSPS.pos = Vector3.Lerp(battleSPS._smoothUpdatePosPrevious, battleSPS._smoothUpdatePosActual, smoothFactor);
-				battleSPS.rot = Quaternion.Lerp(battleSPS._smoothUpdateRotPrevious, battleSPS._smoothUpdateRotActual, smoothFactor).eulerAngles;
-				battleSPS.scale = (Int32)Mathf.Lerp(battleSPS._smoothUpdateScalePrevious, battleSPS._smoothUpdateScaleActual, smoothFactor);
+				sps.pos = Vector3.Lerp(sps._smoothUpdatePosPrevious, sps._smoothUpdatePosActual, smoothFactor);
+				sps.rot = Quaternion.Lerp(sps._smoothUpdateRotPrevious, sps._smoothUpdateRotActual, smoothFactor).eulerAngles;
+				sps.scale = (Int32)Mathf.Lerp(sps._smoothUpdateScalePrevious, sps._smoothUpdateScaleActual, smoothFactor);
 			}
 			// Sky
 			if(_bg != null)
@@ -289,14 +289,14 @@ namespace Memoria
 			}
 			if (HonoluluBattleMain.battleSPS?.SpsList != null)
 			{
-				foreach (BattleSPS battleSPS in HonoluluBattleMain.battleSPS.SpsList)
+				foreach (SPSEffect sps in HonoluluBattleMain.battleSPS.SpsList)
 				{
-					if (battleSPS == null || !battleSPS._smoothUpdateRegistered)
+					if (sps == null || !sps._smoothUpdateRegistered)
 						continue;
 
-					battleSPS.pos = battleSPS._smoothUpdatePosActual;
-					battleSPS.rot = battleSPS._smoothUpdateRotActual.eulerAngles;
-					battleSPS.scale = battleSPS._smoothUpdateScaleActual;
+					sps.pos = sps._smoothUpdatePosActual;
+					sps.rot = sps._smoothUpdateRotActual.eulerAngles;
+					sps.scale = sps._smoothUpdateScaleActual;
 				}
 			}
 			if (_bg != null)
@@ -352,16 +352,6 @@ namespace Memoria
 	}
 }
 
-partial class BattleSPS
-{
-	public Boolean _smoothUpdateRegistered = false;
-	public Vector3 _smoothUpdatePosPrevious;
-	public Vector3 _smoothUpdatePosActual;
-	public Quaternion _smoothUpdateRotPrevious;
-	public Quaternion _smoothUpdateRotActual;
-	public Int32 _smoothUpdateScalePrevious;
-	public Int32 _smoothUpdateScaleActual;
-}
 partial class BTL_DATA
 {
 	public Boolean _smoothUpdateRegistered = false;

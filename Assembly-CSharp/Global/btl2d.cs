@@ -22,31 +22,6 @@ public static class btl2d
             entry[num].BtlPtr = null;
     }
 
-    public static void InitBattleSPSBin()
-    {
-        String[] spsBinNames = new String[]
-        {
-            "st_doku.dat",
-            "st_mdoku.dat",
-            "st_moku.dat",
-            "st_moum.dat",
-            "st_nemu.dat",
-            "st_heat.dat",
-            "st_friz.dat",
-            "st_basak.dat",
-            "st_meiwa.dat",
-            "st_slow.dat",
-            "st_heis.dat",
-            "st_rif.dat"
-        };
-        for (Int32 i = 0; i < btl2d.wStatIconTbl.Length; i++)
-        {
-            Byte[] bytes = AssetManager.LoadBytes("BattleMap/BattleSPS/" + spsBinNames[i] + ".sps");
-            if (bytes == null)
-                return;
-        }
-    }
-
     public static void Btl2dReq(BattleUnit pBtl)
     {
         Btl2dReq(pBtl.Data, ref pBtl.Data.fig_info, ref pBtl.Data.fig, ref pBtl.Data.m_fig);
@@ -338,9 +313,6 @@ public static class btl2d
     private static void Btl2dStatIcon()
     {
         BTL2D_WORK btl2d_work_set = FF9StateSystem.Battle.FF9Battle.btl2d_work_set;
-        Vector3 rot;
-        rot.x = 0f;
-        rot.z = 0f;
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
             if (btl.bi.disappear == 0)
@@ -356,43 +328,13 @@ public static class btl2d
                             {
                                 if (btl.bi.player == 0 || !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE))
                                 {
-                                    Int32 angledx = ff9.rsin((Int32)(btl.rot.eulerAngles.y / 360f * 4096f));
-                                    Int32 angledz = ff9.rcos((Int32)(btl.rot.eulerAngles.y / 360f * 4096f));
-                                    btl2d.GetIconPosition(btl, out Byte[] iconBones, out SByte[] iconOffsY, out SByte[] iconOffsZ);
                                     for (Int32 i = 0; i < btl2d.wStatIconTbl.Length; i++)
                                     {
                                         btl2d.STAT_ICON_TBL statTable = btl2d.wStatIconTbl[i];
-                                        if ((statusOn & statTable.Mask) != 0)
+                                        if ((statusOn & statTable.MaskOn) != 0 && (statusOn & statTable.MaskOff) == 0)
                                         {
-                                            if ((statusOn & statTable.Mask2) == 0)
-                                            {
-                                                Int16 dy = (Int16)(iconOffsY[statTable.Pos] << 4);
-                                                Int16 dz = (Int16)(iconOffsZ[statTable.Pos] << 4);
-                                                if ((btl.flags & geo.GEO_FLAGS_SCALE) != 0)
-                                                {
-                                                    dy = (Int16)(dy * btl.gameObject.transform.localScale.y);
-                                                    dz = (Int16)(dz * btl.gameObject.transform.localScale.z);
-                                                }
-                                                Vector3 pos = btl.gameObject.transform.GetChildByName("bone" + iconBones[statTable.Pos].ToString("D3")).position;
-                                                pos.x += dz * angledx >> 12;
-                                                pos.y -= dy;
-                                                pos.z += dz * angledz >> 12;
-                                                if (statTable.Type != 0)
-                                                {
-                                                    rot.y = 0f;
-                                                }
-                                                else if (statTable.Ang != 0)
-                                                {
-                                                    Int32 angle = (Int32)(btl.rot.eulerAngles.y / 360f * 4095f);
-                                                    angle = angle + 3072 & 4095;
-                                                    rot.y = angle / 4095f * 360f;
-                                                }
-                                                else
-                                                {
-                                                    rot.y = 0f;
-                                                }
-                                                HonoluluBattleMain.battleSPS.UpdateBtlStatus(btl, statTable.Mask, pos, rot, btl2d_work_set.Timer);
-                                            }
+                                            btl2d.GetIconPosition(btl, statTable.AttachIndex, out Transform attachment, out Vector3 iconOff);
+                                            HonoluluBattleMain.battleSPS.UpdateBtlStatus(btl, statTable.MaskOn, attachment.position + iconOff, btl2d_work_set.Timer);
                                         }
                                     }
                                 }
@@ -402,48 +344,6 @@ public static class btl2d
                 }
             }
         }
-    }
-
-    public static Int16 S_GetShpFrame(BinaryReader shp)
-    {
-        shp.BaseStream.Seek(0L, SeekOrigin.Begin);
-        return (Int16)(shp.ReadInt16() & Int16.MaxValue);
-    }
-
-    public static UInt16 acUShort(BinaryReader p, Int32 index = 0)
-    {
-        p.BaseStream.Seek(index, SeekOrigin.Begin);
-        return p.ReadUInt16();
-    }
-
-    public static Byte acChar(BinaryReader p, Int32 index = 0)
-    {
-        p.BaseStream.Seek(index, SeekOrigin.Begin);
-        return p.ReadByte();
-    }
-
-    public static UInt64 acULong(BinaryReader p, Int32 index = 0)
-    {
-        p.BaseStream.Seek(index, SeekOrigin.Begin);
-        return p.ReadUInt64();
-    }
-
-    public static Int32 SAbrID(Int32 abr)
-    {
-        return (abr & 3) << 5;
-    }
-
-    public static Int32 getSprtcode(Int32 abr)
-    {
-        return 100 | ((abr != 255) ? 2 : 0);
-    }
-
-    public static void S_ShpNScPut(BinaryReader shp, Vector3 pos, Int32 frame, Int32 abr, Int32 fade)
-    {
-    }
-
-    public static void S_SpsNScPut(BinaryReader sps, Vector3 pos, Vector3 ang, Int32 sc, Int32 frame, Int32 abr, Int32 fade, Int32 pad)
-    {
     }
 
     private static void Btl2dStatCount()
@@ -468,13 +368,7 @@ public static class btl2d
                         {
                             if ((statusOn & counterStatus) != 0)
                             {
-                                btl2d.GetIconPosition(btl, out Byte[] iconBones, out SByte[] iconOffsY, out _);
-                                Int16 iconBone = iconBones[5];
-                                Int16 iconOffY = iconOffsY[5];
-                                if ((btl.flags & geo.GEO_FLAGS_SCALE) != 0)
-                                    iconOffY = (Int16)(iconOffY * btl.gameObject.transform.localScale.y);
-                                Transform attachTransf = btl.gameObject.transform.GetChildByName("bone" + iconBone.ToString("D3"));
-                                Int32 dy = -(iconOffY << 4);
+                                btl2d.GetIconPosition(btl, 5, out Transform attachTransf, out Vector3 iconOff);
                                 for (Int32 i = 0; i < statusTableList.Length; i++)
                                 {
                                     btl2d.STAT_CNT_TBL statusTable = statusTableList[i];
@@ -509,7 +403,7 @@ public static class btl2d
                                         {
                                             if (btl.deathMessage == null)
                                             {
-                                                btl.deathMessage = Singleton<HUDMessage>.Instance.Show(attachTransf, figStr, HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, dy), 0);
+                                                btl.deathMessage = Singleton<HUDMessage>.Instance.Show(attachTransf, figStr, HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
                                                 UIManager.Battle.DisplayParty();
                                             }
                                             else
@@ -521,7 +415,7 @@ public static class btl2d
                                         {
                                             if (btl.petrifyMessage == null)
                                             {
-                                                btl.petrifyMessage = Singleton<HUDMessage>.Instance.Show(attachTransf, figStr, HUDMessage.MessageStyle.PETRIFY, new Vector3(0f, dy), 0);
+                                                btl.petrifyMessage = Singleton<HUDMessage>.Instance.Show(attachTransf, figStr, HUDMessage.MessageStyle.PETRIFY, new Vector3(0f, iconOff.y), 0);
                                                 UIManager.Battle.DisplayParty();
                                             }
                                             else
@@ -583,6 +477,23 @@ public static class btl2d
         }
     }
 
+    public static void GetIconPosition(BTL_DATA btl, Int32 index, out Transform attach, out Vector3 offset)
+    {
+        Single angleY = btl.rot.eulerAngles.y * 0.0174532924f;
+        Single angledx = Mathf.Sin(angleY);
+        Single angledz = Mathf.Cos(angleY);
+        GetIconPosition(btl, out Byte[] iconBone, out SByte[] iconOffY, out SByte[] iconOffZ);
+        Int16 dy = (Int16)(iconOffY[index] << 4);
+        Int16 dz = (Int16)(iconOffZ[index] << 4);
+        if ((btl.flags & geo.GEO_FLAGS_SCALE) != 0)
+        {
+            dy = (Int16)(dy * btl.gameObject.transform.localScale.y);
+            dz = (Int16)(dz * btl.gameObject.transform.localScale.z);
+        }
+        attach = btl.gameObject.transform.GetChildByName($"bone{iconBone[index]:D3}");
+        offset = new Vector3(dz * angledx, -dy, dz * angledz);
+    }
+
     public const Byte BTL2D_NUM = 16;
 
     public const Byte BTL2D_TYPE_HP = 0;
@@ -611,18 +522,19 @@ public static class btl2d
 
     public static btl2d.STAT_ICON_TBL[] wStatIconTbl = new btl2d.STAT_ICON_TBL[]
     {
-        new btl2d.STAT_ICON_TBL(BattleStatus.Poison, 0u, null, 0, 1, 0, 0),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Venom, 0u, null, 0, 1, 0, 0),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Slow, 0u, null, 0, Byte.MaxValue, 1, 0),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Haste, 0u, null, 0, Byte.MaxValue, 1, 0),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Sleep, 0u, null, 0, Byte.MaxValue, 0, 1),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Heat, 0u, null, 1, 1, 0, 0),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Freeze, 0u, null, 1, 1, 0, 0),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Reflect, BattleStatus.Petrify, null, 1, 1, 0, 0),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Silence, 0u, null, 2, Byte.MaxValue, 1, 1),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Blind, 0u, null, 3, 2, 0, 0),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Trouble, 0u, null, 4, Byte.MaxValue, 1, 0),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Berserk, 0u, null, 4, 1, 0, 0)
+        // TODO: bring back the extra position (will be done with status rework)
+        new btl2d.STAT_ICON_TBL(BattleStatus.Poison, 0u, 0),
+        new btl2d.STAT_ICON_TBL(BattleStatus.Venom, 0u, 0),
+        new btl2d.STAT_ICON_TBL(BattleStatus.Slow, 0u, 0), // extra pos: 212, 0
+        new btl2d.STAT_ICON_TBL(BattleStatus.Haste, 0u, 0), // extra pos: -148, 0
+        new btl2d.STAT_ICON_TBL(BattleStatus.Sleep, 0u, 0),
+        new btl2d.STAT_ICON_TBL(BattleStatus.Heat, 0u, 1),
+        new btl2d.STAT_ICON_TBL(BattleStatus.Freeze, 0u, 1),
+        new btl2d.STAT_ICON_TBL(BattleStatus.Reflect, BattleStatus.Petrify, 1),
+        new btl2d.STAT_ICON_TBL(BattleStatus.Silence, 0u, 2), // extra pos: -92, 0
+        new btl2d.STAT_ICON_TBL(BattleStatus.Blind, 0u, 3),
+        new btl2d.STAT_ICON_TBL(BattleStatus.Trouble, 0u, 4), // extra pos: 92, 0
+        new btl2d.STAT_ICON_TBL(BattleStatus.Berserk, 0u, 4)
     };
 
     public class STAT_CNT_TBL
@@ -635,80 +547,21 @@ public static class btl2d
         }
 
         public BattleStatus Mask;
-
         public Int16 Idx;
-
         public UInt16 Col;
     }
 
     public class STAT_ICON_TBL
     {
-        public STAT_ICON_TBL(BattleStatus mask, BattleStatus mask2, BinaryReader spr, Byte pos, Byte abr, Byte type, Byte ang)
+        public STAT_ICON_TBL(BattleStatus maskActivate, BattleStatus maskPrevent, Byte attachIdx)
         {
-            this.Mask = mask;
-            this.Mask2 = mask2;
-            this.Spr = spr;
-            this.Pos = pos;
-            this.Abr = abr;
-            this.Type = type;
-            this.Ang = ang;
-            this.texture = null;
+            this.MaskOn = maskActivate;
+            this.MaskOff = maskPrevent;
+            this.AttachIndex = attachIdx;
         }
 
-        public BattleStatus Mask;
-
-        public BattleStatus Mask2;
-
-        public BinaryReader Spr;
-
-        public Byte Pos;
-
-        public Byte Abr;
-
-        public Byte Type;
-
-        public Byte Ang;
-
-        public Texture2D texture;
-    }
-
-    public class S_InShpWork
-    {
-        public UInt32 rgbcode;
-
-        public Int32 sx;
-
-        public Int32 sy;
-
-        public Int32 abr;
-
-        public Int32 clut;
-
-        public Int32 prim;
-
-        public Int32 otadd;
-    }
-
-    public class S_InSpsWork
-    {
-        public BinaryReader pt;
-
-        public BinaryReader rgb;
-
-        public Int32 w;
-
-        public Int32 h;
-
-        public Int32 tpage;
-
-        public Int32 clut;
-
-        public Int32 fade;
-
-        public Int32 prim;
-
-        public Int32 otadd;
-
-        public Int32 code;
+        public BattleStatus MaskOn;
+        public BattleStatus MaskOff;
+        public Byte AttachIndex;
     }
 }

@@ -505,26 +505,6 @@ namespace Memoria
                     String[] TexturesCustomModel = TexturesList.ToArray();
                     ModelFactory.CustomModelField.Add(entry[1] + "#" + entry[2], TexturesCustomModel);
                 }
-                else if (String.Compare(entry[0], "SPSTexture") == 0)
-                {
-                    // eg.: SPSTexture customfireorb shp 3 400 0 0 5 5
-                    if (!Int32.TryParse(entry[3], out Int32 numbertexture))
-                        continue;
-                    if (!float.TryParse(entry[4], out float posx))
-                        continue;
-                    if (!float.TryParse(entry[5], out float posy))
-                        continue;
-                    if (!float.TryParse(entry[6], out float posz))
-                        continue;
-
-                    if (!float.TryParse(entry[7], out float SPSScale))
-                        SPSScale = 4;
-                    if (!float.TryParse(entry[8], out float SPSDistance))
-                        SPSDistance = 5;
-
-                    Vector3 SPSpos = new Vector3(posx, posy, posz);
-                    BattleSPSSystem.statusTextures.Add(new BattleSPSSystem.SPSTexture(entry[1], entry[2], numbertexture, SPSpos, SPSScale, SPSDistance));
-                }
             }
 			if (shouldUpdateBattleStatus)
 				BattleStatusConst.Update();

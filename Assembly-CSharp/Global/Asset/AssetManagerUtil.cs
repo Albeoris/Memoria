@@ -224,15 +224,12 @@ public static class AssetManagerUtil
 
 	public static Int32 GetFieldMapAreaId(String fieldMapName)
 	{
-		Int32 num = fieldMapName.IndexOf("FBG_N");
-		if (num != -1)
+		Int32 fbgpos = fieldMapName.IndexOf("FBG_N", StringComparison.OrdinalIgnoreCase);
+		if (fbgpos != -1)
 		{
-			String s = fieldMapName.Substring(num + "FBG_N".Length, 2);
-			Int32 result = 0;
-			if (Int32.TryParse(s, out result))
-			{
+			String s = fieldMapName.Substring(fbgpos + "FBG_N".Length, 2);
+			if (Int32.TryParse(s, out Int32 result))
 				return result;
-			}
 		}
 		global::Debug.LogWarning("AssetManagerUtil::GetFieldMapAreaId::Unknown field map name " + fieldMapName);
 		return -1;

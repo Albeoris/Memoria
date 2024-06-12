@@ -160,6 +160,14 @@ namespace Memoria.Prime.CSV
             return raw.Split(',').Select(Int32).ToArray();
         }
 
+        public static Single[] SingleArray(String raw)
+        {
+            if (System.String.IsNullOrEmpty(raw))
+                return new Single[0];
+
+            return raw.Split(',').Select(Single).ToArray();
+        }
+
         public static String String(String raw)
         {
             if (raw == "<null>")

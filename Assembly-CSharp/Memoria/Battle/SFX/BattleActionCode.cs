@@ -61,7 +61,8 @@ public class BattleActionCode
 		{ "PlayMonsterSFX", new String[]{ "SFX", "Instance" } },
 		{ "LoadSFX", new String[]{ "SFX", "Char", "Target", "TargetPosition", "UseCamera", "FirstBone", "SecondBone", "Args", "MagicCaster" } },
 		{ "PlaySFX", new String[]{ "SFX", "Instance", "JumpToFrame", "SkipSequence", "HideMeshes", "MeshColors" } },
-		{ "Turn", new String[]{ "Char", "BaseAngle", "Angle", "Time", "UsePitch" } },
+        { "CreateVisualEffect", new String[]{ "SPS", "Char", "Bone", "Offset", "Size", "Time", "Speed", "UseSHP" } },
+        { "Turn", new String[]{ "Char", "BaseAngle", "Angle", "Time", "UsePitch" } },
 		{ "PlayAnimation", new String[]{ "Char", "Anim", "Speed", "Loop", "Palindrome", "Frame" } },
 		{ "PlayTextureAnimation", new String[]{ "Char", "Anim", "Once", "Stop" } },
 		{ "ToggleStandAnimation", new String[]{ "Char", "Alternate" } },
@@ -315,7 +316,34 @@ public class BattleActionCode
 		return false;
 	}
 
-	public Boolean TryGetArgVector(String key, out Vector3 value)
+    public Boolean TryGetArgBone(String key, BTL_DATA btl, out Transform boneTransf, out Int32 boneNum)
+    {
+        boneTransf = null;
+        boneNum = 0;
+        if (!argument.TryGetValue(key, out String bone))
+            return false;
+        if (Int32.TryParse(bone, out boneNum))
+            ;
+        else if (String.Equals(bone, "tar_bone", StringComparison.OrdinalIgnoreCase) || String.Equals(bone, "Target", StringComparison.OrdinalIgnoreCase))
+            boneNum = btl.tar_bone;
+        else if (String.Equals(bone, "wep_bone", StringComparison.OrdinalIgnoreCase) || String.Equals(bone, "Weapon", StringComparison.OrdinalIgnoreCase))
+            boneNum = btl.weapon_bone;
+        else if (bone.StartsWith("icon_bone:", StringComparison.OrdinalIgnoreCase) || bone.StartsWith("Icon:", StringComparison.OrdinalIgnoreCase))
+        {
+            btl2d.GetIconPosition(btl, out Byte[] iconBone, out _, out _);
+            if (!Int32.TryParse(bone.Substring(bone.IndexOf(':') + 1), out Int32 iconNum) || iconNum < 0 || iconNum >= iconBone.Length)
+                return false;
+            boneNum = iconBone[iconNum];
+        }
+        else
+        {
+            return false;
+        }
+        boneTransf = btl.gameObject.transform.GetChildByName($"bone{boneNum:D3}");
+        return boneTransf != null;
+    }
+
+    public Boolean TryGetArgVector(String key, out Vector3 value)
 	{
 		String args;
 		value = new Vector3();

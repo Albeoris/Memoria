@@ -1942,8 +1942,6 @@ public partial class EventEngine
             case EBin.event_code_binary.SPS: // 0xB3, "RunSPSCode", "Run Sps code, which seems to be special model effects on the field", true, 5, { 1, 1, 2, 2, 2 }, { "Sps", "Code", "Parameter 1", "Parameter 2", "Parameter 3" }, { AT_USPIN, AT_SPSCODE, AT_SPIN, AT_SPIN, AT_SPIN }, 0
             case EBin.event_code_binary.SPS2: // 0xDA, "RunSPSCodeSimple", "Run Sps code, which seems to be special model effects on the field", true, 5, { 1, 1, 1, 2, 2 }, { "Sps", "Code", "Parameter 1", "Parameter 2", "Parameter 3" }, { AT_USPIN, AT_SPSCODE, AT_SPIN, AT_SPIN, AT_SPIN }, 0
             {
-                // arg1: sps ID.
-                // arg2: sps code.
                 // 3-5: depends on the sps code.
                 // Load Sps (sps type)
                 // Enable Attribute (attribute list, boolean enable/disable)
@@ -1957,10 +1955,20 @@ public partial class EventEngine
                 // Set Frame (value) where the value is factored by 16 to get the frame
                 // Set Position Offset (X, -Z, Y)
                 // Set Depth Offset (depth)
+                Int32 objNo = this.getv1(); // arg1: sps ID.
+                Int32 parmType = this.getv1(); // arg2: sps code.
                 if (eventCodeBinary == EBin.event_code_binary.SPS)
-                    this.fieldSps.FF9FieldSPSSetObjParm(this.getv1(), this.getv1(), this.getv2(), this.getv2(), this.getv2());
+                    Int32 arg0 = this.getv2();
                 else
-                    this.fieldSps.FF9FieldSPSSetObjParm(this.getv1(), this.getv1(), this.getv1(), this.getv2(), this.getv2());
+                    Int32 arg0 = this.getv1();
+                Int32 arg1 = this.getv2();
+                Int32 arg2 = this.getv2();
+                if (this.gMode == 1)
+                    this.fieldSps.SetObjParm(objNo, parmType, arg0, arg1, arg2);
+                else if (this.gMode == 2)
+                    HonoluluBattleMain.battleSPS.SetObjParm(objNo, parmType, arg0, arg1, arg2);
+                else if (this.gMode == 3)
+                    ff9.world.WorldSPSSystem.SetObjParm(objNo, parmType, arg0, arg1, arg2);
                 return 0;
             }
             case EBin.event_code_binary.FULLMEMBER: // 0xB4, "SetPartyReserve", "Define the party member availability for a future Party call", true, 1, { 2 }, { "Characters available" }, { AT_CHARACTER }, 0
