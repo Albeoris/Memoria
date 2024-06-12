@@ -1957,10 +1957,11 @@ public partial class EventEngine
                 // Set Depth Offset (depth)
                 Int32 objNo = this.getv1(); // arg1: sps ID.
                 Int32 parmType = this.getv1(); // arg2: sps code.
+                Int32 arg0 = 0;
                 if (eventCodeBinary == EBin.event_code_binary.SPS)
-                    Int32 arg0 = this.getv2();
+                    arg0 = this.getv2();
                 else
-                    Int32 arg0 = this.getv1();
+                    arg0 = this.getv1();
                 Int32 arg1 = this.getv2();
                 Int32 arg2 = this.getv2();
                 if (this.gMode == 1)
