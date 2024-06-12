@@ -1140,6 +1140,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
+    /// <summary>0x59, "SetTileColor", "Change the color of a field tile block.arg1: background tile block.2nd to arg4s: color in (Cyan, Magenta, Yellow) format."</summary>
     public Int32 EBG_overlaySetShadeColor(Int32 overlayNdx, Byte r, Byte g, Byte b)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
@@ -1164,7 +1165,7 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
-    /// <summary>EBG - set position of overlay </summary>
+    /// <summary>0x5A, "SetTilePositionEx", "Move a field tile block.arg1: background tile block.2nd and arg3: movement in (dX, dY) format.arg4: depth, with higher value being further away from camera." </summary>
     public Int32 EBG_overlayMove(Int32 overlayNdx, Int16 dx, Int16 dy, Int16 dz)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
@@ -1705,9 +1706,7 @@ public class FieldMap : HonoBehavior
                     {
                         case 312:
                             if (ActualPsxScreenWidth > 400)
-                            {
                                 bgOverlay.curX = 0f;
-                            }
                             break;
                         case 805: case 808:
                             if (ActualPsxScreenWidth > 400)
@@ -1718,9 +1717,7 @@ public class FieldMap : HonoBehavior
                             break;
                         case 908: case 1908:
                             if (i == 14 && ActualPsxScreenWidth > 400)
-                            {
                                 bgOverlay.curX = 0f;
-                            }
                             break;
                         case 1108: // Clayra temple light
                             bgOverlay.curX = 0f; break;
@@ -1732,21 +1729,18 @@ public class FieldMap : HonoBehavior
                             bgOverlay.curX = 0f; break;
                         case 2251:
                             if (ActualPsxScreenWidth > 400)
-                            {
                                 bgOverlay.curX = 0f;
-                            }
                             break;
                         case 2252:
                             if (ActualPsxScreenWidth >= 480)
-                            {
                                 bgOverlay.curX = 0f;
-                            }
                             break;
                         case 2600: // 464/416
                             if ((i > 0 && i <= 7) || i == 13)
                             {
                                 bgOverlay.transform.localScale = new Vector3(1.14f, 1.14f, 1f); bgOverlay.curX -= 24f;
-                                if (ActualPsxScreenWidth >= 464) bgOverlay.curX = -12f;
+                                if (ActualPsxScreenWidth >= 464)
+                                    bgOverlay.curX = -12f;
                             }
                             break;
                         case 2602: // 384/328
@@ -1800,28 +1794,30 @@ public class FieldMap : HonoBehavior
                                 bgOverlay.curX = 0f;
                             }
                             break;
+                        case 2851:
+                            bgOverlay.curY -= 12f;
+                            if (ActualPsxScreenWidth >= 384)
+                            {
+                                if (i == 8)
+                                    bgOverlay.curX = 128f;
+                                if (i == 9)
+                                    bgOverlay.curX = 80f;
+                            }
+                            break;
                         case 2916:
                             bgOverlay.transform.localScale = new Vector3(1.02f, 1.02f, 1f); bgOverlay.curX -= 4f;
                             if (ActualPsxScreenWidth > 400)
-                            {
                                 bgOverlay.curX = -4f;
-                            }
                             break;
                         case 2922:
                             if (ActualPsxScreenWidth > 364 && (i < 4 || i == 8 || i == 9))
-                            {
                                 bgOverlay.curX = 0;
-                            }
                             break;
                         case 2923:
                             if (ActualPsxScreenWidth > 400 && (i == 2 || (i >= 4 && i <= 13) || i == 19))
-                            {
                                 bgOverlay.curX = 48;
-                            }
                             if (ActualPsxScreenWidth > 400 && (i == 1 || i == 3))
-                            {
                                 bgOverlay.curX = 0;
-                            }
                             break;
                     }
                 }
@@ -2508,6 +2504,9 @@ public class FieldMap : HonoBehavior
         [2221,0,17,2200],   // Candle light
         [2222,0,2,1000],    // Desert palace teleporter light
         [2502,0,14,1400],   // Ypsen, entrance light
+        [2504,0,44,0],      // Ypsen left light
+        [2504,0,45,0],      // Ypsen left light
+        [2505,0,32,1880],   // Ypsen left light
         [2600,0,1,5000],    // Branbal, background
         [2600,0,2,5000],    // Branbal, background
         [2600,0,3,5000],    // Branbal, background
