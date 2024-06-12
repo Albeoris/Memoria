@@ -113,8 +113,8 @@ public partial class BattleHUD : UIScene
                 return aaData.Name;
             return String.Empty;
         }
-        if (MixCommandSet.Contains(pCmd.cmd_no))
-            return FF9TextTool.ItemName(ff9mixitem.MixItemsData[pCmd.sub_no].Result);
+        if (MixCommandSet.Contains(pCmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(pCmd.sub_no, out MixItems MixChoosen))
+            return FF9TextTool.ItemName(MixChoosen.Result);
         switch (pCmd.cmd_no)
         {
             case BattleCommandId.Item:

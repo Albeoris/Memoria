@@ -715,8 +715,8 @@ public class btl_cmd
                             FF9StateSystem.EventState.IncreaseAAUsageCounter(aaIndex);
                     }
                     RegularItem itemId = btl_util.GetCommandItem(cmd);
-                    if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
-                        foreach (RegularItem ingredient in ff9mixitem.MixItemsData[cmd.sub_no].Ingredients)
+                    if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
+                        foreach (RegularItem ingredient in MixChoosen.Ingredients)
                             UIManager.Battle.ItemUse(ingredient);
                     else if (itemId != RegularItem.NoItem)
                         UIManager.Battle.ItemUse(itemId);
@@ -1041,7 +1041,7 @@ public class btl_cmd
             return true;
 
         Boolean notEnoughItems = false;
-        if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
+        if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no) && cmd.cmd_no != BattleCommandId.Item)
         {
             Dictionary<RegularItem, Int32> allIngredients = ff9mixitem.MixItemsData[cmd.sub_no].GetIngredientsAsDict();
             foreach (KeyValuePair<RegularItem, Int32> requirement in allIngredients)
