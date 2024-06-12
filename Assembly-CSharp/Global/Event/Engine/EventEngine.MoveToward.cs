@@ -14,13 +14,14 @@ public partial class EventEngine
 
     private Boolean MoveToward_mixed_ex(Actor actor, Int32 speed, Single x, Single y, Single z, Int32 flags, PosObj followPosObj)
     {
-        if (FF9StateSystem.Common.FF9.fldMapNo == 1823 && actor.sid == 13 && x == -365 && z == -373)
+        Int16 MapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        if (MapNo == 1823 && actor.sid == 13 && x == -365 && z == -373)
         {
             // A. Castle/Hallway, Steiner, one of the mid-steps before saying "Princess, we are ready."
             x = -389f;
             z = -600f;
         }
-        if (FF9StateSystem.Common.FF9.fldMapNo == 1550 && actor.sid == 15 && x == -1109 && z == -1014)
+        if (MapNo == 1550 && actor.sid == 15 && x == -1109 && z == -1014)
         {
             // Mountain Path/Trail, Dagger, the mid-step right after Eiko says "W-Wait!!!  Don’t leave me here!!!"
             x = -1155f;
@@ -80,7 +81,7 @@ public partial class EventEngine
                     angleMoveFaceDiff += 360f;
                 if (angleMoveFaceDiff > 180f || EventEngineUtils.nearlyEqual(angleMoveFaceDiff, 180f))
                     angleMoveFaceDiff -= 360f;
-                if ((FF9StateSystem.Common.FF9.fldMapNo != 307 || actor.sid != 11) && (FF9StateSystem.Common.FF9.fldMapNo != 610 || actor.sid != 3) && EventEngineUtils.nearlyEqual(angleMoveFaceDiff, 0f))
+                if ((MapNo != 307 || actor.sid != 11) && (MapNo != 610 || actor.sid != 3) && EventEngineUtils.nearlyEqual(angleMoveFaceDiff, 0f))
                 {
                     // Always except (Ice Cavern/Ice Path, Zidane) and (L. Castle/Castle Station, Lindblum_OldAviator)
                     actor.actf |= (UInt16)EventEngine.actLockDir;
@@ -137,8 +138,8 @@ public partial class EventEngine
         }
 
         EventEngine.GetMoveVector(out Vector3 moveVec, movingPitch, movingAngle, speed);
-        if (Configuration.Control.PSXMovementMethod && (flags & 2) == 0 && actorController != null && (FF9StateSystem.Common.FF9.fldMapNo != 758))
-            moveVec *= actorController.fieldMap.walkMesh.GetTriangleSlopeFactor(actorController.activeTri);
+        //if (Configuration.Control.PSXMovementMethod && (flags & 2) == 0 && actorController != null && actorController.isPlayer)
+        //    moveVec *= actorController.fieldMap.walkMesh.GetTriangleSlopeFactor(actorController.activeTri);
 
         if (actorController != null && actorController.name == actorController.fieldMap.debugObjName)
         {
@@ -173,12 +174,12 @@ public partial class EventEngine
 
         if (this.gMode == 1 && actorController != null)
         {
-            if (actorController.originalActor.uid == 2 && FF9StateSystem.Common.FF9.fldMapNo == 1605 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6622)
+            if (actorController.originalActor.uid == 2 && MapNo == 1605 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 6622)
             {
                 // Mdn. Sari/Eidolon Wall, Moogle_Male, first entrance
                 actorController.originalActor.collRad = 10;
             }
-            if (actorController.originalActor.uid == 18 && FF9StateSystem.Common.FF9.fldMapNo == 575 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 3165)
+            if (actorController.originalActor.uid == 18 && MapNo == 575 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 3165)
             {
                 // Lindblum/Festival, Steiner, cutscene with Steiner and Dagger
                 actorController.originalActor.collRad = 34;
@@ -204,17 +205,17 @@ public partial class EventEngine
             syncMove = posObj != followPosObj || moveDistance > 0f;
         moveDistance = this.dist64(deltaX, deltaY, deltaZ);
         Boolean distanceHasIncreased = moveDistance > actor.lastdist;
-        if (FF9StateSystem.Common.FF9.fldMapNo == 456 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2800 && actor.sid == 2)
+        if (MapNo == 456 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2800 && actor.sid == 2)
         {
             // Mountain/Summit, Grandpa
             distanceHasIncreased = distanceHasIncreased && !EventEngineUtils.nearlyEqual(moveDistance, actor.lastdist);
         }
-        else if (FF9StateSystem.Common.FF9.fldMapNo == 455 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2800 && actor.sid == 1)
+        else if (MapNo == 455 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2800 && actor.sid == 1)
         {
             // Mountain/Base, Grandpa
             distanceHasIncreased = distanceHasIncreased && !EventEngineUtils.nearlyEqual(moveDistance, actor.lastdist);
         }
-        else if (FF9StateSystem.Common.FF9.fldMapNo == 1055 && actor.sid == 11)
+        else if (MapNo == 1055 && actor.sid == 11)
         {
             // Cleyra/Town Area, Cleyran_Priest
             distanceHasIncreased = distanceHasIncreased && !EventEngineUtils.nearlyEqual(moveDistance, actor.lastdist);
@@ -222,8 +223,8 @@ public partial class EventEngine
         if (moveDistance < sqrSpeed || ((actor.actf & EventEngine.actMove) != 0 && distanceHasIncreased))
         {
             if (moveDistance < sqrSpeed && this.gMode == 1 && actorController != null
-                && FF9StateSystem.Common.FF9.fldMapNo != 2204
-                && (FF9StateSystem.Common.FF9.fldMapNo != 2209 || PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) != 9850))
+                && MapNo != 2204
+                && (MapNo != 2209 || PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) != 9850))
             {
                 // Always except (Palace/Odyssey) and (Palace/Sanctum, cutscene in which Kuja steals the Gulug Stone)
                 actorController.curPos.x = x;
@@ -233,32 +234,32 @@ public partial class EventEngine
             syncMove = false;
         }
         Boolean forceSyncMove = false;
-        if (FF9StateSystem.Common.FF9.fldMapNo == 901 && actor.sid == 1)
+        if (MapNo == 901 && actor.sid == 1)
         {
             // Treno/Bishop's House, Gilgamesh
             forceSyncMove = true;
         }
-        else if (FF9StateSystem.Common.FF9.fldMapNo == 1808 && (actor.sid == 4 || actor.sid == 5))
+        else if (MapNo == 1808 && (actor.sid == 4 || actor.sid == 5))
         {
             // A. Castle/Library, Scholars
             forceSyncMove = true;
         }
-        else if (FF9StateSystem.Common.FF9.fldMapNo == 1810 && actor.sid == 5)
+        else if (MapNo == 1810 && actor.sid == 5)
         {
             // A. Castle/Kitchen, Cook cooking a fish
             forceSyncMove = true;
         }
-        else if (FF9StateSystem.Common.FF9.fldMapNo == 456 && actor.sid == 2 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2800)
+        else if (MapNo == 456 && actor.sid == 2 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2800)
         {
             // Mountain/Summit, Grandpa
             forceSyncMove = true;
         }
-        else if (FF9StateSystem.Common.FF9.fldMapNo == 455 && actor.sid == 1 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2800)
+        else if (MapNo == 455 && actor.sid == 1 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 2800)
         {
             // Mountain/Base, Grandpa
             forceSyncMove = true;
         }
-        else if (FF9StateSystem.Common.FF9.fldMapNo == 1055 && actor.sid == 11)
+        else if (MapNo == 1055 && actor.sid == 11)
         {
             // Cleyra/Town Area, Cleyran_Priest
             forceSyncMove = true;
@@ -268,7 +269,7 @@ public partial class EventEngine
 
         if (actor.lastdist < EventEngine.kInitialDist && moveDistance < actor.lastdist)
             actor.actf |= (UInt16)EventEngine.actMove;
-        if (FF9StateSystem.Common.FF9.fldMapNo == 571 && actor.sid == 4 && EventEngineUtils.nearlyEqual(x, 887f) && EventEngineUtils.nearlyEqual(z, 1419f) && moveDistance > actor.lastdist)
+        if (MapNo == 571 && actor.sid == 4 && EventEngineUtils.nearlyEqual(x, 887f) && EventEngineUtils.nearlyEqual(z, 1419f) && moveDistance > actor.lastdist)
         {
             // Lindblum/The Doom Pub, Pub_Barman, repeated movement forward/backward while serving clients
             actorController.curPos.x = 887f;
@@ -277,7 +278,7 @@ public partial class EventEngine
             return true;
         }
         actor.lastdist = moveDistance;
-        if (FF9StateSystem.Common.FF9.fldMapNo == 2954 && actor.sid == 11 && EventEngineUtils.nearlyEqual(moveDistance, 32420f))
+        if (MapNo == 2954 && actor.sid == 11 && EventEngineUtils.nearlyEqual(moveDistance, 32420f))
         {
             // Chocobo's Paradise, Moogle_Male, some movement when trying to leave without Choco
             return false;
