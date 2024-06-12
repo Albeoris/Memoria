@@ -1625,7 +1625,7 @@ public partial class BattleHUD : UIScene
         if (mixId >= 0)
             btl_cmd.SetCommand(cmd, lastInput.CommandId, mixId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
         else // In case of mix fail, we use CommandId.Item with the first item picked instead
-            btl_cmd.SetCommand(cmd, BattleCommandId.Item, MixCommandSet[lastInput.CommandId] == MixFallBackType.SECOND_ITEM ? allInputs[1].SubId : allInputs[0].SubId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);         
+            btl_cmd.SetCommand(cmd, BattleCommandId.Item, MixCommandSet[lastInput.CommandId] == MixFallBackType.SECOND_ITEM ? allInputs[1].SubId : allInputs[0].SubId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
         SetPartySwapButtonActive(false);
         InputFinishList.Add(CurrentPlayerIndex);
         _partyDetail.SetBlink(CurrentPlayerIndex, false);
