@@ -912,8 +912,8 @@ public partial class FieldMapActorController : HonoBehavior
 		}
 
 		Vector3 actualMoveVec = this.moveVec * this.speed;
-		if (Configuration.Control.PSXMovementMethod)
-			actualMoveVec *= this.fieldMap.walkMesh.GetTriangleSlopeFactor(this.activeTri);
+		//if (Configuration.Control.PSXMovementMethod)
+		//	actualMoveVec *= this.fieldMap.walkMesh.GetTriangleSlopeFactor(this.activeTri);
 		this.curPos += actualMoveVec;
 	}
 

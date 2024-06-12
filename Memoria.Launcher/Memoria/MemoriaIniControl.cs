@@ -1372,7 +1372,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Control", "BattleAutoConfirm", "1");
                         MakeIniNotNull("Control", "TurboDialog", "1");
                         MakeIniNotNull("Control", "PSXScrollingMethod", "1");
-                        MakeIniNotNull("Control", "PSXMovementMethod", "0");
+                        MakeIniNotNull("Control", "PSXMovementMethod", "1");
                         MakeIniNotNull("Control", "AlwaysCaptureGamepad", "1");
 
                         MakeIniNotNull("Battle", "Enabled", "0");

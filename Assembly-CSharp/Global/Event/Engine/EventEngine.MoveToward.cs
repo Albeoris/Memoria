@@ -138,8 +138,8 @@ public partial class EventEngine
         }
 
         EventEngine.GetMoveVector(out Vector3 moveVec, movingPitch, movingAngle, speed);
-        if (Configuration.Control.PSXMovementMethod && (flags & 2) == 0 && actorController != null && MapNo != 758 && MapNo != 2169)
-            moveVec *= actorController.fieldMap.walkMesh.GetTriangleSlopeFactor(actorController.activeTri);
+        //if (Configuration.Control.PSXMovementMethod && (flags & 2) == 0 && actorController != null && actorController.isPlayer)
+        //    moveVec *= actorController.fieldMap.walkMesh.GetTriangleSlopeFactor(actorController.activeTri);
 
         if (actorController != null && actorController.name == actorController.fieldMap.debugObjName)
         {
