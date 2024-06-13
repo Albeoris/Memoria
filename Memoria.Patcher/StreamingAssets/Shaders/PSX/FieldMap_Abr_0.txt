@@ -5,9 +5,9 @@ Shader "PSX/FieldMap_Abr_0" {
 		_AlphaTex ("Texture", 2D) = "white" { }
 	}
 	SubShader { 
-		Tags { "QUEUE"="Transparent+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
+		Tags { "QUEUE"="Transparent+2" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
 		Pass {
-			Tags { "QUEUE"="Transparent+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
+			Tags { "QUEUE"="Transparent+2" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
 			Cull Off
 			Blend SrcAlpha OneMinusSrcAlpha
 			GpuProgramID 43830
