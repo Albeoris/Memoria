@@ -225,7 +225,7 @@ public static class btl_vfx
         btl.meshIsRendering = new Boolean[btl.meshCount];
         for (Int32 i = 0; i < btl.meshCount; i++)
             btl.meshIsRendering[i] = true;
-        btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
+        btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect", btl);
         BattlePlayerCharacter.InitAnimation(btl);
         //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
         geo.geoAttach(btl.weapon_geo, btl.gameObject, FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].wep_bone);

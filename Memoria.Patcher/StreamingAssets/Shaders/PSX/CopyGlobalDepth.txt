@@ -1,0 +1,56 @@
+Shader "PSX/CopyGlobalDepth" {
+	Properties {
+		_MainTex ("Texture", 2D) = "white" { }
+	}
+	SubShader { 
+		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Pass {
+			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			ZTest Always
+            ZWrite Off
+            Cull Off
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 0 [unity_ObjectToWorld]
+					Matrix 4 [unity_MatrixVP]
+					"vs_3_0
+					    def c8, 1, 0, 0, 0
+                        dcl_position v0
+                        dcl_texcoord v1
+                        dcl_texcoord o0.xy
+                        dcl_position o1
+                        mad r0, v0.xyzx, c8.xxxy, c8.yyyx
+                        dp4 r1.x, c0, r0
+                        dp4 r1.y, c1, r0
+                        dp4 r1.z, c2, r0
+                        dp4 r1.w, c3, r0
+                        dp4 r2.x, c4, r1
+                        dp4 r2.y, c5, r1
+                        dp4 r2.z, c6, r1
+                        dp4 r2.w, c7, r1
+                        mov o0.xy, v1
+                        mad o1.xy, r2.w, c255, r2
+                        mov o1.zw, r2
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					SetTexture 0 [_CameraDepthTexture] 2D 0
+					"ps_3_0
+					    def c0, 0, 0, 0, 0
+                        dcl_texcoord v0.xy
+                        dcl_2d s0
+                        texld_pp r0, v0, s0
+                        mov_pp oC0.x, r0.x
+                        mov_pp oC0.yzw, c0.x
+						"
+				}
+			}
+		}
+	}
+	Fallback "Diffuse"
+}

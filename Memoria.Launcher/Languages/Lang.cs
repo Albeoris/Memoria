@@ -216,6 +216,10 @@ namespace Memoria.Launcher
             public static readonly string UIColumnsChoice1 = GetSettings(nameof(UIColumnsChoice1));
             public static readonly string UIColumnsChoice2 = GetSettings(nameof(UIColumnsChoice2));
             public static readonly string EnableCustomShader = GetSettings(nameof(EnableCustomShader));
+            public static readonly string EnableToonShading = GetSettings(nameof(EnableToonShading));
+            public static readonly string EnableRealismShading = GetSettings(nameof(EnableRealismShading));
+            public static readonly string EnableOutlineForFieldCharacter = GetSettings(nameof(EnableOutlineForFieldCharacter));
+            public static readonly string EnableOutlineForBattleCharacter = GetSettings(nameof(EnableOutlineForBattleCharacter));
 
             // Settings.ini Tooltips
             public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));

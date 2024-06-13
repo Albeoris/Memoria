@@ -8,6 +8,10 @@ namespace Memoria
         private sealed class GraphicsSection : IniSection
         {
             public readonly IniValue<Int32> CustomShader;
+            public readonly IniValue<Int32> ToonShading;
+            public readonly IniValue<Int32> RealismShading;
+            public readonly IniValue<Int32> OutlineForFieldCharacter;
+            public readonly IniValue<Int32> OutlineForBattleCharacter;
             public readonly IniValue<Int32> BattleFPS;
             public readonly IniValue<Int32> BattleTPS;
             public readonly IniValue<Int32> FieldFPS;
@@ -27,6 +31,10 @@ namespace Memoria
             public GraphicsSection() : base(nameof(GraphicsSection), false)
             {
                 CustomShader = BindInt32(nameof(CustomShader), 0);
+                ToonShading = BindInt32(nameof(ToonShading), 0);
+                RealismShading = BindInt32(nameof(RealismShading), 0);
+                OutlineForFieldCharacter = BindInt32(nameof(OutlineForFieldCharacter), 0);
+                OutlineForBattleCharacter = BindInt32(nameof(OutlineForBattleCharacter), 0);
                 BattleFPS = BindInt32(nameof(BattleFPS), 30);
                 BattleTPS = BindInt32(nameof(BattleTPS), 15);
                 FieldFPS = BindInt32(nameof(FieldFPS), 30);

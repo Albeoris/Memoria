@@ -1,0 +1,143 @@
+Shader "PSX/PostEffect" {
+	Properties {
+		_MainTex ("Texture", 2D) = "white" { }
+	}
+	SubShader { 
+		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Pass {
+			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			ZTest Always
+            ZWrite Off
+            Cull Off
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "texcoord" TexCoord0
+					Matrix 0 [unity_ObjectToWorld]
+					Matrix 4 [unity_MatrixVP]
+					"vs_3_0
+					    def c8, 1, 0, 0, 0
+                        dcl_position v0
+                        dcl_texcoord v1
+                        dcl_texcoord o0.xy
+                        dcl_position o1
+                        mad r0, v0.xyzx, c8.xxxy, c8.yyyx
+                        dp4 r1.x, c0, r0
+                        dp4 r1.y, c1, r0
+                        dp4 r1.z, c2, r0
+                        dp4 r1.w, c3, r0
+                        dp4 r2.x, c4, r1
+                        dp4 r2.y, c5, r1
+                        dp4 r2.z, c6, r1
+                        dp4 r2.w, c7, r1
+                        mov o0.xy, v1
+                        mad o1.xy, r2.w, c255, r2
+                        mov o1.zw, r2
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+                    Matrix 0 [_InvP]
+                    Vector 4 [_ScreenParams]
+                    Float 5 [_aoPower]
+                    Float 6 [_aoStrength]
+                    Float 7 [_radius]
+                    Float 8 [_bias]
+                    Float 9 [_fallOffset]
+					SetTexture 0 [_CustomViewZMap] 2D 0
+					SetTexture 1 [_BlueNoise] 2D 1
+					"ps_3_0
+					    def c10, 4, 0.200000003, 0, 0.5
+                        def c11, 0.125, 0.5, 6.28318548, -3.14159274
+                        def c12, 2, 0, -1, 1
+                        def c13, 5, 0.0625, 1, 0
+                        def c14, 0, -0, 1, -1
+                        defi i0, 8, 0, 0, 0
+                        defi i1, 4, 0, 0, 0
+                        dcl_texcoord v0.xy
+                        dcl_2d s0
+                        dcl_2d s1
+                        texld r0, v0, s0
+                        mad r1.xyw, v0.xyzx, c12.xxzy, c12.zzzw
+                        mov r1.z, r0.x
+                        dp4 r0.x, c0, r1
+                        dp4 r0.y, c1, r1
+                        dp4 r0.z, c2, r1
+                        dp4 r0.w, c3, r1
+                        rcp r0.w, r0.w
+                        mul r0.xyz, r0.w, r0
+                        dsx r1.xyz, r0.zxyw
+                        dsy r2.xyz, r0.yzxw
+                        mul r3.xyz, r1, r2
+                        mad r1.xyz, r1.zxyw, r2.yzxw, -r3
+                        nrm r2.xyz, r1
+                        mul r1.xy, c10.x, v0
+                        texld r1, r1, s1
+                        mov r3.yw, c10
+                        mul r0.w, r3.y, c7.x
+                        rcp r3.x, c4.x
+                        rcp r3.y, c4.y
+                        mul r1.zw, r0.w, r3.xyxy
+                        mov r0.w, c12.y
+                        mov r2.w, c12.y
+                        rep i0
+                          mad r3.z, r2.w, c11.x, c11.y
+                          frc r3.z, r3.z
+                          mad r3.z, r3.z, c11.z, c11.w
+                          sincos r4.xy, r3.z
+                          mul r3.z, r1.y, r4.y
+                          mad r5.x, r4.x, r1.x, -r3.z
+                          dp2add r5.y, r4, r1.yxzw, c12.y
+                          mul r4.xy, r1.zwzw, r5
+                          mad r4.xy, r4, c4, r3.w
+                          frc r4.zw, r4.xyxy
+                          add r4.xy, -r4.zwzw, r4
+                          mov r4.zw, v0.xyxy
+                          mov r3.z, r0.w
+                          rep i1
+                            mad r4.zw, r4.xyxy, r3.xyxy, r4
+                            add r5.xy, -r4.zwzw, c12.w
+                            cmp r5.xy, r5, c12.y, c12.w
+                            cmp r6.xyz, r4.zzww, c14.xyxw, c14.zwzw
+                            add r5.z, r5.x, r6.y
+                            cmp r5.x, r5.z, r5.x, r6.x
+                            max r7.x, r6.z, r5.x
+                            max r6.x, r5.y, r7.x
+                            texld r5, r4.zwzw, s0
+                            mad r7.xy, r4.zwzw, c12.x, c12.z
+                            mad r7.zw, r5.x, c12.xywy, c12.xyyw
+                            dp4 r5.x, c0, r7
+                            dp4 r5.y, c1, r7
+                            dp4 r5.z, c2, r7
+                            dp4 r5.w, c3, r7
+                            rcp r5.w, r5.w
+                            mad r5.xyz, r5, r5.w, -r0
+                            dp3 r5.w, r5, r5
+                            dp3 r5.x, r2, r5
+                            rsq r5.y, r5.w
+                            mul r5.z, r5.y, r5.x
+                            mov r7.x, c13.x
+                            mad_sat r5.z, c8.x, -r7.x, r5.z
+                            mad_sat r5.x, r5.x, -r5.y, c9.x
+                            mul r5.x, r5.x, r5.z
+                            add r5.y, -r6.x, c12.w
+                            mad r3.z, r5.x, r5.y, r3.z
+                          endrep
+                          mov r0.w, r3.z
+                          add r2.w, r2.w, c12.w
+                        endrep
+                        mul r0.x, r0.w, c6.x
+                        mad_sat r0.x, r0.x, -c13.y, c13.z
+                        log r0.x, r0.x
+                        mul r0.x, r0.x, c5.x
+                        exp_pp oC0.x, r0.x
+                        mov_pp oC0.yzw, c12.xyyw
+						"
+				}
+			}
+		}
+	}
+	Fallback "Diffuse"
+}

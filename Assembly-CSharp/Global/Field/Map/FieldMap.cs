@@ -549,8 +549,9 @@ public class FieldMap : HonoBehavior
             for (Int32 j = 0; j < componentsInChildren2.Length; j++)
             {
                 Renderer renderer2 = componentsInChildren2[j];
-                renderer2.material.shader = ShadersLoader.Find(Configuration.Graphics.CustomShader == 1 ? "PSX/FieldMapActor_RealLighting" : "PSX/FieldMapActor");
+                renderer2.material.shader = ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
             }
+            NormalSolver.SmoothCharacterMesh(componentsInChildren2);
         }
     }
 
@@ -650,8 +651,9 @@ public class FieldMap : HonoBehavior
                 {
                     Material[] materials = renderers[i].materials;
                     for (Int32 j = 0; j < materials.Length; j++)
-                        materials[j].shader = ShadersLoader.Find(Configuration.Graphics.CustomShader == 1 ? "PSX/FieldMapActor_RealLighting" : "PSX/FieldMapActor");
+                        materials[j].shader = ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
                 }
+                NormalSolver.SmoothCharacterMesh(renderers);
             }
         }
         if (needRestore && FF9StateSystem.Common.FF9.fldMapNo == 1706) // Mdn. Sari/Kitchen

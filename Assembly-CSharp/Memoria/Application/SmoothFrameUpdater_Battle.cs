@@ -354,6 +354,7 @@ namespace Memoria
 
 partial class BTL_DATA
 {
+    public Boolean HasMeshSmoothed = false;
 	public Boolean _smoothUpdateRegistered = false;
 	public Vector3 _smoothUpdatePosPrevious;
 	public Vector3 _smoothUpdatePosActual;

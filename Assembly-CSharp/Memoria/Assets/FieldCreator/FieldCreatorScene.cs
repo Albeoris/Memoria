@@ -247,6 +247,7 @@ namespace Memoria.Assets
 
 		public static void Update()
 		{
+         
 			if (isUpdatingControl)
 				return;
 			if (controlTimeoutAutoShow > 0 && --controlTimeoutAutoShow == 0)
@@ -620,7 +621,7 @@ namespace Memoria.Assets
 						}
 						else
 						{
-							material.shader = ShadersLoader.Find(Configuration.Graphics.CustomShader == 1 ? "PSX/FieldMapActor_RealLighting" : "PSX/FieldMapActor");
+							material.shader = ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
 							material.SetColor("_Color", new Color32(128, 128, 128, 255));
 						}
 					}

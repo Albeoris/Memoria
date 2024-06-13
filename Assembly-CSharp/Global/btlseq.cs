@@ -255,13 +255,13 @@ public class btlseq
 			{
 				btl_stat.GeoAddColor2DrawPacket(btl.weapon_geo, (Int16)(alpha - 128), (Int16)(alpha - 128), (Int16)(alpha - 128));
 				if (alpha < 70)
-					btl_util.GeoSetABR(btl.weapon_geo, "GEO_POLYFLAGS_TRANS_100_PLUS_25");
+					btl_util.GeoSetABR(btl.weapon_geo, "GEO_POLYFLAGS_TRANS_100_PLUS_25", btl);
 			}
 			if ((btl.flags & geo.GEO_FLAGS_RENDER) != 0 && (btl.flags & geo.GEO_FLAGS_CLIP) == 0)
 			{
 				btl_stat.GeoAddColor2DrawPacket(btl.gameObject, (Int16)(alpha - 128), (Int16)(alpha - 128), (Int16)(alpha - 128));
 				if (alpha < 70)
-					btl_util.GeoSetABR(btl.gameObject, "GEO_POLYFLAGS_TRANS_100_PLUS_25");
+					btl_util.GeoSetABR(btl.gameObject, "GEO_POLYFLAGS_TRANS_100_PLUS_25",btl);
 			}
 		}
 	}

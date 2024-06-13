@@ -1,4 +1,4 @@
-Shader "PSX/BattleMap_StatusEffect_RealLighting" {
+Shader "PSX/BattleMap_StatusEffect_Toon" {
 	Properties {
 		_Color ("Main Color", Color) = (1,1,1,1)
 		_MainTex ("Base (RGB) Trans (A)", 2D) = "white" { }
@@ -78,65 +78,39 @@ Shader "PSX/BattleMap_StatusEffect_RealLighting" {
 					SetTexture 1 [_DetailTex] 2D 1
 					"ps_2_0
                         def c4, -0, -1, -0.5, 0.200000003
-                        def c5, 0.5, -0.823500037, 1.25, 0.833333313
-                        def c6, -2, 3, -1.66666663, 16
-                        def c7, -0.89442718, 0.35777089, 0.26832816, 0
-                        def c8, 1.57791328, 0.325715214, -0.524635434, 0
-                        def c9, 0.300000012, 0.699999988, 0, 0
+                        def c5, -0.89442718, 0.35777089, 0.26832816, 0
+                        def c6, 1.57791328, 0.325715214, -0.524635434, 100.000099
+                        def c7, -2, 3, 0, 0
                         dcl t0
                         dcl t1.xyz
-                        dcl t2.xyz
                         dcl_2d s0
                         dcl_2d s1
                         texld r0, t0, s0
                         add r0.w, r0.w, -c2.x
                         cmp r1, r0.w, c4.x, c4.y
                         texkill r1
-                        max r1.x, r0.x, r0.y
-                        max r2.w, r1.x, r0.z
-                        min r1.x, r0.y, r0.x
-                        min r2.x, r0.z, r1.x
-                        add r0.w, r2.x, r2.w
-                        mad_pp r0.w, r0.w, c5.x, c5.y
-                        abs_pp r0.w, r0.w
-                        add r0.w, -r0.w, -c4.y
-                        add_sat r0.w, r0.w, r0.w
-                        add r0.w, r0.w, -c4.w
-                        mul r0.w, r0.w, c5.z
-                        max r1.x, r0.w, -c4.x
-                        mul r0.w, r1.x, r1.x
-                        mad r1.x, r1.x, c6.x, c6.y
-                        mad r0.w, r1.x, -r0.w, -c4.y
-                        dp3 r1.x, t2, t2
-                        rsq r1.x, r1.x
-                        mov r2.x, c3.x
-                        mov r3.xyz, c8
-                        mad_pp r3.xyz, r2.x, r3, c7
-                        mad r1.xyz, t2, r1.x, r3
-                        nrm_pp r4.xyz, r1
-                        nrm_pp r1.xyz, t1
-                        dp3_sat_pp r1.w, r4, r1
-                        pow_pp r3.w, r1.w, c6.w
-                        mul r0.w, r0.w, r3.w
-                        mad r1.w, r2.x, c9.x, c9.y
-                        mul_pp r0.w, r0.w, r1.w
-                        mov r2.x, t0.z
-                        mov r2.y, t0.w
-                        texld r2, r2, s1
-                        mul r1.w, r2.x, c4.w
                         add r0.xyz, r0, c1
                         add r0.xyz, r0, c4.z
-                        mad r2.xyz, r0, r1.w, -r0
-                        mad r0.xyz, c0.x, r2, r0
-                        dp3_pp r1.x, r1, r3
-                        mad_sat_pp r1.x, r1.x, -c4.z, -c4.z
-                        add_pp r1.x, r1.x, c4.w
-                        mad_pp r1.y, r1.x, c6.z, c6.y
-                        mul_pp r1.x, r1.x, c5.w
-                        mul_pp r1.x, r1.x, r1.x
-                        mul_pp r1.x, r1.x, r1.y
-                        mad_pp r0.xyz, r0, r1.x, r0.w
-                        mov r0.w, -c4.y
+                        mov r1.x, t0.z
+                        mov r1.y, t0.w
+                        texld r1, r1, s1
+                        mul r0.w, r1.x, c4.w
+                        mad r1.xyz, r0, r0.w, -r0
+                        mad r0.xyz, c0.x, r1, r0
+                        mov r1.xyz, c6
+                        mov r0.w, c3.x
+                        mad_pp r1.xyz, r0.w, r1, c5
+                        nrm_pp r2.xyz, t1
+                        dp3_pp r0.w, r2, r1
+                        mad_sat_pp r0.w, r0.w, -c4.z, -c4.z
+                        add_pp r0.w, r0.w, -c4.w
+                        mul_sat_pp r0.w, r0.w, c6.w
+                        mul_pp r1.x, r0.w, r0.w
+                        mad_pp r0.w, r0.w, c7.x, c7.y
+                        mul_pp r0.w, r1.x, r0.w
+                        max_pp r1.x, r0.w, c4.w
+                        mul_pp r0.xyz, r0, r1.x
+                        mov_pp r0.w, -c4.y
                         mov_pp oC0, r0
 						"
 				}

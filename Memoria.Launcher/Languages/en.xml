@@ -95,6 +95,11 @@
 	FieldFPS = "Field"
 	WorldFPS = "World"
 	EnableCustomShader = "Enable Custom Shader"
+	EnableToonShading = "Use Toon Shading"
+	EnableRealismShading = "Use Realism Shading"
+	EnableOutlineForFieldCharacter = "Enable Outline For Field Character"
+	EnableOutlineForBattleCharacter = "Enable Outline For Battle Character"
+	
 	CameraStabilizer = "Camera stabilizer"
 	UseOrchestralMusic = "Orchestral music (Moguri)"
 	Use30FpsVideo = "30 FPS videos (Moguri)"

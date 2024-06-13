@@ -996,13 +996,6 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _antialiasing))
                     _antialiasing = 1;
-                
-                value = iniFile.ReadValue("Graphics", "CustomShader");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(CustomShader));
-                }
 
                 value = iniFile.ReadValue("Icons", nameof(HideCards));
                 if (String.IsNullOrEmpty(value))

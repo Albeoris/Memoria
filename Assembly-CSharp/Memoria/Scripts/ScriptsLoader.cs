@@ -19,6 +19,45 @@ namespace Memoria.Scripts
         private static volatile Task s_initializationTask;
         private static volatile Dictionary<String, Shader> s_shaders;
         private static volatile FileSystemWatcher s_watcher;
+        
+        private const string DefaultBattleCharacterShader = "PSX/BattleMap_StatusEffect";
+        private const string ToonBattleCharacterShader = "PSX/BattleMap_StatusEffect_Toon";
+        private const string RealismBattleCharacterShader = "PSX/BattleMap_StatusEffect_RealLighting";
+        
+        private const string DefaultFieldCharacterShader = "PSX/FieldMapActor";
+        private const string ToonFieldCharacterShader = "PSX/FieldMapActor_Toon";
+        private const string RealismFieldCharacterShader = "PSX/FieldMapActor_RealLighting";
+
+        public static string GetCurrentBattleCharcterShader
+        {
+            get
+            {
+                if (Configuration.Graphics.CustomShader == 1)
+                {
+                    if (Configuration.Graphics.ToonShading == 1)
+                        return ToonBattleCharacterShader;
+                    if (Configuration.Graphics.RealismShading == 1)
+                        return RealismBattleCharacterShader;
+                }
+
+                return DefaultBattleCharacterShader;
+            }
+        }
+        
+        public static string GetCurrentFieldMapCharcterShader
+        {
+            get
+            {
+                if (Configuration.Graphics.CustomShader == 1)
+                {
+                    if (Configuration.Graphics.ToonShading == 1)
+                        return ToonFieldCharacterShader;
+                    if (Configuration.Graphics.RealismShading == 1)
+                        return RealismFieldCharacterShader;
+                }
+                return DefaultFieldCharacterShader;
+            }
+        }
 
         public static void InitializeAsync()
         {
