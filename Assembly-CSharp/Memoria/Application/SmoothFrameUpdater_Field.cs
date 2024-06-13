@@ -196,7 +196,7 @@ namespace Memoria
 						//Vector3 frameMove = bgLayer._smoothUpdatePosActual - bgLayer._smoothUpdatePosPrevious;
 						//if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < OverlaySmoothMovementMaxSqr)
 						bgLayer.transform.position = Vector3.Lerp(bgLayer._smoothUpdatePosPrevious, bgLayer._smoothUpdatePosActual, smoothFactor);
-						Log.Message($"[DEBUG] {Time.frameCount} {bgLayer.transform.name} mag {(bgLayer._smoothUpdatePosActual-bgLayer._smoothUpdatePosPrevious).magnitude} cur {bgLayer.transform.position} prev {bgLayer._smoothUpdatePosPrevious} {bgLayer._smoothUpdatePosActual} t {smoothFactor}");
+						//Log.Message($"[DEBUG] {Time.frameCount} {bgLayer.transform.name} mag {(bgLayer._smoothUpdatePosActual-bgLayer._smoothUpdatePosPrevious).magnitude} cur {bgLayer.transform.position} prev {bgLayer._smoothUpdatePosPrevious} {bgLayer._smoothUpdatePosActual} t {smoothFactor}");
 					}
 				}
 			}
