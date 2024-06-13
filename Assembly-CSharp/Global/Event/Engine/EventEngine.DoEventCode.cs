@@ -686,7 +686,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.MODEL: // 0x2F, "SetMode", "Set the model of the object and its head's height (used to set the dialog box's height)", true, 2, { 2, 1 }, { "Mode", "Height" }, { AT_MODEL, AT_USPIN }, 0
+            case EBin.event_code_binary.MODEL: // 0x2F, "SetModel", "Set the model of the object and its head's height (used to set the dialog box's height)", true, 2, { 2, 1 }, { "Mode", "Height" }, { AT_MODEL, AT_USPIN }, 0
             {
                 po.model = (UInt16)this.getv2(); // arg1: model
                 this.gExec.flags |= 1;
@@ -734,6 +734,9 @@ public partial class EventEngine
                     po.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(po.model), false);
                     Singleton<WMWorld>.Instance.addGameObjectToWMActor(po.go, ((Actor)po).wmActor);
                 }
+
+                if (mapNo == 112 && po.model == 223)
+                    this.gCur.flags = (Byte)((this.gCur.flags & -64) | ((Int32)14) & 63); // floating glass Alex pub: set flag 14 (invisible)
                 return 0;
             }
             case EBin.event_code_binary.AIDLE: // 0x33, "SetStandAnimation", "Change the standing animation", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
