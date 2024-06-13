@@ -2602,52 +2602,52 @@ public partial class EventEngine
                 return 0;
             }
             // 0xFF, "EXTENDED_CODE", "Not an opcode."
-            case EBin.event_code_binary.BSACTIVE: //  0x102, "0x102", "Unknown Opcode (BSACTIVE: walkMesh.BGI_simSetActive).", true, 2, { 1, 1 }, { "Unknown", "Unknown" }, { AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.BSACTIVE: //  0x102, "0x102", "Unknown Opcode"
             {
                 this.fieldmap.walkMesh.BGI_simSetActive((UInt32)this.getv1(), (UInt32)this.getv1());
                 return 0;
             }
-            case EBin.event_code_binary.BSFLAG: // 0x103, "0x103", "Unknown Opcode (BSFLAG: walkMesh.BGI_simSetFlags).", true, 2, { 1, 1 }, { "Unknown", "Unknown" }, { AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.BSFLAG: // 0x103, "0x103", "Unknown Opcode"
             {
                 this.fieldmap.walkMesh.BGI_simSetFlags((UInt32)this.getv1(), (UInt32)this.getv1());
                 return 0;
             }
-            case EBin.event_code_binary.BSFLOOR: //  0x104, "0x104", "Unknown Opcode (BSFLOOR: walkMesh.BGI_simSetFloor).", true, 2, { 1, 1 }, { "Unknown", "Unknown" }, { AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.BSFLOOR: // 0x104, "0x104", "Unknown Opcode"
             {
                 this.fieldmap.walkMesh.BGI_simSetFloor((UInt32)this.getv1(), (UInt32)this.getv1());
                 return 0;
             }
-            case EBin.event_code_binary.BSRATE: //  0x105, "0x105", "Unknown Opcode (BSRATE: walkMesh.BGI_simSetFrameRate).", true, 2, { 1, 2 }, { "Unknown", "Unknown" }, { AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.BSRATE: // 0x105, "0x105", "Unknown Opcode"
             {
                 this.fieldmap.walkMesh.BGI_simSetFrameRate((UInt32)this.getv1(), (Int16)this.getv2());
                 return 0;
             }
-            case EBin.event_code_binary.BSALGO: //  0x106, "0x106", "Unknown Opcode (BSALGO: walkMesh.BGI_simSetAlgorithm).", true, 2, { 1, 1 }, { "Unknown", "Unknown" }, { AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.BSALGO: // 0x106, "0x106", "Unknown Opcode"
             {
                 this.fieldmap.walkMesh.BGI_simSetAlgorithm((UInt32)this.getv1(), (UInt32)this.getv1());
                 return 0;
             }
-            case EBin.event_code_binary.BSDELTA: //  0x107, "0x107", "Unknown Opcode (BSDELTA: walkMesh.BGI_simSetDelta).", true, 3, { 1, 2, 2 }, { "Unknown", "Unknown" , "Unknown" }, { AT_USPIN, AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.BSDELTA: // 0x107, "0x107", "Unknown Opcode"
             {
                 this.fieldmap.walkMesh.BGI_simSetDelta((UInt32)this.getv1(), (Int16)this.getv2(), (Int16)this.getv2());
                 return 0;
             }
-            case EBin.event_code_binary.BSAXIS: //  0x108, "0x108", "Unknown Opcode (BSAXIS: walkMesh.BGI_simSetAxis).", true, 2, { 1, 1 }, { "Unknown", "Unknown" }, { AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.BSAXIS: // 0x108, "0x108", "Unknown Opcode"
             {
                 this.fieldmap.walkMesh.BGI_simSetAxis((UInt32)this.getv1(), (UInt32)this.getv1());
                 return 0;
             }
-            case EBin.event_code_binary.BAFRAME: //  0x10A, "0x10A", "Unknown Opcode (BAFRAME: walkMesh.BGI_animShowFrame).", true, 2, { 1, 1 }, { "Unknown", "Unknown" }, { AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.BAFRAME: // 0x10A, "0x10A", "Unknown Opcode"
             {
                 this.fieldmap.walkMesh.BGI_animShowFrame((UInt32)this.getv1(), (UInt32)this.getv1());
                 return 0;
             }
             // TODO: no more information from Hades Workshop
-            case EBin.event_code_binary.PLAYER_EQUIP:
+            case EBin.event_code_binary.PLAYER_EQUIP: // "SetCharacterEquipment" Change the piece of equipment of a player, using it from the player's inventory
             {
-                CharacterId charId = this.chr2slot(this.getv3());
-                Int32 equipType = this.getv3();
-                RegularItem item = (RegularItem)this.getv3();
+                CharacterId charId = this.chr2slot(this.getv3()); // character to (re-)equip.
+                Int32 equipType = this.getv3(); // equipment type (0/1/2/3/4 for weapon/head/wrist/armor/accessory)
+                RegularItem item = (RegularItem)this.getv3(); // item to equip
                 PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
                 if (player != null)
                 {
@@ -2656,19 +2656,19 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.PLAYER_LEVEL:
+            case EBin.event_code_binary.PLAYER_LEVEL: // "SetCharacterLevel" Change the character's level
             {
-                CharacterId charId = this.chr2slot(this.getv3());
-                Int32 lvl = Mathf.Clamp(this.getv3(), 1, ff9level.LEVEL_COUNT);
+                CharacterId charId = this.chr2slot(this.getv3()); // character to re-level
+                Int32 lvl = Mathf.Clamp(this.getv3(), 1, ff9level.LEVEL_COUNT); // level to reach
                 PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
                 if (player != null)
                     ff9play.FF9Play_Build(player, lvl, false, false);
                 return 0;
             }
-            case EBin.event_code_binary.PLAYER_EXP:
+            case EBin.event_code_binary.PLAYER_EXP: // "SetCharacterExp" Set the character's experience to the given amount. The character's level cannot be lowered that way
             {
-                CharacterId charId = this.chr2slot(this.getv3());
-                UInt32 exp = Math.Min(this.getv3u(), 9999999u);
+                CharacterId charId = this.chr2slot(this.getv3()); // character to consider
+                UInt32 exp = Math.Min(this.getv3u(), 9999999u); // experience amount
                 PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
                 if (player != null)
                 {
@@ -2678,11 +2678,11 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.SHOP_ITEM:
+            case EBin.event_code_binary.SHOP_ITEM: // "AddShopItem" Add or remove an item to be bought in a shop
             {
-                Int32 shopId = this.getv3();
-                RegularItem item = (RegularItem)this.getv3();
-                Boolean add = this.getv3() != 0;
+                Int32 shopId = this.getv3(); // shop ID
+                RegularItem item = (RegularItem)this.getv3(); // item to add or remove
+                Boolean add = this.getv3() != 0; // boolean add/remove
                 if (!ff9buy.ShopItems.ContainsKey(shopId))
                     return 0;
                 ShopItems shop = ff9buy.ShopItems[shopId];
@@ -2692,11 +2692,11 @@ public partial class EventEngine
                     shop.ItemIds.Remove(item);
                 return 0;
             }
-            case EBin.event_code_binary.SHOP_SYNTH:
+            case EBin.event_code_binary.SHOP_SYNTH: // "AddShopSynthesis" Add or remove a synthesis recipe in a shop
             {
-                Int32 shopId = this.getv3();
-                Int32 synthId = this.getv3();
-                Boolean add = this.getv3() != 0;
+                Int32 shopId = this.getv3(); // shop ID
+                Int32 synthId = this.getv3(); // recipe to add or remove
+                Boolean add = this.getv3() != 0; // boolean add/remove
                 if (!ff9mix.SynthesisData.ContainsKey(synthId))
                     return 0;
                 FF9MIX_DATA synth = ff9mix.SynthesisData[synthId];
@@ -2706,14 +2706,14 @@ public partial class EventEngine
                     synth.Shops.Remove(shopId);
                 return 0;
             }
-            case EBin.event_code_binary.MOVE_EX:
+            case EBin.event_code_binary.MOVE_EX: // "WalkEx" Make the specified character walk to destination
             {
-                actor = this.GetObj3() as Actor;
-                Int32 speed = this.getv3();
-                Single x = this.getv3();
+                actor = this.GetObj3() as Actor; // object to move
+                Int32 speed = this.getv3(); // walk speed
+                Single x = this.getv3(); // 3rd to 5th arguments: position in (X, Z, Y) format.
                 Single y = -this.getv3();
                 Single z = this.getv3();
-                Int32 flags = this.getv3();
+                Int32 flags = this.getv3(); // movement flags
                 if (actor == null)
                     return 0;
                 if (actor.loopCount != Byte.MaxValue)
