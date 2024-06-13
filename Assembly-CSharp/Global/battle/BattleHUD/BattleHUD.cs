@@ -1638,11 +1638,11 @@ public partial class BattleHUD : UIScene
                 if (CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Item)
                     lastInput.TargetId = GetTargetFromType(lastInput, cmd, ff9item.GetItemEffect(MixCommandSet[lastInput.CommandId][FailedMixType.FAIL_ITEM]).info.Target);
             }
-            else if (MixCommandSet[lastInput.CommandId].ContainsKey(FailedMixType.SKIPTURN))
+            else if (MixCommandSet[lastInput.CommandId].ContainsKey(FailedMixType.SKIP_TURN))
             {
                 cmd.info.mix_failed = 2; // Skip turn in btl_cmd.CheckCommandCondition
             }
-            else if (MixCommandSet[lastInput.CommandId].ContainsKey(FailedMixType.CANCEL_COMMAND)) // [DV] I want to put an error sound here with FF9Sfx.FF9SFX_Play but the sound is overwritten by "SetCommandVisibility"
+            else if (MixCommandSet[lastInput.CommandId].ContainsKey(FailedMixType.CANCEL_MENU)) // [DV] I want to put an error sound here with FF9Sfx.FF9SFX_Play but the sound is overwritten when Command menu pop.
             {
                 _doubleCastCount = 0;
                 SetTargetVisibility(false);

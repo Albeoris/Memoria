@@ -39,9 +39,9 @@ public partial class BattleHUD : UIScene
     {
         FIRST_ITEM,
         SECOND_ITEM,
-        SKIPTURN,
+        SKIP_TURN,
         USE_ITEMS,
-        CANCEL_COMMAND,
+        CANCEL_MENU,
         FAIL_ITEM
     }
 
