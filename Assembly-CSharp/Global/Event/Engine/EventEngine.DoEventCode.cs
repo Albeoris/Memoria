@@ -736,7 +736,7 @@ public partial class EventEngine
                 }
 
                 if (mapNo == 112 && po.model == 223)
-                    this.gCur.flags = (Byte)((this.gCur.flags & -64) | ((Int32)14) & 63); // floating glass Alex pub: set flag 14 (invisible)
+                    this.gCur.flags = (Byte)((this.gCur.flags & -64) | (Int32)14); // floating glass Alex pub: set flag 14 (invisible)
                 return 0;
             }
             case EBin.event_code_binary.AIDLE: // 0x33, "SetStandAnimation", "Change the standing animation", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
@@ -1451,8 +1451,11 @@ public partial class EventEngine
             {
                 Int32 newCamIdx = this.getv1(); // arg1: camera ID
                 Obj player = this.GetObjUID(250);
-                if ((mapNo == 153 || mapNo == 1214 || mapNo == 1806) && newCamIdx == 0 && (((Actor)player).fieldMapActorController.lastPos.x > 500 || ((Actor)player).fieldMapActorController.lastPos.y > 240)) // Fix #493 - flapping camera
-                    return 0;
+                if (player != null && player.cid == 4)
+                {
+                    if ((mapNo == 153 || mapNo == 1214 || mapNo == 1806) && newCamIdx == 0 && (((Actor)player).fieldMapActorController.lastPos.x > 500 || ((Actor)player).fieldMapActorController.lastPos.y > 240)) // Fix #493 - flapping camera //  
+                        return 0;
+                }
                 this.fieldmap.SetCurrentCameraIndex(newCamIdx);
                 if (mapNo == 1205 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && this.eBin.getVarManually(6357) == 3)
                     this.SetActorPosition(this._fixThornPosObj, (Single)this._fixThornPosA, (Single)this._fixThornPosB, (Single)this._fixThornPosC);
