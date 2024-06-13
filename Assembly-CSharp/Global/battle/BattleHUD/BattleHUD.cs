@@ -656,7 +656,7 @@ public partial class BattleHUD : UIScene
                     Count = ff9Item.count,
                     Id = ff9Item.id
                 };
-                if (_doubleCastCount == 2 && battleItemListData.Id == (RegularItem)_firstCommand.SubId)
+                if (_doubleCastCount == 2 && battleItemListData.Id == (RegularItem)_firstCommand.SubId && IsMixCast)
                 {
                     battleItemListData.Count--;
                 }
@@ -1619,24 +1619,78 @@ public partial class BattleHUD : UIScene
                 break;
             }
         }
-        BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
-        CMD_DATA cmd = btl.cmd[0];
+        CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].cmd[0];
         cmd.regist.sel_mode = 1;     
         if (mixId >= 0)
+        {
+            if (CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Item)
+                lastInput.TargetId = GetTargetFromType(lastInput, cmd, ff9item.GetItemEffect(ff9mixitem.MixItemsData[mixId].Result).info.Target);
             btl_cmd.SetCommand(cmd, lastInput.CommandId, mixId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+        }
         else
         {
-            int ItemIdChoosen = MixCommandSet[lastInput.CommandId].ContainsKey(MixFailType.SECOND_ITEM) ? allInputs[1].SubId : allInputs[0].SubId;
-            if (MixCommandSet[lastInput.CommandId].ContainsKey(MixFailType.FAIL_ITEM) && MixCommandSet[lastInput.CommandId][MixFailType.FAIL_ITEM] != RegularItem.NoItem)
+            int ItemIdChoosen = MixCommandSet[lastInput.CommandId].ContainsKey(FailedMixType.SECOND_ITEM) ? allInputs[1].SubId : allInputs[0].SubId;
+            BattleCommandId CommandReplaced = CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Item ? BattleCommandId.Item : BattleCommandId.Throw;
+            if (MixCommandSet[lastInput.CommandId].ContainsKey(FailedMixType.FAIL_ITEM) && MixCommandSet[lastInput.CommandId][FailedMixType.FAIL_ITEM] != RegularItem.NoItem)
             {
-                ItemIdChoosen = (Int32)MixCommandSet[lastInput.CommandId][MixFailType.FAIL_ITEM];
+                ItemIdChoosen = (Int32)MixCommandSet[lastInput.CommandId][FailedMixType.FAIL_ITEM];
                 cmd.info.mix_failed = 1; // Prevent to consume the item in btl_cmd.CommandEngine
+                if (CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Item)
+                    lastInput.TargetId = GetTargetFromType(lastInput, cmd, ff9item.GetItemEffect(MixCommandSet[lastInput.CommandId][FailedMixType.FAIL_ITEM]).info.Target);
             }
-            btl_cmd.SetCommand(cmd, BattleCommandId.Item, ItemIdChoosen, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+            else if (MixCommandSet[lastInput.CommandId].ContainsKey(FailedMixType.SKIPTURN))
+            {
+                cmd.info.mix_failed = 2; // Skip turn in btl_cmd.CheckCommandCondition
+            }
+            else if (MixCommandSet[lastInput.CommandId].ContainsKey(FailedMixType.CANCEL_COMMAND)) // [DV] I want to put an error sound here with FF9Sfx.FF9SFX_Play but the sound is overwritten by "SetCommandVisibility"
+            {
+                _doubleCastCount = 0;
+                SetTargetVisibility(false);
+                SetCommandVisibility(true, true);
+                return;
+            }
+
+            if (MixCommandSet[lastInput.CommandId].ContainsKey(FailedMixType.USE_ITEMS))
+            {
+                CMD_DATA cmd2 = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].cmd[3]; // For now, handle only 2 items in the row.
+                if (CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Item)
+                {
+                    allInputs[0].TargetId = GetTargetFromType(lastInput, cmd, ff9item.GetItemEffect((RegularItem)allInputs[0].SubId).info.Target);
+                    allInputs[1].TargetId = GetTargetFromType(lastInput, cmd, ff9item.GetItemEffect((RegularItem)allInputs[1].SubId).info.Target);
+                }
+                btl_cmd.SetCommand(cmd, CommandReplaced, allInputs[0].SubId, allInputs[1].TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+                btl_cmd.SetCommand(cmd2, CommandReplaced, allInputs[1].SubId, allInputs[1].TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+            }
+            else
+            {
+                btl_cmd.SetCommand(cmd, CommandReplaced, ItemIdChoosen, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+            }
         }
+        FF9Sfx.FF9SFX_Play(103);
         SetPartySwapButtonActive(false);
         InputFinishList.Add(CurrentPlayerIndex);
         _partyDetail.SetBlink(CurrentPlayerIndex, false);
+    }
+
+    private static ushort GetTargetFromType(CommandDetail cmddetail, CMD_DATA cmd, TargetType TargetType)
+    {
+        if (TargetType == TargetType.AllAlly)
+        {
+            return 0x0F;
+        }
+        else if (TargetType == TargetType.AllEnemy)
+        {
+            return 0xF0;
+        }
+        else if (TargetType == TargetType.Everyone)
+        {
+            return 0xFF;
+        }
+        else if (TargetType == TargetType.Self)
+        {
+            return cmd.regist.btl_id;
+        }
+        return cmddetail.TargetId;
     }
 
     private void SetCommandVisibility(Boolean isVisible, Boolean forceCursorMemo)

@@ -291,11 +291,8 @@ namespace FF9
 				return BattleAbilityId.Attack;
             if (cmd.regist.bi.player != 0)
             {
-                if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no))
-                    return BattleAbilityId.Void;
-                if (CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand commandplayer))
-                    if (commandplayer.Type == CharacterCommandType.Item)
-                        return BattleAbilityId.Void;
+                if (CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand commandplayer) && BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no))
+                    return commandplayer.Type == CharacterCommandType.Item ? BattleAbilityId.Void : BattleAbilityId.Throw;
             }
             switch (cmd.cmd_no)
 			{
@@ -324,10 +321,10 @@ namespace FF9
                 return RegularItem.NoItem;
             if (cmd.regist.bi.player != 0)
             {
-                if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no))
-                    return ff9mixitem.MixItemsData[cmd.sub_no].Result;
+                if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
+                    return MixChoosen.Result;
                 if (CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand commandplayer))
-                    if (commandplayer.Type == CharacterCommandType.Item)
+                    if (commandplayer.Type == CharacterCommandType.Item || commandplayer.Type == CharacterCommandType.Throw)
                         return (RegularItem)cmd.sub_no;
             }
             switch (cmd.cmd_no)
@@ -366,11 +363,8 @@ namespace FF9
 		{
             if (cmd.regist.bi.player != 0)
             {
-                if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no))
-                    return ff9item.GetItemEffect(GetCommandItem(cmd)).Ref.ScriptId;
-                if (CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand commandplayer))
-                    if (commandplayer.Type == CharacterCommandType.Item)
-                        return ff9item.GetItemEffect(GetCommandItem(cmd)).Ref.ScriptId;
+                if (CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand commandplayer) && BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no))
+                    return commandplayer.Type == CharacterCommandType.Item ? ff9item.GetItemEffect(GetCommandItem(cmd)).Ref.ScriptId : cmd.ScriptId;
             }
             switch (cmd.cmd_no)
 			{

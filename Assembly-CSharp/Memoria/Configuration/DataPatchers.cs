@@ -300,7 +300,7 @@ namespace Memoria
                     if (!entry[1].TryEnumParse(out BattleCommandId cmdId))
                         continue;
 
-                    if (!entry[2].TryEnumParse(out BattleHUD.MixFailType MixType))
+                    if (!entry[2].TryEnumParse(out BattleHUD.FailedMixType MixType))
                         continue;
 
                     RegularItem FailItem = RegularItem.NoItem;
@@ -309,7 +309,7 @@ namespace Memoria
                         if (Int32.TryParse(entry[3], out Int32 FailItemID))
                             FailItem = (RegularItem)FailItemID;
                     }
-                    Dictionary<BattleHUD.MixFailType, RegularItem> MixData = new Dictionary<BattleHUD.MixFailType, RegularItem>();
+                    Dictionary<BattleHUD.FailedMixType, RegularItem> MixData = new Dictionary<BattleHUD.FailedMixType, RegularItem>();
                     MixData.Add(MixType, FailItem);
                     BattleHUD.MixCommandSet.Add(cmdId, MixData);
                 }

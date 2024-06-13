@@ -44,7 +44,8 @@ namespace Memoria.Assets
 
         private static Dictionary<String, String> _defaultDictionary = new Dictionary<String, String>()
         {
-            { "GilSymbol", "%[YSUB=1.3][sub]G" }
+            { "GilSymbol", "%[YSUB=1.3][sub]G" },
+            { "FailedMixMessage", "The combination failed!" }
         };
     }
 }

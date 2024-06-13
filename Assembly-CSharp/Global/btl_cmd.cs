@@ -1,7 +1,9 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
+using Memoria.Assets;
 using Memoria.Data;
+using Memoria.Prime;
 using Memoria.Scripts;
 using NCalc;
 using System;
@@ -715,12 +717,12 @@ public class btl_cmd
                             FF9StateSystem.EventState.IncreaseAAUsageCounter(aaIndex);
                     }
                     RegularItem itemId = btl_util.GetCommandItem(cmd);
-                    if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no))
+                    if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
                     {
-                        foreach (RegularItem ingredient in ff9mixitem.MixItemsData[cmd.sub_no].Ingredients)
+                        foreach (RegularItem ingredient in MixChoosen.Ingredients)
                             UIManager.Battle.ItemUse(ingredient);
                     }
-                    else if (itemId != RegularItem.NoItem && cmd.info.mix_failed == 0)
+                    else if (itemId != RegularItem.NoItem && cmd.info.mix_failed != 1)
                         UIManager.Battle.ItemUse(itemId);
 
                     cmd.info.mode = command_mode_index.CMD_MODE_LOOP;
@@ -1043,9 +1045,9 @@ public class btl_cmd
             return true;
 
         Boolean notEnoughItems = false;
-        if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no))
+        if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
         {
-            Dictionary<RegularItem, Int32> allIngredients = ff9mixitem.MixItemsData[cmd.sub_no].GetIngredientsAsDict();
+            Dictionary<RegularItem, Int32> allIngredients = MixChoosen.GetIngredientsAsDict();
             foreach (KeyValuePair<RegularItem, Int32> requirement in allIngredients)
                 if (ff9item.FF9Item_GetCount(requirement.Key) < requirement.Value)
                     notEnoughItems = true;
@@ -1060,6 +1062,11 @@ public class btl_cmd
         {
             UIManager.Battle.SetBattleFollowMessage(BattleMesages.NotEnoughItems);
             return false;
+        }
+        else if (cmd.info.mix_failed == 2)
+        {
+            UIManager.Battle.SetBattleFollowMessage(5, Localization.GetWithDefault("FailedMixMessage"));
+            return false;           
         }
         if (!BattleAbilityHelper.ApplySpecialCommandCondition(cmd))
             return false;
