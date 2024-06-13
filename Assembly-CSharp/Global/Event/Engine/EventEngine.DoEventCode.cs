@@ -1447,10 +1447,13 @@ public partial class EventEngine
             case EBin.event_code_binary.SETCAM: // 0x7E, "SetFieldCamera", "Change the field's background camera", true, 1, { 1 }, { "Camera ID" }, { AT_USPIN }, 0
             {
                 Int32 newCamIdx = this.getv1(); // arg1: camera ID
+                Obj player = this.GetObjUID(250);
+                if ((mapNo == 153 || mapNo == 1214 || mapNo == 1806) && newCamIdx == 0 && (((Actor)player).fieldMapActorController.lastPos.x > 500 || ((Actor)player).fieldMapActorController.lastPos.y > 240)) // Fix #493 - flapping camera
+                    return 0;
                 this.fieldmap.SetCurrentCameraIndex(newCamIdx);
                 if (mapNo == 1205 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && this.eBin.getVarManually(6357) == 3)
                     this.SetActorPosition(this._fixThornPosObj, (Single)this._fixThornPosA, (Single)this._fixThornPosB, (Single)this._fixThornPosC);
-                if (mapNo == 3009 && (Int32)this.gCur.uid == 17 && newCamIdx == 0)
+                if (mapNo == 3009 && this.gCur.uid == 17 && newCamIdx == 0)
                 {
                     EventEngine.resyncBGMSignal = 1;
                     //Debug.Log((object)("SET resyncBGMSignal = " + (object)EventEngine.resyncBGMSignal));

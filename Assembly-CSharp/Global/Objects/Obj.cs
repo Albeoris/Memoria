@@ -534,22 +534,22 @@ public class Obj
 
 	public UInt16 getUShortIP()
 	{
-		UInt16 num = (UInt16)(this.currentByte[this.ip] & Byte.MaxValue);
-		return (UInt16)(num | (UInt16)((this.currentByte[this.ip + 1] & Byte.MaxValue) << 8));
+		UInt16 ip = (UInt16)(this.currentByte[this.ip] & Byte.MaxValue);
+		return (UInt16)(ip | (UInt16)((this.currentByte[this.ip + 1] & Byte.MaxValue) << 8));
 	}
 
 	public Int16 getShortIP()
 	{
-		Int16 num = (Int16)(this.currentByte[this.ip] & Byte.MaxValue);
-		return (Int16)(num | (Int16)((this.currentByte[this.ip + 1] & Byte.MaxValue) << 8));
+		Int16 ip = (Int16)(this.currentByte[this.ip] & Byte.MaxValue);
+		return (Int16)(ip | (Int16)((this.currentByte[this.ip + 1] & Byte.MaxValue) << 8));
 	}
 
 	public Int32 getIntIP()
 	{
-		Int32 num = (Int32)(this.currentByte[this.ip] & Byte.MaxValue);
-		num |= (Int32)(this.currentByte[this.ip + 1] & Byte.MaxValue) << 8;
-		num |= (Int32)(this.currentByte[this.ip + 2] & Byte.MaxValue) << 16;
-		return num | (Int32)(this.currentByte[this.ip + 3] & Byte.MaxValue) << 24;
+		Int32 ip = (Int32)(this.currentByte[this.ip] & Byte.MaxValue);
+		ip |= (Int32)(this.currentByte[this.ip + 1] & Byte.MaxValue) << 8;
+		ip |= (Int32)(this.currentByte[this.ip + 2] & Byte.MaxValue) << 16;
+		return ip | (Int32)(this.currentByte[this.ip + 3] & Byte.MaxValue) << 24;
 	}
 
 	public Byte getByteFromCurrentByte(Int32 index)
@@ -561,7 +561,7 @@ public class Obj
 	{
 		for (Int32 i = 0; i < numOfBytes; i++)
 		{
-			Int32 num = this.ip + i;
+			Int32 ip = this.ip + i;
 		}
 	}
 
