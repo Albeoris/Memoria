@@ -5,9 +5,9 @@ Shader "PSX/FieldMap_Abr_1" {
 		_AlphaTex ("Texture", 2D) = "white" { }
 	}
 	SubShader { 
-		Tags { "QUEUE"="Transparent+2" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+3" }
+		Tags { "QUEUE"="Transparent+3" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+3" }
 		Pass {
-			Tags { "QUEUE"="Transparent+2" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+3" }
+			Tags { "QUEUE"="Transparent+3" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+3" }
 			ZWrite Off
 			Cull Off
 			Blend One One
