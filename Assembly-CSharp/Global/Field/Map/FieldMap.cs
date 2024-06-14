@@ -2521,6 +2521,7 @@ public class FieldMap : HonoBehavior
         [2922,0,10,3179],   // Crystal world (was not active on PSX)
         [2922,0,11,3179],   // Crystal world (was not active on PSX)
         [2922,0,12,6080],   // Crystal world (was not active on PSX)
+        [2924,0,1,0],   // Crystal world (was not active on PSX)
     };
 
     public static readonly HashSet<Int32> SmoothCamExcludeMaps = new HashSet<Int32>()
