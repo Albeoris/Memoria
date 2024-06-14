@@ -2521,7 +2521,13 @@ public class FieldMap : HonoBehavior
         [2922,0,10,3179],   // Crystal world (was not active on PSX)
         [2922,0,11,3179],   // Crystal world (was not active on PSX)
         [2922,0,12,6080],   // Crystal world (was not active on PSX)
-        [2924,0,1,0],   // Crystal world (was not active on PSX)
+        [2924,0,1,0],       // Crystal world (was not active on PSX)
+        [3100,0,0,2300],    // Mognet - static tiles on top of anim
+        [3100,0,1,2300],    // Mognet - static tiles on top of anim
+        [3100,0,2,2300],    // Mognet - static tiles on top of anim
+        [3100,0,3,2300],    // Mognet - static tiles on top of anim
+        [3100,0,4,2300],    // Mognet - static tiles on top of anim
+        [3100,0,5,2300],    // Mognet - static tiles on top of anim
     };
 
     public static readonly HashSet<Int32> SmoothCamExcludeMaps = new HashSet<Int32>()
