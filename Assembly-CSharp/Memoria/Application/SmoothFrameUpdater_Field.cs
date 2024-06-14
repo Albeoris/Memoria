@@ -197,7 +197,7 @@ namespace Memoria
 			{
 				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
 				{
-					if (bgLayer.transform != null && (bgLayer.flags & (BGOVERLAY_DEF.OVERLAY_FLAG.Loop | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset)) == 0) // && (bgLayer.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Active) != 0
+					if (bgLayer.transform != null && bgLayer._smoothUpdateRegistered && (bgLayer.flags & (BGOVERLAY_DEF.OVERLAY_FLAG.Loop | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset)) == 0) // && (bgLayer.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Active) != 0
 					{
 						//Vector3 frameMove = bgLayer._smoothUpdatePosActual - bgLayer._smoothUpdatePosPrevious;
 						//if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < OverlaySmoothMovementMaxSqr)
@@ -241,7 +241,7 @@ namespace Memoria
 			}
 			if (fieldmap?.scene?.overlayList != null)
 				foreach (BGOVERLAY_DEF bgLayer in fieldmap.scene.overlayList)
-					if (bgLayer.transform != null && (bgLayer.flags & (BGOVERLAY_DEF.OVERLAY_FLAG.Loop | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset)) == 0) // && (bgLayer.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Active) != 0
+					if (bgLayer.transform != null && bgLayer._smoothUpdateRegistered && (bgLayer.flags & (BGOVERLAY_DEF.OVERLAY_FLAG.Loop | BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset)) == 0) // && (bgLayer.flags & BGOVERLAY_DEF.OVERLAY_FLAG.Active) != 0
 						bgLayer.transform.position = bgLayer._smoothUpdatePosActual;
 			if (_cameraRegistered)
 			{
