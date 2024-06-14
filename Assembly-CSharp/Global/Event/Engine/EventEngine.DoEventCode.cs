@@ -540,8 +540,11 @@ public partial class EventEngine
                     destX = -3750;
                     destZ = 11849;
                 }
+                Boolean flag2 = this.MoveToward_mixed((Single)destX, 0.0f, (Single)destZ, 0, (PosObj)null);
                 eulerAngles1 = po.go.transform.localRotation.eulerAngles;
-                if (flag || this.MoveToward_mixed((Single)destX, 0.0f, (Single)destZ, 0, (PosObj)null))
+                if (flag2)
+                    this.stay();
+                else if (flag)
                     this.stay();
                 return 1;
             }
