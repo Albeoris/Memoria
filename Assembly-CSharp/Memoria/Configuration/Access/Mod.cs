@@ -10,6 +10,7 @@ namespace Memoria
             public static String[] FolderNames => Instance._mod.FolderNames;
             public static String[] Priorities => Instance._mod.Priorities;
             public static Int32 UseFileList => Instance._mod.UseFileList;
+            public static Boolean MergeScripts => Instance._mod.MergeScripts;
             public static String[] AllFolderNames
             {
                 get
@@ -23,14 +24,14 @@ namespace Memoria
 
             private static Boolean? _tranceSeek = null;
             public static Boolean TranceSeek
-			{
+            {
                 get
                 {
                     if (!_tranceSeek.HasValue)
                         _tranceSeek = FolderNames.Contains("TranceSeek");
                     return _tranceSeek.Value;
                 }
-			}
+            }
         }
     }
 }

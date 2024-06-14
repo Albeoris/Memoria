@@ -1856,7 +1856,7 @@ internal class EventEngineUtils
             str = "US/";
 
         ebFileName = ebFilePath + ebSubFolder + str + ebFileName + ebFileExt;
-        Byte[] binAsset = AssetManager.LoadBytes(ebFileName);
+        Byte[] binAsset = AssetManager.LoadBytesMerged(ebFileName);
         if (binAsset != null)
             return binAsset;
 
