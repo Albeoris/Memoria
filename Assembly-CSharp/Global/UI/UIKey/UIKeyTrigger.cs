@@ -50,6 +50,14 @@ public class UIKeyTrigger : MonoBehaviour
     private Boolean MKeyDown => UnityXInput.Input.GetKeyDown(KeyCode.M);
     private Boolean SKeyDown => UnityXInput.Input.GetKeyDown(KeyCode.S);
 
+    private Boolean SoftResetKeyPSXDown => // L1 + R1 + L2 + R2 + start + select
+        PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger)
+        && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightTrigger)
+        && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Select) 
+        || keyCommand == Control.LeftBumper && keyCommand == Control.LeftTrigger && keyCommand == Control.RightBumper && keyCommand == Control.RightTrigger
+        && keyCommand == Control.Pause && keyCommand == Control.Select || UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.LeftTrigger)
+        && UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Pause) && UIManager.Input.GetKey(Control.Select);
+
     public UIKeyTrigger()
     {
         keyCommand = Control.None;
@@ -266,14 +274,16 @@ public class UIKeyTrigger : MonoBehaviour
 
             PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.GilMax);
         }
-        if (Configuration.Mod.TranceSeek && UnityXInput.Input.GetKeyDown(KeyCode.F8) && PersistenSingleton<UIManager>.Instance.IsPause) // TRANCE SEEK - Hard reset, back to main menu
+        if (Configuration.Control.SoftReset && ((UnityXInput.Input.GetKeyDown(KeyCode.F8) && PersistenSingleton<UIManager>.Instance.IsPause) || SoftResetKeyPSXDown)) // Soft Reset
         {
             preventTurboKey = false;
+            PersistenSingleton<UIManager>.Instance.WorldHUDScene.FullMapPanel.SetActive(false);
             PersistenSingleton<UIManager>.Instance.Dialogs.PauseAllDialog(true);
             PersistenSingleton<UIManager>.Instance.HideAllHUD();
             ButtonGroupState.DisableAllGroup(true);
             UIManager.Battle.FF9BMenu_EnableMenu(false);
-            PersistenSingleton<UIManager>.Instance.PauseScene.Hide(null);
+            if (PersistenSingleton<UIManager>.Instance.IsPause)
+                PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyPause(null);
             EventHUD.Cleanup();
             EventInput.ClearPadMask();
             TimerUI.SetEnable(false);
@@ -505,7 +515,7 @@ public class UIKeyTrigger : MonoBehaviour
             activeButton = UICamera.selectedObject;
         if (sceneFromState != null && (!PersistenSingleton<UIManager>.Instance.Dialogs.Activate || PersistenSingleton<UIManager>.Instance.IsPause))
         {
-            if (sceneFromState.GetType() == typeof(ConfigUI) && FF9StateSystem.AndroidTVPlatform && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause))
+            if (sceneFromState.GetType() == typeof(ConfigUI) && FF9StateSystem.AndroidTVPlatform && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) && !SoftResetKeyPSXDown)
             {
                 if (PersistenSingleton<UIManager>.Instance.IsPauseControlEnable)
                     sceneFromState.OnKeyPause(activeButton);
@@ -540,7 +550,7 @@ public class UIKeyTrigger : MonoBehaviour
             {
                 autoConfirmDownTime = 0;
             }
-            if (PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) || keyCommand == Control.Pause)
+            if ((PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) || keyCommand == Control.Pause) && !SoftResetKeyPSXDown)
             {
                 keyCommand = Control.None;
                 if (PersistenSingleton<UIManager>.Instance.IsPauseControlEnable)
