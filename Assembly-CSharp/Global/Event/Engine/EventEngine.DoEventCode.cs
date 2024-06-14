@@ -1261,7 +1261,15 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGAANIME: // 0x5F, "RunTileAnimation", "Run a field tile animation", true, 2, { 1, 1 }, { "Field Animation", "Frame" }, { AT_TILEANIM, AT_USPIN }, 0
             {
-                this.fieldmap.EBG_animAnimate(this.getv1(), this.getv1()); //arg1: background animation.arg2: starting frame
+                Int32 animID = this.getv1(); // arg1: background animation
+                Int32 startFrame = this.getv1(); // arg2: starting frame
+                if (mapNo == 2925 && animID == 0) // Restore animation in Crystal World (missing in every version)
+                {
+                    this.fieldmap.EBG_animAnimate(1, 0);
+                    this.fieldmap.EBG_animSetFlags(1, 16);
+                    this.fieldmap.EBG_animSetFrameRate(1, 128);
+                }
+                this.fieldmap.EBG_animAnimate(animID, startFrame);
                 return 0;
             }
             case EBin.event_code_binary.BGAACTIVE: // 0x60, "ActivateTileAnimation", "Make a field tile animation active..", true, 2, { 1, 1 }, { "Tile Animation", "Activate" }, { AT_TILEANIM, AT_BOOL }, 0
