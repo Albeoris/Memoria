@@ -2525,6 +2525,7 @@ public class FieldMap : HonoBehavior
         [2600,0,13,8000],   // Branbal, background
         [2605,0,3,2200],    // Branbal, light of light net
         [2657,0,4,2040],    // Branbal, light in the room
+        [2800,0,26,1700],   // Dagguereo Zidane behind beckground on left path
         [2922,0,8,4329],    // Crystal world (was not active on PSX)
         [2922,0,10,3179],   // Crystal world (was not active on PSX)
         [2922,0,11,3179],   // Crystal world (was not active on PSX)
