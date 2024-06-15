@@ -511,6 +511,15 @@ namespace Memoria.Launcher
 
         private void UpdateCatalog()
         {
+            if (File.Exists(CATALOG_PATH))
+            {
+                FileInfo fi = new FileInfo(CATALOG_PATH);
+                if (fi.IsReadOnly) // Local testing of catalog: put it as read-only
+                {
+                    ReadCatalog();
+                    return;
+                }
+            }
             modListCatalog.Clear();
             ReadCatalog();
             downloadCatalogThread = new Thread(() =>
