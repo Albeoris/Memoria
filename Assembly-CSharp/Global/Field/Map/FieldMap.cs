@@ -1166,19 +1166,27 @@ public class FieldMap : HonoBehavior
     }
 
     /// <summary>0x5A, "SetTilePositionEx", "Move a field tile block.arg1: background tile block.2nd and arg3: movement in (dX, dY) format.arg4: depth, with higher value being further away from camera." </summary>
-    public Int32 EBG_overlayMove(Int32 overlayNdx, Int16 dx, Int16 dy, Int16 dz)
+    public Int32 EBG_overlayMove(Int32 overlayNdx, Single dx, Single dy, Int16 dz)
     {
+        Int16 MapNo = FF9StateSystem.Common.FF9.fldMapNo;
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
+
+        if (MapNo == 2755 && overlayNdx == 5 && dx == 1 && Configuration.Graphics.WidescreenSupport)
+        {
+            dx = 0.75f;
+            bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1);
+        }
+
         FieldMapInfo.fieldmapExtraOffset.UpdateOverlayOffset(this.mapName, overlayNdx, ref dz);
         Single destX = Mathf.Clamp(bgOverlay.orgX + dx, bgOverlay.minX, bgOverlay.maxX);
         Single destY = Mathf.Clamp(bgOverlay.orgY + dy, bgOverlay.minY, bgOverlay.maxY);
 
         // TODO Check Native: #147
-        UInt16 destZ;
-        if (FF9StateSystem.Common.FF9.fldMapNo == 2351 && overlayNdx >= 3 && overlayNdx <= 17) // official fix of the mine bucket
+        UInt16 destZ = (UInt16)(bgOverlay.orgZ + (UInt16)dz);
+
+        if (MapNo == 2351 && overlayNdx >= 3 && overlayNdx <= 17) // official fix of the mine bucket
             destZ = 3000;
-        else
-            destZ = (UInt16)(bgOverlay.orgZ + (UInt16)dz);
+
 
         bgOverlay.orgX = destX;
         bgOverlay.orgY = destY;

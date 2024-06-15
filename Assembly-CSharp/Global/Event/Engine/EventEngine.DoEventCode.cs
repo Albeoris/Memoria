@@ -1236,7 +1236,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGLMOVE: // 0x5A, "SetTilePositionEx", "Move a field tile block.", true, 4, { 1, 2, 2, 2 }, { "Tile Block", "Position X", "Position Y", "Position Closeness" }, { AT_TILE, AT_SPIN, AT_SPIN, AT_SPIN }, 0
             {
-                this.fieldmap.EBG_overlayMove(this.getv1(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2()); // arg1: background tile block. 2nd and arg3: movement in (dX, dY) format.arg4: depth, with higher value being further away from camera.
+                this.fieldmap.EBG_overlayMove(this.getv1(), (Single)this.getv2(), (Single)this.getv2(), (Int16)this.getv2()); // arg1: background tile block. 2nd and arg3: movement in (dX, dY) format.arg4: depth, with higher value being further away from camera.
                 return 0;
             }
             case EBin.event_code_binary.BGLACTIVE: // 0x5B, "ShowTile", "Show or hide a field tile block", true, 2, { 1, 1 }, { "Tile Block", "Show" }, { AT_TILE, AT_BOOL }, 0
