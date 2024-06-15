@@ -1,27 +1,76 @@
-﻿<ModCatalog>
+<ModCatalog>
 
 <Mod>
-	<Name>Moguri Mod</Name>
-	<Version>8.3.0.0</Version>
-	<InstallationPath>MoguriFiles</InstallationPath>
+	<Name>Moguri - BETA 1</Name>
+	<Version>9.0.0</Version>
+	<InstallationPath>Moguri_Main</InstallationPath>
+	<ReleaseDate>2024-06-15</ReleaseDate>
 	<Author>Ze_PilOt / Snouz</Author>
-	<ReleaseDate>8 Jul 2021</ReleaseDate>
-	<PatchNotes>Download/Install the Moguri Mod, then update Memoria to its newest version</PatchNotes>
-	<Description>Moguri Mod is a faithful revamp of the PC version of Final Fantasy IX helped by deep learning techniques (ESRGAN). The most important changes are in the background arts, that are now cleaner, more detailed and higher resolution.
+	<Description>Moguri Mod is a faithful revamp of FF9 aided by AI (ESRGAN and Stable Diffusion). It makes backgrounds more detailed, highres, cleaner and less noisy.
 
-Main Features:
-- HD backgrounds (aided by AI and polished by hand)
+- HD backgrounds aided by AI and polished/combined by hand
 - Manual redraw of all 11k layer edges and area names
-- HD textures (worldmap, NPC, battles...)
-- Many bugfixes
-...And much more!
+- UI improvements
+- Matching background FMVs (not yet upgraded)
 
-Note: this mod doesn't support automatic installation yet. Download it from its website, install it, and then update Memoria. Also, it is usually better to place it at the bottom of the list of installed mods for compatibility purposes.</Description>
+Credits: Creation - Ze_PilOt
+Backgrounds/videos - Snouz
+HDChocographs - Caledor
+</Description>
 	<Category>Visual</Category>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/zn536b2bu6ng2pxl52cwq/MoguriMain.zip?rlkey=456h7jay5q7hm7mimxzd7ulhq&amp;st=k2nmjk9u&amp;dl=1</DownloadUrl>
 	<Website>https://sites.google.com/view/moguri-mod</Website>
-	<!-- Download URL: https://www.moddb.com/downloads/mirror/216757/122/3381820ec0869d559baf7ca59abcc388 -->
-	<CompatibilityNotes>In most situations, it is better to keep 'MoguriFiles' at the lowest priority</CompatibilityNotes>
-	<PreviewFileUrl>https://i.imgur.com/nddT44g.jpg</PreviewFileUrl>
+	<PreviewFileUrl>https://i.imgur.com/HWwtyrD.jpg</PreviewFileUrl>
+</Mod>
+
+<Mod>
+	<Name>Moguri - 3D textures</Name>
+	<Version>8.3.0</Version>
+	<InstallationPath>Moguri_3Dtextures</InstallationPath>
+	<ReleaseDate>2021-07-06</ReleaseDate>
+	<Author>Snouz</Author>
+	<Description>Moguri Mod is a faithful revamp of FF9 aided by AI (ESRGAN and Stable Diffusion). It makes backgrounds more detailed, highres, cleaner and less noisy.
+
+- 3D textures (worldmap, monsters, battles...) (not yet upgraded)
+
+Textures 3D - Snouz
+</Description>
+	<Category>Visual</Category>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/srm5izd79va9nm0uwa12b/Moguri8_nobackgrounds.zip?rlkey=q217mskcfvgld90xmhqlo51f5&amp;st=k8c14ru7&amp;dl=1</DownloadUrl>
+	<Website>https://sites.google.com/view/moguri-mod</Website>
+	<PreviewFileUrl>https://i.imgur.com/HWwtyrD.jpg</PreviewFileUrl>
+</Mod>
+
+<Mod>
+	<Name>Moguri - 30fps videos</Name>
+	<Version>8.3.0</Version>
+	<InstallationPath>MoguriVideo</InstallationPath>
+	<ReleaseDate>2021-07-06</ReleaseDate>
+	<Author>Snouz, Lykon</Author>
+	<Description>Moguri Mod is a faithful revamp of FF9 aided by AI (ESRGAN and Stable Diffusion). It makes backgrounds more detailed, highres, cleaner and less noisy.
+
+- 30fps FMVs instead of 15 (not yet upgraded)
+</Description>
+	<Category>Visual</Category>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/ffbmb0xzpmidoq7jn8h0x/MoguriVideo.zip?rlkey=qw596ax2kfa5j283vau3yvo80&amp;st=d5shmtbh&amp;dl=1</DownloadUrl>
+	<Website>https://sites.google.com/view/moguri-mod</Website>
+	<PreviewFileUrl>https://i.imgur.com/HWwtyrD.jpg</PreviewFileUrl>
+</Mod>
+
+<Mod>
+	<Name>Moguri - Orchestral Soundtrack</Name>
+	<Version>8.3.0</Version>
+	<InstallationPath>MoguriSoundtrack</InstallationPath>
+	<ReleaseDate>2021-07-06</ReleaseDate>
+	<Author>Pontus Hultgren, Ze_PilOt</Author>
+	<Description>Moguri Mod is a faithful revamp of FF9 aided by AI (ESRGAN and Stable Diffusion). It makes backgrounds more detailed, highres, cleaner and less noisy.
+
+- Orchestral version for 13 songs
+</Description>
+	<Category>Music</Category>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/clcznn21xcyroo2g2vwx1/StreamingAssets.zip?rlkey=nb52xwh07g8zihe25rldb26z5&amp;st=pobojjmk&amp;dl=1</DownloadUrl>
+	<Website>https://sites.google.com/view/moguri-mod</Website>
+	<PreviewFileUrl>https://i.imgur.com/HWwtyrD.jpg</PreviewFileUrl>
 </Mod>
 
 <Mod>
