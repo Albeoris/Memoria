@@ -26,7 +26,7 @@ namespace Memoria.Launcher
     {
         public MemoriaIniCheatControl()
         {
-            SetRows(16);
+            SetRows(17);
             SetCols(8);
             
             Width = 260;
@@ -183,14 +183,14 @@ namespace Memoria.Launcher
             masterSkill.Margin = rowMargin;
             masterSkill.ToolTip = Lang.Settings.PermanentCheats_Tooltip;
 
-            /*row++;
+            row++;
 
             UiCheckBox maxTetraMasterCards = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.MaxCardCount, null), row, 0, 1, 8);
             maxTetraMasterCards.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(MaxCardCount)) { Mode = BindingMode.TwoWay });
             maxTetraMasterCards.Foreground = Brushes.White;
             maxTetraMasterCards.Margin = rowMargin;
             maxTetraMasterCards.ToolTip = Lang.Settings.MaxCardCount_Tooltip;
-            */
+            
 
             /*AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row++, 0, 1, 8).Foreground = Brushes.White;*/
 
