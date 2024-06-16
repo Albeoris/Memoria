@@ -1462,9 +1462,10 @@ public partial class EventEngine
             {
                 Int32 newCamIdx = this.getv1(); // arg1: camera ID
                 Obj player = this.GetObjUID(250);
-                if (player != null && player.cid == 4)
+                if (player != null && player.cid == 4 && (mapNo == 153 || mapNo == 1214 || mapNo == 1806) && newCamIdx == 0) // Fix #493 - flapping camera
                 {
-                    if ((mapNo == 153 || mapNo == 1214 || mapNo == 1806) && newCamIdx == 0 && (((Actor)player).fieldMapActorController.lastPos.x > 500 || ((Actor)player).fieldMapActorController.lastPos.y > 240)) // Fix #493 - flapping camera //  
+                    Vector3 pos = ((Actor)player).fieldMapActorController.lastPos;
+                    if ((pos.x > 500 || pos.y > 240) && !(scCounter == 1190 && pos.y > 314 && pos.y < 317)) //exception for scene with Steiner and plutos
                         return 0;
                 }
                 this.fieldmap.SetCurrentCameraIndex(newCamIdx);
