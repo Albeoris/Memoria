@@ -3,6 +3,7 @@ using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
+using Memoria.Database;
 using Memoria.Prime;
 using Memoria.Scenes;
 using System;
@@ -19,8 +20,8 @@ public partial class BattleHUD : UIScene
     public Boolean BtlWorkPeep => _currentPeepingMessageCount > 0;
     public GameObject PlayerTargetPanel => TargetPanel.GetChild(0);
     public GameObject EnemyTargetPanel => TargetPanel.GetChild(1);
-    public Boolean IsDoubleCast => DoubleCastSet.Contains(_currentCommandId) || MixCommandSet.Contains(_currentCommandId);
-    public Boolean IsMixCast => MixCommandSet.Contains(_currentCommandId);
+    public Boolean IsDoubleCast => DoubleCastSet.Contains(_currentCommandId) || MixCommandSet.ContainsKey(_currentCommandId);
+    public Boolean IsMixCast => MixCommandSet.ContainsKey(_currentCommandId);
     public Boolean CanForceNextTurn => Configuration.Battle.Speed == 2 && UIManager.Battle.FF9BMenu_IsEnable() && !ForceNextTurn
         && ReadyQueue.Count > 0 && FF9StateSystem.Battle.FF9Battle.cur_cmd == null && btl_cmd.GetFirstCommandReadyToDequeue(FF9StateSystem.Battle.FF9Battle) == null;
     public List<Int32> ReadyQueue { get; }
@@ -30,7 +31,7 @@ public partial class BattleHUD : UIScene
         BattleCommandId.DoubleBlackMagic,
         BattleCommandId.DoubleWhiteMagic
     };
-    public static HashSet<BattleCommandId> MixCommandSet = new HashSet<BattleCommandId>();
+    public static Dictionary<BattleCommandId, MixCommandType> MixCommandSet = new Dictionary<BattleCommandId, MixCommandType>();
     public static Boolean ForceNextTurn = false;
     public static Int32 switchBtlId = -1;
 
@@ -113,7 +114,7 @@ public partial class BattleHUD : UIScene
                 return aaData.Name;
             return String.Empty;
         }
-        if (MixCommandSet.Contains(pCmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(pCmd.sub_no, out MixItems MixChoosen))
+        if (MixCommandSet.ContainsKey(pCmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(pCmd.sub_no, out MixItems MixChoosen))
             return FF9TextTool.ItemName(MixChoosen.Result);
         switch (pCmd.cmd_no)
         {

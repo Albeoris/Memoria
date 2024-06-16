@@ -154,8 +154,8 @@ public partial class BattleHUD : UIScene
             ResetSlidingButton();
             TryMemorizeCommand();
             _subMenuType = SubMenuType.Normal;
-            if (IsDoubleCast && _doubleCastCount < 2)
-                ++_doubleCastCount;
+            if (IsDoubleCast)
+                _doubleCastCount = 1;
 
             switch (menuType)
             {
@@ -226,30 +226,35 @@ public partial class BattleHUD : UIScene
         }
         else if (ButtonGroupState.ActiveGroup == TargetGroupButton)
         {
-            FF9Sfx.FF9SFX_Play(103);
+            Boolean commandSent = false;
             if (_cursorType == CursorGroup.Individual)
             {
                 for (Int32 i = 0; i < _matchBattleIdEnemyList.Count; i++)
                 {
                     if (i < _targetPanel.Enemies.Count && _targetPanel.Enemies[i].GameObject == go)
                     {
-                        CheckDoubleCast(_matchBattleIdEnemyList[i], _cursorType);
-                        return true;
+                        commandSent = CheckDoubleCast(_matchBattleIdEnemyList[i], _cursorType);
+                        break;
                     }
                 }
-
                 for (Int32 i = 0; i < _matchBattleIdPlayerList.Count; i++)
                 {
                     if (i < _targetPanel.Players.Count && _targetPanel.Players[i].GameObject == go)
                     {
-                        CheckDoubleCast(_matchBattleIdPlayerList[i], _cursorType);
-                        return true;
+                        commandSent = CheckDoubleCast(_matchBattleIdPlayerList[i], _cursorType);
+                        break;
                     }
                 }
             }
             else if (_cursorType == CursorGroup.AllPlayer || _cursorType == CursorGroup.AllEnemy || _cursorType == CursorGroup.All)
             {
-                CheckDoubleCast(-1, _cursorType);
+                commandSent = CheckDoubleCast(-1, _cursorType);
+            }
+            if (commandSent)
+            {
+                FF9Sfx.FF9SFX_Play(103);
+                SetTargetVisibility(false);
+                SetIdle();
             }
         }
         else if (ButtonGroupState.ActiveGroup == AbilityGroupButton)
