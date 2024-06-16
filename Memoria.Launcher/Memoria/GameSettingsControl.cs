@@ -112,10 +112,14 @@ namespace Memoria.Launcher
             checkUpdates.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckUpdates)) { Mode = BindingMode.TwoWay });
             checkUpdates.ToolTip = Lang.Settings.CheckUpdates_Tooltip;
 
-            UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 17, 0, 3, 8);
-            steamOverlayFix.Margin = rowMargin;
-            steamOverlayFix.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SteamOverlayFix)) { Mode = BindingMode.TwoWay });
-            steamOverlayFix.ToolTip = Lang.Settings.SteamOverlayFix_Tooltip;
+            String OSversion = $"{Environment.OSVersion}";
+            if (OSversion.Contains("Windows"))
+            {
+                UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 17, 0, 3, 8);
+                steamOverlayFix.Margin = rowMargin;
+                steamOverlayFix.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SteamOverlayFix)) { Mode = BindingMode.TwoWay });
+                steamOverlayFix.ToolTip = Lang.Settings.SteamOverlayFix_Tooltip;
+            }
 
             foreach (FrameworkElement child in Children)
             {
