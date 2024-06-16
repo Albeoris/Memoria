@@ -313,16 +313,16 @@ namespace Memoria
                         continue;
 
                     Int32 entryIndex = 3;
-                    Int32 failItemId = (Int32)RegularItem.NoItem;
+                    RegularItem failItem = RegularItem.NoItem;
                     Boolean consumeOnFail = false;
                     if (failType == FailedMixType.FAIL_ITEM)
                     {
-                        if (entry.Length <= entryIndex || !Int32.TryParse(entry[entryIndex++], out failItemId))
+                        if (entry.Length <= entryIndex || !entry[entryIndex++].TryEnumParse(out failItem))
                             continue;
                     }
                     if (entry.Length > entryIndex)
                         consumeOnFail = String.Equals(entry[entryIndex++], "Consume");
-                    BattleHUD.MixCommandSet[cmdId] = new MixCommandType(failType, (RegularItem)failItemId, consumeOnFail);
+                    BattleHUD.MixCommandSet[cmdId] = new MixCommandType(failType, failItem, consumeOnFail);
                 }
                 else if (String.Equals(entry[0], "WorldMusicList") && entry.Length >= 7)
 				{
