@@ -274,8 +274,10 @@ public class UIKeyTrigger : MonoBehaviour
 
             PersistenSingleton<UIManager>.Instance.Booster.ShowWaringDialog(BoosterType.GilMax);
         }
-        if (Configuration.Control.SoftReset && ((UnityXInput.Input.GetKeyDown(KeyCode.F8) && PersistenSingleton<UIManager>.Instance.IsPause) || SoftResetKeyPSXDown)) // Soft Reset
-        {
+        if (Configuration.Control.SoftReset && ((UnityXInput.Input.GetKeyDown(KeyCode.F8) && PersistenSingleton<UIManager>.Instance.IsPause) || SoftResetKeyPSXDown))
+        { // Soft Reset
+            if (ButtonGroupState.ActiveGroup == QuitUI.WarningMenuGroupButton)
+                return;
             preventTurboKey = false;
             PersistenSingleton<UIManager>.Instance.WorldHUDScene.FullMapPanel.SetActive(false);
             PersistenSingleton<UIManager>.Instance.Dialogs.PauseAllDialog(true);
