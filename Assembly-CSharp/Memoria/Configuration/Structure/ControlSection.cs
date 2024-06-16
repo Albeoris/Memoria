@@ -26,6 +26,7 @@ namespace Memoria
             public readonly IniValue<Boolean> WrapSomeMenus;
             public readonly IniValue<Boolean> BattleAutoConfirm;
             public readonly IniValue<Boolean> TurboDialog;
+            public readonly IniValue<Boolean> SoftReset;
             public readonly IniValue<Boolean> PSXScrollingMethod;
             public readonly IniValue<Boolean> PSXMovementMethod;
             public readonly IniValue<Boolean> AlwaysCaptureGamepad;
@@ -37,6 +38,7 @@ namespace Memoria
                 WrapSomeMenus = BindBoolean(nameof(WrapSomeMenus), true);
                 BattleAutoConfirm = BindBoolean(nameof(BattleAutoConfirm), true);
                 TurboDialog = BindBoolean(nameof(TurboDialog), false);
+                SoftReset = BindBoolean(nameof(SoftReset), false);
                 PSXScrollingMethod = BindBoolean(nameof(PSXScrollingMethod), true);
                 PSXMovementMethod = BindBoolean(nameof(PSXMovementMethod), false);
                 AlwaysCaptureGamepad = BindBoolean(nameof(AlwaysCaptureGamepad), false);
