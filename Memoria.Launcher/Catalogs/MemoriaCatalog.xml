@@ -8,14 +8,18 @@
 	<Author>Ze_PilOt / Snouz</Author>
 	<Description>Moguri Mod is a faithful revamp of FF9 aided by AI (ESRGAN and Stable Diffusion). It makes backgrounds more detailed, highres, cleaner and less noisy.
 
+NOTICE: if you have a previous Moguri version installed: After downloading this, do an integrity check of the game (right click in steam > Installed Files > Verify integrity...), then run Memoria.patcher.exe again.
+
 - HD backgrounds aided by AI and polished/combined by hand
 - Manual redraw of all 11k layer edges and area names
 - UI improvements
 - Matching background FMVs (not yet upgraded)
 
-Credits: Creation - Ze_PilOt
-Backgrounds/videos - Snouz
-HDChocographs - Caledor
+Credits:
+Ze_PilOt - Created the mod
+Snouz - Backgrounds/videos/UI
+SamsamTS - Background text improved
+Caledor - HDChocographs
 </Description>
 	<Category>Visual</Category>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/6iparht6jc04zq2fw0nvv/Moguri_Main.zip?rlkey=xh4punnutqqk8rsvd2o6witwm&amp;st=i0sznhhm&amp;dl=1</DownloadUrl>
@@ -29,11 +33,9 @@ HDChocographs - Caledor
 	<InstallationPath>Moguri_3Dtextures</InstallationPath>
 	<ReleaseDate>2021-07-06</ReleaseDate>
 	<Author>Snouz</Author>
-	<Description>Moguri Mod is a faithful revamp of FF9 aided by AI (ESRGAN and Stable Diffusion). It makes backgrounds more detailed, highres, cleaner and less noisy.
+	<Description>Moguri Mod is a faithful revamp of FF9 aided by AI (ESRGAN and Stable Diffusion). It makes backgrounds more detailed, highres, cleaner and less noisy. This contains 3D textures only.
 
 - 3D textures (worldmap, monsters, battles...) (not yet upgraded)
-
-Textures 3D - Snouz
 </Description>
 	<Category>Visual</Category>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/6jorkaxmdkrn971cqg9wj/Moguri_3DTextures.zip?rlkey=m20tlrx2pjvkc4kfamr6vf7qx&amp;st=numalm00&amp;dl=1</DownloadUrl>
@@ -47,9 +49,13 @@ Textures 3D - Snouz
 	<InstallationPath>MoguriVideo</InstallationPath>
 	<ReleaseDate>2021-07-06</ReleaseDate>
 	<Author>Snouz, Lykon</Author>
-	<Description>Moguri Mod is a faithful revamp of FF9 aided by AI (ESRGAN and Stable Diffusion). It makes backgrounds more detailed, highres, cleaner and less noisy.
+	<Description>Moguri Mod is a faithful revamp of FF9 aided by AI (ESRGAN and Stable Diffusion). It makes backgrounds more detailed, highres, cleaner and less noisy. This contains the FMVs fluidified by AI.
 
-- 30fps FMVs instead of 15 (not yet upgraded)
+- 30fps FMVs (instead of 15) (not yet upgraded)
+
+Credits:
+Lykon - rendering, research
+Snouz - resyncronization
 </Description>
 	<Category>Visual</Category>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/3m146e1kls2plastocgua/MoguriVideo.zip?rlkey=o8566ebx9vw07ptk0ih08udlo&amp;st=dg6b1bu8&amp;dl=1</DownloadUrl>
@@ -65,7 +71,7 @@ Textures 3D - Snouz
 	<Author>Pontus Hultgren, Ze_PilOt</Author>
 	<Description>Moguri Mod is a faithful revamp of FF9 aided by AI (ESRGAN and Stable Diffusion). It makes backgrounds more detailed, highres, cleaner and less noisy.
 
-- Orchestral version for 13 songs
+- Orchestral version for 13 songs, interpreted by Pontus Hultgren
 </Description>
 	<Category>Music</Category>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/3kq1r1jh0eauwc2f68tvi/MoguriSoundtrack.zip?rlkey=iynaxlmzgt5fftudwh75s3uch&amp;st=mmyr9ikz&amp;dl=1</DownloadUrl>

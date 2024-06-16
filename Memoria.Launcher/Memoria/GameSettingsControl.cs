@@ -96,7 +96,7 @@ namespace Memoria.Launcher
             audio.SetBinding(Selector.IsEnabledProperty, new Binding(nameof(AudioFrequencyEnabled)) {Mode = BindingMode.TwoWay});
             audio.Margin = rowMargin;*/
 
-            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create(" X64", null), 13, 0, 3, 4);
+            UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create("x64", null), 13, 0, 3, 4);
             x64.Margin = rowMargin;
             x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) { Mode = BindingMode.TwoWay });
             x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) { Mode = BindingMode.TwoWay });
