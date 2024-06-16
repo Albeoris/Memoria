@@ -593,7 +593,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         {
             if (!IsPaused)
                 SmoothFrameUpdater_Battle.ResetState();
-            battleSPS.Service();
             if (IsOver)
                 UpdateOverFrame();
             else
@@ -611,6 +610,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             return;
 
         HonoluluBattleMain.counterATB = 0;
+        battleSPS.EffectUpdate();
         this.battleResult = battle.BattleMain();
         if (!FF9StateSystem.Battle.isDebug)
         {

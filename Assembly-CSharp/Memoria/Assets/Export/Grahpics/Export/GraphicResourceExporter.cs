@@ -28,6 +28,8 @@ namespace Memoria.Assets
                         ExportAtlasSafe(path, atlas);
                     }
                 }
+
+                CommonSPSSystem.ExportAllSPSTextures(Path.Combine(Configuration.Export.Path, "EffectSPS"));
             }
             catch (Exception ex)
             {
@@ -41,14 +43,14 @@ namespace Memoria.Assets
             {
                 if (Directory.Exists(outputDirectory))
                 {
-                    Log.Warning("[GraphicResourceExporter] Export was skipped bacause a directory already exists: [{0}].", outputDirectory);
+                    Log.Warning("[GraphicResourceExporter] Export was skipped because a directory already exists: [{0}].", outputDirectory);
                     return;
                 }
 
                 String outputPath = outputDirectory + ".png";
                 if (File.Exists(outputPath))
                 {
-                    Log.Warning("[GraphicResourceExporter] Export was skipped bacause a file already exists: [{0}].", outputPath);
+                    Log.Warning("[GraphicResourceExporter] Export was skipped because a file already exists: [{0}].", outputPath);
                     return;
                 }
 

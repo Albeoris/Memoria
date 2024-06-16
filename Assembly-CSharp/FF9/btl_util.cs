@@ -289,11 +289,9 @@ namespace FF9
 				return BattleAbilityId.Void;
 			if (IsCommandMonsterTransformAttack(cmd))
 				return BattleAbilityId.Attack;
-            if (cmd.regist.bi.player != 0)
-            {
-                if (CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand commandplayer) && BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no))
-                    return commandplayer.Type == CharacterCommandType.Item ? BattleAbilityId.Void : BattleAbilityId.Throw;
-            }
+
+            if (cmd.regist != null && cmd.regist.bi.player != 0 && BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand commandplayer))
+                return commandplayer.Type == CharacterCommandType.Item ? BattleAbilityId.Void : BattleAbilityId.Throw;
             switch (cmd.cmd_no)
 			{
 				case BattleCommandId.SysEscape:
@@ -319,7 +317,7 @@ namespace FF9
                 return RegularItem.NoItem;
             if (IsCommandMonsterTransform(cmd) || IsCommandMonsterTransformAttack(cmd))
                 return RegularItem.NoItem;
-            if (cmd.regist.bi.player != 0)
+            if (cmd.regist != null && cmd.regist.bi.player != 0)
             {
                 if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
                     return MixChoosen.Result;

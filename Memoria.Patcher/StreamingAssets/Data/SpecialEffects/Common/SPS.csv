@@ -1,0 +1,14 @@
+# This file contains a set of SPS prototypes.
+# You must set at least 8 different SPS, used by statuses.
+# -----------------------------------------------
+# Comment;Id;SPS;Texture;ShaderIndex;BattleScale;BattleDistance
+# ;Int32;String;String;UInt8;Single;Single
+# -----------------------------------------------
+Poison;0;BattleMap/BattleSPS/st_doku.sps;EmbeddedAsset/BattleMap/Status/poison;1;6;4
+Venom;1;BattleMap/BattleSPS/st_mdoku.sps;EmbeddedAsset/BattleMap/Status/venom;1;2;1.5
+Sleep;2;BattleMap/BattleSPS/st_nemu.sps;EmbeddedAsset/BattleMap/Status/sleep;255;2.5;4.5
+Heat;3;BattleMap/BattleSPS/st_heat.sps;EmbeddedAsset/BattleMap/Status/heat;1;4;5
+Freeze;4;BattleMap/BattleSPS/st_friz.sps;EmbeddedAsset/BattleMap/Status/freeze;1;4;5
+Reflect;5;BattleMap/BattleSPS/st_rif.sps;EmbeddedAsset/BattleMap/Status/reflect;1;3;3
+Blind;6;BattleMap/BattleSPS/st_moum.sps;EmbeddedAsset/BattleMap/Status/blind;2;5;5.5
+Berserk;7;BattleMap/BattleSPS/st_basak.sps;EmbeddedAsset/BattleMap/Status/berserk;1;3;2

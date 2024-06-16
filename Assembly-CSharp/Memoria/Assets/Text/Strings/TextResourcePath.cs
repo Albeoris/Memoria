@@ -31,8 +31,9 @@ namespace Memoria.Assets
                 throw new FileNotFoundException(existingPath);
 
             String extension = Path.GetExtension(existingPath);
+            String pathWithoutExtension = existingPath.Substring(0, existingPath.Length - extension.Length);
             TextResourceFormat format = TextResourceFormatHelper.ResolveFileFormat(extension);
-            TextResourceReference reference = new(existingPath);
+            TextResourceReference reference = new(pathWithoutExtension);
             return new TextResourcePath(reference, format);
         }
 

@@ -51,6 +51,8 @@ public static class NarrowMapList
         [1602, 16, -5],       // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping,  bugged if you see too much
         [1652, -5, 6700],     // Iifa entrance
         [1652, -5, 6710],     // Iifa entrance
+        [1807, -5, 8500],     // Cid etc. arrival at Alexandria attack
+        [1807, -5, 8600],     // Cid etc. arrival at Alexandria attack
         [1815, 0, -5],        // Love quiproquo at the docks
         [1816, 315, -5],      // Love quiproquo at the docks
         [1901, -5, 7550],     // Treno scene,  people staying there
@@ -92,14 +94,14 @@ public static class NarrowMapList
         [1801,1,320],
         [1806,0,320],
         [1807,0,352],
-        [1823,1,320],
+        //[1823,1,320],
         [2150,1,320],
         [2172,1,320],
         [2217,1,320],
         [2217,2,320],
         [2363,0,384],
         [2363,1,336],
-        [2510,0,320],
+        //[2510,0,320],
         [2755,1,336],
     };
 
@@ -612,7 +614,7 @@ public static class NarrowMapList
         [1820,382],
         [1821,528],
         [1822,320],
-        [1823,432],
+        [1823,320], //432],
         [1824,480],
         [1850,320],
         [1851,640],
