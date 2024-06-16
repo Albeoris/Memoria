@@ -188,9 +188,9 @@ namespace Memoria.Assets
                     }
                 }
                 if (!downUpProcessed && Input.GetKeyDown(KeyCode.UpArrow))
-                    ChangeAnimation(currentAnimIndex + 1);
+                    ChangeAnimation(currentAnimIndex + (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) ? 5 : 1));
                 else if (!downUpProcessed && Input.GetKeyDown(KeyCode.DownArrow))
-                    ChangeAnimation(currentAnimIndex - 1);
+                    ChangeAnimation(currentAnimIndex - (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) ? 5 : 1));
                 else if (Input.GetKeyDown(KeyCode.L))
                 {
                     Animation anim = currentModel.GetComponent<Animation>();
