@@ -272,9 +272,9 @@ Complete changes and info can be found on this mod's page.</Description>
 
 <Mod>
 	<Name>Mog Add-ons</Name>
-	<Version>3.6</Version>
+	<Version>3.6.2</Version>
 	<InstallationPath>MogAddons</InstallationPath>
-	<ReleaseDate>2024-06-13</ReleaseDate>
+	<ReleaseDate>2024-06-16</ReleaseDate>
 	<Author>faospark</Author>
 	<Description>A multi-mod / Collection of Gameplay Tweak: 2x, 4x [ Ability , EXP and Gil Make ] Ability Gems Require only 1 gem, Darker UI ,
 Better Button Prompt (including Dualsense), Opera Omnia Portraits, Upscaled PS1 Portraits,
@@ -282,7 +282,9 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 :: Submod activation and Notes ::
 - Use the Mod Manager UI to activate each submods by using the drop down menu  
 - All ability enhancement not necessarily compatible to Alternate fantasy</Description>
-	<PatchNotes>Collective notes from 3.5 - 3.6
+	<PatchNotes>Collective notes from 3.5 - 3.6.1
+ - Added Hotfixes for recent release of moguri
+ - another significant file reduction 	
  - Added Recreation Title Screen  
  - Added Pixel remaster Darker Ui
  - Added Requested NA SNES Controller
@@ -303,7 +305,7 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 	<Category>Various</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1</DownloadUrl>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1715702142-1980695436.png</PreviewFileUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1718198423-35308735.png</PreviewFileUrl>
 	<PreviewFile>preview/mog-addons.png</PreviewFile>
 	<SubMod>
 		<Name>Buttons : PS5</Name>
@@ -332,7 +334,7 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 	<SubMod>
 		<Name>Buttons : SNES</Name>
 		<InstallationPath>Features/Buttons/ButtonsSNES</InstallationPath>
-		<Description>A Requested SNES or Switch layout</Description>
+		<Description>A Requested SNES or Switch layout </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
@@ -464,7 +466,7 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 	<SubMod>
 		<Name>Tweak: Get random card after battle</Name>
 		<InstallationPath>Features/Tweaks/RandomCard</InstallationPath>
-		<Description>Recieve a Random Card after value</Description>
+		<Description>Recieve a Random Card after battle (Will be soon moved to DV's mod)</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
@@ -483,13 +485,13 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 		<Name>Memoria : Recreation Title Screen</Name>
 		<InstallationPath>Features/TitleLogo2</InstallationPath>
 		<Description>Shows a Recreation title screen and Memoria Indicator</Description>
-		<Priority>1</Priority>
+		<Priority>99</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Memoria: Alternate World Maps [Select]</Name>
 		<InstallationPath>Features/Maps</InstallationPath>
-		<Description>Alternative Overworld Map</Description>
-		<Priority>1</Priority>
+		<Description>Alternative Overworld Map </Description>
+		<Priority>99</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Memoria: Triple Triad Mat</Name>
@@ -504,33 +506,33 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance: Make Millenial Decay (Fenrir) as default [Eiko]</Name>
+		<Name>Enhance: Make Millenial Decay (Fenrir) as default [Eiko] </Name>
 		<InstallationPath>Features/Enhance/Eiko</InstallationPath>
 		<Description>Equip Sapphire in order to summon Terrestrial Rage (Golem)</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance: Stronger Jump [Freya]</Name>
+		<Name>Enhance: Stronger Jump [Freya]  </Name>
 		<InstallationPath>Features/Enhance/Freya</InstallationPath>
 		<Description>Make Freya's Jump do 3x damage</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance: Better Cook and Eat [Quina]</Name>
+		<Name>Enhance: Better Cook and Eat [Quina]  </Name>
 		<InstallationPath>Features/Enhance/Quina</InstallationPath>
 		<Description>Better Devour</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance: Save the Queen for Steiner [Steiner]</Name>
+		<Name>Enhance: Save the Queen for Steiner  [Steiner]  </Name>
 		<InstallationPath>Features/Enhance/Steiner</InstallationPath>
 		<Description>Steiner can Equip Save the Queen </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance: Add Resistance to Zombie and Virus</Name>
+		<Name>Enhance: Add Resistance to Zombie and Virus   </Name>
 		<InstallationPath>Features/Enhance/All</InstallationPath>
-		<Description>Auto-life resists Zombie, Anti-body Resists Virus</Description>
+		<Description>Auto-life resists Zombie, Anti-body Resists Virus </Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
