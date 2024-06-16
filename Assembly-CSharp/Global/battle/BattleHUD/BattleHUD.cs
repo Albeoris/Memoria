@@ -1620,7 +1620,7 @@ public partial class BattleHUD : UIScene
             }
         }
         CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].cmd[0];
-        cmd.regist.sel_mode = 1;     
+        cmd.regist.sel_mode = 1;
         if (mixId >= 0)
         {
             if (CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Item)
