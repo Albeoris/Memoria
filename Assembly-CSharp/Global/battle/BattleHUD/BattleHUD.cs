@@ -656,7 +656,7 @@ public partial class BattleHUD : UIScene
                     Count = ff9Item.count,
                     Id = ff9Item.id
                 };
-                if (_doubleCastCount == 2 && battleItemListData.Id == (RegularItem)_firstCommand.SubId)
+                if (_doubleCastCount == 2 && battleItemListData.Id == (RegularItem)_firstCommand.SubId && IsMixCast)
                 {
                     battleItemListData.Count--;
                 }
@@ -1116,38 +1116,37 @@ public partial class BattleHUD : UIScene
         return bd.CurrentMp <= bd.MaximumMp / 6.0 ? ParameterStatus.Critical : ParameterStatus.Normal;
     }
 
-    private void CheckDoubleCast(Int32 battleIndex, CursorGroup cursorGroup)
+    private Boolean CheckDoubleCast(Int32 battleIndex, CursorGroup cursorGroup)
     {
-        if (IsDoubleCast && _doubleCastCount == 2 || !IsDoubleCast)
+        if (!IsDoubleCast || (IsDoubleCast && _doubleCastCount == 2))
         {
             _doubleCastCount = 0;
-            SetTarget(battleIndex);
+            return SetTarget(battleIndex);
+        }
+        if (_doubleCastCount > 2) // TODO: handle more than 2 commands (triple cast etc...)
+            return false;
+
+        ++_doubleCastCount;
+        _firstCommand = ProcessCommand(battleIndex, cursorGroup);
+        CharacterCommandType commandType = CharacterCommands.Commands[_firstCommand.CommandId].Type;
+
+        if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
+        {
+            _subMenuType = commandType == CharacterCommandType.Item ? SubMenuType.Item : SubMenuType.Throw;
+            DisplayItem(commandType == CharacterCommandType.Throw);
+            SetTargetVisibility(false);
+            SetItemPanelVisibility(true, true);
         }
         else
         {
-            if (!IsDoubleCast || _doubleCastCount >= 2)
-                return;
-
-            ++_doubleCastCount;
-            _firstCommand = ProcessCommand(battleIndex, cursorGroup);
-            CharacterCommandType commandType = CharacterCommands.Commands[_firstCommand.CommandId].Type;
-
-            if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
-            {
-                _subMenuType = commandType == CharacterCommandType.Item ? SubMenuType.Item : SubMenuType.Throw;
-                DisplayItem(commandType == CharacterCommandType.Throw);
-                SetTargetVisibility(false);
-                SetItemPanelVisibility(true, true);
-            }                
-            else
-            {
-                _subMenuType = SubMenuType.Ability;
-                DisplayAbility();
-                SetTargetVisibility(false);
-                SetAbilityPanelVisibility(true, true);
-            }
-            BackButton.SetActive(FF9StateSystem.MobilePlatform);
+            _subMenuType = SubMenuType.Ability;
+            DisplayAbility();
+            SetTargetVisibility(false);
+            SetAbilityPanelVisibility(true, true);
         }
+        FF9Sfx.FF9SFX_Play(103);
+        BackButton.SetActive(FF9StateSystem.MobilePlatform);
+        return false;
     }
 
     private void CheckPlayerState()
@@ -1572,7 +1571,7 @@ public partial class BattleHUD : UIScene
         }
     }
 
-    private void SendCommand(CommandDetail command)
+    private Boolean SendCommand(CommandDetail command)
     {
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
         CMD_DATA cmd = btl.cmd[0];
@@ -1582,9 +1581,10 @@ public partial class BattleHUD : UIScene
         InputFinishList.Add(CurrentPlayerIndex);
 
         _partyDetail.SetBlink(CurrentPlayerIndex, false);
+        return true;
     }
 
-    private void SendDoubleCastCommand(CommandDetail first, CommandDetail second)
+    private Boolean SendDoubleCastCommand(CommandDetail first, CommandDetail second)
     {
         CMD_DATA cmd1 = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].cmd[3];
         CMD_DATA cmd2 = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].cmd[0]; // The second command sent/performed is the main one (it resets the ATB correctly amongst other things)
@@ -1595,40 +1595,130 @@ public partial class BattleHUD : UIScene
         InputFinishList.Add(CurrentPlayerIndex);
 
         _partyDetail.SetBlink(CurrentPlayerIndex, false);
+        return true;
     }
 
-    private void SendMixCommand(CommandDetail[] allInputs)
+    private Boolean SendMixCommand(CommandDetail[] allInputs)
     {
         CommandDetail lastInput = allInputs[allInputs.Length - 1];
+        CharacterCommand charCmd = CharacterCommands.Commands[lastInput.CommandId];
         MixItems mixRequest = new MixItems()
         {
             Id = -1,
             Result = RegularItem.NoItem,
-            Ingredients = allInputs.Select(detail => (RegularItem)detail.SubId).ToList()         
+            Ingredients = allInputs.Select(detail => (RegularItem)detail.SubId).ToList()
         };
         Dictionary<RegularItem, Int32> requestIngredients = mixRequest.GetIngredientsAsDict();
-        Int32 mixId = -1;
         foreach (MixItems mixCandidate in ff9mixitem.MixItemsData.Values)
         {
+            if (mixCandidate.Id < 0)
+                continue;
             if (mixCandidate.Length != mixRequest.Length)
                 continue;
             Dictionary<RegularItem, Int32> candidateIngredients = mixCandidate.GetIngredientsAsDict();
             if (candidateIngredients.All(kvp => requestIngredients.TryGetValue(kvp.Key, out Int32 cnt) && cnt == kvp.Value))
             {
-                mixId = mixCandidate.Id;
+                mixRequest.Id = mixCandidate.Id;
                 break;
             }
         }
-        BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex];
-        CMD_DATA cmd = btl.cmd[0];
-        cmd.regist.sel_mode = 1;     
-        if (mixId >= 0) 
-            btl_cmd.SetCommand(cmd, lastInput.CommandId, mixId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
-        else // In case of mix fail, we use CommandId.Item with the first item picked instead
-            btl_cmd.SetCommand(cmd, BattleCommandId.Item, allInputs[0].SubId, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+        CMD_DATA cmd = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].cmd[0];
+        if (mixRequest.Id >= 0)
+        {
+            cmd.regist.sel_mode = 1;
+            if (charCmd.Type == CharacterCommandType.Item)
+                lastInput.TargetId = GetTargetFromType(lastInput, cmd, ff9item.GetItemEffect(ff9mixitem.MixItemsData[mixRequest.Id].Result).info.Target);
+            btl_cmd.SetCommand(cmd, lastInput.CommandId, mixRequest.Id, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+        }
+        else
+        {
+            MixCommandType mixInfo = MixCommandSet[lastInput.CommandId];
+            if (mixInfo.failType == FailedMixType.CANCEL_MENU)
+            {
+                // No command sent, return to a menu (first item pick)
+                if (charCmd.Type == CharacterCommandType.Throw)
+                {
+                    _doubleCastCount = 1;
+                    _subMenuType = SubMenuType.Throw;
+                    DisplayItem(true);
+                    SetTargetVisibility(false);
+                    SetItemPanelVisibility(true, false);
+                }
+                else if (charCmd.Type == CharacterCommandType.Item)
+                {
+                    _doubleCastCount = 1;
+                    _subMenuType = SubMenuType.Item;
+                    DisplayItem(false);
+                    SetTargetVisibility(false);
+                    SetItemPanelVisibility(true, false);
+                }
+                if (mixInfo.consumeOnFail)
+                    foreach (RegularItem ingredient in mixRequest.Ingredients)
+                        UIManager.Battle.ItemUse(ingredient);
+                FF9Sfx.FF9SFX_Play(1046);
+                return false;
+            }
+            cmd.regist.sel_mode = 1;
+            if (mixInfo.failType == FailedMixType.FIRST_ITEM || mixInfo.failType == FailedMixType.SECOND_ITEM || mixInfo.failType == FailedMixType.USE_ITEMS)
+            {
+                // Don't use the mix command
+                BattleCommandId commandReplacement = charCmd.Type == CharacterCommandType.Item ? BattleCommandId.Item : BattleCommandId.Throw;
+                if (mixInfo.failType == FailedMixType.USE_ITEMS)
+                {
+                    CMD_DATA cmd2 = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex].cmd[3]; // TODO: handle more than 2 items
+                    if (charCmd.Type == CharacterCommandType.Item)
+                    {
+                        allInputs[0].TargetId = GetTargetFromType(lastInput, cmd, ff9item.GetItemEffect((RegularItem)allInputs[0].SubId).info.Target);
+                        allInputs[1].TargetId = GetTargetFromType(lastInput, cmd, ff9item.GetItemEffect((RegularItem)allInputs[1].SubId).info.Target);
+                    }
+                    btl_cmd.SetCommand(cmd2, commandReplacement, allInputs[0].SubId, allInputs[0].TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+                    btl_cmd.SetCommand(cmd, commandReplacement, allInputs[1].SubId, allInputs[1].TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+                }
+                else
+                {
+                    Int32 itemIdUsed = mixInfo.failType == FailedMixType.SECOND_ITEM ? allInputs[1].SubId : allInputs[0].SubId;
+                    btl_cmd.SetCommand(cmd, commandReplacement, itemIdUsed, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+                }
+            }
+            else
+            {
+                // Use the mix command with the non-registed request (it is added to the database with a negative ID)
+                mixRequest.Id = -1 - CurrentPlayerIndex;
+                ff9mixitem.MixItemsData[mixRequest.Id] = mixRequest;
+                if (mixInfo.failType == FailedMixType.FAIL_ITEM)
+                {
+                    mixRequest.Result = mixInfo.failItem;
+                    if (charCmd.Type == CharacterCommandType.Item)
+                        lastInput.TargetId = GetTargetFromType(lastInput, cmd, ff9item.GetItemEffect(mixInfo.failItem).info.Target);
+                }
+                btl_cmd.SetCommand(cmd, lastInput.CommandId, mixRequest.Id, lastInput.TargetId, lastInput.TargetType, cmdMenu: lastInput.Menu);
+            }
+        }
         SetPartySwapButtonActive(false);
         InputFinishList.Add(CurrentPlayerIndex);
         _partyDetail.SetBlink(CurrentPlayerIndex, false);
+        return true;
+    }
+
+    private static ushort GetTargetFromType(CommandDetail cmddetail, CMD_DATA cmd, TargetType TargetType)
+    {
+        if (TargetType == TargetType.AllAlly)
+        {
+            return 0x0F;
+        }
+        else if (TargetType == TargetType.AllEnemy)
+        {
+            return 0xF0;
+        }
+        else if (TargetType == TargetType.Everyone)
+        {
+            return 0xFF;
+        }
+        else if (TargetType == TargetType.Self)
+        {
+            return cmd.regist.btl_id;
+        }
+        return cmddetail.TargetId;
     }
 
     private void SetCommandVisibility(Boolean isVisible, Boolean forceCursorMemo)
@@ -1765,45 +1855,71 @@ public partial class BattleHUD : UIScene
             _bestTargetIndex = -1;
             if (_currentCommandIndex == BattleCommandMenu.Ability1 || _currentCommandIndex == BattleCommandMenu.Ability2 || CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out _))
             {
-                AA_DATA aaData = GetSelectedActiveAbility(CurrentPlayerIndex, _currentCommandId, _currentSubMenuIndex, out Int32 subNo, out _);
-                targetType = aaData.Info.Target;
-                _defaultTargetAlly = aaData.Info.DefaultAlly;
-                _defaultTargetDead = aaData.Info.DefaultOnDead;
-                _targetDead = aaData.Info.ForDead;
-                subMode = aaData.Info.DisplayStats;
-
-                CMD_DATA testCommand = new CMD_DATA
+                if (CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Item)
                 {
-                    regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
-                    cmd_no = _currentCommandId,
-                    sub_no = subNo
-                };
-                testCommand.SetAAData(aaData);
-                testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
-
-                if (Configuration.Mod.TranceSeek && _currentCommandId == BattleCommandId.Throw) // [DV] Change TargetType for throwing items (magic scrolls for Trance Seek)
-                { // Or i can make it with the DictionaryPatch.txt instead ?
-                    ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
-                    if (((weapon.Category & WeaponCategory.Throw) != 0) && (weapon.ModelId == 65535 || weapon.ModelId == 0))
+                    RegularItem itemId = _itemIdList[_currentSubMenuIndex];
+                    ITEM_DATA itemData = ff9item.GetItemEffect(itemId);
+                    targetType = itemData.info.Target;
+                    _defaultTargetAlly = itemData.info.DefaultAlly;
+                    _defaultTargetDead = itemData.info.ForDead;
+                    _targetDead = itemData.info.ForDead;
+                    subMode = itemData.info.DisplayStats;
+                    if (!MixCommandSet.ContainsKey(_currentCommandId))
                     {
-                        switch (weapon.Offset2)
+                        CMD_DATA testCommand = new CMD_DATA
                         {
-                            case 1:
-                                targetType = TargetType.SingleAlly;
-                                break;
-                            case 6:
-                                targetType = TargetType.All;
-                                break;
-                            case 7:
-                                targetType = TargetType.AllAlly;
-                                break;
-                            case 8:
-                                targetType = TargetType.AllEnemy;
-                                break;
-                        }
+                            regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
+                            cmd_no = _currentCommandId,
+                            sub_no = (Int32)itemId
+                        };
+
+                        testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityId.Void]);
+                        testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
+                        SelectBestTarget(targetType, testCommand);
                     }
                 }
-                SelectBestTarget(targetType, testCommand);
+                else
+                {
+                    AA_DATA aaData = GetSelectedActiveAbility(CurrentPlayerIndex, _currentCommandId, _currentSubMenuIndex, out Int32 subNo, out _);
+                    targetType = aaData.Info.Target;
+                    _defaultTargetAlly = aaData.Info.DefaultAlly;
+                    _defaultTargetDead = aaData.Info.DefaultOnDead;
+                    _targetDead = aaData.Info.ForDead;
+                    subMode = aaData.Info.DisplayStats;
+
+                    CMD_DATA testCommand = new CMD_DATA
+                    {
+                        regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
+                        cmd_no = _currentCommandId,
+                        sub_no = subNo
+                    };
+                    testCommand.SetAAData(aaData);
+                    testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
+
+                    if (Configuration.Mod.TranceSeek && _currentCommandId == BattleCommandId.Throw) // [DV] Change TargetType for throwing items (magic scrolls for Trance Seek)
+                    { // Or i can make it with the DictionaryPatch.txt instead ?
+                        ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
+                        if (((weapon.Category & WeaponCategory.Throw) != 0) && (weapon.ModelId == 65535 || weapon.ModelId == 0))
+                        {
+                            switch (weapon.Offset2)
+                            {
+                                case 1:
+                                    targetType = TargetType.SingleAlly;
+                                    break;
+                                case 6:
+                                    targetType = TargetType.All;
+                                    break;
+                                case 7:
+                                    targetType = TargetType.AllAlly;
+                                    break;
+                                case 8:
+                                    targetType = TargetType.AllEnemy;
+                                    break;
+                            }
+                        }
+                    }
+                    SelectBestTarget(targetType, testCommand);
+                }
             }
             else if (_currentCommandIndex == BattleCommandMenu.Item)
             {
@@ -1814,7 +1930,7 @@ public partial class BattleHUD : UIScene
                 _defaultTargetDead = itemData.info.ForDead;
                 _targetDead = itemData.info.ForDead;
                 subMode = itemData.info.DisplayStats;
-                if (!MixCommandSet.Contains(_currentCommandId))
+                if (!MixCommandSet.ContainsKey(_currentCommandId))
                 {
                     CMD_DATA testCommand = new CMD_DATA
                     {
@@ -2404,7 +2520,7 @@ public partial class BattleHUD : UIScene
     }
 
 
-    private void SetTarget(Int32 battleIndex)
+    private Boolean SetTarget(Int32 battleIndex)
     {
         // This could be moved to AbilityFeatures.txt but whatever...
         if (_currentCommandId == BattleCommandId.Attack && CurrentBattlePlayerIndex > -1)
@@ -2417,23 +2533,20 @@ public partial class BattleHUD : UIScene
                 {
                     CommandDetail first = ProcessCommand(battleIndex, _cursorType);
                     SendDoubleCastCommand(first, first);
-
-                    SetTargetVisibility(false);
-                    SetIdle();
-                    return;
+                    return true;
                 }
             }
         }
 
+        Boolean success;
         if (IsMixCast)
-            SendMixCommand([_firstCommand, ProcessCommand(battleIndex, _cursorType)]);
+            success = SendMixCommand([_firstCommand, ProcessCommand(battleIndex, _cursorType)]);
         else if (IsDoubleCast)
-            SendDoubleCastCommand(_firstCommand, ProcessCommand(battleIndex, _cursorType));
+            success = SendDoubleCastCommand(_firstCommand, ProcessCommand(battleIndex, _cursorType));
         else
-            SendCommand(ProcessCommand(battleIndex, _cursorType));
+            success = SendCommand(ProcessCommand(battleIndex, _cursorType));
 
-        SetTargetVisibility(false);
-        SetIdle();
+        return success;
     }
 
     private void ValidateDefaultTarget(ref Int32 firstIndex)

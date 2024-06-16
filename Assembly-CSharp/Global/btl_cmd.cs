@@ -1,7 +1,9 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
+using Memoria.Assets;
 using Memoria.Data;
+using Memoria.Prime;
 using Memoria.Scripts;
 using NCalc;
 using System;
@@ -714,12 +716,18 @@ public class btl_cmd
                         if (aaIndex != BattleAbilityId.Void)
                             FF9StateSystem.EventState.IncreaseAAUsageCounter(aaIndex);
                     }
-                    RegularItem itemId = btl_util.GetCommandItem(cmd);
-                    if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
-                        foreach (RegularItem ingredient in MixChoosen.Ingredients)
-                            UIManager.Battle.ItemUse(ingredient);
-                    else if (itemId != RegularItem.NoItem)
-                        UIManager.Battle.ItemUse(itemId);
+                    if (BattleHUD.MixCommandSet.TryGetValue(cmd.cmd_no, out MixCommandType mixInfo) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
+                    {
+                        if (cmd.sub_no >= 0 || mixInfo.consumeOnFail)
+                            foreach (RegularItem ingredient in MixChoosen.Ingredients)
+                                UIManager.Battle.ItemUse(ingredient);
+                    }
+                    else
+                    {
+                        RegularItem itemId = btl_util.GetCommandItem(cmd);
+                        if (itemId != RegularItem.NoItem)
+                            UIManager.Battle.ItemUse(itemId);
+                    }
 
                     cmd.info.mode = command_mode_index.CMD_MODE_LOOP;
                     break;
@@ -1041,12 +1049,26 @@ public class btl_cmd
             return true;
 
         Boolean notEnoughItems = false;
-        if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no) && cmd.cmd_no != BattleCommandId.Item)
+        if (BattleHUD.MixCommandSet.TryGetValue(cmd.cmd_no, out MixCommandType mixInfo) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
         {
-            Dictionary<RegularItem, Int32> allIngredients = ff9mixitem.MixItemsData[cmd.sub_no].GetIngredientsAsDict();
-            foreach (KeyValuePair<RegularItem, Int32> requirement in allIngredients)
-                if (ff9item.FF9Item_GetCount(requirement.Key) < requirement.Value)
-                    notEnoughItems = true;
+            if (cmd.sub_no >= 0 || mixInfo.consumeOnFail)
+            {
+                Dictionary<RegularItem, Int32> allIngredients = MixChoosen.GetIngredientsAsDict();
+                foreach (KeyValuePair<RegularItem, Int32> requirement in allIngredients)
+                    if (ff9item.FF9Item_GetCount(requirement.Key) < requirement.Value)
+                        notEnoughItems = true;
+            }
+            if (cmd.sub_no < 0 && mixInfo.failType == FailedMixType.SKIP_TURN)
+            {
+                if (mixInfo.consumeOnFail)
+                {
+                    // Consume the mix ingredients attempt now because CMD_MODE_SELECT_VFX will never be reached
+                    foreach (RegularItem ingredient in MixChoosen.Ingredients)
+                        UIManager.Battle.ItemUse(ingredient);
+                }
+                UIManager.Battle.SetBattleFollowMessage(5, Localization.GetWithDefault("FailedMixMessage"));
+                return false;
+            }
         }
         else
         {

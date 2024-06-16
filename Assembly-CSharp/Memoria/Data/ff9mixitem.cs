@@ -12,10 +12,10 @@ namespace FF9
 
         static ff9mixitem()
         {
-            MixItemsData = LoadSynthesis();
+            MixItemsData = LoadMixes();
         }
 
-        private static Dictionary<Int32, MixItems> LoadSynthesis()
+        private static Dictionary<Int32, MixItems> LoadMixes()
         {
             try
             {
