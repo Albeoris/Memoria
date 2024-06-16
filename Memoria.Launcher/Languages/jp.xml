@@ -98,6 +98,7 @@
 	UseOrchestralMusic = "オーケストラの音楽 (Moguri)"
 	Use30FpsVideo = "30 FPS動画 (Moguri)"
 	MaxCardCount = "10000枚のカード"
+	NoAutoTrance = "手動トランス"
 	ActiveMonitor_Tooltip = "モニターを選択"
 	WindowMode_Tooltip = "-ウィンドウモード: ゲームをウィンドウで実行&#xA;-全画面: ディスプレイ全体を使用&#xA;-ボーダーレス フルスクリーン: ディスプレイ全体を使用し、ウィンドウプロセスとして実行"
 	Resolution_Tooltip = "画面の解像度&#xA;16:9および16:10のみワイドスクリーンがサポートされています"
@@ -136,7 +137,7 @@
 	FieldFPS_Tooltip = "通常の背景の画像更新レート (デフォルト: 30)"
 	WorldFPS_Tooltip = "ワールドマップの画像更新レート (デフォルト: 20)"
 	MaxCardCount_Tooltip = "インベントリ内のカードの制限を10000枚に引き上げます"
-
+	NoAutoTrance_Tooltip = "トランスは自動的に開始されません。「左キー」で起動します"
 	/>
 
 	<SdLib

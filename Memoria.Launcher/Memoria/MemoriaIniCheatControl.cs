@@ -26,7 +26,7 @@ namespace Memoria.Launcher
     {
         public MemoriaIniCheatControl()
         {
-            SetRows(15);
+            SetRows(16);
             SetCols(8);
             
             Width = 260;
@@ -58,6 +58,14 @@ namespace Memoria.Launcher
             stealingAlwaysWorks.Foreground = Brushes.White;
             stealingAlwaysWorks.Margin = rowMargin;
             stealingAlwaysWorks.ToolTip = Lang.Settings.MaxStealRate_Tooltip;
+
+            row++;
+
+            UiCheckBox noAutoTrance = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.NoAutoTrance, null), row, 0, 1, 8);
+            noAutoTrance.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(NoAutoTrance)) { Mode = BindingMode.TwoWay });
+            noAutoTrance.Foreground = Brushes.White;
+            noAutoTrance.Margin = rowMargin;
+            noAutoTrance.ToolTip = Lang.Settings.NoAutoTrance_Tooltip;
 
             row++;
 
@@ -203,6 +211,18 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public Int16 NoAutoTrance
+        {
+            get { return _noautotrance; }
+            set
+            {
+                if (_noautotrance != value)
+                {
+                    _noautotrance = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public Int16 GarnetConcentrate
         {
             get { return _garnetconcentrate; }
@@ -337,7 +357,7 @@ namespace Memoria.Launcher
             }
         }
 
-        private Int16 _stealingalwaysworks, _garnetconcentrate, _breakDamageLimit, _accessBattleMenu, _speedmode, _speedfactor, _battletpsfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill, _maxcardcount;
+        private Int16 _stealingalwaysworks, _noautotrance, _garnetconcentrate, _breakDamageLimit, _accessBattleMenu, _speedmode, _speedfactor, _battletpsfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill, _maxcardcount;
 
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Memoria.ini";
 
@@ -356,6 +376,16 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _stealingalwaysworks))
                     _stealingalwaysworks = 0;
+
+
+                value = iniFile.ReadValue("Battle", nameof(NoAutoTrance));
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                    OnPropertyChanged(nameof(NoAutoTrance));
+                }
+                if (!Int16.TryParse(value, out _noautotrance))
+                    _noautotrance = 0;
 
                 value = iniFile.ReadValue("Battle", nameof(GarnetConcentrate));
                 if (String.IsNullOrEmpty(value))
@@ -466,6 +496,7 @@ namespace Memoria.Launcher
                     _maxcardcount = 1;
 
                 Refresh(nameof(StealingAlwaysWorks));
+                Refresh(nameof(NoAutoTrance));
                 Refresh(nameof(GarnetConcentrate));
                 Refresh(nameof(BreakDamageLimit));
                 Refresh(nameof(AccessBattleMenu));
@@ -515,6 +546,11 @@ namespace Memoria.Launcher
                             iniFile.WriteValue("Hacks", "Enabled ", " 1");
                             iniFile.WriteValue("Hacks", propertyName + " ", " 2");
                         }
+                        break;
+                    case nameof(NoAutoTrance):
+                        iniFile.WriteValue("Battle", propertyName + " ", " " + NoAutoTrance);
+                        if (NoAutoTrance == 1)
+                            iniFile.WriteValue("Battle", "Enabled ", " 1");
                         break;
                     case nameof(GarnetConcentrate):
                         iniFile.WriteValue("Battle", propertyName + " ", " " + GarnetConcentrate);

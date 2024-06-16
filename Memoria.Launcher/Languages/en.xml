@@ -98,6 +98,7 @@
 	UseOrchestralMusic = "Orchestral music (Moguri)"
 	Use30FpsVideo = "30 FPS videos (Moguri)"
 	MaxCardCount = "10k cards"
+	NoAutoTrance = "Manual trance"
 	UIColumnsChoice = "UI lines/columns"
 	UIColumnsChoice0 = "Default"
 	UIColumnsChoice1 = "x1.5 (max 3 columns)"
@@ -141,6 +142,7 @@
 	WorldFPS_Tooltip = "Image refresh rate on the world map (default: 20)"
 	MaxCardCount_Tooltip = "Limit to cards in inventory raised to 10000"
 	UIColumnsChoice_Tooltip = "Number of columns: if you want more items/abilities on one screen"
+	NoAutoTrance_Tooltip = "Trance does not start automatically. 'Left key' to activate it"
 	/>
 
 	<SdLib

@@ -99,6 +99,7 @@
 	UseOrchestralMusic = "Musique orchestrale (Moguri)"
 	Use30FpsVideo = "Video 30 FPS (Moguri)"
 	MaxCardCount = "10k cartes"
+	NoAutoTrance = "Trance manuelle"
 	ActiveMonitor_Tooltip = "Choix d'écran"
 	WindowMode_Tooltip = "-Fenêtré: Jouer dans une fenêtre&#xA;-Plein écran exclusif: Le jeu prend tout l'écran&#xA;-Plein écran sans bordures: prend tout l'écran mais dans une fenêtre invisible"
 	Resolution_Tooltip = "Résolution d'écran&#xA;Les résolutions 16:9 et 16:10 supportent le mode écran large"
@@ -137,6 +138,7 @@
 	FieldFPS_Tooltip = "Taux de rafraichissement d'image sur les décors (défaut: 30)"
 	WorldFPS_Tooltip = "Taux de rafraichissement d'image sur la mappemonde (défaut: 20)"
 	MaxCardCount_Tooltip = "La limite de cartes dans l'inventaire augmentée à 10000"
+	NoAutoTrance_Tooltip = "La trance ne se lance pas automatiquement. 'Touche gauche' pour l'activer"
 	/>
 
 	<SdLib

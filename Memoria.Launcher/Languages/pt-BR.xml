@@ -102,6 +102,7 @@
 	UIColumnsChoice0 = "Padrão"
 	UIColumnsChoice1 = "x1.5 (máximo de 3 colunas)"
 	UIColumnsChoice2 = "x2 (máximo de 4 colunas)"
+	NoAutoTrance = "Trance manual"
 	ActiveMonitor_Tooltip = "Escolha uma tela"
 	WindowMode_Tooltip = "-Modo Janela: Executa o jogo numa janela&#xA;-Tela Cheia: O jogo toma a tela inteira&#xA;-Tela Cheia Sem Borda: Toma a tela inteira mas como um processo de janela"
 	Resolution_Tooltip = "Resolução da tela&#xA;Suporte a Widescreen só em 16:9 e 16:10"
@@ -141,6 +142,7 @@
 	WorldFPS_Tooltip = "Taxa de atualização das imagens no mapa-múndi (padrão: 20)"
 	MaxCardCount_Tooltip = "Limite dos cartões no inventário aumentado pra 10.000"
 	UIColumnsChoice_Tooltip = "Número de colunas: se você quiser mais itens/habilidades em uma tela"
+	NoAutoTrance_Tooltip = "A trance não inicia automaticamente. 'Tecla esquerda' para ativar"
 	/>
 
 	<SdLib
