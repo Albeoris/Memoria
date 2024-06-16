@@ -2449,7 +2449,7 @@ public class FieldMap : HonoBehavior
     public static readonly Int32[][] FixDepthOfLayer =
     {
         // [mapNo,camIdx,LayerIndex,Depth],
-        [51,1,20,600],      // Kidnap scene, candle light
+        [51,1,19,800],      // Kidnap scene, candle light
         [202,0,20,0],       // Prima Vista light
         [252,0,6,1600],     // Evil Forest light
         [350,0,0,730],      // Dali shop door cropped
