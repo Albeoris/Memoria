@@ -15,6 +15,7 @@ using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 
 // ReSharper disable UnusedMember.Local
@@ -1336,6 +1337,7 @@ namespace Memoria.Launcher
             {
                 if (File.Exists(_iniPath))
                 {
+                    RemoveDuplicateKeys(_iniPath);
                     IniFile iniFile = new IniFile(_iniPath);
                     String _checklatestadded = iniFile.ReadValue("Interface", "FadeDuration"); // check if the latest ini parameter is already there
                     if (String.IsNullOrEmpty(_checklatestadded))
@@ -1517,6 +1519,67 @@ namespace Memoria.Launcher
             {
                 iniFile.WriteValue(Category, Setting + " ", " " + Defaultvalue);
             }
+        }
+        public static void RemoveDuplicateKeys(string iniPath)
+        {
+            string wholeFile = File.ReadAllText(iniPath);
+            string cleanedContent = RemoveDuplicateKeysFromContent(wholeFile);
+            File.WriteAllText(iniPath, cleanedContent);
+        }
+        private static string RemoveDuplicateKeysFromContent(string content)
+        {
+            var sections = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
+            string[] lines = content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            string currentSection = "";
+
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                    continue;
+                if (line.StartsWith("[") && line.EndsWith("]"))
+                {
+                    currentSection = line.Trim('[', ']');
+                    if (!sections.ContainsKey(currentSection))
+                    {
+                        sections[currentSection] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                    }
+                }
+                else if (!line.Contains(";") && line.Contains("=") && !line.StartsWith("="))
+                {
+                    var keyValue = line.Split(new[] { '=' }, 2);
+                    sections[currentSection][keyValue[0].Trim()] = keyValue[1].Trim();
+                }
+                else 
+                {
+                    sections[currentSection][line] = "zzz";
+                }
+            }
+
+            return GenerateContentFromSections(sections);
+        }
+
+        private static string GenerateContentFromSections(Dictionary<string, Dictionary<string, string>> sections)
+        {
+            var result = new List<string>();
+
+            foreach (var section in sections)
+            {
+                result.Add($"[{section.Key}]");
+                foreach (var keyValue in section.Value)
+                {
+                    if (keyValue.Value != "zzz")
+                    {
+                        result.Add($"{keyValue.Key} = {keyValue.Value}");
+                    }
+                    else
+                    {
+                        result.Add($"{keyValue.Key}");
+                    }
+                }
+                result.Add(""); // Add a blank line after each section for readability
+            }
+
+            return string.Join(Environment.NewLine, result);
         }
     }
 }
