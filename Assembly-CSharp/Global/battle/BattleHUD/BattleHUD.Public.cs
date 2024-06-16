@@ -31,19 +31,9 @@ public partial class BattleHUD : UIScene
         BattleCommandId.DoubleBlackMagic,
         BattleCommandId.DoubleWhiteMagic
     };
-    public static Dictionary<BattleCommandId, Dictionary<FailedMixType, RegularItem>> MixCommandSet = new Dictionary<BattleCommandId, Dictionary<FailedMixType, RegularItem>>();
+    public static Dictionary<BattleCommandId, MixCommandType> MixCommandSet = new Dictionary<BattleCommandId, MixCommandType>();
     public static Boolean ForceNextTurn = false;
     public static Int32 switchBtlId = -1;
-
-    public enum FailedMixType
-    {
-        FIRST_ITEM,
-        SECOND_ITEM,
-        SKIP_TURN,
-        USE_ITEMS,
-        CANCEL_MENU,
-        FAIL_ITEM
-    }
 
     public BattleHUD()
     {
@@ -124,13 +114,8 @@ public partial class BattleHUD : UIScene
                 return aaData.Name;
             return String.Empty;
         }
-        if (MixCommandSet.ContainsKey(pCmd.cmd_no))
-        {
-            if (ff9mixitem.MixItemsData.TryGetValue(pCmd.sub_no, out MixItems MixChoosen))
-                return FF9TextTool.ItemName(MixChoosen.Result);
-            if (CharacterCommands.Commands[pCmd.cmd_no].Type == CharacterCommandType.Item || CharacterCommands.Commands[pCmd.cmd_no].Type == CharacterCommandType.Throw)
-                return FF9TextTool.ItemName((RegularItem)pCmd.sub_no);
-        }
+        if (MixCommandSet.ContainsKey(pCmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(pCmd.sub_no, out MixItems MixChoosen))
+            return FF9TextTool.ItemName(MixChoosen.Result);
         switch (pCmd.cmd_no)
         {
             case BattleCommandId.Item:

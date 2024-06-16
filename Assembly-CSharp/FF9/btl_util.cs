@@ -281,6 +281,17 @@ namespace FF9
 			return cmdNo < BattleCommandId.BoundaryCheck || cmdNo > BattleCommandId.BoundaryUpperCheck;
 		}
 
+        public static CharacterCommandType GetCommandTypeSafe(BattleCommandId cmdNo)
+        {
+            if (cmdNo == BattleCommandId.Item || cmdNo == BattleCommandId.AutoPotion)
+                return CharacterCommandType.Item;
+            if (cmdNo == BattleCommandId.Throw)
+                return CharacterCommandType.Throw;
+            if (CharacterCommands.Commands.TryGetValue(cmdNo, out CharacterCommand chcmd))
+                return chcmd.Type;
+            return CharacterCommandType.Normal;
+        }
+
 		public static BattleAbilityId GetCommandMainActionIndex(CMD_DATA cmd)
 		{
             if (cmd.regist != null && cmd.regist.bi.player == 0)
@@ -289,9 +300,11 @@ namespace FF9
 				return BattleAbilityId.Void;
 			if (IsCommandMonsterTransformAttack(cmd))
 				return BattleAbilityId.Attack;
-
-            if (cmd.regist != null && cmd.regist.bi.player != 0 && BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand commandplayer))
-                return commandplayer.Type == CharacterCommandType.Item ? BattleAbilityId.Void : BattleAbilityId.Throw;
+            CharacterCommandType cmdType = GetCommandTypeSafe(cmd.cmd_no);
+            if (cmdType == CharacterCommandType.Item)
+                return BattleAbilityId.Void;
+            else if (cmdType == CharacterCommandType.Throw)
+                return BattleAbilityId.Throw;
             switch (cmd.cmd_no)
 			{
 				case BattleCommandId.SysEscape:
@@ -317,23 +330,12 @@ namespace FF9
                 return RegularItem.NoItem;
             if (IsCommandMonsterTransform(cmd) || IsCommandMonsterTransformAttack(cmd))
                 return RegularItem.NoItem;
-            if (cmd.regist != null && cmd.regist.bi.player != 0)
-            {
-                if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
-                    return MixChoosen.Result;
-                if (CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand commandplayer))
-                    if (commandplayer.Type == CharacterCommandType.Item || commandplayer.Type == CharacterCommandType.Throw)
-                        return (RegularItem)cmd.sub_no;
-            }
-            switch (cmd.cmd_no)
-            {
-                case BattleCommandId.Throw:
-                case BattleCommandId.Item:
-                case BattleCommandId.AutoPotion:
-                    return (RegularItem)cmd.sub_no;
-                default:
-                    return RegularItem.NoItem;
-            }
+            if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
+                return MixChoosen.Result;
+            CharacterCommandType cmdType = GetCommandTypeSafe(cmd.cmd_no);
+            if (cmdType == CharacterCommandType.Item || cmdType == CharacterCommandType.Throw)
+                return (RegularItem)cmd.sub_no;
+            return RegularItem.NoItem;
         }
 
         public static AA_DATA GetCommandMonsterAttack(CMD_DATA cmd)
@@ -359,10 +361,12 @@ namespace FF9
 
 		public static Int32 GetCommandScriptId(CMD_DATA cmd)
 		{
-            if (cmd.regist.bi.player != 0)
+            if (cmd.regist != null && cmd.regist.bi.player != 0 && GetCommandTypeSafe(cmd.cmd_no) == CharacterCommandType.Item)
             {
-                if (CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand commandplayer) && BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no))
-                    return commandplayer.Type == CharacterCommandType.Item ? ff9item.GetItemEffect(GetCommandItem(cmd)).Ref.ScriptId : cmd.ScriptId;
+                RegularItem cmdItem = GetCommandItem(cmd);
+                if (cmdItem != RegularItem.NoItem)
+                    return ff9item.GetItemEffect(cmdItem).Ref.ScriptId;
+                return cmd.ScriptId;
             }
             switch (cmd.cmd_no)
 			{

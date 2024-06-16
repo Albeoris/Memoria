@@ -356,6 +356,7 @@
     <Compile Include="Memoria\Configuration\Structure\InterfaceSection.cs" />
     <Compile Include="Memoria\Data\Battle\BattleCommandMenu.cs" />
     <Compile Include="Memoria\Data\Battle\BattleMagicSwordSet.cs" />
+    <Compile Include="Memoria\Data\Items\MixCommandType.cs" />
     <Compile Include="Memoria\Data\SpecialEffects\SHPPrototype.cs" />
     <Compile Include="Memoria\Data\SpecialEffects\SPSPrototype.cs" />
     <Compile Include="Memoria\Data\ff9mixitem.cs" />

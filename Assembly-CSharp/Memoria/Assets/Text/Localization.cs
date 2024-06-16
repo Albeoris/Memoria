@@ -31,21 +31,46 @@ namespace Memoria.Assets
             return Provider.Get(key);
         }
 
+        /// <summary>Might be useful in the future to base a translation mod on another language</summary>
+        public static String GetFallbackSymbol()
+        {
+            return "US";
+        }
+
         /// <summary>For keys not present in vanilla</summary>
         public static String GetWithDefault(String key)
         {
             String value = Provider.Get(key);
             if (!String.Equals(value, key))
                 return value;
-            if (_defaultDictionary.TryGetValue(key, out value))
-                return value;
+            if (_defaultDictionary.TryGetValue(key, out Dictionary<String, String> defaultValue))
+            {
+                if (defaultValue.TryGetValue(Provider.CurrentSymbol, out value))
+                    return value;
+                else if (defaultValue.TryGetValue(GetFallbackSymbol(), out value))
+                    return value;
+            }
             return key;
         }
 
-        private static Dictionary<String, String> _defaultDictionary = new Dictionary<String, String>()
+        private static Dictionary<String, Dictionary<String, String>> _defaultDictionary = new Dictionary<String, Dictionary<String, String>>()
         {
-            { "GilSymbol", "%[YSUB=1.3][sub]G" },
-            { "FailedMixMessage", "The combination failed!" }
+            { "GilSymbol", new Dictionary<String, String>()
+                {
+                    { "US", "%[YSUB=1.3][sub]G" }
+                }
+            },
+            { "FailedMixMessage", new Dictionary<String, String>()
+                {
+                    { "US", "The combination failed!" },
+                    { "UK", "The combination failed!" },
+                    { "JP", "調合失敗" },
+                    { "ES", "La mezcla falló!" },
+                    { "FR", "Le mélange a échoué !" },
+                    { "GR", "Mischung fehlgeschlagen!" },
+                    { "IT", "La miscela non è riuscita!" }
+                }
+            }
         };
     }
 }

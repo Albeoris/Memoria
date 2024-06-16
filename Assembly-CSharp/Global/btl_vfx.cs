@@ -44,7 +44,8 @@ public static class btl_vfx
     {
         BTL_DATA regist = cmd.regist;
         BattleCommandId cmd_no = cmd.cmd_no;
-        if (cmd_no == BattleCommandId.AutoPotion || cmd_no == BattleCommandId.Item || (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand chcmd) && chcmd.Type == CharacterCommandType.Item))
+        CharacterCommandType cmdType = btl_util.GetCommandTypeSafe(cmd_no);
+        if (cmdType == CharacterCommandType.Item)
             return (SpecialEffect)ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).info.VfxIndex;
         else if (cmd_no == BattleCommandId.SysTrans)
             return btl_stat.CheckStatus(regist, BattleStatus.Trance) ? SpecialEffect.Special_Trance_Activate : SpecialEffect.Special_Trance_End;
@@ -66,7 +67,7 @@ public static class btl_vfx
             else
                 return SpecialEffect.Steal_Blank;
         }
-        else if (cmd_no == BattleCommandId.Throw || (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && CharacterCommands.Commands.TryGetValue(cmd.cmd_no, out CharacterCommand chcmd) && chcmd.Type == CharacterCommandType.Throw))
+        else if (cmdType == CharacterCommandType.Throw)
         {
             Byte shape = ff9item._FF9Item_Data[btl_util.GetCommandItem(cmd)].shape;
             if (shape == 1)
@@ -102,7 +103,6 @@ public static class btl_vfx
             else
                 return (SpecialEffect)cmd.aa.Info.VfxIndex;
         }
-        return SpecialEffect.Special_No_Effect;
     }
 
     public static void SelectCommandVfx(CMD_DATA cmd)
