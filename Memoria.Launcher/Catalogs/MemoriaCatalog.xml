@@ -8,6 +8,8 @@
 	<Author>Ze_PilOt / Snouz</Author>
 	<Description>Moguri Mod is a faithful revamp of FF9 aided by AI (ESRGAN and Stable Diffusion). It makes backgrounds more detailed, highres, cleaner and less noisy.
 
+NOTICE: if you have a previous Moguri version installed: After downloading this, do an integrity check of the game (right click in steam > Installed Files > Verify integrity...), then run Memoria.patcher.exe again.
+
 - HD backgrounds aided by AI and polished/combined by hand
 - Manual redraw of all 11k layer edges and area names
 - UI improvements
