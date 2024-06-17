@@ -20,12 +20,17 @@ namespace Memoria.Assets
         private static Boolean displayBoneNames = false;
         private static Boolean displayModelAnimNames = false;
         private static List<ModelObject> geoList;
+        private static List<ModelObject> weapongeoList;
         private static List<KeyValuePair<Int32, String>> animList;
         private static HashSet<Int32> geoArchetype;
         private static Int32 currentGeoIndex;
         private static Int32 currentAnimIndex;
+        private static Int32 currentWeaponGeoIndex;
+        private static Int32 currentWeaponBoneIndex;
+        private static List<Int32> currentBonesID;
         private static String currentAnimName;
         private static GameObject currentModel;
+        private static GameObject currentWeaponModel;
         private static CommonSPSSystem spsUtility;
         private static SPSEffect spsEffect;
         private static Vector3 scaleFactor;
@@ -33,6 +38,7 @@ namespace Memoria.Assets
         private static String savedAnimationPath;
 
         private static Boolean isLoadingModel;
+        private static Boolean isLoadingWeaponModel;
         private static Boolean mouseLeftPressed;
         private static Boolean mouseRightPressed;
         private static Vector3 mousePreviousPosition;
@@ -49,9 +55,13 @@ namespace Memoria.Assets
             if (camera == null)
                 return;
             isLoadingModel = false;
+            isLoadingWeaponModel = false;
+            currentWeaponBoneIndex = 0;
             scaleFactor = new Vector3(1f, 1f, 1f);
             geoList = new List<ModelObject>();
+            weapongeoList = new List<ModelObject>();
             geoArchetype = new HashSet<Int32>();
+            currentBonesID = new List<Int32>();
             speedFactor = 1f;
             savedAnimationPath = null;
             spsUtility = new CommonSPSSystem();
@@ -74,7 +84,11 @@ namespace Memoria.Assets
                 sprite.alpha = 0f;
             }
             foreach (KeyValuePair<Int32, String> geo in FF9BattleDB.GEO)
+            {
                 geoList.Add(new ModelObject() { Id = geo.Key, Name = geo.Value, Kind = 0 });
+                if (geo.Value.StartsWith("GEO_WEP"))
+                    weapongeoList.Add(new ModelObject() { Id = geo.Key, Name = geo.Value, Kind = 0 });
+            }
             geoArchetype.Add(0);
             String lastArchetype = geoList[0].Name.Substring(0, 8);
             for (Int32 i = 0; i < geoList.Count; i++)
@@ -128,7 +142,7 @@ namespace Memoria.Assets
         {
             try
             {
-                if (isLoadingModel)
+                if (isLoadingModel || isLoadingWeaponModel)
                     return;
                 Boolean mouseLeftWasPressed = mouseLeftPressed;
                 Boolean mouseRightWasPressed = mouseRightPressed;
@@ -171,6 +185,46 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyDown(KeyCode.N))
                     displayModelAnimNames = !displayModelAnimNames;
+
+                if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
+                {
+                    if (Input.GetKey(KeyCode.LeftShift))
+                    {
+                        currentWeaponBoneIndex--;
+                        if (currentWeaponBoneIndex < 0)
+                            currentWeaponBoneIndex = currentBonesID.Count - 1;
+                        if (currentWeaponModel != null && currentModel != null)
+                        {
+                            WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentWeaponBoneIndex]);
+                        }
+                    }
+                    else if (Input.GetKey(KeyCode.RightShift))
+                    {
+                        currentWeaponBoneIndex++;
+                        if (currentWeaponBoneIndex > currentBonesID.Count)
+                            currentWeaponBoneIndex = 0;
+                        if (currentWeaponModel != null && currentModel != null)
+                        {
+                            WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentWeaponBoneIndex]);
+                        }
+                    }
+                    else if (Input.GetKey(KeyCode.LeftControl))
+                    {
+                        Int32 prevIndex = currentWeaponGeoIndex - 1;
+                        if (prevIndex < 0)
+                            prevIndex = (weapongeoList.Count - 1);
+                        ChangeWeaponModel(prevIndex);
+                    }
+                    else if (Input.GetKey(KeyCode.RightControl))
+                    {
+                        Int32 nextIndex = currentWeaponGeoIndex + 1;
+                        if (nextIndex > weapongeoList.Count)
+                            nextIndex = 0;
+                        ChangeWeaponModel(nextIndex);
+                    }
+                    else
+                        ChangeWeaponModel(currentWeaponGeoIndex);
+                }
                 if (currentModel == null)
                     return;
                 Boolean downUpProcessed = false;
@@ -374,12 +428,13 @@ namespace Memoria.Assets
             {
                 foreach (BoneHierarchyNode bone in currentModelBones)
                 {
+                    if (!currentBonesID.Contains(bone.Id))
+                        currentBonesID.Add(bone.Id);
                     if (displayBoneNames)
-                    {                       
+                    {
                         while (boneDialogCount >= boneDialogs.Count)
                         {
                             boneDialogs.Add(Singleton<DialogManager>.Instance.AttachDialog($"[IMME][NFOC][b]{bone.Id}[/b][ENDN]", 10, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, bone.Position, Dialog.CaptionType.None));
-                            Boolean samebones = false;
                             Vector3 BonePos = -bone.Position * 5f;
                             string ID = $"[IMME][NFOC][b]{bone.Id}[/b]";
                             for (Int32 i = 0; i < (boneDialogs.Count - 1); i++)
@@ -394,11 +449,6 @@ namespace Memoria.Assets
                                     boneDialogs[i].transform.localPosition = BonePos;                                  
                                     break;
                                 }
-                            }
-                            if (samebones)
-                            {
-                                ID += "[ENDN]";                           
-                                boneDialogs[boneDialogCount] = Singleton<DialogManager>.Instance.AttachDialog(ID, 10, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, bone.Position, Dialog.CaptionType.None);
                             }
                         }
                         boneDialogs[boneDialogCount].transform.localPosition = -bone.Position * 5f;
@@ -506,6 +556,8 @@ namespace Memoria.Assets
                 }
             }
             currentModelBones = null;
+            currentBonesID.Clear();
+            currentWeaponBoneIndex = 0;
             if (currentModel != null && geoList[index].Kind == 0)
             {
                 if (ModelFactory.garnetShortHairTable.Contains(geoList[index].Name))
@@ -539,6 +591,41 @@ namespace Memoria.Assets
                 currentModelBones = null;
             }  
             isLoadingModel = false;
+        }
+
+        private static void ChangeWeaponModel(Int32 index)
+        {
+            if (currentWeaponModel != null && index == currentWeaponBoneIndex)
+            {
+                UnityEngine.Object.Destroy(currentWeaponModel);
+            }
+            else
+            {
+                if (currentBonesID.Count != 0 && currentModel != null)
+                {
+                    isLoadingWeaponModel = true;
+                    if (currentWeaponModel != null)
+                        UnityEngine.Object.Destroy(currentWeaponModel);
+                    while (index < 0)
+                        index += weapongeoList.Count;
+                    while (index >= weapongeoList.Count)
+                        index -= weapongeoList.Count;
+                    currentWeaponGeoIndex = index;
+                    Log.Message($"[ModelViewerScene] Change weapon model: {weapongeoList[index].Name}");
+                    currentWeaponModel = ModelFactory.CreateModel(weapongeoList[index].Name);
+                    WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentWeaponBoneIndex]);
+                    isLoadingWeaponModel = false;
+                }
+            }
+        }
+
+        public static void WeaponAttach(GameObject sourceObject, GameObject targetObject, Int32 bone_index)
+        {
+            Transform childByName = targetObject.transform.GetChildByName("bone" + bone_index.ToString("D3"));
+            sourceObject.transform.parent = childByName;
+            sourceObject.transform.localPosition = Vector3.zero;
+            sourceObject.transform.localRotation = Quaternion.identity;
+            sourceObject.transform.localScale = Vector3.one;
         }
 
         private static void ChangeAnimation(Int32 index)
