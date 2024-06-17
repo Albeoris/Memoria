@@ -42,6 +42,8 @@ namespace Memoria.Assets
         private static Boolean isLoadingWeaponModel;
         private static Boolean mouseLeftPressed;
         private static Boolean mouseRightPressed;
+        private static Boolean ControlWeapon = false;
+        private static Boolean DontSpamMessage = false;
         private static Vector3 mousePreviousPosition;
         private static BoneHierarchyNode currentModelBones;
         private static List<GameObject> boneModels = new List<GameObject>();
@@ -144,7 +146,7 @@ namespace Memoria.Assets
             try
             {
                 if (isLoadingModel || isLoadingWeaponModel)
-                    return;
+                    return;              
                 Boolean mouseLeftWasPressed = mouseLeftPressed;
                 Boolean mouseRightWasPressed = mouseRightPressed;
                 mouseLeftPressed = false;
@@ -199,7 +201,11 @@ namespace Memoria.Assets
 
                 if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
                 {
-                    if (Input.GetKey(KeyCode.LeftShift))
+                    if (Input.GetKey(KeyCode.AltGr))
+                    {
+                        ControlWeapon = !ControlWeapon;
+                    }                
+                    else if (Input.GetKey(KeyCode.LeftShift))
                     {
                         currentWeaponBoneIndex--;
                         if (currentWeaponBoneIndex < 0)
@@ -305,7 +311,49 @@ namespace Memoria.Assets
                 {
                     infoPanel.BasePanel.transform.localPosition = infoPanel.BasePanel.transform.localPosition + new Vector3(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? -5 : 5, 0 , 0);
                 }
-                if (Input.mouseScrollDelta.y != 0f)
+                GameObject targetModel = ControlWeapon ? currentWeaponModel : currentModel;
+                if (Input.GetKey(KeyCode.Keypad6))
+                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                        targetModel.transform.localRotation *= Quaternion.Euler(0f, 1f, 0f);
+                    else
+                        targetModel.transform.localPosition += 0.5f * Vector3.left;
+                if (Input.GetKey(KeyCode.Keypad4))
+                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                        targetModel.transform.localRotation *= Quaternion.Euler(0f, -1f, 0f);
+
+                    else
+                        targetModel.transform.localPosition += 0.5f * Vector3.right;
+                if (Input.GetKey(KeyCode.Keypad8))
+                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                        targetModel.transform.localRotation *= Quaternion.Euler(-1f, 0f, 0f);
+                    else
+                        targetModel.transform.localPosition += 0.5f * Vector3.down;
+
+                if (Input.GetKey(KeyCode.Keypad2))
+                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                        targetModel.transform.localRotation *= Quaternion.Euler(1f, 0f, 0f);
+                    else
+                        targetModel.transform.localPosition += 0.5f * Vector3.up;
+
+                if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad3))
+                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                        targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, 1f);
+                    else
+                        targetModel.transform.localPosition += 0.5f * Vector3.back;
+                if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad9))
+                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                        targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, -1f);
+                    else
+                        targetModel.transform.localPosition += 0.5f * Vector3.forward;
+                if (Input.GetKey(KeyCode.Keypad5) && !DontSpamMessage)
+                {
+                    Log.Message("" + targetModel.name + "(currentpos) = " + targetModel.transform.localPosition.ToString("F9") + "");
+                    Log.Message("" + targetModel.name + "(currentrot) = " + targetModel.transform.localRotation.ToString("F9") + "");
+                    DontSpamMessage = true;
+                }
+                if (Input.GetKeyUp(KeyCode.Keypad5))
+                    DontSpamMessage = false;
+                if (Input.mouseScrollDelta.y != 0f) // Scroll wheel on mouse (zoom in/out)
                 {
                     if (Input.mouseScrollDelta.y > 0f)
                         scaleFactor *= 1f + 0.05f * Input.mouseScrollDelta.y;
@@ -313,35 +361,35 @@ namespace Memoria.Assets
                         scaleFactor /= 1f - 0.05f * Input.mouseScrollDelta.y;
                     currentModel.transform.localScale = scaleFactor;
                 }
-                if (Input.GetMouseButton(0) && geoList[currentGeoIndex].Kind == 0)
+                if (Input.GetMouseButton(0) && geoList[currentGeoIndex].Kind == 0) // Left Click
                 {
                     if (mouseLeftWasPressed)
                     {
                         Vector3 mouseDelta = Input.mousePosition - mousePreviousPosition;
                         if (Math.Abs(mouseDelta.x) >= Math.Abs(mouseDelta.y))
                         {
-                            currentModel.transform.localRotation *= Quaternion.Euler(0f, mouseDelta.x, 0f);
+                            targetModel.transform.localRotation *= Quaternion.Euler(0f, mouseDelta.x, 0f);
                         }
                         else
                         {
-                            Quaternion angles = currentModel.transform.localRotation;
+                            Quaternion angles = targetModel.transform.localRotation;
                             Single angley = angles.eulerAngles[1];
                             Single factorx = -(Single)Math.Cos(Math.PI * angley / 180f);
                             Single factorz = -(Single)Math.Sin(Math.PI * angley / 180f);
                             Quaternion performedRot = Quaternion.Euler(factorx * mouseDelta.y, 0f, factorz * mouseDelta.y);
                             Single horizontalFactor = (angles * performedRot * Vector3.up).y;
                             if (horizontalFactor > 0.5f)
-                                currentModel.transform.localRotation *= performedRot;
+                                targetModel.transform.localRotation *= performedRot;
                         }
                     }
                     mouseLeftPressed = true;
                 }
-                if (Input.GetMouseButton(1))
+                if (Input.GetMouseButton(1)) // Right Click
                 {
                     if (mouseRightWasPressed)
                     {
                         Vector3 mouseDelta = Input.mousePosition - mousePreviousPosition;
-                        currentModel.transform.localPosition -= 0.5f * mouseDelta.y * Vector3.up;
+                        targetModel.transform.localPosition -= 0.5f * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z);
                         if (geoList[currentGeoIndex].Kind == 1)
                             spsEffect.pos = currentModel.transform.localPosition;
                     }
@@ -510,6 +558,10 @@ namespace Memoria.Assets
                 {
                     label += $" Weapon Attach : {weapongeoList[currentWeaponGeoIndex].Name}\n";
                     label += $" Bone Attach : {currentWeaponBoneIndex}\n";
+                    if (ControlWeapon)
+                        label += $" Control : [00FF00]Enabled\n";
+                    else
+                        label += $" Control : [FF0000]Disabled\n";
                 }
                 else
                     label += $"\n\n";              
@@ -548,7 +600,10 @@ namespace Memoria.Assets
             if (currentModel != null && geoList[currentGeoIndex].Kind == 0)
                 UnityEngine.Object.Destroy(currentModel);
             if (currentWeaponModel != null)
+            {
+                ControlWeapon = false;
                 UnityEngine.Object.Destroy(currentWeaponModel);
+            }
             else if (geoList[currentGeoIndex].Kind == 1)
                 spsEffect.Unload();
             while (index < 0)
