@@ -76,7 +76,7 @@ namespace Memoria.Assets
             spsEffect.meshRenderer = meshRenderer;
             spsEffect.meshFilter = meshFilter;
             infoPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
-            infoLabel = infoPanel.AddSimpleLabel("", NGUIText.Alignment.Left, 4);
+            infoLabel = infoPanel.AddSimpleLabel("", NGUIText.Alignment.Left, 5);
             infoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
             infoPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
             foreach (UISprite sprite in infoPanel.BasePanel.GetComponentsInChildren<UISprite>(true))
@@ -301,6 +301,10 @@ namespace Memoria.Assets
                         ChangeAnimation(currentAnimIndex + 1);
                     }
                 }
+                if (Input.GetKey(KeyCode.M))
+                {
+                    infoPanel.BasePanel.transform.localPosition = infoPanel.BasePanel.transform.localPosition + new Vector3(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? -5 : 5, 0 , 0);
+                }
                 if (Input.mouseScrollDelta.y != 0f)
                 {
                     if (Input.mouseScrollDelta.y > 0f)
@@ -501,9 +505,14 @@ namespace Memoria.Assets
                 if (geoList[currentGeoIndex].Kind == 1)
                     label += $"\nShader: {spsEffect.materials[Math.Min((Int32)spsEffect.abr, 4)].shader.name}\nColour intensity: {spsEffect.fade}";
                 else if (animList.Count > 0)
-                    label += $" ({animList[currentAnimIndex].Key})\n\n";
+                    label += $" ({animList[currentAnimIndex].Key})\n";
+                if (currentWeaponModel)
+                {
+                    label += $" Weapon Attach : {weapongeoList[currentWeaponGeoIndex].Name}\n";
+                    label += $" Bone Attach : {currentWeaponBoneIndex}\n";
+                }
                 else
-                    label += $"\n\n";
+                    label += $"\n\n";              
                 if (!String.Equals(infoLabel.text, label))
                     infoLabel.text = label;
                 if (!infoPanel.Show)
@@ -609,7 +618,7 @@ namespace Memoria.Assets
 
         private static void ChangeWeaponModel(Int32 index)
         {
-            if (currentWeaponModel != null && index == currentWeaponBoneIndex)
+            if (currentWeaponModel != null && index == currentWeaponGeoIndex)
             {
                 UnityEngine.Object.Destroy(currentWeaponModel);
             }
