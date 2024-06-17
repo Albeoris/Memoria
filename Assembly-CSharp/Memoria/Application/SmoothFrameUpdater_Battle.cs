@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using FF9;
-using Memoria.Prime;
 
 namespace Memoria
 {
@@ -30,22 +29,15 @@ namespace Memoria
 					{
 						next._smoothUpdateRegistered = false;
 					}
-					if (HonoluluBattleMain.battleSPS?.SpsList != null)
-					{
-						foreach (SPSEffect sps in HonoluluBattleMain.battleSPS.SpsList)
-						{
-							if (sps == null)
-								continue;
-							sps._smoothUpdateRegistered = false;
-						}
-					}
 				}
 			}
 		}
 
 		public static Boolean Enabled => Configuration.Graphics.BattleTPS < Configuration.Graphics.BattleFPS;
 
-		public static void RegisterState()
+        public static Int32 LastSFXEffectJTex { get; set; }
+
+        public static void RegisterState()
 		{
 			if (!Enabled) return;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
@@ -134,30 +126,6 @@ namespace Memoria
 				next._smoothUpdateRegistered = true;
 				geo.geoScaleUpdate(next, true);
 			}
-			// SPS
-			foreach (SPSEffect sps in HonoluluBattleMain.battleSPS.SpsList)
-			{
-				if (sps == null || !sps.enabled)
-					continue;
-
-				if (sps._smoothUpdateRegistered)
-				{
-					sps._smoothUpdatePosPrevious = sps._smoothUpdatePosActual;
-					sps._smoothUpdateRotPrevious = sps._smoothUpdateRotActual;
-					sps._smoothUpdateScalePrevious = sps._smoothUpdateScaleActual;
-				}
-				else
-				{
-					sps._smoothUpdatePosPrevious = sps.pos;
-					sps._smoothUpdateRotPrevious = Quaternion.Euler(sps.rot.x, sps.rot.y, sps.rot.z);
-					sps._smoothUpdateScalePrevious = sps.scale;
-				}
-				sps._smoothUpdatePosActual = sps.pos;
-				sps._smoothUpdateRotActual = Quaternion.Euler(sps.rot.x, sps.rot.y, sps.rot.z);
-				sps._smoothUpdateScaleActual = sps.scale;
-
-				sps._smoothUpdateRegistered = true;
-			}
 			// Sky
 			if (_bg == null && !_cameraRegistered)
 			{
@@ -237,24 +205,22 @@ namespace Memoria
 					// if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} curName {next.currentAnimationName} actualName {next._smoothUpdateAnimNameActual} prevName {next._smoothUpdateAnimNamePrevious} nextName {next._smoothUpdateAnimNameNext} speed {next._smoothUpdateAnimSpeed} {animState.enabled} animTime {animState.time} animLength {animState.length} t {smoothFactor} prev {next._smoothUpdateAnimTimePrevious} actual {next._smoothUpdateAnimTimeActual}");
 				}
 			}
-			// SPS
-			foreach (SPSEffect sps in HonoluluBattleMain.battleSPS.SpsList)
-			{
-				if (sps == null || !sps.enabled || !sps._smoothUpdateRegistered)
-					continue;
-
-				sps.pos = Vector3.Lerp(sps._smoothUpdatePosPrevious, sps._smoothUpdatePosActual, smoothFactor);
-				sps.rot = Quaternion.Lerp(sps._smoothUpdateRotPrevious, sps._smoothUpdateRotActual, smoothFactor).eulerAngles;
-				sps.scale = (Int32)Mathf.Lerp(sps._smoothUpdateScalePrevious, sps._smoothUpdateScaleActual, smoothFactor);
-			}
 			// Sky
 			if(_bg != null)
 			{
 				_bg.localRotation = Quaternion.Lerp(_bgRotPrevious, _bgRotActual, smoothFactor);
-				// Log.Message($"[DEBUG {Time.frameCount} cur {_bg.localRotation.eulerAngles} prev {_bgRotPrevious.eulerAngles} actual {_bgRotActual.eulerAngles} t {smoothFactor}");
-			}
-			// Camera
-			Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
+                // Log.Message($"[DEBUG {Time.frameCount} cur {_bg.localRotation.eulerAngles} prev {_bgRotPrevious.eulerAngles} actual {_bgRotActual.eulerAngles} t {smoothFactor}");
+            }
+            // SPS
+            if (FF9StateSystem.Battle.FF9Battle.btl_phase != 2)
+            {
+                btl2d.Btl2dStatCount();
+                if (LastSFXEffectJTex == 0)
+                    btl2d.Btl2dStatIcon();
+                HonoluluBattleMain.battleSPS.GenerateSPS();
+            }
+            // Camera
+            Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
 			if (_cameraRegistered && camera != null)
 			{
 				Vector3 cameraMove = MatrixGetTranslation(_cameraW2CMatrixActual) - MatrixGetTranslation(_cameraW2CMatrixPrevious);
@@ -291,18 +257,6 @@ namespace Memoria
 						animState.time -= animState.length;
 					else if (animState.time < 0f)
 						animState.time += animState.length;
-				}
-			}
-			if (HonoluluBattleMain.battleSPS?.SpsList != null)
-			{
-				foreach (SPSEffect sps in HonoluluBattleMain.battleSPS.SpsList)
-				{
-					if (sps == null || !sps._smoothUpdateRegistered)
-						continue;
-
-					sps.pos = sps._smoothUpdatePosActual;
-					sps.rot = sps._smoothUpdateRotActual.eulerAngles;
-					sps.scale = sps._smoothUpdateScaleActual;
 				}
 			}
 			if (_bg != null)
@@ -351,8 +305,9 @@ namespace Memoria
 		private static Matrix4x4 _cameraW2CMatrixActual;
 		private static Matrix4x4 _cameraProjMatrixPrevious;
 		private static Matrix4x4 _cameraProjMatrixActual;
+        private static Int32 _lastEffectJTex = 1;
 
-		private static Transform _bg;
+        private static Transform _bg;
 		private static Quaternion _bgRotPrevious;
 		private static Quaternion _bgRotActual;
 	}

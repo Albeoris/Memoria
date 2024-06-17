@@ -126,7 +126,25 @@ namespace Memoria
         public Byte Dexterity
         {
             get => Data.special_status_old ? (byte)Math.Max(1, Data.elem.dex >> 3) : Data.elem.dex;
-            set => Data.elem.dex = value;
+            set
+            {
+                if (Data.elem.dex == value)
+                    return;
+                Int16 newMaxATB = (Int16)((60 - value) * 40 << 2);
+                if (Data.cur.at >= Data.max.at)
+                {
+                    Data.elem.dex = value;
+                    Data.max.at = newMaxATB;
+                    Data.cur.at = newMaxATB;
+                }
+                else
+                {
+                    Single atbFill = (Single)Data.cur.at / Data.max.at;
+                    Data.elem.dex = value;
+                    Data.max.at = newMaxATB;
+                    Data.cur.at = (Int16)Math.Round(atbFill * newMaxATB);
+                }
+            }
         }
 
         public Byte Will

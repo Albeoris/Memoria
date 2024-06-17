@@ -214,6 +214,7 @@ namespace Memoria.Data
                             if (String.Equals(formula.Key, "FleeGil")) fleeGil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), fleeGil);
                             else if (String.Equals(formula.Key, "HP")) play.cur.hp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.cur.hp);
                             else if (String.Equals(formula.Key, "MP")) play.cur.mp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.cur.mp);
+                            else if (String.Equals(formula.Key, "Trance")) play.trance = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.trance);
                             else if (String.Equals(formula.Key, "Status")) play.status = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)play.status);
                             else if (String.Equals(formula.Key, "BonusAP")) bonus.ap = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), bonus.ap);
                             else if (String.Equals(formula.Key, "BonusCard")) bonus.card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)bonus.card);

@@ -509,14 +509,12 @@ namespace Memoria
                 {
                     // eg.: SwapFieldModelTexture 2250 GEO_MON_B3_093 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
                     List<string> TexturesList = new List<string>();
-                    if (!Int32.TryParse(entry[1], out Int32 FieldID))
+                    if (!Int32.TryParse(entry[1], out Int32 fieldID))
                         continue;
                     for (Int32 i = 3; i < entry.Length; i++)
-                    {
                         TexturesList.Add(entry[i]);
-                    }
                     String[] TexturesCustomModel = TexturesList.ToArray();
-                    ModelFactory.CustomModelField.Add(entry[1] + "#" + entry[2], TexturesCustomModel);
+                    ModelFactory.CustomModelField.Add(new KeyValuePair<Int32, String>(fieldID, entry[2]), TexturesCustomModel);
                 }
             }
 			if (shouldUpdateBattleStatus)

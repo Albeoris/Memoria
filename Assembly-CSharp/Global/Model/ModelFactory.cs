@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.IO;
-using FF9;
+using Assets.Scripts.Common;
 using Memoria;
 using Memoria.Data;
 using Memoria.Scripts;
@@ -58,138 +58,134 @@ public static class ModelFactory
 		return result;
 	}
 
-	public static GameObject CreateModel(String path, Boolean isBattle = false)
-	{
-		String modelNameId = path;
-		path = ModelFactory.CheckUpscale(path);
-		String renameModelPath = ModelFactory.GetRenameModelPath(path);
-		UnityEngine.Object model = AssetManager.Load<GameObject>(renameModelPath, false);
-		if (model == null)
-			return null;
-		GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(model);
-		if (modelNameId == "GEO_MAIN_F3_ZDN" || modelNameId == "GEO_MAIN_F4_ZDN" || modelNameId == "GEO_MAIN_F5_ZDN")
-		{
-			Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
-			for (Int32 i = 0; i < renderers.Length; i++)
-			{
-				Renderer renderer = renderers[i];
-				String name = renderer.material.mainTexture.name;
-				Char textureId = name[name.Length - 1];
-				String geoId = ModelFactory.GetGEOID(modelNameId).ToString();
-				String textureFileName = geoId + "_" + textureId;
-				String texturePath = "Models/2/" + geoId + "/" + textureFileName;
-				Texture texture = AssetManager.Load<Texture>(texturePath, false);
-				renderer.material.SetTexture("_MainTex", texture);
-			}
-		}
-        if (CustomModelField.Count > 0 && !isBattle)
+    public static GameObject CreateModel(String path, Boolean isBattle = false, Boolean checkTextureOnDisc = true)
+    {
+        String modelNameId = path;
+        path = ModelFactory.CheckUpscale(path);
+        String renameModelPath = ModelFactory.GetRenameModelPath(path);
+        UnityEngine.Object model = AssetManager.Load<GameObject>(renameModelPath, false);
+        if (model == null)
+            return null;
+        GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(model);
+        if (modelNameId == "GEO_MAIN_F3_ZDN" || modelNameId == "GEO_MAIN_F4_ZDN" || modelNameId == "GEO_MAIN_F5_ZDN")
         {
-            foreach (KeyValuePair<String, String[]> CustomModelFieldEntry in CustomModelField)
+            Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+            for (Int32 i = 0; i < renderers.Length; i++)
             {
-                if (CustomModelFieldEntry.Key.Contains(modelNameId))
-                {
-                    string[] SplitEntry = CustomModelFieldEntry.Key.Split('#');
-                    Int32.TryParse(SplitEntry[0], out Int32 FieldID);
-                    Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
-                    if (FF9StateSystem.Common.FF9.fldMapNo == FieldID)
-                    {
-                        String[] NewTextures = CustomModelFieldEntry.Value;
-                        ChangeModelTexture(gameObject, NewTextures);
-                    }
-                }
+                Renderer renderer = renderers[i];
+                String name = renderer.material.mainTexture.name;
+                Char textureId = name[name.Length - 1];
+                String geoId = ModelFactory.GetGEOID(modelNameId).ToString();
+                String textureFileName = geoId + "_" + textureId;
+                String texturePath = "Models/2/" + geoId + "/" + textureFileName;
+                Texture texture = AssetManager.Load<Texture>(texturePath, false);
+                renderer.material.SetTexture("_MainTex", texture);
+                checkTextureOnDisc = false;
+            }
+        }
+        if (SceneDirector.IsFieldScene())
+        {
+            if (CustomModelField.TryGetValue(new KeyValuePair<Int32, String>(FF9StateSystem.Common.FF9.fldMapNo, modelNameId), out String[] modelSwapEntry))
+            {
+                ChangeModelTexture(gameObject, modelSwapEntry);
+                checkTextureOnDisc = false;
+            }
+        }
+        if (checkTextureOnDisc)
+        {
+            String texturePath = Path.GetDirectoryName(renameModelPath) + "/%.png";
+            foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>())
+            {
+                String externalPath = AssetManager.SearchAssetOnDisc(texturePath.Replace("%", renderer.material.mainTexture.name), true, false);
+                if (!String.IsNullOrEmpty(externalPath))
+                    renderer.material.mainTexture = AssetManager.LoadFromDisc<Texture2D>(externalPath, "");
             }
         }
         Shader shader;
-		if (modelNameId.Contains("GEO_SUB_W0"))
-			shader = ShadersLoader.Find(modelNameId.Contains("GEO_SUB_W0_025") ? "WorldMap/ShadowActor" : "WorldMap/Actor");
-		else
-			shader = ShadersLoader.Find(isBattle ? "BattleMap_Common" : "Unlit/Transparent Cutout");
-		SkinnedMeshRenderer[] skinnedRenderers = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
-		for (Int32 i = 0; i < skinnedRenderers.Length; i++)
-			skinnedRenderers[i].material.shader = shader;
-		MeshRenderer[] meshRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
-		for (Int32 k = 0; k < meshRenderers.Length; k++)
-		{
-			Material[] materials = meshRenderers[k].materials;
-			for (Int32 l = 0; l < materials.Length; l++)
-			{
-				Material material = materials[l];
-				String materialName = material.name.Replace("(Instance)", String.Empty);
-				if (meshRenderers[k].name == "Group_2")
-					material.shader = ShadersLoader.Find("BattleMap_Ground");
-				else if (materialName.Contains("a"))
-					material.shader = ShadersLoader.Find("PSX/BattleMap_Abr_1");
-				else
-					material.shader = shader;
-			}
-		}
-		if (ModelFactory.garnetShortHairTable.Contains(modelNameId))
-		{
-		    Boolean garnetShortHair;
-		    if (Configuration.Graphics.GarnetHair == 1)
-		        garnetShortHair = false;
+        if (modelNameId.Contains("GEO_SUB_W0"))
+            shader = ShadersLoader.Find(modelNameId.Contains("GEO_SUB_W0_025") ? "WorldMap/ShadowActor" : "WorldMap/Actor");
+        else
+            shader = ShadersLoader.Find(isBattle ? "BattleMap_Common" : "Unlit/Transparent Cutout");
+        SkinnedMeshRenderer[] skinnedRenderers = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
+        for (Int32 i = 0; i < skinnedRenderers.Length; i++)
+            skinnedRenderers[i].material.shader = shader;
+        MeshRenderer[] meshRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+        for (Int32 i = 0; i < meshRenderers.Length; i++)
+        {
+            Material[] materials = meshRenderers[i].materials;
+            for (Int32 j = 0; j < materials.Length; j++)
+            {
+                Material material = materials[j];
+                String materialName = material.name.Replace("(Instance)", String.Empty);
+                if (meshRenderers[i].name == "Group_2")
+                    material.shader = ShadersLoader.Find("BattleMap_Ground");
+                else if (materialName.Contains("a"))
+                    material.shader = ShadersLoader.Find("PSX/BattleMap_Abr_1");
+                else
+                    material.shader = shader;
+            }
+        }
+        if (ModelFactory.garnetShortHairTable.Contains(modelNameId))
+        {
+            Boolean garnetShortHair;
+            if (Configuration.Graphics.GarnetHair == 1)
+                garnetShortHair = false;
             else if (Configuration.Graphics.GarnetHair == 2)
-		        garnetShortHair = true;
-		    else
-		        garnetShortHair = FF9StateSystem.EventState.ScenarioCounter >= 10300;
+                garnetShortHair = true;
+            else
+                garnetShortHair = FF9StateSystem.EventState.ScenarioCounter >= 10300;
 
             if (garnetShortHair)
-			{
-				Renderer[] renderers = gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
-				for (Int32 i = 0; i < renderers.Length; i++)
-					renderers[i].enabled = false;
-			}
-			else
-			{
-				Renderer[] renderers = gameObject.transform.GetChildByName("short_hair").GetComponentsInChildren<Renderer>();
-				for (Int32 i = 0; i < renderers.Length; i++)
-					renderers[i].enabled = false;
-			}
-		}
-		if (gameObject != null)
-		{
-			AnimationFactory.AddAnimToGameObject(gameObject, modelNameId, (isBattle && !modelNameId.Contains("_B1_")) || modelNameId.Contains("_W0_"));
-			if (modelNameId.Contains("GEO_MON_"))
-			{
-				if (ModelFactory.upscaleTable.ContainsKey(modelNameId))
-					modelNameId = ModelFactory.upscaleTable[modelNameId];
-				modelNameId = modelNameId.Replace("_UP0", "_B3");
-				AnimationFactory.AddAnimToGameObject(gameObject, modelNameId, (isBattle && !modelNameId.Contains("_B1_")) || modelNameId.Contains("_W0_"));
-			}
-		}
-		if (gameObject != null)
-		{
-			if (isBattle)
-			{
-				Transform fieldSubModel = gameObject.transform.GetChildByName("field_model");
-				if (fieldSubModel != null)
-				{
-					Renderer[] renderers = fieldSubModel.GetComponentsInChildren<Renderer>();
-					for (Int32 i = 0; i < renderers.Length; i++)
-						renderers[i].enabled = false;
-				}
-				// TODO: Handle weapons that are parts of models
-				//Int32 weaponBoneID;
-				//if (removableWeaponBoneTable.TryGetValue(text, out weaponBoneID))
-				//{
-				//	Transform weaponBone = gameObject.transform.GetChildByName($"bone{weaponBoneID:D3}");
-				//	if (weaponBone != null)
-				//		UnityEngine.Object.Destroy(weaponBone);
-				//}
-			}
-			else
-			{
-				Transform battleSubModel = gameObject.transform.GetChildByName("battle_model");
-				if (battleSubModel != null)
-				{
-					Renderer[] renderers = battleSubModel.GetComponentsInChildren<Renderer>();
-					for (Int32 i = 0; i < renderers.Length; i++)
-						renderers[i].enabled = false;
-				}
-			}
-		}
-		return gameObject;
-	}
+            {
+                Renderer[] renderers = gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
+                for (Int32 i = 0; i < renderers.Length; i++)
+                    renderers[i].enabled = false;
+            }
+            else
+            {
+                Renderer[] renderers = gameObject.transform.GetChildByName("short_hair").GetComponentsInChildren<Renderer>();
+                for (Int32 i = 0; i < renderers.Length; i++)
+                    renderers[i].enabled = false;
+            }
+        }
+        AnimationFactory.AddAnimToGameObject(gameObject, modelNameId, (isBattle && !modelNameId.Contains("_B1_")) || modelNameId.Contains("_W0_"));
+        if (modelNameId.Contains("GEO_MON_"))
+        {
+            if (ModelFactory.upscaleTable.ContainsKey(modelNameId))
+                modelNameId = ModelFactory.upscaleTable[modelNameId];
+            modelNameId = modelNameId.Replace("_UP0", "_B3");
+            AnimationFactory.AddAnimToGameObject(gameObject, modelNameId, (isBattle && !modelNameId.Contains("_B1_")) || modelNameId.Contains("_W0_"));
+        }
+        if (isBattle)
+        {
+            Transform fieldSubModel = gameObject.transform.GetChildByName("field_model");
+            if (fieldSubModel != null)
+            {
+                Renderer[] renderers = fieldSubModel.GetComponentsInChildren<Renderer>();
+                for (Int32 i = 0; i < renderers.Length; i++)
+                    renderers[i].enabled = false;
+            }
+            // TODO: Handle weapons that are parts of models
+            //Int32 weaponBoneID;
+            //if (removableWeaponBoneTable.TryGetValue(text, out weaponBoneID))
+            //{
+            //	Transform weaponBone = gameObject.transform.GetChildByName($"bone{weaponBoneID:D3}");
+            //	if (weaponBone != null)
+            //		UnityEngine.Object.Destroy(weaponBone);
+            //}
+        }
+        else
+        {
+            Transform battleSubModel = gameObject.transform.GetChildByName("battle_model");
+            if (battleSubModel != null)
+            {
+                Renderer[] renderers = battleSubModel.GetComponentsInChildren<Renderer>();
+                for (Int32 i = 0; i < renderers.Length; i++)
+                    renderers[i].enabled = false;
+            }
+        }
+        return gameObject;
+    }
 
 	public static Boolean IsUseAsEnemyCharacter(String path)
 	{
@@ -1702,5 +1698,5 @@ public static class ModelFactory
 		"GEO_MAIN_B0_027"
 	};
 
-    public static Dictionary<String, String[]> CustomModelField = new Dictionary<String, String[]>();
+    public static Dictionary<KeyValuePair<Int32, String>, String[]> CustomModelField = new Dictionary<KeyValuePair<Int32, String>, String[]>();
 }

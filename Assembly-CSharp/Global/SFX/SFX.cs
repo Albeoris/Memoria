@@ -2070,7 +2070,8 @@ public static class SFX
 
     public static Int32 GetEffectJTexUsed()
     {
-        return SFX.SFX_SendIntData(12, 0, 0, 0);
+        SmoothFrameUpdater_Battle.LastSFXEffectJTex = SFX.SFX_SendIntData(12, 0, 0, 0);
+        return SmoothFrameUpdater_Battle.LastSFXEffectJTex;
     }
 
     public static void SoundClear()

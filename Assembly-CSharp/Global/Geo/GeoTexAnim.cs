@@ -453,60 +453,33 @@ public class GeoTexAnim : HonoBehavior
 	{
 		mainTextureIndex = 0;
 		subTextureIndex = 0;
-		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv");
-		if (textAsset == null)
+		String csvAsset = AssetManager.LoadString($"EmbeddedAsset/GeoTexAnimIndex/{geoName}.csv", true);
+		if (csvAsset == null)
 			return;
-		String[] array = textAsset.Split(new Char[]
-		{
-			'\n'
-		});
-		Int32 num = (Int32)array.Length;
-		Int32[,] array2 = new Int32[num - 1, num - 1];
-		for (Int32 i = 1; i < num; i++)
-		{
-			String[] array3 = array[i].Split(new Char[]
-			{
-				','
-			});
-			String s = array3[0];
-			String s2 = array3[1];
-			Int32 num2 = Int32.Parse(s);
-			Int32 num3 = Int32.Parse(s2);
-			array2[i - 1, 0] = num2;
-			array2[i - 1, 1] = num3;
-		}
-		mainTextureIndex = array2[0, 0];
-		subTextureIndex = array2[0, 1];
+		String[] entries = csvAsset.Split('\n');
+        String[] firstEntry = entries[1].Split(',');
+		mainTextureIndex = Int32.Parse(firstEntry[0]);
+		subTextureIndex = Int32.Parse(firstEntry[1]);
 	}
 
 	public static void SetTexAnimIndexs(String geoName, out Int32[] mainTextureIndexs, out Int32[] subTextureIndexs)
 	{
-		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv");
-		if (textAsset == null)
+		String csvAsset = AssetManager.LoadString($"EmbeddedAsset/GeoTexAnimIndex/{geoName}.csv", true);
+		if (csvAsset == null)
 		{
 			mainTextureIndexs = null;
 			subTextureIndexs = null;
 			return;
-		}
-		String[] array = textAsset.Split(new Char[]
+        }
+        String[] entries = csvAsset.Split('\n');
+        Int32 cnt = entries.Length;
+		mainTextureIndexs = new Int32[cnt - 1];
+		subTextureIndexs = new Int32[cnt - 1];
+		for (Int32 i = 1; i < cnt; i++)
 		{
-			'\n'
-		});
-		Int32 num = (Int32)array.Length;
-		mainTextureIndexs = new Int32[num - 1];
-		subTextureIndexs = new Int32[num - 1];
-		for (Int32 i = 1; i < num; i++)
-		{
-			String[] array2 = array[i].Split(new Char[]
-			{
-				','
-			});
-			String s = array2[0];
-			String s2 = array2[1];
-			Int32 num2 = Int32.Parse(s);
-			Int32 num3 = Int32.Parse(s2);
-			mainTextureIndexs[i - 1] = num2;
-			subTextureIndexs[i - 1] = num3;
+			String[] entry = entries[i].Split(',');
+			mainTextureIndexs[i - 1] = Int32.Parse(entry[0]);
+			subTextureIndexs[i - 1] = Int32.Parse(entry[1]);
 		}
 	}
 
