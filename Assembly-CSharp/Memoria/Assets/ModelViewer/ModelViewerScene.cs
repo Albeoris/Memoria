@@ -186,7 +186,7 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyDown(KeyCode.N))
                     displayModelAnimNames = !displayModelAnimNames;
-                if (Input.GetKeyDown(KeyCode.H)) // TODO - Find a way to activate an animation if model is hidden.
+                if (Input.GetKeyDown(KeyCode.H)) // TODO - Replace it by changing the color instead, to hide the model
                 {
                     displayCurrentModel = !displayCurrentModel;
                     Renderer[] componentsInChildren = currentModel.GetComponentsInChildren<Renderer>();
@@ -435,7 +435,7 @@ namespace Memoria.Assets
                 currentModel.transform.localScale = new Vector3(-scaleFactor.x, -scaleFactor.y, scaleFactor.z);
                 currentModel.transform.LookAt(currentModel.transform.position + directionForward, -directionDown);
             }
-            if (currentModel != null && currentModelBones != null)
+            if (currentModel != null && currentModelBones != null && !isLoadingModel)
             {
                 foreach (BoneHierarchyNode bone in currentModelBones)
                 {
@@ -457,7 +457,7 @@ namespace Memoria.Assets
                                     boneDialogs[i].Phrase = "";
                                     boneDialogs[boneDialogCount].Phrase = "";
                                     boneDialogs[i] = Singleton<DialogManager>.Instance.AttachDialog(ID, ID.Length, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, bone.Position, Dialog.CaptionType.None);
-                                    boneDialogs[i].transform.localPosition = BonePos;                                  
+                                    boneDialogs[i].transform.localPosition = BonePos;
                                     break;
                                 }
                             }
@@ -549,6 +549,7 @@ namespace Memoria.Assets
             currentGeoIndex = index;
             animList = GetAnimationsOfModel(geoList[index]);
             Log.Message($"[ModelViewerScene] Change model: {geoList[index].Name}");
+            UpdateRender(); // Force refresh bones between different models
             if (geoList[index].Kind == 0)
             {
                 currentModel = ModelFactory.CreateModel(geoList[index].Name);
