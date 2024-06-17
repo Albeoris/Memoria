@@ -19,6 +19,7 @@ namespace Memoria.Assets
         private static Boolean displayBoneConnections = false;
         private static Boolean displayBoneNames = false;
         private static Boolean displayModelAnimNames = false;
+        private static Boolean displayCurrentModel = true;
         private static List<ModelObject> geoList;
         private static List<ModelObject> weapongeoList;
         private static List<KeyValuePair<Int32, String>> animList;
@@ -185,6 +186,16 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyDown(KeyCode.N))
                     displayModelAnimNames = !displayModelAnimNames;
+                if (Input.GetKeyDown(KeyCode.H)) // TODO - Find a way to activate an animation if model is hidden.
+                {
+                    displayCurrentModel = !displayCurrentModel;
+                    Renderer[] componentsInChildren = currentModel.GetComponentsInChildren<Renderer>();
+                    for (Int32 i = 0; i < componentsInChildren.Length; i++)
+                    {
+                        Renderer renderer = componentsInChildren[i];
+                        renderer.enabled = displayCurrentModel;
+                    }
+                }
 
                 if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
                 {
@@ -527,6 +538,8 @@ namespace Memoria.Assets
             isLoadingModel = true;
             if (currentModel != null && geoList[currentGeoIndex].Kind == 0)
                 UnityEngine.Object.Destroy(currentModel);
+            if (currentWeaponModel != null)
+                UnityEngine.Object.Destroy(currentWeaponModel);
             else if (geoList[currentGeoIndex].Kind == 1)
                 spsEffect.Unload();
             while (index < 0)
