@@ -165,14 +165,6 @@ public static class ModelFactory
                 for (Int32 i = 0; i < renderers.Length; i++)
                     renderers[i].enabled = false;
             }
-            // TODO: Handle weapons that are parts of models
-            //Int32 weaponBoneID;
-            //if (removableWeaponBoneTable.TryGetValue(text, out weaponBoneID))
-            //{
-            //	Transform weaponBone = gameObject.transform.GetChildByName($"bone{weaponBoneID:D3}");
-            //	if (weaponBone != null)
-            //		UnityEngine.Object.Destroy(weaponBone);
-            //}
         }
         else
         {
@@ -1674,12 +1666,6 @@ public static class ModelFactory
 			"GEO_MON_B3_155",
 			16
 		}
-	};
-
-	private static Dictionary<String, Int32> removableWeaponBoneTable = new Dictionary<String, Int32>
-	{
-		{ "GEO_SUB_F0_FLT", 21 }, // Fratley
-		{ "GEO_MON_B3_122", 31 }  // Lani
 	};
 
 	public static List<String> garnetShortHairTable = new List<String>

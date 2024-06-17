@@ -236,11 +236,13 @@ public partial class BattleHUD : UIScene
                 }
                 libraMessage += "\n";
             }
+            btl_eqp.ProcessBuiltInWeapon();
             Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
             RenderTexture photoRender = RenderTexture.GetTemporary(Screen.width, Screen.height);
             Vector2 photoSize = new Vector2(Math.Min(Screen.width, 400f), Math.Min(Screen.height, 600f));
             btl2d.GetIconPosition(pBtl.Data, out Byte[] iconBone, out _, out _);
             Vector3 btlPos = pBtl.Data.gameObject.transform.GetChildByName($"bone{iconBone[3]:D3}").position + 50f * Vector3.down;
+            Matrix4x4 cameraOldMatrix = camera.worldToCameraMatrix;
             camera.ResetWorldToCameraMatrix();
             camera.transform.position = btlPos - 1500f * pBtl.Data.gameObject.transform.forward + 500f * Vector3.up;
             camera.transform.LookAt(btlPos);
@@ -249,7 +251,10 @@ public partial class BattleHUD : UIScene
             camera.targetTexture = photoRender;
             camera.Render();
             camera.targetTexture = null;
-            SFXDataCamera.UpdateCamera();
+            camera.nearClipPlane = SFX.fxNearZ;
+            camera.farClipPlane = SFX.fxFarZ;
+            camera.worldToCameraMatrix = cameraOldMatrix;
+            camera.projectionMatrix = PsxCamera.PsxProj2UnityProj(SFX.fxNearZ, SFX.fxFarZ);
             RenderTexture.active = photoRender;
             Texture2D photo = new Texture2D((Int32)photoSize.x, (Int32)photoSize.y, TextureFormat.ARGB32, false);
             photo.ReadPixels(new Rect((Screen.width - (Int32)photoSize.x) / 2, (Screen.height - (Int32)photoSize.y) / 2, photoRender.width, photoRender.height), 0, 0);

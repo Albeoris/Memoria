@@ -734,6 +734,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         UpdateAttachModel();
         UIManager.Battle.modelButtonManager.UpdateModelButtonPosition();
         Singleton<HUDMessage>.Instance.UpdateChildPosition();
+        btl_eqp.ProcessBuiltInWeapon();
     }
 
     public Int32 GetWeaponID(Int32 battlePlayerPosID)

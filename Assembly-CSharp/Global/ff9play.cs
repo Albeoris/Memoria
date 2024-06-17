@@ -255,7 +255,7 @@ public static class ff9play
             play.cur.mp = play.max.mp;
             play.cur.capa = play.max.capa;
         }
-        FF9Play_Update(play, false);
+        FF9Play_Update(play);
         if (lvup)
         {
             play.cur.hp = ccommon.min((UInt32)oldHP, play.max.hp);
@@ -271,15 +271,8 @@ public static class ff9play
         FF9Play_UpdateSA(play);
     }
 
-    public static void FF9Play_Update(PLAYER play, Boolean refreshStats = true)
+    public static void FF9Play_Update(PLAYER play)
     {
-        if (refreshStats)
-        {
-            play.basis.dex = (Byte)ff9level.FF9Level_GetDex(play, play.level, false);
-            play.basis.str = (Byte)ff9level.FF9Level_GetStr(play, play.level, false);
-            play.basis.mgc = (Byte)ff9level.FF9Level_GetMgc(play, play.level, false);
-            play.basis.wpr = (Byte)ff9level.FF9Level_GetWpr(play, play.level, false);
-        }
         FF9PLAY_INFO info = new FF9PLAY_INFO();
         FF9PLAY_SKILL skill = new FF9PLAY_SKILL();
         info.Base = play.basis;

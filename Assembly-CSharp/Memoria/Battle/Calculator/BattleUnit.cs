@@ -679,7 +679,7 @@ namespace Memoria
             // Let the spell sequence handle the model fadings (in and out)
             //Data.SetActiveBtlData(false);
             String geoName = FF9BattleDB.GEO.GetValue(monsterParam.Geo);
-            Data.gameObject = ModelFactory.CreateModel(geoName, true);
+            Data.ChangeModel(ModelFactory.CreateModel(geoName, true));
             Data.bi.t_gauge = 0;
             if (IsUnderAnyStatus(BattleStatus.Trance))
             {
@@ -876,7 +876,7 @@ namespace Memoria
             btl_cmd.KillSpecificCommand(Data, Data.monster_transform.new_command);
             btl_cmd.KillSpecificCommand(Data, BattleCommandId.EnemyCounter);
             Data.gameObject.SetActive(false);
-            Data.gameObject = Data.originalGo;
+            Data.ChangeModel(Data.originalGo);
             Data.geo_scale_default = 4096;
             geo.geoScaleReset(Data);
             if (battle.TRANCE_GAUGE_FLAG != 0 && (p.category & 16) == 0 && (Data.bi.slot_no != (Byte)CharacterId.Garnet || battle.GARNET_DEPRESS_FLAG == 0))

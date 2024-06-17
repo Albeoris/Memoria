@@ -34,10 +34,9 @@ namespace Memoria
 		}
 
 		public static Boolean Enabled => Configuration.Graphics.BattleTPS < Configuration.Graphics.BattleFPS;
-
         public static Int32 LastSFXEffectJTex { get; set; }
 
-        public static void RegisterState()
+		public static void RegisterState()
 		{
 			if (!Enabled) return;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
@@ -209,8 +208,8 @@ namespace Memoria
 			if(_bg != null)
 			{
 				_bg.localRotation = Quaternion.Lerp(_bgRotPrevious, _bgRotActual, smoothFactor);
-                // Log.Message($"[DEBUG {Time.frameCount} cur {_bg.localRotation.eulerAngles} prev {_bgRotPrevious.eulerAngles} actual {_bgRotActual.eulerAngles} t {smoothFactor}");
-            }
+				// Log.Message($"[DEBUG {Time.frameCount} cur {_bg.localRotation.eulerAngles} prev {_bgRotPrevious.eulerAngles} actual {_bgRotActual.eulerAngles} t {smoothFactor}");
+			}
             // SPS
             if (FF9StateSystem.Battle.FF9Battle.btl_phase != 2)
             {
@@ -219,8 +218,8 @@ namespace Memoria
                     btl2d.Btl2dStatIcon();
                 HonoluluBattleMain.battleSPS.GenerateSPS();
             }
-            // Camera
-            Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
+			// Camera
+			Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
 			if (_cameraRegistered && camera != null)
 			{
 				Vector3 cameraMove = MatrixGetTranslation(_cameraW2CMatrixActual) - MatrixGetTranslation(_cameraW2CMatrixPrevious);
@@ -305,9 +304,8 @@ namespace Memoria
 		private static Matrix4x4 _cameraW2CMatrixActual;
 		private static Matrix4x4 _cameraProjMatrixPrevious;
 		private static Matrix4x4 _cameraProjMatrixActual;
-        private static Int32 _lastEffectJTex = 1;
 
-        private static Transform _bg;
+		private static Transform _bg;
 		private static Quaternion _bgRotPrevious;
 		private static Quaternion _bgRotActual;
 	}
