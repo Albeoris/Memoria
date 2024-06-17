@@ -160,7 +160,11 @@ namespace Memoria.Assets
                     speedFactor = 1f;
                 else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
                     speedFactor = 0.5f;
-                if (Input.GetKeyDown(KeyCode.B))
+                if (Input.GetKeyDown(KeyCode.B) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+                {
+                    displayBoneConnections = !displayBoneConnections;
+                }
+                else if (Input.GetKeyDown(KeyCode.B))
                 {
                     displayBones = !displayBones;
                     displayBoneNames = !displayBoneNames;
@@ -371,15 +375,34 @@ namespace Memoria.Assets
                 foreach (BoneHierarchyNode bone in currentModelBones)
                 {
                     if (displayBoneNames)
-                    {
-                        Vector3 dialPos = camera.WorldToScreenPoint(bone.Position) / 4; // TODO: fix offsetting
-                        dialPos.y = camera.pixelHeight / 4 - dialPos.y;
-                        dialPos.x *= 5f / 4f;
-                        dialPos.y *= 5f / 4f;
+                    {                       
                         while (boneDialogCount >= boneDialogs.Count)
-                            boneDialogs.Add(Singleton<DialogManager>.Instance.AttachDialog($"[STRT=20,1][IMME][NFOC]{bone.Id}[ENDN]", 20, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, dialPos, Dialog.CaptionType.None));
-                        Dialog dialog = boneDialogs[boneDialogCount];
-                        dialog.Position = dialPos; // TODO: updating position is not currently working
+                        {
+                            boneDialogs.Add(Singleton<DialogManager>.Instance.AttachDialog($"[IMME][NFOC][b]{bone.Id}[/b][ENDN]", 10, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, bone.Position, Dialog.CaptionType.None));
+                            Boolean samebones = false;
+                            Vector3 BonePos = -bone.Position * 5f;
+                            string ID = $"[IMME][NFOC][b]{bone.Id}[/b]";
+                            for (Int32 i = 0; i < (boneDialogs.Count - 1); i++)
+                            {
+                                if ((BonePos - boneDialogs[i].transform.localPosition).sqrMagnitude < 1 && boneDialogs[i].Phrase.Length > 8)
+                                {
+                                    String IDBone = boneDialogs[i].Phrase.Remove(0, 14);
+                                    ID += $",{IDBone}[ENDN]";
+                                    boneDialogs[i].Phrase = "";
+                                    boneDialogs[boneDialogCount].Phrase = "";
+                                    boneDialogs[i] = Singleton<DialogManager>.Instance.AttachDialog(ID, ID.Length, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, bone.Position, Dialog.CaptionType.None);
+                                    boneDialogs[i].transform.localPosition = BonePos;                                  
+                                    break;
+                                }
+                            }
+                            if (samebones)
+                            {
+                                ID += "[ENDN]";                           
+                                boneDialogs[boneDialogCount] = Singleton<DialogManager>.Instance.AttachDialog(ID, 10, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, bone.Position, Dialog.CaptionType.None);
+                            }
+                        }
+                        boneDialogs[boneDialogCount].transform.localPosition = -bone.Position * 5f;
+                        boneDialogs[boneDialogCount].transform.localScale = scaleFactor;
                         boneDialogCount++;
                     }
                     if (displayBones)
@@ -387,6 +410,7 @@ namespace Memoria.Assets
                         while (boneCount >= boneModels.Count)
                             boneModels.Add(CreateModelForBone());
                         boneModels[boneCount].transform.position = bone.Position;
+                        boneModels[boneCount].transform.localScale = scaleFactor;
                         boneCount++;
                     }
                     if (displayBoneConnections && bone.Parent != null)
@@ -513,7 +537,7 @@ namespace Memoria.Assets
                 currentAnimIndex = 0;
                 currentAnimName = $"Frame {(spsEffect.curFrame >> 4) + 1}/{spsEffect.frameCount >> 4}";
                 currentModelBones = null;
-            }
+            }  
             isLoadingModel = false;
         }
 
