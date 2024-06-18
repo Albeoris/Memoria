@@ -335,12 +335,12 @@ namespace Memoria.Assets
                     else
                         targetModel.transform.localPosition += 0.5f * Vector3.up;
 
-                if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad3))
+                if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
                     if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
                         targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, 1f);
                     else
                         targetModel.transform.localPosition += 0.5f * Vector3.back;
-                if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad9))
+                if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
                     if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
                         targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, -1f);
                     else
