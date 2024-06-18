@@ -5,7 +5,6 @@ using Memoria.Data;
 using Memoria.Assets;
 using UnityEngine;
 using Object = System.Object;
-using Memoria.Database;
 
 public static class btl_vfx
 {
@@ -232,6 +231,15 @@ public static class btl_vfx
         geo.geoAttach(btl.weapon_geo, btl.gameObject, FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].wep_bone);
         //btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
+
+        Single[] WeaponOffsetPos = btl_mot.BattleParameterList[serialNo].WeaponOffsetPos;
+        Single[] WeaponOffsetRot = btl_mot.BattleParameterList[serialNo].WeaponOffsetRot;
+
+        if (WeaponOffsetPos.Length == 3 && WeaponOffsetRot.Length == 3)
+        {
+            btl.weapon_geo.transform.localPosition = new Vector3(WeaponOffsetPos[0], WeaponOffsetPos[1], WeaponOffsetPos[2]);
+            btl.weapon_geo.transform.localRotation = Quaternion.Euler(WeaponOffsetRot[0], WeaponOffsetRot[1], WeaponOffsetRot[2]);
+        }
     }
 
     public static SpecialEffect GetPlayerAttackVfx(BTL_DATA btl)

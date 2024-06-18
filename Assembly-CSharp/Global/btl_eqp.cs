@@ -39,13 +39,8 @@ public class btl_eqp
 
         if (WeaponOffsetPos.Length == 3 && WeaponOffsetRot.Length == 3)
         {
-            Log.Message("WeaponOffsetRot[0] = " + WeaponOffsetRot[0]);
-            Log.Message("WeaponOffsetRot[1] = " + WeaponOffsetRot[1]);
-            Log.Message("WeaponOffsetRot[2] = " + WeaponOffsetRot[2]);
             btl.weapon_geo.transform.localPosition = new Vector3(WeaponOffsetPos[0], WeaponOffsetPos[1], WeaponOffsetPos[2]);
             btl.weapon_geo.transform.localRotation = Quaternion.Euler(WeaponOffsetRot[0], WeaponOffsetRot[1], WeaponOffsetRot[2]);
-            Log.Message("btl.weapon_geo.transform.localPosition = " + btl.weapon_geo.transform.localPosition.ToString("F8"));
-            Log.Message("btl.weapon_geo.transform.localRotation = " + btl.weapon_geo.transform.localRotation.ToString("F8"));
         }
     }
 
