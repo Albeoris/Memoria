@@ -146,7 +146,7 @@ namespace Memoria.Assets
             try
             {
                 if (isLoadingModel || isLoadingWeaponModel)
-                    return;              
+                    return;
                 Boolean mouseLeftWasPressed = mouseLeftPressed;
                 Boolean mouseRightWasPressed = mouseRightPressed;
                 mouseLeftPressed = false;
@@ -564,7 +564,7 @@ namespace Memoria.Assets
                         label += $" Control : [FF0000]Disabled\n";
                 }
                 else
-                    label += $"\n\n";              
+                    label += $"\n\n";
                 if (!String.Equals(infoLabel.text, label))
                     infoLabel.text = label;
                 if (!infoPanel.Show)
