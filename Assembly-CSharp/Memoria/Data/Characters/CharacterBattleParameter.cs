@@ -19,8 +19,8 @@ namespace Memoria.Data
         public SByte[] StatusOffsetY = new SByte[6];
         public SByte[] StatusOffsetZ = new SByte[6];
         public Int32[] WeaponSound = new Int32[2];
-        public Single[] WeaponOffsetPos = new Single[3];
-        public Single[] WeaponOffsetRot = new Single[3];
+        public Single[] WeaponOffsetPos = new Single[] { 0, 0, 0 };
+        public Single[] WeaponOffsetRot = new Single[] { 0, 0, 0 };
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
@@ -57,20 +57,22 @@ namespace Memoria.Data
             if (metadata.HasOption($"Include{nameof(WeaponOffsetPos)}"))
             {
                 string[] WeaponOffsetPosExtract = CsvParser.String(raw[rawIndex++]).Split(','); ;
-                for (Int32 i = 0; i < WeaponOffsetPosExtract.Length; i++)
-                    WeaponOffsetPos[i] = Convert.ToSingle(WeaponOffsetPosExtract[i]);
+                if (WeaponOffsetPosExtract.Length == 3)
+                {
+                    for (Int32 i = 0; i < WeaponOffsetPosExtract.Length; i++)
+                        WeaponOffsetPos[i] = Convert.ToSingle(WeaponOffsetPosExtract[i]);
+                }
             }
-            else
-                WeaponOffsetPos = new Single[] { 0, 0, 0 };
 
             if (metadata.HasOption($"Include{nameof(WeaponOffsetRot)}"))
             {
                 string[] WeaponOffsetRotExtract = CsvParser.String(raw[rawIndex++]).Split(','); ;
-                for (Int32 i = 0; i < WeaponOffsetRotExtract.Length; i++)
-                    WeaponOffsetRot[i] = Convert.ToSingle(WeaponOffsetRotExtract[i]);
+                if (WeaponOffsetRotExtract.Length == 3)
+                {
+                    for (Int32 i = 0; i < WeaponOffsetRotExtract.Length; i++)
+                        WeaponOffsetRot[i] = Convert.ToSingle(WeaponOffsetRotExtract[i]);
+                }
             }
-            else
-                WeaponOffsetRot = new Single[] { 0, 0, 0 };
         }
 
         public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
