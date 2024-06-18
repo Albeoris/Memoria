@@ -613,9 +613,9 @@ namespace Memoria.Assets
             currentGeoIndex = index;
             animList = GetAnimationsOfModel(geoList[index]);
             Log.Message($"[ModelViewerScene] Change model: {geoList[index].Name}");
-            UpdateRender(); // Force refresh bones between different models
             if (geoList[index].Kind == 0)
             {
+                UpdateRender(); // Force refresh bones between different models
                 currentModel = ModelFactory.CreateModel(geoList[index].Name);
             }
             else
