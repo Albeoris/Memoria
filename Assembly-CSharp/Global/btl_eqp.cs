@@ -3,6 +3,7 @@ using FF9;
 using UnityEngine;
 using Memoria.Data;
 using Memoria.Prime;
+using System.Net;
 
 public class btl_eqp
 {
@@ -33,15 +34,7 @@ public class btl_eqp
 			geo.geoAttach(btl.weapon_geo, btl.originalGo, p.wep_bone);
 		else
 			geo.geoAttach(btl.weapon_geo, btl.gameObject, p.wep_bone);
-
-        Single[] WeaponOffsetPos = btl_mot.BattleParameterList[p.info.serial_no].WeaponOffsetPos;
-        Single[] WeaponOffsetRot = btl_mot.BattleParameterList[p.info.serial_no].WeaponOffsetRot;
-
-        if (WeaponOffsetPos.Length == 3 && WeaponOffsetRot.Length == 3)
-        {
-            btl.weapon_geo.transform.localPosition = new Vector3(WeaponOffsetPos[0], WeaponOffsetPos[1], WeaponOffsetPos[2]);
-            btl.weapon_geo.transform.localRotation = Quaternion.Euler(WeaponOffsetRot[0], WeaponOffsetRot[1], WeaponOffsetRot[2]);
-        }
+        InitOffSetWeapon(btl);
     }
 
     public static void InitEquipPrivilegeAttrib(PLAYER p, BTL_DATA btl)
@@ -56,4 +49,19 @@ public class btl_eqp
 			}
 		}
 	}
+
+    public static void InitOffSetWeapon(BTL_DATA btl)
+    {
+        if (btl.bi.player != 0)
+        {
+            Single[] WeaponOffsetPos = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no].WeaponOffsetPos;
+            Single[] WeaponOffsetRot = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no].WeaponOffsetRot;
+
+            if (WeaponOffsetPos.Length == 3 && WeaponOffsetRot.Length == 3)
+            {
+                btl.weapon_geo.transform.localPosition = new Vector3(WeaponOffsetPos[0], WeaponOffsetPos[1], WeaponOffsetPos[2]);
+                btl.weapon_geo.transform.localRotation = Quaternion.Euler(WeaponOffsetRot[0], WeaponOffsetRot[1], WeaponOffsetRot[2]);
+            }
+        }
+    }
 }

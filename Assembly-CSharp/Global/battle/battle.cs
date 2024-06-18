@@ -537,18 +537,7 @@ public static class battle
 
         foreach (BattleUnit next in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
-            BTL_DATA data = next.Data;
-            if (data.bi.player == 0)
-                continue;
-
-            Single[] WeaponOffsetPos = btl_mot.BattleParameterList[btl_util.getSerialNumber(next)].WeaponOffsetPos;
-            Single[] WeaponOffsetRot = btl_mot.BattleParameterList[btl_util.getSerialNumber(next)].WeaponOffsetRot;
-
-            if (WeaponOffsetPos.Length == 3 && WeaponOffsetRot.Length == 3)
-            {
-                data.weapon_geo.transform.localPosition = new Vector3(WeaponOffsetPos[0], WeaponOffsetPos[1], WeaponOffsetPos[2]);
-                data.weapon_geo.transform.localRotation = Quaternion.Euler(WeaponOffsetRot[0], WeaponOffsetRot[1], WeaponOffsetRot[2]);
-            }
+            btl_eqp.InitOffSetWeapon(next);
         }
     }
 
