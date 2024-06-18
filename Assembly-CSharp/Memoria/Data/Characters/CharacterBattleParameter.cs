@@ -56,18 +56,18 @@ namespace Memoria.Data
 
             if (metadata.HasOption($"Include{nameof(WeaponOffsetPos)}"))
             {
-                WeaponOffsetPos[0] = CsvParser.Single(raw[rawIndex++]);
-                WeaponOffsetPos[1] = CsvParser.Single(raw[rawIndex++]);
-                WeaponOffsetPos[2] = CsvParser.Single(raw[rawIndex++]);
+                string[] WeaponOffsetPosExtract = CsvParser.String(raw[rawIndex++]).Split(','); ;
+                for (Int32 i = 0; i < WeaponOffsetPosExtract.Length; i++)
+                    WeaponOffsetPos[i] = Convert.ToSingle(WeaponOffsetPosExtract[i]);
             }
             else
                 WeaponOffsetPos = new Single[] { 0, 0, 0 };
 
             if (metadata.HasOption($"Include{nameof(WeaponOffsetRot)}"))
             {
-                WeaponOffsetRot[0] = CsvParser.Single(raw[rawIndex++]);
-                WeaponOffsetRot[1] = CsvParser.Single(raw[rawIndex++]);
-                WeaponOffsetRot[2] = CsvParser.Single(raw[rawIndex++]);
+                string[] WeaponOffsetRotExtract = CsvParser.String(raw[rawIndex++]).Split(','); ;
+                for (Int32 i = 0; i < WeaponOffsetRotExtract.Length; i++)
+                    WeaponOffsetRot[i] = Convert.ToSingle(WeaponOffsetRotExtract[i]);
             }
             else
                 WeaponOffsetRot = new Single[] { 0, 0, 0 };
