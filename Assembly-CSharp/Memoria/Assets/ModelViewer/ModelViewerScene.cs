@@ -347,8 +347,8 @@ namespace Memoria.Assets
                         targetModel.transform.localPosition += 0.5f * Vector3.forward;
                 if (Input.GetKey(KeyCode.Keypad5) && !DontSpamMessage)
                 {
-                    Log.Message("" + targetModel.name + "(currentpos) = " + targetModel.transform.localPosition.ToString("F9") + "");
-                    Log.Message("" + targetModel.name + "(currentrot) = " + targetModel.transform.localRotation.ToString("F9") + "");
+                    Log.Message("[MODEL]" + geoList[currentWeaponGeoIndex].Name + "(currentpos) = " + targetModel.transform.localPosition.ToString("F9") + "");
+                    Log.Message("[WEAPON]" + weapongeoList[currentWeaponGeoIndex].Name + "(currentrot) = " + targetModel.transform.localRotation.eulerAngles.ToString("F9") + "");
                     DontSpamMessage = true;
                 }
                 if (Input.GetKeyUp(KeyCode.Keypad5))
