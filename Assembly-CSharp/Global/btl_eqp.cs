@@ -2,6 +2,7 @@
 using FF9;
 using UnityEngine;
 using Memoria.Data;
+using Memoria.Prime;
 
 public class btl_eqp
 {
@@ -32,9 +33,23 @@ public class btl_eqp
 			geo.geoAttach(btl.weapon_geo, btl.originalGo, p.wep_bone);
 		else
 			geo.geoAttach(btl.weapon_geo, btl.gameObject, p.wep_bone);
-	}
 
-	public static void InitEquipPrivilegeAttrib(PLAYER p, BTL_DATA btl)
+        Single[] WeaponOffsetPos = btl_mot.BattleParameterList[p.info.serial_no].WeaponOffsetPos;
+        Single[] WeaponOffsetRot = btl_mot.BattleParameterList[p.info.serial_no].WeaponOffsetRot;
+
+        if (WeaponOffsetPos.Length == 3 && WeaponOffsetRot.Length == 3)
+        {
+            Log.Message("WeaponOffsetRot[0] = " + WeaponOffsetRot[0]);
+            Log.Message("WeaponOffsetRot[1] = " + WeaponOffsetRot[1]);
+            Log.Message("WeaponOffsetRot[2] = " + WeaponOffsetRot[2]);
+            btl.weapon_geo.transform.localPosition = new Vector3(WeaponOffsetPos[0], WeaponOffsetPos[1], WeaponOffsetPos[2]);
+            btl.weapon_geo.transform.localRotation = Quaternion.Euler(WeaponOffsetRot[0], WeaponOffsetRot[1], WeaponOffsetRot[2]);
+            Log.Message("btl.weapon_geo.transform.localPosition = " + btl.weapon_geo.transform.localPosition.ToString("F8"));
+            Log.Message("btl.weapon_geo.transform.localRotation = " + btl.weapon_geo.transform.localRotation.ToString("F8"));
+        }
+    }
+
+    public static void InitEquipPrivilegeAttrib(PLAYER p, BTL_DATA btl)
 	{
 		btl.def_attr.invalid = (btl.def_attr.absorb = (btl.def_attr.half = (btl.def_attr.weak = (btl.p_up_attr = 0))));
 		for (Int32 i = 0; i < 5; i++)
