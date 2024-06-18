@@ -307,7 +307,16 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGVPORT: // 0x1E, "SetCameraBounds", "Redefine the field camera boundaries (default value is part of the background's data)", true, 5, { 1, 2, 2, 2, 2 }, { "Camera", "Min X", "Max X", "Min Y", "Max Y" }, { AT_USPIN, AT_SPIN, AT_SPIN, AT_SPIN, AT_SPIN }, 0
             {
-                this.fieldmap.EBG_cameraSetViewport(this.getv1(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2()); // arg1: camera ID | arg2-5: MinX, MaxX, MinY, MaxY
+                Int32 camId = this.getv1(); // arg1: camera ID
+                Int16 minX = (Int16)this.getv2(); // arg2-5: MinX, MaxX, MinY, MaxY
+                Int16 maxX = (Int16)this.getv2();
+                Int16 minY = (Int16)this.getv2();
+                Int16 maxY = (Int16)this.getv2();
+
+                if (mapNo == 2220 && minX == 154 && FieldMap.ActualPsxScreenWidth > 390) // Desert Palace fix to widescreen cam seeing hidden path too soon
+                    minX = (Int16)544;
+
+                this.fieldmap.EBG_cameraSetViewport(camId, minX, maxX, minY, maxY);
                 return 0;
             }
             case EBin.event_code_binary.MES: // 0x1F, "WindowSync", "Display a window with text inside and wait until it closes", true, 3, { 1, 1, 2 }, { "Window ID", "UI", "Text" }, { AT_USPIN, AT_BOOLLIST, AT_TEXT }, 0
