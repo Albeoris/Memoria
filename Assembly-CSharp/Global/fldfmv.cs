@@ -97,23 +97,28 @@ public class fldfmv : Singleton<fldfmv>
 
 	public unsafe void ff9fieldFMVService()
 	{
+		Boolean speedLoad = true;
 		switch (fldfmv.fmvStatus)
 		{
 		case 1:
 			fldfmv.fmvStatus = 2;
+			if (speedLoad) ff9fieldFMVService();
 			break;
 		case 2:
 			fldfmv.ff9fieldFMVAttr |= 8;
 			fldfmv.fmvStatus = 3;
+			if (speedLoad) ff9fieldFMVService();
 			break;
 		case 3:
 			if ((fldfmv.ff9fieldFMVAttr & 8) != 0)
 			{
 				fldfmv.fmvStatus = 4;
+				if (speedLoad) ff9fieldFMVService();
 			}
 			break;
 		case 4:
 			fldfmv.fmvStatus = 5;
+			if (speedLoad) ff9fieldFMVService();
 			break;
 		case 5:
 			if ((fldfmv.ff9fieldFMVAttr & 1) != 0)
@@ -127,13 +132,13 @@ public class fldfmv : Singleton<fldfmv>
 				FieldMap.FF9FieldAttr.ff9[0, num - 1] = 25;
 				if (!this.mbg.isFMV045)
 				{
-                        FieldMap.FF9FieldAttr.field[0, num - 1] |= (UInt16)2048;
-                    }
+					FieldMap.FF9FieldAttr.field[0, num - 1] |= (UInt16)2048;
+				}
 				if (fldfmv.fmvDepth != 0)
 				{
-                        FieldMap.FF9FieldAttr.ff9[0, num - 1] |= (UInt16)68;
-                        FieldMap.FF9FieldAttr.field[0, num - 1] |= (UInt16)1;
-                    }
+					FieldMap.FF9FieldAttr.ff9[0, num - 1] |= (UInt16)68;
+					FieldMap.FF9FieldAttr.field[0, num - 1] |= (UInt16)1;
+				}
 				FieldMap.FF9FieldAttr.fmv[0, num - 1] = 64;
 				FieldMap.FF9FieldAttr.fmv[1, num] = 64;
 				FieldMap.FF9FieldAttr.fmv[0, num] = 2;
@@ -141,6 +146,7 @@ public class fldfmv : Singleton<fldfmv>
 				this.mbg.Set24BitMode(fldfmv.fmvDepth);
 				this.mbg.Play();
 				fldfmv.fmvStatus = 6;
+				if (speedLoad) ff9fieldFMVService();
 			}
 			break;
 		case 6:
@@ -205,6 +211,7 @@ public class fldfmv : Singleton<fldfmv>
 		this.mbg.Purge();
 		fldfmv.ff9fieldFMVAttr |= 4;
 		fldfmv.fmvStatus = 7;
+		ff9fieldFMVService();
 		UIManager.Field.MovieHitArea.SetActive(false);
 		MBG.Instance.ResetFlags();
 	}
