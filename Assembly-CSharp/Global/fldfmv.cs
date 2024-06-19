@@ -121,7 +121,7 @@ public class fldfmv : Singleton<fldfmv>
 			if (speedLoad) ff9fieldFMVService();
 			break;
 		case 5:
-			if ((fldfmv.ff9fieldFMVAttr & 1) != 0)
+			if ((fldfmv.ff9fieldFMVAttr & 1) != 0 || FF9StateSystem.Common.FF9.fldMapNo == 100)
 			{
 				Int32 num = 1;
 				if (FF9StateSystem.Common.FF9.id != 0)
