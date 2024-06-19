@@ -421,7 +421,7 @@ namespace Memoria.Launcher
         private Boolean _isX64 = true;
         private Boolean _isX64Enabled = true;
         private Boolean _isDebugMode;
-        private Boolean _checkUpdates;
+        private Boolean _checkUpdates = true;
         private String[] _downloadMirrors;
 
         private void LoadSettings()
@@ -491,9 +491,9 @@ namespace Memoria.Launcher
 
                 value = iniFile.ReadValue("Memoria", nameof(CheckUpdates));
                 if (String.IsNullOrEmpty(value))
-                    value = "false";
+                    value = "true";
                 if (!Boolean.TryParse(value, out _checkUpdates))
-                    _checkUpdates = false;
+                    _checkUpdates = true;
 
                 value = iniFile.ReadValue("Memoria", nameof(AutoRunGame));
                 if (String.IsNullOrEmpty(value))
