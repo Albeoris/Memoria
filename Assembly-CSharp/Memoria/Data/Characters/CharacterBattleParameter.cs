@@ -1,6 +1,5 @@
 ﻿using System;
 using Memoria.Prime.CSV;
-using UnityEngine;
 
 namespace Memoria.Data
 {

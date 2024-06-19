@@ -2,8 +2,6 @@
 using FF9;
 using UnityEngine;
 using Memoria.Data;
-using Memoria.Prime;
-using System.Net;
 
 public class btl_eqp
 {

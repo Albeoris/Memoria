@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
