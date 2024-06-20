@@ -17,7 +17,7 @@ namespace Memoria.Data
         public Byte[] StatusBone = new Byte[6];
         public SByte[] StatusOffsetY = new SByte[6];
         public SByte[] StatusOffsetZ = new SByte[6];
-        public Int32[] WeaponSound = new Int32[2];
+        public Int32[] WeaponSound = new Int32[0];
         public Single[] WeaponOffsetPos = new Single[] { 0, 0, 0 };
         public Single[] WeaponOffsetRot = new Single[] { 0, 0, 0 };
 
