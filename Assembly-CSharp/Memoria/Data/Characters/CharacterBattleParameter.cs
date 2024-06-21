@@ -1,4 +1,5 @@
 ﻿using System;
+using Memoria.Prime;
 using Memoria.Prime.CSV;
 
 namespace Memoria.Data
@@ -20,6 +21,7 @@ namespace Memoria.Data
         public Int32[] WeaponSound = new Int32[0];
         public Single[] WeaponOffsetPos = new Single[] { 0, 0, 0 };
         public Single[] WeaponOffsetRot = new Single[] { 0, 0, 0 };
+        public String[] TranceAnimationId = new String[34];
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
@@ -72,6 +74,17 @@ namespace Memoria.Data
                         WeaponOffsetRot[i] = Convert.ToSingle(WeaponOffsetRotExtract[i]);
                 }
             }
+            if (metadata.HasOption($"Include{nameof(TranceAnimationId)}"))
+            {
+                for (Int32 i = 0; i < 34; i++)
+                {                 
+                    if (rawIndex < raw.Length)
+                        TranceAnimationId[i] = CsvParser.String(raw[rawIndex]);
+                    else
+                        TranceAnimationId[i] = "";
+                    rawIndex++;
+                }
+            }
         }
 
         public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
@@ -88,8 +101,12 @@ namespace Memoria.Data
             writer.ByteArray(StatusBone);
             writer.SByteArray(StatusOffsetY);
             writer.SByteArray(StatusOffsetZ);
+            writer.SingleArray(WeaponOffsetPos);
+            writer.SingleArray(WeaponOffsetRot);
+            for (Int32 i = 0; i < 34; i++)
+                writer.String(TranceAnimationId[i]);
 
-            if (metadata.HasOption($"Include{nameof(CharacterBattleParameter.WeaponSound)}"))
+            if (metadata.HasOption($"Include{nameof(WeaponSound)}"))
                 writer.Int32Array(WeaponSound);
         }
     }

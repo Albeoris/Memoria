@@ -108,8 +108,21 @@ namespace FF9
 		{
 			BattleParameterList = LoadCharacterBattleParameters();
 			foreach (CharacterBattleParameter param in BattleParameterList.Values)
-				AssetManager.UpdateAutoAnimMapping(param.ModelId, param.AnimationId);
-		}
+            {
+                Boolean TranceAnimationPresent = true;
+                AssetManager.UpdateAutoAnimMapping(param.ModelId, param.AnimationId);
+                for (Int32 i = 0; i < 34; i++)
+                {
+                    if (String.IsNullOrEmpty(param.TranceAnimationId[i]))
+                    {
+                        TranceAnimationPresent = false;
+                        break;
+                    }
+                }
+                if (TranceAnimationPresent)
+                    AssetManager.UpdateAutoAnimMapping(param.TranceModelId, param.TranceAnimationId);
+            }
+        }
 
 		private static Dictionary<CharacterSerialNumber, CharacterBattleParameter> LoadCharacterBattleParameters()
 		{

@@ -52,8 +52,8 @@ public class BattlePlayerCharacter : MonoBehaviour
 	}
 
 	public static void InitAnimation(BTL_DATA btl)
-	{
-		for (Int32 i = 0; i < 34; i++)
+	{      
+        for (Int32 i = 0; i < 34; i++)
 		{
 			String motAnim = btl.mot[i];
 			if (btl.gameObject.GetComponent<Animation>()[motAnim] != null)
@@ -66,9 +66,27 @@ public class BattlePlayerCharacter : MonoBehaviour
 				animationState.speed = 0.5f * FF9StateSystem.Settings.FastForwardFactor;
 			}
 		}
-	}
+    }
 
-	public static void CreatePlayer(BTL_DATA btl, CharacterSerialNumber playerSerialNumber)
+    public static void InitTranceAnimation(BTL_DATA btl, Boolean GoTrance)
+    {
+        string[] AnimationId = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no].AnimationId;
+        string[] TranceAnimationId = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no].TranceAnimationId;
+        for (Int32 i = 0; i < 34; i++)
+        {
+            if (GoTrance)
+            {
+                if (TranceAnimationId[i] != null)
+                    btl.mot[i] = TranceAnimationId[i];
+            }
+            else
+            {
+                btl.mot[i] = AnimationId[i];
+            }
+        }
+    }
+
+    public static void CreatePlayer(BTL_DATA btl, CharacterSerialNumber playerSerialNumber)
 	{
 		String path = btl_mot.BattleParameterList[playerSerialNumber].ModelId;
 		GameObject gameObject = ModelFactory.CreateModel(path, true);
