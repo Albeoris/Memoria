@@ -319,7 +319,8 @@ public class UIKeyTrigger : MonoBehaviour
     {
         AutoSplitterPipe.SignalLoadStart(); // Pause the in-game time when closing the program
         quitConfirm = true;
-        BroadcastAll("OnQuit");
+        // Commented out for faster quit:
+        //BroadcastAll("OnQuit");
         Application.Quit();
     }
 
