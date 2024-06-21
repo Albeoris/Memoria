@@ -836,6 +836,7 @@ public class UIKeyTrigger : MonoBehaviour
 
             if (VoicePlayer.scriptRequestedButtonPress && !BubbleUI.Instance.IsActive && DialogManager.Instance.ActiveDialogList.Any(dial => dial.gameObject.activeInHierarchy && dial.CurrentState == Dialog.State.CompleteAnimation))
             {
+                ETb.sKey0 &= ~(EventInput.Pcircle | EventInput.Lcircle);
                 EventInput.ReceiveInput(EventInput.Pcircle | EventInput.Lcircle);
             }
         }
