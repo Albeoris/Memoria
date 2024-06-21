@@ -97,29 +97,17 @@ public class fldfmv : Singleton<fldfmv>
 
 	public unsafe void ff9fieldFMVService()
 	{
-		Boolean speedLoad = true;
-		switch (fldfmv.fmvStatus)
+		if (fldfmv.fmvStatus == 1 || fldfmv.fmvStatus == 2)
 		{
-		case 1:
-			fldfmv.fmvStatus = 2;
-			if (speedLoad) ff9fieldFMVService();
-			break;
-		case 2:
 			fldfmv.ff9fieldFMVAttr |= 8;
 			fldfmv.fmvStatus = 3;
-			if (speedLoad) ff9fieldFMVService();
-			break;
-		case 3:
-			if ((fldfmv.ff9fieldFMVAttr & 8) != 0)
-			{
-				fldfmv.fmvStatus = 4;
-				if (speedLoad) ff9fieldFMVService();
-			}
-			break;
-		case 4:
+		}
+		if ((fldfmv.fmvStatus == 3 && (fldfmv.ff9fieldFMVAttr & 8) != 0) || fldfmv.fmvStatus == 4)
+		{
 			fldfmv.fmvStatus = 5;
-			if (speedLoad) ff9fieldFMVService();
-			break;
+		}
+		switch (fldfmv.fmvStatus)
+		{
 		case 5:
 			if ((fldfmv.ff9fieldFMVAttr & 1) != 0 || FF9StateSystem.Common.FF9.fldMapNo == 100)
 			{
@@ -146,7 +134,6 @@ public class fldfmv : Singleton<fldfmv>
 				this.mbg.Set24BitMode(fldfmv.fmvDepth);
 				this.mbg.Play();
 				fldfmv.fmvStatus = 6;
-				if (speedLoad) ff9fieldFMVService();
 			}
 			break;
 		case 6:
