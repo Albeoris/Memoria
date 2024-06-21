@@ -829,12 +829,12 @@ public class UIKeyTrigger : MonoBehaviour
         if (!Configuration.Control.TurboDialog || preventTurboKey)
             return false;
 
-        if(TurboKey || ((HonoInputManager.Instance.IsInput(Control.RightBumper) || ShiftKey) && confirmKeys.Any(HonoInputManager.Instance.IsInput)))
+        if (TurboKey || ((HonoInputManager.Instance.IsInput(Control.RightBumper) || ShiftKey) && confirmKeys.Any(HonoInputManager.Instance.IsInput)))
         {
             if (UIManager.Instance.Dialogs.IsDialogNeedControl())
                 return true;
 
-            if (VoicePlayer.scriptRequestedButtonPress && !BubbleUI.Instance.IsActive && DialogManager.Instance.ActiveDialogList.Any(dial => dial.gameObject.activeInHierarchy && dial.CurrentState == Dialog.State.CompleteAnimation))
+            if (VoicePlayer.scriptRequestedButtonPress && DialogManager.Instance.ActiveDialogList.Any(dial => dial.gameObject.activeInHierarchy && (dial.Style == Dialog.WindowStyle.WindowStyleAuto || dial.Style == Dialog.WindowStyle.WindowStyleTransparent)))
             {
                 ETb.sKey0 &= ~(EventInput.Pcircle | EventInput.Lcircle);
                 EventInput.ReceiveInput(EventInput.Pcircle | EventInput.Lcircle);
