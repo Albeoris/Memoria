@@ -9,6 +9,7 @@ using Memoria.Test;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -302,6 +303,11 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
+    [DllImport("user32.dll")]
+    private static extern bool DestroyWindow(IntPtr hwnd);
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetActiveWindow();
+
     private void OnApplicationQuit()
     {
         if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Bundle && !quitConfirm)
@@ -312,6 +318,8 @@ public class UIKeyTrigger : MonoBehaviour
         else
         {
             GameLoopManager.RaiseQuitEvent();
+            // DestroyWindow closes faster
+            try { DestroyWindow(GetActiveWindow()); } catch { }
         }
     }
 
@@ -829,13 +837,14 @@ public class UIKeyTrigger : MonoBehaviour
         if (!Configuration.Control.TurboDialog || preventTurboKey)
             return false;
 
-        if(TurboKey || ((HonoInputManager.Instance.IsInput(Control.RightBumper) || ShiftKey) && confirmKeys.Any(HonoInputManager.Instance.IsInput)))
+        if (TurboKey || ((HonoInputManager.Instance.IsInput(Control.RightBumper) || ShiftKey) && confirmKeys.Any(HonoInputManager.Instance.IsInput)))
         {
             if (UIManager.Instance.Dialogs.IsDialogNeedControl())
                 return true;
 
-            if (VoicePlayer.scriptRequestedButtonPress && !BubbleUI.Instance.IsActive && DialogManager.Instance.ActiveDialogList.Any(dial => dial.gameObject.activeInHierarchy && dial.CurrentState == Dialog.State.CompleteAnimation))
+            if (VoicePlayer.scriptRequestedButtonPress && DialogManager.Instance.ActiveDialogList.Any(dial => dial.gameObject.activeInHierarchy && (dial.Style == Dialog.WindowStyle.WindowStyleAuto || dial.Style == Dialog.WindowStyle.WindowStyleTransparent)))
             {
+                ETb.sKey0 &= ~(EventInput.Pcircle | EventInput.Lcircle);
                 EventInput.ReceiveInput(EventInput.Pcircle | EventInput.Lcircle);
             }
         }
