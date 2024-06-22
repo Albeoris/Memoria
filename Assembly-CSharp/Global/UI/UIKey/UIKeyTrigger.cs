@@ -9,6 +9,7 @@ using Memoria.Test;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -302,6 +303,11 @@ public class UIKeyTrigger : MonoBehaviour
         }
     }
 
+    [DllImport("user32.dll")]
+    private static extern bool DestroyWindow(IntPtr hwnd);
+    [DllImport("user32.dll")]
+    private static extern IntPtr GetActiveWindow();
+
     private void OnApplicationQuit()
     {
         if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Bundle && !quitConfirm)
@@ -312,6 +318,8 @@ public class UIKeyTrigger : MonoBehaviour
         else
         {
             GameLoopManager.RaiseQuitEvent();
+            // DestroyWindow closes faster
+            try { DestroyWindow(GetActiveWindow()); } catch { }
         }
     }
 
@@ -319,8 +327,7 @@ public class UIKeyTrigger : MonoBehaviour
     {
         AutoSplitterPipe.SignalLoadStart(); // Pause the in-game time when closing the program
         quitConfirm = true;
-        // Commented out for faster quit:
-        //BroadcastAll("OnQuit");
+        BroadcastAll("OnQuit");
         Application.Quit();
     }
 
