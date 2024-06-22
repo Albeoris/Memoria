@@ -523,11 +523,6 @@ public partial class EventEngine
                 {
                     destX = -1635;
                 }
-                else if (mapNo == 2800 && po.sid == 17) // TODO Check Native: #147
-                {
-                    destX = -4702;
-                    destZ = 2702;
-                }
                 else if (mapNo == 2954 && po.sid == 4 && destX == -1159 && destZ == 13130)
                 {
                     SettingUtils.FieldMapSettings fieldMapSettings = SettingUtils.fieldMapSettings;
