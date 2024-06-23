@@ -58,6 +58,14 @@ public class UIKeyTrigger : MonoBehaviour
         && keyCommand == Control.Pause && keyCommand == Control.Select || UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.LeftTrigger)
         && UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Pause) && UIManager.Input.GetKey(Control.Select);
 
+    private Boolean SoftResetKeyPSXForPause => // L1 + R1 + L2 + R2 + select
+    PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger)
+    && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightTrigger)
+    && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Select)
+    || keyCommand == Control.LeftBumper && keyCommand == Control.LeftTrigger && keyCommand == Control.RightBumper && keyCommand == Control.RightTrigger
+    && keyCommand == Control.Select || UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.LeftTrigger)
+    && UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Select);
+
     public UIKeyTrigger()
     {
         keyCommand = Control.None;
@@ -517,7 +525,7 @@ public class UIKeyTrigger : MonoBehaviour
             activeButton = UICamera.selectedObject;
         if (sceneFromState != null && (!PersistenSingleton<UIManager>.Instance.Dialogs.Activate || PersistenSingleton<UIManager>.Instance.IsPause))
         {
-            if (sceneFromState.GetType() == typeof(ConfigUI) && FF9StateSystem.AndroidTVPlatform && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) && !SoftResetKeyPSXDown)
+            if (sceneFromState.GetType() == typeof(ConfigUI) && FF9StateSystem.AndroidTVPlatform && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) && !SoftResetKeyPSXForPause)
             {
                 if (PersistenSingleton<UIManager>.Instance.IsPauseControlEnable)
                     sceneFromState.OnKeyPause(activeButton);
@@ -552,7 +560,7 @@ public class UIKeyTrigger : MonoBehaviour
             {
                 autoConfirmDownTime = 0;
             }
-            if ((PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) || keyCommand == Control.Pause) && !SoftResetKeyPSXDown)
+            if ((PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) || keyCommand == Control.Pause) && !SoftResetKeyPSXForPause)
             {
                 keyCommand = Control.None;
                 if (PersistenSingleton<UIManager>.Instance.IsPauseControlEnable)
