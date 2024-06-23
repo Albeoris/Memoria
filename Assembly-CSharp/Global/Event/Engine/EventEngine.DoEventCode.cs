@@ -563,6 +563,47 @@ public partial class EventEngine
                 this.gArgUsed = 1;
                 return 1;
             }
+            case EBin.event_code_binary.MOVE_EX: // "WalkEx" Make the specified character walk to destination
+            {
+                actor = this.GetObj3() as Actor; // object to move
+                Int32 speed = this.getv3(); // walk speed
+                Single x = this.getv3(); // 3rd to 5th arguments: position in (X, Z, Y) format.
+                Single y = -this.getv3();
+                Single z = this.getv3();
+                Int32 flags = this.getv3(); // movement flags
+                if (actor == null)
+                    return 0;
+                if (actor.loopCount != Byte.MaxValue)
+                {
+                    actor.loopCount = Byte.MaxValue;
+                    this.clrdist(actor);
+                }
+                if (this.gMode == 1 && (flags & 2) != 0)
+                {
+                    FieldMapActorController controller = actor.go?.GetComponent<FieldMapActorController>();
+                    controller?.walkMesh.BGI_charSetActive(controller, 0);
+                    ff9shadow.FF9ShadowOffField(actor.uid);
+                    actor.isShadowOff = true;
+                }
+                if (this.MoveToward_mixed_ex(actor, speed, x, y, z, flags, null))
+                {
+                    this.stay();
+                }
+                else
+                {
+                    if (this.gMode == 1 && (flags & 2) != 0)
+                    {
+                        FieldMapActorController controller = actor.go?.GetComponent<FieldMapActorController>();
+                        if (controller != null && controller.walkMesh.BGI_nearestWalkPosInVertical(new Vector3(x, y, z), out Single h) && Math.Abs(h) < 100f)
+                        {
+                            // Enable walkmesh pathing and shadow if the destination is near the ground
+                            controller.walkMesh.BGI_charSetActive(controller, 1);
+                            ff9shadow.FF9ShadowOnField(actor.uid);
+                        }
+                    }
+                }
+                return 1;
+            }
             case EBin.event_code_binary.CLRDIST: // 0x25, "InitWalk", "Make a further Walk call (or variations of Walk) synchronous."
             {
                 actor.loopCount = Byte.MaxValue;
@@ -2764,47 +2805,6 @@ public partial class EventEngine
                 else
                     synth.Shops.Remove(shopId);
                 return 0;
-            }
-            case EBin.event_code_binary.MOVE_EX: // "WalkEx" Make the specified character walk to destination
-            {
-                actor = this.GetObj3() as Actor; // object to move
-                Int32 speed = this.getv3(); // walk speed
-                Single x = this.getv3(); // 3rd to 5th arguments: position in (X, Z, Y) format.
-                Single y = -this.getv3();
-                Single z = this.getv3();
-                Int32 flags = this.getv3(); // movement flags
-                if (actor == null)
-                    return 0;
-                if (actor.loopCount != Byte.MaxValue)
-                {
-                    actor.loopCount = Byte.MaxValue;
-                    this.clrdist(actor);
-                }
-                if (this.gMode == 1 && (flags & 2) != 0)
-                {
-                    FieldMapActorController controller = actor.go?.GetComponent<FieldMapActorController>();
-                    controller?.walkMesh.BGI_charSetActive(controller, 0);
-                    ff9shadow.FF9ShadowOffField(actor.uid);
-                    actor.isShadowOff = true;
-                }
-                if (this.MoveToward_mixed_ex(actor, speed, x, y, z, flags, null))
-                {
-                    this.stay();
-                }
-                else
-                {
-                    if (this.gMode == 1 && (flags & 2) != 0)
-                    {
-                        FieldMapActorController controller = actor.go?.GetComponent<FieldMapActorController>();
-                        if (controller != null && controller.walkMesh.BGI_nearestWalkPosInVertical(new Vector3(x, y, z), out Single h) && Math.Abs(h) < 100f)
-                        {
-                            // Enable walkmesh pathing and shadow if the destination is near the ground
-                            controller.walkMesh.BGI_charSetActive(controller, 1);
-                            ff9shadow.FF9ShadowOnField(actor.uid);
-                        }
-                    }
-                }
-                return 1;
             }
             case EBin.event_code_binary.TURN_OBJ_EX:
             {

@@ -2482,13 +2482,13 @@ public class FieldMap : HonoBehavior
         [1359,0,10,3900],   // Lindblum castle anim
         [1359,0,11,3900],   // Lindblum castle anim
         [900,0,20,500],     // Treno Thug Inn light
+        [1900,0,20,500],    // Treno Thug Inn light
         [913,0,0,100],      // Treno Tower lights
         [913,0,3,0],        // Treno Tower lights
         [913,0,4,0],        // Treno Tower lights
-        [1900,0,20,500],     // Treno Thug Inn light
-        [1913,0,0,100],      // Treno Tower lights
-        [1913,0,3,0],        // Treno Tower lights
-        [1913,0,4,0],        // Treno Tower lights
+        [1913,1,9,100],     // Treno Tower lights
+        [1913,1,12,0],      // Treno Tower lights
+        [1913,1,13,0],      // Treno Tower lights
         [951,0,2,1214],     // Gargan Roo's railing
         [1000,0,12,0],      // Clayra's Trunk text (in English version)
         [1206,0,21,800],    // Alexandria, purple chadelier
