@@ -55,7 +55,7 @@ public static class NarrowMapList
         [1807, -5, 8600],     // Cid etc. arrival at Alexandria attack
         //[1815, 0, -5],        // Love quiproquo at the docks
         //[1816, 315, -5],      // Love quiproquo at the docks
-        [1901, -5, 7550],     // Treno scene,  people staying there
+        //[1901, -5, 7550],     // Treno scene,  people staying there
         [2007, -5, 8340],     // MBG111 - Alex castle changing
         [2007, -5, 8400],     // MBG111 - Alex castle changing
         [2173, -5, 9050],     // ATE Quina

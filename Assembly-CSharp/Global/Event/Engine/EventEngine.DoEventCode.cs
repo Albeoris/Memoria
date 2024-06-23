@@ -308,6 +308,11 @@ public partial class EventEngine
                         posX = -2890;
                         //Log.Message("posX:" + posX + " posZ:" + posZ);
                     }
+                    else if (mapNo == 1901 && scCounter == 7550 && po.sid == 2 && posX == 142 && posZ == 2172) // Eiko ATE: Gilmanesh appears between 2 columns
+                    {
+                        posX = 400;
+                        Log.Message("posX:" + posX + " posZ:" + posZ);
+                    }
                     else if (mapNo == 2110 && po.sid == 9 && posX == -1614)
                         posX = -1635;
                 }
@@ -548,8 +553,13 @@ public partial class EventEngine
                 else if (mapNo == 1861 && po.sid == 24 && destX == 137 && destZ == 420) // Eiko in pub: not going far enough.
                 {
                     destX = -550;
-                    destZ = 800;
-                    //Log.Message("destX = " + destX + " destZ = " + destZ);
+                    destZ = 800; //Log.Message("destX = " + destX + " destZ = " + destZ);
+                }
+                else if (mapNo == 1901 && (po.sid == 2 || po.sid == 17) && destX == 672) // Eiko ATE widescreen: Quina chasing Gilmanesh not far enough
+                {
+                    destX = 1000; //Log.Message("destX = " + destX + " destZ = " + destZ + " po.sid = " + po.sid + " po.pos[0] = " + po.pos[0]);
+                    if ((po.sid == 2 && po.pos[0] > 890) || (po.sid == 17 && po.pos[0] > 810)) 
+                        this.gCur.flags = (Byte)((this.gCur.flags & -64) | 14); // make invisible, because they're still visible even at the edge
                 }
                 else if (mapNo == 2101 && po.sid == 2 && destX == 781 && destZ == 1587)
                 {
