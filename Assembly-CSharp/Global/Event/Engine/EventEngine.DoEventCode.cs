@@ -327,6 +327,10 @@ public partial class EventEngine
                         posX = -2700;
                         posZ = 1400; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
                     }
+                    else if (mapNo == 2211 && scCounter == 9200 && (po.sid == 5 || po.sid == 6) && posX == -465 && posZ == -5796) // Kuja ATE: Zorn Thorn position
+                    {
+                        posX = (po.sid == 5) ? posX = -200 : posX = 0; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                    }
                 }
                 this.SetActorPosition(po, (Single)posX, this.POS_COMMAND_DEFAULTY, (Single)posZ);
                 if (mapNo == 2050 && (Int32)po.sid == 5 && (isValid == 1 && po != null))
