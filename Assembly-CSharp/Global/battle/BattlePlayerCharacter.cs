@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Memoria.Data;
+using Memoria.Prime;
 using FF9;
 
 public class BattlePlayerCharacter : MonoBehaviour
@@ -52,7 +53,7 @@ public class BattlePlayerCharacter : MonoBehaviour
 	}
 
 	public static void InitAnimation(BTL_DATA btl)
-	{      
+	{
         for (Int32 i = 0; i < 34; i++)
 		{
 			String motAnim = btl.mot[i];
@@ -70,8 +71,8 @@ public class BattlePlayerCharacter : MonoBehaviour
 
     public static void InitTranceAnimation(BTL_DATA btl, Boolean GoTrance)
     {
-        string[] AnimationId = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no].AnimationId;
-        string[] TranceAnimationId = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no].TranceAnimationId;
+        string[] AnimationId = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)].AnimationId;
+        string[] TranceAnimationId = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)].TranceAnimationId;
         for (Int32 i = 0; i < 34; i++)
         {
             if (GoTrance)

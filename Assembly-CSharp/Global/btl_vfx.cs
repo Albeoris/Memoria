@@ -198,7 +198,7 @@ public static class btl_vfx
 
     public static void SetTranceModel(BTL_DATA btl, Boolean isTrance)
     {
-        CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
+        CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);     
         if (isTrance)
         {
             btl.battleModelIsRendering = true;
@@ -222,13 +222,13 @@ public static class btl_vfx
             if (transform.name.Contains("mesh"))
                 btl.meshCount++;
         }
+        BattlePlayerCharacter.InitTranceAnimation(btl, isTrance);
         btl.meshIsRendering = new Boolean[btl.meshCount];
         for (Int32 i = 0; i < btl.meshCount; i++)
             btl.meshIsRendering[i] = true;
         btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
-        BattlePlayerCharacter.InitTranceAnimation(btl, true);
         BattlePlayerCharacter.InitAnimation(btl);
-        //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
+        //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);      
         geo.geoAttach(btl.weapon_geo, btl.gameObject, FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].wep_bone);
         //btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
