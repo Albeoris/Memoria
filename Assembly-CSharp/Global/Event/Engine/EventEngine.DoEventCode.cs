@@ -300,18 +300,25 @@ public partial class EventEngine
                     else if (mapNo == 1811 && scCounter == 7200 && po.sid == 13 && posX == 413 && posZ == -17294) // Vivi visible too soon
                     {
                         posX = 300;
-                        posZ = -17894;
-                        //Log.Message("posX:" + posX + " posZ:" + posZ);
+                        posZ = -17894; //Log.Message("posX:" + posX + " posZ:" + posZ);
                     }
                     else if (mapNo == 1816 && scCounter == 7200 && po.sid == 18 && posX == -2390 && posZ == 856) // Quiproquo at the dock, Beatrix visible too soon
                     {
-                        posX = -2890;
-                        //Log.Message("posX:" + posX + " posZ:" + posZ);
+                        posX = -2890; //Log.Message("posX:" + posX + " posZ:" + posZ);
                     }
                     else if (mapNo == 1901 && scCounter == 7550 && po.sid == 2 && posX == 142 && posZ == 2172) // Eiko ATE: Gilmanesh appears between 2 columns
                     {
-                        posX = 400;
-                        Log.Message("posX:" + posX + " posZ:" + posZ);
+                        posX = 400; //Log.Message("posX:" + posX + " posZ:" + posZ);
+                    }
+                    else if (mapNo == 2105 && scCounter == 8800 && po.sid == 14 && posX == -831 && posZ == 358) // Baku/Marcus visible too soon
+                    {
+                        posX = -1031;
+                        posZ = 158; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                    }
+                    else if (mapNo == 2105 && scCounter == 8800 && po.sid == 25 && posX == -714 && posZ == -190) // Baku/Marcus visible too soon
+                    {
+                        posX = -914;
+                        posZ = -390; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
                     }
                     else if (mapNo == 2110 && po.sid == 9 && posX == -1614)
                         posX = -1635;
