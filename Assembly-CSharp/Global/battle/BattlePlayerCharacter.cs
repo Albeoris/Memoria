@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Memoria.Data;
-using Memoria.Prime;
 using FF9;
 
 public class BattlePlayerCharacter : MonoBehaviour
@@ -69,20 +68,41 @@ public class BattlePlayerCharacter : MonoBehaviour
 		}
     }
 
-    public static void InitTranceAnimation(BTL_DATA btl, Boolean GoTrance)
+    public static void ResetTranceData(BTL_DATA btl, Boolean GoTrance)
     {
+        CharacterBattleParameter btlParam = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)];
         string[] AnimationId = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)].AnimationId;
         string[] TranceAnimationId = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)].TranceAnimationId;
-        for (Int32 i = 0; i < 34; i++)
+
+        if (btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)].TranceParameters)
         {
+            for (Int32 i = 0; i < 34; i++)
+            {
+                if (GoTrance)
+                {
+                    if (!String.IsNullOrEmpty(TranceAnimationId[i]))
+                        btl.mot[i] = TranceAnimationId[i];
+                }
+                else
+                {
+                    btl.mot[i] = AnimationId[i];
+                }
+            }
+          
+            btl_mot.setMotion(btl, btl.bi.def_idle);
+
             if (GoTrance)
             {
-                if (TranceAnimationId[i] != null)
-                    btl.mot[i] = TranceAnimationId[i];
+                btl.shadow_bone[0] = btlParam.TranceShadowData[0];
+                btl.shadow_bone[1] = btlParam.TranceShadowData[1];
+                btl_util.SetShadow(btl, btlParam.TranceShadowData[2], btlParam.TranceShadowData[3]);
             }
             else
             {
-                btl.mot[i] = AnimationId[i];
+                btl.shadow_bone[0] = btlParam.ShadowData[0];
+                btl.shadow_bone[1] = btlParam.ShadowData[1];
+                btl_util.SetShadow(btl, btlParam.ShadowData[2], btlParam.ShadowData[3]);
+                btl._smoothUpdateAnimNameActual = btl.mot[btl.bi.def_idle]; // TODO ? prevState.time = next._smoothUpdateAnimTimePrevious + next._smoothUpdateAnimSpeed in SmoothFrameUpdater_Battle.RegisterState() bug the game (NullReferenceException) => prevState is null in some case ?
             }
         }
     }

@@ -198,7 +198,8 @@ public static class btl_vfx
 
     public static void SetTranceModel(BTL_DATA btl, Boolean isTrance)
     {
-        CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);     
+        CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
+        CharacterBattleParameter btlParam = btl_mot.BattleParameterList[serialNo];
         if (isTrance)
         {
             btl.battleModelIsRendering = true;
@@ -222,14 +223,15 @@ public static class btl_vfx
             if (transform.name.Contains("mesh"))
                 btl.meshCount++;
         }
-        BattlePlayerCharacter.InitTranceAnimation(btl, isTrance);
+        BattlePlayerCharacter.ResetTranceData(btl, isTrance);
         btl.meshIsRendering = new Boolean[btl.meshCount];
         for (Int32 i = 0; i < btl.meshCount; i++)
             btl.meshIsRendering[i] = true;
         btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
         BattlePlayerCharacter.InitAnimation(btl);
-        //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);      
-        geo.geoAttach(btl.weapon_geo, btl.gameObject, FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].wep_bone);
+        //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
+        byte WeaponBone = (btlParam.TranceParameters && isTrance) ? btlParam.TranceWeaponBone : btlParam.WeaponBone;
+        geo.geoAttach(btl.weapon_geo, btl.gameObject, WeaponBone);
         //btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
 
@@ -247,7 +249,8 @@ public static class btl_vfx
     {
         CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
         if (serialNo != CharacterSerialNumber.NONE)
-            return btl_mot.BattleParameterList[serialNo].AttackSequence;
+            return (btl_mot.BattleParameterList[serialNo].TranceParameters && btl_stat.CheckStatus(btl, BattleStatus.Trance)) ? 
+                btl_mot.BattleParameterList[serialNo].TranceAttackSequence : btl_mot.BattleParameterList[serialNo].AttackSequence;
         return SpecialEffect.Special_No_Effect;
     }
 }

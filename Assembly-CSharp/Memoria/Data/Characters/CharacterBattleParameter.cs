@@ -19,9 +19,17 @@ namespace Memoria.Data
         public SByte[] StatusOffsetY = new SByte[6];
         public SByte[] StatusOffsetZ = new SByte[6];
         public Int32[] WeaponSound = new Int32[0];
-        public Single[] WeaponOffsetPos = new Single[] { 0, 0, 0 };
+        public Single[] WeaponOffsetPos = new Single[] { 0, 0, 0 }; // TODO <====== Unify
         public Single[] WeaponOffsetRot = new Single[] { 0, 0, 0 };
+        public Boolean TranceParameters = false;
         public String[] TranceAnimationId = new String[34];
+        public SpecialEffect TranceAttackSequence;
+        public Byte TranceWeaponBone;
+        public Byte[] TranceShadowData = new Byte[5];
+        public Byte[] TranceStatusBone = new Byte[6];
+        public SByte[] TranceStatusOffsetY = new SByte[6];
+        public SByte[] TranceStatusOffsetZ = new SByte[6];
+        public Int32[] TranceWeaponSound = new Int32[0];
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
@@ -74,16 +82,26 @@ namespace Memoria.Data
                         WeaponOffsetRot[i] = Convert.ToSingle(WeaponOffsetRotExtract[i]);
                 }
             }
-            if (metadata.HasOption($"Include{nameof(TranceAnimationId)}"))
+            if (metadata.HasOption($"Include{nameof(TranceParameters)}"))
             {
                 for (Int32 i = 0; i < 34; i++)
-                {                 
-                    if (rawIndex < raw.Length)
-                        TranceAnimationId[i] = CsvParser.String(raw[rawIndex]);
-                    else
-                        TranceAnimationId[i] = "";
-                    rawIndex++;
-                }
+                    TranceAnimationId[i] = CsvParser.String(raw[rawIndex++]);
+                TranceAttackSequence = (SpecialEffect)CsvParser.Int32(raw[rawIndex++]);
+                TranceWeaponBone = CsvParser.Byte(raw[rawIndex++]);
+                TranceShadowData = CsvParser.ByteArray(raw[rawIndex++]);
+                if (TranceShadowData.Length < 5)
+                    Array.Resize(ref TranceShadowData, 5);
+                TranceStatusBone = CsvParser.ByteArray(raw[rawIndex++]);
+                if (TranceStatusBone.Length < 6)
+                    Array.Resize(ref TranceStatusBone, 6);
+                TranceStatusOffsetY = CsvParser.SByteArray(raw[rawIndex++]);
+                if (TranceStatusOffsetY.Length < 6)
+                    Array.Resize(ref TranceStatusOffsetY, 6);
+                TranceStatusOffsetZ = CsvParser.SByteArray(raw[rawIndex++]);
+                if (TranceStatusOffsetZ.Length < 6)
+                    Array.Resize(ref TranceStatusOffsetZ, 6);
+                TranceWeaponSound = CsvParser.Int32Array(raw[rawIndex++]);
+                TranceParameters = true;
             }
         }
 
