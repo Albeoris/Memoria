@@ -45,7 +45,7 @@ public static class NarrowMapList
         [150, 325, -5],       // Zidane infiltrate Alex Castle
         [254, 26, -5],        // MBG103 - Evil Forest
         [352, 3, -5],         // Arrival at Dali: vivi visible before sleeping
-        [1550, -5, 6270],     // Mountain path - Quina stays there
+        //[1550, -5, 6270],     // Mountain path - Quina stays there
         [1554, -5, 6300],     // MBG109 - roots
         [1554, -5, 6305],     // MBG109 - roots
         [1602, 16, -5],       // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping,  bugged if you see too much

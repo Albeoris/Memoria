@@ -88,6 +88,13 @@ public partial class EventEngine
                 this.getv1();
                 return 0;
             }
+            case EBin.event_code_binary.BGSMOVE:
+            {
+                this.getv2();
+                this.getv2();
+                this.getv2();
+                return 0;
+            }
             case EBin.event_code_binary.NEW: // 0x07, "InitCode", "Init a normal code (independant functions).arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0).", false, 2, { 1, 1 }, { "Entry", "UID" }, { AT_ENTRY, AT_USPIN }, 0
             {
                 NewThread(this.gArgFlag, this.geti()); // arg1: code entry to init / arg2: Unique ID (defaulted to entry's ID if 0)
@@ -602,6 +609,51 @@ public partial class EventEngine
                         }
                     }
                 }
+                return 1;
+            }
+            case EBin.event_code_binary.MOVE3: // 0xA2, "WalkXZY", "Make the character walk to destination. Make it synchronous if InitWalk is called before", true, 3, { 2, 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
+            {
+                Single x = (Single)this.getv2(); // 3rd to 5th arguments: position in (X, Y, Z) format.
+                Single y = -(Single)(this.getv2());
+                Single z = (Single)this.getv2();
+
+                if (mapNo == 1550 && ((po.sid == 18 && x == 1798f) || (po.sid == 2 && x == 1797f))) // Fix widescreen - Quina runs to eat Mog
+                    x = 2800f;
+
+                if (this.MoveToward_mixed(x, y, z, 2, (PosObj)null)) // arg1: destination in (X, Z, Y)
+                    this.stay();
+                return 1;
+            }
+            case EBin.event_code_binary.MOVQ: // 0x9E, "ExitField", "Make the player's character walk to the field exit and prepare to flush the field datas."
+            {
+                po = (PosObj)this.FindObjByUID((Int32)this._context.controlUID);
+                if (po != null)
+                {
+                    this.Call((Obj)po, 0, 0, false, Obj.movQData);
+                    this._context.usercontrol = (Byte)0;
+                    for (ObjList objList = this._context.activeObj; objList != null; objList = objList.next)
+                        objList.obj.flags |= (Byte)6;
+                }
+                return 0;
+            }
+            case EBin.event_code_binary.MOVJ: // 0xA0, "WalkToExit", "Make the entry's object walk to the field exit."
+            {
+                if (this.MoveToward_mixed((Single)this.sMapJumpX, 0.0f, (Single)this.sMapJumpZ, 0, (PosObj)null))
+                    this.stay();
+                return 1;
+            }
+            case EBin.event_code_binary.MOVH: // 0xA5, "Slide", "Make the character slide to destination (walk without using the walk animation and without changing the facing angle)", true, 2, { 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Y }, 0
+            {
+                Int32 destX = this.getv2(); // 1st and arg2s: destination in (X, Z) format.
+                Int32 destZ = this.getv2();
+                if (mapNo == 66 && po.sid == 14 && destX == -145 && destZ == -9135)
+                {
+                    // Prima Vista/Interior, Marcus attacking King Leo as Cornelia (Garnet) moves to protect him
+                    destX = -160;
+                    destZ = -9080;
+                }
+                if (this.MoveToward_mixed(destX, 0.0f, destZ, 1, null))
+                    this.stay();
                 return 1;
             }
             case EBin.event_code_binary.CLRDIST: // 0x25, "InitWalk", "Make a further Walk call (or variations of Walk) synchronous."
@@ -1268,14 +1320,6 @@ public partial class EventEngine
                     this._encountBase = 0;
                 return 0;
             }
-            case EBin.event_code_binary.BGSMOVE: // 0x58, "SlideXZY", "Make the character slide to destination (walk without using the walk animation and without changing the facing angle)", true, 3, { 2, 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
-            {
-                this.getv2(); // X
-                this.getv2(); // Z
-                this.getv2(); // Y // TODO - I don't understand, it seems to do nothing
-                //Debug.Log((object)("DoEventCode BGSMOVE : a = " + (object)this.getv2() + ", b = " + (object)this.getv2() + ", temp = " + (object)this.getv2()));
-                return 0;
-            }
             case EBin.event_code_binary.BGLCOLOR: // 0x59, "SetTileColor", "Change the color of a field tile block", true, 4, { 1, 1, 1, 1 }, { "Tile Block", "Color" }, { AT_TILE, AT_COLOR_CYAN, AT_COLOR_MAGENTA, AT_COLOR_YELLOW }, 0
             {
                 Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
@@ -1769,18 +1813,6 @@ public partial class EventEngine
                 this.ExecAnim(actor, (Int32)actor.jump);
                 return 0;
             }
-            case EBin.event_code_binary.MOVQ: // 0x9E, "ExitField", "Make the player's character walk to the field exit and prepare to flush the field datas."
-            {
-                po = (PosObj)this.FindObjByUID((Int32)this._context.controlUID);
-                if (po != null)
-                {
-                    this.Call((Obj)po, 0, 0, false, Obj.movQData);
-                    this._context.usercontrol = (Byte)0;
-                    for (ObjList objList = this._context.activeObj; objList != null; objList = objList.next)
-                        objList.obj.flags |= (Byte)6;
-                }
-                return 0;
-            }
             case EBin.event_code_binary.CHRSCALE: // 0x9F, "SetObjectSize", "Set the size of a 3D model", true, 4, { 1, 1, 1, 1 }, { "Object", "Size X", "Size Z", "Size Y" }, { AT_ENTRY, AT_SPIN, AT_SPIN, AT_SPIN }, 0
             {
                 po = (PosObj)this.GetObj1(); // arg1: entry of the 3D model
@@ -1799,12 +1831,6 @@ public partial class EventEngine
                     this._geoTexAnim.geoTexAnimPlay(1);
                 }
                 return 0;
-            }
-            case EBin.event_code_binary.MOVJ: // 0xA0, "WalkToExit", "Make the entry's object walk to the field exit."
-            {
-                if (this.MoveToward_mixed((Single)this.sMapJumpX, 0.0f, (Single)this.sMapJumpZ, 0, (PosObj)null))
-                    this.stay();
-                return 1;
             }
             case EBin.event_code_binary.POS3: // 0xA1, "MoveInstantXZY", "Instantatly move the object", true, 3, { 2, 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
             case EBin.event_code_binary.DPOS3: // 0xAD, "MoveInstantXZYEx", "Instantatly move an object", true, 4, { 1, 2, 2, 2 }, { "Object", "Destination" }, { AT_ENTRY, AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
@@ -1868,12 +1894,6 @@ public partial class EventEngine
                     this.clrdist((Actor)po);
                 return 0;
             }
-            case EBin.event_code_binary.MOVE3: // 0xA2, "WalkXZY", "Make the character walk to destination. Make it synchronous if InitWalk is called before", true, 3, { 2, 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
-            {
-                if (this.MoveToward_mixed((Single)this.getv2(), -this.getv2(), (Single)this.getv2(), 2, (PosObj)null)) // arg1: destination in (X, Z, Y)
-                    this.stay();
-                return 1;
-            }
             case EBin.event_code_binary.DRADIUS: // 0xA3, "0xA3", "Unknown Opcode (DRADIUS).", true, 4, { 1, 1, 1, 1 }, { "Unknown", "Unknown", "Unknown", "Unknown" }, { AT_SPIN, AT_SPIN, AT_SPIN, AT_SPIN }, 0  // Unused in Steam
             {
                 this.getv1();
@@ -1911,20 +1931,6 @@ public partial class EventEngine
                 else
                     this.sMapJumpX = this.sMapJumpZ = 0;
                 return 0;
-            }
-            case EBin.event_code_binary.MOVH: // 0xA5, "Slide", "Make the character slide to destination (walk without using the walk animation and without changing the facing angle)", true, 2, { 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Y }, 0
-            {
-                Int32 destX = this.getv2(); // 1st and arg2s: destination in (X, Z) format.
-                Int32 destZ = this.getv2();
-                if (mapNo == 66 && po.sid == 14 && destX == -145 && destZ == -9135)
-                {
-                    // Prima Vista/Interior, Marcus attacking King Leo as Cornelia (Garnet) moves to protect him
-                    destX = -160;
-                    destZ = -9080;
-                }
-                if (this.MoveToward_mixed(destX, 0.0f, destZ, 1, null))
-                    this.stay();
-                return 1;
             }
             case EBin.event_code_binary.SPEEDTH: // 0xA6, "SetRunSpeedLimit", "Change the speed at which the character uses his run animation instead of his walk animation (default is 31)", true, 1, { 1 }, { "Speed Limit" }, { AT_USPIN }, 0
             {
