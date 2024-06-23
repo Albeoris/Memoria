@@ -58,8 +58,8 @@ public static class NarrowMapList
         //[1901, -5, 7550],     // Treno scene,  people staying there
         [2007, -5, 8340],     // MBG111 - Alex castle changing
         [2007, -5, 8400],     // MBG111 - Alex castle changing
-        [2173, -5, 9050],     // ATE Quina
         [2211, 8, -5],        // Lindblum meeting after Alexander scene: ATE with kuja at his ship,  Zorn & Thorn visible too soon and blending
+        //[2173, -5, 9050],     // ATE Quina
         [2404, 25, -5],       // Baku seen waiting on the docks too soon
         [2705, -1, -5],       // Pandemonium,  you're not alone sequence,  several glitches
         [2706, -1, -5],       // Pandemonium,  you're not alone sequence,  several glitches

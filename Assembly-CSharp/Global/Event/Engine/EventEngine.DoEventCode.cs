@@ -322,6 +322,11 @@ public partial class EventEngine
                     }
                     else if (mapNo == 2110 && po.sid == 9 && posX == -1614)
                         posX = -1635;
+                    else if (mapNo == 2173 && scCounter == 9050 && po.sid == 6 && posX == -1705 && posZ == 177) // Quina ashore ATE: guard seen too soon
+                    {
+                        posX = -2700;
+                        posZ = 1400; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                    }
                 }
                 this.SetActorPosition(po, (Single)posX, this.POS_COMMAND_DEFAULTY, (Single)posZ);
                 if (mapNo == 2050 && (Int32)po.sid == 5 && (isValid == 1 && po != null))
@@ -576,6 +581,13 @@ public partial class EventEngine
                 else if (mapNo == 2110 && po.sid == 9 && destX == -1614)
                 {
                     destX = -1635;
+                }
+                else if (mapNo == 2173 && scCounter == 9050 && (po.sid == 4 || po.sid == 5 || po.sid == 6) && destX == -2612 && destZ == 1558)  // Quina ashore ATE: guard not quitting the scene
+                {
+                    destX = -3900;
+                    destZ = 2558; //Log.Message("destX = " + destX + " destZ = " + destZ + " po.sid = " + po.sid + " po.pos[0] = " + po.pos[0]);
+                    if (po.pos[0] < -3500)
+                        this.gCur.flags = (Byte)((this.gCur.flags & -64) | 14);
                 }
                 else if (mapNo == 2800 && po.sid == 17) // TODO Check Native: #147
                 {
