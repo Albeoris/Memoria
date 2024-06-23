@@ -707,6 +707,10 @@ public class EBin
             {
                 Int32 t3 = EvaluateValueExpression();
                 _v0 = EvaluateValueExpression();
+                if ((FF9StateSystem.Common.FF9.fldMapNo == 908 || FF9StateSystem.Common.FF9.fldMapNo == 1908) && _eventEngine.gCur.uid == 0 && t3 == 80)
+                {
+                    t3 = 300; // fix for gates at treno in widescreen
+                }
                 if (_eventEngine.gCur.uid == 13 && t3 == -300)
                 {
                     t3 = -250;
