@@ -2514,13 +2514,13 @@ public partial class EventEngine
                 Int32 cyan = this.getv1(); // 4 Cyan
                 Int32 magenta = this.getv1(); // 5 Magenta
                 Int32 yellow = this.getv1(); // 6 Yellow
-                SceneDirector.InitFade(
-                    (filterMode >> 1 & 1) != 0 ? FadeMode.Sub : FadeMode.Add,
-                    frame,
-                    (Color32)new Color(
-                        (Single)cyan / (Single)Byte.MaxValue,
-                        (Single)magenta / (Single)Byte.MaxValue,
-                        (Single)yellow / (Single)Byte.MaxValue));
+                if (mapNo == 1819 && scCounter == 7030 && cyan == 130 && magenta == 160 && yellow == 170)
+                {
+                    cyan = 81; magenta = 110; yellow = 121;
+                }
+
+                Color32 fadeColor = new Color((Single)cyan / (Single)Byte.MaxValue, (Single)magenta / (Single)Byte.MaxValue, (Single)yellow / (Single)Byte.MaxValue);
+                SceneDirector.InitFade((filterMode >> 1 & 1) != 0 ? FadeMode.Sub : FadeMode.Add, frame, fadeColor);
                 return 0;
             }
             case EBin.event_code_binary.BGVALPHA: // 0xED, "SetTileLoopAlpha", "Unknown opcode about tile looping movements (EBG_overlayDefineViewportAlpha).", true, 3, { 1, 2, 2 }, { "Tile Block", "Unknown X", "Unknown Y" }, { AT_TILE, AT_SPIN, AT_SPIN }, 0

@@ -48,13 +48,13 @@ public static class NarrowMapList
         //[1550, -5, 6270],     // Mountain path - Quina stays there
         [1554, -5, 6300],     // MBG109 - roots
         [1554, -5, 6305],     // MBG109 - roots
-        [1602, 16, -5],       // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping,  bugged if you see too much
+        [1602, 16, -5],       // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping
         [1652, -5, 6700],     // Iifa entrance
         [1652, -5, 6710],     // Iifa entrance
         [1807, -5, 8500],     // Cid etc. arrival at Alexandria attack
         [1807, -5, 8600],     // Cid etc. arrival at Alexandria attack
-        [1815, 0, -5],        // Love quiproquo at the docks
-        [1816, 315, -5],      // Love quiproquo at the docks
+        //[1815, 0, -5],        // Love quiproquo at the docks
+        //[1816, 315, -5],      // Love quiproquo at the docks
         [1901, -5, 7550],     // Treno scene,  people staying there
         [2007, -5, 8340],     // MBG111 - Alex castle changing
         [2007, -5, 8400],     // MBG111 - Alex castle changing
