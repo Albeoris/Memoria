@@ -551,9 +551,7 @@ public partial class EventEngine
                 }
                 Boolean flag2 = this.MoveToward_mixed((Single)destX, 0.0f, (Single)destZ, 0, (PosObj)null);
                 eulerAngles1 = po.go.transform.localRotation.eulerAngles;
-                if (flag2)
-                    this.stay();
-                else if (flag)
+                if (flag || flag2)
                     this.stay();
                 return 1;
             }
@@ -1233,24 +1231,51 @@ public partial class EventEngine
             {
                 this.getv2(); // X
                 this.getv2(); // Z
-                this.getv2(); // Y
+                this.getv2(); // Y // TODO - I don't understand, it seems to do nothing
                 //Debug.Log((object)("DoEventCode BGSMOVE : a = " + (object)this.getv2() + ", b = " + (object)this.getv2() + ", temp = " + (object)this.getv2()));
                 return 0;
             }
             case EBin.event_code_binary.BGLCOLOR: // 0x59, "SetTileColor", "Change the color of a field tile block", true, 4, { 1, 1, 1, 1 }, { "Tile Block", "Color" }, { AT_TILE, AT_COLOR_CYAN, AT_COLOR_MAGENTA, AT_COLOR_YELLOW }, 0
             {
-                
-                this.fieldmap.EBG_overlaySetShadeColor(this.getv1(), (Byte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1()); // arg1: background tile block.2nd to arg4s: color (Cyan, Magenta, Yellow)
+                Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
+                Byte Cyan = (Byte)this.getv1();
+                Byte Magenta = (Byte)this.getv1();
+                Byte Yellow = (Byte)this.getv1();
+                this.fieldmap.EBG_overlaySetShadeColor(overlayNdx, Cyan, Magenta, Yellow); // arg1: background tile block
+                return 0;
+            }
+            case EBin.event_code_binary.BGLORIGIN: // 0x5E, "SetTilePosition", "Move a field tile block", true, 3, { 1, 2, 2 }, { "Tile Block", "Position X", "Position Y" }, { AT_TILE, AT_SPIN, AT_SPIN }, 0
+            {
+                Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
+                Single dx = (Single)this.getv2(); // arg2: x movement
+                Single dy = (Single)this.getv2(); // arg3: y movement
+                this.fieldmap.EBG_overlaySetOrigin(overlayNdx, dx, dy);
                 return 0;
             }
             case EBin.event_code_binary.BGLMOVE: // 0x5A, "SetTilePositionEx", "Move a field tile block.", true, 4, { 1, 2, 2, 2 }, { "Tile Block", "Position X", "Position Y", "Position Closeness" }, { AT_TILE, AT_SPIN, AT_SPIN, AT_SPIN }, 0
             {
-                this.fieldmap.EBG_overlayMove(this.getv1(), (Single)this.getv2(), (Single)this.getv2(), (Int16)this.getv2()); // arg1: background tile block. 2nd and arg3: movement in (dX, dY) format.arg4: depth, with higher value being further away from camera.
+                Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
+                Single dx = (Single)this.getv2(); // arg2: x movement
+                Single dy = (Single)this.getv2(); // arg3: y movement
+                Int16 dz = (Int16)this.getv2(); // arg4: depth, with higher value being further away from camera
+                this.fieldmap.EBG_overlayMove(overlayNdx, dx, dy, dz);
+                return 0;
+            }
+            case EBin.event_code_binary.BGLMOVE_TIMED: // TODO add description
+            {
+                Int32 overlayNdx = (Int32)this.getv3(); // arg1: background tile block
+                Single dx = (Single)this.getv3(); // arg2: x movement
+                Single dy = (Single)this.getv3(); // arg3: y movement
+                Int16 dz = (Int16)this.getv3(); // arg4: depth, with higher value being further away from camera
+                Int32 time = (Int32)this.getv3(); // arg5: how much time this will move // TODO in what unit?
+                this.fieldmap.EBG_overlayMoveTimed(overlayNdx, dx, dy, dz, time);
                 return 0;
             }
             case EBin.event_code_binary.BGLACTIVE: // 0x5B, "ShowTile", "Show or hide a field tile block", true, 2, { 1, 1 }, { "Tile Block", "Show" }, { AT_TILE, AT_BOOL }, 0
             {
-                this.fieldmap.EBG_overlaySetActive(this.getv1(), this.getv1()); // arg1: background tile block.arg2: boolean show/hide
+                Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
+                Boolean isActive = (Int32)this.getv1() != 0; // arg2: boolean show/ hide
+                this.fieldmap.EBG_overlaySetActive(overlayNdx, isActive); // arg1: background tile block.
                 return 0;
             }
             case EBin.event_code_binary.BGLLOOP: // 0x5C, "MoveTileLoop", "Make the image of a field tile loop over space.", true, 4, { 1, 1, 2, 2 }, { "Tile Block", "Activate", "X Loop", "Y Loop" }, { AT_TILE, AT_BOOL, AT_SPIN, AT_SPIN }, 0
@@ -1261,11 +1286,6 @@ public partial class EventEngine
             case EBin.event_code_binary.BGLPARALLAX: // 0x5D, "MoveTile", "Make the field moves depending on the camera position", true, 4, { 1, 1, 2, 2 }, { "Tile Block", "Activate", "Movement X", "Movement Y" }, { AT_TILE, AT_BOOL, AT_SPIN, AT_SPIN }, 0
             {
                 this.fieldmap.EBG_overlaySetParallax(this.getv1(), (UInt32)this.getv1(), this.getv2(), this.getv2()); // arg1: background tile block.arg2: boolean on/off.3rd and arg4s: parallax movement in (X, Y) format
-                return 0;
-            }
-            case EBin.event_code_binary.BGLORIGIN: // 0x5E, "SetTilePosition", "Move a field tile block", true, 3, { 1, 2, 2 }, { "Tile Block", "Position X", "Position Y" }, { AT_TILE, AT_SPIN, AT_SPIN }, 0
-            {
-                this.fieldmap.EBG_overlaySetOrigin(this.getv1(), this.getv2(), this.getv2()); // arg1: background tile block.2nd and arg3: movement in (dX, dY) format
                 return 0;
             }
             case EBin.event_code_binary.BGAANIME: // 0x5F, "RunTileAnimation", "Run a field tile animation", true, 2, { 1, 1 }, { "Field Animation", "Frame" }, { AT_TILEANIM, AT_USPIN }, 0
@@ -1283,7 +1303,9 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGAACTIVE: // 0x60, "ActivateTileAnimation", "Make a field tile animation active..", true, 2, { 1, 1 }, { "Tile Animation", "Activate" }, { AT_TILEANIM, AT_BOOL }, 0
             {
-                this.fieldmap.EBG_animSetActive(this.getv1(), this.getv1()); // arg1: background animation.arg2: boolean on/off
+                Int32 animNdx = (Int32)this.getv1(); // arg1: background tile block
+                Boolean isActive = (Int32)this.getv1() != 0; // arg2: boolean show/ hide
+                this.fieldmap.EBG_animSetActive(animNdx, isActive); // arg1: background animation.arg2: boolean on/off
                 return 0;
             }
             case EBin.event_code_binary.BGARATE: // 0x61, "SetTileAnimationSpeed", "Change the speed of a field tile animation", true, 2, { 1, 2 }, { "Tile Animation", "Speed" }, { AT_TILEANIM, AT_SPIN }, 0
@@ -1295,6 +1317,26 @@ public partial class EventEngine
                 this.fieldmap.EBG_animSetFrameRate(animNdx, frameRate);
                 return 0;
             }
+            case EBin.event_code_binary.BGAWAIT: // 0x63, "SetTileAnimationPause", "Make a field tile animation pause at some frame in addition to its normal animation speed", true, 3, { 1, 1, 1 }, { "Tile Animation", "Frame ID", "Time" }, { AT_TILEANIM, AT_USPIN, AT_USPIN }, 0
+            {
+                Int32 animNdx = this.getv1(); // arg1: background animation
+                Int32 frame = this.getv1(); // arg2: animation frame
+                Int32 waitTime = this.getv1(); // arg3: wait time
+                this.fieldmap.EBG_animSetFrameWait(animNdx, frame, waitTime);
+                return 0;
+            }
+            case EBin.event_code_binary.BGAFLAG: // 0x64, "SetTileAnimationFlags", "Add flags of a field tile animation", true, 2, { 1, 1 }, { "Tile Animation", "Flags" }, { AT_TILEANIM, AT_BOOLLIST }, 0
+            {
+                Int32 animNdx = this.getv1(); // arg1: background animation
+                Int32 flags = this.getv1(); // arg2: flags (only the flags 5 and 6 can be added). 5: unknown 6: loop back and forth
+                this.fieldmap.EBG_animSetFlags(animNdx, flags);
+                return 0;
+            }
+            case EBin.event_code_binary.BGARANGE: // 0x65, "RunTileAnimationEx", "Run a field tile animation and choose its frame range", true, 3, { 1, 1, 1 }, { "Tile Animation", "Start", "End" }, { AT_TILEANIM, AT_USPIN, AT_USPIN }, 0
+            {
+                this.fieldmap.EBG_animSetPlayRange(this.getv1(), this.getv1(), this.getv1()); // arg1: background animation.arg2: starting frame.arg3: ending frame
+                return 0;
+            }
             case EBin.event_code_binary.SETROW: // 0x62, "SetRow", "Change the battle row of a party member", true, 2, { 1, 1 }, { "Character", "Row" }, { AT_LCHARACTER, AT_BOOL }, 0
             {
                 CharacterId charId = this.chr2slot(this.getv1()); // arg1: party member
@@ -1303,26 +1345,12 @@ public partial class EventEngine
                     FF9StateSystem.Common.FF9.GetPlayer(charId).info.row = (Byte)row;
                 return 0;
             }
-            case EBin.event_code_binary.BGAWAIT: // 0x63, "SetTileAnimationPause", "Make a field tile animation pause at some frame in addition to its normal animation speed", true, 3, { 1, 1, 1 }, { "Tile Animation", "Frame ID", "Time" }, { AT_TILEANIM, AT_USPIN, AT_USPIN }, 0
-            {
-                this.fieldmap.EBG_animSetFrameWait(this.getv1(), this.getv1(), this.getv1()); // arg1: background animation.arg2: animation frame.arg3: wait time
-                return 0;
-            }
-            case EBin.event_code_binary.BGAFLAG: // 0x64, "SetTileAnimationFlags", "Add flags of a field tile animation", true, 2, { 1, 1 }, { "Tile Animation", "Flags" }, { AT_TILEANIM, AT_BOOLLIST }, 0
-            {
-                this.fieldmap.EBG_animSetFlags(this.getv1(), this.getv1()); // arg1: background animation.arg2: flags (only the flags 5 and 6 can be added). 5: unknown 6: loop back and forth
-                return 0;
-            }
-            case EBin.event_code_binary.BGARANGE: // 0x65, "RunTileAnimationEx", "Run a field tile animation and choose its frame range", true, 3, { 1, 1, 1 }, { "Tile Animation", "Start", "End" }, { AT_TILEANIM, AT_USPIN, AT_USPIN }, 0
-            {
-                this.fieldmap.EBG_animSetPlayRange(this.getv1(), this.getv1(), this.getv1()); // arg1: background animation.arg2: starting frame.arg3: ending frame
-                return 0;
-            }
             case EBin.event_code_binary.MESVALUE: // 0x66, "SetTextVariable", "Set the value of a text number or item variable", true, 2, { 1, 2 }, { "Variable ID", "Value" }, { AT_USPIN, AT_ITEM }, 0
             {
-                // arg1: text variable's 'Script ID'
-                // arg2: depends on which text opcode is related to the text variable: [VAR_NUM]: integral value. [VAR_ITEM]: item ID. [VAR_TOKEN]: token number
-                this.eTb.SetMesValue(this.getv1(), this.getv2()); 
+                Int32 scriptID = this.getv1(); // arg1: text variable's 'Script ID'
+                Int32 value = this.getv2(); // arg2: depends on which text opcode is related to the text variable: [VAR_NUM]: integral value. [VAR_ITEM]: item ID. [VAR_TOKEN]: token number
+
+                this.eTb.SetMesValue(scriptID, value); 
                 return 0;
             }
             case EBin.event_code_binary.TWIST: // 0x67, "SetControlDirection", "Set the angles for the player's movement control", true, 2, { 1, 1 }, { "Arrow Angle", "Analogic Angle" }, { AT_SPIN, AT_SPIN }, 0
@@ -1358,7 +1386,8 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.CLEARCOLOR: // 0x6B, "SetBackgroundColor", "Change the default color, seen behind the field's tiles", true, 3, { 1, 1, 1 }, { "Color" }, { AT_COLOR_RED, AT_COLOR_GREEN, AT_COLOR_BLUE }, 0
             {
-                this.fieldmap.GetMainCamera().backgroundColor = new Color((Single)this.getv1() / (Single)Byte.MaxValue, (Single)this.getv1() / (Single)Byte.MaxValue, (Single)this.getv1() / (Single)Byte.MaxValue); // arg 1-3: color in (Red, Green, Blue)
+                Color newColor = new Color((Single)this.getv1() / (Single)Byte.MaxValue, (Single)this.getv1() / (Single)Byte.MaxValue, (Single)this.getv1() / (Single)Byte.MaxValue);
+                this.fieldmap.GetMainCamera().backgroundColor = newColor; // arg 1-3: color in (Red, Green, Blue)
                 return 0;
             }
             case EBin.event_code_binary.BGSSCROLL: // 0x6F, "MoveCamera", "Move camera over time.", true, 4, { 2, 2, 1, 1 }, { "Destination", "Time", "Smoothness" }, { AT_POSITION_X, AT_POSITION_Y, AT_USPIN, AT_USPIN }, 0  // screen size = 320?
@@ -1463,7 +1492,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.TIMERCONTROL: // 0x7D, "RunTimer", "Run or pause the timer window", true, 1, { 1 }, { "Run" }, { AT_BOOL }, 0
             {
-                this._ff9.timerControl = this.getv1() != 0; // arg1: boolean run/pause
+                this._ff9.timerControl = this.getv1() != 0; // arg1: boolean, 0=pause
                 TimerUI.SetPlay(this._ff9.timerControl);
                 return 0;
             }
@@ -1474,7 +1503,7 @@ public partial class EventEngine
                 if (player != null && player.cid == 4 && (mapNo == 153 || mapNo == 1214 || mapNo == 1806) && newCamIdx == 0) // Fix #493 - flapping camera
                 {
                     Vector3 pos = ((Actor)player).fieldMapActorController.lastPos;
-                    if ((pos.x > 500 || pos.y > 240) && !(scCounter == 1190 && pos.y > 314 && pos.y < 317)) //exception for scene with Steiner and plutos
+                    if ((pos.x > 500 || pos.y > 240) && !(scCounter == 1190 && pos.y > 314 && pos.y < 317)) // exception for scene with Steiner and plutos
                         return 0;
                 }
                 this.fieldmap.SetCurrentCameraIndex(newCamIdx);
@@ -2819,11 +2848,6 @@ public partial class EventEngine
                 Int32 dictID = this.getv3();
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictID, out Dictionary<Int32, Int32> dict))
                     dict.Clear();
-                return 0;
-            }
-            case EBin.event_code_binary.BGLMOVE_TIMED:
-            {
-                this.fieldmap.EBG_overlayMoveTimed(this.getv3(), this.getv3(), this.getv3(), this.getv3(), this.getv3());
                 return 0;
             }
             default:
