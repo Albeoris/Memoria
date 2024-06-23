@@ -258,7 +258,7 @@ public partial class EventEngine
                 if (eventCodeBinary == EBin.event_code_binary.DPOS)
                     po = (PosObj)this.GetObj1(); // arg1: object's entry
                 Int32 posX = this.getv2(); // X position
-                Int32 posY = this.getv2(); // Y position
+                Int32 posZ = this.getv2(); // Z position
                 Int32 isValid = this.gMode != 1 || (Int32)po.model == (Int32)UInt16.MaxValue ? 0 : 1;
                 if (isValid == 1 && po != null)
                 {
@@ -270,22 +270,22 @@ public partial class EventEngine
                             component.walkMesh.BGI_charSetActive(component, 0U);
                         else if (mapNo == 2917 && po.sid == 4)
                         {
-                            if (posX == 0 && posY == -1787)
+                            if (posX == 0 && posZ == -1787)
                                 posX = -15;
                         }
-                        else if (mapNo == 450 && po.sid == 3 && (posX == 363 && posY == 88))
+                        else if (mapNo == 450 && po.sid == 3 && (posX == 363 && posZ == 88))
                             component.walkMesh.BGI_triSetActive(24U, 0U);
                     }
                     if (mapNo == 1421 && po.sid == 5)
                     {
-                        if (posX == 1510 && (posY == -2331 || posY == -2231))
+                        if (posX == 1510 && (posZ == -2331 || posZ == -2231))
                         {
-                            if (posY == -2331)
-                                posY = -2231;
+                            if (posZ == -2331)
+                                posZ = -2231;
                             this.fieldmap.walkMesh.BGI_triSetActive(109U, 0U);
                             this.fieldmap.walkMesh.BGI_triSetActive(110U, 0U);
                         }
-                        else if (posX == 34 && posY == -598)
+                        else if (posX == 34 && posZ == -598)
                         {
                             this.fieldmap.walkMesh.BGI_triSetActive(109U, 1U);
                             this.fieldmap.walkMesh.BGI_triSetActive(110U, 1U);
@@ -297,10 +297,21 @@ public partial class EventEngine
                         posX = -1765;
                     else if (mapNo == 1310 && po.sid == 12 && posX == -1614)
                         posX = -1635;
+                    else if (mapNo == 1811 && scCounter == 7200 && po.sid == 13 && posX == 413 && posZ == -17294) // Vivi visible too soon
+                    {
+                        posX = 300;
+                        posZ = -17894;
+                        //Log.Message("posX:" + posX + " posZ:" + posZ);
+                    }
+                    else if (mapNo == 1816 && scCounter == 7200 && po.sid == 18 && posX == -2390 && posZ == 856) // Quiproquo at the dock, Beatrix visible too soon
+                    {
+                        posX = -2890;
+                        //Log.Message("posX:" + posX + " posZ:" + posZ);
+                    }
                     else if (mapNo == 2110 && po.sid == 9 && posX == -1614)
                         posX = -1635;
                 }
-                this.SetActorPosition(po, (Single)posX, this.POS_COMMAND_DEFAULTY, (Single)posY);
+                this.SetActorPosition(po, (Single)posX, this.POS_COMMAND_DEFAULTY, (Single)posZ);
                 if (mapNo == 2050 && (Int32)po.sid == 5 && (isValid == 1 && po != null))
                 {
                     FieldMapActorController component = po.go.GetComponent<FieldMapActorController>();
@@ -525,10 +536,20 @@ public partial class EventEngine
                 {
                     destZ = 2970;
                 }
+                else if (mapNo == 1815 && scCounter == 7070 && destX == -2312 && destZ == -245) // Steiner visible on dock in widescreen
+                {
+                    destX = -3000;
+                }
                 else if (mapNo == 1857 && po.sid == 3 && destX == -111 && destZ == -210)
                 {
                     destX = -150;
                     destZ = -270;
+                }
+                else if (mapNo == 1861 && po.sid == 24 && destX == 137 && destZ == 420) // Eiko in pub: not going far enough.
+                {
+                    destX = -550;
+                    destZ = 800;
+                    //Log.Message("destX = " + destX + " destZ = " + destZ);
                 }
                 else if (mapNo == 2101 && po.sid == 2 && destX == 781 && destZ == 1587)
                 {
@@ -653,6 +674,12 @@ public partial class EventEngine
                     destZ = -9080;
                 }
                 if (this.MoveToward_mixed(destX, 0.0f, destZ, 1, null))
+                    this.stay();
+                return 1;
+            }
+            case EBin.event_code_binary.MOVE3H: // 0xE8, "SideWalkXZY", "Make the character walk to destination without changing his facing angle. Make it synchronous if InitWalk is called before. format.", true, 3, { 2, 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
+            {
+                if (this.MoveToward_mixed(this.getv2(), -this.getv2(), this.getv2(), 3, null)) // 1st to arg3s: destination in (X, Z, Y)
                     this.stay();
                 return 1;
             }
@@ -2480,12 +2507,6 @@ public partial class EventEngine
             {
                 this.fieldmap.EBG_animShowFrame(this.getv1(), this.getv1()); // arg1: background animation.arg2: animation frame to display
                 return 0;
-            }
-            case EBin.event_code_binary.MOVE3H: // 0xE8, "SideWalkXZY", "Make the character walk to destination without changing his facing angle. Make it synchronous if InitWalk is called before. format.", true, 3, { 2, 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
-            {
-                if (this.MoveToward_mixed(this.getv2(), -this.getv2(), this.getv2(), 3, null)) // 1st to arg3s: destination in (X, Z, Y)
-                    this.stay();
-                return 1;
             }
             case EBin.event_code_binary.SYNCPARTY: // 0xE9, "UpdatePartyUID", "Update the party's entry list (Team Character 1-4 entries) for RunScript and InitObject calls. Should always be used after a Party call (it is automatic when using RemoveParty or AddParty)."
             {
