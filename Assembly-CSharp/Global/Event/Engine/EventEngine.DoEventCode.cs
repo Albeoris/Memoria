@@ -291,6 +291,11 @@ public partial class EventEngine
                             this.fieldmap.walkMesh.BGI_triSetActive(110U, 1U);
                         }
                     }
+                    if (mapNo == 560 && po.sid == 6 && posX == 714) // removed shadow on sword
+                    {
+                        ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                        po.isShadowOff = true;
+                    }
                     if (mapNo == 563 && po.sid == 16 && posX == -1614)
                         posX = -1635;
                     else if (mapNo == 572 && po.sid == 16 && posX == -1750)
@@ -330,6 +335,11 @@ public partial class EventEngine
                     else if (mapNo == 2211 && scCounter == 9200 && (po.sid == 5 || po.sid == 6) && posX == -465 && posZ == -5796) // Kuja ATE: Zorn Thorn position
                     {
                         posX = (po.sid == 5) ? posX = -200 : posX = 0; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                    }
+                    else if (mapNo == 2914 && scCounter == 11670 && po.sid >= 6 && po.sid <= 10) // Disable fishes shadows
+                    {
+                        ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                        po.isShadowOff = true;
                     }
                 }
                 this.SetActorPosition(po, (Single)posX, this.POS_COMMAND_DEFAULTY, (Single)posZ);
