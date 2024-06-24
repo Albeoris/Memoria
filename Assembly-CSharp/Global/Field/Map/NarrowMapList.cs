@@ -42,7 +42,7 @@ public static class NarrowMapList
     public static readonly int[][] RestrictedWidthScenesList =
     {
         // [mapNo,  EBin.MAP_INDEX_SVR,  EBin.SC_COUNTER_SVR], 
-        [150, 325, -5],       // Zidane infiltrate Alex Castle
+        [150, 325, -5],       // Zidane infiltrate Alex Castle - better in narrow for the "Alex" text
         [254, 26, -5],        // MBG103 - Evil Forest
         [352, 3, -5],         // Arrival at Dali: vivi visible before sleeping
         //[1550, -5, 6270],     // Mountain path - Quina stays there

@@ -627,7 +627,7 @@ public partial class EventEngine
             case EBin.event_code_binary.MOVE_EX: // "WalkEx" Make the specified character walk to destination
             {
                 actor = this.GetObj3() as Actor; // object to move
-                Int32 speed = this.getv3(); // walk speed
+                Int32 walkSpeed = this.getv3(); // walk speed
                 Single x = this.getv3(); // 3rd to 5th arguments: position in (X, Z, Y) format.
                 Single y = -this.getv3();
                 Single z = this.getv3();
@@ -646,7 +646,7 @@ public partial class EventEngine
                     ff9shadow.FF9ShadowOffField(actor.uid);
                     actor.isShadowOff = true;
                 }
-                if (this.MoveToward_mixed_ex(actor, speed, x, y, z, flags, null))
+                if (this.MoveToward_mixed_ex(actor, walkSpeed, x, y, z, flags, null))
                 {
                     this.stay();
                 }
@@ -2910,36 +2910,90 @@ public partial class EventEngine
                     dict.Clear();
                 return 0;
             }
+            case EBin.event_code_binary.SHADOWON: // 0x7F, "EnableShadow", "Enable the shadow for the entry's object."
+            {
+                if (this.gMode == 1)
+                    ff9shadow.FF9ShadowOnField((Int32)po.uid);
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowOnBattle(po.uid);
+                return 0;
+            }
+            case EBin.event_code_binary.SHADOWOFF: // 0x80, "DisableShadow", "Disable the shadow for the entry's object."
+            {
+                if (this.gMode == 1)
+                {
+                    ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                    po.isShadowOff = true;
+                }
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowOffBattle(po.uid);
+                return 0;
+            }
+            case EBin.event_code_binary.SHADOWSCALE: // 0x81, "SetShadowSize", "Set the entry's object shadow size", true, 2, { 1, 1 }, { "Size X", "Size Y" }, { AT_SPIN, AT_SPIN }, 0
+            {
+                Int32 xScale = this.getv1(); // arg1: size X
+                Int32 zScale = this.getv1(); // arg2: size Z
+                if (this.gMode == 1)
+                    ff9shadow.FF9ShadowSetScaleField((Int32)po.uid, xScale, zScale);
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowSetScaleBattle(po.uid, xScale, zScale);
+                return 0;
+            }
+            case EBin.event_code_binary.SHADOWOFFSET: // 0x82, "SetShadowOffset", "Change the offset between the entry's object and its shadow...", true, 2, { 2, 2 }, { "Offset X", "Offset Y" }, { AT_SPIN, AT_SPIN }, 0
+            {
+                Int32 xOffset = this.getv2(); // arg1: offset X
+                Int32 zOffset = this.getv2(); // arg2: offset Z
+                if (this.gMode == 1)
+                    ff9shadow.FF9ShadowSetOffsetField((Int32)po.uid, (Single)xOffset, (Single)zOffset);
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowSetOffsetBattle(po.uid, xOffset, zOffset);
+                return 0;
+            }
+            case EBin.event_code_binary.SHADOWLOCK: // 0x83, "LockShadowRotation", "Stop updating the shadow rotation by the object's rotation", true, 1, { 1 }, { "Locked Rotation" }, { AT_SPIN }, 0
+            {
+                Int32 rotY = this.getv1(); // arg1: locked rotation
+                if (this.gMode == 1)
+                    ff9shadow.FF9ShadowLockYRotField((Int32)po.uid, (Single)(rotY << 4));
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowLockYRotBattle(po.uid, rotY << 4);
+                return 0;
+            }
+            case EBin.event_code_binary.SHADOWUNLOCK: // 0x84, "UnlockShadowRotation", "Make the shadow rotate accordingly with its object."
+            {
+                if (this.gMode == 1)
+                    ff9shadow.FF9ShadowUnlockYRotField((Int32)po.uid);
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowUnlockYRotBattle(po.uid);
+                return 0;
+            }
+            case EBin.event_code_binary.SHADOWAMP: // 0x85, "SetShadowAmplifier", "Amplify or reduce the shadow transparancy", true, 1, { 1 }, { "Amplification Factor" }, { AT_USPIN }, 0
+            {
+                Int32 ampFactor = this.getv1(); // arg1: amplification factor
+                if (this.gMode == 1)
+                    ff9shadow.FF9ShadowSetAmpField((Int32)po.uid, (Int32)(Byte)ampFactor);
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowSetAmpBattle(po.uid, ampFactor);
+                return 0;
+            }
+            case EBin.event_code_binary.RAIN: // 0xD8, "SetWeather", "Add a raining effect (works on the world maps, fields and in battles)", true, 2, { 1, 1 }, { "Strength", "Speed" }, { AT_USPIN, AT_USPIN }, 0
+            {
+                Int32 strength = this.getv1(); // arg1: strength of rain
+                Int32 speed = this.getv1(); // arg2: speed of rain (unused for a battle rain)
+                if (this.gMode == 1 || this.gMode == 3)
+                {
+                    this.fieldmap.rainRenderer.SetRainParam(strength, speed);
+                    this._ff9.btl_rain = (Byte)strength;
+                }
+                else if (this.gMode == 2)
+                    FF9StateSystem.Common.FF9.btl_rain = (Byte)strength;
+                return 0;
+            }
             default:
             {
-                switch (this.gMode)
-                {
-                    case 1:
-                        return this.DoEventCodeField(po, code);
-                    case 2:
-                        return this.DoEventCodeBattle(po, code);
-                    case 3:
-                        return this.DoEventCodeWorld(po, code);
-                    default:
-                        return 1;
-                }
+                return 1;
             }
         }
     }
-
-    /*private static Boolean IsAlexandriaStageScene()
-    {
-        switch (FF9StateSystem.Common.FF9.fldMapNo)
-        {
-            case 62:
-            case 63:
-            case 3009:
-            case 3010:
-            //case 3011: // Leads to problems
-                return true;
-        }
-        return false;
-    }*/
 
     [DebuggerHidden]
     private IEnumerator DelayedCFLAG(Obj obj, Int32 cflag)
