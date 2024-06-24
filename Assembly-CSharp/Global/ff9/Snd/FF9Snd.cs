@@ -24,162 +24,147 @@ public static class FF9Snd
 
 	public static Int32 ff9snd_song_play(Int32 _songid)
 	{
-		return FF9Snd.FF9SoundArg0(0, _songid);
+		return FF9Snd.FF9Sound(0, _songid);
 	}
 
 	public static Int32 ff9snd_song_stop(Int32 _songid)
 	{
-		return FF9Snd.FF9SoundArg0(256, _songid);
+		return FF9Snd.FF9Sound(256, _songid);
 	}
 
 	public static Int32 ff9snd_song_vol(Int32 _songid, Int32 _vol)
 	{
-		return FF9Snd.FF9SoundArg1(16897, _songid, _vol);
+		return FF9Snd.FF9Sound(16897, _songid, _vol);
 	}
 
 	public static Int32 ff9snd_song_vol_intpl(Int32 _songid, Int32 _ticks, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg2(33537, _songid, _ticks, _to);
+		return FF9Snd.FF9Sound(33537, _songid, _ticks, _to);
 	}
 
 	public static Int32 ff9snd_song_vol_fade(Int32 _songid, Int32 _ticks, Int32 _from, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg3(50177, _songid, _ticks, _from, _to);
+		return FF9Snd.FF9Sound(50177, _songid, _ticks, _from, _to);
 	}
 
 	public static Int32 ff9snd_song_tempo(Int32 _songid, Int32 _tempo)
 	{
-		return FF9Snd.FF9SoundArg1(16898, _songid, _tempo);
+		return FF9Snd.FF9Sound(16898, _songid, _tempo);
 	}
 
 	public static Int32 ff9snd_song_tempo_intpl(Int32 _songid, Int32 _ticks, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg2(33538, _songid, _ticks, _to);
+		return FF9Snd.FF9Sound(33538, _songid, _ticks, _to);
 	}
 
 	public static Int32 ff9snd_song_tempo_fade(Int32 _songid, Int32 _ticks, Int32 _from, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg3(50177, _songid, _ticks, _from, _to);
+		return FF9Snd.FF9Sound(50177, _songid, _ticks, _from, _to);
 	}
 
 	public static Int32 ff9snd_song_pitch(Int32 _songid, Int32 _pitch)
 	{
-		return FF9Snd.FF9SoundArg1(16899, _songid, _pitch);
+		return FF9Snd.FF9Sound(16899, _songid, _pitch);
 	}
 
 	public static Int32 ff9snd_song_pitch_intpl(Int32 _songid, Int32 _ticks, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg2(33539, _songid, _ticks, _to);
+		return FF9Snd.FF9Sound(33539, _songid, _ticks, _to);
 	}
 
 	public static Int32 ff9snd_song_pitch_fade(Int32 _songid, Int32 _ticks, Int32 _from, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg3(50177, _songid, _ticks, _from, _to);
+		return FF9Snd.FF9Sound(50177, _songid, _ticks, _from, _to);
 	}
 
 	public static Int32 ff9snd_song_tempopitch(Int32 _songid, Int32 _tempopitch)
 	{
-		return FF9Snd.FF9SoundArg1(16900, _songid, _tempopitch);
+		return FF9Snd.FF9Sound(16900, _songid, _tempopitch);
 	}
 
 	public static Int32 ff9snd_song_tempopitch_intpl(Int32 _songid, Int32 _ticks, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg2(33540, _songid, _ticks, _to);
+		return FF9Snd.FF9Sound(33540, _songid, _ticks, _to);
 	}
 
 	public static Int32 ff9snd_song_tempopitch_fade(Int32 _songid, Int32 _ticks, Int32 _from, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg3(1028, _songid, _ticks, _from, _to);
+		return FF9Snd.FF9Sound(1028, _songid, _ticks, _from, _to);
 	}
 
 	public static Int32 ff9snd_sndeffect_play(Int32 _sndeffectid, Int32 _attr, Int32 _vol, Int32 _pos)
 	{
-		return FF9Snd.FF9SoundArg3(53248, _sndeffectid, _attr, _pos, _vol);
+		return FF9Snd.FF9Sound(53248, _sndeffectid, _attr, _pos, _vol);
 	}
 
 	public static Int32 ff9snd_sndeffect_stop(Int32 _sndeffectid, Int32 _attr)
 	{
-		return FF9Snd.FF9SoundArg1(20736, _sndeffectid, _attr);
+		return FF9Snd.FF9Sound(20736, _sndeffectid, _attr);
 	}
 
 	public static Int32 ff9snd_sndeffect_vol(Int32 _sndeffectid, Int32 _attr, Int32 _vol)
 	{
-		return FF9Snd.FF9SoundArg2(37377, _sndeffectid, _attr, _vol);
+		return FF9Snd.FF9Sound(37377, _sndeffectid, _attr, _vol);
 	}
 
 	public static Int32 ff9snd_sndeffect_vol_intpl(Int32 _sndeffectid, Int32 _attr, Int32 _ticks, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg3(54017, _sndeffectid, _attr, _ticks, _to);
+		return FF9Snd.FF9Sound(54017, _sndeffectid, _attr, _ticks, _to);
 	}
 
 	public static Int32 ff9snd_sndeffect_vol_all(Int32 _vol)
 	{
-		return FF9Snd.FF9SoundArg1(21761, -1, _vol);
+		return FF9Snd.FF9Sound(21761, -1, _vol);
 	}
 
 	public static Int32 ff9snd_sndeffect_vol_intplall(Int32 _ticks, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg2(38401, -1, _ticks, _to);
+		return FF9Snd.FF9Sound(38401, -1, _ticks, _to);
 	}
 
 	public static Int32 ff9snd_sndeffect_pos(Int32 _sndeffectid, Int32 _attr, Int32 _pos)
 	{
-		return FF9Snd.FF9SoundArg2(37381, _sndeffectid, _attr, _pos);
+		return FF9Snd.FF9Sound(37381, _sndeffectid, _attr, _pos);
 	}
 
 	public static Int32 ff9snd_sndeffect_pos_intpl(Int32 _sndeffectid, Int32 _attr, Int32 _ticks, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg3(54021, _sndeffectid, _attr, _ticks, _to);
+		return FF9Snd.FF9Sound(54021, _sndeffectid, _attr, _ticks, _to);
 	}
 
 	public static Int32 ff9snd_sndeffect_pos_all(Int32 _pos)
 	{
-		return FF9Snd.FF9SoundArg1(21765, -1, _pos);
+		return FF9Snd.FF9Sound(21765, -1, _pos);
 	}
 
 	public static Int32 ff9snd_sndeffect_pos_intplall(Int32 _ticks, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg2(38405, -1, _ticks, _to);
+		return FF9Snd.FF9Sound(38405, -1, _ticks, _to);
 	}
 
 	public static Int32 ff9snd_sndeffect_pitch(Int32 _sndeffectid, Int32 _attr, Int32 _pitch)
 	{
-		return FF9Snd.FF9SoundArg2(37379, _sndeffectid, _attr, _pitch);
+		return FF9Snd.FF9Sound(37379, _sndeffectid, _attr, _pitch);
 	}
 
 	public static Int32 ff9snd_sndeffect_pitch_intpl(Int32 _sndeffectid, Int32 _attr, Int32 _ticks, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg3(54019, _sndeffectid, _attr, _ticks, _to);
+		return FF9Snd.FF9Sound(54019, _sndeffectid, _attr, _ticks, _to);
 	}
 
 	public static Int32 ff9snd_sndeffect_pitch_all(Int32 _pitch)
 	{
-		return FF9Snd.FF9SoundArg1(21763, -1, _pitch);
+		return FF9Snd.FF9Sound(21763, -1, _pitch);
 	}
 
 	public static Int32 ff9snd_sndeffect_pitch_intplall(Int32 _ticks, Int32 _to)
 	{
-		return FF9Snd.FF9SoundArg2(38403, -1, _ticks, _to);
+		return FF9Snd.FF9Sound(38403, -1, _ticks, _to);
 	}
 
-	public static Int32 FF9SoundArg0(Int32 _parmtype, Int32 _objno)
+	public static Int32 FF9Sound(Int32 soundCode, Int32 objno, Int32 arg1 = 0, Int32 arg2 = 0, Int32 arg3 = 0)
 	{
-		return FF9Snd.sndFuncPtr(_parmtype, _objno, 0, 0, 0);
-	}
-
-	public static Int32 FF9SoundArg1(Int32 _parmtype, Int32 _objno, Int32 _arg1)
-	{
-		return FF9Snd.sndFuncPtr(_parmtype, _objno, _arg1, 0, 0);
-	}
-
-	public static Int32 FF9SoundArg2(Int32 _parmtype, Int32 _objno, Int32 _arg1, Int32 _arg2)
-	{
-		return FF9Snd.sndFuncPtr(_parmtype, _objno, _arg1, _arg2, 0);
-	}
-
-	public static Int32 FF9SoundArg3(Int32 _parmtype, Int32 _objno, Int32 _arg1, Int32 _arg2, Int32 _arg3)
-	{
-		return FF9Snd.sndFuncPtr(_parmtype, _objno, _arg1, _arg2, _arg3);
+		return FF9Snd.sndFuncPtr(soundCode, objno, arg1, arg2, arg3);
 	}
 
 	private static Int32 DMSMakeID(FF9Snd.DMS_DATATYPE type, Int32 ObjNo)
@@ -217,7 +202,7 @@ public static class FF9Snd
 				ObjNo = 633;
 //			else if (ObjNo == 1545) [DV] => When Vivi cast fire on Garnet's hood in CD1 (field n°67)
 //				ObjNo = 58; => Third sound file of SFX Fire_Sword (se020006)
-            else if (ObjNo == 679)
+			else if (ObjNo == 679)
 				ObjNo = 9010197;
 			else if (ObjNo == 1230 || ObjNo == 1231)
 			{
@@ -231,7 +216,7 @@ public static class FF9Snd
 				ObjNo = 9010138;
 //			else if (ObjNo == 678) // [DV] => Battle Sound Slam (ex : Edge from Tantarian)
 //				ObjNo = 725; => Battle Sound Slap (ex : Strike from Zombie)
-            else if (ObjNo == 3084)
+			else if (ObjNo == 3084)
 				ObjNo = 370;
 		}
 	}
