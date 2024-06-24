@@ -86,7 +86,8 @@ public class AnimationFactory
 			String text = "Animations/" + str + "/" + animationName;
 			text = AnimationFactory.GetRenameAnimationPath(text);
 			AnimationClip clip = AssetManager.Load<AnimationClip>(text, false);
-			component.AddClip(clip, animationName);
+            if (clip != null)
+			    component.AddClip(clip, animationName);
 		}
 	}
 

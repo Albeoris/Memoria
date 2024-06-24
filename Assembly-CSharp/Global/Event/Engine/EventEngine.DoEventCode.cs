@@ -307,7 +307,16 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGVPORT: // 0x1E, "SetCameraBounds", "Redefine the field camera boundaries (default value is part of the background's data)", true, 5, { 1, 2, 2, 2, 2 }, { "Camera", "Min X", "Max X", "Min Y", "Max Y" }, { AT_USPIN, AT_SPIN, AT_SPIN, AT_SPIN, AT_SPIN }, 0
             {
-                this.fieldmap.EBG_cameraSetViewport(this.getv1(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2()); // arg1: camera ID | arg2-5: MinX, MaxX, MinY, MaxY
+                Int32 camId = this.getv1(); // arg1: camera ID
+                Int16 minX = (Int16)this.getv2(); // arg2-5: MinX, MaxX, MinY, MaxY
+                Int16 maxX = (Int16)this.getv2();
+                Int16 minY = (Int16)this.getv2();
+                Int16 maxY = (Int16)this.getv2();
+
+                if (mapNo == 2220 && minX == 154 && FieldMap.ActualPsxScreenWidth > 390) // Desert Palace fix to widescreen cam seeing hidden path too soon
+                    minX = (Int16)544;
+
+                this.fieldmap.EBG_cameraSetViewport(camId, minX, maxX, minY, maxY);
                 return 0;
             }
             case EBin.event_code_binary.MES: // 0x1F, "WindowSync", "Display a window with text inside and wait until it closes", true, 3, { 1, 1, 2 }, { "Window ID", "UI", "Text" }, { AT_USPIN, AT_BOOLLIST, AT_TEXT }, 0
@@ -523,11 +532,6 @@ public partial class EventEngine
                 {
                     destX = -1635;
                 }
-                else if (mapNo == 2800 && po.sid == 17) // TODO Check Native: #147
-                {
-                    destX = -4702;
-                    destZ = 2702;
-                }
                 else if (mapNo == 2954 && po.sid == 4 && destX == -1159 && destZ == 13130)
                 {
                     SettingUtils.FieldMapSettings fieldMapSettings = SettingUtils.fieldMapSettings;
@@ -737,14 +741,16 @@ public partial class EventEngine
                     po.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(po.model), false);
                     Singleton<WMWorld>.Instance.addGameObjectToWMActor(po.go, ((Actor)po).wmActor);
                 }
-
-                if (mapNo == 112 && po.model == 223)
-                    this.gCur.flags = (Byte)((this.gCur.flags & -64) | (Int32)14); // floating glass Alex pub: set flag 14 (invisible)
                 return 0;
             }
             case EBin.event_code_binary.AIDLE: // 0x33, "SetStandAnimation", "Change the standing animation", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
             {
                 actor.idle = (UInt16)this.getv2(); // arg1: animation ID
+                if (mapNo == 112 && po.model == 223) 
+                {
+                    if ((actor.idle == 8239 && actor.uid == 3) || (actor.idle == 1870 && actor.uid == 6)) // Remove SetStandAnimation( 8239 ) for Dante's glass in Alexandria/Pub
+                        actor.idle = 5384; // Better stand animation imo for the Red Mage (uid == 6) or remove it... it's just a detail.
+                }
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.idle));
                 if (mapNo == 2365 && actor.uid == 14 && actor.idle == 11611)
                 {
@@ -768,7 +774,7 @@ public partial class EventEngine
                     this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
                     if ((Int32)actor.idle == 7503)
                         this._geoTexAnim.geoTexAnimPlay(2);
-                }
+                }            
                 return 0;
             }
             case EBin.event_code_binary.AWALK: // 0x34, "SetWalkAnimation", "Change the walking animation", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
@@ -1095,6 +1101,20 @@ public partial class EventEngine
                 GameObject attachedObjUnity = attachedObj.go;
                 GameObject targetObject = targetObj.go;
                 Int32 bone_index = this.getv1(); // arg3: attachment point (unknown format)
+
+                if (mapNo == 112 && po.model == 223) // [DV] Fix the glasses in Alexandria's pub at the begin of the game
+                {
+                    if (po.uid == 6) // Red Mage's glass ?
+                    {
+                        attachedObjUnity = this.GetObjUID(6).go;
+                        targetObject = this.GetObjUID(4).go;
+                    }
+                    else // Dante's glass
+                    {
+                        geo.geoAttach(this.GetObjUID(3).go, this.GetObjUID(2).go, 13);
+                    }
+                }
+
                 if ((UnityEngine.Object)attachedObjUnity != (UnityEngine.Object)null && (UnityEngine.Object)targetObject != (UnityEngine.Object)null)
                 {
                     if (this.gMode == 1 || this.gMode == 2)
