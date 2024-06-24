@@ -1449,7 +1449,7 @@ public partial class EventEngine
                 this.fieldmap.EBG_overlayMove(overlayNdx, dx, dy, dz);
                 return 0;
             }
-            case EBin.event_code_binary.BGLMOVE_TIMED: // TODO add description
+            case EBin.event_code_binary.BGLMOVE_TIMED: // "SetTilePositionTimed" Move a tile block over time
             {
                 Int32 overlayNdx = (Int32)this.getv3(); // arg1: background tile block
                 Single dx = (Single)this.getv3(); // arg2: x movement
@@ -2855,7 +2855,6 @@ public partial class EventEngine
                 this.fieldmap.walkMesh.BGI_animShowFrame((UInt32)this.getv1(), (UInt32)this.getv1());
                 return 0;
             }
-            // TODO: no more information from Hades Workshop
             case EBin.event_code_binary.PLAYER_EQUIP: // "SetCharacterEquipment" Change the piece of equipment of a player, using it from the player's inventory
             {
                 CharacterId charId = this.chr2slot(this.getv3()); // character to (re-)equip.
@@ -2921,9 +2920,9 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.TURN_OBJ_EX:
             {
-                Actor turner = this.GetObj3() as Actor;
-                PosObj target = this.GetObj3() as PosObj;
-                Int32 tspeed = this.getv3();
+                Actor turner = this.GetObj3() as Actor; // character to turn
+                PosObj target = this.GetObj3() as PosObj; // object to look at
+                Int32 tspeed = this.getv3(); // turn speed
                 if (turner != null && target != null)
                 {
                     Single angle = this.eBin.angleAsm(target.pos[0] - turner.pos[0], target.pos[2] - turner.pos[2]);
@@ -2931,11 +2930,11 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.AANIM_EX:
+            case EBin.event_code_binary.AANIM_EX: // "SetLogicalAnimationEx" Change the logical animation of the specified entry
             {
-                actor = this.GetObj3() as Actor;
-                Int32 kind = this.getv3();
-                UInt16 anim = (UInt16)(Int32)this.getv3();
+                actor = this.GetObj3() as Actor; // object re-animated
+                Int32 kind = this.getv3(); // type of logical animation
+                UInt16 anim = (UInt16)this.getv3(); // animation to use
                 switch (kind)
                 {
                     case 0: actor.idle = anim; break;
@@ -2949,16 +2948,16 @@ public partial class EventEngine
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)anim));
                 return 0;
             }
-            case EBin.event_code_binary.VECTOR_CLEAR:
+            case EBin.event_code_binary.VECTOR_CLEAR: // "ClearMemoriaVector" Empty a vector in the vector system provided by Memoria
             {
-                Int32 vectID = this.getv3();
+                Int32 vectID = this.getv3(); // vector ID to clear
                 if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect))
                     vect.Clear();
                 return 0;
             }
-            case EBin.event_code_binary.DICTIONARY_CLEAR:
+            case EBin.event_code_binary.DICTIONARY_CLEAR: // "ClearMemoriaDictionary" Empty a dictionary in the dictionary system provided by Memoria
             {
-                Int32 dictID = this.getv3();
+                Int32 dictID = this.getv3(); // dictionary ID to clear
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictID, out Dictionary<Int32, Int32> dict))
                     dict.Clear();
                 return 0;

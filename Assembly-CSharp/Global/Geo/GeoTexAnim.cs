@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 using Assets.Scripts.Common;
 using UnityEngine;
 
@@ -9,7 +8,7 @@ public class GeoTexAnim : HonoBehavior
 {
 	public override void HonoAwake()
 	{
-		this.Count = 0;
+		this._renderTexuresCreated = false;
 		this._isLoaded = false;
 		this._cFrameCounter = 0;
 	}
@@ -17,142 +16,52 @@ public class GeoTexAnim : HonoBehavior
 	public override void HonoOnDestroy()
 	{
 		base.HonoOnDestroy();
-		if (this.RenderTex != (UnityEngine.Object)null)
+		if (this.TextureAnim != null)
 		{
-			this.RenderTex.Release();
-			this.RenderTex = (RenderTexture)null;
+			foreach (RenderTexture rt in this.TextureAnim.RenderTexMapping.Values)
+				rt.Release();
+			this.TextureAnim = null;
 		}
 	}
 
-	public void Load(String modelName, Int32 mainTextureIndex, Int32 subTextureIndex, Int32 scale = 1)
+	public void Load(String modelName, Int32[] mainTextureIndex, Int32[] subTextureIndex)
 	{
-		this._mainTextureIndex = mainTextureIndex;
-		this._subTextureIndex = subTextureIndex;
-		Byte[] binAsset = AssetManager.LoadBytes(modelName + ".tab", true);
-		if (binAsset == null)
+		this.TextureAnim = new GEOTEXHEADER();
+		this.TextureAnim.ReadTextureAnim(modelName + ".tab");
+		if (this.TextureAnim.geotex == null)
 			return;
-		using (BinaryReader binaryReader = new BinaryReader(new MemoryStream(binAsset)))
-		{
-			this.Count = binaryReader.ReadUInt16();
-			Int32 num = binaryReader.ReadUInt16();
-			this.Anims = new GEOTEXANIMHEADER[this.Count];
-			for (Int32 i = 0; i < this.Count; i++)
-			{
-				this.Anims[i] = new GEOTEXANIMHEADER();
-				this.Anims[i].ReadData(binaryReader);
-			}
-		}
-		this._isLoaded = true;
-		this._smrs = base.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
+		this.TextureAnim._mainTextureIndexs = mainTextureIndex;
+		this.TextureAnim._subTextureIndexs = subTextureIndex;
+		SkinnedMeshRenderer[] skmrs = base.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
 		if (modelName.Contains("GEO_SUB_F0_KUW"))
-		{
-			this._mainTexture = this._smrs[0].materials[this._mainTextureIndex].mainTexture;
-			this._subTexture = this._smrs[0].materials[this._subTextureIndex].mainTexture;
-		}
+			this.TextureAnim.materials = skmrs[0].materials;
 		else
-		{
-			this._mainTexture = this._smrs[this._mainTextureIndex].material.mainTexture;
-			this._subTexture = this._smrs[this._subTextureIndex].material.mainTexture;
-		}
-		this.RenderTex = new RenderTexture(this._mainTexture.width, this._mainTexture.height, 24);
-		this.RenderTex.filterMode = FilterMode.Bilinear;
-		this.RenderTex.wrapMode = TextureWrapMode.Repeat;
-		this.RenderTex.name = modelName + "_RT";
-		this.RenderTexWidth = this._mainTexture.width;
-		this.RenderTexHeight = this._mainTexture.height;
-		this._smrs[this._mainTextureIndex].material.mainTexture = this.RenderTex;
-		Single w = this._subTexture.width;
-		Single h = this._subTexture.height;
-		for (Int32 i = 0; i < this.Count; i++)
-		{
-			Rect rect = this.Anims[i].targetuv;
-			rect.x *= scale;
-			rect.y *= scale;
-			rect.width *= scale;
-			rect.height *= scale;
-			this.Anims[i].targetuv = rect;
-			for (Int32 j = 0; j < this.Anims[i].numframes; j++)
-			{
-				rect = this.Anims[i].rectuvs[j];
-				rect.x *= scale;
-				rect.y *= scale;
-				rect.width *= scale;
-				rect.height *= scale;
-				rect.y = h - rect.y - rect.height;
-				rect.x += 0.5f;
-				rect.y += 0.5f;
-				rect.width -= 1f;
-				rect.height -= 1f;
-				rect.x /= w;
-				rect.y /= h;
-				rect.width /= w;
-				rect.height /= h;
-				this.Anims[i].rectuvs[j] = rect;
-			}
-		}
-		RenderTexture active = RenderTexture.active;
-		RenderTexture.active = this.RenderTex;
-		GL.PushMatrix();
-		GL.Clear(true, true, Color.clear);
-		GL.LoadPixelMatrix(0f, this.RenderTexWidth, this.RenderTexHeight, 0f);
-		Graphics.DrawTexture(new Rect(0f, 0f, this.RenderTexWidth, this.RenderTexHeight), this._mainTexture);
-		GL.PopMatrix();
-		RenderTexture.active = active;
-	}
-
-	private IEnumerator WaitToRecreateTexAnim(RenderTexture reRenderTex, Texture reMainTex)
-	{
-		this._smrs[this._mainTextureIndex].material.mainTexture = this._mainTexture;
-		this._smrs[this._subTextureIndex].material.mainTexture = this._subTexture;
-		yield return new WaitForEndOfFrame();
-		this._smrs[this._mainTextureIndex].material.mainTexture = this.RenderTex;
-		this.RecreateTexAnim(reRenderTex, reMainTex);
-		yield break;
-	}
-
-	private void RecreateTexAnim(RenderTexture reRenderTex, Texture reMainTex)
-	{
-		RenderTexture active = RenderTexture.active;
-		RenderTexture.active = reRenderTex;
-		GL.PushMatrix();
-		GL.Clear(true, true, Color.clear);
-		GL.LoadPixelMatrix(0f, this.RenderTexWidth, this.RenderTexHeight, 0f);
-		Graphics.DrawTexture(new Rect(0f, 0f, this.RenderTexWidth, this.RenderTexHeight), reMainTex);
-		GL.PopMatrix();
-		RenderTexture.active = active;
+			this.TextureAnim.materials = skmrs.Select(smr => smr.material).ToArray();
+		this.TextureAnim.InitMultiTexAnim(modelName + ".tab");
+		this._isLoaded = true;
 	}
 
 	public Int32 geoTexAnimGetCount()
 	{
-		return this.Count;
+		return this.TextureAnim?.count ?? 0;
 	}
 
 	public void geoTexAnimPlay(Int32 anum)
 	{
 		if (!this._isLoaded)
-		{
 			return;
-		}
-		GEOTEXANIMHEADER geotexanimheader = this.Anims[anum];
-		geotexanimheader.flags = (Byte)(geotexanimheader.flags | 1);
-		this.Anims[anum].frame = 0;
-		this.Anims[anum].lastframe = 4096;
+		this.TextureAnim.geotex[anum].flags |= 1;
+		this.TextureAnim.geotex[anum].frame = 0;
+		this.TextureAnim.geotex[anum].lastframe = 4096;
 		if (anum == 0)
-		{
-			Byte b = 3;
-			GEOTEXANIMHEADER geotexanimheader2 = this.Anims[2];
-			geotexanimheader2.flags = (Byte)(geotexanimheader2.flags & (Byte)(~b));
-		}
+			this.TextureAnim.geotex[2].flags &= unchecked((Byte)~3);
 	}
 
 	public static void geoTexAnimPlay(GEOTEXHEADER tab, Int32 anum)
 	{
 		if (tab == null || tab.geotex == null)
-		{
 			return;
-		}
-		GEOTEXANIMHEADER geotexanimheader = tab.geotex[anum];
-		geotexanimheader.flags = (Byte)(geotexanimheader.flags | 1);
+		tab.geotex[anum].flags |= 1;
 		tab.geotex[anum].frame = 0;
 		tab.geotex[anum].lastframe = 4096;
 	}
@@ -160,23 +69,17 @@ public class GeoTexAnim : HonoBehavior
 	public void geoTexAnimPlayOnce(Int32 anum)
 	{
 		if (!this._isLoaded)
-		{
 			return;
-		}
-		GEOTEXANIMHEADER geotexanimheader = this.Anims[anum];
-		geotexanimheader.flags = (Byte)(geotexanimheader.flags | 3);
-		this.Anims[anum].frame = 0;
-		this.Anims[anum].lastframe = 4096;
+		this.TextureAnim.geotex[anum].flags |= 3;
+		this.TextureAnim.geotex[anum].frame = 0;
+		this.TextureAnim.geotex[anum].lastframe = 4096;
 	}
 
 	public static void geoTexAnimPlayOnce(GEOTEXHEADER tab, Int32 anum)
 	{
 		if (tab == null || tab.geotex == null)
-		{
 			return;
-		}
-		GEOTEXANIMHEADER geotexanimheader = tab.geotex[anum];
-		geotexanimheader.flags = (Byte)(geotexanimheader.flags | 3);
+		tab.geotex[anum].flags |= 3;
 		tab.geotex[anum].frame = 0;
 		tab.geotex[anum].lastframe = 4096;
 	}
@@ -184,46 +87,36 @@ public class GeoTexAnim : HonoBehavior
 	public void geoTexAnimStop(Int32 anum)
 	{
 		if (!this._isLoaded)
-		{
 			return;
-		}
-		Byte b = 3;
-		GEOTEXANIMHEADER geotexanimheader = this.Anims[anum];
-		geotexanimheader.flags = (Byte)(geotexanimheader.flags & (Byte)(~b));
+		this.TextureAnim.geotex[anum].flags &= unchecked((Byte)~3);
 	}
 
 	public static void geoTexAnimStop(GEOTEXHEADER tab, Int32 anum)
 	{
 		if (tab == null || tab.geotex == null)
-		{
 			return;
-		}
-		Byte b = 3;
-		GEOTEXANIMHEADER geotexanimheader = tab.geotex[anum];
-		geotexanimheader.flags = (Byte)(geotexanimheader.flags & (Byte)(~b));
+		tab.geotex[anum].flags &= unchecked((Byte)~3);
 	}
 
 	public static void geoTexAnimFreezeState(BTL_DATA btl)
 	{
 		if (btl.backupGeotex != null || btl.texanimptr == null || btl.texanimptr.geotex == null)
-		{
 			return;
-		}
-		Int32 num = (Int32)btl.texanimptr.geotex.Length;
-		btl.backupGeotex = new Byte[num];
-		for (Int32 i = 0; i < num; i++)
+		Int32 animCount = btl.texanimptr.geotex.Length;
+		btl.backupGeotex = new Byte[animCount];
+		for (Int32 i = 0; i < animCount; i++)
 		{
 			btl.backupGeotex[i] = btl.texanimptr.geotex[i].flags;
 			GeoTexAnim.geoTexAnimStop(btl.texanimptr, i);
 		}
 		if (btl.bi.player != 0 && btl.tranceTexanimptr != null && btl.tranceTexanimptr.geotex != null)
 		{
-			num = (Int32)btl.tranceTexanimptr.geotex.Length;
-			btl.backupGeoTrancetex = new Byte[num];
-			for (Int32 j = 0; j < num; j++)
+			animCount = btl.tranceTexanimptr.geotex.Length;
+			btl.backupGeoTrancetex = new Byte[animCount];
+			for (Int32 i = 0; i < animCount; i++)
 			{
-				btl.backupGeoTrancetex[j] = btl.tranceTexanimptr.geotex[j].flags;
-				GeoTexAnim.geoTexAnimStop(btl.tranceTexanimptr, j);
+				btl.backupGeoTrancetex[i] = btl.tranceTexanimptr.geotex[i].flags;
+				GeoTexAnim.geoTexAnimStop(btl.tranceTexanimptr, i);
 			}
 		}
 	}
@@ -231,25 +124,17 @@ public class GeoTexAnim : HonoBehavior
 	public static void geoTexAnimReturnState(BTL_DATA btl)
 	{
 		if (btl.texanimptr == null || btl.texanimptr.geotex == null)
-		{
 			return;
-		}
-		Int32 num = (Int32)btl.texanimptr.geotex.Length;
-		Int32 num2 = 0;
-		while (num2 < num && btl.backupGeotex != null)
-		{
-			btl.texanimptr.geotex[num2].flags = btl.backupGeotex[num2];
-			num2++;
-		}
+		Int32 animCount = btl.texanimptr.geotex.Length;
+		if (btl.backupGeotex != null)
+			for (Int32 i = 0; i < animCount; i++)
+				btl.texanimptr.geotex[i].flags = btl.backupGeotex[i];
 		if (btl.bi.player != 0 && btl.tranceTexanimptr != null && btl.tranceTexanimptr.geotex != null)
 		{
-			num = (Int32)btl.tranceTexanimptr.geotex.Length;
-			Int32 num3 = 0;
-			while (num3 < num && btl.backupGeoTrancetex != null)
-			{
-				btl.tranceTexanimptr.geotex[num3].flags = btl.backupGeoTrancetex[num3];
-				num3++;
-			}
+			animCount = btl.tranceTexanimptr.geotex.Length;
+			if (btl.backupGeoTrancetex != null)
+				for (Int32 i = 0; i < animCount; i++)
+					btl.tranceTexanimptr.geotex[i].flags = btl.backupGeoTrancetex[i];
 		}
 		btl.backupGeotex = null;
 		btl.backupGeoTrancetex = null;
@@ -258,26 +143,19 @@ public class GeoTexAnim : HonoBehavior
 	public Boolean ff9fieldCharIsTexAnimActive()
 	{
 		if (!this._isLoaded)
-		{
 			return false;
-		}
-		Int32 num = this.geoTexAnimGetCount();
-		for (Int32 i = num - 1; i >= 0; i--)
-		{
-			if ((this.Anims[i].flags & 1) != 0)
-			{
+		for (Int32 i = this.geoTexAnimGetCount() - 1; i >= 0; i--)
+			if ((this.TextureAnim.geotex[i].flags & 1) != 0)
 				return true;
-			}
-		}
 		return false;
 	}
 
 	private void Update()
 	{
-		if (!this._isLoaded)
+		if (!this._isLoaded || this._renderTexuresCreated)
 			return;
-		if (!this.RenderTex.IsCreated())
-			base.StartCoroutine(this.WaitToRecreateTexAnim(this.RenderTex, this._mainTexture));
+		this.TextureAnim.CheckRenderTextures(this);
+		this._renderTexuresCreated = true;
 	}
 
 	public override void HonoUpdate()
@@ -288,118 +166,54 @@ public class GeoTexAnim : HonoBehavior
 		if (this._cFrameCounter >= (SceneDirector.IsBattleScene() ? 2 : 1))
 		{
 			this._cFrameCounter = 0;
-			for (Int32 i = 0; i < this.Count; i++)
-			{
-				GEOTEXANIMHEADER geotexanimheader = this.Anims[i];
-				if ((geotexanimheader.flags & 1) != 0)
-				{
-					Int32 num = geotexanimheader.frame;
-					Int32 lastframe = (Int32)geotexanimheader.lastframe;
-					Int16 num2 = (Int16)(num >> 12);
-					if (num2 >= 0)
-					{
-						if ((Int32)num2 != lastframe)
-						{
-							for (Int32 j = 0; j < (Int32)geotexanimheader.count; j++)
-							{
-								RenderTexture active = RenderTexture.active;
-								RenderTexture.active = this.RenderTex;
-								GL.PushMatrix();
-								GL.LoadPixelMatrix(0f, this.RenderTexWidth, this.RenderTexHeight, 0f);
-								Graphics.DrawTexture(new Rect(0f, 0f, this.RenderTexWidth, this.RenderTexHeight), this._mainTexture);
-								Graphics.DrawTexture(geotexanimheader.targetuv, this._subTexture, geotexanimheader.rectuvs[(Int32)num2], 0, 0, 0, 0);
-								GL.PopMatrix();
-								RenderTexture.active = active;
-							}
-							geotexanimheader.lastframe = num2;
-						}
-						Int16 rate = geotexanimheader.rate;
-						num += (Int32)rate;
-					}
-					else
-					{
-						num += 4096;
-					}
-					if (num >> 12 < (Int32)geotexanimheader.numframes)
-					{
-						geotexanimheader.frame = num;
-					}
-					else if (geotexanimheader.randrange > 0)
-					{
-						UInt32 num3 = this.geoTexAnimRandom((UInt32)geotexanimheader.randmin, (UInt32)geotexanimheader.randrange);
-						geotexanimheader.frame = (Int32)(-(Int32)((UInt64)((UInt64)num3 << 12)));
-					}
-					else if ((geotexanimheader.flags & 2) != 0)
-					{
-						Byte b = 3;
-						GEOTEXANIMHEADER geotexanimheader2 = geotexanimheader;
-						geotexanimheader2.flags = (Byte)(geotexanimheader2.flags & (Byte)(~b));
-					}
-					else
-					{
-						geotexanimheader.frame = 0;
-					}
-				}
-			}
-			return;
+			geoTexAnimService(this.TextureAnim);
 		}
 	}
 
-	private UInt32 geoTexAnimRandom(UInt32 randmin, UInt32 randrange)
+	private static Int32 geoTexAnimRandom(Int32 randmin, Int32 randrange)
 	{
-		return (UInt32)UnityEngine.Random.Range((Int32)randmin, (Int32)(randrange + 1u));
+		return UnityEngine.Random.Range(randmin, randrange + 1);
 	}
 
 	public static void geoTexAnimService(GEOTEXHEADER texHeader)
 	{
 		if (texHeader == null)
-		{
 			return;
-		}
-		for (Int32 i = 0; i < (Int32)texHeader.count; i++)
+		for (Int32 i = 0; i < texHeader.count; i++)
 		{
 			GEOTEXANIMHEADER geotexanimheader = texHeader.geotex[i];
 			if ((geotexanimheader.flags & 1) != 0)
 			{
 				if (geotexanimheader.numframes != 0)
 				{
-					Int32 num = geotexanimheader.frame;
+					Int32 frameLong = geotexanimheader.frame;
 					Int16 lastframe = geotexanimheader.lastframe;
-					Int16 num2 = (Int16)(num >> 12);
-					if (num2 >= 0)
+					Int16 frameShort = (Int16)(frameLong >> 12);
+					if (frameShort >= 0)
 					{
-						if (num2 != lastframe)
+						if (frameShort != lastframe)
 						{
-							for (Int32 j = 0; j < (Int32)geotexanimheader.count; j++)
-							{
-								if (texHeader.geotex != null)
-								{
-									GeoTexAnim.MultiTexAnimService(geotexanimheader, texHeader, i, num2);
-								}
-							}
-							geotexanimheader.lastframe = num2;
+							//for (Int32 j = 0; j < geotexanimheader.count; j++)
+							texHeader.MultiTexAnimService(i, frameShort);
+							geotexanimheader.lastframe = frameShort;
 						}
-						Int16 rate = geotexanimheader.rate;
-						num += (Int32)rate;
+						frameLong += geotexanimheader.rate;
 					}
 					else
 					{
-						num += 4096;
+						frameLong += 4096;
 					}
-					if (num >> 12 < (Int32)geotexanimheader.numframes)
+					if (frameLong >> 12 < geotexanimheader.numframes)
 					{
-						geotexanimheader.frame = num;
+						geotexanimheader.frame = frameLong;
 					}
 					else if (geotexanimheader.randrange > 0)
 					{
-						UInt32 num3 = (UInt32)UnityEngine.Random.Range((Int32)geotexanimheader.randmin, (Int32)(geotexanimheader.randrange + 1));
-						geotexanimheader.frame = (Int32)(-(Int32)((UInt64)((UInt64)num3 << 12)));
+						geotexanimheader.frame = -(geoTexAnimRandom(geotexanimheader.randmin, geotexanimheader.randrange) << 12);
 					}
 					else if ((geotexanimheader.flags & 2) != 0)
 					{
-						Byte b = 3;
-						GEOTEXANIMHEADER geotexanimheader2 = geotexanimheader;
-						geotexanimheader2.flags = (Byte)(geotexanimheader2.flags & (Byte)(~b));
+						geotexanimheader.flags &= unchecked((Byte)~3);
 					}
 					else
 					{
@@ -414,152 +228,40 @@ public class GeoTexAnim : HonoBehavior
 		}
 	}
 
-	private static void MultiTexAnimService(GEOTEXANIMHEADER texAnimHeader, GEOTEXHEADER texHeader, Int32 i, Int16 framenum)
-	{
-		RenderTexture active = RenderTexture.active;
-		RenderTexture.active = texHeader.RenderTexMapping[texHeader._mainTextureIndexs[i]];
-		GL.PushMatrix();
-		GL.LoadPixelMatrix(0f, texHeader.RenderTexWidth, texHeader.RenderTexHeight, 0f);
-		Graphics.DrawTexture(new Rect(0f, 0f, texHeader.RenderTexWidth, texHeader.RenderTexHeight), texHeader.TextureMapping[texHeader._mainTextureIndexs[i]], GEOTEXANIMHEADER.texAnimMat);
-		Graphics.DrawTexture(texAnimHeader.targetuv, texHeader.TextureMapping[texHeader._subTextureIndexs[i]], texAnimHeader.rectuvs[(Int32)framenum], 0, 0, 0, 0);
-		GL.PopMatrix();
-		RenderTexture.active = active;
-	}
-
-	public static void RecreateMultiTexAnim(GEOTEXANIMHEADER texAnimHeader, GEOTEXHEADER texHeader, Int32 i)
-	{
-		RenderTexture active = RenderTexture.active;
-		RenderTexture.active = texHeader.RenderTexMapping[texHeader._mainTextureIndexs[i]];
-		GL.PushMatrix();
-		GL.Clear(true, true, Color.clear);
-		GL.LoadPixelMatrix(0f, texHeader.RenderTexWidth, texHeader.RenderTexHeight, 0f);
-		Graphics.DrawTexture(new Rect(0f, 0f, texHeader.RenderTexWidth, texHeader.RenderTexHeight), texHeader.TextureMapping[texHeader._mainTextureIndexs[i]]);
-		GL.PopMatrix();
-		RenderTexture.active = active;
-	}
-
 	public static void addTexAnim(GameObject go, String geoName)
 	{
 		GeoTexAnim geoTexAnim = go.AddComponent<GeoTexAnim>();
-		Int32 scale = ModelFactory.HaveUpScaleModel(geoName) ? 4 : 1;
 		Boolean garnetShortHair = FF9StateSystem.EventState.ScenarioCounter >= 10300;
 		if (geoName.Equals("GEO_MAIN_F0_GRN") && garnetShortHair)
 			geoName = "GEO_MAIN_F1_GRN";
-		GeoTexAnim.SetTexAnimIndex(geoName, out Int32 mainTextureIndex, out Int32 subTextureIndex);
-		geoTexAnim.Load("Models/GeoTexAnim/" + geoName, mainTextureIndex, subTextureIndex, scale);
-	}
-
-	public static void SetTexAnimIndex(String geoName, out Int32 mainTextureIndex, out Int32 subTextureIndex)
-	{
-		mainTextureIndex = 0;
-		subTextureIndex = 0;
-		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv", true);
-		if (textAsset == null)
-			return;
-		String[] array = textAsset.Split(new Char[]
-		{
-			'\n'
-		});
-		Int32 num = (Int32)array.Length;
-		Int32[,] array2 = new Int32[num - 1, num - 1];
-		for (Int32 i = 1; i < num; i++)
-		{
-			String[] array3 = array[i].Split(new Char[]
-			{
-				','
-			});
-			String s = array3[0];
-			String s2 = array3[1];
-			Int32 num2 = Int32.Parse(s);
-			Int32 num3 = Int32.Parse(s2);
-			array2[i - 1, 0] = num2;
-			array2[i - 1, 1] = num3;
-		}
-		mainTextureIndex = array2[0, 0];
-		subTextureIndex = array2[0, 1];
+		GeoTexAnim.SetTexAnimIndexs(geoName, out Int32[] mainTextureIndex, out Int32[] subTextureIndex);
+		geoTexAnim.Load("Models/GeoTexAnim/" + geoName, mainTextureIndex, subTextureIndex);
 	}
 
 	public static void SetTexAnimIndexs(String geoName, out Int32[] mainTextureIndexs, out Int32[] subTextureIndexs)
 	{
-		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv");
-		if (textAsset == null)
+		String csvAsset = AssetManager.LoadString($"EmbeddedAsset/GeoTexAnimIndex/{geoName}.csv", true);
+		if (csvAsset == null)
 		{
 			mainTextureIndexs = null;
 			subTextureIndexs = null;
 			return;
 		}
-		String[] array = textAsset.Split(new Char[]
+		String[] entries = csvAsset.Split('\n');
+		Int32 cnt = entries.Length;
+		mainTextureIndexs = new Int32[cnt - 1];
+		subTextureIndexs = new Int32[cnt - 1];
+		for (Int32 i = 1; i < cnt; i++)
 		{
-			'\n'
-		});
-		Int32 num = (Int32)array.Length;
-		mainTextureIndexs = new Int32[num - 1];
-		subTextureIndexs = new Int32[num - 1];
-		for (Int32 i = 1; i < num; i++)
-		{
-			String[] array2 = array[i].Split(new Char[]
-			{
-				','
-			});
-			String s = array2[0];
-			String s2 = array2[1];
-			Int32 num2 = Int32.Parse(s);
-			Int32 num3 = Int32.Parse(s2);
-			mainTextureIndexs[i - 1] = num2;
-			subTextureIndexs[i - 1] = num3;
+			String[] entry = entries[i].Split(',');
+			mainTextureIndexs[i - 1] = Int32.Parse(entry[0]);
+			subTextureIndexs[i - 1] = Int32.Parse(entry[1]);
 		}
 	}
 
-	public static void MapTextureToTexAnimIndex(Int32 texAnimIndex, Texture texture, Dictionary<Int32, Texture> textureMapping)
-	{
-		if (!textureMapping.ContainsKey(texAnimIndex))
-		{
-			textureMapping.Add(texAnimIndex, texture);
-		}
-	}
+	public GEOTEXHEADER TextureAnim;
 
-	public static void MapRenderTexToTexAnimIndex(Int32 texAnimIndex, Single textureWidth, Single textureHeight, SkinnedMeshRenderer skinnedMeshRenderer, Texture mainTexture, Dictionary<Int32, RenderTexture> renderTexMapping)
-	{
-		if (!renderTexMapping.ContainsKey(texAnimIndex))
-		{
-			RenderTexture renderTexture = new RenderTexture((Int32)textureWidth, (Int32)textureHeight, 24);
-			renderTexture.filterMode = FilterMode.Bilinear;
-			renderTexture.wrapMode = TextureWrapMode.Repeat;
-			renderTexture.name = skinnedMeshRenderer.transform.parent.name + "_" + skinnedMeshRenderer.name + "_RT";
-			skinnedMeshRenderer.material.mainTexture = renderTexture;
-			renderTexMapping.Add(texAnimIndex, renderTexture);
-			RenderTexture active = RenderTexture.active;
-			RenderTexture.active = renderTexture;
-			GL.PushMatrix();
-			GL.Clear(true, true, Color.clear);
-			GL.LoadPixelMatrix(0f, textureWidth, textureHeight, 0f);
-			Graphics.DrawTexture(new Rect(0f, 0f, textureWidth, textureHeight), mainTexture);
-			GL.PopMatrix();
-			RenderTexture.active = active;
-		}
-	}
-
-	public Int32 Count;
-
-	public GEOTEXANIMHEADER[] Anims;
-
-	public RenderTexture RenderTex;
-
-	public Single RenderTexWidth;
-
-	public Single RenderTexHeight;
-
+	private Boolean _renderTexuresCreated;
 	private Boolean _isLoaded;
-
 	private Int32 _cFrameCounter;
-
-	private SkinnedMeshRenderer[] _smrs;
-
-	private Int32 _mainTextureIndex;
-
-	private Int32 _subTextureIndex;
-
-	private Texture _mainTexture;
-
-	private Texture _subTexture;
 }

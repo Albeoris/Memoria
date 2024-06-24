@@ -13,30 +13,17 @@ public class BattleTexAnimWatcher : MonoBehaviour
 		{
 			if (!Status.checkCurStat(next, BattleStatus.Jump))
 			{
-				this.CheckRenderTexture(next.texanimptr);
-				this.CheckRenderTexture(next.tranceTexanimptr);
+				this.CheckRenderTextures(next.texanimptr);
+				this.CheckRenderTextures(next.tranceTexanimptr);
 			}
 		}
 	}
 
-	public void CheckRenderTexture(GEOTEXHEADER texHeader)
+	public void CheckRenderTextures(GEOTEXHEADER texHeader)
 	{
 		if (texHeader == null)
-		{
 			return;
-		}
-		for (Int32 i = 0; i < (Int32)texHeader.count; i++)
-		{
-			RenderTexture renderTexture = texHeader.RenderTexMapping[texHeader._mainTextureIndexs[i]];
-			if (!renderTexture.IsCreated())
-			{
-				if (texHeader.geotex != null)
-				{
-					GEOTEXANIMHEADER texAnimHeader = texHeader.geotex[i];
-					base.StartCoroutine(this.WaitForRecreateRenderTexture(texAnimHeader, texHeader, i));
-				}
-			}
-		}
+        texHeader.CheckRenderTextures(this);
 	}
 
 	public static void ForcedNonCullingMesh(GameObject go)
@@ -61,25 +48,5 @@ public class BattleTexAnimWatcher : MonoBehaviour
 			MeshFilter meshFilter = array2[j];
 			meshFilter.sharedMesh.bounds = new Bounds(center, Vector3.one * Single.MaxValue * 0.01f);
 		}
-	}
-
-	private void SetDefaultTextures(GEOTEXHEADER texHeader, Int32 i)
-	{
-		texHeader._smrs[texHeader._mainTextureIndexs[i]].material.mainTexture = texHeader.TextureMapping[texHeader._mainTextureIndexs[i]];
-		texHeader._smrs[texHeader._subTextureIndexs[i]].material.mainTexture = texHeader.TextureMapping[texHeader._subTextureIndexs[i]];
-	}
-
-	private void SetBackRenderTexture(GEOTEXHEADER texHeader, Int32 i)
-	{
-		texHeader._smrs[texHeader._mainTextureIndexs[i]].material.mainTexture = texHeader.RenderTexMapping[texHeader._mainTextureIndexs[i]];
-	}
-
-	private IEnumerator WaitForRecreateRenderTexture(GEOTEXANIMHEADER texAnimHeader, GEOTEXHEADER texHeader, Int32 i)
-	{
-		this.SetDefaultTextures(texHeader, i);
-		yield return new WaitForEndOfFrame();
-		this.SetBackRenderTexture(texHeader, i);
-		GeoTexAnim.RecreateMultiTexAnim(texAnimHeader, texHeader, i);
-		yield break;
 	}
 }

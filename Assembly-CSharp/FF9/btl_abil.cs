@@ -79,7 +79,7 @@ namespace FF9
             if (defender.IsUnderAnyStatus(BattleStatusConst.NoReaction) || !btl_util.IsCommandDeclarable(command.Id))
                 return;
 
-            RegularItem itemId = IsDefualtAutoPotionBehaviourEnabled()
+            RegularItem itemId = IsDefaultAutoPotionBehaviourEnabled()
                 ? GetFirstPotionUseableByAutoItemAbility()
                 : FindSuitablePotion(defender, Configuration.Battle.AutoPotionOverhealLimit);
 
@@ -92,7 +92,7 @@ namespace FF9
             btl_cmd.SetCounter(defender.Data, BattleCommandId.AutoPotion, (Int32)itemId, defender.Id);
         }
 
-        private static bool IsDefualtAutoPotionBehaviourEnabled()
+        private static Boolean IsDefaultAutoPotionBehaviourEnabled()
         {
             return Configuration.Battle.AutoPotionOverhealLimit < 0;
         }
@@ -116,7 +116,7 @@ namespace FF9
         /// </returns>
         private static RegularItem FindSuitablePotion(BattleTarget defender, Int32 autoPotionOverhealLimitInPercent)
         {
-            RegularItem id = 0;
+            RegularItem id = RegularItem.NoItem;
             foreach (RegularItem itemId in AutoPotionsItemIds)
             {
                 if (ff9item.FF9Item_GetCount(itemId) < 1)
@@ -126,19 +126,18 @@ namespace FF9
 
                 // Every value below is in Hit Points, expect if specified otherwise.
                 UInt32 heal = (UInt32)calc.Target.HpDamage;
-                UInt32 toGain = defender.HasSupportAbility(SupportAbility1.Chemist) ? heal * 2 : heal;
                 UInt32 missing = calc.Target.MaximumHp - calc.Target.CurrentHp;
 
                 // If character gets healed by value smaller than missing hp it means
                 // there is no over healing done yet. Otherwise, check over healing limit set by user.
-                if (toGain <= missing)
+                if (heal <= missing)
                 {
                     id = itemId;
                 }
                 else
                 {
-                    UInt32 overhealDone = toGain - missing;
-                    UInt32 overhealLimit = (UInt32)(toGain * (autoPotionOverhealLimitInPercent / 100));
+                    UInt32 overhealDone = heal - missing;
+                    UInt32 overhealLimit = (UInt32)(heal * autoPotionOverhealLimitInPercent / 100);
 
                     if (overhealDone <= overhealLimit)
                         id = itemId;
