@@ -49,11 +49,11 @@ public partial class EventEngine
             {
                 return 1;
             }
-            // 0x02, "JMP_IFN", "Skip some operations if the stack value is not 0.WARNING: unsafe to use.", false, 1, { 2 }, { "Jump" }, { AT_JUMP }, 3
-            // 0x03, "JMP_IF", "Skip some operations if the stack value is 0.WARNING: unsafe to use.", false, 1, { 2 }, { "Jump" }, { AT_JUMP }, 3
+            // 0x02, "JMP_IFN", "Skip some operations if the stack value is not 0.WARNING: unsafe to use."
+            // 0x03, "JMP_IF", "Skip some operations if the stack value is 0.WARNING: unsafe to use."
             // 0x04, "return", "End the function."
-            // 0x05, "set", "Perform variable operations and store the result in the stack.", false, 1, { 0 }, { "Variable Code" }, { AT_NONE }, 0
-            // 0x06, "JMP_SWITCHEX", "Skip some operations depending on the stack value.WARNING: unsafe to use.", false, -1, { 2, 2, 2 }, { "Default Jump", "Case", "Jump" }, { AT_JUMP, AT_SPIN, AT_JUMP }, 0
+            // 0x05, "set", "Perform variable operations and store the result in the stack."
+            // 0x06, "JMP_SWITCHEX", "Skip some operations depending on the stack value.WARNING: unsafe to use."
             // Unknown / unused opcodes:
             case EBin.event_code_binary.DEBUGCC:
             case EBin.event_code_binary.GLOBALCLEAR:
@@ -62,8 +62,8 @@ public partial class EventEngine
             {
                 return 0;
             }
-            case EBin.event_code_binary.BSSTART: //  0x100, "0x100", "Unknown Opcode (BSSTART).", true, 2, { 1, 1 }, { "Unknown", "Unknown" }, { AT_SPIN, AT_SPIN }, 0
-            case EBin.event_code_binary.BSFRAME: //  0x101, "0x101", "Unknown Opcode (BSFRAME.", true, 2, { 1, 1 }, { "Unknown", "Unknown" }, { AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.BSSTART: //  0x100, "0x100", "Unknown Opcode (BSSTART)."
+            case EBin.event_code_binary.BSFRAME: //  0x101, "0x101", "Unknown Opcode (BSFRAME)."
             case EBin.event_code_binary.BAANIME:
             case EBin.event_code_binary.BAACTIVE:
             case EBin.event_code_binary.BAFLAG:
@@ -95,19 +95,19 @@ public partial class EventEngine
                 this.getv2();
                 return 0;
             }
-            case EBin.event_code_binary.NEW: // 0x07, "InitCode", "Init a normal code (independant functions).arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0).", false, 2, { 1, 1 }, { "Entry", "UID" }, { AT_ENTRY, AT_USPIN }, 0
+            case EBin.event_code_binary.NEW: // 0x07, "InitCode", "Init a normal code (independant functions).arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0)."
             {
                 NewThread(this.gArgFlag, this.geti()); // arg1: code entry to init / arg2: Unique ID (defaulted to entry's ID if 0)
                 this.gArgUsed = 1;
                 return 0;
             }
-            case EBin.event_code_binary.NEW2: // 0x08, "InitRegion", "Init a region code (associated with a region).arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0).", false, 2, { 1, 1 }, { "Entry", "UID" }, { AT_ENTRY, AT_USPIN }, 0
+            case EBin.event_code_binary.NEW2: // 0x08, "InitRegion", "Init a region code (associated with a region).arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0)."
             {
                 Quad quad = new Quad(this.gArgFlag, this.geti()); // arg1: code entry to init / arg2: Unique ID (defaulted to entry's ID if 0)
                 this.gArgUsed = 1;
                 return 0;
             }
-            case EBin.event_code_binary.NEW3: // 0x09, "InitObject", "Init an object code (associated with a 3D model). Also load the related model into the RAM.arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0).", false, 2, { 1, 1 }, { "Entry", "UID" }, { AT_ENTRY, AT_USPIN }, 0
+            case EBin.event_code_binary.NEW3: // 0x09, "InitObject", "Init an object code (associated with a 3D model). Also load the related model into the RAM.arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0)."
             {
                 Int32 sid = this.gArgFlag; // arg1: code entry to init
                 Int32 uid = this.geti(); // arg2: Unique ID (defaulted to entry's ID if 0)
@@ -128,10 +128,10 @@ public partial class EventEngine
                 this.gArgUsed = 1;
                 return 0;
             }
-            // 0x0B, "JMP_SWITCH", "Skip some operations depending on the stack value.WARNING: unsafe to use.", false, -1, { 2, 2, 2 }, { "Starting Value", "Default Jump", "Jump" }, { AT_USPIN, AT_JUMP, AT_JUMP }, 1
+            // 0x0B, "JMP_SWITCH", "Skip some operations depending on the stack value. WARNING: unsafe to use."
             // 0x0C, "0x0C", "Unknown Opcode.", 
             // 0x0D, "0x0D", "Unknown Opcode." - Steam seems to handle it like a JMP_SWITCH with a short instead of a char (number of cases)
-            case EBin.event_code_binary.REQ: // 0x10, "RunScriptAsync", "Run script function and continue executing the current one.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns", true, 3, { 1, 1, 1 }, { "Script Leve", "Entry", "Function" }, { AT_SCRIPTLVL, AT_ENTRY, AT_FUNCTION }, 0
+            case EBin.event_code_binary.REQ: // 0x10, "RunScriptAsync", "Run script function and continue executing the current one.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns"
             {
                 Int32 scriptLevel = this.getv1(); // arg1: script level
                 Obj obj1 = this.GetObj1(); // arg2: entry of the function
@@ -141,7 +141,7 @@ public partial class EventEngine
                     this.fieldmap.walkMesh.BGI_triSetActive(62U, 1U); // Treno/Pub, function "Steiner_11"
                 return 0;
             }
-            case EBin.event_code_binary.REQSW: // 0x12, "RunScript", "Wait until the entry's script level gets higher than the specified script level then run the script function and continue executing the current one.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns", true, 3, { 1, 1, 1 }, { "Script Leve", "Entry", "Function" }, { AT_SCRIPTLVL, AT_ENTRY, AT_FUNCTION }, 0
+            case EBin.event_code_binary.REQSW: // 0x12, "RunScript", "Wait until the entry's script level gets higher than the specified script level then run the script function and continue executing the current one.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns"
             {
                 Int32 scriptLevel = this.getv1(); // arg1: script level
                 Obj obj1 = this.GetObj1(); // arg2: entry of the function
@@ -173,7 +173,9 @@ public partial class EventEngine
                 this.stay();
                 return 1;
             }
-            case EBin.event_code_binary.REQEW: // 0x14, "RunScriptSync", "Wait until the entry's script level gets higher than the specified script level then run the script function and wait until it returns. Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns", true, 3, { 1, 1, 1 }, { "Script Leve", "Entry", "Function" }, { AT_SCRIPTLVL, AT_ENTRY, AT_FUNCTION }, 0
+            case EBin.event_code_binary.REQEW: // 0x14, "RunScriptSync", "Wait until the entry's script level gets higher than the specified script level then run the script function and wait until it returns.
+                                               // Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed.
+                                               // Otherwise, the entry's script level is set to the specified script level until the function returns"
             {
                 Int32 scriptLevel = this.getv1(); // arg1: script level
                 Obj obj1 = this.GetObj1(); // arg2: entry of the function
@@ -195,8 +197,7 @@ public partial class EventEngine
                     this.Request(obj1, scriptLevel, tagNumber, true);
                 else
                     this.stay();
-                // Hotfix: non-standard characters hacked in the team to Oeilvert -> pretend other member(s) were picked instead (field "Palace/Sanctum", start of function "Kuja_74")
-                if (mapNo == 2209 && obj1 != null && obj1.sid == 4 && tagNumber == 74)
+                if (mapNo == 2209 && obj1 != null && obj1.sid == 4 && tagNumber == 74) // Hotfix: non-standard characters hacked in the team to Oeilvert -> pretend other member(s) were picked instead (field "Palace/Sanctum", start of function "Kuja_74")
                 {
                     Int32 oeilvertPartyCount = 0;
                     Queue<Int32> missingMemberVar = new Queue<Int32>();
@@ -215,12 +216,16 @@ public partial class EventEngine
                 }
                 return 1;
             }
-            case EBin.event_code_binary.REPLY: // 0x16, "RunScriptObjectAsync", "Run script function and continue executing the current one. Must only be used in response to a function call ; the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns", true, 2, { 1, 1 }, { "Script Leve", "Function" }, { AT_SCRIPTLVL, AT_FUNCTION }, 0
+            case EBin.event_code_binary.REPLY: // 0x16, "RunScriptObjectAsync", "Run script function and continue executing the current one. Must only be used in response to a function call ;
+                                               // the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7.
+                                               // If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns"
             {
                 this.Request(this.getSender(this.gExec), this.getv1(), this.geti(), false); // arg1: script level / arg2: function
                 return 0;
             }
-            case EBin.event_code_binary.REPLYSW: // 0x18, "RunScriptObject", "Wait until the entry's script level gets higher than the specified script level then run the script function and continue executing the current one. Must only be used in response to a function call ; the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns", true, 2, { 1, 1 }, { "Script Leve", "Function" }, { AT_SCRIPTLVL, AT_FUNCTION }, 0
+            case EBin.event_code_binary.REPLYSW: // 0x18, "RunScriptObject", "Wait until the entry's script level gets higher than the specified script level then run the script function and continue executing the current one.
+                                                 // Must only be used in response to a function call ; the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7.
+                                                 // If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns"
             {
                 Int32 scriptLevel = this.getv1(); // arg1: script level
                 Int32 tagNumber = this.geti(); // arg2: function
@@ -232,7 +237,9 @@ public partial class EventEngine
                 this.stay();
                 return 1;
             }
-            case EBin.event_code_binary.REPLYEW: // 0x1A, "RunScriptObjectSync", "Wait until the entry's script level gets higher than the specified script level then run the script function and wait until it returns. Must only be used in response to a function call ; the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns", true, 2, { 1, 1 }, { "Script Leve", "Function" }, { AT_SCRIPTLVL, AT_FUNCTION }, 0
+            case EBin.event_code_binary.REPLYEW: // 0x1A, "RunScriptObjectSync", "Wait until the entry's script level gets higher than the specified script level then run the script function and wait until it returns.
+                                                 // Must only be used in response to a function call ; the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7.
+                                                 // If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns"
             {
                 Int32 scriptLevel = this.getv1(); // arg1: script level
                 Int32 tagNumber = this.geti(); // arg2: function
@@ -243,7 +250,7 @@ public partial class EventEngine
                     this.stay();
                 return 1;
             }
-            case EBin.event_code_binary.SONGFLAG: // 0x1B, "ContinueBattleMusic", "Continue the music after the battle end", true, 1, { 1 }, { "Continue" }, { AT_BOOL }, 0
+            case EBin.event_code_binary.SONGFLAG: // 0x1B, "ContinueBattleMusic", "Continue the music after the battle end"
             {
                 if (this.getv1() != 0) // arg1: flag continue/ don't continue
                     FF9StateSystem.Common.FF9.btl_flag |= (Byte)8;
@@ -251,9 +258,9 @@ public partial class EventEngine
                     FF9StateSystem.Common.FF9.btl_flag &= (Byte)247;
                 return 0;
             }
-            // 0x1C, "TerminateEntry", "Stop the execution of an entry's code.arg1: entry to terminate.", true, 1, { 1 }, { "Object" }, { AT_ENTRY }, 0
-            case EBin.event_code_binary.POS: // 0x1D, "CreateObject", "Place (or replace) the 3D model on the field", true, 2, { 2, 2 }, { "Position" }, { AT_POSITION_X, AT_POSITION_Y }, 0
-            case EBin.event_code_binary.DPOS: // 0xBF, "MoveInstantEx", "Instantatly move an object", true, 3, { 1, 2, 2 }, { "Object", "Destination" }, { AT_ENTRY, AT_POSITION_X, AT_POSITION_Y }, 0
+            // 0x1C, "TerminateEntry", "Stop the execution of an entry's code.arg1: entry to terminate."
+            case EBin.event_code_binary.POS: // 0x1D, "CreateObject", "Place (or replace) the 3D model on the field"
+            case EBin.event_code_binary.DPOS: // 0xBF, "MoveInstantEx", "Instantatly move an object"
             {
                 if (eventCodeBinary == EBin.event_code_binary.DPOS)
                     po = (PosObj)this.GetObj1(); // arg1: object's entry
@@ -354,7 +361,7 @@ public partial class EventEngine
                 this._posUsed = true;
                 return 0;
             }
-            case EBin.event_code_binary.BGVPORT: // 0x1E, "SetCameraBounds", "Redefine the field camera boundaries (default value is part of the background's data)", true, 5, { 1, 2, 2, 2, 2 }, { "Camera", "Min X", "Max X", "Min Y", "Max Y" }, { AT_USPIN, AT_SPIN, AT_SPIN, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.BGVPORT: // 0x1E, "SetCameraBounds", "Redefine the field camera boundaries (default value is part of the background's data)"
             {
                 Int32 camId = this.getv1(); // arg1: camera ID
                 Int16 minX = (Int16)this.getv2(); // arg2-5: MinX, MaxX, MinY, MaxY
@@ -368,7 +375,7 @@ public partial class EventEngine
                 this.fieldmap.EBG_cameraSetViewport(camId, minX, maxX, minY, maxY);
                 return 0;
             }
-            case EBin.event_code_binary.MES: // 0x1F, "WindowSync", "Display a window with text inside and wait until it closes", true, 3, { 1, 1, 2 }, { "Window ID", "UI", "Text" }, { AT_USPIN, AT_BOOLLIST, AT_TEXT }, 0
+            case EBin.event_code_binary.MES: // 0x1F, "WindowSync", "Display a window with text inside and wait until it closes"
             {
                 this.gCur.winnum = (Byte)this.getv1(); // arg1: window ID
                 Int32 uiFlags = this.getv1(); // arg2: UI flag list. 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
@@ -418,7 +425,7 @@ public partial class EventEngine
                 this.gCur.wait = (Byte)254;
                 return 1;
             }
-            case EBin.event_code_binary.MESN: // 0x20, "WindowAsync", "Display a window with text inside and continue the execution of the script without waiting", true, 3, { 1, 1, 2 }, { "Window ID", "UI", "Text" }, { AT_USPIN, AT_BOOLLIST, AT_TEXT }, 0
+            case EBin.event_code_binary.MESN: // 0x20, "WindowAsync", "Display a window with text inside and continue the execution of the script without waiting"
             {
                 this.gCur.winnum = (Byte)this.getv1(); // arg1: window ID
                 Int32 uiFlags = this.getv1(); // arg2: UI flag list: 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
@@ -478,8 +485,8 @@ public partial class EventEngine
                 this.eTb.DisposWindowByID(windowID, true);
                 return 0;
             }
-            // 0x22, "Wait", "Wait some time.arg1: amount of frames to wait. For PAL, 1 frame is 0.04 seconds. For other versions, 1 frame is about 0.033 seconds.", true, 1, { 1 }, { "Frame Amount" }, { AT_USPIN }, 0
-            case EBin.event_code_binary.MOVE: // 0x23, "Walk", "Make the character walk to destination. Make it synchronous if InitWalk is called before", true, 2, { 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Y }, 0
+            // 0x22, "Wait", "Wait some time.arg1: amount of frames to wait. For PAL, 1 frame is 0.04 seconds. For other versions, 1 frame is about 0.033 seconds."
+            case EBin.event_code_binary.MOVE: // 0x23, "Walk", "Make the character walk to destination. Make it synchronous if InitWalk is called before"
             {
                 Int32 destX = this.getv2(); // arg1: destination X
                 Int32 destZ = this.getv2(); // arg2: destination Z
@@ -626,7 +633,7 @@ public partial class EventEngine
                     this.stay();
                 return 1;
             }
-            case EBin.event_code_binary.MOVA: // 0x24, "WalkTowardObject", "Make the character walk and follow an object", true, 1, { 1 }, { "Object" }, { AT_ENTRY }, 0
+            case EBin.event_code_binary.MOVA: // 0x24, "WalkTowardObject", "Make the character walk and follow an object"
             {
                 po = (PosObj)this.GetObj1(); // arg1: object to walk toward
                 if (this.MoveToward_mixed(po.pos[0], po.pos[1], po.pos[2], 0, po))
@@ -675,7 +682,7 @@ public partial class EventEngine
                 }
                 return 1;
             }
-            case EBin.event_code_binary.MOVE3: // 0xA2, "WalkXZY", "Make the character walk to destination. Make it synchronous if InitWalk is called before", true, 3, { 2, 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
+            case EBin.event_code_binary.MOVE3: // 0xA2, "WalkXZY", "Make the character walk to destination. Make it synchronous if InitWalk is called before"
             {
                 Single x = (Single)this.getv2(); // 3rd to 5th arguments: position in (X, Y, Z) format.
                 Single y = -(Single)(this.getv2());
@@ -706,7 +713,7 @@ public partial class EventEngine
                     this.stay();
                 return 1;
             }
-            case EBin.event_code_binary.MOVH: // 0xA5, "Slide", "Make the character slide to destination (walk without using the walk animation and without changing the facing angle)", true, 2, { 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Y }, 0
+            case EBin.event_code_binary.MOVH: // 0xA5, "Slide", "Make the character slide to destination (walk without using the walk animation and without changing the facing angle)"
             {
                 Int32 destX = this.getv2(); // 1st and arg2s: destination in (X, Z) format.
                 Int32 destZ = this.getv2();
@@ -732,7 +739,7 @@ public partial class EventEngine
                 this.clrdist(actor);
                 return 0;
             }
-            case EBin.event_code_binary.MSPEED: // 0x26, "SetWalkSpeed", "Change the walk speed", true, 1, { 1 }, { "Speed" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.MSPEED: // 0x26, "SetWalkSpeed", "Change the walk speed"
             {
                 Byte walkSpeed = (Byte)this.getv1(); // arg1: speed (surely in unit/frame)
                 if (mapNo == 3010)
@@ -763,17 +770,17 @@ public partial class EventEngine
                 actor.speed = walkSpeed;
                 return 0;
             }
-            case EBin.event_code_binary.BGIMASK: // 0x27, "SetTriangleFlagMask", "Set a bitmask for some of the walkmesh triangle flags, 7: disable restricted triangles, 8: disable player-restricted triangles", true, 1, { 1 }, { "Flags" }, { AT_BOOLLIST }, 0 // BGIMASK
+            case EBin.event_code_binary.BGIMASK: // 0x27, "SetTriangleFlagMask", "Set a bitmask for some of the walkmesh triangle flags"
             {
-                this.BGI_systemSetAttributeMask((Byte)this.getv1()); // arg1: flag mask
+                this.BGI_systemSetAttributeMask((Byte)this.getv1()); // arg1: flag mask - 7: disable restricted triangles, 8: disable player-restricted triangles
                 return 0;
             }
-            case EBin.event_code_binary.FMV: // 0x28, "Cinematic", "Run or setup a cinematic", true, 4, { 1, 1, 1, 1 }, { "Unknown", "Cinematic ID", "Unknown", "Unknown" }, { AT_SPIN, AT_FMV, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.FMV: // 0x28, "Cinematic", "Run or setup a cinematic"
             {
                 Singleton<fldfmv>.Instance.FF9FieldFMVDispatch(this.getv1(), this.getv2(), this.getv1()); // arg1: unknown, arg2: cinematic ID (may depends on arg1's value), arg3: unknown, (arg4: unknown)
                 return 0;
             }
-            case EBin.event_code_binary.QUAD: // 0x29, "SetRegion", "Define the polygonal region linked with the entry script. If the polygon is not convex, its convex hull is used instead. Args are in the format (Vertex X, Vertex Y) and there can be any number of them", true, -1, { 4 }, { "Polygon" }, { AT_NONE }, 0
+            case EBin.event_code_binary.QUAD: // 0x29, "SetRegion", "Define the polygonal region linked with the entry script. If the polygon is not convex, its convex hull is used instead. Args are in the format (Vertex X, Vertex Y) and there can be any number of them"
             {
                 Int32 i = 0;
                 ((Quad)this.gCur).n = this.getv1();
@@ -792,7 +799,7 @@ public partial class EventEngine
                 //    ;
                 return 0;
             }
-            case EBin.event_code_binary.ENCOUNT: // 0x2A, "Battle", "Start a battle (using a random enemy group)", true, 2, { 1, 2 }, { "Rush Type", "Battle" }, { AT_SPIN, AT_BATTLE }, 0
+            case EBin.event_code_binary.ENCOUNT: // 0x2A, "Battle", "Start a battle (using a random enemy group)"
             {
                 this.getv1(); // arg1: rush type (unknown)
                 this._ff9.btlSubMapNo = -1;
@@ -803,7 +810,7 @@ public partial class EventEngine
                 this._encountBase = 0;
                 return 3;
             }
-            case EBin.event_code_binary.MAPJUMP: // 0x2B, "Field", "Change the field scene", true, 1, { 2 }, { "Field" }, { AT_FIELD }, 0
+            case EBin.event_code_binary.MAPJUMP: // 0x2B, "Field", "Change the field scene",
             {
                 this.SetNextMap(this.getv2()); //arg1: field scene destination
                 return 4;
@@ -859,7 +866,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.MODEL: // 0x2F, "SetModel", "Set the model of the object and its head's height (used to set the dialog box's height)", true, 2, { 2, 1 }, { "Mode", "Height" }, { AT_MODEL, AT_USPIN }, 0
+            case EBin.event_code_binary.MODEL: // 0x2F, "SetModel", "Set the model of the object and its head's height (used to set the dialog box's height)"
             {
                 po.model = (UInt16)this.getv2(); // arg1: model
                 this.gExec.flags |= 1;
@@ -1209,16 +1216,18 @@ public partial class EventEngine
                     EMinigame.MognetCentralAchievement();
                 return 0;
             }
-            case EBin.event_code_binary.BTLSET: // 0x4A, "RunBattleCode", "Run a battle code | End Battle: 0 for a defeat (deprecated), 1 for a victory, 2 for a victory without victory pose, 3 for a defeat, 4 for an escape, 5 for an interrupted battle, 6 for a game over, 7 for an enemy escape. Run Camera: Camera ID. Change Field: ID of the destination field after the battle. Add Gil: amount to add.", true, 2, { 1, 2 }, { "Code", "Argument" }, { AT_BATTLECODE, AT_SPIN }, 0
+            case EBin.event_code_binary.BTLSET: // 0x4A, "RunBattleCode", "Run a battle code"
             {
                 Int32 battleCode = this.getv1(); // arg1: battle code
                 Int32 val = this.getv2(); // arg2: depends on the battle code
-                //if (num23 == 33)
-                //    Debug.Log((object)"BTLSET 33");
+                // - End Battle: 0 for a defeat (deprecated), 1 for a victory, 2 for a victory without victory pose, 3 for a defeat, 4 for an escape, 5 for an interrupted battle, 6 for a game over, 7 for an enemy escape.
+                // - Run Camera: Camera ID.
+                // - Change Field: ID of the destination field after the battle.
+                // - Add Gil: amount to add.
                 btl_scrp.SetBattleData((UInt32)battleCode, val);
                 return 0;
             }
-            case EBin.event_code_binary.RADIUS: // 0x4B, "SetObjectLogicalSize", "Set different size informations of the object", true, 3, { 1, 1, 1 }, { "Walk Radius", "Collision Radius", "Talk Distance" }, { AT_SPIN, AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.RADIUS: // 0x4B, "SetObjectLogicalSize", "Set different size informations of the object"
             {
                 Int32 size = this.getv1(); // arg1: size for pathing
                 Int32 collRad = (Int32)(Byte)this.getv1(); // arg2: collision radius
@@ -1258,7 +1267,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.ATTACH: // 0x4C, "AttachObject", "Attach an object to another one", true, 3, { 1, 1, 1 }, { "Object", "Carrier", "Attachement Point" }, { AT_ENTRY, AT_ENTRY, AT_USPIN }, 0
+            case EBin.event_code_binary.ATTACH: // 0x4C, "AttachObject", "Attach an object to another one"
             {
                 Obj attachedObj = this.GetObj1(); // arg1: carried object
                 Obj targetObj = this.GetObj1(); // arg2: carrying object
@@ -1278,7 +1287,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.DETACH: // 0x4D, "DetachObject", "Stop attaching an object to another one", true, 1, { 1 }, { "Object" }, { AT_ENTRY }, 0
+            case EBin.event_code_binary.DETACH: // 0x4D, "DetachObject", "Stop attaching an object to another one"
             {
                 Obj attachedObj = this.GetObj1(); // arg1: carried object
                 if (attachedObj != null)
@@ -1309,7 +1318,7 @@ public partial class EventEngine
                 this.gArgUsed = 1;
                 return 0;
             }
-            case EBin.event_code_binary.STOP: // 0x4F, "0x4F", "Unknown Opcode (STOP).", true, 1, { 1 }, { "Unknown" }, { AT_SPIN }, 0
+            case EBin.event_code_binary.STOP: // 0x4F, "0x4F", "Unknown Opcode (STOP)."
             {
                 Int32 stop = (Int32)this.gExec.getByteIP(-1) | (Int32)this.gExec.getByteIP() << 8;
                 ++this.gExec.ip;
@@ -1317,7 +1326,7 @@ public partial class EventEngine
                 return 6;
             }
             case EBin.event_code_binary.WAITTURN: // 0x50, "WaitTurn", "Wait until the character has turned."
-            case EBin.event_code_binary.DWAITTURN: // 0xBC, "WaitTurnEx", "Wait until an object facing movement has ended", true, 1, { 1 }, { "Object" }, { AT_ENTRY }, 0
+            case EBin.event_code_binary.DWAITTURN: // 0xBC, "WaitTurnEx", "Wait until an object facing movement has ended"
             {
                 if (eventCodeBinary == EBin.event_code_binary.DWAITTURN)
                     actor = (Actor)this.GetObj1(); // arg1: object's entry
@@ -1325,7 +1334,7 @@ public partial class EventEngine
                     this.stay();
                 return 1;
             }
-            case EBin.event_code_binary.TURNA: // 0x51, "TurnTowardObject", "Turn the character toward an entry object (animated)", true, 2, { 1, 1 }, { "Object", "Speed" }, { AT_ENTRY, AT_USPIN }, 0
+            case EBin.event_code_binary.TURNA: // 0x51, "TurnTowardObject", "Turn the character toward an entry object (animated)"
             {
                 Obj obj1 = this.GetObj1(); // arg1: object
                 Int32 turnSpeed = this.getv1(); // arg2: turn speed (1 is slowest)
@@ -1339,7 +1348,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.ASLEEP: // 0x52, "SetInactiveAnimation", "Change the animation played when inactive for a long time. The inaction time required is:First Time = 200 + 4 * Random[0, 255]Subsequent Times = 200 + 2 * Random[0, 255]", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
+            case EBin.event_code_binary.ASLEEP: // 0x52, "SetInactiveAnimation", "Change the animation played when inactive for a long time. The inaction time required is:First Time = 200 + 4 * Random[0, 255], Subsequent Times = 200 + 2 * Random[0, 255]"
             {
                 actor.sleep = (UInt16)this.getv2(); // arg1: animation ID
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.sleep));
@@ -1350,7 +1359,7 @@ public partial class EventEngine
                 this.eTb.InhInitMes();
                 return 0;
             }
-            case EBin.event_code_binary.WAITMES: // 0x54, "WaitWindow", "Wait until the window is closed", true, 1, { 1 }, { "Window ID" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.WAITMES: // 0x54, "WaitWindow", "Wait until the window is closed"
             {
                 if (mapNo == 1650 && FF9StateSystem.Settings.CurrentLanguage == "Japanese" && ((Int32)this.gCur.sid == 19 && this.gCur.ip == 1849))
                 {
@@ -1361,7 +1370,7 @@ public partial class EventEngine
                 this.gCur.wait = (Byte)254;
                 return 1;
             }
-            case EBin.event_code_binary.MROT: // 0x55, "SetWalkTurnSpeed", "Change the turn speed of the object when it walks or runs (default is 16)..", true, 1, { 1 }, { "Turn Speed" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.MROT: // 0x55, "SetWalkTurnSpeed", "Change the turn speed of the object when it walks or runs (default is 16).."
             {
                 Int32 turnSpeed = this.getv1(); // arg1: turn speed (with 0, the object doesn't turn while moving).Special treatments:Vivi's in Iifa Tree/Eidolon Moun (field 1656) is initialized to 48.Choco's in Chocobo's Paradise (field 2954) is initialized to 96
                 if (turnSpeed == 0)
@@ -1369,8 +1378,8 @@ public partial class EventEngine
                 actor.omega = (Byte)turnSpeed;
                 return 0;
             }
-            case EBin.event_code_binary.TURN: // 0x56, "TimedTurn", "Make the character face an angle (animated)", true, 2, { 1, 1 }, { "Angle", "Speed" }, { AT_USPIN, AT_USPIN }, 0
-            case EBin.event_code_binary.DTURN: // 0xBB, "TimedTurnEx", "Make an object face an angle (animated)", true, 3, { 1, 1, 1 }, { "Object", "Angle", "Speed" }, { AT_ENTRY, AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.TURN: // 0x56, "TimedTurn", "Make the character face an angle (animated)"
+            case EBin.event_code_binary.DTURN: // 0xBB, "TimedTurnEx", "Make an object face an angle (animated)"
             {
                 if (eventCodeBinary == EBin.event_code_binary.DTURN)
                     actor = (Actor)this.GetObj1(); // arg1: object's entry
@@ -1390,7 +1399,7 @@ public partial class EventEngine
                     this._encountBase = 0;
                 return 0;
             }
-            case EBin.event_code_binary.BGLCOLOR: // 0x59, "SetTileColor", "Change the color of a field tile block", true, 4, { 1, 1, 1, 1 }, { "Tile Block", "Color" }, { AT_TILE, AT_COLOR_CYAN, AT_COLOR_MAGENTA, AT_COLOR_YELLOW }, 0
+            case EBin.event_code_binary.BGLCOLOR: // 0x59, "SetTileColor", "Change the color of a field tile block"
             {
                 Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
                 Byte Cyan = (Byte)this.getv1();
@@ -1399,7 +1408,7 @@ public partial class EventEngine
                 this.fieldmap.EBG_overlaySetShadeColor(overlayNdx, Cyan, Magenta, Yellow); // arg1: background tile block
                 return 0;
             }
-            case EBin.event_code_binary.BGLORIGIN: // 0x5E, "SetTilePosition", "Move a field tile block", true, 3, { 1, 2, 2 }, { "Tile Block", "Position X", "Position Y" }, { AT_TILE, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.BGLORIGIN: // 0x5E, "SetTilePosition", "Move a field tile block"
             {
                 Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
                 Single dx = (Single)this.getv2(); // arg2: x movement
@@ -1407,7 +1416,7 @@ public partial class EventEngine
                 this.fieldmap.EBG_overlaySetOrigin(overlayNdx, dx, dy);
                 return 0;
             }
-            case EBin.event_code_binary.BGLMOVE: // 0x5A, "SetTilePositionEx", "Move a field tile block.", true, 4, { 1, 2, 2, 2 }, { "Tile Block", "Position X", "Position Y", "Position Closeness" }, { AT_TILE, AT_SPIN, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.BGLMOVE: // 0x5A, "SetTilePositionEx", "Move a field tile block."
             {
                 Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
                 Single dx = (Single)this.getv2(); // arg2: x movement
@@ -1704,11 +1713,9 @@ public partial class EventEngine
                 fldchar.FF9FieldCharDispatch((Int32)po.uid, modelCode, arg2, arg3, arg4);
                 return 0;
             }
-            case EBin.event_code_binary.SEPV: // 0x89, "SetSoundPosition", "Set the position of a 3D sound", true, 4, { 2, 2, 2, 1 }, { "Position", "Volume" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y, AT_SPIN }, 0
+            case EBin.event_code_binary.SEPV: // 0x89, "SetSoundPosition", "Set the position of a 3D sound"
             {
-                Int32 PosPtr;
-                Int32 VolPtr;
-                FF9Snd.FF9FieldSoundGetPositionVolume(this.getv2(), this.getv2(), this.getv2(), out PosPtr, out VolPtr); // 1st to arg3s: sound position X Z Y
+                FF9Snd.FF9FieldSoundGetPositionVolume(this.getv2(), this.getv2(), this.getv2(), out Int32 PosPtr, out Int32 VolPtr); // 1st to arg3s: sound position X Z Y
                 this.sSEPos = PosPtr;
                 Int32 soundVolume = this.getv1(); // arg4: sound volume
                 this.sSEVol = VolPtr * soundVolume >> 7;
@@ -1716,7 +1723,7 @@ public partial class EventEngine
                     this.sSEVol = (Int32)SByte.MaxValue;
                 return 0;
             }
-            case EBin.event_code_binary.SEPVA: // 0x8A, "SetSoundObjectPosition", "Set the position of a 3D sound to the object's position", true, 2, { 1, 1 }, { "Object", "Volume" }, { AT_ENTRY, AT_SPIN }, 0
+            case EBin.event_code_binary.SEPVA: // 0x8A, "SetSoundObjectPosition", "Set the position of a 3D sound to the object's position"
             {
                 po = (PosObj)this.GetObj1(); // arg1: object
                 Int32 PosPtr;
@@ -1729,14 +1736,16 @@ public partial class EventEngine
                     this.sSEVol = (Int32)SByte.MaxValue;
                 return 0;
             }
-            case EBin.event_code_binary.NECKID: // 0x8B, "SetHeadFocusMask", "Define a mask for characters to turn their head toward close characters: if this character's TargetMask has a common bit with another character's SelfMask, then he can turn to that other character.Also enables the two EnableHeadFocus flags 'enable' and 'turn toward close characters'.Characters must be at least 31 units away to have head focus and at most 2000 units away (the closest character is determined both by the distance and the angle)", true, 2, { 1, 1 }, { "SelfMask", "TargetMask" }, { AT_BOOLLIST, AT_BOOLLIST }, 0
+            case EBin.event_code_binary.NECKID: // 0x8B, "SetHeadFocusMask", "Define a mask for characters to turn their head toward close characters: if this character's TargetMask has a common bit with another character's SelfMask,
+                                                // then he can turn to that other character.Also enables the two EnableHeadFocus flags 'enable' and 'turn toward close characters'.Characters must be at least 31 units away to have head focus
+                                                // and at most 2000 units away (the closest character is determined both by the distance and the angle)"
             {
                 actor.neckMyID = (Byte)this.getv1(); // arg1: SelfMask
                 actor.neckTargetID = (Byte)this.getv1(); // arg2: TargetMask
                 actor.actf |= (UInt16)(EventEngine.actNeckT | EventEngine.actNeckM);
                 return 0;
             }
-            case EBin.event_code_binary.ENCOUNT2: // 0x8C, "BattleEx", "Start a battle and choose its battle group", true, 3, { 1, 1, 2 }, { "Rush Type", "Battle Group", "Battle" }, { AT_SPIN, AT_SPIN, AT_BATTLE }, 0
+            case EBin.event_code_binary.ENCOUNT2: // 0x8C, "BattleEx", "Start a battle and choose its battle group"
             {
                 this.getv1(); // arg1: rush type (unknown)
                 this._ff9.btlSubMapNo = (SByte)this.getv1(); // arg2: group
@@ -1747,7 +1756,7 @@ public partial class EventEngine
                 this._encountBase = 0;
                 return 3;
             }
-            case EBin.event_code_binary.TIMERDISPLAY: // 0x8D, "ShowTimer", "Activate the timer window", true, 1, { 1 }, { "Enable" }, { AT_BOOL }, 0
+            case EBin.event_code_binary.TIMERDISPLAY: // 0x8D, "ShowTimer", "Activate the timer window"
             {
                 this._ff9.timerDisplay = this.getv1() != 0; // arg1: boolean show/hide
                 TimerUI.SetEnable(this._ff9.timerDisplay);
@@ -1759,7 +1768,7 @@ public partial class EventEngine
                 this.eTb.RaiseAllWindow();
                 return 0;
             }
-            case EBin.event_code_binary.CHRCOLOR: // 0x8F, "SetModelColor", "Change a 3D model's color.", true, 4, { 1, 1, 1, 1 }, { "Object", "Color" }, { AT_ENTRY, AT_COLOR_RED, AT_COLOR_GREEN, AT_COLOR_BLUE }, 0
+            case EBin.event_code_binary.CHRCOLOR: // 0x8F, "SetModelColor", "Change a 3D model's color."
             {
                 if (fldmcf.FF9FieldMCFSetCharColor((Int32)this.GetObj1().uid, this.getv1(), this.getv1(), this.getv1()) == 0) // arg1: entry associated with the model, 2-4: color in (Red, Green, Blue)
                     return 0;
@@ -1771,13 +1780,13 @@ public partial class EventEngine
                 this._context.idletimer = -1;
                 return 0;
             }
-            case EBin.event_code_binary.AUTOTURN: // 0x91, "FollowFocus", "Automatically turn toward the character that is stared at when needed", true, 1, { 1 }, { "Enable" }, { AT_BOOL }, 0
+            case EBin.event_code_binary.AUTOTURN: // 0x91, "FollowFocus", "Automatically turn toward the character that is stared at when needed"
             {
                 Int32 FollowFocus = this.getv1(); // arg1: boolean on/ off
                 actor.turninst0 = FollowFocus == 0 ? (Int16)4 : (Int16)167;
                 return 0;
             }
-            case EBin.event_code_binary.BGLATTACH: // 0x92, "AttachTile", "Make a part of the field background follow the player's movements. Also apply a color filter out of that tile block's range", true, 7, { 1, 2, 1, 1, 1, 1, 1 }, { "Tile Block", "Position X", "Position Y", "Filter Mode", "Filter Color" }, { AT_TILE, AT_SPIN, AT_SPIN, AT_SPIN, AT_COLOR_RED, AT_COLOR_GREEN, AT_COLOR_BLUE }, 0
+            case EBin.event_code_binary.BGLATTACH: // 0x92, "AttachTile", "Make a part of the field background follow the player's movements. Also apply a color filter out of that tile block's range"
             {
                 // arg1: tile block.2nd and arg3s: offset position in (X, Y) format.arg4: filter mode ; use -1 for no filter effect.5th to 7th arguments: filter color in (Red, Green, Blue) format.
                 this.fieldmap.EBG_charAttachOverlay(this.getv1(), (Int16)this.getv2(), (Int16)this.getv1(), (SByte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1());
