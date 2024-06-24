@@ -510,11 +510,10 @@ public class FieldMap : HonoBehavior
         gameObject.transform.parent = base.transform;
         gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
         FieldMapActor actor = gameObject.AddComponent<FieldMapActor>();
-        Boolean flag = true;
-        if (flag)
+        if (true)
         {
             GeoTexAnim geoTexAnim = gameObject.AddComponent<GeoTexAnim>();
-            geoTexAnim.Load("Models/GeoTexAnim/GEO_MAIN_B0_000", 1, 1, 4);
+            geoTexAnim.Load("Models/GeoTexAnim/GEO_MAIN_B0_000", [1], [1]);
         }
         FieldMapActorController fieldMapActorController = gameObject.AddComponent<FieldMapActorController>();
         fieldMapActorController.fieldMap = this;

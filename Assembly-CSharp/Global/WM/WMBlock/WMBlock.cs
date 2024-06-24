@@ -1,9 +1,12 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class WMBlock : MonoBehaviour
 {
+	public Transform Transform => this._transform;
+
 	public List<WMMesh> ActiveWalkMeshes
 	{
 		get
@@ -18,14 +21,8 @@ public class WMBlock : MonoBehaviour
 
 	public Int32 Form
 	{
-		get
-		{
-			return this._form;
-		}
-		private set
-		{
-			this._form = value;
-		}
+		get => this._form;
+		private set => this._form = value;
 	}
 
 	public Vector3 PositionAsCenter
@@ -100,15 +97,18 @@ public class WMBlock : MonoBehaviour
 	public void SetForm(Int32 form)
 	{
 		if (!this.IsSwitchable)
-		{
 			return;
-		}
 		if (form != 1 && form != 2)
-		{
 			global::Debug.Log("There are only two forms (form 1 and form 2.)");
-		}
 		this.Form = form;
 	}
+
+    public void SetupPreloadedMaterials()
+    {
+        foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>())
+            if (MaterialDatabase.TryGetValue(renderer.gameObject.name, out Material material))
+                renderer.material = material;
+    }
 
 	public void ApplyForm()
 	{
@@ -125,14 +125,6 @@ public class WMBlock : MonoBehaviour
 				transform.gameObject.SetActive(false);
 			foreach (Transform transform in this.Form2Transforms)
 				transform.gameObject.SetActive(true);
-		}
-	}
-
-	public Transform Transform
-	{
-		get
-		{
-			return this._transform;
 		}
 	}
 
@@ -210,8 +202,8 @@ public class WMBlock : MonoBehaviour
 			Int32[] triangles = mesh.Triangles;
 			Vector4[] tangents = mesh.Tangents;
 			mapid = (Int32)tangents[triangles[hit.triangleIndex * 3]].x;
-            return mapid != 0x31EE || ff9.w_moveCHRControlPtr.type == 1;
-        }
+			return mapid != 0x31EE || ff9.w_moveCHRControlPtr.type == 1;
+		}
 		mapid = 0;
 		return false;
 	}
@@ -231,52 +223,35 @@ public class WMBlock : MonoBehaviour
 		if (WMPhysics.RaycastOnSpecifiedTriangle(ray, mesh, triangleIndex, out hit))
 		{
 			mapid = (Int32)tangents[triangles[hit.triangleIndex * 3]].x;
-            return mapid != 0x31EE || ff9.w_moveCHRControlPtr.type == 1;
-        }
+			return mapid != 0x31EE || ff9.w_moveCHRControlPtr.type == 1;
+		}
 		mapid = 0;
 		return false;
 	}
 
 	public List<WMMesh> Form1WalkMeshes;
-
 	public List<WMMesh> Form2WalkMeshes;
-
 	public List<Transform> Form1Transforms;
-
 	public List<Transform> Form2Transforms;
 
 	public Boolean IsSea;
-
 	public Boolean HasSpecialObject;
-
 	public Boolean IsSwitchable;
-
 	public Boolean HasRiver;
-
 	public Boolean HasRiverJoint;
-
 	public Boolean HasStream;
-
 	public Boolean HasFalls;
-
 	public Boolean HasBeach1;
-
 	public Boolean HasBeach2;
-
 	public Boolean HasSea;
-
 	public Boolean HasVolcanoCrater;
-
 	public Boolean HasVolcanoLava;
 
 	public Int32 InitialX;
-
 	public Int32 InitialY;
-
 	public Int32 Number;
 
 	public Int32 CurrentX;
-
 	public Int32 CurrentY;
 
 	public Boolean IsInsideSight;
@@ -284,12 +259,77 @@ public class WMBlock : MonoBehaviour
 	public Color DebugColor = Color.yellow;
 
 	public Bounds Bounds;
-
 	public Boolean StartedLoadAsync;
-
 	private Int32 _form = 1;
-
 	public Boolean IsReady;
-
 	private Transform _transform;
+
+    public static void LoadMaterialsFromDisc()
+    {
+        if (MaterialDatabaseLoaded)
+            return;
+        Dictionary<String, Material> databaseByPath = new Dictionary<String, Material>();
+        foreach (KeyValuePair<String, String[]> entry in ObjectNameToPaths)
+        {
+            String materialPath = entry.Value[0];
+            String texturePath = entry.Value[1];
+            if (databaseByPath.TryGetValue(materialPath, out Material material))
+            {
+                if (material != null)
+                    MaterialDatabase.Add(entry.Key, material);
+                continue;
+            }
+            String externalPath = AssetManager.SearchAssetOnDisc(texturePath, true, false);
+            if (!String.IsNullOrEmpty(externalPath))
+            {
+                Texture2D texture = AssetManager.LoadFromDisc<Texture2D>(externalPath, "");
+                if (texture != null)
+                {
+                    material = AssetManager.Load<Material>(entry.Value[0], false);
+                    material.mainTexture = texture;
+                    MaterialDatabase.Add(entry.Key, material);
+                    databaseByPath.Add(materialPath, material);
+                    continue;
+                }
+            }
+            databaseByPath.Add(materialPath, null);
+        }
+        MaterialDatabaseLoaded = true;
+    }
+
+    public static Dictionary<String, Material> MaterialDatabase = new Dictionary<String, Material>();
+    private static Boolean MaterialDatabaseLoaded = false;
+    private static Dictionary<String, String[]> ObjectNameToPaths = new Dictionary<String, String[]>()
+    {
+        { "Terrain", ["WorldMap/Materials/Terrain", "WorldMap/Textures/res(1_24)_terrain.png"] }, // Repath of the texture from "EmbeddedAsset/WorldMap_Local/Textures/res(1_24)_terrain" (or simply "res(1_24)_terrain")
+        { "Terrain2", ["WorldMap/Materials/Terrain", "WorldMap/Textures/res(1_24)_terrain.png"] },
+        { "Object", ["WorldMap/Materials/Object", "WorldMap/Textures/res(1_24)_objects.png"] }, // Repath of the texture from "EmbeddedAsset/WorldMap_Local/Textures/res(1_24)_objects" (or simply "res(1_24)_objects")
+        { "Object2", ["WorldMap/Materials/Object", "WorldMap/Textures/res(1_24)_objects.png"] },
+        { "Falls", ["WorldMap/Materials/Falls", "WorldMap/Materials/11_0_192.png"] },
+        { "Stream", ["WorldMap/Materials/Stream", "WorldMap/Materials/11_64_192.png"] },
+        { "Quicksand", ["WorldMap/Materials/Quicksand_mat", "WorldMap/Materials/Quicksand.png"] },
+        { "WaterShrine", ["WorldMap/Materials/WaterShrine_mat", "WorldMap/Materials/WaterShrine.png"] },
+        { "Block[5][16] Object", ["WorldMap/Materials/Object", "WorldMap/Textures/res(1_24)_objects.png"] },
+        { "Block[14][6] Object", ["WorldMap/Materials/Object", "WorldMap/Textures/res(1_24)_objects.png"] },
+        { "Block[14][6] Object_tree", ["WorldMap/Materials/Object", "WorldMap/Textures/res(1_24)_objects.png"] },
+        { "VolcanoCrater1", ["WorldMap/Materials/0_4_0_128_mat", "WorldMap/Materials/0_4_0_128.png"] },
+        { "VolcanoCrater2", ["WorldMap/Materials/1_4_0_128", "WorldMap/Materials/1_4_0_128.png"] },
+        { "VolcanoLava1", ["WorldMap/Materials/0_4_0_192", "WorldMap/Materials/0_4_0_192.png"] },
+        { "VolcanoLava2", ["WorldMap/Materials/1_4_0_192", "WorldMap/Materials/1_4_0_192.png"] },
+
+        // These are animated by WMRenderTextureBank so they don't need to be explicitely loaded from the disc
+        //{ "Beach1", "WorldMap/Textures/11_0_128_0.png" },
+        //{ "Beach2", "WorldMap/Textures/11_128_128_0.png" },
+        //{ "Sea1", "WorldMap/Textures/10_64_0_0.png" },
+        //{ "Sea2", "WorldMap/Textures/10_128_0_0.png" },
+        //{ "Sea3", "WorldMap/Textures/10_128_64_0.png" },
+        //{ "Sea3_2", "WorldMap/Textures/10_128_64_0.png" },
+        //{ "Sea4", "WorldMap/Textures/10_128_128_0.png" },
+        //{ "Sea4_2", "WorldMap/Textures/10_128_128_0.png" },
+        //{ "Sea5", "WorldMap/Textures/11_64_0_0.png" },
+        //{ "Sea5_2", "WorldMap/Textures/11_64_0_0.png" },
+        //{ "Sea6", "WorldMap/Textures/11_192_64_0.png" },
+        //{ "River", "WorldMap/Textures/11_128_0_0.png" },
+        //{ "RiverJoint", "WorldMap/Textures/10_0_128_0.png" }
+    };
 }

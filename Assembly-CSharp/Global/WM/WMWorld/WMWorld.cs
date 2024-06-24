@@ -53,7 +53,8 @@ public class WMWorld : Singleton<WMWorld>
 	}
 
 	public void Initialize()
-	{
+    {
+		WMBlock.LoadMaterialsFromDisc();
 		if (FF9StateSystem.World.IsBeeScene)
 		{
 			GameObject gameObject = GameObject.Find("WorldMapRoot");
@@ -366,7 +367,7 @@ public class WMWorld : Singleton<WMWorld>
 		Int32 peak = 0;
 		for (Int32 i = 0; i < this.WorldSPSSystem.SpsList.Count; i++)
 		{
-            SPSEffect worldSPS = this.WorldSPSSystem.SpsList[i];
+			SPSEffect worldSPS = this.WorldSPSSystem.SpsList[i];
 			if (worldSPS.spsBin != null && worldSPS.spsId != -1)
 				peak++;
 		}
@@ -493,433 +494,243 @@ public class WMWorld : Singleton<WMWorld>
 		}
 	}
 
-	private void LoadBlock(GameObject blockObjectPrefab, WMBlock block)
-	{
-		WMBlockPrefab component = blockObjectPrefab.GetComponent<WMBlockPrefab>();
-		block.Form1WalkMeshes = new List<WMMesh>();
-		block.Form2WalkMeshes = new List<WMMesh>();
-		block.Form1Transforms = new List<Transform>();
-		if (component.ObjectForm1)
-		{
-			Transform transform = UnityEngine.Object.Instantiate<Transform>(component.ObjectForm1);
-			transform.name = component.ObjectForm1.name;
-			transform.parent = block.transform;
-			transform.localPosition = Vector3.zero;
-			transform.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh = transform.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh);
-			block.AddForm1Transform(transform);
-		}
-		if (component.TerrainForm1)
-		{
-			Transform transform2 = UnityEngine.Object.Instantiate<Transform>(component.TerrainForm1);
-			transform2.name = component.TerrainForm1.name;
-			transform2.parent = block.transform;
-			transform2.localPosition = Vector3.zero;
-			transform2.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh2 = transform2.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh2);
-			block.AddForm1Transform(transform2);
-		}
-		if (component.ObjectForm2)
-		{
-			Transform transform3 = UnityEngine.Object.Instantiate<Transform>(component.ObjectForm2);
-			transform3.name = component.ObjectForm2.name;
-			transform3.parent = block.transform;
-			transform3.localPosition = Vector3.zero;
-			transform3.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh3 = transform3.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm2(sharedMesh3);
-			block.AddForm2Transform(transform3);
-		}
-		if (component.TerrainForm2)
-		{
-			Transform transform4 = UnityEngine.Object.Instantiate<Transform>(component.TerrainForm2);
-			transform4.name = component.TerrainForm2.name;
-			transform4.parent = block.transform;
-			transform4.localPosition = Vector3.zero;
-			transform4.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh4 = transform4.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm2(sharedMesh4);
-			block.AddForm2Transform(transform4);
-		}
-		if (block.Number == 219)
-		{
-			if (component.Sea3)
-			{
-				Transform transform5 = UnityEngine.Object.Instantiate<Transform>(component.Sea3);
-				transform5.name = component.Sea3.name;
-				transform5.parent = block.transform;
-				transform5.localPosition = Vector3.zero;
-				transform5.localScale = new Vector3(1f, 1f, 1f);
-				Mesh sharedMesh5 = transform5.GetComponent<MeshFilter>().sharedMesh;
-				block.AddWalkMeshForm1(sharedMesh5);
-				block.AddForm1Transform(transform5);
-				block.HasSea = true;
-			}
-			if (component.Sea4)
-			{
-				Transform transform6 = UnityEngine.Object.Instantiate<Transform>(component.Sea4);
-				transform6.name = component.Sea4.name;
-				transform6.parent = block.transform;
-				transform6.localPosition = Vector3.zero;
-				transform6.localScale = new Vector3(1f, 1f, 1f);
-				Mesh sharedMesh6 = transform6.GetComponent<MeshFilter>().sharedMesh;
-				block.AddWalkMeshForm1(sharedMesh6);
-				block.AddForm1Transform(transform6);
-				block.HasSea = true;
-			}
-			if (component.Sea5)
-			{
-				Transform transform7 = UnityEngine.Object.Instantiate<Transform>(component.Sea5);
-				transform7.name = component.Sea5.name;
-				transform7.parent = block.transform;
-				transform7.localPosition = Vector3.zero;
-				transform7.localScale = new Vector3(1f, 1f, 1f);
-				Mesh sharedMesh7 = transform7.GetComponent<MeshFilter>().sharedMesh;
-				block.AddWalkMeshForm1(sharedMesh7);
-				block.AddForm1Transform(transform7);
-				block.HasSea = true;
-			}
-			if (component.Sea3_2)
-			{
-				Transform transform8 = UnityEngine.Object.Instantiate<Transform>(component.Sea3_2);
-				transform8.name = component.Sea3_2.name;
-				transform8.parent = block.transform;
-				transform8.localPosition = Vector3.zero;
-				transform8.localScale = new Vector3(1f, 1f, 1f);
-				Mesh sharedMesh8 = transform8.GetComponent<MeshFilter>().sharedMesh;
-				block.AddWalkMeshForm2(sharedMesh8);
-				block.AddForm2Transform(transform8);
-			}
-			if (component.Sea4_2)
-			{
-				Transform transform9 = UnityEngine.Object.Instantiate<Transform>(component.Sea4_2);
-				transform9.name = component.Sea4_2.name;
-				transform9.parent = block.transform;
-				transform9.localPosition = Vector3.zero;
-				transform9.localScale = new Vector3(1f, 1f, 1f);
-				Mesh sharedMesh9 = transform9.GetComponent<MeshFilter>().sharedMesh;
-				block.AddWalkMeshForm2(sharedMesh9);
-				block.AddForm2Transform(transform9);
-			}
-			if (component.Sea5_2)
-			{
-				Transform transform10 = UnityEngine.Object.Instantiate<Transform>(component.Sea5_2);
-				transform10.name = component.Sea5_2.name;
-				transform10.parent = block.transform;
-				transform10.localPosition = Vector3.zero;
-				transform10.localScale = new Vector3(1f, 1f, 1f);
-				Mesh sharedMesh10 = transform10.GetComponent<MeshFilter>().sharedMesh;
-				block.AddWalkMeshForm2(sharedMesh10);
-				block.AddForm2Transform(transform10);
-			}
-			GameObject gameObject = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/WaterShrine", false);
-			if (gameObject)
-			{
-				GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(gameObject);
-				gameObject2.transform.parent = block.transform;
-				gameObject2.transform.localPosition = new Vector3(32.11f, -2.46f, -31.69f);
-				block.AddForm2Transform(gameObject2.transform);
-			}
-			block.ApplyForm();
-			return;
-		}
-		if (component.Beach1)
-		{
-			Transform transform11 = UnityEngine.Object.Instantiate<Transform>(component.Beach1);
-			transform11.name = component.Beach1.name;
-			transform11.parent = block.transform;
-			transform11.localPosition = Vector3.zero;
-			transform11.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh11 = transform11.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh11);
-			block.AddWalkMeshForm2(sharedMesh11);
-			block.AddForm1Transform(transform11);
-			block.AddForm2Transform(transform11);
-			block.HasBeach1 = true;
-		}
-		if (component.Beach2)
-		{
-			Transform transform12 = UnityEngine.Object.Instantiate<Transform>(component.Beach2);
-			transform12.name = component.Beach2.name;
-			transform12.parent = block.transform;
-			transform12.localPosition = Vector3.zero;
-			transform12.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh12 = transform12.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh12);
-			block.AddWalkMeshForm2(sharedMesh12);
-			block.AddForm1Transform(transform12);
-			block.AddForm2Transform(transform12);
-			block.HasBeach2 = true;
-		}
-		if (component.Stream)
-		{
-			Transform transform13 = UnityEngine.Object.Instantiate<Transform>(component.Stream);
-			transform13.name = component.Stream.name;
-			transform13.parent = block.transform;
-			transform13.localPosition = Vector3.zero;
-			transform13.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh13 = transform13.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh13);
-			block.AddWalkMeshForm2(sharedMesh13);
-			block.AddForm1Transform(transform13);
-			block.AddForm2Transform(transform13);
-			block.HasStream = true;
-		}
-		if (component.River)
-		{
-			Transform transform14 = UnityEngine.Object.Instantiate<Transform>(component.River);
-			transform14.name = component.River.name;
-			transform14.parent = block.transform;
-			transform14.localPosition = Vector3.zero;
-			transform14.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh14 = transform14.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh14);
-			block.AddWalkMeshForm2(sharedMesh14);
-			block.AddForm1Transform(transform14);
-			block.AddForm2Transform(transform14);
-			block.HasRiver = true;
-		}
-		if (component.RiverJoint)
-		{
-			Transform transform15 = UnityEngine.Object.Instantiate<Transform>(component.RiverJoint);
-			transform15.name = component.RiverJoint.name;
-			transform15.parent = block.transform;
-			transform15.localPosition = Vector3.zero;
-			transform15.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh15 = transform15.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh15);
-			block.AddWalkMeshForm2(sharedMesh15);
-			block.AddForm1Transform(transform15);
-			block.AddForm2Transform(transform15);
-			block.HasRiverJoint = true;
-		}
-		if (component.Falls)
-		{
-			Transform transform16 = UnityEngine.Object.Instantiate<Transform>(component.Falls);
-			transform16.name = component.Falls.name;
-			transform16.parent = block.transform;
-			transform16.localPosition = Vector3.zero;
-			transform16.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh16 = transform16.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh16);
-			block.AddWalkMeshForm2(sharedMesh16);
-			block.AddForm1Transform(transform16);
-			block.AddForm2Transform(transform16);
-			block.HasFalls = true;
-		}
-		if (component.Sea1)
-		{
-			Transform transform17 = UnityEngine.Object.Instantiate<Transform>(component.Sea1);
-			transform17.name = component.Sea1.name;
-			transform17.parent = block.transform;
-			transform17.localPosition = Vector3.zero;
-			transform17.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh17 = transform17.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh17);
-			block.AddWalkMeshForm2(sharedMesh17);
-			block.AddForm1Transform(transform17);
-			block.AddForm2Transform(transform17);
-			block.HasSea = true;
-		}
-		if (component.Sea2)
-		{
-			Transform transform18 = UnityEngine.Object.Instantiate<Transform>(component.Sea2);
-			transform18.name = component.Sea2.name;
-			transform18.parent = block.transform;
-			transform18.localPosition = Vector3.zero;
-			transform18.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh18 = transform18.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh18);
-			block.AddWalkMeshForm2(sharedMesh18);
-			block.AddForm1Transform(transform18);
-			block.AddForm2Transform(transform18);
-			block.HasSea = true;
-		}
-		if (component.Sea3)
-		{
-			Transform transform19 = UnityEngine.Object.Instantiate<Transform>(component.Sea3);
-			transform19.name = component.Sea3.name;
-			transform19.parent = block.transform;
-			transform19.localPosition = Vector3.zero;
-			transform19.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh19 = transform19.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh19);
-			block.AddWalkMeshForm2(sharedMesh19);
-			block.AddForm1Transform(transform19);
-			block.AddForm2Transform(transform19);
-			block.HasSea = true;
-		}
-		if (component.Sea4)
-		{
-			Transform transform20 = UnityEngine.Object.Instantiate<Transform>(component.Sea4);
-			transform20.name = component.Sea4.name;
-			transform20.parent = block.transform;
-			transform20.localPosition = Vector3.zero;
-			transform20.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh20 = transform20.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh20);
-			block.AddWalkMeshForm2(sharedMesh20);
-			block.AddForm1Transform(transform20);
-			block.AddForm2Transform(transform20);
-			block.HasSea = true;
-		}
-		if (component.Sea5)
-		{
-			Transform transform21 = UnityEngine.Object.Instantiate<Transform>(component.Sea5);
-			transform21.name = component.Sea5.name;
-			transform21.parent = block.transform;
-			transform21.localPosition = Vector3.zero;
-			transform21.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh21 = transform21.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh21);
-			block.AddWalkMeshForm2(sharedMesh21);
-			block.AddForm1Transform(transform21);
-			block.AddForm2Transform(transform21);
-			block.HasSea = true;
-		}
-		if (component.Sea6)
-		{
-			Transform transform22 = UnityEngine.Object.Instantiate<Transform>(component.Sea6);
-			transform22.name = component.Sea6.name;
-			transform22.parent = block.transform;
-			transform22.localPosition = Vector3.zero;
-			transform22.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh22 = transform22.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh22);
-			block.AddWalkMeshForm2(sharedMesh22);
-			block.AddForm1Transform(transform22);
-			block.AddForm2Transform(transform22);
-			block.HasSea = true;
-		}
-		if (component.VolcanoCrater1)
-		{
-			Transform transform23 = UnityEngine.Object.Instantiate<Transform>(component.VolcanoCrater1);
-			transform23.name = component.VolcanoCrater1.name;
-			transform23.parent = block.transform;
-			transform23.localPosition = Vector3.zero;
-			transform23.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh23 = transform23.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh23);
-			block.AddForm1Transform(transform23);
-			block.HasVolcanoCrater = true;
-		}
-		if (component.VolcanoLava1)
-		{
-			Transform transform24 = UnityEngine.Object.Instantiate<Transform>(component.VolcanoLava1);
-			transform24.name = component.VolcanoLava1.name;
-			transform24.parent = block.transform;
-			transform24.localPosition = Vector3.zero;
-			transform24.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh24 = transform24.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm1(sharedMesh24);
-			block.AddForm1Transform(transform24);
-			block.HasVolcanoLava = true;
-		}
-		if (component.VolcanoCrater2)
-		{
-			Transform transform25 = UnityEngine.Object.Instantiate<Transform>(component.VolcanoCrater2);
-			transform25.name = component.VolcanoCrater2.name;
-			transform25.parent = block.transform;
-			transform25.localPosition = Vector3.zero;
-			transform25.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh25 = transform25.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm2(sharedMesh25);
-			block.AddForm2Transform(transform25);
-			block.HasVolcanoCrater = true;
-		}
-		if (component.VolcanoLava2)
-		{
-			Transform transform26 = UnityEngine.Object.Instantiate<Transform>(component.VolcanoLava2);
-			transform26.name = component.VolcanoLava2.name;
-			transform26.parent = block.transform;
-			transform26.localPosition = Vector3.zero;
-			transform26.localScale = new Vector3(1f, 1f, 1f);
-			Mesh sharedMesh26 = transform26.GetComponent<MeshFilter>().sharedMesh;
-			block.AddWalkMeshForm2(sharedMesh26);
-			block.AddForm2Transform(transform26);
-			block.HasVolcanoLava = true;
-		}
-		if (block.Number == 91)
-		{
-			GameObject gameObject3 = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/Quicksand", false);
-			if (gameObject3)
-			{
-				GameObject gameObject4 = UnityEngine.Object.Instantiate<GameObject>(gameObject3);
-				gameObject4.transform.parent = block.transform;
-				gameObject4.transform.localPosition = new Vector3(8f, 1.66f, -60f);
-			}
-		}
-		if (block.Number == 115)
-		{
-			GameObject gameObject5 = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/Quicksand", false);
-			if (gameObject5)
-			{
-				GameObject gameObject6 = UnityEngine.Object.Instantiate<GameObject>(gameObject5);
-				gameObject6.transform.parent = block.transform;
-				gameObject6.transform.localPosition = new Vector3(23.68f, 1.18f, -23.98f);
-				gameObject6 = UnityEngine.Object.Instantiate<GameObject>(gameObject5);
-				gameObject6.transform.parent = block.transform;
-				gameObject6.transform.localPosition = new Vector3(4f, 1.18f, -16f);
-				gameObject6 = UnityEngine.Object.Instantiate<GameObject>(gameObject5);
-				gameObject6.transform.parent = block.transform;
-				gameObject6.transform.localPosition = new Vector3(28f, 1.18f, -4f);
-			}
-		}
-		if (block.Number == 158 && ff9.w_frameDisc == 4)
-		{
-			GameObject gameObject7 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[14][6] Object", false);
-			if (gameObject7)
-			{
-				Transform transform27 = block.transform.Find("Object");
-				if (transform27)
-					transform27.GetComponent<Renderer>().enabled = false;
-				GameObject gameObject8 = UnityEngine.Object.Instantiate<GameObject>(gameObject7);
-				gameObject8.transform.parent = block.transform;
-				gameObject8.transform.localPosition = new Vector3(0f, 0f, 0f);
-			}
-			gameObject7 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[14][6] Object_tree", false);
-			if (gameObject7)
-			{
-				GameObject gameObject9 = UnityEngine.Object.Instantiate<GameObject>(gameObject7);
-				gameObject9.transform.parent = block.transform;
-				gameObject9.transform.localPosition = new Vector3(0f, 0f, 0f);
-			}
-		}
-		if (block.Number == 219)
-		{
-		}
-		if (block.Number == 31)
-		{
-		}
-		if (block.Number == 115)
-		{
-		}
-		if (block.Number == 283)
-		{
-		}
-		if (block.Number == 219)
-		{
-		}
-		if (block.Number == 397)
-		{
-		}
-		if (block.Number == 389)
-		{
-			GameObject gameObject10 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[5][16] Object", false);
-			if (gameObject10)
-			{
-				Transform transform28 = block.transform.Find("Object");
-				if (transform28)
-					transform28.GetComponent<Renderer>().enabled = false;
-				GameObject gameObject11 = UnityEngine.Object.Instantiate<GameObject>(gameObject10);
-				gameObject11.transform.parent = block.transform;
-				gameObject11.transform.localPosition = new Vector3(0f, 0f, 0f);
-			}
-		}
-		block.ApplyForm();
-	}
+    private void LoadBlock(GameObject blockObjectPrefab, WMBlock block)
+    {
+        WMBlockPrefab prefab = blockObjectPrefab.GetComponent<WMBlockPrefab>();
+        block.Form1WalkMeshes = new List<WMMesh>();
+        block.Form2WalkMeshes = new List<WMMesh>();
+        block.Form1Transforms = new List<Transform>();
+        if (prefab.ObjectForm1)
+            RegisterBlockComponent(block, prefab.ObjectForm1, true, false);
+        if (prefab.TerrainForm1)
+            RegisterBlockComponent(block, prefab.TerrainForm1, true, false);
+        if (prefab.ObjectForm2)
+            RegisterBlockComponent(block, prefab.ObjectForm2, false, true);
+        if (prefab.TerrainForm2)
+            RegisterBlockComponent(block, prefab.TerrainForm2, false, true);
+        if (block.Number == 219)
+        {
+            if (prefab.Sea3)
+            {
+                RegisterBlockComponent(block, prefab.Sea3, true, false);
+                block.HasSea = true;
+            }
+            if (prefab.Sea4)
+            {
+                RegisterBlockComponent(block, prefab.Sea4, true, false);
+                block.HasSea = true;
+            }
+            if (prefab.Sea5)
+            {
+                RegisterBlockComponent(block, prefab.Sea5, true, false);
+                block.HasSea = true;
+            }
+            if (prefab.Sea3_2)
+                RegisterBlockComponent(block, prefab.Sea3_2, false, true);
+            if (prefab.Sea4_2)
+                RegisterBlockComponent(block, prefab.Sea4_2, false, true);
+            if (prefab.Sea5_2)
+                RegisterBlockComponent(block, prefab.Sea5_2, false, true);
+            GameObject waterShrineGo = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/WaterShrine", false);
+            if (waterShrineGo)
+            {
+                GameObject waterShrineCopy = UnityEngine.Object.Instantiate<GameObject>(waterShrineGo);
+                waterShrineCopy.transform.name = waterShrineGo.transform.name;
+                waterShrineCopy.transform.parent = block.transform;
+                waterShrineCopy.transform.localPosition = new Vector3(32.11f, -2.46f, -31.69f);
+                block.AddForm2Transform(waterShrineCopy.transform);
+            }
+            block.SetupPreloadedMaterials();
+            block.ApplyForm();
+            return;
+        }
+        if (prefab.Beach1)
+        {
+            RegisterBlockComponent(block, prefab.Beach1, true, true);
+            block.HasBeach1 = true;
+        }
+        if (prefab.Beach2)
+        {
+            RegisterBlockComponent(block, prefab.Beach2, true, true);
+            block.HasBeach2 = true;
+        }
+        if (prefab.Stream)
+        {
+            RegisterBlockComponent(block, prefab.Stream, true, true);
+            block.HasStream = true;
+        }
+        if (prefab.River)
+        {
+            RegisterBlockComponent(block, prefab.River, true, true);
+            block.HasRiver = true;
+        }
+        if (prefab.RiverJoint)
+        {
+            RegisterBlockComponent(block, prefab.RiverJoint, true, true);
+            block.HasRiverJoint = true;
+        }
+        if (prefab.Falls)
+        {
+            RegisterBlockComponent(block, prefab.Falls, true, true);
+            block.HasFalls = true;
+        }
+        if (prefab.Sea1)
+        {
+            RegisterBlockComponent(block, prefab.Sea1, true, true);
+            block.HasSea = true;
+        }
+        if (prefab.Sea2)
+        {
+            RegisterBlockComponent(block, prefab.Sea2, true, true);
+            block.HasSea = true;
+        }
+        if (prefab.Sea3)
+        {
+            RegisterBlockComponent(block, prefab.Sea3, true, true);
+            block.HasSea = true;
+        }
+        if (prefab.Sea4)
+        {
+            RegisterBlockComponent(block, prefab.Sea4, true, true);
+            block.HasSea = true;
+        }
+        if (prefab.Sea5)
+        {
+            RegisterBlockComponent(block, prefab.Sea5, true, true);
+            block.HasSea = true;
+        }
+        if (prefab.Sea6)
+        {
+            RegisterBlockComponent(block, prefab.Sea6, true, true);
+            block.HasSea = true;
+        }
+        if (prefab.VolcanoCrater1)
+        {
+            RegisterBlockComponent(block, prefab.VolcanoCrater1, true, false);
+            block.HasVolcanoCrater = true;
+        }
+        if (prefab.VolcanoLava1)
+        {
+            RegisterBlockComponent(block, prefab.VolcanoLava1, true, false);
+            block.HasVolcanoLava = true;
+        }
+        if (prefab.VolcanoCrater2)
+        {
+            RegisterBlockComponent(block, prefab.VolcanoCrater2, false, true);
+            block.HasVolcanoCrater = true;
+        }
+        if (prefab.VolcanoLava2)
+        {
+            RegisterBlockComponent(block, prefab.VolcanoLava2, false, true);
+            block.HasVolcanoLava = true;
+        }
+        if (block.Number == 91)
+        {
+            GameObject quicksandGo = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/Quicksand", false);
+            if (quicksandGo)
+            {
+                GameObject quicksandCopy = UnityEngine.Object.Instantiate<GameObject>(quicksandGo);
+                quicksandCopy.transform.name = quicksandGo.transform.name;
+                quicksandCopy.transform.parent = block.transform;
+                quicksandCopy.transform.localPosition = new Vector3(8f, 1.66f, -60f);
+            }
+        }
+        if (block.Number == 115)
+        {
+            GameObject quicksandGo = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/Quicksand", false);
+            if (quicksandGo)
+            {
+                GameObject quicksandCopy = UnityEngine.Object.Instantiate<GameObject>(quicksandGo);
+                quicksandCopy.transform.name = quicksandGo.transform.name;
+                quicksandCopy.transform.parent = block.transform;
+                quicksandCopy.transform.localPosition = new Vector3(23.68f, 1.18f, -23.98f);
+                quicksandCopy = UnityEngine.Object.Instantiate<GameObject>(quicksandGo);
+                quicksandCopy.transform.name = quicksandGo.transform.name;
+                quicksandCopy.transform.parent = block.transform;
+                quicksandCopy.transform.localPosition = new Vector3(4f, 1.18f, -16f);
+                quicksandCopy = UnityEngine.Object.Instantiate<GameObject>(quicksandGo);
+                quicksandCopy.transform.name = quicksandGo.transform.name;
+                quicksandCopy.transform.parent = block.transform;
+                quicksandCopy.transform.localPosition = new Vector3(28f, 1.18f, -4f);
+            }
+        }
+        if (block.Number == 158 && ff9.w_frameDisc == 4)
+        {
+            GameObject block146Go = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[14][6] Object", false);
+            if (block146Go)
+            {
+                Transform obj = block.transform.Find("Object");
+                if (obj)
+                    obj.GetComponent<Renderer>().enabled = false;
+                GameObject block146Copy = UnityEngine.Object.Instantiate<GameObject>(block146Go);
+                block146Copy.transform.name = block146Go.transform.name;
+                block146Copy.transform.parent = block.transform;
+                block146Copy.transform.localPosition = new Vector3(0f, 0f, 0f);
+            }
+            block146Go = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[14][6] Object_tree", false);
+            if (block146Go)
+            {
+                GameObject block146Copy = UnityEngine.Object.Instantiate<GameObject>(block146Go);
+                block146Copy.transform.name = block146Go.transform.name;
+                block146Copy.transform.parent = block.transform;
+                block146Copy.transform.localPosition = new Vector3(0f, 0f, 0f);
+            }
+        }
+        if (block.Number == 219)
+        {
+        }
+        if (block.Number == 31)
+        {
+        }
+        if (block.Number == 115)
+        {
+        }
+        if (block.Number == 283)
+        {
+        }
+        if (block.Number == 219)
+        {
+        }
+        if (block.Number == 397)
+        {
+        }
+        if (block.Number == 389)
+        {
+            GameObject block516Go = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[5][16] Object", false);
+            if (block516Go)
+            {
+                Transform obj = block.transform.Find("Object");
+                if (obj)
+                    obj.GetComponent<Renderer>().enabled = false;
+                GameObject block516Copy = UnityEngine.Object.Instantiate<GameObject>(block516Go);
+                block516Copy.transform.name = block516Go.transform.name;
+                block516Copy.transform.parent = block.transform;
+                block516Copy.transform.localPosition = new Vector3(0f, 0f, 0f);
+            }
+        }
+        block.SetupPreloadedMaterials();
+        block.ApplyForm();
+    }
+
+    private void RegisterBlockComponent(WMBlock block, Transform transform, Boolean form1, Boolean form2)
+    {
+        Transform copy = UnityEngine.Object.Instantiate<Transform>(transform);
+        copy.name = transform.name;
+        copy.parent = block.transform;
+        copy.localPosition = Vector3.zero;
+        copy.localScale = new Vector3(1f, 1f, 1f);
+        Mesh mesh = copy.GetComponent<MeshFilter>().sharedMesh;
+        if (form1)
+        {
+            block.AddWalkMeshForm1(mesh);
+            block.AddForm1Transform(copy);
+        }
+        if (form2)
+        {
+            block.AddWalkMeshForm2(mesh);
+            block.AddForm2Transform(copy);
+        }
+    }
 
 	private IEnumerator LoadBlockAsync(Int32 disc, WMBlock block)
 	{
@@ -2043,14 +1854,16 @@ public class WMWorld : Singleton<WMWorld>
 
 	public void LoadQuicksandMaterial()
 	{
-		this.QuicksandMaterial = AssetManager.Load<Material>("WorldMap/Materials/quicksand_mat", false);
-		Texture2D texture = AssetManager.Load<Texture2D>("EmbeddedAsset/WorldMap_Local/Textures/SeamlessRock", false);
-		this.QuicksandMaterial.SetTexture("_DetailTex", texture);
+		if (!WMBlock.MaterialDatabase.TryGetValue("Quicksand", out this.QuicksandMaterial))
+			this.QuicksandMaterial = AssetManager.Load<Material>("WorldMap/Materials/quicksand_mat", false);
+		Texture2D detailTexture = AssetManager.Load<Texture2D>("EmbeddedAsset/WorldMap_Local/Textures/SeamlessRock", false);
+		this.QuicksandMaterial.SetTexture("_DetailTex", detailTexture);
 	}
 
 	public void LoadWaterShrineMaterial()
 	{
-		this.WaterShrineMaterial = AssetManager.Load<Material>("WorldMap/Materials/WaterShrine_mat", false);
+		if (!WMBlock.MaterialDatabase.TryGetValue("WaterShrine", out this.WaterShrineMaterial))
+			this.WaterShrineMaterial = AssetManager.Load<Material>("WorldMap/Materials/WaterShrine_mat", false);
 	}
 
 	public void CreateProjectionMatrix()

@@ -585,12 +585,9 @@ public static class btl_init
 	{
 		// Set normal model
 		String modelName = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(btl.dms_geo_id);
-		Int32 scale = 1;
-		if (ModelFactory.HaveUpScaleModel(modelName))
-			scale = 4;
 
 		GEOTEXHEADER textureAnim = new GEOTEXHEADER();
-		textureAnim.ReadPlayerTextureAnim(btl, "Models/GeoTexAnim/" + modelName + ".tab", scale);
+		textureAnim.ReadBattleTextureAnim(btl, "Models/GeoTexAnim/" + modelName + ".tab");
 		btl.texanimptr = textureAnim;
 
 		// Set trance model
@@ -599,7 +596,7 @@ public static class btl_init
 
 		String tranceModelName = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)].TranceModelId;
 		GEOTEXHEADER tranceTextureAnim = new GEOTEXHEADER();
-		tranceTextureAnim.ReadTrancePlayerTextureAnim(btl, tranceModelName, scale);
+		tranceTextureAnim.ReadTranceTextureAnim(btl, tranceModelName);
 		btl.tranceTexanimptr = tranceTextureAnim;
 	}
 

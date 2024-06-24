@@ -570,7 +570,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         }
         catch (Exception err)
         {
-            Memoria.Prime.Log.Error(err);
+            Log.Error(err);
         }
     }
 

@@ -11,6 +11,8 @@ public static class btl_eqp
     {
         { 380, 21 }, // Fratley - GEO_SUB_F0_FLT
         { 410, 31 }, // Lani - GEO_MON_B3_122 or GEO_MON_UP3_122
+        { 301, 17 }, // Baku - GEO_MON_B3_105
+        { 359, 19 }, // King Leo - GEO_MON_B3_106
     };
 
     public static void InitWeapon(PLAYER p, BTL_DATA btl)

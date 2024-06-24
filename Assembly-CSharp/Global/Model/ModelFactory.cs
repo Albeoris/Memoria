@@ -79,6 +79,7 @@ public static class ModelFactory
                 String textureFileName = geoId + "_" + textureId;
                 String texturePath = "Models/2/" + geoId + "/" + textureFileName;
                 Texture texture = AssetManager.Load<Texture>(texturePath, false);
+                texture.name = name;
                 renderer.material.SetTexture("_MainTex", texture);
                 checkTextureOnDisc = false;
             }
@@ -98,7 +99,11 @@ public static class ModelFactory
             {
                 String externalPath = AssetManager.SearchAssetOnDisc(texturePath.Replace("%", renderer.material.mainTexture.name), true, false);
                 if (!String.IsNullOrEmpty(externalPath))
-                    renderer.material.mainTexture = AssetManager.LoadFromDisc<Texture2D>(externalPath, "");
+                {
+                    Texture texture = AssetManager.LoadFromDisc<Texture2D>(externalPath, "");
+                    texture.name = renderer.material.mainTexture.name;
+                    renderer.material.mainTexture = texture;
+                }
             }
         }
         Shader shader;
