@@ -19,8 +19,7 @@ namespace Memoria.Data
         public SByte[] StatusOffsetY = new SByte[6];
         public SByte[] StatusOffsetZ = new SByte[6];
         public Int32[] WeaponSound = new Int32[0];
-        public Single[] WeaponOffsetPos = new Single[] { 0, 0, 0 }; // TODO <====== Unify
-        public Single[] WeaponOffsetRot = new Single[] { 0, 0, 0 };
+        public Single[] WeaponOffset = new Single[6]; // Maybe add it to TranceParameters too ? (for model which can't handle weapons properly)
         public Boolean TranceParameters = false;
         public String[] TranceAnimationId = new String[34];
         public SpecialEffect TranceAttackSequence;
@@ -63,24 +62,11 @@ namespace Memoria.Data
             else if (FF9Snd.ff9battleSoundWeaponSndEffect02.TryGetValue(Id, out Int32[] sounds))
                 WeaponSound = sounds;
 
-            if (metadata.HasOption($"Include{nameof(WeaponOffsetPos)}"))
+            if (metadata.HasOption($"Include{nameof(WeaponOffset)}"))
             {
-                string[] WeaponOffsetPosExtract = CsvParser.String(raw[rawIndex++]).Split(','); ;
-                if (WeaponOffsetPosExtract.Length == 3)
-                {
-                    for (Int32 i = 0; i < WeaponOffsetPosExtract.Length; i++)
-                        WeaponOffsetPos[i] = Convert.ToSingle(WeaponOffsetPosExtract[i]);
-                }
-            }
-
-            if (metadata.HasOption($"Include{nameof(WeaponOffsetRot)}"))
-            {
-                string[] WeaponOffsetRotExtract = CsvParser.String(raw[rawIndex++]).Split(','); ;
-                if (WeaponOffsetRotExtract.Length == 3)
-                {
-                    for (Int32 i = 0; i < WeaponOffsetRotExtract.Length; i++)
-                        WeaponOffsetRot[i] = Convert.ToSingle(WeaponOffsetRotExtract[i]);
-                }
+                WeaponOffset = CsvParser.SingleArray(raw[rawIndex++]);
+                if (WeaponOffset.Length == 6)
+                    Array.Resize(ref WeaponOffset, 6);
             }
             if (metadata.HasOption($"Include{nameof(TranceParameters)}"))
             {
@@ -119,13 +105,23 @@ namespace Memoria.Data
             writer.ByteArray(StatusBone);
             writer.SByteArray(StatusOffsetY);
             writer.SByteArray(StatusOffsetZ);
-            writer.SingleArray(WeaponOffsetPos);
-            writer.SingleArray(WeaponOffsetRot);
-            for (Int32 i = 0; i < 34; i++)
-                writer.String(TranceAnimationId[i]);
-
+            
             if (metadata.HasOption($"Include{nameof(WeaponSound)}"))
                 writer.Int32Array(WeaponSound);
+            if (metadata.HasOption($"Include{nameof(WeaponOffset)}"))
+                writer.SingleArray(WeaponOffset);
+            if (metadata.HasOption($"Include{nameof(TranceParameters)}"))
+            {
+                for (Int32 i = 0; i < 34; i++)
+                    writer.String(TranceAnimationId[i]);
+                writer.Int32((Int32)TranceAttackSequence);
+                writer.Byte(TranceWeaponBone);
+                writer.ByteArray(TranceShadowData);
+                writer.ByteArray(TranceStatusBone);
+                writer.SByteArray(TranceStatusOffsetY);
+                writer.SByteArray(TranceStatusOffsetY);
+                writer.Int32Array(TranceWeaponSound);
+            }
         }
     }
 }

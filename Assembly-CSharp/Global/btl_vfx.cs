@@ -5,6 +5,7 @@ using Memoria.Data;
 using Memoria.Assets;
 using UnityEngine;
 using Object = System.Object;
+using System.Linq;
 
 public static class btl_vfx
 {
@@ -235,13 +236,10 @@ public static class btl_vfx
         //btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
 
-        Single[] WeaponOffsetPos = btl_mot.BattleParameterList[serialNo].WeaponOffsetPos;
-        Single[] WeaponOffsetRot = btl_mot.BattleParameterList[serialNo].WeaponOffsetRot;
-
-        if (WeaponOffsetPos.Length == 3 && WeaponOffsetRot.Length == 3)
+        if (btlParam.WeaponOffset.Sum() != 0) // Don't edit values if all values are 0
         {
-            btl.weapon_geo.transform.localPosition = new Vector3(WeaponOffsetPos[0], WeaponOffsetPos[1], WeaponOffsetPos[2]);
-            btl.weapon_geo.transform.localRotation = Quaternion.Euler(WeaponOffsetRot[0], WeaponOffsetRot[1], WeaponOffsetRot[2]);
+            btl.weapon_geo.transform.localPosition = new Vector3(btlParam.WeaponOffset[0], btlParam.WeaponOffset[1], btlParam.WeaponOffset[2]);
+            btl.weapon_geo.transform.localRotation = Quaternion.Euler(btlParam.WeaponOffset[3], btlParam.WeaponOffset[4], btlParam.WeaponOffset[5]);
         }
     }
 
