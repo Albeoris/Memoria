@@ -453,7 +453,7 @@ public class GeoTexAnim : HonoBehavior
 	{
 		mainTextureIndex = 0;
 		subTextureIndex = 0;
-		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv");
+		String textAsset = AssetManager.LoadString("EmbeddedAsset/GeoTexAnimIndex/" + geoName + ".csv", true);
 		if (textAsset == null)
 			return;
 		String[] array = textAsset.Split(new Char[]

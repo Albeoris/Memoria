@@ -172,6 +172,7 @@ public class SaveLoadUI : UIScene
 					base.StartCoroutine("RunProgressBar");
 					this.timeCounter = Time.time;
 					base.Loading = true;
+					SoundLib.AllSoundDispatchPlayer.StopAllSounds();
 					FF9StateSystem.Serializer.Load(this.currentSlot, this.currentFile, (ISharedDataSerializer.OnSaveLoadStart)null, new ISharedDataSerializer.OnLoadFinish(this.OnFinishedLoadFile));
 				}
 				else

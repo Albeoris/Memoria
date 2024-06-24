@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Memoria;
 using Memoria.Data;
+using Memoria.Database;
 using Memoria.Scripts;
 using UnityEngine;
 
@@ -280,6 +281,17 @@ namespace FF9
 			return cmdNo < BattleCommandId.BoundaryCheck || cmdNo > BattleCommandId.BoundaryUpperCheck;
 		}
 
+        public static CharacterCommandType GetCommandTypeSafe(BattleCommandId cmdNo)
+        {
+            if (cmdNo == BattleCommandId.Item || cmdNo == BattleCommandId.AutoPotion)
+                return CharacterCommandType.Item;
+            if (cmdNo == BattleCommandId.Throw)
+                return CharacterCommandType.Throw;
+            if (CharacterCommands.Commands.TryGetValue(cmdNo, out CharacterCommand chcmd))
+                return chcmd.Type;
+            return CharacterCommandType.Normal;
+        }
+
 		public static BattleAbilityId GetCommandMainActionIndex(CMD_DATA cmd)
 		{
             if (cmd.regist != null && cmd.regist.bi.player == 0)
@@ -288,7 +300,12 @@ namespace FF9
 				return BattleAbilityId.Void;
 			if (IsCommandMonsterTransformAttack(cmd))
 				return BattleAbilityId.Attack;
-			switch (cmd.cmd_no)
+            CharacterCommandType cmdType = GetCommandTypeSafe(cmd.cmd_no);
+            if (cmdType == CharacterCommandType.Item)
+                return BattleAbilityId.Void;
+            else if (cmdType == CharacterCommandType.Throw)
+                return BattleAbilityId.Throw;
+            switch (cmd.cmd_no)
 			{
 				case BattleCommandId.SysEscape:
 					return BattleAbilityId.Flee2;
@@ -313,17 +330,12 @@ namespace FF9
                 return RegularItem.NoItem;
             if (IsCommandMonsterTransform(cmd) || IsCommandMonsterTransformAttack(cmd))
                 return RegularItem.NoItem;
-            if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
-                return ff9mixitem.MixItemsData[cmd.sub_no].Result;
-            switch (cmd.cmd_no)
-            {
-                case BattleCommandId.Throw:
-                case BattleCommandId.Item:
-                case BattleCommandId.AutoPotion:
-                    return (RegularItem)cmd.sub_no;
-                default:
-                    return RegularItem.NoItem;
-            }
+            if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
+                return MixChoosen.Result;
+            CharacterCommandType cmdType = GetCommandTypeSafe(cmd.cmd_no);
+            if (cmdType == CharacterCommandType.Item || cmdType == CharacterCommandType.Throw)
+                return (RegularItem)cmd.sub_no;
+            return RegularItem.NoItem;
         }
 
         public static AA_DATA GetCommandMonsterAttack(CMD_DATA cmd)
@@ -349,8 +361,13 @@ namespace FF9
 
 		public static Int32 GetCommandScriptId(CMD_DATA cmd)
 		{
-            if (BattleHUD.MixCommandSet.Contains(cmd.cmd_no))
-                return ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).Ref.ScriptId;
+            if (cmd.regist != null && cmd.regist.bi.player != 0 && GetCommandTypeSafe(cmd.cmd_no) == CharacterCommandType.Item)
+            {
+                RegularItem cmdItem = GetCommandItem(cmd);
+                if (cmdItem != RegularItem.NoItem)
+                    return ff9item.GetItemEffect(cmdItem).Ref.ScriptId;
+                return cmd.ScriptId;
+            }
             switch (cmd.cmd_no)
 			{
 				case BattleCommandId.Jump:
@@ -359,9 +376,9 @@ namespace FF9
 					return 0;
 				case BattleCommandId.Item:
 				case BattleCommandId.AutoPotion:
-					return ff9item.GetItemEffect(btl_util.GetCommandItem(cmd)).Ref.ScriptId;
+					return ff9item.GetItemEffect(GetCommandItem(cmd)).Ref.ScriptId;
 				default:
-					if (cmd.regist?.weapon != null && btl_util.GetCommandMainActionIndex(cmd) == BattleAbilityId.Attack && !btl_util.IsCommandMonsterTransformAttack(cmd))
+					if (cmd.regist?.weapon != null && GetCommandMainActionIndex(cmd) == BattleAbilityId.Attack && !IsCommandMonsterTransformAttack(cmd))
 						return cmd.regist.weapon.Ref.ScriptId;
 					return cmd.ScriptId;
 			}

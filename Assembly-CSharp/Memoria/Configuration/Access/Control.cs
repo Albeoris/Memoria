@@ -24,6 +24,7 @@ namespace Memoria
             public static Boolean WrapSomeMenus => Instance._control.WrapSomeMenus;
             public static Boolean BattleAutoConfirm => Instance._control.BattleAutoConfirm;
             public static Boolean TurboDialog => Instance._control.TurboDialog;
+            public static Boolean SoftReset => Instance._control.SoftReset;
             public static Boolean PSXScrollingMethod => Instance._control.PSXScrollingMethod;
             /*
             The PSX movement algorithm is different than the remaster's movement algorithm

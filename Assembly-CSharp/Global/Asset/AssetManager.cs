@@ -34,12 +34,12 @@ public static class AssetManager
 
 	static AssetManager()
 	{
-        Version assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
-        DateTime assemblyDate = new DateTime(2000, 1, 1).AddDays(assemblyVersion.Build).AddSeconds(assemblyVersion.Revision * 2);
-        Log.Message($"[Initialization] Memoria version: {assemblyDate.ToString("yyyy-MM-dd")}");
-        Log.Message($"[Initialization] OS version: {Environment.OSVersion}");
+		Version assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
+		DateTime assemblyDate = new DateTime(2000, 1, 1).AddDays(assemblyVersion.Build).AddSeconds(assemblyVersion.Revision * 2);
+		Log.Message($"[Initialization] Memoria version: {assemblyDate.ToString("yyyy-MM-dd")}");
+		Log.Message($"[Initialization] OS version: {Environment.OSVersion}");
 
-        AssetManager.IsFullyInitialized = false;
+		AssetManager.IsFullyInitialized = false;
 		Array moduleList = Enum.GetValues(typeof(AssetManagerUtil.ModuleBundle));
 		String[] foldname = new String[Configuration.Mod.FolderNames.Length + 1];
 		String path;
@@ -275,7 +275,7 @@ public static class AssetManager
 		// Dummied
 		// Maybe remove the successfully parsed lines from the "info" array?
 		foreach (String s in memoriaInfo)
-        {
+		{
 			String[] textureCode = s.Split(' ');
 			if (textureCode.Length >= 2 && String.Compare(textureCode[0], "AnisotropicLevel") == 0)
 			{
@@ -527,24 +527,43 @@ public static class AssetManager
 		{
 			txt = AssetManagerForObb.Load<TextAsset>(name);
 			if (txt != null)
+			{
+				modFolderName = String.Empty;
 				yield return txt.bytes;
+			}
+			modFolderName = null;
 			yield break;
 		}
 		if (AssetManagerUtil.IsMemoriaAssets(name))
 		{
 			foreach (AssetFolder modfold in FolderHighToLow)
+			{
 				if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+				{
+					modFolderName = modfold.FolderPath;
 					yield return LoadFromDisc<Byte[]>(fullPath, name);
+				}
+			}
+			modFolderName = null;
 			yield break;
 		}
 		if (!UseBundles || AssetManagerUtil.IsEmbededAssets(name))
 		{
 			foreach (AssetFolder modfold in FolderHighToLow)
+			{
 				if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+				{
+					modFolderName = modfold.FolderPath;
 					yield return LoadFromDisc<Byte[]>(fullPath, name);
+				}
+			}
 			txt = Resources.Load<TextAsset>(name);
 			if (txt != null)
+			{
+				modFolderName = String.Empty;
 				yield return txt.bytes;
+			}
+			modFolderName = null;
 			yield break;
 		}
 		String belongingBundleFilename = AssetManagerUtil.GetBelongingBundleFilename(name);
@@ -554,23 +573,39 @@ public static class AssetManager
 			foreach (AssetFolder modfold in FolderHighToLow)
 			{
 				if (modfold.TryFindAssetInModOnDisc(nameInBundle, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+				{
+					modFolderName = modfold.FolderPath;
 					yield return LoadFromDisc<Byte[]>(fullPath, nameInBundle);
+				}
 				if (modfold.IsAssetInModInBundle(belongingBundleFilename, nameInBundle, out AssetBundleRef assetBundleRef))
 				{
 					txt = assetBundleRef.assetBundle.LoadAsset<TextAsset>(nameInBundle);
 					if (txt != null)
+					{
+						modFolderName = modfold.FolderPath;
 						yield return txt.bytes;
+					}
 				}
 			}
 		}
+		modFolderName = null;
 		if (ForceUseBundles)
 			yield break;
 		foreach (AssetFolder modfold in FolderHighToLow)
+		{
 			if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+			{
+				modFolderName = modfold.FolderPath;
 				yield return LoadFromDisc<Byte[]>(fullPath, name);
+			}
+		}
 		txt = Resources.Load<TextAsset>(name);
 		if (txt != null)
+		{
+			modFolderName = String.Empty;
 			yield return txt.bytes;
+		}
+		modFolderName = null;
 		yield break;
 	}
 
@@ -600,6 +635,65 @@ public static class AssetManager
 		if (mainFile == null && !suppressMissingError)
 			Log.Message("[AssetManager] Memoria asset not found: " + name);
 		return mainFile;
+	}
+
+	public static Byte[] LoadBytesMerged(String name, Boolean suppressMissingError = false)
+	{
+		if(!Configuration.Mod.MergeScripts)
+			return LoadBytes(name, suppressMissingError);
+
+		if (AssetManager.AnimationInFolder == null)
+			DelayedInitialization();
+		Byte[] ogFile = null;
+		String belongingBundleFilename = AssetManagerUtil.GetBelongingBundleFilename(name);
+		if (!String.IsNullOrEmpty(belongingBundleFilename))
+		{
+			String nameInBundle = AssetManagerUtil.GetResourcesBasePath() + name + AssetManagerUtil.GetAssetExtension<TextAsset>(name);
+			foreach (AssetFolder modfold in FolderLowToHigh)
+			{
+				if (modfold.IsAssetInModInBundle(belongingBundleFilename, nameInBundle, out AssetBundleRef assetBundleRef))
+				{
+					// TODO: Ensure the file is vanilla. If a mod includes p0Data files (with the script) it will be loaded instead of the vanilla script
+					TextAsset txt = assetBundleRef.assetBundle.LoadAsset<TextAsset>(nameInBundle);
+					if (txt != null)
+					{
+						ogFile = txt.bytes;
+						break;
+					}
+				}
+			}
+		}
+		if (ogFile == null)
+		{
+			Byte[] mainFile = LoadBytesMultiple(name).FirstOrDefault();
+			if (mainFile == null && !suppressMissingError)
+				Log.Message("[AssetManager] Memoria asset not found: " + name);
+			return mainFile;
+		}
+		else
+		{
+			BinaryDiff merged = new BinaryDiff();
+
+			foreach (Byte[] file in LoadBytesMultiple(name))
+			{
+				var diff = new BinaryDiff(ogFile, file);
+				if (diff.Count > 0)
+				{
+					if (merged.TryMerge(diff))
+						Log.Message($"[AssetManager] Merged '{Path.GetFileName(name)}{AssetManagerUtil.GetAssetExtension<TextAsset>(name)}'({(String.IsNullOrEmpty(modFolderName) ? "Memoria" : modFolderName.TrimEnd(['/']))})");
+					else
+						Log.Message($"[AssetManager] Couldn't merge script file '{Path.GetFileName(name)}{AssetManagerUtil.GetAssetExtension<TextAsset>(name)}'({(String.IsNullOrEmpty(modFolderName) ? "Memoria" : modFolderName.TrimEnd(['/']))}), conflict detected");
+				}
+				else if(!String.IsNullOrEmpty(modFolderName))
+				{
+					Log.Message($"[AssetManager] Script file '{Path.GetFileName(name)}{AssetManagerUtil.GetAssetExtension<TextAsset>(name)}'({modFolderName.TrimEnd(['/'])}) doesn't contain any changes");
+				}
+			}
+			if (merged != null && merged.Count > 0)
+				return merged.Apply(ogFile);
+
+			return ogFile;
+		}
 	}
 
 	public static AssetManagerRequest LoadAsync<T>(String name) where T : UnityEngine.Object
@@ -783,6 +877,8 @@ public static class AssetManager
 
 	public static Dictionary<String, List<String>> AnimationInFolder;
 	public static Dictionary<String, String> AnimationReverseFolder;
+
+	private static String modFolderName;
 
 	public class AssetBundleRef
 	{

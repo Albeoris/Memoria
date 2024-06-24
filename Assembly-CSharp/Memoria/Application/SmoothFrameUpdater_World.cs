@@ -41,61 +41,60 @@ namespace Memoria
 			}
 		}
 
+		public static Boolean Enabled => Configuration.Graphics.WorldTPS < Configuration.Graphics.WorldFPS;
+
 		public static void RegisterState()
 		{
+			if (!Enabled) return;
 			for (ObjList objList = ff9.GetActiveObjList(); objList != null; objList = objList.next)
 			{
-				Obj obj = objList.obj;
-				if (obj.cid == 4)
+				WMActor actor = (objList.obj as Actor)?.wmActor;
+				if (actor == null || objList.obj.cid != 4 || actor.Animation == null)
+					continue;
+
+				String curAnim = FF9DBAll.AnimationDB.GetValue(actor.originalActor.anim);
+				Animation anim = actor.Animation;
+				AnimationState animState = anim[curAnim];
+
+				if (actor._smoothUpdateRegistered)
 				{
-					WMActor actor = (obj as Actor)?.wmActor;
-					if (actor != null)
-					{
-						String curAnim = FF9DBAll.AnimationDB.GetValue(actor.originalActor.anim);
-						Animation anim = actor.Animation;
-						AnimationState animState = anim[curAnim];
+					actor._smoothUpdatePosPrevious = actor._smoothUpdatePosActual + ff9.world.BlockShift;
+					actor._smoothUpdateRotPrevious = actor._smoothUpdateRotActual;
 
-						if (actor._smoothUpdateRegistered)
-						{
-							actor._smoothUpdatePosPrevious = actor._smoothUpdatePosActual + ff9.world.BlockShift;
-							actor._smoothUpdateRotPrevious = actor._smoothUpdateRotActual;
-
-							actor._smoothUpdateAnimNamePrevious = actor._smoothUpdateAnimNameActual;
-							actor._smoothUpdateAnimTimePrevious = actor._smoothUpdateAnimTimeActual;
-						}
-						else
-						{
-							actor._smoothUpdatePosPrevious = actor.transform.position;
-							actor._smoothUpdateRotPrevious = actor.transform.rotation;
-
-							actor._smoothUpdateAnimNamePrevious = curAnim;
-							actor._smoothUpdateAnimTimePrevious = animState.time;
-						}
-						actor._smoothUpdatePosActual = actor.transform.position;
-						actor._smoothUpdateRotActual = actor.transform.rotation;
-
-						actor._smoothUpdateAnimNameActual = curAnim;
-						actor._smoothUpdateAnimTimeActual = animState.time;
-
-						if (actor._smoothUpdateRegistered && actor._smoothUpdateAnimNamePrevious == actor._smoothUpdateAnimNameActual)
-						{
-							Single speed = actor._smoothUpdateAnimTimeActual - actor._smoothUpdateAnimTimePrevious;
-							Int32 direction = actor.originalActor.animFrame - actor.originalActor.lastAnimFrame;
-							Boolean hasLooped =
-								(direction < 0 && actor._smoothUpdateAnimTimeActual + speed < 0f) ||
-								(direction > 0 && actor._smoothUpdateAnimTimeActual + speed > animState.length);
-							if (!hasLooped)
-								actor._smoothUpdateAnimSpeed = speed;
-						}
-						else
-						{
-							actor._smoothUpdateAnimTimePrevious = actor._smoothUpdateAnimTimeActual;
-							actor._smoothUpdateAnimSpeed = 0f;
-						}
-
-						actor._smoothUpdateRegistered = true;
-					}
+					actor._smoothUpdateAnimNamePrevious = actor._smoothUpdateAnimNameActual;
+					actor._smoothUpdateAnimTimePrevious = actor._smoothUpdateAnimTimeActual;
 				}
+				else
+				{
+					actor._smoothUpdatePosPrevious = actor.transform.position;
+					actor._smoothUpdateRotPrevious = actor.transform.rotation;
+
+					actor._smoothUpdateAnimNamePrevious = curAnim;
+					actor._smoothUpdateAnimTimePrevious = animState.time;
+				}
+				actor._smoothUpdatePosActual = actor.transform.position;
+				actor._smoothUpdateRotActual = actor.transform.rotation;
+
+				actor._smoothUpdateAnimNameActual = curAnim;
+				actor._smoothUpdateAnimTimeActual = animState.time;
+
+				if (actor._smoothUpdateRegistered && actor._smoothUpdateAnimNamePrevious == actor._smoothUpdateAnimNameActual)
+				{
+					Single speed = actor._smoothUpdateAnimTimeActual - actor._smoothUpdateAnimTimePrevious;
+					Int32 direction = actor.originalActor.animFrame - actor.originalActor.lastAnimFrame;
+					Boolean hasLooped =
+						(direction < 0 && actor._smoothUpdateAnimTimeActual + speed < 0f) ||
+						(direction > 0 && actor._smoothUpdateAnimTimeActual + speed > animState.length);
+					if (!hasLooped)
+						actor._smoothUpdateAnimSpeed = speed;
+				}
+				else
+				{
+					actor._smoothUpdateAnimTimePrevious = actor._smoothUpdateAnimTimeActual;
+					actor._smoothUpdateAnimSpeed = 0f;
+				}
+
+				actor._smoothUpdateRegistered = true;
 			}
 			foreach (WMShadow shadow in WMWorld.Instance.Shadows)
 			{
@@ -132,39 +131,35 @@ namespace Memoria
 
 		public static void Apply(Single smoothFactor)
 		{
-			if (_skipCount > 0)
+			if (!Enabled || _skipCount > 0)
 				return;
 			SFXData.LoadLoop();
 			for (ObjList objList = ff9.GetActiveObjList(); objList != null; objList = objList.next)
 			{
-				Obj obj = objList.obj;
-				if (obj.cid == 4)
+				WMActor actor = (objList.obj as Actor)?.wmActor;
+				if (actor == null || objList.obj.cid != 4 || actor.Animation == null || !actor._smoothUpdateRegistered || actor._smoothUpdateAnimNamePrevious != actor._smoothUpdateAnimNameActual)
+					continue;
+
+				Animation anim = actor.Animation;
+				AnimationState animState = anim[actor._smoothUpdateAnimNameActual];
+
+				//Vector3 frameMove = actor._smoothUpdatePosActual - actor._smoothUpdatePosPrevious;
+				//if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < ActorSmoothMovementMaxSqr)
+				actor.transform.position = Vector3.Lerp(actor._smoothUpdatePosPrevious, actor._smoothUpdatePosActual, smoothFactor);
+
+				//if (Quaternion.Angle(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual) < ActorSmoothTurnMaxDeg)
+				actor.transform.rotation = Quaternion.Lerp(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual, smoothFactor);
+
+				if (anim != null)
 				{
-					WMActor actor = (obj as Actor)?.wmActor;
-					if (actor == null || !actor._smoothUpdateRegistered || actor._smoothUpdateAnimNamePrevious != actor._smoothUpdateAnimNameActual)
-						continue;
-
-					Animation anim = actor.Animation;
-					AnimationState animState = anim[actor._smoothUpdateAnimNameActual];
-
-					//Vector3 frameMove = actor._smoothUpdatePosActual - actor._smoothUpdatePosPrevious;
-					//if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < ActorSmoothMovementMaxSqr)
-					actor.transform.position = Vector3.Lerp(actor._smoothUpdatePosPrevious, actor._smoothUpdatePosActual, smoothFactor);
-
-					//if (Quaternion.Angle(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual) < ActorSmoothTurnMaxDeg)
-					actor.transform.rotation = Quaternion.Lerp(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual, smoothFactor);
-
-					if (anim != null)
-					{
-						animState.time = Mathf.Lerp(actor._smoothUpdateAnimTimePrevious, actor._smoothUpdateAnimTimePrevious + actor._smoothUpdateAnimSpeed, smoothFactor);
-						if (animState.time > animState.length)
-							animState.time -= animState.length;
-						else if (animState.time < 0f)
-							animState.time += animState.length;
-						anim.Sample();
-					}
-					//if (actor.name == "obj12_WM") Log.Message($"[DEBUG] {Time.frameCount} {actor.name} framerate {animState?.clip?.frameRate} actualName {actor._smoothUpdateAnimNameActual} speed {actor._smoothUpdateAnimSpeed} {animState.enabled} animTime {animState.time} animLength {animState.length} t {smoothFactor} prev {actor._smoothUpdateAnimTimePrevious} actual {actor._smoothUpdateAnimTimePrevious + actor._smoothUpdateAnimSpeed}");
+					animState.time = Mathf.Lerp(actor._smoothUpdateAnimTimePrevious, actor._smoothUpdateAnimTimePrevious + actor._smoothUpdateAnimSpeed, smoothFactor);
+					if (animState.time > animState.length)
+						animState.time -= animState.length;
+					else if (animState.time < 0f)
+						animState.time += animState.length;
+					anim.Sample();
 				}
+				//if (actor.name == "obj12_WM") Log.Message($"[DEBUG] {Time.frameCount} {actor.name} framerate {animState?.clip?.frameRate} actualName {actor._smoothUpdateAnimNameActual} speed {actor._smoothUpdateAnimSpeed} {animState.enabled} animTime {animState.time} animLength {animState.length} t {smoothFactor} prev {actor._smoothUpdateAnimTimePrevious} actual {actor._smoothUpdateAnimTimePrevious + actor._smoothUpdateAnimSpeed}");
 			}
 			foreach (WMShadow shadow in WMWorld.Instance.Shadows)
 			{
@@ -182,6 +177,7 @@ namespace Memoria
 
 		public static void ResetState()
 		{
+			if (!Enabled) return;
 			if (_skipCount > 0)
 				_skipCount--;
 			for (ObjList objList = ff9.GetActiveObjList(); objList != null; objList = objList.next)

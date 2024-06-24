@@ -220,6 +220,7 @@ namespace Memoria.Launcher
             public static readonly string EnableRealismShading = GetSettings(nameof(EnableRealismShading));
             public static readonly string EnableOutlineForFieldCharacter = GetSettings(nameof(EnableOutlineForFieldCharacter));
             public static readonly string EnableOutlineForBattleCharacter = GetSettings(nameof(EnableOutlineForBattleCharacter));
+            public static readonly string NoAutoTrance = GetSettings(nameof(NoAutoTrance));
 
             // Settings.ini Tooltips
             public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));
@@ -257,6 +258,7 @@ namespace Memoria.Launcher
 
             // Memoria.ini Cheats tooltips
             public static readonly string MaxStealRate_Tooltip = GetSettings(nameof(MaxStealRate_Tooltip));
+            public static readonly string NoAutoTrance_Tooltip = GetSettings(nameof(NoAutoTrance_Tooltip));
             public static readonly string DisableCantConcentrate_Tooltip = GetSettings(nameof(DisableCantConcentrate_Tooltip));
             public static readonly string BreakDamageLimit_Tooltip = GetSettings(nameof(BreakDamageLimit_Tooltip));
             public static readonly string AccessBattleMenu_Tooltip = GetSettings(nameof(AccessBattleMenu_Tooltip));

@@ -1168,19 +1168,27 @@ public class FieldMap : HonoBehavior
     }
 
     /// <summary>0x5A, "SetTilePositionEx", "Move a field tile block.arg1: background tile block.2nd and arg3: movement in (dX, dY) format.arg4: depth, with higher value being further away from camera." </summary>
-    public Int32 EBG_overlayMove(Int32 overlayNdx, Int16 dx, Int16 dy, Int16 dz)
+    public Int32 EBG_overlayMove(Int32 overlayNdx, Single dx, Single dy, Int16 dz)
     {
+        Int16 MapNo = FF9StateSystem.Common.FF9.fldMapNo;
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
+
+        if (MapNo == 2755 && overlayNdx == 5 && dx == 1 && Configuration.Graphics.WidescreenSupport)
+        {
+            dx = 0.75f;
+            bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1);
+        }
+
         FieldMapInfo.fieldmapExtraOffset.UpdateOverlayOffset(this.mapName, overlayNdx, ref dz);
         Single destX = Mathf.Clamp(bgOverlay.orgX + dx, bgOverlay.minX, bgOverlay.maxX);
         Single destY = Mathf.Clamp(bgOverlay.orgY + dy, bgOverlay.minY, bgOverlay.maxY);
 
         // TODO Check Native: #147
-        UInt16 destZ;
-        if (FF9StateSystem.Common.FF9.fldMapNo == 2351 && overlayNdx >= 3 && overlayNdx <= 17) // official fix of the mine bucket
+        UInt16 destZ = (UInt16)(bgOverlay.orgZ + (UInt16)dz);
+
+        if (MapNo == 2351 && overlayNdx >= 3 && overlayNdx <= 17) // official fix of the mine bucket
             destZ = 3000;
-        else
-            destZ = (UInt16)(bgOverlay.orgZ + (UInt16)dz);
+
 
         bgOverlay.orgX = destX;
         bgOverlay.orgY = destY;
@@ -2443,7 +2451,7 @@ public class FieldMap : HonoBehavior
     public static readonly Int32[][] FixDepthOfLayer =
     {
         // [mapNo,camIdx,LayerIndex,Depth],
-        [51,1,20,600],      // Kidnap scene, candle light
+        [51,1,19,800],      // Kidnap scene, candle light
         [202,0,20,0],       // Prima Vista light
         [252,0,6,1600],     // Evil Forest light
         [350,0,0,730],      // Dali shop door cropped
@@ -2480,6 +2488,10 @@ public class FieldMap : HonoBehavior
         [913,0,0,100],      // Treno Tower lights
         [913,0,3,0],        // Treno Tower lights
         [913,0,4,0],        // Treno Tower lights
+        [1900,0,20,500],     // Treno Thug Inn light
+        [1913,0,0,100],      // Treno Tower lights
+        [1913,0,3,0],        // Treno Tower lights
+        [1913,0,4,0],        // Treno Tower lights
         [951,0,2,1214],     // Gargan Roo's railing
         [1000,0,12,0],      // Clayra's Trunk text (in English version)
         [1206,0,21,800],    // Alexandria, purple chadelier
@@ -2519,10 +2531,18 @@ public class FieldMap : HonoBehavior
         [2600,0,13,8000],   // Branbal, background
         [2605,0,3,2200],    // Branbal, light of light net
         [2657,0,4,2040],    // Branbal, light in the room
+        [2800,0,26,1700],   // Dagguereo Zidane behind beckground on left path
         [2922,0,8,4329],    // Crystal world (was not active on PSX)
         [2922,0,10,3179],   // Crystal world (was not active on PSX)
         [2922,0,11,3179],   // Crystal world (was not active on PSX)
         [2922,0,12,6080],   // Crystal world (was not active on PSX)
+        [2924,0,1,0],       // Crystal world (was not active on PSX)
+        [3100,0,0,2300],    // Mognet - static tiles on top of anim
+        [3100,0,1,2300],    // Mognet - static tiles on top of anim
+        [3100,0,2,2300],    // Mognet - static tiles on top of anim
+        [3100,0,3,2300],    // Mognet - static tiles on top of anim
+        [3100,0,4,2300],    // Mognet - static tiles on top of anim
+        [3100,0,5,2300],    // Mognet - static tiles on top of anim
     };
 
     public static readonly HashSet<Int32> SmoothCamExcludeMaps = new HashSet<Int32>()

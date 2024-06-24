@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Collections.Generic;
+using FF9;
 using UnityEngine;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
@@ -141,7 +142,7 @@ namespace Memoria
 				String[] entry = s.Split(' ');
 				if (entry.Length < 3)
 					continue;
-				if (String.Compare(entry[0], "MessageFile") == 0)
+				if (String.Equals(entry[0], "MessageFile"))
 				{
 					// eg.: MessageFile 2000 MES_CUSTOM_PLACE
 					if (FF9DBAll.MesDB == null)
@@ -151,7 +152,7 @@ namespace Memoria
 						continue;
 					FF9DBAll.MesDB[ID] = entry[2];
 				}
-				else if (String.Compare(entry[0], "IconSprite") == 0)
+				else if (String.Equals(entry[0], "IconSprite"))
 				{
 					// eg.: IconSprite 19 arrow_down
 					if (FF9UIDataTool.IconSpriteName == null)
@@ -161,7 +162,7 @@ namespace Memoria
 						continue;
 					FF9UIDataTool.IconSpriteName[ID] = entry[2];
 				}
-				else if (String.Compare(entry[0], "DebuffIcon") == 0)
+				else if (String.Equals(entry[0], "DebuffIcon"))
 				{
 					// eg.: DebuffIcon 0 188
 					// or : DebuffIcon 0 ability_stone
@@ -192,7 +193,7 @@ namespace Memoria
 						BattleHUD.DebuffIconNames[(BattleStatus)(1 << ID)] = entry[2]; // When adding a debuff icon by sprite name, not all the dictionaries are updated
 					}
 				}
-				else if (String.Compare(entry[0], "BuffIcon") == 0)
+				else if (String.Equals(entry[0], "BuffIcon"))
 				{
 					// eg.: BuffIcon 18 188
 					// or : BuffIcon 18 ability_stone
@@ -215,7 +216,7 @@ namespace Memoria
 						BattleHUD.BuffIconNames[(BattleStatus)(1 << ID)] = entry[2];
 					}
 				}
-				else if (String.Compare(entry[0], "BoostedAbilityColor") == 0 && entry.Length >= 5)
+				else if (String.Equals(entry[0], "BoostedAbilityColor") && entry.Length >= 5)
 				{
 					// eg.: BoostedAbilityColor 3 0.2 1.0 0.8
 					if (AbilityUI.BoostedAbilityColor == null)
@@ -235,15 +236,15 @@ namespace Memoria
 					}
 					AbilityUI.BoostedAbilityColor[index] = new Color(r, g, b);
 				}
-				else if (String.Compare(entry[0], "BattleStatus") == 0)
+				else if (String.Equals(entry[0], "BattleStatus"))
 				{
 					// eg.: BattleStatus IdleDying Remove Poison Venom
 					// eg.: BattleStatus BattleEnd Add Zombie
 					if (!entry[1].TryStaticFieldParse(typeof(BattleStatusConst), out FieldInfo field))
 						continue;
 					BattleStatus fieldStatus = 0;
-					Boolean add = String.Compare(entry[2], "Remove") != 0;
-					if (String.Compare(entry[2], "Set") != 0)
+					Boolean add = !String.Equals(entry[2], "Remove");
+					if (!String.Equals(entry[2], "Set"))
 						fieldStatus = (BattleStatus)field.GetValue(null);
 					for (Int32 i = 3; i < entry.Length; i++)
 					{
@@ -258,13 +259,13 @@ namespace Memoria
 					field.SetValue(null, fieldStatus);
 					shouldUpdateBattleStatus = true;
 				}
-				else if (String.Compare(entry[0], "HalfTranceCommand") == 0)
+				else if (String.Equals(entry[0], "HalfTranceCommand"))
 				{
 					// eg.: HalfTranceCommand Set DoubleWhiteMagic DoubleBlackMagic HolySword2
 					if (btl_cmd.half_trance_cmd_list == null)
 						continue;
-					Boolean add = String.Compare(entry[1], "Remove") != 0;
-					if (String.Compare(entry[1], "Set") == 0)
+					Boolean add = !String.Equals(entry[1], "Remove");
+					if (String.Equals(entry[1], "Set"))
 						btl_cmd.half_trance_cmd_list.Clear();
 					for (Int32 i = 2; i < entry.Length; i++)
 					{
@@ -277,11 +278,11 @@ namespace Memoria
 						}
 					}
 				}
-				else if (String.Compare(entry[0], "DoubleCastCommand") == 0)
+				else if (String.Equals(entry[0], "DoubleCastCommand"))
 				{
 					// eg.: DoubleCastCommand Add RedMagic1
-					Boolean add = String.Compare(entry[1], "Remove") != 0;
-					if (String.Compare(entry[1], "Set") == 0)
+					Boolean add = !String.Equals(entry[1], "Remove");
+					if (String.Equals(entry[1], "Set"))
 						BattleHUD.DoubleCastSet.Clear();
 					for (Int32 i = 2; i < entry.Length; i++)
 					{
@@ -294,24 +295,36 @@ namespace Memoria
 						}
 					}
 				}
-                else if (String.Compare(entry[0], "MixCommand") == 0)
+                else if (String.Equals(entry[0], "MixCommand"))
                 {
-                    // eg.: MixCommand Add 1000
-                    Boolean add = String.Compare(entry[1], "Remove") != 0;
-                    if (String.Compare(entry[1], "Set") == 0)
-                        BattleHUD.MixCommandSet.Clear();
-                    for (Int32 i = 2; i < entry.Length; i++)
+                    // eg.: MixCommand RedMagic1 SKIP_TURN
+                    // eg.: MixCommand 1000 SKIP_TURN Consume
+                    // eg.: MixCommand RedMagic2 FAIL_ITEM 254
+                    // eg.: MixCommand 1001 FAIL_ITEM 254 Consume
+                    if (!entry[1].TryEnumParse(out BattleCommandId cmdId))
+                        continue;
+                    if (!btl_util.IsCommandDeclarable(cmdId))
                     {
-                        if (entry[i].TryEnumParse(out BattleCommandId cmdId))
-                        {
-                            if (add)
-                                BattleHUD.MixCommandSet.Add(cmdId);
-                            else
-                                BattleHUD.MixCommandSet.Remove(cmdId);
-                        }
+                        Log.Message($"[AssetManager.PatchDictionaries] Trying to declare the system-protected command {cmdId} as a MixCommand");
+                        continue;
                     }
+
+                    if (!entry[2].TryEnumParse(out FailedMixType failType))
+                        continue;
+
+                    Int32 entryIndex = 3;
+                    RegularItem failItem = RegularItem.NoItem;
+                    Boolean consumeOnFail = false;
+                    if (failType == FailedMixType.FAIL_ITEM)
+                    {
+                        if (entry.Length <= entryIndex || !entry[entryIndex++].TryEnumParse(out failItem))
+                            continue;
+                    }
+                    if (entry.Length > entryIndex)
+                        consumeOnFail = String.Equals(entry[entryIndex++], "Consume");
+                    BattleHUD.MixCommandSet[cmdId] = new MixCommandType(failType, failItem, consumeOnFail);
                 }
-                else if (String.Compare(entry[0], "WorldMusicList") == 0 && entry.Length >= 7)
+                else if (String.Equals(entry[0], "WorldMusicList") && entry.Length >= 7)
 				{
 					// eg.: WorldMusicList 69 22 112 45 95 96 61 62
 					if (ff9.w_musicSet == null)
@@ -322,7 +335,7 @@ namespace Memoria
 					for (Int32 i = 0; i < arraySize; i++)
 						Byte.TryParse(entry[1 + i], out ff9.w_musicSet[i]);
 				}
-				else if (String.Compare(entry[0], "TetraMasterSound") == 0)
+				else if (String.Equals(entry[0], "TetraMasterSound"))
 				{
 					// eg.: TetraMasterSound CANCEL 101
 					if (SoundEffect.soundIdMap == null)
@@ -337,11 +350,11 @@ namespace Memoria
 						continue;
 					SoundEffect.soundIdMap[effectID] = soundID;
 				}
-				else if (String.Compare(entry[0], "MoogleFieldList") == 0)
+				else if (String.Equals(entry[0], "MoogleFieldList"))
 				{
 					// eg.: MoogleFieldList Remove 2905 2909 2916 2919
-					Boolean add = String.Compare(entry[1], "Remove") != 0;
-					if (String.Compare(entry[1], "Set") == 0)
+					Boolean add = !String.Equals(entry[1], "Remove");
+					if (String.Equals(entry[1], "Set"))
 					{
 						EventEngine.moogleFldMap.Clear();
 						EventEngine.moogleFldSpecialMap.Clear();
@@ -359,7 +372,7 @@ namespace Memoria
 						}
 					}
 				}
-				else if (String.Compare(entry[0], "BattleMapModel") == 0)
+				else if (String.Equals(entry[0], "BattleMapModel"))
 				{
 					// eg.: BattleMapModel BSC_CUSTOM_FIELD BBG_B065
 					// Can also be modified using "BattleScene"
@@ -367,7 +380,7 @@ namespace Memoria
 						continue;
 					FF9BattleDB.MapModel[entry[1]] = entry[2];
 				}
-				else if (String.Compare(entry[0], "FieldScene") == 0 && entry.Length >= 6)
+				else if (String.Equals(entry[0], "FieldScene") && entry.Length >= 6)
 				{
 					// eg.: FieldScene 4000 57 CUSTOM_FIELD CUSTOM_FIELD 2000
 					if (FF9DBAll.EventDB == null || EventEngineUtils.eventIDToFBGID == null || EventEngineUtils.eventIDToMESID == null)
@@ -400,7 +413,7 @@ namespace Memoria
 					//  [Optional] Assets/Resources/CommonAsset/MapConfigData/EVT_{entry[4]}.bytes
 					//  [Optional] Assets/Resources/CommonAsset/VibrationData/EVT_{entry[4]}.bytes
 				}
-				else if (String.Compare(entry[0], "BattleScene") == 0 && entry.Length >= 4)
+				else if (String.Equals(entry[0], "BattleScene") && entry.Length >= 4)
 				{
 					// eg.: BattleScene 5000 CUSTOM_BATTLE BBG_B065
 					if (FF9DBAll.EventDB == null || FF9BattleDB.SceneData == null || FF9BattleDB.MapModel == null)
@@ -419,7 +432,7 @@ namespace Memoria
 					// resources:
 					//  EmbeddedAsset/Text/{Lang}/Battle/{ID}.mes
 				}
-				else if (String.Compare(entry[0], "CharacterDefaultName") == 0 && entry.Length >= 4)
+				else if (String.Equals(entry[0], "CharacterDefaultName") && entry.Length >= 4)
 				{
 					// eg.: CharacterDefaultName 0 US Zinedine
 					// REMARK: Character default names can also be changed with the option "[Import] Text = 1" although it would monopolise the whole machinery of text importing
@@ -440,7 +453,7 @@ namespace Memoria
 						FF9TextTool.ChangeCharacterName((CharacterId)ID, nameDict[(CharacterId)ID]);
 					}
 				}
-				else if (String.Compare(entry[0], "3DModel") == 0)
+				else if (String.Equals(entry[0], "3DModel"))
 				{
 					// For both field models and enemy battle models (+ animations)
 					// eg.:
@@ -468,7 +481,7 @@ namespace Memoria
 					// TODO: make it work for replacing battle weapon models
 					// Currently, a line like "3DModel 476 GEO_ACC_F0_OPB" for replacing the dagger by a book freezes the game on black screen when battle starts
 				}
-				else if (String.Compare(entry[0], "3DModelAnimation") == 0)
+				else if (String.Equals(entry[0], "3DModelAnimation"))
 				{
 					// eg.: See above
 					// When adding custom animations, the name must follow the following pattern:
@@ -492,7 +505,7 @@ namespace Memoria
 						FF9BattleDB.Animation[ID[idindex]] = entry[entry.Length - 1];
 					}
 				}
-                else if (String.Compare(entry[0], "SwapFieldModelTexture") == 0)
+                else if (String.Equals(entry[0], "SwapFieldModelTexture"))
                 {
                     // eg.: SwapFieldModelTexture 2250 GEO_MON_B3_093 CustomTextures/OeilvertGuardian/342_0.png CustomTextures/OeilvertGuardian/342_1.png CustomTextures/OeilvertGuardian/342_2.png CustomTextures/OeilvertGuardian/342_3.png CustomTextures/OeilvertGuardian/342_4.png CustomTextures/OeilvertGuardian/342_5.png
                     List<string> TexturesList = new List<string>();
@@ -532,7 +545,7 @@ namespace Memoria
 				String oparg = entry[1];
 				if (!TryParseBattleSelector(opcode, oparg, ref currentPatch) && currentPatch != null)
 				{
-					if (_selectedBattleId >= 0 && String.Compare(opcode, "Music") == 0)
+					if (_selectedBattleId >= 0 && String.Equals(opcode, "Music"))
 					{
 						if (Int32.TryParse(oparg.Trim(), out Int32 musicId))
 							FF9SndMetaData.BtlBgmPatcherMapper[_selectedBattleId] = musicId;
@@ -541,7 +554,7 @@ namespace Memoria
 					{
 						foreach (FieldInfo field in fieldArr.Where(h => h.IsDefined(typeof(PatchableFieldAttribute), false)))
 						{
-							if (String.Compare(opcode, field.Name) == 0)
+							if (String.Equals(opcode, field.Name))
 							{
 								object obj;
 								if (field.FieldType.IsArray)
@@ -571,7 +584,7 @@ namespace Memoria
 		{
 			String idstr;
 			Int32 idint;
-			if (String.Compare(opcode, "Battle") == 0)
+			if (String.Equals(opcode, "Battle"))
 			{
 				String selectedBattle;
 				if (Int32.TryParse(oparg, out idint) && FF9BattleDB.SceneData.TryGetKey(idint, out idstr))
@@ -581,32 +594,32 @@ namespace Memoria
 				if (!FF9BattleDB.SceneData.TryGetValue(selectedBattle, out _selectedBattleId))
 					_selectedBattleId = -1;
 				patch = new BattlePatch(BattlePatch.BattleTokenType.Scene,
-					(scene, str) => String.Compare(scene.nameIdentifier, selectedBattle) == 0,
+					(scene, str) => String.Equals(scene.nameIdentifier, selectedBattle),
 					(scene, str, index) => false);
 				_battlePatch.Add(patch);
 				return true;
 			}
-			else if (String.Compare(opcode, "AnyEnemyByName") == 0)
+			else if (String.Equals(opcode, "AnyEnemyByName"))
 			{
 				_selectedBattleId = -1;
 				patch = new BattlePatch(BattlePatch.BattleTokenType.Enemy,
-					(scene, str) => Array.Exists(str, (name) => String.Compare(name, oparg) == 0),
-					(scene, str, index) => String.Compare(str[index], oparg) == 0);
+					(scene, str) => Array.Exists(str, (name) => String.Equals(name, oparg)),
+					(scene, str, index) => String.Equals(str[index], oparg));
 				_battlePatch.Add(patch);
 				return true;
 			}
-			else if (String.Compare(opcode, "AnyAttackByName") == 0)
+			else if (String.Equals(opcode, "AnyAttackByName"))
 			{
 				_selectedBattleId = -1;
 				patch = new BattlePatch(BattlePatch.BattleTokenType.Attack,
-					(scene, str) => Array.Exists(str, (name) => String.Compare(name, oparg) == 0),
-					(scene, str, index) => String.Compare(str[scene.header.TypCount + index], oparg) == 0);
+					(scene, str) => Array.Exists(str, (name) => String.Equals(name, oparg)),
+					(scene, str, index) => String.Equals(str[scene.header.TypCount + index], oparg));
 				_battlePatch.Add(patch);
 				return true;
 			}
 			else if (patch != null)
 			{
-				if (String.Compare(opcode, "Pattern") == 0)
+				if (String.Equals(opcode, "Pattern"))
 				{
 					if (!Int32.TryParse(oparg, out idint))
 						return false;
@@ -616,7 +629,7 @@ namespace Memoria
 					_battlePatch.Add(patch);
 					return true;
 				}
-				else if (String.Compare(opcode, "Enemy") == 0)
+				else if (String.Equals(opcode, "Enemy"))
 				{
 					if (!Int32.TryParse(oparg, out idint))
 						return false;
@@ -626,7 +639,7 @@ namespace Memoria
 					_battlePatch.Add(patch);
 					return true;
 				}
-				else if (String.Compare(opcode, "Attack") == 0)
+				else if (String.Equals(opcode, "Attack"))
 				{
 					if (!Int32.TryParse(oparg, out idint))
 						return false;
@@ -636,19 +649,19 @@ namespace Memoria
 					_battlePatch.Add(patch);
 					return true;
 				}
-				else if (String.Compare(opcode, "EnemyByName") == 0)
+				else if (String.Equals(opcode, "EnemyByName"))
 				{
 					patch = new BattlePatch(BattlePatch.BattleTokenType.Enemy,
 						patch.IsSceneApplicable,
-						(scene, str, index) => String.Compare(str[index], oparg) == 0);
+						(scene, str, index) => String.Equals(str[index], oparg));
 					_battlePatch.Add(patch);
 					return true;
 				}
-				else if (String.Compare(opcode, "AttackByName") == 0)
+				else if (String.Equals(opcode, "AttackByName"))
 				{
 					patch = new BattlePatch(BattlePatch.BattleTokenType.Attack,
 						patch.IsSceneApplicable,
-						(scene, str, index) => String.Compare(str[scene.header.TypCount + index], oparg) == 0);
+						(scene, str, index) => String.Equals(str[scene.header.TypCount + index], oparg));
 					_battlePatch.Add(patch);
 					return true;
 				}

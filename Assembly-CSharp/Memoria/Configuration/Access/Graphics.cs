@@ -32,7 +32,7 @@ namespace Memoria
 
             public static Boolean InitializeWidescreenSupport()
             {
-                if (!Instance._graphics.WidescreenSupport || (Instance._debug.Enabled && Instance._debug.StartFieldCreator))
+                if (!Instance._graphics.WidescreenSupport || (Instance._debug.Enabled && Instance._debug.StartFieldCreator) || Math.Abs((Double)Screen.width / (Double)Screen.height) < 1.34)
                 {
                     return false;
                 }

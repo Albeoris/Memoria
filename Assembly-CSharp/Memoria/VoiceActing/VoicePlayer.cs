@@ -75,8 +75,8 @@ public class VoicePlayer : SoundPlayer
 			SoundLib.Log("failed to play sound");
 			soundProfile.SoundID = 0;
 			return;
-        }
-        ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, 0);
+		}
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, 0);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPanning(soundProfile.SoundID, soundProfile.Panning, 0);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
@@ -140,7 +140,10 @@ public class VoicePlayer : SoundPlayer
 				if (!dialog.FlagButtonInh) // This dialog can be closed normally
 					dialog.ForceClose();
 				else if (VoicePlayer.scriptRequestedButtonPress) // It looks like this dialog is closed by the script on a key press
-					EventInput.ReceiveInput(EventInput.Pcircle | EventInput.Lcircle);
+				{
+					ETb.sKey0 &= ~(EventInput.Pcircle | EventInput.Lcircle);
+					EventInput.ReceiveInput(EventInput.Pcircle | EventInput.Lcircle); 
+				}
 			};
 		Action playSelectChoiceAction =
 			() =>
@@ -301,8 +304,8 @@ public class VoicePlayer : SoundPlayer
 			SoundLib.Log("failed to play sound");
 			soundProfile.SoundID = 0;
 			return;
-        }
-        ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
+		}
+		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, 0f, 0);
 		ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, (Int32)(this.fadeInDuration * 1000f));
 		this.SetMusicPanning(this.playerPanning, soundProfile);
 		this.SetMusicPitch(this.playerPitch, soundProfile);

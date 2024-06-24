@@ -279,14 +279,48 @@ namespace Memoria.Launcher
             downloadBytesTime = DateTime.Now;
             downloadThread = new Thread(() =>
             {
+                String modUrl = TryGetModdbMirror(mod.DownloadUrl);
+                if (modUrl == null)
+                    return;
                 Directory.CreateDirectory(Mod.INSTALLATION_TMP);
                 downloadingPath = Mod.INSTALLATION_TMP + "/" + (mod.InstallationPath ?? mod.Name) + ".zip";
                 downloadClient = new WebClient();
                 downloadClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadLoop);
                 downloadClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadEnd);
-                downloadClient.DownloadFileAsync(new Uri(mod.DownloadUrl), downloadingPath);
+                downloadClient.DownloadFileAsync(new Uri(modUrl), downloadingPath);
             });
             downloadThread.Start();
+        }
+        private String TryGetModdbMirror(String modUrl)
+        {
+            String moddbLink = "moddb.com/downloads/";
+            Int32 start = modUrl.IndexOf(moddbLink, StringComparison.InvariantCultureIgnoreCase);
+            if (start < 0)
+                return modUrl;
+
+            try
+            {
+                // Get the mod ID
+                start = modUrl.IndexOf("/", start + moddbLink.Length, StringComparison.InvariantCultureIgnoreCase) + 1;
+                Int32 end = modUrl.IndexOfAny(['/', '?'], start);
+                if (end < 0) end = modUrl.Length;
+                String moddbID = modUrl.Substring(start, end - start);
+
+                // Download the page
+                WebClient client = new WebClient();
+                String html = client.DownloadString($"https://www.moddb.com/downloads/start/{moddbID}/all");
+
+                // Get the mirror
+                start = html.IndexOf($@"<a href=""/downloads/mirror/{moddbID}/") + 9;
+                end = html.IndexOf(@"""", start);
+
+                String url = $"https://www.moddb.com" + html.Substring(start, end - start);
+                return url;
+            }
+            catch
+            {
+                return null;
+            }
         }
         private void DownloadLoop(Object sender, DownloadProgressChangedEventArgs e)
         {
@@ -511,6 +545,15 @@ namespace Memoria.Launcher
 
         private void UpdateCatalog()
         {
+            if (File.Exists(CATALOG_PATH))
+            {
+                FileInfo fi = new FileInfo(CATALOG_PATH);
+                if (fi.IsReadOnly) // Local testing of catalog: put it as read-only
+                {
+                    ReadCatalog();
+                    return;
+                }
+            }
             modListCatalog.Clear();
             ReadCatalog();
             downloadCatalogThread = new Thread(() =>

@@ -43,8 +43,11 @@ namespace Memoria
 			}
 		}
 
+		public static Boolean Enabled => Configuration.Graphics.BattleTPS < Configuration.Graphics.BattleFPS;
+
 		public static void RegisterState()
 		{
+			if (!Enabled) return;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
 			{
 				if (next.bi.slave != 0 || next.gameObject == null || !next.gameObject.activeInHierarchy || HonoluluBattleMain.IsAttachedModel(next))
@@ -52,6 +55,8 @@ namespace Memoria
 
 				String curAnim = next.currentAnimationName;
 				Animation anim = next.gameObject.GetComponent<Animation>();
+				if (anim == null)
+					continue;
 				AnimationState animState = anim[curAnim];
 				next._smoothUpdateBoneDelta = Vector3.zero;
 
@@ -195,7 +200,7 @@ namespace Memoria
 
 		public static void Apply(Single smoothFactor)
 		{
-			if (_skipCount > 0)
+			if (!Enabled || _skipCount > 0)
 				return;
 			SFXData.LoadLoop();
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
@@ -265,6 +270,7 @@ namespace Memoria
 
 		public static void ResetState()
 		{
+			if (!Enabled) return;
 			if (_skipCount > 0)
 				_skipCount--;
 			for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)

@@ -335,16 +335,16 @@ namespace Assets.Sources.Graphics.Movie
 
 		private void CalculateUVScaleOffset()
 		{
-			Single num = (Single)this.Width;
-			Single num2 = (Single)this.Height;
-			Single num3 = (Single)this.m_picX;
-			Single num4 = (Single)this.m_picY;
-			Single num5 = (Single)this.m_yStride;
-			Single num6 = (Single)this.m_yHeight;
-			Single num7 = (Single)this.m_uvStride;
-			Single num8 = (Single)this.m_uvHeight;
-			this.m_uvYScale = new Vector2(num / num5, -(num2 / num6));
-			this.m_uvYOffset = new Vector2(num3 / num5, (num2 + num4) / num6);
+			Single w = (Single)this.Width;
+			Single h = (Single)this.Height;
+			Single x = (Single)this.m_picX;
+			Single y = (Single)this.m_picY;
+			Single yStride = (Single)this.m_yStride;
+			Single yHeight = (Single)this.m_yHeight;
+			Single uvStride = (Single)this.m_uvStride;
+			Single uvHeight = (Single)this.m_uvHeight;
+			this.m_uvYScale = new Vector2(w / yStride, -(h / yHeight));
+			this.m_uvYOffset = new Vector2(x / yStride, (h + y) / yHeight);
 			this.m_uvCrCbScale = default(Vector2);
 			this.m_uvCrCbOffset = default(Vector2);
 			if (this.m_uvStride == this.m_yStride)
@@ -353,7 +353,7 @@ namespace Assets.Sources.Graphics.Movie
 			}
 			else
 			{
-				this.m_uvCrCbScale.x = num / 2f / num7;
+				this.m_uvCrCbScale.x = w / 2f / uvStride;
 			}
 			if (this.m_uvHeight == this.m_yHeight)
 			{
@@ -362,8 +362,8 @@ namespace Assets.Sources.Graphics.Movie
 			}
 			else
 			{
-				this.m_uvCrCbScale.y = -(num2 / 2f / num8);
-				this.m_uvCrCbOffset = new Vector2(num3 / 2f / num7, (num2 + num4) / 2f / num8);
+				this.m_uvCrCbScale.y = -(h / 2f / uvHeight);
+				this.m_uvCrCbOffset = new Vector2(x / 2f / uvStride, (h + y) / 2f / uvHeight);
 			}
 		}
 

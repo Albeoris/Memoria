@@ -28,9 +28,9 @@ public partial class EventEngine
             case EBin.event_code_binary.SHADOWAMP:
                 num1 = this.getv1();
                 return 0;
-            case EBin.event_code_binary.RAIN:
-                Int32 strength = this.getv1();
-                Int32 speed = this.getv1();
+            case EBin.event_code_binary.RAIN: // 0xD8, "SetWeather", "Add a raining effect (works on the world maps, fields and in battles)..arg2: speed of rain (unused for a battle rain).", true, 2, { 1, 1 }, { "Strength", "Speed" }, { AT_USPIN, AT_USPIN }, 0
+                Int32 strength = this.getv1(); // arg1: strength of rain
+                Int32 speed = this.getv1(); // arg2: speed of rain
                 ff9.rainRenderer.SetRainParam(strength, speed);
                 this._ff9.btl_rain = (Byte)strength;
                 return 0;
