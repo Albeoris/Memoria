@@ -204,7 +204,7 @@ public static class btl_vfx
         {
             btl.battleModelIsRendering = true;
             btl.tranceGo.SetActive(true);
-            btl.gameObject = btl.tranceGo;
+            btl.ChangeModel(btl.tranceGo);
             GeoTexAnim.geoTexAnimPlay(btl.tranceTexanimptr, 2);
         }
         else
@@ -212,7 +212,7 @@ public static class btl_vfx
             btl.battleModelIsRendering = true;
             btl.originalGo.SetActive(true);
             btl.tranceGo.SetActive(false);
-            btl.gameObject = btl.originalGo;
+            btl.ChangeModel(btl.originalGo);
             btl.dms_geo_id = btl_init.GetModelID(serialNo, isTrance);
             GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
         }

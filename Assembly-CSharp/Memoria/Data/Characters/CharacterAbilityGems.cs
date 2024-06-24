@@ -118,10 +118,10 @@ namespace Memoria.Data
                         e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         if (String.Equals(formula.Key, "MaxHP")) play.max.hp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.max.hp);
                         else if (String.Equals(formula.Key, "MaxMP")) play.max.mp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.max.mp);
-                        else if (String.Equals(formula.Key, "Speed")) play.basis.dex = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.basis.dex);
-                        else if (String.Equals(formula.Key, "Strength")) play.basis.str = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.basis.str);
-                        else if (String.Equals(formula.Key, "Magic")) play.basis.mgc = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.basis.mgc);
-                        else if (String.Equals(formula.Key, "Spirit")) play.basis.wpr = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.basis.wpr);
+                        else if (String.Equals(formula.Key, "Speed")) play.elem.dex = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.elem.dex);
+                        else if (String.Equals(formula.Key, "Strength")) play.elem.str = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.elem.str);
+                        else if (String.Equals(formula.Key, "Magic")) play.elem.mgc = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.elem.mgc);
+                        else if (String.Equals(formula.Key, "Spirit")) play.elem.wpr = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.elem.wpr);
                         else if (String.Equals(formula.Key, "Defence")) play.defence.PhysicalDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.defence.PhysicalDefence);
                         else if (String.Equals(formula.Key, "Evade")) play.defence.PhysicalEvade = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.defence.PhysicalEvade);
                         else if (String.Equals(formula.Key, "MagicDefence")) play.defence.MagicalDefence = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.defence.MagicalDefence);
@@ -214,6 +214,7 @@ namespace Memoria.Data
                             if (String.Equals(formula.Key, "FleeGil")) fleeGil = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), fleeGil);
                             else if (String.Equals(formula.Key, "HP")) play.cur.hp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.cur.hp);
                             else if (String.Equals(formula.Key, "MP")) play.cur.mp = (UInt32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.cur.mp);
+                            else if (String.Equals(formula.Key, "Trance")) play.trance = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), play.trance);
                             else if (String.Equals(formula.Key, "Status")) play.status = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (UInt32)play.status);
                             else if (String.Equals(formula.Key, "BonusAP")) bonus.ap = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), bonus.ap);
                             else if (String.Equals(formula.Key, "BonusCard")) bonus.card = (TetraMasterCardId)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int32)bonus.card);

@@ -7,6 +7,12 @@ using UnityEngine;
 
 public partial class BTL_DATA
 {
+    public void ChangeModel(GameObject newModel)
+    {
+        gameObject = newModel;
+        _smoothUpdateRegistered = false;
+    }
+
 	public void SetDisappear(Boolean disappear, Byte priority)
 	{
 		Byte value = disappear ? Math.Max(this.bi.disappear, priority) :
@@ -259,7 +265,9 @@ public partial class BTL_DATA
 
 	public BTL_DATA killer_track;
 
-	public Boolean is_monster_transform;
+    public Boolean builtin_weapon_mode = false;
+
+    public Boolean is_monster_transform;
 	public MONSTER_TRANSFORM monster_transform;
 
 	public class MONSTER_TRANSFORM

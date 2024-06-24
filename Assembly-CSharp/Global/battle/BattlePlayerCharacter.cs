@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using Memoria.Data;
@@ -78,16 +79,28 @@ public class BattlePlayerCharacter : MonoBehaviour
 		btl.originalGo = gameObject;
 	}
 
-	private static void CreateTranceModel(BTL_DATA btl, CharacterSerialNumber serial)
-	{
-		String path = btl_mot.BattleParameterList[serial].TranceModelId;
-		btl.tranceGo = ModelFactory.CreateModel(path, true);
-		BattlePlayerCharacter.CheckToHideBattleModel(btl.tranceGo, serial);
-		btl.tranceGo.transform.localPosition = new Vector3(btl.tranceGo.transform.localPosition.x, -10000f, btl.tranceGo.transform.localPosition.z);
-		btl.tranceGo.SetActive(false);
-	}
+    private static void CreateTranceModel(BTL_DATA btl, CharacterSerialNumber serial)
+    {
+        String path = btl_mot.BattleParameterList[serial].TranceModelId;
+        btl.tranceGo = ModelFactory.CreateModel(path, true);
+        BattlePlayerCharacter.CheckToHideBattleModel(btl.tranceGo, serial);
+        btl.tranceGo.transform.localPosition = new Vector3(btl.tranceGo.transform.localPosition.x, -10000f, btl.tranceGo.transform.localPosition.z);
+        // Set custom trance texture, if they exist
+        String tranceTexturePath = Path.GetDirectoryName(ModelFactory.GetRenameModelPath(ModelFactory.CheckUpscale(path))) + "/%_trance.png";
+        foreach (Renderer renderer in btl.tranceGo.GetComponentsInChildren<Renderer>())
+        {
+            String externalPath = AssetManager.SearchAssetOnDisc(tranceTexturePath.Replace("%", renderer.material.mainTexture.name), true, false);
+            if (!String.IsNullOrEmpty(externalPath))
+            {
+                Texture texture = AssetManager.LoadFromDisc<Texture2D>(externalPath, "");
+                texture.name = renderer.material.mainTexture.name;
+                renderer.material.mainTexture = texture;
+            }
+        }
+        btl.tranceGo.SetActive(false);
+    }
 
-	private static void CheckToHideBattleModel(GameObject characterGo, CharacterSerialNumber serial)
+    private static void CheckToHideBattleModel(GameObject characterGo, CharacterSerialNumber serial)
 	{
 		if (serial == CharacterSerialNumber.ZIDANE_SWORD)
 		{

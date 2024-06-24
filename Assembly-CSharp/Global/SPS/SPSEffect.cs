@@ -524,14 +524,6 @@ public class SPSEffect : MonoBehaviour
     private Boolean tcbAreaComputed;
     private Rect tcbArea;
 
-    public Boolean _smoothUpdateRegistered = false;
-    public Vector3 _smoothUpdatePosPrevious;
-    public Vector3 _smoothUpdatePosActual;
-    public Quaternion _smoothUpdateRotPrevious;
-    public Quaternion _smoothUpdateRotActual;
-    public Int32 _smoothUpdateScalePrevious;
-    public Int32 _smoothUpdateScaleActual;
-
     public class FieldSPSWork
     {
         public Int32 pt;

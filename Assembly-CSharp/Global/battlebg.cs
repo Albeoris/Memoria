@@ -43,7 +43,7 @@ public class battlebg
 			}
 		}
 		FF9StateSystem.Battle.FF9Battle.map.btlBGObjAnim = battlebg.objAnimModel;
-		battlebg.nf_BbgTabAddress.InitTextureAnim();
+		battlebg.nf_BbgTabAddress.InitBBGTextureAnim();
 		if (battlebg.nf_BbgTexAnm != 0)
 		{
 			for (Int32 j = 0; j < battlebg.nf_BbgTexAnm; j++)
@@ -383,14 +383,11 @@ public class battlebg
 	{
 		if (tab.geotex[anum].numframes == 0)
 		{
-			tab.TexAnimTextures[anum].wrapMode = TextureWrapMode.Repeat;
-			if (battlebg.nf_BbgNumber == 57)
-			{
-				tab.extraTexAnimTrTextures[anum].wrapMode = TextureWrapMode.Repeat;
-			}
+			tab.materials[anum].mainTexture.wrapMode = TextureWrapMode.Repeat;
+			if (battlebg.nf_BbgNumber == 57) // Cleyra, Observation post
+				tab.bbgExtraAimMaterials[anum].mainTexture.wrapMode = TextureWrapMode.Repeat;
 		}
-		GEOTEXANIMHEADER geotexanimheader = tab.geotex[anum];
-		geotexanimheader.flags = (Byte)(geotexanimheader.flags | 1);
+		tab.geotex[anum].flags |= 1;
 		tab.geotex[anum].frame = 0;
 		tab.geotex[anum].lastframe = 4096;
 	}
@@ -413,15 +410,15 @@ public class battlebg
 					{
 						if (geotexanimheader.numframes <= 0)
 						{
-							goto IL_2C3;
+							continue;
 						}
 						if (num2 != lastframe)
 						{
 							for (Int32 j = 0; j < (Int32)geotexanimheader.count; j++)
 							{
-								Single x = (geotexanimheader.coords[(Int32)num2].x - geotexanimheader.target.x) / (Single)texheaderptr.TexAnimTextures[j].width;
-								Single num3 = (geotexanimheader.coords[(Int32)num2].y - geotexanimheader.target.y) / (Single)texheaderptr.TexAnimTextures[j].height;
-								texheaderptr.texAnimMaterials[i].SetTextureOffset("_MainTex", new Vector2(x, -num3));
+								Single x = (geotexanimheader.coords[num2].x - geotexanimheader.target.x) / texheaderptr.materials[j].mainTexture.width;
+								Single num3 = (geotexanimheader.coords[num2].y - geotexanimheader.target.y) / texheaderptr.materials[j].mainTexture.height;
+								texheaderptr.materials[i].SetTextureOffset("_MainTex", new Vector2(x, -num3));
 							}
 							geotexanimheader.lastframe = num2;
 						}
@@ -459,27 +456,20 @@ public class battlebg
 					for (Int32 k = 0; k < (Int32)geotexanimheader.count; k++)
 					{
 						Int32 num5 = 0;
-						Int32 height = texheaderptr.TexAnimTextures[k].height;
+						Int32 height = texheaderptr.materials[k].mainTexture.height;
 						Single num6 = (Single)num2 / (Single)height;
-						if (battlebg.nf_BbgNumber == 69 && i == 3)
-						{
+						if (battlebg.nf_BbgNumber == 69 && i == 3) // 
 							num6 *= -1f;
-						}
-						texheaderptr.texAnimMaterials[i].SetTextureOffset("_MainTex", new Vector2((Single)num5, -num6));
+						texheaderptr.materials[i].SetTextureOffset("_MainTex", new Vector2(num5, -num6));
 						if (battlebg.nf_BbgNumber == 57)
-						{
-							texheaderptr.extraTexAimMaterials[i].SetTextureOffset("_MainTex", new Vector2((Single)num5, -num6));
-						}
+							texheaderptr.bbgExtraAimMaterials[i].SetTextureOffset("_MainTex", new Vector2(num5, -num6));
 						else if (battlebg.nf_BbgNumber == 71 && k == 0)
-						{
-							texheaderptr.extraTexAimMaterials[i].SetTextureOffset("_MainTex", new Vector2((Single)num5, -num6));
-						}
+							texheaderptr.bbgExtraAimMaterials[i].SetTextureOffset("_MainTex", new Vector2(num5, -num6));
 					}
 					Int16 rate = geotexanimheader.rate;
 					geotexanimheader.frame += (Int32)rate;
 				}
 			}
-			IL_2C3:;
 		}
 	}
 
@@ -490,12 +480,12 @@ public class battlebg
 
 	public static Int32 rand()
 	{
-		return UnityEngine.Random.Range(0, 32767);
+		return UnityEngine.Random.Range(0, 0x7FFF);
 	}
 
 	public static Int32 nf_GetBbgIntensity()
 	{
-		return (Int32)battlebg.nf_BbgBrite;
+		return battlebg.nf_BbgBrite;
 	}
 
 	public static void nf_SetBbgIntensity(Byte fade)
@@ -505,23 +495,18 @@ public class battlebg
 
 	private static void setBGColor(GameObject go)
 	{
-		Single num = (Single)battlebg.nf_BbgBrite;
-		MeshRenderer[] componentsInChildren = go.GetComponentsInChildren<MeshRenderer>();
-		for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
+		Single intensity = battlebg.nf_BbgBrite;
+		foreach (MeshRenderer renderer in go.GetComponentsInChildren<MeshRenderer>())
 		{
-			if (num == 0f)
+			if (intensity == 0f)
 			{
-				componentsInChildren[i].enabled = false;
+				renderer.enabled = false;
 			}
 			else
 			{
-				componentsInChildren[i].enabled = true;
-				Material[] materials = componentsInChildren[i].materials;
-				for (Int32 j = 0; j < (Int32)materials.Length; j++)
-				{
-					Material material = materials[j];
-					material.SetFloat("_Intensity", num);
-				}
+				renderer.enabled = true;
+				foreach (Material mat in renderer.materials)
+					mat.SetFloat("_Intensity", intensity);
 			}
 		}
 	}
