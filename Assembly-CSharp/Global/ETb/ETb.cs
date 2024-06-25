@@ -211,9 +211,9 @@ public class ETb
 		Singleton<DialogManager>.Instance.CloseAll(scriptedClose);
 	}
 
-	public void DisposWindowByID(Int32 p, Boolean scriptedClose = false)
+	public void DisposWindowByID(Int32 windowID, Boolean scriptedClose = false)
 	{
-		Singleton<DialogManager>.Instance.Close(p, scriptedClose);
+		Singleton<DialogManager>.Instance.Close(windowID, scriptedClose);
 	}
 
 	public void RaiseAllWindow()
@@ -221,10 +221,10 @@ public class ETb
 		Singleton<DialogManager>.Instance.RiseAll();
 	}
 
-	public void SetMesValue(Int32 n, Int32 v)
+	public void SetMesValue(Int32 scriptID, Int32 value)
 	{
-		if (n >= 0 && n < 8)
-			this.gMesValue[n] = v;
+		if (scriptID >= 0 && scriptID < 8)
+			this.gMesValue[scriptID] = value;
 	}
 
 	public static String GetItemName(Int32 itemId)

@@ -54,6 +54,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     public String sOriginalFieldName;
     #endregion
     public Int16 sOriginalFieldNo;
+    /// <summary>gamemode: 1=Field, 2=Battle, 3=Worldmap</summary>
     public Int32 gMode;
     public Obj gCur;
     public Int32 gArgFlag;

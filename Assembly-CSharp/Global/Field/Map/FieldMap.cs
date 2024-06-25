@@ -901,10 +901,10 @@ public class FieldMap : HonoBehavior
     }
 
     /// <summary>EBG - set if overlay is active (inactive isn't visible)</summary>
-    public Int32 EBG_overlaySetActive(Int32 overlayNdx, Int32 activeFlag)
+    public Int32 EBG_overlaySetActive(Int32 overlayNdx, Boolean isActive)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
-        bgOverlay.SetFlags(BGOVERLAY_DEF.OVERLAY_FLAG.Active, activeFlag != 0);
+        bgOverlay.SetFlags(BGOVERLAY_DEF.OVERLAY_FLAG.Active, isActive);
         return 1;
     }
 
@@ -1056,10 +1056,10 @@ public class FieldMap : HonoBehavior
     }
 
     /// <summary>EBG - anim - define if animation is running in a loop</summary>
-    public Int32 EBG_animSetActive(Int32 animNdx, Int32 flag)
+    public Int32 EBG_animSetActive(Int32 animNdx, Boolean isActive)
     {
         BGANIM_DEF bgAnim = this.scene.animList[animNdx];
-        if (flag != 0)
+        if (isActive)
         {
             if (dbug) Log.Message("EBG_animSetActive | PLAY anim:" + animNdx);
             bgAnim.flags |= BGANIM_DEF.ANIM_FLAG.StartPlay;
@@ -1186,7 +1186,6 @@ public class FieldMap : HonoBehavior
         if (MapNo == 2351 && overlayNdx >= 3 && overlayNdx <= 17) // official fix of the mine bucket
             destZ = 3000;
 
-
         bgOverlay.orgX = destX;
         bgOverlay.orgY = destY;
         bgOverlay.orgZ = destZ;
@@ -1198,8 +1197,8 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
-    /// <summary>New EBG - set position of overlay, with movement for a time (</summary>
-    public void EBG_overlayMoveTimed(Int32 overlayNdx, Int32 dx, Int32 dy, Int32 dz, Int32 t)
+    /// <summary>New EBG - set position of overlay, with movement for a time</summary>
+    public void EBG_overlayMoveTimed(Int32 overlayNdx, Single dx, Single dy, Int16 dz, Int32 t)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
         bgOverlay.dxTimed = (Single)dx / t;
@@ -1209,13 +1208,13 @@ public class FieldMap : HonoBehavior
         if (dbug) Log.Message($"EBG_overlayMoveTimed {overlayNdx} | dx:{dx} dy:{dy} dz:{dz} t:{t}");
     }
 
-    public Int32 EBG_overlaySetOrigin(Int32 overlayNdx, Int32 orgX, Int32 orgY)
+    public Int32 EBG_overlaySetOrigin(Int32 overlayNdx, Single orgX, Single orgY)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
-        bgOverlay.curX = (float)orgX;
-        bgOverlay.curY = (float)orgY;
-        bgOverlay.orgX = (float)orgX;
-        bgOverlay.orgY = (float)orgY;
+        bgOverlay.curX = orgX;
+        bgOverlay.curY = orgY;
+        bgOverlay.orgX = orgX;
+        bgOverlay.orgY = orgY;
         this.flags |= FieldMapFlags.Unknown128;
         if (dbug) Log.Message("EBG_overlaySetOrigin " + overlayNdx + " | orgX:" + orgX + " orgY:" + orgY);
         return 1;
@@ -2482,13 +2481,13 @@ public class FieldMap : HonoBehavior
         [1359,0,10,3900],   // Lindblum castle anim
         [1359,0,11,3900],   // Lindblum castle anim
         [900,0,20,500],     // Treno Thug Inn light
+        [1900,0,20,500],    // Treno Thug Inn light
         [913,0,0,100],      // Treno Tower lights
         [913,0,3,0],        // Treno Tower lights
         [913,0,4,0],        // Treno Tower lights
-        [1900,0,20,500],     // Treno Thug Inn light
-        [1913,0,0,100],      // Treno Tower lights
-        [1913,0,3,0],        // Treno Tower lights
-        [1913,0,4,0],        // Treno Tower lights
+        [1913,1,9,100],     // Treno Tower lights
+        [1913,1,12,0],      // Treno Tower lights
+        [1913,1,13,0],      // Treno Tower lights
         [951,0,2,1214],     // Gargan Roo's railing
         [1000,0,12,0],      // Clayra's Trunk text (in English version)
         [1206,0,21,800],    // Alexandria, purple chadelier

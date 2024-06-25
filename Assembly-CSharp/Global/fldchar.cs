@@ -16,31 +16,31 @@ public class fldchar
 		}
 	}
 
-	public static void FF9FieldCharDispatch(Int32 uid, Int32 Parm, Int32 Arg1, Int32 Arg2, Int32 Arg3)
+	public static void FF9FieldCharDispatch(Int32 uid, Int32 param, Int32 Arg2, Int32 Arg3, Int32 Arg4)
 	{
 		FF9FieldCharState ff9FieldCharState = FF9StateSystem.Field.FF9Field.loc.map.charStateArray[uid];
 		FF9Char ff9Char = FF9StateSystem.Common.FF9.charArray[uid];
-		switch (Parm)
+		switch (param)
 		{
 		case 0:
-			if ((Arg1 & 255) == 255)
+			if ((Arg2 & 255) == 255)
 			{
 				ff9Char.attr = (UInt32)((UInt64)ff9Char.attr & 18446744073709486079UL);
 			}
 			else
 			{
-				if (Arg1 != (Int32)ff9FieldCharState.arate)
+				if (Arg2 != (Int32)ff9FieldCharState.arate)
 				{
 					ff9Char.attr |= 262144u;
 				}
 				ff9Char.attr |= 65536u;
 			}
-			ff9FieldCharState.arate = (SByte)Arg1;
+			ff9FieldCharState.arate = (SByte)Arg2;
 			break;
 		case 4:
-			if (Arg1 != 0)
+			if (Arg2 != 0)
 			{
-				fldchar.geoSlice(ff9Char.geo, Arg2);
+				fldchar.geoSlice(ff9Char.geo, Arg3);
 				ff9Char.attr |= 1048576u;
 			}
 			else
@@ -62,8 +62,8 @@ public class fldchar
 				ff9Char2.attr = 0u;
 				ff9FieldCharMirror.geo = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue((Int32)ff9Char.evt.model), false);
 				ff9FieldCharMirror.geo.name = ff9Char.geo.name + "_mirror";
-			    Shader shader = ShadersLoader.Find("PSX/FieldMapActor");
-			    Renderer[] componentsInChildren = ff9FieldCharMirror.geo.GetComponentsInChildren<Renderer>();
+				Shader shader = ShadersLoader.Find("PSX/FieldMapActor");
+				Renderer[] componentsInChildren = ff9FieldCharMirror.geo.GetComponentsInChildren<Renderer>();
 				Renderer[] array = componentsInChildren;
 				for (Int32 i = 0; i < (Int32)array.Length; i++)
 				{
@@ -93,10 +93,10 @@ public class fldchar
 				ff9Char2.evt = ff9Char.evt;
 				FF9Char.ff9charptr_attr_set(ff9FieldCharMirror.chr, 33554433);
 			}
-			switch (Parm)
+			switch (param)
 			{
 			case 8:
-				if (Arg1 != 0)
+				if (Arg2 != 0)
 				{
 					FF9Char.ff9charptr_attr_set(ff9FieldCharMirror.chr, 16777216);
 					ff9FieldCharMirror.geo.SetActive(true);
@@ -108,15 +108,15 @@ public class fldchar
 				}
 				break;
 			case 9:
-				ff9FieldCharMirror.point = new Vector3((Single)Arg1, (Single)Arg2, (Single)Arg3);
+				ff9FieldCharMirror.point = new Vector3((Single)Arg2, (Single)Arg3, (Single)Arg4);
 				break;
 			case 10:
-				ff9FieldCharMirror.normal = new Vector3((Single)(Arg1 >> 12), (Single)(Arg2 >> 12), (Single)(Arg3 >> 12));
+				ff9FieldCharMirror.normal = new Vector3((Single)(Arg2 >> 12), (Single)(Arg3 >> 12), (Single)(Arg4 >> 12));
 				break;
 			case 11:
-				ff9FieldCharMirror.clr[0] = (Byte)Arg1;
-				ff9FieldCharMirror.clr[1] = (Byte)Arg2;
-				ff9FieldCharMirror.clr[2] = (Byte)Arg3;
+				ff9FieldCharMirror.clr[0] = (Byte)Arg2;
+				ff9FieldCharMirror.clr[1] = (Byte)Arg3;
+				ff9FieldCharMirror.clr[2] = (Byte)Arg4;
 				ff9FieldCharMirror.clr[3] = 2;
 				break;
 			}
@@ -128,23 +128,23 @@ public class fldchar
 		case 19:
 		{
 			FF9FieldCharSound ff9FieldCharSound;
-			if ((ff9FieldCharSound = FF9Snd.ff9fieldSoundGetChar(ff9Char, Arg1, Arg2)) == null && Parm != 19)
+			if ((ff9FieldCharSound = FF9Snd.ff9fieldSoundGetChar(ff9Char, Arg2, Arg3)) == null && param != 19)
 			{
-				ff9FieldCharSound = FF9Snd.ff9fieldSoundNewChar(ff9Char, Arg1, Arg2);
+				ff9FieldCharSound = FF9Snd.ff9fieldSoundNewChar(ff9Char, Arg2, Arg3);
 			}
-			switch (Parm)
+			switch (param)
 			{
 			case 16:
-				ff9FieldCharSound.sndEffectID[0] = (UInt16)Arg3;
+				ff9FieldCharSound.sndEffectID[0] = (UInt16)Arg4;
 				break;
 			case 17:
-				ff9FieldCharSound.sndEffectID[1] = (UInt16)Arg3;
+				ff9FieldCharSound.sndEffectID[1] = (UInt16)Arg4;
 				break;
 			case 18:
-				ff9FieldCharSound.pitchRand = (SByte)((Arg3 == 0) ? 0 : 1);
+				ff9FieldCharSound.pitchRand = (SByte)((Arg4 == 0) ? 0 : 1);
 				break;
 			case 19:
-				FF9Snd.ff9fieldSoundDeleteChar(ff9Char, Arg1, Arg2);
+				FF9Snd.ff9fieldSoundDeleteChar(ff9Char, Arg2, Arg3);
 				break;
 			}
 			break;
@@ -196,9 +196,9 @@ public class fldchar
 							}
 							else
 							{
-							    Shader shader2 = ShadersLoader.Find("PSX/FieldMapActor");
+								Shader shader2 = ShadersLoader.Find("PSX/FieldMapActor");
 
-                                Renderer[] array2 = componentsInChildren;
+								Renderer[] array2 = componentsInChildren;
 								for (Int32 k = 0; k < (Int32)array2.Length; k++)
 								{
 									Renderer renderer2 = array2[k];
