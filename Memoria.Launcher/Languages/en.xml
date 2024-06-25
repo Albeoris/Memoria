@@ -94,6 +94,15 @@
 	BattleFPS = "Battle"
 	FieldFPS = "Field"
 	WorldFPS = "World"
+	EnableCustomShader = "Enable Custom Shader"
+	EnableRealismShadingForField = "Use Realism Shading In Field"
+	EnableToonShadingForField = "Use Toon Shading In Field"
+	EnableRealismShadingForBattle = "Use Realism Shading In Battle"
+	EnableToonShadingForBattle = "Use Toon Shading In Battle"
+	EnableOutlineForFieldCharacter = "Enable Outline For Field Character"
+	EnableOutlineForBattleCharacter = "Enable Outline For Battle Character"
+	EnableSSAO = "Enable SASO (Expensive)"
+	
 	CameraStabilizer = "Camera stabilizer"
 	UseOrchestralMusic = "Orchestral music (Moguri)"
 	Use30FpsVideo = "30 FPS videos (Moguri)"
@@ -142,6 +151,7 @@
 	WorldFPS_Tooltip = "Image refresh rate on the world map (default: 20)"
 	MaxCardCount_Tooltip = "Limit to cards in inventory raised to 10000"
 	UIColumnsChoice_Tooltip = "Number of columns: if you want more items/abilities on one screen"
+	EnableCustomShader_Tooltip = "Whether to enable per-pixel lighting shader for field and battle character"
 	NoAutoTrance_Tooltip = "Trance does not start automatically. 'Left key' to activate it"
 	/>
 

@@ -682,6 +682,20 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             }
             btlseq.FF9DrawShadowCharBattle(stateBattleSystem.map.shadowArray[btl], btl, 0, BoneNo);
         }
+        
+        for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+        {
+            if (btl.bi.slave != 0 || btl.bi.disappear != 0 || btl.bi.shadow == 0)
+                continue;
+            if(btl.HasMeshSmoothed)
+                continue;
+            var battleUnitGameObject = btl.gameObject;
+            SkinnedMeshRenderer[] componentsInChildren = battleUnitGameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
+            MeshRenderer[] componentsInChildren2 = battleUnitGameObject.GetComponentsInChildren<MeshRenderer>();
+            NormalSolver.SmoothCharacterMesh(componentsInChildren);
+            NormalSolver.SmoothCharacterMesh(componentsInChildren2);
+            btl.HasMeshSmoothed = true;
+        }
     }
 
     private static void UpdateAttachModel()

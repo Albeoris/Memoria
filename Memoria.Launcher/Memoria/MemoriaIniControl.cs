@@ -50,6 +50,14 @@ namespace Memoria.Launcher
             optionsText.FontWeight = FontWeights.Bold;
             optionsText.Margin = rowMargin;*/
             Int32 row = 0;
+            
+            UiCheckBox EnableCustomShader = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableCustomShader, null), row, 0, 1, 9);
+            EnableCustomShader.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CustomShader)) { Mode = BindingMode.TwoWay });
+            EnableCustomShader.Foreground = Brushes.White;
+            EnableCustomShader.Margin = rowMargin;
+            EnableCustomShader.ToolTip = Lang.Settings.EnableCustomShader_Tooltip;
+
+            row++;
 
             if (Directory.Exists("MoguriSoundtrack"))
             {
@@ -436,6 +444,19 @@ namespace Memoria.Launcher
                 }
             }
         }
+        
+        public Int16 CustomShader
+        {
+            get { return _customshader; }
+            set
+            {
+                if (_customshader != value)
+                {
+                    _customshader = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         public Int16 SharedFPS
         {
@@ -799,7 +820,7 @@ namespace Memoria.Launcher
             }
             return false;
         }
-        private Int16 _iswidescreensupport, _battleInterface, _uicolumnschoice, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _scaledbattleui, _sharedfps, _battlefps, _fieldfps, _worldfps, _camerastabilizer;
+        private Int16 _customshader, _iswidescreensupport, _battleInterface, _uicolumnschoice, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _scaledbattleui, _sharedfps, _battlefps, _fieldfps, _worldfps, _camerastabilizer;
         private double _scaledbattleuiscale;
         private String _fontChoice;
         private UiComboBox _fontChoiceBox;
@@ -864,6 +885,16 @@ namespace Memoria.Launcher
                     value = " 1";
                     OnPropertyChanged(nameof(WidescreenSupport));
                 }
+                
+                value = iniFile.ReadValue("Graphics", "CustomShader");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                    OnPropertyChanged(nameof(CustomShader));
+                }
+                if (!Int16.TryParse(value, out _customshader))
+                    _customshader = 0;
+                
                 if (!Int16.TryParse(value, out _iswidescreensupport))
                     _iswidescreensupport = 1;
 
@@ -1071,6 +1102,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(FieldFPS));
                 Refresh(nameof(WorldFPS));
                 Refresh(nameof(CameraStabilizer));
+                Refresh(nameof(CustomShader));
                 Refresh(nameof(BattleInterface));
                 Refresh(nameof(UIColumnsChoice));
                 Refresh(nameof(SkipIntros));
@@ -1152,6 +1184,9 @@ namespace Memoria.Launcher
                 IniFile iniFile = new IniFile(_iniPath);
                 switch (propertyName)
                 {
+                    case nameof(CustomShader):
+                        iniFile.WriteValue("Graphics", "CustomShader ", " "+CustomShader.ToString());
+                        break;
                     case nameof(OrchestralMusic):
                     case nameof(HighFpsVideo):
                         iniFile.WriteValue("Mod", "FolderNames ", " " + UpdateModList());
@@ -1366,6 +1401,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Graphics", "TileSize", "32");
                         MakeIniNotNull("Graphics", "AntiAliasing", "8");
                         MakeIniNotNull("Graphics", "CameraStabilizer", "85");
+                        MakeIniNotNull("Graphics", "CustomShader", "0");
 
                         MakeIniNotNull("Control", "Enabled", "1");
                         MakeIniNotNull("Control", "DisableMouse", "0");

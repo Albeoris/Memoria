@@ -4,6 +4,7 @@ Shader "PSX/BattleMap_Ground" {
 		_Cutoff ("Alpha cutoff", Range(0,1)) = 0.5
 		_Intensity ("Intensity", Float) = 128
 		_ZWrite ("ZWrite", Int) = 0
+		_Color ("Color", Color) = (1,1,1,1)
 	}
 	SubShader { 
 		LOD 100
@@ -16,36 +17,33 @@ Shader "PSX/BattleMap_Ground" {
 				SubProgram "d3d9 " {
 					Bind "vertex" Vertex
 					Bind "texcoord" TexCoord0
-					Matrix 0 [glstate_matrix_modelview0]
-					Matrix 4 [glstate_matrix_projection]
+					Matrix 0 [unity_ObjectToWorld]
+					Matrix 4 [unity_MatrixVP]
 					Vector 9 [_MainTex_ST]
 					Vector 8 [_ProjectionParams]
 					"vs_2_0
-						def c10, 20, 1, 60000, 0
-						dcl_position v0
-						dcl_texcoord v1
-						dp4 r0.x, c0, v0
-						dp4 r0.y, c1, v0
-						dp4 r0.w, c3, v0
-						dp4 r0.z, c2, v0
-						dp4 r1.x, c7, r0
-						rcp r1.x, r1.x
-						dp4 r2.x, c4, r0
-						dp4 r2.y, c5, r0
-						mov r3.xyw, r0
-						mul oPos.xy, r1.x, r2
-						mov r0.xw, c10.xyzy
-						add r0.x, r0.x, c8.y
-						add r3.z, -r0.x, r0.z
-						sge r0.x, r0.z, -r0.x
-						dp4 r0.y, c7, r3
-						dp4 r0.z, c6, r3
-						rcp r0.y, r0.y
-						mul r0.z, r0.y, r0.z
-						add r1.xy, -r0.zwzw, c10.zyzw
-						mad oPos.zw, r0.x, r1.xyxy, r0
-						mad oT0.xy, v1, c9, c9.zwzw
-						
+					    def c10, 1, 0, 0.5, 0
+                        dcl_position v0
+                        dcl_texcoord v1
+                        mad oT0.xy, v1, c9, c9.zwzw
+                        mad r0, v0.xyzx, c10.xxxy, c10.yyyx
+                        dp4 r1.x, c0, r0
+                        dp4 r1.y, c1, r0
+                        dp4 r1.z, c2, r0
+                        dp4 r1.w, c3, r0
+                        dp4 r0.x, c4, r1
+                        dp4 r0.w, c7, r1
+                        mul r2.xz, r0.xyww, c10.z
+                        dp4 r0.y, c5, r1
+                        dp4 r0.z, c6, r1
+                        mul r1.x, r0.y, c8.x
+                        mov r3.xyw, r0
+                        mul r2.w, r1.x, c10.z
+                        add oT1.xy, r2.z, r2.xwzw
+                        mov oT1.zw, r0
+                        mov r3.z, r0.z
+                        mad oPos.xy, r3.w, c255, r3
+                        mov oPos.zw, r3
 						"
 				}
 			}
@@ -54,18 +52,105 @@ Shader "PSX/BattleMap_Ground" {
 					Float 0 [_Cutoff]
 					Float 1 [_Intensity]
 					SetTexture 0 [_MainTex] 2D 0
+					SetTexture 1 [_SSAO] 2D 1
 					"ps_2_0
-						def c2, 0.0078125, 0, 0, 0
-						dcl_pp t0.xy
-						dcl_2d s0
-						texld_pp r0, t0, s0
-						add_pp r1, r0.w, -c0.x
-						texkill r1
-						mov r1.x, c1.x
-						mul r1.x, r1.x, c2.x
-						mul_pp r0.xyz, r0, r1.x
-						mov_pp oC0, r0
+					    def c2, -0, -1, 0.0078125, 0
+                        dcl t0.xy
+                        dcl t1
+                        dcl_2d s0
+                        dcl_2d s1
+                        texld_pp r0, t0, s0
+                        add r1.w, r0.w, -c0.x
+                        cmp r1, r1.w, c2.x, c2.y
+                        texkill r1
+                        mov r1.z, c2.z
+                        mul r1.x, r1.z, c1.x
+                        mul_pp r1.xyz, r0, r1.x
+                        rcp r1.w, t1.w
+                        mul r2.xy, r1.w, t1
+                        texld r2, r2, s1
+                        mul_pp r0.xyz, r1, r2.x
+                        mov_pp oC0, r0
 						
+						"
+				}
+			}
+		}
+		
+        Pass {
+			Name "SHADOWCASTER"
+			Tags { "QUEUE"="AlphaTest+1" "LIGHTMODE"="SHADOWCASTER" "IGNOREPROJECTOR"="true" "SHADOWSUPPORT"="true" "RenderType"="TransparentCutout" }
+            Cull Back
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_DEPTH" }
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "texcoord" TexCoord0
+					Matrix 0 [unity_ObjectToWorld]
+					Matrix 4 [unity_MatrixVP]
+					Matrix 8 [unity_WorldToObject]
+					Vector 11 [_WorldSpaceLightPos0]
+					Vector 12 [unity_LightShadowBias]
+					Vector 13 [_MainTex_ST]
+					"vs_2_0
+					    def c14, 1, 0, 0, 0
+                        dcl_position v0
+                        dcl_normal v1
+                        dcl_texcoord v2
+                        mul r0.xyz, v1.y, c9
+                        mad r0.xyz, v1.x, c8, r0
+                        mad r0.xyz, v1.z, c10, r0
+                        nrm r1.xyz, r0
+                        dp4 r0.x, c0, v0
+                        dp4 r0.y, c1, v0
+                        dp4 r0.z, c2, v0
+                        mad r2.xyz, r0, -c11.w, c11
+                        nrm r3.xyz, r2
+                        dp3 r0.w, r1, r3
+                        mad r0.w, r0.w, -r0.w, c14.x
+                        rsq r0.w, r0.w
+                        rcp r0.w, r0.w
+                        mul r0.w, r0.w, c12.z
+                        mul r1.xyz, r0.w, r1
+                        mul r0.w, c12.z, c12.z
+                        slt r0.w, -r0.w, r0.w
+                        mad r0.xyz, r0.w, -r1, r0
+                        dp4 r0.w, c3, v0
+                        dp4 r4.x, c4, r0
+                        dp4 r4.y, c5, r0
+                        dp4 r1.x, c6, r0
+                        dp4 r0.x, c7, r0
+                        rcp r0.y, r0.x
+                        mov r4.w, r0.x
+                        mul r0.x, r0.y, c12.x
+                        max r0.x, r0.x, c14.y
+                        min r0.x, r0.x, c14.x
+                        add r0.x, r0.x, r1.x
+                        max r0.y, r0.x, c14.y
+                        add r0.y, -r0.x, r0.y
+                        mad r4.z, c12.y, r0.y, r0.x
+                        mad oT1.xy, v2, c13, c13.zwzw
+                        mad oPos.xy, r4.w, c255, r4
+                        mov oPos.zw, r4
+						
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Keywords { "SHADOWS_DEPTH" }
+					Float 0 [_Cutoff]
+                    SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+					    def c1, 0, 0, 0, 0
+                        dcl t1.xy
+                        dcl_2d s0
+                        texld_pp r0, t1, s0
+                        add_pp r0, r0.w, -c0.x
+                        texkill r0
+                        mov_pp r0, c1.x
+                        mov_pp oC0, r0
 						"
 				}
 			}

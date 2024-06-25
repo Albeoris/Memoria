@@ -635,7 +635,7 @@ public static class btl_stat
             if (CheckStatus(data, BattleStatusConst.ChgPolyCol))
             {
                 if (!FF9StateSystem.Battle.isFade)
-                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect", data);
                 btl_util.GeoSetColor2DrawPacket(data.gameObject, data.add_col[0], data.add_col[1], data.add_col[2], Byte.MaxValue);
                 if (data.weapon_geo)
                     btl_util.GeoSetColor2DrawPacket(data.weapon_geo, data.add_col[0], data.add_col[1], data.add_col[2], Byte.MaxValue);
@@ -643,7 +643,7 @@ public static class btl_stat
             else if (data.special_status_old) // [DV] - Add a glow effect
             {
                 if (!FF9StateSystem.Battle.isFade)
-                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect", data);
                 Byte counter = (Byte)(ff9Battle.btl_cnt % 24);
                 Byte strength = (Byte)(counter >= 8 ? (counter >= 16 ? (24 - counter) : 8) : (counter + 2));
                 Int32 OldGlow = -192;
@@ -657,7 +657,7 @@ public static class btl_stat
             else if (CheckStatus(data, BattleStatus.Shell | BattleStatus.Protect))
             {
                 if (!FF9StateSystem.Battle.isFade)
-                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect", data);
                 Byte counter = (Byte)(ff9Battle.btl_cnt % 24);
                 Byte strength = (Byte)(counter >= 8 ? (counter >= 16 ? (24 - counter) : 8) : counter);
                 Boolean shellGlow = CheckStatus(data, BattleStatus.Shell) && (!CheckStatus(data, BattleStatus.Protect) || ff9Battle.btl_cnt % 48 >= 24);
@@ -674,7 +674,7 @@ public static class btl_stat
             else if (!unit.IsUnderStatus(BattleStatus.Death) && ((unit.IsPlayer && unit.IsUnderAnyStatus(BattleStatus.Trance)) || (!unit.IsPlayer && unit.Data.enable_trance_glow)))
             {
                 if (!FF9StateSystem.Battle.isFade)
-                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect", data);
                 Byte counter = (Byte)(ff9Battle.btl_cnt % 16);
                 Byte strength = counter >= 8 ? (Byte)(16U - counter) : counter;
                 Byte[] glowingColor = unit.IsPlayer ? btl_mot.BattleParameterList[unit.SerialNumber].TranceGlowingColor : unit.Enemy.Data.trance_glowing_color;
@@ -726,7 +726,7 @@ public static class btl_stat
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
         if ((ff9Battle.btl_load_status & ff9btl.LOAD_CHR) == 0 || (ff9Battle.btl_load_status & ff9btl.LOAD_FADENPC) == 0 || FF9StateSystem.Battle.isFade)
             return;
-        btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
+        btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect", btl);
         btl_util.GeoSetColor2DrawPacket(btl.gameObject, bbgInfoPtr.chr_r, bbgInfoPtr.chr_g, bbgInfoPtr.chr_b, Byte.MaxValue);
     }
 

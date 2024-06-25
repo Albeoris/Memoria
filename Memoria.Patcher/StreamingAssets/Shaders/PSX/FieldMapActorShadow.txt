@@ -4,9 +4,9 @@ Shader "PSX/FieldMapActorShadow" {
 		_Color ("Tint", Color) = (1,1,1,1)
 	}
 	SubShader { 
-		Tags { "QUEUE"="Transparent+3" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+2" }
+		Tags { "QUEUE"="Transparent+2" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+2" }
 		Pass {
-			Tags { "QUEUE"="Transparent+3" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+2" }
+			Tags { "QUEUE"="Transparent+2" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+2" }
 			ZWrite Off
 			Blend One One
 			BlendOp RevSub
