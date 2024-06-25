@@ -928,13 +928,30 @@ public partial class EventEngine
                         actor.idle = 5384; // Better stand animation imo for the Red Mage (uid == 6) or remove it... it's just a detail.
                 }
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.idle));
-                if (mapNo == 2365 && actor.uid == 14 && actor.idle == 11611)
+                
+                if (mapNo == 1601 && actor.uid == 19 && actor.idle == 816) // Garnet shadow off when sitting
+                {
+                    ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                    po.isShadowOff = true;
+                }
+                if (mapNo == 1600 && actor.uid == 12 && scCounter == 6615) // Garnet shadow on again to be sure
+                {
+                    ff9shadow.FF9ShadowOnField((Int32)po.uid);
+                    po.isShadowOff = false;
+                }
+                else if (mapNo == 1605 && actor.uid == 18)
+                {
+                    this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
+                    if ((Int32)actor.idle == 7503)
+                        this._geoTexAnim.geoTexAnimPlay(2);
+                }
+                else if (mapNo == 2365 && actor.uid == 14 && actor.idle == 11611)
                 {
                     this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
                     this._geoTexAnim.geoTexAnimStop(2);
                     this._geoTexAnim.geoTexAnimPlay(0);
                 }
-                if (mapNo == 2657 && actor.uid == 7)
+                else if (mapNo == 2657 && actor.uid == 7)
                 {
                     this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
                     if (actor.idle == 1044)
@@ -945,12 +962,6 @@ public partial class EventEngine
                     else if (actor.idle == 816)
                         this._geoTexAnim.geoTexAnimPlay(2);
                 }
-                if (mapNo == 1605 && actor.uid == 18)
-                {
-                    this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
-                    if ((Int32)actor.idle == 7503)
-                        this._geoTexAnim.geoTexAnimPlay(2);
-                }            
                 return 0;
             }
             case EBin.event_code_binary.AWALK: // 0x34, "SetWalkAnimation", "Change the walking animation"
@@ -1106,6 +1117,19 @@ public partial class EventEngine
                             this._geoTexAnim.geoTexAnimPlay(1);
                         }
                     }
+                    if (mapNo == 1601)
+                    {
+                        if (actor.uid == 19 && anim == 752) // Garnet shadow off when sitting
+                        {
+                            ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                            po.isShadowOff = true;
+                        }
+                        if (po.sid == 17 && scCounter == 6600 && anim == 3005) // Zidane shadow off when sitting
+                        {
+                            ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                            po.isShadowOff = true;
+                        }
+                    }
                     if (mapNo == 1605 && (Int32)actor.uid == 18)
                     {
                         this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
@@ -1150,6 +1174,11 @@ public partial class EventEngine
             case EBin.event_code_binary.ENDANIM: // 0x42, "StopAnimation", "Stop the character's animation."
             {
                 this.AnimStop(actor);
+                if (mapNo == 1601 && scCounter == 6600 && po.sid == 17) // Zidane shadow on when standing up
+                {
+                    ff9shadow.FF9ShadowOnField((Int32)po.uid);
+                    po.isShadowOff = false;
+                }
                 return 0;
             }
             case EBin.event_code_binary.STARTSEQ: // 0x43, "RunSharedScript", "Run script passing the current object to it and continue executing the current function. If another shared script is already running for this object, it will be terminated"
@@ -2965,7 +2994,10 @@ public partial class EventEngine
             case EBin.event_code_binary.SHADOWON: // 0x7F, "EnableShadow", "Enable the shadow for the entry's object."
             {
                 if (this.gMode == 1)
+                {
                     ff9shadow.FF9ShadowOnField((Int32)po.uid);
+                    po.isShadowOff = false;
+                }
                 else if (this.gMode == 2)
                     ff9shadow.FF9ShadowOnBattle(po.uid);
                 return 0;
