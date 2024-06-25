@@ -179,6 +179,10 @@ public static class NormalSolver
         }
         public static void SmoothCharacterMesh(Renderer[] renderers)
         {
+            if (Configuration.Shaders.EnabledEnabled != 1)
+            {
+                return;
+            }
             foreach (var renderer in renderers)
             {
                 var meshFilter = renderer.GetComponent<MeshFilter>();
@@ -206,12 +210,16 @@ public static class NormalSolver
             foreach (var renderer in renderers)
             {
                 renderer.material.SetFloat("_OutlineWidth", 2f);
-                renderer.material.SetFloat("_ShowOutline", Configuration.Graphics.OutlineForFieldCharacter == 1 ? 1f : 0f);
+                renderer.material.SetFloat("_ShowOutline", Configuration.Shaders.OutlineForFieldCharacter == 1 ? 1f : 0f);
             }
         }
         
         public static void SmoothCharacterMesh(SkinnedMeshRenderer[] renderers)
         {
+            if (Configuration.Shaders.EnabledEnabled != 1)
+            {
+                return;
+            }
             foreach (var renderer in renderers)
             {
                 var originMesh = renderer.sharedMesh;
@@ -225,6 +233,10 @@ public static class NormalSolver
         
         public static void SmoothCharacterMesh(MeshRenderer[] renderers)
         {
+            if (Configuration.Shaders.EnabledEnabled != 1)
+            {
+                return;
+            }
             foreach (var renderer in renderers)
             {
                 var meshFilter = renderer.GetComponent<MeshFilter>();
@@ -369,6 +381,7 @@ public class fldchar
 				ff9FieldCharMirror.geo.transform.localPosition = Vector3.zero;
 				ff9FieldCharMirror.actor = ff9FieldCharMirror.geo.AddComponent<FieldMapActor>();
 				ff9FieldCharMirror.actor.meshRenderer = ff9FieldCharMirror.geo.GetComponentsInChildren<Renderer>();
+                
                 NormalSolver.SmoothCharacterMesh(ff9FieldCharMirror.actor.meshRenderer);
                 
 				ff9FieldCharMirror.parent = ff9Char;

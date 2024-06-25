@@ -32,11 +32,11 @@ namespace Memoria.Scripts
         {
             get
             {
-                if (Configuration.Graphics.CustomShader == 1)
+                if (Configuration.Shaders.EnabledEnabled == 1)
                 {
-                    if (Configuration.Graphics.ToonShading == 1)
+                    if (Configuration.Shaders.EnableToonShadingBattle == 1)
                         return ToonBattleCharacterShader;
-                    if (Configuration.Graphics.RealismShading == 1)
+                    if (Configuration.Shaders.EnableRealismShadingBattle == 1)
                         return RealismBattleCharacterShader;
                 }
 
@@ -48,11 +48,11 @@ namespace Memoria.Scripts
         {
             get
             {
-                if (Configuration.Graphics.CustomShader == 1)
+                if (Configuration.Shaders.EnabledEnabled == 1)
                 {
-                    if (Configuration.Graphics.ToonShading == 1)
+                    if (Configuration.Shaders.EnableToonShadingField == 1)
                         return ToonFieldCharacterShader;
-                    if (Configuration.Graphics.RealismShading == 1)
+                    if (Configuration.Shaders.EnableRealismShadingField == 1)
                         return RealismFieldCharacterShader;
                 }
                 return DefaultFieldCharacterShader;

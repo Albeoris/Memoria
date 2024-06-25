@@ -42,7 +42,7 @@ namespace Memoria.Launcher
     {
         public ShaderSettingControl()
         {
-            SetRows(20);
+            SetRows(25);
 
             Width = 260;
             VerticalAlignment = VerticalAlignment.Bottom;
@@ -55,39 +55,65 @@ namespace Memoria.Launcher
             UiCheckBox EnableCustomShader =
                 AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableCustomShader, null), 3, 0, 3, 8);
             EnableCustomShader.SetBinding(ToggleButton.IsCheckedProperty,
-                new Binding(nameof(CustomShader)) { Mode = BindingMode.TwoWay });
+                new Binding(nameof(this.EnableCustomShader)) { Mode = BindingMode.TwoWay });
             EnableCustomShader.Foreground = Brushes.White;
             EnableCustomShader.Margin = rowMargin;
             EnableCustomShader.ToolTip = Lang.Settings.EnableCustomShader_Tooltip;
+            
+            UiTextBlock separateLineField = AddUiElement(UiTextBlockFactory.Create("-----Shader For Field Character (Non-Battle)-----"), row: 5, col: 0, rowSpan: 3, colSpan: 8);
+            separateLineField.Margin = rowMargin;
+            
+            UiCheckBox EnableRealismShadingForField =
+                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableRealismShadingForField, null), 7, 0, 3, 8);
+            EnableRealismShadingForField.SetBinding(ToggleButton.IsCheckedProperty,
+                new Binding(nameof(RealismShadingForField)) { Mode = BindingMode.TwoWay });
+            EnableRealismShadingForField.Foreground = Brushes.White;
 
-            UiCheckBox EnableToonShading =
-                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableToonShading, null), 5, 0, 3, 8);
-            EnableToonShading.SetBinding(ToggleButton.IsCheckedProperty,
-                new Binding(nameof(ToonShading)) { Mode = BindingMode.TwoWay });
-            EnableToonShading.Foreground = Brushes.White;
-            EnableToonShading.ToolTip = Lang.Settings.EnableCustomShader_Tooltip;
-
-            UiCheckBox EnableRealismShading =
-                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableRealismShading, null), 7, 0, 3, 8);
-            EnableRealismShading.SetBinding(ToggleButton.IsCheckedProperty,
-                new Binding(nameof(RealismShading)) { Mode = BindingMode.TwoWay });
-            EnableRealismShading.Foreground = Brushes.White;
-            EnableRealismShading.ToolTip = Lang.Settings.EnableCustomShader_Tooltip;
-
+            
+            UiCheckBox EnableToonShadingForField =
+                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableToonShadingForField, null), 9, 0, 3, 8);
+            EnableToonShadingForField.SetBinding(ToggleButton.IsCheckedProperty,
+                new Binding(nameof(ToonShadingForField)) { Mode = BindingMode.TwoWay });
+            EnableToonShadingForField.Foreground = Brushes.White;
+            
             UiCheckBox EnableOutlineForFieldCharacter =
-                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableOutlineForFieldCharacter, null), 9, 0, 3, 8);
+                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableOutlineForFieldCharacter, null), 11, 0, 3, 8);
             EnableOutlineForFieldCharacter.SetBinding(ToggleButton.IsCheckedProperty,
                 new Binding(nameof(OutlineForFieldCharacter)) { Mode = BindingMode.TwoWay });
             EnableOutlineForFieldCharacter.Foreground = Brushes.White;
-            EnableOutlineForFieldCharacter.ToolTip = Lang.Settings.EnableCustomShader_Tooltip;
+
+            UiTextBlock separateLineBattle = AddUiElement(UiTextBlockFactory.Create("-----Shader For Battle Character-----"), row: 13, col: 0, rowSpan: 3, colSpan: 8);
+            separateLineBattle.Margin = rowMargin;
+            
+            UiCheckBox EnableRealismShadingForBattle =
+                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableRealismShadingForBattle, null), 15, 0, 3, 8);
+            EnableRealismShadingForBattle.SetBinding(ToggleButton.IsCheckedProperty,
+                new Binding(nameof(RealismShadingForBattle)) { Mode = BindingMode.TwoWay });
+            EnableRealismShadingForBattle.Foreground = Brushes.White;
+            
+            UiCheckBox EnableToonShadingForBattle =
+                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableToonShadingForBattle, null), 17, 0, 3, 8);
+            EnableToonShadingForBattle.SetBinding(ToggleButton.IsCheckedProperty,
+                new Binding(nameof(ToonShadingForBattle)) { Mode = BindingMode.TwoWay });
+            EnableToonShadingForBattle.Foreground = Brushes.White;
 
             UiCheckBox EnableOutlineForBattleCharacter =
-                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableOutlineForBattleCharacter, null), 11, 0, 3,
+                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableOutlineForBattleCharacter, null), 19, 0, 3,
                     8);
             EnableOutlineForBattleCharacter.SetBinding(ToggleButton.IsCheckedProperty,
                 new Binding(nameof(OutlineForBattleCharacter)) { Mode = BindingMode.TwoWay });
             EnableOutlineForBattleCharacter.Foreground = Brushes.White;
-            EnableOutlineForBattleCharacter.ToolTip = Lang.Settings.EnableCustomShader_Tooltip;
+            
+            // TODO - hide ssao related ui for now
+            /* UiTextBlock separateLineOther = AddUiElement(UiTextBlockFactory.Create("-----Shader Other Effects-----"), row: 21, col: 0, rowSpan: 3, colSpan: 8);
+            separateLineField.Margin = rowMargin;*/
+            
+            /*UiCheckBox UiEnableSSAO =
+                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableSSAO, null), 23, 0, 3,
+                    8);
+            UiEnableSSAO.SetBinding(ToggleButton.IsCheckedProperty,
+                new Binding(nameof(EnableSSAO)) { Mode = BindingMode.TwoWay });
+            UiEnableSSAO.Foreground = Brushes.White;*/
 
             foreach (FrameworkElement child in Children)
             {
@@ -121,50 +147,85 @@ namespace Memoria.Launcher
 
         #region Properties
 
-        private Int16 _customshader, _toonShading, _realismShading, _outlineForField, _outlineForBattle;
+        private Int16 _enableCustomShader, _toonShadingForField, _toonShadingForBattle, _realismShadingForField, _realismShadingForBattle, _outlineForField, _outlineForBattle;
+        private Int16 _enableSSAO;
 
-        public Int16 CustomShader
+        public Int16 EnableCustomShader
         {
-            get { return _customshader; }
+            get { return _enableCustomShader; }
             set
             {
-                if (_customshader != value)
+                if (_enableCustomShader != value)
                 {
-                    _customshader = value;
+                    _enableCustomShader = value;
                     OnPropertyChanged();
                 }
             }
         }
 
-        public Int16 ToonShading
+        public Int16 ToonShadingForField
         {
-            get { return _toonShading; }
+            get { return _toonShadingForField; }
             set
             {
-                if (_toonShading != value)
+                if (_toonShadingForField != value)
                 {
                     if (value == 1)
                     {
-                        RealismShading = 0;
+                        RealismShadingForField = 0;
                     }
-                    _toonShading = value;
+                    _toonShadingForField = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        
+        public Int16 ToonShadingForBattle
+        {
+            get { return _toonShadingForBattle; }
+            set
+            {
+                if (_toonShadingForBattle != value)
+                {
+                    if (value == 1)
+                    {
+                        RealismShadingForBattle = 0;
+                    }
+                    _toonShadingForBattle = value;
                     OnPropertyChanged();
                 }
             }
         }
 
-        public Int16 RealismShading
+        public Int16 RealismShadingForField
         {
-            get { return _realismShading; }
+            get { return _realismShadingForField; }
             set
             {
-                if (_realismShading != value)
+                if (_realismShadingForField != value)
                 {
                     if (value == 1)
                     {
-                        ToonShading = 0;
+                        ToonShadingForField = 0;
                     }
-                    _realismShading = value;
+                    _realismShadingForField = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        
+        public Int16 RealismShadingForBattle
+        {
+            get { return _realismShadingForBattle; }
+            set
+            {
+                if (_realismShadingForBattle != value)
+                {
+                    if (value == 1)
+                    {
+                        ToonShadingForBattle = 0;
+                    }
+                    _realismShadingForBattle = value;
                     OnPropertyChanged();
                 }
             }
@@ -191,6 +252,19 @@ namespace Memoria.Launcher
                 if (_outlineForBattle != value)
                 {
                     _outlineForBattle = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        
+        public Int16 EnableSSAO
+        {
+            get { return _enableSSAO; }
+            set
+            {
+                if (_enableSSAO != value)
+                {
+                    _enableSSAO = value;
                     OnPropertyChanged();
                 }
             }
@@ -238,11 +312,16 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Graphics", "TileSize", "32");
                         MakeIniNotNull("Graphics", "AntiAliasing", "8");
                         MakeIniNotNull("Graphics", "CameraStabilizer", "85");
-                        MakeIniNotNull("Graphics", "CustomShader", "0");
-                        MakeIniNotNull("Graphics", "ToonShading", "0");
-                        MakeIniNotNull("Graphics", "RealismShading", "0");
-                        MakeIniNotNull("Graphics", "OutlineForFieldCharacter", "0");
-                        MakeIniNotNull("Graphics", "OutlineForBattleCharacter", "0");
+                        
+                        
+                        MakeIniNotNull("Shaders", "Enabled", "0");
+                        MakeIniNotNull("Shaders", "EnableRealismShadingForField", "0");
+                        MakeIniNotNull("Shaders", "EnableToonShadingForField", "0");
+                        MakeIniNotNull("Shaders", "EnableRealismShadingForBattle", "0");
+                        MakeIniNotNull("Shaders", "EnableToonShadingForBattle", "0");
+                        MakeIniNotNull("Shaders", "OutlineForFieldCharacter", "0");
+                        MakeIniNotNull("Shaders", "OutlineForBattleCharacter", "0");
+                        MakeIniNotNull("Shaders", "EnableSSAO", "0");
 
                         MakeIniNotNull("Control", "Enabled", "1");
                         MakeIniNotNull("Control", "DisableMouse", "0");
@@ -407,22 +486,32 @@ namespace Memoria.Launcher
                 IniFile iniFile = new IniFile(_iniPath);
                 switch (propertyName)
                 {
-                    case nameof(CustomShader):
-                        iniFile.WriteValue("Graphics", "CustomShader ", " " + CustomShader.ToString());
+                    case nameof(EnableCustomShader):
+                        iniFile.WriteValue("Shaders", "Enabled ", " " + EnableCustomShader.ToString());
                         break;
-                    case nameof(ToonShading):
-                        iniFile.WriteValue("Graphics", "ToonShading ", " " + ToonShading.ToString());
+                    case nameof(ToonShadingForField):
+                        iniFile.WriteValue("Shaders", "EnableToonShadingForField ", " " + ToonShadingForField.ToString());
                         break;
-                    case nameof(RealismShading):
-                        iniFile.WriteValue("Graphics", "RealismShading ", " " + RealismShading.ToString());
+                    case nameof(RealismShadingForField):
+                        iniFile.WriteValue("Shaders", "EnableRealismShadingForField ", " " + RealismShadingForField.ToString());
+                        break;
+                    case nameof(ToonShadingForBattle):
+                        iniFile.WriteValue("Shaders", "EnableToonShadingForBattle ", " " + ToonShadingForBattle.ToString());
+                        break;
+                    case nameof(RealismShadingForBattle):
+                        iniFile.WriteValue("Shaders", "EnableRealismShadingForBattle ", " " + RealismShadingForBattle.ToString());
                         break;
                     case nameof(OutlineForFieldCharacter):
-                        iniFile.WriteValue("Graphics", "OutlineForFieldCharacter ",
+                        iniFile.WriteValue("Shaders", "OutlineForFieldCharacter ",
                             " " + OutlineForFieldCharacter.ToString());
                         break;
                     case nameof(OutlineForBattleCharacter):
-                        iniFile.WriteValue("Graphics", "OutlineForBattleCharacter ",
+                        iniFile.WriteValue("Shaders", "OutlineForBattleCharacter ",
                             " " + OutlineForBattleCharacter.ToString());
+                        break;
+                    case nameof(EnableSSAO):
+                        iniFile.WriteValue("Shaders", "EnableSSAO ",
+                            " " + EnableSSAO.ToString());
                         break;
                 }
             }
@@ -441,34 +530,52 @@ namespace Memoria.Launcher
             {
                 SanitizeMemoriaIni();
                 IniFile iniFile = new IniFile(_iniPath);
-                string value = iniFile.ReadValue("Graphics", "CustomShader");
+                string value = iniFile.ReadValue("Shaders", "Enabled");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
                 }
-                if (!Int16.TryParse(value, out _customshader))
-                    _customshader = 0;
-                OnPropertyChanged(nameof(CustomShader));
+                if (!Int16.TryParse(value, out _enableCustomShader))
+                    _enableCustomShader = 0;
+                OnPropertyChanged(nameof(EnableCustomShader));
+
+                value = iniFile.ReadValue("Shaders", "EnableRealismShadingForField");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                }
+                if (!Int16.TryParse(value, out _realismShadingForField))
+                    _realismShadingForField = 0;
+                OnPropertyChanged(nameof(RealismShadingForField));
+
+                value = iniFile.ReadValue("Shaders", "EnableToonShadingForField");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                }
+                if (!Int16.TryParse(value, out _toonShadingForField))
+                    _toonShadingForField = 0;
+                OnPropertyChanged(nameof(ToonShadingForField));
                 
-                value = iniFile.ReadValue("Graphics", "ToonShading");
+                value = iniFile.ReadValue("Shaders", "EnableRealismShadingForBattle");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
                 }
-                if (!Int16.TryParse(value, out _toonShading))
-                    _toonShading = 0;
-                OnPropertyChanged(nameof(ToonShading));
+                if (!Int16.TryParse(value, out _realismShadingForBattle))
+                    _realismShadingForBattle = 0;
+                OnPropertyChanged(nameof(RealismShadingForBattle));
 
-                value = iniFile.ReadValue("Graphics", "RealismShading");
+                value = iniFile.ReadValue("Shaders", "EnableToonShadingForBattle");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
                 }
-                if (!Int16.TryParse(value, out _realismShading))
-                    _realismShading = 0;
-                OnPropertyChanged(nameof(RealismShading));
-
-                value = iniFile.ReadValue("Graphics", "OutlineForFieldCharacter");
+                if (!Int16.TryParse(value, out _toonShadingForBattle))
+                    _toonShadingForBattle = 0;
+                OnPropertyChanged(nameof(ToonShadingForBattle));
+                
+                value = iniFile.ReadValue("Shaders", "OutlineForFieldCharacter");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
@@ -477,7 +584,7 @@ namespace Memoria.Launcher
                     _outlineForField = 0;
                 OnPropertyChanged(nameof(OutlineForFieldCharacter));
 
-                value = iniFile.ReadValue("Graphics", "OutlineForBattleCharacter");
+                value = iniFile.ReadValue("Shaders", "OutlineForBattleCharacter");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
@@ -485,6 +592,15 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _outlineForBattle))
                     _outlineForBattle = 0;
                 OnPropertyChanged(nameof(OutlineForBattleCharacter));
+                
+                value = iniFile.ReadValue("Shaders", "EnableSSAO");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                }
+                if (!Int16.TryParse(value, out _enableSSAO))
+                    _enableSSAO = 0;
+                OnPropertyChanged(nameof(EnableSSAO));
             }
             catch (Exception ex)
             {

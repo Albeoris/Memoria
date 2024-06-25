@@ -106,11 +106,11 @@ Shader "PSX/FieldMapActor_RealLighting" {
 			Program "fp" {
 				SubProgram "d3d9 " {
 				    Float 0 [_Slice]
+				    Vector 1 [_FieldMainLightDirection]
                 	SetTexture 0 [_MainTex] 2D 0
 					"ps_2_0
-                        def c1, -0.5, 0, 1, 0.5
-                        def c2, -0.196116135, 0.980580688, 0, 2
-                        def c3, 0.5, -0.823500037, 16, 0
+                        def c2, -0.5, 0, 1, 0.5
+                        def c3, 2, 0.5, -0.823500037, 16
                         dcl t0.xy
                         dcl t1.xyz
                         dcl t2.xyz
@@ -119,57 +119,58 @@ Shader "PSX/FieldMapActor_RealLighting" {
                         dcl_2d s0
                         texld_pp r0, t0, s0
                         add r1.w, -t1.y, c0.x
-                        cmp r1.x, r1.w, c1.y, c1.z
-                        cmp r1.y, t1.z, c1.y, c1.z
+                        cmp r1.x, r1.w, c2.y, c2.z
+                        cmp r1.y, t1.z, c2.y, c2.z
                         add r1.x, r1.x, r1.y
-                        cmp r1.x, -r1.x, c1.y, c1.z
-                        mad r1.y, r0.w, v0.w, c1.x
-                        cmp r1.y, r1.y, c1.y, c1.z
+                        cmp r1.x, -r1.x, c2.y, c2.z
+                        mad r1.y, r0.w, v0.w, c2.x
+                        cmp r1.y, r1.y, c2.y, c2.z
                         add r1.x, r1.y, r1.x
-                        cmp r1, -r1.x, -c1.y, -c1.z
+                        cmp r1, -r1.x, -c2.y, -c2.z
                         texkill r1
                         max r1.x, r0.x, r0.y
                         max r2.w, r1.x, r0.z
                         min r1.x, r0.y, r0.x
                         min r2.x, r0.z, r1.x
                         add r1.x, -r2.w, -r2.x
-                        add r1.x, r1.x, c2.w
+                        add r1.x, r1.x, c3.x
                         rcp r1.x, r1.x
                         add r1.y, -r2.x, r2.w
                         mul_pp r1.x, r1.x, r1.y
                         add r1.z, r2.x, r2.w
                         rcp r1.w, r1.z
                         mul_pp r1.w, r1.w, r1.y
-                        add r2.x, r1.z, -c1.z
+                        add r2.x, r1.z, -c2.z
                         cmp_pp r1.x, r2.x, r1.x, r1.w
-                        add r1.x, r1.x, -c1.z
+                        add r1.x, r1.x, -c2.z
                         abs r1.x, r1.x
-                        add r1.x, -r1.x, c1.z
-                        mul r1.x, r1.x, c1.w
+                        add r1.x, -r1.x, c2.z
+                        mul r1.x, r1.x, c2.w
                         mul r1.y, r1.y, r1.y
-                        cmp r1.x, -r1.y, c1.y, r1.x
-                        mad_pp r1.y, r1.z, c3.x, c3.y
+                        cmp r1.x, -r1.y, c2.y, r1.x
+                        mad_pp r1.y, r1.z, c3.y, c3.z
                         abs_pp r1.y, r1.y
-                        add r1.y, -r1.y, c1.z
-                        mad r1.x, r1.y, c1.w, r1.x
-                        add r1.y, -r1.x, c1.z
-                        cmp r1.x, r1.x, r1.y, c1.z
+                        add r1.y, -r1.y, c2.z
+                        mad r1.x, r1.y, c2.w, r1.x
+                        add r1.y, -r1.x, c2.z
+                        cmp r1.x, r1.x, r1.y, c2.z
                         dp3 r1.y, t3, t3
                         rsq r1.y, r1.y
-                        mad r2.xyz, t3, r1.y, c2
-                        nrm_pp r3.xyz, r2
-                        nrm_pp r2.xyz, t2
-                        dp3_sat_pp r1.y, r3, r2
-                        pow_pp r2.z, r1.y, c3.z
-                        mul_pp r1.y, r2.z, c1.w
-                        dp2add_pp r1.z, r2, c2, c2.z
-                        mad_sat_pp r1.z, r1.z, c1.w, c1.w
-                        mul_pp r2, r0, v0
-                        mul_pp r2.xyz, r2, r2.w
+                        nrm_pp r2.xyz, c1
+                        mad r3.xyz, t3, r1.y, r2
+                        nrm_pp r4.xyz, r3
+                        nrm_pp r3.xyz, t2
+                        dp3_sat_pp r2.w, r4, r3
+                        pow_pp r3.w, r2.w, c3.w
+                        mul_pp r2.w, r3.w, c2.w
+                        dp3_pp r1.y, r3, r2
+                        mad_sat_pp r1.y, r1.y, c2.w, c2.w
+                        mul_pp r3, r0, v0
+                        mul_pp r2.xyz, r3, r3.w
                         add_pp r2.xyz, r2, r2
-                        mad r3.xyz, r2, r1.z, -r2
-                        mad_pp r2.xyz, r1.x, r3, r2
-                        mad_pp r0.xyz, r1.y, r1.x, r2
+                        mad r1.yzw, r2.wzyx, r1.y, -r2.wzyx
+                        mad_pp r1.yzw, r1.x, r1, r2.wzyx
+                        mad_pp r0.xyz, r2.w, r1.x, r1.wzyx
                         mov_pp oC0, r0
 						"
 				}
@@ -281,8 +282,7 @@ Shader "PSX/FieldMapActor_RealLighting" {
 					Float 1 [_ShowOutline]
 					SetTexture 0 [_MainTex] 2D 0
 					"ps_2_0
-                        def c2, -1, -0, -0.5, 0
-                        def c3, 0, 0, 0, 1
+                        def c2, -1, -0, -0.5, 0.100000001
                         dcl t0.xy
                         dcl t1.xyz
                         dcl v0
@@ -296,12 +296,14 @@ Shader "PSX/FieldMapActor_RealLighting" {
                         add r0.x, r0.x, r0.y
                         cmp r0.x, -r0.x, -c2.y, -c2.x
                         texld_pp r1, t0, s0
-                        mad r0.y, r1.w, v0.w, c2.z
-                        cmp r0.y, r0.y, -c2.y, -c2.x
-                        add r0.x, r0.y, r0.x
-                        cmp r1, -r0.x, c2.y, c2.x
-                        texkill r1
-                        mov_pp oC0, c3
+                        mad r1.w, r1.w, v0.w, c2.z
+                        cmp r1.w, r1.w, -c2.y, -c2.x
+                        add r1.w, r0.x, r1.w
+                        cmp r2, -r1.w, c2.y, c2.x
+                        texkill r2
+                        mul_pp r0.xyz, r1, c2.w
+                        mov r0.w, -c2.x
+                        mov_pp oC0, r0
 						"
 				}
 			}

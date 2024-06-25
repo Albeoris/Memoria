@@ -500,8 +500,8 @@ namespace FF9
             {
                 componentsInChildren[i].material.shader = shader;
                 componentsInChildren[i].material.SetFloat("_Cutoff", 0.5f);
-                componentsInChildren[i].material.SetFloat("_OutlineWidth", 3f);
-                componentsInChildren[i].material.SetFloat("_ShowOutline", Configuration.Graphics.OutlineForBattleCharacter == 1 ? 1f : 0f);
+                componentsInChildren[i].material.SetFloat("_OutlineWidth", 2.3f);
+                componentsInChildren[i].material.SetFloat("_ShowOutline", Configuration.Shaders.OutlineForBattleCharacter == 1 ? 1f : 0f);
                 componentsInChildren[i].material.SetFloat("_IsEnemy", btl.bi.player == 0 ? 1 : 0);
                 componentsInChildren[i].material.SetInt("_StencilOp", btl.bi.player == 0 ? 2 : 1);
                 componentsInChildren[i].material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
@@ -516,7 +516,7 @@ namespace FF9
                     material.shader = shader;
                     material.SetFloat("_Cutoff", 0.5f);
                     material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
-                    material.SetFloat("_OutlineWidth", 3f);
+                    material.SetFloat("_OutlineWidth", 2.3f);
                     material.SetFloat("_ShowOutline", 1f);
                     material.SetFloat("_IsEnemy", btl.bi.player == 0 ? 1 : 0);
                     material.SetInt("_StencilOp", btl.bi.player == 0 ? 2 : 1);

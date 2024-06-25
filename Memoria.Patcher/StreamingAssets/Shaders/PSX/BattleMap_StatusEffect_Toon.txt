@@ -74,43 +74,46 @@ Shader "PSX/BattleMap_StatusEffect_Toon" {
 					Float 2 [_Cutoff]
 					Float 3 [_IsEnemy]
 					Float 0 [_IsPetrify]
+					Vector 4 [_MainLightDirection]
+					Vector 5 [_EnemyMainLightDirection]
 					SetTexture 0 [_MainTex] 2D 0
 					SetTexture 1 [_DetailTex] 2D 1
 					"ps_2_0
-                        def c4, -0, -1, -0.5, 0.200000003
-                        def c5, -0.89442718, 0.35777089, 0.26832816, 0
-                        def c6, 1.57791328, 0.325715214, -0.524635434, 100.000099
-                        def c7, -2, 3, 0, 0
+                        def c6, -0, -1, -0.5, 0.200000003
+                        def c7, 0.300000012, 2.49999976, -2, 3
                         dcl t0
                         dcl t1.xyz
                         dcl_2d s0
                         dcl_2d s1
                         texld r0, t0, s0
                         add r0.w, r0.w, -c2.x
-                        cmp r1, r0.w, c4.x, c4.y
+                        cmp r1, r0.w, c6.x, c6.y
                         texkill r1
-                        add r0.xyz, r0, c1
-                        add r0.xyz, r0, c4.z
                         mov r1.x, t0.z
                         mov r1.y, t0.w
                         texld r1, r1, s1
-                        mul r0.w, r1.x, c4.w
+                        mov r0.w, c6.z
+                        add r1.yzw, r0.w, c1.wzyx
+                        add r0.xyz, r0, r1.wzyx
+                        mul r0.w, r1.x, c6.w
                         mad r1.xyz, r0, r0.w, -r0
                         mad r0.xyz, c0.x, r1, r0
-                        mov r1.xyz, c6
-                        mov r0.w, c3.x
-                        mad_pp r1.xyz, r0.w, r1, c5
+                        dp3 r0.w, c5, c5
+                        rsq r0.w, r0.w
+                        nrm r1.xyz, c4
+                        mad r2.xyz, c5, r0.w, -r1
+                        mad_pp r1.xyz, c3.x, r2, r1
                         nrm_pp r2.xyz, t1
                         dp3_pp r0.w, r2, r1
-                        mad_sat_pp r0.w, r0.w, -c4.z, -c4.z
-                        add_pp r0.w, r0.w, -c4.w
-                        mul_sat_pp r0.w, r0.w, c6.w
+                        add_sat_pp r0.w, r0.w, c7.x
+                        add_pp r0.w, r0.w, -c6.w
+                        mul_sat_pp r0.w, r0.w, c7.y
                         mul_pp r1.x, r0.w, r0.w
-                        mad_pp r0.w, r0.w, c7.x, c7.y
+                        mad_pp r0.w, r0.w, c7.z, c7.w
                         mul_pp r0.w, r1.x, r0.w
-                        max_pp r1.x, r0.w, c4.w
+                        max_pp r1.x, r0.w, -c6.z
                         mul_pp r0.xyz, r0, r1.x
-                        mov_pp r0.w, -c4.y
+                        mov r0.w, -c6.y
                         mov_pp oC0, r0
 						"
 				}
@@ -167,17 +170,18 @@ Shader "PSX/BattleMap_StatusEffect_Toon" {
 					Float 1 [_ShowOutline]
 					SetTexture 0 [_MainTex] 2D 0
 					"ps_2_0
-                        def c2, -1, -0, -0, -0
+                        def c2, -1, -0, 0.100000001, 1
                         dcl t0.xy
                         dcl_2d s0
                         mov r0.xy, c2
                         cmp r0, -c1.x, r0.x, r0.y
                         texkill r0
                         texld r0, t0, s0
-                        add r0.x, r0.w, -c0.x
-                        cmp r1, r0.x, c2.y, c2.x
+                        add r0.w, r0.w, -c0.x
+                        cmp r1, r0.w, c2.y, c2.x
                         texkill r1
-                        mov_pp r0, -c2.wzyx
+                        mul_pp r0.xyz, r0, c2.z
+                        mov_pp r0.w, c2.w
                         mov_pp oC0, r0
 						"
 				}

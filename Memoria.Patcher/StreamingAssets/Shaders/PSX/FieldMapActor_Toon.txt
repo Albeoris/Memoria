@@ -106,11 +106,11 @@ Shader "PSX/FieldMapActor_Toon" {
 			Program "fp" {
 				SubProgram "d3d9 " {
 				    Float 0 [_Slice]
+				    Vector 1 [_FieldMainLightDirection]
                 	SetTexture 0 [_MainTex] 2D 0
 					"ps_2_0
-                        def c1, -0.5, 0, 1, 0.5
-                        def c2, -0.274721116, 0.96152395, 0, -0.200000003
-                        def c3, 100.000099, -2, 3, 0
+                        def c2, -0.5, 0, 1, 0.300000012
+                        def c3, -0.200000003, 2.49999976, -2, 3
                         dcl t0.xy
                         dcl t1.xyz
                         dcl t2.xyz
@@ -118,29 +118,28 @@ Shader "PSX/FieldMapActor_Toon" {
                         dcl_2d s0
                         texld_pp r0, t0, s0
                         add r1.w, -t1.y, c0.x
-                        cmp r1.x, r1.w, c1.y, c1.z
-                        cmp r1.y, t1.z, c1.y, c1.z
+                        cmp r1.x, r1.w, c2.y, c2.z
+                        cmp r1.y, t1.z, c2.y, c2.z
                         add r1.x, r1.x, r1.y
-                        cmp r1.x, -r1.x, c1.y, c1.z
-                        mad r1.y, r0.w, v0.w, c1.x
-                        cmp r1.y, r1.y, c1.y, c1.z
+                        cmp r1.x, -r1.x, c2.y, c2.z
+                        mad r1.y, r0.w, v0.w, c2.x
+                        cmp r1.y, r1.y, c2.y, c2.z
                         add r1.x, r1.y, r1.x
-                        cmp r1, -r1.x, -c1.y, -c1.z
+                        cmp r1, -r1.x, -c2.y, -c2.z
                         texkill r1
                         mul_pp r1, r0, v0
                         mul_pp r1.xyz, r1, r1.w
                         add_pp r1.xyz, r1, r1
-                        dp3 r1.w, t2, t2
-                        rsq r1.w, r1.w
-                        mul_pp r2.xy, r1.w, t2
-                        dp2add_pp r1.w, r2, c2, c2.z
-                        mad_sat_pp r1.w, r1.w, c1.w, c1.w
-                        add_pp r1.w, r1.w, c2.w
-                        mul_sat_pp r1.w, r1.w, c3.x
+                        nrm_pp r2.xyz, c1
+                        nrm_pp r3.xyz, t2
+                        dp3_pp r1.w, r3, r2
+                        add_sat_pp r1.w, r1.w, c2.w
+                        add_pp r1.w, r1.w, c3.x
+                        mul_sat_pp r1.w, r1.w, c3.y
                         mul_pp r2.x, r1.w, r1.w
-                        mad_pp r1.w, r1.w, c3.y, c3.z
+                        mad_pp r1.w, r1.w, c3.z, c3.w
                         mul_pp r1.w, r2.x, r1.w
-                        max_pp r2.x, r1.w, -c2.w
+                        max_pp r2.x, r1.w, -c2.x
                         mul_pp r0.xyz, r1, r2.x
                         mov_pp oC0, r0
 						"
@@ -253,8 +252,7 @@ Shader "PSX/FieldMapActor_Toon" {
 					Float 1 [_ShowOutline]
 					SetTexture 0 [_MainTex] 2D 0
 					"ps_2_0
-                        def c2, -1, -0, -0.5, 0
-                        def c3, 0, 0, 0, 1
+                        def c2, -1, -0, -0.5, 0.100000001
                         dcl t0.xy
                         dcl t1.xyz
                         dcl v0
@@ -268,12 +266,14 @@ Shader "PSX/FieldMapActor_Toon" {
                         add r0.x, r0.x, r0.y
                         cmp r0.x, -r0.x, -c2.y, -c2.x
                         texld_pp r1, t0, s0
-                        mad r0.y, r1.w, v0.w, c2.z
-                        cmp r0.y, r0.y, -c2.y, -c2.x
-                        add r0.x, r0.y, r0.x
-                        cmp r1, -r0.x, c2.y, c2.x
-                        texkill r1
-                        mov_pp oC0, c3
+                        mad r1.w, r1.w, v0.w, c2.z
+                        cmp r1.w, r1.w, -c2.y, -c2.x
+                        add r1.w, r0.x, r1.w
+                        cmp r2, -r1.w, c2.y, c2.x
+                        texkill r2
+                        mul_pp r0.xyz, r1, c2.w
+                        mov r0.w, -c2.x
+                        mov_pp oC0, r0
 						"
 				}
 			}
