@@ -1,6 +1,6 @@
-using Memoria.Prime.Threading;
 using System;
 using System.Collections;
+using Memoria.Prime.Threading;
 
 namespace Memoria.Assets
 {

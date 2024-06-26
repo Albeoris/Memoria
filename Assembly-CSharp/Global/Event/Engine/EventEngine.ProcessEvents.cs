@@ -1,9 +1,9 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using System.Collections.Generic;
 using FF9;
 using Memoria;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
+using Assets.Scripts.Common;
 // ReSharper disable ClassNeverInstantiated.Global
 
 public partial class EventEngine
@@ -98,19 +98,19 @@ public partial class EventEngine
         }
         if (isBattle)
             this.SetupBattleState();
-
+        
         this._posUsed = false;
-
+        
         // TODO Check Native: #147
         Int32 result = 0;
         bool canProcessCode = true;
 
         if (_ff9.fldMapNo == 257) // Evil Forest/Nest
             canProcessCode = !Singleton<DialogManager>.Instance.Activate || Singleton<DialogManager>.Instance.CompletlyVisible;
-
+        
         if (canProcessCode)
             result = this.eBin.ProcessCode(this._context.activeObj);
-
+        
         EventHUD.CheckUIMiniGameForMobile();
         if (result == 6)
             result = 0;

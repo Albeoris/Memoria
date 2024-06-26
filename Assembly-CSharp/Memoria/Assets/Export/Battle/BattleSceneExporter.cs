@@ -1,14 +1,14 @@
-using Assets.Sources.Scripts.UI.Common;
-using Memoria.Data;
-using Memoria.Prime;
-using Memoria.Prime.CSV;
-using Memoria.Prime.Json;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
+using Memoria.Prime;
+using Memoria.Prime.CSV;
+using Memoria.Prime.Json;
 
 namespace Memoria.Assets
 {
@@ -111,7 +111,7 @@ namespace Memoria.Assets
                         List<BattleActionThread> atkSeq = BattleActionThread.LoadFromBtlSeq(btlScene, btlSeq, index => usBattleText[index], i, langBattleText);
                         String seqStr = BattleActionThread.GetSequenceStringCode(atkSeq);
                         if (!String.IsNullOrEmpty(seqStr))
-                        {
+						{
                             String seqPath = outputDirectory + i.ToString("D2") + " " + FF9TextTool.RemoveOpCode(usBattleText[btlScene.header.TypCount + i]) + UnifiedBattleSequencer.EXTENSION_SEQ;
                             File.WriteAllText(seqPath, seqStr);
                         }
@@ -484,7 +484,7 @@ namespace Memoria.Assets
                     csv.WriteEntry(new EnemyEntry(id, baseItem.Value), csvOptions, RemovePrefix(baseItem.Key["US"]));
 
                     foreach (KeyValuePair<String, String> pair in baseItem.Key)
-                        localizationCsv[pair.Key].Add(new TxtEntry { Index = id, Prefix = "$battleEnemy", Value = pair.Value });
+                        localizationCsv[pair.Key].Add(new TxtEntry {Index = id, Prefix = "$battleEnemy", Value = pair.Value});
 
                     SB2_MON_PARM baseValue = baseItem.Value;
                     Dictionary<String, String> names = group.First().Key;
@@ -706,7 +706,7 @@ namespace Memoria.Assets
                     csv.WriteEntry(new ActionEntry(id, baseItem.Value), csvOptions, RemovePrefix(baseItem.Key["US"]));
 
                     foreach (KeyValuePair<String, String> pair in baseItem.Key)
-                        localizationCsv[pair.Key].Add(new TxtEntry { Index = id, Prefix = "$battleAction", Value = pair.Value });
+                        localizationCsv[pair.Key].Add(new TxtEntry {Index = id, Prefix = "$battleAction", Value = pair.Value});
 
                     Dictionary<String, String> names = group.First().Key;
                     String outputPath = outputDirectory + FF9TextTool.RemoveOpCode(names["US"]) + ".json";

@@ -1,9 +1,9 @@
-using JetBrains.Annotations;
-using Memoria.Test;
 using System;
 using System.ComponentModel;
 using System.Windows.Data;
 using System.Windows.Threading;
+using JetBrains.Annotations;
+using Memoria.Test;
 
 namespace Memoria.Client
 {

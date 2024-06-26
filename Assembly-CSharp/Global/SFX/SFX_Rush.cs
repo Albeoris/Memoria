@@ -1,7 +1,7 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using Assets.Scripts.Common;
 using Memoria;
 using Memoria.Scripts;
-using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 

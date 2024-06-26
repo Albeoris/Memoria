@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Memoria.Assets
 {
-    public class BoneHierarchyNode : IEnumerable<BoneHierarchyNode>
+	public class BoneHierarchyNode : IEnumerable<BoneHierarchyNode>
     {
         public Transform Bone { get; set; }
         public BoneHierarchyNode Parent { get; set; }
@@ -23,13 +23,13 @@ namespace Memoria.Assets
             }
         }
         public String NameInHierarchy
-        {
+		{
             get
-            {
+			{
                 String name = Bone.name;
                 BoneHierarchyNode node = Parent;
                 while (node != null)
-                {
+				{
                     name = node.Bone.name + "/" + name;
                     node = node.Parent;
                 }
@@ -41,13 +41,13 @@ namespace Memoria.Assets
         {
             BoneHierarchyNode root = null;
             foreach (Transform t in go.transform)
-            {
+			{
                 if (t.name.StartsWith("bone"))
-                {
+				{
                     root = new BoneHierarchyNode(t);
                     break;
                 }
-            }
+			}
             if (root == null)
                 return null;
             root.CreateFromModelRecursive();

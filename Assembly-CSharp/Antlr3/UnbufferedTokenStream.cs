@@ -34,8 +34,8 @@ namespace Antlr.Runtime
 {
     using Antlr.Runtime.Misc;
     using CLSCompliant = System.CLSCompliantAttribute;
-    using IndexOutOfRangeException = System.IndexOutOfRangeException;
     using NotSupportedException = System.NotSupportedException;
+    using IndexOutOfRangeException = System.IndexOutOfRangeException;
 
     /** A token stream that pulls tokens from the code source on-demand and
      *  without tracking a complete buffer of the tokens. This stream buffers

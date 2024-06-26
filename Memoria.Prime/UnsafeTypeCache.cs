@@ -8,7 +8,7 @@ namespace Memoria.Prime
     {
         public static readonly Int32 UnsafeSize = GetSize();
         public static readonly UIntPtr ArrayTypePointer = GetArrayTypePointer();
-
+        
         private static Int32 GetSize()
         {
             DynamicMethod dynamicMethod = new DynamicMethod("SizeOf", typeof(Int32), Type.EmptyTypes);

@@ -1,12 +1,12 @@
-using FF9;
-using Memoria;
-using Memoria.Assets;
-using Memoria.Data;
-using Memoria.Prime;
-using NCalc;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using FF9;
+using Memoria;
+using Memoria.Assets;
+using Memoria.Prime;
+using Memoria.Data;
+using NCalc;
 using UnityEngine;
 
 public static class btl2d
@@ -436,7 +436,7 @@ public static class btl2d
     public static void ReleaseBtl2dStatCount()
     {
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
-        {
+		{
             if (btl.deathMessage != null)
             {
                 Singleton<HUDMessage>.Instance.ReleaseObject(btl.deathMessage);

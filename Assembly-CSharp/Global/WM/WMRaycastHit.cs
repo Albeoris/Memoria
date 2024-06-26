@@ -3,7 +3,7 @@ using UnityEngine;
 
 public struct WMRaycastHit
 {
-    public Vector3 point;
+	public Vector3 point;
 
-    public Int32 triangleIndex;
+	public Int32 triangleIndex;
 }

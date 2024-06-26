@@ -88,11 +88,11 @@ public partial class EventEngine
     {
         if ((Int32)actor.idle != 0)
             AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.idle));
-        if ((Int32)actor.walk != 0)
+        if ((Int32)actor.walk != 0)                                               
             AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.walk));
-        if ((Int32)actor.run != 0)
+        if ((Int32)actor.run != 0)                                                
             AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.run));
-        if ((Int32)actor.turnl != 0)
+        if ((Int32)actor.turnl != 0)                                              
             AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.turnl));
         if ((Int32)actor.turnr == 0)
             return;

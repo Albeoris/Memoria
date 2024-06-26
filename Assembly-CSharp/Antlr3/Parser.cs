@@ -43,14 +43,14 @@ namespace Antlr.Runtime
     {
         public ITokenStream input;
 
-        public Parser(ITokenStream input)
+        public Parser( ITokenStream input )
             : base()
         {
             //super(); // highlight that we go to super to set state object
             TokenStream = input;
         }
 
-        public Parser(ITokenStream input, RecognizerSharedState state)
+        public Parser( ITokenStream input, RecognizerSharedState state )
             : base(state) // share the state object with another parser
         {
             this.input = input;
@@ -59,32 +59,32 @@ namespace Antlr.Runtime
         public override void Reset()
         {
             base.Reset(); // reset all recognizer state variables
-            if (input != null)
+            if ( input != null )
             {
-                input.Seek(0); // rewind the input
+                input.Seek( 0 ); // rewind the input
             }
         }
 
-        protected override object GetCurrentInputSymbol(IIntStream input)
+        protected override object GetCurrentInputSymbol( IIntStream input )
         {
-            return ((ITokenStream)input).LT(1);
+            return ( (ITokenStream)input ).LT( 1 );
         }
 
-        protected override object GetMissingSymbol(IIntStream input,
+        protected override object GetMissingSymbol( IIntStream input,
                                           RecognitionException e,
                                           int expectedTokenType,
-                                          BitSet follow)
+                                          BitSet follow )
         {
             string tokenText = null;
-            if (expectedTokenType == TokenTypes.EndOfFile)
+            if ( expectedTokenType == TokenTypes.EndOfFile )
                 tokenText = "<missing EOF>";
             else
                 tokenText = "<missing " + TokenNames[expectedTokenType] + ">";
-            CommonToken t = new CommonToken(expectedTokenType, tokenText);
-            IToken current = ((ITokenStream)input).LT(1);
-            if (current.Type == TokenTypes.EndOfFile)
+            CommonToken t = new CommonToken( expectedTokenType, tokenText );
+            IToken current = ( (ITokenStream)input ).LT( 1 );
+            if ( current.Type == TokenTypes.EndOfFile )
             {
-                current = ((ITokenStream)input).LT(-1);
+                current = ( (ITokenStream)input ).LT( -1 );
             }
             t.Line = current.Line;
             t.CharPositionInLine = current.CharPositionInLine;
@@ -117,15 +117,15 @@ namespace Antlr.Runtime
         }
 
         [Conditional("ANTLR_TRACE")]
-        public virtual void TraceIn(string ruleName, int ruleIndex)
+        public virtual void TraceIn( string ruleName, int ruleIndex )
         {
-            base.TraceIn(ruleName, ruleIndex, input.LT(1));
+            base.TraceIn( ruleName, ruleIndex, input.LT( 1 ) );
         }
 
         [Conditional("ANTLR_TRACE")]
-        public virtual void TraceOut(string ruleName, int ruleIndex)
+        public virtual void TraceOut( string ruleName, int ruleIndex )
         {
-            base.TraceOut(ruleName, ruleIndex, input.LT(1));
+            base.TraceOut( ruleName, ruleIndex, input.LT( 1 ) );
         }
     }
 }

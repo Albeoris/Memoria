@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class PSXMaterial : Material
 {
-    public PSXMaterial(Shader shader) : base(shader)
-    {
-    }
+	public PSXMaterial(Shader shader) : base(shader)
+	{
+	}
 }

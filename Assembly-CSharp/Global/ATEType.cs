@@ -2,6 +2,6 @@
 
 public enum ATEType
 {
-    Blue = 1,
-    Gray
+	Blue = 1,
+	Gray
 }

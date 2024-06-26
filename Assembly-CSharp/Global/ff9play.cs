@@ -1,14 +1,14 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.Collections;
 using Memoria.Prime.CSV;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 #pragma warning disable 169
@@ -422,7 +422,7 @@ public static class ff9play
         CharacterEquipment newSet = DefaultEquipment[equipmentId];
         CharacterEquipment characterInitialSet = null;
         if (!isNewPlayer)
-        {
+		{
             if (equipmentId == EquipmentSetId.Blank2)
                 characterInitialSet = DefaultEquipment[EquipmentSetId.Blank];
             else if (equipmentId == EquipmentSetId.Marcus2)
@@ -491,7 +491,7 @@ public static class ff9play
         ff9play.FF9Play_UpdateSerialNumber(play);
         if (!update_lv && equipSetId == EquipmentSetId.NONE)
             return;
-
+        
         if (update_lv)
         {
             Int32 lv = Mathf.Max(play.level, FF9Play_GetAvgLevel(play.Index));

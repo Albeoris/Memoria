@@ -33,10 +33,10 @@
 namespace Antlr.Runtime.Misc
 {
     using ArgumentException = System.ArgumentException;
-    using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
     using Debug = System.Diagnostics.Debug;
     using InvalidOperationException = System.InvalidOperationException;
     using NotSupportedException = System.NotSupportedException;
+    using ArgumentOutOfRangeException = System.ArgumentOutOfRangeException;
 
     /** <summary>
      * A lookahead queue that knows how to mark/release locations in the buffer for
@@ -116,7 +116,7 @@ namespace Antlr.Runtime.Misc
             T o = this[0];
             _p++;
             // have we hit end of buffer and not backtracking?
-            if (_p == _data.Count && _markDepth == 0)
+            if ( _p == _data.Count && _markDepth == 0 )
             {
                 _previousElement = o;
                 // if so, it's an opportunity to start filling at index 0 again
@@ -139,23 +139,23 @@ namespace Antlr.Runtime.Misc
          *  ahead.  If we need 1 element, (p+1-1)==p must be &lt; data.size().
          *  </summary>
          */
-        protected virtual void SyncAhead(int need)
+        protected virtual void SyncAhead( int need )
         {
-            int n = (_p + need - 1) - _data.Count + 1; // how many more elements we need?
-            if (n > 0)
-                Fill(n);                 // out of elements?
+            int n = ( _p + need - 1 ) - _data.Count + 1; // how many more elements we need?
+            if ( n > 0 )
+                Fill( n );                 // out of elements?
         }
 
         /** <summary>add n elements to buffer</summary> */
-        public virtual void Fill(int n)
+        public virtual void Fill( int n )
         {
-            for (int i = 0; i < n; i++)
+            for ( int i = 0; i < n; i++ )
             {
                 T o = NextElement();
-                if (IsEndOfFile(o))
+                if ( IsEndOfFile(o) )
                     _eof = o;
 
-                _data.Add(o);
+                _data.Add( o );
             }
         }
 
@@ -164,22 +164,22 @@ namespace Antlr.Runtime.Misc
         {
             get
             {
-                throw new System.NotSupportedException("streams are of unknown size");
+                throw new System.NotSupportedException( "streams are of unknown size" );
             }
         }
 
-        public virtual T LT(int k)
+        public virtual T LT( int k )
         {
-            if (k == 0)
+            if ( k == 0 )
             {
                 return null;
             }
-            if (k < 0)
+            if ( k < 0 )
             {
                 return LB(-k);
             }
 
-            SyncAhead(k);
+            SyncAhead( k );
             if ((_p + k - 1) > _data.Count)
                 return _eof;
 
@@ -201,7 +201,7 @@ namespace Antlr.Runtime.Misc
             return _lastMarker;
         }
 
-        public virtual void Release(int marker)
+        public virtual void Release( int marker )
         {
             if (_markDepth == 0)
                 throw new InvalidOperationException();
@@ -209,7 +209,7 @@ namespace Antlr.Runtime.Misc
             _markDepth--;
         }
 
-        public virtual void Rewind(int marker)
+        public virtual void Rewind( int marker )
         {
             _markDepth--;
             int delta = _p - marker;
@@ -236,7 +236,7 @@ namespace Antlr.Runtime.Misc
          * {@link #consume} or {@link #LT} for {@code k>0}.
          *  </remarks>
          */
-        public virtual void Seek(int index)
+        public virtual void Seek( int index )
         {
             if (index < 0)
                 throw new ArgumentOutOfRangeException("index");

@@ -40,7 +40,7 @@ public partial class EventEngine
                 break;
             case EBin.op_binary.B_AND_LET_E:
             case EBin.op_binary.B_XOR_LET_E:
-            case EBin.op_binary.B_OR_LET_E:
+            case EBin.op_binary.B_OR_LET_E: 
             case EBin.op_binary.B_LET_E:
                 result = this.OperatorExtractLet(code);
                 break;

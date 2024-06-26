@@ -1,9 +1,9 @@
-﻿using Memoria.Prime.Text;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Memoria.Prime.Text;
 
 namespace Memoria.Prime.Ini
 {
@@ -26,7 +26,7 @@ namespace Memoria.Prime.Ini
         private Action<T> _setter;
 
         public SectionBinding(String name, Func<T> ctor, Action<T> setter)
-            : base(name)
+            :base(name)
         {
             _ctor = ctor;
             _setter = setter;

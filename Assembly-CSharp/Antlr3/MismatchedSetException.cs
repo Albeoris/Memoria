@@ -60,8 +60,8 @@ namespace Antlr.Runtime
         {
         }
 
-        public MismatchedSetException(BitSet expecting, IIntStream input)
-            : base(input)
+        public MismatchedSetException( BitSet expecting, IIntStream input )
+            : base( input )
         {
             this._expecting = expecting;
         }

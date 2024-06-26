@@ -1,15 +1,15 @@
-﻿using AOT;
-using FF9;
-using Memoria;
-using Memoria.Assets;
-using Memoria.Data;
-using Memoria.Prime;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
 using System.IO;
+using System.Diagnostics;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using AOT;
+using FF9;
+using Memoria;
+using Memoria.Data;
+using Memoria.Prime;
+using Memoria.Assets;
 
 public class SFXData
 {
@@ -94,7 +94,7 @@ public class SFXData
     }
 
     public static void AdvanceEventSFXFrame()
-    {
+	{
         try
         {
             foreach (SFXData sfx in SFXData.EventSFX.Values)
@@ -109,7 +109,7 @@ public class SFXData
     }
 
     public static void RenderEventSFX()
-    {
+	{
         try
         {
             foreach (SFXData sfx in SFXData.EventSFX.Values)
@@ -154,7 +154,7 @@ public class SFXData
     }
 
     public void LoadSFX(SpecialEffect effNum, CMD_DATA cmd, BTL_VFX_REQ request, Boolean applyCamera)
-    {
+	{
         id = effNum;
         cmdRef = cmd;
         sfxRequest = request;
@@ -173,7 +173,7 @@ public class SFXData
             LoadSFXFromInfo(sfxInfo, defaultFolder);
         LoadSequenceFromFile(defaultFolder + UnifiedBattleSequencer.SEQUENCE_FILE);
         if (mesh != null)
-        {
+		{
             loadHasEnded = true;
             return;
         }
@@ -183,10 +183,10 @@ public class SFXData
     public void LoadEventSFX(Int32 eventId, SpecialEffect effNum, BTL_VFX_REQ request)
     {
         if (SFXData.EventSFX.TryGetValue(eventId, out SFXData oldSFX))
-        {
+		{
             oldSFX.Cancel();
             if (oldSFX.runningSFX.Count > 0)
-            {
+			{
                 oldSFX.runningSFX.Clear();
                 oldSFX.mesh.End();
             }
@@ -218,7 +218,7 @@ public class SFXData
     }
 
     public void Cancel()
-    {
+	{
         cancel = true;
         SFXData.sfxLoadedNotPlayed.Remove(this);
         foreach (RunningInstance inst in runningSFX)
@@ -226,12 +226,12 @@ public class SFXData
     }
 
     public Boolean IsCancelled()
-    {
+	{
         return cancel;
-    }
+	}
 
     private void LoadSequenceFromFile(String seqPath)
-    {
+	{
         String sequenceText = AssetManager.LoadString(seqPath, true);
         if (sequenceText != null)
         {
@@ -391,7 +391,7 @@ public class SFXData
                 {
                     Int32 genMeshIndex = sfxRawMesh.genTextureMesh.FindIndex(p => p.Key == sfxmat && !p.Value.raw.ContainsKey(SFX.frameIndex));
                     if (genMeshIndex >= 0)
-                    {
+					{
                         frameMesh = sfxRawMesh.genTextureMesh[genMeshIndex].Value;
                     }
                     else
@@ -550,7 +550,7 @@ public class SFXData
     }
 
     private void ChangeCharacterArgument(BattleActionCode baCode, UInt16 charId)
-    {
+	{
         Boolean includeCaster = (charId & cmdRef.regist.btl_id) != 0;
         Boolean includePlayers = (charId & 0xF) == 0xF;
         Boolean includeATarget = (charId & cmdRef.tar_id) != 0;
@@ -595,7 +595,7 @@ public class SFXData
         public Byte animFrame;
 
         public void Store(BTL_DATA btl)
-        {
+		{
             pos = btl.pos;
             rot = btl.rot;
             scale_x = btl.geo_scale_x;
@@ -1333,7 +1333,7 @@ public class SFXData
     public static Boolean BattleCallbackDummyUpdateVib = false;
 
     public static Boolean IsShortSpecialEffect(SpecialEffect eff)
-    {
+	{
         //return AssetManager.LoadBytes("SpecialEffects/ef" + ((Int32)eff).ToString("D3"), out _, false) == null;
         return (eff >= SpecialEffect.Player_Attack_Zidane_Dagger && eff <= SpecialEffect.Player_Attack_Beatrix)
             || (eff >= SpecialEffect.SFX_Attack_Rod && eff <= SpecialEffect.SFX_Attack_Excalibur2)

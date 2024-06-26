@@ -1,5 +1,5 @@
-using Memoria.Data;
 using System;
+using Memoria.Data;
 
 namespace Memoria.Assets
 {
@@ -115,7 +115,7 @@ namespace Memoria.Assets
         }
 
         public static class World
-        {
+		{
             public static readonly String PureDirectory = PureDataDirectory + "World/";
             public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 

@@ -57,14 +57,14 @@ namespace Antlr.Runtime.Debug
          *  multiple grammar files.
          *  </summary>
          */
-        void EnterRule(string grammarFileName, string ruleName);
+        void EnterRule( string grammarFileName, string ruleName );
 
         /** <summary>
          *  Because rules can have lots of alternatives, it is very useful to
          *  know which alt you are entering.  This is 1..n for n alts.
          *  </summary>
          */
-        void EnterAlt(int alt);
+        void EnterAlt( int alt );
 
         /** <summary>
          *  This is the last thing executed before leaving a rule.  It is
@@ -75,12 +75,12 @@ namespace Antlr.Runtime.Debug
          *  multiple grammar files.
          *  </summary>
          */
-        void ExitRule(string grammarFileName, string ruleName);
+        void ExitRule( string grammarFileName, string ruleName );
 
         /** <summary>Track entry into any (...) subrule other EBNF construct</summary> */
-        void EnterSubRule(int decisionNumber);
+        void EnterSubRule( int decisionNumber );
 
-        void ExitSubRule(int decisionNumber);
+        void ExitSubRule( int decisionNumber );
 
         /** <summary>
          *  Every decision, fixed k or arbitrary, has an enter/exit event
@@ -92,14 +92,14 @@ namespace Antlr.Runtime.Debug
          */
         void EnterDecision(int decisionNumber, bool couldBacktrack);
 
-        void ExitDecision(int decisionNumber);
+        void ExitDecision( int decisionNumber );
 
         /** <summary>
          *  An input token was consumed; matched by any kind of element.
          *  Trigger after the token was matched by things like match(), matchAny().
          *  </summary>
          */
-        void ConsumeToken(IToken t);
+        void ConsumeToken( IToken t );
 
         /** <summary>
          *  An off-channel input token was consumed.
@@ -107,7 +107,7 @@ namespace Antlr.Runtime.Debug
          *  (unless of course the hidden token is first stuff in the input stream).
          *  </summary>
          */
-        void ConsumeHiddenToken(IToken t);
+        void ConsumeHiddenToken( IToken t );
 
         /** <summary>
          *  Somebody (anybody) looked ahead.  Note that this actually gets
@@ -118,14 +118,14 @@ namespace Antlr.Runtime.Debug
          *  even if the info is redundant.
          *  </summary>
          */
-        void LT(int i, IToken t);
+        void LT( int i, IToken t );
 
         /** <summary>
          *  The parser is going to look arbitrarily ahead; mark this location,
          *  the token stream's marker is sent in case you need it.
          *  </summary>
          */
-        void Mark(int marker);
+        void Mark( int marker );
 
         /** <summary>
          *  After an arbitrairly long lookahead as with a cyclic DFA (or with
@@ -133,7 +133,7 @@ namespace Antlr.Runtime.Debug
          *  rewound to the position associated with marker.
          *  </summary>
          */
-        void Rewind(int marker);
+        void Rewind( int marker );
 
         /** <summary>
          *  Rewind to the input position of the last marker.
@@ -146,9 +146,9 @@ namespace Antlr.Runtime.Debug
          */
         void Rewind();
 
-        void BeginBacktrack(int level);
+        void BeginBacktrack( int level );
 
-        void EndBacktrack(int level, bool successful);
+        void EndBacktrack( int level, bool successful );
 
         /** <summary>
          *  To watch a parser move through the grammar, the parser needs to
@@ -162,7 +162,7 @@ namespace Antlr.Runtime.Debug
          *  the parser whenever it hits this line/pos.
          *  </remarks>
          */
-        void Location(int line, int pos);
+        void Location( int line, int pos );
 
         /** <summary>
          *  A recognition exception occurred such as NoViableAltException.  I made
@@ -224,7 +224,7 @@ namespace Antlr.Runtime.Debug
          *		terminate
          *  </remarks>
          */
-        void RecognitionException(RecognitionException e);
+        void RecognitionException( RecognitionException e );
 
         /** <summary>
          *  Indicates the recognizer is about to consume tokens to resynchronize
@@ -247,7 +247,7 @@ namespace Antlr.Runtime.Debug
         void EndResync();
 
         /** <summary>A semantic predicate was evaluate with this result and action text</summary> */
-        void SemanticPredicate(bool result, string predicate);
+        void SemanticPredicate( bool result, string predicate );
 
         /** <summary>
          *  Announce that parsing has begun.  Not technically useful except for
@@ -284,7 +284,7 @@ namespace Antlr.Runtime.Debug
          *
          *  <param name="t" />
          */
-        void ConsumeNode(object t);
+        void ConsumeNode( object t );
 
         /** <summary>
          *  The tree parser lookedahead.  If the type is UP or DOWN,
@@ -292,7 +292,7 @@ namespace Antlr.Runtime.Debug
          *  just one UP node and one DOWN navigation node.
          *  </summary>
          */
-        void LT(int i, object t);
+        void LT( int i, object t );
 
         #endregion
 
@@ -312,7 +312,7 @@ namespace Antlr.Runtime.Debug
          *  RemoteDebugEventSocketListener then only t.ID is set.
          *  </remarks>
          */
-        void NilNode(object t);
+        void NilNode( object t );
 
         /** <summary>
          *  Upon syntax error, recognizers bracket the error with an error node
@@ -321,7 +321,7 @@ namespace Antlr.Runtime.Debug
          *
          *  <param name="t"/>
          */
-        void ErrorNode(object t);
+        void ErrorNode( object t );
 
         /** <summary>Announce a new node built from token elements such as type etc...</summary>
          * 
@@ -331,7 +331,7 @@ namespace Antlr.Runtime.Debug
          *  set.
          *  </remarks>
          */
-        void CreateNode(object t);
+        void CreateNode( object t );
 
         /** <summary>Announce a new node built from an existing token.</summary>
          *
@@ -341,7 +341,7 @@ namespace Antlr.Runtime.Debug
          *  are set.
          *  </remarks>
          */
-        void CreateNode(object node, IToken token);
+        void CreateNode( object node, IToken token );
 
         /** <summary>Make a node the new root of an existing root.  See</summary>
          *
@@ -361,7 +361,7 @@ namespace Antlr.Runtime.Debug
          *
          *  <seealso cref="ITreeAdaptor.BecomeRoot(object, object)"/>
          */
-        void BecomeRoot(object newRoot, object oldRoot);
+        void BecomeRoot( object newRoot, object oldRoot );
 
         /** <summary>Make childID a child of rootID.</summary>
          *
@@ -372,7 +372,7 @@ namespace Antlr.Runtime.Debug
          *
          *  <seealso cref="ITreeAdaptor.AddChild(object, object)"/>
          */
-        void AddChild(object root, object child);
+        void AddChild( object root, object child );
 
         /** <summary>Set the token start/stop token index for a subtree root or node.</summary>
          *
@@ -381,7 +381,7 @@ namespace Antlr.Runtime.Debug
          *  RemoteDebugEventSocketListener then only t.ID is set.
          *  </remarks>
          */
-        void SetTokenBoundaries(object t, int tokenStartIndex, int tokenStopIndex);
+        void SetTokenBoundaries( object t, int tokenStartIndex, int tokenStopIndex );
 
         #endregion
     }

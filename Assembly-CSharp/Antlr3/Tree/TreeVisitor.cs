@@ -39,12 +39,12 @@ namespace Antlr.Runtime.Tree
     {
         protected ITreeAdaptor adaptor;
 
-        public TreeVisitor(ITreeAdaptor adaptor)
+        public TreeVisitor( ITreeAdaptor adaptor )
         {
             this.adaptor = adaptor;
         }
         public TreeVisitor()
-            : this(new CommonTreeAdaptor())
+            : this( new CommonTreeAdaptor() )
         {
         }
 
@@ -57,27 +57,27 @@ namespace Antlr.Runtime.Tree
          *  applying post action to this node.
          *  </summary>
          */
-        public object Visit(object t, ITreeVisitorAction action)
+        public object Visit( object t, ITreeVisitorAction action )
         {
             // System.out.println("visit "+((Tree)t).toStringTree());
-            bool isNil = adaptor.IsNil(t);
-            if (action != null && !isNil)
+            bool isNil = adaptor.IsNil( t );
+            if ( action != null && !isNil )
             {
-                t = action.Pre(t); // if rewritten, walk children of new t
+                t = action.Pre( t ); // if rewritten, walk children of new t
             }
-            for (int i = 0; i < adaptor.GetChildCount(t); i++)
+            for ( int i = 0; i < adaptor.GetChildCount(t); i++ )
             {
-                object child = adaptor.GetChild(t, i);
-                Visit(child, action);
+                object child = adaptor.GetChild( t, i );
+                Visit( child, action );
             }
-            if (action != null && !isNil)
-                t = action.Post(t);
+            if ( action != null && !isNil )
+                t = action.Post( t );
             return t;
         }
 
-        public object Visit(object t, Func<object, object> preAction, Func<object, object> postAction)
+        public object Visit( object t, Func<object, object> preAction, Func<object, object> postAction )
         {
-            return Visit(t, new TreeVisitorAction(preAction, postAction));
+            return Visit( t, new TreeVisitorAction( preAction, postAction ) );
         }
     }
 }

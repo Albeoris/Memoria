@@ -49,13 +49,13 @@ namespace UnityEngine.UI
         private Material m_UnmaskMaterial;
 
         protected Mask()
-        { }
+        {}
 
         [Obsolete("use Mask.enabled instead", true)]
         public virtual bool MaskEnabled() { throw new NotSupportedException(); }
 
         [Obsolete("Not used anymore.")]
-        public virtual void OnSiblingGraphicEnabledDisabled() { }
+        public virtual void OnSiblingGraphicEnabledDisabled() {}
 
         protected override void OnEnable()
         {

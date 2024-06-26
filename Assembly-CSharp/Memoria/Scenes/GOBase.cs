@@ -1,10 +1,10 @@
-using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using Memoria.Prime;
 using UnityEngine;
 
 namespace Memoria.Scenes
@@ -42,7 +42,7 @@ namespace Memoria.Scenes
             private static Func<GameObject, T> CreateConstructor()
             {
                 ParameterExpression param = Expression.Parameter(TypeCache<GameObject>.Type, "obj");
-                ConstructorInfo ctor = TypeCache<T>.Type.GetConstructor(new[] { TypeCache<GameObject>.Type });
+                ConstructorInfo ctor = TypeCache<T>.Type.GetConstructor(new[] {TypeCache<GameObject>.Type});
                 Expression<Func<GameObject, T>> lambda = Expression.Lambda<Func<GameObject, T>>(Expression.New(ctor, param), param);
                 return lambda.Compile();
             }

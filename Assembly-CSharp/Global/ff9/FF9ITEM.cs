@@ -1,6 +1,6 @@
-﻿using Memoria.Data;
+﻿using System;
+using Memoria.Data;
 using Memoria.Prime.CSV;
-using System;
 
 public class FF9ITEM : ICsvEntry
 {
@@ -8,14 +8,14 @@ public class FF9ITEM : ICsvEntry
     public Byte count;
 
     public FF9ITEM()
-    {
-    }
+	{
+	}
 
     public FF9ITEM(RegularItem id, Byte count)
-    {
-        this.id = id;
-        this.count = count;
-    }
+	{
+		this.id = id;
+		this.count = count;
+	}
 
     public void ParseEntry(String[] raw, CsvMetaData metadata)
     {

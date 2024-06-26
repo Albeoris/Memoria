@@ -1,6 +1,6 @@
-﻿using Memoria.Prime.CSV;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Memoria.Prime.CSV;
 
 namespace Memoria.Data
 {

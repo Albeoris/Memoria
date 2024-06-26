@@ -33,8 +33,8 @@
 namespace Antlr.Runtime
 {
     using System.Collections.Generic;
-    using ArgumentNullException = System.ArgumentNullException;
     using CLSCompliant = System.CLSCompliantAttribute;
+    using ArgumentNullException = System.ArgumentNullException;
 
     /** <summary>
      *  The set of fields needed by an abstract recognizer to recognize input
@@ -158,7 +158,7 @@ namespace Antlr.Runtime
             tokenStartCharIndex = -1;
         }
 
-        public RecognizerSharedState(RecognizerSharedState state)
+        public RecognizerSharedState( RecognizerSharedState state )
         {
             if (state == null)
                 throw new ArgumentNullException("state");
@@ -171,7 +171,7 @@ namespace Antlr.Runtime
             syntaxErrors = state.syntaxErrors;
             backtracking = state.backtracking;
 
-            if (state.ruleMemo != null)
+            if ( state.ruleMemo != null )
                 ruleMemo = (IDictionary<int, int>[])state.ruleMemo.Clone();
 
             token = state.token;

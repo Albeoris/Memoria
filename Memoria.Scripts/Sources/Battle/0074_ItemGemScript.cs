@@ -28,7 +28,7 @@ namespace Memoria.Scripts.Battle
             Int32 recovery = _v.Command.Item.Power * (ff9item.FF9Item_GetCount(_v.Command.ItemId) + 1);
 
             Single rate = recovery * BattleScriptDamageEstimate.RateHpMp((Int32)_v.Target.CurrentHp, (Int32)_v.Target.MaximumHp);
-
+            
             if (!_v.Target.IsPlayer)
                 rate *= -1;
 

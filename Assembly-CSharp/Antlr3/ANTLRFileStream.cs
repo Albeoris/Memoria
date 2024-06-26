@@ -51,20 +51,20 @@ namespace Antlr.Runtime
     {
         protected string fileName;
 
-        public ANTLRFileStream(string fileName)
-            : this(fileName, null)
+        public ANTLRFileStream( string fileName ) 
+            : this( fileName, null )
         {
         }
 
-        public ANTLRFileStream(string fileName, Encoding encoding)
+        public ANTLRFileStream( string fileName, Encoding encoding )
         {
             this.fileName = fileName;
-            Load(fileName, encoding);
+            Load( fileName, encoding );
         }
 
-        public virtual void Load(string fileName, Encoding encoding)
+        public virtual void Load( string fileName, Encoding encoding )
         {
-            if (fileName == null)
+            if ( fileName == null )
             {
                 return;
             }

@@ -7,8 +7,8 @@
  ***************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
+using System.IO;
 
 namespace Memoria.Prime.NVorbis.Ogg
 {

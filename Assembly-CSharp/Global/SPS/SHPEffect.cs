@@ -1,7 +1,7 @@
-﻿using Memoria.Data;
-using Memoria.Scripts;
-using System;
+﻿using System;
 using UnityEngine;
+using Memoria.Scripts;
+using Memoria.Data;
 
 public class SHPEffect : MonoBehaviour
 {

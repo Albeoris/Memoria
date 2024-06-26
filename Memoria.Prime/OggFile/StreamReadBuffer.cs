@@ -26,13 +26,13 @@ namespace Memoria.Prime.NVorbis
         internal StreamReadBuffer(Stream source, int initialSize, int maxSize, bool minimalRead)
         {
             StreamWrapper wrapper;
-            lock (_lockObjects)
+            lock(_lockObjects)
             {
                 if (!_lockObjects.TryGetValue(source, out wrapper))
                 {
                     _lockObjects.Add(source, new StreamWrapper { Source = source });
                     wrapper = _lockObjects[source];
-
+    
                     if (source.CanSeek)
                     {
                         // assume that this is a quick operation
@@ -61,7 +61,7 @@ namespace Memoria.Prime.NVorbis
 
         public void Dispose()
         {
-            lock (_lockObjects)
+            lock( _lockObjects )
             {
                 if (--_wrapper.RefCount == 0)
                 {

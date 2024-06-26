@@ -1,7 +1,3 @@
-using Assets.Sources.Scripts.UI.Common;
-using Memoria.Prime;
-using Memoria.Prime.Text;
-using Memoria.Prime.Threading;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,6 +5,10 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Prime;
+using Memoria.Prime.Text;
+using Memoria.Prime.Threading;
 using ExtensionMethodsIEnumerable = Memoria.Scenes.ExtensionMethodsIEnumerable;
 
 namespace Memoria.Assets
@@ -206,7 +206,7 @@ namespace Memoria.Assets
 
             return ReadTagReplacements(existingFile);
         }
-
+        
         private static IList<KeyValuePair<String, TextReplacement>> ReadTagReplacements(TextResourcePath existingFile)
         {
             TxtEntry[] generalNames = existingFile.ReadAll();
@@ -411,7 +411,7 @@ namespace Memoria.Assets
             {
                 if (!_initialized)
                     return false;
-
+                
                 Int32 fieldZoneId = FF9TextTool.FieldZoneId;
 
                 String[] result;

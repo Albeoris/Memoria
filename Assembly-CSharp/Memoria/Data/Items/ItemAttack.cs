@@ -1,5 +1,5 @@
-﻿using Memoria.Prime.CSV;
-using System;
+﻿using System;
+using Memoria.Prime.CSV;
 
 namespace Memoria.Data
 {
@@ -47,13 +47,13 @@ namespace Memoria.Data
             {
                 var StringTexture = CsvParser.String(raw[12]);
                 CustomTexture = StringTexture.Split(',');
-                for (Int32 i = 0; i < CustomTexture.Length; i++)
-                    CustomTexture[i] = CustomTexture[i].Trim();
+				for (Int32 i = 0; i < CustomTexture.Length; i++)
+					CustomTexture[i] = CustomTexture[i].Trim();
             }
-            else
-            {
+			else
+			{
                 CustomTexture = new String[0];
-            }
+			}
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)

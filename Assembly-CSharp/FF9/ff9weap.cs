@@ -1,26 +1,26 @@
-﻿using Memoria;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.Collections;
 using Memoria.Prime.CSV;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace FF9
 {
-    public static class ff9weap
-    {
-        public const Int32 WEAPON_START = 0;
+	public static class ff9weap
+	{
+	    public const Int32 WEAPON_START = 0;
         public const Int32 WEAPON_COUNT = 88;
 
         public static Dictionary<Int32, ItemAttack> WeaponData;
 
         static ff9weap()
-        {
-            WeaponData = LoadWeapons();
-        }
+	    {
+	        WeaponData = LoadWeapons();
+	    }
 
         private static Dictionary<Int32, ItemAttack> LoadWeapons()
         {
@@ -45,5 +45,5 @@ namespace FF9
                 return null;
             }
         }
-    }
+	}
 }

@@ -1,5 +1,3 @@
-using Memoria.Client.Interaction;
-using Memoria.Test;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -10,6 +8,8 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
+using Memoria.Client.Interaction;
+using Memoria.Test;
 using Xceed.Wpf.Toolkit.PropertyGrid;
 
 namespace Memoria.Client
@@ -31,7 +31,7 @@ namespace Memoria.Client
             _treeView = CreateNewTab("All objects");
             AddUiElement(_tabControl, 0, 0);
 
-            _propertyGrid = new PropertyGrid { AutoGenerateProperties = true };
+            _propertyGrid = new PropertyGrid {AutoGenerateProperties = true};
             AddUiElement(_propertyGrid, 0, 1);
 
             #endregion
@@ -57,7 +57,7 @@ namespace Memoria.Client
             Tree treeView = new Tree();
             treeView.SelectedItemChanged += OnTreeViewSelectedItemChanged;
 
-            TabItem tabItem = new TabItem { Header = header };
+            TabItem tabItem = new TabItem {Header = header};
             tabItem.Content = treeView;
 
             ContextMenu contextMenu = new ContextMenu();
@@ -68,7 +68,7 @@ namespace Memoria.Client
             {
                 CloseTabCommand closeTabCommand = new CloseTabCommand(_tabControl, tabItem);
 
-                contextMenu.Items.Add(new MenuItem { Header = "Close", Command = closeTabCommand });
+                contextMenu.Items.Add(new MenuItem {Header = "Close", Command = closeTabCommand});
 
                 tabItem.MouseDown += (s, e) =>
                 {

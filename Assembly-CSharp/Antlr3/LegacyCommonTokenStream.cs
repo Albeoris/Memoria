@@ -83,7 +83,7 @@ namespace Antlr.Runtime
 
         public LegacyCommonTokenStream()
         {
-            tokens = new List<IToken>(500);
+            tokens = new List<IToken>( 500 );
         }
 
         public LegacyCommonTokenStream(ITokenSource tokenSource)
@@ -92,8 +92,8 @@ namespace Antlr.Runtime
             this._tokenSource = tokenSource;
         }
 
-        public LegacyCommonTokenStream(ITokenSource tokenSource, int channel)
-            : this(tokenSource)
+        public LegacyCommonTokenStream( ITokenSource tokenSource, int channel )
+            : this( tokenSource )
         {
             this.channel = channel;
         }
@@ -116,7 +116,7 @@ namespace Antlr.Runtime
         }
 
         /** <summary>Reset this token stream by setting its token source.</summary> */
-        public virtual void SetTokenSource(ITokenSource tokenSource)
+        public virtual void SetTokenSource( ITokenSource tokenSource )
         {
             this._tokenSource = tokenSource;
             tokens.Clear();
@@ -133,17 +133,17 @@ namespace Antlr.Runtime
         public virtual void FillBuffer()
         {
             // fast return if the buffer is already full
-            if (p != -1)
+            if ( p != -1 )
                 return;
 
             int index = 0;
             IToken t = _tokenSource.NextToken();
-            while (t != null && t.Type != CharStreamConstants.EndOfFile)
+            while ( t != null && t.Type != CharStreamConstants.EndOfFile )
             {
                 bool discard = false;
                 // is there a channel override for token type?
                 int channelI;
-                if (channelOverrideMap != null && channelOverrideMap.TryGetValue(t.Type, out channelI))
+                if ( channelOverrideMap != null && channelOverrideMap.TryGetValue( t.Type, out channelI ) )
                     t.Channel = channelI;
 
                 //if ( channelOverrideMap != null && channelOverrideMap.ContainsKey( t.getType() ) )
@@ -154,26 +154,26 @@ namespace Antlr.Runtime
                 //        t.setChannel( (int)channelI );
                 //    }
                 //}
-                if (discardSet != null &&
-                     discardSet.Contains(t.Type))
+                if ( discardSet != null &&
+                     discardSet.Contains( t.Type ) )
                 {
                     discard = true;
                 }
-                else if (discardOffChannelTokens && t.Channel != this.channel)
+                else if ( discardOffChannelTokens && t.Channel != this.channel )
                 {
                     discard = true;
                 }
-                if (!discard)
+                if ( !discard )
                 {
                     t.TokenIndex = index;
-                    tokens.Add(t);
+                    tokens.Add( t );
                     index++;
                 }
                 t = _tokenSource.NextToken();
             }
             // leave p pointing at first token on channel
             p = 0;
-            p = SkipOffTokenChannels(p);
+            p = SkipOffTokenChannels( p );
         }
 
         /** <summary>
@@ -189,27 +189,27 @@ namespace Antlr.Runtime
          */
         public virtual void Consume()
         {
-            if (p < tokens.Count)
+            if ( p < tokens.Count )
             {
                 p++;
-                p = SkipOffTokenChannels(p); // leave p on valid token
+                p = SkipOffTokenChannels( p ); // leave p on valid token
             }
         }
 
         /** <summary>Given a starting index, return the index of the first on-channel token.</summary> */
-        protected virtual int SkipOffTokenChannels(int i)
+        protected virtual int SkipOffTokenChannels( int i )
         {
             int n = tokens.Count;
-            while (i < n && ((IToken)tokens[i]).Channel != channel)
+            while ( i < n && ( (IToken)tokens[i] ).Channel != channel )
             {
                 i++;
             }
             return i;
         }
 
-        protected virtual int SkipOffTokenChannelsReverse(int i)
+        protected virtual int SkipOffTokenChannelsReverse( int i )
         {
-            while (i >= 0 && ((IToken)tokens[i]).Channel != channel)
+            while ( i >= 0 && ( (IToken)tokens[i] ).Channel != channel )
             {
                 i--;
             }
@@ -224,41 +224,41 @@ namespace Antlr.Runtime
          *  channel.
          *  </summary>
          */
-        public virtual void SetTokenTypeChannel(int ttype, int channel)
+        public virtual void SetTokenTypeChannel( int ttype, int channel )
         {
-            if (channelOverrideMap == null)
+            if ( channelOverrideMap == null )
             {
                 channelOverrideMap = new Dictionary<int, int>();
             }
             channelOverrideMap[ttype] = channel;
         }
 
-        public virtual void DiscardTokenType(int ttype)
+        public virtual void DiscardTokenType( int ttype )
         {
-            if (discardSet == null)
+            if ( discardSet == null )
             {
                 discardSet = new List<int>();
             }
-            discardSet.Add(ttype);
+            discardSet.Add( ttype );
         }
 
-        public virtual void SetDiscardOffChannelTokens(bool discardOffChannelTokens)
+        public virtual void SetDiscardOffChannelTokens( bool discardOffChannelTokens )
         {
             this.discardOffChannelTokens = discardOffChannelTokens;
         }
 
         public virtual IList<IToken> GetTokens()
         {
-            if (p == -1)
+            if ( p == -1 )
             {
                 FillBuffer();
             }
             return tokens;
         }
 
-        public virtual IList<IToken> GetTokens(int start, int stop)
+        public virtual IList<IToken> GetTokens( int start, int stop )
         {
-            return GetTokens(start, stop, (BitSet)null);
+            return GetTokens( start, stop, (BitSet)null );
         }
 
         /** <summary>
@@ -267,50 +267,50 @@ namespace Antlr.Runtime
          *  method looks at both on and off channel tokens.
          *  </summary>
          */
-        public virtual IList<IToken> GetTokens(int start, int stop, BitSet types)
+        public virtual IList<IToken> GetTokens( int start, int stop, BitSet types )
         {
-            if (p == -1)
+            if ( p == -1 )
             {
                 FillBuffer();
             }
-            if (stop >= tokens.Count)
+            if ( stop >= tokens.Count )
             {
                 stop = tokens.Count - 1;
             }
-            if (start < 0)
+            if ( start < 0 )
             {
                 start = 0;
             }
-            if (start > stop)
+            if ( start > stop )
             {
                 return null;
             }
 
             // list = tokens[start:stop]:{Token t, t.getType() in types}
             IList<IToken> filteredTokens = new List<IToken>();
-            for (int i = start; i <= stop; i++)
+            for ( int i = start; i <= stop; i++ )
             {
                 IToken t = tokens[i];
-                if (types == null || types.Member(t.Type))
+                if ( types == null || types.Member( t.Type ) )
                 {
-                    filteredTokens.Add(t);
+                    filteredTokens.Add( t );
                 }
             }
-            if (filteredTokens.Count == 0)
+            if ( filteredTokens.Count == 0 )
             {
                 filteredTokens = null;
             }
             return filteredTokens;
         }
 
-        public virtual IList<IToken> GetTokens(int start, int stop, IList<int> types)
+        public virtual IList<IToken> GetTokens( int start, int stop, IList<int> types )
         {
-            return GetTokens(start, stop, new BitSet(types));
+            return GetTokens( start, stop, new BitSet( types ) );
         }
 
-        public virtual IList<IToken> GetTokens(int start, int stop, int ttype)
+        public virtual IList<IToken> GetTokens( int start, int stop, int ttype )
         {
-            return GetTokens(start, stop, BitSet.Of(ttype));
+            return GetTokens( start, stop, BitSet.Of( ttype ) );
         }
 
         /** <summary>
@@ -318,22 +318,22 @@ namespace Antlr.Runtime
          *  first symbol of lookahead.
          *  </summary>
          */
-        public virtual IToken LT(int k)
+        public virtual IToken LT( int k )
         {
-            if (p == -1)
+            if ( p == -1 )
             {
                 FillBuffer();
             }
-            if (k == 0)
+            if ( k == 0 )
             {
                 return null;
             }
-            if (k < 0)
+            if ( k < 0 )
             {
-                return LB(-k);
+                return LB( -k );
             }
             //System.out.print("LT(p="+p+","+k+")=");
-            if ((p + k - 1) >= tokens.Count)
+            if ( ( p + k - 1 ) >= tokens.Count )
             {
                 return tokens[tokens.Count - 1];
             }
@@ -341,13 +341,13 @@ namespace Antlr.Runtime
             int i = p;
             int n = 1;
             // find k good tokens
-            while (n < k)
+            while ( n < k )
             {
                 // skip off-channel tokens
-                i = SkipOffTokenChannels(i + 1); // leave p on valid token
+                i = SkipOffTokenChannels( i + 1 ); // leave p on valid token
                 n++;
             }
-            if (i >= tokens.Count)
+            if ( i >= tokens.Count )
             {
                 return tokens[tokens.Count - 1];
             }
@@ -359,18 +359,18 @@ namespace Antlr.Runtime
         }
 
         /** <summary>Look backwards k tokens on-channel tokens</summary> */
-        protected virtual IToken LB(int k)
+        protected virtual IToken LB( int k )
         {
             //System.out.print("LB(p="+p+","+k+") ");
-            if (p == -1)
+            if ( p == -1 )
             {
                 FillBuffer();
             }
-            if (k == 0)
+            if ( k == 0 )
             {
                 return null;
             }
-            if ((p - k) < 0)
+            if ( ( p - k ) < 0 )
             {
                 return null;
             }
@@ -378,13 +378,13 @@ namespace Antlr.Runtime
             int i = p;
             int n = 1;
             // find k good tokens looking backwards
-            while (n <= k)
+            while ( n <= k )
             {
                 // skip off-channel tokens
-                i = SkipOffTokenChannelsReverse(i - 1); // leave p on valid token
+                i = SkipOffTokenChannelsReverse( i - 1 ); // leave p on valid token
                 n++;
             }
-            if (i < 0)
+            if ( i < 0 )
             {
                 return null;
             }
@@ -396,7 +396,7 @@ namespace Antlr.Runtime
          *  that is, count all tokens not just on-channel tokens.
          *  </summary>
          */
-        public virtual IToken Get(int i)
+        public virtual IToken Get( int i )
         {
             return (IToken)tokens[i];
         }
@@ -417,14 +417,14 @@ namespace Antlr.Runtime
         }
 #endif
 
-        public virtual int LA(int i)
+        public virtual int LA( int i )
         {
-            return LT(i).Type;
+            return LT( i ).Type;
         }
 
         public virtual int Mark()
         {
-            if (p == -1)
+            if ( p == -1 )
             {
                 FillBuffer();
             }
@@ -432,7 +432,7 @@ namespace Antlr.Runtime
             return lastMarker;
         }
 
-        public virtual void Release(int marker)
+        public virtual void Release( int marker )
         {
             // no resources to release
         }
@@ -445,14 +445,14 @@ namespace Antlr.Runtime
             }
         }
 
-        public virtual void Rewind(int marker)
+        public virtual void Rewind( int marker )
         {
-            Seek(marker);
+            Seek( marker );
         }
 
         public virtual void Rewind()
         {
-            Seek(lastMarker);
+            Seek( lastMarker );
         }
 
         public virtual void Reset()
@@ -461,7 +461,7 @@ namespace Antlr.Runtime
             lastMarker = 0;
         }
 
-        public virtual void Seek(int index)
+        public virtual void Seek( int index )
         {
             p = index;
         }
@@ -484,41 +484,41 @@ namespace Antlr.Runtime
 
         public override string ToString()
         {
-            if (p == -1)
+            if ( p == -1 )
             {
-                throw new InvalidOperationException("Buffer is not yet filled.");
+                throw new InvalidOperationException( "Buffer is not yet filled." );
             }
-            return ToString(0, tokens.Count - 1);
+            return ToString( 0, tokens.Count - 1 );
         }
 
-        public virtual string ToString(int start, int stop)
+        public virtual string ToString( int start, int stop )
         {
-            if (start < 0 || stop < 0)
+            if ( start < 0 || stop < 0 )
             {
                 return null;
             }
-            if (p == -1)
+            if ( p == -1 )
             {
-                throw new InvalidOperationException("Buffer is not yet filled.");
+                throw new InvalidOperationException( "Buffer is not yet filled." );
             }
-            if (stop >= tokens.Count)
+            if ( stop >= tokens.Count )
             {
                 stop = tokens.Count - 1;
             }
             StringBuilder buf = new StringBuilder();
-            for (int i = start; i <= stop; i++)
+            for ( int i = start; i <= stop; i++ )
             {
                 IToken t = tokens[i];
-                buf.Append(t.Text);
+                buf.Append( t.Text );
             }
             return buf.ToString();
         }
 
-        public virtual string ToString(IToken start, IToken stop)
+        public virtual string ToString( IToken start, IToken stop )
         {
-            if (start != null && stop != null)
+            if ( start != null && stop != null )
             {
-                return ToString(start.TokenIndex, stop.TokenIndex);
+                return ToString( start.TokenIndex, stop.TokenIndex );
             }
             return null;
         }

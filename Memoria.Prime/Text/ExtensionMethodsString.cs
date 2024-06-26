@@ -1,7 +1,7 @@
 using System;
+using System.Reflection;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace Memoria.Prime.Text
@@ -173,17 +173,17 @@ namespace Memoria.Prime.Text
             foreach (FieldInfo f in type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy))
             {
                 if (f.Name == source)
-                {
+				{
                     field = f;
                     return true;
-                }
-            }
+				}
+			}
             field = null;
             return false;
         }
 
         public static Boolean TryEnumParse<T>(this String source, out T value) where T : Enum
-        {
+		{
             try
             {
                 value = (T)Enum.Parse(typeof(T), source);
@@ -244,7 +244,7 @@ namespace Memoria.Prime.Text
         }
 
         public static Boolean TryArrayParse(this String[] source, Type t, out object obj)
-        {
+		{
             Array arr = Array.CreateInstance(t, source.Length);
             Boolean ok = true;
             object buffer;
@@ -257,6 +257,6 @@ namespace Memoria.Prime.Text
             }
             obj = ok ? arr : null;
             return ok;
-        }
+		}
     }
 }

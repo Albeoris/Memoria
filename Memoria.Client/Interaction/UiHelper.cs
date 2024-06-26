@@ -1,8 +1,8 @@
-﻿using Memoria.Prime;
-using Memoria.Prime.Text;
-using System;
+﻿using System;
 using System.Text;
 using System.Windows;
+using Memoria.Prime;
+using Memoria.Prime.Text;
 
 namespace Memoria.Client.Interaction
 {

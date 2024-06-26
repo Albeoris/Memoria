@@ -1,8 +1,8 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using Microsoft.Win32;
 
 namespace Memoria.SteamFix
 {
@@ -39,7 +39,7 @@ namespace Memoria.SteamFix
                 else
                 {
                     KillRunningLaunchers();
-
+                    
                     try
                     {
                         File.Copy(fixPath, launcherPath, overwrite: true);
@@ -105,7 +105,7 @@ namespace Memoria.SteamFix
 
             if (!File.Exists(backupPath))
                 throw new FileNotFoundException($"Cannot find a backup copy of the original launcher: {backupPath}", backupPath);
-
+            
             try
             {
                 File.Copy(launcherPath, fixPath, overwrite: true);
@@ -114,7 +114,7 @@ namespace Memoria.SteamFix
             {
                 throw new Exception($"Failed to copy {launcherPath} to {fixPath}. Try running the launcher with administrator rights.", ex);
             }
-
+            
             try
             {
                 File.Copy(backupPath, launcherPath, overwrite: true);
@@ -136,7 +136,7 @@ namespace Memoria.SteamFix
                 throw new Exception($"Failed to set launcher hook. Try running the launcher with administrator rights.", ex);
             }
         }
-
+        
         private static Boolean RemoveLauncherHook()
         {
             try
@@ -148,7 +148,7 @@ namespace Memoria.SteamFix
                         if (subKey == null)
                             return false;
                     }
-
+                    
                     registryKey.DeleteSubKey(FF9LauncherRegistryPath);
                     return true;
                 }

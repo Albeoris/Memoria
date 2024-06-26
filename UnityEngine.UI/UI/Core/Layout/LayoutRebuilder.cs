@@ -38,7 +38,7 @@ namespace UnityEngine.UI
             MarkLayoutForRebuild(driven);
         }
 
-        public Transform transform { get { return m_ToRebuild; } }
+        public Transform transform { get { return m_ToRebuild; }}
 
         public bool IsDestroyed()
         {
@@ -178,7 +178,7 @@ namespace UnityEngine.UI
             var comps = ListPool<Component>.Get();
             layoutRoot.GetComponents(typeof(ILayoutController), comps);
             StripDisabledBehavioursFromList(comps);
-            var valid = comps.Count > 0;
+            var valid =  comps.Count > 0;
             ListPool<Component>.Release(comps);
             return valid;
         }
@@ -200,7 +200,7 @@ namespace UnityEngine.UI
         }
 
         public void GraphicUpdateComplete()
-        { }
+        {}
 
         public override int GetHashCode()
         {

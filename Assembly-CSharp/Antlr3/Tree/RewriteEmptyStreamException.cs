@@ -51,7 +51,7 @@ namespace Antlr.Runtime.Tree
             : base(elementDescription)
         {
         }
-
+        
         public RewriteEmptyStreamException(string elementDescription, Exception innerException)
             : base(elementDescription, innerException)
         {

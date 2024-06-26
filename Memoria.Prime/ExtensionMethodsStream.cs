@@ -10,7 +10,7 @@ namespace Memoria.Prime
             if (self.Position != position)
                 self.Position = position;
         }
-
+        
         public static void CopyTo(this Stream self, Stream destination, Int64 bufferSize)
         {
             Int32 count;
@@ -31,7 +31,7 @@ namespace Memoria.Prime
             if (size != 0)
                 throw new EndOfStreamException("Unexpected end of stream.");
         }
-
+        
         public static T ReadStruct<T>(this Stream input) where T : unmanaged
         {
             return ReadStructs<T>(input, count: 1)[0];

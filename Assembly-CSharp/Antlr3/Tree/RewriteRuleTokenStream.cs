@@ -39,20 +39,20 @@ namespace Antlr.Runtime.Tree
     public class RewriteRuleTokenStream : RewriteRuleElementStream
     {
 
-        public RewriteRuleTokenStream(ITreeAdaptor adaptor, string elementDescription)
-            : base(adaptor, elementDescription)
+        public RewriteRuleTokenStream( ITreeAdaptor adaptor, string elementDescription )
+            : base( adaptor, elementDescription )
         {
         }
 
         /** <summary>Create a stream with one element</summary> */
-        public RewriteRuleTokenStream(ITreeAdaptor adaptor, string elementDescription, object oneElement)
-            : base(adaptor, elementDescription, oneElement)
+        public RewriteRuleTokenStream( ITreeAdaptor adaptor, string elementDescription, object oneElement )
+            : base( adaptor, elementDescription, oneElement )
         {
         }
 
         /** <summary>Create a stream, but feed off an existing list</summary> */
-        public RewriteRuleTokenStream(ITreeAdaptor adaptor, string elementDescription, IList elements)
-            : base(adaptor, elementDescription, elements)
+        public RewriteRuleTokenStream( ITreeAdaptor adaptor, string elementDescription, IList elements )
+            : base( adaptor, elementDescription, elements )
         {
         }
 
@@ -60,7 +60,7 @@ namespace Antlr.Runtime.Tree
         public virtual object NextNode()
         {
             IToken t = (IToken)NextCore();
-            return adaptor.Create(t);
+            return adaptor.Create( t );
         }
 
         public virtual IToken NextToken()
@@ -73,14 +73,14 @@ namespace Antlr.Runtime.Tree
          *  This way we can do hetero tree nodes in rewrite.
          *  </summary>
          */
-        protected override object ToTree(object el)
+        protected override object ToTree( object el )
         {
             return el;
         }
 
-        protected override object Dup(object el)
+        protected override object Dup( object el )
         {
-            throw new NotSupportedException("dup can't be called for a token stream.");
+            throw new NotSupportedException( "dup can't be called for a token stream." );
         }
     }
 }

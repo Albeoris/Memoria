@@ -54,7 +54,7 @@ public static class PSX_LIBGPU
         PSX_OT_MGR.AddPrim(in_ot, in_p);
     }
 
-    public unsafe static UInt32* ClearOTagR(UInt32* ot, UInt32 n)
+public unsafe static UInt32* ClearOTagR(UInt32* ot, UInt32 n)
     {
         PSX_OT_MGR.ClearOTag(ot, n);
         if (n <= 0u)
@@ -70,13 +70,13 @@ public static class PSX_LIBGPU
         return ot;
     }
 
-    public static UInt16[] originalVram = new UInt16[524288];
+public static UInt16[] originalVram = new UInt16[524288];
 
-    public static Boolean isInitVram = false;
+public static Boolean isInitVram = false;
 
-    public static Boolean isVramDirty = true;
+public static Boolean isVramDirty = true;
 
-    public struct RECT
+public struct RECT
     {
         public Int16 x;
 
@@ -87,7 +87,7 @@ public static class PSX_LIBGPU
         public Int16 h;
     }
 
-    public struct RECT32
+public struct RECT32
     {
         public Int32 x;
 
@@ -98,18 +98,18 @@ public static class PSX_LIBGPU
         public Int32 h;
     }
 
-    public struct DR_ENV
+public struct DR_ENV
     {
         public UInt32 tag;
 
-        public unsafe fixed UInt32 code[15];
+        public unsafe fixed UInt32 code [15];
     }
 
-    public struct DRAWENV
+public struct DRAWENV
     {
         public RECT clip;
 
-        public unsafe fixed Int16 ofs[2];
+        public unsafe fixed Int16 ofs [2];
 
         public RECT tw;
 
@@ -130,7 +130,7 @@ public static class PSX_LIBGPU
         public DR_ENV dr_env;
     }
 
-    public struct DISPENV
+public struct DISPENV
     {
         public RECT disp;
 
@@ -145,7 +145,7 @@ public static class PSX_LIBGPU
         public Byte pad1;
     }
 
-    public struct P_TAG
+public struct P_TAG
     {
         public UInt32 getAddr()
         {
@@ -190,7 +190,7 @@ public static class PSX_LIBGPU
         public Byte code;
     }
 
-    public struct P_CODE
+public struct P_CODE
     {
         public Byte r0;
 
@@ -201,7 +201,7 @@ public static class PSX_LIBGPU
         public Byte code;
     }
 
-    public struct POLY_F3
+public struct POLY_F3
     {
         public UInt32 tag;
 
@@ -226,7 +226,7 @@ public static class PSX_LIBGPU
         public Int16 y2;
     }
 
-    public struct POLY_F4
+public struct POLY_F4
     {
         public UInt32 tag;
 
@@ -255,7 +255,7 @@ public static class PSX_LIBGPU
         public Int16 y3;
     }
 
-    [StructLayout(LayoutKind.Explicit)]
+[StructLayout(LayoutKind.Explicit)]
     public struct POLY_FT3
     {
         [FieldOffset(0)] public UInt32 tag;
@@ -313,7 +313,7 @@ public static class PSX_LIBGPU
         [FieldOffset(30)] public UInt16 pad1;
     }
 
-    [StructLayout(LayoutKind.Explicit)]
+[StructLayout(LayoutKind.Explicit)]
     public struct POLY_FT4
     {
         [FieldOffset(0)] public UInt32 tag;
@@ -385,7 +385,7 @@ public static class PSX_LIBGPU
         [FieldOffset(38)] public UInt16 pad3;
     }
 
-    public struct POLY_G3
+public struct POLY_G3
     {
         public UInt32 tag;
 
@@ -426,7 +426,7 @@ public static class PSX_LIBGPU
         public Int16 y2;
     }
 
-    public struct POLY_G4
+public struct POLY_G4
     {
         public UInt32 tag;
 
@@ -479,7 +479,7 @@ public static class PSX_LIBGPU
         public Int16 y3;
     }
 
-    [StructLayout(LayoutKind.Explicit)]
+[StructLayout(LayoutKind.Explicit)]
     public struct POLY_GT3
     {
         [FieldOffset(0)] public UInt32 tag;
@@ -557,7 +557,7 @@ public static class PSX_LIBGPU
         [FieldOffset(38)] public UInt16 pad2;
     }
 
-    [StructLayout(LayoutKind.Explicit)]
+[StructLayout(LayoutKind.Explicit)]
     public struct POLY_GT4
     {
         [FieldOffset(0)] public UInt32 tag;
@@ -659,7 +659,7 @@ public static class PSX_LIBGPU
         [FieldOffset(50)] public UInt16 pad3;
     }
 
-    public struct LINE_F2
+public struct LINE_F2
     {
         public UInt32 tag;
 
@@ -680,7 +680,7 @@ public static class PSX_LIBGPU
         public Int16 y1;
     }
 
-    public struct LINE_G2
+public struct LINE_G2
     {
         public UInt32 tag;
 
@@ -709,7 +709,7 @@ public static class PSX_LIBGPU
         public Int16 y1;
     }
 
-    public struct LINE_F3
+public struct LINE_F3
     {
         public UInt32 tag;
 
@@ -736,7 +736,7 @@ public static class PSX_LIBGPU
         public UInt32 pad;
     }
 
-    public struct LINE_G3
+public struct LINE_G3
     {
         public UInt32 tag;
 
@@ -779,7 +779,7 @@ public static class PSX_LIBGPU
         public UInt32 pad;
     }
 
-    public struct LINE_F4
+public struct LINE_F4
     {
         public UInt32 tag;
 
@@ -810,7 +810,7 @@ public static class PSX_LIBGPU
         public UInt32 pad;
     }
 
-    public struct LINE_G4
+public struct LINE_G4
     {
         public UInt32 tag;
 
@@ -865,28 +865,28 @@ public static class PSX_LIBGPU
         public UInt32 pad;
     }
 
-    public struct XY
+public struct XY
     {
         public Int16 x;
 
         public Int16 y;
     }
 
-    public struct UV
+public struct UV
     {
         public Byte u;
 
         public Byte v;
     }
 
-    public struct WH
+public struct WH
     {
         public Int16 w;
 
         public Int16 h;
     }
 
-    [StructLayout(LayoutKind.Explicit)]
+[StructLayout(LayoutKind.Explicit)]
     public struct SPRT
     {
         [FieldOffset(0)] public UInt32 tag;
@@ -922,7 +922,7 @@ public static class PSX_LIBGPU
         [FieldOffset(16)] public WH wh;
     }
 
-    [StructLayout(LayoutKind.Explicit)]
+[StructLayout(LayoutKind.Explicit)]
     public struct SPRT_16
     {
         [FieldOffset(4)] public Byte r0;
@@ -950,7 +950,7 @@ public static class PSX_LIBGPU
         [FieldOffset(14)] public UInt16 clut;
     }
 
-    [StructLayout(LayoutKind.Explicit)]
+[StructLayout(LayoutKind.Explicit)]
     public struct SPRT_8
     {
         [FieldOffset(4)] public Byte r0;
@@ -978,7 +978,7 @@ public static class PSX_LIBGPU
         [FieldOffset(14)] public UInt16 clut;
     }
 
-    public struct TILE
+public struct TILE
     {
         public UInt32 tag;
 
@@ -999,7 +999,7 @@ public static class PSX_LIBGPU
         public Int16 h;
     }
 
-    public struct TILE_16
+public struct TILE_16
     {
         public UInt32 tag;
 
@@ -1016,7 +1016,7 @@ public static class PSX_LIBGPU
         public Int16 y0;
     }
 
-    public struct TILE_8
+public struct TILE_8
     {
         public UInt32 tag;
 
@@ -1033,7 +1033,7 @@ public static class PSX_LIBGPU
         public Int16 y0;
     }
 
-    public struct TILE_1
+public struct TILE_1
     {
         public UInt32 tag;
 
@@ -1050,62 +1050,62 @@ public static class PSX_LIBGPU
         public Int16 y0;
     }
 
-    public struct DR_MODE
+public struct DR_MODE
     {
         public UInt32 tag;
 
-        public unsafe fixed UInt32 code[2];
+        public unsafe fixed UInt32 code [2];
     }
 
-    public struct DR_TWIN
+public struct DR_TWIN
     {
         public UInt32 tag;
 
-        public unsafe fixed UInt32 code[2];
+        public unsafe fixed UInt32 code [2];
     }
 
-    public struct DR_AREA
+public struct DR_AREA
     {
         public UInt32 tag;
 
-        public unsafe fixed UInt32 code[2];
+        public unsafe fixed UInt32 code [2];
     }
 
-    public struct DR_OFFSET
+public struct DR_OFFSET
     {
         public UInt32 tag;
 
-        public unsafe fixed UInt32 code[2];
+        public unsafe fixed UInt32 code [2];
     }
 
-    public struct DR_MOVE
+public struct DR_MOVE
     {
         public UInt32 tag;
 
-        public unsafe fixed UInt32 code[5];
+        public unsafe fixed UInt32 code [5];
     }
 
-    public struct DR_LOAD
+public struct DR_LOAD
     {
         public UInt32 tag;
 
-        public unsafe fixed UInt32 code[3];
+        public unsafe fixed UInt32 code [3];
 
-        public unsafe fixed UInt32 p[13];
+        public unsafe fixed UInt32 p [13];
 
     }
 
-    public struct DR_TPAGE
+public struct DR_TPAGE
     {
         public UInt32 tag;
 
-        public unsafe fixed UInt32 code[1];
+        public unsafe fixed UInt32 code [1];
     }
 
-    public struct DR_STP
+public struct DR_STP
     {
         public UInt32 tag;
 
-        public unsafe fixed UInt32 code[2];
+        public unsafe fixed UInt32 code [2];
     }
 }

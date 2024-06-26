@@ -1,4 +1,3 @@
-using Memoria.Test;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -6,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Memoria.Test;
 using WpfControl = System.Windows.Controls.Control;
 
 namespace Memoria.Client
@@ -34,7 +34,7 @@ namespace Memoria.Client
                 if (menuItems.Length == 0)
                     return null;
 
-                ContextMenu menu = new ContextMenu { ItemsSource = menuItems };
+                ContextMenu menu = new ContextMenu {ItemsSource = menuItems};
                 return menu;
             }
         }
@@ -120,7 +120,7 @@ namespace Memoria.Client
         protected internal readonly RemoteGameObjects Context;
 
         protected ObjectAbstractView(TNative native, RemoteGameObjects context)
-            : base(native)
+            :base(native)
         {
             Native = native;
             Context = context;

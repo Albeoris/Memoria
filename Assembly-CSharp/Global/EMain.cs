@@ -2,9 +2,9 @@
 
 internal class EMain
 {
-    private Boolean gNoEvents;
+	private Boolean gNoEvents;
 
-    private EventEngine ee;
+	private EventEngine ee;
 
-    private ETb eTb;
+	private ETb eTb;
 }

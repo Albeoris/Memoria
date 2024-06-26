@@ -1,80 +1,80 @@
-﻿using Memoria;
-using Memoria.Prime;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Memoria;
+using Memoria.Prime;
 using UnityEngine;
 
 public class SfxSoundPlayer : SoundPlayer
 {
-    public void UpdateVolume()
-    {
-        foreach (Int32 key in this.playingDict.Keys)
-        {
-            SoundProfile soundProfile = this.playingDict[key];
-            if (this.residentSoundDatabase.Read(soundProfile.SoundIndex) != null)
-            {
-                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, 0);
-            }
-        }
-    }
+	public void UpdateVolume()
+	{
+		foreach (Int32 key in this.playingDict.Keys)
+		{
+			SoundProfile soundProfile = this.playingDict[key];
+			if (this.residentSoundDatabase.Read(soundProfile.SoundIndex) != null)
+			{
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, 0);
+			}
+		}
+	}
 
-    public Int32 GetResidentSoundCount()
-    {
-        return this.residentSoundDatabase.ReadAll().Count;
-    }
+	public Int32 GetResidentSoundCount()
+	{
+		return this.residentSoundDatabase.ReadAll().Count;
+	}
 
-    public void LoadAllResidentSoundData()
-    {
-        List<String> list = SoundMetaData.ResidentSfxSoundIndex[0];
-        for (Int32 i = 0; i < list.Count; i++)
-        {
-            Int32 soundIndex = i;
-            String text = list[i];
-            String fileName = Path.GetFileName(text);
-            SoundProfile soundProfile = new SoundProfile();
-            soundProfile.Code = soundIndex.ToString();
-            soundProfile.Name = fileName;
-            soundProfile.SoundIndex = soundIndex;
-            soundProfile.ResourceID = text;
-            soundProfile.SoundProfileType = SoundProfileType.Sfx;
-            this.residentSoundDatabase.Create(soundProfile);
-            base.LoadResource(soundProfile, this.residentSoundDatabase, new SoundPlayer.LoadResourceCallback(this.LoadSoundResourceCallback));
-        }
-    }
+	public void LoadAllResidentSoundData()
+	{
+		List<String> list = SoundMetaData.ResidentSfxSoundIndex[0];
+		for (Int32 i = 0; i < list.Count; i++)
+		{
+			Int32 soundIndex = i;
+			String text = list[i];
+			String fileName = Path.GetFileName(text);
+			SoundProfile soundProfile = new SoundProfile();
+			soundProfile.Code = soundIndex.ToString();
+			soundProfile.Name = fileName;
+			soundProfile.SoundIndex = soundIndex;
+			soundProfile.ResourceID = text;
+			soundProfile.SoundProfileType = SoundProfileType.Sfx;
+			this.residentSoundDatabase.Create(soundProfile);
+			base.LoadResource(soundProfile, this.residentSoundDatabase, new SoundPlayer.LoadResourceCallback(this.LoadSoundResourceCallback));
+		}
+	}
 
-    public void UnloadAllResidentSoundData()
-    {
-        this.UnloadAllSoundData(this.residentSoundDatabase);
-    }
+	public void UnloadAllResidentSoundData()
+	{
+		this.UnloadAllSoundData(this.residentSoundDatabase);
+	}
 
-    public void LoadSoundData(Int32 specialEffectID)
-    {
-        this.CurrentSpecialEffectID = specialEffectID;
-        this.UnloadAllSoundData(this.soundDatabase);
-        if (!SoundMetaData.SfxSoundIndex.TryGetValue(specialEffectID, out var list))
-        {
-            //Log.Message($"[SoundData] Sound table not found: SFX {specialEffectID} ({(Memoria.Data.SpecialEffect)specialEffectID})");
-            return;
-        }
+	public void LoadSoundData(Int32 specialEffectID)
+	{
+		this.CurrentSpecialEffectID = specialEffectID;
+		this.UnloadAllSoundData(this.soundDatabase);
+		if (!SoundMetaData.SfxSoundIndex.TryGetValue(specialEffectID, out var list))
+		{
+			//Log.Message($"[SoundData] Sound table not found: SFX {specialEffectID} ({(Memoria.Data.SpecialEffect)specialEffectID})");
+			return;
+		}
 
-        for (Int32 i = 0; i < list.Count; i++)
-        {
-            Int32 soundIndex = this.GetSoundIndex(specialEffectID, i, this.GetResidentSoundCount());
-            String text = list[i];
-            String fileName = Path.GetFileName(text);
-            SoundProfile soundProfile = new SoundProfile();
-            soundProfile.Code = soundIndex.ToString();
-            soundProfile.Name = fileName;
-            soundProfile.SoundIndex = soundIndex;
-            soundProfile.ResourceID = text;
-            soundProfile.SoundProfileType = SoundProfileType.Sfx;
-            this.soundDatabase.Create(soundProfile);
-            this.loadingSoundProfile = soundProfile;
-            base.LoadResource(soundProfile, this.soundDatabase, new SoundPlayer.LoadResourceCallback(this.LoadSoundResourceCallback));
-            this.loadingSoundProfile = (SoundProfile)null;
-        }
-    }
+		for (Int32 i = 0; i < list.Count; i++)
+		{
+			Int32 soundIndex = this.GetSoundIndex(specialEffectID, i, this.GetResidentSoundCount());
+			String text = list[i];
+			String fileName = Path.GetFileName(text);
+			SoundProfile soundProfile = new SoundProfile();
+			soundProfile.Code = soundIndex.ToString();
+			soundProfile.Name = fileName;
+			soundProfile.SoundIndex = soundIndex;
+			soundProfile.ResourceID = text;
+			soundProfile.SoundProfileType = SoundProfileType.Sfx;
+			this.soundDatabase.Create(soundProfile);
+			this.loadingSoundProfile = soundProfile;
+			base.LoadResource(soundProfile, this.soundDatabase, new SoundPlayer.LoadResourceCallback(this.LoadSoundResourceCallback));
+			this.loadingSoundProfile = (SoundProfile)null;
+		}
+	}
 
     public SoundProfile PlaySfxSound(Int32 soundIndexInSpecialEffect, Single soundVolume = 1f, Single panning = 0f, Single pitch = 1f)
     {
@@ -119,23 +119,23 @@ public class SfxSoundPlayer : SoundPlayer
         soundProfile.Panning = panning;
         soundProfile.Pitch = pitch;
         soundProfile.StartPlayTime = Time.time;
-        if (SFXData.BattleCallbackReaderExportSequence && SFXData.LoadCur != null)
-        {
-            foreach (KeyValuePair<Int32, String> p in SoundMetaData.SoundEffectIndex)
-                if (p.Value == soundProfile.ResourceID)
-                {
-                    SFXData.LoadThread[SFXData.LoadThId].code.AddLast(new BattleActionCode("PlaySound", "Sound", p.Key.ToString(), "Volume", soundVolume.ToString(), "Pitch", pitch.ToString(), "Panning", panning.ToString()));
-                    return soundProfile;
-                }
-            foreach (KeyValuePair<Int32, String> p in SoundMetaData.SongIndex)
-                if (p.Value == soundProfile.ResourceID)
-                {
-                    SFXData.LoadThread[SFXData.LoadThId].code.AddLast(new BattleActionCode("PlaySound", "Sound", p.Key.ToString(), "SoundType", SoundProfileType.Song.ToString(), "Volume", soundVolume.ToString(), "Pitch", pitch.ToString(), "Panning", panning.ToString()));
-                    return soundProfile;
-                }
-            return soundProfile;
-        }
-        base.CreateSound(soundProfile);
+		if (SFXData.BattleCallbackReaderExportSequence && SFXData.LoadCur != null)
+		{
+			foreach (KeyValuePair<Int32, String> p in SoundMetaData.SoundEffectIndex)
+				if (p.Value == soundProfile.ResourceID)
+				{
+					SFXData.LoadThread[SFXData.LoadThId].code.AddLast(new BattleActionCode("PlaySound", "Sound", p.Key.ToString(), "Volume", soundVolume.ToString(), "Pitch", pitch.ToString(), "Panning", panning.ToString()));
+					return soundProfile;
+				}
+			foreach (KeyValuePair<Int32, String> p in SoundMetaData.SongIndex)
+				if (p.Value == soundProfile.ResourceID)
+				{
+					SFXData.LoadThread[SFXData.LoadThId].code.AddLast(new BattleActionCode("PlaySound", "Sound", p.Key.ToString(), "SoundType", SoundProfileType.Song.ToString(), "Volume", soundVolume.ToString(), "Pitch", pitch.ToString(), "Panning", panning.ToString()));
+					return soundProfile;
+				}
+			return soundProfile;
+		}
+		base.CreateSound(soundProfile);
         if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) != 0)
         {
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * this.Volume, 0);
@@ -146,8 +146,8 @@ public class SfxSoundPlayer : SoundPlayer
                 soundProfile.Pitch = (Single)fastForwardFactor * soundProfile.Pitch;
             }
             ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPitch(soundProfile.SoundID, soundProfile.Pitch, 0);
-            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
-        }
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
+		}
         else
         {
             SoundLib.Log("failed to play sound");
@@ -187,202 +187,202 @@ public class SfxSoundPlayer : SoundPlayer
     }
 
     public Boolean IsPlaying(Int32 soundIndexInSpecialEffect)
-    {
-        SoundProfile soundProfile;
-        if (soundIndexInSpecialEffect < this.GetResidentSoundCount())
-        {
-            soundProfile = this.residentSoundDatabase.Read(soundIndexInSpecialEffect);
-        }
-        else
-        {
-            soundProfile = this.soundDatabase.Read(this.GetSoundIndex(this.CurrentSpecialEffectID, soundIndexInSpecialEffect, 0));
-        }
-        if (soundProfile == null)
-        {
-            SoundLib.LogError("PlaySfxSound, soundProfile is null");
-            return false;
-        }
-        return ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 1;
-    }
+	{
+		SoundProfile soundProfile;
+		if (soundIndexInSpecialEffect < this.GetResidentSoundCount())
+		{
+			soundProfile = this.residentSoundDatabase.Read(soundIndexInSpecialEffect);
+		}
+		else
+		{
+			soundProfile = this.soundDatabase.Read(this.GetSoundIndex(this.CurrentSpecialEffectID, soundIndexInSpecialEffect, 0));
+		}
+		if (soundProfile == null)
+		{
+			SoundLib.LogError("PlaySfxSound, soundProfile is null");
+			return false;
+		}
+		return ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 1;
+	}
 
-    public void StopSound(Int32 soundIndexInSpecialEffect)
-    {
-        SoundProfile soundProfile;
-        if (soundIndexInSpecialEffect < this.GetResidentSoundCount())
-        {
-            soundProfile = this.residentSoundDatabase.Read(soundIndexInSpecialEffect);
-        }
-        else
-        {
-            soundProfile = this.soundDatabase.Read(this.GetSoundIndex(this.CurrentSpecialEffectID, soundIndexInSpecialEffect, 0));
-        }
-        if (soundProfile == null)
-        {
-            SoundLib.LogError("StopSfxSound, soundProfile is null");
-            return;
-        }
-        if (SFXData.BattleCallbackReaderExportSequence && SFXData.LoadCur != null)
-        {
-            foreach (KeyValuePair<Int32, String> p in SoundMetaData.SoundEffectIndex)
-                if (p.Value == soundProfile.ResourceID)
-                {
-                    SFXData.LoadThread[SFXData.LoadThId].code.AddLast(new BattleActionCode("StopSound", "Sound", p.Key.ToString()));
-                    return;
-                }
-            foreach (KeyValuePair<Int32, String> p in SoundMetaData.SongIndex)
-                if (p.Value == soundProfile.ResourceID)
-                {
-                    SFXData.LoadThread[SFXData.LoadThId].code.AddLast(new BattleActionCode("StopSound", "Sound", p.Key.ToString(), "SoundType", SoundProfileType.Song.ToString()));
-                    return;
-                }
-            return;
-        }
-        if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 1)
-        {
-            ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
-        }
-    }
+	public void StopSound(Int32 soundIndexInSpecialEffect)
+	{
+		SoundProfile soundProfile;
+		if (soundIndexInSpecialEffect < this.GetResidentSoundCount())
+		{
+			soundProfile = this.residentSoundDatabase.Read(soundIndexInSpecialEffect);
+		}
+		else
+		{
+			soundProfile = this.soundDatabase.Read(this.GetSoundIndex(this.CurrentSpecialEffectID, soundIndexInSpecialEffect, 0));
+		}
+		if (soundProfile == null)
+		{
+			SoundLib.LogError("StopSfxSound, soundProfile is null");
+			return;
+		}
+		if (SFXData.BattleCallbackReaderExportSequence && SFXData.LoadCur != null)
+		{
+			foreach (KeyValuePair<Int32, String> p in SoundMetaData.SoundEffectIndex)
+				if (p.Value == soundProfile.ResourceID)
+				{
+					SFXData.LoadThread[SFXData.LoadThId].code.AddLast(new BattleActionCode("StopSound", "Sound", p.Key.ToString()));
+					return;
+				}
+			foreach (KeyValuePair<Int32, String> p in SoundMetaData.SongIndex)
+				if (p.Value == soundProfile.ResourceID)
+				{
+					SFXData.LoadThread[SFXData.LoadThId].code.AddLast(new BattleActionCode("StopSound", "Sound", p.Key.ToString(), "SoundType", SoundProfileType.Song.ToString()));
+					return;
+				}
+			return;
+		}
+		if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 1)
+		{
+			ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
+		}
+	}
 
-    public void StopAllSounds()
-    {
-        Dictionary<Int32, SoundProfile> dictionary = new Dictionary<Int32, SoundProfile>();
-        Dictionary<Int32, SoundProfile> dictionary2 = this.residentSoundDatabase.ReadAll();
-        Dictionary<Int32, SoundProfile> dictionary3 = this.soundDatabase.ReadAll();
-        foreach (Int32 key in dictionary2.Keys)
-        {
-            dictionary.Add(key, dictionary2[key]);
-        }
-        foreach (Int32 key2 in dictionary3.Keys)
-        {
-            dictionary.Add(key2, dictionary3[key2]);
-        }
-        foreach (Int32 key3 in dictionary.Keys)
-        {
-            SoundProfile soundProfile = dictionary[key3];
-            if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 1)
-            {
-                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
-            }
-        }
-    }
+	public void StopAllSounds()
+	{
+		Dictionary<Int32, SoundProfile> dictionary = new Dictionary<Int32, SoundProfile>();
+		Dictionary<Int32, SoundProfile> dictionary2 = this.residentSoundDatabase.ReadAll();
+		Dictionary<Int32, SoundProfile> dictionary3 = this.soundDatabase.ReadAll();
+		foreach (Int32 key in dictionary2.Keys)
+		{
+			dictionary.Add(key, dictionary2[key]);
+		}
+		foreach (Int32 key2 in dictionary3.Keys)
+		{
+			dictionary.Add(key2, dictionary3[key2]);
+		}
+		foreach (Int32 key3 in dictionary.Keys)
+		{
+			SoundProfile soundProfile = dictionary[key3];
+			if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 1)
+			{
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
+			}
+		}
+	}
 
-    public void PauseAllSounds()
-    {
-        Dictionary<Int32, SoundProfile> dictionary = new Dictionary<Int32, SoundProfile>();
-        Dictionary<Int32, SoundProfile> dictionary2 = this.residentSoundDatabase.ReadAll();
-        Dictionary<Int32, SoundProfile> dictionary3 = this.soundDatabase.ReadAll();
-        foreach (Int32 key in dictionary2.Keys)
-        {
-            dictionary.Add(key, dictionary2[key]);
-        }
-        foreach (Int32 key2 in dictionary3.Keys)
-        {
-            dictionary.Add(key2, dictionary3[key2]);
-        }
-        foreach (Int32 key3 in dictionary.Keys)
-        {
-            SoundProfile soundProfile = dictionary[key3];
-            if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 1)
-            {
-                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 1, 0);
-            }
-        }
-    }
+	public void PauseAllSounds()
+	{
+		Dictionary<Int32, SoundProfile> dictionary = new Dictionary<Int32, SoundProfile>();
+		Dictionary<Int32, SoundProfile> dictionary2 = this.residentSoundDatabase.ReadAll();
+		Dictionary<Int32, SoundProfile> dictionary3 = this.soundDatabase.ReadAll();
+		foreach (Int32 key in dictionary2.Keys)
+		{
+			dictionary.Add(key, dictionary2[key]);
+		}
+		foreach (Int32 key2 in dictionary3.Keys)
+		{
+			dictionary.Add(key2, dictionary3[key2]);
+		}
+		foreach (Int32 key3 in dictionary.Keys)
+		{
+			SoundProfile soundProfile = dictionary[key3];
+			if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 1)
+			{
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 1, 0);
+			}
+		}
+	}
 
-    public void ResumeAllSounds()
-    {
-        Dictionary<Int32, SoundProfile> dictionary = new Dictionary<Int32, SoundProfile>();
-        Dictionary<Int32, SoundProfile> dictionary2 = this.residentSoundDatabase.ReadAll();
-        Dictionary<Int32, SoundProfile> dictionary3 = this.soundDatabase.ReadAll();
-        foreach (Int32 key in dictionary2.Keys)
-        {
-            dictionary.Add(key, dictionary2[key]);
-        }
-        foreach (Int32 key2 in dictionary3.Keys)
-        {
-            dictionary.Add(key2, dictionary3[key2]);
-        }
-        foreach (Int32 key3 in dictionary.Keys)
-        {
-            SoundProfile soundProfile = dictionary[key3];
-            if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 1)
-            {
-                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 0, 0);
-            }
-        }
-    }
+	public void ResumeAllSounds()
+	{
+		Dictionary<Int32, SoundProfile> dictionary = new Dictionary<Int32, SoundProfile>();
+		Dictionary<Int32, SoundProfile> dictionary2 = this.residentSoundDatabase.ReadAll();
+		Dictionary<Int32, SoundProfile> dictionary3 = this.soundDatabase.ReadAll();
+		foreach (Int32 key in dictionary2.Keys)
+		{
+			dictionary.Add(key, dictionary2[key]);
+		}
+		foreach (Int32 key2 in dictionary3.Keys)
+		{
+			dictionary.Add(key2, dictionary3[key2]);
+		}
+		foreach (Int32 key3 in dictionary.Keys)
+		{
+			SoundProfile soundProfile = dictionary[key3];
+			if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 1)
+			{
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetPause(soundProfile.SoundID, 0, 0);
+			}
+		}
+	}
 
-    public override void Update()
-    {
-        foreach (Int32 num in this.playingDict.Keys)
-        {
-            if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(num) == 0)
-            {
-                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(num, 0);
-                this.playingRemoveList.Add(num);
-                SoundLib.Log("Sound End, Stop success");
-            }
-        }
-        foreach (Int32 key in this.playingRemoveList)
-        {
-            if (!this.playingDict.Remove(key))
-            {
-                SoundLib.Log("Remove playingSet failure!");
-            }
-        }
-        this.playingRemoveList.Clear();
-    }
+	public override void Update()
+	{
+		foreach (Int32 num in this.playingDict.Keys)
+		{
+			if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(num) == 0)
+			{
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(num, 0);
+				this.playingRemoveList.Add(num);
+				SoundLib.Log("Sound End, Stop success");
+			}
+		}
+		foreach (Int32 key in this.playingRemoveList)
+		{
+			if (!this.playingDict.Remove(key))
+			{
+				SoundLib.Log("Remove playingSet failure!");
+			}
+		}
+		this.playingRemoveList.Clear();
+	}
 
-    private void LoadSoundResourceCallback(SoundDatabase soundDatabase, Boolean isError)
-    {
-        if (!isError)
-        {
-            SoundLib.Log("LoadSoundResource is success");
-        }
-        else
-        {
-            SoundLib.LogError("LoadSoundResource has Error");
-            this.soundDatabase.Delete(this.loadingSoundProfile);
-        }
-    }
+	private void LoadSoundResourceCallback(SoundDatabase soundDatabase, Boolean isError)
+	{
+		if (!isError)
+		{
+			SoundLib.Log("LoadSoundResource is success");
+		}
+		else
+		{
+			SoundLib.LogError("LoadSoundResource has Error");
+			this.soundDatabase.Delete(this.loadingSoundProfile);
+		}
+	}
 
-    private void UnloadAllSoundData(SoundDatabase soundDatabase)
-    {
-        Dictionary<Int32, SoundProfile> dictionary = soundDatabase.ReadAll();
-        Dictionary<Int32, SoundProfile> dictionary2 = new Dictionary<Int32, SoundProfile>();
-        foreach (Int32 key in dictionary.Keys)
-        {
-            dictionary2.Add(key, dictionary[key]);
-        }
-        foreach (Int32 key2 in dictionary2.Keys)
-        {
-            SoundProfile soundProfile = dictionary2[key2];
-            if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 0)
-            {
-                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
-            }
-            base.UnloadResource(soundProfile, soundDatabase);
-        }
-        if (soundDatabase.ReadAll().Count != 0)
-        {
-            SoundLib.LogError("soundDatabase: Count: " + soundDatabase.ReadAll().Count + " It should be 0");
-        }
-    }
+	private void UnloadAllSoundData(SoundDatabase soundDatabase)
+	{
+		Dictionary<Int32, SoundProfile> dictionary = soundDatabase.ReadAll();
+		Dictionary<Int32, SoundProfile> dictionary2 = new Dictionary<Int32, SoundProfile>();
+		foreach (Int32 key in dictionary.Keys)
+		{
+			dictionary2.Add(key, dictionary[key]);
+		}
+		foreach (Int32 key2 in dictionary2.Keys)
+		{
+			SoundProfile soundProfile = dictionary2[key2];
+			if (ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_IsExist(soundProfile.SoundID) == 0)
+			{
+				ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Stop(soundProfile.SoundID, 0);
+			}
+			base.UnloadResource(soundProfile, soundDatabase);
+		}
+		if (soundDatabase.ReadAll().Count != 0)
+		{
+			SoundLib.LogError("soundDatabase: Count: " + soundDatabase.ReadAll().Count + " It should be 0");
+		}
+	}
 
-    private Int32 GetSoundIndex(Int32 specialEffectID, Int32 soundIndexInSpecialEffect, Int32 residentSpecialEffectOffset = 0)
-    {
-        return specialEffectID * 100 + soundIndexInSpecialEffect + residentSpecialEffectOffset;
-    }
+	private Int32 GetSoundIndex(Int32 specialEffectID, Int32 soundIndexInSpecialEffect, Int32 residentSpecialEffectOffset = 0)
+	{
+		return specialEffectID * 100 + soundIndexInSpecialEffect + residentSpecialEffectOffset;
+	}
 
-    private SoundDatabase residentSoundDatabase = new SoundDatabase();
+	private SoundDatabase residentSoundDatabase = new SoundDatabase();
 
-    private SoundDatabase soundDatabase = new SoundDatabase();
+	private SoundDatabase soundDatabase = new SoundDatabase();
 
-    public Int32 CurrentSpecialEffectID;
+	public Int32 CurrentSpecialEffectID;
 
-    private Dictionary<Int32, SoundProfile> playingDict = new Dictionary<Int32, SoundProfile>();
+	private Dictionary<Int32, SoundProfile> playingDict = new Dictionary<Int32, SoundProfile>();
 
-    private List<Int32> playingRemoveList = new List<Int32>();
+	private List<Int32> playingRemoveList = new List<Int32>();
 
     private Int32 lastSfxSoundIndex = -1;
 
@@ -392,5 +392,5 @@ public class SfxSoundPlayer : SoundPlayer
 
     public override Single Volume => Configuration.Audio.SoundVolume / 100f;
 
-    private SoundProfile loadingSoundProfile;
+	private SoundProfile loadingSoundProfile;
 }

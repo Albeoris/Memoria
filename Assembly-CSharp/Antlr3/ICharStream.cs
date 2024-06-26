@@ -43,7 +43,7 @@ namespace Antlr.Runtime
          *  use this on streams that don't support it.
          *  </summary>
          */
-        string Substring(int start, int length);
+        string Substring( int start, int length );
 
         /** <summary>
          *  Get the ith character of lookahead.  This is the same usually as
@@ -52,7 +52,7 @@ namespace Antlr.Runtime
          *  probably better to be 32-bit clean and be consistent with LA.
          *  </summary>
          */
-        int LT(int i);
+        int LT( int i );
 
         /** <summary>ANTLR tracks the line information automatically</summary> */
         /** <summary>Because this stream can rewind, we need to be able to reset the line</summary> */

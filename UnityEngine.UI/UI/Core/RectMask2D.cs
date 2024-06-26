@@ -51,7 +51,7 @@ namespace UnityEngine.UI
         }
 
         protected RectMask2D()
-        { }
+        {}
 
         protected override void OnEnable()
         {

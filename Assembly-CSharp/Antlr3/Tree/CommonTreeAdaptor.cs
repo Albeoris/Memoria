@@ -49,9 +49,9 @@ namespace Antlr.Runtime.Tree
      */
     public class CommonTreeAdaptor : BaseTreeAdaptor
     {
-        public override object Create(IToken payload)
+        public override object Create( IToken payload )
         {
-            return new CommonTree(payload);
+            return new CommonTree( payload );
         }
 
         /** <summary>
@@ -66,9 +66,9 @@ namespace Antlr.Runtime.Tree
          *  override this method and any other createToken variant.
          *  </remarks>
          */
-        public override IToken CreateToken(int tokenType, string text)
+        public override IToken CreateToken( int tokenType, string text )
         {
-            return new CommonToken(tokenType, text);
+            return new CommonToken( tokenType, text );
         }
 
         /** <summary>
@@ -89,9 +89,9 @@ namespace Antlr.Runtime.Tree
          *  override this method and any other createToken variant.
          *  </remarks>
          */
-        public override IToken CreateToken(IToken fromToken)
+        public override IToken CreateToken( IToken fromToken )
         {
-            return new CommonToken(fromToken);
+            return new CommonToken( fromToken );
         }
 
         /** <summary>
@@ -100,11 +100,11 @@ namespace Antlr.Runtime.Tree
          *  override this in your own adaptor.
          *  </summary>
          */
-        public override IToken GetToken(object t)
+        public override IToken GetToken( object t )
         {
-            if (t is CommonTree)
+            if ( t is CommonTree )
             {
-                return ((CommonTree)t).Token;
+                return ( (CommonTree)t ).Token;
             }
             return null; // no idea what to do
         }

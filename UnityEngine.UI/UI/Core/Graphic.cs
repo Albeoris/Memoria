@@ -322,10 +322,10 @@ namespace UnityEngine.UI
         }
 
         public virtual void LayoutComplete()
-        { }
+        {}
 
         public virtual void GraphicUpdateComplete()
-        { }
+        {}
 
         /// <summary>
         /// Update the renderer's material.
@@ -412,7 +412,7 @@ namespace UnityEngine.UI
         }
 
         [Obsolete("Use OnPopulateMesh instead.", true)]
-        protected virtual void OnFillVBO(System.Collections.Generic.List<UIVertex> vbo) { }
+        protected virtual void OnFillVBO(System.Collections.Generic.List<UIVertex> vbo) {}
 
         [Obsolete("Use OnPopulateMesh(VertexHelper vh) instead.", false)]
         protected virtual void OnPopulateMesh(Mesh m)
@@ -468,7 +468,7 @@ namespace UnityEngine.UI
         /// <summary>
         /// Make the Graphic have the native size of its content.
         /// </summary>
-        public virtual void SetNativeSize() { }
+        public virtual void SetNativeSize() {}
         public virtual bool Raycast(Vector2 sp, Camera eventCamera)
         {
             if (!isActiveAndEnabled)
@@ -562,7 +562,7 @@ namespace UnityEngine.UI
                                               ColorTween.ColorTweenMode.All :
                                               (useRGB ? ColorTween.ColorTweenMode.RGB : ColorTween.ColorTweenMode.Alpha));
 
-            var colorTween = new ColorTween { duration = duration, startColor = canvasRenderer.GetColor(), targetColor = targetColor };
+            var colorTween = new ColorTween {duration = duration, startColor = canvasRenderer.GetColor(), targetColor = targetColor};
             colorTween.AddOnChangedCallback(canvasRenderer.SetColor);
             colorTween.ignoreTimeScale = ignoreTimeScale;
             colorTween.tweenMode = mode;

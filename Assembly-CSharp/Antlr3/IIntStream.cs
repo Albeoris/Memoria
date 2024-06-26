@@ -49,7 +49,7 @@ namespace Antlr.Runtime
          *  yield -1, invalid char / EOF.
          *  </summary>
          */
-        int LA(int i);
+        int LA( int i );
 
         /** <summary>
          *  Tell the stream to start buffering if it hasn't already.  Return
@@ -83,7 +83,7 @@ namespace Antlr.Runtime
          *  was created.
          *  </summary>
          */
-        void Rewind(int marker);
+        void Rewind( int marker );
 
         /** <summary>
          *  Rewind to the input position of the last marker.
@@ -108,7 +108,7 @@ namespace Antlr.Runtime
          *  you have to release resources for depths 2..5.
          *  </summary>
          */
-        void Release(int marker);
+        void Release( int marker );
 
         /** <summary>
          *  Set the input cursor to the position indicated by index.  This is
@@ -134,7 +134,7 @@ namespace Antlr.Runtime
          *  first element in the stream. 
          *  </remarks>
          */
-        void Seek(int index);
+        void Seek( int index );
 
         /** <summary>
          *  Only makes sense for streams that buffer everything up probably, but

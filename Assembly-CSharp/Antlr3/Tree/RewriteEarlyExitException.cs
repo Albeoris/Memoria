@@ -51,7 +51,7 @@ namespace Antlr.Runtime.Tree
             : base(elementDescription)
         {
         }
-
+        
         public RewriteEarlyExitException(string elementDescription, Exception innerException)
             : base(elementDescription, innerException)
         {

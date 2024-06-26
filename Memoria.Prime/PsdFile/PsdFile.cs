@@ -12,12 +12,12 @@
 //
 /////////////////////////////////////////////////////////////////////////////////
 
-using Memoria.Prime.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Memoria.Prime.Threading;
 
 namespace Memoria.Prime.PsdFile
 {
@@ -251,7 +251,7 @@ namespace Memoria.Prime.PsdFile
             String signature = "8BPS";
             writer.WriteAsciiChars(signature);
             writer.Write((Int16)Version);
-            writer.Write(new Byte[] { 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, });
+            writer.Write(new Byte[] {0x0, 0x0, 0x0, 0x0, 0x0, 0x0,});
             writer.Write(ChannelCount);
             writer.Write(RowCount);
             writer.Write(ColumnCount);
@@ -536,7 +536,7 @@ namespace Memoria.Prime.PsdFile
         /// </summary>
         private void DecompressImages()
         {
-            var layersAndComposite = Layers.Concat(new[] { BaseLayer });
+            var layersAndComposite = Layers.Concat(new[] {BaseLayer});
             var channels = layersAndComposite.SelectMany(x => x.Channels);
             LinkedList<Task> list = new LinkedList<Task>();
             foreach (var chanel in channels)
@@ -566,7 +566,7 @@ namespace Memoria.Prime.PsdFile
             VerifyInfoLayers();
             VerifyLayerSections();
 
-            var imageLayers = Layers.Concat(new List<Layer>() { this.BaseLayer }).ToList();
+            var imageLayers = Layers.Concat(new List<Layer>() {this.BaseLayer}).ToList();
 
             foreach (var layer in imageLayers)
             {

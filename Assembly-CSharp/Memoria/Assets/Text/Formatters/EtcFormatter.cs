@@ -8,7 +8,7 @@ namespace Memoria.Assets
         {
             TxtEntry[] abilities = new TxtEntry[value.Length];
             for (Int32 i = 0; i < abilities.Length; i++)
-                abilities[i] = new TxtEntry { Prefix = prefix, Value = value[i] };
+                abilities[i] = new TxtEntry {Prefix = prefix, Value = value[i]};
             return abilities;
         }
 

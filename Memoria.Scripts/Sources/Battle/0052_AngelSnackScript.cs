@@ -1,5 +1,5 @@
-using Memoria.Data;
 using System;
+using Memoria.Data;
 
 // ReSharper disable UseObjectOrCollectionInitializer
 

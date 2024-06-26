@@ -123,11 +123,11 @@ namespace Memoria.Launcher
                 await Task.Factory.StartNew(
                     () =>
                     {
-                        ProcessStartInfo gameStartInfo = new ProcessStartInfo(executablePath, arguments) { UseShellExecute = false };
+                        ProcessStartInfo gameStartInfo = new ProcessStartInfo(executablePath, arguments) {UseShellExecute = false};
                         if (GameSettings.IsDebugMode)
                             gameStartInfo.EnvironmentVariables["UNITY_GIVE_CHANCE_TO_ATTACH_DEBUGGER"] = "1";
 
-                        Process gameProcess = new Process { StartInfo = gameStartInfo };
+                        Process gameProcess = new Process {StartInfo = gameStartInfo};
                         gameProcess.Start();
 
                         if (GameSettings.IsDebugMode)
@@ -150,7 +150,7 @@ namespace Memoria.Launcher
                                 catch (Exception)
                                 {
                                 }
-
+                                
                             }
                         }
                     }
@@ -311,7 +311,7 @@ namespace Memoria.Launcher
                 }
             }
 
-            return list; ;
+            return list;;
         }
     }
 

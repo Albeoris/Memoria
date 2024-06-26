@@ -109,7 +109,7 @@ namespace Memoria
 
         public void PenaltyAbsorbElement(EffectElement element)
         {
-            if (CanAbsorbElement(element))
+           if (CanAbsorbElement(element))
                 _context.DefensePower = 0;
         }
 

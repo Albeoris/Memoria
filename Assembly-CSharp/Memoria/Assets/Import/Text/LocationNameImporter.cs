@@ -1,8 +1,8 @@
-using Assets.Sources.Scripts.UI.Common;
-using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Prime;
 
 namespace Memoria.Assets
 {

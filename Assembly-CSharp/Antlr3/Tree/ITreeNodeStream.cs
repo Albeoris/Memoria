@@ -61,7 +61,7 @@ namespace Antlr.Runtime.Tree
          * parser and tree grammars.
          *  </remarks>
          */
-        object LT(int k);
+        object LT( int k );
 
         /** <summary>
          *  Where is this stream pulling nodes from?  This is not the name, but
@@ -118,7 +118,7 @@ namespace Antlr.Runtime.Tree
          * {@code $ruleLabel.text} in an action of course in that case.
          *  </summary>
          */
-        string ToString(object start, object stop);
+        string ToString( object start, object stop );
 
 
         #region REWRITING TREES (used by tree parser)
@@ -138,7 +138,7 @@ namespace Antlr.Runtime.Tree
          * nothing.
          *  </remarks>
          */
-        void ReplaceChildren(object parent, int startChildIndex, int stopChildIndex, object t);
+        void ReplaceChildren( object parent, int startChildIndex, int stopChildIndex, object t );
 
         #endregion
 

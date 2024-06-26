@@ -1,5 +1,5 @@
-using Memoria.Prime.Ini;
 using System;
+using Memoria.Prime.Ini;
 
 namespace Memoria
 {

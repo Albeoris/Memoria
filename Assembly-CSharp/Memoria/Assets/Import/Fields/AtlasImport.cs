@@ -1,6 +1,6 @@
-﻿using Memoria.Prime.Ini;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Memoria.Prime.Ini;
 #pragma warning disable 420
 
 namespace Memoria.Assets.Import.Graphics

@@ -37,20 +37,20 @@ namespace Antlr.Runtime.Tree
     [System.Serializable]
     public class RewriteRuleSubtreeStream : RewriteRuleElementStream
     {
-        public RewriteRuleSubtreeStream(ITreeAdaptor adaptor, string elementDescription)
-            : base(adaptor, elementDescription)
+        public RewriteRuleSubtreeStream( ITreeAdaptor adaptor, string elementDescription )
+            : base( adaptor, elementDescription )
         {
         }
 
         /** <summary>Create a stream with one element</summary> */
-        public RewriteRuleSubtreeStream(ITreeAdaptor adaptor, string elementDescription, object oneElement)
-            : base(adaptor, elementDescription, oneElement)
+        public RewriteRuleSubtreeStream( ITreeAdaptor adaptor, string elementDescription, object oneElement )
+            : base( adaptor, elementDescription, oneElement )
         {
         }
 
         /** <summary>Create a stream, but feed off an existing list</summary> */
-        public RewriteRuleSubtreeStream(ITreeAdaptor adaptor, string elementDescription, IList elements)
-            : base(adaptor, elementDescription, elements)
+        public RewriteRuleSubtreeStream( ITreeAdaptor adaptor, string elementDescription, IList elements )
+            : base( adaptor, elementDescription, elements )
         {
         }
 
@@ -75,12 +75,12 @@ namespace Antlr.Runtime.Tree
         {
             //System.Console.WriteLine("nextNode: elements={0}, singleElement={1}", elements, ((ITree)singleElement).ToStringTree());
             int n = Count;
-            if (dirty || (cursor >= n && n == 1))
+            if ( dirty || ( cursor >= n && n == 1 ) )
             {
                 // if out of elements and size is 1, dup (at most a single node
                 // since this is for making root nodes).
                 object el = NextCore();
-                return adaptor.DupNode(el);
+                return adaptor.DupNode( el );
             }
             // test size above then fetch
             object tree = NextCore();
@@ -91,9 +91,9 @@ namespace Antlr.Runtime.Tree
             return el2;
         }
 
-        protected override object Dup(object el)
+        protected override object Dup( object el )
         {
-            return adaptor.DupTree(el);
+            return adaptor.DupTree( el );
         }
     }
 }

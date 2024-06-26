@@ -43,7 +43,7 @@ namespace Memoria.Prime.NVorbis
 
             protected override void Init(DataPacket packet)
             {
-
+                
             }
         }
     }

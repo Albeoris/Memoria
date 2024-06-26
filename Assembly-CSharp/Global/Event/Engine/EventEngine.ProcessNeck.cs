@@ -1,5 +1,5 @@
-﻿using FF9;
-using System;
+﻿using System;
+using FF9;
 using UnityEngine;
 
 public partial class EventEngine

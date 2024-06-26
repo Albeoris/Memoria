@@ -50,12 +50,12 @@ namespace Antlr.Runtime
         {
         }
 
-        public Lexer(ICharStream input)
+        public Lexer( ICharStream input )
         {
             this.input = input;
         }
 
-        public Lexer(ICharStream input, RecognizerSharedState state)
+        public Lexer( ICharStream input, RecognizerSharedState state )
             : base(state)
         {
             this.input = input;
@@ -72,11 +72,11 @@ namespace Antlr.Runtime
         {
             get
             {
-                if (state.text != null)
+                if ( state.text != null )
                 {
                     return state.text;
                 }
-                return input.Substring(state.tokenStartCharIndex, CharIndex - state.tokenStartCharIndex);
+                return input.Substring( state.tokenStartCharIndex, CharIndex - state.tokenStartCharIndex );
             }
             set
             {
@@ -111,11 +111,11 @@ namespace Antlr.Runtime
         {
             base.Reset(); // reset all recognizer state variables
             // wack Lexer state variables
-            if (input != null)
+            if ( input != null )
             {
-                input.Seek(0); // rewind the input
+                input.Seek( 0 ); // rewind the input
             }
-            if (state == null)
+            if ( state == null )
             {
                 return; // no shared state work to do
             }
@@ -131,7 +131,7 @@ namespace Antlr.Runtime
         /** <summary>Return a token from this source; i.e., match a token on the char stream.</summary> */
         public virtual IToken NextToken()
         {
-            for (; ; )
+            for ( ; ; )
             {
                 state.token = null;
                 state.channel = TokenChannels.Default;
@@ -139,18 +139,18 @@ namespace Antlr.Runtime
                 state.tokenStartCharPositionInLine = input.CharPositionInLine;
                 state.tokenStartLine = input.Line;
                 state.text = null;
-                if (input.LA(1) == CharStreamConstants.EndOfFile)
+                if ( input.LA( 1 ) == CharStreamConstants.EndOfFile )
                 {
                     return GetEndOfFileToken();
                 }
                 try
                 {
                     ParseNextToken();
-                    if (state.token == null)
+                    if ( state.token == null )
                     {
                         Emit();
                     }
-                    else if (state.token == Tokens.Skip)
+                    else if ( state.token == Tokens.Skip )
                     {
                         continue;
                     }
@@ -166,10 +166,10 @@ namespace Antlr.Runtime
                     ReportError(mte);
                     // Match() routine has already called recover()
                 }
-                catch (RecognitionException re)
+                catch ( RecognitionException re )
                 {
-                    ReportError(re);
-                    Recover(re); // throw out current char and try again
+                    ReportError( re );
+                    Recover( re ); // throw out current char and try again
                 }
             }
         }
@@ -231,7 +231,7 @@ namespace Antlr.Runtime
          *  than a single variable as this implementation does).
          *  </summary>
          */
-        public virtual void Emit(IToken token)
+        public virtual void Emit( IToken token )
         {
             state.token = token;
         }
@@ -251,28 +251,28 @@ namespace Antlr.Runtime
          */
         public virtual IToken Emit()
         {
-            IToken t = new CommonToken(input, state.type, state.channel, state.tokenStartCharIndex, CharIndex - 1);
+            IToken t = new CommonToken( input, state.type, state.channel, state.tokenStartCharIndex, CharIndex - 1 );
             t.Line = state.tokenStartLine;
             t.Text = state.text;
             t.CharPositionInLine = state.tokenStartCharPositionInLine;
-            Emit(t);
+            Emit( t );
             return t;
         }
 
-        public virtual void Match(string s)
+        public virtual void Match( string s )
         {
             int i = 0;
-            while (i < s.Length)
+            while ( i < s.Length )
             {
-                if (input.LA(1) != s[i])
+                if ( input.LA( 1 ) != s[i] )
                 {
-                    if (state.backtracking > 0)
+                    if ( state.backtracking > 0 )
                     {
                         state.failed = true;
                         return;
                     }
                     MismatchedTokenException mte = new MismatchedTokenException(s[i], input, TokenNames);
-                    Recover(mte);
+                    Recover( mte );
                     throw mte;
                 }
                 i++;
@@ -286,34 +286,34 @@ namespace Antlr.Runtime
             input.Consume();
         }
 
-        public virtual void Match(int c)
+        public virtual void Match( int c )
         {
-            if (input.LA(1) != c)
+            if ( input.LA( 1 ) != c )
             {
-                if (state.backtracking > 0)
+                if ( state.backtracking > 0 )
                 {
                     state.failed = true;
                     return;
                 }
                 MismatchedTokenException mte = new MismatchedTokenException(c, input, TokenNames);
-                Recover(mte);  // don't really recover; just consume in lexer
+                Recover( mte );  // don't really recover; just consume in lexer
                 throw mte;
             }
             input.Consume();
             state.failed = false;
         }
 
-        public virtual void MatchRange(int a, int b)
+        public virtual void MatchRange( int a, int b )
         {
-            if (input.LA(1) < a || input.LA(1) > b)
+            if ( input.LA( 1 ) < a || input.LA( 1 ) > b )
             {
-                if (state.backtracking > 0)
+                if ( state.backtracking > 0 )
                 {
                     state.failed = true;
                     return;
                 }
                 MismatchedRangeException mre = new MismatchedRangeException(a, b, input);
-                Recover(mre);
+                Recover( mre );
                 throw mre;
             }
             input.Consume();
@@ -329,7 +329,7 @@ namespace Antlr.Runtime
             }
         }
 
-        public override void ReportError(RecognitionException e)
+        public override void ReportError( RecognitionException e )
         {
             /* TODO: not thought about recovery in lexer yet.
              *
@@ -342,71 +342,71 @@ namespace Antlr.Runtime
              * errorRecovery = true;
              */
 
-            DisplayRecognitionError(this.TokenNames, e);
+            DisplayRecognitionError( this.TokenNames, e );
         }
 
-        public override string GetErrorMessage(RecognitionException e, string[] tokenNames)
+        public override string GetErrorMessage( RecognitionException e, string[] tokenNames )
         {
             string msg = null;
-            if (e is MismatchedTokenException)
+            if ( e is MismatchedTokenException )
             {
                 MismatchedTokenException mte = (MismatchedTokenException)e;
-                msg = "mismatched character " + GetCharErrorDisplay(e.Character) + " expecting " + GetCharErrorDisplay(mte.Expecting);
+                msg = "mismatched character " + GetCharErrorDisplay( e.Character ) + " expecting " + GetCharErrorDisplay( mte.Expecting );
             }
-            else if (e is NoViableAltException)
+            else if ( e is NoViableAltException )
             {
                 NoViableAltException nvae = (NoViableAltException)e;
                 // for development, can add "decision=<<"+nvae.grammarDecisionDescription+">>"
                 // and "(decision="+nvae.decisionNumber+") and
                 // "state "+nvae.stateNumber
-                msg = "no viable alternative at character " + GetCharErrorDisplay(e.Character);
+                msg = "no viable alternative at character " + GetCharErrorDisplay( e.Character );
             }
-            else if (e is EarlyExitException)
+            else if ( e is EarlyExitException )
             {
                 EarlyExitException eee = (EarlyExitException)e;
                 // for development, can add "(decision="+eee.decisionNumber+")"
-                msg = "required (...)+ loop did not match anything at character " + GetCharErrorDisplay(e.Character);
+                msg = "required (...)+ loop did not match anything at character " + GetCharErrorDisplay( e.Character );
             }
-            else if (e is MismatchedNotSetException)
+            else if ( e is MismatchedNotSetException )
             {
                 MismatchedNotSetException mse = (MismatchedNotSetException)e;
-                msg = "mismatched character " + GetCharErrorDisplay(e.Character) + " expecting set " + mse.Expecting;
+                msg = "mismatched character " + GetCharErrorDisplay( e.Character ) + " expecting set " + mse.Expecting;
             }
-            else if (e is MismatchedSetException)
+            else if ( e is MismatchedSetException )
             {
                 MismatchedSetException mse = (MismatchedSetException)e;
-                msg = "mismatched character " + GetCharErrorDisplay(e.Character) + " expecting set " + mse.Expecting;
+                msg = "mismatched character " + GetCharErrorDisplay( e.Character ) + " expecting set " + mse.Expecting;
             }
-            else if (e is MismatchedRangeException)
+            else if ( e is MismatchedRangeException )
             {
                 MismatchedRangeException mre = (MismatchedRangeException)e;
-                msg = "mismatched character " + GetCharErrorDisplay(e.Character) + " expecting set " +
-                      GetCharErrorDisplay(mre.A) + ".." + GetCharErrorDisplay(mre.B);
+                msg = "mismatched character " + GetCharErrorDisplay( e.Character ) + " expecting set " +
+                      GetCharErrorDisplay( mre.A ) + ".." + GetCharErrorDisplay( mre.B );
             }
             else
             {
-                msg = base.GetErrorMessage(e, tokenNames);
+                msg = base.GetErrorMessage( e, tokenNames );
             }
             return msg;
         }
 
-        public virtual string GetCharErrorDisplay(int c)
+        public virtual string GetCharErrorDisplay( int c )
         {
-            string s = ((char)c).ToString();
-            switch (c)
+            string s = ( (char)c ).ToString();
+            switch ( c )
             {
-                case TokenTypes.EndOfFile:
-                    s = "<EOF>";
-                    break;
-                case '\n':
-                    s = "\\n";
-                    break;
-                case '\t':
-                    s = "\\t";
-                    break;
-                case '\r':
-                    s = "\\r";
-                    break;
+            case TokenTypes.EndOfFile:
+                s = "<EOF>";
+                break;
+            case '\n':
+                s = "\\n";
+                break;
+            case '\t':
+                s = "\\t";
+                break;
+            case '\r':
+                s = "\\r";
+                break;
             }
             return "'" + s + "'";
         }
@@ -418,7 +418,7 @@ namespace Antlr.Runtime
          *  to do sophisticated error recovery if you are in a fragment rule.
          *  </summary>
          */
-        public virtual void Recover(RecognitionException re)
+        public virtual void Recover( RecognitionException re )
         {
             //System.out.println("consuming char "+(char)input.LA(1)+" during recovery");
             //re.printStackTrace();
@@ -426,17 +426,17 @@ namespace Antlr.Runtime
         }
 
         [Conditional("ANTLR_TRACE")]
-        public virtual void TraceIn(string ruleName, int ruleIndex)
+        public virtual void TraceIn( string ruleName, int ruleIndex )
         {
-            string inputSymbol = ((char)input.LT(1)) + " line=" + Line + ":" + CharPositionInLine;
-            base.TraceIn(ruleName, ruleIndex, inputSymbol);
+            string inputSymbol = ( (char)input.LT( 1 ) ) + " line=" + Line + ":" + CharPositionInLine;
+            base.TraceIn( ruleName, ruleIndex, inputSymbol );
         }
 
         [Conditional("ANTLR_TRACE")]
-        public virtual void TraceOut(string ruleName, int ruleIndex)
+        public virtual void TraceOut( string ruleName, int ruleIndex )
         {
-            string inputSymbol = ((char)input.LT(1)) + " line=" + Line + ":" + CharPositionInLine;
-            base.TraceOut(ruleName, ruleIndex, inputSymbol);
+            string inputSymbol = ( (char)input.LT( 1 ) ) + " line=" + Line + ":" + CharPositionInLine;
+            base.TraceOut( ruleName, ruleIndex, inputSymbol );
         }
 
         protected virtual void ParseNextToken()

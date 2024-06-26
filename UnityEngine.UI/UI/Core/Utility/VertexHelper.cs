@@ -17,7 +17,7 @@ namespace UnityEngine.UI
         private static readonly Vector3 s_DefaultNormal = Vector3.back;
 
         public VertexHelper()
-        { }
+        {}
 
         public VertexHelper(Mesh m)
         {

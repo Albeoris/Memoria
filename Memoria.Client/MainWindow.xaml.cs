@@ -1,7 +1,4 @@
-﻿using Memoria.Client.Interaction;
-using Memoria.Prime;
-using Memoria.Test;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -10,6 +7,9 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Threading;
+using Memoria.Client.Interaction;
+using Memoria.Prime;
+using Memoria.Test;
 using UnityEngine;
 using Application = System.Windows.Application;
 using Object = System.Object;

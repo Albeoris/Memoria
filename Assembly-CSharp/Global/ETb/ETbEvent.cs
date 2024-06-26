@@ -2,7 +2,7 @@
 
 internal class ETbEvent
 {
-    public Int32 what;
+	public Int32 what;
 
-    public Int32 msg;
+	public Int32 msg;
 }

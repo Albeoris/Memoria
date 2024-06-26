@@ -1,9 +1,9 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
+using System;
+using System.Collections.Generic;
 using Memoria;
 using Memoria.Data;
 using Memoria.Scenes;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
 

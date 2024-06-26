@@ -2,19 +2,19 @@
 
 public class FF9Shadow
 {
-    public Boolean needUpdate;
+	public Boolean needUpdate;
 
-    public Boolean needUpdateAmp;
+	public Boolean needUpdateAmp;
 
-    public Int32 amp;
+	public Int32 amp;
 
-    public Single xScale;
+	public Single xScale;
 
-    public Single zScale;
+	public Single zScale;
 
-    public Single yRot;
+	public Single yRot;
 
-    public Single xOffset;
+	public Single xOffset;
 
-    public Single zOffset;
+	public Single zOffset;
 }

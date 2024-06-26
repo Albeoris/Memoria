@@ -1,6 +1,6 @@
 using Memoria.Assets;
-using Memoria.Prime.Ini;
 using System;
+using Memoria.Prime.Ini;
 
 namespace Memoria
 {
@@ -8,7 +8,7 @@ namespace Memoria
     {
         private sealed class ExportSection : IniSection
         {
-            private static readonly String[] DefaultLanguages = { "US", "UK", "JP", "ES", "FR", "GR", "IT" };
+            private static readonly String[] DefaultLanguages = {"US", "UK", "JP", "ES", "FR", "GR", "IT"};
 
             public readonly IniValue<String> Path;
             public readonly IniArray<String> Languages;

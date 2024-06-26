@@ -2,8 +2,8 @@
 
 public enum AchievementStatusesEnum
 {
-    NotUnlockYet,
-    ReadyToUnlock,
-    UnlockComplete,
-    Invalid
+	NotUnlockYet,
+	ReadyToUnlock,
+	UnlockComplete,
+	Invalid
 }

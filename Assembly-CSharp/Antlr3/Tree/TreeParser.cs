@@ -50,19 +50,19 @@ namespace Antlr.Runtime.Tree
         // precompiled regex used by inContext
         static string dotdot = ".*[^.]\\.\\.[^.].*";
         static string doubleEtc = ".*\\.\\.\\.\\s+\\.\\.\\..*";
-        static Regex dotdotPattern = new Regex(dotdot, RegexOptionsHelper.Compiled);
-        static Regex doubleEtcPattern = new Regex(doubleEtc, RegexOptionsHelper.Compiled);
+        static Regex dotdotPattern = new Regex( dotdot, RegexOptionsHelper.Compiled );
+        static Regex doubleEtcPattern = new Regex( doubleEtc, RegexOptionsHelper.Compiled );
 
         protected ITreeNodeStream input;
 
-        public TreeParser(ITreeNodeStream input)
+        public TreeParser( ITreeNodeStream input )
             : base() // highlight that we go to super to set state object
         {
             this.input = input;
         }
 
-        public TreeParser(ITreeNodeStream input, RecognizerSharedState state)
-            : base(state) // share the state object with another parser
+        public TreeParser( ITreeNodeStream input, RecognizerSharedState state )
+            : base( state ) // share the state object with another parser
         {
             this.input = input;
         }
@@ -70,14 +70,14 @@ namespace Antlr.Runtime.Tree
         public override void Reset()
         {
             base.Reset(); // reset all recognizer state variables
-            if (input != null)
+            if ( input != null )
             {
-                input.Seek(0); // rewind the input
+                input.Seek( 0 ); // rewind the input
             }
         }
 
         /** <summary>Set the input stream</summary> */
-        public virtual void SetTreeNodeStream(ITreeNodeStream input)
+        public virtual void SetTreeNodeStream( ITreeNodeStream input )
         {
             this.input = input;
         }
@@ -95,15 +95,15 @@ namespace Antlr.Runtime.Tree
             }
         }
 
-        protected override object GetCurrentInputSymbol(IIntStream input)
+        protected override object GetCurrentInputSymbol( IIntStream input )
         {
-            return ((ITreeNodeStream)input).LT(1);
+            return ( (ITreeNodeStream)input ).LT( 1 );
         }
 
-        protected override object GetMissingSymbol(IIntStream input,
+        protected override object GetMissingSymbol( IIntStream input,
                                           RecognitionException e,
                                           int expectedTokenType,
-                                          BitSet follow)
+                                          BitSet follow )
         {
             string tokenText =
                 "<missing " + TokenNames[expectedTokenType] + ">";
@@ -117,7 +117,7 @@ namespace Antlr.Runtime.Tree
          *  corresponding UP node.
          *  </summary>
          */
-        public override void MatchAny(IIntStream ignore)
+        public override void MatchAny( IIntStream ignore )
         {
             state.errorRecovery = false;
             state.failed = false;
@@ -125,25 +125,25 @@ namespace Antlr.Runtime.Tree
             input.Consume();
             // if the next node is DOWN, then the current node is a subtree:
             // skip to corresponding UP. must count nesting level to get right UP
-            int look = input.LA(1);
-            if (look == DOWN)
+            int look = input.LA( 1 );
+            if ( look == DOWN )
             {
                 input.Consume();
                 int level = 1;
-                while (level > 0)
+                while ( level > 0 )
                 {
-                    switch (input.LA(1))
+                    switch ( input.LA( 1 ) )
                     {
-                        case DOWN:
-                            level++;
-                            break;
-                        case UP:
-                            level--;
-                            break;
-                        case TokenTypes.EndOfFile:
-                            return;
-                        default:
-                            break;
+                    case DOWN:
+                        level++;
+                        break;
+                    case UP:
+                        level--;
+                        break;
+                    case TokenTypes.EndOfFile:
+                        return;
+                    default:
+                        break;
                     }
                     input.Consume();
                 }
@@ -156,9 +156,9 @@ namespace Antlr.Runtime.Tree
          *  from tree parser errors inline...
          *  </summary>
          */
-        protected override object RecoverFromMismatchedToken(IIntStream input, int ttype, BitSet follow)
+        protected override object RecoverFromMismatchedToken( IIntStream input, int ttype, BitSet follow )
         {
-            throw new MismatchedTreeNodeException(ttype, (ITreeNodeStream)input);
+            throw new MismatchedTreeNodeException( ttype, (ITreeNodeStream)input );
         }
 
         /** <summary>
@@ -167,10 +167,10 @@ namespace Antlr.Runtime.Tree
          *  the input tree not the user.
          *  </summary>
          */
-        public override string GetErrorHeader(RecognitionException e)
+        public override string GetErrorHeader( RecognitionException e )
         {
             return GrammarFileName + ": node from " +
-                   (e.ApproximateLineInfo ? "after " : "") + "line " + e.Line + ":" + e.CharPositionInLine;
+                   ( e.ApproximateLineInfo ? "after " : "" ) + "line " + e.Line + ":" + e.CharPositionInLine;
         }
 
         /** <summary>
@@ -178,31 +178,31 @@ namespace Antlr.Runtime.Tree
          *  payload. Set the exception token and do the default behavior.
          *  </summary>
          */
-        public override string GetErrorMessage(RecognitionException e, string[] tokenNames)
+        public override string GetErrorMessage( RecognitionException e, string[] tokenNames )
         {
-            if (this is TreeParser)
+            if ( this is TreeParser )
             {
-                ITreeAdaptor adaptor = ((ITreeNodeStream)e.Input).TreeAdaptor;
-                e.Token = adaptor.GetToken(e.Node);
-                if (e.Token == null)
+                ITreeAdaptor adaptor = ( (ITreeNodeStream)e.Input ).TreeAdaptor;
+                e.Token = adaptor.GetToken( e.Node );
+                if ( e.Token == null )
                 { // could be an UP/DOWN node
-                    e.Token = new CommonToken(adaptor.GetType(e.Node),
-                                              adaptor.GetText(e.Node));
+                    e.Token = new CommonToken( adaptor.GetType( e.Node ),
+                                              adaptor.GetText( e.Node ) );
                 }
             }
-            return base.GetErrorMessage(e, tokenNames);
+            return base.GetErrorMessage( e, tokenNames );
         }
 
         [Conditional("ANTLR_TRACE")]
-        public virtual void TraceIn(string ruleName, int ruleIndex)
+        public virtual void TraceIn( string ruleName, int ruleIndex )
         {
-            base.TraceIn(ruleName, ruleIndex, input.LT(1));
+            base.TraceIn( ruleName, ruleIndex, input.LT( 1 ) );
         }
 
         [Conditional("ANTLR_TRACE")]
-        public virtual void TraceOut(string ruleName, int ruleIndex)
+        public virtual void TraceOut( string ruleName, int ruleIndex )
         {
-            base.TraceOut(ruleName, ruleIndex, input.LT(1));
+            base.TraceOut( ruleName, ruleIndex, input.LT( 1 ) );
         }
 
     }

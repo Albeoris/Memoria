@@ -1,10 +1,10 @@
-﻿/****************************************************************************
-* NVorbis                                                                  *
-* Copyright (C) 2014, Andrew Ward <afward@gmail.com>                       *
-*                                                                          *
-* See COPYING for license terms (Ms-PL).                                   *
-*                                                                          *
-***************************************************************************/
+﻿﻿/****************************************************************************
+ * NVorbis                                                                  *
+ * Copyright (C) 2014, Andrew Ward <afward@gmail.com>                       *
+ *                                                                          *
+ * See COPYING for license terms (Ms-PL).                                   *
+ *                                                                          *
+ ***************************************************************************/
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,15 +37,15 @@ namespace Memoria.Prime.NVorbis
             /// <summary>
             /// Packet is first since reader had to resync with stream.
             /// </summary>
-            IsResync = 0x01,
+            IsResync        = 0x01,
             /// <summary>
             /// Packet is the last in the logical stream.
             /// </summary>
-            IsEndOfStream = 0x02,
+            IsEndOfStream   = 0x02,
             /// <summary>
             /// Packet does not have all its data available.
             /// </summary>
-            IsShort = 0x04,
+            IsShort         = 0x04,
             /// <summary>
             /// Packet has a granule count defined.
             /// </summary>
@@ -54,19 +54,19 @@ namespace Memoria.Prime.NVorbis
             /// <summary>
             /// Flag for use by inheritors.
             /// </summary>
-            User1 = 0x10,
+            User1           = 0x10,
             /// <summary>
             /// Flag for use by inheritors.
             /// </summary>
-            User2 = 0x20,
+            User2           = 0x20,
             /// <summary>
             /// Flag for use by inheritors.
             /// </summary>
-            User3 = 0x40,
+            User3           = 0x40,
             /// <summary>
             /// Flag for use by inheritors.
             /// </summary>
-            User4 = 0x80,
+            User4           = 0x80,
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace Memoria.Prime.NVorbis
                 }
                 _bitBucket = (ulong)(val & 0xFF) << _bitCount | _bitBucket;
                 _bitCount += 8;
-
+                
                 if (_bitCount > 64)
                 {
                     _overflowBits = (byte)(val >> (72 - _bitCount));

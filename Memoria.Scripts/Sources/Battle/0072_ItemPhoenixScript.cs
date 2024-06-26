@@ -1,5 +1,5 @@
-using Memoria.Data;
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -22,7 +22,7 @@ namespace Memoria.Scripts.Battle
         {
             if (!_v.Target.CanBeRevived())
                 return;
-
+            
             if (_v.Target.IsZombie)
             {
                 if ((_v.Target.CurrentHp = (UInt32)(GameRandom.Next8() % 10)) == 0)

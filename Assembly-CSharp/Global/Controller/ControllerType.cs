@@ -2,6 +2,6 @@
 
 internal enum ControllerType
 {
-    Keyboard,
-    Joystick
+	Keyboard,
+	Joystick
 }

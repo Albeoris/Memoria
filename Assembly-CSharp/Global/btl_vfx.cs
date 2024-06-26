@@ -1,11 +1,11 @@
-﻿using FF9;
+﻿using System;
+using FF9;
 using Memoria;
-using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Database;
-using System;
+using Memoria.Assets;
 using UnityEngine;
 using Object = System.Object;
+using Memoria.Database;
 
 public static class btl_vfx
 {

@@ -24,5 +24,5 @@ namespace Memoria.Assets
         }
 
         private static readonly String[] DELIM = new[] { "[ENDN]" };
-    }
+}
 }

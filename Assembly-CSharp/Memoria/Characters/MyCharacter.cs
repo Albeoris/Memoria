@@ -21,7 +21,7 @@ namespace Memoria
         {
             return new CharacterAnimation
             {
-                IdleSpeed = new Byte[] { 14, 16, 18, 20 },
+                IdleSpeed = new Byte[] {14, 16, 18, 20},
                 Idle = 921, //ANH_NPC_F0_HUM_IDLE
                 TurnRight = 922, //ANH_NPC_F0_HUM_TURN_R
                 Run = 923, //ANH_NPC_F0_HUM_RUN

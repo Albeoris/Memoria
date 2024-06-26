@@ -227,9 +227,9 @@ namespace NCalc.Domain
         public override void Visit(Function function)
         {
             var args = new FunctionArgs
-            {
-                Parameters = new Expression[function.Expressions.Length]
-            };
+                           {
+                               Parameters = new Expression[function.Expressions.Length]
+                           };
 
             // Don't call parameters right now, instead let the function do it as needed.
             // Some parameters shouldn't be called, for instance, in a if(), the "not" value might be a division by zero

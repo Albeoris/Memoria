@@ -2,8 +2,8 @@
 
 public enum WMWorldLoadState
 {
-    Initializing,
-    ReadyToLoadBlocks,
-    LoadingTheRestOfBlocksInBackground,
-    Finished
+	Initializing,
+	ReadyToLoadBlocks,
+	LoadingTheRestOfBlocksInBackground,
+	Finished
 }

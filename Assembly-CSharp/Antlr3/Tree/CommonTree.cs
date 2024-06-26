@@ -66,8 +66,8 @@ namespace Antlr.Runtime.Tree
         {
         }
 
-        public CommonTree(CommonTree node)
-            : base(node)
+        public CommonTree( CommonTree node )
+            : base( node )
         {
             if (node == null)
                 throw new ArgumentNullException("node");
@@ -77,7 +77,7 @@ namespace Antlr.Runtime.Tree
             this.stopIndex = node.stopIndex;
         }
 
-        public CommonTree(IToken t)
+        public CommonTree( IToken t )
         {
             this.Token = t;
         }
@@ -88,9 +88,9 @@ namespace Antlr.Runtime.Tree
         {
             get
             {
-                if (Token == null || Token.CharPositionInLine == -1)
+                if ( Token == null || Token.CharPositionInLine == -1 )
                 {
-                    if (ChildCount > 0)
+                    if ( ChildCount > 0 )
                         return Children[0].CharPositionInLine;
 
                     return 0;
@@ -129,9 +129,9 @@ namespace Antlr.Runtime.Tree
         {
             get
             {
-                if (Token == null || Token.Line == 0)
+                if ( Token == null || Token.Line == 0 )
                 {
-                    if (ChildCount > 0)
+                    if ( ChildCount > 0 )
                         return Children[0].Line;
 
                     return 0;
@@ -163,7 +163,7 @@ namespace Antlr.Runtime.Tree
         {
             get
             {
-                if (Token == null)
+                if ( Token == null )
                     return null;
 
                 return Token.Text;
@@ -191,7 +191,7 @@ namespace Antlr.Runtime.Tree
         {
             get
             {
-                if (startIndex == -1 && Token != null)
+                if ( startIndex == -1 && Token != null )
                     return Token.TokenIndex;
 
                 return startIndex;
@@ -207,7 +207,7 @@ namespace Antlr.Runtime.Tree
         {
             get
             {
-                if (stopIndex == -1 && Token != null)
+                if ( stopIndex == -1 && Token != null )
                 {
                     return Token.TokenIndex;
                 }
@@ -224,7 +224,7 @@ namespace Antlr.Runtime.Tree
         {
             get
             {
-                if (Token == null)
+                if ( Token == null )
                     return TokenTypes.Invalid;
 
                 return Token.Type;
@@ -239,7 +239,7 @@ namespace Antlr.Runtime.Tree
 
         public override ITree DupNode()
         {
-            return new CommonTree(this);
+            return new CommonTree( this );
         }
 
         /** <summary>
@@ -250,9 +250,9 @@ namespace Antlr.Runtime.Tree
          */
         public virtual void SetUnknownTokenBoundaries()
         {
-            if (Children == null)
+            if ( Children == null )
             {
-                if (startIndex < 0 || stopIndex < 0)
+                if ( startIndex < 0 || stopIndex < 0 )
                     startIndex = stopIndex = Token.TokenIndex;
 
                 return;
@@ -267,10 +267,10 @@ namespace Antlr.Runtime.Tree
                 commonTree.SetUnknownTokenBoundaries();
             }
 
-            if (startIndex >= 0 && stopIndex >= 0)
+            if ( startIndex >= 0 && stopIndex >= 0 )
                 return; // already set
 
-            if (Children.Count > 0)
+            if ( Children.Count > 0 )
             {
                 ITree firstChild = Children[0];
                 ITree lastChild = Children[Children.Count - 1];

@@ -2,6 +2,6 @@
 
 public enum END_STATE
 {
-    RESULT,
-    CONFIRM
+	RESULT,
+	CONFIRM
 }

@@ -1,8 +1,8 @@
-﻿using Memoria.Data;
-using Memoria.Prime.CSV;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
+using System.Collections.Generic;
+using Memoria.Data;
+using Memoria.Prime.CSV;
 
 namespace FF9
 {
@@ -31,7 +31,7 @@ namespace FF9
         }
 
         public Boolean CanBeSynthesized()
-        {
+		{
             if (ff9item.FF9Item_GetCount(Result) >= ff9item.FF9ITEM_COUNT_MAX || FF9StateSystem.Common.FF9.party.gil < Price)
                 return false;
             return !IngredientsAsDictionary().Any(kvp => ff9item.FF9Item_GetCount(kvp.Key) < kvp.Value);
@@ -48,7 +48,7 @@ namespace FF9
                 Shops = new HashSet<Int32>(synthArray);
             }
             else
-            {
+			{
                 Byte synthFlags = CsvParser.Byte(raw[2]);
                 Shops = new HashSet<Int32>();
                 for (Int32 i = 0; i < 8; i++)
@@ -78,7 +78,7 @@ namespace FF9
                 sw.Int32Array(Shops.ToArray());
             }
             else
-            {
+			{
                 Byte synthFlags = 0;
                 for (Int32 i = 0; i < 8; i++)
                     if (Shops.Contains(32 + i))

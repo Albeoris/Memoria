@@ -1,29 +1,29 @@
-﻿using Ini;
-using System;
+﻿using System;
+using System.IO;
+using System.IO.Compression;
+using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
-using Application = System.Windows.Application;
-using Color = System.Drawing.Color;
+using Ini;
+using ListView = System.Windows.Controls.ListView;
 using GridView = System.Windows.Controls.GridView;
 using GridViewColumnHeader = System.Windows.Controls.GridViewColumnHeader;
-using ListView = System.Windows.Controls.ListView;
 using MessageBox = System.Windows.Forms.MessageBox;
+using Application = System.Windows.Application;
 using Point = System.Drawing.Point;
+using Color = System.Drawing.Color;
 
 namespace Memoria.Launcher
 {
@@ -783,7 +783,7 @@ namespace Memoria.Launcher
             if (sortGetter == null || sortGetter.DeclaringType != typeof(Mod) || sortGetter.ReturnType.GetInterface(nameof(IComparable)) == null || sortGetter.GetParameters().Length > 0)
                 return;
             List<Mod> catalogList = new List<Mod>(modListCatalog);
-            catalogList.Sort(delegate (Mod a, Mod b)
+            catalogList.Sort(delegate(Mod a, Mod b)
             {
                 IComparable ac = sortGetter.Invoke(a, null) as IComparable;
                 IComparable bc = sortGetter.Invoke(b, null) as IComparable;

@@ -24,7 +24,7 @@ namespace Memoria.Assets
             TextResourceReference reference = new(outputPath);
             return new TextResourcePath(reference, Configuration.Export.TextFileFormat);
         }
-
+        
         public static TextResourcePath ForImportExistingFile(String existingPath)
         {
             if (!File.Exists(existingPath))
@@ -56,11 +56,11 @@ namespace Memoria.Assets
         {
             for (Int32 i = 0; i < entries.Count; i++)
                 entries[i].TryUpdateIndex(i);
-
+            
             ITextFormatter formatter = GetFormatter();
             formatter.GetWriter().WriteAll(Value, entries);
         }
-
+        
         public TxtEntry[] ReadAll()
         {
             ITextFormatter formatter = GetFormatter();

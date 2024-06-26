@@ -149,7 +149,7 @@ namespace Memoria.Data
         /// Raises the strength of Throw.
         /// </summary>
         PowerThrow = 1u << SupportAbility.PowerThrow, // 268435456
-
+        
         /// <summary>
         /// Raises the strength of Chakra.
         /// </summary>

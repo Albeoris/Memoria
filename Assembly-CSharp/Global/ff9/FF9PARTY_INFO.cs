@@ -1,14 +1,14 @@
-﻿using Memoria.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Memoria.Data;
 
 public class FF9PARTY_INFO
 {
-    public Int32 party_ct;
+	public Int32 party_ct;
 
-    public CharacterId[] menu = new CharacterId[4];
+	public CharacterId[] menu = new CharacterId[4];
 
-    public CharacterId[] select = null;
+	public CharacterId[] select = null;
 
-    public HashSet<CharacterId> fix = new HashSet<CharacterId>();
+	public HashSet<CharacterId> fix = new HashSet<CharacterId>();
 }

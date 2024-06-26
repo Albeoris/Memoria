@@ -1,6 +1,6 @@
-using Memoria.Prime;
 using System;
 using System.IO;
+using Memoria.Prime;
 
 namespace Memoria.Assets
 {

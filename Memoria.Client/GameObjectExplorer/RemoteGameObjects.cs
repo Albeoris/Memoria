@@ -1,9 +1,9 @@
-﻿using Memoria.Test;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Data;
+using Memoria.Test;
 
 namespace Memoria.Client
 {

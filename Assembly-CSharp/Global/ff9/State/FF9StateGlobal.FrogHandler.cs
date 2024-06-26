@@ -1,5 +1,5 @@
-﻿using Memoria;
-using System;
+﻿using System;
+using Memoria;
 
 public partial class FF9StateGlobal
 {
@@ -7,7 +7,7 @@ public partial class FF9StateGlobal
     {
         private const Int16 MaxReward = 99;
 
-        private static readonly Int16[] Rewards = { 2, 5, 9, 15, 23, 33, 45, MaxReward };
+        private static readonly Int16[] Rewards = {2, 5, 9, 15, 23, 33, 45, MaxReward};
 
         public Int16 Number { get; private set; }
 

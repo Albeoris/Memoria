@@ -1,9 +1,9 @@
-﻿using Memoria.Prime.Text;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using Memoria.Prime.Text;
 using UnityEngine;
 
 namespace Memoria.Prime.Ini

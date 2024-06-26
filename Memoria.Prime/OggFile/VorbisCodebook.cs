@@ -6,8 +6,8 @@
  *                                                                          *
  ***************************************************************************/
 using System;
-using System.IO;
 using System.Linq;
+using System.IO;
 
 namespace Memoria.Prime.NVorbis
 {
@@ -35,7 +35,7 @@ namespace Memoria.Prime.NVorbis
             // get the counts
             Dimensions = (int)packet.ReadBits(16);
             Entries = (int)packet.ReadBits(24);
-
+            
             // init the storage
             Lengths = new int[Entries];
 
@@ -52,7 +52,7 @@ namespace Memoria.Prime.NVorbis
             {
                 // ordered
                 var len = (int)packet.ReadBits(5) + 1;
-                for (var i = 0; i < Entries;)
+                for (var i = 0; i < Entries; )
                 {
                     var cnt = (int)packet.ReadBits(Utils.ilog(Entries - i));
 
@@ -244,9 +244,9 @@ namespace Memoria.Prime.NVorbis
         int lookup1_values()
         {
             var r = (int)Math.Floor(Math.Exp(Math.Log(Entries) / Dimensions));
-
+            
             if (Math.Floor(Math.Pow(r + 1, Dimensions)) <= Entries) ++r;
-
+            
             return r;
         }
 

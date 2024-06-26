@@ -1,8 +1,8 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
-using Memoria.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Memoria.Scenes;
 using UnityEngine;
 using Object = System.Object;
 
@@ -98,7 +98,7 @@ public partial class BattleHUD : UIScene
 
                 Int32 playerId = Characters[go.transform.GetSiblingIndex()].PlayerId;
                 if (playerId == _scene.CurrentPlayerIndex
-                    || !_scene.ReadyQueue.Contains(playerId)
+                    ||!_scene.ReadyQueue.Contains(playerId)
                     || _scene.InputFinishList.Contains(playerId)
                     || _scene._unconsciousStateList.Contains(playerId))
                     return;

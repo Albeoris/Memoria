@@ -1,18 +1,18 @@
-﻿using Memoria;
-using System;
+﻿using System;
 using System.IO;
+using Memoria;
 using UnityEngine;
 using Object = System.Object;
 
 public class BGCAM_DEF
 {
-    public BGCAM_DEF()
-    {
-        this.r = new Int16[3, 3];
-        this.t = new Int32[3];
-        this.centerOffset = new Int16[2];
-        this.startOffset = 0L;
-    }
+	public BGCAM_DEF()
+	{
+		this.r = new Int16[3, 3];
+		this.t = new Int32[3];
+		this.centerOffset = new Int16[2];
+		this.startOffset = 0L;
+	}
 
     public void ReadData(BinaryReader reader)
     {
@@ -38,7 +38,7 @@ public class BGCAM_DEF
     }
 
     public BGCAM_DEF Copy()
-    {
+	{
         BGCAM_DEF copy = new BGCAM_DEF();
         copy.proj = this.proj;
         for (Int32 i = 0; i < 3; i++)
@@ -61,33 +61,33 @@ public class BGCAM_DEF
     }
 
     public Matrix4x4 GetMatrixR()
-    {
-        Matrix4x4 result = default(Matrix4x4);
-        result.SetRow(1, new Vector4(this.r[1, 0] * ROTATTION_INVFACTOR, this.r[1, 1] * ROTATTION_INVFACTOR, this.r[1, 2] * ROTATTION_INVFACTOR, 0f));
-        result.SetRow(2, new Vector4(this.r[2, 0] * ROTATTION_INVFACTOR, this.r[2, 1] * ROTATTION_INVFACTOR, this.r[2, 2] * ROTATTION_INVFACTOR, 0f));
-        result.SetRow(0, new Vector4(this.r[0, 0] * ROTATTION_INVFACTOR, this.r[0, 1] * ROTATTION_INVFACTOR, this.r[0, 2] * ROTATTION_INVFACTOR, 0f));
-        result.SetRow(3, new Vector4(0f, 0f, 0f, 1f));
-        return result;
-    }
+	{
+		Matrix4x4 result = default(Matrix4x4);
+		result.SetRow(1, new Vector4(this.r[1, 0] * ROTATTION_INVFACTOR, this.r[1, 1] * ROTATTION_INVFACTOR, this.r[1, 2] * ROTATTION_INVFACTOR, 0f));
+		result.SetRow(2, new Vector4(this.r[2, 0] * ROTATTION_INVFACTOR, this.r[2, 1] * ROTATTION_INVFACTOR, this.r[2, 2] * ROTATTION_INVFACTOR, 0f));
+		result.SetRow(0, new Vector4(this.r[0, 0] * ROTATTION_INVFACTOR, this.r[0, 1] * ROTATTION_INVFACTOR, this.r[0, 2] * ROTATTION_INVFACTOR, 0f));
+		result.SetRow(3, new Vector4(0f, 0f, 0f, 1f));
+		return result;
+	}
 
-    public Matrix4x4 GetMatrixRT()
-    {
-        Matrix4x4 result = default(Matrix4x4);
-        result.SetRow(0, new Vector4(this.r[0, 0] * ROTATTION_INVFACTOR, this.r[0, 1] * ROTATTION_INVFACTOR, this.r[0, 2] * ROTATTION_INVFACTOR, this.t[0]));
-        result.SetRow(1, new Vector4(this.r[1, 0] * ROTATTION_INVFACTOR, this.r[1, 1] * ROTATTION_INVFACTOR, this.r[1, 2] * ROTATTION_INVFACTOR, this.t[1]));
-        result.SetRow(2, new Vector4(this.r[2, 0] * ROTATTION_INVFACTOR, this.r[2, 1] * ROTATTION_INVFACTOR, this.r[2, 2] * ROTATTION_INVFACTOR, this.t[2]));
-        result.SetRow(3, new Vector4(0f, 0f, 0f, 1f));
-        return result;
-    }
+	public Matrix4x4 GetMatrixRT()
+	{
+		Matrix4x4 result = default(Matrix4x4);
+		result.SetRow(0, new Vector4(this.r[0, 0] * ROTATTION_INVFACTOR, this.r[0, 1] * ROTATTION_INVFACTOR, this.r[0, 2] * ROTATTION_INVFACTOR, this.t[0]));
+		result.SetRow(1, new Vector4(this.r[1, 0] * ROTATTION_INVFACTOR, this.r[1, 1] * ROTATTION_INVFACTOR, this.r[1, 2] * ROTATTION_INVFACTOR, this.t[1]));
+		result.SetRow(2, new Vector4(this.r[2, 0] * ROTATTION_INVFACTOR, this.r[2, 1] * ROTATTION_INVFACTOR, this.r[2, 2] * ROTATTION_INVFACTOR, this.t[2]));
+		result.SetRow(3, new Vector4(0f, 0f, 0f, 1f));
+		return result;
+	}
 
-    public Matrix4x4 GetMatrixRTI()
-    {
-        Matrix4x4 result = default(Matrix4x4);
-        result.SetRow(1, new Vector4(this.r[1, 0] * ROTATTION_INVFACTOR, this.r[1, 1] * ROTATTION_INVFACTOR, this.r[1, 2] * ROTATTION_INVFACTOR, -this.t[1]));
-        result.SetRow(2, new Vector4(this.r[2, 0] * ROTATTION_INVFACTOR, this.r[2, 1] * ROTATTION_INVFACTOR, this.r[2, 2] * ROTATTION_INVFACTOR, -this.t[2]));
-        result.SetRow(0, new Vector4(this.r[0, 0] * ROTATTION_INVFACTOR, this.r[0, 1] * ROTATTION_INVFACTOR, this.r[0, 2] * ROTATTION_INVFACTOR, -this.t[0]));
-        result.SetRow(3, new Vector4(0f, 0f, 0f, 1f));
-        return result;
+	public Matrix4x4 GetMatrixRTI()
+	{
+		Matrix4x4 result = default(Matrix4x4);
+		result.SetRow(1, new Vector4(this.r[1, 0] * ROTATTION_INVFACTOR, this.r[1, 1] * ROTATTION_INVFACTOR, this.r[1, 2] * ROTATTION_INVFACTOR, -this.t[1]));
+		result.SetRow(2, new Vector4(this.r[2, 0] * ROTATTION_INVFACTOR, this.r[2, 1] * ROTATTION_INVFACTOR, this.r[2, 2] * ROTATTION_INVFACTOR, -this.t[2]));
+		result.SetRow(0, new Vector4(this.r[0, 0] * ROTATTION_INVFACTOR, this.r[0, 1] * ROTATTION_INVFACTOR, this.r[0, 2] * ROTATTION_INVFACTOR, -this.t[0]));
+		result.SetRow(3, new Vector4(0f, 0f, 0f, 1f));
+		return result;
     }
 
     public void SetMatrixRT(Matrix4x4 matrix)
@@ -100,18 +100,18 @@ public class BGCAM_DEF
     }
 
     public Vector2 GetCenterOffset()
-    {
-        return new Vector2(this.centerOffset[0], this.centerOffset[1]);
+	{
+		return new Vector2(this.centerOffset[0], this.centerOffset[1]);
     }
 
-    public Single GetViewDistance()
-    {
-        return this.proj;
-    }
+	public Single GetViewDistance()
+	{
+		return this.proj;
+	}
 
-    public Vector3 GetCamPos()
-    {
-        return new Vector3(this.t[0], this.t[1], this.t[2]);
+	public Vector3 GetCamPos()
+	{
+		return new Vector3(this.t[0], this.t[1], this.t[2]);
     }
 
     public void RefreshCache(Boolean force)
@@ -146,13 +146,13 @@ public class BGCAM_DEF
     public const Single ROTATTION_FACTOR = 4096f;
     public const Single ROTATTION_INVFACTOR = 0.000244140625f; // 1 / 4096
 
-    public Int16[,] r;
-    public Int32[] t;
+	public Int16[,] r;
+	public Int32[] t;
 
-    public Int16[] centerOffset;
+	public Int16[] centerOffset;
 
-    public Int16 w;
-    public Int16 h;
+	public Int16 w;
+	public Int16 h;
 
     public Int16 vrpMinY;
     public Int16 vrpMaxY;
@@ -189,7 +189,7 @@ public class BGCAM_DEF
     public UInt16 proj;
     public Int32 depthOffset;
 
-    public Int64 startOffset;
-    public Transform transform;
-    public GameObject projectedWalkMesh;
+	public Int64 startOffset;
+	public Transform transform;
+	public GameObject projectedWalkMesh;
 }

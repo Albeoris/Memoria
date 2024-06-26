@@ -32,8 +32,9 @@
 
 namespace Antlr.Runtime.Tree
 {
-    using Antlr.Runtime.Misc;
     using System.Collections.Generic;
+    using Antlr.Runtime.Misc;
+
     using StringBuilder = System.Text.StringBuilder;
 
     [System.Serializable]
@@ -75,16 +76,16 @@ namespace Antlr.Runtime.Tree
          */
         private object _previousLocationElement;
 
-        public CommonTreeNodeStream(object tree)
-            : this(new CommonTreeAdaptor(), tree)
+        public CommonTreeNodeStream( object tree )
+            : this( new CommonTreeAdaptor(), tree )
         {
         }
 
-        public CommonTreeNodeStream(ITreeAdaptor adaptor, object tree)
+        public CommonTreeNodeStream( ITreeAdaptor adaptor, object tree )
         {
             this._root = tree;
             this._adaptor = adaptor;
-            _it = new TreeIterator(adaptor, _root);
+            _it = new TreeIterator( adaptor, _root );
         }
 
         #region Properties
@@ -93,7 +94,7 @@ namespace Antlr.Runtime.Tree
         {
             get
             {
-                if (TokenStream == null)
+                if ( TokenStream == null )
                     return null;
 
                 return TokenStream.SourceName;
@@ -155,7 +156,7 @@ namespace Antlr.Runtime.Tree
             _hasNilRoot = false;
             _level = 0;
             _previousLocationElement = null;
-            if (_calls != null)
+            if ( _calls != null )
                 _calls.Clear();
         }
 
@@ -164,21 +165,21 @@ namespace Antlr.Runtime.Tree
             _it.MoveNext();
             object t = _it.Current;
             //System.out.println("pulled "+adaptor.getType(t));
-            if (t == _it.up)
+            if ( t == _it.up )
             {
                 _level--;
-                if (_level == 0 && _hasNilRoot)
+                if ( _level == 0 && _hasNilRoot )
                 {
                     _it.MoveNext();
                     return _it.Current; // don't give last UP; get EOF
                 }
             }
-            else if (t == _it.down)
+            else if ( t == _it.down )
             {
                 _level++;
             }
 
-            if (_level == 0 && TreeAdaptor.IsNil(t))
+            if ( _level == 0 && TreeAdaptor.IsNil( t ) )
             {
                 // if nil root, scarf nil, DOWN
                 _hasNilRoot = true;
@@ -206,21 +207,21 @@ namespace Antlr.Runtime.Tree
             return TreeAdaptor.GetType(o) == CharStreamConstants.EndOfFile;
         }
 
-        public virtual int LA(int i)
+        public virtual int LA( int i )
         {
-            return TreeAdaptor.GetType(LT(i));
+            return TreeAdaptor.GetType( LT( i ) );
         }
 
         /** Make stream jump to a new location, saving old location.
          *  Switch back with pop().
          */
-        public virtual void Push(int index)
+        public virtual void Push( int index )
         {
-            if (_calls == null)
+            if ( _calls == null )
                 _calls = new Stack<int>();
 
-            _calls.Push(_p); // save current index
-            Seek(index);
+            _calls.Push( _p ); // save current index
+            Seek( index );
         }
 
         /** Seek back to previous index saved during last push() call.
@@ -229,7 +230,7 @@ namespace Antlr.Runtime.Tree
         public virtual int Pop()
         {
             int ret = _calls.Pop();
-            Seek(ret);
+            Seek( ret );
             return ret;
         }
 
@@ -273,17 +274,17 @@ namespace Antlr.Runtime.Tree
 
         #region Tree rewrite interface
 
-        public virtual void ReplaceChildren(object parent, int startChildIndex, int stopChildIndex, object t)
+        public virtual void ReplaceChildren( object parent, int startChildIndex, int stopChildIndex, object t )
         {
-            if (parent != null)
+            if ( parent != null )
             {
-                TreeAdaptor.ReplaceChildren(parent, startChildIndex, stopChildIndex, t);
+                TreeAdaptor.ReplaceChildren( parent, startChildIndex, stopChildIndex, t );
             }
         }
 
         #endregion
 
-        public virtual string ToString(object start, object stop)
+        public virtual string ToString( object start, object stop )
         {
             // we'll have to walk from start to stop in tree; we're not keeping
             // a complete node stream buffer
@@ -295,15 +296,15 @@ namespace Antlr.Runtime.Tree
         {
             Reset();
             StringBuilder buf = new StringBuilder();
-            object o = LT(1);
-            int type = TreeAdaptor.GetType(o);
-            while (type != TokenTypes.EndOfFile)
+            object o = LT( 1 );
+            int type = TreeAdaptor.GetType( o );
+            while ( type != TokenTypes.EndOfFile )
             {
-                buf.Append(" ");
-                buf.Append(type);
+                buf.Append( " " );
+                buf.Append( type );
                 Consume();
-                o = LT(1);
-                type = TreeAdaptor.GetType(o);
+                o = LT( 1 );
+                type = TreeAdaptor.GetType( o );
             }
             return buf.ToString();
         }

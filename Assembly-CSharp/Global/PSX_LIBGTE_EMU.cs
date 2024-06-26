@@ -3,2287 +3,2287 @@ using System.Runtime.InteropServices;
 
 public static class PSX_LIBGTE_EMU
 {
-    public static UInt32 mfc2(Int32 reg)
-    {
-        return PSX_LIBGTE_EMU.getcp2dr(reg);
-    }
-
-    public static void mtc2(Int32 reg, UInt32 value)
-    {
-        PSX_LIBGTE_EMU.setcp2dr(reg, value);
-    }
-
-    public static void ctc2(Int32 reg, UInt32 value)
-    {
-        PSX_LIBGTE_EMU.setcp2cr(reg, value);
-    }
-
-    public static UInt32 cfc2(Int32 reg)
-    {
-        return PSX_LIBGTE_EMU.getcp2cr(reg);
-    }
-
-    public static void lwc2(Int32 reg, UInt32 value)
-    {
-        PSX_LIBGTE_EMU.setcp2dr(reg, value);
-    }
-
-    public static UInt32 swc2(Int32 reg)
-    {
-        return PSX_LIBGTE_EMU.getcp2dr(reg);
-    }
-
-    private static void GTELOG(Int32 debugLevel, String s, Int32 gteop)
-    {
-    }
-
-    private static Int16 VX(Int32 n)
-    {
-        return (Int16)((n >= 3) ? PSX_LIBGTE_EMU.m_cp2dr[9].sw.l : PSX_LIBGTE_EMU.m_cp2dr[n << 1].sw.l);
-    }
-
-    private static Int16 VY(Int32 n)
-    {
-        return (Int16)((n >= 3) ? PSX_LIBGTE_EMU.m_cp2dr[10].sw.l : PSX_LIBGTE_EMU.m_cp2dr[n << 1].sw.h);
-    }
-
-    private static Int16 VZ(Int32 n)
-    {
-        return (Int16)((n >= 3) ? PSX_LIBGTE_EMU.m_cp2dr[11].sw.l : PSX_LIBGTE_EMU.m_cp2dr[(n << 1) + 1].sw.l);
-    }
-
-    private static Int16 MX11(Int32 n)
-    {
-        return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[n << 3].sw.l);
-    }
-
-    private static Int16 MX12(Int32 n)
-    {
-        return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[n << 3].sw.h);
-    }
-
-    private static Int16 MX13(Int32 n)
-    {
-        return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 1].sw.l);
-    }
-
-    private static Int16 MX21(Int32 n)
-    {
-        return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 1].sw.h);
-    }
-
-    private static Int16 MX22(Int32 n)
-    {
-        return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 2].sw.l);
-    }
-
-    private static Int16 MX23(Int32 n)
-    {
-        return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 2].sw.h);
-    }
-
-    private static Int16 MX31(Int32 n)
-    {
-        return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 3].sw.l);
-    }
-
-    private static Int16 MX32(Int32 n)
-    {
-        return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 3].sw.h);
-    }
-
-    private static Int16 MX33(Int32 n)
-    {
-        return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 4].sw.l);
-    }
-
-    private static Int32 CV1(Int32 n)
-    {
-        return (Int32)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 5].sd);
-    }
-
-    private static Int32 CV2(Int32 n)
-    {
-        return (Int32)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 6].sd);
-    }
-
-    private static Int32 CV3(Int32 n)
-    {
-        return (Int32)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 7].sd);
-    }
-
-    private static UInt32 VXY0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[0].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[0].d = value;
-        }
-    }
-
-    private static Int16 VX0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[0].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[0].sw.l = value;
-        }
-    }
-
-    private static Int16 VY0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[0].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[0].sw.h = value;
-        }
-    }
-
-    private static Int16 VZ0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[1].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[1].sw.l = value;
-        }
-    }
-
-    private static UInt32 VXY1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[2].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[2].d = value;
-        }
-    }
-
-    private static UInt16 VX1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[2].w.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[2].w.l = value;
-        }
-    }
-
-    private static UInt16 VY1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[2].w.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[2].w.h = value;
-        }
-    }
-
-    private static UInt16 VZ1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[3].w.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[3].w.l = value;
-        }
-    }
-
-    private static UInt32 VXY2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[4].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[4].d = value;
-        }
-    }
-
-    private static UInt16 VX2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[4].w.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[4].w.l = value;
-        }
-    }
-
-    private static UInt16 VY2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[4].w.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[4].w.h = value;
-        }
-    }
-
-    private static UInt16 VZ2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[5].w.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[5].w.l = value;
-        }
-    }
-
-    private static UInt32 RGB
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[6].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[6].d = value;
-        }
-    }
-
-    private static Byte R
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[6].b.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[6].b.l = value;
-        }
-    }
-
-    private static Byte G
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[6].b.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[6].b.h = value;
-        }
-    }
-
-    private static Byte B
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[6].b.h2;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[6].b.h2 = value;
-        }
-    }
-
-    private static Byte CODE
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[6].b.h3;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[6].b.h3 = value;
-        }
-    }
-
-    private static UInt16 OTZ
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[7].w.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[7].w.l = value;
-        }
-    }
-
-    private static Int16 IR0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[8].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[8].sw.l = value;
-        }
-    }
-
-    private static Int16 IR1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[9].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[9].sw.l = value;
-        }
-    }
-
-    private static Int16 IR2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[10].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[10].sw.l = value;
-        }
-    }
-
-    private static Int16 IR3
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[11].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[11].sw.l = value;
-        }
-    }
-
-    private static UInt32 SXY0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[12].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[12].d = value;
-        }
-    }
-
-    private static Int16 SX0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[12].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[12].sw.l = value;
-        }
-    }
-
-    private static Int16 SY0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[12].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[12].sw.h = value;
-        }
-    }
-
-    private static UInt32 SXY1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[13].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[13].d = value;
-        }
-    }
-
-    private static Int16 SX1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[13].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[13].sw.l = value;
-        }
-    }
-
-    private static Int16 SY1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[13].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[13].sw.h = value;
-        }
-    }
-
-    private static UInt32 SXY2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[14].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[14].d = value;
-        }
-    }
-
-    private static Int16 SX2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[14].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[14].sw.l = value;
-        }
-    }
-
-    private static Int16 SY2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[14].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[14].sw.h = value;
-        }
-    }
-
-    private static UInt32 SXYP
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[15].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[15].d = value;
-        }
-    }
-
-    private static Int16 SXP
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[15].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[15].sw.l = value;
-        }
-    }
-
-    private static Int16 SYP
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[15].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[15].sw.h = value;
-        }
-    }
-
-    private static UInt16 SZ0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[16].w.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[16].w.l = value;
-        }
-    }
-
-    private static UInt16 SZ1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[17].w.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[17].w.l = value;
-        }
-    }
-
-    private static UInt16 SZ2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[18].w.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[18].w.l = value;
-        }
-    }
-
-    private static UInt16 SZ3
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[19].w.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[19].w.l = value;
-        }
-    }
-
-    private static UInt32 RGB0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[20].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[20].d = value;
-        }
-    }
-
-    private static Byte R0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[20].b.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[20].b.l = value;
-        }
-    }
-
-    private static Byte G0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[20].b.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[20].b.h = value;
-        }
-    }
-
-    private static Byte B0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[20].b.h2;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[20].b.h2 = value;
-        }
-    }
-
-    private static Byte CD0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[20].b.h3;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[20].b.h3 = value;
-        }
-    }
-
-    private static UInt32 RGB1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[21].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[21].d = value;
-        }
-    }
-
-    private static Byte R1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[21].b.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[21].b.l = value;
-        }
-    }
-
-    private static Byte G1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[21].b.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[21].b.h = value;
-        }
-    }
-
-    private static Byte B1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[21].b.h2;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[21].b.h2 = value;
-        }
-    }
-
-    private static Byte CD1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[21].b.h3;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[21].b.h3 = value;
-        }
-    }
-
-    private static UInt32 RGB2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[22].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[22].d = value;
-        }
-    }
-
-    private static Byte R2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[22].b.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[22].b.l = value;
-        }
-    }
-
-    private static Byte G2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[22].b.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[22].b.h = value;
-        }
-    }
-
-    private static Byte B2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[22].b.h2;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[22].b.h2 = value;
-        }
-    }
-
-    private static Byte CD2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[22].b.h3;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[22].b.h3 = value;
-        }
-    }
-
-    private static UInt32 RES1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[23].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[23].d = value;
-        }
-    }
-
-    private static Int32 MAC0
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[24].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[24].sd = value;
-        }
-    }
-
-    private static Int32 MAC1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[25].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[25].sd = value;
-        }
-    }
-
-    private static Int32 MAC2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[26].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[26].sd = value;
-        }
-    }
-
-    private static Int32 MAC3
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[27].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[27].sd = value;
-        }
-    }
-
-    private static UInt32 IRGB
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[28].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[28].d = value;
-        }
-    }
-
-    private static UInt32 ORGB
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[29].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[29].d = value;
-        }
-    }
-
-    private static UInt32 LZCS
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[30].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[30].d = value;
-        }
-    }
-
-    private static UInt32 LZCR
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2dr[31].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2dr[31].d = value;
-        }
-    }
-
-    private static Int16 R11
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[0].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[0].sw.l = value;
-        }
-    }
-
-    private static Int16 R12
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[0].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[0].sw.h = value;
-        }
-    }
-
-    private static Int16 R13
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[1].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[1].sw.l = value;
-        }
-    }
-
-    private static Int16 R21
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[1].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[1].sw.h = value;
-        }
-    }
-
-    private static Int16 R22
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[2].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[2].sw.l = value;
-        }
-    }
-
-    private static Int16 R23
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[2].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[2].sw.h = value;
-        }
-    }
-
-    private static Int16 R31
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[3].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[3].sw.l = value;
-        }
-    }
-
-    private static Int16 R32
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[3].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[3].sw.h = value;
-        }
-    }
-
-    private static Int16 R33
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[4].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[4].sw.l = value;
-        }
-    }
-
-    private static Int32 TRX
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[5].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[5].sd = value;
-        }
-    }
-
-    private static Int32 TRY
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[6].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[6].sd = value;
-        }
-    }
-
-    private static Int32 TRZ
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[7].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[7].sd = value;
-        }
-    }
-
-    private static Int16 L11
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[8].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[8].sw.l = value;
-        }
-    }
-
-    private static Int16 L12
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[8].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[8].sw.h = value;
-        }
-    }
-
-    private static Int16 L13
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[9].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[9].sw.l = value;
-        }
-    }
-
-    private static Int16 L21
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[9].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[9].sw.h = value;
-        }
-    }
-
-    private static Int16 L22
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[10].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[10].sw.l = value;
-        }
-    }
-
-    private static Int16 L23
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[10].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[10].sw.h = value;
-        }
-    }
-
-    private static Int16 L31
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[11].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[11].sw.l = value;
-        }
-    }
-
-    private static Int16 L32
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[11].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[11].sw.h = value;
-        }
-    }
-
-    private static Int16 L33
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[12].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[12].sw.l = value;
-        }
-    }
-
-    private static Int32 RBK
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[13].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[13].sd = value;
-        }
-    }
-
-    private static Int32 GBK
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[14].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[14].sd = value;
-        }
-    }
-
-    private static Int32 BBK
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[15].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[15].sd = value;
-        }
-    }
-
-    private static Int16 LR1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[16].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[16].sw.l = value;
-        }
-    }
-
-    private static Int16 LR2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[16].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[16].sw.h = value;
-        }
-    }
-
-    private static Int16 LR3
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[17].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[17].sw.l = value;
-        }
-    }
-
-    private static Int16 LG1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[17].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[17].sw.h = value;
-        }
-    }
-
-    private static Int16 LG2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[18].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[18].sw.l = value;
-        }
-    }
-
-    private static Int16 LG3
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[18].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[18].sw.h = value;
-        }
-    }
-
-    private static Int16 LB1
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[19].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[19].sw.l = value;
-        }
-    }
-
-    private static Int16 LB2
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[19].sw.h;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[19].sw.h = value;
-        }
-    }
-
-    private static Int16 LB3
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[20].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[20].sw.l = value;
-        }
-    }
-
-    private static Int32 RFC
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[21].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[21].sd = value;
-        }
-    }
-
-    private static Int32 GFC
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[22].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[22].sd = value;
-        }
-    }
-
-    private static Int32 BFC
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[23].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[23].sd = value;
-        }
-    }
-
-    private static Int32 OFX
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[24].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[24].sd = value;
-        }
-    }
-
-    private static Int32 OFY
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[25].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[25].sd = value;
-        }
-    }
-
-    private static Int16 H
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[26].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[26].sw.l = value;
-        }
-    }
-
-    private static Int16 DQA
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[27].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[27].sw.l = value;
-        }
-    }
-
-    private static Int32 DQB
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[28].sd;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[28].sd = value;
-        }
-    }
-
-    private static Int16 ZSF3
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[29].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[29].sw.l = value;
-        }
-    }
-
-    private static Int16 ZSF4
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[30].sw.l;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[30].sw.l = value;
-        }
-    }
-
-    private static UInt32 FLAG
-    {
-        get
-        {
-            return PSX_LIBGTE_EMU.m_cp2cr[31].d;
-        }
-        set
-        {
-            PSX_LIBGTE_EMU.m_cp2cr[31].d = value;
-        }
-    }
-
-    private static Int32 LIM(Int32 value, Int32 max, Int32 min, UInt32 flag)
-    {
-        if (value > max)
-        {
-            PSX_LIBGTE_EMU.FLAG |= flag;
-            return max;
-        }
-        if (value < min)
-        {
-            PSX_LIBGTE_EMU.FLAG |= flag;
-            return min;
-        }
-        return value;
-    }
-
-    public static UInt32 getcp2dr(Int32 reg)
-    {
-        switch (reg)
-        {
-            case 1:
-            case 3:
-            case 5:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-                PSX_LIBGTE_EMU.m_cp2dr[reg].d = (UInt32)PSX_LIBGTE_EMU.m_cp2dr[reg].sw.l;
-                break;
-            case 7:
-            case 16:
-            case 17:
-            case 18:
-            case 19:
-                PSX_LIBGTE_EMU.m_cp2dr[reg].d = (UInt32)PSX_LIBGTE_EMU.m_cp2dr[reg].w.l;
-                break;
-            case 15:
-                PSX_LIBGTE_EMU.m_cp2dr[reg].d = PSX_LIBGTE_EMU.SXY2;
-                break;
-            case 28:
-            case 29:
-                PSX_LIBGTE_EMU.m_cp2dr[reg].d = (UInt32)(PSX_LIBGTE_EMU.LIM(PSX_LIBGTE_EMU.IR1 >> 7, 31, 0, 0u) | PSX_LIBGTE_EMU.LIM(PSX_LIBGTE_EMU.IR2 >> 7, 31, 0, 0u) << 5 | PSX_LIBGTE_EMU.LIM(PSX_LIBGTE_EMU.IR3 >> 7, 31, 0, 0u) << 10);
-                break;
-        }
-        return PSX_LIBGTE_EMU.m_cp2dr[reg].d;
-    }
-
-    public static void setcp2dr(Int32 reg, UInt32 value)
-    {
-        switch (reg)
-        {
-            case 28:
-                PSX_LIBGTE_EMU.IR1 = (Int16)((value & 31u) << 7);
-                PSX_LIBGTE_EMU.IR2 = (Int16)((value & 992u) << 2);
-                PSX_LIBGTE_EMU.IR3 = (Int16)((value & 31744u) >> 3);
-                break;
-            case 29:
-            IL_1B:
-                if (reg == 15)
-                {
-                    PSX_LIBGTE_EMU.SXY0 = PSX_LIBGTE_EMU.SXY1;
-                    PSX_LIBGTE_EMU.SXY1 = PSX_LIBGTE_EMU.SXY2;
-                    PSX_LIBGTE_EMU.SXY2 = value;
-                }
-                break;
-            case 30:
-            {
-                UInt32 num = value;
-                UInt32 num2 = 0u;
-                if ((num & 2147483648u) == 0u)
-                {
-                    num = ~num;
-                }
-                while ((num & 2147483648u) != 0u)
-                {
-                    num2 += 1u;
-                    num <<= 1;
-                }
-                PSX_LIBGTE_EMU.LZCR = num2;
-                break;
-            }
-            case 31:
-                value = PSX_LIBGTE_EMU.m_cp2dr[reg].d;
-                break;
-            default:
-                goto IL_1B;
-        }
-        PSX_LIBGTE_EMU.m_cp2dr[reg].d = value;
-    }
-
-    public static UInt32 getcp2cr(Int32 reg)
-    {
-        return PSX_LIBGTE_EMU.m_cp2cr[reg].d;
-    }
-
-    public static void setcp2cr(Int32 reg, UInt32 value)
-    {
-        switch (reg)
-        {
-            case 20:
-            case 26:
-            case 27:
-            case 29:
-            case 30:
-                break;
-            case 21:
-            case 22:
-            case 23:
-            case 24:
-            case 25:
-            case 28:
-            IL_3B:
-                if (reg != 4 && reg != 12)
-                {
-                    goto IL_7C;
-                }
-                break;
-            case 31:
-                value &= 2147479552u;
-                if ((value & 2139611136u) != 0u)
-                {
-                    value |= 2147483648u;
-                }
-                goto IL_7C;
-            default:
-                goto IL_3B;
-        }
-        value = (UInt32)((Int16)value);
-    IL_7C:
-        PSX_LIBGTE_EMU.m_cp2cr[reg].d = value;
-    }
-
-    private static Int64 BOUNDS(Int64 n_value, Int64 n_max, Int32 n_maxflag, Int64 n_min, Int32 n_minflag)
-    {
-        if (n_value > n_max)
-        {
-            PSX_LIBGTE_EMU.FLAG |= (UInt32)n_maxflag;
-        }
-        else if (n_value < n_min)
-        {
-            PSX_LIBGTE_EMU.FLAG |= (UInt32)n_minflag;
-        }
-        return n_value;
-    }
-
-    private static UInt32 gte_divide(Int16 numerator, UInt16 denominator)
-    {
-        if (numerator >= 0 && numerator < (Int16)(denominator * 2))
-        {
-            UInt32 num = (UInt32)denominator;
-            Int32 num2 = 0;
-            while (num <= 32768u)
-            {
-                num <<= 1;
-                num2++;
-            }
-            UInt64 num3 = (UInt64)((UInt64)((Int64)(65536 | (Int32)PSX_LIBGTE_EMU.reciprocals[(Int32)((UIntPtr)(num & 32767u))])) << num2);
-            return (UInt32)(num3 * (UInt64)((Int64)numerator) + 32768UL >> 16);
-        }
-        return UInt32.MaxValue;
-    }
-
-    private static Int64 A1(Int64 a)
-    {
-        return PSX_LIBGTE_EMU.BOUNDS(a, 2147483647L, 1073741824, -2147483648L, -2013265920);
-    }
-
-    private static Int64 A2(Int64 a)
-    {
-        return PSX_LIBGTE_EMU.BOUNDS(a, 2147483647L, 536870912, -2147483648L, -2080374784);
-    }
-
-    private static Int64 A3(Int64 a)
-    {
-        return PSX_LIBGTE_EMU.BOUNDS(a, 2147483647L, 268435456, -2147483648L, -2113929216);
-    }
-
-    private static Int32 GetMin(Int32 l)
-    {
-        if (l == 0)
-        {
-            return 1;
-        }
-        return 0;
-    }
-
-    private static Int32 Lm_B1(Int32 a, Int32 l)
-    {
-        return PSX_LIBGTE_EMU.LIM(a, 32767, -32768 * PSX_LIBGTE_EMU.GetMin(l), 2164260864u);
-    }
-
-    private static Int32 Lm_B2(Int32 a, Int32 l)
-    {
-        return PSX_LIBGTE_EMU.LIM(a, 32767, -32768 * PSX_LIBGTE_EMU.GetMin(l), 2155872256u);
-    }
-
-    private static Int32 Lm_B3(Int32 a, Int32 l)
-    {
-        return PSX_LIBGTE_EMU.LIM(a, 32767, -32768 * PSX_LIBGTE_EMU.GetMin(l), 4194304u);
-    }
-
-    private static Int32 Lm_C1(Int32 a)
-    {
-        return PSX_LIBGTE_EMU.LIM(a, 255, 0, 2097152u);
-    }
-
-    private static Int32 Lm_C2(Int32 a)
-    {
-        return PSX_LIBGTE_EMU.LIM(a, 255, 0, 1048576u);
-    }
-
-    private static Int32 Lm_C3(Int32 a)
-    {
-        return PSX_LIBGTE_EMU.LIM(a, 255, 0, 524288u);
-    }
-
-    private static Int32 Lm_D(Int32 a)
-    {
-        return PSX_LIBGTE_EMU.LIM(a, 65535, 0, 2147745792u);
-    }
-
-    private static UInt32 Lm_E(UInt32 result)
-    {
-        if (result > 131071u)
-        {
-            PSX_LIBGTE_EMU.FLAG |= 2147614720u;
-            return 131071u;
-        }
-        return result;
-    }
-
-    private static Int64 F(Int64 a)
-    {
-        return PSX_LIBGTE_EMU.BOUNDS(a, 2147483647L, -2147418112, -2147483648L, -2147450880);
-    }
-
-    private static Int32 Lm_G1(Int32 a)
-    {
-        return PSX_LIBGTE_EMU.LIM(a, 1023, -1024, 2147500032u);
-    }
-
-    private static Int32 Lm_G2(Int32 a)
-    {
-        return PSX_LIBGTE_EMU.LIM(a, 1023, -1024, 2147491840u);
-    }
-
-    private static Int32 Lm_H(Int32 a)
-    {
-        return PSX_LIBGTE_EMU.LIM(a, 4095, 0, 4096u);
-    }
-
-    private static Int32 GTE_OP(Int32 op)
-    {
-        return op >> 20 & 31;
-    }
-
-    private static Int32 GTE_SF(Int32 op)
-    {
-        return op >> 19 & 1;
-    }
-
-    private static Int32 GTE_MX(Int32 op)
-    {
-        return op >> 17 & 3;
-    }
-
-    private static Int32 GTE_V(Int32 op)
-    {
-        return op >> 15 & 3;
-    }
-
-    private static Int32 GTE_CV(Int32 op)
-    {
-        return op >> 13 & 3;
-    }
-
-    private static Int32 GTE_CD(Int32 op)
-    {
-        return op >> 11 & 3;
-    }
-
-    private static Int32 GTE_LM(Int32 op)
-    {
-        return op >> 10 & 1;
-    }
-
-    private static Int32 GTE_CT(Int32 op)
-    {
-        return op >> 6 & 15;
-    }
-
-    private static Int32 GTE_FUNCT(Int32 op)
-    {
-        return op & 63;
-    }
-
-    public static Int32 docop2(Int32 gteop)
-    {
-        Int32 num = PSX_LIBGTE_EMU.GTE_FUNCT(gteop);
-        switch (num)
-        {
-            case 12:
-            {
-                PSX_LIBGTE_EMU.GTELOG(0, "%08x OP", gteop);
-                PSX_LIBGTE_EMU.FLAG = 0u;
-                Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
-                Int32 l = PSX_LIBGTE_EMU.GTE_LM(gteop);
-                PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)(PSX_LIBGTE_EMU.R22 * PSX_LIBGTE_EMU.IR3) - (Int64)(PSX_LIBGTE_EMU.R33 * PSX_LIBGTE_EMU.IR2) >> num2);
-                PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)(PSX_LIBGTE_EMU.R33 * PSX_LIBGTE_EMU.IR1) - (Int64)(PSX_LIBGTE_EMU.R11 * PSX_LIBGTE_EMU.IR3) >> num2);
-                PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)(PSX_LIBGTE_EMU.R11 * PSX_LIBGTE_EMU.IR2) - (Int64)(PSX_LIBGTE_EMU.R22 * PSX_LIBGTE_EMU.IR1) >> num2);
-                PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, l);
-                PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, l);
-                PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, l);
-                return 1;
-            }
-            case 13:
-            case 14:
-            case 15:
-            case 21:
-            case 23:
-            case 24:
-            case 25:
-            case 26:
-            case 29:
-            case 31:
-            IL_66:
-                switch (num)
-                {
-                    case 40:
-                    {
-                        PSX_LIBGTE_EMU.GTELOG(0, "%08x SQR", gteop);
-                        PSX_LIBGTE_EMU.FLAG = 0u;
-                        Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
-                        Int32 l = PSX_LIBGTE_EMU.GTE_LM(gteop);
-                        PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)(PSX_LIBGTE_EMU.IR1 * PSX_LIBGTE_EMU.IR1 >> num2));
-                        PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)(PSX_LIBGTE_EMU.IR2 * PSX_LIBGTE_EMU.IR2 >> num2));
-                        PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)(PSX_LIBGTE_EMU.IR3 * PSX_LIBGTE_EMU.IR3 >> num2));
-                        PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, l);
-                        PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, l);
-                        PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, l);
-                        return 1;
-                    }
-                    case 41:
-                        if (gteop == 6815785)
-                        {
-                            PSX_LIBGTE_EMU.GTELOG(0, "%08x DCPL", gteop);
-                            PSX_LIBGTE_EMU.FLAG = 0u;
-                            PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.R << 4) * (Int64)PSX_LIBGTE_EMU.IR1 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.RFC - ((Int16)PSX_LIBGTE_EMU.R * PSX_LIBGTE_EMU.IR1 >> 8), 0)) >> 12);
-                            PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.G << 4) * (Int64)PSX_LIBGTE_EMU.IR2 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.GFC - ((Int16)PSX_LIBGTE_EMU.G * PSX_LIBGTE_EMU.IR2 >> 8), 0)) >> 12);
-                            PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.B << 4) * (Int64)PSX_LIBGTE_EMU.IR3 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.BFC - ((Int16)PSX_LIBGTE_EMU.B * PSX_LIBGTE_EMU.IR3 >> 8), 0)) >> 12);
-                            PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                            PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                            PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                            PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
-                            PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
-                            PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                            PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
-                            PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
-                            PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                            PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
-                            PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
-                            PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                            PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
-                            PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
-                            PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                            return 1;
-                        }
-                        break;
-                    case 42:
-                        if (gteop == 16252970)
-                        {
-                            PSX_LIBGTE_EMU.GTELOG(0, "%08x DPCT", gteop);
-                            PSX_LIBGTE_EMU.FLAG = 0u;
-                            for (Int32 i = 0; i < 3; i++)
-                            {
-                                PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.R0 << 16) + (Int64)PSX_LIBGTE_EMU.IR0 * (Int64)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.RFC - ((Int32)PSX_LIBGTE_EMU.R0 << 4), 0) >> 12);
-                                PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.G0 << 16) + (Int64)PSX_LIBGTE_EMU.IR0 * (Int64)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.GFC - ((Int32)PSX_LIBGTE_EMU.G0 << 4), 0) >> 12);
-                                PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.B0 << 16) + (Int64)PSX_LIBGTE_EMU.IR0 * (Int64)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.BFC - ((Int32)PSX_LIBGTE_EMU.B0 << 4), 0) >> 12);
-                                PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 0);
-                                PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 0);
-                                PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 0);
-                                PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
-                                PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
-                                PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                                PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
-                                PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
-                                PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                                PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
-                                PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
-                                PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                                PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
-                                PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
-                                PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                            }
-                            return 1;
-                        }
-                        break;
-                    case 43:
-                    case 44:
-                    case 47:
-                    IL_94:
-                        switch (num)
-                        {
-                            case 61:
-                                if (PSX_LIBGTE_EMU.GTE_OP(gteop) == 9 || PSX_LIBGTE_EMU.GTE_OP(gteop) == 25)
-                                {
-                                    PSX_LIBGTE_EMU.GTELOG(0, "%08x GPF", gteop);
-                                    Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
-                                    PSX_LIBGTE_EMU.FLAG = 0u;
-                                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.IR0 * (Int64)PSX_LIBGTE_EMU.IR1 >> num2);
-                                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.IR0 * (Int64)PSX_LIBGTE_EMU.IR2 >> num2);
-                                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.IR0 * (Int64)PSX_LIBGTE_EMU.IR3 >> num2);
-                                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 0);
-                                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 0);
-                                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 0);
-                                    PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
-                                    PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
-                                    PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                                    PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
-                                    PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
-                                    PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                                    PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
-                                    PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
-                                    PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                                    PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
-                                    PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
-                                    PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                                    return 1;
-                                }
-                                break;
-                            case 62:
-                                if (PSX_LIBGTE_EMU.GTE_OP(gteop) == 26)
-                                {
-                                    PSX_LIBGTE_EMU.GTELOG(0, "%08x GPL", gteop);
-                                    Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
-                                    PSX_LIBGTE_EMU.FLAG = 0u;
-                                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.MAC1 << num2) + (Int64)(PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.IR1) >> num2);
-                                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.MAC2 << num2) + (Int64)(PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.IR2) >> num2);
-                                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.MAC3 << num2) + (Int64)(PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.IR3) >> num2);
-                                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 0);
-                                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 0);
-                                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 0);
-                                    PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
-                                    PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
-                                    PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                                    PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
-                                    PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
-                                    PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                                    PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
-                                    PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
-                                    PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                                    PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
-                                    PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
-                                    PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                                    return 1;
-                                }
-                                break;
-                            case 63:
-                                if (gteop == 17302591 || gteop == 18351167)
-                                {
-                                    PSX_LIBGTE_EMU.GTELOG(0, "%08x NCCT", gteop);
-                                    PSX_LIBGTE_EMU.FLAG = 0u;
-                                    for (Int32 i = 0; i < 3; i++)
-                                    {
-                                        PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.L11 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L12 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L13 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
-                                        PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.L21 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L22 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L23 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
-                                        PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.L31 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L32 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L33 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
-                                        PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                                        PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                                        PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                                        PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                                        PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                                        PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                                        PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                                        PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                                        PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                                        PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.R * (Int64)PSX_LIBGTE_EMU.IR1 >> 8);
-                                        PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.G * (Int64)PSX_LIBGTE_EMU.IR2 >> 8);
-                                        PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.B * (Int64)PSX_LIBGTE_EMU.IR3 >> 8);
-                                        PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                                        PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                                        PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                                        PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
-                                        PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
-                                        PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                                        PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
-                                        PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
-                                        PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                                        PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
-                                        PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
-                                        PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                                        PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
-                                        PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
-                                        PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                                    }
-                                    return 1;
-                                }
-                                break;
-                            default:
-                                if (num != 1)
-                                {
-                                    if (num == 6)
-                                    {
-                                        PSX_LIBGTE_EMU.GTELOG(0, "%08x NCLIP", gteop);
-                                        PSX_LIBGTE_EMU.FLAG = 0u;
-                                        PSX_LIBGTE_EMU.MAC0 = (Int32)PSX_LIBGTE_EMU.F((Int64)((Int32)((Int64)(PSX_LIBGTE_EMU.SX0 * PSX_LIBGTE_EMU.SY1) + (Int64)(PSX_LIBGTE_EMU.SX1 * PSX_LIBGTE_EMU.SY2) + (Int64)(PSX_LIBGTE_EMU.SX2 * PSX_LIBGTE_EMU.SY0) - (Int64)(PSX_LIBGTE_EMU.SX0 * PSX_LIBGTE_EMU.SY2) - (Int64)(PSX_LIBGTE_EMU.SX1 * PSX_LIBGTE_EMU.SY0) - (Int64)(PSX_LIBGTE_EMU.SX2 * PSX_LIBGTE_EMU.SY1))));
-                                        return 1;
-                                    }
-                                }
-                                else if (gteop == 1572865)
-                                {
-                                    PSX_LIBGTE_EMU.GTELOG(0, "%08x RTPS", gteop);
-                                    PSX_LIBGTE_EMU.FLAG = 0u;
-                                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.TRX << 12) + (Int64)(PSX_LIBGTE_EMU.R11 * PSX_LIBGTE_EMU.VX0) + (Int64)(PSX_LIBGTE_EMU.R12 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.R13 * PSX_LIBGTE_EMU.VZ0) >> 12);
-                                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.TRY << 12) + (Int64)(PSX_LIBGTE_EMU.R21 * PSX_LIBGTE_EMU.VX0) + (Int64)(PSX_LIBGTE_EMU.R22 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.R23 * PSX_LIBGTE_EMU.VZ0) >> 12);
-                                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.TRZ << 12) + (Int64)(PSX_LIBGTE_EMU.R31 * PSX_LIBGTE_EMU.VX0) + (Int64)(PSX_LIBGTE_EMU.R32 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.R33 * PSX_LIBGTE_EMU.VZ0) >> 12);
-                                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 0);
-                                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 0);
-                                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 0);
-                                    PSX_LIBGTE_EMU.SZ0 = PSX_LIBGTE_EMU.SZ1;
-                                    PSX_LIBGTE_EMU.SZ1 = PSX_LIBGTE_EMU.SZ2;
-                                    PSX_LIBGTE_EMU.SZ2 = PSX_LIBGTE_EMU.SZ3;
-                                    PSX_LIBGTE_EMU.SZ3 = (UInt16)PSX_LIBGTE_EMU.Lm_D(PSX_LIBGTE_EMU.MAC3);
-                                    Int64 num3 = (Int64)((UInt64)PSX_LIBGTE_EMU.Lm_E(PSX_LIBGTE_EMU.gte_divide(PSX_LIBGTE_EMU.H, PSX_LIBGTE_EMU.SZ3)));
-                                    PSX_LIBGTE_EMU.SXY0 = PSX_LIBGTE_EMU.SXY1;
-                                    PSX_LIBGTE_EMU.SXY1 = PSX_LIBGTE_EMU.SXY2;
-                                    PSX_LIBGTE_EMU.SX2 = (Int16)PSX_LIBGTE_EMU.Lm_G1((Int32)PSX_LIBGTE_EMU.F((Int64)((Int32)((Int64)PSX_LIBGTE_EMU.OFX + (Int64)PSX_LIBGTE_EMU.IR1 * num3) >> 16)));
-                                    PSX_LIBGTE_EMU.SY2 = (Int16)PSX_LIBGTE_EMU.Lm_G2((Int32)PSX_LIBGTE_EMU.F((Int64)((Int32)((Int64)PSX_LIBGTE_EMU.OFY + (Int64)PSX_LIBGTE_EMU.IR2 * num3) >> 16)));
-                                    PSX_LIBGTE_EMU.MAC0 = (Int32)PSX_LIBGTE_EMU.F((Int64)((Int32)((Int64)PSX_LIBGTE_EMU.DQB + (Int64)PSX_LIBGTE_EMU.DQA * num3)));
-                                    PSX_LIBGTE_EMU.IR0 = (Int16)PSX_LIBGTE_EMU.Lm_H(PSX_LIBGTE_EMU.MAC0 >> 12);
-                                    return 1;
-                                }
-                                break;
-                        }
-                        break;
-                    case 45:
-                    {
-                        PSX_LIBGTE_EMU.GTELOG(0, "%08x AVSZ3", gteop);
-                        PSX_LIBGTE_EMU.FLAG = 0u;
-                        Int64 num4 = PSX_LIBGTE_EMU.F((Int64)(PSX_LIBGTE_EMU.ZSF3 * (Int16)PSX_LIBGTE_EMU.SZ1) + (Int64)(PSX_LIBGTE_EMU.ZSF3 * (Int16)PSX_LIBGTE_EMU.SZ2) + (Int64)(PSX_LIBGTE_EMU.ZSF3 * (Int16)PSX_LIBGTE_EMU.SZ3));
-                        PSX_LIBGTE_EMU.OTZ = (UInt16)PSX_LIBGTE_EMU.Lm_D((Int32)(num4 >> 12));
-                        PSX_LIBGTE_EMU.MAC0 = (Int32)num4;
-                        return 1;
-                    }
-                    case 46:
-                    {
-                        PSX_LIBGTE_EMU.GTELOG(0, "%08x AVSZ4", gteop);
-                        PSX_LIBGTE_EMU.FLAG = 0u;
-                        Int64 num4 = PSX_LIBGTE_EMU.F((Int64)(PSX_LIBGTE_EMU.ZSF4 * (Int16)PSX_LIBGTE_EMU.SZ0) + (Int64)(PSX_LIBGTE_EMU.ZSF4 * (Int16)PSX_LIBGTE_EMU.SZ1) + (Int64)(PSX_LIBGTE_EMU.ZSF4 * (Int16)PSX_LIBGTE_EMU.SZ2) + (Int64)(PSX_LIBGTE_EMU.ZSF4 * (Int16)PSX_LIBGTE_EMU.SZ3));
-                        PSX_LIBGTE_EMU.OTZ = (UInt16)PSX_LIBGTE_EMU.Lm_D((Int32)(num4 >> 12));
-                        PSX_LIBGTE_EMU.MAC0 = (Int32)num4;
-                        return 1;
-                    }
-                    case 48:
-                        if (gteop == 2621488)
-                        {
-                            PSX_LIBGTE_EMU.GTELOG(0, "%08x RTPT", gteop);
-                            PSX_LIBGTE_EMU.FLAG = 0u;
-                            for (Int32 i = 0; i < 3; i++)
-                            {
-                                PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.TRX << 12) + (Int64)(PSX_LIBGTE_EMU.R11 * PSX_LIBGTE_EMU.VX(i)) + (Int64)(PSX_LIBGTE_EMU.R12 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.R13 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
-                                PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.TRY << 12) + (Int64)(PSX_LIBGTE_EMU.R21 * PSX_LIBGTE_EMU.VX(i)) + (Int64)(PSX_LIBGTE_EMU.R22 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.R23 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
-                                PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.TRZ << 12) + (Int64)(PSX_LIBGTE_EMU.R31 * PSX_LIBGTE_EMU.VX(i)) + (Int64)(PSX_LIBGTE_EMU.R32 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.R33 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
-                                PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 0);
-                                PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 0);
-                                PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 0);
-                                PSX_LIBGTE_EMU.SZ0 = PSX_LIBGTE_EMU.SZ1;
-                                PSX_LIBGTE_EMU.SZ1 = PSX_LIBGTE_EMU.SZ2;
-                                PSX_LIBGTE_EMU.SZ2 = PSX_LIBGTE_EMU.SZ3;
-                                PSX_LIBGTE_EMU.SZ3 = (UInt16)PSX_LIBGTE_EMU.Lm_D(PSX_LIBGTE_EMU.MAC3);
-                                Int64 num3 = (Int64)((UInt64)PSX_LIBGTE_EMU.Lm_E(PSX_LIBGTE_EMU.gte_divide(PSX_LIBGTE_EMU.H, PSX_LIBGTE_EMU.SZ3)));
-                                PSX_LIBGTE_EMU.SXY0 = PSX_LIBGTE_EMU.SXY1;
-                                PSX_LIBGTE_EMU.SXY1 = PSX_LIBGTE_EMU.SXY2;
-                                PSX_LIBGTE_EMU.SX2 = (Int16)PSX_LIBGTE_EMU.Lm_G1((Int32)PSX_LIBGTE_EMU.F((Int64)PSX_LIBGTE_EMU.OFX + (Int64)PSX_LIBGTE_EMU.IR1 * num3 >> 16));
-                                PSX_LIBGTE_EMU.SY2 = (Int16)PSX_LIBGTE_EMU.Lm_G2((Int32)PSX_LIBGTE_EMU.F((Int64)PSX_LIBGTE_EMU.OFY + (Int64)PSX_LIBGTE_EMU.IR2 * num3 >> 16));
-                                PSX_LIBGTE_EMU.MAC0 = (Int32)PSX_LIBGTE_EMU.F((Int64)PSX_LIBGTE_EMU.DQB + (Int64)PSX_LIBGTE_EMU.DQA * num3);
-                                PSX_LIBGTE_EMU.IR0 = (Int16)PSX_LIBGTE_EMU.Lm_H(PSX_LIBGTE_EMU.MAC0 >> 12);
-                            }
-                            return 1;
-                        }
-                        break;
-                    default:
-                        goto IL_94;
-                }
-                break;
-            case 16:
-            {
-                PSX_LIBGTE_EMU.GTELOG(0, "%08x DPCS", gteop);
-                PSX_LIBGTE_EMU.FLAG = 0u;
-                Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
-                Int32 l = PSX_LIBGTE_EMU.GTE_LM(gteop);
-                PSX_LIBGTE_EMU.MAC1 = ((Int32)PSX_LIBGTE_EMU.R << 16) + (Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B1((Int32)PSX_LIBGTE_EMU.A1((Int64)((Int64)((Int32)((Int64)PSX_LIBGTE_EMU.RFC - (Int64)((Int64)PSX_LIBGTE_EMU.R << 4))) << 12 - num2)), 0) >> num2;
-                PSX_LIBGTE_EMU.MAC2 = ((Int32)PSX_LIBGTE_EMU.G << 16) + (Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B2((Int32)PSX_LIBGTE_EMU.A2((Int64)((Int64)((Int32)((Int64)PSX_LIBGTE_EMU.GFC - (Int64)((Int64)PSX_LIBGTE_EMU.G << 4))) << 12 - num2)), 0) >> num2;
-                PSX_LIBGTE_EMU.MAC3 = ((Int32)PSX_LIBGTE_EMU.B << 16) + (Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B3((Int32)PSX_LIBGTE_EMU.A3((Int64)((Int64)((Int32)((Int64)PSX_LIBGTE_EMU.BFC - (Int64)((Int64)PSX_LIBGTE_EMU.B << 4))) << 12 - num2)), 0) >> num2;
-                PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, l);
-                PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, l);
-                PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, l);
-                PSX_LIBGTE_EMU.RGB0 = PSX_LIBGTE_EMU.RGB1;
-                PSX_LIBGTE_EMU.RGB1 = PSX_LIBGTE_EMU.RGB2;
-                PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                return 1;
-            }
-            case 17:
-            {
-                PSX_LIBGTE_EMU.GTELOG(0, "%08x INTPL", gteop);
-                PSX_LIBGTE_EMU.FLAG = 0u;
-                Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
-                Int32 l = PSX_LIBGTE_EMU.GTE_LM(gteop);
-                PSX_LIBGTE_EMU.MAC1 = ((Int32)PSX_LIBGTE_EMU.IR1 << 12) + (Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B1((Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.RFC - (Int64)PSX_LIBGTE_EMU.IR1) << 12 - num2, 0) >> num2;
-                PSX_LIBGTE_EMU.MAC2 = ((Int32)PSX_LIBGTE_EMU.IR2 << 12) + (Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B2((Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.GFC - (Int64)PSX_LIBGTE_EMU.IR2) << 12 - num2, 0) >> num2;
-                PSX_LIBGTE_EMU.MAC3 = ((Int32)PSX_LIBGTE_EMU.IR3 << 12) + (Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B3((Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.BFC - (Int64)PSX_LIBGTE_EMU.IR3) << 12 - num2, 0) >> num2;
-                PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, l);
-                PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, l);
-                PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, l);
-                PSX_LIBGTE_EMU.RGB0 = PSX_LIBGTE_EMU.RGB1;
-                PSX_LIBGTE_EMU.RGB1 = PSX_LIBGTE_EMU.RGB2;
-                PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                return 1;
-            }
-            case 18:
-                if (PSX_LIBGTE_EMU.GTE_OP(gteop) == 4)
-                {
-                    PSX_LIBGTE_EMU.GTELOG(0, "%08x MVMVA", gteop);
-                    Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
-                    Int32 n = PSX_LIBGTE_EMU.GTE_MX(gteop);
-                    Int32 i = PSX_LIBGTE_EMU.GTE_V(gteop);
-                    Int32 n2 = PSX_LIBGTE_EMU.GTE_CV(gteop);
-                    Int32 l = PSX_LIBGTE_EMU.GTE_LM(gteop);
-                    PSX_LIBGTE_EMU.FLAG = 0u;
-                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.CV1(n2) << 12) + (Int64)(PSX_LIBGTE_EMU.MX11(n) * PSX_LIBGTE_EMU.VX(i)) + (Int64)(PSX_LIBGTE_EMU.MX12(n) * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.MX13(n) * PSX_LIBGTE_EMU.VZ(i)) >> num2);
-                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.CV2(n2) << 12) + (Int64)(PSX_LIBGTE_EMU.MX21(n) * PSX_LIBGTE_EMU.VX(i)) + (Int64)(PSX_LIBGTE_EMU.MX22(n) * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.MX23(n) * PSX_LIBGTE_EMU.VZ(i)) >> num2);
-                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.CV3(n2) << 12) + (Int64)(PSX_LIBGTE_EMU.MX31(n) * PSX_LIBGTE_EMU.VX(i)) + (Int64)(PSX_LIBGTE_EMU.MX32(n) * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.MX33(n) * PSX_LIBGTE_EMU.VZ(i)) >> num2);
-                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, l);
-                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, l);
-                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, l);
-                    return 1;
-                }
-                break;
-            case 19:
-                if (gteop == 15205395)
-                {
-                    PSX_LIBGTE_EMU.GTELOG(0, "%08x NCDS", gteop);
-                    PSX_LIBGTE_EMU.FLAG = 0u;
-                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.L11 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L12 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L13 * PSX_LIBGTE_EMU.VZ0) >> 12);
-                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.L21 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L22 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L23 * PSX_LIBGTE_EMU.VZ0) >> 12);
-                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.L31 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L32 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L33 * PSX_LIBGTE_EMU.VZ0) >> 12);
-                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.R << 4) * (Int64)PSX_LIBGTE_EMU.IR1 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.RFC - ((Int16)PSX_LIBGTE_EMU.R * PSX_LIBGTE_EMU.IR1 >> 8), 0)) >> 12);
-                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.G << 4) * (Int64)PSX_LIBGTE_EMU.IR2 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.GFC - ((Int16)PSX_LIBGTE_EMU.G * PSX_LIBGTE_EMU.IR2 >> 8), 0)) >> 12);
-                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.B << 4) * (Int64)PSX_LIBGTE_EMU.IR3 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.BFC - ((Int16)PSX_LIBGTE_EMU.B * PSX_LIBGTE_EMU.IR3 >> 8), 0)) >> 12);
-                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                    PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
-                    PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
-                    PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                    PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
-                    PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
-                    PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                    PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
-                    PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
-                    PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                    PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
-                    PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
-                    PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                    return 1;
-                }
-                break;
-            case 20:
-                if (gteop == 19399700)
-                {
-                    PSX_LIBGTE_EMU.GTELOG(0, "%08x CDP", gteop);
-                    PSX_LIBGTE_EMU.FLAG = 0u;
-                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.R << 4) * (Int64)PSX_LIBGTE_EMU.IR1 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.RFC - ((Int16)PSX_LIBGTE_EMU.R * PSX_LIBGTE_EMU.IR1 >> 8), 0)) >> 12);
-                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.G << 4) * (Int64)PSX_LIBGTE_EMU.IR2 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.GFC - ((Int16)PSX_LIBGTE_EMU.G * PSX_LIBGTE_EMU.IR2 >> 8), 0)) >> 12);
-                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.B << 4) * (Int64)PSX_LIBGTE_EMU.IR3 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.BFC - ((Int16)PSX_LIBGTE_EMU.B * PSX_LIBGTE_EMU.IR3 >> 8), 0)) >> 12);
-                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                    PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
-                    PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
-                    PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                    PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
-                    PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
-                    PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                    PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
-                    PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
-                    PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                    PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
-                    PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
-                    PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                    return 1;
-                }
-                break;
-            case 22:
-                if (gteop == 16253974)
-                {
-                    PSX_LIBGTE_EMU.GTELOG(0, "%08x NCDT", gteop);
-                    PSX_LIBGTE_EMU.FLAG = 0u;
-                    for (Int32 i = 0; i < 3; i++)
-                    {
-                        PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.L11 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L12 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L13 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
-                        PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.L21 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L22 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L23 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
-                        PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.L31 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L32 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L33 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
-                        PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                        PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                        PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                        PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                        PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                        PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                        PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                        PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                        PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                        PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.R << 4) * (Int64)PSX_LIBGTE_EMU.IR1 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.RFC - ((Int16)PSX_LIBGTE_EMU.R * PSX_LIBGTE_EMU.IR1 >> 8), 0)) >> 12);
-                        PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.G << 4) * (Int64)PSX_LIBGTE_EMU.IR2 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.GFC - ((Int16)PSX_LIBGTE_EMU.G * PSX_LIBGTE_EMU.IR2 >> 8), 0)) >> 12);
-                        PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.B << 4) * (Int64)PSX_LIBGTE_EMU.IR3 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.BFC - ((Int16)PSX_LIBGTE_EMU.B * PSX_LIBGTE_EMU.IR3 >> 8), 0)) >> 12);
-                        PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                        PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                        PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                        PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
-                        PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
-                        PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                        PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
-                        PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
-                        PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                        PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
-                        PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
-                        PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                        PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
-                        PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
-                        PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                    }
-                    return 1;
-                }
-                break;
-            case 27:
-                if (gteop == 17302555 || gteop == 18351131)
-                {
-                    PSX_LIBGTE_EMU.GTELOG(0, "%08x NCCS", gteop);
-                    PSX_LIBGTE_EMU.FLAG = 0u;
-                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.L11 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L12 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L13 * PSX_LIBGTE_EMU.VZ0) >> 12);
-                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.L21 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L22 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L23 * PSX_LIBGTE_EMU.VZ0) >> 12);
-                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.L31 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L32 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L33 * PSX_LIBGTE_EMU.VZ0) >> 12);
-                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.R * (Int64)PSX_LIBGTE_EMU.IR1 >> 8);
-                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.G * (Int64)PSX_LIBGTE_EMU.IR2 >> 8);
-                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.B * (Int64)PSX_LIBGTE_EMU.IR3 >> 8);
-                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                    PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
-                    PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
-                    PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                    PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
-                    PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
-                    PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                    PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
-                    PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
-                    PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                    PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
-                    PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
-                    PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                    return 1;
-                }
-                break;
-            case 28:
-                if (gteop == 20448284)
-                {
-                    PSX_LIBGTE_EMU.GTELOG(0, "%08x CC", gteop);
-                    PSX_LIBGTE_EMU.FLAG = 0u;
-                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.R * (Int64)PSX_LIBGTE_EMU.IR1 >> 8);
-                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.G * (Int64)PSX_LIBGTE_EMU.IR2 >> 8);
-                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.B * (Int64)PSX_LIBGTE_EMU.IR3 >> 8);
-                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                    PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
-                    PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
-                    PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                    PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
-                    PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
-                    PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                    PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
-                    PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
-                    PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                    PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
-                    PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
-                    PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                    return 1;
-                }
-                break;
-            case 30:
-                if (gteop == 13108254)
-                {
-                    PSX_LIBGTE_EMU.GTELOG(0, "%08x NCS", gteop);
-                    PSX_LIBGTE_EMU.FLAG = 0u;
-                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.L11 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L12 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L13 * PSX_LIBGTE_EMU.VZ0) >> 12);
-                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.L21 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L22 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L23 * PSX_LIBGTE_EMU.VZ0) >> 12);
-                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.L31 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L32 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L33 * PSX_LIBGTE_EMU.VZ0) >> 12);
-                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                    PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                    PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                    PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                    PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                    PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
-                    PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
-                    PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                    PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
-                    PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
-                    PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                    PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
-                    PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
-                    PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                    PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
-                    PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
-                    PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                    return 1;
-                }
-                break;
-            case 32:
-                if (gteop == 14156832)
-                {
-                    PSX_LIBGTE_EMU.GTELOG(0, "%08x NCT", gteop);
-                    PSX_LIBGTE_EMU.FLAG = 0u;
-                    for (Int32 i = 0; i < 3; i++)
-                    {
-                        PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.L11 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L12 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L13 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
-                        PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.L21 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L22 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L23 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
-                        PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.L31 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L32 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L33 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
-                        PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                        PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                        PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                        PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                        PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                        PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
-                        PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
-                        PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
-                        PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
-                        PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
-                        PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
-                        PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
-                        PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
-                        PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
-                        PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
-                        PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
-                        PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
-                        PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
-                        PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
-                        PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
-                        PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
-                    }
-                    return 1;
-                }
-                break;
-            default:
-                goto IL_66;
-        }
-        return 0;
-    }
-
-    private static readonly PSX_LIBGTE_EMU.PAIR[] m_cp2cr = new PSX_LIBGTE_EMU.PAIR[32];
-
-    private static readonly PSX_LIBGTE_EMU.PAIR[] m_cp2dr = new PSX_LIBGTE_EMU.PAIR[32];
+	public static UInt32 mfc2(Int32 reg)
+	{
+		return PSX_LIBGTE_EMU.getcp2dr(reg);
+	}
+
+	public static void mtc2(Int32 reg, UInt32 value)
+	{
+		PSX_LIBGTE_EMU.setcp2dr(reg, value);
+	}
+
+	public static void ctc2(Int32 reg, UInt32 value)
+	{
+		PSX_LIBGTE_EMU.setcp2cr(reg, value);
+	}
+
+	public static UInt32 cfc2(Int32 reg)
+	{
+		return PSX_LIBGTE_EMU.getcp2cr(reg);
+	}
+
+	public static void lwc2(Int32 reg, UInt32 value)
+	{
+		PSX_LIBGTE_EMU.setcp2dr(reg, value);
+	}
+
+	public static UInt32 swc2(Int32 reg)
+	{
+		return PSX_LIBGTE_EMU.getcp2dr(reg);
+	}
+
+	private static void GTELOG(Int32 debugLevel, String s, Int32 gteop)
+	{
+	}
+
+	private static Int16 VX(Int32 n)
+	{
+		return (Int16)((n >= 3) ? PSX_LIBGTE_EMU.m_cp2dr[9].sw.l : PSX_LIBGTE_EMU.m_cp2dr[n << 1].sw.l);
+	}
+
+	private static Int16 VY(Int32 n)
+	{
+		return (Int16)((n >= 3) ? PSX_LIBGTE_EMU.m_cp2dr[10].sw.l : PSX_LIBGTE_EMU.m_cp2dr[n << 1].sw.h);
+	}
+
+	private static Int16 VZ(Int32 n)
+	{
+		return (Int16)((n >= 3) ? PSX_LIBGTE_EMU.m_cp2dr[11].sw.l : PSX_LIBGTE_EMU.m_cp2dr[(n << 1) + 1].sw.l);
+	}
+
+	private static Int16 MX11(Int32 n)
+	{
+		return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[n << 3].sw.l);
+	}
+
+	private static Int16 MX12(Int32 n)
+	{
+		return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[n << 3].sw.h);
+	}
+
+	private static Int16 MX13(Int32 n)
+	{
+		return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 1].sw.l);
+	}
+
+	private static Int16 MX21(Int32 n)
+	{
+		return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 1].sw.h);
+	}
+
+	private static Int16 MX22(Int32 n)
+	{
+		return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 2].sw.l);
+	}
+
+	private static Int16 MX23(Int32 n)
+	{
+		return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 2].sw.h);
+	}
+
+	private static Int16 MX31(Int32 n)
+	{
+		return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 3].sw.l);
+	}
+
+	private static Int16 MX32(Int32 n)
+	{
+		return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 3].sw.h);
+	}
+
+	private static Int16 MX33(Int32 n)
+	{
+		return (Int16)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 4].sw.l);
+	}
+
+	private static Int32 CV1(Int32 n)
+	{
+		return (Int32)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 5].sd);
+	}
+
+	private static Int32 CV2(Int32 n)
+	{
+		return (Int32)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 6].sd);
+	}
+
+	private static Int32 CV3(Int32 n)
+	{
+		return (Int32)((n >= 3) ? 0 : PSX_LIBGTE_EMU.m_cp2cr[(n << 3) + 7].sd);
+	}
+
+	private static UInt32 VXY0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[0].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[0].d = value;
+		}
+	}
+
+	private static Int16 VX0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[0].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[0].sw.l = value;
+		}
+	}
+
+	private static Int16 VY0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[0].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[0].sw.h = value;
+		}
+	}
+
+	private static Int16 VZ0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[1].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[1].sw.l = value;
+		}
+	}
+
+	private static UInt32 VXY1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[2].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[2].d = value;
+		}
+	}
+
+	private static UInt16 VX1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[2].w.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[2].w.l = value;
+		}
+	}
+
+	private static UInt16 VY1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[2].w.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[2].w.h = value;
+		}
+	}
+
+	private static UInt16 VZ1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[3].w.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[3].w.l = value;
+		}
+	}
+
+	private static UInt32 VXY2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[4].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[4].d = value;
+		}
+	}
+
+	private static UInt16 VX2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[4].w.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[4].w.l = value;
+		}
+	}
+
+	private static UInt16 VY2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[4].w.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[4].w.h = value;
+		}
+	}
+
+	private static UInt16 VZ2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[5].w.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[5].w.l = value;
+		}
+	}
+
+	private static UInt32 RGB
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[6].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[6].d = value;
+		}
+	}
+
+	private static Byte R
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[6].b.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[6].b.l = value;
+		}
+	}
+
+	private static Byte G
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[6].b.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[6].b.h = value;
+		}
+	}
+
+	private static Byte B
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[6].b.h2;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[6].b.h2 = value;
+		}
+	}
+
+	private static Byte CODE
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[6].b.h3;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[6].b.h3 = value;
+		}
+	}
+
+	private static UInt16 OTZ
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[7].w.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[7].w.l = value;
+		}
+	}
+
+	private static Int16 IR0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[8].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[8].sw.l = value;
+		}
+	}
+
+	private static Int16 IR1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[9].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[9].sw.l = value;
+		}
+	}
+
+	private static Int16 IR2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[10].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[10].sw.l = value;
+		}
+	}
+
+	private static Int16 IR3
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[11].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[11].sw.l = value;
+		}
+	}
+
+	private static UInt32 SXY0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[12].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[12].d = value;
+		}
+	}
+
+	private static Int16 SX0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[12].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[12].sw.l = value;
+		}
+	}
+
+	private static Int16 SY0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[12].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[12].sw.h = value;
+		}
+	}
+
+	private static UInt32 SXY1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[13].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[13].d = value;
+		}
+	}
+
+	private static Int16 SX1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[13].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[13].sw.l = value;
+		}
+	}
+
+	private static Int16 SY1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[13].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[13].sw.h = value;
+		}
+	}
+
+	private static UInt32 SXY2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[14].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[14].d = value;
+		}
+	}
+
+	private static Int16 SX2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[14].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[14].sw.l = value;
+		}
+	}
+
+	private static Int16 SY2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[14].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[14].sw.h = value;
+		}
+	}
+
+	private static UInt32 SXYP
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[15].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[15].d = value;
+		}
+	}
+
+	private static Int16 SXP
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[15].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[15].sw.l = value;
+		}
+	}
+
+	private static Int16 SYP
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[15].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[15].sw.h = value;
+		}
+	}
+
+	private static UInt16 SZ0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[16].w.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[16].w.l = value;
+		}
+	}
+
+	private static UInt16 SZ1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[17].w.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[17].w.l = value;
+		}
+	}
+
+	private static UInt16 SZ2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[18].w.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[18].w.l = value;
+		}
+	}
+
+	private static UInt16 SZ3
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[19].w.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[19].w.l = value;
+		}
+	}
+
+	private static UInt32 RGB0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[20].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[20].d = value;
+		}
+	}
+
+	private static Byte R0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[20].b.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[20].b.l = value;
+		}
+	}
+
+	private static Byte G0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[20].b.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[20].b.h = value;
+		}
+	}
+
+	private static Byte B0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[20].b.h2;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[20].b.h2 = value;
+		}
+	}
+
+	private static Byte CD0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[20].b.h3;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[20].b.h3 = value;
+		}
+	}
+
+	private static UInt32 RGB1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[21].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[21].d = value;
+		}
+	}
+
+	private static Byte R1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[21].b.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[21].b.l = value;
+		}
+	}
+
+	private static Byte G1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[21].b.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[21].b.h = value;
+		}
+	}
+
+	private static Byte B1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[21].b.h2;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[21].b.h2 = value;
+		}
+	}
+
+	private static Byte CD1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[21].b.h3;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[21].b.h3 = value;
+		}
+	}
+
+	private static UInt32 RGB2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[22].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[22].d = value;
+		}
+	}
+
+	private static Byte R2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[22].b.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[22].b.l = value;
+		}
+	}
+
+	private static Byte G2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[22].b.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[22].b.h = value;
+		}
+	}
+
+	private static Byte B2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[22].b.h2;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[22].b.h2 = value;
+		}
+	}
+
+	private static Byte CD2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[22].b.h3;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[22].b.h3 = value;
+		}
+	}
+
+	private static UInt32 RES1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[23].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[23].d = value;
+		}
+	}
+
+	private static Int32 MAC0
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[24].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[24].sd = value;
+		}
+	}
+
+	private static Int32 MAC1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[25].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[25].sd = value;
+		}
+	}
+
+	private static Int32 MAC2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[26].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[26].sd = value;
+		}
+	}
+
+	private static Int32 MAC3
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[27].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[27].sd = value;
+		}
+	}
+
+	private static UInt32 IRGB
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[28].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[28].d = value;
+		}
+	}
+
+	private static UInt32 ORGB
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[29].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[29].d = value;
+		}
+	}
+
+	private static UInt32 LZCS
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[30].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[30].d = value;
+		}
+	}
+
+	private static UInt32 LZCR
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2dr[31].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2dr[31].d = value;
+		}
+	}
+
+	private static Int16 R11
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[0].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[0].sw.l = value;
+		}
+	}
+
+	private static Int16 R12
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[0].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[0].sw.h = value;
+		}
+	}
+
+	private static Int16 R13
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[1].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[1].sw.l = value;
+		}
+	}
+
+	private static Int16 R21
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[1].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[1].sw.h = value;
+		}
+	}
+
+	private static Int16 R22
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[2].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[2].sw.l = value;
+		}
+	}
+
+	private static Int16 R23
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[2].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[2].sw.h = value;
+		}
+	}
+
+	private static Int16 R31
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[3].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[3].sw.l = value;
+		}
+	}
+
+	private static Int16 R32
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[3].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[3].sw.h = value;
+		}
+	}
+
+	private static Int16 R33
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[4].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[4].sw.l = value;
+		}
+	}
+
+	private static Int32 TRX
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[5].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[5].sd = value;
+		}
+	}
+
+	private static Int32 TRY
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[6].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[6].sd = value;
+		}
+	}
+
+	private static Int32 TRZ
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[7].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[7].sd = value;
+		}
+	}
+
+	private static Int16 L11
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[8].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[8].sw.l = value;
+		}
+	}
+
+	private static Int16 L12
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[8].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[8].sw.h = value;
+		}
+	}
+
+	private static Int16 L13
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[9].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[9].sw.l = value;
+		}
+	}
+
+	private static Int16 L21
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[9].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[9].sw.h = value;
+		}
+	}
+
+	private static Int16 L22
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[10].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[10].sw.l = value;
+		}
+	}
+
+	private static Int16 L23
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[10].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[10].sw.h = value;
+		}
+	}
+
+	private static Int16 L31
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[11].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[11].sw.l = value;
+		}
+	}
+
+	private static Int16 L32
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[11].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[11].sw.h = value;
+		}
+	}
+
+	private static Int16 L33
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[12].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[12].sw.l = value;
+		}
+	}
+
+	private static Int32 RBK
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[13].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[13].sd = value;
+		}
+	}
+
+	private static Int32 GBK
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[14].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[14].sd = value;
+		}
+	}
+
+	private static Int32 BBK
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[15].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[15].sd = value;
+		}
+	}
+
+	private static Int16 LR1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[16].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[16].sw.l = value;
+		}
+	}
+
+	private static Int16 LR2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[16].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[16].sw.h = value;
+		}
+	}
+
+	private static Int16 LR3
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[17].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[17].sw.l = value;
+		}
+	}
+
+	private static Int16 LG1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[17].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[17].sw.h = value;
+		}
+	}
+
+	private static Int16 LG2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[18].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[18].sw.l = value;
+		}
+	}
+
+	private static Int16 LG3
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[18].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[18].sw.h = value;
+		}
+	}
+
+	private static Int16 LB1
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[19].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[19].sw.l = value;
+		}
+	}
+
+	private static Int16 LB2
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[19].sw.h;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[19].sw.h = value;
+		}
+	}
+
+	private static Int16 LB3
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[20].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[20].sw.l = value;
+		}
+	}
+
+	private static Int32 RFC
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[21].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[21].sd = value;
+		}
+	}
+
+	private static Int32 GFC
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[22].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[22].sd = value;
+		}
+	}
+
+	private static Int32 BFC
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[23].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[23].sd = value;
+		}
+	}
+
+	private static Int32 OFX
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[24].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[24].sd = value;
+		}
+	}
+
+	private static Int32 OFY
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[25].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[25].sd = value;
+		}
+	}
+
+	private static Int16 H
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[26].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[26].sw.l = value;
+		}
+	}
+
+	private static Int16 DQA
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[27].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[27].sw.l = value;
+		}
+	}
+
+	private static Int32 DQB
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[28].sd;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[28].sd = value;
+		}
+	}
+
+	private static Int16 ZSF3
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[29].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[29].sw.l = value;
+		}
+	}
+
+	private static Int16 ZSF4
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[30].sw.l;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[30].sw.l = value;
+		}
+	}
+
+	private static UInt32 FLAG
+	{
+		get
+		{
+			return PSX_LIBGTE_EMU.m_cp2cr[31].d;
+		}
+		set
+		{
+			PSX_LIBGTE_EMU.m_cp2cr[31].d = value;
+		}
+	}
+
+	private static Int32 LIM(Int32 value, Int32 max, Int32 min, UInt32 flag)
+	{
+		if (value > max)
+		{
+			PSX_LIBGTE_EMU.FLAG |= flag;
+			return max;
+		}
+		if (value < min)
+		{
+			PSX_LIBGTE_EMU.FLAG |= flag;
+			return min;
+		}
+		return value;
+	}
+
+	public static UInt32 getcp2dr(Int32 reg)
+	{
+		switch (reg)
+		{
+		case 1:
+		case 3:
+		case 5:
+		case 8:
+		case 9:
+		case 10:
+		case 11:
+			PSX_LIBGTE_EMU.m_cp2dr[reg].d = (UInt32)PSX_LIBGTE_EMU.m_cp2dr[reg].sw.l;
+			break;
+		case 7:
+		case 16:
+		case 17:
+		case 18:
+		case 19:
+			PSX_LIBGTE_EMU.m_cp2dr[reg].d = (UInt32)PSX_LIBGTE_EMU.m_cp2dr[reg].w.l;
+			break;
+		case 15:
+			PSX_LIBGTE_EMU.m_cp2dr[reg].d = PSX_LIBGTE_EMU.SXY2;
+			break;
+		case 28:
+		case 29:
+			PSX_LIBGTE_EMU.m_cp2dr[reg].d = (UInt32)(PSX_LIBGTE_EMU.LIM(PSX_LIBGTE_EMU.IR1 >> 7, 31, 0, 0u) | PSX_LIBGTE_EMU.LIM(PSX_LIBGTE_EMU.IR2 >> 7, 31, 0, 0u) << 5 | PSX_LIBGTE_EMU.LIM(PSX_LIBGTE_EMU.IR3 >> 7, 31, 0, 0u) << 10);
+			break;
+		}
+		return PSX_LIBGTE_EMU.m_cp2dr[reg].d;
+	}
+
+	public static void setcp2dr(Int32 reg, UInt32 value)
+	{
+		switch (reg)
+		{
+		case 28:
+			PSX_LIBGTE_EMU.IR1 = (Int16)((value & 31u) << 7);
+			PSX_LIBGTE_EMU.IR2 = (Int16)((value & 992u) << 2);
+			PSX_LIBGTE_EMU.IR3 = (Int16)((value & 31744u) >> 3);
+			break;
+		case 29:
+			IL_1B:
+			if (reg == 15)
+			{
+				PSX_LIBGTE_EMU.SXY0 = PSX_LIBGTE_EMU.SXY1;
+				PSX_LIBGTE_EMU.SXY1 = PSX_LIBGTE_EMU.SXY2;
+				PSX_LIBGTE_EMU.SXY2 = value;
+			}
+			break;
+		case 30:
+		{
+			UInt32 num = value;
+			UInt32 num2 = 0u;
+			if ((num & 2147483648u) == 0u)
+			{
+				num = ~num;
+			}
+			while ((num & 2147483648u) != 0u)
+			{
+				num2 += 1u;
+				num <<= 1;
+			}
+			PSX_LIBGTE_EMU.LZCR = num2;
+			break;
+		}
+		case 31:
+			value = PSX_LIBGTE_EMU.m_cp2dr[reg].d;
+			break;
+		default:
+			goto IL_1B;
+		}
+		PSX_LIBGTE_EMU.m_cp2dr[reg].d = value;
+	}
+
+	public static UInt32 getcp2cr(Int32 reg)
+	{
+		return PSX_LIBGTE_EMU.m_cp2cr[reg].d;
+	}
+
+	public static void setcp2cr(Int32 reg, UInt32 value)
+	{
+		switch (reg)
+		{
+		case 20:
+		case 26:
+		case 27:
+		case 29:
+		case 30:
+			break;
+		case 21:
+		case 22:
+		case 23:
+		case 24:
+		case 25:
+		case 28:
+			IL_3B:
+			if (reg != 4 && reg != 12)
+			{
+				goto IL_7C;
+			}
+			break;
+		case 31:
+			value &= 2147479552u;
+			if ((value & 2139611136u) != 0u)
+			{
+				value |= 2147483648u;
+			}
+			goto IL_7C;
+		default:
+			goto IL_3B;
+		}
+		value = (UInt32)((Int16)value);
+		IL_7C:
+		PSX_LIBGTE_EMU.m_cp2cr[reg].d = value;
+	}
+
+	private static Int64 BOUNDS(Int64 n_value, Int64 n_max, Int32 n_maxflag, Int64 n_min, Int32 n_minflag)
+	{
+		if (n_value > n_max)
+		{
+			PSX_LIBGTE_EMU.FLAG |= (UInt32)n_maxflag;
+		}
+		else if (n_value < n_min)
+		{
+			PSX_LIBGTE_EMU.FLAG |= (UInt32)n_minflag;
+		}
+		return n_value;
+	}
+
+	private static UInt32 gte_divide(Int16 numerator, UInt16 denominator)
+	{
+		if (numerator >= 0 && numerator < (Int16)(denominator * 2))
+		{
+			UInt32 num = (UInt32)denominator;
+			Int32 num2 = 0;
+			while (num <= 32768u)
+			{
+				num <<= 1;
+				num2++;
+			}
+			UInt64 num3 = (UInt64)((UInt64)((Int64)(65536 | (Int32)PSX_LIBGTE_EMU.reciprocals[(Int32)((UIntPtr)(num & 32767u))])) << num2);
+			return (UInt32)(num3 * (UInt64)((Int64)numerator) + 32768UL >> 16);
+		}
+		return UInt32.MaxValue;
+	}
+
+	private static Int64 A1(Int64 a)
+	{
+		return PSX_LIBGTE_EMU.BOUNDS(a, 2147483647L, 1073741824, -2147483648L, -2013265920);
+	}
+
+	private static Int64 A2(Int64 a)
+	{
+		return PSX_LIBGTE_EMU.BOUNDS(a, 2147483647L, 536870912, -2147483648L, -2080374784);
+	}
+
+	private static Int64 A3(Int64 a)
+	{
+		return PSX_LIBGTE_EMU.BOUNDS(a, 2147483647L, 268435456, -2147483648L, -2113929216);
+	}
+
+	private static Int32 GetMin(Int32 l)
+	{
+		if (l == 0)
+		{
+			return 1;
+		}
+		return 0;
+	}
+
+	private static Int32 Lm_B1(Int32 a, Int32 l)
+	{
+		return PSX_LIBGTE_EMU.LIM(a, 32767, -32768 * PSX_LIBGTE_EMU.GetMin(l), 2164260864u);
+	}
+
+	private static Int32 Lm_B2(Int32 a, Int32 l)
+	{
+		return PSX_LIBGTE_EMU.LIM(a, 32767, -32768 * PSX_LIBGTE_EMU.GetMin(l), 2155872256u);
+	}
+
+	private static Int32 Lm_B3(Int32 a, Int32 l)
+	{
+		return PSX_LIBGTE_EMU.LIM(a, 32767, -32768 * PSX_LIBGTE_EMU.GetMin(l), 4194304u);
+	}
+
+	private static Int32 Lm_C1(Int32 a)
+	{
+		return PSX_LIBGTE_EMU.LIM(a, 255, 0, 2097152u);
+	}
+
+	private static Int32 Lm_C2(Int32 a)
+	{
+		return PSX_LIBGTE_EMU.LIM(a, 255, 0, 1048576u);
+	}
+
+	private static Int32 Lm_C3(Int32 a)
+	{
+		return PSX_LIBGTE_EMU.LIM(a, 255, 0, 524288u);
+	}
+
+	private static Int32 Lm_D(Int32 a)
+	{
+		return PSX_LIBGTE_EMU.LIM(a, 65535, 0, 2147745792u);
+	}
+
+	private static UInt32 Lm_E(UInt32 result)
+	{
+		if (result > 131071u)
+		{
+			PSX_LIBGTE_EMU.FLAG |= 2147614720u;
+			return 131071u;
+		}
+		return result;
+	}
+
+	private static Int64 F(Int64 a)
+	{
+		return PSX_LIBGTE_EMU.BOUNDS(a, 2147483647L, -2147418112, -2147483648L, -2147450880);
+	}
+
+	private static Int32 Lm_G1(Int32 a)
+	{
+		return PSX_LIBGTE_EMU.LIM(a, 1023, -1024, 2147500032u);
+	}
+
+	private static Int32 Lm_G2(Int32 a)
+	{
+		return PSX_LIBGTE_EMU.LIM(a, 1023, -1024, 2147491840u);
+	}
+
+	private static Int32 Lm_H(Int32 a)
+	{
+		return PSX_LIBGTE_EMU.LIM(a, 4095, 0, 4096u);
+	}
+
+	private static Int32 GTE_OP(Int32 op)
+	{
+		return op >> 20 & 31;
+	}
+
+	private static Int32 GTE_SF(Int32 op)
+	{
+		return op >> 19 & 1;
+	}
+
+	private static Int32 GTE_MX(Int32 op)
+	{
+		return op >> 17 & 3;
+	}
+
+	private static Int32 GTE_V(Int32 op)
+	{
+		return op >> 15 & 3;
+	}
+
+	private static Int32 GTE_CV(Int32 op)
+	{
+		return op >> 13 & 3;
+	}
+
+	private static Int32 GTE_CD(Int32 op)
+	{
+		return op >> 11 & 3;
+	}
+
+	private static Int32 GTE_LM(Int32 op)
+	{
+		return op >> 10 & 1;
+	}
+
+	private static Int32 GTE_CT(Int32 op)
+	{
+		return op >> 6 & 15;
+	}
+
+	private static Int32 GTE_FUNCT(Int32 op)
+	{
+		return op & 63;
+	}
+
+	public static Int32 docop2(Int32 gteop)
+	{
+		Int32 num = PSX_LIBGTE_EMU.GTE_FUNCT(gteop);
+		switch (num)
+		{
+		case 12:
+		{
+			PSX_LIBGTE_EMU.GTELOG(0, "%08x OP", gteop);
+			PSX_LIBGTE_EMU.FLAG = 0u;
+			Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
+			Int32 l = PSX_LIBGTE_EMU.GTE_LM(gteop);
+			PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)(PSX_LIBGTE_EMU.R22 * PSX_LIBGTE_EMU.IR3) - (Int64)(PSX_LIBGTE_EMU.R33 * PSX_LIBGTE_EMU.IR2) >> num2);
+			PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)(PSX_LIBGTE_EMU.R33 * PSX_LIBGTE_EMU.IR1) - (Int64)(PSX_LIBGTE_EMU.R11 * PSX_LIBGTE_EMU.IR3) >> num2);
+			PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)(PSX_LIBGTE_EMU.R11 * PSX_LIBGTE_EMU.IR2) - (Int64)(PSX_LIBGTE_EMU.R22 * PSX_LIBGTE_EMU.IR1) >> num2);
+			PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, l);
+			PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, l);
+			PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, l);
+			return 1;
+		}
+		case 13:
+		case 14:
+		case 15:
+		case 21:
+		case 23:
+		case 24:
+		case 25:
+		case 26:
+		case 29:
+		case 31:
+			IL_66:
+			switch (num)
+			{
+			case 40:
+			{
+				PSX_LIBGTE_EMU.GTELOG(0, "%08x SQR", gteop);
+				PSX_LIBGTE_EMU.FLAG = 0u;
+				Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
+				Int32 l = PSX_LIBGTE_EMU.GTE_LM(gteop);
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)(PSX_LIBGTE_EMU.IR1 * PSX_LIBGTE_EMU.IR1 >> num2));
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)(PSX_LIBGTE_EMU.IR2 * PSX_LIBGTE_EMU.IR2 >> num2));
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)(PSX_LIBGTE_EMU.IR3 * PSX_LIBGTE_EMU.IR3 >> num2));
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, l);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, l);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, l);
+				return 1;
+			}
+			case 41:
+				if (gteop == 6815785)
+				{
+					PSX_LIBGTE_EMU.GTELOG(0, "%08x DCPL", gteop);
+					PSX_LIBGTE_EMU.FLAG = 0u;
+					PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.R << 4) * (Int64)PSX_LIBGTE_EMU.IR1 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.RFC - ((Int16)PSX_LIBGTE_EMU.R * PSX_LIBGTE_EMU.IR1 >> 8), 0)) >> 12);
+					PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.G << 4) * (Int64)PSX_LIBGTE_EMU.IR2 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.GFC - ((Int16)PSX_LIBGTE_EMU.G * PSX_LIBGTE_EMU.IR2 >> 8), 0)) >> 12);
+					PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.B << 4) * (Int64)PSX_LIBGTE_EMU.IR3 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.BFC - ((Int16)PSX_LIBGTE_EMU.B * PSX_LIBGTE_EMU.IR3 >> 8), 0)) >> 12);
+					PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+					PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+					PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+					PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
+					PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
+					PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+					PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
+					PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
+					PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+					PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
+					PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
+					PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+					PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
+					PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
+					PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+					return 1;
+				}
+				break;
+			case 42:
+				if (gteop == 16252970)
+				{
+					PSX_LIBGTE_EMU.GTELOG(0, "%08x DPCT", gteop);
+					PSX_LIBGTE_EMU.FLAG = 0u;
+					for (Int32 i = 0; i < 3; i++)
+					{
+						PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.R0 << 16) + (Int64)PSX_LIBGTE_EMU.IR0 * (Int64)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.RFC - ((Int32)PSX_LIBGTE_EMU.R0 << 4), 0) >> 12);
+						PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.G0 << 16) + (Int64)PSX_LIBGTE_EMU.IR0 * (Int64)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.GFC - ((Int32)PSX_LIBGTE_EMU.G0 << 4), 0) >> 12);
+						PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.B0 << 16) + (Int64)PSX_LIBGTE_EMU.IR0 * (Int64)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.BFC - ((Int32)PSX_LIBGTE_EMU.B0 << 4), 0) >> 12);
+						PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 0);
+						PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 0);
+						PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 0);
+						PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
+						PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
+						PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+						PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
+						PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
+						PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+						PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
+						PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
+						PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+						PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
+						PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
+						PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+					}
+					return 1;
+				}
+				break;
+			case 43:
+			case 44:
+			case 47:
+				IL_94:
+				switch (num)
+				{
+				case 61:
+					if (PSX_LIBGTE_EMU.GTE_OP(gteop) == 9 || PSX_LIBGTE_EMU.GTE_OP(gteop) == 25)
+					{
+						PSX_LIBGTE_EMU.GTELOG(0, "%08x GPF", gteop);
+						Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
+						PSX_LIBGTE_EMU.FLAG = 0u;
+						PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.IR0 * (Int64)PSX_LIBGTE_EMU.IR1 >> num2);
+						PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.IR0 * (Int64)PSX_LIBGTE_EMU.IR2 >> num2);
+						PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.IR0 * (Int64)PSX_LIBGTE_EMU.IR3 >> num2);
+						PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 0);
+						PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 0);
+						PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 0);
+						PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
+						PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
+						PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+						PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
+						PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
+						PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+						PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
+						PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
+						PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+						PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
+						PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
+						PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+						return 1;
+					}
+					break;
+				case 62:
+					if (PSX_LIBGTE_EMU.GTE_OP(gteop) == 26)
+					{
+						PSX_LIBGTE_EMU.GTELOG(0, "%08x GPL", gteop);
+						Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
+						PSX_LIBGTE_EMU.FLAG = 0u;
+						PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.MAC1 << num2) + (Int64)(PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.IR1) >> num2);
+						PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.MAC2 << num2) + (Int64)(PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.IR2) >> num2);
+						PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.MAC3 << num2) + (Int64)(PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.IR3) >> num2);
+						PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 0);
+						PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 0);
+						PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 0);
+						PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
+						PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
+						PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+						PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
+						PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
+						PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+						PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
+						PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
+						PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+						PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
+						PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
+						PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+						return 1;
+					}
+					break;
+				case 63:
+					if (gteop == 17302591 || gteop == 18351167)
+					{
+						PSX_LIBGTE_EMU.GTELOG(0, "%08x NCCT", gteop);
+						PSX_LIBGTE_EMU.FLAG = 0u;
+						for (Int32 i = 0; i < 3; i++)
+						{
+							PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.L11 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L12 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L13 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
+							PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.L21 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L22 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L23 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
+							PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.L31 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L32 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L33 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
+							PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+							PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+							PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+							PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
+							PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
+							PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
+							PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+							PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+							PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+							PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.R * (Int64)PSX_LIBGTE_EMU.IR1 >> 8);
+							PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.G * (Int64)PSX_LIBGTE_EMU.IR2 >> 8);
+							PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.B * (Int64)PSX_LIBGTE_EMU.IR3 >> 8);
+							PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+							PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+							PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+							PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
+							PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
+							PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+							PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
+							PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
+							PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+							PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
+							PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
+							PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+							PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
+							PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
+							PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+						}
+						return 1;
+					}
+					break;
+				default:
+					if (num != 1)
+					{
+						if (num == 6)
+						{
+							PSX_LIBGTE_EMU.GTELOG(0, "%08x NCLIP", gteop);
+							PSX_LIBGTE_EMU.FLAG = 0u;
+							PSX_LIBGTE_EMU.MAC0 = (Int32)PSX_LIBGTE_EMU.F((Int64)((Int32)((Int64)(PSX_LIBGTE_EMU.SX0 * PSX_LIBGTE_EMU.SY1) + (Int64)(PSX_LIBGTE_EMU.SX1 * PSX_LIBGTE_EMU.SY2) + (Int64)(PSX_LIBGTE_EMU.SX2 * PSX_LIBGTE_EMU.SY0) - (Int64)(PSX_LIBGTE_EMU.SX0 * PSX_LIBGTE_EMU.SY2) - (Int64)(PSX_LIBGTE_EMU.SX1 * PSX_LIBGTE_EMU.SY0) - (Int64)(PSX_LIBGTE_EMU.SX2 * PSX_LIBGTE_EMU.SY1))));
+							return 1;
+						}
+					}
+					else if (gteop == 1572865)
+					{
+						PSX_LIBGTE_EMU.GTELOG(0, "%08x RTPS", gteop);
+						PSX_LIBGTE_EMU.FLAG = 0u;
+						PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.TRX << 12) + (Int64)(PSX_LIBGTE_EMU.R11 * PSX_LIBGTE_EMU.VX0) + (Int64)(PSX_LIBGTE_EMU.R12 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.R13 * PSX_LIBGTE_EMU.VZ0) >> 12);
+						PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.TRY << 12) + (Int64)(PSX_LIBGTE_EMU.R21 * PSX_LIBGTE_EMU.VX0) + (Int64)(PSX_LIBGTE_EMU.R22 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.R23 * PSX_LIBGTE_EMU.VZ0) >> 12);
+						PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.TRZ << 12) + (Int64)(PSX_LIBGTE_EMU.R31 * PSX_LIBGTE_EMU.VX0) + (Int64)(PSX_LIBGTE_EMU.R32 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.R33 * PSX_LIBGTE_EMU.VZ0) >> 12);
+						PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 0);
+						PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 0);
+						PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 0);
+						PSX_LIBGTE_EMU.SZ0 = PSX_LIBGTE_EMU.SZ1;
+						PSX_LIBGTE_EMU.SZ1 = PSX_LIBGTE_EMU.SZ2;
+						PSX_LIBGTE_EMU.SZ2 = PSX_LIBGTE_EMU.SZ3;
+						PSX_LIBGTE_EMU.SZ3 = (UInt16)PSX_LIBGTE_EMU.Lm_D(PSX_LIBGTE_EMU.MAC3);
+						Int64 num3 = (Int64)((UInt64)PSX_LIBGTE_EMU.Lm_E(PSX_LIBGTE_EMU.gte_divide(PSX_LIBGTE_EMU.H, PSX_LIBGTE_EMU.SZ3)));
+						PSX_LIBGTE_EMU.SXY0 = PSX_LIBGTE_EMU.SXY1;
+						PSX_LIBGTE_EMU.SXY1 = PSX_LIBGTE_EMU.SXY2;
+						PSX_LIBGTE_EMU.SX2 = (Int16)PSX_LIBGTE_EMU.Lm_G1((Int32)PSX_LIBGTE_EMU.F((Int64)((Int32)((Int64)PSX_LIBGTE_EMU.OFX + (Int64)PSX_LIBGTE_EMU.IR1 * num3) >> 16)));
+						PSX_LIBGTE_EMU.SY2 = (Int16)PSX_LIBGTE_EMU.Lm_G2((Int32)PSX_LIBGTE_EMU.F((Int64)((Int32)((Int64)PSX_LIBGTE_EMU.OFY + (Int64)PSX_LIBGTE_EMU.IR2 * num3) >> 16)));
+						PSX_LIBGTE_EMU.MAC0 = (Int32)PSX_LIBGTE_EMU.F((Int64)((Int32)((Int64)PSX_LIBGTE_EMU.DQB + (Int64)PSX_LIBGTE_EMU.DQA * num3)));
+						PSX_LIBGTE_EMU.IR0 = (Int16)PSX_LIBGTE_EMU.Lm_H(PSX_LIBGTE_EMU.MAC0 >> 12);
+						return 1;
+					}
+					break;
+				}
+				break;
+			case 45:
+			{
+				PSX_LIBGTE_EMU.GTELOG(0, "%08x AVSZ3", gteop);
+				PSX_LIBGTE_EMU.FLAG = 0u;
+				Int64 num4 = PSX_LIBGTE_EMU.F((Int64)(PSX_LIBGTE_EMU.ZSF3 * (Int16)PSX_LIBGTE_EMU.SZ1) + (Int64)(PSX_LIBGTE_EMU.ZSF3 * (Int16)PSX_LIBGTE_EMU.SZ2) + (Int64)(PSX_LIBGTE_EMU.ZSF3 * (Int16)PSX_LIBGTE_EMU.SZ3));
+				PSX_LIBGTE_EMU.OTZ = (UInt16)PSX_LIBGTE_EMU.Lm_D((Int32)(num4 >> 12));
+				PSX_LIBGTE_EMU.MAC0 = (Int32)num4;
+				return 1;
+			}
+			case 46:
+			{
+				PSX_LIBGTE_EMU.GTELOG(0, "%08x AVSZ4", gteop);
+				PSX_LIBGTE_EMU.FLAG = 0u;
+				Int64 num4 = PSX_LIBGTE_EMU.F((Int64)(PSX_LIBGTE_EMU.ZSF4 * (Int16)PSX_LIBGTE_EMU.SZ0) + (Int64)(PSX_LIBGTE_EMU.ZSF4 * (Int16)PSX_LIBGTE_EMU.SZ1) + (Int64)(PSX_LIBGTE_EMU.ZSF4 * (Int16)PSX_LIBGTE_EMU.SZ2) + (Int64)(PSX_LIBGTE_EMU.ZSF4 * (Int16)PSX_LIBGTE_EMU.SZ3));
+				PSX_LIBGTE_EMU.OTZ = (UInt16)PSX_LIBGTE_EMU.Lm_D((Int32)(num4 >> 12));
+				PSX_LIBGTE_EMU.MAC0 = (Int32)num4;
+				return 1;
+			}
+			case 48:
+				if (gteop == 2621488)
+				{
+					PSX_LIBGTE_EMU.GTELOG(0, "%08x RTPT", gteop);
+					PSX_LIBGTE_EMU.FLAG = 0u;
+					for (Int32 i = 0; i < 3; i++)
+					{
+						PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.TRX << 12) + (Int64)(PSX_LIBGTE_EMU.R11 * PSX_LIBGTE_EMU.VX(i)) + (Int64)(PSX_LIBGTE_EMU.R12 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.R13 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
+						PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.TRY << 12) + (Int64)(PSX_LIBGTE_EMU.R21 * PSX_LIBGTE_EMU.VX(i)) + (Int64)(PSX_LIBGTE_EMU.R22 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.R23 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
+						PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.TRZ << 12) + (Int64)(PSX_LIBGTE_EMU.R31 * PSX_LIBGTE_EMU.VX(i)) + (Int64)(PSX_LIBGTE_EMU.R32 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.R33 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
+						PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 0);
+						PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 0);
+						PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 0);
+						PSX_LIBGTE_EMU.SZ0 = PSX_LIBGTE_EMU.SZ1;
+						PSX_LIBGTE_EMU.SZ1 = PSX_LIBGTE_EMU.SZ2;
+						PSX_LIBGTE_EMU.SZ2 = PSX_LIBGTE_EMU.SZ3;
+						PSX_LIBGTE_EMU.SZ3 = (UInt16)PSX_LIBGTE_EMU.Lm_D(PSX_LIBGTE_EMU.MAC3);
+						Int64 num3 = (Int64)((UInt64)PSX_LIBGTE_EMU.Lm_E(PSX_LIBGTE_EMU.gte_divide(PSX_LIBGTE_EMU.H, PSX_LIBGTE_EMU.SZ3)));
+						PSX_LIBGTE_EMU.SXY0 = PSX_LIBGTE_EMU.SXY1;
+						PSX_LIBGTE_EMU.SXY1 = PSX_LIBGTE_EMU.SXY2;
+						PSX_LIBGTE_EMU.SX2 = (Int16)PSX_LIBGTE_EMU.Lm_G1((Int32)PSX_LIBGTE_EMU.F((Int64)PSX_LIBGTE_EMU.OFX + (Int64)PSX_LIBGTE_EMU.IR1 * num3 >> 16));
+						PSX_LIBGTE_EMU.SY2 = (Int16)PSX_LIBGTE_EMU.Lm_G2((Int32)PSX_LIBGTE_EMU.F((Int64)PSX_LIBGTE_EMU.OFY + (Int64)PSX_LIBGTE_EMU.IR2 * num3 >> 16));
+						PSX_LIBGTE_EMU.MAC0 = (Int32)PSX_LIBGTE_EMU.F((Int64)PSX_LIBGTE_EMU.DQB + (Int64)PSX_LIBGTE_EMU.DQA * num3);
+						PSX_LIBGTE_EMU.IR0 = (Int16)PSX_LIBGTE_EMU.Lm_H(PSX_LIBGTE_EMU.MAC0 >> 12);
+					}
+					return 1;
+				}
+				break;
+			default:
+				goto IL_94;
+			}
+			break;
+		case 16:
+		{
+			PSX_LIBGTE_EMU.GTELOG(0, "%08x DPCS", gteop);
+			PSX_LIBGTE_EMU.FLAG = 0u;
+			Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
+			Int32 l = PSX_LIBGTE_EMU.GTE_LM(gteop);
+			PSX_LIBGTE_EMU.MAC1 = ((Int32)PSX_LIBGTE_EMU.R << 16) + (Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B1((Int32)PSX_LIBGTE_EMU.A1((Int64)((Int64)((Int32)((Int64)PSX_LIBGTE_EMU.RFC - (Int64)((Int64)PSX_LIBGTE_EMU.R << 4))) << 12 - num2)), 0) >> num2;
+			PSX_LIBGTE_EMU.MAC2 = ((Int32)PSX_LIBGTE_EMU.G << 16) + (Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B2((Int32)PSX_LIBGTE_EMU.A2((Int64)((Int64)((Int32)((Int64)PSX_LIBGTE_EMU.GFC - (Int64)((Int64)PSX_LIBGTE_EMU.G << 4))) << 12 - num2)), 0) >> num2;
+			PSX_LIBGTE_EMU.MAC3 = ((Int32)PSX_LIBGTE_EMU.B << 16) + (Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B3((Int32)PSX_LIBGTE_EMU.A3((Int64)((Int64)((Int32)((Int64)PSX_LIBGTE_EMU.BFC - (Int64)((Int64)PSX_LIBGTE_EMU.B << 4))) << 12 - num2)), 0) >> num2;
+			PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, l);
+			PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, l);
+			PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, l);
+			PSX_LIBGTE_EMU.RGB0 = PSX_LIBGTE_EMU.RGB1;
+			PSX_LIBGTE_EMU.RGB1 = PSX_LIBGTE_EMU.RGB2;
+			PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+			PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+			PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+			PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+			return 1;
+		}
+		case 17:
+		{
+			PSX_LIBGTE_EMU.GTELOG(0, "%08x INTPL", gteop);
+			PSX_LIBGTE_EMU.FLAG = 0u;
+			Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
+			Int32 l = PSX_LIBGTE_EMU.GTE_LM(gteop);
+			PSX_LIBGTE_EMU.MAC1 = ((Int32)PSX_LIBGTE_EMU.IR1 << 12) + (Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B1((Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.RFC - (Int64)PSX_LIBGTE_EMU.IR1) << 12 - num2, 0) >> num2;
+			PSX_LIBGTE_EMU.MAC2 = ((Int32)PSX_LIBGTE_EMU.IR2 << 12) + (Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B2((Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.GFC - (Int64)PSX_LIBGTE_EMU.IR2) << 12 - num2, 0) >> num2;
+			PSX_LIBGTE_EMU.MAC3 = ((Int32)PSX_LIBGTE_EMU.IR3 << 12) + (Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B3((Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.BFC - (Int64)PSX_LIBGTE_EMU.IR3) << 12 - num2, 0) >> num2;
+			PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, l);
+			PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, l);
+			PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, l);
+			PSX_LIBGTE_EMU.RGB0 = PSX_LIBGTE_EMU.RGB1;
+			PSX_LIBGTE_EMU.RGB1 = PSX_LIBGTE_EMU.RGB2;
+			PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+			PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+			PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+			PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+			return 1;
+		}
+		case 18:
+			if (PSX_LIBGTE_EMU.GTE_OP(gteop) == 4)
+			{
+				PSX_LIBGTE_EMU.GTELOG(0, "%08x MVMVA", gteop);
+				Int32 num2 = 12 * PSX_LIBGTE_EMU.GTE_SF(gteop);
+				Int32 n = PSX_LIBGTE_EMU.GTE_MX(gteop);
+				Int32 i = PSX_LIBGTE_EMU.GTE_V(gteop);
+				Int32 n2 = PSX_LIBGTE_EMU.GTE_CV(gteop);
+				Int32 l = PSX_LIBGTE_EMU.GTE_LM(gteop);
+				PSX_LIBGTE_EMU.FLAG = 0u;
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.CV1(n2) << 12) + (Int64)(PSX_LIBGTE_EMU.MX11(n) * PSX_LIBGTE_EMU.VX(i)) + (Int64)(PSX_LIBGTE_EMU.MX12(n) * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.MX13(n) * PSX_LIBGTE_EMU.VZ(i)) >> num2);
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.CV2(n2) << 12) + (Int64)(PSX_LIBGTE_EMU.MX21(n) * PSX_LIBGTE_EMU.VX(i)) + (Int64)(PSX_LIBGTE_EMU.MX22(n) * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.MX23(n) * PSX_LIBGTE_EMU.VZ(i)) >> num2);
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.CV3(n2) << 12) + (Int64)(PSX_LIBGTE_EMU.MX31(n) * PSX_LIBGTE_EMU.VX(i)) + (Int64)(PSX_LIBGTE_EMU.MX32(n) * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.MX33(n) * PSX_LIBGTE_EMU.VZ(i)) >> num2);
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, l);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, l);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, l);
+				return 1;
+			}
+			break;
+		case 19:
+			if (gteop == 15205395)
+			{
+				PSX_LIBGTE_EMU.GTELOG(0, "%08x NCDS", gteop);
+				PSX_LIBGTE_EMU.FLAG = 0u;
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.L11 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L12 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L13 * PSX_LIBGTE_EMU.VZ0) >> 12);
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.L21 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L22 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L23 * PSX_LIBGTE_EMU.VZ0) >> 12);
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.L31 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L32 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L33 * PSX_LIBGTE_EMU.VZ0) >> 12);
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.R << 4) * (Int64)PSX_LIBGTE_EMU.IR1 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.RFC - ((Int16)PSX_LIBGTE_EMU.R * PSX_LIBGTE_EMU.IR1 >> 8), 0)) >> 12);
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.G << 4) * (Int64)PSX_LIBGTE_EMU.IR2 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.GFC - ((Int16)PSX_LIBGTE_EMU.G * PSX_LIBGTE_EMU.IR2 >> 8), 0)) >> 12);
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.B << 4) * (Int64)PSX_LIBGTE_EMU.IR3 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.BFC - ((Int16)PSX_LIBGTE_EMU.B * PSX_LIBGTE_EMU.IR3 >> 8), 0)) >> 12);
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+				PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
+				PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
+				PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+				PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
+				PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
+				PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+				PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
+				PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
+				PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+				PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
+				PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
+				PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+				return 1;
+			}
+			break;
+		case 20:
+			if (gteop == 19399700)
+			{
+				PSX_LIBGTE_EMU.GTELOG(0, "%08x CDP", gteop);
+				PSX_LIBGTE_EMU.FLAG = 0u;
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.R << 4) * (Int64)PSX_LIBGTE_EMU.IR1 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.RFC - ((Int16)PSX_LIBGTE_EMU.R * PSX_LIBGTE_EMU.IR1 >> 8), 0)) >> 12);
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.G << 4) * (Int64)PSX_LIBGTE_EMU.IR2 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.GFC - ((Int16)PSX_LIBGTE_EMU.G * PSX_LIBGTE_EMU.IR2 >> 8), 0)) >> 12);
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.B << 4) * (Int64)PSX_LIBGTE_EMU.IR3 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.BFC - ((Int16)PSX_LIBGTE_EMU.B * PSX_LIBGTE_EMU.IR3 >> 8), 0)) >> 12);
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+				PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
+				PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
+				PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+				PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
+				PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
+				PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+				PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
+				PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
+				PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+				PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
+				PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
+				PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+				return 1;
+			}
+			break;
+		case 22:
+			if (gteop == 16253974)
+			{
+				PSX_LIBGTE_EMU.GTELOG(0, "%08x NCDT", gteop);
+				PSX_LIBGTE_EMU.FLAG = 0u;
+				for (Int32 i = 0; i < 3; i++)
+				{
+					PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.L11 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L12 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L13 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
+					PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.L21 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L22 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L23 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
+					PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.L31 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L32 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L33 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
+					PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+					PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+					PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+					PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
+					PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
+					PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
+					PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+					PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+					PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+					PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.R << 4) * (Int64)PSX_LIBGTE_EMU.IR1 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.RFC - ((Int16)PSX_LIBGTE_EMU.R * PSX_LIBGTE_EMU.IR1 >> 8), 0)) >> 12);
+					PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.G << 4) * (Int64)PSX_LIBGTE_EMU.IR2 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.GFC - ((Int16)PSX_LIBGTE_EMU.G * PSX_LIBGTE_EMU.IR2 >> 8), 0)) >> 12);
+					PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.B << 4) * (Int64)PSX_LIBGTE_EMU.IR3 + (Int64)((Int32)PSX_LIBGTE_EMU.IR0 * PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.BFC - ((Int16)PSX_LIBGTE_EMU.B * PSX_LIBGTE_EMU.IR3 >> 8), 0)) >> 12);
+					PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+					PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+					PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+					PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
+					PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
+					PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+					PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
+					PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
+					PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+					PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
+					PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
+					PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+					PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
+					PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
+					PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+				}
+				return 1;
+			}
+			break;
+		case 27:
+			if (gteop == 17302555 || gteop == 18351131)
+			{
+				PSX_LIBGTE_EMU.GTELOG(0, "%08x NCCS", gteop);
+				PSX_LIBGTE_EMU.FLAG = 0u;
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.L11 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L12 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L13 * PSX_LIBGTE_EMU.VZ0) >> 12);
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.L21 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L22 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L23 * PSX_LIBGTE_EMU.VZ0) >> 12);
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.L31 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L32 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L33 * PSX_LIBGTE_EMU.VZ0) >> 12);
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.R * (Int64)PSX_LIBGTE_EMU.IR1 >> 8);
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.G * (Int64)PSX_LIBGTE_EMU.IR2 >> 8);
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.B * (Int64)PSX_LIBGTE_EMU.IR3 >> 8);
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+				PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
+				PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
+				PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+				PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
+				PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
+				PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+				PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
+				PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
+				PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+				PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
+				PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
+				PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+				return 1;
+			}
+			break;
+		case 28:
+			if (gteop == 20448284)
+			{
+				PSX_LIBGTE_EMU.GTELOG(0, "%08x CC", gteop);
+				PSX_LIBGTE_EMU.FLAG = 0u;
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.R * (Int64)PSX_LIBGTE_EMU.IR1 >> 8);
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.G * (Int64)PSX_LIBGTE_EMU.IR2 >> 8);
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.B * (Int64)PSX_LIBGTE_EMU.IR3 >> 8);
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+				PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
+				PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
+				PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+				PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
+				PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
+				PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+				PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
+				PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
+				PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+				PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
+				PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
+				PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+				return 1;
+			}
+			break;
+		case 30:
+			if (gteop == 13108254)
+			{
+				PSX_LIBGTE_EMU.GTELOG(0, "%08x NCS", gteop);
+				PSX_LIBGTE_EMU.FLAG = 0u;
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.L11 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L12 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L13 * PSX_LIBGTE_EMU.VZ0) >> 12);
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.L21 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L22 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L23 * PSX_LIBGTE_EMU.VZ0) >> 12);
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.L31 * (Int64)PSX_LIBGTE_EMU.VX0 + (Int64)(PSX_LIBGTE_EMU.L32 * PSX_LIBGTE_EMU.VY0) + (Int64)(PSX_LIBGTE_EMU.L33 * PSX_LIBGTE_EMU.VZ0) >> 12);
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+				PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
+				PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+				PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+				PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+				PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
+				PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
+				PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+				PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
+				PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
+				PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+				PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
+				PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
+				PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+				PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
+				PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
+				PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+				return 1;
+			}
+			break;
+		case 32:
+			if (gteop == 14156832)
+			{
+				PSX_LIBGTE_EMU.GTELOG(0, "%08x NCT", gteop);
+				PSX_LIBGTE_EMU.FLAG = 0u;
+				for (Int32 i = 0; i < 3; i++)
+				{
+					PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1((Int64)PSX_LIBGTE_EMU.L11 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L12 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L13 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
+					PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2((Int64)PSX_LIBGTE_EMU.L21 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L22 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L23 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
+					PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3((Int64)PSX_LIBGTE_EMU.L31 * (Int64)PSX_LIBGTE_EMU.VX(i) + (Int64)(PSX_LIBGTE_EMU.L32 * PSX_LIBGTE_EMU.VY(i)) + (Int64)(PSX_LIBGTE_EMU.L33 * PSX_LIBGTE_EMU.VZ(i)) >> 12);
+					PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+					PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+					PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+					PSX_LIBGTE_EMU.MAC1 = (Int32)PSX_LIBGTE_EMU.A1(((Int64)PSX_LIBGTE_EMU.RBK << 12) + (Int64)(PSX_LIBGTE_EMU.LR1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LR2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LR3 * PSX_LIBGTE_EMU.IR3) >> 12);
+					PSX_LIBGTE_EMU.MAC2 = (Int32)PSX_LIBGTE_EMU.A2(((Int64)PSX_LIBGTE_EMU.GBK << 12) + (Int64)(PSX_LIBGTE_EMU.LG1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LG2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LG3 * PSX_LIBGTE_EMU.IR3) >> 12);
+					PSX_LIBGTE_EMU.MAC3 = (Int32)PSX_LIBGTE_EMU.A3(((Int64)PSX_LIBGTE_EMU.BBK << 12) + (Int64)(PSX_LIBGTE_EMU.LB1 * PSX_LIBGTE_EMU.IR1) + (Int64)(PSX_LIBGTE_EMU.LB2 * PSX_LIBGTE_EMU.IR2) + (Int64)(PSX_LIBGTE_EMU.LB3 * PSX_LIBGTE_EMU.IR3) >> 12);
+					PSX_LIBGTE_EMU.IR1 = (Int16)PSX_LIBGTE_EMU.Lm_B1(PSX_LIBGTE_EMU.MAC1, 1);
+					PSX_LIBGTE_EMU.IR2 = (Int16)PSX_LIBGTE_EMU.Lm_B2(PSX_LIBGTE_EMU.MAC2, 1);
+					PSX_LIBGTE_EMU.IR3 = (Int16)PSX_LIBGTE_EMU.Lm_B3(PSX_LIBGTE_EMU.MAC3, 1);
+					PSX_LIBGTE_EMU.CD0 = PSX_LIBGTE_EMU.CD1;
+					PSX_LIBGTE_EMU.CD1 = PSX_LIBGTE_EMU.CD2;
+					PSX_LIBGTE_EMU.CD2 = PSX_LIBGTE_EMU.CODE;
+					PSX_LIBGTE_EMU.R0 = PSX_LIBGTE_EMU.R1;
+					PSX_LIBGTE_EMU.R1 = PSX_LIBGTE_EMU.R2;
+					PSX_LIBGTE_EMU.R2 = (Byte)PSX_LIBGTE_EMU.Lm_C1(PSX_LIBGTE_EMU.MAC1 >> 4);
+					PSX_LIBGTE_EMU.G0 = PSX_LIBGTE_EMU.G1;
+					PSX_LIBGTE_EMU.G1 = PSX_LIBGTE_EMU.G2;
+					PSX_LIBGTE_EMU.G2 = (Byte)PSX_LIBGTE_EMU.Lm_C2(PSX_LIBGTE_EMU.MAC2 >> 4);
+					PSX_LIBGTE_EMU.B0 = PSX_LIBGTE_EMU.B1;
+					PSX_LIBGTE_EMU.B1 = PSX_LIBGTE_EMU.B2;
+					PSX_LIBGTE_EMU.B2 = (Byte)PSX_LIBGTE_EMU.Lm_C3(PSX_LIBGTE_EMU.MAC3 >> 4);
+				}
+				return 1;
+			}
+			break;
+		default:
+			goto IL_66;
+		}
+		return 0;
+	}
+
+	private static readonly PSX_LIBGTE_EMU.PAIR[] m_cp2cr = new PSX_LIBGTE_EMU.PAIR[32];
+
+	private static readonly PSX_LIBGTE_EMU.PAIR[] m_cp2dr = new PSX_LIBGTE_EMU.PAIR[32];
 
     private static readonly UInt16[] reciprocals = new UInt16[32768]
   {
@@ -35058,76 +35058,76 @@ public static class PSX_LIBGTE_EMU
   };
 
     [StructLayout(LayoutKind.Explicit)]
-    private struct structB
-    {
-        [FieldOffset(0)]
-        public Byte l;
+	private struct structB
+	{
+		[FieldOffset(0)]
+		public Byte l;
 
-        [FieldOffset(1)]
-        public Byte h;
+		[FieldOffset(1)]
+		public Byte h;
 
-        [FieldOffset(2)]
-        public Byte h2;
+		[FieldOffset(2)]
+		public Byte h2;
 
-        [FieldOffset(3)]
-        public Byte h3;
-    }
+		[FieldOffset(3)]
+		public Byte h3;
+	}
 
-    [StructLayout(LayoutKind.Explicit)]
-    private struct structW
-    {
-        [FieldOffset(0)]
-        public UInt16 l;
+	[StructLayout(LayoutKind.Explicit)]
+	private struct structW
+	{
+		[FieldOffset(0)]
+		public UInt16 l;
 
-        [FieldOffset(2)]
-        public UInt16 h;
-    }
+		[FieldOffset(2)]
+		public UInt16 h;
+	}
 
-    [StructLayout(LayoutKind.Explicit)]
-    private struct structSB
-    {
-        [FieldOffset(0)]
-        public SByte l;
+	[StructLayout(LayoutKind.Explicit)]
+	private struct structSB
+	{
+		[FieldOffset(0)]
+		public SByte l;
 
-        [FieldOffset(1)]
-        public SByte h;
+		[FieldOffset(1)]
+		public SByte h;
 
-        [FieldOffset(2)]
-        public SByte h2;
+		[FieldOffset(2)]
+		public SByte h2;
 
-        [FieldOffset(3)]
-        public SByte h3;
-    }
+		[FieldOffset(3)]
+		public SByte h3;
+	}
 
-    [StructLayout(LayoutKind.Explicit)]
-    private struct structSW
-    {
-        [FieldOffset(0)]
-        public Int16 l;
+	[StructLayout(LayoutKind.Explicit)]
+	private struct structSW
+	{
+		[FieldOffset(0)]
+		public Int16 l;
 
-        [FieldOffset(2)]
-        public Int16 h;
-    }
+		[FieldOffset(2)]
+		public Int16 h;
+	}
 
-    [StructLayout(LayoutKind.Explicit)]
-    private struct PAIR
-    {
-        [FieldOffset(0)]
-        public PSX_LIBGTE_EMU.structB b;
+	[StructLayout(LayoutKind.Explicit)]
+	private struct PAIR
+	{
+		[FieldOffset(0)]
+		public PSX_LIBGTE_EMU.structB b;
 
-        [FieldOffset(0)]
-        public PSX_LIBGTE_EMU.structW w;
+		[FieldOffset(0)]
+		public PSX_LIBGTE_EMU.structW w;
 
-        [FieldOffset(0)]
-        public PSX_LIBGTE_EMU.structSB sb;
+		[FieldOffset(0)]
+		public PSX_LIBGTE_EMU.structSB sb;
 
-        [FieldOffset(0)]
-        public PSX_LIBGTE_EMU.structSW sw;
+		[FieldOffset(0)]
+		public PSX_LIBGTE_EMU.structSW sw;
 
-        [FieldOffset(0)]
-        public UInt32 d;
+		[FieldOffset(0)]
+		public UInt32 d;
 
-        [FieldOffset(0)]
-        public Int32 sd;
-    }
+		[FieldOffset(0)]
+		public Int32 sd;
+	}
 }

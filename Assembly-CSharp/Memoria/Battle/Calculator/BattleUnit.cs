@@ -1,10 +1,10 @@
-using Assets.Sources.Scripts.UI.Common;
-using FF9;
-using Memoria.Assets;
-using Memoria.Data;
-using Memoria.Database;
 using System;
 using System.Collections.Generic;
+using FF9;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Data;
+using Memoria.Database;
+using Memoria.Assets;
 using UnityEngine;
 using Object = System.Object;
 
@@ -444,7 +444,7 @@ namespace Memoria
         }
 
         public void Kill(BattleUnit killer)
-        {
+		{
             Kill(killer.Data);
         }
         public void Kill(BTL_DATA killer = null)
@@ -814,7 +814,7 @@ namespace Memoria
             if (attackAA[0] == null)
                 monsterTransform.resist_added |= BattleStatus.Berserk | BattleStatus.Confuse;
             foreach (SupportingAbilityFeature saFeature in Data.saMonster)
-            {
+			{
                 saFeature.GetStatusInitQuietly(this, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out StatusModifier partialResist, out StatusModifier durationFactor, out Int16 atb);
                 current_added |= initial;
                 monsterTransform.resist_added |= resist;

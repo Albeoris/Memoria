@@ -1,10 +1,10 @@
-﻿using Memoria.Prime;
-using Memoria.Prime.Ini;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using Memoria.Prime;
+using Memoria.Prime.Ini;
 
 namespace Memoria
 {
@@ -76,7 +76,7 @@ namespace Memoria
                 Monitor.Exit(Watcher);
             }
         }
-
+        
         private static void AppendSection<T>(String sectionName, IniValue<T> value, String[] lines)
         {
             using (var output = File.AppendText(ConfigurationFileName))

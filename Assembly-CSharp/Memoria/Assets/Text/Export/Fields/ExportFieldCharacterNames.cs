@@ -1,7 +1,7 @@
-using Memoria.Prime.Text;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Memoria.Prime.Text;
 
 namespace Memoria.Assets
 {
@@ -73,7 +73,7 @@ namespace Memoria.Assets
 
             TxtEntry[] array = new TxtEntry[general.Length];
             for (Int32 i = 0; i < general.Length; i++)
-                array[i] = new TxtEntry { Index = i, Prefix = '{' + general[i] + '}', Value = general[i] };
+                array[i] = new TxtEntry {Index = i, Prefix = '{' + general[i] + '}', Value = general[i]};
             return array;
         }
 

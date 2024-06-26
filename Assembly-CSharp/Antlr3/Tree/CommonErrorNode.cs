@@ -42,13 +42,13 @@ namespace Antlr.Runtime.Tree
         public IToken stop;
         public RecognitionException trappedException;
 
-        public CommonErrorNode(ITokenStream input, IToken start, IToken stop,
-                               RecognitionException e)
+        public CommonErrorNode( ITokenStream input, IToken start, IToken stop,
+                               RecognitionException e )
         {
             //System.out.println("start: "+start+", stop: "+stop);
-            if (stop == null ||
-                 (stop.TokenIndex < start.TokenIndex &&
-                  stop.Type != TokenTypes.EndOfFile))
+            if ( stop == null ||
+                 ( stop.TokenIndex < start.TokenIndex &&
+                  stop.Type != TokenTypes.EndOfFile ) )
             {
                 // sometimes resync does not consume a token (when LT(1) is
                 // in follow set.  So, stop will be 1 to left to start. adjust.
@@ -75,19 +75,19 @@ namespace Antlr.Runtime.Tree
             get
             {
                 string badText = null;
-                if (start is IToken)
+                if ( start is IToken )
                 {
-                    int i = ((IToken)start).TokenIndex;
-                    int j = ((IToken)stop).TokenIndex;
-                    if (((IToken)stop).Type == TokenTypes.EndOfFile)
+                    int i = ( (IToken)start ).TokenIndex;
+                    int j = ( (IToken)stop ).TokenIndex;
+                    if ( ( (IToken)stop ).Type == TokenTypes.EndOfFile )
                     {
-                        j = ((ITokenStream)input).Count;
+                        j = ( (ITokenStream)input ).Count;
                     }
-                    badText = ((ITokenStream)input).ToString(i, j);
+                    badText = ( (ITokenStream)input ).ToString( i, j );
                 }
-                else if (start is ITree)
+                else if ( start is ITree )
                 {
-                    badText = ((ITreeNodeStream)input).ToString(start, stop);
+                    badText = ( (ITreeNodeStream)input ).ToString( start, stop );
                 }
                 else
                 {
@@ -115,23 +115,23 @@ namespace Antlr.Runtime.Tree
 
         public override string ToString()
         {
-            if (trappedException is MissingTokenException)
+            if ( trappedException is MissingTokenException )
             {
                 return "<missing type: " +
-                       ((MissingTokenException)trappedException).MissingType +
+                       ( (MissingTokenException)trappedException ).MissingType +
                        ">";
             }
-            else if (trappedException is UnwantedTokenException)
+            else if ( trappedException is UnwantedTokenException )
             {
                 return "<extraneous: " +
-                       ((UnwantedTokenException)trappedException).UnexpectedToken +
+                       ( (UnwantedTokenException)trappedException ).UnexpectedToken +
                        ", resync=" + Text + ">";
             }
-            else if (trappedException is MismatchedTokenException)
+            else if ( trappedException is MismatchedTokenException )
             {
                 return "<mismatched token: " + trappedException.Token + ", resync=" + Text + ">";
             }
-            else if (trappedException is NoViableAltException)
+            else if ( trappedException is NoViableAltException )
             {
                 return "<unexpected: " + trappedException.Token +
                        ", resync=" + Text + ">";

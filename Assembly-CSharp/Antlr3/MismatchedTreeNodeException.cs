@@ -61,8 +61,8 @@ namespace Antlr.Runtime
         {
         }
 
-        public MismatchedTreeNodeException(int expecting, ITreeNodeStream input)
-            : base(input)
+        public MismatchedTreeNodeException( int expecting, ITreeNodeStream input )
+            : base( input )
         {
             this._expecting = expecting;
         }

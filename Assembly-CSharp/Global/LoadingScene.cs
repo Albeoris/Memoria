@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class LoadingScene : MonoBehaviour
 {
-    private void Awake()
-    {
-    }
+	private void Awake()
+	{
+	}
 
-    private void Update()
-    {
-    }
+	private void Update()
+	{
+	}
 }

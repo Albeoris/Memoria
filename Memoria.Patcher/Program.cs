@@ -34,7 +34,7 @@ namespace Memoria.Patcher
                         {
                         }
 
-                        Run(new[] { launcherProcessDirectory });
+                        Run(new[] {launcherProcessDirectory});
 
                         String arguments = $"-update \"{launcherProcessPath}\"";
                         foreach (String patcher in args.Skip(3))
@@ -49,7 +49,7 @@ namespace Memoria.Patcher
                     }
                     else
                     {
-                        Run(new[] { launcherProcessDirectory });
+                        Run(new[] {launcherProcessDirectory});
                     }
 
                     Environment.Exit(0);
@@ -237,7 +237,7 @@ namespace Memoria.Patcher
                 File.SetLastWriteTimeUtc(outputPath, writeTimeUtc);
         }
 
-        private static readonly HashSet<String> _filesForBackup = new HashSet<String>(StringComparer.OrdinalIgnoreCase) { ".exe", ".dll" };
+        private static readonly HashSet<String> _filesForBackup = new HashSet<String>(StringComparer.OrdinalIgnoreCase) {".exe", ".dll"};
         private static readonly HashSet<String> _iniFileName = new HashSet<String>(StringComparer.OrdinalIgnoreCase) { "Memoria.ini", "Settings.ini" };
 
         private static FileStream OverwriteFile(String outputPath)
@@ -270,10 +270,10 @@ namespace Memoria.Patcher
         }
 
         private static String[] MergeIniFiles(String[] newIni, String[] previousIni)
-        {
+		{
             List<String> mergedIni = new List<String>(previousIni.Where(line => !line.StartsWith("\t; "))); // In order to have a persisting custom comment, the user must use a slightly different format than "	; " (eg. "	;; ")
             for (Int32 i = 0; i < mergedIni.Count; i++)
-            {
+			{
                 // Hotfix: replace incorrect default formulas by the correct ones
                 if (String.Compare(mergedIni[i], "StatusDurationFormula = ContiCnt * (IsNegativeStatus ? 8 * (60 - TargetSpirit) : 8 * TargetSpirit)") == 0
                     || String.Compare(mergedIni[i], "StatusTickFormula = OprCnt * (IsNegativeStatus ? 4 * (60 - TargetSpirit) : 4 * TargetSpirit)") == 0)
@@ -295,11 +295,11 @@ namespace Memoria.Patcher
                     sectionFirstLine = mergedIni.FindIndex(s => s.Trim().StartsWith("[" + currentSection + "]"));
                     Boolean hasSection = sectionFirstLine >= 0;
                     if (hasSection)
-                    {
+					{
                         sectionFirstLine++;
                         sectionLastLine = sectionFirstLine;
                         while (sectionLastLine < mergedIni.Count)
-                        {
+						{
                             if (mergedIni[sectionLastLine].Trim().StartsWith("["))
                                 break;
                             sectionLastLine++;
@@ -308,16 +308,16 @@ namespace Memoria.Patcher
                             sectionLastLine--;
                     }
                     else
-                    {
+					{
                         mergedIni.Add("[" + currentSection + "]");
                         sectionFirstLine = mergedIni.Count;
                         sectionLastLine = sectionFirstLine;
                     }
                 }
                 else if (trimmedLine.StartsWith(";"))
-                {
+				{
                     if (!mergedIni.Exists(s => s.Trim() == trimmedLine))
-                    {
+					{
                         mergedIni.Insert(sectionFirstLine, line);
                         sectionFirstLine++;
                         sectionLastLine++;

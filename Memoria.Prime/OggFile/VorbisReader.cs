@@ -7,9 +7,9 @@
  ***************************************************************************/
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace Memoria.Prime.NVorbis
 {
@@ -293,7 +293,7 @@ namespace Memoria.Prime.NVorbis
         /// </summary>
         public long DecodedPosition
         {
-            get
+            get 
             {
                 return ActiveDecoder.CurrentPosition;
             }
@@ -337,7 +337,7 @@ namespace Memoria.Prime.NVorbis
                 }
             }
         }
-
+        
         #endregion
     }
 }

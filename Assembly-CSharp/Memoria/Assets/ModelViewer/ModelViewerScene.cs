@@ -1,13 +1,13 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Diagnostics;
+using System.Collections.Generic;
+using Assets.Scripts.Common;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scenes;
 using Memoria.Scripts;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using UnityEngine;
 
 namespace Memoria.Assets
@@ -204,7 +204,7 @@ namespace Memoria.Assets
                     if (Input.GetKey(KeyCode.AltGr))
                     {
                         ControlWeapon = !ControlWeapon;
-                    }
+                    }                
                     else if (Input.GetKey(KeyCode.LeftShift))
                     {
                         currentWeaponBoneIndex--;
@@ -309,7 +309,7 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKey(KeyCode.M))
                 {
-                    infoPanel.BasePanel.transform.localPosition = infoPanel.BasePanel.transform.localPosition + new Vector3(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? -5 : 5, 0, 0);
+                    infoPanel.BasePanel.transform.localPosition = infoPanel.BasePanel.transform.localPosition + new Vector3(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? -5 : 5, 0 , 0);
                 }
                 GameObject targetModel = ControlWeapon ? currentWeaponModel : currentModel;
                 if (Input.GetKey(KeyCode.Keypad6))
@@ -667,7 +667,7 @@ namespace Memoria.Assets
                 currentAnimIndex = 0;
                 currentAnimName = $"Frame {(spsEffect.curFrame >> 4) + 1}/{spsEffect.frameCount >> 4}";
                 currentModelBones = null;
-            }
+            }  
             isLoadingModel = false;
         }
 
@@ -766,12 +766,8 @@ namespace Memoria.Assets
             Vector3[] meshVert = new Vector3[4];
             Int32[] meshIndex =
             [
-                0,
-                1,
-                2,
-                1,
-                2,
-                3
+                0, 1, 2,
+                1, 2, 3
             ];
             mesh.vertices = meshVert;
             mesh.uv = null;

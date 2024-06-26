@@ -26,7 +26,7 @@ namespace UnityEngine.UI
         }
 
         [Serializable]
-        public class ScrollRectEvent : UnityEvent<Vector2> { }
+        public class ScrollRectEvent : UnityEvent<Vector2> {}
 
         [SerializeField]
         private RectTransform m_Content;
@@ -198,10 +198,10 @@ namespace UnityEngine.UI
         }
 
         public virtual void LayoutComplete()
-        { }
+        {}
 
         public virtual void GraphicUpdateComplete()
-        { }
+        {}
 
         void UpdateCachedData()
         {
@@ -568,8 +568,8 @@ namespace UnityEngine.UI
             }
         }
 
-        public virtual void CalculateLayoutInputHorizontal() { }
-        public virtual void CalculateLayoutInputVertical() { }
+        public virtual void CalculateLayoutInputHorizontal() {}
+        public virtual void CalculateLayoutInputVertical() {}
 
         public virtual float minWidth { get { return -1; } }
         public virtual float preferredWidth { get { return -1; } }
@@ -789,12 +789,12 @@ namespace UnityEngine.UI
             LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
         }
 
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         protected override void OnValidate()
         {
             SetDirtyCaching();
         }
 
-#endif
+        #endif
     }
 }

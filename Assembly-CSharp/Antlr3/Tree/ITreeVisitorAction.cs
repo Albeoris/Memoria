@@ -48,7 +48,7 @@ namespace Antlr.Runtime.Tree
          *  visited if using TreeVisitor.visit().
          *  </summary>
          */
-        object Pre(object t);
+        object Pre( object t );
 
         /** <summary>
          *  Execute an action after visiting children of t.  Return t or
@@ -56,7 +56,7 @@ namespace Antlr.Runtime.Tree
          *  with the return value.
          *  </summary>
          */
-        object Post(object t);
+        object Post( object t );
     }
 
     public class TreeVisitorAction
@@ -65,24 +65,24 @@ namespace Antlr.Runtime.Tree
         private readonly Func<object, object> _preAction;
         private readonly Func<object, object> _postAction;
 
-        public TreeVisitorAction(Func<object, object> preAction, Func<object, object> postAction)
+        public TreeVisitorAction( Func<object, object> preAction, Func<object, object> postAction )
         {
             _preAction = preAction;
             _postAction = postAction;
         }
 
-        public object Pre(object t)
+        public object Pre( object t )
         {
-            if (_preAction != null)
-                return _preAction(t);
+            if ( _preAction != null )
+                return _preAction( t );
 
             return t;
         }
 
-        public object Post(object t)
+        public object Post( object t )
         {
-            if (_postAction != null)
-                return _postAction(t);
+            if ( _postAction != null )
+                return _postAction( t );
 
             return t;
         }

@@ -2,22 +2,22 @@
 
 public class EndGameScore
 {
-    public void ClearScores()
-    {
-        this.dealerCardTotal = (String)null;
-        this.splitCardTotal = (String)null;
-        this.splitMinTotal = (String)null;
-        this.playerCardTotal = (String)null;
-        this.playerMinTotal = (String)null;
-    }
+	public void ClearScores()
+	{
+		this.dealerCardTotal = (String)null;
+		this.splitCardTotal = (String)null;
+		this.splitMinTotal = (String)null;
+		this.playerCardTotal = (String)null;
+		this.playerMinTotal = (String)null;
+	}
 
-    public String dealerCardTotal;
+	public String dealerCardTotal;
 
-    public String splitCardTotal;
+	public String splitCardTotal;
 
-    public String splitMinTotal;
+	public String splitMinTotal;
 
-    public String playerCardTotal;
+	public String playerCardTotal;
 
-    public String playerMinTotal;
+	public String playerMinTotal;
 }

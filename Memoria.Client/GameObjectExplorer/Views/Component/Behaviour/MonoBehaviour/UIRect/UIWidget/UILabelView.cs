@@ -1,7 +1,7 @@
-using Memoria.Test;
 using System;
 using System.ComponentModel;
 using System.Text;
+using Memoria.Test;
 
 namespace Memoria.Client
 {

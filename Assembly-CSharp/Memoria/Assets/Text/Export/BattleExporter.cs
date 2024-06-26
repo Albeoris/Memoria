@@ -35,7 +35,7 @@ namespace Memoria.Assets
                 }
             }
 
-            return dic.Select(p => new TxtEntry { Prefix = p.Key, Value = p.Value }).ToArray();
+            return dic.Select(p => new TxtEntry {Prefix = p.Key, Value = p.Value}).ToArray();
         }
     }
 }

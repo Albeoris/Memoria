@@ -374,14 +374,14 @@ namespace Memoria.Prime.NVorbis.Ogg
             foreach (var size in hdr.PacketSizes)
             {
                 var packet = new Packet(this, dataOffset, size)
-                {
-                    PageGranulePosition = hdr.GranulePosition,
-                    IsEndOfStream = isEOS,
-                    PageSequenceNumber = hdr.SequenceNumber,
-                    IsContinued = isContinued,
-                    IsContinuation = isContinuation,
-                    IsResync = isResync,
-                };
+                    {
+                        PageGranulePosition = hdr.GranulePosition,
+                        IsEndOfStream = isEOS,
+                        PageSequenceNumber = hdr.SequenceNumber,
+                        IsContinued = isContinued,
+                        IsContinuation = isContinuation,
+                        IsResync = isResync,
+                    };
                 packetReader.AddPacket(packet);
 
                 // update the offset into the stream for each packet
@@ -422,10 +422,10 @@ namespace Memoria.Prime.NVorbis.Ogg
                 {
                     return -1;
                 }
-
+                
                 // if it's in a disposed stream, grab the next page instead
                 if (_disposedStreamSerials.Contains(hdr.StreamSerial)) continue;
-
+                
                 // otherwise, add it
                 if (AddPage(hdr))
                 {

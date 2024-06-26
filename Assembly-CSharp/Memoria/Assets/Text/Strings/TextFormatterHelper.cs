@@ -10,12 +10,12 @@ namespace Memoria.Assets
         {
             return CreateKey(entry.Prefix, entry.Index);
         }
-
+        
         public static void SetKey(this TxtEntry entry, String key)
         {
             ParseKey(key, out entry.Prefix, out entry.Index);
         }
-
+        
         public static String CreateKey(String prefix, Int32 index)
         {
             return prefix + index.ToString("D4", CultureInfo.InvariantCulture);

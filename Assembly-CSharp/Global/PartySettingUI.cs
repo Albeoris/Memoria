@@ -1,11 +1,11 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Object = System.Object;
 
@@ -90,9 +90,9 @@ public class PartySettingUI : UIScene
     [NonSerialized]
     private Int32 currentFloor;
     private Int32 TotalCharCount
-    {
+	{
         get
-        {
+		{
             if (this.info == null)
                 return 0;
             Int32 count = this.info.menu.Sum(cId => cId != CharacterId.NONE ? 1 : 0);
@@ -100,7 +100,7 @@ public class PartySettingUI : UIScene
                 count += this.info.select.Sum(cId => cId != CharacterId.NONE ? 1 : 0);
             return count;
         }
-    }
+	}
     private Int32 FloorMax => Math.Max(0, (TotalCharCount - 6) / 4);
 
     public FF9PARTY_INFO Info
@@ -174,7 +174,7 @@ public class PartySettingUI : UIScene
         if (!canChangeFloor)
             return null;
         if (direction == KeyCode.DownArrow && currentFloor < FloorMax)
-        {
+		{
             currentFloor++;
             DisplayOutsideCharacters();
             OnItemSelect(currentObj);
@@ -194,7 +194,7 @@ public class PartySettingUI : UIScene
     {
         if (!base.OnKeyConfirm(go))
             return true;
-
+        
         if (ButtonGroupState.ActiveGroup == SelectCharGroupButton)
         {
             FF9Sfx.FF9SFX_Play(103);
@@ -390,7 +390,7 @@ public class PartySettingUI : UIScene
     {
         Int32 healthyCnt = 0;
         Int32 charCnt = 0;
-        for (Int32 i = 0; i < 4; i++)
+        for (Int32 i = 0; i < 4;i++)
         {
             if (this.info.menu[i] != CharacterId.NONE)
             {
@@ -471,7 +471,7 @@ public class PartySettingUI : UIScene
     }
 
     private void ExtendSelectSlots()
-    {
+	{
         Int32 oldCount;
         if (this.info.select == null)
         {
@@ -481,7 +481,7 @@ public class PartySettingUI : UIScene
                 this.info.select[i] = CharacterId.NONE;
         }
         else
-        {
+		{
             oldCount = this.info.select.Length;
         }
         Int32 count = 8 + FloorMax * 4;

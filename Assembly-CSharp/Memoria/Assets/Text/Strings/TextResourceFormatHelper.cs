@@ -25,7 +25,7 @@ namespace Memoria.Assets
         public static Boolean TryResolveFileFormat(String fileExtension, out TextResourceFormat format)
         {
             String extension = fileExtension?.ToLowerInvariant();
-
+            
             format = extension switch
             {
                 ".strings" => TextResourceFormat.Strings,

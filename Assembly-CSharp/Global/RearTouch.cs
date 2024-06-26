@@ -3,13 +3,13 @@ using UnityEngine;
 
 public struct RearTouch
 {
-    public Vector2 deltaPosition;
+	public Vector2 deltaPosition;
 
-    public Single deltaTime;
+	public Single deltaTime;
 
-    public Int32 fingerId;
+	public Int32 fingerId;
 
-    public TouchPhase phase;
+	public TouchPhase phase;
 
-    public Vector2 position;
+	public Vector2 position;
 }

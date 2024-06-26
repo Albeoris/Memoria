@@ -1,13 +1,13 @@
-﻿using Assets.Scripts.Common;
-using FF9;
-using Memoria;
-using Memoria.Prime;
-using Memoria.Scripts;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using FF9;
+using Memoria;
+using Memoria.Scripts;
 using Object = System.Object;
+using Memoria.Prime;
+using Assets.Scripts.Common;
 
 [Flags]
 public enum FieldMapFlags : uint
@@ -772,7 +772,7 @@ public class FieldMap : HonoBehavior
                 Prev_CamPositionY = CamPositionY;
             }
         }
-
+            
         localPosition.x = CamPositionX;
         localPosition.y = CamPositionY;
 
@@ -974,7 +974,7 @@ public class FieldMap : HonoBehavior
             if (dbug) Log.Message("EBG_overlaySetLoopType " + overlayNdx + " | - ScreenAnchored");
             bgOverlay.flags &= ~BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored;
         }
-
+            
         return 1;
     }
 
@@ -1115,7 +1115,7 @@ public class FieldMap : HonoBehavior
 
     public Int32 EBG_animSetVisible(Int32 animNdx, Int32 isVisible)
     {
-        if (dbug) Log.Message("EBG_animSetVisible | anim:" + animNdx + " Visible:" + (isVisible != 0));
+        if (dbug) Log.Message("EBG_animSetVisible | anim:"+ animNdx + " Visible:" + (isVisible != 0));
         BGANIM_DEF bgAnim = this.scene.animList[animNdx];
         List<BGANIMFRAME_DEF> frameList = bgAnim.frameList;
         List<BGOVERLAY_DEF> overlayList = this.scene.overlayList;
@@ -1306,7 +1306,7 @@ public class FieldMap : HonoBehavior
                 }
                 screenY = (float)((screenY - (this.scrollWindowDim[(int)bgOverlay.viewportNdx][1] - (float)bgOverlay.h)) % (float)bgOverlay.h + (this.scrollWindowDim[(int)bgOverlay.viewportNdx][1] - (float)bgOverlay.h));
             }
-
+            
             for (short i = 0; i < spriteCount; i++)
             {
                 BGSPRITE_LOC_DEF bgSprite = spriteList[i];
@@ -1535,7 +1535,7 @@ public class FieldMap : HonoBehavior
             vertex.y += this.offset.y;
         }
         float targetX = (bgCamera.w / 2) + bgCamera.centerOffset[0] + vertex.x - this.offset.x;
-        float targetY = -((bgCamera.h / 2) + bgCamera.centerOffset[1] + vertex.y + this.offset.y - (2 * HalfFieldHeight));
+        float targetY = -( (bgCamera.h / 2) + bgCamera.centerOffset[1] + vertex.y + this.offset.y - (2 * HalfFieldHeight) );
         targetX = Mathf.Clamp(targetX, bgCamera.vrpMinX, bgCamera.vrpMaxX);
         targetY = Mathf.Clamp(targetY, bgCamera.vrpMinY, bgCamera.vrpMaxY);
         this.endPoint.x = targetX;
@@ -1674,8 +1674,7 @@ public class FieldMap : HonoBehavior
                 {
                     switch (map)
                     {
-                        case 1651:
-                        case 1758: // Iifa roots
+                        case 1651: case 1758: // Iifa roots
                             bgOverlay.curX = 200;
                             if (ActualPsxScreenWidth > 400)
                             {
@@ -1716,23 +1715,20 @@ public class FieldMap : HonoBehavior
                             if (ActualPsxScreenWidth > 400)
                                 bgOverlay.curX = 0f;
                             break;
-                        case 805:
-                        case 808:
+                        case 805: case 808:
                             if (ActualPsxScreenWidth > 400)
                             {
                                 bgOverlay.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
                                 bgOverlay.curX = 0f;
                             }
                             break;
-                        case 908:
-                        case 1908:
+                        case 908: case 1908:
                             if (i == 14 && ActualPsxScreenWidth > 400)
                                 bgOverlay.curX = 0f;
                             break;
                         case 1108: // Clayra temple light
                             bgOverlay.curX = 0f; break;
-                        case 1651:
-                        case 1758:// Iifa roots
+                        case 1651: case 1758:// Iifa roots
                             bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8f; break;
                         case 1657:
                             bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256f) - 0.25f; break;
@@ -1958,7 +1954,7 @@ public class FieldMap : HonoBehavior
         }
         scaledValue = (bgOverlay.curX * 65536) - scaledValue * Math3D.Fixed2Float((int)Math.Abs(ScaleFactor));
         bgOverlay.curX = scaledValue / 65536;
-        if (dbug) Log.Message("EBG_alphaScaleX | scaledValue:" + scaledValue + " ScaleFactor:" + ScaleFactor + " curX:" + bgOverlay.curX);
+        if (dbug) Log.Message("EBG_alphaScaleX | scaledValue:" + scaledValue + " ScaleFactor:" + ScaleFactor + " curX:" + bgOverlay.curX); 
         return bgOverlay.curX;
     }
 
@@ -2374,7 +2370,7 @@ public class FieldMap : HonoBehavior
             Int32 mapWidth = NarrowMapList.MapWidth(map);
             //Log.Message("Configuration.Graphics.WidescreenSupport " + Configuration.Graphics.WidescreenSupport + " CalcPsxFieldWidth() " + CalcPsxFieldWidth() + " PsxScreenWidth 1 " + CalcPsxScreenWidth() + " Screen.width " + Screen.width + " Screen.height " + Screen.height + "mapWidth " + mapWidth);
 
-            if (mapWidth <= PsxScreenWidth && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "BattleMap" && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "WorldMap")
+            if (mapWidth <= PsxScreenWidth && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "BattleMap" && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "WorldMap" )
             {
                 PsxFieldWidth = (Int16)mapWidth;
                 PsxScreenWidth = (Int16)mapWidth;

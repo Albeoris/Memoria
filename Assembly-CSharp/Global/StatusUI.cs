@@ -1,12 +1,12 @@
-﻿using Assets.Sources.Scripts.UI.Common;
-using FF9;
-using Memoria;
-using Memoria.Assets;
-using Memoria.Data;
-using Memoria.Database;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Sources.Scripts.UI.Common;
+using FF9;
+using Memoria;
+using Memoria.Data;
+using Memoria.Assets;
+using Memoria.Database;
 using UnityEngine;
 
 // ReSharper disable NotAccessedField.Global

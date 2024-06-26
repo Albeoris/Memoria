@@ -1,10 +1,10 @@
-using Assets.Sources.Scripts.UI.Common;
+using System;
+using System.Linq;
+using System.Collections.Generic;
 using FF9;
 using Memoria.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
+using Assets.Sources.Scripts.UI.Common;
 using Object = System.Object;
 
 namespace Memoria

@@ -7,7 +7,7 @@ namespace FF9
 {
     public static class btl_abil
     {
-        private static readonly RegularItem[] AutoPotionsItemIds = new RegularItem[] { RegularItem.Potion, RegularItem.HiPotion };
+        private static readonly RegularItem[] AutoPotionsItemIds = new RegularItem[]{ RegularItem.Potion, RegularItem.HiPotion };
 
         public static Boolean TryReturnMagic(BattleUnit returner, BattleUnit originalCaster, BattleCommand command)
         {

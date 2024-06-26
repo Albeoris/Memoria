@@ -1,12 +1,12 @@
-﻿using FF9;
+﻿using System;
+using System.Collections.Generic;
+using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
 using Memoria.Scenes;
 using Memoria.Test;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
@@ -64,7 +64,7 @@ public partial class BattleHUD : UIScene
         SetHudVisibility(!UIManager.Input.GetKey(Control.Special));
         UpdateAndroidTV();
     }
-
+    
     private void Awake()
     {
         FadingComponent = ScreenFadeGameObject.GetExactComponent<HonoFading>();
@@ -359,7 +359,7 @@ public partial class BattleHUD : UIScene
                     if (diff == 0)
                         continue;
                     if (curAnimation.CurrentValue > maxPoint)
-                    {
+					{
                         curAnimation.CurrentValue = maxPoint;
                         continue;
                     }
@@ -551,10 +551,10 @@ public partial class BattleHUD : UIScene
             }
             else if (go == _targetPanel.Buttons.Enemy.GameObject)
             {
-                if (_cursorType == CursorGroup.AllEnemy)
-                    CheckDoubleCast(-1, _cursorType);
-                else
-                    OnTargetNavigate(go, KeyCode.LeftArrow);
+                    if (_cursorType == CursorGroup.AllEnemy)
+                        CheckDoubleCast(-1, _cursorType);
+                    else
+                        OnTargetNavigate(go, KeyCode.LeftArrow);
             }
         }
         else
@@ -603,7 +603,7 @@ public partial class BattleHUD : UIScene
             return;
         CurrentPlayerIndex = playerIndex;
         _currentCommandIndex = BattleCommandMenu.Attack;
-
+        
         BattleUnit enemy = GetFirstAliveEnemy();
         if (enemy != null)
         {

@@ -1,8 +1,8 @@
-﻿using Memoria.Prime.Text;
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Memoria.Prime.Text;
 using UnityEngine;
 using Object = System.Object;
 

@@ -1,10 +1,10 @@
-using Memoria.Prime;
-using Memoria.Prime.PsdFile;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using Memoria.Prime;
+using Memoria.Prime.PsdFile;
 using UnityEngine;
 
 namespace Memoria.Assets
@@ -28,7 +28,7 @@ namespace Memoria.Assets
                 {
                     if (!map.Contains("FBG_N01_ALXT_MAP016_AT_MSA_0"))
                         continue;
-
+                    
                     ExportMapSafe(map);
                     i++;
 
@@ -209,9 +209,9 @@ namespace Memoria.Assets
             g.ImageData = new Byte[channelSize];
             b.ImageData = new Byte[channelSize];
             a.ImageData = new Byte[channelSize];
-
+            
             Color[] transpPixels = new Color[textureWidth * textureHeight];
-            Color transpPixel = new Color(1.0f, 1.0f, 1.0f, 0.0f);
+            Color transpPixel = new Color(1.0f,1.0f, 1.0f, 0.0f);
             for (var i = 0; i < textureHeight * textureWidth; i++)
             {
                 transpPixels[i] = transpPixel;

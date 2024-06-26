@@ -1,7 +1,7 @@
-﻿using Memoria.Client;
-using System;
+﻿using System;
 using System.IO;
 using System.Windows.Input;
+using Memoria.Client;
 
 namespace Memoria.Test
 {

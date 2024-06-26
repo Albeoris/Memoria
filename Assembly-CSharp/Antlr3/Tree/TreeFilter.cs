@@ -39,20 +39,20 @@ namespace Antlr.Runtime.Tree
         protected ITokenStream originalTokenStream;
         protected ITreeAdaptor originalAdaptor;
 
-        public TreeFilter(ITreeNodeStream input)
-            : this(input, new RecognizerSharedState())
+        public TreeFilter( ITreeNodeStream input )
+            : this( input, new RecognizerSharedState() )
         {
         }
-        public TreeFilter(ITreeNodeStream input, RecognizerSharedState state)
-            : base(input, state)
+        public TreeFilter( ITreeNodeStream input, RecognizerSharedState state )
+            : base( input, state )
         {
             originalAdaptor = input.TreeAdaptor;
             originalTokenStream = input.TokenStream;
         }
 
-        public virtual void ApplyOnce(object t, Action whichRule)
+        public virtual void ApplyOnce( object t, Action whichRule )
         {
-            if (t == null)
+            if ( t == null )
                 return;
 
             try
@@ -60,30 +60,30 @@ namespace Antlr.Runtime.Tree
                 // share TreeParser object but not parsing-related state
                 SetState(new RecognizerSharedState());
                 SetTreeNodeStream(new CommonTreeNodeStream(originalAdaptor, t));
-                ((CommonTreeNodeStream)input).TokenStream = originalTokenStream;
+                ( (CommonTreeNodeStream)input ).TokenStream = originalTokenStream;
                 BacktrackingLevel = 1;
                 whichRule();
                 BacktrackingLevel = 0;
             }
-            catch (RecognitionException)
+            catch ( RecognitionException )
             {
             }
         }
 
-        public virtual void Downup(object t)
+        public virtual void Downup( object t )
         {
-            TreeVisitor v = new TreeVisitor(new CommonTreeAdaptor());
-            Func<object, object> pre = (o) =>
+            TreeVisitor v = new TreeVisitor( new CommonTreeAdaptor() );
+            Func<object, object> pre = ( o ) =>
             {
-                ApplyOnce(o, Topdown);
+                ApplyOnce( o, Topdown );
                 return o;
             };
-            Func<object, object> post = (o) =>
+            Func<object, object> post = ( o ) =>
             {
-                ApplyOnce(o, Bottomup);
+                ApplyOnce( o, Bottomup );
                 return o;
             };
-            v.Visit(t, pre, post);
+            v.Visit( t, pre, post );
         }
 
         // methods the downup strategy uses to do the up and down rules.

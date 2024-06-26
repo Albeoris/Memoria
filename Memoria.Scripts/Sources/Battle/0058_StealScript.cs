@@ -1,5 +1,5 @@
-using Memoria.Data;
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -78,7 +78,7 @@ namespace Memoria.Scripts.Battle
                 else
                     UiState.SetBattleFollowFormatMessage(BattleMesages.CouldNotStealAnything);
             }
-
+            
         }
 
         private static Boolean HasStealableItems(BattleEnemy enemy)

@@ -1,6 +1,6 @@
-using FF9;
-using Memoria.Data;
 using System;
+using Memoria.Data;
+using FF9;
 
 namespace Memoria
 {

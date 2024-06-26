@@ -1,14 +1,14 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
 using Memoria.Prime.CSV;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 public partial class BattleHUD : UIScene
@@ -27,7 +27,7 @@ public partial class BattleHUD : UIScene
     public const String AbilityGroupButton = "Battle.Ability";
     public const String ItemGroupButton = "Battle.Item";
 
-    private static readonly Byte[] BattleMessageTimeTick = new Byte[7] { 54, 46, 48, 30, 24, 18, 12 };
+    private static readonly Byte[] BattleMessageTimeTick = new Byte[7] {54, 46, 48, 30, 24, 18, 12};
     private static readonly Dictionary<BattleAbilityId, IdMap> CmdTitleTable;
     private static readonly Int32 YINFO_ANIM_HPMP_MIN = 4;
     private static readonly Int32 YINFO_ANIM_HPMP_MAX = 16;
@@ -105,7 +105,7 @@ public partial class BattleHUD : UIScene
     {
         // TODO: Move it to an external file
         String abilityName = FF9TextTool.ActionAbilityName(btl_util.GetCommandMainActionIndex(pCmd));
-
+        
         String result;
         if (TryFormatRussianMagicSwordAbility(abilityName, out result))
             return result;

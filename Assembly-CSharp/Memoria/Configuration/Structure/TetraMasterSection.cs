@@ -1,6 +1,6 @@
-using Memoria.Prime.Ini;
 using System;
 using System.Collections.Generic;
+using Memoria.Prime.Ini;
 
 namespace Memoria
 {
@@ -8,7 +8,7 @@ namespace Memoria
     {
         private sealed class TetraMasterSection : IniSection
         {
-            private static readonly HashSet<Int32> DefaultExclusions = new HashSet<Int32>(new[] { 56, 75, 76, 77, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 98, 99, 100 });
+            private static readonly HashSet<Int32> DefaultExclusions = new HashSet<Int32>(new[] {56, 75, 76, 77, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 98, 99, 100});
 
             public readonly IniValue<Int32> TripleTriad;
             public readonly IniValue<Int32> ReduceRandom;

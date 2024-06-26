@@ -1,7 +1,7 @@
-using Assets.Sources.Scripts.UI.Common;
-using Memoria.Prime;
 using System;
 using System.Text;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Prime;
 
 namespace Memoria.Assets
 {

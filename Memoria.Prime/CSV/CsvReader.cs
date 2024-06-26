@@ -1,8 +1,8 @@
-﻿using Memoria.Prime.Exceptions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Memoria.Prime.Exceptions;
 
 namespace Memoria.Prime.CSV
 {

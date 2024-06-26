@@ -64,10 +64,10 @@ namespace UnityEngine.UI
         public delegate char OnValidateInput(string text, int charIndex, char addedChar);
 
         [Serializable]
-        public class SubmitEvent : UnityEvent<string> { }
+        public class SubmitEvent : UnityEvent<string> {}
 
         [Serializable]
-        public class OnChangeEvent : UnityEvent<string> { }
+        public class OnChangeEvent : UnityEvent<string> {}
 
         protected TouchScreenKeyboard m_Keyboard;
         static private readonly char[] kSeparators = { ' ', '.', ',' };
@@ -201,7 +201,7 @@ namespace UnityEngine.UI
         const string kEmailSpecialCharacters = "!#$%&'*+-/=?^_`{|}~";
 
         protected InputField()
-        { }
+        {}
 
         protected Mesh mesh
         {
@@ -408,7 +408,7 @@ namespace UnityEngine.UI
             }
         }
 
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
         // Remember: This is NOT related to text validation!
         // This is Unity's own OnValidate method which is invoked when changing values in the Inspector.
         protected override void OnValidate()
@@ -425,7 +425,7 @@ namespace UnityEngine.UI
                 SetCaretActive();
         }
 
-#endif // if UNITY_EDITOR
+    #endif // if UNITY_EDITOR
 
         protected override void OnEnable()
         {
@@ -1624,10 +1624,10 @@ namespace UnityEngine.UI
         }
 
         public virtual void LayoutComplete()
-        { }
+        {}
 
         public virtual void GraphicUpdateComplete()
-        { }
+        {}
 
         private void UpdateGeometry()
         {

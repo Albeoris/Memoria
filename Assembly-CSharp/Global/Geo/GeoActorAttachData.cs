@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class GeoActorAttachData
 {
-    public FieldMapActor parentActor;
+	public FieldMapActor parentActor;
 
-    public Transform parentNode;
+	public Transform parentNode;
 
-    public Transform childNode;
+	public Transform childNode;
 
-    public Vector3 attachOffset;
+	public Vector3 attachOffset;
 }

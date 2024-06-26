@@ -1,7 +1,7 @@
-﻿using Memoria;
+﻿using System;
+using Memoria;
 using Memoria.Data;
 using Memoria.Speedrun;
-using System;
 using System.Collections.Generic;
 
 // ReSharper disable InconsistentNaming

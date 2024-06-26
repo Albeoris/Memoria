@@ -1,8 +1,8 @@
-﻿using FF9;
-using Memoria.Data;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using FF9;
 using UnityEngine;
+using Memoria.Data;
 
 public static class btl_eqp
 {
