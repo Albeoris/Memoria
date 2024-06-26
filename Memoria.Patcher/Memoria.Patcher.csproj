@@ -120,49 +120,16 @@
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_tera_ta_ivk_0.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_treno1_tr_gat_0.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\es\evt_treno2_tr_gat_0.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_fossil_fr_dn2_0.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_treno1_tr_gat_0.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\fr\evt_treno2_tr_gat_0.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\gr\evt_fossil_fr_dn2_0.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\gr\evt_treno1_tr_gat_0.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\gr\evt_treno2_tr_gat_0.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\it\evt_fossil_fr_dn2_0.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\it\evt_treno1_tr_gat_0.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\it\evt_treno2_tr_gat_0.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\jp\evt_treno2_tr_gat_0.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\uk\evt_fossil_fr_dn2_0.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\uk\evt_treno1_tr_gat_0.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\uk\evt_treno2_tr_gat_0.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\us\evt_fossil_fr_dn2_0.eb.bytes">
@@ -373,12 +340,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\us\evt_tera_ta_ivk_0.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\us\evt_treno1_tr_gat_0.eb.bytes">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="StreamingAssets\Assets\Resources\commonasset\eventengine\eventbinary\field\us\evt_treno2_tr_gat_0.eb.bytes">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Assets\Resources\Fieldmaps\fbg_n06_vgdl_map097_dl_viw_0\fbg_n06_vgdl_map097_dl_viw_0.bgs.bytes">
