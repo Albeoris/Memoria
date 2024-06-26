@@ -1,10 +1,10 @@
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Prime;
+using Memoria.Prime.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Assets.Sources.Scripts.UI.Common;
-using Memoria.Prime;
-using Memoria.Prime.Text;
 
 namespace Memoria.Assets
 {

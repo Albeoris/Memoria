@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace UnityEngine.UI
 {
@@ -16,15 +16,15 @@ namespace UnityEngine.UI
             public Sprite mask;
         }
 
-        private const float  kWidth       = 160f;
-        private const float  kThickHeight = 30f;
-        private const float  kThinHeight  = 20f;
-        private static Vector2 s_ThickElementSize       = new Vector2(kWidth, kThickHeight);
-        private static Vector2 s_ThinElementSize        = new Vector2(kWidth, kThinHeight);
-        private static Vector2 s_ImageElementSize       = new Vector2(100f, 100f);
-        private static Color   s_DefaultSelectableColor = new Color(1f, 1f, 1f, 1f);
-        private static Color   s_PanelColor             = new Color(1f, 1f, 1f, 0.392f);
-        private static Color   s_TextColor              = new Color(50f / 255f, 50f / 255f, 50f / 255f, 1f);
+        private const float kWidth = 160f;
+        private const float kThickHeight = 30f;
+        private const float kThinHeight = 20f;
+        private static Vector2 s_ThickElementSize = new Vector2(kWidth, kThickHeight);
+        private static Vector2 s_ThinElementSize = new Vector2(kWidth, kThinHeight);
+        private static Vector2 s_ImageElementSize = new Vector2(100f, 100f);
+        private static Color s_DefaultSelectableColor = new Color(1f, 1f, 1f, 1f);
+        private static Color s_PanelColor = new Color(1f, 1f, 1f, 0.392f);
+        private static Color s_TextColor = new Color(50f / 255f, 50f / 255f, 50f / 255f, 1f);
 
         // Helper methods at top
 
@@ -56,8 +56,8 @@ namespace UnityEngine.UI
         {
             ColorBlock colors = slider.colors;
             colors.highlightedColor = new Color(0.882f, 0.882f, 0.882f);
-            colors.pressedColor     = new Color(0.698f, 0.698f, 0.698f);
-            colors.disabledColor    = new Color(0.521f, 0.521f, 0.521f);
+            colors.pressedColor = new Color(0.698f, 0.698f, 0.698f);
+            colors.disabledColor = new Color(0.521f, 0.521f, 0.521f);
         }
 
         private static void SetParentAndAlign(GameObject child, GameObject parent)
@@ -282,10 +282,10 @@ namespace UnityEngine.UI
             SetDefaultColorTransitionValues(toggle);
 
             RectTransform bgRect = background.GetComponent<RectTransform>();
-            bgRect.anchorMin        = new Vector2(0f, 1f);
-            bgRect.anchorMax        = new Vector2(0f, 1f);
+            bgRect.anchorMin = new Vector2(0f, 1f);
+            bgRect.anchorMax = new Vector2(0f, 1f);
             bgRect.anchoredPosition = new Vector2(10f, -10f);
-            bgRect.sizeDelta        = new Vector2(kThinHeight, kThinHeight);
+            bgRect.sizeDelta = new Vector2(kThinHeight, kThinHeight);
 
             RectTransform checkmarkRect = checkmark.GetComponent<RectTransform>();
             checkmarkRect.anchorMin = new Vector2(0.5f, 0.5f);
@@ -294,10 +294,10 @@ namespace UnityEngine.UI
             checkmarkRect.sizeDelta = new Vector2(20f, 20f);
 
             RectTransform labelRect = childLabel.GetComponent<RectTransform>();
-            labelRect.anchorMin     = new Vector2(0f, 0f);
-            labelRect.anchorMax     = new Vector2(1f, 1f);
-            labelRect.offsetMin     = new Vector2(23f, 1f);
-            labelRect.offsetMax     = new Vector2(-5f, -2f);
+            labelRect.anchorMin = new Vector2(0f, 0f);
+            labelRect.anchorMax = new Vector2(1f, 1f);
+            labelRect.offsetMin = new Vector2(23f, 1f);
+            labelRect.offsetMax = new Vector2(-5f, -2f);
 
             return toggleRoot;
         }
@@ -442,65 +442,65 @@ namespace UnityEngine.UI
 
             // Setting default Item list.
             itemLabelText.text = "Option A";
-            dropdown.options.Add(new Dropdown.OptionData {text = "Option A"});
-            dropdown.options.Add(new Dropdown.OptionData {text = "Option B"});
-            dropdown.options.Add(new Dropdown.OptionData {text = "Option C"});
+            dropdown.options.Add(new Dropdown.OptionData { text = "Option A" });
+            dropdown.options.Add(new Dropdown.OptionData { text = "Option B" });
+            dropdown.options.Add(new Dropdown.OptionData { text = "Option C" });
 
             // Set up RectTransforms.
 
             RectTransform labelRT = label.GetComponent<RectTransform>();
-            labelRT.anchorMin           = Vector2.zero;
-            labelRT.anchorMax           = Vector2.one;
-            labelRT.offsetMin           = new Vector2(10, 6);
-            labelRT.offsetMax           = new Vector2(-25, -7);
+            labelRT.anchorMin = Vector2.zero;
+            labelRT.anchorMax = Vector2.one;
+            labelRT.offsetMin = new Vector2(10, 6);
+            labelRT.offsetMax = new Vector2(-25, -7);
 
             RectTransform arrowRT = arrow.GetComponent<RectTransform>();
-            arrowRT.anchorMin           = new Vector2(1, 0.5f);
-            arrowRT.anchorMax           = new Vector2(1, 0.5f);
-            arrowRT.sizeDelta           = new Vector2(20, 20);
-            arrowRT.anchoredPosition    = new Vector2(-15, 0);
+            arrowRT.anchorMin = new Vector2(1, 0.5f);
+            arrowRT.anchorMax = new Vector2(1, 0.5f);
+            arrowRT.sizeDelta = new Vector2(20, 20);
+            arrowRT.anchoredPosition = new Vector2(-15, 0);
 
             RectTransform templateRT = template.GetComponent<RectTransform>();
-            templateRT.anchorMin        = new Vector2(0, 0);
-            templateRT.anchorMax        = new Vector2(1, 0);
-            templateRT.pivot            = new Vector2(0.5f, 1);
+            templateRT.anchorMin = new Vector2(0, 0);
+            templateRT.anchorMax = new Vector2(1, 0);
+            templateRT.pivot = new Vector2(0.5f, 1);
             templateRT.anchoredPosition = new Vector2(0, 2);
-            templateRT.sizeDelta        = new Vector2(0, 150);
+            templateRT.sizeDelta = new Vector2(0, 150);
 
             RectTransform viewportRT = viewport.GetComponent<RectTransform>();
-            viewportRT.anchorMin        = new Vector2(0, 0);
-            viewportRT.anchorMax        = new Vector2(1, 1);
-            viewportRT.sizeDelta        = new Vector2(-18, 0);
-            viewportRT.pivot            = new Vector2(0, 1);
+            viewportRT.anchorMin = new Vector2(0, 0);
+            viewportRT.anchorMax = new Vector2(1, 1);
+            viewportRT.sizeDelta = new Vector2(-18, 0);
+            viewportRT.pivot = new Vector2(0, 1);
 
             RectTransform contentRT = content.GetComponent<RectTransform>();
-            contentRT.anchorMin         = new Vector2(0f, 1);
-            contentRT.anchorMax         = new Vector2(1f, 1);
-            contentRT.pivot             = new Vector2(0.5f, 1);
-            contentRT.anchoredPosition  = new Vector2(0, 0);
-            contentRT.sizeDelta         = new Vector2(0, 28);
+            contentRT.anchorMin = new Vector2(0f, 1);
+            contentRT.anchorMax = new Vector2(1f, 1);
+            contentRT.pivot = new Vector2(0.5f, 1);
+            contentRT.anchoredPosition = new Vector2(0, 0);
+            contentRT.sizeDelta = new Vector2(0, 28);
 
             RectTransform itemRT = item.GetComponent<RectTransform>();
-            itemRT.anchorMin            = new Vector2(0, 0.5f);
-            itemRT.anchorMax            = new Vector2(1, 0.5f);
-            itemRT.sizeDelta            = new Vector2(0, 20);
+            itemRT.anchorMin = new Vector2(0, 0.5f);
+            itemRT.anchorMax = new Vector2(1, 0.5f);
+            itemRT.sizeDelta = new Vector2(0, 20);
 
             RectTransform itemBackgroundRT = itemBackground.GetComponent<RectTransform>();
-            itemBackgroundRT.anchorMin  = Vector2.zero;
-            itemBackgroundRT.anchorMax  = Vector2.one;
-            itemBackgroundRT.sizeDelta  = Vector2.zero;
+            itemBackgroundRT.anchorMin = Vector2.zero;
+            itemBackgroundRT.anchorMax = Vector2.one;
+            itemBackgroundRT.sizeDelta = Vector2.zero;
 
             RectTransform itemCheckmarkRT = itemCheckmark.GetComponent<RectTransform>();
-            itemCheckmarkRT.anchorMin   = new Vector2(0, 0.5f);
-            itemCheckmarkRT.anchorMax   = new Vector2(0, 0.5f);
-            itemCheckmarkRT.sizeDelta   = new Vector2(20, 20);
+            itemCheckmarkRT.anchorMin = new Vector2(0, 0.5f);
+            itemCheckmarkRT.anchorMax = new Vector2(0, 0.5f);
+            itemCheckmarkRT.sizeDelta = new Vector2(20, 20);
             itemCheckmarkRT.anchoredPosition = new Vector2(10, 0);
 
             RectTransform itemLabelRT = itemLabel.GetComponent<RectTransform>();
-            itemLabelRT.anchorMin       = Vector2.zero;
-            itemLabelRT.anchorMax       = Vector2.one;
-            itemLabelRT.offsetMin       = new Vector2(20, 1);
-            itemLabelRT.offsetMax       = new Vector2(-10, -2);
+            itemLabelRT.anchorMin = Vector2.zero;
+            itemLabelRT.anchorMax = Vector2.one;
+            itemLabelRT.offsetMin = new Vector2(20, 1);
+            itemLabelRT.offsetMax = new Vector2(-10, -2);
 
             template.SetActive(false);
 

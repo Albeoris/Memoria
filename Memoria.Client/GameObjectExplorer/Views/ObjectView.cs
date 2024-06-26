@@ -1,10 +1,10 @@
+using Memoria.Client.Interaction;
+using Memoria.Test;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Memoria.Client.Interaction;
-using Memoria.Test;
 using UnityEngine;
 using Object = System.Object;
 using WpfControl = System.Windows.Controls.Control;
@@ -55,8 +55,8 @@ namespace Memoria.Client
                 yield return new Separator();
             }
 
-            yield return new MenuItem {Header = "Branch", Command = new BranchCommand(this)};
-            yield return new MenuItem {Header = "Duplicate", Command = new DuplicateCommandMessage(Native.InstanceId)};
+            yield return new MenuItem { Header = "Branch", Command = new BranchCommand(this) };
+            yield return new MenuItem { Header = "Duplicate", Command = new DuplicateCommandMessage(Native.InstanceId) };
         }
 
         private class BranchCommand : ICommand

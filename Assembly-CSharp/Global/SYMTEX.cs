@@ -2,9 +2,9 @@
 
 public class SYMTEX
 {
-	public Byte SeqPtr;
+    public Byte SeqPtr;
 
-	public UInt16 TimIdx;
+    public UInt16 TimIdx;
 
-	public UInt16 Pad;
+    public UInt16 Pad;
 }

@@ -2,10 +2,10 @@
 
 namespace AnimationOrTween
 {
-	public enum EnableCondition
-	{
-		DoNothing,
-		EnableThenPlay,
-		IgnoreDisabledState
-	}
+    public enum EnableCondition
+    {
+        DoNothing,
+        EnableThenPlay,
+        IgnoreDisabledState
+    }
 }

@@ -1,12 +1,12 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
-using System;
-using System.Collections.Generic;
 using Memoria;
 using Memoria.Assets;
+using Memoria.Data;
 using Memoria.Scenes;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
-using Memoria.Data;
 
 public partial class BattleHUD : UIScene
 {
@@ -51,7 +51,7 @@ public partial class BattleHUD : UIScene
                     AccessMenu.IsActive = false;
                 }
                 else
-				{
+                {
                     AccessMenu = null;
                 }
 

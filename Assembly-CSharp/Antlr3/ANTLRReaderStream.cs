@@ -49,32 +49,32 @@ namespace Antlr.Runtime
         public const int ReadBufferSize = 1024;
         public const int InitialBufferSize = 1024;
 
-        public ANTLRReaderStream( TextReader r )
-            : this( r, InitialBufferSize, ReadBufferSize )
+        public ANTLRReaderStream(TextReader r)
+            : this(r, InitialBufferSize, ReadBufferSize)
         {
         }
 
-        public ANTLRReaderStream( TextReader r, int size )
-            : this( r, size, ReadBufferSize )
+        public ANTLRReaderStream(TextReader r, int size)
+            : this(r, size, ReadBufferSize)
         {
         }
 
-        public ANTLRReaderStream( TextReader r, int size, int readChunkSize )
+        public ANTLRReaderStream(TextReader r, int size, int readChunkSize)
         {
-            Load( r, size, readChunkSize );
+            Load(r, size, readChunkSize);
         }
 
-        public virtual void Load( TextReader r, int size, int readChunkSize )
+        public virtual void Load(TextReader r, int size, int readChunkSize)
         {
-            if ( r == null )
+            if (r == null)
             {
                 return;
             }
-            if ( size <= 0 )
+            if (size <= 0)
             {
                 size = InitialBufferSize;
             }
-            if ( readChunkSize <= 0 )
+            if (readChunkSize <= 0)
             {
                 readChunkSize = ReadBufferSize;
             }

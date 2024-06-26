@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Antlr.Runtime;
+using NCalc.Domain;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using Antlr.Runtime;
-using NCalc.Domain;
 
 // Original author: sebastienros https://archive.codeplex.com/?p=ncalc
 // Author of this version: pitermarx https://github.com/pitermarx/NCalc-Edge

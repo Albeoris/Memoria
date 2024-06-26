@@ -1,5 +1,10 @@
 using Assets.Scripts.Common;
 using Assets.SiliconSocial;
+using Memoria;
+using Memoria.Assets;
+using Memoria.Prime;
+using Memoria.Scenes;
+using Memoria.Speedrun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,11 +12,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using Memoria;
-using Memoria.Assets;
-using Memoria.Prime;
-using Memoria.Scenes;
-using Memoria.Speedrun;
 using UnityEngine;
 using UnityEngine.UI;
 using static AssetManager;
@@ -259,7 +259,7 @@ public class TitleUI : UIScene
     private Single clickedTimer = -1f;
 
     private Boolean isPaused;
-    
+
     public string GClunguage;
 
     public bool IsSplashTextActive
@@ -1025,7 +1025,7 @@ public class TitleUI : UIScene
     {
         AutoSplitterPipe.SignalLoadEnd();
         if (Configuration.Debug.StartModelViewer || Configuration.Debug.StartFieldCreator)
-		{
+        {
             OnNewGameButtonClick();
             return;
         }
@@ -1467,7 +1467,8 @@ public class TitleUI : UIScene
             }
             else
             {
-                SteamSdkWrapper.RequestStats(delegate {
+                SteamSdkWrapper.RequestStats(delegate
+                {
                     AchievementManager.ResyncSystemAchievements();
                 });
             }
@@ -1581,13 +1582,13 @@ public class TitleUI : UIScene
             this.MenuBlackjackButton.SetActive(false);
             this.MenuStaffPCButton.SetActive(true);
             this.MenuBlackjackPCButton.SetActive(true);
-            
+
             UIEventListener staffEvents = UIEventListener.Get(this.MenuStaffPCButton);
             staffEvents.Click += onClick;
-            
+
             UIEventListener blackjackEvents = UIEventListener.Get(this.MenuBlackjackPCButton);
             blackjackEvents.Click += onClick;
-            
+
             this.SquareEnixButton.SetActive(true);
             UIEventListener squareEnixEvents = UIEventListener.Get(this.SquareEnixButton);
             squareEnixEvents.Click += onClick;
@@ -2117,7 +2118,8 @@ public class TitleUI : UIScene
                 postMenuFadeOut();
                 postIdleScreenFadeOut();
                 this.stopEnable = false;
-                this.honoFading.Fade(1f, 0f, this.skipFadeInTime, 0f, this.honoFading.fadeInCurve, delegate {
+                this.honoFading.Fade(1f, 0f, this.skipFadeInTime, 0f, this.honoFading.fadeInCurve, delegate
+                {
                     postMenuFadeIn();
                 });
                 return;

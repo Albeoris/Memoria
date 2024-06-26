@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using Global.TileSystem;
 using Memoria;
-using UnityEngine;
-using Memoria.Prime;
 using Memoria.Assets;
-using Memoria.Prime.PsdFile;
 using Memoria.Assets.Import.Graphics;
+using Memoria.Prime;
+using Memoria.Prime.PsdFile;
 using Memoria.Scripts;
-using Global.TileSystem;
-using System.Linq;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using UnityEngine;
 
 #pragma warning disable 169
 #pragma warning disable 414
@@ -171,7 +171,7 @@ public class BGSCENE_DEF
                 currentObj = bgCamera;
             }
             else if (currentObj is BGOVERLAY_DEF)
-			{
+            {
                 processOk = this.ProcessMemoriaOverlay(currentObj as BGOVERLAY_DEF, operation, args);
             }
             else if (currentObj is BGANIM_DEF)
@@ -197,7 +197,7 @@ public class BGSCENE_DEF
     }
 
     private void PushGenericObject(System.Object obj)
-	{
+    {
         if (obj == null)
             return;
         if (obj is BGOVERLAY_DEF)
@@ -211,7 +211,7 @@ public class BGSCENE_DEF
     }
 
     private Boolean ProcessMemoriaOverlay(BGOVERLAY_DEF bgOverlay, String operation, String[] arguments)
-	{
+    {
         if (operation == "CameraId" && arguments.Length >= 1)
         {
             Byte.TryParse(arguments[0], out bgOverlay.camNdx);
@@ -285,7 +285,7 @@ public class BGSCENE_DEF
         else if (operation == "Overlays")
         {
             foreach (String s in arguments)
-			{
+            {
                 BGANIMFRAME_DEF frame = new BGANIMFRAME_DEF();
                 Byte.TryParse(s, out frame.target);
                 bgAnim.frameList.Add(frame);
@@ -445,14 +445,14 @@ public class BGSCENE_DEF
     }
 
     public void ExportMemoriaBGX(String bgxExportPath)
-	{
+    {
         Boolean atlasIsReadable = true;
         try
-		{
+        {
             Color firstPixel = this.atlas.GetPixel(0, 0);
         }
         catch (Exception)
-		{
+        {
             atlasIsReadable = false;
         }
         if (!atlasIsReadable)
@@ -529,7 +529,7 @@ public class BGSCENE_DEF
                 TextureHelper.WriteTextureToFile(bgOverlay.memoriaImage, folder + textureName);
             }
             else
-			{
+            {
                 bgsStr += $"Position: {this.orgX + bgOverlay.orgX}, {this.orgY + bgOverlay.orgY}, {this.orgZ + bgOverlay.orgZ}\n";
             }
             bgsStr += $"\n";
@@ -558,7 +558,7 @@ public class BGSCENE_DEF
             bgsStr += $"\n";
         }
         File.WriteAllText(bgxExportPath, bgsStr);
-	}
+    }
 
     private void InitPSXTextureAtlas()
     {
@@ -770,7 +770,7 @@ public class BGSCENE_DEF
         {
             this.ReadMemoriaBGS(customBackgroundFilename);
             return;
-		}
+        }
 
         if (!this.useUpscaleFM)
         {
@@ -830,11 +830,11 @@ public class BGSCENE_DEF
         String symbol = Localization.GetSymbol();
         if (symbol == "US")
             return;
-        
+
         FieldMapLocalizeAreaTitleInfo info = FieldMapInfo.localizeAreaTitle.GetInfo(newName);
         if (info == null)
             return;
-        
+
         if (symbol != "UK" || info.hasUK)
         {
             BGSCENE_DEF bGSCENE_DEF = new BGSCENE_DEF(this.useUpscaleFM);
@@ -1130,8 +1130,8 @@ public class BGSCENE_DEF
         // open meta, get total atlases
         string atlasPath = Path.Combine(externalPath, "atlases");
         AtlasInfo ai = AtlasInfo.Load(Path.Combine(atlasPath, "atlas.meta"));
- 
-        uint totalAtlases = (uint) ai.TotalAtlasesFromAtlasSection;
+
+        uint totalAtlases = (uint)ai.TotalAtlasesFromAtlasSection;
         uint tileSize = (uint)ai.TileSizeFromAtlasSection;
         int atlasSide = ai.AtlasSideFromAtlasSection;
 
@@ -1393,9 +1393,9 @@ public class BGSCENE_DEF
         return factor;
     }
 
-    private void doCreateAtlas(List<Layer> layers, List<BGOVERLAY_DEF> overlays, 
+    private void doCreateAtlas(List<Layer> layers, List<BGOVERLAY_DEF> overlays,
         List<BGANIM_DEF> animationOverlays, List<BGLIGHT_DEF> lightOverlays,
-        String atlasFilename, 
+        String atlasFilename,
         CopyBytesHelper copyHelper, int atlasSide, uint factor, Texture2D atlasTexture)
     {
         int padding = Convert.ToInt32(factor);
@@ -1514,22 +1514,22 @@ public class BGSCENE_DEF
         List<BGOVERLAY_DEF> mainList = new List<BGOVERLAY_DEF>(this.overlayList);
         List<Layer> mainLayerList = new List<Layer>(noLocalizationList);
 
-        if(info != null)
+        if (info != null)
         {
             Int32 startOvrIdx = info.startOvrIdx;
             Int32 endOvrIdx = info.endOvrIdx;
-            for(var i = endOvrIdx; i >= startOvrIdx; i--)
+            for (var i = endOvrIdx; i >= startOvrIdx; i--)
             {
                 mainLayerList.RemoveAt(i);
                 mainList.RemoveAt(i);
             }
         }
 
-        this.doCreateAtlas(mainLayerList, mainList, this.animList, this.lightList, 
+        this.doCreateAtlas(mainLayerList, mainList, this.animList, this.lightList,
             "atlas", copyHelper, atlasSide, factor, atlasTexture);
 
         // create all other atlases
-        if(info != null)
+        if (info != null)
         {
             Int32 startOvrIdx = info.startOvrIdx;
             Int32 endOvrIdx = info.endOvrIdx;
@@ -1544,7 +1544,7 @@ public class BGSCENE_DEF
                 bGSCENE_DEF._LoadDummyEBG(bb, resourcePath, this.mapName, info, language);
                 List<Layer> restrictedLayerList = new List<Layer>();
                 List<BGOVERLAY_DEF> restrictedOverlayList = new List<BGOVERLAY_DEF>();
-                for(var i = startOvrIdx; i <= endOvrIdx; i++)
+                for (var i = startOvrIdx; i <= endOvrIdx; i++)
                 {
                     Log.Message($"Overlay {startOvrIdx}, localization for {language}, spriteCount {this.overlayList[i].spriteList.Count}");
                     restrictedLayerList.Add(newPsdList.First(x => x.Name == $"{noLocalizationList[i].Name}_{language}"));
@@ -1552,7 +1552,7 @@ public class BGSCENE_DEF
                 }
 
                 Log.Message($"Creating atlas for language {language}");
-                this.doCreateAtlas(restrictedLayerList, restrictedOverlayList, new List<BGANIM_DEF>(), new List<BGLIGHT_DEF>(), 
+                this.doCreateAtlas(restrictedLayerList, restrictedOverlayList, new List<BGANIM_DEF>(), new List<BGLIGHT_DEF>(),
                     $"atlas_{language}", copyHelper, atlasSide, factor, atlasTexture);
             }
         }
@@ -1743,7 +1743,7 @@ public class BGSCENE_DEF
     }
 
     private void CreateScene_Background(Transform parent, Boolean noDepth = false)
-	{
+    {
         GameObject backgroundGo = new GameObject("Background");
         backgroundGo.transform.parent = parent;
         backgroundGo.transform.localPosition = new Vector3(this.curX - FieldMap.HalfFieldWidth, -(this.curY - FieldMap.HalfFieldHeight), noDepth ? 0f : this.curZ);
@@ -1761,7 +1761,7 @@ public class BGSCENE_DEF
     }
 
     private void CreateScene_CompleteAnimatedOverlayNames()
-	{
+    {
         for (Int32 i = 0; i < this.animList.Count; i++)
         {
             BGANIM_DEF bgAnim = this.animList[i];
@@ -1774,7 +1774,7 @@ public class BGSCENE_DEF
     }
 
     private void CreateScene_OverlayGo(BGOVERLAY_DEF bgOverlay, Boolean noDepth = false)
-	{
+    {
         GameObject overlayGo = new GameObject($"Overlay_{bgOverlay.indnum:D2}");
         Transform overlayTransf = overlayGo.transform;
         overlayTransf.parent = this.cameraList[bgOverlay.camNdx].transform;

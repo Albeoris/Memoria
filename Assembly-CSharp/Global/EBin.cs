@@ -1,12 +1,12 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
 using Assets.Sources.Scripts.EventEngine.Utils;
 using FF9;
 using Memoria;
-using Memoria.Data;
 using Memoria.Assets;
+using Memoria.Data;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
 // ReSharper disable UnusedMember.Global
@@ -459,10 +459,10 @@ public class EBin
                 _s7.push(encodeTypeAndVarClass(VariableSource.Null, VariableType.Dictionary));
                 return;
         }
-		expr_Push_v0_Int24();
-	}
+        expr_Push_v0_Int24();
+    }
 
-	private Int32 expr_varSpec(Int32 varOperation)
+    private Int32 expr_varSpec(Int32 varOperation)
     {
         _v0 = (varOperation & 3) << 26 | (varOperation & 0x1C) << 27;
         Int32 varArrayIndex = s1.getByteIP();
@@ -1682,8 +1682,8 @@ public class EBin
     }
 
     private Int32 GetMemoriaCustomVariable(memoria_variable varCode)
-	{
-		switch (varCode)
+    {
+        switch (varCode)
         {
             case memoria_variable.TETRA_MASTER_WIN:
                 return FF9StateSystem.MiniGame.SavedData.sWin;
@@ -1692,15 +1692,15 @@ public class EBin
             case memoria_variable.TETRA_MASTER_DRAW:
                 return FF9StateSystem.MiniGame.SavedData.sDraw;
             case memoria_variable.TETRA_MASTER_POINTS:
-				return QuadMistDatabase.MiniGame_GetPlayerPoints();
-			case memoria_variable.TETRA_MASTER_RANK:
-				return QuadMistDatabase.MiniGame_GetCollectorLevel();
-			case memoria_variable.TREASURE_HUNTER_POINTS:
-				return FF9StateSystem.EventState.GetTreasureHunterPoints();
+                return QuadMistDatabase.MiniGame_GetPlayerPoints();
+            case memoria_variable.TETRA_MASTER_RANK:
+                return QuadMistDatabase.MiniGame_GetCollectorLevel();
+            case memoria_variable.TREASURE_HUNTER_POINTS:
+                return FF9StateSystem.EventState.GetTreasureHunterPoints();
             case memoria_variable.BATTLE_RUNAWAY:
                 return FF9StateSystem.Battle.FF9Battle.btl_scene.Info.Runaway ? 1 : 0;
         }
-		return 0;
+        return 0;
     }
 
     private void SetMemoriaCustomVariable(memoria_variable varCode, Int32 val)
@@ -1728,60 +1728,60 @@ public class EBin
         switch (type)
         {
             case 0:
+            {
+                if (obj.cid != 4)
                 {
-                    if (obj.cid != 4)
-                    {
-                        return 0;
-                    }
-                    result = CastFloatToIntWithChecking(((PosObj)obj).pos[0]);
-                    WMActor wmActor = ((Actor)obj).wmActor;
-                    if (wmActor != null)
-                    {
-                    }
-                    break;
+                    return 0;
                 }
+                result = CastFloatToIntWithChecking(((PosObj)obj).pos[0]);
+                WMActor wmActor = ((Actor)obj).wmActor;
+                if (wmActor != null)
+                {
+                }
+                break;
+            }
             case 1:
+            {
+                if (obj.cid != 4)
                 {
-                    if (obj.cid != 4)
-                    {
-                        return 0;
-                    }
-                    result = -1 * CastFloatToIntWithChecking(((PosObj)obj).pos[1]);
-                    WMActor wmActor = ((Actor)obj).wmActor;
-                    if (wmActor != null)
-                    {
-                    }
-                    break;
+                    return 0;
                 }
+                result = -1 * CastFloatToIntWithChecking(((PosObj)obj).pos[1]);
+                WMActor wmActor = ((Actor)obj).wmActor;
+                if (wmActor != null)
+                {
+                }
+                break;
+            }
             case 2:
+            {
+                if (obj.cid != 4)
                 {
-                    if (obj.cid != 4)
-                    {
-                        return 0;
-                    }
-                    result = CastFloatToIntWithChecking(((PosObj)obj).pos[2]);
-                    WMActor wmActor = ((Actor)obj).wmActor;
-                    if (wmActor != null)
-                    {
-                    }
-                    break;
+                    return 0;
                 }
+                result = CastFloatToIntWithChecking(((PosObj)obj).pos[2]);
+                WMActor wmActor = ((Actor)obj).wmActor;
+                if (wmActor != null)
+                {
+                }
+                break;
+            }
             case 3:
+            {
+                Single floatAngle = 0f;
+                if (_eventEngine.gMode == 1)
                 {
-                    Single floatAngle = 0f;
-                    if (_eventEngine.gMode == 1)
-                    {
-                        floatAngle = ((Actor)obj).rotAngle[1];
-                    }
-                    else if (_eventEngine.gMode == 3)
-                    {
-                        floatAngle = ((Actor)obj).wmActor.rot1;
-                    }
-                    Int32 num = ConvertFloatAngleToFixedPoint(floatAngle);
-                    Int32 num2 = num >> 4 & 255;
-                    result = num2;
-                    break;
+                    floatAngle = ((Actor)obj).rotAngle[1];
                 }
+                else if (_eventEngine.gMode == 3)
+                {
+                    floatAngle = ((Actor)obj).wmActor.rot1;
+                }
+                Int32 num = ConvertFloatAngleToFixedPoint(floatAngle);
+                Int32 num2 = num >> 4 & 255;
+                result = num2;
+                break;
+            }
             case 4:
                 result = obj.flags;
                 break;
@@ -1903,7 +1903,7 @@ public class EBin
                                 vect[arrayIndex] = varValue;
                         }
                         else if (arrayIndex == 0)
-						{
+                        {
                             vect = new List<Int32>();
                             vect.Add(varValue);
                             FF9StateSystem.EventState.gScriptVector.Add(vectID, vect);

@@ -30,7 +30,7 @@ namespace UnityEngine.UI
 
         private DrivenRectTransformTracker m_Tracker;
 
-        protected AspectRatioFitter() {}
+        protected AspectRatioFitter() { }
 
         #region Unity Lifetime calls
 
@@ -127,9 +127,9 @@ namespace UnityEngine.UI
             return parent.rect.size;
         }
 
-        public virtual void SetLayoutHorizontal() {}
+        public virtual void SetLayoutHorizontal() { }
 
-        public virtual void SetLayoutVertical() {}
+        public virtual void SetLayoutVertical() { }
 
         protected void SetDirty()
         {
@@ -139,13 +139,13 @@ namespace UnityEngine.UI
             UpdateRect();
         }
 
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
         protected override void OnValidate()
         {
             m_AspectRatio = Mathf.Clamp(m_AspectRatio, 0.001f, 1000f);
             SetDirty();
         }
 
-    #endif
+#endif
     }
 }

@@ -19,7 +19,7 @@ namespace Memoria.Assets
 
             TxtEntry[] result = new TxtEntry[dic.Count];
             for (Int32 i = 0; i < result.Length; i++)
-                result[i] = new TxtEntry {Prefix = keys[i], Value =  values[i]};
+                result[i] = new TxtEntry { Prefix = keys[i], Value = values[i] };
 
             return result;
         }

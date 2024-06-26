@@ -2,13 +2,13 @@
 
 public class Watch
 {
-	public String name;
+    public String name;
 
-	public String base_;
+    public String base_;
 
-	public UInt16 ofs;
+    public UInt16 ofs;
 
-	public Byte type;
+    public Byte type;
 
-	public Byte le;
+    public Byte le;
 }

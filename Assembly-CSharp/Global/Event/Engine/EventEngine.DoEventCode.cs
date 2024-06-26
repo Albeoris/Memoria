@@ -1,15 +1,15 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria;
+using Memoria.Assets;
+using Memoria.Data;
 using Memoria.Field;
+using Memoria.Prime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Memoria;
-using Memoria.Prime;
-using Memoria.Assets;
-using Memoria.Data;
 using UnityEngine;
 
 public partial class EventEngine
@@ -599,7 +599,7 @@ public partial class EventEngine
                 else if (mapNo == 1901 && (po.sid == 2 || po.sid == 17) && destX == 672) // Eiko ATE widescreen: Quina chasing Gilmanesh not far enough
                 {
                     destX = 1000; //Log.Message("destX = " + destX + " destZ = " + destZ + " po.sid = " + po.sid + " po.pos[0] = " + po.pos[0]);
-                    if ((po.sid == 2 && po.pos[0] > 890) || (po.sid == 17 && po.pos[0] > 810)) 
+                    if ((po.sid == 2 && po.pos[0] > 890) || (po.sid == 17 && po.pos[0] > 810))
                         this.gCur.flags = (Byte)((this.gCur.flags & -64) | 14); // make invisible, because they're still visible even at the edge
                 }
                 else if (mapNo == 2101 && po.sid == 2 && destX == 781 && destZ == 1587)
@@ -922,13 +922,13 @@ public partial class EventEngine
             case EBin.event_code_binary.AIDLE: // 0x33, "SetStandAnimation", "Change the standing animation"
             {
                 actor.idle = (UInt16)this.getv2(); // arg1: animation ID
-                if (mapNo == 112 && po.model == 223) 
+                if (mapNo == 112 && po.model == 223)
                 {
                     if ((actor.idle == 8239 && actor.uid == 3) || (actor.idle == 1870 && actor.uid == 6)) // Remove SetStandAnimation( 8239 ) for Dante's glass in Alexandria/Pub
                         actor.idle = 5384; // Better stand animation imo for the Red Mage (uid == 6) or remove it... it's just a detail.
                 }
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.idle));
-                
+
                 if (mapNo == 1601 && actor.uid == 19 && actor.idle == 816) // Garnet shadow off when sitting
                 {
                     ff9shadow.FF9ShadowOffField((Int32)po.uid);
@@ -1527,7 +1527,7 @@ public partial class EventEngine
             {
                 Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
                 UInt32 isScreenAnchored = (UInt32)this.getv1(); // arg2: boolean on/off
-                this.fieldmap.EBG_overlaySetLoopType(overlayNdx, isScreenAnchored); 
+                this.fieldmap.EBG_overlaySetLoopType(overlayNdx, isScreenAnchored);
                 return 0;
             }
             case EBin.event_code_binary.BGAFRAME: // 0xE7, "SetTileAnimationFrame", "Change the frame of a field tile animation (can be used to hide them all if the given frame is out of range, eg. 255)"
@@ -1601,7 +1601,7 @@ public partial class EventEngine
             {
                 Int32 scriptID = this.getv1(); // arg1: text variable's 'Script ID'
                 Int32 value = this.getv2(); // arg2: depends on which text opcode is related to the text variable: [VAR_NUM]: integral value. [VAR_ITEM]: item ID. [VAR_TOKEN]: token number
-                this.eTb.SetMesValue(scriptID, value); 
+                this.eTb.SetMesValue(scriptID, value);
                 return 0;
             }
             case EBin.event_code_binary.TWIST: // 0x67, "SetControlDirection", "Set the angles for the player's movement control"
@@ -1883,8 +1883,8 @@ public partial class EventEngine
             case EBin.event_code_binary.CFLAG: // 0x93, "SetObjectFlags", "Change flags of the current entry's object."
             {
                 // arg1: object flags. 1: show model 2: collision with player character 4: collision with NPC 8: disable talk 16: can't walk through by insisting 32: don't hide all 64: unknown/unused (can't change with this) 128: is turning (can't change with this)
-                Int32 cflag = (Int32)(Byte)this.getv1(); 
-                
+                Int32 cflag = (Int32)(Byte)this.getv1();
+
                 if (cflag == 14 && mapNo == 103 && this.gCur.uid >= 6 && this.gCur.uid <= 17) // fix: do not hide NPCs when they are offscreen for widescreen compatibility - Alexandria/Square, many NPCs and the Jump Rope
                     return 0;
                 if (mapNo == 2934 && MBG.Instance.GetFrame < 10)
@@ -2339,13 +2339,13 @@ public partial class EventEngine
                 po = (PosObj)this.GetObj1(); // arg1: model's entry
                 this._geoTexAnim = po.go.GetComponent<GeoTexAnim>();
                 Int32 textureAnim = this.getv1(); // arg2: texture animation ID
-                if ( (mapNo == 114 && po.uid == 2) 
-                    || (mapNo == 450 && po.uid == 3) 
+                if ((mapNo == 114 && po.uid == 2)
+                    || (mapNo == 450 && po.uid == 3)
                     || (mapNo == 551 && po.uid == 10)
-                    || (mapNo == 555 && po.uid == 12) 
+                    || (mapNo == 555 && po.uid == 12)
                     || (mapNo == 559 && po.uid == 17)
                     || (mapNo == 2105 && po.uid == 2)
-                    || (mapNo == 2450 && po.uid == 8) )
+                    || (mapNo == 2450 && po.uid == 8))
                 {
                     if (textureAnim == 0)
                         textureAnim = 2;

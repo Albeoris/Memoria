@@ -412,9 +412,9 @@ namespace NCalc
         }
 
         public static void InitializeExpressionNullableUnit(ref Expression expr, BattleUnit unit, String prefix = "")
-		{
+        {
             if (unit != null)
-			{
+            {
                 InitializeExpressionUnit(ref expr, unit, prefix);
                 return;
             }

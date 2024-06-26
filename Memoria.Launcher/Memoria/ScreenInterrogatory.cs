@@ -302,7 +302,7 @@ namespace Memoria
         {
             try
             {
-                return GetAllMonitorsFriendlyNames().Select((name, index) => new {index, name}).ToDictionary(p => p.index, p => p.name);
+                return GetAllMonitorsFriendlyNames().Select((name, index) => new { index, name }).ToDictionary(p => p.index, p => p.name);
             }
             catch
             {

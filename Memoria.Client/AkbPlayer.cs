@@ -24,7 +24,7 @@ namespace Memoria.Client
                 //Int32 num = instance.SdSoundSystem_Create(String.Empty);
                 //if (num < 0)
                 //    return;
-                
+
                 //var musicPlayer = new MusicPlayer();
                 //var soundPlayerList = new List<SoundPlayer>();
                 //soundPlayerList.Add(musicPlayer);

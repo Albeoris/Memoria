@@ -79,7 +79,7 @@ namespace UnityEngine.UI
         private float m_PrevReferencePixelsPerUnit = 100;
 
 
-        protected CanvasScaler() {}
+        protected CanvasScaler() { }
 
         protected override void OnEnable()
         {
@@ -177,9 +177,9 @@ namespace UnityEngine.UI
             {
                 case Unit.Centimeters: targetDPI = 2.54f; break;
                 case Unit.Millimeters: targetDPI = 25.4f; break;
-                case Unit.Inches:      targetDPI =     1; break;
-                case Unit.Points:      targetDPI =    72; break;
-                case Unit.Picas:       targetDPI =     6; break;
+                case Unit.Inches: targetDPI = 1; break;
+                case Unit.Points: targetDPI = 72; break;
+                case Unit.Picas: targetDPI = 6; break;
             }
 
             SetScaleFactor(dpi / targetDPI);

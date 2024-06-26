@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using Memoria.Prime.CSV;
+using System;
 using System.Collections.Generic;
-using Memoria.Prime.CSV;
+using System.Linq;
 
 namespace Memoria.Data
 {
@@ -37,7 +37,7 @@ namespace Memoria.Data
                     {
                         stop = true;
                         break;
-                    }                 
+                    }
                     Ingredients.Add(itemId);
                 }
                 if (stop)

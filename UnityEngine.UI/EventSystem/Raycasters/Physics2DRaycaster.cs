@@ -10,7 +10,7 @@ namespace UnityEngine.EventSystems
     public class Physics2DRaycaster : PhysicsRaycaster
     {
         protected Physics2DRaycaster()
-        {}
+        { }
 
         public override void Raycast(PointerEventData eventData, List<RaycastResult> resultAppendList)
         {
@@ -38,7 +38,7 @@ namespace UnityEngine.EventSystems
                         worldNormal = hits[b].normal,
                         screenPosition = eventData.position,
                         index = resultAppendList.Count,
-                        sortingLayer =  sr != null ? sr.sortingLayerID : 0,
+                        sortingLayer = sr != null ? sr.sortingLayerID : 0,
                         sortingOrder = sr != null ? sr.sortingOrder : 0
                     };
                     resultAppendList.Add(result);

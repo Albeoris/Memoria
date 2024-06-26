@@ -44,20 +44,20 @@ namespace Antlr.Runtime.Tree
     public class RewriteRuleNodeStream : RewriteRuleElementStream
     {
 
-        public RewriteRuleNodeStream( ITreeAdaptor adaptor, string elementDescription )
-            : base( adaptor, elementDescription )
+        public RewriteRuleNodeStream(ITreeAdaptor adaptor, string elementDescription)
+            : base(adaptor, elementDescription)
         {
         }
 
         /** <summary>Create a stream with one element</summary> */
-        public RewriteRuleNodeStream( ITreeAdaptor adaptor, string elementDescription, object oneElement )
-            : base( adaptor, elementDescription, oneElement )
+        public RewriteRuleNodeStream(ITreeAdaptor adaptor, string elementDescription, object oneElement)
+            : base(adaptor, elementDescription, oneElement)
         {
         }
 
         /** <summary>Create a stream, but feed off an existing list</summary> */
-        public RewriteRuleNodeStream( ITreeAdaptor adaptor, string elementDescription, IList elements )
-            : base( adaptor, elementDescription, elements )
+        public RewriteRuleNodeStream(ITreeAdaptor adaptor, string elementDescription, IList elements)
+            : base(adaptor, elementDescription, elements)
         {
         }
 
@@ -66,16 +66,16 @@ namespace Antlr.Runtime.Tree
             return NextCore();
         }
 
-        protected override object ToTree( object el )
+        protected override object ToTree(object el)
         {
-            return adaptor.DupNode( el );
+            return adaptor.DupNode(el);
         }
 
-        protected override object Dup( object el )
+        protected override object Dup(object el)
         {
             // we dup every node, so don't have to worry about calling dup; short-
             // circuited next() so it doesn't call.
-            throw new NotSupportedException( "dup can't be called for a node stream." );
+            throw new NotSupportedException("dup can't be called for a node stream.");
         }
     }
 }

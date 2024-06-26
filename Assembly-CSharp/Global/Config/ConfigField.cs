@@ -3,21 +3,21 @@ using UnityEngine;
 
 public class ConfigField
 {
-	public ConfigField()
-	{
-		this.ConfigChoice = new BetterList<GameObject>();
-		this.Value = -1f;
-	}
+    public ConfigField()
+    {
+        this.ConfigChoice = new BetterList<GameObject>();
+        this.Value = -1f;
+    }
 
-	public ConfigUI.Configurator Configurator;
+    public ConfigUI.Configurator Configurator;
 
-	public GameObject ConfigParent;
+    public GameObject ConfigParent;
 
-	public ButtonGroupState Button;
+    public ButtonGroupState Button;
 
-	public BetterList<GameObject> ConfigChoice;
+    public BetterList<GameObject> ConfigChoice;
 
-	public Boolean IsSlider;
+    public Boolean IsSlider;
 
-	public Single Value;
+    public Single Value;
 }

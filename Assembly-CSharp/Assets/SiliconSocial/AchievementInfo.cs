@@ -2,18 +2,18 @@
 
 namespace Assets.SiliconSocial
 {
-	public struct AchievementInfo
-	{
-		public String refKey_Steam;
+    public struct AchievementInfo
+    {
+        public String refKey_Steam;
 
-		public String refKey_iOS;
+        public String refKey_iOS;
 
-		public String refKey_Andrd;
+        public String refKey_Andrd;
 
-		public String refKey_aaaa;
+        public String refKey_aaaa;
 
-		public Single Target;
+        public Single Target;
 
-		public String refKey_SteamStat;
-	}
+        public String refKey_SteamStat;
+    }
 }

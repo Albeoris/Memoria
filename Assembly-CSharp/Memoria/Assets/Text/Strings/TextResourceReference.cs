@@ -19,7 +19,7 @@ namespace Memoria.Assets
         public override Boolean Equals(object obj) => obj is TextResourceReference other && Equals(other);
         public override Int32 GetHashCode() => (Value != null ? Value.GetHashCode() : 0);
         public override String ToString() => Value;
-        
+
         public bool IsExists(out TextResourcePath existingFile)
         {
             foreach (TextResourceFormat format in EnumCache<TextResourceFormat>.Values)

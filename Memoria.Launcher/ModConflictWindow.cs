@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 
 namespace Memoria.Launcher
 {
-	public partial class ModConflictWindow : Window, IComponentConnector
+    public partial class ModConflictWindow : Window, IComponentConnector
     {
         public ObservableCollection<Mod> ModInstalledList;
         public List<Mod> ModMainList;
@@ -133,7 +133,7 @@ namespace Memoria.Launcher
                 overwrittenFiles.Clear();
                 String noteStr = "";
                 if (!ModConflictList[i].HasFileList)
-				{
+                {
                     ModConflictList[i].Label = $"? {ModFullList[i].Name}";
                     noteStr += $"[{ModFullList[i].Name}] File list is missing and cannot be automatically generated: the details of file-by-file potential conflicts is not displayed.\n";
                 }
@@ -161,7 +161,7 @@ namespace Memoria.Launcher
                             }
                         }
                         else if (String.Compare(pathLower, "dictionarypatch.txt") == 0 || String.Compare(pathLower, "battlepatch.txt") == 0 || String.Compare(pathLower, "battlevoiceeffects.txt") == 0)
-						{
+                        {
                             // TODO
                             hasConflict = true;
                             ModConflictList[i].DetailedInfo += $"{ModFullList[j].Name} might override options of '{path}'\n";
@@ -177,7 +177,7 @@ namespace Memoria.Launcher
                         else if (CsvWithPartialData.Contains(pathLower))
                         {
                             if (HandleSpecialFileConflicts(ModFullList[i].FullInstallationPath + "/StreamingAssets/" + path, ModFullList[j].FullInstallationPath + "/StreamingAssets/" + path, EnumerateCsvConflicts, 5, out String entryStr))
-							{
+                            {
                                 hasConflict = true;
                                 ModConflictList[i].DetailedInfo += $"{ModFullList[j].Name} supplants the '{path}' entry(ies) {entryStr}\n";
                             }
@@ -211,7 +211,7 @@ namespace Memoria.Launcher
         }
 
         private Boolean HandleSpecialFileConflicts(String path1, String path2, SpecialFileConflictEnumerator enumerator, Int32 maxCount, out String joinedEntries)
-		{
+        {
             List<String> commonEntries = new List<String>();
             joinedEntries = "";
             foreach (String str in enumerator(path1, path2))
@@ -267,12 +267,12 @@ namespace Memoria.Launcher
             }
             currentSection2 = null;
             foreach (String line1 in iniFile1)
-			{
+            {
                 String trimmedLine = line1.Trim();
                 if (trimmedLine.StartsWith(";") || trimmedLine.StartsWith("#"))
                     continue;
                 if (trimmedLine.StartsWith("["))
-				{
+                {
                     Int32 endBracket = trimmedLine.IndexOf(']');
                     if (endBracket < 0)
                         continue;
@@ -375,7 +375,7 @@ namespace Memoria.Launcher
         private Int32 GetModifiedCsvIdIndex(String csvName, String metaDataInstruction, Int32 currentIndex)
         {
             switch (metaDataInstruction + ":" + csvName)
-			{
+            {
                 case "IncludeId:commands.csv":
                 case "IncludeId:commandsets.csv":
                 case "IncludeId:itemeffects.csv":
@@ -386,7 +386,7 @@ namespace Memoria.Launcher
         }
 
         private class ModConflict
-		{
+        {
             public Mod BaseMod { get; set; }
             public String Label { get; set; }
             public String DetailedInfo { get; set; }
@@ -394,7 +394,7 @@ namespace Memoria.Launcher
             public Boolean HasFileList { get; set; }
 
             public ModConflict(Mod mod, String label)
-			{
+            {
                 BaseMod = mod;
                 Label = label;
                 DetailedInfo = String.Empty;

@@ -1,3 +1,5 @@
+using Ini;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,8 +19,6 @@ using System.Windows.Forms;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using Ini;
-using Microsoft.Win32;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
@@ -208,7 +208,7 @@ namespace Memoria.Launcher
                         }
                         else if (x64 == true)
                         {
-                            MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.SuccessX64 , Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
+                            MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.SuccessX64, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
                             _audioFrequency = value;
                             OnPropertyChanged();
                         }
@@ -317,12 +317,12 @@ namespace Memoria.Launcher
             {
                 MessageBoxResult ShowMessage(String message, MessageBoxButton button, MessageBoxImage image)
                 {
-                    return MessageBox.Show((System.Windows.Window) this.GetRootElement(), message, Lang.SteamOverlay.Caption, button, image);
+                    return MessageBox.Show((System.Windows.Window)this.GetRootElement(), message, Lang.SteamOverlay.Caption, button, image);
                 }
 
                 if (IsSteamOverlayFixed() == value)
                     return;
-                
+
                 if (value)
                 {
                     if (ShowMessage(Lang.SteamOverlay.FixAreYouSure, MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
@@ -332,8 +332,8 @@ namespace Memoria.Launcher
                     }
 
                     String currentLauncherPath = Process.GetCurrentProcess().MainModule.FileName;
-                    
-                    Process process = Process.Start(new ProcessStartInfo("Memoria.SteamFix.exe", @$" ""{currentLauncherPath}"" ") {Verb = "runas"});
+
+                    Process process = Process.Start(new ProcessStartInfo("Memoria.SteamFix.exe", @$" ""{currentLauncherPath}"" ") { Verb = "runas" });
                     process.WaitForExit();
                 }
                 else
@@ -344,10 +344,10 @@ namespace Memoria.Launcher
                         return;
                     }
 
-                    Process process = Process.Start(new ProcessStartInfo("Memoria.SteamFix.exe") {Verb = "runas"});
+                    Process process = Process.Start(new ProcessStartInfo("Memoria.SteamFix.exe") { Verb = "runas" });
                     process.WaitForExit();
                 }
-                
+
                 Application.Current.Dispatcher.BeginInvoke(new Action(() => OnPropertyChanged()), DispatcherPriority.ContextIdle, null);
             }
         }
@@ -607,7 +607,7 @@ namespace Memoria.Launcher
             }
             catch (Exception ex)
             {
-                MessageBox.Show((System.Windows.Window) this.GetRootElement(), Lang.SdLib.CannotRead + $" {sdlibPath}{Environment.NewLine}{Environment.NewLine}{ex}", Lang.Message.Error.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.CannotRead + $" {sdlibPath}{Environment.NewLine}{Environment.NewLine}{ex}", Lang.Message.Error.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
                 samplingFrequency = 0;
                 return false;
             }

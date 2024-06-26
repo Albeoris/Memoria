@@ -43,7 +43,7 @@ namespace Memoria.Prime.Exceptions
 
             return arg;
         }
-        
+
         public static T ThrowIfDefault<T>(T arg, String name)
         {
             if (Equals(arg, default(T)))

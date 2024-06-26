@@ -22,7 +22,7 @@ namespace Memoria.Prime.CSV
         }
 
         public void WriteMetaData(CsvMetaData metadata)
-		{
+        {
             String[] mdLines = metadata.GenerateLines();
             foreach (String line in mdLines)
                 _sw.WriteLine("#!" + line);
