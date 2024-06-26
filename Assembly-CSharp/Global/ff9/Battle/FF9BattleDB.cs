@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using FF9;
+﻿using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.Collections;
 using Memoria.Prime.CSV;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 public static partial class FF9BattleDB
 {
@@ -18,9 +18,9 @@ public static partial class FF9BattleDB
     public static readonly Dictionary<Int32, BattleMagicSwordSet> MagicSwordData;
 
     static FF9BattleDB()
-	{
-	    StatusSets = LoadStatusSets();
-	    CharacterActions = LoadActions();
+    {
+        StatusSets = LoadStatusSets();
+        CharacterActions = LoadActions();
         StatusData = LoadStatusData();
         MagicSwordData = LoadMagicSwordSets();
     }

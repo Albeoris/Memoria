@@ -2,6 +2,6 @@
 
 public enum WMPadType
 {
-	Normal,
-	Push
+    Normal,
+    Push
 }

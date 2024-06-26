@@ -1,6 +1,6 @@
+using Memoria.Data;
 using System;
 using System.Collections.Generic;
-using Memoria.Data;
 
 namespace Memoria
 {

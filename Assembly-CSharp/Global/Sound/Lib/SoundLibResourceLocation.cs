@@ -2,8 +2,8 @@
 
 public enum SoundLibResourceLocation
 {
-	Resources,
-	ResourcesRecursive,
-	DocumentDirectory,
-	StreamingAsset
+    Resources,
+    ResourcesRecursive,
+    DocumentDirectory,
+    StreamingAsset
 }

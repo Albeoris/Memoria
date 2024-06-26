@@ -54,7 +54,7 @@ namespace UnityEngine.UI
             {
                 var fontData = new FontData
                 {
-                    m_FontSize  = 14,
+                    m_FontSize = 14,
                     m_LineSpacing = 1f,
                     m_FontStyle = FontStyle.Normal,
                     m_BestFit = false,
@@ -63,7 +63,7 @@ namespace UnityEngine.UI
                     m_Alignment = TextAnchor.UpperLeft,
                     m_HorizontalOverflow = HorizontalWrapMode.Wrap,
                     m_VerticalOverflow = VerticalWrapMode.Truncate,
-                    m_RichText  = true
+                    m_RichText = true
                 };
                 return fontData;
             }
@@ -136,7 +136,7 @@ namespace UnityEngine.UI
         }
 
         void ISerializationCallbackReceiver.OnBeforeSerialize()
-        {}
+        { }
 
         void ISerializationCallbackReceiver.OnAfterDeserialize()
         {

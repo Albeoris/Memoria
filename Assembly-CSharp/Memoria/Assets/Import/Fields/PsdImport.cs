@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Memoria.Prime.Ini;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Memoria.Prime.Ini;
 
 namespace Memoria.Assets.Import.Graphics
 {

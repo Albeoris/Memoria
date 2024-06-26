@@ -1,15 +1,15 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria;
+using Memoria.Assets;
+using Memoria.Data;
 using Memoria.Field;
+using Memoria.Prime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Memoria;
-using Memoria.Prime;
-using Memoria.Assets;
-using Memoria.Data;
 using UnityEngine;
 
 public partial class EventEngine
@@ -746,7 +746,7 @@ public partial class EventEngine
             case EBin.event_code_binary.AIDLE: // 0x33, "SetStandAnimation", "Change the standing animation", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
             {
                 actor.idle = (UInt16)this.getv2(); // arg1: animation ID
-                if (mapNo == 112 && po.model == 223) 
+                if (mapNo == 112 && po.model == 223)
                 {
                     if ((actor.idle == 8239 && actor.uid == 3) || (actor.idle == 1870 && actor.uid == 6)) // Remove SetStandAnimation( 8239 ) for Dante's glass in Alexandria/Pub
                         actor.idle = 5384; // Better stand animation imo for the Red Mage (uid == 6) or remove it... it's just a detail.
@@ -774,7 +774,7 @@ public partial class EventEngine
                     this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
                     if ((Int32)actor.idle == 7503)
                         this._geoTexAnim.geoTexAnimPlay(2);
-                }            
+                }
                 return 0;
             }
             case EBin.event_code_binary.AWALK: // 0x34, "SetWalkAnimation", "Change the walking animation", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
@@ -1250,7 +1250,7 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.BGLCOLOR: // 0x59, "SetTileColor", "Change the color of a field tile block", true, 4, { 1, 1, 1, 1 }, { "Tile Block", "Color" }, { AT_TILE, AT_COLOR_CYAN, AT_COLOR_MAGENTA, AT_COLOR_YELLOW }, 0
             {
-                
+
                 this.fieldmap.EBG_overlaySetShadeColor(this.getv1(), (Byte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1()); // arg1: background tile block.2nd to arg4s: color (Cyan, Magenta, Yellow)
                 return 0;
             }
@@ -1333,7 +1333,7 @@ public partial class EventEngine
             {
                 // arg1: text variable's 'Script ID'
                 // arg2: depends on which text opcode is related to the text variable: [VAR_NUM]: integral value. [VAR_ITEM]: item ID. [VAR_TOKEN]: token number
-                this.eTb.SetMesValue(this.getv1(), this.getv2()); 
+                this.eTb.SetMesValue(this.getv1(), this.getv2());
                 return 0;
             }
             case EBin.event_code_binary.TWIST: // 0x67, "SetControlDirection", "Set the angles for the player's movement control", true, 2, { 1, 1 }, { "Arrow Angle", "Analogic Angle" }, { AT_SPIN, AT_SPIN }, 0
@@ -1613,8 +1613,8 @@ public partial class EventEngine
             case EBin.event_code_binary.CFLAG: // 0x93, "SetObjectFlags", "Change flags of the current entry's object.", true, 1, { 1 }, { "Flags" }, { AT_BOOLLIST }, 0
             {
                 // arg1: object flags. 1: show model 2: collision with player character 4: collision with NPC 8: disable talk 16: can't walk through by insisting 32: don't hide all 64: unknown/unused (can't change with this) 128: is turning (can't change with this)
-                Int32 cflag = (Int32)(Byte)this.getv1(); 
-                
+                Int32 cflag = (Int32)(Byte)this.getv1();
+
                 if (cflag == 14 && mapNo == 103 && this.gCur.uid >= 6 && this.gCur.uid <= 17) // fix: do not hide NPCs when they are offscreen for widescreen compatibility - Alexandria/Square, many NPCs and the Jump Rope
                     return 0;
                 if (mapNo == 2934 && MBG.Instance.GetFrame < 10)
@@ -2090,13 +2090,13 @@ public partial class EventEngine
                 po = (PosObj)this.GetObj1(); // arg1: model's entry
                 this._geoTexAnim = po.go.GetComponent<GeoTexAnim>();
                 Int32 textureAnim = this.getv1(); // arg2: texture animation ID
-                if ( (mapNo == 114 && po.uid == 2) 
-                    || (mapNo == 450 && po.uid == 3) 
+                if ((mapNo == 114 && po.uid == 2)
+                    || (mapNo == 450 && po.uid == 3)
                     || (mapNo == 551 && po.uid == 10)
-                    || (mapNo == 555 && po.uid == 12) 
+                    || (mapNo == 555 && po.uid == 12)
                     || (mapNo == 559 && po.uid == 17)
                     || (mapNo == 2105 && po.uid == 2)
-                    || (mapNo == 2450 && po.uid == 8) )
+                    || (mapNo == 2450 && po.uid == 8))
                 {
                     if (textureAnim == 0)
                         textureAnim = 2;

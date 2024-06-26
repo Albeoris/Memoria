@@ -1,7 +1,7 @@
-﻿using System;
-using System.ComponentModel;
-using Memoria.Prime;
+﻿using Memoria.Prime;
 using Memoria.Prime.WinAPI;
+using System;
+using System.ComponentModel;
 using UnityEngine;
 using Object = System.Object;
 

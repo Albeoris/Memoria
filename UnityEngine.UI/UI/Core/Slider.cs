@@ -17,11 +17,11 @@ namespace UnityEngine.UI
         }
 
         [Serializable]
-        public class SliderEvent : UnityEvent<float> {}
+        public class SliderEvent : UnityEvent<float> { }
 
         [SerializeField]
         private RectTransform m_FillRect;
-        public RectTransform fillRect { get { return m_FillRect; } set { if (SetPropertyUtility.SetClass(ref m_FillRect, value)) {UpdateCachedReferences(); UpdateVisuals(); } } }
+        public RectTransform fillRect { get { return m_FillRect; } set { if (SetPropertyUtility.SetClass(ref m_FillRect, value)) { UpdateCachedReferences(); UpdateVisuals(); } } }
 
         [SerializeField]
         private RectTransform m_HandleRect;
@@ -99,7 +99,7 @@ namespace UnityEngine.UI
         float stepSize { get { return wholeNumbers ? 1 : (maxValue - minValue) * 0.1f; } }
 
         protected Slider()
-        {}
+        { }
 
 #if UNITY_EDITOR
         protected override void OnValidate()
@@ -137,10 +137,10 @@ namespace UnityEngine.UI
         }
 
         public virtual void LayoutComplete()
-        {}
+        { }
 
         public virtual void GraphicUpdateComplete()
-        {}
+        { }
 
         protected override void OnEnable()
         {

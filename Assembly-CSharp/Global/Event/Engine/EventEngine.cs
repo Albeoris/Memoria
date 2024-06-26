@@ -1,11 +1,11 @@
-using System;
 using Assets.Sources.Scripts.EventEngine.Utils;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
+using Memoria.Data;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Memoria.Data;
 using UnityEngine;
 using static EventEngine;
 using Debug = UnityEngine.Debug;
@@ -737,8 +737,8 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     {
         // Order of script objects is Zidane, Vivi, Dagger, Steiner, Freya, Quina, Eiko, Amarant, Beatrix
         // Order of priorities is Zidane, Eiko, Steiner, Vivi, Freya, Amarant, Garnet, Beatrix, others...
-        Byte[] reorderArray1 = new Byte[9]{ 0, 6, 3, 1, 4, 5, 7, 2, 8 };
-        Byte[] reorderArray2 = new Byte[9]{ 0, 3, 7, 2, 4, 5, 1, 6, 8 };
+        Byte[] reorderArray1 = new Byte[9] { 0, 6, 3, 1, 4, 5, 7, 2, 8 };
+        Byte[] reorderArray2 = new Byte[9] { 0, 3, 7, 2, 4, 5, 1, 6, 8 };
         Dictionary<Int32, CharacterId> reorderToChar = new Dictionary<Int32, CharacterId>();
         Int32 charFlags = 0;
         for (Int32 index = 0; index < 4; ++index)
@@ -965,7 +965,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     private static Obj NewThread(Int32 sid, Int32 uid)
     {
-        return new Obj(sid, uid, sizeOfObj, 16) {cid = 2};
+        return new Obj(sid, uid, sizeOfObj, 16) { cid = 2 };
     }
 
     public Int32 GetBattleCharData(Obj obj, Int32 kind)
@@ -979,7 +979,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         {
             BattleUnit btlDataPtr = btl_scrp.FindBattleUnit((UInt16)(1 << index));
             if (btlDataPtr != null)
-                 num = (Int32)btl_scrp.GetCharacterData(btlDataPtr.Data, (UInt32)kind);
+                num = (Int32)btl_scrp.GetCharacterData(btlDataPtr.Data, (UInt32)kind);
         }
 
         return num;
@@ -1044,7 +1044,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     {
         if (eventData.Length == 0)
             return this.nil;
-        
+
         using (MemoryStream memoryStream = new MemoryStream(eventData))
         {
             using (BinaryReader binaryReader = new BinaryReader(memoryStream))
@@ -1062,7 +1062,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                 }
                 if (num3 == 0)
                     return this.nil;
-                
+
                 return 2 + num2;
             }
         }

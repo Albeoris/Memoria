@@ -49,7 +49,7 @@ namespace Antlr.Runtime.Tree
         public object payload;
         public List<IToken> hiddenTokens;
 
-        public ParseTree( object label )
+        public ParseTree(object label)
         {
             this.payload = label;
         }
@@ -104,10 +104,10 @@ namespace Antlr.Runtime.Tree
 
         public override string ToString()
         {
-            if ( payload is IToken )
+            if (payload is IToken)
             {
                 IToken t = (IToken)payload;
-                if ( t.Type == TokenTypes.EndOfFile )
+                if (t.Type == TokenTypes.EndOfFile)
                 {
                     return "<EOF>";
                 }
@@ -124,17 +124,17 @@ namespace Antlr.Runtime.Tree
         public virtual string ToStringWithHiddenTokens()
         {
             StringBuilder buf = new StringBuilder();
-            if ( hiddenTokens != null )
+            if (hiddenTokens != null)
             {
-                for ( int i = 0; i < hiddenTokens.Count; i++ )
+                for (int i = 0; i < hiddenTokens.Count; i++)
                 {
                     IToken hidden = (IToken)hiddenTokens[i];
-                    buf.Append( hidden.Text );
+                    buf.Append(hidden.Text);
                 }
             }
             string nodeText = this.ToString();
-            if ( !nodeText.Equals( "<EOF>" ) )
-                buf.Append( nodeText );
+            if (!nodeText.Equals("<EOF>"))
+                buf.Append(nodeText);
             return buf.ToString();
         }
 
@@ -146,21 +146,21 @@ namespace Antlr.Runtime.Tree
         public virtual string ToInputString()
         {
             StringBuilder buf = new StringBuilder();
-            ToStringLeaves( buf );
+            ToStringLeaves(buf);
             return buf.ToString();
         }
 
-        protected virtual void ToStringLeaves( StringBuilder buf )
+        protected virtual void ToStringLeaves(StringBuilder buf)
         {
-            if ( payload is IToken )
+            if (payload is IToken)
             { // leaf node token?
-                buf.Append( this.ToStringWithHiddenTokens() );
+                buf.Append(this.ToStringWithHiddenTokens());
                 return;
             }
-            for ( int i = 0; Children != null && i < Children.Count; i++ )
+            for (int i = 0; Children != null && i < Children.Count; i++)
             {
                 ParseTree t = (ParseTree)Children[i];
-                t.ToStringLeaves( buf );
+                t.ToStringLeaves(buf);
             }
         }
     }

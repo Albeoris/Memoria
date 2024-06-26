@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria.Prime.CSV;
+﻿using Memoria.Prime.CSV;
+using System;
 using UnityEngine;
 
 namespace Memoria.Data

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Memoria.Client.Interaction;
+using Memoria.Test;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Threading;
-using Memoria.Client.Interaction;
-using Memoria.Test;
 
 namespace Memoria.Client
 {
@@ -67,7 +67,7 @@ namespace Memoria.Client
                 _keyToIndex.Add(message.InstanceId, index);
                 _values.Add(item);
 
-                NotifyCollectionChangedEventArgs args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new[] {item}, index);
+                NotifyCollectionChangedEventArgs args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new[] { item }, index);
                 RaiseCollectionChanged(args);
                 return true;
             }

@@ -152,7 +152,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         EventEngine.sizeOfObj = 20;
         EventEngine.sizeOfQuad = 56;
         EventEngine.sizeOfActor = 160;
-        EventEngine.testEventIDs = new Int32[31] {602, 350, 107, 262, 655, 350, 50, 101, 107, 103, 100, 310, 251, 250, 62, 752, 300, 453, 100, 2930, 301, 310, 157, 764, 60, 115, 64, 350, 1906, 2952, 852};
+        EventEngine.testEventIDs = new Int32[31] { 602, 350, 107, 262, 655, 350, 50, 101, 107, 103, 100, 310, 251, 250, 62, 752, 300, 453, 100, 2930, 301, 310, 157, 764, 60, 115, 64, 350, 1906, 2952, 852 };
         EventEngine.d = new Byte[4, 4]
         {
             {(Byte)96, (Byte)168, (Byte)224, Byte.MaxValue},
@@ -253,7 +253,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     }
 
     public static Boolean IsMoogleField(Int16 fldId, Int32 scCounter, Int32 mapIndex)
-	{
+    {
         if (!EventEngine.moogleFldMap.Contains(fldId))
             return false;
         if (EventEngine.moogleFldSpecialMap.Contains(fldId))

@@ -2,8 +2,8 @@
 
 public enum EndGameState
 {
-	None,
-	Start,
-	OnUpdate,
-	Finish
+    None,
+    Start,
+    OnUpdate,
+    Finish
 }

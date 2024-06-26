@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using FF9;
+﻿using FF9;
 using Memoria;
 using Memoria.Data;
+using System;
+using System.Collections.Generic;
 
 public partial class BattleHUD : UIScene
 {
@@ -60,14 +60,14 @@ public partial class BattleHUD : UIScene
     [Flags]
     public enum LibraInformation : uint
     {
-        Name            = 0x1,
-        Level           = 0x2,
-        HP              = 0x4,
-        MP              = 0x8,
-        Category        = 0x10,
-        ElementWeak     = 0x20,
-        ItemSteal       = 0x40,
-        BlueLearn       = 0x80,
+        Name = 0x1,
+        Level = 0x2,
+        HP = 0x4,
+        MP = 0x8,
+        Category = 0x10,
+        ElementWeak = 0x20,
+        ItemSteal = 0x40,
+        BlueLearn = 0x80,
 
         NameLevel = Name | Level,
         HPMP = HP | MP,
@@ -128,7 +128,7 @@ public partial class BattleHUD : UIScene
         public BattleCommandId CommandId;
 
         public PairCharCommand(Int32 pi, BattleCommandId ci)
-		{
+        {
             PlayerIndex = pi;
             CommandId = ci;
         }
@@ -156,7 +156,7 @@ public partial class BattleHUD : UIScene
     }
 
     private class PlayerMemo
-	{
+    {
         public PlayerMemo(PLAYER p, Boolean updateRow)
         {
             original = p;

@@ -39,6 +39,6 @@ namespace Antlr.Runtime
          *  will avoid creating a token for this symbol and try to fetch another.
          *  </summary>
          */
-        public static readonly IToken Skip = new CommonToken( TokenTypes.Invalid );
+        public static readonly IToken Skip = new CommonToken(TokenTypes.Invalid);
     }
 }

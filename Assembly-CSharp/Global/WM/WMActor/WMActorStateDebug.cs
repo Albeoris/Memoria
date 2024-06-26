@@ -2,7 +2,7 @@
 
 public enum WMActorStateDebug
 {
-	Idle,
-	Running,
-	Sprint
+    Idle,
+    Running,
+    Sprint
 }

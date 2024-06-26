@@ -22,10 +22,10 @@ namespace UnityEngine.UI
             [SerializeField]
             private Toggle m_Toggle;
 
-            public Text          text          { get { return m_Text; } set { m_Text = value; } }
-            public Image         image         { get { return m_Image; } set { m_Image = value; } }
+            public Text text { get { return m_Text; } set { m_Text = value; } }
+            public Image image { get { return m_Image; } set { m_Image = value; } }
             public RectTransform rectTransform { get { return m_RectTransform; } set { m_RectTransform = value; } }
-            public Toggle        toggle        { get { return m_Toggle; } set { m_Toggle = value; } }
+            public Toggle toggle { get { return m_Toggle; } set { m_Toggle = value; } }
 
             public virtual void OnPointerEnter(PointerEventData eventData)
             {
@@ -48,7 +48,7 @@ namespace UnityEngine.UI
             [SerializeField]
             private Sprite m_Image;
 
-            public string text  { get { return m_Text; }  set { m_Text = value; } }
+            public string text { get { return m_Text; } set { m_Text = value; } }
             public Sprite image { get { return m_Image; } set { m_Image = value; } }
 
             public OptionData()
@@ -87,7 +87,7 @@ namespace UnityEngine.UI
         }
 
         [Serializable]
-        public class DropdownEvent : UnityEvent<int> {}
+        public class DropdownEvent : UnityEvent<int> { }
 
         // Template used to create the dropdown.
         [SerializeField]
@@ -164,14 +164,14 @@ namespace UnityEngine.UI
         }
 
         protected Dropdown()
-        {}
+        { }
 
         protected override void Awake()
         {
-            #if UNITY_EDITOR
+#if UNITY_EDITOR
             if (!Application.isPlaying)
                 return;
-            #endif
+#endif
 
             m_AlphaTweenRunner = new TweenRunner<FloatTween>();
             m_AlphaTweenRunner.Init(this);
@@ -183,7 +183,7 @@ namespace UnityEngine.UI
                 m_Template.gameObject.SetActive(false);
         }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         protected override void OnValidate()
         {
             base.OnValidate();
@@ -194,7 +194,7 @@ namespace UnityEngine.UI
             Refresh();
         }
 
-        #endif
+#endif
 
         void Refresh()
         {
@@ -544,7 +544,7 @@ namespace UnityEngine.UI
             if (end.Equals(start))
                 return;
 
-            FloatTween tween = new FloatTween {duration = duration, startValue = start, targetValue = end};
+            FloatTween tween = new FloatTween { duration = duration, startValue = start, targetValue = end };
             tween.AddOnChangedCallback(SetAlpha);
             tween.ignoreTimeScale = true;
             m_AlphaTweenRunner.StartTween(tween);

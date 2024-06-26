@@ -2,11 +2,11 @@
 
 public enum ModelType
 {
-	none,
-	acc,
-	main,
-	mon,
-	npc,
-	sub,
-	battle_weapon
+    none,
+    acc,
+    main,
+    mon,
+    npc,
+    sub,
+    battle_weapon
 }

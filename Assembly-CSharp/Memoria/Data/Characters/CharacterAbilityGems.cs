@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using FF9;
-using NCalc;
 using Memoria.Prime;
 using Memoria.Prime.CSV;
 using Memoria.Prime.Text;
+using NCalc;
+using System;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Memoria.Data
 {
@@ -864,7 +864,7 @@ namespace Memoria.Data
                     CommandEffect.Add(newEffect);
                 }
                 else if (String.Equals(saCode, "EnemyFeature"))
-				{
+                {
                     EnableAsEnemy = true;
                 }
                 else if (String.Equals(saCode, "MorphFeature"))

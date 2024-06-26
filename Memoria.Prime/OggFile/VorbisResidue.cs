@@ -6,8 +6,8 @@
  *                                                                          *
  ***************************************************************************/
 using System;
-using System.Linq;
 using System.IO;
+using System.Linq;
 
 namespace Memoria.Prime.NVorbis
 {
@@ -196,7 +196,7 @@ namespace Memoria.Prime.NVorbis
                 if (n > 0 && doNotDecode.Contains(false))
                 {
                     var partVals = n / _partitionSize;
-                    
+
                     var partWords = (partVals + _classBook.Dimensions - 1) / _classBook.Dimensions;
                     for (int j = 0; j < channels; j++)
                     {
@@ -285,7 +285,7 @@ namespace Memoria.Prime.NVorbis
             {
                 var res = residue[channel];
 
-                for (int i = 0; i < partitionSize; )
+                for (int i = 0; i < partitionSize;)
                 {
                     var entry = codebook.DecodeScalar(packet);
                     if (entry == -1)
@@ -323,7 +323,7 @@ namespace Memoria.Prime.NVorbis
                 var chPtr = 0;
 
                 offset /= _channels;
-                for (int c = 0; c < partitionSize; )
+                for (int c = 0; c < partitionSize;)
                 {
                     var entry = codebook.DecodeScalar(packet);
                     if (entry == -1)

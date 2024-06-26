@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Memoria.Patcher;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using Memoria.Patcher;
-using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 using Task = System.Threading.Tasks.Task;
 
 // ReSharper disable UnusedMember.Global

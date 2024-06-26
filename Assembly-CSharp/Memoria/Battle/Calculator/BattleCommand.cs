@@ -1,7 +1,7 @@
-using System;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
+using System;
 
 namespace Memoria
 {
@@ -130,7 +130,7 @@ namespace Memoria
         public Boolean IsGround => HasElement(EffectElement.Earth);
 
         public Boolean IsShortRange
-		{
+        {
             get => Data.IsShortRange;
             set => Data.IsShortRange = value;
         }

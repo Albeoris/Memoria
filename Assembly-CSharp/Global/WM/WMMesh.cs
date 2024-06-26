@@ -3,17 +3,17 @@ using UnityEngine;
 
 public struct WMMesh
 {
-	public Int32 Id;
+    public Int32 Id;
 
-	public Transform Transform;
+    public Transform Transform;
 
-	public Vector3[] Vertices;
+    public Vector3[] Vertices;
 
-	public Int32[] Triangles;
+    public Int32[] Triangles;
 
-	public Vector3[] Normals;
+    public Vector3[] Normals;
 
-	public Vector4[] Tangents;
+    public Vector4[] Tangents;
 
-	public Vector3[] TriangleNormals;
+    public Vector3[] TriangleNormals;
 }

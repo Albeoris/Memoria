@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class WMCell : MonoBehaviour
 {
-	public Int32 Section;
+    public Int32 Section;
 
-	public Boolean HasSpecialObject;
+    public Boolean HasSpecialObject;
 
-	public Int32 SpecialTextureNumber;
+    public Int32 SpecialTextureNumber;
 }

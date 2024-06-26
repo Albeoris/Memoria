@@ -8,7 +8,7 @@ namespace Memoria.Prime.IL
     {
         public static Action<TValue> MakeStaticSetter<TValue>(FieldInfo field)
         {
-            DynamicMethod method = new DynamicMethod(field.Name + "_publicSetter", typeof(void), new[] {typeof(TValue)}, typeof(Expressions), true);
+            DynamicMethod method = new DynamicMethod(field.Name + "_publicSetter", typeof(void), new[] { typeof(TValue) }, typeof(Expressions), true);
             ILGenerator cg = method.GetILGenerator();
 
             cg.Emit(OpCodes.Ldarg_0);
@@ -31,7 +31,7 @@ namespace Memoria.Prime.IL
 
         public static Func<T1, T2, TResult> MakeStaticFunction<T1, T2, TResult>(MethodInfo method)
         {
-            DynamicMethod dm = new DynamicMethod(method.Name + "_publicAccessor", typeof(TResult), new[] {typeof(T1), typeof(T2)}, typeof(Expressions), true);
+            DynamicMethod dm = new DynamicMethod(method.Name + "_publicAccessor", typeof(TResult), new[] { typeof(T1), typeof(T2) }, typeof(Expressions), true);
             ILGenerator cg = dm.GetILGenerator();
 
             cg.Emit(OpCodes.Ldarg_0);
@@ -44,7 +44,7 @@ namespace Memoria.Prime.IL
 
         public static DynamicMethod MakeConstructor<T1>(Type type, ConstructorInfo constructor)
         {
-            DynamicMethod dm = new DynamicMethod(constructor.Name + "_publicConstructor", type, new[] {typeof(T1)}, type);
+            DynamicMethod dm = new DynamicMethod(constructor.Name + "_publicConstructor", type, new[] { typeof(T1) }, type);
             ILGenerator cg = dm.GetILGenerator();
 
             cg.Emit(OpCodes.Ldarg, 0);

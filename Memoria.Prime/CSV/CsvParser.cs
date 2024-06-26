@@ -42,7 +42,7 @@ namespace Memoria.Prime.CSV
         {
             raw = raw.Trim();
             if (raw.StartsWith("AA:"))
-			{
+            {
                 Int32 activeId = System.Int32.Parse(raw.Substring(3), NumberStyle, CultureInfo.InvariantCulture);
                 Int32 poolNum = activeId / 192;
                 Int32 idInPool = activeId % 192;

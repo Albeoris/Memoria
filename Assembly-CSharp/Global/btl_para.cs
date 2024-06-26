@@ -1,10 +1,10 @@
 ﻿using FF9;
-using System;
-using System.Collections.Generic;
 using Memoria;
 using Memoria.Data;
-using Object = System.Object;
 using NCalc;
+using System;
+using System.Collections.Generic;
+using Object = System.Object;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable ClassNeverInstantiated.Global
@@ -37,7 +37,7 @@ public class btl_para
                 newHP += 10000;
         }
         else if (IsNonDyingVanillaBoss(btl))
-		{
+        {
             // Weak security for enemies that should never reach 0 HP in vanilla
             newHP = Math.Max(newHP, 1);
         }
@@ -321,11 +321,11 @@ public class btl_para
     }
 
     public static Boolean IsNonDyingVanillaBoss(BTL_DATA btl)
-	{
+    {
         if (Configuration.Battle.CustomBattleFlagsMeaning != 0 || btl.bi.player != 0 || btl_util.getEnemyPtr(btl).info.die_unused3 == 1) // [DV & Tirlititi] - TODO => Replace it with CustomBattleFlagsMeaning
             return false;
         if (NonDyingBossBattles.Contains(FF9StateSystem.Battle.battleMapIndex))
-		{
+        {
             if (FF9StateSystem.Battle.battleMapIndex == 338 && btl.max.hp < 10000) // King Leo + Zenero + Benero
                 return false;
             if (Configuration.Mod.TranceSeek && FF9StateSystem.Battle.battleMapIndex == 4 && btl.dms_geo_id == 142) // TRANCE SEEK - Dark Beatrix fight, make true form vulnerable.
@@ -333,7 +333,7 @@ public class btl_para
             return true;
         }
         return false;
-	}
+    }
 
     private static HashSet<Int32> NonDyingBossBattles = new HashSet<Int32>()
     {

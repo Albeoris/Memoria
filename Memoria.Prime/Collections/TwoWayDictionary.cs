@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Memoria.Prime.Collections
 {
-    public class TwoWayDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey,TValue>>
+    public class TwoWayDictionary<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>
     {
         private readonly Dictionary<TKey, TValue> _fwdDictionary;
         private readonly Dictionary<TValue, TKey> _revDictionary;
@@ -115,13 +115,14 @@ namespace Memoria.Prime.Collections
         {
             return _fwdDictionary.GetEnumerator();
         }
-        public TValue this[TKey key] {
+        public TValue this[TKey key]
+        {
             get
             {
                 return _fwdDictionary[key];
             }
             set
-			{
+            {
                 _fwdDictionary[key] = value;
                 if (!_allowDublicateValues || !_revDictionary.ContainsKey(value))
                 {
