@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using FF9;
 using Memoria.Data;
-using FF9;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
 public class BattlePlayerCharacter : MonoBehaviour
 {
@@ -52,20 +53,20 @@ public class BattlePlayerCharacter : MonoBehaviour
 	}
 
 	public static void InitAnimation(BTL_DATA btl)
-	{
+    {
         for (Int32 i = 0; i < 34; i++)
-		{
-			String motAnim = btl.mot[i];
-			if (btl.gameObject.GetComponent<Animation>()[motAnim] != null)
-			{
-				AnimationState animationState = btl.gameObject.GetComponent<Animation>()[motAnim];
-				if (i == 0 || i == 1 || i == 9 || i == 13 || i == 19 || i == 27 || i == 17 || animationState.name.Substring(animationState.name.Length - 3) == "000")
-					animationState.wrapMode = WrapMode.Loop;
-				else
-					animationState.wrapMode = WrapMode.Once;
-				animationState.speed = 0.5f * FF9StateSystem.Settings.FastForwardFactor;
-			}
-		}
+        {
+            String motAnim = btl.mot[i];
+            if (btl.gameObject.GetComponent<Animation>()[motAnim] != null)
+            {
+                AnimationState animationState = btl.gameObject.GetComponent<Animation>()[motAnim];
+                if (i == 0 || i == 1 || i == 9 || i == 13 || i == 19 || i == 27 || i == 17 || animationState.name.Substring(animationState.name.Length - 3) == "000")
+                    animationState.wrapMode = WrapMode.Loop;
+                else
+                    animationState.wrapMode = WrapMode.Once;
+                animationState.speed = 0.5f * FF9StateSystem.Settings.FastForwardFactor;
+            }
+        }
     }
 
     public static void ResetTranceData(BTL_DATA btl, Boolean GoTrance)
@@ -108,14 +109,14 @@ public class BattlePlayerCharacter : MonoBehaviour
     }
 
     public static void CreatePlayer(BTL_DATA btl, CharacterSerialNumber playerSerialNumber)
-	{
-		String path = btl_mot.BattleParameterList[playerSerialNumber].ModelId;
-		GameObject gameObject = ModelFactory.CreateModel(path, true);
-		BattlePlayerCharacter.CreateTranceModel(btl, playerSerialNumber);
-		BattlePlayerCharacter.CheckToHideBattleModel(gameObject, playerSerialNumber);
-		btl.gameObject = gameObject;
-		btl.originalGo = gameObject;
-	}
+    {
+        String path = btl_mot.BattleParameterList[playerSerialNumber].ModelId;
+        GameObject gameObject = ModelFactory.CreateModel(path, true);
+        BattlePlayerCharacter.CreateTranceModel(btl, playerSerialNumber);
+        BattlePlayerCharacter.CheckToHideBattleModel(gameObject, playerSerialNumber);
+        btl.gameObject = gameObject;
+        btl.originalGo = gameObject;
+    }
 
 	private static void CreateTranceModel(BTL_DATA btl, CharacterSerialNumber serial)
 	{
