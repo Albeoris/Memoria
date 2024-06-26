@@ -1,6 +1,6 @@
-﻿using System;
-using FF9;
+﻿using FF9;
 using Memoria.Prime.CSV;
+using System;
 
 namespace Memoria.Data
 {

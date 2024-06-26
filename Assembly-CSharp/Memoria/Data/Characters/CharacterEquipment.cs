@@ -1,5 +1,5 @@
-using System;
 using Memoria.Prime.CSV;
+using System;
 
 namespace Memoria.Data
 {
@@ -117,7 +117,7 @@ namespace Memoria.Data
             // Equip
             if (itemId != RegularItem.NoItem)
                 ff9item.FF9Item_Remove(itemId, 1); // Ignore missing item
-            
+
             this[itemType] = itemId;
         }
     }

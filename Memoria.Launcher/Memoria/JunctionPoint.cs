@@ -1,8 +1,8 @@
+using Microsoft.Win32.SafeHandles;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.Win32.SafeHandles;
 
 namespace Memoria.Launcher
 {
@@ -314,7 +314,7 @@ namespace Memoria.Launcher
         /// or some other error occurs</exception>
         public static bool Exists(string path)
         {
-            if (! Directory.Exists(path))
+            if (!Directory.Exists(path))
                 return false;
 
             using (SafeFileHandle handle = OpenReparsePoint(path, EFileAccess.GenericRead))

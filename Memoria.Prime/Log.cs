@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Memoria.Prime.Text;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading;
-using Memoria.Prime.Text;
 
 namespace Memoria.Prime
 {

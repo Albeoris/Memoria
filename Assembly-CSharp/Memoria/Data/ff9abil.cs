@@ -1,15 +1,15 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Memoria;
+﻿using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
 using Memoria.Prime.Collections;
 using Memoria.Prime.CSV;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable RedundantExplicitArraySize
@@ -416,10 +416,10 @@ namespace FF9
         }
 
         public static void LoadAbilityFeatureFile(ref Dictionary<SupportAbility, SupportingAbilityFeature> entries, String input)
-		{
+        {
             MatchCollection abilMatches = new Regex(@"^(>SA|>AA)\s+(\d+|GlobalEnemyLast|GlobalEnemy|GlobalLast|Global)(\+?).*()", RegexOptions.Multiline).Matches(input);
             for (Int32 i = 0; i < abilMatches.Count; i++)
-			{
+            {
                 Int32 abilIndex;
                 if (String.Equals(abilMatches[i].Groups[2].Value, "Global"))
                     abilIndex = -1;
@@ -432,7 +432,7 @@ namespace FF9
                 else if (!Int32.TryParse(abilMatches[i].Groups[2].Value, out abilIndex))
                     continue;
                 Boolean cumulate = String.Compare(abilMatches[i].Groups[3].Value, "+") == 0;
-                Int32 endPos, startPos = abilMatches[i].Groups[4].Captures[0].Index+1;
+                Int32 endPos, startPos = abilMatches[i].Groups[4].Captures[0].Index + 1;
                 if (i + 1 == abilMatches.Count)
                     endPos = input.Length;
                 else
@@ -444,7 +444,7 @@ namespace FF9
                     entries[(SupportAbility)abilIndex].ParseFeatures((SupportAbility)abilIndex, input.Substring(startPos, endPos - startPos));
                 }
                 else
-				{
+                {
                     if (abilIndex > 0)
                     {
                         if (!cumulate)
@@ -459,6 +459,6 @@ namespace FF9
                     }
                 }
             }
-		}
+        }
     }
 }

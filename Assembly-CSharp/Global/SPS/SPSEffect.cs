@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Memoria.Assets;
+using Memoria.Scripts;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Memoria.Assets;
-using Memoria.Scripts;
 using UnityEngine;
 
 public class SPSEffect : MonoBehaviour

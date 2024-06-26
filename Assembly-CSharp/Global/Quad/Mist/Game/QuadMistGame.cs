@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = UnityEngine.Random;

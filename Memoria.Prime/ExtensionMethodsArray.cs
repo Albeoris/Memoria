@@ -8,7 +8,7 @@ namespace Memoria.Prime
         {
             return new ArraySegment<T>(array, offset, array.Length - offset);
         }
-        
+
         public static ArraySegment<T> Segment<T>(this T[] array, Int32 offset, Int32 size)
         {
             return new ArraySegment<T>(array, offset, size);

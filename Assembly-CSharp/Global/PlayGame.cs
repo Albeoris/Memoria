@@ -3,19 +3,19 @@ using UnityEngine;
 
 public class PlayGame : MonoBehaviour
 {
-	public Coin coin;
+    public Coin coin;
 
-	public Combo combo;
+    public Combo combo;
 
-	public Board board;
+    public Board board;
 
-	public Score score;
+    public Score score;
 
-	public ResultText result;
+    public ResultText result;
 
-	public SpriteDisplay bomb;
+    public SpriteDisplay bomb;
 
-	public SpriteText[] battleNumber;
+    public SpriteText[] battleNumber;
 
-	public SpriteRenderer background;
+    public SpriteRenderer background;
 }

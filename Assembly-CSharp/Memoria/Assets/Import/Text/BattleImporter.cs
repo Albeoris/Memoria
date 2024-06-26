@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Prime;
 using Memoria.Prime.Threading;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Memoria.Assets
 {
@@ -34,7 +34,7 @@ namespace Memoria.Assets
                 Int32 index = pair.Value;
                 if (index == 220 || index == 238) // Junk?
                     continue;
-                
+
                 String path = EmbadedTextResources.GetCurrentPath("/Battle/" + index + ".mes");
                 String[] text = EmbadedSentenseLoader.LoadSentense(path);
                 if (text != null)

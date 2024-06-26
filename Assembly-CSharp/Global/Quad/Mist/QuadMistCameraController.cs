@@ -1,27 +1,27 @@
-﻿using System;
-using Assets.Sources.Scripts.Common;
+﻿using Assets.Sources.Scripts.Common;
+using System;
 using UnityEngine;
 
 public class QuadMistCameraController : MonoBehaviour
 {
-	private void Start()
-	{
-		aspectFit = new AspectFit(1.6001482f, 1.12f, CanvasCamera);
-	}
+    private void Start()
+    {
+        aspectFit = new AspectFit(1.6001482f, 1.12f, CanvasCamera);
+    }
 
-	private void Update()
-	{
-		if (aspectFit != null)
-		{
-			aspectFit.setAspectFit();
-		}
-	}
+    private void Update()
+    {
+        if (aspectFit != null)
+        {
+            aspectFit.setAspectFit();
+        }
+    }
 
-	public const Single canvasHeight = 1.12f;
+    public const Single canvasHeight = 1.12f;
 
-	public const Single canvasWidth = 1.6001482f;
+    public const Single canvasWidth = 1.6001482f;
 
-	public Camera CanvasCamera;
+    public Camera CanvasCamera;
 
-	private AspectFit aspectFit;
+    private AspectFit aspectFit;
 }

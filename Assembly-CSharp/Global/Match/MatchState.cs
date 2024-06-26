@@ -2,7 +2,7 @@
 
 internal enum MatchState
 {
-	HasSymbol = 1,
-	HasMatch,
-	HasSymbolAndMatch
+    HasSymbol = 1,
+    HasMatch,
+    HasSymbolAndMatch
 }

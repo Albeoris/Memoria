@@ -19,7 +19,7 @@ namespace Memoria.Client.GameObjectExplorer.Views.TypeEditors
             grid.ColumnDefinitions[0].Width = GridLength.Auto;
             grid.ColumnDefinitions[2].Width = GridLength.Auto;
 
-            TextBlock xLabel = grid.AddUiElement(new TextBlock {Text = "x:"}, 0, 0);
+            TextBlock xLabel = grid.AddUiElement(new TextBlock { Text = "x:" }, 0, 0);
             xLabel.Margin = new Thickness(3, 3, 5, 3);
 
             _x = grid.AddUiElement(new SingleUpDown(), 0, 1);
@@ -29,7 +29,7 @@ namespace Memoria.Client.GameObjectExplorer.Views.TypeEditors
             _x.ValueChanged += XChanged;
             _x.Margin = new Thickness(3);
 
-            TextBlock yLabel = grid.AddUiElement(new TextBlock {Text = "y:"}, 0, 2);
+            TextBlock yLabel = grid.AddUiElement(new TextBlock { Text = "y:" }, 0, 2);
             yLabel.Margin = new Thickness(10, 3, 5, 3);
 
             _y = grid.AddUiElement(new SingleUpDown(), 0, 3);

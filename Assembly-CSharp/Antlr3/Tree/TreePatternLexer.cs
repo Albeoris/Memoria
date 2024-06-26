@@ -61,7 +61,7 @@ namespace Antlr.Runtime.Tree
 
         public bool error = false;
 
-        public TreePatternLexer( string pattern )
+        public TreePatternLexer(string pattern)
         {
             this.pattern = pattern;
             this.n = pattern.Length;
@@ -71,68 +71,68 @@ namespace Antlr.Runtime.Tree
         public virtual int NextToken()
         {
             sval.Length = 0; // reset, but reuse buffer
-            while ( c != CharStreamConstants.EndOfFile )
+            while (c != CharStreamConstants.EndOfFile)
             {
-                if ( c == ' ' || c == '\n' || c == '\r' || c == '\t' )
+                if (c == ' ' || c == '\n' || c == '\r' || c == '\t')
                 {
                     Consume();
                     continue;
                 }
-                if ( ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' ) || c == '_' )
+                if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_')
                 {
-                    sval.Append( (char)c );
+                    sval.Append((char)c);
                     Consume();
-                    while ( ( c >= 'a' && c <= 'z' ) || ( c >= 'A' && c <= 'Z' ) ||
-                            ( c >= '0' && c <= '9' ) || c == '_' )
+                    while ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+                            (c >= '0' && c <= '9') || c == '_')
                     {
-                        sval.Append( (char)c );
+                        sval.Append((char)c);
                         Consume();
                     }
                     return Id;
                 }
-                if ( c == '(' )
+                if (c == '(')
                 {
                     Consume();
                     return Begin;
                 }
-                if ( c == ')' )
+                if (c == ')')
                 {
                     Consume();
                     return End;
                 }
-                if ( c == '%' )
+                if (c == '%')
                 {
                     Consume();
                     return Percent;
                 }
-                if ( c == ':' )
+                if (c == ':')
                 {
                     Consume();
                     return Colon;
                 }
-                if ( c == '.' )
+                if (c == '.')
                 {
                     Consume();
                     return Dot;
                 }
-                if ( c == '[' )
+                if (c == '[')
                 {
                     // grab [x] as a string, returning x
                     Consume();
-                    while ( c != ']' )
+                    while (c != ']')
                     {
-                        if ( c == '\\' )
+                        if (c == '\\')
                         {
                             Consume();
-                            if ( c != ']' )
+                            if (c != ']')
                             {
-                                sval.Append( '\\' );
+                                sval.Append('\\');
                             }
-                            sval.Append( (char)c );
+                            sval.Append((char)c);
                         }
                         else
                         {
-                            sval.Append( (char)c );
+                            sval.Append((char)c);
                         }
                         Consume();
                     }
@@ -149,7 +149,7 @@ namespace Antlr.Runtime.Tree
         protected virtual void Consume()
         {
             p++;
-            if ( p >= n )
+            if (p >= n)
             {
                 c = CharStreamConstants.EndOfFile;
             }

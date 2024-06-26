@@ -1,14 +1,14 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using Memoria.Client.Interaction;
+using Memoria.Prime;
+using Memoria.Test;
+using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
-using JetBrains.Annotations;
-using Memoria.Client.Interaction;
-using Memoria.Test;
-using Memoria.Prime;
 
 namespace Memoria.Client
 {
@@ -118,7 +118,8 @@ namespace Memoria.Client
                     {
                         Disconnect(ex.ToString());
                     }
-                }) {IsBackground = true, Name = "NetworkReadingThread"};
+                })
+                { IsBackground = true, Name = "NetworkReadingThread" };
                 readingThread.Start();
 
                 Thread writingThread = new Thread(() =>

@@ -82,22 +82,22 @@ namespace Antlr.Runtime.Tree
         protected string elementDescription;
         protected ITreeAdaptor adaptor;
 
-        public RewriteRuleElementStream( ITreeAdaptor adaptor, string elementDescription )
+        public RewriteRuleElementStream(ITreeAdaptor adaptor, string elementDescription)
         {
             this.elementDescription = elementDescription;
             this.adaptor = adaptor;
         }
 
         /** <summary>Create a stream with one element</summary> */
-        public RewriteRuleElementStream( ITreeAdaptor adaptor, string elementDescription, object oneElement )
-            : this( adaptor, elementDescription )
+        public RewriteRuleElementStream(ITreeAdaptor adaptor, string elementDescription, object oneElement)
+            : this(adaptor, elementDescription)
         {
-            Add( oneElement );
+            Add(oneElement);
         }
 
         /** <summary>Create a stream, but feed off an existing list</summary> */
-        public RewriteRuleElementStream( ITreeAdaptor adaptor, string elementDescription, IList elements )
-            : this( adaptor, elementDescription )
+        public RewriteRuleElementStream(ITreeAdaptor adaptor, string elementDescription, IList elements)
+            : this(adaptor, elementDescription)
         {
             this.singleElement = null;
             this.elements = elements;
@@ -116,28 +116,28 @@ namespace Antlr.Runtime.Tree
             dirty = true;
         }
 
-        public virtual void Add( object el )
+        public virtual void Add(object el)
         {
             //System.out.println("add '"+elementDescription+"' is "+el);
-            if ( el == null )
+            if (el == null)
             {
                 return;
             }
-            if ( elements != null )
+            if (elements != null)
             { // if in list, just add
-                elements.Add( el );
+                elements.Add(el);
                 return;
             }
-            if ( singleElement == null )
+            if (singleElement == null)
             { // no elements yet, track w/o list
                 singleElement = el;
                 return;
             }
             // adding 2nd element, move to list
-            elements = new List<object>( 5 );
-            elements.Add( singleElement );
+            elements = new List<object>(5);
+            elements.Add(singleElement);
             singleElement = null;
-            elements.Add( el );
+            elements.Add(el);
         }
 
         /** <summary>
@@ -150,11 +150,11 @@ namespace Antlr.Runtime.Tree
         public virtual object NextTree()
         {
             int n = Count;
-            if ( dirty || ( cursor >= n && n == 1 ) )
+            if (dirty || (cursor >= n && n == 1))
             {
                 // if out of elements and size is 1, dup
                 object el = NextCore();
-                return Dup( el );
+                return Dup(el);
             }
             // test size above then fetch
             object el2 = NextCore();
@@ -172,27 +172,27 @@ namespace Antlr.Runtime.Tree
         protected virtual object NextCore()
         {
             int n = Count;
-            if ( n == 0 )
+            if (n == 0)
             {
-                throw new RewriteEmptyStreamException( elementDescription );
+                throw new RewriteEmptyStreamException(elementDescription);
             }
-            if ( cursor >= n )
+            if (cursor >= n)
             { // out of elements?
-                if ( n == 1 )
+                if (n == 1)
                 {  // if size is 1, it's ok; return and we'll dup
-                    return ToTree( singleElement );
+                    return ToTree(singleElement);
                 }
                 // out of elements and size was not 1, so we can't dup
-                throw new RewriteCardinalityException( elementDescription );
+                throw new RewriteCardinalityException(elementDescription);
             }
             // we have elements
-            if ( singleElement != null )
+            if (singleElement != null)
             {
                 cursor++; // move cursor even for single element list
-                return ToTree( singleElement );
+                return ToTree(singleElement);
             }
             // must have more than one in list, pull from elements
-            object o = ToTree( elements[cursor] );
+            object o = ToTree(elements[cursor]);
             cursor++;
             return o;
         }
@@ -204,14 +204,14 @@ namespace Antlr.Runtime.Tree
          *  the element is for a tree root; then it must be a node dup.
          *  </summary>
          */
-        protected abstract object Dup( object el );
+        protected abstract object Dup(object el);
 
         /** <summary>
          *  Ensure stream emits trees; tokens must be converted to AST nodes.
          *  AST nodes can be passed through unmolested.
          *  </summary>
          */
-        protected virtual object ToTree( object el )
+        protected virtual object ToTree(object el)
         {
             return el;
         }
@@ -220,8 +220,8 @@ namespace Antlr.Runtime.Tree
         {
             get
             {
-                return ( singleElement != null && cursor < 1 ) ||
-                      ( elements != null && cursor < elements.Count );
+                return (singleElement != null && cursor < 1) ||
+                      (elements != null && cursor < elements.Count);
             }
         }
 
@@ -230,11 +230,11 @@ namespace Antlr.Runtime.Tree
             get
             {
                 int n = 0;
-                if ( singleElement != null )
+                if (singleElement != null)
                 {
                     n = 1;
                 }
-                if ( elements != null )
+                if (elements != null)
                 {
                     return elements.Count;
                 }

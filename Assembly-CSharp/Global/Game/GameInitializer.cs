@@ -1,11 +1,11 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
+using System;
 
 public static class GameInitializer
 {
-	public static void Initial()
-	{
-		SceneDirector.GetDefaultFadeInTransition();
-		OSDLogger.SetBundleVersion(BundleScene.BundleVersion);
-	}
+    public static void Initial()
+    {
+        SceneDirector.GetDefaultFadeInTransition();
+        OSDLogger.SetBundleVersion(BundleScene.BundleVersion);
+    }
 }

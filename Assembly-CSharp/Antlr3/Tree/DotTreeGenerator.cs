@@ -92,42 +92,42 @@ namespace Antlr.Runtime.Tree
          *
          * Takes a Tree interface object.
          */
-        public virtual string ToDot( object tree, ITreeAdaptor adaptor )
+        public virtual string ToDot(object tree, ITreeAdaptor adaptor)
         {
             StringBuilder builder = new StringBuilder();
-            foreach ( string line in HeaderLines )
-                builder.AppendLine( line );
+            foreach (string line in HeaderLines)
+                builder.AppendLine(line);
 
             nodeNumber = 0;
-            var nodes = DefineNodes( tree, adaptor );
+            var nodes = DefineNodes(tree, adaptor);
             nodeNumber = 0;
-            var edges = DefineEdges( tree, adaptor );
+            var edges = DefineEdges(tree, adaptor);
 
-            foreach ( var s in nodes )
-                builder.AppendLine( s );
+            foreach (var s in nodes)
+                builder.AppendLine(s);
 
             builder.AppendLine();
 
-            foreach ( var s in edges )
-                builder.AppendLine( s );
+            foreach (var s in edges)
+                builder.AppendLine(s);
 
             builder.AppendLine();
 
-            builder.AppendLine( Footer );
+            builder.AppendLine(Footer);
             return builder.ToString();
         }
 
-        public virtual string ToDot( ITree tree )
+        public virtual string ToDot(ITree tree)
         {
-            return ToDot( tree, new CommonTreeAdaptor() );
+            return ToDot(tree, new CommonTreeAdaptor());
         }
-        protected virtual IEnumerable<string> DefineNodes( object tree, ITreeAdaptor adaptor )
+        protected virtual IEnumerable<string> DefineNodes(object tree, ITreeAdaptor adaptor)
         {
-            if ( tree == null )
+            if (tree == null)
                 yield break;
 
-            int n = adaptor.GetChildCount( tree );
-            if ( n == 0 )
+            int n = adaptor.GetChildCount(tree);
+            if (n == 0)
             {
                 // must have already dumped as child from previous
                 // invocation; do nothing
@@ -135,57 +135,57 @@ namespace Antlr.Runtime.Tree
             }
 
             // define parent node
-            yield return GetNodeText( adaptor, tree );
+            yield return GetNodeText(adaptor, tree);
 
             // for each child, do a "<unique-name> [label=text]" node def
-            for ( int i = 0; i < n; i++ )
+            for (int i = 0; i < n; i++)
             {
-                object child = adaptor.GetChild( tree, i );
-                yield return GetNodeText( adaptor, child );
-                foreach ( var t in DefineNodes( child, adaptor ) )
+                object child = adaptor.GetChild(tree, i);
+                yield return GetNodeText(adaptor, child);
+                foreach (var t in DefineNodes(child, adaptor))
                     yield return t;
             }
         }
 
-        protected virtual IEnumerable<string> DefineEdges( object tree, ITreeAdaptor adaptor )
+        protected virtual IEnumerable<string> DefineEdges(object tree, ITreeAdaptor adaptor)
         {
-            if ( tree == null )
+            if (tree == null)
                 yield break;
 
-            int n = adaptor.GetChildCount( tree );
-            if ( n == 0 )
+            int n = adaptor.GetChildCount(tree);
+            if (n == 0)
             {
                 // must have already dumped as child from previous
                 // invocation; do nothing
                 yield break;
             }
 
-            string parentName = "n" + GetNodeNumber( tree );
+            string parentName = "n" + GetNodeNumber(tree);
 
             // for each child, do a parent -> child edge using unique node names
-            string parentText = adaptor.GetText( tree );
-            for ( int i = 0; i < n; i++ )
+            string parentText = adaptor.GetText(tree);
+            for (int i = 0; i < n; i++)
             {
-                object child = adaptor.GetChild( tree, i );
-                string childText = adaptor.GetText( child );
-                string childName = "n" + GetNodeNumber( child );
-                yield return string.Format( EdgeFormat, parentName, childName, FixString( parentText ), FixString( childText ) );
-                foreach ( var t in DefineEdges( child, adaptor ) )
+                object child = adaptor.GetChild(tree, i);
+                string childText = adaptor.GetText(child);
+                string childName = "n" + GetNodeNumber(child);
+                yield return string.Format(EdgeFormat, parentName, childName, FixString(parentText), FixString(childText));
+                foreach (var t in DefineEdges(child, adaptor))
                     yield return t;
             }
         }
 
-        protected virtual string GetNodeText( ITreeAdaptor adaptor, object t )
+        protected virtual string GetNodeText(ITreeAdaptor adaptor, object t)
         {
-            string text = adaptor.GetText( t );
-            string uniqueName = "n" + GetNodeNumber( t );
-            return string.Format( NodeFormat, uniqueName, FixString( text ) );
+            string text = adaptor.GetText(t);
+            string uniqueName = "n" + GetNodeNumber(t);
+            return string.Format(NodeFormat, uniqueName, FixString(text));
         }
 
-        protected virtual int GetNodeNumber( object t )
+        protected virtual int GetNodeNumber(object t)
         {
             int i;
-            if ( nodeToNumberMap.TryGetValue( t, out i ) )
+            if (nodeToNumberMap.TryGetValue(t, out i))
             {
                 return i;
             }
@@ -197,17 +197,17 @@ namespace Antlr.Runtime.Tree
             }
         }
 
-        protected virtual string FixString( string text )
+        protected virtual string FixString(string text)
         {
-            if ( text != null )
+            if (text != null)
             {
-                text = System.Text.RegularExpressions.Regex.Replace( text, "\"", "\\\\\"" );
-                text = System.Text.RegularExpressions.Regex.Replace( text, "\\t", "    " );
-                text = System.Text.RegularExpressions.Regex.Replace( text, "\\n", "\\\\n" );
-                text = System.Text.RegularExpressions.Regex.Replace( text, "\\r", "\\\\r" );
+                text = System.Text.RegularExpressions.Regex.Replace(text, "\"", "\\\\\"");
+                text = System.Text.RegularExpressions.Regex.Replace(text, "\\t", "    ");
+                text = System.Text.RegularExpressions.Regex.Replace(text, "\\n", "\\\\n");
+                text = System.Text.RegularExpressions.Regex.Replace(text, "\\r", "\\\\r");
 
-                if ( text.Length > 20 )
-                    text = text.Substring( 0, 8 ) + "..." + text.Substring( text.Length - 8 );
+                if (text.Length > 20)
+                    text = text.Substring(0, 8) + "..." + text.Substring(text.Length - 8);
             }
 
             return text;

@@ -2,11 +2,11 @@
 
 public class ELEMENT
 {
-	public Byte dex;
+    public Byte dex;
 
-	public Byte str;
+    public Byte str;
 
-	public Byte mgc;
+    public Byte mgc;
 
-	public Byte wpr;
+    public Byte wpr;
 }

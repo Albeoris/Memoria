@@ -41,7 +41,7 @@ namespace Antlr.Runtime.Tree
         protected TreeWizard wizard;
         protected ITreeAdaptor adaptor;
 
-        public TreePatternParser( TreePatternLexer tokenizer, TreeWizard wizard, ITreeAdaptor adaptor )
+        public TreePatternParser(TreePatternLexer tokenizer, TreeWizard wizard, ITreeAdaptor adaptor)
         {
             this.tokenizer = tokenizer;
             this.wizard = wizard;
@@ -51,14 +51,14 @@ namespace Antlr.Runtime.Tree
 
         public virtual object Pattern()
         {
-            if ( ttype == TreePatternLexer.Begin )
+            if (ttype == TreePatternLexer.Begin)
             {
                 return ParseTree();
             }
-            else if ( ttype == TreePatternLexer.Id )
+            else if (ttype == TreePatternLexer.Id)
             {
                 object node = ParseNode();
-                if ( ttype == CharStreamConstants.EndOfFile )
+                if (ttype == CharStreamConstants.EndOfFile)
                 {
                     return node;
                 }
@@ -69,37 +69,37 @@ namespace Antlr.Runtime.Tree
 
         public virtual object ParseTree()
         {
-            if ( ttype != TreePatternLexer.Begin )
+            if (ttype != TreePatternLexer.Begin)
                 throw new InvalidOperationException("No beginning.");
 
             ttype = tokenizer.NextToken();
             object root = ParseNode();
-            if ( root == null )
+            if (root == null)
             {
                 return null;
             }
-            while ( ttype == TreePatternLexer.Begin ||
+            while (ttype == TreePatternLexer.Begin ||
                     ttype == TreePatternLexer.Id ||
                     ttype == TreePatternLexer.Percent ||
-                    ttype == TreePatternLexer.Dot )
+                    ttype == TreePatternLexer.Dot)
             {
-                if ( ttype == TreePatternLexer.Begin )
+                if (ttype == TreePatternLexer.Begin)
                 {
                     object subtree = ParseTree();
-                    adaptor.AddChild( root, subtree );
+                    adaptor.AddChild(root, subtree);
                 }
                 else
                 {
                     object child = ParseNode();
-                    if ( child == null )
+                    if (child == null)
                     {
                         return null;
                     }
-                    adaptor.AddChild( root, child );
+                    adaptor.AddChild(root, child);
                 }
             }
 
-            if ( ttype != TreePatternLexer.End )
+            if (ttype != TreePatternLexer.End)
                 throw new InvalidOperationException("No end.");
 
             ttype = tokenizer.NextToken();
@@ -110,16 +110,16 @@ namespace Antlr.Runtime.Tree
         {
             // "%label:" prefix
             string label = null;
-            if ( ttype == TreePatternLexer.Percent )
+            if (ttype == TreePatternLexer.Percent)
             {
                 ttype = tokenizer.NextToken();
-                if ( ttype != TreePatternLexer.Id )
+                if (ttype != TreePatternLexer.Id)
                 {
                     return null;
                 }
                 label = tokenizer.sval.ToString();
                 ttype = tokenizer.NextToken();
-                if ( ttype != TreePatternLexer.Colon )
+                if (ttype != TreePatternLexer.Colon)
                 {
                     return null;
                 }
@@ -127,13 +127,13 @@ namespace Antlr.Runtime.Tree
             }
 
             // Wildcard?
-            if ( ttype == TreePatternLexer.Dot )
+            if (ttype == TreePatternLexer.Dot)
             {
                 ttype = tokenizer.NextToken();
-                IToken wildcardPayload = new CommonToken( 0, "." );
+                IToken wildcardPayload = new CommonToken(0, ".");
                 TreeWizard.TreePattern node =
-                    new TreeWizard.WildcardTreePattern( wildcardPayload );
-                if ( label != null )
+                    new TreeWizard.WildcardTreePattern(wildcardPayload);
+                if (label != null)
                 {
                     node.label = label;
                 }
@@ -141,20 +141,20 @@ namespace Antlr.Runtime.Tree
             }
 
             // "ID" or "ID[arg]"
-            if ( ttype != TreePatternLexer.Id )
+            if (ttype != TreePatternLexer.Id)
             {
                 return null;
             }
             string tokenName = tokenizer.sval.ToString();
             ttype = tokenizer.NextToken();
-            if ( tokenName.Equals( "nil" ) )
+            if (tokenName.Equals("nil"))
             {
                 return adaptor.Nil();
             }
             string text = tokenName;
             // check for arg
             string arg = null;
-            if ( ttype == TreePatternLexer.Arg )
+            if (ttype == TreePatternLexer.Arg)
             {
                 arg = tokenizer.sval.ToString();
                 text = arg;
@@ -162,20 +162,20 @@ namespace Antlr.Runtime.Tree
             }
 
             // create node
-            int treeNodeType = wizard.GetTokenType( tokenName );
-            if ( treeNodeType == TokenTypes.Invalid )
+            int treeNodeType = wizard.GetTokenType(tokenName);
+            if (treeNodeType == TokenTypes.Invalid)
             {
                 return null;
             }
             object node2;
-            node2 = adaptor.Create( treeNodeType, text );
-            if ( label != null && node2.GetType() == typeof( TreeWizard.TreePattern ) )
+            node2 = adaptor.Create(treeNodeType, text);
+            if (label != null && node2.GetType() == typeof(TreeWizard.TreePattern))
             {
-                ( (TreeWizard.TreePattern)node2 ).label = label;
+                ((TreeWizard.TreePattern)node2).label = label;
             }
-            if ( arg != null && node2.GetType() == typeof( TreeWizard.TreePattern ) )
+            if (arg != null && node2.GetType() == typeof(TreeWizard.TreePattern))
             {
-                ( (TreeWizard.TreePattern)node2 ).hasTextArg = true;
+                ((TreeWizard.TreePattern)node2).hasTextArg = true;
             }
             return node2;
         }

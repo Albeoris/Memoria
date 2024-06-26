@@ -1,5 +1,5 @@
-﻿using System;
-using Assets.Sources.Scripts.Common;
+﻿using Assets.Sources.Scripts.Common;
+using System;
 using UnityEngine;
 
 namespace Memoria
@@ -9,7 +9,7 @@ namespace Memoria
         private Single _timer;
         private Boolean _soundVolumeChanged;
         private Boolean _musicVolumeChanged;
-		
+
         private void OnEnable()
         {
             _soundVolumeChanged = false;
@@ -63,7 +63,7 @@ namespace Memoria
             }
             GUILayout.EndArea();
         }
-		
+
         private void BuildSoundSlider()
         {
             GUILayout.BeginHorizontal();
@@ -79,7 +79,7 @@ namespace Memoria
             }
             GUILayout.EndHorizontal();
         }
-		
+
         private void BuildMusicSlider()
         {
             GUILayout.BeginHorizontal();
