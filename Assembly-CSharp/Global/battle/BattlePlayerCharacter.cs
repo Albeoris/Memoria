@@ -52,7 +52,7 @@ public class BattlePlayerCharacter : MonoBehaviour
 		global::Debug.Log(dbgMessage);
 	}
 
-	public static void InitAnimation(BTL_DATA btl)
+    public static void InitAnimation(BTL_DATA btl)
     {
         for (Int32 i = 0; i < 34; i++)
         {
