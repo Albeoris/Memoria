@@ -574,7 +574,7 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 	<Name>Trance Seek</Name>
 	<Version>0.3.21</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
-	<ReleaseDate>2020-08-26</ReleaseDate>
+	<ReleaseDate>2024-06-27</ReleaseDate>
 	<Author>DV</Author>
 	<Description>
 	A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
@@ -627,7 +627,7 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 	<Name>Playstation Sounds</Name>
 	<Version>2.1</Version>
 	<InstallationPath>PlaystationSounds</InstallationPath>
-	<ReleaseDate>2022-03-19</ReleaseDate>
+	<ReleaseDate>2024-06-27</ReleaseDate>
 	<Author>DV</Author>
 	<Description>Replace the sound assets by the PSX sounds (specially Battle + Tetra Master + Miscellaneous).
 More than 1540 sound files fixed!
@@ -655,10 +655,8 @@ Change some card textures (add boss + characters)
 	<Name>BetterCardDrop</Name>
 	<Version>1.1</Version>
 	<InstallationPath>BetterCardDrop</InstallationPath>
-	<ReleaseDate>2024-05-12</ReleaseDate>
+	<ReleaseDate>2024-06-27</ReleaseDate>
 	<Author>Snouz + DV</Author>
-	<Category>Gameplay</Category>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/jeu88un3m1e0f4qff5b40/BetterCardDrop-by-DV.zip?rlkey=4woy4rml3pwv65wg6tyionc90&amp;dl=1</DownloadUrl>
 	<SubMod>
 		<Name>Drop x 2</Name>
 		<InstallationPath>Dropx2</InstallationPath>
@@ -682,6 +680,12 @@ Change some card textures (add boss + characters)
 		<InstallationPath>Drop100</InstallationPath>
 		<Description>Drop rate of 100%</Description>
 		<Priority>4</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>RandomCard</Name>
+		<InstallationPath>RandomCard</InstallationPath>
+		<Description>Drop a random card at each battle !</Description>
+		<Priority>5</Priority>
 	</SubMod>
 	<Category>Gameplay</Category>
 	<Description>
