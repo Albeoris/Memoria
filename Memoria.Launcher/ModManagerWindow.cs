@@ -17,6 +17,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
+using static System.Windows.Forms.DataFormats;
 using Application = System.Windows.Application;
 using Color = System.Drawing.Color;
 using GridView = System.Windows.Controls.GridView;
@@ -210,12 +211,35 @@ namespace Memoria.Launcher
             {
                 if (downloadList.Contains(mod) || String.IsNullOrEmpty(mod.DownloadUrl))
                     return;
+                if (!String.IsNullOrEmpty(mod.MinimumMemoriaVersion))
+                {
+                    String memoriaVersion = ((MainWindow)this.Owner).MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
+                    DateTime tempDate;
+                    Boolean isDate1Valid = DateTime.TryParseExact(memoriaVersion, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out tempDate);
+                    Boolean isDate2Valid = DateTime.TryParseExact(mod.MinimumMemoriaVersion, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out tempDate);
+                    if (isDate1Valid && isDate2Valid)
+                    {
+                        if (!IsDate1EqualOrMoreRecent(memoriaVersion, mod.MinimumMemoriaVersion))
+                        {
+                            MessageBox.Show($"The mod \"{mod.Name}\" requires Memoria v{mod.MinimumMemoriaVersion} or above to work correctly.\n\nPlease update Memoria to the latest version.", "Warning", MessageBoxButtons.OK);
+                        }
+                    }
+                }
                 downloadList.Add(mod);
                 DownloadStart(mod);
                 mod.Installed = "...";
             }
             lstCatalogMods.Items.Refresh();
         }
+
+        public static bool IsDate1EqualOrMoreRecent(string date1, string date2)
+        {
+            string format = "yyyy-MM-dd";
+            DateTime dateTime1 = DateTime.ParseExact(date1, format, CultureInfo.InvariantCulture);
+            DateTime dateTime2 = DateTime.ParseExact(date2, format, CultureInfo.InvariantCulture);
+            return dateTime1 >= dateTime2;
+        }
+
         private void OnClickCancel(Object sender, RoutedEventArgs e)
         {
             if (downloadThread != null)
