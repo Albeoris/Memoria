@@ -349,7 +349,16 @@ public partial class EventEngine
                     }
                     else if (mapNo == 2211 && scCounter == 9200 && (po.sid == 5 || po.sid == 6) && posX == -465 && posZ == -5796) // Kuja ATE: Zorn Thorn position
                     {
-                        posX = (po.sid == 5) ? posX = -200 : posX = 0; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                        posX = (po.sid == 5) ? -200 : 0; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                    }
+                    else if (mapNo == 2600 && scCounter == 10700 && po.sid == 8 && Configuration.Graphics.WidescreenSupport && posX == 1173 && posZ == -1685) // Dagga appears in frame
+                    {
+                        posZ = -1985; // Log.Message("posX" + posX + " posZ" + posZ);
+                    }
+                    else if (mapNo == 2651 && scCounter == 10890 && po.sid == 4 && Configuration.Graphics.WidescreenSupport && posX == 1449 && posZ == -6844) // Mikito appears in frame
+                    {
+                        posX = 1749;
+                        posZ = -7244; // Log.Message("posX" + posX + " posZ" + posZ);
                     }
                     else if (mapNo == 2914 && scCounter == 11670 && po.sid >= 6 && po.sid <= 10) // Disable fishes shadows
                     {
