@@ -30,6 +30,7 @@ namespace Memoria.Launcher
         public Int64 FullSize { get; set; } // TODO
         public List<Mod> SubMod { get; set; }
         public Mod ParentMod { get; set; }
+        public String MinimumMemoriaVersion { get; set; }
 
         // Entries that are computed in the Mod Manager
         public HashSet<String> FileContent { get; set; }
@@ -180,6 +181,7 @@ namespace Memoria.Launcher
             DownloadFormat = modNode["DownloadFormat"]?.InnerText;
             PreviewFile = modNode["PreviewFile"]?.InnerText;
             PreviewFileUrl = modNode["PreviewFileUrl"]?.InnerText;
+            MinimumMemoriaVersion = modNode["MinimumMemoriaVersion"]?.InnerText;
             if (Int64.TryParse(modNode["FullSize"]?.InnerText ?? "0", out outParse)) FullSize = outParse;
             if (Int64.TryParse(modNode["DownloadSize"]?.InnerText ?? "0", out outParse)) DownloadSize = outParse;
             SubMod.Clear();
@@ -282,6 +284,12 @@ namespace Memoria.Launcher
             {
                 el = doc.CreateElement("PreviewFileUrl");
                 el.InnerText = PreviewFileUrl;
+                mod.AppendChild(el);
+            }
+            if (MinimumMemoriaVersion != null)
+            {
+                el = doc.CreateElement("MinimumMemoriaVersion");
+                el.InnerText = MinimumMemoriaVersion;
                 mod.AppendChild(el);
             }
             if (FullSize > 0)
