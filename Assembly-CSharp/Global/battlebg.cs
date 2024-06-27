@@ -3,119 +3,82 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Object = System.Object;
 
-public class battlebg
+public static class battlebg
 {
     public static void nf_InitBattleBG(BBGINFO bbginfoPtr, GEOTEXHEADER tab)
     {
         battlebg.btlModel = FF9StateSystem.Battle.FF9Battle.map.btlBGPtr;
         battlebg.nf_BbgInfoPtr = bbginfoPtr;
-        battlebg.nf_BbgNumber = (Int32)battlebg.nf_BbgInfoPtr.bbgnumber;
+        battlebg.nf_BbgNumber = battlebg.nf_BbgInfoPtr.bbgnumber;
         battlebg.nf_SkyFixPositionFlag = 0;
         if (battlebg.nf_BbgInfoPtr.fog != 0)
-        {
             battlebg.nf_SkyFixPositionFlag++;
-        }
-        battlebg.nf_BbgSkyRotation = (Int32)battlebg.nf_BbgInfoPtr.skyrotation;
-        battlebg.nf_BbgTexAnm = (Int32)battlebg.nf_BbgInfoPtr.texanim;
+        battlebg.nf_BbgSkyRotation = battlebg.nf_BbgInfoPtr.skyrotation;
+        battlebg.nf_BbgTexAnm = battlebg.nf_BbgInfoPtr.texanim;
         battlebg.nf_BbgTabAddress = tab;
-        battlebg.nf_BbgUVChangeCount = (Int32)battlebg.nf_BbgInfoPtr.uvcount;
-        battlebg.nf_SetBbgDispAttribute(15);
+        battlebg.nf_BbgUVChangeCount = battlebg.nf_BbgInfoPtr.uvcount;
+        battlebg.nf_SetBbgDispAttribute(battlebg.BBG_DISP_ATTRIBUTE_ALL);
         battlebg.nf_BbgSkyAngle_Y = 0;
         battlebg.SetDefaultShader(battlebg.btlModel);
         battlebg.objAnimModel = FF9StateSystem.Battle.FF9Battle.map.btlBGObjAnim;
-        battlebg.objAnimModel = new GameObject[(Int32)battlebg.nf_BbgInfoPtr.objanim];
-        for (Int32 i = 0; i < (Int32)battlebg.nf_BbgInfoPtr.objanim; i++)
+        battlebg.objAnimModel = new GameObject[battlebg.nf_BbgInfoPtr.objanim];
+        for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
         {
-            String text = String.Concat(new Object[]
-            {
-                "BBG_B",
-                battlebg.nf_BbgNumber.ToString("D3"),
-                "_OBJ",
-                i + 1
-            });
-            battlebg.objAnimModel[i] = ModelFactory.CreateModel("BattleMap/BattleModel/battleMap_all/" + text + "/" + text, false);
+            String objName = $"BBG_B{battlebg.nf_BbgNumber:D3}_OBJ{i + 1}";
+            battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false);
             battlebg.SetDefaultShader(battlebg.objAnimModel[i]);
-            if (battlebg.nf_BbgNumber == 171 && i == 1)
-            {
+            if (battlebg.nf_BbgNumber == 171 && i == 1) // Crystal World, Crystal
                 battlebg.SetMaterailShader(battlebg.objAnimModel[i], "PSX/BattleMap_Cystal");
-            }
         }
         FF9StateSystem.Battle.FF9Battle.map.btlBGObjAnim = battlebg.objAnimModel;
-        battlebg.nf_BbgTabAddress.InitBBGTextureAnim();
+        battlebg.nf_BbgTabAddress.InitBBGTextureAnim(battlebg.btlModel, battlebg.objAnimModel);
         if (battlebg.nf_BbgTexAnm != 0)
-        {
-            for (Int32 j = 0; j < battlebg.nf_BbgTexAnm; j++)
-            {
-                battlebg.geoBGTexAnimPlay(battlebg.nf_BbgTabAddress, j);
-            }
-        }
+            for (Int32 i = 0; i < battlebg.nf_BbgTexAnm; i++)
+                battlebg.geoBGTexAnimPlay(battlebg.nf_BbgTabAddress, i);
     }
 
     private static void SetDefaultShader(GameObject go)
     {
-        foreach (Object obj in go.transform)
+        foreach (Transform transform in go.transform)
         {
-            Transform transform = (Transform)obj;
-            if (battlebg.getBbgAttr(transform.name) == 0)
+            if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_PLUS)
             {
                 battlebg.SetMaterailShader(transform.gameObject, "PSX/BattleMap_Plus");
             }
-            else if (battlebg.getBbgAttr(transform.name) == 2)
+            else if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_GROUND)
             {
                 battlebg.SetMaterailShader(transform.gameObject, "PSX/BattleMap_Ground");
             }
-            else if (battlebg.getBbgAttr(transform.name) == 4)
+            else if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_MINUS)
             {
                 battlebg.SetMaterailShader(transform.gameObject, "PSX/BattleMap_Minus");
             }
-            else if (battlebg.getBbgAttr(transform.name) == 8)
+            else if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_SKY)
             {
                 battlebg.SetMaterailShader(transform.gameObject, "PSX/BattleMap_Sky");
-                Int32[] source = new Int32[]
-                {
-                    1,
-                    2,
-                    12,
-                    109,
-                    119,
-                    68,
-                    69,
-                    60,
-                    53,
-                    49,
-                    90,
-                    20,
-                    77,
-                    125,
-                    141,
-                    95
-                };
-                if (!source.Contains(battlebg.nf_BbgNumber))
-                {
+                if (!battlebg.bbg_KeepSkyScaleList.Contains(battlebg.nf_BbgNumber))
                     transform.localScale = new Vector3(1.01f, 1.01f, 1.01f);
-                }
             }
         }
     }
 
     public static void SetMaterailShader(GameObject go, String shaderName)
     {
-        MeshRenderer[] componentsInChildren = go.GetComponentsInChildren<MeshRenderer>();
-        for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
+        MeshRenderer[] renderers = go.GetComponentsInChildren<MeshRenderer>();
+        for (Int32 i = 0; i < renderers.Length; i++)
         {
-            Int32 num = 0;
-            Material[] materials = componentsInChildren[i].materials;
-            for (Int32 j = 0; j < (Int32)materials.Length; j++)
+            Material[] materials = renderers[i].materials;
+            for (Int32 j = 0; j < materials.Length; j++)
             {
                 Material material = materials[j];
                 String text = material.name.Replace("(Instance)", String.Empty);
-                if (battlebg.nf_BbgNumber == 171 && num == 0 && shaderName.Contains("Minus"))
+                if (battlebg.nf_BbgNumber == 171 && j == 0 && shaderName.Contains("Minus")) // Crystal World, Crystal
                 {
                     material.shader = ShadersLoader.Find("PSX/BattleMap_Moon");
                 }
-                else if ((battlebg.nf_BbgNumber == 92 && num == 3 && shaderName.Contains("Plus")) || (battlebg.nf_BbgNumber == 52 && num == 6 && shaderName.Contains("Plus")))
+                else if ((battlebg.nf_BbgNumber == 92 && j == 3 && shaderName.Contains("Plus"))  // Desert Palace, Dock
+                      || (battlebg.nf_BbgNumber == 52 && j == 6 && shaderName.Contains("Plus"))) // Cleyra's Trunk, Inside, Sandfall
                 {
                     material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_1_Off");
                 }
@@ -134,7 +97,6 @@ public class battlebg
                     if (shaderName.CompareTo("PSX/BattleMap_Ground") == 0)
                         material.SetInt("_ZWrite", 0); // DEBUG: Can't make the default value in "_ZWrite ("ZWrite", Int) = 0" works correctly for some reason
                 }
-                num++;
             }
         }
     }
@@ -142,19 +104,16 @@ public class battlebg
     public static List<Material> GetShaders(Int32 bbgAttr)
     {
         List<Material> list = new List<Material>();
-        foreach (Object obj in battlebg.btlModel.transform)
+        foreach (Transform transform in battlebg.btlModel.transform)
         {
-            Transform transform = (Transform)obj;
             if (battlebg.getBbgAttr(transform.name) == bbgAttr)
             {
-                MeshRenderer[] componentsInChildren = transform.gameObject.GetComponentsInChildren<MeshRenderer>();
-                for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
+                MeshRenderer[] renderers = transform.gameObject.GetComponentsInChildren<MeshRenderer>();
+                for (Int32 i = 0; i < renderers.Length; i++)
                 {
-                    Material[] materials = componentsInChildren[i].materials;
-                    for (Int32 j = 0; j < (Int32)materials.Length; j++)
-                    {
+                    Material[] materials = renderers[i].materials;
+                    for (Int32 j = 0; j < materials.Length; j++)
                         list.Add(materials[j]);
-                    }
                 }
             }
         }
@@ -163,193 +122,127 @@ public class battlebg
 
     public static void nf_BattleBG()
     {
-        Int32 num = 0;
-        Int32 num2 = 0;
-        Int32 num3 = 0;
-        Vector3 zero = Vector3.zero;
-        Vector3 zero2 = Vector3.zero;
+        Vector3 bbgRot = Vector3.zero;
+        Vector3 bbgPos = Vector3.zero;
+        Boolean invertRot = false;
         battlebg.nf_BbgTick++;
         if (battlebg.nf_BbgTexAnm != 0)
-        {
             battlebg.geoBGTexAnimService(battlebg.nf_BbgTabAddress);
-        }
-        GameObject gameObject = battlebg.btlModel;
-        for (; ; )
+        foreach (Transform transform in battlebg.btlModel.transform)
         {
-            foreach (Object obj in gameObject.transform)
+            if (battlebg.getBbgAttr(transform.name) == 8 && battlebg.nf_BbgSkyRotation != 0)
             {
-                Transform transform = (Transform)obj;
-                if (battlebg.getBbgAttr(transform.name) == 8 && battlebg.nf_BbgSkyRotation != 0 && num == 0)
-                {
-                    battlebg.nf_BbgSkyAngle_Y += battlebg.nf_BbgSkyRotation;
-                    Vector3 eulerAngles = transform.localRotation.eulerAngles;
-                    eulerAngles.y = (battlebg.nf_BbgSkyAngle_Y / 8f) / 4096f * 360f;
-                    transform.localRotation = Quaternion.Euler(eulerAngles);
-                    num++;
-                }
-                battlebg.setBGColor(transform.gameObject);
+                battlebg.nf_BbgSkyAngle_Y += battlebg.nf_BbgSkyRotation;
+                Vector3 eulerAngles = transform.localRotation.eulerAngles;
+                eulerAngles.y = battlebg.nf_BbgSkyAngle_Y / 8f / 4096f * 360f;
+                transform.localRotation = Quaternion.Euler(eulerAngles);
             }
-            if (num2 == (Int32)battlebg.nf_BbgInfoPtr.objanim)
+            battlebg.setBGColor(transform.gameObject);
+        }
+        for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
+        {
+            Int32 fullTime = (Int32)Time.realtimeSinceStartup;
+            switch (battlebg.nf_BbgInfoPtr.bbgnumber)
             {
-                break;
-            }
-            num2++;
-            gameObject = battlebg.objAnimModel[num2 - 1];
-            Single num4 = Time.realtimeSinceStartup;
-            Int16 bbgnumber = battlebg.nf_BbgInfoPtr.bbgnumber;
-            switch (bbgnumber)
-            {
-                case 168:
-                    zero.x = 0f;
-                    zero.z = 0f;
-                    if (num2 == 1)
+                case 7:
+                    if (i == 0)
                     {
-                        zero.y = (Single)((Int32)num4 / 16 & 4095);
+                        if ((battlebg.nf_BbgTick + 31 & 63) == 0)
+                            battlebg.nf_b007a = UnityEngine.Random.Range(0, 512);
+                        bbgRot.y = battlebg.nf_b007a + UnityEngine.Random.Range(0, 64);
                     }
                     else
                     {
-                        zero.y = (Single)((Int32)num4 / 8 & 4095);
+                        if ((battlebg.nf_BbgTick & 63) == 0)
+                            battlebg.nf_b007b = UnityEngine.Random.Range(0, 1024);
+                        bbgRot.y = battlebg.nf_b007b + UnityEngine.Random.Range(0, 128);
                     }
                     break;
-                case 169:
-                case 170:
-                IL_158:
-                    switch (bbgnumber)
-                    {
-                        case 110:
-                        {
-                            Int32 num5 = (Int32)(num4 * 12f) & 4095;
-                            num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
-                            num5 /= 64;
-                            zero.z = (Single)num5;
-                            zero.y = 512f;
-                            zero2.x = 1500f;
-                            zero2.y = -7000f;
-                            zero2.z = 3750f;
-                            break;
-                        }
-                        case 111:
-                        IL_16E:
-                            if (bbgnumber != 7)
-                            {
-                                if (bbgnumber != 68)
-                                {
-                                    zero.y += 3f;
-                                    zero2.x = 0f;
-                                    zero2.y = -10f;
-                                    zero2.z = 0f;
-                                }
-                                else
-                                {
-                                    Int32 num5 = (Int32)(num4 * 26f) & 4095;
-                                    num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
-                                    num5 /= 5;
-                                    zero.z = (Single)num5;
-                                    zero2.x = 1065f;
-                                    zero2.y = -1345f;
-                                    zero2.z = 3749f;
-                                }
-                            }
-                            else if (num2 == 1)
-                            {
-                                if ((battlebg.nf_BbgTick + 31 & 63) == 0)
-                                {
-                                    battlebg.nf_b007a = (battlebg.rand() & 511);
-                                }
-                                zero.y = (Single)(battlebg.nf_b007a + (battlebg.rand() & 63));
-                            }
-                            else
-                            {
-                                if ((battlebg.nf_BbgTick & 63) == 0)
-                                {
-                                    battlebg.nf_b007b = (battlebg.rand() & 1023);
-                                }
-                                zero.y = (Single)(battlebg.nf_b007b + (battlebg.rand() & 127));
-                            }
-                            break;
-                        case 112:
-                            switch (num2)
-                            {
-                                case 1:
-                                {
-                                    Int32 num5 = (Int32)(num4 * 5f) & 4095;
-                                    zero.z = (Single)(4095 - num5);
-                                    num5 = ((Int32)(num4 * 3f) & 4095);
-                                    zero.y = (Single)(4095 - num5);
-                                    num5 = ((Int32)((num4 + 8f) * 22f) & 4095);
-                                    num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
-                                    zero2.x = -2100f;
-                                    zero2.y = (Single)(-250 + num5 / 45);
-                                    zero2.z = -850f;
-                                    break;
-                                }
-                                case 2:
-                                {
-                                    zero.y = 0f;
-                                    zero.z = 0f;
-                                    Int32 num5 = (Int32)(num4 * 20f) & 4095;
-                                    num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
-                                    zero2.x = 1725f;
-                                    zero2.y = (Single)(-1500 + num5 / 64);
-                                    zero2.z = -75f;
-                                    break;
-                                }
-                                case 3:
-                                {
-                                    Int32 num5 = (Int32)(num4 * 4f) & 4095;
-                                    zero.z = (Single)num5;
-                                    num5 = ((Int32)(num4 * 3f) & 4095);
-                                    zero.y = (Single)num5;
-                                    num5 = ((Int32)((num4 + 16f) * 21f) & 4095);
-                                    num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
-                                    zero2.x = 1750f;
-                                    zero2.y = (Single)(-775 + num5 / 50);
-                                    zero2.z = 1025f;
-                                    break;
-                                }
-                            }
-                            break;
-                        default:
-                            goto IL_16E;
-                    }
+                case 68:
+                    bbgRot.y += 3f;
+                    bbgPos.x = 0f;
+                    bbgPos.y = -10f;
+                    bbgPos.z = 0f;
+                    break;
+                case 110:
+                    bbgRot.z = (Int32)(Mathf.Sin(((fullTime * 12) & 4095) / 4096f * 360f) * 4096f) / 64;
+                    bbgRot.y = 512f;
+                    bbgPos.x = 1500f;
+                    bbgPos.y = -7000f;
+                    bbgPos.z = 3750f;
+                    break;
+                case 168:
+                    bbgRot.x = 0f;
+                    bbgRot.z = 0f;
+                    bbgRot.y = (i == 0 ? fullTime / 16 : fullTime / 8) & 4095;
                     break;
                 case 171:
-                    num4 = (Single)(-(Single)(battlebg.nf_BbgTick * 2));
-                    if (num2 == 1)
+                    fullTime = battlebg.nf_BbgTick * 2;
+                    if (i == 0)
                     {
-                        Int32 num5 = (Int32)(num4 * -12f) & 4095;
-                        zero.z = (Single)num5;
-                        zero2.x = 0f;
-                        zero2.y = -2375f;
-                        zero2.z = 3750f;
+                        bbgRot.z = (fullTime * 12) & 4095;
+                        bbgPos.x = 0f;
+                        bbgPos.y = -2375f;
+                        bbgPos.z = 3750f;
                     }
                     else
                     {
-                        Int32 num5 = (Int32)(num4 * -22f) & 4095;
-                        zero.z = 3584f;
-                        zero.y = (Single)num5;
-                        zero2.x = 0f;
-                        zero2.y = -2250f;
-                        zero2.z = 7625f;
-                        num3 = 1;
+                        bbgRot.z = 3584f;
+                        bbgRot.y = (fullTime * 22) & 4095;
+                        bbgPos.x = 0f;
+                        bbgPos.y = -2250f;
+                        bbgPos.z = 7625f;
+                        invertRot = true;
                     }
                     break;
+                case 112:
+                    switch (i)
+                    {
+                        case 0:
+                        {
+                            bbgRot.z = 4095 - ((fullTime * 5) & 4095);
+                            bbgRot.y = 4095 - ((fullTime * 3) & 4095);
+                            bbgPos.x = -2100f;
+                            bbgPos.y = -250f + (Int32)(Mathf.Sin((((fullTime + 8) * 22) & 4095) / 4096f * 360f) * 4096f) / 45;
+                            bbgPos.z = -850f;
+                            break;
+                        }
+                        case 1:
+                        {
+                            bbgRot.y = 0f;
+                            bbgRot.z = 0f;
+                            bbgPos.x = 1725f;
+                            bbgPos.y = -1500f + (Int32)(Mathf.Sin(((fullTime * 20) & 4095) / 4096f * 360f) * 4096f) / 64;
+                            bbgPos.z = -75f;
+                            break;
+                        }
+                        case 2:
+                        {
+                            bbgRot.z = (fullTime * 4) & 4095;
+                            bbgRot.y = (fullTime * 3) & 4095;
+                            bbgPos.x = 1750f;
+                            bbgPos.y = -775f + (Int32)(Mathf.Sin((((fullTime + 16) * 21) & 4095) / 4096f * 360f) * 4096f) / 50;
+                            bbgPos.z = 1025f;
+                            break;
+                        }
+                    }
+                    break;
+                case 111:
+                case 169:
+                case 170:
                 default:
-                    goto IL_158;
+                    bbgRot.z = (Int32)(Mathf.Sin(((fullTime * 26) & 4095) / 4096f * 360f) * 4096f) / 5;
+                    bbgPos.x = 1065f;
+                    bbgPos.y = -1345f;
+                    bbgPos.z = 3749f;
+                    break;
             }
-            zero2.y *= -1f;
-            zero.x = zero.x / 4096f * 360f;
-            zero.y = zero.y / 4096f * 360f;
-            zero.z = zero.z / 4096f * 360f;
-            gameObject.transform.localPosition = zero2;
-            if (num3 != 0)
-            {
-                gameObject.transform.localRotation = Quaternion.Inverse(Quaternion.Euler(zero));
-            }
-            else
-            {
-                gameObject.transform.localRotation = Quaternion.Euler(zero);
-            }
+            bbgPos.y *= -1f;
+            bbgRot.x = bbgRot.x / 4096f * 360f;
+            bbgRot.y = bbgRot.y / 4096f * 360f;
+            bbgRot.z = bbgRot.z / 4096f * 360f;
+            battlebg.objAnimModel[i].transform.localPosition = bbgPos;
+            battlebg.objAnimModel[i].transform.localRotation = invertRot ? Quaternion.Inverse(Quaternion.Euler(bbgRot)) : Quaternion.Euler(bbgRot);
         }
     }
 
@@ -396,53 +289,48 @@ public class battlebg
     {
         UInt16 count = texheaderptr.count;
         GEOTEXANIMHEADER[] geotex = texheaderptr.geotex;
-        for (Int32 i = 0; i < (Int32)count; i++)
+        for (Int32 i = 0; i < count; i++)
         {
             GEOTEXANIMHEADER geotexanimheader = geotex[i];
             if ((geotexanimheader.flags & 1) != 0)
             {
+                // UV animation
                 if (geotexanimheader.numframes != 0)
                 {
-                    Int32 num = geotexanimheader.frame;
+                    Int32 frameLong = geotexanimheader.frame;
                     Int16 lastframe = geotexanimheader.lastframe;
-                    Int16 num2 = (Int16)(num >> 12);
-                    if (num2 >= 0)
+                    Int16 frameShort = (Int16)(frameLong >> 12);
+                    if (frameShort >= 0)
                     {
                         if (geotexanimheader.numframes <= 0)
-                        {
                             continue;
-                        }
-                        if (num2 != lastframe)
+                        if (frameShort != lastframe)
                         {
-                            for (Int32 j = 0; j < (Int32)geotexanimheader.count; j++)
+                            //for (Int32 j = 0; j < geotexanimheader.count; j++)
                             {
-                                Single x = (geotexanimheader.coords[num2].x - geotexanimheader.target.x) / texheaderptr.materials[j].mainTexture.width;
-                                Single num3 = (geotexanimheader.coords[num2].y - geotexanimheader.target.y) / texheaderptr.materials[j].mainTexture.height;
-                                texheaderptr.materials[i].SetTextureOffset("_MainTex", new Vector2(x, -num3));
+                                Single dx = (geotexanimheader.coords[frameShort].x - geotexanimheader.target.x) / texheaderptr.materials[i].mainTexture.width;
+                                Single dy = (geotexanimheader.coords[frameShort].y - geotexanimheader.target.y) / texheaderptr.materials[i].mainTexture.height;
+                                texheaderptr.materials[i].SetTextureOffset("_MainTex", new Vector2(dx, -dy));
                             }
-                            geotexanimheader.lastframe = num2;
+                            geotexanimheader.lastframe = frameShort;
                         }
-                        Int16 rate = geotexanimheader.rate;
-                        num += (Int32)rate;
+                        frameLong += geotexanimheader.rate;
                     }
                     else
                     {
-                        num += 4096;
+                        frameLong += 4096;
                     }
-                    if (num >> 12 < (Int32)geotexanimheader.numframes)
+                    if (frameLong >> 12 < geotexanimheader.numframes)
                     {
-                        geotexanimheader.frame = num;
+                        geotexanimheader.frame = frameLong;
                     }
                     else if (geotexanimheader.randrange > 0)
                     {
-                        UInt32 num4 = battlebg.geoBGTexAnimRandom((UInt32)geotexanimheader.randmin, (UInt32)geotexanimheader.randrange);
-                        geotexanimheader.frame = (Int32)(-(Int32)((UInt64)((UInt64)num4 << 12)));
+                        geotexanimheader.frame = -(Int32)((UInt64)UnityEngine.Random.Range(geotexanimheader.randmin, geotexanimheader.randrange + 1) << 12);
                     }
                     else if ((geotexanimheader.flags & 2) != 0)
                     {
-                        Byte b = 3;
-                        GEOTEXANIMHEADER geotexanimheader2 = geotexanimheader;
-                        geotexanimheader2.flags = (Byte)(geotexanimheader2.flags & (Byte)(~b));
+                        geotexanimheader.flags &= unchecked((Byte)~3);
                     }
                     else
                     {
@@ -451,36 +339,22 @@ public class battlebg
                 }
                 else if ((geotexanimheader.flags & 4) != 0)
                 {
-                    Int32 num = geotexanimheader.frame;
-                    Int16 num2 = (Int16)(num >> 12);
-                    for (Int32 k = 0; k < (Int32)geotexanimheader.count; k++)
-                    {
-                        Int32 num5 = 0;
-                        Int32 height = texheaderptr.materials[k].mainTexture.height;
-                        Single num6 = (Single)num2 / (Single)height;
-                        if (battlebg.nf_BbgNumber == 69 && i == 3) // 
-                            num6 *= -1f;
-                        texheaderptr.materials[i].SetTextureOffset("_MainTex", new Vector2(num5, -num6));
-                        if (battlebg.nf_BbgNumber == 57)
-                            texheaderptr.bbgExtraAimMaterials[i].SetTextureOffset("_MainTex", new Vector2(num5, -num6));
-                        else if (battlebg.nf_BbgNumber == 71 && k == 0)
-                            texheaderptr.bbgExtraAimMaterials[i].SetTextureOffset("_MainTex", new Vector2(num5, -num6));
-                    }
-                    Int16 rate = geotexanimheader.rate;
-                    geotexanimheader.frame += (Int32)rate;
+                    // Vertical texture scroll
+                    Int32 frameLong = geotexanimheader.frame;
+                    Int16 frameShort = (Int16)(frameLong >> 12);
+                    Single dy = frameShort / 256f;
+                    if (battlebg.nf_BbgNumber == 69 && i == 3) // Fossil Roo, Road accross water
+                        dy *= -1f;
+                    //for (Int32 j = 0; j < geotexanimheader.count; j++)
+                    texheaderptr.materials[i].SetTextureOffset("_MainTex", new Vector2(0f, -dy));
+                    if (battlebg.nf_BbgNumber == 57) // Cleyra, Observation post
+                        texheaderptr.bbgExtraAimMaterials[i].SetTextureOffset("_MainTex", new Vector2(0f, -dy));
+                    else if (battlebg.nf_BbgNumber == 71) // Fossil Roo, Underground lake
+                        texheaderptr.bbgExtraAimMaterials[i].SetTextureOffset("_MainTex", new Vector2(0f, -dy));
+                    geotexanimheader.frame += geotexanimheader.rate;
                 }
             }
         }
-    }
-
-    private static UInt32 geoBGTexAnimRandom(UInt32 randmin, UInt32 randrange)
-    {
-        return (UInt32)UnityEngine.Random.Range((Int32)randmin, (Int32)(randrange + 1u));
-    }
-
-    public static Int32 rand()
-    {
-        return UnityEngine.Random.Range(0, 0x7FFF);
     }
 
     public static Int32 nf_GetBbgIntensity()
@@ -511,55 +385,276 @@ public class battlebg
         }
     }
 
+    #region Debugging API
+    // The commented code is an alternative to the "relevant part" cut using triangle sets instead of rects
+    // It tends to cut the relevant part too sharply
+    // TODO: maybe allow to use custom textures that are cropped to the relevant part like with SPS textures
+    public static List<Texture2D> GetAllTextures_RelevantPartOnly(String bbgName, Color32 clear)
+    {
+        GameObject go = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{bbgName}/{bbgName}", Vector3.zero, Vector3.zero, true);
+        Dictionary<String, Texture2D> textureDict = new Dictionary<String, Texture2D>();
+        Dictionary<String, Rect> areaDict = new Dictionary<String, Rect>();
+        //Dictionary<String, List<Vector2[]>> areaDict = new Dictionary<String, List<Vector2[]>>();
+        foreach (Renderer rend in go.GetComponentsInChildren<Renderer>())
+            GetRelevantUVPartFromRenderer(rend, textureDict, areaDict);
+        GEOTEXHEADER geotexheader = new GEOTEXHEADER();
+        geotexheader.ReadBGTextureAnim(bbgName);
+        if (geotexheader.geotex != null)
+        {
+            GameObject[] extraObj = null;
+            if (geotexheader.bbgnumber == 7)
+            {
+                BBGINFO bbginfo = new BBGINFO();
+                bbginfo.ReadBattleInfo(bbgName);
+                extraObj = new GameObject[bbginfo.objanim];
+                for (Int32 i = 0; i < bbginfo.objanim; i++)
+                {
+                    String objName = $"BBG_B{geotexheader.bbgnumber:D3}_OBJ{i + 1}";
+                    extraObj[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false);
+                }
+            }
+            geotexheader.InitBBGTextureAnim(go, extraObj);
+            for (Int32 i = 0; i < geotexheader.count; i++)
+            {
+                GEOTEXANIMHEADER anim = geotexheader.geotex[i];
+                Texture2D texture = textureDict[geotexheader.materials[i].mainTexture.name];
+                //List<Vector2[]> area = areaDict[texture.name];
+                Rect area = areaDict[texture.name];
+                Int32 w = texture.width;
+                Int32 h = texture.height;
+                if (anim.numframes != 0)
+                {
+                    //List<Vector2[]> newtriangles = new List<Vector2[]>();
+                    List<Rect> newareas = new List<Rect>();
+                    for (Int32 f = 0; f < anim.numframes; f++)
+                    {
+                        Single dx = (anim.coords[f].x - anim.target.x) / w;
+                        Single dy = (anim.coords[f].y - anim.target.y) / h;
+                        Vector2 dv = new Vector2(dx, -dy);
+                        Rect newarea = area;
+                        newarea.position += dv;
+                        newareas.Add(newarea);
+                        //foreach (Vector2[] tri in area)
+                        //{
+                        //    Vector2[] newtri = [tri[0] + dv, tri[1] + dv, tri[2] + dv];
+                        //    newtriangles.Add(newtri);
+                        //}
+                    }
+                    foreach (Rect newarea in newareas)
+                    {
+                        area.min = Vector2.Min(area.min, newarea.min);
+                        area.max = Vector2.Max(area.max, newarea.max);
+                    }
+                    areaDict[texture.name] = area;
+                    //area.AddRange(newtriangles);
+                }
+                else if ((anim.flags & 4) != 0)
+                {
+                    area.yMin = 0f;
+                    area.yMax = 1f;
+                    areaDict[texture.name] = area;
+                    //if (area.Count > 0)
+                    //{
+                    //    Single minx = Math.Min(Math.Min(area[0][0].x, area[0][1].x), area[0][2].x);
+                    //    Single maxx = Math.Max(Math.Max(area[0][0].x, area[0][1].x), area[0][2].x);
+                    //    foreach (Vector2[] tri in area)
+                    //    {
+                    //        foreach (Vector2 v in tri)
+                    //        {
+                    //            minx = Math.Min(minx, v.x);
+                    //            maxx = Math.Max(maxx, v.x);
+                    //        }
+                    //    }
+                    //    area.Clear();
+                    //    area.Add([new Vector2(minx, 0f), new Vector2(maxx, 0f), new Vector2(minx, 1f)]);
+                    //    area.Add([new Vector2(maxx, 0f), new Vector2(minx, 1f), new Vector2(maxx, 1f)]);
+                    //}
+                    if (geotexheader.bbgnumber == 57 || geotexheader.bbgnumber == 71)
+                    {
+                        texture = textureDict[geotexheader.bbgExtraAimMaterials[i].mainTexture.name];
+                        area = areaDict[texture.name];
+                        area.yMin = 0f;
+                        area.yMax = 1f;
+                        areaDict[texture.name] = area;
+                        //if (area.Count > 0)
+                        //{
+                        //    Single min = Math.Min(Math.Min(area[0][0].x, area[0][1].x), area[0][2].x);
+                        //    Single max = Math.Max(Math.Max(area[0][0].x, area[0][1].x), area[0][2].x);
+                        //    foreach (Vector2[] tri in area)
+                        //    {
+                        //        foreach (Vector2 v in tri)
+                        //        {
+                        //            min = Math.Min(min, v.x);
+                        //            max = Math.Max(max, v.x);
+                        //        }
+                        //    }
+                        //    area.Clear();
+                        //    area.Add([new Vector2(min, 0f), new Vector2(max, 0f), new Vector2(min, 1f)]);
+                        //    area.Add([new Vector2(max, 0f), new Vector2(min, 1f), new Vector2(max, 1f)]);
+                        //}
+                    }
+                }
+            }
+        }
+        foreach (var kvp in textureDict)
+        {
+            Texture2D texture = kvp.Value;
+            Rect area = areaDict[kvp.Key];
+            //List<Vector2[]> area = areaDict[kvp.Key];
+            Color32[] colors = texture.GetPixels32();
+            Int32 w = texture.width;
+            Int32 h = texture.height;
+            Single eps = 0.5f / w;
+            Single rounding = 4f;
+            Int32 roundedx = (Int32)Math.Floor(w * area.xMin / rounding);
+            Int32 roundedy = (Int32)Math.Floor(h * area.yMin / rounding);
+            Int32 roundedw = (Int32)Math.Ceiling(w * (area.xMax - area.xMin) / rounding);
+            Int32 roundedh = (Int32)Math.Ceiling(h * (area.yMax - area.yMin) / rounding);
+            area = new Rect((roundedx * rounding - 0.5f) / w, (roundedy * rounding - 0.5f) / h, (roundedw * rounding) / w, (roundedh * rounding) / h);
+            for (Int32 x = 0; x < w; x++)
+            {
+                for (Int32 y = 0; y < h; y++)
+                {
+                    Vector2 v = new Vector2((Single)x / w, (Single)y / h);
+                    //if (!area.Any(r => TriangleContains(r, v, eps)))
+                    if (!area.Contains(v))
+                        colors[x + w * y] = clear;
+                }
+            }
+            texture.SetPixels32(colors);
+            texture.Apply();
+        }
+        UnityEngine.Object.Destroy(go);
+        return textureDict.Values.ToList();
+    }
+
+    private static void GetRelevantUVPartFromRenderer(Renderer renderer, Dictionary<String, Texture2D> textureDict, Dictionary<String, Rect> areaDict)
+    {
+        List<String> texts = new List<String>();
+        foreach (Material mat in renderer.materials)
+        {
+            if (!textureDict.TryGetValue(mat.mainTexture.name, out Texture2D texture))
+            {
+                texture = Memoria.Assets.TextureHelper.CopyAsReadable(mat.mainTexture);
+                texture.name = mat.mainTexture.name;
+                textureDict.Add(texture.name, texture);
+                areaDict.Add(texture.name, new Rect(100f, 100f, -200f, -200f));
+                //areaDict.Add(texture.name, new List<Vector2[]>());
+            }
+            texts.Add(texture.name);
+        }
+        MeshFilter filter = renderer.GetComponent<MeshFilter>();
+        SkinnedMeshRenderer skin = renderer.GetComponent<SkinnedMeshRenderer>();
+        if (filter)
+        {
+            for (Int32 meshi = 0; meshi < texts.Count; meshi++)
+            {
+                Int32[] submeshtri = filter.sharedMesh.GetTriangles(meshi);
+                for (Int32 tri = 0; tri < submeshtri.Length; tri += 3)
+                {
+                    Vector2 v1 = filter.sharedMesh.uv[submeshtri[tri]];
+                    Vector2 v2 = filter.sharedMesh.uv[submeshtri[tri + 1]];
+                    Vector2 v3 = filter.sharedMesh.uv[submeshtri[tri + 2]];
+                    Rect prevRect = areaDict[texts[meshi]];
+                    prevRect.min = Vector2.Min(prevRect.min, Vector2.Min(Vector2.Min(v1, v2), v3));
+                    prevRect.max = Vector2.Max(prevRect.max, Vector2.Max(Vector2.Max(v1, v2), v3));
+                    areaDict[texts[meshi]] = prevRect;
+                    //areaDict[texts[meshi]].Add([v1, v2, v3]);
+                }
+            }
+        }
+        if (skin)
+        {
+            for (Int32 meshi = 0; meshi < texts.Count; meshi++)
+            {
+                Int32[] submeshtri = filter.sharedMesh.GetTriangles(meshi);
+                for (Int32 tri = 0; tri < submeshtri.Length; tri += 3)
+                {
+                    Vector2 v1 = skin.sharedMesh.uv[submeshtri[tri]];
+                    Vector2 v2 = skin.sharedMesh.uv[submeshtri[tri + 1]];
+                    Vector2 v3 = skin.sharedMesh.uv[submeshtri[tri + 2]];
+                    Rect prevRect = areaDict[texts[meshi]];
+                    prevRect.min = Vector2.Min(prevRect.min, Vector2.Min(Vector2.Min(v1, v2), v3));
+                    prevRect.max = Vector2.Max(prevRect.max, Vector2.Max(Vector2.Max(v1, v2), v3));
+                    areaDict[texts[meshi]] = prevRect;
+                    //areaDict[texts[meshi]].Add([v1, v2, v3]);
+                }
+            }
+        }
+    }
+
+    private static Single LineDist(Vector2 l1, Vector2 l2, Vector2 p)
+    {
+        Vector2 pl = p - l1;
+        Vector2 ll = l2 - l1;
+        return (pl.x * ll.y - pl.y * ll.x) / ll.magnitude;
+    }
+
+    private static Boolean TriangleContains(Vector2[] tri, Vector2 p, Single eps)
+    {
+        if (tri[0] == tri[1] || tri[0] == tri[2] || tri[1] == tri[2])
+            return false;
+        Single d1 = LineDist(tri[0], tri[1], p);
+        Single d2 = LineDist(tri[1], tri[2], p);
+        Single d3 = LineDist(tri[2], tri[0], p);
+        Int32 overallSign = Math.Sign(LineDist(tri[0], tri[1], tri[2]));
+        if (overallSign >= 0)
+            return d1 > -eps && d2 > -eps && d3 > -eps;
+        return d1 < eps && d2 < eps && d3 < eps;
+    }
+    #endregion
+
     public const Int32 BBG_DISP_ATTRIBUTE_PLUS = 1;
-
     public const Int32 BBG_DISP_ATTRIBUTE_GROUND = 2;
-
     public const Int32 BBG_DISP_ATTRIBUTE_MINUS = 4;
-
     public const Int32 BBG_DISP_ATTRIBUTE_SKY = 8;
-
     public const Int32 BBG_DISP_ATTRIBUTE_ALL = 15;
 
     public const Byte BBG_ATTR_PLUS = 0;
-
     public const Byte BBG_ATTR_GROUND = 2;
-
     public const Byte BBG_ATTR_MINUS = 4;
-
     public const Byte BBG_ATTR_SKY = 8;
-
-    public static Int32 nf_BbgUVscroll;
-
-    public static GEOTEXHEADER nf_BbgTabAddress;
 
     public static Int32 nf_BbgNumber;
 
-    public static Int32 nf_BbgTexAnm;
-
-    public static Int32 nf_BbgSkyRotation;
-
-    public static Int32 nf_BbgUVChangeCount;
-
     public static BBGINFO nf_BbgInfoPtr;
+    public static GEOTEXHEADER nf_BbgTabAddress;
 
+    public static Int32 nf_BbgTexAnm;
+    public static Int32 nf_BbgUVscroll;
+    public static Int32 nf_BbgSkyRotation;
     public static Int32 nf_BbgSkyAngle_Y;
-
-    public static Int32 nf_BbgDispAttribute;
-
+    public static Int32 nf_BbgUVChangeCount;
     public static Int32 nf_SkyFixPositionFlag;
-
+    public static Int32 nf_BbgDispAttribute;
     public static Int32 nf_BbgRainFlag;
 
     public static Int32 nf_b007a;
-
     public static Int32 nf_b007b;
-
     public static Int32 nf_BbgTick;
 
     private static GameObject btlModel;
-
     private static GameObject[] objAnimModel;
 
     private static Byte nf_BbgBrite = 128;
+
+    private static readonly HashSet<Int32> bbg_KeepSkyScaleList =
+    [
+        1,   // Prima Vista, Cargo room
+        2,   // Prima Vista, Storage room
+        12,  // Prima Vista, Cargo room in ruins
+        109, // Memoria, Entrance & Recollection
+        119, // Memoria, Birth
+        68,  // Fossil Roo, Booby-Trapped road
+        69,  // Fossil Roo, Road accross water
+        60,  // Gargan Roo, Hall
+        53,  // Cleyra's Trunk, Inside, Trunk forest
+        49,  // Cleyra's Trunk, Inside, Sand-full room
+        90,  // Mount Gulug, Extraction circle
+        20,  // Ice Cavern, Road to waterfall
+        77,  // Iifa Tree, Inside, Stone elevator
+        125, // World Map, Mist Continent, Mountain + Mist
+        141, // World Map, Lost Continent, Snow
+        95   // Desert Palace, Library
+    ];
 }

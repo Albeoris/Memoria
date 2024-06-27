@@ -181,22 +181,22 @@ public class GEOTEXHEADER
         yield break;
     }
 
-    public void InitBBGTextureAnim()
+    public void InitBBGTextureAnim(GameObject bbgObj, GameObject[] bbgObjAnim)
     {
         if (this.geotex == null)
             return;
         BGObjIndex bgobjIndex = GEOTEXHEADER.bgObjMappings[this.bbgnumber];
-        MeshRenderer[] bbgmrs = FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.GetComponentsInChildren<MeshRenderer>();
+        MeshRenderer[] bbgmrs = bbgObj.GetComponentsInChildren<MeshRenderer>();
         this.materials = new Material[this.count];
-        this.bbgExtraAimMaterials = new Material[this.count];
+        this.bbgExtraAimMaterials = this.bbgnumber == 57 || this.bbgnumber == 71 ? new Material[this.count] : [];
         for (Int32 i = 0; i < this.count; i++)
         {
             if (this.bbgnumber == 7 && i != 0) // Memoria, Nova Dragon battle
             {
                 if (i == 1)
-                    this.materials[i] = FF9StateSystem.Battle.FF9Battle.map.btlBGObjAnim[0].GetComponentsInChildren<MeshRenderer>()[bgobjIndex.groupIndex[i]].materials[bgobjIndex.materialIndex[i]];
+                    this.materials[i] = bbgObjAnim[0].GetComponentsInChildren<MeshRenderer>()[bgobjIndex.groupIndex[i]].materials[bgobjIndex.materialIndex[i]];
                 else
-                    this.materials[i] = FF9StateSystem.Battle.FF9Battle.map.btlBGObjAnim[1].GetComponentsInChildren<MeshRenderer>()[bgobjIndex.groupIndex[i]].materials[bgobjIndex.materialIndex[i]];
+                    this.materials[i] = bbgObjAnim[1].GetComponentsInChildren<MeshRenderer>()[bgobjIndex.groupIndex[i]].materials[bgobjIndex.materialIndex[i]];
             }
             else
             {
@@ -209,6 +209,7 @@ public class GEOTEXHEADER
         }
     }
 
+    public Int32 bbgnumber;
     public UInt16 count;
     public UInt16 pad;
 
@@ -222,8 +223,6 @@ public class GEOTEXHEADER
 
     public Dictionary<Int32, Texture> TextureMapping = new Dictionary<Int32, Texture>();
     public Dictionary<Int32, RenderTexture> RenderTexMapping = new Dictionary<Int32, RenderTexture>();
-
-    public Int32 bbgnumber;
 
     public static Dictionary<Int32, BGObjIndex> bgObjMappings = new Dictionary<Int32, BGObjIndex>()
     {
