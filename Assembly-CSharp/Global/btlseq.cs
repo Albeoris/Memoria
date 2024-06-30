@@ -316,7 +316,7 @@ public class btlseq
         }
         btl.animEndFrame = false;
 
-        if (btl_mot.IsAnimationFrozen(btl) || (!reverseSpeed && btl.evt.animFrame > animLoopFrame) || (reverseSpeed && btl.evt.animFrame < 0))
+        if (btl_mot.IsAnimationFrozen(btl) || btl.evt.animFrame > animLoopFrame)
         {
             btl.endedAnimationName = btl.currentAnimationName;
             if (btl.bi.dmg_mot_f != 0)
@@ -331,7 +331,10 @@ public class btlseq
             if (!btl_mot.IsAnimationFrozen(btl))
             {
                 if ((btl.animFlag & EventEngine.afPalindrome) != 0)
+                {
                     btl.animSpeed = -btl.animSpeed;
+                    btl.evt.animFrame = (Byte)(btl.animSpeed < 0 ? animLoopFrame + btl.animSpeed : btl.animSpeed);
+                }
                 else if ((btl.animFlag & EventEngine.afLoop) != 0)
                     btl.evt.animFrame = (Byte)(reverseSpeed ? animLoopFrame : 0);
                 else

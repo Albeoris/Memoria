@@ -79,7 +79,8 @@ namespace Memoria
                             Boolean hasLooped =
                                 (direction < 0 && speed > 0f) ||
                                 (direction > 0 && speed < 0f);
-                            if (!hasLooped)
+                            Boolean isPalindrome = Mathf.Abs(speed + direction) < 0.001f;
+                            if (!hasLooped || isPalindrome)
                                 next._smoothUpdateAnimSpeed = speed;
                         }
                         else
@@ -94,7 +95,9 @@ namespace Memoria
                         if (!anim.IsPlaying(next._smoothUpdateAnimNamePrevious))
                         {
                             Vector3 nextBonePos = next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
+                            Single time = animState.time;
                             anim.Play(next._smoothUpdateAnimNamePrevious);
+                            animState.time = time; // Reset to 0 by previous line which we don't want
                             AnimationState prevState = anim[next._smoothUpdateAnimNamePrevious];
                             prevState.time = next._smoothUpdateAnimTimePrevious + next._smoothUpdateAnimSpeed;
                             anim.Sample();
