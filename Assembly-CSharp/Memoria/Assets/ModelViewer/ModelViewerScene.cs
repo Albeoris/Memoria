@@ -40,6 +40,7 @@ namespace Memoria.Assets
 
         private static Boolean isLoadingModel;
         private static Boolean isLoadingWeaponModel;
+        private static Int32 replaceOnce = 0;
         private static Boolean mouseLeftPressed;
         private static Boolean mouseRightPressed;
         private static Boolean ControlWeapon = false;
@@ -86,11 +87,12 @@ namespace Memoria.Assets
                 sprite.spriteName = String.Empty;
                 sprite.alpha = 0f;
             }
+            // Usual models, of type ACC, MAIN, MON, NPC, SUB and WEP
             foreach (KeyValuePair<Int32, String> geo in FF9BattleDB.GEO)
             {
-                geoList.Add(new ModelObject() { Id = geo.Key, Name = geo.Value, Kind = 0 });
+                geoList.Add(new ModelObject() { Id = geo.Key, Name = geo.Value, Kind = MODEL_KIND_NORMAL });
                 if (geo.Value.StartsWith("GEO_WEP"))
-                    weapongeoList.Add(new ModelObject() { Id = geo.Key, Name = geo.Value, Kind = 0 });
+                    weapongeoList.Add(new ModelObject() { Id = geo.Key, Name = geo.Value, Kind = MODEL_KIND_NORMAL });
             }
             geoArchetype.Add(0);
             String lastArchetype = geoList[0].Name.Substring(0, 8);
@@ -103,6 +105,21 @@ namespace Memoria.Assets
                 }
             }
             geoArchetype.Add(geoList.Count);
+            // Battle scenes (and their animated objects)
+            List<String> bbgNames = new HashSet<String>(FF9BattleDB.MapModel.Values).ToList();
+            bbgNames.Sort();
+            foreach (String bbgName in bbgNames)
+            {
+                if (!Int32.TryParse(bbgName.Substring(5), out Int32 bbgId))
+                    continue;
+                geoList.Add(new ModelObject() { Id = bbgId, Name = bbgName, Kind = MODEL_KIND_BBG });
+                BBGINFO bbgInfo = new BBGINFO();
+                bbgInfo.ReadBattleInfo(bbgName);
+                for (Int32 i = 0; i < bbgInfo.objanim; i++)
+                    geoList.Add(new ModelObject() { Id = bbgId, Name = $"{bbgName}_OBJ{i + 1}", Kind = MODEL_KIND_BBG_OBJ });
+            }
+            geoArchetype.Add(geoList.Count);
+            // SPS effects
             for (Int32 bundleId = 0; bundleId <= 9; bundleId++)
             {
                 foreach (AssetManager.AssetFolder modFolder in AssetManager.FolderLowToHigh)
@@ -121,16 +138,16 @@ namespace Memoria.Assets
                         String mapName = path[3];
                         if (!Int32.TryParse(path[4].Remove(path[4].Length - 10), out Int32 spsId))
                             continue;
-                        geoList.Add(new ModelObject() { Id = spsId, Name = mapName, Kind = 1 });
+                        geoList.Add(new ModelObject() { Id = spsId, Name = mapName, Kind = MODEL_KIND_SPS });
                     }
                 }
                 geoArchetype.Add(geoList.Count);
             }
             for (Int32 spsNo = 0; spsNo < SPSConst.WORLD_DEFAULT_OBJLOAD; spsNo++)
-                geoList.Add(new ModelObject() { Id = spsNo, Name = "WorldMap", Kind = 1 });
+                geoList.Add(new ModelObject() { Id = spsNo, Name = "WorldMap", Kind = MODEL_KIND_SPS });
             geoArchetype.Add(geoList.Count);
             foreach (SPSPrototype sps in CommonSPSSystem.SPSPrototypes.Values)
-                geoList.Add(new ModelObject() { Id = sps.Id, Name = "FromPrototype", Kind = 1 });
+                geoList.Add(new ModelObject() { Id = sps.Id, Name = "FromPrototype", Kind = MODEL_KIND_SPS });
             geoArchetype.Add(geoList.Count);
             ChangeModel(0);
             SceneDirector.ClearFadeColor();
@@ -147,6 +164,12 @@ namespace Memoria.Assets
             {
                 if (isLoadingModel || isLoadingWeaponModel)
                     return;
+                if (replaceOnce > 0 && currentModel != null)
+                {
+                    currentModel.transform.localScale = scaleFactor;
+                    currentModel.transform.localRotation = Quaternion.Euler(45f, 0f, 0f);
+                    replaceOnce--;
+                }
                 Boolean mouseLeftWasPressed = mouseLeftPressed;
                 Boolean mouseRightWasPressed = mouseRightPressed;
                 mouseLeftPressed = false;
@@ -245,7 +268,7 @@ namespace Memoria.Assets
                 if (currentModel == null)
                     return;
                 Boolean downUpProcessed = false;
-                if (geoList[currentGeoIndex].Kind == 1 && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+                if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
                 {
                     if (Input.GetKey(KeyCode.UpArrow))
                     {
@@ -292,7 +315,7 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKey(KeyCode.Space))
                 {
-                    if (geoList[currentGeoIndex].Kind == 0 && animList.Count > 0 && !String.IsNullOrEmpty(currentAnimName))
+                    if (geoList[currentGeoIndex].Kind < MODEL_KIND_SPS && animList.Count > 0 && !String.IsNullOrEmpty(currentAnimName))
                     {
                         Animation anim = currentModel.GetComponent<Animation>();
                         if (anim != null && !anim.IsPlaying(currentAnimName))
@@ -302,7 +325,7 @@ namespace Memoria.Assets
                                 anim[currentAnimName].speed = speedFactor;
                         }
                     }
-                    else if (geoList[currentGeoIndex].Kind == 1)
+                    else if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                     {
                         ChangeAnimation(currentAnimIndex + 1);
                     }
@@ -361,7 +384,7 @@ namespace Memoria.Assets
                         scaleFactor /= 1f - 0.05f * Input.mouseScrollDelta.y;
                     currentModel.transform.localScale = scaleFactor;
                 }
-                if (Input.GetMouseButton(0) && geoList[currentGeoIndex].Kind == 0) // Left Click
+                if (Input.GetMouseButton(0) && geoList[currentGeoIndex].Kind < MODEL_KIND_SPS) // Left Click
                 {
                     if (mouseLeftWasPressed)
                     {
@@ -390,7 +413,7 @@ namespace Memoria.Assets
                     {
                         Vector3 mouseDelta = Input.mousePosition - mousePreviousPosition;
                         targetModel.transform.localPosition -= 0.5f * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z);
-                        if (geoList[currentGeoIndex].Kind == 1)
+                        if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                             spsEffect.pos = currentModel.transform.localPosition;
                     }
                     mouseRightPressed = true;
@@ -406,7 +429,7 @@ namespace Memoria.Assets
                             exportedAnims = new List<String>() { animList[currentAnimIndex].Value };
                         ExportAnimation(exportedAnims);
                     }
-                    else if (geoList[currentGeoIndex].Kind == 1 && currentModel != null)
+                    else if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS && currentModel != null)
                     {
                         String directoryName = "StreamingAssets/EffectSPS/";
                         String fileName;
@@ -449,7 +472,7 @@ namespace Memoria.Assets
                         FF9Sfx.FF9SFX_Play(102);
                     }
                 }
-                if (Input.GetKeyDown(KeyCode.S) && geoList[currentGeoIndex].Kind == 1)
+                if (Input.GetKeyDown(KeyCode.S) && geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                 {
                     spsEffect.abr++;
                     if (spsEffect.abr >= spsEffect.materials.Length)
@@ -476,7 +499,7 @@ namespace Memoria.Assets
             Int32 boneConnectionCount = 0;
             Int32 boneDialogCount = 0;
             Camera camera = GetCamera();
-            if (currentModel != null && geoList[currentGeoIndex].Kind == 1)
+            if (currentModel != null && geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
             {
                 spsEffect.GenerateSPS();
                 spsEffect.lastFrame = spsEffect.curFrame;
@@ -484,7 +507,7 @@ namespace Memoria.Assets
                 Vector3 directionForward = cameraMatrix.MultiplyVector(Vector3.forward);
                 Vector3 directionRight = cameraMatrix.MultiplyVector(Vector3.right);
                 Vector3 directionDown = Vector3.Cross(directionForward, directionRight);
-                currentModel.transform.localScale = new Vector3(-scaleFactor.x, -scaleFactor.y, scaleFactor.z);
+                currentModel.transform.localScale = scaleFactor;
                 currentModel.transform.LookAt(currentModel.transform.position + directionForward, -directionDown);
             }
             if (currentModel != null && currentModelBones != null && !isLoadingModel)
@@ -550,10 +573,12 @@ namespace Memoria.Assets
             if (displayModelAnimNames)
             {
                 String label = $"{geoList[currentGeoIndex].Name} ({geoList[currentGeoIndex].Id})\n{currentAnimName}";
-                if (geoList[currentGeoIndex].Kind == 1)
+                if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                     label += $"\nShader: {spsEffect.materials[Math.Min((Int32)spsEffect.abr, 4)].shader.name}\nColour intensity: {spsEffect.fade}";
                 else if (animList.Count > 0)
                     label += $" ({animList[currentAnimIndex].Key})\n";
+                else
+                    label += $"\n";
                 if (currentWeaponModel)
                 {
                     label += $" Weapon Attach : {weapongeoList[currentWeaponGeoIndex].Name}\n";
@@ -584,27 +609,28 @@ namespace Memoria.Assets
         private static List<KeyValuePair<Int32, String>> GetAnimationsOfModel(ModelObject model)
         {
             List<KeyValuePair<Int32, String>> result = new List<KeyValuePair<Int32, String>>();
-            if (model.Kind != 0)
-                return result;
-            String identifier = model.Name.Substring(4);
-            foreach (KeyValuePair<Int32, String> anim in FF9DBAll.AnimationDB)
-                if (anim.Value.Substring(4).StartsWith(identifier))
-                    result.Add(new KeyValuePair<Int32, String>(anim.Key, anim.Value));
-            Log.Message($"[ModelViewerScene] Animation set: {String.Join(", ", result.Select(a => a.Value).ToArray())}");
+            if (model.Kind == MODEL_KIND_NORMAL)
+            {
+                String identifier = model.Name.Substring(4);
+                foreach (KeyValuePair<Int32, String> anim in FF9DBAll.AnimationDB)
+                    if (anim.Value.Substring(4).StartsWith(identifier))
+                        result.Add(new KeyValuePair<Int32, String>(anim.Key, anim.Value));
+                Log.Message($"[ModelViewerScene] Animation set: {String.Join(", ", result.Select(a => a.Value).ToArray())}");
+            }
             return result;
         }
 
         private static void ChangeModel(Int32 index)
         {
             isLoadingModel = true;
-            if (currentModel != null && geoList[currentGeoIndex].Kind == 0)
+            if (currentModel != null && geoList[currentGeoIndex].Kind != MODEL_KIND_SPS)
                 UnityEngine.Object.Destroy(currentModel);
             if (currentWeaponModel != null)
             {
                 ControlWeapon = false;
                 UnityEngine.Object.Destroy(currentWeaponModel);
             }
-            else if (geoList[currentGeoIndex].Kind == 1)
+            else if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                 spsEffect.Unload();
             while (index < 0)
                 index += geoList.Count;
@@ -613,10 +639,23 @@ namespace Memoria.Assets
             currentGeoIndex = index;
             animList = GetAnimationsOfModel(geoList[index]);
             Log.Message($"[ModelViewerScene] Change model: {geoList[index].Name}");
-            if (geoList[index].Kind == 0)
+            if (geoList[index].Kind != MODEL_KIND_SPS)
             {
                 UpdateRender(); // Force refresh bones between different models
-                currentModel = ModelFactory.CreateModel(geoList[index].Name);
+                if (geoList[index].Kind == MODEL_KIND_NORMAL)
+                    currentModel = ModelFactory.CreateModel(geoList[index].Name);
+                else if (geoList[index].Kind == MODEL_KIND_BBG)
+                    currentModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{geoList[index].Name}/{geoList[index].Name}", true);
+                else if (geoList[index].Kind == MODEL_KIND_BBG_OBJ)
+                    currentModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{geoList[index].Name}/{geoList[index].Name}");
+                else
+                    currentModel = null;
+                if (currentModel != null && (geoList[index].Kind == MODEL_KIND_BBG || geoList[index].Kind == MODEL_KIND_BBG_OBJ))
+                {
+                    battlebg.SetDefaultShader(currentModel);
+                    if (String.Equals(geoList[index].Name, "BBG_B171_OBJ2")) // Crystal World, Crystal
+                        battlebg.SetMaterailShader(currentModel, "PSX/BattleMap_Cystal");
+                }
             }
             else
             {
@@ -633,10 +672,21 @@ namespace Memoria.Assets
                     currentModel = null;
                 }
             }
+            Single scaleAbs = scaleFactor.z;
+            scaleFactor.x = geoList[index].Kind == MODEL_KIND_NORMAL ? scaleAbs : -scaleAbs;
+            scaleFactor.y = geoList[index].Kind == MODEL_KIND_NORMAL ? scaleAbs : -scaleAbs;
             currentModelBones = null;
             currentBonesID.Clear();
             currentWeaponBoneIndex = 0;
-            if (currentModel != null && geoList[index].Kind == 0)
+            if (currentModel == null)
+            {
+                currentAnimIndex = 0;
+                currentAnimName = "";
+                currentModelBones = null;
+                isLoadingModel = false;
+                return;
+            }
+            if (geoList[index].Kind == MODEL_KIND_NORMAL)
             {
                 if (ModelFactory.garnetShortHairTable.Contains(geoList[index].Name))
                 {
@@ -661,6 +711,26 @@ namespace Memoria.Assets
                 currentAnimIndex = 0;
                 currentAnimName = animList.Count > 0 ? animList[0].Value : "";
                 currentModelBones = BoneHierarchyNode.CreateFromModel(currentModel);
+                replaceOnce = 4;
+            }
+            else if (geoList[index].Kind == MODEL_KIND_BBG)
+            {
+                currentModel.transform.position = Vector3.zero;
+                currentModel.transform.localScale = scaleFactor;
+                currentModel.transform.localRotation = Quaternion.Euler(45f, 0f, 0f);
+                currentAnimIndex = 0;
+                currentAnimName = "";
+                currentModelBones = null;
+                replaceOnce = 4;
+            }
+            else if (geoList[index].Kind == MODEL_KIND_BBG_OBJ)
+            {
+                currentModel.transform.position = Vector3.zero;
+                currentModel.transform.localScale = scaleFactor;
+                currentModel.transform.localRotation = Quaternion.Euler(45f, 0f, 0f);
+                currentAnimIndex = 0;
+                currentAnimName = "";
+                currentModelBones = null;
             }
             else
             {
@@ -708,7 +778,9 @@ namespace Memoria.Assets
 
         private static void ChangeAnimation(Int32 index)
         {
-            Int32 count = geoList[currentGeoIndex].Kind != 1 ? animList.Count : spsEffect.frameCount >> 4;
+            Int32 count = geoList[currentGeoIndex].Kind != MODEL_KIND_SPS ? animList.Count : spsEffect.frameCount >> 4;
+            // TODO: use battlebg.getBbgObjAnimation for objects of type MODEL_KIND_BBG_OBJ
+            // It only consists of rotation (and hovering movement for BBG_B112)
             if (count == 0)
                 return;
             while (index < 0)
@@ -716,7 +788,7 @@ namespace Memoria.Assets
             while (index >= count)
                 index -= count;
             currentAnimIndex = index;
-            if (geoList[currentGeoIndex].Kind == 1)
+            if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
             {
                 spsEffect.curFrame = index << 4;
                 currentAnimName = $"Frame {index + 1}/{count}";
@@ -1056,5 +1128,10 @@ namespace Memoria.Assets
             public String Name;
             public Int32 Kind;
         }
+
+        private const Int32 MODEL_KIND_NORMAL = 0;
+        private const Int32 MODEL_KIND_BBG = 1;
+        private const Int32 MODEL_KIND_BBG_OBJ = 2;
+        private const Int32 MODEL_KIND_SPS = 3;
     }
 }

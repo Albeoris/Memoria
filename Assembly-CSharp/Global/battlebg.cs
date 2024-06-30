@@ -38,7 +38,7 @@ public static class battlebg
                 battlebg.geoBGTexAnimPlay(battlebg.nf_BbgTabAddress, i);
     }
 
-    private static void SetDefaultShader(GameObject go)
+    public static void SetDefaultShader(GameObject go)
     {
         foreach (Transform transform in go.transform)
         {
@@ -122,9 +122,6 @@ public static class battlebg
 
     public static void nf_BattleBG()
     {
-        Vector3 bbgRot = Vector3.zero;
-        Vector3 bbgPos = Vector3.zero;
-        Boolean invertRot = false;
         battlebg.nf_BbgTick++;
         if (battlebg.nf_BbgTexAnm != 0)
             battlebg.geoBGTexAnimService(battlebg.nf_BbgTabAddress);
@@ -139,111 +136,118 @@ public static class battlebg
             }
             battlebg.setBGColor(transform.gameObject);
         }
+        Int32 fullTime = (Int32)Time.realtimeSinceStartup;
         for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
         {
-            Int32 fullTime = (Int32)Time.realtimeSinceStartup;
-            switch (battlebg.nf_BbgInfoPtr.bbgnumber)
-            {
-                case 7:
-                    if (i == 0)
-                    {
-                        if ((battlebg.nf_BbgTick + 31 & 63) == 0)
-                            battlebg.nf_b007a = UnityEngine.Random.Range(0, 512);
-                        bbgRot.y = battlebg.nf_b007a + UnityEngine.Random.Range(0, 64);
-                    }
-                    else
-                    {
-                        if ((battlebg.nf_BbgTick & 63) == 0)
-                            battlebg.nf_b007b = UnityEngine.Random.Range(0, 1024);
-                        bbgRot.y = battlebg.nf_b007b + UnityEngine.Random.Range(0, 128);
-                    }
-                    break;
-                case 68:
-                    bbgRot.y += 3f;
-                    bbgPos.x = 0f;
-                    bbgPos.y = -10f;
-                    bbgPos.z = 0f;
-                    break;
-                case 110:
-                    bbgRot.z = (Int32)(Mathf.Sin(((fullTime * 12) & 4095) / 4096f * 360f) * 4096f) / 64;
-                    bbgRot.y = 512f;
-                    bbgPos.x = 1500f;
-                    bbgPos.y = -7000f;
-                    bbgPos.z = 3750f;
-                    break;
-                case 168:
-                    bbgRot.x = 0f;
-                    bbgRot.z = 0f;
-                    bbgRot.y = (i == 0 ? fullTime / 16 : fullTime / 8) & 4095;
-                    break;
-                case 171:
-                    fullTime = battlebg.nf_BbgTick * 2;
-                    if (i == 0)
-                    {
-                        bbgRot.z = (fullTime * 12) & 4095;
-                        bbgPos.x = 0f;
-                        bbgPos.y = -2375f;
-                        bbgPos.z = 3750f;
-                    }
-                    else
-                    {
-                        bbgRot.z = 3584f;
-                        bbgRot.y = (fullTime * 22) & 4095;
-                        bbgPos.x = 0f;
-                        bbgPos.y = -2250f;
-                        bbgPos.z = 7625f;
-                        invertRot = true;
-                    }
-                    break;
-                case 112:
-                    switch (i)
-                    {
-                        case 0:
-                        {
-                            bbgRot.z = 4095 - ((fullTime * 5) & 4095);
-                            bbgRot.y = 4095 - ((fullTime * 3) & 4095);
-                            bbgPos.x = -2100f;
-                            bbgPos.y = -250f + (Int32)(Mathf.Sin((((fullTime + 8) * 22) & 4095) / 4096f * 360f) * 4096f) / 45;
-                            bbgPos.z = -850f;
-                            break;
-                        }
-                        case 1:
-                        {
-                            bbgRot.y = 0f;
-                            bbgRot.z = 0f;
-                            bbgPos.x = 1725f;
-                            bbgPos.y = -1500f + (Int32)(Mathf.Sin(((fullTime * 20) & 4095) / 4096f * 360f) * 4096f) / 64;
-                            bbgPos.z = -75f;
-                            break;
-                        }
-                        case 2:
-                        {
-                            bbgRot.z = (fullTime * 4) & 4095;
-                            bbgRot.y = (fullTime * 3) & 4095;
-                            bbgPos.x = 1750f;
-                            bbgPos.y = -775f + (Int32)(Mathf.Sin((((fullTime + 16) * 21) & 4095) / 4096f * 360f) * 4096f) / 50;
-                            bbgPos.z = 1025f;
-                            break;
-                        }
-                    }
-                    break;
-                case 111:
-                case 169:
-                case 170:
-                default:
-                    bbgRot.z = (Int32)(Mathf.Sin(((fullTime * 26) & 4095) / 4096f * 360f) * 4096f) / 5;
-                    bbgPos.x = 1065f;
-                    bbgPos.y = -1345f;
-                    bbgPos.z = 3749f;
-                    break;
-            }
-            bbgPos.y *= -1f;
-            bbgRot.x = bbgRot.x / 4096f * 360f;
-            bbgRot.y = bbgRot.y / 4096f * 360f;
-            bbgRot.z = bbgRot.z / 4096f * 360f;
+            battlebg.getBbgObjAnimation(battlebg.nf_BbgNumber, i, battlebg.nf_BbgTick, fullTime, out Vector3 bbgPos, out Quaternion bbgRot);
             battlebg.objAnimModel[i].transform.localPosition = bbgPos;
-            battlebg.objAnimModel[i].transform.localRotation = invertRot ? Quaternion.Inverse(Quaternion.Euler(bbgRot)) : Quaternion.Euler(bbgRot);
+            battlebg.objAnimModel[i].transform.localRotation = bbgRot;
         }
+    }
+
+    public static void getBbgObjAnimation(Int32 bbgId, Int32 objIndex, Int32 tick, Int32 fullTime, out Vector3 pos, out Quaternion rot)
+    {
+        Boolean invertRot = false;
+        Vector3 angles = default;
+        pos = default;
+        switch (bbgId)
+        {
+            case 7:
+                if (objIndex == 0)
+                {
+                    if ((tick + 31 & 63) == 0)
+                        battlebg.nf_b007a = UnityEngine.Random.Range(0, 512);
+                    angles.y = battlebg.nf_b007a + UnityEngine.Random.Range(0, 64);
+                }
+                else
+                {
+                    if ((tick & 63) == 0)
+                        battlebg.nf_b007b = UnityEngine.Random.Range(0, 1024);
+                    angles.y = battlebg.nf_b007b + UnityEngine.Random.Range(0, 128);
+                }
+                break;
+            case 68:
+                angles.y += 3f;
+                pos.x = 0f;
+                pos.y = -10f;
+                pos.z = 0f;
+                break;
+            case 110:
+                angles.z = (Int32)(Mathf.Sin(((fullTime * 12) & 4095) / 4096f * 360f) * 4096f) / 64;
+                angles.y = 512f;
+                pos.x = 1500f;
+                pos.y = -7000f;
+                pos.z = 3750f;
+                break;
+            case 112:
+                switch (objIndex)
+                {
+                    case 0:
+                    {
+                        angles.z = 4095 - ((fullTime * 5) & 4095);
+                        angles.y = 4095 - ((fullTime * 3) & 4095);
+                        pos.x = -2100f;
+                        pos.y = -250f + (Int32)(Mathf.Sin((((fullTime + 8) * 22) & 4095) / 4096f * 360f) * 4096f) / 45;
+                        pos.z = -850f;
+                        break;
+                    }
+                    case 1:
+                    {
+                        angles.y = 0f;
+                        angles.z = 0f;
+                        pos.x = 1725f;
+                        pos.y = -1500f + (Int32)(Mathf.Sin(((fullTime * 20) & 4095) / 4096f * 360f) * 4096f) / 64;
+                        pos.z = -75f;
+                        break;
+                    }
+                    case 2:
+                    {
+                        angles.z = (fullTime * 4) & 4095;
+                        angles.y = (fullTime * 3) & 4095;
+                        pos.x = 1750f;
+                        pos.y = -775f + (Int32)(Mathf.Sin((((fullTime + 16) * 21) & 4095) / 4096f * 360f) * 4096f) / 50;
+                        pos.z = 1025f;
+                        break;
+                    }
+                }
+                break;
+            case 168:
+                angles.x = 0f;
+                angles.z = 0f;
+                angles.y = (objIndex == 0 ? fullTime / 16 : fullTime / 8) & 4095;
+                break;
+            case 171:
+                fullTime = tick * 2;
+                if (objIndex == 0)
+                {
+                    angles.z = (fullTime * 12) & 4095;
+                    pos.x = 0f;
+                    pos.y = -2375f;
+                    pos.z = 3750f;
+                }
+                else
+                {
+                    angles.z = 3584f;
+                    angles.y = (fullTime * 22) & 4095;
+                    pos.x = 0f;
+                    pos.y = -2250f;
+                    pos.z = 7625f;
+                    invertRot = true;
+                }
+                break;
+            case 111:
+            case 169:
+            case 170:
+            default:
+                angles.z = (Int32)(Mathf.Sin(((fullTime * 26) & 4095) / 4096f * 360f) * 4096f) / 5;
+                pos.x = 1065f;
+                pos.y = -1345f;
+                pos.z = 3749f;
+                break;
+        }
+        pos.y *= -1f;
+        angles *= 360f / 4096f;
+        rot = invertRot ? Quaternion.Inverse(Quaternion.Euler(angles)) : Quaternion.Euler(angles);
     }
 
     public static Int32 getBbgAttr(String name)
