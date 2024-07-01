@@ -232,8 +232,8 @@ public static class btl_vfx
         btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
         BattlePlayerCharacter.InitAnimation(btl);
         //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
-        Byte weaponBone = (isTrance && btlParam.TranceParameters) ? btlParam.TranceWeaponBone : btlParam.WeaponBone;
-        geo.geoAttach(btl.weapon_geo, btl.gameObject, weaponBone);
+        btl.weapon_bone = (isTrance && btlParam.TranceParameters) ? btlParam.TranceWeaponBone : btlParam.WeaponBone;
+        geo.geoAttach(btl.weapon_geo, btl.gameObject, btl.weapon_bone);
         //btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
 
