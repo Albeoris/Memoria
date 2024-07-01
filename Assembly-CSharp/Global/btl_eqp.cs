@@ -56,14 +56,17 @@ public class btl_eqp
         {
             CharacterBattleParameter btlParam = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)];
 
-            Single[] CurrentWeaponOffset;
-            if (btlParam.TranceWeaponOffset.Sum() != 0)
-                CurrentWeaponOffset = btl_stat.CheckStatus(btl, BattleStatus.Trance) ? btlParam.TranceWeaponOffset : btlParam.WeaponOffset;
-            else
-                CurrentWeaponOffset = btlParam.WeaponOffset;
+            if (btlParam.WeaponOffset.Sum() != 0) // Don't edit values if all values are 0
+            {
+                Single[] CurrentWeaponOffset;
+                if (btlParam.TranceWeaponOffset.Sum() != 0)
+                    CurrentWeaponOffset = btl_stat.CheckStatus(btl, BattleStatus.Trance) ? btlParam.TranceWeaponOffset : btlParam.WeaponOffset;
+                else
+                    CurrentWeaponOffset = btlParam.WeaponOffset;
 
-            btl.weapon_geo.transform.localPosition = new Vector3(CurrentWeaponOffset[0], CurrentWeaponOffset[1], CurrentWeaponOffset[2]);
-            btl.weapon_geo.transform.localRotation = Quaternion.Euler(CurrentWeaponOffset[3], CurrentWeaponOffset[4], CurrentWeaponOffset[5]);
+                btl.weapon_geo.transform.localPosition = new Vector3(CurrentWeaponOffset[0], CurrentWeaponOffset[1], CurrentWeaponOffset[2]);
+                btl.weapon_geo.transform.localRotation = Quaternion.Euler(CurrentWeaponOffset[3], CurrentWeaponOffset[4], CurrentWeaponOffset[5]);
+            }
         }
     }
 }
