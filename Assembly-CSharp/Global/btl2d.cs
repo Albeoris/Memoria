@@ -463,9 +463,18 @@ public static class btl2d
             else
             {
                 CharacterBattleParameter param = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no];
-                iconBone = param.StatusBone;
-                iconOffY = param.StatusOffsetY;
-                iconOffZ = param.StatusOffsetZ;
+                if (param.TranceParameters && btl_stat.CheckStatus(btl, BattleStatus.Trance))
+                {
+                    iconBone = param.TranceStatusBone;
+                    iconOffY = param.TranceStatusOffsetY;
+                    iconOffZ = param.TranceStatusOffsetZ;
+                }
+                else
+                {
+                    iconBone = param.StatusBone;
+                    iconOffY = param.StatusOffsetY;
+                    iconOffZ = param.StatusOffsetZ;
+                }
             }
         }
         else

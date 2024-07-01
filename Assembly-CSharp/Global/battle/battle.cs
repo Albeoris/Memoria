@@ -534,6 +534,11 @@ public static class battle
             btlsys.btl_load_status |= ff9btl.LOAD_CHR;
             BattleVoice.TriggerOnBattleInOut("BattleStart");
         }
+
+        foreach (BattleUnit next in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+        {
+            btl_eqp.InitOffSetWeapon(next);
+        }
     }
 
     private static void BattleSubSystem(FF9StateGlobal sys, FF9StateBattleSystem btlsys)

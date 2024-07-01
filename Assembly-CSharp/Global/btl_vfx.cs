@@ -4,6 +4,7 @@ using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
 using System;
+using System.Linq;
 using UnityEngine;
 using Object = System.Object;
 
@@ -200,6 +201,7 @@ public static class btl_vfx
     public static void SetTranceModel(BTL_DATA btl, Boolean isTrance)
     {
         CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
+        CharacterBattleParameter btlParam = btl_mot.BattleParameterList[serialNo];
         if (isTrance)
         {
             btl.battleModelIsRendering = true;
@@ -223,22 +225,37 @@ public static class btl_vfx
             if (transform.name.Contains("mesh"))
                 btl.meshCount++;
         }
+        BattlePlayerCharacter.ResetTranceData(btl, isTrance);
         btl.meshIsRendering = new Boolean[btl.meshCount];
         for (Int32 i = 0; i < btl.meshCount; i++)
             btl.meshIsRendering[i] = true;
         btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
         BattlePlayerCharacter.InitAnimation(btl);
         //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
-        geo.geoAttach(btl.weapon_geo, btl.gameObject, FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].wep_bone);
+        btl.weapon_bone = (isTrance && btlParam.TranceParameters) ? btlParam.TranceWeaponBone : btlParam.WeaponBone;
+        geo.geoAttach(btl.weapon_geo, btl.gameObject, btl.weapon_bone);
         //btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
+
+        if (btlParam.WeaponOffset.Any(off => off != 0f)) // Don't edit values if all values are 0
+        {
+            Single[] CurrentWeaponOffset;
+            if (isTrance && btlParam.TranceWeaponOffset.Any(off => off != 0f))
+                CurrentWeaponOffset = btlParam.TranceWeaponOffset;
+            else
+                CurrentWeaponOffset = btlParam.WeaponOffset;
+
+            btl.weapon_geo.transform.localPosition = new Vector3(CurrentWeaponOffset[0], CurrentWeaponOffset[1], CurrentWeaponOffset[2]);
+            btl.weapon_geo.transform.localRotation = Quaternion.Euler(CurrentWeaponOffset[3], CurrentWeaponOffset[4], CurrentWeaponOffset[5]);
+        }
     }
 
     public static SpecialEffect GetPlayerAttackVfx(BTL_DATA btl)
     {
         CharacterSerialNumber serialNo = btl_util.getSerialNumber(btl);
         if (serialNo != CharacterSerialNumber.NONE)
-            return btl_mot.BattleParameterList[serialNo].AttackSequence;
+            return (btl_mot.BattleParameterList[serialNo].TranceParameters && btl_stat.CheckStatus(btl, BattleStatus.Trance)) ? 
+                btl_mot.BattleParameterList[serialNo].TranceAttackSequence : btl_mot.BattleParameterList[serialNo].AttackSequence;
         return SpecialEffect.Special_No_Effect;
     }
 }
