@@ -2,25 +2,25 @@
 
 public struct DMSMapConf
 {
-	public UInt16 attr;
+    public UInt16 attr;
 
-	public UInt16 version;
+    public UInt16 version;
 
-	public UInt16 bgNo;
+    public UInt16 bgNo;
 
-	public Byte lightCount;
+    public Byte lightCount;
 
-	public Byte lightUse;
+    public Byte lightUse;
 
-	public Byte charCount;
+    public Byte charCount;
 
-	public Byte charUse;
+    public Byte charUse;
 
-	public Byte evtCount;
+    public Byte evtCount;
 
-	public Byte evtUse;
+    public Byte evtUse;
 
-	public DMSMapLight[] DMSMapLight;
+    public DMSMapLight[] DMSMapLight;
 
-	public DMSMapChar[] DMSMapChar;
+    public DMSMapChar[] DMSMapChar;
 }

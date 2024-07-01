@@ -1,7 +1,7 @@
-using System;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
+using System;
 
 namespace Memoria.Scripts.Battle
 {

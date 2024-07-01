@@ -270,7 +270,7 @@ public partial class BattleHUD : UIScene
                         str += FF9TextTool.SupportAbilityName(ff9abil.GetSupportAbilityFromAbilityId(blueMagicId));
                 }
                 else
-				{
+                {
                     str = FF9TextTool.CommandName(BattleCommandId.BlueMagic) + ": -";
                 }
                 SetBattleMessage(str, 3);
@@ -334,7 +334,7 @@ public partial class BattleHUD : UIScene
     }
 
     private Boolean CommandIsEnabled(BTL_DATA btl, BattleCommandId cmdId)
-	{
+    {
         if (cmdId == BattleCommandId.None)
             return false;
         if (!btl.is_monster_transform)
@@ -449,7 +449,7 @@ public partial class BattleHUD : UIScene
         _statusPanel.SetActive(false);
         _partyDetail.SetActive(true);
 
-        List<Int32> list = new List<Int32>(new[] {0, 1, 2, 3});
+        List<Int32> list = new List<Int32>(new[] { 0, 1, 2, 3 });
         switch (subMode)
         {
             case TargetDisplay.Hp:
@@ -820,12 +820,12 @@ public partial class BattleHUD : UIScene
                 {
                     playerCount++;
                     matchBattleIdPlayerCurrentList.Add(index);
-                }                 
+                }
                 else
                 {
                     enemyCount++;
                     matchBattleIdEnemyCurrentList.Add(index);
-                }                   
+                }
             }
         }
 
@@ -1251,10 +1251,10 @@ public partial class BattleHUD : UIScene
         BattleAbilityId patchedId = BattleAbilityHelper.Patch(ff9abil.GetActiveAbilityFromAbilityId(abilId), unit.Player.Data);
         AA_DATA patchedAbil = FF9StateSystem.Battle.FF9Battle.aa_data[patchedId];
 
-		if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && abilityPlayerDetail.Player.Index != CharacterId.Quina && abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && ff9abil.IsAbilityActive(abilId))
+        if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && abilityPlayerDetail.Player.Index != CharacterId.Quina && abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && ff9abil.IsAbilityActive(abilId))
             return AbilityStatus.None;
         if (abilityPlayerDetail.HasAp && !abilityPlayerDetail.AbilityEquipList.ContainsKey(abilId) && ff9abil.IsAbilityActive(abilId))
-		{
+        {
             if (unit.InTrance && abilityPlayerDetail.AbilityTranceList.ContainsKey(abilId))
             {
                 if (!abilityPlayerDetail.AbilityTranceList[abilId])
@@ -1355,7 +1355,7 @@ public partial class BattleHUD : UIScene
     private static void SetAbilityMagic(AbilityPlayerDetail abilityPlayer)
     {
         foreach (BattleMagicSwordSet magicSet in FF9BattleDB.MagicSwordData.Values)
-		{
+        {
             if (magicSet.Beneficiary != abilityPlayer.Player.Index)
                 continue;
             if (!FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().Any(btl => btl.IsPlayer && btl.PlayerIndex == magicSet.Supporter))
@@ -1845,7 +1845,7 @@ public partial class BattleHUD : UIScene
     private void SetTargetVisibility(Boolean isVisible)
     {
         if (isVisible)
-        {     
+        {
             TargetType targetType = 0;
             TargetDisplay subMode = 0;
             _defaultTargetAlly = false;

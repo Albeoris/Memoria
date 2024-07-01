@@ -1,16 +1,16 @@
-﻿using System;
-using Assets.Scripts.Common;
+﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Memoria;
 using Memoria.Assets;
-using Memoria.Scenes;
 using Memoria.Data;
 using Memoria.Field;
 using Memoria.Prime;
+using Memoria.Scenes;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 // ReSharper disable UnusedMember.Global

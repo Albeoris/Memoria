@@ -206,7 +206,7 @@ public static class btl_vfx
         {
             btl.battleModelIsRendering = true;
             btl.tranceGo.SetActive(true);
-            btl.gameObject = btl.tranceGo;
+            btl.ChangeModel(btl.tranceGo);
             GeoTexAnim.geoTexAnimPlay(btl.tranceTexanimptr, 2);
         }
         else
@@ -214,7 +214,7 @@ public static class btl_vfx
             btl.battleModelIsRendering = true;
             btl.originalGo.SetActive(true);
             btl.tranceGo.SetActive(false);
-            btl.gameObject = btl.originalGo;
+            btl.ChangeModel(btl.originalGo);
             btl.dms_geo_id = btl_init.GetModelID(serialNo, isTrance);
             GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
         }
@@ -232,16 +232,16 @@ public static class btl_vfx
         btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
         BattlePlayerCharacter.InitAnimation(btl);
         //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
-        byte WeaponBone = (btlParam.TranceParameters && isTrance) ? btlParam.TranceWeaponBone : btlParam.WeaponBone;
-        geo.geoAttach(btl.weapon_geo, btl.gameObject, WeaponBone);
+        Byte weaponBone = (isTrance && btlParam.TranceParameters) ? btlParam.TranceWeaponBone : btlParam.WeaponBone;
+        geo.geoAttach(btl.weapon_geo, btl.gameObject, weaponBone);
         //btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
 
-        if (btlParam.WeaponOffset.Sum() != 0) // Don't edit values if all values are 0
+        if (btlParam.WeaponOffset.Any(off => off != 0f)) // Don't edit values if all values are 0
         {
             Single[] CurrentWeaponOffset;
-            if (btlParam.TranceWeaponOffset.Sum() != 0)
-                CurrentWeaponOffset = isTrance ? btlParam.TranceWeaponOffset : btlParam.WeaponOffset;
+            if (isTrance && btlParam.TranceWeaponOffset.Any(off => off != 0f))
+                CurrentWeaponOffset = btlParam.TranceWeaponOffset;
             else
                 CurrentWeaponOffset = btlParam.WeaponOffset;
 

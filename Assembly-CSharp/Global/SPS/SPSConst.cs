@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public static class SPSConst
 {
-	public const Byte ATTR_VISIBLE = 1;
+    public const Byte ATTR_VISIBLE = 1;
     public const Byte ATTR_UPDATE_ANY_FRAME = 2;
     public const Byte ATTR_UPDATE_THIS_FRAME = 4;
     public const Byte ATTR_UNLOAD_ON_FINISH = 8;
@@ -14,8 +14,8 @@ public static class SPSConst
     public const Int32 WORLD_DEFAULT_OBJLOAD = 40;
 
     public const Int32 REF_DELETE = -1;
-	public const Int32 SCALE_ONE = 4096;
-	public const Int32 FRAMERATE_ONE = 16;
+    public const Int32 SCALE_ONE = 4096;
+    public const Int32 FRAMERATE_ONE = 16;
     public const Int32 ABR_50ADD = 0;
     public const Int32 ABR_ADD = 1;
     public const Int32 ABR_SUB = 2;
@@ -23,28 +23,28 @@ public static class SPSConst
     public const Int32 ABR_OFF = 15;
 
     public const Int32 OPERATION_CHANGE_FIELD = 129;
-	public const Int32 OPERATION_LOAD = 130;
-	public const Int32 OPERATION_ATTR = 131;
-	public const Int32 OPERATION_POS = 135;
-	public const Int32 OPERATION_POS_X = 136;
-	public const Int32 OPERATION_POS_Y = 137;
-	public const Int32 OPERATION_POS_Z = 138;
-	public const Int32 OPERATION_ROT = 140;
-	public const Int32 OPERATION_ROT_X = 141;
-	public const Int32 OPERATION_ROT_Y = 142;
-	public const Int32 OPERATION_ROT_Z = 143;
-	public const Int32 OPERATION_SCALE = 145;
-	public const Int32 OPERATION_CHAR = 150;
-	public const Int32 OPERATION_BONE = 151;
-	public const Int32 OPERATION_FADE = 155;
-	public const Int32 OPERATION_ABR = 156;
-	public const Int32 OPERATION_FRAMERATE = 160;
-	public const Int32 OPERATION_FRAME = 161;
-	public const Int32 OPERATION_POSOFFSET = 165;
-	public const Int32 OPERATION_POSOFFSET_X = 166;
-	public const Int32 OPERATION_POSOFFSET_Y = 167;
-	public const Int32 OPERATION_POSOFFSET_Z = 168;
-	public const Int32 OPERATION_DEPTHOFFSET = 170;
+    public const Int32 OPERATION_LOAD = 130;
+    public const Int32 OPERATION_ATTR = 131;
+    public const Int32 OPERATION_POS = 135;
+    public const Int32 OPERATION_POS_X = 136;
+    public const Int32 OPERATION_POS_Y = 137;
+    public const Int32 OPERATION_POS_Z = 138;
+    public const Int32 OPERATION_ROT = 140;
+    public const Int32 OPERATION_ROT_X = 141;
+    public const Int32 OPERATION_ROT_Y = 142;
+    public const Int32 OPERATION_ROT_Z = 143;
+    public const Int32 OPERATION_SCALE = 145;
+    public const Int32 OPERATION_CHAR = 150;
+    public const Int32 OPERATION_BONE = 151;
+    public const Int32 OPERATION_FADE = 155;
+    public const Int32 OPERATION_ABR = 156;
+    public const Int32 OPERATION_FRAMERATE = 160;
+    public const Int32 OPERATION_FRAME = 161;
+    public const Int32 OPERATION_POSOFFSET = 165;
+    public const Int32 OPERATION_POSOFFSET_X = 166;
+    public const Int32 OPERATION_POSOFFSET_Y = 167;
+    public const Int32 OPERATION_POSOFFSET_Z = 168;
+    public const Int32 OPERATION_DEPTHOFFSET = 170;
 
     public enum WorldSPSEffect
     {

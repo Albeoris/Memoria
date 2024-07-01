@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria.Prime;
+using System;
 using System.Text;
-using Memoria.Prime;
 
 namespace Memoria.Assets
 {
@@ -69,7 +69,7 @@ namespace Memoria.Assets
                 String currentPath = GetCurrentPath(relativeReference.Value);
                 return new TextResourcePath(new TextResourceReference(currentPath), Configuration.Export.TextFileFormat);
             }
-            
+
             public static String GetCurrentPath(String relativePath)
             {
                 StringBuilder sb = new(64);
@@ -117,7 +117,7 @@ namespace Memoria.Assets
                 String currentPath = GetCurrentPath(relativeReference.Value);
                 return new TextResourceReference(currentPath);
             }
-            
+
             public static String GetCurrentPath(String relativePath)
             {
                 return GetSymbolPath(Localization.GetSymbol(), relativePath);

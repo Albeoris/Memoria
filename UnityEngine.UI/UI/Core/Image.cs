@@ -85,7 +85,7 @@ namespace UnityEngine.UI
 
         /// Filling method for filled sprites.
         [SerializeField] private FillMethod m_FillMethod = FillMethod.Radial360;
-        public FillMethod fillMethod { get { return m_FillMethod; } set { if (SetPropertyUtility.SetStruct(ref m_FillMethod, value)) {SetVerticesDirty(); m_FillOrigin = 0; } } }
+        public FillMethod fillMethod { get { return m_FillMethod; } set { if (SetPropertyUtility.SetStruct(ref m_FillMethod, value)) { SetVerticesDirty(); m_FillOrigin = 0; } } }
 
         /// Amount of the Image shown. 0-1 range with 0 being nothing shown, and 1 being the full Image.
         [Range(0, 1)]
@@ -162,7 +162,7 @@ namespace UnityEngine.UI
             }
         }
 
-        public virtual void OnBeforeSerialize() {}
+        public virtual void OnBeforeSerialize() { }
 
         public virtual void OnAfterDeserialize()
         {
@@ -873,8 +873,8 @@ namespace UnityEngine.UI
 
         #endregion
 
-        public virtual void CalculateLayoutInputHorizontal() {}
-        public virtual void CalculateLayoutInputVertical() {}
+        public virtual void CalculateLayoutInputHorizontal() { }
+        public virtual void CalculateLayoutInputVertical() { }
 
         public virtual float minWidth { get { return 0; } }
 

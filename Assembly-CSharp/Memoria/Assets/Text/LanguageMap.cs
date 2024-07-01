@@ -1,9 +1,9 @@
+using Memoria.Prime;
+using Memoria.Prime.CSV;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Memoria.Prime;
-using Memoria.Prime.CSV;
 using UnityEngine;
 
 namespace Memoria.Assets

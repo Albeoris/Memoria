@@ -140,8 +140,8 @@ namespace Antlr.Runtime
         public override string ToString()
         {
             int unexpectedType = UnexpectedType;
-            string unexpected = ( TokenNames != null && unexpectedType >= 0 && unexpectedType < TokenNames.Count ) ? TokenNames[unexpectedType] : unexpectedType.ToString();
-            string expected = ( TokenNames != null && Expecting >= 0 && Expecting < TokenNames.Count ) ? TokenNames[Expecting] : Expecting.ToString();
+            string unexpected = (TokenNames != null && unexpectedType >= 0 && unexpectedType < TokenNames.Count) ? TokenNames[unexpectedType] : unexpectedType.ToString();
+            string expected = (TokenNames != null && Expecting >= 0 && Expecting < TokenNames.Count) ? TokenNames[Expecting] : Expecting.ToString();
             return "MismatchedTokenException(" + unexpected + "!=" + expected + ")";
         }
     }

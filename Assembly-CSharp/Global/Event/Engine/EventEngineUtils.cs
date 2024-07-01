@@ -1,9 +1,9 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Memoria;
 using Memoria.Assets;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
@@ -1856,7 +1856,7 @@ internal class EventEngineUtils
             str = "US/";
 
         ebFileName = ebFilePath + ebSubFolder + str + ebFileName + ebFileExt;
-        Byte[] binAsset = AssetManager.LoadBytes(ebFileName);
+        Byte[] binAsset = AssetManager.LoadBytesMerged(ebFileName);
         if (binAsset != null)
             return binAsset;
 

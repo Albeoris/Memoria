@@ -1,10 +1,10 @@
-using System;
-using System.Linq;
-using System.Collections.Generic;
+using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
-using Assets.Sources.Scripts.UI.Common;
 using Object = System.Object;
 
 namespace Memoria
@@ -660,6 +660,8 @@ namespace Memoria
 
         public void TryCriticalHit()
         {
+            if ((Target.Flags & CalcFlag.Critical) != 0) // In case another system triggered a critical strike (with possibly other consequences)
+                return;
             Int32 quarterWill = Caster.Data.elem.wpr >> 2;
             if (quarterWill != 0 && (Comn.random16() % quarterWill) + Caster.Data.critical_rate_deal_bonus + Target.Data.critical_rate_receive_bonus > Comn.random16() % 100)
             {

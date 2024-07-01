@@ -269,11 +269,11 @@ public class WorldSPSSystem : MonoBehaviour
     }
 
     public Int32 EffectRegist(Single x, Single y, Single z, SPSConst.WorldSPSEffect no, Int32 size)
-	{
+    {
         Int32 slot = this._FindFreeEffectSlot();
         SPSEffect sps = Utility.SpsList[slot];
         if (!Utility.SetupSPSBinary(sps, new KeyValuePair<String, Int32>("WorldMap", (Int32)no), false))
-			return -1;
+            return -1;
         switch (no)
         {
             case SPSConst.WorldSPSEffect.SMOKE_SOUTH_GATE:
@@ -287,15 +287,16 @@ public class WorldSPSSystem : MonoBehaviour
                 sps.abr = SPSConst.ABR_ADD;
                 break;
         }
+        sps.attr |= SPSConst.ATTR_UPDATE_ANY_FRAME;
         if (no != SPSConst.WorldSPSEffect.MEMORIA)
             sps.attr |= SPSConst.ATTR_UNLOAD_ON_FINISH;
         sps.pos.x = x;
-		sps.pos.y = y;
-		sps.pos.z = z;
+        sps.pos.y = y;
+        sps.pos.z = z;
         sps.rot = Vector3.zero;
-		sps.scale = size;
-		sps.prm0 = 0;
-		sps.meshRenderer.enabled = true;
+        sps.scale = size;
+        sps.prm0 = 0;
+        sps.meshRenderer.enabled = true;
         if (no == SPSConst.WorldSPSEffect.SMOKE_SOUTH_GATE)
             sps.frameRate = 4;
         else if (no == SPSConst.WorldSPSEffect.SMOKE_FIRE_SHRINE)
@@ -303,76 +304,76 @@ public class WorldSPSSystem : MonoBehaviour
         else if (no == SPSConst.WorldSPSEffect.MEMORIA)
             sps.frameRate = 0;
         return slot;
-	}
+    }
 
     public void ShiftRight()
     {
         foreach (SPSEffect sps in Utility.SpsList)
         {
             if (sps.spsId != -1)
-			{
-				Vector3 position = sps.transform.position;
-				position.x += 64f;
-				if (position.x >= 1536f)
-					position.x -= 1536f;
-				sps.pos = position;
-				sps.transform.position = position;
-			}
-		}
-	}
+            {
+                Vector3 position = sps.transform.position;
+                position.x += 64f;
+                if (position.x >= 1536f)
+                    position.x -= 1536f;
+                sps.pos = position;
+                sps.transform.position = position;
+            }
+        }
+    }
 
-	public void ShiftLeft()
+    public void ShiftLeft()
     {
         foreach (SPSEffect sps in Utility.SpsList)
         {
             if (sps.spsId != -1)
-			{
-				Vector3 position = sps.transform.position;
-				position.x -= 64f;
-				if (position.x < 0f)
-					position.x += 1536f;
-				sps.pos = position;
-				sps.transform.position = position;
-			}
-		}
-	}
+            {
+                Vector3 position = sps.transform.position;
+                position.x -= 64f;
+                if (position.x < 0f)
+                    position.x += 1536f;
+                sps.pos = position;
+                sps.transform.position = position;
+            }
+        }
+    }
 
-	public void ShiftDown()
+    public void ShiftDown()
     {
         foreach (SPSEffect sps in Utility.SpsList)
         {
             if (sps.spsId != -1)
-			{
-				Vector3 position = sps.transform.position;
-				position.z -= 64f;
-				if (position.z <= -1280f)
-					position.z += 1280f;
-				sps.pos = position;
-				sps.transform.position = position;
-			}
-		}
-	}
+            {
+                Vector3 position = sps.transform.position;
+                position.z -= 64f;
+                if (position.z <= -1280f)
+                    position.z += 1280f;
+                sps.pos = position;
+                sps.transform.position = position;
+            }
+        }
+    }
 
-	public void ShiftUp()
-	{
-		foreach (SPSEffect sps in Utility.SpsList)
-		{
-			if (sps.spsId != -1)
-			{
-				Vector3 position = sps.transform.position;
-				position.z += 64f;
-				if (position.z > 0f)
-					position.z -= 1280f;
-				sps.pos = position;
-				sps.transform.position = position;
-			}
-		}
-	}
+    public void ShiftUp()
+    {
+        foreach (SPSEffect sps in Utility.SpsList)
+        {
+            if (sps.spsId != -1)
+            {
+                Vector3 position = sps.transform.position;
+                position.z += 64f;
+                if (position.z > 0f)
+                    position.z -= 1280f;
+                sps.pos = position;
+                sps.transform.position = position;
+            }
+        }
+    }
 
-	public void EffectRelease(SPSEffect sps)
-	{
+    public void EffectRelease(SPSEffect sps)
+    {
         sps.Unload();
-		sps.spsId = -1;
+        sps.spsId = -1;
     }
 
     public void SetObjParm(Int32 ObjNo, Int32 ParmType, Int32 Arg0, Int32 Arg1, Int32 Arg2)
@@ -400,19 +401,19 @@ public class WorldSPSSystem : MonoBehaviour
     }
 
     private Boolean _IsSlotAvailable(Int32 index)
-	{
-		return Utility.SpsList[index].spsId == -1;
-	}
+    {
+        return Utility.SpsList[index].spsId == -1;
+    }
 
-	private Int32 _FindFreeEffectSlot()
-	{
-		for (Int32 i = 0; i < Utility.SpsList.Count; i++)
-			if (this._IsSlotAvailable(i))
-				return i;
+    private Int32 _FindFreeEffectSlot()
+    {
+        for (Int32 i = 0; i < Utility.SpsList.Count; i++)
+            if (this._IsSlotAvailable(i))
+                return i;
         Int32 slot = Utility.SpsList.Count;
         this.InitSPSInstance(slot);
         return slot;
-	}
+    }
 
     [NonSerialized]
     private CommonSPSSystem Utility;

@@ -34,7 +34,7 @@ namespace UnityEngine.UI
         private DrivenRectTransformTracker m_Tracker;
 
         protected ContentSizeFitter()
-        {}
+        { }
 
         #region Unity Lifetime calls
 
@@ -92,12 +92,12 @@ namespace UnityEngine.UI
             LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
         }
 
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
         protected override void OnValidate()
         {
             SetDirty();
         }
 
-    #endif
+#endif
     }
 }

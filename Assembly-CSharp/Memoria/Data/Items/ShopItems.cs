@@ -1,7 +1,7 @@
-﻿using System;
-using System.Linq;
+﻿using Memoria.Prime.CSV;
+using System;
 using System.Collections.Generic;
-using Memoria.Prime.CSV;
+using System.Linq;
 
 namespace Memoria.Data
 {
@@ -30,10 +30,10 @@ namespace Memoria.Data
                 Int32[] itemArray = CsvParser.ItemArray(value);
                 Boolean stop = false;
                 foreach (Int32 itemInt in itemArray)
-				{
+                {
                     RegularItem itemId = (RegularItem)itemInt;
                     if (itemId == RegularItem.NoItem)
-					{
+                    {
                         stop = true;
                         break;
                     }

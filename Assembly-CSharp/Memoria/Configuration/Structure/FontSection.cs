@@ -1,5 +1,5 @@
-using System;
 using Memoria.Prime.Ini;
+using System;
 
 namespace Memoria
 {
@@ -7,7 +7,7 @@ namespace Memoria
     {
         private sealed class FontSection : IniSection
         {
-            private static readonly String[] DefaultFonts = {"Arial", "Times Bold"};
+            private static readonly String[] DefaultFonts = { "Arial", "Times Bold" };
 
             public readonly IniArray<String> Names;
             public readonly IniValue<Int32> Size;

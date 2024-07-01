@@ -67,12 +67,12 @@ namespace Antlr.Runtime
         {
         }
 
-        public CommonToken( int type )
+        public CommonToken(int type)
         {
             this.type = type;
         }
 
-        public CommonToken( ICharStream input, int type, int channel, int start, int stop )
+        public CommonToken(ICharStream input, int type, int channel, int start, int stop)
         {
             this.input = input;
             this.type = type;
@@ -81,14 +81,14 @@ namespace Antlr.Runtime
             this.stop = stop;
         }
 
-        public CommonToken( int type, string text )
+        public CommonToken(int type, string text)
         {
             this.type = type;
             this.channel = TokenChannels.Default;
             this.text = text;
         }
 
-        public CommonToken( IToken oldToken )
+        public CommonToken(IToken oldToken)
         {
             text = oldToken.Text;
             type = oldToken.Type;
@@ -97,10 +97,10 @@ namespace Antlr.Runtime
             charPositionInLine = oldToken.CharPositionInLine;
             channel = oldToken.Channel;
             input = oldToken.InputStream;
-            if ( oldToken is CommonToken )
+            if (oldToken is CommonToken)
             {
-                start = ( (CommonToken)oldToken ).start;
-                stop = ( (CommonToken)oldToken ).stop;
+                start = ((CommonToken)oldToken).start;
+                stop = ((CommonToken)oldToken).stop;
             }
         }
 
@@ -109,13 +109,13 @@ namespace Antlr.Runtime
         {
             get
             {
-                if ( text != null )
+                if (text != null)
                     return text;
-                if ( input == null )
+                if (input == null)
                     return null;
 
                 if (start <= stop && stop < input.Count)
-                    return input.Substring( start, stop - start + 1 );
+                    return input.Substring(start, stop - start + 1);
 
                 return "<EOF>";
             }
@@ -232,16 +232,16 @@ namespace Antlr.Runtime
         public override string ToString()
         {
             string channelStr = "";
-            if ( channel > 0 )
+            if (channel > 0)
             {
                 channelStr = ",channel=" + channel;
             }
             string txt = Text;
-            if ( txt != null )
+            if (txt != null)
             {
-                txt = Regex.Replace( txt, "\n", "\\\\n" );
-                txt = Regex.Replace( txt, "\r", "\\\\r" );
-                txt = Regex.Replace( txt, "\t", "\\\\t" );
+                txt = Regex.Replace(txt, "\n", "\\\\n");
+                txt = Regex.Replace(txt, "\r", "\\\\r");
+                txt = Regex.Replace(txt, "\t", "\\\\t");
             }
             else
             {
@@ -251,9 +251,9 @@ namespace Antlr.Runtime
         }
 
         [System.Runtime.Serialization.OnSerializing]
-        internal void OnSerializing( System.Runtime.Serialization.StreamingContext context )
+        internal void OnSerializing(System.Runtime.Serialization.StreamingContext context)
         {
-            if ( text == null )
+            if (text == null)
                 text = Text;
         }
     }

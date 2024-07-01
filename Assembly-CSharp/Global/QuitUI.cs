@@ -1,9 +1,9 @@
-﻿using System;
-using Assets.Sources.Scripts.UI.Common;
-using UnityEngine;
+﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Prime;
 using Memoria.Scenes;
+using System;
+using UnityEngine;
 
 public class QuitUI : MonoBehaviour
 {

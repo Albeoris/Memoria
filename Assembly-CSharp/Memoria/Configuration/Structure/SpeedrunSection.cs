@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria.Prime.Ini;
+using System;
 using System.Collections.Generic;
-using Memoria.Prime.Ini;
 
 namespace Memoria
 {

@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Memoria.Assets;
+using Memoria.Data;
+using Memoria.Prime;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Memoria.Data;
-using Memoria.Assets;
-using Memoria.Prime;
 using UnityEngine;
 
 namespace Assets.Sources.Scripts.UI.Common

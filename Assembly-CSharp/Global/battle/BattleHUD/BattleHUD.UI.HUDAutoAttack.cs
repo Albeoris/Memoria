@@ -1,5 +1,5 @@
-﻿using System;
-using Memoria.Scenes;
+﻿using Memoria.Scenes;
+using System;
 using UnityEngine;
 
 public partial class BattleHUD : UIScene

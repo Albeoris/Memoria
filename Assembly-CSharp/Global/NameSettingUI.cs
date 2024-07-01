@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Assets.Scripts.Common;
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Assets;
+using Memoria.Data;
+using System;
 using System.Collections;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using Assets.Scripts.Common;
-using Assets.Sources.Scripts.UI.Common;
-using Memoria.Data;
-using Memoria.Assets;
 using UnityEngine;
 
 // ReSharper disable UnusedMember.Local

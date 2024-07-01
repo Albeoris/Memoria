@@ -1,15 +1,15 @@
+using Memoria.Prime.Text;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Memoria.Prime.Text;
 
 namespace Memoria.Assets
 {
     public sealed class TextReplacements : IEnumerable<String>
     {
-        private readonly List<KeyValuePair<String, TextReplacement>> _forward ;
+        private readonly List<KeyValuePair<String, TextReplacement>> _forward;
         private readonly List<KeyValuePair<String, TextReplacement>> _backward;
 
         public TextReplacements()

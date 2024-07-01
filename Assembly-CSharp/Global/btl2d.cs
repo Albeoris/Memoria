@@ -1,12 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
 using FF9;
 using Memoria;
 using Memoria.Assets;
-using Memoria.Prime;
 using Memoria.Data;
+using Memoria.Prime;
 using NCalc;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public static class btl2d
@@ -310,7 +310,7 @@ public static class btl2d
         workSet.OldDisappear = oldDisappear;
     }
 
-    private static void Btl2dStatIcon()
+    public static void Btl2dStatIcon()
     {
         BTL2D_WORK btl2d_work_set = FF9StateSystem.Battle.FF9Battle.btl2d_work_set;
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
@@ -346,7 +346,7 @@ public static class btl2d
         }
     }
 
-    private static void Btl2dStatCount()
+    public static void Btl2dStatCount()
     {
         btl2d.STAT_CNT_TBL[] statusTableList = new btl2d.STAT_CNT_TBL[]
         {
@@ -436,7 +436,7 @@ public static class btl2d
     public static void ReleaseBtl2dStatCount()
     {
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
-		{
+        {
             if (btl.deathMessage != null)
             {
                 Singleton<HUDMessage>.Instance.ReleaseObject(btl.deathMessage);

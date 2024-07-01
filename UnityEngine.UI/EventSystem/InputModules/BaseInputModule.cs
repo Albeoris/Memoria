@@ -188,13 +188,13 @@ namespace UnityEngine.EventSystems
         }
 
         public virtual void DeactivateModule()
-        {}
+        { }
 
         public virtual void ActivateModule()
-        {}
+        { }
 
         public virtual void UpdateModule()
-        {}
+        { }
 
         public virtual bool IsModuleSupported()
         {

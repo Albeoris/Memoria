@@ -1,8 +1,8 @@
-﻿using System;
-using System.Globalization;
-using FF9;
+﻿using FF9;
 using Memoria.Prime;
 using Memoria.Prime.CSV;
+using System;
+using System.Globalization;
 
 namespace Memoria.Data
 {
@@ -27,7 +27,7 @@ namespace Memoria.Data
             BattleStatus invalid = 0;
             String[] clearArray = raw[5].Split(',');
             for (Int32 i = 0; i < clearArray.Length; i++)
-			{
+            {
                 String clearToken = clearArray[i].Trim();
                 if (String.IsNullOrEmpty(clearToken))
                     continue;

@@ -1,6 +1,6 @@
-﻿using System;
-using Memoria.Prime.CSV;
+﻿using Memoria.Prime.CSV;
 using NCalc;
+using System;
 
 namespace Memoria.Data
 {

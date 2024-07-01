@@ -9,7 +9,7 @@ namespace Memoria.Prime.Text
         {
             self.Length = 0;
         }
-        
+
         public static StringBuilder AppendFormatLine(this StringBuilder self, String format, params Object[] args)
         {
             Exceptions.Exceptions.CheckArgumentNull(self, "self");

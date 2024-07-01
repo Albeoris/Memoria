@@ -3,15 +3,15 @@ using UnityEngine;
 
 public class TestStateSystem : MonoBehaviour
 {
-	private void Awake()
-	{
-	}
+    private void Awake()
+    {
+    }
 
-	private void Start()
-	{
-	}
+    private void Start()
+    {
+    }
 
-	private void Update()
-	{
-	}
+    private void Update()
+    {
+    }
 }

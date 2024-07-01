@@ -42,24 +42,24 @@ public static class NarrowMapList
     public static readonly int[][] RestrictedWidthScenesList =
     {
         // [mapNo,  EBin.MAP_INDEX_SVR,  EBin.SC_COUNTER_SVR], 
-        [150, 325, -5],       // Zidane infiltrate Alex Castle
+        [150, 325, -5],       // Zidane infiltrate Alex Castle - better in narrow for the "Alex" text
         [254, 26, -5],        // MBG103 - Evil Forest
         [352, 3, -5],         // Arrival at Dali: vivi visible before sleeping
-        [1550, -5, 6270],     // Mountain path - Quina stays there
+        //[1550, -5, 6270],     // Mountain path - Quina stays there
         [1554, -5, 6300],     // MBG109 - roots
         [1554, -5, 6305],     // MBG109 - roots
-        [1602, 16, -5],       // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping,  bugged if you see too much
+        [1602, 16, -5],       // scene at Madain Sari night w/ Vivi/Zidane/Eiko eavesdropping
         [1652, -5, 6700],     // Iifa entrance
         [1652, -5, 6710],     // Iifa entrance
         [1807, -5, 8500],     // Cid etc. arrival at Alexandria attack
         [1807, -5, 8600],     // Cid etc. arrival at Alexandria attack
-        [1815, 0, -5],        // Love quiproquo at the docks
-        [1816, 315, -5],      // Love quiproquo at the docks
-        [1901, -5, 7550],     // Treno scene,  people staying there
+        //[1815, 0, -5],        // Love quiproquo at the docks
+        //[1816, 315, -5],      // Love quiproquo at the docks
+        //[1901, -5, 7550],     // Treno scene,  people staying there
         [2007, -5, 8340],     // MBG111 - Alex castle changing
         [2007, -5, 8400],     // MBG111 - Alex castle changing
-        [2173, -5, 9050],     // ATE Quina
-        [2211, 8, -5],        // Lindblum meeting after Alexander scene: ATE with kuja at his ship,  Zorn & Thorn visible too soon and blending
+        //[2173, -5, 9050],     // ATE Quina
+        //[2211, 8, -5],        // Lindblum meeting after Alexander scene: ATE with kuja at his ship,  Zorn & Thorn visible too soon and blending
         [2404, 25, -5],       // Baku seen waiting on the docks too soon
         [2705, -1, -5],       // Pandemonium,  you're not alone sequence,  several glitches
         [2706, -1, -5],       // Pandemonium,  you're not alone sequence,  several glitches

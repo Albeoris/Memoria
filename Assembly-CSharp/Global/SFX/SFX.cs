@@ -1,13 +1,13 @@
-using System;
-using System.IO;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
-using System.Threading;
 using AOT;
 using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
+using System;
+using System.IO;
+using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Threading;
 using UnityEngine;
 
 public static class SFX
@@ -575,7 +575,7 @@ public static class SFX
     }
 
     public static Boolean IsRunning()
-	{
+    {
         if (Configuration.Battle.SFXRework)
             return UnifiedBattleSequencer.runningActions.Count > 0;
         return SFX.isRunning;
@@ -880,12 +880,12 @@ public static class SFX
                 FF9StateSystem.EventState.gEventGlobal[199] |= 16;
                 return 0;
             case 113: // Display Ability Casting Name
-                {
-                    CMD_DATA curCmdPtr = btl_util.getCurCmdPtr();
-                    if (curCmdPtr != null)
-                        UIManager.Battle.SetBattleCommandTitle(curCmdPtr);
-                    return 0;
-                }
+            {
+                CMD_DATA curCmdPtr = btl_util.getCurCmdPtr();
+                if (curCmdPtr != null)
+                    UIManager.Battle.SetBattleCommandTitle(curCmdPtr);
+                return 0;
+            }
             case 114: // Show/Hide Cursor
                 if (arg0 != 0)
                     FF9StateSystem.Battle.FF9Battle.cmd_status |= 2;
@@ -908,18 +908,18 @@ public static class SFX
                         vib.VIB_purge();
                         break;
                     case 1: // Vibrate (full parameters)
-                        {
-                            Byte[] array = new Byte[1800];
-                            Marshal.Copy((IntPtr)p, array, 0, 1800);
-                            MemoryStream input = new MemoryStream(array);
-                            BinaryReader binaryReader = new BinaryReader(input);
-                            vib.VIB_init(binaryReader);
-                            vib.VIB_setTrackActive(0, vib.VIB_SAMPLE_LO, true);
-                            vib.VIB_setTrackActive(0, vib.VIB_SAMPLE_HI, true);
-                            vib.VIB_vibrate(1);
-                            binaryReader.Close();
-                            break;
-                        }
+                    {
+                        Byte[] array = new Byte[1800];
+                        Marshal.Copy((IntPtr)p, array, 0, 1800);
+                        MemoryStream input = new MemoryStream(array);
+                        BinaryReader binaryReader = new BinaryReader(input);
+                        vib.VIB_init(binaryReader);
+                        vib.VIB_setTrackActive(0, vib.VIB_SAMPLE_LO, true);
+                        vib.VIB_setTrackActive(0, vib.VIB_SAMPLE_HI, true);
+                        vib.VIB_vibrate(1);
+                        binaryReader.Close();
+                        break;
+                    }
                     case 2: // Vibrate
                         vib.VIB_setActive(false);
                         vib.VIB_setTrackActive(1, vib.VIB_SAMPLE_LO, true);
@@ -942,13 +942,13 @@ public static class SFX
             case 122: // Back Attack, Preemptive, Normal
                 return (Byte)FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType;
             case 123: // Return the number of targetable player characters
-                {
-                    Int32 validPlayerTarget = 0;
-                    for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                        if (next.bi.player != 0 && !Status.checkCurStat(next, BattleStatus.Death | BattleStatus.Jump))
-                            validPlayerTarget++;
-                    return validPlayerTarget;
-                }
+            {
+                Int32 validPlayerTarget = 0;
+                for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+                    if (next.bi.player != 0 && !Status.checkCurStat(next, BattleStatus.Death | BattleStatus.Jump))
+                        validPlayerTarget++;
+                return validPlayerTarget;
+            }
             case 124: // Return the current battle camera index (these cameras are predefined per btlseq)
                 return FF9StateSystem.Battle.FF9Battle.seq_work_set.CameraNo;
             case 125: // Set Sound Pitch (default is 4 for a pitch of 1f)
@@ -1315,7 +1315,7 @@ public static class SFX
                 break;
             case 31: // Play Weapon Sound (see FF9Snd.ff9battleSoundWeaponSndEffect02, second entry)
                 if (btl_util.getCurCmdPtr() != null)
-				{
+                {
                     BattleUnit targ = btl_scrp.FindBattleUnit(btl_util.getCurCmdPtr().tar_id);
                     if (targ != null && (targ.Data.fig_info & Param.FIG_INFO_MISS) != 0)
                         break;
@@ -2001,8 +2001,8 @@ public static class SFX
                 case 163: // Shell Dragon (YANA)
                     arg = 120;
                     break;
-                //case 161: // Carve Spider + Axe Beak (World Map)
-                //case 162: // Carve Spider + Axe Beak (World Map)
+                    //case 161: // Carve Spider + Axe Beak (World Map)
+                    //case 162: // Carve Spider + Axe Beak (World Map)
             }
         }
         SFXDataCamera.currentCameraEngine = SFXDataCamera.CameraEngine.SFX_PLUGIN;
@@ -2026,8 +2026,8 @@ public static class SFX
             case 302: // Prison Cage (Garnet)
                 arg = 150;
                 break;
-            //case 300: // Antlion (Cleyra)
-            //case 301: // Prison Cage (Vivi)
+                //case 300: // Antlion (Cleyra)
+                //case 301: // Prison Cage (Vivi)
         }
         SFXDataCamera.currentCameraEngine = SFXDataCamera.CameraEngine.SFX_PLUGIN;
         SFX.SFX_SendIntData(4, btl.btl_id, arg, 0);
@@ -2070,7 +2070,8 @@ public static class SFX
 
     public static Int32 GetEffectJTexUsed()
     {
-        return SFX.SFX_SendIntData(12, 0, 0, 0);
+        SmoothFrameUpdater_Battle.LastSFXEffectJTex = SFX.SFX_SendIntData(12, 0, 0, 0);
+        return SmoothFrameUpdater_Battle.LastSFXEffectJTex;
     }
 
     public static void SoundClear()
@@ -2082,7 +2083,7 @@ public static class SFX
     }
 
     public static Int32 AdjustSoundIndex(Int32 dno, Int32 sce, out Boolean shouldSkip)
-	{
+    {
         dno += 12;
         shouldSkip = false;
         if (sce != 0)

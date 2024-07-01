@@ -1,9 +1,9 @@
-using System;
-using System.IO;
-using System.Collections.Generic;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 public static class TripleTriad
 {

@@ -63,7 +63,7 @@ namespace UnityEngine.EventSystems
         }
 
         protected EventSystem()
-        {}
+        { }
 
         public void UpdateModules()
         {
@@ -87,7 +87,7 @@ namespace UnityEngine.EventSystems
         {
             if (m_SelectionGuard)
             {
-                Debug.LogError("Attempting to select " + selected +  "while already selecting an object.");
+                Debug.LogError("Attempting to select " + selected + "while already selecting an object.");
                 return;
             }
 

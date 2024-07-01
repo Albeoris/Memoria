@@ -21,7 +21,7 @@ namespace Memoria.Patcher
                 XmlElement def = XmlHelper.LoadEmbadedDocument(assembly, $"Memoria.Patcher.Languages.en.xml");
                 XmlElement cur = null;
 
-                String[] fileNames = {CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName};
+                String[] fileNames = { CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName };
                 foreach (String name in fileNames)
                 {
                     cur = XmlHelper.LoadEmbadedDocument(assembly, $"Memoria.Patcher.Languages.{name}.xml");
@@ -296,7 +296,7 @@ namespace Memoria.Patcher
             {
                 return Instance.Value.GetString(name, nameof(EncodingEditor), childName);
             }
-            
+
             public static class List
             {
                 private static string GetEncodingEditorList(string name)

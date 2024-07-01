@@ -217,6 +217,7 @@
     <Compile Include="Global\Asset\AssetManagerForObb.cs" />
     <Compile Include="Global\Asset\AssetManagerRequest.cs" />
     <Compile Include="Global\Asset\AssetManagerUtil.cs" />
+    <Compile Include="Global\Asset\BinaryDiff.cs" />
     <Compile Include="Global\ATEType.cs" />
     <Compile Include="Global\AUDIO_HDR_DEF.cs" />
     <Compile Include="Global\Battery\BatteryMonitor.cs" />
