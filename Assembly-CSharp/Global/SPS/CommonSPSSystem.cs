@@ -110,6 +110,13 @@ public class CommonSPSSystem
         return true;
     }
 
+    private Vector3 adjustSpsPrecise(String name, Vector3 pos)
+    {
+        Int16 MapNo = FF9StateSystem.Common.FF9.fldMapNo;
+        //Log.Message("if (MapNo == " + MapNo + " && name == " + name + " && pos.x == " + pos.x + " && pos.y == " + pos.y + ")");
+        return pos;
+    }
+
     public void SetObjParm(SPSEffect sps, Int32 ParmType, Int32 Arg0, Int32 Arg1, Int32 Arg2)
     {
         if (ParmType == SPSConst.OPERATION_CHANGE_FIELD)
@@ -176,15 +183,16 @@ public class CommonSPSSystem
         }
         else if (ParmType == SPSConst.OPERATION_POS)
         {
+            Vector3 adjustedFloatPos = adjustSpsPrecise(sps.name, new Vector3((Single)Arg0, -(Single)Arg1, (Single)Arg2));
             if (FF9StateSystem.Common.FF9.fldMapNo == 911 || FF9StateSystem.Common.FF9.fldMapNo == 1911)
             {
                 // Treno/Queen's House
                 if (sps.spsBin != null)
-                    sps.pos = new Vector3(Arg0, -Arg1, Arg2);
+                    sps.pos = adjustedFloatPos;
             }
             else
             {
-                sps.pos = new Vector3(Arg0, -Arg1, Arg2);
+                sps.pos = adjustedFloatPos;
             }
         }
         else if (ParmType == SPSConst.OPERATION_ROT)
