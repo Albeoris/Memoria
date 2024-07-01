@@ -3,6 +3,7 @@ using FF9;
 using UnityEngine;
 using Memoria.Data;
 using System.Linq;
+using static UnifiedBattleSequencer;
 
 public class btl_eqp
 {
@@ -53,13 +54,16 @@ public class btl_eqp
     {
         if (btl.bi.player != 0)
         {
-            Single[] WeaponOffset = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no].info.serial_no].WeaponOffset;
+            CharacterBattleParameter btlParam = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)];
 
-            if (WeaponOffset.Sum() != 0) // Don't edit values if all values are 0
-            {
-                btl.weapon_geo.transform.localPosition = new Vector3(WeaponOffset[0], WeaponOffset[1], WeaponOffset[2]);
-                btl.weapon_geo.transform.localRotation = Quaternion.Euler(WeaponOffset[3], WeaponOffset[4], WeaponOffset[5]);
-            }
+            Single[] CurrentWeaponOffset;
+            if (btlParam.TranceWeaponOffset.Sum() != 0)
+                CurrentWeaponOffset = btl_stat.CheckStatus(btl, BattleStatus.Trance) ? btlParam.TranceWeaponOffset : btlParam.WeaponOffset;
+            else
+                CurrentWeaponOffset = btlParam.WeaponOffset;
+
+            btl.weapon_geo.transform.localPosition = new Vector3(CurrentWeaponOffset[0], CurrentWeaponOffset[1], CurrentWeaponOffset[2]);
+            btl.weapon_geo.transform.localRotation = Quaternion.Euler(CurrentWeaponOffset[3], CurrentWeaponOffset[4], CurrentWeaponOffset[5]);
         }
     }
 }
