@@ -97,12 +97,15 @@ public static class ModelFactory
             String texturePath = Path.GetDirectoryName(renameModelPath) + "/%.png";
             foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>())
             {
-                String externalPath = AssetManager.SearchAssetOnDisc(texturePath.Replace("%", renderer.material.mainTexture.name), true, false);
-                if (!String.IsNullOrEmpty(externalPath))
+                foreach (Material mat in renderer.materials)
                 {
-                    Texture texture = AssetManager.LoadFromDisc<Texture2D>(externalPath, "");
-                    texture.name = renderer.material.mainTexture.name;
-                    renderer.material.mainTexture = texture;
+                    String externalPath = AssetManager.SearchAssetOnDisc(texturePath.Replace("%", mat.mainTexture.name), true, false);
+                    if (!String.IsNullOrEmpty(externalPath))
+                    {
+                        Texture texture = AssetManager.LoadFromDisc<Texture2D>(externalPath, "");
+                        texture.name = mat.mainTexture.name;
+                        mat.mainTexture = texture;
+                    }
                 }
             }
         }
