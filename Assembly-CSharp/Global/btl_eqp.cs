@@ -68,17 +68,21 @@ public static class btl_eqp
     {
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
+            InitOffSetWeapon(btl);
             if (btl.builtin_weapon_mode && btl.bi.disappear == 0 && !btl.is_monster_transform && btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(btl.dms_geo_id, out Int32 weaponBoneID))
-            {
+            {               
+                CharacterSerialNumber serial = btl_util.getSerialNumber(btl);
+                FF9BattleDB.GEO.TryGetKey(btl_mot.BattleParameterList[serial].ModelId, out Int32 NormalgeoId);
+                FF9BattleDB.GEO.TryGetKey(btl_mot.BattleParameterList[serial].TranceModelId, out Int32 TrancegeoId);
                 Transform builtInBone = null;
-                if (btl.gameObject == btl.originalGo)
+                if (btl.dms_geo_id == NormalgeoId)
                 {
                     builtInBone = btl.originalGo.transform.GetChildByName($"bone{weaponBoneID:D3}");
                 }
-                else if (btl.gameObject == btl.tranceGo && btl.bi.player != 0)
+                else if (btl.dms_geo_id == TrancegeoId && btl.bi.player != 0)
                 {
-                    CharacterSerialNumber serial = btl_util.getSerialNumber(btl);
-                    if (btl_mot.BattleParameterList[serial].ModelId == btl_mot.BattleParameterList[serial].TranceModelId)
+
+                    if (btl_mot.BattleParameterList[serial].ModelId == btl_mot.BattleParameterList[serial].TranceModelId || btl_mot.BattleParameterList[serial].TranceParameters)
                         builtInBone = btl.tranceGo.transform.GetChildByName($"bone{weaponBoneID:D3}");
                 }
                 if (builtInBone != null)
