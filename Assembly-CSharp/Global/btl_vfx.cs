@@ -207,6 +207,7 @@ public static class btl_vfx
             btl.battleModelIsRendering = true;
             btl.tranceGo.SetActive(true);
             btl.ChangeModel(btl.tranceGo);
+            btl.dms_geo_id = btl_init.GetModelID(serialNo, isTrance);
             GeoTexAnim.geoTexAnimPlay(btl.tranceTexanimptr, 2);
         }
         else
@@ -236,18 +237,6 @@ public static class btl_vfx
         geo.geoAttach(btl.weapon_geo, btl.gameObject, btl.weapon_bone);
         //btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
-
-        if (btlParam.WeaponOffset.Any(off => off != 0f)) // Don't edit values if all values are 0
-        {
-            Single[] CurrentWeaponOffset;
-            if (isTrance && btlParam.TranceWeaponOffset.Any(off => off != 0f))
-                CurrentWeaponOffset = btlParam.TranceWeaponOffset;
-            else
-                CurrentWeaponOffset = btlParam.WeaponOffset;
-
-            btl.weapon_geo.transform.localPosition = new Vector3(CurrentWeaponOffset[0], CurrentWeaponOffset[1], CurrentWeaponOffset[2]);
-            btl.weapon_geo.transform.localRotation = Quaternion.Euler(CurrentWeaponOffset[3], CurrentWeaponOffset[4], CurrentWeaponOffset[5]);
-        }
     }
 
     public static SpecialEffect GetPlayerAttackVfx(BTL_DATA btl)
