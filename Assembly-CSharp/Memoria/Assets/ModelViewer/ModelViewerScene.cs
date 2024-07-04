@@ -597,9 +597,9 @@ namespace Memoria.Assets
                 boneDialogs.RemoveRange(boneDialogCount, boneDialogs.Count - boneDialogCount);
             if (displayModelAnimNames)
             {
-                String label = $"[FFFF00][^←→][FFFFFF] {GetCategoryIndex(currentGeoIndex)}";
+                String label = $"[FFFF00][^←→][FFFFFF] {GetCategoryEnumeration(currentGeoIndex, true)}";
                 label += "\n";
-                label += $"[FFFF00][←→][FFFFFF] Model {GetNumberInCategory(currentGeoIndex)}: {geoList[currentGeoIndex].Name} ({geoList[currentGeoIndex].Id})";
+                label += $"[FFFF00][←→][FFFFFF] Model {GetCategoryEnumeration(currentGeoIndex)}: {geoList[currentGeoIndex].Name} ({geoList[currentGeoIndex].Id})";
                 label += "\n";
                 if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                 {
@@ -650,28 +650,13 @@ namespace Memoria.Assets
                     controlist += $"\r\n";
                 controlLabel.text = controlist;
             }
-            controlPanel.BasePanel.transform.localPosition = new Vector3(1000, 10, 0);
+            controlPanel.BasePanel.transform.localPosition = new Vector3(1000, 0, 0);
             controlPanel.Show = true;
             controlLabel.fontSize = 25;
         }
 
-        private static String GetCategoryIndex(Int32 modelNum)
-        {
-            List<int> categoriesThresholds = new List<int>(geoArchetype);
-            categoriesThresholds.Sort();
-            int categoryNum = -1;
-            foreach (int threshold in categoriesThresholds)
-            {
-                if (!(threshold > modelNum))
-                    categoryNum++;
-            }
-            if (!(categoryNum >= categoryNames.Count))
-                return categoryNames[categoryNum];
-            else
-                return $"{categoryNum}";
-        }
-
-        private static String GetNumberInCategory(Int32 modelNum)
+        /// <summary>Returns "model#/maxmodel#" from a category, or the category name if "categoryName" is true </summary>
+        private static String GetCategoryEnumeration(Int32 modelNum, Boolean categoryName = false)
         {
             List<int> categoriesThresholds = new List<int>(geoArchetype);
             categoriesThresholds.Add(geoList.Count);
@@ -682,23 +667,26 @@ namespace Memoria.Assets
                 if (!(threshold > modelNum))
                     categoryNum++;
             }
-            /*if (!(categoryNum >= categoryNames.Count))
-                return categoryNames[categoryNum];
+            if (categoryName)
+            {
+                if (!(categoryNum >= categoryNames.Count))
+                    return categoryNames[categoryNum];
+                else
+                    return $"{categoryNum}";
+            }
             else
-                return $"{categoryNum}";*/
-            //int aboveLimit = (categoryNum+1 > categoriesThresholds.Count) ? geoList.Count : categoriesThresholds[categoryNum + 1];
-            return $"{modelNum + 1 - categoriesThresholds[categoryNum]}/{categoriesThresholds[categoryNum + 1] - categoriesThresholds[categoryNum]}";
+                return $"{modelNum + 1 - categoriesThresholds[categoryNum]}/{categoriesThresholds[categoryNum + 1] - categoriesThresholds[categoryNum]}";
         }
 
         private static List<string> categoryNames = new List<string>
         {
-            "Field objects",
-            "Main actors",
-            "Monsters",
+            "FIELD ITEMS",
+            "ACTORS (MAIN)",
+            "MONSTERS",
             "NPC",
-            "Secondary actors",
-            "Weapons",
-            "Battle maps",
+            "ACTORS (MINOR)",
+            "WEAPONS",
+            "BATTLE MAPS",
             "SPS 1",
             "SPS 2",
             "SPS 3",
@@ -708,16 +696,16 @@ namespace Memoria.Assets
             "SPS 7",
             "SPS 8",
             "SPS 9",
-            "SPS 10",
-            "SPS 11",
+            "SPS (WORLDMAP)",
+            "SPS (PROTOTYPES)",
         };
 
         private static readonly Dictionary<String, String> ControlsKeys = new Dictionary<String, String>
         {
             {"N", "Show infos"},
             {"B", "Show model bones"},
-            {"Left clic", "Angle"},
-            {"Right clic", "Position"},
+            {"Left click", "Angle"},
+            {"Right click", "Position"},
             {"Mouse wheel", "Zoom"},
             {"E", "Export animation"},
             {"1/2", "Normal/battle anim speed"},
