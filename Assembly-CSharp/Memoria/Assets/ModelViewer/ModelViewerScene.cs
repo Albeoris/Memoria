@@ -18,8 +18,7 @@ namespace Memoria.Assets
         private static Boolean displayBones = false;
         private static Boolean displayBoneConnections = false;
         private static Boolean displayBoneNames = false;
-        private static Boolean displayModelAnimNames = true;
-        private static Boolean displayControls = false;
+        private static Boolean displayUI = true;
         private static Boolean displayCurrentModel = true;
         private static List<ModelObject> geoList;
         private static List<ModelObject> weapongeoList;
@@ -193,6 +192,8 @@ namespace Memoria.Assets
                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                         while (!geoArchetype.Contains(nextIndex) && nextIndex != geoList.Count)
                             nextIndex++;
+                    else if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                        nextIndex = currentGeoIndex + 10;
                     if (nextIndex == geoList.Count)
                         nextIndex -= geoList.Count;
                     if (geoList[nextIndex].Id == 276 || geoList[nextIndex].Id == 393 || geoList[nextIndex].Id == 394) // models with no texture bugged
@@ -210,6 +211,8 @@ namespace Memoria.Assets
                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                         while (!geoArchetype.Contains(prevIndex))
                             prevIndex--;
+                    else if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                        prevIndex = currentGeoIndex - 10;
                     if (geoList[prevIndex].Id == 276 || geoList[prevIndex].Id == 393 || geoList[prevIndex].Id == 394) // models with no texture bugged
                         ChangeModel(prevIndex - 1);
                     else
@@ -217,10 +220,6 @@ namespace Memoria.Assets
                     while (currentModel == null)
                         ChangeModel(--prevIndex);
                 }
-                if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1))
-                    speedFactor = 1f;
-                else if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
-                    speedFactor = 0.5f;
                 if (Input.GetKeyDown(KeyCode.B) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
                 {
                     displayBoneConnections = !displayBoneConnections;
@@ -230,10 +229,8 @@ namespace Memoria.Assets
                     displayBones = !displayBones;
                     displayBoneNames = !displayBoneNames;
                 }
-                if (Input.GetKeyDown(KeyCode.N))
-                    displayModelAnimNames = !displayModelAnimNames;
-                if (Input.GetKeyDown(KeyCode.C))
-                    displayControls = !displayControls;
+                if (Input.GetKeyDown(KeyCode.I))
+                    displayUI = !displayUI;
                 if (Input.GetKeyDown(KeyCode.H)) // TODO - Replace it by changing the color instead, to hide the model
                 {
                     displayCurrentModel = !displayCurrentModel;
@@ -244,7 +241,6 @@ namespace Memoria.Assets
                         renderer.enabled = displayCurrentModel;
                     }
                 }
-
                 if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
                 {
                     if (Input.GetKey(KeyCode.AltGr))
@@ -497,11 +493,23 @@ namespace Memoria.Assets
                         FF9Sfx.FF9SFX_Play(102);
                     }
                 }
-                if (Input.GetKeyDown(KeyCode.S) && geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
+                if (Input.GetKeyDown(KeyCode.S))
                 {
-                    spsEffect.abr++;
-                    if (spsEffect.abr >= spsEffect.materials.Length)
-                        spsEffect.abr = 0;
+                    if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS) // SPS: control shader
+                    {
+                        spsEffect.abr++;
+                        if (spsEffect.abr >= spsEffect.materials.Length)
+                            spsEffect.abr = 0;
+                    }
+                    else if (animList.Count > 0) // anim model: control animation speed
+                    {
+                        if (speedFactor == 1f)
+                            speedFactor = 0.5f; 
+                        else if (speedFactor == 0.5f)
+                            speedFactor = 0.1f; 
+                        else if (speedFactor == 0.1f)
+                            speedFactor = 1f;
+                    }
                 }
                 if (Input.GetKeyDown(KeyCode.W))
                 {
@@ -595,7 +603,7 @@ namespace Memoria.Assets
                 boneConnectModels.RemoveRange(boneConnectionCount, boneConnectModels.Count - boneConnectionCount);
             if (boneDialogCount < boneDialogs.Count)
                 boneDialogs.RemoveRange(boneDialogCount, boneDialogs.Count - boneDialogCount);
-            if (displayModelAnimNames)
+            if (displayUI)
             {
                 String label = $"[FFFF00][^←→][FFFFFF] {GetCategoryEnumeration(currentGeoIndex, true)}";
                 label += "\n";
@@ -604,16 +612,20 @@ namespace Memoria.Assets
                 if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                 {
                     label += $"[FFFF00][↓↑][FFFFFF] {currentAnimName}";
-                    label += $"\nShader: {spsEffect.materials[Math.Min((Int32)spsEffect.abr, 4)].shader.name} | Color intensity: {spsEffect.fade}";
+                    label += "\n";
+                    label += $"[FFFF00][S][FFFFFF] Shader: {spsEffect.materials[Math.Min((Int32)spsEffect.abr, 4)].shader.name} | [FFFF00][^↓↑][FFFFFF] Fade: {spsEffect.fade}";
+                    label += "\n";
                 }
                 else if (animList.Count > 0)
                 {
-                    label += $"[FFFF00][↓↑][FFFFFF] Anim {currentAnimIndex + 1}/{animList.Count}: ";
-                    label += $"{currentAnimName} ({animList[currentAnimIndex].Key})\n";
+                    label += $"[FFFF00][↓↑][FFFFFF] Anim {currentAnimIndex + 1}/{animList.Count}: {currentAnimName} ({animList[currentAnimIndex].Key})";
+                    label += "\n";
+                    label += $"[FFFF00][S][FFFFFF] Speed: {speedFactor}";
+                    label += "\n";
                 }
                 else
                 {
-                    label += $"\n";
+                    label += "\n\n";
                 }
                 if (currentWeaponModel)
                 {
@@ -625,27 +637,23 @@ namespace Memoria.Assets
                         label += $" Control: [FF0000]Disabled\n";
                 }
                 else
-                    label += $"\n\n\n";
+                    label += "\n\n\n";
                 if (!String.Equals(infoLabel.text, label))
                     infoLabel.text = label;
                 if (!infoPanel.Show)
                     infoPanel.Show = true;
                 infoLabel.fontSize = 25;
-            }
-            else if (infoPanel.Show)
-            {
-                infoPanel.Show = false;
-            }
-            if (displayControls)
-            {
-                String controlist = "Hide controls [FFFF00][C][FFFFFF]\r\n";
+
+                String controlist = "Hide UI [FFFF00][I][FFFFFF]\r\n";
                 foreach (KeyValuePair<String, String> entry in ControlsKeys)
                     controlist += $"{entry.Value} [FFFF00][{entry.Key}][FFFFFF]\r\n";
                 controlLabel.text = controlist;
             }
             else
             {
-                String controlist = "Show controls [FFFF00][C][FFFFFF]\r\n";
+                infoPanel.Show = false;
+
+                String controlist = "Show UI [FFFF00][I][FFFFFF]\r\n";
                 foreach (KeyValuePair<String, String> entry in ControlsKeys)
                     controlist += $"\r\n";
                 controlLabel.text = controlist;
@@ -687,29 +695,28 @@ namespace Memoria.Assets
             "ACTORS (MINOR)",
             "WEAPONS",
             "BATTLE MAPS",
-            "SPS 1",
-            "SPS 2",
-            "SPS 3",
-            "SPS 4",
-            "SPS 5",
-            "SPS 6",
-            "SPS 7",
-            "SPS 8",
-            "SPS 9",
+            "SPS (p0data1)",
+            "SPS (p0data2)",
+            "SPS (p0data3)",
+            "SPS (p0data4)",
+            "SPS (p0data5)",
+            "SPS (p0data6)",
+            "SPS (p0data7)",
+            "SPS (p0data8)",
+            "SPS (p0data9)",
             "SPS (WORLDMAP)",
             "SPS (PROTOTYPES)",
         };
 
         private static readonly Dictionary<String, String> ControlsKeys = new Dictionary<String, String>
         {
-            {"N", "Show infos"},
-            {"B", "Show model bones"},
-            {"Left click", "Angle"},
-            {"Right click", "Position"},
-            {"Mouse wheel", "Zoom"},
-            {"E", "Export animation"},
-            {"1/2", "Normal/battle anim speed"},
-            {"Space", "replay animation"},
+            {"B", "Show bones"},
+            {"◐", "Angle"},
+            {"◑", "Position"},
+            {"◗↕", "Zoom"},
+            {"Ctrl", "Fast browse"},
+            {"E", "Export anim"},
+            {"␣", "Replay anim"},
         };
 
         private static Camera GetCamera()
