@@ -288,9 +288,29 @@ public class UIKeyTrigger : MonoBehaviour
             if (ButtonGroupState.ActiveGroup == QuitUI.WarningMenuGroupButton)
                 return;
             preventTurboKey = false;
-            PersistenSingleton<UIManager>.Instance.WorldHUDScene.FullMapPanel.SetActive(false);
+
+            if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World && PersistenSingleton<UIManager>.Instance.WorldHUDScene != (UnityEngine.Object)null) // World Map
+            {
+                PersistenSingleton<UIManager>.Instance.WorldHUDScene.MiniMapPanel.SetActive(false);
+                PersistenSingleton<UIManager>.Instance.WorldHUDScene.FullMapPanel.SetActive(false);
+                PersistenSingleton<UIManager>.Instance.WorldHUDScene.MapButtonGameObject.SetActive(false);
+                if (PersistenSingleton<UIManager>.Instance.WorldHUDScene.CurrentState == WorldHUD.State.FullMap)
+                    PersistenSingleton<UIManager>.Instance.WorldHUDScene.OnKeySelect(null);
+                PersistenSingleton<UIManager>.Instance.WorldHUDScene.ClearFullMapLocations();
+                UIManager.Input.ResetKeyCode();
+                EIcon.IsProcessingFIcon = true;
+                PersistenSingleton<EventEngine>.Instance.SetUserControl(true);
+                PersistenSingleton<EventEngine>.Instance.eBin.setVarManually(9173, 0);
+                Singleton<BubbleUI>.Instance.SetGameObjectActive(false);
+                PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, (Action)null);
+                PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(true);
+                ff9.w_naviMode = 0;
+            }
+
             PersistenSingleton<UIManager>.Instance.Dialogs.PauseAllDialog(true);
+
             PersistenSingleton<UIManager>.Instance.HideAllHUD();
+            Singleton<DialogManager>.Instance.CloseAll();
             ButtonGroupState.DisableAllGroup(true);
             UIManager.Battle.FF9BMenu_EnableMenu(false);
             if (PersistenSingleton<UIManager>.Instance.IsPause)
