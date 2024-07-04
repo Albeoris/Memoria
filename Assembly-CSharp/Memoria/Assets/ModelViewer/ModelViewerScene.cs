@@ -62,10 +62,14 @@ namespace Memoria.Assets
             Camera camera = GetCamera();
             if (camera == null)
                 return;
+            camera.orthographic = false;
+            camera.fieldOfView = 60f;
+            camera.nearClipPlane = 0.1f;
+            camera.farClipPlane = 10000f;
             isLoadingModel = false;
             isLoadingWeaponModel = false;
             currentWeaponBoneIndex = 0;
-            scaleFactor = new Vector3(1f, 1f, 1f);
+            scaleFactor = new Vector3(0.3f, 0.3f, 0.3f);
             geoList = new List<ModelObject>();
             weapongeoList = new List<ModelObject>();
             geoArchetype = new HashSet<Int32>();
@@ -181,7 +185,7 @@ namespace Memoria.Assets
                 if (replaceOnce > 0 && currentModel != null)
                 {
                     currentModel.transform.localScale = scaleFactor;
-                    currentModel.transform.localRotation = Quaternion.Euler(45f, 0f, 0f);
+                    currentModel.transform.localRotation = Quaternion.Euler(20f, 0f, 0f);
                     replaceOnce--;
                 }
                 Boolean mouseLeftWasPressed = mouseLeftPressed;
@@ -509,7 +513,6 @@ namespace Memoria.Assets
                             speedFactor = 0.1f; 
                         else if (speedFactor == 0.1f)
                             speedFactor = 1f;
-                        //animation.Stop();
                     }
                 }
                 if (Input.GetKeyDown(KeyCode.W))
@@ -835,7 +838,7 @@ namespace Memoria.Assets
                 }
                 currentModel.transform.position = Vector3.zero;
                 currentModel.transform.localScale = scaleFactor;
-                currentModel.transform.localRotation = Quaternion.Euler(45f, 0f, 0f);
+                currentModel.transform.localRotation = Quaternion.Euler(20f, 0f, 0f);
                 foreach (KeyValuePair<Int32, String> anim in animList)
                     AnimationFactory.AddAnimWithAnimatioName(currentModel, anim.Value);
                 currentAnimIndex = 0;
@@ -847,7 +850,7 @@ namespace Memoria.Assets
             {
                 currentModel.transform.position = Vector3.zero;
                 currentModel.transform.localScale = scaleFactor;
-                currentModel.transform.localRotation = Quaternion.Euler(45f, 0f, 0f);
+                currentModel.transform.localRotation = Quaternion.Euler(20f, 0f, 0f);
                 currentAnimIndex = 0;
                 currentAnimName = "";
                 currentModelBones = null;
@@ -857,7 +860,7 @@ namespace Memoria.Assets
             {
                 currentModel.transform.position = Vector3.zero;
                 currentModel.transform.localScale = scaleFactor;
-                currentModel.transform.localRotation = Quaternion.Euler(45f, 0f, 0f);
+                currentModel.transform.localRotation = Quaternion.Euler(20f, 0f, 0f);
                 currentAnimIndex = 0;
                 currentAnimName = "";
                 currentModelBones = null;
