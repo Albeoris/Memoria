@@ -308,7 +308,6 @@ public class UIKeyTrigger : MonoBehaviour
             }
 
             PersistenSingleton<UIManager>.Instance.Dialogs.PauseAllDialog(true);
-
             PersistenSingleton<UIManager>.Instance.HideAllHUD();
             Singleton<DialogManager>.Instance.CloseAll();
             ButtonGroupState.DisableAllGroup(true);
