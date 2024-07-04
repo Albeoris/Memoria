@@ -18,7 +18,8 @@ namespace Memoria.Assets
         private static Boolean displayBones = false;
         private static Boolean displayBoneConnections = false;
         private static Boolean displayBoneNames = false;
-        private static Boolean displayModelAnimNames = false;
+        private static Boolean displayModelAnimNames = true;
+        private static Boolean displayControls = false;
         private static Boolean displayCurrentModel = true;
         private static List<ModelObject> geoList;
         private static List<ModelObject> weapongeoList;
@@ -51,7 +52,9 @@ namespace Memoria.Assets
         private static List<GameObject> boneConnectModels = new List<GameObject>();
         private static List<Dialog> boneDialogs = new List<Dialog>();
         private static ControlPanel infoPanel;
+        private static ControlPanel controlPanel;
         private static UILabel infoLabel;
+        private static UILabel controlLabel;
 
         public static void Init()
         {
@@ -79,10 +82,20 @@ namespace Memoria.Assets
             spsEffect.meshRenderer = meshRenderer;
             spsEffect.meshFilter = meshFilter;
             infoPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
-            infoLabel = infoPanel.AddSimpleLabel("", NGUIText.Alignment.Left, 5);
+            infoLabel = infoPanel.AddSimpleLabel("", NGUIText.Alignment.Left, 7);
             infoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
             infoPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
+            controlPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
+            controlLabel = controlPanel.AddSimpleLabel("", NGUIText.Alignment.Right, 11);
+            controlPanel.EndInitialization(UIWidget.Pivot.BottomRight);
+            controlPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
+            Log.Message("controlPanel.AllPanels.Count " + controlPanel.BasePanel);
             foreach (UISprite sprite in infoPanel.BasePanel.GetComponentsInChildren<UISprite>(true))
+            {
+                sprite.spriteName = String.Empty;
+                sprite.alpha = 0f;
+            }
+            foreach (UISprite sprite in controlPanel.BasePanel.GetComponentsInChildren<UISprite>(true))
             {
                 sprite.spriteName = String.Empty;
                 sprite.alpha = 0f;
@@ -178,9 +191,14 @@ namespace Memoria.Assets
                 {
                     Int32 nextIndex = currentGeoIndex + 1;
                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
-                        while (!geoArchetype.Contains(nextIndex))
+                        while (!geoArchetype.Contains(nextIndex) && nextIndex != geoList.Count)
                             nextIndex++;
-                    ChangeModel(nextIndex);
+                    if (nextIndex == geoList.Count)
+                        nextIndex -= geoList.Count;
+                    if (geoList[nextIndex].Id == 276 || geoList[nextIndex].Id == 393 || geoList[nextIndex].Id == 394) // models with no texture bugged
+                        ChangeModel(nextIndex + 1);
+                    else
+                        ChangeModel(nextIndex);
                     while (currentModel == null)
                         ChangeModel(++nextIndex);
                 }
@@ -192,7 +210,10 @@ namespace Memoria.Assets
                     if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
                         while (!geoArchetype.Contains(prevIndex))
                             prevIndex--;
-                    ChangeModel(prevIndex);
+                    if (geoList[prevIndex].Id == 276 || geoList[prevIndex].Id == 393 || geoList[prevIndex].Id == 394) // models with no texture bugged
+                        ChangeModel(prevIndex - 1);
+                    else
+                        ChangeModel(prevIndex);
                     while (currentModel == null)
                         ChangeModel(--prevIndex);
                 }
@@ -211,6 +232,8 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyDown(KeyCode.N))
                     displayModelAnimNames = !displayModelAnimNames;
+                if (Input.GetKeyDown(KeyCode.C))
+                    displayControls = !displayControls;
                 if (Input.GetKeyDown(KeyCode.H)) // TODO - Replace it by changing the color instead, to hide the model
                 {
                     displayCurrentModel = !displayCurrentModel;
@@ -333,6 +356,8 @@ namespace Memoria.Assets
                 if (Input.GetKey(KeyCode.M))
                 {
                     infoPanel.BasePanel.transform.localPosition = infoPanel.BasePanel.transform.localPosition + new Vector3(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? -5 : 5, 0, 0);
+                    controlPanel.BasePanel.transform.localPosition = controlPanel.BasePanel.transform.localPosition + new Vector3(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? -5 : 5, 0, 0);
+                    Log.Message("" + controlPanel.BasePanel.transform.localPosition.x);
                 }
                 GameObject targetModel = ControlWeapon ? currentWeaponModel : currentModel;
                 if (Input.GetKey(KeyCode.Keypad6))
@@ -572,34 +597,132 @@ namespace Memoria.Assets
                 boneDialogs.RemoveRange(boneDialogCount, boneDialogs.Count - boneDialogCount);
             if (displayModelAnimNames)
             {
-                String label = $"{geoList[currentGeoIndex].Name} ({geoList[currentGeoIndex].Id})\n{currentAnimName}";
+                String label = $"[FFFF00][^←→][FFFFFF] {GetCategoryIndex(currentGeoIndex)}";
+                label += "\n";
+                label += $"[FFFF00][←→][FFFFFF] Model {GetNumberInCategory(currentGeoIndex)}: {geoList[currentGeoIndex].Name} ({geoList[currentGeoIndex].Id})";
+                label += "\n";
                 if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
-                    label += $"\nShader: {spsEffect.materials[Math.Min((Int32)spsEffect.abr, 4)].shader.name}\nColour intensity: {spsEffect.fade}";
-                else if (animList.Count > 0)
-                    label += $" ({animList[currentAnimIndex].Key})\n";
-                else
-                    label += $"\n";
-                if (currentWeaponModel)
                 {
-                    label += $" Weapon Attach : {weapongeoList[currentWeaponGeoIndex].Name}\n";
-                    label += $" Bone Attach : {currentWeaponBoneIndex}\n";
-                    if (ControlWeapon)
-                        label += $" Control : [00FF00]Enabled\n";
-                    else
-                        label += $" Control : [FF0000]Disabled\n";
+                    label += $"[FFFF00][↓↑][FFFFFF] {currentAnimName}";
+                    label += $"\nShader: {spsEffect.materials[Math.Min((Int32)spsEffect.abr, 4)].shader.name} | Color intensity: {spsEffect.fade}";
+                }
+                else if (animList.Count > 0)
+                {
+                    label += $"[FFFF00][↓↑][FFFFFF] Anim {currentAnimIndex + 1}/{animList.Count}: ";
+                    label += $"{currentAnimName} ({animList[currentAnimIndex].Key})\n";
                 }
                 else
-                    label += $"\n\n";
+                {
+                    label += $"\n";
+                }
+                if (currentWeaponModel)
+                {
+                    label += $" Weapon Attach: {weapongeoList[currentWeaponGeoIndex].Name}\n";
+                    label += $" Bone Attach: {currentWeaponBoneIndex}\n";
+                    if (ControlWeapon)
+                        label += $" Control: [00FF00]Enabled\n";
+                    else
+                        label += $" Control: [FF0000]Disabled\n";
+                }
+                else
+                    label += $"\n\n\n";
                 if (!String.Equals(infoLabel.text, label))
                     infoLabel.text = label;
                 if (!infoPanel.Show)
                     infoPanel.Show = true;
+                infoLabel.fontSize = 25;
             }
             else if (infoPanel.Show)
             {
                 infoPanel.Show = false;
             }
+            if (displayControls)
+            {
+                String controlist = "Hide controls [FFFF00][C][FFFFFF]\r\n";
+                foreach (KeyValuePair<String, String> entry in ControlsKeys)
+                    controlist += $"{entry.Value} [FFFF00][{entry.Key}][FFFFFF]\r\n";
+                controlLabel.text = controlist;
+            }
+            else
+            {
+                String controlist = "Show controls [FFFF00][C][FFFFFF]\r\n";
+                foreach (KeyValuePair<String, String> entry in ControlsKeys)
+                    controlist += $"\r\n";
+                controlLabel.text = controlist;
+            }
+            controlPanel.BasePanel.transform.localPosition = new Vector3(1000, 10, 0);
+            controlPanel.Show = true;
+            controlLabel.fontSize = 25;
         }
+
+        private static String GetCategoryIndex(Int32 modelNum)
+        {
+            List<int> categoriesThresholds = new List<int>(geoArchetype);
+            categoriesThresholds.Sort();
+            int categoryNum = -1;
+            foreach (int threshold in categoriesThresholds)
+            {
+                if (!(threshold > modelNum))
+                    categoryNum++;
+            }
+            if (!(categoryNum >= categoryNames.Count))
+                return categoryNames[categoryNum];
+            else
+                return $"{categoryNum}";
+        }
+
+        private static String GetNumberInCategory(Int32 modelNum)
+        {
+            List<int> categoriesThresholds = new List<int>(geoArchetype);
+            categoriesThresholds.Add(geoList.Count);
+            categoriesThresholds.Sort();
+            int categoryNum = -1;
+            foreach (int threshold in categoriesThresholds)
+            {
+                if (!(threshold > modelNum))
+                    categoryNum++;
+            }
+            /*if (!(categoryNum >= categoryNames.Count))
+                return categoryNames[categoryNum];
+            else
+                return $"{categoryNum}";*/
+            //int aboveLimit = (categoryNum+1 > categoriesThresholds.Count) ? geoList.Count : categoriesThresholds[categoryNum + 1];
+            return $"{modelNum + 1 - categoriesThresholds[categoryNum]}/{categoriesThresholds[categoryNum + 1] - categoriesThresholds[categoryNum]}";
+        }
+
+        private static List<string> categoryNames = new List<string>
+        {
+            "Field objects",
+            "Main actors",
+            "Monsters",
+            "NPC",
+            "Secondary actors",
+            "Weapons",
+            "Battle maps",
+            "SPS 1",
+            "SPS 2",
+            "SPS 3",
+            "SPS 4",
+            "SPS 5",
+            "SPS 6",
+            "SPS 7",
+            "SPS 8",
+            "SPS 9",
+            "SPS 10",
+            "SPS 11",
+        };
+
+        private static readonly Dictionary<String, String> ControlsKeys = new Dictionary<String, String>
+        {
+            {"N", "Show infos"},
+            {"B", "Show model bones"},
+            {"Left clic", "Angle"},
+            {"Right clic", "Position"},
+            {"Mouse wheel", "Zoom"},
+            {"E", "Export animation"},
+            {"1/2", "Normal/battle anim speed"},
+            {"Space", "replay animation"},
+        };
 
         private static Camera GetCamera()
         {
@@ -735,7 +858,7 @@ namespace Memoria.Assets
             else
             {
                 currentAnimIndex = 0;
-                currentAnimName = $"Frame {(spsEffect.curFrame >> 4) + 1}/{spsEffect.frameCount >> 4}";
+                currentAnimName = $"Frame: {(spsEffect.curFrame >> 4) + 1}/{spsEffect.frameCount >> 4}";
                 currentModelBones = null;
             }
             isLoadingModel = false;
@@ -791,7 +914,7 @@ namespace Memoria.Assets
             if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
             {
                 spsEffect.curFrame = index << 4;
-                currentAnimName = $"Frame {index + 1}/{count}";
+                currentAnimName = $"Frame: {index + 1}/{count}";
             }
             else
             {
