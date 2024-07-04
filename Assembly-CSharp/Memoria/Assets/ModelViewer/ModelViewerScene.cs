@@ -19,6 +19,7 @@ namespace Memoria.Assets
         private static Boolean displayBoneConnections = false;
         private static Boolean displayBoneNames = false;
         private static Boolean displayUI = true;
+        private static Boolean toggleAnim = true;
         private static Boolean displayCurrentModel = true;
         private static List<ModelObject> geoList;
         private static List<ModelObject> weapongeoList;
@@ -38,6 +39,7 @@ namespace Memoria.Assets
         private static Single speedFactor;
         private static String savedAnimationPath;
 
+        private static Int32 inputDelay;
         private static Boolean isLoadingModel;
         private static Boolean isLoadingWeaponModel;
         private static Int32 replaceOnce = 0;
@@ -332,16 +334,15 @@ namespace Memoria.Assets
                         FF9Sfx.FF9SFX_Play(102);
                     }
                 }
+                if (inputDelay > 0) inputDelay--;
                 if (Input.GetKey(KeyCode.Space))
                 {
-                    if (geoList[currentGeoIndex].Kind < MODEL_KIND_SPS && animList.Count > 0 && !String.IsNullOrEmpty(currentAnimName))
+                    if (geoList[currentGeoIndex].Kind < MODEL_KIND_SPS && animList.Count > 0) // && !String.IsNullOrEmpty(currentAnimName))
                     {
-                        Animation anim = currentModel.GetComponent<Animation>();
-                        if (anim != null && !anim.IsPlaying(currentAnimName))
+                        if (inputDelay < 1)
                         {
-                            anim.Play(currentAnimName);
-                            if (anim[currentAnimName] != null)
-                                anim[currentAnimName].speed = speedFactor;
+                            toggleAnim = !toggleAnim;
+                            inputDelay = 6;
                         }
                     }
                     else if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
@@ -352,8 +353,6 @@ namespace Memoria.Assets
                 if (Input.GetKey(KeyCode.M))
                 {
                     infoPanel.BasePanel.transform.localPosition = infoPanel.BasePanel.transform.localPosition + new Vector3(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? -5 : 5, 0, 0);
-                    controlPanel.BasePanel.transform.localPosition = controlPanel.BasePanel.transform.localPosition + new Vector3(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? -5 : 5, 0, 0);
-                    Log.Message("" + controlPanel.BasePanel.transform.localPosition.x);
                 }
                 GameObject targetModel = ControlWeapon ? currentWeaponModel : currentModel;
                 if (Input.GetKey(KeyCode.Keypad6))
@@ -493,6 +492,7 @@ namespace Memoria.Assets
                         FF9Sfx.FF9SFX_Play(102);
                     }
                 }
+                Animation animation = currentModel.GetComponent<Animation>();
                 if (Input.GetKeyDown(KeyCode.S))
                 {
                     if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS) // SPS: control shader
@@ -509,6 +509,7 @@ namespace Memoria.Assets
                             speedFactor = 0.1f; 
                         else if (speedFactor == 0.1f)
                             speedFactor = 1f;
+                        //animation.Stop();
                     }
                 }
                 if (Input.GetKeyDown(KeyCode.W))
@@ -516,6 +517,18 @@ namespace Memoria.Assets
                     Camera camera = GetCamera();
                     camera.backgroundColor = camera.backgroundColor == Color.grey ? Color.black : Color.grey;
                 }
+                // make animation a loop
+                if (animation != null && !animation.IsPlaying(currentAnimName) && toggleAnim)
+                {
+                    animation.Play(currentAnimName);
+                    if (animation[currentAnimName] != null)
+                        animation[currentAnimName].speed = speedFactor;
+                }
+                else if (animation != null && animation.IsPlaying(currentAnimName) && (!toggleAnim || Input.GetKeyDown(KeyCode.S)))
+                {
+                    animation.Stop();
+                }
+
                 UpdateRender();
                 mousePreviousPosition = Input.mousePosition;
             }
@@ -613,14 +626,14 @@ namespace Memoria.Assets
                 {
                     label += $"[FFFF00][↓↑][FFFFFF] {currentAnimName}";
                     label += "\n";
-                    label += $"[FFFF00][S][FFFFFF] Shader: {spsEffect.materials[Math.Min((Int32)spsEffect.abr, 4)].shader.name} | [FFFF00][^↓↑][FFFFFF] Fade: {spsEffect.fade}";
+                    label += $"[FFFF00][S][FFFFFF] Shader: {spsEffect.materials[Math.Min((Int32)spsEffect.abr, 4)].shader.name} [FFFF00][^↓↑][FFFFFF] Fade: {spsEffect.fade}";
                     label += "\n";
                 }
                 else if (animList.Count > 0)
                 {
                     label += $"[FFFF00][↓↑][FFFFFF] Anim {currentAnimIndex + 1}/{animList.Count}: {currentAnimName} ({animList[currentAnimIndex].Key})";
                     label += "\n";
-                    label += $"[FFFF00][S][FFFFFF] Speed: {speedFactor}";
+                    label += $"[FFFF00][␣][FFFFFF] {((toggleAnim) ? "[00FF00]▶" : "[FF0000]ıı")} [FFFF00][S][FFFFFF] Speed: {speedFactor}";
                     label += "\n";
                 }
                 else
@@ -716,7 +729,6 @@ namespace Memoria.Assets
             {"◗↕", "Zoom"},
             {"Ctrl", "Fast browse"},
             {"E", "Export anim"},
-            {"␣", "Replay anim"},
         };
 
         private static Camera GetCamera()
