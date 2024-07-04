@@ -982,12 +982,23 @@ public partial class EventEngine
                 if (eventCodeBinary == EBin.event_code_binary.DDIR)
                     po = (PosObj)this.GetObj1(); //arg1: object to turn
                 Int32 angle = this.getv1(); // arg1/2: angle: 0 south, 64 west, 128 north, 192 east.
+
                 if (po == null || (UnityEngine.Object)po.go == (UnityEngine.Object)null)
                     return 0;
+
                 if (this.gMode == 1)
                 {
                     if (mapNo == 504 && (Int32)po.sid == 15 && (this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 4 && angle == 240))
                         angle = 128;
+
+                    if (mapNo == 103 && angle == 228 && po.model == 224 && actor.uid == 9) // Jump rope from little girls at Alexandria (before Alexandria destruction)
+                    {
+                        angle = 229;
+                    }
+                    if (mapNo == 2456 && angle == 0 && po.model == 224 && actor.uid == 6) // Jump rope from little girls at Alexandria (after Alexandria destruction)
+                    {
+                        angle = 1;
+                    }
                     Vector3 eulerAngles2 = po.go.transform.localRotation.eulerAngles;
                     eulerAngles2.y = EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)(angle << 4));
                     po.rotAngle[1] = eulerAngles2.y;
@@ -1093,6 +1104,29 @@ public partial class EventEngine
                 if (eventCodeBinary == EBin.event_code_binary.DANIM)
                     actor = (Actor)this.GetObj1(); // arg1: object's entry
                 Int32 anim = this.getv2(); // arg1/2: animation ID
+
+                if (mapNo == 103 && po.model == 5492) // Jump rope from little girls at Alexandria (before Alexandria destruction)
+                {
+                    if (anim == 973 && actor.uid == 6)
+                    {
+                        anim = 975;
+                    }
+                    else if (anim == 975 && actor.uid == 7)
+                    {
+                        anim = 973;
+                    }
+                }
+                if (mapNo == 2456 && po.model == 5492) // Jump rope from little girls at Alexandria (after Alexandria destruction)
+                {
+                    if (anim == 973 && actor.uid == 3)
+                    {
+                        anim = 975;
+                    }
+                    else if (anim == 975 && actor.uid == 4)
+                    {
+                        anim = 973;
+                    }
+                }
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue(anim));
                 if (this.gMode == 1)
                 {
@@ -2068,6 +2102,10 @@ public partial class EventEngine
                         destX = -3145;
                         destZ = -2035;
                         destY = 1274;
+                    }
+                    if (mapNo == 2456 && actor.uid == 6) // Sligthy resize the rope in Alexandria/Steeple (CD3 & CD4)
+                    {
+                        geo.geoScaleSetXYZ(po.go, 66 << 24 >> 18, 66 << 24 >> 18, 66 << 24 >> 18);
                     }
                 }
                 this.SetActorPosition(po, (Single)destX, (Single)destZ, (Single)destY);
