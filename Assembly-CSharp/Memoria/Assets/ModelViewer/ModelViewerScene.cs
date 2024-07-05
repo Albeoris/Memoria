@@ -62,14 +62,10 @@ namespace Memoria.Assets
             Camera camera = GetCamera();
             if (camera == null)
                 return;
-            camera.orthographic = false;
-            camera.fieldOfView = 60f;
-            camera.nearClipPlane = 0.1f;
-            camera.farClipPlane = 10000f;
             isLoadingModel = false;
             isLoadingWeaponModel = false;
             currentWeaponBoneIndex = 0;
-            scaleFactor = new Vector3(0.3f, 0.3f, 0.3f);
+            scaleFactor = new Vector3(0.2f, 0.2f, 0.2f);
             geoList = new List<ModelObject>();
             weapongeoList = new List<ModelObject>();
             geoArchetype = new HashSet<Int32>();
@@ -234,6 +230,7 @@ namespace Memoria.Assets
                 if (shift && Input.GetKeyDown(KeyCode.B))
                 {
                     displayBoneConnections = !displayBoneConnections;
+                    Log.Message(" displayBoneConnection s " + displayBoneConnections);
                 }
                 else if (Input.GetKeyDown(KeyCode.B))
                 {
@@ -559,7 +556,7 @@ namespace Memoria.Assets
                         while (boneDialogCount >= boneDialogs.Count)
                         {
                             boneDialogs.Add(Singleton<DialogManager>.Instance.AttachDialog($"[IMME][NFOC][b]{bone.Id}[/b][ENDN]", 10, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, bone.Position, Dialog.CaptionType.None));
-                            Vector3 BonePos = -bone.Position * 5f;
+                            Vector3 BonePos = -bone.Position * 1f;
                             string ID = $"[IMME][NFOC][b]{bone.Id}[/b]";
                             for (Int32 i = 0; i < (boneDialogs.Count - 1); i++)
                             {
@@ -575,7 +572,7 @@ namespace Memoria.Assets
                                 }
                             }
                         }
-                        boneDialogs[boneDialogCount].transform.localPosition = -bone.Position * 5f;
+                        boneDialogs[boneDialogCount].transform.localPosition = -bone.Position * 1f;
                         boneDialogs[boneDialogCount].transform.localScale = scaleFactor;
                         boneDialogCount++;
                     }
@@ -591,6 +588,7 @@ namespace Memoria.Assets
                     {
                         while (boneConnectionCount >= boneConnectModels.Count)
                             boneConnectModels.Add(CreateModelForBoneConnection());
+                        //Log.Message("Test " + boneConnectModels.Count);
                         MoveBoneConnection(boneConnectModels[boneConnectionCount], bone.Parent.Position, bone.Position);
                         boneConnectionCount++;
                     }
@@ -666,6 +664,7 @@ namespace Memoria.Assets
             controlPanel.BasePanel.transform.localPosition = new Vector3(1000, 0, 0);
             controlPanel.Show = true;
             controlLabel.fontSize = 25;
+            //Log.Message("boneConnectModels.Count " + boneConnectModels.Count);
         }
 
         /// <summary>Returns "model#/maxmodel#" from a category, or the category name if "categoryName" is true </summary>
@@ -725,7 +724,23 @@ namespace Memoria.Assets
 
         private static Camera GetCamera()
         {
-            return GameObject.Find("FieldMap Camera")?.GetComponent<Camera>();
+            Camera camera = GameObject.Find("FieldMap Camera")?.GetComponent<Camera>();
+            if (camera != null)
+            {
+                if (displayBones)
+                {
+                    camera.orthographic = true;
+                    camera.orthographicSize = 600f;
+                }
+                else
+                {
+                    camera.orthographic = false;
+                    camera.fieldOfView = 60f;
+                    camera.nearClipPlane = 0.1f;
+                    camera.farClipPlane = 10000f;
+                }
+            }
+            return camera;
         }
 
         private static List<KeyValuePair<Int32, String>> GetAnimationsOfModel(ModelObject model)
