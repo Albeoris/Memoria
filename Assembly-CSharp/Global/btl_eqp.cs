@@ -77,9 +77,7 @@ public static class btl_eqp
                 }
                 else if (btl.gameObject == btl.tranceGo && btl.bi.player != 0)
                 {
-                    CharacterSerialNumber serial = btl_util.getSerialNumber(btl);
-                    if (btl_mot.BattleParameterList[serial].ModelId == btl_mot.BattleParameterList[serial].TranceModelId)
-                        builtInBone = btl.tranceGo.transform.GetChildByName($"bone{weaponBoneID:D3}");
+                    builtInBone = btl.tranceGo.transform.GetChildByName($"bone{weaponBoneID:D3}");
                 }
                 if (builtInBone != null)
                     builtInBone.localScale = SCALE_INVISIBLE;
