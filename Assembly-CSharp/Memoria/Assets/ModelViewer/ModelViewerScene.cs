@@ -190,15 +190,20 @@ namespace Memoria.Assets
                 }
                 Boolean mouseLeftWasPressed = mouseLeftPressed;
                 Boolean mouseRightWasPressed = mouseRightPressed;
+                Boolean downUpProcessed = false;
                 mouseLeftPressed = false;
                 mouseRightPressed = false;
+                Boolean ctrl = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+                Boolean shift = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
+                Boolean altgr = Input.GetKey(KeyCode.AltGr);
+
                 if (Input.GetKeyDown(KeyCode.RightArrow))
                 {
                     Int32 nextIndex = currentGeoIndex + 1;
-                    if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                    if (shift)
                         while (!geoArchetype.Contains(nextIndex) && nextIndex != geoList.Count)
                             nextIndex++;
-                    else if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                    else if (ctrl)
                         nextIndex = currentGeoIndex + 10;
                     if (nextIndex == geoList.Count)
                         nextIndex -= geoList.Count;
@@ -214,10 +219,10 @@ namespace Memoria.Assets
                     Int32 prevIndex = currentGeoIndex - 1;
                     if (prevIndex < 0)
                         prevIndex += geoList.Count;
-                    if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                    if (shift)
                         while (!geoArchetype.Contains(prevIndex))
                             prevIndex--;
-                    else if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                    else if (ctrl)
                         prevIndex = currentGeoIndex - 10;
                     if (geoList[prevIndex].Id == 276 || geoList[prevIndex].Id == 393 || geoList[prevIndex].Id == 394) // models with no texture bugged
                         ChangeModel(prevIndex - 1);
@@ -226,7 +231,7 @@ namespace Memoria.Assets
                     while (currentModel == null)
                         ChangeModel(--prevIndex);
                 }
-                if (Input.GetKeyDown(KeyCode.B) && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+                if (shift && Input.GetKeyDown(KeyCode.B))
                 {
                     displayBoneConnections = !displayBoneConnections;
                 }
@@ -236,7 +241,9 @@ namespace Memoria.Assets
                     displayBoneNames = !displayBoneNames;
                 }
                 if (Input.GetKeyDown(KeyCode.I))
+                {
                     displayUI = !displayUI;
+                }
                 if (Input.GetKeyDown(KeyCode.H)) // TODO - Replace it by changing the color instead, to hide the model
                 {
                     displayCurrentModel = !displayCurrentModel;
@@ -249,71 +256,88 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
                 {
-                    if (Input.GetKey(KeyCode.AltGr))
+                    if (altgr)
                     {
                         ControlWeapon = !ControlWeapon;
                     }
-                    else if (Input.GetKey(KeyCode.LeftShift))
+                    else if (shift)
                     {
-                        currentWeaponBoneIndex--;
+                        currentWeaponBoneIndex += Input.GetKey(KeyCode.LeftShift) ? -1 : 1;
                         if (currentWeaponBoneIndex < 0)
                             currentWeaponBoneIndex = currentBonesID.Count - 1;
-                        if (currentWeaponModel != null && currentModel != null)
-                        {
-                            WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentWeaponBoneIndex]);
-                        }
-                    }
-                    else if (Input.GetKey(KeyCode.RightShift))
-                    {
-                        currentWeaponBoneIndex++;
-                        if (currentWeaponBoneIndex > currentBonesID.Count)
+                        else if (currentWeaponBoneIndex > currentBonesID.Count)
                             currentWeaponBoneIndex = 0;
                         if (currentWeaponModel != null && currentModel != null)
-                        {
                             WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentWeaponBoneIndex]);
-                        }
+
                     }
-                    else if (Input.GetKey(KeyCode.LeftControl))
+                    else if (ctrl)
                     {
-                        Int32 prevIndex = currentWeaponGeoIndex - 1;
-                        if (prevIndex < 0)
-                            prevIndex = (weapongeoList.Count - 1);
-                        ChangeWeaponModel(prevIndex);
-                    }
-                    else if (Input.GetKey(KeyCode.RightControl))
-                    {
-                        Int32 nextIndex = currentWeaponGeoIndex + 1;
-                        if (nextIndex > weapongeoList.Count)
+                        Int32 nextIndex = currentWeaponGeoIndex;
+                        nextIndex += Input.GetKey(KeyCode.LeftControl) ? -1 : 1;
+                        if (nextIndex < 0)
+                            nextIndex = (weapongeoList.Count - 1);
+                        else if (nextIndex > weapongeoList.Count)
                             nextIndex = 0;
                         ChangeWeaponModel(nextIndex);
                     }
                     else
+                    {
                         ChangeWeaponModel(currentWeaponGeoIndex);
+                    }
                 }
                 if (currentModel == null)
                     return;
-                Boolean downUpProcessed = false;
-                if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS && (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)))
+                if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS) // SPS SPECIFIC
                 {
-                    if (Input.GetKey(KeyCode.UpArrow))
+                    if (shift && Input.GetKey(KeyCode.UpArrow)) // Fade ++
                     {
                         spsEffect.fade++;
                         if (spsEffect.fade > 255)
                             spsEffect.fade = 255;
                         downUpProcessed = true;
                     }
-                    else if (Input.GetKey(KeyCode.DownArrow))
+                    else if (shift && Input.GetKey(KeyCode.DownArrow)) // Fade --
                     {
                         spsEffect.fade--;
                         if (spsEffect.fade < 0)
                             spsEffect.fade = 0;
                         downUpProcessed = true;
                     }
+                    if (Input.GetKey(KeyCode.Space)) // Next frame
+                    {
+                        ChangeAnimation(currentAnimIndex + 1);
+                    }
+                    if (Input.GetKeyDown(KeyCode.S)) // Next shader
+                    {
+                        spsEffect.abr++;
+                        if (spsEffect.abr >= spsEffect.materials.Length)
+                            spsEffect.abr = 0;
+                    }
                 }
-                if (!downUpProcessed && Input.GetKeyDown(KeyCode.UpArrow))
-                    ChangeAnimation(currentAnimIndex + (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) ? 5 : 1));
-                else if (!downUpProcessed && Input.GetKeyDown(KeyCode.DownArrow))
-                    ChangeAnimation(currentAnimIndex - (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl) ? 5 : 1));
+                else if (geoList[currentGeoIndex].Kind < MODEL_KIND_SPS && animList.Count > 0) // Anim specific
+                {
+                    if (Input.GetKeyDown(KeyCode.Space)) // play/pause anim
+                    {
+                        toggleAnim = !toggleAnim;
+                    }
+                    if (Input.GetKeyDown(KeyCode.S)) // change anim speed
+                    {
+                        if (speedFactor == 1f)
+                            speedFactor = 0.5f;
+                        else if (speedFactor == 0.5f)
+                            speedFactor = 0.1f;
+                        else if (speedFactor == 0.1f)
+                            speedFactor = 1f;
+                    }
+                }
+                if (!downUpProcessed) // Browse anims
+                {
+                    if (Input.GetKeyDown(KeyCode.UpArrow))
+                        ChangeAnimation(currentAnimIndex + (ctrl ? 5 : 1));
+                    else if (Input.GetKeyDown(KeyCode.DownArrow))
+                        ChangeAnimation(currentAnimIndex - (ctrl ? 5 : 1));
+                }
                 else if (Input.GetKeyDown(KeyCode.L))
                 {
                     Animation anim = currentModel.GetComponent<Animation>();
@@ -338,60 +362,42 @@ namespace Memoria.Assets
                         FF9Sfx.FF9SFX_Play(102);
                     }
                 }
-                if (inputDelay > 0) inputDelay--;
-                if (Input.GetKey(KeyCode.Space))
-                {
-                    if (geoList[currentGeoIndex].Kind < MODEL_KIND_SPS && animList.Count > 0) // && !String.IsNullOrEmpty(currentAnimName))
-                    {
-                        if (inputDelay < 1)
-                        {
-                            toggleAnim = !toggleAnim;
-                            inputDelay = 6;
-                        }
-                    }
-                    else if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
-                    {
-                        ChangeAnimation(currentAnimIndex + 1);
-                    }
-                }
                 if (Input.GetKey(KeyCode.M))
                 {
-                    infoPanel.BasePanel.transform.localPosition = infoPanel.BasePanel.transform.localPosition + new Vector3(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift) ? -5 : 5, 0, 0);
+                    infoPanel.BasePanel.transform.localPosition = infoPanel.BasePanel.transform.localPosition + new Vector3(shift ? -5 : 5, 0, 0);
                 }
                 GameObject targetModel = ControlWeapon ? currentWeaponModel : currentModel;
-                if (Input.GetKey(KeyCode.Keypad6))
-                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
-                        targetModel.transform.localRotation *= Quaternion.Euler(0f, 1f, 0f);
-                    else
-                        targetModel.transform.localPosition += 0.5f * Vector3.left;
-                if (Input.GetKey(KeyCode.Keypad4))
-                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
-                        targetModel.transform.localRotation *= Quaternion.Euler(0f, -1f, 0f);
-
-                    else
-                        targetModel.transform.localPosition += 0.5f * Vector3.right;
-                if (Input.GetKey(KeyCode.Keypad8))
-                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
-                        targetModel.transform.localRotation *= Quaternion.Euler(-1f, 0f, 0f);
-                    else
-                        targetModel.transform.localPosition += 0.5f * Vector3.down;
-
-                if (Input.GetKey(KeyCode.Keypad2))
-                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
-                        targetModel.transform.localRotation *= Quaternion.Euler(1f, 0f, 0f);
-                    else
-                        targetModel.transform.localPosition += 0.5f * Vector3.up;
-
-                if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
-                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
-                        targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, 1f);
-                    else
-                        targetModel.transform.localPosition += 0.5f * Vector3.back;
-                if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
-                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
-                        targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, -1f);
-                    else
-                        targetModel.transform.localPosition += 0.5f * Vector3.forward;
+                if (ctrl)
+                {
+                    if (Input.GetKey(KeyCode.Keypad6))
+                            targetModel.transform.localRotation *= Quaternion.Euler(0f, 1f, 0f);
+                    if (Input.GetKey(KeyCode.Keypad4))
+                            targetModel.transform.localRotation *= Quaternion.Euler(0f, -1f, 0f);
+                    if (Input.GetKey(KeyCode.Keypad8))
+                            targetModel.transform.localRotation *= Quaternion.Euler(-1f, 0f, 0f);
+                    if (Input.GetKey(KeyCode.Keypad2))
+                            targetModel.transform.localRotation *= Quaternion.Euler(1f, 0f, 0f);
+                    if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
+                            targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, 1f);
+                    if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
+                            targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, -1f);
+                }
+                else
+                {
+                    Single moveSpeed = 0.5f;
+                    if (Input.GetKey(KeyCode.Keypad6))
+                            targetModel.transform.localPosition += moveSpeed * Vector3.left;
+                    if (Input.GetKey(KeyCode.Keypad4))
+                            targetModel.transform.localPosition += moveSpeed * Vector3.right;
+                    if (Input.GetKey(KeyCode.Keypad8))
+                            targetModel.transform.localPosition += moveSpeed * Vector3.down;
+                    if (Input.GetKey(KeyCode.Keypad2))
+                            targetModel.transform.localPosition += moveSpeed * Vector3.up;
+                    if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
+                            targetModel.transform.localPosition += moveSpeed * Vector3.back;
+                    if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
+                            targetModel.transform.localPosition += moveSpeed * Vector3.forward;
+                }
                 if (Input.GetKey(KeyCode.Keypad5) && !DontSpamMessage)
                 {
                     Log.Message("[MODEL]" + geoList[currentWeaponGeoIndex].Name + "(currentpos) = " + targetModel.transform.localPosition.ToString("F9") + "");
@@ -402,10 +408,11 @@ namespace Memoria.Assets
                     DontSpamMessage = false;
                 if (Input.mouseScrollDelta.y != 0f) // Scroll wheel on mouse (zoom in/out)
                 {
+                    Single scrollSpeed = 0.1f;
                     if (Input.mouseScrollDelta.y > 0f)
-                        scaleFactor *= 1f + 0.05f * Input.mouseScrollDelta.y;
+                        scaleFactor *= 1f + scrollSpeed * Input.mouseScrollDelta.y;
                     else
-                        scaleFactor /= 1f - 0.05f * Input.mouseScrollDelta.y;
+                        scaleFactor /= 1f - scrollSpeed * Input.mouseScrollDelta.y;
                     currentModel.transform.localScale = scaleFactor;
                 }
                 if (Input.GetMouseButton(0) && geoList[currentGeoIndex].Kind < MODEL_KIND_SPS) // Left Click
@@ -447,7 +454,7 @@ namespace Memoria.Assets
                     if (animList.Count > 0)
                     {
                         List<String> exportedAnims;
-                        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+                        if (shift)
                             exportedAnims = animList.Select(a => a.Value).ToList();
                         else
                             exportedAnims = new List<String>() { animList[currentAnimIndex].Value };
@@ -497,24 +504,6 @@ namespace Memoria.Assets
                     }
                 }
                 Animation animation = currentModel.GetComponent<Animation>();
-                if (Input.GetKeyDown(KeyCode.S))
-                {
-                    if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS) // SPS: control shader
-                    {
-                        spsEffect.abr++;
-                        if (spsEffect.abr >= spsEffect.materials.Length)
-                            spsEffect.abr = 0;
-                    }
-                    else if (animList.Count > 0) // anim model: control animation speed
-                    {
-                        if (speedFactor == 1f)
-                            speedFactor = 0.5f; 
-                        else if (speedFactor == 0.5f)
-                            speedFactor = 0.1f; 
-                        else if (speedFactor == 0.1f)
-                            speedFactor = 1f;
-                    }
-                }
                 if (Input.GetKeyDown(KeyCode.W))
                 {
                     Camera camera = GetCamera();
@@ -627,7 +616,7 @@ namespace Memoria.Assets
                 label += "\n";
                 if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                 {
-                    label += $"[FFFF00][↓↑][FFFFFF] {currentAnimName}";
+                    label += $"[FFFF00][␣][FFFFFF] {currentAnimName}";
                     label += "\n";
                     label += $"[FFFF00][S][FFFFFF] Shader: {spsEffect.materials[Math.Min((Int32)spsEffect.abr, 4)].shader.name} [FFFF00][^↓↑][FFFFFF] Fade: {spsEffect.fade}";
                     label += "\n";
