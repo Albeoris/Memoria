@@ -755,6 +755,7 @@ namespace Memoria.Assets
 
         private static void ChangeModel(Int32 index)
         {
+            currentAnimIndex = 0;
             isLoadingModel = true;
             if (currentModel != null && geoList[currentGeoIndex].Kind != MODEL_KIND_SPS)
                 UnityEngine.Object.Destroy(currentModel);
