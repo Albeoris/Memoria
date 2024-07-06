@@ -21,6 +21,7 @@ namespace Memoria.Assets
         private static Boolean displayUI = true;
         private static Boolean toggleAnim = true;
         private static Boolean displayCurrentModel = true;
+        private static Boolean orthoView = false;
         private static List<ModelObject> geoList;
         private static List<ModelObject> weapongeoList;
         private static List<KeyValuePair<Int32, String>> animList;
@@ -230,7 +231,6 @@ namespace Memoria.Assets
                 if (shift && Input.GetKeyDown(KeyCode.B))
                 {
                     displayBoneConnections = !displayBoneConnections;
-                    Log.Message(" displayBoneConnection s " + displayBoneConnections);
                 }
                 else if (Input.GetKeyDown(KeyCode.B))
                 {
@@ -240,6 +240,10 @@ namespace Memoria.Assets
                 if (Input.GetKeyDown(KeyCode.I))
                 {
                     displayUI = !displayUI;
+                }
+                if (Input.GetKeyDown(KeyCode.O))
+                {
+                    orthoView = !orthoView;
                 }
                 if (Input.GetKeyDown(KeyCode.H)) // TODO - Replace it by changing the color instead, to hide the model
                 {
@@ -607,7 +611,7 @@ namespace Memoria.Assets
                 boneDialogs.RemoveRange(boneDialogCount, boneDialogs.Count - boneDialogCount);
             if (displayUI)
             {
-                String label = $"[FFFF00][^↔][FFFFFF] {GetCategoryEnumeration(currentGeoIndex, true)}";
+                String label = $"[FFFF00][^↔][E5E5FF] {GetCategoryEnumeration(currentGeoIndex, true)}[FFFFFF]"; //[222222]{GetCategoryEnumeration(currentGeoIndex, true, -1)} [FFFFFF]{GetCategoryEnumeration(currentGeoIndex, true)} [222222]{GetCategoryEnumeration(currentGeoIndex, true, 1)}[FFFFFF]
                 label += "\n";
                 label += $"[FFFF00][↔][FFFFFF] Model {GetCategoryEnumeration(currentGeoIndex)}: {geoList[currentGeoIndex].Name} ({geoList[currentGeoIndex].Id})";
                 label += "\n";
@@ -667,7 +671,7 @@ namespace Memoria.Assets
         }
 
         /// <summary>Returns "model#/maxmodel#" from a category, or the category name if "categoryName" is true </summary>
-        private static String GetCategoryEnumeration(Int32 modelNum, Boolean categoryName = false)
+        private static String GetCategoryEnumeration(Int32 modelNum, Boolean categoryName = false, Int32 offset = 0)
         {
             List<int> categoriesThresholds = new List<int>(geoArchetype);
             categoriesThresholds.Add(geoList.Count);
@@ -677,6 +681,13 @@ namespace Memoria.Assets
             {
                 if (!(threshold > modelNum))
                     categoryNum++;
+                
+            }
+            if (offset != 0)
+            {
+                categoryNum += offset;
+                if (categoryNum < 0) categoryNum += categoriesThresholds.Count -1;
+                if (categoryNum >= categoriesThresholds.Count -1) categoryNum -= categoriesThresholds.Count -1;
             }
             if (categoryName)
             {
@@ -695,26 +706,27 @@ namespace Memoria.Assets
             "ACTORS (MAIN)",
             "MONSTERS",
             "NPC",
-            "ACTORS (MINOR)",
+            "ACTORS/WM",
             "WEAPONS",
             "BATTLE MAPS",
-            "SPS (p0data11)",
-            "SPS (p0data12)",
-            "SPS (p0data13)",
-            "SPS (p0data14)",
-            "SPS (p0data15)",
-            "SPS (p0data16)",
-            "SPS (p0data17)",
-            "SPS (p0data18)",
-            "SPS (p0data19)",
-            "SPS (WORLDMAP)",
-            "SPS (PROTOTYPES)",
+            "SPS (11)",
+            "SPS (12)",
+            "SPS (13)",
+            "SPS (14)",
+            "SPS (15)",
+            "SPS (16)",
+            "SPS (17)",
+            "SPS (18)",
+            "SPS (19)",
+            "SPS (WM)",
+            "SPS (PROTO)",
         };
 
         private static readonly Dictionary<String, String> ControlsKeys = new Dictionary<String, String>
         {
             {"B", "Show bones"},
             {"^B", "bone lines"},
+            {"O", "Orthographic view"},
             {"◐", "Angle"},
             {"◑", "Position"},
             {"◗↕", "Zoom"},
@@ -727,10 +739,10 @@ namespace Memoria.Assets
             Camera camera = GameObject.Find("FieldMap Camera")?.GetComponent<Camera>();
             if (camera != null)
             {
-                if (displayBones)
+                if (displayBones || orthoView)
                 {
                     camera.orthographic = true;
-                    camera.orthographicSize = 600f;
+                    camera.orthographicSize = 550f;
                 }
                 else
                 {
