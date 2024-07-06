@@ -65,7 +65,7 @@ namespace Memoria.Assets
             isLoadingModel = false;
             isLoadingWeaponModel = false;
             currentWeaponBoneIndex = 0;
-            scaleFactor = new Vector3(0.2f, 0.2f, 0.2f);
+            scaleFactor = new Vector3(0.5f, 0.5f, 0.5f);
             geoList = new List<ModelObject>();
             weapongeoList = new List<ModelObject>();
             geoArchetype = new HashSet<Int32>();
@@ -266,7 +266,6 @@ namespace Memoria.Assets
                             currentWeaponBoneIndex = 0;
                         if (currentWeaponModel != null && currentModel != null)
                             WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentWeaponBoneIndex]);
-
                     }
                     else if (ctrl)
                     {
@@ -608,9 +607,9 @@ namespace Memoria.Assets
                 boneDialogs.RemoveRange(boneDialogCount, boneDialogs.Count - boneDialogCount);
             if (displayUI)
             {
-                String label = $"[FFFF00][^←→][FFFFFF] {GetCategoryEnumeration(currentGeoIndex, true)}";
+                String label = $"[FFFF00][^↔][FFFFFF] {GetCategoryEnumeration(currentGeoIndex, true)}";
                 label += "\n";
-                label += $"[FFFF00][←→][FFFFFF] Model {GetCategoryEnumeration(currentGeoIndex)}: {geoList[currentGeoIndex].Name} ({geoList[currentGeoIndex].Id})";
+                label += $"[FFFF00][↔][FFFFFF] Model {GetCategoryEnumeration(currentGeoIndex)}: {geoList[currentGeoIndex].Name} ({geoList[currentGeoIndex].Id})";
                 label += "\n";
                 if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                 {
@@ -621,7 +620,7 @@ namespace Memoria.Assets
                 }
                 else if (animList.Count > 0)
                 {
-                    label += $"[FFFF00][↓↑][FFFFFF] Anim {currentAnimIndex + 1}/{animList.Count}: {currentAnimName} ({animList[currentAnimIndex].Key})";
+                    label += $"[FFFF00][↕][FFFFFF] Anim {currentAnimIndex + 1}/{animList.Count}: {currentAnimName} ({animList[currentAnimIndex].Key})";
                     label += "\n";
                     label += $"[FFFF00][␣][FFFFFF] {((toggleAnim) ? "[00FF00]▶" : "[FF0000]ıı")} [FFFF00][S][FFFFFF] Speed: {speedFactor}";
                     label += "\n";
@@ -632,12 +631,12 @@ namespace Memoria.Assets
                 }
                 if (currentWeaponModel)
                 {
-                    label += $" Weapon Attach: {weapongeoList[currentWeaponGeoIndex].Name}\n";
-                    label += $" Bone Attach: {currentWeaponBoneIndex}\n";
+                    label += $"[FFFF00][ctrl+P][FFFFFF] Weapon: {weapongeoList[currentWeaponGeoIndex].Name}\n";
+                    label += $"[FFFF00][^P][FFFFFF] Bone: {currentWeaponBoneIndex}\n";
                     if (ControlWeapon)
-                        label += $" Control: [00FF00]Enabled\n";
+                        label += $"[FFFF00][AltGr+P][FFFFFF] Control: [00FF00]Enabled\n";
                     else
-                        label += $" Control: [FF0000]Disabled\n";
+                        label += $"[FFFF00][AltGr+P][FFFFFF] Control: [FF0000]Disabled\n";
                 }
                 else
                     label += "\n\n\n";
@@ -699,15 +698,15 @@ namespace Memoria.Assets
             "ACTORS (MINOR)",
             "WEAPONS",
             "BATTLE MAPS",
-            "SPS (p0data1)",
-            "SPS (p0data2)",
-            "SPS (p0data3)",
-            "SPS (p0data4)",
-            "SPS (p0data5)",
-            "SPS (p0data6)",
-            "SPS (p0data7)",
-            "SPS (p0data8)",
-            "SPS (p0data9)",
+            "SPS (p0data11)",
+            "SPS (p0data12)",
+            "SPS (p0data13)",
+            "SPS (p0data14)",
+            "SPS (p0data15)",
+            "SPS (p0data16)",
+            "SPS (p0data17)",
+            "SPS (p0data18)",
+            "SPS (p0data19)",
             "SPS (WORLDMAP)",
             "SPS (PROTOTYPES)",
         };
@@ -715,6 +714,7 @@ namespace Memoria.Assets
         private static readonly Dictionary<String, String> ControlsKeys = new Dictionary<String, String>
         {
             {"B", "Show bones"},
+            {"^B", "bone lines"},
             {"◐", "Angle"},
             {"◑", "Position"},
             {"◗↕", "Zoom"},
