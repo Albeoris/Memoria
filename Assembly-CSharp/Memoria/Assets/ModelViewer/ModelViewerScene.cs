@@ -88,7 +88,7 @@ namespace Memoria.Assets
             infoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
             infoPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
             controlPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
-            controlLabel = controlPanel.AddSimpleLabel("", NGUIText.Alignment.Right, 11);
+            controlLabel = controlPanel.AddSimpleLabel("", NGUIText.Alignment.Right, 9);
             controlPanel.EndInitialization(UIWidget.Pivot.BottomRight);
             controlPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
             Log.Message("controlPanel.AllPanels.Count " + controlPanel.BasePanel);
@@ -255,37 +255,6 @@ namespace Memoria.Assets
                         renderer.enabled = displayCurrentModel;
                     }
                 }
-                if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
-                {
-                    if (altgr)
-                    {
-                        ControlWeapon = !ControlWeapon;
-                    }
-                    else if (shift)
-                    {
-                        currentWeaponBoneIndex += Input.GetKey(KeyCode.LeftShift) ? -1 : 1;
-                        if (currentWeaponBoneIndex < 0)
-                            currentWeaponBoneIndex = currentBonesID.Count - 1;
-                        else if (currentWeaponBoneIndex > currentBonesID.Count)
-                            currentWeaponBoneIndex = 0;
-                        if (currentWeaponModel != null && currentModel != null)
-                            WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentWeaponBoneIndex]);
-                    }
-                    else if (ctrl)
-                    {
-                        Int32 nextIndex = currentWeaponGeoIndex;
-                        nextIndex += Input.GetKey(KeyCode.LeftControl) ? -1 : 1;
-                        if (nextIndex < 0)
-                            nextIndex = (weapongeoList.Count - 1);
-                        else if (nextIndex > weapongeoList.Count)
-                            nextIndex = 0;
-                        ChangeWeaponModel(nextIndex);
-                    }
-                    else
-                    {
-                        ChangeWeaponModel(currentWeaponGeoIndex);
-                    }
-                }
                 if (currentModel == null)
                     return;
                 if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS) // SPS SPECIFIC
@@ -406,14 +375,57 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyUp(KeyCode.Keypad5))
                     DontSpamMessage = false;
+
+                if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
+                {
+                    if (!currentWeaponModel)
+                    {
+                        ChangeWeaponModel(currentWeaponGeoIndex);
+                        ControlWeapon = false;
+                    }
+                    else if (currentWeaponModel && !ControlWeapon)
+                    {
+                        ControlWeapon = true;
+                    }
+                    else if (currentWeaponModel && ControlWeapon)
+                    {
+                        ChangeWeaponModel(currentWeaponGeoIndex);
+                    }
+                }
                 if (Input.mouseScrollDelta.y != 0f) // Scroll wheel on mouse (zoom in/out)
                 {
-                    Single scrollSpeed = 0.1f;
-                    if (Input.mouseScrollDelta.y > 0f)
-                        scaleFactor *= 1f + scrollSpeed * Input.mouseScrollDelta.y;
+                    if (currentWeaponModel && (shift || ctrl))
+                    {
+                        if (shift)
+                        {
+                            currentWeaponBoneIndex += Input.mouseScrollDelta.y < 0f ? -1 : 1;
+                            if (currentWeaponBoneIndex < 0)
+                                currentWeaponBoneIndex = currentBonesID.Count - 1;
+                            else if (currentWeaponBoneIndex > currentBonesID.Count)
+                                currentWeaponBoneIndex = 0;
+                            if (currentWeaponModel != null && currentModel != null)
+                                WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentWeaponBoneIndex]);
+                        }
+                        else if (ctrl)
+                        {
+                            Int32 nextIndex = currentWeaponGeoIndex;
+                            nextIndex += Input.mouseScrollDelta.y < 0f ? -1 : 1;
+                            if (nextIndex < 0)
+                                nextIndex = (weapongeoList.Count - 1);
+                            else if (nextIndex > weapongeoList.Count)
+                                nextIndex = 0;
+                            ChangeWeaponModel(nextIndex);
+                        }
+                    }
                     else
-                        scaleFactor /= 1f - scrollSpeed * Input.mouseScrollDelta.y;
-                    currentModel.transform.localScale = scaleFactor;
+                    {
+                        Single scrollSpeed = 0.1f; // was 0.05 before
+                        if (Input.mouseScrollDelta.y > 0f)
+                            scaleFactor *= 1f + scrollSpeed * Input.mouseScrollDelta.y;
+                        else
+                            scaleFactor /= 1f - scrollSpeed * Input.mouseScrollDelta.y;
+                        currentModel.transform.localScale = scaleFactor;
+                    }
                 }
                 if (Input.GetMouseButton(0) && geoList[currentGeoIndex].Kind < MODEL_KIND_SPS) // Left Click
                 {
@@ -611,7 +623,7 @@ namespace Memoria.Assets
                 boneDialogs.RemoveRange(boneDialogCount, boneDialogs.Count - boneDialogCount);
             if (displayUI)
             {
-                String label = $"[FFFF00][^↔][E5E5FF] {GetCategoryEnumeration(currentGeoIndex, true)}[FFFFFF]"; //[222222]{GetCategoryEnumeration(currentGeoIndex, true, -1)} [FFFFFF]{GetCategoryEnumeration(currentGeoIndex, true)} [222222]{GetCategoryEnumeration(currentGeoIndex, true, 1)}[FFFFFF]
+                String label = $"[FFFF00][⇧↔][E5E5FF] {GetCategoryEnumeration(currentGeoIndex, true)}[FFFFFF]"; //[222222]{GetCategoryEnumeration(currentGeoIndex, true, -1)} [FFFFFF]{GetCategoryEnumeration(currentGeoIndex, true)} [222222]{GetCategoryEnumeration(currentGeoIndex, true, 1)}[FFFFFF]
                 label += "\n";
                 label += $"[FFFF00][↔][FFFFFF] Model {GetCategoryEnumeration(currentGeoIndex)}: {geoList[currentGeoIndex].Name} ({geoList[currentGeoIndex].Id})";
                 label += "\n";
@@ -624,9 +636,9 @@ namespace Memoria.Assets
                 }
                 else if (animList.Count > 0)
                 {
-                    label += $"[FFFF00][↕][FFFFFF] Anim {currentAnimIndex + 1}/{animList.Count}: {currentAnimName} ({animList[currentAnimIndex].Key})";
+                    label += $"[FFFF00][↕][FFFFFF] Anim {currentAnimIndex + 1}/{animList.Count} [FFFF00][S][FFFFFF] Speed: {speedFactor} [FFFF00][␣][FFFFFF] {((toggleAnim) ? "[00FF00]▶" : "[FF0000]ıı")}";
                     label += "\n";
-                    label += $"[FFFF00][␣][FFFFFF] {((toggleAnim) ? "[00FF00]▶" : "[FF0000]ıı")} [FFFF00][S][FFFFFF] Speed: {speedFactor}";
+                    label += $"[CCCCCC]  - Anim name: {currentAnimName} ({animList[currentAnimIndex].Key})[FFFFFF]";
                     label += "\n";
                 }
                 else
@@ -635,12 +647,12 @@ namespace Memoria.Assets
                 }
                 if (currentWeaponModel)
                 {
-                    label += $"[FFFF00][ctrl+P][FFFFFF] Weapon: {weapongeoList[currentWeaponGeoIndex].Name}\n";
-                    label += $"[FFFF00][^P][FFFFFF] Bone: {currentWeaponBoneIndex}\n";
-                    if (ControlWeapon)
-                        label += $"[FFFF00][AltGr+P][FFFFFF] Control: [00FF00]Enabled\n";
+                    label += $"[FFFF00][^Scroll][FFFFFF] Weapon: {weapongeoList[currentWeaponGeoIndex].Name}\n";
+                    label += $"[FFFF00][⇧Scroll][FFFFFF] Bone: {currentWeaponBoneIndex}\n";
+                    if (!ControlWeapon)
+                        label += $"[FFFF00][P][FFFFFF] Aiming: Model\n";
                     else
-                        label += $"[FFFF00][AltGr+P][FFFFFF] Control: [FF0000]Disabled\n";
+                        label += $"[FFFF00][P][FFFFFF] Aiming: [00FF00]Weapon\n";
                 }
                 else
                     label += "\n\n\n";
@@ -725,12 +737,13 @@ namespace Memoria.Assets
         private static readonly Dictionary<String, String> ControlsKeys = new Dictionary<String, String>
         {
             {"B", "Show bones"},
-            {"^B", "bone lines"},
+            {"⇧B", "Bone lines"},
+            {"P", "Attach weapon"},
             {"O", "Orthographic view"},
             {"◐", "Angle"},
             {"◑", "Position"},
-            {"◗↕", "Zoom"},
-            {"Ctrl", "Fast browse"},
+            {"Scroll", "Zoom"},
+            {"^✥", "Fast browse"},
             {"E", "Export anim"},
         };
 
