@@ -1,29 +1,30 @@
-﻿using System;
-using System.IO;
-using System.IO.Compression;
-using System.Runtime.InteropServices;
+﻿using Ini;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Reflection;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
-using Ini;
-using ListView = System.Windows.Controls.ListView;
+using static System.Windows.Forms.DataFormats;
+using Application = System.Windows.Application;
+using Color = System.Drawing.Color;
 using GridView = System.Windows.Controls.GridView;
 using GridViewColumnHeader = System.Windows.Controls.GridViewColumnHeader;
+using ListView = System.Windows.Controls.ListView;
 using MessageBox = System.Windows.Forms.MessageBox;
-using Application = System.Windows.Application;
 using Point = System.Drawing.Point;
-using Color = System.Drawing.Color;
 
 namespace Memoria.Launcher
 {
@@ -210,12 +211,35 @@ namespace Memoria.Launcher
             {
                 if (downloadList.Contains(mod) || String.IsNullOrEmpty(mod.DownloadUrl))
                     return;
+                if (!String.IsNullOrEmpty(mod.MinimumMemoriaVersion))
+                {
+                    String memoriaVersion = ((MainWindow)this.Owner).MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
+                    DateTime tempDate;
+                    Boolean isDate1Valid = DateTime.TryParseExact(memoriaVersion, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out tempDate);
+                    Boolean isDate2Valid = DateTime.TryParseExact(mod.MinimumMemoriaVersion, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out tempDate);
+                    if (isDate1Valid && isDate2Valid)
+                    {
+                        if (!IsDate1EqualOrMoreRecent(memoriaVersion, mod.MinimumMemoriaVersion))
+                        {
+                            MessageBox.Show($"The mod \"{mod.Name}\" requires Memoria v{mod.MinimumMemoriaVersion} or above to work correctly.\n\nPlease update Memoria to the latest version.", "Warning", MessageBoxButtons.OK);
+                        }
+                    }
+                }
                 downloadList.Add(mod);
                 DownloadStart(mod);
                 mod.Installed = "...";
             }
             lstCatalogMods.Items.Refresh();
         }
+
+        public static bool IsDate1EqualOrMoreRecent(string date1, string date2)
+        {
+            string format = "yyyy-MM-dd";
+            DateTime dateTime1 = DateTime.ParseExact(date1, format, CultureInfo.InvariantCulture);
+            DateTime dateTime2 = DateTime.ParseExact(date2, format, CultureInfo.InvariantCulture);
+            return dateTime1 >= dateTime2;
+        }
+
         private void OnClickCancel(Object sender, RoutedEventArgs e)
         {
             if (downloadThread != null)
@@ -783,7 +807,7 @@ namespace Memoria.Launcher
             if (sortGetter == null || sortGetter.DeclaringType != typeof(Mod) || sortGetter.ReturnType.GetInterface(nameof(IComparable)) == null || sortGetter.GetParameters().Length > 0)
                 return;
             List<Mod> catalogList = new List<Mod>(modListCatalog);
-            catalogList.Sort(delegate(Mod a, Mod b)
+            catalogList.Sort(delegate (Mod a, Mod b)
             {
                 IComparable ac = sortGetter.Invoke(a, null) as IComparable;
                 IComparable bc = sortGetter.Invoke(b, null) as IComparable;

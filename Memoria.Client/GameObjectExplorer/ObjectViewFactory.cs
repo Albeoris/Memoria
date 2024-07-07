@@ -1,6 +1,6 @@
+using Memoria.Test;
 using System;
 using System.Collections.Generic;
-using Memoria.Test;
 
 namespace Memoria.Client
 {

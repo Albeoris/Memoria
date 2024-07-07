@@ -1,10 +1,10 @@
-using System;
-using System.Collections.Generic;
-using FF9;
 using Assets.Sources.Scripts.UI.Common;
+using FF9;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
-using Memoria.Assets;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
 
@@ -126,7 +126,25 @@ namespace Memoria
         public Byte Dexterity
         {
             get => Data.special_status_old ? (byte)Math.Max(1, Data.elem.dex >> 3) : Data.elem.dex;
-            set => Data.elem.dex = value;
+            set
+            {
+                if (Data.elem.dex == value)
+                    return;
+                Int16 newMaxATB = (Int16)((60 - value) * 40 << 2);
+                if (Data.cur.at >= Data.max.at)
+                {
+                    Data.elem.dex = value;
+                    Data.max.at = newMaxATB;
+                    Data.cur.at = newMaxATB;
+                }
+                else
+                {
+                    Single atbFill = (Single)Data.cur.at / Data.max.at;
+                    Data.elem.dex = value;
+                    Data.max.at = newMaxATB;
+                    Data.cur.at = (Int16)Math.Round(atbFill * newMaxATB);
+                }
+            }
         }
 
         public Byte Will
@@ -426,7 +444,7 @@ namespace Memoria
         }
 
         public void Kill(BattleUnit killer)
-		{
+        {
             Kill(killer.Data);
         }
         public void Kill(BTL_DATA killer = null)
@@ -661,7 +679,7 @@ namespace Memoria
             // Let the spell sequence handle the model fadings (in and out)
             //Data.SetActiveBtlData(false);
             String geoName = FF9BattleDB.GEO.GetValue(monsterParam.Geo);
-            Data.gameObject = ModelFactory.CreateModel(geoName, true);
+            Data.ChangeModel(ModelFactory.CreateModel(geoName, true));
             Data.bi.t_gauge = 0;
             if (IsUnderAnyStatus(BattleStatus.Trance))
             {
@@ -796,7 +814,7 @@ namespace Memoria
             if (attackAA[0] == null)
                 monsterTransform.resist_added |= BattleStatus.Berserk | BattleStatus.Confuse;
             foreach (SupportingAbilityFeature saFeature in Data.saMonster)
-			{
+            {
                 saFeature.GetStatusInitQuietly(this, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out StatusModifier partialResist, out StatusModifier durationFactor, out Int16 atb);
                 current_added |= initial;
                 monsterTransform.resist_added |= resist;
@@ -858,7 +876,7 @@ namespace Memoria
             btl_cmd.KillSpecificCommand(Data, Data.monster_transform.new_command);
             btl_cmd.KillSpecificCommand(Data, BattleCommandId.EnemyCounter);
             Data.gameObject.SetActive(false);
-            Data.gameObject = Data.originalGo;
+            Data.ChangeModel(Data.originalGo);
             Data.geo_scale_default = 4096;
             geo.geoScaleReset(Data);
             if (battle.TRANCE_GAUGE_FLAG != 0 && (p.category & 16) == 0 && (Data.bi.slot_no != (Byte)CharacterId.Garnet || battle.GARNET_DEPRESS_FLAG == 0))

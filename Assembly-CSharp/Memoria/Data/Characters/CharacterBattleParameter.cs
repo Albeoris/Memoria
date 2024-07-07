@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria.Prime.CSV;
+using System;
 using System.Collections.Generic;
-using Memoria.Prime.CSV;
 
 namespace Memoria.Data
 {
@@ -19,6 +19,17 @@ namespace Memoria.Data
         public SByte[] StatusOffsetY = new SByte[6];
         public SByte[] StatusOffsetZ = new SByte[6];
         public Int32[] WeaponSound = new Int32[0];
+        public Single[] WeaponOffset = new Single[6];
+        public Boolean TranceParameters = false;
+        public String[] TranceAnimationId = new String[34];
+        public SpecialEffect TranceAttackSequence;
+        public Byte TranceWeaponBone;
+        public Byte[] TranceShadowData = new Byte[5];
+        public Byte[] TranceStatusBone = new Byte[6];
+        public SByte[] TranceStatusOffsetY = new SByte[6];
+        public SByte[] TranceStatusOffsetZ = new SByte[6];
+        public Int32[] TranceWeaponSound = new Int32[0];
+        public Single[] TranceWeaponOffset = new Single[6];
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
@@ -47,10 +58,41 @@ namespace Memoria.Data
             if (StatusOffsetZ.Length < 6)
                 Array.Resize(ref StatusOffsetZ, 6);
 
-            if (metadata.HasOption($"Include{nameof(CharacterBattleParameter.WeaponSound)}"))
+            if (metadata.HasOption($"Include{nameof(WeaponSound)}"))
                 WeaponSound = CsvParser.Int32Array(raw[rawIndex++]);
             else if (FF9Snd.ff9battleSoundWeaponSndEffect02.TryGetValue(Id, out Int32[] sounds))
                 WeaponSound = sounds;
+
+            if (metadata.HasOption($"Include{nameof(WeaponOffset)}"))
+            {
+                WeaponOffset = CsvParser.SingleArray(raw[rawIndex++]);
+                if (WeaponOffset.Length < 6)
+                    Array.Resize(ref WeaponOffset, 6);
+            }
+            if (metadata.HasOption($"Include{nameof(TranceParameters)}"))
+            {
+                for (Int32 i = 0; i < 34; i++)
+                    TranceAnimationId[i] = CsvParser.String(raw[rawIndex++]);
+                TranceAttackSequence = (SpecialEffect)CsvParser.Int32(raw[rawIndex++]);
+                TranceWeaponBone = CsvParser.Byte(raw[rawIndex++]);
+                TranceShadowData = CsvParser.ByteArray(raw[rawIndex++]);
+                if (TranceShadowData.Length < 5)
+                    Array.Resize(ref TranceShadowData, 5);
+                TranceStatusBone = CsvParser.ByteArray(raw[rawIndex++]);
+                if (TranceStatusBone.Length < 6)
+                    Array.Resize(ref TranceStatusBone, 6);
+                TranceStatusOffsetY = CsvParser.SByteArray(raw[rawIndex++]);
+                if (TranceStatusOffsetY.Length < 6)
+                    Array.Resize(ref TranceStatusOffsetY, 6);
+                TranceStatusOffsetZ = CsvParser.SByteArray(raw[rawIndex++]);
+                if (TranceStatusOffsetZ.Length < 6)
+                    Array.Resize(ref TranceStatusOffsetZ, 6);
+                TranceWeaponSound = CsvParser.Int32Array(raw[rawIndex++]);
+                TranceWeaponOffset = CsvParser.SingleArray(raw[rawIndex++]);
+                if (TranceWeaponOffset.Length < 6)
+                    Array.Resize(ref TranceWeaponOffset, 6);
+                TranceParameters = true;
+            }
         }
 
         public void WriteEntry(CsvWriter writer, CsvMetaData metadata)
@@ -67,9 +109,24 @@ namespace Memoria.Data
             writer.ByteArray(StatusBone);
             writer.SByteArray(StatusOffsetY);
             writer.SByteArray(StatusOffsetZ);
-
-            if (metadata.HasOption($"Include{nameof(CharacterBattleParameter.WeaponSound)}"))
+            
+            if (metadata.HasOption($"Include{nameof(WeaponSound)}"))
                 writer.Int32Array(WeaponSound);
+            if (metadata.HasOption($"Include{nameof(WeaponOffset)}"))
+                writer.SingleArray(WeaponOffset);
+            if (metadata.HasOption($"Include{nameof(TranceParameters)}"))
+            {
+                for (Int32 i = 0; i < 34; i++)
+                    writer.String(TranceAnimationId[i]);
+                writer.Int32((Int32)TranceAttackSequence);
+                writer.Byte(TranceWeaponBone);
+                writer.ByteArray(TranceShadowData);
+                writer.ByteArray(TranceStatusBone);
+                writer.SByteArray(TranceStatusOffsetY);
+                writer.SByteArray(TranceStatusOffsetZ);
+                writer.Int32Array(TranceWeaponSound);
+                writer.SingleArray(TranceWeaponOffset);
+            }
         }
     }
 }

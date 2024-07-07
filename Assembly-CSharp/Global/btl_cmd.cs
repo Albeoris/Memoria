@@ -1164,13 +1164,6 @@ public class btl_cmd
                             tranceMessage = BattleMesages.Trance;
                     }
                     UIManager.Battle.SetBattleFollowMessage(tranceMessage);
-                    if (caster.IsPlayer)
-                        caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data), true);
-                }
-                else
-                {
-                    if (caster.IsPlayer)
-                        caster.Data.dms_geo_id = btl_init.GetModelID(btl_util.getSerialNumber(caster.Data), false);
                 }
                 return true;
             case BattleCommandId.SysDead: // Unused anymore

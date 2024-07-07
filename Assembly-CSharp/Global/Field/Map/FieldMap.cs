@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Assets.Scripts.Common;
+using FF9;
+using Memoria;
+using Memoria.Prime;
+using Memoria.Scripts;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using FF9;
-using Memoria;
-using Memoria.Scripts;
 using Object = System.Object;
-using Memoria.Prime;
-using Assets.Scripts.Common;
 
 [Flags]
 public enum FieldMapFlags : uint
@@ -510,11 +510,10 @@ public class FieldMap : HonoBehavior
         gameObject.transform.parent = base.transform;
         gameObject.transform.localScale = new Vector3(1f, 1f, 1f);
         FieldMapActor actor = gameObject.AddComponent<FieldMapActor>();
-        Boolean flag = true;
-        if (flag)
+        if (true)
         {
             GeoTexAnim geoTexAnim = gameObject.AddComponent<GeoTexAnim>();
-            geoTexAnim.Load("Models/GeoTexAnim/GEO_MAIN_B0_000", 1, 1, 4);
+            geoTexAnim.Load("Models/GeoTexAnim/GEO_MAIN_B0_000", [1], [1]);
         }
         FieldMapActorController fieldMapActorController = gameObject.AddComponent<FieldMapActorController>();
         fieldMapActorController.fieldMap = this;
@@ -775,7 +774,7 @@ public class FieldMap : HonoBehavior
                 Prev_CamPositionY = CamPositionY;
             }
         }
-            
+
         localPosition.x = CamPositionX;
         localPosition.y = CamPositionY;
 
@@ -904,10 +903,10 @@ public class FieldMap : HonoBehavior
     }
 
     /// <summary>EBG - set if overlay is active (inactive isn't visible)</summary>
-    public Int32 EBG_overlaySetActive(Int32 overlayNdx, Int32 activeFlag)
+    public Int32 EBG_overlaySetActive(Int32 overlayNdx, Boolean isActive)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
-        bgOverlay.SetFlags(BGOVERLAY_DEF.OVERLAY_FLAG.Active, activeFlag != 0);
+        bgOverlay.SetFlags(BGOVERLAY_DEF.OVERLAY_FLAG.Active, isActive);
         return 1;
     }
 
@@ -977,7 +976,7 @@ public class FieldMap : HonoBehavior
             if (dbug) Log.Message("EBG_overlaySetLoopType " + overlayNdx + " | - ScreenAnchored");
             bgOverlay.flags &= ~BGOVERLAY_DEF.OVERLAY_FLAG.ScreenAnchored;
         }
-            
+
         return 1;
     }
 
@@ -1059,10 +1058,10 @@ public class FieldMap : HonoBehavior
     }
 
     /// <summary>EBG - anim - define if animation is running in a loop</summary>
-    public Int32 EBG_animSetActive(Int32 animNdx, Int32 flag)
+    public Int32 EBG_animSetActive(Int32 animNdx, Boolean isActive)
     {
         BGANIM_DEF bgAnim = this.scene.animList[animNdx];
-        if (flag != 0)
+        if (isActive)
         {
             if (dbug) Log.Message("EBG_animSetActive | PLAY anim:" + animNdx);
             bgAnim.flags |= BGANIM_DEF.ANIM_FLAG.StartPlay;
@@ -1118,7 +1117,7 @@ public class FieldMap : HonoBehavior
 
     public Int32 EBG_animSetVisible(Int32 animNdx, Int32 isVisible)
     {
-        if (dbug) Log.Message("EBG_animSetVisible | anim:"+ animNdx + " Visible:" + (isVisible != 0));
+        if (dbug) Log.Message("EBG_animSetVisible | anim:" + animNdx + " Visible:" + (isVisible != 0));
         BGANIM_DEF bgAnim = this.scene.animList[animNdx];
         List<BGANIMFRAME_DEF> frameList = bgAnim.frameList;
         List<BGOVERLAY_DEF> overlayList = this.scene.overlayList;
@@ -1189,7 +1188,6 @@ public class FieldMap : HonoBehavior
         if (MapNo == 2351 && overlayNdx >= 3 && overlayNdx <= 17) // official fix of the mine bucket
             destZ = 3000;
 
-
         bgOverlay.orgX = destX;
         bgOverlay.orgY = destY;
         bgOverlay.orgZ = destZ;
@@ -1201,8 +1199,8 @@ public class FieldMap : HonoBehavior
         return 1;
     }
 
-    /// <summary>New EBG - set position of overlay, with movement for a time (</summary>
-    public void EBG_overlayMoveTimed(Int32 overlayNdx, Int32 dx, Int32 dy, Int32 dz, Int32 t)
+    /// <summary>New EBG - set position of overlay, with movement for a time</summary>
+    public void EBG_overlayMoveTimed(Int32 overlayNdx, Single dx, Single dy, Int16 dz, Int32 t)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
         bgOverlay.dxTimed = (Single)dx / t;
@@ -1212,13 +1210,13 @@ public class FieldMap : HonoBehavior
         if (dbug) Log.Message($"EBG_overlayMoveTimed {overlayNdx} | dx:{dx} dy:{dy} dz:{dz} t:{t}");
     }
 
-    public Int32 EBG_overlaySetOrigin(Int32 overlayNdx, Int32 orgX, Int32 orgY)
+    public Int32 EBG_overlaySetOrigin(Int32 overlayNdx, Single orgX, Single orgY)
     {
         BGOVERLAY_DEF bgOverlay = this.scene.overlayList[overlayNdx];
-        bgOverlay.curX = (float)orgX;
-        bgOverlay.curY = (float)orgY;
-        bgOverlay.orgX = (float)orgX;
-        bgOverlay.orgY = (float)orgY;
+        bgOverlay.curX = orgX;
+        bgOverlay.curY = orgY;
+        bgOverlay.orgX = orgX;
+        bgOverlay.orgY = orgY;
         this.flags |= FieldMapFlags.Unknown128;
         if (dbug) Log.Message("EBG_overlaySetOrigin " + overlayNdx + " | orgX:" + orgX + " orgY:" + orgY);
         return 1;
@@ -1309,7 +1307,7 @@ public class FieldMap : HonoBehavior
                 }
                 screenY = (float)((screenY - (this.scrollWindowDim[(int)bgOverlay.viewportNdx][1] - (float)bgOverlay.h)) % (float)bgOverlay.h + (this.scrollWindowDim[(int)bgOverlay.viewportNdx][1] - (float)bgOverlay.h));
             }
-            
+
             for (short i = 0; i < spriteCount; i++)
             {
                 BGSPRITE_LOC_DEF bgSprite = spriteList[i];
@@ -1538,7 +1536,7 @@ public class FieldMap : HonoBehavior
             vertex.y += this.offset.y;
         }
         float targetX = (bgCamera.w / 2) + bgCamera.centerOffset[0] + vertex.x - this.offset.x;
-        float targetY = -( (bgCamera.h / 2) + bgCamera.centerOffset[1] + vertex.y + this.offset.y - (2 * HalfFieldHeight) );
+        float targetY = -((bgCamera.h / 2) + bgCamera.centerOffset[1] + vertex.y + this.offset.y - (2 * HalfFieldHeight));
         targetX = Mathf.Clamp(targetX, bgCamera.vrpMinX, bgCamera.vrpMaxX);
         targetY = Mathf.Clamp(targetY, bgCamera.vrpMinY, bgCamera.vrpMaxY);
         this.endPoint.x = targetX;
@@ -1677,7 +1675,8 @@ public class FieldMap : HonoBehavior
                 {
                     switch (map)
                     {
-                        case 1651: case 1758: // Iifa roots
+                        case 1651:
+                        case 1758: // Iifa roots
                             bgOverlay.curX = 200;
                             if (ActualPsxScreenWidth > 400)
                             {
@@ -1718,20 +1717,23 @@ public class FieldMap : HonoBehavior
                             if (ActualPsxScreenWidth > 400)
                                 bgOverlay.curX = 0f;
                             break;
-                        case 805: case 808:
+                        case 805:
+                        case 808:
                             if (ActualPsxScreenWidth > 400)
                             {
                                 bgOverlay.transform.localScale = new Vector3(1.3f, 1.3f, 1f);
                                 bgOverlay.curX = 0f;
                             }
                             break;
-                        case 908: case 1908:
+                        case 908:
+                        case 1908:
                             if (i == 14 && ActualPsxScreenWidth > 400)
                                 bgOverlay.curX = 0f;
                             break;
                         case 1108: // Clayra temple light
                             bgOverlay.curX = 0f; break;
-                        case 1651: case 1758:// Iifa roots
+                        case 1651:
+                        case 1758:// Iifa roots
                             bgOverlay.transform.localScale = new Vector3(1.1f, 1.1f, 1f); bgOverlay.curX = -8f; break;
                         case 1657:
                             bgOverlay.curX = this.mainCamera.transform.localPosition.x * (bgOverlay.scrollX / 256f) - 0.25f; break;
@@ -1957,7 +1959,7 @@ public class FieldMap : HonoBehavior
         }
         scaledValue = (bgOverlay.curX * 65536) - scaledValue * Math3D.Fixed2Float((int)Math.Abs(ScaleFactor));
         bgOverlay.curX = scaledValue / 65536;
-        if (dbug) Log.Message("EBG_alphaScaleX | scaledValue:" + scaledValue + " ScaleFactor:" + ScaleFactor + " curX:" + bgOverlay.curX); 
+        if (dbug) Log.Message("EBG_alphaScaleX | scaledValue:" + scaledValue + " ScaleFactor:" + ScaleFactor + " curX:" + bgOverlay.curX);
         return bgOverlay.curX;
     }
 
@@ -2373,7 +2375,7 @@ public class FieldMap : HonoBehavior
             Int32 mapWidth = NarrowMapList.MapWidth(map);
             //Log.Message("Configuration.Graphics.WidescreenSupport " + Configuration.Graphics.WidescreenSupport + " CalcPsxFieldWidth() " + CalcPsxFieldWidth() + " PsxScreenWidth 1 " + CalcPsxScreenWidth() + " Screen.width " + Screen.width + " Screen.height " + Screen.height + "mapWidth " + mapWidth);
 
-            if (mapWidth <= PsxScreenWidth && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "BattleMap" && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "WorldMap" )
+            if (mapWidth <= PsxScreenWidth && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "BattleMap" && PersistenSingleton<SceneDirector>.Instance.CurrentScene != "WorldMap")
             {
                 PsxFieldWidth = (Int16)mapWidth;
                 PsxScreenWidth = (Int16)mapWidth;
@@ -2485,13 +2487,13 @@ public class FieldMap : HonoBehavior
         [1359,0,10,3900],   // Lindblum castle anim
         [1359,0,11,3900],   // Lindblum castle anim
         [900,0,20,500],     // Treno Thug Inn light
+        [1900,0,20,500],    // Treno Thug Inn light
         [913,0,0,100],      // Treno Tower lights
         [913,0,3,0],        // Treno Tower lights
         [913,0,4,0],        // Treno Tower lights
-        [1900,0,20,500],     // Treno Thug Inn light
-        [1913,0,0,100],      // Treno Tower lights
-        [1913,0,3,0],        // Treno Tower lights
-        [1913,0,4,0],        // Treno Tower lights
+        [1913,1,9,100],     // Treno Tower lights
+        [1913,1,12,0],      // Treno Tower lights
+        [1913,1,13,0],      // Treno Tower lights
         [951,0,2,1214],     // Gargan Roo's railing
         [1000,0,12,0],      // Clayra's Trunk text (in English version)
         [1206,0,21,800],    // Alexandria, purple chadelier

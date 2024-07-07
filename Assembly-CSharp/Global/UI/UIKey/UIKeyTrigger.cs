@@ -54,7 +54,7 @@ public class UIKeyTrigger : MonoBehaviour
     private Boolean SoftResetKeyPSXDown => // L1 + R1 + L2 + R2 + start + select
         PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger)
         && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightTrigger)
-        && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Select) 
+        && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) && PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Select)
         || keyCommand == Control.LeftBumper && keyCommand == Control.LeftTrigger && keyCommand == Control.RightBumper && keyCommand == Control.RightTrigger
         && keyCommand == Control.Pause && keyCommand == Control.Select || UIManager.Input.GetKey(Control.LeftBumper) && UIManager.Input.GetKey(Control.LeftTrigger)
         && UIManager.Input.GetKey(Control.RightBumper) && UIManager.Input.GetKey(Control.RightTrigger) && UIManager.Input.GetKey(Control.Pause) && UIManager.Input.GetKey(Control.Select);
@@ -288,9 +288,28 @@ public class UIKeyTrigger : MonoBehaviour
             if (ButtonGroupState.ActiveGroup == QuitUI.WarningMenuGroupButton)
                 return;
             preventTurboKey = false;
-            PersistenSingleton<UIManager>.Instance.WorldHUDScene.FullMapPanel.SetActive(false);
+
+            if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World && PersistenSingleton<UIManager>.Instance.WorldHUDScene != (UnityEngine.Object)null) // World Map
+            {
+                PersistenSingleton<UIManager>.Instance.WorldHUDScene.MiniMapPanel.SetActive(false);
+                PersistenSingleton<UIManager>.Instance.WorldHUDScene.FullMapPanel.SetActive(false);
+                PersistenSingleton<UIManager>.Instance.WorldHUDScene.MapButtonGameObject.SetActive(false);
+                if (PersistenSingleton<UIManager>.Instance.WorldHUDScene.CurrentState == WorldHUD.State.FullMap)
+                    PersistenSingleton<UIManager>.Instance.WorldHUDScene.OnKeySelect(null);
+                PersistenSingleton<UIManager>.Instance.WorldHUDScene.ClearFullMapLocations();
+                UIManager.Input.ResetKeyCode();
+                EIcon.IsProcessingFIcon = true;
+                PersistenSingleton<EventEngine>.Instance.SetUserControl(true);
+                PersistenSingleton<EventEngine>.Instance.eBin.setVarManually(9173, 0);
+                Singleton<BubbleUI>.Instance.SetGameObjectActive(false);
+                PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(true, (Action)null);
+                PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(true);
+                ff9.w_naviMode = 0;
+            }
+
             PersistenSingleton<UIManager>.Instance.Dialogs.PauseAllDialog(true);
             PersistenSingleton<UIManager>.Instance.HideAllHUD();
+            Singleton<DialogManager>.Instance.CloseAll();
             ButtonGroupState.DisableAllGroup(true);
             UIManager.Battle.FF9BMenu_EnableMenu(false);
             if (PersistenSingleton<UIManager>.Instance.IsPause)

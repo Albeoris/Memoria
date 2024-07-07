@@ -1,9 +1,9 @@
+using Assets.Sources.Scripts.UI.Common;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using Assets.Sources.Scripts.UI.Common;
-using Memoria.Prime;
 using ExtensionMethodsIEnumerable = Memoria.Scenes.ExtensionMethodsIEnumerable;
 
 namespace Memoria.Assets

@@ -1,21 +1,21 @@
-﻿using System;
-using Memoria.Data;
+﻿using Memoria.Data;
+using System;
 
 namespace FF9
 {
-	public class ITEM_DATA
-	{
-		public ITEM_DATA(BattleCommandInfo info, BTL_REF Ref, BattleStatus status)
-		{
-			this.info = info;
-			this.Ref = Ref;
-			this.status = status;
-		}
+    public class ITEM_DATA
+    {
+        public ITEM_DATA(BattleCommandInfo info, BTL_REF Ref, BattleStatus status)
+        {
+            this.info = info;
+            this.Ref = Ref;
+            this.status = status;
+        }
 
-		public BattleCommandInfo info;
+        public BattleCommandInfo info;
 
-		public BTL_REF Ref;
+        public BTL_REF Ref;
 
-		public BattleStatus status;
-	}
+        public BattleStatus status;
+    }
 }

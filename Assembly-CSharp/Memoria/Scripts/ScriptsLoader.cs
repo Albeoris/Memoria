@@ -1,3 +1,7 @@
+using Memoria.Assets;
+using Memoria.Prime;
+using Memoria.Prime.IL;
+using Memoria.Prime.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -5,10 +9,6 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
-using Memoria.Assets;
-using Memoria.Prime;
-using Memoria.Prime.IL;
-using Memoria.Prime.Threading;
 using UnityEngine;
 using Object = System.Object;
 
@@ -248,7 +248,7 @@ namespace Memoria.Scripts
         }
 
         public static String GetScriptDLL(Int32 scriptId)
-		{
+        {
             Result result = GetScriptResult(scriptId);
             if (result != null)
                 return result.DLLPath;
@@ -346,7 +346,7 @@ namespace Memoria.Scripts
         private static void ProcessBattleScript(Type type, Result result, Object attribute)
         {
             BattleScriptAttribute bsa = (BattleScriptAttribute)attribute;
-            ConstructorInfo constructor = type.GetConstructor(new[] {TypeCache<BattleCalculator>.Type});
+            ConstructorInfo constructor = type.GetConstructor(new[] { TypeCache<BattleCalculator>.Type });
             DynamicMethod dm = Expressions.MakeConstructor<BattleCalculator>(type, constructor);
             BattleScriptFactory factory = (BattleScriptFactory)dm.CreateDelegate(TypeCache<BattleScriptFactory>.Type);
 

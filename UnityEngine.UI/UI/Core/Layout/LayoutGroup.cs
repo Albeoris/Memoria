@@ -199,12 +199,12 @@ namespace UnityEngine.UI
             LayoutRebuilder.MarkLayoutForRebuild(rectTransform);
         }
 
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
         protected override void OnValidate()
         {
             SetDirty();
         }
 
-    #endif
+#endif
     }
 }

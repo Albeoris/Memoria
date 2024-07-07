@@ -2,8 +2,8 @@
 
 public class UIInputaaaaExtension : UIInput
 {
-	protected override void Update()
-	{
-		base.Update();
-	}
+    protected override void Update()
+    {
+        base.Update();
+    }
 }

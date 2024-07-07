@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Ini;
+using System;
 using System.Globalization;
 using System.Reflection;
 using System.Xml;
-using Ini;
 
 namespace Memoria.Launcher
 {
@@ -28,7 +28,7 @@ namespace Memoria.Launcher
 
                 String[] fileNames = String.IsNullOrEmpty(forcedLang) ?
                     new String[] { CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName } :
-                    new String[] { forcedLang, CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName,  };
+                    new String[] { forcedLang, CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName, };
                 foreach (String name in fileNames)
                 {
                     cur = XmlHelper.LoadEmbadedDocument(assembly, $"Languages.{name}.xml");
@@ -293,7 +293,7 @@ namespace Memoria.Launcher
             public static readonly String CannotRead = GetSdLib(nameof(CannotRead));
             public static readonly String CannotWrite = GetSdLib(nameof(CannotWrite));
         }
-        
+
         public static class SteamOverlay
         {
             private static String GetSteamOverlay(string name)
@@ -483,7 +483,7 @@ namespace Memoria.Launcher
             {
                 return Instance.Value.GetString(name, nameof(EncodingEditor), childName);
             }
-            
+
             public static class List
             {
                 private static string GetEncodingEditorList(string name)

@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace UnityEngine.UI
 {
@@ -29,16 +29,16 @@ namespace UnityEngine.UI
         public int constraintCount { get { return m_ConstraintCount; } set { SetProperty(ref m_ConstraintCount, Mathf.Max(1, value)); } }
 
         protected GridLayoutGroup()
-        {}
+        { }
 
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         protected override void OnValidate()
         {
             base.OnValidate();
             constraintCount = constraintCount;
         }
 
-        #endif
+#endif
 
         public override void CalculateLayoutInputHorizontal()
         {

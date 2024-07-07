@@ -67,7 +67,7 @@ namespace Memoria.Data
         }
 
         public static void ClearAbilityFeature(BattleAbilityId abilId)
-		{
+        {
             AbilityFeatures.Remove(abilId);
         }
 

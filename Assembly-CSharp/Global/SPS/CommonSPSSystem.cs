@@ -1,10 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using UnityEngine;
-using Memoria.Assets;
+﻿using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using UnityEngine;
 
 public class CommonSPSSystem
 {

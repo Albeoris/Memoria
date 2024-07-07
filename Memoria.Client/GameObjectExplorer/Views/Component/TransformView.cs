@@ -1,6 +1,6 @@
-using System.ComponentModel;
 using Memoria.Client.GameObjectExplorer.Views.TypeEditors;
 using Memoria.Test;
+using System.ComponentModel;
 using UnityEngine;
 
 namespace Memoria.Client

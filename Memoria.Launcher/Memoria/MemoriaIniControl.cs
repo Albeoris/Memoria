@@ -1,21 +1,21 @@
-﻿using System;
+﻿using Ini;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Text;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Globalization;
-using System.Drawing.Text;
-using Ini;
 using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
-using System.Text.RegularExpressions;
-using System.Collections.Generic;
 
 
 // ReSharper disable UnusedMember.Local
@@ -33,7 +33,7 @@ namespace Memoria.Launcher
         {
             SetRows(22);
             SetCols(9);
-            
+
             Width = 260;
             VerticalAlignment = VerticalAlignment.Bottom;
             HorizontalAlignment = HorizontalAlignment.Right;
@@ -72,7 +72,7 @@ namespace Memoria.Launcher
 
                 row++;
             }
-            
+
             UiCheckBox isWidescreenSupport = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Widescreen, null), row, 0, 1, 9);
             isWidescreenSupport.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(WidescreenSupport)) { Mode = BindingMode.TwoWay });
             isWidescreenSupport.Foreground = Brushes.White;
@@ -417,7 +417,7 @@ namespace Memoria.Launcher
             fontNames[0] = _fontDefaultPC;
             fontNames[1] = _fontDefaultPSX;
             for (Int32 fontindex = 0; fontindex < installedFonts.Families.Length; ++fontindex)
-                fontNames[fontindex+2] = installedFonts.Families[fontindex].Name;
+                fontNames[fontindex + 2] = installedFonts.Families[fontindex].Name;
             _fontChoiceBox.ItemsSource = fontNames;
             _fontChoiceBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(FontChoice)) { Mode = BindingMode.TwoWay });
 
@@ -523,9 +523,9 @@ namespace Memoria.Launcher
             }
         }
         public Rect BattleInterfaceMenu
-		{
+        {
             get
-			{
+            {
                 if (WidescreenSupport == 0)
                 {
                     switch (BattleInterface)
@@ -553,7 +553,7 @@ namespace Memoria.Launcher
                             return new Rect(-500, -360, 650, 280);
                     }
                 }
-			}
+            }
         }
         public Rect BattleInterfaceDetail
         {
@@ -591,7 +591,7 @@ namespace Memoria.Launcher
         {
             get { return _isskipintros; }
             set
-            {   
+            {
                 if (_isskipintros == 0)
                 {
                     _isskipintros = 3;
@@ -855,7 +855,7 @@ namespace Memoria.Launcher
                         _isusin30fpsvideo = 1;
                         OnPropertyChanged(nameof(HighFpsVideo));
                     }
-                        
+
                 }
 
                 String value = iniFile.ReadValue("Graphics", nameof(WidescreenSupport));
@@ -1033,7 +1033,7 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _movievolume))
                     _movievolume = 100;
 
-                
+
                 value = iniFile.ReadValue("Font", "Enabled");
                 Int16 enabledFont = 0;
                 if (String.IsNullOrEmpty(value) || !Int16.TryParse(value, out enabledFont) || enabledFont == 0)
@@ -1118,7 +1118,7 @@ namespace Memoria.Launcher
             {
                 str = str.Replace("\"", "").Replace("MoguriSoundtrack", "").Replace("MoguriVideo", "");
             }
-            
+
             if (Directory.Exists("MoguriSoundtrack") && OrchestralMusic == 1)
                 str = str + ",MoguriSoundtrack";
             if (Directory.Exists("MoguriVideo") && HighFpsVideo == 1)
@@ -1467,7 +1467,7 @@ namespace Memoria.Launcher
 
                         MakeIniNotNull("Fixes", "Enabled", "1");
                         MakeIniNotNull("Fixes", "KeepRestTimeInBattle", "1");
-                        
+
                         MakeIniNotNull("SaveFile", "DisableAutoSave", "0");
                         MakeIniNotNull("SaveFile", "AutoSaveOnlyAtMoogle", "0");
                         MakeIniNotNull("SaveFile", "SaveOnCloud", "0");
@@ -1559,7 +1559,7 @@ namespace Memoria.Launcher
                     var keyValue = line.Split(new[] { '=' }, 2);
                     sections[currentSection][keyValue[0].Trim()] = keyValue[1].Trim();
                 }
-                else 
+                else
                 {
                     sections[currentSection][line] = "zzz";
                 }

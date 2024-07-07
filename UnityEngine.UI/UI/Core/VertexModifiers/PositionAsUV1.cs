@@ -6,7 +6,7 @@ namespace UnityEngine.UI
     public class PositionAsUV1 : BaseMeshEffect
     {
         protected PositionAsUV1()
-        {}
+        { }
 
         public override void ModifyMesh(VertexHelper vh)
         {
@@ -14,7 +14,7 @@ namespace UnityEngine.UI
             for (int i = 0; i < vh.currentVertCount; i++)
             {
                 vh.PopulateUIVertex(ref vert, i);
-                vert.uv1 =  new Vector2(vert.position.x, vert.position.y);
+                vert.uv1 = new Vector2(vert.position.x, vert.position.y);
                 vh.SetUIVertex(vert, i);
             }
         }

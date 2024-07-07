@@ -274,10 +274,10 @@ namespace NCalc
             expr.Parameters["MaxMP"] = play.max.mp;
             expr.Parameters["Level"] = (Int32)play.level;
             expr.Parameters["Exp"] = play.exp;
-            expr.Parameters["Speed"] = (Int32)play.basis.dex;
-            expr.Parameters["Strength"] = (Int32)play.basis.str;
-            expr.Parameters["Magic"] = (Int32)play.basis.mgc;
-            expr.Parameters["Spirit"] = (Int32)play.basis.wpr;
+            expr.Parameters["Speed"] = (Int32)play.elem.dex;
+            expr.Parameters["Strength"] = (Int32)play.elem.str;
+            expr.Parameters["Magic"] = (Int32)play.elem.mgc;
+            expr.Parameters["Spirit"] = (Int32)play.elem.wpr;
             expr.Parameters["Defence"] = play.defence.PhysicalDefence;
             expr.Parameters["Evade"] = play.defence.PhysicalEvade;
             expr.Parameters["PlayerStatus"] = (UInt32)play.status;
@@ -412,9 +412,9 @@ namespace NCalc
         }
 
         public static void InitializeExpressionNullableUnit(ref Expression expr, BattleUnit unit, String prefix = "")
-		{
+        {
             if (unit != null)
-			{
+            {
                 InitializeExpressionUnit(ref expr, unit, prefix);
                 return;
             }

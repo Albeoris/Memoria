@@ -1,15 +1,15 @@
 ﻿using System;
-using System.IO;
-using System.Xml;
-using System.Linq;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Media.Imaging;
+using System.Xml;
 
 namespace Memoria.Launcher
 {
-	public class Mod
+    public class Mod
     {
         // Entries that can be defined in .xml descriptions
         public String Name { get; set; }
@@ -30,6 +30,7 @@ namespace Memoria.Launcher
         public Int64 FullSize { get; set; } // TODO
         public List<Mod> SubMod { get; set; }
         public Mod ParentMod { get; set; }
+        public String MinimumMemoriaVersion { get; set; }
 
         // Entries that are computed in the Mod Manager
         public HashSet<String> FileContent { get; set; }
@@ -83,12 +84,12 @@ namespace Memoria.Launcher
                     InstallationPath = folderPath;
             }
             catch (Exception)
-			{
-			}
+            {
+            }
         }
 
         public IEnumerable<Mod> EnumerateModAndSubModsOrdered(Boolean activeOnly)
-		{
+        {
             return EnumerateModAndSubModsOrdered_Generic(false, activeOnly).Select(obj => obj as Mod);
         }
 
@@ -119,7 +120,7 @@ namespace Memoria.Launcher
         }
 
         public static void LoadModDescriptions(StreamReader reader, ref ObservableCollection<Mod> modList)
-		{
+        {
             XmlDocument doc = new XmlDocument();
             doc.Load(reader);
             XmlNodeList rootNode = doc.SelectNodes("/ModCatalog");
@@ -180,11 +181,12 @@ namespace Memoria.Launcher
             DownloadFormat = modNode["DownloadFormat"]?.InnerText;
             PreviewFile = modNode["PreviewFile"]?.InnerText;
             PreviewFileUrl = modNode["PreviewFileUrl"]?.InnerText;
+            MinimumMemoriaVersion = modNode["MinimumMemoriaVersion"]?.InnerText;
             if (Int64.TryParse(modNode["FullSize"]?.InnerText ?? "0", out outParse)) FullSize = outParse;
             if (Int64.TryParse(modNode["DownloadSize"]?.InnerText ?? "0", out outParse)) DownloadSize = outParse;
             SubMod.Clear();
             foreach (XmlNode subNode in elSubMod)
-			{
+            {
                 Mod sub = new Mod();
                 elName = subNode["Name"];
                 elInstPath = subNode["InstallationPath"];
@@ -284,6 +286,12 @@ namespace Memoria.Launcher
                 el.InnerText = PreviewFileUrl;
                 mod.AppendChild(el);
             }
+            if (MinimumMemoriaVersion != null)
+            {
+                el = doc.CreateElement("MinimumMemoriaVersion");
+                el.InnerText = MinimumMemoriaVersion;
+                mod.AppendChild(el);
+            }
             if (FullSize > 0)
             {
                 el = doc.CreateElement("FullSize");
@@ -332,14 +340,14 @@ namespace Memoria.Launcher
         }
 
         public static String IndentXml(String xmlRaw)
-		{
+        {
             String indented = Regex.Replace(xmlRaw, @">(<[^/])", ">\n\t$1").Replace("</Mod>", "\n</Mod>").Replace("</SubMod>", "\n\t</SubMod>");
             String[] lines = indented.Split('\n');
             indented = "";
             Boolean inSubMod = false;
             Boolean firstLine = true;
             foreach (String line in lines)
-			{
+            {
                 if (line == "\t</SubMod>")
                     inSubMod = false;
                 if (firstLine)
@@ -354,7 +362,7 @@ namespace Memoria.Launcher
         }
 
         public static Mod SearchWithName(IEnumerable<Mod> modList, String queryName)
-		{
+        {
             foreach (Mod mod in modList)
                 if (mod.Name == queryName)
                     return mod;
@@ -370,7 +378,7 @@ namespace Memoria.Launcher
         }
 
         public static Boolean LooksLikeAModFolder(String path)
-		{
+        {
             if (File.Exists(path + "/" + Mod.DESCRIPTION_FILE))
                 return true;
             if (File.Exists(path + "/Memoria.ini") || File.Exists(path + "/DictionaryPatch.txt"))
@@ -381,7 +389,7 @@ namespace Memoria.Launcher
         }
 
         public class CompatibilityNoteClass
-		{
+        {
             public String GenericNotes = String.Empty;
             public Dictionary<String, String> OtherModLow = new Dictionary<String, String>();
             public Dictionary<String, String> OtherModHigh = new Dictionary<String, String>();

@@ -239,16 +239,16 @@ namespace Antlr.Runtime
         {
             get
             {
-                if ( _input is ITokenStream )
+                if (_input is ITokenStream)
                 {
                     return _token.Type;
                 }
 
                 ITreeNodeStream treeNodeStream = _input as ITreeNodeStream;
-                if ( treeNodeStream != null )
+                if (treeNodeStream != null)
                 {
                     ITreeAdaptor adaptor = treeNodeStream.TreeAdaptor;
-                    return adaptor.GetType( _node );
+                    return adaptor.GetType(_node);
                 }
 
                 return _c;

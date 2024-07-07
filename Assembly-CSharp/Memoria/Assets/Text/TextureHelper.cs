@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Memoria.Prime;
+using System;
 using System.IO;
-using Memoria.Prime;
 using UnityEngine;
 
 namespace Memoria.Assets
@@ -24,7 +24,7 @@ namespace Memoria.Assets
             if (texture == null)
                 return null;
 
-            Camera camera = Camera.main ?? GameObject.Find("FieldMap Camera").GetComponent<Camera>();
+            Camera camera = Camera.main ?? GameObject.Find("FieldMap Camera")?.GetComponent<Camera>() ?? GameObject.Find("UI Camera")?.GetComponent<Camera>() ?? UICamera.mainCamera;
             RenderTexture oldTarget = camera.targetTexture;
             RenderTexture oldActive = RenderTexture.active;
 

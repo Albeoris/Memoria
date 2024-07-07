@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ini;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -7,7 +8,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
-using Ini;
 using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
@@ -28,7 +28,7 @@ namespace Memoria.Launcher
         {
             SetRows(17);
             SetCols(8);
-            
+
             Width = 260;
             VerticalAlignment = VerticalAlignment.Bottom;
             HorizontalAlignment = HorizontalAlignment.Center;
@@ -46,7 +46,7 @@ namespace Memoria.Launcher
             cheatOptionsText.FontSize = 14;
             cheatOptionsText.FontWeight = FontWeights.Bold;
             cheatOptionsText.Margin = rowMargin;
-            
+
             row++;
             row++;
             /*
@@ -190,7 +190,7 @@ namespace Memoria.Launcher
             maxTetraMasterCards.Foreground = Brushes.White;
             maxTetraMasterCards.Margin = rowMargin;
             maxTetraMasterCards.ToolTip = Lang.Settings.MaxCardCount_Tooltip;
-            
+
 
             /*AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row++, 0, 1, 8).Foreground = Brushes.White;*/
 
@@ -367,7 +367,7 @@ namespace Memoria.Launcher
             try
             {
                 IniFile iniFile = new IniFile(_iniPath);
-                
+
                 String value = iniFile.ReadValue("Hacks", nameof(StealingAlwaysWorks));
                 if (String.IsNullOrEmpty(value))
                 {
@@ -509,7 +509,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(MasterSkill));
                 Refresh(nameof(MaxCardCount));
             }
-            catch (Exception ex){ UiHelper.ShowError(Application.Current.MainWindow, ex); }
+            catch (Exception ex) { UiHelper.ShowError(Application.Current.MainWindow, ex); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

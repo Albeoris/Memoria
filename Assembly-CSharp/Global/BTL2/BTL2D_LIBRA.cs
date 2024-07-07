@@ -2,13 +2,13 @@
 
 public class BTL2D_LIBRA
 {
-	public BTL_DATA BtlPtr;
+    public BTL_DATA BtlPtr;
 
-	public Byte Timer;
+    public Byte Timer;
 
-	public Byte Count;
+    public Byte Count;
 
-	public Byte Number;
+    public Byte Number;
 
-	public Byte Pad0;
+    public Byte Pad0;
 }

@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using Memoria.Data;
-using Memoria.Speedrun;
+﻿using Memoria.Data;
 using Memoria.Prime.Collections;
+using Memoria.Speedrun;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public partial class FF9StateGlobal
 {
-	/* List of fldMapNo:
+    /* List of fldMapNo:
 	50		-> Prima Vista/Cargo Room
 	51		-> Prima Vista/Cargo Room
 	52		-> Prima Vista/Meeting Rm
@@ -826,163 +826,163 @@ public partial class FF9StateGlobal
 	3058	-> Mage Village/Water Mil
 	3059	-> Mage Village/Item Shop
 	*/
-	public FF9StateGlobal()
-	{
-		//this.ot = new UInt32[2];
-		this.player = new Dictionary<CharacterId, PLAYER>();
-		this.party = new PARTY_DATA();
-		this.item = new List<FF9ITEM>();
-		this.rare_item_obtained = new HashSet<Int32>();
-		this.rare_item_used = new HashSet<Int32>();
-		this.charArray = new Dictionary<Int32, FF9Char>();
-	    this.Frogs = new FrogHandler();
-		this.steal_no = 0;
-		this.categoryKillCount = new Int16[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
-		this.modelKillCount = new EntryCollection<Int16, Int16>(0);
-	}
+    public FF9StateGlobal()
+    {
+        //this.ot = new UInt32[2];
+        this.player = new Dictionary<CharacterId, PLAYER>();
+        this.party = new PARTY_DATA();
+        this.item = new List<FF9ITEM>();
+        this.rare_item_obtained = new HashSet<Int32>();
+        this.rare_item_used = new HashSet<Int32>();
+        this.charArray = new Dictionary<Int32, FF9Char>();
+        this.Frogs = new FrogHandler();
+        this.steal_no = 0;
+        this.categoryKillCount = new Int16[8] { 0, 0, 0, 0, 0, 0, 0, 0 };
+        this.modelKillCount = new EntryCollection<Int16, Int16>(0);
+    }
 
-	public FF9Char FF9GetCharPtr(Int32 uid)
-	{
-		return this.charArray[uid];
-	}
+    public FF9Char FF9GetCharPtr(Int32 uid)
+    {
+        return this.charArray[uid];
+    }
 
-	public PLAYER GetPlayer(CharacterId id)
-	{
-		if (player.TryGetValue(id, out PLAYER p))
-			return p;
-		return null;
-	}
+    public PLAYER GetPlayer(CharacterId id)
+    {
+        if (player.TryGetValue(id, out PLAYER p))
+            return p;
+        return null;
+    }
 
-	public void ff9ResetStateGlobal()
-	{
-		this.hintmap_id = 0;
-	}
+    public void ff9ResetStateGlobal()
+    {
+        this.hintmap_id = 0;
+    }
 
-	public Byte GetRareItemByteFormat(Int32 index)
-	{
-		if (index < 0 || index >= 64)
-			return 0;
-		index <<= 2;
-		Byte result = 0;
-		for (Int32 i = 0; i < 8; i += 2)
-		{
-			if (rare_item_obtained.Contains(index))
-				result |= (Byte)(1 << i);
-			if (rare_item_used.Contains(index))
-				result |= (Byte)(1 << (i + 1));
-			index++;
-		}
-		return result;
-	}
+    public Byte GetRareItemByteFormat(Int32 index)
+    {
+        if (index < 0 || index >= 64)
+            return 0;
+        index <<= 2;
+        Byte result = 0;
+        for (Int32 i = 0; i < 8; i += 2)
+        {
+            if (rare_item_obtained.Contains(index))
+                result |= (Byte)(1 << i);
+            if (rare_item_used.Contains(index))
+                result |= (Byte)(1 << (i + 1));
+            index++;
+        }
+        return result;
+    }
 
-	public void ParseRareItemByteFormat(Int32 index, Byte byteValue)
-	{
-		if (index < 0 || index >= 64)
-			return;
-		index <<= 2;
-		for (Int32 i = 0; i < 8; i += 2)
-		{
-			if ((byteValue & (1 << i)) != 0)
-				rare_item_obtained.Add(index);
-			if ((byteValue & (1 << (i + 1))) != 0)
-				rare_item_used.Add(index);
-			index++;
-		}
-	}
+    public void ParseRareItemByteFormat(Int32 index, Byte byteValue)
+    {
+        if (index < 0 || index >= 64)
+            return;
+        index <<= 2;
+        for (Int32 i = 0; i < 8; i += 2)
+        {
+            if ((byteValue & (1 << i)) != 0)
+                rare_item_obtained.Add(index);
+            if ((byteValue & (1 << (i + 1))) != 0)
+                rare_item_used.Add(index);
+            index++;
+        }
+    }
 
-	public const Int32 FF9_SIZE_OT = 4096;
-	public const Int32 FF9_BUFFER_COUNT = 2;
+    public const Int32 FF9_SIZE_OT = 4096;
+    public const Int32 FF9_BUFFER_COUNT = 2;
 
-	public Int16 fldMapNo
-	{
-		get => _fldMapNo;
-		set
-		{
-			previousFldWldMapNo = currentFldWldMapNo;
-			currentFldWldMapNo = _fldMapNo = value;
-			AutoSplitterPipe.SignalFieldChange();
-		}
-	}
+    public Int16 fldMapNo
+    {
+        get => _fldMapNo;
+        set
+        {
+            previousFldWldMapNo = currentFldWldMapNo;
+            currentFldWldMapNo = _fldMapNo = value;
+            AutoSplitterPipe.SignalFieldChange();
+        }
+    }
 
-	public Int16 wldMapNo
-	{
-		get => _wldMapNo;
-		set
-		{
-			previousFldWldMapNo = currentFldWldMapNo;
-			currentFldWldMapNo = _wldMapNo = value;
-			AutoSplitterPipe.SignalFieldChange();
-		}
-	}
+    public Int16 wldMapNo
+    {
+        get => _wldMapNo;
+        set
+        {
+            previousFldWldMapNo = currentFldWldMapNo;
+            currentFldWldMapNo = _wldMapNo = value;
+            AutoSplitterPipe.SignalFieldChange();
+        }
+    }
 
-	public Int16 btlMapNo
-	{
-		get => _btlMapNo;
-		set
-		{
-			previousBtlMapNo = _btlMapNo;
-			_btlMapNo = value;
-		}
-	}
+    public Int16 btlMapNo
+    {
+        get => _btlMapNo;
+        set
+        {
+            previousBtlMapNo = _btlMapNo;
+            _btlMapNo = value;
+        }
+    }
 
-	public IEnumerable<PLAYER> PlayerList => player.Values;
-	public Dictionary<CharacterId, PLAYER> player;
-	public PARTY_DATA party;
+    public IEnumerable<PLAYER> PlayerList => player.Values;
+    public Dictionary<CharacterId, PLAYER> player;
+    public PARTY_DATA party;
 
-	public UInt32 attr;
+    public UInt32 attr;
 
-	public Char usage;
+    public Char usage;
 
-	public Byte id;
+    public Byte id;
 
-	public Byte mainUsed;
+    public Byte mainUsed;
 
-	public UInt16 proj;
+    public UInt16 proj;
 
-	public Int16 currentFldWldMapNo;
-	public Int16 previousFldWldMapNo;
-	public Int16 previousBtlMapNo;
-	public Int16 fldLocNo;
-	public Int16 wldLocNo;
-	public SByte btlSubMapNo;
-	public String mapNameStr;
+    public Int16 currentFldWldMapNo;
+    public Int16 previousFldWldMapNo;
+    public Int16 previousBtlMapNo;
+    public Int16 fldLocNo;
+    public Int16 wldLocNo;
+    public SByte btlSubMapNo;
+    public String mapNameStr;
 
-	public Matrix4x4 cam;
+    public Matrix4x4 cam;
 
-	public Byte npcCount;
-	public Byte npcUsed;
+    public Byte npcCount;
+    public Byte npcUsed;
 
-	public FrogHandler Frogs;
-	public Int16 steal_no;
-	public Int16[] categoryKillCount;
-	public EntryCollection<Int16, Int16> modelKillCount;
+    public FrogHandler Frogs;
+    public Int16 steal_no;
+    public Int16[] categoryKillCount;
+    public EntryCollection<Int16, Int16> modelKillCount;
 
-	public Byte btl_result; // FF9.battle_result
-	public Byte btl_flag;
-	public Byte btl_rain;
-	public Byte steiner_state;
+    public Byte btl_result; // FF9.battle_result
+    public Byte btl_flag;
+    public Byte btl_rain;
+    public Byte steiner_state;
 
-	public List<FF9ITEM> item;
-	public HashSet<Int32> rare_item_obtained;
-	public HashSet<Int32> rare_item_used;
+    public List<FF9ITEM> item;
+    public HashSet<Int32> rare_item_obtained;
+    public HashSet<Int32> rare_item_used;
 
-	public UInt16 miniGameArg;
+    public UInt16 miniGameArg;
 
-	public Int32 hintmap_id;
+    public Int32 hintmap_id;
 
-	public ff9.sworldState worldState = new ff9.sworldState();
+    public ff9.sworldState worldState = new ff9.sworldState();
 
-	public Boolean timerControl;
+    public Boolean timerControl;
 
-	public Boolean timerDisplay;
+    public Boolean timerDisplay;
 
-	public Vector2 projectionOffset;
+    public Vector2 projectionOffset;
 
-	public CharInitFuncPtr charInitFuncPtr;
+    public CharInitFuncPtr charInitFuncPtr;
 
-	public Dictionary<Int32, FF9Char> charArray;
+    public Dictionary<Int32, FF9Char> charArray;
 
-	private Int16 _fldMapNo;
-	private Int16 _wldMapNo;
-	private Int16 _btlMapNo;
+    private Int16 _fldMapNo;
+    private Int16 _wldMapNo;
+    private Int16 _btlMapNo;
 }

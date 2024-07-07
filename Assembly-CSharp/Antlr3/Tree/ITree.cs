@@ -51,7 +51,7 @@ namespace Antlr.Runtime.Tree
     public interface ITree
     {
 
-        ITree GetChild( int i );
+        ITree GetChild(int i);
 
         int ChildCount
         {
@@ -67,10 +67,10 @@ namespace Antlr.Runtime.Tree
         }
 
         /** <summary>Is there is a node above with token type ttype?</summary> */
-        bool HasAncestor( int ttype );
+        bool HasAncestor(int ttype);
 
         /** <summary>Walk upwards and get first ancestor with this token type.</summary> */
-        ITree GetAncestor( int ttype );
+        ITree GetAncestor(int ttype);
 
         /** <summary>
          *  Return a list of all ancestors of this node.  The first node of
@@ -94,12 +94,12 @@ namespace Antlr.Runtime.Tree
          *  is nil, add all children of t to this' children.
          *  </summary>
          */
-        void AddChild( ITree t );
+        void AddChild(ITree t);
 
         /** <summary>Set ith child (0..n-1) to t; t must be non-null and non-nil node</summary> */
-        void SetChild( int i, ITree t );
+        void SetChild(int i, ITree t);
 
-        object DeleteChild( int i );
+        object DeleteChild(int i);
 
         /** <summary>
          *  Delete children from start to stop and replace with t even if t is
@@ -108,7 +108,7 @@ namespace Antlr.Runtime.Tree
          *  children to set their childindex; could be slow.
          *  </summary>
          */
-        void ReplaceChildren( int startChildIndex, int stopChildIndex, object t );
+        void ReplaceChildren(int startChildIndex, int stopChildIndex, object t);
 
         /** <summary>
          *  Indicates the node is a nil node but may still have children, meaning

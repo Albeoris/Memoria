@@ -1,7 +1,7 @@
+using Memoria.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Memoria.Data;
 
 namespace Memoria.Assets
 {
@@ -143,7 +143,7 @@ namespace Memoria.Assets
             if (x.Key["US"] != y.Key["US"])
                 return false;
 
-            return CalcDiff(x, new[] {y}) == 0;
+            return CalcDiff(x, new[] { y }) == 0;
         }
 
         public Int32 GetHashCode(KeyValuePair<Dictionary<String, String>, SB2_MON_PARM> obj)

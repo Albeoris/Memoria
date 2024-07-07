@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Memoria.Prime;
+using Memoria.Prime.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using Memoria.Prime;
-using Memoria.Prime.Exceptions;
 using UnityEngine;
 
 namespace Memoria.Assets.TexturePacker
@@ -171,7 +171,7 @@ namespace Memoria.Assets.TexturePacker
             if (String.IsNullOrEmpty(line))
                 return;
 
-            String[] general = line.Split(new[] {"; "}, StringSplitOptions.None);
+            String[] general = line.Split(new[] { "; " }, StringSplitOptions.None);
             if (general.Length < 1)
                 return;
 

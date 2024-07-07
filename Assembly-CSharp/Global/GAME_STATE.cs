@@ -2,9 +2,9 @@
 
 public enum GAME_STATE
 {
-	PREGAME,
-	START,
-	PLAY,
-	END,
-	POSTGAME
+    PREGAME,
+    START,
+    PLAY,
+    END,
+    POSTGAME
 }

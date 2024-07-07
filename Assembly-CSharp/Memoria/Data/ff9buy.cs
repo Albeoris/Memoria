@@ -1,12 +1,12 @@
-﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using Memoria;
+﻿using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.Collections;
 using Memoria.Prime.CSV;
+using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace FF9
 {

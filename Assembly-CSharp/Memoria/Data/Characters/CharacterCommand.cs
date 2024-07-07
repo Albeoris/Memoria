@@ -1,7 +1,7 @@
+using Memoria.Prime.CSV;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using Memoria.Prime.CSV;
 
 namespace Memoria.Data
 {
@@ -18,7 +18,7 @@ namespace Memoria.Data
             {
                 case CharacterCommandType.Throw:
                 case CharacterCommandType.Normal:
-                    yield return(BattleAbilityId)MainEntry;
+                    yield return (BattleAbilityId)MainEntry;
                     yield break;
                 case CharacterCommandType.Ability:
                     foreach (Int32 id in ListEntry)
@@ -28,7 +28,7 @@ namespace Memoria.Data
         }
 
         public BattleAbilityId GetAbilityId(Int32 index = -1)
-		{
+        {
             switch (Type)
             {
                 case CharacterCommandType.Throw:

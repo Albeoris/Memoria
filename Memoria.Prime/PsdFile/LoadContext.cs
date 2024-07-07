@@ -18,24 +18,24 @@ using System.Text;
 
 namespace Memoria.Prime.PsdFile
 {
-  /// <summary>
-  /// Contains settings and callbacks that affect the loading of a PSD file.
-  /// </summary>
-  public class LoadContext
-  {
-    public Encoding Encoding { get; set; }
-
-    public LoadContext()
+    /// <summary>
+    /// Contains settings and callbacks that affect the loading of a PSD file.
+    /// </summary>
+    public class LoadContext
     {
-      Encoding = Encoding.Default;
-    }
+        public Encoding Encoding { get; set; }
 
-    public virtual void OnLoadLayersHeader(PsdFile psdFile)
-    {
-    }
+        public LoadContext()
+        {
+            Encoding = Encoding.Default;
+        }
 
-    public virtual void OnLoadLayerHeader(Layer layer)
-    {
+        public virtual void OnLoadLayersHeader(PsdFile psdFile)
+        {
+        }
+
+        public virtual void OnLoadLayerHeader(Layer layer)
+        {
+        }
     }
-  }
 }

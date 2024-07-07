@@ -55,7 +55,7 @@ namespace Memoria.Prime.Exceptions
                 throw new ArgumentNullException(nameof(innerException));
             }
 
-            _innerExceptions = new ReadOnlyCollection<Exception>(new[] {innerException});
+            _innerExceptions = new ReadOnlyCollection<Exception>(new[] { innerException });
         }
 
         /// <summary> 
@@ -294,7 +294,7 @@ namespace Memoria.Prime.Exceptions
             List<Exception> flattenedExceptions = new List<Exception>();
 
             // Create a list to remember all aggregates to be flattened, this will be accessed like a FIFO queue
-            List<AggregateException> exceptionsToFlatten = new List<AggregateException> {this};
+            List<AggregateException> exceptionsToFlatten = new List<AggregateException> { this };
             Int32 nDequeueIndex = 0;
 
             // Continue removing and recursively flattening exceptions, until there are no more.

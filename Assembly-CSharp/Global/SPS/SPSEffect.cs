@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Memoria.Assets;
+using Memoria.Scripts;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using Memoria.Assets;
-using Memoria.Scripts;
 using UnityEngine;
 
 public class SPSEffect : MonoBehaviour
@@ -523,14 +523,6 @@ public class SPSEffect : MonoBehaviour
     public Texture2D pngTexture;
     private Boolean tcbAreaComputed;
     private Rect tcbArea;
-
-    public Boolean _smoothUpdateRegistered = false;
-    public Vector3 _smoothUpdatePosPrevious;
-    public Vector3 _smoothUpdatePosActual;
-    public Quaternion _smoothUpdateRotPrevious;
-    public Quaternion _smoothUpdateRotActual;
-    public Int32 _smoothUpdateScalePrevious;
-    public Int32 _smoothUpdateScaleActual;
 
     public class FieldSPSWork
     {

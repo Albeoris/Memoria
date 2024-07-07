@@ -1,15 +1,15 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
+using Memoria;
+using Memoria.Assets;
+using Memoria.Data;
 using Memoria.Field;
+using Memoria.Prime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Memoria;
-using Memoria.Prime;
-using Memoria.Assets;
-using Memoria.Data;
 using UnityEngine;
 
 public partial class EventEngine
@@ -49,11 +49,11 @@ public partial class EventEngine
             {
                 return 1;
             }
-            // 0x02, "JMP_IFN", "Skip some operations if the stack value is not 0.WARNING: unsafe to use.", false, 1, { 2 }, { "Jump" }, { AT_JUMP }, 3
-            // 0x03, "JMP_IF", "Skip some operations if the stack value is 0.WARNING: unsafe to use.", false, 1, { 2 }, { "Jump" }, { AT_JUMP }, 3
+            // 0x02, "JMP_IFN", "Skip some operations if the stack value is not 0.WARNING: unsafe to use."
+            // 0x03, "JMP_IF", "Skip some operations if the stack value is 0.WARNING: unsafe to use."
             // 0x04, "return", "End the function."
-            // 0x05, "set", "Perform variable operations and store the result in the stack.", false, 1, { 0 }, { "Variable Code" }, { AT_NONE }, 0
-            // 0x06, "JMP_SWITCHEX", "Skip some operations depending on the stack value.WARNING: unsafe to use.", false, -1, { 2, 2, 2 }, { "Default Jump", "Case", "Jump" }, { AT_JUMP, AT_SPIN, AT_JUMP }, 0
+            // 0x05, "set", "Perform variable operations and store the result in the stack."
+            // 0x06, "JMP_SWITCHEX", "Skip some operations depending on the stack value.WARNING: unsafe to use."
             // Unknown / unused opcodes:
             case EBin.event_code_binary.DEBUGCC:
             case EBin.event_code_binary.GLOBALCLEAR:
@@ -62,8 +62,8 @@ public partial class EventEngine
             {
                 return 0;
             }
-            case EBin.event_code_binary.BSSTART: //  0x100, "0x100", "Unknown Opcode (BSSTART).", true, 2, { 1, 1 }, { "Unknown", "Unknown" }, { AT_SPIN, AT_SPIN }, 0
-            case EBin.event_code_binary.BSFRAME: //  0x101, "0x101", "Unknown Opcode (BSFRAME.", true, 2, { 1, 1 }, { "Unknown", "Unknown" }, { AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.BSSTART:
+            case EBin.event_code_binary.BSFRAME:
             case EBin.event_code_binary.BAANIME:
             case EBin.event_code_binary.BAACTIVE:
             case EBin.event_code_binary.BAFLAG:
@@ -88,19 +88,34 @@ public partial class EventEngine
                 this.getv1();
                 return 0;
             }
-            case EBin.event_code_binary.NEW: // 0x07, "InitCode", "Init a normal code (independant functions).arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0).", false, 2, { 1, 1 }, { "Entry", "UID" }, { AT_ENTRY, AT_USPIN }, 0
+            case EBin.event_code_binary.DRADIUS:
+            {
+                this.getv1();
+                this.getv1();
+                this.getv1();
+                this.getv1();
+                return 0;
+            }
+            case EBin.event_code_binary.BGSMOVE:
+            {
+                this.getv2();
+                this.getv2();
+                this.getv2();
+                return 0;
+            }
+            case EBin.event_code_binary.NEW: // 0x07, "InitCode", "Init a normal code (independant functions).arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0)."
             {
                 NewThread(this.gArgFlag, this.geti()); // arg1: code entry to init / arg2: Unique ID (defaulted to entry's ID if 0)
                 this.gArgUsed = 1;
                 return 0;
             }
-            case EBin.event_code_binary.NEW2: // 0x08, "InitRegion", "Init a region code (associated with a region).arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0).", false, 2, { 1, 1 }, { "Entry", "UID" }, { AT_ENTRY, AT_USPIN }, 0
+            case EBin.event_code_binary.NEW2: // 0x08, "InitRegion", "Init a region code (associated with a region).arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0)."
             {
                 Quad quad = new Quad(this.gArgFlag, this.geti()); // arg1: code entry to init / arg2: Unique ID (defaulted to entry's ID if 0)
                 this.gArgUsed = 1;
                 return 0;
             }
-            case EBin.event_code_binary.NEW3: // 0x09, "InitObject", "Init an object code (associated with a 3D model). Also load the related model into the RAM.arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0).", false, 2, { 1, 1 }, { "Entry", "UID" }, { AT_ENTRY, AT_USPIN }, 0
+            case EBin.event_code_binary.NEW3: // 0x09, "InitObject", "Init an object code (associated with a 3D model). Also load the related model into the RAM.arg1: code entry to init.arg2: Unique ID (defaulted to entry's ID if 0)."
             {
                 Int32 sid = this.gArgFlag; // arg1: code entry to init
                 Int32 uid = this.geti(); // arg2: Unique ID (defaulted to entry's ID if 0)
@@ -116,15 +131,15 @@ public partial class EventEngine
                 actor = new Actor(sid, uid, EventEngine.sizeOfActor);
                 if (this.gMode == 3)
                     Singleton<WMWorld>.Instance.addWMActorOnly(actor);
-                if (this.gMode == 1)
+                else if (this.gMode == 1)
                     this.turnOffTriManually(sid);
                 this.gArgUsed = 1;
                 return 0;
             }
-            // 0x0B, "JMP_SWITCH", "Skip some operations depending on the stack value.WARNING: unsafe to use.", false, -1, { 2, 2, 2 }, { "Starting Value", "Default Jump", "Jump" }, { AT_USPIN, AT_JUMP, AT_JUMP }, 1
+            // 0x0B, "JMP_SWITCH", "Skip some operations depending on the stack value. WARNING: unsafe to use."
             // 0x0C, "0x0C", "Unknown Opcode.", 
             // 0x0D, "0x0D", "Unknown Opcode." - Steam seems to handle it like a JMP_SWITCH with a short instead of a char (number of cases)
-            case EBin.event_code_binary.REQ: // 0x10, "RunScriptAsync", "Run script function and continue executing the current one.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns", true, 3, { 1, 1, 1 }, { "Script Leve", "Entry", "Function" }, { AT_SCRIPTLVL, AT_ENTRY, AT_FUNCTION }, 0
+            case EBin.event_code_binary.REQ: // 0x10, "RunScriptAsync", "Run script function and continue executing the current one.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns"
             {
                 Int32 scriptLevel = this.getv1(); // arg1: script level
                 Obj obj1 = this.GetObj1(); // arg2: entry of the function
@@ -134,7 +149,7 @@ public partial class EventEngine
                     this.fieldmap.walkMesh.BGI_triSetActive(62U, 1U); // Treno/Pub, function "Steiner_11"
                 return 0;
             }
-            case EBin.event_code_binary.REQSW: // 0x12, "RunScript", "Wait until the entry's script level gets higher than the specified script level then run the script function and continue executing the current one.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns", true, 3, { 1, 1, 1 }, { "Script Leve", "Entry", "Function" }, { AT_SCRIPTLVL, AT_ENTRY, AT_FUNCTION }, 0
+            case EBin.event_code_binary.REQSW: // 0x12, "RunScript", "Wait until the entry's script level gets higher than the specified script level then run the script function and continue executing the current one.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns"
             {
                 Int32 scriptLevel = this.getv1(); // arg1: script level
                 Obj obj1 = this.GetObj1(); // arg2: entry of the function
@@ -166,7 +181,9 @@ public partial class EventEngine
                 this.stay();
                 return 1;
             }
-            case EBin.event_code_binary.REQEW: // 0x14, "RunScriptSync", "Wait until the entry's script level gets higher than the specified script level then run the script function and wait until it returns. Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns", true, 3, { 1, 1, 1 }, { "Script Leve", "Entry", "Function" }, { AT_SCRIPTLVL, AT_ENTRY, AT_FUNCTION }, 0
+            case EBin.event_code_binary.REQEW: // 0x14, "RunScriptSync", "Wait until the entry's script level gets higher than the specified script level then run the script function and wait until it returns.
+                                               // Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed.
+                                               // Otherwise, the entry's script level is set to the specified script level until the function returns"
             {
                 Int32 scriptLevel = this.getv1(); // arg1: script level
                 Obj obj1 = this.GetObj1(); // arg2: entry of the function
@@ -188,8 +205,7 @@ public partial class EventEngine
                     this.Request(obj1, scriptLevel, tagNumber, true);
                 else
                     this.stay();
-                // Hotfix: non-standard characters hacked in the team to Oeilvert -> pretend other member(s) were picked instead (field "Palace/Sanctum", start of function "Kuja_74")
-                if (mapNo == 2209 && obj1 != null && obj1.sid == 4 && tagNumber == 74)
+                if (mapNo == 2209 && obj1 != null && obj1.sid == 4 && tagNumber == 74) // Hotfix: non-standard characters hacked in the team to Oeilvert -> pretend other member(s) were picked instead (field "Palace/Sanctum", start of function "Kuja_74")
                 {
                     Int32 oeilvertPartyCount = 0;
                     Queue<Int32> missingMemberVar = new Queue<Int32>();
@@ -208,12 +224,16 @@ public partial class EventEngine
                 }
                 return 1;
             }
-            case EBin.event_code_binary.REPLY: // 0x16, "RunScriptObjectAsync", "Run script function and continue executing the current one. Must only be used in response to a function call ; the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns", true, 2, { 1, 1 }, { "Script Leve", "Function" }, { AT_SCRIPTLVL, AT_FUNCTION }, 0
+            case EBin.event_code_binary.REPLY: // 0x16, "RunScriptObjectAsync", "Run script function and continue executing the current one. Must only be used in response to a function call ;
+                                               // the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7.
+                                               // If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns"
             {
                 this.Request(this.getSender(this.gExec), this.getv1(), this.geti(), false); // arg1: script level / arg2: function
                 return 0;
             }
-            case EBin.event_code_binary.REPLYSW: // 0x18, "RunScriptObject", "Wait until the entry's script level gets higher than the specified script level then run the script function and continue executing the current one. Must only be used in response to a function call ; the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns", true, 2, { 1, 1 }, { "Script Leve", "Function" }, { AT_SCRIPTLVL, AT_FUNCTION }, 0
+            case EBin.event_code_binary.REPLYSW: // 0x18, "RunScriptObject", "Wait until the entry's script level gets higher than the specified script level then run the script function and continue executing the current one.
+                                                 // Must only be used in response to a function call ; the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7.
+                                                 // If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns"
             {
                 Int32 scriptLevel = this.getv1(); // arg1: script level
                 Int32 tagNumber = this.geti(); // arg2: function
@@ -225,7 +245,9 @@ public partial class EventEngine
                 this.stay();
                 return 1;
             }
-            case EBin.event_code_binary.REPLYEW: // 0x1A, "RunScriptObjectSync", "Wait until the entry's script level gets higher than the specified script level then run the script function and wait until it returns. Must only be used in response to a function call ; the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7. If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns", true, 2, { 1, 1 }, { "Script Leve", "Function" }, { AT_SCRIPTLVL, AT_FUNCTION }, 0
+            case EBin.event_code_binary.REPLYEW: // 0x1A, "RunScriptObjectSync", "Wait until the entry's script level gets higher than the specified script level then run the script function and wait until it returns.
+                                                 // Must only be used in response to a function call ; the argument's entry is the one that called this function.Entry's script level is 0 until its main function returns, then it becomes 7.
+                                                 // If the specified script level is higher than the entry's script level, the function is not executed. Otherwise, the entry's script level is set to the specified script level until the function returns"
             {
                 Int32 scriptLevel = this.getv1(); // arg1: script level
                 Int32 tagNumber = this.geti(); // arg2: function
@@ -236,7 +258,7 @@ public partial class EventEngine
                     this.stay();
                 return 1;
             }
-            case EBin.event_code_binary.SONGFLAG: // 0x1B, "ContinueBattleMusic", "Continue the music after the battle end", true, 1, { 1 }, { "Continue" }, { AT_BOOL }, 0
+            case EBin.event_code_binary.SONGFLAG: // 0x1B, "ContinueBattleMusic", "Continue the music after the battle end"
             {
                 if (this.getv1() != 0) // arg1: flag continue/ don't continue
                     FF9StateSystem.Common.FF9.btl_flag |= (Byte)8;
@@ -244,14 +266,14 @@ public partial class EventEngine
                     FF9StateSystem.Common.FF9.btl_flag &= (Byte)247;
                 return 0;
             }
-            // 0x1C, "TerminateEntry", "Stop the execution of an entry's code.arg1: entry to terminate.", true, 1, { 1 }, { "Object" }, { AT_ENTRY }, 0
-            case EBin.event_code_binary.POS: // 0x1D, "CreateObject", "Place (or replace) the 3D model on the field", true, 2, { 2, 2 }, { "Position" }, { AT_POSITION_X, AT_POSITION_Y }, 0
-            case EBin.event_code_binary.DPOS: // 0xBF, "MoveInstantEx", "Instantatly move an object", true, 3, { 1, 2, 2 }, { "Object", "Destination" }, { AT_ENTRY, AT_POSITION_X, AT_POSITION_Y }, 0
+            // 0x1C, "TerminateEntry", "Stop the execution of an entry's code.arg1: entry to terminate."
+            case EBin.event_code_binary.POS: // 0x1D, "CreateObject", "Place (or replace) the 3D model on the field"
+            case EBin.event_code_binary.DPOS: // 0xBF, "MoveInstantEx", "Instantatly move an object"
             {
                 if (eventCodeBinary == EBin.event_code_binary.DPOS)
                     po = (PosObj)this.GetObj1(); // arg1: object's entry
                 Int32 posX = this.getv2(); // X position
-                Int32 posY = this.getv2(); // Y position
+                Int32 posZ = this.getv2(); // Z position
                 Int32 isValid = this.gMode != 1 || (Int32)po.model == (Int32)UInt16.MaxValue ? 0 : 1;
                 if (isValid == 1 && po != null)
                 {
@@ -263,26 +285,31 @@ public partial class EventEngine
                             component.walkMesh.BGI_charSetActive(component, 0U);
                         else if (mapNo == 2917 && po.sid == 4)
                         {
-                            if (posX == 0 && posY == -1787)
+                            if (posX == 0 && posZ == -1787)
                                 posX = -15;
                         }
-                        else if (mapNo == 450 && po.sid == 3 && (posX == 363 && posY == 88))
+                        else if (mapNo == 450 && po.sid == 3 && (posX == 363 && posZ == 88))
                             component.walkMesh.BGI_triSetActive(24U, 0U);
                     }
                     if (mapNo == 1421 && po.sid == 5)
                     {
-                        if (posX == 1510 && (posY == -2331 || posY == -2231))
+                        if (posX == 1510 && (posZ == -2331 || posZ == -2231))
                         {
-                            if (posY == -2331)
-                                posY = -2231;
+                            if (posZ == -2331)
+                                posZ = -2231;
                             this.fieldmap.walkMesh.BGI_triSetActive(109U, 0U);
                             this.fieldmap.walkMesh.BGI_triSetActive(110U, 0U);
                         }
-                        else if (posX == 34 && posY == -598)
+                        else if (posX == 34 && posZ == -598)
                         {
                             this.fieldmap.walkMesh.BGI_triSetActive(109U, 1U);
                             this.fieldmap.walkMesh.BGI_triSetActive(110U, 1U);
                         }
+                    }
+                    if (mapNo == 560 && po.sid == 6 && posX == 714) // removed shadow on sword
+                    {
+                        ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                        po.isShadowOff = true;
                     }
                     if (mapNo == 563 && po.sid == 16 && posX == -1614)
                         posX = -1635;
@@ -290,10 +317,47 @@ public partial class EventEngine
                         posX = -1765;
                     else if (mapNo == 1310 && po.sid == 12 && posX == -1614)
                         posX = -1635;
+                    else if (mapNo == 1811 && scCounter == 7200 && po.sid == 13 && posX == 413 && posZ == -17294) // Vivi visible too soon
+                    {
+                        posX = 300;
+                        posZ = -17894; //Log.Message("posX:" + posX + " posZ:" + posZ);
+                    }
+                    else if (mapNo == 1816 && scCounter == 7200 && po.sid == 18 && posX == -2390 && posZ == 856) // Quiproquo at the dock, Beatrix visible too soon
+                    {
+                        posX = -2890; //Log.Message("posX:" + posX + " posZ:" + posZ);
+                    }
+                    else if (mapNo == 1901 && scCounter == 7550 && po.sid == 2 && posX == 142 && posZ == 2172) // Eiko ATE: Gilmanesh appears between 2 columns
+                    {
+                        posX = 400; //Log.Message("posX:" + posX + " posZ:" + posZ);
+                    }
+                    else if (mapNo == 2105 && scCounter == 8800 && po.sid == 14 && posX == -831 && posZ == 358) // Baku/Marcus visible too soon
+                    {
+                        posX = -1031;
+                        posZ = 158; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                    }
+                    else if (mapNo == 2105 && scCounter == 8800 && po.sid == 25 && posX == -714 && posZ == -190) // Baku/Marcus visible too soon
+                    {
+                        posX = -914;
+                        posZ = -390; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                    }
                     else if (mapNo == 2110 && po.sid == 9 && posX == -1614)
                         posX = -1635;
+                    else if (mapNo == 2173 && scCounter == 9050 && po.sid == 6 && posX == -1705 && posZ == 177) // Quina ashore ATE: guard seen too soon
+                    {
+                        posX = -2700;
+                        posZ = 1400; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                    }
+                    else if (mapNo == 2211 && scCounter == 9200 && (po.sid == 5 || po.sid == 6) && posX == -465 && posZ == -5796) // Kuja ATE: Zorn Thorn position
+                    {
+                        posX = (po.sid == 5) ? posX = -200 : posX = 0; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                    }
+                    else if (mapNo == 2914 && scCounter == 11670 && po.sid >= 6 && po.sid <= 10) // Disable fishes shadows
+                    {
+                        ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                        po.isShadowOff = true;
+                    }
                 }
-                this.SetActorPosition(po, (Single)posX, this.POS_COMMAND_DEFAULTY, (Single)posY);
+                this.SetActorPosition(po, (Single)posX, this.POS_COMMAND_DEFAULTY, (Single)posZ);
                 if (mapNo == 2050 && (Int32)po.sid == 5 && (isValid == 1 && po != null))
                 {
                     FieldMapActorController component = po.go.GetComponent<FieldMapActorController>();
@@ -305,7 +369,7 @@ public partial class EventEngine
                 this._posUsed = true;
                 return 0;
             }
-            case EBin.event_code_binary.BGVPORT: // 0x1E, "SetCameraBounds", "Redefine the field camera boundaries (default value is part of the background's data)", true, 5, { 1, 2, 2, 2, 2 }, { "Camera", "Min X", "Max X", "Min Y", "Max Y" }, { AT_USPIN, AT_SPIN, AT_SPIN, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.BGVPORT: // 0x1E, "SetCameraBounds", "Redefine the field camera boundaries (default value is part of the background's data)"
             {
                 Int32 camId = this.getv1(); // arg1: camera ID
                 Int16 minX = (Int16)this.getv2(); // arg2-5: MinX, MaxX, MinY, MaxY
@@ -319,7 +383,7 @@ public partial class EventEngine
                 this.fieldmap.EBG_cameraSetViewport(camId, minX, maxX, minY, maxY);
                 return 0;
             }
-            case EBin.event_code_binary.MES: // 0x1F, "WindowSync", "Display a window with text inside and wait until it closes", true, 3, { 1, 1, 2 }, { "Window ID", "UI", "Text" }, { AT_USPIN, AT_BOOLLIST, AT_TEXT }, 0
+            case EBin.event_code_binary.MES: // 0x1F, "WindowSync", "Display a window with text inside and wait until it closes"
             {
                 this.gCur.winnum = (Byte)this.getv1(); // arg1: window ID
                 Int32 uiFlags = this.getv1(); // arg2: UI flag list. 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
@@ -369,7 +433,7 @@ public partial class EventEngine
                 this.gCur.wait = (Byte)254;
                 return 1;
             }
-            case EBin.event_code_binary.MESN: // 0x20, "WindowAsync", "Display a window with text inside and continue the execution of the script without waiting", true, 3, { 1, 1, 2 }, { "Window ID", "UI", "Text" }, { AT_USPIN, AT_BOOLLIST, AT_TEXT }, 0
+            case EBin.event_code_binary.MESN: // 0x20, "WindowAsync", "Display a window with text inside and continue the execution of the script without waiting"
             {
                 this.gCur.winnum = (Byte)this.getv1(); // arg1: window ID
                 Int32 uiFlags = this.getv1(); // arg2: UI flag list: 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
@@ -429,8 +493,8 @@ public partial class EventEngine
                 this.eTb.DisposWindowByID(windowID, true);
                 return 0;
             }
-            // 0x22, "Wait", "Wait some time.arg1: amount of frames to wait. For PAL, 1 frame is 0.04 seconds. For other versions, 1 frame is about 0.033 seconds.", true, 1, { 1 }, { "Frame Amount" }, { AT_USPIN }, 0
-            case EBin.event_code_binary.MOVE: // 0x23, "Walk", "Make the character walk to destination. Make it synchronous if InitWalk is called before", true, 2, { 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Y }, 0
+            // 0x22, "Wait", "Wait some time.arg1: amount of frames to wait. For PAL, 1 frame is 0.04 seconds. For other versions, 1 frame is about 0.033 seconds."
+            case EBin.event_code_binary.MOVE: // 0x23, "Walk", "Make the character walk to destination. Make it synchronous if InitWalk is called before"
             {
                 Int32 destX = this.getv2(); // arg1: destination X
                 Int32 destZ = this.getv2(); // arg2: destination Z
@@ -518,10 +582,25 @@ public partial class EventEngine
                 {
                     destZ = 2970;
                 }
+                else if (mapNo == 1815 && scCounter == 7070 && destX == -2312 && destZ == -245) // Steiner visible on dock in widescreen
+                {
+                    destX = -3000;
+                }
                 else if (mapNo == 1857 && po.sid == 3 && destX == -111 && destZ == -210)
                 {
                     destX = -150;
                     destZ = -270;
+                }
+                else if (mapNo == 1861 && po.sid == 24 && destX == 137 && destZ == 420) // Eiko in pub: not going far enough.
+                {
+                    destX = -550;
+                    destZ = 800; //Log.Message("destX = " + destX + " destZ = " + destZ);
+                }
+                else if (mapNo == 1901 && (po.sid == 2 || po.sid == 17) && destX == 672) // Eiko ATE widescreen: Quina chasing Gilmanesh not far enough
+                {
+                    destX = 1000; //Log.Message("destX = " + destX + " destZ = " + destZ + " po.sid = " + po.sid + " po.pos[0] = " + po.pos[0]);
+                    if ((po.sid == 2 && po.pos[0] > 890) || (po.sid == 17 && po.pos[0] > 810))
+                        this.gCur.flags = (Byte)((this.gCur.flags & -64) | 14); // make invisible, because they're still visible even at the edge
                 }
                 else if (mapNo == 2101 && po.sid == 2 && destX == 781 && destZ == 1587)
                 {
@@ -531,6 +610,13 @@ public partial class EventEngine
                 else if (mapNo == 2110 && po.sid == 9 && destX == -1614)
                 {
                     destX = -1635;
+                }
+                else if (mapNo == 2173 && scCounter == 9050 && (po.sid == 4 || po.sid == 5 || po.sid == 6) && destX == -2612 && destZ == 1558)  // Quina ashore ATE: guard not quitting the scene
+                {
+                    destX = -3900;
+                    destZ = 2558; //Log.Message("destX = " + destX + " destZ = " + destZ + " po.sid = " + po.sid + " po.pos[0] = " + po.pos[0]);
+                    if (po.pos[0] < -3500)
+                        this.gCur.flags = (Byte)((this.gCur.flags & -64) | 14);
                 }
                 else if (mapNo == 2954 && po.sid == 4 && destX == -1159 && destZ == 13130)
                 {
@@ -546,18 +632,108 @@ public partial class EventEngine
                 }
                 Boolean flag2 = this.MoveToward_mixed((Single)destX, 0.0f, (Single)destZ, 0, (PosObj)null);
                 eulerAngles1 = po.go.transform.localRotation.eulerAngles;
-                if (flag2)
-                    this.stay();
-                else if (flag)
+                if (flag || flag2)
                     this.stay();
                 return 1;
             }
-            case EBin.event_code_binary.MOVA: // 0x24, "WalkTowardObject", "Make the character walk and follow an object", true, 1, { 1 }, { "Object" }, { AT_ENTRY }, 0
+            case EBin.event_code_binary.MOVA: // 0x24, "WalkTowardObject", "Make the character walk and follow an object"
             {
                 po = (PosObj)this.GetObj1(); // arg1: object to walk toward
                 if (this.MoveToward_mixed(po.pos[0], po.pos[1], po.pos[2], 0, po))
                     this.stay();
                 this.gArgUsed = 1;
+                return 1;
+            }
+            case EBin.event_code_binary.MOVE_EX: // "WalkEx" Make the specified character walk to destination
+            {
+                actor = this.GetObj3() as Actor; // object to move
+                Int32 walkSpeed = this.getv3(); // walk speed
+                Single x = this.getv3(); // 3rd to 5th arguments: position in (X, Z, Y) format.
+                Single y = -this.getv3();
+                Single z = this.getv3();
+                Int32 flags = this.getv3(); // movement flags
+                if (actor == null)
+                    return 0;
+                if (actor.loopCount != Byte.MaxValue)
+                {
+                    actor.loopCount = Byte.MaxValue;
+                    this.clrdist(actor);
+                }
+                if (this.gMode == 1 && (flags & 2) != 0)
+                {
+                    FieldMapActorController controller = actor.go?.GetComponent<FieldMapActorController>();
+                    controller?.walkMesh.BGI_charSetActive(controller, 0);
+                    ff9shadow.FF9ShadowOffField(actor.uid);
+                    actor.isShadowOff = true;
+                }
+                if (this.MoveToward_mixed_ex(actor, walkSpeed, x, y, z, flags, null))
+                {
+                    this.stay();
+                }
+                else
+                {
+                    if (this.gMode == 1 && (flags & 2) != 0)
+                    {
+                        FieldMapActorController controller = actor.go?.GetComponent<FieldMapActorController>();
+                        if (controller != null && controller.walkMesh.BGI_nearestWalkPosInVertical(new Vector3(x, y, z), out Single h) && Math.Abs(h) < 100f)
+                        {
+                            // Enable walkmesh pathing and shadow if the destination is near the ground
+                            controller.walkMesh.BGI_charSetActive(controller, 1);
+                            ff9shadow.FF9ShadowOnField(actor.uid);
+                        }
+                    }
+                }
+                return 1;
+            }
+            case EBin.event_code_binary.MOVE3: // 0xA2, "WalkXZY", "Make the character walk to destination. Make it synchronous if InitWalk is called before"
+            {
+                Single x = (Single)this.getv2(); // 3rd to 5th arguments: position in (X, Y, Z) format.
+                Single y = -(Single)(this.getv2());
+                Single z = (Single)this.getv2();
+
+                if (mapNo == 1550 && ((po.sid == 18 && x == 1798f) || (po.sid == 2 && x == 1797f))) // Fix widescreen - Quina runs to eat Mog
+                    x = 2800f;
+
+                if (this.MoveToward_mixed(x, y, z, 2, (PosObj)null)) // arg1: destination in (X, Z, Y)
+                    this.stay();
+                return 1;
+            }
+            case EBin.event_code_binary.MOVQ: // 0x9E, "ExitField", "Make the player's character walk to the field exit and prepare to flush the field datas."
+            {
+                po = (PosObj)this.FindObjByUID((Int32)this._context.controlUID);
+                if (po != null)
+                {
+                    this.Call((Obj)po, 0, 0, false, Obj.movQData);
+                    this._context.usercontrol = (Byte)0;
+                    for (ObjList objList = this._context.activeObj; objList != null; objList = objList.next)
+                        objList.obj.flags |= (Byte)6;
+                }
+                return 0;
+            }
+            case EBin.event_code_binary.MOVJ: // 0xA0, "WalkToExit", "Make the entry's object walk to the field exit."
+            {
+                if (this.MoveToward_mixed((Single)this.sMapJumpX, 0.0f, (Single)this.sMapJumpZ, 0, (PosObj)null))
+                    this.stay();
+                return 1;
+            }
+            case EBin.event_code_binary.MOVH: // 0xA5, "Slide", "Make the character slide to destination (walk without using the walk animation and without changing the facing angle)"
+            {
+                Int32 destX = this.getv2(); // 1st and arg2s: destination in (X, Z) format.
+                Int32 destZ = this.getv2();
+                if (mapNo == 66 && po.sid == 14 && destX == -145 && destZ == -9135)
+                {
+                    // Prima Vista/Interior, Marcus attacking King Leo as Cornelia (Garnet) moves to protect him
+                    destX = -160;
+                    destZ = -9080;
+                }
+                if (this.MoveToward_mixed(destX, 0.0f, destZ, 1, null))
+                    this.stay();
+                return 1;
+            }
+            case EBin.event_code_binary.MOVE3H: // 0xE8, "SideWalkXZY", "Make the character walk to destination without changing his facing angle. Make it synchronous if InitWalk is called before. format.", true, 3, { 2, 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
+            {
+                if (this.MoveToward_mixed(this.getv2(), -this.getv2(), this.getv2(), 3, null)) // 1st to arg3s: destination in (X, Z, Y)
+                    this.stay();
                 return 1;
             }
             case EBin.event_code_binary.CLRDIST: // 0x25, "InitWalk", "Make a further Walk call (or variations of Walk) synchronous."
@@ -566,7 +742,7 @@ public partial class EventEngine
                 this.clrdist(actor);
                 return 0;
             }
-            case EBin.event_code_binary.MSPEED: // 0x26, "SetWalkSpeed", "Change the walk speed", true, 1, { 1 }, { "Speed" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.MSPEED: // 0x26, "SetWalkSpeed", "Change the walk speed"
             {
                 Byte walkSpeed = (Byte)this.getv1(); // arg1: speed (surely in unit/frame)
                 if (mapNo == 3010)
@@ -597,17 +773,17 @@ public partial class EventEngine
                 actor.speed = walkSpeed;
                 return 0;
             }
-            case EBin.event_code_binary.BGIMASK: // 0x27, "SetTriangleFlagMask", "Set a bitmask for some of the walkmesh triangle flags, 7: disable restricted triangles, 8: disable player-restricted triangles", true, 1, { 1 }, { "Flags" }, { AT_BOOLLIST }, 0 // BGIMASK
+            case EBin.event_code_binary.BGIMASK: // 0x27, "SetTriangleFlagMask", "Set a bitmask for some of the walkmesh triangle flags"
             {
-                this.BGI_systemSetAttributeMask((Byte)this.getv1()); // arg1: flag mask
+                this.BGI_systemSetAttributeMask((Byte)this.getv1()); // arg1: flag mask - 7: disable restricted triangles, 8: disable player-restricted triangles
                 return 0;
             }
-            case EBin.event_code_binary.FMV: // 0x28, "Cinematic", "Run or setup a cinematic", true, 4, { 1, 1, 1, 1 }, { "Unknown", "Cinematic ID", "Unknown", "Unknown" }, { AT_SPIN, AT_FMV, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.FMV: // 0x28, "Cinematic", "Run or setup a cinematic"
             {
                 Singleton<fldfmv>.Instance.FF9FieldFMVDispatch(this.getv1(), this.getv2(), this.getv1()); // arg1: unknown, arg2: cinematic ID (may depends on arg1's value), arg3: unknown, (arg4: unknown)
                 return 0;
             }
-            case EBin.event_code_binary.QUAD: // 0x29, "SetRegion", "Define the polygonal region linked with the entry script. If the polygon is not convex, its convex hull is used instead. Args are in the format (Vertex X, Vertex Y) and there can be any number of them", true, -1, { 4 }, { "Polygon" }, { AT_NONE }, 0
+            case EBin.event_code_binary.QUAD: // 0x29, "SetRegion", "Define the polygonal region linked with the entry script. If the polygon is not convex, its convex hull is used instead. Args are in the format (Vertex X, Vertex Y) and there can be any number of them"
             {
                 Int32 i = 0;
                 ((Quad)this.gCur).n = this.getv1();
@@ -626,7 +802,7 @@ public partial class EventEngine
                 //    ;
                 return 0;
             }
-            case EBin.event_code_binary.ENCOUNT: // 0x2A, "Battle", "Start a battle (using a random enemy group)", true, 2, { 1, 2 }, { "Rush Type", "Battle" }, { AT_SPIN, AT_BATTLE }, 0
+            case EBin.event_code_binary.ENCOUNT: // 0x2A, "Battle", "Start a battle (using a random enemy group)"
             {
                 this.getv1(); // arg1: rush type (unknown)
                 this._ff9.btlSubMapNo = -1;
@@ -637,7 +813,7 @@ public partial class EventEngine
                 this._encountBase = 0;
                 return 3;
             }
-            case EBin.event_code_binary.MAPJUMP: // 0x2B, "Field", "Change the field scene", true, 1, { 2 }, { "Field" }, { AT_FIELD }, 0
+            case EBin.event_code_binary.MAPJUMP: // 0x2B, "Field", "Change the field scene",
             {
                 this.SetNextMap(this.getv2()); //arg1: field scene destination
                 return 4;
@@ -693,7 +869,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.MODEL: // 0x2F, "SetModel", "Set the model of the object and its head's height (used to set the dialog box's height)", true, 2, { 2, 1 }, { "Mode", "Height" }, { AT_MODEL, AT_USPIN }, 0
+            case EBin.event_code_binary.MODEL: // 0x2F, "SetModel", "Set the model of the object and its head's height (used to set the dialog box's height)"
             {
                 po.model = (UInt16)this.getv2(); // arg1: model
                 this.gExec.flags |= 1;
@@ -743,22 +919,39 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.AIDLE: // 0x33, "SetStandAnimation", "Change the standing animation", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
+            case EBin.event_code_binary.AIDLE: // 0x33, "SetStandAnimation", "Change the standing animation"
             {
                 actor.idle = (UInt16)this.getv2(); // arg1: animation ID
-                if (mapNo == 112 && po.model == 223) 
+                if (mapNo == 112 && po.model == 223)
                 {
                     if ((actor.idle == 8239 && actor.uid == 3) || (actor.idle == 1870 && actor.uid == 6)) // Remove SetStandAnimation( 8239 ) for Dante's glass in Alexandria/Pub
                         actor.idle = 5384; // Better stand animation imo for the Red Mage (uid == 6) or remove it... it's just a detail.
                 }
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.idle));
-                if (mapNo == 2365 && actor.uid == 14 && actor.idle == 11611)
+
+                if (mapNo == 1601 && actor.uid == 19 && actor.idle == 816) // Garnet shadow off when sitting
+                {
+                    ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                    po.isShadowOff = true;
+                }
+                if (mapNo == 1600 && actor.uid == 12 && scCounter == 6615) // Garnet shadow on again to be sure
+                {
+                    ff9shadow.FF9ShadowOnField((Int32)po.uid);
+                    po.isShadowOff = false;
+                }
+                else if (mapNo == 1605 && actor.uid == 18)
+                {
+                    this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
+                    if ((Int32)actor.idle == 7503)
+                        this._geoTexAnim.geoTexAnimPlay(2);
+                }
+                else if (mapNo == 2365 && actor.uid == 14 && actor.idle == 11611)
                 {
                     this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
                     this._geoTexAnim.geoTexAnimStop(2);
                     this._geoTexAnim.geoTexAnimPlay(0);
                 }
-                if (mapNo == 2657 && actor.uid == 7)
+                else if (mapNo == 2657 && actor.uid == 7)
                 {
                     this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
                     if (actor.idle == 1044)
@@ -769,38 +962,43 @@ public partial class EventEngine
                     else if (actor.idle == 816)
                         this._geoTexAnim.geoTexAnimPlay(2);
                 }
-                if (mapNo == 1605 && actor.uid == 18)
-                {
-                    this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
-                    if ((Int32)actor.idle == 7503)
-                        this._geoTexAnim.geoTexAnimPlay(2);
-                }            
                 return 0;
             }
-            case EBin.event_code_binary.AWALK: // 0x34, "SetWalkAnimation", "Change the walking animation", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
+            case EBin.event_code_binary.AWALK: // 0x34, "SetWalkAnimation", "Change the walking animation"
             {
                 actor.walk = (UInt16)this.getv2(); // arg1: animation ID
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.walk));
                 return 0;
             }
-            case EBin.event_code_binary.ARUN: // 0x34, "SetWalkAnimation", "Change the walking animation", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
+            case EBin.event_code_binary.ARUN: // 0x34, "SetWalkAnimation", "Change the walking animation"
             {
                 actor.run = (UInt16)this.getv2(); // arg1: animation ID
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.run));
                 return 0;
             }
-            case EBin.event_code_binary.DIRE: // 0x36, "TurnInstant", "Make the character face an angle", true, 1, { 1 }, { "Angle" }, { AT_USPIN }, 0
-            case EBin.event_code_binary.DDIR: // 0x87, "TurnInstantEx", "Make the specified character face an angle", true, 2, { 1, 1 }, { "Entry", "Angle" }, { AT_ENTRY, AT_USPIN }, 0
+            case EBin.event_code_binary.DIRE: // 0x36, "TurnInstant", "Make the character face an angle"
+            case EBin.event_code_binary.DDIR: // 0x87, "TurnInstantEx", "Make the specified character face an angle"
             {
                 if (eventCodeBinary == EBin.event_code_binary.DDIR)
                     po = (PosObj)this.GetObj1(); //arg1: object to turn
                 Int32 angle = this.getv1(); // arg1/2: angle: 0 south, 64 west, 128 north, 192 east.
+
                 if (po == null || (UnityEngine.Object)po.go == (UnityEngine.Object)null)
                     return 0;
+
                 if (this.gMode == 1)
                 {
                     if (mapNo == 504 && (Int32)po.sid == 15 && (this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 4 && angle == 240))
                         angle = 128;
+
+                    if (mapNo == 103 && angle == 228 && po.model == 224 && actor.uid == 9) // Jump rope from little girls at Alexandria (before Alexandria destruction)
+                    {
+                        angle = 229;
+                    }
+                    if (mapNo == 2456 && angle == 0 && po.model == 224 && actor.uid == 6) // Jump rope from little girls at Alexandria (after Alexandria destruction)
+                    {
+                        angle = 1;
+                    }
                     Vector3 eulerAngles2 = po.go.transform.localRotation.eulerAngles;
                     eulerAngles2.y = EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)(angle << 4));
                     po.rotAngle[1] = eulerAngles2.y;
@@ -813,7 +1011,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.ROTXZ: // 0x37, "SetPitchAngle", "Turn the model in the up/down direction.arg1: angle (pitch axis).arg2: angle (XZ axis).", true, 2, { 1, 1 }, { "Pitch", "XZ Angle" }, { AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.ROTXZ: // 0x37, "SetPitchAngle", "Turn the model in the up/down direction.arg1: angle (pitch axis).arg2: angle (XZ axis)."
             {
                 Int32 pitchAxisAngle = (Int32)(Int16)(this.getv1() << 4);
                 Int32 xyAxisAngle = (Int32)(Int16)(this.getv1() << 4);
@@ -823,7 +1021,8 @@ public partial class EventEngine
                 po.rotAngle[2] = xyAxisDegrees;
                 return 0;
             }
-            case EBin.event_code_binary.BTLCMD: // 0x38, "Attack", "Make the enemy attack. The target(s) are to be set using the SV_Target variable. Inside an ATB function, the attack is added to the queue. Inside a counter function, the attack occurs directly. arg1: attack to perform.", true, 1, { 1 }, { "Attack" }, { AT_ATTACK }, 0
+            case EBin.event_code_binary.BTLCMD: // 0x38, "Attack", "Make the enemy attack. The target(s) are to be set using the SV_Target variable. Inside an ATB function, the attack is added to the queue. Inside a counter function,
+                                                // the attack occurs directly. arg1: attack to perform."
             {
                 switch (this.gExec.level)
                 {
@@ -846,7 +1045,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.MESHSHOW: // 0x39, "ShowObject", "Show specific meshes of an object", true, 2, { 1, 1 }, { "Object", "Mesh list" }, { AT_ENTRY, AT_BOOLLIST }, 0
+            case EBin.event_code_binary.MESHSHOW: // 0x39, "ShowObject", "Show specific meshes of an object"
             {
                 po = (PosObj)this.GetObj1(); // arg1: object
                 Int32 mesh = this.getv1(); // arg2: mesh list to show
@@ -854,7 +1053,7 @@ public partial class EventEngine
                     po.geoMeshShow(mesh);
                 return 0;
             }
-            case EBin.event_code_binary.MESHHIDE: // 0x3A, "HideObject", "Hide specific meshes of an object", true, 2, { 1, 1 }, { "Object", "Mesh list" }, { AT_ENTRY, AT_BOOLLIST }, 0
+            case EBin.event_code_binary.MESHHIDE: // 0x3A, "HideObject", "Hide specific meshes of an object"
             {
                 po = (PosObj)this.GetObj1(); // arg1: object
                 Int32 mesh = this.getv1(); // arg2: mesh list to hide
@@ -862,12 +1061,12 @@ public partial class EventEngine
                     po.geoMeshHide(mesh);
                 return 0;
             }
-            case EBin.event_code_binary.OBJINDEX: // 0x3B, "SetObjectIndex", "Redefine the current object's index.", true, 1, { 1 }, { "Index" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.OBJINDEX: // 0x3B, "SetObjectIndex", "Redefine the current object's index."
             {
                 this.gExec.index = (Byte)this.getv1(); // arg1: new index.
                 return 0;
             }
-            case EBin.event_code_binary.ENCSCENE: // 0x3C, "SetRandomBattles", "Define random battles. { "Pattern", "Battle 1", "Battle 2", "Battle 3", "Battle 4" }, { AT_USPIN, AT_BATTLE, AT_BATTLE, AT_BATTLE, AT_BATTLE }, 0
+            case EBin.event_code_binary.ENCSCENE: // 0x3C, "SetRandomBattles", "Define random battles. { "Pattern", "Battle 1", "Battle 2", "Battle 3", "Battle 4" }
             {
                 this._enCountData.pattern = (Byte)this.getv1(); // arg1: pattern, deciding the encounter chances and the topography (World Map only).
                 this._enCountData.scene[0] = (UInt16)this.getv2(); // 0: possible random battles {0.375, 0.28, 0.22, 0.125}
@@ -876,13 +1075,13 @@ public partial class EventEngine
                 this._enCountData.scene[3] = (UInt16)this.getv2(); // 3: possible random battles {0.45, 0.4, 0.1, 0.05}
                 return 0;
             }
-            case EBin.event_code_binary.AFRAME: // 0x3D, "SetAnimationInOut", "Specify the starting and ending animation frames of the character", true, 2, { 1, 1 }, { "In-Frame",  "Out-Frame" }, { AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.AFRAME: // 0x3D, "SetAnimationInOut", "Specify the starting and ending animation frames of the character"
             {
                 actor.inFrame = (Byte)this.getv1(); // arg1: starting frame
                 actor.outFrame = (Byte)this.getv1(); // arg2: ending frame (capped to the animation's duration)
                 return 0;
             }
-            case EBin.event_code_binary.ASPEED: // 0x3E, "SetAnimationSpeed", "Set the current object's animation speed.", true, 1, { 1 }, { "Speed" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.ASPEED: // 0x3E, "SetAnimationSpeed", "Set the current object's animation speed."
             {
                 if (mapNo >= 3009 && mapNo <= 3011)
                 {
@@ -892,16 +1091,42 @@ public partial class EventEngine
                 actor.aspeed0 = (Byte)this.getv1(); // arg1: speed
                 return 0;
             }
-            case EBin.event_code_binary.AMODE: // 0x3F, "SetAnimationFlags", "Set the current object's next animation looping flags", true, 2, { 1, 1 }, { "Flag", "Repeat" }, { AT_ANIMFLAG, AT_USPIN }, 0
+            case EBin.event_code_binary.AMODE: // 0x3F, "SetAnimationFlags", "Set the current object's next animation looping flags"
             {
                 Int32 flag = this.getv1() << 3 & (EventEngine.afHold | EventEngine.afLoop | EventEngine.afPalindrome); // arg1: looping flag list. 1: freeze at end, 2: loop, 3: loop back and forth
                 actor.animFlag = (Byte)flag;
                 actor.loopCount = (Byte)this.getv1(); // arg2: times to repeat
                 return 0;
             }
-            case EBin.event_code_binary.ANIM: // 0x40, "RunAnimation", "Make the character play an animation", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
+            case EBin.event_code_binary.ANIM: // 0x40, "RunAnimation", "Make the character play an animation"
+            case EBin.event_code_binary.DANIM: // 0xBD, "RunAnimationEx", "Play an object's animation"
             {
-                Int32 anim = this.getv2(); // arg1: animation ID
+                if (eventCodeBinary == EBin.event_code_binary.DANIM)
+                    actor = (Actor)this.GetObj1(); // arg1: object's entry
+                Int32 anim = this.getv2(); // arg1/2: animation ID
+
+                if (mapNo == 103 && po.model == 5492) // Jump rope from little girls at Alexandria (before Alexandria destruction)
+                {
+                    if (anim == 973 && actor.uid == 6)
+                    {
+                        anim = 975;
+                    }
+                    else if (anim == 975 && actor.uid == 7)
+                    {
+                        anim = 973;
+                    }
+                }
+                if (mapNo == 2456 && po.model == 5492) // Jump rope from little girls at Alexandria (after Alexandria destruction)
+                {
+                    if (anim == 973 && actor.uid == 3)
+                    {
+                        anim = 975;
+                    }
+                    else if (anim == 975 && actor.uid == 4)
+                    {
+                        anim = 973;
+                    }
+                }
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue(anim));
                 if (this.gMode == 1)
                 {
@@ -924,6 +1149,19 @@ public partial class EventEngine
                         {
                             this._geoTexAnim.geoTexAnimStop(2);
                             this._geoTexAnim.geoTexAnimPlay(1);
+                        }
+                    }
+                    if (mapNo == 1601)
+                    {
+                        if (actor.uid == 19 && anim == 752) // Garnet shadow off when sitting
+                        {
+                            ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                            po.isShadowOff = true;
+                        }
+                        if (po.sid == 17 && scCounter == 6600 && anim == 3005) // Zidane shadow off when sitting
+                        {
+                            ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                            po.isShadowOff = true;
                         }
                     }
                     if (mapNo == 1605 && (Int32)actor.uid == 18)
@@ -960,7 +1198,7 @@ public partial class EventEngine
                 this.stay();
                 return 1;
             }
-            case EBin.event_code_binary.DWAITANIM: // 0xBE, "WaitAnimationEx", "Wait until the object's animation has ended", true, 1, { 1 }, { "Object" }, { AT_ENTRY }, 0
+            case EBin.event_code_binary.DWAITANIM: // 0xBE, "WaitAnimationEx", "Wait until the object's animation has ended"
             {
                 if (((Int32)((Actor)this.GetObj1()).animFlag & EventEngine.afExec) == 0) // arg1: object's entry
                     return 0;
@@ -970,9 +1208,14 @@ public partial class EventEngine
             case EBin.event_code_binary.ENDANIM: // 0x42, "StopAnimation", "Stop the character's animation."
             {
                 this.AnimStop(actor);
+                if (mapNo == 1601 && scCounter == 6600 && po.sid == 17) // Zidane shadow on when standing up
+                {
+                    ff9shadow.FF9ShadowOnField((Int32)po.uid);
+                    po.isShadowOff = false;
+                }
                 return 0;
             }
-            case EBin.event_code_binary.STARTSEQ: // 0x43, "RunSharedScript", "Run script passing the current object to it and continue executing the current function. If another shared script is already running for this object, it will be terminated", true, 1, { 1 }, { "Entry" }, { AT_ENTRY }, 0
+            case EBin.event_code_binary.STARTSEQ: // 0x43, "RunSharedScript", "Run script passing the current object to it and continue executing the current function. If another shared script is already running for this object, it will be terminated"
             {
                 Int32 uid = (Int32)this.gExec.uid + EventEngine.cSeqOfs;
                 Obj objByUid = this.FindObjByUID(uid);
@@ -1014,13 +1257,13 @@ public partial class EventEngine
                     this.DisposeObj(objByUid);
                 return 0;
             }
-            case EBin.event_code_binary.NECKFLAG: // 0x47, "EnableHeadFocus", "Enable or disable the character turning his head toward an active object", true, 1, { 1 }, { "Flags" }, { AT_BOOLLIST }, 0
+            case EBin.event_code_binary.NECKFLAG: // 0x47, "EnableHeadFocus", "Enable or disable the character turning his head toward an active object"
             {
                 actor.actf &= (UInt16)~(EventEngine.actNeckT | EventEngine.actNeckM | EventEngine.actNeckTalk);
                 actor.actf |= (UInt16)(this.getv1() & (EventEngine.actNeckT | EventEngine.actNeckM | EventEngine.actNeckTalk)); // arg1: flags. 1: enable 2: turn toward close characters 3: turn toward talkers
                 return 0;
             }
-            case EBin.event_code_binary.ITEMADD: // 0x48, "AddItem", "Add item to the player's inventory. Only one copy of key items can be in the player's inventory", true, 2, { 2, 1 }, { "Item", "Amount" }, { AT_ITEM, AT_USPIN }, 0
+            case EBin.event_code_binary.ITEMADD: // 0x48, "AddItem", "Add item to the player's inventory. Only one copy of key items can be in the player's inventory"
             {
                 Int32 itemID = this.getv2(); // arg1: item to add
                 Int32 count = this.getv1(); // arg2: amount to add
@@ -1036,7 +1279,7 @@ public partial class EventEngine
                     EMinigame.AtleteQueenAchievement();
                 return 0;
             }
-            case EBin.event_code_binary.ITEMDELETE: // 0x49, "RemoveItem", "Remove item from the player's inventory", true, 2, { 2, 1 }, { "Item", "Amount" }, { AT_ITEM, AT_USPIN }, 0
+            case EBin.event_code_binary.ITEMDELETE: // 0x49, "RemoveItem", "Remove item from the player's inventory"
             {
                 Int32 itemID = this.getv2(); // arg1: item to remove
                 Int32 count = this.getv1(); // arg2: amount to remove
@@ -1045,16 +1288,18 @@ public partial class EventEngine
                     EMinigame.MognetCentralAchievement();
                 return 0;
             }
-            case EBin.event_code_binary.BTLSET: // 0x4A, "RunBattleCode", "Run a battle code | End Battle: 0 for a defeat (deprecated), 1 for a victory, 2 for a victory without victory pose, 3 for a defeat, 4 for an escape, 5 for an interrupted battle, 6 for a game over, 7 for an enemy escape. Run Camera: Camera ID. Change Field: ID of the destination field after the battle. Add Gil: amount to add.", true, 2, { 1, 2 }, { "Code", "Argument" }, { AT_BATTLECODE, AT_SPIN }, 0
+            case EBin.event_code_binary.BTLSET: // 0x4A, "RunBattleCode", "Run a battle code"
             {
                 Int32 battleCode = this.getv1(); // arg1: battle code
                 Int32 val = this.getv2(); // arg2: depends on the battle code
-                //if (num23 == 33)
-                //    Debug.Log((object)"BTLSET 33");
+                // - End Battle: 0 for a defeat (deprecated), 1 for a victory, 2 for a victory without victory pose, 3 for a defeat, 4 for an escape, 5 for an interrupted battle, 6 for a game over, 7 for an enemy escape.
+                // - Run Camera: Camera ID.
+                // - Change Field: ID of the destination field after the battle.
+                // - Add Gil: amount to add.
                 btl_scrp.SetBattleData((UInt32)battleCode, val);
                 return 0;
             }
-            case EBin.event_code_binary.RADIUS: // 0x4B, "SetObjectLogicalSize", "Set different size informations of the object", true, 3, { 1, 1, 1 }, { "Walk Radius", "Collision Radius", "Talk Distance" }, { AT_SPIN, AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.RADIUS: // 0x4B, "SetObjectLogicalSize", "Set different size informations of the object"
             {
                 Int32 size = this.getv1(); // arg1: size for pathing
                 Int32 collRad = (Int32)(Byte)this.getv1(); // arg2: collision radius
@@ -1094,7 +1339,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.ATTACH: // 0x4C, "AttachObject", "Attach an object to another one", true, 3, { 1, 1, 1 }, { "Object", "Carrier", "Attachement Point" }, { AT_ENTRY, AT_ENTRY, AT_USPIN }, 0
+            case EBin.event_code_binary.ATTACH: // 0x4C, "AttachObject", "Attach an object to another one"
             {
                 Obj attachedObj = this.GetObj1(); // arg1: carried object
                 Obj targetObj = this.GetObj1(); // arg2: carrying object
@@ -1128,7 +1373,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.DETACH: // 0x4D, "DetachObject", "Stop attaching an object to another one", true, 1, { 1 }, { "Object" }, { AT_ENTRY }, 0
+            case EBin.event_code_binary.DETACH: // 0x4D, "DetachObject", "Stop attaching an object to another one"
             {
                 Obj attachedObj = this.GetObj1(); // arg1: carried object
                 if (attachedObj != null)
@@ -1159,7 +1404,7 @@ public partial class EventEngine
                 this.gArgUsed = 1;
                 return 0;
             }
-            case EBin.event_code_binary.STOP: // 0x4F, "0x4F", "Unknown Opcode (STOP).", true, 1, { 1 }, { "Unknown" }, { AT_SPIN }, 0
+            case EBin.event_code_binary.STOP: // 0x4F, "0x4F", "Unknown Opcode (STOP)."
             {
                 Int32 stop = (Int32)this.gExec.getByteIP(-1) | (Int32)this.gExec.getByteIP() << 8;
                 ++this.gExec.ip;
@@ -1167,7 +1412,7 @@ public partial class EventEngine
                 return 6;
             }
             case EBin.event_code_binary.WAITTURN: // 0x50, "WaitTurn", "Wait until the character has turned."
-            case EBin.event_code_binary.DWAITTURN: // 0xBC, "WaitTurnEx", "Wait until an object facing movement has ended", true, 1, { 1 }, { "Object" }, { AT_ENTRY }, 0
+            case EBin.event_code_binary.DWAITTURN: // 0xBC, "WaitTurnEx", "Wait until an object facing movement has ended"
             {
                 if (eventCodeBinary == EBin.event_code_binary.DWAITTURN)
                     actor = (Actor)this.GetObj1(); // arg1: object's entry
@@ -1175,7 +1420,7 @@ public partial class EventEngine
                     this.stay();
                 return 1;
             }
-            case EBin.event_code_binary.TURNA: // 0x51, "TurnTowardObject", "Turn the character toward an entry object (animated)", true, 2, { 1, 1 }, { "Object", "Speed" }, { AT_ENTRY, AT_USPIN }, 0
+            case EBin.event_code_binary.TURNA: // 0x51, "TurnTowardObject", "Turn the character toward an entry object (animated)"
             {
                 Obj obj1 = this.GetObj1(); // arg1: object
                 Int32 turnSpeed = this.getv1(); // arg2: turn speed (1 is slowest)
@@ -1189,7 +1434,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.ASLEEP: // 0x52, "SetInactiveAnimation", "Change the animation played when inactive for a long time. The inaction time required is:First Time = 200 + 4 * Random[0, 255]Subsequent Times = 200 + 2 * Random[0, 255]", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
+            case EBin.event_code_binary.ASLEEP: // 0x52, "SetInactiveAnimation", "Change the animation played when inactive for a long time. The inaction time required is:First Time = 200 + 4 * Random[0, 255], Subsequent Times = 200 + 2 * Random[0, 255]"
             {
                 actor.sleep = (UInt16)this.getv2(); // arg1: animation ID
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.sleep));
@@ -1200,7 +1445,7 @@ public partial class EventEngine
                 this.eTb.InhInitMes();
                 return 0;
             }
-            case EBin.event_code_binary.WAITMES: // 0x54, "WaitWindow", "Wait until the window is closed", true, 1, { 1 }, { "Window ID" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.WAITMES: // 0x54, "WaitWindow", "Wait until the window is closed"
             {
                 if (mapNo == 1650 && FF9StateSystem.Settings.CurrentLanguage == "Japanese" && ((Int32)this.gCur.sid == 19 && this.gCur.ip == 1849))
                 {
@@ -1211,16 +1456,17 @@ public partial class EventEngine
                 this.gCur.wait = (Byte)254;
                 return 1;
             }
-            case EBin.event_code_binary.MROT: // 0x55, "SetWalkTurnSpeed", "Change the turn speed of the object when it walks or runs (default is 16)..", true, 1, { 1 }, { "Turn Speed" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.MROT: // 0x55, "SetWalkTurnSpeed", "Change the turn speed of the object when it walks or runs (default is 16).."
             {
-                Int32 turnSpeed = this.getv1(); // arg1: turn speed (with 0, the object doesn't turn while moving).Special treatments:Vivi's in Iifa Tree/Eidolon Moun (field 1656) is initialized to 48.Choco's in Chocobo's Paradise (field 2954) is initialized to 96
+                Int32 turnSpeed = this.getv1(); // arg1: turn speed (with 0, the object doesn't turn while moving).
+                                                // Special treatments:Vivi's in Iifa Tree/Eidolon Moun (field 1656) is initialized to 48.Choco's in Chocobo's Paradise (field 2954) is initialized to 96
                 if (turnSpeed == 0)
                     turnSpeed = (Int32)Byte.MaxValue;
                 actor.omega = (Byte)turnSpeed;
                 return 0;
             }
-            case EBin.event_code_binary.TURN: // 0x56, "TimedTurn", "Make the character face an angle (animated)", true, 2, { 1, 1 }, { "Angle", "Speed" }, { AT_USPIN, AT_USPIN }, 0
-            case EBin.event_code_binary.DTURN: // 0xBB, "TimedTurnEx", "Make an object face an angle (animated)", true, 3, { 1, 1, 1 }, { "Object", "Angle", "Speed" }, { AT_ENTRY, AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.TURN: // 0x56, "TimedTurn", "Make the character face an angle (animated)"
+            case EBin.event_code_binary.DTURN: // 0xBB, "TimedTurnEx", "Make an object face an angle (animated)"
             {
                 if (eventCodeBinary == EBin.event_code_binary.DTURN)
                     actor = (Actor)this.GetObj1(); // arg1: object's entry
@@ -1233,53 +1479,99 @@ public partial class EventEngine
                 this.StartTurn(actor, EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)angle), true, turnSpeed);
                 return 0;
             }
-            case EBin.event_code_binary.ENCRATE: // 0x57, "SetRandomBattleFrequency", "Set the frequency of random battles / 255 is the maximum frequency, corresponding to ~12 walking steps or ~7 running steps. 0 is the minimal frequency and disables random battles.", true, 1, { 1 }, { "Frequency" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.ENCRATE: // 0x57, "SetRandomBattleFrequency", "Set the frequency of random battles / 255 is the maximum frequency, corresponding to ~12 walking steps or ~7 running steps. 0 is the minimal frequency and disables random battles."
             {
                 this._context.encratio = (Byte)this.getv1(); // arg1: frequency (0-255)
                 if ((Int32)this._context.encratio == 0)
                     this._encountBase = 0;
                 return 0;
             }
-            case EBin.event_code_binary.BGSMOVE: // 0x58, "SlideXZY", "Make the character slide to destination (walk without using the walk animation and without changing the facing angle)", true, 3, { 2, 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
+            case EBin.event_code_binary.BGLCOLOR: // 0x59, "SetTileColor", "Change the color of a field tile block"
             {
-                this.getv2(); // X
-                this.getv2(); // Z
-                this.getv2(); // Y
-                //Debug.Log((object)("DoEventCode BGSMOVE : a = " + (object)this.getv2() + ", b = " + (object)this.getv2() + ", temp = " + (object)this.getv2()));
+                Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
+                Byte Cyan = (Byte)this.getv1();
+                Byte Magenta = (Byte)this.getv1();
+                Byte Yellow = (Byte)this.getv1();
+                this.fieldmap.EBG_overlaySetShadeColor(overlayNdx, Cyan, Magenta, Yellow); // arg1: background tile block
                 return 0;
             }
-            case EBin.event_code_binary.BGLCOLOR: // 0x59, "SetTileColor", "Change the color of a field tile block", true, 4, { 1, 1, 1, 1 }, { "Tile Block", "Color" }, { AT_TILE, AT_COLOR_CYAN, AT_COLOR_MAGENTA, AT_COLOR_YELLOW }, 0
+            case EBin.event_code_binary.BGLORIGIN: // 0x5E, "SetTilePosition", "Move a field tile block"
             {
-                
-                this.fieldmap.EBG_overlaySetShadeColor(this.getv1(), (Byte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1()); // arg1: background tile block.2nd to arg4s: color (Cyan, Magenta, Yellow)
+                Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
+                Single dx = (Single)this.getv2(); // arg2: x movement
+                Single dy = (Single)this.getv2(); // arg3: y movement
+                this.fieldmap.EBG_overlaySetOrigin(overlayNdx, dx, dy);
                 return 0;
             }
-            case EBin.event_code_binary.BGLMOVE: // 0x5A, "SetTilePositionEx", "Move a field tile block.", true, 4, { 1, 2, 2, 2 }, { "Tile Block", "Position X", "Position Y", "Position Closeness" }, { AT_TILE, AT_SPIN, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.BGLMOVE: // 0x5A, "SetTilePositionEx", "Move a field tile block."
             {
-                this.fieldmap.EBG_overlayMove(this.getv1(), (Single)this.getv2(), (Single)this.getv2(), (Int16)this.getv2()); // arg1: background tile block. 2nd and arg3: movement in (dX, dY) format.arg4: depth, with higher value being further away from camera.
+                Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
+                Single dx = (Single)this.getv2(); // arg2: x movement
+                Single dy = (Single)this.getv2(); // arg3: y movement
+                Int16 dz = (Int16)this.getv2(); // arg4: depth, with higher value being further away from camera
+                this.fieldmap.EBG_overlayMove(overlayNdx, dx, dy, dz);
                 return 0;
             }
-            case EBin.event_code_binary.BGLACTIVE: // 0x5B, "ShowTile", "Show or hide a field tile block", true, 2, { 1, 1 }, { "Tile Block", "Show" }, { AT_TILE, AT_BOOL }, 0
+            case EBin.event_code_binary.BGLMOVE_TIMED: // "SetTilePositionTimed" Move a tile block over time
             {
-                this.fieldmap.EBG_overlaySetActive(this.getv1(), this.getv1()); // arg1: background tile block.arg2: boolean show/hide
+                Int32 overlayNdx = (Int32)this.getv3(); // arg1: background tile block
+                Single dx = (Single)this.getv3(); // arg2: x movement
+                Single dy = (Single)this.getv3(); // arg3: y movement
+                Int16 dz = (Int16)this.getv3(); // arg4: depth, with higher value being further away from camera
+                Int32 time = (Int32)this.getv3(); // arg5: how much time this will move // TODO in what unit?
+                this.fieldmap.EBG_overlayMoveTimed(overlayNdx, dx, dy, dz, time);
                 return 0;
             }
-            case EBin.event_code_binary.BGLLOOP: // 0x5C, "MoveTileLoop", "Make the image of a field tile loop over space.", true, 4, { 1, 1, 2, 2 }, { "Tile Block", "Activate", "X Loop", "Y Loop" }, { AT_TILE, AT_BOOL, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.BGLACTIVE: // 0x5B, "ShowTile", "Show or hide a field tile block"
             {
-                this.fieldmap.EBG_overlaySetLoop(this.getv1(), (UInt32)this.getv1(), this.getv2(), this.getv2()); //arg1: background tile block.arg2: boolean on/ off.3rd and arg4s: speed in the X and Y directions.
+                Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
+                Boolean isActive = (Int32)this.getv1() != 0; // arg2: boolean show/ hide
+                this.fieldmap.EBG_overlaySetActive(overlayNdx, isActive); // arg1: background tile block.
                 return 0;
             }
-            case EBin.event_code_binary.BGLPARALLAX: // 0x5D, "MoveTile", "Make the field moves depending on the camera position", true, 4, { 1, 1, 2, 2 }, { "Tile Block", "Activate", "Movement X", "Movement Y" }, { AT_TILE, AT_BOOL, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.BGLLOOP: // 0x5C, "MoveTileLoop", "Make the image of a field tile loop over space."
             {
-                this.fieldmap.EBG_overlaySetParallax(this.getv1(), (UInt32)this.getv1(), this.getv2(), this.getv2()); // arg1: background tile block.arg2: boolean on/off.3rd and arg4s: parallax movement in (X, Y) format
+                Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
+                UInt32 isEnabled = (UInt32)this.getv1(); // arg2: boolean on/ off
+                Int32 xSpeed = (Int32)this.getv2(); // args3-4: speed in the X and Y directions
+                Int32 ySpeed = (Int32)this.getv2();
+                this.fieldmap.EBG_overlaySetLoop(overlayNdx, isEnabled, xSpeed, ySpeed);
                 return 0;
             }
-            case EBin.event_code_binary.BGLORIGIN: // 0x5E, "SetTilePosition", "Move a field tile block", true, 3, { 1, 2, 2 }, { "Tile Block", "Position X", "Position Y" }, { AT_TILE, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.BGLPARALLAX: // 0x5D, "MoveTile", "Make the field moves depending on the camera position"
             {
-                this.fieldmap.EBG_overlaySetOrigin(this.getv1(), this.getv2(), this.getv2()); // arg1: background tile block.2nd and arg3: movement in (dX, dY) format
+                Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
+                UInt32 isEnabled = (UInt32)this.getv1(); // arg2: boolean on/ off
+                Int32 xSpeed = (Int32)this.getv2(); // args3-4: parallax movement in (X, Y) format
+                Int32 ySpeed = (Int32)this.getv2();
+                this.fieldmap.EBG_overlaySetParallax(overlayNdx, isEnabled, xSpeed, ySpeed);
                 return 0;
             }
-            case EBin.event_code_binary.BGAANIME: // 0x5F, "RunTileAnimation", "Run a field tile animation", true, 2, { 1, 1 }, { "Field Animation", "Frame" }, { AT_TILEANIM, AT_USPIN }, 0
+            case EBin.event_code_binary.BGLSCROLLOFFSET: // 0xE4, "MoveTileLoopWithOffset", "Make the image of a field tile loop over space"
+            {
+                Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
+                UInt32 isEnabled = (UInt32)this.getv1(); // arg2: boolean on/ off
+                Int32 tileSpeed = (Int32)this.getv2(); // arg3: movement speed
+                Int32 offset = (Int32)this.getv2(); // arg4: offset
+                UInt32 isXOffset = (UInt32)this.getv1(); // arg5: move along the X axis or Y axis
+                this.fieldmap.EBG_overlaySetScrollWithOffset(overlayNdx, isEnabled, tileSpeed, offset, isXOffset);
+                return 0;
+            }
+            case EBin.event_code_binary.BGLLOOPTYPE: // 0xE6, "SetTileLoopType", "Let tile be screen anchored or not"
+            {
+                Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
+                UInt32 isScreenAnchored = (UInt32)this.getv1(); // arg2: boolean on/off
+                this.fieldmap.EBG_overlaySetLoopType(overlayNdx, isScreenAnchored);
+                return 0;
+            }
+            case EBin.event_code_binary.BGAFRAME: // 0xE7, "SetTileAnimationFrame", "Change the frame of a field tile animation (can be used to hide them all if the given frame is out of range, eg. 255)"
+            {
+                Int32 animID = (Int32)this.getv1(); // arg1: background animation
+                Int32 frame = (Int32)this.getv1(); // arg2: animation frame to display
+                this.fieldmap.EBG_animShowFrame(animID, frame); // arg1: background animation.
+                return 0;
+            }
+            case EBin.event_code_binary.BGAANIME: // 0x5F, "RunTileAnimation", "Run a field tile animation"
             {
                 Int32 animID = this.getv1(); // arg1: background animation
                 Int32 startFrame = this.getv1(); // arg2: starting frame
@@ -1292,12 +1584,14 @@ public partial class EventEngine
                 this.fieldmap.EBG_animAnimate(animID, startFrame);
                 return 0;
             }
-            case EBin.event_code_binary.BGAACTIVE: // 0x60, "ActivateTileAnimation", "Make a field tile animation active..", true, 2, { 1, 1 }, { "Tile Animation", "Activate" }, { AT_TILEANIM, AT_BOOL }, 0
+            case EBin.event_code_binary.BGAACTIVE: // 0x60, "ActivateTileAnimation", "Make a field tile animation active.."
             {
-                this.fieldmap.EBG_animSetActive(this.getv1(), this.getv1()); // arg1: background animation.arg2: boolean on/off
+                Int32 animNdx = (Int32)this.getv1(); // arg1: background tile block
+                Boolean isActive = (Int32)this.getv1() != 0; // arg2: boolean show/ hide
+                this.fieldmap.EBG_animSetActive(animNdx, isActive); // arg1: background animation.arg2: boolean on/off
                 return 0;
             }
-            case EBin.event_code_binary.BGARATE: // 0x61, "SetTileAnimationSpeed", "Change the speed of a field tile animation", true, 2, { 1, 2 }, { "Tile Animation", "Speed" }, { AT_TILEANIM, AT_SPIN }, 0
+            case EBin.event_code_binary.BGARATE: // 0x61, "SetTileAnimationSpeed", "Change the speed of a field tile animation"
             {
                 Int32 animNdx = this.getv1(); // arg1: background animation
                 Int32 frameRate = this.getv2(); // arg2: speed (256 = 1 tile/frame)
@@ -1306,7 +1600,30 @@ public partial class EventEngine
                 this.fieldmap.EBG_animSetFrameRate(animNdx, frameRate);
                 return 0;
             }
-            case EBin.event_code_binary.SETROW: // 0x62, "SetRow", "Change the battle row of a party member", true, 2, { 1, 1 }, { "Character", "Row" }, { AT_LCHARACTER, AT_BOOL }, 0
+            case EBin.event_code_binary.BGAWAIT: // 0x63, "SetTileAnimationPause", "Make a field tile animation pause at some frame in addition to its normal animation speed"
+            {
+                Int32 animNdx = this.getv1(); // arg1: background animation
+                Int32 frame = this.getv1(); // arg2: animation frame
+                Int32 waitTime = this.getv1(); // arg3: wait time
+                this.fieldmap.EBG_animSetFrameWait(animNdx, frame, waitTime);
+                return 0;
+            }
+            case EBin.event_code_binary.BGAFLAG: // 0x64, "SetTileAnimationFlags", "Add flags of a field tile animation"
+            {
+                Int32 animNdx = this.getv1(); // arg1: background animation
+                Int32 flags = this.getv1(); // arg2: flags (only the flags 5 and 6 can be added). 5: unknown 6: loop back and forth
+                this.fieldmap.EBG_animSetFlags(animNdx, flags);
+                return 0;
+            }
+            case EBin.event_code_binary.BGARANGE: // 0x65, "RunTileAnimationEx", "Run a field tile animation and choose its frame range"
+            {
+                Int32 animNdx = this.getv1(); // arg1: background animation
+                Int32 firstFrame = this.getv1(); // arg2: starting frame
+                Int32 lastFrame = this.getv1(); // arg3: ending frame
+                this.fieldmap.EBG_animSetPlayRange(animNdx, firstFrame, lastFrame);
+                return 0;
+            }
+            case EBin.event_code_binary.SETROW: // 0x62, "SetRow", "Change the battle row of a party member"
             {
                 CharacterId charId = this.chr2slot(this.getv1()); // arg1: party member
                 Int32 row = this.getv1(); // arg2: boolean front/back
@@ -1314,36 +1631,21 @@ public partial class EventEngine
                     FF9StateSystem.Common.FF9.GetPlayer(charId).info.row = (Byte)row;
                 return 0;
             }
-            case EBin.event_code_binary.BGAWAIT: // 0x63, "SetTileAnimationPause", "Make a field tile animation pause at some frame in addition to its normal animation speed", true, 3, { 1, 1, 1 }, { "Tile Animation", "Frame ID", "Time" }, { AT_TILEANIM, AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.MESVALUE: // 0x66, "SetTextVariable", "Set the value of a text number or item variable"
             {
-                this.fieldmap.EBG_animSetFrameWait(this.getv1(), this.getv1(), this.getv1()); // arg1: background animation.arg2: animation frame.arg3: wait time
+                Int32 scriptID = this.getv1(); // arg1: text variable's 'Script ID'
+                Int32 value = this.getv2(); // arg2: depends on which text opcode is related to the text variable: [VAR_NUM]: integral value. [VAR_ITEM]: item ID. [VAR_TOKEN]: token number
+                this.eTb.SetMesValue(scriptID, value);
                 return 0;
             }
-            case EBin.event_code_binary.BGAFLAG: // 0x64, "SetTileAnimationFlags", "Add flags of a field tile animation", true, 2, { 1, 1 }, { "Tile Animation", "Flags" }, { AT_TILEANIM, AT_BOOLLIST }, 0
-            {
-                this.fieldmap.EBG_animSetFlags(this.getv1(), this.getv1()); // arg1: background animation.arg2: flags (only the flags 5 and 6 can be added). 5: unknown 6: loop back and forth
-                return 0;
-            }
-            case EBin.event_code_binary.BGARANGE: // 0x65, "RunTileAnimationEx", "Run a field tile animation and choose its frame range", true, 3, { 1, 1, 1 }, { "Tile Animation", "Start", "End" }, { AT_TILEANIM, AT_USPIN, AT_USPIN }, 0
-            {
-                this.fieldmap.EBG_animSetPlayRange(this.getv1(), this.getv1(), this.getv1()); // arg1: background animation.arg2: starting frame.arg3: ending frame
-                return 0;
-            }
-            case EBin.event_code_binary.MESVALUE: // 0x66, "SetTextVariable", "Set the value of a text number or item variable", true, 2, { 1, 2 }, { "Variable ID", "Value" }, { AT_USPIN, AT_ITEM }, 0
-            {
-                // arg1: text variable's 'Script ID'
-                // arg2: depends on which text opcode is related to the text variable: [VAR_NUM]: integral value. [VAR_ITEM]: item ID. [VAR_TOKEN]: token number
-                this.eTb.SetMesValue(this.getv1(), this.getv2()); 
-                return 0;
-            }
-            case EBin.event_code_binary.TWIST: // 0x67, "SetControlDirection", "Set the angles for the player's movement control", true, 2, { 1, 1 }, { "Arrow Angle", "Analogic Angle" }, { AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.TWIST: // 0x67, "SetControlDirection", "Set the angles for the player's movement control"
             {
                 this._context.twist_a = (Int16)this.getv1(); // arg1: angle used for arrow movements
                 this._context.twist_d = (Int16)this.getv1(); // arg2: angle used for analogic stick movements
                 FF9StateSystem.Field.SetTwistAD((Int32)this._context.twist_a, (Int32)this._context.twist_d);
                 return 0;
             }
-            case EBin.event_code_binary.FICON: // 0x68, "Bubble", "Display a speech bubble with a symbol inside over the head of player's character", true, 1, { 1 }, { "Symbo" }, { AT_BUBBLESYMBOL }, 0
+            case EBin.event_code_binary.FICON: // 0x68, "Bubble", "Display a speech bubble with a symbol inside over the head of player's character"
             {
                 BubbleUI.IconType bubbleType = (BubbleUI.IconType)this.getv1(); // arg1: bubble symbol
                 if (mapNo == 2955)
@@ -1357,7 +1659,7 @@ public partial class EventEngine
                     EIcon.PollFIcon(bubbleType);
                 return 0;
             }
-            case EBin.event_code_binary.TIMERSET: // 0x69, "ChangeTimerTime", "Change the remaining time of the timer window", true, 1, { 2 }, { "Time" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.TIMERSET: // 0x69, "ChangeTimerTime", "Change the remaining time of the timer window"
             {
                 TimerUI.SetTime(this.getv2()); // arg1: time in seconds
                 return 0;
@@ -1367,29 +1669,37 @@ public partial class EventEngine
                 this._context.dashinh = (Byte)1;
                 return 0;
             }
-            case EBin.event_code_binary.CLEARCOLOR: // 0x6B, "SetBackgroundColor", "Change the default color, seen behind the field's tiles", true, 3, { 1, 1, 1 }, { "Color" }, { AT_COLOR_RED, AT_COLOR_GREEN, AT_COLOR_BLUE }, 0
+            case EBin.event_code_binary.CLEARCOLOR: // 0x6B, "SetBackgroundColor", "Change the default color, seen behind the field's tiles"
             {
-                this.fieldmap.GetMainCamera().backgroundColor = new Color((Single)this.getv1() / (Single)Byte.MaxValue, (Single)this.getv1() / (Single)Byte.MaxValue, (Single)this.getv1() / (Single)Byte.MaxValue); // arg 1-3: color in (Red, Green, Blue)
+                Color newColor = new Color((Single)this.getv1() / (Single)Byte.MaxValue, (Single)this.getv1() / (Single)Byte.MaxValue, (Single)this.getv1() / (Single)Byte.MaxValue);
+                this.fieldmap.GetMainCamera().backgroundColor = newColor; // arg 1-3: color in (Red, Green, Blue)
                 return 0;
             }
-            case EBin.event_code_binary.BGSSCROLL: // 0x6F, "MoveCamera", "Move camera over time.", true, 4, { 2, 2, 1, 1 }, { "Destination", "Time", "Smoothness" }, { AT_POSITION_X, AT_POSITION_Y, AT_USPIN, AT_USPIN }, 0  // screen size = 320?
+            case EBin.event_code_binary.BGSSCROLL: // 0x6F, "MoveCamera", "Move camera over time."
             {
-                //1st and arg2s: destination in (X, Y) format.3nd argument: movement duration.arg4: scrolling type (8 for sinusoidal, other values for linear interpolation).
-                this.fieldmap.EBG_scene2DScroll((Int16)this.getv2(), (Int16)this.getv2(), (UInt16)this.getv1(), (UInt32)this.getv1());
+                Int16 destX = (Int16)this.getv2(); // arg1-2: destination in (X, Y)
+                Int16 destY = (Int16)this.getv2();
+                UInt16 duration = (UInt16)this.getv1(); // arg3: movement duration
+                UInt32 sinusOrLinear = (UInt32)this.getv1(); // arg4: scrolling type (8 for sinusoidal, other values for linear interpolation).
+                this.fieldmap.EBG_scene2DScroll(destX, destY, duration, sinusOrLinear);
                 return 0;
             }
-            case EBin.event_code_binary.BGSRELEASE: // 0x70, "ReleaseCamera", "Release camera movement, getting back to its normal behaviour", true, 2, { 1, 1 }, { "Time", "Smoothness" }, { AT_SPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.BGSRELEASE: // 0x70, "ReleaseCamera", "Release camera movement, getting back to its normal behaviour"
             {
-                this.fieldmap.EBG_scene2DScrollRelease(this.getv1(), (UInt32)this.getv1()); // arg1: duration of the repositioning.arg2: scrolling type (8 for sinusoidal, other values for linear interpolation)
+                Int32 duration = (Int32)this.getv1(); // arg1: movement duration
+                UInt32 sinusOrLinear = (UInt32)this.getv1(); // arg2: scrolling type (8 for sinusoidal, other values for linear interpolation).
+                this.fieldmap.EBG_scene2DScrollRelease(duration, sinusOrLinear); // arg1: duration of the repositioning.arg2: scrolling type (8 for sinusoidal, other values for linear interpolation)
                 return 0;
             }
-            case EBin.event_code_binary.BGCACTIVE: // 0x71, "EnableCameraServices", "Enable or disable camera services.", true, 3, { 1, 1, 1 }, { "Enable", "Time", "Smoothness" }, { AT_BOOL, AT_SPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.BGCACTIVE: // 0x71, "EnableCameraServices", "Enable or disable camera services."
             {
-                // arg1: boolean activate/deactivate.arg2: duration of the repositioning when activating (defaulted to 30 if -1 is given).arg3: scrolling type of the repositioning when activating (8 for sinusoidal, other values for linear interpolation)
-                this.fieldmap.EBG_char3DScrollSetActive((UInt32)this.getv1(), this.getv1(), (UInt32)this.getv1());
+                UInt32 isActive = (UInt32)this.getv1(); // arg1: boolean activate/deactivate
+                Int32 frameCount = (Int32)this.getv1(); // arg2: duration of the repositioning when activating (defaulted to 30 if -1 is given)
+                UInt32 sinusOrLinear = (UInt32)this.getv1(); // arg3: scrolling type of the repositioning when activating (8 for sinusoidal, other values for linear interpolation)
+                this.fieldmap.EBG_char3DScrollSetActive(isActive, frameCount, sinusOrLinear);
                 return 0;
             }
-            case EBin.event_code_binary.BGCHEIGHT: // 0x72, "SetCameraFollowHeight", "Define the standard height gap between the player's character position and the camera view", true, 1, { 2 }, { "Height" }, { AT_SPIN }, 0
+            case EBin.event_code_binary.BGCHEIGHT: // 0x72, "SetCameraFollowHeight", "Define the standard height gap between the player's character position and the camera view"
             {
                 this.fieldmap.charAimHeight = (Int16)this.getv2(); // arg1: height
                 return 0;
@@ -1404,7 +1714,7 @@ public partial class EventEngine
                 this.fieldmap.EBG_charLookAtUnlock();
                 return 0;
             }
-            case EBin.event_code_binary.MENU: // 0x75, "Menu", "Open a menu", true, 2, { 1, 1 }, { "Menu Type", "Menu" }, { AT_MENUTYPE, AT_MENU }, 0
+            case EBin.event_code_binary.MENU: // 0x75, "Menu", "Open a menu"
             {
                 UInt32 menuId = Convert.ToUInt32(this.getv1()); // arg1: menu type
                 UInt32 subId = Convert.ToUInt32(this.getv1()); // arg2: depends on the menu type. Naming Menu: character to name | Shop Menu: shop ID
@@ -1419,7 +1729,7 @@ public partial class EventEngine
                 PersistenSingleton<UIManager>.Instance.MenuOpenEvent();
                 return 1;
             }
-            case EBin.event_code_binary.TRACKSTART: // 0x76, "DrawRegionStart", "Start drawing the convex polygonal region linked with the entry script: two starting points are placed at the same position", true, 2, { 2, 2 }, { "Vertex Position" }, { AT_POSITION_X, AT_POSITION_Y }, 0
+            case EBin.event_code_binary.TRACKSTART: // 0x76, "DrawRegionStart", "Start drawing the convex polygonal region linked with the entry script: two starting points are placed at the same position"
             {
                 Quad quad2 = (Quad)this.gCur;
                 quad2.n = 2;
@@ -1428,12 +1738,12 @@ public partial class EventEngine
                 quad2.q[1].X = startX;
                 quadPos1.X = startX;
                 QuadPos quadPos2 = quad2.q[0];
-                Int16 startZ = (Int16)this.getv2(); // arg1: starting vertex position Z
+                Int16 startZ = (Int16)this.getv2(); // arg2: starting vertex position Z
                 quad2.q[1].Z = startZ;
                 quadPos2.Z = startZ;
                 return 0;
             }
-            case EBin.event_code_binary.TRACK: // 0x77, "DrawRegionSetLast", "Change the position of the convex polygonal region's ending vertex", true, 2, { 2, 2 }, { "Vertex Position" }, { AT_POSITION_X, AT_POSITION_Y }, 0
+            case EBin.event_code_binary.TRACK: // 0x77, "DrawRegionSetLast", "Change the position of the convex polygonal region's ending vertex"
             {
                 Quad quad3 = (Quad)this.gCur;
                 QuadPos quadPos3 = quad3.q[Math.Max(quad3.n, 1) - 1];
@@ -1441,7 +1751,7 @@ public partial class EventEngine
                 quadPos3.Z = (Int16)this.getv2(); // arg2: new vertex position Z
                 return 0;
             }
-            case EBin.event_code_binary.TRACKADD: // 0x78, "DrawRegionPushNew", "Add a new vertex to the convex polygonal region linked with the entry script (defaulting its position to be the same as the current ending vertex's position). This method cannot exceed 8 vertices."
+            case EBin.event_code_binary.TRACKADD: // 0x78, "DrawRegionPushNew", "Add a new vertex to the convex polygonal region linked with the entry script (default: same as the current ending vertex's position). Max 8 vertices."
             {
                 Quad quad4 = (Quad)this.gCur;
                 if (quad4.n > 0 && quad4.n < 8)
@@ -1455,37 +1765,39 @@ public partial class EventEngine
             {
                 return 0;
             }
-            case EBin.event_code_binary.ATURNL: // 0x7A, "SetLeftAnimation", "Change the left turning animation", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
+            case EBin.event_code_binary.ATURNL: // 0x7A, "SetLeftAnimation", "Change the left turning animation"
             {
                 actor.turnl = (UInt16)this.getv2(); // arg1: animation ID
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.turnl));
                 return 0;
             }
-            case EBin.event_code_binary.ATURNR: // 0x7B, "SetRightAnimation", "Change the right turning animation", true, 1, { 2 }, { "Animation" }, { AT_ANIMATION }, 0
+            case EBin.event_code_binary.ATURNR: // 0x7B, "SetRightAnimation", "Change the right turning animation"
             {
                 actor.turnr = (UInt16)this.getv2(); // arg1: animation ID
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.turnr));
                 return 0;
             }
-            case EBin.event_code_binary.CHOOSEPARAM: // 0x7C, "EnableDialogChoices", "Define choices availability in dialogs using the [INIT_MULTICHOICE] text opcode", true, 2, { 2, 1 }, { "Choice List", "Default Choice" }, { AT_BOOLLIST, AT_USPIN }, 0
+            case EBin.event_code_binary.CHOOSEPARAM: // 0x7C, "EnableDialogChoices", "Define choices availability in dialogs using the [INIT_MULTICHOICE] text opcode"
             {
-                this.eTb.SetChooseParam(this.getv2(), this.getv1()); // arg1: boolean list for the different choices.arg2: default choice selected
+                Int32 choicesAvailable = this.getv2(); // arg1: boolean list for the different choices
+                Int32 defaultChoice = this.getv1(); // arg2: default choice selected
+                this.eTb.SetChooseParam(choicesAvailable, defaultChoice);
                 return 0;
             }
-            case EBin.event_code_binary.TIMERCONTROL: // 0x7D, "RunTimer", "Run or pause the timer window", true, 1, { 1 }, { "Run" }, { AT_BOOL }, 0
+            case EBin.event_code_binary.TIMERCONTROL: // 0x7D, "RunTimer", "Run or pause the timer window"
             {
-                this._ff9.timerControl = this.getv1() != 0; // arg1: boolean run/pause
+                this._ff9.timerControl = this.getv1() != 0; // arg1: boolean, 0=pause
                 TimerUI.SetPlay(this._ff9.timerControl);
                 return 0;
             }
-            case EBin.event_code_binary.SETCAM: // 0x7E, "SetFieldCamera", "Change the field's background camera", true, 1, { 1 }, { "Camera ID" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.SETCAM: // 0x7E, "SetFieldCamera", "Change the field's background camera"
             {
                 Int32 newCamIdx = this.getv1(); // arg1: camera ID
                 Obj player = this.GetObjUID(250);
                 if (player != null && player.cid == 4 && (mapNo == 153 || mapNo == 1214 || mapNo == 1806) && newCamIdx == 0) // Fix #493 - flapping camera
                 {
                     Vector3 pos = ((Actor)player).fieldMapActorController.lastPos;
-                    if ((pos.x > 500 || pos.y > 240) && !(scCounter == 1190 && pos.y > 314 && pos.y < 317)) //exception for scene with Steiner and plutos
+                    if ((pos.x > 500 || pos.y > 240) && !(scCounter == 1190 && pos.y > 314 && pos.y < 317)) // exception for scene with Steiner and plutos
                         return 0;
                 }
                 this.fieldmap.SetCurrentCameraIndex(newCamIdx);
@@ -1498,14 +1810,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            // 0x7F, "EnableShadow", "Enable the shadow for the entry's object."
-            // 0x80, "DisableShadow", "Disable the shadow for the entry's object."
-            // 0x81, "SetShadowSize", "Set the entry's object shadow size.arg1: size X.arg2: size Y.", true, 2, { 1, 1 }, { "Size X", "Size Y" }, { AT_SPIN, AT_SPIN }, 0
-            // 0x82, "SetShadowOffset", "Change the offset between the entry's object and its shadow.arg1: offset X.arg2: offset Y.", true, 2, { 2, 2 }, { "Offset X", "Offset Y" }, { AT_SPIN, AT_SPIN }, 0
-            // 0x83, "LockShadowRotation", "Stop updating the shadow rotation by the object's rotation.arg1: locked rotation.", true, 1, { 1 }, { "Locked Rotation" }, { AT_SPIN }, 0
-            // 0x84, "UnlockShadowRotation", "Make the shadow rotate accordingly with its object."
-            // 0x85, "SetShadowAmplifier", "Amplify or reduce the shadow transparancy.arg1: amplification factor.", true, 1, { 1 }, { "Amplification Factor" }, { AT_USPIN }, 0
-            case EBin.event_code_binary.IDLESPEED: // 0x86, "SetAnimationStandSpeed", "Change the standing animation speed", true, 4, { 1, 1, 1, 1 }, { "1st speed", "2nd speed", "3rd speed", "4th speed" }, { AT_USPIN, AT_USPIN, AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.IDLESPEED: // 0x86, "SetAnimationStandSpeed", "Change the standing animation speed"
             {
                 actor.idleSpeed[0] = (Byte)this.getv1(); // args: different animation speeds (default: 16), picked at random.
                 actor.idleSpeed[1] = (Byte)this.getv1();
@@ -1513,29 +1818,28 @@ public partial class EventEngine
                 actor.idleSpeed[3] = (Byte)this.getv1();
                 return 0;
             }
-            case EBin.event_code_binary.CHRFX: // 0x88, "RunModelCode", "Run a model code", true, 4, { 1, 2, 2, 2 }, { "Model Code", "Argument 1", "Argument 2", "Argument 3" }, { AT_MODELCODE, AT_SPIN, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.CHRFX: // 0x88, "RunModelCode", "Run a model code"
             {
-                Int32 modelCode = this.getv1(); // arg1: model code
+                Int32 param = this.getv1(); // arg1: model code
                 // 2nd to 4th arguments: depends on the model code:
-                // slice: 2 slice/unslice, 3 value
-                // enable mirror: 2 on/off
-                // mirror position: X - Z - Y
-                // mirror normal: X - Z - Y
-                // Mirror Color: R - G - B
-                // Add Secondary Sound: anim, Frame, soundID
-                // Sound Random Pitch: anim, Frame, random/not
-                // Remove Sound: anim, Frame, value
+                // 4: slice: 2 slice/unslice, 3 value
+                // 8: enable mirror: 2 on/off
+                // 9: mirror position: X - Y - Z
+                // 10: mirror normal: X - Y - Z
+                // 11: Mirror Color: R - G - B
+                // 16 Add Sound[0]: anim, Frame, soundID
+                // 17 Add Sound[1]: anim, Frame, soundID
+                // 18 Sound Random Pitch: anim, Frame, random/not
+                // 18 Remove Sound: anim, Frame, value
                 Int32 arg2 = this.getv2();
                 Int32 arg3 = this.getv2();
                 Int32 arg4 = this.getv2();
-                fldchar.FF9FieldCharDispatch((Int32)po.uid, modelCode, arg2, arg3, arg4);
+                fldchar.FF9FieldCharDispatch((Int32)po.uid, param, arg2, arg3, arg4);
                 return 0;
             }
-            case EBin.event_code_binary.SEPV: // 0x89, "SetSoundPosition", "Set the position of a 3D sound", true, 4, { 2, 2, 2, 1 }, { "Position", "Volume" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y, AT_SPIN }, 0
+            case EBin.event_code_binary.SEPV: // 0x89, "SetSoundPosition", "Set the position of a 3D sound"
             {
-                Int32 PosPtr;
-                Int32 VolPtr;
-                FF9Snd.FF9FieldSoundGetPositionVolume(this.getv2(), this.getv2(), this.getv2(), out PosPtr, out VolPtr); // 1st to arg3s: sound position X Z Y
+                FF9Snd.FF9FieldSoundGetPositionVolume(this.getv2(), this.getv2(), this.getv2(), out Int32 PosPtr, out Int32 VolPtr); // 1st to arg3s: sound position X Z Y
                 this.sSEPos = PosPtr;
                 Int32 soundVolume = this.getv1(); // arg4: sound volume
                 this.sSEVol = VolPtr * soundVolume >> 7;
@@ -1543,12 +1847,10 @@ public partial class EventEngine
                     this.sSEVol = (Int32)SByte.MaxValue;
                 return 0;
             }
-            case EBin.event_code_binary.SEPVA: // 0x8A, "SetSoundObjectPosition", "Set the position of a 3D sound to the object's position", true, 2, { 1, 1 }, { "Object", "Volume" }, { AT_ENTRY, AT_SPIN }, 0
+            case EBin.event_code_binary.SEPVA: // 0x8A, "SetSoundObjectPosition", "Set the position of a 3D sound to the object's position"
             {
                 po = (PosObj)this.GetObj1(); // arg1: object
-                Int32 PosPtr;
-                Int32 VolPtr;
-                FF9Snd.FF9FieldSoundGetPositionVolume((Int32)po.pos[0], (Int32)po.pos[1], (Int32)po.pos[2], out PosPtr, out VolPtr);
+                FF9Snd.FF9FieldSoundGetPositionVolume((Int32)po.pos[0], (Int32)po.pos[1], (Int32)po.pos[2], out Int32 PosPtr, out Int32 VolPtr);
                 this.sSEPos = PosPtr;
                 Int32 soundVolume = this.getv1(); // arg2: sound volume
                 this.sSEVol = VolPtr * soundVolume >> 7;
@@ -1556,14 +1858,16 @@ public partial class EventEngine
                     this.sSEVol = (Int32)SByte.MaxValue;
                 return 0;
             }
-            case EBin.event_code_binary.NECKID: // 0x8B, "SetHeadFocusMask", "Define a mask for characters to turn their head toward close characters: if this character's TargetMask has a common bit with another character's SelfMask, then he can turn to that other character.Also enables the two EnableHeadFocus flags 'enable' and 'turn toward close characters'.Characters must be at least 31 units away to have head focus and at most 2000 units away (the closest character is determined both by the distance and the angle)", true, 2, { 1, 1 }, { "SelfMask", "TargetMask" }, { AT_BOOLLIST, AT_BOOLLIST }, 0
+            case EBin.event_code_binary.NECKID: // 0x8B, "SetHeadFocusMask", "Define a mask for characters to turn their head toward close characters: if this character's TargetMask has a common bit with another character's SelfMask,
+                                                // then he can turn to that other character.Also enables the two EnableHeadFocus flags 'enable' and 'turn toward close characters'.Characters must be at least 31 units away to have head focus
+                                                // and at most 2000 units away (the closest character is determined both by the distance and the angle)"
             {
                 actor.neckMyID = (Byte)this.getv1(); // arg1: SelfMask
                 actor.neckTargetID = (Byte)this.getv1(); // arg2: TargetMask
                 actor.actf |= (UInt16)(EventEngine.actNeckT | EventEngine.actNeckM);
                 return 0;
             }
-            case EBin.event_code_binary.ENCOUNT2: // 0x8C, "BattleEx", "Start a battle and choose its battle group", true, 3, { 1, 1, 2 }, { "Rush Type", "Battle Group", "Battle" }, { AT_SPIN, AT_SPIN, AT_BATTLE }, 0
+            case EBin.event_code_binary.ENCOUNT2: // 0x8C, "BattleEx", "Start a battle and choose its battle group"
             {
                 this.getv1(); // arg1: rush type (unknown)
                 this._ff9.btlSubMapNo = (SByte)this.getv1(); // arg2: group
@@ -1574,7 +1878,7 @@ public partial class EventEngine
                 this._encountBase = 0;
                 return 3;
             }
-            case EBin.event_code_binary.TIMERDISPLAY: // 0x8D, "ShowTimer", "Activate the timer window", true, 1, { 1 }, { "Enable" }, { AT_BOOL }, 0
+            case EBin.event_code_binary.TIMERDISPLAY: // 0x8D, "ShowTimer", "Activate the timer window"
             {
                 this._ff9.timerDisplay = this.getv1() != 0; // arg1: boolean show/hide
                 TimerUI.SetEnable(this._ff9.timerDisplay);
@@ -1586,7 +1890,7 @@ public partial class EventEngine
                 this.eTb.RaiseAllWindow();
                 return 0;
             }
-            case EBin.event_code_binary.CHRCOLOR: // 0x8F, "SetModelColor", "Change a 3D model's color.", true, 4, { 1, 1, 1, 1 }, { "Object", "Color" }, { AT_ENTRY, AT_COLOR_RED, AT_COLOR_GREEN, AT_COLOR_BLUE }, 0
+            case EBin.event_code_binary.CHRCOLOR: // 0x8F, "SetModelColor", "Change a 3D model's color."
             {
                 if (fldmcf.FF9FieldMCFSetCharColor((Int32)this.GetObj1().uid, this.getv1(), this.getv1(), this.getv1()) == 0) // arg1: entry associated with the model, 2-4: color in (Red, Green, Blue)
                     return 0;
@@ -1598,23 +1902,23 @@ public partial class EventEngine
                 this._context.idletimer = -1;
                 return 0;
             }
-            case EBin.event_code_binary.AUTOTURN: // 0x91, "FollowFocus", "Automatically turn toward the character that is stared at when needed", true, 1, { 1 }, { "Enable" }, { AT_BOOL }, 0
+            case EBin.event_code_binary.AUTOTURN: // 0x91, "FollowFocus", "Automatically turn toward the character that is stared at when needed"
             {
                 Int32 FollowFocus = this.getv1(); // arg1: boolean on/ off
                 actor.turninst0 = FollowFocus == 0 ? (Int16)4 : (Int16)167;
                 return 0;
             }
-            case EBin.event_code_binary.BGLATTACH: // 0x92, "AttachTile", "Make a part of the field background follow the player's movements. Also apply a color filter out of that tile block's range", true, 7, { 1, 2, 1, 1, 1, 1, 1 }, { "Tile Block", "Position X", "Position Y", "Filter Mode", "Filter Color" }, { AT_TILE, AT_SPIN, AT_SPIN, AT_SPIN, AT_COLOR_RED, AT_COLOR_GREEN, AT_COLOR_BLUE }, 0
+            case EBin.event_code_binary.BGLATTACH: // 0x92, "AttachTile", "Make a part of the field background follow the player's movements. Also apply a color filter out of that tile block's range"
             {
                 // arg1: tile block.2nd and arg3s: offset position in (X, Y) format.arg4: filter mode ; use -1 for no filter effect.5th to 7th arguments: filter color in (Red, Green, Blue) format.
                 this.fieldmap.EBG_charAttachOverlay(this.getv1(), (Int16)this.getv2(), (Int16)this.getv1(), (SByte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1(), (Byte)this.getv1());
                 return 0;
             }
-            case EBin.event_code_binary.CFLAG: // 0x93, "SetObjectFlags", "Change flags of the current entry's object.", true, 1, { 1 }, { "Flags" }, { AT_BOOLLIST }, 0
+            case EBin.event_code_binary.CFLAG: // 0x93, "SetObjectFlags", "Change flags of the current entry's object."
             {
                 // arg1: object flags. 1: show model 2: collision with player character 4: collision with NPC 8: disable talk 16: can't walk through by insisting 32: don't hide all 64: unknown/unused (can't change with this) 128: is turning (can't change with this)
-                Int32 cflag = (Int32)(Byte)this.getv1(); 
-                
+                Int32 cflag = (Int32)(Byte)this.getv1();
+
                 if (cflag == 14 && mapNo == 103 && this.gCur.uid >= 6 && this.gCur.uid <= 17) // fix: do not hide NPCs when they are offscreen for widescreen compatibility - Alexandria/Square, many NPCs and the Jump Rope
                     return 0;
                 if (mapNo == 2934 && MBG.Instance.GetFrame < 10)
@@ -1625,7 +1929,7 @@ public partial class EventEngine
                 this.gCur.flags = (Byte)((this.gCur.flags & -64) | (cflag & 63));
                 return 0;
             }
-            case EBin.event_code_binary.AJUMP: // 0x94, "SetJumpAnimation", "Change the jumping animation", true, 3, { 2, 1, 1 }, { "Animation", "Unknown", "Unknown" }, { AT_ANIMATION, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.AJUMP: // 0x94, "SetJumpAnimation", "Change the jumping animation"
             {
                 actor.jump = (UInt16)this.getv2(); // arg1: animation ID
                 actor.jump0 = (Byte)this.getv1(); // arg2: unknown
@@ -1633,65 +1937,19 @@ public partial class EventEngine
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.jump));
                 return 0;
             }
-            case EBin.event_code_binary.MESA:// 0x95, "WindowSyncEx", "Display a window with text inside and wait until it closes", true, 4, { 1, 1, 1, 2 }, { "Talker", "Window ID", "UI", "Text" }, { AT_ENTRY, AT_USPIN, AT_BOOLLIST, AT_TEXT }, 0
-            case EBin.event_code_binary.MESAN: // 0x96, "WindowAsyncEx", "Display a window with text inside and continue the execution of the script without waiting", true, 4, { 1, 1, 1, 2 }, { "Talker", "Window ID", "UI", "Text" }, { AT_ENTRY, AT_USPIN, AT_BOOLLIST, AT_TEXT }, 0
+            case EBin.event_code_binary.JUMP3: // 0xDC, "Jump", "Perform a jumping animation. Must be used after a SetupJump call."
             {
-                po = (PosObj)this.GetObj1(); // arg1: talker's entry
-                this.gCur.winnum = (Byte)this.getv1(); // arg2: window ID
-                Int32 uiFlags = this.getv1(); // arg3: UI flag list. 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
-                Int32 textID = this.getv2(); // arg4: text to display
-                this.SetFollow((Obj)po, (Int32)this.gCur.winnum, uiFlags);
-                this.eTb.NewMesWin(textID, (Int32)this.gCur.winnum, uiFlags, po);
-                if (eventCodeBinary == EBin.event_code_binary.MESAN)
+                Int32 jumpFrame = (Int32)actor.jframe;
+                ++actor.jframe;
+                Int32 jframeN = (Int32)actor.jframeN;
+                actor.pos[0] = (Single)(((Int32)actor.x0 * (jframeN - jumpFrame) + (Int32)actor.jumpx * jumpFrame) / jframeN);
+                actor.pos[1] = (Single)((Int32)actor.y0 - jumpFrame * (jumpFrame << 3) + jumpFrame * ((Int32)actor.jumpy - (Int32)actor.y0) / jframeN + jumpFrame * (jframeN << 3));
+                actor.pos[2] = (Single)(((Int32)actor.z0 * (jframeN - jumpFrame) + (Int32)actor.jumpz * jumpFrame) / jframeN);
+                this.SetActorPosition(po, actor.pos[0], actor.pos[1], actor.pos[2]);
+                if (jumpFrame >= jframeN)
                     return 0;
-                this.gCur.wait = (Byte)254;
+                this.stay();
                 return 1;
-            }
-            case EBin.event_code_binary.DRET: // 0x97, "ReturnEntryFunctions", "Make all the currently executed functions return for a given entry", true, 1, { 1 }, { "Entry" }, { AT_ENTRY }, 0
-            {
-                Obj obj1 = this.GetObj1(); // arg1: entry for which functions are returned
-                if (obj1 != null)
-                {
-                    obj1.sx = (Byte)0;
-                    obj1.state = EventEngine.stateInit;
-                    this.Return(obj1);
-                }
-                return obj1 == this.gExec ? 1 : 0;
-            }
-            case EBin.event_code_binary.MOVT: // 0x98, "MakeAnimationLoop", "Make current object's currently playing animation loop", true, 1, { 1 }, { "Amount" }, { AT_USPIN }, 0
-            {
-                actor.loopCount = (Byte)this.getv1(); // arg1: loop amount
-                return 0;
-            }
-            case EBin.event_code_binary.TSPEED: // 0x99, "SetTurnSpeed", "Change the entry's object turn speed", true, 1, { 1 }, { "Speed" }, { AT_USPIN }, 0
-            {
-                actor.tspeed = (Byte)this.getv1(); // arg1: turn speed (1 is slowest)
-                if ((Int32)actor.tspeed == 0)
-                    actor.tspeed = (Byte)16;
-                return 0;
-            }
-            case EBin.event_code_binary.BGIACTIVET: // 0x9A, "EnablePathTriangle", "Enable or disable a triangle of field pathing", true, 2, { 2, 1 }, { "Triangle ID", "Enable" }, { AT_WALKTRIANGLE, AT_BOOL }, 0
-            {
-                Int32 triangleID = this.getv2(); // arg1: triangle ID
-                Int32 isActive = this.getv1(); // arg2: boolean enable/disable
-                if (mapNo == 1753 && triangleID == 207)
-                    this.fieldmap.walkMesh.BGI_triSetActive(208U, (UInt32)isActive);
-                else if (mapNo == 1606 && triangleID == 107)
-                    isActive = 1;
-                this.fieldmap.walkMesh.BGI_triSetActive((UInt32)triangleID, (UInt32)isActive);
-                return 0;
-            }
-            case EBin.event_code_binary.TURNTO: // 0x9B, "TurnTowardPosition", "Turn the character toward a position (animated). The object's turn speed is used (default to 16).", true, 2, { 2, 2 }, { "Coordinate" }, { AT_POSITION_X, AT_POSITION_Y }, 0
-            {
-                Int32 posX = this.getv2(); // X position
-                Int32 posZ = this.getv2(); // Z position
-                if (!EventEngineUtils.nearlyEqual((Single)posX, gameObject.transform.localPosition.x) || !EventEngineUtils.nearlyEqual((Single)posZ, gameObject.transform.localPosition.z))
-                {
-                    FieldMapActorController component = gameObject.GetComponent<FieldMapActorController>();
-                    Single a = this.eBin.angleAsm((Single)posX - component.curPos.x, (Single)posZ - component.curPos.z);
-                    this.StartTurn(actor, a, true, (Int32)actor.tspeed);
-                }
-                return 0;
             }
             case EBin.event_code_binary.PREJUMP: // 0x9C, "RunJumpAnimation", "Make the character play its jumping animation."
             {
@@ -1710,19 +1968,67 @@ public partial class EventEngine
                 this.ExecAnim(actor, (Int32)actor.jump);
                 return 0;
             }
-            case EBin.event_code_binary.MOVQ: // 0x9E, "ExitField", "Make the player's character walk to the field exit and prepare to flush the field datas."
+            case EBin.event_code_binary.MESA:// 0x95, "WindowSyncEx", "Display a window with text inside and wait until it closes"
+            case EBin.event_code_binary.MESAN: // 0x96, "WindowAsyncEx", "Display a window with text inside and continue the execution of the script without waiting"
             {
-                po = (PosObj)this.FindObjByUID((Int32)this._context.controlUID);
-                if (po != null)
+                po = (PosObj)this.GetObj1(); // arg1: talker's entry
+                this.gCur.winnum = (Byte)this.getv1(); // arg2: window ID
+                Int32 uiFlags = this.getv1(); // arg3: UI flag list. 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
+                Int32 textID = this.getv2(); // arg4: text to display
+                this.SetFollow((Obj)po, (Int32)this.gCur.winnum, uiFlags);
+                this.eTb.NewMesWin(textID, (Int32)this.gCur.winnum, uiFlags, po);
+                if (eventCodeBinary == EBin.event_code_binary.MESAN)
+                    return 0;
+                this.gCur.wait = (Byte)254;
+                return 1;
+            }
+            case EBin.event_code_binary.DRET: // 0x97, "ReturnEntryFunctions", "Make all the currently executed functions return for a given entry"
+            {
+                Obj obj1 = this.GetObj1(); // arg1: entry for which functions are returned
+                if (obj1 != null)
                 {
-                    this.Call((Obj)po, 0, 0, false, Obj.movQData);
-                    this._context.usercontrol = (Byte)0;
-                    for (ObjList objList = this._context.activeObj; objList != null; objList = objList.next)
-                        objList.obj.flags |= (Byte)6;
+                    obj1.sx = (Byte)0;
+                    obj1.state = EventEngine.stateInit;
+                    this.Return(obj1);
+                }
+                return obj1 == this.gExec ? 1 : 0;
+            }
+            case EBin.event_code_binary.MOVT: // 0x98, "MakeAnimationLoop", "Make current object's currently playing animation loop"
+            {
+                actor.loopCount = (Byte)this.getv1(); // arg1: loop amount
+                return 0;
+            }
+            case EBin.event_code_binary.TSPEED: // 0x99, "SetTurnSpeed", "Change the entry's object turn speed"
+            {
+                actor.tspeed = (Byte)this.getv1(); // arg1: turn speed (1 is slowest)
+                if ((Int32)actor.tspeed == 0)
+                    actor.tspeed = (Byte)16;
+                return 0;
+            }
+            case EBin.event_code_binary.BGIACTIVET: // 0x9A, "EnablePathTriangle", "Enable or disable a triangle of field pathing"
+            {
+                Int32 triangleID = this.getv2(); // arg1: triangle ID
+                Int32 isActive = this.getv1(); // arg2: boolean enable/disable
+                if (mapNo == 1753 && triangleID == 207)
+                    this.fieldmap.walkMesh.BGI_triSetActive(208U, (UInt32)isActive);
+                else if (mapNo == 1606 && triangleID == 107)
+                    isActive = 1;
+                this.fieldmap.walkMesh.BGI_triSetActive((UInt32)triangleID, (UInt32)isActive);
+                return 0;
+            }
+            case EBin.event_code_binary.TURNTO: // 0x9B, "TurnTowardPosition", "Turn the character toward a position (animated). The object's turn speed is used (default to 16)."
+            {
+                Int32 posX = this.getv2(); // X position
+                Int32 posZ = this.getv2(); // Z position
+                if (!EventEngineUtils.nearlyEqual((Single)posX, gameObject.transform.localPosition.x) || !EventEngineUtils.nearlyEqual((Single)posZ, gameObject.transform.localPosition.z))
+                {
+                    FieldMapActorController component = gameObject.GetComponent<FieldMapActorController>();
+                    Single a = this.eBin.angleAsm((Single)posX - component.curPos.x, (Single)posZ - component.curPos.z);
+                    this.StartTurn(actor, a, true, (Int32)actor.tspeed);
                 }
                 return 0;
             }
-            case EBin.event_code_binary.CHRSCALE: // 0x9F, "SetObjectSize", "Set the size of a 3D model", true, 4, { 1, 1, 1, 1 }, { "Object", "Size X", "Size Z", "Size Y" }, { AT_ENTRY, AT_SPIN, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.CHRSCALE: // 0x9F, "SetObjectSize", "Set the size of a 3D model"
             {
                 po = (PosObj)this.GetObj1(); // arg1: entry of the 3D model
                 Int32 ratioX = this.getv1(); // Ratio X (def: 64)
@@ -1741,14 +2047,8 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.MOVJ: // 0xA0, "WalkToExit", "Make the entry's object walk to the field exit."
-            {
-                if (this.MoveToward_mixed((Single)this.sMapJumpX, 0.0f, (Single)this.sMapJumpZ, 0, (PosObj)null))
-                    this.stay();
-                return 1;
-            }
-            case EBin.event_code_binary.POS3: // 0xA1, "MoveInstantXZY", "Instantatly move the object", true, 3, { 2, 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
-            case EBin.event_code_binary.DPOS3: // 0xAD, "MoveInstantXZYEx", "Instantatly move an object", true, 4, { 1, 2, 2, 2 }, { "Object", "Destination" }, { AT_ENTRY, AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
+            case EBin.event_code_binary.POS3: // 0xA1, "MoveInstantXZY", "Instantatly move the object"
+            case EBin.event_code_binary.DPOS3: // 0xAD, "MoveInstantXZYEx", "Instantatly move an object"
             {
                 if (eventCodeBinary == EBin.event_code_binary.DPOS3)
                     po = (PosObj)this.GetObj1(); // arg1: object's entry
@@ -1803,24 +2103,14 @@ public partial class EventEngine
                         destZ = -2035;
                         destY = 1274;
                     }
+                    if (mapNo == 2456 && actor.uid == 6) // Sligthy resize the rope in Alexandria/Steeple (CD3 & CD4)
+                    {
+                        geo.geoScaleSetXYZ(po.go, 66 << 24 >> 18, 66 << 24 >> 18, 66 << 24 >> 18);
+                    }
                 }
                 this.SetActorPosition(po, (Single)destX, (Single)destZ, (Single)destY);
                 if (po.cid == 4)
                     this.clrdist((Actor)po);
-                return 0;
-            }
-            case EBin.event_code_binary.MOVE3: // 0xA2, "WalkXZY", "Make the character walk to destination. Make it synchronous if InitWalk is called before", true, 3, { 2, 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
-            {
-                if (this.MoveToward_mixed((Single)this.getv2(), -this.getv2(), (Single)this.getv2(), 2, (PosObj)null)) // arg1: destination in (X, Z, Y)
-                    this.stay();
-                return 1;
-            }
-            case EBin.event_code_binary.DRADIUS: // 0xA3, "0xA3", "Unknown Opcode (DRADIUS).", true, 4, { 1, 1, 1, 1 }, { "Unknown", "Unknown", "Unknown", "Unknown" }, { AT_SPIN, AT_SPIN, AT_SPIN, AT_SPIN }, 0  // Unused in Steam
-            {
-                this.getv1();
-                this.getv1();
-                this.getv1();
-                this.getv1();
                 return 0;
             }
             case EBin.event_code_binary.MJPOS: // 0xA4, "CalculateExitPosition", "Calculate the field exit position based on the region's polygon."
@@ -1853,26 +2143,12 @@ public partial class EventEngine
                     this.sMapJumpX = this.sMapJumpZ = 0;
                 return 0;
             }
-            case EBin.event_code_binary.MOVH: // 0xA5, "Slide", "Make the character slide to destination (walk without using the walk animation and without changing the facing angle)", true, 2, { 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Y }, 0
-            {
-                Int32 destX = this.getv2(); // 1st and arg2s: destination in (X, Z) format.
-                Int32 destZ = this.getv2();
-                if (mapNo == 66 && po.sid == 14 && destX == -145 && destZ == -9135)
-                {
-                    // Prima Vista/Interior, Marcus attacking King Leo as Cornelia (Garnet) moves to protect him
-                    destX = -160;
-                    destZ = -9080;
-                }
-                if (this.MoveToward_mixed(destX, 0.0f, destZ, 1, null))
-                    this.stay();
-                return 1;
-            }
-            case EBin.event_code_binary.SPEEDTH: // 0xA6, "SetRunSpeedLimit", "Change the speed at which the character uses his run animation instead of his walk animation (default is 31)", true, 1, { 1 }, { "Speed Limit" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.SPEEDTH: // 0xA6, "SetRunSpeedLimit", "Change the speed at which the character uses his run animation instead of his walk animation (default is 31)"
             {
                 actor.speedth = (Byte)this.getv1(); // arg1: speed limit
                 return 0;
             }
-            case EBin.event_code_binary.TURNDS: // 0xA7, "Turn", "Make the character face an angle (animated). Speed is defaulted to 16", true, 1, { 1 }, { "Angle" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.TURNDS: // 0xA7, "Turn", "Make the character face an angle (animated). Speed is defaulted to 16"
             {
                 Int32 angle = this.getv1() << 4; // arg1: angle.0 faces south, 64 faces west, 128 faces north and 192 faces east
                 this.StartTurn(actor, EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)angle), true, (Int32)actor.tspeed);
@@ -1890,7 +2166,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.GETSCREEN: // 0xA9, "CalculateScreenPosition", "Calculate the object's position in screen coordinates and store it in 'GetScreenCalculatedX' and 'GetScreenCalculatedY'.", true, 1, { 1 }, { "Object" }, { AT_ENTRY }, 0
+            case EBin.event_code_binary.GETSCREEN: // 0xA9, "CalculateScreenPosition", "Calculate the object's position in screen coordinates and store it in 'GetScreenCalculatedX' and 'GetScreenCalculatedY'."
             {
                 Obj obj1 = this.GetObj1();
                 if (obj1 != null && (UnityEngine.Object)obj1.go != (UnityEngine.Object)null)
@@ -1919,13 +2195,24 @@ public partial class EventEngine
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
                 return 1;
             }
-            case EBin.event_code_binary.DISCCHANGE: // 0xAC, "ChangeDisc", "Allow to save the game and change disc", true, 1, { 2 }, { "Field Destination", "Disc" }, { AT_DISC_FIELD }, 0
+            case EBin.event_code_binary.DISCCHANGE: // 0xAC, "ChangeDisc", "Allow to save the game and change disc"
             {
-                Int32 fieldDiscDest = this.getv2(); // arg1: gathered field destination and disc destination
-                this.FF9FieldDiscRequest((Byte)(fieldDiscDest >> 14 & 3), (UInt16)(fieldDiscDest & 16383));
+                Int32 fieldAndDiscDest = this.getv2(); // arg1: gathered field destination and disc destination
+                Byte disc_id = (Byte)(fieldAndDiscDest >> 14 & 3);
+                UInt16 map_id = (UInt16)(fieldAndDiscDest & 16383);
+
+                //this._ff9fieldDisc.disc_id = disc_id;
+                //this._ff9fieldDisc.cdType = (byte)(1U << (int)disc_id);
+                this._ff9fieldDisc.FieldMapNo = (Int16)map_id;
+                //this._ff9fieldDisc.FieldLocNo = (short)-1;
+                FF9StateFieldSystem stateFieldSystem = FF9StateSystem.Field.FF9Field;
+                FF9StateSystem instance = PersistenSingleton<FF9StateSystem>.Instance;
+                stateFieldSystem.attr |= 1048576U;
+                instance.attr |= 8U;
+
                 return 1;
             }
-            case EBin.event_code_binary.MINIGAME: // 0xAE, "TetraMaster", "Begin a card game", true, 1, { 2 }, { "Card Deck" }, { AT_DECK }, 0
+            case EBin.event_code_binary.MINIGAME: // 0xAE, "TetraMaster", "Begin a card game"
             {
                 Int32 minigameFlag = this.getv2(); // arg1: card deck of the opponent
                 EventService.SetMiniGame((UInt16)minigameFlag);
@@ -1939,7 +2226,7 @@ public partial class EventEngine
                 QuadMistDatabase.MiniGame_AwayAllCard();
                 return 0;
             }
-            case EBin.event_code_binary.SETMAPNAME: // 0xB0, "SetFieldName", "Change the name of the field", true, 1, { 2 }, { "Name" }, { AT_SPIN }, 0
+            case EBin.event_code_binary.SETMAPNAME: // 0xB0, "SetFieldName", "Change the name of the field"
             {
                 FF9StateSystem.Common.FF9.mapNameStr = FF9TextTool.FieldText(this.getv2()); // arg1: new name (unknown format)
                 return 0;
@@ -1949,7 +2236,7 @@ public partial class EventEngine
                 FF9StateSystem.Common.FF9.mapNameStr = this._defaultMapName;
                 return 0;
             }
-            case EBin.event_code_binary.PARTYMENU: // 0xB2, "Party", "Allow the player to change the members of its party", true, 2, { 1, 2 }, { "Party Size", "Locked Characters" }, { AT_USPIN, AT_CHARACTER }, 0
+            case EBin.event_code_binary.PARTYMENU: // 0xB2, "Party", "Allow the player to change the members of its party"
             {
                 FF9PARTY_INFO sPartyInfo = new FF9PARTY_INFO();
                 List<CharacterId> selectList = new List<CharacterId>();
@@ -1977,8 +2264,8 @@ public partial class EventEngine
                 EventService.OpenPartyMenu(sPartyInfo);
                 return 1;
             }
-            case EBin.event_code_binary.SPS: // 0xB3, "RunSPSCode", "Run Sps code, which seems to be special model effects on the field", true, 5, { 1, 1, 2, 2, 2 }, { "Sps", "Code", "Parameter 1", "Parameter 2", "Parameter 3" }, { AT_USPIN, AT_SPSCODE, AT_SPIN, AT_SPIN, AT_SPIN }, 0
-            case EBin.event_code_binary.SPS2: // 0xDA, "RunSPSCodeSimple", "Run Sps code, which seems to be special model effects on the field", true, 5, { 1, 1, 1, 2, 2 }, { "Sps", "Code", "Parameter 1", "Parameter 2", "Parameter 3" }, { AT_USPIN, AT_SPSCODE, AT_SPIN, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.SPS: // 0xB3, "RunSPSCode", "Run Sps code, which seems to be special model effects on the field"
+            case EBin.event_code_binary.SPS2: // 0xDA, "RunSPSCodeSimple", "Run Sps code, which seems to be special model effects on the field"
             {
                 // 3-5: depends on the sps code.
                 // Load Sps (sps type)
@@ -2010,7 +2297,7 @@ public partial class EventEngine
                     ff9.world.WorldSPSSystem.SetObjParm(objNo, parmType, arg0, arg1, arg2);
                 return 0;
             }
-            case EBin.event_code_binary.FULLMEMBER: // 0xB4, "SetPartyReserve", "Define the party member availability for a future Party call", true, 1, { 2 }, { "Characters available" }, { AT_CHARACTER }, 0
+            case EBin.event_code_binary.FULLMEMBER: // 0xB4, "SetPartyReserve", "Define the party member availability for a future Party call"
             {
                 Int32 reserveList = this.getv2(); // arg1: list of available characters
                 Int32 reserveExtendedList = reserveList & ~0xF00; // This opcode puts Beatrix as the 8th character, before Cinna/Marcus/Blank
@@ -2024,7 +2311,7 @@ public partial class EventEngine
                         ff9play.FF9Play_Add(p);
                 return 0;
             }
-            case EBin.event_code_binary.PRETEND: // 0xB5, "PretendToBe", "Link the object to another object, forcing this object to follow the linked object's position and logical animations..", true, 1, { 1 }, { "Entry" }, { AT_ENTRY }, 0
+            case EBin.event_code_binary.PRETEND: // 0xB5, "PretendToBe", "Link the object to another object, forcing this object to follow the linked object's position and logical animations"
             {
                 Obj objToPretendToBe = this.GetObj1(); // arg1: object to pretend to be
                 if (objToPretendToBe != null)
@@ -2042,7 +2329,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.WMAPJUMP: // 0xB6, "WorldMap", "Change the scene to a world map", true, 1, { 2 }, { "World Map" }, { AT_WORLDMAP }, 0
+            case EBin.event_code_binary.WMAPJUMP: // 0xB6, "WorldMap", "Change the scene to a world map"
             {
                 this.SetNextMap(this.getv2()); // arg1: world map destination
                 return 5;
@@ -2069,158 +2356,146 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.SETKEYMASK: // 0xB9, "AddControllerMask", "Prevent the input to be processed by the game", true, 2, { 1, 2 }, { "Pad", "Buttons" }, { AT_USPIN, AT_BUTTONLIST }, 0
             {
-                EventInput.PSXCntlSetPadMask(this.getv1(), Convert.ToUInt32(this.getv2())); // arg1: pad number (should only be 0 or 1). arg2: button list. 1:Select 4:Start 5:Up 6:Right 7:Down 8:Left 9:L2 10:R2 11:L1 12:R1 13:Triangle 14:Circle 15:Cross 16:Square 17:Cancel 18:Confirm 20:Moogle 21:L1Ex 22:R1Ex 23:L2Ex 24:R2Ex 25:Menu 26:SelectEx
+                Int32 padNum = this.getv1(); // arg1: pad number (0 or 1)
+                UInt32 buttonList = Convert.ToUInt32(this.getv2()); // arg2: button list. 1:Select 4:Start 5:Up 6:Right 7:Down 8:Left 9:L2 10:R2 11:L1 12:R1 13:Triangle 14:Circle
+                                                                    // 15:Cross 16:Square 17:Cancel 18:Confirm 20:Moogle 21:L1Ex 22:R1Ex 23:L2Ex 24:R2Ex 25:Menu 26:SelectEx
+                EventInput.PSXCntlSetPadMask(padNum, buttonList);
                 return 0;
             }
             case EBin.event_code_binary.CLEARKEYMASK: // 0xBA, "RemoveControllerMask", "Enable back the controller's inputs", true, 2, { 1, 2 }, { "Pad", "Buttons" }, { AT_USPIN, AT_BUTTONLIST }, 0
             {
-                EventInput.PSXCntlClearPadMask(this.getv1(), Convert.ToUInt32(this.getv2())); // arg1: pad number (should only be 0 or 1). arg2: button list. 1:Select 4:Start 5:Up 6:Right 7:Down 8:Left 9:L2 10:R2 11:L1 12:R1 13:Triangle 14:Circle 15:Cross 16:Square 17:Cancel 18:Confirm 20:Moogle 21:L1Ex 22:R1Ex 23:L2Ex 24:R2Ex 25:Menu 26:SelectEx
-                return 0;
-            }
-            case EBin.event_code_binary.DANIM: // 0xBD, "RunAnimationEx", "Play an object's animation", true, 2, { 1, 2 }, { "Object", "Animation ID" }, { AT_ENTRY, AT_ANIMATION }, 0
-            {
-                Actor actObj = (Actor)this.GetObj1(); // arg1: object's entry
-                Int32 animId = this.getv2(); // arg2: animation ID
-                AnimationFactory.AddAnimWithAnimatioName(actObj.go, FF9DBAll.AnimationDB.GetValue(animId));
-                this.ExecAnim(actObj, animId);
+                Int32 padNum = this.getv1(); // arg1: pad number (0 or 1)
+                UInt32 buttonList = Convert.ToUInt32(this.getv2()); // arg2: button list. 1:Select 4:Start 5:Up 6:Right 7:Down 8:Left 9:L2 10:R2 11:L1 12:R1 13:Triangle 14:Circle
+                                                                    // 15:Cross 16:Square 17:Cancel 18:Confirm 20:Moogle 21:L1Ex 22:R1Ex 23:L2Ex 24:R2Ex 25:Menu 26:SelectEx
+                EventInput.PSXCntlClearPadMask(padNum, buttonList);
                 return 0;
             }
             case EBin.event_code_binary.TEXPLAY: // 0xC0, "EnableTextureAnimation", "Run a model texture animation and make it loop", true, 2, { 1, 1 }, { "Object", "Texture Animation" }, { AT_ENTRY, AT_USPIN }, 0
-            {
-                po = (PosObj)this.GetObj1(); // arg1: model's entry
-                this._geoTexAnim = po.go.GetComponent<GeoTexAnim>();
-                Int32 textureAnim = this.getv1(); // arg2: texture animation ID
-                if ( (mapNo == 114 && po.uid == 2) 
-                    || (mapNo == 450 && po.uid == 3) 
-                    || (mapNo == 551 && po.uid == 10)
-                    || (mapNo == 555 && po.uid == 12) 
-                    || (mapNo == 559 && po.uid == 17)
-                    || (mapNo == 2105 && po.uid == 2)
-                    || (mapNo == 2450 && po.uid == 8) )
-                {
-                    if (textureAnim == 0)
-                        textureAnim = 2;
-                }
-                if ((UnityEngine.Object)po.go != (UnityEngine.Object)null && (UnityEngine.Object)this._geoTexAnim != (UnityEngine.Object)null)
-                    this._geoTexAnim.geoTexAnimPlay(textureAnim);
-                return 0;
-            }
             case EBin.event_code_binary.TEXPLAY1: // 0xC1, "RunTextureAnimation", "Run once a model texture animation", true, 2, { 1, 1 }, { "Object", "Texture Animation" }, { AT_ENTRY, AT_USPIN }, 0
-            {
-                po = (PosObj)this.GetObj1(); // arg1: model's entry
-                this._geoTexAnim = po.go.GetComponent<GeoTexAnim>();
-                Int32 textureAnim = this.getv1(); // arg2: texture animation ID
-                if ((UnityEngine.Object)po.go != (UnityEngine.Object)null && (UnityEngine.Object)this._geoTexAnim != (UnityEngine.Object)null)
-                    this._geoTexAnim.geoTexAnimPlayOnce(textureAnim);
-                return 0;
-            }
             case EBin.event_code_binary.TEXSTOP: // 0xC2, "StopTextureAnimation", "Stop playing the model texture animation", true, 2, { 1, 1 }, { "Object", "Texture Animation" }, { AT_ENTRY, AT_USPIN }, 0
             {
                 po = (PosObj)this.GetObj1(); // arg1: model's entry
                 this._geoTexAnim = po.go.GetComponent<GeoTexAnim>();
                 Int32 textureAnim = this.getv1(); // arg2: texture animation ID
-                if ((UnityEngine.Object)po.go != (UnityEngine.Object)null && (UnityEngine.Object)this._geoTexAnim != (UnityEngine.Object)null)
-                    this._geoTexAnim.geoTexAnimStop(textureAnim);
-                return 0;
-            }
-            case EBin.event_code_binary.BGVSET: // 0xC3, "SetTileCamera", "Link a tile block to a specific field camera (useful for looping movement bounds)", true, 2, { 1, 1 }, { "Tile Block", "Camera ID" }, { AT_TILE, AT_USPIN }, 0
-            {
-                this.fieldmap.EBG_overlaySetViewport(this.getv1(), this.getv1()); // arg1: background tile block.arg2: camera ID
-                return 0;
-            }
-            case EBin.event_code_binary.WPRM: // 0xC4, "RunWorldCode", "Run one of the World Map codes, which effects have a large range. May modify the weather, the music, call the chocobo or enable the auto-pilot", true, 2, { 1, 2 }, { "Code", "Argument" }, { AT_WORLDCODE, AT_SPIN }, 0
-            {
-                ff9.w_frameSetParameter(this.getv1(), this.getv2()); // arg1: world code.arg2: depends on the code
-                return 0;
-            }
-            case EBin.event_code_binary.FLDSND0: // 0xC5, "RunSoundCode", "Same as RunSoundCode3( code, music, 0, 0, 0 ).", true, 2, { 2, 2 }, { "Code", "Sound" }, { AT_SOUNDCODE, AT_SOUND }, 0
-            {
-                FF9Snd.FF9SoundArg0(this.getv2(), this.getv2());
-                return 0;
-            }
-            case EBin.event_code_binary.FLDSND1: // 0xC6, "RunSoundCode1", "Same as RunSoundCode3( code, music, arg1, 0, 0 ).", true, 3, { 2, 2, 3 }, { "Code", "Sound", "Argument" }, { AT_SOUNDCODE, AT_SOUND, AT_SPIN }, 0
-            {
-                Int32 _parmtype1 = this.getv2();
-                Int32 _objno1 = this.getv2();
-                Int32 num66 = this.getv3();
-                FF9Snd.FF9SoundArg1(_parmtype1, _objno1, num66);
-                if (mapNo == 2928 && _objno1 == 2787)
+                if ((mapNo == 114 && po.uid == 2)
+                    || (mapNo == 450 && po.uid == 3)
+                    || (mapNo == 551 && po.uid == 10)
+                    || (mapNo == 555 && po.uid == 12)
+                    || (mapNo == 559 && po.uid == 17)
+                    || (mapNo == 2105 && po.uid == 2)
+                    || (mapNo == 2450 && po.uid == 8))
                 {
-                    // Hill of Despair, Stop Sound 2787
-                    FF9Snd.FF9SoundArg1(_parmtype1, 2982, num66);
-                    FF9Snd.FF9SoundArg1(_parmtype1, 2983, num66);
+                    if (textureAnim == 0)
+                        textureAnim = 2;
+                }
+                if ((UnityEngine.Object)po.go != (UnityEngine.Object)null && (UnityEngine.Object)this._geoTexAnim != (UnityEngine.Object)null)
+                {
+                    if (eventCodeBinary == EBin.event_code_binary.TEXPLAY)
+                        this._geoTexAnim.geoTexAnimPlay(textureAnim);
+                    else if (eventCodeBinary == EBin.event_code_binary.TEXPLAY1)
+                        this._geoTexAnim.geoTexAnimPlayOnce(textureAnim);
+                    else if (eventCodeBinary == EBin.event_code_binary.TEXSTOP)
+                        this._geoTexAnim.geoTexAnimStop(textureAnim);
                 }
                 return 0;
             }
-            case EBin.event_code_binary.FLDSND2: // 0xC7, "RunSoundCode2", "Same as RunSoundCode3( code, music, arg1, arg2, 0 ).", true, 4, { 2, 2, 3, 1 }, { "Code", "Sound", "Argument", "Argument" }, { AT_SOUNDCODE, AT_SOUND, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.WPRM: // 0xC4, "RunWorldCode", "Run one of the World Map codes, which effects have a large range. May modify the weather, the music, call the chocobo or enable the auto-pilot"
             {
-                FF9Snd.FF9SoundArg2(this.getv2(), this.getv2(), this.getv3(), this.getv1());
+                Int32 function = this.getv1(); // arg1: world code
+                Int32 value = this.getv2(); // arg2: depends on the code
+                ff9.w_frameSetParameter(function, value);
                 return 0;
             }
-            case EBin.event_code_binary.FLDSND3: // 0xC8, "RunSoundCode3", "Run a sound code", true, 5, { 2, 2, 3, 1, 1 }, { "Code", "Sound", "Argument", "Argument", "Argument" }, { AT_SOUNDCODE, AT_SOUND, AT_SPIN, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.FLDSND0: // 0xC5, "RunSoundCode", "Same as RunSoundCode3 (code, music, 0, 0, 0)."
+            case EBin.event_code_binary.FLDSND1: // 0xC6, "RunSoundCode1", "Same as RunSoundCode3 (code, music, arg1, 0, 0)."
+            case EBin.event_code_binary.FLDSND2: // 0xC7, "RunSoundCode2", "Same as RunSoundCode3 (code, music, arg1, arg2, 0)."
+            case EBin.event_code_binary.FLDSND3: // 0xC8, "RunSoundCode3", "Run a sound code (code, music, arg1, arg2, arg3)"
             {
                 Int32 soundCode = this.getv2(); // arg1: sound code
                 Int32 soundID = this.getv2(); // arg2: music or sound to process
-                Int32 arg1 = this.getv3(); // 3-5: depends on the sound code
-                Int32 arg2 = this.getv1();
-                Int32 arg3 = this.getv1();
-                FF9Snd.FF9SoundArg3(soundCode, soundID, arg1, arg2, arg3);
+                Int32 arg1 = 0; // 3-5: depends on the sound code
+                Int32 arg2 = 0;
+                Int32 arg3 = 0;
+                if (eventCodeBinary != EBin.event_code_binary.FLDSND0)
+                    arg1 = this.getv3();
+                if (eventCodeBinary == EBin.event_code_binary.FLDSND2 || eventCodeBinary == EBin.event_code_binary.FLDSND3)
+                    arg2 = this.getv1();
+                if (eventCodeBinary == EBin.event_code_binary.FLDSND3)
+                    arg3 = this.getv1();
+
+                FF9Snd.FF9Sound(soundCode, soundID, arg1, arg2, arg3);
                 if (mapNo == 2928)
                 {
                     if (soundID == 2786)
                     {
-                        FF9Snd.FF9SoundArg3(soundCode, 2980, arg1, arg2, arg3);
-                        FF9Snd.FF9SoundArg3(soundCode, 2981, arg1, arg2, arg3);
+                        FF9Snd.FF9Sound(soundCode, 2980, arg1, arg2, arg3);
+                        FF9Snd.FF9Sound(soundCode, 2981, arg1, arg2, arg3);
                     }
                     else if (soundCode == -12288 && soundID == 2787 && (arg1 == 0 && arg2 == 128) && arg3 == 125)
                     {
-                        FF9Snd.FF9SoundArg1(20736, 2980, 0);
-                        FF9Snd.FF9SoundArg1(20736, 2981, 0);
-                        FF9Snd.FF9SoundArg3(soundCode, 2982, arg1, arg2, arg3);
-                        FF9Snd.FF9SoundArg3(soundCode, 2983, arg1, arg2, arg3);
+                        FF9Snd.FF9Sound(20736, 2980, 0, 0, 0);
+                        FF9Snd.FF9Sound(20736, 2981, 0, 0, 0);
+                        FF9Snd.FF9Sound(soundCode, 2982, arg1, arg2, arg3);
+                        FF9Snd.FF9Sound(soundCode, 2983, arg1, arg2, arg3);
                     }
                     else if (soundID == 2787)
                     {
-                        FF9Snd.FF9SoundArg3(soundCode, 2982, arg1, arg2, arg3);
-                        FF9Snd.FF9SoundArg3(soundCode, 2983, arg1, arg2, arg3);
+                        FF9Snd.FF9Sound(soundCode, 2982, arg1, arg2, arg3);
+                        FF9Snd.FF9Sound(soundCode, 2983, arg1, arg2, arg3);
                     }
                 }
                 return 0;
             }
-            case EBin.event_code_binary.BGVDEFINE: // 0xC9, "SetupTileLoopingWindow", "Define the rectangular area for a looping tile block movement.", true, 5, { 1, 2, 2, 2, 2 }, { "Tile Block", "Position X", "Position Y", "Width", "Height" }, { AT_USPIN, AT_USPIN, AT_USPIN, AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.BGVSET: // 0xC3, "SetTileCamera", "Link a tile block to a specific field camera (useful for looping movement bounds)"
             {
-                this.fieldmap.EBG_overlayDefineViewport(this.getv1(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2(), (Int16)this.getv2()); // arg1: background tile block. 2nd to arg5s: posX, posY, Width, Height
+                Int32 overlayNdx = this.getv1(); // arg1: background tile block
+                Int32 camID = this.getv1(); // arg2: camera ID
+                this.fieldmap.EBG_overlaySetViewport(overlayNdx, camID);
                 return 0;
             }
-            case EBin.event_code_binary.BGAVISIBLE: // 0xCA, "ResetTileAnimation", "Stop the background tile animation and optionally show its first frame's tile block", true, 2, { 1, 1 }, { "Tile Animation", "Visible" }, { AT_TILEANIM, AT_BOOL }, 0
+            case EBin.event_code_binary.BGVDEFINE: // 0xC9, "SetupTileLoopingWindow", "Define the rectangular area for a looping tile block movement."
             {
-                this.fieldmap.EBG_animSetVisible(this.getv1(), this.getv1()); // arg1: background tile animation, arg2: show/hide the 1st frame's tile block.
+                Int32 viewportNdx = this.getv1(); // arg1: viewport ID
+                Int16 posX = (Int16)this.getv2(); // 2nd to arg5s: posX, posY, Width, Height
+                Int16 posY = (Int16)this.getv2();
+                Int16 width = (Int16)this.getv2();
+                Int16 height = (Int16)this.getv2();
+                this.fieldmap.EBG_overlayDefineViewport(viewportNdx, posX, posY, width, height);
                 return 0;
             }
-            case EBin.event_code_binary.BGIACTIVEF: // 0xCB, "EnablePath", "Enable a field path", true, 2, { 1, 1 }, { "Path", "Enable" }, { AT_WALKPATH, AT_BOOL }, 0
+            case EBin.event_code_binary.BGAVISIBLE: // 0xCA, "ResetTileAnimation", "Stop the background tile animation and optionally show its first frame's tile block"
             {
-                this.fieldmap.walkMesh.BGI_floorSetActive((UInt32)this.getv1(), (UInt32)this.getv1()); // arg1: field path ID.arg2: boolean enable/disable
+                Int32 animID = this.getv1(); // arg1: background tile animation
+                Int32 showFirstFrame = this.getv1(); // arg2: show/hide the 1st frame's tile block
+                this.fieldmap.EBG_animSetVisible(animID, showFirstFrame);
                 return 0;
             }
-            case EBin.event_code_binary.CHRSET: // 0xCC, "AddCharacterAttribute", "Add specific attributes for the player character corresponding to the current's entry (should only be used by the entries of player characters)", true, 1, { 2 }, { "Attributes" }, { AT_BOOLLIST }, 0
+            case EBin.event_code_binary.BGIACTIVEF: // 0xCB, "EnablePath", "Enable a field path"
+            {
+                UInt32 floorNdx = (UInt32)this.getv1(); // arg1: field path ID
+                UInt32 isActive = (UInt32)this.getv1(); // arg2: boolean enable/disable
+                this.fieldmap.walkMesh.BGI_floorSetActive(floorNdx, isActive);
+                return 0;
+            }
+            case EBin.event_code_binary.CHRSET: // 0xCC, "AddCharacterAttribute", "Add specific attributes for the player character corresponding to the current's entry (should only be used by the entries of player characters)"
             {
                 Int32 attrFlag = this.getv2(); // arg1: attribute flags. 3: use a ladder. 5: hide shadow. 6: lock spin angle. 7: enable animation sounds. others: unknown.
                 FF9Char.ff9char_attr_set((Int32)po.uid, attrFlag);
                 return 0;
             }
-            case EBin.event_code_binary.CHRCLEAR: // 0xCD, "RemoveCharacterAttribute", "Remove specific attributes for the player character corresponding to the current's entry (should only be used by the entries of player characters)", true, 1, { 2 }, { "Attributes" }, { AT_BOOLLIST }, 0
+            case EBin.event_code_binary.CHRCLEAR: // 0xCD, "RemoveCharacterAttribute", "Remove specific attributes for the player character corresponding to the current's entry (should only be used by the entries of player characters)"
             {
                 Int32 attrFlag = this.getv2(); // arg1: attribute flags. 3: use a ladder. 5: hide shadow. 6: lock spin angle. 7: enable animation sounds. others: unknown
                 FF9Char.ff9char_attr_clear((Int32)po.uid, attrFlag);
                 return 0;
             }
-            case EBin.event_code_binary.GILADD: // 0xCE, "AddGi", "Give gil to the player", true, 1, { 3 }, { "Amount" }, { AT_SPIN }, 0
+            case EBin.event_code_binary.GILADD: // 0xCE, "AddGi", "Give gil to the player"
             {
                 if ((this._ff9.party.gil += this.getv3u()) > 9999999U) // arg1: gil amount
                     this._ff9.party.gil = 9999999U;
                 return 0;
             }
-            case EBin.event_code_binary.GILDELETE: // 0xCF, "RemoveGi", "Remove gil from the player", true, 1, { 3 }, { "Amount" }, { AT_SPIN }, 0
+            case EBin.event_code_binary.GILDELETE: // 0xCF, "RemoveGi", "Remove gil from the player"
             {
                 UInt32 gilDecrease = this.getv3u(); // arg1: gil amount
                 if ((this._ff9.party.gil -= gilDecrease) > 9999999U)
@@ -2229,7 +2504,7 @@ public partial class EventEngine
                     EMinigame.StiltzkinAchievement((PosObj)this.gCur, gilDecrease);
                 return 0;
             }
-            case EBin.event_code_binary.MESB: // 0xD0, "BattleDialog", "Display text in battle for 60 frames", true, 1, { 2 }, { "Text" }, { AT_TEXT }, 0
+            case EBin.event_code_binary.MESB: // 0xD0, "BattleDialog", "Display text in battle for 60 frames"
             {
                 Int32 battleTextId = this.getv2(); // arg1: text to display
                 String text = FF9TextTool.BattleText(battleTextId);
@@ -2237,10 +2512,10 @@ public partial class EventEngine
                 UIManager.Battle.SetBattleMessage(text, 4);
                 return 0;
             }
-            case EBin.event_code_binary.ATTACHOFFSET: // 0xD4, "AttachObjectOffset", "Add an offset to the attachment point", true, 3, { 2, 2, 2 }, { "Offset" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
+            case EBin.event_code_binary.ATTACHOFFSET: // 0xD4, "AttachObjectOffset", "Add an offset to the attachment point"
             {
                 GameObject sourceObject2 = this.gCur.go;
-                Int32 offsetX = this.getv2(); // arg1: offset in (X, Z, Y) format
+                Int32 offsetX = this.getv2(); // arg1: offset in (X, Y, Z) format
                 Int32 offsetY = this.getv2();
                 Int32 offsetZ = this.getv2();
                 if ((UnityEngine.Object)sourceObject2 != (UnityEngine.Object)null)
@@ -2274,13 +2549,13 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.AICON: // 0xD7, "ATE", "Enable or disable ATE", true, 1, { 1 }, { "Unknown" }, { AT_SPIN }, 0
+            case EBin.event_code_binary.AICON: // 0xD7, "ATE", "Enable or disable ATE"
             {
-                EIcon.SetAIcon(this.getv1()); // arg1: maybe flags (unknown format)
+                Int32 mode = this.getv1(); // arg1: mode (0 = disable, rest unknown)
+                EIcon.SetAIcon(mode);
                 return 0;
             }
-            // 0xD8, "SetWeather", "Add a raining effect (works on the world maps, fields and in battles).arg1: strength of rain.arg2: speed of rain (unused for a battle rain).", true, 2, { 1, 1 }, { "Strength", "Speed" }, { AT_USPIN, AT_USPIN }, 0
-            case EBin.event_code_binary.CLEARSTATUS: // 0xD9, "CureStatus", "Cure the status ailments of a party member", true, 2, { 1, 1 }, { "Character", "Statuses" }, { AT_LCHARACTER, AT_BOOLLIST }, 0
+            case EBin.event_code_binary.CLEARSTATUS: // 0xD9, "CureStatus", "Cure the status ailments of a party member"
             {
                 CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
                 BattleStatus statusList = (BattleStatus)this.getv1(); // arg2: status list. 1: Petrified 2: Venom 3: Virus 4: Silence 5: Darkness 6: Trouble 7: Zombie
@@ -2297,7 +2572,7 @@ public partial class EventEngine
                             SFieldCalculator.FieldRemoveStatus(play, statusList);
                 return 0;
             }
-            case EBin.event_code_binary.WINPOSE: // 0xDB, "EnableVictoryPose", "Enable or disable the victory pose at the end of battles for a specific character", true, 2, { 1, 1 }, { "Character", "Enable" }, { AT_LCHARACTER, AT_BOOL }, 0
+            case EBin.event_code_binary.WINPOSE: // 0xDB, "EnableVictoryPose", "Enable or disable the victory pose at the end of battles for a specific character"
             {
                 CharacterId charId = this.chr2slot(this.getv1()); // arg1: which character
                 Int32 winPoseOnOff = this.getv1(); // arg2: boolean activate/deactivate
@@ -2305,7 +2580,7 @@ public partial class EventEngine
                     this._ff9.GetPlayer(charId).info.win_pose = (Byte)winPoseOnOff;
                 return 0;
             }
-            case EBin.event_code_binary.SETVY3: // 0xE2, "SetupJump", "Setup datas for a Jump call", true, 4, { 2, 2, 2, 1 }, { "Destination", "Steps" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y, AT_USPIN }, 0
+            case EBin.event_code_binary.SETVY3: // 0xE2, "SetupJump", "Setup datas for a Jump call"
             {
                 actor.jumpx = (Int16)this.getv2(); // 1st to arg3s: destination in (X, Z, Y)
                 actor.jumpy = (short)-this.getv2();
@@ -2331,21 +2606,7 @@ public partial class EventEngine
                 actor.jframeN = (Byte)steps;
                 return 0;
             }
-            case EBin.event_code_binary.JUMP3: // 0xDC, "Jump", "Perform a jumping animation. Must be used after a SetupJump call."
-            {
-                Int32 jumpFrame = (Int32)actor.jframe;
-                ++actor.jframe;
-                Int32 jframeN = (Int32)actor.jframeN;
-                actor.pos[0] = (Single)(((Int32)actor.x0 * (jframeN - jumpFrame) + (Int32)actor.jumpx * jumpFrame) / jframeN);
-                actor.pos[1] = (Single)((Int32)actor.y0 - jumpFrame * (jumpFrame << 3) + jumpFrame * ((Int32)actor.jumpy - (Int32)actor.y0) / jframeN + jumpFrame * (jframeN << 3));
-                actor.pos[2] = (Single)(((Int32)actor.z0 * (jframeN - jumpFrame) + (Int32)actor.jumpz * jumpFrame) / jframeN);
-                this.SetActorPosition(po, actor.pos[0], actor.pos[1], actor.pos[2]);
-                if (jumpFrame >= jframeN)
-                    return 0;
-                this.stay();
-                return 1;
-            }
-            case EBin.event_code_binary.PARTYDELETE: // 0xDD, "RemoveParty", "Remove a character from the player's team", true, 1, { 1 }, { "Character" }, { AT_LCHARACTER }, 0
+            case EBin.event_code_binary.PARTYDELETE: // 0xDD, "RemoveParty", "Remove a character from the player's team"
             {
                 CharacterId charId = this.chr2slot(this.getv1()); // arg1: character to remove
                 if (Configuration.Hacks.AllCharactersAvailable >= 2)
@@ -2360,7 +2621,13 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.PLAYERNAME: // 0xDE, "SetName", "Change the name of a party member. Clear the text opcodes from the chosen text", true, 2, { 1, 2 }, { "Character", "Text" }, { AT_LCHARACTER, AT_TEXT }, 0
+            case EBin.event_code_binary.SYNCPARTY: // 0xE9, "UpdatePartyUID", "Update the party's entry list (Team Character 1-4 entries) for RunScript and InitObject calls. Should always be used after a Party call
+                                                   // (it is automatic when using RemoveParty or AddParty)."
+            {
+                this.SetupPartyUID();
+                return 0;
+            }
+            case EBin.event_code_binary.PLAYERNAME: // 0xDE, "SetName", "Change the name of a party member. Clear the text opcodes from the chosen text"
             {
                 CharacterId charId = this.chr2slot(this.getv1()); // arg1: character to rename
                 Int32 textId = this.getv2(); // arg2: new name
@@ -2368,14 +2635,10 @@ public partial class EventEngine
                     this._ff9.GetPlayer(charId).Name = FF9TextTool.RemoveOpCode(FF9TextTool.FieldText(textId));
                 return 0;
             }
-            case EBin.event_code_binary.OVAL: //  // 0xDF, "SetObjectOvalRatio", "Define a stretching factor for the object's collisions (seems to only work on world maps). The collisions' shape is not exactly an oval but consists of two discs patched together", true, 1, { 1 }, { "Stretching Factor" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.OVAL: //  // 0xDF, "SetObjectOvalRatio", "Define a stretching factor for the object's collisions (seems to only work on world maps). The collisions' shape is not exactly an oval but consists of two discs patched together"
             {
-                //arg1: increase of the collision in the facing direction of the object.
-                //0 removes the feature(both circles are merged)
-                //48 makes the object's collision twice higher toward the facing direction than on its sides
-                //100 corresponds to a factor of about 2.7 in the facing direction
-                //255 corresponds to a factor of about 4
-                po.ovalRatio = (Byte)this.getv1();
+                po.ovalRatio = (Byte)this.getv1(); // arg1: increase of the collision in the facing direction of the object. //0 removes the feature(both circles are merged)
+                // 48 makes the object's collision twice higher toward the facing direction than on its sides //100 corresponds to a factor of about 2.7 in the facing direction  //255 corresponds to a factor of about 4
                 return 0;
             }
             case EBin.event_code_binary.INCFROG: // 0xE0, "AddFrog", "Add one frog to the frog counter."
@@ -2384,47 +2647,20 @@ public partial class EventEngine
                 EMinigame.CatchingGoldenFrogAchievement(this.gCur);
                 return 0;
             }
-            case EBin.event_code_binary.BEND: // 0xE1, "TerminateBattle", "Return to the field (or world map) when the rewards are disabled."
+            case EBin.event_code_binary.BEND: // 0xE1, "TerminateBattle", "Return to the field (or world map) when the rewards are disabled"
             {
                 this._noEvents = true;
                 PersistenSingleton<UIManager>.Instance.BattleResultScene.ShutdownBattleResultUI();
                 return 0;
             }
-            case EBin.event_code_binary.SETSIGNAL: // 0xE3, "SetDialogProgression", "Change the dialog progression value", true, 1, { 1 }, { "Progression" }, { AT_SPIN }, 0
+            case EBin.event_code_binary.SETSIGNAL: // 0xE3, "SetDialogProgression", "Change the dialog progression value"
             {
                 ETb.gMesSignal = this.getv1(); // arg1: new dialog progression value
                 return 0;
             }
-            case EBin.event_code_binary.BGLSCROLLOFFSET: // 0xE4, "MoveTileLoopWithOffset", "Make the image of a field tile loop over space", true, 5, { 1, 1, 2, 2, 1 }, { "Tile Block", "Enable", "Speed", "Offset", "Is X Movement" }, { AT_TILE, AT_BOOL, AT_SPIN, AT_SPIN, AT_BOOL }, 0
-            {
-                //arg1: background tile block arg2: on/off arg3: movement speed arg4: offset arg5: move along the X axis or Y axis.
-                this.fieldmap.EBG_overlaySetScrollWithOffset(this.getv1(), (UInt32)this.getv1(), this.getv2(), this.getv2(), (UInt32)this.getv1());
-                return 0;
-            }
-            case EBin.event_code_binary.BTLSEQ: // 0xE5, "AttackSpecia", "Make the enemy instantatly use a special move. It doesn't use nor modify the battle state so it should be used when the battle is paused. The target(s) are to be set using the SV_Target variable", true, 1, { 1 }, { "Attack" }, { AT_ATTACK }, 0
+            case EBin.event_code_binary.BTLSEQ: // 0xE5, "AttackSpecia", "Make the enemy instantatly use a special move. It doesn't use nor modify the battle state so it should be used when the battle is paused. The target(s) are to be set using the SV_Target variable"
             {
                 btlseq.StartBtlSeq(this.GetSysList(1), this.GetSysList(0), this.getv1()); // arg1: attack to perform
-                return 0;
-            }
-            case EBin.event_code_binary.BGLLOOPTYPE: // 0xE6, "SetTileLoopType", "Let tile be screen anchored or not", true, 2, { 1, 1 }, { "Tile Block", "Screen Anchored" }, { AT_TILE, AT_BOOL }, 0
-            {
-                this.fieldmap.EBG_overlaySetLoopType(this.getv1(), (UInt32)this.getv1()); // arg1: background tile block.arg2: boolean on/off
-                return 0;
-            }
-            case EBin.event_code_binary.BGAFRAME: // 0xE7, "SetTileAnimationFrame", "Change the frame of a field tile animation (can be used to hide them all if the given frame is out of range, eg. 255)", true, 2, { 1, 1 }, { "Animation", "Frame ID" }, { AT_TILEANIM, AT_USPIN }, 0
-            {
-                this.fieldmap.EBG_animShowFrame(this.getv1(), this.getv1()); // arg1: background animation.arg2: animation frame to display
-                return 0;
-            }
-            case EBin.event_code_binary.MOVE3H: // 0xE8, "SideWalkXZY", "Make the character walk to destination without changing his facing angle. Make it synchronous if InitWalk is called before. format.", true, 3, { 2, 2, 2 }, { "Destination" }, { AT_POSITION_X, AT_POSITION_Z, AT_POSITION_Y }, 0
-            {
-                if (this.MoveToward_mixed(this.getv2(), -this.getv2(), this.getv2(), 3, null)) // 1st to arg3s: destination in (X, Z, Y)
-                    this.stay();
-                return 1;
-            }
-            case EBin.event_code_binary.SYNCPARTY: // 0xE9, "UpdatePartyUID", "Update the party's entry list (Team Character 1-4 entries) for RunScript and InitObject calls. Should always be used after a Party call (it is automatic when using RemoveParty or AddParty)."
-            {
-                this.SetupPartyUID();
                 return 0;
             }
             case EBin.event_code_binary.VRP: // 0xEA, "CalculateScreenOrigin", "Calculate the position of the top-left corner of the current camera view in screen coordinates and store it in 'GetScreenCalculatedX' and 'GetScreenCalculatedY'."
@@ -2441,7 +2677,7 @@ public partial class EventEngine
                 this.eTb.YWindow_CloseAll(true);
                 return 0;
             }
-            case EBin.event_code_binary.WIPERGB: // 0xEC, "FadeFilter", "Apply a fade filter on the screen", true, 6, { 1, 1, 1, 1, 1, 1 }, { "Fade In/Out", "Fading Time", "Unknown", "Color" }, { AT_USPIN, AT_USPIN, AT_SPIN, AT_COLOR_CYAN, AT_COLOR_MAGENTA, AT_COLOR_YELLOW }, 0
+            case EBin.event_code_binary.WIPERGB: // 0xEC, "FadeFilter", "Apply a fade filter on the screen"
             {
                 Int32 filterMode = this.getv1(); // arg1: filter mode (0 for ADD, 2 for SUBTRACT)
                 Int32 frame = this.getv1(); // arg2: fading time
@@ -2449,18 +2685,21 @@ public partial class EventEngine
                 Int32 cyan = this.getv1(); // 4 Cyan
                 Int32 magenta = this.getv1(); // 5 Magenta
                 Int32 yellow = this.getv1(); // 6 Yellow
-                SceneDirector.InitFade(
-                    (filterMode >> 1 & 1) != 0 ? FadeMode.Sub : FadeMode.Add,
-                    frame,
-                    (Color32)new Color(
-                        (Single)cyan / (Single)Byte.MaxValue,
-                        (Single)magenta / (Single)Byte.MaxValue,
-                        (Single)yellow / (Single)Byte.MaxValue));
+                if (mapNo == 1819 && scCounter == 7030 && cyan == 130 && magenta == 160 && yellow == 170)
+                {
+                    cyan = 81; magenta = 110; yellow = 121;
+                }
+
+                Color32 fadeColor = new Color((Single)cyan / (Single)Byte.MaxValue, (Single)magenta / (Single)Byte.MaxValue, (Single)yellow / (Single)Byte.MaxValue);
+                SceneDirector.InitFade((filterMode >> 1 & 1) != 0 ? FadeMode.Sub : FadeMode.Add, frame, fadeColor);
                 return 0;
             }
-            case EBin.event_code_binary.BGVALPHA: // 0xED, "SetTileLoopAlpha", "Unknown opcode about tile looping movements (EBG_overlayDefineViewportAlpha).", true, 3, { 1, 2, 2 }, { "Tile Block", "Unknown X", "Unknown Y" }, { AT_TILE, AT_SPIN, AT_SPIN }, 0
+            case EBin.event_code_binary.BGVALPHA: // 0xED, "SetTileLoopAlpha", "Unknown opcode about tile looping movements (EBG_overlayDefineViewportAlpha)."
             {
-                this.fieldmap.EBG_overlayDefineViewportAlpha(this.getv1(), this.getv2(), this.getv2()); // arg1: background tile block.2nd and arg3s: unknown factors (X, Y).
+                Int32 viewportNdx = this.getv1(); // arg1: viewport index
+                Int32 alphaX = this.getv2(); // 2nd and arg3s: unknown factors (X, Y).
+                Int32 alphaY = this.getv2();
+                this.fieldmap.EBG_overlayDefineViewportAlpha(viewportNdx, alphaX, alphaY);
                 return 0;
             }
             case EBin.event_code_binary.SLEEPON: // 0xEE, "EnableInactiveAnimation", "Allow the player's character to play its inactive animation. The inaction time required is:First Time = 200 + 4 * Random[0, 255]Following Times = 200 + 2 * Random[0, 255]"
@@ -2468,7 +2707,7 @@ public partial class EventEngine
                 this._context.idletimer = (Int16)0;
                 return 0;
             }
-            case EBin.event_code_binary.HEREON: // 0xEF, "ShowHereIcon", "Show the Here icon over player's chatacter", true, 1, { 1 }, { "Show" }, { AT_SPIN }, 0
+            case EBin.event_code_binary.HEREON: // 0xEF, "ShowHereIcon", "Show the Here icon over player's character"
             {
                 EIcon.SetHereIcon(this.getv1()); // arg1: display type (0 to hide, 3 to show unconditionally)
                 return 0;
@@ -2478,7 +2717,7 @@ public partial class EventEngine
                 this._context.dashinh = (Byte)0;
                 return 0;
             }
-            case EBin.event_code_binary.SETHP: // 0xF1, "SetHP", "Change the HP of a party's member", true, 2, { 1, 2 }, { "Character", "HP" }, { AT_LCHARACTER, AT_USPIN }, 0
+            case EBin.event_code_binary.SETHP: // 0xF1, "SetHP", "Change the HP of a party's member"
             {
                 CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
                 if (charId != CharacterId.NONE)
@@ -2505,7 +2744,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.SETMP: // 0xF2, "SetMP", "Change the MP of a party's member", true, 2, { 1, 2 }, { "Character", "MP" }, { AT_LCHARACTER, AT_USPIN }, 0
+            case EBin.event_code_binary.SETMP: // 0xF2, "SetMP", "Change the MP of a party's member"
             {
                 CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
                 if (charId != CharacterId.NONE)
@@ -2532,7 +2771,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.CLEARAP: // 0xF3, "UnlearnAbility", "Set an ability's AP back to 0", true, 2, { 1, 1 }, { "Character", "Ability" }, { AT_LCHARACTER, AT_ABILITY }, 0
+            case EBin.event_code_binary.CLEARAP: // 0xF3, "UnlearnAbility", "Set an ability's AP back to 0"
             {
                 CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
                 Int32 abilIndex = this.getv1(); // arg2: ability to reset
@@ -2540,7 +2779,7 @@ public partial class EventEngine
                     ff9abil.FF9Abil_ClearAp(FF9StateSystem.Common.FF9.GetPlayer(charId), abilIndex);
                 return 0;
             }
-            case EBin.event_code_binary.MAXAP: // 0xF4, "LearnAbility", "Make character learn an ability", true, 2, { 1, 1 }, { "Character", "Ability" }, { AT_LCHARACTER, AT_ABILITY }, 0
+            case EBin.event_code_binary.MAXAP: // 0xF4, "LearnAbility", "Make character learn an ability"
             {
                 CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
                 Int32 abilIndex = this.getv1(); // arg2: ability to learn
@@ -2552,42 +2791,42 @@ public partial class EventEngine
             {
                 return 8;
             }
-            case EBin.event_code_binary.VIBSTART: // 0xF6, "VibrateController", "Start the vibration lifespan", true, 1, { 1 }, { "Frame" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.VIBSTART: // 0xF6, "VibrateController", "Start the vibration lifespan"
             {
                 vib.VIB_vibrate((Int16)this.getv1()); // arg1: frame to begin with
                 return 0;
             }
-            case EBin.event_code_binary.VIBACTIVE: // 0xF7, "ActivateVibration", "Make the controller's vibration active. If the current controller's frame is out of the vibration time range, the vibration lifespan is reinit", true, 1, { 1 }, { "Activate" }, { AT_BOOL }, 0
+            case EBin.event_code_binary.VIBACTIVE: // 0xF7, "ActivateVibration", "Make the controller's vibration active. If the current controller's frame is out of the vibration time range, the vibration lifespan is reinit"
             {
                 vib.VIB_setActive(this.getv1() != 0); // arg1: boolean activate/deactivate
                 return 0;
             }
-            case EBin.event_code_binary.VIBTRACK1: // 0xF8, "RunVibrationTrack", "Run a vibration track", true, 3, { 1, 1, 1 }, { "Track", "Sample", "Activate" }, { AT_USPIN, AT_USPIN, AT_BOOL }, 0
+            case EBin.event_code_binary.VIBTRACK1: // 0xF8, "RunVibrationTrack", "Run a vibration track"
             {
                 vib.VIB_setTrackActive(this.getv1(), this.getv1(), this.getv1() != 0); // arg1: track ID.arg2: sample (0 or 1).arg3: boolean activate/deactivate
                 return 0;
             }
-            case EBin.event_code_binary.VIBTRACK: // 0xF9, "ActivateVibrationTrack", "Activate a vibration track", true, 3, { 1, 1, 1 }, { "Track", "Sample", "Activate" }, { AT_USPIN, AT_USPIN, AT_BOOL }, 0
+            case EBin.event_code_binary.VIBTRACK: // 0xF9, "ActivateVibrationTrack", "Activate a vibration track"
             {
                 vib.VIB_setTrackToModulate((UInt32)this.getv1(), (UInt32)this.getv1(), this.getv1() != 0); // arg1: track ID.arg2: sample (0 or 1).arg3: boolean activate/deactivate
                 return 0;
             }
-            case EBin.event_code_binary.VIBRATE: // 0xFA, "SetVibrationSpeed", "Set the vibration frame rate", true, 1, { 2 }, { "Frame Rate" }, { AT_USPIN }, 0
+            case EBin.event_code_binary.VIBRATE: // 0xFA, "SetVibrationSpeed", "Set the vibration frame rate"
             {
                 vib.VIB_setFrameRate((Int16)this.getv2()); // arg1: frame rate
                 return 0;
             }
-            case EBin.event_code_binary.VIBFLAG: // 0xFB, "SetVibrationFlags", "Change the vibration flags", true, 1, { 1 }, { "Flags" }, { AT_BOOLLIST }, 0
+            case EBin.event_code_binary.VIBFLAG: // 0xFB, "SetVibrationFlags", "Change the vibration flags"
             {
                 vib.VIB_setFlags((Int16)this.getv1()); // arg1: flags. 8:Loop 16:Wrap
                 return 0;
             }
-            case EBin.event_code_binary.VIBRANGE: // 0xFC, "SetVibrationRange", "Set the time range of vibration", true, 2, { 1, 1 }, { "Start", "End" }, { AT_USPIN, AT_USPIN }, 0
+            case EBin.event_code_binary.VIBRANGE: // 0xFC, "SetVibrationRange", "Set the time range of vibration"
             {
                 vib.VIB_setPlayRange((Int16)this.getv1(), (Int16)this.getv1()); // arg1-2: vibration range (Start, End)
                 return 0;
             }
-            case EBin.event_code_binary.HINT: // 0xFD, "PreloadField", "Surely preload a field; ignored in the non-PSX versions", true, 2, { 1, 2 }, { "Unknown", "Field" }, { AT_SPIN, AT_FIELD }, 0
+            case EBin.event_code_binary.HINT: // 0xFD, "PreloadField", "Surely preload a field; ignored in the non-PSX versions"
             {
                 Int32 hintCode = this.getv1(); // arg1: unknown - The only values are 0x5, 0x11 and 0x91 in non-modded scripts
                 Int32 preloadField = this.getv2(); // arg2: field to preload
@@ -2618,7 +2857,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.JOIN: // 0xFE, "SetCharacterData", "Init a party's member battle and menu datas", true, 5, { 1, 1, 1, 1, 1 }, { "Character", "Update Leve", "Equipement Set", "Category", "Ability Set" }, { AT_LCHARACTER, AT_BOOL, AT_EQUIPSET, AT_BOOLLIST, AT_ABILITYSET }, 0
+            case EBin.event_code_binary.JOIN: // 0xFE, "SetCharacterData", "Init a party's member battle and menu datas"
             {
                 CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
                 Int32 enableLeveling = this.getv1(); // arg2: boolean update level/don't update level
@@ -2683,7 +2922,6 @@ public partial class EventEngine
                 this.fieldmap.walkMesh.BGI_animShowFrame((UInt32)this.getv1(), (UInt32)this.getv1());
                 return 0;
             }
-            // TODO: no more information from Hades Workshop
             case EBin.event_code_binary.PLAYER_EQUIP: // "SetCharacterEquipment" Change the piece of equipment of a player, using it from the player's inventory
             {
                 CharacterId charId = this.chr2slot(this.getv3()); // character to (re-)equip.
@@ -2747,52 +2985,11 @@ public partial class EventEngine
                     synth.Shops.Remove(shopId);
                 return 0;
             }
-            case EBin.event_code_binary.MOVE_EX: // "WalkEx" Make the specified character walk to destination
-            {
-                actor = this.GetObj3() as Actor; // object to move
-                Int32 speed = this.getv3(); // walk speed
-                Single x = this.getv3(); // 3rd to 5th arguments: position in (X, Z, Y) format.
-                Single y = -this.getv3();
-                Single z = this.getv3();
-                Int32 flags = this.getv3(); // movement flags
-                if (actor == null)
-                    return 0;
-                if (actor.loopCount != Byte.MaxValue)
-                {
-                    actor.loopCount = Byte.MaxValue;
-                    this.clrdist(actor);
-                }
-                if (this.gMode == 1 && (flags & 2) != 0)
-                {
-                    FieldMapActorController controller = actor.go?.GetComponent<FieldMapActorController>();
-                    controller?.walkMesh.BGI_charSetActive(controller, 0);
-                    ff9shadow.FF9ShadowOffField(actor.uid);
-                    actor.isShadowOff = true;
-                }
-                if (this.MoveToward_mixed_ex(actor, speed, x, y, z, flags, null))
-                {
-                    this.stay();
-                }
-                else
-                {
-                    if (this.gMode == 1 && (flags & 2) != 0)
-                    {
-                        FieldMapActorController controller = actor.go?.GetComponent<FieldMapActorController>();
-                        if (controller != null && controller.walkMesh.BGI_nearestWalkPosInVertical(new Vector3(x, y, z), out Single h) && Math.Abs(h) < 100f)
-                        {
-                            // Enable walkmesh pathing and shadow if the destination is near the ground
-                            controller.walkMesh.BGI_charSetActive(controller, 1);
-                            ff9shadow.FF9ShadowOnField(actor.uid);
-                        }
-                    }
-                }
-                return 1;
-            }
             case EBin.event_code_binary.TURN_OBJ_EX:
             {
-                Actor turner = this.GetObj3() as Actor;
-                PosObj target = this.GetObj3() as PosObj;
-                Int32 tspeed = this.getv3();
+                Actor turner = this.GetObj3() as Actor; // character to turn
+                PosObj target = this.GetObj3() as PosObj; // object to look at
+                Int32 tspeed = this.getv3(); // turn speed
                 if (turner != null && target != null)
                 {
                     Single angle = this.eBin.angleAsm(target.pos[0] - turner.pos[0], target.pos[2] - turner.pos[2]);
@@ -2800,11 +2997,11 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.AANIM_EX:
+            case EBin.event_code_binary.AANIM_EX: // "SetLogicalAnimationEx" Change the logical animation of the specified entry
             {
-                actor = this.GetObj3() as Actor;
-                Int32 kind = this.getv3();
-                UInt16 anim = (UInt16)(Int32)this.getv3();
+                actor = this.GetObj3() as Actor; // object re-animated
+                Int32 kind = this.getv3(); // type of logical animation
+                UInt16 anim = (UInt16)this.getv3(); // animation to use
                 switch (kind)
                 {
                     case 0: actor.idle = anim; break;
@@ -2818,55 +3015,107 @@ public partial class EventEngine
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)anim));
                 return 0;
             }
-            case EBin.event_code_binary.VECTOR_CLEAR:
+            case EBin.event_code_binary.VECTOR_CLEAR: // "ClearMemoriaVector" Empty a vector in the vector system provided by Memoria
             {
-                Int32 vectID = this.getv3();
+                Int32 vectID = this.getv3(); // vector ID to clear
                 if (FF9StateSystem.EventState.gScriptVector.TryGetValue(vectID, out List<Int32> vect))
                     vect.Clear();
                 return 0;
             }
-            case EBin.event_code_binary.DICTIONARY_CLEAR:
+            case EBin.event_code_binary.DICTIONARY_CLEAR: // "ClearMemoriaDictionary" Empty a dictionary in the dictionary system provided by Memoria
             {
-                Int32 dictID = this.getv3();
+                Int32 dictID = this.getv3(); // dictionary ID to clear
                 if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(dictID, out Dictionary<Int32, Int32> dict))
                     dict.Clear();
                 return 0;
             }
-            case EBin.event_code_binary.BGLMOVE_TIMED:
+            case EBin.event_code_binary.SHADOWON: // 0x7F, "EnableShadow", "Enable the shadow for the entry's object."
             {
-                this.fieldmap.EBG_overlayMoveTimed(this.getv3(), this.getv3(), this.getv3(), this.getv3(), this.getv3());
+                if (this.gMode == 1)
+                {
+                    ff9shadow.FF9ShadowOnField((Int32)po.uid);
+                    po.isShadowOff = false;
+                }
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowOnBattle(po.uid);
+                return 0;
+            }
+            case EBin.event_code_binary.SHADOWOFF: // 0x80, "DisableShadow", "Disable the shadow for the entry's object"
+            {
+                if (this.gMode == 1)
+                {
+                    ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                    po.isShadowOff = true;
+                }
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowOffBattle(po.uid);
+                return 0;
+            }
+            case EBin.event_code_binary.SHADOWSCALE: // 0x81, "SetShadowSize", "Set the entry's object shadow size"
+            {
+                Int32 xScale = this.getv1(); // arg1: size X
+                Int32 zScale = this.getv1(); // arg2: size Z
+                if (this.gMode == 1)
+                    ff9shadow.FF9ShadowSetScaleField((Int32)po.uid, xScale, zScale);
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowSetScaleBattle(po.uid, xScale, zScale);
+                return 0;
+            }
+            case EBin.event_code_binary.SHADOWOFFSET: // 0x82, "SetShadowOffset", "Change the offset between the entry's object and its shadow"
+            {
+                Int32 xOffset = this.getv2(); // arg1: offset X
+                Int32 zOffset = this.getv2(); // arg2: offset Z
+                if (this.gMode == 1)
+                    ff9shadow.FF9ShadowSetOffsetField((Int32)po.uid, (Single)xOffset, (Single)zOffset);
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowSetOffsetBattle(po.uid, xOffset, zOffset);
+                return 0;
+            }
+            case EBin.event_code_binary.SHADOWLOCK: // 0x83, "LockShadowRotation", "Stop updating the shadow rotation by the object's rotation"
+            {
+                Int32 rotY = this.getv1(); // arg1: locked rotation
+                if (this.gMode == 1)
+                    ff9shadow.FF9ShadowLockYRotField((Int32)po.uid, (Single)(rotY << 4));
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowLockYRotBattle(po.uid, rotY << 4);
+                return 0;
+            }
+            case EBin.event_code_binary.SHADOWUNLOCK: // 0x84, "UnlockShadowRotation", "Make the shadow rotate accordingly with its object"
+            {
+                if (this.gMode == 1)
+                    ff9shadow.FF9ShadowUnlockYRotField((Int32)po.uid);
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowUnlockYRotBattle(po.uid);
+                return 0;
+            }
+            case EBin.event_code_binary.SHADOWAMP: // 0x85, "SetShadowAmplifier", "Amplify or reduce the shadow transparancy"
+            {
+                Int32 ampFactor = this.getv1(); // arg1: amplification factor
+                if (this.gMode == 1)
+                    ff9shadow.FF9ShadowSetAmpField((Int32)po.uid, (Int32)(Byte)ampFactor);
+                else if (this.gMode == 2)
+                    ff9shadow.FF9ShadowSetAmpBattle(po.uid, ampFactor);
+                return 0;
+            }
+            case EBin.event_code_binary.RAIN: // 0xD8, "SetWeather", "Add a raining effect (works on the world maps, fields and in battles)"
+            {
+                Int32 strength = this.getv1(); // arg1: strength of rain
+                Int32 speed = this.getv1(); // arg2: speed of rain (unused for a battle rain)
+                if (this.gMode == 1 || this.gMode == 3)
+                {
+                    this.fieldmap.rainRenderer.SetRainParam(strength, speed);
+                    this._ff9.btl_rain = (Byte)strength;
+                }
+                else if (this.gMode == 2)
+                    FF9StateSystem.Common.FF9.btl_rain = (Byte)strength;
                 return 0;
             }
             default:
             {
-                switch (this.gMode)
-                {
-                    case 1:
-                        return this.DoEventCodeField(po, code);
-                    case 2:
-                        return this.DoEventCodeBattle(po, code);
-                    case 3:
-                        return this.DoEventCodeWorld(po, code);
-                    default:
-                        return 1;
-                }
+                return 1;
             }
         }
     }
-
-    /*private static Boolean IsAlexandriaStageScene()
-    {
-        switch (FF9StateSystem.Common.FF9.fldMapNo)
-        {
-            case 62:
-            case 63:
-            case 3009:
-            case 3010:
-            //case 3011: // Leads to problems
-                return true;
-        }
-        return false;
-    }*/
 
     [DebuggerHidden]
     private IEnumerator DelayedCFLAG(Obj obj, Int32 cflag)
@@ -3020,18 +3269,6 @@ public partial class EventEngine
     private Obj GetObj3()
     {
         return this.GetObjUID(this.getv3());
-    }
-
-    private void FF9FieldDiscRequest(Byte disc_id, UInt16 map_id)
-    {
-        //this._ff9fieldDisc.disc_id = disc_id;
-        //this._ff9fieldDisc.cdType = (byte)(1U << (int)disc_id);
-        this._ff9fieldDisc.FieldMapNo = (Int16)map_id;
-        //this._ff9fieldDisc.FieldLocNo = (short)-1;
-        FF9StateFieldSystem stateFieldSystem = FF9StateSystem.Field.FF9Field;
-        FF9StateSystem instance = PersistenSingleton<FF9StateSystem>.Instance;
-        stateFieldSystem.attr |= 1048576U;
-        instance.attr |= 8U;
     }
 
     internal void SetActorPosition(PosObj po, Single x, Single y, Single z)

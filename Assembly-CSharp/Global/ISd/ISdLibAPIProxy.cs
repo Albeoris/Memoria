@@ -4,39 +4,39 @@ using UnityEngine;
 
 public class ISdLibAPIProxy
 {
-	private ISdLibAPIProxy()
-	{
-	}
+    private ISdLibAPIProxy()
+    {
+    }
 
-	public static ISdLibAPI Instance
-	{
-		get
-		{
-			if (ISdLibAPIProxy.instance == null)
-			{
-				Initialize();
-			}
-			return ISdLibAPIProxy.instance;
-		}
-	    set { ISdLibAPIProxy.instance = value; }
-	}
+    public static ISdLibAPI Instance
+    {
+        get
+        {
+            if (ISdLibAPIProxy.instance == null)
+            {
+                Initialize();
+            }
+            return ISdLibAPIProxy.instance;
+        }
+        set { ISdLibAPIProxy.instance = value; }
+    }
 
     private static void Initialize()
     {
         if (Application.HasProLicense())
         {
-			if(Configuration.Audio.Backend == 0)
+            if (Configuration.Audio.Backend == 0)
             {
                 ISdLibAPIProxy.instance = new SdLibAPIWithProLicense();
             }
-			else
+            else
             {
                 ISdLibAPIProxy.instance = new SdLibAPIWithSoloud();
             }
         }
         else
         {
-			ISdLibAPIProxy.instance = new SdLibAPIWithSoloud();
+            ISdLibAPIProxy.instance = new SdLibAPIWithSoloud();
         }
     }
 

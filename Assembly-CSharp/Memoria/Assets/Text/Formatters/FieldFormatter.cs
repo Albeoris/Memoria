@@ -18,7 +18,7 @@ namespace Memoria.Assets
             {
                 String key;
                 String line = GetLine(lines, ref i);
-                TxtEntry entry = new TxtEntry {Index = entries.Count, Prefix = postfix};
+                TxtEntry entry = new TxtEntry { Index = entries.Count, Prefix = postfix };
                 if (line == String.Empty)
                 {
                     entry.Value = String.Empty;
