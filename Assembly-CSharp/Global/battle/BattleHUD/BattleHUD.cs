@@ -416,6 +416,7 @@ public partial class BattleHUD : UIScene
             _isManualTrance = false;
         }
 
+        // TODO [DV]
         if (Configuration.Mod.TranceSeek) // [DV] - Special commands
         {
             if (presetId == CharacterPresetId.Zidane) // Change Zidane's commands depending the weapon
@@ -482,24 +483,11 @@ public partial class BattleHUD : UIScene
             numberSubModeHud.Value.SetText(player.CurrentHp.ToString());
             numberSubModeHud.MaxValue.SetText(player.MaximumHp.ToString());
             if (!player.IsTargetable)
-            {
                 numberSubModeHud.SetColor(FF9TextTool.Gray);
-            }
+            else if (CheckHPState(player) == ParameterStatus.Dead)
+                numberSubModeHud.SetColor(FF9TextTool.Red);
             else
-            {
-                switch (CheckHPState(player))
-                {
-                    case ParameterStatus.Dead:
-                        numberSubModeHud.SetColor(FF9TextTool.Red);
-                        break;
-                    case ParameterStatus.Critical:
-                        numberSubModeHud.SetColor(FF9TextTool.Yellow);
-                        break;
-                    default:
-                        numberSubModeHud.SetColor(FF9TextTool.White);
-                        break;
-                }
-            }
+                numberSubModeHud.SetColor(player.UIColorHP);
             list.Remove(index);
         }
 
@@ -521,14 +509,7 @@ public partial class BattleHUD : UIScene
             numberSubModeHud.IsActive = true;
             numberSubModeHud.Value.SetText(player.CurrentMp.ToString());
             numberSubModeHud.MaxValue.SetText(player.MaximumMp.ToString());
-
-            if (!player.IsTargetable)
-                numberSubModeHud.SetColor(FF9TextTool.Gray);
-            else if (CheckMPState(player) == ParameterStatus.Dead)
-                numberSubModeHud.SetColor(FF9TextTool.Yellow);
-            else
-                numberSubModeHud.SetColor(FF9TextTool.White);
-
+            numberSubModeHud.SetColor(player.IsTargetable ? player.UIColorMP : FF9TextTool.Gray);
             list.Remove(index);
         }
 
@@ -618,7 +599,7 @@ public partial class BattleHUD : UIScene
     private void DisplayAbilityRealTime()
     {
         BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
-        if (_currentSilenceStatus != unit.IsUnderAnyStatus(BattleStatus.Silence))
+        if (_currentSilenceStatus != unit.IsUnderAnyStatus(BattleStatusConst.CannotUseMagic))
         {
             _currentSilenceStatus = !_currentSilenceStatus;
             DisplayAbility();
@@ -940,17 +921,11 @@ public partial class BattleHUD : UIScene
                     }
                     nameLabel.color = FF9TextTool.Red;
                 }
-                else if (_currentCharacterHp[playerIndex] == ParameterStatus.Critical)
-                {
-                    if (_cursorType == CursorGroup.Individual)
-                        ButtonGroupState.SetButtonEnable(labelObj, true);
-                    nameLabel.color = FF9TextTool.Yellow;
-                }
                 else
                 {
                     if (_cursorType == CursorGroup.Individual)
                         ButtonGroupState.SetButtonEnable(labelObj, true);
-                    nameLabel.color = FF9TextTool.White;
+                    nameLabel.color = unit.UIColorHP;
                 }
                 ++playerIndex;
             }
@@ -1041,27 +1016,15 @@ public partial class BattleHUD : UIScene
                 playerHud.ATBBlink = false;
                 playerHud.TranceBlink = false;
                 break;
-            case ParameterStatus.Critical:
-                playerHud.ATBBar.SetProgress(bd.CurrentAtb / (Single)bd.MaximumAtb);
-                playerHud.HP.SetColor(FF9TextTool.Yellow);
-                playerHud.Name.SetColor(FF9TextTool.Yellow);
-                break;
             default:
                 playerHud.ATBBar.SetProgress(bd.CurrentAtb / (Single)bd.MaximumAtb);
-                playerHud.HP.SetColor(FF9TextTool.White);
-                playerHud.Name.SetColor(FF9TextTool.White);
+                playerHud.HP.SetColor(bd.UIColorHP);
+                playerHud.Name.SetColor(bd.UIColorHP);
                 break;
         }
 
-        playerHud.MP.SetColor(CheckMPState(bd) == ParameterStatus.Critical ? FF9TextTool.Yellow : FF9TextTool.White);
-        String spriteName = ATENormal;
-
-        if (bd.IsUnderAnyStatus(BattleStatusConst.ATBGrey))
-            spriteName = ATEGray;
-        else if (bd.IsUnderAnyStatus(BattleStatusConst.ATBOrange))
-            spriteName = ATEOrange;
-
-        playerHud.ATBBar.Foreground.Foreground.Sprite.spriteName = spriteName;
+        playerHud.MP.SetColor(bd.UIColorMP);
+        playerHud.ATBBar.Foreground.Foreground.Sprite.spriteName = bd.UISpriteATB;
         if (!bd.HasTrance)
             return;
 
@@ -1102,10 +1065,11 @@ public partial class BattleHUD : UIScene
 
     private static ParameterStatus CheckHPState(BattleUnit bd)
     {
+        // TODO
         if (bd.IsUnderStatus(BattleStatus.Death))
             return ParameterStatus.Dead;
 
-        if (bd.IsPlayer && bd.CurrentHp <= bd.MaximumHp / 6.0)
+        if (btl_para.CheckPointDataStatus(bd) != 0)
             return ParameterStatus.Critical;
 
         return ParameterStatus.Normal;
@@ -1113,6 +1077,7 @@ public partial class BattleHUD : UIScene
 
     private static ParameterStatus CheckMPState(BattleUnit bd)
     {
+        // Dummied (see btl_para.CheckPointDataStatus instead)
         return bd.CurrentMp <= bd.MaximumMp / 6.0 ? ParameterStatus.Critical : ParameterStatus.Normal;
     }
 
@@ -1231,7 +1196,7 @@ public partial class BattleHUD : UIScene
             if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoMagical)
                 return AbilityStatus.Disable;
 
-            if (unit.IsUnderAnyStatus(BattleStatus.Silence))
+            if (unit.IsUnderAnyStatus(BattleStatusConst.CannotUseMagic))
                 return AbilityStatus.Disable;
         }
 
@@ -1271,7 +1236,7 @@ public partial class BattleHUD : UIScene
             if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoMagical)
                 return AbilityStatus.Disable;
 
-            if (unit.IsUnderAnyStatus(BattleStatus.Silence))
+            if (unit.IsUnderAnyStatus(BattleStatusConst.CannotUseMagic))
                 return AbilityStatus.Disable;
         }
 
@@ -1551,6 +1516,8 @@ public partial class BattleHUD : UIScene
 
             BattleCalculator v = new BattleCalculator(caster.Data, target.Data, new BattleCommand(testCommand));
             IEstimateBattleScript script = factory(v) as IEstimateBattleScript;
+            if (factory(v) is IEstimateBattleScript)
+                continue;
             if (script == null)
                 continue;
 
@@ -2639,9 +2606,9 @@ public partial class BattleHUD : UIScene
                 btl_init.CopyPoints(btl.cur, player.cur);
                 player.permanent_status &= ~beforeMenu.battlePermanentStatus;
                 BattleStatus statusesToRemove = unit.CurrentStatus & BattleStatusConst.OutOfBattle & ~player.status;
-                btl_stat.RemoveStatuses(btl, statusesToRemove);
+                btl_stat.RemoveStatuses(unit, statusesToRemove);
                 if ((unit.CurrentStatus & BattleStatus.Death) != 0 && player.cur.hp > 0)
-                    btl_stat.RemoveStatus(btl, BattleStatus.Death);
+                    btl_stat.RemoveStatus(unit, BattleStatusId.Death);
 
                 BattleStatus oldPermanent = 0, oldResist = 0, newPermanent = 0, newResist = 0;
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(beforeMenu.saExtended))
@@ -2658,9 +2625,9 @@ public partial class BattleHUD : UIScene
                 }
                 btl.sa = player.sa;
                 btl.saExtended = player.saExtended;
-                btl_stat.MakeStatusesPermanent(btl, oldPermanent & ~newPermanent, false);
+                btl_stat.MakeStatusesPermanent(unit, oldPermanent & ~newPermanent, false);
                 unit.ResistStatus &= ~(oldResist & ~newResist);
-                btl_stat.MakeStatusesPermanent(btl, newPermanent & ~oldPermanent, true);
+                btl_stat.MakeStatusesPermanent(unit, newPermanent & ~oldPermanent, true);
                 unit.ResistStatus |= newResist & ~oldResist;
 
                 btl.max.hp = Math.Max(1, btl.max.hp + player.max.hp - beforeMenu.max.hp);

@@ -890,7 +890,7 @@ public static class SFX
                 if (arg0 != 0)
                     FF9StateSystem.Battle.FF9Battle.cmd_status |= 2;
                 else
-                    FF9StateSystem.Battle.FF9Battle.cmd_status &= 65533;
+                    FF9StateSystem.Battle.FF9Battle.cmd_status &= 0xFFFD;
                 return 0;
             case 115: // Is Cursor Shown
                 return ((FF9StateSystem.Battle.FF9Battle.cmd_status & 2) == 0) ? 0 : 1;
@@ -945,7 +945,7 @@ public static class SFX
             {
                 Int32 validPlayerTarget = 0;
                 for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                    if (next.bi.player != 0 && !Status.checkCurStat(next, BattleStatus.Death | BattleStatus.Jump))
+                    if (next.bi.player != 0 && !btl_stat.CheckStatus(next, BattleStatus.Death | BattleStatus.Jump))
                         validPlayerTarget++;
                 return validPlayerTarget;
             }
@@ -1221,7 +1221,7 @@ public static class SFX
                         return btl_stat.CheckStatus(next, status) ? 1 : 0;
                     }
                     case 2: // Remove many statuses
-                        btl_stat.RemoveStatuses(next, ~(BattleStatus.EasyKill | BattleStatus.Death | BattleStatus.LowHP | BattleStatus.Stop));
+                        btl_stat.RemoveStatuses(new BattleUnit(next), ~(BattleStatus.EasyKill | BattleStatus.Death | BattleStatus.LowHP | BattleStatus.Stop));
                         break;
                     case 3: // Reset Statuses
                         btl_stat.InitStatus(next);
@@ -2070,8 +2070,7 @@ public static class SFX
 
     public static Int32 GetEffectJTexUsed()
     {
-        SmoothFrameUpdater_Battle.LastSFXEffectJTex = SFX.SFX_SendIntData(12, 0, 0, 0);
-        return SmoothFrameUpdater_Battle.LastSFXEffectJTex;
+        return SFX.SFX_SendIntData(12, 0, 0, 0);
     }
 
     public static void SoundClear()

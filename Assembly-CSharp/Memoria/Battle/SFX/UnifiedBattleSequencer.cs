@@ -721,8 +721,9 @@ public static class UnifiedBattleSequencer
                             continue;
                         if (isVanish)
                             meshList = btl.mesh_banish;
-                        if (btl_stat.CheckStatus(btl, BattleStatus.Vanish))
-                            meshList &= ~btl.mesh_banish;
+                        // TODO
+                        //if (btl_stat.CheckStatus(btl, BattleStatus.Vanish))
+                        //    meshList &= ~btl.mesh_banish;
                         if (!permanent)
                             meshList &= ~btl.mesh_current;
                         if (tmpInt > 0)
@@ -944,7 +945,7 @@ public static class UnifiedBattleSequencer
                         cmd.info.effect_counter++;
                         foreach (BTL_DATA btl in btl_util.findAllBtlData(tmpChar))
                         {
-                            if (btl.bi.target == 0 && cmd.cmd_no != BattleCommandId.Jump && cmd.cmd_no != BattleCommandId.Jump2 && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysTrans)
+                            if (btl.bi.target == 0 && cmd.cmd_no != BattleCommandId.Jump && cmd.cmd_no != BattleCommandId.JumpInTrance && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysTrans)
                                 continue;
                             List<BTL_DATA> allBtl = btl_util.findAllBtlData(0xFF);
                             foreach (BTL_DATA c in allBtl)
@@ -977,7 +978,7 @@ public static class UnifiedBattleSequencer
                             Btl2dParam figParam;
                             if (!btl2dParam.TryGetValue(btl, out figParam))
                                 continue;
-                            btl2d.Btl2dReq(btl, ref figParam.info, ref figParam.hp, ref figParam.mp);
+                            btl2d.Btl2dReq(btl, figParam.info, figParam.hp, figParam.mp);
                             btl2dParam.Remove(btl);
                         }
                     }

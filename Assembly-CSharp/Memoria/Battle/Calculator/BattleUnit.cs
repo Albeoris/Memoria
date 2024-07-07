@@ -89,6 +89,7 @@ namespace Memoria
 
         public Int32 PhysicalDefence
         {
+            // TODO [DV]
             get => Data.special_status_old ? (byte)Math.Max(1, Data.defence.PhysicalDefence >> 3) : Data.defence.PhysicalDefence;
             set => Data.defence.PhysicalDefence = value;
         }
@@ -130,17 +131,16 @@ namespace Memoria
             {
                 if (Data.elem.dex == value)
                     return;
-                Int16 newMaxATB = (Int16)((60 - value) * 40 << 2);
+                Data.elem.dex = value;
+                Int16 newMaxATB = btl_para.GetMaxATB(this);
                 if (Data.cur.at >= Data.max.at)
                 {
-                    Data.elem.dex = value;
                     Data.max.at = newMaxATB;
                     Data.cur.at = newMaxATB;
                 }
                 else
                 {
                     Single atbFill = (Single)Data.cur.at / Data.max.at;
-                    Data.elem.dex = value;
                     Data.max.at = newMaxATB;
                     Data.cur.at = (Int16)Math.Round(atbFill * newMaxATB);
                 }
@@ -163,6 +163,24 @@ namespace Memoria
         {
             get => Data.maxMpDamageLimit;
             set => Data.maxMpDamageLimit = value;
+        }
+
+        public Color UIColorHP
+        {
+            get => Data.uiColorHP;
+            set => Data.uiColorHP = value;
+        }
+
+        public Color UIColorMP
+        {
+            get => Data.uiColorMP;
+            set => Data.uiColorMP = value;
+        }
+
+        public String UISpriteATB
+        {
+            get => Data.uiSpriteATB;
+            set => Data.uiSpriteATB = value;
         }
 
         public Boolean HasTrance => Data.bi.t_gauge != 0;
@@ -212,13 +230,13 @@ namespace Memoria
         public BattleStatus CurrentStatus
         {
             get => Data.stat.cur;
-            set => Data.stat.cur = value;
+            //set => Data.stat.cur = value; // Use AlterStatus/RemoveStatus instead
         }
 
         public BattleStatus PermanentStatus
         {
             get => Data.stat.permanent;
-            set => Data.stat.permanent = value;
+            //set => Data.stat.permanent = value; // Use btl_stat.MakeStatusesPermanent instead
         }
 
         public BattleStatus ResistStatus
@@ -262,7 +280,7 @@ namespace Memoria
         }
 
         public Boolean IsLevitate => HasCategory(EnemyCategory.Flight) || IsUnderAnyStatus(BattleStatus.Float);
-        public Boolean IsZombie => HasCategory(EnemyCategory.Undead) || IsUnderAnyStatus(BattleStatus.Zombie);
+        public Boolean IsZombie => HasCategory(EnemyCategory.Undead) || IsUnderAnyStatus(BattleStatusConst.ZombieEffect);
         public Boolean HasLongRangeWeapon => HasCategory(WeaponCategory.LongRange);
 
         public RegularItem Weapon => btl_util.getWeaponNumber(Data);
@@ -281,8 +299,6 @@ namespace Memoria
 
         public void AddDelayedModifier(BTL_DATA.DelayedModifier.IsDelayedDelegate delayDelegate, BTL_DATA.DelayedModifier.ApplyDelegate applyDelegate)
         {
-            if (applyDelegate == null)
-                return;
             if (delayDelegate == null)
             {
                 Data.delayedModifierList.Add(new BTL_DATA.DelayedModifier()
@@ -294,7 +310,8 @@ namespace Memoria
             }
             if (!delayDelegate(this))
             {
-                applyDelegate(this);
+                if (applyDelegate != null)
+                    applyDelegate(this);
                 return;
             }
             Data.delayedModifierList.Add(new BTL_DATA.DelayedModifier()
@@ -330,7 +347,7 @@ namespace Memoria
             get => btl_scrp.GetCharacterData(Data, 140);
             set
             {
-                btl_scrp.SetCharacterData(Data, 140, value);
+                btl_scrp.SetCharacterData(this, 140, value);
                 Data.base_pos.x = Data.pos.x;
             }
         }
@@ -339,7 +356,7 @@ namespace Memoria
             get => btl_scrp.GetCharacterData(Data, 141);
             set
             {
-                btl_scrp.SetCharacterData(Data, 141, value);
+                btl_scrp.SetCharacterData(this, 141, value);
                 Data.base_pos.y = Data.pos.y;
             }
         }
@@ -348,7 +365,7 @@ namespace Memoria
             get => btl_scrp.GetCharacterData(Data, 142);
             set
             {
-                btl_scrp.SetCharacterData(Data, 142, value);
+                btl_scrp.SetCharacterData(this, 142, value);
                 Data.base_pos.z = Data.pos.z;
             }
         }
@@ -387,7 +404,9 @@ namespace Memoria
 
         public Boolean IsUnderAnyStatus(BattleStatus status)
         {
-            return ((CurrentStatus | PermanentStatus) & status) != 0;
+            // Permanent statuses are also current, at least that's the target behaviour
+            //return ((CurrentStatus | PermanentStatus) & status) != 0;
+            return (CurrentStatus & status) != 0;
         }
 
         public Boolean HasCategory(CharacterCategory category)
@@ -430,17 +449,17 @@ namespace Memoria
 
         public Boolean TryRemoveStatuses(BattleStatus status)
         {
-            return btl_stat.RemoveStatuses(Data, status) == 2U;
+            return btl_stat.RemoveStatuses(this, status) == 2U;
         }
 
         public void RemoveStatus(BattleStatus status)
         {
-            btl_stat.RemoveStatus(Data, status);
+            btl_stat.RemoveStatuses(this, status);
         }
 
         public void AlterStatus(BattleStatus status, BattleUnit inflicter = null)
         {
-            btl_stat.AlterStatus(Data, status, inflicter?.Data);
+            btl_stat.AlterStatuses(this, status, inflicter);
         }
 
         public void Kill(BattleUnit killer)
@@ -597,12 +616,12 @@ namespace Memoria
             seqreader.FixBuggedAnimations(scene);
             List<AA_DATA> aaList = new List<AA_DATA>();
             List<Int32> usableAbilList = new List<Int32>();
-            AA_DATA[] attackAA = new AA_DATA[] { null, null };
-            List<Int32>[] attackAnims = new List<Int32>[] { null, null };
+            AA_DATA[] attackAA = [null, null];
+            List<Int32>[] attackAnims = [null, null];
             Int32 animOffset = 0;
             String[] battleRawText = FF9TextTool.GetBattleText(FF9BattleDB.SceneData["BSC_" + btlName]);
             if (battleRawText == null)
-                battleRawText = new String[0];
+                battleRawText = [];
             for (i = 0; i < scene.header.AtkCount; i++)
             {
                 if (seqreader.GetEnemyIndexOfSequence(i) != monsterIndex)
@@ -684,7 +703,7 @@ namespace Memoria
             if (IsUnderAnyStatus(BattleStatus.Trance))
             {
                 Data.stat.permanent &= ~BattleStatus.Trance;
-                Data.stat.cur &= ~BattleStatus.Trance;
+                btl_stat.RemoveStatus(this, BattleStatusId.Trance);
                 if (Trance == Byte.MaxValue)
                     Trance = Byte.MaxValue - 1;
             }
@@ -811,8 +830,6 @@ namespace Memoria
             BattleStatus current_added = 0;
             monsterTransform.resist_added = 0;
             monsterTransform.auto_added = 0;
-            if (attackAA[0] == null)
-                monsterTransform.resist_added |= BattleStatus.Berserk | BattleStatus.Confuse;
             foreach (SupportingAbilityFeature saFeature in Data.saMonster)
             {
                 saFeature.GetStatusInitQuietly(this, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out StatusModifier partialResist, out StatusModifier durationFactor, out Int16 atb);
@@ -820,13 +837,13 @@ namespace Memoria
                 monsterTransform.resist_added |= resist;
                 monsterTransform.auto_added |= permanent;
             }
-            btl_stat.RemoveStatuses(Data, monsterTransform.resist_added);
+            btl_stat.RemoveStatuses(this, monsterTransform.resist_added);
             monsterTransform.resist_added &= ~ResistStatus;
             monsterTransform.auto_added &= ~PermanentStatus;
             ResistStatus |= monsterTransform.resist_added;
             monsterTransform.auto_added &= ~ResistStatus;
-            btl_stat.AlterStatuses(Data, current_added);
-            btl_stat.MakeStatusesPermanent(Data, monsterTransform.auto_added, true);
+            btl_stat.AlterStatuses(this, current_added);
+            btl_stat.MakeStatusesPermanent(this, monsterTransform.auto_added, true);
             // TODO: handle "partialResist" and "durationFactor" properly (now, they are most likely applied but persist after "ReleaseChangeToMonster")
         }
 
@@ -863,7 +880,7 @@ namespace Memoria
             if (Data.monster_transform.replace_element)
                 btl_eqp.InitEquipPrivilegeAttrib(p, Data);
             ResistStatus &= ~Data.monster_transform.resist_added;
-            btl_stat.MakeStatusesPermanent(Data, Data.monster_transform.auto_added, false);
+            btl_stat.MakeStatusesPermanent(this, Data.monster_transform.auto_added, false);
             Data.mesh_current = 0;
             Data.mesh_banish = UInt16.MaxValue;
             Data.tar_bone = 0;
@@ -876,15 +893,14 @@ namespace Memoria
             btl_cmd.KillSpecificCommand(Data, Data.monster_transform.new_command);
             btl_cmd.KillSpecificCommand(Data, BattleCommandId.EnemyCounter);
             Data.gameObject.SetActive(false);
-            Data.ChangeModel(Data.originalGo);
             Data.geo_scale_default = 4096;
             geo.geoScaleReset(Data);
             if (battle.TRANCE_GAUGE_FLAG != 0 && (p.category & 16) == 0 && (Data.bi.slot_no != (Byte)CharacterId.Garnet || battle.GARNET_DEPRESS_FLAG == 0))
                 Data.bi.t_gauge = 1;
-            // Reset the position even if ChangeToMonster doesn't change it by itself
-            Data.pos.x = (Data.evt.posBattle.x = (Data.evt.pos[0] = (Data.base_pos.x = Data.original_pos.x)));
-            Data.pos.y = (Data.evt.posBattle.y = (Data.evt.pos[1] = (Data.base_pos.y = (Data.original_pos.y + (!btl_stat.CheckStatus(Data, BattleStatus.Float) ? 0 : -200)))));
-            Data.pos.z = (Data.evt.posBattle.z = (Data.evt.pos[2] = (Data.base_pos.z = (Data.original_pos.z + (Data.bi.row == 0 ? -400 : 0)))));
+            // Reset the position even when ChangeToMonster doesn't change it by itself
+            Data.pos.x = Data.evt.posBattle.x = Data.evt.pos[0] = Data.base_pos.x = Data.original_pos.x;
+            Data.pos.y = Data.evt.posBattle.y = Data.evt.pos[1] = Data.base_pos.y = Data.original_pos.y;
+            Data.pos.z = Data.evt.posBattle.z = Data.evt.pos[2] = Data.base_pos.z = Data.original_pos.z + (Data.bi.row == 0 ? -400 : 0);
             Data.mot = Data.monster_transform.motion_normal;
             for (Int32 i = 0; i < 34; i++)
                 Data.mot[i] = btlParam.AnimationId[i];
@@ -893,7 +909,9 @@ namespace Memoria
             else
                 btl_mot.setMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
             Data.evt.animFrame = 0;
-            Data.gameObject.SetActive(true);
+            Data.originalGo.SetActive(true);
+            Data.ChangeModel(Data.originalGo);
+            geo.geoAttach(Data.weapon_geo, Data.gameObject, Data.weapon_bone);
             btl_mot.HideMesh(Data, UInt16.MaxValue);
             Data.monster_transform.fade_counter = 2;
             UIManager.Battle.ClearCursorMemorize(Position, Data.monster_transform.new_command);

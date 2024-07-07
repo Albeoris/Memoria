@@ -27,6 +27,10 @@ public partial class BattleHUD : UIScene
     public const String AbilityGroupButton = "Battle.Ability";
     public const String ItemGroupButton = "Battle.Item";
 
+    public const String ATENormal = "battle_bar_atb";
+    public const String ATEGray = "battle_bar_slow";
+    public const String ATEOrange = "battle_bar_haste";
+
     private static readonly Byte[] BattleMessageTimeTick = new Byte[7] { 54, 46, 48, 30, 24, 18, 12 };
     private static readonly Dictionary<BattleAbilityId, IdMap> CmdTitleTable;
     private static readonly Int32 YINFO_ANIM_HPMP_MIN = 4;
@@ -34,9 +38,6 @@ public partial class BattleHUD : UIScene
     private static readonly Int32 AbilFenril = 66;
     private static readonly Int32 AbilCarbuncle = 68;
     private static readonly Int32 AbilSaMpHalf = 226;
-    private static readonly String ATENormal = "battle_bar_atb";
-    private static readonly String ATEGray = "battle_bar_slow";
-    private static readonly String ATEOrange = "battle_bar_haste";
     private static readonly Single DefaultPartyPanelPosY = -420f;
     private static readonly Single PartyItemHeight = 60f;
     public static Dictionary<BattleStatus, String> DebuffIconNames;
@@ -279,7 +280,7 @@ public partial class BattleHUD : UIScene
             if (unit.CurrentHp <= 0)
                 continue;
 
-            if (unit.IsUnderAnyStatus(BattleStatus.Confuse | BattleStatus.Sleep))
+            if (unit.IsUnderAnyStatus(BattleStatusConst.RemoveOnPhysicallyAttacked))
                 return index;
 
             if (unit.CurrentHp < minHp)

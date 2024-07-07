@@ -12,7 +12,7 @@ public class ENEMY
         this.bonus_item_rate = new UInt16[4];
         this.steal_item = new RegularItem[4];
         this.steal_item_rate = new UInt16[4];
-        this.trance_glowing_color = new Byte[3];
+        this.trance_glowing_color = new Int32[3];
     }
 
     public ENEMY_TYPE et;
@@ -28,7 +28,7 @@ public class ENEMY
     public UInt16[] steal_item_rate;
 
     public Vector3 base_pos;
-    public Byte[] trance_glowing_color;
+    public Int32[] trance_glowing_color;
 
     public Byte steal_unsuccessful_counter;
 

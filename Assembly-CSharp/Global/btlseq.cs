@@ -324,7 +324,7 @@ public class btlseq
                 btl.pos[2] = btl.base_pos[2];
                 btl.bi.dmg_mot_f = 0;
             }
-            if (Status.checkCurStat(btl, BattleStatus.Death) && btl.die_seq == 0 && (btl.bi.player != 0 || btl_util.getEnemyPtr(btl).info.die_atk == 0 || !btl_util.IsBtlBusy(btl, btl_util.BusyMode.CASTER | btl_util.BusyMode.QUEUED_CASTER)))
+            if (btl_stat.CheckStatus(btl, BattleStatus.Death) && btl.die_seq == 0 && (btl.bi.player != 0 || btl_util.getEnemyPtr(btl).info.die_atk == 0 || !btl_util.IsBtlBusy(btl, btl_util.BusyMode.CASTER | btl_util.BusyMode.QUEUED_CASTER)))
                 btl.die_seq = 1;
             if ((btl.animFlag & EventEngine.afHold) != 0)
                 btl.animFlag = (UInt16)EventEngine.afFreeze;
@@ -406,7 +406,8 @@ public class btlseq
                 btl.SetIsEnabledBattleModelRenderer(false);
             }
         }
-        if (!Status.checkCurStat(btl, BattleStatus.Jump))
+        // TODO (was check !BattleStatus.Jump, so verify it is OK to check disappear instead)
+        if (btl.bi.disappear == 0)
         {
             GeoTexAnim.geoTexAnimService(btl.texanimptr);
             GeoTexAnim.geoTexAnimService(btl.tranceTexanimptr);
@@ -694,7 +695,7 @@ public class btlseq
         WK_SCALE wk_SCALE = btlseq.SequenceConverter.WorkToWkScale(pSeqWork.Work);
         UInt16 scaleFactor = (UInt16)(wk_SCALE.Scl * pSeqWork.IncCnt / wk_SCALE.Frames + wk_SCALE.Org);
         geo.geoScaleSet(pMe, scaleFactor);
-        btl_scrp.SetCharacterData(pMe, 55u, scaleFactor);
+        btl_scrp.SetCharacterData(new BattleUnit(pMe), 55u, scaleFactor);
         if (scaleFactor == 4096)
             geo.geoScaleReset(pMe);
         if (pSeqWork.IncCnt >= wk_SCALE.Frames)

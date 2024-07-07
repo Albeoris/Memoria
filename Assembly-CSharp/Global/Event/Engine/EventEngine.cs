@@ -999,7 +999,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         if (btl == null)
             return;
 
-        btl_scrp.SetCharacterData(btl.Data, (UInt32)kind, (Int32)value);
+        btl_scrp.SetCharacterData(btl, (UInt32)kind, (Int32)value);
     }
 
     public CMD_DATA GetTriggeringCommand(BTL_DATA btl)

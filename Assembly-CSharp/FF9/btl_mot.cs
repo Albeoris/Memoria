@@ -444,15 +444,13 @@ namespace FF9
                 GeoTexAnim.geoTexAnimStop(btl.tranceTexanimptr, 2);
                 GeoTexAnim.geoTexAnimPlayOnce(btl.tranceTexanimptr, 0);
             }
-            if (btl_stat.CheckStatus(btl, BattleStatus.AutoLife))
+            Boolean cancelDeath = false;
+            foreach (BattleStatusId statusId in btl.stat.cur.ToStatusList())
+                if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
+                    if ((effect as IDeathChangerStatusScript)?.OnDeath(new BattleUnit(btl)) ?? false)
+                        cancelDeath = true;
+            if (cancelDeath)
             {
-                //btl.die_seq = 7;
-                //btl_cmd.SetCommand(btl.cmd[5], BattleCommandId.SysReraise, 0u, btl.btl_id, 0u);
-                btl_stat.RemoveStatus(btl, BattleStatus.AutoLife);
-                btl.cur.hp = 1;
-                btl_stat.RemoveStatus(btl, BattleStatus.Death);
-                // Auto-life has triggered
-                BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.AutoLife);
                 FF9StateSystem.Settings.SetHPFull();
                 if (!cancelMonsterTransform)
                     btl_mot.SetDefaultIdle(btl);
@@ -559,11 +557,11 @@ namespace FF9
                 return;
             else if ((FF9StateSystem.Battle.FF9Battle.cmd_status & 1) != 0 && !btl_stat.CheckStatus(btl, BattleStatusConst.CannotEscape))
                 targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE;
-            else if (Status.checkCurStat(btl, BattleStatus.Death))
+            else if (btl_stat.CheckStatus(btl, BattleStatus.Death))
                 targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE;
             else if (btl.bi.dodge != 0)
                 targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_AVOID;
-            else if (btl_stat.CheckStatus(btl, BattleStatus.Defend))
+            else if (btl_stat.CheckStatus(btl, BattleStatusConst.IdleDefend))
                 targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE;
             else if (FF9StateSystem.Battle.FF9Battle.btl_escape_key != 0 && !btl_stat.CheckStatus(btl, BattleStatusConst.CannotEscape))
                 targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE;
@@ -585,7 +583,7 @@ namespace FF9
                     btl.evt.animFrame = 0;
                     return;
                 }
-                if (btl_stat.CheckStatus(btl, BattleStatus.Defend))
+                if (btl_stat.CheckStatus(btl, BattleStatusConst.IdleDefend))
                     previousStance = BattlePlayerCharacter.PlayerMotionStance.DEFEND;
                 else if (useCmdMotion || btl.bi.cmd_idle == 1)
                     previousStance = BattlePlayerCharacter.PlayerMotionStance.CMD;
@@ -623,7 +621,7 @@ namespace FF9
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             CMD_DATA cur_cmd = ff9Battle.cur_cmd;
-            if (Status.checkCurStat(btl, BattleStatus.Death))
+            if (btl_stat.CheckStatus(btl, BattleStatus.Death))
             {
                 if (btl.bi.player != 0 && btl.bi.dmg_mot_f == 0 && cur_cmd != null && btl != cur_cmd.regist && btl.die_seq == 0 && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD))
                     btl_mot.setMotion(btl, btl.bi.def_idle);
@@ -644,7 +642,7 @@ namespace FF9
                 {
                     if ((ff9Battle.btl_escape_key != 0 || (ff9Battle.cmd_status & 1) != 0) && !btl_stat.CheckStatus(btl, BattleStatusConst.CannotEscape))
                         btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE);
-                    else if (btl_stat.CheckStatus(btl, BattleStatus.Defend))
+                    else if (btl_stat.CheckStatus(btl, BattleStatusConst.IdleDefend))
                         btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE);
                     else if (btl.bi.cmd_idle != 0)
                     {
@@ -721,7 +719,7 @@ namespace FF9
                 btl_sys.CheckBattlePhase(cmd.regist);
             if (cmd.cmd_no > BattleCommandId.EnemyReaction && cmd.cmd_no < BattleCommandId.ScriptCounter1)
                 return;
-            if (cmd.regist != null && Status.checkCurStat(cmd.regist, BattleStatus.Death) && cmd.regist.die_seq == 0)
+            if (cmd.regist != null && btl_stat.CheckStatus(cmd.regist, BattleStatus.Death) && cmd.regist.die_seq == 0)
             {
                 if (cmd.regist.bi.player == 0 && btl_util.getEnemyPtr(cmd.regist).info.die_atk != 0 && cmd.cmd_no != BattleCommandId.EnemyDying)
                     return;
@@ -761,7 +759,7 @@ namespace FF9
         {
             if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1))
             {
-                if (Status.checkCurStat(btl, BattleStatus.Death))
+                if (btl_stat.CheckStatus(btl, BattleStatus.Death))
                 {
                     btl.die_seq = 1;
                     btl.bi.dmg_mot_f = 0;
@@ -777,7 +775,7 @@ namespace FF9
             }
             else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2))
             {
-                if (Status.checkCurStat(btl, BattleStatus.Death))
+                if (btl_stat.CheckStatus(btl, BattleStatus.Death))
                 {
                     btl.die_seq = 5;
                     btl.bi.dmg_mot_f = 0;
@@ -807,7 +805,7 @@ namespace FF9
         public static void EnemyDamageMotion(BTL_DATA btl) // Unused anymore
         {
             btl.bi.dmg_mot_f = 0;
-            if (Status.checkCurStat(btl, BattleStatus.Death))
+            if (btl_stat.CheckStatus(btl, BattleStatus.Death))
             {
                 if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2) && btl_util.getEnemyPtr(btl).info.die_dmg != 0)
                 {
@@ -829,28 +827,29 @@ namespace FF9
 
         public static void HideMesh(BTL_DATA btl, UInt16 mesh, Boolean isBanish = false)
         {
-            String path = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue((Int32)btl.dms_geo_id);
-            if (ModelFactory.IsUseAsEnemyCharacter(path) && isBanish)
-                mesh = UInt16.MaxValue;
+            // TODO: is this really relevant?
+            //String path = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(btl.dms_geo_id);
+            //if (ModelFactory.IsUseAsEnemyCharacter(path) && isBanish)
+            //    mesh = UInt16.MaxValue;
             for (Int32 i = 0; i < 16; i++)
-                if (((Int32)mesh & 1 << i) != 0)
+                if ((mesh & 1 << i) != 0)
                     geo.geoMeshHide(btl, i);
-            if (mesh == 65535)
+            if (mesh == UInt16.MaxValue)
                 for (Int32 i = 0; i < btl.weaponMeshCount; i++)
                     geo.geoWeaponMeshHide(btl, i);
         }
 
         public static void ShowMesh(BTL_DATA btl, UInt16 mesh, Boolean isBanish = false)
         {
-            String path = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue((Int32)btl.dms_geo_id);
-            if (ModelFactory.IsUseAsEnemyCharacter(path) && isBanish)
-                mesh = UInt16.MaxValue;
+            //String path = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(btl.dms_geo_id);
+            //if (ModelFactory.IsUseAsEnemyCharacter(path) && isBanish)
+            //    mesh = UInt16.MaxValue;
             if (btl.bi.player == 0)
                 btl.flags &= (UInt16)~geo.GEO_FLAGS_RENDER;
             for (Int32 i = 0; i < 16; i++)
-                if (((Int32)mesh & 1 << i) != 0)
+                if ((mesh & 1 << i) != 0)
                     geo.geoMeshShow(btl, i);
-            if (mesh == 65535)
+            if (mesh == UInt16.MaxValue)
                 for (Int32 i = 0; i < btl.weaponMeshCount; i++)
                     geo.geoWeaponMeshShow(btl, i);
         }

@@ -719,7 +719,7 @@ public class SFXData
             {
                 Int32 validPlayerTarget = 0;
                 for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                    if (next.bi.player != 0 && !Status.checkCurStat(next, BattleStatus.Death | BattleStatus.Jump))
+                    if (next.bi.player != 0 && !btl_stat.CheckStatus(next, BattleStatus.Death | BattleStatus.Jump))
                         validPlayerTarget++;
                 return validPlayerTarget;
             }
@@ -1178,7 +1178,7 @@ public class SFXData
             {
                 Int32 validPlayerTarget = 0;
                 for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                    if (next.bi.player != 0 && !Status.checkCurStat(next, BattleStatus.Death | BattleStatus.Jump))
+                    if (next.bi.player != 0 && !btl_stat.CheckStatus(next, BattleStatus.Death | BattleStatus.Jump))
                         validPlayerTarget++;
                 return validPlayerTarget;
             }

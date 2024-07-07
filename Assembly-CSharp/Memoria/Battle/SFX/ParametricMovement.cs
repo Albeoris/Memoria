@@ -138,15 +138,13 @@ public class ParametricMovement
             {
                 crootmat = caster.gameObject.transform.GetChildByName("bone000")?.localToWorldMatrix ?? Matrix4x4.identity;
                 ctargmat = caster.gameObject.transform.GetChildByName("bone" + caster.tar_bone.ToString("D3"))?.localToWorldMatrix ?? Matrix4x4.identity;
-                if (caster.bi.player != 0)
-                    cweapmat = caster.gameObject.transform.GetChildByName("bone" + btl_util.getPlayerPtr(caster).wep_bone.ToString("D3"))?.localToWorldMatrix ?? Matrix4x4.identity;
+                cweapmat = caster.gameObject.transform.GetChildByName("bone" + caster.weapon_bone.ToString("D3"))?.localToWorldMatrix ?? Matrix4x4.identity;
             }
             if (target != null)
             {
                 trootmat = target.gameObject.transform.GetChildByName("bone000")?.localToWorldMatrix ?? Matrix4x4.identity;
                 ttargmat = target.gameObject.transform.GetChildByName("bone" + target.tar_bone.ToString("D3"))?.localToWorldMatrix ?? Matrix4x4.identity;
-                if (target.bi.player != 0)
-                    tweapmat = target.gameObject.transform.GetChildByName("bone" + btl_util.getPlayerPtr(target).wep_bone.ToString("D3"))?.localToWorldMatrix ?? Matrix4x4.identity;
+                tweapmat = target.gameObject.transform.GetChildByName("bone" + target.weapon_bone.ToString("D3"))?.localToWorldMatrix ?? Matrix4x4.identity;
             }
             e.Parameters["CasterPositionX"] = caster != null ? caster.pos.x : 0f;
             e.Parameters["CasterPositionY"] = caster != null ? caster.pos.y : 0f;

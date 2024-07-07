@@ -334,6 +334,7 @@ namespace Memoria
 
         public void TryEscape()
         {
+            // TODO extern in DLL
             CMD_DATA curCmdPtr = btl_util.getCurCmdPtr();
             if (curCmdPtr != null && curCmdPtr.regist.bi.player == 0) // Any enemy is attacking
                 return;
@@ -369,7 +370,7 @@ namespace Memoria
 
             Int16 rate = (Int16)(200 / (enemyLevels / enemyCount) * (playerLevels / playerCount) / 16);
             if (rate > Comn.random16() % 100)
-                btl_cmd.SetCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape, BattleCommandId.SysEscape, 1, 15, 1U);
+                btl_cmd.SetCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape, BattleCommandId.SysEscape, 1, 15, 1u);
         }
 
         public Boolean TryPhysicalHit()
@@ -380,7 +381,7 @@ namespace Memoria
             Target.PenaltyDefenceHitRate();
             Target.PenaltyBanishHitRate();
             if (Target.IsUnderAnyStatus(BattleStatus.Float))
-                Context.Evade += (Int16)Configuration.Battle.FloatEvadeBonus;
+                Context.Evade += Configuration.Battle.FloatEvadeBonus;
 
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(Caster))
                 saFeature.TriggerOnAbility(this, "HitRateSetup", false);
@@ -779,7 +780,7 @@ namespace Memoria
 
         public void RaiseTrouble()
         {
-            if (Command.Data.tar_id == Target.Id && Target.IsUnderAnyStatus(BattleStatus.Trouble) && (Context.AddedStatuses & BattleStatus.Trouble) == 0 && (Target.Flags & CalcFlag.HpRecovery) == 0)
+            if (Command.Data.tar_id == Target.Id && Target.IsUnderAnyStatus(BattleStatusConst.ApplyTrouble & ~Context.AddedStatuses))
                 Target.Data.fig_info |= Param.FIG_INFO_TROUBLE;
         }
     }

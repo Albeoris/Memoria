@@ -299,10 +299,8 @@ public class SettingsState : MonoBehaviour
         if (!IsATBFull || !SceneDirector.IsBattleScene())
             return;
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
-        {
-            if (btl.bi.player != 0 && !Status.checkCurStat(btl, BattleStatus.Death))
+            if (btl.bi.player != 0 && !btl_stat.CheckStatus(btl, BattleStatus.Death))
                 btl.cur.at = btl.max.at;
-        }
     }
 
     public void SetHPFull()
@@ -311,7 +309,7 @@ public class SettingsState : MonoBehaviour
             return;
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
-            if (btl.bi.player != 0 && !Status.checkCurStat(btl, BattleStatus.Death))
+            if (btl.bi.player != 0 && !btl_stat.CheckStatus(btl, BattleStatus.Death))
             {
                 btl.cur.hp = btl.max.hp;
                 btl.cur.mp = btl.max.mp;

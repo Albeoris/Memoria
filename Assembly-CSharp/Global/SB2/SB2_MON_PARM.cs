@@ -163,7 +163,7 @@ public class SB2_MON_PARM
     public Int32 WeaponAttachment;
 
     [Memoria.PatchableFieldAttribute]
-    public Byte[] TranceGlowingColor;
+    public Int32[] TranceGlowingColor;
 
     [Memoria.PatchableFieldAttribute]
     public UInt32 MaxDamageLimit;

@@ -34,7 +34,6 @@ namespace Memoria
         }
 
         public static Boolean Enabled => Configuration.Graphics.BattleTPS < Configuration.Graphics.BattleFPS;
-        public static Int32 LastSFXEffectJTex { get; set; }
 
         public static void RegisterState()
         {
@@ -216,9 +215,7 @@ namespace Memoria
             // SPS
             if (FF9StateSystem.Battle.FF9Battle.btl_phase != 2)
             {
-                btl2d.Btl2dStatCount();
-                if (LastSFXEffectJTex == 0)
-                    btl2d.Btl2dStatIcon();
+                btl2d.StatusUpdateVisuals(smoothFactor);
                 HonoluluBattleMain.battleSPS.GenerateSPS();
             }
             // Camera

@@ -10,6 +10,13 @@ public partial class BTL_DATA
     public void ChangeModel(GameObject newModel)
     {
         gameObject = newModel;
+        meshCount = 0;
+        foreach (Transform transform in gameObject.transform)
+            if (transform.name.Contains("mesh"))
+                meshCount++;
+        meshIsRendering = new Boolean[meshCount];
+        for (Int32 i = 0; i < meshCount; i++)
+            meshIsRendering[i] = true;
         _smoothUpdateRegistered = false;
     }
 
@@ -33,7 +40,7 @@ public partial class BTL_DATA
     {
         GameObject shadow = this.getShadow();
         this.gameObject.SetActive(value);
-        btl_stat.SetStatusClut(this, btl_stat.CheckStatus(this, BattleStatus.Petrify));
+        btl_stat.SetStatusClut(this, btl_stat.CheckStatus(this, BattleStatusConst.ChgPolyClut));
         if (this.bi.shadow != 0)
             shadow.SetActive(value);
     }
@@ -96,7 +103,8 @@ public partial class BTL_DATA
             {
                 if (!modifier.isDelayed(unit))
                 {
-                    modifier.apply(unit);
+                    if (modifier.apply != null)
+                        modifier.apply(unit);
                     removedList.Add(modifier);
                 }
             }
@@ -172,8 +180,6 @@ public partial class BTL_DATA
     public Byte shadow_x;
     public Byte shadow_z;
 
-    public Byte[] add_col = new Byte[3];
-
     public UInt32[] sa;
     public HashSet<SupportAbility> saExtended;
     public List<SupportingAbilityFeature> saMonster;
@@ -209,9 +215,6 @@ public partial class BTL_DATA
     public Int32 weaponMeshCount;
 
     public Renderer[] weaponRenderer;
-
-    public HUDMessageChild deathMessage;
-    public HUDMessageChild petrifyMessage;
 
     public Int32 attachOffset = 0;
 
@@ -251,6 +254,7 @@ public partial class BTL_DATA
     public Int32 geo_scale_y;
     public Int32 geo_scale_z;
     public Int32 geo_scale_default;
+    public Vector3 geo_scale_status;
     public Boolean enable_trance_glow;
 
     public Boolean animEndFrame;
@@ -259,6 +263,11 @@ public partial class BTL_DATA
     public UInt32 maxDamageLimit;
     public UInt32 maxMpDamageLimit;
 
+    public Color uiColorHP;
+    public Color uiColorMP;
+    public String uiSpriteATB;
+
+    // TODO [DV]
     public Boolean special_status_old; // TRANCE SEEK - Old Status
 
     public List<DelayedModifier> delayedModifierList = new List<DelayedModifier>();

@@ -75,19 +75,5 @@ namespace FF9
             }
             throw new Exception("[Comn] Trying to find firstBitSetIndex of 0");
         }
-
-        public const Int32 ONE = 4096;
-
-        public const Byte TRUE = 1;
-
-        public const Byte FALSE = 0;
-
-        public const Byte ON = 1;
-
-        public const Byte OFF = 0;
-
-        public const Byte YES = 1;
-
-        public const Byte NO = 0;
     }
 }

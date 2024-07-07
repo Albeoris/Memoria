@@ -3,6 +3,7 @@ using Memoria.Data;
 using Memoria.Database;
 using Memoria.Scripts;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -65,29 +66,23 @@ namespace FF9
             return FF9StateSystem.Battle.FF9Battle.cur_cmd;
         }
 
+        public static List<CMD_DATA> GetBtlCurrentCommands(BTL_DATA btl)
+        {
+            return FF9StateSystem.Battle.FF9Battle.cur_cmd_list.FindAll(cmd => cmd.regist == btl);
+        }
+
         public static Boolean IsBtlUsingCommand(BTL_DATA btl, out CMD_DATA cmdUsed)
         {
-            foreach (CMD_DATA cmd in FF9StateSystem.Battle.FF9Battle.cur_cmd_list)
-                if (cmd.regist == btl)
-                {
-                    cmdUsed = cmd;
-                    return true;
-                }
-            cmdUsed = null;
-            return false;
+            cmdUsed = FF9StateSystem.Battle.FF9Battle.cur_cmd_list.Find(cmd => cmd.regist == btl);
+            return cmdUsed != null;
         }
 
         public static Boolean IsBtlTargetOfCommand(BTL_DATA btl, List<CMD_DATA> cmdList = null)
         {
-            foreach (CMD_DATA cmd in FF9StateSystem.Battle.FF9Battle.cur_cmd_list)
-                if ((cmd.tar_id & btl.btl_id) != 0)
-                {
-                    if (cmdList != null)
-                        cmdList.Add(cmd);
-                    else
-                        return true;
-                }
-            return cmdList != null && cmdList.Count > 0;
+            if (cmdList == null)
+                return FF9StateSystem.Battle.FF9Battle.cur_cmd_list.Any(cmd => (cmd.tar_id & btl.btl_id) != 0);
+            cmdList = FF9StateSystem.Battle.FF9Battle.cur_cmd_list.FindAll(cmd => (cmd.tar_id & btl.btl_id) != 0);
+            return cmdList.Count > 0;
         }
 
         public static Boolean IsBtlUsingCommand(BTL_DATA btl)
@@ -97,14 +92,8 @@ namespace FF9
 
         public static Boolean IsBtlUsingCommandMotion(BTL_DATA btl, Boolean includeSysCmd, out CMD_DATA cmdUsed)
         {
-            cmdUsed = null;
-            foreach (CMD_DATA cmd in FF9StateSystem.Battle.FF9Battle.cur_cmd_list)
-                if (cmd.regist == btl && cmd.info.cmd_motion && (includeSysCmd || cmd.cmd_no <= BattleCommandId.EnemyReaction || cmd.cmd_no >= BattleCommandId.ScriptCounter1))
-                {
-                    cmdUsed = cmd;
-                    return true;
-                }
-            return false;
+            cmdUsed = FF9StateSystem.Battle.FF9Battle.cur_cmd_list.Find(cmd => cmd.regist == btl && cmd.info.cmd_motion && (includeSysCmd || cmd.cmd_no <= BattleCommandId.EnemyReaction || cmd.cmd_no >= BattleCommandId.ScriptCounter1));
+            return cmdUsed != null;
         }
 
         public static Boolean IsBtlUsingCommandMotion(BTL_DATA btl, Boolean includeSysCmd = false)
@@ -150,7 +139,7 @@ namespace FF9
         {
             UInt32 count = 0u;
             for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                if ((UInt32)next.bi.player == player && next.bi.target != 0 && !Status.checkCurStat(next, BattleStatus.Death))
+                if (next.bi.player == player && next.bi.target != 0 && !btl_stat.CheckStatus(next, BattleStatus.Death))
                     count++;
             return count;
         }
@@ -166,16 +155,15 @@ namespace FF9
 
         public static UInt16 GetRandomBtlID(UInt32 player, Boolean allowDead = false)
         {
-            UInt16[] array = new UInt16[4];
-            UInt16 btlCount = 0;
+            List<UInt16> candidates = new List<UInt16>(4);
             if (player != 0u)
                 player = 1u;
             for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                if ((UInt32)next.bi.player == player && (!Status.checkCurStat(next, BattleStatus.Death) || allowDead) && next.bi.target != 0)
-                    array[btlCount++] = next.btl_id;
-            if (btlCount == 0)
+                if (next.bi.player == player && (!btl_stat.CheckStatus(next, BattleStatus.Death) || allowDead) && next.bi.target != 0)
+                    candidates.Add(next.btl_id);
+            if (candidates.Count == 0)
                 return 0;
-            return array[Comn.random8() % (Int32)btlCount];
+            return candidates[UnityEngine.Random.Range(0, candidates.Count)];
         }
 
         public static Boolean ManageBattleSong(FF9StateGlobal sys, Int32 ticks, Int32 song_id)
@@ -371,7 +359,7 @@ namespace FF9
             switch (cmd.cmd_no)
             {
                 case BattleCommandId.Jump:
-                case BattleCommandId.Jump2:
+                case BattleCommandId.JumpInTrance:
                 case BattleCommandId.SysTrans:
                     return 0;
                 case BattleCommandId.Item:

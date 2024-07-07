@@ -59,28 +59,41 @@ namespace Memoria
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(v.Target))
                     saFeature.TriggerOnAbility(v, "BattleScriptStart", true);
 
-                if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
+                IOverloadOnBattleScriptStartScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnBattleScriptStartScript)) as IOverloadOnBattleScriptStartScript;
+                if (overloadedMethod != null)
                 {
-                    if (command.IsShortRange)
-                    {
-                        v.BonusBackstabAndPenaltyLongDistanceAsDamageModifiers();
-                        if ((command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Vanish)) // Is Physical
-                            v.Context.Flags |= BattleCalcFlags.Miss;
-                    }
-                    if ((command.AbilityType & 0x10) != 0 && caster.bi.player != 0) // Use weapon properties
-                    {
-                        v.ApplyElementAsDamageModifiers(v.Caster.WeaponElement, v.Caster.WeaponElement);
-                    }
-                    if ((v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) != 0)
+                    if (overloadedMethod.OnBattleScriptStart(v))
                     {
                         SBattleCalculator.CalcResult(v);
                         return;
                     }
                 }
-                if ((command.AbilityCategory & 8) != 0 && v.Target.TryKillFrozen()) // Is Physical
+                else
                 {
-                    SBattleCalculator.CalcResult(v);
-                    return;
+                    // Default method
+                    if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
+                    {
+                        if (command.IsShortRange)
+                        {
+                            v.BonusBackstabAndPenaltyLongDistanceAsDamageModifiers();
+                            if ((command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Vanish)) // Is Physical
+                                v.Context.Flags |= BattleCalcFlags.Miss;
+                        }
+                        if ((command.AbilityType & 0x10) != 0 && caster.bi.player != 0) // Use weapon properties
+                        {
+                            v.ApplyElementAsDamageModifiers(v.Caster.WeaponElement, v.Caster.WeaponElement);
+                        }
+                        if ((v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) != 0)
+                        {
+                            SBattleCalculator.CalcResult(v);
+                            return;
+                        }
+                    }
+                    if ((command.AbilityCategory & 8) != 0 && v.Target.TryKillFrozen()) // Is Physical
+                    {
+                        SBattleCalculator.CalcResult(v);
+                        return;
+                    }
                 }
                 if (factory != null)
                 {
@@ -151,14 +164,12 @@ namespace Memoria
                     else if (target.bi.slave == 0)
                     {
                         if (!btl_util.IsBtlBusy(target, btl_util.BusyMode.CASTER))
-                        {
-                            if (Configuration.Battle.FloatEvadeBonus > 0 && v.Target.IsUnderPermanentStatus(BattleStatus.Float))
-                                target.pos[1] -= -600f;
                             target.pos[2] -= -400f;
-                        }
                     }
                     else
+                    {
                         btl_util.GetMasterEnemyBtlPtr().Data.pos[2] -= -400f;
+                    }
                     target.bi.dodge = 1;
                     btl_mot.SetDefaultIdle(target);
                     cmd.info.dodge = 1;
@@ -169,6 +180,7 @@ namespace Memoria
                 if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && (v.Command.AbilityType & 0x20) != 0) // Has critical
                     v.TryCriticalHit();
                 // Note: weapon statuses are added before damage (unlike vanilla), like spell statuses
+                // TODO: Might want to rework the status resistance to Death so that it doesn't prevent death from HP removal; so EasyKill can safely use status resistance to Death
                 if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0)
                     if ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !btl_stat.CheckStatus(target, BattleStatus.EasyKill))
                         v.Target.TryAlterStatuses(FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value, false, v.Caster);
@@ -176,13 +188,10 @@ namespace Memoria
                 {
                     if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
                         v.RaiseTrouble();
-                    if ((v.Context.AddedStatuses & BattleStatus.Confuse) == 0)
-                        v.Target.RemoveStatus(BattleStatus.Confuse);
-                    if ((v.Context.AddedStatuses & BattleStatus.Sleep) == 0)
-                        v.Target.RemoveStatus(BattleStatus.Sleep);
+                    v.Target.RemoveStatus(BattleStatusConst.RemoveOnPhysicallyAttacked & ~v.Context.AddedStatuses);
                 }
-                if ((v.Command.AbilityCategory & 16) != 0 && (v.Context.AddedStatuses & BattleStatus.Vanish) == 0) // Is Magical
-                    v.Target.RemoveStatus(BattleStatus.Vanish);
+                if ((v.Command.AbilityCategory & 16) != 0) // Is Magical
+                    v.Target.RemoveStatus(BattleStatusConst.RemoveOnMagicallyAttacked & ~v.Context.AddedStatuses);
 
                 if (v.Target.Flags != 0)
                 {

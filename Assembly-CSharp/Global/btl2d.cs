@@ -6,7 +6,6 @@ using Memoria.Prime;
 using NCalc;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 public static class btl2d
@@ -22,36 +21,43 @@ public static class btl2d
             entry[num].BtlPtr = null;
     }
 
-    public static void Btl2dReq(BattleUnit pBtl)
+    public static void Btl2dReq(BattleUnit unit)
     {
-        Btl2dReq(pBtl.Data, ref pBtl.Data.fig_info, ref pBtl.Data.fig, ref pBtl.Data.m_fig);
+        Btl2dReq(unit.Data, ref unit.Data.fig_info, ref unit.Data.fig, ref unit.Data.m_fig);
     }
 
-    public static void Btl2dReq(BTL_DATA pBtl)
+    public static void Btl2dReq(BTL_DATA btl)
     {
-        Btl2dReq(pBtl, ref pBtl.fig_info, ref pBtl.fig, ref pBtl.m_fig);
+        Btl2dReq(btl, ref btl.fig_info, ref btl.fig, ref btl.m_fig);
     }
 
-    public static void Btl2dReq(BTL_DATA pBtl, ref UInt16 fig_info, ref Int32 fig, ref Int32 m_fig)
+    public static void Btl2dReq(BTL_DATA btl, UInt16 fig_info, Int32 fig, Int32 m_fig)
+    {
+        Btl2dReq(btl, ref fig_info, ref fig, ref m_fig);
+    }
+
+    public static void Btl2dReq(BTL_DATA btl, ref UInt16 fig_info, ref Int32 fig, ref Int32 m_fig)
     {
         Byte delay = 0;
-        if (pBtl.bi.disappear == 0)
+        if (btl.bi.disappear == 0)
         {
             if ((fig_info & Param.FIG_INFO_TROUBLE) != 0)
-                btl_para.SetTroubleDamage(new BattleUnit(pBtl), fig >> 1);
+                foreach (BattleStatusId statusId in btl.stat.cur.ToStatusList())
+                    if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
+                        (effect as ITroubleStatusScript)?.OnTroubleDamage(new BattleUnit(btl), fig_info, fig, m_fig);
             if ((fig_info & Param.FIG_INFO_GUARD) != 0)
             {
-                btl2d.Btl2dReqSymbol(pBtl, 2, 0, 0);
+                btl2d.Btl2dReqSymbol(btl, 2, 0, 0);
             }
             else if ((fig_info & (Param.FIG_INFO_MISS | Param.FIG_INFO_DEATH)) != 0)
             {
                 if ((fig_info & Param.FIG_INFO_MISS) != 0)
                 {
-                    btl2d.Btl2dReqSymbol(pBtl, 0, 0, 0);
+                    btl2d.Btl2dReqSymbol(btl, 0, 0, 0);
                     delay = 2;
                 }
                 if ((fig_info & Param.FIG_INFO_DEATH) != 0)
-                    btl2d.Btl2dReqSymbol(pBtl, 1, 0, delay);
+                    btl2d.Btl2dReqSymbol(btl, 1, 0, delay);
             }
             else
             {
@@ -59,21 +65,21 @@ public static class btl2d
                 {
                     if ((fig_info & Param.FIG_INFO_HP_CRITICAL) != 0)
                     {
-                        btl2d.Btl2dReqSymbol(pBtl, 3, 128, 0);
+                        btl2d.Btl2dReqSymbol(btl, 3, 128, 0);
                         delay = 2;
                     }
                     if ((fig_info & Param.FIG_INFO_HP_RECOVER) != 0)
-                        btl2d.Btl2dReqHP(pBtl, fig, 192, delay);
+                        btl2d.Btl2dReqHP(btl, fig, 192, delay);
                     else
-                        btl2d.Btl2dReqHP(pBtl, fig, 0, delay);
+                        btl2d.Btl2dReqHP(btl, fig, 0, delay);
                     delay += 4;
                 }
                 if ((fig_info & Param.FIG_INFO_DISP_MP) != 0)
                 {
                     if ((fig_info & Param.FIG_INFO_MP_RECOVER) != 0)
-                        btl2d.Btl2dReqMP(pBtl, m_fig, 192, delay);
+                        btl2d.Btl2dReqMP(btl, m_fig, 192, delay);
                     else
-                        btl2d.Btl2dReqMP(pBtl, m_fig, 0, delay);
+                        btl2d.Btl2dReqMP(btl, m_fig, 0, delay);
                 }
             }
         }
@@ -299,9 +305,8 @@ public static class btl2d
             if (entryIndex >= 16)
                 entryIndex = 0;
         }
-        btl2d.Btl2dStatCount();
-        if (SFX.GetEffectJTexUsed() == 0)
-            btl2d.Btl2dStatIcon();
+        btl2d.ShouldShowSPS = SFX.GetEffectJTexUsed() == 0;
+        btl2d.StatusUpdateVisuals(0f);
         workSet.Timer++;
         Byte oldDisappear = Byte.MaxValue;
         for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
@@ -310,35 +315,41 @@ public static class btl2d
         workSet.OldDisappear = oldDisappear;
     }
 
-    public static void Btl2dStatIcon()
+    public static void StatusUpdateVisuals(Single frameFrac)
     {
         BTL2D_WORK btl2d_work_set = FF9StateSystem.Battle.FF9Battle.btl2d_work_set;
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
-            if (btl.bi.disappear == 0)
+            if (btl.bi.disappear == 0 && (btl.flags & geo.GEO_FLAGS_CLIP) == 0 && (btl2d_work_set.OldDisappear & btl.btl_id) == 0)
             {
-                if ((btl.flags & geo.GEO_FLAGS_CLIP) == 0)
+                BattleUnit unit = new BattleUnit(btl);
+                foreach (BattleStatusId statusId in btl.stat.cur.ToStatusList())
                 {
-                    if ((btl2d_work_set.OldDisappear & btl.btl_id) == 0)
+                    if (btl2d.ShouldShowSPS && !unit.IsUnderAnyStatus(BattleStatus.Death) && (!unit.IsPlayer || !btl_mot.checkMotion(unit, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE)))
                     {
-                        BattleStatus statusOn = btl.stat.cur | btl.stat.permanent;
-                        if ((statusOn & BattleStatus.Death) == 0)
+                        BattleStatusDataEntry statusData = statusId.GetStatData();
+                        if (statusData.SPSEffect >= 0 || statusData.SHPEffect >= 0)
                         {
-                            if ((statusOn & STATUS_2D_ICON) != 0)
+                            Vector3 spsPos = default;
+                            Vector3 shpPos = default;
+                            if (statusData.SPSEffect >= 0)
                             {
-                                if (btl.bi.player == 0 || !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE))
+                                btl2d.GetIconPosition(unit, statusData.SPSAttach, out Transform attachment, out Vector3 iconOff);
+                                spsPos = attachment.position + iconOff;
+                            }
+                            if (statusData.SHPEffect >= 0)
+                            {
+                                if (statusData.SPSEffect >= 0 && statusData.SPSAttach == statusData.SHPAttach)
                                 {
-                                    for (Int32 i = 0; i < btl2d.wStatIconTbl.Length; i++)
-                                    {
-                                        btl2d.STAT_ICON_TBL statTable = btl2d.wStatIconTbl[i];
-                                        if ((statusOn & statTable.MaskOn) != 0 && (statusOn & statTable.MaskOff) == 0)
-                                        {
-                                            btl2d.GetIconPosition(btl, statTable.AttachIndex, out Transform attachment, out Vector3 iconOff);
-                                            HonoluluBattleMain.battleSPS.UpdateBtlStatus(btl, statTable.MaskOn, attachment.position + iconOff, btl2d_work_set.Timer);
-                                        }
-                                    }
+                                    shpPos = spsPos;
+                                }
+                                else
+                                {
+                                    btl2d.GetIconPosition(unit, statusData.SHPAttach, out Transform attachment, out Vector3 iconOff);
+                                    shpPos = attachment.position + iconOff;
                                 }
                             }
+                            HonoluluBattleMain.battleSPS.UpdateBtlStatus(unit, statusId, spsPos, shpPos, btl2d_work_set.Timer);
                         }
                     }
                 }
@@ -346,108 +357,10 @@ public static class btl2d
         }
     }
 
-    public static void Btl2dStatCount()
+    public static void ShowMessages(Boolean show = true)
     {
-        btl2d.STAT_CNT_TBL[] statusTableList = new btl2d.STAT_CNT_TBL[]
-        {
-            new btl2d.STAT_CNT_TBL(BattleStatus.Doom, (Int32)BattleStatusNumber.Doom - 1, 0),
-            new btl2d.STAT_CNT_TBL(BattleStatus.GradualPetrify, (Int32)BattleStatusNumber.GradualPetrify - 1, 1)
-        };
-        FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-        BattleStatus counterStatus = BattleStatus.Doom | BattleStatus.GradualPetrify;
-        for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
-        {
-            if (btl.bi.disappear == 0)
-            {
-                if ((btl.flags & geo.GEO_FLAGS_CLIP) == 0)
-                {
-                    if ((ff9Battle.btl2d_work_set.OldDisappear & btl.btl_id) == 0)
-                    {
-                        BattleStatus statusOn = btl.stat.cur | btl.stat.permanent;
-                        if ((statusOn & BattleStatus.Death) == 0)
-                        {
-                            if ((statusOn & counterStatus) != 0)
-                            {
-                                btl2d.GetIconPosition(btl, 5, out Transform attachTransf, out Vector3 iconOff);
-                                for (Int32 i = 0; i < statusTableList.Length; i++)
-                                {
-                                    btl2d.STAT_CNT_TBL statusTable = statusTableList[i];
-                                    if ((statusOn & statusTable.Mask) != 0)
-                                    {
-                                        Int16 cdownMax = btl.stat.cnt.cdown_max;
-                                        if (cdownMax < 1)
-                                            break;
-                                        Int16 cdownConti = btl.stat.cnt.conti[statusTable.Idx];
-                                        if (cdownConti < 0)
-                                            break;
-                                        Int32 figureNb = (Int16)(cdownConti * 10 / cdownMax);
-                                        UInt16 abrCode;
-                                        if (cdownConti <= 0)
-                                            abrCode = 2;
-                                        else
-                                            abrCode = (UInt16)((figureNb == (cdownConti - btl.cur.at_coef) * 10 / cdownMax) ? 0 : 2);
-                                        Int32 color;
-                                        if (statusTable.Col != 0)
-                                        {
-                                            Byte intensity = (Byte)((figureNb << 4) + 32);
-                                            color = intensity << 16 | intensity << 8 | intensity;
-                                        }
-                                        else
-                                        {
-                                            color = 0x1000000;
-                                        }
-                                        color |= abrCode << 24;
-                                        figureNb = Math.Min(figureNb + 1, 10);
-                                        String figStr = statusTable.Col != 0 ? $"[{color & 0xFFFFFF:X6}]{figureNb}" : $"{figureNb}";
-                                        if (statusTable.Mask == BattleStatus.Doom)
-                                        {
-                                            if (btl.deathMessage == null)
-                                            {
-                                                btl.deathMessage = Singleton<HUDMessage>.Instance.Show(attachTransf, figStr, HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
-                                                UIManager.Battle.DisplayParty();
-                                            }
-                                            else
-                                            {
-                                                btl.deathMessage.Label = figStr;
-                                            }
-                                        }
-                                        else if (statusTable.Mask == BattleStatus.GradualPetrify)
-                                        {
-                                            if (btl.petrifyMessage == null)
-                                            {
-                                                btl.petrifyMessage = Singleton<HUDMessage>.Instance.Show(attachTransf, figStr, HUDMessage.MessageStyle.PETRIFY, new Vector3(0f, iconOff.y), 0);
-                                                UIManager.Battle.DisplayParty();
-                                            }
-                                            else
-                                            {
-                                                btl.petrifyMessage.Label = figStr;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public static void ReleaseBtl2dStatCount()
-    {
-        for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
-        {
-            if (btl.deathMessage != null)
-            {
-                Singleton<HUDMessage>.Instance.ReleaseObject(btl.deathMessage);
-                btl.deathMessage = null;
-            }
-            if (btl.petrifyMessage != null)
-            {
-                Singleton<HUDMessage>.Instance.ReleaseObject(btl.petrifyMessage);
-                btl.petrifyMessage = null;
-            }
-        }
+        foreach (HUDMessageChild message in btl2d.StatusMessages)
+            message.gameObject.SetActive(show);
     }
 
     public static void GetIconPosition(BTL_DATA btl, out Byte[] iconBone, out SByte[] iconOffY, out SByte[] iconOffZ)
@@ -515,8 +428,6 @@ public static class btl2d
     public const Byte DMG_COL_YELLOW = 128;
     public const Byte DMG_COL_GREEN = 192;
 
-    public const BattleStatus STATUS_2D_ICON = BattleStatus.Venom | BattleStatus.Silence | BattleStatus.Blind | BattleStatus.Trouble | BattleStatus.Berserk | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Reflect;
-
     public const Byte ABR_OFF = 255;
     public const Byte ABR_50ADD = 0;
     public const Byte ABR_ADD = 1;
@@ -529,48 +440,6 @@ public static class btl2d
 
     public const Byte Sprtcode = 100;
 
-    public static btl2d.STAT_ICON_TBL[] wStatIconTbl = new btl2d.STAT_ICON_TBL[]
-    {
-        // TODO: bring back the extra position (will be done with status rework)
-        new btl2d.STAT_ICON_TBL(BattleStatus.Poison, 0u, 0),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Venom, 0u, 0),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Slow, 0u, 0), // extra pos: 212, 0
-        new btl2d.STAT_ICON_TBL(BattleStatus.Haste, 0u, 0), // extra pos: -148, 0
-        new btl2d.STAT_ICON_TBL(BattleStatus.Sleep, 0u, 0),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Heat, 0u, 1),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Freeze, 0u, 1),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Reflect, BattleStatus.Petrify, 1),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Silence, 0u, 2), // extra pos: -92, 0
-        new btl2d.STAT_ICON_TBL(BattleStatus.Blind, 0u, 3),
-        new btl2d.STAT_ICON_TBL(BattleStatus.Trouble, 0u, 4), // extra pos: 92, 0
-        new btl2d.STAT_ICON_TBL(BattleStatus.Berserk, 0u, 4)
-    };
-
-    public class STAT_CNT_TBL
-    {
-        public STAT_CNT_TBL(BattleStatus mask, Int16 idx, UInt16 col)
-        {
-            this.Mask = mask;
-            this.Idx = idx;
-            this.Col = col;
-        }
-
-        public BattleStatus Mask;
-        public Int16 Idx;
-        public UInt16 Col;
-    }
-
-    public class STAT_ICON_TBL
-    {
-        public STAT_ICON_TBL(BattleStatus maskActivate, BattleStatus maskPrevent, Byte attachIdx)
-        {
-            this.MaskOn = maskActivate;
-            this.MaskOff = maskPrevent;
-            this.AttachIndex = attachIdx;
-        }
-
-        public BattleStatus MaskOn;
-        public BattleStatus MaskOff;
-        public Byte AttachIndex;
-    }
+    public static Boolean ShouldShowSPS = false;
+    public static List<HUDMessageChild> StatusMessages = new List<HUDMessageChild>();
 }

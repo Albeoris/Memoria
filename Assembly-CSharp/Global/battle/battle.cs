@@ -180,7 +180,7 @@ public static class battle
             // Automatically end a battle when there is no enemy anymore, typically they escaped (warning: enemies that are not targetable but still present don't trigger the end)
             UIManager.Battle.FF9BMenu_EnableMenu(false);
             ff9Battle.btl_escape_key = 0;
-            ff9Battle.cmd_status &= 65533;
+            ff9Battle.cmd_status &= 0xFFFD;
             ff9Battle.btl_phase = 5;
             ff9Battle.btl_seq = 2;
             btl_cmd.KillAllCommand(ff9Battle);
@@ -209,30 +209,31 @@ public static class battle
 
     private static void BattleMainLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
     {
-        //uint id = sys.id;
         FF9StateSystem.Settings.SetTranceFull();
-        Boolean flag = false;
+        Boolean showTargetCursor = false;
         for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
         {
             if (next.bi.disappear == 0)
                 btlseq.DispCharacter(next);
             if (!FF9StateSystem.Battle.isDebug && UIManager.Battle.CurrentPlayerIndex != -1 && next.btl_id == 1 << UIManager.Battle.CurrentPlayerIndex && (btlsys.cmd_status & 2) != 0 && (next.flags & geo.GEO_FLAGS_CLIP) == 0)
             {
-                flag = true;
+                showTargetCursor = true;
                 btl_cmd.DispSelectCursor(sys, btlsys, next);
             }
 
-            btl_para.CheckPointData(next);
-            btl_stat.CheckStatusLoop(next);
-            btl_stat.RotateAfterCheckStatusLoop(next);
+            BattleUnit unit = new BattleUnit(next);
+            btl_para.CheckPointData(unit);
+            btl_stat.CheckStatusLoop(unit);
         }
-        if (flag)
+        if (showTargetCursor)
         {
             if (!btlsys.s_cur.activeSelf)
                 btlsys.s_cur.SetActive(true);
         }
         else
+        {
             btlsys.s_cur.SetActive(false);
+        }
         btl_cmd.CommandEngine(btlsys);
         battle.BattleSubSystem(sys, btlsys);
     }
@@ -290,7 +291,7 @@ public static class battle
                 switch (btlsys.btl_seq)
                 {
                     case 0:
-                        btl_para.CheckPointData(data);
+                        btl_para.CheckPointData(next);
                         if ((!next.IsPlayer && !next.IsUnderAnyStatus(BattleStatusConst.BattleEnd)) || (next.IsPlayer && next.IsUnderStatus(BattleStatus.Death) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE)))
                             proceedEnd = false;
                         break;
@@ -301,9 +302,9 @@ public static class battle
                     case 2:
                         if (btlsys.cmd_queue.next != null && btlsys.cur_cmd == null && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysTrans) && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysDead) && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysReraise) && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysStone))
                             proceedEnd = true;
-                        btl_para.CheckPointData(data);
+                        btl_para.CheckPointData(next);
                         if (next.IsPlayer)
-                            next.TryRemoveStatuses(BattleStatusConst.CancelEvent);
+                            next.TryRemoveStatuses(BattleStatusConst.RemoveOnEvent);
                         if (btlsys.cur_cmd != null)
                             proceedEnd = false;
                         if (next.IsUnderStatus(BattleStatus.Death))
@@ -375,16 +376,17 @@ public static class battle
                         {
                             if (next.bi.player != 0)
                             {
-                                /*int num2 = (int)*/
-                                btl_stat.RemoveStatuses(next, BattleStatusConst.VictoryClear);
+                                BattleUnit unit = new BattleUnit(next);
+                                btl_stat.RemoveStatuses(unit, BattleStatusConst.VictoryClear);
                                 if (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull))
                                 {
                                     if (next.cur.hp > 0)
                                     {
                                         Int32 num3 = btl_mot.GetDirection(next);
                                         next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
+                                        // TODO [DV] Add status Old to BattleStatusConst.IdleDying
                                         if (!next.is_monster_transform)
-                                            next.bi.def_idle = btl_stat.CheckStatus(next, BattleStatusConst.IdleDying) || next.special_status_old ? (Byte)1 : (Byte)0;
+                                            next.bi.def_idle = btl_stat.CheckStatus(next, BattleStatusConst.IdleDying) ? (Byte)1 : (Byte)0;
                                         next.bi.cmd_idle = 0;
                                         btl_mot.SetDefaultIdle(next);
                                         //if (btl_util.getPlayerPtr(next).info.win_pose != 0)
@@ -395,8 +397,7 @@ public static class battle
                                     }
                                     else
                                     {
-                                        /*int num4 = (int)*/
-                                        btl_stat.AlterStatus(next, BattleStatus.Death);
+                                        btl_stat.AlterStatus(unit, BattleStatusId.Death);
                                     }
                                 }
                             }

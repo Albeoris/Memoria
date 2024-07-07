@@ -16,15 +16,10 @@ namespace Assets.Sources.Scripts.UI.Common
         }
 
         public GameObject Self;
-
         public ItemListDetailWithIconHUD Weapon;
-
         public ItemListDetailWithIconHUD Head;
-
         public ItemListDetailWithIconHUD Wrist;
-
         public ItemListDetailWithIconHUD Body;
-
         public ItemListDetailWithIconHUD Accessory;
     }
 }

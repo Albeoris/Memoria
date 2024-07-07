@@ -65,8 +65,8 @@ namespace Memoria.Data
             public BattleStatus PermanentStatus = 0;
             public BattleStatus InitialStatus = 0;
             public BattleStatus ResistStatus = 0;
-            public List<KeyValuePair<BattleStatus, String>> PartialResistStatus = new List<KeyValuePair<BattleStatus, String>>();
-            public List<KeyValuePair<BattleStatus, String>> DurationFactorStatus = new List<KeyValuePair<BattleStatus, String>>();
+            public List<KeyValuePair<BattleStatusId, String>> PartialResistStatus = new List<KeyValuePair<BattleStatusId, String>>();
+            public List<KeyValuePair<BattleStatusId, String>> DurationFactorStatus = new List<KeyValuePair<BattleStatusId, String>>();
             public Int32 InitialATB = -1;
         }
         public class SupportingAbilityEffectAbilityUse
@@ -316,8 +316,8 @@ namespace Memoria.Data
         public void TriggerOnStatusInit(BattleUnit unit)
         {
             GetStatusInitQuietly(unit, out BattleStatus permanent, out BattleStatus initial, out BattleStatus resist, out StatusModifier partialResist, out StatusModifier durationFactor, out Int16 atb);
-            unit.PermanentStatus |= permanent;
-            unit.CurrentStatus |= initial;
+            unit.Data.stat.permanent |= permanent;
+            unit.Data.stat.cur |= initial;
             unit.ResistStatus |= resist;
             unit.Data.stat_partial_resist = partialResist;
             unit.Data.stat_duration_factor = durationFactor;
@@ -347,7 +347,7 @@ namespace Memoria.Data
                     permanent |= StatusEffect[i].PermanentStatus;
                     initial |= StatusEffect[i].InitialStatus;
                     resist |= StatusEffect[i].ResistStatus;
-                    foreach (KeyValuePair<BattleStatus, String> kvp in StatusEffect[i].PartialResistStatus)
+                    foreach (KeyValuePair<BattleStatusId, String> kvp in StatusEffect[i].PartialResistStatus)
                     {
                         Expression e = new Expression(kvp.Value);
                         NCalcUtility.InitializeExpressionUnit(ref e, unit);
@@ -355,7 +355,7 @@ namespace Memoria.Data
                         e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                         partialResist[kvp.Key] = NCalcUtility.ConvertNCalcResult(e.Evaluate(), 0f);
                     }
-                    foreach (KeyValuePair<BattleStatus, String> kvp in StatusEffect[i].DurationFactorStatus)
+                    foreach (KeyValuePair<BattleStatusId, String> kvp in StatusEffect[i].DurationFactorStatus)
                     {
                         Expression e = new Expression(kvp.Value);
                         NCalcUtility.InitializeExpressionUnit(ref e, unit);
@@ -721,11 +721,11 @@ namespace Memoria.Data
         private void UpdateUnitStatuses(BattleUnit unit, BattleStatus cur, BattleStatus auto, BattleStatus resist)
         {
             cur &= ~(unit.PermanentStatus & ~auto);
-            if (unit.PermanentStatus != auto) btl_stat.MakeStatusesPermanent(unit.Data, unit.PermanentStatus & ~auto, false);
-            if (unit.CurrentStatus != cur) btl_stat.RemoveStatuses(unit.Data, unit.CurrentStatus & ~cur);
+            if (unit.PermanentStatus != auto) btl_stat.MakeStatusesPermanent(unit, unit.PermanentStatus & ~auto, false);
+            if (unit.CurrentStatus != cur) btl_stat.RemoveStatuses(unit, unit.CurrentStatus & ~cur);
             if (unit.ResistStatus != resist) unit.ResistStatus = resist;
-            if (unit.PermanentStatus != auto) btl_stat.MakeStatusesPermanent(unit.Data, auto & ~unit.PermanentStatus, true);
-            if (unit.CurrentStatus != cur) btl_stat.AlterStatuses(unit.Data, cur & ~unit.CurrentStatus);
+            if (unit.PermanentStatus != auto) btl_stat.MakeStatusesPermanent(unit, auto & ~unit.PermanentStatus, true);
+            if (unit.CurrentStatus != cur) btl_stat.AlterStatuses(unit, cur & ~unit.CurrentStatus);
         }
 
         public void ParseFeatures(SupportAbility id, String featureCode)
@@ -797,13 +797,13 @@ namespace Memoria.Data
                         }
                         else if (codeName.StartsWith("PartialResist"))
                         {
-                            if (codeName.Substring("PartialResist".Length).TryEnumParse(out BattleStatus status))
-                                newEffect.PartialResistStatus.Add(new KeyValuePair<BattleStatus, String>(status, formula.Groups[2].Value));
+                            if (codeName.Substring("PartialResist".Length).TryEnumParse(out BattleStatusId status))
+                                newEffect.PartialResistStatus.Add(new KeyValuePair<BattleStatusId, String>(status, formula.Groups[2].Value));
                         }
                         else if (codeName.StartsWith("DurationFactor"))
                         {
-                            if (codeName.Substring("DurationFactor".Length).TryEnumParse(out BattleStatus status))
-                                newEffect.DurationFactorStatus.Add(new KeyValuePair<BattleStatus, String>(status, formula.Groups[2].Value));
+                            if (codeName.Substring("DurationFactor".Length).TryEnumParse(out BattleStatusId status))
+                                newEffect.DurationFactorStatus.Add(new KeyValuePair<BattleStatusId, String>(status, formula.Groups[2].Value));
                         }
                     }
                     foreach (Match statusMatch in new Regex(@"\b((Auto|Initial|Resist)Status|InitialATB)\s+(\w+|\d+)\b").Matches(saArgs))

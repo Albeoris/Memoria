@@ -1,10 +1,10 @@
-﻿using FF9;
+﻿using System;
+using System.Collections.Generic;
+using FF9;
 using Memoria;
 using Memoria.Data;
-using NCalc;
-using System;
-using System.Collections.Generic;
-using Object = System.Object;
+using Memoria.Scripts;
+using Assets.Sources.Scripts.UI.Common;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable ClassNeverInstantiated.Global
@@ -41,49 +41,74 @@ public class btl_para
             // Weak security for enemies that should never reach 0 HP in vanilla
             newHP = Math.Max(newHP, 1);
         }
+        if (FF9StateSystem.Settings.IsHpMpFull && !max && btl.bi.player != 0)
+            newHP = btl.max.hp;
         if (max)
             btl.max.hp = newHP;
         else
             btl.cur.hp = newHP;
     }
 
-    public static void InitATB(BTL_DATA btl)
+    public static Int16 GetMaxATB(BattleUnit unit)
+    {
+        return (Int16)((60 - unit.Dexterity) * 40 << 2);
+    }
+
+    public static void SetupATBCoef(BTL_DATA btl)
     {
         btl.cur.at_coef = GetATBCoef();
     }
 
     public static SByte GetATBCoef()
     {
-        SettingsState settings = (SettingsState)(Object)FF9StateSystem.Settings;
-        if (settings.cfg.btl_speed == 0uL)
-            return 8;
-        else if (settings.cfg.btl_speed == 2uL)
-            return 14;
+        switch (FF9StateSystem.Settings.cfg.btl_speed)
+        {
+            case 0: return 8;
+            case 1: return 10;
+            case 2: return 14;
+        }
         return 10;
     }
 
-    public static void CheckPointData(BTL_DATA btl)
+    public static void CheckPointData(BattleUnit unit)
     {
-        if (btl.cur.hp * 6 > btl.max.hp)
+        if (unit.CurrentHp > unit.MaximumHp)
+            unit.CurrentHp = unit.MaximumHp;
+        if (unit.CurrentMp > unit.MaximumMp)
+            unit.CurrentMp = unit.MaximumMp;
+        BattleStatus checkPointStatus = CheckPointDataStatus(unit);
+        if ((checkPointStatus & BattleStatus.Death) != 0)
         {
-            btl_stat.RemoveStatus(btl, BattleStatus.LowHP);
-            if (btl.cur.hp > btl.max.hp)
-                btl.cur.hp = btl.max.hp;
+            if (!btl_stat.CheckStatus(unit, BattleStatus.Death))
+                btl_stat.AlterStatus(unit, BattleStatusId.Death);
+            return;
+        }
+        if (unit.IsNonMorphedPlayer)
+            unit.Data.bi.def_idle = (Byte)(btl_stat.CheckStatus(unit, BattleStatusConst.IdleDying) ? 1 : 0);
+    }
+
+    public static BattleStatus CheckPointDataStatus(BattleUnit unit)
+    {
+        if (unit.Data.cur.hp == 0) // Using this instead of "CurrentHp" avoids considering bosses under 10 000 HP as dead here
+            return BattleStatus.Death;
+        IOverloadUnitCheckPointScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadUnitCheckPointScript)) as IOverloadUnitCheckPointScript;
+        if (overloadedMethod != null)
+            return overloadedMethod.UpdatePointStatus(unit);
+        // Default method
+        Boolean isLowHP = unit.IsPlayer && unit.CurrentHp * 6 <= unit.MaximumHp;
+        if (isLowHP)
+        {
+            unit.UIColorHP = FF9TextTool.Yellow;
+            if (!btl_stat.CheckStatus(unit, BattleStatus.LowHP))
+                btl_stat.AlterStatus(unit, BattleStatusId.LowHP);
         }
         else
         {
-            if (btl.cur.hp == 0)
-            {
-                if (!Status.checkCurStat(btl, BattleStatus.Death))
-                    btl_stat.AlterStatus(btl, BattleStatus.Death);
-                return;
-            }
-            if (!Status.checkCurStat(btl, BattleStatus.LowHP))
-                btl_stat.AlterStatus(btl, BattleStatus.LowHP);
+            unit.UIColorHP = FF9TextTool.White;
+            btl_stat.RemoveStatus(unit, BattleStatusId.LowHP);
         }
-        btl.cur.mp = btl.cur.mp <= btl.max.mp ? btl.cur.mp : btl.max.mp;
-        if (btl.bi.player != 0 && !btl.is_monster_transform)
-            btl.bi.def_idle = (Byte)(btl_stat.CheckStatus(btl, BattleStatusConst.IdleDying) || btl.special_status_old ? 1 : 0);
+        unit.UIColorMP = unit.CurrentMp <= unit.MaximumMp / 6f ? FF9TextTool.Yellow : FF9TextTool.White;
+        return isLowHP ? BattleStatus.LowHP : 0;
     }
 
     public static Int32 SetDamage(BattleUnit btl, Int32 damage, Byte dmg_mot, CMD_DATA cmd = null)
@@ -194,10 +219,12 @@ public class btl_para
 
     public static void SetPoisonDamage(BTL_DATA btl)
     {
+        // Dummied
         BattleUnit battleUnit = new BattleUnit(btl);
         UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
+            // TODO [DV]
             if (Configuration.Mod.TranceSeek)
             {
                 damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 8 : 5);
@@ -243,16 +270,17 @@ public class btl_para
         }
         btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_HP;
         btl.fig_poison_hp = (Int32)damage;
-        BattleVoice.TriggerOnStatusChange(btl, "Used", btl_stat.CheckStatus(btl, BattleStatus.Venom) ? BattleStatus.Venom : BattleStatus.Poison);
+        BattleVoice.TriggerOnStatusChange(btl, "Used", btl_stat.CheckStatus(btl, BattleStatus.Venom) ? BattleStatusId.Venom : BattleStatusId.Poison);
     }
 
     public static void SetRegeneRecover(BTL_DATA btl)
     {
+        // Dummied
         UInt32 recover = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
             recover = GetLogicalHP(btl, true) >> (Configuration.Mod.TranceSeek ? (btl_stat.CheckStatus(btl, BattleStatus.EasyKill) ? 7 : 5) : 4);
-            if (btl_stat.CheckStatus(btl, BattleStatus.Zombie) || btl_util.CheckEnemyCategory(btl, 16))
+            if (new BattleUnit(btl).IsZombie)
             {
                 btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_DMG;
                 if (GetLogicalHP(btl, false) > recover)
@@ -271,11 +299,13 @@ public class btl_para
         }
         btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
         btl.fig_regene_hp = (Int32)recover;
-        BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Regen);
+        BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Regen);
     }
 
     public static void SetPoisonMpDamage(BTL_DATA btl)
     {
+        // Dummied
+        // TODO [DV]
         if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill)) // TRANCE SEEK - Venom didn't remove MP on bosses.
             return;
         UInt32 damage = 0;
@@ -300,6 +330,7 @@ public class btl_para
 
     public static void SetTroubleDamage(BattleUnit btl, Int32 dmg)
     {
+        // Dummied
         foreach (BattleUnit next in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
             if (next.IsPlayer == btl.IsPlayer && next.Id != btl.Id && next.IsTargetable)
@@ -307,7 +338,7 @@ public class btl_para
                 next.Data.fig_info = Param.FIG_INFO_DISP_HP;
                 SetDamage(next, dmg, 0);
                 btl2d.Btl2dReq(next.Data);
-                BattleVoice.TriggerOnStatusChange(next.Data, "Used", BattleStatus.Trouble);
+                BattleVoice.TriggerOnStatusChange(next.Data, "Used", BattleStatusId.Trouble);
             }
         }
     }

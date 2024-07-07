@@ -2,7 +2,6 @@
 using Memoria.Data;
 using Memoria.Speedrun;
 using System;
-using System.Collections.Generic;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable EmptyConstructor
@@ -33,8 +32,6 @@ namespace FF9
             ff9Battle.btl_load_status = 0;
             ff9Battle.player_load_fade = 0;
             ff9Battle.enemy_load_fade = 0;
-            ff9Battle.phantom_no = BattleAbilityId.Void;
-            ff9Battle.phantom_cnt = 0;
             ff9Battle.enemy_die = 0;
             battle.btl_bonus.member_flag = 0;
             ClearBattleBonus();
@@ -56,20 +53,28 @@ namespace FF9
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             Int32 dieSeqEnd = 6; /*btl.bi.player == 0 ? 6 : 6*/
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
-                if (next.bi.player == btl.bi.player && (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull) || Status.checkCurStat(next, BattleStatus.Death) && next.die_seq != dieSeqEnd))
+                if (next.bi.player == btl.bi.player && (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull) || btl_stat.CheckStatus(next, BattleStatus.Death) && next.die_seq != dieSeqEnd))
                     return;
             if (btl.bi.player == 0)
             {
-                Boolean playerStillAliver = false;
+                Boolean playerStillAlive = false;
                 for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                 {
-                    if (next.bi.player != 0 && (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull) || (next.cur.hp == 0 || Status.checkCurStat(next, BattleStatus.Death)) && btl_stat.CheckStatus(next, BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysReraise)))
+                    if (next.bi.player != 0)
                     {
-                        playerStillAliver = true;
-                        break;
+                        if (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull))
+                        {
+                            playerStillAlive = true;
+                            break;
+                        }
+                        if ((next.cur.hp == 0 || btl_stat.CheckStatus(next, BattleStatus.Death)) && next.stat.HasDeathChangerEffect)
+                        {
+                            playerStillAlive = true;
+                            break;
+                        }
                     }
                 }
-                if (!playerStillAliver)
+                if (!playerStillAlive)
                     return;
                 if (ff9Battle.btl_seq != 1)
                     ff9Battle.btl_seq = 0;
@@ -86,6 +91,7 @@ namespace FF9
                             if (btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix))
                                 return;
                             Boolean procRebirthFlame = false;
+                            // TODO [DV]
                             if (Configuration.Mod.TranceSeek) // TRANCE SEEK - RebirthFlame
                             {
                                 BattleUnit unit = new BattleUnit(next);
@@ -100,7 +106,7 @@ namespace FF9
                             if (procRebirthFlame)
                             {
                                 UIManager.Battle.FF9BMenu_EnableMenu(true);
-                                btl_cmd.SetCommand(next.cmd[0], BattleCommandId.SysLastPhoenix, (Int32)BattleAbilityId.RebirthFlame, btl_scrp.GetBattleID(0U), 1U);
+                                btl_cmd.SetCommand(next.cmd[0], BattleCommandId.SysLastPhoenix, (Int32)BattleAbilityId.RebirthFlame, btl_scrp.GetBattleID(0U), 1u);
                                 return;
                             }
                         }
@@ -118,18 +124,18 @@ namespace FF9
         public static void CheckBattleMenuOff(BattleUnit btl)
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-            BattleUnit btl1 = null;
+            BattleUnit eiko = null;
 
             foreach (BattleUnit next in ff9Battle.EnumerateBattleUnits())
             {
                 if (next.PlayerIndex == CharacterId.Eiko)
-                    btl1 = next;
+                    eiko = next;
 
-                if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.IsUnderAnyStatus(BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next.Data, BattleCommandId.SysReraise)))
+                if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.Data.stat.HasDeathChangerEffect || btl_cmd.CheckSpecificCommand(next.Data, BattleCommandId.SysReraise)))
                     return;
             }
 
-            if (btl1 != null && btl_cmd.CheckSpecificCommand(btl1.Data, BattleCommandId.SysLastPhoenix))
+            if (eiko != null && btl_cmd.CheckSpecificCommand(eiko.Data, BattleCommandId.SysLastPhoenix))
                 return;
 
             UIManager.Battle.FF9BMenu_EnableMenu(false);
@@ -141,7 +147,7 @@ namespace FF9
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
-                if (next.bi.player == 0 && !Status.checkCurStat(next, BattleStatus.Death))
+                if (next.bi.player == 0 && !btl_stat.CheckStatus(next, BattleStatus.Death))
                     return;
             AutoSplitterPipe.SignalBattleWin();
             UIManager.Battle.FF9BMenu_EnableMenu(false);
@@ -269,7 +275,7 @@ namespace FF9
             player.cur.mp = Math.Min(player.cur.mp, player.max.mp);
             if (removingUnit)
                 if (btl.cur.hp == 0)
-                    btl_stat.AlterStatus(btl, BattleStatus.Death);
+                    btl_stat.AlterStatus(unit, BattleStatusId.Death);
             btl_stat.SaveStatus(player, btl);
             ff9play.FF9Play_UpdateSerialNumber(player);
         }

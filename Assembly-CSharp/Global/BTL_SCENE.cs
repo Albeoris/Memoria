@@ -143,7 +143,7 @@ public class BTL_SCENE
                 abilRef.Elements = binaryReader.ReadByte();
                 abilRef.Rate = binaryReader.ReadByte();
                 monAbility.Category = binaryReader.ReadByte();
-                monAbility.AddStatusNo = (BattleStatusIndex)binaryReader.ReadByte();
+                monAbility.AddStatusNo = (StatusSetId)binaryReader.ReadByte();
                 monAbility.MP = binaryReader.ReadByte();
                 monAbility.Type = binaryReader.ReadByte();
                 monAbility.Vfx2 = binaryReader.ReadUInt16();

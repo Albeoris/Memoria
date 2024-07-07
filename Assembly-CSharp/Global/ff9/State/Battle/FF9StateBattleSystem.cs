@@ -34,9 +34,9 @@ public class FF9StateBattleSystem
         this.seq_work_set = new SEQ_WORK_SET();
         this.btl_scene = new BTL_SCENE();
         this.btl2d_work_set = new BTL2D_WORK();
-        this.status_data = new Dictionary<Int32, STAT_DATA>();
+        this.status_data = new Dictionary<BattleStatusId, BattleStatusDataEntry>();
         this.aa_data = new Dictionary<BattleAbilityId, AA_DATA>();
-        this.add_status = new Dictionary<BattleStatusIndex, BattleStatusEntry>();
+        this.add_status = new Dictionary<StatusSetId, BattleStatusEntry>();
         this.map = new FF9StateBattleMap();
     }
 
@@ -47,39 +47,26 @@ public class FF9StateBattleSystem
     public String[][] p_mot;
 
     public ENEMY[] enemy;
-
     public List<ENEMY_TYPE> enemy_type;
-
     public List<AA_DATA> enemy_attack;
 
     public BTL_DATA btl_list;
-
     public BTL_DATA[] btl_data;
 
     public Int32 btl_cnt;
-
     public Byte btl_phase; // FF9.battle_phase
-
     public Byte btl_seq; // FF9.battle_phase_close, FF9.battle_phase_defeat, FF9.battle_phase_menu_off & FF9.battle_phase_victory
 
     public Byte btl_fade_time;
-
     public Byte btl_escape_key;
-
     public SByte btl_escape_fade;
-
     public Byte btl_load_status;
-
     public SByte player_load_fade;
-
     public SByte enemy_load_fade;
 
     public CMD_DATA[] cmd_buffer;
-
     public CMD_DATA cmd_escape;
-
     public CMD_DATA cmd_queue;
-
     public CMD_DATA cur_cmd
     {
         get
@@ -97,31 +84,17 @@ public class FF9StateBattleSystem
 
     public GameObject s_cur;
 
-    //public BTL_VFX_REQ fx_req; // Use 1 fx request per command instead of a shared one
-
     public UInt16 cmd_status; // FF9.Command.CMDSYS_STATUS_...
-
-    //public command_mode_index cmd_mode; // Each cmd has its cmd.info.mode
-
-    public BattleAbilityId phantom_no;
-
-    public Int16 phantom_cnt;
-
     public UInt16 enemy_die;
 
     public FF9StateBattleMap map;
-
     public SEQ_WORK_SET seq_work_set;
-
     public BTL_SCENE btl_scene;
-
     public BTL2D_WORK btl2d_work_set;
 
-    public Dictionary<Int32, STAT_DATA> status_data;
-
+    public Dictionary<BattleStatusId, BattleStatusDataEntry> status_data;
     public Dictionary<BattleAbilityId, AA_DATA> aa_data;
-
-    public Dictionary<BattleStatusIndex, BattleStatusEntry> add_status;
+    public Dictionary<StatusSetId, BattleStatusEntry> add_status;
 
     public IEnumerable<BattleUnit> EnumerateBattleUnits()
     {

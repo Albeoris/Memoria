@@ -2,7 +2,7 @@ using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Prime;
+using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -75,22 +75,34 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void DisplayCharacterDetail(PLAYER player, CharacterDetailHUD charHud)
         {
+            IOverloadPlayerUIScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadPlayerUIScript)) as IOverloadPlayerUIScript;
+            if (overloadedMethod != null)
+            {
+                IOverloadPlayerUIScript.Result ui = overloadedMethod.UpdatePointStatus(player);
+                charHud.HPTextColor = ui.ColorHP;
+                charHud.MPTextColor = ui.ColorMP;
+                if (charHud.MagicStoneLabel != null)
+                    charHud.MagicStoneTextColor = ui.ColorMagicStone;
+            }
+            else
+            {
+                charHud.HPTextColor = (player.cur.hp == 0) ? FF9TextTool.Red
+                                    : (player.cur.hp <= player.max.hp / 6) ? FF9TextTool.Yellow : FF9TextTool.White;
+                charHud.MPTextColor = (player.cur.mp <= player.max.mp / 6) ? FF9TextTool.Yellow : FF9TextTool.White;
+                if (charHud.MagicStoneLabel != null)
+                    charHud.MagicStoneTextColor = (player.cur.capa == 0) ? FF9TextTool.Yellow : FF9TextTool.White;
+            }
             charHud.Self.SetActive(true);
             charHud.NameLabel.text = player.Name;
             charHud.LvLabel.text = player.level.ToString();
-            Color color = (player.cur.hp != 0) ? ((player.cur.hp > player.max.hp / 6) ? FF9TextTool.White : FF9TextTool.Yellow) : FF9TextTool.Red;
             charHud.HPLabel.text = player.cur.hp.ToString();
             charHud.HPMaxLabel.text = player.max.hp.ToString();
-            charHud.HPTextColor = color;
-            color = (player.cur.mp > player.max.mp / 6) ? FF9TextTool.White : FF9TextTool.Yellow;
             charHud.MPLabel.text = player.cur.mp.ToString();
             charHud.MPMaxLabel.text = player.max.mp.ToString();
-            charHud.MPTextColor = color;
             if (charHud.MagicStoneLabel != null)
             {
                 charHud.MagicStoneLabel.text = player.cur.capa.ToString();
                 charHud.MagicStoneMaxLabel.text = player.max.capa.ToString();
-                charHud.MagicStoneTextColor = (player.cur.capa != 0) ? FF9TextTool.White : FF9TextTool.Yellow;
             }
             if (charHud.StatusesSpriteList != null)
             {
@@ -1461,11 +1473,8 @@ namespace Assets.Sources.Scripts.UI.Common
         };
 
         private static readonly SByte WorldTitleMistContinent = 0;
-
         private static readonly SByte WorldTitleOuterContinent = 1;
-
         private static readonly SByte WorldTitleForgottenContinent = 2;
-
         private static readonly SByte WorldTitleLostContinent = 3;
 
         private static Dictionary<String, Sprite> worldTitleSpriteList = new Dictionary<String, Sprite>();

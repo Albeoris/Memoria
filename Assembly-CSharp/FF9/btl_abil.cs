@@ -233,7 +233,7 @@ namespace FF9
             // Dummied
             if (!btl_stat.CheckStatus(btl, BattleStatusConst.NoReaction))
             {
-                if ((btl.sa[1] & (Int32)SupportAbility2.RestoreHP) != 0u && btl.cur.hp != 0 && Status.checkCurStat(btl, BattleStatus.LowHP))
+                if ((btl.sa[1] & (Int32)SupportAbility2.RestoreHP) != 0u && btl.cur.hp != 0 && btl_stat.CheckStatus(btl, BattleStatus.LowHP))
                     btl.cur.hp = Math.Min(btl.cur.hp + btl.max.hp / 2, btl.max.hp);
                 if ((btl.sa[1] & (Int32)SupportAbility2.AbsorbMP) != 0u && aa.MP != 0)
                     btl.cur.mp = (UInt32)Math.Min(btl.cur.mp + aa.MP, btl.max.mp);

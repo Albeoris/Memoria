@@ -165,15 +165,15 @@ public class BattleSPSSystem : MonoBehaviour
             this._eventNoToIndex.Remove(ObjNo);
     }
 
-    public void UpdateBtlStatus(BTL_DATA btl, BattleStatus status, Vector3? pos = null, Int32? frame = null)
+    public void UpdateBtlStatus(BattleUnit unit, BattleStatusId statusId, Vector3? spsPos = null, Vector3? shpPos = null, Int32? frame = null)
     {
-        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(btl.bi.line_no, (Int32)status);
+        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(unit.Position, (Int32)statusId);
         if (this._statusToSPSIndex.TryGetValue(effectCode, out Int32 spsIndex))
         {
             SPSEffect sps = Utility.SpsList[spsIndex];
             sps.attr |= SPSConst.ATTR_VISIBLE | SPSConst.ATTR_UPDATE_THIS_FRAME;
-            if (pos.HasValue)
-                sps.pos = pos.Value;
+            if (spsPos.HasValue)
+                sps.pos = spsPos.Value;
             if (frame.HasValue)
                 sps.curFrame = frame.Value << 4;
         }
@@ -181,63 +181,67 @@ public class BattleSPSSystem : MonoBehaviour
         {
             SHPEffect shp = this._shpEffects[shpIndex];
             shp.attr |= SPSConst.ATTR_VISIBLE | SPSConst.ATTR_UPDATE_THIS_FRAME;
-            if (pos.HasValue)
-                shp.pos = pos.Value;
+            if (shpPos.HasValue)
+                shp.pos = shpPos.Value;
             if (frame.HasValue)
                 shp.frame = frame.Value;
         }
     }
 
-    public void AddBtlSPSObj(BattleUnit unit, BattleStatus status)
+    public void AddBtlSPSObj(BattleUnit unit, BattleStatusId statusId, Int32 spsId = -1, Int32 shpId = -1, Vector3 extraPos = default)
     {
-        if (!BattleSPSSystem.StatusVisualEffects.TryGetValue(status, out BattleSPSSystem.StatusVisualEffect effect))
-            return;
-        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(unit.Position, (Int32)status);
-        if (effect.spsIndex >= 0)
+        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(unit.Position, (Int32)statusId);
+        if (spsId >= 0)
         {
             if (this._statusToSPSIndex.TryGetValue(effectCode, out Int32 spsIndex))
             {
+                Utility.SpsList[spsIndex].gameObject.transform.localPosition = extraPos;
                 Utility.SpsList[spsIndex].attr |= SPSConst.ATTR_VISIBLE;
             }
             else
             {
-                if (!CommonSPSSystem.SPSPrototypes.ContainsKey(effect.spsIndex))
+                if (!CommonSPSSystem.SPSPrototypes.ContainsKey(spsId))
                 {
-                    Log.Error($"[{nameof(BattleSPSSystem)}] Status {status} tries to use the SPS {effect.spsIndex} which does not exists");
+                    Log.Error($"[{nameof(BattleSPSSystem)}] Status {statusId} tries to use the SPS {spsId} which does not exists");
                     return;
                 }
-                KeyValuePair<String, Int32> spsID = new KeyValuePair<String, Int32>($"FromPrototype", effect.spsIndex);
+                KeyValuePair<String, Int32> spsID = new KeyValuePair<String, Int32>($"FromPrototype", spsId);
                 Int32 slot = this._FindFreeSPSSlot();
                 this._statusToSPSIndex[effectCode] = slot;
                 SPSEffect sps = Utility.SpsList[slot];
                 if (Utility.SetupSPSBinary(sps, spsID, true))
+                {
                     sps.meshRenderer.enabled = false;
+                    sps.gameObject.transform.localPosition = extraPos;
+                }
             }
         }
-        if (effect.shpIndex >= 0)
+        if (shpId >= 0)
         {
             if (this._statusToSHPIndex.TryGetValue(effectCode, out Int32 shpIndex))
             {
                 this._shpEffects[shpIndex].attr |= SPSConst.ATTR_VISIBLE;
+                this._shpEffects[shpIndex].gameObject.transform.localPosition = extraPos;
             }
             else
             {
-                if (!CommonSPSSystem.SPSPrototypes.ContainsKey(effect.shpIndex))
+                if (!CommonSPSSystem.SPSPrototypes.ContainsKey(shpId))
                 {
-                    Log.Error($"[{nameof(BattleSPSSystem)}] Status {status} tries to use the SHP {effect.shpIndex} which does not exists");
+                    Log.Error($"[{nameof(BattleSPSSystem)}] Status {statusId} tries to use the SHP {shpId} which does not exists");
                     return;
                 }
                 Int32 slot = this._FindFreeSHPSlot();
                 this._statusToSHPIndex[effectCode] = slot;
-                this._shpEffects[slot].Init(CommonSPSSystem.SHPPrototypes[effect.shpIndex]);
+                this._shpEffects[slot].Init(CommonSPSSystem.SHPPrototypes[shpId]);
+                this._shpEffects[slot].gameObject.transform.localPosition = extraPos;
             }
         }
     }
 
-    public void RemoveBtlSPSObj(BTL_DATA btl, BattleStatus status)
+    public void RemoveBtlSPSObj(BattleUnit unit, BattleStatusId statusId)
     {
         // Don't unload the SPS / SHP; assume there's a relatively high probability it can be re-used
-        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(btl.bi.line_no, (Int32)status);
+        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(unit.Position, (Int32)statusId);
         if (this._statusToSPSIndex.TryGetValue(effectCode, out Int32 spsIndex))
         {
             Utility.SpsList[spsIndex].attr = 0;
@@ -388,32 +392,4 @@ public class BattleSPSSystem : MonoBehaviour
     private Dictionary<KeyValuePair<Int32, Int32>, Int32> _statusToSPSIndex;
     [NonSerialized]
     private Dictionary<KeyValuePair<Int32, Int32>, Int32> _statusToSHPIndex;
-
-    public class StatusVisualEffect
-    {
-        public StatusVisualEffect(Int32 shpIndex, Int32 spsIndex)
-        {
-            this.shpIndex = shpIndex;
-            this.spsIndex = spsIndex;
-        }
-
-        public Int32 shpIndex;
-        public Int32 spsIndex;
-    }
-
-    public static Dictionary<BattleStatus, StatusVisualEffect> StatusVisualEffects = new Dictionary<BattleStatus, StatusVisualEffect>()
-    {
-        { BattleStatus.Slow, new StatusVisualEffect(0, -1) },
-        { BattleStatus.Haste, new StatusVisualEffect(1, -1) },
-        { BattleStatus.Silence, new StatusVisualEffect(2, -1) },
-        { BattleStatus.Trouble, new StatusVisualEffect(3, -1) },
-        { BattleStatus.Poison, new StatusVisualEffect(-1, 0) },
-        { BattleStatus.Venom, new StatusVisualEffect(-1, 1) },
-        { BattleStatus.Sleep, new StatusVisualEffect(-1, 2) },
-        { BattleStatus.Heat, new StatusVisualEffect(-1, 3) },
-        { BattleStatus.Freeze, new StatusVisualEffect(-1, 4) },
-        { BattleStatus.Reflect, new StatusVisualEffect(-1, 5) },
-        { BattleStatus.Blind, new StatusVisualEffect(-1, 6) },
-        { BattleStatus.Berserk, new StatusVisualEffect(-1, 7) }
-    };
 }

@@ -187,7 +187,7 @@ public partial class BattleHUD : UIScene
                 continue;
 
             BattleUnit player = FF9StateSystem.Battle.FF9Battle.GetUnit(character.PlayerId);
-            if (player.IsUnderAnyStatus(BattleStatus.Confuse | BattleStatus.Berserk) && character.ATBBlink)
+            if (player.Data.stat.HasAutoAttackEffect && character.ATBBlink)
                 character.ATBBlink = false;
             if (IsEnableInput(player) && !_isAutoAttack)
             {
@@ -463,7 +463,7 @@ public partial class BattleHUD : UIScene
                 return false;
             }
 
-            if ((aaData.Category & 2) != 0 && btl.IsUnderAnyStatus(BattleStatus.Silence))
+            if ((aaData.Category & 2) != 0 && btl.IsUnderAnyStatus(BattleStatusConst.CannotUseMagic))
             {
                 FF9Sfx.FF9SFX_Play(101);
                 DisplayAbility();

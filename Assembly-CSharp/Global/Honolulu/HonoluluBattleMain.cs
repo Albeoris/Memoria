@@ -405,7 +405,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 return;
 
             CMD_DATA cmd = new CMD_DATA { regist = btlData };
-            btl_cmd.SetCommand(cmd, commandId, sub_no, (UInt16)target, 0U);
+            btl_cmd.SetCommand(cmd, commandId, sub_no, (UInt16)target, 0u);
         }
     }
 
@@ -504,24 +504,31 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
                 if (btl.bi.player != 0)
                 {
-                    if (btl_stat.CheckStatus(btl, BattleStatus.Confuse | BattleStatus.Berserk))
+                    if (!btl_cmd.CheckUsingCommand(btl.cmd[0]))
                     {
-                        Int32 num = 0;
-                        while (1 << num != btl.btl_id)
-                            ++num;
-                        if (!UIManager.Battle.InputFinishList.Contains(num))
+                        Boolean autoAttack = false;
+                        foreach (BattleStatusId statusId in btl.stat.cur.ToStatusList())
+                        {
+                            if (!btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
+                                continue;
+                            if ((effect as IAutoAttackStatusScript)?.OnATB(new BattleUnit(btl)) ?? false)
+                            {
+                                autoAttack = true;
+                                break;
+                            }
+                        }
+                        if (autoAttack)
                         {
                             btl.sel_mode = 1;
-                            btl_cmd.SetAutoCommand(btl);
                         }
-                    }
-                    else
-                    {
-                        Int32 playerId = 0;
-                        while (1 << playerId != btl.btl_id)
-                            ++playerId;
-                        if (!UIManager.Battle.ReadyQueue.Contains(playerId))
-                            UIManager.Battle.AddPlayerToReady(playerId);
+                        else
+                        {
+                            Int32 playerId = 0;
+                            while (1 << playerId != btl.btl_id)
+                                ++playerId;
+                            if (!UIManager.Battle.ReadyQueue.Contains(playerId))
+                                UIManager.Battle.AddPlayerToReady(playerId);
+                        }
                     }
                 }
                 else if (!FF9StateSystem.Battle.isDebug)
@@ -551,8 +558,9 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 // Update statuses before looping
                 for (btl = source; btl != null; btl = btl.next)
                 {
-                    btl_para.CheckPointData(btl);
-                    btl_stat.CheckStatusLoop(btl);
+                    BattleUnit unit = new BattleUnit(btl);
+                    btl_para.CheckPointData(unit);
+                    btl_stat.CheckStatusLoop(unit);
                 }
                 // Events need to be processed (i.e. atb reset to 0, see issue #430)
                 PersistenSingleton<EventEngine>.Instance.ServiceEvents();

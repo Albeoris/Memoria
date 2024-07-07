@@ -134,24 +134,11 @@ public partial class BattleHUD : UIScene
                 hud.Value.SetText(bd.CurrentHp.ToString());
                 hud.MaxValue.SetText(bd.MaximumHp.ToString());
                 if (!bd.IsTargetable)
-                {
                     hud.SetColor(FF9TextTool.Gray);
-                }
+                else if (CheckHPState(bd) == ParameterStatus.Dead)
+                    hud.SetColor(FF9TextTool.Red);
                 else
-                {
-                    switch (CheckHPState(bd))
-                    {
-                        case ParameterStatus.Dead:
-                            hud.SetColor(FF9TextTool.Red);
-                            return;
-                        case ParameterStatus.Critical:
-                            hud.SetColor(FF9TextTool.Yellow);
-                            return;
-                        default:
-                            hud.SetColor(FF9TextTool.White);
-                            return;
-                    }
-                }
+                    hud.SetColor(bd.UIColorHP);
             }
 
             private void DisplayMp(Int32 playerId, BattleUnit bd)
@@ -160,12 +147,7 @@ public partial class BattleHUD : UIScene
                 numberSubModeHud.IsActive = true;
                 numberSubModeHud.Value.SetText(bd.CurrentMp.ToString());
                 numberSubModeHud.MaxValue.SetText(bd.MaximumMp.ToString());
-                if (!bd.IsTargetable)
-                    numberSubModeHud.SetColor(FF9TextTool.Gray);
-                else if (CheckMPState(bd) == ParameterStatus.Dead)
-                    numberSubModeHud.SetColor(FF9TextTool.Yellow);
-                else
-                    numberSubModeHud.SetColor(FF9TextTool.White);
+                numberSubModeHud.SetColor(bd.IsTargetable ? bd.UIColorMP : FF9TextTool.Gray);
             }
 
             private void DisplayBadStatus(Int32 playerId, BattleUnit bd)

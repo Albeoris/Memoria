@@ -1,10 +1,12 @@
 ﻿using FF9;
 using Memoria;
 using Memoria.Data;
+using Memoria.Scripts;
 using NCalc;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = System.Object;
 
 // ReSharper disable ClassNeverInstantiated.Global
 // ReSharper disable EmptyConstructor
@@ -21,16 +23,11 @@ public static class btl_stat
         p.status |= p.permanent_status;
     }
 
-    public static void InitCountDownStatus(BTL_DATA btl)
+    public static void StatusCommandCancel(BTL_DATA btl)
     {
-        // cdown_max is now updated in AlterStatus; its initialization there is not important
-        btl.stat.cnt.cdown_max = (Int16)((60 - btl.elem.wpr << 3) * FF9StateSystem.Battle.FF9Battle.status_data[27].conti_cnt);
-    }
-
-    public static void StatusCommandCancel(BTL_DATA btl, BattleStatus status)
-    {
-        if (Configuration.Mod.TranceSeek && CheckStatus(btl, BattleStatus.EasyKill) && (status & BattleStatus.Sleep) != 0) // [DV] Prevent command cancel for boss.
-            return;
+        // TODO [DV]
+        //if (Configuration.Mod.TranceSeek && CheckStatus(btl, BattleStatus.EasyKill) && (status & BattleStatus.Sleep) != 0) // [DV] Prevent command cancel for boss.
+        //    return;
         if (btl.bi.player != 0)
             UIManager.Battle.RemovePlayerFromAction(btl.btl_id, true);
         if (!btl_cmd.KillCommand2(btl))
@@ -41,155 +38,42 @@ public static class btl_stat
         btl.sel_mode = 0;
     }
 
-    public static UInt32 AlterStatus(BTL_DATA btl, BattleStatus status, BTL_DATA inflicter = null)
+    public static UInt32 AlterStatus(BattleUnit target, BattleStatusId statusId, BattleUnit inflicter = null, params Object[] parameters)
     {
-        BattleUnit unit = new BattleUnit(btl);
-        Dictionary<Int32, STAT_DATA> statusData = FF9StateSystem.Battle.FF9Battle.status_data;
+        Dictionary<BattleStatusId, BattleStatusDataEntry> statusDatabase = FF9StateSystem.Battle.FF9Battle.status_data;
+        BTL_DATA btl = target;
         STAT_INFO stat = btl.stat;
-        Int32 statusIndex = 0;
+        BattleStatus status = statusId.ToBattleStatus();
         if ((status & stat.invalid) != 0)
-            return 0;
+            return ALTER_RESIST;
         if ((status & stat.permanent) != 0 || ((status & stat.cur) != 0 && (status & BattleStatusConst.NoReset) != 0))
-            return 1;
+            return ALTER_INVALID;
         BattleStatus invalidStatuses = btl.bi.t_gauge == 0 ? BattleStatus.Trance : 0;
-        for (Int32 i = 0; i < 32; ++i)
-        {
-            BattleStatus bsi = (BattleStatus)(1U << i);
-            if ((status & bsi) != 0)
-                statusIndex = i;
-            if ((stat.cur & bsi) != 0)
-                invalidStatuses |= statusData[i].invalid;
-        }
+        foreach (BattleStatusId curStatus in stat.cur.ToStatusList())
+            invalidStatuses |= statusDatabase[curStatus].ImmunityProvided;
         if (btl_cmd.CheckSpecificCommand(btl, BattleCommandId.SysStone))
-            invalidStatuses |= statusData[0].invalid;
+            invalidStatuses |= statusDatabase[BattleStatusId.Petrify].ImmunityProvided;
         if ((status & invalidStatuses) != 0)
-            return 1;
-        if ((status & BattleStatusConst.AlterNoSet) == 0)
-        {
-            if ((status & BattleStatusConst.CmdCancel) != 0)
-                StatusCommandCancel(btl, status);
-            stat.cur |= status;
-        }
-        switch (status)
-        {
-            case BattleStatus.Petrify:
-                if (!btl_cmd.CheckUsingCommand(btl.cmd[2]))
-                {
-                    if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2 && Configuration.Battle.Speed < 3)
-                    {
-                        btl_cmd.SetCommand(btl.cmd[2], BattleCommandId.SysStone, 0, btl.btl_id, 0U);
-                        break;
-                    }
-                    stat.cur |= status;
-                    btl.bi.atb = 0;
-                    RemoveStatuses(btl, BattleStatus.GradualPetrify);
-                    SetStatusClut(btl, true);
-                    if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2 && (status & BattleStatusConst.CmdCancel) != 0)
-                        StatusCommandCancel(btl, status);
-                }
-                break;
-            case BattleStatus.Venom:
-                break;
-            case BattleStatus.Zombie:
-                if (unit.IsPlayer && !unit.IsUnderAnyStatus(BattleStatus.Trance))
-                    unit.Trance = 0;
-                SetStatusPolyColor(btl);
-                break;
-            case BattleStatus.Death:
-                if (unit.CurrentHp > 0)
-                {
-                    btl.fig_info |= Param.FIG_INFO_DEATH;
-                    new BattleUnit(btl).Kill(inflicter);
-                }
-                else
-                {
-                    unit.CurrentHp = 0;
-                }
-                unit.CurrentAtb = 0;
-                if (!btl_cmd.CheckUsingCommand(btl.cmd[2]))
-                {
-                    //btl_cmd.SetCommand(btl.cmd[2], BattleCommandId.SysDead, 0U, btl.btl_id, 0U);
-                    if (!unit.IsPlayer)
-                    {
-                        if (btl.die_seq == 0)
-                        {
-                            if (btl.bi.slave != 0)
-                                btl.die_seq = 5;
-                            else if (btl_util.getEnemyPtr(btl).info.die_atk == 0 || !btl_util.IsBtlBusy(btl, btl_util.BusyMode.CASTER | btl_util.BusyMode.QUEUED_CASTER))
-                                btl.die_seq = 1;
-                        }
-                        btl_sys.CheckForecastMenuOff(btl);
-                    }
-                }
-                if ((stat.cur & BattleStatus.Trance) != 0 && btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysTrans))
-                {
-                    Byte tranceValue = btl.trance;
-                    btl_stat.RemoveStatus(btl, BattleStatus.Trance);
-                    btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysTrans);
-                    if (tranceValue == 255)
-                        btl.trance = 254;
-                    else
-                        btl.trance = tranceValue;
-                }
-                break;
-            case BattleStatus.Berserk:
-            case BattleStatus.Heat:
-            case BattleStatus.Freeze:
-                SetStatusPolyColor(btl);
-                break;
-            case BattleStatus.Stop:
-                break;
-            case BattleStatus.Trance:
-                btl.special_status_old = false;
-                btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0, btl.btl_id, 0U);
-                break;
-            case BattleStatus.Sleep:
-                if (unit.IsPlayer && !btl.is_monster_transform)
-                {
-                    btl.bi.def_idle = 1;
-                    btl_mot.SetDefaultIdle(btl);
-                }
-                //if (unit.IsPlayer && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING) && !btl_util.IsBtlUsingCommand(btl))
-                //{
-                //    btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
-                //    btl.evt.animFrame = 0;
-                //}
-                break;
-            case BattleStatus.Haste:
-                if (CheckStatus(btl, BattleStatus.Slow))
-                {
-                    RemoveStatus(btl, BattleStatus.Slow);
-                    return 2;
-                }
-                btl_para.InitATB(btl);
-                btl.cur.at_coef = (SByte)(btl.cur.at_coef * 3 / 2);
-                stat.cur |= status;
-                break;
-            case BattleStatus.Slow:
-                if (CheckStatus(btl, BattleStatus.Haste))
-                {
-                    RemoveStatus(btl, BattleStatus.Haste);
-                    return 2;
-                }
-                btl_para.InitATB(btl);
-                btl.cur.at_coef = (SByte)(btl.cur.at_coef * 2 / 3);
-                stat.cur |= status;
-                break;
-            case BattleStatus.Vanish:
-                btl_mot.HideMesh(btl, btl.mesh_banish, true);
-                break;
-            case BattleStatus.Mini:
-                if ((stat.permanent & BattleStatus.Mini) != 0)
-                    return 1;
-                if ((stat.cur & BattleStatus.Mini) != 0)
-                {
-                    btl_stat.RemoveStatus(btl, BattleStatus.Mini);
-                    return 2;
-                }
-                stat.cur ^= status;
-                geo.geoScaleUpdate(btl, true);
-                break;
-        }
+            return ALTER_INVALID;
+        if (!stat.effects.TryGetValue(statusId, out StatusScriptBase script))
+            script = ScriptsLoader.GetStatusScript(statusId);
+        if (script == null)
+            throw new Exception($"[btl_stat] Trying to apply the status {statusId} but it doesn't have a script.");
+        UInt32 result = script.Apply(target, inflicter, parameters);
+        if (result != ALTER_SUCCESS)
+            return result;
+        // The status is successfully (re-)added
+        BattleStatusDataEntry statusData = statusDatabase[statusId];
+        stat.effects[statusId] = script;
+        stat.cur |= status;
+        if ((status & BattleStatusConst.CmdCancel) != 0)
+            StatusCommandCancel(btl);
+        if ((status & BattleStatusConst.ChgPolyClut) != 0)
+            SetStatusClut(btl, true);
+        if (statusData.SPSEffect >= 0)
+            HonoluluBattleMain.battleSPS.AddBtlSPSObj(target, statusId, spsId: statusData.SPSEffect, extraPos: statusData.SPSExtraPos);
+        if (statusData.SHPEffect >= 0)
+            HonoluluBattleMain.battleSPS.AddBtlSPSObj(target, statusId, shpId: statusData.SHPEffect, extraPos: statusData.SHPExtraPos);
         if (btl.bi.player != 0 && !btl.is_monster_transform && (status & BattleStatusConst.Immobilized & BattleStatusConst.IdleDying) != 0 && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
         {
             btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
@@ -197,322 +81,193 @@ public static class btl_stat
         }
         if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2 && (status & BattleStatusConst.BattleEnd) != 0)
             btl_sys.CheckBattlePhase(btl);
-        RemoveStatuses(btl, statusData[statusIndex].clear);
+        RemoveStatuses(target, statusData.ClearOnApply);
         if (CheckStatus(btl, BattleStatusConst.StopAtb))
             btl.bi.atb = 0;
         if ((status & BattleStatusConst.ContiCount) != 0)
         {
             Int16 defaultFactor = (status & BattleStatusConst.ContiBad) != 0 ? (Int16)(60 - btl.elem.wpr << 3) :
                                   (status & BattleStatusConst.ContiGood) != 0 ? (Int16)(btl.elem.wpr << 3) : (Int16)(60 - btl.elem.wpr << 2);
-            btl.stat.cnt.conti[statusIndex] = (Int16)(statusData[statusIndex].conti_cnt * defaultFactor);
+            btl.stat.conti[statusId] = (Int16)(statusData.ContiCnt * defaultFactor);
             if (!String.IsNullOrEmpty(Configuration.Battle.StatusDurationFormula))
             {
                 Expression e = new Expression(Configuration.Battle.StatusDurationFormula);
-                e.Parameters["StatusIndex"] = (Int32)statusIndex;
+                e.Parameters["StatusId"] = (Int32)statusId;
                 e.Parameters["IsPositiveStatus"] = (status & BattleStatusConst.ContiGood) != 0;
                 e.Parameters["IsNegativeStatus"] = (status & BattleStatusConst.ContiBad) != 0;
-                e.Parameters["ContiCnt"] = (Int32)statusData[statusIndex].conti_cnt;
-                e.Parameters["OprCnt"] = (Int32)statusData[statusIndex].opr_cnt;
+                e.Parameters["ContiCnt"] = (Int32)statusData.ContiCnt;
+                e.Parameters["OprCnt"] = (Int32)statusData.OprCnt;
                 e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                 e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Target");
-                NCalcUtility.InitializeExpressionNullableUnit(ref e, inflicter != null ? new BattleUnit(inflicter) : null, "Inflicter");
+                NCalcUtility.InitializeExpressionUnit(ref e, target, "Target");
+                NCalcUtility.InitializeExpressionNullableUnit(ref e, inflicter, "Inflicter");
                 Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
                 if (val >= 0)
-                    btl.stat.cnt.conti[statusIndex] = (Int16)Math.Min(val, Int16.MaxValue);
+                    btl.stat.conti[statusId] = (Int16)Math.Min(val, Int16.MaxValue);
             }
-            btl.stat.cnt.conti[statusIndex] = (Int16)(btl.stat_duration_factor[status] * btl.stat.cnt.conti[statusIndex]);
-            if ((status & (BattleStatus.Doom | BattleStatus.GradualPetrify)) != 0u)
-            {
-                if (Configuration.Mod.TranceSeek && unit.HasSupportAbility(SupportAbility1.AutoRegen)) // [DV] - SA Resilience
-                {
-                    btl.stat.cnt.conti[statusIndex] = (Int16)(statusData[statusIndex].conti_cnt * defaultFactor * 2);
-                    btl.stat.cnt.cdown_max = (Int16)Math.Max(1, btl.stat.cnt.conti[statusIndex] / 2);
-                }
-                else
-                {
-                    btl.stat.cnt.cdown_max = Math.Max((Int16)1, btl.stat.cnt.conti[statusIndex]);
-                }
-            }
+            btl.stat.conti[statusId] = (Int16)(btl.stat_duration_factor[statusId] * btl.stat.conti[statusId]);
+            // TODO [DV]
+            //if ((status & (BattleStatus.Doom | BattleStatus.GradualPetrify)) != 0u)
+            //{
+            //    if (Configuration.Mod.TranceSeek && target.HasSupportAbility(SupportAbility1.AutoRegen)) // [DV] - SA Resilience
+            //    {
+            //        btl.stat.cnt.conti[statusId] = (Int16)(statusData.ContiCnt * defaultFactor * 2);
+            //        btl.stat.cnt.cdown_max = (Int16)Math.Max(1, btl.stat.cnt.conti[statusId] / 2);
+            //    }
+            //    else
+            //    {
+            //        btl.stat.cnt.cdown_max = Math.Max(1, btl.stat.cnt.conti[statusId]);
+            //    }
+            //}
         }
-        if ((status & BattleStatusConst.OprCount) != 0)
-            SetOprStatusCount(btl, statusIndex);
-        HonoluluBattleMain.battleSPS.AddBtlSPSObj(unit, status);
+        if (script is IOprStatusScript)
+            SetOprStatusCount(target, statusId);
         if (btl.bi.player != 0)
             BattleAchievement.UpdateAbnormalStatus(status);
-        BattleVoice.TriggerOnStatusChange(btl, "Added", status);
-        return 2;
+        BattleVoice.TriggerOnStatusChange(btl, "Added", statusId);
+        return result;
     }
 
-    public static UInt32 AlterStatuses(BTL_DATA btl, BattleStatus statuses, BTL_DATA inflicter = null, Boolean usePartialResist = false)
+    public static UInt32 AlterStatuses(BattleUnit target, BattleStatus statuses, BattleUnit inflicter = null, Boolean usePartialResist = false)
     {
         UInt32 bestResult = 0;
-        for (Int32 index = 0; index < 32U; ++index)
+        foreach (BattleStatusId statusId in statuses.ToStatusList())
         {
-            BattleStatus status = (BattleStatus)(1U << index);
-            if ((statuses & status) != 0)
+            if (usePartialResist)
             {
-                Single rate = btl.stat_partial_resist[status];
-                if (usePartialResist && rate > 0f && Comn.random16() < rate * 65536f)
-                    bestResult = Math.Max(bestResult, 1);
-                else
-                    bestResult = Math.Max(bestResult, AlterStatus(btl, status, inflicter));
+                Single rate = target.PartialResistStatus[statusId];
+                if (rate > 0f && UnityEngine.Random.Range(0f, 1f) < rate)
+                {
+                    bestResult = Math.Max(bestResult, ALTER_INVALID);
+                    continue;
+                }
             }
+            bestResult = Math.Max(bestResult, AlterStatus(target, statusId, inflicter));
         }
         return bestResult;
     }
 
-    public static UInt32 RemoveStatus(BTL_DATA btl, BattleStatus status)
+    public static UInt32 RemoveStatus(BattleUnit unit, BattleStatusId statusId)
     {
+        BattleStatus status = statusId.ToBattleStatus();
+        BTL_DATA btl = unit;
         STAT_INFO stat = btl.stat;
-        if ((stat.permanent & status) != 0 || (stat.cur & status) == 0 || btl.bi.player == 0 && FF9StateSystem.Battle.FF9Battle.btl_phase == 5 && (status & BattleStatusConst.BattleEnd) != 0)
+        if ((stat.permanent & status) != 0 || (stat.cur & status) == 0 || (btl.bi.player == 0 && FF9StateSystem.Battle.FF9Battle.btl_phase == 5 && (status & BattleStatusConst.BattleEnd) != 0))
             return 1;
-        stat.cur &= ~status;
-        switch (status)
+        if (stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
         {
-            case BattleStatus.Petrify:
-                btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysStone);
-                SetStatusClut(btl, false);
-                break;
-            case BattleStatus.Zombie:
-            case BattleStatus.Heat:
-            case BattleStatus.Freeze:
-                if (CheckStatus(btl, BattleStatusConst.ChgPolyCol))
-                    SetStatusPolyColor(btl);
-                break;
-            case BattleStatus.Death:
-                btl.die_seq = 0;
-                //btl.bi.dmg_mot_f = 0;
-                btl.bi.cmd_idle = 0;
-                btl.bi.death_f = 0;
-                btl.bi.stop_anim = 0;
-                btl.escape_key = 0;
-                btl.killer_track = null;
-                if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) || btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE))
-                {
-                    GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
-                    if (btl.bi.player != 0)
-                        GeoTexAnim.geoTexAnimPlay(btl.tranceTexanimptr, 2);
-                    //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_GET_UP_DISABLE);
-                    //btl.evt.animFrame = 0;
-                }
-                if (!btl_util.IsBtlUsingCommand(btl, out CMD_DATA cmd) || !btl_util.IsCommandDeclarable(cmd.cmd_no))
-                    btl.sel_mode = 0;
-                btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysDead);
-                if ((btl.stat.permanent & BattleStatus.Regen) != 0)
-                    SetOprStatusCount(btl, 18);
-                break;
-            case BattleStatus.Confuse:
-                Vector3 eulerAngles = btl.rot.eulerAngles;
-                eulerAngles.y = btl.evt.rotBattle.eulerAngles.y;
-                btl.rot = Quaternion.Euler(eulerAngles);
-                StatusCommandCancel(btl, status);
-                break;
-            case BattleStatus.Berserk:
-                StatusCommandCancel(btl, status);
-                if (CheckStatus(btl, BattleStatusConst.ChgPolyCol))
-                    SetStatusPolyColor(btl);
-                break;
-            case BattleStatus.Trance:
-                btl.trance = 0;
-                if (Status.checkCurStat(btl, BattleStatus.Jump))
-                {
-                    RemoveStatus(btl, BattleStatus.Jump);
-                    btl.SetDisappear(false, 2);
-                    btl_mot.setBasePos(btl);
-                    btl_mot.setMotion(btl, btl.bi.def_idle);
-                    btl.evt.animFrame = 0;
-                }
-                btl_cmd.SetCommand(btl.cmd[4], BattleCommandId.SysTrans, 0, btl.btl_id, 0U);
-                break;
-            case BattleStatus.Haste:
-            case BattleStatus.Slow:
-                btl_para.InitATB(btl);
-                break;
-            case BattleStatus.Float:
-                Single value = 0f;
-                btl.pos[1] = value;
-                btl.base_pos[1] = value;
-                break;
-            case BattleStatus.Vanish:
-                btl_mot.ShowMesh(btl, btl.mesh_banish, true);
-                break;
-            case BattleStatus.Doom:
-                if (btl.deathMessage != null)
-                {
-                    Singleton<HUDMessage>.Instance.ReleaseObject(btl.deathMessage);
-                    btl.deathMessage = null;
-                }
-                break;
-            case BattleStatus.Mini:
-                geo.geoScaleUpdate(btl, true);
-                break;
-            case BattleStatus.Jump:
-                btl.tar_mode = 3;
-                btl.bi.atb = 1;
-                if (btl.bi.player != 0 && !FF9StateSystem.Settings.IsATBFull)
-                    btl.cur.at = 0;
-                btl.sel_mode = 0;
-                btl.cmd[3].cmd_no = BattleCommandId.None;
-                btl.cmd[3].tar_id = 0;
-                break;
-            case BattleStatus.GradualPetrify:
-                if (btl.petrifyMessage != null)
-                {
-                    Singleton<HUDMessage>.Instance.ReleaseObject(btl.petrifyMessage);
-                    btl.petrifyMessage = null;
-                }
-                btl_cmd.KillSpecificCommand(btl, BattleCommandId.SysStone);
-                break;
+            if (!effect.Remove(unit))
+                return 1;
+            stat.effects.Remove(statusId);
         }
-        HonoluluBattleMain.battleSPS.RemoveBtlSPSObj(btl, status);
-        BattleVoice.TriggerOnStatusChange(btl, "Removed", status);
+        BattleStatusDataEntry statusData = statusId.GetStatData();
+        stat.cur &= ~status;
+        if ((status & BattleStatusConst.ChgPolyClut) != 0)
+            SetStatusClut(btl, CheckStatus(btl, BattleStatusConst.ChgPolyClut));
+        if (statusData.SPSEffect >= 0 || statusData.SHPEffect >= 0)
+            HonoluluBattleMain.battleSPS.RemoveBtlSPSObj(unit, statusId);
+        BattleVoice.TriggerOnStatusChange(btl, "Removed", statusId);
         return 2;
     }
 
-    public static UInt32 RemoveStatuses(BTL_DATA btl, BattleStatus statuses)
+    public static UInt32 RemoveStatuses(BattleUnit unit, BattleStatus statuses)
     {
-        UInt32 num = 1;
-        for (Int32 index = 0; index < 32U; ++index)
-        {
-            BattleStatus status = (BattleStatus)(1U << index);
-            if (((Int32)statuses & (Int32)status) != 0 && (Int32)RemoveStatus(btl, status) == 2)
-                num = 2U;
-        }
-        return num;
+        UInt32 result = 1;
+        foreach (BattleStatusId statusId in statuses.ToStatusList())
+            result = Math.Max(result, RemoveStatus(unit, statusId));
+        return result;
     }
 
-    public static void MakeStatusesPermanent(BTL_DATA btl, BattleStatus statuses, Boolean flag = true, BTL_DATA inflicter = null)
+    public static void MakeStatusesPermanent(BattleUnit unit, BattleStatus statuses, Boolean flag = true, BattleUnit inflicter = null)
     {
         if (flag)
         {
-            if ((statuses & BattleStatus.Haste) != 0)
-                RemoveStatus(btl, BattleStatus.Slow);
-            if ((statuses & BattleStatus.Slow) != 0)
-                RemoveStatus(btl, BattleStatus.Haste);
-            AlterStatuses(btl, statuses, inflicter);
-            btl.stat.permanent |= statuses;
+            UInt32 alterResult = AlterStatuses(unit, statuses, inflicter);
+            if (alterResult == ALTER_SUCCESS_NO_SET) // Try a second time, in case it removed an opposite status
+                AlterStatuses(unit, statuses, inflicter);
+            unit.Data.stat.permanent |= statuses & unit.CurrentStatus;
             // Permanent statuses should also be registered as current statuses
             //btl.stat.cur &= ~(statuses & btl.stat.cur);
         }
         else
         {
-            btl.stat.permanent &= ~statuses;
-            btl_stat.RemoveStatuses(btl, statuses);
+            // Don't remove the status if it wasn't permanent in the first place
+            statuses &= unit.Data.stat.permanent;
+            unit.Data.stat.permanent &= ~statuses;
+            btl_stat.RemoveStatuses(unit, statuses);
         }
     }
 
-    public static void SetOprStatusCount(BTL_DATA btl, Int32 statTblNo)
+    public static void SetOprStatusCount(BattleUnit unit, BattleStatusId statusId)
     {
-        UInt16 oprIndex;
+        // Formula priorities:
+        // (1) IOprStatusScript.SetupOpr
+        // (2) StatusTickFormula
+        // (3) Default hardcoded Opr duration
+        BTL_DATA btl = unit;
         UInt16 defaultFactor;
-        if (statTblNo == 1) // Venom
-        {
-            oprIndex = 0;
+        if (statusId == BattleStatusId.Venom) // Venom
             defaultFactor = (UInt16)((UInt32)btl.elem.wpr << 2);
-        }
-        else if (statTblNo == 16) // Poison
-        {
-            oprIndex = 1;
+        else if (statusId == BattleStatusId.Poison) // Poison
             defaultFactor = (UInt16)((UInt32)btl.elem.wpr << 2);
-        }
-        else // Regen
-        {
-            oprIndex = 2;
+        else // Regen or others
             defaultFactor = (UInt16)(60 - btl.elem.wpr << 2);
+        btl.stat.opr[statusId] = (Int16)(statusId.GetStatData().OprCnt * defaultFactor);
+        if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect) && (effect as IOprStatusScript)?.SetupOpr != null)
+        {
+            btl.stat.opr[statusId] = (effect as IOprStatusScript).SetupOpr(unit);
         }
-        btl.stat.cnt.opr[oprIndex] = (Int16)(FF9StateSystem.Battle.FF9Battle.status_data[statTblNo].opr_cnt * defaultFactor);
-        if (!String.IsNullOrEmpty(Configuration.Battle.StatusTickFormula))
+        else if (!String.IsNullOrEmpty(Configuration.Battle.StatusTickFormula))
         {
             Expression e = new Expression(Configuration.Battle.StatusTickFormula);
-            e.Parameters["StatusIndex"] = (Int32)statTblNo;
-            e.Parameters["IsPositiveStatus"] = oprIndex == 2;
-            e.Parameters["IsNegativeStatus"] = oprIndex == 0 || oprIndex == 1;
-            e.Parameters["ContiCnt"] = (Int32)FF9StateSystem.Battle.FF9Battle.status_data[statTblNo].conti_cnt;
-            e.Parameters["OprCnt"] = (Int32)FF9StateSystem.Battle.FF9Battle.status_data[statTblNo].opr_cnt;
+            e.Parameters["StatusId"] = (Int32)statusId;
+            e.Parameters["IsPositiveStatus"] = (BattleStatusConst.AnyPositive & statusId.ToBattleStatus()) != 0;
+            e.Parameters["IsNegativeStatus"] = (BattleStatusConst.AnyNegative & statusId.ToBattleStatus()) != 0;
+            e.Parameters["ContiCnt"] = (Int32)statusId.GetStatData().ContiCnt;
+            e.Parameters["OprCnt"] = (Int32)statusId.GetStatData().OprCnt;
             e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
             e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-            NCalcUtility.InitializeExpressionUnit(ref e, new BattleUnit(btl), "Target");
+            NCalcUtility.InitializeExpressionUnit(ref e, unit, "Target");
             Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
             if (val >= 0)
-                btl.stat.cnt.opr[oprIndex] = (Int16)Math.Min(val, Int16.MaxValue);
+                btl.stat.opr[statusId] = (Int16)Math.Min(val, Int16.MaxValue);
         }
     }
 
     public static void SetPresentColor(BTL_DATA btl)
     {
-        if (CheckStatus(btl, BattleStatus.Petrify))
+        if (CheckStatus(btl, BattleStatusConst.ChgPolyClut))
             SetStatusClut(btl, true);
-        else if (CheckStatus(btl, BattleStatusConst.ChgPolyCol))
-            SetStatusPolyColor(btl);
         btl_util.SetBBGColor(btl.gameObject);
-        if (btl.bi.player == 0)
-            return;
-        btl_util.SetBBGColor(btl.weapon_geo);
-    }
-
-    private static void SetStatusPolyColor(BTL_DATA btl)
-    {
-        BBGINFO bbgInfoPtr = battlebg.nf_GetBbgInfoPtr();
-        Int16[] numArray1 = new Int16[3];
-        Int16[] numArray2 = new Int16[3] { bbgInfoPtr.chr_r, bbgInfoPtr.chr_g, bbgInfoPtr.chr_b };
-        if (CheckStatus(btl, BattleStatus.Zombie))
-        {
-            numArray1[0] = 48;
-            numArray1[1] = 72;
-            numArray1[2] = 88;
-        }
-        else if (CheckStatus(btl, BattleStatus.Berserk))
-        {
-            numArray1[0] = -16;
-            numArray1[1] = 40;
-            numArray1[2] = 40;
-        }
-        else if (CheckStatus(btl, BattleStatus.Heat))
-        {
-            numArray1[0] = -80;
-            numArray1[1] = 16;
-            numArray1[2] = 72;
-        }
-        else if (CheckStatus(btl, BattleStatus.Freeze))
-        {
-            numArray1[0] = 48;
-            numArray1[1] = 0;
-            numArray1[2] = -96;
-        }
-        else
-            numArray1[0] = numArray1[1] = numArray1[2] = 0;
-        for (Int32 index = 0; index < 3; ++index)
-            btl.add_col[index] = numArray2[index] - numArray1[index] >= 0 ? numArray2[index] - numArray1[index] <= Byte.MaxValue ? (Byte)((UInt32)numArray2[index] - (UInt32)numArray1[index]) : Byte.MaxValue : (Byte)0;
+        if (btl.weapon_geo != null)
+            btl_util.SetBBGColor(btl.weapon_geo);
     }
 
     public static void SetStatusClut(BTL_DATA btl, Boolean sw)
     {
-        GameObject gameObject = btl.gameObject;
-        Int32 num = !sw ? 0 : 1;
-        if (num != 0)
+        Int32 petrifyFlag = sw ? 1 : 0;
+        if (sw)
             GeoTexAnim.geoTexAnimFreezeState(btl);
         else
             GeoTexAnim.geoTexAnimReturnState(btl);
-        foreach (Renderer componentsInChild in gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
-            componentsInChild.material.SetFloat("_IsPetrify", num);
-        foreach (Renderer componentsInChild in gameObject.GetComponentsInChildren<MeshRenderer>())
-        {
-            foreach (Material material in componentsInChild.materials)
-                material.SetFloat("_IsPetrify", num);
-        }
+        foreach (Renderer renderers in btl.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>())
+            renderers.material.SetFloat("_IsPetrify", petrifyFlag);
+        foreach (Renderer renderers in btl.gameObject.GetComponentsInChildren<MeshRenderer>())
+            foreach (Material material in renderers.materials)
+                material.SetFloat("_IsPetrify", petrifyFlag);
     }
 
     public static Boolean CheckStatus(BTL_DATA btl, BattleStatus status)
     {
-        return (btl.stat.permanent & status) != 0 || (btl.stat.cur & status) != 0;
+        // Permanent statuses are also current, at least that's the target behaviour
+        //return (btl.stat.permanent & status) != 0 || (btl.stat.cur & status) != 0;
+        return (btl.stat.cur & status) != 0;
     }
 
-    public static void CheckStatusLoop(BTL_DATA btl)
+    public static void CheckStatusLoop(BattleUnit unit)
     {
-        FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
+        BTL_DATA btl = unit.Data;
         STAT_INFO stat = btl.stat;
-        BattleUnit unit = new BattleUnit(btl);
 
         SetStatusVfx(unit);
 
@@ -522,97 +277,55 @@ public static class btl_stat
             return;
         }
 
-        if (unit.IsUnderAnyStatus(BattleStatus.Petrify))
-            return;
-
-        if (!unit.IsUnderAnyStatus(BattleStatus.Stop | BattleStatus.Jump))
+        if (!unit.IsUnderAnyStatus(BattleStatusConst.StopAtb))
             btl.bi.atb = 1;
 
         if (!UIManager.Battle.FF9BMenu_IsEnableAtb())
             return;
 
         if (btl.bi.atb == 0)
-        {
-            if (unit.IsUnderStatus(BattleStatus.Jump) && (ff9Battle.cmd_status & 16) == 0 && (stat.cnt.conti[(Int32)BattleStatusNumber.Jump - 1] -= btl.cur.at_coef) < 0)
-            {
-                if (btl.cmd[3].cmd_no == BattleCommandId.Jump)
-                    btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.JumpAttack, (Int32)BattleAbilityId.Spear1, btl.cmd[3].tar_id, Comn.countBits(btl.cmd[3].tar_id) > 1 ? 1u : 0u);
-                else
-                    btl_cmd.SetCommand(btl.cmd[1], BattleCommandId.JumpTrance, (Int32)BattleAbilityId.Spear2, btl.cmd[3].tar_id, Comn.countBits(btl.cmd[3].tar_id) > 1 ? 1u : 0u);
-            }
-
             return;
-        }
 
-        if (unit.IsUnderAnyStatus(BattleStatus.Venom))
+        BattleStatus removeList = 0;
+        foreach (BattleStatusId statusId in unit.CurrentStatus.ToStatusList())
         {
-            if (stat.cnt.opr[0] <= 0)
+            if ((statusId.ToBattleStatus() & BattleStatusConst.OprCount) == 0)
+                continue;
+            if (stat.opr[statusId] <= 0)
             {
-                SetOprStatusCount(btl, 1);
-                btl_para.SetPoisonDamage(btl);
-                btl_para.SetPoisonMpDamage(btl);
-                btl2d.Btl2dStatReq(btl);
+                Boolean shouldRemove = false;
+                SetOprStatusCount(unit, statusId);
+                if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect) && effect is IOprStatusScript)
+                    shouldRemove = (effect as IOprStatusScript).OnOpr(unit);
+                if (shouldRemove)
+                    removeList |= statusId.ToBattleStatus();
             }
             else
             {
-                stat.cnt.opr[0] -= btl.cur.at_coef;
+                stat.opr[statusId] -= btl.cur.at_coef;
             }
         }
+        foreach (BattleStatusId statusId in removeList.ToStatusList())
+            RemoveStatus(unit, statusId);
 
-        if (unit.IsUnderAnyStatus(BattleStatus.Poison))
-        {
-            if (stat.cnt.opr[1] <= 0)
-            {
-                SetOprStatusCount(btl, 16);
-                btl_para.SetPoisonDamage(btl);
-                btl2d.Btl2dStatReq(btl);
-            }
-            else
-            {
-                stat.cnt.opr[1] -= btl.cur.at_coef;
-            }
-        }
+        // TODO [DV]
+        //if (Configuration.Mod.TranceSeek)
+        //{
+        //    if (unit.IsUnderAnyStatus(BattleStatus.Virus))
+        //    {
+        //        if (btl.cur.hp > 0U)
+        //            btl.cur.hp -= 1U;
+        //        else
+        //            unit.Kill();
+        //    }
+        //}
 
-        if (unit.IsUnderAnyStatus(BattleStatus.Regen))
-        {
-            if (stat.cnt.opr[2] <= 0)
-            {
-                SetOprStatusCount(btl, 18);
-                btl_para.SetRegeneRecover(btl);
-                btl2d.Btl2dStatReq(btl);
-            }
-            else
-            {
-                stat.cnt.opr[2] -= btl.cur.at_coef;
-            }
-        }
-        if (Configuration.Mod.TranceSeek)
-        {
-            if (unit.IsUnderAnyStatus(BattleStatus.Virus))
-            {
-                if (btl.cur.hp > 0U)
-                    btl.cur.hp -= 1U;
-                else
-                    new BattleUnit(btl).Kill();
-            }
-        }
-        if (unit.IsUnderAnyStatus(BattleStatus.Trance) && btl.bi.slot_no == (Byte)CharacterId.Garnet && (ff9Battle.cmd_status & 4) != 0 && (ff9Battle.cmd_status & 8) == 0)
-        {
-            if (ff9Battle.phantom_cnt <= 0)
-            {
-                btl_cmd.SetCommand(btl.cmd[3], BattleCommandId.SysPhantom, (Int32)ff9Battle.phantom_no, btl_util.GetStatusBtlID(1U, 0U), 8U);
-                ff9Battle.cmd_status |= 8;
-            }
-            else
-            {
-                ff9Battle.phantom_cnt -= btl.cur.at_coef;
-            }
-        }
-        ActiveTimeStatus(btl);
+        ActiveTimeStatus(unit);
     }
 
     public static void RotateAfterCheckStatusLoop(BTL_DATA btl)
     {
+        // Dummied
         if (CheckStatus(btl, BattleStatus.Confuse)
             && !btl_util.IsBtlUsingCommand(btl)
             && (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL)
@@ -629,71 +342,108 @@ public static class btl_stat
     {
         BTL_DATA data = unit.Data;
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-        if (data.bi.disappear == 0 && !CheckStatus(data, BattleStatus.Petrify))
-        {
-            BBGINFO bbgInfoPtr = battlebg.nf_GetBbgInfoPtr();
-            if (CheckStatus(data, BattleStatusConst.ChgPolyCol))
-            {
-                if (!FF9StateSystem.Battle.isFade)
-                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
-                btl_util.GeoSetColor2DrawPacket(data.gameObject, data.add_col[0], data.add_col[1], data.add_col[2], Byte.MaxValue);
-                if (data.weapon_geo)
-                    btl_util.GeoSetColor2DrawPacket(data.weapon_geo, data.add_col[0], data.add_col[1], data.add_col[2], Byte.MaxValue);
-            }
-            else if (data.special_status_old) // [DV] - Add a glow effect
-            {
-                if (!FF9StateSystem.Battle.isFade)
-                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
-                Byte counter = (Byte)(ff9Battle.btl_cnt % 24);
-                Byte strength = (Byte)(counter >= 8 ? (counter >= 16 ? (24 - counter) : 8) : (counter + 2));
-                Int32 OldGlow = -192;
-                Int16 r = (Int16)((bbgInfoPtr.chr_r - OldGlow) * strength >> 3);
-                Int16 g = (Int16)((bbgInfoPtr.chr_g - OldGlow) * strength >> 3);
-                Int16 b = (Int16)((bbgInfoPtr.chr_b - OldGlow) * strength >> 3);
-                GeoAddColor2DrawPacket(data.gameObject, r, g, b);
-                if (data.weapon_geo)
-                    GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
-            }
-            else if (CheckStatus(data, BattleStatus.Shell | BattleStatus.Protect))
-            {
-                if (!FF9StateSystem.Battle.isFade)
-                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
-                Byte counter = (Byte)(ff9Battle.btl_cnt % 24);
-                Byte strength = (Byte)(counter >= 8 ? (counter >= 16 ? (24 - counter) : 8) : counter);
-                Boolean shellGlow = CheckStatus(data, BattleStatus.Shell) && (!CheckStatus(data, BattleStatus.Protect) || ff9Battle.btl_cnt % 48 >= 24);
-                Int32 rGlow = shellGlow ? 64 : -40;
-                Int32 gGlow = shellGlow ? -24 : -40;
-                Int32 bGlow = shellGlow ? -72 : 80;
-                Int16 r = (Int16)((bbgInfoPtr.chr_r - rGlow) * strength >> 3);
-                Int16 g = (Int16)((bbgInfoPtr.chr_g - gGlow) * strength >> 3);
-                Int16 b = (Int16)((bbgInfoPtr.chr_b - bGlow) * strength >> 3);
-                GeoAddColor2DrawPacket(data.gameObject, r, g, b);
-                if (data.weapon_geo)
-                    GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
-            }
-            else if (!unit.IsUnderStatus(BattleStatus.Death) && ((unit.IsPlayer && unit.IsUnderAnyStatus(BattleStatus.Trance)) || (!unit.IsPlayer && unit.Data.enable_trance_glow)))
-            {
-                if (!FF9StateSystem.Battle.isFade)
-                    btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
-                Byte counter = (Byte)(ff9Battle.btl_cnt % 16);
-                Byte strength = counter >= 8 ? (Byte)(16U - counter) : counter;
-                Byte[] glowingColor = unit.IsPlayer ? btl_mot.BattleParameterList[unit.SerialNumber].TranceGlowingColor : unit.Enemy.Data.trance_glowing_color;
-                Int16 r = (Int16)((bbgInfoPtr.chr_r - (128 - glowingColor[0])) * strength >> 3);
-                Int16 g = (Int16)((bbgInfoPtr.chr_g - (128 - glowingColor[1])) * strength >> 3);
-                Int16 b = (Int16)((bbgInfoPtr.chr_b - (128 - glowingColor[2])) * strength >> 3);
-                GeoAddColor2DrawPacket(data.gameObject, r, g, b);
-                if (data.weapon_geo)
-                    GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
-            }
-            else
-            {
-                SetDefaultShader(data);
-            }
-        }
-        else if (CheckStatus(data, BattleStatus.Petrify))
+        if (CheckStatus(data, BattleStatusConst.ChgPolyClut))
         {
             SetDefaultShader(data);
             SetStatusClut(data, true);
+        }
+        else if (data.bi.disappear == 0)
+        {
+            List<BattleStatusDataEntry> retainedData = new List<BattleStatusDataEntry>();
+            BBGINFO bbgInfoPtr = battlebg.nf_GetBbgInfoPtr();
+            Int32 highestPriority = Int32.MinValue;
+            Boolean useColor = false;
+            foreach (BattleStatusId statusId in unit.CurrentStatus.ToStatusList())
+            {
+                BattleStatusDataEntry statusData = statusId.GetStatData();
+                if (statusData.ColorKind > 0)
+                {
+                    if (statusData.ColorPriority == highestPriority)
+                    {
+                        retainedData.Add(statusData);
+                    }
+                    else if (statusData.ColorPriority > highestPriority)
+                    {
+                        retainedData.Clear();
+                        retainedData.Add(statusData);
+                        highestPriority = statusData.ColorPriority;
+                    }
+                }
+            }
+            if (retainedData.Count > 0)
+            {
+                Int32 kind = retainedData[0].ColorKind;
+                useColor = true;
+                switch (kind)
+                {
+                    case 0: // Like Freeze or Berserk
+                    {
+                        Byte r = (Byte)Mathf.Clamp(bbgInfoPtr.chr_r + retainedData[0].ColorBase[0], 0, Byte.MaxValue);
+                        Byte g = (Byte)Mathf.Clamp(bbgInfoPtr.chr_g + retainedData[0].ColorBase[1], 0, Byte.MaxValue);
+                        Byte b = (Byte)Mathf.Clamp(bbgInfoPtr.chr_b + retainedData[0].ColorBase[2], 0, Byte.MaxValue);
+                        if (!FF9StateSystem.Battle.isFade)
+                            btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                        btl_util.GeoSetColor2DrawPacket(data.gameObject, r, g, b, Byte.MaxValue);
+                        if (data.weapon_geo)
+                            btl_util.GeoSetColor2DrawPacket(data.weapon_geo, r, g, b, Byte.MaxValue);
+                        break;
+                    }
+                    case 1: // Like Shell or Protect
+                    {
+                        Int32 index = ff9Battle.btl_cnt % (24 * retainedData.Count);
+                        Byte counter = (Byte)(ff9Battle.btl_cnt % 24);
+                        Byte strength = (Byte)(counter >= 8 ? (counter >= 16 ? (24 - counter) : 8) : counter);
+                        Int16 r = (Int16)((bbgInfoPtr.chr_r + retainedData[index].ColorBase[0]) * strength >> 3);
+                        Int16 g = (Int16)((bbgInfoPtr.chr_g + retainedData[index].ColorBase[1]) * strength >> 3);
+                        Int16 b = (Int16)((bbgInfoPtr.chr_b + retainedData[index].ColorBase[2]) * strength >> 3);
+                        if (!FF9StateSystem.Battle.isFade)
+                            btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                        GeoAddColor2DrawPacket(data.gameObject, r, g, b);
+                        if (data.weapon_geo)
+                            GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
+                        break;
+                    }
+                    case 2: // Trance
+                    {
+                        if (!unit.IsUnderStatus(BattleStatus.Death) && ((unit.IsPlayer && unit.IsUnderAnyStatus(BattleStatus.Trance)) || (!unit.IsPlayer && unit.Data.enable_trance_glow)))
+                        {
+                            Byte counter = (Byte)(ff9Battle.btl_cnt % 16);
+                            Byte strength = counter >= 8 ? (Byte)(16 - counter) : counter;
+                            Int32[] glowingColor = unit.IsPlayer ? btl_mot.BattleParameterList[unit.SerialNumber].TranceGlowingColor : unit.Enemy.Data.trance_glowing_color;
+                            Int16 r = (Int16)((bbgInfoPtr.chr_r + glowingColor[0] - 128) * strength >> 3);
+                            Int16 g = (Int16)((bbgInfoPtr.chr_g + glowingColor[1] - 128) * strength >> 3);
+                            Int16 b = (Int16)((bbgInfoPtr.chr_b + glowingColor[2] - 128) * strength >> 3);
+                            if (!FF9StateSystem.Battle.isFade)
+                                btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                            GeoAddColor2DrawPacket(data.gameObject, r, g, b);
+                            if (data.weapon_geo)
+                                GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
+                        }
+                        else
+                        {
+                            useColor = false;
+                        }
+                        break;
+                    }
+                }
+            }
+            if (!useColor)
+                SetDefaultShader(data);
+            // TODO [DV]
+            //if (data.special_status_old) // [DV] - Add a glow effect
+            //{
+            //    if (!FF9StateSystem.Battle.isFade)
+            //        btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+            //    Byte counter = (Byte)(ff9Battle.btl_cnt % 24);
+            //    Byte strength = (Byte)(counter >= 8 ? (counter >= 16 ? (24 - counter) : 8) : (counter + 2));
+            //    Int32 OldGlow = -192;
+            //    Int16 r = (Int16)((bbgInfoPtr.chr_r - OldGlow) * strength >> 3);
+            //    Int16 g = (Int16)((bbgInfoPtr.chr_g - OldGlow) * strength >> 3);
+            //    Int16 b = (Int16)((bbgInfoPtr.chr_b - OldGlow) * strength >> 3);
+            //    GeoAddColor2DrawPacket(data.gameObject, r, g, b);
+            //    if (data.weapon_geo)
+            //        GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
+            //}
         }
         if (FF9StateSystem.Battle.isDebug && FF9StateSystem.Battle.isLevitate)
         {
@@ -704,19 +454,6 @@ public static class btl_stat
                 pos.y *= -1f;
             }
             data.pos = pos;
-        }
-        // Hovering movement, except for auto-floating enemies
-        if ((data.stat.cur & BattleStatus.Float) != 0u && ((data.stat.permanent & BattleStatus.Float) == 0 || unit.IsNonMorphedPlayer))
-        {
-            Single y = -200 - (Int32)(30 * ff9.rsin((ff9Battle.btl_cnt & 15) << 8) / 4096f);
-            Vector3 vector = data.base_pos;
-            vector.y = y;
-            vector.y *= -1f;
-            data.base_pos = vector;
-            vector = data.pos;
-            vector.y = y;
-            vector.y *= -1f;
-            data.pos = vector;
         }
     }
 
@@ -782,104 +519,90 @@ public static class btl_stat
         }
     }
 
-    private static void ActiveTimeStatus(BTL_DATA btl)
+    private static void ActiveTimeStatus(BattleUnit unit)
     {
-        for (Int32 index = 0; index < 32; ++index)
+        BTL_DATA btl = unit;
+        STAT_INFO stat = btl.stat;
+        foreach (BattleStatusId statusId in (unit.CurrentStatus & BattleStatusConst.ContiCount).ToStatusList())
         {
-            if (btl.stat.cnt.conti[index] >= 0) // [DV] For Trance Seek purpose, to make some status dissapear for bosses.
-                btl.stat.cnt.conti[index] -= btl.cur.at_coef;
-            BattleStatus status = (BattleStatus)(1 << index);
-            if ((btl.stat.cur & BattleStatusConst.ContiCount & status) != 0 && btl.stat.cnt.conti[index] < 0)
+            // TODO [DV]
+            //if (stat.conti[statusId] >= 0) // [DV] For Trance Seek purpose, to make some status dissapear for bosses.
+            //    stat.conti[statusId] -= btl.cur.at_coef;
+            if (stat.conti[statusId] < 0)
             {
-                if ((status & BattleStatus.GradualPetrify) != 0)
-                {
-                    if (!btl_cmd.CheckUsingCommand(btl.cmd[2]))
-                    {
-                        if (AlterStatus(btl, BattleStatus.Petrify) == 2)
-                        {
-                            BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.GradualPetrify);
-                        }
-                        else
-                        {
-                            RemoveStatus(btl, BattleStatus.GradualPetrify);
-                            btl.fig_info |= Param.FIG_INFO_MISS;
-                            btl2d.Btl2dReq(btl);
-                        }
-                    }
-                }
-                else if ((status & BattleStatus.Doom) != 0)
-                {
-                    if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
-                    {
-                        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Add 2 random status at the end of countdown.
-                        {
-                            List<BattleStatus> statuschoosen = new List<BattleStatus>{ BattleStatus.Poison, BattleStatus.Venom, BattleStatus.Blind, BattleStatus.Silence, BattleStatus.Trouble,
-                            BattleStatus.Sleep, BattleStatus.Freeze, BattleStatus.Heat, BattleStatus.Mini, BattleStatus.Petrify, BattleStatus.GradualPetrify,
-                            BattleStatus.Berserk, BattleStatus.Confuse, BattleStatus.Stop, BattleStatus.Zombie, BattleStatus.Slow };
-
-                            for (Int32 i = 0; i < (statuschoosen.Count - 1); i++)
-                            {
-                                if ((statuschoosen[i] & btl.stat.invalid) != 0)
-                                {
-                                    statuschoosen.Remove(statuschoosen[i]);
-                                }
-                            }
-
-                            for (Int32 i = 0; i < 2; i++)
-                            {
-                                AlterStatus(btl, statuschoosen[GameRandom.Next16() % statuschoosen.Count]);
-                            }
-                            RemoveStatus(btl, status);
-                        }
-                        else
-                        {
-                            // Enemies affected by Doom but with Easy kill proof (doesn't exist in vanilla) lose 1/5 of their Max HP instead (non-capped, except for avoiding softlocks)
-                            // Might want to add a Configuration option for that effect...
-                            Int32 doom_damage = (Int32)btl_para.GetLogicalHP(btl, true) / 5;
-                            if (doom_damage > Math.Max(btl.cur.hp - 1, 9999))
-                                doom_damage = (Int32)btl.cur.hp - 1;
-                            if (doom_damage > 0)
-                            {
-                                BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Doom);
-                                btl_stat.RemoveStatus(btl, status);
-                                btl.fig_info = Param.FIG_INFO_DISP_HP;
-                                btl_para.SetDamage(new BattleUnit(btl), doom_damage, (Byte)(btl_mot.checkMotion(btl, btl.bi.def_idle) ? 1 : 0));
-                                btl2d.Btl2dReq(btl);
-                            }
-                            else
-                            {
-                                btl.fig_info |= Param.FIG_INFO_MISS;
-                                btl2d.Btl2dReq(btl);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Doom);
-                        btl_stat.AlterStatus(btl, BattleStatus.Death);
-                        btl2d.Btl2dReq(btl);
-                    }
-                }
-                else
-                {
-                    RemoveStatus(btl, status);
-                }
+                RemoveStatus(unit, statusId);
+                // TODO [DV]
+                //if ((status & BattleStatus.Doom) != 0)
+                //{
+                //    if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
+                //    {
+                //        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Add 2 random status at the end of countdown.
+                //        {
+                //            List<BattleStatus> statuschoosen = new List<BattleStatus>{ BattleStatus.Poison, BattleStatus.Venom, BattleStatus.Blind, BattleStatus.Silence, BattleStatus.Trouble,
+                //            BattleStatus.Sleep, BattleStatus.Freeze, BattleStatus.Heat, BattleStatus.Mini, BattleStatus.Petrify, BattleStatus.GradualPetrify,
+                //            BattleStatus.Berserk, BattleStatus.Confuse, BattleStatus.Stop, BattleStatus.Zombie, BattleStatus.Slow };
+                //
+                //            for (Int32 i = 0; i < (statuschoosen.Count - 1); i++)
+                //            {
+                //                if ((statuschoosen[i] & btl.stat.invalid) != 0)
+                //                {
+                //                    statuschoosen.Remove(statuschoosen[i]);
+                //                }
+                //            }
+                //
+                //            for (Int32 i = 0; i < 2; i++)
+                //            {
+                //                AlterStatus(unit, statuschoosen[GameRandom.Next16() % statuschoosen.Count]);
+                //            }
+                //            RemoveStatus(unit, status);
+                //        }
+                //        else
+                //        {
+                //            // Enemies affected by Doom but with Easy kill proof (doesn't exist in vanilla) lose 1/5 of their Max HP instead (non-capped, except for avoiding softlocks)
+                //            Int32 doom_damage = (Int32)btl_para.GetLogicalHP(btl, true) / 5;
+                //            if (doom_damage > Math.Max(btl.cur.hp - 1, 9999))
+                //                doom_damage = (Int32)btl.cur.hp - 1;
+                //            if (doom_damage > 0)
+                //            {
+                //                BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Doom);
+                //                btl_stat.RemoveStatus(unit, status);
+                //                btl.fig_info = Param.FIG_INFO_DISP_HP;
+                //                btl_para.SetDamage(new BattleUnit(btl), doom_damage, (Byte)(btl_mot.checkMotion(btl, btl.bi.def_idle) ? 1 : 0));
+                //                btl2d.Btl2dReq(btl);
+                //            }
+                //            else
+                //            {
+                //                btl.fig_info |= Param.FIG_INFO_MISS;
+                //                btl2d.Btl2dReq(btl);
+                //            }
+                //        }
+                //    }
+                //    else
+                //    {
+                //        BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Doom);
+                //        btl_stat.AlterStatus(unit, BattleStatus.Death);
+                //        btl2d.Btl2dReq(btl);
+                //    }
+                //}
             }
         }
     }
 
     public static void InitStatus(BTL_DATA btl)
     {
-        STAT_CNT cnt = btl.stat.cnt;
-        btl.stat.invalid = btl.stat.permanent = btl.stat.cur = 0U;
-        for (Int32 index = 0; index < 3; ++index)
-            cnt.opr[index] = 0;
-        for (Int32 index = 0; index < 32; ++index)
-            cnt.conti[index] = 0;
+        STAT_INFO stat = btl.stat;
+        stat.invalid = stat.permanent = stat.cur = 0;
+        stat.opr.Clear();
+        stat.conti.Clear();
     }
+
+    public const UInt32 ALTER_RESIST = 0; // Cannot apply because of status resistance ("Guard")
+    public const UInt32 ALTER_INVALID = 1; // Cannot apply for other reasons ("Miss", status incompatibility etc...)
+    public const UInt32 ALTER_SUCCESS_NO_SET = 2; // Had an effect, like removing an opposite status, but didn't register the status in stat.cur
+    public const UInt32 ALTER_SUCCESS = 3; // Successfully applied the status
 }
 
-public class StatusModifier : Memoria.Prime.Collections.EntryCollection<BattleStatus, Single>
+public class StatusModifier : Memoria.Prime.Collections.EntryCollection<BattleStatusId, Single>
 {
     public StatusModifier(Single defaultValue) : base(defaultValue)
     {

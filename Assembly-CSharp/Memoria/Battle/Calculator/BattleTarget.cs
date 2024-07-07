@@ -173,13 +173,13 @@ namespace Memoria
         public void TryAlterStatuses(BattleStatus status, Boolean changeContext, BattleUnit inflicter = null)
         {
             BattleStatus prev_status = this.PermanentStatus | this.CurrentStatus;
-            UInt32 result = btl_stat.AlterStatuses(Data, status, inflicter?.Data, true);
+            UInt32 result = btl_stat.AlterStatuses(this, status, inflicter, true);
             this._context.AddedStatuses |= (this.PermanentStatus | this.CurrentStatus) & ~prev_status;
             if (changeContext)
             {
-                if (result == 0)
+                if (result == btl_stat.ALTER_RESIST)
                     _context.Flags |= BattleCalcFlags.Guard;
-                else if (result == 1)
+                else if (result == btl_stat.ALTER_INVALID)
                     _context.Flags |= BattleCalcFlags.Miss;
             }
         }
@@ -270,15 +270,13 @@ namespace Memoria
 
         public Boolean TryKillFrozen()
         {
+            // TODO and [DV]
             if (!IsUnderAnyStatus(BattleStatus.Freeze) || IsUnderAnyStatus(BattleStatus.Petrify))
                 return false;
             if (IsUnderAnyStatus(BattleStatus.EasyKill)) // Behaviour added by Memoria with no influence on vanilla - Boss can't die when frozen
                 return false;
 
-            if (Configuration.Mod.TranceSeek && IsUnderAnyStatus(BattleStatus.EasyKill)) // [DV] - Boss can't die when freeze. Can't move in Memoria.Scripts because depending with SBattleCalculator :(
-                return false;
-
-            BattleVoice.TriggerOnStatusChange(Data, "Used", BattleStatus.Freeze);
+            BattleVoice.TriggerOnStatusChange(Data, "Used", BattleStatusId.Freeze);
             btl_cmd.KillSpecificCommand(Data, BattleCommandId.SysStone);
             Kill();
             UIManager.Battle.SetBattleFollowMessage(BattleMesages.ImpactCrushes);
@@ -294,12 +292,10 @@ namespace Memoria
 
         private BattleStatus CheckPointData()
         {
-            BattleStatus status = 0;
             if (Data.cur.hp == 0) // Using this instead of "CurrentHp" avoids considering bosses under 10 000 HP as dead here
-                status |= BattleStatus.Death;
-            else if (IsPlayer && CurrentHp * 6 <= MaximumHp)
-                status |= BattleStatus.LowHP;
-            return status;
+                return BattleStatus.Death;
+            else
+                return btl_para.CheckPointDataStatus(this);
         }
     }
 }

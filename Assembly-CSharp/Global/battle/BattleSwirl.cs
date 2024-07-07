@@ -1,7 +1,5 @@
 ﻿using Assets.Scripts.Common;
-using Memoria;
 using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 // ReSharper disable UnusedMember.Local
