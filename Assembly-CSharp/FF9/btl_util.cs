@@ -479,9 +479,8 @@ namespace FF9
 				}
 			}
 		}
-        
+
         public static void GeoSetABR(GameObject go, String type, BTL_DATA btl)
-        public static void GeoSetABR(GameObject go, String type)
         {
             Shader shader;
             if (type == "GEO_POLYFLAGS_TRANS_100_PLUS_25")

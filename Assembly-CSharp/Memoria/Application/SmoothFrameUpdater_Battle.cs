@@ -330,4 +330,5 @@ partial class BTL_DATA
     public Single _smoothUpdateAnimTimeActual;
     public Single _smoothUpdateAnimSpeed;
     public Vector3 _smoothUpdateBoneDelta;
+    public bool _hasMeshSmoothed;
 }

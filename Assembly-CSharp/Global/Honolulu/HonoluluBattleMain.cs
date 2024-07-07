@@ -687,14 +687,14 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         {
             if (btl.bi.slave != 0 || btl.bi.disappear != 0 || btl.bi.shadow == 0)
                 continue;
-            if(btl.HasMeshSmoothed)
+            if(btl._hasMeshSmoothed)
                 continue;
             var battleUnitGameObject = btl.gameObject;
             SkinnedMeshRenderer[] componentsInChildren = battleUnitGameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
             MeshRenderer[] componentsInChildren2 = battleUnitGameObject.GetComponentsInChildren<MeshRenderer>();
             NormalSolver.SmoothCharacterMesh(componentsInChildren);
             NormalSolver.SmoothCharacterMesh(componentsInChildren2);
-            btl.HasMeshSmoothed = true;
+            btl._hasMeshSmoothed = true;
         }
     }
 
