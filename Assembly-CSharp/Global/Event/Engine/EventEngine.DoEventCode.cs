@@ -2985,7 +2985,7 @@ public partial class EventEngine
                     synth.Shops.Remove(shopId);
                 return 0;
             }
-            case EBin.event_code_binary.TURN_OBJ_EX:
+            case EBin.event_code_binary.TURN_OBJ_EX: // "TurnTowardObjectEx"
             {
                 Actor turner = this.GetObj3() as Actor; // character to turn
                 PosObj target = this.GetObj3() as PosObj; // object to look at
