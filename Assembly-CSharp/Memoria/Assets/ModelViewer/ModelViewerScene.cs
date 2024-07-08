@@ -88,7 +88,7 @@ namespace Memoria.Assets
             infoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
             infoPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
             controlPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
-            controlLabel = controlPanel.AddSimpleLabel("", NGUIText.Alignment.Right, 9);
+            controlLabel = controlPanel.AddSimpleLabel("", NGUIText.Alignment.Right, 10);
             controlPanel.EndInitialization(UIWidget.Pivot.BottomRight);
             controlPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
             Log.Message("controlPanel.AllPanels.Count " + controlPanel.BasePanel);
@@ -322,14 +322,10 @@ namespace Memoria.Assets
                             anim["CUSTOM_CLIP"].speed = speedFactor;
                         }
                         else
-                        {
                             FF9Sfx.FF9SFX_Play(102);
-                        }
                     }
                     else
-                    {
                         FF9Sfx.FF9SFX_Play(102);
-                    }
                 }
                 if (Input.GetKey(KeyCode.M))
                 {
@@ -339,33 +335,33 @@ namespace Memoria.Assets
                 if (ctrl)
                 {
                     if (Input.GetKey(KeyCode.Keypad6))
-                            targetModel.transform.localRotation *= Quaternion.Euler(0f, 1f, 0f);
+                        targetModel.transform.localRotation *= Quaternion.Euler(0f, 1f, 0f);
                     if (Input.GetKey(KeyCode.Keypad4))
-                            targetModel.transform.localRotation *= Quaternion.Euler(0f, -1f, 0f);
+                        targetModel.transform.localRotation *= Quaternion.Euler(0f, -1f, 0f);
                     if (Input.GetKey(KeyCode.Keypad8))
-                            targetModel.transform.localRotation *= Quaternion.Euler(-1f, 0f, 0f);
+                        targetModel.transform.localRotation *= Quaternion.Euler(-1f, 0f, 0f);
                     if (Input.GetKey(KeyCode.Keypad2))
-                            targetModel.transform.localRotation *= Quaternion.Euler(1f, 0f, 0f);
+                        targetModel.transform.localRotation *= Quaternion.Euler(1f, 0f, 0f);
                     if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
-                            targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, 1f);
+                        targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, 1f);
                     if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
-                            targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, -1f);
+                        targetModel.transform.localRotation *= Quaternion.Euler(0f, 0f, -1f);
                 }
                 else
                 {
                     Single moveSpeed = 0.5f;
                     if (Input.GetKey(KeyCode.Keypad6))
-                            targetModel.transform.localPosition += moveSpeed * Vector3.left;
+                        targetModel.transform.localPosition += moveSpeed * Vector3.left;
                     if (Input.GetKey(KeyCode.Keypad4))
-                            targetModel.transform.localPosition += moveSpeed * Vector3.right;
+                        targetModel.transform.localPosition += moveSpeed * Vector3.right;
                     if (Input.GetKey(KeyCode.Keypad8))
-                            targetModel.transform.localPosition += moveSpeed * Vector3.down;
+                        targetModel.transform.localPosition += moveSpeed * Vector3.down;
                     if (Input.GetKey(KeyCode.Keypad2))
-                            targetModel.transform.localPosition += moveSpeed * Vector3.up;
+                        targetModel.transform.localPosition += moveSpeed * Vector3.up;
                     if (Input.GetKey(KeyCode.Keypad7) || Input.GetKey(KeyCode.Keypad9))
-                            targetModel.transform.localPosition += moveSpeed * Vector3.back;
+                        targetModel.transform.localPosition += moveSpeed * Vector3.back;
                     if (Input.GetKey(KeyCode.Keypad1) || Input.GetKey(KeyCode.Keypad3))
-                            targetModel.transform.localPosition += moveSpeed * Vector3.forward;
+                        targetModel.transform.localPosition += moveSpeed * Vector3.forward;
                 }
                 if (Input.GetKey(KeyCode.Keypad5) && !DontSpamMessage)
                 {
@@ -516,12 +512,14 @@ namespace Memoria.Assets
                     }
                 }
                 Animation animation = currentModel.GetComponent<Animation>();
-                if (Input.GetKeyDown(KeyCode.W))
+                if (Input.GetKeyDown(KeyCode.C))
                 {
                     Camera camera = GetCamera();
-                    camera.backgroundColor = camera.backgroundColor == Color.grey ? Color.black : Color.grey;
+                    if (camera.backgroundColor == Color.grey) camera.backgroundColor = Color.black;
+                    else if (camera.backgroundColor == Color.black) camera.backgroundColor = Color.green;
+                    else camera.backgroundColor = Color.grey;
                 }
-                // make animation a loop
+                // make animation a loop by default
                 if (animation != null && !animation.IsPlaying(currentAnimName) && toggleAnim)
                 {
                     animation.Play(currentAnimName);
@@ -739,12 +737,14 @@ namespace Memoria.Assets
             {"B", "Show bones"},
             {"⇧B", "Bone lines"},
             {"P", "Attach weapon"},
-            {"O", "Orthographic view"},
+            {"O", "Ortho view"},
+            {"C", "BG color"},
             {"◐", "Angle"},
             {"◑", "Position"},
             {"Scroll", "Zoom"},
             {"^✥", "Fast browse"},
             {"E", "Export anim"},
+            {"L", "Import anim"},
         };
 
         private static Camera GetCamera()
