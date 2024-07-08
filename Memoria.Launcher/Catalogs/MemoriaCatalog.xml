@@ -241,6 +241,40 @@ You should set the priority of this mod to be higher than the priority of the Mo
 	</SubMod>
 </Mod>
 
+<Mod>
+	<Name>Tantalus</Name>
+	<Version>2.0</Version>
+	<InstallationPath>PlayableTantalus</InstallationPath>
+	<ReleaseDate>Jul 2024</ReleaseDate>
+	<Author>Emeiru</Author>
+	<Description>Overhauls Blank, Cinna, and Marcus to become actually usable characters
+Includes:
+- The tantalus trio with their own set of active and supporting abilities
+- Base stats improvements
+- Steal-Gil and Mug buffed
+- New items and tweaks to complement the trio and thief gameplay
+- Minor name and ability text changes (purely thematic)
+
+Complete changes and info can be found on this mod's page.</Description>
+	<PatchNotes>Requires the latest Memoria Engine version and Alternate Fantasy v6.2+</PatchNotes>
+	<Category>Gameplay</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/64</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/mkmzntygv46sh4qg4qjxi/PlayableTantalus.zip?rlkey=r92lksa6neyz3g52nkiyb6rhq&amp;dl=1</DownloadUrl>
+	<SubMod>
+		<Name>Alternate Fantasy</Name>
+		<InstallationPath>AlternateFantasy</InstallationPath>
+		<Description>Version for Alternate Fantasy</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Vanilla</Name>
+		<InstallationPath>Vanilla</InstallationPath>
+		<Description>Version for regular FFIX</Description>
+		<Priority>2</Priority>
+	</SubMod>
+	<PreviewFile>Preview.JPG</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/64/64-1718179640-480880001.png</PreviewFileUrl>
+</Mod>
 
 <Mod>
 	<Name>David Bowie Edition</Name>
