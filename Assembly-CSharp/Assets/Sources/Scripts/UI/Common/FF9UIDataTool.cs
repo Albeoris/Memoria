@@ -8,12 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using XInputDotNetPure;
+using static Memoria.Assets.DataResources;
 
 namespace Assets.Sources.Scripts.UI.Common
 {
     public static class FF9UIDataTool
     {
-        public static void DisplayItem(RegularItem itemId, UISprite itemIcon, UILabel itemName, Boolean isEnable)
+        public static void DisplayItem(RegularItem itemId, UISprite itemIcon, UILabel itemName, Boolean isEnable, Boolean displayStock = false)
         {
             if (itemId != RegularItem.NoItem)
             {
@@ -29,6 +30,14 @@ namespace Assets.Sources.Scripts.UI.Common
                     itemName.text = FF9TextTool.ItemName(itemId);
                     itemName.color = isEnable ? FF9TextTool.White : FF9TextTool.Gray;
                     itemName.multiLine = true;
+                    if (displayStock && Configuration.Interface.SynthIngredientStockDisplayed)
+                    {
+                        Int32 itemAmount = ff9item.FF9Item_GetCount(itemId);
+                        if (itemAmount > 0)
+                        {
+                            itemName.text += $" ({itemAmount})";
+                        }
+                    }
                 }
             }
             else
@@ -40,7 +49,7 @@ namespace Assets.Sources.Scripts.UI.Common
             }
         }
 
-        public static void DisplayMultipleItems(Dictionary<RegularItem, Int32> items, UISprite itemIcon, UILabel itemName, Dictionary<RegularItem, Boolean> isEnable)
+        public static void DisplayMultipleItems(Dictionary<RegularItem, Int32> items, UISprite itemIcon, UILabel itemName, Dictionary<RegularItem, Boolean> isEnable, Boolean displayStock = false)
         {
             String itemLabel = String.Empty;
             String spriteName = String.Empty;
@@ -61,6 +70,14 @@ namespace Assets.Sources.Scripts.UI.Common
                 itemLabel += $"[{NGUIText.EncodeColor(enabled ? FF9TextTool.White : FF9TextTool.Gray)}]{FF9TextTool.ItemName(kvp.Key)}";
                 if (kvp.Value > 1)
                     itemLabel += $" × {kvp.Value}";
+                if (displayStock && Configuration.Interface.SynthIngredientStockDisplayed)
+                {
+                    Int32 itemAmount = ff9item.FF9Item_GetCount(kvp.Key);
+                    if (itemAmount > 0)
+                    {
+                        itemLabel += $" ({itemAmount})";
+                    }
+                }
             }
             if (itemIcon != null)
                 itemIcon.spriteName = spriteName;

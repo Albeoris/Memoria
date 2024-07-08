@@ -1339,7 +1339,7 @@ namespace Memoria.Launcher
                 {
                     RemoveDuplicateKeys(_iniPath);
                     IniFile iniFile = new IniFile(_iniPath);
-                    String _checklatestadded = iniFile.ReadValue("Interface", "FadeDuration"); // check if the latest ini parameter is already there
+                    String _checklatestadded = iniFile.ReadValue("Interface", "SynthIngredientStockDisplayed"); // check if the latest ini parameter is already there
                     if (String.IsNullOrEmpty(_checklatestadded))
                     {
                         MakeIniNotNull("Mod", "FolderNames", "");
@@ -1463,6 +1463,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Interface", "MenuEquipRowCount", "5");
                         MakeIniNotNull("Interface", "MenuChocographRowCount", "5");
                         MakeIniNotNull("Interface", "FadeDuration", "40");
+                        MakeIniNotNull("Interface", "SynthIngredientStockDisplayed", "1");
 
                         MakeIniNotNull("Fixes", "Enabled", "1");
                         MakeIniNotNull("Fixes", "KeepRestTimeInBattle", "1");
