@@ -30,41 +30,53 @@ Shader "PSX/BattleMap_StatusEffect_RealLighting" {
 					Bind "normal" Normal
 					Matrix 0 [glstate_matrix_modelview0]
 					Matrix 4 [glstate_matrix_projection]
-					Vector 10 [_DetailTex_ST]
+					Vector 8 [_ProjectionParams]
 					Vector 9 [_MainTex_ST]
-					Vector 8 [_WorldSpaceCameraPos]
+					Vector 10 [_DetailTex_ST]
 					"vs_2_0
-					    def c11, 0.200000003, 0.300000012, 2, 0
-                        def c12, 1, 0, 0, 0
-                        dcl_position v0
-                        dcl_normal v1
-                        dcl_texcoord v2
-                        mad r0, v0.xyzx, c12.xxxy, c12.yyyx
-                        dp4 r1.w, c3, r0
-                        dp4 r1.x, c0, r0
-                        dp4 r1.y, c1, r0
-                        dp4 r1.z, c2, r0
-                        dp4 r2.x, c4, r1
-                        dp4 r2.y, c5, r1
-                        dp4 r2.z, c6, r1
-                        dp4 r2.w, c7, r1
-                        add r0.xyz, -r1, c11
-                        dp3 r1.x, c0, v1
-                        dp3 r1.y, c1, v1
-                        dp3 r1.z, c2, v1
-                        dp3 r0.w, r1, r1
-                        rsq r0.w, r0.w
-                        mul oT1.xyz, r0.w, r1
-                        mad oT0.xy, v2, c9, c9.zwzw
-                        mad oT0.zw, v2.xyxy, c10.xyxy, c10
-                        dp3 r0.w, r0, r0
-                        rsq r0.w, r0.w
-                        mul oT2.xyz, r0.w, r0
-                        dp3 r0.x, c8, c8
-                        rsq r0.x, r0.x
-                        mul oT3.xyz, r0.x, c8
-                        mad oPos.xy, r2.w, c255, r2
-                        mov oPos.zw, r2
+						def c11, 20, 1, 60000, 0
+						def c12, 1, 0, 0, 0
+						def c13, 0.200000003, 0.300000012, 2, 0
+						dcl_position v0
+						dcl_texcoord v1
+						dcl_normal v2
+						dp4 r0.x, c0, v0
+						dp4 r0.y, c1, v0
+						dp4 r0.w, c3, v0
+						dp4 r0.z, c2, v0
+						dp4 r1.x, c7, r0
+						rcp r1.x, r1.x
+						dp4 r2.x, c4, r0
+						dp4 r2.y, c5, r0
+						mov r3.xyw, r0
+						mul oPos.xy, r1.x, r2
+						mov r0.xw, c11.xyzy
+						add r0.x, r0.x, c8.y
+						add r3.z, -r0.x, r0.z
+						sge r0.x, r0.z, -r0.x
+						dp4 r0.y, c7, r3
+						dp4 r0.z, c6, r3
+						rcp r0.y, r0.y
+						mul r0.z, r0.y, r0.z
+						add r1.xy, -r0.zwzw, c11.zyzw
+						mad oPos.zw, r0.x, r1.xyxy, r0
+						mad oT0.xy, v1, c9, c9.zwzw
+						mad oT0.zw, v1.xyxy, c10.xyxy, c10
+						mad r4, v0.xyzx, c12.xxxy, c12.yyyx
+						dp3 r4.x, c0, v2
+                        dp3 r4.y, c1, v2
+                        dp3 r4.z, c2, v2
+                        dp3 r4.w, r4, r4
+                        rsq r4.w, r4.w
+                        mul oT1.xyz, r4.w, r4
+                        mad r5, v0.xyzx, c12.xxxy, c12.yyyx
+                        dp4 r6.x, c0, r5
+                        dp4 r6.y, c1, r5
+                        dp4 r6.z, c2, r5
+                        add r5.xyz, -r6, c13
+                        dp3 r5.w, r5, r5
+                        rsq r5.w, r5.w
+                        mul oT2.xyz, r5.w, r5
 						"
 				}
 			}
@@ -146,11 +158,6 @@ Shader "PSX/BattleMap_StatusEffect_RealLighting" {
 			}
 		}
 		Pass {
-		Stencil
-            {
-               Ref 100
-               Comp Greater
-            }
 		    Name "OUTLINE"
 		    Cull Front
 			Tags { "QUEUE"="AlphaTest+3" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutOff" }
@@ -159,34 +166,47 @@ Shader "PSX/BattleMap_StatusEffect_RealLighting" {
 					Bind "vertex" Vertex
 					Bind "texcoord" TexCoord0
 					Bind "normal" Normal
-					Matrix 0 [_Object2World]
-					Matrix 4 [unity_MatrixVP]
-					Vector 8 [_MainTex_ST]
-					Vector 9 [_DetailTex_ST]
-					Float 10 [_IsEnemy]
-					Float 11 [_OutlineWidth]
+					Matrix 0 [glstate_matrix_modelview0]
+					Matrix 4 [glstate_matrix_projection]
+					Vector 8 [_ProjectionParams]
+					Vector 9 [_MainTex_ST]
+					Vector 10 [_DetailTex_ST]
+					Float 11 [_IsEnemy]
+					Float 12 [_OutlineWidth]
 					"vs_2_0
-					    def c12, 1, 0, 0, 0
-                        dcl_position v0
-                        dcl_normal v1
-                        dcl_texcoord v2
-                        mov r0.x, c11.x
-                        mad r0.x, c10.x, r0.x, r0.x
-                        nrm r1.xyz, v1
-                        mad r0.xyz, r1, r0.x, v0
-                        mov r0.w, c12.x
-                        dp4 r1.x, c0, r0
-                        dp4 r1.y, c1, r0
-                        dp4 r1.z, c2, r0
-                        dp4 r1.w, c3, r0
-                        dp4 r2.x, c4, r1
-                        dp4 r2.y, c5, r1
-                        dp4 r2.z, c6, r1
-                        dp4 r2.w, c7, r1
-                        mad oT0.xy, v2, c8, c8.zwzw
-                        mad oT0.zw, v2.xyxy, c9.xyxy, c9
-                        mad oPos.xy, r2.w, c255, r2
-                        mov oPos.zw, r2
+						def c15, 20, 1, 60000, 0
+						def c16, 1, 0, 0, 0
+						def c17, 3, 0, 0, 0
+						dcl_position v0
+						dcl_texcoord v1
+						dcl_normal v2
+						mov r5.x, c12.x
+                        mad r5.x, c11.x, r5.x, r5.x
+                        nrm r4.xyz, v2
+                        mad r5.xyz, r4, r5.x, v0
+                        mov r5.w, c16.x
+						dp4 r0.x, c0, r5
+						dp4 r0.y, c1, r5
+						dp4 r0.w, c3, r5
+						dp4 r0.z, c2, r5
+						dp4 r1.x, c7, r0
+						rcp r1.x, r1.x
+						dp4 r2.x, c4, r0
+						dp4 r2.y, c5, r0
+						mov r3.xyw, r0
+						mul oPos.xy, r1.x, r2
+						mov r0.xw, c15.xyzy
+						add r0.x, r0.x, c8.y
+						add r3.z, -r0.x, r0.z
+						sge r0.x, r0.z, -r0.x
+						dp4 r0.y, c7, r3
+						dp4 r0.z, c6, r3
+						rcp r0.y, r0.y
+						mul r0.z, r0.y, r0.z
+						add r1.xy, -r0.zwzw, c15.zyzw
+						mad oPos.zw, r0.x, r1.xyxy, r0
+						mad oT0.xy, v1, c9, c9.zwzw
+						mad oT0.zw, v1.xyxy, c10.xyxy, c10
 						"
 				}
 			}
