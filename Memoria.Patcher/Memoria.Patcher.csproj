@@ -3357,6 +3357,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ff9.ico" />
+    <Content Include="StreamingAssets\Shaders\PSX\BattleCharacterShaderRef.txt" />
     <Content Include="StreamingAssets\Shaders\PSX\BattleMap_StatusEffect_RealLighting.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
