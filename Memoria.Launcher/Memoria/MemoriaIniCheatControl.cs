@@ -141,7 +141,7 @@ namespace Memoria.Launcher
             row++;
 
             UiTextBlock BattleTPSindex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
-            BattleTPSindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleTPS)) { Mode = BindingMode.TwoWay });
+            BattleTPSindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleTPSDividedBy10)) { Mode = BindingMode.TwoWay, StringFormat = "{0}x" });
             BattleTPSindex.Foreground = Brushes.White;
             BattleTPSindex.Margin = rowMargin;
             Slider BattleTPSFactor = AddUiElement(UiSliderFactory.Create(0), row, 1, 1, 7);
@@ -292,8 +292,17 @@ namespace Memoria.Launcher
                 if (_battletpsfactor != value)
                 {
                     _battletpsfactor = value;
+                    BattleTPSDividedBy10 = ((Decimal)value / 15);
                     OnPropertyChanged();
                 }
+            }
+        }
+        public Decimal BattleTPSDividedBy10
+        {
+            get { return ((Decimal)BattleTPS / 15); }
+            set
+            {
+                OnPropertyChanged();
             }
         }
         public Int16 BattleAssistance
@@ -441,6 +450,8 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _battletpsfactor))
                     _battletpsfactor = 15;
+                Boolean valueexists = decimal.TryParse(value, out Decimal decvalue);
+                BattleTPSDividedBy10 = valueexists ? decvalue / 15 : (decimal)1.5;
 
                 value = iniFile.ReadValue("Cheats", nameof(BattleAssistance));
                 if (String.IsNullOrEmpty(value))

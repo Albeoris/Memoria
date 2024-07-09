@@ -90,7 +90,7 @@
 	UsePsxFont = "Utiliser la police PS1"
 	FontChoice = "Police"
 	SBUIenabled = "Scaled Battle UI"
-	BattleTPS = "Vitesse combats"
+	BattleTPS = "Vitesse des combats"
 	SharedFPS = "Fréquence d'images / seconde"
 	BattleFPS = "Combat"
 	FieldFPS = "Décor"
