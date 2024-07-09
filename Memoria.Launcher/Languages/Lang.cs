@@ -265,6 +265,12 @@ namespace Memoria.Launcher
 
 
 
+            public static readonly string FPSDropboxChoice = GetSettings(nameof(FPSDropboxChoice));
+            public static readonly string FPSDropboxChoice0 = GetSettings(nameof(FPSDropboxChoice0));
+            public static readonly string FPSDropboxChoice1 = GetSettings(nameof(FPSDropboxChoice1));
+            public static readonly string FPSDropboxChoice2 = GetSettings(nameof(FPSDropboxChoice2));
+            public static readonly string FPSDropboxChoice3 = GetSettings(nameof(FPSDropboxChoice3));
+            public static readonly string FPSDropboxChoice4 = GetSettings(nameof(FPSDropboxChoice4));
         }
 
 

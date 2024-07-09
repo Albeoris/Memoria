@@ -151,7 +151,7 @@ namespace Memoria.Launcher
             BattleTPSFactor.TickPlacement = TickPlacement.BottomRight;
             BattleTPSFactor.Height = 20;
             BattleTPSFactor.Minimum = 15;
-            BattleTPSFactor.Maximum = 150;
+            BattleTPSFactor.Maximum = 75;
             BattleTPSFactor.Margin = new Thickness(0, 0, 3, 0);
 
             row++;
