@@ -3370,6 +3370,9 @@
     <Content Include="StreamingAssets\Shaders\PSX\FieldMapActor_Toon.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="StreamingAssets\Shaders\PSX\Skybox_Cubemap.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="StreamingAssets\Data\Text\LocalizationPatch.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

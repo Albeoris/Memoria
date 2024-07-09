@@ -5,11 +5,15 @@ using Memoria;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
+using Memoria.Scripts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 #pragma warning disable 169
 #pragma warning disable 414
@@ -117,9 +121,25 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             FF9StateSystem.Battle.FF9Battle.map.nextMapNo = FF9StateSystem.Common.FF9.wldMapNo;
         }
     }
-
+    
+    public static Cubemap CubemapFromTexture2D(Texture2D texture)
+    {
+        int cubedim = texture.width / 4;
+        Cubemap cube = new Cubemap(cubedim, TextureFormat.ARGB32, false);
+        cube.SetPixels(texture.GetPixels(2 * cubedim, 2 * cubedim, cubedim, cubedim), CubemapFace.NegativeY);
+        cube.SetPixels(texture.GetPixels(3 * cubedim, cubedim, cubedim, cubedim), CubemapFace.PositiveX);
+        cube.SetPixels(texture.GetPixels(2 * cubedim, cubedim, cubedim, cubedim), CubemapFace.PositiveZ);
+        cube.SetPixels(texture.GetPixels(cubedim, cubedim, cubedim, cubedim), CubemapFace.NegativeX);
+        cube.SetPixels(texture.GetPixels(0, cubedim, cubedim, cubedim), CubemapFace.NegativeZ);
+        cube.SetPixels(texture.GetPixels(2 * cubedim, 0, cubedim, cubedim), CubemapFace.PositiveY);
+        cube.Apply();
+        return cube;
+    }
     private void Start()
     {
+        /*Byte[] raw = File.ReadAllBytes("StreamingAssets/Assets/Resources/Textures/StandardCubeMap.png");
+        _cubeMapTex = AssetManager.LoadTextureGeneric(raw);
+        _cubeMap = CubemapFromTexture2D(_cubeMapTex);*/
         this.cameraController = GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>();
         this.InitBattleScene();
         FPSManager.SetTargetFPS(Configuration.Graphics.BattleFPS);
@@ -210,6 +230,11 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         playerEnterCommand = false;
         this.playerCastingSkill = false;
         this.enemyEnterCommand = false;
+        
+        if (_updateAmbientRoutine == null)
+        {
+            _updateAmbientRoutine = this.StartCoroutine(UpdateAmbientLight());
+        }
     }
 
     private void CreateBattleData(FF9StateGlobal FF9)
@@ -603,15 +628,71 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         if (!IsPaused)
             FPSManager.AddSmoothEffect(SmoothFrameUpdater_Battle.Apply);
     }
+    public ReflectionProbe _reflectionProbe;
+    public bool _hasUpdateProbeCapture = false;
+    public bool _hasUpdateAmbient = false;
+    private Material _skyBox;
+
+    private IEnumerator UpdateAmbientLight()
+    {
+        while (FF9StateSystem.Battle.FF9Battle.btl_phase < 3)
+        {
+            yield return null;
+        }
+        
+        for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+        {
+            if (btl.bi.player == 1)
+            {
+                if (_reflectionProbe == null)
+                {
+                    var obj = new GameObject("environemtCapture");
+                    obj.transform.position = (btl.gameObject.transform.position) + new Vector3(0,500,0);
+                    _reflectionProbe = obj.AddComponent<ReflectionProbe>();
+                    _reflectionProbe.mode = ReflectionProbeMode.Realtime;
+                    _reflectionProbe.cullingMask = -1;
+                    _reflectionProbe.refreshMode = ReflectionProbeRefreshMode.ViaScripting;
+                    _reflectionProbe.size = new Vector3(10000, 10000, 10000);
+                    _reflectionProbe.resolution = 128;
+                    _reflectionProbe.clearFlags = ReflectionProbeClearFlags.SolidColor;
+                    _reflectionProbe.backgroundColor = Color.black;
+                    ;
+                }
+            }
+        }
+        
+        if(_skyBox == null)
+            _skyBox = new Material(ShadersLoader.Find("PSX/Skybox_Cubemap"));
+        
+        if (_reflectionProbe != null)
+        {
+            RenderSettings.ambientMode = AmbientMode.Skybox;
+            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 0.5f;
+            RenderSettings.skybox = _skyBox;
+            _reflectionProbe.RenderProbe();
+        }
+
+        while (_reflectionProbe.texture.name.Contains("Black"))
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        _skyBox.SetTexture("_Tex", _reflectionProbe.texture);
+        _skyBox.SetFloat("_Exposure", Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.5f : 1.0f);
+        DynamicGI.UpdateEnvironment();
+        
+    }
+
+    private Coroutine _updateAmbientRoutine = null;
 
     private void UpdateBattleFrame()
     {
         if (IsPaused)
             return;
-
+        
         HonoluluBattleMain.counterATB = 0;
         battleSPS.EffectUpdate();
         this.battleResult = battle.BattleMain();
+        
         if (!FF9StateSystem.Battle.isDebug)
         {
             if (UIManager.Battle.FF9BMenu_IsEnable())
@@ -755,7 +836,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     {
         return CurPlayerWeaponIndex[battlePlayerPosID];
     }
-
+    
     private void OnGUI()
     {
         //if (!EventEngineUtils.showDebugUI)
@@ -773,6 +854,14 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private void OnDestroy()
     {
         SFX.EndBattle();
+        if (_reflectionProbe != null)
+        {
+            Destroy(_reflectionProbe.gameObject);
+            _hasUpdateProbeCapture = false;
+            _hasUpdateAmbient = false;
+        }
+        StopCoroutine(_updateAmbientRoutine);
+        _updateAmbientRoutine = null;
 
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
         {
