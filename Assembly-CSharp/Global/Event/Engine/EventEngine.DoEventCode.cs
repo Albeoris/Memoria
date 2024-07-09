@@ -349,7 +349,16 @@ public partial class EventEngine
                     }
                     else if (mapNo == 2211 && scCounter == 9200 && (po.sid == 5 || po.sid == 6) && posX == -465 && posZ == -5796) // Kuja ATE: Zorn Thorn position
                     {
-                        posX = (po.sid == 5) ? posX = -200 : posX = 0; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                        posX = (po.sid == 5) ? -200 : 0; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                    }
+                    else if (mapNo == 2600 && scCounter == 10700 && po.sid == 8 && Configuration.Graphics.WidescreenSupport && posX == 1173 && posZ == -1685) // Dagga appears in frame
+                    {
+                        posZ = -1985; // Log.Message("posX" + posX + " posZ" + posZ);
+                    }
+                    else if (mapNo == 2651 && scCounter == 10890 && po.sid == 4 && Configuration.Graphics.WidescreenSupport && posX == 1449 && posZ == -6844) // Mikito appears in frame
+                    {
+                        posX = 1749;
+                        posZ = -7244; // Log.Message("posX" + posX + " posZ" + posZ);
                     }
                     else if (mapNo == 2914 && scCounter == 11670 && po.sid >= 6 && po.sid <= 10) // Disable fishes shadows
                     {
@@ -2270,31 +2279,27 @@ public partial class EventEngine
                 // 3-5: depends on the sps code.
                 // Load Sps (sps type)
                 // Enable Attribute (attribute list, boolean enable/disable)
-                // Set Position (X, -Z, Y)
-                // Set Rotation (angle X, angle Z, angle Y)
+                // Set Position (X, -Y, Z)
+                // Set Rotation (angle X, angle Y, angle Z)
                 // Set Scale (scale factor)
                 // Attach (object's entry to attach, bone number)
                 // Set Fade (fade)
                 // Set Animation Rate (rate)
                 // Set Frame Rate (rate)
                 // Set Frame (value) where the value is factored by 16 to get the frame
-                // Set Position Offset (X, -Z, Y)
+                // Set Position Offset (X, -Y, Z)
                 // Set Depth Offset (depth)
                 Int32 objNo = this.getv1(); // arg1: sps ID.
                 Int32 parmType = this.getv1(); // arg2: sps code.
-                Int32 arg0 = 0;
-                if (eventCodeBinary == EBin.event_code_binary.SPS)
-                    arg0 = this.getv2();
-                else
-                    arg0 = this.getv1();
-                Int32 arg1 = this.getv2();
+                Int32 arg1 = (eventCodeBinary == EBin.event_code_binary.SPS) ? this.getv2() : this.getv1();
                 Int32 arg2 = this.getv2();
+                Int32 arg3 = this.getv2();
                 if (this.gMode == 1)
-                    this.fieldSps.SetObjParm(objNo, parmType, arg0, arg1, arg2);
+                    this.fieldSps.SetObjParm(objNo, parmType, arg1, arg2, arg3);
                 else if (this.gMode == 2)
-                    HonoluluBattleMain.battleSPS.SetObjParm(objNo, parmType, arg0, arg1, arg2);
+                    HonoluluBattleMain.battleSPS.SetObjParm(objNo, parmType, arg1, arg2, arg3);
                 else if (this.gMode == 3)
-                    ff9.world.WorldSPSSystem.SetObjParm(objNo, parmType, arg0, arg1, arg2);
+                    ff9.world.WorldSPSSystem.SetObjParm(objNo, parmType, arg1, arg2, arg3);
                 return 0;
             }
             case EBin.event_code_binary.FULLMEMBER: // 0xB4, "SetPartyReserve", "Define the party member availability for a future Party call"
