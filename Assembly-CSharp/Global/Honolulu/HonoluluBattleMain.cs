@@ -635,11 +635,16 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private IEnumerator UpdateAmbientLight()
     {
-        while (FF9StateSystem.Battle.FF9Battle.btl_phase < 3)
+        var hasValidCharacter = false;
+        while (!hasValidCharacter)
         {
+            for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+            {
+                hasValidCharacter = true;
+            }
             yield return null;
         }
-        
+
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
             if (btl.bi.player == 1)
@@ -647,7 +652,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 if (_reflectionProbe == null)
                 {
                     var obj = new GameObject("environemtCapture");
-                    obj.transform.position = (btl.gameObject.transform.position) + new Vector3(0,500,0);
+                    Log.Message(""+(btl.gameObject.transform.position));
+                    obj.transform.position = new Vector3(632.0f, 500.0f, -1560.0f);//(btl.gameObject.transform.position) + new Vector3(0,500,0);
                     _reflectionProbe = obj.AddComponent<ReflectionProbe>();
                     _reflectionProbe.mode = ReflectionProbeMode.Realtime;
                     _reflectionProbe.cullingMask = -1;
