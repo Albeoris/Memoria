@@ -113,7 +113,11 @@ public class CommonSPSSystem
     private Vector3 adjustSpsPrecise(String name, Vector3 pos)
     {
         Int16 MapNo = FF9StateSystem.Common.FF9.fldMapNo;
-        //Log.Message("if (MapNo == " + MapNo + " && name == " + name + " && pos.x == " + pos.x + " && pos.y == " + pos.y + ")");
+        //Log.Message("if (MapNo == " + MapNo + " && name == \"" + name + "\" && pos.x == " + pos.x + " && pos.y == " + pos.y + " && pos.z == " + pos.z + ")"); // 3D positions, pos.y calculated from bottom
+        if (MapNo == 2215 && name == "SPS_0008" && pos.x == 1330 && pos.y == 1150 && pos.z == 1125)
+        {
+            pos.y = 1025;
+        }
         return pos;
     }
 
@@ -169,7 +173,7 @@ public class CommonSPSSystem
             {
                 sps.meshRenderer.enabled = false;
             }
-            else if (FF9StateSystem.Common.FF9.fldMapNo == 2928 || FF9StateSystem.Common.FF9.fldMapNo == 1206 || FF9StateSystem.Common.FF9.fldMapNo == 1223)
+            else if (FF9StateSystem.Common.FF9.fldMapNo == 1206 || FF9StateSystem.Common.FF9.fldMapNo == 1223 || FF9StateSystem.Common.FF9.fldMapNo == 2928)
             {
                 // Hill of Despair
                 // A. Castle/Queen's Chamber
@@ -201,7 +205,10 @@ public class CommonSPSSystem
         }
         else if (ParmType == SPSConst.OPERATION_SCALE)
         {
-            sps.scale = Arg0;
+            if ((FF9StateSystem.Common.FF9.fldMapNo == 50 && sps.name == "SPS_0001") || (FF9StateSystem.Common.FF9.fldMapNo == 51 && sps.name == "SPS_0000")) // candle lights made a bit bigger
+                sps.scale = (Int32)(Arg0 * 1.30);
+            else
+                sps.scale = Arg0;
         }
         else if (ParmType == SPSConst.OPERATION_CHAR)
         {
