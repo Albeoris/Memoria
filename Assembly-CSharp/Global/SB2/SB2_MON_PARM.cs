@@ -161,6 +161,8 @@ public class SB2_MON_PARM
     public String WeaponModel;
     [Memoria.PatchableFieldAttribute]
     public Int32 WeaponAttachment;
+    [Memoria.PatchableFieldAttribute]
+    public Single[] WeaponOffset;
 
     [Memoria.PatchableFieldAttribute]
     public Byte[] TranceGlowingColor;

@@ -155,6 +155,7 @@ public partial class BTL_DATA
     public Single animFrameFrac;
 
     public Byte weapon_bone;
+    public Single[] weapon_offset;
     public GameObject weapon_geo;
 
     public UInt16 mesh_current;

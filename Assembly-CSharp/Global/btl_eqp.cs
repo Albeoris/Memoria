@@ -68,6 +68,7 @@ public static class btl_eqp
     {
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
+            InitOffSetWeapon(btl);
             if (btl.builtin_weapon_mode && btl.bi.disappear == 0 && !btl.is_monster_transform && btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(btl.dms_geo_id, out Int32 weaponBoneID))
             {
                 Transform builtInBone = null;
@@ -103,6 +104,14 @@ public static class btl_eqp
 
                 btl.weapon_geo.transform.localPosition = new Vector3(CurrentWeaponOffset[0], CurrentWeaponOffset[1], CurrentWeaponOffset[2]);
                 btl.weapon_geo.transform.localRotation = Quaternion.Euler(CurrentWeaponOffset[3], CurrentWeaponOffset[4], CurrentWeaponOffset[5]);
+            }
+        }
+        else
+        {
+            if (btl.weapon_offset.Any(off => off != 0f) && btl.weapon_geo != null)
+            {
+                btl.weapon_geo.transform.localPosition = new Vector3(btl.weapon_offset[0], btl.weapon_offset[1], btl.weapon_offset[2]);
+                btl.weapon_geo.transform.localRotation = Quaternion.Euler(btl.weapon_offset[3], btl.weapon_offset[4], btl.weapon_offset[5]);
             }
         }
     }

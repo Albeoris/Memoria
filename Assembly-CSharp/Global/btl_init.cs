@@ -72,7 +72,7 @@ public static class btl_init
             monBtl.bi.def_idle = 0;
             monBtl.base_pos = enemy.base_pos;
             String path = (monBtl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(monBtl.dms_geo_id);
-            if (!ModelFactory.IsUseAsEnemyCharacter(path))
+            if (!ModelFactory.IsUseAsEnemyCharacter(path) && monParam.WeaponOffset.Length == 0)
                 monBtl.weapon_geo = null;
             monBtl.sa = btl_init.enemy_dummy_sa;
             monBtl.saExtended = new HashSet<SupportAbility>();
@@ -167,6 +167,7 @@ public static class btl_init
         pBtl.mesh_banish = pParm.Mesh[1];
         pBtl.tar_bone = pParm.Bone[3];
         pBtl.weapon_bone = (Byte)pParm.WeaponAttachment;
+        pBtl.weapon_offset = pParm.WeaponOffset;
         // New field "out_of_reach"
         pBtl.out_of_reach = pParm.OutOfReach || FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoNeighboring;
         ENEMY enemy = FF9StateSystem.Battle.FF9Battle.enemy[pBtl.bi.slot_no];
@@ -509,6 +510,11 @@ public static class btl_init
                 btl.base_pos[0] = btl.evt.posBattle[0];
                 btl.base_pos[1] = btl.evt.posBattle[1];
                 btl.base_pos[2] = btl.evt.posBattle[2];
+                for (Int16 j = 0; j < btl.mot.Length; j++) // [DV] Check each anims if a clip exist, otherwise create them (if we don't that for custom anim, the battle is frozen).
+                {
+                    if (btl.gameObject.GetComponent<Animation>().GetClip(btl.mot[j]) == null)
+                        AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, btl.mot[j]);
+                }
                 btl.currentAnimationName = btl.mot[btl.bi.def_idle];
                 btl.evt.animFrame = (Byte)(Comn.random8() % GeoAnim.geoAnimGetNumFrames(btl));
             }
