@@ -28,6 +28,8 @@ public static class NarrowMapList
     {
         if (SpecificScenesNarrow(mapId))
             return 320;
+        if (mapId == 50 && FieldMap.ActualPsxScreenWidth > 480)
+            return 320;
 
         foreach (int[] entry in MapWidthList)
         {
