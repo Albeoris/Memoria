@@ -509,6 +509,11 @@ public static class btl_init
                 btl.base_pos[0] = btl.evt.posBattle[0];
                 btl.base_pos[1] = btl.evt.posBattle[1];
                 btl.base_pos[2] = btl.evt.posBattle[2];
+                for (Int16 j = 0; j < btl.mot.Length; j++) // [DV] Check each anims if a clip exist, otherwise create them (if we don't that for custom anim, the battle is frozen).
+                {
+                    if (btl.gameObject.GetComponent<Animation>().GetClip(btl.mot[j]) == null)
+                        AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, btl.mot[j]);
+                }
                 btl.currentAnimationName = btl.mot[btl.bi.def_idle];
                 btl.evt.animFrame = (Byte)(Comn.random8() % GeoAnim.geoAnimGetNumFrames(btl));
             }
