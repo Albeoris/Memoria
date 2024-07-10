@@ -57,6 +57,7 @@ namespace Memoria.Assets
         private static ControlPanel controlPanel;
         private static UILabel infoLabel;
         private static UILabel controlLabel;
+        private static Int32 controlLabelPosX = 0;
 
         public static void Init()
         {
@@ -91,7 +92,6 @@ namespace Memoria.Assets
             controlLabel = controlPanel.AddSimpleLabel("", NGUIText.Alignment.Right, 10);
             controlPanel.EndInitialization(UIWidget.Pivot.BottomRight);
             controlPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
-            Log.Message("controlPanel.AllPanels.Count " + controlPanel.BasePanel);
             foreach (UISprite sprite in infoPanel.BasePanel.GetComponentsInChildren<UISprite>(true))
             {
                 sprite.spriteName = String.Empty;
@@ -327,9 +327,13 @@ namespace Memoria.Assets
                     else
                         FF9Sfx.FF9SFX_Play(102);
                 }
-                if (Input.GetKey(KeyCode.M))
+                if (Input.GetKey(KeyCode.V))
                 {
                     infoPanel.BasePanel.transform.localPosition = infoPanel.BasePanel.transform.localPosition + new Vector3(shift ? -5 : 5, 0, 0);
+                }
+                if (Input.GetKey(KeyCode.N))
+                {
+                    controlLabelPosX += shift ? 5 : -5;
                 }
                 GameObject targetModel = ControlWeapon ? currentWeaponModel : currentModel;
                 if (ctrl)
@@ -365,8 +369,12 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKey(KeyCode.Keypad5) && !DontSpamMessage)
                 {
-                    Log.Message("[MODEL]" + geoList[currentWeaponGeoIndex].Name + "(currentpos) = " + targetModel.transform.localPosition.ToString("F9") + "");
-                    Log.Message("[WEAPON]" + weapongeoList[currentWeaponGeoIndex].Name + "(currentrot) = " + targetModel.transform.localRotation.eulerAngles.ToString("F9") + "");
+                    string ModelTargetPos = currentModel.transform.localPosition.ToString("F9");
+                    string ModelTargetRot = currentModel.transform.localRotation.eulerAngles.ToString("F9");
+                    string WeaponTargetPos = currentWeaponModel.transform.localPosition.ToString("F9");
+                    string WeaponTargetRot = currentWeaponModel.transform.localRotation.eulerAngles.ToString("F9");
+                    Log.Message("[MODEL] " + geoList[currentGeoIndex].Name + ".offset = " + ModelTargetPos.Remove(ModelTargetPos.Length - 1) + ", " + ModelTargetRot.Remove(0, 1));
+                    Log.Message("[WEAPON] " + weapongeoList[currentWeaponGeoIndex].Name + ".offset = " + WeaponTargetPos.Remove(WeaponTargetPos.Length - 1) + ", " + WeaponTargetRot.Remove(0, 1));
                     DontSpamMessage = true;
                 }
                 if (Input.GetKeyUp(KeyCode.Keypad5))
@@ -374,16 +382,18 @@ namespace Memoria.Assets
 
                 if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
                 {
-                    if (!currentWeaponModel)
+                    if (shift)
                     {
-                        ChangeWeaponModel(currentWeaponGeoIndex);
-                        ControlWeapon = false;
+                        if (ControlWeapon)
+                        {
+                            ControlWeapon = false;
+                        }
+                        else
+                        {
+                            ControlWeapon = true;
+                        }
                     }
-                    else if (currentWeaponModel && !ControlWeapon)
-                    {
-                        ControlWeapon = true;
-                    }
-                    else if (currentWeaponModel && ControlWeapon)
+                    else
                     {
                         ChangeWeaponModel(currentWeaponGeoIndex);
                     }
@@ -648,9 +658,9 @@ namespace Memoria.Assets
                     label += $"[FFFF00][^Scroll][FFFFFF] Weapon: {weapongeoList[currentWeaponGeoIndex].Name}\n";
                     label += $"[FFFF00][⇧Scroll][FFFFFF] Bone: {currentWeaponBoneIndex}\n";
                     if (!ControlWeapon)
-                        label += $"[FFFF00][P][FFFFFF] Aiming: Model\n";
+                        label += $"[FFFF00][⇧P][FFFFFF] Selected: Model\n";
                     else
-                        label += $"[FFFF00][P][FFFFFF] Aiming: [00FF00]Weapon\n";
+                        label += $"[FFFF00][⇧P][FFFFFF] Selected: [00FF00]Weapon\n";
                 }
                 else
                     label += "\n\n\n";
@@ -674,7 +684,7 @@ namespace Memoria.Assets
                     controlist += $"\r\n";
                 controlLabel.text = controlist;
             }
-            controlPanel.BasePanel.transform.localPosition = new Vector3(1000, 0, 0);
+            controlPanel.BasePanel.transform.localPosition = new Vector3(1000 + controlLabelPosX, 0, 0);
             controlPanel.Show = true;
             controlLabel.fontSize = 25;
             //Log.Message("boneConnectModels.Count " + boneConnectModels.Count);
