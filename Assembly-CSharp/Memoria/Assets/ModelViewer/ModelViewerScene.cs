@@ -379,7 +379,38 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyUp(KeyCode.Keypad5))
                     DontSpamMessage = false;
-
+                if (Input.GetKeyDown(KeyCode.Alpha1))
+                {
+                    ChangeModel(GetFirstModelOfCategory(0));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha2))
+                {
+                    ChangeModel(GetFirstModelOfCategory(1));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha3))
+                {
+                    ChangeModel(GetFirstModelOfCategory(2));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha4))
+                {
+                    ChangeModel(GetFirstModelOfCategory(3));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha5))
+                {
+                    ChangeModel(GetFirstModelOfCategory(4));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha6))
+                {
+                    ChangeModel(GetFirstModelOfCategory(5));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha7))
+                {
+                    ChangeModel(GetFirstModelOfCategory(6));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha8))
+                {
+                    ChangeModel(GetFirstModelOfCategory(7));
+                }
                 if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
                 {
                     if (shift)
@@ -632,7 +663,7 @@ namespace Memoria.Assets
                 boneDialogs.RemoveRange(boneDialogCount, boneDialogs.Count - boneDialogCount);
             if (displayUI)
             {
-                String label = $"[FFFF00][⇧↔][E5E5FF] {GetCategoryEnumeration(currentGeoIndex, true)}[FFFFFF]"; //[222222]{GetCategoryEnumeration(currentGeoIndex, true, -1)} [FFFFFF]{GetCategoryEnumeration(currentGeoIndex, true)} [222222]{GetCategoryEnumeration(currentGeoIndex, true, 1)}[FFFFFF]
+                String label = $"[FFFF00][⇧↔/1-8][E5E5FF] {GetCategoryEnumeration(currentGeoIndex, true)}[FFFFFF]"; //[222222]{GetCategoryEnumeration(currentGeoIndex, true, -1)} [FFFFFF]{GetCategoryEnumeration(currentGeoIndex, true)} [222222]{GetCategoryEnumeration(currentGeoIndex, true, 1)}[FFFFFF]
                 label += "\n";
                 label += $"[FFFF00][↔][FFFFFF] Model {GetCategoryEnumeration(currentGeoIndex)}: {geoList[currentGeoIndex].Name} ({geoList[currentGeoIndex].Id})";
                 label += "\n";
@@ -721,6 +752,14 @@ namespace Memoria.Assets
                 return $"{modelNum + 1 - categoriesThresholds[categoryNum]}/{categoriesThresholds[categoryNum + 1] - categoriesThresholds[categoryNum]}";
         }
 
+        private static Int32 GetFirstModelOfCategory(Int32 categoryNum)
+        {
+            List<int> categoriesThresholds = new List<int>(geoArchetype);
+            categoriesThresholds.Sort();
+            categoryNum = Mathf.Clamp(categoryNum, 0, categoriesThresholds.Count -1);
+            return categoriesThresholds[categoryNum];
+        }
+
         private static List<string> categoryNames = new List<string>
         {
             "FIELD ITEMS",
@@ -755,7 +794,7 @@ namespace Memoria.Assets
             {"Scroll", "Zoom"},
             {"^✥", "Fast browse"},
             {"E", "Export anim"},
-            {"L", "Import anim"},
+            {"L", "Read last exp."},
         };
 
         private static Camera GetCamera()
