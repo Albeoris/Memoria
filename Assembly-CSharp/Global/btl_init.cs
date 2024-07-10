@@ -72,7 +72,7 @@ public static class btl_init
             monBtl.bi.def_idle = 0;
             monBtl.base_pos = enemy.base_pos;
             String path = (monBtl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(monBtl.dms_geo_id);
-            if (!ModelFactory.IsUseAsEnemyCharacter(path) && monParam.WeaponOffset.Length == 0)
+            if (!ModelFactory.IsUseAsEnemyCharacter(path) && monParam.WeaponOffset.Length == 0) // [DV] Not satisfy with that.. if we didn't put this WeaponOffset condition, the weapon_geo will dissapear.
                 monBtl.weapon_geo = null;
             monBtl.sa = btl_init.enemy_dummy_sa;
             monBtl.saExtended = new HashSet<SupportAbility>();
@@ -510,11 +510,6 @@ public static class btl_init
                 btl.base_pos[0] = btl.evt.posBattle[0];
                 btl.base_pos[1] = btl.evt.posBattle[1];
                 btl.base_pos[2] = btl.evt.posBattle[2];
-                for (Int16 j = 0; j < btl.mot.Length; j++) // [DV] Check each anims if a clip exist, otherwise create them (if we don't that for custom anim, the battle is frozen).
-                {
-                    if (btl.gameObject.GetComponent<Animation>().GetClip(btl.mot[j]) == null)
-                        AnimationFactory.AddAnimWithAnimatioName(btl.gameObject, btl.mot[j]);
-                }
                 btl.currentAnimationName = btl.mot[btl.bi.def_idle];
                 btl.evt.animFrame = (Byte)(Comn.random8() % GeoAnim.geoAnimGetNumFrames(btl));
             }
