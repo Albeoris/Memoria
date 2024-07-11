@@ -55,8 +55,10 @@ namespace Memoria.Assets
         private static List<Dialog> boneDialogs = new List<Dialog>();
         private static ControlPanel infoPanel;
         private static ControlPanel controlPanel;
+        private static ControlPanel extraInfoPanel;
         private static UILabel infoLabel;
         private static UILabel controlLabel;
+        private static UILabel extraInfoLabel;
         private static Int32 controlLabelPosX = 0;
 
         public static void Init()
@@ -92,12 +94,21 @@ namespace Memoria.Assets
             controlLabel = controlPanel.AddSimpleLabel("", NGUIText.Alignment.Right, 10);
             controlPanel.EndInitialization(UIWidget.Pivot.BottomRight);
             controlPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
+            extraInfoPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
+            extraInfoLabel = extraInfoPanel.AddSimpleLabel("", NGUIText.Alignment.Center, 1);
+            extraInfoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
+            extraInfoPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
             foreach (UISprite sprite in infoPanel.BasePanel.GetComponentsInChildren<UISprite>(true))
             {
                 sprite.spriteName = String.Empty;
                 sprite.alpha = 0f;
             }
             foreach (UISprite sprite in controlPanel.BasePanel.GetComponentsInChildren<UISprite>(true))
+            {
+                sprite.spriteName = String.Empty;
+                sprite.alpha = 0f;
+            }
+            foreach (UISprite sprite in extraInfoPanel.BasePanel.GetComponentsInChildren<UISprite>(true))
             {
                 sprite.spriteName = String.Empty;
                 sprite.alpha = 0f;
@@ -706,10 +717,27 @@ namespace Memoria.Assets
                 foreach (KeyValuePair<String, String> entry in ControlsKeys)
                     controlist += $"{entry.Value} [FFFF00][{entry.Key}][FFFFFF]\r\n";
                 controlLabel.text = controlist;
+
+                GameObject targetModel = ControlWeapon ? currentWeaponModel : currentModel;
+                String extraInfo = "";
+                if (targetModel != null)
+                {
+                    Transform transform = targetModel.transform;
+                    extraInfo += $"Pos: [x]{transform.localPosition.x} [y]{transform.localPosition.y}";
+                    extraInfo += $" | Rot(Quat): [x]{Math.Round(transform.localRotation.x, 2)} [y]{Math.Round(transform.localRotation.y, 2)} [z]{Math.Round(transform.localRotation.z, 2)} [w]{Math.Round(transform.localRotation.w, 2)}";
+                    extraInfo += $" | Rot(Eul): {Math.Round(transform.localRotation.eulerAngles.x, 0)}/{Math.Round(transform.localRotation.eulerAngles.y, 0)}/{Math.Round(transform.localRotation.eulerAngles.z, 0)}";
+                }
+                extraInfoLabel.text = extraInfo;
+                extraInfoLabel.fontSize = 16;
+                extraInfoLabel.effectDistance = new Vector2(2f,2f);
+                extraInfoLabel.alignment = NGUIText.Alignment.Center;
+                extraInfoPanel.BasePanel.transform.localPosition = new Vector3(500, 0, 0);
+                extraInfoPanel.Show = true;
             }
             else
             {
                 infoPanel.Show = false;
+                extraInfoPanel.Show = false;
 
                 String controlist = "Show UI [FFFF00][I][FFFFFF]\r\n";
                 foreach (KeyValuePair<String, String> entry in ControlsKeys)
@@ -805,7 +833,7 @@ namespace Memoria.Assets
                 if (displayBones || orthoView)
                 {
                     camera.orthographic = true;
-                    camera.orthographicSize = 550f;
+                    camera.orthographicSize = 350f;
                 }
                 else
                 {
