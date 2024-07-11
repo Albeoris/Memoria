@@ -72,7 +72,7 @@ public static class btl_init
             monBtl.bi.def_idle = 0;
             monBtl.base_pos = enemy.base_pos;
             String path = (monBtl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(monBtl.dms_geo_id);
-            if (!ModelFactory.IsUseAsEnemyCharacter(path) && monParam.WeaponOffset.Length == 0) // [DV] Not satisfy with that.. if we didn't put this WeaponOffset condition, the weapon_geo will dissapear.
+            if (!ModelFactory.IsUseAsEnemyCharacter(path) && monParam.WeaponOffset == null) // [DV] Not satisfy with that.. if we didn't put this WeaponOffset condition, the weapon_geo will dissapear.
                 monBtl.weapon_geo = null;
             monBtl.sa = btl_init.enemy_dummy_sa;
             monBtl.saExtended = new HashSet<SupportAbility>();
