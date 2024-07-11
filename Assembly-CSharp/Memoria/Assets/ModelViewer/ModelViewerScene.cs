@@ -810,7 +810,7 @@ namespace Memoria.Assets
                 else
                 {
                     camera.orthographic = false;
-                    camera.fieldOfView = 60f;
+                    camera.fieldOfView = 40f;
                     camera.nearClipPlane = 0.1f;
                     camera.farClipPlane = 10000f;
                 }
