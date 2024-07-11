@@ -715,6 +715,19 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             }
         }
         SceneDirector.ServiceFade();
+/*
+        if (Input.GetKey(KeyCode.M))
+        {
+            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 0.5f;
+            DynamicGI.UpdateEnvironment();
+        }
+        
+        if (Input.GetKey(KeyCode.N))
+        {
+            RenderSettings.ambientIntensity = 0f;
+            DynamicGI.UpdateEnvironment();
+        }
+*/
     }
 
     private static void UpdateOverFrame()
