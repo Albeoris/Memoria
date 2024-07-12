@@ -27,7 +27,7 @@ WaitMove: Char=Caster
 PlayAnimation: Char=Caster ; Anim=MP_ATTACK
 Wait: Time=5
 PlayAnimation: Char=Caster ; Speed=0
-WaitSFXDone: SFX=Bio_Sword ; Reflect=True
+Wait: Time=57
 MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
 Turn: Char=Caster ; BaseAngle=Default ; Time=4
 WaitMove: Caster
