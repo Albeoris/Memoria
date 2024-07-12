@@ -55,8 +55,10 @@ namespace Memoria.Assets
         private static List<Dialog> boneDialogs = new List<Dialog>();
         private static ControlPanel infoPanel;
         private static ControlPanel controlPanel;
+        private static ControlPanel extraInfoPanel;
         private static UILabel infoLabel;
         private static UILabel controlLabel;
+        private static UILabel extraInfoLabel;
         private static Int32 controlLabelPosX = 0;
 
         public static void Init()
@@ -92,12 +94,21 @@ namespace Memoria.Assets
             controlLabel = controlPanel.AddSimpleLabel("", NGUIText.Alignment.Right, 10);
             controlPanel.EndInitialization(UIWidget.Pivot.BottomRight);
             controlPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
+            extraInfoPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
+            extraInfoLabel = extraInfoPanel.AddSimpleLabel("", NGUIText.Alignment.Center, 1);
+            extraInfoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
+            extraInfoPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
             foreach (UISprite sprite in infoPanel.BasePanel.GetComponentsInChildren<UISprite>(true))
             {
                 sprite.spriteName = String.Empty;
                 sprite.alpha = 0f;
             }
             foreach (UISprite sprite in controlPanel.BasePanel.GetComponentsInChildren<UISprite>(true))
+            {
+                sprite.spriteName = String.Empty;
+                sprite.alpha = 0f;
+            }
+            foreach (UISprite sprite in extraInfoPanel.BasePanel.GetComponentsInChildren<UISprite>(true))
             {
                 sprite.spriteName = String.Empty;
                 sprite.alpha = 0f;
@@ -379,7 +390,38 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyUp(KeyCode.Keypad5))
                     DontSpamMessage = false;
-
+                if (Input.GetKeyDown(KeyCode.Alpha1))
+                {
+                    ChangeModel(GetFirstModelOfCategory(0));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha2))
+                {
+                    ChangeModel(GetFirstModelOfCategory(1));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha3))
+                {
+                    ChangeModel(GetFirstModelOfCategory(2));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha4))
+                {
+                    ChangeModel(GetFirstModelOfCategory(3));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha5))
+                {
+                    ChangeModel(GetFirstModelOfCategory(4));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha6))
+                {
+                    ChangeModel(GetFirstModelOfCategory(5));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha7))
+                {
+                    ChangeModel(GetFirstModelOfCategory(6));
+                }
+                else if (Input.GetKeyDown(KeyCode.Alpha8))
+                {
+                    ChangeModel(GetFirstModelOfCategory(7));
+                }
                 if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
                 {
                     if (shift)
@@ -461,7 +503,8 @@ namespace Memoria.Assets
                     if (mouseRightWasPressed)
                     {
                         Vector3 mouseDelta = Input.mousePosition - mousePreviousPosition;
-                        targetModel.transform.localPosition -= 0.5f * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z);
+                        Single mouseSensibility = 1f; // was 0.5f
+                        targetModel.transform.localPosition -= mouseSensibility * new Vector3(mouseDelta.x, mouseDelta.y, mouseDelta.z);
                         if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
                             spsEffect.pos = currentModel.transform.localPosition;
                     }
@@ -631,7 +674,7 @@ namespace Memoria.Assets
                 boneDialogs.RemoveRange(boneDialogCount, boneDialogs.Count - boneDialogCount);
             if (displayUI)
             {
-                String label = $"[FFFF00][⇧↔][E5E5FF] {GetCategoryEnumeration(currentGeoIndex, true)}[FFFFFF]"; //[222222]{GetCategoryEnumeration(currentGeoIndex, true, -1)} [FFFFFF]{GetCategoryEnumeration(currentGeoIndex, true)} [222222]{GetCategoryEnumeration(currentGeoIndex, true, 1)}[FFFFFF]
+                String label = $"[FFFF00][⇧↔/1-8][E5E5FF] {GetCategoryEnumeration(currentGeoIndex, true)}[FFFFFF]"; //[222222]{GetCategoryEnumeration(currentGeoIndex, true, -1)} [FFFFFF]{GetCategoryEnumeration(currentGeoIndex, true)} [222222]{GetCategoryEnumeration(currentGeoIndex, true, 1)}[FFFFFF]
                 label += "\n";
                 label += $"[FFFF00][↔][FFFFFF] Model {GetCategoryEnumeration(currentGeoIndex)}: {geoList[currentGeoIndex].Name} ({geoList[currentGeoIndex].Id})";
                 label += "\n";
@@ -674,10 +717,27 @@ namespace Memoria.Assets
                 foreach (KeyValuePair<String, String> entry in ControlsKeys)
                     controlist += $"{entry.Value} [FFFF00][{entry.Key}][FFFFFF]\r\n";
                 controlLabel.text = controlist;
+
+                GameObject targetModel = ControlWeapon ? currentWeaponModel : currentModel;
+                String extraInfo = "";
+                if (targetModel != null)
+                {
+                    Transform transform = targetModel.transform;
+                    extraInfo += $"Pos: [x]{transform.localPosition.x} [y]{transform.localPosition.y}";
+                    extraInfo += $" | Rot(Quat): [x]{Math.Round(transform.localRotation.x, 2)} [y]{Math.Round(transform.localRotation.y, 2)} [z]{Math.Round(transform.localRotation.z, 2)} [w]{Math.Round(transform.localRotation.w, 2)}";
+                    extraInfo += $" | Rot(Eul): {Math.Round(transform.localRotation.eulerAngles.x, 0)}/{Math.Round(transform.localRotation.eulerAngles.y, 0)}/{Math.Round(transform.localRotation.eulerAngles.z, 0)}";
+                }
+                extraInfoLabel.text = extraInfo;
+                extraInfoLabel.fontSize = 16;
+                extraInfoLabel.effectDistance = new Vector2(2f,2f);
+                extraInfoLabel.alignment = NGUIText.Alignment.Center;
+                extraInfoPanel.BasePanel.transform.localPosition = new Vector3(500, 0, 0);
+                extraInfoPanel.Show = true;
             }
             else
             {
                 infoPanel.Show = false;
+                extraInfoPanel.Show = false;
 
                 String controlist = "Show UI [FFFF00][I][FFFFFF]\r\n";
                 foreach (KeyValuePair<String, String> entry in ControlsKeys)
@@ -720,6 +780,14 @@ namespace Memoria.Assets
                 return $"{modelNum + 1 - categoriesThresholds[categoryNum]}/{categoriesThresholds[categoryNum + 1] - categoriesThresholds[categoryNum]}";
         }
 
+        private static Int32 GetFirstModelOfCategory(Int32 categoryNum)
+        {
+            List<int> categoriesThresholds = new List<int>(geoArchetype);
+            categoriesThresholds.Sort();
+            categoryNum = Mathf.Clamp(categoryNum, 0, categoriesThresholds.Count -1);
+            return categoriesThresholds[categoryNum];
+        }
+
         private static List<string> categoryNames = new List<string>
         {
             "FIELD ITEMS",
@@ -754,7 +822,7 @@ namespace Memoria.Assets
             {"Scroll", "Zoom"},
             {"^✥", "Fast browse"},
             {"E", "Export anim"},
-            {"L", "Import anim"},
+            {"L", "Read last exp."},
         };
 
         private static Camera GetCamera()
@@ -765,12 +833,12 @@ namespace Memoria.Assets
                 if (displayBones || orthoView)
                 {
                     camera.orthographic = true;
-                    camera.orthographicSize = 550f;
+                    camera.orthographicSize = 350f;
                 }
                 else
                 {
                     camera.orthographic = false;
-                    camera.fieldOfView = 60f;
+                    camera.fieldOfView = 40f;
                     camera.nearClipPlane = 0.1f;
                     camera.farClipPlane = 10000f;
                 }
