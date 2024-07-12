@@ -709,7 +709,7 @@ public class ShopUI : UIScene
                     if (i < synth.Ingredients.Length && synth.Ingredients[i] != RegularItem.NoItem)
                     {
                         hud[i].Self.SetActive(true);
-                        FF9UIDataTool.DisplayItem(synth.Ingredients[i], hud[i].IconSprite, hud[i].NameLabel, ff9item.FF9Item_GetCount(synth.Ingredients[i]) >= ingredients[synth.Ingredients[i]]);
+                        FF9UIDataTool.DisplayItem(synth.Ingredients[i], hud[i].IconSprite, hud[i].NameLabel, ff9item.FF9Item_GetCount(synth.Ingredients[i]) >= ingredients[synth.Ingredients[i]], true);
                         ingredients[synth.Ingredients[i]]--;
                     }
                     else
@@ -734,7 +734,7 @@ public class ShopUI : UIScene
                 for (Int32 i = 0; i < 2; i++)
                 {
                     hud[i].Self.SetActive(true);
-                    FF9UIDataTool.DisplayMultipleItems(ingrSplit[i], hud[i].IconSprite, hud[i].NameLabel, ingrEnabled[i]);
+                    FF9UIDataTool.DisplayMultipleItems(ingrSplit[i], hud[i].IconSprite, hud[i].NameLabel, ingrEnabled[i], true);
                 }
             }
         }

@@ -48,27 +48,28 @@ public class TextOpCodeModifier
                 case "German":
                     num2 = 0;
                     num3 = 3;
-                    goto IL_E5;
+                    break;
                 case "Spanish":
                     num2 = 2;
                     num3 = 2;
-                    goto IL_E5;
+                    break;
                 case "French":
                     num2 = 3;
                     num3 = 3;
-                    goto IL_E5;
+                    break;
                 case "Italian":
                     num2 = 4;
                     num3 = 0;
-                    goto IL_E5;
+                    break;
                 case "Japanese":
                     num2 = 5;
                     num3 = 1;
-                    goto IL_E5;
+                    break;
+                default:
+                    num2 = 1;
+                    num3 = 2;
+                    break;
             }
-            num2 = 1;
-            num3 = 2;
-        IL_E5:
             String text = TextOpCodeModifier.ChanbaraTargetOpCode[num2];
             if (source.Contains(text))
             {
@@ -93,23 +94,24 @@ public class TextOpCodeModifier
                 case "Spanish":
                     num2 = 4;
                     num3 = 5;
-                    goto IL_DC;
+                    break;
                 case "French":
                     num2 = 6;
                     num3 = 7;
-                    goto IL_DC;
+                    break;
                 case "Italian":
                     num2 = 2;
                     num3 = 3;
-                    goto IL_DC;
+                    break;
                 case "Japanese":
                     num2 = 8;
                     num3 = 10;
-                    goto IL_DC;
+                    break;
+                default:
+                    num2 = 0;
+                    num3 = 1;
+                    break;
             }
-            num2 = 0;
-            num3 = 1;
-        IL_DC:
             for (Int32 i = num2; i <= num3; i++)
             {
                 String text = TextOpCodeModifier.PotionShopTargetOpCode[i];
@@ -158,27 +160,28 @@ public class TextOpCodeModifier
                 case "German":
                     num2 = 6;
                     num3 = 8;
-                    goto IL_F7;
+                    break;
                 case "Spanish":
                     num2 = 9;
                     num3 = 11;
-                    goto IL_F7;
+                    break;
                 case "French":
                     num2 = 12;
                     num3 = 14;
-                    goto IL_F7;
+                    break;
                 case "Italian":
                     num2 = 3;
                     num3 = 5;
-                    goto IL_F7;
+                    break;
                 case "Japanese":
                     num2 = 15;
                     num3 = 17;
-                    goto IL_F7;
+                    break;
+                default:
+                    num2 = 0;
+                    num3 = 2;
+                    break;
             }
-            num2 = 0;
-            num3 = 2;
-        IL_F7:
             for (Int32 i = num2; i <= num3; i++)
             {
                 String text = TextOpCodeModifier.AuctionTargetOpCode[i];
@@ -203,27 +206,28 @@ public class TextOpCodeModifier
                 case "German":
                     num2 = 4;
                     num3 = 5;
-                    goto IL_E6;
+                    break;
                 case "Spanish":
                     num2 = 6;
                     num3 = 7;
-                    goto IL_E6;
+                    break;
                 case "French":
                     num2 = 0;
                     num3 = -1;
-                    goto IL_E6;
+                    break;
                 case "Italian":
                     num2 = 2;
                     num3 = 3;
-                    goto IL_E6;
+                    break;
                 case "Japanese":
                     num2 = 8;
                     num3 = 9;
-                    goto IL_E6;
+                    break;
+                default:
+                    num2 = 0;
+                    num3 = 1;
+                    break;
             }
-            num2 = 0;
-            num3 = 1;
-        IL_E6:
             for (Int32 i = num2; i <= num3; i++)
             {
                 String text = TextOpCodeModifier.GysahlGreenTargetOpCode[i];
@@ -293,25 +297,26 @@ public class TextOpCodeModifier
                 case "German":
                     num2 = 8;
                     num3 = 9;
-                    goto IL_DF;
+                    break;
                 case "Spanish":
                     num2 = 6;
                     num3 = 7;
-                    goto IL_DF;
+                    break;
                 case "French":
                     num2 = 4;
                     num3 = 5;
-                    goto IL_DF;
+                    break;
                 case "Italian":
                     return source;
                 case "Japanese":
                     num2 = 2;
                     num3 = 3;
-                    goto IL_DF;
+                    break;
+                default:
+                    num2 = 0;
+                    num3 = 1;
+                    break;
             }
-            num2 = 0;
-            num3 = 1;
-        IL_DF:
             for (Int32 i = num2; i <= num3; i++)
             {
                 String text = TextOpCodeModifier.EikoCookingTargetOpCode[i];
