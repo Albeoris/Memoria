@@ -275,6 +275,25 @@ Complete changes and info can be found on this mod's page.</Description>
 	<PreviewFile>Preview.JPG</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/64/64-1718179640-480880001.png</PreviewFileUrl>
 </Mod>
+	
+<Mod>
+	<Name>Black Cat - Endgame Shop</Name>
+	<Version>1.0</Version>
+	<ReleaseDate>Jul 2024</ReleaseDate>
+	<Author>Emeiru</Author>
+	<InstallationPath>BlackCat</InstallationPath>
+	<Category>Gameplay</Category>
+	<Description>The Black Mage Village (Disc 4) now sells almost every item in the game!
+- No. 239's Weapon and Armor Shop now sells every purchasable weapon and armor.
+- The Black Cat Synthesis Shop now can synthesize all regular equipment.
+
+Complete changes and info can be found on this mod's page.</Description>
+	<PatchNotes>Requires the latest Memoria Engine version</PatchNotes>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/65</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/19l0a7strjifbdpezs5op/BlackCat.zip?rlkey=6a3509xwdzpny23zvrnkpg3qx&amp;dl=1</DownloadUrl>
+	<PreviewFile>Preview.JPG</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/65/65-1720822585-1514609332.jpeg</PreviewFileUrl>
+</Mod>
 
 <Mod>
 	<Name>David Bowie Edition</Name>
