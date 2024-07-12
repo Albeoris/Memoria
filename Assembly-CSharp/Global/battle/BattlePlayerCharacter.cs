@@ -136,6 +136,10 @@ public class BattlePlayerCharacter : MonoBehaviour
                 renderer.material.mainTexture = texture;
             }
         }
+        SkinnedMeshRenderer[] componentsInChildren = btl.tranceGo.GetComponentsInChildren<SkinnedMeshRenderer>();
+        MeshRenderer[] componentsInChildren2 = btl.tranceGo.GetComponentsInChildren<MeshRenderer>();
+        NormalSolver.SmoothCharacterMesh(componentsInChildren);
+        NormalSolver.SmoothCharacterMesh(componentsInChildren2);
         btl.tranceGo.SetActive(false);
     }
 

@@ -85,85 +85,90 @@ Shader "PSX/BattleMap_StatusEffect_RealLighting" {
 					Vector 0 [unity_SHAr]
 					Vector 1 [unity_SHAg]
 					Vector 2 [unity_SHAb]
-					Float 3 [_IsPetrify]
-					Vector 4 [_Color]
-					Float 5 [_Cutoff]
-					Float 6 [_IsEnemy]
+					Vector 3 [unity_SHBr]
+                    Vector 4 [unity_SHBg]
+                    Vector 5 [unity_SHBb]
+                    Vector 6 [unity_SHC]
+					Float 7 [_IsPetrify]
+					Vector 8 [_Color]
+					Float 9 [_Cutoff]
+					Float 10 [_IsEnemy]
+					Float 11 [_IsDebugNormal]
+					Float 12 [_IsDebugSH]
 					SetTexture 0 [_MainTex] 2D 0
 					SetTexture 1 [_DetailTex] 2D 1
 					"ps_3_0
-                        def c7, -0, -1, -0.5, 0.200000003
-                        def c8, 0.5, -0.823500037, 1.25, 0.100000001
-                        def c9, -0.89442718, 0.35777089, 0.26832816, 0.699999988
-                        def c10, 1.57791328, 0.325715214, -0.524635434, 0.300000012
-                        def c11, -2, 3, 0.909090877, -1.81818175
-                        def c12, 0.416666657, 1.05499995, -0.0549999997, 0
-                        def c13, 16, 1, -1, 0
+                        def c13, -0, -1, -0.5, 0.200000003
+                        def c14, 0.5, -0.823500037, 1.25, 0.100000001
+                        def c15, -0.89442718, 0.35777089, 0.26832816, 0.699999988
+                        def c16, 1.57791328, 0.325715214, -0.524635434, 0.300000012
+                        def c17, -2, 3, 0.909090877, -1.81818175
+                        def c18, 16, 1, -1, 0
                         dcl_texcoord v0
                         dcl_texcoord1 v1.xyz
                         dcl_texcoord2 v2.xyz
                         dcl_2d s0
                         dcl_2d s1
                         texld r0, v0, s0
-                        add r0.w, r0.w, -c5.x
-                        cmp r1, r0.w, c7.x, c7.y
+                        add r0.w, r0.w, -c9.x
+                        cmp r1, r0.w, c13.x, c13.y
                         texkill r1
                         texld r1, v0.zwzw, s1
-                        add r1.yzw, r0.xxyz, c4.xxyz
-                        add r1.yzw, r1, c7.z
-                        mul r0.w, r1.x, c7.w
+                        add r1.yzw, r0.xxyz, c8.xxyz
+                        add r1.yzw, r1, c13.z
+                        mul r0.w, r1.x, c13.w
                         mad r2.xyz, r1.yzww, r0.w, -r1.yzww
-                        mad r1.xyz, c3.x, r2, r1.yzww
+                        mad r1.xyz, c7.x, r2, r1.yzww
                         add r0.w, -r0.y, r0.x
                         cmp r2.xy, r0.w, r0.yxzw, r0
                         min r1.w, r0.z, r2.x
                         max r3.x, r2.y, r0.z
                         add r0.w, r1.w, r3.x
-                        mad_pp r0.w, r0.w, c8.x, c8.y
-                        add r0.w, -r0_abs.w, -c7.y
+                        mad_pp r0.w, r0.w, c14.x, c14.y
+                        add r0.w, -r0_abs.w, -c13.y
                         add_sat r0.w, r0.w, r0.w
-                        add r0.w, r0.w, -c7.w
-                        mul r0.w, r0.w, c8.z
-                        max r1.w, r0.w, -c7.x
-                        mad r0.w, r1.w, c11.x, c11.y
+                        add r0.w, r0.w, -c13.w
+                        mul r0.w, r0.w, c14.z
+                        max r1.w, r0.w, -c13.x
+                        mad r0.w, r1.w, c17.x, c17.y
                         mul r1.w, r1.w, r1.w
-                        mad r0.w, r0.w, -r1.w, -c7.y
+                        mad r0.w, r0.w, -r1.w, -c13.y
                         dp3 r1.w, v2, v2
                         rsq r1.w, r1.w
-                        mov r2.x, c6.x
-                        mov r3, c10
-                        mad r2, r2.x, r3, c9
-                        nrm_pp r3, v1.xyzx
-                        dp3_sat_pp r4.x, r3.wyzw, r2
-                        add_pp r4.x, r4.x, c8.w
-                        mul_pp r4.y, r4.x, c11.z
-                        mad_pp r4.x, r4.x, c11.w, c11.y
+                        mov r2.x, c10.x
+                        mov r3, c16
+                        mad r2, r2.x, r3, c15
+                        nrm_pp r3.xyz, v1
+                        dp3_sat_pp r4.x, r3, r2
+                        add_pp r4.x, r4.x, c14.w
+                        mul_pp r4.y, r4.x, c17.z
+                        mad_pp r4.x, r4.x, c17.w, c17.y
                         mul_pp r4.y, r4.y, r4.y
                         mul_pp r4.x, r4.y, r4.x
                         mad r2.xyz, v2, r1.w, r2
                         nrm_pp r5.xyz, r2
                         dp3_sat_pp r1.w, r5, r3
-                        pow_pp r2.x, r1.w, c13.x
+                        pow_pp r2.x, r1.w, c18.x
                         mul r0.w, r0.w, r2.x
                         mul_pp r0.w, r2.w, r0.w
                         mad r1.xyz, r1, r4.x, r0.w
-                        mad_pp r2, r3, c13.yzyw, c13.wwwy
-                        dp4_pp r3.x, c0, r2
-                        dp4_pp r3.y, c1, r2
-                        dp4_pp r3.z, c2, r2
-                        max_pp r2.xyz, r3, -c7.x
-                        log_pp r3.x, r2.x
-                        log_pp r3.y, r2.y
-                        log_pp r3.z, r2.z
-                        mul_pp r2.xyz, r3, c12.x
-                        exp_pp r3.x, r2.x
-                        exp_pp r3.y, r2.y
-                        exp_pp r3.z, r2.z
-                        mad_pp r2.xyz, r3, c12.y, c12.z
-                        mul_pp r0.xyz, r0, r2
-                        cmp_pp r0.xyz, r2, r0, -c7.x
-                        add_pp oC0.xyz, r0, r1
-                        mov_pp oC0.w, -c7.y
+                        mad_pp r2, r3.xyzx, c18.yzyw, c18.wwwy
+                        dp4_pp r4.x, c0, r2
+                        dp4_pp r4.y, c1, r2
+                        dp4_pp r4.z, c2, r2
+                        mul_pp r2, r2.yyzx, r3.xzzz
+                        dp4_pp r5.x, c3, r2
+                        dp4_pp r5.y, c4, r2
+                        dp4_pp r5.z, c5, r2
+                        mul_pp r0.w, r3.y, r3.y
+                        mad_pp r0.w, r3.x, r3.x, -r0.w
+                        mad_pp r2.xyz, c6, r0.w, r5
+                        add_pp r2.xyz, r2, r4
+                        mad_pp r0.xyz, r2, r0, r1
+                        cmp_pp r0.xyz, -c12.x, r0, r2
+                        mov_pp r0.w, -c13.y
+                        mov_pp r3.w, -c13.y
+                        cmp_pp oC0, -c11.x, r0, r3
 						"
 				}
 			}

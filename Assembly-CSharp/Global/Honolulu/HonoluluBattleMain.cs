@@ -587,6 +587,29 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            _debugNormal *= -1;
+            Shader.SetGlobalFloat("_IsDebugNormal",_debugNormal);
+            
+        }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            _debugSH *= -1;
+            Shader.SetGlobalFloat("_IsDebugSH", _debugSH);
+        }
+
+        if (Input.GetKeyDown(KeyCode.M))
+        {
+            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 0.7f;
+            DynamicGI.UpdateEnvironment();
+        }
+        
+        if (Input.GetKeyDown(KeyCode.N))
+        {
+            RenderSettings.ambientIntensity = 0f;
+            DynamicGI.UpdateEnvironment();
+        }
         try
         {
             UpdateAttachModel();
@@ -673,7 +696,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         if (_reflectionProbe != null)
         {
             RenderSettings.ambientMode = AmbientMode.Skybox;
-            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 0.5f;
+            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 0.7f;
             RenderSettings.skybox = _skyBox;
             _reflectionProbe.RenderProbe();
         }
@@ -689,7 +712,9 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     }
 
     private Coroutine _updateAmbientRoutine = null;
-
+    private float _debugNormal = -1;
+    private float _debugSH = -1;
+    
     private void UpdateBattleFrame()
     {
         if (IsPaused)
@@ -715,19 +740,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             }
         }
         SceneDirector.ServiceFade();
-/*
-        if (Input.GetKey(KeyCode.M))
-        {
-            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 0.5f;
-            DynamicGI.UpdateEnvironment();
-        }
-        
-        if (Input.GetKey(KeyCode.N))
-        {
-            RenderSettings.ambientIntensity = 0f;
-            DynamicGI.UpdateEnvironment();
-        }
-*/
+
     }
 
     private static void UpdateOverFrame()
