@@ -30,12 +30,13 @@ WaitAnimation: Char=Caster
 PlayAnimation: Char=Caster ; Anim=MP_ATTACK
 Wait: Time=5
 PlayAnimation: Char=Caster ; Speed=0
-Wait: Time=119
+Wait: Time=120
 SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True
 MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
 Turn: Char=Caster ; BaseAngle=Default ; Time=4
 WaitMove: Caster
 PlayAnimation: Char=Caster ; Anim=Idle
 WaitTurn: Char=Caster
+WaitSFXDone: SFX=Doomsday_Sword ; Reflect=True
 ActivateReflect
 WaitReflect

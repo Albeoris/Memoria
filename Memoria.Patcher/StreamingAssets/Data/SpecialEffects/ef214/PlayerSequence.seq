@@ -34,5 +34,6 @@ Turn: Char=Caster ; BaseAngle=Default ; Time=4
 WaitMove: Caster
 PlayAnimation: Char=Caster ; Anim=Idle
 WaitTurn: Char=Caster
+WaitSFXDone: SFX=Firaga_Sword ; Reflect=True
 ActivateReflect
 WaitReflect

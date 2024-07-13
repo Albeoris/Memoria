@@ -27,11 +27,12 @@ WaitMove: Char=Caster
 PlayAnimation: Char=Caster ; Anim=MP_ATTACK
 Wait: Time=5
 PlayAnimation: Char=Caster ; Speed=0
-Wait: Time=61
+Wait: Time=54
 MoveToPosition: Char=Caster ; AbsolutePosition=Default ; Anim=MP_BACK
 Turn: Char=Caster ; BaseAngle=Default ; Time=4
 WaitMove: Caster
 PlayAnimation: Char=Caster ; Anim=Idle
 WaitTurn: Char=Caster
+WaitSFXDone: SFX=Water_Sword ; Reflect=True
 ActivateReflect
 WaitReflect
