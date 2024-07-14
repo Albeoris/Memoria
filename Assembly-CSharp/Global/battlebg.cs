@@ -312,8 +312,8 @@ public static class battlebg
                         {
                             //for (Int32 j = 0; j < geotexanimheader.count; j++)
                             {
-                                Single dx = (geotexanimheader.coords[frameShort].x - geotexanimheader.target.x) / texheaderptr.materials[i].mainTexture.width;
-                                Single dy = (geotexanimheader.coords[frameShort].y - geotexanimheader.target.y) / texheaderptr.materials[i].mainTexture.height;
+                                Single dx = (geotexanimheader.coords[frameShort].x - geotexanimheader.target.x) / 256f;
+                                Single dy = (geotexanimheader.coords[frameShort].y - geotexanimheader.target.y) / 256f;
                                 texheaderptr.materials[i].SetTextureOffset("_MainTex", new Vector2(dx, -dy));
                             }
                             geotexanimheader.lastframe = frameShort;

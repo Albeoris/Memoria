@@ -102,13 +102,13 @@ namespace Memoria.Assets
                 EmbadedTextResources.CurrentSymbol = null;
                 Dictionary<String, BattleActionThread.TextGetter> langBattleText = new Dictionary<String, BattleActionThread.TextGetter>();
                 foreach (String symbol in Configuration.Export.Languages)
-                    langBattleText[symbol] = index => text[index][symbol];
+                    langBattleText[symbol] = index => index >= 0 && index < text.Count && text[index].ContainsKey(symbol) ? text[index][symbol] : "[TEXT NOT FOUND]";
 
                 for (Int32 i = 0; i < btlScene.header.AtkCount; i++)
                 {
                     if (btlSeq.seq_work_set.SeqData[i] != 0)
                     {
-                        List<BattleActionThread> atkSeq = BattleActionThread.LoadFromBtlSeq(btlScene, btlSeq, index => usBattleText[index], i, langBattleText);
+                        List<BattleActionThread> atkSeq = BattleActionThread.LoadFromBtlSeq(btlScene, btlSeq, index => index >= 0 && index < usBattleText.Length ? usBattleText[index] : "[TEXT NOT FOUND]", i, langBattleText);
                         String seqStr = BattleActionThread.GetSequenceStringCode(atkSeq);
                         if (!String.IsNullOrEmpty(seqStr))
                         {
