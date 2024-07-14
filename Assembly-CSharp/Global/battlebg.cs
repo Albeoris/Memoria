@@ -74,6 +74,7 @@ public static class battlebg
             {
                 Material material = materials[matID];
                 String text = material.name.Replace("(Instance)", String.Empty);
+                material.mainTexture.wrapMode = TextureWrapMode.Clamp; // Fixes PNG Textures having seams between them
                 if (battlebg.nf_BbgNumber == 171 && matID == 0 && shaderName.Contains("Minus")) // Crystal World, Crystal
                 {
                     material.shader = ShadersLoader.Find("PSX/BattleMap_Moon");
