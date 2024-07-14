@@ -2,7 +2,7 @@
 
 PlaySound: Sound=2433
 PlaySound: Sound=2434
-Wait: Time=15
+Wait: Time=2
 PlaySound: Sound=159
 PlaySound: Sound=142
 PlaySound: Sound=252
