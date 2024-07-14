@@ -164,9 +164,12 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         FF9StateSystem.Settings.SetBoosterHudToCurrentState();
         PersistenSingleton<UIManager>.Instance.Booster.SetBoosterButton(BoosterType.BattleAssistance, false);
     }
-
+    private Texture2D _cloudFlowMap;
     public void InitBattleScene()
     {
+        Byte[] raw = File.ReadAllBytes("StreamingAssets/Assets/Resources/Textures/DefaultCloudMap.png");
+        _cloudFlowMap = AssetManager.LoadTextureGeneric(raw);
+        _cloudFlowMap.wrapMode = TextureWrapMode.Clamp;
         FF9StateGlobal FF9 = FF9StateSystem.Common.FF9;
         FF9.charArray.Clear();
         attachModel.Clear();
@@ -210,6 +213,9 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         bbginfo.ReadBattleInfo(battleModelPath);
         FF9StateSystem.Battle.FF9Battle.map.btlBGInfoPtr = bbginfo;
         battle.InitBattleMap();
+        string fullbattleSceneName;
+        FF9BattleDB.SceneData.TryGetKey(FF9StateSystem.Battle.battleMapIndex, out fullbattleSceneName);
+        battle.InitBattleMapSky(_cloudFlowMap, fullbattleSceneName);
         this.seqList = new List<Int32>();
         SB2_PATTERN sb2Pattern = this.btlScene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
         Int32[] monsterType = new Int32[sb2Pattern.MonsterCount];
@@ -235,6 +241,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         {
             _updateAmbientRoutine = this.StartCoroutine(UpdateAmbientLight());
         }
+        
+        Shader.SetGlobalTexture("_CloudTexture", _cloudFlowMap);
     }
 
     private void CreateBattleData(FF9StateGlobal FF9)
@@ -587,6 +595,11 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private void Update()
     {
+        if (cameraController != null)
+        {
+            Log.Message("cameraController pos = "+cameraController.mainCam.transform.position);
+        }
+
         if (Input.GetKeyDown(KeyCode.L))
         {
             _debugNormal *= -1;
@@ -601,15 +614,16 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
         if (Input.GetKeyDown(KeyCode.M))
         {
-            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 0.7f;
+            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 1.0f;
             DynamicGI.UpdateEnvironment();
         }
-        
+
         if (Input.GetKeyDown(KeyCode.N))
         {
             RenderSettings.ambientIntensity = 0f;
             DynamicGI.UpdateEnvironment();
         }
+        
         try
         {
             UpdateAttachModel();
@@ -696,7 +710,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         if (_reflectionProbe != null)
         {
             RenderSettings.ambientMode = AmbientMode.Skybox;
-            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 0.7f;
+            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 1.0f;
             RenderSettings.skybox = _skyBox;
             _reflectionProbe.RenderProbe();
         }

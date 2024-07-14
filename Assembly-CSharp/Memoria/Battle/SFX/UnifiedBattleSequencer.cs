@@ -1375,7 +1375,7 @@ public static class UnifiedBattleSequencer
                     foreach (SFXData sfx in (th.waitSFX == 2 ? sfxList.ToArray() : new SFXData[] { sfxList[th.waitSFX - 2000] }))
                     {
                         if (sfx.runningSFX.Count > 0)
-                            stopWait = false;
+                            stopWait = true;
                         if (threadList.FindIndex(th2 => th2.active && th2.parentSFX == sfx) >= 0)
                             stopWait = false;
                     }

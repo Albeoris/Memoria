@@ -3559,7 +3559,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Shaders\PSX\BattleMap_Sky.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="StreamingAssets\Shaders\PSX\BattleMap_Sky_Abr_0.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

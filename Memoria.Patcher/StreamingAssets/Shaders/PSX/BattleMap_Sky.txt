@@ -1,8 +1,20 @@
 Shader "PSX/BattleMap_Sky" {
 	Properties {
-		_MainTex ("Base (RGB) Trans (A)", 2D) = "white" { }
-		_Cutoff ("Alpha cutoff", Range(0,1)) = 0.5
-		_Intensity ("Intensity", Float) = 128
+		 _Color ("Color", Color) = (1.000000,1.000000,1.000000,1.000000)
+         _MainTex ("Texture", 2D) = "grey" { }
+         _Cutoff ("Alpha cutoff", Range(0.000000,1.000000)) = 0.500000
+         _Intensity ("Intensity", Float) = 128.000000
+         _CloudTexture ("Cloud Texture", 2D) = "black" { }
+         _Opacity1 ("Opacity1", Range(0.000000,1.000000)) = 1.000000
+         _Opacity2 ("Opacity2", Range(0.000000,1.000000)) = 0.200000
+         _Opacity3 ("Opacity3", Range(0.000000,1.000000)) = 1.000000
+         _Opacity4 ("Opacity4", Range(0.000000,1.000000)) = 0.095000
+         _ColorTint ("ColorTint", Color) = (1.000000,1.000000,1.000000,1.000000)
+         _ColorAmbientTint ("Ambient Tint", Color) = (1.000000,1.000000,1.000000,1.000000)
+         _HeightOffset ("HeightOffset", Range(0.000000,1.000000)) = 0.100000
+         _Altitude ("Altitude", Float) = 2000.000000
+         _Scroll ("Scroll", Range(0.000000,1.000000)) = 0.721000
+         _Opacity ("Opacity", Range(0.000000,1.000000)) = 0.500000
 	}
 	SubShader { 
 		LOD 100
@@ -16,56 +28,198 @@ Shader "PSX/BattleMap_Sky" {
 				SubProgram "d3d9 " {
 					Bind "vertex" Vertex
 					Bind "texcoord" TexCoord0
-					Matrix 0 [glstate_matrix_modelview0]
-					Matrix 4 [glstate_matrix_projection]
-					Vector 9 [_MainTex_ST]
-					Vector 8 [_ProjectionParams]
-					"vs_2_0
-						def c10, 20, 1, 60000, 0
-						dcl_position v0
-						dcl_texcoord v1
-						dp4 r0.x, c0, v0
-						dp4 r0.y, c1, v0
-						dp4 r0.w, c3, v0
-						dp4 r0.z, c2, v0
-						dp4 r1.x, c7, r0
-						rcp r1.x, r1.x
-						dp4 r2.x, c4, r0
-						dp4 r2.y, c5, r0
-						mov r3.xyw, r0
-						mul oPos.xy, r1.x, r2
-						mov r0.xw, c10.xyzy
-						add r0.x, r0.x, c8.y
-						add r3.z, -r0.x, r0.z
-						sge r0.x, r0.z, -r0.x
-						dp4 r0.y, c7, r3
-						dp4 r0.z, c6, r3
-						rcp r0.y, r0.y
-						mul r0.z, r0.y, r0.z
-						add r1.xy, -r0.zwzw, c10.zyzw
-						mad oPos.zw, r0.x, r1.xyxy, r0
-						mad oT0.xy, v1, c9, c9.zwzw
-						
+					Matrix 0 [unity_ObjectToWorld]
+					Matrix 4 [unity_MatrixVP]
+					Vector 8 [_MainTex_ST]
+					"vs_3_0
+					def c9, 1, 0, 0, 0
+                        dcl_position v0
+                        dcl_texcoord v1
+                        dcl_texcoord o0.xy
+                        dcl_texcoord1 o1.xyz
+                        dcl_position o2
+                        mad r0, v0.xyzx, c9.xxxy, c9.yyyx
+                        dp4 r1.w, c3, r0
+                        dp4 r1.x, c0, r0
+                        dp4 r1.y, c1, r0
+                        dp4 r1.z, c2, r0
+                        dp4 r2.x, c4, r1
+                        dp4 r2.y, c5, r1
+                        dp4 r2.z, c6, r1
+                        dp4 r2.w, c7, r1
+                        mov o1.xyz, r1
+                        mad o0.xy, v1, c8, c8.zwzw
+                        mad o2.xy, r2.w, c255, r2
+                        mov o2.zw, r2
 						"
 				}
 			}
 			Program "fp" {
 				SubProgram "d3d9 " {
-					Float 0 [_Cutoff]
-					Float 1 [_Intensity]
+					Vector 0 [_FixedWorldSpaceCameraPos]
+					Float 1 [_Cutoff]
+					Float 2 [_Intensity]
+					Float 3 [_Altitude]
+					Float 4 [_Opacity1]
+					Float 5 [_Opacity2]
+					Float 6 [_Opacity3]
+					Float 7 [_Opacity4]
+					Vector 8 [_ColorTint]
+					Vector 9 [_ColorAmbientTint]
+					Float 10 [_HeightOffset]
+					Float 11 [_AlphaX]
+					Float 12 [_AlphaY]
+					Float 13 [_NoCloud]
+					Float 14 [_Angle]
 					SetTexture 0 [_MainTex] 2D 0
-					"ps_2_0
-						def c2, 0.0078125, 0, 0, 0
-						dcl_pp t0.xy
-						dcl_2d s0
-						texld_pp r0, t0, s0
-						add_pp r1, r0.w, -c0.x
-						texkill r1
-						mov r1.x, c1.x
-						mul r1.x, r1.x, c2.x
-						mul_pp r0.xyz, r0, r1.x
-						mov_pp oC0, r0
-						
+					SetTexture 1 [_CloudTexture] 2D 1
+					"ps_3_0
+					    def c15, -0, -1, 0.0078125, 1
+                        def c16, 6378100, 1.56786498e-007, 0.00277777785, 0.5
+                        def c17, 6.28318548, -3.14159274, 2000, 1.57079637
+                        def c18, 0.0872929022, -0.301894993, 3.14159274, -3.14159274
+                        def c19, 0.0468878001, -0.203471005, 1.57079601, 0.000250000012
+                        def c20, 0.159099996, 0.318300009, 0.5, 0
+                        def c21, 0.212599993, 0.715200007, 0.0722000003, 0
+                        def c22, 0.444444448, 1, 0, 0
+                        def c23, 2, 0, -1, -3
+                        dcl_texcoord v0.xy
+                        dcl_texcoord1 v1.xyz
+                        dcl_2d s0
+                        dcl_2d s1
+                        texld_pp r0, v0, s0
+                        add r0.w, r0.w, -c1.x
+                        cmp r1, r0.w, c15.x, c15.y
+                        texkill r1
+                        mov r1.z, c15.z
+                        mul r0.w, r1.z, c2.x
+                        add r1.xyz, -c0, v1
+                        dp3 r1.w, r1, r1
+                        rsq r1.w, r1.w
+                        mul r1.xz, r1.w, r1
+                        mov r2.xz, -r1
+                        mad r1.x, r1.y, -r1.w, -c10.x
+                        max r3.x, r1.x, c15.y
+                        min r2.w, r3.x, c15.w
+                        mov r1.xzw, c16
+                        add r1.x, r1.x, c3.x
+                        mul r1.x, r1.x, c16.y
+                        mad r1.y, r2.w, -r2.w, c15.w
+                        mad r1.x, r1.x, r1.x, -r1.y
+                        rsq r1.y, r1.x
+                        rcp r1.y, r1.y
+                        add r2.y, -r1.y, r2.w
+                        mul r2.y, r2.y, c16.x
+                        cmp r2.y, r1.x, r2.y, r1.x
+                        mul r3.xyz, r2.y, -r2.xwzw
+                        add r1.y, -r1.y, -r2.w
+                        mul r1.y, r1.y, c16.x
+                        cmp r1.x, r1.x, r1.y, r1.x
+                        mul r2.xyz, r1.x, -r2.xwzw
+                        cmp r2.xyz, -r2.w, r2, r3
+                        mad r1.x, c14.x, r1.z, r1.w
+                        frc r1.x, r1.x
+                        mad r1.x, r1.x, c17.x, c17.y
+                        sincos r3.xy, r1.x
+                        mov r1.z, c17.z
+                        mul r1.x, r1.z, c11.x
+                        mul r4.xz, -r3.xyyw, r1.x
+                        mov r4.y, -c15.x
+                        mov r2.w, -r2.y
+                        add r1.xyw, r2.xwzz, r4.xyzz
+                        nrm r4.xyz, r1.xyww
+                        rcp r1.x, r4.z
+                        mul r1.x, r1.x, r4.x
+                        add r1.y, r1_abs.x, c15.y
+                        rcp r1.w, r1_abs.x
+                        cmp r1.w, r1.y, r1.w, r1_abs.x
+                        mul r3.z, r1.w, r1.w
+                        mad r3.w, r3.z, c18.x, c18.y
+                        mad r3.z, r3.w, r3.z, c15.w
+                        mad r1.w, r3.z, -r1.w, c17.w
+                        mul r3.z, r1_abs.x, r3.z
+                        cmp r1.y, r1.y, r1.w, r3.z
+                        cmp r1.x, r1.x, r1.y, -r1.y
+                        cmp r1.y, r4.x, c18.z, c18.w
+                        cmp r1.y, r4.z, -c15.x, r1.y
+                        add r1.x, r1.y, r1.x
+                        mad r1.w, r4_abs.y, c19.x, c19.y
+                        mad r1.w, r1.w, r4_abs.y, c19.z
+                        add r3.z, -r4_abs.y, c15.w
+                        rsq r3.z, r3.z
+                        rcp r3.z, r3.z
+                        mul r3.w, r1.w, r3.z
+                        mad r1.w, r1.w, -r3.z, -c17.y
+                        cmp r1.w, r4.y, r3.w, r1.w
+                        add r1.y, -r1.w, c17.w
+                        mad r4.xy, r1, c20, c20.z
+                        mad r4.zw, r4.y, c23.xyxy, c23.xyzy
+                        texldl r4, r4.xzww, s1
+                        mov r1.x, c4.x
+                        mov r1.y, c5.x
+                        mov r5.x, c6.x
+                        mov r5.y, c7.x
+                        mul r3.zw, r4, r5.xyxy
+                        mad r3.zw, r4.xyxy, r1.xyxy, r3
+                        mul r1.z, r1.z, c12.x
+                        mul r4.xz, -r3.xyyw, r1.z
+                        mov r4.y, -c15.x
+                        add r2.xzw, r2.xywz, r4.xyyz
+                        nrm r4.xyz, r2.xzww
+                        rcp r1.z, r4.z
+                        mul r1.z, r1.z, r4.x
+                        add r1.w, r1_abs.z, c15.y
+                        rcp r2.x, r1_abs.z
+                        cmp r2.x, r1.w, r2.x, r1_abs.z
+                        mul r2.z, r2.x, r2.x
+                        mad r2.w, r2.z, c18.x, c18.y
+                        mad r2.z, r2.w, r2.z, c15.w
+                        mad r2.x, r2.z, -r2.x, c17.w
+                        mul r2.z, r1_abs.z, r2.z
+                        cmp r1.w, r1.w, r2.x, r2.z
+                        cmp r1.z, r1.z, r1.w, -r1.w
+                        cmp r1.w, r4.x, c18.z, c18.w
+                        cmp r1.w, r4.z, -c15.x, r1.w
+                        add r3.x, r1.w, r1.z
+                        mad r1.z, r4_abs.y, c19.x, c19.y
+                        mad r1.z, r1.z, r4_abs.y, c19.z
+                        add r1.w, -r4_abs.y, c15.w
+                        rsq r1.w, r1.w
+                        rcp r1.w, r1.w
+                        mul r2.x, r1.w, r1.z
+                        mad r1.z, r1.z, -r1.w, -c17.y
+                        cmp r1.z, r4.y, r2.x, r1.z
+                        add r3.y, -r1.z, c17.w
+                        mad r4.xy, r3, c20, c20.z
+                        mad r4.zw, r4.y, c23.xyxy, c23.xyzy
+                        texldl r4, r4.xzww, s1
+                        mul r1.zw, r5.xyxy, r4
+                        mad r1.xy, r4, r1, r1.zwzw
+                        add r1.z, c11.x, c11.x
+                        lrp r2.xz, r1_abs.z, r1.xyyw, r3.zyww
+                        add r1.x, r2.y, c17.z
+                        mul_sat r1.x, r1.x, c19.w
+                        mad r1.y, r1.x, -c23.x, -c23.w
+                        mul r1.x, r1.x, r1.x
+                        mul r1.x, r1.x, r1.y
+                        mad r1.yz, r1.x, -r2.xxzw, r2.xxzw
+                        mul r2.xyz, r1.z, c9
+                        mad r1.yzw, r1.y, c8.xxyz, r2.xxyz
+                        mad_pp r1.yzw, r1, c16.w, r0.xxyz
+                        dp3 r2.x, r1.yzww, c21
+                        mad r2.y, r2.x, c22.x, c22.y
+                        mul r2.y, r2.y, r2.x
+                        add r2.z, r2.x, c15.w
+                        rcp r2.z, r2.z
+                        mul r2.y, r2.z, r2.y
+                        rcp r2.x, r2.x
+                        mul r2.x, r2.x, r2.y
+                        mul r2.yzw, r1, r2.x
+                        mad r1.yzw, r1, -r2.x, r1
+                        mad_pp r1.xyz, r1.x, r1.yzww, r2.yzww
+                        cmp r0.xyz, -c13.x, r1, r0
+                        mul_pp oC0.xyz, r0.w, r0
+                        mov_pp oC0.w, c15.w
 						"
 				}
 			}
