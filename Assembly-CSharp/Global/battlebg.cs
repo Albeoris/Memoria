@@ -79,19 +79,15 @@ public static class battlebg
                 {
                     material.shader = ShadersLoader.Find("PSX/BattleMap_Moon");
                 }
-                else if ((battlebg.nf_BbgNumber == 92 && matID == 3 && shaderName.Contains("Plus")) // Desert Palace, Dock
-                      || (battlebg.nf_BbgNumber == 52 && matID == 6 && shaderName.Contains("Plus")) // Cleyra's Trunk, Inside, Sandfall
-                      || (battlebg.nf_BbgNumber == 57 && matID == 0 && text.Contains("a"))) // Clayra outpost waterfall
-                {
-                    material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_1_Off");
-                }
-                else if (battlebg.nf_BbgNumber == 32 && matID == 3 && text.Contains("a"))
-                {
-                    material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_1_Off");
-                }
                 else if (text.Contains("a"))
                 {
-                    material.shader = ShadersLoader.Find(shaderName + "_Abr_1");
+                    if (battlebg.nf_BbgNumber == 92 // Desert Palace, Dock
+                      || battlebg.nf_BbgNumber == 52 // Cleyra's Trunk, Inside, Sandfall
+                      || battlebg.nf_BbgNumber == 57 // Clayra outpost waterfall
+                      || battlebg.nf_BbgNumber == 32) // Oeilvert bridge flames
+                        material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_1_Off");
+                    else
+                        material.shader = ShadersLoader.Find(shaderName + "_Abr_1");
                 }
                 else if (text.Contains("s"))
                 {
