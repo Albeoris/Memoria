@@ -85,6 +85,10 @@ public static class battlebg
                 {
                     material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_1_Off");
                 }
+                else if (battlebg.nf_BbgNumber == 32 && matID == 3 && text.Contains("a"))
+                {
+                    material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_1_Off");
+                }
                 else if (text.Contains("a"))
                 {
                     material.shader = ShadersLoader.Find(shaderName + "_Abr_1");
