@@ -308,7 +308,7 @@ Complete changes and info can be found on this mod's page.</Description>
 
 <Mod>
 	<Name>Mog Add-ons</Name>
-	<Version>3.7</Version>
+	<Version>3.7.2</Version>
 	<InstallationPath>MogAddons</InstallationPath>
 	<ReleaseDate>2024-07-10</ReleaseDate>
 	<Author>faospark</Author>
@@ -318,42 +318,13 @@ Complete changes and info can be found on this mod's page.</Description>
  - Compatible to Playable Character Pack and Beatrix mod
  - All ability enhancement not necessarily compatible to Alternate fantasy</Description>
 	<PatchNotes> 
-Updates for 3.7
-Characters Enhancements [Not YET Compatible with AF]
- - Added Passive for Zidane : - Pillage - Boosts damage of thievery
- - Added -Aero-,-Quake-,-Watera- up to their Aga levels To Vivi   
- - Added New -Swrd Mag- skills for Steiner 
- - New Active Ability -Photon Beam- Increases Garnet Utility in early parts of thegma  
- - Splits -Titan- and -Fenir- in to two independent summons for Eiko (replaces old swap method)
- - New Support Ability - Tensai - Makes Amaranth learn abilities and Level up extremely fast 
-Gameplay
- - 1 Ability Gem now compatible with Alternate fantasy
- - Added option Remove Auto Potion and replace it with 5% HP and AP 
- - Added 8xp
- - Fix DoubleXP requirement 
-Graphical 
- - Added option Menu Background Choices: Tantalus and Chocobo, Defaults to black
- - Added option Title Screen Concept art loop
- - New Portraits of all variants for Lani, Frately and Mikoto [Just in case she is added in game] 
- - New 3d Portraits for Cina and Marcus
- - Added Dffoo portraits support for Pluto knight Zidane and White mage Garnet
- - Restored Original versions of the assets and not the compressed ones
- - Unified shared assets on base mod to reduce repeated textures on variants
-General
- - Reorganized folders of some sub mods 
- - Removed Random card drop because it is now part of DV's Card Mod 
- - Fixed Colored Maps Bug 
+	Pleas read the Read-me File 
 	</PatchNotes>
 	<Category>Various</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1</DownloadUrl>
 	<PreviewFile>preview/mog-addons.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1718198423-35308735.png</PreviewFileUrl>
-	<SubMod>
-		<Name>Configure</Name>
-		<InstallationPath>#</InstallationPath>
-		<Description>Click here to configure mods</Description>
-	</SubMod>
 	<SubMod>
 		<Name>Buttons : PS5</Name>
 		<InstallationPath>Features/Buttons/ButtonsPS5</InstallationPath>
@@ -389,11 +360,6 @@ General
 		<InstallationPath>Features/Buttons/ButtonsPixel</InstallationPath>
 		<Description>Pixelated Prompts if that is your thing</Description>
 		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>---- [ Configure UI ] ----</Name>
-		<InstallationPath>#</InstallationPath>
-		<Description>Click here to configure mods</Description>
 	</SubMod>
 	<SubMod>
 		<Name>Portraits : Default Extended Cast</Name>
@@ -492,11 +458,6 @@ General
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>---- [ Configure Tweaks ] ----</Name>
-		<InstallationPath>#</InstallationPath>
-		<Description>Click here to configure mods</Description>
-	</SubMod>
-	<SubMod>
 		<Name>Tweak: 1 Gem Ability</Name>
 		<InstallationPath>Features/Tweaks/Ability</InstallationPath>
 		<Description>Enables 1 gem for passive abilities to be enabled Now Compatible to Alternate Fantasy</Description>
@@ -508,12 +469,6 @@ General
 		<Description>Cuts ability gems to half for passive abilities to be enabled</Description>
 		<Priority>1</Priority>
 	</SubMod>
-	<!-- <SubMod> -->
-	<!-- <Name>Tweak: 1 Gem Ability for Alternate Fantasy</Name> -->
-	<!-- <InstallationPath>Features/Tweaks/AF Ability</InstallationPath> -->
-	<!-- <Description>Enables 1 gem for passive abilities to be enabled for alternate fantasy</Description> -->
-	<!-- <Priority>1</Priority> -->
-	<!-- </SubMod> -->
 	<SubMod>
 		<Name>Tweak: 2x AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP2x</InstallationPath>
@@ -605,11 +560,6 @@ General
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>-- [ Character Enhancements Not AF compatible ] --</Name>
-		<InstallationPath>#</InstallationPath>
-		<Description>Click here to configure mods</Description>
-	</SubMod>
-	<SubMod>
 		<Name>Enhance:[Eiko] The Summoner  </Name>
 		<InstallationPath>Features/Enhance/Eiko</InstallationPath>
 		<Description>Splits Titan and Fenrir as their won independent summon</Description>
@@ -657,7 +607,6 @@ General
 		<Description>Boosts damage of thievery </Description>
 		<Priority>1</Priority>
 	</SubMod>
-
 </Mod>
 
 <Mod>
