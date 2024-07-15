@@ -89,12 +89,31 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiTextBlock sharedFpsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SharedFPS), row, 0, 1, 9);
+            UiTextBlock FPSDropboxText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FPSDropboxChoice), row, 0, 1, 4);
+            FPSDropboxText.Foreground = Brushes.White;
+            FPSDropboxText.Margin = rowMargin;
+            FPSDropboxText.ToolTip = Lang.Settings.SharedFPS_Tooltip;
+            UiComboBox FPSDropbox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
+            FPSDropbox.ItemsSource = new String[]{
+                Lang.Settings.FPSDropboxChoice0, // default 30 20 15
+                Lang.Settings.FPSDropboxChoice1, // 30
+                Lang.Settings.FPSDropboxChoice2, // 60
+                Lang.Settings.FPSDropboxChoice3, // 90
+                Lang.Settings.FPSDropboxChoice4  // 120
+            };
+            FPSDropbox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(FPSDropboxChoice)) { Mode = BindingMode.TwoWay });
+            FPSDropbox.Height = 20;
+            FPSDropbox.FontSize = 10;
+            FPSDropbox.Margin = rowMargin;
+
+            row++;
+
+            /*UiTextBlock sharedFpsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SharedFPS), row, 0, 1, 9);
             sharedFpsText.Foreground = Brushes.White;
             sharedFpsText.Margin = rowMargin;
             sharedFpsText.ToolTip = Lang.Settings.SharedFPS_Tooltip;
 
-            row++;
+            row++;*/
 
             /*UiTextBlock sharedFpsIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
             sharedFpsIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SharedFPS)) { Mode = BindingMode.TwoWay });
@@ -108,6 +127,7 @@ namespace Memoria.Launcher
             sharedFps.Maximum = 120;
             sharedFps.Margin = new Thickness(0, 0, 3, 0);*/
 
+            /*
             UiTextBlock battleFPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleFPS), row, 0, 1, 3);
             battleFPSText.Foreground = Brushes.White;
             battleFPSText.Margin = rowMargin;
@@ -183,7 +203,7 @@ namespace Memoria.Launcher
             worldFPSSlider.Maximum = 120;
             worldFPSSlider.Margin = new(3, 0, 3, 0);
 
-            row++;
+            row++;*/
 
             UiTextBlock CameraStabilizerText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.CameraStabilizer), row, 0, 1, 8);
             CameraStabilizerText.Foreground = Brushes.White;
@@ -510,6 +530,18 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public Int16 FPSDropboxChoice
+        {
+            get { return _fpsdropboxchoice; }
+            set
+            {
+                if (_fpsdropboxchoice != value)
+                {
+                    _fpsdropboxchoice = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         public Int16 UIColumnsChoice
         {
             get { return _uicolumnschoice; }
@@ -799,7 +831,7 @@ namespace Memoria.Launcher
             }
             return false;
         }
-        private Int16 _iswidescreensupport, _battleInterface, _uicolumnschoice, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _scaledbattleui, _sharedfps, _battlefps, _fieldfps, _worldfps, _camerastabilizer;
+        private Int16 _iswidescreensupport, _battleInterface, _uicolumnschoice, _fpsdropboxchoice, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _scaledbattleui, _sharedfps, _battlefps, _fieldfps, _worldfps, _camerastabilizer;
         private double _scaledbattleuiscale;
         private String _fontChoice;
         private UiComboBox _fontChoiceBox;
@@ -867,7 +899,7 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _iswidescreensupport))
                     _iswidescreensupport = 1;
 
-                value = iniFile.ReadValue("Graphics", "FieldFPS");
+                /*value = iniFile.ReadValue("Graphics", "FieldFPS");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 30";
@@ -902,6 +934,30 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _worldfps))
                     _worldfps = 20;
+                */
+
+
+                value = iniFile.ReadValue("Graphics", "FieldFPS");
+                Boolean value1isInt = Int16.TryParse(value, out Int16 value1);
+                value = iniFile.ReadValue("Graphics", "BattleFPS");
+                Boolean value2isInt = Int16.TryParse(value, out Int16 value2);
+                value = iniFile.ReadValue("Graphics", "WorldFPS");
+                Boolean value3isInt = Int16.TryParse(value, out Int16 value3);
+                if (value1isInt && value2isInt && value3isInt)
+                {
+                    if (value1 == 30 && value2 == 15 && value3 == 20)
+                        _fpsdropboxchoice = 0;
+                    else if (value1 == 30 && value2 == 30 && value3 == 30)
+                        _fpsdropboxchoice = 1;
+                    else if (value1 == 60 && value2 == 60 && value3 == 60)
+                        _fpsdropboxchoice = 2;
+                    else if (value1 == 90 && value2 == 90 && value3 == 90)
+                        _fpsdropboxchoice = 3;
+                    else if (value1 == 120 && value2 == 120 && value3 == 120)
+                        _fpsdropboxchoice = 4;
+                    else
+                        _fpsdropboxchoice = -1;
+                }
 
                 value = iniFile.ReadValue("Graphics", "CameraStabilizer");
                 if (String.IsNullOrEmpty(value))
@@ -1073,6 +1129,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(CameraStabilizer));
                 Refresh(nameof(BattleInterface));
                 Refresh(nameof(UIColumnsChoice));
+                Refresh(nameof(FPSDropboxChoice));
                 Refresh(nameof(SkipIntros));
                 Refresh(nameof(OrchestralMusic));
                 Refresh(nameof(HighFpsVideo));
@@ -1161,7 +1218,7 @@ namespace Memoria.Launcher
                         if (WidescreenSupport == 1)
                             iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         break;
-                    case nameof(SharedFPS):
+                    /*case nameof(SharedFPS):
                         iniFile.WriteValue("Graphics", "BattleFPS ", " " + SharedFPS);
                         iniFile.WriteValue("Graphics", "FieldFPS ", " " + SharedFPS);
                         iniFile.WriteValue("Graphics", "WorldFPS ", " " + SharedFPS);
@@ -1181,7 +1238,7 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Graphics", "WorldFPS ", " " + WorldFPS);
                         if (WorldFPS != 20)
                             iniFile.WriteValue("Graphics", "Enabled ", " 1");
-                        break;
+                        break;*/
                     case nameof(CameraStabilizer):
                         iniFile.WriteValue("Graphics", "CameraStabilizer ", " " + CameraStabilizer);
                         if (CameraStabilizer != 0)
@@ -1217,6 +1274,39 @@ namespace Memoria.Launcher
                         {
                             iniFile.WriteValue("Interface", "MenuEquipRowCount ", " 8");
                             iniFile.WriteValue("Interface", "MenuChocographRowCount ", " 8");
+                        }
+                        break;
+                    case nameof(FPSDropboxChoice):
+                        iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                        switch (FPSDropboxChoice)
+                        {
+                            case (0):
+                                iniFile.WriteValue("Graphics", "FieldFPS ", " 30");
+                                iniFile.WriteValue("Graphics", "BattleFPS ", " 15");
+                                iniFile.WriteValue("Graphics", "WorldFPS ", " 20");
+                                break;
+                            case (1):
+                                iniFile.WriteValue("Graphics", "FieldFPS ", " 30");
+                                iniFile.WriteValue("Graphics", "BattleFPS ", " 30");
+                                iniFile.WriteValue("Graphics", "WorldFPS ", " 30");
+                                break;
+                            case (2):
+                                iniFile.WriteValue("Graphics", "FieldFPS ", " 60");
+                                iniFile.WriteValue("Graphics", "BattleFPS ", " 60");
+                                iniFile.WriteValue("Graphics", "WorldFPS ", " 60");
+                                break;
+                            case (3):
+                                iniFile.WriteValue("Graphics", "FieldFPS ", " 90");
+                                iniFile.WriteValue("Graphics", "BattleFPS ", " 90");
+                                iniFile.WriteValue("Graphics", "WorldFPS ", " 90");
+                                break;
+                            case (4):
+                                iniFile.WriteValue("Graphics", "FieldFPS ", " 120");
+                                iniFile.WriteValue("Graphics", "BattleFPS ", " 120");
+                                iniFile.WriteValue("Graphics", "WorldFPS ", " 120");
+                                break;
+                            default:
+                                break;
                         }
                         break;
                     case nameof(SkipIntros):
@@ -1339,7 +1429,7 @@ namespace Memoria.Launcher
                 {
                     RemoveDuplicateKeys(_iniPath);
                     IniFile iniFile = new IniFile(_iniPath);
-                    String _checklatestadded = iniFile.ReadValue("Interface", "FadeDuration"); // check if the latest ini parameter is already there
+                    String _checklatestadded = iniFile.ReadValue("Interface", "SynthIngredientStockDisplayed"); // check if the latest ini parameter is already there
                     if (String.IsNullOrEmpty(_checklatestadded))
                     {
                         MakeIniNotNull("Mod", "FolderNames", "");
@@ -1463,6 +1553,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Interface", "MenuEquipRowCount", "5");
                         MakeIniNotNull("Interface", "MenuChocographRowCount", "5");
                         MakeIniNotNull("Interface", "FadeDuration", "40");
+                        MakeIniNotNull("Interface", "SynthIngredientStockDisplayed", "1");
 
                         MakeIniNotNull("Fixes", "Enabled", "1");
                         MakeIniNotNull("Fixes", "KeepRestTimeInBattle", "1");

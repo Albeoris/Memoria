@@ -243,26 +243,56 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Tantalus</Name>
-	<Version>1.1</Version>
-	<Author>Emeiru</Author>
+	<Version>2.0</Version>
 	<InstallationPath>PlayableTantalus</InstallationPath>
-	<Category>Gameplay</Category>
+	<ReleaseDate>Jul 2024</ReleaseDate>
+	<Author>Emeiru</Author>
 	<Description>Overhauls Blank, Cinna, and Marcus to become actually usable characters
 Includes:
 - The tantalus trio with their own set of active and supporting abilities
 - Base stats improvements
 - Steal-Gil and Mug buffed
-- Minor item changes to complement the trio
+- New items and tweaks to complement the trio and thief gameplay
 - Minor name and ability text changes (purely thematic)
-- and others
 
 Complete changes and info can be found on this mod's page.</Description>
-	<ReleaseDate>Jun 2024</ReleaseDate>
-	<PatchNotes>Requires the latest Memoria Engine version and Alternate Fantasy v6.2 (or higher)</PatchNotes>
+	<PatchNotes>Requires the latest Memoria Engine version and Alternate Fantasy v6.2+</PatchNotes>
+	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/64</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/mkmzntygv46sh4qg4qjxi/PlayableTantalus.zip?rlkey=r92lksa6neyz3g52nkiyb6rhq&amp;st=8okqf35z&amp;dl=1</DownloadUrl>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/64/64-1718179640-480880001.png</PreviewFileUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/mkmzntygv46sh4qg4qjxi/PlayableTantalus.zip?rlkey=r92lksa6neyz3g52nkiyb6rhq&amp;dl=1</DownloadUrl>
+	<SubMod>
+		<Name>Alternate Fantasy</Name>
+		<InstallationPath>AlternateFantasy</InstallationPath>
+		<Description>Version for Alternate Fantasy</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Vanilla</Name>
+		<InstallationPath>Vanilla</InstallationPath>
+		<Description>Version for regular FFIX</Description>
+		<Priority>2</Priority>
+	</SubMod>
 	<PreviewFile>Preview.JPG</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/64/64-1718179640-480880001.png</PreviewFileUrl>
+</Mod>
+	
+<Mod>
+	<Name>Black Cat - Endgame Shop</Name>
+	<Version>1.0</Version>
+	<ReleaseDate>Jul 2024</ReleaseDate>
+	<Author>Emeiru</Author>
+	<InstallationPath>BlackCat</InstallationPath>
+	<Category>Gameplay</Category>
+	<Description>The Black Mage Village (Disc 4) now sells almost every item in the game!
+- No. 239's Weapon and Armor Shop now sells every purchasable weapon and armor.
+- The Black Cat Synthesis Shop now can synthesize all regular equipment.
+
+Complete changes and info can be found on this mod's page.</Description>
+	<PatchNotes>Requires the latest Memoria Engine version</PatchNotes>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/65</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/19l0a7strjifbdpezs5op/BlackCat.zip?rlkey=6a3509xwdzpny23zvrnkpg3qx&amp;dl=1</DownloadUrl>
+	<PreviewFile>Preview.JPG</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/65/65-1720822585-1514609332.jpeg</PreviewFileUrl>
 </Mod>
 
 <Mod>
@@ -278,41 +308,52 @@ Complete changes and info can be found on this mod's page.</Description>
 
 <Mod>
 	<Name>Mog Add-ons</Name>
-	<Version>3.6.2</Version>
+	<Version>3.7</Version>
 	<InstallationPath>MogAddons</InstallationPath>
-	<ReleaseDate>2024-06-16</ReleaseDate>
+	<ReleaseDate>2024-07-10</ReleaseDate>
 	<Author>faospark</Author>
-	<Description>A multi-mod / Collection of Gameplay Tweak: 2x, 4x [ Ability , EXP and Gil Make ] Ability Gems Require only 1 gem, Darker UI ,
-Better Button Prompt (including Dualsense), Opera Omnia Portraits, Upscaled PS1 Portraits,
-Half exp, 1 Gem abilities, Portraits extended Characters
+	<Description>A Library / Collection of Gameplay Tweaks, Graphical enhancement , Button Support and Many more
 :: Submod activation and Notes ::
-- Use the Mod Manager UI to activate each submods by using the drop down menu  
-- All ability enhancement not necessarily compatible to Alternate fantasy</Description>
-	<PatchNotes>Collective notes from 3.5 - 3.6.1
- - Added Hotfixes for recent release of moguri
- - another significant file reduction 	
- - Added Recreation Title Screen  
- - Added Pixel remaster Darker Ui
- - Added Requested NA SNES Controller
- - Quina's can now Eat at 50% enemy hp
- - Quina's can Cook at 100% enemy Hp (though can still miss)
- - Steiner can Now equip Save the Queen
- - Fixed 1 gem cost skill for Alternate fantasy 
- - Fixed exp conflict with one of the submods
- - Marked reduced file size through compression and now using Append mode
- - Fixed AP Tweak Bug 
- - added deffered Tweak 2x Item drop 
- - added Alternative colored world Maps
- - added Millennial Decay as default for Eiko's summon skill 
- - added Freya Jump do 3x damage 
- - added Resistance to zombie and virus status
- - replaced file preview url and preview file
- - striped extra slash declared submod folders</PatchNotes>
+ - Use the Mod Manager UI to activate each submods by using the drop down menu 
+ - Compatible to Playable Character Pack and Beatrix mod
+ - All ability enhancement not necessarily compatible to Alternate fantasy</Description>
+	<PatchNotes> 
+Updates for 3.7
+Characters Enhancements [Not YET Compatible with AF]
+ - Added Passive for Zidane : - Pillage - Boosts damage of thievery
+ - Added -Aero-,-Quake-,-Watera- up to their Aga levels To Vivi   
+ - Added New -Swrd Mag- skills for Steiner 
+ - New Active Ability -Photon Beam- Increases Garnet Utility in early parts of thegma  
+ - Splits -Titan- and -Fenir- in to two independent summons for Eiko (replaces old swap method)
+ - New Support Ability - Tensai - Makes Amaranth learn abilities and Level up extremely fast 
+Gameplay
+ - 1 Ability Gem now compatible with Alternate fantasy
+ - Added option Remove Auto Potion and replace it with 5% HP and AP 
+ - Added 8xp
+ - Fix DoubleXP requirement 
+Graphical 
+ - Added option Menu Background Choices: Tantalus and Chocobo, Defaults to black
+ - Added option Title Screen Concept art loop
+ - New Portraits of all variants for Lani, Frately and Mikoto [Just in case she is added in game] 
+ - New 3d Portraits for Cina and Marcus
+ - Added Dffoo portraits support for Pluto knight Zidane and White mage Garnet
+ - Restored Original versions of the assets and not the compressed ones
+ - Unified shared assets on base mod to reduce repeated textures on variants
+General
+ - Reorganized folders of some sub mods 
+ - Removed Random card drop because it is now part of DV's Card Mod 
+ - Fixed Colored Maps Bug 
+	</PatchNotes>
 	<Category>Various</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1</DownloadUrl>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1718198423-35308735.png</PreviewFileUrl>
 	<PreviewFile>preview/mog-addons.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1718198423-35308735.png</PreviewFileUrl>
+	<SubMod>
+		<Name>Configure</Name>
+		<InstallationPath>#</InstallationPath>
+		<Description>Click here to configure mods</Description>
+	</SubMod>
 	<SubMod>
 		<Name>Buttons : PS5</Name>
 		<InstallationPath>Features/Buttons/ButtonsPS5</InstallationPath>
@@ -323,19 +364,19 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 		<Name>Buttons : PS Gloss</Name>
 		<InstallationPath>Features/Buttons/ButtonsPS4Gloss</InstallationPath>
 		<Description>Glossy PS4 buttons</Description>
-		<Priority>1</Priority>
+		<Priority>5</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : Simple PS</Name>
 		<InstallationPath>Features/Buttons/ButtonsPSX</InstallationPath>
 		<Description>PS prompts in the same Style as the default xbox prompts</Description>
-		<Priority>1</Priority>
+		<Priority>4</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : Default Xbox</Name>
 		<InstallationPath>Features/Buttons/ButtonsXbox</InstallationPath>
 		<Description>Restores Default Xbox Prompts</Description>
-		<Priority>1</Priority>
+		<Priority>2</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : SNES</Name>
@@ -350,10 +391,15 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
+		<Name>---- [ Configure UI ] ----</Name>
+		<InstallationPath>#</InstallationPath>
+		<Description>Click here to configure mods</Description>
+	</SubMod>
+	<SubMod>
 		<Name>Portraits : Default Extended Cast</Name>
 		<InstallationPath>Features/Portraits/PortraitDefault</InstallationPath>
 		<Description>Default Portraits that includes Kuja, Fratly and Lani</Description>
-		<Priority>1</Priority>
+		<Priority>2</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Portraits : PSX Upscaled</Name>
@@ -362,10 +408,16 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
+		<Name>Portraits : DFFOO Pluto Knight / White Mage </Name>
+		<InstallationPath>Features/Portraits/PortraitOperaOmniaPCP</InstallationPath>
+		<Description>Playable Character Pack DFFOO Style for Extra costumes for Zidane and Garnet </Description>
+		<Priority>3</Priority>
+	</SubMod>
+	<SubMod>
 		<Name>Portraits : Opera Omnia</Name>
 		<InstallationPath>Features/Portraits/PortraitOperaOmnia</InstallationPath>
 		<Description>Only activate this when base is buggy</Description>
-		<Priority>1</Priority>
+		<Priority>3</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Dialogue Box : Default</Name>
@@ -392,9 +444,62 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
+		<Name>Menu Bg : Tantalus</Name>
+		<InstallationPath>Features/Menubg/menubgtantalus</InstallationPath>
+		<Description>Tantalus Pattern on Menu Background</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Menu Bg : Chocobo</Name>
+		<InstallationPath>Features/Menubg/menubgchocobo</InstallationPath>
+		<Description>Chocobo Pattern on Menu Background</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Memoria : Alternate Title Screen</Name>
+		<InstallationPath>Features/TitleLogo/TitleLogo1</InstallationPath>
+		<Description>Shows an Alternative title screen and Memoria Indicator</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Memoria : Recreation Title Screen</Name>
+		<InstallationPath>Features/TitleLogo/TitleLogo2</InstallationPath>
+		<Description>Shows a Recreation title screen and Memoria Indicator</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Memoria : Old School Title Screen</Name>
+		<InstallationPath>Features/TitleLogo/TitleLogo3</InstallationPath>
+		<Description>Shows an old school type of title screen</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Memoria : Concept Art Title Loop</Name>
+		<InstallationPath>Features/TitleLogo/TitleLoop</InstallationPath>
+		<Description>Replace Title Loop Images with Concept Art</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Memoria: Alternate World Maps [Select]</Name>
+		<InstallationPath>Features/Maps</InstallationPath>
+		<Description>Alternative Over world Map </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Memoria: Triple Triad Mat</Name>
+		<InstallationPath>Features/Cards</InstallationPath>
+		<Description>Shows Triple triad inspired matt and UI for cards</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>---- [ Configure Tweaks ] ----</Name>
+		<InstallationPath>#</InstallationPath>
+		<Description>Click here to configure mods</Description>
+	</SubMod>
+	<SubMod>
 		<Name>Tweak: 1 Gem Ability</Name>
 		<InstallationPath>Features/Tweaks/Ability</InstallationPath>
-		<Description>Enables 1 gem for passive abilities to be enabled</Description>
+		<Description>Enables 1 gem for passive abilities to be enabled Now Compatible to Alternate Fantasy</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
@@ -403,12 +508,12 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 		<Description>Cuts ability gems to half for passive abilities to be enabled</Description>
 		<Priority>1</Priority>
 	</SubMod>
-	<SubMod>
-		<Name>Tweak: 1 Gem Ability for Alternate Fantasy</Name>
-		<InstallationPath>Features/Tweaks/AF Ability</InstallationPath>
-		<Description>Enables 1 gem for passive abilities to be enabled for alternate fantasy</Description>
-		<Priority>1</Priority>
-	</SubMod>
+	<!-- <SubMod> -->
+	<!-- <Name>Tweak: 1 Gem Ability for Alternate Fantasy</Name> -->
+	<!-- <InstallationPath>Features/Tweaks/AF Ability</InstallationPath> -->
+	<!-- <Description>Enables 1 gem for passive abilities to be enabled for alternate fantasy</Description> -->
+	<!-- <Priority>1</Priority> -->
+	<!-- </SubMod> -->
 	<SubMod>
 		<Name>Tweak: 2x AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP2x</InstallationPath>
@@ -437,6 +542,12 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 		<Name>Tweak: 4x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP4x</InstallationPath>
 		<Description>Gains 4x EXP after battle</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 8x EXP Gain</Name>
+		<InstallationPath>Features/Tweaks/EXP8x</InstallationPath>
+		<Description>Gains 8x EXP after battle</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
@@ -470,39 +581,9 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: Get random card after battle</Name>
-		<InstallationPath>Features/Tweaks/RandomCard</InstallationPath>
-		<Description>Recieve a Random Card after battle (Will be soon moved to DV's mod)</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
 		<Name>Tweak: Get 2x of any item drop after battle </Name>
 		<InstallationPath>Features/Tweaks/2xitem</InstallationPath>
-		<Description>Any item recieved after battle would be mutltiplied by 2 , hence if a monster drops 2 poition you get 4  </Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Memoria : Alternate Title Screen</Name>
-		<InstallationPath>Features/TitleLogo</InstallationPath>
-		<Description>Shows an Alternative title screen and Memoria Indicator</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Memoria : Recreation Title Screen</Name>
-		<InstallationPath>Features/TitleLogo2</InstallationPath>
-		<Description>Shows a Recreation title screen and Memoria Indicator</Description>
-		<Priority>99</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Memoria: Alternate World Maps [Select]</Name>
-		<InstallationPath>Features/Maps</InstallationPath>
-		<Description>Alternative Overworld Map </Description>
-		<Priority>99</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Memoria: Triple Triad Mat</Name>
-		<InstallationPath>Features/Cards</InstallationPath>
-		<Description>Shows Triple triad inspired matt and UI for cards</Description>
+		<Description>Any item received after battle would be multiplied by 2 , hence if a monster drops 2 potions you get 4  </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
@@ -512,35 +593,71 @@ Half exp, 1 Gem abilities, Portraits extended Characters
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance: Make Millenial Decay (Fenrir) as default [Eiko] </Name>
+		<Name>Enhance:[All] Add Resistance to Zombie and Virus   </Name>
+		<InstallationPath>Features/Enhance/All</InstallationPath>
+		<Description>Auto-life resists Zombie, Anti-body Resists Virus </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[All] Bye Auto-Potion </Name>
+		<InstallationPath>Features/Enhance/NoAutoPotion</InstallationPath>
+		<Description>Replace Auto-Potion with HP and MP 5% </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>-- [ Character Enhancements Not AF compatible ] --</Name>
+		<InstallationPath>#</InstallationPath>
+		<Description>Click here to configure mods</Description>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[Eiko] The Summoner  </Name>
 		<InstallationPath>Features/Enhance/Eiko</InstallationPath>
-		<Description>Equip Sapphire in order to summon Terrestrial Rage (Golem)</Description>
+		<Description>Splits Titan and Fenrir as their won independent summon</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance: Stronger Jump [Freya]  </Name>
+		<Name>Enhance:[Freya] The Dragoon   </Name>
 		<InstallationPath>Features/Enhance/Freya</InstallationPath>
-		<Description>Make Freya's Jump do 3x damage</Description>
+		<Description>Make Freya's High Jump do 3x damage</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance: Better Cook and Eat [Quina]  </Name>
+		<Name>Enhance:[Quina] The Chef   </Name>
 		<InstallationPath>Features/Enhance/Quina</InstallationPath>
-		<Description>Better Devour</Description>
+		<Description>Better Eat at 50% Cook at 100% </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance: Save the Queen for Steiner  [Steiner]  </Name>
+		<Name>Enhance:[Steiner] The QueensKnight  </Name>
 		<InstallationPath>Features/Enhance/Steiner</InstallationPath>
 		<Description>Steiner can Equip Save the Queen </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance: Add Resistance to Zombie and Virus   </Name>
-		<InstallationPath>Features/Enhance/All</InstallationPath>
-		<Description>Auto-life resists Zombie, Anti-body Resists Virus </Description>
+		<Name>Enhance:[Vivi] The Warlock   </Name>
+		<InstallationPath>Features/Enhance/Vivi</InstallationPath>
+		<Description>Vivi and Steiner can Cast Aero,Quake,Water to RA to AGA spells </Description>
 		<Priority>1</Priority>
 	</SubMod>
+	<SubMod>
+		<Name>Enhance:[Garnet] The White Mage   </Name>
+		<InstallationPath>Features/Enhance/Garnet</InstallationPath>
+		<Description>Adds A White Magic Ability to Garnet that causes damage</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[Amaranth] The Genius Nomad    </Name>
+		<InstallationPath>Features/Enhance/Amaranth</InstallationPath>
+		<Description>Amaranth learns the Passive Tensai which makes him Learn and Level UP fast</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[Zidane] The Pillager    </Name>
+		<InstallationPath>Features/Enhance/Zidane</InstallationPath>
+		<Description>Boosts damage of thievery </Description>
+		<Priority>1</Priority>
+	</SubMod>
+
 </Mod>
 
 <Mod>

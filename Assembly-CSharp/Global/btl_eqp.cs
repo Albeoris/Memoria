@@ -1,6 +1,7 @@
 ﻿using FF9;
 using Memoria.Data;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -47,6 +48,7 @@ public static class btl_eqp
             geo.geoAttach(btl.weapon_geo, btl.originalGo, p.wep_bone);
         else
             geo.geoAttach(btl.weapon_geo, btl.gameObject, p.wep_bone);
+        InitOffSetWeapon(btl);
     }
 
     public static void InitEquipPrivilegeAttrib(PLAYER p, BTL_DATA btl)
@@ -75,14 +77,32 @@ public static class btl_eqp
                 }
                 else if (btl.gameObject == btl.tranceGo && btl.bi.player != 0)
                 {
-                    CharacterSerialNumber serial = btl_util.getSerialNumber(btl);
-                    if (btl_mot.BattleParameterList[serial].ModelId == btl_mot.BattleParameterList[serial].TranceModelId)
-                        builtInBone = btl.tranceGo.transform.GetChildByName($"bone{weaponBoneID:D3}");
+                    builtInBone = btl.tranceGo.transform.GetChildByName($"bone{weaponBoneID:D3}");
                 }
                 if (builtInBone != null)
                     builtInBone.localScale = SCALE_INVISIBLE;
                 if (btl.weapon_geo != null)
                     btl.weapon_geo.transform.localScale = builtInBone != null ? SCALE_REBALANCE : Vector3.one;
+            }
+        }
+    }
+
+    public static void InitOffSetWeapon(BTL_DATA btl)
+    {
+        if (btl.bi.player != 0)
+        {
+            CharacterBattleParameter btlParam = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)];
+
+            if (btlParam.WeaponOffset.Any(off => off != 0f)) // Don't edit values if all values are 0
+            {
+                Single[] CurrentWeaponOffset;
+                if (btl_stat.CheckStatus(btl, BattleStatus.Trance) && btlParam.TranceWeaponOffset.Any(off => off != 0f))
+                    CurrentWeaponOffset = btlParam.TranceWeaponOffset;
+                else
+                    CurrentWeaponOffset = btlParam.WeaponOffset;
+
+                btl.weapon_geo.transform.localPosition = new Vector3(CurrentWeaponOffset[0], CurrentWeaponOffset[1], CurrentWeaponOffset[2]);
+                btl.weapon_geo.transform.localRotation = Quaternion.Euler(CurrentWeaponOffset[3], CurrentWeaponOffset[4], CurrentWeaponOffset[5]);
             }
         }
     }

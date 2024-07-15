@@ -211,6 +211,8 @@ public static class UnifiedBattleSequencer
                     break;
                 case "WaitAnimation":
                     code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar);
+                    if (cmd.regist.bi.player != 0 && tmpChar == cmd.regist.btl_id && frameIndex <= 1 && cmd.regist.evt.animFrame <= 1 && String.Equals(cmd.regist.currentAnimationName, cmd.regist.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD]))
+                        break; // Ignore the first "WaitAnimation: Caster" instruction to cut the "IDLE_CMD" in the sequence "NORMAL_TO_CMD" -> "IDLE_CMD" -> Attack (typically when the command queue only contains this attack, so this attack is performed more quickly)
                     runningThread.waitAnimId |= (UInt16)(tmpChar & animatedChar);
                     break;
                 case "WaitMove":

@@ -9,6 +9,7 @@ namespace Memoria
         {
             public readonly IniValue<Boolean> PSXBattleMenu;
             public readonly IniValue<Boolean> ScanDisplay;
+            public readonly IniValue<Boolean> SynthIngredientStockDisplayed;
             public readonly IniValue<Int32> BattleRowCount;
             public readonly IniValue<Int32> BattleColumnCount;
             public readonly IniValue<Int32> BattleMenuPosX;
@@ -36,6 +37,7 @@ namespace Memoria
             {
                 PSXBattleMenu = BindBoolean(nameof(PSXBattleMenu), false);
                 ScanDisplay = BindBoolean(nameof(ScanDisplay), true);
+                SynthIngredientStockDisplayed = BindBoolean(nameof(SynthIngredientStockDisplayed), true);
                 BattleRowCount = BindInt32(nameof(BattleRowCount), 5);
                 BattleColumnCount = BindInt32(nameof(BattleColumnCount), 1);
                 BattleMenuPosX = BindInt32(nameof(BattleMenuPosX), -400);

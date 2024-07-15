@@ -607,10 +607,64 @@ public partial class BattleHUD : UIScene
         BattleUnit enemy = GetFirstAliveEnemy();
         if (enemy != null)
         {
-            btl_cmd.SetCommand(player.Data.cmd[0], BattleCommandId.Attack, (Int32)BattleAbilityId.Attack, enemy.Id, 0U);
+            Boolean cmdSent = false;
+            if (Configuration.Battle.ViviAutoAttack && player.PlayerIndex == CharacterId.Vivi)
+                cmdSent = SelectViviMagicInsteadOfAttack_AutoAttack(player, enemy);
+            if (!cmdSent)
+                btl_cmd.SetCommand(player.Data.cmd[0], BattleCommandId.Attack, (Int32)BattleAbilityId.Attack, enemy.Id, 0U);
             InputFinishList.Add(CurrentPlayerIndex);
         }
         CurrentPlayerIndex = -1;
+    }
+
+    private Boolean SelectViviMagicInsteadOfAttack_AutoAttack(BattleUnit caster, BattleUnit target)
+    {
+        CMD_DATA testCommand = new CMD_DATA
+        {
+            regist = caster.Data,
+            cmd_no = BattleCommandId.BlackMagic,
+            tar_id = target.Id
+        };
+
+        Single bestRating = 0;
+        BattleAbilityId bestAbility = 0;
+
+        BattleAbilityId[] abilityIds = { BattleAbilityId.Fire, BattleAbilityId.Blizzard, BattleAbilityId.Thunder };
+        abilityIds.Shuffle();
+
+        foreach (BattleAbilityId abilityId in abilityIds)
+        {
+            if (GetAbilityState(ff9abil.GetAbilityIdFromActiveAbility(abilityId)) != AbilityStatus.Enable)
+                continue;
+
+            testCommand.sub_no = (Int32)abilityId;
+            testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[abilityId]);
+            testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
+
+            BattleScriptFactory factory = SBattleCalculator.FindScriptFactory(testCommand.ScriptId);
+            if (factory == null)
+                continue;
+
+            BattleCalculator v = new BattleCalculator(caster.Data, target.Data, new BattleCommand(testCommand));
+            IEstimateBattleScript script = factory(v) as IEstimateBattleScript;
+            if (script == null)
+                continue;
+
+            Single rating = script.RateTarget();
+            if (rating > bestRating)
+            {
+                bestRating = rating;
+                bestAbility = abilityId;
+            }
+        }
+
+        if (bestRating > 0)
+        {
+            caster.Data.cmd[0].info.IsZeroMP = true;
+            btl_cmd.SetCommand(caster.Data.cmd[0], BattleCommandId.BlackMagic, (Int32)bestAbility, target.Id, 0U);
+            return true;
+        }
+        return false;
     }
 
     private void ResetToReady()

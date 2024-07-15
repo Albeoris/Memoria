@@ -23,6 +23,11 @@ namespace Memoria
                 get => Instance._interface.ScanDisplay;
                 set => Instance._interface.ScanDisplay.Value = value;
             }
+            public static Boolean SynthIngredientStockDisplayed
+            {
+                get => Instance._interface.SynthIngredientStockDisplayed;
+                set => Instance._interface.SynthIngredientStockDisplayed.Value = value;
+            }
             public static Int32 BattleRowCount
             {
                 get => Math.Max(1, Instance._interface.BattleRowCount);
@@ -127,6 +132,7 @@ namespace Memoria
                 SaveValue(Instance._interface.Name, Instance._interface.MenuAbilityRowCount);
                 SaveValue(Instance._interface.Name, Instance._interface.MenuEquipRowCount);
                 SaveValue(Instance._interface.Name, Instance._interface.MenuChocographRowCount);
+                SaveValue(Instance._interface.Name, Instance._interface.SynthIngredientStockDisplayed);
             }
         }
     }

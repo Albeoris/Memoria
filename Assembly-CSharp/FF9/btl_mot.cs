@@ -59,41 +59,41 @@ namespace FF9
             btl_mot.mot_stance = new BattlePlayerCharacter.PlayerMotionStance[35, 2]
             {
                 { BattlePlayerCharacter.PlayerMotionStance.NORMAL, BattlePlayerCharacter.PlayerMotionStance.NORMAL }, // 0:  MP_IDLE_NORMAL
-				{ BattlePlayerCharacter.PlayerMotionStance.DYING, BattlePlayerCharacter.PlayerMotionStance.DYING }, // 1:  MP_IDLE_DYING
-				{ BattlePlayerCharacter.PlayerMotionStance.NORMAL, BattlePlayerCharacter.PlayerMotionStance.NORMAL }, // 2:  MP_DAMAGE1
-				{ BattlePlayerCharacter.PlayerMotionStance.NORMAL, BattlePlayerCharacter.PlayerMotionStance.DISABLE }, // 3:  MP_DAMAGE2
-				{ BattlePlayerCharacter.PlayerMotionStance.DISABLE, BattlePlayerCharacter.PlayerMotionStance.DISABLE }, // 4:  MP_DISABLE
-				{ BattlePlayerCharacter.PlayerMotionStance.DYING, BattlePlayerCharacter.PlayerMotionStance.NORMAL }, // 5:  MP_GET_UP_DYING
-				{ BattlePlayerCharacter.PlayerMotionStance.DISABLE, BattlePlayerCharacter.PlayerMotionStance.DYING }, // 6:  MP_GET_UP_DISABLE
-				{ BattlePlayerCharacter.PlayerMotionStance.NORMAL, BattlePlayerCharacter.PlayerMotionStance.DYING }, // 7:  MP_DOWN_DYING
-				{ BattlePlayerCharacter.PlayerMotionStance.DYING, BattlePlayerCharacter.PlayerMotionStance.DISABLE }, // 8:  MP_DOWN_DISABLE
-				{ BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 9:  MP_IDLE_CMD
-				{ BattlePlayerCharacter.PlayerMotionStance.NORMAL, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 10: MP_NORMAL_TO_CMD
-				{ BattlePlayerCharacter.PlayerMotionStance.DYING, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 11: MP_DYING_TO_CMD
-				{ BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.DEFEND }, // 12: MP_IDLE_TO_DEF
-				{ BattlePlayerCharacter.PlayerMotionStance.DEFEND, BattlePlayerCharacter.PlayerMotionStance.DEFEND }, // 13: MP_DEFENCE
-				{ BattlePlayerCharacter.PlayerMotionStance.DEFEND, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 14: MP_DEF_TO_IDLE
-				{ BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_ANY_IDLE }, // 15: MP_COVER
-				{ BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_ANY_IDLE }, // 16: MP_AVOID
-				{ BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_ANY_IDLE }, // 17: MP_ESCAPE
-				{ BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.WIN }, // 18: MP_WIN
-				{ BattlePlayerCharacter.PlayerMotionStance.WIN, BattlePlayerCharacter.PlayerMotionStance.WIN }, // 19: MP_WIN_LOOP
-				{ BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT }, // 20: MP_SET
-				{ BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT }, // 21: MP_RUN
-				{ BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT }, // 22: MP_RUN_TO_ATTACK
-				{ BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT }, // 23: MP_ATTACK
-				{ BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT }, // 24: MP_BACK
-				{ BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.NORMAL }, // 25: MP_ATK_TO_NORMAL
-				{ BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.NORMAL }, // 26: MP_IDLE_TO_CHANT
-				{ BattlePlayerCharacter.PlayerMotionStance.NORMAL, BattlePlayerCharacter.PlayerMotionStance.NORMAL }, // 27: MP_CHANT
-				{ BattlePlayerCharacter.PlayerMotionStance.NORMAL, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 28: MP_MAGIC
-				{ BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 29: MP_STEP_FORWARD
-				{ BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 30: MP_STEP_BACK
-				{ BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 31: MP_ITEM1
-				{ BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.NORMAL }, // 32: MP_CMD_TO_NORMAL
-				{ BattlePlayerCharacter.PlayerMotionStance.SPECIAL_UNKNOWN, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_UNKNOWN }, // 33: MP_SPECIAL1
-				{ BattlePlayerCharacter.PlayerMotionStance.SPECIAL_UNKNOWN, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_UNKNOWN }  // 34: MP_MAX
-			};
+                { BattlePlayerCharacter.PlayerMotionStance.DYING, BattlePlayerCharacter.PlayerMotionStance.DYING }, // 1:  MP_IDLE_DYING
+                { BattlePlayerCharacter.PlayerMotionStance.NORMAL, BattlePlayerCharacter.PlayerMotionStance.NORMAL }, // 2:  MP_DAMAGE1
+                { BattlePlayerCharacter.PlayerMotionStance.NORMAL, BattlePlayerCharacter.PlayerMotionStance.DISABLE }, // 3:  MP_DAMAGE2
+                { BattlePlayerCharacter.PlayerMotionStance.DISABLE, BattlePlayerCharacter.PlayerMotionStance.DISABLE }, // 4:  MP_DISABLE
+                { BattlePlayerCharacter.PlayerMotionStance.DYING, BattlePlayerCharacter.PlayerMotionStance.NORMAL }, // 5:  MP_GET_UP_DYING
+                { BattlePlayerCharacter.PlayerMotionStance.DISABLE, BattlePlayerCharacter.PlayerMotionStance.DYING }, // 6:  MP_GET_UP_DISABLE
+                { BattlePlayerCharacter.PlayerMotionStance.NORMAL, BattlePlayerCharacter.PlayerMotionStance.DYING }, // 7:  MP_DOWN_DYING
+                { BattlePlayerCharacter.PlayerMotionStance.DYING, BattlePlayerCharacter.PlayerMotionStance.DISABLE }, // 8:  MP_DOWN_DISABLE
+                { BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 9:  MP_IDLE_CMD
+                { BattlePlayerCharacter.PlayerMotionStance.NORMAL, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 10: MP_NORMAL_TO_CMD
+                { BattlePlayerCharacter.PlayerMotionStance.DYING, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 11: MP_DYING_TO_CMD
+                { BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.DEFEND }, // 12: MP_IDLE_TO_DEF
+                { BattlePlayerCharacter.PlayerMotionStance.DEFEND, BattlePlayerCharacter.PlayerMotionStance.DEFEND }, // 13: MP_DEFENCE
+                { BattlePlayerCharacter.PlayerMotionStance.DEFEND, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 14: MP_DEF_TO_IDLE
+                { BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_ANY_IDLE }, // 15: MP_COVER
+                { BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_ANY_IDLE }, // 16: MP_AVOID
+                { BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_ANY_IDLE }, // 17: MP_ESCAPE
+                { BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.WIN }, // 18: MP_WIN
+                { BattlePlayerCharacter.PlayerMotionStance.WIN, BattlePlayerCharacter.PlayerMotionStance.WIN }, // 19: MP_WIN_LOOP
+                { BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT }, // 20: MP_SET
+                { BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT }, // 21: MP_RUN
+                { BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT }, // 22: MP_RUN_TO_ATTACK
+                { BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT }, // 23: MP_ATTACK
+                { BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT }, // 24: MP_BACK
+                { BattlePlayerCharacter.PlayerMotionStance.SPECIAL_INDIFFERENT, BattlePlayerCharacter.PlayerMotionStance.NORMAL }, // 25: MP_ATK_TO_NORMAL
+                { BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.NORMAL }, // 26: MP_IDLE_TO_CHANT
+                { BattlePlayerCharacter.PlayerMotionStance.NORMAL, BattlePlayerCharacter.PlayerMotionStance.NORMAL }, // 27: MP_CHANT
+                { BattlePlayerCharacter.PlayerMotionStance.NORMAL, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 28: MP_MAGIC
+                { BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 29: MP_STEP_FORWARD
+                { BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 30: MP_STEP_BACK
+                { BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.CMD }, // 31: MP_ITEM1
+                { BattlePlayerCharacter.PlayerMotionStance.CMD, BattlePlayerCharacter.PlayerMotionStance.NORMAL }, // 32: MP_CMD_TO_NORMAL
+                { BattlePlayerCharacter.PlayerMotionStance.SPECIAL_UNKNOWN, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_UNKNOWN }, // 33: MP_SPECIAL1
+                { BattlePlayerCharacter.PlayerMotionStance.SPECIAL_UNKNOWN, BattlePlayerCharacter.PlayerMotionStance.SPECIAL_UNKNOWN }  // 34: MP_MAX
+            };
             // List of animations that can't be interrupted by eg. the escape key
             unstoppable_mot = new HashSet<BattlePlayerCharacter.PlayerMotionIndex>
             {
@@ -108,7 +108,20 @@ namespace FF9
         {
             BattleParameterList = LoadCharacterBattleParameters();
             foreach (CharacterBattleParameter param in BattleParameterList.Values)
+            {
+                Boolean TranceAnimationPresent = true;
                 AssetManager.UpdateAutoAnimMapping(param.ModelId, param.AnimationId);
+                for (Int32 i = 0; i < 34; i++)
+                {
+                    if (String.IsNullOrEmpty(param.TranceAnimationId[i]))
+                    {
+                        TranceAnimationPresent = false;
+                        break;
+                    }
+                }
+                if (TranceAnimationPresent)
+                    AssetManager.UpdateAutoAnimMapping(param.TranceModelId, param.TranceAnimationId);
+            }
         }
 
         private static Dictionary<CharacterSerialNumber, CharacterBattleParameter> LoadCharacterBattleParameters()

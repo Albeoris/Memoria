@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
+
 public static class NarrowMapList
 {
     /// <summary>is mapId <= ScreenWidth</summary>
@@ -11,12 +13,16 @@ public static class NarrowMapList
 
         return false;
     }
+
     public static Boolean SpecificScenesNarrow(Int32 mapId)
     {
+        if (PersistenSingleton<EventEngine>.Instance.eBin == null)
+            return false;
         Int32 currIndex = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.MAP_INDEX_SVR);
         Int32 currCounter = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
 
-        foreach (int[] entry in RestrictedWidthScenesList)
+        //return RestrictedWidthScenesList.Any(entry => entry[0] == mapId && (entry[1] == currIndex || entry[2] == currCounter));
+        foreach (Int32[] entry in RestrictedWidthScenesList)
         {
             if (entry[0] == mapId && (entry[1] == currIndex || entry[2] == currCounter))
                 return true;
@@ -28,8 +34,11 @@ public static class NarrowMapList
     {
         if (SpecificScenesNarrow(mapId))
             return 320;
+        if (mapId == 50 && FieldMap.ActualPsxScreenWidth > 480)
+            return 320;
 
-        foreach (int[] entry in MapWidthList)
+        //return MapWidthList.FirstOrDefault(entry => entry[0] == mapId)?[1] ?? 500;
+        foreach (Int32[] entry in MapWidthList)
         {
             if (entry[0] == mapId)
                 return entry[1];
@@ -39,7 +48,7 @@ public static class NarrowMapList
     }
 
     /// <summary>Make these scenes widescreen (based on index [1] or counter [2]), -5 is ignored</summary>
-    public static readonly int[][] RestrictedWidthScenesList =
+    public static readonly Int32[][] RestrictedWidthScenesList =
     {
         // [mapNo,  EBin.MAP_INDEX_SVR,  EBin.SC_COUNTER_SVR], 
         [150, 325, -5],       // Zidane infiltrate Alex Castle - better in narrow for the "Alex" text
@@ -70,7 +79,7 @@ public static class NarrowMapList
     };
 
     /// <summary>List of fields with narrower cams than widescreen, [field#, cam#, PSXWidth]</summary>
-    public static readonly int[][] RestrictedCams =
+    public static readonly Int32[][] RestrictedCams =
     {
         // [mapNo,cam,width],
         [50,1,320],
@@ -106,7 +115,7 @@ public static class NarrowMapList
     };
 
     /// <summary>List of fields of width smaller than widescreen, [field#,PSXWidth]</summary>
-    public static readonly int[][] MapWidthList =
+    public static readonly Int32[][] MapWidthList =
     {
         [50,480],
         [51,480],
@@ -921,7 +930,7 @@ public static class NarrowMapList
     };
 
     /// <summary>Left and right margin of camera (because it goes too far), [field#,PSXmargin]</summary>
-    public static readonly Dictionary<int, int> mapCameraMargin = new Dictionary<int, int>
+    public static readonly Dictionary<Int32, Int32> mapCameraMargin = new Dictionary<Int32, Int32>
     {
         //{mapNo,pixels on each side to crop because of scrollable}
         {1051,9},

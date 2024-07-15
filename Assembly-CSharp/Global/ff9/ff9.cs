@@ -2259,6 +2259,11 @@ public static class ff9
         return FF9StateSystem.EventState.gEventGlobal[100];
     }
 
+    public static void byte_gEventGlobal_updateNaviMode()
+    {
+        FF9StateSystem.EventState.gEventGlobal[100] = (Byte)ff9.w_naviMode;
+    }
+
     public static void byte_gEventGlobal_Write(Int32 index, Byte value)
     {
         FF9StateSystem.EventState.gEventGlobal[index] = value;
@@ -6721,29 +6726,28 @@ public static class ff9
             {
                 case 0:
                     s_musicID.id[0] = 104;
-                    goto IL_C0;
+                    break;
                 case 1:
                     s_musicID.id[0] = 102;
-                    goto IL_C0;
+                    break;
                 case 2:
                     s_musicID.id[0] = 108;
-                    goto IL_C0;
+                    break;
                 case 3:
                     s_musicID.id[0] = 637;
-                    goto IL_C0;
+                    break;
                 case 4:
                     s_musicID.id[0] = 638;
-                    goto IL_C0;
+                    break;
                 case 5:
                     s_musicID.id[0] = 682;
-                    goto IL_C0;
+                    break;
             }
         }
         if (seno == 39L)
         {
             s_musicID.id[0] = 103;
         }
-    IL_C0:
         if (s_musicID.id[0] != -1)
         {
             s_musicID.attr = 8388608;
