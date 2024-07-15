@@ -100,10 +100,12 @@ Shader "PSX/BattleMap_StatusEffect_RealLighting" {
 					"ps_3_0
                         def c13, -0, -1, -0.5, 0.200000003
                         def c14, 0.5, -0.823500037, 1.25, 0.100000001
-                        def c15, -0.89442718, 0.35777089, 0.26832816, 0.699999988
-                        def c16, 1.57791328, 0.325715214, -0.524635434, 0.300000012
-                        def c17, -2, 3, 0.909090877, -1.81818175
-                        def c18, 16, 1, -1, 0
+                        def c15, -2, 3, 0.909090877, -1.81818175
+                        def c16, -0.89442718, 0.35777089, 0.26832816, 0.699999988
+                        def c17, 1.57791328, 0.325715214, -0.524635434, 0.300000012
+                        def c18, 0.212599993, 0.715200007, 0.0722000003, 0
+                        def c19, 0.444444448, 1, 0, 0
+                        def c20, 16, 1, -1, 0
                         dcl_texcoord v0
                         dcl_texcoord1 v1.xyz
                         dcl_texcoord2 v2.xyz
@@ -120,39 +122,39 @@ Shader "PSX/BattleMap_StatusEffect_RealLighting" {
                         mad r2.xyz, r1.yzww, r0.w, -r1.yzww
                         mad r1.xyz, c7.x, r2, r1.yzww
                         add r0.w, -r0.y, r0.x
-                        cmp r2.xy, r0.w, r0.yxzw, r0
-                        min r1.w, r0.z, r2.x
-                        max r3.x, r2.y, r0.z
-                        add r0.w, r1.w, r3.x
-                        mad_pp r0.w, r0.w, c14.x, c14.y
-                        add r0.w, -r0_abs.w, -c13.y
-                        add_sat r0.w, r0.w, r0.w
-                        add r0.w, r0.w, -c13.w
-                        mul r0.w, r0.w, c14.z
-                        max r1.w, r0.w, -c13.x
-                        mad r0.w, r1.w, c17.x, c17.y
-                        mul r1.w, r1.w, r1.w
-                        mad r0.w, r0.w, -r1.w, -c13.y
-                        dp3 r1.w, v2, v2
-                        rsq r1.w, r1.w
+                        cmp r0.xy, r0.w, r0.yxzw, r0
+                        min r1.w, r0.z, r0.x
+                        max r2.x, r0.y, r0.z
+                        add r0.x, r1.w, r2.x
+                        mad_pp r0.x, r0.x, c14.x, c14.y
+                        add r0.x, -r0_abs.x, -c13.y
+                        add_sat r0.x, r0.x, r0.x
+                        add r0.x, r0.x, -c13.w
+                        mul r0.x, r0.x, c14.z
+                        max r1.w, r0.x, -c13.x
+                        mad r0.x, r1.w, c15.x, c15.y
+                        mul r0.y, r1.w, r1.w
+                        mad r0.x, r0.x, -r0.y, -c13.y
+                        dp3 r0.y, v2, v2
+                        rsq r0.y, r0.y
                         mov r2.x, c10.x
-                        mov r3, c16
-                        mad r2, r2.x, r3, c15
+                        mov r3, c17
+                        mad r2, r2.x, r3, c16
                         nrm_pp r3.xyz, v1
-                        dp3_sat_pp r4.x, r3, r2
-                        add_pp r4.x, r4.x, c14.w
-                        mul_pp r4.y, r4.x, c17.z
-                        mad_pp r4.x, r4.x, c17.w, c17.y
-                        mul_pp r4.y, r4.y, r4.y
-                        mul_pp r4.x, r4.y, r4.x
-                        mad r2.xyz, v2, r1.w, r2
-                        nrm_pp r5.xyz, r2
-                        dp3_sat_pp r1.w, r5, r3
-                        pow_pp r2.x, r1.w, c18.x
-                        mul r0.w, r0.w, r2.x
-                        mul_pp r0.w, r2.w, r0.w
-                        mad r1.xyz, r1, r4.x, r0.w
-                        mad_pp r2, r3.xyzx, c18.yzyw, c18.wwwy
+                        dp3_sat_pp r0.z, r3, r2
+                        add_pp r0.z, r0.z, c14.w
+                        mul_pp r0.w, r0.z, c15.z
+                        mad_pp r0.z, r0.z, c15.w, c15.y
+                        mul_pp r0.w, r0.w, r0.w
+                        mul_pp r0.z, r0.w, r0.z
+                        mad r2.xyz, v2, r0.y, r2
+                        nrm_pp r4.xyz, r2
+                        dp3_sat_pp r0.y, r4, r3
+                        pow_pp r1.w, r0.y, c20.x
+                        mul r0.x, r0.x, r1.w
+                        mul_pp r0.x, r2.w, r0.x
+                        mad r0.xyz, r1, r0.z, r0.x
+                        mad_pp r2, r3.xyzx, c20.yzyw, c20.wwwy
                         dp4_pp r4.x, c0, r2
                         dp4_pp r4.y, c1, r2
                         dp4_pp r4.z, c2, r2
@@ -164,7 +166,16 @@ Shader "PSX/BattleMap_StatusEffect_RealLighting" {
                         mad_pp r0.w, r3.x, r3.x, -r0.w
                         mad_pp r2.xyz, c6, r0.w, r5
                         add_pp r2.xyz, r2, r4
-                        mad_pp r0.xyz, r2, r0, r1
+                        mad r0.xyz, r2, r1, r0
+                        dp3 r0.w, r0, c18
+                        mad r1.x, r0.w, c19.x, c19.y
+                        mul r1.x, r0.w, r1.x
+                        add r1.y, r0.w, -c13.y
+                        rcp r1.y, r1.y
+                        mul r1.x, r1.y, r1.x
+                        rcp r0.w, r0.w
+                        mul r0.w, r0.w, r1.x
+                        mul_pp r0.xyz, r0.w, r0
                         cmp_pp r0.xyz, -c12.x, r0, r2
                         mov_pp r0.w, -c13.y
                         mov_pp r3.w, -c13.y

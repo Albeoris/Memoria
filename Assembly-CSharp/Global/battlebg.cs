@@ -170,7 +170,7 @@ public static class battlebg
                             material.SetFloat("_Scroll", 0.001f);
                             material.SetFloat("_Opacity", 0.5f);
                             material.SetFloat("_Exposure",2.7f);
-                            material.SetFloat("_NoCloud", 1.0f);
+                            material.SetFloat("_NoCloud", -1.0f);
                             material.SetFloat("_Angle", Random.Range(0,360));
                         }
                         else

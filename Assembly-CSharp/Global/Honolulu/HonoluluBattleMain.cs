@@ -614,7 +614,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
         if (Input.GetKeyDown(KeyCode.M))
         {
-            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 1.0f;
+            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 1.5f;
             DynamicGI.UpdateEnvironment();
         }
 
@@ -710,7 +710,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         if (_reflectionProbe != null)
         {
             RenderSettings.ambientMode = AmbientMode.Skybox;
-            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 1.0f;
+            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 1.5f;
             RenderSettings.skybox = _skyBox;
             _reflectionProbe.RenderProbe();
         }
