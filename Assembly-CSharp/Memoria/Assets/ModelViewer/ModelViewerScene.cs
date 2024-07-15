@@ -895,7 +895,7 @@ namespace Memoria.Assets
                 {
                     battlebg.SetDefaultShader(currentModel);
                     if (String.Equals(geoList[index].Name, "BBG_B171_OBJ2")) // Crystal World, Crystal
-                        battlebg.SetMaterailShader(currentModel, "PSX/BattleMap_Cystal");
+                        battlebg.SetMaterialShader(currentModel, "PSX/BattleMap_Cystal");
                 }
             }
             else

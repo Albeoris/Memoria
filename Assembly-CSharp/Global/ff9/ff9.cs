@@ -2259,6 +2259,11 @@ public static class ff9
         return FF9StateSystem.EventState.gEventGlobal[100];
     }
 
+    public static void byte_gEventGlobal_updateNaviMode()
+    {
+        FF9StateSystem.EventState.gEventGlobal[100] = (Byte)ff9.w_naviMode;
+    }
+
     public static void byte_gEventGlobal_Write(Int32 index, Byte value)
     {
         FF9StateSystem.EventState.gEventGlobal[index] = value;

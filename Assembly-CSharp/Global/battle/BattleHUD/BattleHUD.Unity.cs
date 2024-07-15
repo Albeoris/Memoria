@@ -607,20 +607,17 @@ public partial class BattleHUD : UIScene
         BattleUnit enemy = GetFirstAliveEnemy();
         if (enemy != null)
         {
+            Boolean cmdSent = false;
             if (Configuration.Battle.ViviAutoAttack && player.PlayerIndex == CharacterId.Vivi)
-            {
-                SelectViviMagicInsteadOfAttack_AutoAttack(player, enemy);
-                InputFinishList.Add(CurrentPlayerIndex);
-            }
-            else
-            {
+                cmdSent = SelectViviMagicInsteadOfAttack_AutoAttack(player, enemy);
+            if (!cmdSent)
                 btl_cmd.SetCommand(player.Data.cmd[0], BattleCommandId.Attack, (Int32)BattleAbilityId.Attack, enemy.Id, 0U);
-                InputFinishList.Add(CurrentPlayerIndex);
-            }
+            InputFinishList.Add(CurrentPlayerIndex);
         }
         CurrentPlayerIndex = -1;
     }
-    private void SelectViviMagicInsteadOfAttack_AutoAttack(BattleUnit caster, BattleUnit target)
+
+    private Boolean SelectViviMagicInsteadOfAttack_AutoAttack(BattleUnit caster, BattleUnit target)
     {
         CMD_DATA testCommand = new CMD_DATA
         {
@@ -665,7 +662,9 @@ public partial class BattleHUD : UIScene
         {
             caster.Data.cmd[0].info.IsZeroMP = true;
             btl_cmd.SetCommand(caster.Data.cmd[0], BattleCommandId.BlackMagic, (Int32)bestAbility, target.Id, 0U);
+            return true;
         }
+        return false;
     }
 
     private void ResetToReady()
