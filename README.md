@@ -3,7 +3,7 @@
 
 ## Overview
 
-Memoria Engine is a community rewrite of Final Fantasy IX's game engine that aims to add features, fix bugs and expand mod making capabilities (adding content, localizing...). Memoria includes built-in bugfix and optional improvements (camera, framerate, audio, controller, UI, options, cheats...) while supporting third-party mods. [More info here](https://github.com/Albeoris/Memoria/wiki/Project-Overview)
+Memoria Engine is a community rewrite of Final Fantasy IX's game engine that aims to add features, fix bugs and expand mod making capabilities (adding content, localizing...). Memoria includes a built-in Mod Manager, bugfixes and optional improvements (camera, framerate, audio, controller, UI, options, cheats...) while supporting third-party mods. [More info here](https://github.com/Albeoris/Memoria/wiki/Project-Overview)
 
 ## Features
 
@@ -57,6 +57,11 @@ Memoria Engine is a community rewrite of Final Fantasy IX's game engine that aim
     > Automatically finds the game path from Windows registry or current directory, you can provide a custom path as argument:
     > Memoria.Patcher.exe gameDirectory
 - Note: if you want Moguri Mod, use Memoria patcher after.
+
+
+## Configure
+
+Most crucial options are embedded in the game launcher, more in-depth configuration is available in the file Memoria.ini generated in the game directory
 
 
 ## Update
