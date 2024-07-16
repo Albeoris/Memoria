@@ -75,32 +75,31 @@ public static class battlebg
                 Material material = materials[matID];
                 String text = material.name.Replace("(Instance)", String.Empty);
                 material.mainTexture.wrapMode = TextureWrapMode.Clamp; // Fixes PNG Textures having seams between them
-                if (battlebg.nf_BbgNumber == 171 && matID == 0 && shaderName.Contains("Minus")) // Crystal World, Crystal
+                if (text.Contains("a"))
                 {
-                    material.shader = ShadersLoader.Find("PSX/BattleMap_Moon");
-                }
-                else if (text.Contains("a"))
-                {
-                    if (battlebg.nf_BbgNumber == 92 // Desert Palace, Dock
-                      || battlebg.nf_BbgNumber == 52 // Cleyra's Trunk, Inside, Sandfall
-                      || battlebg.nf_BbgNumber == 57 // Clayra outpost waterfall
-                      || battlebg.nf_BbgNumber == 32) // Oeilvert bridge flames
+                    if (battlebg.nf_BbgNumber == 21) // Duel Amarant Zidane
+                        material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_0_Substract"); // Apply "Substract" (light colors darken the image)
+                    else if (battlebg.nf_BbgNumber == 171) // Crystal World, ball
+                        material.shader = ShadersLoader.Find("PSX/BattleMap_Moon");
+                    else if (battlebg.nf_BbgNumber == 92 // Desert Palace, Dock
+                          || battlebg.nf_BbgNumber == 52 // Cleyra's Trunk, Inside, Sandfall
+                          || battlebg.nf_BbgNumber == 57 // Clayra outpost waterfall
+                          || battlebg.nf_BbgNumber == 32) // Oeilvert bridge flames
                         material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_1_Off");
                     else
                         material.shader = ShadersLoader.Find(shaderName + "_Abr_1");
                 }
-                else if (text.Contains("s"))
+                else if (text.Contains("s")) // 23-3, 25-8
                 {
-                    material.shader = ShadersLoader.Find(shaderName + "_Abr_0");
-                    material.SetColor("_Color", new Color32(Byte.MaxValue, Byte.MaxValue, Byte.MaxValue, 110));
+                    material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_0_Multiply"); // Apply "Multiply" (darkens)
                 }
                 else
                 {
                     material.shader = ShadersLoader.Find(shaderName);
                     if (shaderName.CompareTo("PSX/BattleMap_Ground") == 0 && !(battlebg.nf_BbgNumber == 57 && matID == 0)) // Exception Clayra outpost waterfall, for ground to appear on top of waterfall
-                        material.SetInt("_ZWrite", 0); // DEBUG: Can't make the default value in "_ZWrite ("ZWrite", Int) = 0" works correctly for some reason
+                        material.SetInt("_ZWrite", 0); // ZWrite 0 to ignore depth buffer (1 to activate), Ground is the only one that was set to 1
                 }
-                //Log.Message("SetMaterialShader - go:" + go.name + " rendIdx:" + rendID + " battlebg.nf_BbgNumber:" + battlebg.nf_BbgNumber + " matID:" + matID + " shaderName:" + shaderName + " shader:" + text + " _ZWrite:" + material.GetInt("_ZWrite"));
+                //Log.Message("SetMaterialShader - go:" + go.name + " rendIdx:" + rendID + " battlebg.nf_BbgNumber:" + battlebg.nf_BbgNumber + " matID:" + matID + " shaderName:" + shaderName + " text:\"" + text + "\" _ZWrite:" + material.GetInt("_ZWrite") + " renderqueue:" + material.shader.renderQueue);
             }
         }
     }
