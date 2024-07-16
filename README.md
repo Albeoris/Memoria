@@ -12,7 +12,7 @@ Memoria Engine is a community rewrite of Final Fantasy IX's game engine that aim
     - **New launcher with easy options (for not included options: Memoria.ini)**
     - **Mod Manager/downloader**
     - **Widescreen (for all resolutions)**
-    - **Highter framerate (60fps+)**
+    - **Higher framerate (60fps+)**
     - **Camera stabilizer (configurable)**
     - **Font change (includes original PSX font)**
     - **Smooth camera movement & texture scrolling**
