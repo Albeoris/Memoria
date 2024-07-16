@@ -112,7 +112,7 @@ namespace Memoria.Assets
                         String seqStr = BattleActionThread.GetSequenceStringCode(atkSeq);
                         if (!String.IsNullOrEmpty(seqStr))
                         {
-                            String seqPath = outputDirectory + i.ToString("D2") + " " + FF9TextTool.RemoveOpCode(usBattleText[btlScene.header.TypCount + i]) + UnifiedBattleSequencer.EXTENSION_SEQ;
+                            String seqPath = outputDirectory + i.ToString("D2") + " " + String.Concat(FF9TextTool.RemoveOpCode(usBattleText[btlScene.header.TypCount + i]).Split(Path.GetInvalidFileNameChars())) + UnifiedBattleSequencer.EXTENSION_SEQ;
                             File.WriteAllText(seqPath, seqStr);
                         }
                     }
@@ -709,7 +709,7 @@ namespace Memoria.Assets
                         localizationCsv[pair.Key].Add(new TxtEntry { Index = id, Prefix = "$battleAction", Value = pair.Value });
 
                     Dictionary<String, String> names = group.First().Key;
-                    String outputPath = outputDirectory + FF9TextTool.RemoveOpCode(names["US"]) + ".json";
+                    String outputPath = outputDirectory + FF9TextTool.RemoveOpCode(names["US"]).Split(Path.GetInvalidFileNameChars()) + ".json";
 
                     using (JsonWriter writer = new JsonWriter(outputPath))
                     {
