@@ -1,4 +1,4 @@
-Shader "PSX/BattleMap_Plus_Abr_1" {
+Shader "PSX/BattleMap_Plus_Abr_0_Substract" {
 	Properties {
 		_Color ("Tint Color", Color) = (0.5,0.5,0.5,0.5)
 		_MainTex ("Particle Texture", 2D) = "white" { }
@@ -6,13 +6,12 @@ Shader "PSX/BattleMap_Plus_Abr_1" {
 		_Intensity ("Intensity", Float) = 128
 	}
 	SubShader { 
-		Tags { "QUEUE"="AlphaTest+4" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
+		Tags { "QUEUE"="AlphaTest+3" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
 		Pass {
-			Tags { "QUEUE"="AlphaTest+4" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
-			ZWrite Off
-			Blend One OneMinusSrcColor
+			Tags { "QUEUE"="AlphaTest+3" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
+			Blend Zero OneMinusSrcColor
 			ColorMask RGB
-			GpuProgramID 49895
+			GpuProgramID 30279
 			Program "vp" {
 				SubProgram "d3d9 " {
 					Keywords { "SOFTPARTICLES_OFF" }
@@ -101,16 +100,16 @@ Shader "PSX/BattleMap_Plus_Abr_1" {
 					SetTexture 0 [_MainTex] 2D 0
 					"ps_2_0
 						def c2, 0.0078125, 0, 0, 0
-						dcl v0.xyz
+						dcl v0
 						dcl t0.xy
 						dcl_2d s0
 						texld r0, t0, s0
-						mul r1.xyz, v0, c0
-						mul_pp r0.xyz, r0, r1
-						mov r0.w, c1.x
-						mul r1.xw, r0.w, c2.x
-						mul_pp r1.xyz, r0, r1.x
-						mov_pp oC0, r1
+						mul r1, v0, c0
+						mul_pp r0, r0, r1
+						mov r1.x, c1.x
+						mul r1.x, r1.x, c2.x
+						mul_pp r0.xyz, r0, r1.x
+						mov_pp oC0, r0
 						
 						"
 				}
@@ -121,16 +120,16 @@ Shader "PSX/BattleMap_Plus_Abr_1" {
 					SetTexture 0 [_MainTex] 2D 0
 					"ps_2_0
 						def c2, 0.0078125, 0, 0, 0
-						dcl v0.xyz
+						dcl v0
 						dcl t0.xy
 						dcl_2d s0
 						texld r0, t0, s0
-						mul r1.xyz, v0, c0
-						mul_pp r0.xyz, r0, r1
-						mov r0.w, c1.x
-						mul r1.xw, r0.w, c2.x
-						mul_pp r1.xyz, r0, r1.x
-						mov_pp oC0, r1
+						mul r1, v0, c0
+						mul_pp r0, r0, r1
+						mov r1.x, c1.x
+						mul r1.x, r1.x, c2.x
+						mul_pp r0.xyz, r0, r1.x
+						mov_pp oC0, r0
 						
 						"
 				}
