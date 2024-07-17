@@ -22,9 +22,12 @@ public static class btl_eqp
         btl.weapon = ff9item.GetItemWeapon(p.equip[0]);
         p.wep_bone = btl_mot.BattleParameterList[p.info.serial_no].WeaponBone;
         if (btl.weapon.ModelId != UInt16.MaxValue)
-        {
+        {        
             String modelName = FF9BattleDB.GEO.GetValue(btl.weapon.ModelId);
-            btl.weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + modelName + "/" + modelName, true);
+            if (modelName.Contains("GEO_WEP"))
+                btl.weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + modelName + "/" + modelName, true);
+            else
+                btl.weapon_geo = ModelFactory.CreateModel(modelName, true);      
             if (btl.weapon_geo == null)
                 btl.weapon_geo = new GameObject("Dummy weapon");
             if (EnemyBuiltInWeaponTable.ContainsKey(btl.dms_geo_id))
@@ -82,7 +85,7 @@ public static class btl_eqp
                 }
                 if (builtInBone != null)
                     builtInBone.localScale = SCALE_INVISIBLE;
-                if (btl.weapon_geo != null)
+                if (btl.weapon_geo != null && btl.weapon_bone == weaponBoneID)
                     btl.weapon_geo.transform.localScale = builtInBone != null ? SCALE_REBALANCE : Vector3.one;
             }
         }

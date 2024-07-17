@@ -257,7 +257,10 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             btlDataArray[i] = new BTL_DATA { gameObject = ModelFactory.CreateModel(path, true) };
             if (!String.IsNullOrEmpty(sb2MonParm.WeaponModel))
             {
-                btlDataArray[i].weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + sb2MonParm.WeaponModel + "/" + sb2MonParm.WeaponModel, true);
+                if (sb2MonParm.WeaponModel.Contains("GEO_WEP"))
+                    btlDataArray[i].weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + sb2MonParm.WeaponModel + "/" + sb2MonParm.WeaponModel, true);
+                else
+                    btlDataArray[i].weapon_geo = ModelFactory.CreateModel(sb2MonParm.WeaponModel, true);
                 MeshRenderer[] componentsInChildren = btlDataArray[i].weapon_geo.GetComponentsInChildren<MeshRenderer>();
                 btlDataArray[i].weaponMeshCount = componentsInChildren.Length;
                 btlDataArray[i].weaponRenderer = new Renderer[btlDataArray[i].weaponMeshCount];
