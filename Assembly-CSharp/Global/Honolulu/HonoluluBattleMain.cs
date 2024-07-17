@@ -277,6 +277,10 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     btlDataArray[i].weaponRenderer[j] = componentsInChildren[j].GetComponent<Renderer>();
                 geo.geoAttach(btlDataArray[i].weapon_geo, btlDataArray[i].gameObject, ModelFactory.GetDefaultWeaponBoneIdForCharacterWhenUseAsEnemy(path));
             }
+            else
+            {
+                btlDataArray[i].weapon_geo = null;
+            }
             if (sb2MonParm.TextureFiles != null)
                 ModelFactory.ChangeModelTexture(btlDataArray[i].gameObject, sb2MonParm.TextureFiles);
             Int32 meshCount = 0;

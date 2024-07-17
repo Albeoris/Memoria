@@ -94,24 +94,40 @@ public static class btl_eqp
         {
             CharacterBattleParameter btlParam = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)];
 
-            if (btlParam.WeaponOffset.Any(off => off != 0f)) // Don't edit values if all values are 0
+            if (btlParam.WeaponOffsetPos.Any(off => off != 0f)) // Don't edit values if all values are 0
             {
-                Single[] CurrentWeaponOffset;
-                if (btl_stat.CheckStatus(btl, BattleStatus.Trance) && btlParam.TranceWeaponOffset.Any(off => off != 0f))
-                    CurrentWeaponOffset = btlParam.TranceWeaponOffset;
+                Single[] CurrentWeaponOffsetPos;
+                if (btl_stat.CheckStatus(btl, BattleStatus.Trance) && btlParam.TranceWeaponOffsetPos.Any(off => off != 0f))
+                    CurrentWeaponOffsetPos = btlParam.TranceWeaponOffsetPos;
                 else
-                    CurrentWeaponOffset = btlParam.WeaponOffset;
+                    CurrentWeaponOffsetPos = btlParam.WeaponOffsetPos;
 
-                btl.weapon_geo.transform.localPosition = new Vector3(CurrentWeaponOffset[0], CurrentWeaponOffset[1], CurrentWeaponOffset[2]);
-                btl.weapon_geo.transform.localRotation = Quaternion.Euler(CurrentWeaponOffset[3], CurrentWeaponOffset[4], CurrentWeaponOffset[5]);
+                btl.weapon_geo.transform.localPosition = new Vector3(CurrentWeaponOffsetPos[0], CurrentWeaponOffsetPos[1], CurrentWeaponOffsetPos[2]);
+            }
+            if (btlParam.WeaponOffsetRot.Any(off => off != 0f)) // Don't edit values if all values are 0
+            {
+                Single[] CurrentWeaponOffsetRot;
+                if (btl_stat.CheckStatus(btl, BattleStatus.Trance) && btlParam.TranceWeaponOffsetRot.Any(off => off != 0f))
+                    CurrentWeaponOffsetRot = btlParam.TranceWeaponOffsetRot;
+                else
+                    CurrentWeaponOffsetRot = btlParam.WeaponOffsetRot;
+
+                btl.weapon_geo.transform.localRotation = Quaternion.Euler(CurrentWeaponOffsetRot[0], CurrentWeaponOffsetRot[1], CurrentWeaponOffsetRot[2]);
             }
         }
         else
         {
-            if (btl.weapon_offset.Any(off => off != 0f) && btl.weapon_geo != null)
+            if (btl.weapon_geo != null)
             {
-                btl.weapon_geo.transform.localPosition = new Vector3(btl.weapon_offset[0], btl.weapon_offset[1], btl.weapon_offset[2]);
-                btl.weapon_geo.transform.localRotation = Quaternion.Euler(btl.weapon_offset[3], btl.weapon_offset[4], btl.weapon_offset[5]);
+                if (btl.weapon_offset_pos.Any(off => off != 0f))
+                {
+                    btl.weapon_geo.transform.localPosition = new Vector3(btl.weapon_offset_pos[0], btl.weapon_offset_pos[1], btl.weapon_offset_pos[2]);
+                }
+                if (btl.weapon_offset_rot.Any(off => off != 0f))
+                {
+                    btl.weapon_geo.transform.localRotation = Quaternion.Euler(btl.weapon_offset_rot[0], btl.weapon_offset_rot[1], btl.weapon_offset_rot[2]);
+                }
+                btl.weapon_geo.transform.localScale = btl.weapon_scale;
             }
         }
     }

@@ -72,8 +72,6 @@ public static class btl_init
             monBtl.bi.def_idle = 0;
             monBtl.base_pos = enemy.base_pos;
             String path = (monBtl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(monBtl.dms_geo_id);
-            if (!ModelFactory.IsUseAsEnemyCharacter(path) && monParam.WeaponOffset == null) // [DV] Not satisfy with that.. if we didn't put this WeaponOffset condition, the weapon_geo will dissapear.
-                monBtl.weapon_geo = null;
             monBtl.sa = btl_init.enemy_dummy_sa;
             monBtl.saExtended = new HashSet<SupportAbility>();
             monBtl.saMonster = new List<SupportingAbilityFeature>();
@@ -167,7 +165,15 @@ public static class btl_init
         pBtl.mesh_banish = pParm.Mesh[1];
         pBtl.tar_bone = pParm.Bone[3];
         pBtl.weapon_bone = (Byte)pParm.WeaponAttachment;
-        pBtl.weapon_offset = pParm.WeaponOffset;
+        pBtl.weapon_offset_pos = pParm.WeaponOffsetPos;
+        pBtl.weapon_offset_rot = pParm.WeaponOffsetRot;
+        if (pParm.WeaponSize != null)
+            if (pParm.WeaponSize.Length == 3)
+                pBtl.weapon_scale = new Vector3(pParm.WeaponSize[0], pParm.WeaponSize[1], pParm.WeaponSize[2]);
+            else
+                pBtl.weapon_scale = new Vector3(pParm.WeaponSize[0], pParm.WeaponSize[0], pParm.WeaponSize[0]);
+        else
+            pBtl.weapon_scale = Vector3.one;
         // New field "out_of_reach"
         pBtl.out_of_reach = pParm.OutOfReach || FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoNeighboring;
         ENEMY enemy = FF9StateSystem.Battle.FF9Battle.enemy[pBtl.bi.slot_no];
