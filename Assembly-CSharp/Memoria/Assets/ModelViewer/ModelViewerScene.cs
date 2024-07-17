@@ -117,7 +117,9 @@ namespace Memoria.Assets
             foreach (KeyValuePair<Int32, String> geo in FF9BattleDB.GEO)
             {
                 geoList.Add(new ModelObject() { Id = geo.Key, Name = geo.Value, Kind = MODEL_KIND_NORMAL });
-                if (geo.Value.StartsWith("GEO_WEP"))
+                if (!geo.Value.Contains("GEO_SUB_W0") && !geo.Value.Contains("GEO_MAIN_B2") && !geo.Value.Contains("GEO_MAIN_B4") && geo.Key != 29 && geo.Key != 2 &&
+                    geo.Key != 139 && geo.Key != 140 && geo.Key != 201 && geo.Key != 271 && geo.Key != 276 && geo.Key != 361 && geo.Key != 393 && geo.Key != 394 && geo.Key != 552 &&
+                    geo.Key != 611 && geo.Key != 623 && geo.Key != 668 && geo.Key != 669 && geo.Key != 670 && geo.Key != 697 && geo.Key != 698 && geo.Key != 699 && geo.Key != 700)
                     weapongeoList.Add(new ModelObject() { Id = geo.Key, Name = geo.Value, Kind = MODEL_KIND_NORMAL });
             }
             geoArchetype.Add(0);
@@ -182,6 +184,7 @@ namespace Memoria.Assets
             FPSManager.SetTargetFPS(Configuration.Graphics.MenuFPS);
             FPSManager.SetMainLoopSpeed(Configuration.Graphics.MenuTPS);
             initialized = true;
+            currentWeaponGeoIndex = 557; // Start at weapon, so the Hammer.
         }
 
         public static void Update()
@@ -462,6 +465,8 @@ namespace Memoria.Assets
                                 nextIndex = (weapongeoList.Count - 1);
                             else if (nextIndex > weapongeoList.Count)
                                 nextIndex = 0;
+                            if (nextIndex == weapongeoList.Count)
+                                nextIndex -= weapongeoList.Count;
                             ChangeWeaponModel(nextIndex);
                         }
                     }
@@ -698,7 +703,7 @@ namespace Memoria.Assets
                 }
                 if (currentWeaponModel)
                 {
-                    label += $"[FFFF00][^Scroll][FFFFFF] Weapon: {weapongeoList[currentWeaponGeoIndex].Name}\n";
+                    label += $"[FFFF00][^Scroll][FFFFFF] Weapon: {weapongeoList[currentWeaponGeoIndex].Name} ({geoList[currentGeoIndex].Id})\n";
                     label += $"[FFFF00][⇧Scroll][FFFFFF] Bone: {currentWeaponBoneIndex}\n";
                     if (!ControlWeapon)
                         label += $"[FFFF00][⇧P][FFFFFF] Selected: Model\n";
