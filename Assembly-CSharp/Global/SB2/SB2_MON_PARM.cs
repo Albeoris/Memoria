@@ -61,7 +61,7 @@ public class SB2_MON_PARM
 
     public UInt16 Radius;
 
-    public UInt16 Geo;
+    public Int16 Geo;
 
     public UInt16[] Mot;
 

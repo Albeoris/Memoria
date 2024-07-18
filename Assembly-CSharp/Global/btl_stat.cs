@@ -44,7 +44,8 @@ public static class btl_stat
         BTL_DATA btl = target;
         STAT_INFO stat = btl.stat;
         BattleStatus status = statusId.ToBattleStatus();
-        if ((status & stat.invalid) != 0)
+        Boolean bypassResistances = statusId == BattleStatusId.Death && btl.cur.hp == 0;
+        if (!bypassResistances && (status & stat.invalid) != 0)
             return ALTER_RESIST;
         if ((status & stat.permanent) != 0 || ((status & stat.cur) != 0 && (status & BattleStatusConst.NoReset) != 0))
             return ALTER_INVALID;
@@ -53,7 +54,7 @@ public static class btl_stat
             invalidStatuses |= statusDatabase[curStatus].ImmunityProvided;
         if (btl_cmd.CheckSpecificCommand(btl, BattleCommandId.SysStone))
             invalidStatuses |= statusDatabase[BattleStatusId.Petrify].ImmunityProvided;
-        if ((status & invalidStatuses) != 0)
+        if (!bypassResistances && (status & invalidStatuses) != 0)
             return ALTER_INVALID;
         if (!stat.effects.TryGetValue(statusId, out StatusScriptBase script))
             script = ScriptsLoader.GetStatusScript(statusId);
@@ -86,15 +87,15 @@ public static class btl_stat
             btl.bi.atb = 0;
         if ((status & BattleStatusConst.ContiCount) != 0)
         {
-            Int16 defaultFactor = (status & BattleStatusConst.ContiBad) != 0 ? (Int16)(60 - btl.elem.wpr << 3) :
-                                  (status & BattleStatusConst.ContiGood) != 0 ? (Int16)(btl.elem.wpr << 3) : (Int16)(60 - btl.elem.wpr << 2);
+            Int16 defaultFactor = (status & BattleStatusConst.AnyNegative) != 0 ? (Int16)(60 - btl.elem.wpr << 3) :
+                                  (status & BattleStatusConst.AnyPositive) != 0 ? (Int16)(btl.elem.wpr << 3) : (Int16)(60 - btl.elem.wpr << 2);
             btl.stat.conti[statusId] = (Int16)(statusData.ContiCnt * defaultFactor);
             if (!String.IsNullOrEmpty(Configuration.Battle.StatusDurationFormula))
             {
                 Expression e = new Expression(Configuration.Battle.StatusDurationFormula);
                 e.Parameters["StatusId"] = (Int32)statusId;
-                e.Parameters["IsPositiveStatus"] = (status & BattleStatusConst.ContiGood) != 0;
-                e.Parameters["IsNegativeStatus"] = (status & BattleStatusConst.ContiBad) != 0;
+                e.Parameters["IsPositiveStatus"] = (status & BattleStatusConst.AnyPositive) != 0;
+                e.Parameters["IsNegativeStatus"] = (status & BattleStatusConst.AnyNegative) != 0;
                 e.Parameters["ContiCnt"] = (Int32)statusData.ContiCnt;
                 e.Parameters["OprCnt"] = (Int32)statusData.OprCnt;
                 e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
@@ -356,7 +357,7 @@ public static class btl_stat
             foreach (BattleStatusId statusId in unit.CurrentStatus.ToStatusList())
             {
                 BattleStatusDataEntry statusData = statusId.GetStatData();
-                if (statusData.ColorKind > 0)
+                if (statusData.ColorKind >= 0)
                 {
                     if (statusData.ColorPriority == highestPriority)
                     {
@@ -390,7 +391,7 @@ public static class btl_stat
                     }
                     case 1: // Like Shell or Protect
                     {
-                        Int32 index = ff9Battle.btl_cnt % (24 * retainedData.Count);
+                        Int32 index = ff9Battle.btl_cnt / 24 % retainedData.Count;
                         Byte counter = (Byte)(ff9Battle.btl_cnt % 24);
                         Byte strength = (Byte)(counter >= 8 ? (counter >= 16 ? (24 - counter) : 8) : counter);
                         Int16 r = (Int16)((bbgInfoPtr.chr_r + retainedData[index].ColorBase[0]) * strength >> 3);
@@ -485,35 +486,33 @@ public static class btl_stat
             g = Byte.MaxValue;
         if (b > Byte.MaxValue)
             b = Byte.MaxValue;
-        SkinnedMeshRenderer[] componentsInChildren1 = go.GetComponentsInChildren<SkinnedMeshRenderer>();
-        for (Int32 index = 0; index < componentsInChildren1.Length; ++index)
+        foreach (SkinnedMeshRenderer renderer in go.GetComponentsInChildren<SkinnedMeshRenderer>())
         {
             if (r == 0 && g == 0 && b == 0)
             {
-                componentsInChildren1[index].tag = "RGBZero";
-                componentsInChildren1[index].enabled = false;
+                renderer.tag = "RGBZero";
+                renderer.enabled = false;
             }
             else
             {
-                if (!componentsInChildren1[index].enabled && componentsInChildren1[index].CompareTag("RGBZero"))
+                if (!renderer.enabled && renderer.CompareTag("RGBZero"))
                 {
-                    componentsInChildren1[index].enabled = true;
-                    componentsInChildren1[index].tag = String.Empty;
+                    renderer.enabled = true;
+                    renderer.tag = String.Empty;
                 }
-                componentsInChildren1[index].material.SetColor("_Color", new Color32((Byte)r, (Byte)g, (Byte)b, Byte.MaxValue));
+                renderer.material.SetColor("_Color", new Color32((Byte)r, (Byte)g, (Byte)b, Byte.MaxValue));
             }
         }
-        MeshRenderer[] componentsInChildren2 = go.GetComponentsInChildren<MeshRenderer>();
-        for (Int32 index = 0; index < componentsInChildren2.Length; ++index)
+        foreach (MeshRenderer renderer in go.GetComponentsInChildren<MeshRenderer>())
         {
             if (r == 0 && g == 0 && b == 0)
             {
-                componentsInChildren2[index].enabled = false;
+                renderer.enabled = false;
             }
             else
             {
-                componentsInChildren2[index].enabled = true;
-                foreach (Material material in componentsInChildren2[index].materials)
+                renderer.enabled = true;
+                foreach (Material material in renderer.materials)
                     material.SetColor("_Color", new Color32((Byte)r, (Byte)g, (Byte)b, Byte.MaxValue));
             }
         }
@@ -523,11 +522,12 @@ public static class btl_stat
     {
         BTL_DATA btl = unit;
         STAT_INFO stat = btl.stat;
-        foreach (BattleStatusId statusId in (unit.CurrentStatus & BattleStatusConst.ContiCount).ToStatusList())
+        foreach (BattleStatusId statusId in (stat.cur & BattleStatusConst.ContiCount).ToStatusList())
         {
             // TODO [DV]
             //if (stat.conti[statusId] >= 0) // [DV] For Trance Seek purpose, to make some status dissapear for bosses.
             //    stat.conti[statusId] -= btl.cur.at_coef;
+            stat.conti[statusId] -= btl.cur.at_coef;
             if (stat.conti[statusId] < 0)
             {
                 RemoveStatus(unit, statusId);

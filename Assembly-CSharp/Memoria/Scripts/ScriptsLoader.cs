@@ -337,7 +337,13 @@ namespace Memoria.Scripts
                     result.OverloadableMethodScripts[interf] = type;
                 if (interf == typeof(IOverloadOnCommandRunScript))
                     result.OverloadableMethodScripts[interf] = type;
-                // TODO before Game Over (Rebirth Flame), maybe multiple BattleCalculator utility?
+                if (interf == typeof(IOverloadOnGameOverScript))
+                    result.OverloadableMethodScripts[interf] = type;
+                if (interf == typeof(IOverloadOnFleeScript))
+                    result.OverloadableMethodScripts[interf] = type;
+                if (interf == typeof(IOverloadDamageModifierScript))
+                    result.OverloadableMethodScripts[interf] = type;
+                // TODO maybe multiple BattleCalculator utility?
             }
         }
 

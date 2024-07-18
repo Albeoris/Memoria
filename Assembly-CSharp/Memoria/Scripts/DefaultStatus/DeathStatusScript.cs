@@ -23,19 +23,16 @@ namespace Memoria.DefaultScripts
                 target.CurrentHp = 0;
             }
             target.CurrentAtb = 0;
-            if (!btl_cmd.CheckUsingCommand(target.Data.cmd[2]))
+            if (!target.IsPlayer)
             {
-                if (!target.IsPlayer)
+                if (target.Data.die_seq == 0)
                 {
-                    if (target.Data.die_seq == 0)
-                    {
-                        if (target.IsSlave)
-                            target.Data.die_seq = 5;
-                        else if (target.Enemy.Data.info.die_atk == 0 || !btl_util.IsBtlBusy(target, btl_util.BusyMode.CASTER | btl_util.BusyMode.QUEUED_CASTER))
-                            target.Data.die_seq = 1;
-                    }
-                    btl_sys.CheckForecastMenuOff(target);
+                    if (target.IsSlave)
+                        target.Data.die_seq = 5;
+                    else if (!target.Enemy.AttackOnDeath || !btl_util.IsBtlBusy(target, btl_util.BusyMode.CASTER | btl_util.BusyMode.QUEUED_CASTER))
+                        target.Data.die_seq = 1;
                 }
+                btl_sys.CheckForecastMenuOff(target);
             }
             if ((target.CurrentStatus & BattleStatus.Trance) != 0 && btl_cmd.KillSpecificCommand(target, BattleCommandId.SysTrans))
             {

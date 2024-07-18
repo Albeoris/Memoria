@@ -158,6 +158,9 @@ public static class btl_init
         pBtl.elem.wpr = pParm.Element.Spirit;
         pBtl.maxDamageLimit = pParm.MaxDamageLimit;
         pBtl.maxMpDamageLimit = pParm.MaxMpDamageLimit;
+        pBtl.uiColorHP = FF9TextTool.White;
+        pBtl.uiColorMP = FF9TextTool.White;
+        pBtl.uiSpriteATB = BattleHUD.ATENormal;
         pBtl.def_attr.invalid = pParm.GuardElement;
         pBtl.def_attr.absorb = pParm.AbsorbElement;
         pBtl.def_attr.half = pParm.HalfElement;
@@ -188,14 +191,13 @@ public static class btl_init
         enemy.trance_glowing_color[1] = pParm.TranceGlowingColor != null && pParm.TranceGlowingColor.Length > 1 ? pParm.TranceGlowingColor[1] : (Byte)0x60;
         enemy.trance_glowing_color[2] = pParm.TranceGlowingColor != null && pParm.TranceGlowingColor.Length > 2 ? pParm.TranceGlowingColor[2] : (Byte)0x60;
         enemy.steal_unsuccessful_counter = 0; // New field used for counting unsuccessful steals and force a successful steal when it becomes high enough
-        enemy.info.die_atk = (Byte)(((pParm.Flags & 1) == 0) ? 0 : 1);
-        enemy.info.die_dmg = (Byte)(((pParm.Flags & 2) == 0) ? 0 : 1);
         enemy.info.flags = pParm.Flags;
         btl_util.SetShadow(pBtl, pParm.ShadowX, pParm.ShadowZ);
         pBtl.shadow_bone[0] = pParm.ShadowBone;
         pBtl.shadow_bone[1] = pParm.ShadowBone2;
         pBtl.geo_scale_x = pBtl.geo_scale_y = pBtl.geo_scale_z = pBtl.geo_scale_default = 4096;
-        pBtl.geo_scale_status = Vector3.one;
+        pBtl.geoScaleStatus = Vector3.one;
+        pBtl.animSpeedStatusFactor = 1f;
         btl_abil.CheckStatusAbility(new BattleUnit(pBtl));
     }
 
@@ -204,12 +206,12 @@ public static class btl_init
         Int16 startTypeAngle = (Int16)(pScene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK ? 180 : 0);
         ENEMY enemy = FF9StateSystem.Battle.FF9Battle.enemy[pBtl.bi.slot_no];
         enemy.et = FF9StateSystem.Battle.FF9Battle.enemy_type[pPut.TypeNo];
-        pBtl.bi.target = (Byte)(((pPut.Flags & 1) == 0) ? 0 : 1);
+        pBtl.bi.target = (Byte)(((pPut.Flags & SB2_PUT.FLG_TARGETABLE) != 0) ? 1 : 0);
         pBtl.bi.row = 2;
         CopyPoints(pBtl.max, FF9StateSystem.Battle.FF9Battle.enemy_type[pPut.TypeNo].max);
         pBtl.cur.hp = pBtl.max.hp;
         pBtl.cur.mp = pBtl.max.mp;
-        enemy.info.multiple = (Byte)(((pPut.Flags & 2) == 0) ? 0 : 1);
+        enemy.info.multiple = (Byte)(((pPut.Flags & SB2_PUT.FLG_MULTIPART) != 0) ? 1 : 0);
         if (enemy.info.slave == 0)
         {
             pBtl.evt.posBattle = pBtl.original_pos = pBtl.base_pos = pBtl.pos = new Vector3(pPut.Xpos, pPut.Ypos * -1, pPut.Zpos);
@@ -336,8 +338,7 @@ public static class btl_init
             btl.evt.posBattle[0] = posLeftRight;
             btl.base_pos[0] = posLeftRight;
             btl.pos[0] = posLeftRight;
-            // TODO check
-            Single posHeight = 0; // (!btl_stat.CheckStatus(btl, BattleStatus.Float)) ? 0 : -200;
+            Single posHeight = 0; // btl_stat.CheckStatus(btl, BattleStatus.Float) ? -200 : 0;
             btl.original_pos[1] = 0;
             btl.evt.posBattle[1] = posHeight;
             btl.base_pos[1] = posHeight;
@@ -357,7 +358,6 @@ public static class btl_init
             btl.shadow_bone[1] = btlParam.ShadowData[1];
             btl_util.SetShadow(btl, btlParam.ShadowData[2], btlParam.ShadowData[3]);
             btl.geo_scale_x = btl.geo_scale_y = btl.geo_scale_z = btl.geo_scale_default = 4096;
-            btl.geo_scale_status = Vector3.one;
             GameObject shadowObj = FF9StateSystem.Battle.FF9Battle.map.shadowArray[btl];
             Vector3 shadowPos = shadowObj.transform.localPosition;
             shadowPos.z = btlParam.ShadowData[4];
@@ -402,6 +402,9 @@ public static class btl_init
         btl_init.CopyPoints(btl.cur, p.cur);
         btl.maxDamageLimit = p.maxDamageLimit;
         btl.maxMpDamageLimit = p.maxMpDamageLimit;
+        btl.uiColorHP = FF9TextTool.White;
+        btl.uiColorMP = FF9TextTool.White;
+        btl.uiSpriteATB = BattleHUD.ATENormal;
         FF9Char ff9Char = new FF9Char();
         ff9Char.btl = btl;
         ff9Char.evt = btl.evt;
@@ -419,6 +422,8 @@ public static class btl_init
             btl.cur.at = (Int16)(btl.max.at - 1);
         else
             btl.cur.at = (Int16)(Comn.random16() % btl.max.at);
+        btl.geoScaleStatus = Vector3.one;
+        btl.animSpeedStatusFactor = 1f;
         btl_mot.SetPlayerDefMotion(btl, p.info.serial_no, btl_no);
         BattlePlayerCharacter.InitAnimation(btl);
         btl_eqp.InitWeapon(p, btl);
@@ -428,10 +433,6 @@ public static class btl_init
         btl.defence.MagicalEvade = p.defence.MagicalEvade;
         btl_eqp.InitEquipPrivilegeAttrib(p, btl);
         btl_util.GeoSetColor2Source(btl.weapon_geo, 0, 0, 0);
-        // TODO
-        //if (btl.cur.hp * 6 < btl.max.hp)
-        //    btl.stat.cur |= BattleStatus.LowHP;
-
         btl_stat.AlterStatuses(unit, p.status & ~BattleStatus.Petrify);
         if ((p.status & BattleStatus.Petrify) != 0)
             btl_stat.AlterStatus(unit, BattleStatusId.Petrify);
@@ -490,7 +491,7 @@ public static class btl_init
                 btl_mot.setSlavePos(btl, ref btl.base_pos);
                 UnityEngine.Object.Destroy(btl.gameObject);
                 UnityEngine.Object.Destroy(btl.getShadow());
-                btl.gameObject = btl_util.GetMasterEnemyBtlPtr().Data.gameObject;
+                btl.gameObject = btl_util.GetMasterEnemyBtlPtr(btl).Data.gameObject;
             }
             else
             {
@@ -558,8 +559,8 @@ public static class btl_init
         // Out of reach: enemies inside battles flagged with "NoNeighboring" are all set to out of reach but they can also be placed individually using SV_FunctionEnemy[110] in battle scripts or setting the "OutOfReach" flag in the battle's ".memnfo" file
         // False by default for player character, initialized in "btl_init.SetMonsterData" for enemies
         btl.out_of_reach = false;
-        for (int i = 0; i < btl.stat_modifier.Length; i++)
-            btl.stat_modifier[i] = false;
+        btl.stat_partial_resist.Clear();
+        btl.stat_duration_factor.Clear();
         btl.delayedModifierList.Clear();
         btl.summon_count = 0;
         btl.critical_rate_deal_bonus = 0;

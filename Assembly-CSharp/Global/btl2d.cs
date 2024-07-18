@@ -5,6 +5,7 @@ using Memoria.Data;
 using Memoria.Prime;
 using NCalc;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,12 +14,10 @@ public static class btl2d
     public static void Btl2dInit()
     {
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-        ff9Battle.btl2d_work_set.NewID = 0;
         ff9Battle.btl2d_work_set.Timer = 0;
         ff9Battle.btl2d_work_set.OldDisappear = Byte.MaxValue;
-        BTL2D_ENT[] entry = ff9Battle.btl2d_work_set.Entry;
-        for (Int16 num = 0; num < 16; num++)
-            entry[num].BtlPtr = null;
+        foreach (BTL2D_ENT entry in ff9Battle.btl2d_work_set.Entry)
+            entry.BtlPtr = null;
     }
 
     public static void Btl2dReq(BattleUnit unit)
@@ -90,36 +89,32 @@ public static class btl2d
 
     public static void Btl2dStatReq(BTL_DATA pBtl)
     {
-        Byte b = 0;
+        Byte delay = 0;
         UInt16 fig_stat_info = pBtl.fig_stat_info;
         if (pBtl.bi.disappear == 0)
         {
             if ((fig_stat_info & Param.FIG_STAT_INFO_REGENE_HP) != 0)
             {
-                BTL2D_ENT btl2D_ENT = btl2d.Btl2dReqHP(pBtl, pBtl.fig_regene_hp, (UInt16)(((fig_stat_info & Param.FIG_STAT_INFO_REGENE_DMG) == 0) ? 192 : 0), 0);
-                btl2D_ENT.NoClip = 1;
-                btl2D_ENT.Yofs = -12;
-                b = 4;
+                BTL2D_ENT entry = btl2d.Btl2dReqHP(pBtl, pBtl.fig_regene_hp, (UInt16)(((fig_stat_info & Param.FIG_STAT_INFO_REGENE_DMG) == 0) ? 192 : 0), 0);
+                entry.Yofs = -12;
+                delay = 4;
             }
             if ((fig_stat_info & Param.FIG_STAT_INFO_POISON_HP) != 0)
             {
-                BTL2D_ENT btl2D_ENT = btl2d.Btl2dReqHP(pBtl, pBtl.fig_poison_hp, 0, b);
-                btl2D_ENT.NoClip = 1;
-                btl2D_ENT.Yofs = -12;
-                b += 4;
+                BTL2D_ENT entry = btl2d.Btl2dReqHP(pBtl, pBtl.fig_poison_hp, 0, delay);
+                entry.Yofs = -12;
+                delay += 4;
             }
             if ((fig_stat_info & Param.FIG_STAT_INFO_POISON_MP) != 0)
             {
-                BTL2D_ENT btl2D_ENT = btl2d.Btl2dReqMP(pBtl, pBtl.fig_poison_mp, 0, b);
-                btl2D_ENT.NoClip = 1;
-                btl2D_ENT.Yofs = -12;
-                b += 4;
+                BTL2D_ENT entry = btl2d.Btl2dReqMP(pBtl, pBtl.fig_poison_mp, 0, delay);
+                entry.Yofs = -12;
+                delay += 4;
             }
             if ((fig_stat_info & Param.FIG_STAT_INFO_REGENE_MP) != 0)
             {
-                BTL2D_ENT btl2D_ENT = btl2d.Btl2dReqMP(pBtl, pBtl.fig_regene_mp, 192, b);
-                btl2D_ENT.NoClip = 1;
-                btl2D_ENT.Yofs = -12;
+                BTL2D_ENT entry = btl2d.Btl2dReqMP(pBtl, pBtl.fig_regene_mp, 192, delay);
+                entry.Yofs = -12;
             }
         }
         pBtl.fig_stat_info = 0;
@@ -131,21 +126,17 @@ public static class btl2d
 
     public static BTL2D_ENT GetFreeEntry(BTL_DATA pBtl)
     {
-        FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-        BTL2D_WORK btl2d_work_set = ff9Battle.btl2d_work_set;
-        Int16 num = (Int16)(btl2d_work_set.NewID - 1);
-        if (num < 0)
-            num = 15;
-        btl2d_work_set.NewID = num;
-        BTL2D_ENT btl2D_ENT = btl2d_work_set.Entry[num];
-        btl2D_ENT.BtlPtr = pBtl;
-        btl2D_ENT.Cnt = 0;
-        btl2D_ENT.Delay = 0;
-        btl2D_ENT.trans = pBtl.gameObject.transform.GetChildByName("bone" + pBtl.tar_bone.ToString("D3"));
-        Vector3 position = btl2D_ENT.trans.position;
-        btl2D_ENT.Yofs += 4;
-        btl2D_ENT.trans.position = position;
-        return btl2D_ENT;
+        BTL2D_ENT freeEntry = FF9StateSystem.Battle.FF9Battle.btl2d_work_set.Entry.FirstOrDefault(entry => entry.BtlPtr == null);
+        if (freeEntry == null)
+        {
+            freeEntry = new BTL2D_ENT();
+            FF9StateSystem.Battle.FF9Battle.btl2d_work_set.Entry.Add(freeEntry);
+        }
+        freeEntry.BtlPtr = pBtl;
+        freeEntry.Delay = 0;
+        freeEntry.trans = pBtl.gameObject.transform.GetChildByName($"bone{pBtl.tar_bone:D3}");
+        freeEntry.Yofs += 4;
+        return freeEntry;
     }
 
     public static BTL2D_ENT Btl2dReqHP(BTL_DATA pBtl, Int32 pNum, UInt16 pCol, Byte pDelay)
@@ -153,8 +144,8 @@ public static class btl2d
         BTL2D_ENT freeEntry = btl2d.GetFreeEntry(pBtl);
         freeEntry.Type = 0;
         freeEntry.Delay = pDelay;
-        freeEntry.Work.Num.Color = pCol;
-        freeEntry.Work.Num.Value = (UInt32)pNum;
+        freeEntry.NumColor = pCol;
+        freeEntry.NumValue = (UInt32)pNum;
         return freeEntry;
     }
 
@@ -163,8 +154,8 @@ public static class btl2d
         BTL2D_ENT freeEntry = btl2d.GetFreeEntry(pBtl);
         freeEntry.Type = 1;
         freeEntry.Delay = pDelay;
-        freeEntry.Work.Num.Color = pCol;
-        freeEntry.Work.Num.Value = (UInt32)pNum;
+        freeEntry.NumColor = pCol;
+        freeEntry.NumValue = (UInt32)pNum;
         return freeEntry;
     }
 
@@ -173,8 +164,8 @@ public static class btl2d
         BTL2D_ENT freeEntry = btl2d.GetFreeEntry(pBtl);
         freeEntry.Type = 2;
         freeEntry.Delay = pDelay;
-        freeEntry.Work.Num.Color = pCol;
-        freeEntry.Work.Num.Value = pNum;
+        freeEntry.NumColor = pCol;
+        freeEntry.NumValue = pNum;
         return freeEntry;
     }
 
@@ -194,116 +185,106 @@ public static class btl2d
     {
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
         BTL2D_WORK workSet = ff9Battle.btl2d_work_set;
-        Int16 entryIndex = workSet.NewID;
-        for (Int16 i = 0; i < 16; i++)
+        foreach (BTL2D_ENT btl2dMessage in workSet.Entry)
         {
-            BTL2D_ENT btl2dMessage = workSet.Entry[entryIndex];
-            if (btl2dMessage.BtlPtr != null)
+            if (btl2dMessage.Type > 3)
+                btl2dMessage.BtlPtr = null;
+            if (btl2dMessage.BtlPtr == null)
+                continue;
+            if (btl2dMessage.Delay != 0)
             {
-                if (btl2dMessage.Type > 3)
+                btl2dMessage.Delay--;
+                continue;
+            }
+            HUDMessage.MessageStyle style = HUDMessage.MessageStyle.DAMAGE;
+            String message = String.Empty;
+            String format = String.Empty;
+            if (btl2dMessage.Type == 0)
+            {
+                if (btl2dMessage.NumColor == 0)
                 {
-                    btl2dMessage.BtlPtr = null;
-                }
-                else if (btl2dMessage.Delay != 0)
-                {
-                    btl2dMessage.Delay--;
+                    style = HUDMessage.MessageStyle.DAMAGE;
+                    if (!String.IsNullOrEmpty(Configuration.Interface.BattleDamageTextFormat))
+                        format = Configuration.Interface.BattleDamageTextFormat;
                 }
                 else
                 {
-                    HUDMessage.MessageStyle style = HUDMessage.MessageStyle.DAMAGE;
-                    String message = String.Empty;
-                    String format = String.Empty;
-                    if (btl2dMessage.Type == 0)
-                    {
-                        if (btl2dMessage.Work.Num.Color == 0)
-                        {
-                            style = HUDMessage.MessageStyle.DAMAGE;
-                            if (!String.IsNullOrEmpty(Configuration.Interface.BattleDamageTextFormat))
-                                format = Configuration.Interface.BattleDamageTextFormat;
-                        }
-                        else
-                        {
-                            style = HUDMessage.MessageStyle.RESTORE_HP;
-                            if (!String.IsNullOrEmpty(Configuration.Interface.BattleRestoreTextFormat))
-                                format = Configuration.Interface.BattleRestoreTextFormat;
-                        }
-                        message = btl2dMessage.Work.Num.Value.ToString();
-                    }
-                    else if (btl2dMessage.Type == 1)
-                    {
-                        if (btl2dMessage.Work.Num.Color == 0)
-                        {
-                            style = HUDMessage.MessageStyle.DAMAGE;
-                            if (!String.IsNullOrEmpty(Configuration.Interface.BattleMPDamageTextFormat))
-                                format = Configuration.Interface.BattleMPDamageTextFormat;
-                        }
-                        else
-                        {
-                            style = HUDMessage.MessageStyle.RESTORE_MP;
-                            if (!String.IsNullOrEmpty(Configuration.Interface.BattleMPRestoreTextFormat))
-                                format = Configuration.Interface.BattleMPRestoreTextFormat;
-                        }
-                        message = btl2dMessage.Work.Num.Value.ToString() + " " + Localization.Get("MPCaption");
-                    }
-                    else if (btl2dMessage.Type == 2)
-                    {
-                        if (btl2dMessage.Work.Num.Value == 0u)
-                        {
-                            message = Localization.Get("Miss");
-                            style = HUDMessage.MessageStyle.MISS;
-                        }
-                        else if (btl2dMessage.Work.Num.Value == 1u)
-                        {
-                            message = Localization.Get("Death");
-                            style = HUDMessage.MessageStyle.DEATH;
-                        }
-                        else if (btl2dMessage.Work.Num.Value == 2u)
-                        {
-                            message = Localization.Get("Guard");
-                            style = HUDMessage.MessageStyle.GUARD;
-                        }
-                        else if (btl2dMessage.Work.Num.Value == 3u)
-                        {
-                            message = NGUIText.FF9YellowColor + Localization.Get("Critical") + "[-] \n ";
-                            style = HUDMessage.MessageStyle.CRITICAL;
-                        }
-                        else if (btl2dMessage.Work.Num.Value == 0x10000u)
-                        {
-                            message = NGUIText.FF9PinkColor + "DLL Error!\nCheck Memoria.log";
-                            style = HUDMessage.MessageStyle.DAMAGE;
-                        }
-                    }
-                    else if (btl2dMessage.Type == 3)
-                    {
-                        message = btl2dMessage.CustomColor + btl2dMessage.CustomMessage;
-                        style = btl2dMessage.CustomStyle;
-                    }
-                    if (!String.IsNullOrEmpty(format))
-                    {
-                        try
-                        {
-                            Expression expr = new Expression(format);
-                            NCalcUtility.InitializeExpressionUnit(ref expr, new BattleUnit(btl2dMessage.BtlPtr), "Target");
-                            expr.Parameters["DamageValue"] = btl2dMessage.Work.Num.Value;
-                            expr.Parameters["HealValue"] = btl2dMessage.Work.Num.Value;
-                            expr.Parameters["BaseText"] = message;
-                            expr.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
-                            expr.EvaluateParameter += NCalcUtility.commonNCalcParameters;
-                            message = NCalcUtility.EvaluateNCalcString(expr.Evaluate(), message);
-                        }
-                        catch (Exception err)
-                        {
-                            Log.Error(err);
-                        }
-                    }
-                    Singleton<HUDMessage>.Instance.Show(btl2dMessage.trans, message, style, new Vector3(0f, btl2dMessage.Yofs, 0f), 0);
-                    UIManager.Battle.DisplayParty();
-                    btl2dMessage.BtlPtr = null;
+                    style = HUDMessage.MessageStyle.RESTORE_HP;
+                    if (!String.IsNullOrEmpty(Configuration.Interface.BattleRestoreTextFormat))
+                        format = Configuration.Interface.BattleRestoreTextFormat;
+                }
+                message = btl2dMessage.NumValue.ToString();
+            }
+            else if (btl2dMessage.Type == 1)
+            {
+                if (btl2dMessage.NumColor == 0)
+                {
+                    style = HUDMessage.MessageStyle.DAMAGE;
+                    if (!String.IsNullOrEmpty(Configuration.Interface.BattleMPDamageTextFormat))
+                        format = Configuration.Interface.BattleMPDamageTextFormat;
+                }
+                else
+                {
+                    style = HUDMessage.MessageStyle.RESTORE_MP;
+                    if (!String.IsNullOrEmpty(Configuration.Interface.BattleMPRestoreTextFormat))
+                        format = Configuration.Interface.BattleMPRestoreTextFormat;
+                }
+                message = btl2dMessage.NumValue.ToString() + " " + Localization.Get("MPCaption");
+            }
+            else if (btl2dMessage.Type == 2)
+            {
+                if (btl2dMessage.NumValue == 0u)
+                {
+                    message = Localization.Get("Miss");
+                    style = HUDMessage.MessageStyle.MISS;
+                }
+                else if (btl2dMessage.NumValue == 1u)
+                {
+                    message = Localization.Get("Death");
+                    style = HUDMessage.MessageStyle.DEATH;
+                }
+                else if (btl2dMessage.NumValue == 2u)
+                {
+                    message = Localization.Get("Guard");
+                    style = HUDMessage.MessageStyle.GUARD;
+                }
+                else if (btl2dMessage.NumValue == 3u)
+                {
+                    message = NGUIText.FF9YellowColor + Localization.Get("Critical") + "[-] \n ";
+                    style = HUDMessage.MessageStyle.CRITICAL;
+                }
+                else if (btl2dMessage.NumValue == 0x10000u)
+                {
+                    message = NGUIText.FF9PinkColor + "DLL Error!\nCheck Memoria.log";
+                    style = HUDMessage.MessageStyle.DAMAGE;
                 }
             }
-            entryIndex++;
-            if (entryIndex >= 16)
-                entryIndex = 0;
+            else if (btl2dMessage.Type == 3)
+            {
+                message = btl2dMessage.CustomColor + btl2dMessage.CustomMessage;
+                style = btl2dMessage.CustomStyle;
+            }
+            if (!String.IsNullOrEmpty(format))
+            {
+                try
+                {
+                    Expression expr = new Expression(format);
+                    NCalcUtility.InitializeExpressionUnit(ref expr, new BattleUnit(btl2dMessage.BtlPtr), "Target");
+                    expr.Parameters["DamageValue"] = btl2dMessage.NumValue;
+                    expr.Parameters["HealValue"] = btl2dMessage.NumValue;
+                    expr.Parameters["BaseText"] = message;
+                    expr.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                    expr.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                    message = NCalcUtility.EvaluateNCalcString(expr.Evaluate(), message);
+                }
+                catch (Exception err)
+                {
+                    Log.Error(err);
+                }
+            }
+            Singleton<HUDMessage>.Instance.Show(btl2dMessage.trans, message, style, new Vector3(0f, btl2dMessage.Yofs, 0f), 0);
+            UIManager.Battle.DisplayParty();
+            btl2dMessage.BtlPtr = null;
         }
         btl2d.ShouldShowSPS = SFX.GetEffectJTexUsed() == 0;
         btl2d.StatusUpdateVisuals(0f);
@@ -401,6 +382,18 @@ public static class btl2d
 
     public static void GetIconPosition(BTL_DATA btl, Int32 index, out Transform attach, out Vector3 offset)
     {
+        if (index == ICON_POS_WEAPON)
+        {
+            attach = btl.gameObject.transform.GetChildByName($"bone{btl.weapon_bone:D3}");
+            offset = Vector3.zero;
+            return;
+        }
+        if (index == ICON_POS_TARGET)
+        {
+            attach = btl.gameObject.transform.GetChildByName($"bone{btl.tar_bone:D3}");
+            offset = Vector3.zero;
+            return;
+        }
         Single angleY = btl.rot.eulerAngles.y * 0.0174532924f;
         Single angledx = Mathf.Sin(angleY);
         Single angledz = Mathf.Cos(angleY);
@@ -416,7 +409,7 @@ public static class btl2d
         offset = new Vector3(dz * angledx, -dy, dz * angledz);
     }
 
-    public const Byte BTL2D_NUM = 16;
+    public const Byte BTL2D_INITIAL_COUNT = 16;
 
     public const Byte BTL2D_TYPE_HP = 0;
     public const Byte BTL2D_TYPE_MP = 1;
@@ -434,7 +427,14 @@ public static class btl2d
     public const Byte ABR_SUB = 2;
     public const Byte ABR_25ADD = 3;
 
-    public const Int16 STAT_ICON_NUM = 12;
+    public const Int32 ICON_POS_DEFAULT = 0; // Venom, Poison, Sleep, Haste, Slow
+    public const Int32 ICON_POS_HEAD = 1; // Heat, Freeze, Reflect
+    public const Int32 ICON_POS_MOUTH = 2; // Silence
+    public const Int32 ICON_POS_EYES = 3; // Blind
+    public const Int32 ICON_POS_FOREHEAD = 4; // Trouble, Berserk
+    public const Int32 ICON_POS_NUMBER = 5; // Doom, Gradual Petrify
+    public const Int32 ICON_POS_WEAPON = 100; // Weapon attachment
+    public const Int32 ICON_POS_TARGET = 101; // Targeting cursor
 
     public const Int32 SOTSIZE = 4096;
 

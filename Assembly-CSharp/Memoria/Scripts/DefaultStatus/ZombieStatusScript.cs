@@ -1,7 +1,5 @@
 ﻿using System;
-using UnityEngine;
 using Memoria.Data;
-using FF9;
 using Object = System.Object;
 
 namespace Memoria.DefaultScripts

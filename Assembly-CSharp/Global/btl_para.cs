@@ -18,8 +18,9 @@ public class btl_para
         // It might be a good idea to rework completly the system (let some enemies be able to survive / perform ending attacks even with 0 HP for instance), but any solution requires a rewrite of AI scripts
         // Even this solution requires a rework of many AI scripts since the HP gap is not always 10 000 (Kraken's tentacle for instance)
         UInt32 hp = max ? btl.max.hp : btl.cur.hp;
-        if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && btl.bi.player == 0 && (btl_util.getEnemyPtr(btl).info.flags & 0x4) != 0)
+        if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && btl.bi.player == 0 && (btl_util.getEnemyPtr(btl).info.flags & ENEMY.ENEMY_INFO.FLG_NON_DYING_BOSS) != 0)
         {
+            // In that mode, an enemy can be flagged as unkillable with "set SV_FunctionEnemy[109] |=$ 4" and killable with "set SV_FunctionEnemy[109] &=$ 251" in its AI script
             if (hp > 10000)
                 return hp - 10000;
             return 0;
@@ -29,12 +30,16 @@ public class btl_para
 
     public static void SetLogicalHP(BTL_DATA btl, UInt32 newHP, Boolean max)
     {
-        if (Configuration.Battle.CustomBattleFlagsMeaning != 0 && btl.bi.player == 0 && (btl_util.getEnemyPtr(btl).info.flags & 0x4) != 0)
+        if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
         {
-            if (newHP == 0)
-                newHP = 1;
-            else
-                newHP += 10000;
+            // TODO [Tirlititi] Check that "IsNonDyingVanillaBoss" isn't needed at all in AF
+            if (btl.bi.player == 0 && (btl_util.getEnemyPtr(btl).info.flags & ENEMY.ENEMY_INFO.FLG_NON_DYING_BOSS) != 0)
+            {
+                if (newHP == 0)
+                    newHP = 1;
+                else
+                    newHP += 10000;
+            }
         }
         else if (IsNonDyingVanillaBoss(btl))
         {
@@ -353,13 +358,9 @@ public class btl_para
 
     public static Boolean IsNonDyingVanillaBoss(BTL_DATA btl)
     {
-        if (Configuration.Battle.CustomBattleFlagsMeaning != 0 || btl.bi.player != 0 || btl_util.getEnemyPtr(btl).info.die_unused3 == 1) // [DV & Tirlititi] - TODO => Replace it with CustomBattleFlagsMeaning
-            return false;
         if (NonDyingBossBattles.Contains(FF9StateSystem.Battle.battleMapIndex))
         {
             if (FF9StateSystem.Battle.battleMapIndex == 338 && btl.max.hp < 10000) // King Leo + Zenero + Benero
-                return false;
-            if (Configuration.Mod.TranceSeek && FF9StateSystem.Battle.battleMapIndex == 4 && btl.dms_geo_id == 142) // TRANCE SEEK - Dark Beatrix fight, make true form vulnerable.
                 return false;
             return true;
         }

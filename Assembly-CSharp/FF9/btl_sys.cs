@@ -1,5 +1,6 @@
 ﻿using Memoria;
 using Memoria.Data;
+using Memoria.Scripts;
 using Memoria.Speedrun;
 using System;
 
@@ -48,26 +49,26 @@ namespace FF9
             btlBonus.escape_gil = false;
         }
 
-        public static void CheckBattlePhase(BTL_DATA btl)
+        public static void CheckBattlePhase(BTL_DATA dyingUnit)
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             Int32 dieSeqEnd = 6; /*btl.bi.player == 0 ? 6 : 6*/
-            for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
-                if (next.bi.player == btl.bi.player && (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull) || btl_stat.CheckStatus(next, BattleStatus.Death) && next.die_seq != dieSeqEnd))
+            for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
+                if (btl.bi.player == dyingUnit.bi.player && (!btl_stat.CheckStatus(btl, BattleStatusConst.BattleEndFull) || btl_stat.CheckStatus(btl, BattleStatus.Death) && btl.die_seq != dieSeqEnd))
                     return;
-            if (btl.bi.player == 0)
+            if (dyingUnit.bi.player == 0)
             {
                 Boolean playerStillAlive = false;
-                for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
+                for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
                 {
-                    if (next.bi.player != 0)
+                    if (btl.bi.player != 0)
                     {
-                        if (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull))
+                        if (!btl_stat.CheckStatus(btl, BattleStatusConst.BattleEndFull))
                         {
                             playerStillAlive = true;
                             break;
                         }
-                        if ((next.cur.hp == 0 || btl_stat.CheckStatus(next, BattleStatus.Death)) && next.stat.HasDeathChangerEffect)
+                        if ((btl.cur.hp == 0 || btl_stat.CheckStatus(btl, BattleStatus.Death)) && btl.stat.HasDeathChangerEffect)
                         {
                             playerStillAlive = true;
                             break;
@@ -81,36 +82,40 @@ namespace FF9
             }
             else
             {
-                for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
+                IOverloadOnGameOverScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnGameOverScript)) as IOverloadOnGameOverScript;
+                if (overloadedMethod != null)
                 {
-                    CharacterSerialNumber serialNo = btl_util.getSerialNumber(next);
-                    if (serialNo == CharacterSerialNumber.EIKO_FLUTE || serialNo == CharacterSerialNumber.EIKO_KNIFE)
+                    if (overloadedMethod.OnGameOver(ff9Battle, new BattleUnit(dyingUnit)))
+                        return;
+                }
+                else
+                {
+                    // Default method
+                    for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
                     {
-                        if (!btl_stat.CheckStatus(next, BattleStatusConst.NoRebirthFlame))
+                        if (btl.bi.player != 0 && (CharacterId)btl.bi.slot_no == CharacterId.Eiko)
                         {
-                            if (btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix))
-                                return;
-                            Boolean procRebirthFlame = false;
-                            // TODO [DV]
-                            if (Configuration.Mod.TranceSeek) // TRANCE SEEK - RebirthFlame
+                            if (!btl_stat.CheckStatus(btl, BattleStatusConst.NoRebirthFlame))
                             {
-                                BattleUnit unit = new BattleUnit(next);
-                                Character player = unit.Player;
-                                if (player.Equipment.Accessory == RegularItem.PhoenixPinion && ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8())
-                                    procRebirthFlame = true;
+                                if (btl_cmd.CheckSpecificCommand(btl, BattleCommandId.SysLastPhoenix))
+                                    return;
+                                Boolean procRebirthFlame = ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8();
+                                // TODO [DV]
+                                //if (Configuration.Mod.TranceSeek) // TRANCE SEEK - RebirthFlame
+                                //{
+                                //    BattleUnit unit = new BattleUnit(btl);
+                                //    Character player = unit.Player;
+                                //    procRebirthFlame = player.Equipment.Accessory == RegularItem.PhoenixPinion && ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8();
+                                //}
+                                if (procRebirthFlame)
+                                {
+                                    UIManager.Battle.FF9BMenu_EnableMenu(true);
+                                    btl_cmd.SetCommand(btl.cmd[0], BattleCommandId.SysLastPhoenix, (Int32)BattleAbilityId.RebirthFlame, btl_scrp.GetBattleID(0U), 1u);
+                                    return;
+                                }
                             }
-                            else
-                            {
-                                procRebirthFlame = ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8();
-                            }
-                            if (procRebirthFlame)
-                            {
-                                UIManager.Battle.FF9BMenu_EnableMenu(true);
-                                btl_cmd.SetCommand(next.cmd[0], BattleCommandId.SysLastPhoenix, (Int32)BattleAbilityId.RebirthFlame, btl_scrp.GetBattleID(0U), 1u);
-                                return;
-                            }
+                            break;
                         }
-                        break;
                     }
                 }
                 ff9Battle.btl_seq = 1;
@@ -124,18 +129,12 @@ namespace FF9
         public static void CheckBattleMenuOff(BattleUnit btl)
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-            BattleUnit eiko = null;
 
             foreach (BattleUnit next in ff9Battle.EnumerateBattleUnits())
-            {
-                if (next.PlayerIndex == CharacterId.Eiko)
-                    eiko = next;
-
                 if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.Data.stat.HasDeathChangerEffect || btl_cmd.CheckSpecificCommand(next.Data, BattleCommandId.SysReraise)))
                     return;
-            }
 
-            if (eiko != null && btl_cmd.CheckSpecificCommand(eiko.Data, BattleCommandId.SysLastPhoenix))
+            if (btl_cmd.CheckSpecificCommand2(BattleCommandId.SysLastPhoenix))
                 return;
 
             UIManager.Battle.FF9BMenu_EnableMenu(false);
@@ -143,11 +142,11 @@ namespace FF9
             ff9Battle.btl_escape_key = 0;
         }
 
-        public static void CheckForecastMenuOff(BTL_DATA btl)
+        public static void CheckForecastMenuOff(BTL_DATA dyingEnemy)
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-            for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
-                if (next.bi.player == 0 && !btl_stat.CheckStatus(next, BattleStatus.Death))
+            for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
+                if (btl.bi.player == 0 && !btl_stat.CheckStatus(btl, BattleStatus.Death) && btl != dyingEnemy)
                     return;
             AutoSplitterPipe.SignalBattleWin();
             UIManager.Battle.FF9BMenu_EnableMenu(false);

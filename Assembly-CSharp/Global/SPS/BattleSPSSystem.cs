@@ -104,7 +104,7 @@ public class BattleSPSSystem : MonoBehaviour
             if (sps.spsBin != null && (sps.attr & SPSConst.ATTR_VISIBLE) != 0)
             {
                 if (sps.charTran != null && sps.boneTran != null)
-                    sps.pos = sps.boneTran.position + sps.posOffset;
+                    sps.pos = sps.boneTran.position;
                 if ((sps.attr & (SPSConst.ATTR_UPDATE_THIS_FRAME | SPSConst.ATTR_UPDATE_ANY_FRAME)) != 0)
                 {
                     sps.meshRenderer.enabled = true;
@@ -195,7 +195,7 @@ public class BattleSPSSystem : MonoBehaviour
         {
             if (this._statusToSPSIndex.TryGetValue(effectCode, out Int32 spsIndex))
             {
-                Utility.SpsList[spsIndex].gameObject.transform.localPosition = extraPos;
+                Utility.SpsList[spsIndex].posOffset = extraPos;
                 Utility.SpsList[spsIndex].attr |= SPSConst.ATTR_VISIBLE;
             }
             else
@@ -212,7 +212,7 @@ public class BattleSPSSystem : MonoBehaviour
                 if (Utility.SetupSPSBinary(sps, spsID, true))
                 {
                     sps.meshRenderer.enabled = false;
-                    sps.gameObject.transform.localPosition = extraPos;
+                    sps.posOffset = extraPos;
                 }
             }
         }
@@ -221,7 +221,7 @@ public class BattleSPSSystem : MonoBehaviour
             if (this._statusToSHPIndex.TryGetValue(effectCode, out Int32 shpIndex))
             {
                 this._shpEffects[shpIndex].attr |= SPSConst.ATTR_VISIBLE;
-                this._shpEffects[shpIndex].gameObject.transform.localPosition = extraPos;
+                this._shpEffects[shpIndex].posOffset = extraPos;
             }
             else
             {
@@ -233,7 +233,7 @@ public class BattleSPSSystem : MonoBehaviour
                 Int32 slot = this._FindFreeSHPSlot();
                 this._statusToSHPIndex[effectCode] = slot;
                 this._shpEffects[slot].Init(CommonSPSSystem.SHPPrototypes[shpId]);
-                this._shpEffects[slot].gameObject.transform.localPosition = extraPos;
+                this._shpEffects[slot].posOffset = extraPos;
             }
         }
     }

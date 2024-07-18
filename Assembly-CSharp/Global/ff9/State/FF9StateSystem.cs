@@ -4,109 +4,19 @@ using UnityEngine;
 
 public class FF9StateSystem : PersistenSingleton<FF9StateSystem>
 {
-    public static Boolean AndroidTVPlatform
-    {
-        get
-        {
-            return FF9StateSystem.IsAndroidTV;
-        }
-    }
-
-    public static Boolean AndroidAmazonPlatform
-    {
-        get
-        {
-            return false;
-        }
-    }
-
-    public static SettingsState Settings
-    {
-        get
-        {
-            return PersistenSingleton<FF9StateSystem>.Instance.settings;
-        }
-    }
-
-    public static CommonState Common
-    {
-        get
-        {
-            return PersistenSingleton<FF9StateSystem>.Instance.common;
-        }
-    }
-
-    public static FieldState Field
-    {
-        get
-        {
-            return PersistenSingleton<FF9StateSystem>.Instance.field;
-        }
-    }
-
-    public static WorldState World
-    {
-        get
-        {
-            return PersistenSingleton<FF9StateSystem>.Instance.world;
-        }
-    }
-
-    public static BattleState Battle
-    {
-        get
-        {
-            return PersistenSingleton<FF9StateSystem>.Instance.battle;
-        }
-    }
-
-    public static MiniGameState MiniGame
-    {
-        get
-        {
-            return PersistenSingleton<FF9StateSystem>.Instance.miniGame;
-        }
-    }
-
-    public static EventState EventState
-    {
-        get
-        {
-            return PersistenSingleton<FF9StateSystem>.Instance.eventState;
-        }
-    }
-
-    public static SoundState Sound
-    {
-        get
-        {
-            return PersistenSingleton<FF9StateSystem>.Instance.sound;
-        }
-    }
-
-    public static AchievementState Achievement
-    {
-        get
-        {
-            return PersistenSingleton<FF9StateSystem>.Instance.achievement;
-        }
-    }
-
-    public static ISharedDataSerializer Serializer
-    {
-        get
-        {
-            return PersistenSingleton<FF9StateSystem>.Instance.serializer;
-        }
-    }
-
-    public static QuadMistDatabase QuadMistDatabase
-    {
-        get
-        {
-            return PersistenSingleton<FF9StateSystem>.Instance.quadMistDatabase;
-        }
-    }
+    public static Boolean AndroidTVPlatform => FF9StateSystem.IsAndroidTV;
+    public static Boolean AndroidAmazonPlatform => false;
+    public static SettingsState Settings => PersistenSingleton<FF9StateSystem>.Instance.settings;
+    public static CommonState Common => PersistenSingleton<FF9StateSystem>.Instance.common;
+    public static FieldState Field => PersistenSingleton<FF9StateSystem>.Instance.field;
+    public static WorldState World => PersistenSingleton<FF9StateSystem>.Instance.world;
+    public static BattleStateSystem Battle => PersistenSingleton<FF9StateSystem>.Instance.battle;
+    public static MiniGameState MiniGame => PersistenSingleton<FF9StateSystem>.Instance.miniGame;
+    public static EventState EventState => PersistenSingleton<FF9StateSystem>.Instance.eventState;
+    public static SoundState Sound => PersistenSingleton<FF9StateSystem>.Instance.sound;
+    public static AchievementState Achievement => PersistenSingleton<FF9StateSystem>.Instance.achievement;
+    public static ISharedDataSerializer Serializer => PersistenSingleton<FF9StateSystem>.Instance.serializer;
+    public static QuadMistDatabase QuadMistDatabase => PersistenSingleton<FF9StateSystem>.Instance.quadMistDatabase;
 
     protected override void Awake()
     {
@@ -134,7 +44,7 @@ public class FF9StateSystem : PersistenSingleton<FF9StateSystem>
         this.world = gameObject.AddComponent<WorldState>();
         gameObject.transform.parent = transform;
         gameObject = new GameObject("Battle State");
-        this.battle = gameObject.AddComponent<BattleState>();
+        this.battle = gameObject.AddComponent<BattleStateSystem>();
         gameObject.transform.parent = transform;
         gameObject = new GameObject("MiniGame State");
         this.miniGame = gameObject.AddComponent<MiniGameState>();
@@ -175,43 +85,39 @@ public class FF9StateSystem : PersistenSingleton<FF9StateSystem>
 
     private void InitStateSerializer()
     {
-        GameObject gameObject = new GameObject("WinIosAndrSharedDataSerializer");
-        WinIosAndrSharedDataSerializer winIosAndrSharedDataSerializer = gameObject.AddComponent<WinIosAndrSharedDataSerializer>();
-        this.serializer = winIosAndrSharedDataSerializer;
-        gameObject.transform.parent = base.transform;
-        GameObject gameObject2 = new GameObject("JsonParser");
-        JsonParser parser = gameObject2.AddComponent<JsonParser>();
-        winIosAndrSharedDataSerializer.Parser = parser;
-        gameObject2.transform.parent = winIosAndrSharedDataSerializer.transform;
-        GameObject gameObject3 = new GameObject("SharedDataAesEncryption");
-        winIosAndrSharedDataSerializer.Encryption = gameObject3.AddComponent<SharedDataAesEncryption>();
-        winIosAndrSharedDataSerializer.Encryption.transform.parent = gameObject.transform;
-        GameObject gameObject4 = new GameObject("SharedDataBytesStorage");
-        winIosAndrSharedDataSerializer.Storage = gameObject4.AddComponent<SharedDataBytesStorage>();
-        winIosAndrSharedDataSerializer.Storage.transform.parent = gameObject.transform;
-        if (winIosAndrSharedDataSerializer.Storage is SharedDataBytesStorage)
+        GameObject serializerGo = new GameObject("WinIosAndrSharedDataSerializer");
+        WinIosAndrSharedDataSerializer sharedSerializer = serializerGo.AddComponent<WinIosAndrSharedDataSerializer>();
+        this.serializer = sharedSerializer;
+        serializerGo.transform.parent = base.transform;
+        GameObject gameObject = new GameObject("JsonParser");
+        sharedSerializer.Parser = gameObject.AddComponent<JsonParser>();
+        gameObject.transform.parent = sharedSerializer.transform;
+        gameObject = new GameObject("SharedDataAesEncryption");
+        sharedSerializer.Encryption = gameObject.AddComponent<SharedDataAesEncryption>();
+        sharedSerializer.Encryption.transform.parent = serializerGo.transform;
+        gameObject = new GameObject("SharedDataBytesStorage");
+        sharedSerializer.Storage = gameObject.AddComponent<SharedDataBytesStorage>();
+        sharedSerializer.Storage.transform.parent = serializerGo.transform;
+        if (sharedSerializer.Storage is SharedDataBytesStorage)
         {
-            GameObject gameObject5 = new GameObject("SharedDataRawStorage");
-            SharedDataRawStorage sharedDataRawStorage = gameObject5.AddComponent<SharedDataRawStorage>();
-            gameObject5.transform.parent = winIosAndrSharedDataSerializer.Storage.transform;
-            winIosAndrSharedDataSerializer.RawStorage = sharedDataRawStorage;
-            sharedDataRawStorage.Encryption = winIosAndrSharedDataSerializer.Encryption;
+            gameObject = new GameObject("SharedDataRawStorage");
+            sharedSerializer.RawStorage = gameObject.AddComponent<SharedDataRawStorage>();
+            sharedSerializer.RawStorage.Encryption = sharedSerializer.Encryption;
+            gameObject.transform.parent = sharedSerializer.Storage.transform;
         }
-        winIosAndrSharedDataSerializer.Storage.Encryption = winIosAndrSharedDataSerializer.Encryption;
-        GameObject gameObject6 = new GameObject("SharedDataSlotPreviewUtil");
-        gameObject6.AddComponent<SlotPreviewReadWriterUtil>();
-        gameObject6.transform.parent = winIosAndrSharedDataSerializer.transform;
+        sharedSerializer.Storage.Encryption = sharedSerializer.Encryption;
+        gameObject = new GameObject("SharedDataSlotPreviewUtil");
+        gameObject.AddComponent<SlotPreviewReadWriterUtil>();
+        gameObject.transform.parent = sharedSerializer.transform;
     }
 
     private void InitQuadMistDatabase()
     {
         GameObject gameObject = new GameObject("QuadMistDatabase");
-        QuadMistDatabase quadMistDatabase = gameObject.AddComponent<QuadMistDatabase>();
-        this.quadMistDatabase = quadMistDatabase;
+        this.quadMistDatabase = gameObject.AddComponent<QuadMistDatabase>();
         gameObject.transform.parent = base.transform;
         gameObject = new GameObject("QuadMistCardPool");
-        CardPool cardPool = gameObject.AddComponent<CardPool>();
-        this.quadMistCardPool = cardPool;
+        this.quadMistCardPool = gameObject.AddComponent<CardPool>();
         gameObject.transform.parent = base.transform;
     }
 
@@ -220,64 +126,38 @@ public class FF9StateSystem : PersistenSingleton<FF9StateSystem>
     }
 
     private const Boolean IsEStoreEnabled = false;
-
     private static Boolean IsAndroidTV = false;
 
     public static Boolean Editor = Application.platform == RuntimePlatform.WindowsEditor;
-
     public static Boolean MobilePlatform = Application.platform == RuntimePlatform.Android || Application.platform == RuntimePlatform.IPhonePlayer || FF9StateSystem.Editor;
-
     public static Boolean PCPlatform = Application.platform == RuntimePlatform.WindowsPlayer;
-
     public static Boolean aaaaPlatform = false;
-
     public static Boolean MobileAndaaaaPlatform = FF9StateSystem.MobilePlatform || FF9StateSystem.aaaaPlatform;
-
     public static Boolean PCEStorePlatform = false;
-
     public static Boolean IOSPlatform = Application.platform == RuntimePlatform.IPhonePlayer;
-
     public static Boolean AndroidPlatform = Application.platform == RuntimePlatform.Android;
-
     public static Boolean AndroidSQEXMarket = false;
-
     public static Boolean EnableAndroidTVJoystickMode = true;
-
     public static Boolean IsPlatformVibration => Editor || PCPlatform;
 
     public UInt32 attr;
-
     public Byte mode;
-
     public Byte prevMode;
 
     public static Double LatestTimestamp = -1.0;
-
     public static Int32 latestSlot = -1;
-
     public static Int32 latestSave = -1;
 
     private SettingsState settings;
-
     private CommonState common;
-
     private FieldState field;
-
     private WorldState world;
-
-    private BattleState battle;
-
+    private BattleStateSystem battle;
     private MiniGameState miniGame;
-
     private EventState eventState;
-
     private SoundState sound;
-
     private AchievementState achievement;
-
     private ISharedDataSerializer serializer;
-
     private QuadMistDatabase quadMistDatabase;
-
     private CardPool quadMistCardPool;
 }

@@ -2,8 +2,6 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
-using Memoria.Prime.Collections;
-using Memoria.Prime.CSV;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -270,7 +268,7 @@ namespace FF9
         {
             return anim == btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE]
                 || anim == btl.mot[5]
-                || (btl_util.getEnemyPtr(btl).info.die_dmg != 0 && anim == btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2]);
+                || (btl_util.getEnemyPtr(btl).info.die_dmg && anim == btl.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2]);
         }
 
         public static void ToggleIdleAnimation(BTL_DATA btl, Boolean alternateOn)
@@ -527,7 +525,7 @@ namespace FF9
             {
                 if (useCmdMotion && currentAnim != BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2 && currentAnim != BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1)
                     targetAnim = currentAnim;
-                else if ((btl.die_seq == 1 || btl.die_seq == 2) && btl.bi.player == 0 && btl_util.getEnemyPtr(btl).info.die_dmg != 0)
+                else if ((btl.die_seq == 1 || btl.die_seq == 2) && btl.bi.player == 0 && btl_util.getEnemyPtr(btl).info.die_dmg)
                     targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2;
                 else if ((btl.die_seq == 1 || btl.die_seq == 2) && btl.is_monster_transform)
                     targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_DOWN_DISABLE;
@@ -674,7 +672,7 @@ namespace FF9
         {
             if (btl_util.IsBtlUsingCommandMotion(btl.Data, true))
             {
-                if (!btl.IsPlayer && btl.Data.cur.hp == 0 && btl.Enemy.Data.info.die_atk == 0)
+                if (!btl.IsPlayer && btl.Data.cur.hp == 0 && !btl.Enemy.AttackOnDeath)
                     btl_util.SetEnemyDieSound(btl.Data, btl.EnemyType.die_snd_no);
                 return;
             }
@@ -697,7 +695,7 @@ namespace FF9
                 }
                 btl.Data.evt.animFrame = 0;
             }
-            else if (btl.Data.cur.hp == 0 && btl.Enemy.Data.info.die_dmg != 0 && btl.Enemy.Data.info.die_atk == 0)
+            else if (btl.Data.cur.hp == 0 && btl.Enemy.AlternateDeathAnim && !btl.Enemy.AttackOnDeath)
             {
                 btl_mot.setMotion(btl.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2);
                 btl.Data.evt.animFrame = 0;
@@ -706,7 +704,7 @@ namespace FF9
             else
             {
                 if (btl.IsSlave)
-                    btl = btl_util.GetMasterEnemyBtlPtr();
+                    btl = btl_util.GetMasterEnemyBtlPtr(btl);
                 btl_mot.setMotion(btl.Data, BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1 + btl.Data.bi.def_idle);
                 btl.Data.evt.animFrame = 0;
             }
@@ -721,7 +719,7 @@ namespace FF9
                 return;
             if (cmd.regist != null && btl_stat.CheckStatus(cmd.regist, BattleStatus.Death) && cmd.regist.die_seq == 0)
             {
-                if (cmd.regist.bi.player == 0 && btl_util.getEnemyPtr(cmd.regist).info.die_atk != 0 && cmd.cmd_no != BattleCommandId.EnemyDying)
+                if (cmd.regist.bi.player == 0 && btl_util.getEnemyPtr(cmd.regist).info.die_atk && cmd.cmd_no != BattleCommandId.EnemyDying)
                     return;
                 if (cmd.regist.bi.player == 0 && btl_mot.IsEnemyDyingAnimation(cmd.regist, cmd.regist.currentAnimationName))
                     cmd.regist.die_seq = 2;
@@ -807,14 +805,14 @@ namespace FF9
             btl.bi.dmg_mot_f = 0;
             if (btl_stat.CheckStatus(btl, BattleStatus.Death))
             {
-                if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2) && btl_util.getEnemyPtr(btl).info.die_dmg != 0)
+                if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2) && btl_util.getEnemyPtr(btl).info.die_dmg)
                 {
                     btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE);
                     btl.evt.animFrame--;
                     btl.bi.stop_anim = 1;
                     btl.die_seq = 3;
                 }
-                else if (btl_util.getEnemyPtr(btl).info.die_atk == 0 && btl.bi.death_f == 0)
+                else if (!btl_util.getEnemyPtr(btl).info.die_atk && btl.bi.death_f == 0)
                 {
                     btl.die_seq = 1;
                 }
@@ -825,31 +823,31 @@ namespace FF9
             }
         }
 
-        public static void HideMesh(BTL_DATA btl, UInt16 mesh, Boolean isBanish = false)
+        public static void HideMesh(BTL_DATA btl, UInt16 mesh, Boolean isVanish = false)
         {
             // TODO: is this really relevant?
             //String path = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(btl.dms_geo_id);
-            //if (ModelFactory.IsUseAsEnemyCharacter(path) && isBanish)
+            //if (ModelFactory.IsUseAsEnemyCharacter(path) && isVanish)
             //    mesh = UInt16.MaxValue;
             for (Int32 i = 0; i < 16; i++)
                 if ((mesh & 1 << i) != 0)
                     geo.geoMeshHide(btl, i);
-            if (mesh == UInt16.MaxValue)
+            if (mesh == UInt16.MaxValue && !isVanish)
                 for (Int32 i = 0; i < btl.weaponMeshCount; i++)
                     geo.geoWeaponMeshHide(btl, i);
         }
 
-        public static void ShowMesh(BTL_DATA btl, UInt16 mesh, Boolean isBanish = false)
+        public static void ShowMesh(BTL_DATA btl, UInt16 mesh, Boolean isVanish = false)
         {
             //String path = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(btl.dms_geo_id);
-            //if (ModelFactory.IsUseAsEnemyCharacter(path) && isBanish)
+            //if (ModelFactory.IsUseAsEnemyCharacter(path) && isVanish)
             //    mesh = UInt16.MaxValue;
             if (btl.bi.player == 0)
                 btl.flags &= (UInt16)~geo.GEO_FLAGS_RENDER;
             for (Int32 i = 0; i < 16; i++)
                 if ((mesh & 1 << i) != 0)
                     geo.geoMeshShow(btl, i);
-            if (mesh == UInt16.MaxValue)
+            if (mesh == UInt16.MaxValue && !isVanish)
                 for (Int32 i = 0; i < btl.weaponMeshCount; i++)
                     geo.geoWeaponMeshShow(btl, i);
         }

@@ -271,7 +271,7 @@ public class btlseq
         if (btl.bi.slave != 0)
         {
             btl_mot.DieSequence(btl);
-            BattleUnit masterEnemyBtlPtr = btl_util.GetMasterEnemyBtlPtr();
+            BattleUnit masterEnemyBtlPtr = btl_util.GetMasterEnemyBtlPtr(btl);
             if (masterEnemyBtlPtr == null)
                 return;
             btl.rot = masterEnemyBtlPtr.Data.rot;
@@ -299,7 +299,7 @@ public class btlseq
             if (btl.animation != null)
                 btl.animation.enabled = true;
             if (advanceAnim)
-                btl.animFrameFrac += Math.Abs(btl.animSpeed);
+                btl.animFrameFrac += Math.Abs(btl.animSpeed * btl.animSpeedStatusFactor);
 
             while (btl.animFrameFrac >= 1f)
             {
@@ -324,7 +324,7 @@ public class btlseq
                 btl.pos[2] = btl.base_pos[2];
                 btl.bi.dmg_mot_f = 0;
             }
-            if (btl_stat.CheckStatus(btl, BattleStatus.Death) && btl.die_seq == 0 && (btl.bi.player != 0 || btl_util.getEnemyPtr(btl).info.die_atk == 0 || !btl_util.IsBtlBusy(btl, btl_util.BusyMode.CASTER | btl_util.BusyMode.QUEUED_CASTER)))
+            if (btl_stat.CheckStatus(btl, BattleStatus.Death) && btl.die_seq == 0 && (btl.bi.player != 0 || !btl_util.getEnemyPtr(btl).info.die_atk || !btl_util.IsBtlBusy(btl, btl_util.BusyMode.CASTER | btl_util.BusyMode.QUEUED_CASTER)))
                 btl.die_seq = 1;
             if ((btl.animFlag & EventEngine.afHold) != 0)
                 btl.animFlag = (UInt16)EventEngine.afFreeze;
@@ -333,7 +333,7 @@ public class btlseq
                 if ((btl.animFlag & EventEngine.afPalindrome) != 0)
                 {
                     btl.animSpeed = -btl.animSpeed;
-                    btl.evt.animFrame = (Byte)(btl.animSpeed < 0 ? animLoopFrame + btl.animSpeed : btl.animSpeed);
+                    btl.evt.animFrame = (Byte)(btl.animSpeed < 0 ? animLoopFrame + btl.animSpeed * btl.animSpeedStatusFactor : btl.animSpeed * btl.animSpeedStatusFactor);
                 }
                 else if ((btl.animFlag & EventEngine.afLoop) != 0)
                     btl.evt.animFrame = (Byte)(reverseSpeed ? animLoopFrame : 0);

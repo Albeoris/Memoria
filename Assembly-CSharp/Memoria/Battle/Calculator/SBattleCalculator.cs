@@ -75,13 +75,13 @@ namespace Memoria
                     {
                         if (command.IsShortRange)
                         {
-                            v.BonusBackstabAndPenaltyLongDistanceAsDamageModifiers();
+                            v.BonusBackstabAndPenaltyLongDistanceVisually();
                             if ((command.AbilityCategory & 8) != 0 && v.Target.IsUnderAnyStatus(BattleStatus.Vanish)) // Is Physical
                                 v.Context.Flags |= BattleCalcFlags.Miss;
                         }
                         if ((command.AbilityType & 0x10) != 0 && caster.bi.player != 0) // Use weapon properties
                         {
-                            v.ApplyElementAsDamageModifiers(v.Caster.WeaponElement, v.Caster.WeaponElement);
+                            v.ApplyElementFullStack(v.Caster.WeaponElement, v.Caster.WeaponElement);
                         }
                         if ((v.Context.Flags & (BattleCalcFlags.Miss | BattleCalcFlags.Guard)) != 0)
                         {
@@ -168,7 +168,7 @@ namespace Memoria
                     }
                     else
                     {
-                        btl_util.GetMasterEnemyBtlPtr().Data.pos[2] -= -400f;
+                        btl_util.GetMasterEnemyBtlPtr(target).Data.pos[2] -= -400f;
                     }
                     target.bi.dodge = 1;
                     btl_mot.SetDefaultIdle(target);
@@ -180,10 +180,8 @@ namespace Memoria
                 if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && (v.Command.AbilityType & 0x20) != 0) // Has critical
                     v.TryCriticalHit();
                 // Note: weapon statuses are added before damage (unlike vanilla), like spell statuses
-                // TODO: Might want to rework the status resistance to Death so that it doesn't prevent death from HP removal; so EasyKill can safely use status resistance to Death
                 if ((v.Context.Flags & BattleCalcFlags.AddStat) != 0 && target.cur.hp > 0)
-                    if ((FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value & BattleStatus.Death) == 0 || !btl_stat.CheckStatus(target, BattleStatus.EasyKill))
-                        v.Target.TryAlterStatuses(FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value, false, v.Caster);
+                    v.Target.TryAlterStatuses(FF9StateSystem.Battle.FF9Battle.add_status[caster.weapon.StatusIndex].Value, false, v.Caster);
                 if ((v.Command.AbilityCategory & 8) != 0) // Is Physical
                 {
                     if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
@@ -193,50 +191,21 @@ namespace Memoria
                 if ((v.Command.AbilityCategory & 16) != 0) // Is Magical
                     v.Target.RemoveStatus(BattleStatusConst.RemoveOnMagicallyAttacked & ~v.Context.AddedStatuses);
 
+                target.fig_info |= (UInt16)v.Target.Flags;
+                caster.fig_info |= (UInt16)v.Caster.Flags;
+                if (BattleCalculator.DamageModifierScript != null)
+                {
+                    BattleCalculator.DamageModifierScript.OnDamageFinalChanges(v);
+                }
+                else
+                {
+                    // Default method
+                    DamageFinalChanges(v);
+                }
                 if (v.Target.Flags != 0)
                 {
-                    // DamageModifierCount > 0 -> damage is multiplied by 1.5, 2, 2.25, 2.5, 2.625, 2.75...
-                    // DamageModifierCount < 0 -> damage is divided by 2, 4, 8, 16, 32...
-                    Single modifier_factor = 1.0f;
-                    Single modifier_bonus = 0.5f;
-                    Byte modifier_index = 0;
-                    if (Configuration.Mod.TranceSeek && v.Context.DamageModifierCount > 0)
-                    {
-                        modifier_factor = 1 + (float)(v.Context.DamageModifierCount * 0.25); // TRANCE SEEK -> damage is multiplied by 1.25, 1.5, 1.75, 2, 2.25, 2.5...
-                    }
-                    else
-                    {
-                        if (v.Caster.IsUnderAnyStatus(BattleStatus.Trance) && v.Caster.PlayerIndex == CharacterId.Steiner)
-                            modifier_bonus = 1.0f;
-                        while (v.Context.DamageModifierCount > 0)
-                        {
-                            modifier_factor += modifier_bonus;
-                            modifier_index++;
-                            if (modifier_index >= 2)
-                            {
-                                modifier_bonus *= 0.5f;
-                                modifier_index = 0;
-                            }
-                            --v.Context.DamageModifierCount;
-                        }
-                    }
-                    while (v.Context.DamageModifierCount < 0)
-                    {
-                        modifier_factor *= 0.5f;
-                        ++v.Context.DamageModifierCount;
-                    }
-                    target.fig_info |= (UInt16)v.Target.Flags;
                     if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
                     {
-                        v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage);
-                        if (cmd.info.reflec == 1)
-                        {
-                            UInt16 reflectMultiplier = 0;
-                            for (UInt16 index = 0; index < 4; ++index)
-                                if ((cmd.reflec.tar_id[index] & target.btl_id) != 0)
-                                    ++reflectMultiplier;
-                            v.Target.HpDamage *= reflectMultiplier;
-                        }
                         if (!Configuration.Battle.BreakDamageLimit && v.Target.HpDamage > v.Caster.MaxDamageLimit)
                             v.Target.HpDamage = (Int32)v.Caster.MaxDamageLimit;
                         if ((v.Target.Flags & CalcFlag.HpRecovery) != 0)
@@ -263,7 +232,6 @@ namespace Memoria
 
                     if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
                     {
-                        v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage);
                         if (!Configuration.Battle.BreakDamageLimit && v.Target.MpDamage > v.Caster.MaxMpDamageLimit)
                             v.Target.MpDamage = (Int32)v.Caster.MaxMpDamageLimit;
                         if ((v.Target.Flags & CalcFlag.MpRecovery) != 0)
@@ -289,7 +257,6 @@ namespace Memoria
                 }
                 if (v.Caster.Flags != 0)
                 {
-                    caster.fig_info |= (UInt16)v.Caster.Flags;
                     if ((v.Caster.Flags & CalcFlag.HpAlteration) != 0)
                     {
                         if (!Configuration.Battle.BreakDamageLimit && v.Caster.HpDamage > v.Caster.MaxDamageLimit)
@@ -328,7 +295,7 @@ namespace Memoria
             UInt16 targetId = target.bi.slave == 0 ? target.btl_id : (UInt16)16;
             if (caster.bi.player != 0 && !btl_stat.CheckStatus(target, BattleStatusConst.Immobilized))
             {
-                if (btl_util.getEnemyPtr(target).info.die_atk != 0 && target.cur.hp == 0)
+                if (v.Target.Enemy.AttackOnDeath && target.cur.hp == 0)
                     PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyDying, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
                 else if (target.cur.hp != 0 && btl_util.IsCommandDeclarable(cmd.cmd_no))
                     PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyCounter, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
@@ -380,6 +347,52 @@ namespace Memoria
                     return;
 
                 v.Target.AlterStatus(BattleStatus.Trance);
+            }
+        }
+
+        private static void DamageFinalChanges(BattleCalculator v)
+        {
+            if (v.Target.Flags == 0)
+                return;
+            // DamageModifierCount > 0 -> damage is multiplied by 1.5, 2, 2.25, 2.5, 2.625, 2.75...
+            // DamageModifierCount < 0 -> damage is divided by 2, 4, 8, 16, 32...
+            // TODO [DV]
+            Single modifier_factor = 1.0f;
+            //if (Configuration.Mod.TranceSeek && v.Context.DamageModifierCount > 0)
+            //{
+            //    modifier_factor = 1f + v.Context.DamageModifierCount * 0.25f; // TRANCE SEEK -> damage is multiplied by 1.25, 1.5, 1.75, 2, 2.25, 2.5...
+            //    while (v.Context.DamageModifierCount < 0)
+            //    {
+            //        modifier_factor *= 0.5f;
+            //        ++v.Context.DamageModifierCount;
+            //    }
+            //}
+            //else
+            //{
+            //    // Done
+            //}
+            Int32 reflectMultiplier;
+            CMD_DATA cmd = v.Command.Data;
+            if (cmd.info.reflec == 1)
+            {
+                reflectMultiplier = 0;
+                for (UInt16 index = 0; index < 4; ++index)
+                    if ((cmd.reflec.tar_id[index] & v.Target.Id) != 0)
+                        ++reflectMultiplier;
+            }
+            else
+            {
+                reflectMultiplier = 1;
+            }
+            if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
+            {
+                v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage);
+                v.Target.HpDamage *= reflectMultiplier;
+            }
+            if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
+            {
+                v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage);
+                v.Target.MpDamage *= reflectMultiplier;
             }
         }
     }

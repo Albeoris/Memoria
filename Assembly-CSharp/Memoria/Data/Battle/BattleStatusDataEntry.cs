@@ -24,7 +24,7 @@ namespace Memoria.Data
         public Int32 SHPAttach = 0;
         public Vector3 SHPExtraPos = default;
 
-        public Int32 ColorKind = 0;
+        public Int32 ColorKind = -1;
         public Int32 ColorPriority = 0;
         public Int32[] ColorBase = [0, 0, 0];
 
@@ -93,19 +93,19 @@ namespace Memoria.Data
                         SHPExtraPos = new Vector3(92f, 0f, 0f);
                         break;
                     case BattleStatusId.Zombie:
-                        ColorKind = 1;
+                        ColorKind = 0;
                         ColorPriority = 100;
                         ColorBase = [-48, -72, -88];
                         break;
                     case BattleStatusId.Berserk:
                         SPSEffect = 7;
                         SPSAttach = 4;
-                        ColorKind = 1;
+                        ColorKind = 0;
                         ColorPriority = 95;
                         ColorBase = [16, -40, -40];
                         break;
                     case BattleStatusId.Trance:
-                        ColorKind = 3;
+                        ColorKind = 2;
                         ColorPriority = 10;
                         break;
                     case BattleStatusId.Poison:
@@ -127,26 +127,26 @@ namespace Memoria.Data
                         SHPExtraPos = new Vector3(212f, 0f, 0f);
                         break;
                     case BattleStatusId.Shell:
-                        ColorKind = 2;
+                        ColorKind = 1;
                         ColorPriority = 50;
                         ColorBase = [-64, 24, 72];
                         break;
                     case BattleStatusId.Protect:
-                        ColorKind = 2;
+                        ColorKind = 1;
                         ColorPriority = 50;
                         ColorBase = [40, 40, -80];
                         break;
                     case BattleStatusId.Heat:
                         SPSEffect = 3;
                         SPSAttach = 1;
-                        ColorKind = 1;
+                        ColorKind = 0;
                         ColorPriority = 90;
                         ColorBase = [80, -16, -72];
                         break;
                     case BattleStatusId.Freeze:
                         SPSEffect = 4;
                         SPSAttach = 1;
-                        ColorKind = 1;
+                        ColorKind = 0;
                         ColorPriority = 85;
                         ColorBase = [-48, 0, 96];
                         break;

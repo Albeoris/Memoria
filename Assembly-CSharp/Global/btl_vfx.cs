@@ -186,8 +186,7 @@ public static class btl_vfx
         {
             btl.battleModelIsRendering = true;
             btl.tranceGo.SetActive(true);
-            btl.ChangeModel(btl.tranceGo);
-            btl.dms_geo_id = btl_init.GetModelID(serialNo, isTrance);
+            btl.ChangeModel(btl.tranceGo, btl_init.GetModelID(serialNo, isTrance));
             GeoTexAnim.geoTexAnimPlay(btl.tranceTexanimptr, 2);
         }
         else
@@ -195,8 +194,7 @@ public static class btl_vfx
             btl.battleModelIsRendering = true;
             btl.tranceGo.SetActive(false);
             btl.originalGo.SetActive(true);
-            btl.ChangeModel(btl.originalGo);
-            btl.dms_geo_id = btl_init.GetModelID(serialNo, isTrance);
+            btl.ChangeModel(btl.originalGo, btl_init.GetModelID(serialNo, isTrance));
             GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
         }
         btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");

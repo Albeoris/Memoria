@@ -35,13 +35,13 @@ namespace FF9
             Vector3 scalesize = new Vector3(sizex / 4096f, sizey / 4096f, sizez / 4096f);
             if (bypassMini)
             {
-                btl.geo_scale_x = (Int32)(btl.geo_scale_x / btl.geo_scale_status.x);
-                btl.geo_scale_y = (Int32)(btl.geo_scale_y / btl.geo_scale_status.y);
-                btl.geo_scale_z = (Int32)(btl.geo_scale_z / btl.geo_scale_status.z);
+                btl.geo_scale_x = (Int32)(btl.geo_scale_x / btl.geoScaleStatus.x);
+                btl.geo_scale_y = (Int32)(btl.geo_scale_y / btl.geoScaleStatus.y);
+                btl.geo_scale_z = (Int32)(btl.geo_scale_z / btl.geoScaleStatus.z);
             }
             else
             {
-                scalesize = Vector3.Scale(scalesize, btl.geo_scale_status);
+                scalesize = Vector3.Scale(scalesize, btl.geoScaleStatus);
             }
             btl.gameObject.transform.localScale = scalesize;
             if (btl.bi.player != 0)

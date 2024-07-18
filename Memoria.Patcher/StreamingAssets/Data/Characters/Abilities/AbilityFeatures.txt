@@ -605,55 +605,55 @@ Ability WhenBattleScriptStart EvenImmobilized
 >SA 12 MP Attack
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] AbilityId == BattleAbilityId_Attack && CasterMP > 0 && CasterIsPlayer != TargetIsPlayer [/code]
-[code=Attack] Attack + Attack / 2 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
 [code=EffectFlags] EffectFlags | BattleCalcFlags_MpAttack [/code]
 
 >SA 13 Bird Killer
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Flight) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
-[code=Attack] Attack + Attack / 2 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 14 Bug Killer
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Soul) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
-[code=Attack] Attack + Attack / 2 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 15 Stone Killer
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Stone) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
-[code=Attack] Attack + Attack / 2 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 16 Undead Killer
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
-[code=Attack] Attack + Attack / 2 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 17 Dragon Killer
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Dragon) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
-[code=Attack] Attack + Attack / 2 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 18 Devil Killer
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Devil) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
-[code=Attack] Attack + Attack / 2 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 19 Beast Killer
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Beast) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
-[code=Attack] Attack + Attack / 2 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 20 Man Eater
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Humanoid) != 0 && CasterIsPlayer != TargetIsPlayer [/code]
-[code=Attack] Attack + Attack / 2 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
 DisableSA 13 14 15 16 17 18 19 20
 
 >SA 21 High Jump
@@ -690,7 +690,7 @@ Ability WhenCalcDamage EvenImmobilized
 >SA 28 Power Throw
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] ScriptId == 42 [/code]
-[code=Attack] Attack + Attack / 2 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 29 Power Up
 Ability WhenBattleScriptEnd EvenImmobilized
@@ -716,7 +716,7 @@ Command EvenImmobilized
 >SA 33 Concentrate
 Ability WhenCalcDamage EvenImmobilized
 [code=Condition] ScriptId == 10 || ScriptId == 13 [/code]
-[code=Attack] Attack + Attack / 2 [/code]
+[code=DamageModifierCount] DamageModifierCount + 1 [/code]
 
 >SA 34 Half MP
 Permanent [code=MPCostFactor] MPCostFactor / 2 [/code]

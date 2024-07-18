@@ -34,15 +34,14 @@ public class ENEMY
 
     public class ENEMY_INFO
     {
+        public const UInt16 FLG_DIE_ATK = 1;
+        public const UInt16 FLG_DIE_DMG = 2;
+        public const UInt16 FLG_NON_DYING_BOSS = 4;
+
+        public Boolean die_atk => (flags & FLG_DIE_ATK) != 0;
+        public Boolean die_dmg => (flags & FLG_DIE_DMG) != 0;
+
         public Byte die_fade_rate;
-        public Byte die_atk;
-        public Byte die_dmg;
-        public Byte die_unused3;
-        public Byte die_unused4;
-        public Byte die_unused5;
-        public Byte die_unused6;
-        public Byte die_unused7;
-        public Byte die_unused8;
         public Byte multiple;
         public Byte slave;
         public Int32 reserve;

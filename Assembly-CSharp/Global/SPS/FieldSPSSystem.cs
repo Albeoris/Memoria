@@ -102,7 +102,7 @@ public class FieldSPSSystem : HonoBehavior
                     FieldMapActor component = sps.charTran.GetComponent<FieldMapActor>();
                     if (component != null)
                         component.UpdateGeoAttach();
-                    sps.pos = sps.boneTran.position + sps.posOffset;
+                    sps.pos = sps.boneTran.position;
                 }
                 sps.GenerateSPS();
                 sps.lastFrame = sps.curFrame;

@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace Memoria.Data
 {
-    static class BattleVoice
+    public static class BattleVoice
     {
         public const String BattleVoicePath = "BattleVoiceEffects.txt";
 

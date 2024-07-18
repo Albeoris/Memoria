@@ -162,16 +162,16 @@ public partial class BattleHUD : UIScene
                 DisplayStatusHud(bd, statusHud, BuffIconNames);
             }
 
-            private static void DisplayStatusHud(BattleUnit bd, IconsWidget statusHud, Dictionary<BattleStatus, String> iconDic)
+            private static void DisplayStatusHud(BattleUnit bd, IconsWidget statusHud, Dictionary<BattleStatusId, String> iconDic)
             {
                 statusHud.IsActive = true;
                 foreach (GOSprite uiWidget in statusHud.Icons.Entries)
                     uiWidget.Sprite.alpha = 0.0f;
 
                 Int32 index = 0;
-                foreach (KeyValuePair<BattleStatus, String> current in iconDic)
+                foreach (KeyValuePair<BattleStatusId, String> current in iconDic)
                 {
-                    if (!bd.IsUnderAnyStatus(current.Key))
+                    if (!bd.IsUnderAnyStatus(current.Key.ToBattleStatus()))
                         continue;
 
                     GOSprite spriteObj = statusHud.Icons[index];

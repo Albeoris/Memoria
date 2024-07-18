@@ -25,8 +25,9 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsZombie)
             {
-                if ((_v.Target.CurrentHp = (UInt32)(GameRandom.Next8() % 10)) == 0)
-                    _v.Target.Kill(_v.Caster);
+                if (_v.Target.CheckUnsafetyOrGuard())
+                    if ((_v.Target.CurrentHp = (UInt32)(GameRandom.Next8() % 10)) == 0)
+                        _v.Target.Kill(_v.Caster);
             }
             else if (_v.Target.CheckIsPlayer())
             {

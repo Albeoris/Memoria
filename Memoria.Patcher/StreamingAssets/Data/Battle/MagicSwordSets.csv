@@ -1,4 +1,5 @@
-﻿# This file contains sets of ablities that get unlocked by other abilities.
+﻿#! IncludeSynergyCondition
+# This file contains sets of ablities that get unlocked by other abilities.
 # You can set any number of different items.
 # -----------------------------------------------
 # Id;Supporter;Beneficiary;BaseAbilities;UnlockedAbilities

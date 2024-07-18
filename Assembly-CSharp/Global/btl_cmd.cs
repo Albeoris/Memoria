@@ -505,9 +505,9 @@ public class btl_cmd
                 || btl_stat.CheckStatus(cmd.regist, BattleStatusConst.Immobilized) && cmd.cmd_no != BattleCommandId.SysDead && cmd.cmd_no != BattleCommandId.SysReraise && cmd.cmd_no != BattleCommandId.SysStone && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysLastPhoenix
                 || btl_stat.CheckStatus(cmd.regist, BattleStatus.Death) && cmd.cmd_no == BattleCommandId.SysPhantom
                 || Configuration.Battle.Speed >= 4 && btl_util.IsBtlUsingCommandMotion(cmd.regist)
-                || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0
+                || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0)
                 // TODO [DV]: apply another status than Sleep on bosses / easykill
-                || (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill) && btl_stat.CheckStatus(cmd.regist, BattleStatus.Sleep))) // [DV] Prevent command cancel for boss.
+                //|| (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill) && btl_stat.CheckStatus(cmd.regist, BattleStatus.Sleep)) // [DV] Prevent command cancel for boss.
             {
                 if (Configuration.Battle.Speed == 4)
                 {
@@ -580,6 +580,7 @@ public class btl_cmd
                     //}
                     BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Heat);
                     btl_stat.AlterStatus(new BattleUnit(btl), BattleStatusId.Death);
+                    KillCommand(cmd);
                     return;
                 }
             }
@@ -1041,9 +1042,12 @@ public class btl_cmd
         switch (cmd.cmd_no)
         {
             case BattleCommandId.Jump:
-            case BattleCommandId.JumpInTrance:
+                btl_stat.AlterStatus(caster, BattleStatusId.Jump, caster, BattleCommandId.Spear, BattleAbilityId.Spear1, cmd.tar_id);
                 cmd.tar_id = caster.Id;
-                btl_stat.AlterStatus(caster, BattleStatusId.Jump, caster, cmd.cmd_no == BattleCommandId.Jump ? cmd.tar_id : btl_util.GetStatusBtlID(1, 0), cmd.cmd_no == BattleCommandId.JumpInTrance);
+                break;
+            case BattleCommandId.JumpInTrance:
+                btl_stat.AlterStatus(caster, BattleStatusId.Jump, caster, BattleCommandId.SpearInTrance, BattleAbilityId.Spear2, btl_util.GetStatusBtlID(1, 0));
+                cmd.tar_id = caster.Id;
                 break;
             case BattleCommandId.MagicCounter:
                 UIManager.Battle.SetBattleFollowMessage(BattleMesages.ReturnMagic, msgCmd: cmd);
@@ -1084,7 +1088,7 @@ public class btl_cmd
                         UIManager.Battle.SetIdle();
                         ++ff9StateGlobal.party.escape_no;
                         if (cmd.sub_no == 0)
-                            ff9StateGlobal.btl_flag |= 4;
+                            ff9StateGlobal.btl_flag |= battle.BTL_FLAG_ABILITY_FLEE;
                         KillAllCommand(btlsys);
                     }
                     else
@@ -1122,7 +1126,6 @@ public class btl_cmd
                 return false;
             case BattleCommandId.SysReraise: // Unused anymore
                 caster.CurrentHp = 1;
-                /*int num4 = (int)*/
                 caster.RemoveStatus(BattleStatus.Death);
                 //caster.Data.bi.dmg_mot_f = 1;
                 FF9StateSystem.Settings.SetHPFull();
@@ -1404,7 +1407,7 @@ public class btl_cmd
                 if (unit.IsPlayer)
                     btl_mot.SetDefaultIdle(unit.Data);
                 else if (unit.IsSlave)
-                    unit = btl_util.GetMasterEnemyBtlPtr();
+                    unit = btl_util.GetMasterEnemyBtlPtr(unit);
 
                 if (!unit.IsPlayer)
                     unit.Data.pos[2] = unit.Data.base_pos[2];

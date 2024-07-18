@@ -377,12 +377,6 @@ namespace NCalc
             expr.Parameters[prefix + "PlayerCategory"] = (Int32)unit.PlayerCategory;
             expr.Parameters[prefix + "Category"] = (Int32)unit.Category;
             expr.Parameters[prefix + "CharacterIndex"] = (Int32)unit.PlayerIndex;
-            expr.Parameters[prefix + "IsStrengthModified"] = unit.StatModifier[0];
-            expr.Parameters[prefix + "IsMagicModified"] = unit.StatModifier[1];
-            expr.Parameters[prefix + "IsDefenceModified"] = unit.StatModifier[2];
-            expr.Parameters[prefix + "IsEvadeModified"] = unit.StatModifier[3];
-            expr.Parameters[prefix + "IsMagicDefenceModified"] = unit.StatModifier[4];
-            expr.Parameters[prefix + "IsMagicEvadeModified"] = unit.StatModifier[5];
             expr.Parameters[prefix + "IsAlternateStand"] = unit.Data.bi.def_idle == 1 && (!unit.IsPlayer || unit.IsMonsterTransform);
             expr.Parameters[prefix + "CriticalRateBonus"] = (Int32)unit.CriticalRateBonus;
             expr.Parameters[prefix + "CriticalRateWeakening"] = (Int32)unit.CriticalRateWeakening;
@@ -517,7 +511,7 @@ namespace NCalc
             expr.Parameters["Evade"] = context.Evade;
             expr.Parameters["EffectFlags"] = (UInt16)context.Flags;
             expr.Parameters["StatusesInflicted"] = (UInt32)context.AddedStatuses;
-            expr.Parameters["DamageModifierCount"] = (Int32)context.DamageModifierCount;
+            expr.Parameters["DamageModifierCount"] = context.DamageModifierCount;
             expr.Parameters["TranceIncrease"] = (Int32)context.TranceIncrease;
             expr.Parameters["ItemSteal"] = (Int32)context.ItemSteal;
             expr.Parameters["IsDrain"] = context.IsDrain;

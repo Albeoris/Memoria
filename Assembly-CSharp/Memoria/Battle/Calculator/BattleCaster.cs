@@ -32,22 +32,22 @@ namespace Memoria
         public void PhysicalPenaltyAndBonusAttack()
         {
             if (IsUnderAnyStatus(BattleStatus.Mini))
-                _context.Attack = 1;
+                _context.DecreaseAttackDrastically();
             else if (IsUnderAnyStatus(BattleStatus.Berserk) || (IsPlayer && IsUnderAnyStatus(BattleStatus.Trance)))
-                _context.Attack = (Int16)(_context.Attack * 3 >> 1);
+                ++_context.DamageModifierCount;
         }
 
         public void EnemyTranceBonusAttack()
         {
             // Enemies get +50% damage for most attacks under trance, on top of the accuracy given by "BonusPhysicalEvade"
             if (!IsPlayer && IsUnderAnyStatus(BattleStatus.Trance))
-                _context.Attack = (Int16)(_context.Attack * 3 >> 1);
+                ++_context.DamageModifierCount;
         }
 
         public void PenaltyMini()
         {
             if (IsUnderAnyStatus(BattleStatus.Mini))
-                _context.Attack /= 2;
+                --_context.DamageModifierCount;
         }
 
         public void PenaltyPhysicalHitRate()
@@ -60,7 +60,7 @@ namespace Memoria
         {
             // Dummied
             if (HasSupportAbility(SupportAbility2.Concentrate))
-                _context.Attack = (Int16)(_context.Attack * 3 >> 1);
+                ++_context.DamageModifierCount;
         }
 
         public void BonusPhysicalEvade()
@@ -72,7 +72,7 @@ namespace Memoria
         public void BonusWeaponElement()
         {
             if ((WeaponElement & BonusElement) != 0)
-                _context.Attack = (Int16)(_context.Attack * 3 >> 1);
+                ++_context.DamageModifierCount;
         }
     }
 }

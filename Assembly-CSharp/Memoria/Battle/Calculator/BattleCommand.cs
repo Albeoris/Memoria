@@ -57,6 +57,8 @@ namespace Memoria
         public UInt16 DroppableCardRate => Data.bonus_card_rate;
         public UInt32 BonusExperience => Data.bonus_exp;
         public UInt32 BonusGil => Data.bonus_gil;
+        public Boolean AttackOnDeath => Data.info.die_atk;
+        public Boolean AlternateDeathAnim => Data.info.die_dmg;
 
         public static BattleEnemy Find(BattleUnit unit)
         {

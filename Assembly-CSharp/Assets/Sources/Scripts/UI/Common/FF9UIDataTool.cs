@@ -86,6 +86,7 @@ namespace Assets.Sources.Scripts.UI.Common
             }
             else
             {
+                // Default method
                 charHud.HPTextColor = (player.cur.hp == 0) ? FF9TextTool.Red
                                     : (player.cur.hp <= player.max.hp / 6) ? FF9TextTool.Yellow : FF9TextTool.White;
                 charHud.MPTextColor = (player.cur.mp <= player.max.mp / 6) ? FF9TextTool.Yellow : FF9TextTool.White;

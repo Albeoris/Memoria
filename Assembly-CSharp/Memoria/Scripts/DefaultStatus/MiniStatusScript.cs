@@ -5,7 +5,7 @@ using Object = System.Object;
 
 namespace Memoria.DefaultScripts
 {
-    [StatusScript(BattleStatusId.Mini)] // TODO MagicSword prevent
+    [StatusScript(BattleStatusId.Mini)]
     public class MiniStatusScript : StatusScriptBase
     {
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
@@ -17,14 +17,14 @@ namespace Memoria.DefaultScripts
                 btl_stat.RemoveStatus(target, BattleStatusId.Mini);
                 return btl_stat.ALTER_SUCCESS_NO_SET;
             }
-            target.Data.geo_scale_status *= 0.5f;
+            target.Data.geoScaleStatus *= 0.5f;
             geo.geoScaleUpdate(target, true);
             return btl_stat.ALTER_SUCCESS;
         }
 
         public override Boolean Remove(BattleUnit target)
         {
-            target.Data.geo_scale_status *= 2f;
+            target.Data.geoScaleStatus *= 2f;
             geo.geoScaleUpdate(target, true);
             return true;
         }

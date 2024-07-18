@@ -241,7 +241,7 @@ public partial class BattleHUD : UIScene
             RenderTexture photoRender = RenderTexture.GetTemporary(Screen.width, Screen.height);
             Vector2 photoSize = new Vector2(Math.Min(Screen.width, 400f), Math.Min(Screen.height, 600f));
             btl2d.GetIconPosition(pBtl.Data, out Byte[] iconBone, out _, out _);
-            Vector3 btlPos = pBtl.Data.gameObject.transform.GetChildByName($"bone{iconBone[3]:D3}").position + 50f * Vector3.down;
+            Vector3 btlPos = pBtl.Data.gameObject.transform.GetChildByName($"bone{iconBone[btl2d.ICON_POS_EYES]:D3}").position + 50f * Vector3.down;
             Matrix4x4 cameraOldMatrix = camera.worldToCameraMatrix;
             camera.ResetWorldToCameraMatrix();
             camera.transform.position = btlPos - 1500f * pBtl.Data.gameObject.transform.forward + 500f * Vector3.up;

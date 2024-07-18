@@ -126,13 +126,17 @@ namespace FF9
             return false;
         }
 
-        public static BattleUnit GetMasterEnemyBtlPtr()
+        public static BattleUnit GetMasterEnemyBtlPtr(BTL_DATA btl)
         {
+            BattleUnit master = null;
             foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+            {
                 if (!unit.IsPlayer && !unit.IsSlave && unit.Enemy.Data.info.multiple != 0)
-                    return unit;
-
-            return null;
+                    master = unit;
+                if (unit.Data == btl)
+                    return master;
+            }
+            return master;
         }
 
         public static UInt32 SumOfTarget(UInt32 player)
@@ -168,12 +172,12 @@ namespace FF9
 
         public static Boolean ManageBattleSong(FF9StateGlobal sys, Int32 ticks, Int32 song_id)
         {
-            if ((sys.btl_flag & 16) == 0)
+            if ((sys.btl_flag & battle.BTL_SONG_FADEOUT) == 0)
             {
                 btlsnd.ff9btlsnd_song_vol_intplall(ticks, 0);
-                sys.btl_flag |= 16;
+                sys.btl_flag |= battle.BTL_SONG_FADEOUT;
             }
-            if ((sys.btl_flag & 2) == 0)
+            if ((sys.btl_flag & battle.BTL_LOAD_END_SONG) == 0)
             {
                 if ((FF9StateSystem.Battle.FF9Battle.player_load_fade += 4) < ticks)
                     return false;
@@ -188,15 +192,15 @@ namespace FF9
                 }
                 if (song_id >= 0)
                     btlsnd.ff9btlsnd_song_load(song_id);
-                sys.btl_flag |= 2;
+                sys.btl_flag |= battle.BTL_LOAD_END_SONG;
             }
             if (song_id >= 0 && btlsnd.ff9btlsnd_sync() != 0)
                 return false;
-            if ((sys.btl_flag & 32) == 0)
+            if ((sys.btl_flag & battle.BTL_PLAY_END_SONG) == 0)
             {
                 if (song_id >= 0)
                     btlsnd.ff9btlsnd_song_play(song_id);
-                sys.btl_flag |= 32;
+                sys.btl_flag |= battle.BTL_PLAY_END_SONG;
             }
             return true;
         }
@@ -445,20 +449,16 @@ namespace FF9
                 shader = FF9StateSystem.Battle.shadowShader;
             else
                 shader = ShadersLoader.Find(type);
-            SkinnedMeshRenderer[] componentsInChildren = go.GetComponentsInChildren<SkinnedMeshRenderer>();
-            for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
+            foreach (SkinnedMeshRenderer renderer in go.GetComponentsInChildren<SkinnedMeshRenderer>())
             {
-                componentsInChildren[i].material.shader = shader;
-                componentsInChildren[i].material.SetFloat("_Cutoff", 0.5f);
-                componentsInChildren[i].material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
+                renderer.material.shader = shader;
+                renderer.material.SetFloat("_Cutoff", 0.5f);
+                renderer.material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
             }
-            MeshRenderer[] componentsInChildren2 = go.GetComponentsInChildren<MeshRenderer>();
-            for (Int32 j = 0; j < (Int32)componentsInChildren2.Length; j++)
+            foreach (MeshRenderer renderer in go.GetComponentsInChildren<MeshRenderer>())
             {
-                Material[] materials = componentsInChildren2[j].materials;
-                for (Int32 k = 0; k < (Int32)materials.Length; k++)
+                foreach (Material material in renderer.materials)
                 {
-                    Material material = materials[k];
                     material.shader = shader;
                     material.SetFloat("_Cutoff", 0.5f);
                     material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
@@ -479,19 +479,11 @@ namespace FF9
                 g = Byte.MaxValue;
             if (b > 255)
                 b = Byte.MaxValue;
-            SkinnedMeshRenderer[] componentsInChildren = go.GetComponentsInChildren<SkinnedMeshRenderer>();
-            for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
-                componentsInChildren[i].material.SetColor("_Color", new Color32(r, g, b, a));
-            MeshRenderer[] componentsInChildren2 = go.GetComponentsInChildren<MeshRenderer>();
-            for (Int32 j = 0; j < (Int32)componentsInChildren2.Length; j++)
-            {
-                Material[] materials = componentsInChildren2[j].materials;
-                for (Int32 k = 0; k < (Int32)materials.Length; k++)
-                {
-                    Material material = materials[k];
+            foreach (SkinnedMeshRenderer renderer in go.GetComponentsInChildren<SkinnedMeshRenderer>())
+                renderer.material.SetColor("_Color", new Color32(r, g, b, a));
+            foreach (MeshRenderer renderer in go.GetComponentsInChildren<MeshRenderer>())
+                foreach (Material material in renderer.materials)
                     material.SetColor("_Color", new Color32(r, g, b, a));
-                }
-            }
         }
 
         [Flags]

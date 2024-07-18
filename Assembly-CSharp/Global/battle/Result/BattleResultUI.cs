@@ -235,11 +235,12 @@ public class BattleResultUI : UIScene
                 for (Int32 j = 0; j < statusesSpriteList.Length; j++)
                     statusesSpriteList[j].alpha = 0f;
                 Int32 spriteSlot = 0;
-                foreach (KeyValuePair<BattleStatus, Byte> kvp in BattleResultUI.BadIconDict)
+                // TODO Handle modded OutOfBattle statuses (also have a single dictionary for all of these bad icons)
+                foreach (KeyValuePair<BattleStatusId, Byte> kvp in BattleResultUI.BadIconDict)
                 {
                     if (spriteSlot >= characterBattleResultInfoHUD.StatusesSpriteList.Length)
                         break;
-                    if ((player.status & kvp.Key) != 0u)
+                    if ((player.status & kvp.Key.ToBattleStatus()) != 0)
                     {
                         characterBattleResultInfoHUD.StatusesSpriteList[spriteSlot].alpha = 1f;
                         characterBattleResultInfoHUD.StatusesSpriteList[spriteSlot].spriteName = FF9UIDataTool.IconSpriteName[kvp.Value];
@@ -953,15 +954,15 @@ public class BattleResultUI : UIScene
     [NonSerialized]
     private Boolean isAbilityLearnSoundPlayed = false;
 
-    public static Dictionary<BattleStatus, Byte> BadIconDict = new Dictionary<BattleStatus, Byte>
+    public static Dictionary<BattleStatusId, Byte> BadIconDict = new Dictionary<BattleStatusId, Byte>
     {
-        { BattleStatus.Petrify, 154 },
-        { BattleStatus.Venom, 153 },
-        { BattleStatus.Virus, 152 },
-        { BattleStatus.Silence, 151 },
-        { BattleStatus.Blind, 150 },
-        { BattleStatus.Trouble, 149 },
-        { BattleStatus.Zombie, 148 }
+        { BattleStatusId.Petrify, 154 },
+        { BattleStatusId.Venom,   153 },
+        { BattleStatusId.Virus,   152 },
+        { BattleStatusId.Silence, 151 },
+        { BattleStatusId.Blind,   150 },
+        { BattleStatusId.Trouble, 149 },
+        { BattleStatusId.Zombie,  148 }
     };
 
     private class CharacterBattleResultInfoHUD

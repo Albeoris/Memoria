@@ -4,10 +4,10 @@ PlaySound: Sound=2447
 PlaySound: Sound=2448
 PlaySound: Sound=2449
 Wait: Time=25
-ShowMesh: Char=AllTargets ; Enable=False ; Time=14
+ShowMesh: Char=AllTargets ; Mesh=Vanish ; Enable=False ; Time=14
 Wait: Time=15
 EffectPoint: Char=AllTargets ; Type=Effect
-ShowMesh: Char=AllTargets ; Enable=True ; Time=14
+ShowMesh: Char=AllTargets ; Mesh=Vanish ; Enable=True ; Time=14
 Wait: Time=24
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=24

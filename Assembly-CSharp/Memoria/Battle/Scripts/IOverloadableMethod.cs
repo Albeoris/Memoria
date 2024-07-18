@@ -1,7 +1,6 @@
 ﻿using System;
 using UnityEngine;
 using Memoria.Data;
-using Memoria.Scripts;
 
 namespace Memoria
 {
@@ -38,7 +37,20 @@ namespace Memoria
         public Boolean OnCommandRun(CMD_DATA cmd);
     }
 
-    // TODO
+    public interface IOverloadOnGameOverScript
+    {
+        /// <summary>Run a code in a Game Over situation (typically handles Eiko's automatic Rebirth Flame)</summary>
+        /// <param name="dyingPC">The player character for which the situation just changed (KO, petrified...)</param>
+        /// <returns>Whether the game over should be canceled</returns>
+        public Boolean OnGameOver(FF9StateBattleSystem state, BattleUnit dyingPC);
+    }
+
+    public interface IOverloadOnFleeScript
+    {
+        /// <summary>Run a code when successfully fleeing, either with an ability or with the bumper buttons</summary>
+        public void OnFlee(FF9StateGlobal state);
+    }
+
     public interface IOverloadDamageModifierScript
     {
         /// <summary>The effect of increasing/decreasing DamageModifierCount</summary>
@@ -49,8 +61,5 @@ namespace Memoria
 
         /// <summary>The last modifications applied to target HPDamage, between WhenBattleScriptEnd and WhenEffectDone</summary>
         public void OnDamageFinalChanges(BattleCalculator v);
-
-        /// <summary>The effect of decreasing the attack's hit rate</summary>
-        public void OnHitRateDecrease(BattleCalculator v, Boolean isDrasticDecrease = false);
     }
 }

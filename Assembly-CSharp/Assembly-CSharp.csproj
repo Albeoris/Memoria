@@ -245,7 +245,7 @@
     <Compile Include="Global\battle\BattlePlayerCharacter.cs" />
     <Compile Include="Global\battle\BattleRainRenderer.cs" />
     <Compile Include="Global\SPS\BattleSPSSystem.cs" />
-    <Compile Include="Global\battle\BattleState.cs" />
+    <Compile Include="Global\battle\BattleStateSystem.cs" />
     <Compile Include="Global\battle\BattleSwirl.cs" />
     <Compile Include="Global\battle\BattleTexAnimWatcher.cs" />
     <Compile Include="Global\battle\BattleUI.cs" />
@@ -285,10 +285,6 @@
     <Compile Include="Global\Booster\BoosterType.cs" />
     <Compile Include="Global\btl2d.cs" />
     <Compile Include="Global\BTL2\BTL2D_ENT.cs" />
-    <Compile Include="Global\BTL2\BTL2D_ENT_NUM.cs" />
-    <Compile Include="Global\BTL2\BTL2D_ENT_SYM.cs" />
-    <Compile Include="Global\BTL2\BTL2D_LIBRA.cs" />
-    <Compile Include="Global\BTL2\BTL2D_PEEP.cs" />
     <Compile Include="Global\BTL2\BTL2D_WORK.cs" />
     <Compile Include="Global\btlseq.cs" />
     <Compile Include="Global\btlshadow.cs" />

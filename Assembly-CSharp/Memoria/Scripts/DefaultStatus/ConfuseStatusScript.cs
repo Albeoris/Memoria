@@ -13,7 +13,6 @@ namespace Memoria.DefaultScripts
         {
             if (target.IsMonsterTransform && target.Data.monster_transform.attack[target.Data.bi.def_idle] == null)
                 return btl_stat.ALTER_RESIST;
-            // TODO: check if that's OK
             target.AddDelayedModifier(KeepRotating, null);
             return btl_stat.ALTER_SUCCESS;
         }

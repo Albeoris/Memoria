@@ -1,5 +1,4 @@
 ﻿using System;
-using UnityEngine;
 using Memoria.Data;
 using FF9;
 using Object = System.Object;
@@ -37,8 +36,8 @@ namespace Memoria.DefaultScripts
                     damage >>= 2;
                     mpdamage >>= 2;
                 }
-                if (target.CurrentMp > damage)
-                    target.CurrentMp -= damage;
+                if (target.CurrentMp > mpdamage)
+                    target.CurrentMp -= mpdamage;
                 else
                     target.CurrentMp = 0;
                 if (target.CurrentHp > damage)

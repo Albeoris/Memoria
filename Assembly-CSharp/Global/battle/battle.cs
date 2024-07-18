@@ -1,10 +1,10 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Data;
-using System;
-using System.Collections.Generic;
+using Memoria.Scripts;
 using UnityEngine;
 
 // ReSharper disable UnusedParameter.Global
@@ -21,27 +21,23 @@ public static class battle
     public const SByte BTL_SYSTEM_FADE_RATE = 32;
     public const Byte BTL_MAP_JUMP_ON = 1;
     public const Byte BTL_LOAD_END_SONG = 2;
-    public const Byte BTL_FLAG_TONZURA = 4;
+    public const Byte BTL_FLAG_ABILITY_FLEE = 4;
     public const Byte BTL_CONTI_FLD_SONG = 8;
     public const Byte BTL_SONG_FADEOUT = 16;
     public const Byte BTL_PLAY_END_SONG = 32;
     public const Byte BTL_END_LOAD = 64;
     public const Byte BTL_FADE_IN_COUNT = 32;
     public const Byte BTL_FADE_OUT_COUNT = 32;
+
     public static BONUS btl_bonus;
     public static Boolean isAlreadyShowTutorial;
     public static Boolean isSpecialTutorialWindow;
 
     public static Byte TRANCE_GAUGE_FLAG => FF9StateSystem.EventState.gEventGlobal[16];
-
     public static Byte GARNET_DEPRESS_FLAG => FF9StateSystem.EventState.gEventGlobal[17];
-
     public static Byte GARNET_SUMMON_FLAG => FF9StateSystem.EventState.gEventGlobal[18];
-
     public static Byte TONBERI_COUNT => FF9StateSystem.EventState.gEventGlobal[192];
-
     public static Byte SUMMON_RAY_FLAG => FF9StateSystem.EventState.gEventGlobal[193];
-
     public static Byte SUMMON_ALL_LONG_FLAG => FF9StateSystem.EventState.gEventGlobal[207];
 
     static battle()
@@ -60,7 +56,7 @@ public static class battle
         ff9.btl_result = 0;
         btl_sys.InitBattleSystem();
         btl2d.Btl2dInit();
-        ++FF9StateSystem.Common.FF9.party.battle_no;
+        ++ff9.party.battle_no;
     }
 
     public static void InitBattleMap()
@@ -151,7 +147,7 @@ public static class battle
             case 8:
                 if (battle.BattleIdleLoop(ff9, ff9Battle))
                 {
-                    ff9.btl_flag |= 64;
+                    ff9.btl_flag |= battle.BTL_END_LOAD;
                     if (ff9Battle.btl_seq == 0)
                     {
                         if (ff9.btl_result == 3 || ff9.btl_result == 6)
@@ -358,90 +354,102 @@ public static class battle
         }
         if (btlsys.btl_seq == 3 && btlsys.btl_escape_fade < 32 && btlsys.btl_escape_fade != 0)
             btlsys.btl_escape_fade -= 2;
-        if (proceedEnd)
+        if (!proceedEnd)
         {
-            switch (btlsys.btl_seq)
-            {
-                case 0:
-                case 4:
-                    sys.btl_flag |= 64;
-                    sys.btl_result = 1;
-                    if (btlsys.btl_scene.Info.WinPose)
+            btl_cmd.CommandEngine(btlsys);
+            battle.BattleSubSystem(sys, btlsys);
+            return;
+        }
+        switch (btlsys.btl_seq)
+        {
+            case 0:
+            case 4:
+                sys.btl_flag |= battle.BTL_END_LOAD;
+                sys.btl_result = 1;
+                if (btlsys.btl_scene.Info.WinPose)
+                {
+                    if (!btl_util.ManageBattleSong(sys, 30, 5))
+                        break;
+                    BattleVoice.TriggerOnBattleInOut("VictoryPose");
+                    btlsys.btl_phase = 6;
+                    for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
                     {
-                        if (!btl_util.ManageBattleSong(sys, 30, 5))
-                            break;
-                        BattleVoice.TriggerOnBattleInOut("VictoryPose");
-                        btlsys.btl_phase = 6;
-                        for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                        if (next.bi.player != 0)
                         {
-                            if (next.bi.player != 0)
+                            BattleUnit unit = new BattleUnit(next);
+                            btl_stat.RemoveStatuses(unit, BattleStatusConst.VictoryClear);
+                            if (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull))
                             {
-                                BattleUnit unit = new BattleUnit(next);
-                                btl_stat.RemoveStatuses(unit, BattleStatusConst.VictoryClear);
-                                if (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull))
+                                if (next.cur.hp > 0)
                                 {
-                                    if (next.cur.hp > 0)
-                                    {
-                                        Int32 num3 = btl_mot.GetDirection(next);
-                                        next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
-                                        // TODO [DV] Add status Old to BattleStatusConst.IdleDying
-                                        if (!next.is_monster_transform)
-                                            next.bi.def_idle = btl_stat.CheckStatus(next, BattleStatusConst.IdleDying) ? (Byte)1 : (Byte)0;
-                                        next.bi.cmd_idle = 0;
-                                        btl_mot.SetDefaultIdle(next);
-                                        //if (btl_util.getPlayerPtr(next).info.win_pose != 0)
-                                        //    btl_mot.setMotion(next, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN);
-                                        //else
-                                        //    btl_mot.setMotion(next, next.bi.def_idle);
-                                        //next.evt.animFrame = 0;
-                                    }
-                                    else
-                                    {
-                                        btl_stat.AlterStatus(unit, BattleStatusId.Death);
-                                    }
+                                    Int32 num3 = btl_mot.GetDirection(next);
+                                    next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
+                                    // TODO [DV] Add status Old to BattleStatusConst.IdleDying
+                                    if (!next.is_monster_transform)
+                                        next.bi.def_idle = btl_stat.CheckStatus(next, BattleStatusConst.IdleDying) ? (Byte)1 : (Byte)0;
+                                    next.bi.cmd_idle = 0;
+                                    btl_mot.SetDefaultIdle(next);
+                                    //if (btl_util.getPlayerPtr(next).info.win_pose != 0)
+                                    //    btl_mot.setMotion(next, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN);
+                                    //else
+                                    //    btl_mot.setMotion(next, next.bi.def_idle);
+                                    //next.evt.animFrame = 0;
+                                }
+                                else
+                                {
+                                    btl_stat.AlterStatus(unit, BattleStatusId.Death);
                                 }
                             }
                         }
-                        SFX.SetCamera(2);
                     }
-                    else if (btlsys.btl_scene.Info.FieldBGM)
+                    SFX.SetCamera(2);
+                }
+                else if (btlsys.btl_scene.Info.FieldBGM)
+                {
+                    sys.btl_flag |= battle.BTL_CONTI_FLD_SONG;
+                }
+                btlsys.btl_phase = 6;
+                break;
+            case 1:
+                sys.btl_result = 3;
+                btlsys.btl_phase = 7;
+                break;
+            case 2:
+                if (!btlsys.btl_scene.Info.WinPose && btlsys.btl_scene.Info.FieldBGM)
+                    sys.btl_flag |= battle.BTL_CONTI_FLD_SONG;
+                btlsys.btl_phase = 1;
+                btl_cmd.KillAllCommand(btlsys);
+                btl_cmd.InitCommandSystem(btlsys);
+                for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                {
+                    btl_cmd.InitCommand(next);
+                    if (next.bi.player == 0)
                     {
-                        sys.btl_flag |= 8;
+                        Int32 num2 = btl_mot.GetDirection(next);
+                        next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num2, next.rot.eulerAngles.z);
                     }
-                    btlsys.btl_phase = 6;
-                    break;
-                case 1:
-                    sys.btl_result = 3;
-                    btlsys.btl_phase = 7;
-                    break;
-                case 2:
-                    if (!btlsys.btl_scene.Info.WinPose && btlsys.btl_scene.Info.FieldBGM)
-                        sys.btl_flag |= 8;
-                    btlsys.btl_phase = 1;
-                    btl_cmd.KillAllCommand(btlsys);
-                    btl_cmd.InitCommandSystem(btlsys);
-                    for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                }
+                break;
+            case 3:
+                sys.btl_flag |= battle.BTL_END_LOAD;
+                if (!btlsys.btl_scene.Info.WinPose && btlsys.btl_scene.Info.FieldBGM)
+                    sys.btl_flag |= battle.BTL_CONTI_FLD_SONG;
+                sys.btl_result = 4;
+                btlsys.btl_phase = 8;
+                IOverloadOnFleeScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnFleeScript)) as IOverloadOnFleeScript;
+                if (overloadedMethod != null)
+                {
+                    overloadedMethod.OnFlee(sys);
+                }
+                else
+                {
+                    // Default method
+                    if ((sys.btl_flag & battle.BTL_FLAG_ABILITY_FLEE) != 0)
                     {
-                        btl_cmd.InitCommand(next);
-                        if (next.bi.player == 0)
-                        {
-                            Int32 num2 = btl_mot.GetDirection(next);
-                            next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num2, next.rot.eulerAngles.z);
-                        }
-                    }
-                    break;
-                case 3:
-                    UInt32 gil = (UInt32)battle.btl_bonus.gil;
-                    sys.btl_flag |= 64;
-                    for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
-                        if (next.bi.player == 0)
-                            gil += btl_util.getEnemyPtr(next).bonus_gil;
-                    if (!btlsys.btl_scene.Info.WinPose && btlsys.btl_scene.Info.FieldBGM)
-                        sys.btl_flag |= 8;
-                    sys.btl_result = 4;
-                    btlsys.btl_phase = 8;
-                    if ((sys.btl_flag & 4) != 0)
-                    {
+                        UInt32 gil = (UInt32)battle.btl_bonus.gil;
+                        foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                            if (!unit.IsPlayer)
+                                gil += unit.Enemy.BonusGil;
                         UInt32 gilLost = gil / 10U;
                         if (sys.party.gil > gilLost)
                         {
@@ -454,13 +462,11 @@ public static class battle
                         }
                         UIManager.Battle.SetBattleFollowMessage(BattleMesages.DroppedGil, gilLost);
                     }
-                    break;
-            }
-            if (btlsys.btl_phase != 5)
-                btlsys.btl_seq = btlsys.btl_phase != 6 || btlsys.btl_scene.Info.WinPose ? (Byte)0 : (Byte)1;
+                }
+                break;
         }
-        else
-            btl_cmd.CommandEngine(btlsys);
+        if (btlsys.btl_phase != 5)
+            btlsys.btl_seq = btlsys.btl_phase != 6 || btlsys.btl_scene.Info.WinPose ? (Byte)0 : (Byte)1;
         battle.BattleSubSystem(sys, btlsys);
     }
 
@@ -556,7 +562,7 @@ public static class battle
 
     public static void ff9ShutdownStateBattleResult()
     {
-        if ((FF9StateSystem.Common.FF9.btl_flag & 8) != 0)
+        if ((FF9StateSystem.Common.FF9.btl_flag & battle.BTL_CONTI_FLD_SONG) != 0)
             return;
 
         btlsnd.ff9btlsnd_song_vol_intplall(120, 0);

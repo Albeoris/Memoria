@@ -546,27 +546,21 @@ public class btl_scrp
                 break;
             case 72u:
                 btl.elem.str = (Byte)val;
-                btl.stat_modifier[0] = false;
                 break;
             case 73u:
                 btl.elem.mgc = (Byte)val;
-                btl.stat_modifier[1] = false;
                 break;
             case 74u:
                 btl.defence.PhysicalDefence = val;
-                btl.stat_modifier[2] = false;
                 break;
             case 75u:
                 btl.defence.PhysicalEvade = val;
-                btl.stat_modifier[3] = false;
                 break;
             case 76u:
                 btl.defence.MagicalDefence = val;
-                btl.stat_modifier[4] = false;
                 break;
             case 77u:
                 btl.defence.MagicalEvade = val;
-                btl.stat_modifier[5] = false;
                 break;
             case 78u:
                 btl.cur.at = btl.max.at;
@@ -841,8 +835,7 @@ public class btl_scrp
                 break;
             case 37u: // Change next field
             {
-                FF9StateGlobal ff9StateGlobal = ff;
-                ff9StateGlobal.btl_flag = (Byte)(ff9StateGlobal.btl_flag | 1);
+                ff.btl_flag |= battle.BTL_MAP_JUMP_ON;
                 PersistenSingleton<EventEngine>.Instance.SetNextMap(val);
                 break;
             }
@@ -858,8 +851,7 @@ public class btl_scrp
             case 40u:
             {
                 btlsnd.ff9btlsnd_song_vol_intplall(30, 0);
-                FF9StateGlobal ff2 = FF9StateSystem.Common.FF9;
-                ff2.btl_flag = (Byte)(ff2.btl_flag | 16);
+                FF9StateSystem.Common.FF9.btl_flag |= battle.BTL_SONG_FADEOUT;
                 break;
             }
             case 43u:

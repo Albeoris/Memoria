@@ -261,9 +261,9 @@ public partial class EventEngine
             case EBin.event_code_binary.SONGFLAG: // 0x1B, "ContinueBattleMusic", "Continue the music after the battle end"
             {
                 if (this.getv1() != 0) // arg1: flag continue/ don't continue
-                    FF9StateSystem.Common.FF9.btl_flag |= (Byte)8;
+                    FF9StateSystem.Common.FF9.btl_flag |= battle.BTL_CONTI_FLD_SONG;
                 else
-                    FF9StateSystem.Common.FF9.btl_flag &= (Byte)247;
+                    FF9StateSystem.Common.FF9.btl_flag &= unchecked((Byte)~battle.BTL_CONTI_FLD_SONG);
                 return 0;
             }
             // 0x1C, "TerminateEntry", "Stop the execution of an entry's code.arg1: entry to terminate."

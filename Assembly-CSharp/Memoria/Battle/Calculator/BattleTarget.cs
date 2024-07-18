@@ -61,13 +61,13 @@ namespace Memoria
         public void PenaltyDefenceAttack()
         {
             if (IsUnderAnyStatus(BattleStatus.Defend | BattleStatus.Protect))
-                _context.Attack >>= 1;
+                --_context.DamageModifierCount;
         }
 
         public void PenaltyShellAttack()
         {
             if (IsUnderAnyStatus(BattleStatus.Shell))
-                _context.Attack >>= 1;
+                --_context.DamageModifierCount;
         }
 
         public void PenaltyShellHitRate()
@@ -104,7 +104,7 @@ namespace Memoria
         public void PenaltyHalfElement(EffectElement element)
         {
             if (IsHalfElement(element))
-                _context.Attack >>= 1;
+                --_context.DamageModifierCount;
         }
 
         public void PenaltyAbsorbElement(EffectElement element)
@@ -116,13 +116,13 @@ namespace Memoria
         public void BonusWeakElement(EffectElement element)
         {
             if (IsWeakElement(element))
-                _context.Attack = (Int16)(_context.Attack * 3 >> 1);
+                ++_context.DamageModifierCount;
         }
 
         private void BonusSleepOrMiniAttack()
         {
             if (IsUnderAnyStatus(BattleStatus.Sleep | BattleStatus.Mini))
-                _context.Attack = (Int16)(_context.Attack * 3 >> 1);
+                ++_context.DamageModifierCount;
         }
 
         public Boolean IsGuardElement(EffectElement element)
@@ -270,7 +270,6 @@ namespace Memoria
 
         public Boolean TryKillFrozen()
         {
-            // TODO and [DV]
             if (!IsUnderAnyStatus(BattleStatus.Freeze) || IsUnderAnyStatus(BattleStatus.Petrify))
                 return false;
             if (IsUnderAnyStatus(BattleStatus.EasyKill)) // Behaviour added by Memoria with no influence on vanilla - Boss can't die when frozen

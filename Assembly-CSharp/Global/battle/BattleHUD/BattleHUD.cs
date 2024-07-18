@@ -450,7 +450,7 @@ public partial class BattleHUD : UIScene
         _statusPanel.SetActive(false);
         _partyDetail.SetActive(true);
 
-        List<Int32> list = new List<Int32>(new[] { 0, 1, 2, 3 });
+        List<Int32> list = [0, 1, 2, 3];
         switch (subMode)
         {
             case TargetDisplay.Hp:
@@ -517,7 +517,7 @@ public partial class BattleHUD : UIScene
             _statusPanel.MP.Array[index].IsActive = false;
     }
 
-    private void DisplayTargetStatus(List<Int32> list, UI.ContainerStatus.PanelDetail<UI.ContainerStatus.IconsWidget> statusPanel, Dictionary<BattleStatus, String> iconNames)
+    private void DisplayTargetStatus(List<Int32> list, UI.ContainerStatus.PanelDetail<UI.ContainerStatus.IconsWidget> statusPanel, Dictionary<BattleStatusId, String> iconNames)
     {
         statusPanel.IsActive = true;
         _partyDetail.SetActive(false);
@@ -533,9 +533,9 @@ public partial class BattleHUD : UIScene
                 uiWidget.Sprite.alpha = 0.0f;
 
             Int32 iconIndex = 0;
-            foreach (KeyValuePair<BattleStatus, String> status in iconNames)
+            foreach (KeyValuePair<BattleStatusId, String> status in iconNames)
             {
-                if (!player.IsUnderAnyStatus(status.Key))
+                if (!player.IsUnderAnyStatus(status.Key.ToBattleStatus()))
                     continue;
 
                 UISprite sprite = uiStatus.Icons[iconIndex].Sprite;
@@ -1065,7 +1065,6 @@ public partial class BattleHUD : UIScene
 
     private static ParameterStatus CheckHPState(BattleUnit bd)
     {
-        // TODO
         if (bd.IsUnderStatus(BattleStatus.Death))
             return ParameterStatus.Dead;
 
@@ -2607,8 +2606,10 @@ public partial class BattleHUD : UIScene
                 player.permanent_status &= ~beforeMenu.battlePermanentStatus;
                 BattleStatus statusesToRemove = unit.CurrentStatus & BattleStatusConst.OutOfBattle & ~player.status;
                 btl_stat.RemoveStatuses(unit, statusesToRemove);
-                if ((unit.CurrentStatus & BattleStatus.Death) != 0 && player.cur.hp > 0)
+                if (player.cur.hp > 0 && unit.IsUnderAnyStatus(BattleStatus.Death))
                     btl_stat.RemoveStatus(unit, BattleStatusId.Death);
+                else if (player.cur.hp == 0 && !unit.IsUnderAnyStatus(BattleStatus.Death))
+                    btl_stat.AlterStatus(unit, BattleStatusId.Death);
 
                 BattleStatus oldPermanent = 0, oldResist = 0, newPermanent = 0, newResist = 0;
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(beforeMenu.saExtended))
@@ -2647,9 +2648,10 @@ public partial class BattleHUD : UIScene
                 //BattlePlayerCharacter.CreatePlayer(btl, player.info.serial_no);
                 //btl_mot.SetPlayerDefMotion(btl, player.info.serial_no, (UInt32)unit.GetIndex());
                 //BattlePlayerCharacter.InitAnimation(btl);
-                if (btl.weapon_geo != null && btl.weapon != ff9item.GetItemWeapon(player.equip[0]))
+                if (btl.weapon != ff9item.GetItemWeapon(player.equip[0]))
                 {
-                    UnityEngine.Object.Destroy(btl.weapon_geo);
+                    if (btl.weapon_geo != null)
+                        UnityEngine.Object.Destroy(btl.weapon_geo);
                     btl_eqp.InitWeapon(player, btl);
                 }
                 btl_eqp.InitEquipPrivilegeAttrib(player, btl);

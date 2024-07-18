@@ -267,10 +267,11 @@ public class SPSEffect : MonoBehaviour
         Single scalef = this.scale / 4096f;
         Matrix4x4 localRTS = Matrix4x4.identity;
         Boolean isBehindCamera = false;
+        Vector3 offsetedPos = this.pos + this.posOffset;
         if (this.gMode == 3)
         {
             scalef *= 0.00390625f;
-            base.transform.position = this.pos;
+            base.transform.position = offsetedPos;
             base.transform.localScale = new Vector3(scalef, scalef, scalef);
         }
         else if (this.gMode == 2)
@@ -282,22 +283,22 @@ public class SPSEffect : MonoBehaviour
             Vector3 directionDown = Vector3.Cross(directionForward, directionRight);
             if (this.useBattleFactors)
             {
-                Single distanceToCamera = Vector3.Distance(cameraMatrix.GetColumn(3), this.pos);
+                Single distanceToCamera = Vector3.Distance(cameraMatrix.GetColumn(3), offsetedPos);
                 Single distanceFactor = Math.Min(3f, distanceToCamera * this.battleScaleFactor * 0.000259551482f);
                 scalef *= distanceFactor;
             }
             base.transform.localScale = new Vector3(-scalef, -scalef, scalef);
             base.transform.localRotation = Quaternion.Euler(this.rot.x, this.rot.y, this.rot.z);
-            base.transform.localPosition = this.pos;
+            base.transform.localPosition = offsetedPos;
             base.transform.LookAt(base.transform.position + directionForward, -directionDown);
         }
         else if (useScreenPositionHack)
         {
-            localRTS = Matrix4x4.TRS(this.pos * 0.9925f, Quaternion.Euler(-this.rot.x / 2f, -this.rot.y / 2f, this.rot.z / 2f), new Vector3(scalef, -scalef, 1f));
+            localRTS = Matrix4x4.TRS(offsetedPos * 0.9925f, Quaternion.Euler(-this.rot.x / 2f, -this.rot.y / 2f, this.rot.z / 2f), new Vector3(scalef, -scalef, 1f));
         }
         else if (this.gMode == 1)
         {
-            Vector3 localPos = PSX.CalculateGTE_RTPT_POS(this.pos, Matrix4x4.identity, currentBgCamera.GetMatrixRT(), currentBgCamera.GetViewDistance(), this.fieldMap.GetProjectionOffset(), true);
+            Vector3 localPos = PSX.CalculateGTE_RTPT_POS(offsetedPos, Matrix4x4.identity, currentBgCamera.GetMatrixRT(), currentBgCamera.GetViewDistance(), this.fieldMap.GetProjectionOffset(), true);
             scalef *= currentBgCamera.GetViewDistance() / localPos.z;
             if (localPos.z < 0f)
                 isBehindCamera = true;
@@ -315,7 +316,7 @@ public class SPSEffect : MonoBehaviour
             Vector3 directionRight = cameraMatrix.MultiplyVector(Vector3.right);
             Vector3 directionDown = Vector3.Cross(directionForward, directionRight);
             base.transform.localScale = new Vector3(-scalef, -scalef, scalef);
-            base.transform.localPosition = this.pos;
+            base.transform.localPosition = offsetedPos;
             base.transform.LookAt(base.transform.position + directionForward, -directionDown);
         }
         this._vertices.Clear();
@@ -411,7 +412,7 @@ public class SPSEffect : MonoBehaviour
         }
         this.meshRenderer.material = this.materials[shindex];
         if (this.spsActor != null)
-            this.spsActor.spsPos = this.pos;
+            this.spsActor.spsPos = offsetedPos;
     }
 
     /// <summary>Not really operational in the current state</summary>

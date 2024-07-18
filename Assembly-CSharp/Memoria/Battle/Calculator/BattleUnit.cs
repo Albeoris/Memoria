@@ -6,7 +6,6 @@ using Memoria.Database;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = System.Object;
 
 namespace Memoria
 {
@@ -38,7 +37,8 @@ namespace Memoria
         public Boolean CanMove => Data.bi.atb != 0;
         public CharacterId PlayerIndex => IsPlayer ? (CharacterId)Data.bi.slot_no : CharacterId.NONE;
 
-        public Byte Level => Data.special_status_old ? (byte)Math.Max(1, Data.level >> 3) : Data.level;
+        // TODO [DV] Re-code the status Old (eg. OldStatusScript.Apply => cut down the different stats)
+        public Byte Level => Data.level;
         public Byte Position => Data.bi.line_no;
 
         public Byte Row
@@ -89,44 +89,43 @@ namespace Memoria
 
         public Int32 PhysicalDefence
         {
-            // TODO [DV]
-            get => Data.special_status_old ? (byte)Math.Max(1, Data.defence.PhysicalDefence >> 3) : Data.defence.PhysicalDefence;
+            get => Data.defence.PhysicalDefence;
             set => Data.defence.PhysicalDefence = value;
         }
 
         public Int32 PhysicalEvade
         {
-            get => Data.special_status_old ? (byte)Math.Max(1, Data.defence.PhysicalEvade >> 3) : Data.defence.PhysicalEvade;
+            get => Data.defence.PhysicalEvade;
             set => Data.defence.PhysicalEvade = value;
         }
 
         public Int32 MagicDefence
         {
-            get => Data.special_status_old ? (byte)Math.Max(1, Data.defence.MagicalDefence >> 3) : Data.defence.MagicalDefence;
+            get => Data.defence.MagicalDefence;
             set => Data.defence.MagicalDefence = value;
         }
 
         public Int32 MagicEvade
         {
-            get => Data.special_status_old ? (byte)Math.Max(1, Data.defence.MagicalEvade >> 3) : Data.defence.MagicalEvade;
+            get => Data.defence.MagicalEvade;
             set => Data.defence.MagicalEvade = value;
         }
 
         public Byte Strength
         {
-            get => Data.special_status_old ? (byte)Math.Max(1, Data.elem.str >> 3) : Data.elem.str;
+            get => Data.elem.str;
             set => Data.elem.str = value;
         }
 
         public Byte Magic
         {
-            get => Data.special_status_old ? (byte)Math.Max(1, Data.elem.mgc >> 3) : Data.elem.mgc;
+            get => Data.elem.mgc;
             set => Data.elem.mgc = value;
         }
 
         public Byte Dexterity
         {
-            get => Data.special_status_old ? (byte)Math.Max(1, Data.elem.dex >> 3) : Data.elem.dex;
+            get => Data.elem.dex;
             set
             {
                 if (Data.elem.dex == value)
@@ -149,7 +148,7 @@ namespace Memoria
 
         public Byte Will
         {
-            get => Data.special_status_old ? (byte)Math.Max(1, Data.elem.wpr >> 3) : Data.elem.wpr;
+            get => Data.elem.wpr;
             set => Data.elem.wpr = value;
         }
 
@@ -290,8 +289,6 @@ namespace Memoria
         public RegularItem Accessory => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Accessory : RegularItem.NoItem;
         public Boolean IsHealingRod => IsPlayer && Weapon == RegularItem.HealingRod;
 
-        public Boolean[] StatModifier => Data.stat_modifier;
-
         public BattleUnit GetKiller()
         {
             return Data.killer_track != null ? new BattleUnit(Data.killer_track) : null;
@@ -306,12 +303,6 @@ namespace Memoria
                     isDelayed = btl => false,
                     apply = applyDelegate
                 });
-                return;
-            }
-            if (!delayDelegate(this))
-            {
-                if (applyDelegate != null)
-                    applyDelegate(this);
                 return;
             }
             Data.delayedModifierList.Add(new BTL_DATA.DelayedModifier()
@@ -464,7 +455,7 @@ namespace Memoria
 
         public void Kill(BattleUnit killer)
         {
-            Kill(killer.Data);
+            Kill(killer?.Data);
         }
         public void Kill(BTL_DATA killer = null)
         {
@@ -474,7 +465,7 @@ namespace Memoria
 
             Data.killer_track = killer;
             Data.bi.death_f = 1;
-            if (!IsPlayer && btl_util.getEnemyPtr(Data).info.die_atk == 0)
+            if (!IsPlayer && !Enemy.AttackOnDeath)
             {
                 btl_util.SetEnemyDieSound(Data, btl_util.getEnemyTypePtr(Data).die_snd_no);
                 Data.die_seq = 3;
@@ -698,7 +689,7 @@ namespace Memoria
             // Let the spell sequence handle the model fadings (in and out)
             //Data.SetActiveBtlData(false);
             String geoName = FF9BattleDB.GEO.GetValue(monsterParam.Geo);
-            Data.ChangeModel(ModelFactory.CreateModel(geoName, true));
+            Data.ChangeModel(ModelFactory.CreateModel(geoName, true), monsterParam.Geo);
             Data.bi.t_gauge = 0;
             if (IsUnderAnyStatus(BattleStatus.Trance))
             {
@@ -910,7 +901,7 @@ namespace Memoria
                 btl_mot.setMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
             Data.evt.animFrame = 0;
             Data.originalGo.SetActive(true);
-            Data.ChangeModel(Data.originalGo);
+            Data.ChangeModel(Data.originalGo, btl_init.GetModelID(p.info.serial_no, false));
             geo.geoAttach(Data.weapon_geo, Data.gameObject, Data.weapon_bone);
             btl_mot.HideMesh(Data, UInt16.MaxValue);
             Data.monster_transform.fade_counter = 2;

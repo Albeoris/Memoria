@@ -12,9 +12,10 @@ namespace Memoria.DefaultScripts
     [StatusScript(BattleStatusId.Jump)]
     public class JumpStatusScript : StatusScriptBase, IFinishCommandScript
     {
+        public BattleCommandId SpearCommandId;
+        public BattleAbilityId SpearAbilityId;
         public UInt16 SpearTargetId;
         public Int32 SpearCountdown;
-        public Boolean UseTranceSpear;
 
         private Boolean CurrentlyUseSpear = false;
         private Boolean InitialisedModifier = false;
@@ -22,14 +23,15 @@ namespace Memoria.DefaultScripts
         public static Int32 GetJumpDuration(BattleUnit btl)
         {
             // Use the duration "ContiCnt" of Jump even if it is not registered as BattleStatusConst.ContiCount
-            return BattleStatusId.Jump.GetStatData().ContiCnt * 4 * (60 - btl.Will);
+            return (Int32)(btl.StatusDurationFactor[BattleStatusId.Jump] * BattleStatusId.Jump.GetStatData().ContiCnt * 4 * (60 - btl.Will));
         }
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             SpearCountdown = GetJumpDuration(target);
-            SpearTargetId = parameters.Length > 0 ? (UInt16)parameters[0] : target.Data.cmd[3].tar_id;
-            UseTranceSpear = parameters.Length > 1 ? (Boolean)parameters[1] : target.Data.cmd[3].cmd_no == BattleCommandId.JumpInTrance;
+            SpearCommandId = parameters.Length > 0 ? (BattleCommandId)parameters[0] : BattleCommandId.Spear;
+            SpearAbilityId = parameters.Length > 1 ? (BattleAbilityId)parameters[1] : BattleAbilityId.Spear1;
+            SpearTargetId = parameters.Length > 2 ? (UInt16)parameters[2] : target.Data.cmd[3].tar_id;
             return btl_stat.ALTER_SUCCESS;
         }
 
@@ -97,16 +99,11 @@ namespace Memoria.DefaultScripts
                     CurrentlyUseSpear = useSpear;
                 }
             }
-            if (btl_cmd.CheckUsingCommand(freya.Data.cmd[1]))
+            if (!BattleState.IsATBEnabled || btl_cmd.CheckUsingCommand(freya.Data.cmd[1]))
                 return true;
             SpearCountdown -= freya.Data.cur.at_coef * BattleState.ATBTickCount;
             if (SpearCountdown < 0)
-            {
-                if (UseTranceSpear)
-                    btl_cmd.SetCommand(freya.Data.cmd[1], BattleCommandId.SpearInTrance, (Int32)BattleAbilityId.Spear2, SpearTargetId, Comn.countBits(SpearTargetId) > 1 ? 1u : 0u);
-                else
-                    btl_cmd.SetCommand(freya.Data.cmd[1], BattleCommandId.Spear, (Int32)BattleAbilityId.Spear1, SpearTargetId, Comn.countBits(SpearTargetId) > 1 ? 1u : 0u);
-            }
+                btl_cmd.SetCommand(freya.Data.cmd[1], SpearCommandId, (Int32)SpearAbilityId, SpearTargetId, Comn.countBits(SpearTargetId) > 1 ? 1u : 0u);
             return true;
         }
     }

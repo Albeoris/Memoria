@@ -39,7 +39,7 @@ namespace Memoria.DefaultScripts
         public Int32 SetupGradualPetrifyOpr(BattleUnit target)
         {
             // Use the duration "ContiCnt" of GradualPetrify even if it is not registered as BattleStatusConst.ContiCount
-            return BattleStatusId.GradualPetrify.GetStatData().ContiCnt * (60 - target.Will << 3) / 10;
+            return (Int32)(target.StatusDurationFactor[BattleStatusId.GradualPetrify] * BattleStatusId.GradualPetrify.GetStatData().ContiCnt * (60 - target.Will << 3) / 10);
         }
 
         public Boolean OnOpr(BattleUnit target)
