@@ -245,6 +245,8 @@ namespace Memoria.Assets
                     {
                         InsertTextGUI.SetActive(true);
                         backgroundGo.SetActive(true);
+                        input.selected = true;
+                        input.text = ""; // Reset text input.
                         CreateInsertText = false;
                     }
 
@@ -276,14 +278,7 @@ namespace Memoria.Assets
                     }
                     return;               
                     
-                }
-
-                if (Input.GetKeyDown(KeyCode.T)) // Load custom textures
-                {
-                    InsertText = true;
-                    CreateInsertText = true;
-                }
-                    
+                }              
 
                 Boolean mouseLeftWasPressed = mouseLeftPressed;
                 Boolean mouseRightWasPressed = mouseRightPressed;
@@ -434,6 +429,15 @@ namespace Memoria.Assets
                 if (Input.GetKey(KeyCode.N))
                 {
                     controlLabelPosX += shift ? 5 : -5;
+                }
+                if (Input.GetKeyDown(KeyCode.T)) // Load custom textures
+                {
+                    InsertText = true;
+                    CreateInsertText = true;
+                }
+                if (Input.GetKeyDown(KeyCode.F5)) // Reload models
+                {
+                    ChangeModel(currentGeoIndex);
                 }
                 GameObject targetModel = ControlWeapon ? currentWeaponModel : currentModel;
                 if (ctrl)
