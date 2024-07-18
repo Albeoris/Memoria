@@ -22,7 +22,7 @@ public static class btl_eqp
         btl.weapon = ff9item.GetItemWeapon(p.equip[0]);
         p.wep_bone = btl_mot.BattleParameterList[p.info.serial_no].WeaponBone;
         if (btl.weapon.ModelId != UInt16.MaxValue)
-        {        
+        {
             String modelName = FF9BattleDB.GEO.GetValue(btl.weapon.ModelId);
             if (modelName.Contains("GEO_WEP"))
                 btl.weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + modelName + "/" + modelName, true);
@@ -79,7 +79,7 @@ public static class btl_eqp
     public static void ProcessBuiltInWeapon()
     {
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
-        {            
+        {
             if (btl.builtin_weapon_mode && btl.bi.disappear == 0 && !btl.is_monster_transform && btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(btl.dms_geo_id, out Int32 weaponBoneID))
             {
                 Transform builtInBone = null;
