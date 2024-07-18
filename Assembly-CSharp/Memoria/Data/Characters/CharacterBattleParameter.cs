@@ -19,6 +19,7 @@ namespace Memoria.Data
         public SByte[] StatusOffsetY = new SByte[6];
         public SByte[] StatusOffsetZ = new SByte[6];
         public Int32[] WeaponSound = new Int32[0];
+        public Single[] WeaponSize = new Single[3];
         public Single[] WeaponOffsetPos = new Single[3];
         public Single[] WeaponOffsetRot = new Single[3];
         public Boolean TranceParameters = false;
@@ -30,6 +31,7 @@ namespace Memoria.Data
         public SByte[] TranceStatusOffsetY = new SByte[6];
         public SByte[] TranceStatusOffsetZ = new SByte[6];
         public Int32[] TranceWeaponSound = new Int32[0];
+        public Single[] TranceWeaponSize = new Single[3];
         public Single[] TranceWeaponOffsetPos = new Single[3];
         public Single[] TranceWeaponOffsetRot = new Single[3];
 
@@ -65,6 +67,12 @@ namespace Memoria.Data
             else if (FF9Snd.ff9battleSoundWeaponSndEffect02.TryGetValue(Id, out Int32[] sounds))
                 WeaponSound = sounds;
 
+            if (metadata.HasOption($"Include{nameof(WeaponSize)}"))
+            {
+                WeaponSize = CsvParser.SingleArray(raw[rawIndex++]);
+                if (WeaponSize.Length < 3)
+                    Array.Resize(ref WeaponSize, 3);
+            }
             if (metadata.HasOption($"IncludeWeaponOffset"))
             {
                 WeaponOffsetPos = CsvParser.SingleArray(raw[rawIndex++]);
@@ -120,6 +128,8 @@ namespace Memoria.Data
             
             if (metadata.HasOption($"Include{nameof(WeaponSound)}"))
                 writer.Int32Array(WeaponSound);
+            if (metadata.HasOption($"Include{nameof(WeaponSize)}"))
+                writer.SingleArray(WeaponSize);
             if (metadata.HasOption($"IncludeWeaponOffset"))
             {
                 writer.SingleArray(WeaponOffsetPos);

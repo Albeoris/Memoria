@@ -40,12 +40,21 @@ public static class btl_eqp
         MeshRenderer[] componentsInChildren = btl.weapon_geo.GetComponentsInChildren<MeshRenderer>();
         btl.weaponMeshCount = componentsInChildren.Length;
         btl.weaponRenderer = new Renderer[btl.weaponMeshCount];
-        for (Int32 i = 0; i < btl.weaponMeshCount; i++)
+        if (btl.weaponMeshCount > 0)
         {
-            btl.weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
-            if (btl.weapon.CustomTexture != null && btl.weapon.CustomTexture.Length > i && !String.IsNullOrEmpty(btl.weapon.CustomTexture[i]))
-                btl.weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(btl.weapon.CustomTexture[i], false);
+            for (Int32 i = 0; i < btl.weaponMeshCount; i++)
+            {
+                btl.weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
+                if (btl.weapon.CustomTexture != null && btl.weapon.CustomTexture.Length > i && !String.IsNullOrEmpty(btl.weapon.CustomTexture[i]))
+                {
+                    btl.weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(btl.weapon.CustomTexture[i], false);
+                }
+            }
         }
+        else if (btl.weapon.CustomTexture != null) // Other kind of model have no btl.weaponMeshCount
+        {
+            ModelFactory.ChangeModelTexture(btl.weapon_geo, btl.weapon.CustomTexture);
+        } 
         btl_util.SetBBGColor(btl.weapon_geo);
         if (btl.is_monster_transform)
             geo.geoAttach(btl.weapon_geo, btl.originalGo, p.wep_bone);
@@ -70,8 +79,7 @@ public static class btl_eqp
     public static void ProcessBuiltInWeapon()
     {
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
-        {
-            InitOffSetWeapon(btl);
+        {            
             if (btl.builtin_weapon_mode && btl.bi.disappear == 0 && !btl.is_monster_transform && btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(btl.dms_geo_id, out Int32 weaponBoneID))
             {
                 Transform builtInBone = null;
@@ -87,7 +95,15 @@ public static class btl_eqp
                     builtInBone.localScale = SCALE_INVISIBLE;
                 if (btl.weapon_geo != null && btl.weapon_bone == weaponBoneID)
                     btl.weapon_geo.transform.localScale = builtInBone != null ? SCALE_REBALANCE : Vector3.one;
+
+                CharacterBattleParameter btlParam = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)];
+                if (btlParam.WeaponSize.Any(off => off != 0f))
+                {
+                    Vector3 WeaponSizeVector = new Vector3(btlParam.WeaponSize[0], btlParam.WeaponSize[1], btlParam.WeaponSize[2]);
+                    btl.weapon_geo.transform.localScale = Vector3.Scale(WeaponSizeVector, builtInBone != null && btl.weapon_bone == weaponBoneID ? SCALE_REBALANCE : Vector3.one);
+                }
             }
+            InitOffSetWeapon(btl);
         }
     }
 
@@ -117,6 +133,10 @@ public static class btl_eqp
 
                 btl.weapon_geo.transform.localRotation = Quaternion.Euler(CurrentWeaponOffsetRot[0], CurrentWeaponOffsetRot[1], CurrentWeaponOffsetRot[2]);
             }
+
+            if (btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(btl.dms_geo_id, out Int32 weaponBoneID)) 
+                if (btl.weapon_bone == weaponBoneID)
+                    btl.weapon_geo.transform.localPosition *= SCALE_REBALANCE.x;
         }
         else
         {

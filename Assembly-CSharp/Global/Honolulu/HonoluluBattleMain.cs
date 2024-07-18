@@ -286,6 +286,27 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             }
             if (sb2MonParm.TextureFiles != null)
                 ModelFactory.ChangeModelTexture(btlDataArray[i].gameObject, sb2MonParm.TextureFiles);
+            if (btlDataArray[i].weapon_geo != null)
+            {
+                MeshRenderer[] componentsInChildren = btlDataArray[i].weapon_geo.GetComponentsInChildren<MeshRenderer>();
+                btlDataArray[i].weaponMeshCount = componentsInChildren.Length;
+                btlDataArray[i].weaponRenderer = new Renderer[btlDataArray[i].weaponMeshCount];
+                if (btlDataArray[i].weaponMeshCount > 0)
+                {
+                    for (Int32 j = 0; j < btlDataArray[i].weaponMeshCount; j++)
+                    {
+                        btlDataArray[i].weaponRenderer[j] = componentsInChildren[j].GetComponent<Renderer>();
+                        if (sb2MonParm.WeaponTextureFiles != null && sb2MonParm.WeaponTextureFiles.Length > j && !String.IsNullOrEmpty(sb2MonParm.WeaponTextureFiles[j]))
+                        {
+                            btlDataArray[i].weaponRenderer[j].material.mainTexture = AssetManager.Load<Texture2D>(sb2MonParm.WeaponTextureFiles[j], false);
+                        }
+                    }
+                }
+                else if (sb2MonParm.WeaponTextureFiles != null) // Other kind of model have no btl.weaponMeshCount
+                {
+                    ModelFactory.ChangeModelTexture(btlDataArray[i].weapon_geo, sb2MonParm.WeaponTextureFiles);
+                }
+            }
             Int32 meshCount = 0;
             IEnumerator enumerator = btlDataArray[i].gameObject.transform.GetEnumerator();
             try
