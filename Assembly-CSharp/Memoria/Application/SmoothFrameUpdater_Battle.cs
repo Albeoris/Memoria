@@ -61,7 +61,7 @@ namespace Memoria
                     }
                 }
 
-                if (next._smoothUpdateRegistered && anim[next._smoothUpdateAnimNamePrevious] != null)
+                if (next._smoothUpdateRegistered)
                 {
                     next._smoothUpdatePosPrevious = next._smoothUpdatePosActual;
                     next._smoothUpdateRotPrevious = next._smoothUpdateRotActual;
@@ -75,7 +75,12 @@ namespace Memoria
                         if (next._smoothUpdateAnimNameNext == null)
                         {
                             Single speed = animState.time - next._smoothUpdateAnimTimePrevious;
-                            if (Mathf.Abs(speed) < animState.length / 2f)
+                            Single direction = next._smoothUpdateAnimSpeed;
+                            Boolean hasLooped =
+                                (direction < 0 && speed > 0f) ||
+                                (direction > 0 && speed < 0f);
+                            Boolean isPalindrome = Mathf.Abs(speed + direction) < 0.001f;
+                            if (!hasLooped || isPalindrome)
                                 next._smoothUpdateAnimSpeed = speed;
                         }
                         else
@@ -85,19 +90,22 @@ namespace Memoria
                             next._smoothUpdateAnimNameNext = null;
                         }
                     }
-                    else if (!anim.IsPlaying(next._smoothUpdateAnimNamePrevious))
+                    else
                     {
-                        Vector3 nextBonePos = next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
-                        Single time = animState.time;
-                        anim.Play(next._smoothUpdateAnimNamePrevious);
-                        animState.time = time; // Reset to 0 by previous line which we don't want
-                        AnimationState prevState = anim[next._smoothUpdateAnimNamePrevious];
-                        prevState.time = next._smoothUpdateAnimTimePrevious + next._smoothUpdateAnimSpeed;
-                        anim.Sample();
-                        Vector3 curBonePos = next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
+                        if (!anim.IsPlaying(next._smoothUpdateAnimNamePrevious))
+                        {
+                            Vector3 nextBonePos = next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
+                            Single time = animState.time;
+                            anim.Play(next._smoothUpdateAnimNamePrevious);
+                            animState.time = time; // Reset to 0 by previous line which we don't want
+                            AnimationState prevState = anim[next._smoothUpdateAnimNamePrevious];
+                            prevState.time = next._smoothUpdateAnimTimePrevious + next._smoothUpdateAnimSpeed;
+                            anim.Sample();
+                            Vector3 curBonePos = next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
 
-                        next._smoothUpdateBoneDelta = nextBonePos - curBonePos;
-                        next._smoothUpdateAnimNameNext = next.currentAnimationName;
+                            next._smoothUpdateBoneDelta = nextBonePos - curBonePos;
+                            next._smoothUpdateAnimNameNext = next.currentAnimationName;
+                        }
                     }
                 }
                 else
