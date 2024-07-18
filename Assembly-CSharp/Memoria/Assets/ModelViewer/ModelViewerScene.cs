@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Common;
+using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scenes;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace Memoria.Assets
@@ -47,7 +49,10 @@ namespace Memoria.Assets
         private static Boolean mouseLeftPressed;
         private static Boolean mouseRightPressed;
         private static Boolean ControlWeapon = false;
+        private static Boolean ChangeWeaponTexture = false;
         private static Boolean DontSpamMessage = false;
+        private static Boolean InsertText = false;
+        private static Boolean CreateInsertText = false;
         private static Vector3 mousePreviousPosition;
         private static BoneHierarchyNode currentModelBones;
         private static List<GameObject> boneModels = new List<GameObject>();
@@ -60,6 +65,12 @@ namespace Memoria.Assets
         private static UILabel controlLabel;
         private static UILabel extraInfoLabel;
         private static Int32 controlLabelPosX = 0;
+
+        private static GameObject InsertTextGUI = UnityEngine.Object.Instantiate(PersistenSingleton<UIManager>.Instance.NameSettingScene.NameInputField.gameObject);
+        private static UIInput input = InsertTextGUI.GetComponent<UIInput>();
+        private static GameObject backgroundGo = InsertTextGUI.GetChild(0);
+        private static GameObject labelGo = InsertTextGUI.GetChild(1);
+        private static UISprite background = backgroundGo.GetComponent<UISprite>();
 
         public static void Init()
         {
@@ -98,6 +109,34 @@ namespace Memoria.Assets
             extraInfoLabel = extraInfoPanel.AddSimpleLabel("", NGUIText.Alignment.Center, 1);
             extraInfoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
             extraInfoPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
+
+            InsertTextGUI.transform.localPosition = new Vector3(-300, -400, 0);
+            background.spriteName = "battle_bar_white";
+            background.color = FF9TextTool.White;
+            input.label = labelGo.GetComponent<UILabel>();
+            input.inputType = UIInput.InputType.Standard;
+            input.onReturnKey = UIInput.OnReturnKey.Default;
+            input.onValidate = ValidateInput;
+            input.characterLimit = -1;
+            input.label.overflowMethod = UILabel.Overflow.ResizeFreely;
+            input.label.color = FF9TextTool.Black;
+            input.label.leftAnchor.Set(InsertTextGUI.transform, 0f, 0);
+            input.label.rightAnchor.Set(InsertTextGUI.transform, 1f, 0);
+            input.label.topAnchor.Set(InsertTextGUI.transform, 1f, 0);
+            input.label.bottomAnchor.Set(InsertTextGUI.transform, 0f, 0);
+            input.label.SetRect(0f, 0f, 500f, 100f);
+            input.label.depth = 6;
+            background.depth = 5;
+            background.leftAnchor.Set(labelGo.transform, 0f, -25f);
+            background.rightAnchor.Set(labelGo.transform, 1f, 25f);
+            background.topAnchor.Set(labelGo.transform, 1f, 25f);
+            background.bottomAnchor.Set(labelGo.transform, 0.25f, -75f);
+            backgroundGo.transform.parent = InsertTextGUI.transform;
+            labelGo.transform.parent = InsertTextGUI.transform;
+            InsertTextGUI = labelGo;        
+            InsertTextGUI.SetActive(false);
+            backgroundGo.SetActive(false);
+
             foreach (UISprite sprite in infoPanel.BasePanel.GetComponentsInChildren<UISprite>(true))
             {
                 sprite.spriteName = String.Empty;
@@ -199,6 +238,53 @@ namespace Memoria.Assets
                     currentModel.transform.localRotation = Quaternion.Euler(20f, 0f, 0f);
                     replaceOnce--;
                 }
+
+                if (InsertText)
+                {
+                    if (CreateInsertText)
+                    {
+                        InsertTextGUI.SetActive(true);
+                        backgroundGo.SetActive(true);
+                        CreateInsertText = false;
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+                    {
+                        string[] CustomTexture = input.value.Split(' ');
+                        InsertTextGUI.SetActive(false);
+                        backgroundGo.SetActive(false);
+                        InsertText = false;
+                        if (CustomTexture != null)
+                        {
+                            if (ChangeWeaponTexture)
+                            {
+                                MeshRenderer[] componentsInChildren = currentWeaponModel.GetComponentsInChildren<MeshRenderer>();
+                                int weaponMeshCount = componentsInChildren.Length;
+                                Renderer[] weaponRenderer = new Renderer[weaponMeshCount];
+                                for (Int32 i = 0; i < weaponMeshCount; i++)
+                                {
+                                    weaponRenderer[i] = componentsInChildren[i].GetComponent<Renderer>();
+                                    if (CustomTexture.Length > i && !String.IsNullOrEmpty(CustomTexture[i]))
+                                    {
+                                        weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(CustomTexture[i], false);
+                                    }
+                                }
+                            }
+                            else
+                                ModelFactory.ChangeModelTexture(currentModel, CustomTexture);
+                        }
+                    }
+                    return;               
+                    
+                }
+
+                if (Input.GetKeyDown(KeyCode.T)) // Load custom textures
+                {
+                    InsertText = true;
+                    CreateInsertText = true;
+                }
+                    
+
                 Boolean mouseLeftWasPressed = mouseLeftPressed;
                 Boolean mouseRightWasPressed = mouseRightPressed;
                 Boolean downUpProcessed = false;
@@ -427,6 +513,7 @@ namespace Memoria.Assets
                 }
                 if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
                 {
+                    ChangeWeaponTexture = !ChangeWeaponTexture;
                     if (shift)
                     {
                         if (ControlWeapon)
@@ -624,10 +711,10 @@ namespace Memoria.Assets
                         currentBonesID.Add(bone.Id);
                     if (displayBoneNames)
                     {
+                        Vector3 BonePos = -bone.Position * 1.5f;
                         while (boneDialogCount >= boneDialogs.Count)
                         {
-                            boneDialogs.Add(Singleton<DialogManager>.Instance.AttachDialog($"[IMME][NFOC][b]{bone.Id}[/b][ENDN]", 10, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, bone.Position, Dialog.CaptionType.None));
-                            Vector3 BonePos = -bone.Position * 1.5f;
+                            boneDialogs.Add(Singleton<DialogManager>.Instance.AttachDialog($"[IMME][NFOC][b]{bone.Id}[/b][ENDN]", 10, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, BonePos, Dialog.CaptionType.None));                          
                             string ID = $"[IMME][NFOC][b]{bone.Id}[/b]";
                             for (Int32 i = 0; i < (boneDialogs.Count - 1); i++)
                             {
@@ -637,13 +724,13 @@ namespace Memoria.Assets
                                     ID += $",{IDBone}[ENDN]";
                                     boneDialogs[i].Phrase = "";
                                     boneDialogs[boneDialogCount].Phrase = "";
-                                    boneDialogs[i] = Singleton<DialogManager>.Instance.AttachDialog(ID, (3 * ID.Length) / 2, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, bone.Position, Dialog.CaptionType.None);
+                                    boneDialogs[i] = Singleton<DialogManager>.Instance.AttachDialog(ID, (3 * ID.Length) / 2, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, BonePos, Dialog.CaptionType.None);
                                     boneDialogs[i].transform.localPosition = BonePos;
                                     break;
                                 }
                             }
                         }
-                        boneDialogs[boneDialogCount].transform.localPosition = -bone.Position * 1.5f;
+                        boneDialogs[boneDialogCount].transform.localPosition = BonePos;
                         boneDialogs[boneDialogCount].transform.localScale = new Vector3(0.5f, 0.5f, 0.5f); //scaleFactor;
                         boneDialogCount++;
                     }
@@ -874,6 +961,7 @@ namespace Memoria.Assets
             if (currentWeaponModel != null)
             {
                 ControlWeapon = false;
+                ChangeWeaponTexture = false;
                 UnityEngine.Object.Destroy(currentWeaponModel);
             }
             else if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
@@ -1369,6 +1457,15 @@ namespace Memoria.Assets
             if (coordNum.Length == 3)
                 return new Vector4(coordNum[0], coordNum[1], coordNum[2], 0f);
             return new Vector4(coordNum[0], coordNum[1], coordNum[2], coordNum[3]);
+        }
+
+        private static Char ValidateInput(String text, Int32 charIndex, Char addedChar)
+        {
+            if (Char.IsLetter(addedChar))
+                return addedChar;
+            if (Regex.IsMatch(addedChar.ToString(), "[^\\u3041-\\u3096\\u30A0-\\u30FF\\u3400-\\u4DB5\\u4E00-\\u9FCB\\uF900-\\uFA6A\\u0021-\\u007E\\u00C0-\\u00FF\\uFF41-\\uFF5A]"))
+                return Char.MinValue;
+            return addedChar;
         }
 
         private class ModelObject
