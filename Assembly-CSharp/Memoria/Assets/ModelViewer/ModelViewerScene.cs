@@ -100,6 +100,15 @@ namespace Memoria.Assets
             spsEffect.meshRenderer = meshRenderer;
             spsEffect.meshFilter = meshFilter;
             
+            if (infoPanel != null) // For Soft Reset
+                UnityEngine.Object.Destroy(infoPanel.BasePanel.gameObject);
+            if (controlPanel != null)
+                UnityEngine.Object.Destroy(controlPanel.BasePanel.gameObject);
+            if (extraInfoPanel != null)
+                UnityEngine.Object.Destroy(extraInfoPanel.BasePanel.gameObject);
+            if (InsertTextGUI != null)
+                UnityEngine.Object.Destroy(InsertTextGUI);
+
             infoPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
             infoLabel = infoPanel.AddSimpleLabel("", NGUIText.Alignment.Left, 7);
             infoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
