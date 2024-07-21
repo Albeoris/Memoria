@@ -33,6 +33,7 @@ namespace Memoria.Assets
         private static Int32 currentWeaponGeoIndex;
         private static Int32 currentWeaponBoneIndex;
         private static List<Int32> currentBonesID;
+        private static List<Int32> currentHiddenBonesID;
         private static String currentAnimName;
         private static GameObject currentModel;
         private static GameObject currentWeaponModel;
@@ -66,11 +67,11 @@ namespace Memoria.Assets
         private static UILabel extraInfoLabel;
         private static Int32 controlLabelPosX = 0;
 
-        private static GameObject InsertTextGUI = UnityEngine.Object.Instantiate(PersistenSingleton<UIManager>.Instance.NameSettingScene.NameInputField.gameObject);
-        private static UIInput input = InsertTextGUI.GetComponent<UIInput>();
-        private static GameObject backgroundGo = InsertTextGUI.GetChild(0);
-        private static GameObject labelGo = InsertTextGUI.GetChild(1);
-        private static UISprite background = backgroundGo.GetComponent<UISprite>();
+        private static GameObject InsertTextGUI;
+        private static UIInput input;
+        private static GameObject backgroundGo;
+        private static GameObject labelGo;
+        private static UISprite background;
 
         public static void Init()
         {
@@ -85,6 +86,7 @@ namespace Memoria.Assets
             weapongeoList = new List<ModelObject>();
             geoArchetype = new HashSet<Int32>();
             currentBonesID = new List<Int32>();
+            currentHiddenBonesID = new List<Int32>();
             speedFactor = 1f;
             savedAnimationPath = null;
             spsUtility = new CommonSPSSystem();
@@ -97,6 +99,7 @@ namespace Memoria.Assets
             spsEffect.spsTransform = spsGo.transform;
             spsEffect.meshRenderer = meshRenderer;
             spsEffect.meshFilter = meshFilter;
+            
             infoPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
             infoLabel = infoPanel.AddSimpleLabel("", NGUIText.Alignment.Left, 7);
             infoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
@@ -110,7 +113,11 @@ namespace Memoria.Assets
             extraInfoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
             extraInfoPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
 
-            InsertTextGUI.transform.localPosition = new Vector3(-300, -400, 0);
+            InsertTextGUI = UnityEngine.Object.Instantiate(PersistenSingleton<UIManager>.Instance.NameSettingScene.NameInputField.gameObject);            
+            input = InsertTextGUI.GetComponent<UIInput>();
+            backgroundGo = InsertTextGUI.GetChild(0);
+            labelGo = InsertTextGUI.GetChild(1);
+            background = backgroundGo.GetComponent<UISprite>();
             background.spriteName = "battle_bar_white";
             background.color = FF9TextTool.White;
             input.label = labelGo.GetComponent<UILabel>();
@@ -132,8 +139,8 @@ namespace Memoria.Assets
             background.topAnchor.Set(labelGo.transform, 1f, 25f);
             background.bottomAnchor.Set(labelGo.transform, 0.25f, -75f);
             backgroundGo.transform.parent = InsertTextGUI.transform;
-            labelGo.transform.parent = InsertTextGUI.transform;
-            InsertTextGUI = labelGo;        
+            labelGo.transform.parent = InsertTextGUI.transform;            
+            InsertTextGUI = labelGo;
             InsertTextGUI.SetActive(false);
             backgroundGo.SetActive(false);
 
@@ -241,6 +248,9 @@ namespace Memoria.Assets
 
                 if (InsertText)
                 {
+                    // Vector3 AdjustUIPosition = new Vector3(-300, -400, 0);
+                    // InsertTextGUI.transform.localPosition = AdjustUIPosition;
+                    // backgroundGo.transform.localPosition = AdjustUIPosition; // [DV] Can't init that... i don't understand why...
                     if (CreateInsertText)
                     {
                         InsertTextGUI.SetActive(true);
@@ -252,7 +262,7 @@ namespace Memoria.Assets
 
                     if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
                     {
-                        string[] CustomTexture = input.value.Split(' ');
+                        string[] CustomTexture = input.value.Split(';');
                         InsertTextGUI.SetActive(false);
                         backgroundGo.SetActive(false);
                         InsertText = false;
@@ -518,7 +528,7 @@ namespace Memoria.Assets
                 if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
                 {
                     ChangeWeaponTexture = !ChangeWeaponTexture;
-                    if (shift)
+                    if (shift && currentWeaponModel != null)
                     {
                         if (ControlWeapon)
                         {
@@ -528,6 +538,23 @@ namespace Memoria.Assets
                         {
                             ControlWeapon = true;
                         }
+                    }
+                    else if (ctrl && currentWeaponModel != null)
+                    {
+                        Transform builtInBone = currentModel.transform.GetChildByName($"bone{currentWeaponBoneIndex:D3}");
+                        if (builtInBone.localScale != SCALE_INVISIBLE)
+                        {
+                            currentHiddenBonesID.Add(currentWeaponBoneIndex);
+                            builtInBone.localScale = SCALE_INVISIBLE;
+                            currentWeaponModel.transform.localScale = SCALE_REBALANCE;
+                        }
+                        else
+                        {
+                            currentHiddenBonesID.Remove(currentWeaponBoneIndex);
+                            builtInBone.localScale = Vector3.one;
+                            currentWeaponModel.transform.localScale = Vector3.one;
+                        }                       
+                        currentHiddenBonesID.Sort();
                     }
                     else
                     {
@@ -713,26 +740,37 @@ namespace Memoria.Assets
                 {
                     if (!currentBonesID.Contains(bone.Id))
                         currentBonesID.Add(bone.Id);
+
                     if (displayBoneNames)
                     {
-                        Vector3 BonePos = -bone.Position * 1.5f;
+                        string ID = "";
+                        Vector3 BonePos = -bone.Position * 1.60f; // [DV] Need to be improved, quite imprecise depending on the "zoom".
+
                         while (boneDialogCount >= boneDialogs.Count)
                         {
-                            boneDialogs.Add(Singleton<DialogManager>.Instance.AttachDialog($"[IMME][NFOC][b]{bone.Id}[/b][ENDN]", 10, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, BonePos, Dialog.CaptionType.None));                          
-                            string ID = $"[IMME][NFOC][b]{bone.Id}[/b]";
+                            if (currentHiddenBonesID.Contains(bone.Id))
+                                boneDialogs.Add(Singleton<DialogManager>.Instance.AttachDialog($"[IMME][NFOC][b][FFFF00]{bone.Id}[/b][ENDN]", 10, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, BonePos, Dialog.CaptionType.None));
+                            else
+                                boneDialogs.Add(Singleton<DialogManager>.Instance.AttachDialog($"[IMME][NFOC][b]{bone.Id}[/b][ENDN]", 10, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, BonePos, Dialog.CaptionType.None));
+
+                            if (currentHiddenBonesID.Contains(bone.Id))
+                                ID = $"[IMME][NFOC][b][FFFF00]{bone.Id}[C8C8C8]";
+                            else
+                                ID = $"[IMME][NFOC][b]{bone.Id}";
+
                             for (Int32 i = 0; i < (boneDialogs.Count - 1); i++)
                             {
                                 if ((BonePos - boneDialogs[i].transform.localPosition).sqrMagnitude < 1 && boneDialogs[i].Phrase.Length > 8)
                                 {
-                                    String IDBone = boneDialogs[i].Phrase.Remove(0, 14);
+                                    String IDBone = boneDialogs[i].Phrase.Remove(0, 17);
                                     ID += $",{IDBone}[ENDN]";
                                     boneDialogs[i].Phrase = "";
                                     boneDialogs[boneDialogCount].Phrase = "";
-                                    boneDialogs[i] = Singleton<DialogManager>.Instance.AttachDialog(ID, (3 * ID.Length) / 2, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, BonePos, Dialog.CaptionType.None);
+                                    boneDialogs[i] = Singleton<DialogManager>.Instance.AttachDialog(ID, 2 * ID.Length, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, BonePos, Dialog.CaptionType.None);
                                     boneDialogs[i].transform.localPosition = BonePos;
                                     break;
                                 }
-                            }
+                            }                        
                         }
                         boneDialogs[boneDialogCount].transform.localPosition = BonePos;
                         boneDialogs[boneDialogCount].transform.localScale = new Vector3(0.5f, 0.5f, 0.5f); //scaleFactor;
@@ -741,7 +779,7 @@ namespace Memoria.Assets
                     if (displayBones)
                     {
                         while (boneCount >= boneModels.Count)
-                            boneModels.Add(CreateModelForBone());
+                        boneModels.Add(CreateModelForBone());
                         boneModels[boneCount].transform.position = bone.Position;
                         boneModels[boneCount].transform.localScale = scaleFactor;
                         boneCount++;
@@ -800,6 +838,14 @@ namespace Memoria.Assets
                         label += $"[FFFF00][⇧P][FFFFFF] Selected: Model\n";
                     else
                         label += $"[FFFF00][⇧P][FFFFFF] Selected: [00FF00]Weapon\n";
+
+                    label += $"[FFFF00][^P][FFFFFF] BoneHidden: ";
+                    if (currentHiddenBonesID.Count > 0)
+                    {
+                        for (Int32 i = 0; i < currentHiddenBonesID.Count; i++)
+                            label += $"{currentHiddenBonesID[i]} ";
+                        label += $"\n";
+                    }
                 }
                 else
                     label += "\n\n\n";
@@ -965,7 +1011,7 @@ namespace Memoria.Assets
             if (currentWeaponModel != null)
             {
                 ControlWeapon = false;
-                ChangeWeaponTexture = false;
+                ChangeWeaponTexture = false;               
                 UnityEngine.Object.Destroy(currentWeaponModel);
             }
             else if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS)
@@ -1018,6 +1064,7 @@ namespace Memoria.Assets
             scaleFactor.y = geoList[index].Kind == MODEL_KIND_NORMAL ? scaleAbs : -scaleAbs;
             currentModelBones = null;
             currentBonesID.Clear();
+            currentHiddenBonesID.Clear();
             currentWeaponBoneIndex = 0;
             if (currentModel == null)
             {
@@ -1483,5 +1530,8 @@ namespace Memoria.Assets
         private const Int32 MODEL_KIND_BBG = 1;
         private const Int32 MODEL_KIND_BBG_OBJ = 2;
         private const Int32 MODEL_KIND_SPS = 3;
+
+        private static readonly Vector3 SCALE_INVISIBLE = new Vector3(0.01f, 0.01f, 0.01f);
+        private static readonly Vector3 SCALE_REBALANCE = new Vector3(100f, 100f, 100f);
     }
 }
