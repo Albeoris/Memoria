@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Common;
 using Memoria;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.Text;
@@ -287,6 +288,19 @@ public class UIKeyTrigger : MonoBehaviour
         { // Soft Reset
             if (ButtonGroupState.ActiveGroup == QuitUI.WarningMenuGroupButton)
                 return;
+
+            if (Configuration.Debug.StartModelViewer)
+            {
+                ModelViewerScene.initialized = false;
+                if (!ModelViewerScene.initialized)
+                    ModelViewerScene.Init();
+                if (ModelViewerScene.initialized)
+                    ModelViewerScene.Update();
+                if (PersistenSingleton<UIManager>.Instance.IsPause)
+                    PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyPause(null);
+                return;
+            }
+
             preventTurboKey = false;
 
             if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World && PersistenSingleton<UIManager>.Instance.WorldHUDScene != (UnityEngine.Object)null) // World Map
