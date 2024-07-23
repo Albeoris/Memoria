@@ -79,7 +79,7 @@ namespace FF9
                 for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                 {
                     CharacterSerialNumber serialNo = btl_util.getSerialNumber(next);
-                    if (serialNo == CharacterSerialNumber.EIKO_FLUTE || serialNo == CharacterSerialNumber.EIKO_KNIFE)
+                    if (serialNo == CharacterSerialNumber.EIKO_FLUTE || serialNo == CharacterSerialNumber.EIKO_RACKET)
                     {
                         if (!btl_stat.CheckStatus(next, BattleStatusConst.NoRebirthFlame))
                         {

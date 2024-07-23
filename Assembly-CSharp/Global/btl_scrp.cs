@@ -758,7 +758,7 @@ public class btl_scrp
                 for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                 {
                     CharacterSerialNumber serialNumber = btl_util.getSerialNumber(next);
-                    if (serialNumber == CharacterSerialNumber.EIKO_FLUTE || serialNumber == CharacterSerialNumber.EIKO_KNIFE)
+                    if (serialNumber == CharacterSerialNumber.EIKO_FLUTE || serialNumber == CharacterSerialNumber.EIKO_RACKET)
                     {
                         result = !btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix) ? 0u : 1u;
                         break;
