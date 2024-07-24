@@ -38,7 +38,7 @@ namespace Memoria.Assets
         private static List<Int32> currentHiddenBonesID;
         private static String currentAnimName;
         private static GameObject currentModel;
-        private static GameObject currentModelWrapper; // parent transform for vertical rotation
+        private static GameObject currentModelWrapper; // parent transform for vertical rotation and position
         private static GameObject currentWeaponModel;
         private static float model_Horizontal_Rotation = 0f;
         private static float model_Vertical_Rotation = 0f;
@@ -48,11 +48,10 @@ namespace Memoria.Assets
         private static Vector3 scaleFactor;
         private static Single speedFactor;
         private static String savedAnimationPath;
-
-        private static Int32 inputDelay;
         private static Boolean isLoadingModel;
         private static Boolean isLoadingWeaponModel;
-        private static Int32 replaceOnce = 0;
+        //private static Int32 replaceOnce = 0;
+        private static Int32 postRefresh = 0;
         private static Boolean mouseLeftPressed;
         private static Boolean mouseRightPressed;
         private static Boolean ControlWeapon = false;
@@ -73,7 +72,6 @@ namespace Memoria.Assets
         private static UILabel extraInfoLabel;
         private static Int32 InfoPanelPosX = 0;
         private static Int32 ControlPanelPosX = 0;
-
         private static GameObject InsertTextGUI;
         private static UIInput input;
         private static GameObject backgroundGo;
@@ -252,46 +250,12 @@ namespace Memoria.Assets
             initialized = true;
             currentWeaponGeoIndex = 557; // Start at weapon, so the Hammer.
 
-            if (currentModelWrapper == null)
-                currentModelWrapper = new GameObject("CurrentModelWrapper");
-            currentModel.transform.SetParent(currentModelWrapper.transform);
-
             ReadModelViewerConfigFile(ParamIni.MODEL_ANIMATION, out string IndexAnimation);
             if (!String.IsNullOrEmpty(IndexAnimation))
                 ChangeAnimation(Int32.Parse(IndexAnimation));
             else
                 ChangeModel(0);
-            ReadModelViewerConfigFile(ParamIni.MODEL_POSITION, out string ModelPosition);
-            if (!String.IsNullOrEmpty(ModelPosition))
-            {
-                string[] VectorModelPosition = ModelPosition.Split(',');
-                if (VectorModelPosition.Length == 3)
-                {
-                    Single.TryParse(VectorModelPosition[0], out model_Position.x);
-                    Single.TryParse(VectorModelPosition[1], out model_Position.y);
-                    Single.TryParse(VectorModelPosition[2], out model_Position.z);
-                }
-            }
-            ReadModelViewerConfigFile(ParamIni.MODEL_HOR_ROTATION, out string ModelHorizontalRotation);
-            if (!String.IsNullOrEmpty(ModelHorizontalRotation))
-            {
-                if (!float.TryParse(ModelHorizontalRotation, out model_Horizontal_Rotation))
-                    model_Horizontal_Rotation = 0f;
-                model_Horizontal_Rotation = Mathf.Repeat(model_Horizontal_Rotation, 360f);
-            }
-            ReadModelViewerConfigFile(ParamIni.MODEL_VER_ROTATION, out string ModelVerticalRotation);
-            if (!String.IsNullOrEmpty(ModelVerticalRotation))
-            {
-                if (!float.TryParse(ModelVerticalRotation, out model_Vertical_Rotation))
-                    model_Vertical_Rotation = 0f;
-                model_Vertical_Rotation = Mathf.Repeat(model_Vertical_Rotation, 360f);
-            }
-            ReadModelViewerConfigFile(ParamIni.MODEL_SCALE, out string ModelScale);
-            if (!String.IsNullOrEmpty(ModelScale))
-            {
-                Single.TryParse(ModelScale, out scaleFactor.x);
-                scaleFactor.y = scaleFactor.z = scaleFactor.x;
-            }
+
             ReadModelViewerConfigFile(ParamIni.INFOPANEL_POSITION, out string InfoPanelPostion);
             if (!String.IsNullOrEmpty(InfoPanelPostion))
                 InfoPanelPosX = Int32.Parse(InfoPanelPostion);
@@ -300,6 +264,7 @@ namespace Memoria.Assets
             if (!String.IsNullOrEmpty(ControlPanelPosition))
                 ControlPanelPosX = Int32.Parse(ControlPanelPosition);
 
+            LoadCoordinatesConfig();
             currentModelWrapper.transform.localPosition = model_Position;
             currentModel.transform.localRotation = Quaternion.Euler(0f, model_Horizontal_Rotation, 0f);
             currentModelWrapper.transform.localRotation = Quaternion.Euler(model_Vertical_Rotation, 0f, 0f);
@@ -310,14 +275,13 @@ namespace Memoria.Assets
         {
             try
             {
+                if (postRefresh > 0 && currentModel != null)
+                {
+                    UpdateModelCoordinates();
+                    postRefresh--;
+                }
                 if (isLoadingModel || isLoadingWeaponModel)
                     return;
-                //          if (replaceOnce > 0 && currentModel != null)
-                //          {
-                //              currentModel.transform.localScale = scaleFactor;
-                //              currentModel.transform.localRotation = Quaternion.Euler(20f, 0f, 0f);
-                //              replaceOnce--;
-                //          }
 
                 if (InsertText)
                 {
@@ -864,7 +828,7 @@ namespace Memoria.Assets
                 Vector3 directionRight = cameraMatrix.MultiplyVector(Vector3.right);
                 Vector3 directionDown = Vector3.Cross(directionForward, directionRight);
                 currentModel.transform.localScale = scaleFactor;
-                currentModel.transform.LookAt(currentModel.transform.position + directionForward, -directionDown);
+                currentModel.transform.LookAt(currentModel.transform.position + directionForward, directionDown);
             }
             if (currentModel != null && currentModelBones != null && !isLoadingModel)
             {
@@ -1214,9 +1178,9 @@ namespace Memoria.Assets
                     currentModel = null;
                 }
             }
-            Single scaleAbs = scaleFactor.z;
-            scaleFactor.x = geoList[index].Kind == MODEL_KIND_NORMAL ? scaleAbs : -scaleAbs;
-            scaleFactor.y = geoList[index].Kind == MODEL_KIND_NORMAL ? scaleAbs : -scaleAbs;
+            //Single scaleAbs = scaleFactor.z;
+            //scaleFactor.x = geoList[index].Kind == MODEL_KIND_NORMAL ? scaleAbs : -scaleAbs;
+            //scaleFactor.y = geoList[index].Kind == MODEL_KIND_NORMAL ? scaleAbs : -scaleAbs;
             currentModelBones = null;
             currentBonesID.Clear();
             currentHiddenBonesID.Clear();
@@ -1254,7 +1218,8 @@ namespace Memoria.Assets
                 currentAnimIndex = 0;
                 currentAnimName = animList.Count > 0 ? animList[0].Value : "";
                 currentModelBones = BoneHierarchyNode.CreateFromModel(currentModel);
-                replaceOnce = 4;
+                //replaceOnce = 4;
+                postRefresh = 6;
             }
             else if (geoList[index].Kind == MODEL_KIND_BBG)
             {
@@ -1264,7 +1229,8 @@ namespace Memoria.Assets
                 currentAnimIndex = 0;
                 currentAnimName = "";
                 currentModelBones = null;
-                replaceOnce = 4;
+                //replaceOnce = 4;
+                postRefresh = 6;
             }
             else if (geoList[index].Kind == MODEL_KIND_BBG_OBJ)
             {
@@ -1283,71 +1249,20 @@ namespace Memoria.Assets
             }
             if (KeepCoordinates)
             {
-
-                if (currentModelWrapper == null)
-                    currentModelWrapper = new GameObject("CurrentModelWrapper");
-                currentModel.transform.SetParent(currentModelWrapper.transform);
-
-                ReadModelViewerConfigFile(ParamIni.MODEL_POSITION, out string ModelPosition);
-                if (!String.IsNullOrEmpty(ModelPosition))
-                {
-                    string[] VectorModelPosition = ModelPosition.Split(',');
-                    if (VectorModelPosition.Length == 3)
-                    {
-                        Single.TryParse(VectorModelPosition[0], out model_Position.x);
-                        Single.TryParse(VectorModelPosition[1], out model_Position.y);
-                        Single.TryParse(VectorModelPosition[2], out model_Position.z);
-                    }
-                }
-                ReadModelViewerConfigFile(ParamIni.MODEL_HOR_ROTATION, out string ModelHorizontalRotation);
-                if (!String.IsNullOrEmpty(ModelHorizontalRotation))
-                {
-                    if (float.TryParse(ModelHorizontalRotation, out model_Horizontal_Rotation))
-                        currentModel.transform.localRotation = Quaternion.Euler(0f, model_Horizontal_Rotation, 0f);
-                    else
-                        currentModel.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-                }
-                ReadModelViewerConfigFile(ParamIni.MODEL_VER_ROTATION, out string ModelVerticalRotation);
-                if (!String.IsNullOrEmpty(ModelVerticalRotation))
-                {
-                    if (float.TryParse(ModelVerticalRotation, out model_Vertical_Rotation))
-                        currentModelWrapper.transform.localRotation = Quaternion.Euler(model_Vertical_Rotation, 0f, 0f);
-                    else
-                        currentModelWrapper.transform.localRotation = Quaternion.Euler(0f, 0f, 0f);
-                }
-                ReadModelViewerConfigFile(ParamIni.MODEL_SCALE, out string ModelScale);
-                if (!String.IsNullOrEmpty(ModelScale))
-                {
-                    Single.TryParse(ModelScale, out scaleFactor.x);
-                    scaleFactor.y = scaleFactor.z = scaleFactor.x;
-                }
-
-                if ((geoList[index].Kind == MODEL_KIND_BBG && geoList[previousIndex].Kind == MODEL_KIND_NORMAL)
-                    || geoList[index].Kind == MODEL_KIND_NORMAL && geoList[previousIndex].Kind == MODEL_KIND_BBG)
-                    model_Vertical_Rotation = Mathf.Repeat(model_Vertical_Rotation - 180f, 360f);
-
-
-                currentModelWrapper.transform.localPosition = model_Position;
-                currentModelWrapper.transform.localScale = Vector3.one;
-                currentModel.transform.localScale = scaleFactor;
-                currentModel.transform.localPosition = Vector3.zero;
-                currentModel.transform.localRotation = Quaternion.Euler(0f, model_Horizontal_Rotation, 0f);
-                currentModelWrapper.transform.localRotation = Quaternion.Euler(model_Vertical_Rotation, 0f, 0f);
-                UpdateRender();
+                LoadCoordinatesConfig();
             }
             else
             {
                 model_Position = Vector3.zero;
                 model_Horizontal_Rotation = 0f;
                 model_Vertical_Rotation = 20f;
-                currentModelWrapper.transform.localPosition = model_Position;
-                currentModelWrapper.transform.localScale = Vector3.one;
-                currentModel.transform.localScale = scaleFactor;
-                currentModel.transform.localPosition = Vector3.zero;
-                currentModel.transform.localRotation = Quaternion.Euler(0f, model_Horizontal_Rotation, 0f);
-                currentModelWrapper.transform.localRotation = Quaternion.Euler(model_Vertical_Rotation, 0f, 0f);
-                UpdateRender();
             }
+            if ((geoList[index].Kind == MODEL_KIND_NORMAL && geoList[previousIndex].Kind != MODEL_KIND_NORMAL)
+                || (geoList[previousIndex].Kind == MODEL_KIND_NORMAL && geoList[index].Kind != MODEL_KIND_NORMAL))
+                model_Vertical_Rotation = Mathf.Repeat(model_Vertical_Rotation - 180f, 360f); // BBG are inverted, so invert rotation when switching
+
+            UpdateModelCoordinates();
+            UpdateRender();
             isLoadingModel = false;
         }
 
@@ -1712,6 +1627,58 @@ namespace Memoria.Assets
                 Directory.CreateDirectory(ModelViewerConfigFolder);
             File.WriteAllText(ModelViewerConfigPath, "");
             return;
+        }
+
+        public static void LoadCoordinatesConfig()
+        {
+            ReadModelViewerConfigFile(ParamIni.MODEL_POSITION, out string ModelPosition);
+            if (!String.IsNullOrEmpty(ModelPosition))
+            {
+                string[] VectorModelPosition = ModelPosition.Split(',');
+                if (VectorModelPosition.Length == 3)
+                {
+                    Single.TryParse(VectorModelPosition[0], out model_Position.x);
+                    Single.TryParse(VectorModelPosition[1], out model_Position.y);
+                    Single.TryParse(VectorModelPosition[2], out model_Position.z);
+                }
+            }
+            ReadModelViewerConfigFile(ParamIni.MODEL_HOR_ROTATION, out string ModelHorizontalRotation);
+            if (!String.IsNullOrEmpty(ModelHorizontalRotation))
+            {
+                if (!Single.TryParse(ModelHorizontalRotation, out model_Horizontal_Rotation))
+                    model_Horizontal_Rotation = 0f;
+                model_Horizontal_Rotation = Mathf.Repeat(model_Horizontal_Rotation, 360f);
+            }
+            ReadModelViewerConfigFile(ParamIni.MODEL_VER_ROTATION, out string ModelVerticalRotation);
+            if (!String.IsNullOrEmpty(ModelVerticalRotation))
+            {
+                if (!Single.TryParse(ModelVerticalRotation, out model_Vertical_Rotation))
+                    model_Vertical_Rotation = 0f;
+                model_Vertical_Rotation = Mathf.Repeat(model_Vertical_Rotation, 360f);
+            }
+            ReadModelViewerConfigFile(ParamIni.MODEL_SCALE, out string ModelScale);
+            if (!String.IsNullOrEmpty(ModelScale))
+            {
+                Single.TryParse(ModelScale, out scaleFactor.x);
+                scaleFactor.y = scaleFactor.z = scaleFactor.x;
+            }
+        }
+        public static void UpdateModelCoordinates()
+        {
+            if (currentModel != null)
+            {
+                if (currentModelWrapper == null)
+                {
+                    currentModelWrapper = new GameObject("CurrentModelWrapper");
+                }
+                currentModel.transform.SetParent(currentModelWrapper.transform);
+                currentModelWrapper.transform.localPosition = model_Position;
+                currentModel.transform.localPosition = Vector3.zero;
+                currentModel.transform.localRotation = Quaternion.Euler(0f, model_Horizontal_Rotation, 0f);
+                currentModelWrapper.transform.localRotation = Quaternion.Euler(model_Vertical_Rotation, 0f, 0f);
+                currentModel.transform.localScale = scaleFactor;
+                currentModelWrapper.transform.localScale = Vector3.one;
+            }
         }
 
         public static void SaveModelViewerConfigFile()
