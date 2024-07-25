@@ -1146,11 +1146,6 @@
     <Compile Include="FF9\Attrib.cs" />
     <Compile Include="FF9\battle_id_list.cs" />
     <Compile Include="FF9\battle_main_ret.cs" />
-    <Compile Include="FF9\battle_phase_close.cs" />
-    <Compile Include="FF9\battle_phase_defeat.cs" />
-    <Compile Include="FF9\battle_phase_menu_off.cs" />
-    <Compile Include="FF9\battle_phase_victory.cs" />
-    <Compile Include="FF9\battle_result.cs" />
     <Compile Include="FF9\btl_abil.cs" />
     <Compile Include="FF9\BTL_HEADER.cs" />
     <Compile Include="FF9\btl_mot.cs" />
@@ -1198,8 +1193,6 @@
     <Compile Include="FF9\save_player_data_tags.cs" />
     <Compile Include="FF9\selected_type.cs" />
     <Compile Include="FF9\select_type.cs" />
-    <Compile Include="FF9\stat_id.cs" />
-    <Compile Include="FF9\stat_table.cs" />
     <Compile Include="FF9\sub_window_index.cs" />
     <Compile Include="FF9\sys_get_script_id_tags.cs" />
     <Compile Include="FF9\sys_set_script_id_tags.cs" />

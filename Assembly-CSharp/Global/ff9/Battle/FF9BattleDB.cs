@@ -16,6 +16,7 @@ public static partial class FF9BattleDB
     public static readonly Dictionary<BattleAbilityId, AA_DATA> CharacterActions;
     public static readonly Dictionary<BattleStatusId, BattleStatusDataEntry> StatusData;
     public static readonly Dictionary<Int32, BattleMagicSwordSet> MagicSwordData;
+    public static readonly BattleStatus AllStatuses = 0;
 
     static FF9BattleDB()
     {
@@ -23,6 +24,8 @@ public static partial class FF9BattleDB
         CharacterActions = LoadActions();
         StatusData = LoadStatusData();
         MagicSwordData = LoadMagicSwordSets();
+        foreach (BattleStatusId statusId in StatusData.Keys)
+            AllStatuses |= statusId.ToBattleStatus();
     }
 
     private static Dictionary<StatusSetId, BattleStatusEntry> LoadStatusSets()

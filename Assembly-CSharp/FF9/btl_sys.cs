@@ -77,8 +77,8 @@ namespace FF9
                 }
                 if (!playerStillAlive)
                     return;
-                if (ff9Battle.btl_seq != 1)
-                    ff9Battle.btl_seq = 0;
+                if (ff9Battle.btl_seq != FF9StateBattleSystem.SEQ_MENU_OFF_DEFEAT)
+                    ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_MENU_OFF_VICTORY;
             }
             else
             {
@@ -118,7 +118,7 @@ namespace FF9
                         }
                     }
                 }
-                ff9Battle.btl_seq = 1;
+                ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_MENU_OFF_DEFEAT;
                 UIManager.Battle.SetBattleFollowMessage(BattleMesages.Annihilated);
             }
             UIManager.Battle.FF9BMenu_EnableMenu(false);
@@ -160,11 +160,11 @@ namespace FF9
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             switch (ff9.btl_result)
             {
-                case 3: // Scripted defeat
-                case 6: // Normal defeat
+                case FF9StateGlobal.BTL_RESULT_DEFEAT: // Scripted defeat
+                case FF9StateGlobal.BTL_RESULT_GAMEOVER: // Normal defeat
                     if (!btlsys.btl_scene.Info.NoGameOver)
                     {
-                        ff9.btl_result = 6;
+                        ff9.btl_result = FF9StateGlobal.BTL_RESULT_GAMEOVER;
                         break;
                     }
                     // Non-critical battles, such as battles during the Festival of the Hunt
@@ -173,7 +173,7 @@ namespace FF9
                             SavePlayerData(next, false);
                     break;
                 default: // Battle has been won or interrupted
-                    if (ff9.btl_result == 1 || ff9.btl_result == 2)
+                    if (ff9.btl_result == FF9StateGlobal.BTL_RESULT_VICTORY || ff9.btl_result == FF9StateGlobal.BTL_RESULT_VICTORY_NO_POSE)
                         BattleAchievement.UpdateEndBattleAchievement();
                     for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                         if (next.bi.player != 0)

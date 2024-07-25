@@ -767,7 +767,7 @@ public class btl_scrp
                 ff9Battle.btl_escape_key = 0;
                 ff9Battle.cmd_status &= 0xFFFD;
                 ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
-                ff9Battle.btl_seq = 2;
+                ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_MENU_OFF_EVENT;
                 btl_cmd.KillAllCommand(ff9Battle);
                 for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                     next.bi.cmd_idle = 0;
@@ -779,18 +779,18 @@ public class btl_scrp
                     if (val == 1 && ff9Battle.btl_scene.Info.WinPose)
                     {
                         ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
-                        ff9Battle.btl_seq = 4;
+                        ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_MENU_OFF_VICTORY_WITH_ENEMY;
                     }
                     else
                     {
-                        if (ff.btl_result == 1)
-                            ff.btl_result = 2;
+                        if (ff.btl_result == FF9StateGlobal.BTL_RESULT_VICTORY)
+                            ff.btl_result = FF9StateGlobal.BTL_RESULT_VICTORY_NO_POSE;
                         ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_CLOSE;
-                        ff9Battle.btl_seq = 0;
+                        ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_DEFEATCLOSE_FADEOUT;
                     }
-                    if (ff.btl_result == 5) // Scripted interruption, such as Black Waltz 3 (first time)
+                    if (ff.btl_result == FF9StateGlobal.BTL_RESULT_INTERRUPTION) // Scripted interruption, such as Black Waltz 3 (first time)
                         BattleVoice.TriggerOnBattleInOut("BattleInterrupted");
-                    else if (ff.btl_result == 7) // Enemy flee, such as (Magic) Vice or friendly monsters when attacked
+                    else if (ff.btl_result == FF9StateGlobal.BTL_RESULT_ENEMY_FLEE) // Enemy flee, such as (Magic) Vice or friendly monsters when attacked
                         BattleVoice.TriggerOnBattleInOut("EnemyEscape");
                 }
                 break;
@@ -798,8 +798,8 @@ public class btl_scrp
                 if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_EVENT)
                 {
                     ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_DEFEAT;
-                    ff9Battle.btl_seq = 0;
-                    ff.btl_result = 3;
+                    ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_DEFEATCLOSE_FADEOUT;
+                    ff.btl_result = FF9StateGlobal.BTL_RESULT_DEFEAT;
                 }
                 break;
             case 35u: // Enable ATB

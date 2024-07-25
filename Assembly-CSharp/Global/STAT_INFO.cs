@@ -9,6 +9,7 @@ public class STAT_INFO
     public Boolean HasDeathChangerEffect => effects.Values.Any(eff => eff is IDeathChangerStatusScript);
     public Boolean HasAutoAttackEffect => effects.Values.Any(eff => eff is IAutoAttackStatusScript);
     public Boolean HasTroubleEffect => effects.Values.Any(eff => eff is ITroubleStatusScript);
+    public BattleStatus CurrentIncludeOnHold => cur | permanent_on_hold;
 
     public BattleStatus invalid;
     public BattleStatus permanent;

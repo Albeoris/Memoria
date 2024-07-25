@@ -918,7 +918,7 @@ public class btl_cmd
             {
                 if ((btl.btl_id & cmd.tar_id) != 0)
                 {
-                    if (btl.bi.target != 0 && btl_stat.CheckStatus(btl, BattleStatusConst.ApplyReflect) && !btl_stat.CheckStatus(btl, BattleStatusConst.PreventReflect))
+                    if (btl.bi.target != 0 && (btl.stat.CurrentIncludeOnHold & BattleStatusConst.ApplyReflect) != 0 && (btl.stat.CurrentIncludeOnHold & BattleStatusConst.PreventReflect) == 0)
                     {
                         reflectingBtl |= btl.btl_id;
                         if (btl.bi.player == 1)
@@ -1089,10 +1089,10 @@ public class btl_cmd
                             //    btl.evt.animFrame = 0;
                             //}
                             btlsys.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
-                            btlsys.btl_seq = 3;
+                            btlsys.btl_seq = FF9StateBattleSystem.SEQ_MENU_OFF_ESCAPE;
                         }
                     }
-                    if (btlsys.btl_phase == FF9StateBattleSystem.PHASE_MENU_OFF && btlsys.btl_seq == 3)
+                    if (btlsys.btl_phase == FF9StateBattleSystem.PHASE_MENU_OFF && btlsys.btl_seq == FF9StateBattleSystem.SEQ_MENU_OFF_ESCAPE)
                     {
                         UIManager.Battle.SetIdle();
                         ++ff9StateGlobal.party.escape_no;
@@ -1589,7 +1589,7 @@ public class btl_cmd
                     if (btlsys.btl_phase != FF9StateBattleSystem.PHASE_MENU_OFF)
                     {
                         btlsys.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
-                        btlsys.btl_seq = 0;
+                        btlsys.btl_seq = FF9StateBattleSystem.SEQ_MENU_OFF_VICTORY;
                         KillAllCommand(btlsys);
                     }
                 }

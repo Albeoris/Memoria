@@ -17,6 +17,17 @@ public class FF9StateBattleSystem
     public const Byte PHASE_DEFEAT = 7;
     public const Byte PHASE_CLOSE = 8;
 
+    public const Byte SEQ_DEFEATCLOSE_FADEOUT = 0;
+    public const Byte SEQ_DEFEATCLOSE_WAIT = 1;
+    public const Byte SEQ_MENU_OFF_VICTORY = 0;
+    public const Byte SEQ_MENU_OFF_DEFEAT = 1;
+    public const Byte SEQ_MENU_OFF_EVENT = 2;
+    public const Byte SEQ_MENU_OFF_ESCAPE = 3;
+    public const Byte SEQ_MENU_OFF_VICTORY_WITH_ENEMY = 4;
+    public const Byte SEQ_VICTORY_CAMERA_MOVE = 0;
+    public const Byte SEQ_VICTORY_FADEOUT = 1;
+    public const Byte SEQ_VICTORY_WAIT = 2;
+
     public FF9StateBattleSystem()
     {
         this.p_mot = new String[][]
@@ -65,7 +76,7 @@ public class FF9StateBattleSystem
 
     public Int32 btl_cnt;
     public Byte btl_phase;
-    public Byte btl_seq; // FF9.battle_phase_close, FF9.battle_phase_defeat, FF9.battle_phase_menu_off & FF9.battle_phase_victory
+    public Byte btl_seq;
 
     public Byte btl_fade_time;
     public Byte btl_escape_key;

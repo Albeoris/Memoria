@@ -640,7 +640,7 @@ public partial class BattleHUD : UIScene
         for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
             if (next.bi.player == 0)
                 gil += btl_util.getEnemyPtr(next).bonus_gil;
-        if (FF9StateSystem.Common.FF9.btl_result == 4)
+        if (FF9StateSystem.Common.FF9.btl_result == FF9StateGlobal.BTL_RESULT_ESCAPE)
             btl_sys.ClearBattleBonus();
         for (Int32 i = 0; i < 4; i++)
         {
@@ -649,7 +649,7 @@ public partial class BattleHUD : UIScene
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player))
                     saFeature.TriggerOnBattleResult(player, battle.btl_bonus, new List<FF9ITEM>(), "BattleEnd", gil / 10U);
         }
-        if (FF9StateSystem.Common.FF9.btl_result == 4 && (battle.btl_bonus.gil != 0 || battle.btl_bonus.exp != 0 || battle.btl_bonus.ap != 0 || battle.btl_bonus.card != TetraMasterCardId.NONE))
+        if (FF9StateSystem.Common.FF9.btl_result == FF9StateGlobal.BTL_RESULT_ESCAPE && (battle.btl_bonus.gil != 0 || battle.btl_bonus.exp != 0 || battle.btl_bonus.ap != 0 || battle.btl_bonus.card != TetraMasterCardId.NONE))
             battle.btl_bonus.escape_gil = true;
 
         Hide(() => PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.BattleResult));

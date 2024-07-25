@@ -26,7 +26,7 @@ namespace Memoria.DefaultScripts
             btl_stat.RemoveStatus(Target, BattleStatusId.AutoLife);
             if (HPRestore > 0)
             {
-                Target.CurrentHp = HPRestore;
+                Target.CurrentHp = Math.Min(HPRestore, Target.MaximumHp);
                 btl_stat.RemoveStatus(Target, BattleStatusId.Death);
             }
             BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.AutoLife);

@@ -1,4 +1,11 @@
 #####################################################################################################
+##  
+##  Wiki pages also document how this file works:
+##  - Supporting Ability features: https://github.com/Albeoris/Memoria/wiki/Supporting-ability-features
+##  - Active Ability features: https://github.com/Albeoris/Memoria/wiki/Active-ability-features
+##  - Documentation for the formula format: https://github.com/Albeoris/Memoria/wiki/NCalc-formulas
+##  
+#####################################################################################################
 ## 
 ##  The format for coding Supporting Ability features is the following:
 ##  >SA {ID} {Comment}

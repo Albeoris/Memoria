@@ -14,39 +14,26 @@ public class BattleResultUI : UIScene
 {
     public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
     {
-        UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
-        {
-            this.screenFadePanel.depth = 0;
-        };
+        UIScene.SceneVoidDelegate afterShow = () => this.screenFadePanel.depth = 0;
         if (afterFinished != null)
-        {
-            sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
-        base.Show(sceneVoidDelegate);
+            afterShow += afterFinished;
+        base.Show(afterShow);
         SceneDirector.FF9Wipe_FadeInEx(12);
         PersistenSingleton<UIManager>.Instance.SetGameCameraEnable(false);
         this.isTimerDisplay = TimerUI.GetDisplay();
-        if (FF9StateSystem.Common.FF9.btl_result == 4)
+        if (FF9StateSystem.Common.FF9.btl_result == FF9StateGlobal.BTL_RESULT_ESCAPE)
         {
             if (battle.btl_bonus.escape_gil)
-            {
                 this.InitialNormal();
-            }
             else
-            {
                 this.InitialNone();
-            }
         }
-        else if (FF9StateSystem.Common.FF9.btl_result != 7)
+        else if (FF9StateSystem.Common.FF9.btl_result != FF9StateGlobal.BTL_RESULT_ENEMY_FLEE)
         {
             if (battle.btl_bonus.Event)
-            {
                 this.InitialEvent();
-            }
             else
-            {
                 this.InitialNormal();
-            }
         }
         else
         {
@@ -56,7 +43,7 @@ public class BattleResultUI : UIScene
 
     public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
     {
-        UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+        UIScene.SceneVoidDelegate afterHidz = delegate
         {
             SceneDirector.FF9Wipe_FadeInEx(256);
             battle.ff9ShutdownStateBattleResult();
@@ -64,23 +51,15 @@ public class BattleResultUI : UIScene
             PersistenSingleton<FF9StateSystem>.Instance.mode = PersistenSingleton<FF9StateSystem>.Instance.prevMode;
             Byte mode = PersistenSingleton<FF9StateSystem>.Instance.mode;
             if (mode == 3)
-            {
                 SceneDirector.Replace("WorldMap", SceneTransition.FadeOutToBlack, true);
-            }
             else if (mode == 5 || mode == 1)
-            {
                 SceneDirector.Replace("FieldMap", SceneTransition.FadeOutToBlack, true);
-            }
             if (this.isTimerDisplay && TimerUI.Enable)
-            {
                 TimerUI.SetDisplay(true);
-            }
         };
         if (afterFinished != null)
-        {
-            sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
-        base.Hide(sceneVoidDelegate);
+            afterHidz += afterFinished;
+        base.Hide(afterHidz);
         SceneDirector.FF9Wipe_FadeInEx(12);
         this.screenFadePanel.depth = 5;
     }

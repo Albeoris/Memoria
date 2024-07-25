@@ -341,10 +341,10 @@ namespace FF9
                                         ff.categoryKillCount[category]++;
                                 if (btl.dms_geo_id >= 0)
                                     ff.modelKillCount[btl.dms_geo_id]++;
-                                if (ff.btl_result != 4)
+                                if (ff.btl_result != FF9StateGlobal.BTL_RESULT_ESCAPE)
                                     btl_sys.SetBonus(enemyPtr);
                                 btl.die_seq++;
-                                if (ff9Battle.btl_phase != FF9StateBattleSystem.PHASE_MENU_OFF || (ff9Battle.btl_seq != 3 && ff9Battle.btl_seq != 2))
+                                if (ff9Battle.btl_phase != FF9StateBattleSystem.PHASE_MENU_OFF || (ff9Battle.btl_seq != FF9StateBattleSystem.SEQ_MENU_OFF_ESCAPE && ff9Battle.btl_seq != FF9StateBattleSystem.SEQ_MENU_OFF_EVENT))
                                     btl_sys.CheckBattlePhase(btl);
                                 btl_sys.DelCharacter(btl);
                             }
@@ -841,9 +841,12 @@ namespace FF9
 
         public static void ShowMesh(BTL_DATA btl, UInt16 mesh, Boolean isVanish = false)
         {
-            //String path = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(btl.dms_geo_id);
-            //if (ModelFactory.IsUseAsEnemyCharacter(path) && isVanish)
-            //    mesh = UInt16.MaxValue;
+            if (isVanish)
+            {
+                String path = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(btl.dms_geo_id);
+                if (ModelFactory.IsUseAsEnemyCharacter(path))
+                    mesh = UInt16.MaxValue;
+            }
             if (btl.bi.player == 0)
                 btl.flags &= (UInt16)~geo.GEO_FLAGS_RENDER;
             for (Int32 i = 0; i < 16; i++)

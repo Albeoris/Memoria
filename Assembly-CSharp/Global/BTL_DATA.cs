@@ -1,6 +1,7 @@
 ﻿using FF9;
 using Memoria;
 using Memoria.Data;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -104,7 +105,7 @@ public partial class BTL_DATA
         try
         {
             List<DelayedModifier> removedList = new List<DelayedModifier>();
-            Memoria.BattleUnit unit = new Memoria.BattleUnit(this);
+            BattleUnit unit = new BattleUnit(this);
             foreach (DelayedModifier modifier in delayedModifierList)
             {
                 if (!modifier.isDelayed(unit))
@@ -119,7 +120,7 @@ public partial class BTL_DATA
         }
         catch (Exception err)
         {
-            Memoria.Prime.Log.Error(err);
+            Log.Error(err);
         }
     }
 
@@ -231,8 +232,6 @@ public partial class BTL_DATA
     public Int32 radius_effect; // big radius (Scan etc...)
     public UInt16 radius_collision; // small radius (range for attacks etc...)
 
-    public UInt16 frameCount = 1;
-
     public Vector3 targetPos;
     public Int16 targetFrame;
 
@@ -300,8 +299,8 @@ public partial class BTL_DATA
 
     public class DelayedModifier
     {
-        public delegate Boolean IsDelayedDelegate(Memoria.BattleUnit btl);
-        public delegate void ApplyDelegate(Memoria.BattleUnit btl);
+        public delegate Boolean IsDelayedDelegate(BattleUnit btl);
+        public delegate void ApplyDelegate(BattleUnit btl);
 
         public IsDelayedDelegate isDelayed = null;
         public ApplyDelegate apply = null;

@@ -79,8 +79,8 @@ namespace Memoria
         public static Boolean IsRandomBattle => FF9StateSystem.Battle.isRandomEncounter && !IsFriendlyBattle;
         public static Boolean IsFriendlyBattle => ff9.w_friendlyBattles.Contains((UInt16)FF9StateSystem.Battle.battleMapIndex);
         public static Boolean IsRagtimeBattle => ff9.w_ragtimeBattles.Contains((UInt16)FF9StateSystem.Battle.battleMapIndex);
-        public static Boolean IsFlee => FF9StateSystem.Common.FF9.btl_result == 4;
-        public static Boolean IsFleeByLuck => FF9StateSystem.Common.FF9.btl_result == 4 && (FF9StateSystem.Common.FF9.btl_flag & battle.BTL_FLAG_ABILITY_FLEE) == 0;
+        public static Boolean IsFlee => FF9StateSystem.Common.FF9.btl_result == FF9StateGlobal.BTL_RESULT_ESCAPE;
+        public static Boolean IsFleeByLuck => FF9StateSystem.Common.FF9.btl_result == FF9StateGlobal.BTL_RESULT_ESCAPE && (FF9StateSystem.Common.FF9.btl_flag & battle.BTL_FLAG_ABILITY_FLEE) == 0;
         public static BattleCommand EscapeCommand => new BattleCommand(FF9StateSystem.Battle.FF9Battle.cmd_escape);
         public static Int32 TargetCount(Boolean isPlayer)
         {

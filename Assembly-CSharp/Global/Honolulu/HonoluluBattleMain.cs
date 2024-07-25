@@ -622,14 +622,14 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         FF9StateGlobal ff9StateGlobal = FF9StateSystem.Common.FF9;
         switch (ff9StateGlobal.btl_result)
         {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 7:
-                if (ff9StateGlobal.btl_result == 2)
-                    ff9StateGlobal.btl_result = 1;
+            case FF9StateGlobal.BTL_RESULT_VICTORY:
+            case FF9StateGlobal.BTL_RESULT_VICTORY_NO_POSE:
+            case FF9StateGlobal.BTL_RESULT_DEFEAT:
+            case FF9StateGlobal.BTL_RESULT_ESCAPE:
+            case FF9StateGlobal.BTL_RESULT_INTERRUPTION:
+            case FF9StateGlobal.BTL_RESULT_ENEMY_FLEE:
+                if (ff9StateGlobal.btl_result == FF9StateGlobal.BTL_RESULT_VICTORY_NO_POSE)
+                    ff9StateGlobal.btl_result = FF9StateGlobal.BTL_RESULT_VICTORY;
                 if (FF9StateSystem.Battle.FF9Battle.map.nextMode == 1 || FF9StateSystem.Battle.FF9Battle.map.nextMode == 5)
                     FF9StateSystem.Common.FF9.fldMapNo = FF9StateSystem.Battle.FF9Battle.map.nextMapNo;
                 else if (FF9StateSystem.Battle.FF9Battle.map.nextMode == 3)
@@ -641,7 +641,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     SceneDirector.ServiceFade();
                 }
                 return;
-            case 6:
+            case FF9StateGlobal.BTL_RESULT_GAMEOVER:
                 UIManager.Battle.GoToGameOver();
                 return;
             default:

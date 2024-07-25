@@ -2293,10 +2293,10 @@ public static class SFX
             return true;
         if (FF9StateSystem.Settings.cfg.camera == 1UL || Comn.random8() >= 128)
             return false;
-        BattleStatus pStat = cmd.regist.stat.cur | cmd.regist.stat.permanent;
+        BattleStatus pStat = cmd.regist.stat.CurrentIncludeOnHold;
         for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
             if ((next.btl_id & cmd.tar_id) != 0)
-                pStat |= next.stat.cur | next.stat.permanent;
+                pStat |= next.stat.CurrentIncludeOnHold;
         return (pStat & BattleStatusConst.PreventAlternateCamera) == 0u;
     }
 
