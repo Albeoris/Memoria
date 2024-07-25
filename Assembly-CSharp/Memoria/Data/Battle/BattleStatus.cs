@@ -124,13 +124,16 @@ namespace Memoria.Data
         public static BattleStatus OprCount = BattleStatus.Venom | BattleStatus.Poison | BattleStatus.Regen | BattleStatus.GradualPetrify | BattleStatus.Doom; // 0x50002 originally, now Doom and GPetrify also use opr
         public static BattleStatus CmdCancel = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Sleep; // 0x20D03
         public static BattleStatus NoInput = CmdCancel | BattleStatus.Stop | BattleStatus.Freeze | BattleStatus.Jump; // 0x42021D03;
-        public static BattleStatus IdleDying = BattleStatus.Venom | BattleStatus.LowHP | BattleStatus.Poison | BattleStatus.Sleep;
-        public static BattleStatus IdleDefend = BattleStatus.Defend;
         public static BattleStatus Immobilized = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Stop | BattleStatus.Freeze; // 0x2001003
         public static BattleStatus FrozenAnimation = Immobilized | BattleStatus.Jump;
         public static BattleStatus NoReaction = FrozenAnimation | BattleStatus.Death;
         public static BattleStatus NoDamageMotion = NoReaction | BattleStatus.Defend;
+        public static BattleStatus CannotAct = Immobilized | BattleStatus.Jump | BattleStatus.Death | BattleStatus.Sleep;
+        public static BattleStatus PreventEnemyCmd = Immobilized | BattleStatus.Death | BattleStatus.Sleep; // 0x2021103
+        public static BattleStatus PreventCounter = PreventEnemyCmd; // 0x2021103
         public static BattleStatus StopAtb = BattleStatus.Petrify | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Jump; // 0x40001101
+        public static BattleStatus IdleDying = BattleStatus.Venom | BattleStatus.LowHP | BattleStatus.Poison | BattleStatus.Sleep;
+        public static BattleStatus IdleDefend = BattleStatus.Defend;
         public static BattleStatus ChgPolyClut = BattleStatus.Petrify;
         public static BattleStatus CannotEscape = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump;
         public static BattleStatus CannotTrance = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Zombie | BattleStatus.Death | BattleStatus.Stop | BattleStatus.Trance | BattleStatus.Freeze;
@@ -144,9 +147,6 @@ namespace Memoria.Data
         public static BattleStatus RemoveOnPhysicallyAttacked = BattleStatus.Confuse | BattleStatus.Sleep; // 0x20400
         public static BattleStatus RemoveOnEvent = BattleStatus.Confuse | BattleStatus.Stop | BattleStatus.Defend | BattleStatus.Freeze;
         public static BattleStatus RemoveOnMonsterTransform = BattleStatus.ChangeStat;
-        public static BattleStatus PreventEnemyCmd = Immobilized | BattleStatus.Death | BattleStatus.Sleep; // 0x2021103
-        public static BattleStatus PreventCounter = PreventEnemyCmd; // 0x2021103
-        public static BattleStatus CannotAct = Immobilized | BattleStatus.Jump | BattleStatus.Death | BattleStatus.Sleep;
         public static BattleStatus PenaltyEvade = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Virus | BattleStatus.Blind | BattleStatus.Confuse | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze;
         public static BattleStatus PreventAlternateCamera = BattleStatus.Vanish | BattleStatus.Mini;
         public static BattleStatus PreventATBConfirm = BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze;
@@ -164,11 +164,11 @@ namespace Memoria.Data
         {
             NoInput |= CmdCancel;
             FrozenAnimation |= Immobilized;
-            BattleEndFull = BattleEnd | BattleStatus.Death;
             NoReaction |= FrozenAnimation;
+            CannotAct |= Immobilized;
             PreventEnemyCmd |= Immobilized;
             PreventCounter |= Immobilized;
-            CannotAct |= Immobilized;
+            BattleEndFull = BattleEnd | BattleStatus.Death;
             BattleEndInMenu = BattleEnd & OutOfBattle;
         }
     }

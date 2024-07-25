@@ -44,10 +44,9 @@ public static class btl2d
         Byte delay = 0;
         if (btl.bi.disappear == 0)
         {
-            if ((fig_info & Param.FIG_INFO_TROUBLE) != 0)
-                foreach (BattleStatusId statusId in btl.stat.cur.ToStatusList())
-                    if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
-                        (effect as ITroubleStatusScript)?.OnTroubleDamage(fig_info, fig, m_fig);
+            foreach (BattleStatusId statusId in btl.stat.cur.ToStatusList())
+                if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
+                    (effect as IFigurePointStatusScript)?.OnFigurePoint(fig_info, fig, m_fig);
             if ((fig_info & Param.FIG_INFO_GUARD) != 0)
             {
                 btl2d.Btl2dReqSymbol(btl, 2, btl2d.DMG_COL_WHITE, 0);

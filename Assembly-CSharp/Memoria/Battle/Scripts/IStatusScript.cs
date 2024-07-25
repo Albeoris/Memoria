@@ -5,6 +5,15 @@ using Memoria.Prime.Text;
 
 namespace Memoria
 {
+    /// <summary>The attribute required for all the status scripts</summary>
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    public sealed class StatusScriptAttribute : Attribute
+    {
+        public BattleStatusId Id { get; }
+        public StatusScriptAttribute(BattleStatusId id) { Id = id; }
+    }
+
+    /// <summary>The base class required for all the status scripts</summary>
     public abstract class StatusScriptBase
     {
         /// <summary>The unit on which the status has been inflicted, provided that base.Apply is called correctly</summary>
@@ -41,17 +50,6 @@ namespace Memoria
         }
     }
 
-    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public sealed class StatusScriptAttribute : Attribute
-    {
-        public BattleStatusId Id { get; }
-
-        public StatusScriptAttribute(BattleStatusId id)
-        {
-            Id = id;
-        }
-    }
-
     public interface IOprStatusScript
     {
         /// <summary>A code executed at every Opr ticks (eg. Regen or Poison ticks)</summary>
@@ -83,9 +81,9 @@ namespace Memoria
         public void OnFinishCommand(CMD_DATA cmd, Int32 tranceDecrease);
     }
 
-    public interface ITroubleStatusScript
+    public interface IFigurePointStatusScript
     {
-        /// <summary>A code executed at the figure point (ie. when damage is displayed) if the flag FIG_INFO_TROUBLE was raised</summary>
-        public void OnTroubleDamage(UInt16 fig_info, Int32 fig, Int32 m_fig);
+        /// <summary>A code executed at the figure point (ie. when damage is displayed)</summary>
+        public void OnFigurePoint(UInt16 fig_info, Int32 fig, Int32 m_fig);
     }
 }
