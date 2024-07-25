@@ -46,7 +46,7 @@ public static class btl2d
         {
             foreach (BattleStatusId statusId in btl.stat.cur.ToStatusList())
                 if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
-                    (effect as IFigurePointStatusScript)?.OnFigurePoint(fig_info, fig, m_fig);
+                    (effect as IFigurePointStatusScript)?.OnFigurePoint(ref fig_info, ref fig, ref m_fig);
             if ((fig_info & Param.FIG_INFO_GUARD) != 0)
             {
                 btl2d.Btl2dReqSymbol(btl, 2, btl2d.DMG_COL_WHITE, 0);

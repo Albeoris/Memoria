@@ -19,7 +19,7 @@ namespace Memoria.DefaultScripts
             return true;
         }
 
-        public void OnFigurePoint(UInt16 fig_info, Int32 fig, Int32 m_fig)
+        public void OnFigurePoint(ref UInt16 fig_info, ref Int32 fig, ref Int32 m_fig)
         {
             if ((fig_info & Param.FIG_INFO_TROUBLE) == 0)
                 return;
