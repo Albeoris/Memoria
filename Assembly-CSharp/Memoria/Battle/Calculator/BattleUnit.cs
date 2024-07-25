@@ -178,13 +178,21 @@ namespace Memoria
             get => Data.uiColorHP;
             set => Data.uiColorHP = value;
         }
-
         public Color UIColorMP
         {
             get => Data.uiColorMP;
             set => Data.uiColorMP = value;
         }
-
+        public String UILabelHP
+        {
+            get => Data.uiLabelHP;
+            set => Data.uiLabelHP = value;
+        }
+        public String UILabelMP
+        {
+            get => Data.uiLabelMP;
+            set => Data.uiLabelMP = value;
+        }
         public String UISpriteATB
         {
             get => Data.uiSpriteATB;

@@ -404,6 +404,9 @@ public static class btl_init
         btl.maxMpDamageLimit = p.maxMpDamageLimit;
         btl.uiColorHP = FF9TextTool.White;
         btl.uiColorMP = FF9TextTool.White;
+        btl.uiLabelHP = null;
+        btl.uiLabelMP = null;
+        btl.uiSpriteATB = BattleHUD.ATENormal;
         btl.uiSpriteATB = BattleHUD.ATENormal;
         FF9Char ff9Char = new FF9Char();
         ff9Char.btl = btl;

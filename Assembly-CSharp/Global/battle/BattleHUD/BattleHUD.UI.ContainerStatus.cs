@@ -131,7 +131,7 @@ public partial class BattleHUD : UIScene
             {
                 ValueWidget hud = HP.Array[playerId];
                 hud.IsActive = true;
-                hud.Value.SetText(bd.CurrentHp.ToString());
+                hud.Value.SetText(String.IsNullOrEmpty(bd.UILabelHP) ? bd.CurrentHp.ToString() : bd.UILabelHP);
                 hud.MaxValue.SetText(bd.MaximumHp.ToString());
                 if (!bd.IsTargetable)
                     hud.SetColor(FF9TextTool.Gray);
@@ -145,7 +145,7 @@ public partial class BattleHUD : UIScene
             {
                 ValueWidget numberSubModeHud = MP.Array[playerId];
                 numberSubModeHud.IsActive = true;
-                numberSubModeHud.Value.SetText(bd.CurrentMp.ToString());
+                numberSubModeHud.Value.SetText(String.IsNullOrEmpty(bd.UILabelMP) ? bd.CurrentMp.ToString() : bd.UILabelMP);
                 numberSubModeHud.MaxValue.SetText(bd.MaximumMp.ToString());
                 numberSubModeHud.SetColor(bd.IsTargetable ? bd.UIColorMP : FF9TextTool.Gray);
             }

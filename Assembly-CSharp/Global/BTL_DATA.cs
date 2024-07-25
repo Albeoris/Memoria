@@ -259,6 +259,8 @@ public partial class BTL_DATA
 
     public Color uiColorHP;
     public Color uiColorMP;
+    public String uiLabelHP;
+    public String uiLabelMP;
     public String uiSpriteATB;
 
     public Vector3 geoScaleStatus;

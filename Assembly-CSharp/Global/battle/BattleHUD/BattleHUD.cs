@@ -471,7 +471,7 @@ public partial class BattleHUD : UIScene
 
             UI.ContainerStatus.ValueWidget numberSubModeHud = _statusPanel.HP.Array[index];
             numberSubModeHud.IsActive = true;
-            numberSubModeHud.Value.SetText(player.CurrentHp.ToString());
+            numberSubModeHud.Value.SetText(String.IsNullOrEmpty(player.UILabelHP) ? player.CurrentHp.ToString() : player.UILabelHP);
             numberSubModeHud.MaxValue.SetText(player.MaximumHp.ToString());
             if (!player.IsTargetable)
                 numberSubModeHud.SetColor(FF9TextTool.Gray);
@@ -498,7 +498,7 @@ public partial class BattleHUD : UIScene
 
             UI.ContainerStatus.ValueWidget numberSubModeHud = _statusPanel.MP.Array[index];
             numberSubModeHud.IsActive = true;
-            numberSubModeHud.Value.SetText(player.CurrentMp.ToString());
+            numberSubModeHud.Value.SetText(String.IsNullOrEmpty(player.UILabelMP) ? player.CurrentMp.ToString() : player.UILabelMP);
             numberSubModeHud.MaxValue.SetText(player.MaximumMp.ToString());
             numberSubModeHud.SetColor(player.IsTargetable ? player.UIColorMP : FF9TextTool.Gray);
             list.Remove(index);
@@ -1010,8 +1010,8 @@ public partial class BattleHUD : UIScene
     private void DisplayCharacterParameter(UI.PanelParty.Character playerHud, BattleUnit bd, DamageAnimationInfo hp, DamageAnimationInfo mp)
     {
         playerHud.Name.SetText(bd.Player.Name);
-        playerHud.HP.SetText(hp.CurrentValue.ToString());
-        playerHud.MP.SetText(mp.CurrentValue.ToString());
+        playerHud.HP.SetText(String.IsNullOrEmpty(bd.UILabelHP) ? hp.CurrentValue.ToString() : bd.UILabelHP);
+        playerHud.MP.SetText(String.IsNullOrEmpty(bd.UILabelMP) ? mp.CurrentValue.ToString() : bd.UILabelMP);
         ParameterStatus parameterStatus = CheckHPState(bd);
 
         switch (parameterStatus)
