@@ -10,41 +10,42 @@ namespace Memoria.DefaultScripts
     {
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
-            if (target.IsMonsterTransform && target.Data.monster_transform.attack[target.Data.bi.def_idle] == null)
+            base.Apply(target, inflicter, parameters);
+            if (!target.CanUseTheAttackCommand)
                 return btl_stat.ALTER_RESIST;
             return btl_stat.ALTER_SUCCESS;
         }
 
-        public override Boolean Remove(BattleUnit target)
+        public override Boolean Remove()
         {
-            btl_stat.StatusCommandCancel(target);
+            btl_stat.StatusCommandCancel(Target);
             return true;
         }
 
-        public Boolean OnATB(BattleUnit target)
+        public Boolean OnATB()
         {
-            if (target.IsMonsterTransform && target.Data.monster_transform.attack[target.Data.bi.def_idle] == null)
+            if (!Target.CanUseTheAttackCommand)
             {
-                btl_stat.RemoveStatus(target, BattleStatusId.Berserk);
+                btl_stat.RemoveStatus(Target, BattleStatusId.Berserk);
                 return false;
             }
-            if (target.IsPlayer)
-                btl_cmd.SetCommand(target.Data.cmd[0], BattleCommandId.Attack, (Int32)BattleAbilityId.Attack, btl_util.GetRandomBtlID(0), 0u);
+            if (Target.IsPlayer)
+                btl_cmd.SetCommand(Target.ATBCommand, BattleCommandId.Attack, (Int32)BattleAbilityId.Attack, btl_util.GetRandomBtlID(0), 0u);
             else
-                btl_cmd.SetEnemyCommand(target.Id, btl_util.GetRandomBtlID(1), BattleCommandId.EnemyAtk, target.EnemyType.p_atk_no);
+                btl_cmd.SetEnemyCommand(Target.Id, btl_util.GetRandomBtlID(1), BattleCommandId.EnemyAtk, Target.EnemyType.p_atk_no);
             if (Configuration.VoiceActing.Enabled)
-                target.AddDelayedModifier(WaitForAutoAttack, TriggerUsageForBattleVoice);
+                Target.AddDelayedModifier(WaitForAutoAttack, TriggerUsageForBattleVoice);
             return true;
         }
 
         private Boolean WaitForAutoAttack(BattleUnit unit)
         {
-            return btl_cmd.CheckCommandQueued(unit.Data.cmd[0]);
+            return btl_cmd.CheckCommandQueued(unit.ATBCommand);
         }
 
         private void TriggerUsageForBattleVoice(BattleUnit unit)
         {
-            if (unit.Data.cmd[0].info.mode != command_mode_index.CMD_MODE_INSPECTION)
+            if (unit.ATBCommand.ExecutionStep != command_mode_index.CMD_MODE_INSPECTION)
                 BattleVoice.TriggerOnStatusChange(unit, "Used", BattleStatusId.Berserk);
         }
     }

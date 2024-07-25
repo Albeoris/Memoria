@@ -38,8 +38,16 @@ public class SHPEffect : MonoBehaviour
     {
         this.shpId = -1;
         this.attr = 0;
+        this.frame = 0;
+        this.pos = Vector3.zero;
+        this.scale = Vector3.one;
+        this.rot = Vector3.zero;
+        this.attach = null;
+        this.posOffset = Vector3.zero;
+        this.duration = -1;
         foreach (GameObject go in this.shpGo)
-            go.SetActive(false);
+            UnityEngine.Object.Destroy(go);
+        this.shpGo = [];
     }
 
     public void AnimateSHP()

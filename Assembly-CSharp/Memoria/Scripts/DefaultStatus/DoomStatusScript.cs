@@ -14,7 +14,8 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
-            btl2d.GetIconPosition(target, 5, out Transform attachTransf, out Vector3 iconOff);
+            base.Apply(target, inflicter, parameters);
+            btl2d.GetIconPosition(target, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
             DoomInflicter = inflicter;
             Counter = parameters.Length > 0 ? (Int32)parameters[0] : 10;
             Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
@@ -22,7 +23,7 @@ namespace Memoria.DefaultScripts
             return btl_stat.ALTER_SUCCESS;
         }
 
-        public override Boolean Remove(BattleUnit target)
+        public override Boolean Remove()
         {
             btl2d.StatusMessages.Remove(Message);
             Singleton<HUDMessage>.Instance.ReleaseObject(Message);
@@ -30,13 +31,13 @@ namespace Memoria.DefaultScripts
         }
 
         public IOprStatusScript.SetupOprMethod SetupOpr => SetupDoomOpr;
-        public Int32 SetupDoomOpr(BattleUnit target)
+        public Int32 SetupDoomOpr()
         {
             // Use the duration "ContiCnt" of Doom even if it is not registered as BattleStatusConst.ContiCount
-            return (Int32)(target.StatusDurationFactor[BattleStatusId.Doom] * BattleStatusId.Doom.GetStatData().ContiCnt * (60 - target.Will << 3) / 10);
+            return (Int32)(Target.StatusDurationFactor[BattleStatusId.Doom] * BattleStatusId.Doom.GetStatData().ContiCnt * (60 - Target.Will << 3) / 10);
         }
 
-        public Boolean OnOpr(BattleUnit target)
+        public Boolean OnOpr()
         {
             Counter--;
             if (Counter > 0)
@@ -44,9 +45,9 @@ namespace Memoria.DefaultScripts
                 Message.Label = $"{Counter}";
                 return false;
             }
-            BattleVoice.TriggerOnStatusChange(target, "Used", BattleStatusId.Doom);
-            btl_stat.AlterStatus(target, BattleStatusId.Death, DoomInflicter);
-            btl2d.Btl2dReq(target);
+            if (btl_stat.AlterStatus(Target, BattleStatusId.Death, DoomInflicter) == btl_stat.ALTER_SUCCESS)
+                BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Doom);
+            btl2d.Btl2dReq(Target);
             return true;
         }
     }

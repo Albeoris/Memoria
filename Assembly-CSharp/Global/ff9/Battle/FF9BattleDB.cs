@@ -82,9 +82,9 @@ public static partial class FF9BattleDB
             inputPath = DataResources.Battle.Directory + DataResources.Battle.StatusDataFile;
             if (result.Count == 0)
                 throw new FileNotFoundException($"File with status datas not found: [{inputPath}]");
-            for (Int32 i = 0; i < 32; i++)
+            for (Int32 i = 0; i < 33; i++)
                 if (!result.ContainsKey((BattleStatusId)i))
-                    throw new NotSupportedException($"You must define at least 32 status datas, with IDs between 0 and 31");
+                    throw new NotSupportedException($"You must define at least 33 status datas, with IDs between 0 and 32");
             return result;
         }
         catch (Exception ex)

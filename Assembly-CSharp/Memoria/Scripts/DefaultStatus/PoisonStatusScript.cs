@@ -12,34 +12,30 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            base.Apply(target, inflicter, parameters);
             PoisonInflicter = inflicter;
             return btl_stat.ALTER_SUCCESS;
         }
 
-        public override Boolean Remove(BattleUnit target)
+        public override Boolean Remove()
         {
             return true;
         }
 
         public IOprStatusScript.SetupOprMethod SetupOpr => null;
-        public Boolean OnOpr(BattleUnit target)
+        public Boolean OnOpr()
         {
-            BTL_DATA btl = target;
-            UInt32 damage = 0;
-            if (!target.IsUnderAnyStatus(BattleStatus.Petrify))
-            {
-                damage = target.MaximumHp >> 4;
-                if (target.IsUnderAnyStatus(BattleStatus.EasyKill))
-                    damage >>= 2;
-                if (target.CurrentHp > damage)
-                    target.CurrentHp -= damage;
-                else
-                    target.Kill(PoisonInflicter);
-            }
-            btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_HP;
-            btl.fig_poison_hp = (Int32)damage;
-            btl2d.Btl2dStatReq(target);
-            BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Poison);
+            if (Target.IsUnderAnyStatus(BattleStatus.Petrify))
+                return false;
+            UInt32 damage = Target.MaximumHp >> 4;
+            if (Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                damage >>= 2;
+            if (Target.CurrentHp > damage)
+                Target.CurrentHp -= damage;
+            else
+                Target.Kill(PoisonInflicter);
+            btl2d.Btl2dStatReq(Target, (Int32)damage, 0);
+            BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Poison);
             return false;
         }
     }

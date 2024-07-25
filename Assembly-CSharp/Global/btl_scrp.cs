@@ -4,7 +4,6 @@ using Memoria.Data;
 using Memoria.Speedrun;
 using System;
 using System.Linq;
-using static Memoria.Prime.PsdFile.ResolutionInfo;
 
 public class btl_scrp
 {
@@ -88,8 +87,8 @@ public class btl_scrp
             case 1013: return (UInt16)0;
             case 1014: return (UInt16)cmd.info.CustomMPCost;
             case 1015: return (UInt16)cmd.AbilityType;
-            case 1016: return (UInt16)((UInt32)cmd.AbilityStatus >> 16);
-            case 1017: return (UInt16)((UInt32)cmd.AbilityStatus & 0xFFFF);
+            case 1016: return (UInt16)((UInt64)cmd.AbilityStatus >> 16);
+            case 1017: return (UInt16)((UInt64)cmd.AbilityStatus & 0xFFFF);
             case 1018: return (UInt16)cmd.info.dodge;
             case 1019: return (UInt16)cmd.info.reflec;
             case 1020: return (UInt16)cmd.info.meteor_miss;
@@ -154,8 +153,8 @@ public class btl_scrp
             case 1013: return;
             case 1014: cmd.info.CustomMPCost = val; return;
             case 1015: cmd.AbilityType = (Byte)val; return;
-            case 1016: cmd.AbilityStatus = (BattleStatus)(((UInt32)cmd.AbilityStatus & 0xFFFFu) | ((UInt32)(val & 0xFFFF) << 16)); return;
-            case 1017: cmd.AbilityStatus = (BattleStatus)(((UInt32)cmd.AbilityStatus & 0xFFFF0000u) | (UInt32)(val & 0xFFFF)); return;
+            case 1016: cmd.AbilityStatus = (BattleStatus)(((UInt64)cmd.AbilityStatus & 0xFFFFFFFF0000FFFFul) | ((UInt64)(val & 0xFFFFu) << 16)); return;
+            case 1017: cmd.AbilityStatus = (BattleStatus)(((UInt64)cmd.AbilityStatus & 0xFFFFFFFFFFFF0000ul) | (UInt64)(val & 0xFFFFu)); return;
             case 1018: cmd.info.dodge = (Byte)val; return;
             case 1019: cmd.info.reflec = (Byte)val; return;
             case 1020: cmd.info.meteor_miss = (Byte)val; return;
@@ -222,22 +221,22 @@ public class btl_scrp
                     result = btl_util.getEnemyTypePtr(btl).level;
                 break;
             case 42u:
-                result = (Int32)((UInt32)btl.stat.invalid >> 24);
+                result = (Int32)((UInt64)btl.stat.invalid >> 24);
                 break;
             case 43u:
-                result = (Int32)((UInt32)btl.stat.invalid & 0xFFFFFFu);
+                result = (Int32)((UInt64)btl.stat.invalid & 0xFFFFFFu);
                 break;
             case 44u:
-                result = (Int32)((UInt32)btl.stat.permanent >> 24);
+                result = (Int32)((UInt64)btl.stat.permanent >> 24);
                 break;
             case 45u:
-                result = (Int32)((UInt32)btl.stat.permanent & 0xFFFFFFu);
+                result = (Int32)((UInt64)btl.stat.permanent & 0xFFFFFFu);
                 break;
             case 46u:
-                result = (Int32)((UInt32)btl.stat.cur >> 24);
+                result = (Int32)((UInt64)btl.stat.cur >> 24);
                 break;
             case 47u:
-                result = (Int32)((UInt32)btl.stat.cur & 0xFFFFFFu);
+                result = (Int32)((UInt64)btl.stat.cur & 0xFFFFFFu);
                 break;
             case 48u:
                 result = btl.def_attr.invalid;
@@ -458,26 +457,26 @@ public class btl_scrp
                 btl.cur.at = (Int16)val;
                 break;
             case 42u:
-                btl.stat.invalid = (BattleStatus)(((UInt32)btl.stat.invalid & 0xFFFFFFu) | ((UInt32)val << 24));
+                btl.stat.invalid = (BattleStatus)(((UInt64)btl.stat.invalid & 0xFFFF000000FFFFFFul) | ((UInt64)val << 24));
                 break;
             case 43u:
-                btl.stat.invalid = (BattleStatus)(((UInt32)btl.stat.invalid & 0xFF000000u) | (UInt32)val);
+                btl.stat.invalid = (BattleStatus)(((UInt64)btl.stat.invalid & 0xFFFFFFFFFF000000ul) | (UInt32)val);
                 break;
             case 44u:
-                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt32)btl.stat.permanent & (~((UInt32)val << 24)) & 0xFF000000u), false);
+                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt64)btl.stat.permanent & (~((UInt64)val << 24)) & 0xFFFFFFFFFF000000ul), false);
                 btl_stat.MakeStatusesPermanent(unit, (BattleStatus)(val << 24), true);
                 break;
             case 45u:
-                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt32)btl.stat.permanent & (~(UInt32)val) & 0xFFFFFFu), false);
-                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)(val & 0xFFFFFFu), true);
+                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt64)btl.stat.permanent & (~(UInt64)val) & 0xFFFF000000FFFFFFul), false);
+                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt64)val & 0xFFFF000000FFFFFFul), true);
                 break;
             case 46u: // Statuses can be modified by battle scripts thanks to these: set SV_FunctionEnemy[STATUS_CURRENT_A] |=$ Status to add
-                btl_stat.RemoveStatuses(unit, (BattleStatus)((UInt32)btl.stat.cur & (~((UInt32)val << 24)) & 0xFF000000u));
+                btl_stat.RemoveStatuses(unit, (BattleStatus)((UInt64)btl.stat.cur & (~((UInt64)val << 24)) & 0xFFFFFFFFFF000000ul));
                 btl_stat.AlterStatuses(unit, (BattleStatus)(val << 24));
                 break;
             case 47u:
-                btl_stat.RemoveStatuses(unit, (BattleStatus)((UInt32)btl.stat.cur & (~(UInt32)val) & 0xFFFFFFu));
-                btl_stat.AlterStatuses(unit, (BattleStatus)(val & 0xFFFFFFu));
+                btl_stat.RemoveStatuses(unit, (BattleStatus)((UInt64)btl.stat.cur & (~(UInt64)val) & 0xFFFF000000FFFFFFul));
+                btl_stat.AlterStatuses(unit, (BattleStatus)((UInt64)val & 0xFFFF000000FFFFFFul));
                 break;
             case 48u:
                 btl.def_attr.invalid = (Byte)val;
@@ -492,8 +491,7 @@ public class btl_scrp
                 btl.def_attr.weak = (Byte)val;
                 break;
             case 52u:
-                //very start of battle
-                if (ff9Battle.btl_phase == 2)
+                if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_ENTER)
                 {
                     btl.tar_mode = 0;
                     btl.bi.target = 0;
@@ -515,7 +513,7 @@ public class btl_scrp
             case 55u:
                 // Many AI scripts setup a custom model size for enemies; when they do, they handle Mini in the EventEngine.Request(tagNumber = 7) function ("CounterEx" in Hades Workshop)
                 geo.geoScaleSet(btl, val, true, true);
-                if (ff9Battle.btl_phase == 2) // When modified during BattleLoad, consider it to be the default
+                if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_ENTER) // When modified during BattleLoad, consider it to be the default
                     btl.geo_scale_default = val;
                 break;
             case 56u:
@@ -654,21 +652,6 @@ public class btl_scrp
                 }
                 break;
             }
-            case 130u: // Note: Very crafty. Creates elemental orbs (special SPS) rotating around the BTL_DATA...
-                if (val == 3)
-                {
-                    UnityEngine.Vector3 btl_pos = btl.gameObject.transform.GetChildByName("bone000").position;
-                    HonoluluBattleMain.battleSPS.AddSpecialSPSObj(0, 12, btl_pos, 4.0f);
-                    HonoluluBattleMain.battleSPS.AddSpecialSPSObj(1, 13, btl_pos, 4.0f);
-                    HonoluluBattleMain.battleSPS.AddSpecialSPSObj(2, 14, btl_pos, 4.0f);
-                }
-                else if (val == 2) // ... and remove them 1 by 1
-                    HonoluluBattleMain.battleSPS.RemoveSpecialSPSObj(2);
-                else if (val == 1)
-                    HonoluluBattleMain.battleSPS.RemoveSpecialSPSObj(1);
-                else if (val == 0)
-                    HonoluluBattleMain.battleSPS.RemoveSpecialSPSObj(0);
-                break;
             case 140:
                 btl.pos.x = val;
                 btl.evt.posBattle.x = btl.pos.x;
@@ -783,26 +766,26 @@ public class btl_scrp
                 UIManager.Battle.FF9BMenu_EnableMenu(false);
                 ff9Battle.btl_escape_key = 0;
                 ff9Battle.cmd_status &= 0xFFFD;
-                ff9Battle.btl_phase = 5;
+                ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
                 ff9Battle.btl_seq = 2;
                 btl_cmd.KillAllCommand(ff9Battle);
                 for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                     next.bi.cmd_idle = 0;
                 break;
             case 33u: // End battle
-                if (ff9Battle.btl_phase == 1)
+                if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_EVENT)
                 {
                     ff.btl_result = (Byte)val;
                     if (val == 1 && ff9Battle.btl_scene.Info.WinPose)
                     {
-                        ff9Battle.btl_phase = 5;
+                        ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
                         ff9Battle.btl_seq = 4;
                     }
                     else
                     {
                         if (ff.btl_result == 1)
                             ff.btl_result = 2;
-                        ff9Battle.btl_phase = 8;
+                        ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_CLOSE;
                         ff9Battle.btl_seq = 0;
                     }
                     if (ff.btl_result == 5) // Scripted interruption, such as Black Waltz 3 (first time)
@@ -812,25 +795,25 @@ public class btl_scrp
                 }
                 break;
             case 34u: // Game Over
-                if (ff9Battle.btl_phase == 1)
+                if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_EVENT)
                 {
-                    ff9Battle.btl_phase = 7;
+                    ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_DEFEAT;
                     ff9Battle.btl_seq = 0;
                     ff.btl_result = 3;
                 }
                 break;
             case 35u: // Enable ATB
-                if (ff9Battle.btl_phase == 1)
+                if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_EVENT)
                 {
                     BTL_SCENE_INFO info = ff9Battle.btl_scene.Info;
-                    ff9Battle.btl_phase = 3;
+                    ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_ON;
                     ff9Battle.btl_seq = 0;
                     if (!info.SpecialStart || !info.BackAttack || !info.Preemptive)
                         info.StartType = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
                 }
                 break;
             case 36u: // Run Camera
-                if (ff9Battle.btl_phase == 1)
+                if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_EVENT)
                     SFX.SetCamera(val);
                 break;
             case 37u: // Change next field

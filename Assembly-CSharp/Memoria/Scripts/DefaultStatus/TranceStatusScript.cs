@@ -38,7 +38,8 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
-            // TODO [DV]
+            base.Apply(target, inflicter, parameters);
+            // TODO [DV] Add the status Old (and possibly other custom statuses) in StatusData.csv's "ClearOnApply and ImmunityProvided"
             //btl_stat.RemoveStatus(target, OLD);
             btl_cmd.SetCommand(target.Data.cmd[4], BattleCommandId.SysTrans, 0, target.Id, 0u);
             if (target.PlayerIndex == CharacterId.Garnet)
@@ -46,36 +47,36 @@ namespace Memoria.DefaultScripts
             return btl_stat.ALTER_SUCCESS;
         }
 
-        public override Boolean Remove(BattleUnit target)
+        public override Boolean Remove()
         {
-            target.Trance = 0;
-            if (target.IsUnderAnyStatus(BattleStatus.Jump))
+            Target.Trance = 0;
+            if (Target.IsUnderAnyStatus(BattleStatus.Jump))
             {
-                btl_stat.RemoveStatus(target, BattleStatusId.Jump);
-                target.Data.SetDisappear(false, 2);
-                btl_mot.setBasePos(target);
-                btl_mot.setMotion(target, target.Data.bi.def_idle);
-                target.Data.evt.animFrame = 0;
+                btl_stat.RemoveStatus(Target, BattleStatusId.Jump);
+                Target.Data.SetDisappear(false, 2);
+                btl_mot.setBasePos(Target);
+                btl_mot.setMotion(Target, Target.Data.bi.def_idle);
+                Target.Data.evt.animFrame = 0;
             }
-            if (!target.IsMonsterTransform)
-                btl_cmd.SetCommand(target.Data.cmd[4], BattleCommandId.SysTrans, 0, target.Id, 0u);
+            if (!Target.IsMonsterTransform)
+                btl_cmd.SetCommand(Target.Data.cmd[4], BattleCommandId.SysTrans, 0, Target.Id, 0u);
             return true;
         }
 
-        public void OnFinishCommand(BattleUnit garnet, CMD_DATA cmd, Int32 tranceDecrease)
+        public void OnFinishCommand(CMD_DATA cmd, Int32 tranceDecrease)
         {
-            if (garnet.PlayerIndex != CharacterId.Garnet)
+            if (Target.PlayerIndex != CharacterId.Garnet)
                 return;
             if (cmd.cmd_no == BattleCommandId.Phantom)
             {
                 PhantomAbility = EidolonToPhantom(btl_util.GetCommandMainActionIndex(cmd));
                 if (PhantomAbility != BattleAbilityId.Void)
-                    PhantomCountdown = GetPhantomCount(garnet);
+                    PhantomCountdown = GetPhantomCount(Target);
             }
             else if (cmd.cmd_no == BattleCommandId.SysPhantom)
             {
                 PhantomCommandSent = false;
-                PhantomCountdown = GetPhantomCount(garnet);
+                PhantomCountdown = GetPhantomCount(Target);
             }
         }
 
@@ -83,7 +84,7 @@ namespace Memoria.DefaultScripts
         {
             if (!garnet.IsUnderAnyStatus(BattleStatus.Trance))
                 return false;
-            if (FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
+            if (FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
             {
                 ClearPhantomRecast(garnet);
                 return true;

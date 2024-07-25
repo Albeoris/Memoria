@@ -163,7 +163,7 @@ namespace FF9
             if (player != 0u)
                 player = 1u;
             for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                if (next.bi.player == player && (!btl_stat.CheckStatus(next, BattleStatus.Death) || allowDead) && next.bi.target != 0)
+                if (next.bi.player == player && (allowDead || !btl_stat.CheckStatus(next, BattleStatus.Death)) && next.bi.target != 0)
                     candidates.Add(next.btl_id);
             if (candidates.Count == 0)
                 return 0;

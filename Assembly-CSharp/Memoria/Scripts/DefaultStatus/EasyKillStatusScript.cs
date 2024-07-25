@@ -11,15 +11,16 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            base.Apply(target, inflicter, parameters);
             DeathResistanceAdded = DeathResistanceAdded || (target.ResistStatus & BattleStatus.Death) == 0;
             target.ResistStatus |= BattleStatus.Death;
             return btl_stat.ALTER_SUCCESS;
         }
 
-        public override Boolean Remove(BattleUnit target)
+        public override Boolean Remove()
         {
             if (DeathResistanceAdded)
-                target.ResistStatus &= ~BattleStatus.Death;
+                Target.ResistStatus &= ~BattleStatus.Death;
             return true;
         }
     }

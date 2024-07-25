@@ -11,7 +11,7 @@ namespace FF9
 
         public static Boolean TryReturnMagic(BattleUnit returner, BattleUnit originalCaster, BattleCommand command)
         {
-            if (returner.IsUnderAnyStatus(BattleStatusConst.CannotAct) || FF9StateSystem.Battle.FF9Battle.btl_phase != 4) // TRANCE SEEK - VENOM
+            if (returner.IsUnderAnyStatus(BattleStatusConst.CannotAct) || FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
                 return false;
             BattleCommandId cmdId = originalCaster.IsPlayer ? BattleCommandId.Counter : BattleCommandId.MagicCounter;
             if (Configuration.Battle.CountersBetterTarget)
@@ -24,7 +24,7 @@ namespace FF9
                         for (Int32 i = 0; i < 4; i++)
                         {
                             BattleUnit new_target = btl_scrp.FindBattleUnit((UInt16)(retarget_id << i));
-                            if (new_target != null && new_target.Data.bi.target != 0 && !new_target.IsUnderStatus(BattleStatus.Death))
+                            if (new_target != null && new_target.Data.bi.target != 0 && !new_target.IsUnderStatus(BattleStatusId.Death))
                             {
                                 btl_cmd.SetCounter(returner.Data, cmdId, command.Data.sub_no, new_target.Id);
                                 return true;
@@ -233,7 +233,7 @@ namespace FF9
             // Dummied
             if (!btl_stat.CheckStatus(btl, BattleStatusConst.NoReaction))
             {
-                if ((btl.sa[1] & (Int32)SupportAbility2.RestoreHP) != 0u && btl.cur.hp != 0 && btl_stat.CheckStatus(btl, BattleStatus.LowHP))
+                if ((btl.sa[1] & (Int32)SupportAbility2.RestoreHP) != 0u && btl.cur.hp != 0 && btl_stat.CheckStatus(btl, BattleStatusId.LowHP))
                     btl.cur.hp = Math.Min(btl.cur.hp + btl.max.hp / 2, btl.max.hp);
                 if ((btl.sa[1] & (Int32)SupportAbility2.AbsorbMP) != 0u && aa.MP != 0)
                     btl.cur.mp = (UInt32)Math.Min(btl.cur.mp + aa.MP, btl.max.mp);

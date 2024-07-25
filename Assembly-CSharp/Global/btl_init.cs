@@ -415,7 +415,7 @@ public static class btl_init
         btl_init.InitBattleData(btl, ff9Char);
         btl.mesh_banish = UInt16.MaxValue;
         btl.max.at = btl_para.GetMaxATB(unit);
-        btl_para.SetupATBCoef(btl);
+        btl_para.SetupATBCoef(btl, btl_para.GetATBCoef());
         if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
             btl.cur.at = 0;
         else if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
@@ -476,7 +476,7 @@ public static class btl_init
             BattleUnit unit = new BattleUnit(btl);
             btl.level = et.level;
             btl.max.at = btl_para.GetMaxATB(unit);
-            btl_para.SetupATBCoef(btl);
+            btl_para.SetupATBCoef(btl, btl_para.GetATBCoef());
             btl.cur.at = (Int16)(Comn.random16() % btl.max.at);
             btl.weapon = null;
             btl_mot.HideMesh(btl, btl.mesh_current, false);
@@ -546,10 +546,6 @@ public static class btl_init
         btl.fig_info = 0;
         btl.fig = 0;
         btl.m_fig = 0;
-        btl.fig_stat_info = 0;
-        btl.fig_regene_hp = 0;
-        btl.fig_poison_hp = 0;
-        btl.fig_poison_mp = 0;
         btl.die_seq = 0;
         ff9char.btl = btl;
         btl.evt = ff9char.evt;
@@ -559,12 +555,10 @@ public static class btl_init
         // Out of reach: enemies inside battles flagged with "NoNeighboring" are all set to out of reach but they can also be placed individually using SV_FunctionEnemy[110] in battle scripts or setting the "OutOfReach" flag in the battle's ".memnfo" file
         // False by default for player character, initialized in "btl_init.SetMonsterData" for enemies
         btl.out_of_reach = false;
-        btl.stat_partial_resist.Clear();
-        btl.stat_duration_factor.Clear();
         btl.delayedModifierList.Clear();
         btl.summon_count = 0;
         btl.critical_rate_deal_bonus = 0;
-        btl.critical_rate_receive_bonus = 0;
+        btl.critical_rate_receive_resistance = 0;
         btl.is_monster_transform = false;
         btl.killer_track = null;
         btl.enable_trance_glow = false;

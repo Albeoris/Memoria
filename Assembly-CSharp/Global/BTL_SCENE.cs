@@ -182,7 +182,7 @@ public class BTL_SCENE
     public static Int16 GetMonGeoID(Int32 pNum)
     {
         SB2_PUT placement = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Monster[pNum];
-        if (pNum > 0 && (placement.Flags & SB2_PUT.FLG_MULTIPART) != 0)
+        if (placement.TypeNo > 0 && (placement.Flags & SB2_PUT.FLG_MULTIPART) != 0)
             return -1;
         return FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr[placement.TypeNo].Geo;
     }

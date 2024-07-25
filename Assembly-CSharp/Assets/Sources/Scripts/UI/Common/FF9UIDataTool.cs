@@ -107,21 +107,24 @@ namespace Assets.Sources.Scripts.UI.Common
             }
             if (charHud.StatusesSpriteList != null)
             {
-                Int32 statusIndex = 0;
                 UISprite[] statusesSpriteList = charHud.StatusesSpriteList;
-                for (Int32 i = 0; i < statusesSpriteList.Length; i++)
+                foreach (UISprite statusSprite in statusesSpriteList)
+                    statusSprite.alpha = 0f;
+                foreach (BattleStatusId statusId in player.status.ToStatusList())
                 {
-                    UISprite uisprite = statusesSpriteList[i];
-                    if ((player.status & (BattleStatus)(1 << statusIndex)) != 0)
-                    {
-                        uisprite.spriteName = FF9UIDataTool.IconSpriteName[FF9UIDataTool.status_id[statusIndex]];
-                        uisprite.alpha = 1f;
-                    }
+                    if (!BattleHUD.DebuffIconNames.TryGetValue(statusId, out String spriteName))
+                        continue;
+                    Int32 spriteSlot = (Int32)statusId;
+                    UISprite statusSprite = null;
+                    if (spriteSlot >= statusesSpriteList.Length || statusesSpriteList[spriteSlot].alpha == 1f)
+                        statusSprite = statusesSpriteList.FirstOrDefault(sprite => sprite.alpha == 0f);
                     else
-                    {
-                        uisprite.alpha = 0f;
-                    }
-                    statusIndex++;
+                        statusSprite = statusesSpriteList[spriteSlot];
+                    // TODO Add more UISprite if the limit is reached?
+                    if (statusSprite == null)
+                        break;
+                    statusesSpriteList[spriteSlot].spriteName = spriteName;
+                    statusesSpriteList[spriteSlot].alpha = 1f;
                 }
             }
         }

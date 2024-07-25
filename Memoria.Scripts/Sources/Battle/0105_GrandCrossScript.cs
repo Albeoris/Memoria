@@ -44,7 +44,7 @@ namespace Memoria.Scripts.Battle
                 }
                 else
                 {
-                    _v.Target.AlterStatus(statusId.ToBattleStatus(), _v.Caster);
+                    _v.Target.AlterStatus(statusId, _v.Caster);
                 }
             }
         }

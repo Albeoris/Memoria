@@ -344,7 +344,7 @@ namespace FF9
                                 if (ff.btl_result != 4)
                                     btl_sys.SetBonus(enemyPtr);
                                 btl.die_seq++;
-                                if (ff9Battle.btl_phase != 5 || (ff9Battle.btl_seq != 3 && ff9Battle.btl_seq != 2))
+                                if (ff9Battle.btl_phase != FF9StateBattleSystem.PHASE_MENU_OFF || (ff9Battle.btl_seq != 3 && ff9Battle.btl_seq != 2))
                                     btl_sys.CheckBattlePhase(btl);
                                 btl_sys.DelCharacter(btl);
                             }
@@ -445,7 +445,7 @@ namespace FF9
             Boolean cancelDeath = false;
             foreach (BattleStatusId statusId in btl.stat.cur.ToStatusList())
                 if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
-                    if ((effect as IDeathChangerStatusScript)?.OnDeath(new BattleUnit(btl)) ?? false)
+                    if ((effect as IDeathChangerStatusScript)?.OnDeath() ?? false)
                         cancelDeath = true;
             if (cancelDeath)
             {
@@ -543,7 +543,7 @@ namespace FF9
                 btl.evt.animFrame = 0;
                 return;
             }
-            if (FF9StateSystem.Battle.FF9Battle.btl_phase == 6 && !btl_stat.CheckStatus(btl, BattleStatusConst.BattleEndFull) && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.WinPose && btl_util.getPlayerPtr(btl).info.win_pose != 0)
+            if (FF9StateSystem.Battle.FF9Battle.btl_phase == FF9StateBattleSystem.PHASE_VICTORY && !btl_stat.CheckStatus(btl, BattleStatusConst.BattleEndFull) && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.WinPose && btl_util.getPlayerPtr(btl).info.win_pose != 0)
                 targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_WIN_LOOP;
             else if (btl.bi.cover != 0)
                 targetAnim = BattlePlayerCharacter.PlayerMotionIndex.MP_COVER;
@@ -619,7 +619,7 @@ namespace FF9
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             CMD_DATA cur_cmd = ff9Battle.cur_cmd;
-            if (btl_stat.CheckStatus(btl, BattleStatus.Death))
+            if (btl_stat.CheckStatus(btl, BattleStatusId.Death))
             {
                 if (btl.bi.player != 0 && btl.bi.dmg_mot_f == 0 && cur_cmd != null && btl != cur_cmd.regist && btl.die_seq == 0 && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD))
                     btl_mot.setMotion(btl, btl.bi.def_idle);
@@ -757,7 +757,7 @@ namespace FF9
         {
             if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE1))
             {
-                if (btl_stat.CheckStatus(btl, BattleStatus.Death))
+                if (btl_stat.CheckStatus(btl, BattleStatusId.Death))
                 {
                     btl.die_seq = 1;
                     btl.bi.dmg_mot_f = 0;
@@ -773,7 +773,7 @@ namespace FF9
             }
             else if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2))
             {
-                if (btl_stat.CheckStatus(btl, BattleStatus.Death))
+                if (btl_stat.CheckStatus(btl, BattleStatusId.Death))
                 {
                     btl.die_seq = 5;
                     btl.bi.dmg_mot_f = 0;
@@ -803,7 +803,7 @@ namespace FF9
         public static void EnemyDamageMotion(BTL_DATA btl) // Unused anymore
         {
             btl.bi.dmg_mot_f = 0;
-            if (btl_stat.CheckStatus(btl, BattleStatus.Death))
+            if (btl_stat.CheckStatus(btl, BattleStatusId.Death))
             {
                 if (btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DAMAGE2) && btl_util.getEnemyPtr(btl).info.die_dmg)
                 {
@@ -825,10 +825,12 @@ namespace FF9
 
         public static void HideMesh(BTL_DATA btl, UInt16 mesh, Boolean isVanish = false)
         {
-            // TODO: is this really relevant?
-            //String path = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(btl.dms_geo_id);
-            //if (ModelFactory.IsUseAsEnemyCharacter(path) && isVanish)
-            //    mesh = UInt16.MaxValue;
+            if (isVanish)
+            {
+                String path = (btl.dms_geo_id == -1) ? String.Empty : FF9BattleDB.GEO.GetValue(btl.dms_geo_id);
+                if (ModelFactory.IsUseAsEnemyCharacter(path))
+                    mesh = UInt16.MaxValue;
+            }
             for (Int32 i = 0; i < 16; i++)
                 if ((mesh & 1 << i) != 0)
                     geo.geoMeshHide(btl, i);

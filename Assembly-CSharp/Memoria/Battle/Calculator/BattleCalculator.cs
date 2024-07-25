@@ -658,7 +658,7 @@ namespace Memoria
             if ((Target.Flags & CalcFlag.Critical) != 0) // In case another system triggered a critical strike (with possibly other consequences)
                 return;
             Int32 quarterWill = Caster.Data.elem.wpr >> 2;
-            if (quarterWill != 0 && (Comn.random16() % quarterWill) + Caster.Data.critical_rate_deal_bonus + Target.Data.critical_rate_receive_bonus > Comn.random16() % 100)
+            if (quarterWill != 0 && (Comn.random16() % quarterWill) + Caster.CriticalRateBonus - Target.CriticalRateResistance > Comn.random16() % 100)
             {
                 Context.Attack *= 2; // In case TryCriticalHit is called before "Calc...HpDamage"
                 Target.HpDamage *= 2; // In case TryCriticalHit is called after "Calc...HpDamage"

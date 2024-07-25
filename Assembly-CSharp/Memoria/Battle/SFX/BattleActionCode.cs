@@ -62,7 +62,7 @@ public class BattleActionCode
         { "LoadSFX", new String[]{ "SFX", "Char", "Target", "TargetPosition", "UseCamera", "FirstBone", "SecondBone", "Args", "MagicCaster" } },
         { "PlaySFX", new String[]{ "SFX", "Instance", "JumpToFrame", "SkipSequence", "HideMeshes", "MeshColors" } },
         { "CreateVisualEffect", new String[]{ "SPS", "Char", "Bone", "Offset", "Size", "Time", "Speed", "UseSHP" } },
-        { "Turn", new String[]{ "Char", "BaseAngle", "Angle", "Time", "UsePitch" } },
+        { "Turn", new String[]{ "Char", "BaseAngle", "Angle", "Time", "UsePitch", "AsDefaultAngle" } },
         { "PlayAnimation", new String[]{ "Char", "Anim", "Speed", "Loop", "Palindrome", "Frame" } },
         { "PlayTextureAnimation", new String[]{ "Char", "Anim", "Once", "Stop" } },
         { "ToggleStandAnimation", new String[]{ "Char", "Alternate" } },

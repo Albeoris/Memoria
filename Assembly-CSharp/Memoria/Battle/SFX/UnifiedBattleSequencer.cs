@@ -32,7 +32,7 @@ public static class UnifiedBattleSequencer
             {
                 if (runningActions[i].ExecuteLoop())
                 {
-                    if (FF9StateSystem.Battle.FF9Battle.btl_phase == 4 && runningActions[i].useCameraTarget)
+                    if (FF9StateSystem.Battle.FF9Battle.btl_phase == FF9StateBattleSystem.PHASE_NORMAL && runningActions[i].useCameraTarget)
                     {
                         //SFX.SFX_SendIntData(4, 0, 0, 0);
                         btlseq.instance.seq_work_set.CameraNo = 0;
@@ -335,7 +335,7 @@ public static class UnifiedBattleSequencer
                             customRequest.useTargetAveragePosition = false;
                         }
                         if (!code.TryGetArgBoolean("UseCamera", out tmpBool))
-                            tmpBool = Configuration.Battle.Speed < 3 || FF9StateSystem.Battle.FF9Battle.btl_phase != 4 || !UIManager.Battle.FF9BMenu_IsEnable();
+                            tmpBool = Configuration.Battle.Speed < 3 || FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_NORMAL || !UIManager.Battle.FF9BMenu_IsEnable();
                         if (SFXData.IsShortSpecialEffect(tmpSfx))
                             tmpBool = false;
                         else if (useCameraTarget)
@@ -417,6 +417,7 @@ public static class UnifiedBattleSequencer
                     Single tmpBaseAngle;
                     Boolean hasSingleAngle = code.TryGetArgSingle("Angle", out tmpSingle);
                     Boolean hasVectorAngle = code.TryGetArgVector("Angle", out tmpVec);
+                    code.TryGetArgBoolean("AsDefaultAngle", out Boolean asDefaultAngle);
                     code.TryGetArgBoolean("UsePitch", out tmpBool);
                     code.TryGetArgInt32("Time", out tmpInt);
                     if (!hasSingleAngle && !hasVectorAngle)
@@ -432,7 +433,7 @@ public static class UnifiedBattleSequencer
                         code.TryGetArgBaseAngle("BaseAngle", btl, cmd.regist.btl_id, runningThread.targetId, tmpBool, out tmpBaseAngle, out tmpTarg);
                         if (hasSingleAngle && !hasVectorAngle)
                         {
-                            destAngle = btl.rot.eulerAngles;
+                            destAngle = asDefaultAngle ? btl.evt.rotBattle.eulerAngles : btl.rot.eulerAngles;
                             destAngle[tmpBool ? 0 : 1] = tmpBaseAngle + tmpSingle;
                         }
                         else if (hasVectorAngle)
@@ -441,16 +442,30 @@ public static class UnifiedBattleSequencer
                         }
                         if (tmpTarg != btl.btl_id)
                         {
-                            SequenceTurn seqt = new SequenceTurn(btl, tmpTarg, destAngle, tmpInt);
-                            if (tmpInt == 0)
+                            if (asDefaultAngle)
                             {
-                                seqt.frameCur = seqt.frameEnd;
-                                seqt.Apply();
+                                // Apply immediatly and discard the argument "Time" for the default angle
+                                if (tmpTarg != 0)
+                                {
+                                    Vector3 targetDir = BattleActionCode.TargetAveragePos(tmpTarg) - btl.pos;
+                                    if (targetDir.x != 0 || targetDir.z != 0)
+                                        destAngle.y += ff9.ratan2(-targetDir.x, -targetDir.z);
+                                }
+                                btl.evt.rotBattle = Quaternion.EulerAngles(destAngle);
                             }
                             else
                             {
-                                turn.Add(seqt);
-                                turningChar |= btl.btl_id;
+                                SequenceTurn seqt = new SequenceTurn(btl, tmpTarg, destAngle, tmpInt);
+                                if (tmpInt == 0)
+                                {
+                                    seqt.frameCur = seqt.frameEnd;
+                                    seqt.Apply();
+                                }
+                                else
+                                {
+                                    turn.Add(seqt);
+                                    turningChar |= btl.btl_id;
+                                }
                             }
                         }
                     }
@@ -791,7 +806,7 @@ public static class UnifiedBattleSequencer
                 case "PlayCamera":
                     if (cancel)
                         break;
-                    if (Configuration.Battle.Speed >= 3 && FF9StateSystem.Battle.FF9Battle.btl_phase == 4)
+                    if (Configuration.Battle.Speed >= 3 && FF9StateSystem.Battle.FF9Battle.btl_phase == FF9StateBattleSystem.PHASE_NORMAL)
                         break;
                     code.TryGetArgBoolean("Alternate", out tmpBool);
                     if (tmpBool && !SFX.ShouldPlayAlternateCamera(cmd))
@@ -1327,7 +1342,7 @@ public static class UnifiedBattleSequencer
         {
             if (reflectTriggered || cmd.info.reflec != 2)
                 return false;
-            if (FF9StateSystem.Battle.FF9Battle.btl_phase != 4 || !UIManager.Battle.FF9BMenu_IsEnable())
+            if (FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_NORMAL || !UIManager.Battle.FF9BMenu_IsEnable())
                 return false;
             List<BTL_DATA> newTargList = btl_util.findAllBtlData(btl_cmd.MergeReflecTargetID(cmd.reflec));
             if (newTargList.Count == 0)

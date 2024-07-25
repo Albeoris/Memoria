@@ -20,11 +20,9 @@ namespace FF9
         public const UInt16 FIG_INFO_GUARD = 128;
         public const UInt16 FIG_INFO_TROUBLE = 256;
 
-        public const Byte FIG_STAT_INFO_REGENE_HP = 1;
-        public const Byte FIG_STAT_INFO_POISON_HP = 2;
-        public const Byte FIG_STAT_INFO_POISON_MP = 4;
-        public const Byte FIG_STAT_INFO_REGENE_DMG = 8;
-        public const Byte FIG_STAT_INFO_REGENE_MP = 16;
+        public const Byte FIG_STAT_INFO_DISP_HP = 1;
+        public const Byte FIG_STAT_INFO_DISP_MP = 2;
+        public const Byte FIG_STAT_INFO_HEAL = 4;
 
         public const Byte WPN_CATEGORY_SHORT_RANGE = 1;
         public const Byte WPN_CATEGORY_LONG_RANGE = 2;

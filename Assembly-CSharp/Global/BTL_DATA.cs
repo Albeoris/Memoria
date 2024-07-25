@@ -9,6 +9,8 @@ public partial class BTL_DATA
 {
     public void ChangeModel(GameObject newModel, Int16 geoID)
     {
+        gameObject.SetActive(false);
+        newModel.SetActive(true);
         gameObject = newModel;
         meshCount = 0;
         foreach (Transform transform in gameObject.transform)
@@ -188,12 +190,6 @@ public partial class BTL_DATA
     public HashSet<SupportAbility> saExtended;
     public List<SupportingAbilityFeature> saMonster;
 
-    public Int32 fig_regene_hp;
-    public Int32 fig_regene_mp;
-    public Int32 fig_poison_hp;
-    public Int32 fig_poison_mp;
-    public Byte fig_stat_info;
-
     public Byte sel_menu;
 
     public Byte typeNo;
@@ -245,13 +241,10 @@ public partial class BTL_DATA
     // Custom fields
     public Boolean out_of_reach; // Instead of considering the global battle flag "NoNeighboring", we use a flag for each BTL_DATA
 
-    public StatusModifier stat_partial_resist = new StatusModifier(0f);
-    public StatusModifier stat_duration_factor = new StatusModifier(1f);
-
     public UInt16 summon_count; // Counter of the number of uses of a summon spell in a battle
 
     public Int16 critical_rate_deal_bonus; // Absolute increase/decrease in the % of critical strikes dealt by the BTL_DATA
-    public Int16 critical_rate_receive_bonus; // Absolute increase/decrease in the % of critical strikes dealt to the BTL_DATA
+    public Int16 critical_rate_receive_resistance; // Absolute increase/decrease in the % of critical strikes dealt to the BTL_DATA
 
     public Int32 geo_scale_x; // For geo.geoScaleSet
     public Int32 geo_scale_y;

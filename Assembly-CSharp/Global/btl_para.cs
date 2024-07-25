@@ -46,7 +46,7 @@ public class btl_para
             // Weak security for enemies that should never reach 0 HP in vanilla
             newHP = Math.Max(newHP, 1);
         }
-        if (FF9StateSystem.Settings.IsHpMpFull && !max && btl.bi.player != 0)
+        if (FF9StateSystem.Settings.IsHpMpFull && !max && btl.bi.player != 0 && newHP > 0)
             newHP = btl.max.hp;
         if (max)
             btl.max.hp = newHP;
@@ -59,12 +59,12 @@ public class btl_para
         return (Int16)((60 - unit.Dexterity) * 40 << 2);
     }
 
-    public static void SetupATBCoef(BTL_DATA btl)
+    public static void SetupATBCoef(BTL_DATA btl, Int32 coef)
     {
-        btl.cur.at_coef = GetATBCoef();
+        btl.cur.at_coef = (SByte)coef;
     }
 
-    public static SByte GetATBCoef()
+    public static Int32 GetATBCoef()
     {
         switch (FF9StateSystem.Settings.cfg.btl_speed)
         {
@@ -116,66 +116,86 @@ public class btl_para
         return isLowHP ? BattleStatus.LowHP : 0;
     }
 
-    public static Int32 SetDamage(BattleUnit btl, Int32 damage, Byte dmg_mot, CMD_DATA cmd = null)
+    public static Int32 SetDamage(BattleUnit unit, Int32 damage, Byte dmg_mot, CMD_DATA cmd = null, Boolean requestFigureNow = false)
     {
         // "damage" and the different "fig" numbers are signed integers now
         // Maybe choose to have these unsigned or have everything signed (including "hp.cur" etc...) or to keep things as they are now
         // Note that "btl2d" is currently adjusted to display unsigned numbers only
-        if (btl.IsUnderStatus(BattleStatus.Death))
+        BTL_DATA btl = unit.Data;
+        if (btl_stat.CheckStatus(btl, BattleStatus.Death))
         {
-            btl.Data.fig_info = Param.FIG_INFO_MISS;
+            if (requestFigureNow)
+                btl2d.Btl2dReq(btl, Param.FIG_INFO_MISS, 0, 0);
+            else
+                btl.fig_info = Param.FIG_INFO_MISS;
             return 0;
         }
 
-        if (btl.IsUnderAnyStatus(BattleStatus.Petrify))
+        if (btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            btl.Fig = 0;
+            if (requestFigureNow)
+                btl2d.Btl2dReq(btl, Param.FIG_INFO_DISP_HP, 0, 0);
+            else
+                btl.fig = 0;
             return 0;
         }
 
-        if (!btl_util.IsBtlBusy(btl.Data, btl_util.BusyMode.CASTER))
-            btl.FaceTheEnemy();
+        if (!btl_util.IsBtlBusy(btl, btl_util.BusyMode.CASTER))
+            unit.FaceTheEnemy();
 
         if (!FF9StateSystem.Battle.isDebug)
         {
-            if (btl.CurrentHp > damage)
+            if (unit.CurrentHp > damage)
             {
-                if (!btl.IsPlayer || !FF9StateSystem.Settings.IsHpMpFull)
-                    btl.CurrentHp -= (UInt32)damage;
+                if (!unit.IsPlayer || !FF9StateSystem.Settings.IsHpMpFull)
+                    unit.CurrentHp -= (UInt32)damage;
             }
             else
             {
-                btl.CurrentHp = 0;
+                unit.CurrentHp = 0;
             }
         }
 
-        btl.Fig = damage;
+        if (!requestFigureNow)
+            btl.fig = damage;
         if (dmg_mot != 0)
-            btl_mot.SetDamageMotion(btl, cmd);
-        else if (btl.CurrentHp == 0)
-            btl.Kill(cmd?.regist);
-        if (btl.CurrentHp == 0)
-            btl.Data.killer_track = cmd?.regist;
+            btl_mot.SetDamageMotion(unit, cmd);
+        else if (unit.CurrentHp == 0)
+            unit.Kill(cmd?.regist);
+        if (unit.CurrentHp == 0)
+            btl.killer_track = cmd?.regist;
+        if (requestFigureNow)
+            btl2d.Btl2dReq(btl, Param.FIG_INFO_DISP_HP, damage, 0);
         return damage;
     }
 
-    public static Int32 SetRecover(BattleUnit btl, UInt32 recover)
+    public static Int32 SetRecover(BattleUnit unit, UInt32 recover, Boolean requestFigureNow = false)
     {
-        if (btl.IsUnderAnyStatus(BattleStatus.Death))
+        BTL_DATA btl = unit.Data;
+        if (btl_stat.CheckStatus(btl, BattleStatus.Death))
         {
-            btl.Data.fig_info = Param.FIG_INFO_MISS;
+            if (requestFigureNow)
+                btl2d.Btl2dReq(btl, Param.FIG_INFO_MISS, 0, 0);
+            else
+                btl.fig_info = Param.FIG_INFO_MISS;
             return 0;
         }
-        if (btl.IsUnderAnyStatus(BattleStatus.Petrify))
+        if (btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            btl.Data.fig = 0;
+            if (requestFigureNow)
+                btl2d.Btl2dReq(btl, Param.FIG_INFO_DISP_HP, 0, 0);
+            else
+                btl.fig = 0;
             return 0;
         }
-        if (btl.CurrentHp + recover < btl.MaximumHp)
-            btl.CurrentHp += recover;
+        if (unit.CurrentHp + recover < unit.MaximumHp)
+            unit.CurrentHp += recover;
         else
-            btl.CurrentHp = btl.MaximumHp;
-        btl.Data.fig = (Int32)recover;
+            unit.CurrentHp = unit.MaximumHp;
+        if (requestFigureNow)
+            btl2d.Btl2dReq(btl, Param.FIG_INFO_DISP_HP | Param.FIG_INFO_HP_RECOVER, (Int32)recover, 0);
+        else
+            btl.fig = (Int32)recover;
         return (Int32)recover;
     }
 
@@ -229,7 +249,7 @@ public class btl_para
         UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            // TODO [DV]
+            // TODO [DV] Code that in a custom PoisonStatusScript / VenomStatusScript
             if (Configuration.Mod.TranceSeek)
             {
                 damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 8 : 5);
@@ -249,16 +269,12 @@ public class btl_para
                     if (battleUnit.IsUnderStatus(BattleStatus.Poison)) // [DV] Zombie get healed by Poison in Trance Seek.
                     {
                         btl.cur.hp += damage;
-                        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
-                        btl.fig_regene_hp = (Int32)damage;
                         return;
                     }
                     if (battleUnit.IsUnderStatus(BattleStatus.Venom)) // [DV] Zombie get half damage by Venom in Trance Seek.
                     {
                         damage /= 2U;
                         btl.cur.hp -= damage;
-                        btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_HP;
-                        btl.fig_poison_hp = (Int32)damage;
                         return;
                     }
                 }
@@ -273,8 +289,6 @@ public class btl_para
                 }
             }
         }
-        btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_HP;
-        btl.fig_poison_hp = (Int32)damage;
         BattleVoice.TriggerOnStatusChange(btl, "Used", btl_stat.CheckStatus(btl, BattleStatus.Venom) ? BattleStatusId.Venom : BattleStatusId.Poison);
     }
 
@@ -287,7 +301,6 @@ public class btl_para
             recover = GetLogicalHP(btl, true) >> (Configuration.Mod.TranceSeek ? (btl_stat.CheckStatus(btl, BattleStatus.EasyKill) ? 7 : 5) : 4);
             if (new BattleUnit(btl).IsZombie)
             {
-                btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_DMG;
                 if (GetLogicalHP(btl, false) > recover)
                     btl.cur.hp -= recover;
                 else
@@ -302,15 +315,13 @@ public class btl_para
                 btl.cur.hp = btl.max.hp;
             }
         }
-        btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
-        btl.fig_regene_hp = (Int32)recover;
         BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Regen);
     }
 
     public static void SetPoisonMpDamage(BTL_DATA btl)
     {
         // Dummied
-        // TODO [DV]
+        // TODO [DV] Code that in a custom VenomStatusScript
         if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill)) // TRANCE SEEK - Venom didn't remove MP on bosses.
             return;
         UInt32 damage = 0;
@@ -329,8 +340,6 @@ public class btl_para
                     btl.cur.mp = 0;
             }
         }
-        btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_MP;
-        btl.fig_poison_mp = (Int32)damage;
     }
 
     public static void SetTroubleDamage(BattleUnit btl, Int32 dmg)
@@ -340,9 +349,7 @@ public class btl_para
         {
             if (next.IsPlayer == btl.IsPlayer && next.Id != btl.Id && next.IsTargetable)
             {
-                next.Data.fig_info = Param.FIG_INFO_DISP_HP;
-                SetDamage(next, dmg, 0);
-                btl2d.Btl2dReq(next.Data);
+                SetDamage(next, dmg, 0, requestFigureNow: true);
                 BattleVoice.TriggerOnStatusChange(next.Data, "Used", BattleStatusId.Trouble);
             }
         }

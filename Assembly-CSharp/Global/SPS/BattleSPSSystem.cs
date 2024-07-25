@@ -70,6 +70,8 @@ public class BattleSPSSystem : MonoBehaviour
         }
         foreach (SHPEffect shp in this._shpEffects)
         {
+            if (shp.shpId < 0)
+                continue;
             shp.frame++;
             if (shp.cycleDuration > 0 && shp.frame >= shp.cycleDuration && (shp.attr & SPSConst.ATTR_UNLOAD_ON_FINISH) != 0)
                 shp.Unload();
@@ -78,23 +80,6 @@ public class BattleSPSSystem : MonoBehaviour
             if (shp.duration == 0)
                 shp.Unload();
         }
-        //for (Int32 i = 0; i < this._specialSpsList.Count; i++)
-        //{
-        //	BattleSPS special_sps = this._specialSpsList[i];
-        //	if ((special_sps.type != 0 || special_sps.spsBin != null) && (special_sps.attr & 1) != 0 && special_sps.lastFrame != -1 && special_sps.isUpdate)
-        //	{
-        //		special_sps.lastFrame = special_sps.curFrame;
-        //		special_sps.curFrame += special_sps.frameRate;
-        //		if (special_sps.curFrame >= special_sps.frameCount)
-        //		{
-        //			special_sps.curFrame = 0;
-        //		}
-        //		else if (special_sps.curFrame < 0)
-        //		{
-        //			special_sps.curFrame = (special_sps.frameCount >> 4) - 1 << 4;
-        //		}
-        //	}
-        //}
     }
 
     public void GenerateSPS()
@@ -119,36 +104,8 @@ public class BattleSPSSystem : MonoBehaviour
             sps.lastFrame = sps.curFrame;
         }
         foreach (SHPEffect shp in this._shpEffects)
-            shp.AnimateSHP();
-        //bool show_special = false;
-        //for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-        //	if (next.bi.player == 0 && next.bi.disappear == 0)
-        //		show_special = true;
-        //for (Int32 i = 0; i < this._specialSpsList.Count; i++)
-        //{
-        //	BattleSPS special_sps = this._specialSpsList[i];
-        //	if ((special_sps.type != 0 || special_sps.spsBin != null) && (special_sps.attr & 1) != 0 && special_sps.isUpdate)
-        //	{
-        //		double rotation_cos = Math.Cos(2 * Math.PI * special_sps.curFrame / 10000) * this._specialSpsFadingList[i]; // 1 turn every 10 seconds
-        //		double rotation_sin = Math.Sin(2 * Math.PI * special_sps.curFrame / 10000) * this._specialSpsFadingList[i];
-        //		Vector3 rotated_pos = BattleSPSSystem.statusTextures[special_sps.refNo].extraPos;
-        //		float tmp = rotated_pos.x;
-        //		rotated_pos.x = (float)(rotation_cos * tmp - rotation_sin * rotated_pos.z);
-        //		rotated_pos.z = (float)(rotation_sin * tmp + rotation_cos * rotated_pos.z);
-        //		for (int j = 0; j < special_sps.shpGo.Length; j++)
-        //			special_sps.shpGo[j].transform.localPosition = rotated_pos;
-        //		special_sps.isUpdate = show_special;
-        //		special_sps.AnimateSHP();
-        //		special_sps.lastFrame = special_sps.curFrame;
-        //		if (this._specialSpsRemovingList[i])
-        //			this._specialSpsFadingList[i] -= 0.05f;
-        //		if (this._specialSpsFadingList[i] > 0.0f)
-        //			special_sps.isUpdate = true;
-        //		else
-        //			for (int j = 0; j < special_sps.shpGo.Length; j++)
-        //				special_sps.shpGo[j].SetActive(false);
-        //	}
-        //}
+            if (shp.shpId >= 0)
+                shp.AnimateSHP();
     }
 
     public void SetObjParm(Int32 ObjNo, Int32 ParmType, Int32 Arg0, Int32 Arg1, Int32 Arg2)
@@ -259,7 +216,7 @@ public class BattleSPSSystem : MonoBehaviour
         }
     }
 
-    public SPSEffect AddSequenceSPS(Int32 spsId, Int32 duration, Single speed)
+    public SPSEffect AddSequenceSPS(Int32 spsId, Int32 duration, Single speed, Boolean neverUnload = false)
     {
         if (!CommonSPSSystem.SPSPrototypes.ContainsKey(spsId))
         {
@@ -274,7 +231,9 @@ public class BattleSPSSystem : MonoBehaviour
         sps.meshRenderer.enabled = false;
         sps.frameRate = (Int32)(sps.frameRate * speed);
         sps.attr |= SPSConst.ATTR_UPDATE_ANY_FRAME;
-        if (duration < 0 && sps.frameRate > 0)
+        if (neverUnload)
+            sps.duration = -1;
+        else if(duration < 0 && sps.frameRate > 0)
             sps.attr |= SPSConst.ATTR_UNLOAD_ON_FINISH;
         else if (duration >= 0)
             sps.duration = duration;
@@ -285,7 +244,7 @@ public class BattleSPSSystem : MonoBehaviour
         return sps;
     }
 
-    public SHPEffect AddSequenceSHP(Int32 shpId, Int32 duration, Single speed)
+    public SHPEffect AddSequenceSHP(Int32 shpId, Int32 duration, Single speed, Boolean neverUnload = false)
     {
         if (!CommonSPSSystem.SHPPrototypes.ContainsKey(shpId))
         {
@@ -297,62 +256,15 @@ public class BattleSPSSystem : MonoBehaviour
         shp.Init(CommonSPSSystem.SHPPrototypes[shpId]);
         shp.cycleDuration = (speed >= 0 ? 1 : -1) * Math.Max(1, Math.Abs((Int32)(shp.cycleDuration / Math.Abs(speed))));
         shp.attr |= SPSConst.ATTR_UPDATE_ANY_FRAME;
-        if (duration < 0 && shp.cycleDuration > 0)
+        if (neverUnload)
+            shp.duration = -1;
+        else if (duration < 0 && shp.cycleDuration > 0)
             shp.attr |= SPSConst.ATTR_UNLOAD_ON_FINISH;
         else if (duration >= 0)
             shp.duration = duration;
         else
             shp.duration = -shp.cycleDuration;
         return shp;
-    }
-
-    public void AddSpecialSPSObj(int specialid, uint spstype, Vector3 pos, float scale)
-    {
-        //BattleSPS special_sps;
-        //if (specialid < 0 || specialid > _specialSpsList.Count)
-        //	specialid = _specialSpsList.Count;
-        //if (specialid == _specialSpsList.Count)
-        //{
-        //	GameObject gameObject = new GameObject("SpecialSPS_" + specialid.ToString("D4"));
-        //	gameObject.transform.parent = base.transform;
-        //	gameObject.transform.localScale = Vector3.one;
-        //	gameObject.transform.localPosition = Vector3.zero;
-        //	MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        //	MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-        //	special_sps = gameObject.AddComponent<BattleSPS>();
-        //	special_sps.Init();
-        //	special_sps.spsIndex = specialid;
-        //	special_sps.spsTransform = gameObject.transform;
-        //	special_sps.meshRenderer = meshRenderer;
-        //	special_sps.meshFilter = meshFilter;
-        //	this._specialSpsList.Add(special_sps);
-        //	this._specialSpsFadingList.Add(1.0f);
-        //	this._specialSpsRemovingList.Add(false);
-        //}
-        //else
-        //{
-        //	special_sps = this._specialSpsList[specialid];
-        //	this._specialSpsFadingList[specialid] = 1.0f;
-        //	this._specialSpsRemovingList[specialid] = false;
-        //}
-        //special_sps.pos = pos;
-        //special_sps.curFrame = 0;
-        //special_sps.lastFrame = 0;
-        //special_sps.frameCount = 10000;
-        //special_sps.attr |= 1;
-        //special_sps.isUpdate = true;
-        //special_sps.refNo = (int)spstype;
-        //special_sps.type = (BattleSPSSystem.statusTextures[(int)spstype].type.Equals("shp") ? 1 : 0);
-        //special_sps.scale = (int)(scale * 4096);
-        //if (special_sps.shpGo == null)
-        //	special_sps.GenerateSHP();
-    }
-
-    public void RemoveSpecialSPSObj(int specialid)
-    {
-        //if (specialid < 0 || specialid >= _specialSpsList.Count)
-        //	return;
-        //this._specialSpsRemovingList[specialid] = true;
     }
 
     private Int32 _FindFreeSPSSlot()

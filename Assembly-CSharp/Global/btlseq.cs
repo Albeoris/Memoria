@@ -406,7 +406,6 @@ public class btlseq
                 btl.SetIsEnabledBattleModelRenderer(false);
             }
         }
-        // TODO (was check !BattleStatus.Jump, so verify it is OK to check disappear instead)
         if (btl.bi.disappear == 0)
         {
             GeoTexAnim.geoTexAnimService(btl.texanimptr);

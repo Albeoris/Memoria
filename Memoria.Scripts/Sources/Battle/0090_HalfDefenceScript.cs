@@ -1,4 +1,5 @@
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -19,8 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Target.PhysicalDefence /= 2;
-            _v.Target.MagicDefence /= 2;
+            _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "PhysicalDefence", _v.Target.PhysicalDefence / 2, "MagicDefence", _v.Target.MagicDefence / 2);
         }
     }
 }

@@ -10,36 +10,11 @@ public class SPSEffect : MonoBehaviour
     public void Init(Int32 mode)
     {
         this.gMode = mode;
-        this.attr = SPSConst.ATTR_VISIBLE;
-        this.abr = SPSConst.ABR_OFF;
-        this.fade = 128;
-        this.spsId = -1;
-        this.charNo = -1;
-        this.boneNo = 0;
-        this.lastFrame = -1;
-        this.curFrame = 0;
-        this.frameCount = 0;
-        this.duration = -1;
-        this.frameRate = SPSConst.FRAMERATE_ONE;
-        this.prm0 = 0;
-        this.pos = Vector3.zero;
-        this.scale = SPSConst.SCALE_ONE;
-        this.rot = Vector3.zero;
-        this.rotArg = Vector3.zero;
-        this.zOffset = 0;
-        this.posOffset = Vector3.zero;
-        this.depthOffset = 0;
-        this.useBattleFactors = false;
-        this.battleScaleFactor = 4f;
-        this.battleDistanceFactor = 5f;
         this.spsIndex = -1;
         this.spsTransform = null;
         this.meshRenderer = null;
         this.meshFilter = null;
-        this.spsBin = null;
         this.works = new SPSEffect.FieldSPSWork();
-        this.works.wFactor = 1f;
-        this.works.hFactor = 1f;
         this.spsPrims = new List<SPSEffect.FieldSPSPrim>();
         this.spsActor = null;
         this._vertices = new List<Vector3>();
@@ -80,23 +55,43 @@ public class SPSEffect : MonoBehaviour
                 ];
                 break;
         }
-        this.charTran = null;
-        this.boneTran = null;
-        this.mapName = null;
-        this.pngTexture = null;
-        this.tcbAreaComputed = false;
+        this.Unload();
     }
 
     public void Unload()
     {
         this.spsBin = null;
-        if (this.meshRenderer != null)
-            this.meshRenderer.enabled = false;
+        this.spsId = -1;
+        this.attr = SPSConst.ATTR_VISIBLE;
+        this.abr = SPSConst.ABR_OFF;
+        this.fade = 128;
+        this.charNo = -1;
+        this.boneNo = 0;
+        this.lastFrame = -1;
+        this.curFrame = 0;
+        this.frameCount = 0;
+        this.duration = -1;
+        this.frameRate = SPSConst.FRAMERATE_ONE;
+        this.prm0 = 0;
+        this.pos = Vector3.zero;
+        this.scale = SPSConst.SCALE_ONE;
+        this.rot = Vector3.zero;
+        this.rotArg = Vector3.zero;
+        this.zOffset = 0;
+        this.posOffset = Vector3.zero;
+        this.depthOffset = 0;
+        this.useBattleFactors = false;
+        this.battleScaleFactor = 4f;
+        this.battleDistanceFactor = 5f;
+        this.works.wFactor = 1f;
+        this.works.hFactor = 1f;
         this.charTran = null;
         this.boneTran = null;
         this.mapName = null;
         this.pngTexture = null;
         this.tcbAreaComputed = false;
+        if (this.meshRenderer != null)
+            this.meshRenderer.enabled = false;
     }
 
     public Rect GetRelevantPartOfTCB()

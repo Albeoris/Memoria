@@ -120,6 +120,7 @@ namespace Memoria
         public Boolean IsZeroMP => Data.info.IsZeroMP;
         public Int32 CommandMPCost => Data.GetCommandMPCost(); // This takes AA features into account but not increased summon cost early on or player MP cost factor
         public BattleCommandMenu CommandMenu => Data.info.cmdMenu;
+        public command_mode_index ExecutionStep => Data.info.mode;
 
         public Boolean IsDevided => IsManyTarget && (Int32)Data.aa.Info.Target > 2 && (Int32)Data.aa.Info.Target < 6;
 
@@ -185,6 +186,17 @@ namespace Memoria
         public Boolean HasElement(EffectElement element)
         {
             return (Element & element) != 0;
+        }
+
+        public Int32 GetReflectMultiplierOnTarget(UInt16 targetId)
+        {
+            if (Data.info.reflec != 1)
+                return (Data.tar_id & targetId) != 0 ? 1 : 0;
+            Int32 reflectMultiplier = 0;
+            for (UInt16 index = 0; index < 4; ++index)
+                if ((Data.reflec.tar_id[index] & targetId) != 0)
+                    ++reflectMultiplier;
+            return reflectMultiplier;
         }
     }
 }

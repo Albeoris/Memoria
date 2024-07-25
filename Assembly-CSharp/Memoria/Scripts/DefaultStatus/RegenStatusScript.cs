@@ -12,42 +12,39 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            base.Apply(target, inflicter, parameters);
             RegenInflicter = inflicter;
             return btl_stat.ALTER_SUCCESS;
         }
 
-        public override Boolean Remove(BattleUnit target)
+        public override Boolean Remove()
         {
             return true;
         }
 
         public IOprStatusScript.SetupOprMethod SetupOpr => null;
-        public Boolean OnOpr(BattleUnit target)
+        public Boolean OnOpr()
         {
-            BTL_DATA btl = target;
-            UInt32 heal = 0;
-            if (!target.IsUnderAnyStatus(BattleStatus.Petrify))
+            if (Target.IsUnderAnyStatus(BattleStatus.Petrify))
+                return false;
+            UInt32 heal = Target.MaximumHp >> 4;
+            Boolean isDmg = false;
+            if (Target.IsUnderAnyStatus(BattleStatus.EasyKill))
+                heal >>= 2;
+            if (Target.IsZombie)
             {
-                heal = target.MaximumHp >> 4;
-                if (target.IsUnderAnyStatus(BattleStatus.EasyKill))
-                    heal >>= 2;
-                if (btl_stat.CheckStatus(btl, BattleStatus.Zombie) || btl_util.CheckEnemyCategory(btl, 16))
-                {
-                    btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_DMG;
-                    if (target.CurrentHp > heal)
-                        target.CurrentHp -= heal;
-                    else
-                        target.Kill(RegenInflicter);
-                }
+                isDmg = true;
+                if (Target.CurrentHp > heal)
+                    Target.CurrentHp -= heal;
                 else
-                {
-                    target.CurrentHp = Math.Min(target.CurrentHp + heal, target.MaximumHp);
-                }
+                    Target.Kill(RegenInflicter);
             }
-            btl.fig_stat_info |= Param.FIG_STAT_INFO_REGENE_HP;
-            btl.fig_regene_hp = (Int32)heal;
-            btl2d.Btl2dStatReq(target);
-            BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Regen);
+            else
+            {
+                Target.CurrentHp = Math.Min(Target.CurrentHp + heal, Target.MaximumHp);
+            }
+            btl2d.Btl2dStatReq(Target, isDmg ? (Int32)heal : -(Int32)heal, 0);
+            BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Regen);
             return false;
         }
     }

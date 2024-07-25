@@ -38,7 +38,6 @@ public partial class BattleHUD : UIScene
     public BattleHUD()
     {
         _abilityDetailDict = new Dictionary<Int32, AbilityPlayerDetail>();
-        _magicSwordCond = new MagicSwordCondition();
         _enemyCount = -1;
         _playerCount = -1;
         _currentCharacterHp = new List<ParameterStatus>();
@@ -370,6 +369,13 @@ public partial class BattleHUD : UIScene
         if (!_messageQueue.TryGetValue(str, out mess))
             return 0;
         return mess.priority;
+    }
+
+    public BattleMagicSwordSet GetMagicSwordOfAbility(BattleUnit caster, Int32 abilId)
+    {
+        if (!caster.IsPlayer || !_abilityDetailDict[caster.GetIndex()].AbilityMagicSet.TryGetValue(abilId, out BattleMagicSwordSet magicSet))
+            return null;
+        return magicSet;
     }
 
     public void DisplayParty(Boolean resetPointAnimations = false)
@@ -790,6 +796,7 @@ public partial class BattleHUD : UIScene
         SetAbilityPanelVisibility(false, false);
         BackButton.SetActive(false);
         _currentSilenceStatus = false;
+        _currentMagicSwordState = true;
         _currentMpValue = -1;
         _currentCommandIndex = BattleCommandMenu.Attack;
         _currentSubMenuIndex = -1;

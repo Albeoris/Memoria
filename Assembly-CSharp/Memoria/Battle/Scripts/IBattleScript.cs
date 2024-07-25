@@ -56,84 +56,77 @@ namespace Memoria
                 return 0;
 
             Int32 raiting = 0;
-            for (Int32 i = 0; i < 32; i++)
-            {
-                BattleStatus status = (BattleStatus)(1u << i);
-                if ((statuses & status) == status)
-                    raiting += RateStatus(status);
-            }
+            foreach (BattleStatusId statusId in statuses.ToStatusList())
+                raiting += RateStatus(statusId);
 
             return raiting;
         }
 
-        public static Int32 RateStatus(BattleStatus status)
+        public static Int32 RateStatus(BattleStatusId statusId)
         {
-            switch (status)
+            switch (statusId)
             {
-                case 0:
-                    return 0;
-
-                case BattleStatus.Death:
+                case BattleStatusId.Death:
                     return -20;
-                case BattleStatus.Freeze:
+                case BattleStatusId.Freeze:
                     return -19;
-                case BattleStatus.Heat:
+                case BattleStatusId.Heat:
                     return -18;
-                case BattleStatus.Venom:
+                case BattleStatusId.Venom:
                     return -17;
-                case BattleStatus.Stop:
+                case BattleStatusId.Stop:
                     return -16;
-                case BattleStatus.Petrify:
+                case BattleStatusId.Petrify:
                     return -15;
-                case BattleStatus.Confuse:
+                case BattleStatusId.Confuse:
                     return -14;
-                case BattleStatus.Berserk:
+                case BattleStatusId.Berserk:
                     return -13;
-                case BattleStatus.GradualPetrify:
+                case BattleStatusId.GradualPetrify:
                     return -12;
-                case BattleStatus.Doom:
+                case BattleStatusId.Doom:
                     return -11;
-                case BattleStatus.LowHP:
+                case BattleStatusId.LowHP:
                     return -10;
-                case BattleStatus.Sleep:
+                case BattleStatusId.Sleep:
                     return -9;
-                case BattleStatus.Trouble:
+                case BattleStatusId.Trouble:
                     return -8;
-                case BattleStatus.Zombie:
+                case BattleStatusId.Zombie:
                     return -7;
-                case BattleStatus.Poison:
+                case BattleStatusId.Poison:
                     return -6;
-                case BattleStatus.Mini:
+                case BattleStatusId.Mini:
                     return -5;
-                case BattleStatus.Silence:
+                case BattleStatusId.Silence:
                     return -4;
-                case BattleStatus.Blind:
+                case BattleStatusId.Blind:
                     return -3;
-                case BattleStatus.Slow:
+                case BattleStatusId.Slow:
                     return -2;
-                case BattleStatus.Virus:
+                case BattleStatusId.Virus:
                     return -1;
 
-                case BattleStatus.EasyKill:
+                case BattleStatusId.EasyKill:
                     return 20;
-                case BattleStatus.AutoLife:
+                case BattleStatusId.AutoLife:
                     return 10;
-                case BattleStatus.Trance:
+                case BattleStatusId.Trance:
                     return 8;
-                case BattleStatus.Haste:
+                case BattleStatusId.Haste:
                     return 6;
-                case BattleStatus.Reflect:
-                case BattleStatus.Vanish:
+                case BattleStatusId.Reflect:
+                case BattleStatusId.Vanish:
                     return 5;
-                case BattleStatus.Regen:
+                case BattleStatusId.Regen:
                     return 4;
-                case BattleStatus.Shell:
-                case BattleStatus.Protect:
+                case BattleStatusId.Shell:
+                case BattleStatusId.Protect:
                     return 3;
-                case BattleStatus.Float:
+                case BattleStatusId.Float:
                     return 2;
-                case BattleStatus.Jump:
-                case BattleStatus.Defend:
+                case BattleStatusId.Jump:
+                case BattleStatusId.Defend:
                     return 1;
 
                 default:

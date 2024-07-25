@@ -184,6 +184,20 @@ namespace Memoria
             }
         }
 
+        public void TryAlterSingleStatus(BattleStatusId status, Boolean changeContext, BattleUnit inflicter = null, params Object[] parameters)
+        {
+            BattleStatus prev_status = this.PermanentStatus | this.CurrentStatus;
+            UInt32 result = btl_stat.AlterStatus(this, status, inflicter, true, parameters);
+            this._context.AddedStatuses |= (this.PermanentStatus | this.CurrentStatus) & ~prev_status;
+            if (changeContext)
+            {
+                if (result == btl_stat.ALTER_RESIST)
+                    _context.Flags |= BattleCalcFlags.Guard;
+                else if (result == btl_stat.ALTER_INVALID)
+                    _context.Flags |= BattleCalcFlags.Miss;
+            }
+        }
+
         public void AlterStatuses(EffectElement element)
         {
             if ((element & (EffectElement.Cold | EffectElement.Aqua)) != 0)

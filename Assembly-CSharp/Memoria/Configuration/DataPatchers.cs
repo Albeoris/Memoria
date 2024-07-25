@@ -180,18 +180,10 @@ namespace Memoria
                             continue;
                         }
                         BattleHUD.DebuffIconNames[statusID] = FF9UIDataTool.IconSpriteName[iconID];
-                        if (BattleResultUI.BadIconDict == null || FF9UIDataTool.status_id == null)
-                            continue;
-                        BattleResultUI.BadIconDict[statusID] = (Byte)iconID;
-                        if ((Int32)statusID < FF9UIDataTool.status_id.Length)
-                            FF9UIDataTool.status_id[(Int32)statusID] = iconID;
-                        // Todo: debuff icons in the main menus (status menu, items...) are UISprite components of CharacterDetailHUD and are enabled/disabled in FF9UIDataTool.DisplayCharacterDetail
-                        // Maybe add UISprite components at runtime? The width of the window may require adjustments then
-                        // By design (in FF9UIDataTool.DisplayCharacterDetail for instance), permanent debuffs must be the first ones of the list of statuses
                     }
                     else
                     {
-                        BattleHUD.DebuffIconNames[statusID] = entry[2]; // When adding a debuff icon by sprite name, not all the dictionaries are updated
+                        BattleHUD.DebuffIconNames[statusID] = entry[2];
                     }
                 }
                 else if (String.Equals(entry[0], "BuffIcon"))
@@ -250,12 +242,12 @@ namespace Memoria
                         fieldStatus = (BattleStatus)field.GetValue(null);
                     for (Int32 i = 3; i < entry.Length; i++)
                     {
-                        if (entry[i].TryEnumParse(out BattleStatus status))
+                        if (entry[i].TryEnumParse(out BattleStatusId status))
                         {
                             if (add)
-                                fieldStatus |= status;
+                                fieldStatus |= status.ToBattleStatus();
                             else
-                                fieldStatus &= ~status;
+                                fieldStatus &= ~status.ToBattleStatus();
                         }
                     }
                     field.SetValue(null, fieldStatus);

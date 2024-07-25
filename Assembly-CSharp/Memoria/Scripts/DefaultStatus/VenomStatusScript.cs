@@ -12,45 +12,38 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            base.Apply(target, inflicter, parameters);
             VenomInflicter = inflicter;
             return btl_stat.ALTER_SUCCESS;
         }
 
-        public override Boolean Remove(BattleUnit target)
+        public override Boolean Remove()
         {
             return true;
         }
 
         public IOprStatusScript.SetupOprMethod SetupOpr => null;
-        public Boolean OnOpr(BattleUnit target)
+        public Boolean OnOpr()
         {
-            BTL_DATA btl = target;
-            UInt32 damage = 0;
-            UInt32 mpdamage = 0;
-            if (!target.IsUnderAnyStatus(BattleStatus.Petrify))
+            if (Target.IsUnderAnyStatus(BattleStatus.Petrify))
+                return false;
+            UInt32 damage = Target.MaximumHp >> 4;
+            UInt32 mpdamage = Target.MaximumMp >> 4;
+            if (Target.IsUnderAnyStatus(BattleStatus.EasyKill))
             {
-                damage = target.MaximumHp >> 4;
-                mpdamage = target.MaximumMp >> 4;
-                if (target.IsUnderAnyStatus(BattleStatus.EasyKill))
-                {
-                    damage >>= 2;
-                    mpdamage >>= 2;
-                }
-                if (target.CurrentMp > mpdamage)
-                    target.CurrentMp -= mpdamage;
-                else
-                    target.CurrentMp = 0;
-                if (target.CurrentHp > damage)
-                    target.CurrentHp -= damage;
-                else
-                    target.Kill(VenomInflicter);
+                damage >>= 2;
+                mpdamage >>= 2;
             }
-            btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_HP;
-            btl.fig_stat_info |= Param.FIG_STAT_INFO_POISON_MP;
-            btl.fig_poison_hp = (Int32)damage;
-            btl.fig_poison_mp = (Int32)mpdamage;
-            btl2d.Btl2dStatReq(target);
-            BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Venom);
+            if (Target.CurrentMp > mpdamage)
+                Target.CurrentMp -= mpdamage;
+            else
+                Target.CurrentMp = 0;
+            if (Target.CurrentHp > damage)
+                Target.CurrentHp -= damage;
+            else
+                Target.Kill(VenomInflicter);
+            btl2d.Btl2dStatReq(Target, (Int32)damage, (Int32)mpdamage);
+            BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Venom);
             return false;
         }
     }

@@ -6,13 +6,6 @@ using Memoria.Data;
 
 public class STAT_INFO
 {
-    public STAT_INFO()
-    {
-        this.effects = new Dictionary<BattleStatusId, StatusScriptBase>();
-        this.opr = new Dictionary<BattleStatusId, Int32>();
-        this.conti = new Dictionary<BattleStatusId, Int32>();
-    }
-
     public Boolean HasDeathChangerEffect => effects.Values.Any(eff => eff is IDeathChangerStatusScript);
     public Boolean HasAutoAttackEffect => effects.Values.Any(eff => eff is IAutoAttackStatusScript);
     public Boolean HasTroubleEffect => effects.Values.Any(eff => eff is ITroubleStatusScript);
@@ -20,7 +13,12 @@ public class STAT_INFO
     public BattleStatus invalid;
     public BattleStatus permanent;
     public BattleStatus cur;
-    public Dictionary<BattleStatusId, StatusScriptBase> effects;
-    public Dictionary<BattleStatusId, Int32> opr;
-    public Dictionary<BattleStatusId, Int32> conti;
+    public Dictionary<BattleStatusId, StatusScriptBase> effects = new Dictionary<BattleStatusId, StatusScriptBase>();
+    public Dictionary<BattleStatusId, Int32> opr = new Dictionary<BattleStatusId, Int32>();
+    public Dictionary<BattleStatusId, Int32> conti = new Dictionary<BattleStatusId, Int32>();
+    public BattleStatus permanent_on_hold; // Statuses that cannot be applied yet but will be applied (as permanent) as soon as possible
+
+    // TODO [DV] Moved here for consistency
+    public StatusModifier partial_resist = new StatusModifier(0f);
+    public StatusModifier duration_factor = new StatusModifier(1f);
 }

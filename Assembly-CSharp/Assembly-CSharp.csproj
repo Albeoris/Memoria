@@ -379,6 +379,7 @@
     <Compile Include="Memoria\Scenes\MenuHUD\MenuUIControlPanel.cs" />
     <Compile Include="Memoria\Scenes\GOScrollablePanel.cs" />
     <Compile Include="Memoria\Scripts\DefaultStatusDatabase.cs" />
+    <Compile Include="Memoria\Scripts\DefaultStatus\ChangeStatStatusScript.cs" />
     <Compile Include="Memoria\Scripts\DefaultStatus\ReflectStatusScript.cs" />
     <Compile Include="Memoria\Scripts\DefaultStatus\GradualPetrifyStatusScript.cs" />
     <Compile Include="Memoria\Scripts\DefaultStatus\FreezeStatusScript.cs" />
@@ -1145,7 +1146,6 @@
     <Compile Include="FF9\Attrib.cs" />
     <Compile Include="FF9\battle_id_list.cs" />
     <Compile Include="FF9\battle_main_ret.cs" />
-    <Compile Include="FF9\battle_phase.cs" />
     <Compile Include="FF9\battle_phase_close.cs" />
     <Compile Include="FF9\battle_phase_defeat.cs" />
     <Compile Include="FF9\battle_phase_menu_off.cs" />

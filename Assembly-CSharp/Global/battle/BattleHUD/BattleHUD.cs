@@ -15,7 +15,6 @@ using UnityEngine;
 public partial class BattleHUD : UIScene
 {
     private readonly Dictionary<Int32, AbilityPlayerDetail> _abilityDetailDict;
-    private readonly MagicSwordCondition _magicSwordCond;
     private readonly List<ParameterStatus> _currentCharacterHp;
     private readonly List<Boolean> _currentEnemyDieState;
     private readonly List<DamageAnimationInfo> _hpInfoVal;
@@ -50,6 +49,7 @@ public partial class BattleHUD : UIScene
     private Boolean _isManualTrance;
     private Boolean _needItemUpdate;
     private Boolean _currentSilenceStatus;
+    private Boolean _currentMagicSwordState;
     private Int32 _currentMpValue;
     private Single _blinkAlphaCounter;
     private Int32 _tranceColorCounter;
@@ -386,19 +386,10 @@ public partial class BattleHUD : UIScene
         BattleCommandId defendCmdId = !btl.Data.is_monster_transform || transform.base_command != BattleCommandId.Defend ? BattleCommandId.Defend : transform.new_command;
         Boolean command1IsEnable = CommandIsEnabled(btl.Data, command1);
         Boolean command2IsEnable = CommandIsEnabled(btl.Data, command2);
+        // TODO Change that with a features of type >CMD similar to >AA
         Boolean noMagicSword = false;
         if (command2 == BattleCommandId.MagicSword)
-        {
-            if (!_magicSwordCond.IsViviExist)
-            {
-                noMagicSword = true;
-                command2IsEnable = false;
-            }
-            else if (_magicSwordCond.IsViviDead || _magicSwordCond.IsSteinerMini)
-            {
-                command2IsEnable = false;
-            }
-        }
+            noMagicSword = !BattleState.EnumerateUnits().Any(u => u.PlayerIndex == CharacterId.Vivi);
 
         if (Configuration.Battle.NoAutoTrance && btl.Trance == Byte.MaxValue && !btl.IsUnderAnyStatus(BattleStatus.Trance))
         {
@@ -416,7 +407,7 @@ public partial class BattleHUD : UIScene
             _isManualTrance = false;
         }
 
-        // TODO [DV]
+        // TODO [DV] Must have a features of type >CMD similar to >AA
         if (Configuration.Mod.TranceSeek) // [DV] - Special commands
         {
             if (presetId == CharacterPresetId.Zidane) // Change Zidane's commands depending the weapon
@@ -603,12 +594,28 @@ public partial class BattleHUD : UIScene
         {
             _currentSilenceStatus = !_currentSilenceStatus;
             DisplayAbility();
+            return;
         }
 
         if (_currentMpValue != unit.CurrentMp)
         {
             _currentMpValue = (Int32)unit.CurrentMp;
             DisplayAbility();
+            return;
+        }
+
+        HashSet<BattleMagicSwordSet> unitMagicSet = new HashSet<BattleMagicSwordSet>(_abilityDetailDict[CurrentPlayerIndex].AbilityMagicSet.Values);
+        Boolean newMagicSwordState = true;
+        foreach (BattleMagicSwordSet magicSet in unitMagicSet)
+        {
+            BattleUnit supporter = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().FirstOrDefault(u => u.PlayerIndex == magicSet.Supporter);
+            newMagicSwordState = newMagicSwordState && supporter != null && !unit.IsUnderAnyStatus(BattleStatusConst.NoInput | magicSet.BeneficiaryBlockingStatus) && !supporter.IsUnderAnyStatus(BattleStatusConst.NoInput | magicSet.SupporterBlockingStatus);
+        }
+        if (_currentMagicSwordState != newMagicSwordState)
+        {
+            _currentMagicSwordState = newMagicSwordState;
+            DisplayAbility();
+            return;
         }
     }
 
@@ -1239,9 +1246,16 @@ public partial class BattleHUD : UIScene
                 return AbilityStatus.Disable;
         }
 
-        if (Configuration.Mod.TranceSeek && (patchedAbil.Type & 16) != 0) // [DV] Unused (5) - To disable "Bandit !" if Zidane equip a Dagger, Mage Masher or Mythril Dagger.
-        {
+        if (Configuration.Mod.TranceSeek && (patchedAbil.Type & 16) != 0) // TODO [DV] Unused (5) - To disable "Bandit !" if Zidane equip a Dagger, Mage Masher or Mythril Dagger.
             return AbilityStatus.Disable;
+
+        if (abilityPlayerDetail.AbilityMagicSet.TryGetValue(abilId, out BattleMagicSwordSet magicSet))
+        {
+            if (unit.IsUnderAnyStatus(BattleStatusConst.NoInput | magicSet.BeneficiaryBlockingStatus))
+                return AbilityStatus.Disable;
+            BattleUnit supporter = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().FirstOrDefault(u => u.PlayerIndex == magicSet.Supporter);
+            if (supporter == null || supporter.IsUnderAnyStatus(BattleStatusConst.NoInput | magicSet.SupporterBlockingStatus))
+                return AbilityStatus.Disable;
         }
 
         if (GetActionMpCost(patchedAbil, unit, patchedId, checkCurrentPlayer) > unit.CurrentMp)
@@ -1330,6 +1344,7 @@ public partial class BattleHUD : UIScene
             Int32 count = Math.Min(magicSet.BaseAbilities.Length, magicSet.UnlockedAbilities.Length);
             for (Int32 i = 0; i < count; ++i)
             {
+                abilityPlayer.AbilityMagicSet[magicSet.UnlockedAbilities[i]] = magicSet;
                 Int32 index = ff9abil.FF9Abil_GetIndex(supporter, magicSet.BaseAbilities[i]);
                 if (index >= 0)
                 {

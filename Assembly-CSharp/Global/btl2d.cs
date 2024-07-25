@@ -18,6 +18,10 @@ public static class btl2d
         ff9Battle.btl2d_work_set.OldDisappear = Byte.MaxValue;
         foreach (BTL2D_ENT entry in ff9Battle.btl2d_work_set.Entry)
             entry.BtlPtr = null;
+        List<HUDMessageChild> nonClearedStatusMessages = new List<HUDMessageChild>(btl2d.StatusMessages);
+        btl2d.StatusMessages.Clear();
+        foreach (HUDMessageChild message in nonClearedStatusMessages)
+            Singleton<HUDMessage>.Instance.ReleaseObject(message);
     }
 
     public static void Btl2dReq(BattleUnit unit)
@@ -43,20 +47,20 @@ public static class btl2d
             if ((fig_info & Param.FIG_INFO_TROUBLE) != 0)
                 foreach (BattleStatusId statusId in btl.stat.cur.ToStatusList())
                     if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
-                        (effect as ITroubleStatusScript)?.OnTroubleDamage(new BattleUnit(btl), fig_info, fig, m_fig);
+                        (effect as ITroubleStatusScript)?.OnTroubleDamage(fig_info, fig, m_fig);
             if ((fig_info & Param.FIG_INFO_GUARD) != 0)
             {
-                btl2d.Btl2dReqSymbol(btl, 2, 0, 0);
+                btl2d.Btl2dReqSymbol(btl, 2, btl2d.DMG_COL_WHITE, 0);
             }
             else if ((fig_info & (Param.FIG_INFO_MISS | Param.FIG_INFO_DEATH)) != 0)
             {
                 if ((fig_info & Param.FIG_INFO_MISS) != 0)
                 {
-                    btl2d.Btl2dReqSymbol(btl, 0, 0, 0);
+                    btl2d.Btl2dReqSymbol(btl, 0, btl2d.DMG_COL_WHITE, 0);
                     delay = 2;
                 }
                 if ((fig_info & Param.FIG_INFO_DEATH) != 0)
-                    btl2d.Btl2dReqSymbol(btl, 1, 0, delay);
+                    btl2d.Btl2dReqSymbol(btl, 1, btl2d.DMG_COL_WHITE, delay);
             }
             else
             {
@@ -64,21 +68,21 @@ public static class btl2d
                 {
                     if ((fig_info & Param.FIG_INFO_HP_CRITICAL) != 0)
                     {
-                        btl2d.Btl2dReqSymbol(btl, 3, 128, 0);
+                        btl2d.Btl2dReqSymbol(btl, 3, btl2d.DMG_COL_YELLOW, 0);
                         delay = 2;
                     }
                     if ((fig_info & Param.FIG_INFO_HP_RECOVER) != 0)
-                        btl2d.Btl2dReqHP(btl, fig, 192, delay);
+                        btl2d.Btl2dReqHP(btl, fig, btl2d.DMG_COL_GREEN, delay);
                     else
-                        btl2d.Btl2dReqHP(btl, fig, 0, delay);
+                        btl2d.Btl2dReqHP(btl, fig, btl2d.DMG_COL_WHITE, delay);
                     delay += 4;
                 }
                 if ((fig_info & Param.FIG_INFO_DISP_MP) != 0)
                 {
                     if ((fig_info & Param.FIG_INFO_MP_RECOVER) != 0)
-                        btl2d.Btl2dReqMP(btl, m_fig, 192, delay);
+                        btl2d.Btl2dReqMP(btl, m_fig, btl2d.DMG_COL_GREEN, delay);
                     else
-                        btl2d.Btl2dReqMP(btl, m_fig, 0, delay);
+                        btl2d.Btl2dReqMP(btl, m_fig, btl2d.DMG_COL_WHITE, delay);
                 }
             }
         }
@@ -87,46 +91,39 @@ public static class btl2d
         m_fig = 0;
     }
 
-    public static void Btl2dStatReq(BTL_DATA pBtl)
+    public static void Btl2dStatReq(BTL_DATA btl, Int32 hp, Int32 mp)
     {
+        if (btl.bi.disappear != 0)
+            return;
         Byte delay = 0;
-        UInt16 fig_stat_info = pBtl.fig_stat_info;
-        if (pBtl.bi.disappear == 0)
+        if (hp != 0)
         {
-            if ((fig_stat_info & Param.FIG_STAT_INFO_REGENE_HP) != 0)
+            UInt16 pCol = btl2d.DMG_COL_WHITE;
+            if (hp < 0)
             {
-                BTL2D_ENT entry = btl2d.Btl2dReqHP(pBtl, pBtl.fig_regene_hp, (UInt16)(((fig_stat_info & Param.FIG_STAT_INFO_REGENE_DMG) == 0) ? 192 : 0), 0);
-                entry.Yofs = -12;
-                delay = 4;
+                hp = -hp;
+                pCol = btl2d.DMG_COL_GREEN;
             }
-            if ((fig_stat_info & Param.FIG_STAT_INFO_POISON_HP) != 0)
-            {
-                BTL2D_ENT entry = btl2d.Btl2dReqHP(pBtl, pBtl.fig_poison_hp, 0, delay);
-                entry.Yofs = -12;
-                delay += 4;
-            }
-            if ((fig_stat_info & Param.FIG_STAT_INFO_POISON_MP) != 0)
-            {
-                BTL2D_ENT entry = btl2d.Btl2dReqMP(pBtl, pBtl.fig_poison_mp, 0, delay);
-                entry.Yofs = -12;
-                delay += 4;
-            }
-            if ((fig_stat_info & Param.FIG_STAT_INFO_REGENE_MP) != 0)
-            {
-                BTL2D_ENT entry = btl2d.Btl2dReqMP(pBtl, pBtl.fig_regene_mp, 192, delay);
-                entry.Yofs = -12;
-            }
+            BTL2D_ENT entry = btl2d.Btl2dReqHP(btl, hp, pCol, delay);
+            entry.Yofs = -12;
+            delay += 4;
         }
-        pBtl.fig_stat_info = 0;
-        pBtl.fig_regene_hp = 0;
-        pBtl.fig_regene_mp = 0;
-        pBtl.fig_poison_hp = 0;
-        pBtl.fig_poison_mp = 0;
+        if (mp != 0)
+        {
+            UInt16 pCol = btl2d.DMG_COL_WHITE;
+            if (mp < 0)
+            {
+                mp = -mp;
+                pCol = btl2d.DMG_COL_GREEN;
+            }
+            BTL2D_ENT entry = btl2d.Btl2dReqMP(btl, mp, pCol, delay);
+            entry.Yofs = -12;
+        }
     }
 
     public static BTL2D_ENT GetFreeEntry(BTL_DATA pBtl)
     {
-        BTL2D_ENT freeEntry = FF9StateSystem.Battle.FF9Battle.btl2d_work_set.Entry.FirstOrDefault(entry => entry.BtlPtr == null);
+        BTL2D_ENT freeEntry = FF9StateSystem.Battle.FF9Battle.btl2d_work_set.Entry.Find(entry => entry.BtlPtr == null);
         if (freeEntry == null)
         {
             freeEntry = new BTL2D_ENT();
@@ -171,12 +168,18 @@ public static class btl2d
 
     public static BTL2D_ENT Btl2dReqSymbolMessage(BTL_DATA pBtl, String messageColor, Dictionary<String, String> multiLangMessage, HUDMessage.MessageStyle style, Byte pDelay)
     {
+        if (!multiLangMessage.TryGetValue(Localization.GetSymbol(), out String msg))
+            multiLangMessage.TryGetValue(Localization.GetFallbackSymbol(), out msg);
+        return Btl2dReqSymbolMessage(pBtl, messageColor, msg, style, pDelay);
+    }
+
+    public static BTL2D_ENT Btl2dReqSymbolMessage(BTL_DATA pBtl, String messageColor, String message, HUDMessage.MessageStyle style, Byte pDelay)
+    {
         BTL2D_ENT freeEntry = btl2d.GetFreeEntry(pBtl);
         freeEntry.Type = 3;
         freeEntry.Delay = pDelay;
         freeEntry.CustomColor = messageColor;
-        if (!multiLangMessage.TryGetValue(Localization.GetSymbol(), out freeEntry.CustomMessage))
-            multiLangMessage.TryGetValue("US", out freeEntry.CustomMessage);
+        freeEntry.CustomMessage = message;
         freeEntry.CustomStyle = style;
         return freeEntry;
     }
@@ -201,7 +204,7 @@ public static class btl2d
             String format = String.Empty;
             if (btl2dMessage.Type == 0)
             {
-                if (btl2dMessage.NumColor == 0)
+                if (btl2dMessage.NumColor == btl2d.DMG_COL_WHITE)
                 {
                     style = HUDMessage.MessageStyle.DAMAGE;
                     if (!String.IsNullOrEmpty(Configuration.Interface.BattleDamageTextFormat))
@@ -217,7 +220,7 @@ public static class btl2d
             }
             else if (btl2dMessage.Type == 1)
             {
-                if (btl2dMessage.NumColor == 0)
+                if (btl2dMessage.NumColor == btl2d.DMG_COL_WHITE)
                 {
                     style = HUDMessage.MessageStyle.DAMAGE;
                     if (!String.IsNullOrEmpty(Configuration.Interface.BattleMPDamageTextFormat))

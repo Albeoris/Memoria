@@ -133,7 +133,7 @@ public class btl_cmd
     public static void InitCommand(BTL_DATA btl)
     {
         FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
-        if (stateBattleSystem.btl_phase == 2)
+        if (stateBattleSystem.btl_phase == FF9StateBattleSystem.PHASE_ENTER)
             btl.tar_mode = 1;
         btl.sel_mode = 0;
         btl.finger_disp = false;
@@ -313,7 +313,7 @@ public class btl_cmd
 
     public static void SetCounter(BTL_DATA btl, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id)
     {
-        if (btl_stat.CheckStatus(btl, BattleStatusConst.PreventCounter) || FF9StateSystem.Battle.FF9Battle.btl_phase != 4)
+        if (btl_stat.CheckStatus(btl, BattleStatusConst.PreventCounter) || FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
             return;
         if (btl_util.IsCommandMonsterTransformAttack(btl, commandId, sub_no) && btl.monster_transform.attack[btl.bi.def_idle] == null)
             return;
@@ -346,7 +346,7 @@ public class btl_cmd
             CMD_DATA cmd;
             if (cmd_no == BattleCommandId.EnemyAtk)
             {
-                if (stateBattleSystem.btl_phase != 4)
+                if (stateBattleSystem.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
                 {
                     btl.Data.sel_mode = 0;
                     return;
@@ -405,7 +405,7 @@ public class btl_cmd
             caster.Data.sel_mode = 0;
             return;
         }
-        if (btl_para.IsNonDyingVanillaBoss(caster.Data) && caster.CurrentHp < 10000 && stateBattleSystem.btl_phase == 4 && btl_scrp.GetBattleID(1) == caster.Id)
+        if (btl_para.IsNonDyingVanillaBoss(caster.Data) && caster.CurrentHp < 10000 && stateBattleSystem.btl_phase == FF9StateBattleSystem.PHASE_NORMAL && btl_scrp.GetBattleID(1) == caster.Id)
         {
             // Avoid bosses to keep attacking under 10000 HP in Speed modes >= 3 (because their AI script will not enter the ending phase if SFX keep playing)
             caster.Data.sel_mode = 0;
@@ -414,7 +414,7 @@ public class btl_cmd
         CMD_DATA cmd;
         if (cmd_no == BattleCommandId.EnemyAtk)
         {
-            if (stateBattleSystem.btl_phase != 4)
+            if (stateBattleSystem.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
             {
                 caster.Data.sel_mode = 0;
                 return;
@@ -506,7 +506,7 @@ public class btl_cmd
                 || btl_stat.CheckStatus(cmd.regist, BattleStatus.Death) && cmd.cmd_no == BattleCommandId.SysPhantom
                 || Configuration.Battle.Speed >= 4 && btl_util.IsBtlUsingCommandMotion(cmd.regist)
                 || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0)
-                // TODO [DV]: apply another status than Sleep on bosses / easykill
+                // TODO [DV] Apply another status than Sleep on bosses / easykill
                 //|| (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill) && btl_stat.CheckStatus(cmd.regist, BattleStatus.Sleep)) // [DV] Prevent command cancel for boss.
             {
                 if (Configuration.Battle.Speed == 4)
@@ -571,17 +571,19 @@ public class btl_cmd
                 BTL_DATA btl = cmd.regist;
                 if (btl_stat.CheckStatus(btl, BattleStatus.Heat))
                 {
-                    // TODO [DV]
+                    // TODO [DV] Apply another status than Heat on bosses / easykill
                     //if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill)) // TRANCE SEEK - Boss don't die with Heat.
                     //{
                     //    btlsys.cur_cmd_list.Add(cmd);
                     //    KillCommand(cmd);
                     //    return;
                     //}
-                    BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Heat);
-                    btl_stat.AlterStatus(new BattleUnit(btl), BattleStatusId.Death);
-                    KillCommand(cmd);
-                    return;
+                    if (btl_stat.AlterStatus(new BattleUnit(btl), BattleStatusId.Death) == btl_stat.ALTER_SUCCESS)
+                    {
+                        BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Heat);
+                        KillCommand(cmd);
+                        return;
+                    }
                 }
             }
         }
@@ -1039,14 +1041,23 @@ public class btl_cmd
         if (!BattleAbilityHelper.ApplySpecialCommandCondition(cmd))
             return false;
 
+
+        BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
+        if (caster != null)
+        {
+            BattleMagicSwordSet magicSet = UIManager.Battle.GetMagicSwordOfAbility(caster, ff9abil.GetAbilityIdFromActiveAbility(abilId));
+            if (magicSet != null && !DecideMagicSword(caster, magicSet))
+                return false;
+        }
+
         switch (cmd.cmd_no)
         {
             case BattleCommandId.Jump:
-                btl_stat.AlterStatus(caster, BattleStatusId.Jump, caster, BattleCommandId.Spear, BattleAbilityId.Spear1, cmd.tar_id);
+                btl_stat.AlterStatus(caster, BattleStatusId.Jump, caster, false, BattleCommandId.Spear, BattleAbilityId.Spear1, cmd.tar_id);
                 cmd.tar_id = caster.Id;
                 break;
             case BattleCommandId.JumpInTrance:
-                btl_stat.AlterStatus(caster, BattleStatusId.Jump, caster, BattleCommandId.SpearInTrance, BattleAbilityId.Spear2, btl_util.GetStatusBtlID(1, 0));
+                btl_stat.AlterStatus(caster, BattleStatusId.Jump, caster, false, BattleCommandId.SpearInTrance, BattleAbilityId.Spear2, btl_util.GetStatusBtlID(1, 0));
                 cmd.tar_id = caster.Id;
                 break;
             case BattleCommandId.MagicCounter:
@@ -1060,14 +1071,12 @@ public class btl_cmd
             case BattleCommandId.Phantom:
                 DecideSummonType(cmd);
                 break;
-            case BattleCommandId.MagicSword:
-                return DecideMagicSword(caster, cmd.aa.MP);
             case BattleCommandId.Counter:
-                if (btl_util.GetCommandMainActionIndex(cmd) == BattleAbilityId.Attack)
+                if (abilId == BattleAbilityId.Attack)
                     UIManager.Battle.SetBattleFollowMessage(BattleMesages.CounterAttack, msgCmd: cmd);
                 break;
             case BattleCommandId.SysEscape:
-                if (btlsys.btl_phase == 4)
+                if (btlsys.btl_phase == FF9StateBattleSystem.PHASE_NORMAL)
                 {
                     for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
                     {
@@ -1079,11 +1088,11 @@ public class btl_cmd
                             //    btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_ESCAPE);
                             //    btl.evt.animFrame = 0;
                             //}
-                            btlsys.btl_phase = 5;
+                            btlsys.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
                             btlsys.btl_seq = 3;
                         }
                     }
-                    if (btlsys.btl_phase == 5 && btlsys.btl_seq == 3)
+                    if (btlsys.btl_phase == FF9StateBattleSystem.PHASE_MENU_OFF && btlsys.btl_seq == 3)
                     {
                         UIManager.Battle.SetIdle();
                         ++ff9StateGlobal.party.escape_no;
@@ -1126,7 +1135,7 @@ public class btl_cmd
                 return false;
             case BattleCommandId.SysReraise: // Unused anymore
                 caster.CurrentHp = 1;
-                caster.RemoveStatus(BattleStatus.Death);
+                caster.RemoveStatus(BattleStatusId.Death);
                 //caster.Data.bi.dmg_mot_f = 1;
                 FF9StateSystem.Settings.SetHPFull();
                 return false;
@@ -1156,7 +1165,7 @@ public class btl_cmd
     {
         if (!btl_stat.CheckStatus(cmd.regist, BattleStatusConst.CannotUseMagic) || (cmd.AbilityCategory & 2) == 0)
             return true;
-        // TODO [DV]: apply a different status than Silence on bosses / easykill
+        // TODO [DV] Apply a different status than Silence on bosses / easykill
         //if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill)) // [DV] - Bosses can use magic under silence but have malus
         //    return true;
         UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotCast);
@@ -1323,9 +1332,6 @@ public class btl_cmd
         {
             if (cmd == caster.Data.cmd[0] && cmd.cmd_no != BattleCommandId.Jump && cmd.cmd_no != BattleCommandId.JumpInTrance)
                 ResetCurrentBattlerActiveTime(caster);
-            // TODO check if that code is relevant
-            //else if (commandId == BattleCommandId.DoubleWhiteMagic && caster.PlayerIndex == CharacterId.Eiko && cmd == caster.Data.cmd[3] && !CheckUsingCommand(caster.Data.cmd[0]))
-            //    ResetCurrentBattlerActiveTime(caster);
 
             if (IsNeedToDecreaseTrance(caster, commandId, cmd))
             {
@@ -1426,7 +1432,7 @@ public class btl_cmd
             {
                 if (!caster.Data.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
                     continue;
-                (effect as IFinishCommandScript)?.OnFinishCommand(caster, cmd, tranceDelta);
+                (effect as IFinishCommandScript)?.OnFinishCommand(cmd, tranceDelta);
             }
 
             btl_para.CheckPointData(caster);
@@ -1580,9 +1586,9 @@ public class btl_cmd
                 {
                     FF9StateBattleSystem btlsys = FF9StateSystem.Battle.FF9Battle;
                     UIManager.Battle.FF9BMenu_EnableMenu(false);
-                    if (btlsys.btl_phase != 5)
+                    if (btlsys.btl_phase != FF9StateBattleSystem.PHASE_MENU_OFF)
                     {
-                        btlsys.btl_phase = 5;
+                        btlsys.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
                         btlsys.btl_seq = 0;
                         KillAllCommand(btlsys);
                     }
@@ -1662,24 +1668,17 @@ public class btl_cmd
         }
     }
 
-    private static Boolean DecideMagicSword(BattleUnit steiner, Int32 mp)
+    private static Boolean DecideMagicSword(BattleUnit attacker, BattleMagicSwordSet mgSet)
     {
-        if (steiner.CurrentMp < mp || steiner.IsUnderAnyStatus(BattleStatusConst.NoMagicSword))
+        if (attacker.IsUnderAnyStatus(BattleStatusConst.NoInput | mgSet.BeneficiaryBlockingStatus))
         {
             UIManager.Battle.SetBattleFollowMessage(BattleMesages.CombinationFailed);
             return false;
         }
 
-        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
-        {
-            if (btl_util.getSerialNumber(unit.Data) != CharacterSerialNumber.VIVI)
-                continue;
-
-            if (!unit.IsUnderAnyStatus(BattleStatusConst.NoMagicSword))
-                return true;
-
-            break;
-        }
+        BattleUnit supporter = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().FirstOrDefault(unit => unit.PlayerIndex == mgSet.Supporter);
+        if (supporter != null && !supporter.IsUnderAnyStatus(BattleStatusConst.NoInput | mgSet.SupporterBlockingStatus))
+            return true;
 
         UIManager.Battle.SetBattleFollowMessage(BattleMesages.CombinationFailed);
         return false;

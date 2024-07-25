@@ -185,15 +185,12 @@ public static class btl_vfx
         if (isTrance)
         {
             btl.battleModelIsRendering = true;
-            btl.tranceGo.SetActive(true);
             btl.ChangeModel(btl.tranceGo, btl_init.GetModelID(serialNo, isTrance));
             GeoTexAnim.geoTexAnimPlay(btl.tranceTexanimptr, 2);
         }
         else
         {
             btl.battleModelIsRendering = true;
-            btl.tranceGo.SetActive(false);
-            btl.originalGo.SetActive(true);
             btl.ChangeModel(btl.originalGo, btl_init.GetModelID(serialNo, isTrance));
             GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
         }

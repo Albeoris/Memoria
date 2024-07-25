@@ -213,7 +213,7 @@ public partial class BattleHUD : UIScene
                     {
                         BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
                         btl.Trance = Byte.MaxValue;
-                        btl.AlterStatus(BattleStatus.Trance);
+                        btl.AlterStatus(BattleStatusId.Trance);
                     }
                     else
                     {

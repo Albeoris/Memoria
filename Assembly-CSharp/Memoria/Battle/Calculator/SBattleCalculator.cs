@@ -292,7 +292,7 @@ namespace Memoria
             BattleCalculator.FrameAppliedEffectList.Add(v);
             if (target.bi.player != 0 || FF9StateSystem.Battle.isDebug)
                 return;
-            UInt16 targetId = target.bi.slave == 0 ? target.btl_id : (UInt16)16;
+            UInt16 targetId = target.bi.slave == 0 ? target.btl_id : btl_util.GetMasterEnemyBtlPtr(target).Id;
             if (caster.bi.player != 0 && !btl_stat.CheckStatus(target, BattleStatusConst.Immobilized))
             {
                 if (v.Target.Enemy.AttackOnDeath && target.cur.hp == 0)
@@ -346,7 +346,7 @@ namespace Memoria
                 if (Configuration.Battle.NoAutoTrance)
                     return;
 
-                v.Target.AlterStatus(BattleStatus.Trance);
+                v.Target.AlterStatus(BattleStatusId.Trance);
             }
         }
 
@@ -354,46 +354,25 @@ namespace Memoria
         {
             if (v.Target.Flags == 0)
                 return;
-            // DamageModifierCount > 0 -> damage is multiplied by 1.5, 2, 2.25, 2.5, 2.625, 2.75...
-            // DamageModifierCount < 0 -> damage is divided by 2, 4, 8, 16, 32...
-            // TODO [DV]
-            Single modifier_factor = 1.0f;
+            Int32 reflectMultiplier = v.Command.GetReflectMultiplierOnTarget(v.Target.Id);
+            if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
+                v.Target.HpDamage *= reflectMultiplier;
+            if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
+                v.Target.MpDamage *= reflectMultiplier;
+            // TODO [DV] Use IOverloadDamageModifierScript
             //if (Configuration.Mod.TranceSeek && v.Context.DamageModifierCount > 0)
             //{
-            //    modifier_factor = 1f + v.Context.DamageModifierCount * 0.25f; // TRANCE SEEK -> damage is multiplied by 1.25, 1.5, 1.75, 2, 2.25, 2.5...
+            //    Single modifier_factor = 1f + v.Context.DamageModifierCount * 0.25f; // TRANCE SEEK -> damage is multiplied by 1.25, 1.5, 1.75, 2, 2.25, 2.5...
             //    while (v.Context.DamageModifierCount < 0)
             //    {
             //        modifier_factor *= 0.5f;
             //        ++v.Context.DamageModifierCount;
             //    }
+            //    if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
+            //        v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage) * reflectMultiplier;
+            //    if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
+            //        v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage) * reflectMultiplier;
             //}
-            //else
-            //{
-            //    // Done
-            //}
-            Int32 reflectMultiplier;
-            CMD_DATA cmd = v.Command.Data;
-            if (cmd.info.reflec == 1)
-            {
-                reflectMultiplier = 0;
-                for (UInt16 index = 0; index < 4; ++index)
-                    if ((cmd.reflec.tar_id[index] & v.Target.Id) != 0)
-                        ++reflectMultiplier;
-            }
-            else
-            {
-                reflectMultiplier = 1;
-            }
-            if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
-            {
-                v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage);
-                v.Target.HpDamage *= reflectMultiplier;
-            }
-            if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
-            {
-                v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage);
-                v.Target.MpDamage *= reflectMultiplier;
-            }
         }
     }
 }

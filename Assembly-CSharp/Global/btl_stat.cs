@@ -25,7 +25,7 @@ public static class btl_stat
 
     public static void StatusCommandCancel(BTL_DATA btl)
     {
-        // TODO [DV]
+        // TODO [DV] Apply a different status than Sleep on bosses / easykill
         //if (Configuration.Mod.TranceSeek && CheckStatus(btl, BattleStatus.EasyKill) && (status & BattleStatus.Sleep) != 0) // [DV] Prevent command cancel for boss.
         //    return;
         if (btl.bi.player != 0)
@@ -38,7 +38,7 @@ public static class btl_stat
         btl.sel_mode = 0;
     }
 
-    public static UInt32 AlterStatus(BattleUnit target, BattleStatusId statusId, BattleUnit inflicter = null, params Object[] parameters)
+    public static UInt32 AlterStatus(BattleUnit target, BattleStatusId statusId, BattleUnit inflicter = null, Boolean usePartialResist = false, params Object[] parameters)
     {
         Dictionary<BattleStatusId, BattleStatusDataEntry> statusDatabase = FF9StateSystem.Battle.FF9Battle.status_data;
         BTL_DATA btl = target;
@@ -47,6 +47,12 @@ public static class btl_stat
         Boolean bypassResistances = statusId == BattleStatusId.Death && btl.cur.hp == 0;
         if (!bypassResistances && (status & stat.invalid) != 0)
             return ALTER_RESIST;
+        if (!bypassResistances && usePartialResist)
+        {
+            Single rate = target.PartialResistStatus[statusId];
+            if (rate > 0f && UnityEngine.Random.Range(0f, 1f) < rate)
+                return ALTER_INVALID;
+        }
         if ((status & stat.permanent) != 0 || ((status & stat.cur) != 0 && (status & BattleStatusConst.NoReset) != 0))
             return ALTER_INVALID;
         BattleStatus invalidStatuses = btl.bi.t_gauge == 0 ? BattleStatus.Trance : 0;
@@ -80,7 +86,7 @@ public static class btl_stat
             btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
             btl.evt.animFrame = 0;
         }
-        if (FF9StateSystem.Battle.FF9Battle.btl_phase > 2 && (status & BattleStatusConst.BattleEnd) != 0)
+        if (FF9StateSystem.Battle.FF9Battle.btl_phase > FF9StateBattleSystem.PHASE_ENTER && (status & BattleStatusConst.BattleEnd) != 0)
             btl_sys.CheckBattlePhase(btl);
         RemoveStatuses(target, statusData.ClearOnApply);
         if (CheckStatus(btl, BattleStatusConst.StopAtb))
@@ -89,7 +95,7 @@ public static class btl_stat
         {
             Int16 defaultFactor = (status & BattleStatusConst.AnyNegative) != 0 ? (Int16)(60 - btl.elem.wpr << 3) :
                                   (status & BattleStatusConst.AnyPositive) != 0 ? (Int16)(btl.elem.wpr << 3) : (Int16)(60 - btl.elem.wpr << 2);
-            btl.stat.conti[statusId] = (Int16)(statusData.ContiCnt * defaultFactor);
+            stat.conti[statusId] = (Int16)(statusData.ContiCnt * defaultFactor);
             if (!String.IsNullOrEmpty(Configuration.Battle.StatusDurationFormula))
             {
                 Expression e = new Expression(Configuration.Battle.StatusDurationFormula);
@@ -104,20 +110,20 @@ public static class btl_stat
                 NCalcUtility.InitializeExpressionNullableUnit(ref e, inflicter, "Inflicter");
                 Int64 val = NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
                 if (val >= 0)
-                    btl.stat.conti[statusId] = (Int16)Math.Min(val, Int16.MaxValue);
+                    stat.conti[statusId] = (Int16)Math.Min(val, Int16.MaxValue);
             }
-            btl.stat.conti[statusId] = (Int16)(btl.stat_duration_factor[statusId] * btl.stat.conti[statusId]);
-            // TODO [DV]
+            stat.conti[statusId] = (Int16)(stat.duration_factor[statusId] * stat.conti[statusId]);
+            // TODO [DV] Code that in a custom DoomStatusScript / GradualPetrifyStatusScript
             //if ((status & (BattleStatus.Doom | BattleStatus.GradualPetrify)) != 0u)
             //{
             //    if (Configuration.Mod.TranceSeek && target.HasSupportAbility(SupportAbility1.AutoRegen)) // [DV] - SA Resilience
             //    {
-            //        btl.stat.cnt.conti[statusId] = (Int16)(statusData.ContiCnt * defaultFactor * 2);
-            //        btl.stat.cnt.cdown_max = (Int16)Math.Max(1, btl.stat.cnt.conti[statusId] / 2);
+            //        stat.cnt.conti[statusId] = (Int16)(statusData.ContiCnt * defaultFactor * 2);
+            //        stat.cnt.cdown_max = (Int16)Math.Max(1, stat.cnt.conti[statusId] / 2);
             //    }
             //    else
             //    {
-            //        btl.stat.cnt.cdown_max = Math.Max(1, btl.stat.cnt.conti[statusId]);
+            //        stat.cnt.cdown_max = Math.Max(1, stat.cnt.conti[statusId]);
             //    }
             //}
         }
@@ -133,18 +139,7 @@ public static class btl_stat
     {
         UInt32 bestResult = 0;
         foreach (BattleStatusId statusId in statuses.ToStatusList())
-        {
-            if (usePartialResist)
-            {
-                Single rate = target.PartialResistStatus[statusId];
-                if (rate > 0f && UnityEngine.Random.Range(0f, 1f) < rate)
-                {
-                    bestResult = Math.Max(bestResult, ALTER_INVALID);
-                    continue;
-                }
-            }
-            bestResult = Math.Max(bestResult, AlterStatus(target, statusId, inflicter));
-        }
+            bestResult = Math.Max(bestResult, AlterStatus(target, statusId, inflicter, usePartialResist));
         return bestResult;
     }
 
@@ -153,11 +148,11 @@ public static class btl_stat
         BattleStatus status = statusId.ToBattleStatus();
         BTL_DATA btl = unit;
         STAT_INFO stat = btl.stat;
-        if ((stat.permanent & status) != 0 || (stat.cur & status) == 0 || (btl.bi.player == 0 && FF9StateSystem.Battle.FF9Battle.btl_phase == 5 && (status & BattleStatusConst.BattleEnd) != 0))
+        if ((stat.permanent & status) != 0 || (stat.cur & status) == 0 || (btl.bi.player == 0 && FF9StateSystem.Battle.FF9Battle.btl_phase == FF9StateBattleSystem.PHASE_MENU_OFF && (status & BattleStatusConst.BattleEnd) != 0))
             return 1;
         if (stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
         {
-            if (!effect.Remove(unit))
+            if (!effect.Remove())
                 return 1;
             stat.effects.Remove(statusId);
         }
@@ -168,6 +163,8 @@ public static class btl_stat
         if (statusData.SPSEffect >= 0 || statusData.SHPEffect >= 0)
             HonoluluBattleMain.battleSPS.RemoveBtlSPSObj(unit, statusId);
         BattleVoice.TriggerOnStatusChange(btl, "Removed", statusId);
+        if (stat.permanent_on_hold != 0)
+            MakeStatusesPermanent(unit, stat.permanent_on_hold, true);
         return 2;
     }
 
@@ -181,20 +178,23 @@ public static class btl_stat
 
     public static void MakeStatusesPermanent(BattleUnit unit, BattleStatus statuses, Boolean flag = true, BattleUnit inflicter = null)
     {
+        STAT_INFO stat = unit.Data.stat;
         if (flag)
         {
             UInt32 alterResult = AlterStatuses(unit, statuses, inflicter);
             if (alterResult == ALTER_SUCCESS_NO_SET) // Try a second time, in case it removed an opposite status
                 AlterStatuses(unit, statuses, inflicter);
-            unit.Data.stat.permanent |= statuses & unit.CurrentStatus;
+            stat.permanent |= statuses & stat.cur;
+            stat.permanent_on_hold = (stat.permanent_on_hold | statuses) & ~stat.permanent;
             // Permanent statuses should also be registered as current statuses
             //btl.stat.cur &= ~(statuses & btl.stat.cur);
         }
         else
         {
             // Don't remove the status if it wasn't permanent in the first place
-            statuses &= unit.Data.stat.permanent;
-            unit.Data.stat.permanent &= ~statuses;
+            stat.permanent_on_hold &= ~statuses;
+            statuses &= stat.permanent;
+            stat.permanent &= ~statuses;
             btl_stat.RemoveStatuses(unit, statuses);
         }
     }
@@ -216,7 +216,7 @@ public static class btl_stat
         btl.stat.opr[statusId] = (Int16)(statusId.GetStatData().OprCnt * defaultFactor);
         if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect) && (effect as IOprStatusScript)?.SetupOpr != null)
         {
-            btl.stat.opr[statusId] = (effect as IOprStatusScript).SetupOpr(unit);
+            btl.stat.opr[statusId] = (effect as IOprStatusScript).SetupOpr();
         }
         else if (!String.IsNullOrEmpty(Configuration.Battle.StatusTickFormula))
         {
@@ -265,6 +265,11 @@ public static class btl_stat
         return (btl.stat.cur & status) != 0;
     }
 
+    public static Boolean CheckStatus(BTL_DATA btl, BattleStatusId statusId)
+    {
+        return (btl.stat.cur & statusId.ToBattleStatus()) != 0;
+    }
+
     public static void CheckStatusLoop(BattleUnit unit)
     {
         BTL_DATA btl = unit.Data;
@@ -297,7 +302,7 @@ public static class btl_stat
                 Boolean shouldRemove = false;
                 SetOprStatusCount(unit, statusId);
                 if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect) && effect is IOprStatusScript)
-                    shouldRemove = (effect as IOprStatusScript).OnOpr(unit);
+                    shouldRemove = (effect as IOprStatusScript).OnOpr();
                 if (shouldRemove)
                     removeList |= statusId.ToBattleStatus();
             }
@@ -309,7 +314,7 @@ public static class btl_stat
         foreach (BattleStatusId statusId in removeList.ToStatusList())
             RemoveStatus(unit, statusId);
 
-        // TODO [DV]
+        // TODO [DV] Code that in a custom VirusStatusScript
         //if (Configuration.Mod.TranceSeek)
         //{
         //    if (unit.IsUnderAnyStatus(BattleStatus.Virus))
@@ -430,7 +435,7 @@ public static class btl_stat
             }
             if (!useColor)
                 SetDefaultShader(data);
-            // TODO [DV]
+            // TODO [DV] That glow can be added by using "1;25;-192, -192, -192" as "ColorKind;ColorPriority;ColorBase" in the status data for Old in StatusData.csv
             //if (data.special_status_old) // [DV] - Add a glow effect
             //{
             //    if (!FF9StateSystem.Battle.isFade)
@@ -524,14 +529,14 @@ public static class btl_stat
         STAT_INFO stat = btl.stat;
         foreach (BattleStatusId statusId in (stat.cur & BattleStatusConst.ContiCount).ToStatusList())
         {
-            // TODO [DV]
+            // TODO [DV] Shouldn't be relevant anymore, nothing to do?
             //if (stat.conti[statusId] >= 0) // [DV] For Trance Seek purpose, to make some status dissapear for bosses.
             //    stat.conti[statusId] -= btl.cur.at_coef;
             stat.conti[statusId] -= btl.cur.at_coef;
             if (stat.conti[statusId] < 0)
             {
                 RemoveStatus(unit, statusId);
-                // TODO [DV]
+                // TODO [DV] Code that in a custom DoomStatusScript
                 //if ((status & BattleStatus.Doom) != 0)
                 //{
                 //    if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
@@ -591,9 +596,12 @@ public static class btl_stat
     public static void InitStatus(BTL_DATA btl)
     {
         STAT_INFO stat = btl.stat;
-        stat.invalid = stat.permanent = stat.cur = 0;
+        stat.invalid = stat.permanent = stat.cur = stat.permanent_on_hold = 0;
+        stat.effects.Clear();
         stat.opr.Clear();
         stat.conti.Clear();
+        stat.partial_resist.Clear();
+        stat.duration_factor.Clear();
     }
 
     public const UInt32 ALTER_RESIST = 0; // Cannot apply because of status resistance ("Guard")

@@ -28,27 +28,25 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            base.Apply(target, inflicter, parameters);
             SpearCountdown = GetJumpDuration(target);
             SpearCommandId = parameters.Length > 0 ? (BattleCommandId)parameters[0] : BattleCommandId.Spear;
             SpearAbilityId = parameters.Length > 1 ? (BattleAbilityId)parameters[1] : BattleAbilityId.Spear1;
-            SpearTargetId = parameters.Length > 2 ? (UInt16)parameters[2] : target.Data.cmd[3].tar_id;
+            SpearTargetId = parameters.Length > 2 ? (UInt16)parameters[2] : btl_util.GetRandomBtlID(0);
             return btl_stat.ALTER_SUCCESS;
         }
 
-        public override Boolean Remove(BattleUnit target)
+        public override Boolean Remove()
         {
-            BTL_DATA btl = target.Data;
+            BTL_DATA btl = Target.Data;
             btl.tar_mode = 3;
-            btl.bi.atb = 1;
             if (btl.bi.player != 0 && !FF9StateSystem.Settings.IsATBFull)
                 btl.cur.at = 0;
             btl.sel_mode = 0;
-            btl.cmd[3].cmd_no = BattleCommandId.None;
-            btl.cmd[3].tar_id = 0;
             return true;
         }
 
-        public void OnFinishCommand(BattleUnit unit, CMD_DATA cmd, Int32 tranceDecrease)
+        public void OnFinishCommand(CMD_DATA cmd, Int32 tranceDecrease)
         {
             switch (cmd.cmd_no)
             {
@@ -56,30 +54,21 @@ namespace Memoria.DefaultScripts
                 case BattleCommandId.JumpInTrance:
                     if (!InitialisedModifier)
                     {
-                        BTL_DATA btl = unit.Data;
+                        BTL_DATA btl = Target.Data;
                         btl.tar_mode = 2;
-                        btl.bi.atb = 0;
                         btl.SetDisappear(true, 2);
-                        unit.AddDelayedModifier(ProcessJumpSpear, null);
+                        Target.AddDelayedModifier(ProcessJumpSpear, null);
                         InitialisedModifier = true;
                     }
                     break;
                 case BattleCommandId.Spear:
-                    unit.RemoveStatus(BattleStatus.Jump);
+                    Target.RemoveStatus(BattleStatus.Jump);
                     break;
                 case BattleCommandId.SpearInTrance:
-                    // TODO [DV]
+                    // TODO [DV] Code in a custom JumpStatusScript
                     //if (Configuration.Mod.TranceSeek) // [DV] - Freyja come back after Jump when in Trance
-                    //{
-                    //    unit.RemoveStatus(BattleStatus.Jump);
-                    //}
-                    //else
-                    //{
-                    //    unit.AlterStatus(BattleStatus.Jump);
-                    //    unit.Data.tar_mode = 2;
-                    //    unit.Data.SetDisappear(true, 2);
-                    //}
-                    SpearCountdown = GetJumpDuration(unit);
+                    //    Target.RemoveStatus(BattleStatus.Jump);
+                    SpearCountdown = GetJumpDuration(Target);
                     break;
             }
         }

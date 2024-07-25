@@ -7,6 +7,16 @@ using UnityEngine;
 
 public class FF9StateBattleSystem
 {
+    public const Byte PHASE_INIT_SYSTEM = 0;
+    public const Byte PHASE_EVENT = 1;
+    public const Byte PHASE_ENTER = 2;
+    public const Byte PHASE_MENU_ON = 3;
+    public const Byte PHASE_NORMAL = 4;
+    public const Byte PHASE_MENU_OFF = 5;
+    public const Byte PHASE_VICTORY = 6;
+    public const Byte PHASE_DEFEAT = 7;
+    public const Byte PHASE_CLOSE = 8;
+
     public FF9StateBattleSystem()
     {
         this.p_mot = new String[][]
@@ -54,7 +64,7 @@ public class FF9StateBattleSystem
     public BTL_DATA[] btl_data;
 
     public Int32 btl_cnt;
-    public Byte btl_phase; // FF9.battle_phase
+    public Byte btl_phase;
     public Byte btl_seq; // FF9.battle_phase_close, FF9.battle_phase_defeat, FF9.battle_phase_menu_off & FF9.battle_phase_victory
 
     public Byte btl_fade_time;

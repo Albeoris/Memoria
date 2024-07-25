@@ -41,6 +41,7 @@ namespace Memoria.Scripts
                 case BattleStatusId.Reflect: return new ReflectStatusScript();
                 case BattleStatusId.Jump: return new JumpStatusScript();
                 case BattleStatusId.GradualPetrify: return new GradualPetrifyStatusScript();
+                case BattleStatusId.ChangeStat: return new ChangeStatStatusScript();
             }
             return null;
         }

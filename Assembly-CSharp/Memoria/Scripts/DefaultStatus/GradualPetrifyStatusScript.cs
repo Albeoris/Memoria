@@ -16,7 +16,8 @@ namespace Memoria.DefaultScripts
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
-            btl2d.GetIconPosition(target, 5, out Transform attachTransf, out Vector3 iconOff);
+            base.Apply(target, inflicter, parameters);
+            btl2d.GetIconPosition(target, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
             GPInflicter = inflicter;
             InitialCounter = parameters.Length > 0 ? (Int32)parameters[0] : 10;
             Counter = InitialCounter;
@@ -26,23 +27,22 @@ namespace Memoria.DefaultScripts
             return btl_stat.ALTER_SUCCESS;
         }
 
-        public override Boolean Remove(BattleUnit target)
+        public override Boolean Remove()
         {
-            // TODO?
-            btl_cmd.KillSpecificCommand(target, BattleCommandId.SysStone);
+            btl_cmd.KillSpecificCommand(Target, BattleCommandId.SysStone);
             btl2d.StatusMessages.Remove(Message);
             Singleton<HUDMessage>.Instance.ReleaseObject(Message);
             return true;
         }
 
         public IOprStatusScript.SetupOprMethod SetupOpr => SetupGradualPetrifyOpr;
-        public Int32 SetupGradualPetrifyOpr(BattleUnit target)
+        public Int32 SetupGradualPetrifyOpr()
         {
             // Use the duration "ContiCnt" of GradualPetrify even if it is not registered as BattleStatusConst.ContiCount
-            return (Int32)(target.StatusDurationFactor[BattleStatusId.GradualPetrify] * BattleStatusId.GradualPetrify.GetStatData().ContiCnt * (60 - target.Will << 3) / 10);
+            return (Int32)(Target.StatusDurationFactor[BattleStatusId.GradualPetrify] * BattleStatusId.GradualPetrify.GetStatData().ContiCnt * (60 - Target.Will << 3) / 10);
         }
 
-        public Boolean OnOpr(BattleUnit target)
+        public Boolean OnOpr()
         {
             Counter--;
             if (Counter > 0)
@@ -50,14 +50,13 @@ namespace Memoria.DefaultScripts
                 UpdateLabel();
                 return false;
             }
-            BTL_DATA btl = target;
-            if (!btl_cmd.CheckUsingCommand(btl.cmd[2]))
+            if (!btl_cmd.CheckUsingCommand(Target.PetrifyCommand))
             {
-                UInt32 tryPetrify = btl_stat.AlterStatus(target, BattleStatusId.Petrify, GPInflicter);
+                UInt32 tryPetrify = btl_stat.AlterStatus(Target, BattleStatusId.Petrify, GPInflicter);
                 if (tryPetrify == btl_stat.ALTER_SUCCESS || tryPetrify == btl_stat.ALTER_SUCCESS_NO_SET)
-                    BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.GradualPetrify);
+                    BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.GradualPetrify);
                 else
-                    btl2d.Btl2dReq(btl, Param.FIG_INFO_MISS, 0, 0);
+                    btl2d.Btl2dReq(Target, Param.FIG_INFO_MISS, 0, 0);
             }
             return true;
         }

@@ -13,9 +13,10 @@ namespace Memoria.DefaultScripts
     {
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            base.Apply(target, inflicter, parameters);
             if (target.CurrentHp > 0)
             {
-                target.Data.fig_info |= Param.FIG_INFO_DEATH;
+                target.FigInfo |= Param.FIG_INFO_DEATH;
                 target.Kill(inflicter);
             }
             else
@@ -42,9 +43,9 @@ namespace Memoria.DefaultScripts
             return btl_stat.ALTER_SUCCESS;
         }
 
-        public override Boolean Remove(BattleUnit target)
+        public override Boolean Remove()
         {
-            BTL_DATA btl = target.Data;
+            BTL_DATA btl = Target.Data;
             btl.die_seq = 0;
             //btl.bi.dmg_mot_f = 0;
             btl.bi.cmd_idle = 0;
@@ -60,8 +61,8 @@ namespace Memoria.DefaultScripts
             }
             if (!btl_util.IsBtlUsingCommand(btl, out CMD_DATA cmd) || !btl_util.IsCommandDeclarable(cmd.cmd_no))
                 btl.sel_mode = 0;
-            foreach (BattleStatusId oprStatus in (target.PermanentStatus & BattleStatusConst.OprCount & BattleStatusId.Death.GetStatData().ClearOnApply).ToStatusList())
-                btl_stat.SetOprStatusCount(target, oprStatus);
+            foreach (BattleStatusId oprStatus in (Target.PermanentStatus & BattleStatusConst.OprCount & BattleStatusId.Death.GetStatData().ClearOnApply).ToStatusList())
+                btl_stat.SetOprStatusCount(Target, oprStatus);
             return true;
         }
     }

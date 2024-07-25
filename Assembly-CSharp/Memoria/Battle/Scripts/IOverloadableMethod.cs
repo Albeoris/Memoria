@@ -6,7 +6,7 @@ namespace Memoria
 {
     public interface IOverloadUnitCheckPointScript
     {
-        /// <summary>Update the current state of a unit based on its HP</summary>
+        /// <summary>Update the current state of a unit based on its HP (typically handles the LowHP status)</summary>
         public BattleStatus UpdatePointStatus(BattleUnit unit);
     }
 
@@ -47,7 +47,7 @@ namespace Memoria
 
     public interface IOverloadOnFleeScript
     {
-        /// <summary>Run a code when successfully fleeing, either with an ability or with the bumper buttons</summary>
+        /// <summary>Run a code when successfully fleeing, either with an ability or with the bumper buttons (typically handles gil loss when fleeing with an ability)</summary>
         public void OnFlee(FF9StateGlobal state);
     }
 

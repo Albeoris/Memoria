@@ -1202,7 +1202,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
                             startID3 -= 8;
                         if (startID3 > num1)
                         {
-                            Byte num2 = (Byte)(objByUid.getByteFromBuffer(startID3) & 4294967040U);
+                            Byte num2 = (Byte)(objByUid.getByteFromBuffer(startID3) & 0xFFFFFF00u);
                             objByUid.setByteToBuffer(startID3, num2);
                         }
                     }
@@ -1216,7 +1216,9 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
             obj.level = (Byte)(cEventLevelN - 1);
         }
         else
+        {
             obj.ip = this.nil;
+        }
         if (!obj.isAdditionCommand)
             return;
         obj.RetunCall();

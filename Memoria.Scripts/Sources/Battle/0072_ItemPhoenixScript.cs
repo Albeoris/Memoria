@@ -45,7 +45,7 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsZombie)
             {
-                Single result = BattleScriptStatusEstimate.RateStatus(BattleStatus.Death) * 0.1f;
+                Single result = BattleScriptStatusEstimate.RateStatus(BattleStatusId.Death) * 0.1f;
                 if (!_v.Target.IsPlayer)
                     result *= -1;
                 return result;

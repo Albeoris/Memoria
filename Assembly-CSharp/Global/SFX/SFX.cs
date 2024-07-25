@@ -1126,7 +1126,7 @@ public static class SFX
                 //  + reset the BBG transparency at the end ("Set battle scene transparency 255 5" in Hades Workshop)
                 //  + make sure that all the characters are shown at the end (removing all the lines "Show/hide characters" in Hades Workshop has a good-looking result)
                 // Also, the caster moves away when using SFX 384 (Ultima in Crystal World), so either reset the caster's position at the end of the sequencing or use the Pandemonium version
-                if ((SFX.currentEffectID == SpecialEffect.Special_Ultima_Terra || SFX.currentEffectID == SpecialEffect.Special_Ultima_Memoria) && FF9StateSystem.Battle.FF9Battle.btl_phase == 4)
+                if ((SFX.currentEffectID == SpecialEffect.Special_Ultima_Terra || SFX.currentEffectID == SpecialEffect.Special_Ultima_Memoria) && FF9StateSystem.Battle.FF9Battle.btl_phase == FF9StateBattleSystem.PHASE_NORMAL)
                     return next.bi.stop_anim;
                 Byte stop_anim = next.bi.stop_anim;
                 next.bi.stop_anim = (Byte)arg0;
@@ -1221,7 +1221,7 @@ public static class SFX
                         return btl_stat.CheckStatus(next, status) ? 1 : 0;
                     }
                     case 2: // Remove many statuses
-                        btl_stat.RemoveStatuses(new BattleUnit(next), ~(BattleStatus.EasyKill | BattleStatus.Death | BattleStatus.LowHP | BattleStatus.Stop));
+                        btl_stat.RemoveStatuses(new BattleUnit(next), ~(BattleStatus.EasyKill | BattleStatus.Death | BattleStatus.LowHP | BattleStatus.Stop | BattleStatus.ChangeStat));
                         break;
                     case 3: // Reset Statuses
                         btl_stat.InitStatus(next);
@@ -1596,9 +1596,9 @@ public static class SFX
                 if ((fF9Battle.btl_load_status & ff9btl.LOAD_ALL) == ff9btl.LOAD_ALL)
                 {
                     if (fF9Battle.btl_scene.Info.SpecialStart && !FF9StateSystem.Battle.isDebug)
-                        fF9Battle.btl_phase = 1;
+                        fF9Battle.btl_phase = FF9StateBattleSystem.PHASE_EVENT;
                     else
-                        fF9Battle.btl_phase = 3;
+                        fF9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_ON;
                     SFX.InitBattleParty();
                     SFX.SetCameraPhase(0);
                 }

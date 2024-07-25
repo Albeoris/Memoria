@@ -25,7 +25,7 @@ namespace FF9
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             ff9Battle.btl_list.next = null;
             ff9Battle.btl_cnt = 0;
-            ff9Battle.btl_phase = 0;
+            ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_INIT_SYSTEM;
             ff9Battle.btl_seq = 0;
             ff9Battle.btl_fade_time = 0;
             ff9Battle.btl_escape_key = 0;
@@ -100,7 +100,7 @@ namespace FF9
                                 if (btl_cmd.CheckSpecificCommand(btl, BattleCommandId.SysLastPhoenix))
                                     return;
                                 Boolean procRebirthFlame = ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8();
-                                // TODO [DV]
+                                // TODO [DV] Use IOverloadOnGameOverScript
                                 //if (Configuration.Mod.TranceSeek) // TRANCE SEEK - RebirthFlame
                                 //{
                                 //    BattleUnit unit = new BattleUnit(btl);
@@ -122,7 +122,7 @@ namespace FF9
                 UIManager.Battle.SetBattleFollowMessage(BattleMesages.Annihilated);
             }
             UIManager.Battle.FF9BMenu_EnableMenu(false);
-            ff9Battle.btl_phase = 5;
+            ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
             btl_cmd.KillAllCommand(ff9Battle);
         }
 

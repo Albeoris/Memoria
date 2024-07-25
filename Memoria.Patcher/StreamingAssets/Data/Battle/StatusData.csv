@@ -1,7 +1,7 @@
 #! UnshiftStatuses
 #! IncludeVisuals
 # This file contains data of statuses.
-# You must set 32 different items.
+# You must set 33 different items.
 # -----------------------------------------------
 # Comment;Id;Priority(unused);OprCount(tick);ContiCount(duration);ClearOnApply;ImmunityProvided;SPSEffect;SPSAttach;SPSExtraPos;SHPEffect;SHPAttach;SHPExtraPos;ColorKind;ColorPriority;ColorBase
 # ;Int32;UInt8;UInt8;UInt16;Status[];Status[];Int32;Int32;Vector3;Int32;Int32;Vector3;Int32;Int32;Int32[3]
@@ -38,3 +38,4 @@ Mini;28;11;0;20;;;-1;0;0, 0, 0;-1;0;0, 0, 0;-1;0;0, 0, 0;# Mini
 Reflect;29;25;0;40;;;5;1;0, 0, 0;-1;0;0, 0, 0;-1;0;0, 0, 0;# Reflect
 Jump;30;0;0;10;;Petrify(0), Venom(1), Virus(2), Silence(3), Blind(4), Trouble(5), Zombie(6), EasyKill(7), Death(8), LowHP(9), Confuse(10), Berserk(11), Stop(12), AutoLife(13), Trance(14), Defend(15), Poison(16), Sleep(17), Regen(18), Haste(19), Slow(20), Float(21), Shell(22), Protect(23), Heat(24), Freeze(25), Vanish(26), Doom(27), Mini(28), Reflect(29), GradualPetrify(31);-1;0;0, 0, 0;-1;0;0, 0, 0;-1;0;0, 0, 0;# Jump
 GradualPetrify;31;0;0;25;;Zombie(6), Doom(27);-1;0;0, 0, 0;-1;0;0, 0, 0;-1;0;0, 0, 0;# Gradual Petrify
+ChangeStat;32;0;0;0;;;-1;0;0, 0, 0;-1;0;0, 0, 0;-1;0;0, 0, 0;# Change Stat

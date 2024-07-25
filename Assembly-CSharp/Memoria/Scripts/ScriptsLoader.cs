@@ -343,7 +343,6 @@ namespace Memoria.Scripts
                     result.OverloadableMethodScripts[interf] = type;
                 if (interf == typeof(IOverloadDamageModifierScript))
                     result.OverloadableMethodScripts[interf] = type;
-                // TODO maybe multiple BattleCalculator utility?
             }
         }
 

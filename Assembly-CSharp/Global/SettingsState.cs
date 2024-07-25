@@ -328,7 +328,7 @@ public class SettingsState : MonoBehaviour
             {
                 btl.Trance = Byte.MaxValue;
                 if (!btl.IsUnderAnyStatus(BattleStatus.Trance))
-                    btl.AlterStatus(BattleStatus.Trance);
+                    btl.AlterStatus(BattleStatusId.Trance);
             }
         }
     }

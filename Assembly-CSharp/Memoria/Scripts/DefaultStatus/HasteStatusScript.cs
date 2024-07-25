@@ -9,22 +9,22 @@ namespace Memoria.DefaultScripts
     {
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
+            base.Apply(target, inflicter, parameters);
             if (target.IsUnderStatus(BattleStatus.Slow))
             {
                 if (btl_stat.RemoveStatus(target, BattleStatusId.Slow) == 2)
                     return btl_stat.ALTER_SUCCESS_NO_SET;
                 return btl_stat.ALTER_RESIST;
             }
-            btl_para.SetupATBCoef(target);
-            target.Data.cur.at_coef = (SByte)(target.Data.cur.at_coef * 3 / 2);
+            btl_para.SetupATBCoef(target, btl_para.GetATBCoef() * 3 / 2);
             target.UISpriteATB = BattleHUD.ATEOrange;
             return btl_stat.ALTER_SUCCESS;
         }
 
-        public override Boolean Remove(BattleUnit target)
+        public override Boolean Remove()
         {
-            btl_para.SetupATBCoef(target);
-            target.UISpriteATB = BattleHUD.ATENormal;
+            btl_para.SetupATBCoef(Target, btl_para.GetATBCoef());
+            Target.UISpriteATB = BattleHUD.ATENormal;
             return true;
         }
     }

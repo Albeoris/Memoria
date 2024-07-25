@@ -224,40 +224,39 @@ public class BattleResultUI : UIScene
             if (player != null)
             {
                 UInt64 nextLvl = (player.level >= ff9level.LEVEL_COUNT) ? player.exp : ff9level.CharacterLevelUps[player.level].ExperienceToLevel;
-                BattleResultUI.CharacterBattleResultInfoHUD characterBattleResultInfoHUD = this.characterBRInfoHudList[i];
-                characterBattleResultInfoHUD.Content.SetActive(true);
-                characterBattleResultInfoHUD.NameLabel.text = player.Name;
-                characterBattleResultInfoHUD.LevelLabel.text = player.level.ToString();
-                characterBattleResultInfoHUD.ExpLabel.text = player.exp.ToString();
-                characterBattleResultInfoHUD.NextLvLabel.text = (nextLvl - player.exp).ToString();
-                FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), characterBattleResultInfoHUD.AvatarSprite, false);
-                UISprite[] statusesSpriteList = characterBattleResultInfoHUD.StatusesSpriteList;
-                for (Int32 j = 0; j < statusesSpriteList.Length; j++)
-                    statusesSpriteList[j].alpha = 0f;
+                BattleResultUI.CharacterBattleResultInfoHUD infoHUD = this.characterBRInfoHudList[i];
+                infoHUD.Content.SetActive(true);
+                infoHUD.NameLabel.text = player.Name;
+                infoHUD.LevelLabel.text = player.level.ToString();
+                infoHUD.ExpLabel.text = player.exp.ToString();
+                infoHUD.NextLvLabel.text = (nextLvl - player.exp).ToString();
+                FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), infoHUD.AvatarSprite, false);
+                UISprite[] statusesSpriteList = infoHUD.StatusesSpriteList;
+                foreach (UISprite statusSprite in statusesSpriteList)
+                    statusSprite.alpha = 0f;
                 Int32 spriteSlot = 0;
-                // TODO Handle modded OutOfBattle statuses (also have a single dictionary for all of these bad icons)
-                foreach (KeyValuePair<BattleStatusId, Byte> kvp in BattleResultUI.BadIconDict)
+                foreach (BattleStatusId statusId in player.status.ToStatusList())
                 {
-                    if (spriteSlot >= characterBattleResultInfoHUD.StatusesSpriteList.Length)
+                    // TODO Add more UISprite if the limit is reached?
+                    if (spriteSlot >= infoHUD.StatusesSpriteList.Length)
                         break;
-                    if ((player.status & kvp.Key.ToBattleStatus()) != 0)
-                    {
-                        characterBattleResultInfoHUD.StatusesSpriteList[spriteSlot].alpha = 1f;
-                        characterBattleResultInfoHUD.StatusesSpriteList[spriteSlot].spriteName = FF9UIDataTool.IconSpriteName[kvp.Value];
-                        spriteSlot++;
-                    }
+                    if (!BattleHUD.DebuffIconNames.TryGetValue(statusId, out String spriteName))
+                        continue;
+                    infoHUD.StatusesSpriteList[spriteSlot].alpha = 1f;
+                    infoHUD.StatusesSpriteList[spriteSlot].spriteName = spriteName;
+                    spriteSlot++;
                 }
                 if (!this.IsEnableDraw(player, i))
                 {
                     this.isRecieveExpList.Add(false);
-                    characterBattleResultInfoHUD.DimPanel.SetActive(true);
-                    characterBattleResultInfoHUD.AvatarSprite.alpha = 0.5f;
+                    infoHUD.DimPanel.SetActive(true);
+                    infoHUD.AvatarSprite.alpha = 0.5f;
                 }
                 else
                 {
                     this.isRecieveExpList.Add(true);
-                    characterBattleResultInfoHUD.DimPanel.SetActive(false);
-                    characterBattleResultInfoHUD.AvatarSprite.alpha = 1f;
+                    infoHUD.DimPanel.SetActive(false);
+                    infoHUD.AvatarSprite.alpha = 1f;
                 }
             }
         }
@@ -953,17 +952,6 @@ public class BattleResultUI : UIScene
     private Boolean isLevelUpSoundPlayed = false;
     [NonSerialized]
     private Boolean isAbilityLearnSoundPlayed = false;
-
-    public static Dictionary<BattleStatusId, Byte> BadIconDict = new Dictionary<BattleStatusId, Byte>
-    {
-        { BattleStatusId.Petrify, 154 },
-        { BattleStatusId.Venom,   153 },
-        { BattleStatusId.Virus,   152 },
-        { BattleStatusId.Silence, 151 },
-        { BattleStatusId.Blind,   150 },
-        { BattleStatusId.Trouble, 149 },
-        { BattleStatusId.Zombie,  148 }
-    };
 
     private class CharacterBattleResultInfoHUD
     {
