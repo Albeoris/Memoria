@@ -182,7 +182,7 @@ public class BattleSPSSystem : MonoBehaviour
             }
             else
             {
-                if (!CommonSPSSystem.SPSPrototypes.ContainsKey(shpId))
+                if (!CommonSPSSystem.SHPPrototypes.ContainsKey(shpId))
                 {
                     Log.Error($"[{nameof(BattleSPSSystem)}] Status {statusId} tries to use the SHP {shpId} which does not exists");
                     return;
