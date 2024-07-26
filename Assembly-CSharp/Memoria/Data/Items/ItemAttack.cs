@@ -9,7 +9,7 @@ namespace Memoria.Data
         public Int32 Id;
 
         public WeaponCategory Category;
-        public BattleStatusIndex StatusIndex;
+        public StatusSetId StatusIndex;
         public String ModelName;
         public UInt16 ModelId;
         public BTL_REF Ref;
@@ -24,7 +24,7 @@ namespace Memoria.Data
             Id = CsvParser.Int32(raw[1]);
 
             Category = (WeaponCategory)CsvParser.Byte(raw[2]);
-            StatusIndex = (BattleStatusIndex)CsvParser.Int32(raw[3]);
+            StatusIndex = (StatusSetId)CsvParser.Int32(raw[3]);
             ModelName = CsvParser.String(raw[4]);
             if (!String.IsNullOrEmpty(ModelName))
                 ModelId = (UInt16)FF9BattleDB.GEO.GetKey(ModelName);

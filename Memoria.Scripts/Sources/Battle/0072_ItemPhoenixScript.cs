@@ -25,8 +25,9 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsZombie)
             {
-                if ((_v.Target.CurrentHp = (UInt32)(GameRandom.Next8() % 10)) == 0)
-                    _v.Target.Kill(_v.Caster);
+                if (_v.Target.CheckUnsafetyOrGuard())
+                    if ((_v.Target.CurrentHp = (UInt32)(GameRandom.Next8() % 10)) == 0)
+                        _v.Target.Kill(_v.Caster);
             }
             else if (_v.Target.CheckIsPlayer())
             {
@@ -44,7 +45,7 @@ namespace Memoria.Scripts.Battle
 
             if (_v.Target.IsZombie)
             {
-                Single result = BattleScriptStatusEstimate.RateStatus(BattleStatus.Death) * 0.1f;
+                Single result = BattleScriptStatusEstimate.RateStatus(BattleStatusId.Death) * 0.1f;
                 if (!_v.Target.IsPlayer)
                     result *= -1;
                 return result;

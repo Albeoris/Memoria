@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
             _v.MagicAccuracy();
             _v.Target.PenaltyShellHitRate();
             if (_v.TryMagicHit())
-                _v.Target.MagicDefence /= 2;
+                _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "MagicDefence", _v.Target.MagicDefence / 2);
         }
 
         public Single RateTarget()

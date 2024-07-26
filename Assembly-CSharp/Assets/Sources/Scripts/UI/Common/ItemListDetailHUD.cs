@@ -15,13 +15,9 @@ namespace Assets.Sources.Scripts.UI.Common
         }
 
         public GameObject Self;
-
         public GameObject Content;
-
         public ButtonGroupState Button;
-
         public UILabel NameLabel;
-
         public UILabel NumberLabel;
     }
 }

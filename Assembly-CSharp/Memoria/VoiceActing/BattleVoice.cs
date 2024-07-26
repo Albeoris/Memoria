@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace Memoria.Data
 {
-    static class BattleVoice
+    public static class BattleVoice
     {
         public const String BattleVoicePath = "BattleVoiceEffects.txt";
 
@@ -61,11 +61,11 @@ namespace Memoria.Data
                 return null;
             }
 
-            public static Boolean CheckCanSpeak(BTL_DATA btl, Int32 voicePriority, BattleStatus statusException = 0)
+            public static Boolean CheckCanSpeak(BTL_DATA btl, Int32 voicePriority, BattleStatusId statusException = BattleStatusId.None)
             {
-                if (btl.bi.disappear != 0 && ((statusException & BattleStatus.Jump) == 0 || !btl_stat.CheckStatus(btl, BattleStatus.Jump)))
+                if (btl.bi.disappear != 0 && (statusException != BattleStatusId.Jump || !btl_stat.CheckStatus(btl, BattleStatus.Jump)))
                     return false;
-                if (btl_stat.CheckStatus(btl, BattleStatusConst.CannotSpeak & ~statusException))
+                if (btl_stat.CheckStatus(btl, BattleStatusConst.CannotSpeak & ~statusException.ToBattleStatus()))
                     return false;
                 KeyValuePair<Int32, SoundProfile> playingVoice;
                 if (_currentVoicePlay.TryGetValue(btl, out playingVoice))
@@ -82,7 +82,7 @@ namespace Memoria.Data
             public Int32 Priority = 0;
             public Int32 lastPlayed = -1;
 
-            public Boolean CheckSpeakerAll(BTL_DATA statusExceptionBtl = null, BattleStatus statusException = 0)
+            public Boolean CheckSpeakerAll(BTL_DATA statusExceptionBtl = null, BattleStatusId statusException = BattleStatusId.None)
             {
                 foreach (BattleSpeaker speaker in Speakers)
                 {
@@ -97,13 +97,13 @@ namespace Memoria.Data
                     }
                     if (btl == null)
                         return false;
-                    if (!BattleSpeaker.CheckCanSpeak(btl, Priority, statusExceptionBtl == btl ? statusException : 0))
+                    if (!BattleSpeaker.CheckCanSpeak(btl, Priority, statusExceptionBtl == btl ? statusException : BattleStatusId.None))
                         return false;
                 }
                 return true;
             }
 
-            public Boolean CheckIsFirstSpeaker(BTL_DATA btl, BattleStatus statusException = 0)
+            public Boolean CheckIsFirstSpeaker(BTL_DATA btl, BattleStatusId statusException = BattleStatusId.None)
             {
                 if (Speakers.Count == 0)
                     return false;
@@ -129,7 +129,7 @@ namespace Memoria.Data
         {
             public Boolean SomeoneElse = false;
             public String When = "Added"; // "Removed", "Used"
-            public BattleStatus Status = 0;
+            public BattleStatusId Status = 0;
         }
 
         private static List<BattleInOut> InOutEffect = new List<BattleInOut>();
@@ -360,7 +360,7 @@ namespace Memoria.Data
             PlayVoiceEffect(retainedEffects[UnityEngine.Random.Range(0, retainedEffects.Count)]);
         }
 
-        public static void TriggerOnStatusChange(BTL_DATA statusedChar, String when, BattleStatus whichStatus)
+        public static void TriggerOnStatusChange(BTL_DATA statusedChar, String when, BattleStatusId whichStatus)
         {
             if (!Configuration.VoiceActing.Enabled)
                 return;
@@ -372,7 +372,7 @@ namespace Memoria.Data
             Boolean discardStatusChecks = String.Compare(when, "Removed") != 0;
             foreach (BattleStatusChange effect in StatusChangeEffect)
             {
-                if (String.Compare(effect.When, when) != 0 || (whichStatus & effect.Status) == 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll(statusedChar, effect.Status))
+                if (whichStatus != effect.Status || String.Compare(effect.When, when) != 0 || effect.Priority < retainedPriority || !effect.CheckSpeakerAll(statusedChar, effect.Status))
                     continue;
                 if (discardStatusChecks && !effect.CheckIsFirstSpeaker(statusedChar, effect.Status))
                     continue;
@@ -542,7 +542,7 @@ namespace Memoria.Data
                     {
                         Match statusMatch = new Regex(@"\bStatus:([\w ,]+)\b").Match(bvArgs);
                         if (statusMatch.Success)
-                            newEffect.Status = (BattleStatus)Enum.Parse(typeof(BattleStatus), statusMatch.Groups[1].Value);
+                            newEffect.Status = (BattleStatusId)Enum.Parse(typeof(BattleStatusId), statusMatch.Groups[1].Value);
                     }
                     catch (Exception)
                     {

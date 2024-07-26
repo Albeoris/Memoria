@@ -31,7 +31,7 @@ namespace Memoria.Scripts.Battle
             _v.Target.PhysicalPenaltyAndBonusAttack();
 
             if (_v.Target.HasCategory(EnemyCategory.Flight))
-                _v.Context.Attack = _v.Context.Attack * 3 >> 1;
+                ++_v.Context.DamageModifierCount;
 
             _v.CalcPhysicalHpDamage();
         }

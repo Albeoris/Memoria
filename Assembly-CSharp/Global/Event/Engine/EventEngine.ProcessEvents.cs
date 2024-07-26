@@ -591,7 +591,7 @@ public partial class EventEngine
 
     private void SetupBattleState()
     {
-        if ((Int32)FF9StateSystem.Battle.FF9Battle.btl_phase == 0)
+        if (FF9StateSystem.Battle.FF9Battle.btl_phase == FF9StateBattleSystem.PHASE_INIT_SYSTEM)
             return;
         Int32 sysList = this.GetSysList(3);
         for (Int32 index = 4; index < 8; ++index)

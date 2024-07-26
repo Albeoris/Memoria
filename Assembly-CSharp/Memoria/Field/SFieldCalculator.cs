@@ -6,6 +6,7 @@ namespace Memoria.Field
 {
     public static class SFieldCalculator
     {
+        // TODO
         public static Boolean FieldCalcMain(PLAYER caster, PLAYER target, AA_DATA tbl, Int32 scriptId, UInt32 cursor)
         {
             ItemActionData tbl1 = new ItemActionData(tbl);
@@ -128,7 +129,7 @@ namespace Memoria.Field
 
         private static Boolean CanBeHealed(Context v)
         {
-            if (!FieldCheckStatus(v.Target, BattleStatus.Petrify | BattleStatus.Zombie) && v.Target.cur.hp != 0)
+            if (!FieldCheckStatus(v.Target, BattleStatus.Petrify | BattleStatusConst.ZombieEffect) && v.Target.cur.hp != 0)
                 return true;
             v.Flags |= BattleCalcFlags.Miss;
             return false;
@@ -136,7 +137,7 @@ namespace Memoria.Field
 
         private static Boolean CanBeRevived(Context v)
         {
-            if (!FieldCheckStatus(v.Target, BattleStatus.Petrify) && v.Target.cur.hp <= 0 && (!FieldCheckStatus(v.Target, BattleStatus.Zombie) || v.Target.cur.hp != 0))
+            if (!FieldCheckStatus(v.Target, BattleStatus.Petrify) && v.Target.cur.hp <= 0 && (!FieldCheckStatus(v.Target, BattleStatusConst.ZombieEffect) || v.Target.cur.hp != 0))
                 return true;
             v.Flags |= BattleCalcFlags.Miss;
             return false;
@@ -270,7 +271,7 @@ namespace Memoria.Field
             public BattleCommandInfo Info;
             public BTL_REF Ref;
             public Byte Category;
-            public BattleStatusIndex AddNo;
+            public StatusSetId AddNo;
             public Int32 MP;
             public Byte Type;
             public UInt16 Vfx2;

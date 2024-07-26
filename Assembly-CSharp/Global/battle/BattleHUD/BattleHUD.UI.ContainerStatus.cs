@@ -131,41 +131,23 @@ public partial class BattleHUD : UIScene
             {
                 ValueWidget hud = HP.Array[playerId];
                 hud.IsActive = true;
-                hud.Value.SetText(bd.CurrentHp.ToString());
+                hud.Value.SetText(String.IsNullOrEmpty(bd.UILabelHP) ? bd.CurrentHp.ToString() : bd.UILabelHP);
                 hud.MaxValue.SetText(bd.MaximumHp.ToString());
                 if (!bd.IsTargetable)
-                {
                     hud.SetColor(FF9TextTool.Gray);
-                }
+                else if (CheckHPState(bd) == ParameterStatus.Dead)
+                    hud.SetColor(FF9TextTool.Red);
                 else
-                {
-                    switch (CheckHPState(bd))
-                    {
-                        case ParameterStatus.Dead:
-                            hud.SetColor(FF9TextTool.Red);
-                            return;
-                        case ParameterStatus.Critical:
-                            hud.SetColor(FF9TextTool.Yellow);
-                            return;
-                        default:
-                            hud.SetColor(FF9TextTool.White);
-                            return;
-                    }
-                }
+                    hud.SetColor(bd.UIColorHP);
             }
 
             private void DisplayMp(Int32 playerId, BattleUnit bd)
             {
                 ValueWidget numberSubModeHud = MP.Array[playerId];
                 numberSubModeHud.IsActive = true;
-                numberSubModeHud.Value.SetText(bd.CurrentMp.ToString());
+                numberSubModeHud.Value.SetText(String.IsNullOrEmpty(bd.UILabelMP) ? bd.CurrentMp.ToString() : bd.UILabelMP);
                 numberSubModeHud.MaxValue.SetText(bd.MaximumMp.ToString());
-                if (!bd.IsTargetable)
-                    numberSubModeHud.SetColor(FF9TextTool.Gray);
-                else if (CheckMPState(bd) == ParameterStatus.Dead)
-                    numberSubModeHud.SetColor(FF9TextTool.Yellow);
-                else
-                    numberSubModeHud.SetColor(FF9TextTool.White);
+                numberSubModeHud.SetColor(bd.IsTargetable ? bd.UIColorMP : FF9TextTool.Gray);
             }
 
             private void DisplayBadStatus(Int32 playerId, BattleUnit bd)
@@ -180,16 +162,16 @@ public partial class BattleHUD : UIScene
                 DisplayStatusHud(bd, statusHud, BuffIconNames);
             }
 
-            private static void DisplayStatusHud(BattleUnit bd, IconsWidget statusHud, Dictionary<BattleStatus, String> iconDic)
+            private static void DisplayStatusHud(BattleUnit bd, IconsWidget statusHud, Dictionary<BattleStatusId, String> iconDic)
             {
                 statusHud.IsActive = true;
                 foreach (GOSprite uiWidget in statusHud.Icons.Entries)
                     uiWidget.Sprite.alpha = 0.0f;
 
                 Int32 index = 0;
-                foreach (KeyValuePair<BattleStatus, String> current in iconDic)
+                foreach (KeyValuePair<BattleStatusId, String> current in iconDic)
                 {
-                    if (!bd.IsUnderAnyStatus(current.Key))
+                    if (!bd.IsUnderAnyStatus(current.Key.ToBattleStatus()))
                         continue;
 
                     GOSprite spriteObj = statusHud.Icons[index];

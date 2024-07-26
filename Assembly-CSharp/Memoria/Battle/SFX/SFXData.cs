@@ -31,11 +31,11 @@ public class SFXData
 
     public static SFXData LoadCur;
     public static Boolean lockLoading;
-    public static Dictionary<Int32, SFXData> EventSFX = new Dictionary<Int32, SFXData>(); // TODO: Event SFX would be SFX tied to event scripts (battle scripts but also field/wm scripts). Loading these SFX and rendering them in fields is not possible yet. Note that PSXTextureMgr is already used for FieldSPS so it would conflict.
+    public static Dictionary<Int32, SFXData> EventSFX = new Dictionary<Int32, SFXData>(); // TODO: Event SFX would be SFX tied to event scripts (battle scripts but also field/wm scripts). Loading these SFX and rendering them in fields is not possible yet.
     private static Queue<SFXData> loadingQueue = new Queue<SFXData>();
     private static HashSet<SFXData> sfxLoadedNotPlayed = new HashSet<SFXData>();
 
-    public const Int32 LoadingTimeAllocatedPerFrame = 25;
+    private const Single LoadingTimeAllocatedPerFrame = 1000f * 0.5f; // 500: half of the frame's duration
 
     public static void Reinit()
     {
@@ -55,7 +55,7 @@ public class SFXData
             return;
         Stopwatch watch = new Stopwatch();
         watch.Start();
-        Int32 maxLoadingTime = (Int32)Mathf.Floor(1000f / Configuration.Graphics.BattleFPS);
+        Int32 maxLoadingTime = Math.Max(5, (Int32)Mathf.Floor(LoadingTimeAllocatedPerFrame / Configuration.Graphics.BattleFPS));
         while (!SFXData.lockLoading && watch.ElapsedMilliseconds < maxLoadingTime)
         {
             if (LoadCur == null)
@@ -719,7 +719,7 @@ public class SFXData
             {
                 Int32 validPlayerTarget = 0;
                 for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                    if (next.bi.player != 0 && !Status.checkCurStat(next, BattleStatus.Death | BattleStatus.Jump))
+                    if (next.bi.player != 0 && !btl_stat.CheckStatus(next, BattleStatus.Death | BattleStatus.Jump))
                         validPlayerTarget++;
                 return validPlayerTarget;
             }
@@ -1178,7 +1178,7 @@ public class SFXData
             {
                 Int32 validPlayerTarget = 0;
                 for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                    if (next.bi.player != 0 && !Status.checkCurStat(next, BattleStatus.Death | BattleStatus.Jump))
+                    if (next.bi.player != 0 && !btl_stat.CheckStatus(next, BattleStatus.Death | BattleStatus.Jump))
                         validPlayerTarget++;
                 return validPlayerTarget;
             }

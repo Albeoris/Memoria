@@ -29,8 +29,6 @@ public class CommonSPSSystem
             return false;
         sps.mapName = spsID.Key;
         sps.spsBin = spsBin;
-        sps.curFrame = 0;
-        sps.lastFrame = -1;
         sps.frameCount = CommonSPSSystem.GetSpsFrameCount(sps.spsBin);
         sps.spsId = spsID.Value;
         this.SetupSPSTexture(sps);

@@ -7,6 +7,7 @@ using Memoria.Data;
 using Memoria.Field;
 using Memoria.Prime;
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -261,9 +262,9 @@ public partial class EventEngine
             case EBin.event_code_binary.SONGFLAG: // 0x1B, "ContinueBattleMusic", "Continue the music after the battle end"
             {
                 if (this.getv1() != 0) // arg1: flag continue/ don't continue
-                    FF9StateSystem.Common.FF9.btl_flag |= (Byte)8;
+                    FF9StateSystem.Common.FF9.btl_flag |= battle.BTL_CONTI_FLD_SONG;
                 else
-                    FF9StateSystem.Common.FF9.btl_flag &= (Byte)247;
+                    FF9StateSystem.Common.FF9.btl_flag &= unchecked((Byte)~battle.BTL_CONTI_FLD_SONG);
                 return 0;
             }
             // 0x1C, "TerminateEntry", "Stop the execution of an entry's code.arg1: entry to terminate."
@@ -1527,7 +1528,7 @@ public partial class EventEngine
                 Single dx = (Single)this.getv3(); // arg2: x movement
                 Single dy = (Single)this.getv3(); // arg3: y movement
                 Int16 dz = (Int16)this.getv3(); // arg4: depth, with higher value being further away from camera
-                Int32 time = (Int32)this.getv3(); // arg5: how much time this will move // TODO in what unit?
+                Int32 time = (Int32)this.getv3(); // arg5: the frame duration of the movement
                 this.fieldmap.EBG_overlayMoveTimed(overlayNdx, dx, dy, dz, time);
                 return 0;
             }
@@ -2566,6 +2567,8 @@ public partial class EventEngine
                 BattleStatus statusList = (BattleStatus)this.getv1(); // arg2: status list. 1: Petrified 2: Venom 3: Virus 4: Silence 5: Darkness 6: Trouble 7: Zombie
                 if (charId == CharacterId.NONE)
                     return 0;
+                if ((Int32)statusList == 0x7F) // Usual vanilla "clear all statuses": make it clear extra statuses that could be "OutOfBattle" as well
+                    statusList = (BattleStatus)~0ul;
                 PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
                 SFieldCalculator.FieldRemoveStatus(player, statusList);
                 // https://github.com/Albeoris/Memoria/issues/22
@@ -2575,6 +2578,41 @@ public partial class EventEngine
                     foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
                         if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
                             SFieldCalculator.FieldRemoveStatus(play, statusList);
+                return 0;
+            }
+            case EBin.event_code_binary.ADD_STATUS: // Apply a status to a unit in battle, with possible status parameters
+            {
+                UInt16 targetId = (UInt16)this.getv3(); // Unit to which the status is applied
+                BattleStatusId statusId = (BattleStatusId)this.getv3(); // The status to apply
+                Boolean permanent = this.getv3() != 0; // Whether it should be added as a permanent status
+                Int32 argument1 = this.getv3(); // A first parameter (to be handled by the status script's Apply)
+                Int32 argument2 = this.getv3(); // A second parameter
+                Int32 argument3 = this.getv3(); // A third parameter
+                if (this.gMode != 2)
+                    return 0;
+                foreach (BTL_DATA btl in btl_util.findAllBtlData(targetId))
+                {
+                    BattleUnit target = new BattleUnit(btl);
+                    btl_stat.AlterStatus(target, statusId, null, false, argument1, argument2, argument3);
+                    if (permanent && target.IsUnderAnyStatus(statusId))
+                        target.Data.stat.permanent |= statusId.ToBattleStatus();
+                }
+                return 0;
+            }
+            case EBin.event_code_binary.REMOVE_STATUS: // Remove a status from a unit in battle
+            {
+                UInt16 targetId = (UInt16)this.getv3(); // Unit from which the status is removed
+                BattleStatusId statusId = (BattleStatusId)this.getv3(); // The status to remove
+                Boolean permanent = this.getv3() != 0; // Whether it should be removed as a permanent status
+                if (this.gMode != 2)
+                    return 0;
+                foreach (BTL_DATA btl in btl_util.findAllBtlData(targetId))
+                {
+                    BattleUnit target = new BattleUnit(btl);
+                    if (permanent)
+                        target.Data.stat.permanent &= ~statusId.ToBattleStatus();
+                    btl_stat.RemoveStatus(target, statusId);
+                }
                 return 0;
             }
             case EBin.event_code_binary.WINPOSE: // 0xDB, "EnableVictoryPose", "Enable or disable the victory pose at the end of battles for a specific character"

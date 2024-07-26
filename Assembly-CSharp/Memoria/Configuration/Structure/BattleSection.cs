@@ -22,7 +22,7 @@ namespace Memoria
             public readonly IniValue<Boolean> CountersBetterTarget;
             public readonly IniValue<Int32> LockEquippedAbilities;
             public readonly IniValue<Int32> SummonPriorityCount;
-            public readonly IniValue<Boolean> CurseUseWeaponElement;
+            public readonly IniValue<Boolean> CurseUseWeaponElement; // Deprecated: rather use a AA feature in "AbilityFeatures.txt"
             public readonly IniValue<Int32> FloatEvadeBonus;
             public readonly IniValue<Int32> AccessMenus;
             public readonly IniArray<String> AvailableMenus;
@@ -35,7 +35,7 @@ namespace Memoria
               [ENEMY_INFO.flags & 0x4]: "Has 10 000 HP trigger", consider that the enemy has 10000 HP less than what its data says (for Scan, HP-based heal or damage...)
             */
             public readonly IniValue<Int32> CustomBattleFlagsMeaning;
-            /* SpareChangeGilSpentFormula (see "btl_cmd.SpendSpareChangeGil"):
+            /* SpareChangeGilSpentFormula (deprecated: rather use a AA feature in "AbilityFeatures.txt")
              default: SpareChangeGilSpentFormula = Power * CasterLevel
              Alternate Fantasy: SpareChangeGilSpentFormula = Power * Gil / 100
             */
@@ -43,7 +43,7 @@ namespace Memoria
             /* Status durations and ticks formulas (see "btl_stat"):
              default: StatusDurationFormula = ContiCnt * (IsNegativeStatus ? 60 - 8 * TargetSpirit : 8 * TargetSpirit)
                       StatusTickFormula = OprCnt * (IsNegativeStatus ? 60 - 4 * TargetSpirit : 4 * TargetSpirit)
-             Alternate Fantasy: StatusDurationFormula = ContiCnt * (StatusIndex == 31 || StatusIndex == 27 ? 240 + 4 * TargetSpirit : 200)
+             Alternate Fantasy: StatusDurationFormula = ContiCnt * 200
                                 StatusTickFormula = OprCnt * 150
             */
             public readonly IniValue<String> StatusDurationFormula;

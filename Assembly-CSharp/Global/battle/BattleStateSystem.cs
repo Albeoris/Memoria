@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class BattleState : MonoBehaviour
+public class BattleStateSystem : MonoBehaviour
 {
     private void Awake()
     {
