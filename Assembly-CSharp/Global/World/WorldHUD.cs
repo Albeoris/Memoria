@@ -1286,7 +1286,6 @@ public class WorldHUD : UIScene
         this.PlaneButtonPanel.GetChild(0).GetComponent<OnScreenButton>().SetHighlightKeyCommand(Control.Down);
         this.PlaneButtonPanel.GetChild(1).GetComponent<OnScreenButton>().SetHighlightKeyCommand(Control.Up);
         this.ChocographLocationPanel.transform.localPosition += new Vector3(158f, -708f, 0f);
-        // Todo: see with TehMighty for a proper and unified UI mod
         //this.ChocographLocationPanel.transform.localPosition = new Vector3(600f, 0f, 0f);
         //this.miniMapWidget.transform.parent.localPosition = new Vector3(250f, -500f, 0f);
         // Todo: fix Title displaying permanently if the World Map was exited during its first appearance

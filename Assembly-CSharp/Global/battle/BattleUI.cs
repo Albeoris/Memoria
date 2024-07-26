@@ -490,12 +490,12 @@ public class BattleUI : MonoBehaviour
             if (isTrance)
             {
                 character.Trance = Byte.MaxValue;
-                character.AlterStatus(BattleStatus.Trance);
+                character.AlterStatus(BattleStatusId.Trance);
             }
             else
             {
                 character.Trance = 0;
-                character.RemoveStatus(BattleStatus.Trance);
+                character.RemoveStatus(BattleStatusId.Trance);
             }
         }
         if (GUILayout.Button("Attack"))

@@ -2346,6 +2346,8 @@ public class EBin
         VECTOR_CLEAR,
         DICTIONARY_CLEAR,
         BGLMOVE_TIMED,
+        ADD_STATUS,
+        REMOVE_STATUS,
     }
 
     public enum flexible_varfunc : ushort

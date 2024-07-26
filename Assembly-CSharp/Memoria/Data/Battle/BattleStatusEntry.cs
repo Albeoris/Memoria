@@ -1,43 +1,22 @@
-﻿using Memoria.Prime.CSV;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using Memoria.Prime.CSV;
 
 namespace Memoria.Data
 {
     public sealed class BattleStatusEntry : ICsvEntry
     {
-        public const Int32 SetsCount = 128;
-
         public String Comment;
-        public BattleStatusIndex Id;
+        public StatusSetId Id;
 
         public BattleStatus Value;
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
             Comment = CsvParser.String(raw[0]);
-            Id = (BattleStatusIndex)CsvParser.Int32(raw[1]);
+            Id = (StatusSetId)CsvParser.Int32(raw[1]);
 
-            BattleStatus result = 0;
-            for (Int32 index = 2; index < raw.Length; index++)
-            {
-                String value = raw[index];
-                if (String.IsNullOrEmpty(value))
-                    continue;
-
-                foreach (String fullToken in value.Split(','))
-                {
-                    String token = fullToken.Trim();
-                    if (String.IsNullOrEmpty(token))
-                        continue;
-
-                    Int32 number = (Int32)CsvParser.EnumValue<BattleStatusNumber>(token);
-                    if (number == 0)
-                        continue;
-
-                    result |= (BattleStatus)(1 << checked(number - 1));
-                }
-            }
-            Value = result;
+            Value = ParseBattleStatus(raw[2], metadata);
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -45,22 +24,51 @@ namespace Memoria.Data
             sw.String(Comment);
             sw.Int32((Int32)Id);
 
-            UInt32 flags = (UInt32)Value;
-            if (flags == 0)
-            {
-                BattleStatusNumber number = 0;
-                sw.EnumValue(number);
-                return;
-            }
+            WriteBattleStatus(sw, metadata, Value);
+        }
 
-            for (Int32 i = 0; i < 32; i++)
+        public static BattleStatus ParseBattleStatus(String raw, CsvMetaData metadata)
+        {
+            BattleStatus result = 0;
+            String[] tokens = raw.Split(',');
+            for (Int32 i = 0; i < tokens.Length; i++)
             {
-                if ((flags & (1 << i)) != 0)
+                String tok = tokens[i].Trim();
+                if (String.IsNullOrEmpty(tok))
+                    continue;
+
+                if (metadata.HasOption("UnshiftStatuses"))
+                    result |= CsvParser.EnumValue<BattleStatusId>(tok).ToBattleStatus();
+                else
+                    result |= CsvParser.EnumValue<BattleStatusIdOldVersion>(tok).ToBattleStatus();
+            }
+            return result;
+        }
+
+        public static void WriteBattleStatus(CsvWriter sw, CsvMetaData metadata, BattleStatus status)
+        {
+            List<String> statusStr = new List<String>();
+            if (metadata.HasOption("UnshiftStatuses"))
+            {
+                foreach (BattleStatusId statusId in status.ToStatusList())
+                    statusStr.Add($"{statusId}({(Int32)statusId})");
+            }
+            else
+            {
+                if (status == 0)
                 {
-                    BattleStatusNumber number = (BattleStatusNumber)(i + 1);
-                    sw.EnumValue(number);
+                    statusStr.Add($"{BattleStatusIdOldVersion.None}({(Int32)BattleStatusIdOldVersion.None})");
+                }
+                else
+                {
+                    foreach (BattleStatusId statusId in status.ToStatusList())
+                    {
+                        BattleStatusIdOldVersion oldId = (BattleStatusIdOldVersion)(statusId + 1);
+                        statusStr.Add($"{oldId}({(Int32)oldId})");
+                    }
                 }
             }
+            sw.String(String.Join(", ", statusStr.ToArray()));
         }
     }
 }

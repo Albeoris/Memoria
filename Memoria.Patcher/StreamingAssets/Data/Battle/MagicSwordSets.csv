@@ -1,7 +1,8 @@
-﻿# This file contains sets of ablities that get unlocked by other abilities.
+﻿#! IncludeStatusBlockers
+# This file contains sets of ablities that get unlocked by other abilities.
 # You can set any number of different items.
 # -----------------------------------------------
-# Id;Supporter;Beneficiary;BaseAbilities;UnlockedAbilities
-# Int32;Int32;Int32;Ability[];Ability[]
+# Id;Supporter;Beneficiary;BaseAbilities;UnlockedAbilities;SupporterBlockingStatus;BeneficiaryBlockingStatus
+# Int32;Int32;Int32;Ability[];Ability[];Status[];Status[]
 # -----------------------------------------------
-0;1;3;AA:25, AA:26, AA:27, AA:29, AA:30, AA:31, AA:33, AA:34, AA:35, AA:38, AA:45, AA:47, AA:48;AA:50, AA:52, AA:54, AA:56, AA:57, AA:59, AA:61, AA:63, AA:65, AA:75, AA:76, AA:189, AA:191;# Magic Sword
+0;1;3;AA:25, AA:26, AA:27, AA:29, AA:30, AA:31, AA:33, AA:34, AA:35, AA:38, AA:45, AA:47, AA:48;AA:50, AA:52, AA:54, AA:56, AA:57, AA:59, AA:61, AA:63, AA:65, AA:75, AA:76, AA:189, AA:191;Silence(3), Heat(24), Mini(28);Mini(28);# Magic Sword

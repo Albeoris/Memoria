@@ -14,39 +14,26 @@ public class BattleResultUI : UIScene
 {
     public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
     {
-        UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
-        {
-            this.screenFadePanel.depth = 0;
-        };
+        UIScene.SceneVoidDelegate afterShow = () => this.screenFadePanel.depth = 0;
         if (afterFinished != null)
-        {
-            sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
-        base.Show(sceneVoidDelegate);
+            afterShow += afterFinished;
+        base.Show(afterShow);
         SceneDirector.FF9Wipe_FadeInEx(12);
         PersistenSingleton<UIManager>.Instance.SetGameCameraEnable(false);
         this.isTimerDisplay = TimerUI.GetDisplay();
-        if (FF9StateSystem.Common.FF9.btl_result == 4)
+        if (FF9StateSystem.Common.FF9.btl_result == FF9StateGlobal.BTL_RESULT_ESCAPE)
         {
             if (battle.btl_bonus.escape_gil)
-            {
                 this.InitialNormal();
-            }
             else
-            {
                 this.InitialNone();
-            }
         }
-        else if (FF9StateSystem.Common.FF9.btl_result != 7)
+        else if (FF9StateSystem.Common.FF9.btl_result != FF9StateGlobal.BTL_RESULT_ENEMY_FLEE)
         {
             if (battle.btl_bonus.Event)
-            {
                 this.InitialEvent();
-            }
             else
-            {
                 this.InitialNormal();
-            }
         }
         else
         {
@@ -56,7 +43,7 @@ public class BattleResultUI : UIScene
 
     public override void Hide(UIScene.SceneVoidDelegate afterFinished = null)
     {
-        UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+        UIScene.SceneVoidDelegate afterHidz = delegate
         {
             SceneDirector.FF9Wipe_FadeInEx(256);
             battle.ff9ShutdownStateBattleResult();
@@ -64,23 +51,15 @@ public class BattleResultUI : UIScene
             PersistenSingleton<FF9StateSystem>.Instance.mode = PersistenSingleton<FF9StateSystem>.Instance.prevMode;
             Byte mode = PersistenSingleton<FF9StateSystem>.Instance.mode;
             if (mode == 3)
-            {
                 SceneDirector.Replace("WorldMap", SceneTransition.FadeOutToBlack, true);
-            }
             else if (mode == 5 || mode == 1)
-            {
                 SceneDirector.Replace("FieldMap", SceneTransition.FadeOutToBlack, true);
-            }
             if (this.isTimerDisplay && TimerUI.Enable)
-            {
                 TimerUI.SetDisplay(true);
-            }
         };
         if (afterFinished != null)
-        {
-            sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
-        base.Hide(sceneVoidDelegate);
+            afterHidz += afterFinished;
+        base.Hide(afterHidz);
         SceneDirector.FF9Wipe_FadeInEx(12);
         this.screenFadePanel.depth = 5;
     }
@@ -224,39 +203,39 @@ public class BattleResultUI : UIScene
             if (player != null)
             {
                 UInt64 nextLvl = (player.level >= ff9level.LEVEL_COUNT) ? player.exp : ff9level.CharacterLevelUps[player.level].ExperienceToLevel;
-                BattleResultUI.CharacterBattleResultInfoHUD characterBattleResultInfoHUD = this.characterBRInfoHudList[i];
-                characterBattleResultInfoHUD.Content.SetActive(true);
-                characterBattleResultInfoHUD.NameLabel.text = player.Name;
-                characterBattleResultInfoHUD.LevelLabel.text = player.level.ToString();
-                characterBattleResultInfoHUD.ExpLabel.text = player.exp.ToString();
-                characterBattleResultInfoHUD.NextLvLabel.text = (nextLvl - player.exp).ToString();
-                FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), characterBattleResultInfoHUD.AvatarSprite, false);
-                UISprite[] statusesSpriteList = characterBattleResultInfoHUD.StatusesSpriteList;
-                for (Int32 j = 0; j < statusesSpriteList.Length; j++)
-                    statusesSpriteList[j].alpha = 0f;
+                BattleResultUI.CharacterBattleResultInfoHUD infoHUD = this.characterBRInfoHudList[i];
+                infoHUD.Content.SetActive(true);
+                infoHUD.NameLabel.text = player.Name;
+                infoHUD.LevelLabel.text = player.level.ToString();
+                infoHUD.ExpLabel.text = player.exp.ToString();
+                infoHUD.NextLvLabel.text = (nextLvl - player.exp).ToString();
+                FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), infoHUD.AvatarSprite, false);
+                UISprite[] statusesSpriteList = infoHUD.StatusesSpriteList;
+                foreach (UISprite statusSprite in statusesSpriteList)
+                    statusSprite.alpha = 0f;
                 Int32 spriteSlot = 0;
-                foreach (KeyValuePair<BattleStatus, Byte> kvp in BattleResultUI.BadIconDict)
+                foreach (BattleStatusId statusId in player.status.ToStatusList())
                 {
-                    if (spriteSlot >= characterBattleResultInfoHUD.StatusesSpriteList.Length)
+                    // TODO Add more UISprite if the limit is reached?
+                    if (spriteSlot >= infoHUD.StatusesSpriteList.Length)
                         break;
-                    if ((player.status & kvp.Key) != 0u)
-                    {
-                        characterBattleResultInfoHUD.StatusesSpriteList[spriteSlot].alpha = 1f;
-                        characterBattleResultInfoHUD.StatusesSpriteList[spriteSlot].spriteName = FF9UIDataTool.IconSpriteName[kvp.Value];
-                        spriteSlot++;
-                    }
+                    if (!BattleHUD.DebuffIconNames.TryGetValue(statusId, out String spriteName))
+                        continue;
+                    infoHUD.StatusesSpriteList[spriteSlot].alpha = 1f;
+                    infoHUD.StatusesSpriteList[spriteSlot].spriteName = spriteName;
+                    spriteSlot++;
                 }
                 if (!this.IsEnableDraw(player, i))
                 {
                     this.isRecieveExpList.Add(false);
-                    characterBattleResultInfoHUD.DimPanel.SetActive(true);
-                    characterBattleResultInfoHUD.AvatarSprite.alpha = 0.5f;
+                    infoHUD.DimPanel.SetActive(true);
+                    infoHUD.AvatarSprite.alpha = 0.5f;
                 }
                 else
                 {
                     this.isRecieveExpList.Add(true);
-                    characterBattleResultInfoHUD.DimPanel.SetActive(false);
-                    characterBattleResultInfoHUD.AvatarSprite.alpha = 1f;
+                    infoHUD.DimPanel.SetActive(false);
+                    infoHUD.AvatarSprite.alpha = 1f;
                 }
             }
         }
@@ -952,17 +931,6 @@ public class BattleResultUI : UIScene
     private Boolean isLevelUpSoundPlayed = false;
     [NonSerialized]
     private Boolean isAbilityLearnSoundPlayed = false;
-
-    public static Dictionary<BattleStatus, Byte> BadIconDict = new Dictionary<BattleStatus, Byte>
-    {
-        { BattleStatus.Petrify, 154 },
-        { BattleStatus.Venom, 153 },
-        { BattleStatus.Virus, 152 },
-        { BattleStatus.Silence, 151 },
-        { BattleStatus.Blind, 150 },
-        { BattleStatus.Trouble, 149 },
-        { BattleStatus.Zombie, 148 }
-    };
 
     private class CharacterBattleResultInfoHUD
     {

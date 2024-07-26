@@ -42,7 +42,7 @@ namespace Memoria.Scripts.Battle
             if (!_v.CanAttackMagic())
                 return 0;
 
-            if (_v.Target.IsUnderAnyStatus(BattleStatus.Reflect) && !_v.Command.IsReflectNull)
+            if (_v.Target.IsUnderAnyStatus(BattleStatusConst.ApplyReflect) && !_v.Command.IsReflectNull)
                 return 0;
 
             _v.CalcHpDamage();

@@ -83,6 +83,7 @@ public partial class BattleHUD : UIScene
         public readonly Dictionary<Int32, Int32> AbilityPaList;
         public readonly Dictionary<Int32, Int32> AbilityMaxPaList;
         public readonly Dictionary<Int32, Boolean> AbilityTranceList;
+        public readonly Dictionary<Int32, BattleMagicSwordSet> AbilityMagicSet;
 
         public AbilityPlayerDetail()
         {
@@ -90,6 +91,7 @@ public partial class BattleHUD : UIScene
             AbilityPaList = new Dictionary<Int32, Int32>();
             AbilityMaxPaList = new Dictionary<Int32, Int32>();
             AbilityTranceList = new Dictionary<Int32, Boolean>();
+            AbilityMagicSet = new Dictionary<Int32, BattleMagicSwordSet>();
         }
 
         public void Clear()
@@ -98,18 +100,7 @@ public partial class BattleHUD : UIScene
             AbilityPaList.Clear();
             AbilityMaxPaList.Clear();
             AbilityTranceList.Clear();
-        }
-    }
-
-    private class MagicSwordCondition
-    {
-        public Boolean IsViviExist;
-        public Boolean IsViviDead;
-        public Boolean IsSteinerMini;
-
-        public Boolean Changed(MagicSwordCondition other)
-        {
-            return IsViviExist != other.IsViviExist || IsViviDead != other.IsViviDead || IsSteinerMini != other.IsSteinerMini;
+            AbilityMagicSet.Clear();
         }
     }
 

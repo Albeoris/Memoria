@@ -40,7 +40,10 @@ public partial class BattleHUD : UIScene
         }
 
         if (_usingMainMenu)
+        {
+            btl2d.ShowMessages(true);
             UpdateBattleAfterMainMenu();
+        }
 
         _isFromPause = false;
         _oneTime = true;
@@ -210,7 +213,7 @@ public partial class BattleHUD : UIScene
                     {
                         BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
                         btl.Trance = Byte.MaxValue;
-                        btl.AlterStatus(BattleStatus.Trance);
+                        btl.AlterStatus(BattleStatusId.Trance);
                     }
                     else
                     {
@@ -569,7 +572,7 @@ public partial class BattleHUD : UIScene
 
     private static void OpenMainMenuAfterHide()
     {
-        btl2d.ReleaseBtl2dStatCount();
+        btl2d.ShowMessages(false);
         PersistenSingleton<UIManager>.Instance.MainMenuScene.EnabledSubMenus = new HashSet<String>(Configuration.Battle.AvailableMenus);
         PersistenSingleton<UIManager>.Instance.MainMenuScene.CurrentSubMenu = PersistenSingleton<UIManager>.Instance.MainMenuScene.GetFirstAvailableSubMenu();
         PersistenSingleton<UIManager>.Instance.MainMenuScene.NeedTweenAndHideSubMenu = true;

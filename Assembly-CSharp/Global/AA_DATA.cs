@@ -7,13 +7,13 @@ public class AA_DATA
         this.Info = new BattleCommandInfo();
         this.Ref = new BTL_REF();
         Category = 0;
-        AddStatusNo = BattleStatusIndex.None;
+        AddStatusNo = StatusSetId.None;
         MP = 0;
         Type = 0;
         Vfx2 = 0;
     }
 
-    public AA_DATA(BattleCommandInfo info, BTL_REF btlRef, Byte category, BattleStatusIndex statusSetIndex, Int32 mp, Byte type, UInt16 vfx2)
+    public AA_DATA(BattleCommandInfo info, BTL_REF btlRef, Byte category, StatusSetId statusSetIndex, Int32 mp, Byte type, UInt16 vfx2)
     {
         Info = info;
         Ref = btlRef;
@@ -30,7 +30,7 @@ public class AA_DATA
     [Memoria.PatchableFieldAttribute]
     public Byte Category;
     [Memoria.PatchableFieldAttribute]
-    public BattleStatusIndex AddStatusNo;
+    public StatusSetId AddStatusNo;
     [Memoria.PatchableFieldAttribute]
     public Int32 MP;
     [Memoria.PatchableFieldAttribute]

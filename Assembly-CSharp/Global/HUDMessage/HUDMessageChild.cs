@@ -175,7 +175,7 @@ public class HUDMessageChild : MonoBehaviour
 
     public void Clear()
     {
-        if (this.isInitialized)
+        if (this.isInitialized && !btl2d.StatusMessages.Contains(this))
         {
             this.PrintLog(false);
             this.parentGameObject.SetActive(false);

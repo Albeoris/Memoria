@@ -140,7 +140,7 @@ public class WorldSPSSystem : MonoBehaviour
                 sps.meshRenderer.enabled = true;
                 sps.attr &= unchecked((Byte)~SPSConst.ATTR_UPDATE_THIS_FRAME);
                 if (sps.charTran != null && sps.boneTran != null)
-                    sps.pos = sps.boneTran.position + sps.posOffset;
+                    sps.pos = sps.boneTran.position;
                 SPSConst.WorldSPSEffect no = sps.worldSpsId;
                 Vector3 goPos = sps.pos;
                 Int32 curFrame = sps.curFrame >> 4;

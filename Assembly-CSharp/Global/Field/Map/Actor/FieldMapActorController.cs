@@ -612,7 +612,6 @@ public partial class FieldMapActorController : HonoBehavior
         Boolean movingLeft = UIManager.Input.GetKey(Control.Left) || analogVector.x <= -0.1f;
         Boolean movingRight = UIManager.Input.GetKey(Control.Right) || analogVector.x >= 0.1f;
 
-        // TODO: maybe have a better check for deciding whether the movement is a stick movement
         // In RuntimePlatform.WindowsPlayer mode:
         //  PersistenSingleton<HonoInputManager>.Instance.GetAxis -> UnityEngine's GetAxis and UnityXInput's GetXAxis
         //  UIManager.Input.GetKey --------------------------------> UnityEngine's GetAxis and UnityXInput's GetXAxis and HonoInputManager's CheckPersistentDirectionInput

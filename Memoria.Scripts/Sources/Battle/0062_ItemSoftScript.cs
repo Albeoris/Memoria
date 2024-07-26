@@ -38,7 +38,7 @@ namespace Memoria.Scripts.Battle
             if (_v.Target.HasCategory(EnemyCategory.Stone))
             {
                 if (_v.Target.CanBeAttacked())
-                    return -1 * BattleScriptStatusEstimate.RateStatus(BattleStatus.Death);
+                    return -1 * BattleScriptStatusEstimate.RateStatus(BattleStatusId.Death);
 
                 return 0;
             }
