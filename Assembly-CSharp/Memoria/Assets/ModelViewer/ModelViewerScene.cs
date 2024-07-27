@@ -586,18 +586,18 @@ namespace Memoria.Assets
                     }
                     else if (ctrl && currentWeaponModel != null)
                     {
-                        Transform builtInBone = currentModel.transform.GetChildByName($"bone{currentWeaponBoneIndex:D3}");
-                        if (builtInBone.localScale != SCALE_INVISIBLE)
+                        Transform builtInBone = currentModel.transform.GetChildByName("bone" + currentWeaponBoneIndex.ToString("D3"));
+                        if (!currentHiddenBonesID.Contains(currentWeaponBoneIndex))
                         {
                             currentHiddenBonesID.Add(currentWeaponBoneIndex);
-                            builtInBone.localScale = SCALE_INVISIBLE;
-                            currentWeaponModel.transform.localScale = SCALE_REBALANCE;
                         }
                         else
                         {
                             currentHiddenBonesID.Remove(currentWeaponBoneIndex);
-                            builtInBone.localScale = Vector3.one;
-                            currentWeaponModel.transform.localScale = Vector3.one;
+                            if (builtInBone != null)
+                                builtInBone.localScale = Vector3.one;
+                            if (currentWeaponModel != null)
+                                currentWeaponModel.transform.localScale = Vector3.one;
                         }
                         currentHiddenBonesID.Sort();
                     }
@@ -782,16 +782,15 @@ namespace Memoria.Assets
                         FF9Sfx.FF9SFX_Play(102);
                     }
                 }
-                Animation animation = currentModel.GetComponent<Animation>();
                 if (Input.GetKeyDown(KeyCode.C))
                 {
                     Camera camera = GetCamera();
                     if (camera.backgroundColor == Color.grey) camera.backgroundColor = Color.black;
                     else if (camera.backgroundColor == Color.black) camera.backgroundColor = Color.green;
                     else camera.backgroundColor = Color.grey;
-                }
-                // make animation a loop by default
-                if (animation != null && !animation.IsPlaying(currentAnimName) && toggleAnim)
+                }                       
+                Animation animation = currentModel.GetComponent<Animation>();
+                if (animation != null && !animation.IsPlaying(currentAnimName) && toggleAnim) // make animation a loop by default
                 {
                     animation.Play(currentAnimName);
                     if (animation[currentAnimName] != null)
@@ -803,6 +802,7 @@ namespace Memoria.Assets
                 }
 
                 UpdateRender();
+                ProcessBuiltInWeapon();
                 SaveModelViewerConfigFile();
                 mousePreviousPosition = Input.mousePosition;
             }
@@ -1299,6 +1299,21 @@ namespace Memoria.Assets
             sourceObject.transform.localPosition = Vector3.zero;
             sourceObject.transform.localRotation = Quaternion.identity;
             sourceObject.transform.localScale = Vector3.one;
+        }
+
+        public static void ProcessBuiltInWeapon()
+        {
+            Animation animation = currentModel.GetComponent<Animation>();
+            for (Int32 i = 0; i < currentHiddenBonesID.Count; i++)
+            {
+                Int32 HiddenBonesID = currentHiddenBonesID[i];
+                Transform builtInBone = currentModel.transform.GetChildByName("bone" + HiddenBonesID.ToString("D3"));
+
+                if (builtInBone != null)
+                    builtInBone.localScale = SCALE_INVISIBLE;
+                if (currentWeaponModel != null)
+                    currentWeaponModel.transform.localScale = (builtInBone != null && builtInBone.localScale == SCALE_INVISIBLE && !animation.IsPlaying(currentAnimName)) ? SCALE_REBALANCE : Vector3.one;
+            }
         }
 
         private static void ChangeAnimation(Int32 index)
