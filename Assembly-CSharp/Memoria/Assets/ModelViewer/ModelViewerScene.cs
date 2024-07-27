@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
+using FF9;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scenes;
@@ -386,16 +387,6 @@ namespace Memoria.Assets
                 {
                     orthoView = !orthoView;
                 }
-                if (Input.GetKeyDown(KeyCode.H)) // TODO - Replace it by changing the color instead, to hide the model
-                {
-                    displayCurrentModel = !displayCurrentModel;
-                    Renderer[] componentsInChildren = currentModel.GetComponentsInChildren<Renderer>();
-                    for (Int32 i = 0; i < componentsInChildren.Length; i++)
-                    {
-                        Renderer renderer = componentsInChildren[i];
-                        renderer.enabled = displayCurrentModel;
-                    }
-                }
                 if (currentModel == null)
                     return;
                 if (geoList[currentGeoIndex].Kind == MODEL_KIND_SPS) // SPS SPECIFIC
@@ -605,6 +596,11 @@ namespace Memoria.Assets
                     {
                         ChangeWeaponModel(currentWeaponGeoIndex);
                     }
+                }
+                if (Input.GetKeyDown(KeyCode.H)) // TODO - Replace it by changing the color instead, to hide the model
+                {
+                    displayCurrentModel = !displayCurrentModel;
+                    targetModel.gameObject.SetActive(displayCurrentModel);
                 }
                 if (Input.mouseScrollDelta.y != 0f) // Scroll wheel on mouse (ScalePosition)
                 {
@@ -928,7 +924,7 @@ namespace Memoria.Assets
                 }
                 if (currentWeaponModel)
                 {
-                    label += $"[FFFF00][^Scroll][FFFFFF] Weapon: {weapongeoList[currentWeaponGeoIndex].Name} ({geoList[currentGeoIndex].Id})\n";
+                    label += $"[FFFF00][^Scroll][FFFFFF] Weapon: {weapongeoList[currentWeaponGeoIndex].Name} ({geoList[currentWeaponGeoIndex].Id})\n";
                     label += $"[FFFF00][⇧Scroll][FFFFFF] Bone: {currentWeaponBoneIndex}\n";
                     if (!ControlWeapon)
                         label += $"[FFFF00][⇧P][FFFFFF] Selected: Model\n";
