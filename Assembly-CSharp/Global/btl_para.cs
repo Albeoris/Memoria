@@ -365,6 +365,8 @@ public class btl_para
 
     public static Boolean IsNonDyingVanillaBoss(BTL_DATA btl)
     {
+        if (btl.bi.player != 0)
+            return false;
         if (NonDyingBossBattles.Contains(FF9StateSystem.Battle.battleMapIndex))
         {
             if (FF9StateSystem.Battle.battleMapIndex == 338 && btl.max.hp < 10000) // King Leo + Zenero + Benero
