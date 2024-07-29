@@ -1309,7 +1309,8 @@ namespace Memoria.Assets
                 if (builtInBone != null)
                     builtInBone.localScale = SCALE_INVISIBLE;
                 if (currentWeaponModel != null)
-                    currentWeaponModel.transform.localScale = (builtInBone != null && builtInBone.localScale == SCALE_INVISIBLE && !animation.IsPlaying(currentAnimName)) ? SCALE_REBALANCE : Vector3.one;
+                    currentWeaponModel.transform.localScale = (builtInBone != null && builtInBone.localScale == SCALE_INVISIBLE &&
+                        !animation.IsPlaying(currentAnimName)) && currentHiddenBonesID.Contains(currentWeaponBoneIndex) ? SCALE_REBALANCE : Vector3.one;
             }
         }
 
