@@ -41,7 +41,7 @@ public class btl_para
                     newHP += 10000;
             }
         }
-        else if (IsNonDyingVanillaBoss(btl))
+        else if (IsNonDyingVanillaBoss(btl) && btl.bi.player == 0)
         {
             // Weak security for enemies that should never reach 0 HP in vanilla
             newHP = Math.Max(newHP, 1);
