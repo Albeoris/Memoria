@@ -602,7 +602,8 @@ namespace Memoria.Assets
                     displayCurrentModel = !displayCurrentModel;
                     targetModel.gameObject.SetActive(displayCurrentModel);
                 }
-                if (Input.mouseScrollDelta.y != 0f) // Scroll wheel on mouse (ScalePosition)
+                if (Input.mouseScrollDelta.y != 0f && Input.mousePosition.x > 0 && Input.mousePosition.x < Screen.width 
+                && Input.mousePosition.y > 0 && Input.mousePosition.y < Screen.height) // Scroll wheel on mouse (ScalePosition) // Makes sure mouse is over the window
                 {
                     if (currentWeaponModel && (shift || ctrl))
                     {
