@@ -7,15 +7,7 @@ using UnityEngine;
 
 public static class btl_eqp
 {
-    // TODO: maybe apply the system to the enemies as well when there's a sb2MonParm.WeaponModel
-    public static Dictionary<Int32, Int32> EnemyBuiltInWeaponTable = new Dictionary<Int32, Int32>
-    {
-        { 380, 21 }, // Fratley - GEO_SUB_F0_FLT
-        { 410, 31 }, // Lani - GEO_MON_B3_122 or GEO_MON_UP3_122
-        { 301, 17 }, // Baku - GEO_MON_B3_105
-        { 359, 19 }, // King Leo - GEO_MON_B3_106
-    };
-
+    
     public static void InitWeapon(PLAYER p, BTL_DATA btl)
     {
         btl.builtin_weapon_mode = false;
@@ -154,6 +146,32 @@ public static class btl_eqp
             }
         }
     }
+
+    // TODO: maybe apply the system to the enemies as well when there's a sb2MonParm.WeaponModel
+    public static Dictionary<Int32, Int32> EnemyBuiltInWeaponTable = new Dictionary<Int32, Int32>
+    {
+        { 152, 30 }, // Goblin - GEO_MON_B3_001
+        { 162, 36 }, // Skeleton - GEO_MON_B3_015
+		{ 5459, 6 }, // Lizard Man (weapon 1) - GEO_MON_B3_019
+		{ 5459, 24 }, // Lizard Man (weapon 2) - GEO_MON_B3_019
+		{ 135, 40 }, // Vice - GEO_MON_B3_022
+		{ 138, 29 }, // Sahagin - GEO_MON_B3_025
+		{ 136, 25 }, // Lady Bug - GEO_MON_B3_027
+		{ 148, 28 }, // Drakan - GEO_MON_B3_035
+		{ 85, 10 }, // Ramya - GEO_MON_B3_041
+		{ 46, 23 }, // Goblin Mage - GEO_MON_B3_043
+		{ 92, 23 }, // Gnoll (weapon 1) - GEO_MON_B3_049
+		{ 92, 48 }, // Gnoll (weapon 2) - GEO_MON_B3_049
+		{ 184, 18 }, // Tomberry (weapon) - GEO_MON_B3_054
+		{ 184, 28 }, // Tomberry (lantern) - GEO_MON_B3_054
+		{ 265, 33 }, // Magic Vice - GEO_MON_B3_059
+		{ 328, 52 }, // Agares - GEO_MON_B3_070
+		
+		{ 380, 21 }, // Fratley - GEO_SUB_F0_FLT
+        { 410, 31 }, // Lani - GEO_MON_B3_122 or GEO_MON_UP3_122
+        { 301, 17 }, // Baku - GEO_MON_B3_105
+        { 359, 19 } // King Leo - GEO_MON_B3_106
+    };
 
     private static readonly Vector3 SCALE_INVISIBLE = new Vector3(0.01f, 0.01f, 0.01f);
     private static readonly Vector3 SCALE_REBALANCE = new Vector3(100f, 100f, 100f);
