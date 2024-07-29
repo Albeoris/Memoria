@@ -54,19 +54,25 @@ public class WorldHUD : UIScene
                 else
                 {
                     if (!this.ignorePointerProcess)
-                    {
                         this.DisplayLocationName(this.currentLocationIndex);
-                    }
                     if (FF9StateSystem.MobilePlatform)
-                    {
                         base.StartCoroutine(this.ForceOpenVirtual());
-                    }
                 }
+                this.DisplayChocographLocation(false);
             }
-            else if (this.currentState == WorldHUD.State.HUDNoMiniMap && this.MiniMapPanel.activeSelf)
+            else if (ff9.w_naviMode == 0)
+            {
+                this.currentState = WorldHUD.State.HUDNoMiniMap;
+                this.MiniMapPanel.SetActive(false);
+                this.MapButtonGameObject.SetActive(FF9StateSystem.MobilePlatform);
+                this.DisplayChocographLocation(false);
+            }
+            else if (ff9.w_naviMode == 1)
             {
                 this.currentState = WorldHUD.State.HUD;
+                this.MiniMapPanel.SetActive(true);
                 this.MapButtonGameObject.SetActive(false);
+                this.DisplayChocographLocation(true);
             }
             if (PersistenSingleton<UIManager>.Instance.PreviousState == UIManager.UIState.Pause && this.currentState != WorldHUD.State.FullMap && PersistenSingleton<EventEngine>.Instance.GetUserControl())
             {
@@ -83,7 +89,6 @@ public class WorldHUD : UIScene
         PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(ff9.GetUserControl(), (Action)null);
         this.InitialHUD();
         this.DisplayButtonHud();
-        this.DisplayChocographLocation(true);
         VirtualAnalog.Init(base.gameObject);
         VirtualAnalog.FallbackTouchWidgetList.Add(PersistenSingleton<UIManager>.Instance.gameObject);
         VirtualAnalog.FallbackTouchWidgetList.Add(PersistenSingleton<UIManager>.Instance.Dialogs.gameObject);
@@ -290,6 +295,7 @@ public class WorldHUD : UIScene
                     this.MapButtonGameObject.SetActive(false);
                     this.DisplayChocographLocation(true);
                 }
+                ff9.byte_gEventGlobal_updateNaviMode();
             }
         }
         return true;
@@ -614,6 +620,7 @@ public class WorldHUD : UIScene
     {
         this.currentState = WorldHUD.State.HUD;
         ff9.w_naviMode = 1;
+        ff9.byte_gEventGlobal_updateNaviMode();
         this.SetButtonVisible(true);
         this.FullMapPanel.SetActive(false);
         UIManager.Input.ResetKeyCode();
@@ -1279,7 +1286,6 @@ public class WorldHUD : UIScene
         this.PlaneButtonPanel.GetChild(0).GetComponent<OnScreenButton>().SetHighlightKeyCommand(Control.Down);
         this.PlaneButtonPanel.GetChild(1).GetComponent<OnScreenButton>().SetHighlightKeyCommand(Control.Up);
         this.ChocographLocationPanel.transform.localPosition += new Vector3(158f, -708f, 0f);
-        // Todo: see with TehMighty for a proper and unified UI mod
         //this.ChocographLocationPanel.transform.localPosition = new Vector3(600f, 0f, 0f);
         //this.miniMapWidget.transform.parent.localPosition = new Vector3(250f, -500f, 0f);
         // Todo: fix Title displaying permanently if the World Map was exited during its first appearance

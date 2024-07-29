@@ -182,6 +182,22 @@ namespace Memoria.Prime.Text
             return false;
         }
 
+        public static Boolean TryPublicFieldParse(this String source, Object obj, out Object field)
+        {
+            field = null;
+            if (obj == null)
+                return false;
+            foreach (FieldInfo f in obj.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy))
+            {
+                if (f.Name == source)
+                {
+                    field = f.GetValue(obj);
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static Boolean TryEnumParse<T>(this String source, out T value) where T : Enum
         {
             try

@@ -1,45 +1,46 @@
+#! UnshiftStatuses
 # This file contains set of statuses what will be applied to targets in the battle.
 # You must set at least 39 different items.
 # -----------------------------------------------
 # Comment;Id;Statuses
-# ;Int32;UInt32[]
+# ;Int32;Status[]
 # -----------------------------------------------
-Set 0;0;None(0);# No status
-Set 1;1;Regen(19);# Regen
-Set 2;2;Death(9);# Life
-Set 3;3;Venom(2), Poison(17);# Panacea
-Set 4;4;Petrify(1), GradualPetrify(32);# Stona
-Set 5;5;Silence(4), Blind(5), Confuse(11), Poison(17), Sleep(18), Heat(25), Freeze(26), Mini(29), GradualPetrify(32);# Esuna
-Set 6;6;Shell(23);# Shell
-Set 7;7;Protect(24);# Protect
-Set 8;8;Haste(20);# Haste
-Set 9;9;Silence(4);# Silence
-Set 10;10;Mini(29);# Mini
-Set 11;11;Reflect(30);# Reflect
-Set 12;12;Confuse(11);# Confuse
-Set 13;13;Berserk(12);# Berserk
-Set 14;14;Blind(5);# Blind
-Set 15;15;Float(22);# Float
-Set 16;16;Stop(13), AutoLife(14), Regen(19), Haste(20), Slow(21), Float(22), Shell(23), Protect(24), Vanish(27), Reflect(30);# Dispel
-Set 17;17;Sleep(18);# Sleep
-Set 18;18;Slow(21);# Slow
-Set 19;19;Stop(13);# Stop
-Set 20;20;Poison(17);# Poison
-Set 21;21;Death(9);# Death
-Set 22;22;Petrify(1);# Petrify
-Set 23;23;Petrify(1), Virus(3), Zombie(7), Death(9);# No Exp
-Set 24;24;Vanish(27);# Vanish
-Set 25;25;Doom(28);# Doom
-Set 26;26;Shell(23), Protect(24);# Mighty Guard
-Set 27;27;Blind(5), Confuse(11), Poison(17), Slow(21), Mini(29);# Bad Breath
-Set 28;28;Freeze(26);# Freeze
-Set 29;29;Heat(25);# Heat
-Set 30;30;AutoLife(14);# AutoLife
-Set 31;31;Trouble(6);# Trouble
-Set 32;32;AutoLife(14), Regen(19);# Aura
-Set 33;33;Defend(16);# Defend
-Set 34;34;Zombie(7);# Zombie
-Set 35;35;Virus(3);# Virus
-Set 36;36;GradualPetrify(32);# Gradual Petrify
-Set 37;37;Venom(2);# Venom
-Set 38;38;Blind(5), Confuse(11), Slow(21), Mini(29);# Lesser Bad Breath
+Set 0;0;;# No status
+Set 1;1;Regen(18);# Regen
+Set 2;2;Death(8);# Life
+Set 3;3;Venom(1), Poison(16);# Panacea
+Set 4;4;Petrify(0), GradualPetrify(31);# Stona
+Set 5;5;Silence(3), Blind(5), Confuse(10), Poison(16), Sleep(17), Heat(24), Freeze(25), Mini(28), GradualPetrify(31);# Esuna
+Set 6;6;Shell(22);# Shell
+Set 7;7;Protect(23);# Protect
+Set 8;8;Haste(19);# Haste
+Set 9;9;Silence(3);# Silence
+Set 10;10;Mini(28);# Mini
+Set 11;11;Reflect(29);# Reflect
+Set 12;12;Confuse(10);# Confuse
+Set 13;13;Berserk(11);# Berserk
+Set 14;14;Blind(4);# Blind
+Set 15;15;Float(21);# Float
+Set 16;16;Stop(12), AutoLife(13), Regen(18), Haste(19), Slow(20), Float(21), Shell(22), Protect(23), Vanish(26), Reflect(29);# Dispel
+Set 17;17;Sleep(17);# Sleep
+Set 18;18;Slow(20);# Slow
+Set 19;19;Stop(12);# Stop
+Set 20;20;Poison(16);# Poison
+Set 21;21;Death(8);# Death
+Set 22;22;Petrify(0);# Petrify
+Set 23;23;Petrify(0), Virus(2), Zombie(6), Death(8);# No Exp
+Set 24;24;Vanish(26);# Vanish
+Set 25;25;Doom(27);# Doom
+Set 26;26;Shell(22), Protect(23);# Mighty Guard
+Set 27;27;Blind(4), Confuse(10), Poison(16), Slow(20), Mini(28);# Bad Breath
+Set 28;28;Freeze(25);# Freeze
+Set 29;29;Heat(24);# Heat
+Set 30;30;AutoLife(13);# AutoLife
+Set 31;31;Trouble(5);# Trouble
+Set 32;32;AutoLife(13), Regen(18);# Aura
+Set 33;33;Defend(15);# Defend
+Set 34;34;Zombie(6);# Zombie
+Set 35;35;Virus(2);# Virus
+Set 36;36;GradualPetrify(31);# Gradual Petrify
+Set 37;37;Venom(1);# Venom
+Set 38;38;Blind(4), Confuse(10), Slow(20), Mini(28);# Lesser Bad Breath

@@ -1,6 +1,7 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria.Data;
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 

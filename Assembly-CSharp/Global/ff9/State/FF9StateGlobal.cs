@@ -7,6 +7,15 @@ using UnityEngine;
 
 public partial class FF9StateGlobal
 {
+    public const Byte BTL_RESULT_INITIAL = 0;
+    public const Byte BTL_RESULT_VICTORY = 1;
+    public const Byte BTL_RESULT_VICTORY_NO_POSE = 2;
+    public const Byte BTL_RESULT_DEFEAT = 3;
+    public const Byte BTL_RESULT_ESCAPE = 4;
+    public const Byte BTL_RESULT_INTERRUPTION = 5;
+    public const Byte BTL_RESULT_GAMEOVER = 6;
+    public const Byte BTL_RESULT_ENEMY_FLEE = 7;
+
     /* List of fldMapNo:
 	50		-> Prima Vista/Cargo Room
 	51		-> Prima Vista/Cargo Room

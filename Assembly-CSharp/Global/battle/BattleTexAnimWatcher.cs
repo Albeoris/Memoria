@@ -11,7 +11,7 @@ public class BattleTexAnimWatcher : MonoBehaviour
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
         for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
         {
-            if (!Status.checkCurStat(next, BattleStatus.Jump))
+            if (next.bi.disappear == 0)
             {
                 this.CheckRenderTextures(next.texanimptr);
                 this.CheckRenderTextures(next.tranceTexanimptr);

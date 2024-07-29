@@ -81,7 +81,7 @@ public static class btl_eqp
                 }
                 if (builtInBone != null)
                     builtInBone.localScale = SCALE_INVISIBLE;
-                if (btl.weapon_geo != null)
+                if (btl.weapon_geo != null && btl.weapon_bone == weaponBoneID)
                     btl.weapon_geo.transform.localScale = builtInBone != null ? SCALE_REBALANCE : Vector3.one;
             }
         }

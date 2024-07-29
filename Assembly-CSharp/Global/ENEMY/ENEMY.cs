@@ -12,7 +12,7 @@ public class ENEMY
         this.bonus_item_rate = new UInt16[4];
         this.steal_item = new RegularItem[4];
         this.steal_item_rate = new UInt16[4];
-        this.trance_glowing_color = new Byte[3];
+        this.trance_glowing_color = new Int32[3];
     }
 
     public ENEMY_TYPE et;
@@ -28,21 +28,20 @@ public class ENEMY
     public UInt16[] steal_item_rate;
 
     public Vector3 base_pos;
-    public Byte[] trance_glowing_color;
+    public Int32[] trance_glowing_color;
 
     public Byte steal_unsuccessful_counter;
 
     public class ENEMY_INFO
     {
+        public const UInt16 FLG_DIE_ATK = 1;
+        public const UInt16 FLG_DIE_DMG = 2;
+        public const UInt16 FLG_NON_DYING_BOSS = 4;
+
+        public Boolean die_atk => (flags & FLG_DIE_ATK) != 0;
+        public Boolean die_dmg => (flags & FLG_DIE_DMG) != 0;
+
         public Byte die_fade_rate;
-        public Byte die_atk;
-        public Byte die_dmg;
-        public Byte die_unused3;
-        public Byte die_unused4;
-        public Byte die_unused5;
-        public Byte die_unused6;
-        public Byte die_unused7;
-        public Byte die_unused8;
         public Byte multiple;
         public Byte slave;
         public Int32 reserve;

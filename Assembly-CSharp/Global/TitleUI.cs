@@ -4,6 +4,7 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Prime;
 using Memoria.Scenes;
+using Memoria.Scripts;
 using Memoria.Speedrun;
 using System;
 using System.Collections;
@@ -1739,6 +1740,7 @@ public class TitleUI : UIScene
         UICamera.onNavigate = (UICamera.KeyCodeDelegate)Delegate.Combine(UICamera.onNavigate, new UICamera.KeyCodeDelegate(this.OnKeyNavigate));
 
         DataPatchers.Initialize();
+        ScriptsLoader.InitializeAsync();
         QualitySettings.antiAliasing = Configuration.Graphics.AntiAliasing;
     }
 

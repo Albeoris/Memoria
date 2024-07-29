@@ -22,8 +22,8 @@ namespace Assets.Sources.Scripts.UI.Common
             this.MPMaxLabel = this.MPPanel.GetChild(3).GetComponent<UILabel>();
             if (isTargetHud)
             {
-                this.MagicStoneLabel = (UILabel)null;
-                this.MagicStoneMaxLabel = (UILabel)null;
+                this.MagicStoneLabel = null;
+                this.MagicStoneMaxLabel = null;
                 this.StatusesPanel = this.Content.GetChild(4);
                 this.StatusesSpriteList = new UISprite[]
                 {
@@ -40,8 +40,8 @@ namespace Assets.Sources.Scripts.UI.Common
             {
                 if (this.Content.GetChild(4).name == "Empty")
                 {
-                    this.MagicStoneLabel = (UILabel)null;
-                    this.MagicStoneMaxLabel = (UILabel)null;
+                    this.MagicStoneLabel = null;
+                    this.MagicStoneMaxLabel = null;
                 }
                 else
                 {
@@ -51,7 +51,7 @@ namespace Assets.Sources.Scripts.UI.Common
                 }
                 if (this.Content.GetChild(5).name == "Empty")
                 {
-                    this.StatusesPanel = (GameObject)null;
+                    this.StatusesPanel = null;
                     this.StatusesSpriteList = null;
                 }
                 else
@@ -106,39 +106,22 @@ namespace Assets.Sources.Scripts.UI.Common
         }
 
         public GameObject Self;
-
         public GameObject Content;
-
         public GameObject HPPanel;
-
         public GameObject MPPanel;
-
         public GameObject StatusesPanel;
-
         public UISprite AvatarSprite;
-
         public UILabel NameLabel;
-
         public UILabel LvLabel;
-
         public UILabel HPLabel;
-
         public UILabel HPMaxLabel;
-
         public UILabel MPLabel;
-
         public UILabel MPMaxLabel;
-
         public UILabel MagicStoneLabel;
-
         public UILabel MagicStoneMaxLabel;
-
         public UISprite[] StatusesSpriteList;
-
         private UILabel hpSlashLabel;
-
         private UILabel mpSlashLabel;
-
         private UILabel magicStoneSlashLabel;
     }
 }

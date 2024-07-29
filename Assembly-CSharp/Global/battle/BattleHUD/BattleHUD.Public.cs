@@ -38,7 +38,6 @@ public partial class BattleHUD : UIScene
     public BattleHUD()
     {
         _abilityDetailDict = new Dictionary<Int32, AbilityPlayerDetail>();
-        _magicSwordCond = new MagicSwordCondition();
         _enemyCount = -1;
         _playerCount = -1;
         _currentCharacterHp = new List<ParameterStatus>();
@@ -241,7 +240,7 @@ public partial class BattleHUD : UIScene
             RenderTexture photoRender = RenderTexture.GetTemporary(Screen.width, Screen.height);
             Vector2 photoSize = new Vector2(Math.Min(Screen.width, 400f), Math.Min(Screen.height, 600f));
             btl2d.GetIconPosition(pBtl.Data, out Byte[] iconBone, out _, out _);
-            Vector3 btlPos = pBtl.Data.gameObject.transform.GetChildByName($"bone{iconBone[3]:D3}").position + 50f * Vector3.down;
+            Vector3 btlPos = pBtl.Data.gameObject.transform.GetChildByName($"bone{iconBone[btl2d.ICON_POS_EYES]:D3}").position + 50f * Vector3.down;
             Matrix4x4 cameraOldMatrix = camera.worldToCameraMatrix;
             camera.ResetWorldToCameraMatrix();
             camera.transform.position = btlPos - 1500f * pBtl.Data.gameObject.transform.forward + 500f * Vector3.up;
@@ -370,6 +369,13 @@ public partial class BattleHUD : UIScene
         if (!_messageQueue.TryGetValue(str, out mess))
             return 0;
         return mess.priority;
+    }
+
+    public BattleMagicSwordSet GetMagicSwordOfAbility(BattleUnit caster, Int32 abilId)
+    {
+        if (!caster.IsPlayer || !_abilityDetailDict[caster.GetIndex()].AbilityMagicSet.TryGetValue(abilId, out BattleMagicSwordSet magicSet))
+            return null;
+        return magicSet;
     }
 
     public void DisplayParty(Boolean resetPointAnimations = false)
@@ -634,7 +640,7 @@ public partial class BattleHUD : UIScene
         for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
             if (next.bi.player == 0)
                 gil += btl_util.getEnemyPtr(next).bonus_gil;
-        if (FF9StateSystem.Common.FF9.btl_result == 4)
+        if (FF9StateSystem.Common.FF9.btl_result == FF9StateGlobal.BTL_RESULT_ESCAPE)
             btl_sys.ClearBattleBonus();
         for (Int32 i = 0; i < 4; i++)
         {
@@ -643,7 +649,7 @@ public partial class BattleHUD : UIScene
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player))
                     saFeature.TriggerOnBattleResult(player, battle.btl_bonus, new List<FF9ITEM>(), "BattleEnd", gil / 10U);
         }
-        if (FF9StateSystem.Common.FF9.btl_result == 4 && (battle.btl_bonus.gil != 0 || battle.btl_bonus.exp != 0 || battle.btl_bonus.ap != 0 || battle.btl_bonus.card != TetraMasterCardId.NONE))
+        if (FF9StateSystem.Common.FF9.btl_result == FF9StateGlobal.BTL_RESULT_ESCAPE && (battle.btl_bonus.gil != 0 || battle.btl_bonus.exp != 0 || battle.btl_bonus.ap != 0 || battle.btl_bonus.card != TetraMasterCardId.NONE))
             battle.btl_bonus.escape_gil = true;
 
         Hide(() => PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.BattleResult));
@@ -790,6 +796,7 @@ public partial class BattleHUD : UIScene
         SetAbilityPanelVisibility(false, false);
         BackButton.SetActive(false);
         _currentSilenceStatus = false;
+        _currentMagicSwordState = true;
         _currentMpValue = -1;
         _currentCommandIndex = BattleCommandMenu.Attack;
         _currentSubMenuIndex = -1;

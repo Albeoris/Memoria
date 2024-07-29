@@ -62,7 +62,7 @@ namespace Memoria.Scripts.Battle
                 Single hitRate = BattleScriptAccuracyEstimate.RatePlayerAttackHit(_v.Context.HitRate);
                 Single evaRate = BattleScriptAccuracyEstimate.RatePlayerAttackEvade(_v.Context.Evade);
 
-                Single result = BattleScriptStatusEstimate.RateStatus(BattleStatus.Death) * hitRate * evaRate;
+                Single result = BattleScriptStatusEstimate.RateStatus(BattleStatusId.Death) * hitRate * evaRate;
                 if (!_v.Target.IsPlayer)
                     result *= -1;
                 return result;

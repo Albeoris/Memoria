@@ -38,8 +38,16 @@ public class SHPEffect : MonoBehaviour
     {
         this.shpId = -1;
         this.attr = 0;
+        this.frame = 0;
+        this.pos = Vector3.zero;
+        this.scale = Vector3.one;
+        this.rot = Vector3.zero;
+        this.attach = null;
+        this.posOffset = Vector3.zero;
+        this.duration = -1;
         foreach (GameObject go in this.shpGo)
-            go.SetActive(false);
+            UnityEngine.Object.Destroy(go);
+        this.shpGo = [];
     }
 
     public void AnimateSHP()
@@ -49,17 +57,17 @@ public class SHPEffect : MonoBehaviour
         if ((this.attr & (SPSConst.ATTR_UPDATE_THIS_FRAME | SPSConst.ATTR_UPDATE_ANY_FRAME)) != 0)
         {
             if (this.attach != null)
-                this.pos = this.attach.position + this.posOffset;
+                this.pos = this.attach.position;
             Camera battleCamera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
             Matrix4x4 cameraMatrix = battleCamera.worldToCameraMatrix.inverse;
-            Single distanceToCamera = Vector3.Distance(cameraMatrix.GetColumn(3), this.pos);
+            Single distanceToCamera = Vector3.Distance(cameraMatrix.GetColumn(3), this.pos + this.posOffset);
             Single distanceFactor = Mathf.Clamp(distanceToCamera * 0.000259551482f, 0.3f, 1f);
             Vector3 directionForward = cameraMatrix.MultiplyVector(Vector3.forward);
             Vector3 directionRight = cameraMatrix.MultiplyVector(Vector3.right);
             Vector3 directionDown = Vector3.Cross(directionForward, directionRight);
             base.transform.localScale = this.scale * distanceFactor;
             base.transform.localRotation = Quaternion.Euler(this.rot.x, this.rot.y, this.rot.z);
-            base.transform.localPosition = this.pos;
+            base.transform.localPosition = this.pos + this.posOffset;
             base.transform.LookAt(base.transform.position + directionForward, -directionDown);
             foreach (GameObject go in this.shpGo)
                 go.SetActive(false);

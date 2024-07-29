@@ -1,4 +1,5 @@
-﻿using Memoria.Scripts;
+﻿using Memoria.Prime;
+using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +30,7 @@ public static class battlebg
             battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false);
             battlebg.SetDefaultShader(battlebg.objAnimModel[i]);
             if (battlebg.nf_BbgNumber == 171 && i == 1) // Crystal World, Crystal
-                battlebg.SetMaterailShader(battlebg.objAnimModel[i], "PSX/BattleMap_Cystal");
+                battlebg.SetMaterialShader(battlebg.objAnimModel[i], "PSX/BattleMap_Cystal");
         }
         FF9StateSystem.Battle.FF9Battle.map.btlBGObjAnim = battlebg.objAnimModel;
         battlebg.nf_BbgTabAddress.InitBBGTextureAnim(battlebg.btlModel, battlebg.objAnimModel);
@@ -44,59 +45,61 @@ public static class battlebg
         {
             if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_PLUS)
             {
-                battlebg.SetMaterailShader(transform.gameObject, "PSX/BattleMap_Plus");
+                battlebg.SetMaterialShader(transform.gameObject, "PSX/BattleMap_Plus");
             }
             else if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_GROUND)
             {
-                battlebg.SetMaterailShader(transform.gameObject, "PSX/BattleMap_Ground");
+                battlebg.SetMaterialShader(transform.gameObject, "PSX/BattleMap_Ground");
             }
             else if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_MINUS)
             {
-                battlebg.SetMaterailShader(transform.gameObject, "PSX/BattleMap_Minus");
+                battlebg.SetMaterialShader(transform.gameObject, "PSX/BattleMap_Minus");
             }
             else if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_SKY)
             {
-                battlebg.SetMaterailShader(transform.gameObject, "PSX/BattleMap_Sky");
+                battlebg.SetMaterialShader(transform.gameObject, "PSX/BattleMap_Sky");
                 if (!battlebg.bbg_KeepSkyScaleList.Contains(battlebg.nf_BbgNumber))
                     transform.localScale = new Vector3(1.01f, 1.01f, 1.01f);
             }
         }
     }
 
-    public static void SetMaterailShader(GameObject go, String shaderName)
+    public static void SetMaterialShader(GameObject go, String shaderName)
     {
         MeshRenderer[] renderers = go.GetComponentsInChildren<MeshRenderer>();
-        for (Int32 i = 0; i < renderers.Length; i++)
+        for (Int32 rendID = 0; rendID < renderers.Length; rendID++)
         {
-            Material[] materials = renderers[i].materials;
-            for (Int32 j = 0; j < materials.Length; j++)
+            Material[] materials = renderers[rendID].materials;
+            for (Int32 matID = 0; matID < materials.Length; matID++)
             {
-                Material material = materials[j];
+                Material material = materials[matID];
                 String text = material.name.Replace("(Instance)", String.Empty);
-                if (battlebg.nf_BbgNumber == 171 && j == 0 && shaderName.Contains("Minus")) // Crystal World, Crystal
+                material.mainTexture.wrapMode = TextureWrapMode.Clamp; // Fixes PNG Textures having seams between them
+                if (text.Contains("a"))
                 {
-                    material.shader = ShadersLoader.Find("PSX/BattleMap_Moon");
+                    if (battlebg.nf_BbgNumber == 21) // Duel Amarant Zidane
+                        material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_0_Substract"); // Apply "Substract" (light colors darken the image)
+                    else if (battlebg.nf_BbgNumber == 171) // Crystal World, ball
+                        material.shader = ShadersLoader.Find("PSX/BattleMap_Moon");
+                    else if (battlebg.nf_BbgNumber == 92 // Desert Palace, Dock
+                          || battlebg.nf_BbgNumber == 52 // Cleyra's Trunk, Inside, Sandfall
+                          || battlebg.nf_BbgNumber == 57 // Clayra outpost waterfall
+                          || battlebg.nf_BbgNumber == 32) // Oeilvert bridge flames
+                        material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_1_Off");
+                    else
+                        material.shader = ShadersLoader.Find(shaderName + "_Abr_1");
                 }
-                else if ((battlebg.nf_BbgNumber == 92 && j == 3 && shaderName.Contains("Plus"))  // Desert Palace, Dock
-                      || (battlebg.nf_BbgNumber == 52 && j == 6 && shaderName.Contains("Plus"))) // Cleyra's Trunk, Inside, Sandfall
+                else if (text.Contains("s")) // 23-3, 25-8
                 {
-                    material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_1_Off");
-                }
-                else if (text.Contains("a"))
-                {
-                    material.shader = ShadersLoader.Find(shaderName + "_Abr_1");
-                }
-                else if (text.Contains("s"))
-                {
-                    material.shader = ShadersLoader.Find(shaderName + "_Abr_0");
-                    material.SetColor("_Color", new Color32(Byte.MaxValue, Byte.MaxValue, Byte.MaxValue, 110));
+                    material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_0_Multiply"); // Apply "Multiply" (darkens)
                 }
                 else
                 {
                     material.shader = ShadersLoader.Find(shaderName);
-                    if (shaderName.CompareTo("PSX/BattleMap_Ground") == 0)
-                        material.SetInt("_ZWrite", 0); // DEBUG: Can't make the default value in "_ZWrite ("ZWrite", Int) = 0" works correctly for some reason
+                    if (shaderName.CompareTo("PSX/BattleMap_Ground") == 0 && !(battlebg.nf_BbgNumber == 57 && matID == 0)) // Exception Clayra outpost waterfall, for ground to appear on top of waterfall
+                        material.SetInt("_ZWrite", 0); // ZWrite 0 to ignore depth buffer (1 to activate), Ground is the only one that was set to 1
                 }
+                //Log.Message("SetMaterialShader - go:" + go.name + " rendIdx:" + rendID + " battlebg.nf_BbgNumber:" + battlebg.nf_BbgNumber + " matID:" + matID + " shaderName:" + shaderName + " text:\"" + text + "\" _ZWrite:" + material.GetInt("_ZWrite") + " renderqueue:" + material.shader.renderQueue);
             }
         }
     }
@@ -312,8 +315,8 @@ public static class battlebg
                         {
                             //for (Int32 j = 0; j < geotexanimheader.count; j++)
                             {
-                                Single dx = (geotexanimheader.coords[frameShort].x - geotexanimheader.target.x) / texheaderptr.materials[i].mainTexture.width;
-                                Single dy = (geotexanimheader.coords[frameShort].y - geotexanimheader.target.y) / texheaderptr.materials[i].mainTexture.height;
+                                Single dx = (geotexanimheader.coords[frameShort].x - geotexanimheader.target.x) / 256f;
+                                Single dy = (geotexanimheader.coords[frameShort].y - geotexanimheader.target.y) / 256f;
                                 texheaderptr.materials[i].SetTextureOffset("_MainTex", new Vector2(dx, -dy));
                             }
                             geotexanimheader.lastframe = frameShort;

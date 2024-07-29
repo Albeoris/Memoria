@@ -1,4 +1,5 @@
 using System;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -19,7 +20,7 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            _v.Target.Strength = (Byte)Math.Min(99, _v.Target.Strength + _v.Target.Strength / _v.Command.Power);
+            _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, "Strength", Math.Min(99, _v.Target.Strength + _v.Target.Strength / _v.Command.Power));
         }
 
         public Single RateTarget()

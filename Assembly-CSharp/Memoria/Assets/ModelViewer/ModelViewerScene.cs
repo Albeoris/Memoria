@@ -886,7 +886,10 @@ namespace Memoria.Assets
                 if (geoList[index].Kind == MODEL_KIND_NORMAL)
                     currentModel = ModelFactory.CreateModel(geoList[index].Name);
                 else if (geoList[index].Kind == MODEL_KIND_BBG)
+                {
                     currentModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{geoList[index].Name}/{geoList[index].Name}", true);
+                    battlebg.nf_BbgNumber = Int32.Parse(geoList[index].Name.Replace("BBG_B", ""));
+                }
                 else if (geoList[index].Kind == MODEL_KIND_BBG_OBJ)
                     currentModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{geoList[index].Name}/{geoList[index].Name}");
                 else
@@ -895,7 +898,7 @@ namespace Memoria.Assets
                 {
                     battlebg.SetDefaultShader(currentModel);
                     if (String.Equals(geoList[index].Name, "BBG_B171_OBJ2")) // Crystal World, Crystal
-                        battlebg.SetMaterailShader(currentModel, "PSX/BattleMap_Cystal");
+                        battlebg.SetMaterialShader(currentModel, "PSX/BattleMap_Cystal");
                 }
             }
             else

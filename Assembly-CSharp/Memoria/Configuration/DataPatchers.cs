@@ -168,29 +168,22 @@ namespace Memoria
                     // or : DebuffIcon 0 ability_stone
                     if (BattleHUD.DebuffIconNames == null)
                         continue;
-                    Int32 ID, iconID;
-                    if (!Int32.TryParse(entry[1], out ID))
+                    BattleStatusId statusID;
+                    Int32 iconID;
+                    if (!entry[1].TryEnumParse(out statusID))
                         continue;
                     if (Int32.TryParse(entry[2], out iconID))
                     {
                         if (!FF9UIDataTool.IconSpriteName.ContainsKey(iconID))
                         {
-                            Log.Message("[AssetManager.PatchDictionaries] Trying to use the invalid sprite index " + iconID + " for the icon of status " + ID);
+                            Log.Message("[DataPatchers] Trying to use the invalid sprite index " + iconID + " for the icon of status " + statusID);
                             continue;
                         }
-                        BattleHUD.DebuffIconNames[(BattleStatus)(1 << ID)] = FF9UIDataTool.IconSpriteName[iconID];
-                        if (BattleResultUI.BadIconDict == null || FF9UIDataTool.status_id == null)
-                            continue;
-                        BattleResultUI.BadIconDict[(BattleStatus)(1 << ID)] = (Byte)iconID;
-                        if (ID < FF9UIDataTool.status_id.Length)
-                            FF9UIDataTool.status_id[ID] = iconID;
-                        // Todo: debuff icons in the main menus (status menu, items...) are UISprite components of CharacterDetailHUD and are enabled/disabled in FF9UIDataTool.DisplayCharacterDetail
-                        // Maybe add UISprite components at runtime? The width of the window may require adjustments then
-                        // By design (in FF9UIDataTool.DisplayCharacterDetail for instance), permanent debuffs must be the first ones of the list of statuses
+                        BattleHUD.DebuffIconNames[statusID] = FF9UIDataTool.IconSpriteName[iconID];
                     }
                     else
                     {
-                        BattleHUD.DebuffIconNames[(BattleStatus)(1 << ID)] = entry[2]; // When adding a debuff icon by sprite name, not all the dictionaries are updated
+                        BattleHUD.DebuffIconNames[statusID] = entry[2];
                     }
                 }
                 else if (String.Equals(entry[0], "BuffIcon"))
@@ -199,21 +192,22 @@ namespace Memoria
                     // or : BuffIcon 18 ability_stone
                     if (BattleHUD.BuffIconNames == null)
                         continue;
-                    Int32 ID, iconID;
-                    if (!Int32.TryParse(entry[1], out ID))
+                    BattleStatusId statusID;
+                    Int32 iconID;
+                    if (!entry[1].TryEnumParse(out statusID))
                         continue;
                     if (Int32.TryParse(entry[2], out iconID))
                     {
                         if (!FF9UIDataTool.IconSpriteName.ContainsKey(iconID))
                         {
-                            Log.Message("[AssetManager.PatchDictionaries] Trying to use the invalid sprite index " + iconID + " for the icon of status " + ID);
+                            Log.Message("[DataPatchers] Trying to use the invalid sprite index " + iconID + " for the icon of status " + statusID);
                             continue;
                         }
-                        BattleHUD.BuffIconNames[(BattleStatus)(1 << ID)] = FF9UIDataTool.IconSpriteName[iconID];
+                        BattleHUD.BuffIconNames[statusID] = FF9UIDataTool.IconSpriteName[iconID];
                     }
                     else
                     {
-                        BattleHUD.BuffIconNames[(BattleStatus)(1 << ID)] = entry[2];
+                        BattleHUD.BuffIconNames[statusID] = entry[2];
                     }
                 }
                 else if (String.Equals(entry[0], "BoostedAbilityColor") && entry.Length >= 5)
@@ -248,12 +242,12 @@ namespace Memoria
                         fieldStatus = (BattleStatus)field.GetValue(null);
                     for (Int32 i = 3; i < entry.Length; i++)
                     {
-                        if (entry[i].TryEnumParse(out BattleStatus status))
+                        if (entry[i].TryEnumParse(out BattleStatusId status))
                         {
                             if (add)
-                                fieldStatus |= status;
+                                fieldStatus |= status.ToBattleStatus();
                             else
-                                fieldStatus &= ~status;
+                                fieldStatus &= ~status.ToBattleStatus();
                         }
                     }
                     field.SetValue(null, fieldStatus);
@@ -305,7 +299,7 @@ namespace Memoria
                         continue;
                     if (!btl_util.IsCommandDeclarable(cmdId))
                     {
-                        Log.Message($"[AssetManager.PatchDictionaries] Trying to declare the system-protected command {cmdId} as a MixCommand");
+                        Log.Message($"[DataPatchers] Trying to declare the system-protected command {cmdId} as a MixCommand");
                         continue;
                     }
 
@@ -394,7 +388,7 @@ namespace Memoria
                         continue;
                     if (!FF9DBAll.MesDB.ContainsKey(mesID))
                     {
-                        Log.Message("[AssetManager.PatchDictionaries] Trying to use the invalid message file ID " + mesID + " for the field map field scene " + entry[3] + " (" + ID + ")");
+                        Log.Message("[DataPatchers] Trying to use the invalid message file ID " + mesID + " for the field map field scene " + entry[3] + " (" + ID + ")");
                         continue;
                     }
                     String fieldMapName = "FBG_N" + areaID + "_" + entry[3];
@@ -475,11 +469,7 @@ namespace Memoria
                     if (!formatOK)
                         continue;
                     for (Int32 idindex = 0; formatOK && idindex < idcount; ++idindex)
-                    {
                         FF9BattleDB.GEO[ID[idindex]] = entry[entry.Length - 1];
-                    }
-                    // TODO: make it work for replacing battle weapon models
-                    // Currently, a line like "3DModel 476 GEO_ACC_F0_OPB" for replacing the dagger by a book freezes the game on black screen when battle starts
                 }
                 else if (String.Equals(entry[0], "3DModelAnimation"))
                 {

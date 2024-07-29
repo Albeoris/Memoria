@@ -3,6 +3,7 @@ using Memoria.Data;
 using Memoria.Database;
 using Memoria.Scripts;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -65,29 +66,23 @@ namespace FF9
             return FF9StateSystem.Battle.FF9Battle.cur_cmd;
         }
 
+        public static List<CMD_DATA> GetBtlCurrentCommands(BTL_DATA btl)
+        {
+            return FF9StateSystem.Battle.FF9Battle.cur_cmd_list.FindAll(cmd => cmd.regist == btl);
+        }
+
         public static Boolean IsBtlUsingCommand(BTL_DATA btl, out CMD_DATA cmdUsed)
         {
-            foreach (CMD_DATA cmd in FF9StateSystem.Battle.FF9Battle.cur_cmd_list)
-                if (cmd.regist == btl)
-                {
-                    cmdUsed = cmd;
-                    return true;
-                }
-            cmdUsed = null;
-            return false;
+            cmdUsed = FF9StateSystem.Battle.FF9Battle.cur_cmd_list.Find(cmd => cmd.regist == btl);
+            return cmdUsed != null;
         }
 
         public static Boolean IsBtlTargetOfCommand(BTL_DATA btl, List<CMD_DATA> cmdList = null)
         {
-            foreach (CMD_DATA cmd in FF9StateSystem.Battle.FF9Battle.cur_cmd_list)
-                if ((cmd.tar_id & btl.btl_id) != 0)
-                {
-                    if (cmdList != null)
-                        cmdList.Add(cmd);
-                    else
-                        return true;
-                }
-            return cmdList != null && cmdList.Count > 0;
+            if (cmdList == null)
+                return FF9StateSystem.Battle.FF9Battle.cur_cmd_list.Any(cmd => (cmd.tar_id & btl.btl_id) != 0);
+            cmdList = FF9StateSystem.Battle.FF9Battle.cur_cmd_list.FindAll(cmd => (cmd.tar_id & btl.btl_id) != 0);
+            return cmdList.Count > 0;
         }
 
         public static Boolean IsBtlUsingCommand(BTL_DATA btl)
@@ -97,14 +92,8 @@ namespace FF9
 
         public static Boolean IsBtlUsingCommandMotion(BTL_DATA btl, Boolean includeSysCmd, out CMD_DATA cmdUsed)
         {
-            cmdUsed = null;
-            foreach (CMD_DATA cmd in FF9StateSystem.Battle.FF9Battle.cur_cmd_list)
-                if (cmd.regist == btl && cmd.info.cmd_motion && (includeSysCmd || cmd.cmd_no <= BattleCommandId.EnemyReaction || cmd.cmd_no >= BattleCommandId.ScriptCounter1))
-                {
-                    cmdUsed = cmd;
-                    return true;
-                }
-            return false;
+            cmdUsed = FF9StateSystem.Battle.FF9Battle.cur_cmd_list.Find(cmd => cmd.regist == btl && cmd.info.cmd_motion && (includeSysCmd || cmd.cmd_no <= BattleCommandId.EnemyReaction || cmd.cmd_no >= BattleCommandId.ScriptCounter1));
+            return cmdUsed != null;
         }
 
         public static Boolean IsBtlUsingCommandMotion(BTL_DATA btl, Boolean includeSysCmd = false)
@@ -137,20 +126,24 @@ namespace FF9
             return false;
         }
 
-        public static BattleUnit GetMasterEnemyBtlPtr()
+        public static BattleUnit GetMasterEnemyBtlPtr(BTL_DATA btl)
         {
+            BattleUnit master = null;
             foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+            {
                 if (!unit.IsPlayer && !unit.IsSlave && unit.Enemy.Data.info.multiple != 0)
-                    return unit;
-
-            return null;
+                    master = unit;
+                if (unit.Data == btl)
+                    return master;
+            }
+            return master;
         }
 
         public static UInt32 SumOfTarget(UInt32 player)
         {
             UInt32 count = 0u;
             for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                if ((UInt32)next.bi.player == player && next.bi.target != 0 && !Status.checkCurStat(next, BattleStatus.Death))
+                if (next.bi.player == player && next.bi.target != 0 && !btl_stat.CheckStatus(next, BattleStatus.Death))
                     count++;
             return count;
         }
@@ -166,26 +159,25 @@ namespace FF9
 
         public static UInt16 GetRandomBtlID(UInt32 player, Boolean allowDead = false)
         {
-            UInt16[] array = new UInt16[4];
-            UInt16 btlCount = 0;
+            List<UInt16> candidates = new List<UInt16>(4);
             if (player != 0u)
                 player = 1u;
             for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                if ((UInt32)next.bi.player == player && (!Status.checkCurStat(next, BattleStatus.Death) || allowDead) && next.bi.target != 0)
-                    array[btlCount++] = next.btl_id;
-            if (btlCount == 0)
+                if (next.bi.player == player && (allowDead || !btl_stat.CheckStatus(next, BattleStatus.Death)) && next.bi.target != 0)
+                    candidates.Add(next.btl_id);
+            if (candidates.Count == 0)
                 return 0;
-            return array[Comn.random8() % (Int32)btlCount];
+            return candidates[UnityEngine.Random.Range(0, candidates.Count)];
         }
 
         public static Boolean ManageBattleSong(FF9StateGlobal sys, Int32 ticks, Int32 song_id)
         {
-            if ((sys.btl_flag & 16) == 0)
+            if ((sys.btl_flag & battle.BTL_SONG_FADEOUT) == 0)
             {
                 btlsnd.ff9btlsnd_song_vol_intplall(ticks, 0);
-                sys.btl_flag |= 16;
+                sys.btl_flag |= battle.BTL_SONG_FADEOUT;
             }
-            if ((sys.btl_flag & 2) == 0)
+            if ((sys.btl_flag & battle.BTL_LOAD_END_SONG) == 0)
             {
                 if ((FF9StateSystem.Battle.FF9Battle.player_load_fade += 4) < ticks)
                     return false;
@@ -200,15 +192,15 @@ namespace FF9
                 }
                 if (song_id >= 0)
                     btlsnd.ff9btlsnd_song_load(song_id);
-                sys.btl_flag |= 2;
+                sys.btl_flag |= battle.BTL_LOAD_END_SONG;
             }
             if (song_id >= 0 && btlsnd.ff9btlsnd_sync() != 0)
                 return false;
-            if ((sys.btl_flag & 32) == 0)
+            if ((sys.btl_flag & battle.BTL_PLAY_END_SONG) == 0)
             {
                 if (song_id >= 0)
                     btlsnd.ff9btlsnd_song_play(song_id);
-                sys.btl_flag |= 32;
+                sys.btl_flag |= battle.BTL_PLAY_END_SONG;
             }
             return true;
         }
@@ -371,7 +363,7 @@ namespace FF9
             switch (cmd.cmd_no)
             {
                 case BattleCommandId.Jump:
-                case BattleCommandId.Jump2:
+                case BattleCommandId.JumpInTrance:
                 case BattleCommandId.SysTrans:
                     return 0;
                 case BattleCommandId.Item:
@@ -457,20 +449,16 @@ namespace FF9
                 shader = FF9StateSystem.Battle.shadowShader;
             else
                 shader = ShadersLoader.Find(type);
-            SkinnedMeshRenderer[] componentsInChildren = go.GetComponentsInChildren<SkinnedMeshRenderer>();
-            for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
+            foreach (SkinnedMeshRenderer renderer in go.GetComponentsInChildren<SkinnedMeshRenderer>())
             {
-                componentsInChildren[i].material.shader = shader;
-                componentsInChildren[i].material.SetFloat("_Cutoff", 0.5f);
-                componentsInChildren[i].material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
+                renderer.material.shader = shader;
+                renderer.material.SetFloat("_Cutoff", 0.5f);
+                renderer.material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
             }
-            MeshRenderer[] componentsInChildren2 = go.GetComponentsInChildren<MeshRenderer>();
-            for (Int32 j = 0; j < (Int32)componentsInChildren2.Length; j++)
+            foreach (MeshRenderer renderer in go.GetComponentsInChildren<MeshRenderer>())
             {
-                Material[] materials = componentsInChildren2[j].materials;
-                for (Int32 k = 0; k < (Int32)materials.Length; k++)
+                foreach (Material material in renderer.materials)
                 {
-                    Material material = materials[k];
                     material.shader = shader;
                     material.SetFloat("_Cutoff", 0.5f);
                     material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
@@ -491,19 +479,11 @@ namespace FF9
                 g = Byte.MaxValue;
             if (b > 255)
                 b = Byte.MaxValue;
-            SkinnedMeshRenderer[] componentsInChildren = go.GetComponentsInChildren<SkinnedMeshRenderer>();
-            for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
-                componentsInChildren[i].material.SetColor("_Color", new Color32(r, g, b, a));
-            MeshRenderer[] componentsInChildren2 = go.GetComponentsInChildren<MeshRenderer>();
-            for (Int32 j = 0; j < (Int32)componentsInChildren2.Length; j++)
-            {
-                Material[] materials = componentsInChildren2[j].materials;
-                for (Int32 k = 0; k < (Int32)materials.Length; k++)
-                {
-                    Material material = materials[k];
+            foreach (SkinnedMeshRenderer renderer in go.GetComponentsInChildren<SkinnedMeshRenderer>())
+                renderer.material.SetColor("_Color", new Color32(r, g, b, a));
+            foreach (MeshRenderer renderer in go.GetComponentsInChildren<MeshRenderer>())
+                foreach (Material material in renderer.materials)
                     material.SetColor("_Color", new Color32(r, g, b, a));
-                }
-            }
         }
 
         [Flags]

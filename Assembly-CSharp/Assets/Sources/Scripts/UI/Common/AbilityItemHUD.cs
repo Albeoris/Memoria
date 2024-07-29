@@ -14,11 +14,8 @@ namespace Assets.Sources.Scripts.UI.Common
         }
 
         public GameObject Self;
-
         public UISprite IconSprite;
-
         public UILabel NameLabel;
-
         public APBarHUD APBar;
     }
 }

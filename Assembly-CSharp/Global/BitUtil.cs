@@ -1,12 +1,11 @@
 ﻿using System;
-using UnityEngine;
 
-public class BitUtil
+public static class BitUtil
 {
     public static UInt32 ReadBits(UInt32 input, ref Byte startBit, Byte numBits)
     {
-        UInt32 num = (UInt32)Mathf.Pow(2f, (Single)numBits) - 1u;
-        UInt32 result = input >> (Int32)startBit & num;
+        UInt32 mask = (UInt32)Math.Pow(2, numBits) - 1u;
+        UInt32 result = input >> startBit & mask;
         startBit = (Byte)(startBit + numBits);
         return result;
     }

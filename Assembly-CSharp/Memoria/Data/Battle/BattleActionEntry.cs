@@ -30,7 +30,7 @@ namespace Memoria.Data
             Byte elements = CsvParser.Byte(raw[index++]);
             Int32 rate = CsvParser.Int32(raw[index++]);
             Byte category = CsvParser.Byte(raw[index++]);
-            BattleStatusIndex statusIndex = (BattleStatusIndex)CsvParser.Int32(raw[index++]);
+            StatusSetId statusIndex = (StatusSetId)CsvParser.Int32(raw[index++]);
             Int32 mp = CsvParser.Int32(raw[index++]);
             Byte type = CsvParser.Byte(raw[index++]);
 

@@ -1,5 +1,5 @@
 ﻿using System;
-using UnityEngine;
+using System.Collections;
 
 namespace FF9
 {
@@ -34,11 +34,9 @@ namespace FF9
             return 1u << numArray[index];
         }
 
-        /// <summary>
-        /// Counts the number of set bits (bits with a value of 1) in an unsigned 64-bit integer.
-        /// </summary>
-        /// <param name="bitList">The unsigned 64-bit integer to count the set bits in.</param>
-        /// <returns>The count of set bits in the input integer.</returns>
+        /// <summary>Counts the number of set bits (bits with a value of 1) in an unsigned 64-bit integer</summary>
+        /// <param name="bitList">The unsigned 64-bit integer to count the set bits in</param>
+        /// <returns>The count of set bits in the input integer</returns>
         public static Byte countBits(UInt64 bitList)
         {
             Byte count = 0;
@@ -48,6 +46,22 @@ namespace FF9
                 bitList &= bitList - 1;
             }
             return count;
+        }
+
+        /// <summary>Retrieve the indexes of set bits (bits with a value of 1) in an unsigned 64-bit integer</summary>
+        /// <param name="bitList">The unsigned 64-bit integer to count the set bits in</param>
+        /// <returns>The array containing all the set bits</returns>
+        public static IEnumerable getBitIndexes(UInt64 bitList)
+        {
+            Byte index = 0;
+            while (bitList != 0 && index < 64)
+            {
+                if ((bitList & 1) != 0)
+                    yield return index;
+                ++index;
+                bitList >>= 1;
+            }
+            yield break;
         }
 
         public static UInt64 firstBitSet(UInt64 bitList)
@@ -75,19 +89,5 @@ namespace FF9
             }
             throw new Exception("[Comn] Trying to find firstBitSetIndex of 0");
         }
-
-        public const Int32 ONE = 4096;
-
-        public const Byte TRUE = 1;
-
-        public const Byte FALSE = 0;
-
-        public const Byte ON = 1;
-
-        public const Byte OFF = 0;
-
-        public const Byte YES = 1;
-
-        public const Byte NO = 0;
     }
 }
