@@ -41,7 +41,7 @@ public class btl_para
                     newHP += 10000;
             }
         }
-        else if (IsNonDyingVanillaBoss(btl) && btl.bi.player == 0)
+        else if (IsNonDyingVanillaBoss(btl))
         {
             // Weak security for enemies that should never reach 0 HP in vanilla
             newHP = Math.Max(newHP, 1);
@@ -365,6 +365,8 @@ public class btl_para
 
     public static Boolean IsNonDyingVanillaBoss(BTL_DATA btl)
     {
+        if (btl.bi.player != 0)
+            return false;
         if (NonDyingBossBattles.Contains(FF9StateSystem.Battle.battleMapIndex))
         {
             if (FF9StateSystem.Battle.battleMapIndex == 338 && btl.max.hp < 10000) // King Leo + Zenero + Benero
