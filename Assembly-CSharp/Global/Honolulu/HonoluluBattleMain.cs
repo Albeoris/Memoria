@@ -267,6 +267,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 for (Int32 j = 0; j < btlDataArray[i].weaponMeshCount; ++j)
                     btlDataArray[i].weaponRenderer[j] = componentsInChildren[j].GetComponent<Renderer>();
                 geo.geoAttach(btlDataArray[i].weapon_geo, btlDataArray[i].gameObject, sb2MonParm.WeaponAttachment);
+                if (btl_eqp.EnemyBuiltInWeaponTable.ContainsKey(sb2MonParm.Geo))
+                    btlDataArray[i].builtin_weapon_mode = true;
             }
             else if (ModelFactory.IsUseAsEnemyCharacter(path))
             {

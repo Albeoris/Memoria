@@ -72,29 +72,34 @@ public static class btl_eqp
     {
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
-            if (btl.builtin_weapon_mode && btl.bi.disappear == 0 && !btl.is_monster_transform && btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(btl.dms_geo_id, out Int32[] weaponBoneID))
+            if (btl.builtin_weapon_mode && btl.bi.disappear == 0 && !btl.is_monster_transform && EnemyBuiltInWeaponTable.TryGetValue(btl.dms_geo_id, out Int32[] weaponBoneID))
             {
                 for (Int32 i = 0; i < weaponBoneID.Length; i++)
                 {
                     Transform builtInBone = null;
                     if (btl.gameObject == btl.originalGo)
-                    {
                         builtInBone = btl.originalGo.transform.GetChildByName($"bone{weaponBoneID[i]:D3}");
-                    }
                     else if (btl.gameObject == btl.tranceGo && btl.bi.player != 0)
-                    {
                         builtInBone = btl.tranceGo.transform.GetChildByName($"bone{weaponBoneID[i]:D3}");
-                    }
+                    else if (btl.bi.player == 0)
+                        builtInBone = btl.gameObject.transform.GetChildByName($"bone{weaponBoneID[i]:D3}");
                     if (builtInBone != null)
                         builtInBone.localScale = SCALE_INVISIBLE;
                     if (btl.weapon_geo != null && btl.weapon_bone == weaponBoneID[i])
                         btl.weapon_geo.transform.localScale = builtInBone != null ? SCALE_REBALANCE : Vector3.one;
-
-                    CharacterBattleParameter btlParam = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)];
-                    if (btlParam.WeaponSize.Any(off => off != 0f))
+                    if (btl.bi.player != 0)
                     {
-                        Vector3 WeaponSizeVector = new Vector3(btlParam.WeaponSize[0], btlParam.WeaponSize[1], btlParam.WeaponSize[2]);
-                        btl.weapon_geo.transform.localScale = Vector3.Scale(WeaponSizeVector, builtInBone != null && btl.weapon_bone == weaponBoneID[i] ? SCALE_REBALANCE : Vector3.one);
+                        CharacterBattleParameter btlParam = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)];
+                        if (btlParam.WeaponSize.Any(off => off != 0f))
+                        {
+                            Vector3 WeaponSizeVector = new Vector3(btlParam.WeaponSize[0], btlParam.WeaponSize[1], btlParam.WeaponSize[2]);
+                            btl.weapon_geo.transform.localScale = Vector3.Scale(WeaponSizeVector, builtInBone != null && weaponBoneID.Contains(btl.weapon_bone) ? SCALE_REBALANCE : Vector3.one);
+                        }
+                    }
+                    else if (btl.weapon_scale != null && btl.bi.player == 0)
+                    {
+
+                        btl.weapon_geo.transform.localScale = Vector3.Scale(btl.weapon_scale, builtInBone != null && weaponBoneID.Contains(btl.weapon_bone) ? SCALE_REBALANCE : Vector3.one);
                     }
                 }
             }
@@ -129,7 +134,7 @@ public static class btl_eqp
                 btl.weapon_geo.transform.localRotation = Quaternion.Euler(CurrentWeaponOffsetRot[0], CurrentWeaponOffsetRot[1], CurrentWeaponOffsetRot[2]);
             }
 
-            if (btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(btl.dms_geo_id, out Int32[] weaponBoneID))
+            if (EnemyBuiltInWeaponTable.TryGetValue(btl.dms_geo_id, out Int32[] weaponBoneID))
                 for (Int32 i = 0; i < weaponBoneID.Length; i++)
                     if (btl.weapon_bone == weaponBoneID[i])
                         btl.weapon_geo.transform.localPosition *= SCALE_REBALANCE.x;
@@ -138,15 +143,13 @@ public static class btl_eqp
         {
             if (btl.weapon_geo != null)
             {
-                if (btl.weapon_offset_pos.Any(off => off != 0f))
-                {
-                    btl.weapon_geo.transform.localPosition = new Vector3(btl.weapon_offset_pos[0], btl.weapon_offset_pos[1], btl.weapon_offset_pos[2]);
-                }
-                if (btl.weapon_offset_rot.Any(off => off != 0f))
-                {
-                    btl.weapon_geo.transform.localRotation = Quaternion.Euler(btl.weapon_offset_rot[0], btl.weapon_offset_rot[1], btl.weapon_offset_rot[2]);
-                }
-                btl.weapon_geo.transform.localScale = btl.weapon_scale;
+
+                if (btl.weapon_offset_pos != null)
+                    if (btl.weapon_offset_pos.Any(off => off != 0f))
+                        btl.weapon_geo.transform.localPosition = new Vector3(btl.weapon_offset_pos[0], btl.weapon_offset_pos[1], btl.weapon_offset_pos[2]);
+                if (btl.weapon_offset_rot != null)
+                    if (btl.weapon_offset_rot.Any(off => off != 0f))
+                        btl.weapon_geo.transform.localRotation = Quaternion.Euler(btl.weapon_offset_rot[0], btl.weapon_offset_rot[1], btl.weapon_offset_rot[2]);
             }
         }
     }
@@ -163,8 +166,8 @@ public static class btl_eqp
 		{ 148, [28] }, // Drakan - GEO_MON_B3_035
 		{ 85, [10] }, // Ramya - GEO_MON_B3_041
 		{ 46, [23] }, // Goblin Mage - GEO_MON_B3_043
-		{ 92, [23] }, // Gnoll (weapon 1) - GEO_MON_B3_049
-		// { 92, [48] }, // Gnoll (weapon 2) - GEO_MON_B3_049, kind of shield.... ?
+		// { 92, [23] }, // Gnoll (weapon 2) - GEO_MON_B3_049, kind of shield.... ?
+		{ 92, [48] }, // Gnoll (weapon 1) - GEO_MON_B3_049
 		{ 184, [18] }, // Tomberry (weapon) - GEO_MON_B3_054 (bone n°28 => Lantern)
         // { 184, [28] }, // Tomberry (lantern) - GEO_MON_B3_054
 		{ 265, [33] }, // Magic Vice - GEO_MON_B3_059
