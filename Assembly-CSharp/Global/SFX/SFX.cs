@@ -559,7 +559,7 @@ public static class SFX
         SFX.isDebugLine = false;
         SFX.isDebugCam = false;
         SFX.isDebugMode = false;
-        SFX.isDebugFillter = true;
+        SFX.isDebugFilter = true;
         SFX.isDebugMeshIndex = 0;
         SFX.isRunning = false;
         SFX.currentEffectID = SpecialEffect.Special_No_Effect;
@@ -2410,7 +2410,7 @@ public static class SFX
 
     public static Boolean isDebugMode;
 
-    public static Boolean isDebugFillter;
+    public static Boolean isDebugFilter;
 
     public static Int32 isDebugMeshIndex;
 

@@ -1,4 +1,5 @@
-﻿using Memoria.Prime;
+﻿using Memoria;
+using Memoria.Prime;
 using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ public static class battlebg
         for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
         {
             String objName = $"BBG_B{battlebg.nf_BbgNumber:D3}_OBJ{i + 1}";
-            battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false);
+            battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false, false, Configuration.Graphics.BattleSmoothTexture);
             battlebg.SetDefaultShader(battlebg.objAnimModel[i]);
             if (battlebg.nf_BbgNumber == 171 && i == 1) // Crystal World, Crystal
                 battlebg.SetMaterialShader(battlebg.objAnimModel[i], "PSX/BattleMap_Cystal");
@@ -75,6 +76,7 @@ public static class battlebg
                 Material material = materials[matID];
                 String text = material.name.Replace("(Instance)", String.Empty);
                 material.mainTexture.wrapMode = TextureWrapMode.Clamp; // Fixes PNG Textures having seams between them
+                ModelFactory.SetMatFilter(material, Configuration.Graphics.BattleSmoothTexture);
                 if (text.Contains("a"))
                 {
                     if (battlebg.nf_BbgNumber == 21) // Duel Amarant Zidane
@@ -417,7 +419,7 @@ public static class battlebg
                 for (Int32 i = 0; i < bbginfo.objanim; i++)
                 {
                     String objName = $"BBG_B{geotexheader.bbgnumber:D3}_OBJ{i + 1}";
-                    extraObj[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false);
+                    extraObj[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false, true, Configuration.Graphics.BattleSmoothTexture);
                 }
             }
             geotexheader.InitBBGTextureAnim(go, extraObj);

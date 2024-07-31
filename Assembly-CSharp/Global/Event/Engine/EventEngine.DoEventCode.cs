@@ -888,7 +888,7 @@ public partial class EventEngine
                 {
                     String str = FF9BattleDB.GEO.GetValue(po.model);
 
-                    po.go = ModelFactory.CreateModel(str, false);
+                    po.go = ModelFactory.CreateModel(str, false, true, Configuration.Graphics.ElementsSmoothTexture);
                     GeoTexAnim.addTexAnim(po.go, str);
                     if (ModelFactory.garnetShortHairTable.Contains(str))
                     {
@@ -924,7 +924,7 @@ public partial class EventEngine
                 }
                 else if (this.gMode == 3)
                 {
-                    po.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(po.model), false);
+                    po.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(po.model), false, true, Configuration.Graphics.WorldSmoothTexture);
                     Singleton<WMWorld>.Instance.addGameObjectToWMActor(po.go, ((Actor)po).wmActor);
                 }
                 return 0;

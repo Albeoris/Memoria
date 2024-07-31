@@ -782,7 +782,7 @@ namespace Memoria
             // Let the spell sequence handle the model fadings (in and out)
             //Data.SetActiveBtlData(false);
             String geoName = FF9BattleDB.GEO.GetValue(monsterParam.Geo);
-            Data.ChangeModel(ModelFactory.CreateModel(geoName, true), monsterParam.Geo);
+            Data.ChangeModel(ModelFactory.CreateModel(geoName, true, true, Configuration.Graphics.ElementsSmoothTexture), monsterParam.Geo);
             Data.bi.t_gauge = 0;
             if (IsUnderAnyStatus(BattleStatus.Trance))
             {

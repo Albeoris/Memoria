@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using UnityEngine;
 
 public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
@@ -64,7 +65,37 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             this.Falls = AssetManager.Load<Material>("WorldMap/Materials/Falls", false);
         if (!WMBlock.MaterialDatabase.TryGetValue("Stream", out this.Stream))
             this.Stream = AssetManager.Load<Material>("WorldMap/Materials/Stream", false);
+        UpdateFilterMode();
         this.initialized = true;
+    }
+
+    public void UpdateFilterMode()
+    {
+        if (Configuration.Graphics.WorldSmoothTexture == 0) filterMode = FilterMode.Point;
+        if (Configuration.Graphics.WorldSmoothTexture == 2) filterMode = FilterMode.Trilinear;
+        var fields = this.GetType().GetFields();
+        foreach (var field in fields)
+        {
+            if (field.FieldType == typeof(Texture2D[]))
+            {
+                Texture2D[] textures = (Texture2D[])field.GetValue(this);
+                if (textures != null)
+                {
+                    foreach (Texture2D texture in textures)
+                    {
+                        texture.filterMode = filterMode;
+                    }
+                }
+            }
+            else if (field.FieldType == typeof(Texture2D))
+            {
+                Texture2D texture = (Texture2D)field.GetValue(this);
+                if (texture != null)
+                {
+                    texture.filterMode = filterMode;
+                }
+            }
+        }
     }
 
     public void OnUpdate()
@@ -191,6 +222,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Beach1Textures[this.currentFrameBeach1];
+        mainTexture.filterMode = filterMode;
         this.Beach1Material.mainTexture = mainTexture;
     }
 
@@ -228,6 +260,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Beach2Textures[this.currentFrameBeach2];
+        mainTexture.filterMode = filterMode;
         this.Beach2Material.mainTexture = mainTexture;
     }
 
@@ -238,6 +271,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Sea_10_64_0Textures[(Int32)this.Sea_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.Sea_10_64_0Material.mainTexture = mainTexture;
     }
 
@@ -248,6 +282,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Sea_10_128_0Textures[(Int32)this.Sea_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.Sea_10_128_0Material.mainTexture = mainTexture;
     }
 
@@ -258,6 +293,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Sea_10_128_64Textures[(Int32)this.Sea_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.Sea_10_128_64Material.mainTexture = mainTexture;
     }
 
@@ -268,6 +304,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Sea_10_128_128Textures[(Int32)this.Sea_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.Sea_10_128_128Material.mainTexture = mainTexture;
     }
 
@@ -278,6 +315,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Sea_11_64_0Textures[(Int32)this.Sea_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.Sea_11_64_0Material.mainTexture = mainTexture;
     }
 
@@ -288,6 +326,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Sea_11_192_64Textures[(Int32)this.Sea6_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.Sea_11_192_64Material.mainTexture = mainTexture;
     }
 
@@ -298,6 +337,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.RiverTextures[(Int32)this.River_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.RiverMaterial.mainTexture = mainTexture;
     }
 
@@ -308,8 +348,11 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.RiverJointTextures[(Int32)this.River_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.RiverJointMaterial.mainTexture = mainTexture;
     }
+
+    FilterMode filterMode = FilterMode.Bilinear;
 
     public const String RenderTexturesPath = "WorldMap/RenderTextures/";
 

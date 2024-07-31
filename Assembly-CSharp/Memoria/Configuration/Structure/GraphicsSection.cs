@@ -22,6 +22,11 @@ namespace Memoria
             public readonly IniValue<Int32> SkipIntros;
             public readonly IniValue<Int32> GarnetHair;
             public readonly IniValue<Int32> CameraStabilizer;
+            public readonly IniValue<Int32> FieldSmoothTexture;
+            public readonly IniValue<Int32> WorldSmoothTexture;
+            public readonly IniValue<Int32> BattleSmoothTexture;
+            public readonly IniValue<Int32> ElementsSmoothTexture;
+            public readonly IniValue<Int32> SFXSmoothTexture;
 
             public GraphicsSection() : base(nameof(GraphicsSection), false)
             {
@@ -40,6 +45,11 @@ namespace Memoria
                 SkipIntros = BindInt32(nameof(SkipIntros), 0);
                 GarnetHair = BindInt32(nameof(GarnetHair), 0);
                 CameraStabilizer = BindInt32(nameof(CameraStabilizer), 0);
+                FieldSmoothTexture = BindInt32(nameof(FieldSmoothTexture), 1);
+                WorldSmoothTexture = BindInt32(nameof(WorldSmoothTexture), 1);
+                BattleSmoothTexture = BindInt32(nameof(BattleSmoothTexture), 1);
+                ElementsSmoothTexture = BindInt32(nameof(ElementsSmoothTexture), 1);
+                SFXSmoothTexture = BindInt32(nameof(SFXSmoothTexture), 1);
             }
         }
     }

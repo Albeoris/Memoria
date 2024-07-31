@@ -333,9 +333,9 @@ public class BattleUI : MonoBehaviour
         {
             SFX.colThreshold = (SFX.colThreshold + 1 & 1);
         }
-        if (GUILayout.Button("Bilinear " + ((!SFX.isDebugFillter) ? "SPRT" : "All")))
+        if (GUILayout.Button("Bilinear " + ((!SFX.isDebugFilter) ? "SPRT" : "All")))
         {
-            SFX.isDebugFillter = !SFX.isDebugFillter;
+            SFX.isDebugFilter = !SFX.isDebugFilter;
         }
         GUILayout.Label(String.Concat("Sub:", SFX.subOrder, " /Col:", SFX.colIntensity, " /Prim:", SFXRender.primCount, " / Frame:", SFX.frameIndex));
         GUILayout.EndHorizontal();

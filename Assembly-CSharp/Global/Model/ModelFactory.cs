@@ -58,7 +58,7 @@ public static class ModelFactory
         return result;
     }
 
-    public static GameObject CreateModel(String path, Boolean isBattle = false, Boolean checkTextureOnDisc = true)
+    public static GameObject CreateModel(String path, Boolean isBattle = false, Boolean checkTextureOnDisc = true, Int32 filtermode = -1)
     {
         String modelNameId = path;
         path = ModelFactory.CheckUpscale(path);
@@ -70,9 +70,8 @@ public static class ModelFactory
         if (modelNameId == "GEO_MAIN_F3_ZDN" || modelNameId == "GEO_MAIN_F4_ZDN" || modelNameId == "GEO_MAIN_F5_ZDN")
         {
             Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
-            for (Int32 i = 0; i < renderers.Length; i++)
+            foreach (Renderer renderer in renderers)
             {
-                Renderer renderer = renderers[i];
                 String name = renderer.material.mainTexture.name;
                 Char textureId = name[name.Length - 1];
                 String geoId = ModelFactory.GetGEOID(modelNameId).ToString();
@@ -114,25 +113,31 @@ public static class ModelFactory
             shader = ShadersLoader.Find(modelNameId.Contains("GEO_SUB_W0_025") ? "WorldMap/ShadowActor" : "WorldMap/Actor");
         else
             shader = ShadersLoader.Find(isBattle ? "BattleMap_Common" : "Unlit/Transparent Cutout");
+
         SkinnedMeshRenderer[] skinnedRenderers = gameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
-        for (Int32 i = 0; i < skinnedRenderers.Length; i++)
-            skinnedRenderers[i].material.shader = shader;
-        MeshRenderer[] meshRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
-        for (Int32 i = 0; i < meshRenderers.Length; i++)
+        foreach (SkinnedMeshRenderer skinnedrenderer in skinnedRenderers)
         {
-            Material[] materials = meshRenderers[i].materials;
-            for (Int32 j = 0; j < materials.Length; j++)
+            skinnedrenderer.material.shader = shader;
+            ModelFactory.SetMatFilter(skinnedrenderer.material, filtermode);
+        }
+
+        MeshRenderer[] meshRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
+        foreach (MeshRenderer meshrenderer in meshRenderers)
+        {
+            foreach (Material material in meshrenderer.materials)
             {
-                Material material = materials[j];
                 String materialName = material.name.Replace("(Instance)", String.Empty);
-                if (meshRenderers[i].name == "Group_2")
+                if (meshrenderer.name == "Group_2")
                     material.shader = ShadersLoader.Find("BattleMap_Ground");
                 else if (materialName.Contains("a"))
                     material.shader = ShadersLoader.Find("PSX/BattleMap_Abr_1");
                 else
                     material.shader = shader;
+
+                ModelFactory.SetMatFilter(material, filtermode);
             }
         }
+
         if (ModelFactory.garnetShortHairTable.Contains(modelNameId))
         {
             Boolean garnetShortHair;
@@ -200,7 +205,7 @@ public static class ModelFactory
             return new GameObject("Dummy weapon");
         String geoName = FF9BattleDB.GEO.GetValue(weapon.ModelId);
         global::Debug.LogWarning("-------------------------------------------------------------------------");
-        return ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + geoName + "/" + geoName, true);
+        return ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + geoName + "/" + geoName, true, true, Configuration.Graphics.ElementsSmoothTexture);
     }
 
     public static Int32 GetDefaultWeaponBoneIdForCharacterWhenUseAsEnemy(String path)
@@ -438,6 +443,28 @@ public static class ModelFactory
             model.transform.localScale = new Vector3(size, size, size);
         }
         return model;
+    }
+
+    /// <summary>Set filter mode of material, 0=point 1=bilinear 2=trilinear</summary>
+    public static void SetMatFilter(Material material, Int32 filtermode)
+    {
+        if (material != null && material.mainTexture != null && filtermode != -1)
+        {
+            filtermode = Mathf.Clamp(filtermode, 0, 2);
+            switch (filtermode)
+            {
+                case 0:
+                    material.mainTexture.filterMode = FilterMode.Point;
+                    material.mainTexture.mipMapBias = -1f;
+                    break;
+                case 1:
+                    material.mainTexture.filterMode = FilterMode.Bilinear;
+                    break;
+                case 2:
+                    material.mainTexture.filterMode = FilterMode.Trilinear;
+                    break;
+            }
+        }
     }
 
     public static Dictionary<String, String> upscaleTable = new Dictionary<String, String>

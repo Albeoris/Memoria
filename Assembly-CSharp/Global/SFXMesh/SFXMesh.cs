@@ -1,4 +1,5 @@
-﻿using Memoria.Data;
+﻿using Memoria;
+using Memoria.Data;
 using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
@@ -233,6 +234,9 @@ public class SFXMesh : SFXMeshBase
 
     public override void Render(Int32 index)
     {
+        FilterMode filterMode = FilterMode.Bilinear;
+        if (Configuration.Graphics.SFXSmoothTexture == 0) filterMode = FilterMode.Point;
+        if (Configuration.Graphics.SFXSmoothTexture == 2) filterMode = FilterMode.Trilinear;
         _material.shader = __shaders[_shaderIndex];
         if (SFXKey.IsTexture(_key))
         {
@@ -240,12 +244,12 @@ public class SFXMesh : SFXMeshBase
             if (_material.mainTexture == null)
                 return;
             UInt32 filter = SFXKey.GetFilter(_key);
-            if (filter == SFXKey.FILLTER_POINT)
-                _material.mainTexture.filterMode = FilterMode.Point;
-            else if (filter == SFXKey.FILLTER_BILINEAR)
-                _material.mainTexture.filterMode = FilterMode.Bilinear;
+            if (filter == SFXKey.FILTER_POINT)
+                _material.mainTexture.filterMode = Configuration.Graphics.SFXSmoothTexture != -1 ? filterMode : FilterMode.Point;
+            else if (filter == SFXKey.FILTER_BILINEAR)
+                _material.mainTexture.filterMode = filterMode;
             else
-                _material.mainTexture.filterMode = (!SFX.isDebugFillter) ? FilterMode.Point : FilterMode.Bilinear;
+                _material.mainTexture.filterMode = (!SFX.isDebugFilter) ? FilterMode.Point : filterMode;
             _material.mainTexture.wrapMode = TextureWrapMode.Clamp;
             _material.SetVector(TexParam, _constTexParam);
         }
@@ -255,7 +259,7 @@ public class SFXMesh : SFXMeshBase
             _material.mainTexture = psxtexture;
             if (_material.mainTexture == null)
                 return;
-            _material.mainTexture.filterMode = FilterMode.Point;
+            _material.mainTexture.filterMode = Configuration.Graphics.SFXSmoothTexture != -1 ? filterMode : FilterMode.Point; ;
             _material.mainTexture.wrapMode = TextureWrapMode.Clamp;
             _material.SetVector(TexParam, new Vector4(HALF_PIXEL, HALF_PIXEL, 256f, 256f));
         }

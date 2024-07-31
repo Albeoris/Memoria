@@ -3,6 +3,7 @@ using Memoria;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityStandardAssets.ImageEffects;
 using Object = System.Object;
@@ -54,6 +55,8 @@ public class WMWorld : Singleton<WMWorld>
 
     public void Initialize()
     {
+        if (Configuration.Graphics.WorldSmoothTexture == 0) filterMode = FilterMode.Point;
+        if (Configuration.Graphics.WorldSmoothTexture == 2) filterMode = FilterMode.Trilinear;
         WMBlock.LoadMaterialsFromDisc();
         if (FF9StateSystem.World.IsBeeScene)
         {
@@ -1005,18 +1008,22 @@ public class WMWorld : Singleton<WMWorld>
         this.textures = new List<Texture2D>();
         foreach (Object obj in this.root.transform)
         {
-            Transform transform = (Transform)obj;
+            Transform objtransform = (Transform)obj;
             Boolean flag = false;
-            foreach (Object obj2 in transform)
+            foreach (Object obj2 in objtransform)
             {
-                Transform transform2 = (Transform)obj2;
-                Renderer component = transform2.GetComponent<Renderer>();
-                if (component)
+                Transform obj2transform = (Transform)obj2;
+                Renderer renderer = obj2transform.GetComponent<Renderer>();
+                if (renderer)
                 {
-                    Texture2D item = transform2.GetComponent<Renderer>().sharedMaterial.mainTexture as Texture2D;
-                    if (!this.textures.Contains(item))
+                    Texture2D texture = obj2transform.GetComponent<Renderer>().sharedMaterial.mainTexture as Texture2D;
+                    if (texture != null)
                     {
-                        this.textures.Add(item);
+                        texture.filterMode = filterMode;
+                    }
+                    if (!this.textures.Contains(texture))
+                    {
+                        this.textures.Add(texture);
                         flag = true;
                         break;
                     }
@@ -1029,13 +1036,13 @@ public class WMWorld : Singleton<WMWorld>
         }
     }
 
-    public void SetTextureFilterMode(FilterMode mode)
+    /*public void SetTextureFilterMode(FilterMode mode)
     {
         foreach (Texture2D texture2D in this.textures)
         {
             texture2D.filterMode = mode;
         }
-    }
+    }*/
 
     public void LoadBlocks(Boolean loadOnlyInSight)
     {
@@ -1849,7 +1856,10 @@ public class WMWorld : Singleton<WMWorld>
                 str = "geo_sub_w0_003_2";
                 break;
         }
-        return AssetManager.Load<Texture2D>("EmbeddedAsset/WorldMap_Local/Characters/Chocobo/" + chocoboName + "/" + str, false);
+        Texture2D chocoText = AssetManager.Load<Texture2D>("EmbeddedAsset/WorldMap_Local/Characters/Chocobo/" + chocoboName + "/" + str, false);
+        if (chocoText != null)
+            chocoText.filterMode = filterMode;
+        return chocoText;
     }
 
     public void LoadQuicksandMaterial()
@@ -1857,6 +1867,7 @@ public class WMWorld : Singleton<WMWorld>
         if (!WMBlock.MaterialDatabase.TryGetValue("Quicksand", out this.QuicksandMaterial))
             this.QuicksandMaterial = AssetManager.Load<Material>("WorldMap/Materials/quicksand_mat", false);
         Texture2D detailTexture = AssetManager.Load<Texture2D>("EmbeddedAsset/WorldMap_Local/Textures/SeamlessRock", false);
+        detailTexture.filterMode = filterMode;
         this.QuicksandMaterial.SetTexture("_DetailTex", detailTexture);
     }
 
@@ -1964,6 +1975,8 @@ public class WMWorld : Singleton<WMWorld>
         this.Shadows.Add(wmshadow);
         return wmshadow;
     }
+
+    private FilterMode filterMode = FilterMode.Bilinear;
 
     private const Int32 BlockDistance = 64;
 
