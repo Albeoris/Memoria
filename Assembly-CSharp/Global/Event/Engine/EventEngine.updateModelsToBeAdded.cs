@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Object = System.Object;
@@ -19,11 +20,19 @@ public partial class EventEngine
                 {
                     if (posObj.go == null)
                     {
-                        posObj.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(posObj.model), false);
                         if (this.gMode == 1)
                         {
+                            posObj.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(posObj.model), false, true, Configuration.Graphics.ElementsSmoothTexture);
                             GeoTexAnim.addTexAnim(posObj.go, FF9BattleDB.GEO.GetValue(posObj.model));
                             this.ReassignBasicAnimationForField((Actor)posObj);
+                        }
+                        else if (this.gMode == 3)
+                        {
+                            posObj.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(posObj.model), false, true, Configuration.Graphics.WorldSmoothTexture);
+                        }
+                        else
+                        {
+                            posObj.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(posObj.model), false, true, Configuration.Graphics.ElementsSmoothTexture);
                         }
                     }
                     if (posObj.go != null)
@@ -31,8 +40,6 @@ public partial class EventEngine
                         this.requiredAddActor = true;
                         this.toBeAddedObjUIDList.Add((Int32)posObj.uid);
                     }
-                    //if (this.gMode != 1)
-                    //    ;
                 }
             }
         }

@@ -1,3 +1,4 @@
+using Memoria;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -112,7 +113,7 @@ public class GEOTEXHEADER
         if (!this.RenderTexMapping.ContainsKey(texAnimIndex))
         {
             RenderTexture renderTexture = new RenderTexture((Int32)textureWidth, (Int32)textureHeight, 24);
-            renderTexture.filterMode = FilterMode.Bilinear;
+            ModelFactory.SetMatFilter(renderTexture, Configuration.Graphics.ElementsSmoothTexture);
             renderTexture.wrapMode = TextureWrapMode.Repeat;
             renderTexture.name = mat.name + "_RT";
             mat.mainTexture = renderTexture;

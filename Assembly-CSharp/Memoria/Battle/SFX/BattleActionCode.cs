@@ -324,7 +324,7 @@ public class BattleActionCode
         if (!argument.TryGetValue(key, out String bone))
             return false;
         if (Int32.TryParse(bone, out boneNum))
-            ;
+        { }
         else if (String.Equals(bone, "tar_bone", StringComparison.OrdinalIgnoreCase) || String.Equals(bone, "Target", StringComparison.OrdinalIgnoreCase))
             boneNum = btl.tar_bone;
         else if (String.Equals(bone, "wep_bone", StringComparison.OrdinalIgnoreCase) || String.Equals(bone, "Weapon", StringComparison.OrdinalIgnoreCase))

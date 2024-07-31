@@ -1143,21 +1143,21 @@ namespace Memoria.Assets
             {
                 UpdateRender(); // Force refresh bones between different models
                 if (geoList[index].Kind == MODEL_KIND_NORMAL)
-                    currentModel = ModelFactory.CreateModel(geoList[index].Name, false, UseModdedTextures);
-                else if (geoList[index].Kind == MODEL_KIND_BBG)
+                    currentModel = ModelFactory.CreateModel(geoList[index].Name, false, UseModdedTextures, Configuration.Graphics.ElementsSmoothTexture);
+                else if (geoList[index].Kind == MODEL_KIND_BBG || geoList[index].Kind == MODEL_KIND_BBG_OBJ)
                 {
-                    currentModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{geoList[index].Name}/{geoList[index].Name}", true, UseModdedTextures);
-                    battlebg.nf_BbgNumber = Int32.Parse(geoList[index].Name.Replace("BBG_B", ""));
+                    currentModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{geoList[index].Name}/{geoList[index].Name}", geoList[index].Kind == MODEL_KIND_BBG, UseModdedTextures, Configuration.Graphics.BattleSmoothTexture);
+                    if (currentModel != null)
+                    {
+                        battlebg.nf_BbgNumber = Int32.Parse(geoList[index].Name.Replace("BBG_B", ""));
+                        battlebg.SetDefaultShader(currentModel);
+                        if (String.Equals(geoList[index].Name, "BBG_B171_OBJ2")) // Crystal World, Crystal
+                            battlebg.SetMaterialShader(currentModel, "PSX/BattleMap_Cystal");
+                    }
                 }
-                else if (geoList[index].Kind == MODEL_KIND_BBG_OBJ)
-                    currentModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{geoList[index].Name}/{geoList[index].Name}", false, UseModdedTextures);
                 else
-                    currentModel = null;
-                if (currentModel != null && (geoList[index].Kind == MODEL_KIND_BBG || geoList[index].Kind == MODEL_KIND_BBG_OBJ))
                 {
-                    battlebg.SetDefaultShader(currentModel);
-                    //if (String.Equals(geoList[index].Name, "BBG_B171_OBJ2")) // Crystal World, Crystal
-                    //    battlebg.SetMaterialShader(currentModel, "PSX/BattleMap_Cystal");
+                    currentModel = null;
                 }
             }
             else
@@ -1282,7 +1282,7 @@ namespace Memoria.Assets
                         index -= weapongeoList.Count;
                     currentWeaponGeoIndex = index;
                     Log.Message($"[ModelViewerScene] Change weapon model: {weapongeoList[index].Name}");
-                    currentWeaponModel = ModelFactory.CreateModel(weapongeoList[index].Name);
+                    currentWeaponModel = ModelFactory.CreateModel(weapongeoList[index].Name, false, true, Configuration.Graphics.ElementsSmoothTexture);
                     WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentWeaponBoneIndex]);
                     isLoadingWeaponModel = false;
                 }

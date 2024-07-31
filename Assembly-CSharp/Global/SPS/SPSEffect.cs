@@ -1,4 +1,5 @@
-﻿using Memoria.Assets;
+﻿using Memoria;
+using Memoria.Assets;
 using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
@@ -402,9 +403,10 @@ public class SPSEffect : MonoBehaviour
         else
         {
             PSXTexture texture = PSXTextureMgr.GetTexture(worktpage.FlagTP, worktpage.FlagTY, worktpage.FlagTX, workclut.FlagClutY, workclut.FlagClutX);
-            texture.SetFilter(FilterMode.Bilinear);
             this.materials[shindex].mainTexture = texture.texture;
         }
+        ModelFactory.SetMatFilter(this.materials[shindex], Configuration.Graphics.SFXSmoothTexture, 1);
+        
         this.meshRenderer.material = this.materials[shindex];
         if (this.spsActor != null)
             this.spsActor.spsPos = offsetedPos;

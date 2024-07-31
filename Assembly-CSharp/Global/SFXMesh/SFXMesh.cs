@@ -1,4 +1,5 @@
-﻿using Memoria.Data;
+﻿using Memoria;
+using Memoria.Data;
 using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
@@ -240,12 +241,12 @@ public class SFXMesh : SFXMeshBase
             if (_material.mainTexture == null)
                 return;
             UInt32 filter = SFXKey.GetFilter(_key);
-            if (filter == SFXKey.FILLTER_POINT)
-                _material.mainTexture.filterMode = FilterMode.Point;
-            else if (filter == SFXKey.FILLTER_BILINEAR)
-                _material.mainTexture.filterMode = FilterMode.Bilinear;
+            if (filter == SFXKey.FILTER_POINT)
+                ModelFactory.SetMatFilter(_material, Configuration.Graphics.SFXSmoothTexture, 0);
+            else if (filter == SFXKey.FILTER_BILINEAR || SFX.isDebugFilter)
+                ModelFactory.SetMatFilter(_material, Configuration.Graphics.SFXSmoothTexture, 1);
             else
-                _material.mainTexture.filterMode = (!SFX.isDebugFillter) ? FilterMode.Point : FilterMode.Bilinear;
+                ModelFactory.SetMatFilter(_material, Configuration.Graphics.SFXSmoothTexture, 0);
             _material.mainTexture.wrapMode = TextureWrapMode.Clamp;
             _material.SetVector(TexParam, _constTexParam);
         }
@@ -255,7 +256,7 @@ public class SFXMesh : SFXMeshBase
             _material.mainTexture = psxtexture;
             if (_material.mainTexture == null)
                 return;
-            _material.mainTexture.filterMode = FilterMode.Point;
+            ModelFactory.SetMatFilter(_material, Configuration.Graphics.SFXSmoothTexture, 0);
             _material.mainTexture.wrapMode = TextureWrapMode.Clamp;
             _material.SetVector(TexParam, new Vector4(HALF_PIXEL, HALF_PIXEL, 256f, 256f));
         }

@@ -1,8 +1,10 @@
 using Assets.Scripts.Common;
 using Memoria;
+using Memoria.Prime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityStandardAssets.ImageEffects;
 using Object = System.Object;
@@ -54,6 +56,10 @@ public class WMWorld : Singleton<WMWorld>
 
     public void Initialize()
     {
+        if (Configuration.Graphics.WorldSmoothTexture == 0)
+            filterMode = FilterMode.Point;
+        else if (Configuration.Graphics.WorldSmoothTexture == 2)
+            filterMode = FilterMode.Trilinear;
         WMBlock.LoadMaterialsFromDisc();
         if (FF9StateSystem.World.IsBeeScene)
         {
@@ -145,7 +151,7 @@ public class WMWorld : Singleton<WMWorld>
         this.LoadSPS();
     }
 
-    private void UpscaleMeshBounds()
+    /*private void UpscaleMeshBounds()
     {
         MeshFilter[] componentsInChildren = base.GetComponentsInChildren<MeshFilter>(true);
         MeshFilter[] array = componentsInChildren;
@@ -158,9 +164,9 @@ public class WMWorld : Singleton<WMWorld>
             bounds.size = size;
             meshFilter.sharedMesh.bounds = bounds;
         }
-    }
+    }*/
 
-    public void addWMActor(Actor actor)
+    /*public void addWMActor(Actor actor)
     {
         String name = actor.go.name;
         GameObject gameObject = new GameObject(name + "WM");
@@ -182,7 +188,7 @@ public class WMWorld : Singleton<WMWorld>
             actor.go.transform.parent = gameObject.transform;
         }
         actor.go.transform.localRotation = Quaternion.Euler(0f, 0f, 180f);
-    }
+    }*/
 
     public void addWMActorOnly(Actor actor)
     {
@@ -362,6 +368,7 @@ public class WMWorld : Singleton<WMWorld>
         this.wrapWorldLowerBound = this.centerOfMesh.z - 32f;
     }
 
+    /*
     private void UpdateInputDebug()
     {
         Int32 peak = 0;
@@ -429,7 +436,7 @@ public class WMWorld : Singleton<WMWorld>
             pos = ff9.w_moveChocoboPtr.pos;
             pos.y = 0f;
         }
-    }
+    }*/
 
     public void OnInitialize()
     {
@@ -510,6 +517,16 @@ public class WMWorld : Singleton<WMWorld>
             RegisterBlockComponent(block, prefab.TerrainForm2, false, true);
         if (block.Number == 219)
         {
+            block.SetFilterMode();
+            GameObject waterShrineGo = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/WaterShrine", false);
+            if (waterShrineGo)
+            {
+                GameObject waterShrineCopy = UnityEngine.Object.Instantiate<GameObject>(waterShrineGo);
+                waterShrineCopy.transform.name = waterShrineGo.transform.name;
+                waterShrineCopy.transform.parent = block.transform;
+                waterShrineCopy.transform.localPosition = new Vector3(32.11f, -2.46f, -31.69f);
+                block.AddForm2Transform(waterShrineCopy.transform);
+            }
             if (prefab.Sea3)
             {
                 RegisterBlockComponent(block, prefab.Sea3, true, false);
@@ -531,18 +548,114 @@ public class WMWorld : Singleton<WMWorld>
                 RegisterBlockComponent(block, prefab.Sea4_2, false, true);
             if (prefab.Sea5_2)
                 RegisterBlockComponent(block, prefab.Sea5_2, false, true);
-            GameObject waterShrineGo = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/WaterShrine", false);
-            if (waterShrineGo)
-            {
-                GameObject waterShrineCopy = UnityEngine.Object.Instantiate<GameObject>(waterShrineGo);
-                waterShrineCopy.transform.name = waterShrineGo.transform.name;
-                waterShrineCopy.transform.parent = block.transform;
-                waterShrineCopy.transform.localPosition = new Vector3(32.11f, -2.46f, -31.69f);
-                block.AddForm2Transform(waterShrineCopy.transform);
-            }
             block.SetupPreloadedMaterials();
             block.ApplyForm();
             return;
+        }
+        if (prefab.VolcanoCrater1)
+        {
+            RegisterBlockComponent(block, prefab.VolcanoCrater1, true, false);
+            block.HasVolcanoCrater = true;
+        }
+        if (prefab.VolcanoLava1)
+        {
+            RegisterBlockComponent(block, prefab.VolcanoLava1, true, false);
+            block.HasVolcanoLava = true;
+        }
+        if (prefab.VolcanoCrater2)
+        {
+            RegisterBlockComponent(block, prefab.VolcanoCrater2, false, true);
+            block.HasVolcanoCrater = true;
+        }
+        if (prefab.VolcanoLava2)
+        {
+            RegisterBlockComponent(block, prefab.VolcanoLava2, false, true);
+            block.HasVolcanoLava = true;
+        }
+        if (block.Number == 158 && ff9.w_frameDisc == 4)
+        {
+            GameObject block146Go = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[14][6] Object", false);
+            if (block146Go)
+            {
+                Transform obj = block.transform.Find("Object");
+                if (obj)
+                    obj.GetComponent<Renderer>().enabled = false;
+                GameObject block146Copy = UnityEngine.Object.Instantiate<GameObject>(block146Go);
+                block146Copy.transform.name = block146Go.transform.name;
+                block146Copy.transform.parent = block.transform;
+                block146Copy.transform.localPosition = new Vector3(0f, 0f, 0f);
+            }
+            block146Go = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[14][6] Object_tree", false);
+            if (block146Go)
+            {
+                GameObject block146Copy = UnityEngine.Object.Instantiate<GameObject>(block146Go);
+                block146Copy.transform.name = block146Go.transform.name;
+                block146Copy.transform.parent = block.transform;
+                block146Copy.transform.localPosition = new Vector3(0f, 0f, 0f);
+            }
+        }
+        if (block.Number == 219)
+        {
+        }
+        if (block.Number == 31)
+        {
+        }
+        if (block.Number == 115)
+        {
+        }
+        if (block.Number == 283)
+        {
+        }
+        if (block.Number == 219)
+        {
+        }
+        if (block.Number == 397)
+        {
+        }
+        if (block.Number == 389)
+        {
+            GameObject block516Go = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[5][16] Object", false);
+            if (block516Go)
+            {
+                Transform obj = block.transform.Find("Object");
+                if (obj)
+                    obj.GetComponent<Renderer>().enabled = false;
+                GameObject block516Copy = UnityEngine.Object.Instantiate<GameObject>(block516Go);
+                block516Copy.transform.name = block516Go.transform.name;
+                block516Copy.transform.parent = block.transform;
+                block516Copy.transform.localPosition = new Vector3(0f, 0f, 0f);
+            }
+        }
+        block.SetFilterMode(); // has to be declared before sea/beach/quicksand, or they become static
+        if (block.Number == 91)
+        {
+            GameObject quicksandGo = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/Quicksand", false);
+            if (quicksandGo)
+            {
+                GameObject quicksandCopy = UnityEngine.Object.Instantiate<GameObject>(quicksandGo);
+                quicksandCopy.transform.name = quicksandGo.transform.name;
+                quicksandCopy.transform.parent = block.transform;
+                quicksandCopy.transform.localPosition = new Vector3(8f, 1.66f, -60f);
+            }
+        }
+        if (block.Number == 115)
+        {
+            GameObject quicksandGo = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/Quicksand", false);
+            if (quicksandGo)
+            {
+                GameObject quicksandCopy = UnityEngine.Object.Instantiate<GameObject>(quicksandGo);
+                quicksandCopy.transform.name = quicksandGo.transform.name;
+                quicksandCopy.transform.parent = block.transform;
+                quicksandCopy.transform.localPosition = new Vector3(23.68f, 1.18f, -23.98f);
+                quicksandCopy = UnityEngine.Object.Instantiate<GameObject>(quicksandGo);
+                quicksandCopy.transform.name = quicksandGo.transform.name;
+                quicksandCopy.transform.parent = block.transform;
+                quicksandCopy.transform.localPosition = new Vector3(4f, 1.18f, -16f);
+                quicksandCopy = UnityEngine.Object.Instantiate<GameObject>(quicksandGo);
+                quicksandCopy.transform.name = quicksandGo.transform.name;
+                quicksandCopy.transform.parent = block.transform;
+                quicksandCopy.transform.localPosition = new Vector3(28f, 1.18f, -4f);
+            }
         }
         if (prefab.Beach1)
         {
@@ -603,110 +716,6 @@ public class WMWorld : Singleton<WMWorld>
         {
             RegisterBlockComponent(block, prefab.Sea6, true, true);
             block.HasSea = true;
-        }
-        if (prefab.VolcanoCrater1)
-        {
-            RegisterBlockComponent(block, prefab.VolcanoCrater1, true, false);
-            block.HasVolcanoCrater = true;
-        }
-        if (prefab.VolcanoLava1)
-        {
-            RegisterBlockComponent(block, prefab.VolcanoLava1, true, false);
-            block.HasVolcanoLava = true;
-        }
-        if (prefab.VolcanoCrater2)
-        {
-            RegisterBlockComponent(block, prefab.VolcanoCrater2, false, true);
-            block.HasVolcanoCrater = true;
-        }
-        if (prefab.VolcanoLava2)
-        {
-            RegisterBlockComponent(block, prefab.VolcanoLava2, false, true);
-            block.HasVolcanoLava = true;
-        }
-        if (block.Number == 91)
-        {
-            GameObject quicksandGo = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/Quicksand", false);
-            if (quicksandGo)
-            {
-                GameObject quicksandCopy = UnityEngine.Object.Instantiate<GameObject>(quicksandGo);
-                quicksandCopy.transform.name = quicksandGo.transform.name;
-                quicksandCopy.transform.parent = block.transform;
-                quicksandCopy.transform.localPosition = new Vector3(8f, 1.66f, -60f);
-            }
-        }
-        if (block.Number == 115)
-        {
-            GameObject quicksandGo = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/Quicksand", false);
-            if (quicksandGo)
-            {
-                GameObject quicksandCopy = UnityEngine.Object.Instantiate<GameObject>(quicksandGo);
-                quicksandCopy.transform.name = quicksandGo.transform.name;
-                quicksandCopy.transform.parent = block.transform;
-                quicksandCopy.transform.localPosition = new Vector3(23.68f, 1.18f, -23.98f);
-                quicksandCopy = UnityEngine.Object.Instantiate<GameObject>(quicksandGo);
-                quicksandCopy.transform.name = quicksandGo.transform.name;
-                quicksandCopy.transform.parent = block.transform;
-                quicksandCopy.transform.localPosition = new Vector3(4f, 1.18f, -16f);
-                quicksandCopy = UnityEngine.Object.Instantiate<GameObject>(quicksandGo);
-                quicksandCopy.transform.name = quicksandGo.transform.name;
-                quicksandCopy.transform.parent = block.transform;
-                quicksandCopy.transform.localPosition = new Vector3(28f, 1.18f, -4f);
-            }
-        }
-        if (block.Number == 158 && ff9.w_frameDisc == 4)
-        {
-            GameObject block146Go = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[14][6] Object", false);
-            if (block146Go)
-            {
-                Transform obj = block.transform.Find("Object");
-                if (obj)
-                    obj.GetComponent<Renderer>().enabled = false;
-                GameObject block146Copy = UnityEngine.Object.Instantiate<GameObject>(block146Go);
-                block146Copy.transform.name = block146Go.transform.name;
-                block146Copy.transform.parent = block.transform;
-                block146Copy.transform.localPosition = new Vector3(0f, 0f, 0f);
-            }
-            block146Go = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[14][6] Object_tree", false);
-            if (block146Go)
-            {
-                GameObject block146Copy = UnityEngine.Object.Instantiate<GameObject>(block146Go);
-                block146Copy.transform.name = block146Go.transform.name;
-                block146Copy.transform.parent = block.transform;
-                block146Copy.transform.localPosition = new Vector3(0f, 0f, 0f);
-            }
-        }
-        if (block.Number == 219)
-        {
-        }
-        if (block.Number == 31)
-        {
-        }
-        if (block.Number == 115)
-        {
-        }
-        if (block.Number == 283)
-        {
-        }
-        if (block.Number == 219)
-        {
-        }
-        if (block.Number == 397)
-        {
-        }
-        if (block.Number == 389)
-        {
-            GameObject block516Go = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/Prefabs/Block[5][16] Object", false);
-            if (block516Go)
-            {
-                Transform obj = block.transform.Find("Object");
-                if (obj)
-                    obj.GetComponent<Renderer>().enabled = false;
-                GameObject block516Copy = UnityEngine.Object.Instantiate<GameObject>(block516Go);
-                block516Copy.transform.name = block516Go.transform.name;
-                block516Copy.transform.parent = block.transform;
-                block516Copy.transform.localPosition = new Vector3(0f, 0f, 0f);
-            }
         }
         block.SetupPreloadedMaterials();
         block.ApplyForm();
@@ -1005,18 +1014,22 @@ public class WMWorld : Singleton<WMWorld>
         this.textures = new List<Texture2D>();
         foreach (Object obj in this.root.transform)
         {
-            Transform transform = (Transform)obj;
+            Transform objtransform = (Transform)obj;
             Boolean flag = false;
-            foreach (Object obj2 in transform)
+            foreach (Object obj2 in objtransform)
             {
-                Transform transform2 = (Transform)obj2;
-                Renderer component = transform2.GetComponent<Renderer>();
-                if (component)
+                Transform obj2transform = (Transform)obj2;
+                Renderer renderer = obj2transform.GetComponent<Renderer>();
+                if (renderer)
                 {
-                    Texture2D item = transform2.GetComponent<Renderer>().sharedMaterial.mainTexture as Texture2D;
-                    if (!this.textures.Contains(item))
+                    Texture2D texture = obj2transform.GetComponent<Renderer>().sharedMaterial.mainTexture as Texture2D;
+                    if (texture != null)
                     {
-                        this.textures.Add(item);
+                        texture.filterMode = filterMode;
+                    }
+                    if (!this.textures.Contains(texture))
+                    {
+                        this.textures.Add(texture);
                         flag = true;
                         break;
                     }
@@ -1029,13 +1042,13 @@ public class WMWorld : Singleton<WMWorld>
         }
     }
 
-    public void SetTextureFilterMode(FilterMode mode)
+    /*public void SetTextureFilterMode(FilterMode mode)
     {
         foreach (Texture2D texture2D in this.textures)
         {
             texture2D.filterMode = mode;
         }
-    }
+    }*/
 
     public void LoadBlocks(Boolean loadOnlyInSight)
     {
@@ -1753,6 +1766,7 @@ public class WMWorld : Singleton<WMWorld>
         Transform transform = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/" + effect, false).transform;
         Transform transform2 = UnityEngine.Object.Instantiate<Transform>(transform);
         transform2.parent = this.WorldMapEffectRoot;
+        ModelFactory.SetMatFilter(transform2.GetComponentInChildren<Renderer>().material, Configuration.Graphics.WorldSmoothTexture);
         return transform2;
     }
 
@@ -1764,6 +1778,7 @@ public class WMWorld : Singleton<WMWorld>
         {
             array[i] = UnityEngine.Object.Instantiate<Transform>(transform);
             array[i].parent = this.WorldMapEffectRoot;
+            //ModelFactory.SetMatFilter(array[i].getComponentInChildren<Renderer>().material, Configuration.Graphics.WorldSmoothTexture); // doesn't work for some reason
         }
         return array;
     }
@@ -1850,7 +1865,10 @@ public class WMWorld : Singleton<WMWorld>
                 str = "geo_sub_w0_003_2";
                 break;
         }
-        return AssetManager.Load<Texture2D>("EmbeddedAsset/WorldMap_Local/Characters/Chocobo/" + chocoboName + "/" + str, false);
+        Texture2D chocoText = AssetManager.Load<Texture2D>("EmbeddedAsset/WorldMap_Local/Characters/Chocobo/" + chocoboName + "/" + str, false);
+        if (chocoText != null)
+            chocoText.filterMode = filterMode;
+        return chocoText;
     }
 
     public void LoadQuicksandMaterial()
@@ -1859,12 +1877,14 @@ public class WMWorld : Singleton<WMWorld>
             this.QuicksandMaterial = AssetManager.Load<Material>("WorldMap/Materials/quicksand_mat", false);
         Texture2D detailTexture = AssetManager.Load<Texture2D>("EmbeddedAsset/WorldMap_Local/Textures/SeamlessRock", false);
         this.QuicksandMaterial.SetTexture("_DetailTex", detailTexture);
+        ModelFactory.SetMatFilter(this.QuicksandMaterial, Configuration.Graphics.WorldSmoothTexture);
     }
 
     public void LoadWaterShrineMaterial()
     {
         if (!WMBlock.MaterialDatabase.TryGetValue("WaterShrine", out this.WaterShrineMaterial))
             this.WaterShrineMaterial = AssetManager.Load<Material>("WorldMap/Materials/WaterShrine_mat", false);
+        ModelFactory.SetMatFilter(this.WaterShrineMaterial, Configuration.Graphics.WorldSmoothTexture);
     }
 
     public void CreateProjectionMatrix()
@@ -1969,6 +1989,9 @@ public class WMWorld : Singleton<WMWorld>
     private const Int32 BlockDistance = 64;
 
     private const Int32 CellDistance = 32;
+
+    [NonSerialized]
+    private FilterMode filterMode = FilterMode.Bilinear;
 
     private Transform root;
 

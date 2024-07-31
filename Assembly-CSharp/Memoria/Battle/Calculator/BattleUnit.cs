@@ -781,7 +781,7 @@ namespace Memoria
             // Let the spell sequence handle the model fadings (in and out)
             //Data.SetActiveBtlData(false);
             String geoName = FF9BattleDB.GEO.GetValue(monsterParam.Geo);
-            Data.ChangeModel(ModelFactory.CreateModel(geoName, true), monsterParam.Geo);
+            Data.ChangeModel(ModelFactory.CreateModel(geoName, true, true, Configuration.Graphics.ElementsSmoothTexture), monsterParam.Geo);
             Data.weapon_bone = (Byte)monsterParam.WeaponAttachment;
             Data.weapon_scale = monsterParam.WeaponSize.ToVector3(true);
             Data.weapon_offset_pos = monsterParam.WeaponOffsetPos.ToVector3(false);

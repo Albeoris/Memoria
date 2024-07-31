@@ -1456,6 +1456,11 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Graphics", "TileSize", "32");
                         MakeIniNotNull("Graphics", "AntiAliasing", "8");
                         MakeIniNotNull("Graphics", "CameraStabilizer", "85");
+                        MakeIniNotNull("Graphics", "FieldSmoothTexture", "1");
+                        MakeIniNotNull("Graphics", "WorldSmoothTexture", "1");
+                        MakeIniNotNull("Graphics", "BattleSmoothTexture", "1");
+                        MakeIniNotNull("Graphics", "ElementsSmoothTexture", "1");
+                        MakeIniNotNull("Graphics", "SFXSmoothTexture", "-1");
 
                         MakeIniNotNull("Control", "Enabled", "1");
                         MakeIniNotNull("Control", "DisableMouse", "0");

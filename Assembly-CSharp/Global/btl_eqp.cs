@@ -3,6 +3,7 @@ using Memoria.Data;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Memoria;
 
 public static class btl_eqp
 {
@@ -16,9 +17,9 @@ public static class btl_eqp
         {
             String modelName = FF9BattleDB.GEO.GetValue(btl.weapon.ModelId);
             if (modelName.Contains("GEO_WEP"))
-                btl.weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + modelName + "/" + modelName, true);
+                btl.weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + modelName + "/" + modelName, true, true, Configuration.Graphics.ElementsSmoothTexture);
             else
-                btl.weapon_geo = ModelFactory.CreateModel(modelName, true);      
+                btl.weapon_geo = ModelFactory.CreateModel(modelName, true, true, Configuration.Graphics.ElementsSmoothTexture);
             if (btl.weapon_geo == null)
                 btl.weapon_geo = new GameObject(DummyWeaponName);
             if (EnemyBuiltInWeaponTable.ContainsKey(btl.dms_geo_id))

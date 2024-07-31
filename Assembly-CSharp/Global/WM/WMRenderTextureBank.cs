@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using UnityEngine;
 
 public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
@@ -13,6 +14,8 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
     {
         if (this.initialized)
             return;
+        if (Configuration.Graphics.WorldSmoothTexture == 0) filterMode = FilterMode.Point;
+        if (Configuration.Graphics.WorldSmoothTexture == 2) filterMode = FilterMode.Trilinear;
         WMBlock.LoadMaterialsFromDisc();
         this.VolcanoCrater1 = AssetManager.Load<RenderTexture>("WorldMap/RenderTextures/VolcanoCrater1", false);
         if (!WMBlock.MaterialDatabase.TryGetValue("VolcanoCrater1", out this.VolcanoCrater1Material))
@@ -65,10 +68,6 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
         if (!WMBlock.MaterialDatabase.TryGetValue("Stream", out this.Stream))
             this.Stream = AssetManager.Load<Material>("WorldMap/Materials/Stream", false);
         this.initialized = true;
-    }
-
-    public void OnUpdate()
-    {
     }
 
     public void OnUpdate20FPS()
@@ -191,6 +190,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Beach1Textures[this.currentFrameBeach1];
+        mainTexture.filterMode = filterMode;
         this.Beach1Material.mainTexture = mainTexture;
     }
 
@@ -228,6 +228,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Beach2Textures[this.currentFrameBeach2];
+        mainTexture.filterMode = filterMode;
         this.Beach2Material.mainTexture = mainTexture;
     }
 
@@ -238,6 +239,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Sea_10_64_0Textures[(Int32)this.Sea_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.Sea_10_64_0Material.mainTexture = mainTexture;
     }
 
@@ -248,6 +250,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Sea_10_128_0Textures[(Int32)this.Sea_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.Sea_10_128_0Material.mainTexture = mainTexture;
     }
 
@@ -258,6 +261,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Sea_10_128_64Textures[(Int32)this.Sea_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.Sea_10_128_64Material.mainTexture = mainTexture;
     }
 
@@ -268,6 +272,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Sea_10_128_128Textures[(Int32)this.Sea_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.Sea_10_128_128Material.mainTexture = mainTexture;
     }
 
@@ -278,6 +283,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Sea_11_64_0Textures[(Int32)this.Sea_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.Sea_11_64_0Material.mainTexture = mainTexture;
     }
 
@@ -288,6 +294,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Sea_11_192_64Textures[(Int32)this.Sea6_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.Sea_11_192_64Material.mainTexture = mainTexture;
     }
 
@@ -298,6 +305,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.RiverTextures[(Int32)this.River_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.RiverMaterial.mainTexture = mainTexture;
     }
 
@@ -308,6 +316,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.RiverJointTextures[(Int32)this.River_IndexOffset];
+        mainTexture.filterMode = filterMode;
         this.RiverJointMaterial.mainTexture = mainTexture;
     }
 
@@ -454,4 +463,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
     public Boolean StreamEnabled = true;
 
     private Boolean initialized;
+
+    [NonSerialized]
+    private FilterMode filterMode = FilterMode.Bilinear;
 }

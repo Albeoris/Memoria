@@ -246,13 +246,13 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             SB2_MON_PARM sb2MonParm = this.btlScene.MonAddr[monType];
             String path = FF9BattleDB.GEO.GetValue(sb2MonParm.Geo);
             //var vector3 = new Vector3(sb2Pattern.Put[index2 - 4].Xpos, sb2Pattern.Put[index2 - 4].Ypos * -1, sb2Pattern.Put[index2 - 4].Zpos);
-            btl[i] = new BTL_DATA { gameObject = ModelFactory.CreateModel(path, true) };
+            btl[i] = new BTL_DATA { gameObject = ModelFactory.CreateModel(path, true, true, Configuration.Graphics.ElementsSmoothTexture) };
             if (!String.IsNullOrEmpty(sb2MonParm.WeaponModel))
             {
                 if (sb2MonParm.WeaponModel.Contains("GEO_WEP"))
-                    btl[i].weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + sb2MonParm.WeaponModel + "/" + sb2MonParm.WeaponModel, true);
+                    btl[i].weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + sb2MonParm.WeaponModel + "/" + sb2MonParm.WeaponModel, true, true, Configuration.Graphics.ElementsSmoothTexture);
                 else
-                    btl[i].weapon_geo = ModelFactory.CreateModel(sb2MonParm.WeaponModel, true);
+                    btl[i].weapon_geo = ModelFactory.CreateModel(sb2MonParm.WeaponModel, true, true, Configuration.Graphics.ElementsSmoothTexture);
                 MeshRenderer[] weaponRenderers = btl[i].weapon_geo.GetComponentsInChildren<MeshRenderer>();
                 btl[i].weaponMeshCount = weaponRenderers.Length;
                 btl[i].weaponRenderer = new Renderer[btl[i].weaponMeshCount];

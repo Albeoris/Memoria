@@ -1122,6 +1122,7 @@ public class BGSCENE_DEF
         {
             material.SetTexture("_AlphaTex", this.atlasAlpha);
         }
+        ModelFactory.SetMatFilter(material, Configuration.Graphics.FieldSmoothTexture);
         this.materialList.Add("abr_3", material);
     }
 
