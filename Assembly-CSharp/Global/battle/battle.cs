@@ -1,10 +1,10 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Data;
-using System;
-using System.Collections.Generic;
+using Memoria.Scripts;
 using UnityEngine;
 
 // ReSharper disable UnusedParameter.Global
@@ -21,27 +21,23 @@ public static class battle
     public const SByte BTL_SYSTEM_FADE_RATE = 32;
     public const Byte BTL_MAP_JUMP_ON = 1;
     public const Byte BTL_LOAD_END_SONG = 2;
-    public const Byte BTL_FLAG_TONZURA = 4;
+    public const Byte BTL_FLAG_ABILITY_FLEE = 4;
     public const Byte BTL_CONTI_FLD_SONG = 8;
     public const Byte BTL_SONG_FADEOUT = 16;
     public const Byte BTL_PLAY_END_SONG = 32;
     public const Byte BTL_END_LOAD = 64;
     public const Byte BTL_FADE_IN_COUNT = 32;
     public const Byte BTL_FADE_OUT_COUNT = 32;
+
     public static BONUS btl_bonus;
     public static Boolean isAlreadyShowTutorial;
     public static Boolean isSpecialTutorialWindow;
 
     public static Byte TRANCE_GAUGE_FLAG => FF9StateSystem.EventState.gEventGlobal[16];
-
     public static Byte GARNET_DEPRESS_FLAG => FF9StateSystem.EventState.gEventGlobal[17];
-
     public static Byte GARNET_SUMMON_FLAG => FF9StateSystem.EventState.gEventGlobal[18];
-
     public static Byte TONBERI_COUNT => FF9StateSystem.EventState.gEventGlobal[192];
-
     public static Byte SUMMON_RAY_FLAG => FF9StateSystem.EventState.gEventGlobal[193];
-
     public static Byte SUMMON_ALL_LONG_FLAG => FF9StateSystem.EventState.gEventGlobal[207];
 
     static battle()
@@ -57,10 +53,10 @@ public static class battle
         ff9.btl_flag = 0;
         // "steiner_state" is never activated anyways, in none of any "ENCOUNT" or "ENCOUNT2" event script line
         //ff9.GetPlayer(CharacterId.Steiner).info.serial_no = ff9.steiner_state == 0 ? CharacterSerialNumber.STEINER_OUTDOOR : CharacterSerialNumber.STEINER_INDOOR;
-        ff9.btl_result = 0;
+        ff9.btl_result = FF9StateGlobal.BTL_RESULT_INITIAL;
         btl_sys.InitBattleSystem();
         btl2d.Btl2dInit();
-        ++FF9StateSystem.Common.FF9.party.battle_no;
+        ++ff9.party.battle_no;
     }
 
     public static void InitBattleMap()
@@ -75,7 +71,7 @@ public static class battle
         if (!FF9StateSystem.Battle.isDebug)
             PersistenSingleton<EventEngine>.Instance.ServiceEvents();
         SceneDirector.FF9Wipe_FadeInEx(32);
-        ff9Battle.btl_phase = 2;
+        ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_ENTER;
         battle.isSpecialTutorialWindow = false;
     }
 
@@ -84,17 +80,17 @@ public static class battle
         FF9StateGlobal ff9 = FF9StateSystem.Common.FF9;
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
         SFXDataCamera.UpdateCamera();
-        if (ff9Battle.btl_phase != 4 && ff9Battle.s_cur != null && ff9Battle.s_cur.activeSelf)
+        if (ff9Battle.btl_phase != FF9StateBattleSystem.PHASE_NORMAL && ff9Battle.s_cur != null && ff9Battle.s_cur.activeSelf)
             ff9Battle.s_cur.SetActive(false);
         switch (ff9Battle.btl_phase)
         {
-            case 1:
+            case FF9StateBattleSystem.PHASE_EVENT:
                 battle.BattleIdleLoop(ff9, ff9Battle);
                 break;
-            case 2:
+            case FF9StateBattleSystem.PHASE_ENTER:
                 battle.BattleLoadLoop(ff9, ff9Battle);
                 break;
-            case 3:
+            case FF9StateBattleSystem.PHASE_MENU_ON:
                 if (battle.BattleIdleLoop(ff9, ff9Battle))
                 {
                     if (ff9.btlMapNo == 336 && !battle.isAlreadyShowTutorial) // Masked Man
@@ -105,7 +101,7 @@ public static class battle
                     }
                     if (!FF9StateSystem.Battle.isTutorial)
                     {
-                        ff9Battle.btl_phase = 4;
+                        ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_NORMAL;
                         ff9Battle.btl_cnt = ff9Battle.btl_cnt & 15;
                         ff9Battle.player_load_fade = 0;
                         for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
@@ -126,80 +122,82 @@ public static class battle
                     }
                 }
                 break;
-            case 4:
+            case FF9StateBattleSystem.PHASE_NORMAL:
                 battle.BattleMainLoop(ff9, ff9Battle);
                 break;
-            case 5:
+            case FF9StateBattleSystem.PHASE_MENU_OFF:
                 if (!FF9StateSystem.Battle.isDebug)
                     UIManager.Battle.FF9BMenu_EnableMenu(false);
                 battle.BattleTrailingLoop(ff9, ff9Battle);
-                if (ff9Battle.btl_seq != 3)
+                if (ff9Battle.btl_seq != FF9StateBattleSystem.SEQ_MENU_OFF_ESCAPE)
                     ff9Battle.btl_escape_key = 0;
                 break;
-            case 6:
+            case FF9StateBattleSystem.PHASE_VICTORY:
                 battle.BattleIdleLoop(ff9, ff9Battle);
-                if (ff9Battle.btl_seq == 1)
+                if (ff9Battle.btl_seq == FF9StateBattleSystem.SEQ_VICTORY_FADEOUT)
                 {
                     SceneDirector.FF9Wipe_FadeOutEx(32);
-                    ++ff9Battle.btl_seq;
-                    break;
+                    ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_VICTORY_WAIT;
                 }
-                if (ff9Battle.btl_seq == 2 && ff9Battle.btl_fade_time++ > 32)
+                else if (ff9Battle.btl_seq == FF9StateBattleSystem.SEQ_VICTORY_WAIT && ff9Battle.btl_fade_time++ > 32)
+                {
                     return btl_sys.ManageBattleEnd(ff9Battle);
+                }
                 break;
-            case 7:
-            case 8:
+            case FF9StateBattleSystem.PHASE_DEFEAT:
+            case FF9StateBattleSystem.PHASE_CLOSE:
                 if (battle.BattleIdleLoop(ff9, ff9Battle))
                 {
-                    ff9.btl_flag |= 64;
-                    if (ff9Battle.btl_seq == 0)
+                    ff9.btl_flag |= battle.BTL_END_LOAD;
+                    if (ff9Battle.btl_seq == FF9StateBattleSystem.SEQ_DEFEATCLOSE_FADEOUT)
                     {
-                        if (ff9.btl_result == 3 || ff9.btl_result == 6)
+                        if (ff9.btl_result == FF9StateGlobal.BTL_RESULT_DEFEAT || ff9.btl_result == FF9StateGlobal.BTL_RESULT_GAMEOVER)
                         {
                             if (ff9Battle.btl_scene.Info.NoGameOver)
                                 BattleVoice.TriggerOnBattleInOut("Defeated");
                             else
                                 BattleVoice.TriggerOnBattleInOut("GameOver");
                         }
-                        if ((!ff9Battle.btl_scene.Info.WinPose && ff9.btl_result == 1) || ff9.btl_result == 2)
+                        if ((!ff9Battle.btl_scene.Info.WinPose && ff9.btl_result == FF9StateGlobal.BTL_RESULT_VICTORY) || ff9.btl_result == FF9StateGlobal.BTL_RESULT_VICTORY_NO_POSE)
                             BattleVoice.TriggerOnBattleInOut("Victory");
-                        if (ff9.btl_result != 5)
+                        if (ff9.btl_result != FF9StateGlobal.BTL_RESULT_INTERRUPTION)
                             SceneDirector.FF9Wipe_FadeOutEx(32);
-                        ++ff9Battle.btl_seq;
-                        break;
+                        ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_DEFEATCLOSE_WAIT;
                     }
-                    if (ff9Battle.btl_seq == 1 && ff9Battle.btl_fade_time++ > 32)
+                    else if (ff9Battle.btl_seq == FF9StateBattleSystem.SEQ_DEFEATCLOSE_WAIT && ff9Battle.btl_fade_time++ > 32)
+                    {
                         return btl_sys.ManageBattleEnd(ff9Battle);
+                    }
                 }
                 break;
         }
         if (!FF9StateSystem.Battle.isDebug)
             PersistenSingleton<EventEngine>.Instance.ServiceEvents();
-        if (ff9Battle.btl_phase == 4 && ff9Battle.cur_cmd_list.Count == 0 && btl_scrp.GetBattleID(1u) == 0)
+        if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_NORMAL && ff9Battle.cur_cmd_list.Count == 0 && btl_scrp.GetBattleID(1u) == 0)
         {
             // Automatically end a battle when there is no enemy anymore, typically they escaped (warning: enemies that are not targetable but still present don't trigger the end)
             UIManager.Battle.FF9BMenu_EnableMenu(false);
             ff9Battle.btl_escape_key = 0;
-            ff9Battle.cmd_status &= 65533;
-            ff9Battle.btl_phase = 5;
-            ff9Battle.btl_seq = 2;
+            ff9Battle.cmd_status &= 0xFFFD;
+            ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
+            ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_MENU_OFF_EVENT;
             btl_cmd.KillAllCommand(ff9Battle);
             for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                 next.bi.cmd_idle = 0;
             // Don't wait for btl_phase to turn to 1
-            ff9.btl_result = battle.btl_bonus.exp > 0 ? (Byte)1 : (Byte)7;
-            if (ff9.btl_result == 1 && ff9Battle.btl_scene.Info.WinPose)
+            ff9.btl_result = battle.btl_bonus.exp > 0 ? FF9StateGlobal.BTL_RESULT_VICTORY : FF9StateGlobal.BTL_RESULT_ENEMY_FLEE;
+            if (ff9.btl_result == FF9StateGlobal.BTL_RESULT_VICTORY && ff9Battle.btl_scene.Info.WinPose)
             {
-                ff9Battle.btl_phase = 5;
-                ff9Battle.btl_seq = 4;
+                ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
+                ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_MENU_OFF_VICTORY_WITH_ENEMY;
             }
             else
             {
-                if (ff9.btl_result == 1)
-                    ff9.btl_result = 2;
-                ff9Battle.btl_phase = 8;
-                ff9Battle.btl_seq = 0;
-                if (ff9.btl_result == 7) // Enemy flee, such as (Magic) Vice or friendly monsters when attacked
+                if (ff9.btl_result == FF9StateGlobal.BTL_RESULT_VICTORY)
+                    ff9.btl_result = FF9StateGlobal.BTL_RESULT_VICTORY_NO_POSE;
+                ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_CLOSE;
+                ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_DEFEATCLOSE_FADEOUT;
+                if (ff9.btl_result == FF9StateGlobal.BTL_RESULT_ENEMY_FLEE) // Enemy flee, such as (Magic) Vice or friendly monsters when attacked
                     BattleVoice.TriggerOnBattleInOut("EnemyEscape");
             }
         }
@@ -209,30 +207,31 @@ public static class battle
 
     private static void BattleMainLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
     {
-        //uint id = sys.id;
         FF9StateSystem.Settings.SetTranceFull();
-        Boolean flag = false;
+        Boolean showTargetCursor = false;
         for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
         {
             if (next.bi.disappear == 0)
                 btlseq.DispCharacter(next);
             if (!FF9StateSystem.Battle.isDebug && UIManager.Battle.CurrentPlayerIndex != -1 && next.btl_id == 1 << UIManager.Battle.CurrentPlayerIndex && (btlsys.cmd_status & 2) != 0 && (next.flags & geo.GEO_FLAGS_CLIP) == 0)
             {
-                flag = true;
+                showTargetCursor = true;
                 btl_cmd.DispSelectCursor(sys, btlsys, next);
             }
 
-            btl_para.CheckPointData(next);
-            btl_stat.CheckStatusLoop(next);
-            btl_stat.RotateAfterCheckStatusLoop(next);
+            BattleUnit unit = new BattleUnit(next);
+            btl_para.CheckPointData(unit);
+            btl_stat.CheckStatusLoop(unit);
         }
-        if (flag)
+        if (showTargetCursor)
         {
             if (!btlsys.s_cur.activeSelf)
                 btlsys.s_cur.SetActive(true);
         }
         else
+        {
             btlsys.s_cur.SetActive(false);
+        }
         btl_cmd.CommandEngine(btlsys);
         battle.BattleSubSystem(sys, btlsys);
     }
@@ -247,7 +246,7 @@ public static class battle
             if (data.bi.disappear == 0)
             {
                 btlseq.DispCharacter(data);
-                if (btlsys.btl_phase == 3)
+                if (btlsys.btl_phase == FF9StateBattleSystem.PHASE_MENU_ON)
                 {
                     //data.bi.stop_anim = 0;
                     //if (data.evt.animFrame >= GeoAnim.geoAnimGetNumFrames(data))
@@ -268,7 +267,7 @@ public static class battle
             }
             btl_mot.DieSequence(data);
         }
-        if (btlsys.btl_phase == 7 && !btlsys.btl_scene.Info.NoGameOver && !btl_util.ManageBattleSong(sys, 30, 6))
+        if (btlsys.btl_phase == FF9StateBattleSystem.PHASE_DEFEAT && !btlsys.btl_scene.Info.NoGameOver && !btl_util.ManageBattleSong(sys, 30, 6))
             flag = false;
         battle.BattleSubSystem(sys, btlsys);
         return flag;
@@ -289,21 +288,21 @@ public static class battle
                 btlseq.DispCharacter(data);
                 switch (btlsys.btl_seq)
                 {
-                    case 0:
-                        btl_para.CheckPointData(data);
+                    case FF9StateBattleSystem.SEQ_MENU_OFF_VICTORY:
+                        btl_para.CheckPointData(next);
                         if ((!next.IsPlayer && !next.IsUnderAnyStatus(BattleStatusConst.BattleEnd)) || (next.IsPlayer && next.IsUnderStatus(BattleStatus.Death) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE)))
                             proceedEnd = false;
                         break;
-                    case 1:
+                    case FF9StateBattleSystem.SEQ_MENU_OFF_DEFEAT:
                         if (next.IsPlayer && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_DISABLE) && !next.IsUnderAnyStatus(BattleStatusConst.BattleEnd))
                             proceedEnd = false;
                         break;
-                    case 2:
+                    case FF9StateBattleSystem.SEQ_MENU_OFF_EVENT:
                         if (btlsys.cmd_queue.next != null && btlsys.cur_cmd == null && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysTrans) && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysDead) && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysReraise) && !btl_cmd.CheckSpecificCommand2(BattleCommandId.SysStone))
                             proceedEnd = true;
-                        btl_para.CheckPointData(data);
+                        btl_para.CheckPointData(next);
                         if (next.IsPlayer)
-                            next.TryRemoveStatuses(BattleStatusConst.CancelEvent);
+                            next.TryRemoveStatuses(BattleStatusConst.RemoveOnEvent);
                         if (btlsys.cur_cmd != null)
                             proceedEnd = false;
                         if (next.IsUnderStatus(BattleStatus.Death))
@@ -319,7 +318,7 @@ public static class battle
                         if (!btl_stat.CheckStatus(data, BattleStatusConst.Immobilized) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
                             proceedEnd = false;
                         break;
-                    case 3:
+                    case FF9StateBattleSystem.SEQ_MENU_OFF_ESCAPE:
                         btl_cmd.KillAllCommand(btlsys);
                         if (next.IsUnderStatus(BattleStatus.Death))
                         {
@@ -355,92 +354,104 @@ public static class battle
             }
             btl_mot.DieSequence(data);
         }
-        if (btlsys.btl_seq == 3 && btlsys.btl_escape_fade < 32 && btlsys.btl_escape_fade != 0)
+        if (btlsys.btl_seq == FF9StateBattleSystem.SEQ_MENU_OFF_ESCAPE && btlsys.btl_escape_fade < 32 && btlsys.btl_escape_fade != 0)
             btlsys.btl_escape_fade -= 2;
-        if (proceedEnd)
+        if (!proceedEnd)
         {
-            switch (btlsys.btl_seq)
-            {
-                case 0:
-                case 4:
-                    sys.btl_flag |= 64;
-                    sys.btl_result = 1;
-                    if (btlsys.btl_scene.Info.WinPose)
+            btl_cmd.CommandEngine(btlsys);
+            battle.BattleSubSystem(sys, btlsys);
+            return;
+        }
+        switch (btlsys.btl_seq)
+        {
+            case FF9StateBattleSystem.SEQ_MENU_OFF_VICTORY:
+            case FF9StateBattleSystem.SEQ_MENU_OFF_VICTORY_WITH_ENEMY:
+                sys.btl_flag |= battle.BTL_END_LOAD;
+                sys.btl_result = FF9StateGlobal.BTL_RESULT_VICTORY;
+                if (btlsys.btl_scene.Info.WinPose)
+                {
+                    if (!btl_util.ManageBattleSong(sys, 30, 5))
+                        break;
+                    BattleVoice.TriggerOnBattleInOut("VictoryPose");
+                    btlsys.btl_phase = FF9StateBattleSystem.PHASE_VICTORY;
+                    for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
                     {
-                        if (!btl_util.ManageBattleSong(sys, 30, 5))
-                            break;
-                        BattleVoice.TriggerOnBattleInOut("VictoryPose");
-                        btlsys.btl_phase = 6;
-                        for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                        if (next.bi.player != 0)
                         {
-                            if (next.bi.player != 0)
+                            BattleUnit unit = new BattleUnit(next);
+                            btl_stat.RemoveStatuses(unit, BattleStatusConst.VictoryClear);
+                            if (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull))
                             {
-                                /*int num2 = (int)*/
-                                btl_stat.RemoveStatuses(next, BattleStatusConst.VictoryClear);
-                                if (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull))
+                                if (next.cur.hp > 0)
                                 {
-                                    if (next.cur.hp > 0)
-                                    {
-                                        Int32 num3 = btl_mot.GetDirection(next);
-                                        next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
-                                        if (!next.is_monster_transform)
-                                            next.bi.def_idle = btl_stat.CheckStatus(next, BattleStatusConst.IdleDying) || next.special_status_old ? (Byte)1 : (Byte)0;
-                                        next.bi.cmd_idle = 0;
-                                        btl_mot.SetDefaultIdle(next);
-                                        //if (btl_util.getPlayerPtr(next).info.win_pose != 0)
-                                        //    btl_mot.setMotion(next, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN);
-                                        //else
-                                        //    btl_mot.setMotion(next, next.bi.def_idle);
-                                        //next.evt.animFrame = 0;
-                                    }
-                                    else
-                                    {
-                                        /*int num4 = (int)*/
-                                        btl_stat.AlterStatus(next, BattleStatus.Death);
-                                    }
+                                    Int32 num3 = btl_mot.GetDirection(next);
+                                    next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
+                                    // TODO [DV] Add status Old to BattleStatusConst.IdleDying
+                                    if (!next.is_monster_transform)
+                                        next.bi.def_idle = btl_stat.CheckStatus(next, BattleStatusConst.IdleDying) ? (Byte)1 : (Byte)0;
+                                    next.bi.cmd_idle = 0;
+                                    btl_mot.SetDefaultIdle(next);
+                                    //if (btl_util.getPlayerPtr(next).info.win_pose != 0)
+                                    //    btl_mot.setMotion(next, BattlePlayerCharacter.PlayerMotionIndex.MP_WIN);
+                                    //else
+                                    //    btl_mot.setMotion(next, next.bi.def_idle);
+                                    //next.evt.animFrame = 0;
+                                }
+                                else
+                                {
+                                    btl_stat.AlterStatus(unit, BattleStatusId.Death);
                                 }
                             }
                         }
-                        SFX.SetCamera(2);
                     }
-                    else if (btlsys.btl_scene.Info.FieldBGM)
+                    SFX.SetCamera(2);
+                }
+                else if (btlsys.btl_scene.Info.FieldBGM)
+                {
+                    sys.btl_flag |= battle.BTL_CONTI_FLD_SONG;
+                }
+                btlsys.btl_phase = FF9StateBattleSystem.PHASE_VICTORY;
+                break;
+            case FF9StateBattleSystem.SEQ_MENU_OFF_DEFEAT:
+                sys.btl_result = FF9StateGlobal.BTL_RESULT_DEFEAT;
+                btlsys.btl_phase = FF9StateBattleSystem.PHASE_DEFEAT;
+                break;
+            case FF9StateBattleSystem.SEQ_MENU_OFF_EVENT:
+                if (!btlsys.btl_scene.Info.WinPose && btlsys.btl_scene.Info.FieldBGM)
+                    sys.btl_flag |= battle.BTL_CONTI_FLD_SONG;
+                btlsys.btl_phase = FF9StateBattleSystem.PHASE_EVENT;
+                btl_cmd.KillAllCommand(btlsys);
+                btl_cmd.InitCommandSystem(btlsys);
+                for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                {
+                    btl_cmd.InitCommand(next);
+                    if (next.bi.player == 0)
                     {
-                        sys.btl_flag |= 8;
+                        Int32 num2 = btl_mot.GetDirection(next);
+                        next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num2, next.rot.eulerAngles.z);
                     }
-                    btlsys.btl_phase = 6;
-                    break;
-                case 1:
-                    sys.btl_result = 3;
-                    btlsys.btl_phase = 7;
-                    break;
-                case 2:
-                    if (!btlsys.btl_scene.Info.WinPose && btlsys.btl_scene.Info.FieldBGM)
-                        sys.btl_flag |= 8;
-                    btlsys.btl_phase = 1;
-                    btl_cmd.KillAllCommand(btlsys);
-                    btl_cmd.InitCommandSystem(btlsys);
-                    for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
+                }
+                break;
+            case FF9StateBattleSystem.SEQ_MENU_OFF_ESCAPE:
+                sys.btl_flag |= battle.BTL_END_LOAD;
+                if (!btlsys.btl_scene.Info.WinPose && btlsys.btl_scene.Info.FieldBGM)
+                    sys.btl_flag |= battle.BTL_CONTI_FLD_SONG;
+                sys.btl_result = FF9StateGlobal.BTL_RESULT_ESCAPE;
+                btlsys.btl_phase = FF9StateBattleSystem.PHASE_CLOSE;
+                IOverloadOnFleeScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnFleeScript)) as IOverloadOnFleeScript;
+                if (overloadedMethod != null)
+                {
+                    overloadedMethod.OnFlee(sys);
+                }
+                else
+                {
+                    // Default method
+                    if ((sys.btl_flag & battle.BTL_FLAG_ABILITY_FLEE) != 0)
                     {
-                        btl_cmd.InitCommand(next);
-                        if (next.bi.player == 0)
-                        {
-                            Int32 num2 = btl_mot.GetDirection(next);
-                            next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num2, next.rot.eulerAngles.z);
-                        }
-                    }
-                    break;
-                case 3:
-                    UInt32 gil = (UInt32)battle.btl_bonus.gil;
-                    sys.btl_flag |= 64;
-                    for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
-                        if (next.bi.player == 0)
-                            gil += btl_util.getEnemyPtr(next).bonus_gil;
-                    if (!btlsys.btl_scene.Info.WinPose && btlsys.btl_scene.Info.FieldBGM)
-                        sys.btl_flag |= 8;
-                    sys.btl_result = 4;
-                    btlsys.btl_phase = 8;
-                    if ((sys.btl_flag & 4) != 0)
-                    {
+                        UInt32 gil = (UInt32)battle.btl_bonus.gil;
+                        foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                            if (!unit.IsPlayer)
+                                gil += unit.Enemy.BonusGil;
                         UInt32 gilLost = gil / 10U;
                         if (sys.party.gil > gilLost)
                         {
@@ -453,13 +464,16 @@ public static class battle
                         }
                         UIManager.Battle.SetBattleFollowMessage(BattleMesages.DroppedGil, gilLost);
                     }
-                    break;
-            }
-            if (btlsys.btl_phase != 5)
-                btlsys.btl_seq = btlsys.btl_phase != 6 || btlsys.btl_scene.Info.WinPose ? (Byte)0 : (Byte)1;
+                }
+                break;
         }
-        else
-            btl_cmd.CommandEngine(btlsys);
+        if (btlsys.btl_phase != FF9StateBattleSystem.PHASE_MENU_OFF)
+        {
+            if (btlsys.btl_phase == FF9StateBattleSystem.PHASE_VICTORY)
+                btlsys.btl_seq = btlsys.btl_scene.Info.WinPose ? FF9StateBattleSystem.SEQ_VICTORY_CAMERA_MOVE : FF9StateBattleSystem.SEQ_VICTORY_FADEOUT;
+            else
+                btlsys.btl_seq = FF9StateBattleSystem.SEQ_DEFEATCLOSE_FADEOUT;
+        }
         battle.BattleSubSystem(sys, btlsys);
     }
 
@@ -555,7 +569,7 @@ public static class battle
 
     public static void ff9ShutdownStateBattleResult()
     {
-        if ((FF9StateSystem.Common.FF9.btl_flag & 8) != 0)
+        if ((FF9StateSystem.Common.FF9.btl_flag & battle.BTL_CONTI_FLD_SONG) != 0)
             return;
 
         btlsnd.ff9btlsnd_song_vol_intplall(120, 0);

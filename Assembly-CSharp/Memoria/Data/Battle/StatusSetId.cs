@@ -1,6 +1,6 @@
 ﻿namespace Memoria.Data
 {
-    public enum BattleStatusIndex : int
+    public enum StatusSetId : int
     {
         None = 0,
         Regen = 1,

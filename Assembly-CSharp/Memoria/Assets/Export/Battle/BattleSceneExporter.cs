@@ -102,13 +102,13 @@ namespace Memoria.Assets
                 EmbadedTextResources.CurrentSymbol = null;
                 Dictionary<String, BattleActionThread.TextGetter> langBattleText = new Dictionary<String, BattleActionThread.TextGetter>();
                 foreach (String symbol in Configuration.Export.Languages)
-                    langBattleText[symbol] = index => text[index][symbol];
+                    langBattleText[symbol] = index => index >= 0 && index < text.Count && text[index].ContainsKey(symbol) ? text[index][symbol] : "[TEXT NOT FOUND]";
 
                 for (Int32 i = 0; i < btlScene.header.AtkCount; i++)
                 {
                     if (btlSeq.seq_work_set.SeqData[i] != 0)
                     {
-                        List<BattleActionThread> atkSeq = BattleActionThread.LoadFromBtlSeq(btlScene, btlSeq, index => usBattleText[index], i, langBattleText);
+                        List<BattleActionThread> atkSeq = BattleActionThread.LoadFromBtlSeq(btlScene, btlSeq, index => index >= 0 && index < usBattleText.Length ? usBattleText[index] : "[TEXT NOT FOUND]", i, langBattleText);
                         String seqStr = BattleActionThread.GetSequenceStringCode(atkSeq);
                         if (!String.IsNullOrEmpty(seqStr))
                         {
@@ -261,7 +261,7 @@ namespace Memoria.Assets
                 writer.EndArray();
 
                 writer.WriteUInt16("radius", enemy.Radius);
-                writer.WriteUInt16("geo", enemy.Geo);
+                writer.WriteInt16("geo", enemy.Geo);
 
                 writer.BeginObject("animation");
                 for (Int32 i = 0; i < enemy.Mot.Length; i++) // 6
@@ -536,7 +536,7 @@ namespace Memoria.Assets
                             if (baseValue.Radius != enemy.Radius)
                                 writer.WriteUInt16("radius", enemy.Radius);
                             if (baseValue.Geo != enemy.Geo)
-                                writer.WriteUInt16("geo", enemy.Geo);
+                                writer.WriteInt16("geo", enemy.Geo);
 
                             if (!baseValue.Mot.SequenceEqual(enemy.Mot))
                             {
@@ -877,7 +877,7 @@ namespace Memoria.Assets
                     sw.Item(item);
 
                 sw.UInt16(_enData.Radius);
-                sw.UInt16(_enData.Geo);
+                sw.Int16(_enData.Geo);
 
                 // 6
                 foreach (UInt16 anim in _enData.Mot)

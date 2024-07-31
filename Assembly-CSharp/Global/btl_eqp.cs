@@ -72,35 +72,25 @@ public static class btl_eqp
     {
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
-            if (btl.builtin_weapon_mode && btl.bi.disappear == 0 && !btl.is_monster_transform && EnemyBuiltInWeaponTable.TryGetValue(btl.dms_geo_id, out Int32[] weaponBoneID))
+            if (btl.builtin_weapon_mode && btl.bi.disappear == 0 && !btl.is_monster_transform && EnemyBuiltInWeaponTable.TryGetValue(btl.dms_geo_id, out Int32[] weaponBoneIDs))
             {
-                for (Int32 i = 0; i < weaponBoneID.Length; i++)
+                Boolean usedForWeapon = false;
+                foreach (Int32 boneID in weaponBoneIDs)
                 {
-                    Transform builtInBone = null;
-                    if (btl.gameObject == btl.originalGo)
-                        builtInBone = btl.originalGo.transform.GetChildByName($"bone{weaponBoneID[i]:D3}");
-                    else if (btl.gameObject == btl.tranceGo && btl.bi.player != 0)
-                        builtInBone = btl.tranceGo.transform.GetChildByName($"bone{weaponBoneID[i]:D3}");
-                    else if (btl.bi.player == 0)
-                        builtInBone = btl.gameObject.transform.GetChildByName($"bone{weaponBoneID[i]:D3}");
+                    Transform builtInBone = btl.gameObject.transform.GetChildByName($"bone{boneID:D3}");
                     if (builtInBone != null)
+                    {
                         builtInBone.localScale = SCALE_INVISIBLE;
-                    if (btl.weapon_geo != null && btl.weapon_bone == weaponBoneID[i])
-                        btl.weapon_geo.transform.localScale = builtInBone != null ? SCALE_REBALANCE : Vector3.one;
-                    if (btl.bi.player != 0)
-                    {
-                        CharacterBattleParameter btlParam = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)];
-                        if (btlParam.WeaponSize.Any(off => off != 0f))
-                        {
-                            Vector3 WeaponSizeVector = new Vector3(btlParam.WeaponSize[0], btlParam.WeaponSize[1], btlParam.WeaponSize[2]);
-                            btl.weapon_geo.transform.localScale = Vector3.Scale(WeaponSizeVector, builtInBone != null && weaponBoneID.Contains(btl.weapon_bone) ? SCALE_REBALANCE : Vector3.one);
-                        }
+                        if (boneID == btl.weapon_bone)
+                            usedForWeapon = true;
                     }
-                    else if (btl.weapon_scale != null && btl.bi.player == 0)
-                    {
-
-                        btl.weapon_geo.transform.localScale = Vector3.Scale(btl.weapon_scale, builtInBone != null && weaponBoneID.Contains(btl.weapon_bone) ? SCALE_REBALANCE : Vector3.one);
-                    }
+                }
+                if (btl.weapon_geo != null)
+                {
+                    if (usedForWeapon)
+                        btl.weapon_geo.transform.localScale = Vector3.Scale(btl.weapon_scale, SCALE_REBALANCE);
+                    else
+                        btl.weapon_geo.transform.localScale = btl.weapon_scale;
                 }
             }
             InitOffSetWeapon(btl);

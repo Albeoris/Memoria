@@ -10,6 +10,8 @@ namespace Memoria.Data
         public CharacterId Beneficiary;
         public Int32[] BaseAbilities;
         public Int32[] UnlockedAbilities;
+        public BattleStatus SupporterBlockingStatus;
+        public BattleStatus BeneficiaryBlockingStatus;
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
@@ -19,6 +21,18 @@ namespace Memoria.Data
             Beneficiary = (CharacterId)CsvParser.Int32(raw[index++]);
             BaseAbilities = CsvParser.AnyAbilityArray(raw[index++]);
             UnlockedAbilities = CsvParser.AnyAbilityArray(raw[index++]);
+
+            if (metadata.HasOption($"IncludeStatusBlockers"))
+            {
+                metadata.AddOption("UnshiftStatuses");
+                SupporterBlockingStatus = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata);
+                BeneficiaryBlockingStatus = BattleStatusEntry.ParseBattleStatus(raw[index++], metadata);
+            }
+            else
+            {
+                SupporterBlockingStatus = BattleStatus.Silence | BattleStatus.Heat | BattleStatus.Mini;
+                BeneficiaryBlockingStatus = BattleStatus.Mini;
+            }
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -28,6 +42,12 @@ namespace Memoria.Data
             sw.Int32((Int32)Beneficiary);
             sw.AnyAbilityArray(BaseAbilities);
             sw.AnyAbilityArray(UnlockedAbilities);
+            if (metadata.HasOption($"IncludeStatusBlockers"))
+            {
+                metadata.AddOption("UnshiftStatuses");
+                BattleStatusEntry.WriteBattleStatus(sw, metadata, SupporterBlockingStatus);
+                BattleStatusEntry.WriteBattleStatus(sw, metadata, BeneficiaryBlockingStatus);
+            }
         }
     }
 }

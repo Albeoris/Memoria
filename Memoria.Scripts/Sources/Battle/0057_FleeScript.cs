@@ -23,7 +23,7 @@ namespace Memoria.Scripts.Battle
         {
             btl_sys.CheckEscape(false);
             if (_v.CanEscape())
-                BattleState.EnqueueCommand(BattleState.EscapeCommand, BattleCommandId.SysEscape, 0U, 15, true);
+                BattleState.EnqueueCommand(BattleState.EscapeCommand, BattleCommandId.SysEscape, 0, 15, true);
         }
     }
 }

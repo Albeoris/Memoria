@@ -64,7 +64,7 @@ namespace Memoria.Data
             Rate = CsvParser.Int32(raw[index++]);
             Element = (EffectElement)CsvParser.Byte(raw[index++]);
 
-            Status = (BattleStatus)CsvParser.UInt32(raw[index]);
+            Status = (BattleStatus)CsvParser.UInt64(raw[index]);
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -84,7 +84,7 @@ namespace Memoria.Data
             sw.Int32(Rate);
             sw.Byte((Byte)Element);
 
-            sw.UInt32((UInt32)Status);
+            sw.UInt64((UInt64)Status);
         }
 
         public ITEM_DATA ToItemData()

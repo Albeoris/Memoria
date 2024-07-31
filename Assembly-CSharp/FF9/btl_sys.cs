@@ -1,8 +1,8 @@
 ﻿using Memoria;
 using Memoria.Data;
+using Memoria.Scripts;
 using Memoria.Speedrun;
 using System;
-using System.Collections.Generic;
 
 // ReSharper disable InconsistentNaming
 // ReSharper disable EmptyConstructor
@@ -25,7 +25,7 @@ namespace FF9
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             ff9Battle.btl_list.next = null;
             ff9Battle.btl_cnt = 0;
-            ff9Battle.btl_phase = 0;
+            ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_INIT_SYSTEM;
             ff9Battle.btl_seq = 0;
             ff9Battle.btl_fade_time = 0;
             ff9Battle.btl_escape_key = 0;
@@ -33,8 +33,6 @@ namespace FF9
             ff9Battle.btl_load_status = 0;
             ff9Battle.player_load_fade = 0;
             ff9Battle.enemy_load_fade = 0;
-            ff9Battle.phantom_no = BattleAbilityId.Void;
-            ff9Battle.phantom_cnt = 0;
             ff9Battle.enemy_die = 0;
             battle.btl_bonus.member_flag = 0;
             ClearBattleBonus();
@@ -51,85 +49,92 @@ namespace FF9
             btlBonus.escape_gil = false;
         }
 
-        public static void CheckBattlePhase(BTL_DATA btl)
+        public static void CheckBattlePhase(BTL_DATA dyingUnit)
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             Int32 dieSeqEnd = 6; /*btl.bi.player == 0 ? 6 : 6*/
-            for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
-                if (next.bi.player == btl.bi.player && (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull) || Status.checkCurStat(next, BattleStatus.Death) && next.die_seq != dieSeqEnd))
+            for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
+                if (btl.bi.player == dyingUnit.bi.player && (!btl_stat.CheckStatus(btl, BattleStatusConst.BattleEndFull) || btl_stat.CheckStatus(btl, BattleStatus.Death) && btl.die_seq != dieSeqEnd))
                     return;
-            if (btl.bi.player == 0)
+            if (dyingUnit.bi.player == 0)
             {
-                Boolean playerStillAliver = false;
-                for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
+                Boolean playerStillAlive = false;
+                for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
                 {
-                    if (next.bi.player != 0 && (!btl_stat.CheckStatus(next, BattleStatusConst.BattleEndFull) || (next.cur.hp == 0 || Status.checkCurStat(next, BattleStatus.Death)) && btl_stat.CheckStatus(next, BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysReraise)))
+                    if (btl.bi.player != 0)
                     {
-                        playerStillAliver = true;
-                        break;
+                        if (!btl_stat.CheckStatus(btl, BattleStatusConst.BattleEndFull))
+                        {
+                            playerStillAlive = true;
+                            break;
+                        }
+                        if ((btl.cur.hp == 0 || btl_stat.CheckStatus(btl, BattleStatus.Death)) && btl.stat.HasDeathChangerEffect)
+                        {
+                            playerStillAlive = true;
+                            break;
+                        }
                     }
                 }
-                if (!playerStillAliver)
+                if (!playerStillAlive)
                     return;
-                if (ff9Battle.btl_seq != 1)
-                    ff9Battle.btl_seq = 0;
+                if (ff9Battle.btl_seq != FF9StateBattleSystem.SEQ_MENU_OFF_DEFEAT)
+                    ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_MENU_OFF_VICTORY;
             }
             else
             {
-                for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
+                IOverloadOnGameOverScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnGameOverScript)) as IOverloadOnGameOverScript;
+                if (overloadedMethod != null)
                 {
-                    CharacterSerialNumber serialNo = btl_util.getSerialNumber(next);
-                    if (serialNo == CharacterSerialNumber.EIKO_FLUTE || serialNo == CharacterSerialNumber.EIKO_RACKET)
+                    if (overloadedMethod.OnGameOver(ff9Battle, new BattleUnit(dyingUnit)))
+                        return;
+                }
+                else
+                {
+                    // Default method
+                    for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
                     {
-                        if (!btl_stat.CheckStatus(next, BattleStatusConst.NoRebirthFlame))
+                        if (btl.bi.player != 0 && (CharacterId)btl.bi.slot_no == CharacterId.Eiko)
                         {
-                            if (btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix))
-                                return;
-                            Boolean procRebirthFlame = false;
-                            if (Configuration.Mod.TranceSeek) // TRANCE SEEK - RebirthFlame
+                            if (!btl_stat.CheckStatus(btl, BattleStatusConst.NoRebirthFlame))
                             {
-                                BattleUnit unit = new BattleUnit(next);
-                                Character player = unit.Player;
-                                if (player.Equipment.Accessory == RegularItem.PhoenixPinion && ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8())
-                                    procRebirthFlame = true;
+                                if (btl_cmd.CheckSpecificCommand(btl, BattleCommandId.SysLastPhoenix))
+                                    return;
+                                Boolean procRebirthFlame = ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8();
+                                // TODO [DV] Use IOverloadOnGameOverScript
+                                //if (Configuration.Mod.TranceSeek) // TRANCE SEEK - RebirthFlame
+                                //{
+                                //    BattleUnit unit = new BattleUnit(btl);
+                                //    Character player = unit.Player;
+                                //    procRebirthFlame = player.Equipment.Accessory == RegularItem.PhoenixPinion && ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8();
+                                //}
+                                if (procRebirthFlame)
+                                {
+                                    UIManager.Battle.FF9BMenu_EnableMenu(true);
+                                    btl_cmd.SetCommand(btl.cmd[0], BattleCommandId.SysLastPhoenix, (Int32)BattleAbilityId.RebirthFlame, btl_scrp.GetBattleID(0U), 1u);
+                                    return;
+                                }
                             }
-                            else
-                            {
-                                procRebirthFlame = ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8();
-                            }
-                            if (procRebirthFlame)
-                            {
-                                UIManager.Battle.FF9BMenu_EnableMenu(true);
-                                btl_cmd.SetCommand(next.cmd[0], BattleCommandId.SysLastPhoenix, (Int32)BattleAbilityId.RebirthFlame, btl_scrp.GetBattleID(0U), 1U);
-                                return;
-                            }
+                            break;
                         }
-                        break;
                     }
                 }
-                ff9Battle.btl_seq = 1;
+                ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_MENU_OFF_DEFEAT;
                 UIManager.Battle.SetBattleFollowMessage(BattleMesages.Annihilated);
             }
             UIManager.Battle.FF9BMenu_EnableMenu(false);
-            ff9Battle.btl_phase = 5;
+            ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
             btl_cmd.KillAllCommand(ff9Battle);
         }
 
         public static void CheckBattleMenuOff(BattleUnit btl)
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-            BattleUnit btl1 = null;
 
             foreach (BattleUnit next in ff9Battle.EnumerateBattleUnits())
-            {
-                if (next.PlayerIndex == CharacterId.Eiko)
-                    btl1 = next;
-
-                if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.IsUnderAnyStatus(BattleStatus.AutoLife) || btl_cmd.CheckSpecificCommand(next.Data, BattleCommandId.SysReraise)))
+                if (next.IsPlayer == btl.IsPlayer && (!next.IsUnderAnyStatus(BattleStatusConst.BattleEndFull) || (next.CurrentHp == 0 || next.IsUnderStatus(BattleStatus.Death)) && next.Data.stat.HasDeathChangerEffect || btl_cmd.CheckSpecificCommand(next.Data, BattleCommandId.SysReraise)))
                     return;
-            }
 
-            if (btl1 != null && btl_cmd.CheckSpecificCommand(btl1.Data, BattleCommandId.SysLastPhoenix))
+            if (btl_cmd.CheckSpecificCommand2(BattleCommandId.SysLastPhoenix))
                 return;
 
             UIManager.Battle.FF9BMenu_EnableMenu(false);
@@ -137,11 +142,11 @@ namespace FF9
             ff9Battle.btl_escape_key = 0;
         }
 
-        public static void CheckForecastMenuOff(BTL_DATA btl)
+        public static void CheckForecastMenuOff(BTL_DATA dyingEnemy)
         {
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
-            for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
-                if (next.bi.player == 0 && !Status.checkCurStat(next, BattleStatus.Death))
+            for (BTL_DATA btl = ff9Battle.btl_list.next; btl != null; btl = btl.next)
+                if (btl.bi.player == 0 && !btl_stat.CheckStatus(btl, BattleStatus.Death) && btl != dyingEnemy)
                     return;
             AutoSplitterPipe.SignalBattleWin();
             UIManager.Battle.FF9BMenu_EnableMenu(false);
@@ -155,11 +160,11 @@ namespace FF9
             FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
             switch (ff9.btl_result)
             {
-                case 3: // Scripted defeat
-                case 6: // Normal defeat
+                case FF9StateGlobal.BTL_RESULT_DEFEAT: // Scripted defeat
+                case FF9StateGlobal.BTL_RESULT_GAMEOVER: // Normal defeat
                     if (!btlsys.btl_scene.Info.NoGameOver)
                     {
-                        ff9.btl_result = 6;
+                        ff9.btl_result = FF9StateGlobal.BTL_RESULT_GAMEOVER;
                         break;
                     }
                     // Non-critical battles, such as battles during the Festival of the Hunt
@@ -168,7 +173,7 @@ namespace FF9
                             SavePlayerData(next, false);
                     break;
                 default: // Battle has been won or interrupted
-                    if (ff9.btl_result == 1 || ff9.btl_result == 2)
+                    if (ff9.btl_result == FF9StateGlobal.BTL_RESULT_VICTORY || ff9.btl_result == FF9StateGlobal.BTL_RESULT_VICTORY_NO_POSE)
                         BattleAchievement.UpdateEndBattleAchievement();
                     for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                         if (next.bi.player != 0)
@@ -269,7 +274,7 @@ namespace FF9
             player.cur.mp = Math.Min(player.cur.mp, player.max.mp);
             if (removingUnit)
                 if (btl.cur.hp == 0)
-                    btl_stat.AlterStatus(btl, BattleStatus.Death);
+                    btl_stat.AlterStatus(unit, BattleStatusId.Death);
             btl_stat.SaveStatus(player, btl);
             ff9play.FF9Play_UpdateSerialNumber(player);
         }

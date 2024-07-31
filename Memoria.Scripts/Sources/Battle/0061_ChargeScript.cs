@@ -20,9 +20,6 @@ namespace Memoria.Scripts.Battle
 
         public void Perform()
         {
-            const BattleStatus cannotAttack = BattleStatus.Petrify | BattleStatus.Venom | BattleStatus.Death | BattleStatus.Confuse | BattleStatus.Berserk
-                                              | BattleStatus.Stop | BattleStatus.Sleep | BattleStatus.Freeze | BattleStatus.Jump;
-
             _v.PerformCalcResult = false;
 
             _v.Context.Flags = (BattleCalcFlags)BattleState.GetUnitIdsUnderStatus(false, BattleStatus.LowHP);
@@ -35,7 +32,7 @@ namespace Memoria.Scripts.Battle
             Boolean canAttack = false;
             foreach (BattleUnit unit in BattleState.EnumerateUnits())
             {
-                if (((BattleCalcFlags)unit.Id & _v.Context.Flags) == 0 || unit.IsUnderAnyStatus(cannotAttack))
+                if (((BattleCalcFlags)unit.Id & _v.Context.Flags) == 0 || unit.IsUnderAnyStatus(BattleStatusConst.NoInput))
                     continue;
 
                 canAttack = true;

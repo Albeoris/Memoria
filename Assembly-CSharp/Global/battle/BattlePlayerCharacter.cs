@@ -69,45 +69,6 @@ public class BattlePlayerCharacter : MonoBehaviour
         }
     }
 
-    public static void ResetTranceData(BTL_DATA btl, Boolean isTrance)
-    {
-        CharacterBattleParameter btlParam = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)];
-        string[] AnimationId = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)].AnimationId;
-        string[] TranceAnimationId = btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)].TranceAnimationId;
-
-        if (btl_mot.BattleParameterList[btl_util.getSerialNumber(btl)].TranceParameters)
-        {
-            for (Int32 i = 0; i < 34; i++)
-            {
-                if (isTrance)
-                {
-                    if (!String.IsNullOrEmpty(TranceAnimationId[i]))
-                        btl.mot[i] = TranceAnimationId[i];
-                }
-                else
-                {
-                    btl.mot[i] = AnimationId[i];
-                }
-            }
-          
-            btl_mot.setMotion(btl, btl.bi.def_idle);
-
-            if (isTrance)
-            {
-                btl.shadow_bone[0] = btlParam.TranceShadowData[0];
-                btl.shadow_bone[1] = btlParam.TranceShadowData[1];
-                btl_util.SetShadow(btl, btlParam.TranceShadowData[2], btlParam.TranceShadowData[3]);
-            }
-            else
-            {
-                btl.shadow_bone[0] = btlParam.ShadowData[0];
-                btl.shadow_bone[1] = btlParam.ShadowData[1];
-                btl_util.SetShadow(btl, btlParam.ShadowData[2], btlParam.ShadowData[3]);
-                btl._smoothUpdateRegistered = false;
-            }
-        }
-    }
-
     public static void CreatePlayer(BTL_DATA btl, CharacterSerialNumber playerSerialNumber)
     {
         String path = btl_mot.BattleParameterList[playerSerialNumber].ModelId;

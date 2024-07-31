@@ -2495,6 +2495,8 @@ public class FieldMap : HonoBehavior
         [951,0,2,1214],     // Gargan Roo's railing
         [1000,0,12,0],      // Clayra's Trunk text (in English version)
         [1206,0,21,800],    // Alexandria, purple chadelier
+        [1223,0,21,800],    // Alexandria, purple chadelier
+        [1225,0,21,800],    // Alexandria, purple chadelier
         [1309,0,23,0],      // Lindblum armorer light
         [1309,0,24,1],      // Lindblum armorer armor
         [1406,0,20,2600],   // Water layer masking actual water waves

@@ -10,7 +10,7 @@ namespace Memoria.Data
         public String AvatarSprite;
         public String ModelId;
         public String TranceModelId;
-        public Byte[] TranceGlowingColor = new Byte[3];
+        public Int32[] TranceGlowingColor = new Int32[3];
         public String[] AnimationId = new String[34];
         public SpecialEffect AttackSequence;
         public Byte WeaponBone;
@@ -42,7 +42,7 @@ namespace Memoria.Data
             AvatarSprite = CsvParser.String(raw[rawIndex++]);
             ModelId = CsvParser.String(raw[rawIndex++]);
             TranceModelId = CsvParser.String(raw[rawIndex++]);
-            TranceGlowingColor = CsvParser.ByteArray(raw[rawIndex++]);
+            TranceGlowingColor = CsvParser.Int32Array(raw[rawIndex++]);
             if (TranceGlowingColor.Length < 3)
                 Array.Resize(ref TranceGlowingColor, 3);
             for (Int32 i = 0; i < 34; i++)
@@ -83,7 +83,8 @@ namespace Memoria.Data
                 if (WeaponOffsetRot.Length < 3)
                     Array.Resize(ref WeaponOffsetRot, 3);
             }
-            if (metadata.HasOption($"Include{nameof(TranceParameters)}"))
+            TranceParameters = metadata.HasOption($"Include{nameof(TranceParameters)}");
+            if (TranceParameters)
             {
                 for (Int32 i = 0; i < 34; i++)
                     TranceAnimationId[i] = CsvParser.String(raw[rawIndex++]);

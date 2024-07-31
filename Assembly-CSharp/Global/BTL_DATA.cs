@@ -1,15 +1,27 @@
 ﻿using FF9;
+using Memoria;
 using Memoria.Data;
-using Memoria.Prime.Collections;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 public partial class BTL_DATA
 {
-    public void ChangeModel(GameObject newModel)
+    public void ChangeModel(GameObject newModel, Int16 geoID)
     {
+        gameObject.SetActive(false);
+        newModel.SetActive(true);
         gameObject = newModel;
+        meshCount = 0;
+        foreach (Transform transform in gameObject.transform)
+            if (transform.name.Contains("mesh"))
+                meshCount++;
+        meshIsRendering = new Boolean[meshCount];
+        for (Int32 i = 0; i < meshCount; i++)
+            meshIsRendering[i] = true;
+        dms_geo_id = geoID;
+        builtin_weapon_mode = btl_eqp.EnemyBuiltInWeaponTable.ContainsKey(geoID);
         _smoothUpdateRegistered = false;
     }
 
@@ -33,9 +45,11 @@ public partial class BTL_DATA
     {
         GameObject shadow = this.getShadow();
         this.gameObject.SetActive(value);
-        btl_stat.SetStatusClut(this, btl_stat.CheckStatus(this, BattleStatus.Petrify));
+        btl_stat.SetStatusClut(this, btl_stat.CheckStatus(this, BattleStatusConst.ChgPolyClut));
         if (this.bi.shadow != 0)
             shadow.SetActive(value);
+        if (value)
+            _smoothUpdateRegistered = false;
     }
 
     public void SetIsEnabledMeshRenderer(Int32 mesh, Boolean isEnabled)
@@ -91,12 +105,13 @@ public partial class BTL_DATA
         try
         {
             List<DelayedModifier> removedList = new List<DelayedModifier>();
-            Memoria.BattleUnit unit = new Memoria.BattleUnit(this);
+            BattleUnit unit = new BattleUnit(this);
             foreach (DelayedModifier modifier in delayedModifierList)
             {
                 if (!modifier.isDelayed(unit))
                 {
-                    modifier.apply(unit);
+                    if (modifier.apply != null)
+                        modifier.apply(unit);
                     removedList.Add(modifier);
                 }
             }
@@ -105,7 +120,7 @@ public partial class BTL_DATA
         }
         catch (Exception err)
         {
-            Memoria.Prime.Log.Error(err);
+            Log.Error(err);
         }
     }
 
@@ -175,17 +190,9 @@ public partial class BTL_DATA
     public Byte shadow_x;
     public Byte shadow_z;
 
-    public Byte[] add_col = new Byte[3];
-
     public UInt32[] sa;
     public HashSet<SupportAbility> saExtended;
     public List<SupportingAbilityFeature> saMonster;
-
-    public Int32 fig_regene_hp;
-    public Int32 fig_regene_mp;
-    public Int32 fig_poison_hp;
-    public Int32 fig_poison_mp;
-    public Byte fig_stat_info;
 
     public Byte sel_menu;
 
@@ -213,9 +220,6 @@ public partial class BTL_DATA
 
     public Renderer[] weaponRenderer;
 
-    public HUDMessageChild deathMessage;
-    public HUDMessageChild petrifyMessage;
-
     public Int32 attachOffset = 0;
 
     public GameObject originalGo;
@@ -231,8 +235,6 @@ public partial class BTL_DATA
     public Int32 radius_effect; // big radius (Scan etc...)
     public UInt16 radius_collision; // small radius (range for attacks etc...)
 
-    public UInt16 frameCount = 1;
-
     public Vector3 targetPos;
     public Int16 targetFrame;
 
@@ -241,14 +243,10 @@ public partial class BTL_DATA
     // Custom fields
     public Boolean out_of_reach; // Instead of considering the global battle flag "NoNeighboring", we use a flag for each BTL_DATA
 
-    public Boolean[] stat_modifier = new Boolean[6]; // Str, Mgc, Def, Ev, MgDef, MgEv; Flags checking if a stat has been modified by a spell; re-initialized to "false" when that stat gets modified by script
-    public StatusModifier stat_partial_resist = new StatusModifier(0f);
-    public StatusModifier stat_duration_factor = new StatusModifier(1f);
-
     public UInt16 summon_count; // Counter of the number of uses of a summon spell in a battle
 
     public Int16 critical_rate_deal_bonus; // Absolute increase/decrease in the % of critical strikes dealt by the BTL_DATA
-    public Int16 critical_rate_receive_bonus; // Absolute increase/decrease in the % of critical strikes dealt to the BTL_DATA
+    public Int16 critical_rate_receive_resistance; // Absolute increase/decrease in the % of critical strikes dealt to the BTL_DATA
 
     public Int32 geo_scale_x; // For geo.geoScaleSet
     public Int32 geo_scale_y;
@@ -262,13 +260,20 @@ public partial class BTL_DATA
     public UInt32 maxDamageLimit;
     public UInt32 maxMpDamageLimit;
 
-    public Boolean special_status_old; // TRANCE SEEK - Old Status
+    public Color uiColorHP;
+    public Color uiColorMP;
+    public String uiLabelHP;
+    public String uiLabelMP;
+    public String uiSpriteATB;
+
+    public Vector3 geoScaleStatus;
+    public Single animSpeedStatusFactor;
 
     public List<DelayedModifier> delayedModifierList = new List<DelayedModifier>();
 
     public BTL_DATA killer_track;
 
-    public Boolean builtin_weapon_mode = false;
+    public Boolean builtin_weapon_mode;
 
     public Boolean is_monster_transform;
     public MONSTER_TRANSFORM monster_transform;
@@ -299,8 +304,8 @@ public partial class BTL_DATA
 
     public class DelayedModifier
     {
-        public delegate Boolean IsDelayedDelegate(Memoria.BattleUnit btl);
-        public delegate void ApplyDelegate(Memoria.BattleUnit btl);
+        public delegate Boolean IsDelayedDelegate(BattleUnit btl);
+        public delegate void ApplyDelegate(BattleUnit btl);
 
         public IsDelayedDelegate isDelayed = null;
         public ApplyDelegate apply = null;

@@ -80,12 +80,8 @@ namespace Memoria
 
                 if (actor._smoothUpdateRegistered && actor._smoothUpdateAnimNamePrevious == actor._smoothUpdateAnimNameActual)
                 {
-                    Single speed = actor._smoothUpdateAnimTimeActual - actor._smoothUpdateAnimTimePrevious;
-                    Int32 direction = actor.originalActor.animFrame - actor.originalActor.lastAnimFrame;
-                    Boolean hasLooped =
-                        (direction < 0 && actor._smoothUpdateAnimTimeActual + speed < 0f) ||
-                        (direction > 0 && actor._smoothUpdateAnimTimeActual + speed > animState.length);
-                    if (!hasLooped)
+                    Single speed = animState.time - actor._smoothUpdateAnimTimePrevious;
+                    if (Mathf.Abs(speed) < animState.length / 2f)
                         actor._smoothUpdateAnimSpeed = speed;
                 }
                 else

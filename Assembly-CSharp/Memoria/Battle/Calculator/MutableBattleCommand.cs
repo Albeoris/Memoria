@@ -82,7 +82,7 @@ namespace Memoria
             set => Data.aa.Info.Target = value;
         }
 
-        public new BattleStatusIndex AbilityStatusIndex
+        public new StatusSetId AbilityStatusIndex
         {
             get => base.AbilityStatusIndex;
             set => Data.aa.AddStatusNo = value;
