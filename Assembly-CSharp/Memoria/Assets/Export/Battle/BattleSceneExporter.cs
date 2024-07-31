@@ -709,7 +709,7 @@ namespace Memoria.Assets
                         localizationCsv[pair.Key].Add(new TxtEntry { Index = id, Prefix = "$battleAction", Value = pair.Value });
 
                     Dictionary<String, String> names = group.First().Key;
-                    String outputPath = outputDirectory + FF9TextTool.RemoveOpCode(names["US"]).Split(Path.GetInvalidFileNameChars()) + ".json";
+                    String outputPath = outputDirectory + String.Concat(FF9TextTool.RemoveOpCode(names["US"]).Split(Path.GetInvalidFileNameChars())) + ".json";
 
                     using (JsonWriter writer = new JsonWriter(outputPath))
                     {
