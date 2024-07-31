@@ -98,6 +98,7 @@
 	UseOrchestralMusic = "Música orquestral (Moguri)"
 	Use30FpsVideo = "Vídeos de 30 FPS (Moguri)"
 	MaxCardCount = "10 mil cartões"
+	NoAutoTrance = "Transe manual"
 	UIColumnsChoice = "Linhas da Interface do Usuário/Colunas"
 	UIColumnsChoice0 = "Padrão"
 	UIColumnsChoice1 = "x1.5 (máximo de 3 colunas)"
@@ -141,6 +142,13 @@
 	WorldFPS_Tooltip = "Taxa de atualização das imagens no mapa-múndi (padrão: 20)"
 	MaxCardCount_Tooltip = "Limite dos cartões no inventário aumentado pra 10.000"
 	UIColumnsChoice_Tooltip = "Número de colunas: se você quiser mais itens/habilidades em uma tela"
+	NoAutoTrance_Tooltip = "O transe não começa automaticamente. Use a 'Tecla Esquerda' pra ativá-lo"
+	FPSDropboxChoice = "FPS"
+	FPSDropboxChoice0 = "Nativo (15/20/30)"
+	FPSDropboxChoice1 = "30"
+	FPSDropboxChoice2 = "60"
+	FPSDropboxChoice3 = "90"
+	FPSDropboxChoice4 = "120"
 	/>
 
 	<SdLib
