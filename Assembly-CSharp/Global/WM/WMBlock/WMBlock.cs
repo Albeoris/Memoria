@@ -1,7 +1,7 @@
 ﻿using Memoria;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 public class WMBlock : MonoBehaviour
@@ -107,8 +107,18 @@ public class WMBlock : MonoBehaviour
     public void SetupPreloadedMaterials()
     {
         foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>())
+        {
             if (MaterialDatabase.TryGetValue(renderer.gameObject.name, out Material material))
                 renderer.material = material;
+        }
+    }
+    public void SetFilterMode()
+    {
+        foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>())
+        {
+            if (renderer.material != null)
+                ModelFactory.SetMatFilter(renderer.material, Configuration.Graphics.WorldSmoothTexture);
+        }
     }
 
     public void ApplyForm()

@@ -14,6 +14,8 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
     {
         if (this.initialized)
             return;
+        if (Configuration.Graphics.WorldSmoothTexture == 0) filterMode = FilterMode.Point;
+        if (Configuration.Graphics.WorldSmoothTexture == 2) filterMode = FilterMode.Trilinear;
         WMBlock.LoadMaterialsFromDisc();
         this.VolcanoCrater1 = AssetManager.Load<RenderTexture>("WorldMap/RenderTextures/VolcanoCrater1", false);
         if (!WMBlock.MaterialDatabase.TryGetValue("VolcanoCrater1", out this.VolcanoCrater1Material))
@@ -65,41 +67,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             this.Falls = AssetManager.Load<Material>("WorldMap/Materials/Falls", false);
         if (!WMBlock.MaterialDatabase.TryGetValue("Stream", out this.Stream))
             this.Stream = AssetManager.Load<Material>("WorldMap/Materials/Stream", false);
-        UpdateFilterMode();
         this.initialized = true;
-    }
-
-    public void UpdateFilterMode()
-    {
-        if (Configuration.Graphics.WorldSmoothTexture == 0) filterMode = FilterMode.Point;
-        if (Configuration.Graphics.WorldSmoothTexture == 2) filterMode = FilterMode.Trilinear;
-        var fields = this.GetType().GetFields();
-        foreach (var field in fields)
-        {
-            if (field.FieldType == typeof(Texture2D[]))
-            {
-                Texture2D[] textures = (Texture2D[])field.GetValue(this);
-                if (textures != null)
-                {
-                    foreach (Texture2D texture in textures)
-                    {
-                        texture.filterMode = filterMode;
-                    }
-                }
-            }
-            else if (field.FieldType == typeof(Texture2D))
-            {
-                Texture2D texture = (Texture2D)field.GetValue(this);
-                if (texture != null)
-                {
-                    texture.filterMode = filterMode;
-                }
-            }
-        }
-    }
-
-    public void OnUpdate()
-    {
     }
 
     public void OnUpdate20FPS()
