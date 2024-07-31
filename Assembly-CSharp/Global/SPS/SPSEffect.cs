@@ -405,7 +405,7 @@ public class SPSEffect : MonoBehaviour
             PSXTexture texture = PSXTextureMgr.GetTexture(worktpage.FlagTP, worktpage.FlagTY, worktpage.FlagTX, workclut.FlagClutY, workclut.FlagClutX);
             this.materials[shindex].mainTexture = texture.texture;
         }
-        ModelFactory.SetMatFilter(this.materials[shindex], Configuration.Graphics.SFXSmoothTexture, 0);
+        ModelFactory.SetMatFilter(this.materials[shindex], Configuration.Graphics.SFXSmoothTexture, 1);
         
         this.meshRenderer.material = this.materials[shindex];
         if (this.spsActor != null)
