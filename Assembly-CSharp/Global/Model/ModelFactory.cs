@@ -80,6 +80,7 @@ public static class ModelFactory
                 Texture texture = AssetManager.Load<Texture>(texturePath, false);
                 texture.name = name;
                 renderer.material.SetTexture("_MainTex", texture);
+                ModelFactory.SetMatFilter(renderer.material, Configuration.Graphics.ElementsSmoothTexture);
                 checkTextureOnDisc = false;
             }
         }
