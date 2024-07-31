@@ -169,8 +169,11 @@ public partial class BTL_DATA
     public Single animSpeed;
     public Single animFrameFrac;
 
-    public Byte weapon_bone;
     public GameObject weapon_geo;
+    public Byte weapon_bone;
+    public Vector3 weapon_scale;
+    public Single[] weapon_offset_pos;
+    public Single[] weapon_offset_rot;
 
     public UInt16 mesh_current;
     public UInt16 mesh_banish;
