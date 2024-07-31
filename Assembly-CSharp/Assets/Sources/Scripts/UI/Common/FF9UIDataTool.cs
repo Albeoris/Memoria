@@ -713,7 +713,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String AvatarSpriteName(CharacterSerialNumber serialNo)
         {
-            if (serialNo >= CharacterSerialNumber.GARNET_LH_ROD && serialNo <= CharacterSerialNumber.GARNET_SH_KNIFE)
+            if (serialNo >= CharacterSerialNumber.GARNET_LH_ROD && serialNo <= CharacterSerialNumber.GARNET_SH_RACKET)
             {
                 if (Configuration.Graphics.GarnetHair == 1)
                     return "face02";
