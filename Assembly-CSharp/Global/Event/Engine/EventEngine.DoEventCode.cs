@@ -2568,16 +2568,16 @@ public partial class EventEngine
                 if (charId == CharacterId.NONE)
                     return 0;
                 if ((Int32)statusList == 0x7F) // Usual vanilla "clear all statuses": make it clear extra statuses that could be "OutOfBattle" as well
-                    statusList = (BattleStatus)~0ul;
+                    statusList = FF9BattleDB.AllStatuses;
                 PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
-                SFieldCalculator.FieldRemoveStatus(player, statusList);
+                FieldCalculator.RemoveStatuses(player, statusList);
                 // https://github.com/Albeoris/Memoria/issues/22
                 if (!player.info.sub_replaced)
-                    SFieldCalculator.FieldRemoveStatus(FF9StateSystem.Common.FF9.GetPlayer(charId + 3), statusList);
+                    FieldCalculator.RemoveStatuses(FF9StateSystem.Common.FF9.GetPlayer(charId + 3), statusList);
                 if (charId == CharacterId.Beatrix)
                     foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
                         if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
-                            SFieldCalculator.FieldRemoveStatus(play, statusList);
+                            FieldCalculator.RemoveStatuses(play, statusList);
                 return 0;
             }
             case EBin.event_code_binary.ADD_STATUS: // Apply a status to a unit in battle, with possible status parameters

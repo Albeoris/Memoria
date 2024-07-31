@@ -245,6 +245,14 @@ namespace Memoria.Scripts
             return null;
         }
 
+        public static FieldAbilityScriptBase GetFieldAbilityScript(Int32 scriptId)
+        {
+            foreach (Result result in s_result)
+                if (result.FieldAbilityScripts.TryGetValue(scriptId, out Type scriptType))
+                    return (FieldAbilityScriptBase)scriptType.GetConstructor(Type.EmptyTypes).Invoke(null);
+            return null;
+        }
+
         public static StatusScriptBase GetStatusScript(BattleStatusId statusId)
         {
             foreach (Result result in s_result)
@@ -324,6 +332,8 @@ namespace Memoria.Scripts
                 Type attributeType = attribute.GetType();
                 if (attributeType == TypeCache<BattleScriptAttribute>.Type)
                     ProcessBattleScript(type, result, attribute);
+                else if (attributeType == TypeCache<FieldAbilityScriptAttribute>.Type)
+                    result.FieldAbilityScripts[(attribute as FieldAbilityScriptAttribute).Id] = type;
                 else if (attributeType == TypeCache<StatusScriptAttribute>.Type)
                     result.StatusScripts[(attribute as StatusScriptAttribute).Id] = type;
             }
@@ -363,6 +373,7 @@ namespace Memoria.Scripts
         {
             public readonly BattleScriptFactory[] BattleBaseScripts;
             public readonly Dictionary<Int32, BattleScriptFactory> BattleExtendedScripts;
+            public readonly Dictionary<Int32, Type> FieldAbilityScripts;
             public readonly Dictionary<BattleStatusId, Type> StatusScripts;
             public readonly Dictionary<Type, Type> OverloadableMethodScripts;
             public readonly String DLLPath;
@@ -371,6 +382,7 @@ namespace Memoria.Scripts
             {
                 BattleBaseScripts = new BattleScriptFactory[256];
                 BattleExtendedScripts = new Dictionary<Int32, BattleScriptFactory>();
+                FieldAbilityScripts = new Dictionary<Int32, Type>();
                 StatusScripts = new Dictionary<BattleStatusId, Type>();
                 OverloadableMethodScripts = new Dictionary<Type, Type>();
                 DLLPath = dllPath;

@@ -1,6 +1,9 @@
 // Shared sequence of SFX Ark__Short
 
-ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+ShowMesh: Char=AllNonTargets ; Enable=False ; IsDisappear=True
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 180, 0)
+EndThread
 PlaySound: Sound=2877
 PlaySound: Sound=2878
 PlaySound: Sound=2879
@@ -8,7 +11,7 @@ PlaySound: Sound=2932
 Wait: Time=36
 SetBackgroundIntensity: Intensity=0.46875 ; Time=24 ; HoldDuration=41
 Wait: Time=40
-ShowMesh: Char=AllEnemies ; Enable=False ; IsDisappear=True
+ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
 Wait: Time=1
 SetBackgroundIntensity: Intensity=0 ; Time=0 ; HoldDuration=275
 PlaySound: Sound=2502
@@ -23,12 +26,15 @@ PlaySound: Sound=2426 ; Pitch=0.76
 Wait: Time=139
 SetBackgroundIntensity: Intensity=1 ; Time=20
 Wait: Time=1
-ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllEnemies ; Enable=True ; Time=20
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllTargets ; Enable=True ; Time=20
 Wait: Time=11
 EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=12
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=20
-ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 0, 0)
+EndThread
+ShowMesh: Char=AllNonTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12

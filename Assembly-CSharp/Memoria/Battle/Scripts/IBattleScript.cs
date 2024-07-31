@@ -3,27 +3,27 @@ using System;
 
 namespace Memoria
 {
+    /// <summary>The attribute required for all the battle ability scripts</summary>
+    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
+    public sealed class BattleScriptAttribute : Attribute
+    {
+        public Int32 Id { get; }
+        public BattleScriptAttribute(Int32 id) { Id = id; }
+    }
+
+    /// <summary>All the battle ability scripts should defined a constructor taking a BattleCalculator as unique argument</summary>
     public delegate IBattleScript BattleScriptFactory(BattleCalculator calc);
 
+    /// <summary>The interface required for all the battle ability scripts</summary>
     public interface IBattleScript
     {
         void Perform();
     }
 
+    /// <summary>The interface for rating battle ability scripts and determine which target is the best according to these estimations</summary>
     public interface IEstimateBattleScript
     {
         Single RateTarget();
-    }
-
-    [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-    public sealed class BattleScriptAttribute : Attribute
-    {
-        public Int32 Id { get; }
-
-        public BattleScriptAttribute(Int32 id)
-        {
-            Id = id;
-        }
     }
 
     public static class BattleScriptDamageEstimate

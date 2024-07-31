@@ -422,7 +422,7 @@ public class EBin
             case flexible_varfunc.PLAYER_ABILITY_LEARNT:
             {
                 PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(ff9play.CharacterOldIndexToID((CharacterOldIndex)args[0]));
-                if (player == null || !ff9abil.FF9Abil_HasAp(new Character(player)))
+                if (player == null || !ff9abil.FF9Abil_HasAp(player))
                     break;
                 Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, args[1]);
                 if (abilIndex < 0)

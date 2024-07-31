@@ -1,12 +1,9 @@
-﻿using FF9;
+﻿using System;
+using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Database;
-using System;
-using System.Linq;
-using UnityEngine;
-using Object = System.Object;
+using Memoria.Prime;
 
 public static class btl_vfx
 {
@@ -197,9 +194,21 @@ public static class btl_vfx
         btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
         BattlePlayerCharacter.InitAnimation(btl);
         //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
-        btl.weapon_bone = (isTrance && btlParam.TranceParameters) ? btlParam.TranceWeaponBone : btlParam.WeaponBone;
+        if (isTrance && btlParam.TranceParameters)
+        {
+            btl.weapon_bone = btlParam.TranceWeaponBone;
+            btl.weapon_scale = btlParam.TranceWeaponSize.ToVector3(true);
+            btl.weapon_offset_pos = btlParam.TranceWeaponOffsetPos.ToVector3(false);
+            btl.weapon_offset_rot = btlParam.TranceWeaponOffsetRot.ToVector3(false);
+        }
+        else
+        {
+            btl.weapon_bone = btlParam.WeaponBone;
+            btl.weapon_scale = btlParam.WeaponSize.ToVector3(true);
+            btl.weapon_offset_pos = btlParam.WeaponOffsetPos.ToVector3(false);
+            btl.weapon_offset_rot = btlParam.WeaponOffsetRot.ToVector3(false);
+        }
         geo.geoAttach(btl.weapon_geo, btl.gameObject, btl.weapon_bone);
-        //btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
     }
 

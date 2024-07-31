@@ -381,7 +381,7 @@ namespace NCalc
             expr.Parameters[prefix + "IsSlave"] = unit.IsSlave;
             expr.Parameters[prefix + "IsOutOfReach"] = unit.IsOutOfReach;
             expr.Parameters[prefix + "Level"] = (Int32)unit.Level;
-            expr.Parameters[prefix + "Exp"] = unit.IsPlayer ? unit.Player.Data.exp : 0u;
+            expr.Parameters[prefix + "Exp"] = unit.IsPlayer ? unit.Player.exp : 0u;
             expr.Parameters[prefix + "Speed"] = (Int32)unit.Dexterity;
             expr.Parameters[prefix + "Strength"] = (Int32)unit.Strength;
             expr.Parameters[prefix + "Magic"] = (Int32)unit.Magic;

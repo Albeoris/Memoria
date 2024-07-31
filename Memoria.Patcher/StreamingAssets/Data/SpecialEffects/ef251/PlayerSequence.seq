@@ -18,7 +18,7 @@ PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
 Channel
 SetBackgroundIntensity: Intensity=0.546875 ; Time=22
 Wait: Time=9
-ShowMesh: Enable=False ; Time=16 ; Char=AllPlayers
+ShowMesh: Enable=False ; Time=16 ; Char=AllNonTargets
 WaitSFXLoaded: SFX=Madeen__Full ; Reflect=True
 WaitAnimation: Char=Caster
 StopChannel

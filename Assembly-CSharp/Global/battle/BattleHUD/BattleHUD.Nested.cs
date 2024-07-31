@@ -68,16 +68,38 @@ public partial class BattleHUD : UIScene
         ElementWeak = 0x20,
         ItemSteal = 0x40,
         BlueLearn = 0x80,
+        ElementResist = 0x100,
+        ElementImmune = 0x200,
+        ElementAbsorb = 0x400,
+        AttackList = 0x800,
+        StatusAuto = 0x1000,
+        StatusImmune = 0x2000,
 
         NameLevel = Name | Level,
         HPMP = HP | MP,
+        ElementalAffinities = ElementWeak | ElementResist | ElementImmune | ElementAbsorb,
+        StatusAffinities = StatusImmune | StatusAuto,
 
         Default = NameLevel | HPMP | Category | ElementWeak
     }
 
+    private static readonly LibraInformation[] LibraAutoProcess =
+    {
+        LibraInformation.Category,
+        LibraInformation.ElementWeak,
+        LibraInformation.ElementResist,
+        LibraInformation.ElementImmune,
+        LibraInformation.ElementAbsorb,
+        LibraInformation.StatusAuto,
+        LibraInformation.StatusImmune,
+        LibraInformation.ItemSteal,
+        LibraInformation.BlueLearn,
+        LibraInformation.AttackList
+    };
+
     private class AbilityPlayerDetail
     {
-        public Character Player;
+        public PLAYER Player;
         public Boolean HasAp;
         public readonly Dictionary<Int32, Boolean> AbilityEquipList;
         public readonly Dictionary<Int32, Int32> AbilityPaList;

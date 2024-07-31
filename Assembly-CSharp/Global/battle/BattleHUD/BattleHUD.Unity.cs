@@ -500,10 +500,11 @@ public partial class BattleHUD : UIScene
 
     private void OnAllTargetClick(GameObject go)
     {
+        Boolean commandSent = false;
         if (_cursorType == CursorGroup.All)
         {
             FF9Sfx.FF9SFX_Play(103);
-            CheckDoubleCast(-1, _cursorType);
+            commandSent = CheckDoubleCast(-1, _cursorType);
         }
         else if (UICamera.currentTouchID == 0 || UICamera.currentTouchID == 1)
         {
@@ -511,14 +512,14 @@ public partial class BattleHUD : UIScene
             if (go == _targetPanel.Buttons.Player.GameObject)
             {
                 if (_cursorType == CursorGroup.AllPlayer)
-                    CheckDoubleCast(-1, _cursorType);
+                    commandSent = CheckDoubleCast(-1, _cursorType);
                 else
                     OnTargetNavigate(go, KeyCode.RightArrow);
             }
             else if (go == _targetPanel.Buttons.Enemy.GameObject)
             {
                 if (_cursorType == CursorGroup.AllEnemy)
-                    CheckDoubleCast(-1, _cursorType);
+                    commandSent = CheckDoubleCast(-1, _cursorType);
                 else
                     OnTargetNavigate(go, KeyCode.LeftArrow);
             }
@@ -533,7 +534,12 @@ public partial class BattleHUD : UIScene
                 _cursorType = CursorGroup.AllPlayer;
             else if (go == _targetPanel.Buttons.Enemy.GameObject)
                 _cursorType = CursorGroup.AllEnemy;
-            CheckDoubleCast(-1, _cursorType);
+            commandSent = CheckDoubleCast(-1, _cursorType);
+        }
+        if (commandSent)
+        {
+            SetTargetVisibility(false);
+            SetIdle();
         }
     }
 

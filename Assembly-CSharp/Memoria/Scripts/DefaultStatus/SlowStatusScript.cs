@@ -24,7 +24,8 @@ namespace Memoria.DefaultScripts
         public override Boolean Remove()
         {
             btl_para.SetupATBCoef(Target, btl_para.GetATBCoef());
-            Target.UISpriteATB = BattleHUD.ATENormal;
+            if (!Target.IsUnderAnyStatus(BattleStatus.Stop))
+                Target.UISpriteATB = BattleHUD.ATENormal;
             return true;
         }
     }

@@ -43,11 +43,11 @@ public static class btl_init
             ENEMY enemy = btlsys.enemy[enemyIndex];
             BTL_DATA monBtl = btlsys.btl_data[btlIndex];
             BTL_SCENE btl_scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
-            SB2_PATTERN battlePattern = btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
-            SB2_MON_PARM monParam = btl_scene.MonAddr[battlePattern.Monster[enemyIndex].TypeNo];
+            SB2_PUT enemyPlacement = btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Monster[enemyIndex];
+            SB2_MON_PARM monParam = btl_scene.MonAddr[enemyPlacement.TypeNo];
             btlshadow.ff9battleShadowInit(monBtl);
             enemy.info.die_fade_rate = 32;
-            if ((monBtl.dms_geo_id = BTL_SCENE.GetMonGeoID(enemyIndex)) < 0)
+            if ((monBtl.dms_geo_id = BTL_SCENE.GetMonGeoID(enemyPlacement)) < 0)
             {
                 enemy.info.slave = 1;
             }
@@ -168,15 +168,9 @@ public static class btl_init
         pBtl.mesh_banish = pParm.Mesh[1];
         pBtl.tar_bone = pParm.Bone[3];
         pBtl.weapon_bone = (Byte)pParm.WeaponAttachment;
-        pBtl.weapon_offset_pos = pParm.WeaponOffsetPos;
-        pBtl.weapon_offset_rot = pParm.WeaponOffsetRot;
-        if (pParm.WeaponSize != null)
-            if (pParm.WeaponSize.Length == 3)
-                pBtl.weapon_scale = new Vector3(pParm.WeaponSize[0], pParm.WeaponSize[1], pParm.WeaponSize[2]);
-            else
-                pBtl.weapon_scale = new Vector3(pParm.WeaponSize[0], pParm.WeaponSize[0], pParm.WeaponSize[0]);
-        else
-            pBtl.weapon_scale = Vector3.one;
+        pBtl.weapon_scale = pParm.WeaponSize.ToVector3(true);
+        pBtl.weapon_offset_pos = pParm.WeaponOffsetPos.ToVector3(false);
+        pBtl.weapon_offset_rot = pParm.WeaponOffsetRot.ToVector3(false);
         // New field "out_of_reach"
         pBtl.out_of_reach = pParm.OutOfReach || FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoNeighboring;
         ENEMY enemy = FF9StateSystem.Battle.FF9Battle.enemy[pBtl.bi.slot_no];
@@ -329,10 +323,10 @@ public static class btl_init
         for (Int32 i = 0; i < 4; i++)
             if (FF9StateSystem.Common.FF9.party.member[i] != null)
                 playerCount++;
-        Int16 gap = 632;
-        Int16 bposFrontBack = -1560;
-        Int16 posLeftRight = (Int16)((playerCount - 1) * gap / 2);
-        Int16 baseAngle = (Int16)((btl_scene.Info.StartType != battle_start_type_tags.BTL_START_BACK_ATTACK) ? 180 : 0);
+        Int32 gap = 632;
+        Int32 bposFrontBack = btl_init.PLAYER_ORIGINAL_Z;
+        Int32 posLeftRight = (Int16)((playerCount - 1) * gap / 2);
+        Int32 baseAngle = (Int16)((btl_scene.Info.StartType != battle_start_type_tags.BTL_START_BACK_ATTACK) ? 180 : 0);
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
             if (btl.bi.player == 0)
@@ -376,6 +370,7 @@ public static class btl_init
     public static void OrganizePlayerData(PLAYER p, BTL_DATA btl, UInt16 cnt, UInt16 btl_no)
     {
         BattleUnit unit = new BattleUnit(btl);
+        CharacterBattleParameter btlParam = btl_mot.BattleParameterList[p.info.serial_no];
         btlshadow.ff9battleShadowInit(btl);
         btl.btl_id = (UInt16)(1 << btl_no);
         BONUS btl_bonus = battle.btl_bonus;
@@ -396,7 +391,10 @@ public static class btl_init
             btl.trance = p.trance;
         }
         btl.tar_bone = 0;
-        btl.weapon_bone = btl_mot.BattleParameterList[p.info.serial_no].WeaponBone;
+        btl.weapon_bone = btlParam.WeaponBone;
+        btl.weapon_scale = btlParam.WeaponSize.ToVector3(true);
+        btl.weapon_offset_pos = btlParam.WeaponOffsetPos.ToVector3(false);
+        btl.weapon_offset_rot = btlParam.WeaponOffsetRot.ToVector3(false);
         btl.sa = p.sa;
         btl.saExtended = p.saExtended;
         btl.saMonster = new List<SupportingAbilityFeature>();
@@ -597,6 +595,8 @@ public static class btl_init
         tranceTextureAnim.ReadTranceTextureAnim(btl, tranceModelName);
         btl.tranceTexanimptr = tranceTextureAnim;
     }
+
+    public const Int32 PLAYER_ORIGINAL_Z = -1560;
 
     public const Byte BTL_LOAD_BG_DONE = 1;
     public const Byte BTL_LOAD_ENEMY_DONE = 2;

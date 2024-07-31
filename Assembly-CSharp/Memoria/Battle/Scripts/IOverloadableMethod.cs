@@ -23,6 +23,12 @@ namespace Memoria
         }
     }
 
+    public interface IOverloadOnBattleInitScript
+    {
+        /// <summary>Run a code at battle initialisation time, right after the BattleUnits have all been initialised</summary>
+        public void OnBattleInit();
+    }
+
     public interface IOverloadOnBattleScriptStartScript
     {
         /// <summary>Run a code before any battle script, right after the SA features "WhenBattleScriptStart" (typically handles killing frozen targets)</summary>

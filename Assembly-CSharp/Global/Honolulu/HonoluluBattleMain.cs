@@ -127,7 +127,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         GameObject battleMapGo = GameObject.Find("BattleMap Root");
         GameObject spsSystemGo = new GameObject("BattleMap SPS");
         spsSystemGo.transform.parent = battleMapGo.transform;
-        battleSPS = spsSystemGo.AddComponent<BattleSPSSystem>();
+        if (battleSPS == null)
+            battleSPS = spsSystemGo.AddComponent<BattleSPSSystem>();
         battleSPS.Init();
         Byte cameraNo = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Camera;
         FF9StateSystem.Battle.FF9Battle.seq_work_set.CameraNo = cameraNo >= 3 ? (Byte)UnityEngine.Random.Range(0, 3) : cameraNo;
@@ -154,6 +155,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         this.btlScene = FF9StateSystem.Battle.FF9Battle.btl_scene = new BTL_SCENE();
         Debug.Log("battleID = " + FF9StateSystem.Battle.battleMapIndex);
 
+        battlebg.CreateBattleRoot();
         FF9BattleDB.SceneData.TryGetKey(FF9StateSystem.Battle.battleMapIndex, out battleSceneName);
         battleSceneName = battleSceneName.Substring(4);
         Debug.Log("battleSceneName = " + battleSceneName);
@@ -222,7 +224,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             btl[i] = new BTL_DATA();
             if (FF9.party.member[i] != null)
             {
-                BattlePlayerCharacter.CreatePlayer(btl[pindex], FF9.party.member[i].info.serial_no);
+                BattlePlayerCharacter.CreatePlayer(btl[pindex], FF9.party.member[i]);
                 Int32 meshCount = 0;
                 foreach (Transform transform in btl[i].gameObject.transform)
                     if (transform.name.Contains("mesh"))
@@ -251,11 +253,11 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     btl[i].weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + sb2MonParm.WeaponModel + "/" + sb2MonParm.WeaponModel, true);
                 else
                     btl[i].weapon_geo = ModelFactory.CreateModel(sb2MonParm.WeaponModel, true);
-                MeshRenderer[] componentsInChildren = btl[i].weapon_geo.GetComponentsInChildren<MeshRenderer>();
-                btl[i].weaponMeshCount = componentsInChildren.Length;
+                MeshRenderer[] weaponRenderers = btl[i].weapon_geo.GetComponentsInChildren<MeshRenderer>();
+                btl[i].weaponMeshCount = weaponRenderers.Length;
                 btl[i].weaponRenderer = new Renderer[btl[i].weaponMeshCount];
                 for (Int32 j = 0; j < btl[i].weaponMeshCount; ++j)
-                    btl[i].weaponRenderer[j] = componentsInChildren[j].GetComponent<Renderer>();
+                    btl[i].weaponRenderer[j] = weaponRenderers[j].GetComponent<Renderer>();
                 geo.geoAttach(btl[i].weapon_geo, btl[i].gameObject, sb2MonParm.WeaponAttachment);
                 if (btl_eqp.EnemyBuiltInWeaponTable.ContainsKey(sb2MonParm.Geo))
                     btl[i].builtin_weapon_mode = true;
@@ -265,11 +267,11 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 if (path.Contains("GEO_MON_B3_168"))
                     btl[i].gameObject.transform.FindChild("mesh5").gameObject.SetActive(false);
                 btl[i].weapon_geo = ModelFactory.CreateDefaultWeaponForCharacterWhenUseAsEnemy(path);
-                MeshRenderer[] componentsInChildren = btl[i].weapon_geo.GetComponentsInChildren<MeshRenderer>();
-                btl[i].weaponMeshCount = componentsInChildren.Length;
+                MeshRenderer[] weaponRenderers = btl[i].weapon_geo.GetComponentsInChildren<MeshRenderer>();
+                btl[i].weaponMeshCount = weaponRenderers.Length;
                 btl[i].weaponRenderer = new Renderer[btl[i].weaponMeshCount];
                 for (Int32 j = 0; j < btl[i].weaponMeshCount; ++j)
-                    btl[i].weaponRenderer[j] = componentsInChildren[j].GetComponent<Renderer>();
+                    btl[i].weaponRenderer[j] = weaponRenderers[j].GetComponent<Renderer>();
                 geo.geoAttach(btl[i].weapon_geo, btl[i].gameObject, ModelFactory.GetDefaultWeaponBoneIdForCharacterWhenUseAsEnemy(path));
             }
             else
@@ -736,7 +738,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     public static void ClearAttachModel(BTL_DATA attachedBtl)
     {
         attachModel.RemoveAll(kvp => kvp.Value == attachedBtl);
-        attachedBtl.gameObject.transform.parent = null;
+        attachedBtl.gameObject.transform.parent = battlebg.BattleRoot.transform;
     }
 
     public static Boolean IsAttachedModel(BTL_DATA btl)
@@ -749,7 +751,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         UpdateAttachModel();
         UIManager.Battle.modelButtonManager.UpdateModelButtonPosition();
         Singleton<HUDMessage>.Instance.UpdateChildPosition();
-        btl_eqp.ProcessBuiltInWeapon();
+        btl_eqp.UpdateWeaponOffsets();
     }
 
     public Int32 GetWeaponID(Int32 battlePlayerPosID)

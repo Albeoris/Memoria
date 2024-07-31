@@ -2,13 +2,16 @@
 
 Wait: Time=14
 ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 180, 0)
+EndThread
 Wait: Time=23
 PlaySound: Sound=1779
 PlaySound: Sound=1780
 PlaySound: Sound=1781
 Wait: Time=95
 SetBackgroundIntensity: Intensity=0.546875 ; Time=8 ; HoldDuration=78
-ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
 Wait: Time=27
 PlaySound: Sound=1782
 PlaySound: Sound=1783
@@ -29,6 +32,9 @@ EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=20
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=10
-ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 0, 0)
+EndThread
+ShowMesh: Char=AllNonTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12
 Wait: Time=31

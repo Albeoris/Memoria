@@ -211,7 +211,7 @@ namespace Memoria
                 // Log.Message($"[DEBUG {Time.frameCount} cur {_bg.localRotation.eulerAngles} prev {_bgRotPrevious.eulerAngles} actual {_bgRotActual.eulerAngles} t {smoothFactor}");
             }
             // SPS
-            if (FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_ENTER)
+            if (FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_ENTER && FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_INIT_SYSTEM)
             {
                 btl2d.StatusUpdateVisuals(smoothFactor);
                 HonoluluBattleMain.battleSPS.GenerateSPS();

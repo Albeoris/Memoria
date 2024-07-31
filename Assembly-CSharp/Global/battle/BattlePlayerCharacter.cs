@@ -69,21 +69,23 @@ public class BattlePlayerCharacter : MonoBehaviour
         }
     }
 
-    public static void CreatePlayer(BTL_DATA btl, CharacterSerialNumber playerSerialNumber)
+    public static void CreatePlayer(BTL_DATA btl, PLAYER p)
     {
-        String path = btl_mot.BattleParameterList[playerSerialNumber].ModelId;
-        GameObject gameObject = ModelFactory.CreateModel(path, true);
-        BattlePlayerCharacter.CreateTranceModel(btl, playerSerialNumber);
-        BattlePlayerCharacter.CheckToHideBattleModel(gameObject, playerSerialNumber);
-        btl.gameObject = gameObject;
-        btl.originalGo = gameObject;
+        CharacterBattleParameter btlParam = btl_mot.BattleParameterList[p.info.serial_no];
+        p.wep_bone = btlParam.WeaponBone;
+        btl.gameObject = ModelFactory.CreateModel(btlParam.ModelId, true);
+        btl.originalGo = btl.gameObject;
+        BattlePlayerCharacter.CreateTranceModel(btl, btlParam.TranceModelId);
+        if (p.info.serial_no == CharacterSerialNumber.ZIDANE_SWORD)
+        {
+            BattlePlayerCharacter.HideZidaneOrichalcum(btl.gameObject);
+            BattlePlayerCharacter.HideZidaneOrichalcum(btl.tranceGo);
+        }
     }
 
-    private static void CreateTranceModel(BTL_DATA btl, CharacterSerialNumber serial)
+    private static void CreateTranceModel(BTL_DATA btl, String path)
     {
-        String path = btl_mot.BattleParameterList[serial].TranceModelId;
         btl.tranceGo = ModelFactory.CreateModel(path, true);
-        BattlePlayerCharacter.CheckToHideBattleModel(btl.tranceGo, serial);
         btl.tranceGo.transform.localPosition = new Vector3(btl.tranceGo.transform.localPosition.x, -10000f, btl.tranceGo.transform.localPosition.z);
         // Set custom trance texture, if they exist
         String tranceTexturePath = Path.GetDirectoryName(ModelFactory.GetRenameModelPath(ModelFactory.CheckUpscale(path))) + "/%_trance.png";
@@ -100,17 +102,14 @@ public class BattlePlayerCharacter : MonoBehaviour
         btl.tranceGo.SetActive(false);
     }
 
-    private static void CheckToHideBattleModel(GameObject characterGo, CharacterSerialNumber serial)
+    private static void HideZidaneOrichalcum(GameObject characterGo)
     {
-        if (serial == CharacterSerialNumber.ZIDANE_SWORD)
+        Transform childByName = characterGo.transform.GetChildByName("battle_model");
+        if (childByName != null)
         {
-            Transform childByName = characterGo.transform.GetChildByName("battle_model");
-            if (childByName != null)
-            {
-                Renderer[] renderers = childByName.GetComponentsInChildren<Renderer>();
-                for (Int32 i = 0; i < renderers.Length; i++)
-                    renderers[i].enabled = false;
-            }
+            Renderer[] renderers = childByName.GetComponentsInChildren<Renderer>();
+            for (Int32 i = 0; i < renderers.Length; i++)
+                renderers[i].enabled = false;
         }
     }
 

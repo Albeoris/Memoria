@@ -122,7 +122,7 @@ namespace Memoria
         public BattleCommandMenu CommandMenu => Data.info.cmdMenu;
         public command_mode_index ExecutionStep => Data.info.mode;
 
-        public Boolean IsDevided => IsManyTarget && (Int32)Data.aa.Info.Target > 2 && (Int32)Data.aa.Info.Target < 6;
+        public Boolean IsDevided => IsManyTarget && Data.aa.Info.Target >= TargetType.ManyAny && Data.aa.Info.Target <= TargetType.ManyEnemy;
 
         public BattleItem Item => BattleItem.Find(ItemId);
         public BattleStatus ItemStatus => Item.Status;
@@ -190,13 +190,14 @@ namespace Memoria
 
         public Int32 GetReflectMultiplierOnTarget(UInt16 targetId)
         {
+            // Always return at least 1 even if not part of the command's targets, in order to take possible .seq target changes into account properly
             if (Data.info.reflec != 1)
-                return (Data.tar_id & targetId) != 0 ? 1 : 0;
+                return 1;
             Int32 reflectMultiplier = 0;
             for (UInt16 index = 0; index < 4; ++index)
                 if ((Data.reflec.tar_id[index] & targetId) != 0)
                     ++reflectMultiplier;
-            return reflectMultiplier;
+            return Math.Max(1, reflectMultiplier);
         }
     }
 }

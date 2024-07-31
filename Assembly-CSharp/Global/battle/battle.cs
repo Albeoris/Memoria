@@ -535,6 +535,9 @@ public static class battle
             settings.SetHPFull();
             for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
                 BattleTexAnimWatcher.ForcedNonCullingMesh(next.gameObject);
+            IOverloadOnBattleInitScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnBattleInitScript)) as IOverloadOnBattleInitScript;
+            if (overloadedMethod != null)
+                overloadedMethod.OnBattleInit();
         }
         else
         {

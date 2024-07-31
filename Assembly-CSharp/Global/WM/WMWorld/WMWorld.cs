@@ -1770,7 +1770,8 @@ public class WMWorld : Singleton<WMWorld>
 
     public void LoadSPS()
     {
-        this.WorldSPSSystem = new GameObject("WorldSPSSystem").AddComponent<WorldSPSSystem>();
+        if (this.WorldSPSSystem == null)
+            this.WorldSPSSystem = new GameObject("WorldSPSSystem").AddComponent<WorldSPSSystem>();
         this.WorldSPSSystem.transform.parent = this.WorldMapRoot;
         this.WorldSPSSystem.Init();
     }
