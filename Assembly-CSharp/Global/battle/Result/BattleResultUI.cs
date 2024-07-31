@@ -300,7 +300,7 @@ public class BattleResultUI : UIScene
         {
             if ((battle.btl_bonus.member_flag & 1 << i) != 0 && FF9StateSystem.Common.FF9.party.member[i] != null)
             {
-                Character player = FF9StateSystem.Common.FF9.party.GetCharacter(i);
+                PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
 
                 this.isNeedExp[i] = this.IsNeedExp(player);
                 this.isNeedAp[i] = this.IsNeedAp(player);
@@ -310,14 +310,14 @@ public class BattleResultUI : UIScene
         }
     }
 
-    private Boolean IsNeedExp(Character play)
+    private Boolean IsNeedExp(PLAYER play)
     {
-        return this.IsEnable(play.Data) && play.Data.exp < 9999999u;
+        return this.IsEnable(play) && play.exp < 9999999u;
     }
 
-    private Boolean IsNeedAp(Character play)
+    private Boolean IsNeedAp(PLAYER play)
     {
-        return this.IsEnable(play.Data) && ff9abil.FF9Abil_HasAp(play);
+        return this.IsEnable(play) && ff9abil.FF9Abil_HasAp(play);
     }
 
     private Boolean IsEnableDraw(PLAYER play, Int32 id)
@@ -603,34 +603,34 @@ public class BattleResultUI : UIScene
 
     private void AddAp(Int32 id, UInt32 ap)
     {
-        Character player = FF9StateSystem.Common.FF9.party.GetCharacter(id);
+        PLAYER player = FF9StateSystem.Common.FF9.party.member[id];
         if (ap == 0u || player == null || !ff9abil.FF9Abil_HasAp(player))
             return;
         this.apValue[id].current += ap;
         for (Int32 i = 0; i < 5; i++)
         {
-            if (player.Equipment[i] != RegularItem.NoItem)
+            if (player.equip[i] != RegularItem.NoItem)
             {
-                FF9ITEM_DATA itemData = ff9item._FF9Item_Data[player.Equipment[i]];
+                FF9ITEM_DATA itemData = ff9item._FF9Item_Data[player.equip[i]];
                 foreach (Int32 abil in itemData.ability)
                 {
                     if (abil != 0)
                     {
-                        Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player.Data, abil);
+                        Int32 abilIndex = ff9abil.FF9Abil_GetIndex(player, abil);
                         if (abilIndex >= 0)
                         {
                             Int32 max_ap = ff9abil._FF9Abil_PaData[player.PresetId][abilIndex].Ap;
-                            Int32 cur_ap = player.Data.pa[abilIndex];
+                            Int32 cur_ap = player.pa[abilIndex];
                             if (max_ap > cur_ap)
                             {
                                 if (max_ap <= cur_ap + ap)
                                 {
-                                    player.Data.pa[abilIndex] = (Byte)max_ap;
+                                    player.pa[abilIndex] = (Byte)max_ap;
                                     this.ApLearned(id, abil);
                                 }
                                 else
                                 {
-                                    player.Data.pa[abilIndex] += (Byte)ap;
+                                    player.pa[abilIndex] += (Byte)ap;
                                 }
                             }
                         }

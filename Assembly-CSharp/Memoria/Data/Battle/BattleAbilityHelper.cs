@@ -20,7 +20,7 @@ namespace Memoria.Data
             FeatureSet set;
             if (abilId == BattleAbilityId.Void)
             {
-                // A feature that relies on their "Condition" to discriminate whether they apply or not
+                // A feature that relies on their "Condition" to discriminate whether it applies or not
                 set = new FeatureSet();
                 FlexibleFeatures.Add(set);
             }
@@ -41,7 +41,7 @@ namespace Memoria.Data
                 {
                     set.AbilityPatch = formula.Groups[2].Value;
                     if (abilId == BattleAbilityId.Void)
-                        Log.Warning($"[{nameof(BattleAbilityHelper)}] \"AbilityPatch\" cannot be used as a Global AA feature");
+                        Log.Warning($"[{nameof(BattleAbilityHelper)}] \"Patch\" cannot be used as a Global AA feature");
                 }
                 else if (String.Equals(formula.Groups[1].Value, "Priority"))
                     set.AbilityPriority = formula.Groups[2].Value;

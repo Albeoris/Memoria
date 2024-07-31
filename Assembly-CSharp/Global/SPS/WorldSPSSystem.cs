@@ -24,7 +24,7 @@ public class WorldSPSSystem : MonoBehaviour
             return;
         if (index < Utility.SpsList.Count)
         {
-            Utility.SpsList[index].Init(3);
+            Utility.SpsList[index].Unload();
             return;
         }
         GameObject spsGo = new GameObject($"SPS_{index:D4}");

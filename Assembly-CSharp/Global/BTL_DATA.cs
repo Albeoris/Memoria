@@ -21,7 +21,9 @@ public partial class BTL_DATA
         for (Int32 i = 0; i < meshCount; i++)
             meshIsRendering[i] = true;
         dms_geo_id = geoID;
-        builtin_weapon_mode = btl_eqp.EnemyBuiltInWeaponTable.ContainsKey(geoID);
+        if (builtin_weapon_mode && weapon_geo != null)
+            weapon_geo.transform.localScale = Vector3.one;
+        builtin_weapon_mode = weapon_geo != null && weapon_geo.name != btl_eqp.DummyWeaponName && btl_eqp.EnemyBuiltInWeaponTable.ContainsKey(geoID);
         _smoothUpdateRegistered = false;
     }
 
@@ -172,8 +174,8 @@ public partial class BTL_DATA
     public GameObject weapon_geo;
     public Byte weapon_bone;
     public Vector3 weapon_scale;
-    public Single[] weapon_offset_pos;
-    public Single[] weapon_offset_rot;
+    public Vector3 weapon_offset_pos;
+    public Vector3 weapon_offset_rot;
 
     public UInt16 mesh_current;
     public UInt16 mesh_banish;
@@ -240,7 +242,6 @@ public partial class BTL_DATA
 
     public Animation animation;
 
-    // Custom fields
     public Boolean out_of_reach; // Instead of considering the global battle flag "NoNeighboring", we use a flag for each BTL_DATA
 
     public UInt16 summon_count; // Counter of the number of uses of a summon spell in a battle

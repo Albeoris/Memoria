@@ -223,7 +223,7 @@ public partial class BattleHUD : UIScene
                     }
                     break;
                 case BattleCommandMenu.AccessMenu:
-                    OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex)?.Player?.Data : null);
+                    OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex)?.Player : null);
                     break;
             }
         }
@@ -449,7 +449,7 @@ public partial class BattleHUD : UIScene
             else if (Configuration.Battle.AccessMenus == 3)
                 canOpen = FF9BMenu_IsEnable() && ((!hasAccessMenuButton && ButtonGroupState.ActiveGroup != CommandGroupButton && ButtonGroupState.ActiveGroup != TargetGroupButton) || (hasAccessMenuButton && selectedChar == null));
             if (canOpen)
-                OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? selectedChar?.Player?.Data : null);
+                OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? selectedChar?.Player : null);
         }
         return true;
     }

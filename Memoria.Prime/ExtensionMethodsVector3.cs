@@ -34,5 +34,16 @@ namespace Memoria.Prime
         {
             return new Vector3(self.x, y, z);
         }
+
+        public static Vector3 ToVector3(this Single[] array, Boolean asScale)
+        {
+            if (array == null || array.Length == 0)
+                return asScale ? Vector3.one : Vector3.zero;
+            if (array.Length >= 3)
+                return new Vector3(array[0], array[1], array[2]);
+            if (array.Length == 1)
+                return asScale ? new Vector3(array[0], array[0], array[0]) : new Vector3(array[0], 0f, 0f);
+            return asScale ? new Vector3(array[0], 1f, array[1]) : new Vector3(array[0], 0f, array[1]);
+        }
     }
 }

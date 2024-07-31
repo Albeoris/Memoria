@@ -152,6 +152,7 @@ namespace Memoria.Data
         public static BattleStatus PreventATBConfirm = BattleStatus.Venom | BattleStatus.Sleep | BattleStatus.Freeze;
         public static BattleStatus PreventReflect = BattleStatus.Petrify;
         public static BattleStatus VictoryClear = BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Stop | BattleStatus.AutoLife | BattleStatus.Defend | BattleStatus.Poison | BattleStatus.Sleep | BattleStatus.Regen | BattleStatus.Haste | BattleStatus.Slow | BattleStatus.Float | BattleStatus.Shell | BattleStatus.Protect | BattleStatus.Heat | BattleStatus.Freeze | BattleStatus.Vanish | BattleStatus.Doom | BattleStatus.Mini | BattleStatus.Reflect | BattleStatus.GradualPetrify;
+        public static BattleStatus CannotHealInMenu = BattleStatus.Petrify | BattleStatus.Zombie;
         public static BattleStatus CannotUseAbilityInMenu = BattleStatus.Petrify | BattleStatus.Silence;
         public static BattleStatus CannotUseMagic = BattleStatus.Silence;
         public static BattleStatus ApplyReflect = BattleStatus.Reflect;

@@ -16,8 +16,11 @@ public class BattleSPSSystem : MonoBehaviour
         this._eventNoToIndex = new Dictionary<Int32, Int32>();
         this._statusToSPSIndex = new Dictionary<KeyValuePair<Int32, Int32>, Int32>();
         this._statusToSHPIndex = new Dictionary<KeyValuePair<Int32, Int32>, Int32>();
-        for (Int32 i = 0; i < SPSConst.BATTLE_DEFAULT_OBJCOUNT; i++)
+        Int32 count = Math.Max(Utility.SpsList.Count, SPSConst.BATTLE_DEFAULT_OBJCOUNT);
+        for (Int32 i = 0; i < count; i++)
             this.InitSPSInstance(i);
+        for (Int32 i = 0; i < this._shpEffects.Count; i++)
+            this._shpEffects[i].Unload();
     }
 
     private void InitSPSInstance(Int32 index)
@@ -26,7 +29,7 @@ public class BattleSPSSystem : MonoBehaviour
             return;
         if (index < Utility.SpsList.Count)
         {
-            Utility.SpsList[index].Init(2);
+            Utility.SpsList[index].Unload();
             return;
         }
         GameObject spsGo = new GameObject($"SPS_{index:D4}");

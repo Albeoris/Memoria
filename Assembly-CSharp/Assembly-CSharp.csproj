@@ -363,6 +363,7 @@
     <Compile Include="Memoria\Data\TetraMaster\TripleTriad.cs" />
     <Compile Include="Memoria\Data\TetraMaster\TripleTriadCard.cs" />
     <Compile Include="Memoria\Data\TetraMaster\TetraMasterCardId.cs" />
+    <Compile Include="Memoria\Field\FieldCalculator.cs" />
     <Compile Include="Memoria\Scenes\BattleHUD\BattleUIControlPanel.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlHelp.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlHitBox.cs" />
@@ -412,6 +413,7 @@
     <Compile Include="Memoria\Scripts\DefaultStatus\VirusStatusScript.cs" />
     <Compile Include="Memoria\Scripts\DefaultStatus\PetrifyStatusScript.cs" />
     <Compile Include="Memoria\Scripts\DefaultStatus\VenomStatusScript.cs" />
+    <Compile Include="Memoria\Field\IFieldScript.cs" />
     <Compile Include="Memoria\Speedrun\AutoSplitterPipe.cs" />
     <Compile Include="Memoria\Speedrun\Split.cs" />
     <Compile Include="Memoria\Speedrun\SpeedrunSettings.cs" />

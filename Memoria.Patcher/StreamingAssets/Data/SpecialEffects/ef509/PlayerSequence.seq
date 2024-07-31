@@ -17,7 +17,7 @@ WaitAnimation: Char=Caster
 PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
 Channel
 SetBackgroundIntensity: Intensity=0.5 ; Time=20
-ShowMesh: Enable=False ; Time=16 ; Char=AllPlayers
+ShowMesh: Enable=False ; Time=16 ; Char=AllNonTargets
 WaitSFXLoaded: SFX=Fenrir_Wind__Short ; Reflect=True
 WaitAnimation: Char=Caster
 StopChannel

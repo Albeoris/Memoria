@@ -586,20 +586,24 @@ public class UIKeyTrigger : MonoBehaviour
                 sceneFromState.OnKeyConfirm(activeButton);
                 return true;
             }
-            if (battelAutoConfirm && PersistenSingleton<HonoInputManager>.Instance.IsInput(Control.Confirm))
+            if (battelAutoConfirm)
             {
-                // If confirm is held more than 500ms it will auto confirm at an interval of 100ms
-                const Single delay = 0.5f;
-                if (autoConfirmDownTime > 0 && Time.time - autoConfirmDownTime > delay)
+                // The expected chain would be "IsInputDown -> IsInput -> IsInputUp" but it's not always like that (sometimes there is only "IsInputDown", sometimes "IsInput" procs before "IsInputDown"...)
+                if (PersistenSingleton<HonoInputManager>.Instance.IsInput(Control.Confirm))
                 {
-                    autoConfirmDownTime = Time.time - delay + 0.1f;
-                    sceneFromState.OnKeyConfirm(activeButton);
-                    return true;
+                    // If confirm is held more than 500ms it will auto confirm at an interval of 100ms
+                    const Single delay = 0.5f;
+                    if (autoConfirmDownTime > 0 && Time.time - autoConfirmDownTime > delay)
+                    {
+                        autoConfirmDownTime = Time.time - delay + 0.1f;
+                        sceneFromState.OnKeyConfirm(activeButton);
+                        return true;
+                    }
                 }
-            }
-            if (battelAutoConfirm && PersistenSingleton<HonoInputManager>.Instance.IsInputUp(Control.Confirm))
-            {
-                autoConfirmDownTime = 0;
+                else
+                {
+                    autoConfirmDownTime = 0f;
+                }
             }
             if ((PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) || keyCommand == Control.Pause) && !SoftResetKeyPSXForPause)
             {

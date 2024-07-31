@@ -1,7 +1,9 @@
 // Shared sequence of SFX Madeen__Full
 
-ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
-ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllNonTargets ; Enable=False ; IsDisappear=True
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 180, 0)
+EndThread
 SetBackgroundIntensity: Intensity=0.546875 ; Time=4 ; HoldDuration=32
 PlaySound: Sound=2158
 PlaySound: Sound=2159
@@ -339,7 +341,7 @@ Wait: Time=1
 Turn: Char=AllTargets ; Angle=(83.6, 230.9, 195.8) ; Time=0
 Wait: Time=1
 Turn: Char=AllTargets ; Angle=(83.2, 231.9, 197.1) ; Time=0
-ShowMesh: Enable=False ; Time=10 ; Char=AllTargets
+ShowMesh: Char=AllTargets ; Enable=False ; Time=10
 Wait: Time=1
 Turn: Char=AllTargets ; Angle=(82.9, 233.0, 198.5) ; Time=0
 Wait: Time=1
@@ -477,6 +479,9 @@ EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=1
 SetBackgroundIntensity: Intensity=1 ; Time=16
 Wait: Time=9
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 0, 0)
+EndThread
 ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12
 Wait: Time=31

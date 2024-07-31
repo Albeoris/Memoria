@@ -190,6 +190,8 @@ public static class ModelFactory
                     renderers[i].enabled = false;
             }
         }
+        if (isBattle && battlebg.BattleRoot != null)
+            gameObject.transform.parent = battlebg.BattleRoot.transform;
         return gameObject;
     }
 
@@ -203,7 +205,7 @@ public static class ModelFactory
         RegularItem weaponId = ModelFactory.defaultWeaponTable[path];
         ItemAttack weapon = ff9item.GetItemWeapon(weaponId);
         if (weapon.ModelId == UInt16.MaxValue)
-            return new GameObject("Dummy weapon");
+            return new GameObject(btl_eqp.DummyWeaponName);
         String geoName = FF9BattleDB.GEO.GetValue(weapon.ModelId);
         global::Debug.LogWarning("-------------------------------------------------------------------------");
         return ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + geoName + "/" + geoName, true, true, Configuration.Graphics.ElementsSmoothTexture);

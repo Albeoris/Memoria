@@ -6,8 +6,8 @@ using UnityEngine;
 public class HUDMessage : Singleton<HUDMessage>
 {
     public Single Speed => FF9StateSystem.Settings.IsFastForward ? this.speed * (Single)FF9StateSystem.Settings.FastForwardFactor : this.speed;
-
     public Boolean Ready => this.ready;
+    public HUDMessageChild[] AllMessagePool => this.childHud;
 
     public Camera WorldCamera
     {
@@ -17,15 +17,13 @@ public class HUDMessage : Singleton<HUDMessage>
     private void Start()
     {
         this.worldCamera = PersistenSingleton<UIManager>.Instance.BattleCamera;
-        this.activeIndexList = new Byte[(Int32)this.instanceNumber];
+        this.activeIndexList = new Byte[this.instanceNumber];
         if (this.childHud == null)
-        {
-            this.childHud = new HUDMessageChild[(Int32)this.instanceNumber];
-        }
+            this.childHud = new HUDMessageChild[this.instanceNumber];
         Int32 childCount = base.transform.childCount;
-        for (Byte b = 0; b < this.instanceNumber; b = (Byte)(b + 1))
+        for (Int32 i = 0; i < this.instanceNumber; i++)
         {
-            this.activeIndexList[(Int32)b] = Byte.MaxValue;
+            this.activeIndexList[i] = Byte.MaxValue;
             if (childCount == 0)
             {
                 GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.prototype);
@@ -33,16 +31,16 @@ public class HUDMessage : Singleton<HUDMessage>
                 gameObject.transform.localPosition = Vector3.zero;
                 gameObject.transform.localScale = Vector3.one;
                 Transform child = gameObject.transform.GetChild(0);
-                this.childHud[(Int32)b] = child.GetComponent<HUDMessageChild>();
-                this.childHud[(Int32)b].Initial();
-                this.childHud[(Int32)b].MessageId = b;
-                this.childHud[(Int32)b].SetupCamera(this.worldCamera, this.uiCamera);
+                this.childHud[i] = child.GetComponent<HUDMessageChild>();
+                this.childHud[i].Initial();
+                this.childHud[i].MessageId = (Byte)i;
+                this.childHud[i].SetupCamera(this.worldCamera, this.uiCamera);
             }
             else
             {
-                this.childHud[(Int32)b].SetupCamera(this.worldCamera, this.uiCamera);
-                this.childHud[(Int32)b].Pause(false);
-                this.childHud[(Int32)b].Clear();
+                this.childHud[i].SetupCamera(this.worldCamera, this.uiCamera);
+                this.childHud[i].Pause(false);
+                this.childHud[i].Clear();
             }
         }
         this.ready = true;

@@ -18,7 +18,7 @@ namespace Memoria.Data
         public Byte[] StatusBone = new Byte[6];
         public SByte[] StatusOffsetY = new SByte[6];
         public SByte[] StatusOffsetZ = new SByte[6];
-        public Int32[] WeaponSound = new Int32[0];
+        public Int32[] WeaponSound = [];
         public Single[] WeaponSize = [1f, 1f, 1f];
         public Single[] WeaponOffsetPos = new Single[3];
         public Single[] WeaponOffsetRot = new Single[3];
@@ -30,7 +30,7 @@ namespace Memoria.Data
         public Byte[] TranceStatusBone = new Byte[6];
         public SByte[] TranceStatusOffsetY = new SByte[6];
         public SByte[] TranceStatusOffsetZ = new SByte[6];
-        public Int32[] TranceWeaponSound = new Int32[0];
+        public Int32[] TranceWeaponSound = [];
         public Single[] TranceWeaponSize = [1f, 1f, 1f];
         public Single[] TranceWeaponOffsetPos = new Single[3];
         public Single[] TranceWeaponOffsetRot = new Single[3];
@@ -70,18 +70,8 @@ namespace Memoria.Data
             if (metadata.HasOption($"IncludeWeaponOffsets"))
             {
                 WeaponSize = CsvParser.SingleArray(raw[rawIndex++]);
-                if (WeaponSize.Length <= 0)
-                    WeaponSize = [1f, 1f, 1f];
-                else if (WeaponSize.Length == 1)
-                    WeaponSize = [WeaponSize[0], WeaponSize[0], WeaponSize[0]];
-                else if (WeaponSize.Length == 2)
-                    WeaponSize = [WeaponSize[0], 1f, WeaponSize[1]];
                 WeaponOffsetPos = CsvParser.SingleArray(raw[rawIndex++]);
-                if (WeaponOffsetPos.Length < 3)
-                    Array.Resize(ref WeaponOffsetPos, 3);
                 WeaponOffsetRot = CsvParser.SingleArray(raw[rawIndex++]);
-                if (WeaponOffsetRot.Length < 3)
-                    Array.Resize(ref WeaponOffsetRot, 3);
             }
             TranceParameters = metadata.HasOption($"Include{nameof(TranceParameters)}");
             if (TranceParameters)
@@ -106,18 +96,8 @@ namespace Memoria.Data
                 if (metadata.HasOption($"IncludeWeaponOffsets"))
                 {
                     TranceWeaponSize = CsvParser.SingleArray(raw[rawIndex++]);
-                    if (TranceWeaponSize.Length <= 0)
-                        TranceWeaponSize = [1f, 1f, 1f];
-                    else if (TranceWeaponSize.Length == 1)
-                        TranceWeaponSize = [TranceWeaponSize[0], TranceWeaponSize[0], TranceWeaponSize[0]];
-                    else if (TranceWeaponSize.Length == 2)
-                        TranceWeaponSize = [TranceWeaponSize[0], 1f, TranceWeaponSize[1]];
                     TranceWeaponOffsetPos = CsvParser.SingleArray(raw[rawIndex++]);
-                    if (TranceWeaponOffsetPos.Length < 3)
-                        Array.Resize(ref TranceWeaponOffsetPos, 3);
                     TranceWeaponOffsetRot = CsvParser.SingleArray(raw[rawIndex++]);
-                    if (TranceWeaponOffsetRot.Length < 3)
-                        Array.Resize(ref TranceWeaponOffsetRot, 3);
                 }
                 TranceParameters = true;
             }

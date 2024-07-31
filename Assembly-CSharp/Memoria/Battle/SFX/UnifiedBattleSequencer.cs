@@ -19,6 +19,7 @@ public static class UnifiedBattleSequencer
             UnifiedBattleSequencer.ReleaseRunningAction(0);
         BattleAction.bbgIntensity.Clear();
         battlebg.nf_SetBbgIntensity(128);
+        battlebg.UnshiftWorld();
     }
 
     public static void Loop()
@@ -260,7 +261,7 @@ public static class UnifiedBattleSequencer
                         break;
                     if (!code.argument.TryGetValue("Type", out tmpStr))
                     {
-                        if (cmd.regist.bi.player == 0 || cmd.cmd_no == BattleCommandId.BlueMagic)
+                        if (cmd.regist.bi.player == 0 || cmd.cmd_no == BattleCommandId.BlueMagic || btl_util.IsCommandMonsterTransform(cmd))
                             tmpStr = "Enemy";
                         else if (cmd.cmd_no == BattleCommandId.BlackMagic || cmd.cmd_no == BattleCommandId.DoubleBlackMagic || cmd.cmd_no == BattleCommandId.MagicSword)
                             tmpStr = "Black";
@@ -419,7 +420,6 @@ public static class UnifiedBattleSequencer
                     Single tmpBaseAngle;
                     Boolean hasSingleAngle = code.TryGetArgSingle("Angle", out tmpSingle);
                     Boolean hasVectorAngle = code.TryGetArgVector("Angle", out tmpVec);
-                    code.TryGetArgBoolean("AsDefaultAngle", out Boolean asDefaultAngle);
                     code.TryGetArgBoolean("UsePitch", out tmpBool);
                     code.TryGetArgInt32("Time", out tmpInt);
                     if (!hasSingleAngle && !hasVectorAngle)
@@ -435,7 +435,7 @@ public static class UnifiedBattleSequencer
                         code.TryGetArgBaseAngle("BaseAngle", btl, cmd.regist.btl_id, runningThread.targetId, tmpBool, out tmpBaseAngle, out tmpTarg);
                         if (hasSingleAngle && !hasVectorAngle)
                         {
-                            destAngle = asDefaultAngle ? btl.evt.rotBattle.eulerAngles : btl.rot.eulerAngles;
+                            destAngle = btl.rot.eulerAngles;
                             destAngle[tmpBool ? 0 : 1] = tmpBaseAngle + tmpSingle;
                         }
                         else if (hasVectorAngle)
@@ -444,30 +444,16 @@ public static class UnifiedBattleSequencer
                         }
                         if (tmpTarg != btl.btl_id)
                         {
-                            if (asDefaultAngle)
+                            SequenceTurn seqt = new SequenceTurn(btl, tmpTarg, destAngle, tmpInt);
+                            if (tmpInt == 0)
                             {
-                                // Apply immediatly and discard the argument "Time" for the default angle
-                                if (tmpTarg != 0)
-                                {
-                                    Vector3 targetDir = BattleActionCode.TargetAveragePos(tmpTarg) - btl.pos;
-                                    if (targetDir.x != 0 || targetDir.z != 0)
-                                        destAngle.y += ff9.ratan2(-targetDir.x, -targetDir.z);
-                                }
-                                btl.evt.rotBattle = Quaternion.EulerAngles(destAngle);
+                                seqt.frameCur = seqt.frameEnd;
+                                seqt.Apply();
                             }
                             else
                             {
-                                SequenceTurn seqt = new SequenceTurn(btl, tmpTarg, destAngle, tmpInt);
-                                if (tmpInt == 0)
-                                {
-                                    seqt.frameCur = seqt.frameEnd;
-                                    seqt.Apply();
-                                }
-                                else
-                                {
-                                    turn.Add(seqt);
-                                    turningChar |= btl.btl_id;
-                                }
+                                turn.Add(seqt);
+                                turningChar |= btl.btl_id;
                             }
                         }
                     }
@@ -1023,6 +1009,18 @@ public static class UnifiedBattleSequencer
                         SequenceBBGIntensity.Apply(false);
                     }
                     break;
+                case "ShiftWorld":
+                {
+                    code.TryGetArgVector("Offset", out tmpVec);
+                    code.TryGetArgVector("Angle", out Vector3 angleEuler);
+                    if (!code.TryGetArgBoolean("OnlyOnCameraMovement", out tmpBool))
+                        tmpBool = true;
+                    if (tmpBool && SFXDataCamera.currentCameraEngine == SFXDataCamera.CameraEngine.NONE)
+                        break;
+                    Quaternion angle = Quaternion.EulerAngles(angleEuler);
+                    battlebg.ShiftWorld(tmpVec, angle);
+                    break;
+                }
                 case "SetVariable":
                     code.TrySetVariable("Variable", "Value", "Index");
                     break;
@@ -1074,6 +1072,7 @@ public static class UnifiedBattleSequencer
                             NCalcUtility.InitializeExpressionUnit(ref c, target, "Target");
                             NCalcUtility.InitializeExpressionCommand(ref c, new BattleCommand(cmd));
                             c.Parameters["IsSingleTarget"] = Comn.countBits(runningThread.targetId) == 1;
+                            c.Parameters["AreTargetsPlayers"] = (runningThread.targetId & 0xF) == runningThread.targetId;
                             c.Parameters["AreCasterAndTargetsEnemies"] = caster.IsPlayer && (runningThread.targetId & 0xF0) == runningThread.targetId || !caster.IsPlayer && (runningThread.targetId & 0xF) == runningThread.targetId;
                             c.Parameters["AreCasterAndTargetsAllies"] = caster.IsPlayer && (runningThread.targetId & 0xF) == runningThread.targetId || !caster.IsPlayer && (runningThread.targetId & 0x0F) == runningThread.targetId;
                             c.Parameters["IsSingleSelectedTarget"] = Comn.countBits(originalTargetId) == 1;

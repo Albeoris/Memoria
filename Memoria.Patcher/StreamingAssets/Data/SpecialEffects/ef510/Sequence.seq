@@ -1,7 +1,10 @@
 // Shared sequence of SFX Phoenix__Short
 
 SetBackgroundIntensity: Intensity=0.5 ; Time=4
-ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsPlayer == CasterIsPlayer) ; Enable=False ; IsDisappear=True
+StartThread: Condition=SFXUseCamera && !CasterIsPlayer
+	ShiftWorld: Angle=(0, 180, 0)
+EndThread
 PlaySound: Sound=2933
 PlaySound: Sound=2934
 PlaySound: Sound=2935
@@ -13,17 +16,20 @@ PlaySound: Sound=2938
 PlaySound: Sound=2939
 PlaySound: Sound=2940
 Wait: Time=33
-ShowMesh: Char=AllEnemies ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsPlayer != CasterIsPlayer) ; Enable=False ; IsDisappear=True
 Wait: Time=88
-ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+ShowMesh: Char=MatchingCondition(IsPlayer == CasterIsPlayer) ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsPlayer == CasterIsPlayer) ; Enable=True ; Time=12
 Wait: Time=3
-ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsPlayer != CasterIsPlayer) ; Enable=True ; IsDisappear=True
 EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=1
 SetBackgroundIntensity: Intensity=1 ; Time=12
 Wait: Time=16
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=8
+StartThread: Condition=SFXUseCamera && !CasterIsPlayer
+	ShiftWorld: Angle=(0, 0, 0)
+EndThread
 
 

@@ -62,7 +62,7 @@ public class BattleActionCode
         { "LoadSFX", new String[]{ "SFX", "Char", "Target", "TargetPosition", "UseCamera", "FirstBone", "SecondBone", "Args", "MagicCaster" } },
         { "PlaySFX", new String[]{ "SFX", "Instance", "JumpToFrame", "SkipSequence", "HideMeshes", "MeshColors" } },
         { "CreateVisualEffect", new String[]{ "SPS", "Char", "Bone", "Offset", "Size", "Time", "Speed", "UseSHP" } },
-        { "Turn", new String[]{ "Char", "BaseAngle", "Angle", "Time", "UsePitch", "AsDefaultAngle" } },
+        { "Turn", new String[]{ "Char", "BaseAngle", "Angle", "Time", "UsePitch" } },
         { "PlayAnimation", new String[]{ "Char", "Anim", "Speed", "Loop", "Palindrome", "Frame" } },
         { "PlayTextureAnimation", new String[]{ "Char", "Anim", "Once", "Stop" } },
         { "ToggleStandAnimation", new String[]{ "Char", "Alternate" } },
@@ -79,6 +79,7 @@ public class BattleActionCode
         { "EffectPoint", new String[]{ "Char", "Type" } },
         { "Message", new String[]{ "Text", "Title", "Priority" } },
         { "SetBackgroundIntensity", new String[]{ "Intensity", "Time", "HoldDuration" } },
+        { "ShiftWorld", new String[]{ "Offset", "Angle" } },
         { "SetVariable", new String[]{ "Variable", "Value", "Index" } },
         { "SetupReflect", new String[]{ "Delay" } },
         { "ActivateReflect", null },
@@ -502,7 +503,7 @@ public class BattleActionCode
                 c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                 c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                 NCalcUtility.InitializeExpressionUnit(ref c, btl_scrp.FindBattleUnit(caster), "Caster");
-                foreach (BattleUnit unit in Memoria.BattleState.EnumerateUnits())
+                foreach (BattleUnit unit in BattleState.EnumerateUnits())
                 {
                     c.Parameters["IsTargeted"] = (unit.Id & target) != 0;
                     c.Parameters["IsTheCaster"] = (unit.Id & caster) != 0;
@@ -515,6 +516,14 @@ public class BattleActionCode
             if (args == "AllTargets")
             {
                 value = target;
+                return true;
+            }
+            if (args == "AllNonTargets")
+            {
+                value = 0;
+                foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                    if ((unit.Id & target) == 0)
+                        value |= unit.Id;
                 return true;
             }
             if (args == "RandomTarget")
