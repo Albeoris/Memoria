@@ -2,7 +2,6 @@
 using Memoria;
 using Memoria.Scripts;
 using System;
-using System.IO;
 using UnityEngine;
 using Random = UnityEngine.Random;
 

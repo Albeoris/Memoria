@@ -396,21 +396,17 @@ public class SPSEffect : MonoBehaviour
         TIMUtils.TPage worktpage = this.works.tpage;
         TIMUtils.Clut workclut = this.works.clut;
         Int32 shindex = Math.Min((Int32)this.abr, 4);
-        FilterMode filterMode = FilterMode.Bilinear;
-        if (Configuration.Graphics.SFXSmoothTexture == 0) filterMode = FilterMode.Point;
-        if (Configuration.Graphics.SFXSmoothTexture == 2) filterMode = FilterMode.Trilinear;
         if (usePNGTexture)
         {
             this.materials[shindex].mainTexture = this.pngTexture;
-            if (Configuration.Graphics.SFXSmoothTexture != -1)
-                this.materials[shindex].mainTexture.filterMode = filterMode;
         }
         else
         {
             PSXTexture texture = PSXTextureMgr.GetTexture(worktpage.FlagTP, worktpage.FlagTY, worktpage.FlagTX, workclut.FlagClutY, workclut.FlagClutX);
-            texture.SetFilter(filterMode);
             this.materials[shindex].mainTexture = texture.texture;
         }
+        ModelFactory.SetMatFilter(this.materials[shindex], Configuration.Graphics.SFXSmoothTexture, 0);
+        
         this.meshRenderer.material = this.materials[shindex];
         if (this.spsActor != null)
             this.spsActor.spsPos = offsetedPos;

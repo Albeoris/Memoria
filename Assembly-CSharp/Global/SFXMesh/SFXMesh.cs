@@ -234,9 +234,6 @@ public class SFXMesh : SFXMeshBase
 
     public override void Render(Int32 index)
     {
-        FilterMode filterMode = FilterMode.Bilinear;
-        if (Configuration.Graphics.SFXSmoothTexture == 0) filterMode = FilterMode.Point;
-        if (Configuration.Graphics.SFXSmoothTexture == 2) filterMode = FilterMode.Trilinear;
         _material.shader = __shaders[_shaderIndex];
         if (SFXKey.IsTexture(_key))
         {
@@ -245,11 +242,11 @@ public class SFXMesh : SFXMeshBase
                 return;
             UInt32 filter = SFXKey.GetFilter(_key);
             if (filter == SFXKey.FILTER_POINT)
-                _material.mainTexture.filterMode = Configuration.Graphics.SFXSmoothTexture != -1 ? filterMode : FilterMode.Point;
-            else if (filter == SFXKey.FILTER_BILINEAR)
-                _material.mainTexture.filterMode = filterMode;
+                ModelFactory.SetMatFilter(_material, Configuration.Graphics.SFXSmoothTexture, 0);
+            else if (filter == SFXKey.FILTER_BILINEAR || SFX.isDebugFilter)
+                ModelFactory.SetMatFilter(_material, Configuration.Graphics.SFXSmoothTexture, 1);
             else
-                _material.mainTexture.filterMode = (!SFX.isDebugFilter) ? FilterMode.Point : filterMode;
+                ModelFactory.SetMatFilter(_material, Configuration.Graphics.SFXSmoothTexture, 0);
             _material.mainTexture.wrapMode = TextureWrapMode.Clamp;
             _material.SetVector(TexParam, _constTexParam);
         }
@@ -259,7 +256,7 @@ public class SFXMesh : SFXMeshBase
             _material.mainTexture = psxtexture;
             if (_material.mainTexture == null)
                 return;
-            _material.mainTexture.filterMode = Configuration.Graphics.SFXSmoothTexture != -1 ? filterMode : FilterMode.Point; ;
+            ModelFactory.SetMatFilter(_material, Configuration.Graphics.SFXSmoothTexture, 0);
             _material.mainTexture.wrapMode = TextureWrapMode.Clamp;
             _material.SetVector(TexParam, new Vector4(HALF_PIXEL, HALF_PIXEL, 256f, 256f));
         }
