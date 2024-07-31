@@ -49,7 +49,7 @@ namespace Memoria
                 WorldSmoothTexture = BindInt32(nameof(WorldSmoothTexture), 1);
                 BattleSmoothTexture = BindInt32(nameof(BattleSmoothTexture), 1);
                 ElementsSmoothTexture = BindInt32(nameof(ElementsSmoothTexture), 1);
-                SFXSmoothTexture = BindInt32(nameof(SFXSmoothTexture), 1);
+                SFXSmoothTexture = BindInt32(nameof(SFXSmoothTexture), -1);
             }
         }
     }
