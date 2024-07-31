@@ -1985,11 +1985,12 @@ public class WMWorld : Singleton<WMWorld>
         return wmshadow;
     }
 
-    private FilterMode filterMode = FilterMode.Bilinear;
-
     private const Int32 BlockDistance = 64;
 
     private const Int32 CellDistance = 32;
+
+    [NonSerialized]
+    private FilterMode filterMode = FilterMode.Bilinear;
 
     private Transform root;
 
