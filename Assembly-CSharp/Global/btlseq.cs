@@ -388,7 +388,7 @@ public class btlseq
             CharacterSerialNumber serialNumber = btl_util.getSerialNumber(btl);
             if (FF9BattleDB.GEO.TryGetValue(btl.dms_geo_id, out String modelName) && ModelFactory.garnetShortHairTable.Contains(modelName))
             {
-                if (Configuration.Graphics.GarnetHair != 2 && (serialNumber == CharacterSerialNumber.GARNET_LH_ROD || serialNumber == CharacterSerialNumber.GARNET_LH_KNIFE || Configuration.Graphics.GarnetHair == 1))
+                if (Configuration.Graphics.GarnetHair != 2 && (serialNumber == CharacterSerialNumber.GARNET_LH_ROD || serialNumber == CharacterSerialNumber.GARNET_LH_RACKET || Configuration.Graphics.GarnetHair == 1))
                 {
                     Renderer[] longHairRenderers = btl.gameObject.transform.GetChildByName("long_hair").GetComponentsInChildren<Renderer>();
                     foreach (Renderer renderer in longHairRenderers)
