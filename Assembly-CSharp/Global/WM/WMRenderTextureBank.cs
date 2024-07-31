@@ -320,8 +320,6 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
         this.RiverJointMaterial.mainTexture = mainTexture;
     }
 
-    FilterMode filterMode = FilterMode.Bilinear;
-
     public const String RenderTexturesPath = "WorldMap/RenderTextures/";
 
     public const String MaterialsPath = "WorldMap/Materials/";
@@ -465,4 +463,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
     public Boolean StreamEnabled = true;
 
     private Boolean initialized;
+
+    [NonSerialized]
+    private FilterMode filterMode = FilterMode.Bilinear;
 }
