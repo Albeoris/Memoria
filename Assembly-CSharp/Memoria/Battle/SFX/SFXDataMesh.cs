@@ -48,7 +48,8 @@ public abstract class SFXDataMesh
         public Single threshold = 0.05f;
         public FilterMode filterMode
         {
-            get {
+            get
+            {
                 switch (Configuration.Graphics.SFXSmoothTexture)
                 {
                     case 0:
@@ -59,7 +60,6 @@ public abstract class SFXDataMesh
                         return FilterMode.Bilinear;
                 }
             }
-            set { }
         }
         public TextureWrapMode wrapMode = TextureWrapMode.Clamp;
 
@@ -141,7 +141,7 @@ public abstract class SFXDataMesh
                         RenderTexture renderTexture = texture as RenderTexture;
                         renderTexture.enableRandomWrite = false;
                         renderTexture.wrapMode = TextureWrapMode.Clamp;
-                        renderTexture.filterMode = filterMode; // FilterMode.Bilinear
+                        renderTexture.filterMode = filterMode;
                         renderTexture.Create();
                         RenderTexture active = RenderTexture.active;
                         RenderTexture.active = renderTexture;
@@ -315,7 +315,6 @@ public abstract class SFXDataMesh
                         return FilterMode.Bilinear;
                 }
             }
-            set { }
         }
 
         public static Int32 RenderingCount;
@@ -327,7 +326,7 @@ public abstract class SFXDataMesh
                 genTexture = new RenderTexture(PSXTextureMgr.GEN_TEXTURE_W, PSXTextureMgr.GEN_TEXTURE_H, 0, RenderTextureFormat.RGB565);
                 genTexture.enableRandomWrite = false;
                 genTexture.wrapMode = TextureWrapMode.Clamp;
-                genTexture.filterMode = filterMode; //FilterMode.Bilinear;
+                genTexture.filterMode = filterMode;
                 genTexture.Create();
             }
             Raw.RenderingCount++;
