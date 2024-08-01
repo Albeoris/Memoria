@@ -60,6 +60,7 @@ public abstract class SFXDataMesh
                         return FilterMode.Bilinear;
                 }
             }
+            set {}
         }
         public TextureWrapMode wrapMode = TextureWrapMode.Clamp;
 
