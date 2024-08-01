@@ -477,6 +477,18 @@ public static class ModelFactory
             }
         }
     }
+    
+    public static FilterMode GetFilterMode(Int32 filtermode, Int32 def)
+    {
+        filtermode = filtermode == -1 ? def : filtermode;
+        filtermode = Mathf.Clamp(filtermode, 0, 2);
+        return filtermode switch
+        {
+            0 => FilterMode.Point,
+            2 => FilterMode.Trilinear,
+            _ => FilterMode.Bilinear,
+        };
+    }
 
     public static Dictionary<String, String> upscaleTable = new Dictionary<String, String>
     {
