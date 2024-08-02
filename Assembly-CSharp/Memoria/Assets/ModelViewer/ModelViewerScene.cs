@@ -106,6 +106,7 @@ namespace Memoria.Assets
             spsEffect.meshRenderer = meshRenderer;
             spsEffect.meshFilter = meshFilter;
             
+            // Model Viewer UI
             if (infoPanel != null) // For Soft Reset
                 UnityEngine.Object.Destroy(infoPanel.BasePanel.gameObject);
             if (controlPanel != null)
@@ -174,6 +175,30 @@ namespace Memoria.Assets
                 sprite.spriteName = String.Empty;
                 sprite.alpha = 0f;
             }
+
+            // Setup World Map lights
+            Light wmLight0 = GameObject.Find("ModelViewerWMLight0")?.GetComponent<Light>();
+            Light wmLight1 = GameObject.Find("ModelViewerWMLight1")?.GetComponent<Light>();
+            Light wmLight2 = GameObject.Find("ModelViewerWMLight2")?.GetComponent<Light>();
+            if (wmLight0 == null || wmLight1 == null || wmLight2 == null)
+            {
+                wmLight0 = new GameObject("ModelViewerWMLight0").AddComponent<Light>();
+                wmLight1 = new GameObject("ModelViewerWMLight1").AddComponent<Light>();
+                wmLight2 = new GameObject("ModelViewerWMLight2").AddComponent<Light>();
+            }
+            wmLight0.transform.position = new Vector3(0f, 5f, 0f);
+            wmLight1.transform.position = new Vector3(1f, 5f, 0f);
+            wmLight2.transform.position = new Vector3(2f, 5f, 0f);
+            wmLight0.transform.rotation = Quaternion.LookRotation(Vector3.down);
+            wmLight1.transform.rotation = Quaternion.LookRotation(Vector3.right);
+            wmLight2.transform.rotation = Quaternion.LookRotation(new Vector3(0f, -1f, -4f).normalized);
+            wmLight0.type = LightType.Directional;
+            wmLight1.type = LightType.Directional;
+            wmLight2.type = LightType.Directional;
+            wmLight0.color = new Color(0.247f, 0.247f, 0.247f); // The default ambiant lights
+            wmLight1.color = new Color(0.177f, 0.177f, 0.177f);
+            wmLight2.color = new Color(0.402f, 0.378f, 0.329f);
+
             // Usual models, of type ACC, MAIN, MON, NPC, SUB and WEP
             foreach (KeyValuePair<Int32, String> geo in FF9BattleDB.GEO)
             {
@@ -185,12 +210,18 @@ namespace Memoria.Assets
             }
             geoArchetype.Add(0);
             String lastArchetype = geoList[0].Name.Substring(0, 8);
+            Boolean reachedWorldArchetype = false;
             for (Int32 i = 0; i < geoList.Count; i++)
             {
                 if (!geoList[i].Name.StartsWith(lastArchetype))
                 {
                     geoArchetype.Add(i);
                     lastArchetype = geoList[i].Name.Substring(0, 8);
+                }
+                else if (!reachedWorldArchetype && geoList[i].Name.StartsWith("GEO_SUB_W0"))
+                {
+                    geoArchetype.Add(i);
+                    reachedWorldArchetype = true;
                 }
             }
             geoArchetype.Add(geoList.Count);
@@ -1036,19 +1067,20 @@ namespace Memoria.Assets
 
         private static Int32 GetFirstModelOfCategory(Int32 categoryNum)
         {
-            List<int> categoriesThresholds = new List<int>(geoArchetype);
+            List<Int32> categoriesThresholds = new List<Int32>(geoArchetype);
             categoriesThresholds.Sort();
             categoryNum = Mathf.Clamp(categoryNum, 0, categoriesThresholds.Count - 1);
             return categoriesThresholds[categoryNum];
         }
 
-        private static List<string> categoryNames = new List<string>
+        private static List<String> categoryNames = new List<String>
         {
             "FIELD ITEMS",
             "ACTORS (MAIN)",
             "MONSTERS",
             "NPC",
-            "ACTORS/WM",
+            "ACTORS",
+            "WORLD",
             "WEAPONS",
             "BATTLE MAPS",
             "SPS (11)",
@@ -1217,6 +1249,11 @@ namespace Memoria.Assets
                 currentModelBones = BoneHierarchyNode.CreateFromModel(currentModel);
                 //replaceOnce = 4;
                 postRefresh = 6;
+                // Disable fog effect for World Map models
+                foreach (Renderer renderer in currentModel.gameObject.GetComponentsInChildren<Renderer>())
+                    foreach (Material mat in renderer.materials)
+                        if (mat.shader.name.StartsWith("WorldMap/"))
+                            mat.SetFloat("_FogEnabled", 0f);
             }
             else if (geoList[index].Kind == MODEL_KIND_BBG)
             {

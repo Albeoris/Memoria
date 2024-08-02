@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
+using FF9;
 using Memoria;
 using Memoria.Data;
 using System;
@@ -224,9 +225,7 @@ public class BattleUI : MonoBehaviour
             }
         }
         if (GUILayout.Button(" Play "))
-        {
-            btl_cmd.SetEnemyCommandBySequence(1, BattleCommandId.EnemyAtk, this.seqList[this.seqNo]);
-        }
+            SetDebugEnemyCommand(1, BattleCommandId.EnemyAtk, this.seqList[this.seqNo]);
         GUI.enabled = true;
         GUILayout.EndHorizontal();
         this.OnUiCamera();
@@ -848,4 +847,80 @@ public class BattleUI : MonoBehaviour
     };
 
     private Vector2 scrollPosition;
+
+    private static void SetDebugEnemyCommand(UInt16 tar_id, BattleCommandId cmd_no, Int32 sub_no)
+    {
+        FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
+        BattleUnit btl = btl_scrp.FindBattleUnit(16);
+        BTL_DATA[] btlDataArray = stateBattleSystem.btl_data;
+        SEQ_WORK_SET seqWorkSet = stateBattleSystem.seq_work_set;
+        Int32 enemyType = Array.IndexOf(seqWorkSet.AnmOfsList.Distinct().ToArray(), seqWorkSet.AnmOfsList[sub_no]);
+        for (Int32 index = 0; index < btlDataArray.Length; ++index)
+        {
+            if (enemyType == btlDataArray[index].typeNo)
+            {
+                btl = new BattleUnit(btlDataArray[index]);
+                break;
+            }
+        }
+        if (btl == null)
+            return;
+        if ((stateBattleSystem.cmd_status & 1) != 0 || btl.IsUnderAnyStatus(BattleStatusConst.PreventEnemyCmd))
+        {
+            btl.Data.sel_mode = 0;
+        }
+        else
+        {
+            CMD_DATA cmd;
+            if (cmd_no == BattleCommandId.EnemyAtk)
+            {
+                if (stateBattleSystem.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
+                {
+                    btl.Data.sel_mode = 0;
+                    return;
+                }
+                cmd = btl.Data.cmd[0];
+            }
+            else if (cmd_no == BattleCommandId.EnemyCounter)
+                cmd = btl.Data.cmd[1];
+            else if (cmd_no == BattleCommandId.EnemyDying)
+                cmd = btl.Data.cmd[1];
+            else if (cmd_no == BattleCommandId.ScriptCounter1)
+            {
+                cmd = btl.Data.cmd[3];
+                cmd_no = BattleCommandId.EnemyCounter;
+            }
+            else if (cmd_no == BattleCommandId.ScriptCounter2)
+            {
+                cmd = btl.Data.cmd[4];
+                cmd_no = BattleCommandId.EnemyCounter;
+            }
+            else if (cmd_no == BattleCommandId.ScriptCounter3)
+            {
+                cmd = btl.Data.cmd[5];
+                cmd_no = BattleCommandId.EnemyCounter;
+            }
+            else
+            {
+                btl.Data.sel_mode = 0;
+                return;
+            }
+            cmd.cmd_no = cmd_no;
+            cmd.sub_no = sub_no;
+            cmd.SetAAData(btl_util.GetCommandAction(cmd));
+            cmd.ScriptId = 26;
+            cmd.tar_id = tar_id;
+            cmd.info.cursor = cmd.aa.Info.Target <= TargetType.ManyEnemy || cmd.aa.Info.Target >= TargetType.Self ? (Byte)0 : (Byte)1;
+            cmd.IsShortRange = btl_util.IsAttackShortRange(cmd);
+            if (!btl_util.IsCommandDeclarable(cmd_no))
+                cmd.info.priority = 1;
+            if (cmd == btl.Data.cmd[0])
+                btl_stat.RemoveStatuses(btl, BattleStatusConst.RemoveOnMainCommand);
+            cmd.info.cover = 0;
+            cmd.info.dodge = 0;
+            cmd.info.reflec = 0;
+            btl.Data.bi.cmd_idle = 1;
+            btl_cmd.EnqueueCommand(cmd);
+        }
+    }
 }

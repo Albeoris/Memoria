@@ -46,22 +46,7 @@ public abstract class SFXDataMesh
         public Vector4 textureParam = default(Vector4);
         public Color colorIntensity = Color.white;
         public Single threshold = 0.05f;
-        public FilterMode filterMode
-        {
-            get
-            {
-                switch (Configuration.Graphics.SFXSmoothTexture)
-                {
-                    case 0:
-                        return FilterMode.Point;
-                    case 2:
-                        return FilterMode.Trilinear;
-                    default:
-                        return FilterMode.Bilinear;
-                }
-            }
-            set {}
-        }
+        public Int32 defaultFilterMode = 0;
         public TextureWrapMode wrapMode = TextureWrapMode.Clamp;
 
         public TextureKind textureKind = 0;
@@ -142,7 +127,7 @@ public abstract class SFXDataMesh
                         RenderTexture renderTexture = texture as RenderTexture;
                         renderTexture.enableRandomWrite = false;
                         renderTexture.wrapMode = TextureWrapMode.Clamp;
-                        renderTexture.filterMode = filterMode;
+                        ModelFactory.SetMatFilter(renderTexture, Configuration.Graphics.SFXSmoothTexture, 1);
                         renderTexture.Create();
                         RenderTexture active = RenderTexture.active;
                         RenderTexture.active = renderTexture;
@@ -179,7 +164,7 @@ public abstract class SFXDataMesh
                 mat.mainTexture = texture;
                 if (mat.mainTexture == null)
                     return;
-                mat.mainTexture.filterMode = filterMode;
+                ModelFactory.SetMatFilter(mat.mainTexture, Configuration.Graphics.SFXSmoothTexture, defaultFilterMode);
                 mat.mainTexture.wrapMode = wrapMode;
                 mat.SetVector(SFXMesh.TexParam, textureParam);
             }
@@ -201,11 +186,11 @@ public abstract class SFXDataMesh
                 textureParam = sfxmesh._constTexParam;
                 UInt32 filter = SFXKey.GetFilter(meshKey);
                 if (filter == SFXKey.FILTER_POINT)
-                    filterMode = Configuration.Graphics.SFXSmoothTexture == -1 ? FilterMode.Point : filterMode;
+                    defaultFilterMode = 0;
                 else if (filter == SFXKey.FILTER_BILINEAR)
-                    filterMode = filterMode;
+                    defaultFilterMode = 1;
                 else
-                    filterMode = (!SFX.isDebugFilter) ? FilterMode.Point : filterMode;
+                    defaultFilterMode = SFX.isDebugFilter ? 1 : 0;
                 wrapMode = TextureWrapMode.Clamp;
             }
             else if (SFXScreenShot.IsSpecialSlowTexture(meshKey))
@@ -213,7 +198,7 @@ public abstract class SFXDataMesh
                 textureKind = TextureKind.IMAGE;
                 texture = UnityEngine.Object.Instantiate(PSXTextureMgr.GetTexture(1, 1, 8, 247, 0).texture);
                 textureParam = new Vector4(SFXMesh.HALF_PIXEL, SFXMesh.HALF_PIXEL, 256f, 256f);
-                filterMode = filterMode; //FilterMode.Point;
+                defaultFilterMode = 0;
                 wrapMode = TextureWrapMode.Clamp;
             }
             else
@@ -302,21 +287,6 @@ public abstract class SFXDataMesh
         public RenderTexture genTexture = null;
         public Int32 firstFrame = Int32.MaxValue;
         public Int32 lastFrame = -1;
-        public FilterMode filterMode
-        {
-            get
-            {
-                switch (Configuration.Graphics.SFXSmoothTexture)
-                {
-                    case 0:
-                        return FilterMode.Point;
-                    case 2:
-                        return FilterMode.Trilinear;
-                    default:
-                        return FilterMode.Bilinear;
-                }
-            }
-        }
 
         public static Int32 RenderingCount;
 
@@ -327,7 +297,7 @@ public abstract class SFXDataMesh
                 genTexture = new RenderTexture(PSXTextureMgr.GEN_TEXTURE_W, PSXTextureMgr.GEN_TEXTURE_H, 0, RenderTextureFormat.RGB565);
                 genTexture.enableRandomWrite = false;
                 genTexture.wrapMode = TextureWrapMode.Clamp;
-                genTexture.filterMode = filterMode;
+                ModelFactory.SetMatFilter(genTexture, Configuration.Graphics.SFXSmoothTexture, 1);
                 genTexture.Create();
             }
             Raw.RenderingCount++;

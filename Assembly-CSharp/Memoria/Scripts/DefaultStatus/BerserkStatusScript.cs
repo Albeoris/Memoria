@@ -32,7 +32,7 @@ namespace Memoria.DefaultScripts
             if (Target.IsPlayer)
                 btl_cmd.SetCommand(Target.ATBCommand, BattleCommandId.Attack, (Int32)BattleAbilityId.Attack, btl_util.GetRandomBtlID(0), 0u);
             else
-                btl_cmd.SetEnemyCommand(Target.Id, btl_util.GetRandomBtlID(1), BattleCommandId.EnemyAtk, Target.EnemyType.p_atk_no);
+                btl_cmd.SetEnemyCommand(Target, BattleCommandId.EnemyAtk, Target.EnemyType.p_atk_no, btl_util.GetRandomBtlID(1));
             if (Configuration.VoiceActing.Enabled)
                 Target.AddDelayedModifier(WaitForAutoAttack, TriggerUsageForBattleVoice);
             return true;

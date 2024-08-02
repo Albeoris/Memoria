@@ -633,16 +633,16 @@ public class btl_scrp
                         if (btl_cmd.CheckUsingCommand(btl.cmd[4]))
                         {
                             if (!btl_cmd.CheckUsingCommand(btl.cmd[5]))
-                                btl_cmd.SetEnemyCommand((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1), tar_id, BattleCommandId.ScriptCounter3, val);
+                                btl_cmd.SetEnemyCommand(unit, BattleCommandId.ScriptCounter3, val, tar_id);
                         }
                         else
                         {
-                            btl_cmd.SetEnemyCommand((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1), tar_id, BattleCommandId.ScriptCounter2, val);
+                            btl_cmd.SetEnemyCommand(unit, BattleCommandId.ScriptCounter2, val, tar_id);
                         }
                     }
                     else
                     {
-                        btl_cmd.SetEnemyCommand((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1), tar_id, BattleCommandId.ScriptCounter1, val);
+                        btl_cmd.SetEnemyCommand(unit, BattleCommandId.ScriptCounter1, val, tar_id);
                     }
                 }
                 else
