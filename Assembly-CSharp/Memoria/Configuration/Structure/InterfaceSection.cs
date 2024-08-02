@@ -20,6 +20,9 @@ namespace Memoria
             public readonly IniValue<Int32> BattleDetailPosY;
             public readonly IniValue<Int32> BattleDetailWidth;
             public readonly IniValue<Int32> BattleDetailHeight;
+            public readonly IniValue<Int32> MinimapPreset;
+            public readonly IniValue<Int32> MinimapOffsetX;
+            public readonly IniValue<Int32> MinimapOffsetY;
             public readonly IniValue<String> BattleDamageTextFormat;
             public readonly IniValue<String> BattleRestoreTextFormat;
             public readonly IniValue<String> BattleMPDamageTextFormat;
@@ -48,6 +51,9 @@ namespace Memoria
                 BattleDetailPosY = BindInt32(nameof(BattleDetailPosY), -380);
                 BattleDetailWidth = BindInt32(nameof(BattleDetailWidth), 796);
                 BattleDetailHeight = BindInt32(nameof(BattleDetailHeight), 230);
+                MinimapPreset = BindInt32(nameof(MinimapPreset), 1);
+                MinimapOffsetX = BindInt32(nameof(MinimapOffsetX), 0);
+                MinimapOffsetY = BindInt32(nameof(MinimapOffsetY), 0);
                 BattleDamageTextFormat = BindString(nameof(BattleDamageTextFormat), String.Empty);
                 BattleRestoreTextFormat = BindString(nameof(BattleRestoreTextFormat), String.Empty);
                 BattleMPDamageTextFormat = BindString(nameof(BattleMPDamageTextFormat), String.Empty);
@@ -62,7 +68,7 @@ namespace Memoria
                 // Status menu -- Default PC: 8, PSX: 8
                 // Config menu -- Default PC: 6/8, PSX: 9
 
-                FadeDuration = BindInt32(nameof(FadeDuration), 300);
+                FadeDuration = BindInt32(nameof(FadeDuration), 40);
             }
         }
     }

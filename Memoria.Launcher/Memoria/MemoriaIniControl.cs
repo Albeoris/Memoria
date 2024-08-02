@@ -1529,6 +1529,9 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Interface", "BattleDetailPosY", "-380");
                         MakeIniNotNull("Interface", "BattleDetailWidth", "796");
                         MakeIniNotNull("Interface", "BattleDetailHeight", "230");
+                        MakeIniNotNull("Interface", "MinimapPreset", "1");
+                        MakeIniNotNull("Interface", "MinimapOffsetX", "0");
+                        MakeIniNotNull("Interface", "MinimapOffsetY", "0");
                         MakeIniNotNull("Interface", "PSXBattleMenu", "0");
                         MakeIniNotNull("Interface", "ScanDisplay", "1");
                         MakeIniNotNull("Interface", "BattleCommandTitleFormat", "");
