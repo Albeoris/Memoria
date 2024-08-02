@@ -48,7 +48,6 @@ public abstract class SFXDataMesh
         public Single threshold = 0.05f;
         public Int32 defaultFilterMode = 0;
         public TextureWrapMode wrapMode = TextureWrapMode.Clamp;
-
         public TextureKind textureKind = 0;
         public String texturePath = "";
         public Texture texture = null;
@@ -316,8 +315,7 @@ public abstract class SFXDataMesh
                 RenderTexture.active = genTexture;
                 foreach (KeyValuePair<EffectMaterial, RMesh> p in genTextureMesh)
                 {
-                    RMesh.Frame meshFrame;
-                    if (!p.Value.raw.TryGetValue(frame, out meshFrame))
+                    if (!p.Value.raw.TryGetValue(frame, out RMesh.Frame meshFrame))
                         continue;
                     meshFrame.Render(frame, p.Key, p.Value.isPolyline, run);
                 }

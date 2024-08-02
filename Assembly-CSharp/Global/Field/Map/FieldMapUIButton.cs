@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.Common;
+using Memoria;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -93,14 +94,7 @@ public class FieldMapUIButton : MonoBehaviour
         if (!FF9StateSystem.Field.UseUpscalFM && GUILayout.Button((!this.isBilinear) ? "Point" : "Bilinear", new GUILayoutOption[0]))
         {
             this.isBilinear = !this.isBilinear;
-            if (this.isBilinear)
-            {
-                this.bg.scene.atlas.filterMode = FilterMode.Bilinear;
-            }
-            else
-            {
-                this.bg.scene.atlas.filterMode = FilterMode.Point;
-            }
+            this.bg.scene.atlas.filterMode = ModelFactory.GetFilterMode(Configuration.Graphics.UISmoothTexture, this.isBilinear? 1 : 0);
         }
         GUILayout.EndVertical();
         GUILayout.EndHorizontal();

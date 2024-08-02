@@ -517,7 +517,7 @@ public class WMWorld : Singleton<WMWorld>
             RegisterBlockComponent(block, prefab.TerrainForm2, false, true);
         if (block.Number == 219)
         {
-            block.SetFilterMode();
+            block.SetTextureFilterMode(); // declared before sea/beach/quicksand, or they become static (theirs is declared in WMRenderTextureBank and WMBlocks)
             GameObject waterShrineGo = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/WaterShrine", false);
             if (waterShrineGo)
             {
@@ -626,7 +626,7 @@ public class WMWorld : Singleton<WMWorld>
                 block516Copy.transform.localPosition = new Vector3(0f, 0f, 0f);
             }
         }
-        block.SetFilterMode(); // has to be declared before sea/beach/quicksand, or they become static
+        block.SetTextureFilterMode(); // declared before sea/beach/quicksand, or they become static (theirs is declared in WMRenderTextureBank and WMBlocks)
         if (block.Number == 91)
         {
             GameObject quicksandGo = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/Quicksand", false);

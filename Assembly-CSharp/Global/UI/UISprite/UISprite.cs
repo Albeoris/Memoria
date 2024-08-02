@@ -158,69 +158,69 @@ public class UISprite : UIBasicSprite
         get
         {
             Vector2 pivotOffset = base.pivotOffset;
-            Single num = -pivotOffset.x * (Single)this.mWidth;
-            Single num2 = -pivotOffset.y * (Single)this.mHeight;
-            Single num3 = num + (Single)this.mWidth;
-            Single num4 = num2 + (Single)this.mHeight;
+            Single left = -pivotOffset.x * (Single)this.mWidth;
+            Single bottom = -pivotOffset.y * (Single)this.mHeight;
+            Single right = left + (Single)this.mWidth;
+            Single top = bottom + (Single)this.mHeight;
             if (this.GetAtlasSprite() != null && this.mType != UIBasicSprite.Type.Tiled)
             {
-                Int32 num5 = this.mSprite.paddingLeft;
-                Int32 num6 = this.mSprite.paddingBottom;
-                Int32 num7 = this.mSprite.paddingRight;
-                Int32 num8 = this.mSprite.paddingTop;
+                Int32 paddingLeft = this.mSprite.paddingLeft;
+                Int32 paddingBottom = this.mSprite.paddingBottom;
+                Int32 paddingRight = this.mSprite.paddingRight;
+                Int32 paddingTop = this.mSprite.paddingTop;
                 Single pixelSize = this.pixelSize;
                 if (pixelSize != 1f)
                 {
-                    num5 = Mathf.RoundToInt(pixelSize * (Single)num5);
-                    num6 = Mathf.RoundToInt(pixelSize * (Single)num6);
-                    num7 = Mathf.RoundToInt(pixelSize * (Single)num7);
-                    num8 = Mathf.RoundToInt(pixelSize * (Single)num8);
+                    paddingLeft = Mathf.RoundToInt(pixelSize * (Single)paddingLeft);
+                    paddingBottom = Mathf.RoundToInt(pixelSize * (Single)paddingBottom);
+                    paddingRight = Mathf.RoundToInt(pixelSize * (Single)paddingRight);
+                    paddingTop = Mathf.RoundToInt(pixelSize * (Single)paddingTop);
                 }
-                Int32 num9 = this.mSprite.width + num5 + num7;
-                Int32 num10 = this.mSprite.height + num6 + num8;
-                Single num11 = 1f;
-                Single num12 = 1f;
-                if (num9 > 0 && num10 > 0 && (this.mType == UIBasicSprite.Type.Simple || this.mType == UIBasicSprite.Type.Filled))
+                Int32 spriteWidth = this.mSprite.width + paddingLeft + paddingRight;
+                Int32 spriteHeight = this.mSprite.height + paddingBottom + paddingTop;
+                Single scaleX = 1f;
+                Single scaleY = 1f;
+                if (spriteWidth > 0 && spriteHeight > 0 && (this.mType == UIBasicSprite.Type.Simple || this.mType == UIBasicSprite.Type.Filled))
                 {
-                    if ((num9 & 1) != 0)
+                    if ((spriteWidth & 1) != 0)
                     {
-                        num7++;
+                        paddingRight++;
                     }
-                    if ((num10 & 1) != 0)
+                    if ((spriteHeight & 1) != 0)
                     {
-                        num8++;
+                        paddingTop++;
                     }
-                    num11 = 1f / (Single)num9 * (Single)this.mWidth;
-                    num12 = 1f / (Single)num10 * (Single)this.mHeight;
+                    scaleX = 1f / (Single)spriteWidth * (Single)this.mWidth;
+                    scaleY = 1f / (Single)spriteHeight * (Single)this.mHeight;
                 }
                 if (this.mFlip == UIBasicSprite.Flip.Horizontally || this.mFlip == UIBasicSprite.Flip.Both)
                 {
-                    num += (Single)num7 * num11;
-                    num3 -= (Single)num5 * num11;
+                    left += (Single)paddingRight * scaleX;
+                    right -= (Single)paddingLeft * scaleX;
                 }
                 else
                 {
-                    num += (Single)num5 * num11;
-                    num3 -= (Single)num7 * num11;
+                    left += (Single)paddingLeft * scaleX;
+                    right -= (Single)paddingRight * scaleX;
                 }
                 if (this.mFlip == UIBasicSprite.Flip.Vertically || this.mFlip == UIBasicSprite.Flip.Both)
                 {
-                    num2 += (Single)num8 * num12;
-                    num4 -= (Single)num6 * num12;
+                    bottom += (Single)paddingTop * scaleY;
+                    top -= (Single)paddingBottom * scaleY;
                 }
                 else
                 {
-                    num2 += (Single)num6 * num12;
-                    num4 -= (Single)num8 * num12;
+                    bottom += (Single)paddingBottom * scaleY;
+                    top -= (Single)paddingTop * scaleY;
                 }
             }
-            Vector4 vector = (!(this.mAtlas != (UnityEngine.Object)null)) ? Vector4.zero : (this.border * this.pixelSize);
-            Single num13 = vector.x + vector.z;
-            Single num14 = vector.y + vector.w;
-            Single x = Mathf.Lerp(num, num3 - num13, this.mDrawRegion.x);
-            Single y = Mathf.Lerp(num2, num4 - num14, this.mDrawRegion.y);
-            Single z = Mathf.Lerp(num + num13, num3, this.mDrawRegion.z);
-            Single w = Mathf.Lerp(num2 + num14, num4, this.mDrawRegion.w);
+            Vector4 borderVector = (!(this.mAtlas != (UnityEngine.Object)null)) ? Vector4.zero : (this.border * this.pixelSize);
+            Single borderX = borderVector.x + borderVector.z;
+            Single borderY = borderVector.y + borderVector.w;
+            Single x = Mathf.Lerp(left, right - borderX, this.mDrawRegion.x);
+            Single y = Mathf.Lerp(bottom, top - borderY, this.mDrawRegion.y);
+            Single z = Mathf.Lerp(left + borderX, right, this.mDrawRegion.z);
+            Single w = Mathf.Lerp(bottom + borderY, top, this.mDrawRegion.w);
             return new Vector4(x, y, z, w);
         }
     }

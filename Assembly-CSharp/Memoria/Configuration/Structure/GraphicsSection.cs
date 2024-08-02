@@ -27,6 +27,7 @@ namespace Memoria
             public readonly IniValue<Int32> BattleSmoothTexture;
             public readonly IniValue<Int32> ElementsSmoothTexture;
             public readonly IniValue<Int32> SFXSmoothTexture;
+            public readonly IniValue<Int32> UISmoothTexture;
 
             public GraphicsSection() : base(nameof(GraphicsSection), false)
             {
@@ -50,6 +51,7 @@ namespace Memoria
                 BattleSmoothTexture = BindInt32(nameof(BattleSmoothTexture), 1);
                 ElementsSmoothTexture = BindInt32(nameof(ElementsSmoothTexture), 1);
                 SFXSmoothTexture = BindInt32(nameof(SFXSmoothTexture), -1);
+                SFXSmoothTexture = BindInt32(nameof(UISmoothTexture), -1);
             }
         }
     }
