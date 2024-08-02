@@ -188,7 +188,7 @@ public class WMRenderTextureBank : Singleton<WMRenderTextureBank>
             return;
         }
         Texture2D mainTexture = this.Beach1Textures[this.currentFrameBeach1];
-        mainTexture.filterMode = ModelFactory.GetFilterMode(Configuration.Graphics.WorldSmoothTexture, 1);
+        mainTexture.filterMode = filterMode;
         this.Beach1Material.mainTexture = mainTexture;
     }
 

@@ -560,30 +560,21 @@ namespace Memoria.Launcher
             {
                 if (WidescreenSupport == 0)
                 {
-                    switch (BattleInterface)
+                    return BattleInterface switch
                     {
-
-                        case 0:
-                        default:
-                            return new Rect(-400, -362, 630, 236);
-                        case 1:
-                            return new Rect(-400, -382, 530, 220);
-                        case 2:
-                            return new Rect(-400, -360, 650, 280);
-                    }
+                        1 => new Rect(-400, -382, 530, 220),
+                        2 => new Rect(-400, -360, 650, 280),
+                        _ => new Rect(-400, -362, 630, 236),
+                    };
                 }
                 else
                 {
-                    switch (BattleInterface)
+                    return BattleInterface switch
                     {
-                        case 0:
-                        default:
-                            return new Rect(-400, -362, 630, 236);
-                        case 1:
-                            return new Rect(-500, -382, 530, 220);
-                        case 2:
-                            return new Rect(-500, -360, 650, 280);
-                    }
+                        1 => new Rect(-500, -382, 530, 220),
+                        2 => new Rect(-500, -360, 650, 280),
+                        _ => new Rect(-400, -362, 630, 236),
+                    };
                 }
             }
         }
@@ -593,29 +584,21 @@ namespace Memoria.Launcher
             {
                 if (WidescreenSupport == 0)
                 {
-                    switch (BattleInterface)
+                    return BattleInterface switch
                     {
-                        case 0:
-                        default:
-                            return new Rect(345, -380, 796, 230);
-                        case 1:
-                            return new Rect(345, -422, 672, 208);
-                        case 2:
-                            return new Rect(345, -422, 672, 208);
-                    }
+                        1 => new Rect(345, -422, 672, 208),
+                        2 => new Rect(345, -422, 672, 208),
+                        _ => new Rect(345, -380, 796, 230),
+                    };
                 }
                 else
                 {
-                    switch (BattleInterface)
+                    return BattleInterface switch
                     {
-                        case 0:
-                        default:
-                            return new Rect(345, -380, 796, 230);
-                        case 1:
-                            return new Rect(500, -422, 672, 208);
-                        case 2:
-                            return new Rect(500, -422, 672, 208);
-                    }
+                        1 => new Rect(500, -422, 672, 208),
+                        2 => new Rect(500, -422, 672, 208),
+                        _ => new Rect(345, -380, 796, 230),
+                    };
                 }
             }
         }
@@ -822,7 +805,7 @@ namespace Memoria.Launcher
         {
             if (File.Exists(_iniPath))
             {
-                IniFile iniFile = new IniFile(_iniPath);
+                IniFile iniFile = new(_iniPath);
                 String value = iniFile.ReadValue(category, option);
                 if (!String.IsNullOrEmpty(value))
                 {
@@ -851,14 +834,14 @@ namespace Memoria.Launcher
                 if (!File.Exists(_iniPath))
                 {
                     Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("Memoria.ini");
-                    StreamReader reader = new StreamReader(input);
+                    StreamReader reader = new(input);
                     string text = reader.ReadToEnd();
                     File.WriteAllText(_iniPath, text);
                 }
 
                 SanitizeMemoriaIni();
 
-                IniFile iniFile = new IniFile(_iniPath);
+                IniFile iniFile = new(_iniPath);
 
                 String modstring = iniFile.ReadValue("Mod", "FolderNames");
 
@@ -1090,8 +1073,7 @@ namespace Memoria.Launcher
 
 
                 value = iniFile.ReadValue("Font", "Enabled");
-                Int16 enabledFont = 0;
-                if (String.IsNullOrEmpty(value) || !Int16.TryParse(value, out enabledFont) || enabledFont == 0)
+                if (String.IsNullOrEmpty(value) || !Int16.TryParse(value, out Int16 enabledFont) || enabledFont == 0)
                 {
                     _fontChoice = _fontDefaultPC;
                     _usepsxfont = 0;
@@ -1166,7 +1148,7 @@ namespace Memoria.Launcher
         private string UpdateModList()
         {
             //List<string> modList = new List<string>();
-            IniFile iniFile = new IniFile(_iniPath);
+            IniFile iniFile = new(_iniPath);
             String str = iniFile.ReadValue("Mod", "FolderNames");
             if (String.IsNullOrEmpty(str))
                 str = "";
@@ -1176,9 +1158,9 @@ namespace Memoria.Launcher
             }
 
             if (Directory.Exists("MoguriSoundtrack") && OrchestralMusic == 1)
-                str = str + ",MoguriSoundtrack";
+                str += ",MoguriSoundtrack";
             if (Directory.Exists("MoguriVideo") && HighFpsVideo == 1)
-                str = str + ",MoguriVideo";
+                str += ",MoguriVideo";
 
             String[] modList = Regex.Split(str, ",");
             String modList2 = null;
@@ -1206,7 +1188,7 @@ namespace Memoria.Launcher
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-                IniFile iniFile = new IniFile(_iniPath);
+                IniFile iniFile = new(_iniPath);
                 switch (propertyName)
                 {
                     case nameof(OrchestralMusic):
@@ -1428,7 +1410,7 @@ namespace Memoria.Launcher
                 if (File.Exists(_iniPath))
                 {
                     RemoveDuplicateKeys(_iniPath);
-                    IniFile iniFile = new IniFile(_iniPath);
+                    IniFile iniFile = new(_iniPath);
                     String _checklatestadded = iniFile.ReadValue("Interface", "SynthIngredientStockDisplayed"); // check if the latest ini parameter is already there
                     if (String.IsNullOrEmpty(_checklatestadded))
                     {
@@ -1461,6 +1443,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Graphics", "BattleSmoothTexture", "1");
                         MakeIniNotNull("Graphics", "ElementsSmoothTexture", "1");
                         MakeIniNotNull("Graphics", "SFXSmoothTexture", "-1");
+                        MakeIniNotNull("Graphics", "UISmoothTexture", "-1");
 
                         MakeIniNotNull("Control", "Enabled", "1");
                         MakeIniNotNull("Control", "DisableMouse", "0");
@@ -1609,7 +1592,7 @@ namespace Memoria.Launcher
 
         private async void MakeIniNotNull(String Category, String Setting, String Defaultvalue)
         {
-            IniFile iniFile = new IniFile(_iniPath);
+            IniFile iniFile = new(_iniPath);
             String value = iniFile.ReadValue(Category, Setting);
             if (String.IsNullOrEmpty(value))
             {
@@ -1642,7 +1625,7 @@ namespace Memoria.Launcher
                 }
                 else if (!line.Contains(";") && line.Contains("=") && !line.StartsWith("="))
                 {
-                    var keyValue = line.Split(new[] { '=' }, 2);
+                    var keyValue = line.Split(['='], 2);
                     sections[currentSection][keyValue[0].Trim()] = keyValue[1].Trim();
                 }
                 else
