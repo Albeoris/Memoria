@@ -110,7 +110,7 @@ namespace Memoria.Assets
                     { "UK", "Absorb [FFCC00]%[FFFFFF]" },
                     { "JP", "[FFCC00]%[FFFFFF]属性に吸収" },
                     { "ES", "Absorber el elemento [FFCC00]%[FFFFFF]" },
-                    { "FR", "Absorbe le [FFCC00]%[FFFFFF]" },
+                    { "FR", "Absorbe l'élément [FFCC00]%[FFFFFF]" },
                     { "GR", "Absorbieren [FFCC00]%[FFFFFF]-Element" },
                     { "IT", "Assorbire l'elemento [FFCC00]%[FFFFFF]" }
                 }

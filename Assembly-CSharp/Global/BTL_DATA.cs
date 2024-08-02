@@ -200,8 +200,6 @@ public partial class BTL_DATA
 
     public Byte typeNo;
 
-    public String idleAnimationName;
-
     public Vector3 original_pos;
 
     public GameObject gameObject;

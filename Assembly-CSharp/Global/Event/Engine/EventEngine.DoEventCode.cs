@@ -1038,18 +1038,32 @@ public partial class EventEngine
                 {
                     case 0:
                     {
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyDying, this.getv1());
+                        btl_cmd.SetEnemyCommand(btl_scrp.FindBattleUnit((UInt16)this.GetSysList(1)), BattleCommandId.EnemyDying, this.getv1(), (UInt16)this.GetSysList(0));
                         break;
                     }
                     case 1:
                     {
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyCounter, this.getv1());
+                        btl_cmd.SetEnemyCommand(btl_scrp.FindBattleUnit((UInt16)this.GetSysList(1)), BattleCommandId.EnemyCounter, this.getv1(), (UInt16)this.GetSysList(0));
                         break;
                     }
                     case 3:
                     {
-                        this.gExec.btlchk = (Byte)0;
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyAtk, this.getv1());
+                        this.gExec.btlchk = 0;
+                        Int32 atkIndex = this.getv1();
+                        BattleUnit enemy = btl_scrp.FindBattleUnit((UInt16)this.GetSysList(1));
+                        Boolean autoAttack = false;
+                        foreach (BattleStatusId statusId in enemy.CurrentStatus.ToStatusList())
+                        {
+                            if (!enemy.Data.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
+                                continue;
+                            if ((effect as IAutoAttackStatusScript)?.OnATB() ?? false)
+                            {
+                                autoAttack = true;
+                                break;
+                            }
+                        }
+                        if (!autoAttack)
+                            btl_cmd.SetEnemyCommand(enemy, BattleCommandId.EnemyAtk, atkIndex, (UInt16)this.GetSysList(0));
                         break;
                     }
                 }
