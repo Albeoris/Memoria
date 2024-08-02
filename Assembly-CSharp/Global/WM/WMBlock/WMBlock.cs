@@ -106,18 +106,14 @@ public class WMBlock : MonoBehaviour
     public void SetupPreloadedMaterials()
     {
         foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>())
-        {
             if (MaterialDatabase.TryGetValue(renderer.gameObject.name, out Material material))
                 renderer.material = material;
-        }
     }
-    public void SetFilterMode()
+    public void SetTextureFilterMode()
     {
         foreach (Renderer renderer in gameObject.GetComponentsInChildren<Renderer>())
-        {
             if (renderer.material != null)
                 ModelFactory.SetMatFilter(renderer.material, Configuration.Graphics.WorldSmoothTexture);
-        }
     }
 
     public void ApplyForm()
@@ -287,7 +283,6 @@ public class WMBlock : MonoBehaviour
             {
                 if (material != null)
                 {
-                    ModelFactory.SetMatFilter(material, Configuration.Graphics.WorldSmoothTexture);
                     MaterialDatabase.Add(entry.Key, material);
                 }
                 continue;
@@ -300,7 +295,6 @@ public class WMBlock : MonoBehaviour
                 {
                     material = AssetManager.Load<Material>(entry.Value[0], false);
                     material.mainTexture = texture;
-                    ModelFactory.SetMatFilter(material, Configuration.Graphics.WorldSmoothTexture);
                     MaterialDatabase.Add(entry.Key, material);
                     databaseByPath.Add(materialPath, material);
                     continue;

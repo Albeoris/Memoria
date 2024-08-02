@@ -448,36 +448,26 @@ public static class ModelFactory
         return model;
     }
 
-    /// <summary>Set filter mode of material's texture, 0=point 1=bilinear 2=trilinear</summary>
+    /// <summary>Set filter mode of material's texture, 0=point 1=bilinear 2=trilinear, -1 = use default</summary>
     public static void SetMatFilter(Material material, Int32 filtermode, Int32 def = 1)
     {
         if (material != null)
             SetMatFilter(material.mainTexture, filtermode, def);
     }
 
-    /// <summary>Set filter mode of texture, 0=point 1=bilinear 2=trilinear</summary>
+    /// <summary>Set filter mode of texture, 0=point 1=bilinear 2=trilinear, -1 = use default</summary>
     public static void SetMatFilter(Texture texture, Int32 filtermode, Int32 def = 1)
     {
         if (texture != null)
         {
-            filtermode = filtermode == -1 ? def : filtermode;
-            filtermode = Mathf.Clamp(filtermode, 0, 2);
-            switch (filtermode)
-            {
-                case 0:
-                    texture.filterMode = FilterMode.Point;
-                    texture.mipMapBias = -1f;
-                    break;
-                case 1:
-                    texture.filterMode = FilterMode.Bilinear;
-                    break;
-                case 2:
-                    texture.filterMode = FilterMode.Trilinear;
-                    break;
-            }
+            if (filtermode == 0)
+                texture.mipMapBias = -1f;
+
+            texture.filterMode = GetFilterMode(filtermode, def);
         }
     }
-    
+
+    /// <summary>Returns filter mode of texture, 0=point 1=bilinear 2=trilinear, -1 = use default</summary>
     public static FilterMode GetFilterMode(Int32 filtermode, Int32 def)
     {
         filtermode = filtermode == -1 ? def : filtermode;
