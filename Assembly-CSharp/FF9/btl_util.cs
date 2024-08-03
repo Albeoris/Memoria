@@ -438,7 +438,7 @@ namespace FF9
                 btl.SetDisappear(true, 5);
         }
 
-		public static void GeoSetABR(GameObject go, String type)
+		public static void GeoSetABR(GameObject go, String type, BTL_DATA btl= null)
 		{
 			Shader shader;
 			if (type == "GEO_POLYFLAGS_TRANS_100_PLUS_25")
@@ -457,6 +457,13 @@ namespace FF9
 				componentsInChildren[i].material.shader = shader;
 				componentsInChildren[i].material.SetFloat("_Cutoff", 0.5f);
 				componentsInChildren[i].material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
+                if (btl != null)
+                {
+                    componentsInChildren[i].material.SetFloat("_OutlineWidth", 2.3f);
+                    componentsInChildren[i].material.SetFloat("_ShowOutline", Configuration.Shaders.OutlineForBattleCharacter == 1 ? 1f : 0f);
+                    componentsInChildren[i].material.SetFloat("_IsEnemy", btl.bi.player == 0 ? 1 : 0);
+                    componentsInChildren[i].material.SetInt("_StencilOp", btl.bi.player == 0 ? 2 : 1);   
+                }
 			}
 			MeshRenderer[] componentsInChildren2 = go.GetComponentsInChildren<MeshRenderer>();
 			for (Int32 j = 0; j < (Int32)componentsInChildren2.Length; j++)
@@ -468,45 +475,16 @@ namespace FF9
 					material.shader = shader;
 					material.SetFloat("_Cutoff", 0.5f);
 					material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
+                    if (btl != null)
+                    {
+                        material.SetFloat("_OutlineWidth", 2.3f);
+                        material.SetFloat("_ShowOutline", 1f);
+                        material.SetFloat("_IsEnemy", btl.bi.player == 0 ? 1 : 0);
+                        material.SetInt("_StencilOp", btl.bi.player == 0 ? 2 : 1);
+                    }
 				}
 			}
 		}
-
-        public static void GeoSetABR(GameObject go, String type, BTL_DATA btl)
-        {
-            Shader shader;
-            if (type == "GEO_POLYFLAGS_TRANS_100_PLUS_25")
-                shader = FF9StateSystem.Battle.fadeShader;
-            else if (type == "SEMI_TRANS_50_PLUS_50" || type == "PSX/BattleMap_StatusEffect")
-                shader = FF9StateSystem.Battle.battleShader;
-            else if (type == "SHADOW" || type == "PSX/BattleMap_Abr_2")
-                shader = FF9StateSystem.Battle.shadowShader;
-            else
-                shader = ShadersLoader.Find(type);
-            foreach (SkinnedMeshRenderer renderer in go.GetComponentsInChildren<SkinnedMeshRenderer>())
-            {
-                renderer.material.shader = shader;
-                renderer.material.SetFloat("_Cutoff", 0.5f);
-                renderer.material.SetFloat("_OutlineWidth", 2.3f);
-                renderer.material.SetFloat("_ShowOutline", Configuration.Shaders.OutlineForBattleCharacter == 1 ? 1f : 0f);
-                renderer.material.SetFloat("_IsEnemy", btl.bi.player == 0 ? 1 : 0);
-                renderer.material.SetInt("_StencilOp", btl.bi.player == 0 ? 2 : 1);
-                renderer.material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
-            }
-            foreach (MeshRenderer renderer in go.GetComponentsInChildren<MeshRenderer>())
-            {
-                foreach (Material material in renderer.materials)
-                {
-                    material.shader = shader;
-                    material.SetFloat("_Cutoff", 0.5f);
-                    material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
-                    material.SetFloat("_OutlineWidth", 2.3f);
-                    material.SetFloat("_ShowOutline", 1f);
-                    material.SetFloat("_IsEnemy", btl.bi.player == 0 ? 1 : 0);
-                    material.SetInt("_StencilOp", btl.bi.player == 0 ? 2 : 1);
-                }
-            }
-        }
 
         public static void GeoSetColor2Source(GameObject go, Byte r, Byte g, Byte b)
         {
