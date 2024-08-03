@@ -81,23 +81,18 @@ public class BattleMapCameraController : MonoBehaviour
         this.mainCam = base.GetComponent<Camera>();
         this.rainRenderer = base.GetComponent<BattleRainRenderer>();
         this.SetDefaultCamera(this.defaultCamID);
-        this.mainCam.hdr = true;
     }
 
-    private float myTime;
+    private float _myTime;
     
     private void Update()
     {
-        if (!this.mainCam.hdr)
-        {
-            this.mainCam.hdr = true;
-        }
 
-        myTime += 0.016f;
+        _myTime += Time.deltaTime;
         Vector3 _MainLightDirection = new Vector3(-0.6f, 1, 0.6f);
         Vector3 _EnemyMainLightDirection = new Vector3(-0.6f, 2f, 0.6f);
-        float t = 0.06f * Time.unscaledTime;
-        float t2 =  0.06f * Time.unscaledTime + 0.5f;
+        float t = 0.06f * _myTime;
+        float t2 =  0.06f * _myTime + 0.5f;
         float alphaX = t - Mathf.FloorToInt(t)-0.5f;
         float alphaY = t2 - Mathf.FloorToInt(t2) - 0.5f;
         Shader.SetGlobalFloat("_AlphaX", alphaX);

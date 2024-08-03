@@ -128,19 +128,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         }
     }
     
-    public static Cubemap CubemapFromTexture2D(Texture2D texture)
-    {
-        int cubedim = texture.width / 4;
-        Cubemap cube = new Cubemap(cubedim, TextureFormat.ARGB32, false);
-        cube.SetPixels(texture.GetPixels(2 * cubedim, 2 * cubedim, cubedim, cubedim), CubemapFace.NegativeY);
-        cube.SetPixels(texture.GetPixels(3 * cubedim, cubedim, cubedim, cubedim), CubemapFace.PositiveX);
-        cube.SetPixels(texture.GetPixels(2 * cubedim, cubedim, cubedim, cubedim), CubemapFace.PositiveZ);
-        cube.SetPixels(texture.GetPixels(cubedim, cubedim, cubedim, cubedim), CubemapFace.NegativeX);
-        cube.SetPixels(texture.GetPixels(0, cubedim, cubedim, cubedim), CubemapFace.NegativeZ);
-        cube.SetPixels(texture.GetPixels(2 * cubedim, 0, cubedim, cubedim), CubemapFace.PositiveY);
-        cube.Apply();
-        return cube;
-    }
     private void Start()
     {
         try
@@ -620,35 +607,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private void Update()
     {
-        if (cameraController != null)
-        {
-            Log.Message("cameraController pos = "+cameraController.mainCam.transform.position);
-        }
-
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            _debugNormal *= -1;
-            Shader.SetGlobalFloat("_IsDebugNormal",_debugNormal);
-            
-        }
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            _debugSH *= -1;
-            Shader.SetGlobalFloat("_IsDebugSH", _debugSH);
-        }
-
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 1.5f;
-            DynamicGI.UpdateEnvironment();
-        }
-
-        if (Input.GetKeyDown(KeyCode.N))
-        {
-            RenderSettings.ambientIntensity = 0f;
-            DynamicGI.UpdateEnvironment();
-        }
-        
         try
         {
             UpdateAttachModel();
@@ -690,9 +648,10 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         if (!IsPaused)
             FPSManager.AddSmoothEffect(SmoothFrameUpdater_Battle.Apply);
     }
-    public ReflectionProbe _reflectionProbe;
-    public bool _hasUpdateProbeCapture = false;
-    public bool _hasUpdateAmbient = false;
+    // runtime game object and material for creating ambient lighting
+    private ReflectionProbe _reflectionProbe;
+    private bool _hasUpdateProbeCapture = false;
+    private bool _hasUpdateAmbient = false;
     private Material _skyBox;
 
     private IEnumerator UpdateAmbientLight()
@@ -714,8 +673,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 if (_reflectionProbe == null)
                 {
                     var obj = new GameObject("environemtCapture");
-                    Log.Message(""+(btl.gameObject.transform.position));
-                    obj.transform.position = new Vector3(632.0f, 500.0f, -1560.0f);//(btl.gameObject.transform.position) + new Vector3(0,500,0);
+                    // the position is somewhere above one of the character's head in the battle scene....
+                    obj.transform.position = new Vector3(632.0f, 500.0f, -1560.0f);
                     _reflectionProbe = obj.AddComponent<ReflectionProbe>();
                     _reflectionProbe.mode = ReflectionProbeMode.Realtime;
                     _reflectionProbe.cullingMask = -1;
@@ -746,6 +705,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         }
         _skyBox.SetTexture("_Tex", _reflectionProbe.texture);
         _skyBox.SetFloat("_Exposure", Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.5f : 1.0f);
+        
+        // This is a slow operation, make sure this code only run once.
         DynamicGI.UpdateEnvironment();
         
     }
@@ -925,6 +886,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private void OnDestroy()
     {
         SFX.EndBattle();
+        // Make sure we destroy the object we created for ambient lighting during init phase
         if (_reflectionProbe != null)
         {
             Destroy(_reflectionProbe.gameObject);
