@@ -1,12 +1,9 @@
-﻿using FF9;
+﻿using System;
+using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Database;
-using System;
-using System.Linq;
-using UnityEngine;
-using Object = System.Object;
+using Memoria.Prime;
 
 public static class btl_vfx
 {
@@ -108,26 +105,6 @@ public static class btl_vfx
 
     public static void SelectCommandVfx(CMD_DATA cmd)
     {
-        if (cmd.cmd_no == BattleCommandId.Phantom)
-        {
-            BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
-            if (abilId == BattleAbilityId.Shiva)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.DiamondDust;
-            else if (abilId == BattleAbilityId.Ifrit)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.FlamesofHell;
-            else if (abilId == BattleAbilityId.Ramuh)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.JudgementBolt;
-            else if (abilId == BattleAbilityId.Atomos)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.WormHole;
-            else if (abilId == BattleAbilityId.Odin)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.Zantetsuken;
-            else if (abilId == BattleAbilityId.Leviathan)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.Tsunami;
-            else if (abilId == BattleAbilityId.Bahamut)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.MegaFlare;
-            else if (abilId == BattleAbilityId.Ark)
-                FF9StateSystem.Battle.FF9Battle.phantom_no = BattleAbilityId.EternalDarkness;
-        }
         BTL_DATA regist = cmd.regist;
         if (Configuration.Battle.SFXRework)
         {
@@ -205,37 +182,33 @@ public static class btl_vfx
         if (isTrance)
         {
             btl.battleModelIsRendering = true;
-            btl.tranceGo.SetActive(true);
-            btl.ChangeModel(btl.tranceGo);
-            btl.dms_geo_id = btl_init.GetModelID(serialNo, isTrance);
+            btl.ChangeModel(btl.tranceGo, btl_init.GetModelID(serialNo, isTrance));
             GeoTexAnim.geoTexAnimPlay(btl.tranceTexanimptr, 2);
         }
         else
         {
             btl.battleModelIsRendering = true;
-            btl.originalGo.SetActive(true);
-            btl.tranceGo.SetActive(false);
-            btl.ChangeModel(btl.originalGo);
-            btl.dms_geo_id = btl_init.GetModelID(serialNo, isTrance);
+            btl.ChangeModel(btl.originalGo, btl_init.GetModelID(serialNo, isTrance));
             GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
         }
-        btl.meshCount = 0;
-        foreach (Object obj in btl.gameObject.transform)
-        {
-            Transform transform = (Transform)obj;
-            if (transform.name.Contains("mesh"))
-                btl.meshCount++;
-        }
-        BattlePlayerCharacter.ResetTranceData(btl, isTrance);
-        btl.meshIsRendering = new Boolean[btl.meshCount];
-        for (Int32 i = 0; i < btl.meshCount; i++)
-            btl.meshIsRendering[i] = true;
         btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect", btl);
         BattlePlayerCharacter.InitAnimation(btl);
         //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
-        btl.weapon_bone = (isTrance && btlParam.TranceParameters) ? btlParam.TranceWeaponBone : btlParam.WeaponBone;
+        if (isTrance && btlParam.TranceParameters)
+        {
+            btl.weapon_bone = btlParam.TranceWeaponBone;
+            btl.weapon_scale = btlParam.TranceWeaponSize.ToVector3(true);
+            btl.weapon_offset_pos = btlParam.TranceWeaponOffsetPos.ToVector3(false);
+            btl.weapon_offset_rot = btlParam.TranceWeaponOffsetRot.ToVector3(false);
+        }
+        else
+        {
+            btl.weapon_bone = btlParam.WeaponBone;
+            btl.weapon_scale = btlParam.WeaponSize.ToVector3(true);
+            btl.weapon_offset_pos = btlParam.WeaponOffsetPos.ToVector3(false);
+            btl.weapon_offset_rot = btlParam.WeaponOffsetRot.ToVector3(false);
+        }
         geo.geoAttach(btl.weapon_geo, btl.gameObject, btl.weapon_bone);
-        //btl_eqp.InitWeapon(FF9StateSystem.Common.FF9.player[(CharacterId)btl.bi.slot_no], btl);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
     }
 

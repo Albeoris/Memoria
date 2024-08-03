@@ -60,6 +60,8 @@ namespace Memoria.Launcher
             PreviewSubModList.SelectionChanged += OnSubModSelect;
             PreviewSubModActive.Checked += OnSubModActivate;
             PreviewSubModActive.Unchecked += OnSubModActivate;
+            if (modListInstalled.Count == 0)
+                tabCtrlMain.SelectedIndex = 1;
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)

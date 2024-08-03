@@ -1,7 +1,10 @@
 // Shared sequence of SFX Shiva__Short
 
 SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=39
-ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+ShowMesh: Char=AllNonTargets ; Enable=False ; IsDisappear=True
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 180, 0)
+EndThread
 Wait: Time=2
 PlaySound: Sound=2803
 PlaySound: Sound=2804
@@ -18,5 +21,8 @@ SetBackgroundIntensity: Intensity=1 ; Time=25
 Wait: Time=1
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=24
-ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 0, 0)
+EndThread
+ShowMesh: Char=AllNonTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12

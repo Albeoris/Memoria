@@ -40,7 +40,10 @@ public partial class BattleHUD : UIScene
         }
 
         if (_usingMainMenu)
+        {
+            btl2d.ShowMessages(true);
             UpdateBattleAfterMainMenu();
+        }
 
         _isFromPause = false;
         _oneTime = true;
@@ -210,7 +213,7 @@ public partial class BattleHUD : UIScene
                     {
                         BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
                         btl.Trance = Byte.MaxValue;
-                        btl.AlterStatus(BattleStatus.Trance);
+                        btl.AlterStatus(BattleStatusId.Trance);
                     }
                     else
                     {
@@ -220,7 +223,7 @@ public partial class BattleHUD : UIScene
                     }
                     break;
                 case BattleCommandMenu.AccessMenu:
-                    OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex)?.Player?.Data : null);
+                    OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex)?.Player : null);
                     break;
             }
         }
@@ -446,7 +449,7 @@ public partial class BattleHUD : UIScene
             else if (Configuration.Battle.AccessMenus == 3)
                 canOpen = FF9BMenu_IsEnable() && ((!hasAccessMenuButton && ButtonGroupState.ActiveGroup != CommandGroupButton && ButtonGroupState.ActiveGroup != TargetGroupButton) || (hasAccessMenuButton && selectedChar == null));
             if (canOpen)
-                OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? selectedChar?.Player?.Data : null);
+                OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? selectedChar?.Player : null);
         }
         return true;
     }
@@ -569,7 +572,7 @@ public partial class BattleHUD : UIScene
 
     private static void OpenMainMenuAfterHide()
     {
-        btl2d.ReleaseBtl2dStatCount();
+        btl2d.ShowMessages(false);
         PersistenSingleton<UIManager>.Instance.MainMenuScene.EnabledSubMenus = new HashSet<String>(Configuration.Battle.AvailableMenus);
         PersistenSingleton<UIManager>.Instance.MainMenuScene.CurrentSubMenu = PersistenSingleton<UIManager>.Instance.MainMenuScene.GetFirstAvailableSubMenu();
         PersistenSingleton<UIManager>.Instance.MainMenuScene.NeedTweenAndHideSubMenu = true;

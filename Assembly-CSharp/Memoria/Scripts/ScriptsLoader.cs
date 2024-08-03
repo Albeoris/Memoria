@@ -1,4 +1,5 @@
 using Memoria.Assets;
+using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.IL;
 using Memoria.Prime.Threading;
@@ -233,7 +234,21 @@ namespace Memoria.Scripts
 
         public static void InitializeAsync()
         {
-            s_initializationTask = Task.Run(Initialize);
+            if (s_result.Count == 0)
+            {
+                try
+                {
+                    if (s_initializationTask == null)
+                        s_initializationTask = Task.Run(Initialize);
+
+                    //s_initializationTask.Wait();
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(ex, "[ScriptsLoader] Failed to get battle calculator's script.");
+                    UIManager.Input.ConfirmQuit();
+                }
+            }
         }
 
         public static BattleScriptFactory GetBattleScript(Int32 scriptId)
@@ -259,22 +274,6 @@ namespace Memoria.Scripts
         {
             if (s_result.Count == 1)
                 return s_result[0];
-            if (s_result.Count == 0)
-            {
-                try
-                {
-                    if (s_initializationTask == null)
-                        InitializeAsync();
-
-                    s_initializationTask.Wait();
-                }
-                catch (Exception ex)
-                {
-                    Log.Error(ex, "[ScriptsLoader] Failed to get battle calculator's script.");
-                    UIManager.Input.ConfirmQuit();
-                    return null;
-                }
-            }
             foreach (Result result in s_result)
             {
                 if (scriptId >= 0 && scriptId < result.BattleBaseScripts.Length && result.BattleBaseScripts[scriptId] != null)
@@ -285,8 +284,33 @@ namespace Memoria.Scripts
             return null;
         }
 
+        public static FieldAbilityScriptBase GetFieldAbilityScript(Int32 scriptId)
+        {
+            foreach (Result result in s_result)
+                if (result.FieldAbilityScripts.TryGetValue(scriptId, out Type scriptType))
+                    return (FieldAbilityScriptBase)scriptType.GetConstructor(Type.EmptyTypes).Invoke(null);
+            return null;
+        }
+
+        public static StatusScriptBase GetStatusScript(BattleStatusId statusId)
+        {
+            foreach (Result result in s_result)
+                if (result.StatusScripts.TryGetValue(statusId, out Type scriptType))
+                    return (StatusScriptBase)scriptType.GetConstructor(Type.EmptyTypes).Invoke(null);
+            return DefaultStatusDatabase.Get(statusId);
+        }
+
+        public static Object GetOverloadedMethod(Type overloadId)
+        {
+            foreach (Result result in s_result)
+                if (result.OverloadableMethodScripts.TryGetValue(overloadId, out Type scriptType))
+                    return scriptType.GetConstructor(Type.EmptyTypes).Invoke(null);
+            return null;
+        }
+
         private static void Initialize()
         {
+            String currentDLL = null;
             try
             {
                 s_result.Clear();
@@ -302,21 +326,25 @@ namespace Memoria.Scripts
                         String partialDllName = $"Memoria.Scripts.{folder.FolderPath.Trim('/').Replace('/', '.')}.dll";
                         if (folder.TryFindAssetInModOnDisc(DataResources.PureScriptsDirectory + partialDllName, out fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
                         {
+                            currentDLL = fullPath;
                             Assembly assembly = Assembly.LoadFile(fullPath);
                             Result result = new Result(fullPath);
                             foreach (Type type in assembly.GetTypes().OrderBy(t => t, orderer))
                                 ProcessType(type, result);
                             s_result.Add(result);
+                            currentDLL = null;
                             dllCount++;
                         }
                     }
                     if (folder.TryFindAssetInModOnDisc(mainDllPath, out fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
                     {
+                        currentDLL = fullPath;
                         Assembly assembly = Assembly.LoadFile(fullPath);
                         Result result = new Result(fullPath);
                         foreach (Type type in assembly.GetTypes().OrderBy(t => t, orderer))
                             ProcessType(type, result);
                         s_result.Add(result);
+                        currentDLL = null;
                         return;
                     }
                 }
@@ -328,7 +356,10 @@ namespace Memoria.Scripts
             }
             catch (Exception ex)
             {
-                Log.Error(ex, "[ScriptsLoader] Failed to initialize battle calculator's script.");
+                if (String.IsNullOrEmpty(currentDLL))
+                    Log.Error(ex, $"[ScriptsLoader] Failed to initialize external scripts.");
+                else
+                    Log.Error(ex, $"[ScriptsLoader] Failed to initialize external scripts of {currentDLL}.");
                 UIManager.Input.ConfirmQuit();
             }
         }
@@ -340,6 +371,27 @@ namespace Memoria.Scripts
                 Type attributeType = attribute.GetType();
                 if (attributeType == TypeCache<BattleScriptAttribute>.Type)
                     ProcessBattleScript(type, result, attribute);
+                else if (attributeType == TypeCache<FieldAbilityScriptAttribute>.Type)
+                    result.FieldAbilityScripts[(attribute as FieldAbilityScriptAttribute).Id] = type;
+                else if (attributeType == TypeCache<StatusScriptAttribute>.Type)
+                    result.StatusScripts[(attribute as StatusScriptAttribute).Id] = type;
+            }
+            foreach (Type interf in type.GetInterfaces())
+            {
+                if (interf == typeof(IOverloadUnitCheckPointScript))
+                    result.OverloadableMethodScripts[interf] = type;
+                if (interf == typeof(IOverloadPlayerUIScript))
+                    result.OverloadableMethodScripts[interf] = type;
+                if (interf == typeof(IOverloadOnBattleScriptStartScript))
+                    result.OverloadableMethodScripts[interf] = type;
+                if (interf == typeof(IOverloadOnCommandRunScript))
+                    result.OverloadableMethodScripts[interf] = type;
+                if (interf == typeof(IOverloadOnGameOverScript))
+                    result.OverloadableMethodScripts[interf] = type;
+                if (interf == typeof(IOverloadOnFleeScript))
+                    result.OverloadableMethodScripts[interf] = type;
+                if (interf == typeof(IOverloadDamageModifierScript))
+                    result.OverloadableMethodScripts[interf] = type;
             }
         }
 
@@ -360,12 +412,18 @@ namespace Memoria.Scripts
         {
             public readonly BattleScriptFactory[] BattleBaseScripts;
             public readonly Dictionary<Int32, BattleScriptFactory> BattleExtendedScripts;
+            public readonly Dictionary<Int32, Type> FieldAbilityScripts;
+            public readonly Dictionary<BattleStatusId, Type> StatusScripts;
+            public readonly Dictionary<Type, Type> OverloadableMethodScripts;
             public readonly String DLLPath;
 
             public Result(String dllPath)
             {
                 BattleBaseScripts = new BattleScriptFactory[256];
                 BattleExtendedScripts = new Dictionary<Int32, BattleScriptFactory>();
+                FieldAbilityScripts = new Dictionary<Int32, Type>();
+                StatusScripts = new Dictionary<BattleStatusId, Type>();
+                OverloadableMethodScripts = new Dictionary<Type, Type>();
                 DLLPath = dllPath;
             }
         }
@@ -399,7 +457,6 @@ namespace Memoria.Scripts
                 }
 
                 return String.Compare(x.FullName, y.FullName, StringComparison.Ordinal);
-
             }
         }
     }

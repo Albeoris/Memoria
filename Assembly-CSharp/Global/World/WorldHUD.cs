@@ -1,6 +1,8 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria;
 using Memoria.Assets;
+using Memoria.Prime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -54,19 +56,25 @@ public class WorldHUD : UIScene
                 else
                 {
                     if (!this.ignorePointerProcess)
-                    {
                         this.DisplayLocationName(this.currentLocationIndex);
-                    }
                     if (FF9StateSystem.MobilePlatform)
-                    {
                         base.StartCoroutine(this.ForceOpenVirtual());
-                    }
                 }
+                this.DisplayChocographLocation(false);
             }
-            else if (this.currentState == WorldHUD.State.HUDNoMiniMap && this.MiniMapPanel.activeSelf)
+            else if (ff9.w_naviMode == 0)
+            {
+                this.currentState = WorldHUD.State.HUDNoMiniMap;
+                this.MiniMapPanel.SetActive(false);
+                this.MapButtonGameObject.SetActive(FF9StateSystem.MobilePlatform);
+                this.DisplayChocographLocation(false);
+            }
+            else if (ff9.w_naviMode == 1)
             {
                 this.currentState = WorldHUD.State.HUD;
+                this.MiniMapPanel.SetActive(true);
                 this.MapButtonGameObject.SetActive(false);
+                this.DisplayChocographLocation(true);
             }
             if (PersistenSingleton<UIManager>.Instance.PreviousState == UIManager.UIState.Pause && this.currentState != WorldHUD.State.FullMap && PersistenSingleton<EventEngine>.Instance.GetUserControl())
             {
@@ -83,7 +91,6 @@ public class WorldHUD : UIScene
         PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(ff9.GetUserControl(), (Action)null);
         this.InitialHUD();
         this.DisplayButtonHud();
-        this.DisplayChocographLocation(true);
         VirtualAnalog.Init(base.gameObject);
         VirtualAnalog.FallbackTouchWidgetList.Add(PersistenSingleton<UIManager>.Instance.gameObject);
         VirtualAnalog.FallbackTouchWidgetList.Add(PersistenSingleton<UIManager>.Instance.Dialogs.gameObject);
@@ -290,6 +297,7 @@ public class WorldHUD : UIScene
                     this.MapButtonGameObject.SetActive(false);
                     this.DisplayChocographLocation(true);
                 }
+                ff9.byte_gEventGlobal_updateNaviMode();
             }
         }
         return true;
@@ -614,6 +622,7 @@ public class WorldHUD : UIScene
     {
         this.currentState = WorldHUD.State.HUD;
         ff9.w_naviMode = 1;
+        ff9.byte_gEventGlobal_updateNaviMode();
         this.SetButtonVisible(true);
         this.FullMapPanel.SetActive(false);
         UIManager.Input.ResetKeyCode();
@@ -757,6 +766,60 @@ public class WorldHUD : UIScene
         {
             this.miniMapPlanePointer.gameObject.SetActive(false);
         }
+        this.SetMiniMapAndChocoPosition();
+    }
+    private void SetMiniMapAndChocoPosition()
+    {
+        Camera camera = NGUITools.FindCameraForLayer(base.gameObject.layer);
+        Vector3 camVector = camera.ScreenToWorldPoint(new Vector3((Int32)camera.pixelRect.width, (Int32)camera.pixelRect.height, 0));
+        Vector2 minimapSize = new Vector2(miniMapSprite.width, miniMapSprite.height);
+        Vector2 chocoSize = new Vector2((Int32)((chocographLocationSprite.width + 36f) * chocographLocationSprite.pixelSize), (Int32)((chocographLocationSprite.height + 36f) * chocographLocationSprite.pixelSize));
+
+        Transform minimap = this.miniMapButton.transform;
+        Transform choco = this.ChocographLocationPanel.transform;
+
+        Vector2 offsetBlackBars = Vector2.zero;
+        if (!Configuration.Graphics.WidescreenSupport) // offset of black bars, as screen reference is actual window
+        {
+            if (320f / 220f < (Single)Screen.width / (Single)Screen.height) // screen wider than world
+            {
+                Single realWidth = (Single)(Screen.height * 320f / 220f);
+                offsetBlackBars.x = realWidth > 0 ? (Int32)((Screen.width - realWidth) / 2) : 0;
+            }
+            else
+            {
+                Single realHeight = (Single)(Screen.width / 320f * 220f);
+                offsetBlackBars.y = realHeight > 0 ? (Int32)((Screen.height - realHeight) / 2) : 0;
+            }
+        }
+
+        if (Configuration.Interface.MinimapPreset == 0) // left position
+        {
+            minimap.position = new Vector3(-camVector.x, -camVector.y, 0); // bottom left of the screen
+            minimap.localPosition += new Vector3(20, 20, 0); // offset from border
+
+            choco.position = this.miniMapButton.transform.position; // center of chocograph = bottom left of minimap
+            choco.localPosition += new Vector3(chocoSize.x / 2, chocoSize.y / 2, 0); // bottom left of chocograph = bottom left of minimap
+            choco.localPosition += new Vector3(0f, minimapSize.y + 15, 0); // bottom left of chocograph = top left of minimap + 15f
+
+            minimap.localPosition += new Vector3(offsetBlackBars.x, offsetBlackBars.y, 0); // apply offset if not widescreen
+            choco.localPosition += new Vector3(offsetBlackBars.x, offsetBlackBars.y, 0);
+        }
+        else // right position
+        {
+            minimap.position = new Vector3(camVector.x, -camVector.y, 0); // bottom left of the screen
+            minimap.localPosition += new Vector3(-minimapSize.x, 0, 0); // take bottom right as corner point
+            minimap.localPosition += new Vector3(-20, 20, 0); // offset from border
+
+            choco.position = this.miniMapButton.transform.position; // center of chocograph = bottom left of minimap
+            choco.localPosition += new Vector3(-(Int32)(chocoSize.x / 2) + minimapSize.x, chocoSize.y / 2, 0); // bottom right of chocograph = bottom right of minimap
+            choco.localPosition += new Vector3(0, minimapSize.y + 15 , 0); // bottom right of chocograph = top left of minimap
+
+            minimap.localPosition += new Vector3(-offsetBlackBars.x, offsetBlackBars.y, 0); // apply offset if not widescreen
+            choco.localPosition += new Vector3(-offsetBlackBars.x, offsetBlackBars.y, 0);
+        }
+        minimap.localPosition += new Vector3(Configuration.Interface.MinimapOffset.x, Configuration.Interface.MinimapOffset.y, 0); // apply user set offset
+        choco.localPosition += new Vector3(Configuration.Interface.MinimapOffset.x, Configuration.Interface.MinimapOffset.y, 0);
     }
 
     public void DisplayFullmap()
@@ -1279,7 +1342,6 @@ public class WorldHUD : UIScene
         this.PlaneButtonPanel.GetChild(0).GetComponent<OnScreenButton>().SetHighlightKeyCommand(Control.Down);
         this.PlaneButtonPanel.GetChild(1).GetComponent<OnScreenButton>().SetHighlightKeyCommand(Control.Up);
         this.ChocographLocationPanel.transform.localPosition += new Vector3(158f, -708f, 0f);
-        // Todo: see with TehMighty for a proper and unified UI mod
         //this.ChocographLocationPanel.transform.localPosition = new Vector3(600f, 0f, 0f);
         //this.miniMapWidget.transform.parent.localPosition = new Vector3(250f, -500f, 0f);
         // Todo: fix Title displaying permanently if the World Map was exited during its first appearance

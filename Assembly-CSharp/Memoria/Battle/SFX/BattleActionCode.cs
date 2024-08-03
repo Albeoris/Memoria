@@ -79,6 +79,7 @@ public class BattleActionCode
         { "EffectPoint", new String[]{ "Char", "Type" } },
         { "Message", new String[]{ "Text", "Title", "Priority" } },
         { "SetBackgroundIntensity", new String[]{ "Intensity", "Time", "HoldDuration" } },
+        { "ShiftWorld", new String[]{ "Offset", "Angle" } },
         { "SetVariable", new String[]{ "Variable", "Value", "Index" } },
         { "SetupReflect", new String[]{ "Delay" } },
         { "ActivateReflect", null },
@@ -323,7 +324,7 @@ public class BattleActionCode
         if (!argument.TryGetValue(key, out String bone))
             return false;
         if (Int32.TryParse(bone, out boneNum))
-            ;
+        { }
         else if (String.Equals(bone, "tar_bone", StringComparison.OrdinalIgnoreCase) || String.Equals(bone, "Target", StringComparison.OrdinalIgnoreCase))
             boneNum = btl.tar_bone;
         else if (String.Equals(bone, "wep_bone", StringComparison.OrdinalIgnoreCase) || String.Equals(bone, "Weapon", StringComparison.OrdinalIgnoreCase))
@@ -502,7 +503,7 @@ public class BattleActionCode
                 c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                 c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                 NCalcUtility.InitializeExpressionUnit(ref c, btl_scrp.FindBattleUnit(caster), "Caster");
-                foreach (BattleUnit unit in Memoria.BattleState.EnumerateUnits())
+                foreach (BattleUnit unit in BattleState.EnumerateUnits())
                 {
                     c.Parameters["IsTargeted"] = (unit.Id & target) != 0;
                     c.Parameters["IsTheCaster"] = (unit.Id & caster) != 0;
@@ -515,6 +516,14 @@ public class BattleActionCode
             if (args == "AllTargets")
             {
                 value = target;
+                return true;
+            }
+            if (args == "AllNonTargets")
+            {
+                value = 0;
+                foreach (BattleUnit unit in BattleState.EnumerateUnits())
+                    if ((unit.Id & target) == 0)
+                        value |= unit.Id;
                 return true;
             }
             if (args == "RandomTarget")

@@ -18,7 +18,7 @@ StartThread: Condition=CommandId != 57
 	PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
 	Channel
 	SetBackgroundIntensity: Intensity=0.5 ; Time=20
-	ShowMesh: Enable=False ; Time=16 ; Char=AllPlayers
+	ShowMesh: Enable=False ; Time=16 ; Char=AllNonTargets
 	WaitSFXLoaded: SFX=Ifrit__Short ; Reflect=True
 	WaitAnimation: Char=Caster
 	StopChannel
@@ -36,8 +36,7 @@ StartThread: Condition=CommandId != 57
 	Turn: Char=Caster ; BaseAngle=Default ; Time=5
 	WaitTurn: Char=Caster
 	SetVariable: Variable=cmd_status ; Value=|2 ; Reflect=True
-EndThread
-StartThread: Condition=CommandId == 57
+ElseThread
 	SetVariable: Variable=cmd_status ; Value=&65533 ; Reflect=True
 	Message: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=True
 	SetupReflect: Delay=SFXLoaded

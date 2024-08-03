@@ -17,17 +17,11 @@ namespace Assets.Sources.Scripts.UI.Common
         }
 
         public GameObject Self;
-
         public UISlider Slider;
-
         public UISprite ForegroundSprite;
-
         public UISprite MasterSprite;
-
         public GameObject TextPanel;
-
         public UILabel APLable;
-
         public UILabel APMaxLable;
     }
 }

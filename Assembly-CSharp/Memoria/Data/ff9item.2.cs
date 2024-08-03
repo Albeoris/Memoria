@@ -7,7 +7,6 @@ using Memoria.Prime.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 
 // ReSharper disable FieldCanBeMadeReadOnly.Global
 // ReSharper disable UnusedMember.Global
@@ -538,7 +537,7 @@ public class ff9item
             case "SortOrder": return item.sort;
             case "Type": return (Int32)item.type;
             case "WeaponCategory": return hasWeapon ? (Int32)GetItemWeapon(itemId).Category : null;
-            case "WeaponStatus": return hasWeapon ? (UInt32)FF9BattleDB.StatusSets[GetItemWeapon(itemId).StatusIndex].Value : null;
+            case "WeaponStatus": return hasWeapon ? (UInt64)FF9BattleDB.StatusSets[GetItemWeapon(itemId).StatusIndex].Value : null;
             case "WeaponModelId": return hasWeapon ? (Int32)GetItemWeapon(itemId).ModelId : null;
             case "WeaponScriptId": return hasWeapon ? GetItemWeapon(itemId).Ref.ScriptId : null;
             case "WeaponPower": return hasWeapon ? GetItemWeapon(itemId).Ref.Power : null;
@@ -562,7 +561,7 @@ public class ff9item
             case "EffectPower": return hasEffect ? GetItemEffect(itemId).Ref.Power : null;
             case "EffectElement": return hasEffect ? (Int32)GetItemEffect(itemId).Ref.Elements : null;
             case "EffectRate": return hasEffect ? GetItemEffect(itemId).Ref.Rate : null;
-            case "EffectStatus": return hasEffect ? (UInt32)GetItemEffect(itemId).status : null;
+            case "EffectStatus": return hasEffect ? (UInt64)GetItemEffect(itemId).status : null;
         }
         if (propertyName.StartsWith("Ability ") && Int32.TryParse(propertyName.Substring("Ability ".Length), out Int32 index))
             return index >= 0 && index < item.ability.Length ? item.ability[index] : -1;

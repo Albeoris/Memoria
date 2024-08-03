@@ -6,9 +6,9 @@ Shader "PSX/BattleMap_Plus_Abr_1_Off" {
 		_Intensity ("Intensity", Float) = 128
 	}
 	SubShader { 
-		Tags { "QUEUE"="AlphaTest+3" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
+		Tags { "QUEUE"="AlphaTest+4" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
 		Pass {
-			Tags { "QUEUE"="AlphaTest+3" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
+			Tags { "QUEUE"="AlphaTest+4" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutout" }
 			ZWrite Off
 			Cull Off
 			Blend One OneMinusSrcColor

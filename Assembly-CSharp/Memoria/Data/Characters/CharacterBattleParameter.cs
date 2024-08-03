@@ -10,7 +10,7 @@ namespace Memoria.Data
         public String AvatarSprite;
         public String ModelId;
         public String TranceModelId;
-        public Byte[] TranceGlowingColor = new Byte[3];
+        public Int32[] TranceGlowingColor = new Int32[3];
         public String[] AnimationId = new String[34];
         public SpecialEffect AttackSequence;
         public Byte WeaponBone;
@@ -18,8 +18,10 @@ namespace Memoria.Data
         public Byte[] StatusBone = new Byte[6];
         public SByte[] StatusOffsetY = new SByte[6];
         public SByte[] StatusOffsetZ = new SByte[6];
-        public Int32[] WeaponSound = new Int32[0];
-        public Single[] WeaponOffset = new Single[6];
+        public Int32[] WeaponSound = [];
+        public Single[] WeaponSize = [1f, 1f, 1f];
+        public Single[] WeaponOffsetPos = new Single[3];
+        public Single[] WeaponOffsetRot = new Single[3];
         public Boolean TranceParameters = false;
         public String[] TranceAnimationId = new String[34];
         public SpecialEffect TranceAttackSequence;
@@ -28,8 +30,10 @@ namespace Memoria.Data
         public Byte[] TranceStatusBone = new Byte[6];
         public SByte[] TranceStatusOffsetY = new SByte[6];
         public SByte[] TranceStatusOffsetZ = new SByte[6];
-        public Int32[] TranceWeaponSound = new Int32[0];
-        public Single[] TranceWeaponOffset = new Single[6];
+        public Int32[] TranceWeaponSound = [];
+        public Single[] TranceWeaponSize = [1f, 1f, 1f];
+        public Single[] TranceWeaponOffsetPos = new Single[3];
+        public Single[] TranceWeaponOffsetRot = new Single[3];
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {
@@ -38,7 +42,7 @@ namespace Memoria.Data
             AvatarSprite = CsvParser.String(raw[rawIndex++]);
             ModelId = CsvParser.String(raw[rawIndex++]);
             TranceModelId = CsvParser.String(raw[rawIndex++]);
-            TranceGlowingColor = CsvParser.ByteArray(raw[rawIndex++]);
+            TranceGlowingColor = CsvParser.Int32Array(raw[rawIndex++]);
             if (TranceGlowingColor.Length < 3)
                 Array.Resize(ref TranceGlowingColor, 3);
             for (Int32 i = 0; i < 34; i++)
@@ -63,13 +67,14 @@ namespace Memoria.Data
             else if (FF9Snd.ff9battleSoundWeaponSndEffect02.TryGetValue(Id, out Int32[] sounds))
                 WeaponSound = sounds;
 
-            if (metadata.HasOption($"Include{nameof(WeaponOffset)}"))
+            if (metadata.HasOption($"IncludeWeaponOffsets"))
             {
-                WeaponOffset = CsvParser.SingleArray(raw[rawIndex++]);
-                if (WeaponOffset.Length < 6)
-                    Array.Resize(ref WeaponOffset, 6);
+                WeaponSize = CsvParser.SingleArray(raw[rawIndex++]);
+                WeaponOffsetPos = CsvParser.SingleArray(raw[rawIndex++]);
+                WeaponOffsetRot = CsvParser.SingleArray(raw[rawIndex++]);
             }
-            if (metadata.HasOption($"Include{nameof(TranceParameters)}"))
+            TranceParameters = metadata.HasOption($"Include{nameof(TranceParameters)}");
+            if (TranceParameters)
             {
                 for (Int32 i = 0; i < 34; i++)
                     TranceAnimationId[i] = CsvParser.String(raw[rawIndex++]);
@@ -88,9 +93,12 @@ namespace Memoria.Data
                 if (TranceStatusOffsetZ.Length < 6)
                     Array.Resize(ref TranceStatusOffsetZ, 6);
                 TranceWeaponSound = CsvParser.Int32Array(raw[rawIndex++]);
-                TranceWeaponOffset = CsvParser.SingleArray(raw[rawIndex++]);
-                if (TranceWeaponOffset.Length < 6)
-                    Array.Resize(ref TranceWeaponOffset, 6);
+                if (metadata.HasOption($"IncludeWeaponOffsets"))
+                {
+                    TranceWeaponSize = CsvParser.SingleArray(raw[rawIndex++]);
+                    TranceWeaponOffsetPos = CsvParser.SingleArray(raw[rawIndex++]);
+                    TranceWeaponOffsetRot = CsvParser.SingleArray(raw[rawIndex++]);
+                }
                 TranceParameters = true;
             }
         }
@@ -112,8 +120,12 @@ namespace Memoria.Data
             
             if (metadata.HasOption($"Include{nameof(WeaponSound)}"))
                 writer.Int32Array(WeaponSound);
-            if (metadata.HasOption($"Include{nameof(WeaponOffset)}"))
-                writer.SingleArray(WeaponOffset);
+            if (metadata.HasOption($"IncludeWeaponOffsets"))
+            {
+                writer.SingleArray(WeaponSize);
+                writer.SingleArray(WeaponOffsetPos);
+                writer.SingleArray(WeaponOffsetRot);
+            }
             if (metadata.HasOption($"Include{nameof(TranceParameters)}"))
             {
                 for (Int32 i = 0; i < 34; i++)
@@ -125,7 +137,12 @@ namespace Memoria.Data
                 writer.SByteArray(TranceStatusOffsetY);
                 writer.SByteArray(TranceStatusOffsetZ);
                 writer.Int32Array(TranceWeaponSound);
-                writer.SingleArray(TranceWeaponOffset);
+                if (metadata.HasOption($"IncludeWeaponOffsets"))
+                {
+                    writer.SingleArray(TranceWeaponSize);
+                    writer.SingleArray(TranceWeaponOffsetPos);
+                    writer.SingleArray(TranceWeaponOffsetRot);
+                }
             }
         }
     }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using UnityEngine;
 
 public static class WMEffectLoader
@@ -20,6 +21,7 @@ public static class WMEffectLoader
             MeshFilter meshFilter = gameObject2.AddComponent<MeshFilter>();
             meshFilter.sharedMesh = mesh;
             MeshRenderer meshRenderer = gameObject2.AddComponent<MeshRenderer>();
+            ModelFactory.SetMatFilter(material, Configuration.Graphics.WorldSmoothTexture);
             meshRenderer.material = material;
             return gameObject;
         }

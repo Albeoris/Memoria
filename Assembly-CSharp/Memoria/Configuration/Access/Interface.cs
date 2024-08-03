@@ -23,6 +23,11 @@ namespace Memoria
                 get => Instance._interface.ScanDisplay;
                 set => Instance._interface.ScanDisplay.Value = value;
             }
+            public static Boolean SynthIngredientStockDisplayed
+            {
+                get => Instance._interface.SynthIngredientStockDisplayed;
+                set => Instance._interface.SynthIngredientStockDisplayed.Value = value;
+            }
             public static Int32 BattleRowCount
             {
                 get => Math.Max(1, Instance._interface.BattleRowCount);
@@ -69,7 +74,20 @@ namespace Memoria
                     Instance._interface.BattleDetailHeight.Value = (Int32)value.y;
                 }
             }
-
+            public static Int32 MinimapPreset
+            {
+                get => Mathf.Clamp(Instance._interface.MinimapPreset, 0, 1);
+                set => Instance._interface.MinimapPreset.Value = value;
+            }
+            public static Vector2 MinimapOffset
+            {
+                get => new Vector2(Instance._interface.MinimapOffsetX, Instance._interface.MinimapOffsetY);
+                set
+                {
+                    Instance._interface.MinimapOffsetX.Value = (Int32)value.x;
+                    Instance._interface.MinimapOffsetY.Value = (Int32)value.y;
+                }
+            }
             public static String BattleDamageTextFormat => Instance._interface.BattleDamageTextFormat;
             public static String BattleRestoreTextFormat => Instance._interface.BattleRestoreTextFormat;
             public static String BattleMPDamageTextFormat => Instance._interface.BattleMPDamageTextFormat;
@@ -127,6 +145,7 @@ namespace Memoria
                 SaveValue(Instance._interface.Name, Instance._interface.MenuAbilityRowCount);
                 SaveValue(Instance._interface.Name, Instance._interface.MenuEquipRowCount);
                 SaveValue(Instance._interface.Name, Instance._interface.MenuChocographRowCount);
+                SaveValue(Instance._interface.Name, Instance._interface.SynthIngredientStockDisplayed);
             }
         }
     }

@@ -7,6 +7,7 @@ using Memoria.Data;
 using Memoria.Field;
 using Memoria.Prime;
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -261,9 +262,9 @@ public partial class EventEngine
             case EBin.event_code_binary.SONGFLAG: // 0x1B, "ContinueBattleMusic", "Continue the music after the battle end"
             {
                 if (this.getv1() != 0) // arg1: flag continue/ don't continue
-                    FF9StateSystem.Common.FF9.btl_flag |= (Byte)8;
+                    FF9StateSystem.Common.FF9.btl_flag |= battle.BTL_CONTI_FLD_SONG;
                 else
-                    FF9StateSystem.Common.FF9.btl_flag &= (Byte)247;
+                    FF9StateSystem.Common.FF9.btl_flag &= unchecked((Byte)~battle.BTL_CONTI_FLD_SONG);
                 return 0;
             }
             // 0x1C, "TerminateEntry", "Stop the execution of an entry's code.arg1: entry to terminate."
@@ -349,7 +350,16 @@ public partial class EventEngine
                     }
                     else if (mapNo == 2211 && scCounter == 9200 && (po.sid == 5 || po.sid == 6) && posX == -465 && posZ == -5796) // Kuja ATE: Zorn Thorn position
                     {
-                        posX = (po.sid == 5) ? posX = -200 : posX = 0; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                        posX = (po.sid == 5) ? -200 : 0; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
+                    }
+                    else if (mapNo == 2600 && scCounter == 10700 && po.sid == 8 && Configuration.Graphics.WidescreenSupport && posX == 1173 && posZ == -1685) // Dagga appears in frame
+                    {
+                        posZ = -1985; // Log.Message("posX" + posX + " posZ" + posZ);
+                    }
+                    else if (mapNo == 2651 && scCounter == 10890 && po.sid == 4 && Configuration.Graphics.WidescreenSupport && posX == 1449 && posZ == -6844) // Mikito appears in frame
+                    {
+                        posX = 1749;
+                        posZ = -7244; // Log.Message("posX" + posX + " posZ" + posZ);
                     }
                     else if (mapNo == 2914 && scCounter == 11670 && po.sid >= 6 && po.sid <= 10) // Disable fishes shadows
                     {
@@ -878,7 +888,7 @@ public partial class EventEngine
                 {
                     String str = FF9BattleDB.GEO.GetValue(po.model);
 
-                    po.go = ModelFactory.CreateModel(str, false);
+                    po.go = ModelFactory.CreateModel(str, false, true, Configuration.Graphics.ElementsSmoothTexture);
                     GeoTexAnim.addTexAnim(po.go, str);
                     if (ModelFactory.garnetShortHairTable.Contains(str))
                     {
@@ -914,7 +924,7 @@ public partial class EventEngine
                 }
                 else if (this.gMode == 3)
                 {
-                    po.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(po.model), false);
+                    po.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(po.model), false, true, Configuration.Graphics.WorldSmoothTexture);
                     Singleton<WMWorld>.Instance.addGameObjectToWMActor(po.go, ((Actor)po).wmActor);
                 }
                 return 0;
@@ -1028,18 +1038,32 @@ public partial class EventEngine
                 {
                     case 0:
                     {
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyDying, this.getv1());
+                        btl_cmd.SetEnemyCommand(btl_scrp.FindBattleUnit((UInt16)this.GetSysList(1)), BattleCommandId.EnemyDying, this.getv1(), (UInt16)this.GetSysList(0));
                         break;
                     }
                     case 1:
                     {
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyCounter, this.getv1());
+                        btl_cmd.SetEnemyCommand(btl_scrp.FindBattleUnit((UInt16)this.GetSysList(1)), BattleCommandId.EnemyCounter, this.getv1(), (UInt16)this.GetSysList(0));
                         break;
                     }
                     case 3:
                     {
-                        this.gExec.btlchk = (Byte)0;
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyAtk, this.getv1());
+                        this.gExec.btlchk = 0;
+                        Int32 atkIndex = this.getv1();
+                        BattleUnit enemy = btl_scrp.FindBattleUnit((UInt16)this.GetSysList(1));
+                        Boolean autoAttack = false;
+                        foreach (BattleStatusId statusId in enemy.CurrentStatus.ToStatusList())
+                        {
+                            if (!enemy.Data.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
+                                continue;
+                            if ((effect as IAutoAttackStatusScript)?.OnATB() ?? false)
+                            {
+                                autoAttack = true;
+                                break;
+                            }
+                        }
+                        if (!autoAttack)
+                            btl_cmd.SetEnemyCommand(enemy, BattleCommandId.EnemyAtk, atkIndex, (UInt16)this.GetSysList(0));
                         break;
                     }
                 }
@@ -1518,7 +1542,7 @@ public partial class EventEngine
                 Single dx = (Single)this.getv3(); // arg2: x movement
                 Single dy = (Single)this.getv3(); // arg3: y movement
                 Int16 dz = (Int16)this.getv3(); // arg4: depth, with higher value being further away from camera
-                Int32 time = (Int32)this.getv3(); // arg5: how much time this will move // TODO in what unit?
+                Int32 time = (Int32)this.getv3(); // arg5: the frame duration of the movement
                 this.fieldmap.EBG_overlayMoveTimed(overlayNdx, dx, dy, dz, time);
                 return 0;
             }
@@ -2270,31 +2294,27 @@ public partial class EventEngine
                 // 3-5: depends on the sps code.
                 // Load Sps (sps type)
                 // Enable Attribute (attribute list, boolean enable/disable)
-                // Set Position (X, -Z, Y)
-                // Set Rotation (angle X, angle Z, angle Y)
+                // Set Position (X, -Y, Z)
+                // Set Rotation (angle X, angle Y, angle Z)
                 // Set Scale (scale factor)
                 // Attach (object's entry to attach, bone number)
                 // Set Fade (fade)
                 // Set Animation Rate (rate)
                 // Set Frame Rate (rate)
                 // Set Frame (value) where the value is factored by 16 to get the frame
-                // Set Position Offset (X, -Z, Y)
+                // Set Position Offset (X, -Y, Z)
                 // Set Depth Offset (depth)
                 Int32 objNo = this.getv1(); // arg1: sps ID.
                 Int32 parmType = this.getv1(); // arg2: sps code.
-                Int32 arg0 = 0;
-                if (eventCodeBinary == EBin.event_code_binary.SPS)
-                    arg0 = this.getv2();
-                else
-                    arg0 = this.getv1();
-                Int32 arg1 = this.getv2();
+                Int32 arg1 = (eventCodeBinary == EBin.event_code_binary.SPS) ? this.getv2() : this.getv1();
                 Int32 arg2 = this.getv2();
+                Int32 arg3 = this.getv2();
                 if (this.gMode == 1)
-                    this.fieldSps.SetObjParm(objNo, parmType, arg0, arg1, arg2);
+                    this.fieldSps.SetObjParm(objNo, parmType, arg1, arg2, arg3);
                 else if (this.gMode == 2)
-                    HonoluluBattleMain.battleSPS.SetObjParm(objNo, parmType, arg0, arg1, arg2);
+                    HonoluluBattleMain.battleSPS.SetObjParm(objNo, parmType, arg1, arg2, arg3);
                 else if (this.gMode == 3)
-                    ff9.world.WorldSPSSystem.SetObjParm(objNo, parmType, arg0, arg1, arg2);
+                    ff9.world.WorldSPSSystem.SetObjParm(objNo, parmType, arg1, arg2, arg3);
                 return 0;
             }
             case EBin.event_code_binary.FULLMEMBER: // 0xB4, "SetPartyReserve", "Define the party member availability for a future Party call"
@@ -2561,15 +2581,52 @@ public partial class EventEngine
                 BattleStatus statusList = (BattleStatus)this.getv1(); // arg2: status list. 1: Petrified 2: Venom 3: Virus 4: Silence 5: Darkness 6: Trouble 7: Zombie
                 if (charId == CharacterId.NONE)
                     return 0;
+                if ((Int32)statusList == 0x7F) // Usual vanilla "clear all statuses": make it clear extra statuses that could be "OutOfBattle" as well
+                    statusList = FF9BattleDB.AllStatuses;
                 PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
-                SFieldCalculator.FieldRemoveStatus(player, statusList);
+                FieldCalculator.RemoveStatuses(player, statusList);
                 // https://github.com/Albeoris/Memoria/issues/22
                 if (!player.info.sub_replaced)
-                    SFieldCalculator.FieldRemoveStatus(FF9StateSystem.Common.FF9.GetPlayer(charId + 3), statusList);
+                    FieldCalculator.RemoveStatuses(FF9StateSystem.Common.FF9.GetPlayer(charId + 3), statusList);
                 if (charId == CharacterId.Beatrix)
                     foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
                         if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
-                            SFieldCalculator.FieldRemoveStatus(play, statusList);
+                            FieldCalculator.RemoveStatuses(play, statusList);
+                return 0;
+            }
+            case EBin.event_code_binary.ADD_STATUS: // Apply a status to a unit in battle, with possible status parameters
+            {
+                UInt16 targetId = (UInt16)this.getv3(); // Unit to which the status is applied
+                BattleStatusId statusId = (BattleStatusId)this.getv3(); // The status to apply
+                Boolean permanent = this.getv3() != 0; // Whether it should be added as a permanent status
+                Int32 argument1 = this.getv3(); // A first parameter (to be handled by the status script's Apply)
+                Int32 argument2 = this.getv3(); // A second parameter
+                Int32 argument3 = this.getv3(); // A third parameter
+                if (this.gMode != 2)
+                    return 0;
+                foreach (BTL_DATA btl in btl_util.findAllBtlData(targetId))
+                {
+                    BattleUnit target = new BattleUnit(btl);
+                    btl_stat.AlterStatus(target, statusId, null, false, argument1, argument2, argument3);
+                    if (permanent && target.IsUnderAnyStatus(statusId))
+                        target.Data.stat.permanent |= statusId.ToBattleStatus();
+                }
+                return 0;
+            }
+            case EBin.event_code_binary.REMOVE_STATUS: // Remove a status from a unit in battle
+            {
+                UInt16 targetId = (UInt16)this.getv3(); // Unit from which the status is removed
+                BattleStatusId statusId = (BattleStatusId)this.getv3(); // The status to remove
+                Boolean permanent = this.getv3() != 0; // Whether it should be removed as a permanent status
+                if (this.gMode != 2)
+                    return 0;
+                foreach (BTL_DATA btl in btl_util.findAllBtlData(targetId))
+                {
+                    BattleUnit target = new BattleUnit(btl);
+                    if (permanent)
+                        target.Data.stat.permanent &= ~statusId.ToBattleStatus();
+                    btl_stat.RemoveStatus(target, statusId);
+                }
                 return 0;
             }
             case EBin.event_code_binary.WINPOSE: // 0xDB, "EnableVictoryPose", "Enable or disable the victory pose at the end of battles for a specific character"
@@ -2985,7 +3042,7 @@ public partial class EventEngine
                     synth.Shops.Remove(shopId);
                 return 0;
             }
-            case EBin.event_code_binary.TURN_OBJ_EX:
+            case EBin.event_code_binary.TURN_OBJ_EX: // "TurnTowardObjectEx"
             {
                 Actor turner = this.GetObj3() as Actor; // character to turn
                 PosObj target = this.GetObj3() as PosObj; // object to look at

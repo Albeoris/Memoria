@@ -1,17 +1,24 @@
-using Memoria;
-using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Memoria.Prime;
+using Memoria.Scripts;
 
-public class BattleState : MonoBehaviour
+public class BattleStateSystem : MonoBehaviour
 {
     private void Awake()
     {
-        this.Init();
-        this.InitMapName();
-        this.IsPlayFieldBGMInCurrentBattle = false;
+        try
+        {
+            this.Init();
+            this.InitMapName();
+            this.IsPlayFieldBGMInCurrentBattle = false;
+        }
+        catch (Exception err)
+        {
+            Log.Error(err);
+        }
     }
 
     private void InitMapName()

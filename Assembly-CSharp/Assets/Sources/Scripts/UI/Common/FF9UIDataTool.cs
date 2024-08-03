@@ -2,18 +2,19 @@ using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Prime;
+using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using XInputDotNetPure;
+using static Memoria.Assets.DataResources;
 
 namespace Assets.Sources.Scripts.UI.Common
 {
     public static class FF9UIDataTool
     {
-        public static void DisplayItem(RegularItem itemId, UISprite itemIcon, UILabel itemName, Boolean isEnable)
+        public static void DisplayItem(RegularItem itemId, UISprite itemIcon, UILabel itemName, Boolean isEnable, Boolean displayStock = false)
         {
             if (itemId != RegularItem.NoItem)
             {
@@ -29,6 +30,14 @@ namespace Assets.Sources.Scripts.UI.Common
                     itemName.text = FF9TextTool.ItemName(itemId);
                     itemName.color = isEnable ? FF9TextTool.White : FF9TextTool.Gray;
                     itemName.multiLine = true;
+                    if (displayStock && Configuration.Interface.SynthIngredientStockDisplayed)
+                    {
+                        Int32 itemAmount = ff9item.FF9Item_GetCount(itemId);
+                        if (itemAmount > 0)
+                        {
+                            itemName.text += $" ({itemAmount})";
+                        }
+                    }
                 }
             }
             else
@@ -40,7 +49,7 @@ namespace Assets.Sources.Scripts.UI.Common
             }
         }
 
-        public static void DisplayMultipleItems(Dictionary<RegularItem, Int32> items, UISprite itemIcon, UILabel itemName, Dictionary<RegularItem, Boolean> isEnable)
+        public static void DisplayMultipleItems(Dictionary<RegularItem, Int32> items, UISprite itemIcon, UILabel itemName, Dictionary<RegularItem, Boolean> isEnable, Boolean displayStock = false)
         {
             String itemLabel = String.Empty;
             String spriteName = String.Empty;
@@ -61,6 +70,14 @@ namespace Assets.Sources.Scripts.UI.Common
                 itemLabel += $"[{NGUIText.EncodeColor(enabled ? FF9TextTool.White : FF9TextTool.Gray)}]{FF9TextTool.ItemName(kvp.Key)}";
                 if (kvp.Value > 1)
                     itemLabel += $" × {kvp.Value}";
+                if (displayStock && Configuration.Interface.SynthIngredientStockDisplayed)
+                {
+                    Int32 itemAmount = ff9item.FF9Item_GetCount(kvp.Key);
+                    if (itemAmount > 0)
+                    {
+                        itemLabel += $" ({itemAmount})";
+                    }
+                }
             }
             if (itemIcon != null)
                 itemIcon.spriteName = spriteName;
@@ -75,40 +92,56 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void DisplayCharacterDetail(PLAYER player, CharacterDetailHUD charHud)
         {
+            IOverloadPlayerUIScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadPlayerUIScript)) as IOverloadPlayerUIScript;
+            if (overloadedMethod != null)
+            {
+                IOverloadPlayerUIScript.Result ui = overloadedMethod.UpdatePointStatus(player);
+                charHud.HPTextColor = ui.ColorHP;
+                charHud.MPTextColor = ui.ColorMP;
+                if (charHud.MagicStoneLabel != null)
+                    charHud.MagicStoneTextColor = ui.ColorMagicStone;
+            }
+            else
+            {
+                // Default method
+                charHud.HPTextColor = (player.cur.hp == 0) ? FF9TextTool.Red
+                                    : (player.cur.hp <= player.max.hp / 6) ? FF9TextTool.Yellow : FF9TextTool.White;
+                charHud.MPTextColor = (player.cur.mp <= player.max.mp / 6) ? FF9TextTool.Yellow : FF9TextTool.White;
+                if (charHud.MagicStoneLabel != null)
+                    charHud.MagicStoneTextColor = (player.cur.capa == 0) ? FF9TextTool.Yellow : FF9TextTool.White;
+            }
             charHud.Self.SetActive(true);
             charHud.NameLabel.text = player.Name;
             charHud.LvLabel.text = player.level.ToString();
-            Color color = (player.cur.hp != 0) ? ((player.cur.hp > player.max.hp / 6) ? FF9TextTool.White : FF9TextTool.Yellow) : FF9TextTool.Red;
             charHud.HPLabel.text = player.cur.hp.ToString();
             charHud.HPMaxLabel.text = player.max.hp.ToString();
-            charHud.HPTextColor = color;
-            color = (player.cur.mp > player.max.mp / 6) ? FF9TextTool.White : FF9TextTool.Yellow;
             charHud.MPLabel.text = player.cur.mp.ToString();
             charHud.MPMaxLabel.text = player.max.mp.ToString();
-            charHud.MPTextColor = color;
             if (charHud.MagicStoneLabel != null)
             {
                 charHud.MagicStoneLabel.text = player.cur.capa.ToString();
                 charHud.MagicStoneMaxLabel.text = player.max.capa.ToString();
-                charHud.MagicStoneTextColor = (player.cur.capa != 0) ? FF9TextTool.White : FF9TextTool.Yellow;
             }
             if (charHud.StatusesSpriteList != null)
             {
-                Int32 statusIndex = 0;
                 UISprite[] statusesSpriteList = charHud.StatusesSpriteList;
-                for (Int32 i = 0; i < statusesSpriteList.Length; i++)
+                foreach (UISprite statusSprite in statusesSpriteList)
+                    statusSprite.alpha = 0f;
+                foreach (BattleStatusId statusId in player.status.ToStatusList())
                 {
-                    UISprite uisprite = statusesSpriteList[i];
-                    if ((player.status & (BattleStatus)(1 << statusIndex)) != 0)
-                    {
-                        uisprite.spriteName = FF9UIDataTool.IconSpriteName[FF9UIDataTool.status_id[statusIndex]];
-                        uisprite.alpha = 1f;
-                    }
+                    if (!BattleHUD.DebuffIconNames.TryGetValue(statusId, out String spriteName))
+                        continue;
+                    Int32 spriteSlot = (Int32)statusId;
+                    UISprite statusSprite = null;
+                    if (spriteSlot >= statusesSpriteList.Length || statusesSpriteList[spriteSlot].alpha == 1f)
+                        statusSprite = statusesSpriteList.FirstOrDefault(sprite => sprite.alpha == 0f);
                     else
-                    {
-                        uisprite.alpha = 0f;
-                    }
-                    statusIndex++;
+                        statusSprite = statusesSpriteList[spriteSlot];
+                    // TODO Add more UISprite if the limit is reached?
+                    if (statusSprite == null)
+                        break;
+                    statusesSpriteList[spriteSlot].spriteName = spriteName;
+                    statusesSpriteList[spriteSlot].alpha = 1f;
                 }
             }
         }
@@ -680,7 +713,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String AvatarSpriteName(CharacterSerialNumber serialNo)
         {
-            if (serialNo >= CharacterSerialNumber.GARNET_LH_ROD && serialNo <= CharacterSerialNumber.GARNET_SH_KNIFE)
+            if (serialNo >= CharacterSerialNumber.GARNET_LH_ROD && serialNo <= CharacterSerialNumber.GARNET_SH_RACKET)
             {
                 if (Configuration.Graphics.GarnetHair == 1)
                     return "face02";
@@ -1461,11 +1494,8 @@ namespace Assets.Sources.Scripts.UI.Common
         };
 
         private static readonly SByte WorldTitleMistContinent = 0;
-
         private static readonly SByte WorldTitleOuterContinent = 1;
-
         private static readonly SByte WorldTitleForgottenContinent = 2;
-
         private static readonly SByte WorldTitleLostContinent = 3;
 
         private static Dictionary<String, Sprite> worldTitleSpriteList = new Dictionary<String, Sprite>();

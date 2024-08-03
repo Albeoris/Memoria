@@ -19,6 +19,7 @@ public static class UnifiedBattleSequencer
             UnifiedBattleSequencer.ReleaseRunningAction(0);
         BattleAction.bbgIntensity.Clear();
         battlebg.nf_SetBbgIntensity(128);
+        battlebg.UnshiftWorld();
     }
 
     public static void Loop()
@@ -32,7 +33,7 @@ public static class UnifiedBattleSequencer
             {
                 if (runningActions[i].ExecuteLoop())
                 {
-                    if (FF9StateSystem.Battle.FF9Battle.btl_phase == 4 && runningActions[i].useCameraTarget)
+                    if (FF9StateSystem.Battle.FF9Battle.btl_phase == FF9StateBattleSystem.PHASE_NORMAL && runningActions[i].useCameraTarget)
                     {
                         //SFX.SFX_SendIntData(4, 0, 0, 0);
                         btlseq.instance.seq_work_set.CameraNo = 0;
@@ -211,6 +212,8 @@ public static class UnifiedBattleSequencer
                     break;
                 case "WaitAnimation":
                     code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar);
+                    if (cmd.regist.bi.player != 0 && tmpChar == cmd.regist.btl_id && frameIndex <= 1 && cmd.regist.evt.animFrame <= 1 && String.Equals(cmd.regist.currentAnimationName, cmd.regist.mot[(Int32)BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_CMD]))
+                        break; // Ignore the first "WaitAnimation: Caster" instruction to cut the "IDLE_CMD" in the sequence "NORMAL_TO_CMD" -> "IDLE_CMD" -> Attack (typically when the command queue only contains this attack, so this attack is performed more quickly)
                     runningThread.waitAnimId |= (UInt16)(tmpChar & animatedChar);
                     break;
                 case "WaitMove":
@@ -258,7 +261,7 @@ public static class UnifiedBattleSequencer
                         break;
                     if (!code.argument.TryGetValue("Type", out tmpStr))
                     {
-                        if (cmd.regist.bi.player == 0 || cmd.cmd_no == BattleCommandId.BlueMagic)
+                        if (cmd.regist.bi.player == 0 || cmd.cmd_no == BattleCommandId.BlueMagic || btl_util.IsCommandMonsterTransform(cmd))
                             tmpStr = "Enemy";
                         else if (cmd.cmd_no == BattleCommandId.BlackMagic || cmd.cmd_no == BattleCommandId.DoubleBlackMagic || cmd.cmd_no == BattleCommandId.MagicSword)
                             tmpStr = "Black";
@@ -335,7 +338,7 @@ public static class UnifiedBattleSequencer
                             customRequest.useTargetAveragePosition = false;
                         }
                         if (!code.TryGetArgBoolean("UseCamera", out tmpBool))
-                            tmpBool = Configuration.Battle.Speed < 3 || FF9StateSystem.Battle.FF9Battle.btl_phase != 4 || !UIManager.Battle.FF9BMenu_IsEnable();
+                            tmpBool = Configuration.Battle.Speed < 3 || FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_NORMAL || !UIManager.Battle.FF9BMenu_IsEnable();
                         if (SFXData.IsShortSpecialEffect(tmpSfx))
                             tmpBool = false;
                         else if (useCameraTarget)
@@ -706,9 +709,9 @@ public static class UnifiedBattleSequencer
                     if (tmpStr == "All")
                         tmpInt2 = UInt16.MaxValue;
                     code.TryGetArgCharacter("Char", cmd.regist.btl_id, runningThread.targetId, out tmpChar);
-                    Boolean includeWeapon = tmpStr == "Weapon" || tmpInt2 == UInt16.MaxValue;
-                    Boolean includeShadow = tmpStr == "Shadow" || tmpInt2 == UInt16.MaxValue;
                     Boolean isVanish = tmpStr == "Vanish";
+                    Boolean includeWeapon = !isVanish && (tmpStr == "Weapon" || tmpInt2 == UInt16.MaxValue);
+                    Boolean includeShadow = isVanish || tmpStr == "Shadow" || tmpInt2 == UInt16.MaxValue;
                     if (tmpStr == "Main")
                         tmpInt2 = UInt16.MaxValue;
                     Int32 priority;
@@ -721,8 +724,6 @@ public static class UnifiedBattleSequencer
                             continue;
                         if (isVanish)
                             meshList = btl.mesh_banish;
-                        if (btl_stat.CheckStatus(btl, BattleStatus.Vanish))
-                            meshList &= ~btl.mesh_banish;
                         if (!permanent)
                             meshList &= ~btl.mesh_current;
                         if (tmpInt > 0)
@@ -741,7 +742,7 @@ public static class UnifiedBattleSequencer
                                     for (Int32 i = 0; i < btl.weaponMeshCount; i++)
                                         geo.geoWeaponMeshShow(btl, i);
                             }
-                            fade.Add(new SequenceFade(btl, (UInt16)meshList, disappear && !tmpBool, permanent, includeWeapon, includeShadow, tmpBool ? 0f : 128f, tmpBool ? 128f : 0f, tmpInt, (Byte)priority));
+                            fade.Add(new SequenceFade(btl, (UInt16)meshList, disappear && !tmpBool, permanent, isVanish, includeWeapon, includeShadow, tmpBool ? 0f : 128f, tmpBool ? 128f : 0f, tmpInt, (Byte)priority));
                         }
                         else
                         {
@@ -793,7 +794,7 @@ public static class UnifiedBattleSequencer
                 case "PlayCamera":
                     if (cancel)
                         break;
-                    if (Configuration.Battle.Speed >= 3 && FF9StateSystem.Battle.FF9Battle.btl_phase == 4)
+                    if (Configuration.Battle.Speed >= 3 && FF9StateSystem.Battle.FF9Battle.btl_phase == FF9StateBattleSystem.PHASE_NORMAL)
                         break;
                     code.TryGetArgBoolean("Alternate", out tmpBool);
                     if (tmpBool && !SFX.ShouldPlayAlternateCamera(cmd))
@@ -944,7 +945,7 @@ public static class UnifiedBattleSequencer
                         cmd.info.effect_counter++;
                         foreach (BTL_DATA btl in btl_util.findAllBtlData(tmpChar))
                         {
-                            if (btl.bi.target == 0 && cmd.cmd_no != BattleCommandId.Jump && cmd.cmd_no != BattleCommandId.Jump2 && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysTrans)
+                            if (btl.bi.target == 0 && cmd.cmd_no != BattleCommandId.Jump && cmd.cmd_no != BattleCommandId.JumpInTrance && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysTrans)
                                 continue;
                             List<BTL_DATA> allBtl = btl_util.findAllBtlData(0xFF);
                             foreach (BTL_DATA c in allBtl)
@@ -977,7 +978,7 @@ public static class UnifiedBattleSequencer
                             Btl2dParam figParam;
                             if (!btl2dParam.TryGetValue(btl, out figParam))
                                 continue;
-                            btl2d.Btl2dReq(btl, ref figParam.info, ref figParam.hp, ref figParam.mp);
+                            btl2d.Btl2dReq(btl, figParam.info, figParam.hp, figParam.mp);
                             btl2dParam.Remove(btl);
                         }
                     }
@@ -1008,6 +1009,18 @@ public static class UnifiedBattleSequencer
                         SequenceBBGIntensity.Apply(false);
                     }
                     break;
+                case "ShiftWorld":
+                {
+                    code.TryGetArgVector("Offset", out tmpVec);
+                    code.TryGetArgVector("Angle", out Vector3 angleEuler);
+                    if (!code.TryGetArgBoolean("OnlyOnCameraMovement", out tmpBool))
+                        tmpBool = true;
+                    if (tmpBool && SFXDataCamera.currentCameraEngine == SFXDataCamera.CameraEngine.NONE)
+                        break;
+                    Quaternion angle = Quaternion.EulerAngles(angleEuler);
+                    battlebg.ShiftWorld(tmpVec, angle);
+                    break;
+                }
                 case "SetVariable":
                     code.TrySetVariable("Variable", "Value", "Index");
                     break;
@@ -1059,6 +1072,7 @@ public static class UnifiedBattleSequencer
                             NCalcUtility.InitializeExpressionUnit(ref c, target, "Target");
                             NCalcUtility.InitializeExpressionCommand(ref c, new BattleCommand(cmd));
                             c.Parameters["IsSingleTarget"] = Comn.countBits(runningThread.targetId) == 1;
+                            c.Parameters["AreTargetsPlayers"] = (runningThread.targetId & 0xF) == runningThread.targetId;
                             c.Parameters["AreCasterAndTargetsEnemies"] = caster.IsPlayer && (runningThread.targetId & 0xF0) == runningThread.targetId || !caster.IsPlayer && (runningThread.targetId & 0xF) == runningThread.targetId;
                             c.Parameters["AreCasterAndTargetsAllies"] = caster.IsPlayer && (runningThread.targetId & 0xF) == runningThread.targetId || !caster.IsPlayer && (runningThread.targetId & 0x0F) == runningThread.targetId;
                             c.Parameters["IsSingleSelectedTarget"] = Comn.countBits(originalTargetId) == 1;
@@ -1184,7 +1198,7 @@ public static class UnifiedBattleSequencer
             {
                 seqf.frameCur++;
                 Single alpha = ParametricMovement.Interpolate(seqf.frameCur, seqf.frameEnd, seqf.origin, seqf.dest);
-                if (seqf.includeWeapon && seqf.character.bi.player != 0 && seqf.character.weapon_geo != null && (seqf.character.weaponFlags & geo.GEO_FLAGS_RENDER) != 0 && (seqf.character.weaponFlags & geo.GEO_FLAGS_CLIP) == 0)
+                if (seqf.includeWeapon && seqf.character.weapon_geo != null && (seqf.character.weaponFlags & geo.GEO_FLAGS_RENDER) != 0 && (seqf.character.weaponFlags & geo.GEO_FLAGS_CLIP) == 0)
                 {
                     btl_stat.GeoAddColor2DrawPacket(seqf.character.weapon_geo, (Int16)(alpha - 128), (Int16)(alpha - 128), (Int16)(alpha - 128));
                     if (alpha < 70)
@@ -1215,7 +1229,7 @@ public static class UnifiedBattleSequencer
                             seqf.character.meshflags |= (UInt32)seqf.meshId;
                             seqf.character.mesh_current = (UInt16)(seqf.character.mesh_current | seqf.meshId);
                         }
-                        btl_mot.HideMesh(seqf.character, (UInt16)seqf.meshId, false);
+                        btl_mot.HideMesh(seqf.character, (UInt16)seqf.meshId, seqf.isVanish);
                         if (seqf.includeWeapon)
                             for (Int32 i = 0; i < seqf.character.weaponMeshCount; i++)
                                 geo.geoWeaponMeshHide(seqf.character, i);
@@ -1329,7 +1343,7 @@ public static class UnifiedBattleSequencer
         {
             if (reflectTriggered || cmd.info.reflec != 2)
                 return false;
-            if (FF9StateSystem.Battle.FF9Battle.btl_phase != 4 || !UIManager.Battle.FF9BMenu_IsEnable())
+            if (FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_NORMAL || !UIManager.Battle.FF9BMenu_IsEnable())
                 return false;
             List<BTL_DATA> newTargList = btl_util.findAllBtlData(btl_cmd.MergeReflecTargetID(cmd.reflec));
             if (newTargList.Count == 0)
@@ -1525,6 +1539,7 @@ public static class UnifiedBattleSequencer
         public UInt16 meshId;
         public Boolean disappear;
         public Boolean permanent;
+        public Boolean isVanish;
         public Boolean includeWeapon;
         public Boolean includeShadow;
         public Byte priority;
@@ -1533,12 +1548,13 @@ public static class UnifiedBattleSequencer
         public Int32 frameCur;
         public Int32 frameEnd;
 
-        public SequenceFade(BTL_DATA c, UInt16 m, Boolean dis, Boolean per, Boolean w, Boolean sh, Single o, Single d, Int32 f, Byte pr)
+        public SequenceFade(BTL_DATA c, UInt16 m, Boolean dis, Boolean per, Boolean v, Boolean w, Boolean sh, Single o, Single d, Int32 f, Byte pr)
         {
             character = c;
             meshId = m;
             disappear = dis;
             permanent = per;
+            isVanish = v;
             includeWeapon = w;
             includeShadow = sh;
             priority = pr;

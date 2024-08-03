@@ -504,7 +504,7 @@ public class FieldMap : HonoBehavior
 
     public void AddPlayer()
     {
-        GameObject gameObject = ModelFactory.CreateModel("Models/main/GEO_MAIN_F0_ZDN/GEO_MAIN_F0_ZDN", false);
+        GameObject gameObject = ModelFactory.CreateModel("Models/main/GEO_MAIN_F0_ZDN/GEO_MAIN_F0_ZDN", false, true, Configuration.Graphics.ElementsSmoothTexture);
         AnimationFactory.AddAnimToGameObject(gameObject, "GEO_MAIN_F0_ZDN");
         gameObject.name = "Player";
         gameObject.transform.parent = base.transform;
@@ -531,27 +531,17 @@ public class FieldMap : HonoBehavior
         }
         this.player = actor;
         this.playerController = fieldMapActorController;
-        if (FF9StateSystem.Field.isDebugWalkMesh)
+        gameObject.transform.localScale = new Vector3(-1f, -1f, 1f);
+        Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
+        foreach (Renderer renderer in renderers)
         {
-            gameObject.transform.localScale = new Vector3(-1f, -1f, 1f);
-            Renderer[] componentsInChildren = gameObject.GetComponentsInChildren<Renderer>();
-            for (Int32 i = 0; i < componentsInChildren.Length; i++)
+            foreach (Material material in renderer.materials)
             {
-                Renderer renderer = componentsInChildren[i];
-                renderer.material.shader = ShadersLoader.Find("Unlit/Transparent Cutout");
+                material.shader = FF9StateSystem.Field.isDebugWalkMesh ? ShadersLoader.Find("Unlit/Transparent Cutout") : ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
+                ModelFactory.SetMatFilter(material, Configuration.Graphics.ElementsSmoothTexture);
             }
         }
-        else
-        {
-            gameObject.transform.localScale = new Vector3(-1f, -1f, 1f);
-            Renderer[] componentsInChildren2 = gameObject.GetComponentsInChildren<Renderer>();
-            for (Int32 j = 0; j < componentsInChildren2.Length; j++)
-            {
-                Renderer renderer2 = componentsInChildren2[j];
-                renderer2.material.shader = ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
-            }
-            NormalSolver.SmoothCharacterMesh(componentsInChildren2);
-        }
+        NormalSolver.SmoothCharacterMesh(renderers);
     }
 
     public void RestoreModels(GameObject modelGo, Actor actorOfObj)
@@ -623,38 +613,23 @@ public class FieldMap : HonoBehavior
             this.player = fieldMapActor;
             this.playerController = fieldMapActorController;
         }
-        if (FF9StateSystem.Field.isDebugWalkMesh)
+
+        modelGo.transform.localScale = new Vector3(-1f, -1f, 1f);
+        Renderer[] renderers = modelGo.GetComponentsInChildren<Renderer>();
+        foreach (Renderer renderer in renderers)
         {
-            modelGo.transform.localScale = new Vector3(-1f, -1f, 1f);
-            Renderer[] renderers = modelGo.GetComponentsInChildren<Renderer>();
-            for (Int32 i = 0; i < renderers.Length; i++)
-                renderers[i].material.shader = ShadersLoader.Find("Unlit/Transparent Cutout");
-        }
-        else
-        {
-            modelGo.transform.localScale = new Vector3(-1f, -1f, 1f);
-            if (actorOfObj.model == 395) // BlueMagicLight
+            foreach (Material material in renderer.materials)
             {
-                Renderer[] renderers = modelGo.GetComponentsInChildren<Renderer>();
-                for (Int32 i = 0; i < renderers.Length; i++)
-                {
-                    Material[] materials = renderers[i].materials;
-                    for (Int32 j = 0; j < materials.Length; j++)
-                        materials[j].shader = ShadersLoader.Find("PSX/Actor_Abr_1");
-                }
-            }
-            else
-            {
-                Renderer[] renderers = modelGo.GetComponentsInChildren<Renderer>();
-                for (Int32 i = 0; i < renderers.Length; i++)
-                {
-                    Material[] materials = renderers[i].materials;
-                    for (Int32 j = 0; j < materials.Length; j++)
-                        materials[j].shader = ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
-                }
-                NormalSolver.SmoothCharacterMesh(renderers);
+                if (FF9StateSystem.Field.isDebugWalkMesh)
+                    material.shader = ShadersLoader.Find("Unlit/Transparent Cutout");
+                else if (actorOfObj.model == 395) // BlueMagicLight
+                    material.shader = ShadersLoader.Find("PSX/Actor_Abr_1");
+                else
+                    material.shader = ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
+                ModelFactory.SetMatFilter(material, Configuration.Graphics.ElementsSmoothTexture);
             }
         }
+        NormalSolver.SmoothCharacterMesh(renderers);
         if (needRestore && FF9StateSystem.Common.FF9.fldMapNo == 1706) // Mdn. Sari/Kitchen
         {
             if (fieldMapActor.actor.uid == 4 && FF9StateSystem.Settings.CurrentLanguage == "Japanese")
@@ -2497,6 +2472,8 @@ public class FieldMap : HonoBehavior
         [951,0,2,1214],     // Gargan Roo's railing
         [1000,0,12,0],      // Clayra's Trunk text (in English version)
         [1206,0,21,800],    // Alexandria, purple chadelier
+        [1223,0,21,800],    // Alexandria, purple chadelier
+        [1225,0,21,800],    // Alexandria, purple chadelier
         [1309,0,23,0],      // Lindblum armorer light
         [1309,0,24,1],      // Lindblum armorer armor
         [1406,0,20,2600],   // Water layer masking actual water waves

@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using Memoria.Data;
 
 namespace Memoria.Scripts.Battle
 {
@@ -21,10 +23,19 @@ namespace Memoria.Scripts.Battle
         {
             if (_v.IsTargetLevelMultipleOfCommandRate() && _v.Target.CanBeAttacked())
             {
+                List<Object> parameters = new List<Object>();
                 if (_v.Target.PhysicalDefence != 0)
-                    _v.Target.PhysicalDefence = GameRandom.Next16() % _v.Target.PhysicalDefence;
-                if (_v.Target.MagicDefence != 0)
-                    _v.Target.MagicDefence = GameRandom.Next16() % _v.Target.MagicDefence;
+                {
+                    parameters.Add("PhysicalDefence");
+                    parameters.Add(GameRandom.Next16() % _v.Target.PhysicalDefence);
+                }
+                if (_v.Target.PhysicalDefence != 0)
+                {
+                    parameters.Add("MagicDefence");
+                    parameters.Add(GameRandom.Next16() % _v.Target.MagicDefence);
+                }
+                if (parameters.Count > 0)
+                    _v.Target.TryAlterSingleStatus(BattleStatusId.ChangeStat, true, _v.Caster, parameters.ToArray());
             }
         }
     }

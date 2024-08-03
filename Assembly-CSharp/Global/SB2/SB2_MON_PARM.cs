@@ -61,7 +61,7 @@ public class SB2_MON_PARM
 
     public UInt16 Radius;
 
-    public UInt16 Geo;
+    public Int16 Geo;
 
     public UInt16[] Mot;
 
@@ -160,10 +160,18 @@ public class SB2_MON_PARM
     [Memoria.PatchableFieldAttribute]
     public String WeaponModel;
     [Memoria.PatchableFieldAttribute]
+    public String[] WeaponTextureFiles;
+    [Memoria.PatchableFieldAttribute]
+    public Single[] WeaponSize;
+    [Memoria.PatchableFieldAttribute]
     public Int32 WeaponAttachment;
+    [Memoria.PatchableFieldAttribute]
+    public Single[] WeaponOffsetPos;
+    [Memoria.PatchableFieldAttribute]
+    public Single[] WeaponOffsetRot;
 
     [Memoria.PatchableFieldAttribute]
-    public Byte[] TranceGlowingColor;
+    public Int32[] TranceGlowingColor;
 
     [Memoria.PatchableFieldAttribute]
     public UInt32 MaxDamageLimit;

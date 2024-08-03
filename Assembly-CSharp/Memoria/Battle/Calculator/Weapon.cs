@@ -4,33 +4,6 @@ using System;
 
 namespace Memoria
 {
-    public sealed class Character
-    {
-        public readonly PLAYER Data;
-
-        public Character(PLAYER data)
-        {
-            Data = data;
-        }
-
-        public static implicit operator PLAYER(Character character) => character.Data;
-
-        public String Name => Data.Name;
-        public CharacterId Index => Data.Index;
-        public CharacterPresetId PresetId => Data.PresetId;
-        public CharacterEquipment Equipment => Data.equip;
-        public Byte Row => Data.info.row;
-        public CharacterCategory Category => (CharacterCategory)Data.category;
-        public Boolean IsMainCharacter => !Data.IsSubCharacter;
-        public Boolean IsSubCharacter => Data.IsSubCharacter;
-
-        public static Character Find(BattleUnit unit)
-        {
-            PLAYER data = FF9StateSystem.Common.FF9.GetPlayer(unit.PlayerIndex);
-            return new Character(data);
-        }
-    }
-
     public sealed class Weapon
     {
         private readonly ItemAttack _data;

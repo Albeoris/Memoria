@@ -26,15 +26,19 @@ namespace Memoria
                 {
                     _cameraRegistered = false;
                     for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                    {
                         next._smoothUpdateRegistered = false;
-                    }
                 }
             }
         }
 
         public static Boolean Enabled => Configuration.Graphics.BattleTPS < Configuration.Graphics.BattleFPS;
-        public static Int32 LastSFXEffectJTex { get; set; }
+
+        public static void OnBattleMapChange()
+        {
+            _bgInitialised = false;
+            _bg = null;
+            _cameraRegistered = false;
+        }
 
         public static void RegisterState()
         {
@@ -46,9 +50,9 @@ namespace Memoria
 
                 String curAnim = next.currentAnimationName;
                 Animation anim = next.gameObject.GetComponent<Animation>();
-                if (anim == null)
+                AnimationState animState = anim?[curAnim];
+                if (animState == null)
                     continue;
-                AnimationState animState = anim[curAnim];
                 next._smoothUpdateBoneDelta = Vector3.zero;
 
                 foreach (AnimationState state in anim)
@@ -61,7 +65,7 @@ namespace Memoria
                     }
                 }
 
-                if (next._smoothUpdateRegistered)
+                if (next._smoothUpdateRegistered && anim[next._smoothUpdateAnimNamePrevious] != null)
                 {
                     next._smoothUpdatePosPrevious = next._smoothUpdatePosActual;
                     next._smoothUpdateRotPrevious = next._smoothUpdateRotActual;
@@ -75,37 +79,29 @@ namespace Memoria
                         if (next._smoothUpdateAnimNameNext == null)
                         {
                             Single speed = animState.time - next._smoothUpdateAnimTimePrevious;
-                            Single direction = next._smoothUpdateAnimSpeed;
-                            Boolean hasLooped =
-                                (direction < 0 && speed > 0f) ||
-                                (direction > 0 && speed < 0f);
-                            Boolean isPalindrome = Mathf.Abs(speed + direction) < 0.001f;
-                            if (!hasLooped || isPalindrome)
+                            if (Mathf.Abs(speed) < animState.length / 2f)
                                 next._smoothUpdateAnimSpeed = speed;
                         }
                         else
                         {
-                            anim.Play(next._smoothUpdateAnimNameNext);
                             next._smoothUpdateAnimSpeed = animState.time - next._smoothUpdateAnimTimePrevious;
+                            anim.Play(next._smoothUpdateAnimNameNext);
                             next._smoothUpdateAnimNameNext = null;
                         }
                     }
-                    else
+                    else if (!anim.IsPlaying(next._smoothUpdateAnimNamePrevious))
                     {
-                        if (!anim.IsPlaying(next._smoothUpdateAnimNamePrevious))
-                        {
-                            Vector3 nextBonePos = next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
-                            Single time = animState.time;
-                            anim.Play(next._smoothUpdateAnimNamePrevious);
-                            animState.time = time; // Reset to 0 by previous line which we don't want
-                            AnimationState prevState = anim[next._smoothUpdateAnimNamePrevious];
-                            prevState.time = next._smoothUpdateAnimTimePrevious + next._smoothUpdateAnimSpeed;
-                            anim.Sample();
-                            Vector3 curBonePos = next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
+                        Vector3 nextBonePos = next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
+                        Single time = animState.time;
+                        anim.Play(next._smoothUpdateAnimNamePrevious);
+                        animState.time = time; // Reset to 0 by previous line which we don't want
+                        AnimationState prevState = anim[next._smoothUpdateAnimNamePrevious];
+                        prevState.time = next._smoothUpdateAnimTimePrevious + next._smoothUpdateAnimSpeed;
+                        anim.Sample();
+                        Vector3 curBonePos = next.gameObject.transform.GetChildByName("bone000").localToWorldMatrix.GetColumn(3);
 
-                            next._smoothUpdateBoneDelta = nextBonePos - curBonePos;
-                            next._smoothUpdateAnimNameNext = next.currentAnimationName;
-                        }
+                        next._smoothUpdateBoneDelta = nextBonePos - curBonePos;
+                        next._smoothUpdateAnimNameNext = next.currentAnimationName;
                     }
                 }
                 else
@@ -129,7 +125,7 @@ namespace Memoria
                 geo.geoScaleUpdate(next, true);
             }
             // Sky
-            if (_bg == null && !_cameraRegistered)
+            if (_bg == null && FF9StateSystem.Battle.FF9Battle.map.btlBGPtr != null && !_bgInitialised)
             {
                 foreach (Transform transform in FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.gameObject.transform)
                 {
@@ -141,6 +137,7 @@ namespace Memoria
                         break;
                     }
                 }
+                _bgInitialised = true;
             }
             if (_bg != null)
             {
@@ -214,11 +211,9 @@ namespace Memoria
                 // Log.Message($"[DEBUG {Time.frameCount} cur {_bg.localRotation.eulerAngles} prev {_bgRotPrevious.eulerAngles} actual {_bgRotActual.eulerAngles} t {smoothFactor}");
             }
             // SPS
-            if (FF9StateSystem.Battle.FF9Battle.btl_phase != 2)
+            if (FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_ENTER && FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_INIT_SYSTEM)
             {
-                btl2d.Btl2dStatCount();
-                if (LastSFXEffectJTex == 0)
-                    btl2d.Btl2dStatIcon();
+                btl2d.StatusUpdateVisuals(smoothFactor);
                 HonoluluBattleMain.battleSPS.GenerateSPS();
             }
             // Camera
@@ -308,6 +303,7 @@ namespace Memoria
         private static Matrix4x4 _cameraProjMatrixPrevious;
         private static Matrix4x4 _cameraProjMatrixActual;
 
+        private static Boolean _bgInitialised;
         private static Transform _bg;
         private static Quaternion _bgRotPrevious;
         private static Quaternion _bgRotActual;

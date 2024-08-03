@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Common;
 using Memoria;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Prime.Text;
@@ -287,6 +288,19 @@ public class UIKeyTrigger : MonoBehaviour
         { // Soft Reset
             if (ButtonGroupState.ActiveGroup == QuitUI.WarningMenuGroupButton)
                 return;
+
+            if (Configuration.Debug.StartModelViewer)
+            {
+                ModelViewerScene.initialized = false;
+                if (!ModelViewerScene.initialized)
+                    ModelViewerScene.Init();
+                if (ModelViewerScene.initialized)
+                    ModelViewerScene.Update();
+                if (PersistenSingleton<UIManager>.Instance.IsPause)
+                    PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyPause(null);
+                return;
+            }
+
             preventTurboKey = false;
 
             if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World && PersistenSingleton<UIManager>.Instance.WorldHUDScene != (UnityEngine.Object)null) // World Map
@@ -572,20 +586,24 @@ public class UIKeyTrigger : MonoBehaviour
                 sceneFromState.OnKeyConfirm(activeButton);
                 return true;
             }
-            if (battelAutoConfirm && PersistenSingleton<HonoInputManager>.Instance.IsInput(Control.Confirm))
+            if (battelAutoConfirm)
             {
-                // If confirm is held more than 500ms it will auto confirm at an interval of 100ms
-                const Single delay = 0.5f;
-                if (autoConfirmDownTime > 0 && Time.time - autoConfirmDownTime > delay)
+                // The expected chain would be "IsInputDown -> IsInput -> IsInputUp" but it's not always like that (sometimes there is only "IsInputDown", sometimes "IsInput" procs before "IsInputDown"...)
+                if (PersistenSingleton<HonoInputManager>.Instance.IsInput(Control.Confirm))
                 {
-                    autoConfirmDownTime = Time.time - delay + 0.1f;
-                    sceneFromState.OnKeyConfirm(activeButton);
-                    return true;
+                    // If confirm is held more than 500ms it will auto confirm at an interval of 100ms
+                    const Single delay = 0.5f;
+                    if (autoConfirmDownTime > 0 && Time.time - autoConfirmDownTime > delay)
+                    {
+                        autoConfirmDownTime = Time.time - delay + 0.1f;
+                        sceneFromState.OnKeyConfirm(activeButton);
+                        return true;
+                    }
                 }
-            }
-            if (battelAutoConfirm && PersistenSingleton<HonoInputManager>.Instance.IsInputUp(Control.Confirm))
-            {
-                autoConfirmDownTime = 0;
+                else
+                {
+                    autoConfirmDownTime = 0f;
+                }
             }
             if ((PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause) || keyCommand == Control.Pause) && !SoftResetKeyPSXForPause)
             {

@@ -261,7 +261,7 @@ public class SFXRender
                 SFXRender.PolyBGT4((PSX_LIBGPU.POLY_GT4*)tag);
                 return;
             case 76:
-                SFXRender.PolyFT4((PSX_LIBGPU.POLY_FT4*)tag, SFXKey.FILLTER_POINT);
+                SFXRender.PolyFT4((PSX_LIBGPU.POLY_FT4*)tag, SFXKey.FILTER_POINT);
                 return;
             case 80:
             {
@@ -362,7 +362,7 @@ public class SFXRender
 
     private unsafe static void PolyBFT4(PSX_LIBGPU.POLY_FT4* tag)
     {
-        UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | SFXKey.FILLTER_BILINEAR | SFXKey.FULL_BLUR_TXTURE;
+        UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | SFXKey.FILTER_BILINEAR | SFXKey.FULL_BLUR_TXTURE;
         SFXRender.FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
         SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
         mesh.PolyBft4(tag);
@@ -370,7 +370,7 @@ public class SFXRender
 
     private unsafe static void PolyBGT4(PSX_LIBGPU.POLY_GT4* tag)
     {
-        UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | SFXKey.FILLTER_BILINEAR | SFXKey.FULL_BLUR_TXTURE;
+        UInt32 meshKey = SFXKey.GetABRTex(tag->code, tag->clut, tag->tpage) | SFXKey.FILTER_BILINEAR | SFXKey.FULL_BLUR_TXTURE;
         SFXRender.FixWidescreenFace(meshKey, ref tag->x0, ref tag->x1, ref tag->x2, ref tag->x3, tag->y0, tag->y1, tag->y2, tag->y3);
         SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
         mesh.PolyBgt4(tag);
@@ -390,7 +390,7 @@ public class SFXRender
             if (rightx == 320 || tag->x0 + w < (Int16)(rightx * aspectRatioDiffMultiplier - widescreenOffset))
                 w++;
         }
-        UInt32 meshKey = SFXKey.GetCurrentABRTex(tag->code, tag->clut) | SFXKey.FILLTER_BILINEAR;
+        UInt32 meshKey = SFXKey.GetCurrentABRTex(tag->code, tag->clut) | SFXKey.FILTER_BILINEAR;
         SFXMesh mesh = SFXRender.GetMesh(meshKey, tag->code);
         mesh.Sprite(tag, w, h);
     }
@@ -576,9 +576,9 @@ public class SFXRender
             else if (blendMode == 1)
             {
                 UInt32 filter = SFXKey.GetFilter(meshKey);
-                list = filter == SFXKey.FILLTER_POINT ? SFXRender.meshTexAddPS
-                     : filter == SFXKey.FILLTER_BILINEAR ? SFXRender.meshTexAddBL
-                     : SFX.isDebugFillter ? SFXRender.meshTexAddBL : SFXRender.meshTexAddPS;
+                list = filter == SFXKey.FILTER_POINT ? SFXRender.meshTexAddPS
+                     : filter == SFXKey.FILTER_BILINEAR ? SFXRender.meshTexAddBL
+                     : SFX.isDebugFilter ? SFXRender.meshTexAddBL : SFXRender.meshTexAddPS;
             }
             else
                 list = SFXRender.meshTexSub;
@@ -616,7 +616,7 @@ public class SFXRender
         if (SFXKey.isLinePolygon(meshKey))
             priority += blendMode == 1 ? 3 : 2;
         else if (SFXKey.IsTexture(meshKey))
-            priority += blendMode == 1 && (SFXKey.GetFilter(meshKey) == SFXKey.FILLTER_BILINEAR || SFX.isDebugFillter) ? 2 : 1;
+            priority += blendMode == 1 && (SFXKey.GetFilter(meshKey) == SFXKey.FILTER_BILINEAR || SFX.isDebugFilter) ? 2 : 1;
         if (blendMode == 0) // Opa
         {
             if (SFX.subOrder == 0 || (SFX.subOrder == 1 && SFX.addOrder == 1)) // Sub comes before Opa

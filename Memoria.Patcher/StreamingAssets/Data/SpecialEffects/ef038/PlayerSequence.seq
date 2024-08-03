@@ -18,7 +18,7 @@ PlayAnimation: Char=Caster ; Anim=MP_CHANT ; Loop=True
 Channel
 SetBackgroundIntensity: Intensity=0.5 ; Time=12
 Wait: Time=9
-ShowMesh: Enable=False ; Time=16 ; Char=AllPlayers
+ShowMesh: Enable=False ; Time=16 ; Char=AllNonTargets
 WaitSFXLoaded: SFX=Shiva__Full ; Reflect=True
 WaitAnimation: Char=Caster
 StopChannel

@@ -69,7 +69,7 @@ public class BTL_SCENE
                     monParam.StealItemRates[j] = SB2_MON_PARM.DefaultStealItemRates[j];
                 }
                 monParam.Radius = binaryReader.ReadUInt16();
-                monParam.Geo = binaryReader.ReadUInt16();
+                monParam.Geo = binaryReader.ReadInt16();
                 for (Int32 j = 0; j < 6; j++)
                     monParam.Mot[j] = binaryReader.ReadUInt16();
                 for (Int32 j = 0; j < 2; j++)
@@ -120,6 +120,8 @@ public class BTL_SCENE
                 monParam.Pad0 = binaryReader.ReadByte();
                 monParam.Pad1 = binaryReader.ReadUInt16();
                 monParam.Pad2 = binaryReader.ReadUInt16();
+                if (btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(monParam.Geo, out Int32[] weaponBones))
+                    monParam.WeaponAttachment = weaponBones[0];
             }
             binaryReader.BaseStream.Seek(8 + 56 * this.header.PatCount + 116 * this.header.TypCount, SeekOrigin.Begin);
             for (Int32 i = 0; i < this.header.AtkCount; i++)
@@ -143,7 +145,7 @@ public class BTL_SCENE
                 abilRef.Elements = binaryReader.ReadByte();
                 abilRef.Rate = binaryReader.ReadByte();
                 monAbility.Category = binaryReader.ReadByte();
-                monAbility.AddStatusNo = (BattleStatusIndex)binaryReader.ReadByte();
+                monAbility.AddStatusNo = (StatusSetId)binaryReader.ReadByte();
                 monAbility.MP = binaryReader.ReadByte();
                 monAbility.Type = binaryReader.ReadByte();
                 monAbility.Vfx2 = binaryReader.ReadUInt16();
@@ -179,15 +181,22 @@ public class BTL_SCENE
         }
     }
 
-    public static Int16 GetMonGeoID(Int32 pNum)
+    public static Int16 GetMonGeoID(SB2_PUT placement)
     {
-        SB2_PUT placement = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Monster[pNum];
-        Int16 result;
-        if (pNum > 0 && (placement.Flags & 2) != 0)
-            result = -1;
-        else
-            result = (Int16)FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr[placement.TypeNo].Geo;
-        return result;
+        if (placement.TypeNo > 0 && (placement.Flags & SB2_PUT.FLG_MULTIPART) != 0)
+            return -1;
+        return FF9StateSystem.Battle.FF9Battle.btl_scene.MonAddr[placement.TypeNo].Geo;
+    }
+
+    public static List<Int32> EnemyGetAttackList(Int32 slotNo)
+    {
+        List<Int32> atkList = new List<Int32>();
+        BTL_SCENE scene = FF9StateSystem.Battle.FF9Battle.btl_scene;
+        Int32 monsterIndex = FF9StateSystem.Battle.FF9Battle.btl_scene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum].Monster[slotNo].TypeNo;
+        for (Int32 i = 0; i < scene.header.AtkCount; i++)
+            if (btlseq.instance.GetEnemyIndexOfSequence(i) == monsterIndex)
+                atkList.Add(i);
+        return atkList;
     }
 
     public static UInt16 BtlGetStartSFX()

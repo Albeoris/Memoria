@@ -24,7 +24,7 @@ public class WorldSPSSystem : MonoBehaviour
             return;
         if (index < Utility.SpsList.Count)
         {
-            Utility.SpsList[index].Init(3);
+            Utility.SpsList[index].Unload();
             return;
         }
         GameObject spsGo = new GameObject($"SPS_{index:D4}");
@@ -140,7 +140,7 @@ public class WorldSPSSystem : MonoBehaviour
                 sps.meshRenderer.enabled = true;
                 sps.attr &= unchecked((Byte)~SPSConst.ATTR_UPDATE_THIS_FRAME);
                 if (sps.charTran != null && sps.boneTran != null)
-                    sps.pos = sps.boneTran.position + sps.posOffset;
+                    sps.pos = sps.boneTran.position;
                 SPSConst.WorldSPSEffect no = sps.worldSpsId;
                 Vector3 goPos = sps.pos;
                 Int32 curFrame = sps.curFrame >> 4;

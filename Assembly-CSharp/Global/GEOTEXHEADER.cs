@@ -1,3 +1,4 @@
+using Memoria;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -56,6 +57,17 @@ public class GEOTEXHEADER
 
     public void InitMultiTexAnim(String geoName)
     {
+        if (this._mainTextureIndexs == null || this._subTextureIndexs == null)
+        {
+            // No CSV found for the main -> sub texture links; assume the links should default like this (eg. Neptune statue)
+            this._mainTextureIndexs = new Int32[this.count];
+            this._subTextureIndexs = new Int32[this.count];
+            for (Int32 i = 0; i < this.count; i++)
+            {
+                _mainTextureIndexs[i] = i;
+                _subTextureIndexs[i] = i;
+            }
+        }
         for (Int32 i = 0; i < this.count; i++)
         {
             MapTextureToTexAnimIndex(this._mainTextureIndexs[i], this.materials[this._mainTextureIndexs[i]].mainTexture);
@@ -101,7 +113,7 @@ public class GEOTEXHEADER
         if (!this.RenderTexMapping.ContainsKey(texAnimIndex))
         {
             RenderTexture renderTexture = new RenderTexture((Int32)textureWidth, (Int32)textureHeight, 24);
-            renderTexture.filterMode = FilterMode.Bilinear;
+            ModelFactory.SetMatFilter(renderTexture, Configuration.Graphics.ElementsSmoothTexture);
             renderTexture.wrapMode = TextureWrapMode.Repeat;
             renderTexture.name = mat.name + "_RT";
             mat.mainTexture = renderTexture;

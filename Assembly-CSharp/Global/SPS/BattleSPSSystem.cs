@@ -16,8 +16,11 @@ public class BattleSPSSystem : MonoBehaviour
         this._eventNoToIndex = new Dictionary<Int32, Int32>();
         this._statusToSPSIndex = new Dictionary<KeyValuePair<Int32, Int32>, Int32>();
         this._statusToSHPIndex = new Dictionary<KeyValuePair<Int32, Int32>, Int32>();
-        for (Int32 i = 0; i < SPSConst.BATTLE_DEFAULT_OBJCOUNT; i++)
+        Int32 count = Math.Max(Utility.SpsList.Count, SPSConst.BATTLE_DEFAULT_OBJCOUNT);
+        for (Int32 i = 0; i < count; i++)
             this.InitSPSInstance(i);
+        for (Int32 i = 0; i < this._shpEffects.Count; i++)
+            this._shpEffects[i].Unload();
     }
 
     private void InitSPSInstance(Int32 index)
@@ -26,7 +29,7 @@ public class BattleSPSSystem : MonoBehaviour
             return;
         if (index < Utility.SpsList.Count)
         {
-            Utility.SpsList[index].Init(2);
+            Utility.SpsList[index].Unload();
             return;
         }
         GameObject spsGo = new GameObject($"SPS_{index:D4}");
@@ -70,6 +73,8 @@ public class BattleSPSSystem : MonoBehaviour
         }
         foreach (SHPEffect shp in this._shpEffects)
         {
+            if (shp.shpId < 0)
+                continue;
             shp.frame++;
             if (shp.cycleDuration > 0 && shp.frame >= shp.cycleDuration && (shp.attr & SPSConst.ATTR_UNLOAD_ON_FINISH) != 0)
                 shp.Unload();
@@ -78,23 +83,6 @@ public class BattleSPSSystem : MonoBehaviour
             if (shp.duration == 0)
                 shp.Unload();
         }
-        //for (Int32 i = 0; i < this._specialSpsList.Count; i++)
-        //{
-        //	BattleSPS special_sps = this._specialSpsList[i];
-        //	if ((special_sps.type != 0 || special_sps.spsBin != null) && (special_sps.attr & 1) != 0 && special_sps.lastFrame != -1 && special_sps.isUpdate)
-        //	{
-        //		special_sps.lastFrame = special_sps.curFrame;
-        //		special_sps.curFrame += special_sps.frameRate;
-        //		if (special_sps.curFrame >= special_sps.frameCount)
-        //		{
-        //			special_sps.curFrame = 0;
-        //		}
-        //		else if (special_sps.curFrame < 0)
-        //		{
-        //			special_sps.curFrame = (special_sps.frameCount >> 4) - 1 << 4;
-        //		}
-        //	}
-        //}
     }
 
     public void GenerateSPS()
@@ -104,7 +92,7 @@ public class BattleSPSSystem : MonoBehaviour
             if (sps.spsBin != null && (sps.attr & SPSConst.ATTR_VISIBLE) != 0)
             {
                 if (sps.charTran != null && sps.boneTran != null)
-                    sps.pos = sps.boneTran.position + sps.posOffset;
+                    sps.pos = sps.boneTran.position;
                 if ((sps.attr & (SPSConst.ATTR_UPDATE_THIS_FRAME | SPSConst.ATTR_UPDATE_ANY_FRAME)) != 0)
                 {
                     sps.meshRenderer.enabled = true;
@@ -119,36 +107,8 @@ public class BattleSPSSystem : MonoBehaviour
             sps.lastFrame = sps.curFrame;
         }
         foreach (SHPEffect shp in this._shpEffects)
-            shp.AnimateSHP();
-        //bool show_special = false;
-        //for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-        //	if (next.bi.player == 0 && next.bi.disappear == 0)
-        //		show_special = true;
-        //for (Int32 i = 0; i < this._specialSpsList.Count; i++)
-        //{
-        //	BattleSPS special_sps = this._specialSpsList[i];
-        //	if ((special_sps.type != 0 || special_sps.spsBin != null) && (special_sps.attr & 1) != 0 && special_sps.isUpdate)
-        //	{
-        //		double rotation_cos = Math.Cos(2 * Math.PI * special_sps.curFrame / 10000) * this._specialSpsFadingList[i]; // 1 turn every 10 seconds
-        //		double rotation_sin = Math.Sin(2 * Math.PI * special_sps.curFrame / 10000) * this._specialSpsFadingList[i];
-        //		Vector3 rotated_pos = BattleSPSSystem.statusTextures[special_sps.refNo].extraPos;
-        //		float tmp = rotated_pos.x;
-        //		rotated_pos.x = (float)(rotation_cos * tmp - rotation_sin * rotated_pos.z);
-        //		rotated_pos.z = (float)(rotation_sin * tmp + rotation_cos * rotated_pos.z);
-        //		for (int j = 0; j < special_sps.shpGo.Length; j++)
-        //			special_sps.shpGo[j].transform.localPosition = rotated_pos;
-        //		special_sps.isUpdate = show_special;
-        //		special_sps.AnimateSHP();
-        //		special_sps.lastFrame = special_sps.curFrame;
-        //		if (this._specialSpsRemovingList[i])
-        //			this._specialSpsFadingList[i] -= 0.05f;
-        //		if (this._specialSpsFadingList[i] > 0.0f)
-        //			special_sps.isUpdate = true;
-        //		else
-        //			for (int j = 0; j < special_sps.shpGo.Length; j++)
-        //				special_sps.shpGo[j].SetActive(false);
-        //	}
-        //}
+            if (shp.shpId >= 0)
+                shp.AnimateSHP();
     }
 
     public void SetObjParm(Int32 ObjNo, Int32 ParmType, Int32 Arg0, Int32 Arg1, Int32 Arg2)
@@ -165,15 +125,15 @@ public class BattleSPSSystem : MonoBehaviour
             this._eventNoToIndex.Remove(ObjNo);
     }
 
-    public void UpdateBtlStatus(BTL_DATA btl, BattleStatus status, Vector3? pos = null, Int32? frame = null)
+    public void UpdateBtlStatus(BattleUnit unit, BattleStatusId statusId, Vector3? spsPos = null, Vector3? shpPos = null, Int32? frame = null)
     {
-        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(btl.bi.line_no, (Int32)status);
+        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(unit.Position, (Int32)statusId);
         if (this._statusToSPSIndex.TryGetValue(effectCode, out Int32 spsIndex))
         {
             SPSEffect sps = Utility.SpsList[spsIndex];
             sps.attr |= SPSConst.ATTR_VISIBLE | SPSConst.ATTR_UPDATE_THIS_FRAME;
-            if (pos.HasValue)
-                sps.pos = pos.Value;
+            if (spsPos.HasValue)
+                sps.pos = spsPos.Value;
             if (frame.HasValue)
                 sps.curFrame = frame.Value << 4;
         }
@@ -181,63 +141,67 @@ public class BattleSPSSystem : MonoBehaviour
         {
             SHPEffect shp = this._shpEffects[shpIndex];
             shp.attr |= SPSConst.ATTR_VISIBLE | SPSConst.ATTR_UPDATE_THIS_FRAME;
-            if (pos.HasValue)
-                shp.pos = pos.Value;
+            if (shpPos.HasValue)
+                shp.pos = shpPos.Value;
             if (frame.HasValue)
                 shp.frame = frame.Value;
         }
     }
 
-    public void AddBtlSPSObj(BattleUnit unit, BattleStatus status)
+    public void AddBtlSPSObj(BattleUnit unit, BattleStatusId statusId, Int32 spsId = -1, Int32 shpId = -1, Vector3 extraPos = default)
     {
-        if (!BattleSPSSystem.StatusVisualEffects.TryGetValue(status, out BattleSPSSystem.StatusVisualEffect effect))
-            return;
-        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(unit.Position, (Int32)status);
-        if (effect.spsIndex >= 0)
+        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(unit.Position, (Int32)statusId);
+        if (spsId >= 0)
         {
             if (this._statusToSPSIndex.TryGetValue(effectCode, out Int32 spsIndex))
             {
+                Utility.SpsList[spsIndex].posOffset = extraPos;
                 Utility.SpsList[spsIndex].attr |= SPSConst.ATTR_VISIBLE;
             }
             else
             {
-                if (!CommonSPSSystem.SPSPrototypes.ContainsKey(effect.spsIndex))
+                if (!CommonSPSSystem.SPSPrototypes.ContainsKey(spsId))
                 {
-                    Log.Error($"[{nameof(BattleSPSSystem)}] Status {status} tries to use the SPS {effect.spsIndex} which does not exists");
+                    Log.Error($"[{nameof(BattleSPSSystem)}] Status {statusId} tries to use the SPS {spsId} which does not exists");
                     return;
                 }
-                KeyValuePair<String, Int32> spsID = new KeyValuePair<String, Int32>($"FromPrototype", effect.spsIndex);
+                KeyValuePair<String, Int32> spsID = new KeyValuePair<String, Int32>($"FromPrototype", spsId);
                 Int32 slot = this._FindFreeSPSSlot();
                 this._statusToSPSIndex[effectCode] = slot;
                 SPSEffect sps = Utility.SpsList[slot];
                 if (Utility.SetupSPSBinary(sps, spsID, true))
+                {
                     sps.meshRenderer.enabled = false;
+                    sps.posOffset = extraPos;
+                }
             }
         }
-        if (effect.shpIndex >= 0)
+        if (shpId >= 0)
         {
             if (this._statusToSHPIndex.TryGetValue(effectCode, out Int32 shpIndex))
             {
                 this._shpEffects[shpIndex].attr |= SPSConst.ATTR_VISIBLE;
+                this._shpEffects[shpIndex].posOffset = extraPos;
             }
             else
             {
-                if (!CommonSPSSystem.SPSPrototypes.ContainsKey(effect.shpIndex))
+                if (!CommonSPSSystem.SHPPrototypes.ContainsKey(shpId))
                 {
-                    Log.Error($"[{nameof(BattleSPSSystem)}] Status {status} tries to use the SHP {effect.shpIndex} which does not exists");
+                    Log.Error($"[{nameof(BattleSPSSystem)}] Status {statusId} tries to use the SHP {shpId} which does not exists");
                     return;
                 }
                 Int32 slot = this._FindFreeSHPSlot();
                 this._statusToSHPIndex[effectCode] = slot;
-                this._shpEffects[slot].Init(CommonSPSSystem.SHPPrototypes[effect.shpIndex]);
+                this._shpEffects[slot].Init(CommonSPSSystem.SHPPrototypes[shpId]);
+                this._shpEffects[slot].posOffset = extraPos;
             }
         }
     }
 
-    public void RemoveBtlSPSObj(BTL_DATA btl, BattleStatus status)
+    public void RemoveBtlSPSObj(BattleUnit unit, BattleStatusId statusId)
     {
         // Don't unload the SPS / SHP; assume there's a relatively high probability it can be re-used
-        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(btl.bi.line_no, (Int32)status);
+        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(unit.Position, (Int32)statusId);
         if (this._statusToSPSIndex.TryGetValue(effectCode, out Int32 spsIndex))
         {
             Utility.SpsList[spsIndex].attr = 0;
@@ -255,7 +219,7 @@ public class BattleSPSSystem : MonoBehaviour
         }
     }
 
-    public SPSEffect AddSequenceSPS(Int32 spsId, Int32 duration, Single speed)
+    public SPSEffect AddSequenceSPS(Int32 spsId, Int32 duration, Single speed, Boolean neverUnload = false)
     {
         if (!CommonSPSSystem.SPSPrototypes.ContainsKey(spsId))
         {
@@ -270,7 +234,9 @@ public class BattleSPSSystem : MonoBehaviour
         sps.meshRenderer.enabled = false;
         sps.frameRate = (Int32)(sps.frameRate * speed);
         sps.attr |= SPSConst.ATTR_UPDATE_ANY_FRAME;
-        if (duration < 0 && sps.frameRate > 0)
+        if (neverUnload)
+            sps.duration = -1;
+        else if(duration < 0 && sps.frameRate > 0)
             sps.attr |= SPSConst.ATTR_UNLOAD_ON_FINISH;
         else if (duration >= 0)
             sps.duration = duration;
@@ -281,7 +247,7 @@ public class BattleSPSSystem : MonoBehaviour
         return sps;
     }
 
-    public SHPEffect AddSequenceSHP(Int32 shpId, Int32 duration, Single speed)
+    public SHPEffect AddSequenceSHP(Int32 shpId, Int32 duration, Single speed, Boolean neverUnload = false)
     {
         if (!CommonSPSSystem.SHPPrototypes.ContainsKey(shpId))
         {
@@ -293,62 +259,15 @@ public class BattleSPSSystem : MonoBehaviour
         shp.Init(CommonSPSSystem.SHPPrototypes[shpId]);
         shp.cycleDuration = (speed >= 0 ? 1 : -1) * Math.Max(1, Math.Abs((Int32)(shp.cycleDuration / Math.Abs(speed))));
         shp.attr |= SPSConst.ATTR_UPDATE_ANY_FRAME;
-        if (duration < 0 && shp.cycleDuration > 0)
+        if (neverUnload)
+            shp.duration = -1;
+        else if (duration < 0 && shp.cycleDuration > 0)
             shp.attr |= SPSConst.ATTR_UNLOAD_ON_FINISH;
         else if (duration >= 0)
             shp.duration = duration;
         else
             shp.duration = -shp.cycleDuration;
         return shp;
-    }
-
-    public void AddSpecialSPSObj(int specialid, uint spstype, Vector3 pos, float scale)
-    {
-        //BattleSPS special_sps;
-        //if (specialid < 0 || specialid > _specialSpsList.Count)
-        //	specialid = _specialSpsList.Count;
-        //if (specialid == _specialSpsList.Count)
-        //{
-        //	GameObject gameObject = new GameObject("SpecialSPS_" + specialid.ToString("D4"));
-        //	gameObject.transform.parent = base.transform;
-        //	gameObject.transform.localScale = Vector3.one;
-        //	gameObject.transform.localPosition = Vector3.zero;
-        //	MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-        //	MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-        //	special_sps = gameObject.AddComponent<BattleSPS>();
-        //	special_sps.Init();
-        //	special_sps.spsIndex = specialid;
-        //	special_sps.spsTransform = gameObject.transform;
-        //	special_sps.meshRenderer = meshRenderer;
-        //	special_sps.meshFilter = meshFilter;
-        //	this._specialSpsList.Add(special_sps);
-        //	this._specialSpsFadingList.Add(1.0f);
-        //	this._specialSpsRemovingList.Add(false);
-        //}
-        //else
-        //{
-        //	special_sps = this._specialSpsList[specialid];
-        //	this._specialSpsFadingList[specialid] = 1.0f;
-        //	this._specialSpsRemovingList[specialid] = false;
-        //}
-        //special_sps.pos = pos;
-        //special_sps.curFrame = 0;
-        //special_sps.lastFrame = 0;
-        //special_sps.frameCount = 10000;
-        //special_sps.attr |= 1;
-        //special_sps.isUpdate = true;
-        //special_sps.refNo = (int)spstype;
-        //special_sps.type = (BattleSPSSystem.statusTextures[(int)spstype].type.Equals("shp") ? 1 : 0);
-        //special_sps.scale = (int)(scale * 4096);
-        //if (special_sps.shpGo == null)
-        //	special_sps.GenerateSHP();
-    }
-
-    public void RemoveSpecialSPSObj(int specialid)
-    {
-        //if (specialid < 0 || specialid >= _specialSpsList.Count)
-        //	return;
-        //this._specialSpsRemovingList[specialid] = true;
     }
 
     private Int32 _FindFreeSPSSlot()
@@ -388,32 +307,4 @@ public class BattleSPSSystem : MonoBehaviour
     private Dictionary<KeyValuePair<Int32, Int32>, Int32> _statusToSPSIndex;
     [NonSerialized]
     private Dictionary<KeyValuePair<Int32, Int32>, Int32> _statusToSHPIndex;
-
-    public class StatusVisualEffect
-    {
-        public StatusVisualEffect(Int32 shpIndex, Int32 spsIndex)
-        {
-            this.shpIndex = shpIndex;
-            this.spsIndex = spsIndex;
-        }
-
-        public Int32 shpIndex;
-        public Int32 spsIndex;
-    }
-
-    public static Dictionary<BattleStatus, StatusVisualEffect> StatusVisualEffects = new Dictionary<BattleStatus, StatusVisualEffect>()
-    {
-        { BattleStatus.Slow, new StatusVisualEffect(0, -1) },
-        { BattleStatus.Haste, new StatusVisualEffect(1, -1) },
-        { BattleStatus.Silence, new StatusVisualEffect(2, -1) },
-        { BattleStatus.Trouble, new StatusVisualEffect(3, -1) },
-        { BattleStatus.Poison, new StatusVisualEffect(-1, 0) },
-        { BattleStatus.Venom, new StatusVisualEffect(-1, 1) },
-        { BattleStatus.Sleep, new StatusVisualEffect(-1, 2) },
-        { BattleStatus.Heat, new StatusVisualEffect(-1, 3) },
-        { BattleStatus.Freeze, new StatusVisualEffect(-1, 4) },
-        { BattleStatus.Reflect, new StatusVisualEffect(-1, 5) },
-        { BattleStatus.Blind, new StatusVisualEffect(-1, 6) },
-        { BattleStatus.Berserk, new StatusVisualEffect(-1, 7) }
-    };
 }

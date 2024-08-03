@@ -1,4 +1,5 @@
-﻿using Memoria.Data;
+﻿using Memoria;
+using Memoria.Data;
 using System;
 using UnityEngine;
 
@@ -20,13 +21,13 @@ public class SFXScreenShot : SFXMeshBase
         {
             screenshot = new Texture2D(256, 256, TextureFormat.ARGB32, false);
             screenshot.wrapMode = TextureWrapMode.Clamp;
-            screenshot.filterMode = FilterMode.Bilinear;
+            ModelFactory.SetMatFilter(screenshot, Configuration.Graphics.SFXSmoothTexture, 1);
         }
         // Take a screenshot then pretend the screen is 320x220 (full height)
         if (screenshotHD == null || Screen.width > screenshotHD.width || Screen.height > screenshotHD.height)
             screenshotHD = new Texture2D(Screen.width, Screen.height, TextureFormat.ARGB32, false);
         screenshotHD.wrapMode = TextureWrapMode.Clamp;
-        screenshotHD.filterMode = FilterMode.Bilinear;
+        ModelFactory.SetMatFilter(screenshotHD, Configuration.Graphics.SFXSmoothTexture, 1);
         screenshotHD.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0); // Smaller area is not picked here because it doesn't seem to work well (Rect position ignored?)
         screenshotHD.Apply();
         // Pick the target 256x256 area of that 320x220 screenshot; the height is too small but hopefully the UV coordinates of visible vertices will not point to missing areas

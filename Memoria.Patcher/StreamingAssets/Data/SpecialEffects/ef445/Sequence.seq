@@ -1,7 +1,10 @@
 // Shared sequence of SFX Ifrit__Short
 
 SetBackgroundIntensity: Intensity=0.5 ; Time=4 ; HoldDuration=37
-ShowMesh: Char=AllPlayers ; Enable=False ; IsDisappear=True
+ShowMesh: Char=AllNonTargets ; Enable=False ; IsDisappear=True
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 180, 0)
+EndThread
 PlaySound: Sound=1536
 PlaySound: Sound=1537
 PlaySound: Sound=1538
@@ -12,5 +15,8 @@ EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=20
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=11
-ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 0, 0)
+EndThread
+ShowMesh: Char=AllNonTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12

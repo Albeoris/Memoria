@@ -200,12 +200,12 @@ public class BattleAchievement
         CharacterSerialNumber[] femaleList = new CharacterSerialNumber[]
         {
             CharacterSerialNumber.GARNET_LH_ROD,
-            CharacterSerialNumber.GARNET_LH_KNIFE,
+            CharacterSerialNumber.GARNET_LH_RACKET,
             CharacterSerialNumber.GARNET_SH_ROD,
-            CharacterSerialNumber.GARNET_SH_KNIFE,
+            CharacterSerialNumber.GARNET_SH_RACKET,
             CharacterSerialNumber.KUINA,
             CharacterSerialNumber.EIKO_FLUTE,
-            CharacterSerialNumber.EIKO_KNIFE,
+            CharacterSerialNumber.EIKO_RACKET,
             CharacterSerialNumber.FREIJA,
             CharacterSerialNumber.BEATRIX
         };

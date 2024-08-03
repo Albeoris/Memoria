@@ -38,7 +38,6 @@ public partial class BattleHUD : UIScene
     public BattleHUD()
     {
         _abilityDetailDict = new Dictionary<Int32, AbilityPlayerDetail>();
-        _magicSwordCond = new MagicSwordCondition();
         _enemyCount = -1;
         _playerCount = -1;
         _currentCharacterHp = new List<ParameterStatus>();
@@ -175,73 +174,46 @@ public partial class BattleHUD : UIScene
         if (Configuration.Interface.ScanDisplay)
         {
             Single additionalWidth = 0.0f;
-            String libraMessage = $"[{NGUIText.Center}]";
+            String libraBaseMessage = $"[{NGUIText.Center}]";
             if ((infos & LibraInformation.Name) != 0)
-                libraMessage += Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(pBtl.Name, ref additionalWidth);
+                libraBaseMessage += GetLibraMessages(pBtl, LibraInformation.Name)[0];
             if ((infos & LibraInformation.Level) != 0)
-                libraMessage += FF9TextTool.BattleLibraText(10) + pBtl.Level.ToString();
+                libraBaseMessage += GetLibraMessages(pBtl, LibraInformation.Level)[0];
             if ((infos & LibraInformation.NameLevel) != 0)
-                libraMessage += "\n\n";
+                libraBaseMessage += "\n\n";
             if ((infos & LibraInformation.HP) != 0)
-            {
-                libraMessage += FF9TextTool.BattleLibraText(11);
-                libraMessage += pBtl.CurrentHp;
-                libraMessage += FF9TextTool.BattleLibraText(13);
-                libraMessage += pBtl.MaximumHp;
-            }
+                libraBaseMessage += GetLibraMessages(pBtl, LibraInformation.HP)[0];
             if ((infos & LibraInformation.MP) != 0)
-            {
-                libraMessage += FF9TextTool.BattleLibraText(12);
-                libraMessage += pBtl.CurrentMp;
-                libraMessage += FF9TextTool.BattleLibraText(13);
-                libraMessage += pBtl.MaximumMp;
-            }
+                libraBaseMessage += GetLibraMessages(pBtl, LibraInformation.MP)[0];
             if ((infos & LibraInformation.HPMP) != 0)
-                libraMessage += "\n\n";
-            if ((infos & LibraInformation.Category) != 0 && !pBtl.IsPlayer)
+                libraBaseMessage += "\n\n";
+            Int32 lineCount = 0;
+            List<String> libraMessages = [libraBaseMessage];
+            foreach (LibraInformation info in LibraAutoProcess)
             {
-                Int32 enemyCategory = pBtl.Enemy.Data.et.category;
-                for (Int32 category = 0; category < 8; category++)
-                    if ((enemyCategory & (1 << category)) != 0)
-                        libraMessage += FF9TextTool.BattleLibraText(category) + "\n";
-            }
-            if ((infos & LibraInformation.ElementWeak) != 0)
-            {
-                EffectElement weakElement = pBtl.WeakElement & ~pBtl.GuardElement;
-                for (Int32 element = 0; element < 8; element++)
-                    if ((weakElement & (EffectElement)(1 << element)) != 0)
-                        libraMessage += (Localization.GetSymbol() != "JP" ? FF9TextTool.BattleLibraText(14 + element) : BtlGetAttrName(1 << element) + FF9TextTool.BattleLibraText(14)) + "\n";
-            }
-            if ((infos & LibraInformation.ItemSteal) != 0 && !pBtl.IsPlayer)
-            {
-                BattleEnemy enemy = pBtl.Enemy;
-                for (Int32 i = 0; i < enemy.StealableItems.Length; i++)
-                    if (enemy.StealableItems[i] != RegularItem.NoItem)
-                        libraMessage += (Localization.GetSymbol() != "JP" ? FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(enemy.StealableItems[i]) : FF9TextTool.ItemName(enemy.StealableItems[i]) + FF9TextTool.BattleLibraText(8)) + "\n";
-            }
-            if ((infos & LibraInformation.BlueLearn) != 0 && !pBtl.IsPlayer)
-            {
-                Int32 blueMagicId = BattleEnemyPrototype.Find(pBtl).BlueMagicId;
-                libraMessage += FF9TextTool.CommandName(BattleCommandId.BlueMagic) + (Localization.GetSymbol() == "FR" ? " : " : ": ");
-                if (blueMagicId != 0)
+                if ((infos & info) != 0)
                 {
-                    if (ff9abil.IsAbilityActive(blueMagicId))
-                        libraMessage += FF9TextTool.ActionAbilityName(ff9abil.GetActiveAbilityFromAbilityId(blueMagicId));
-                    else if (ff9abil.IsAbilitySupport(blueMagicId))
-                        libraMessage += FF9TextTool.SupportAbilityName(ff9abil.GetSupportAbilityFromAbilityId(blueMagicId));
+                    List<String> infoMessages = GetLibraMessages(pBtl, info);
+                    if (lineCount > 0 && lineCount + infoMessages.Count > 8)
+                    {
+                        libraMessages.Add(libraBaseMessage);
+                        lineCount = 0;
+                    }
+                    else if (info == LibraInformation.AttackList && lineCount + infoMessages.Count < 8)
+                    {
+                        libraMessages[libraMessages.Count - 1] += "\n";
+                    }
+                    foreach (String message in infoMessages)
+                        libraMessages[libraMessages.Count - 1] += message + "\n";
+                    lineCount += infoMessages.Count;
                 }
-                else
-                {
-                    libraMessage += "-";
-                }
-                libraMessage += "\n";
             }
-            btl_eqp.ProcessBuiltInWeapon();
+            btl_eqp.UpdateWeaponOffsets();
             Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
             RenderTexture photoRender = RenderTexture.GetTemporary(Screen.width, Screen.height);
             Vector2 photoSize = new Vector2(Math.Min(Screen.width, 400f), Math.Min(Screen.height, 600f));
             btl2d.GetIconPosition(pBtl.Data, out Byte[] iconBone, out _, out _);
-            Vector3 btlPos = pBtl.Data.gameObject.transform.GetChildByName($"bone{iconBone[3]:D3}").position + 50f * Vector3.down;
+            Vector3 btlPos = pBtl.Data.gameObject.transform.GetChildByName($"bone{iconBone[btl2d.ICON_POS_EYES]:D3}").position + 50f * Vector3.down;
             Matrix4x4 cameraOldMatrix = camera.worldToCameraMatrix;
             camera.ResetWorldToCameraMatrix();
             camera.transform.position = btlPos - 1500f * pBtl.Data.gameObject.transform.forward + 500f * Vector3.up;
@@ -266,8 +238,8 @@ public partial class BattleHUD : UIScene
             _currentButtonGroup = !_hidingHud ? ButtonGroupState.ActiveGroup : _currentButtonGroup;
             FF9BMenu_EnableMenu(false);
             TutorialUI tutorialUI = PersistenSingleton<UIManager>.Instance.TutorialScene;
-            tutorialUI.libraTitle = Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(pBtl.Name, ref additionalWidth);
-            tutorialUI.libraMessage = libraMessage;
+            tutorialUI.libraTitle = "[b][F0A0F0]" + Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(pBtl.Name, ref additionalWidth);
+            tutorialUI.libraMessages = libraMessages;
             tutorialUI.libraPhoto = photo;
             tutorialUI.DisplayMode = TutorialUI.Mode.Libra;
             PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Tutorial);
@@ -370,6 +342,13 @@ public partial class BattleHUD : UIScene
         if (!_messageQueue.TryGetValue(str, out mess))
             return 0;
         return mess.priority;
+    }
+
+    public BattleMagicSwordSet GetMagicSwordOfAbility(BattleUnit caster, Int32 abilId)
+    {
+        if (!caster.IsPlayer || !_abilityDetailDict[caster.GetIndex()].AbilityMagicSet.TryGetValue(abilId, out BattleMagicSwordSet magicSet))
+            return null;
+        return magicSet;
     }
 
     public void DisplayParty(Boolean resetPointAnimations = false)
@@ -634,7 +613,7 @@ public partial class BattleHUD : UIScene
         for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
             if (next.bi.player == 0)
                 gil += btl_util.getEnemyPtr(next).bonus_gil;
-        if (FF9StateSystem.Common.FF9.btl_result == 4)
+        if (FF9StateSystem.Common.FF9.btl_result == FF9StateGlobal.BTL_RESULT_ESCAPE)
             btl_sys.ClearBattleBonus();
         for (Int32 i = 0; i < 4; i++)
         {
@@ -643,7 +622,7 @@ public partial class BattleHUD : UIScene
                 foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(player))
                     saFeature.TriggerOnBattleResult(player, battle.btl_bonus, new List<FF9ITEM>(), "BattleEnd", gil / 10U);
         }
-        if (FF9StateSystem.Common.FF9.btl_result == 4 && (battle.btl_bonus.gil != 0 || battle.btl_bonus.exp != 0 || battle.btl_bonus.ap != 0 || battle.btl_bonus.card != TetraMasterCardId.NONE))
+        if (FF9StateSystem.Common.FF9.btl_result == FF9StateGlobal.BTL_RESULT_ESCAPE && (battle.btl_bonus.gil != 0 || battle.btl_bonus.exp != 0 || battle.btl_bonus.ap != 0 || battle.btl_bonus.card != TetraMasterCardId.NONE))
             battle.btl_bonus.escape_gil = true;
 
         Hide(() => PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.BattleResult));
@@ -790,6 +769,7 @@ public partial class BattleHUD : UIScene
         SetAbilityPanelVisibility(false, false);
         BackButton.SetActive(false);
         _currentSilenceStatus = false;
+        _currentMagicSwordState = true;
         _currentMpValue = -1;
         _currentCommandIndex = BattleCommandMenu.Attack;
         _currentSubMenuIndex = -1;
@@ -812,10 +792,13 @@ public partial class BattleHUD : UIScene
         Int32 index = modelIndex >= HonoluluBattleMain.EnemyStartIndex ? _matchBattleIdEnemyList.IndexOf(modelIndex) + 4 : _matchBattleIdPlayerList.IndexOf(modelIndex);
         if (index == -1)
             return;
-        FF9Sfx.FF9SFX_Play(103);
 
-        if (_targetPanel.AllTargets[index].ButtonGroup.enabled)
-            CheckDoubleCast(modelIndex, CursorGroup.Individual);
+        FF9Sfx.FF9SFX_Play(103);
+        if (_targetPanel.AllTargets[index].ButtonGroup.enabled && CheckDoubleCast(modelIndex, CursorGroup.Individual))
+        {
+            SetTargetVisibility(false);
+            SetIdle();
+        }
     }
 
     public void ClearCursorMemorize(Int32 playerIndex, BattleCommandId commandId)

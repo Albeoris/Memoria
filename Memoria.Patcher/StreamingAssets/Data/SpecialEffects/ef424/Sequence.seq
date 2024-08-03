@@ -4,6 +4,9 @@ PlaySound: Sound=438 ; Pitch=1.25
 PlaySound: Sound=431 ; Pitch=1.25
 PlaySound: Sound=477 ; Pitch=1.25
 //ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 180, 0)
+EndThread
 Wait: Time=12
 //ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
 Wait: Time=12
@@ -11,5 +14,8 @@ EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=20
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=15
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 0, 0)
+EndThread
 //ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
-//ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+//ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12

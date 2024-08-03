@@ -26,7 +26,7 @@ namespace Memoria.Scripts.Battle
                 return;
             }
             _v.Target.Trance = Byte.MaxValue;
-            _v.Target.AlterStatus(BattleStatus.Trance);
+            _v.Target.AlterStatus(BattleStatusId.Trance);
         }
     }
 }

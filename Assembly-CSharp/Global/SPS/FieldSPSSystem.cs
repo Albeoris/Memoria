@@ -32,7 +32,7 @@ public class FieldSPSSystem : HonoBehavior
             return;
         if (index < Utility.SpsList.Count)
         {
-            Utility.SpsList[index].Init(1);
+            Utility.SpsList[index].Unload();
             Utility.SpsList[index].fieldMap = this._fieldMap;
             return;
         }
@@ -102,7 +102,7 @@ public class FieldSPSSystem : HonoBehavior
                     FieldMapActor component = sps.charTran.GetComponent<FieldMapActor>();
                     if (component != null)
                         component.UpdateGeoAttach();
-                    sps.pos = sps.boneTran.position + sps.posOffset;
+                    sps.pos = sps.boneTran.position;
                 }
                 sps.GenerateSPS();
                 sps.lastFrame = sps.curFrame;

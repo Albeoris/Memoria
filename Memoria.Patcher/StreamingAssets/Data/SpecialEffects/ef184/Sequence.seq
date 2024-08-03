@@ -3,6 +3,9 @@
 SetBackgroundIntensity: Intensity=0 ; Time=14 ; HoldDuration=186
 Wait: Time=14
 ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 180, 0)
+EndThread
 Wait: Time=48
 PlaySound: Sound=2551
 PlaySound: Sound=2552
@@ -128,7 +131,7 @@ MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; RelativePosition=(0
 ChangeSize: Char=AllTargets ; Size=1 ; ScaleShadow=True ; Time=0
 Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(0.0, 0.0, 180.0) ; Time=0
 SetBackgroundIntensity: Intensity=1 ; Time=16
-ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
 MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -116.0, 0.0) ; MoveHeight=True ; Time=0
 Wait: Time=1
 MoveToPosition: Char=AllTargets ; RelativePosition=(0.0, -190.0, 0.0) ; MoveHeight=True ; Time=0
@@ -146,6 +149,9 @@ MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; MoveHeight=True ; T
 Wait: Time=17
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=18
-ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 0, 0)
+EndThread
+ShowMesh: Char=AllNonTargets ; Enable=True ; IsDisappear=True
+ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12
 Wait: Time=32

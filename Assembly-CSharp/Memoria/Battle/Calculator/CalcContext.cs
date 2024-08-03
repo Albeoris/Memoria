@@ -6,6 +6,13 @@ namespace Memoria
 {
     public sealed class CalcContext
     {
+        public CalcContext(BattleCalculator calc)
+        {
+            _calculator = calc;
+        }
+
+        private readonly BattleCalculator _calculator;
+
         public Int32 StatusRate;
         public Int32 AttackPower;
         public Int32 DefensePower;
@@ -13,7 +20,6 @@ namespace Memoria
         public Int32 Attack;
         public Int32 HitRate;
         public BattleCalcFlags Flags;
-        public SByte DamageModifierCount = 0; // By default, damage bonus/malus is done by multiplying Attack by 1.5 or 0.5 (it stacks multiplicatively). Using DamageModifierCount, bonus/malus are computed at the end of the effect and stacks much less (additively, with decreasing bonus if there are many)
         public BattleStatus AddedStatuses = 0; // A list of statuses added to the target (through "BattleTarget.TryAlterStatuses")
         public Int16 TranceIncrease = 0; // The increase/decrease of the trance gauge if required (damaged by an enemy); it is set at the start of CalcMain and can be modified before it applies
         public RegularItem ItemSteal = RegularItem.NoItem; // Just a variable to remember which item was stolen
@@ -29,5 +35,52 @@ namespace Memoria
         public Boolean IsAbsorb => (Flags & BattleCalcFlags.Absorb) != 0;
         public Int32 EnsureAttack => Attack < 1 ? (Attack = 1) : Attack;
         public Int32 EnsurePowerDifference => PowerDifference < 1 ? 1 : PowerDifference;
+
+        // By default, damage bonus/malus is done by multiplying Attack by 1.5 or 0.5 (it stacks multiplicatively)
+        // That behaviour can be changed using IOverloadDamageModifierScript
+        private Int32 _damageModifierCount = 0;
+        public Int32 DamageModifierCount
+        {
+            get => _damageModifierCount;
+            set
+            {
+                if (value == _damageModifierCount)
+                    return;
+                Int32 previousCount = _damageModifierCount;
+                Int32 delta = value - previousCount;
+                _damageModifierCount = value;
+                if (BattleCalculator.DamageModifierScript != null)
+                {
+                    BattleCalculator.DamageModifierScript.OnDamageModifierChange(_calculator, previousCount, delta);
+                }
+                else
+                {
+                    // Default method
+                    if (delta >= 0)
+                    {
+                        for (Int32 i = 0; i < delta; i++)
+                            Attack = Attack * 3 >> 1;
+                    }
+                    else
+                    {
+                        for (Int32 i = 0; i < delta; i++)
+                            Attack >>= 1;
+                    }
+                }
+            }
+        }
+
+        public void DecreaseAttackDrastically()
+        {
+            if (BattleCalculator.DamageModifierScript != null)
+            {
+                BattleCalculator.DamageModifierScript.OnDamageDrasticReduction(_calculator);
+            }
+            else
+            {
+                // Default method
+                Attack = 1;
+            }
+        }
     }
 }

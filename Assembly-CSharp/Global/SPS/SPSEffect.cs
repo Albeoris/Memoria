@@ -1,4 +1,5 @@
-﻿using Memoria.Assets;
+﻿using Memoria;
+using Memoria.Assets;
 using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
@@ -10,36 +11,11 @@ public class SPSEffect : MonoBehaviour
     public void Init(Int32 mode)
     {
         this.gMode = mode;
-        this.attr = SPSConst.ATTR_VISIBLE;
-        this.abr = SPSConst.ABR_OFF;
-        this.fade = 128;
-        this.spsId = -1;
-        this.charNo = -1;
-        this.boneNo = 0;
-        this.lastFrame = -1;
-        this.curFrame = 0;
-        this.frameCount = 0;
-        this.duration = -1;
-        this.frameRate = SPSConst.FRAMERATE_ONE;
-        this.prm0 = 0;
-        this.pos = Vector3.zero;
-        this.scale = SPSConst.SCALE_ONE;
-        this.rot = Vector3.zero;
-        this.rotArg = Vector3.zero;
-        this.zOffset = 0;
-        this.posOffset = Vector3.zero;
-        this.depthOffset = 0;
-        this.useBattleFactors = false;
-        this.battleScaleFactor = 4f;
-        this.battleDistanceFactor = 5f;
         this.spsIndex = -1;
         this.spsTransform = null;
         this.meshRenderer = null;
         this.meshFilter = null;
-        this.spsBin = null;
         this.works = new SPSEffect.FieldSPSWork();
-        this.works.wFactor = 1f;
-        this.works.hFactor = 1f;
         this.spsPrims = new List<SPSEffect.FieldSPSPrim>();
         this.spsActor = null;
         this._vertices = new List<Vector3>();
@@ -80,23 +56,43 @@ public class SPSEffect : MonoBehaviour
                 ];
                 break;
         }
-        this.charTran = null;
-        this.boneTran = null;
-        this.mapName = null;
-        this.pngTexture = null;
-        this.tcbAreaComputed = false;
+        this.Unload();
     }
 
     public void Unload()
     {
         this.spsBin = null;
-        if (this.meshRenderer != null)
-            this.meshRenderer.enabled = false;
+        this.spsId = -1;
+        this.attr = SPSConst.ATTR_VISIBLE;
+        this.abr = SPSConst.ABR_OFF;
+        this.fade = 128;
+        this.charNo = -1;
+        this.boneNo = 0;
+        this.lastFrame = -1;
+        this.curFrame = 0;
+        this.frameCount = 0;
+        this.duration = -1;
+        this.frameRate = SPSConst.FRAMERATE_ONE;
+        this.prm0 = 0;
+        this.pos = Vector3.zero;
+        this.scale = SPSConst.SCALE_ONE;
+        this.rot = Vector3.zero;
+        this.rotArg = Vector3.zero;
+        this.zOffset = 0;
+        this.posOffset = Vector3.zero;
+        this.depthOffset = 0;
+        this.useBattleFactors = false;
+        this.battleScaleFactor = 4f;
+        this.battleDistanceFactor = 5f;
+        this.works.wFactor = 1f;
+        this.works.hFactor = 1f;
         this.charTran = null;
         this.boneTran = null;
         this.mapName = null;
         this.pngTexture = null;
         this.tcbAreaComputed = false;
+        if (this.meshRenderer != null)
+            this.meshRenderer.enabled = false;
     }
 
     public Rect GetRelevantPartOfTCB()
@@ -267,10 +263,11 @@ public class SPSEffect : MonoBehaviour
         Single scalef = this.scale / 4096f;
         Matrix4x4 localRTS = Matrix4x4.identity;
         Boolean isBehindCamera = false;
+        Vector3 offsetedPos = this.pos + this.posOffset;
         if (this.gMode == 3)
         {
             scalef *= 0.00390625f;
-            base.transform.position = this.pos;
+            base.transform.position = offsetedPos;
             base.transform.localScale = new Vector3(scalef, scalef, scalef);
         }
         else if (this.gMode == 2)
@@ -282,22 +279,22 @@ public class SPSEffect : MonoBehaviour
             Vector3 directionDown = Vector3.Cross(directionForward, directionRight);
             if (this.useBattleFactors)
             {
-                Single distanceToCamera = Vector3.Distance(cameraMatrix.GetColumn(3), this.pos);
+                Single distanceToCamera = Vector3.Distance(cameraMatrix.GetColumn(3), offsetedPos);
                 Single distanceFactor = Math.Min(3f, distanceToCamera * this.battleScaleFactor * 0.000259551482f);
                 scalef *= distanceFactor;
             }
             base.transform.localScale = new Vector3(-scalef, -scalef, scalef);
             base.transform.localRotation = Quaternion.Euler(this.rot.x, this.rot.y, this.rot.z);
-            base.transform.localPosition = this.pos;
+            base.transform.localPosition = offsetedPos;
             base.transform.LookAt(base.transform.position + directionForward, -directionDown);
         }
         else if (useScreenPositionHack)
         {
-            localRTS = Matrix4x4.TRS(this.pos * 0.9925f, Quaternion.Euler(-this.rot.x / 2f, -this.rot.y / 2f, this.rot.z / 2f), new Vector3(scalef, -scalef, 1f));
+            localRTS = Matrix4x4.TRS(offsetedPos * 0.9925f, Quaternion.Euler(-this.rot.x / 2f, -this.rot.y / 2f, this.rot.z / 2f), new Vector3(scalef, -scalef, 1f));
         }
         else if (this.gMode == 1)
         {
-            Vector3 localPos = PSX.CalculateGTE_RTPT_POS(this.pos, Matrix4x4.identity, currentBgCamera.GetMatrixRT(), currentBgCamera.GetViewDistance(), this.fieldMap.GetProjectionOffset(), true);
+            Vector3 localPos = PSX.CalculateGTE_RTPT_POS(offsetedPos, Matrix4x4.identity, currentBgCamera.GetMatrixRT(), currentBgCamera.GetViewDistance(), this.fieldMap.GetProjectionOffset(), true);
             scalef *= currentBgCamera.GetViewDistance() / localPos.z;
             if (localPos.z < 0f)
                 isBehindCamera = true;
@@ -315,7 +312,7 @@ public class SPSEffect : MonoBehaviour
             Vector3 directionRight = cameraMatrix.MultiplyVector(Vector3.right);
             Vector3 directionDown = Vector3.Cross(directionForward, directionRight);
             base.transform.localScale = new Vector3(-scalef, -scalef, scalef);
-            base.transform.localPosition = this.pos;
+            base.transform.localPosition = offsetedPos;
             base.transform.LookAt(base.transform.position + directionForward, -directionDown);
         }
         this._vertices.Clear();
@@ -406,12 +403,13 @@ public class SPSEffect : MonoBehaviour
         else
         {
             PSXTexture texture = PSXTextureMgr.GetTexture(worktpage.FlagTP, worktpage.FlagTY, worktpage.FlagTX, workclut.FlagClutY, workclut.FlagClutX);
-            texture.SetFilter(FilterMode.Bilinear);
             this.materials[shindex].mainTexture = texture.texture;
         }
+        ModelFactory.SetMatFilter(this.materials[shindex], Configuration.Graphics.SFXSmoothTexture, 1);
+        
         this.meshRenderer.material = this.materials[shindex];
         if (this.spsActor != null)
-            this.spsActor.spsPos = this.pos;
+            this.spsActor.spsPos = offsetedPos;
     }
 
     /// <summary>Not really operational in the current state</summary>

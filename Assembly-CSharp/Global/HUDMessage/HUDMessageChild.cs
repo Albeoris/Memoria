@@ -6,56 +6,21 @@ using UnityEngine;
 [RequireComponent(typeof(TweenAlpha))]
 public class HUDMessageChild : MonoBehaviour
 {
-    public HUDMessage.MessageStyle DisplayStyle
-    {
-        get
-        {
-            return this.displayStyle;
-        }
-    }
-
-    public UIFollowTarget Follower
-    {
-        get
-        {
-            return this.follower;
-        }
-    }
+    public GameObject ParentGameObject => this.parentGameObject;
+    public HUDMessage.MessageStyle DisplayStyle => this.displayStyle;
+    public UIFollowTarget Follower => this.follower;
+    public Single Countdown => this.countdown;
 
     public Byte MessageId
     {
-        get
-        {
-            return this.messageId;
-        }
-        set
-        {
-            this.messageId = value;
-        }
-    }
-
-    public Single Countdown
-    {
-        get
-        {
-            return this.countdown;
-        }
+        get => this.messageId;
+        set => this.messageId = value;
     }
 
     public String Label
     {
-        set
-        {
-            this.label.text = value;
-        }
-    }
-
-    public GameObject ParentGameObject
-    {
-        get
-        {
-            return this.parentGameObject;
-        }
+        get => this.label.text;
+        set => this.label.text = value;
     }
 
     public void Initial()
@@ -88,6 +53,7 @@ public class HUDMessageChild : MonoBehaviour
         this.displayStyle = style;
         this.follower.target = target;
         this.follower.targetTransformOffset = offset;
+        this.follower.clampToScreen = true;
         this.label.text = message;
         this.tweenPosition.duration = this.tweenPositionDuration / Singleton<HUDMessage>.Instance.Speed;
         this.tweenAlpha.duration = this.tweenAlphaDuration / Singleton<HUDMessage>.Instance.Speed;
@@ -175,7 +141,7 @@ public class HUDMessageChild : MonoBehaviour
 
     public void Clear()
     {
-        if (this.isInitialized)
+        if (this.isInitialized && !btl2d.StatusMessages.Contains(this))
         {
             this.PrintLog(false);
             this.parentGameObject.SetActive(false);

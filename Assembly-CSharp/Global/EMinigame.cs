@@ -8,33 +8,39 @@ public class EMinigame
 {
     public static void ChanbaraBonusPoints(Obj s1, EBin eBin)
     {
-        if (FF9StateSystem.Common.FF9.fldMapNo == 64 && s1.sid == 4 && s1.ip == 223)
+        // This mini-game's script can be read there: https://www.dropbox.com/scl/fi/7iiziktw78ijuc4wgnobz/Script_BlankMinigame.txt?rlkey=e5jx7739rz6c6dwlh2h0wgu24&st=twind9av&dl=0
+        if (FF9StateSystem.Common.FF9.fldMapNo == 64) // A. Castle/Public Seats
         {
-            Int32 num = eBin.getVarManually(12505);
-            num += num / 10 * 3;
-            EMinigame.GetEncoreChanbaraAchievement(num);
-            eBin.setVarManually(12505, num);
+            if (s1.sid == 4 && s1.ip == 223)
+            {
+                // Somewhere in a "Code4" function (only "Code4_Loop" is long enough)
+                Int32 score = eBin.getVarManually(0x30D9); // VAR_GlobInt16_48, aka. TotalScore
+                if (Configuration.Hacks.SwordplayAssistance >= 1)
+                    score += score / 10 * 3; // +30% bonus granted by the Steam version
+                EMinigame.GetEncoreChanbaraAchievement(score);
+                eBin.setVarManually(0x30D9, score);
+            }
+            else if (Configuration.Hacks.SwordplayAssistance >= 2 && s1.sid == 4)
+            {
+                // Anywhere in any "Code4" function
+                // 0x3409 = VAR_GlobUInt8_52, aka. TimeLeft
+                // 0x22D9 = VAR_GlobInt16_34, aka. HitCount
+                if (eBin.getVarManually(0x3409) > 0 && eBin.getVarManually(0x22D9) < 50)
+                    eBin.setVarManually(0x3409, 50);
+            }
         }
     }
 
     public static void GetEncoreChanbaraAchievement(Int32 score)
     {
         if (score >= 75)
-        {
             AchievementManager.ReportAchievement(AcheivementKey.Encore, 1);
-        }
     }
 
     public static Int32 StiltzkinBuy
     {
-        get
-        {
-            return EMinigame.stiltzkinBuy;
-        }
-        set
-        {
-            EMinigame.stiltzkinBuy = value;
-        }
+        get => EMinigame.stiltzkinBuy;
+        set => EMinigame.stiltzkinBuy = value;
     }
 
     public static void StiltzkinAchievement(PosObj gCur, UInt32 gilDecrease)

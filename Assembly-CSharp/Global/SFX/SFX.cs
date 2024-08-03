@@ -559,7 +559,7 @@ public static class SFX
         SFX.isDebugLine = false;
         SFX.isDebugCam = false;
         SFX.isDebugMode = false;
-        SFX.isDebugFillter = true;
+        SFX.isDebugFilter = true;
         SFX.isDebugMeshIndex = 0;
         SFX.isRunning = false;
         SFX.currentEffectID = SpecialEffect.Special_No_Effect;
@@ -890,7 +890,7 @@ public static class SFX
                 if (arg0 != 0)
                     FF9StateSystem.Battle.FF9Battle.cmd_status |= 2;
                 else
-                    FF9StateSystem.Battle.FF9Battle.cmd_status &= 65533;
+                    FF9StateSystem.Battle.FF9Battle.cmd_status &= 0xFFFD;
                 return 0;
             case 115: // Is Cursor Shown
                 return ((FF9StateSystem.Battle.FF9Battle.cmd_status & 2) == 0) ? 0 : 1;
@@ -945,7 +945,7 @@ public static class SFX
             {
                 Int32 validPlayerTarget = 0;
                 for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
-                    if (next.bi.player != 0 && !Status.checkCurStat(next, BattleStatus.Death | BattleStatus.Jump))
+                    if (next.bi.player != 0 && !btl_stat.CheckStatus(next, BattleStatus.Death | BattleStatus.Jump))
                         validPlayerTarget++;
                 return validPlayerTarget;
             }
@@ -1126,7 +1126,7 @@ public static class SFX
                 //  + reset the BBG transparency at the end ("Set battle scene transparency 255 5" in Hades Workshop)
                 //  + make sure that all the characters are shown at the end (removing all the lines "Show/hide characters" in Hades Workshop has a good-looking result)
                 // Also, the caster moves away when using SFX 384 (Ultima in Crystal World), so either reset the caster's position at the end of the sequencing or use the Pandemonium version
-                if ((SFX.currentEffectID == SpecialEffect.Special_Ultima_Terra || SFX.currentEffectID == SpecialEffect.Special_Ultima_Memoria) && FF9StateSystem.Battle.FF9Battle.btl_phase == 4)
+                if ((SFX.currentEffectID == SpecialEffect.Special_Ultima_Terra || SFX.currentEffectID == SpecialEffect.Special_Ultima_Memoria) && FF9StateSystem.Battle.FF9Battle.btl_phase == FF9StateBattleSystem.PHASE_NORMAL)
                     return next.bi.stop_anim;
                 Byte stop_anim = next.bi.stop_anim;
                 next.bi.stop_anim = (Byte)arg0;
@@ -1221,7 +1221,7 @@ public static class SFX
                         return btl_stat.CheckStatus(next, status) ? 1 : 0;
                     }
                     case 2: // Remove many statuses
-                        btl_stat.RemoveStatuses(next, ~(BattleStatus.EasyKill | BattleStatus.Death | BattleStatus.LowHP | BattleStatus.Stop));
+                        btl_stat.RemoveStatuses(new BattleUnit(next), ~(BattleStatus.EasyKill | BattleStatus.Death | BattleStatus.LowHP | BattleStatus.Stop | BattleStatus.ChangeStat));
                         break;
                     case 3: // Reset Statuses
                         btl_stat.InitStatus(next);
@@ -1596,9 +1596,9 @@ public static class SFX
                 if ((fF9Battle.btl_load_status & ff9btl.LOAD_ALL) == ff9btl.LOAD_ALL)
                 {
                     if (fF9Battle.btl_scene.Info.SpecialStart && !FF9StateSystem.Battle.isDebug)
-                        fF9Battle.btl_phase = 1;
+                        fF9Battle.btl_phase = FF9StateBattleSystem.PHASE_EVENT;
                     else
-                        fF9Battle.btl_phase = 3;
+                        fF9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_ON;
                     SFX.InitBattleParty();
                     SFX.SetCameraPhase(0);
                 }
@@ -2070,8 +2070,7 @@ public static class SFX
 
     public static Int32 GetEffectJTexUsed()
     {
-        SmoothFrameUpdater_Battle.LastSFXEffectJTex = SFX.SFX_SendIntData(12, 0, 0, 0);
-        return SmoothFrameUpdater_Battle.LastSFXEffectJTex;
+        return SFX.SFX_SendIntData(12, 0, 0, 0);
     }
 
     public static void SoundClear()
@@ -2294,10 +2293,10 @@ public static class SFX
             return true;
         if (FF9StateSystem.Settings.cfg.camera == 1UL || Comn.random8() >= 128)
             return false;
-        BattleStatus pStat = cmd.regist.stat.cur | cmd.regist.stat.permanent;
+        BattleStatus pStat = cmd.regist.stat.CurrentIncludeOnHold;
         for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
             if ((next.btl_id & cmd.tar_id) != 0)
-                pStat |= next.stat.cur | next.stat.permanent;
+                pStat |= next.stat.CurrentIncludeOnHold;
         return (pStat & BattleStatusConst.PreventAlternateCamera) == 0u;
     }
 
@@ -2411,7 +2410,7 @@ public static class SFX
 
     public static Boolean isDebugMode;
 
-    public static Boolean isDebugFillter;
+    public static Boolean isDebugFilter;
 
     public static Int32 isDebugMeshIndex;
 

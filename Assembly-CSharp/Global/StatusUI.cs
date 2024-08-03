@@ -311,7 +311,7 @@ public class StatusUI : UIScene
     private void DrawAbilityInfo(AbilityItemHUD abilityHud, Int32 index)
     {
         PLAYER player = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex];
-        Boolean hasAP = ff9abil.FF9Abil_HasAp(new Character(player));
+        Boolean hasAP = ff9abil.FF9Abil_HasAp(player);
         if (index >= player.pa.Length || (hasAP && player.pa[index] == 0))
         {
             abilityHud.Self.SetActive(false);

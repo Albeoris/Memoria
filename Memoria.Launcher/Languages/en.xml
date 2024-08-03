@@ -153,6 +153,12 @@
 	UIColumnsChoice_Tooltip = "Number of columns: if you want more items/abilities on one screen"
 	EnableCustomShader_Tooltip = "Whether to enable per-pixel lighting shader for field and battle character"
 	NoAutoTrance_Tooltip = "Trance does not start automatically. 'Left key' to activate it"
+	FPSDropboxChoice = "FPS"
+	FPSDropboxChoice0 = "Native (15/20/30)"
+	FPSDropboxChoice1 = "30"
+	FPSDropboxChoice2 = "60"
+	FPSDropboxChoice3 = "90"
+	FPSDropboxChoice4 = "120"
 	/>
 
 	<SdLib

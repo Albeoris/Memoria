@@ -1,4 +1,6 @@
-﻿using Memoria.Scripts;
+﻿using Memoria;
+using Memoria.Prime;
+using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,9 +9,18 @@ using Random = UnityEngine.Random;
 
 public static class battlebg
 {
+    public static GameObject BattleRoot => battlebg.btlRoot;
+
+    public static void CreateBattleRoot()
+    {
+        if (battlebg.btlRoot == null)
+            battlebg.btlRoot = new GameObject("Battle Central Root");
+    }
+
     public static void nf_InitBattleBG(BBGINFO bbginfoPtr, GEOTEXHEADER tab)
     {
         battlebg.btlModel = FF9StateSystem.Battle.FF9Battle.map.btlBGPtr;
+        battlebg.btlModel.transform.parent = battlebg.btlRoot.transform;
         battlebg.nf_BbgInfoPtr = bbginfoPtr;
         battlebg.nf_BbgNumber = battlebg.nf_BbgInfoPtr.bbgnumber;
         battlebg.nf_SkyFixPositionFlag = 0;
@@ -27,10 +38,11 @@ public static class battlebg
         for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
         {
             String objName = $"BBG_B{battlebg.nf_BbgNumber:D3}_OBJ{i + 1}";
-            battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false);
+            battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false, false, Configuration.Graphics.BattleSmoothTexture);
+            battlebg.objAnimModel[i].transform.parent = battlebg.btlRoot.transform;
             battlebg.SetDefaultShader(battlebg.objAnimModel[i]);
             if (battlebg.nf_BbgNumber == 171 && i == 1) // Crystal World, Crystal
-                battlebg.SetMaterailShader(battlebg.objAnimModel[i], "PSX/BattleMap_Cystal");
+                battlebg.SetMaterialShader(battlebg.objAnimModel[i], "PSX/BattleMap_Cystal");
         }
         FF9StateSystem.Battle.FF9Battle.map.btlBGObjAnim = battlebg.objAnimModel;
         battlebg.nf_BbgTabAddress.InitBBGTextureAnim(battlebg.btlModel, battlebg.objAnimModel);
@@ -50,59 +62,62 @@ public static class battlebg
         {
             if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_PLUS)
             {
-                battlebg.SetMaterailShader(transform.gameObject, "PSX/BattleMap_Plus");
+                battlebg.SetMaterialShader(transform.gameObject, "PSX/BattleMap_Plus");
             }
             else if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_GROUND)
             {
-                battlebg.SetMaterailShader(transform.gameObject, "PSX/BattleMap_Ground");
+                battlebg.SetMaterialShader(transform.gameObject, "PSX/BattleMap_Ground");
             }
             else if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_MINUS)
             {
-                battlebg.SetMaterailShader(transform.gameObject, "PSX/BattleMap_Minus");
+                battlebg.SetMaterialShader(transform.gameObject, "PSX/BattleMap_Minus");
             }
             else if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_SKY)
             {
-                battlebg.SetMaterailShader(transform.gameObject, "PSX/BattleMap_Sky");
+                battlebg.SetMaterialShader(transform.gameObject, "PSX/BattleMap_Sky");
                 if (!battlebg.bbg_KeepSkyScaleList.Contains(battlebg.nf_BbgNumber))
                     transform.localScale = new Vector3(1.01f, 1.01f, 1.01f);
             }
         }
     }
 
-    public static void SetMaterailShader(GameObject go, String shaderName)
+    public static void SetMaterialShader(GameObject go, String shaderName)
     {
         MeshRenderer[] renderers = go.GetComponentsInChildren<MeshRenderer>();
-        for (Int32 i = 0; i < renderers.Length; i++)
+        for (Int32 rendID = 0; rendID < renderers.Length; rendID++)
         {
-            Material[] materials = renderers[i].materials;
-            for (Int32 j = 0; j < materials.Length; j++)
+            Material[] materials = renderers[rendID].materials;
+            for (Int32 matID = 0; matID < materials.Length; matID++)
             {
-                Material material = materials[j];
+                Material material = materials[matID];
                 String text = material.name.Replace("(Instance)", String.Empty);
-                if (battlebg.nf_BbgNumber == 171 && j == 0 && shaderName.Contains("Minus")) // Crystal World, Crystal
+                material.mainTexture.wrapMode = TextureWrapMode.Clamp; // Fixes PNG Textures having seams between them
+                ModelFactory.SetMatFilter(material, Configuration.Graphics.BattleSmoothTexture);
+                if (text.Contains("a"))
                 {
-                    material.shader = ShadersLoader.Find("PSX/BattleMap_Moon");
+                    if (battlebg.nf_BbgNumber == 21) // Duel Amarant Zidane
+                        material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_0_Substract"); // Apply "Substract" (light colors darken the image)
+                    else if (battlebg.nf_BbgNumber == 171) // Crystal World, ball
+                        material.shader = ShadersLoader.Find("PSX/BattleMap_Moon");
+                    else if (battlebg.nf_BbgNumber == 92 // Desert Palace, Dock
+                          || battlebg.nf_BbgNumber == 52 // Cleyra's Trunk, Inside, Sandfall
+                          || battlebg.nf_BbgNumber == 57 // Clayra outpost waterfall
+                          || battlebg.nf_BbgNumber == 32) // Oeilvert bridge flames
+                        material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_1_Off");
+                    else
+                        material.shader = ShadersLoader.Find(shaderName + "_Abr_1");
                 }
-                else if ((battlebg.nf_BbgNumber == 92 && j == 3 && shaderName.Contains("Plus"))  // Desert Palace, Dock
-                      || (battlebg.nf_BbgNumber == 52 && j == 6 && shaderName.Contains("Plus"))) // Cleyra's Trunk, Inside, Sandfall
+                else if (text.Contains("s")) // 23-3, 25-8
                 {
-                    material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_1_Off");
-                }
-                else if (text.Contains("a"))
-                {
-                    material.shader = ShadersLoader.Find(shaderName + "_Abr_1");
-                }
-                else if (text.Contains("s"))
-                {
-                    material.shader = ShadersLoader.Find(shaderName + "_Abr_0");
-                    material.SetColor("_Color", new Color32(Byte.MaxValue, Byte.MaxValue, Byte.MaxValue, 110));
+                    material.shader = ShadersLoader.Find("PSX/BattleMap_Plus_Abr_0_Multiply"); // Apply "Multiply" (darkens)
                 }
                 else
                 {
                     material.shader = ShadersLoader.Find(shaderName);
-                    if (shaderName.CompareTo("PSX/BattleMap_Ground") == 0)
-                        material.SetInt("_ZWrite", 0); // DEBUG: Can't make the default value in "_ZWrite ("ZWrite", Int) = 0" works correctly for some reason
+                    if (shaderName.CompareTo("PSX/BattleMap_Ground") == 0 && !(battlebg.nf_BbgNumber == 57 && matID == 0)) // Exception Clayra outpost waterfall, for ground to appear on top of waterfall
+                        material.SetInt("_ZWrite", 0); // ZWrite 0 to ignore depth buffer (1 to activate), Ground is the only one that was set to 1
                 }
+                //Log.Message("SetMaterialShader - go:" + go.name + " rendIdx:" + rendID + " battlebg.nf_BbgNumber:" + battlebg.nf_BbgNumber + " matID:" + matID + " shaderName:" + shaderName + " text:\"" + text + "\" _ZWrite:" + material.GetInt("_ZWrite") + " renderqueue:" + material.shader.renderQueue);
             }
         }
     }
@@ -229,8 +244,8 @@ public static class battlebg
         for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
         {
             battlebg.getBbgObjAnimation(battlebg.nf_BbgNumber, i, battlebg.nf_BbgTick, fullTime, out Vector3 bbgPos, out Quaternion bbgRot);
-            battlebg.objAnimModel[i].transform.localPosition = bbgPos;
-            battlebg.objAnimModel[i].transform.localRotation = bbgRot;
+            battlebg.objAnimModel[i].transform.localPosition = battlebg.nf_BbgOffset + bbgPos;
+            battlebg.objAnimModel[i].transform.localRotation = battlebg.nf_BbgAngle * bbgRot;
         }
     }
 
@@ -401,8 +416,8 @@ public static class battlebg
                         {
                             //for (Int32 j = 0; j < geotexanimheader.count; j++)
                             {
-                                Single dx = (geotexanimheader.coords[frameShort].x - geotexanimheader.target.x) / texheaderptr.materials[i].mainTexture.width;
-                                Single dy = (geotexanimheader.coords[frameShort].y - geotexanimheader.target.y) / texheaderptr.materials[i].mainTexture.height;
+                                Single dx = (geotexanimheader.coords[frameShort].x - geotexanimheader.target.x) / 256f;
+                                Single dy = (geotexanimheader.coords[frameShort].y - geotexanimheader.target.y) / 256f;
                                 texheaderptr.materials[i].SetTextureOffset("_MainTex", new Vector2(dx, -dy));
                             }
                             geotexanimheader.lastframe = frameShort;
@@ -448,6 +463,63 @@ public static class battlebg
                 }
             }
         }
+    }
+
+    public static void ShiftWorld(Vector3 offset, Quaternion angle)
+    {
+        //Vector3 enemyPosMin = new Vector3(Single.MaxValue, 0f, Single.MaxValue);
+        //Vector3 enemyPosMax = new Vector3(Single.MinValue, 0f, Single.MinValue);
+        //foreach (BTL_DATA btl in FF9StateSystem.Battle.FF9Battle.btl_data)
+        //{
+        //    if (btl.btl_id != 0)
+        //    {
+        //        btl._smoothUpdateRegistered = false;
+        //        if (btl?.gameObject != null && btl.gameObject.transform.parent == null)
+        //            btl.gameObject.transform.parent = battlebg.btlRoot.transform;
+        //        if (btl.bi.player == 0)
+        //        {
+        //            enemyPosMin = Vector3.Min(enemyPosMin, btl.original_pos);
+        //            enemyPosMax = Vector3.Max(enemyPosMax, btl.original_pos);
+        //        }
+        //    }
+        //}
+        //Vector3 center = ((enemyPosMin + enemyPosMax) / 2 + new Vector3(0f, 0f, btl_init.PLAYER_ORIGINAL_Z)) / 2;
+        //center.y = 0f;
+        Vector3 center = new Vector3(-700f, 0f, -350f);
+        offset += center - (angle * center);
+        battlebg.btlRoot.transform.localPosition = offset;
+        battlebg.btlRoot.transform.localRotation = angle;
+        foreach (BTL_DATA btl in FF9StateSystem.Battle.FF9Battle.btl_data)
+            btl._smoothUpdateRegistered = false;
+        //Vector3 posUpdate = offset - battlebg.nf_BbgOffset;
+        //Quaternion angleUpdate = angle * Quaternion.Inverse(battlebg.nf_BbgAngle);
+        //battlebg.nf_BbgOffset = offset;
+        //battlebg.nf_BbgAngle = angle;
+        //Int32 fullTime = (Int32)Time.realtimeSinceStartup;
+        //for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
+        //{
+        //    battlebg.getBbgObjAnimation(battlebg.nf_BbgNumber, i, battlebg.nf_BbgTick, fullTime, out Vector3 bbgPos, out Quaternion bbgRot);
+        //    battlebg.objAnimModel[i].transform.localPosition = offset + bbgPos;
+        //    battlebg.objAnimModel[i].transform.localRotation = angle * bbgRot;
+        //}
+        //battlebg.btlModel.transform.localPosition = offset;
+        //battlebg.btlModel.transform.localRotation = angle;
+        //foreach (BTL_DATA btl in FF9StateSystem.Battle.FF9Battle.btl_data)
+        //{
+        //    btl.pos += posUpdate;
+        //    btl.evt.posBattle += posUpdate;
+        //    btl.base_pos += posUpdate;
+        //    btl.original_pos += posUpdate;
+        //    btl.rot = angleUpdate * btl.rot;
+        //    btl.evt.rotBattle = angleUpdate * btl.evt.rotBattle;
+        //}
+    }
+
+    public static void UnshiftWorld()
+    {
+        if (battlebg.nf_BbgOffset == Vector3.zero && battlebg.nf_BbgAngle == Quaternion.identity)
+            return;
+        ShiftWorld(Vector3.zero, Quaternion.identity);
     }
 
     public static Int32 nf_GetBbgIntensity()
@@ -503,7 +575,7 @@ public static class battlebg
                 for (Int32 i = 0; i < bbginfo.objanim; i++)
                 {
                     String objName = $"BBG_B{geotexheader.bbgnumber:D3}_OBJ{i + 1}";
-                    extraObj[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false);
+                    extraObj[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false, true, Configuration.Graphics.BattleSmoothTexture);
                 }
             }
             geotexheader.InitBBGTextureAnim(go, extraObj);
@@ -726,10 +798,13 @@ public static class battlebg
     public static Int32 nf_b007b;
     public static Int32 nf_BbgTick;
 
+    private static GameObject btlRoot;
     private static GameObject btlModel;
     private static GameObject[] objAnimModel;
 
     private static Byte nf_BbgBrite = 128;
+    private static Vector3 nf_BbgOffset = Vector3.zero;
+    private static Quaternion nf_BbgAngle = Quaternion.identity;
 
     private static readonly HashSet<Int32> bbg_KeepSkyScaleList =
     [

@@ -4,7 +4,6 @@ using Memoria.Data;
 using Memoria.Speedrun;
 using System;
 using System.Linq;
-using static Memoria.Prime.PsdFile.ResolutionInfo;
 
 public class btl_scrp
 {
@@ -88,8 +87,8 @@ public class btl_scrp
             case 1013: return (UInt16)0;
             case 1014: return (UInt16)cmd.info.CustomMPCost;
             case 1015: return (UInt16)cmd.AbilityType;
-            case 1016: return (UInt16)((UInt32)cmd.AbilityStatus >> 16);
-            case 1017: return (UInt16)((UInt32)cmd.AbilityStatus & 0xFFFF);
+            case 1016: return (UInt16)((UInt64)cmd.AbilityStatus >> 16);
+            case 1017: return (UInt16)((UInt64)cmd.AbilityStatus & 0xFFFF);
             case 1018: return (UInt16)cmd.info.dodge;
             case 1019: return (UInt16)cmd.info.reflec;
             case 1020: return (UInt16)cmd.info.meteor_miss;
@@ -154,8 +153,8 @@ public class btl_scrp
             case 1013: return;
             case 1014: cmd.info.CustomMPCost = val; return;
             case 1015: cmd.AbilityType = (Byte)val; return;
-            case 1016: cmd.AbilityStatus = (BattleStatus)(((UInt32)cmd.AbilityStatus & 0xFFFFu) | ((UInt32)(val & 0xFFFF) << 16)); return;
-            case 1017: cmd.AbilityStatus = (BattleStatus)(((UInt32)cmd.AbilityStatus & 0xFFFF0000u) | (UInt32)(val & 0xFFFF)); return;
+            case 1016: cmd.AbilityStatus = (BattleStatus)(((UInt64)cmd.AbilityStatus & 0xFFFFFFFF0000FFFFul) | ((UInt64)(val & 0xFFFFu) << 16)); return;
+            case 1017: cmd.AbilityStatus = (BattleStatus)(((UInt64)cmd.AbilityStatus & 0xFFFFFFFFFFFF0000ul) | (UInt64)(val & 0xFFFFu)); return;
             case 1018: cmd.info.dodge = (Byte)val; return;
             case 1019: cmd.info.reflec = (Byte)val; return;
             case 1020: cmd.info.meteor_miss = (Byte)val; return;
@@ -181,7 +180,7 @@ public class btl_scrp
             case 10: cmd.aa.Ref.Elements = (Byte)val; return;
             case 11: cmd.aa.Ref.Rate = val; return;
             case 12: cmd.aa.Category = (Byte)val; return;
-            case 13: cmd.aa.AddStatusNo = (BattleStatusIndex)val; return;
+            case 13: cmd.aa.AddStatusNo = (StatusSetId)val; return;
             case 14: cmd.aa.MP = val; return;
             case 15: cmd.aa.Type = (Byte)val; return;
             case 16: cmd.aa.Vfx2 = (UInt16)val; return;
@@ -222,22 +221,22 @@ public class btl_scrp
                     result = btl_util.getEnemyTypePtr(btl).level;
                 break;
             case 42u:
-                result = (Int32)((UInt32)btl.stat.invalid >> 24);
+                result = (Int32)((UInt64)btl.stat.invalid >> 24);
                 break;
             case 43u:
-                result = (Int32)((UInt32)btl.stat.invalid & 16777215u);
+                result = (Int32)((UInt64)btl.stat.invalid & 0xFFFFFFu);
                 break;
             case 44u:
-                result = (Int32)((UInt32)btl.stat.permanent >> 24);
+                result = (Int32)((UInt64)btl.stat.permanent >> 24);
                 break;
             case 45u:
-                result = (Int32)((UInt32)btl.stat.permanent & 16777215u);
+                result = (Int32)((UInt64)btl.stat.permanent & 0xFFFFFFu);
                 break;
             case 46u:
-                result = (Int32)((UInt32)btl.stat.cur >> 24);
+                result = (Int32)((UInt64)btl.stat.cur >> 24);
                 break;
             case 47u:
-                result = (Int32)((UInt32)btl.stat.cur & 16777215u);
+                result = (Int32)((UInt64)btl.stat.cur & 0xFFFFFFu);
                 break;
             case 48u:
                 result = btl.def_attr.invalid;
@@ -258,7 +257,7 @@ public class btl_scrp
                 result = btl.bi.disappear;
                 break;
             case 57u:
-                result = (Int32)btl.dms_geo_id;
+                result = btl.dms_geo_id;
                 break;
             case 58u:
                 result = btl.mesh_current;
@@ -412,9 +411,10 @@ public class btl_scrp
         return result;
     }
 
-    public static void SetCharacterData(BTL_DATA btl, UInt32 id, Int32 val)
+    public static void SetCharacterData(BattleUnit unit, UInt32 id, Int32 val)
     {
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
+        BTL_DATA btl = unit.Data;
         switch (id)
         {
             case 32u:
@@ -426,8 +426,8 @@ public class btl_scrp
                 btl_sys.AddCharacter(btl);
                 break;
             case 33u:
-                for (Int32 j = 0; j < btl.meshCount; j++)
-                    btl.SetIsEnabledMeshRenderer(j, false);
+                for (Int32 i = 0; i < btl.meshCount; i++)
+                    btl.SetIsEnabledMeshRenderer(i, false);
                 btl.getShadow().SetActive(false);
                 btl.SetIsEnabledWeaponRenderer(false);
                 btl.SetIsEnabledBattleModelRenderer(false);
@@ -457,24 +457,26 @@ public class btl_scrp
                 btl.cur.at = (Int16)val;
                 break;
             case 42u:
-                btl.stat.invalid = (BattleStatus)(((UInt32)btl.stat.invalid & 0xFFFFFFu) | ((UInt32)val << 24));
+                btl.stat.invalid = (BattleStatus)(((UInt64)btl.stat.invalid & 0xFFFF000000FFFFFFul) | ((UInt64)val << 24));
                 break;
             case 43u:
-                btl.stat.invalid = (BattleStatus)(((UInt32)btl.stat.invalid & 0xFF000000u) | (UInt32)val);
+                btl.stat.invalid = (BattleStatus)(((UInt64)btl.stat.invalid & 0xFFFFFFFFFF000000ul) | (UInt32)val);
                 break;
             case 44u:
-                btl.stat.permanent = (BattleStatus)(((UInt32)btl.stat.permanent & 0xFFFFFFu) | ((UInt32)val << 24));
+                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt64)btl.stat.permanent & (~((UInt64)val << 24)) & 0xFFFFFFFFFF000000ul), false);
+                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)(val << 24), true);
                 break;
             case 45u:
-                btl.stat.permanent = (BattleStatus)(((UInt32)btl.stat.permanent & 0xFF000000u) | (UInt32)val);
+                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt64)btl.stat.permanent & (~(UInt64)val) & 0xFFFF000000FFFFFFul), false);
+                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt64)val & 0xFFFF000000FFFFFFul), true);
                 break;
             case 46u: // Statuses can be modified by battle scripts thanks to these: set SV_FunctionEnemy[STATUS_CURRENT_A] |=$ Status to add
-                btl_stat.RemoveStatuses(btl, (BattleStatus)((UInt32)btl.stat.cur & (~((UInt32)val << 24)) & 0xFF000000u));
-                btl_stat.AlterStatuses(btl, (BattleStatus)(val << 24));
+                btl_stat.RemoveStatuses(unit, (BattleStatus)((UInt64)btl.stat.cur & (~((UInt64)val << 24)) & 0xFFFFFFFFFF000000ul));
+                btl_stat.AlterStatuses(unit, (BattleStatus)(val << 24));
                 break;
             case 47u:
-                btl_stat.RemoveStatuses(btl, (BattleStatus)((UInt32)btl.stat.cur & (~(UInt32)val) & 0xFFFFFFu));
-                btl_stat.AlterStatuses(btl, (BattleStatus)(val & 0xFFFFFFu));
+                btl_stat.RemoveStatuses(unit, (BattleStatus)((UInt64)btl.stat.cur & (~(UInt64)val) & 0xFFFF000000FFFFFFul));
+                btl_stat.AlterStatuses(unit, (BattleStatus)((UInt64)val & 0xFFFF000000FFFFFFul));
                 break;
             case 48u:
                 btl.def_attr.invalid = (Byte)val;
@@ -489,8 +491,7 @@ public class btl_scrp
                 btl.def_attr.weak = (Byte)val;
                 break;
             case 52u:
-                //very start of battle
-                if (ff9Battle.btl_phase == 2)
+                if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_ENTER)
                 {
                     btl.tar_mode = 0;
                     btl.bi.target = 0;
@@ -511,8 +512,8 @@ public class btl_scrp
                 break;
             case 55u:
                 // Many AI scripts setup a custom model size for enemies; when they do, they handle Mini in the EventEngine.Request(tagNumber = 7) function ("CounterEx" in Hades Workshop)
-                geo.geoScaleSet(btl, (Int32)val, true, true);
-                if (ff9Battle.btl_phase == 2) // When modified during BattleLoad, consider it to be the default
+                geo.geoScaleSet(btl, val, true, true);
+                if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_ENTER) // When modified during BattleLoad, consider it to be the default
                     btl.geo_scale_default = val;
                 break;
             case 56u:
@@ -524,7 +525,7 @@ public class btl_scrp
                 break;
             case 60u:
                 btl_mot.ShowMesh(btl, (UInt16)val, false);
-                btl.mesh_current = (UInt16)(btl.mesh_current & (UInt16)(~(UInt16)val));
+                btl.mesh_current = (UInt16)(btl.mesh_current & (UInt16)~(UInt16)val);
                 break;
             case 61u:
                 GeoTexAnim.geoTexAnimPlay(btl.texanimptr, (Int32)val);
@@ -543,27 +544,21 @@ public class btl_scrp
                 break;
             case 72u:
                 btl.elem.str = (Byte)val;
-                btl.stat_modifier[0] = false;
                 break;
             case 73u:
                 btl.elem.mgc = (Byte)val;
-                btl.stat_modifier[1] = false;
                 break;
             case 74u:
                 btl.defence.PhysicalDefence = val;
-                btl.stat_modifier[2] = false;
                 break;
             case 75u:
                 btl.defence.PhysicalEvade = val;
-                btl.stat_modifier[3] = false;
                 break;
             case 76u:
                 btl.defence.MagicalDefence = val;
-                btl.stat_modifier[4] = false;
                 break;
             case 77u:
                 btl.defence.MagicalEvade = val;
-                btl.stat_modifier[5] = false;
                 break;
             case 78u:
                 btl.cur.at = btl.max.at;
@@ -638,16 +633,16 @@ public class btl_scrp
                         if (btl_cmd.CheckUsingCommand(btl.cmd[4]))
                         {
                             if (!btl_cmd.CheckUsingCommand(btl.cmd[5]))
-                                btl_cmd.SetEnemyCommand((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1), tar_id, BattleCommandId.ScriptCounter3, val);
+                                btl_cmd.SetEnemyCommand(unit, BattleCommandId.ScriptCounter3, val, tar_id);
                         }
                         else
                         {
-                            btl_cmd.SetEnemyCommand((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1), tar_id, BattleCommandId.ScriptCounter2, val);
+                            btl_cmd.SetEnemyCommand(unit, BattleCommandId.ScriptCounter2, val, tar_id);
                         }
                     }
                     else
                     {
-                        btl_cmd.SetEnemyCommand((UInt16)PersistenSingleton<EventEngine>.Instance.GetSysList(1), tar_id, BattleCommandId.ScriptCounter1, val);
+                        btl_cmd.SetEnemyCommand(unit, BattleCommandId.ScriptCounter1, val, tar_id);
                     }
                 }
                 else
@@ -657,21 +652,6 @@ public class btl_scrp
                 }
                 break;
             }
-            case 130u: // Note: Very crafty. Creates elemental orbs (special SPS) rotating around the BTL_DATA...
-                if (val == 3)
-                {
-                    UnityEngine.Vector3 btl_pos = btl.gameObject.transform.GetChildByName("bone000").position;
-                    HonoluluBattleMain.battleSPS.AddSpecialSPSObj(0, 12, btl_pos, 4.0f);
-                    HonoluluBattleMain.battleSPS.AddSpecialSPSObj(1, 13, btl_pos, 4.0f);
-                    HonoluluBattleMain.battleSPS.AddSpecialSPSObj(2, 14, btl_pos, 4.0f);
-                }
-                else if (val == 2) // ... and remove them 1 by 1
-                    HonoluluBattleMain.battleSPS.RemoveSpecialSPSObj(2);
-                else if (val == 1)
-                    HonoluluBattleMain.battleSPS.RemoveSpecialSPSObj(1);
-                else if (val == 0)
-                    HonoluluBattleMain.battleSPS.RemoveSpecialSPSObj(0);
-                break;
             case 140:
                 btl.pos.x = val;
                 btl.evt.posBattle.x = btl.pos.x;
@@ -758,7 +738,7 @@ public class btl_scrp
                 for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                 {
                     CharacterSerialNumber serialNumber = btl_util.getSerialNumber(next);
-                    if (serialNumber == CharacterSerialNumber.EIKO_FLUTE || serialNumber == CharacterSerialNumber.EIKO_KNIFE)
+                    if (serialNumber == CharacterSerialNumber.EIKO_FLUTE || serialNumber == CharacterSerialNumber.EIKO_RACKET)
                     {
                         result = !btl_cmd.CheckSpecificCommand(next, BattleCommandId.SysLastPhoenix) ? 0u : 1u;
                         break;
@@ -785,61 +765,60 @@ public class btl_scrp
                 AutoSplitterPipe.SignalBattleStop();
                 UIManager.Battle.FF9BMenu_EnableMenu(false);
                 ff9Battle.btl_escape_key = 0;
-                ff9Battle.cmd_status &= 65533;
-                ff9Battle.btl_phase = 5;
-                ff9Battle.btl_seq = 2;
+                ff9Battle.cmd_status &= 0xFFFD;
+                ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
+                ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_MENU_OFF_EVENT;
                 btl_cmd.KillAllCommand(ff9Battle);
                 for (BTL_DATA next = ff9Battle.btl_list.next; next != null; next = next.next)
                     next.bi.cmd_idle = 0;
                 break;
             case 33u: // End battle
-                if (ff9Battle.btl_phase == 1)
+                if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_EVENT)
                 {
                     ff.btl_result = (Byte)val;
                     if (val == 1 && ff9Battle.btl_scene.Info.WinPose)
                     {
-                        ff9Battle.btl_phase = 5;
-                        ff9Battle.btl_seq = 4;
+                        ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_OFF;
+                        ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_MENU_OFF_VICTORY_WITH_ENEMY;
                     }
                     else
                     {
-                        if (ff.btl_result == 1)
-                            ff.btl_result = 2;
-                        ff9Battle.btl_phase = 8;
-                        ff9Battle.btl_seq = 0;
+                        if (ff.btl_result == FF9StateGlobal.BTL_RESULT_VICTORY)
+                            ff.btl_result = FF9StateGlobal.BTL_RESULT_VICTORY_NO_POSE;
+                        ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_CLOSE;
+                        ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_DEFEATCLOSE_FADEOUT;
                     }
-                    if (ff.btl_result == 5) // Scripted interruption, such as Black Waltz 3 (first time)
+                    if (ff.btl_result == FF9StateGlobal.BTL_RESULT_INTERRUPTION) // Scripted interruption, such as Black Waltz 3 (first time)
                         BattleVoice.TriggerOnBattleInOut("BattleInterrupted");
-                    else if (ff.btl_result == 7) // Enemy flee, such as (Magic) Vice or friendly monsters when attacked
+                    else if (ff.btl_result == FF9StateGlobal.BTL_RESULT_ENEMY_FLEE) // Enemy flee, such as (Magic) Vice or friendly monsters when attacked
                         BattleVoice.TriggerOnBattleInOut("EnemyEscape");
                 }
                 break;
             case 34u: // Game Over
-                if (ff9Battle.btl_phase == 1)
+                if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_EVENT)
                 {
-                    ff9Battle.btl_phase = 7;
-                    ff9Battle.btl_seq = 0;
-                    ff.btl_result = 3;
+                    ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_DEFEAT;
+                    ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_DEFEATCLOSE_FADEOUT;
+                    ff.btl_result = FF9StateGlobal.BTL_RESULT_DEFEAT;
                 }
                 break;
             case 35u: // Enable ATB
-                if (ff9Battle.btl_phase == 1)
+                if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_EVENT)
                 {
                     BTL_SCENE_INFO info = ff9Battle.btl_scene.Info;
-                    ff9Battle.btl_phase = 3;
+                    ff9Battle.btl_phase = FF9StateBattleSystem.PHASE_MENU_ON;
                     ff9Battle.btl_seq = 0;
                     if (!info.SpecialStart || !info.BackAttack || !info.Preemptive)
                         info.StartType = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
                 }
                 break;
             case 36u: // Run Camera
-                if (ff9Battle.btl_phase == 1)
+                if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_EVENT)
                     SFX.SetCamera(val);
                 break;
             case 37u: // Change next field
             {
-                FF9StateGlobal ff9StateGlobal = ff;
-                ff9StateGlobal.btl_flag = (Byte)(ff9StateGlobal.btl_flag | 1);
+                ff.btl_flag |= battle.BTL_MAP_JUMP_ON;
                 PersistenSingleton<EventEngine>.Instance.SetNextMap(val);
                 break;
             }
@@ -855,8 +834,7 @@ public class btl_scrp
             case 40u:
             {
                 btlsnd.ff9btlsnd_song_vol_intplall(30, 0);
-                FF9StateGlobal ff2 = FF9StateSystem.Common.FF9;
-                ff2.btl_flag = (Byte)(ff2.btl_flag | 16);
+                FF9StateSystem.Common.FF9.btl_flag |= battle.BTL_SONG_FADEOUT;
                 break;
             }
             case 43u:

@@ -3558,6 +3558,12 @@
     <None Include="StreamingAssets\Shaders\PSX\BattleMap_Plus_Abr_1_Off.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Plus_Abr_0_Substract.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="StreamingAssets\Shaders\PSX\BattleMap_Plus_Abr_0_Multiply.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="StreamingAssets\Shaders\PSX\BattleMap_SelectCursor_Abr_1.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
