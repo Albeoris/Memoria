@@ -215,6 +215,7 @@ namespace Memoria.Launcher
             public static readonly string UIColumnsChoice0 = GetSettings(nameof(UIColumnsChoice0));
             public static readonly string UIColumnsChoice1 = GetSettings(nameof(UIColumnsChoice1));
             public static readonly string UIColumnsChoice2 = GetSettings(nameof(UIColumnsChoice2));
+            public static readonly string NoAutoTrance = GetSettings(nameof(NoAutoTrance));
             public static readonly string EnableCustomShader = GetSettings(nameof(EnableCustomShader));
             public static readonly string EnableRealismShadingForField = GetSettings(nameof(EnableRealismShadingForField));
             public static readonly string EnableRealismShadingForBattle = GetSettings(nameof(EnableRealismShadingForBattle));
@@ -223,7 +224,6 @@ namespace Memoria.Launcher
             public static readonly string EnableOutlineForFieldCharacter = GetSettings(nameof(EnableOutlineForFieldCharacter));
             public static readonly string EnableOutlineForBattleCharacter = GetSettings(nameof(EnableOutlineForBattleCharacter));
             public static readonly string EnableSSAO = GetSettings(nameof(EnableSSAO));
-            public static readonly string NoAutoTrance = GetSettings(nameof(NoAutoTrance));
 
             // Settings.ini Tooltips
             public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));
@@ -257,7 +257,6 @@ namespace Memoria.Launcher
             public static readonly string UsePsxFont_Tooltip = GetSettings(nameof(UsePsxFont_Tooltip));
             public static readonly string FontChoice_Tooltip = GetSettings(nameof(FontChoice_Tooltip));
             public static readonly string UIColumnsChoice_Tooltip = GetSettings(nameof(UIColumnsChoice_Tooltip));
-            public static readonly string EnableCustomShader_Tooltip = GetSettings(nameof(EnableCustomShader_Tooltip));
 
             // Memoria.ini Cheats tooltips
             public static readonly string MaxStealRate_Tooltip = GetSettings(nameof(MaxStealRate_Tooltip));
@@ -274,6 +273,12 @@ namespace Memoria.Launcher
 
 
 
+            public static readonly string FPSDropboxChoice = GetSettings(nameof(FPSDropboxChoice));
+            public static readonly string FPSDropboxChoice0 = GetSettings(nameof(FPSDropboxChoice0));
+            public static readonly string FPSDropboxChoice1 = GetSettings(nameof(FPSDropboxChoice1));
+            public static readonly string FPSDropboxChoice2 = GetSettings(nameof(FPSDropboxChoice2));
+            public static readonly string FPSDropboxChoice3 = GetSettings(nameof(FPSDropboxChoice3));
+            public static readonly string FPSDropboxChoice4 = GetSettings(nameof(FPSDropboxChoice4));
         }
 
 

@@ -70,7 +70,6 @@ namespace Memoria.Launcher
             EnableCustomShader.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(this.EnableCustomShader)) { Mode = BindingMode.TwoWay });
             EnableCustomShader.Foreground = Brushes.White;
             EnableCustomShader.FontWeight = FontWeights.Bold;
-            EnableCustomShader.ToolTip = Lang.Settings.EnableCustomShader_Tooltip;
             EnableCustomShader.Margin = rowMargin;
             EnableCustomShader.FontSize = 14;
 

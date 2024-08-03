@@ -491,24 +491,20 @@ namespace FF9
                 shader = FF9StateSystem.Battle.shadowShader;
             else
                 shader = ShadersLoader.Find(type);
-            SkinnedMeshRenderer[] componentsInChildren = go.GetComponentsInChildren<SkinnedMeshRenderer>();
-            for (Int32 i = 0; i < (Int32)componentsInChildren.Length; i++)
+            foreach (SkinnedMeshRenderer renderer in go.GetComponentsInChildren<SkinnedMeshRenderer>())
             {
-                componentsInChildren[i].material.shader = shader;
-                componentsInChildren[i].material.SetFloat("_Cutoff", 0.5f);
-                componentsInChildren[i].material.SetFloat("_OutlineWidth", 2.3f);
-                componentsInChildren[i].material.SetFloat("_ShowOutline", Configuration.Shaders.OutlineForBattleCharacter == 1 ? 1f : 0f);
-                componentsInChildren[i].material.SetFloat("_IsEnemy", btl.bi.player == 0 ? 1 : 0);
-                componentsInChildren[i].material.SetInt("_StencilOp", btl.bi.player == 0 ? 2 : 1);
-                componentsInChildren[i].material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
+                renderer.material.shader = shader;
+                renderer.material.SetFloat("_Cutoff", 0.5f);
+                renderer.material.SetFloat("_OutlineWidth", 2.3f);
+                renderer.material.SetFloat("_ShowOutline", Configuration.Shaders.OutlineForBattleCharacter == 1 ? 1f : 0f);
+                renderer.material.SetFloat("_IsEnemy", btl.bi.player == 0 ? 1 : 0);
+                renderer.material.SetInt("_StencilOp", btl.bi.player == 0 ? 2 : 1);
+                renderer.material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
             }
-            MeshRenderer[] componentsInChildren2 = go.GetComponentsInChildren<MeshRenderer>();
-            for (Int32 j = 0; j < (Int32)componentsInChildren2.Length; j++)
+            foreach (MeshRenderer renderer in go.GetComponentsInChildren<MeshRenderer>())
             {
-                Material[] materials = componentsInChildren2[j].materials;
-                for (Int32 k = 0; k < (Int32)materials.Length; k++)
+                foreach (Material material in renderer.materials)
                 {
-                    Material material = materials[k];
                     material.shader = shader;
                     material.SetFloat("_Cutoff", 0.5f);
                     material.SetTexture("_DetailTex", FF9StateSystem.Battle.detailTexture);
