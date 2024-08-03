@@ -100,13 +100,6 @@ namespace FF9
                                 if (btl_cmd.CheckSpecificCommand(btl, BattleCommandId.SysLastPhoenix))
                                     return;
                                 Boolean procRebirthFlame = ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8();
-                                // TODO [DV] Use IOverloadOnGameOverScript
-                                //if (Configuration.Mod.TranceSeek) // TRANCE SEEK - RebirthFlame
-                                //{
-                                //    BattleUnit unit = new BattleUnit(btl);
-                                //    Character player = unit.Player;
-                                //    procRebirthFlame = player.Equipment.Accessory == RegularItem.PhoenixPinion && ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8();
-                                //}
                                 if (procRebirthFlame)
                                 {
                                     UIManager.Battle.FF9BMenu_EnableMenu(true);

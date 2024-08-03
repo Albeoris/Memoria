@@ -39,8 +39,6 @@ namespace Memoria.DefaultScripts
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
-            // TODO [DV] Add the status Old (and possibly other custom statuses) in StatusData.csv's "ClearOnApply and ImmunityProvided"
-            //btl_stat.RemoveStatus(target, OLD);
             btl_cmd.SetCommand(target.Data.cmd[4], BattleCommandId.SysTrans, 0, target.Id, 0u);
             if (target.PlayerIndex == CharacterId.Garnet)
                 target.AddDelayedModifier(ProcessPhantomRecast, ClearPhantomRecast);

@@ -386,7 +386,6 @@ public static class battle
                                 {
                                     Int32 num3 = btl_mot.GetDirection(next);
                                     next.rot.eulerAngles = new Vector3(next.rot.eulerAngles.x, num3, next.rot.eulerAngles.z);
-                                    // TODO [DV] Add status Old to BattleStatusConst.IdleDying
                                     if (!next.is_monster_transform)
                                         next.bi.def_idle = btl_stat.CheckStatus(next, BattleStatusConst.IdleDying) ? (Byte)1 : (Byte)0;
                                     next.bi.cmd_idle = 0;

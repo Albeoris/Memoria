@@ -65,9 +65,6 @@ namespace Memoria.DefaultScripts
                     Target.RemoveStatus(BattleStatus.Jump);
                     break;
                 case BattleCommandId.SpearInTrance:
-                    // TODO [DV] Code in a custom JumpStatusScript
-                    //if (Configuration.Mod.TranceSeek) // [DV] - Freyja come back after Jump when in Trance
-                    //    Target.RemoveStatus(BattleStatus.Jump);
                     SpearCountdown = GetJumpDuration(Target);
                     break;
             }

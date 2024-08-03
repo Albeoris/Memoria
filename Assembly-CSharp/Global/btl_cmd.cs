@@ -431,8 +431,6 @@ public class btl_cmd
                 || btl_stat.CheckStatus(cmd.regist, BattleStatus.Death) && cmd.cmd_no == BattleCommandId.SysPhantom
                 || Configuration.Battle.Speed >= 4 && btl_util.IsBtlUsingCommandMotion(cmd.regist)
                 || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0)
-                // TODO [DV] Apply another status than Sleep on bosses / easykill
-                //|| (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill) && btl_stat.CheckStatus(cmd.regist, BattleStatus.Sleep)) // [DV] Prevent command cancel for boss.
             {
                 if (Configuration.Battle.Speed == 4)
                 {
@@ -496,13 +494,6 @@ public class btl_cmd
                 BTL_DATA btl = cmd.regist;
                 if (btl_stat.CheckStatus(btl, BattleStatus.Heat))
                 {
-                    // TODO [DV] Apply another status than Heat on bosses / easykill
-                    //if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill)) // TRANCE SEEK - Boss don't die with Heat.
-                    //{
-                    //    btlsys.cur_cmd_list.Add(cmd);
-                    //    KillCommand(cmd);
-                    //    return;
-                    //}
                     if (btl_stat.AlterStatus(new BattleUnit(btl), BattleStatusId.Death) == btl_stat.ALTER_SUCCESS)
                     {
                         BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Heat);
@@ -1090,9 +1081,6 @@ public class btl_cmd
     {
         if (!btl_stat.CheckStatus(cmd.regist, BattleStatusConst.CannotUseMagic) || (cmd.AbilityCategory & 2) == 0)
             return true;
-        // TODO [DV] Apply a different status than Silence on bosses / easykill
-        //if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill)) // [DV] - Bosses can use magic under silence but have malus
-        //    return true;
         UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotCast);
         foreach (BattleStatusId silenceStatus in (BattleStatusConst.CannotUseMagic & cmd.regist.stat.cur).ToStatusList())
             BattleVoice.TriggerOnStatusChange(cmd.regist, "Used", silenceStatus);

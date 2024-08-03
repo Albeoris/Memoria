@@ -249,7 +249,6 @@ public class btl_para
         UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            // TODO [DV] Code that in a custom PoisonStatusScript / VenomStatusScript
             if (Configuration.Mod.TranceSeek)
             {
                 damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 8 : 5);
@@ -266,12 +265,12 @@ public class btl_para
             {
                 if (Configuration.Mod.TranceSeek && battleUnit.IsZombie)
                 {
-                    if (battleUnit.IsUnderStatus(BattleStatus.Poison)) // [DV] Zombie get healed by Poison in Trance Seek.
+                    if (battleUnit.IsUnderStatus(BattleStatus.Poison))
                     {
                         btl.cur.hp += damage;
                         return;
                     }
-                    if (battleUnit.IsUnderStatus(BattleStatus.Venom)) // [DV] Zombie get half damage by Venom in Trance Seek.
+                    if (battleUnit.IsUnderStatus(BattleStatus.Venom))
                     {
                         damage /= 2U;
                         btl.cur.hp -= damage;
@@ -321,8 +320,7 @@ public class btl_para
     public static void SetPoisonMpDamage(BTL_DATA btl)
     {
         // Dummied
-        // TODO [DV] Code that in a custom VenomStatusScript
-        if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill)) // TRANCE SEEK - Venom didn't remove MP on bosses.
+        if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
             return;
         UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
