@@ -27,10 +27,10 @@ using Color = System.Drawing.Color;
 
 namespace Memoria.Launcher
 {
-    public partial class GraphicsOptionWindow : Window, IComponentConnector
+    public partial class AdvOptionsWindow : Window, IComponentConnector
     {
         public String StatusMessage = "";
-        public GraphicsOptionWindow()
+        public AdvOptionsWindow()
         {
             InitializeComponent();
             Loaded += OnLoaded;
@@ -43,7 +43,7 @@ namespace Memoria.Launcher
 
         private void OnClosing(Object sender, CancelEventArgs e)
         {
-            ((MainWindow)this.Owner).GraphicsOptionWindow = null;
+            ((MainWindow)this.Owner).AdvOptionsWindow = null;
             ((MainWindow)this.Owner).MemoriaIniControl.ComeBackToLauncherFromModManager();
         }
         

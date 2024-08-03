@@ -13,7 +13,6 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Rendering;
-using UnityEngine.Serialization;
 
 #pragma warning disable 169
 #pragma warning disable 414

@@ -42,66 +42,78 @@ namespace Memoria.Launcher
     {
         public ShaderSettingControl()
         {
-            SetRows(25);
+            SetRows(7);
+            SetCols(8);
 
             Width = 260;
             VerticalAlignment = VerticalAlignment.Bottom;
             HorizontalAlignment = HorizontalAlignment.Left;
-            Margin = new Thickness(5);
+            Margin = new Thickness(0);
             DataContext = this;
 
             Thickness rowMargin = new Thickness(0, 2, 0, 2);
 
-            UiCheckBox EnableCustomShader =
-                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableCustomShader, null), 3, 0, 3, 8);
-            EnableCustomShader.SetBinding(ToggleButton.IsCheckedProperty,
-                new Binding(nameof(this.EnableCustomShader)) { Mode = BindingMode.TwoWay });
+            Int32 row = 0;
+
+
+
+            /*UiTextBlock CustomShadersText = AddUiElement(UiTextBlockFactory.Create("Custom Shaders"), row, 0, 2, 8);
+            //CustomShadersText.Padding = new Thickness(0, 4, 0, 16);
+            CustomShadersText.Foreground = Brushes.White;
+            CustomShadersText.FontSize = 14;
+            CustomShadersText.FontWeight = FontWeights.Bold;
+            CustomShadersText.Margin = new Thickness(0, 2, 0, 30);
+            CustomShadersText.Margin = rowMargin;*/
+
+
+            UiCheckBox EnableCustomShader = AddUiElement(UiCheckBoxFactory.Create("Custom Shaders:", null), row, 0, 1, 8);
+            EnableCustomShader.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(this.EnableCustomShader)) { Mode = BindingMode.TwoWay });
             EnableCustomShader.Foreground = Brushes.White;
-            EnableCustomShader.Margin = rowMargin;
+            EnableCustomShader.FontWeight = FontWeights.Bold;
             EnableCustomShader.ToolTip = Lang.Settings.EnableCustomShader_Tooltip;
-            
-            UiTextBlock separateLineField = AddUiElement(UiTextBlockFactory.Create("-----Shader For Field Character (Non-Battle)-----"), row: 5, col: 0, rowSpan: 3, colSpan: 8);
+            EnableCustomShader.Margin = rowMargin;
+            EnableCustomShader.FontSize = 14;
+
+            row++;
+
+            UiTextBlock separateLineField = AddUiElement(UiTextBlockFactory.Create("╙ Non-Battle Characters"), row: row, col: 0, rowSpan: 1, colSpan: 8);
             separateLineField.Margin = rowMargin;
-            
-            UiCheckBox EnableRealismShadingForField =
-                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableRealismShadingForField, null), 7, 0, 3, 8);
-            EnableRealismShadingForField.SetBinding(ToggleButton.IsCheckedProperty,
-                new Binding(nameof(RealismShadingForField)) { Mode = BindingMode.TwoWay });
+
+            row++;
+
+            UiCheckBox EnableRealismShadingForField = AddUiElement(UiCheckBoxFactory.Create("Realistic", null), row, 0, 1, 4);
+            EnableRealismShadingForField.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(RealismShadingForField)) { Mode = BindingMode.TwoWay });
             EnableRealismShadingForField.Foreground = Brushes.White;
 
-            
-            UiCheckBox EnableToonShadingForField =
-                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableToonShadingForField, null), 9, 0, 3, 8);
-            EnableToonShadingForField.SetBinding(ToggleButton.IsCheckedProperty,
-                new Binding(nameof(ToonShadingForField)) { Mode = BindingMode.TwoWay });
+            UiCheckBox EnableToonShadingForField = AddUiElement(UiCheckBoxFactory.Create("Toon", null), row, 3, 1, 4);
+            EnableToonShadingForField.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(ToonShadingForField)) { Mode = BindingMode.TwoWay });
             EnableToonShadingForField.Foreground = Brushes.White;
-            
-            UiCheckBox EnableOutlineForFieldCharacter =
-                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableOutlineForFieldCharacter, null), 11, 0, 3, 8);
-            EnableOutlineForFieldCharacter.SetBinding(ToggleButton.IsCheckedProperty,
-                new Binding(nameof(OutlineForFieldCharacter)) { Mode = BindingMode.TwoWay });
+
+            row++;
+
+            UiCheckBox EnableOutlineForFieldCharacter = AddUiElement(UiCheckBoxFactory.Create("Model outlines", null), row, 0, 1, 8);
+            EnableOutlineForFieldCharacter.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(OutlineForFieldCharacter)) { Mode = BindingMode.TwoWay });
             EnableOutlineForFieldCharacter.Foreground = Brushes.White;
 
-            UiTextBlock separateLineBattle = AddUiElement(UiTextBlockFactory.Create("-----Shader For Battle Character-----"), row: 13, col: 0, rowSpan: 3, colSpan: 8);
+            row++;
+
+            UiTextBlock separateLineBattle = AddUiElement(UiTextBlockFactory.Create("╙ Battle Characters"), row: row, col: 0, rowSpan: 1, colSpan: 8);
             separateLineBattle.Margin = rowMargin;
-            
-            UiCheckBox EnableRealismShadingForBattle =
-                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableRealismShadingForBattle, null), 15, 0, 3, 8);
-            EnableRealismShadingForBattle.SetBinding(ToggleButton.IsCheckedProperty,
-                new Binding(nameof(RealismShadingForBattle)) { Mode = BindingMode.TwoWay });
+
+            row++;
+
+            UiCheckBox EnableRealismShadingForBattle = AddUiElement(UiCheckBoxFactory.Create("Realistic", null), row, 0, 1, 4);
+            EnableRealismShadingForBattle.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(RealismShadingForBattle)) { Mode = BindingMode.TwoWay });
             EnableRealismShadingForBattle.Foreground = Brushes.White;
-            
-            UiCheckBox EnableToonShadingForBattle =
-                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableToonShadingForBattle, null), 17, 0, 3, 8);
-            EnableToonShadingForBattle.SetBinding(ToggleButton.IsCheckedProperty,
-                new Binding(nameof(ToonShadingForBattle)) { Mode = BindingMode.TwoWay });
+
+            UiCheckBox EnableToonShadingForBattle = AddUiElement(UiCheckBoxFactory.Create("Toon", null), row, 3, 1, 4);
+            EnableToonShadingForBattle.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(ToonShadingForBattle)) { Mode = BindingMode.TwoWay });
             EnableToonShadingForBattle.Foreground = Brushes.White;
 
-            UiCheckBox EnableOutlineForBattleCharacter =
-                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableOutlineForBattleCharacter, null), 19, 0, 3,
-                    8);
-            EnableOutlineForBattleCharacter.SetBinding(ToggleButton.IsCheckedProperty,
-                new Binding(nameof(OutlineForBattleCharacter)) { Mode = BindingMode.TwoWay });
+            row++;
+
+            UiCheckBox EnableOutlineForBattleCharacter = AddUiElement(UiCheckBoxFactory.Create("Model outlines", null), row, 0, 1, 8);
+            EnableOutlineForBattleCharacter.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(OutlineForBattleCharacter)) { Mode = BindingMode.TwoWay });
             EnableOutlineForBattleCharacter.Foreground = Brushes.White;
             
             // TODO - hide ssao related ui for now

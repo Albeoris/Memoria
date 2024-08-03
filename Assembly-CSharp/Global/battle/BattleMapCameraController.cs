@@ -1,12 +1,5 @@
-﻿using Memoria;
-using Memoria.Prime;
-using Memoria.Scenes;
-using Memoria.Scripts;
-using System;
-using System.IO;
+﻿using System;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.UI;
 
 public class BattleMapCameraController : MonoBehaviour
 {
@@ -76,25 +69,25 @@ public class BattleMapCameraController : MonoBehaviour
         this.SetDefaultCamera(this.defaultCamID);
     }
 
-	public Int32 GetCurrDefaultCamID()
-	{
-		return this.defaultCamID;
-	}
+    public Int32 GetCurrDefaultCamID()
+    {
+        return this.defaultCamID;
+    }
     
     private void Awake()
     {
-		this.defaultCamID = UnityEngine.Random.Range(0, 3);
-		this.psxCam = new PsxCamera();
-		this.mainCam = base.GetComponent<Camera>();
-		this.rainRenderer = base.GetComponent<BattleRainRenderer>();
-		this.SetDefaultCamera(this.defaultCamID);
+        this.defaultCamID = UnityEngine.Random.Range(0, 3);
+        this.psxCam = new PsxCamera();
+        this.mainCam = base.GetComponent<Camera>();
+        this.rainRenderer = base.GetComponent<BattleRainRenderer>();
+        this.SetDefaultCamera(this.defaultCamID);
         this.mainCam.hdr = true;
     }
 
     private float myTime;
     
-	private void Update()
-	{
+    private void Update()
+    {
         if (!this.mainCam.hdr)
         {
             this.mainCam.hdr = true;
@@ -112,7 +105,7 @@ public class BattleMapCameraController : MonoBehaviour
         Shader.SetGlobalVector("_FixedWorldSpaceCameraPos", new Vector3(0f, 1000f, -4500f));
         Shader.SetGlobalVector("_MainLightDirection", _MainLightDirection);
         Shader.SetGlobalVector("_EnemyMainLightDirection", _EnemyMainLightDirection);
-	}
+    }
 
     private void LateUpdate()
     {
