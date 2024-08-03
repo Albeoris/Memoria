@@ -18,6 +18,13 @@
             VerticalAlignment="Top"
             Source="/Images/new_launcher_bg.png" Margin="-74,-249,74,0" />
 
+        <Image
+            x:Name="shaderComparison"
+            Height="250"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            Source="/Images/shader-comparison2.jpg" Margin="0,0,39,240" />
+
         <Rectangle Visibility="Visible" Height="30" Width="500" Margin="0,27,0,0" VerticalAlignment="Top" HorizontalAlignment="Center">
             <Rectangle.Style>
                 <Style TargetType="{x:Type Rectangle}">
@@ -26,7 +33,7 @@
                 </Style>
             </Rectangle.Style>
         </Rectangle>
-        
+
         <TextBlock x:Name="WindTitle"
             Margin="0,27,0,0"
             Text="Advanced and experimental settings"
