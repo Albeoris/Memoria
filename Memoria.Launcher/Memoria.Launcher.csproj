@@ -75,6 +75,7 @@
     <Compile Include="Memoria\ShaderSettingControl.cs" />
     <Compile Include="Memoria\UiLauncherAdvOptionsCloseButton.cs" />
     <Compile Include="Memoria\UiLauncherAdvOptionsButton.cs" />
+    <Compile Include="Memoria\UiLauncherModelViewerButton.cs" />
     <Compile Include="Memoria\UiModManagerButton.xaml.cs">
       <DependentUpon>UiModManagerButton.xaml</DependentUpon>
     </Compile>

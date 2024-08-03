@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ini;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -34,6 +35,22 @@ namespace Memoria.Launcher
             Label = Lang.Button.Launching;
             try
             {
+                try
+                {
+                    String iniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
+                    IniFile iniFile = new(iniPath);
+                    if (LaunchModelViewer)
+                    {
+                        iniFile.WriteValue("Debug", "Enabled ", " 1");
+                        iniFile.WriteValue("Debug", "StartModelViewer ", " 1");
+                    }
+                    else
+                    {
+                        iniFile.WriteValue("Debug", "StartModelViewer ", " 0");
+                    }
+                }
+                catch (Exception) { }
+
                 if (GameSettings.CheckUpdates)
                 {
                     if (await CheckUpdates((Window)this.GetRootElement(), CancelEvent, GameSettings))
