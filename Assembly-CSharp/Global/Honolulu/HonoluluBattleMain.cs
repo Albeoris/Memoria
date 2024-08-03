@@ -163,7 +163,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             Log.Error(err);
         }
     }
-    private Texture2D _cloudFlowMap;
+
     public void InitBattleScene()
     {
         FF9StateGlobal FF9 = FF9StateSystem.Common.FF9;
@@ -235,8 +235,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         {
             _updateAmbientRoutine = this.StartCoroutine(UpdateAmbientLight());
         }
-        
-        Shader.SetGlobalTexture("_CloudTexture", _cloudFlowMap);
     }
 
     private void CreateBattleData(FF9StateGlobal FF9)
