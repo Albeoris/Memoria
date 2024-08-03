@@ -372,7 +372,9 @@ namespace Memoria.Patcher
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Failed to get a game location.");
+                Console.WriteLine("Failed to get a game location:");
+                Console.WriteLine("If you changed the game directory from your first install, install this from the new game location.");
+                Console.WriteLine("Make sure you have launched the game at least once.");
                 Console.WriteLine("---------------------------");
                 Console.WriteLine(ex);
                 Console.WriteLine("---------------------------");
