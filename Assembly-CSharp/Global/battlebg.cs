@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public static class battlebg
 {
@@ -116,7 +115,7 @@ public static class battlebg
             }
         }
     }
-    
+
     public static List<Material> GetShaders(Int32 bbgAttr)
     {
         List<Material> list = new List<Material>();
