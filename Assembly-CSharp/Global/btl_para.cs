@@ -249,34 +249,11 @@ public class btl_para
         UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            if (Configuration.Mod.TranceSeek)
-            {
-                damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 8 : 5);
-                if (battleUnit.IsUnderStatus(BattleStatus.Venom))
-                    damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 7 : 4);
-            }
-            else
-            {
-                damage = GetLogicalHP(btl, true) >> 4;
-                if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
-                    damage >>= 2;
-            }
+            damage = GetLogicalHP(btl, true) >> 4;
+            if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
+                damage >>= 2;
             if (!FF9StateSystem.Battle.isDebug)
             {
-                if (Configuration.Mod.TranceSeek && battleUnit.IsZombie)
-                {
-                    if (battleUnit.IsUnderStatus(BattleStatus.Poison))
-                    {
-                        btl.cur.hp += damage;
-                        return;
-                    }
-                    if (battleUnit.IsUnderStatus(BattleStatus.Venom))
-                    {
-                        damage /= 2U;
-                        btl.cur.hp -= damage;
-                        return;
-                    }
-                }
                 if (GetLogicalHP(btl, false) > damage)
                 {
                     if (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull)
@@ -297,7 +274,7 @@ public class btl_para
         UInt32 recover = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            recover = GetLogicalHP(btl, true) >> (Configuration.Mod.TranceSeek ? (btl_stat.CheckStatus(btl, BattleStatus.EasyKill) ? 7 : 5) : 4);
+            recover = GetLogicalHP(btl, true) >> 4;
             if (new BattleUnit(btl).IsZombie)
             {
                 if (GetLogicalHP(btl, false) > recover)
@@ -320,16 +297,12 @@ public class btl_para
     public static void SetPoisonMpDamage(BTL_DATA btl)
     {
         // Dummied
-        if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
-            return;
         UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            damage = btl.max.mp >> (Configuration.Mod.TranceSeek ? 5 : 4);
+            damage = btl.max.mp >> 4;
             if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
                 damage >>= 2;
-            if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.Venom))
-                damage = btl.max.mp >> 4;
             if (!FF9StateSystem.Battle.isDebug && (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull))
             {
                 if (btl.cur.mp > damage)
