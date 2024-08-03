@@ -147,6 +147,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\shader-comparison2.jpg" />
     <EmbeddedResource Include="Languages\uk.xml" />
     <EmbeddedResource Include="Languages\it.xml" />
     <EmbeddedResource Include="Languages\jp.xml" />
