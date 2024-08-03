@@ -110,19 +110,6 @@ public static class btl_stat
                     stat.conti[statusId] = (Int16)Math.Min(val, Int16.MaxValue);
             }
             stat.conti[statusId] = (Int16)(stat.duration_factor[statusId] * stat.conti[statusId]);
-            // TODO [DV] Code that in a custom DoomStatusScript / GradualPetrifyStatusScript
-            //if ((status & (BattleStatus.Doom | BattleStatus.GradualPetrify)) != 0u)
-            //{
-            //    if (Configuration.Mod.TranceSeek && target.HasSupportAbility(SupportAbility1.AutoRegen)) // [DV] - SA Resilience
-            //    {
-            //        stat.cnt.conti[statusId] = (Int16)(statusData.ContiCnt * defaultFactor * 2);
-            //        stat.cnt.cdown_max = (Int16)Math.Max(1, stat.cnt.conti[statusId] / 2);
-            //    }
-            //    else
-            //    {
-            //        stat.cnt.cdown_max = Math.Max(1, stat.cnt.conti[statusId]);
-            //    }
-            //}
         }
         if (script is IOprStatusScript)
             SetOprStatusCount(target, statusId);
