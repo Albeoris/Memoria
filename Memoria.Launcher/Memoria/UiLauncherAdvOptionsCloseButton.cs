@@ -17,7 +17,7 @@ namespace Memoria.Launcher
             {
                 ((Window)this.GetRootElement()).Close();
             }
-            catch (Exception ex) { }
+            catch (Exception) { }
         }
     }
 }

@@ -18,7 +18,15 @@
             VerticalAlignment="Top"
             Source="/Images/new_launcher_bg.png" Margin="-74,-249,74,0" />
 
-
+        <Rectangle Visibility="Visible" Height="30" Width="500" Margin="0,27,0,0" VerticalAlignment="Top" HorizontalAlignment="Center">
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill"
+						        Value="#88000000"/>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+        
         <TextBlock x:Name="WindTitle"
             Margin="0,27,0,0"
             Text="Advanced and experimental settings"
@@ -29,6 +37,13 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Top" />
 
+        <launcher:UiLauncherModelViewerButton
+            Width="252"
+            Height="36"
+            Margin="0,0,0,20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Content="" />
 
         <launcher:ShaderSettingControl
             x:Name="GameSettings"
