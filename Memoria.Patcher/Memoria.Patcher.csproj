@@ -3357,9 +3357,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ff9.ico" />
-    <Content Include="StreamingAssets\Assets\Resources\Textures\DefaultCloudMap.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="StreamingAssets\Shaders\PSX\BattleCharacterShaderRef.txt" />
     <Content Include="StreamingAssets\Shaders\PSX\BattleMap_StatusEffect_RealLighting.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -3823,7 +3820,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

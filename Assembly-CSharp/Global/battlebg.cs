@@ -51,11 +51,6 @@ public static class battlebg
                 battlebg.geoBGTexAnimPlay(battlebg.nf_BbgTabAddress, i);
     }
 
-    public static void nf_InitBattleSky(Texture2D cloudTex, string battleSceneName)
-    {
-        battlebg.SetSkyparams(battlebg.btlModel, "PSX/BattleMap_Sky", cloudTex, battleSceneName);
-    }
-
     public static void SetDefaultShader(GameObject go)
     {
         foreach (Transform transform in go.transform)
@@ -118,89 +113,6 @@ public static class battlebg
                         material.SetInt("_ZWrite", 0); // ZWrite 0 to ignore depth buffer (1 to activate), Ground is the only one that was set to 1
                 }
                 //Log.Message("SetMaterialShader - go:" + go.name + " rendIdx:" + rendID + " battlebg.nf_BbgNumber:" + battlebg.nf_BbgNumber + " matID:" + matID + " shaderName:" + shaderName + " text:\"" + text + "\" _ZWrite:" + material.GetInt("_ZWrite") + " renderqueue:" + material.shader.renderQueue);
-            }
-        }
-    }
-
-    public static void SetSkyparams(GameObject go, String shaderName, Texture2D cloudTex, string battleSceneName)
-    {
-        var bgColor = new Color32(battlebg.nf_GetBbgInfoPtr().chr_r, battlebg.nf_GetBbgInfoPtr().chr_g,
-            battlebg.nf_GetBbgInfoPtr().chr_b, 255);
-        var preset = -1;
-        var isCloudBg = BgWithSky.TryGetValue(battleSceneName, out preset);
-       foreach (Transform transform in go.transform)
-        {
-            if (battlebg.getBbgAttr(transform.name) == battlebg.BBG_ATTR_SKY)
-            {
-                MeshRenderer[] renderers = transform.GetComponentsInChildren<MeshRenderer>();
-                for (Int32 i = 0; i < renderers.Length; i++)
-                {
-                    Material[] materials = renderers[i].materials;
-                    for (Int32 j = 0; j < materials.Length; j++)
-                    {
-                        Material material = materials[j];
-                        material.SetTexture("_CloudTexture", cloudTex);
-                        if (battleSceneName.Contains("WM"))
-                        {
-                            material.SetFloat("_Opacity1", Random.Range(0.413f, 0.9f));
-                            material.SetFloat("_Opacity2", Random.Range(0.16f, 0.32f));
-                            material.SetFloat("_Opacity3", Random.Range(0.2f, 1.0f));
-                            material.SetFloat("_Opacity4", 0.095f);
-                            material.SetColor("_ColorTint", Color.white);
-                            material.SetColor("_ColorAmbientTint", bgColor+ new Color(0.15f,0.15f,0.3f));
-                            material.SetFloat("_HeightOffset", 0.02f);
-                            material.SetFloat("_Altitude", Random.Range(2000, 2500));
-                            material.SetFloat("_Scroll", 0.001f);
-                            material.SetFloat("_Opacity", 0.5f);
-                            material.SetFloat("_Exposure", 2.7f);
-                            material.SetFloat("_NoCloud", -1.0f);
-                            material.SetFloat("_Angle", Random.Range(0,360));
-                        }
-                        else if (isCloudBg && preset == 1)
-                        {
-                            material.SetFloat("_Opacity1", 1.0f);
-                            material.SetFloat("_Opacity2", 0.161f);
-                            material.SetFloat("_Opacity3", 1.0f);
-                            material.SetFloat("_Opacity4", 0.095f);
-                            material.SetColor("_ColorTint", Color.white);
-                            material.SetColor("_ColorAmbientTint", bgColor+ new Color(0.15f,0.15f,0.3f));
-                            material.SetFloat("_HeightOffset", 0.0f);
-                            material.SetFloat("_Altitude", 2000.0f);
-                            material.SetFloat("_Scroll", 0.001f);
-                            material.SetFloat("_Opacity", 0.5f);
-                            material.SetFloat("_Exposure",2.7f);
-                            material.SetFloat("_NoCloud", -1.0f);
-                            material.SetFloat("_Angle", Random.Range(0,360));
-                        }
-                        else if (preset == 2)
-                        {
-                            material.SetFloat("_Opacity1", 0.9f);
-                            material.SetFloat("_Opacity2", 0.161f);
-                            material.SetFloat("_Opacity3", 1.0f);
-                            material.SetFloat("_Opacity4", 0.095f);
-                            material.SetColor("_ColorTint", Color.white);
-                            material.SetColor("_ColorAmbientTint", bgColor + new Color(0.15f,0.15f,0.3f));
-                            material.SetFloat("_HeightOffset", 0.1f);
-                            material.SetFloat("_Altitude", 2000.0f);
-                            material.SetFloat("_Scroll", 0.001f);
-                            material.SetFloat("_Opacity", 0.5f);
-                            material.SetFloat("_Exposure",2.7f);
-                            material.SetFloat("_NoCloud", -1.0f);
-                            material.SetFloat("_Angle", Random.Range(0,360));
-                        }
-                        else
-                        {
-                            material.SetFloat("_Opacity1", 0f);
-                            material.SetFloat("_Opacity2", 0f);
-                            material.SetFloat("_Opacity3", 0f);
-                            material.SetFloat("_Opacity4", 0f);
-                            material.SetColor("_ColorTint", Color.black);
-                            material.SetColor("_ColorAmbientTint", Color.black);
-                            material.SetFloat("_Exposure", 1.0f);
-                            material.SetFloat("_NoCloud", 1.0f);
-                        }
-                    }
-                }
             }
         }
     }
@@ -825,36 +737,4 @@ public static class battlebg
         141, // World Map, Lost Continent, Snow
         95   // Desert Palace, Library
     ];
-    
-    public static readonly Dictionary<string, int> BgWithSky = new Dictionary<string, int>
-    {
-        {"BSC_BU_R013", 1},
-        {"BSC_BU_R010", 1},
-        {"BSC_BU_R011", 1},
-        {"BSC_BU_E015", 1},
-        {"BSC_BU_R008", 1},
-        {"BSC_BU_R005", 1},
-        {"BSC_BU_R006", 1},
-        {"BSC_GT_R014", 1},
-        {"BSC_UV_R000", 1},
-        {"BSC_IF_R003", 1},
-        {"BSC_IF_R008", 1},
-        {"BSC_GT_R003", 1},
-        {"BSC_BU_R017", 1},
-        {"BSC_BU_R015", 1},
-        {"BSC_BU_R016", 1},
-        {"BSC_BU_E072", 1},
-        
-        //boss battle
-        {"BSC_AP_E012", 1},
-        {"BSC_CA_E013", 2},
-        {"BSC_SG_E016", 1},
-        {"BSC_CY_E018", 1},
-        {"BSC_CY_E022", 1},
-        {"BSC_CM_E051", 1},
-        {"BSC_CM_R007", 1},
-        {"BSC_CM_R001", 1},
-        {"BSC_CM_R004", 1},
-        {"BSC_MS_E075", 1},
-    };
 }

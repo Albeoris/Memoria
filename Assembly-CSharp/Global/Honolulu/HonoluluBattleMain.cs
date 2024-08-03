@@ -166,9 +166,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private Texture2D _cloudFlowMap;
     public void InitBattleScene()
     {
-        Byte[] raw = File.ReadAllBytes("StreamingAssets/Assets/Resources/Textures/DefaultCloudMap.png");
-        _cloudFlowMap = AssetManager.LoadTextureGeneric(raw);
-        _cloudFlowMap.wrapMode = TextureWrapMode.Clamp;
         FF9StateGlobal FF9 = FF9StateSystem.Common.FF9;
         FF9.charArray.Clear();
         attachModel.Clear();
@@ -213,9 +210,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         bbginfo.ReadBattleInfo(battleModelPath);
         FF9StateSystem.Battle.FF9Battle.map.btlBGInfoPtr = bbginfo;
         battle.InitBattleMap();
-        string fullbattleSceneName;
-        FF9BattleDB.SceneData.TryGetKey(FF9StateSystem.Battle.battleMapIndex, out fullbattleSceneName);
-        battle.InitBattleMapSky(_cloudFlowMap, fullbattleSceneName);
         this.seqList = new List<Int32>();
         SB2_PATTERN sb2Pattern = this.btlScene.PatAddr[FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum];
         Int32[] monsterType = new Int32[sb2Pattern.MonsterCount];

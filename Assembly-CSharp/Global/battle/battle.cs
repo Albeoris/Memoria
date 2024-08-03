@@ -59,11 +59,6 @@ public static class battle
         ++ff9.party.battle_no;
     }
 
-    public static void InitBattleMapSky(Texture2D cloud, string battleSceneName)
-    {
-        battlebg.nf_InitBattleSky(cloud, battleSceneName);
-    }
-
     public static void InitBattleMap()
     {
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;

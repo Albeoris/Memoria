@@ -201,8 +201,11 @@ public class HonoluluFieldMain : HonoBehavior
 
     private void FF9FieldMapMain()
     {
+        // Hard coded sun light direction, maybe there will be a more optimal way to setup sun light.
+        // e.g. Depends on different stage
         Vector3 _FieldMainLightDirection = new Vector3(0.2f, 1.0f, 0);
         Shader.SetGlobalVector("_FieldMainLightDirection", _FieldMainLightDirection);
+        
         if ((this.FF9.attr & 256u) == 0u)
         {
             if (!MBG.IsNull)
