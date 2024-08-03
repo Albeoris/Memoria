@@ -207,14 +207,6 @@ namespace FF9
             if (start_type == battle_start_type_tags.BTL_START_BACK_ATTACK)
                 BattleAchievement.UpdateBackAttack();
 
-            // TRANCE SEEK VERSION - Disable back/first attack from specific battles (custom ennemies)
-            if (Configuration.Mod.TranceSeek &&
-                (FF9StateSystem.Battle.battleMapIndex == 850 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2
-                || FF9StateSystem.Battle.battleMapIndex == 849 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2
-                || FF9StateSystem.Battle.battleMapIndex == 851 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2))
-            {
-                start_type = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
-            }
             return start_type;
         }
 
