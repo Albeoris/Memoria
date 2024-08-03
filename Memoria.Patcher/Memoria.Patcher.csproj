@@ -3357,9 +3357,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="ff9.ico" />
-    <Content Include="StreamingAssets\Assets\Resources\Textures\BlueNoise470.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="StreamingAssets\Assets\Resources\Textures\DefaultCloudMap.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

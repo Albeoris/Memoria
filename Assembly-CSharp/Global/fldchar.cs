@@ -7,6 +7,7 @@ using UnityEngine;
 
 public static class NormalSolver
     {
+        //Source : https://medium.com/@fra3point/runtime-normals-recalculation-in-unity-a-complete-approach-db42490a5644
         /// <summary>
         ///     Recalculate the normals of a mesh based on an angle threshold. This takes
         ///     into account distinct vertices that have the same position.
