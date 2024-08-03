@@ -82,8 +82,6 @@ public class BattleMapCameraController : MonoBehaviour
         this.rainRenderer = base.GetComponent<BattleRainRenderer>();
         this.SetDefaultCamera(this.defaultCamID);
     }
-
-    private float _myTime;
     
     private void Update()
     {
