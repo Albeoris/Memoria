@@ -14,7 +14,6 @@ namespace Memoria
             public readonly IniValue<Int32> EnableToonShadingForBattle;
             public readonly IniValue<Int32> OutlineForFieldCharacter;
             public readonly IniValue<Int32> OutlineForBattleCharacter;
-            public readonly IniValue<Int32> EnableSSAO;
 
             public ShadersSection() : base(nameof(ShadersSection), false)
             {
@@ -24,7 +23,6 @@ namespace Memoria
                 EnableToonShadingForBattle = BindInt32(nameof(EnableToonShadingForBattle), 0);
                 OutlineForFieldCharacter = BindInt32(nameof(OutlineForFieldCharacter), 0);
                 OutlineForBattleCharacter = BindInt32(nameof(OutlineForBattleCharacter), 0);
-                EnableSSAO = BindInt32(nameof(EnableSSAO), 0);
                 Log.Message("custom shader value = " + (Enabled.Value ? "1" : "0"));
             }
         }

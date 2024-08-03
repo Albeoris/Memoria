@@ -101,7 +101,6 @@
 	EnableToonShadingForBattle = "Use Toon Shading In Battle"
 	EnableOutlineForFieldCharacter = "Enable Outline For Field Character"
 	EnableOutlineForBattleCharacter = "Enable Outline For Battle Character"
-	EnableSSAO = "Enable SASO (Expensive)"
 	
 	CameraStabilizer = "Camera stabilizer"
 	UseOrchestralMusic = "Orchestral music (Moguri)"

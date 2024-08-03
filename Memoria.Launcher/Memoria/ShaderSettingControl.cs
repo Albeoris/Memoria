@@ -114,17 +114,6 @@ namespace Memoria.Launcher
             UiCheckBox EnableOutlineForBattleCharacter = AddUiElement(UiCheckBoxFactory.Create("Model outlines", null), row, 0, 1, 8);
             EnableOutlineForBattleCharacter.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(OutlineForBattleCharacter)) { Mode = BindingMode.TwoWay });
             EnableOutlineForBattleCharacter.Foreground = Brushes.White;
-            
-            // TODO - hide ssao related ui for now
-            /* UiTextBlock separateLineOther = AddUiElement(UiTextBlockFactory.Create("-----Shader Other Effects-----"), row: 21, col: 0, rowSpan: 3, colSpan: 8);
-            separateLineField.Margin = rowMargin;*/
-            
-            /*UiCheckBox UiEnableSSAO =
-                AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.EnableSSAO, null), 23, 0, 3,
-                    8);
-            UiEnableSSAO.SetBinding(ToggleButton.IsCheckedProperty,
-                new Binding(nameof(EnableSSAO)) { Mode = BindingMode.TwoWay });
-            UiEnableSSAO.Foreground = Brushes.White;*/
 
             foreach (FrameworkElement child in Children)
             {
@@ -159,7 +148,6 @@ namespace Memoria.Launcher
         #region Properties
 
         private Int16 _enableCustomShader, _toonShadingForField, _toonShadingForBattle, _realismShadingForField, _realismShadingForBattle, _outlineForField, _outlineForBattle;
-        private Int16 _enableSSAO;
 
         public Int16 EnableCustomShader
         {
@@ -267,19 +255,6 @@ namespace Memoria.Launcher
                 }
             }
         }
-        
-        public Int16 EnableSSAO
-        {
-            get { return _enableSSAO; }
-            set
-            {
-                if (_enableSSAO != value)
-                {
-                    _enableSSAO = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
         #endregion
 
@@ -332,7 +307,6 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Shaders", "EnableToonShadingForBattle", "0");
                         MakeIniNotNull("Shaders", "OutlineForFieldCharacter", "0");
                         MakeIniNotNull("Shaders", "OutlineForBattleCharacter", "0");
-                        MakeIniNotNull("Shaders", "EnableSSAO", "0");
 
                         MakeIniNotNull("Control", "Enabled", "1");
                         MakeIniNotNull("Control", "DisableMouse", "0");
@@ -520,10 +494,6 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Shaders", "OutlineForBattleCharacter ",
                             " " + OutlineForBattleCharacter.ToString());
                         break;
-                    case nameof(EnableSSAO):
-                        iniFile.WriteValue("Shaders", "EnableSSAO ",
-                            " " + EnableSSAO.ToString());
-                        break;
                 }
             }
             catch (Exception ex)
@@ -603,15 +573,6 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _outlineForBattle))
                     _outlineForBattle = 0;
                 OnPropertyChanged(nameof(OutlineForBattleCharacter));
-                
-                value = iniFile.ReadValue("Shaders", "EnableSSAO");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                }
-                if (!Int16.TryParse(value, out _enableSSAO))
-                    _enableSSAO = 0;
-                OnPropertyChanged(nameof(EnableSSAO));
             }
             catch (Exception ex)
             {

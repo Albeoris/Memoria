@@ -1570,7 +1570,6 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Shaders", "EnableToonShadingForBattle", "0");
                         MakeIniNotNull("Shaders", "OutlineForFieldCharacter", "0");
                         MakeIniNotNull("Shaders", "OutlineForFieldCharacter", "0");
-                        MakeIniNotNull("Shaders", "EnableSSAO", "0");
 
                         MakeSureSpacesAroundEqualsigns();
                     }

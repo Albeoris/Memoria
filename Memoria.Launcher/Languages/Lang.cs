@@ -223,7 +223,6 @@ namespace Memoria.Launcher
             public static readonly string EnableToonShadingForBattle = GetSettings(nameof(EnableToonShadingForBattle));
             public static readonly string EnableOutlineForFieldCharacter = GetSettings(nameof(EnableOutlineForFieldCharacter));
             public static readonly string EnableOutlineForBattleCharacter = GetSettings(nameof(EnableOutlineForBattleCharacter));
-            public static readonly string EnableSSAO = GetSettings(nameof(EnableSSAO));
 
             // Settings.ini Tooltips
             public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));
