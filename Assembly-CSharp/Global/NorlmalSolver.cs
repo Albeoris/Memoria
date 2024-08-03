@@ -4,7 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+// To have a good looking shading on low poly character model, We need to 'smooth' out the normal vector on character model.
+// This operation are pretty slow and Ideally should perform on a worker-thread.
 
+// However since we only perform the smooth operation on the first time the character mesh loaded & FF9's mesh poly count is very low.
+// With modern PC, player should not notice any drop of framerate, even we perform these operation on main thread.
 public static class NormalSolver
 {
     //Source : https://medium.com/@fra3point/runtime-normals-recalculation-in-unity-a-complete-approach-db42490a5644
@@ -180,7 +184,7 @@ public static class NormalSolver
 
     public static void SmoothCharacterMesh(Renderer[] renderers)
     {
-        if (Configuration.Shaders.EnabledEnabled != 1)
+        if (Configuration.Shaders.CustomShaderEnabled != 1)
         {
             return;
         }
@@ -218,7 +222,7 @@ public static class NormalSolver
 
     public static void SmoothCharacterMesh(SkinnedMeshRenderer[] renderers)
     {
-        if (Configuration.Shaders.EnabledEnabled != 1)
+        if (Configuration.Shaders.CustomShaderEnabled != 1)
         {
             return;
         }
@@ -236,7 +240,7 @@ public static class NormalSolver
 
     public static void SmoothCharacterMesh(MeshRenderer[] renderers)
     {
-        if (Configuration.Shaders.EnabledEnabled != 1)
+        if (Configuration.Shaders.CustomShaderEnabled != 1)
         {
             return;
         }

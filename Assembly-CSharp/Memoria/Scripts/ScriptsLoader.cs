@@ -33,7 +33,7 @@ namespace Memoria.Scripts
         {
             get
             {
-                if (Configuration.Shaders.EnabledEnabled == 1)
+                if (Configuration.Shaders.CustomShaderEnabled == 1)
                 {
                     if (Configuration.Shaders.EnableToonShadingBattle == 1)
                         return ToonBattleCharacterShader;
@@ -49,7 +49,7 @@ namespace Memoria.Scripts
         {
             get
             {
-                if (Configuration.Shaders.EnabledEnabled == 1)
+                if (Configuration.Shaders.CustomShaderEnabled == 1)
                 {
                     if (Configuration.Shaders.EnableToonShadingField == 1)
                         return ToonFieldCharacterShader;
