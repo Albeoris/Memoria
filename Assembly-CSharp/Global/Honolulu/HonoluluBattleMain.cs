@@ -231,7 +231,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         this.playerCastingSkill = false;
         this.enemyEnterCommand = false;
         
-        if (_updateAmbientRoutine == null)
+        
+        if (Configuration.Shaders.CustomShaderEnabled == 1 && _updateAmbientRoutine == null)
         {
             _updateAmbientRoutine = this.StartCoroutine(UpdateAmbientLight());
         }
@@ -877,15 +878,18 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private void OnDestroy()
     {
         SFX.EndBattle();
-        // Make sure we destroy the object we created for ambient lighting during init phase
-        if (_reflectionProbe != null)
+        if (Configuration.Shaders.CustomShaderEnabled == 1)
         {
-            Destroy(_reflectionProbe.gameObject);
-            _hasUpdateProbeCapture = false;
-            _hasUpdateAmbient = false;
+            // Make sure we destroy the object we created for ambient lighting during init phase
+            if (_reflectionProbe != null)
+            {
+                Destroy(_reflectionProbe.gameObject);
+                _hasUpdateProbeCapture = false;
+                _hasUpdateAmbient = false;
+            }
+            StopCoroutine(_updateAmbientRoutine);
+            _updateAmbientRoutine = null;   
         }
-        StopCoroutine(_updateAmbientRoutine);
-        _updateAmbientRoutine = null;
 
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
         {
