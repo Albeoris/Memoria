@@ -244,7 +244,7 @@
     <Compile Include="Global\battle\BattleMapCameraController.cs" />
     <Compile Include="Global\battle\BattlePlayerCharacter.cs" />
     <Compile Include="Global\battle\BattleRainRenderer.cs" />
-    <Compile Include="Global\NorlmalSolver.cs" />
+    <Compile Include="Global\NormalSolver.cs" />
     <Compile Include="Global\SPS\BattleSPSSystem.cs" />
     <Compile Include="Global\battle\BattleStateSystem.cs" />
     <Compile Include="Global\battle\BattleSwirl.cs" />
