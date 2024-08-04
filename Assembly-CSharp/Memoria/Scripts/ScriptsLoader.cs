@@ -20,7 +20,8 @@ namespace Memoria.Scripts
         private static volatile Task s_initializationTask;
         private static volatile Dictionary<String, Shader> s_shaders;
         private static volatile FileSystemWatcher s_watcher;
-        
+
+        // TODO: these would rather be placed in "Memoria/Configuration/Access/Shaders.cs"
         private const string DefaultBattleCharacterShader = "PSX/BattleMap_StatusEffect";
         private const string ToonBattleCharacterShader = "PSX/BattleMap_StatusEffect_Toon";
         private const string RealismBattleCharacterShader = "PSX/BattleMap_StatusEffect_RealLighting";
