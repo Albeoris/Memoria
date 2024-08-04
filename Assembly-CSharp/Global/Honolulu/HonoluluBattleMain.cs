@@ -691,7 +691,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             RenderSettings.skybox = _skyBox;
             _reflectionProbe.RenderProbe();
         }
-
+        // this simply mean the reflection probe's texture are not yet update internally.
+        // so we need to wait for it.
         while (_reflectionProbe.texture.name.Contains("Black"))
         {
             yield return new WaitForEndOfFrame();
