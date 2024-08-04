@@ -216,6 +216,10 @@ namespace Memoria.Launcher
             public static readonly string UIColumnsChoice1 = GetSettings(nameof(UIColumnsChoice1));
             public static readonly string UIColumnsChoice2 = GetSettings(nameof(UIColumnsChoice2));
             public static readonly string NoAutoTrance = GetSettings(nameof(NoAutoTrance));
+            public static readonly string CardReduceRandom = GetSettings(nameof(CardReduceRandom));
+            public static readonly string tetraMasterReduceRandomBox0 = GetSettings(nameof(tetraMasterReduceRandomBox0));
+            public static readonly string tetraMasterReduceRandomBox1 = GetSettings(nameof(tetraMasterReduceRandomBox1));
+            public static readonly string tetraMasterReduceRandomBox2 = GetSettings(nameof(tetraMasterReduceRandomBox2));
 
             // Settings.ini Tooltips
             public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));
