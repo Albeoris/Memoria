@@ -860,7 +860,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     {
         return CurPlayerWeaponIndex[battlePlayerPosID];
     }
-    
+
     private void OnGUI()
     {
         //if (!EventEngineUtils.showDebugUI)
