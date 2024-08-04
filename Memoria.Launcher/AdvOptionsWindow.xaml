@@ -12,31 +12,17 @@
     Background="Black"
     WindowStyle="SingleBorderWindow">
     <Grid>
-        <Image
-            x:Name="Launcher"
+        <Image x:Name="Launcher"
             Height="884"
             VerticalAlignment="Top"
-            Source="/Images/new_launcher_bg.png" Margin="-74,-249,74,0" />
-
-        <Image
-            x:Name="shaderComparison"
-            Height="250"
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Right"
-            Source="/Images/shader-comparison2.jpg" Margin="0,0,39,240" />
-        
-        <Image
-            x:Name="shaderComparisonBattle"
-            Height="350"
-            VerticalAlignment="Bottom"
-            HorizontalAlignment="Center"
-            Source="/Images/shader-battle-comparison.jpg" Margin="0,0,0,143" />
+            Source="/Images/new_launcher_bg.png"
+            Margin="-74,-249,74,0"
+            />
 
         <Rectangle Visibility="Visible" Height="30" Width="500" Margin="0,27,0,0" VerticalAlignment="Top" HorizontalAlignment="Center">
             <Rectangle.Style>
                 <Style TargetType="{x:Type Rectangle}">
-                    <Setter Property="Fill"
-						        Value="#88000000"/>
+                    <Setter Property="Fill" Value="#88000000"/>
                 </Style>
             </Rectangle.Style>
         </Rectangle>
@@ -51,14 +37,6 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Top" />
 
-        <launcher:UiLauncherModelViewerButton
-            Width="252"
-            Height="36"
-            Margin="0,0,0,20"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Bottom"
-            Content="" />
-
         <launcher:ShaderSettingControl
             x:Name="GameSettings"
             Width="260"
@@ -67,6 +45,14 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
 
+        <launcher:UiLauncherModelViewerButton
+            Width="252"
+            Height="36"
+            Margin="0,0,0,20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Content="" />
+
         <launcher:UiLauncherAdvOptionsCloseButton
             Width="251"
             Height="36"
@@ -74,5 +60,44 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Content="" />
+
+        <Image x:Name="shader_comparison1_thumb"
+            MouseEnter="Shader_comparison1_MouseEnter"
+            MouseLeave="Shader_comparison1_MouseLeave"
+            Width="125"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            Source="/Images/shader_comparison1.jpg"
+            Margin="0,0,30,230"
+            />
+
+        <Image x:Name="shader_comparison2_thumb"
+            MouseEnter="Shader_comparison2_MouseEnter"
+            MouseLeave="Shader_comparison2_MouseLeave"
+            Width="117"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            Source="/Images/shader_comparison2.jpg"
+            Margin="0,0,160,230"
+            />
+
+        <Image x:Name="shader_comparison1_full"
+            Width="400"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            Source="/Images/shader_comparison1.jpg"
+            Margin="0,0,155,177"
+            Visibility="Collapsed"
+            />
+
+        <Image x:Name="shader_comparison2_full"
+            Width="400"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            Source="/Images/shader_comparison2.jpg"
+            Margin="0,0,282,146"
+            Visibility="Collapsed"
+            />
+
     </Grid>
 </Window>
