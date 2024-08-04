@@ -26,7 +26,7 @@
             Source="/Images/shader-comparison2.jpg" Margin="0,0,39,240" />
         
         <Image
-            x:Name="shaderComparison2"
+            x:Name="shaderComparisonBattle"
             Height="350"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Center"
