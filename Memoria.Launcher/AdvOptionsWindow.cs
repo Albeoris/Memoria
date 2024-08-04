@@ -1,29 +1,8 @@
 using System;
-using System.IO;
-using System.IO.Compression;
 using System.Runtime.InteropServices;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Globalization;
-using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Reflection;
 using System.Windows;
-using System.Windows.Forms;
 using System.Windows.Markup;
-using System.Windows.Media.Imaging;
-using Ini;
-using ListView = System.Windows.Controls.ListView;
-using GridView = System.Windows.Controls.GridView;
-using GridViewColumnHeader = System.Windows.Controls.GridViewColumnHeader;
-using MessageBox = System.Windows.Forms.MessageBox;
-using Application = System.Windows.Application;
-using Point = System.Drawing.Point;
-using Color = System.Drawing.Color;
 
 namespace Memoria.Launcher
 {

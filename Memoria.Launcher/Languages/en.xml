@@ -94,13 +94,6 @@
 	BattleFPS = "Battle"
 	FieldFPS = "Field"
 	WorldFPS = "World"
-	EnableCustomShader = "Enable Custom Shaders"
-	Shader_Field_Realism = "Use Realism Shading In Field"
-	Shader_Field_Toon = "Use Toon Shading In Field"
-	Shader_Field_Outlines = "Enable Outline For Field Character"
-	Shader_Battle_Realism = "Use Realism Shading In Battle"
-	Shader_Battle_Toon = "Use Toon Shading In Battle"
-	Shader_Battle_Outlines = "Enable Outline For Battle Character"
 	
 	CameraStabilizer = "Camera stabilizer"
 	UseOrchestralMusic = "Orchestral music (Moguri)"
@@ -159,6 +152,16 @@
 	FPSDropboxChoice3 = "90"
 	FPSDropboxChoice4 = "120"
 	/>
+	
+	<!-- 
+	EnableCustomShader = "Enable Custom Shaders"
+	Shader_Field_Realism = "Use Realism Shading In Field"
+	Shader_Field_Toon = "Use Toon Shading In Field"
+	Shader_Field_Outlines = "Enable Outline For Field Character"
+	Shader_Battle_Realism = "Use Realism Shading In Battle"
+	Shader_Battle_Toon = "Use Toon Shading In Battle"
+	Shader_Battle_Outlines = "Enable Outline For Battle Character"
+	-->
 
 	<SdLib
 	Caption = "Patch SdLib.dll"
