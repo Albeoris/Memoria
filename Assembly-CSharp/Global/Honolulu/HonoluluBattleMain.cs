@@ -641,6 +641,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         if (!IsPaused)
             FPSManager.AddSmoothEffect(SmoothFrameUpdater_Battle.Apply);
     }
+    
     // runtime game object and material for creating ambient lighting
     private ReflectionProbe _reflectionProbe;
     private bool _hasUpdateProbeCapture = false;
@@ -649,39 +650,33 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     private IEnumerator UpdateAmbientLight()
     {
-        var hasValidCharacter = false;
+        // TODO: I think BTL_DATA are always initialised at this point because of the call at the end of "InitBattleScene"
+        Boolean hasValidCharacter = false;
         while (!hasValidCharacter)
         {
-            for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
-            {
-                hasValidCharacter = true;
-            }
+            hasValidCharacter = FF9StateSystem.Battle.FF9Battle.btl_list.next != null;
             yield return null;
         }
 
-        for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+        //for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+        //    if (btl.bi.player == 1)
+        
+        if (_reflectionProbe == null)
         {
-            if (btl.bi.player == 1)
-            {
-                if (_reflectionProbe == null)
-                {
-                    var obj = new GameObject("environemtCapture");
-                    // the position is somewhere above one of the character's head in the battle scene....
-                    obj.transform.position = new Vector3(632.0f, 500.0f, -1560.0f);
-                    _reflectionProbe = obj.AddComponent<ReflectionProbe>();
-                    _reflectionProbe.mode = ReflectionProbeMode.Realtime;
-                    _reflectionProbe.cullingMask = -1;
-                    _reflectionProbe.refreshMode = ReflectionProbeRefreshMode.ViaScripting;
-                    _reflectionProbe.size = new Vector3(10000, 10000, 10000);
-                    _reflectionProbe.resolution = 128;
-                    _reflectionProbe.clearFlags = ReflectionProbeClearFlags.SolidColor;
-                    _reflectionProbe.backgroundColor = Color.black;
-                    ;
-                }
-            }
+            GameObject obj = new GameObject("EnvironmentCapture");
+            // the position is somewhere above one of the character's head in the battle scene....
+            obj.transform.position = new Vector3(632.0f, 500.0f, -1560.0f);
+            _reflectionProbe = obj.AddComponent<ReflectionProbe>();
+            _reflectionProbe.mode = ReflectionProbeMode.Realtime;
+            _reflectionProbe.cullingMask = -1;
+            _reflectionProbe.refreshMode = ReflectionProbeRefreshMode.ViaScripting;
+            _reflectionProbe.size = new Vector3(10000, 10000, 10000);
+            _reflectionProbe.resolution = 128;
+            _reflectionProbe.clearFlags = ReflectionProbeClearFlags.SolidColor;
+            _reflectionProbe.backgroundColor = Color.black;
         }
         
-        if(_skyBox == null)
+        if (_skyBox == null)
             _skyBox = new Material(ShadersLoader.Find("PSX/Skybox_Cubemap"));
         
         if (_reflectionProbe != null)
@@ -702,7 +697,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         
         // This is a slow operation, make sure this code only run once.
         DynamicGI.UpdateEnvironment();
-        
     }
 
     private Coroutine _updateAmbientRoutine = null;
@@ -793,13 +787,10 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         {
             if (btl.bi.slave != 0 || btl.bi.disappear != 0 || btl.bi.shadow == 0)
                 continue;
-            if(btl._hasMeshSmoothed)
+            if (btl._hasMeshSmoothed)
                 continue;
-            var battleUnitGameObject = btl.gameObject;
-            SkinnedMeshRenderer[] componentsInChildren = battleUnitGameObject.GetComponentsInChildren<SkinnedMeshRenderer>();
-            MeshRenderer[] componentsInChildren2 = battleUnitGameObject.GetComponentsInChildren<MeshRenderer>();
-            NormalSolver.SmoothCharacterMesh(componentsInChildren);
-            NormalSolver.SmoothCharacterMesh(componentsInChildren2);
+            NormalSolver.SmoothCharacterMesh(btl.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>());
+            NormalSolver.SmoothCharacterMesh(btl.gameObject.GetComponentsInChildren<MeshRenderer>());
             btl._hasMeshSmoothed = true;
         }
     }
