@@ -24,6 +24,13 @@
             VerticalAlignment="Bottom"
             HorizontalAlignment="Right"
             Source="/Images/shader-comparison2.jpg" Margin="0,0,39,240" />
+        
+        <Image
+            x:Name="shaderComparison2"
+            Height="350"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Center"
+            Source="/Images/shader-battle-comparison.jpg" Margin="0,0,0,143" />
 
         <Rectangle Visibility="Visible" Height="30" Width="500" Margin="0,27,0,0" VerticalAlignment="Top" HorizontalAlignment="Center">
             <Rectangle.Style>
