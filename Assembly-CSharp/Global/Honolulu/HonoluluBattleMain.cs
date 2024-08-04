@@ -127,7 +127,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             Log.Error(err);
         }
     }
-    
+
     private void Start()
     {
         try
@@ -711,11 +711,10 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     {
         if (IsPaused)
             return;
-        
+
         HonoluluBattleMain.counterATB = 0;
         battleSPS.EffectUpdate();
         this.battleResult = battle.BattleMain();
-        
         if (!FF9StateSystem.Battle.isDebug)
         {
             if (UIManager.Battle.FF9BMenu_IsEnable())
@@ -732,7 +731,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             }
         }
         SceneDirector.ServiceFade();
-
     }
 
     private static void UpdateOverFrame()
@@ -787,7 +785,8 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             }
             btlseq.FF9DrawShadowCharBattle(stateBattleSystem.map.shadowArray[btl], btl, 0, BoneNo);
         }
-        
+
+        // Smooth all battle character once
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
             if (btl.bi.slave != 0 || btl.bi.disappear != 0 || btl.bi.shadow == 0)

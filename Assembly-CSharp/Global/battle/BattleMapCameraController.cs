@@ -73,7 +73,7 @@ public class BattleMapCameraController : MonoBehaviour
     {
         return this.defaultCamID;
     }
-    
+
     private void Awake()
     {
         this.defaultCamID = UnityEngine.Random.Range(0, 3);
@@ -82,7 +82,7 @@ public class BattleMapCameraController : MonoBehaviour
         this.rainRenderer = base.GetComponent<BattleRainRenderer>();
         this.SetDefaultCamera(this.defaultCamID);
     }
-    
+
     private void Update()
     {
         Vector3 _MainLightDirection = new Vector3(-0.6f, 1, 0.6f);
