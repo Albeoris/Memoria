@@ -80,7 +80,8 @@ public partial class BattleHUD : UIScene
         ElementalAffinities = ElementWeak | ElementResist | ElementImmune | ElementAbsorb,
         StatusAffinities = StatusImmune | StatusAuto,
 
-        Default = NameLevel | HPMP | Category | ElementWeak
+        Default = NameLevel | HPMP | Category | ElementWeak,
+        All = NameLevel | HPMP | ElementalAffinities | StatusAffinities | Category | ItemSteal | BlueLearn | AttackList
     }
 
     private static readonly LibraInformation[] LibraAutoProcess =

@@ -138,6 +138,9 @@ ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
 Wait: Time=1
 SetBackgroundIntensity: Intensity=0.5 ; Time=16 ; HoldDuration=60
 Wait: Time=60
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 0, 0)
+EndThread
 SetBackgroundIntensity: Intensity=1 ; Time=16
 MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; RelativePosition=(0.0, 2008.0, 0.0) ; MoveHeight=True ; Time=0
 Turn: Char=AllTargets ; BaseAngle=Default ; Angle=(0.0, 0.0, 180.0) ; Time=0
@@ -161,8 +164,5 @@ EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=16
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=17
-StartThread: Condition=SFXUseCamera && AreTargetsPlayers
-	ShiftWorld: Angle=(0, 0, 0)
-EndThread
 ShowMesh: Char=AllNonTargets ; Enable=True ; IsDisappear=True
 ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12

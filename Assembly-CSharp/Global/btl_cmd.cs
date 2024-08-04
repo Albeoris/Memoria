@@ -330,9 +330,9 @@ public class btl_cmd
             caster.Data.sel_mode = 0;
             return;
         }
-        if (btl_para.IsNonDyingVanillaBoss(caster.Data) && caster.CurrentHp < 10000 && battleState.btl_phase == FF9StateBattleSystem.PHASE_NORMAL && btl_scrp.GetBattleID(1) == caster.Id)
+        if (btl_para.IsSpecialHPInDyingState(caster) && cmd_no != BattleCommandId.EnemyDying && battleState.btl_phase == FF9StateBattleSystem.PHASE_NORMAL && btl_scrp.GetBattleID(1) == caster.Id)
         {
-            // Avoid bosses to keep attacking under 10000 HP in Speed modes >= 3 (because their AI script will not enter the ending phase if SFX keep playing)
+            // Avoid bosses to keep attacking or counter-attacking under 10000 HP, especially in Speed modes >= 3 (because their AI script will not enter the ending phase if SFX keep playing)
             caster.Data.sel_mode = 0;
             return;
         }
@@ -1552,7 +1552,7 @@ public class btl_cmd
     public static void DispSelectCursor(FF9StateGlobal sys, FF9StateBattleSystem btlsys, BTL_DATA btl)
     {
         GameObject cursorGo = btlsys.s_cur;
-        Vector3 pos = btl.gameObject.transform.localPosition;
+        Vector3 pos = btl.gameObject.transform.position;
         Vector3 rot = cursorGo.transform.localRotation.eulerAngles;
         cursorGo.transform.localPosition = new Vector3(pos.x, pos.y + btl.height, pos.z);
         Single angley = (Single)((((btlsys.btl_cnt & 15) << 8) + 1265) % 4096 / 4096f * 360f);

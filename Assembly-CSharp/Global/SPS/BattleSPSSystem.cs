@@ -219,6 +219,22 @@ public class BattleSPSSystem : MonoBehaviour
         }
     }
 
+    public SPSEffect GetBtlSPSObj(BattleUnit unit, BattleStatusId statusId)
+    {
+        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(unit.Position, (Int32)statusId);
+        if (this._statusToSPSIndex.TryGetValue(effectCode, out Int32 spsIndex) && Utility.SpsList[spsIndex].attr != 0)
+            return Utility.SpsList[spsIndex];
+        return null;
+    }
+
+    public SHPEffect GetBtlSHPObj(BattleUnit unit, BattleStatusId statusId)
+    {
+        KeyValuePair<Int32, Int32> effectCode = new KeyValuePair<Int32, Int32>(unit.Position, (Int32)statusId);
+        if (this._statusToSHPIndex.TryGetValue(effectCode, out Int32 shpIndex) && this._shpEffects[shpIndex].attr != 0)
+            return this._shpEffects[shpIndex];
+        return null;
+    }
+
     public SPSEffect AddSequenceSPS(Int32 spsId, Int32 duration, Single speed, Boolean neverUnload = false)
     {
         if (!CommonSPSSystem.SPSPrototypes.ContainsKey(spsId))

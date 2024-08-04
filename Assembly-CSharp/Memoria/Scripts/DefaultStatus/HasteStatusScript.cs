@@ -17,14 +17,14 @@ namespace Memoria.DefaultScripts
                 return btl_stat.ALTER_RESIST;
             }
             btl_para.SetupATBCoef(target, btl_para.GetATBCoef() * 3 / 2);
-            target.UISpriteATB = BattleHUD.ATEOrange;
+            target.UISpriteATB = Target.IsUnderAnyStatus(BattleStatus.Stop) ? BattleHUD.ATEGray : BattleHUD.ATEOrange;
             return btl_stat.ALTER_SUCCESS;
         }
 
         public override Boolean Remove()
         {
             btl_para.SetupATBCoef(Target, btl_para.GetATBCoef());
-            Target.UISpriteATB = BattleHUD.ATENormal;
+            Target.UISpriteATB = Target.IsUnderAnyStatus(BattleStatus.Stop | BattleStatus.Slow) ? BattleHUD.ATEGray : BattleHUD.ATENormal;
             return true;
         }
     }

@@ -384,6 +384,12 @@ public static class btl2d
 
     public static void GetIconPosition(BTL_DATA btl, Int32 index, out Transform attach, out Vector3 offset)
     {
+        if (index == ICON_POS_ROOT)
+        {
+            attach = btl.gameObject.transform.GetChildByName($"bone{0:D3}");
+            offset = Vector3.zero;
+            return;
+        }
         if (index == ICON_POS_WEAPON)
         {
             attach = btl.gameObject.transform.GetChildByName($"bone{btl.weapon_bone:D3}");
@@ -435,8 +441,9 @@ public static class btl2d
     public const Int32 ICON_POS_EYES = 3; // Blind
     public const Int32 ICON_POS_FOREHEAD = 4; // Trouble, Berserk
     public const Int32 ICON_POS_NUMBER = 5; // Doom, Gradual Petrify
-    public const Int32 ICON_POS_WEAPON = 100; // Weapon attachment
-    public const Int32 ICON_POS_TARGET = 101; // Targeting cursor
+    public const Int32 ICON_POS_ROOT = 100; // Root bone (0)
+    public const Int32 ICON_POS_WEAPON = 101; // Weapon attachment
+    public const Int32 ICON_POS_TARGET = 102; // Targeting cursor
 
     public const Int32 SOTSIZE = 4096;
 

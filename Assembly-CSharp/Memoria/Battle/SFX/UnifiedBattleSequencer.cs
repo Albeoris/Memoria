@@ -556,7 +556,7 @@ public static class UnifiedBattleSequencer
                             continue;
                         if (code.TryGetArgAnimation("Anim", btl, out tmpStr))
                         {
-                            tmpInt = GeoAnim.getAnimationLoopFrame(btl, tmpStr);
+                            tmpInt = (Int32)Math.Max(1, Math.Ceiling(GeoAnim.getAnimationLoopFrame(btl, tmpStr) / btl.animSpeedStatusFactor));
                             btl_mot.setMotion(btl, tmpStr);
                             btl.evt.animFrame = 0;
                         }
@@ -593,7 +593,7 @@ public static class UnifiedBattleSequencer
                             dest = btl.pos + tmpVec;
                         if (code.TryGetArgAnimation("Anim", btl, out tmpStr))
                         {
-                            tmpInt = GeoAnim.getAnimationLoopFrame(btl, tmpStr);
+                            tmpInt = (Int32)Math.Max(1, Math.Ceiling(GeoAnim.getAnimationLoopFrame(btl, tmpStr) / btl.animSpeedStatusFactor));
                             btl_mot.setMotion(btl, tmpStr);
                             btl.evt.animFrame = 0;
                         }
