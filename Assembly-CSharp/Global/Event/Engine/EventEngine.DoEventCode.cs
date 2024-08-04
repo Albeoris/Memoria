@@ -4,10 +4,8 @@ using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Field;
 using Memoria.Prime;
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -1550,6 +1548,15 @@ public partial class EventEngine
             {
                 Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
                 Boolean isActive = (Int32)this.getv1() != 0; // arg2: boolean show/ hide
+
+                if (mapNo == 352 && scCounter == 2540 && overlayNdx == 0) // fix for anim and chest visible
+                {
+                    this.fieldmap.EBG_animSetActive(0, isActive); // anim on -> becomes visible in Ultrawide
+                    Obj chest = this.GetObjUID(16); // chest obj 15 is ok, but 16 was forgotten
+                    if (chest != null)
+                        chest.flags = (Byte)((chest.flags & -64) | (isActive ? 49 : 14)) ;
+                }
+
                 this.fieldmap.EBG_overlaySetActive(overlayNdx, isActive); // arg1: background tile block.
                 return 0;
             }
