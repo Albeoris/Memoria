@@ -687,7 +687,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         if (_reflectionProbe != null)
         {
             RenderSettings.ambientMode = AmbientMode.Skybox;
-            RenderSettings.ambientIntensity = Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.8f : 1.5f;
+            RenderSettings.ambientIntensity = Configuration.Shaders.Shader_Battle_Toon == 1 ? 0.8f : 1.5f;
             RenderSettings.skybox = _skyBox;
             _reflectionProbe.RenderProbe();
         }
@@ -698,7 +698,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             yield return new WaitForEndOfFrame();
         }
         _skyBox.SetTexture("_Tex", _reflectionProbe.texture);
-        _skyBox.SetFloat("_Exposure", Configuration.Shaders.EnableToonShadingBattle == 1 ? 0.5f : 1.0f);
+        _skyBox.SetFloat("_Exposure", Configuration.Shaders.Shader_Battle_Toon == 1 ? 0.5f : 1.0f);
         
         // This is a slow operation, make sure this code only run once.
         DynamicGI.UpdateEnvironment();

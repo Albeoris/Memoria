@@ -216,7 +216,7 @@ public static class NormalSolver
         foreach (var renderer in renderers)
         {
             renderer.material.SetFloat("_OutlineWidth", 2f);
-            renderer.material.SetFloat("_ShowOutline", Configuration.Shaders.OutlineForFieldCharacter == 1 ? 1f : 0f);
+            renderer.material.SetFloat("_ShowOutline", Configuration.Shaders.Shader_Battle_Outlines == 1 ? 1f : 0f);
         }
     }
 

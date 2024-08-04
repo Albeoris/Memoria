@@ -35,10 +35,10 @@ namespace Memoria.Scripts
             {
                 if (Configuration.Shaders.CustomShaderEnabled == 1)
                 {
-                    if (Configuration.Shaders.EnableToonShadingBattle == 1)
-                        return ToonBattleCharacterShader;
-                    if (Configuration.Shaders.EnableRealismShadingBattle == 1)
+                    if (Configuration.Shaders.Shader_Battle_Realism == 1)
                         return RealismBattleCharacterShader;
+                    else if (Configuration.Shaders.Shader_Battle_Toon == 1)
+                        return ToonBattleCharacterShader;
                 }
 
                 return DefaultBattleCharacterShader;
@@ -51,10 +51,10 @@ namespace Memoria.Scripts
             {
                 if (Configuration.Shaders.CustomShaderEnabled == 1)
                 {
-                    if (Configuration.Shaders.EnableToonShadingField == 1)
-                        return ToonFieldCharacterShader;
-                    if (Configuration.Shaders.EnableRealismShadingField == 1)
+                    if (Configuration.Shaders.Shader_Field_Realism == 1)
                         return RealismFieldCharacterShader;
+                    else if (Configuration.Shaders.Shader_Field_Toon == 1)
+                        return ToonFieldCharacterShader;
                 }
                 return DefaultFieldCharacterShader;
             }

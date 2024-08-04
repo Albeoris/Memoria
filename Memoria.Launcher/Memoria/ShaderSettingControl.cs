@@ -81,17 +81,17 @@ namespace Memoria.Launcher
             row++;
 
             UiCheckBox EnableRealismShadingForField = AddUiElement(UiCheckBoxFactory.Create("Realistic", null), row, 0, 1, 4);
-            EnableRealismShadingForField.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(RealismShadingForField)) { Mode = BindingMode.TwoWay });
+            EnableRealismShadingForField.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Shader_Field_Realism)) { Mode = BindingMode.TwoWay });
             EnableRealismShadingForField.Foreground = Brushes.White;
 
             UiCheckBox EnableToonShadingForField = AddUiElement(UiCheckBoxFactory.Create("Toon", null), row, 3, 1, 4);
-            EnableToonShadingForField.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(ToonShadingForField)) { Mode = BindingMode.TwoWay });
+            EnableToonShadingForField.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Shader_Field_Toon)) { Mode = BindingMode.TwoWay });
             EnableToonShadingForField.Foreground = Brushes.White;
 
             row++;
 
             UiCheckBox EnableOutlineForFieldCharacter = AddUiElement(UiCheckBoxFactory.Create("Model outlines", null), row, 0, 1, 8);
-            EnableOutlineForFieldCharacter.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(OutlineForFieldCharacter)) { Mode = BindingMode.TwoWay });
+            EnableOutlineForFieldCharacter.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Shader_Field_Outlines)) { Mode = BindingMode.TwoWay });
             EnableOutlineForFieldCharacter.Foreground = Brushes.White;
 
             row++;
@@ -102,17 +102,17 @@ namespace Memoria.Launcher
             row++;
 
             UiCheckBox EnableRealismShadingForBattle = AddUiElement(UiCheckBoxFactory.Create("Realistic", null), row, 0, 1, 4);
-            EnableRealismShadingForBattle.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(RealismShadingForBattle)) { Mode = BindingMode.TwoWay });
+            EnableRealismShadingForBattle.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Shader_Battle_Realism)) { Mode = BindingMode.TwoWay });
             EnableRealismShadingForBattle.Foreground = Brushes.White;
 
             UiCheckBox EnableToonShadingForBattle = AddUiElement(UiCheckBoxFactory.Create("Toon", null), row, 3, 1, 4);
-            EnableToonShadingForBattle.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(ToonShadingForBattle)) { Mode = BindingMode.TwoWay });
+            EnableToonShadingForBattle.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Shader_Battle_Toon)) { Mode = BindingMode.TwoWay });
             EnableToonShadingForBattle.Foreground = Brushes.White;
 
             row++;
 
             UiCheckBox EnableOutlineForBattleCharacter = AddUiElement(UiCheckBoxFactory.Create("Model outlines", null), row, 0, 1, 8);
-            EnableOutlineForBattleCharacter.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(OutlineForBattleCharacter)) { Mode = BindingMode.TwoWay });
+            EnableOutlineForBattleCharacter.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Shader_Battle_Outlines)) { Mode = BindingMode.TwoWay });
             EnableOutlineForBattleCharacter.Foreground = Brushes.White;
 
             foreach (FrameworkElement child in Children)
@@ -162,41 +162,7 @@ namespace Memoria.Launcher
             }
         }
 
-        public Int16 ToonShadingForField
-        {
-            get { return _toonShadingForField; }
-            set
-            {
-                if (_toonShadingForField != value)
-                {
-                    if (value == 1)
-                    {
-                        RealismShadingForField = 0;
-                    }
-                    _toonShadingForField = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        
-        public Int16 ToonShadingForBattle
-        {
-            get { return _toonShadingForBattle; }
-            set
-            {
-                if (_toonShadingForBattle != value)
-                {
-                    if (value == 1)
-                    {
-                        RealismShadingForBattle = 0;
-                    }
-                    _toonShadingForBattle = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public Int16 RealismShadingForField
+        public Int16 Shader_Field_Realism
         {
             get { return _realismShadingForField; }
             set
@@ -205,32 +171,32 @@ namespace Memoria.Launcher
                 {
                     if (value == 1)
                     {
-                        ToonShadingForField = 0;
+                        Shader_Field_Toon = 0;
                     }
                     _realismShadingForField = value;
                     OnPropertyChanged();
                 }
             }
         }
-        
-        public Int16 RealismShadingForBattle
+
+        public Int16 Shader_Field_Toon
         {
-            get { return _realismShadingForBattle; }
+            get { return _toonShadingForField; }
             set
             {
-                if (_realismShadingForBattle != value)
+                if (_toonShadingForField != value)
                 {
                     if (value == 1)
                     {
-                        ToonShadingForBattle = 0;
+                        Shader_Field_Realism = 0;
                     }
-                    _realismShadingForBattle = value;
+                    _toonShadingForField = value;
                     OnPropertyChanged();
                 }
             }
         }
 
-        public Int16 OutlineForFieldCharacter
+        public Int16 Shader_Field_Outlines
         {
             get { return _outlineForField; }
             set
@@ -242,8 +208,42 @@ namespace Memoria.Launcher
                 }
             }
         }
+        
+        public Int16 Shader_Battle_Realism
+        {
+            get { return _realismShadingForBattle; }
+            set
+            {
+                if (_realismShadingForBattle != value)
+                {
+                    if (value == 1)
+                    {
+                        Shader_Battle_Toon = 0;
+                    }
+                    _realismShadingForBattle = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        
+        public Int16 Shader_Battle_Toon
+        {
+            get { return _toonShadingForBattle; }
+            set
+            {
+                if (_toonShadingForBattle != value)
+                {
+                    if (value == 1)
+                    {
+                        Shader_Battle_Realism = 0;
+                    }
+                    _toonShadingForBattle = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
-        public Int16 OutlineForBattleCharacter
+        public Int16 Shader_Battle_Outlines
         {
             get { return _outlineForBattle; }
             set
@@ -301,12 +301,12 @@ namespace Memoria.Launcher
                         
                         
                         MakeIniNotNull("Shaders", "Enabled", "0");
-                        MakeIniNotNull("Shaders", "EnableRealismShadingForField", "0");
-                        MakeIniNotNull("Shaders", "EnableToonShadingForField", "0");
-                        MakeIniNotNull("Shaders", "EnableRealismShadingForBattle", "0");
-                        MakeIniNotNull("Shaders", "EnableToonShadingForBattle", "0");
-                        MakeIniNotNull("Shaders", "OutlineForFieldCharacter", "0");
-                        MakeIniNotNull("Shaders", "OutlineForBattleCharacter", "0");
+                        MakeIniNotNull("Shaders", "Shader_Field_Realism", "0");
+                        MakeIniNotNull("Shaders", "Shader_Field_Toon", "0");
+                        MakeIniNotNull("Shaders", "Shader_Field_Outlines", "0");
+                        MakeIniNotNull("Shaders", "Shader_Battle_Realism", "0");
+                        MakeIniNotNull("Shaders", "Shader_Battle_Toon", "0");
+                        MakeIniNotNull("Shaders", "Shader_Battle_Outlines", "0");
 
                         MakeIniNotNull("Control", "Enabled", "1");
                         MakeIniNotNull("Control", "DisableMouse", "0");
@@ -474,25 +474,23 @@ namespace Memoria.Launcher
                     case nameof(EnableCustomShader):
                         iniFile.WriteValue("Shaders", "Enabled ", " " + EnableCustomShader.ToString());
                         break;
-                    case nameof(ToonShadingForField):
-                        iniFile.WriteValue("Shaders", "EnableToonShadingForField ", " " + ToonShadingForField.ToString());
+                    case nameof(Shader_Field_Realism):
+                        iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " " + Shader_Field_Realism.ToString());
                         break;
-                    case nameof(RealismShadingForField):
-                        iniFile.WriteValue("Shaders", "EnableRealismShadingForField ", " " + RealismShadingForField.ToString());
+                    case nameof(Shader_Field_Toon):
+                        iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " " + Shader_Field_Toon.ToString());
                         break;
-                    case nameof(ToonShadingForBattle):
-                        iniFile.WriteValue("Shaders", "EnableToonShadingForBattle ", " " + ToonShadingForBattle.ToString());
+                    case nameof(Shader_Field_Outlines):
+                        iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " " + Shader_Field_Outlines.ToString());
                         break;
-                    case nameof(RealismShadingForBattle):
-                        iniFile.WriteValue("Shaders", "EnableRealismShadingForBattle ", " " + RealismShadingForBattle.ToString());
+                    case nameof(Shader_Battle_Realism):
+                        iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " " + Shader_Battle_Realism.ToString());
                         break;
-                    case nameof(OutlineForFieldCharacter):
-                        iniFile.WriteValue("Shaders", "OutlineForFieldCharacter ",
-                            " " + OutlineForFieldCharacter.ToString());
+                    case nameof(Shader_Battle_Toon):
+                        iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " " + Shader_Battle_Toon.ToString());
                         break;
-                    case nameof(OutlineForBattleCharacter):
-                        iniFile.WriteValue("Shaders", "OutlineForBattleCharacter ",
-                            " " + OutlineForBattleCharacter.ToString());
+                    case nameof(Shader_Battle_Outlines):
+                        iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " " + Shader_Battle_Outlines.ToString());
                         break;
                 }
             }
@@ -520,59 +518,59 @@ namespace Memoria.Launcher
                     _enableCustomShader = 0;
                 OnPropertyChanged(nameof(EnableCustomShader));
 
-                value = iniFile.ReadValue("Shaders", "EnableRealismShadingForField");
+                value = iniFile.ReadValue("Shaders", "Shader_Field_Realism");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
                 }
                 if (!Int16.TryParse(value, out _realismShadingForField))
                     _realismShadingForField = 0;
-                OnPropertyChanged(nameof(RealismShadingForField));
+                OnPropertyChanged(nameof(Shader_Field_Realism));
 
-                value = iniFile.ReadValue("Shaders", "EnableToonShadingForField");
+                value = iniFile.ReadValue("Shaders", "Shader_Field_Toon");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
                 }
                 if (!Int16.TryParse(value, out _toonShadingForField))
                     _toonShadingForField = 0;
-                OnPropertyChanged(nameof(ToonShadingForField));
+                OnPropertyChanged(nameof(Shader_Field_Toon));
                 
-                value = iniFile.ReadValue("Shaders", "EnableRealismShadingForBattle");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                }
-                if (!Int16.TryParse(value, out _realismShadingForBattle))
-                    _realismShadingForBattle = 0;
-                OnPropertyChanged(nameof(RealismShadingForBattle));
-
-                value = iniFile.ReadValue("Shaders", "EnableToonShadingForBattle");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                }
-                if (!Int16.TryParse(value, out _toonShadingForBattle))
-                    _toonShadingForBattle = 0;
-                OnPropertyChanged(nameof(ToonShadingForBattle));
-                
-                value = iniFile.ReadValue("Shaders", "OutlineForFieldCharacter");
+                value = iniFile.ReadValue("Shaders", "Shader_Field_Outlines");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
                 }
                 if (!Int16.TryParse(value, out _outlineForField))
                     _outlineForField = 0;
-                OnPropertyChanged(nameof(OutlineForFieldCharacter));
+                OnPropertyChanged(nameof(Shader_Field_Outlines));
+                
+                value = iniFile.ReadValue("Shaders", "Shader_Battle_Realism");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                }
+                if (!Int16.TryParse(value, out _realismShadingForBattle))
+                    _realismShadingForBattle = 0;
+                OnPropertyChanged(nameof(Shader_Battle_Realism));
 
-                value = iniFile.ReadValue("Shaders", "OutlineForBattleCharacter");
+                value = iniFile.ReadValue("Shaders", "Shader_Battle_Toon");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                }
+                if (!Int16.TryParse(value, out _toonShadingForBattle))
+                    _toonShadingForBattle = 0;
+                OnPropertyChanged(nameof(Shader_Battle_Toon));
+
+                value = iniFile.ReadValue("Shaders", "Shader_Battle_Outlines");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
                 }
                 if (!Int16.TryParse(value, out _outlineForBattle))
                     _outlineForBattle = 0;
-                OnPropertyChanged(nameof(OutlineForBattleCharacter));
+                OnPropertyChanged(nameof(Shader_Battle_Outlines));
             }
             catch (Exception ex)
             {

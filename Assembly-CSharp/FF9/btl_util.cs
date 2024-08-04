@@ -460,7 +460,7 @@ namespace FF9
                 if (btl != null)
                 {
                     componentsInChildren[i].material.SetFloat("_OutlineWidth", 2.3f);
-                    componentsInChildren[i].material.SetFloat("_ShowOutline", Configuration.Shaders.OutlineForBattleCharacter == 1 ? 1f : 0f);
+                    componentsInChildren[i].material.SetFloat("_ShowOutline", Configuration.Shaders.Shader_Battle_Outlines == 1 ? 1f : 0f);
                     componentsInChildren[i].material.SetFloat("_IsEnemy", btl.bi.player == 0 ? 1 : 0);
                     componentsInChildren[i].material.SetInt("_StencilOp", btl.bi.player == 0 ? 2 : 1);   
                 }
