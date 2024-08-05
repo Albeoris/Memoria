@@ -9,6 +9,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using UnityEngine;
 //using static EventService;
 
@@ -572,26 +573,9 @@ public partial class EventEngine
                 Int32 fieldAndDiscDest = this.getv2(); // arg1: gathered field destination and disc destination
                 Byte disc_id = (Byte)(fieldAndDiscDest >> 14 & 3);
                 UInt16 map_id = (UInt16)(fieldAndDiscDest & 16383);
-                Log.Message("DISCCHANGE - disc_id:" + disc_id);
-
-
-                /*
-                PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).NextSceneIsModal = false;
-                PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).Hide(delegate
-                {
-                    //PersistenSingleton<UIManager>.Instance.DiscChangeScene.SubNo = CharacterId.Eiko;
-                    PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.DiscChange);
-                    //PersistenSingleton<UIManager>.Instance.NameSettingScene.SubNo = CharacterId.Eiko;
-                    //PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.NameSetting);
-                });
-
-                PersistenSingleton<UIManager>.Instance.HideAllHUD();
-                PersistenSingleton<UIManager>.Instance.SetEventEnable(false);
-                PersistenSingleton<UIManager>.Instance.MenuOpenEvent();
-                */
-
-                //Graphics.DrawTexture(new Rect(0f, 0f, Screen.width, Screen.height), texture);
-
+                Log.Message("Changing to disc_id: " + disc_id);
+                if (Configuration.Interface.DisplayPSXDiscChanges)
+                    SceneDirector.InitDiscChange(disc_id);
 
                 //this._ff9fieldDisc.disc_id = disc_id;
                 //this._ff9fieldDisc.cdType = (byte)(1U << (int)disc_id);

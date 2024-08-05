@@ -1545,6 +1545,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Interface", "MenuChocographRowCount", "5");
                         MakeIniNotNull("Interface", "FadeDuration", "40");
                         MakeIniNotNull("Interface", "SynthIngredientStockDisplayed", "1");
+                        MakeIniNotNull("Interface", "DisplayPSXDiscChanges", "1");
 
                         MakeIniNotNull("Fixes", "Enabled", "1");
                         MakeIniNotNull("Fixes", "KeepRestTimeInBattle", "1");
