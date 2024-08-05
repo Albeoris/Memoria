@@ -412,7 +412,6 @@ ShowMesh: Char=AllTargets ; Enable=False ; IsDisappear=True
 Wait: Time=3
 MoveToPosition: Char=AllTargets ; AbsolutePosition=Default ; RelativePosition=(0.0, 4416.0, 0.0) ; MoveHeight=True ; Time=0
 Turn: Char=AllTargets ; Angle=(0.0, 0.0, 180.0) ; Time=0
-ChangeSize: Char=AllTargets ; Size=1 ; ScaleShadow=True ; Time=0
 Wait: Time=54
 PlaySound: Sound=2170
 PlaySound: Sound=2171
@@ -420,6 +419,7 @@ PlaySound: Sound=2172
 PlaySound: Sound=2173
 Wait: Time=59
 ShowMesh: Char=AllTargets ; Enable=True ; IsDisappear=True
+ChangeSize: Char=AllTargets ; Size=1 ; ScaleShadow=True ; Time=0
 Wait: Time=1
 SetBackgroundIntensity: Intensity=0.5 ; Time=1 ; HoldDuration=33
 Wait: Time=3

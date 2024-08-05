@@ -393,6 +393,8 @@ namespace Memoria.Scripts
                     result.OverloadableMethodScripts[interf] = type;
                 if (interf == typeof(IOverloadDamageModifierScript))
                     result.OverloadableMethodScripts[interf] = type;
+                if (interf == typeof(IOverloadOnBattleInitScript))
+                    result.OverloadableMethodScripts[interf] = type;
             }
         }
 

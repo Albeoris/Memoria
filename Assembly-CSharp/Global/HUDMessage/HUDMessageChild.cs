@@ -23,6 +23,33 @@ public class HUDMessageChild : MonoBehaviour
         set => this.label.text = value;
     }
 
+    public Int32 FontSize
+    {
+        get
+        {
+            return this.label.fontSize;
+        }
+        set
+        {
+            this.label.fontSize = value;
+        }
+    }
+
+    public UILabel.Effect effectStyle
+    {
+        get
+        {
+            return this.label.effectStyle;
+        }
+        set
+        {
+            if (this.label.effectStyle != value)
+            {
+                this.label.effectStyle = value;
+            }
+        }
+    }
+
     public void Initial()
     {
         if (!this.isInitialized)

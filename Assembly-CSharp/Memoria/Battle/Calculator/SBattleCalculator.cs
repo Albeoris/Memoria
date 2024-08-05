@@ -359,20 +359,6 @@ namespace Memoria
                 v.Target.HpDamage *= reflectMultiplier;
             if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
                 v.Target.MpDamage *= reflectMultiplier;
-            // TODO [DV] Use IOverloadDamageModifierScript
-            //if (Configuration.Mod.TranceSeek && v.Context.DamageModifierCount > 0)
-            //{
-            //    Single modifier_factor = 1f + v.Context.DamageModifierCount * 0.25f; // TRANCE SEEK -> damage is multiplied by 1.25, 1.5, 1.75, 2, 2.25, 2.5...
-            //    while (v.Context.DamageModifierCount < 0)
-            //    {
-            //        modifier_factor *= 0.5f;
-            //        ++v.Context.DamageModifierCount;
-            //    }
-            //    if ((v.Target.Flags & CalcFlag.HpAlteration) != 0)
-            //        v.Target.HpDamage = (Int32)Math.Round(modifier_factor * v.Target.HpDamage) * reflectMultiplier;
-            //    if ((v.Target.Flags & CalcFlag.MpAlteration) != 0)
-            //        v.Target.MpDamage = (Int32)Math.Round(modifier_factor * v.Target.MpDamage) * reflectMultiplier;
-            //}
         }
     }
 }
