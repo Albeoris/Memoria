@@ -283,12 +283,10 @@ namespace Assets.Scripts.Common
                 yield return new WaitForEndOfFrame();
             }
 
-            Log.Message(" SceneDirector._discChange " + SceneDirector._discChange);
             if (SceneDirector._discChange != 0)
             {
                 Int32 discNum = SceneDirector._discChange + 1;
                 this.screenTex = AssetManager.Load<Texture2D>("EmbeddedAsset/UI/Sprites/changetodisc" + discNum + ".png");
-                Log.Message(" screenTex " + this.screenTex);
                 if (this.screenTex != null)
                 {
                     if (this.screenTex.width < 321)
@@ -332,14 +330,12 @@ namespace Assets.Scripts.Common
                 }
             }
 
-            Log.Message(" endoffade");
             this.IsFading = false;
             yield break;
         }
 
         private IEnumerator ChangeDisc()
         {
-            Log.Message(" changedisc ");
             Int32 discID = SceneDirector._discChange;
             this.screenTex = AssetManager.Load<Texture2D>("EmbeddedAsset/UI/Sprites/insertdisc" + discID + ".png");
             Rect screenRect = new(0f, 0f, Screen.width, Screen.height);
@@ -360,7 +356,6 @@ namespace Assets.Scripts.Common
                 Graphics.DrawTexture(screenRect, this.screenTex, sourceRect, 0, 0, 0, 0, new Color(0.5f, 0.5f, 0.5f, i / 100f));
                 yield return new WaitForEndOfFrame();
             }
-            Log.Message(" changedisc end");
         }
 
         private void ChangeScene()
@@ -546,7 +541,6 @@ namespace Assets.Scripts.Common
             SceneDirector._prevColor = SceneDirector.abrColor[(Int32)SceneDirector.fadeMode];
             if (disc_id > 0 && disc_id < 4) SceneDirector._discChange = disc_id;
             else SceneDirector._discChange = 0;
-            Log.Message(" SceneDirector._discChange orig " + SceneDirector._discChange);
         }
 
         public static void ServiceFade()
