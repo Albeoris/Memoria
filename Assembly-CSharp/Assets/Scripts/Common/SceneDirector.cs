@@ -282,8 +282,80 @@ namespace Assets.Scripts.Common
                 this.fadeAmount = Mathf.Clamp01(this.fadeAmount - Time.deltaTime / fadeInTime);
                 yield return new WaitForEndOfFrame();
             }
+
+            if (SceneDirector._discChange != 0)
+            {
+                Int32 discNum = SceneDirector._discChange + 1;
+                this.screenTex = AssetManager.Load<Texture2D>("EmbeddedAsset/UI/Sprites/changetodisc" + discNum + ".png");
+                if (this.screenTex != null)
+                {
+                    if (this.screenTex.width < 321)
+                        this.screenTex.filterMode = FilterMode.Point;
+
+                    Single rectwidth = Screen.height / 0.7f;
+                    Rect screenRect = new((Screen.width - rectwidth) / 2f, 0f, rectwidth, Screen.height);
+                    Rect sourceRect = new(0f, 0f, 1f, 1f);
+
+                    if (((Single)this.screenTex.height / (Single)this.screenTex.width) < 0.698f)
+                        screenRect = new(0f, 0f, Screen.width, Screen.height);
+
+                    for (Int32 i = 0; i <= 100; i++) // 100 frame fadein
+                    {
+                        Graphics.DrawTexture(screenRect, this.screenTex, sourceRect, 0, 0, 0, 0, new Color(0.5f, 0.5f, 0.5f, i / 100f));
+                        yield return new WaitForEndOfFrame();
+                    }
+                    while (!PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm)
+                        && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Cancel)
+                        && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Menu)
+                        && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Special)
+                        && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Pause)
+                        && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Select)
+                        && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Up)
+                        && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Down)
+                        && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Left)
+                        && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Right)
+                        && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftBumper)
+                        && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightBumper)
+                        && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger)
+                        && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightTrigger))
+                    {
+                        Graphics.DrawTexture(screenRect, this.screenTex);
+                        yield return new WaitForEndOfFrame();
+                    }
+                    for (Int32 i = 100; i > 0; i--) // 100 frame fadeout
+                    {
+                        Graphics.DrawTexture(screenRect, this.screenTex, sourceRect, 0, 0, 0, 0, new Color(0.5f, 0.5f, 0.5f, i / 100f));
+                        yield return new WaitForEndOfFrame();
+                    }
+                }
+            }
+
             this.IsFading = false;
             yield break;
+        }
+
+        private IEnumerator ChangeDisc()
+        {
+            Int32 discID = SceneDirector._discChange;
+            this.screenTex = AssetManager.Load<Texture2D>("EmbeddedAsset/UI/Sprites/insertdisc" + discID + ".png");
+            Rect screenRect = new(0f, 0f, Screen.width, Screen.height);
+            Rect sourceRect = new(0.25f, 0f, 0.75f, 1f);
+
+            for (Int32 i = 0; i <= 100; i++) // 100 frame fadein
+            {
+                Graphics.DrawTexture(screenRect, this.screenTex, sourceRect, 0, 0, 0, 0, new Color(0.5f, 0.5f, 0.5f, i / 100f));
+                yield return new WaitForEndOfFrame();
+            }
+            while (!PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm))
+            {
+                Graphics.DrawTexture(screenRect, this.screenTex);
+                yield return new WaitForEndOfFrame();
+            }
+            for (Int32 i = 100; i > 0; i--) // 100 frame fadeout
+            {
+                Graphics.DrawTexture(screenRect, this.screenTex, sourceRect, 0, 0, 0, 0, new Color(0.5f, 0.5f, 0.5f, i / 100f));
+                yield return new WaitForEndOfFrame();
+            }
         }
 
         private void ChangeScene()
@@ -455,13 +527,20 @@ namespace Assets.Scripts.Common
             Shader.SetGlobalColor("_FadeColor_ABR" + 2, new Color(0f, 0f, 0f));
         }
 
-        public static void InitFade(FadeMode mode, Int32 frame, Color32 target)
+        public static void InitDiscChange(Int32 disc_id)
+        {
+            InitFade(FadeMode.Sub, 10, Color.black, disc_id);
+        }
+
+        public static void InitFade(FadeMode mode, Int32 frame, Color32 target, Int32 disc_id = 0)
         {
             SceneDirector._curFrame = 0f;
             SceneDirector._targetFrame = frame;
             SceneDirector._targetColor = target;
             SceneDirector._SetFadeMode(mode);
             SceneDirector._prevColor = SceneDirector.abrColor[(Int32)SceneDirector.fadeMode];
+            if (disc_id > 0 && disc_id < 4) SceneDirector._discChange = disc_id;
+            else SceneDirector._discChange = 0;
         }
 
         public static void ServiceFade()
@@ -577,6 +656,8 @@ namespace Assets.Scripts.Common
         private static Color32 _prevColor;
 
         private static Int32 _initialized;
+
+        private static Int32 _discChange;
 
         private static void MemoriaExport()
         {

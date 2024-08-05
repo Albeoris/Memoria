@@ -26,7 +26,7 @@ namespace Memoria.Launcher
     {
         public MemoriaIniCheatControl()
         {
-            SetRows(17);
+            SetRows(18);
             SetCols(8);
 
             Width = 260;
@@ -190,6 +190,24 @@ namespace Memoria.Launcher
             maxTetraMasterCards.Foreground = Brushes.White;
             maxTetraMasterCards.Margin = rowMargin;
             maxTetraMasterCards.ToolTip = Lang.Settings.MaxCardCount_Tooltip;
+
+            row++;
+
+            UiTextBlock tetraMasterReduceRandomText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.CardReduceRandom), row, 0, 2, 4);
+            tetraMasterReduceRandomText.Foreground = Brushes.White;
+            tetraMasterReduceRandomText.Margin = rowMargin;
+            tetraMasterReduceRandomText.TextWrapping = TextWrapping.WrapWithOverflow;
+            tetraMasterReduceRandomText.ToolTip = Lang.Settings.AccessBattleMenu_Tooltip;
+            UiComboBox tetraMasterReduceRandomBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 2, 4);
+            tetraMasterReduceRandomBox.ItemsSource = new String[]{
+                Lang.Settings.tetraMasterReduceRandomBox0,
+                Lang.Settings.tetraMasterReduceRandomBox1,
+                Lang.Settings.tetraMasterReduceRandomBox2,
+            };
+            tetraMasterReduceRandomBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(ReduceRandom)) { Mode = BindingMode.TwoWay });
+            tetraMasterReduceRandomBox.Height = 20;
+            tetraMasterReduceRandomBox.FontSize = 10;
+            tetraMasterReduceRandomBox.Margin = rowMargin;
 
 
             /*AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row++, 0, 1, 8).Foreground = Brushes.White;*/
@@ -365,8 +383,20 @@ namespace Memoria.Launcher
                 }
             }
         }
+        public Int16 ReduceRandom
+        {
+            get { return _reducerandom; }
+            set
+            {
+                if (_reducerandom != value)
+                {
+                    _reducerandom = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
-        private Int16 _stealingalwaysworks, _noautotrance, _garnetconcentrate, _breakDamageLimit, _accessBattleMenu, _speedmode, _speedfactor, _battletpsfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill, _maxcardcount;
+        private Int16 _stealingalwaysworks, _noautotrance, _garnetconcentrate, _breakDamageLimit, _accessBattleMenu, _speedmode, _speedfactor, _battletpsfactor, _battleassistance, _attack9999, _norandomencounter, _masterskill, _maxcardcount, _reducerandom;
 
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Memoria.ini";
 
@@ -504,7 +534,17 @@ namespace Memoria.Launcher
                     OnPropertyChanged(nameof(MaxCardCount));
                 }
                 if (!Int16.TryParse(value, out _maxcardcount))
-                    _maxcardcount = 1;
+                    _maxcardcount = 0;
+
+
+                value = iniFile.ReadValue("TetraMaster", nameof(ReduceRandom));
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                    OnPropertyChanged(nameof(ReduceRandom));
+                }
+                if (!Int16.TryParse(value, out _reducerandom))
+                    _reducerandom = 0;
 
                 Refresh(nameof(StealingAlwaysWorks));
                 Refresh(nameof(NoAutoTrance));
@@ -519,6 +559,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(NoRandomEncounter));
                 Refresh(nameof(MasterSkill));
                 Refresh(nameof(MaxCardCount));
+                Refresh(nameof(ReduceRandom));
             }
             catch (Exception ex) { UiHelper.ShowError(Application.Current.MainWindow, ex); }
         }
@@ -626,6 +667,11 @@ namespace Memoria.Launcher
                         {
                             iniFile.WriteValue("TetraMaster", propertyName + " ", " 100");
                         }
+                        break;
+                    case nameof(ReduceRandom):
+                        if (MaxCardCount != 0)
+                            iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
+                        iniFile.WriteValue("TetraMaster", propertyName + " ", " " + ReduceRandom);
                         break;
                 }
             }

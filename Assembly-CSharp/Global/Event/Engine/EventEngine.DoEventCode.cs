@@ -4,14 +4,14 @@ using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Field;
 using Memoria.Prime;
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using UnityEngine;
+//using static EventService;
 
 public partial class EventEngine
 {
@@ -488,6 +488,27 @@ public partial class EventEngine
                 this.eTb.NewMesWin(textID, (Int32)this.gCur.winnum, uiFlags, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
                 return 0;
             }
+            case EBin.event_code_binary.MESA:// 0x95, "WindowSyncEx", "Display a window with text inside and wait until it closes"
+            case EBin.event_code_binary.MESAN: // 0x96, "WindowAsyncEx", "Display a window with text inside and continue the execution of the script without waiting"
+            {
+                po = (PosObj)this.GetObj1(); // arg1: talker's entry
+                this.gCur.winnum = (Byte)this.getv1(); // arg2: window ID
+                Int32 uiFlags = this.getv1(); // arg3: UI flag list. 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
+                Int32 textID = this.getv2(); // arg4: text to display
+                this.SetFollow((Obj)po, (Int32)this.gCur.winnum, uiFlags);
+                this.eTb.NewMesWin(textID, (Int32)this.gCur.winnum, uiFlags, po);
+                if (eventCodeBinary == EBin.event_code_binary.MESAN)
+                    return 0;
+                this.gCur.wait = (Byte)254;
+                return 1;
+            }
+            case EBin.event_code_binary.MESVALUE: // 0x66, "SetTextVariable", "Set the value of a text number or item variable"
+            {
+                Int32 scriptID = this.getv1(); // arg1: text variable's 'Script ID'
+                Int32 value = this.getv2(); // arg2: depends on which text opcode is related to the text variable: [VAR_NUM]: integral value. [VAR_ITEM]: item ID. [VAR_TOKEN]: token number
+                this.eTb.SetMesValue(scriptID, value);
+                return 0;
+            }
             case EBin.event_code_binary.CLOSE: // 0x21, "CloseWindow", "Close a window", true, 1, { 1 }, { "Window ID" }, { AT_USPIN }, 0
             {
                 // Do not handle stage dialogs specifically
@@ -501,6 +522,93 @@ public partial class EventEngine
 
                 var windowID = this.getv1(); // arg1: window ID determined at its creation
                 this.eTb.DisposWindowByID(windowID, true);
+                return 0;
+            }
+            case EBin.event_code_binary.CLOSEALL: // 0xEB, "CloseAllWindows", "Close all the dialogs and UI windows."
+            {
+                this.eTb.YWindow_CloseAll(true);
+                return 0;
+            }
+            case EBin.event_code_binary.NOINITMES: // 0x53, "PreventWindowInit", "Seems to prevent new dialog windows to close older ones."
+            {
+                this.eTb.InhInitMes();
+                return 0;
+            }
+            case EBin.event_code_binary.WAITMES: // 0x54, "WaitWindow", "Wait until the window is closed"
+            {
+                if (mapNo == 1650 && FF9StateSystem.Settings.CurrentLanguage == "Japanese" && ((Int32)this.gCur.sid == 19 && this.gCur.ip == 1849))
+                {
+                    this.getv1();
+                    return 0;
+                }
+                this.gCur.winnum = (Byte)this.getv1(); // arg1: window ID determined at its creation
+                this.gCur.wait = (Byte)254;
+                return 1;
+            }
+            case EBin.event_code_binary.TIMERSET: // 0x69, "ChangeTimerTime", "Change the remaining time of the timer window"
+            {
+                TimerUI.SetTime(this.getv2()); // arg1: time in seconds
+                return 0;
+            }
+            case EBin.event_code_binary.TIMERCONTROL: // 0x7D, "RunTimer", "Run or pause the timer window"
+            {
+                this._ff9.timerControl = this.getv1() != 0; // arg1: boolean, 0=pause
+                TimerUI.SetPlay(this._ff9.timerControl);
+                return 0;
+            }
+            case EBin.event_code_binary.TIMERDISPLAY: // 0x8D, "ShowTimer", "Activate the timer window"
+            {
+                this._ff9.timerDisplay = this.getv1() != 0; // arg1: boolean show/hide
+                TimerUI.SetEnable(this._ff9.timerDisplay);
+                TimerUI.SetDisplay(this._ff9.timerDisplay);
+                return 0;
+            }
+            case EBin.event_code_binary.RAISE: // 0x8E, "RaiseWindows", "Make all the dialogs and windows display over the filters"
+            {
+                this.eTb.RaiseAllWindow();
+                return 0;
+            }
+            case EBin.event_code_binary.DISCCHANGE: // 0xAC, "ChangeDisc", "Allow to save the game and change disc"
+            {
+                Int32 fieldAndDiscDest = this.getv2(); // arg1: gathered field destination and disc destination
+                Byte disc_id = (Byte)(fieldAndDiscDest >> 14 & 3);
+                UInt16 map_id = (UInt16)(fieldAndDiscDest & 16383);
+                Log.Message("Changing to disc_id: " + disc_id);
+                if (Configuration.Interface.DisplayPSXDiscChanges)
+                    SceneDirector.InitDiscChange(disc_id);
+
+                //this._ff9fieldDisc.disc_id = disc_id;
+                //this._ff9fieldDisc.cdType = (byte)(1U << (int)disc_id);
+                this._ff9fieldDisc.FieldMapNo = (Int16)map_id;
+                //this._ff9fieldDisc.FieldLocNo = (short)-1;
+                FF9StateFieldSystem stateFieldSystem = FF9StateSystem.Field.FF9Field;
+                FF9StateSystem instance = PersistenSingleton<FF9StateSystem>.Instance;
+                stateFieldSystem.attr |= 1048576U;
+                instance.attr |= 8U;
+
+                return 1;
+            }
+            case EBin.event_code_binary.WIPERGB: // 0xEC, "FadeFilter", "Apply a fade filter on the screen"
+            {
+                Int32 filterMode = this.getv1(); // arg1: filter mode (0 for ADD, 2 for SUBTRACT)
+                Int32 frame = this.getv1(); // arg2: fading time
+                this.getv1(); // arg3: unknown
+                Int32 cyan = this.getv1(); // 4 Cyan
+                Int32 magenta = this.getv1(); // 5 Magenta
+                Int32 yellow = this.getv1(); // 6 Yellow
+                if (mapNo == 1819 && scCounter == 7030 && cyan == 130 && magenta == 160 && yellow == 170)
+                {
+                    cyan = 81; magenta = 110; yellow = 121;
+                }
+
+                Color32 fadeColor = new Color((Single)cyan / (Single)Byte.MaxValue, (Single)magenta / (Single)Byte.MaxValue, (Single)yellow / (Single)Byte.MaxValue);
+                SceneDirector.InitFade((filterMode >> 1 & 1) != 0 ? FadeMode.Sub : FadeMode.Add, frame, fadeColor);
+                return 0;
+            }
+            case EBin.event_code_binary.AICON: // 0xD7, "ATE", "Enable or disable ATE"
+            {
+                Int32 mode = this.getv1(); // arg1: mode (0 = disable, rest unknown)
+                EIcon.SetAIcon(mode);
                 return 0;
             }
             // 0x22, "Wait", "Wait some time.arg1: amount of frames to wait. For PAL, 1 frame is 0.04 seconds. For other versions, 1 frame is about 0.033 seconds."
@@ -783,11 +891,6 @@ public partial class EventEngine
                 actor.speed = walkSpeed;
                 return 0;
             }
-            case EBin.event_code_binary.BGIMASK: // 0x27, "SetTriangleFlagMask", "Set a bitmask for some of the walkmesh triangle flags"
-            {
-                this.BGI_systemSetAttributeMask((Byte)this.getv1()); // arg1: flag mask - 7: disable restricted triangles, 8: disable player-restricted triangles
-                return 0;
-            }
             case EBin.event_code_binary.FMV: // 0x28, "Cinematic", "Run or setup a cinematic"
             {
                 Singleton<fldfmv>.Instance.FF9FieldFMVDispatch(this.getv1(), this.getv2(), this.getv1()); // arg1: unknown, arg2: cinematic ID (may depends on arg1's value), arg3: unknown, (arg4: unknown)
@@ -822,6 +925,33 @@ public partial class EventEngine
                 FF9StateSystem.Battle.isRandomEncounter = false;
                 this._encountBase = 0;
                 return 3;
+            }
+            case EBin.event_code_binary.ENCOUNT2: // 0x8C, "BattleEx", "Start a battle and choose its battle group"
+            {
+                this.getv1(); // arg1: rush type (unknown)
+                this._ff9.btlSubMapNo = (SByte)this.getv1(); // arg2: group
+                Int32 btlId = this.getv2(); // arg3: gathered battle and Steiner's state (highest bit) informations
+                this._ff9.steiner_state = (Byte)(btlId >> 15 & 1);
+                this.SetBattleScene(btlId & Int16.MaxValue);
+                FF9StateSystem.Battle.isRandomEncounter = false;
+                this._encountBase = 0;
+                return 3;
+            }
+            case EBin.event_code_binary.ENCRATE: // 0x57, "SetRandomBattleFrequency", "Set the frequency of random battles / 255 is the maximum frequency, corresponding to ~12 walking steps or ~7 running steps. 0 is the minimal frequency and disables random battles."
+            {
+                this._context.encratio = (Byte)this.getv1(); // arg1: frequency (0-255)
+                if ((Int32)this._context.encratio == 0)
+                    this._encountBase = 0;
+                return 0;
+            }
+            case EBin.event_code_binary.ENCSCENE: // 0x3C, "SetRandomBattles", "Define random battles. { "Pattern", "Battle 1", "Battle 2", "Battle 3", "Battle 4" }
+            {
+                this._enCountData.pattern = (Byte)this.getv1(); // arg1: pattern, deciding the encounter chances and the topography (World Map only).
+                this._enCountData.scene[0] = (UInt16)this.getv2(); // 0: possible random battles {0.375, 0.28, 0.22, 0.125}
+                this._enCountData.scene[1] = (UInt16)this.getv2(); // 1: possible random battles {0.25, 0.25, 0.25, 0.25}
+                this._enCountData.scene[2] = (UInt16)this.getv2(); // 2: possible random battles {0.35, 0.3, 0.3, 0.05}
+                this._enCountData.scene[3] = (UInt16)this.getv2(); // 3: possible random battles {0.45, 0.4, 0.1, 0.05}
+                return 0;
             }
             case EBin.event_code_binary.MAPJUMP: // 0x2B, "Field", "Change the field scene",
             {
@@ -1088,15 +1218,6 @@ public partial class EventEngine
             case EBin.event_code_binary.OBJINDEX: // 0x3B, "SetObjectIndex", "Redefine the current object's index."
             {
                 this.gExec.index = (Byte)this.getv1(); // arg1: new index.
-                return 0;
-            }
-            case EBin.event_code_binary.ENCSCENE: // 0x3C, "SetRandomBattles", "Define random battles. { "Pattern", "Battle 1", "Battle 2", "Battle 3", "Battle 4" }
-            {
-                this._enCountData.pattern = (Byte)this.getv1(); // arg1: pattern, deciding the encounter chances and the topography (World Map only).
-                this._enCountData.scene[0] = (UInt16)this.getv2(); // 0: possible random battles {0.375, 0.28, 0.22, 0.125}
-                this._enCountData.scene[1] = (UInt16)this.getv2(); // 1: possible random battles {0.25, 0.25, 0.25, 0.25}
-                this._enCountData.scene[2] = (UInt16)this.getv2(); // 2: possible random battles {0.35, 0.3, 0.3, 0.05}
-                this._enCountData.scene[3] = (UInt16)this.getv2(); // 3: possible random battles {0.45, 0.4, 0.1, 0.05}
                 return 0;
             }
             case EBin.event_code_binary.AFRAME: // 0x3D, "SetAnimationInOut", "Specify the starting and ending animation frames of the character"
@@ -1464,22 +1585,6 @@ public partial class EventEngine
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.sleep));
                 return 0;
             }
-            case EBin.event_code_binary.NOINITMES: // 0x53, "PreventWindowInit", "Seems to prevent new dialog windows to close older ones."
-            {
-                this.eTb.InhInitMes();
-                return 0;
-            }
-            case EBin.event_code_binary.WAITMES: // 0x54, "WaitWindow", "Wait until the window is closed"
-            {
-                if (mapNo == 1650 && FF9StateSystem.Settings.CurrentLanguage == "Japanese" && ((Int32)this.gCur.sid == 19 && this.gCur.ip == 1849))
-                {
-                    this.getv1();
-                    return 0;
-                }
-                this.gCur.winnum = (Byte)this.getv1(); // arg1: window ID determined at its creation
-                this.gCur.wait = (Byte)254;
-                return 1;
-            }
             case EBin.event_code_binary.MROT: // 0x55, "SetWalkTurnSpeed", "Change the turn speed of the object when it walks or runs (default is 16).."
             {
                 Int32 turnSpeed = this.getv1(); // arg1: turn speed (with 0, the object doesn't turn while moving).
@@ -1501,13 +1606,6 @@ public partial class EventEngine
                     Int32 num3 = 0;
                 }*/
                 this.StartTurn(actor, EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)angle), true, turnSpeed);
-                return 0;
-            }
-            case EBin.event_code_binary.ENCRATE: // 0x57, "SetRandomBattleFrequency", "Set the frequency of random battles / 255 is the maximum frequency, corresponding to ~12 walking steps or ~7 running steps. 0 is the minimal frequency and disables random battles."
-            {
-                this._context.encratio = (Byte)this.getv1(); // arg1: frequency (0-255)
-                if ((Int32)this._context.encratio == 0)
-                    this._encountBase = 0;
                 return 0;
             }
             case EBin.event_code_binary.BGLCOLOR: // 0x59, "SetTileColor", "Change the color of a field tile block"
@@ -1550,6 +1648,15 @@ public partial class EventEngine
             {
                 Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
                 Boolean isActive = (Int32)this.getv1() != 0; // arg2: boolean show/ hide
+
+                if (mapNo == 352 && scCounter == 2540 && overlayNdx == 0) // fix for anim and chest visible
+                {
+                    this.fieldmap.EBG_animSetActive(0, isActive); // anim on -> becomes visible in Ultrawide
+                    Obj chest = this.GetObjUID(16); // chest obj 15 is ok, but 16 was forgotten
+                    if (chest != null)
+                        chest.flags = (Byte)((chest.flags & -64) | (isActive ? 49 : 14)) ;
+                }
+
                 this.fieldmap.EBG_overlaySetActive(overlayNdx, isActive); // arg1: background tile block.
                 return 0;
             }
@@ -1647,19 +1754,12 @@ public partial class EventEngine
                 this.fieldmap.EBG_animSetPlayRange(animNdx, firstFrame, lastFrame);
                 return 0;
             }
-            case EBin.event_code_binary.SETROW: // 0x62, "SetRow", "Change the battle row of a party member"
+            case EBin.event_code_binary.BGVALPHA: // 0xED, "SetTileLoopAlpha", "Unknown opcode about tile looping movements (EBG_overlayDefineViewportAlpha)."
             {
-                CharacterId charId = this.chr2slot(this.getv1()); // arg1: party member
-                Int32 row = this.getv1(); // arg2: boolean front/back
-                if (charId != CharacterId.NONE)
-                    FF9StateSystem.Common.FF9.GetPlayer(charId).info.row = (Byte)row;
-                return 0;
-            }
-            case EBin.event_code_binary.MESVALUE: // 0x66, "SetTextVariable", "Set the value of a text number or item variable"
-            {
-                Int32 scriptID = this.getv1(); // arg1: text variable's 'Script ID'
-                Int32 value = this.getv2(); // arg2: depends on which text opcode is related to the text variable: [VAR_NUM]: integral value. [VAR_ITEM]: item ID. [VAR_TOKEN]: token number
-                this.eTb.SetMesValue(scriptID, value);
+                Int32 viewportNdx = this.getv1(); // arg1: viewport index
+                Int32 alphaX = this.getv2(); // 2nd and arg3s: unknown factors (X, Y).
+                Int32 alphaY = this.getv2();
+                this.fieldmap.EBG_overlayDefineViewportAlpha(viewportNdx, alphaX, alphaY);
                 return 0;
             }
             case EBin.event_code_binary.TWIST: // 0x67, "SetControlDirection", "Set the angles for the player's movement control"
@@ -1681,16 +1781,6 @@ public partial class EventEngine
                 }
                 else
                     EIcon.PollFIcon(bubbleType);
-                return 0;
-            }
-            case EBin.event_code_binary.TIMERSET: // 0x69, "ChangeTimerTime", "Change the remaining time of the timer window"
-            {
-                TimerUI.SetTime(this.getv2()); // arg1: time in seconds
-                return 0;
-            }
-            case EBin.event_code_binary.DASHOFF: // 0x6A, "DisableRun", "Make the player's character always walk."
-            {
-                this._context.dashinh = (Byte)1;
                 return 0;
             }
             case EBin.event_code_binary.CLEARCOLOR: // 0x6B, "SetBackgroundColor", "Change the default color, seen behind the field's tiles"
@@ -1737,21 +1827,6 @@ public partial class EventEngine
             {
                 this.fieldmap.EBG_charLookAtUnlock();
                 return 0;
-            }
-            case EBin.event_code_binary.MENU: // 0x75, "Menu", "Open a menu"
-            {
-                UInt32 menuId = Convert.ToUInt32(this.getv1()); // arg1: menu type
-                UInt32 subId = Convert.ToUInt32(this.getv1()); // arg2: depends on the menu type. Naming Menu: character to name | Shop Menu: shop ID
-                if (Configuration.Hacks.DisableNameChoice && menuId == 1)
-                {
-                    CharacterId charId = this.chr2slot((Int32)subId);
-                    if (charId != CharacterId.NONE && NameSettingUI.IsDefaultName(charId))
-                        this._ff9.GetPlayer(charId).Name = FF9TextTool.CharacterDefaultName(charId);
-                    return 0;
-                }
-                EventService.StartMenu(menuId, subId);
-                PersistenSingleton<UIManager>.Instance.MenuOpenEvent();
-                return 1;
             }
             case EBin.event_code_binary.TRACKSTART: // 0x76, "DrawRegionStart", "Start drawing the convex polygonal region linked with the entry script: two starting points are placed at the same position"
             {
@@ -1806,12 +1881,6 @@ public partial class EventEngine
                 Int32 choicesAvailable = this.getv2(); // arg1: boolean list for the different choices
                 Int32 defaultChoice = this.getv1(); // arg2: default choice selected
                 this.eTb.SetChooseParam(choicesAvailable, defaultChoice);
-                return 0;
-            }
-            case EBin.event_code_binary.TIMERCONTROL: // 0x7D, "RunTimer", "Run or pause the timer window"
-            {
-                this._ff9.timerControl = this.getv1() != 0; // arg1: boolean, 0=pause
-                TimerUI.SetPlay(this._ff9.timerControl);
                 return 0;
             }
             case EBin.event_code_binary.SETCAM: // 0x7E, "SetFieldCamera", "Change the field's background camera"
@@ -1889,29 +1958,6 @@ public partial class EventEngine
                 actor.neckMyID = (Byte)this.getv1(); // arg1: SelfMask
                 actor.neckTargetID = (Byte)this.getv1(); // arg2: TargetMask
                 actor.actf |= (UInt16)(EventEngine.actNeckT | EventEngine.actNeckM);
-                return 0;
-            }
-            case EBin.event_code_binary.ENCOUNT2: // 0x8C, "BattleEx", "Start a battle and choose its battle group"
-            {
-                this.getv1(); // arg1: rush type (unknown)
-                this._ff9.btlSubMapNo = (SByte)this.getv1(); // arg2: group
-                Int32 btlId = this.getv2(); // arg3: gathered battle and Steiner's state (highest bit) informations
-                this._ff9.steiner_state = (Byte)(btlId >> 15 & 1);
-                this.SetBattleScene(btlId & Int16.MaxValue);
-                FF9StateSystem.Battle.isRandomEncounter = false;
-                this._encountBase = 0;
-                return 3;
-            }
-            case EBin.event_code_binary.TIMERDISPLAY: // 0x8D, "ShowTimer", "Activate the timer window"
-            {
-                this._ff9.timerDisplay = this.getv1() != 0; // arg1: boolean show/hide
-                TimerUI.SetEnable(this._ff9.timerDisplay);
-                TimerUI.SetDisplay(this._ff9.timerDisplay);
-                return 0;
-            }
-            case EBin.event_code_binary.RAISE: // 0x8E, "RaiseWindows", "Make all the dialogs and windows display over the filters"
-            {
-                this.eTb.RaiseAllWindow();
                 return 0;
             }
             case EBin.event_code_binary.CHRCOLOR: // 0x8F, "SetModelColor", "Change a 3D model's color."
@@ -1992,20 +2038,6 @@ public partial class EventEngine
                 this.ExecAnim(actor, (Int32)actor.jump);
                 return 0;
             }
-            case EBin.event_code_binary.MESA:// 0x95, "WindowSyncEx", "Display a window with text inside and wait until it closes"
-            case EBin.event_code_binary.MESAN: // 0x96, "WindowAsyncEx", "Display a window with text inside and continue the execution of the script without waiting"
-            {
-                po = (PosObj)this.GetObj1(); // arg1: talker's entry
-                this.gCur.winnum = (Byte)this.getv1(); // arg2: window ID
-                Int32 uiFlags = this.getv1(); // arg3: UI flag list. 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
-                Int32 textID = this.getv2(); // arg4: text to display
-                this.SetFollow((Obj)po, (Int32)this.gCur.winnum, uiFlags);
-                this.eTb.NewMesWin(textID, (Int32)this.gCur.winnum, uiFlags, po);
-                if (eventCodeBinary == EBin.event_code_binary.MESAN)
-                    return 0;
-                this.gCur.wait = (Byte)254;
-                return 1;
-            }
             case EBin.event_code_binary.DRET: // 0x97, "ReturnEntryFunctions", "Make all the currently executed functions return for a given entry"
             {
                 Obj obj1 = this.GetObj1(); // arg1: entry for which functions are returned
@@ -2027,17 +2059,6 @@ public partial class EventEngine
                 actor.tspeed = (Byte)this.getv1(); // arg1: turn speed (1 is slowest)
                 if ((Int32)actor.tspeed == 0)
                     actor.tspeed = (Byte)16;
-                return 0;
-            }
-            case EBin.event_code_binary.BGIACTIVET: // 0x9A, "EnablePathTriangle", "Enable or disable a triangle of field pathing"
-            {
-                Int32 triangleID = this.getv2(); // arg1: triangle ID
-                Int32 isActive = this.getv1(); // arg2: boolean enable/disable
-                if (mapNo == 1753 && triangleID == 207)
-                    this.fieldmap.walkMesh.BGI_triSetActive(208U, (UInt32)isActive);
-                else if (mapNo == 1606 && triangleID == 107)
-                    isActive = 1;
-                this.fieldmap.walkMesh.BGI_triSetActive((UInt32)triangleID, (UInt32)isActive);
                 return 0;
             }
             case EBin.event_code_binary.TURNTO: // 0x9B, "TurnTowardPosition", "Turn the character toward a position (animated). The object's turn speed is used (default to 16)."
@@ -2178,18 +2199,6 @@ public partial class EventEngine
                 this.StartTurn(actor, EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)angle), true, (Int32)actor.tspeed);
                 return 0;
             }
-            case EBin.event_code_binary.BGI: // 0xA8, "SetPathing", "Change the pathing of the character", true, 1, { 1 }, { "Pathing" }, { AT_BOOL }, 0
-            {
-                Int32 isPathingActive = this.getv1(); // arg1: boolean pathing on/off
-                if (mapNo == 2508 && (Int32)po.sid == 2 && isPathingActive == 1)
-                    isPathingActive = 0;
-                if ((Int32)po.model != (Int32)UInt16.MaxValue)
-                {
-                    FieldMapActorController FMactor = gameObject.GetComponent<FieldMapActorController>();
-                    FMactor.walkMesh.BGI_charSetActive(FMactor, (UInt32)isPathingActive);
-                }
-                return 0;
-            }
             case EBin.event_code_binary.GETSCREEN: // 0xA9, "CalculateScreenPosition", "Calculate the object's position in screen coordinates and store it in 'GetScreenCalculatedX' and 'GetScreenCalculatedY'."
             {
                 Obj obj1 = this.GetObj1();
@@ -2219,46 +2228,20 @@ public partial class EventEngine
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
                 return 1;
             }
-            case EBin.event_code_binary.DISCCHANGE: // 0xAC, "ChangeDisc", "Allow to save the game and change disc"
+            case EBin.event_code_binary.MENU: // 0x75, "Menu", "Open a menu"
             {
-                Int32 fieldAndDiscDest = this.getv2(); // arg1: gathered field destination and disc destination
-                Byte disc_id = (Byte)(fieldAndDiscDest >> 14 & 3);
-                UInt16 map_id = (UInt16)(fieldAndDiscDest & 16383);
-
-                //this._ff9fieldDisc.disc_id = disc_id;
-                //this._ff9fieldDisc.cdType = (byte)(1U << (int)disc_id);
-                this._ff9fieldDisc.FieldMapNo = (Int16)map_id;
-                //this._ff9fieldDisc.FieldLocNo = (short)-1;
-                FF9StateFieldSystem stateFieldSystem = FF9StateSystem.Field.FF9Field;
-                FF9StateSystem instance = PersistenSingleton<FF9StateSystem>.Instance;
-                stateFieldSystem.attr |= 1048576U;
-                instance.attr |= 8U;
-
+                UInt32 menuId = Convert.ToUInt32(this.getv1()); // arg1: menu type
+                UInt32 subId = Convert.ToUInt32(this.getv1()); // arg2: depends on the menu type. Naming Menu: character to name | Shop Menu: shop ID
+                if (Configuration.Hacks.DisableNameChoice && menuId == 1)
+                {
+                    CharacterId charId = this.chr2slot((Int32)subId);
+                    if (charId != CharacterId.NONE && NameSettingUI.IsDefaultName(charId))
+                        this._ff9.GetPlayer(charId).Name = FF9TextTool.CharacterDefaultName(charId);
+                    return 0;
+                }
+                EventService.StartMenu(menuId, subId);
+                PersistenSingleton<UIManager>.Instance.MenuOpenEvent();
                 return 1;
-            }
-            case EBin.event_code_binary.MINIGAME: // 0xAE, "TetraMaster", "Begin a card game"
-            {
-                Int32 minigameFlag = this.getv2(); // arg1: card deck of the opponent
-                EventService.SetMiniGame((UInt16)minigameFlag);
-                EMinigame.SetQuadmistStadiumOpponentId(this.gCur, minigameFlag);
-                EMinigame.SetThiefId(this.gCur);
-                EMinigame.SetFatChocoboId(this.gCur);
-                return 7;
-            }
-            case EBin.event_code_binary.DELETEALLCARD: // 0xAF, "DeleteAllCards", "Clear the player's Tetra Master's deck."
-            {
-                QuadMistDatabase.MiniGame_AwayAllCard();
-                return 0;
-            }
-            case EBin.event_code_binary.SETMAPNAME: // 0xB0, "SetFieldName", "Change the name of the field"
-            {
-                FF9StateSystem.Common.FF9.mapNameStr = FF9TextTool.FieldText(this.getv2()); // arg1: new name (unknown format)
-                return 0;
-            }
-            case EBin.event_code_binary.RESETMAPNAME: // 0xB1, "ResetFieldName", "Reset the name of the field."
-            {
-                FF9StateSystem.Common.FF9.mapNameStr = this._defaultMapName;
-                return 0;
             }
             case EBin.event_code_binary.PARTYMENU: // 0xB2, "Party", "Allow the player to change the members of its party"
             {
@@ -2287,6 +2270,43 @@ public partial class EventEngine
                 sPartyInfo.select = selectList.ToArray();
                 EventService.OpenPartyMenu(sPartyInfo);
                 return 1;
+            }
+            case EBin.event_code_binary.GAMEOVER: // 0xF5, "GameOver", "Terminate the game with a Game Over screen."
+            {
+                return 8;
+            }
+
+            // Minigames
+            case EBin.event_code_binary.MINIGAME: // 0xAE, "TetraMaster", "Begin a card game"
+            {
+                Int32 minigameFlag = this.getv2(); // arg1: card deck of the opponent
+                EventService.SetMiniGame((UInt16)minigameFlag);
+                EMinigame.SetQuadmistStadiumOpponentId(this.gCur, minigameFlag);
+                EMinigame.SetThiefId(this.gCur);
+                EMinigame.SetFatChocoboId(this.gCur);
+                return 7;
+            }
+            case EBin.event_code_binary.DELETEALLCARD: // 0xAF, "DeleteAllCards", "Clear the player's Tetra Master's deck."
+            {
+                QuadMistDatabase.MiniGame_AwayAllCard();
+                return 0;
+            }
+            case EBin.event_code_binary.INCFROG: // 0xE0, "AddFrog", "Add one frog to the frog counter."
+            {
+                _ff9.Frogs.Increment();
+                EMinigame.CatchingGoldenFrogAchievement(this.gCur);
+                return 0;
+            }
+
+            case EBin.event_code_binary.SETMAPNAME: // 0xB0, "SetFieldName", "Change the name of the field"
+            {
+                FF9StateSystem.Common.FF9.mapNameStr = FF9TextTool.FieldText(this.getv2()); // arg1: new name (unknown format)
+                return 0;
+            }
+            case EBin.event_code_binary.RESETMAPNAME: // 0xB1, "ResetFieldName", "Reset the name of the field."
+            {
+                FF9StateSystem.Common.FF9.mapNameStr = this._defaultMapName;
+                return 0;
             }
             case EBin.event_code_binary.SPS: // 0xB3, "RunSPSCode", "Run Sps code, which seems to be special model effects on the field"
             case EBin.event_code_binary.SPS2: // 0xDA, "RunSPSCodeSimple", "Run Sps code, which seems to be special model effects on the field"
@@ -2317,20 +2337,6 @@ public partial class EventEngine
                     ff9.world.WorldSPSSystem.SetObjParm(objNo, parmType, arg1, arg2, arg3);
                 return 0;
             }
-            case EBin.event_code_binary.FULLMEMBER: // 0xB4, "SetPartyReserve", "Define the party member availability for a future Party call"
-            {
-                Int32 reserveList = this.getv2(); // arg1: list of available characters
-                Int32 reserveExtendedList = reserveList & ~0xF00; // This opcode puts Beatrix as the 8th character, before Cinna/Marcus/Blank
-                reserveExtendedList |= (reserveList >> 1) & 0x700; // Cinna/Marcus/Blank -> shift the ID by 1
-                if ((reserveList & 0x100) != 0)
-                    reserveExtendedList |= 0x800; // Beatrix
-                foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
-                    ff9play.FF9Play_Delete(p);
-                foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
-                    if ((reserveExtendedList & (1 << (Int32)p.info.slot_no)) != 0)
-                        ff9play.FF9Play_Add(p);
-                return 0;
-            }
             case EBin.event_code_binary.PRETEND: // 0xB5, "PretendToBe", "Link the object to another object, forcing this object to follow the linked object's position and logical animations"
             {
                 Obj objToPretendToBe = this.GetObj1(); // arg1: object to pretend to be
@@ -2349,6 +2355,8 @@ public partial class EventEngine
                 }
                 return 0;
             }
+
+            // WorldMap
             case EBin.event_code_binary.WMAPJUMP: // 0xB6, "WorldMap", "Change the scene to a world map"
             {
                 this.SetNextMap(this.getv2()); // arg1: world map destination
@@ -2374,6 +2382,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
+
             case EBin.event_code_binary.SETKEYMASK: // 0xB9, "AddControllerMask", "Prevent the input to be processed by the game", true, 2, { 1, 2 }, { "Pad", "Buttons" }, { AT_USPIN, AT_BUTTONLIST }, 0
             {
                 Int32 padNum = this.getv1(); // arg1: pad number (0 or 1)
@@ -2497,6 +2506,34 @@ public partial class EventEngine
                 this.fieldmap.walkMesh.BGI_floorSetActive(floorNdx, isActive);
                 return 0;
             }
+            case EBin.event_code_binary.BGIACTIVET: // 0x9A, "EnablePathTriangle", "Enable or disable a triangle of field pathing"
+            {
+                Int32 triangleID = this.getv2(); // arg1: triangle ID
+                Int32 isActive = this.getv1(); // arg2: boolean enable/disable
+                if (mapNo == 1753 && triangleID == 207)
+                    this.fieldmap.walkMesh.BGI_triSetActive(208U, (UInt32)isActive);
+                else if (mapNo == 1606 && triangleID == 107)
+                    isActive = 1;
+                this.fieldmap.walkMesh.BGI_triSetActive((UInt32)triangleID, (UInt32)isActive);
+                return 0;
+            }
+            case EBin.event_code_binary.BGI: // 0xA8, "SetPathing", "Change the pathing of the character"
+            {
+                Int32 isPathingActive = this.getv1(); // arg1: boolean pathing on/off
+                if (mapNo == 2508 && (Int32)po.sid == 2 && isPathingActive == 1)
+                    isPathingActive = 0;
+                if ((Int32)po.model != (Int32)UInt16.MaxValue)
+                {
+                    FieldMapActorController FMactor = gameObject.GetComponent<FieldMapActorController>();
+                    FMactor.walkMesh.BGI_charSetActive(FMactor, (UInt32)isPathingActive);
+                }
+                return 0;
+            }
+            case EBin.event_code_binary.BGIMASK: // 0x27, "SetTriangleFlagMask", "Set a bitmask for some of the walkmesh triangle flags"
+            {
+                this.BGI_systemSetAttributeMask((Byte)this.getv1()); // arg1: flag mask - 7: disable restricted triangles, 8: disable player-restricted triangles
+                return 0;
+            }
             case EBin.event_code_binary.CHRSET: // 0xCC, "AddCharacterAttribute", "Add specific attributes for the player character corresponding to the current's entry (should only be used by the entries of player characters)"
             {
                 Int32 attrFlag = this.getv2(); // arg1: attribute flags. 3: use a ladder. 5: hide shadow. 6: lock spin angle. 7: enable animation sounds. others: unknown.
@@ -2569,10 +2606,149 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.AICON: // 0xD7, "ATE", "Enable or disable ATE"
+            case EBin.event_code_binary.SETROW: // 0x62, "SetRow", "Change the battle row of a party member"
             {
-                Int32 mode = this.getv1(); // arg1: mode (0 = disable, rest unknown)
-                EIcon.SetAIcon(mode);
+                CharacterId charId = this.chr2slot(this.getv1()); // arg1: party member
+                Int32 row = this.getv1(); // arg2: boolean front/back
+                if (charId != CharacterId.NONE)
+                    FF9StateSystem.Common.FF9.GetPlayer(charId).info.row = (Byte)row;
+                return 0;
+            }
+            case EBin.event_code_binary.JOIN: // 0xFE, "SetCharacterData", "Init a party's member battle and menu datas"
+            {
+                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
+                Int32 enableLeveling = this.getv1(); // arg2: boolean update level/don't update level
+                EquipmentSetId eqp_id = (EquipmentSetId)this.getv1(); // arg3: equipement set to use
+                if (charId != CharacterId.NONE)
+                {
+                    PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
+                    Int32 category = this.getv1(); // arg4: character categories ; doesn't change if all are enabled. 1: male 2: female 3: gaian 4: terran 5: temporary character
+                    if (category != Byte.MaxValue)
+                        player.category = (Byte)category;
+                    CharacterPresetId charPreset = (CharacterPresetId)this.getv1(); // arg5: ability and command set to use
+                    if (charPreset != CharacterPresetId.NONE)
+                        player.info.menu_type = charPreset;
+                    ff9play.FF9Play_Change(player, enableLeveling != 0, eqp_id);
+                    player.info.sub_replaced = true;
+                }
+                else
+                {
+                    this.getv1();
+                    this.getv1();
+                }
+                return 0;
+            }
+            case EBin.event_code_binary.FULLMEMBER: // 0xB4, "SetPartyReserve", "Define the party member availability for a future Party call"
+            {
+                Int32 reserveList = this.getv2(); // arg1: list of available characters
+                Int32 reserveExtendedList = reserveList & ~0xF00; // This opcode puts Beatrix as the 8th character, before Cinna/Marcus/Blank
+                reserveExtendedList |= (reserveList >> 1) & 0x700; // Cinna/Marcus/Blank -> shift the ID by 1
+                if ((reserveList & 0x100) != 0)
+                    reserveExtendedList |= 0x800; // Beatrix
+                foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
+                    ff9play.FF9Play_Delete(p);
+                foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
+                    if ((reserveExtendedList & (1 << (Int32)p.info.slot_no)) != 0)
+                        ff9play.FF9Play_Add(p);
+                return 0;
+            }
+            case EBin.event_code_binary.PARTYDELETE: // 0xDD, "RemoveParty", "Remove a character from the player's team"
+            {
+                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character to remove
+                if (Configuration.Hacks.AllCharactersAvailable >= 2)
+                    return 0;
+                Int32 party_id = 0;
+                while (party_id < 4 && (this._ff9.party.member[party_id] == null || this._ff9.party.member[party_id].info.slot_no != charId))
+                    ++party_id;
+                if (party_id < 4)
+                {
+                    ff9play.FF9Play_SetParty(party_id, CharacterId.NONE);
+                    this.SetupPartyUID();
+                }
+                return 0;
+            }
+            case EBin.event_code_binary.SYNCPARTY: // 0xE9, "UpdatePartyUID", "Update the party's entry list (Team Character 1-4 entries) for RunScript and InitObject calls. Should always be used after a Party call
+                                                   // (it is automatic when using RemoveParty or AddParty)."
+            {
+                this.SetupPartyUID();
+                return 0;
+            }
+            case EBin.event_code_binary.PLAYERNAME: // 0xDE, "SetName", "Change the name of a party member. Clear the text opcodes from the chosen text"
+            {
+                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character to rename
+                Int32 textId = this.getv2(); // arg2: new name
+                if (charId != CharacterId.NONE)
+                    this._ff9.GetPlayer(charId).Name = FF9TextTool.RemoveOpCode(FF9TextTool.FieldText(textId));
+                return 0;
+            }
+            case EBin.event_code_binary.SETHP: // 0xF1, "SetHP", "Change the HP of a party's member"
+            {
+                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
+                if (charId != CharacterId.NONE)
+                {
+                    PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
+                    Int32 newHp = this.getv2(); // arg2: new HP value
+                    Single hpHealProp = newHp <= player.cur.hp ? -1f :
+                        newHp == 9999 ? 1f : (Single)(newHp - player.cur.hp) / player.max.hp;
+                    if (newHp == 9999)
+                        newHp = Int32.MaxValue;
+
+                    player.cur.hp = (UInt32)Math.Min(player.max.hp, newHp);
+
+                    // https://github.com/Albeoris/Memoria/issues/22
+                    if (!player.info.sub_replaced)
+                    {
+                        PLAYER subPlayer = FF9StateSystem.Common.FF9.GetPlayer(charId + 3);
+                        subPlayer.cur.hp = (UInt32)Math.Min(subPlayer.max.hp, newHp);
+                    }
+                    if (charId == CharacterId.Beatrix && hpHealProp >= 0f)
+                        foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                            if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
+                                play.cur.hp = (UInt32)Math.Min(play.max.hp, play.cur.hp + hpHealProp * play.max.hp);
+                }
+                return 0;
+            }
+            case EBin.event_code_binary.SETMP: // 0xF2, "SetMP", "Change the MP of a party's member"
+            {
+                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
+                if (charId != CharacterId.NONE)
+                {
+                    PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
+                    Int32 newMp = this.getv2(); // arg2: new MP value
+                    Single mpHealProp = newMp <= player.cur.mp ? -1f :
+                        newMp == 999 ? 1f : (Single)(newMp - player.cur.mp) / player.max.mp;
+                    if (newMp == 999)
+                        newMp = Int32.MaxValue;
+
+                    player.cur.mp = (UInt32)Math.Min(player.max.mp, newMp);
+
+                    // https://github.com/Albeoris/Memoria/issues/22
+                    if (!player.info.sub_replaced)
+                    {
+                        PLAYER subPlayer = FF9StateSystem.Common.FF9.GetPlayer(charId + 3);
+                        subPlayer.cur.mp = (UInt32)Math.Min(subPlayer.max.mp, newMp);
+                    }
+                    if (charId == CharacterId.Beatrix && mpHealProp >= 0f)
+                        foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                            if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
+                                play.cur.mp = (UInt32)Math.Min(play.max.mp, play.cur.mp + mpHealProp * play.max.mp);
+                }
+                return 0;
+            }
+            case EBin.event_code_binary.CLEARAP: // 0xF3, "UnlearnAbility", "Set an ability's AP back to 0"
+            {
+                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
+                Int32 abilIndex = this.getv1(); // arg2: ability to reset
+                if (charId != CharacterId.NONE)
+                    ff9abil.FF9Abil_ClearAp(FF9StateSystem.Common.FF9.GetPlayer(charId), abilIndex);
+                return 0;
+            }
+            case EBin.event_code_binary.MAXAP: // 0xF4, "LearnAbility", "Make character learn an ability"
+            {
+                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
+                Int32 abilIndex = this.getv1(); // arg2: ability to learn
+                if (charId != CharacterId.NONE)
+                    ff9abil.FF9Abil_SetMaster(FF9StateSystem.Common.FF9.GetPlayer(charId), abilIndex);
                 return 0;
             }
             case EBin.event_code_binary.CLEARSTATUS: // 0xD9, "CureStatus", "Cure the status ailments of a party member"
@@ -2663,45 +2839,10 @@ public partial class EventEngine
                 actor.jframeN = (Byte)steps;
                 return 0;
             }
-            case EBin.event_code_binary.PARTYDELETE: // 0xDD, "RemoveParty", "Remove a character from the player's team"
-            {
-                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character to remove
-                if (Configuration.Hacks.AllCharactersAvailable >= 2)
-                    return 0;
-                Int32 party_id = 0;
-                while (party_id < 4 && (this._ff9.party.member[party_id] == null || this._ff9.party.member[party_id].info.slot_no != charId))
-                    ++party_id;
-                if (party_id < 4)
-                {
-                    ff9play.FF9Play_SetParty(party_id, CharacterId.NONE);
-                    this.SetupPartyUID();
-                }
-                return 0;
-            }
-            case EBin.event_code_binary.SYNCPARTY: // 0xE9, "UpdatePartyUID", "Update the party's entry list (Team Character 1-4 entries) for RunScript and InitObject calls. Should always be used after a Party call
-                                                   // (it is automatic when using RemoveParty or AddParty)."
-            {
-                this.SetupPartyUID();
-                return 0;
-            }
-            case EBin.event_code_binary.PLAYERNAME: // 0xDE, "SetName", "Change the name of a party member. Clear the text opcodes from the chosen text"
-            {
-                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character to rename
-                Int32 textId = this.getv2(); // arg2: new name
-                if (charId != CharacterId.NONE)
-                    this._ff9.GetPlayer(charId).Name = FF9TextTool.RemoveOpCode(FF9TextTool.FieldText(textId));
-                return 0;
-            }
             case EBin.event_code_binary.OVAL: //  // 0xDF, "SetObjectOvalRatio", "Define a stretching factor for the object's collisions (seems to only work on world maps). The collisions' shape is not exactly an oval but consists of two discs patched together"
             {
                 po.ovalRatio = (Byte)this.getv1(); // arg1: increase of the collision in the facing direction of the object. //0 removes the feature(both circles are merged)
                 // 48 makes the object's collision twice higher toward the facing direction than on its sides //100 corresponds to a factor of about 2.7 in the facing direction  //255 corresponds to a factor of about 4
-                return 0;
-            }
-            case EBin.event_code_binary.INCFROG: // 0xE0, "AddFrog", "Add one frog to the frog counter."
-            {
-                _ff9.Frogs.Increment();
-                EMinigame.CatchingGoldenFrogAchievement(this.gCur);
                 return 0;
             }
             case EBin.event_code_binary.BEND: // 0xE1, "TerminateBattle", "Return to the field (or world map) when the rewards are disabled"
@@ -2729,124 +2870,27 @@ public partial class EventEngine
                 this.sSysY = vrpY;
                 return 0;
             }
-            case EBin.event_code_binary.CLOSEALL: // 0xEB, "CloseAllWindows", "Close all the dialogs and UI windows."
-            {
-                this.eTb.YWindow_CloseAll(true);
-                return 0;
-            }
-            case EBin.event_code_binary.WIPERGB: // 0xEC, "FadeFilter", "Apply a fade filter on the screen"
-            {
-                Int32 filterMode = this.getv1(); // arg1: filter mode (0 for ADD, 2 for SUBTRACT)
-                Int32 frame = this.getv1(); // arg2: fading time
-                this.getv1(); // arg3: unknown
-                Int32 cyan = this.getv1(); // 4 Cyan
-                Int32 magenta = this.getv1(); // 5 Magenta
-                Int32 yellow = this.getv1(); // 6 Yellow
-                if (mapNo == 1819 && scCounter == 7030 && cyan == 130 && magenta == 160 && yellow == 170)
-                {
-                    cyan = 81; magenta = 110; yellow = 121;
-                }
-
-                Color32 fadeColor = new Color((Single)cyan / (Single)Byte.MaxValue, (Single)magenta / (Single)Byte.MaxValue, (Single)yellow / (Single)Byte.MaxValue);
-                SceneDirector.InitFade((filterMode >> 1 & 1) != 0 ? FadeMode.Sub : FadeMode.Add, frame, fadeColor);
-                return 0;
-            }
-            case EBin.event_code_binary.BGVALPHA: // 0xED, "SetTileLoopAlpha", "Unknown opcode about tile looping movements (EBG_overlayDefineViewportAlpha)."
-            {
-                Int32 viewportNdx = this.getv1(); // arg1: viewport index
-                Int32 alphaX = this.getv2(); // 2nd and arg3s: unknown factors (X, Y).
-                Int32 alphaY = this.getv2();
-                this.fieldmap.EBG_overlayDefineViewportAlpha(viewportNdx, alphaX, alphaY);
-                return 0;
-            }
             case EBin.event_code_binary.SLEEPON: // 0xEE, "EnableInactiveAnimation", "Allow the player's character to play its inactive animation. The inaction time required is:First Time = 200 + 4 * Random[0, 255]Following Times = 200 + 2 * Random[0, 255]"
             {
                 this._context.idletimer = (Int16)0;
                 return 0;
             }
+
+            // Controls
             case EBin.event_code_binary.HEREON: // 0xEF, "ShowHereIcon", "Show the Here icon over player's character"
             {
                 EIcon.SetHereIcon(this.getv1()); // arg1: display type (0 to hide, 3 to show unconditionally)
+                return 0;
+            }
+            case EBin.event_code_binary.DASHOFF: // 0x6A, "DisableRun", "Make the player's character always walk."
+            {
+                this._context.dashinh = (Byte)1;
                 return 0;
             }
             case EBin.event_code_binary.DASHON: // 0xF0, "EnableRun", "Allow the player's character to run."
             {
                 this._context.dashinh = (Byte)0;
                 return 0;
-            }
-            case EBin.event_code_binary.SETHP: // 0xF1, "SetHP", "Change the HP of a party's member"
-            {
-                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
-                if (charId != CharacterId.NONE)
-                {
-                    PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
-                    Int32 newHp = this.getv2(); // arg2: new HP value
-                    Single hpHealProp = newHp <= player.cur.hp ? -1f :
-                        newHp == 9999 ? 1f : (Single)(newHp - player.cur.hp) / player.max.hp;
-                    if (newHp == 9999)
-                        newHp = Int32.MaxValue;
-
-                    player.cur.hp = (UInt32)Math.Min(player.max.hp, newHp);
-
-                    // https://github.com/Albeoris/Memoria/issues/22
-                    if (!player.info.sub_replaced)
-                    {
-                        PLAYER subPlayer = FF9StateSystem.Common.FF9.GetPlayer(charId + 3);
-                        subPlayer.cur.hp = (UInt32)Math.Min(subPlayer.max.hp, newHp);
-                    }
-                    if (charId == CharacterId.Beatrix && hpHealProp >= 0f)
-                        foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
-                            if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
-                                play.cur.hp = (UInt32)Math.Min(play.max.hp, play.cur.hp + hpHealProp * play.max.hp);
-                }
-                return 0;
-            }
-            case EBin.event_code_binary.SETMP: // 0xF2, "SetMP", "Change the MP of a party's member"
-            {
-                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
-                if (charId != CharacterId.NONE)
-                {
-                    PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
-                    Int32 newMp = this.getv2(); // arg2: new MP value
-                    Single mpHealProp = newMp <= player.cur.mp ? -1f :
-                        newMp == 999 ? 1f : (Single)(newMp - player.cur.mp) / player.max.mp;
-                    if (newMp == 999)
-                        newMp = Int32.MaxValue;
-
-                    player.cur.mp = (UInt32)Math.Min(player.max.mp, newMp);
-
-                    // https://github.com/Albeoris/Memoria/issues/22
-                    if (!player.info.sub_replaced)
-                    {
-                        PLAYER subPlayer = FF9StateSystem.Common.FF9.GetPlayer(charId + 3);
-                        subPlayer.cur.mp = (UInt32)Math.Min(subPlayer.max.mp, newMp);
-                    }
-                    if (charId == CharacterId.Beatrix && mpHealProp >= 0f)
-                        foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
-                            if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
-                                play.cur.mp = (UInt32)Math.Min(play.max.mp, play.cur.mp + mpHealProp * play.max.mp);
-                }
-                return 0;
-            }
-            case EBin.event_code_binary.CLEARAP: // 0xF3, "UnlearnAbility", "Set an ability's AP back to 0"
-            {
-                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
-                Int32 abilIndex = this.getv1(); // arg2: ability to reset
-                if (charId != CharacterId.NONE)
-                    ff9abil.FF9Abil_ClearAp(FF9StateSystem.Common.FF9.GetPlayer(charId), abilIndex);
-                return 0;
-            }
-            case EBin.event_code_binary.MAXAP: // 0xF4, "LearnAbility", "Make character learn an ability"
-            {
-                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
-                Int32 abilIndex = this.getv1(); // arg2: ability to learn
-                if (charId != CharacterId.NONE)
-                    ff9abil.FF9Abil_SetMaster(FF9StateSystem.Common.FF9.GetPlayer(charId), abilIndex);
-                return 0;
-            }
-            case EBin.event_code_binary.GAMEOVER: // 0xF5, "GameOver", "Terminate the game with a Game Over screen."
-            {
-                return 8;
             }
             case EBin.event_code_binary.VIBSTART: // 0xF6, "VibrateController", "Start the vibration lifespan"
             {
@@ -2911,30 +2955,6 @@ public partial class EventEngine
                         field_object.SetActive(false);
                     }
                     this.sExternalFieldMode = true;
-                }
-                return 0;
-            }
-            case EBin.event_code_binary.JOIN: // 0xFE, "SetCharacterData", "Init a party's member battle and menu datas"
-            {
-                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
-                Int32 enableLeveling = this.getv1(); // arg2: boolean update level/don't update level
-                EquipmentSetId eqp_id = (EquipmentSetId)this.getv1(); // arg3: equipement set to use
-                if (charId != CharacterId.NONE)
-                {
-                    PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
-                    Int32 category = this.getv1(); // arg4: character categories ; doesn't change if all are enabled. 1: male 2: female 3: gaian 4: terran 5: temporary character
-                    if (category != Byte.MaxValue)
-                        player.category = (Byte)category;
-                    CharacterPresetId charPreset = (CharacterPresetId)this.getv1(); // arg5: ability and command set to use
-                    if (charPreset != CharacterPresetId.NONE)
-                        player.info.menu_type = charPreset;
-                    ff9play.FF9Play_Change(player, enableLeveling != 0, eqp_id);
-                    player.info.sub_replaced = true;
-                }
-                else
-                {
-                    this.getv1();
-                    this.getv1();
                 }
                 return 0;
             }
