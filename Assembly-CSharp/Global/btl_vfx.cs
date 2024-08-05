@@ -191,7 +191,7 @@ public static class btl_vfx
             btl.ChangeModel(btl.originalGo, btl_init.GetModelID(serialNo, isTrance));
             GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
         }
-        btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
+        btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect", btl);
         BattlePlayerCharacter.InitAnimation(btl);
         //btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
         if (isTrance && btlParam.TranceParameters)

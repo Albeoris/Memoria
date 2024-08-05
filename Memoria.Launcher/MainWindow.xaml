@@ -30,7 +30,7 @@
 
         <launcher:MemoriaIniControl x:Name="MemoriaIniControl"
             Width="260"
-            Margin="0,0,30,20"
+            Margin="0,0,30,67"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom" >
         </launcher:MemoriaIniControl>
@@ -68,6 +68,12 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Content="" />
-
+        <launcher:UiLauncherAdvOptionsButton
+            Width="251"
+            Height="36"
+            Margin="0,0,30,20"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Content="" />
     </Grid>
 </Window>

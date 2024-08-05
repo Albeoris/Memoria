@@ -18,6 +18,7 @@ namespace Memoria.Launcher
     public partial class MainWindow : Window, IComponentConnector
     {
         public ModManagerWindow ModdingWindow;
+        public AdvOptionsWindow AdvOptionsWindow;
         public DateTime MemoriaAssemblyCompileDate;
 
         public MainWindow()

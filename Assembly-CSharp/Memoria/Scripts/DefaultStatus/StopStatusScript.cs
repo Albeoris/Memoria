@@ -16,8 +16,7 @@ namespace Memoria.DefaultScripts
 
         public override Boolean Remove()
         {
-            if (!Target.IsUnderAnyStatus(BattleStatus.Slow))
-                Target.UISpriteATB = BattleHUD.ATENormal;
+            Target.UISpriteATB = Target.IsUnderAnyStatus(BattleStatus.Slow) ? BattleHUD.ATEGray : Target.IsUnderAnyStatus(BattleStatus.Haste) ? BattleHUD.ATEOrange : BattleHUD.ATENormal;
             return true;
         }
     }

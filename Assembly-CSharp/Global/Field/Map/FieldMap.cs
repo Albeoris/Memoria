@@ -537,10 +537,11 @@ public class FieldMap : HonoBehavior
         {
             foreach (Material material in renderer.materials)
             {
-                material.shader = FF9StateSystem.Field.isDebugWalkMesh ? ShadersLoader.Find("Unlit/Transparent Cutout") : ShadersLoader.Find("PSX/FieldMapActor");
+                material.shader = FF9StateSystem.Field.isDebugWalkMesh ? ShadersLoader.Find("Unlit/Transparent Cutout") : ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
                 ModelFactory.SetMatFilter(material, Configuration.Graphics.ElementsSmoothTexture);
             }
         }
+        NormalSolver.SmoothCharacterMesh(renderers);
     }
 
     public void RestoreModels(GameObject modelGo, Actor actorOfObj)
@@ -624,11 +625,11 @@ public class FieldMap : HonoBehavior
                 else if (actorOfObj.model == 395) // BlueMagicLight
                     material.shader = ShadersLoader.Find("PSX/Actor_Abr_1");
                 else
-                    material.shader = ShadersLoader.Find("PSX/FieldMapActor");
-
+                    material.shader = ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
                 ModelFactory.SetMatFilter(material, Configuration.Graphics.ElementsSmoothTexture);
             }
         }
+        NormalSolver.SmoothCharacterMesh(renderers);
         if (needRestore && FF9StateSystem.Common.FF9.fldMapNo == 1706) // Mdn. Sari/Kitchen
         {
             if (fieldMapActor.actor.uid == 4 && FF9StateSystem.Settings.CurrentLanguage == "Japanese")

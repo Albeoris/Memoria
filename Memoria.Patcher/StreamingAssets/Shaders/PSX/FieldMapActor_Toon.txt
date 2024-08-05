@@ -1,0 +1,282 @@
+Shader "PSX/FieldMapActor_Toon" {
+	Properties {
+		_MainTex ("Texture", 2D) = "grey" { }
+		_Color ("Tint", Color) = (1,1,1,1)
+		_Slice ("Slice", Float) = 40960
+	}
+	SubShader { 
+		Tags { "QUEUE"="Transparent+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
+		Pass {
+			Tags { "QUEUE"="Transparent+1" "IGNOREPROJECTOR"="true" "RenderType"="Transparent+1" }
+			Blend One OneMinusSrcAlpha
+			GpuProgramID 65460
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+                    Matrix 0 [_Object2World]
+                    Matrix 4 [unity_MatrixV]
+					Matrix 8 [_MatrixRT]
+                    Matrix 12 [unity_CameraInvProjection] 3
+                    Matrix 15 [unity_MatrixInvV] 3
+                    Matrix 18 [unity_MatrixVP] 3
+                    Matrix 21 [glstate_matrix_projection] 2
+                    Vector 23 [_WorldSpaceCameraPos]
+                    Vector 24 [_ProjectionParams]
+                    Vector 25 [_Color]
+                    Float 26 [_CharZ]
+                    Float 27 [_DepthOffset]
+                    Float 28 [_OffsetX]
+                    Float 29 [_OffsetY]
+                    Float 30 [_ViewDistance]
+                    Float 31 [_MulX]
+                    Float 32 [_MulY]
+					"vs_2_0
+					    def c33, 2, -112, 0, 0.25
+                        def c34, -1, 0, 1, 2
+                        dcl_position v0
+                        dcl_color v1
+                        dcl_normal v2
+                        dcl_texcoord v3
+                        mul oD0, v1, c25
+                        dp3 r0.x, c0, v2
+                        dp3 r0.y, c1, v2
+                        dp3 r0.z, c2, v2
+                        dp3 r0.w, r0, r0
+                        rsq r0.w, r0.w
+                        mul oT2.xyz, r0.w, r0
+                        mov r0.xz, c34.xyyw
+                        dp4 r1.x, c1, v0
+                        mov r1.y, -r1.x
+                        dp4 r1.w, c3, v0
+                        dp4 r1.z, c2, v0
+                        dp4 r1.x, c0, v0
+                        dp4 r2.x, c10, r1
+                        rcp r2.y, r2.x
+                        mul r2.y, r2.y, c30.x
+                        dp4 r2.z, c9, r1
+                        mul r2.z, r2.z, r2.y
+                        mov r0.w, -r2.z
+                        mad r0.y, r2.z, c33.x, c33.y
+                        slt r2.z, r2.x, c33.z
+                        mov r2.w, c33.w
+                        mad r2.x, r2.x, r2.w, c27.x
+                        add r3.z, r2.x, c26.x
+                        mad r3.xy, r2.z, r0, r0.zwzw
+                        mov oT1.z, r3.x
+                        dp4 r0.x, c8, r1
+                        dp4 r3.w, c11, r1
+                        mov oT1.xyw, r1.xyzz
+                        mul r3.x, r0.x, r2.y
+                        dp4 r0.x, c4, r3
+                        dp4 r0.y, c5, r3
+                        dp4 r0.z, c6, r3
+                        dp4 r0.w, c7, r3
+                        dp4 r1.z, c20, r3
+                        dp4 r1.x, c22, r0
+                        dp4 r0.x, c21, r0
+                        mov r2.x, c28.x
+                        mad r0.x, r2.x, c31.x, r0.x
+                        mov r2.x, c29.x
+                        mad r1.y, r2.x, c32.x, r1.x
+                        mul r0.y, r1.y, c24.x
+                        mov r4.yz, r1
+                        add r1.x, -r1.z, c34.z
+                        mad r0.z, r1.x, c34.w, c34.x
+                        mov r0.w, c34.z
+                        dp4 r1.x, c12, r0
+                        dp4 r1.y, c13, r0
+                        dp4 r1.z, c14, r0
+                        mov r4.xw, r0
+                        mov r1.w, c34.z
+                        dp4 r0.x, c15, r1
+                        dp4 r0.y, c16, r1
+                        dp4 r0.z, c17, r1
+                        add r0.xyz, -r0, c23
+                        nrm r1.xyz, r0
+                        mov oT3.xyz, -r1
+                        mov oT0.xy, v3
+                        mad oPos.xy, r4.w, c255, r4
+                        mov oPos.zw, r4
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+				    Float 0 [_Slice]
+				    Vector 1 [_FieldMainLightDirection]
+                	SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+                        def c2, -0.5, 0, 1, 0.300000012
+                        def c3, -0.200000003, 2.49999976, -2, 3
+                        dcl t0.xy
+                        dcl t1.xyz
+                        dcl t2.xyz
+                        dcl v0
+                        dcl_2d s0
+                        texld_pp r0, t0, s0
+                        add r1.w, -t1.y, c0.x
+                        cmp r1.x, r1.w, c2.y, c2.z
+                        cmp r1.y, t1.z, c2.y, c2.z
+                        add r1.x, r1.x, r1.y
+                        cmp r1.x, -r1.x, c2.y, c2.z
+                        mad r1.y, r0.w, v0.w, c2.x
+                        cmp r1.y, r1.y, c2.y, c2.z
+                        add r1.x, r1.y, r1.x
+                        cmp r1, -r1.x, -c2.y, -c2.z
+                        texkill r1
+                        mul_pp r1, r0, v0
+                        mul_pp r1.xyz, r1, r1.w
+                        add_pp r1.xyz, r1, r1
+                        nrm_pp r2.xyz, c1
+                        nrm_pp r3.xyz, t2
+                        dp3_pp r1.w, r3, r2
+                        add_sat_pp r1.w, r1.w, c2.w
+                        add_pp r1.w, r1.w, c3.x
+                        mul_sat_pp r1.w, r1.w, c3.y
+                        mul_pp r2.x, r1.w, r1.w
+                        mad_pp r1.w, r1.w, c3.z, c3.w
+                        mul_pp r1.w, r2.x, r1.w
+                        max_pp r2.x, r1.w, -c2.x
+                        mul_pp r0.xyz, r1, r2.x
+                        mov_pp oC0, r0
+						"
+				}
+			}
+		}
+		Pass {
+		    Name "OUTLINE"
+		    Cull Front
+			Program "vp" {
+				SubProgram "d3d9 " {
+					Bind "vertex" Vertex
+					Bind "color" Color
+					Bind "normal" Normal
+					Bind "texcoord" TexCoord0
+                    Matrix 0 [_Object2World]
+                    Matrix 4 [unity_MatrixV]
+					Matrix 8 [_MatrixRT]
+                    Matrix 12 [unity_CameraInvProjection] 3
+                    Matrix 15 [unity_MatrixInvV] 3
+                    Matrix 18 [unity_MatrixVP] 3
+                    Matrix 21 [glstate_matrix_projection] 2
+                    Vector 23 [_WorldSpaceCameraPos]
+                    Vector 24 [_ProjectionParams]
+                    Vector 25 [_Color]
+                    Float 26 [_CharZ]
+                    Float 27 [_DepthOffset]
+                    Float 28 [_OffsetX]
+                    Float 29 [_OffsetY]
+                    Float 30 [_ViewDistance]
+                    Float 31 [_MulX]
+                    Float 32 [_MulY]
+                    Float 33 [_OutlineWidth]
+					"vs_2_0
+					    def c34, 2, -112, 0, 0.25
+                        def c35, -1, 0, 1, 2
+                        dcl_position v0
+                        dcl_color v1
+                        dcl_normal v2
+                        dcl_texcoord v3
+                        mul oD0, v1, c25
+                        dp3 r0.x, c0, v2
+                        dp3 r0.y, c1, v2
+                        dp3 r0.z, c2, v2
+                        dp3 r0.w, r0, r0
+                        rsq r0.w, r0.w
+                        mul oT2.xyz, r0.w, r0
+                        mov r0.xz, c35.xyyw
+                        mov r1.xyz, v2
+                        mad r1.xyz, r1, c33.x, v0
+                        mov r1.w, v0.w
+                        dp4 r2.x, c1, r1
+                        mov r2.y, -r2.x
+                        dp4 r2.w, c3, r1
+                        dp4 r2.z, c2, r1
+                        dp4 r2.x, c0, r1
+                        dp4 r1.x, c10, r2
+                        rcp r1.y, r1.x
+                        mul r1.y, r1.y, c30.x
+                        dp4 r1.z, c9, r2
+                        mul r1.z, r1.z, r1.y
+                        mov r0.w, -r1.z
+                        mad r0.y, r1.z, c34.x, c34.y
+                        slt r1.z, r1.x, c34.z
+                        mov r1.w, c34.w
+                        mad r1.x, r1.x, r1.w, c27.x
+                        add r3.z, r1.x, c26.x
+                        mad r3.xy, r1.z, r0, r0.zwzw
+                        mov oT1.z, r3.x
+                        dp4 r0.x, c8, r2
+                        dp4 r3.w, c11, r2
+                        mov oT1.xyw, r2.xyzz
+                        mul r3.x, r0.x, r1.y
+                        dp4 r0.x, c4, r3
+                        dp4 r0.y, c5, r3
+                        dp4 r0.z, c6, r3
+                        dp4 r0.w, c7, r3
+                        dp4 r1.z, c20, r3
+                        dp4 r1.x, c22, r0
+                        dp4 r0.x, c21, r0
+                        mov r2.x, c28.x
+                        mad r0.x, r2.x, c31.x, r0.x
+                        mov r2.x, c29.x
+                        mad r1.y, r2.x, c32.x, r1.x
+                        mul r0.y, r1.y, c24.x
+                        mov r4.yz, r1
+                        add r1.x, -r1.z, c35.z
+                        mad r0.z, r1.x, c35.w, c35.x
+                        mov r0.w, c35.z
+                        dp4 r1.x, c12, r0
+                        dp4 r1.y, c13, r0
+                        dp4 r1.z, c14, r0
+                        mov r4.xw, r0
+                        mov r1.w, c35.z
+                        dp4 r0.x, c15, r1
+                        dp4 r0.y, c16, r1
+                        dp4 r0.z, c17, r1
+                        add r0.xyz, -r0, c23
+                        nrm r1.xyz, r0
+                        mov oT3.xyz, -r1
+                        mov oT0.xy, v3
+                        mad oPos.xy, r4.w, c255, r4
+                        mov oPos.zw, r4
+						"
+				}
+			}
+			Program "fp" {
+				SubProgram "d3d9 " {
+					Float 0 [_Slice]
+					Float 1 [_ShowOutline]
+					SetTexture 0 [_MainTex] 2D 0
+					"ps_2_0
+                        def c2, -1, -0, -0.5, 0.100000001
+                        dcl t0.xy
+                        dcl t1.xyz
+                        dcl v0
+                        dcl_2d s0
+                        mov r0.xy, c2
+                        cmp r0, -c1.x, r0.x, r0.y
+                        texkill r0
+                        add r0.x, -t1.y, c0.x
+                        cmp r0.x, r0.x, -c2.y, -c2.x
+                        cmp r0.y, t1.z, -c2.y, -c2.x
+                        add r0.x, r0.x, r0.y
+                        cmp r0.x, -r0.x, -c2.y, -c2.x
+                        texld_pp r1, t0, s0
+                        mad r1.w, r1.w, v0.w, c2.z
+                        cmp r1.w, r1.w, -c2.y, -c2.x
+                        add r1.w, r0.x, r1.w
+                        cmp r2, -r1.w, c2.y, c2.x
+                        texkill r2
+                        mul_pp r0.xyz, r1, c2.w
+                        mov r0.w, -c2.x
+                        mov_pp oC0, r0
+						"
+				}
+			}
+		}
+	}
+}

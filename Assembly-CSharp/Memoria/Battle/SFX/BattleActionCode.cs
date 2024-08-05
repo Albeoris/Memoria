@@ -329,6 +329,8 @@ public class BattleActionCode
             boneNum = btl.tar_bone;
         else if (String.Equals(bone, "wep_bone", StringComparison.OrdinalIgnoreCase) || String.Equals(bone, "Weapon", StringComparison.OrdinalIgnoreCase))
             boneNum = btl.weapon_bone;
+        else if (String.Equals(bone, "root_bone", StringComparison.OrdinalIgnoreCase) || String.Equals(bone, "Root", StringComparison.OrdinalIgnoreCase))
+            boneNum = 0;
         else if (bone.StartsWith("icon_bone:", StringComparison.OrdinalIgnoreCase) || bone.StartsWith("Icon:", StringComparison.OrdinalIgnoreCase))
         {
             btl2d.GetIconPosition(btl, out Byte[] iconBone, out _, out _);

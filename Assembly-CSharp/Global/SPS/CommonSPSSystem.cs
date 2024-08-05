@@ -156,7 +156,6 @@ public class CommonSPSSystem
                     sps.pos = Vector3.zero;
                     sps.scale = SPSConst.SCALE_ONE;
                     sps.rot = Vector3.zero;
-                    sps.rotArg = Vector3.zero;
                 }
                 sps.Unload();
             }

@@ -94,6 +94,7 @@
 	BattleFPS = "Battle"
 	FieldFPS = "Field"
 	WorldFPS = "World"
+	
 	CameraStabilizer = "Camera stabilizer"
 	UseOrchestralMusic = "Orchestral music (Moguri)"
 	Use30FpsVideo = "30 FPS videos (Moguri)"
@@ -142,6 +143,7 @@
 	WorldFPS_Tooltip = "Image refresh rate on the world map (default: 20)"
 	MaxCardCount_Tooltip = "Limit to cards in inventory raised to 10000"
 	UIColumnsChoice_Tooltip = "Number of columns: if you want more items/abilities on one screen"
+	EnableCustomShader_Tooltip = "Whether to enable per-pixel lighting shader for field and battle character"
 	NoAutoTrance_Tooltip = "Trance does not start automatically. 'Left key' to activate it"
 	FPSDropboxChoice = "FPS"
 	FPSDropboxChoice0 = "Native (15/20/30)"
@@ -154,6 +156,16 @@
 	tetraMasterReduceRandomBox1 = "Lower randomness"
 	tetraMasterReduceRandomBox2 = "Easy win"
 	/>
+	
+	<!-- 
+	EnableCustomShader = "Enable Custom Shaders"
+	Shader_Field_Realism = "Use Realism Shading In Field"
+	Shader_Field_Toon = "Use Toon Shading In Field"
+	Shader_Field_Outlines = "Enable Outline For Field Character"
+	Shader_Battle_Realism = "Use Realism Shading In Battle"
+	Shader_Battle_Toon = "Use Toon Shading In Battle"
+	Shader_Battle_Outlines = "Enable Outline For Battle Character"
+	-->
 
 	<SdLib
 	Caption = "Patch SdLib.dll"

@@ -388,7 +388,7 @@ public static class btl_stat
                         Byte g = (Byte)Mathf.Clamp(bbgInfoPtr.chr_g + retainedData[0].ColorBase[1], 0, Byte.MaxValue);
                         Byte b = (Byte)Mathf.Clamp(bbgInfoPtr.chr_b + retainedData[0].ColorBase[2], 0, Byte.MaxValue);
                         if (!FF9StateSystem.Battle.isFade)
-                            btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                            btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect", data);
                         btl_util.GeoSetColor2DrawPacket(data.gameObject, r, g, b, Byte.MaxValue);
                         if (data.weapon_geo)
                             btl_util.GeoSetColor2DrawPacket(data.weapon_geo, r, g, b, Byte.MaxValue);
@@ -403,7 +403,7 @@ public static class btl_stat
                         Int16 g = (Int16)((bbgInfoPtr.chr_g + retainedData[index].ColorBase[1]) * strength >> 3);
                         Int16 b = (Int16)((bbgInfoPtr.chr_b + retainedData[index].ColorBase[2]) * strength >> 3);
                         if (!FF9StateSystem.Battle.isFade)
-                            btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                            btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect", data);
                         GeoAddColor2DrawPacket(data.gameObject, r, g, b);
                         if (data.weapon_geo)
                             GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
@@ -420,7 +420,7 @@ public static class btl_stat
                             Int16 g = (Int16)((bbgInfoPtr.chr_g + glowingColor[1] - 128) * strength >> 3);
                             Int16 b = (Int16)((bbgInfoPtr.chr_b + glowingColor[2] - 128) * strength >> 3);
                             if (!FF9StateSystem.Battle.isFade)
-                                btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                                btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect", data);
                             GeoAddColor2DrawPacket(data.gameObject, r, g, b);
                             if (data.weapon_geo)
                                 GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
@@ -469,7 +469,7 @@ public static class btl_stat
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
         if ((ff9Battle.btl_load_status & ff9btl.LOAD_CHR) == 0 || (ff9Battle.btl_load_status & ff9btl.LOAD_FADENPC) == 0 || FF9StateSystem.Battle.isFade)
             return;
-        btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
+        btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect", btl);
         btl_util.GeoSetColor2DrawPacket(btl.gameObject, bbgInfoPtr.chr_r, bbgInfoPtr.chr_g, bbgInfoPtr.chr_b, Byte.MaxValue);
     }
 

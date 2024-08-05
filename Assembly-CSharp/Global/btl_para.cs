@@ -16,7 +16,7 @@ public class btl_para
     {
         // Custom Memoria method for enemies with 10 000 HP more than they should for scripting purposes
         // It might be a good idea to rework completly the system (let some enemies be able to survive / perform ending attacks even with 0 HP for instance), but any solution requires a rewrite of AI scripts
-        // Even this solution requires a rework of many AI scripts since the HP gap is not always 10 000 (Kraken's tentacle for instance)
+        // Even this solution requires a rework of many AI scripts since the HP gap is not always 10 000 (Gizamaluke, Kraken's tentacle...)
         UInt32 hp = max ? btl.max.hp : btl.cur.hp;
         if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && btl.bi.player == 0 && (btl_util.getEnemyPtr(btl).info.flags & ENEMY.ENEMY_INFO.FLG_NON_DYING_BOSS) != 0)
         {
@@ -32,7 +32,6 @@ public class btl_para
     {
         if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
         {
-            // TODO [Tirlititi] Check that "IsNonDyingVanillaBoss" isn't needed at all in AF
             if (btl.bi.player == 0 && (btl_util.getEnemyPtr(btl).info.flags & ENEMY.ENEMY_INFO.FLG_NON_DYING_BOSS) != 0)
             {
                 if (newHP == 0)
@@ -365,7 +364,7 @@ public class btl_para
 
     public static Boolean IsNonDyingVanillaBoss(BTL_DATA btl)
     {
-        if (btl.bi.player != 0)
+        if (Configuration.Battle.CustomBattleFlagsMeaning != 0 || btl.bi.player != 0)
             return false;
         if (NonDyingBossBattles.Contains(FF9StateSystem.Battle.battleMapIndex))
         {
@@ -374,6 +373,22 @@ public class btl_para
             return true;
         }
         return false;
+    }
+
+    /// <summary>Check if an enemy has the special 10000 HP threshold system and if its current HP is under that threshold (typically ending the battle)</summary>
+    public static Boolean IsSpecialHPInDyingState(BTL_DATA btl)
+    {
+        if (btl.bi.player != 0)
+            return false;
+        if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
+        {
+            return (btl_util.getEnemyPtr(btl).info.flags & ENEMY.ENEMY_INFO.FLG_NON_DYING_BOSS) != 0 && btl.cur.hp < 10000;
+        }
+        else
+        {
+            // This is not always correct: for enemies whose HP threshold is not 10000 (eg. Gizamaluke), it doesn't spot that the dying state is reached
+            return IsNonDyingVanillaBoss(btl) && btl.cur.hp < 10000;
+        }
     }
 
     private static HashSet<Int32> NonDyingBossBattles = new HashSet<Int32>()
