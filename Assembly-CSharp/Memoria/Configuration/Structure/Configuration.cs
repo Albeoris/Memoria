@@ -11,6 +11,7 @@ namespace Memoria
         private volatile AnalogControlSection _analogControl;
         private volatile ControlSection _control;
         private volatile GraphicsSection _graphics;
+        private volatile ShadersSection _shaders;
         private volatile InterfaceSection _interface;
         private volatile CheatsSection _cheats;
         private volatile ImportSection _import;
@@ -47,6 +48,7 @@ namespace Memoria
             BindingSection(out _saves, v => _saves = v);
             BindingSection(out _speedrun, v => _speedrun = v);
             BindingSection(out _debug, v => _debug = v);
+            BindingSection(out _shaders, v => _shaders = v);
         }
     }
 }

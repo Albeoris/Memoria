@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -58,7 +58,7 @@ public class BattleStateSystem : MonoBehaviour
         this.FF9Battle.aa_data = FF9BattleDB.CharacterActions;
         this.FF9Battle.add_status = FF9BattleDB.StatusSets;
         this.fadeShader = ShadersLoader.Find("PSX/BattleMap_Abr_1");
-        this.battleShader = ShadersLoader.Find("PSX/BattleMap_StatusEffect");
+        this.battleShader = ShadersLoader.Find(ShadersLoader.GetCurrentBattleCharcterShader);
         this.shadowShader = ShadersLoader.Find("PSX/BattleMap_Abr_2");
         this.detailTexture = AssetManager.Load<Texture2D>("EmbeddedAsset/BattleMap/detailTexture", false);
     }

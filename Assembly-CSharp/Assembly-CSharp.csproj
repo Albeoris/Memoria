@@ -244,6 +244,7 @@
     <Compile Include="Global\battle\BattleMapCameraController.cs" />
     <Compile Include="Global\battle\BattlePlayerCharacter.cs" />
     <Compile Include="Global\battle\BattleRainRenderer.cs" />
+    <Compile Include="Global\NormalSolver.cs" />
     <Compile Include="Global\SPS\BattleSPSSystem.cs" />
     <Compile Include="Global\battle\BattleStateSystem.cs" />
     <Compile Include="Global\battle\BattleSwirl.cs" />
@@ -352,7 +353,9 @@
     <Compile Include="Memoria\Battle\Scripts\IOverloadableMethod.cs" />
     <Compile Include="Memoria\Battle\Scripts\IStatusScript.cs" />
     <Compile Include="Memoria\Configuration\Access\Interface.cs" />
+    <Compile Include="Memoria\Configuration\Access\Shaders.cs" />
     <Compile Include="Memoria\Configuration\Structure\InterfaceSection.cs" />
+    <Compile Include="Memoria\Configuration\Structure\ShadersSection.cs" />
     <Compile Include="Memoria\Data\Battle\BattleCommandMenu.cs" />
     <Compile Include="Memoria\Data\Battle\BattleMagicSwordSet.cs" />
     <Compile Include="Memoria\Data\Items\MixCommandType.cs" />

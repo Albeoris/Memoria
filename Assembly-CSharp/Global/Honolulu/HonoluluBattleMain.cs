@@ -5,11 +5,14 @@ using Memoria;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Prime;
+using Memoria.Scripts;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 #pragma warning disable 169
 #pragma warning disable 414
@@ -227,6 +230,12 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         playerEnterCommand = false;
         this.playerCastingSkill = false;
         this.enemyEnterCommand = false;
+        
+        
+        if (Configuration.Shaders.CustomShaderEnabled == 1 && _updateAmbientRoutine == null)
+        {
+            _updateAmbientRoutine = this.StartCoroutine(UpdateAmbientLight());
+        }
     }
 
     private void CreateBattleData(FF9StateGlobal FF9)
@@ -632,7 +641,68 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         if (!IsPaused)
             FPSManager.AddSmoothEffect(SmoothFrameUpdater_Battle.Apply);
     }
+    
+    // runtime game object and material for creating ambient lighting
+    private ReflectionProbe _reflectionProbe;
+    private bool _hasUpdateProbeCapture = false;
+    private bool _hasUpdateAmbient = false;
+    private Material _skyBox;
 
+    private IEnumerator UpdateAmbientLight()
+    {
+        // TODO: I think BTL_DATA are always initialised at this point because of the call at the end of "InitBattleScene"
+        Boolean hasValidCharacter = false;
+        while (!hasValidCharacter)
+        {
+            hasValidCharacter = FF9StateSystem.Battle.FF9Battle.btl_list.next != null;
+            yield return null;
+        }
+
+        //for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+        //    if (btl.bi.player == 1)
+        
+        if (_reflectionProbe == null)
+        {
+            GameObject obj = new GameObject("EnvironmentCapture");
+            // the position is somewhere above one of the character's head in the battle scene....
+            obj.transform.position = new Vector3(632.0f, 500.0f, -1560.0f);
+            _reflectionProbe = obj.AddComponent<ReflectionProbe>();
+            _reflectionProbe.mode = ReflectionProbeMode.Realtime;
+            _reflectionProbe.cullingMask = -1;
+            _reflectionProbe.refreshMode = ReflectionProbeRefreshMode.ViaScripting;
+            _reflectionProbe.size = new Vector3(10000, 10000, 10000);
+            _reflectionProbe.resolution = 128;
+            _reflectionProbe.clearFlags = ReflectionProbeClearFlags.SolidColor;
+            _reflectionProbe.backgroundColor = Color.black;
+        }
+        
+        if (_skyBox == null)
+            _skyBox = new Material(ShadersLoader.Find("PSX/Skybox_Cubemap"));
+        
+        if (_reflectionProbe != null)
+        {
+            RenderSettings.ambientMode = AmbientMode.Skybox;
+            RenderSettings.ambientIntensity = Configuration.Shaders.Shader_Battle_Toon == 1 ? 0.8f : 1.5f;
+            RenderSettings.skybox = _skyBox;
+            _reflectionProbe.RenderProbe();
+        }
+        // this simply mean the reflection probe's texture are not yet update internally.
+        // so we need to wait for it.
+        while (_reflectionProbe.texture.name.Contains("Black"))
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        _skyBox.SetTexture("_Tex", _reflectionProbe.texture);
+        _skyBox.SetFloat("_Exposure", Configuration.Shaders.Shader_Battle_Toon == 1 ? 0.5f : 1.0f);
+        
+        // This is a slow operation, make sure this code only run once.
+        DynamicGI.UpdateEnvironment();
+    }
+
+    private Coroutine _updateAmbientRoutine = null;
+    private float _debugNormal = -1;
+    private float _debugSH = -1;
+    
     private void UpdateBattleFrame()
     {
         if (IsPaused)
@@ -711,6 +781,18 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             }
             btlseq.FF9DrawShadowCharBattle(stateBattleSystem.map.shadowArray[btl], btl, 0, BoneNo);
         }
+
+        // Smooth all battle character once
+        for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
+        {
+            if (btl.bi.slave != 0 || btl.bi.disappear != 0 || btl.bi.shadow == 0)
+                continue;
+            if (btl._hasMeshSmoothed)
+                continue;
+            NormalSolver.SmoothCharacterMesh(btl.gameObject.GetComponentsInChildren<SkinnedMeshRenderer>());
+            NormalSolver.SmoothCharacterMesh(btl.gameObject.GetComponentsInChildren<MeshRenderer>());
+            btl._hasMeshSmoothed = true;
+        }
     }
 
     private static void UpdateAttachModel()
@@ -788,6 +870,18 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     private void OnDestroy()
     {
         SFX.EndBattle();
+        if (Configuration.Shaders.CustomShaderEnabled == 1)
+        {
+            // Make sure we destroy the object we created for ambient lighting during init phase
+            if (_reflectionProbe != null)
+            {
+                Destroy(_reflectionProbe.gameObject);
+                _hasUpdateProbeCapture = false;
+                _hasUpdateAmbient = false;
+            }
+            StopCoroutine(_updateAmbientRoutine);
+            _updateAmbientRoutine = null;   
+        }
 
         for (BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_list.next; btlData != null; btlData = btlData.next)
         {

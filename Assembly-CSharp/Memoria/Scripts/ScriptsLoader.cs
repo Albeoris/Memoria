@@ -21,6 +21,46 @@ namespace Memoria.Scripts
         private static volatile Dictionary<String, Shader> s_shaders;
         private static volatile FileSystemWatcher s_watcher;
 
+        // TODO: these would rather be placed in "Memoria/Configuration/Access/Shaders.cs"
+        private const string DefaultBattleCharacterShader = "PSX/BattleMap_StatusEffect";
+        private const string ToonBattleCharacterShader = "PSX/BattleMap_StatusEffect_Toon";
+        private const string RealismBattleCharacterShader = "PSX/BattleMap_StatusEffect_RealLighting";
+        
+        private const string DefaultFieldCharacterShader = "PSX/FieldMapActor";
+        private const string ToonFieldCharacterShader = "PSX/FieldMapActor_Toon";
+        private const string RealismFieldCharacterShader = "PSX/FieldMapActor_RealLighting";
+
+        public static string GetCurrentBattleCharcterShader
+        {
+            get
+            {
+                if (Configuration.Shaders.CustomShaderEnabled == 1)
+                {
+                    if (Configuration.Shaders.Shader_Battle_Realism == 1)
+                        return RealismBattleCharacterShader;
+                    else if (Configuration.Shaders.Shader_Battle_Toon == 1)
+                        return ToonBattleCharacterShader;
+                }
+
+                return DefaultBattleCharacterShader;
+            }
+        }
+        
+        public static string GetCurrentFieldMapCharcterShader
+        {
+            get
+            {
+                if (Configuration.Shaders.CustomShaderEnabled == 1)
+                {
+                    if (Configuration.Shaders.Shader_Field_Realism == 1)
+                        return RealismFieldCharacterShader;
+                    else if (Configuration.Shaders.Shader_Field_Toon == 1)
+                        return ToonFieldCharacterShader;
+                }
+                return DefaultFieldCharacterShader;
+            }
+        }
+
         public static void InitializeAsync()
         {
             s_initializationTask = Task.Run(Initialize);

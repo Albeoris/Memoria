@@ -1563,6 +1563,14 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Debug", "StartFieldCreator", "0");
                         MakeIniNotNull("Debug", "RenderWalkmeshes", "0");
 
+                        MakeIniNotNull("Shaders", "Enabled", "0");
+                        MakeIniNotNull("Shaders", "Shader_Field_Realism", "0");
+                        MakeIniNotNull("Shaders", "Shader_Field_Toon", "0");
+                        MakeIniNotNull("Shaders", "Shader_Field_Outlines", "0");
+                        MakeIniNotNull("Shaders", "Shader_Battle_Realism", "0");
+                        MakeIniNotNull("Shaders", "Shader_Battle_Toon", "0");
+                        MakeIniNotNull("Shaders", "Shader_Battle_Outlines", "0");
+
                         MakeSureSpacesAroundEqualsigns();
                     }
                 }

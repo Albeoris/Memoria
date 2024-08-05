@@ -217,6 +217,17 @@ namespace Memoria.Launcher
             public static readonly string UIColumnsChoice2 = GetSettings(nameof(UIColumnsChoice2));
             public static readonly string NoAutoTrance = GetSettings(nameof(NoAutoTrance));
 
+            // Advanced Settings
+            /* Unused for now
+            public static readonly string EnableCustomShader = GetSettings(nameof(EnableCustomShader));
+            public static readonly string Shader_Field_Realism = GetSettings(nameof(Shader_Field_Realism));
+            public static readonly string Shader_Field_Toon = GetSettings(nameof(Shader_Field_Toon));
+            public static readonly string Shader_Field_Outlines = GetSettings(nameof(Shader_Field_Outlines));
+            public static readonly string Shader_Battle_Realism = GetSettings(nameof(Shader_Battle_Realism));
+            public static readonly string Shader_Battle_Toon = GetSettings(nameof(Shader_Battle_Toon));
+            public static readonly string Shader_Battle_Outlines = GetSettings(nameof(Shader_Battle_Outlines));
+            */
+
             // Settings.ini Tooltips
             public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));
             public static readonly string WindowMode_Tooltip = GetSettings(nameof(WindowMode_Tooltip));
