@@ -81,11 +81,11 @@ Snouz - resyncronization
 
 <Mod>
 	<Name>Alternate Fantasy</Name>
-	<Version>6.2</Version>
+	<Version>6.5</Version>
 	<InstallationPath>AlternateFantasy</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDate>28 Sep 2023</ReleaseDate>
-	<PatchNotes>Requires Memoria v2023.06.11</PatchNotes>
+	<ReleaseDate>6 Aug 2024</ReleaseDate>
+	<PatchNotes>Requires Memoria v2024.08.05</PatchNotes>
 	<Description>This mod aims at increasing the difficulty and, above all, to give a new fresh experience of FF9 for those who already know the game well.
 It includes:
 - Many changes in the battle system, the enemies and the abilities
@@ -96,7 +96,7 @@ It includes:
 More informations can be found on the mod's webpage.</Description>
 	<Category>Gameplay</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=16324.0</Website>
-	<DownloadUrl>https://www.dropbox.com/s/fyx4uqdhumbimeg/PC_AlternateFantasy.zip?dl=1</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/f0pprvqk3hmtz0p12zorl/PC_AlternateFantasy.zip?rlkey=b6lrylaanmqigdge8t647rolu&amp;dl=1</DownloadUrl>
 	<CompatibilityNotes OtherModLow="MoguriFiles">Keeping Moguri at the lowest priority is surely the best:
 - ".raw16" and ".raw17" assets are duplicates of the base game's assets in Moguri
 - Most of the "EventEngine" assets (field event scripts and battle AI) are also duplicates, except a couple of field scripts that don't overlap with Alternate Fantasy's</CompatibilityNotes>
@@ -216,17 +216,17 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Playable Character Pack</Name>
-	<Version>1.1</Version>
+	<Version>1.2</Version>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDate>2023-09-28</ReleaseDate>
-	<PatchNotes>Requires Memoria v2023.06.11</PatchNotes>
+	<ReleaseDate>2024-08-06</ReleaseDate>
+	<PatchNotes>Requires Memoria v2023.08.05</PatchNotes>
 	<Description>Add Kuja, Fratley and Lani as playable characters.
 You can press Alt+F2 in-game to access the party menu (changing the party at any time is a feature of Memoria, not related to this mod).
 You should set the priority of this mod to be higher than the priority of the Moguri mod but lower than other mods.</Description>
 	<Category>Gameplay</Category>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3497635791229563331/</Website>
-	<DownloadUrl>https://www.dropbox.com/s/b5pbed8pshd3l4t/PC_PlayableCharacterPack.zip?dl=1</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/2nvxgs49ytlxctozel6ga/PC_PlayableCharacterPack.zip?rlkey=vrbnqez1rdtdhuxv7blp5tjdb&amp;dl=1</DownloadUrl>
 	<PreviewFile>Preview.png</PreviewFile>
 	<PreviewFileUrl>https://i.imgur.com/vZ8DbNQ.png</PreviewFileUrl>
 	<SubMod>
