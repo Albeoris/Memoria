@@ -3,20 +3,22 @@
 
 ## Overview
 
-Memoria Engine is a community rewrite of Final Fantasy IX's game engine that aims to add features, fix bugs and expand mod making capabilities (adding content, localizing...). Memoria includes a built-in Mod Manager, bugfixes and optional improvements (camera, framerate, audio, controller, UI, options, cheats...) while supporting third-party mods. [More info here](https://github.com/Albeoris/Memoria/wiki/Project-Overview)
+Memoria Engine is an open-source community rewrite of Final Fantasy IX's engine that aims to add features, fix bugs and expand modding possibilities. It includes built-in improvements (QoL, camera, framerate, audio, controller, UI, options, cheats, shaders...), bugfixes, a mod manager/downloader and a model viewer. [More info here](https://github.com/Albeoris/Memoria/wiki/Project-Overview)
 
 ## Features
 
 
 - Main features:
     - **New launcher with easy options (for not included options: Memoria.ini)**
-    - **Mod Manager/downloader**
+    - **Mod Manager/downloader**, individual mod folders
     - **Widescreen (for all resolutions)**
     - **Higher framerate (60fps+)**
     - **Camera stabilizer (configurable)**
     - **Font change (includes original PSX font)**
     - **Smooth camera movement & texture scrolling**
-    - **Anti-aliasing & Improved layer rendering**
+    - **Anti-aliasing, texture filtering, Improved layer rendering, experimental shaders**
+    - **Triple Triad** / Tetra Triad option
+    - Better **sound engine**, volume control
     - **Many, many bugfixes**
 - UI
     - **Battle speed change & Swirl skip**
@@ -24,44 +26,37 @@ Memoria Engine is a community rewrite of Final Fantasy IX's game engine that aim
     - **Controller support with full analog movement**
     - **Battle UI layouts (includes original PSX layout)**
     - More items displayed at once
-    - Volume control
+    - PSX disc change screens
+    - Model Viewer
 - Support for:
-    - Larger backgrounds definition (e.g. Moguri)
-    - Unlocks FMV framerate change (e.g. Moguri)
+    - UI, backgrounds, shaders, texture, FMV modding/upscale (e.g. Moguri)
     - Voice acting (e.g. WIP project ECHO-S)
     - Translations
-    - Special effects modding (soon)
-    - UI, shader, texture modding
     - Expanded features for mods
+    - Moddable game data (StreamingAssets\Data\) and abilities (StreamingAssets\Scripts\)
+    - More character playable mods (e.g. Playable character pack, Tantalus...)
+    - Import/export text/audio/textures
 - Optional Cheats:
     - **Stealing 100% success**
     - Enable/Disable vanilla cheats
-    - Easy minigames (rope, frogs, racing)
+    - Easy minigames (rope, frogs, racing...)
     - Excalibur II time limit removal
-- Tetra Master (Card game):
-    - **(Option) replace TM with a custom Triple Triad (FF8) or TM/TT hybrid**
-    - Raise card limit
-    - Auto discard cards
-    - Randomness tweaking
-- Include individual mod assets in folders
-- Edit game data (look at the "StreamingAssets\Data" folder)
-- Change ability mechanics (look at the "StreamingAssets\Scripts" folder)
-- Make every character available (Alt+F2)
-- Export/import text/audio resources (Ctrl+Alt+Shift+S to debug)
+    - Cards: lower randomness, card limit raised, auto discard cards
+    - Manual Trance
 
 
 ## Install
 
 - Download and run [Memoria.Patcher.exe](https://github.com/Albeoris/Memoria/releases/)
 
-    > Automatically finds the game path from Windows registry or current directory, you can provide a custom path as argument:
-    > Memoria.Patcher.exe gameDirectory
-- Note: if you want Moguri Mod, use Memoria patcher after.
+    > Automatically finds the game path from Windows registry (if you've launched the game once and haven't moved the install folder)
+    > If not, launch the patcher from the game folder, or provide a custom path in command line: 'Memoria.Patcher.exe "gameDirectory"'
 
 
 ## Configure
 
-Most crucial options are embedded in the game launcher, more in-depth configuration is available in the file Memoria.ini generated in the game directory
+- Most crucial options and cheats are embedded in the game launcher
+- more in-depth configuration is available in the file Memoria.ini (in the game folder)
 
 
 ## Update
@@ -73,7 +68,7 @@ Most crucial options are embedded in the game launcher, more in-depth configurat
 ## Debug (for users)
 
 - After first running the game, you should see "Memoria.ini" in the game directory.
-- If something went wrong, there will be errors in "Memoria.log".
+- If something went wrong, there should be errors in "Memoria.log".
 - If you can't see "Memoria.log", try running the game with administrator rights.
 - "Sharing violation on path" error: close applications holding the file.
 - "at Memoria.CsvReader.Read" error: delete files in (game)\StreamingAssets\Data and patch again.
