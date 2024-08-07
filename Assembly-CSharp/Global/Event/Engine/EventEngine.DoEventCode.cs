@@ -1074,11 +1074,11 @@ public partial class EventEngine
                     ff9shadow.FF9ShadowOffField((Int32)po.uid);
                     po.isShadowOff = true;
                 }
-                if (mapNo == 1600 && actor.uid == 12 && scCounter == 6615) // Garnet shadow on again to be sure
+                /*if (mapNo == 1600 && actor.uid == 12 && scCounter == 6615) // Garnet shadow on again to be sure // creates a softlock if going to worldmap
                 {
                     ff9shadow.FF9ShadowOnField((Int32)po.uid);
                     po.isShadowOff = false;
-                }
+                }*/
                 else if (mapNo == 1605 && actor.uid == 18)
                 {
                     this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
