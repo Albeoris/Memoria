@@ -45,41 +45,16 @@ Memoria Engine is an open-source community rewrite of Final Fantasy IX's engine 
     - Manual Trance
 
 
-## Install
+## Use
 
-- Download and run [Memoria.Patcher.exe](https://github.com/Albeoris/Memoria/releases/)
-
-    > Automatically finds the game path from Windows registry (if you've launched the game once and haven't moved the install folder)
-    > If not, launch the patcher from the game folder, or provide a custom path in command line: 'Memoria.Patcher.exe "gameDirectory"'
-
-
-## Configure
-
-- Most crucial options and cheats are embedded in the game launcher
-- more in-depth configuration is available in the file Memoria.ini (in the game folder)
-
-
-## Update
-
-- Update the game to the **latest** version.
-- Patch with the latest [Memoria.Patcher.exe](https://github.com/Albeoris/Memoria/releases/)
-
-
-## Debug (for users)
-
-- After first running the game, you should see "Memoria.ini" in the game directory.
-- If something went wrong, there should be errors in "Memoria.log".
-- If you can't see "Memoria.log", try running the game with administrator rights.
-- "Sharing violation on path" error: close applications holding the file.
-- "at Memoria.CsvReader.Read" error: delete files in (game)\StreamingAssets\Data and patch again.
-- "at Memoria.ScriptsLoader.Initialize" error: delete files in (game)\StreamingAssets\Scripts and patch again.
-- If an error persists, check "\FINAL FANTASY IX\x64(or x86)\FF9_Data\output_log.txt".
+- **INSTALL**: Download and run [Memoria.Patcher.exe](https://github.com/Albeoris/Memoria/releases/)
+  - Automatically finds the game path from Windows registry (if you've launched the game once and haven't moved the install folder)
+  - If not, launch the patcher from the game folder, or provide a custom path in command line: 'Memoria.Patcher.exe "gameDirectory"'
+- **UPDATE**: with the latest patcher exe or use "check for updates" in the launcher
+- **CONFIGURE**: Most crucial options and cheats are embedded in the game launcher
+  - More in-depth configuration is available in the file Memoria.ini (in the game folder)
 
 ## DEVELOPERS
 
 [INFO for developers](https://github.com/Albeoris/Memoria/wiki/Developer-instructions)
-
-
-## Knowledge base
-
-Please [visit our knowledge base](../../wiki#knowledge-base) before using this software.
+[visit our knowledge base](../../wiki#knowledge-base) for more modding information
