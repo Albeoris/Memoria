@@ -1492,17 +1492,9 @@ public partial class EventEngine
                 GameObject targetObject = targetObj.go;
                 Int32 bone_index = this.getv1(); // arg3: attachment point (unknown format)
 
-                if (mapNo == 112 && po.model == 223) // [DV] Fix the glasses in Alexandria's pub at the begin of the game
+                if (mapNo == 112 && po.model == 223 && po.uid == 3) // [DV] Fix the glasses in Alexandria's pub at the begin of the game // snouz: placed red mage's glass to DisableShadow (this code is never called for glass 6)
                 {
-                    if (po.uid == 6) // Red Mage's glass ?
-                    {
-                        attachedObjUnity = this.GetObjUID(6).go;
-                        targetObject = this.GetObjUID(4).go;
-                    }
-                    else // Dante's glass
-                    {
-                        geo.geoAttach(this.GetObjUID(3).go, this.GetObjUID(2).go, 13);
-                    }
+                    geo.geoAttach(this.GetObjUID(3).go, this.GetObjUID(2).go, 13);
                 }
 
                 if ((UnityEngine.Object)attachedObjUnity != (UnityEngine.Object)null && (UnityEngine.Object)targetObject != (UnityEngine.Object)null)
@@ -3123,6 +3115,14 @@ public partial class EventEngine
                 {
                     ff9shadow.FF9ShadowOffField((Int32)po.uid);
                     po.isShadowOff = true;
+
+                    if (mapNo == 112 && po.model == 223 && po.uid == 6) // intercept to force attach glass in alex pub
+                    {
+                        GameObject attachedObjUnity = this.GetObjUID(6).go;
+                        GameObject targetObject = this.GetObjUID(4).go;
+                        if (attachedObjUnity != null && targetObject != null)
+                            geo.geoAttach(this.GetObjUID(6).go, this.GetObjUID(4).go, 13);
+                    }
                 }
                 else if (this.gMode == 2)
                     ff9shadow.FF9ShadowOffBattle(po.uid);
