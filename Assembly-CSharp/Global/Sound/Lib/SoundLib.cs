@@ -200,7 +200,8 @@ public class SoundLib : MonoBehaviour
 
     public static void LogError(Object message)
     {
-        MLog.Error("[SoundLib] " + message);
+        if (!message.ToString().Contains("mbg119 not found"))
+            MLog.Error("[SoundLib] " + message);
     }
 
     public static void LogWarning(Object message)
