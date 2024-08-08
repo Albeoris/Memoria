@@ -726,7 +726,7 @@ public class FieldMap : HonoBehavior
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 140 : 175; break;
                 case 2716: // fix for Kuja descending camera too high
                     CamPositionY = (float)Math.Min(0, CamPositionY); break;
-                case 2903: // Dali Mountain/Summit
+                case 2903: // Memoria castle
                     if (ActualPsxScreenWidth > 510)
                         CamPositionX = 0; break;
                 default:
@@ -1366,6 +1366,8 @@ public class FieldMap : HonoBehavior
                 bgSprite.transform.localPosition = cacheLocalPos;
             }
             bgOverlay.transform.localPosition = new Vector3((float)bgOverlay.curX, (float)bgOverlay.curY, bgOverlay.transform.localPosition.z);
+            if (FF9StateSystem.Common.FF9.fldMapNo == 2903 && ovrNdx == 1)
+                bgOverlay.transform.localPosition = new Vector3((float)bgOverlay.curX - 1f, (float)bgOverlay.curY, bgOverlay.transform.localPosition.z);
         }
         else if ((bgOverlay.flags & BGOVERLAY_DEF.OVERLAY_FLAG.ScrollWithOffset) != 0)
         {
