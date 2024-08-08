@@ -1589,8 +1589,6 @@ public partial class BattleHUD : UIScene
 
             BattleCalculator v = new BattleCalculator(caster.Data, target.Data, new BattleCommand(testCommand));
             IEstimateBattleScript script = factory(v) as IEstimateBattleScript;
-            if (factory(v) is IEstimateBattleScript)
-                continue;
             if (script == null)
                 continue;
 

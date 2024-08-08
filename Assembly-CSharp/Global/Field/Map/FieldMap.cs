@@ -480,7 +480,7 @@ public class FieldMap : HonoBehavior
         this.walkMesh.CreateProjectedWalkMesh();
         this.walkMesh.BGI_simInit();
         SmoothCamDelay = 6;
-        SmoothCamActive = (!SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo));
+        SmoothCamActive = !SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo);
         FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
         if (dbug) Log.Message("_ LoadFieldMap | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
     }
@@ -730,6 +730,17 @@ public class FieldMap : HonoBehavior
                 default:
                     break;
             }
+        }
+
+        if (!MBG.IsNull && MBG.Instance.HasJustFinished())
+        {
+            // Fix #667: move camera instantly after MBG
+            if (SmoothCamActive)
+            {
+                Prev_CamPositionX = CamPositionX;
+                Prev_CamPositionY = CamPositionY;
+            }
+            return;
         }
 
         if (SmoothCamActive)

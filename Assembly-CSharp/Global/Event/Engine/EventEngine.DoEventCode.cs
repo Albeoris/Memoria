@@ -269,30 +269,29 @@ public partial class EventEngine
             }
             // 0x1C, "TerminateEntry", "Stop the execution of an entry's code.arg1: entry to terminate."
             case EBin.event_code_binary.POS: // 0x1D, "CreateObject", "Place (or replace) the 3D model on the field"
-            case EBin.event_code_binary.DPOS: // 0xBF, "MoveInstantEx", "Instantatly move an object"
+            case EBin.event_code_binary.DPOS: // 0xBF, "MoveInstantEx", "Instantly move an object"
             {
                 if (eventCodeBinary == EBin.event_code_binary.DPOS)
                     po = (PosObj)this.GetObj1(); // arg1: object's entry
                 Int32 posX = this.getv2(); // X position
                 Int32 posZ = this.getv2(); // Z position
-                Int32 isValid = this.gMode != 1 || (Int32)po.model == (Int32)UInt16.MaxValue ? 0 : 1;
-                if (isValid == 1 && po != null)
+                Boolean isValid = this.gMode == 1 && po?.model != UInt16.MaxValue;
+                if (isValid && po != null)
                 {
-                    FieldMapActorController component = po.go.GetComponent<FieldMapActorController>();
-                    if ((UnityEngine.Object)component != (UnityEngine.Object)null && component.walkMesh != null)
+                    FieldMapActorController actorController = po.go.GetComponent<FieldMapActorController>();
+                    if (actorController != null && actorController.walkMesh != null)
                     {
-                        component.walkMesh.BGI_charSetActive(component, 1U);
-                        if (mapNo == 2050 && po.sid == 5)
-                            component.walkMesh.BGI_charSetActive(component, 0U);
-                        else if (mapNo == 2917 && po.sid == 4)
-                        {
-                            if (posX == 0 && posZ == -1787)
-                                posX = -15;
-                        }
-                        else if (mapNo == 450 && po.sid == 3 && (posX == 363 && posZ == 88))
-                            component.walkMesh.BGI_triSetActive(24U, 0U);
+                        actorController.walkMesh.BGI_charSetActive(actorController, 1u);
+                        if (mapNo == 2050 && po.sid == 5) // Alexandria/Main Street, Mistodons
+                            actorController.walkMesh.BGI_charSetActive(actorController, 0u);
+                        else if (mapNo == 2917 && po.sid == 4 && posX == 0 && posZ == -1787) // Memoria/Gaia's Birth, Zidane's initial position
+                            posX = -15;
+                        else if (mapNo == 450 && po.sid == 3 && posX == 363 && posZ == 88) // Dali/Field, Grandma's initial position
+                            actorController.walkMesh.BGI_triSetActive(24U, 0u);
+                        else if (mapNo == 1207 && actor.uid == 9 && actorController != null) // A. Castle/Garnet's Room, Dagger, fix for issue #666
+                            actorController._smoothUpdateRegistered = false;
                     }
-                    if (mapNo == 1421 && po.sid == 5)
+                    if (mapNo == 1421 && po.sid == 5) // Fossil Roo/Mining Site, Lindblum_Worker
                     {
                         if (posX == 1510 && (posZ == -2331 || posZ == -2231))
                         {
@@ -307,16 +306,16 @@ public partial class EventEngine
                             this.fieldmap.walkMesh.BGI_triSetActive(110U, 1U);
                         }
                     }
-                    if (mapNo == 560 && po.sid == 6 && posX == 714) // removed shadow on sword
+                    if (mapNo == 560 && po.sid == 6 && posX == 714) // Lindblum/Synthesist, remove shadow on sword
                     {
-                        ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                        ff9shadow.FF9ShadowOffField(po.uid);
                         po.isShadowOff = true;
                     }
-                    if (mapNo == 563 && po.sid == 16 && posX == -1614)
+                    if (mapNo == 563 && po.sid == 16 && posX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1635;
-                    else if (mapNo == 572 && po.sid == 16 && posX == -1750)
+                    else if (mapNo == 572 && po.sid == 16 && posX == -1750) // Lindblum/I.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1765;
-                    else if (mapNo == 1310 && po.sid == 12 && posX == -1614)
+                    else if (mapNo == 1310 && po.sid == 12 && posX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1635;
                     else if (mapNo == 1811 && scCounter == 7200 && po.sid == 13 && posX == 413 && posZ == -17294) // Vivi visible too soon
                     {
@@ -341,7 +340,7 @@ public partial class EventEngine
                         posX = -914;
                         posZ = -390; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
                     }
-                    else if (mapNo == 2110 && po.sid == 9 && posX == -1614)
+                    else if (mapNo == 2110 && po.sid == 9 && posX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1635;
                     else if (mapNo == 2173 && scCounter == 9050 && po.sid == 6 && posX == -1705 && posZ == 177) // Quina ashore ATE: guard seen too soon
                     {
@@ -352,29 +351,29 @@ public partial class EventEngine
                     {
                         posX = (po.sid == 5) ? -200 : 0; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
                     }
-                    else if (mapNo == 2600 && scCounter == 10700 && po.sid == 8 && Configuration.Graphics.WidescreenSupport && posX == 1173 && posZ == -1685) // Dagga appears in frame
+                    else if (mapNo == 2600 && scCounter == 10700 && po.sid == 8 && Configuration.Graphics.WidescreenSupport && posX == 1173 && posZ == -1685) // Dagger appears in frame
                     {
                         posZ = -1985; // Log.Message("posX" + posX + " posZ" + posZ);
                     }
-                    else if (mapNo == 2651 && scCounter == 10890 && po.sid == 4 && Configuration.Graphics.WidescreenSupport && posX == 1449 && posZ == -6844) // Mikito appears in frame
+                    else if (mapNo == 2651 && scCounter == 10890 && po.sid == 4 && Configuration.Graphics.WidescreenSupport && posX == 1449 && posZ == -6844) // Mikoto appears in frame
                     {
                         posX = 1749;
                         posZ = -7244; // Log.Message("posX" + posX + " posZ" + posZ);
                     }
-                    else if (mapNo == 2914 && scCounter == 11670 && po.sid >= 6 && po.sid <= 10) // Disable fishes shadows
+                    else if (mapNo == 2914 && scCounter == 11670 && po.sid >= 6 && po.sid <= 10) // Memoria/Birth, disable fishes' shadows
                     {
-                        ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                        ff9shadow.FF9ShadowOffField(po.uid);
                         po.isShadowOff = true;
                     }
                 }
-                this.SetActorPosition(po, (Single)posX, this.POS_COMMAND_DEFAULTY, (Single)posZ);
-                if (mapNo == 2050 && (Int32)po.sid == 5 && (isValid == 1 && po != null))
+                this.SetActorPosition(po, posX, this.POS_COMMAND_DEFAULTY, posZ);
+                if (mapNo == 2050 && po.sid == 5 && isValid && po != null) // Alexandria/Main Street, Mistodons
                 {
-                    FieldMapActorController component = po.go.GetComponent<FieldMapActorController>();
-                    if ((UnityEngine.Object)component != (UnityEngine.Object)null && component.walkMesh != null)
-                        component.walkMesh.BGI_charSetActive(component, 1U);
+                    FieldMapActorController actorController = po.go.GetComponent<FieldMapActorController>();
+                    if (actorController != null && actorController.walkMesh != null)
+                        actorController.walkMesh.BGI_charSetActive(actorController, 1u);
                 }
-                if ((Int32)po.cid == 4)
+                if (po.cid == 4)
                     this.clrdist((Actor)po);
                 this._posUsed = true;
                 return 0;
@@ -596,13 +595,13 @@ public partial class EventEngine
                 Int32 cyan = this.getv1(); // 4 Cyan
                 Int32 magenta = this.getv1(); // 5 Magenta
                 Int32 yellow = this.getv1(); // 6 Yellow
-                if (mapNo == 1819 && scCounter == 7030 && cyan == 130 && magenta == 160 && yellow == 170)
+                if (mapNo == 1819 && scCounter == 7030 && cyan == 130 && magenta == 160 && yellow == 170) // A. Castle/Port, Dr. Tot's flashback
                 {
                     cyan = 81; magenta = 110; yellow = 121;
                 }
 
                 Color32 fadeColor = new Color((Single)cyan / (Single)Byte.MaxValue, (Single)magenta / (Single)Byte.MaxValue, (Single)yellow / (Single)Byte.MaxValue);
-                SceneDirector.InitFade((filterMode >> 1 & 1) != 0 ? FadeMode.Sub : FadeMode.Add, frame, fadeColor);
+                SceneDirector.InitFade((filterMode & 2) != 0 ? FadeMode.Sub : FadeMode.Add, frame, fadeColor);
                 return 0;
             }
             case EBin.event_code_binary.AICON: // 0xD7, "ATE", "Enable or disable ATE"
@@ -1253,72 +1252,55 @@ public partial class EventEngine
                 if (mapNo == 103 && po.model == 5492) // Jump rope from little girls at Alexandria (before Alexandria destruction)
                 {
                     if (anim == 973 && actor.uid == 6)
-                    {
                         anim = 975;
-                    }
                     else if (anim == 975 && actor.uid == 7)
-                    {
                         anim = 973;
-                    }
                 }
                 if (mapNo == 2456 && po.model == 5492) // Jump rope from little girls at Alexandria (after Alexandria destruction)
                 {
                     if (anim == 973 && actor.uid == 3)
-                    {
                         anim = 975;
-                    }
                     else if (anim == 975 && actor.uid == 4)
-                    {
                         anim = 973;
-                    }
                 }
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue(anim));
                 if (this.gMode == 1)
                 {
-                    if (mapNo == 800 && scCounter == 3740 && anim == 13158)
-                        actor.inFrame = (Byte)19;
+                    if (mapNo == 800 && scCounter == 3740 && anim == 13158) // S. Gate/Bohden Gate, Steiner's Shoulder_1 (inFrame set to 18 right before)
+                        actor.inFrame = 19;
                     this.ExecAnim(actor, anim);
-                    if (mapNo == 307 && (Int32)actor.uid == 13)
+                    if (mapNo == 307 && actor.uid == 13 && anim == 10328) // Ice Cavern/Ice Path, Dagger, Cold_Sleep
                     {
                         this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
-                        if (anim == 10328)
-                        {
-                            this._geoTexAnim.geoTexAnimStop(2);
-                            this._geoTexAnim.geoTexAnimPlay(0);
-                        }
+                        this._geoTexAnim.geoTexAnimStop(2);
+                        this._geoTexAnim.geoTexAnimPlay(0);
                     }
-                    if (mapNo == 561 && (Int32)actor.uid == 6)
+                    if (mapNo == 561 && actor.uid == 6 && anim == 351) // Lindblum/Item Shop, Queen_Brahne, Idle
                     {
                         this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
-                        if (anim == 351)
-                        {
-                            this._geoTexAnim.geoTexAnimStop(2);
-                            this._geoTexAnim.geoTexAnimPlay(1);
-                        }
+                        this._geoTexAnim.geoTexAnimStop(2);
+                        this._geoTexAnim.geoTexAnimPlay(1);
                     }
-                    if (mapNo == 1601)
+                    if (mapNo == 1601) // Mdn. Sari/Open Area
                     {
                         if (actor.uid == 19 && anim == 752) // Garnet shadow off when sitting
                         {
-                            ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                            ff9shadow.FF9ShadowOffField(po.uid);
                             po.isShadowOff = true;
                         }
                         if (po.sid == 17 && scCounter == 6600 && anim == 3005) // Zidane shadow off when sitting
                         {
-                            ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                            ff9shadow.FF9ShadowOffField(po.uid);
                             po.isShadowOff = true;
                         }
                     }
-                    if (mapNo == 1605 && (Int32)actor.uid == 18)
+                    if (mapNo == 1605 && actor.uid == 18 && anim == 11958) // Mdn. Sari/Eidolon Wall, Eiko, Hang_Look_Down_2
                     {
                         this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
-                        if (anim == 11958)
-                        {
-                            this._geoTexAnim.geoTexAnimStop(2);
-                            this._geoTexAnim.geoTexAnimPlay(0);
-                        }
+                        this._geoTexAnim.geoTexAnimStop(2);
+                        this._geoTexAnim.geoTexAnimPlay(0);
                     }
-                    if (mapNo == 2934 && (Int32)actor.uid == 2 && anim == 12429)
+                    if (mapNo == 2934 && actor.uid == 2 && anim == 12429) // last/cw mbg 2, Zidane, Sit_Look_Up_1 (right after his line "Hey! Don't you go dying on me, alright!?")
                     {
                         FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.BattleAssistance, false);
                         FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.HighSpeedMode, false);
@@ -1788,6 +1770,8 @@ public partial class EventEngine
                 UInt16 duration = (UInt16)this.getv1(); // arg3: movement duration
                 UInt32 sinusOrLinear = (UInt32)this.getv1(); // arg4: scrolling type (8 for sinusoidal, other values for linear interpolation).
                 this.fieldmap.EBG_scene2DScroll(destX, destY, duration, sinusOrLinear);
+                if (mapNo == 3000 || (mapNo >= 3002 && mapNo <= 3006) || mapNo == 3008) // Fix #677: disable smoothener in order to let the camera move instantly out of the screen
+                    SmoothFrameUpdater_Field.Skip = 1;
                 return 0;
             }
             case EBin.event_code_binary.BGSRELEASE: // 0x70, "ReleaseCamera", "Release camera movement, getting back to its normal behaviour"
@@ -2084,23 +2068,24 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.POS3: // 0xA1, "MoveInstantXZY", "Instantatly move the object"
-            case EBin.event_code_binary.DPOS3: // 0xAD, "MoveInstantXZYEx", "Instantatly move an object"
+            case EBin.event_code_binary.POS3: // 0xA1, "MoveInstantXZY", "Instantly move the object"
+            case EBin.event_code_binary.DPOS3: // 0xAD, "MoveInstantXZYEx", "Instantly move an object"
             {
                 if (eventCodeBinary == EBin.event_code_binary.DPOS3)
                     po = (PosObj)this.GetObj1(); // arg1: object's entry
                 Int32 destX = this.getv2();
                 Int32 destZ = -this.getv2();
                 Int32 destY = this.getv2();
-                if ((this.gMode != 1 || (Int32)po.model == (Int32)UInt16.MaxValue ? 0 : 1) == 1)
+                if (this.gMode == 1 && po?.model != UInt16.MaxValue)
                 {
                     if (po != null)
                     {
-                        FieldMapActorController component = po.go.GetComponent<FieldMapActorController>();
-                        if ((UnityEngine.Object)component != (UnityEngine.Object)null && component.walkMesh != null)
-                            component.walkMesh.BGI_charSetActive(component, 0U);
-                        if (mapNo == 1205 && po.sid == 6 && (this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && destX == 418) && destY == 9733)
+                        FieldMapActorController actorController = po.go.GetComponent<FieldMapActorController>();
+                        if (actorController != null && actorController.walkMesh != null)
+                            actorController.walkMesh.BGI_charSetActive(actorController, 0u);
+                        if (mapNo == 1205 && po.sid == 6 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && destX == 418 && destY == 9733)
                         {
+                            // A. Castle/Chapel, Thorn's initial position (fix in some languages)
                             this._fixThornPosA = destX;
                             this._fixThornPosB = destZ;
                             this._fixThornPosC = destY;
@@ -2108,22 +2093,23 @@ public partial class EventEngine
                             destX = 600;
                             destY = 9999;
                         }
-                        if (mapNo == 563 && po.sid == 16 && destX == -1614)
+                        else if (mapNo == 563 && po.sid == 16 && destX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                             destX = -1635;
-                        else if (mapNo == 572 && po.sid == 16 && destX == -1750)
+                        else if (mapNo == 572 && po.sid == 16 && destX == -1750) // Lindblum/I.D. Station, Zidane's initial position when arriving with Air Cab
                             destX = -1765;
-                        else if (mapNo == 1310 && po.sid == 12 && destX == -1614)
+                        else if (mapNo == 1310 && po.sid == 12 && destX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                             destX = -1635;
-                        else if (mapNo == 2110 && po.sid == 9 && destX == -1614)
+                        else if (mapNo == 2110 && po.sid == 9 && destX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                             destX = -1635;
                         else if (mapNo == 1607)
                         {
+                            // Mdn. Sari/Kitchen, Cooked Fish and Stew Plate appearing on the foreground
                             Int32 counter = this.eBin.getVarManually(EBin.SC_COUNTER_SVR);
                             Int32 var9169 = this.eBin.getVarManually(9169);
-                            if ((po.model == 236 || po.model == 237) && (counter >= 6640 && counter < 6690) && var9169 == 0)
+                            if ((po.model == 236 || po.model == 237) && counter >= 6640 && counter < 6690 && var9169 == 0)
                                 destZ += 50000;
                         }
-                        else if (mapNo == 1606)
+                        else if (mapNo == 1606) // Mdn. Sari/Resting Room, initial position of moogles
                         {
                             if (po.uid == 9 && destX == -171 && destZ == 641 && destY == 1042
                             || po.uid == 128 && destX == -574 && destZ == 624 && destY == 903
@@ -2133,19 +2119,19 @@ public partial class EventEngine
                             || po.uid == 132 && destX == -689 && destZ == 621 && destY == 859)
                                 gameObject.GetComponent<FieldMapActor>().SetRenderQueue(2000);
                         }
+                        else if (mapNo == 1207 && actor.uid == 9 && actorController != null) // A. Castle/Garnet's Room, Dagger, fix for issue #666
+                            actorController._smoothUpdateRegistered = false;
                     }
-                    if (mapNo == 1756 && (Int32)po.sid == 6 && (destX == -3019 && destY == 1226))
+                    if (mapNo == 1756 && po.sid == 6 && destX == -3019 && destY == 1226) // Iifa Tree/Bottom, Soulcage when landing from above
                     {
                         destX = -3145;
                         destZ = -2035;
                         destY = 1274;
                     }
-                    if (mapNo == 2456 && actor.uid == 6) // Sligthy resize the rope in Alexandria/Steeple (CD3 & CD4)
-                    {
+                    else if (mapNo == 2456 && actor.uid == 6) // Sligthy resize the rope in Alexandria/Steeple (CD3 & CD4)
                         geo.geoScaleSetXYZ(po.go, 66 << 24 >> 18, 66 << 24 >> 18, 66 << 24 >> 18);
-                    }
                 }
-                this.SetActorPosition(po, (Single)destX, (Single)destZ, (Single)destY);
+                this.SetActorPosition(po, destX, destZ, destY);
                 if (po.cid == 4)
                     this.clrdist((Actor)po);
                 return 0;
@@ -2848,7 +2834,7 @@ public partial class EventEngine
                 ETb.gMesSignal = this.getv1(); // arg1: new dialog progression value
                 return 0;
             }
-            case EBin.event_code_binary.BTLSEQ: // 0xE5, "AttackSpecia", "Make the enemy instantatly use a special move. It doesn't use nor modify the battle state so it should be used when the battle is paused. The target(s) are to be set using the SV_Target variable"
+            case EBin.event_code_binary.BTLSEQ: // 0xE5, "AttackSpecial", "Make the enemy instantly use a special move. It doesn't use nor modify the battle state so it should be used when the battle is paused. The target(s) are to be set using the SV_Target variable"
             {
                 btlseq.StartBtlSeq(this.GetSysList(1), this.GetSysList(0), this.getv1()); // arg1: attack to perform
                 return 0;
