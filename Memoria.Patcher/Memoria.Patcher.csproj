@@ -3368,7 +3368,7 @@
     </Content>
     <Content Include="StreamingAssets\Shaders\PSX\BattleCharacterShaderRef.txt" />
     <Content Include="StreamingAssets\Shaders\PSX\BattleMap_StatusEffect_RealLighting.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="StreamingAssets\Shaders\PSX\BattleMap_StatusEffect_Toon.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
