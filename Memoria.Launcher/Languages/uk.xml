@@ -143,6 +143,17 @@
 	UIColumnsChoice2 = "x2 (максимум 4 стовпці)"
 	UIColumnsChoice_Tooltip = "Кількість стовпців: якщо вам потрібно більше предметів/здібностей на одному екрані"
 	NoAutoTrance_Tooltip = "Транс не запускається автоматично. 'Ліва клавіша' для активації"
+	FPSDropboxChoice = "FPS"
+	FPSDropboxChoice0 = "Рідна (15/20/30)"
+	FPSDropboxChoice1 = "30"
+	FPSDropboxChoice2 = "60"
+	FPSDropboxChoice3 = "90"
+	FPSDropboxChoice4 = "120"
+	CardReduceRandom = "Випадковість у карткових іграх"
+	tetraMasterReduceRandomBox0 = "Нормальний"
+	tetraMasterReduceRandomBox1 = "Менше випадковості"
+	tetraMasterReduceRandomBox2 = "Легка перемога"
+	CardReduceRandom_Tooltip = "Контроль випадковості Tetra Master"
 	/>
 
 	<SdLib

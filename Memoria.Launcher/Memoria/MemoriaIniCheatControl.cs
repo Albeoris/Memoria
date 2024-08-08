@@ -197,7 +197,7 @@ namespace Memoria.Launcher
             tetraMasterReduceRandomText.Foreground = Brushes.White;
             tetraMasterReduceRandomText.Margin = rowMargin;
             tetraMasterReduceRandomText.TextWrapping = TextWrapping.WrapWithOverflow;
-            tetraMasterReduceRandomText.ToolTip = Lang.Settings.AccessBattleMenu_Tooltip;
+            tetraMasterReduceRandomText.ToolTip = Lang.Settings.CardReduceRandom_Tooltip;
             UiComboBox tetraMasterReduceRandomBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 2, 4);
             tetraMasterReduceRandomBox.ItemsSource = new String[]{
                 Lang.Settings.tetraMasterReduceRandomBox0,

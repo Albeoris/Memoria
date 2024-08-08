@@ -142,6 +142,17 @@
 	WorldFPS_Tooltip = "Частота обновления изображения на картe мира (по умолчанию: 20)"
 	MaxCardCount_Tooltip = "Лимит карт в инвентаре увеличен до 10 000"
 	NoAutoTrance_Tooltip = "Транс не запускается автоматически. 'Левая кнопка' для активации"
+	FPSDropboxChoice = "FPS"
+	FPSDropboxChoice0 = "Родное (15/20/30)"
+	FPSDropboxChoice1 = "30"
+	FPSDropboxChoice2 = "60"
+	FPSDropboxChoice3 = "90"
+	FPSDropboxChoice4 = "120"
+	CardReduceRandom = "Случайность в карточных играх"
+	tetraMasterReduceRandomBox0 = "Нормальный"
+	tetraMasterReduceRandomBox1 = "Меньше случайности"
+	tetraMasterReduceRandomBox2 = "Легкая победа"
+	CardReduceRandom_Tooltip = "Контроль случайности Tetra Master"
 	/>
 
 	<SdLib

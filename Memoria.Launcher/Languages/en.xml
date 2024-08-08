@@ -155,6 +155,7 @@
 	tetraMasterReduceRandomBox0 = "Normal"
 	tetraMasterReduceRandomBox1 = "Lower randomness"
 	tetraMasterReduceRandomBox2 = "Easy win"
+	CardReduceRandom_Tooltip = "Controls the randomness of Tetra Master"
 	/>
 	
 	<!-- 

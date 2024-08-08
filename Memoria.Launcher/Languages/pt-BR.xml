@@ -149,6 +149,11 @@
 	FPSDropboxChoice2 = "60"
 	FPSDropboxChoice3 = "90"
 	FPSDropboxChoice4 = "120"
+	CardReduceRandom = "Aleatoriedade em jogos de cartas"
+	tetraMasterReduceRandomBox0 = "Normal"
+	tetraMasterReduceRandomBox1 = "Menos aleatoriedade"
+	tetraMasterReduceRandomBox2 = "Vitória fácil"
+	CardReduceRandom_Tooltip = "Controle da aleatoriedade de TetraMaster"
 	/>
 
 	<SdLib
