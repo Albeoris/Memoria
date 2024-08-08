@@ -138,6 +138,17 @@
 	WorldFPS_Tooltip = "Tasa de actualización de imágenes en el mapa del mundo (predeterminado: 20)"
 	MaxCardCount_Tooltip = "Límite de cartas en inventario aumentado a 10 000"
 	NoAutoTrance_Tooltip = "La trance no se inicia automáticamente. 'Tecla izquierda' para activarla"
+	FPSDropboxChoice = "FPS"
+	FPSDropboxChoice0 = "Nativa (15/20/30)"
+	FPSDropboxChoice1 = "30"
+	FPSDropboxChoice2 = "60"
+	FPSDropboxChoice3 = "90"
+	FPSDropboxChoice4 = "120"
+	CardReduceRandom = "Aleatoriedad TetraMaster"
+	tetraMasterReduceRandomBox0 = "Normal"
+	tetraMasterReduceRandomBox1 = "Menos aleatoriedad"
+	tetraMasterReduceRandomBox2 = "Victoria fácil"
+	CardReduceRandom_Tooltip = "Control de la aleatoriedad de TetraMaster"
 	/>
 
 	<SdLib

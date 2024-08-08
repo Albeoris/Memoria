@@ -277,7 +277,7 @@ namespace Memoria.Launcher
             public static readonly string NoRandomBattles_Tooltip = GetSettings(nameof(NoRandomBattles_Tooltip));
             public static readonly string PermanentCheats_Tooltip = GetSettings(nameof(PermanentCheats_Tooltip));
             public static readonly string MaxCardCount_Tooltip = GetSettings(nameof(MaxCardCount_Tooltip));
-
+            public static readonly string CardReduceRandom_Tooltip = GetSettings(nameof(CardReduceRandom_Tooltip));
 
 
             public static readonly string FPSDropboxChoice = GetSettings(nameof(FPSDropboxChoice));
