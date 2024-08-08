@@ -714,11 +714,13 @@ public class FieldMap : HonoBehavior
             }
             switch (map) // offsets for scrolling maps stretched to WS
             {
+                case 312: // Ice caver out (white line left)
+                    CamPositionX = CamPositionX + 1; break;
                 case 456: // Dali Mountain/Summit
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 195 : 160; break;
                 case 505: // Cargo ship offset
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 70 : 105; break;
-                case 507: // Cargo ship offset
+                case 507: // Cargo ship offset (white line left)
                     CamPositionX = CamPositionX + 1; break;
                 case 1153: // Rose Rouge cockpit offset
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 140 : 175; break;
