@@ -229,7 +229,7 @@ namespace Memoria.Launcher
                 }
                 downloadList.Add(mod);
                 DownloadStart(mod);
-                mod.Installed = "...";
+                mod.Installed = "⌛";
             }
             lstCatalogMods.Items.Refresh();
         }
@@ -795,7 +795,7 @@ namespace Memoria.Launcher
             foreach (Mod mod in modListCatalog)
             {
                 if (Mod.SearchWithName(downloadList, mod.Name) != null)
-                    mod.Installed = "…";
+                    mod.Installed = "⌛";
                 else if (Mod.SearchWithName(modListInstalled, mod.Name) != null)
                     mod.Installed = "✔";
                 else
