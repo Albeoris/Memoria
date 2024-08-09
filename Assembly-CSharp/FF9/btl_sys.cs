@@ -100,13 +100,6 @@ namespace FF9
                                 if (btl_cmd.CheckSpecificCommand(btl, BattleCommandId.SysLastPhoenix))
                                     return;
                                 Boolean procRebirthFlame = ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8();
-                                // TODO [DV] Use IOverloadOnGameOverScript
-                                //if (Configuration.Mod.TranceSeek) // TRANCE SEEK - RebirthFlame
-                                //{
-                                //    BattleUnit unit = new BattleUnit(btl);
-                                //    Character player = unit.Player;
-                                //    procRebirthFlame = player.Equipment.Accessory == RegularItem.PhoenixPinion && ff9item.FF9Item_GetCount(RegularItem.PhoenixPinion) > Comn.random8();
-                                //}
                                 if (procRebirthFlame)
                                 {
                                     UIManager.Battle.FF9BMenu_EnableMenu(true);
@@ -214,14 +207,6 @@ namespace FF9
             if (start_type == battle_start_type_tags.BTL_START_BACK_ATTACK)
                 BattleAchievement.UpdateBackAttack();
 
-            // TRANCE SEEK VERSION - Disable back/first attack from specific battles (custom ennemies)
-            if (Configuration.Mod.TranceSeek &&
-                (FF9StateSystem.Battle.battleMapIndex == 850 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2
-                || FF9StateSystem.Battle.battleMapIndex == 849 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2
-                || FF9StateSystem.Battle.battleMapIndex == 851 && FF9StateSystem.Battle.FF9Battle.btl_scene.PatNum >= 2))
-            {
-                start_type = battle_start_type_tags.BTL_START_NORMAL_ATTACK;
-            }
             return start_type;
         }
 

@@ -42,7 +42,6 @@ namespace Memoria
         public Boolean CanMove => Data.bi.atb != 0;
         public CharacterId PlayerIndex => IsPlayer ? (CharacterId)Data.bi.slot_no : CharacterId.NONE;
 
-        // TODO [DV] Code in a custom status Old (something similar to ChangeStatStatus for example)
         public Byte Level
         {
             get => Data.level;

@@ -138,6 +138,17 @@
 	WorldFPS_Tooltip = "Bildwiederholfrequenz auf der Weltkarte (Standard: 20)"
 	MaxCardCount_Tooltip = "Grenze für Karten im Inventar auf 10000 erhöht"
 	NoAutoTrance_Tooltip = "Der Trance startet nicht automatisch. 'Linke Taste' zum Aktivieren"
+	FPSDropboxChoice = "FPS"
+	FPSDropboxChoice0 = "Native (15/20/30)"
+	FPSDropboxChoice1 = "30"
+	FPSDropboxChoice2 = "60"
+	FPSDropboxChoice3 = "90"
+	FPSDropboxChoice4 = "120"
+	CardReduceRandom = "Kartenspiel-Zufälligkeit"
+	tetraMasterReduceRandomBox0 = "Normal"
+	tetraMasterReduceRandomBox1 = "Weniger Zufälligkeit"
+	tetraMasterReduceRandomBox2 = "Leichter Sieg"
+	CardReduceRandom_Tooltip = "Kontrolle über die Zufälligkeit von Tetra Master"
 	/>
 
 	<SdLib

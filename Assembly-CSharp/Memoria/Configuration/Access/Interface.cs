@@ -28,6 +28,11 @@ namespace Memoria
                 get => Instance._interface.SynthIngredientStockDisplayed;
                 set => Instance._interface.SynthIngredientStockDisplayed.Value = value;
             }
+            public static Boolean DisplayPSXDiscChanges
+            {
+                get => Instance._interface.DisplayPSXDiscChanges;
+                set => Instance._interface.DisplayPSXDiscChanges.Value = value;
+            }
             public static Int32 BattleRowCount
             {
                 get => Math.Max(1, Instance._interface.BattleRowCount);

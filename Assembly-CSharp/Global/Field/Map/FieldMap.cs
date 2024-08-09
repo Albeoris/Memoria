@@ -480,7 +480,7 @@ public class FieldMap : HonoBehavior
         this.walkMesh.CreateProjectedWalkMesh();
         this.walkMesh.BGI_simInit();
         SmoothCamDelay = 6;
-        SmoothCamActive = (!SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo));
+        SmoothCamActive = !SmoothCamExcludeMaps.Contains(FF9StateSystem.Common.FF9.fldMapNo);
         FPSManager.DelayMainLoop(Time.realtimeSinceStartup - loadStartTime);
         if (dbug) Log.Message("_ LoadFieldMap | ShaderMulX: " + ShaderMulX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | bgCamera.vrpMaxX " + bgCamera.vrpMaxX + " | bgCamera.depthOffset: " + bgCamera.depthOffset + " | this.scene.maxX: " + this.scene.maxX);
     }
@@ -718,6 +718,8 @@ public class FieldMap : HonoBehavior
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 195 : 160; break;
                 case 505: // Cargo ship offset
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 70 : 105; break;
+                case 507: // Cargo ship offset
+                    CamPositionX = CamPositionX + 1; break;
                 case 1153: // Rose Rouge cockpit offset
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 140 : 175; break;
                 case 2716: // fix for Kuja descending camera too high
@@ -728,6 +730,17 @@ public class FieldMap : HonoBehavior
                 default:
                     break;
             }
+        }
+
+        if (!MBG.IsNull && MBG.Instance.HasJustFinished())
+        {
+            // Fix #667: move camera instantly after MBG
+            if (SmoothCamActive)
+            {
+                Prev_CamPositionX = CamPositionX;
+                Prev_CamPositionY = CamPositionY;
+            }
+            return;
         }
 
         if (SmoothCamActive)

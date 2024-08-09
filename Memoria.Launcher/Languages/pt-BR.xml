@@ -32,7 +32,7 @@
 	<Settings
 	LauncherWindowTitle = "Final Fantasy IX | Executor do Memoria"
 	ActiveMonitor = "Monitor Ativo"
-	PrimaryMonitor = "[Primário]"
+	PrimaryMonitor = " [Primário]"
 	Resolution = "Resolução"
 	WindowMode = "Modo Janela"
 	Window = "Modo Janela"
@@ -40,10 +40,10 @@
 	BorderlessFullscreen = "Tela Cheia Sem Bordas"
 	AudioSamplingFrequency = "Frequência da Amostra do Áudio"
 	AudioSamplingFrequencyFormat = "{0} Hz"
-	Debuggable = "Debugável"
-	CheckUpdates = "Procurar Atualizações"
+	Debuggable = " Debugável"
+	CheckUpdates = " Procurar Atualizações"
 	IniOptions = "Opções"
-	Widescreen = "Widescreen"
+	Widescreen = " Widescreen"
 	BattleInterface = "HUD de Batalha"
 	BattleInterfaceType0 = "Grande"
 	BattleInterfaceType1 = "Pequena"
@@ -94,7 +94,8 @@
 	BattleFPS = "Batalha"
 	FieldFPS = "Campo"
 	WorldFPS = "Mundo"
-	CameraStabilizer = "Estabilizador"
+	
+    CameraStabilizer = "Estabilizador da Câmera"
 	UseOrchestralMusic = "Música orquestral (Moguri)"
 	Use30FpsVideo = "Vídeos de 30 FPS (Moguri)"
 	MaxCardCount = "10 mil cartões"
@@ -108,8 +109,8 @@
 	Resolution_Tooltip = "Resolução da tela&#xA;Suporte a Widescreen só em 16:9 e 16:10"
 	Xsixfour_Tooltip = "-X64 (recomendado)&#xA;-X86 (legado)"
 	Debuggable_Tooltip = "Pros desenvolvedores"
-	CheckUpdates_Tooltip = "Perguntará a você se você quer baixar automaticamente&#xA;o último Memoria do github quando você pressionar JOGAR"
-	SteamOverlayFix_Tooltip = "Aplicará o patch no executor pras pessoas&#xA;tendo problemas em exibir a sobreposição do Steam&#xA;(As realizações do Steam também dependem dele)"
+	CheckUpdates_Tooltip = "Perguntará a você se você quer baixar automaticamente&#xA;o Memoria mais recente do github quando você pressionar JOGAR"
+	SteamOverlayFix_Tooltip = "/!\ SÓ PRA WINDOWS /!\&#xA;Aplicará o patch no executor pras pessoas&#xA;tendo problemas em exibir a sobreposição do Steam&#xA;(As conquistas do Steam também dependem dele)"
 	UseOrchestralMusic_Tooltip = "Mod Moguri: Trilha sonora orquestral do Pontus Hultgren,&#xA;não é recomendado pras pessoas que querem a experiência original"
 	Use30FpsVideo_Tooltip = "Mod Moguri: FMVs de 30 fps (dos 15 fps originais)&#xA;Imagens intermediárias criadas pela IA"
 	Widescreen_Tooltip = "Remove as barras laterais quando possível,&#xA;Mostra uma parte mais larga das telas de fundo/mapa-múndi/batalhas&#xA;Nota: algumas telas de fundo ainda serão exibidas com barras pretas,&#xA;porque o jogo original não tinha mais pixels"
@@ -134,39 +135,55 @@
 	SpeedFactor_Tooltip = "Multiplicador de velocidade da configuração acima"
 	BattleAssistance_Tooltip = "(Trapaças sem o uso de mods)&#xA;Transe instantâneo (F2)&#xA;Dano máximo (F3)"
 	NoRandomBattles_Tooltip = "(Trapaças sem o uso de mods)&#xA;Sem encontros aleatórios (F4)"
-	PermanentCheats_Tooltip = "(Trapaças sem o uso de mods)&#xA;Tudo no máximo F5/F6/F7&#xA;(estas trapaças ficarão no seu save e desativam as realizações do Steam)"
+	PermanentCheats_Tooltip = "(Trapaças sem o uso de mods)&#xA;Tudo no máximo F5/F6/F7&#xA;(estas trapaças ficarão no seu save e desativam as conquistas do Steam)"
 	BattleTPS_Tooltip = "Velocidade base das batalhas, o normal é 15"
 	UsePsxFont_Tooltip = "Seleciona a fonte original do PSX (sem necessidade de instalação)"
 	BattleFPS_Tooltip = "Taxa de atualização das imagens na batalha (padrão: 30)"
-	FieldFPS_Tooltip = "Taxa de atualização das imagens nos planos de fundo normais (padrão: 30)"
+	FieldFPS_Tooltip = "Taxa de atualização das imagens nas telas de fundo normais (padrão: 30)"
 	WorldFPS_Tooltip = "Taxa de atualização das imagens no mapa-múndi (padrão: 20)"
 	MaxCardCount_Tooltip = "Limite dos cartões no inventário aumentado pra 10.000"
 	UIColumnsChoice_Tooltip = "Número de colunas: se você quiser mais itens/habilidades em uma tela"
-	NoAutoTrance_Tooltip = "O transe não começa automaticamente. Use a 'Tecla Esquerda' pra ativá-lo"
+	EnableCustomShader_Tooltip = "Se ativa o shader de iluminação por pixel pro campo e personagem da batalha"
+    NoAutoTrance_Tooltip = "O transe não começa automaticamente. Use a 'Tecla Esquerda' pra ativá-lo"
 	FPSDropboxChoice = "FPS"
 	FPSDropboxChoice0 = "Nativo (15/20/30)"
 	FPSDropboxChoice1 = "30"
 	FPSDropboxChoice2 = "60"
 	FPSDropboxChoice3 = "90"
 	FPSDropboxChoice4 = "120"
+	CardReduceRandom = "Aleatoriadade do cartão"
+	tetraMasterReduceRandomBox0 = "Normal"
+	tetraMasterReduceRandomBox1 = "Aleatoriadade menor"
+	tetraMasterReduceRandomBox2 = "Vitória fácil"
+	CardReduceRandom_Tooltip = "Controla a aleatoriadade do Tetra Master"
 	/>
+	
+	<!-- 
+	EnableCustomShader = "Ativar Shaders Personalizados"
+	Shader_Field_Realism = "Usar Shading de Realismo no Campo"
+	Shader_Field_Toon = "Usar Shading de Desenho Animado no Campo"
+	Shader_Field_Outlines = "Ativar o Contorno pro Personagem do Campo"
+	Shader_Battle_Realism = "Usar o Shading de Realismo na Batalha"
+	Shader_Battle_Toon = "Usar o Shading de Desenho Animado na Batalha"
+	Shader_Battle_Outlines = "Ativar o Contorno pro Personagem da Batalha"
+	-->
 
 	<SdLib
 	Caption = "Aplicar o Patch no SdLib.dll"
 	AreYouSure = "Você tem certeza que você quer aplicar um patch no SdLib.dll?"
 	SuccessBoth = "O SdLib.dll teve um patch aplicado com sucesso nas duas platformas."
-	SuccessX64 = "O SdLib.dll teve um patch aplicado com sucesso apenas na plataforma x64."
-	SuccessX86 = "O SdLib.dll teve um patch aplicado com sucesso apenas na plataforma x86."
+	SuccessX64 = "O SdLib.dll teve um patch aplicado com sucesso só na plataforma x64."
+	SuccessX86 = "O SdLib.dll teve um patch aplicado com sucesso só na plataforma x86."
 	Fail = "Infelizmente nós não pudemos aplicar o patch no SdLib.dll. Por favor compartilhe sua versão deste arquivo."
 	CannotRead = "Não pôde ler a frequência da amostra de áudio no arquivo:"
 	CannotWrite = "Não pôde ler a frequência da amostra de áudio do SdLib.dll"
 	/>
 
 	<SteamOverlay
-	OptionLabel = "Consertar a Sobreposição do Steam"
+	OptionLabel = " Consertar a Sobreposição do Steam"
 	Caption = "Sobreposição do Steam"
-	FixAreYouSure = "Agora nós instalaremos um gancho no seu SO que executará o FF9_Launcher.fix ao invés do arquivo FF9_Launcher.exe. Neste caso todas as verificações de integridade do arquivo do Steam completarão com sucesso. Assim isto resolverá o problema que alguns usuários tem com a funcionalidade da Sobreposição do Steam e funções relacionadas periodicamente desativadas: Suporte as realizações e controles.&#13;&#10;&#13;&#10;Contudo, seja cuidadoso e NÃO APAGUE o jogo, a pasta dele ou o arquivo FF9_Launcher.fix sem primeiro reverter as mudanças. De outro modo o gancho permanecerá no seu sistema e após uma nova instalação do jogo você não será capaz de executá-lo. Você pode reverter as mudanças no executor ou manualmente executando o Memoria.SteamFix.exe na pasta do jogo.&#13;&#10;&#13;&#10;Você tem certeza que você ainda quer continuar?"
-	RollbackAreYouSure = "Agora nós removeremos as mudanças feitas após as quais o problema com a Sobreposição do Steam retornará.&#13;&#10;&#13;&#10;Isto pode levar a problemas com desativações das realizações e controles.&#13;&#10;&#13;&#10;Você tem certeza que você quer continuar?"
+	FixAreYouSure = "Agora nós instalaremos um gancho no seu SO que executará o FF9_Launcher.fix ao invés do arquivo FF9_Launcher.exe. Neste caso todas as verificações de integridade do arquivo do Steam completarão com sucesso. Assim isto resolverá o problema que alguns usuários tem periodicamente com a funcionalidade da Sobreposição do Steam e funções relacionadas desativadas: Suporte as conquistas e controles.&#13;&#10;&#13;&#10;Contudo, seja cuidadoso e NÃO APAGUE o jogo, a pasta dele ou o arquivo FF9_Launcher.fix sem primeiro reverter as mudanças. De outro modo o gancho permanecerá no seu sistema e após uma nova instalação do jogo você não será capaz de executá-lo. Você pode reverter as mudanças no executor ou manualmente executando o Memoria.SteamFix.exe na pasta do jogo.&#13;&#10;&#13;&#10;Você tem certeza que você ainda quer continuar?"
+	RollbackAreYouSure = "Agora nós removeremos as mudanças feitas após as quais o problema com a Sobreposição do Steam retornará.&#13;&#10;&#13;&#10;Isto pode levar a problemas com desativações das conquistas e controles.&#13;&#10;&#13;&#10;Você tem certeza que você quer continuar?"
 	/>
 
 	<InfoProvider>
@@ -251,7 +268,7 @@
 		<EncodingSelectDialog
 		Title = "Escolher a codificação"
 		Watermark = "Insira o nome da codificação..."
-		ConfirmMessageFormat = "Você escolheu [{0}]. Correto?"
+		ConfirmMessageFormat = "Você escolheu o [{0}]. Correto?"
 		ErrorMessageFormat = "Falhou em reconhecer a codificação [{0}]."
 		/>
 

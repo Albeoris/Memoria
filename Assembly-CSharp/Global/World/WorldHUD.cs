@@ -768,6 +768,7 @@ public class WorldHUD : UIScene
         }
         this.SetMiniMapAndChocoPosition();
     }
+
     private void SetMiniMapAndChocoPosition()
     {
         Camera camera = NGUITools.FindCameraForLayer(base.gameObject.layer);
@@ -1112,6 +1113,12 @@ public class WorldHUD : UIScene
     {
         this.MiniMapPanel.SetActive(isVisible);
         this.SetMinimapPressable(isVisible);
+        if (isVisible && FF9StateSystem.Common.FF9.wldMapNo == 9005)
+        {
+            // Fix #670: World Map - Hilda Garde 1. Maybe it should be always done like that when SetMinimapVisible is called
+            this.currentState = isVisible ? WorldHUD.State.HUD : WorldHUD.State.HUDNoMiniMap;
+            this.DisplayChocographLocation(isVisible);
+        }
     }
 
     public void SetMinimapPressable(Boolean isEnable)

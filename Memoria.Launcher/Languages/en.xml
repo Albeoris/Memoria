@@ -151,6 +151,11 @@
 	FPSDropboxChoice2 = "60"
 	FPSDropboxChoice3 = "90"
 	FPSDropboxChoice4 = "120"
+	CardReduceRandom = "Card randomness"
+	tetraMasterReduceRandomBox0 = "Normal"
+	tetraMasterReduceRandomBox1 = "Lower randomness"
+	tetraMasterReduceRandomBox2 = "Easy win"
+	CardReduceRandom_Tooltip = "Controls the randomness of Tetra Master"
 	/>
 	
 	<!-- 

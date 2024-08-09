@@ -21,22 +21,14 @@ public class MBG : HonoBehavior
         }
     }
 
-    public static Boolean IsNull
-    {
-        get
-        {
-            return MBG.instance == (UnityEngine.Object)null;
-        }
-    }
+    public static Boolean IsNull => MBG.instance == null;
 
     public static Boolean IsSkip
     {
         set
         {
             if (!MBG.IsNull)
-            {
                 MBG.instance.isSkip = value;
-            }
         }
     }
 
@@ -176,7 +168,7 @@ public class MBG : HonoBehavior
 
     public void LoadMovie(String fileName)
     {
-        this.MBGInitialized = (SByte)(this.MBGInitialized + 1);
+        this.MBGInitialized++;
         this.movieMaterial.Load(fileName);
         SoundLib.UnloadMovieResources();
         SoundLib.LoadMovieResources("MovieAudio/", new String[]
@@ -200,7 +192,7 @@ public class MBG : HonoBehavior
         this.tempVirtualAnalogStatus = VirtualAnalog.IsEnable;
         PersistenSingleton<HonoInputManager>.Instance.SetVirtualAnalogEnable(false);
         this.isSkip = false;
-        this.MBGInitialized = (SByte)(this.MBGInitialized + 1);
+        this.MBGInitialized++;
         if (PersistenSingleton<FF9StateSystem>.Instance.mode == 1 || PersistenSingleton<FF9StateSystem>.Instance.mode == 5)
         {
             MBG.MBGParms.oldCharOTOffset = FF9StateSystem.Field.FF9Field.loc.map.charOTOffset;
@@ -278,8 +270,8 @@ public class MBG : HonoBehavior
         if (PersistenSingleton<FF9StateSystem>.Instance.mode == 1 || PersistenSingleton<FF9StateSystem>.Instance.mode == 5)
         {
             FF9StateSystem.Field.FF9Field.loc.map.charOTOffset = MBG.MBGParms.oldCharOTOffset;
-            Shader.SetGlobalFloat("_DepthOffset", (Single)FF9StateSystem.Field.FF9Field.loc.map.charOTOffset);
-            if (this.currentFieldMap != (UnityEngine.Object)null)
+            Shader.SetGlobalFloat("_DepthOffset", FF9StateSystem.Field.FF9Field.loc.map.charOTOffset);
+            if (this.currentFieldMap != null)
             {
                 this.currentFieldMap.camIdx = -1;
                 this.currentFieldMap.SetCurrentCameraIndex(MBG.MBGParms.oldBGCamNdx);
@@ -319,7 +311,7 @@ public class MBG : HonoBehavior
         this.movieMaterial.Transparency = 0f;
         this.movieMaterial.Stop();
         this.mbgCamera.depth = -4096f;
-        this.MBGInitialized = (SByte)(this.MBGInitialized - 1);
+        this.MBGInitialized--;
         MBG.MarkCharacterDepth = false;
         this.played = false;
         PersistenSingleton<UIManager>.Instance.SetUIPauseEnable(true);
@@ -564,42 +556,31 @@ public class MBG : HonoBehavior
 
     public void MBGUpdate()
     {
-        if ((Int32)this.MBGInitialized <= 1)
-        {
+        if (this.MBGInitialized <= 1)
             return;
-        }
         if (this.currentFadeDuration < this.fadeDuration)
         {
             this.currentFadeDuration += Time.deltaTime;
             if (this.currentFadeDuration >= this.fadeDuration)
-            {
                 this.currentFadeDuration = this.fadeDuration;
-            }
-            Single num = this.currentFadeDuration / this.fadeDuration;
-            this.movieMaterial.Transparency = this.alphaFrom + (this.alphaTo - this.alphaFrom) * num;
+            this.movieMaterial.Transparency = this.alphaFrom + (this.alphaTo - this.alphaFrom) * this.currentFadeDuration / this.fadeDuration;
             if (this.currentFadeDuration >= this.fadeDuration && this.fadeCallback != null)
-            {
                 this.fadeCallback();
-            }
         }
         if (this.movieMaterial.GetFirstFrame)
         {
             if (this.updateSwitchCamera)
             {
                 this.updateSwitchCamera = false;
-                this.Set24BitMode((Int32)this.MBGIsRGB24);
+                this.Set24BitMode(this.MBGIsRGB24);
             }
-            if (this.background != (UnityEngine.Object)null && this.background.activeSelf != this.enableBackground)
-            {
+            if (this.background != null && this.background.activeSelf != this.enableBackground)
                 this.background.SetActive(this.enableBackground);
-            }
             if (this.movieMaterial.PlayPosition < this.movieMaterial.Duration)
             {
                 this.UpdateCamera();
                 if (!this.isEnding)
-                {
                     SceneDirector.ToggleFadeAll(false);
-                }
             }
         }
     }
@@ -618,18 +599,17 @@ public class MBG : HonoBehavior
         return this.movieMaterial == null || !this.movieMaterial.GetFirstFrame || (this.movieMaterial.GetFirstFrame && this.movieMaterial.Frame >= this.movieMaterial.TotalFrame) || this.isSkip;
     }
 
+    public Boolean HasJustFinished()
+    {
+        return this.IsFinished() && this.played;
+    }
+
     public bool IsFinishedForDisableBooster()
     {
         return !this.played || this.isSkip;
     }
 
-    public Int32 GetFrame
-    {
-        get
-        {
-            return this.movieMaterial.Frame;
-        }
-    }
+    public Int32 GetFrame => this.movieMaterial.Frame;
 
     public void SetFadeInParameters(Int32 threshold, Int32 tickCount, Int32 targetVolume)
     {
@@ -745,21 +725,8 @@ public class MBG : HonoBehavior
         this.isSkip = false;
     }
 
-    public Int32 GetFrameCount
-    {
-        get
-        {
-            return this.movieMaterial.TotalFrame;
-        }
-    }
-
-    public Boolean is24BitMode
-    {
-        get
-        {
-            return this.MBGIsRGB24 == 1;
-        }
-    }
+    public Int32 GetFrameCount => this.movieMaterial.TotalFrame;
+    public Boolean is24BitMode => this.MBGIsRGB24 == 1;
 
     public UInt64 IsPlaying()
     {

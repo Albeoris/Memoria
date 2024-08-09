@@ -908,7 +908,7 @@ public class BGSCENE_DEF
         return this.useUpscaleFM;
     }
 
-    private static Rect CalculateExpectedTextureAtlasSize(Int32 spriteCount)
+    /*private static Rect CalculateExpectedTextureAtlasSize(Int32 spriteCount)
     {
         Rect[] array =
         {
@@ -937,116 +937,116 @@ public class BGSCENE_DEF
             }
         }
         throw new ArgumentException("Unexpected size of atlas texture");
-    }
+    }*/
 
     private void GenerateAtlasFromBinary()
     {
-        UInt32 num = this.ATLAS_W * this.ATLAS_H;
-        Color32[] array = new Color32[num];
-        UInt32 num2 = 0u;
-        UInt32 num3 = 1u;
+        UInt32 totalPixels = this.ATLAS_W * this.ATLAS_H;
+        Color32[] array = new Color32[totalPixels];
+        UInt32 currentX = 0u;
+        UInt32 currentY = 1u;
         for (Int32 i = 0; i < (Int32)this.overlayCount; i++)
         {
             BGOVERLAY_DEF overlayInfo = this.overlayList[i];
             for (Int32 j = 0; j < (Int32)overlayInfo.spriteCount; j++)
             {
                 BGSPRITE_LOC_DEF spriteInfo = overlayInfo.spriteList[j];
-                spriteInfo.atlasX = (UInt16)num2;
-                spriteInfo.atlasY = (UInt16)num3;
+                spriteInfo.atlasX = (UInt16)currentX;
+                spriteInfo.atlasY = (UInt16)currentY;
                 if (spriteInfo.res == 0)
                 {
                     Int32 index = ArrayUtil.GetIndex(spriteInfo.clutX * 16, spriteInfo.clutY, (Int32)this.vram.width, (Int32)this.vram.height);
-                    for (UInt32 num4 = 0u; num4 < (UInt32)spriteInfo.h; num4 += 1u)
+                    for (UInt32 y = 0u; y < (UInt32)spriteInfo.h; y += 1u)
                     {
-                        Int32 index2 = ArrayUtil.GetIndex(spriteInfo.texX * 64 + spriteInfo.u / 4, (Int32)(spriteInfo.texY * 256u + spriteInfo.v + num4), (Int32)this.vram.width, (Int32)this.vram.height);
-                        Int32 index3 = ArrayUtil.GetIndex((Int32)num2, (Int32)(num3 + num4), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
-                        UInt32 num5 = 0u;
-                        while (num5 < (UInt64)(spriteInfo.w / 2))
+                        Int32 index2 = ArrayUtil.GetIndex(spriteInfo.texX * 64 + spriteInfo.u / 4, (Int32)(spriteInfo.texY * 256u + spriteInfo.v + y), (Int32)this.vram.width, (Int32)this.vram.height);
+                        Int32 index3 = ArrayUtil.GetIndex((Int32)currentX, (Int32)(currentY + y), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
+                        UInt32 x = 0u;
+                        while (x < (UInt64)(spriteInfo.w / 2))
                         {
-                            Byte b = this.vram.rawData[index2 * 2 + (Int32)num5];
+                            Byte b = this.vram.rawData[index2 * 2 + (Int32)x];
                             Byte b2 = (Byte)(b & 15);
                             Byte b3 = (Byte)(b >> 4 & 15);
-                            Int32 num6 = (index + b2) * 2;
-                            UInt16 num7 = (UInt16)(this.vram.rawData[num6] | this.vram.rawData[num6 + 1] << 8);
-                            Int32 num8 = index3 + (Int32)(num5 * 2u);
-                            PSX.ConvertColor16toColor32(num7, out array[num8]);
-                            if (spriteInfo.trans != 0 && num7 != 0)
+                            Int32 indexClut = (index + b2) * 2;
+                            UInt16 color16 = (UInt16)(this.vram.rawData[indexClut] | this.vram.rawData[indexClut + 1] << 8);
+                            Int32 pixelIndex = index3 + (Int32)(x * 2u);
+                            PSX.ConvertColor16toColor32(color16, out array[pixelIndex]);
+                            if (spriteInfo.trans != 0 && color16 != 0)
                             {
                                 if (spriteInfo.alpha == 0)
                                 {
-                                    array[num8].a = 127;
+                                    array[pixelIndex].a = 127;
                                 }
                                 else if (spriteInfo.alpha == 3)
                                 {
-                                    array[num8].a = 63;
+                                    array[pixelIndex].a = 63;
                                 }
                             }
-                            num6 = (index + b3) * 2;
-                            num7 = (UInt16)(this.vram.rawData[num6] | this.vram.rawData[num6 + 1] << 8);
-                            num8 = index3 + (Int32)(num5 * 2u) + 1;
-                            PSX.ConvertColor16toColor32(num7, out array[num8]);
-                            if (spriteInfo.trans != 0 && num7 != 0)
+                            indexClut = (index + b3) * 2;
+                            color16 = (UInt16)(this.vram.rawData[indexClut] | this.vram.rawData[indexClut + 1] << 8);
+                            pixelIndex = index3 + (Int32)(x * 2u) + 1;
+                            PSX.ConvertColor16toColor32(color16, out array[pixelIndex]);
+                            if (spriteInfo.trans != 0 && color16 != 0)
                             {
                                 if (spriteInfo.alpha == 0)
                                 {
-                                    array[num8].a = 127;
+                                    array[pixelIndex].a = 127;
                                 }
                                 else if (spriteInfo.alpha == 3)
                                 {
-                                    array[num8].a = 63;
+                                    array[pixelIndex].a = 63;
                                 }
                             }
-                            num5 += 1u;
+                            x += 1u;
                         }
                     }
                 }
                 else if (spriteInfo.res == 1)
                 {
                     Int32 index4 = ArrayUtil.GetIndex(spriteInfo.clutX * 16, spriteInfo.clutY, (Int32)this.vram.width, (Int32)this.vram.height);
-                    for (UInt32 num9 = 0u; num9 < (UInt32)spriteInfo.h; num9 += 1u)
+                    for (UInt32 y = 0u; y < (UInt32)spriteInfo.h; y += 1u)
                     {
-                        Int32 index5 = ArrayUtil.GetIndex(spriteInfo.texX * 64 + spriteInfo.u / 2, (Int32)(spriteInfo.texY * 256u + spriteInfo.v + num9), (Int32)this.vram.width, (Int32)this.vram.height);
-                        Int32 index6 = ArrayUtil.GetIndex((Int32)num2, (Int32)(num3 + num9), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
-                        for (UInt32 num10 = 0u; num10 < (UInt32)spriteInfo.w; num10 += 1u)
+                        Int32 index5 = ArrayUtil.GetIndex(spriteInfo.texX * 64 + spriteInfo.u / 2, (Int32)(spriteInfo.texY * 256u + spriteInfo.v + y), (Int32)this.vram.width, (Int32)this.vram.height);
+                        Int32 index6 = ArrayUtil.GetIndex((Int32)currentX, (Int32)(currentY + y), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
+                        for (UInt32 x = 0u; x < (UInt32)spriteInfo.w; x += 1u)
                         {
-                            Byte b4 = this.vram.rawData[index5 * 2 + (Int32)num10];
-                            Int32 num11 = (index4 + b4) * 2;
-                            UInt16 num12 = (UInt16)(this.vram.rawData[num11] | this.vram.rawData[num11 + 1] << 8);
-                            Int32 num13 = index6 + (Int32)num10;
-                            PSX.ConvertColor16toColor32(num12, out array[num13]);
-                            if (spriteInfo.trans != 0 && num12 != 0)
+                            Byte b4 = this.vram.rawData[index5 * 2 + (Int32)x];
+                            Int32 indexClut = (index4 + b4) * 2;
+                            UInt16 color16 = (UInt16)(this.vram.rawData[indexClut] | this.vram.rawData[indexClut + 1] << 8);
+                            Int32 pixelIndex = index6 + (Int32)x;
+                            PSX.ConvertColor16toColor32(color16, out array[pixelIndex]);
+                            if (spriteInfo.trans != 0 && color16 != 0)
                             {
                                 if (spriteInfo.alpha == 0)
                                 {
-                                    array[num13].a = 127;
+                                    array[pixelIndex].a = 127;
                                 }
                                 else if (spriteInfo.alpha == 3)
                                 {
-                                    array[num13].a = 63;
+                                    array[pixelIndex].a = 63;
                                 }
                             }
                         }
                     }
                 }
-                for (UInt32 num14 = 0u; num14 < (UInt32)spriteInfo.h; num14 += 1u)
+                for (UInt32 y = 0u; y < (UInt32)spriteInfo.h; y += 1u)
                 {
-                    Int32 index7 = ArrayUtil.GetIndex((Int32)(num2 + this.SPRITE_W), (Int32)(num3 + num14), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
+                    Int32 index7 = ArrayUtil.GetIndex((Int32)(currentX + this.SPRITE_W), (Int32)(currentY + y), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
                     array[index7] = array[index7 - 1];
                 }
-                for (UInt32 num15 = 0u; num15 < (UInt32)spriteInfo.w; num15 += 1u)
+                for (UInt32 x = 0u; x < (UInt32)spriteInfo.w; x += 1u)
                 {
-                    Int32 index8 = ArrayUtil.GetIndex((Int32)(num2 + num15), (Int32)num3, (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
-                    Int32 index9 = ArrayUtil.GetIndex((Int32)(num2 + num15), (Int32)(num3 - 1u), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
+                    Int32 index8 = ArrayUtil.GetIndex((Int32)(currentX + x), (Int32)currentY, (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
+                    Int32 index9 = ArrayUtil.GetIndex((Int32)(currentX + x), (Int32)(currentY - 1u), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
                     array[index9] = array[index8];
                 }
-                Int32 index10 = ArrayUtil.GetIndex((Int32)(num2 + this.SPRITE_W - 1u), (Int32)num3, (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
-                Int32 index11 = ArrayUtil.GetIndex((Int32)(num2 + this.SPRITE_W), (Int32)(num3 - 1u), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
+                Int32 index10 = ArrayUtil.GetIndex((Int32)(currentX + this.SPRITE_W - 1u), (Int32)currentY, (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
+                Int32 index11 = ArrayUtil.GetIndex((Int32)(currentX + this.SPRITE_W), (Int32)(currentY - 1u), (Int32)this.ATLAS_W, (Int32)this.ATLAS_H);
                 array[index11] = array[index10];
-                num2 += this.SPRITE_W + 1u;
-                if (num2 >= this.ATLAS_W || this.ATLAS_W - num2 < this.SPRITE_W + 1u)
+                currentX += this.SPRITE_W + 1u;
+                if (currentX >= this.ATLAS_W || this.ATLAS_W - currentX < this.SPRITE_W + 1u)
                 {
-                    num2 = 0u;
-                    num3 += this.SPRITE_H + 1u;
+                    currentX = 0u;
+                    currentY += this.SPRITE_H + 1u;
                 }
             }
         }
