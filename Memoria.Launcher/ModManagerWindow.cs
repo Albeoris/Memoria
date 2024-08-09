@@ -712,8 +712,9 @@ namespace Memoria.Launcher
                 Boolean hasSubMod = mod.SubMod != null && mod.SubMod.Count > 0;
                 PreviewModName.Text = mod.Name;
                 PreviewModVersion.Text = mod.CurrentVersion?.ToString() ?? "";
-                PreviewModRelease.Text = mod.ReleaseDate ?? "Unknown date";
-                PreviewModAuthor.Text = mod.Author ?? "Unknown author";
+                PreviewModRelease.Text = mod.ReleaseDate ?? "";
+                PreviewModReleaseOriginal.Text = mod.ReleaseDateOriginal ?? "Unknown";
+                PreviewModAuthor.Text = mod.Author ?? "Unknown";
                 PreviewModDescription.Text = mod.Description ?? "No description.";
                 PreviewModReleaseNotes.Text = mod.PatchNotes ?? "";
                 PreviewModCategory.Text = mod.Category ?? "Unknown";
@@ -920,7 +921,8 @@ namespace Memoria.Launcher
             PreviewModWebsite.Content = Lang.ModEditor.Website;
             CaptionModAuthor.Text = Lang.ModEditor.Author + ":";
             CaptionModCategory.Text = Lang.ModEditor.Category + ":";
-            CaptionModDescription.Text = Lang.ModEditor.Description + ":";
+            //CaptionModDescription.Text = Lang.ModEditor.Description + ":";
+            CaptionModReleaseOriginal.Text = Lang.ModEditor.Release + ":";
             CaptionModReleaseNotes.Text = Lang.ModEditor.ReleaseNotes + ":";
             PreviewSubModActive.Content = Lang.ModEditor.Active;
             CaptionSubModPanel.Text = Lang.ModEditor.SubModPanel + ":";

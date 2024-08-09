@@ -286,7 +286,7 @@
 	Mod = "Mod"
 	Name = "Nom"
 	Website = "Site Web"
-	Author = "Auteur"
+	Author = "Auteur(s)"
 	Release = "Date de sortie"
 	Category = "Catégorie"
 	Version = "Version"
