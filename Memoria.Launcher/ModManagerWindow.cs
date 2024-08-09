@@ -753,6 +753,11 @@ namespace Memoria.Launcher
                             mod.PreviewImage.EndInit();
                         }
                     }
+                    else if (tabCtrlMain.SelectedIndex == 0 && mod.PreviewFileUrl != null)
+                    {
+                        mod.PreviewImage = new BitmapImage(new Uri(mod.PreviewFileUrl, UriKind.Absolute));
+                        mod.PreviewImage.DownloadCompleted += OnPreviewFileDownloaded;
+                    }
                     else if (tabCtrlMain.SelectedIndex == 1 && mod.PreviewFileUrl != null)
                     {
                         mod.PreviewImage = new BitmapImage(new Uri(mod.PreviewFileUrl, UriKind.Absolute));
