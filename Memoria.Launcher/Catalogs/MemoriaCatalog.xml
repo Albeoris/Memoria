@@ -713,9 +713,9 @@ Complete changes and info can be found on this mod's page.</Description>
 
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.22</Version>
+	<Version>0.3.23</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
-	<ReleaseDate>2024-08-06</ReleaseDate>
+	<ReleaseDate>2024-08-09</ReleaseDate>
 	<Author>DV</Author>
 	<Description>
 	A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
@@ -738,33 +738,21 @@ Complete changes and info can be found on this mod's page.</Description>
 	/_!_\ IMPORTANT : Please read the README file inside the mod folder, the installation is not YET fully automatic ! (Just move 1 or 2 files, don't worry !)
 	</Description>
 	<PatchNotes>
-	- Update of Trance Seek's Memoria.Scripts.dll, making it compatible with the latest Memoria release, including the INCREDIBLE Tirlititi status rework!
+	- [WIP] New spell kit for Marcus!
+	WARNING: If Marcus has a menu problem in combat or still has these old skills, you can talk to one of the guards at the Treno entrance to reset his data.
 
-	- New rework of the following alterations: PowerBreak, MagicBreak, ArmorBreak, MentalBreak, PowerUp, MagicUp, ArmorUp and MentalUp
-	From now, these state alterations bring a 10% malus/bonus in the statistic concerned, cumulative up to 9 times.
-	These alterations cancel each other out: for example, PowerBreak reduces the number of PowerUp and vice versa.
-
-	- [WIP] Almost all weapons now have a new passive or special effect! Here are the new weapons concerned:
-	Dagger, Thief's Sword, Staff, Cane, Sword, Fork, Spear and Flute.
-
-	- Steiner can no longer learn Darkside and is replaced by Ironclad.
-	- [WIP] New visual for Eiko's passive!
-	- Slight change to the formula for the duration of Doom and Gradual Petrify.
-	- Visual effect added when a character is under "AutoLife".
-	- Old status removes all stat bonuses/malus.
-	- A character under Old can no longer benefit from stat bonuses/maluses.
-	- Trouble effects can also be caused by magic damage. (single-target only).
-	- Fixed a bug on one of the drops in Chocobo Bay.
-	- Hot and Cold scripts improved, so that Mene is better able to tell whether there are any Chocographs left or not.
-	- Fixed a bug where the fight against Bach on Prime Vista would not launch.
-	- Slight script correction on Lani.
-	- Slight decrease in the volume of combat music on the Blumecia special boss.
-	- Improved description of Tonifiant+.
-	- A character with "Add Status" or "Add Status+" can now inflict the weapon's state alteration on himself.
-	- Correction of Garuda + Manta animations (862, 863 and 912)
-	- Slight change to the description of SA Resilience.
-	- Correction of Level Up+ (boosted) SA description in English.
-	- Correction of the healing formula provided by SA Mug+ with Daggers.
+	- Tarask's boomerangs weapons are as effective in the second line as in the first (Long Range).
+	- Zidane's Bandit has been reworked.
+	- Fixed a major bug, where the game softlocked against a fight with Golem + Koa.
+	- Slight correction to script no. 19 (PhysicalAttackScript).
+	- Dagger steal bonus is now taken into account on the following skills/SAs: Mug, What’s That!? and Master Thief.
+	- Corrected EX Mode SA, which was not working on commands that did no damage (e.g. Steal).
+	- Correction of the description on several items.
+	- Fixed a bug on the Annoyntment item.
+	- Correction of Break/Up status scripts, which did not withdraw correctly when a character died.
+	- Temporary correction on Trouble status, which did not apply when a character died (reported to Tirlititi).
+	- Fixed a script bug in Treno/Auction House (1909).
+	- Major script bug fixed on A. Castle/Hallway (1807)
 	</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/NTbTds6/Logo-Trance-Seek.png</PreviewFileUrl>
