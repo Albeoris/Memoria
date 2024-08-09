@@ -255,13 +255,13 @@ public class btlseq
             {
                 btl_stat.GeoAddColor2DrawPacket(btl.weapon_geo, (Int16)(alpha - 128), (Int16)(alpha - 128), (Int16)(alpha - 128));
                 if (alpha < 70)
-                    btl_util.GeoSetABR(btl.weapon_geo, "GEO_POLYFLAGS_TRANS_100_PLUS_25");
+                    btl_util.GeoSetABR(btl.weapon_geo, "GEO_POLYFLAGS_TRANS_100_PLUS_25", btl);
             }
             if ((btl.flags & geo.GEO_FLAGS_RENDER) != 0 && (btl.flags & geo.GEO_FLAGS_CLIP) == 0)
             {
                 btl_stat.GeoAddColor2DrawPacket(btl.gameObject, (Int16)(alpha - 128), (Int16)(alpha - 128), (Int16)(alpha - 128));
                 if (alpha < 70)
-                    btl_util.GeoSetABR(btl.gameObject, "GEO_POLYFLAGS_TRANS_100_PLUS_25");
+                    btl_util.GeoSetABR(btl.gameObject, "GEO_POLYFLAGS_TRANS_100_PLUS_25", btl);
             }
         }
     }
@@ -1025,6 +1025,44 @@ public class btlseq
             return -1;
         }
 
+        public String GetAttackTitleOfSequence(BTL_DATA enemy, Int32 pSeqNo)
+        {
+            if (seq_work_set.SeqData[pSeqNo] == 0 || enemy.bi.player != 0)
+                return String.Empty;
+            using (sequenceReader = new BinaryReader(new MemoryStream(data)))
+            {
+                sequenceReader.BaseStream.Seek(seq_work_set.SeqData[pSeqNo] + 4, SeekOrigin.Begin);
+                wSeqCode = sequenceReader.ReadByte();
+                while (wSeqCode != 0 && wSeqCode != 0x18)
+                {
+                    if (wSeqCode > btlseq.gSeqProg.Length)
+                        wSeqCode = 0;
+                    switch (wSeqCode)
+                    {
+                        case 0xE:
+                        case 0x21:
+                            Int32 messId = instance.sequenceReader.ReadByte();
+                            if ((messId & 0x80) != 0)
+                            {
+                                Int32 cmdNameIndex = FF9StateSystem.Battle.FF9Battle.btl_scene.header.TypCount + pSeqNo;
+                                return FF9TextTool.BattleText(cmdNameIndex);
+                            }
+                            else if (wSeqCode == 0x21)
+                            {
+                                messId += FF9StateSystem.Battle.FF9Battle.enemy[enemy.bi.slot_no].et.mes;
+                                return FF9TextTool.BattleText(messId);
+                            }
+                            break;
+                        default:
+                            AdvanceSeqCode();
+                            break;
+                    }
+                    wSeqCode = sequenceReader.ReadByte();
+                }
+            }
+            return String.Empty;
+        }
+
         public Int32 GetSFXOfSequence(Int32 pSeqNo, out Boolean isChanneling, out Boolean isContact)
         {
             isChanneling = false;
@@ -1047,46 +1085,8 @@ public class btlseq
                             isChanneling = wSeqCode == 0x8;
                             isContact = wSeqCode == 0x6;
                             return sequenceReader.ReadByte() | (sequenceReader.ReadByte() << 8);
-                        case 2:
-                        case 7:
-                        case 9:
-                        case 0xA:
-                        case 0xB:
-                        case 0x18:
-                            break;
-                        case 1:
-                        case 5:
-                        case 4:
-                        case 0xE:
-                        case 0x10:
-                        case 0x11:
-                        case 0x12:
-                        case 0x15:
-                        case 0x16:
-                        case 0x17:
-                        case 0x1C:
-                        case 0x1D:
-                        case 0x1F:
-                        case 0x20:
-                        case 0x21:
-                            sequenceReader.BaseStream.Seek(1, SeekOrigin.Current);
-                            break;
-                        case 0xD:
-                        case 0xF:
-                            sequenceReader.BaseStream.Seek(2, SeekOrigin.Current);
-                            break;
-                        case 3:
-                        case 0xC:
-                        case 0x1E:
-                            sequenceReader.BaseStream.Seek(3, SeekOrigin.Current);
-                            break;
-                        case 0x14:
-                        case 0x19:
-                            sequenceReader.BaseStream.Seek(5, SeekOrigin.Current);
-                            break;
-                        case 0x13:
-                        case 0x1B:
-                            sequenceReader.BaseStream.Seek(7, SeekOrigin.Current);
+                        default:
+                            AdvanceSeqCode();
                             break;
                     }
                     wSeqCode = sequenceReader.ReadByte();
@@ -1117,52 +1117,8 @@ public class btlseq
                         case 5:
                             animList.Add(sequenceReader.ReadByte());
                             break;
-                        case 2:
-                        case 7:
-                        case 9:
-                        case 0xA:
-                        case 0xB:
-                        case 0x18:
-                            break;
-                        case 1:
-                        case 4:
-                        case 0xE:
-                        case 0x10:
-                        case 0x11:
-                        case 0x12:
-                        case 0x15:
-                        case 0x16:
-                        case 0x17:
-                        case 0x1C:
-                        case 0x1D:
-                        case 0x1F:
-                        case 0x20:
-                        case 0x21:
-                            sequenceReader.BaseStream.Seek(1, SeekOrigin.Current);
-                            break;
-                        case 0xD:
-                        case 0xF:
-                            sequenceReader.BaseStream.Seek(2, SeekOrigin.Current);
-                            break;
-                        case 3:
-                        case 0xC:
-                        case 0x1E:
-                            sequenceReader.BaseStream.Seek(3, SeekOrigin.Current);
-                            break;
-                        case 0x6:
-                            sequenceReader.BaseStream.Seek(4, SeekOrigin.Current);
-                            break;
-                        case 0x14:
-                        case 0x19:
-                            sequenceReader.BaseStream.Seek(5, SeekOrigin.Current);
-                            break;
-                        case 0x13:
-                        case 0x1B:
-                            sequenceReader.BaseStream.Seek(7, SeekOrigin.Current);
-                            break;
-                        case 0x8:
-                        case 0x1A:
-                            sequenceReader.BaseStream.Seek(8, SeekOrigin.Current);
+                        default:
+                            AdvanceSeqCode();
                             break;
                     }
                     wSeqCode = sequenceReader.ReadByte();
@@ -1189,6 +1145,61 @@ public class btlseq
                                 seq_work_set.AnmAddrList[j] = 3949; // Cast End (Ice)
                         }
                 }
+            }
+        }
+
+        private void AdvanceSeqCode()
+        {
+            switch (wSeqCode)
+            {
+                case 2:
+                case 7:
+                case 9:
+                case 0xA:
+                case 0xB:
+                case 0x18:
+                    break;
+                case 1:
+                case 4:
+                case 5:
+                case 0xE:
+                case 0x10:
+                case 0x11:
+                case 0x12:
+                case 0x15:
+                case 0x16:
+                case 0x17:
+                case 0x1C:
+                case 0x1D:
+                case 0x1F:
+                case 0x20:
+                case 0x21:
+                    sequenceReader.BaseStream.Seek(1, SeekOrigin.Current);
+                    break;
+                case 0xD:
+                case 0xF:
+                    sequenceReader.BaseStream.Seek(2, SeekOrigin.Current);
+                    break;
+                case 3:
+                case 0xC:
+                case 0x1E:
+                    sequenceReader.BaseStream.Seek(3, SeekOrigin.Current);
+                    break;
+                case 0x6:
+                    sequenceReader.BaseStream.Seek(4, SeekOrigin.Current);
+                    break;
+                case 0x14:
+                case 0x19:
+                    sequenceReader.BaseStream.Seek(5, SeekOrigin.Current);
+                    break;
+                case 0x13:
+                case 0x1B:
+                    sequenceReader.BaseStream.Seek(7, SeekOrigin.Current);
+                    break;
+                case 0x8:
+                case 0x1A:
+                    sequenceReader.BaseStream.Seek(8, SeekOrigin.Current);
+                    break;
             }
         }
     }

@@ -6,6 +6,8 @@ namespace Memoria
 {
     static class SmoothFrameUpdater_World
     {
+        private const Single ActorSmoothMovementMaxSqr = 100f;
+
         // Disable smooth effects for the duration of a couple of main loop ticks
         public static Int32 Skip
         {
@@ -139,9 +141,9 @@ namespace Memoria
                 Animation anim = actor.Animation;
                 AnimationState animState = anim[actor._smoothUpdateAnimNameActual];
 
-                //Vector3 frameMove = actor._smoothUpdatePosActual - actor._smoothUpdatePosPrevious;
-                //if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < ActorSmoothMovementMaxSqr)
-                actor.transform.position = Vector3.Lerp(actor._smoothUpdatePosPrevious, actor._smoothUpdatePosActual, smoothFactor);
+                Vector3 frameMove = actor._smoothUpdatePosActual - actor._smoothUpdatePosPrevious;
+                if (frameMove.sqrMagnitude > 0f && frameMove.sqrMagnitude < ActorSmoothMovementMaxSqr)
+                    actor.transform.position = Vector3.Lerp(actor._smoothUpdatePosPrevious, actor._smoothUpdatePosActual, smoothFactor);
 
                 //if (Quaternion.Angle(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual) < ActorSmoothTurnMaxDeg)
                 actor.transform.rotation = Quaternion.Lerp(actor._smoothUpdateRotPrevious, actor._smoothUpdateRotActual, smoothFactor);

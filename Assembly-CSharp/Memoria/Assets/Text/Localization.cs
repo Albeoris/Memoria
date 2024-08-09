@@ -70,7 +70,95 @@ namespace Memoria.Assets
                     { "GR", "Mischung fehlgeschlagen!" },
                     { "IT", "La miscela non è riuscita!" }
                 }
-            }
+            },
+            { "ElementWeak", new Dictionary<String, String>()
+                {
+                    { "US", "Weak to [FFCC00]%[FFFFFF]" },
+                    { "UK", "Weak to [FFCC00]%[FFFFFF]" },
+                    { "JP", "[FFCC00]%[FFFFFF]属性に弱い" },
+                    { "ES", "Vulnerable al elemento [FFCC00]%[FFFFFF]" },
+                    { "FR", "Sensible à [FFCC00]%[FFFFFF]" },
+                    { "GR", "Anfällig gegen [FFCC00]%[FFFFFF]-Element" },
+                    { "IT", "Debole all’elemento [FFCC00]%[FFFFFF]" }
+                }
+            },
+            { "ElementResist", new Dictionary<String, String>()
+                {
+                    { "US", "Resistant to [FFCC00]%[FFFFFF]" },
+                    { "UK", "Resistant to [FFCC00]%[FFFFFF]" },
+                    { "JP", "[FFCC00]%[FFFFFF]属性に耐性" },
+                    { "ES", "Resistente al elemento [FFCC00]%[FFFFFF]" },
+                    { "FR", "Résiste à [FFCC00]%[FFFFFF]" },
+                    { "GR", "Resistent gegen [FFCC00]%[FFFFFF]-Element" },
+                    { "IT", "Resistente all’elemento [FFCC00]%[FFFFFF]" }
+                }
+            },
+            { "ElementImmune", new Dictionary<String, String>()
+                {
+                    { "US", "Immune to [FFCC00]%[FFFFFF]" },
+                    { "UK", "Immune to [FFCC00]%[FFFFFF]" },
+                    { "JP", "[FFCC00]%[FFFFFF]属性に免疫" },
+                    { "ES", "Inmune al elemento [FFCC00]%[FFFFFF]" },
+                    { "FR", "Immunisé à [FFCC00]%[FFFFFF]" },
+                    { "GR", "Immun gegen [FFCC00]%[FFFFFF]-Element" },
+                    { "IT", "Immune all’elemento [FFCC00]%[FFFFFF]" }
+                }
+            },
+            { "ElementAbsorb", new Dictionary<String, String>()
+                {
+                    { "US", "Absorb [FFCC00]%[FFFFFF]" },
+                    { "UK", "Absorb [FFCC00]%[FFFFFF]" },
+                    { "JP", "[FFCC00]%[FFFFFF]属性に吸収" },
+                    { "ES", "Absorber el elemento [FFCC00]%[FFFFFF]" },
+                    { "FR", "Absorbe l'élément [FFCC00]%[FFFFFF]" },
+                    { "GR", "Absorbiert [FFCC00]%[FFFFFF]-Element" },
+                    { "IT", "Assorbire l'elemento [FFCC00]%[FFFFFF]" }
+                }
+            },
+            { "StatusImmune", new Dictionary<String, String>()
+                {
+                    { "US", "Immune: [FFCC00]%[FFFFFF]" },
+                    { "UK", "Immune: [FFCC00]%[FFFFFF]" },
+                    { "JP", "免疫 [FFCC00]%[FFFFFF]" },
+                    { "ES", "Inmune: [FFCC00]%[FFFFFF]" },
+                    { "FR", "Immunité : [FFCC00]%[FFFFFF]" },
+                    { "GR", "Immunität [FFCC00]%[FFFFFF]" },
+                    { "IT", "Immune: [FFCC00]%[FFFFFF]" }
+                }
+            },
+            { "StatusAuto", new Dictionary<String, String>()
+                {
+                    { "US", "Auto: [FFCC00]%[FFFFFF]" },
+                    { "UK", "Auto: [FFCC00]%[FFFFFF]" },
+                    { "JP", "いつでも [FFCC00]%[FFFFFF]" },
+                    { "ES", "Auto: [FFCC00]%[FFFFFF]" },
+                    { "FR", "Auto : [FFCC00]%[FFFFFF]" },
+                    { "GR", "Auto [FFCC00]%[FFFFFF]" },
+                    { "IT", "Sempre: [FFCC00]%[FFFFFF]" }
+                }
+            },
+            { "StatusResist", new Dictionary<String, String>()
+                {
+                    { "US", "Resist: [FFCC00]%[FFFFFF]" },
+                    { "UK", "Resist: [FFCC00]%[FFFFFF]" },
+                    { "JP", "耐性 [FFCC00]%[FFFFFF]" },
+                    { "ES", "Resistente: [FFCC00]%[FFFFFF]" },
+                    { "FR", "Résistance : [FFCC00]%[FFFFFF]" },
+                    { "GR", "Widersteht [FFCC00]%[FFFFFF]" },
+                    { "IT", "Resistente: [FFCC00]%[FFFFFF]" }
+                }
+            },
+            { "AttackList", new Dictionary<String, String>()
+                {
+                    { "US", "[b]Abilities[/b]" },
+                    { "UK", "[b]Abilities[/b]" },
+                    { "JP", "[b]アビリティ[/b]" },
+                    { "ES", "[b]Habilidades[/b]" },
+                    { "FR", "[b]Compétences[/b]" },
+                    { "GR", "[b]Fähigkeiten[/b]" },
+                    { "IT", "[b]Abilità[/b]" }
+                }
+            },
         };
     }
 }

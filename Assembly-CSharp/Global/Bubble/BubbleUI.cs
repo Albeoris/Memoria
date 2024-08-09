@@ -74,6 +74,7 @@ public class BubbleUI : Singleton<BubbleUI>
         this.WorldFollower.worldCam = worldCam;
         this.WorldFollower.UIOffset = uiOffset;
         this.WorldFollower.updateEveryFrame = true;
+        this.WorldFollower.clampToScreen = true;
         this.InitialBubble(po, coll, flags, listener);
     }
 
@@ -97,6 +98,7 @@ public class BubbleUI : Singleton<BubbleUI>
         this.WorldFollower.target = po.go.transform;
         this.WorldFollower.targetTransformOffset = targetTransformOffset;
         this.WorldFollower.UIOffset = uidefaultOffset;
+        this.WorldFollower.clampToScreen = true;
     }
 
     private void InitialBubble(PosObj po, Obj coll, BubbleUI.Flag[] flags, Action<PosObj, Obj, UInt32>[] listener)

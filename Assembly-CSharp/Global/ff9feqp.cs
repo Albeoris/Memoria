@@ -26,7 +26,7 @@ public static class ff9feqp
     public static void FF9FEqp_UpdateSA(PLAYER player)
     {
         List<SupportAbility> equipSAList = new List<SupportAbility>();
-        if (!ff9abil.FF9Abil_HasSA(new Character(player)))
+        if (!ff9abil.FF9Abil_HasSA(player))
             return;
 
         for (Int32 i = 0; i < 5; i++)

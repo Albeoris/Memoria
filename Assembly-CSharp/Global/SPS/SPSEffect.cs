@@ -1,4 +1,5 @@
-﻿using Memoria.Assets;
+﻿using Memoria;
+using Memoria.Assets;
 using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
@@ -76,7 +77,7 @@ public class SPSEffect : MonoBehaviour
         this.pos = Vector3.zero;
         this.scale = SPSConst.SCALE_ONE;
         this.rot = Vector3.zero;
-        this.rotArg = Vector3.zero;
+        this.rotMode = 0;
         this.zOffset = 0;
         this.posOffset = Vector3.zero;
         this.depthOffset = 0;
@@ -273,9 +274,6 @@ public class SPSEffect : MonoBehaviour
         {
             Camera battleCamera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
             Matrix4x4 cameraMatrix = battleCamera.worldToCameraMatrix.inverse;
-            Vector3 directionForward = cameraMatrix.MultiplyVector(Vector3.forward);
-            Vector3 directionRight = cameraMatrix.MultiplyVector(Vector3.right);
-            Vector3 directionDown = Vector3.Cross(directionForward, directionRight);
             if (this.useBattleFactors)
             {
                 Single distanceToCamera = Vector3.Distance(cameraMatrix.GetColumn(3), offsetedPos);
@@ -283,9 +281,20 @@ public class SPSEffect : MonoBehaviour
                 scalef *= distanceFactor;
             }
             base.transform.localScale = new Vector3(-scalef, -scalef, scalef);
-            base.transform.localRotation = Quaternion.Euler(this.rot.x, this.rot.y, this.rot.z);
             base.transform.localPosition = offsetedPos;
-            base.transform.LookAt(base.transform.position + directionForward, -directionDown);
+            // TODO: Have rotMode apply to other gMode as well
+            if (this.rotMode == 0)
+            {
+                Vector3 directionForward = cameraMatrix.MultiplyVector(Vector3.forward);
+                Vector3 directionRight = cameraMatrix.MultiplyVector(Vector3.right);
+                Matrix4x4 directionRot = Matrix4x4.TRS(Vector3.zero, Quaternion.Euler(new Vector3(0f, 0f, this.rot.z)), Vector3.one);
+                Vector3 directionDown = Vector3.Cross(directionForward, directionRot * directionRight);
+                base.transform.LookAt(base.transform.position + directionForward, -directionDown);
+            }
+            else
+            {
+                base.transform.localRotation = Quaternion.Euler(this.rot.x, this.rot.y, this.rot.z);
+            }
         }
         else if (useScreenPositionHack)
         {
@@ -402,9 +411,10 @@ public class SPSEffect : MonoBehaviour
         else
         {
             PSXTexture texture = PSXTextureMgr.GetTexture(worktpage.FlagTP, worktpage.FlagTY, worktpage.FlagTX, workclut.FlagClutY, workclut.FlagClutX);
-            texture.SetFilter(FilterMode.Bilinear);
             this.materials[shindex].mainTexture = texture.texture;
         }
+        ModelFactory.SetMatFilter(this.materials[shindex], Configuration.Graphics.SFXSmoothTexture, 1);
+        
         this.meshRenderer.material = this.materials[shindex];
         if (this.spsActor != null)
             this.spsActor.spsPos = offsetedPos;
@@ -501,8 +511,8 @@ public class SPSEffect : MonoBehaviour
     public Vector3 pos;
     public Int32 scale;
     public Vector3 rot;
+    public Int32 rotMode;
     public Int32 zOffset;
-    public Vector3 rotArg;
     public Vector3 posOffset;
     public Int32 depthOffset;
     public Boolean useBattleFactors;

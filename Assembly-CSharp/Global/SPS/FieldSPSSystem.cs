@@ -32,7 +32,7 @@ public class FieldSPSSystem : HonoBehavior
             return;
         if (index < Utility.SpsList.Count)
         {
-            Utility.SpsList[index].Init(1);
+            Utility.SpsList[index].Unload();
             Utility.SpsList[index].fieldMap = this._fieldMap;
             return;
         }

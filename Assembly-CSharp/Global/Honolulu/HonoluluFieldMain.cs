@@ -91,13 +91,20 @@ public class HonoluluFieldMain : HonoBehavior
         AnimationFactory.LoadAnimationUseInEvent(text);
         vib.LoadVibData(text);
         map.mcfPtr = MapConfiguration.LoadMapConfigData(text);
-        GameObject gameObject = GameObject.Find("FieldMap Root");
-        GameObject gameObject2 = new GameObject("FieldMap");
-        gameObject2.transform.parent = gameObject.transform;
-        PersistenSingleton<EventEngine>.Instance.fieldmap = gameObject2.AddComponent<FieldMap>();
-        GameObject gameObject3 = new GameObject("FieldMap SPS");
-        gameObject3.transform.parent = gameObject.transform;
-        PersistenSingleton<EventEngine>.Instance.fieldSps = gameObject3.AddComponent<FieldSPSSystem>();
+        GameObject mapRootGo = GameObject.Find("FieldMap Root");
+        GameObject mapGo = new GameObject("FieldMap");
+        mapGo.transform.parent = mapRootGo.transform;
+        PersistenSingleton<EventEngine>.Instance.fieldmap = mapGo.AddComponent<FieldMap>();
+        if (PersistenSingleton<EventEngine>.Instance.fieldSps == null)
+        {
+            GameObject spsSystemGo = new GameObject("FieldMap SPS");
+            spsSystemGo.transform.parent = mapRootGo.transform;
+            PersistenSingleton<EventEngine>.Instance.fieldSps = spsSystemGo.AddComponent<FieldSPSSystem>();
+        }
+        else
+        {
+            PersistenSingleton<EventEngine>.Instance.fieldSps.transform.parent = mapRootGo.transform;
+        }
         PersistenSingleton<EventEngine>.Instance.fieldSps.Init(PersistenSingleton<EventEngine>.Instance.fieldmap);
         if (MapNo >= 3000 && MapNo <= 3012)
         {
@@ -194,6 +201,11 @@ public class HonoluluFieldMain : HonoBehavior
 
     private void FF9FieldMapMain()
     {
+        // Hard coded sun light direction, maybe there will be a more optimal way to setup sun light.
+        // e.g. Depends on different stage
+        Vector3 _FieldMainLightDirection = new Vector3(0.2f, 1.0f, 0);
+        Shader.SetGlobalVector("_FieldMainLightDirection", _FieldMainLightDirection);
+        
         if ((this.FF9.attr & 256u) == 0u)
         {
             if (!MBG.IsNull)

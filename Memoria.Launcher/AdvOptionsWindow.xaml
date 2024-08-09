@@ -1,0 +1,103 @@
+<Window
+    x:Class="Memoria.Launcher.AdvOptionsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:launcher="clr-namespace:Memoria.Launcher"
+    Title="{Binding WindowTitle, FallbackValue='Advanced and experimental settings'}"
+    Width="900"
+    Height="700"
+    BorderThickness="0"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    Background="Black"
+    WindowStyle="SingleBorderWindow">
+    <Grid>
+        <Image x:Name="Launcher"
+            Height="884"
+            VerticalAlignment="Top"
+            Source="/Images/new_launcher_bg.png"
+            Margin="-74,-249,74,0"
+            />
+
+        <Rectangle Visibility="Visible" Height="30" Width="500" Margin="0,27,0,0" VerticalAlignment="Top" HorizontalAlignment="Center">
+            <Rectangle.Style>
+                <Style TargetType="{x:Type Rectangle}">
+                    <Setter Property="Fill" Value="#88000000"/>
+                </Style>
+            </Rectangle.Style>
+        </Rectangle>
+
+        <TextBlock x:Name="WindTitle"
+            Margin="0,27,0,0"
+            Text="Advanced and experimental settings"
+            TextAlignment="Center"
+            Foreground="White"
+            FontSize="20"
+            FontFamily="Century Gothic"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top" />
+
+        <launcher:ShaderSettingControl
+            x:Name="GameSettings"
+            Width="260"
+            Height="157"
+            Margin="614,0,0,68"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom" />
+
+        <launcher:UiLauncherModelViewerButton
+            Width="252"
+            Height="36"
+            Margin="0,0,0,20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Content="" />
+
+        <launcher:UiLauncherAdvOptionsCloseButton
+            Width="251"
+            Height="36"
+            Margin="0,0,30,20"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Content="" />
+
+        <Image x:Name="shader_comparison1_thumb"
+            MouseEnter="Shader_comparison1_MouseEnter"
+            MouseLeave="Shader_comparison1_MouseLeave"
+            Width="125"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            Source="/Images/shader_comparison1.jpg"
+            Margin="0,0,30,230"
+            />
+
+        <Image x:Name="shader_comparison2_thumb"
+            MouseEnter="Shader_comparison2_MouseEnter"
+            MouseLeave="Shader_comparison2_MouseLeave"
+            Width="117"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            Source="/Images/shader_comparison2.jpg"
+            Margin="0,0,160,230"
+            />
+
+        <Image x:Name="shader_comparison1_full"
+            Width="400"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            Source="/Images/shader_comparison1.jpg"
+            Margin="0,0,155,177"
+            Visibility="Collapsed"
+            />
+
+        <Image x:Name="shader_comparison2_full"
+            Width="400"
+            VerticalAlignment="Bottom"
+            HorizontalAlignment="Right"
+            Source="/Images/shader_comparison2.jpg"
+            Margin="0,0,282,146"
+            Visibility="Collapsed"
+            />
+
+    </Grid>
+</Window>

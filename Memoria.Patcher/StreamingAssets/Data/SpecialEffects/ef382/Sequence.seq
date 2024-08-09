@@ -1,5 +1,6 @@
 // Shared sequence of SFX Chestnut
 
+Wait: Time=19
 PlaySound: Sound=1139
 PlaySound: Sound=1140
 Wait: Time=4

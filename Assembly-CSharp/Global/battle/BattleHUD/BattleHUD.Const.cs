@@ -215,7 +215,7 @@ public partial class BattleHUD : UIScene
     private static BattleCommandId GetCommandFromCommandIndex(ref BattleCommandMenu commandIndex, Int32 playerIndex)
     {
         BattleUnit player = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
-        CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.GetCharacter(player.Position).PresetId;
+        CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.member[player.Position].PresetId;
         BattleCommandId result = BattleCommandId.None;
         switch (commandIndex)
         {

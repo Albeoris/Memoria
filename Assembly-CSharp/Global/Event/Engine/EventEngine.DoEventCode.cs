@@ -4,14 +4,14 @@ using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Field;
 using Memoria.Prime;
 using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using UnityEngine;
+//using static EventService;
 
 public partial class EventEngine
 {
@@ -269,30 +269,29 @@ public partial class EventEngine
             }
             // 0x1C, "TerminateEntry", "Stop the execution of an entry's code.arg1: entry to terminate."
             case EBin.event_code_binary.POS: // 0x1D, "CreateObject", "Place (or replace) the 3D model on the field"
-            case EBin.event_code_binary.DPOS: // 0xBF, "MoveInstantEx", "Instantatly move an object"
+            case EBin.event_code_binary.DPOS: // 0xBF, "MoveInstantEx", "Instantly move an object"
             {
                 if (eventCodeBinary == EBin.event_code_binary.DPOS)
                     po = (PosObj)this.GetObj1(); // arg1: object's entry
                 Int32 posX = this.getv2(); // X position
                 Int32 posZ = this.getv2(); // Z position
-                Int32 isValid = this.gMode != 1 || (Int32)po.model == (Int32)UInt16.MaxValue ? 0 : 1;
-                if (isValid == 1 && po != null)
+                Boolean isValid = this.gMode == 1 && po?.model != UInt16.MaxValue;
+                if (isValid && po != null)
                 {
-                    FieldMapActorController component = po.go.GetComponent<FieldMapActorController>();
-                    if ((UnityEngine.Object)component != (UnityEngine.Object)null && component.walkMesh != null)
+                    FieldMapActorController actorController = po.go.GetComponent<FieldMapActorController>();
+                    if (actorController != null && actorController.walkMesh != null)
                     {
-                        component.walkMesh.BGI_charSetActive(component, 1U);
-                        if (mapNo == 2050 && po.sid == 5)
-                            component.walkMesh.BGI_charSetActive(component, 0U);
-                        else if (mapNo == 2917 && po.sid == 4)
-                        {
-                            if (posX == 0 && posZ == -1787)
-                                posX = -15;
-                        }
-                        else if (mapNo == 450 && po.sid == 3 && (posX == 363 && posZ == 88))
-                            component.walkMesh.BGI_triSetActive(24U, 0U);
+                        actorController.walkMesh.BGI_charSetActive(actorController, 1u);
+                        if (mapNo == 2050 && po.sid == 5) // Alexandria/Main Street, Mistodons
+                            actorController.walkMesh.BGI_charSetActive(actorController, 0u);
+                        else if (mapNo == 2917 && po.sid == 4 && posX == 0 && posZ == -1787) // Memoria/Gaia's Birth, Zidane's initial position
+                            posX = -15;
+                        else if (mapNo == 450 && po.sid == 3 && posX == 363 && posZ == 88) // Dali/Field, Grandma's initial position
+                            actorController.walkMesh.BGI_triSetActive(24U, 0u);
+                        else if (mapNo == 1207 && actor.uid == 9 && actorController != null) // A. Castle/Garnet's Room, Dagger, fix for issue #666
+                            actorController._smoothUpdateRegistered = false;
                     }
-                    if (mapNo == 1421 && po.sid == 5)
+                    if (mapNo == 1421 && po.sid == 5) // Fossil Roo/Mining Site, Lindblum_Worker
                     {
                         if (posX == 1510 && (posZ == -2331 || posZ == -2231))
                         {
@@ -307,16 +306,16 @@ public partial class EventEngine
                             this.fieldmap.walkMesh.BGI_triSetActive(110U, 1U);
                         }
                     }
-                    if (mapNo == 560 && po.sid == 6 && posX == 714) // removed shadow on sword
+                    if (mapNo == 560 && po.sid == 6 && posX == 714) // Lindblum/Synthesist, remove shadow on sword
                     {
-                        ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                        ff9shadow.FF9ShadowOffField(po.uid);
                         po.isShadowOff = true;
                     }
-                    if (mapNo == 563 && po.sid == 16 && posX == -1614)
+                    if (mapNo == 563 && po.sid == 16 && posX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1635;
-                    else if (mapNo == 572 && po.sid == 16 && posX == -1750)
+                    else if (mapNo == 572 && po.sid == 16 && posX == -1750) // Lindblum/I.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1765;
-                    else if (mapNo == 1310 && po.sid == 12 && posX == -1614)
+                    else if (mapNo == 1310 && po.sid == 12 && posX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1635;
                     else if (mapNo == 1811 && scCounter == 7200 && po.sid == 13 && posX == 413 && posZ == -17294) // Vivi visible too soon
                     {
@@ -341,7 +340,7 @@ public partial class EventEngine
                         posX = -914;
                         posZ = -390; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
                     }
-                    else if (mapNo == 2110 && po.sid == 9 && posX == -1614)
+                    else if (mapNo == 2110 && po.sid == 9 && posX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1635;
                     else if (mapNo == 2173 && scCounter == 9050 && po.sid == 6 && posX == -1705 && posZ == 177) // Quina ashore ATE: guard seen too soon
                     {
@@ -352,29 +351,29 @@ public partial class EventEngine
                     {
                         posX = (po.sid == 5) ? -200 : 0; //Log.Message("posX:" + posX + " posZ:" + posZ + " po.sid:" + po.sid);
                     }
-                    else if (mapNo == 2600 && scCounter == 10700 && po.sid == 8 && Configuration.Graphics.WidescreenSupport && posX == 1173 && posZ == -1685) // Dagga appears in frame
+                    else if (mapNo == 2600 && scCounter == 10700 && po.sid == 8 && Configuration.Graphics.WidescreenSupport && posX == 1173 && posZ == -1685) // Dagger appears in frame
                     {
                         posZ = -1985; // Log.Message("posX" + posX + " posZ" + posZ);
                     }
-                    else if (mapNo == 2651 && scCounter == 10890 && po.sid == 4 && Configuration.Graphics.WidescreenSupport && posX == 1449 && posZ == -6844) // Mikito appears in frame
+                    else if (mapNo == 2651 && scCounter == 10890 && po.sid == 4 && Configuration.Graphics.WidescreenSupport && posX == 1449 && posZ == -6844) // Mikoto appears in frame
                     {
                         posX = 1749;
                         posZ = -7244; // Log.Message("posX" + posX + " posZ" + posZ);
                     }
-                    else if (mapNo == 2914 && scCounter == 11670 && po.sid >= 6 && po.sid <= 10) // Disable fishes shadows
+                    else if (mapNo == 2914 && scCounter == 11670 && po.sid >= 6 && po.sid <= 10) // Memoria/Birth, disable fishes' shadows
                     {
-                        ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                        ff9shadow.FF9ShadowOffField(po.uid);
                         po.isShadowOff = true;
                     }
                 }
-                this.SetActorPosition(po, (Single)posX, this.POS_COMMAND_DEFAULTY, (Single)posZ);
-                if (mapNo == 2050 && (Int32)po.sid == 5 && (isValid == 1 && po != null))
+                this.SetActorPosition(po, posX, this.POS_COMMAND_DEFAULTY, posZ);
+                if (mapNo == 2050 && po.sid == 5 && isValid && po != null) // Alexandria/Main Street, Mistodons
                 {
-                    FieldMapActorController component = po.go.GetComponent<FieldMapActorController>();
-                    if ((UnityEngine.Object)component != (UnityEngine.Object)null && component.walkMesh != null)
-                        component.walkMesh.BGI_charSetActive(component, 1U);
+                    FieldMapActorController actorController = po.go.GetComponent<FieldMapActorController>();
+                    if (actorController != null && actorController.walkMesh != null)
+                        actorController.walkMesh.BGI_charSetActive(actorController, 1u);
                 }
-                if ((Int32)po.cid == 4)
+                if (po.cid == 4)
                     this.clrdist((Actor)po);
                 this._posUsed = true;
                 return 0;
@@ -488,6 +487,27 @@ public partial class EventEngine
                 this.eTb.NewMesWin(textID, (Int32)this.gCur.winnum, uiFlags, !this.isPosObj(this.gCur) ? (PosObj)null : (PosObj)this.gCur);
                 return 0;
             }
+            case EBin.event_code_binary.MESA:// 0x95, "WindowSyncEx", "Display a window with text inside and wait until it closes"
+            case EBin.event_code_binary.MESAN: // 0x96, "WindowAsyncEx", "Display a window with text inside and continue the execution of the script without waiting"
+            {
+                po = (PosObj)this.GetObj1(); // arg1: talker's entry
+                this.gCur.winnum = (Byte)this.getv1(); // arg2: window ID
+                Int32 uiFlags = this.getv1(); // arg3: UI flag list. 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
+                Int32 textID = this.getv2(); // arg4: text to display
+                this.SetFollow((Obj)po, (Int32)this.gCur.winnum, uiFlags);
+                this.eTb.NewMesWin(textID, (Int32)this.gCur.winnum, uiFlags, po);
+                if (eventCodeBinary == EBin.event_code_binary.MESAN)
+                    return 0;
+                this.gCur.wait = (Byte)254;
+                return 1;
+            }
+            case EBin.event_code_binary.MESVALUE: // 0x66, "SetTextVariable", "Set the value of a text number or item variable"
+            {
+                Int32 scriptID = this.getv1(); // arg1: text variable's 'Script ID'
+                Int32 value = this.getv2(); // arg2: depends on which text opcode is related to the text variable: [VAR_NUM]: integral value. [VAR_ITEM]: item ID. [VAR_TOKEN]: token number
+                this.eTb.SetMesValue(scriptID, value);
+                return 0;
+            }
             case EBin.event_code_binary.CLOSE: // 0x21, "CloseWindow", "Close a window", true, 1, { 1 }, { "Window ID" }, { AT_USPIN }, 0
             {
                 // Do not handle stage dialogs specifically
@@ -501,6 +521,93 @@ public partial class EventEngine
 
                 var windowID = this.getv1(); // arg1: window ID determined at its creation
                 this.eTb.DisposWindowByID(windowID, true);
+                return 0;
+            }
+            case EBin.event_code_binary.CLOSEALL: // 0xEB, "CloseAllWindows", "Close all the dialogs and UI windows."
+            {
+                this.eTb.YWindow_CloseAll(true);
+                return 0;
+            }
+            case EBin.event_code_binary.NOINITMES: // 0x53, "PreventWindowInit", "Seems to prevent new dialog windows to close older ones."
+            {
+                this.eTb.InhInitMes();
+                return 0;
+            }
+            case EBin.event_code_binary.WAITMES: // 0x54, "WaitWindow", "Wait until the window is closed"
+            {
+                if (mapNo == 1650 && FF9StateSystem.Settings.CurrentLanguage == "Japanese" && ((Int32)this.gCur.sid == 19 && this.gCur.ip == 1849))
+                {
+                    this.getv1();
+                    return 0;
+                }
+                this.gCur.winnum = (Byte)this.getv1(); // arg1: window ID determined at its creation
+                this.gCur.wait = (Byte)254;
+                return 1;
+            }
+            case EBin.event_code_binary.TIMERSET: // 0x69, "ChangeTimerTime", "Change the remaining time of the timer window"
+            {
+                TimerUI.SetTime(this.getv2()); // arg1: time in seconds
+                return 0;
+            }
+            case EBin.event_code_binary.TIMERCONTROL: // 0x7D, "RunTimer", "Run or pause the timer window"
+            {
+                this._ff9.timerControl = this.getv1() != 0; // arg1: boolean, 0=pause
+                TimerUI.SetPlay(this._ff9.timerControl);
+                return 0;
+            }
+            case EBin.event_code_binary.TIMERDISPLAY: // 0x8D, "ShowTimer", "Activate the timer window"
+            {
+                this._ff9.timerDisplay = this.getv1() != 0; // arg1: boolean show/hide
+                TimerUI.SetEnable(this._ff9.timerDisplay);
+                TimerUI.SetDisplay(this._ff9.timerDisplay);
+                return 0;
+            }
+            case EBin.event_code_binary.RAISE: // 0x8E, "RaiseWindows", "Make all the dialogs and windows display over the filters"
+            {
+                this.eTb.RaiseAllWindow();
+                return 0;
+            }
+            case EBin.event_code_binary.DISCCHANGE: // 0xAC, "ChangeDisc", "Allow to save the game and change disc"
+            {
+                Int32 fieldAndDiscDest = this.getv2(); // arg1: gathered field destination and disc destination
+                Byte disc_id = (Byte)(fieldAndDiscDest >> 14 & 3);
+                UInt16 map_id = (UInt16)(fieldAndDiscDest & 16383);
+                Log.Message("Changing to disc_id: " + disc_id);
+                if (Configuration.Interface.DisplayPSXDiscChanges)
+                    SceneDirector.InitDiscChange(disc_id);
+
+                //this._ff9fieldDisc.disc_id = disc_id;
+                //this._ff9fieldDisc.cdType = (byte)(1U << (int)disc_id);
+                this._ff9fieldDisc.FieldMapNo = (Int16)map_id;
+                //this._ff9fieldDisc.FieldLocNo = (short)-1;
+                FF9StateFieldSystem stateFieldSystem = FF9StateSystem.Field.FF9Field;
+                FF9StateSystem instance = PersistenSingleton<FF9StateSystem>.Instance;
+                stateFieldSystem.attr |= 1048576U;
+                instance.attr |= 8U;
+
+                return 1;
+            }
+            case EBin.event_code_binary.WIPERGB: // 0xEC, "FadeFilter", "Apply a fade filter on the screen"
+            {
+                Int32 filterMode = this.getv1(); // arg1: filter mode (0 for ADD, 2 for SUBTRACT)
+                Int32 frame = this.getv1(); // arg2: fading time
+                this.getv1(); // arg3: unknown
+                Int32 cyan = this.getv1(); // 4 Cyan
+                Int32 magenta = this.getv1(); // 5 Magenta
+                Int32 yellow = this.getv1(); // 6 Yellow
+                if (mapNo == 1819 && scCounter == 7030 && cyan == 130 && magenta == 160 && yellow == 170) // A. Castle/Port, Dr. Tot's flashback
+                {
+                    cyan = 81; magenta = 110; yellow = 121;
+                }
+
+                Color32 fadeColor = new Color((Single)cyan / (Single)Byte.MaxValue, (Single)magenta / (Single)Byte.MaxValue, (Single)yellow / (Single)Byte.MaxValue);
+                SceneDirector.InitFade((filterMode & 2) != 0 ? FadeMode.Sub : FadeMode.Add, frame, fadeColor);
+                return 0;
+            }
+            case EBin.event_code_binary.AICON: // 0xD7, "ATE", "Enable or disable ATE"
+            {
+                Int32 mode = this.getv1(); // arg1: mode (0 = disable, rest unknown)
+                EIcon.SetAIcon(mode);
                 return 0;
             }
             // 0x22, "Wait", "Wait some time.arg1: amount of frames to wait. For PAL, 1 frame is 0.04 seconds. For other versions, 1 frame is about 0.033 seconds."
@@ -783,11 +890,6 @@ public partial class EventEngine
                 actor.speed = walkSpeed;
                 return 0;
             }
-            case EBin.event_code_binary.BGIMASK: // 0x27, "SetTriangleFlagMask", "Set a bitmask for some of the walkmesh triangle flags"
-            {
-                this.BGI_systemSetAttributeMask((Byte)this.getv1()); // arg1: flag mask - 7: disable restricted triangles, 8: disable player-restricted triangles
-                return 0;
-            }
             case EBin.event_code_binary.FMV: // 0x28, "Cinematic", "Run or setup a cinematic"
             {
                 Singleton<fldfmv>.Instance.FF9FieldFMVDispatch(this.getv1(), this.getv2(), this.getv1()); // arg1: unknown, arg2: cinematic ID (may depends on arg1's value), arg3: unknown, (arg4: unknown)
@@ -822,6 +924,33 @@ public partial class EventEngine
                 FF9StateSystem.Battle.isRandomEncounter = false;
                 this._encountBase = 0;
                 return 3;
+            }
+            case EBin.event_code_binary.ENCOUNT2: // 0x8C, "BattleEx", "Start a battle and choose its battle group"
+            {
+                this.getv1(); // arg1: rush type (unknown)
+                this._ff9.btlSubMapNo = (SByte)this.getv1(); // arg2: group
+                Int32 btlId = this.getv2(); // arg3: gathered battle and Steiner's state (highest bit) informations
+                this._ff9.steiner_state = (Byte)(btlId >> 15 & 1);
+                this.SetBattleScene(btlId & Int16.MaxValue);
+                FF9StateSystem.Battle.isRandomEncounter = false;
+                this._encountBase = 0;
+                return 3;
+            }
+            case EBin.event_code_binary.ENCRATE: // 0x57, "SetRandomBattleFrequency", "Set the frequency of random battles / 255 is the maximum frequency, corresponding to ~12 walking steps or ~7 running steps. 0 is the minimal frequency and disables random battles."
+            {
+                this._context.encratio = (Byte)this.getv1(); // arg1: frequency (0-255)
+                if ((Int32)this._context.encratio == 0)
+                    this._encountBase = 0;
+                return 0;
+            }
+            case EBin.event_code_binary.ENCSCENE: // 0x3C, "SetRandomBattles", "Define random battles. { "Pattern", "Battle 1", "Battle 2", "Battle 3", "Battle 4" }
+            {
+                this._enCountData.pattern = (Byte)this.getv1(); // arg1: pattern, deciding the encounter chances and the topography (World Map only).
+                this._enCountData.scene[0] = (UInt16)this.getv2(); // 0: possible random battles {0.375, 0.28, 0.22, 0.125}
+                this._enCountData.scene[1] = (UInt16)this.getv2(); // 1: possible random battles {0.25, 0.25, 0.25, 0.25}
+                this._enCountData.scene[2] = (UInt16)this.getv2(); // 2: possible random battles {0.35, 0.3, 0.3, 0.05}
+                this._enCountData.scene[3] = (UInt16)this.getv2(); // 3: possible random battles {0.45, 0.4, 0.1, 0.05}
+                return 0;
             }
             case EBin.event_code_binary.MAPJUMP: // 0x2B, "Field", "Change the field scene",
             {
@@ -888,7 +1017,7 @@ public partial class EventEngine
                 {
                     String str = FF9BattleDB.GEO.GetValue(po.model);
 
-                    po.go = ModelFactory.CreateModel(str, false);
+                    po.go = ModelFactory.CreateModel(str, false, true, Configuration.Graphics.ElementsSmoothTexture);
                     GeoTexAnim.addTexAnim(po.go, str);
                     if (ModelFactory.garnetShortHairTable.Contains(str))
                     {
@@ -924,7 +1053,7 @@ public partial class EventEngine
                 }
                 else if (this.gMode == 3)
                 {
-                    po.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(po.model), false);
+                    po.go = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue(po.model), false, true, Configuration.Graphics.WorldSmoothTexture);
                     Singleton<WMWorld>.Instance.addGameObjectToWMActor(po.go, ((Actor)po).wmActor);
                 }
                 return 0;
@@ -944,11 +1073,11 @@ public partial class EventEngine
                     ff9shadow.FF9ShadowOffField((Int32)po.uid);
                     po.isShadowOff = true;
                 }
-                if (mapNo == 1600 && actor.uid == 12 && scCounter == 6615) // Garnet shadow on again to be sure
+                /*if (mapNo == 1600 && actor.uid == 12 && scCounter == 6615) // Garnet shadow on again to be sure // creates a softlock if going to worldmap
                 {
                     ff9shadow.FF9ShadowOnField((Int32)po.uid);
                     po.isShadowOff = false;
-                }
+                }*/
                 else if (mapNo == 1605 && actor.uid == 18)
                 {
                     this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
@@ -1038,18 +1167,32 @@ public partial class EventEngine
                 {
                     case 0:
                     {
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyDying, this.getv1());
+                        btl_cmd.SetEnemyCommand(btl_scrp.FindBattleUnit((UInt16)this.GetSysList(1)), BattleCommandId.EnemyDying, this.getv1(), (UInt16)this.GetSysList(0));
                         break;
                     }
                     case 1:
                     {
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyCounter, this.getv1());
+                        btl_cmd.SetEnemyCommand(btl_scrp.FindBattleUnit((UInt16)this.GetSysList(1)), BattleCommandId.EnemyCounter, this.getv1(), (UInt16)this.GetSysList(0));
                         break;
                     }
                     case 3:
                     {
-                        this.gExec.btlchk = (Byte)0;
-                        btl_cmd.SetEnemyCommand((UInt16)this.GetSysList(1), (UInt16)this.GetSysList(0), BattleCommandId.EnemyAtk, this.getv1());
+                        this.gExec.btlchk = 0;
+                        Int32 atkIndex = this.getv1();
+                        BattleUnit enemy = btl_scrp.FindBattleUnit((UInt16)this.GetSysList(1));
+                        Boolean autoAttack = false;
+                        foreach (BattleStatusId statusId in enemy.CurrentStatus.ToStatusList())
+                        {
+                            if (!enemy.Data.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
+                                continue;
+                            if ((effect as IAutoAttackStatusScript)?.OnATB() ?? false)
+                            {
+                                autoAttack = true;
+                                break;
+                            }
+                        }
+                        if (!autoAttack)
+                            btl_cmd.SetEnemyCommand(enemy, BattleCommandId.EnemyAtk, atkIndex, (UInt16)this.GetSysList(0));
                         break;
                     }
                 }
@@ -1074,15 +1217,6 @@ public partial class EventEngine
             case EBin.event_code_binary.OBJINDEX: // 0x3B, "SetObjectIndex", "Redefine the current object's index."
             {
                 this.gExec.index = (Byte)this.getv1(); // arg1: new index.
-                return 0;
-            }
-            case EBin.event_code_binary.ENCSCENE: // 0x3C, "SetRandomBattles", "Define random battles. { "Pattern", "Battle 1", "Battle 2", "Battle 3", "Battle 4" }
-            {
-                this._enCountData.pattern = (Byte)this.getv1(); // arg1: pattern, deciding the encounter chances and the topography (World Map only).
-                this._enCountData.scene[0] = (UInt16)this.getv2(); // 0: possible random battles {0.375, 0.28, 0.22, 0.125}
-                this._enCountData.scene[1] = (UInt16)this.getv2(); // 1: possible random battles {0.25, 0.25, 0.25, 0.25}
-                this._enCountData.scene[2] = (UInt16)this.getv2(); // 2: possible random battles {0.35, 0.3, 0.3, 0.05}
-                this._enCountData.scene[3] = (UInt16)this.getv2(); // 3: possible random battles {0.45, 0.4, 0.1, 0.05}
                 return 0;
             }
             case EBin.event_code_binary.AFRAME: // 0x3D, "SetAnimationInOut", "Specify the starting and ending animation frames of the character"
@@ -1118,72 +1252,55 @@ public partial class EventEngine
                 if (mapNo == 103 && po.model == 5492) // Jump rope from little girls at Alexandria (before Alexandria destruction)
                 {
                     if (anim == 973 && actor.uid == 6)
-                    {
                         anim = 975;
-                    }
                     else if (anim == 975 && actor.uid == 7)
-                    {
                         anim = 973;
-                    }
                 }
                 if (mapNo == 2456 && po.model == 5492) // Jump rope from little girls at Alexandria (after Alexandria destruction)
                 {
                     if (anim == 973 && actor.uid == 3)
-                    {
                         anim = 975;
-                    }
                     else if (anim == 975 && actor.uid == 4)
-                    {
                         anim = 973;
-                    }
                 }
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue(anim));
                 if (this.gMode == 1)
                 {
-                    if (mapNo == 800 && scCounter == 3740 && anim == 13158)
-                        actor.inFrame = (Byte)19;
+                    if (mapNo == 800 && scCounter == 3740 && anim == 13158) // S. Gate/Bohden Gate, Steiner's Shoulder_1 (inFrame set to 18 right before)
+                        actor.inFrame = 19;
                     this.ExecAnim(actor, anim);
-                    if (mapNo == 307 && (Int32)actor.uid == 13)
+                    if (mapNo == 307 && actor.uid == 13 && anim == 10328) // Ice Cavern/Ice Path, Dagger, Cold_Sleep
                     {
                         this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
-                        if (anim == 10328)
-                        {
-                            this._geoTexAnim.geoTexAnimStop(2);
-                            this._geoTexAnim.geoTexAnimPlay(0);
-                        }
+                        this._geoTexAnim.geoTexAnimStop(2);
+                        this._geoTexAnim.geoTexAnimPlay(0);
                     }
-                    if (mapNo == 561 && (Int32)actor.uid == 6)
+                    if (mapNo == 561 && actor.uid == 6 && anim == 351) // Lindblum/Item Shop, Queen_Brahne, Idle
                     {
                         this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
-                        if (anim == 351)
-                        {
-                            this._geoTexAnim.geoTexAnimStop(2);
-                            this._geoTexAnim.geoTexAnimPlay(1);
-                        }
+                        this._geoTexAnim.geoTexAnimStop(2);
+                        this._geoTexAnim.geoTexAnimPlay(1);
                     }
-                    if (mapNo == 1601)
+                    if (mapNo == 1601) // Mdn. Sari/Open Area
                     {
                         if (actor.uid == 19 && anim == 752) // Garnet shadow off when sitting
                         {
-                            ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                            ff9shadow.FF9ShadowOffField(po.uid);
                             po.isShadowOff = true;
                         }
                         if (po.sid == 17 && scCounter == 6600 && anim == 3005) // Zidane shadow off when sitting
                         {
-                            ff9shadow.FF9ShadowOffField((Int32)po.uid);
+                            ff9shadow.FF9ShadowOffField(po.uid);
                             po.isShadowOff = true;
                         }
                     }
-                    if (mapNo == 1605 && (Int32)actor.uid == 18)
+                    if (mapNo == 1605 && actor.uid == 18 && anim == 11958) // Mdn. Sari/Eidolon Wall, Eiko, Hang_Look_Down_2
                     {
                         this._geoTexAnim = actor.go.GetComponent<GeoTexAnim>();
-                        if (anim == 11958)
-                        {
-                            this._geoTexAnim.geoTexAnimStop(2);
-                            this._geoTexAnim.geoTexAnimPlay(0);
-                        }
+                        this._geoTexAnim.geoTexAnimStop(2);
+                        this._geoTexAnim.geoTexAnimPlay(0);
                     }
-                    if (mapNo == 2934 && (Int32)actor.uid == 2 && anim == 12429)
+                    if (mapNo == 2934 && actor.uid == 2 && anim == 12429) // last/cw mbg 2, Zidane, Sit_Look_Up_1 (right after his line "Hey! Don't you go dying on me, alright!?")
                     {
                         FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.BattleAssistance, false);
                         FF9StateSystem.Settings.CallBoosterButtonFuntion(BoosterType.HighSpeedMode, false);
@@ -1357,17 +1474,9 @@ public partial class EventEngine
                 GameObject targetObject = targetObj.go;
                 Int32 bone_index = this.getv1(); // arg3: attachment point (unknown format)
 
-                if (mapNo == 112 && po.model == 223) // [DV] Fix the glasses in Alexandria's pub at the begin of the game
+                if (mapNo == 112 && po.model == 223 && po.uid == 3) // [DV] Fix the glasses in Alexandria's pub at the begin of the game // snouz: placed red mage's glass to DisableShadow (this code is never called for glass 6)
                 {
-                    if (po.uid == 6) // Red Mage's glass ?
-                    {
-                        attachedObjUnity = this.GetObjUID(6).go;
-                        targetObject = this.GetObjUID(4).go;
-                    }
-                    else // Dante's glass
-                    {
-                        geo.geoAttach(this.GetObjUID(3).go, this.GetObjUID(2).go, 13);
-                    }
+                    geo.geoAttach(this.GetObjUID(3).go, this.GetObjUID(2).go, 13);
                 }
 
                 if ((UnityEngine.Object)attachedObjUnity != (UnityEngine.Object)null && (UnityEngine.Object)targetObject != (UnityEngine.Object)null)
@@ -1450,22 +1559,6 @@ public partial class EventEngine
                 AnimationFactory.AddAnimWithAnimatioName(actor.go, FF9DBAll.AnimationDB.GetValue((Int32)actor.sleep));
                 return 0;
             }
-            case EBin.event_code_binary.NOINITMES: // 0x53, "PreventWindowInit", "Seems to prevent new dialog windows to close older ones."
-            {
-                this.eTb.InhInitMes();
-                return 0;
-            }
-            case EBin.event_code_binary.WAITMES: // 0x54, "WaitWindow", "Wait until the window is closed"
-            {
-                if (mapNo == 1650 && FF9StateSystem.Settings.CurrentLanguage == "Japanese" && ((Int32)this.gCur.sid == 19 && this.gCur.ip == 1849))
-                {
-                    this.getv1();
-                    return 0;
-                }
-                this.gCur.winnum = (Byte)this.getv1(); // arg1: window ID determined at its creation
-                this.gCur.wait = (Byte)254;
-                return 1;
-            }
             case EBin.event_code_binary.MROT: // 0x55, "SetWalkTurnSpeed", "Change the turn speed of the object when it walks or runs (default is 16).."
             {
                 Int32 turnSpeed = this.getv1(); // arg1: turn speed (with 0, the object doesn't turn while moving).
@@ -1487,13 +1580,6 @@ public partial class EventEngine
                     Int32 num3 = 0;
                 }*/
                 this.StartTurn(actor, EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)angle), true, turnSpeed);
-                return 0;
-            }
-            case EBin.event_code_binary.ENCRATE: // 0x57, "SetRandomBattleFrequency", "Set the frequency of random battles / 255 is the maximum frequency, corresponding to ~12 walking steps or ~7 running steps. 0 is the minimal frequency and disables random battles."
-            {
-                this._context.encratio = (Byte)this.getv1(); // arg1: frequency (0-255)
-                if ((Int32)this._context.encratio == 0)
-                    this._encountBase = 0;
                 return 0;
             }
             case EBin.event_code_binary.BGLCOLOR: // 0x59, "SetTileColor", "Change the color of a field tile block"
@@ -1536,6 +1622,15 @@ public partial class EventEngine
             {
                 Int32 overlayNdx = (Int32)this.getv1(); // arg1: background tile block
                 Boolean isActive = (Int32)this.getv1() != 0; // arg2: boolean show/ hide
+
+                if (mapNo == 352 && scCounter == 2540 && overlayNdx == 0) // fix for anim and chest visible
+                {
+                    this.fieldmap.EBG_animSetActive(0, isActive); // anim on -> becomes visible in Ultrawide
+                    Obj chest = this.GetObjUID(16); // chest obj 15 is ok, but 16 was forgotten
+                    if (chest != null)
+                        chest.flags = (Byte)((chest.flags & -64) | (isActive ? 49 : 14)) ;
+                }
+
                 this.fieldmap.EBG_overlaySetActive(overlayNdx, isActive); // arg1: background tile block.
                 return 0;
             }
@@ -1633,19 +1728,12 @@ public partial class EventEngine
                 this.fieldmap.EBG_animSetPlayRange(animNdx, firstFrame, lastFrame);
                 return 0;
             }
-            case EBin.event_code_binary.SETROW: // 0x62, "SetRow", "Change the battle row of a party member"
+            case EBin.event_code_binary.BGVALPHA: // 0xED, "SetTileLoopAlpha", "Unknown opcode about tile looping movements (EBG_overlayDefineViewportAlpha)."
             {
-                CharacterId charId = this.chr2slot(this.getv1()); // arg1: party member
-                Int32 row = this.getv1(); // arg2: boolean front/back
-                if (charId != CharacterId.NONE)
-                    FF9StateSystem.Common.FF9.GetPlayer(charId).info.row = (Byte)row;
-                return 0;
-            }
-            case EBin.event_code_binary.MESVALUE: // 0x66, "SetTextVariable", "Set the value of a text number or item variable"
-            {
-                Int32 scriptID = this.getv1(); // arg1: text variable's 'Script ID'
-                Int32 value = this.getv2(); // arg2: depends on which text opcode is related to the text variable: [VAR_NUM]: integral value. [VAR_ITEM]: item ID. [VAR_TOKEN]: token number
-                this.eTb.SetMesValue(scriptID, value);
+                Int32 viewportNdx = this.getv1(); // arg1: viewport index
+                Int32 alphaX = this.getv2(); // 2nd and arg3s: unknown factors (X, Y).
+                Int32 alphaY = this.getv2();
+                this.fieldmap.EBG_overlayDefineViewportAlpha(viewportNdx, alphaX, alphaY);
                 return 0;
             }
             case EBin.event_code_binary.TWIST: // 0x67, "SetControlDirection", "Set the angles for the player's movement control"
@@ -1669,16 +1757,6 @@ public partial class EventEngine
                     EIcon.PollFIcon(bubbleType);
                 return 0;
             }
-            case EBin.event_code_binary.TIMERSET: // 0x69, "ChangeTimerTime", "Change the remaining time of the timer window"
-            {
-                TimerUI.SetTime(this.getv2()); // arg1: time in seconds
-                return 0;
-            }
-            case EBin.event_code_binary.DASHOFF: // 0x6A, "DisableRun", "Make the player's character always walk."
-            {
-                this._context.dashinh = (Byte)1;
-                return 0;
-            }
             case EBin.event_code_binary.CLEARCOLOR: // 0x6B, "SetBackgroundColor", "Change the default color, seen behind the field's tiles"
             {
                 Color newColor = new Color((Single)this.getv1() / (Single)Byte.MaxValue, (Single)this.getv1() / (Single)Byte.MaxValue, (Single)this.getv1() / (Single)Byte.MaxValue);
@@ -1692,6 +1770,8 @@ public partial class EventEngine
                 UInt16 duration = (UInt16)this.getv1(); // arg3: movement duration
                 UInt32 sinusOrLinear = (UInt32)this.getv1(); // arg4: scrolling type (8 for sinusoidal, other values for linear interpolation).
                 this.fieldmap.EBG_scene2DScroll(destX, destY, duration, sinusOrLinear);
+                if (mapNo == 3000 || (mapNo >= 3002 && mapNo <= 3006) || mapNo == 3008) // Fix #677: disable smoothener in order to let the camera move instantly out of the screen
+                    SmoothFrameUpdater_Field.Skip = 1;
                 return 0;
             }
             case EBin.event_code_binary.BGSRELEASE: // 0x70, "ReleaseCamera", "Release camera movement, getting back to its normal behaviour"
@@ -1723,21 +1803,6 @@ public partial class EventEngine
             {
                 this.fieldmap.EBG_charLookAtUnlock();
                 return 0;
-            }
-            case EBin.event_code_binary.MENU: // 0x75, "Menu", "Open a menu"
-            {
-                UInt32 menuId = Convert.ToUInt32(this.getv1()); // arg1: menu type
-                UInt32 subId = Convert.ToUInt32(this.getv1()); // arg2: depends on the menu type. Naming Menu: character to name | Shop Menu: shop ID
-                if (Configuration.Hacks.DisableNameChoice && menuId == 1)
-                {
-                    CharacterId charId = this.chr2slot((Int32)subId);
-                    if (charId != CharacterId.NONE && NameSettingUI.IsDefaultName(charId))
-                        this._ff9.GetPlayer(charId).Name = FF9TextTool.CharacterDefaultName(charId);
-                    return 0;
-                }
-                EventService.StartMenu(menuId, subId);
-                PersistenSingleton<UIManager>.Instance.MenuOpenEvent();
-                return 1;
             }
             case EBin.event_code_binary.TRACKSTART: // 0x76, "DrawRegionStart", "Start drawing the convex polygonal region linked with the entry script: two starting points are placed at the same position"
             {
@@ -1792,12 +1857,6 @@ public partial class EventEngine
                 Int32 choicesAvailable = this.getv2(); // arg1: boolean list for the different choices
                 Int32 defaultChoice = this.getv1(); // arg2: default choice selected
                 this.eTb.SetChooseParam(choicesAvailable, defaultChoice);
-                return 0;
-            }
-            case EBin.event_code_binary.TIMERCONTROL: // 0x7D, "RunTimer", "Run or pause the timer window"
-            {
-                this._ff9.timerControl = this.getv1() != 0; // arg1: boolean, 0=pause
-                TimerUI.SetPlay(this._ff9.timerControl);
                 return 0;
             }
             case EBin.event_code_binary.SETCAM: // 0x7E, "SetFieldCamera", "Change the field's background camera"
@@ -1875,29 +1934,6 @@ public partial class EventEngine
                 actor.neckMyID = (Byte)this.getv1(); // arg1: SelfMask
                 actor.neckTargetID = (Byte)this.getv1(); // arg2: TargetMask
                 actor.actf |= (UInt16)(EventEngine.actNeckT | EventEngine.actNeckM);
-                return 0;
-            }
-            case EBin.event_code_binary.ENCOUNT2: // 0x8C, "BattleEx", "Start a battle and choose its battle group"
-            {
-                this.getv1(); // arg1: rush type (unknown)
-                this._ff9.btlSubMapNo = (SByte)this.getv1(); // arg2: group
-                Int32 btlId = this.getv2(); // arg3: gathered battle and Steiner's state (highest bit) informations
-                this._ff9.steiner_state = (Byte)(btlId >> 15 & 1);
-                this.SetBattleScene(btlId & Int16.MaxValue);
-                FF9StateSystem.Battle.isRandomEncounter = false;
-                this._encountBase = 0;
-                return 3;
-            }
-            case EBin.event_code_binary.TIMERDISPLAY: // 0x8D, "ShowTimer", "Activate the timer window"
-            {
-                this._ff9.timerDisplay = this.getv1() != 0; // arg1: boolean show/hide
-                TimerUI.SetEnable(this._ff9.timerDisplay);
-                TimerUI.SetDisplay(this._ff9.timerDisplay);
-                return 0;
-            }
-            case EBin.event_code_binary.RAISE: // 0x8E, "RaiseWindows", "Make all the dialogs and windows display over the filters"
-            {
-                this.eTb.RaiseAllWindow();
                 return 0;
             }
             case EBin.event_code_binary.CHRCOLOR: // 0x8F, "SetModelColor", "Change a 3D model's color."
@@ -1978,20 +2014,6 @@ public partial class EventEngine
                 this.ExecAnim(actor, (Int32)actor.jump);
                 return 0;
             }
-            case EBin.event_code_binary.MESA:// 0x95, "WindowSyncEx", "Display a window with text inside and wait until it closes"
-            case EBin.event_code_binary.MESAN: // 0x96, "WindowAsyncEx", "Display a window with text inside and continue the execution of the script without waiting"
-            {
-                po = (PosObj)this.GetObj1(); // arg1: talker's entry
-                this.gCur.winnum = (Byte)this.getv1(); // arg2: window ID
-                Int32 uiFlags = this.getv1(); // arg3: UI flag list. 3: disable bubble tail 4: mognet format 5: hide window 7: ATE window 8: dialog window
-                Int32 textID = this.getv2(); // arg4: text to display
-                this.SetFollow((Obj)po, (Int32)this.gCur.winnum, uiFlags);
-                this.eTb.NewMesWin(textID, (Int32)this.gCur.winnum, uiFlags, po);
-                if (eventCodeBinary == EBin.event_code_binary.MESAN)
-                    return 0;
-                this.gCur.wait = (Byte)254;
-                return 1;
-            }
             case EBin.event_code_binary.DRET: // 0x97, "ReturnEntryFunctions", "Make all the currently executed functions return for a given entry"
             {
                 Obj obj1 = this.GetObj1(); // arg1: entry for which functions are returned
@@ -2013,17 +2035,6 @@ public partial class EventEngine
                 actor.tspeed = (Byte)this.getv1(); // arg1: turn speed (1 is slowest)
                 if ((Int32)actor.tspeed == 0)
                     actor.tspeed = (Byte)16;
-                return 0;
-            }
-            case EBin.event_code_binary.BGIACTIVET: // 0x9A, "EnablePathTriangle", "Enable or disable a triangle of field pathing"
-            {
-                Int32 triangleID = this.getv2(); // arg1: triangle ID
-                Int32 isActive = this.getv1(); // arg2: boolean enable/disable
-                if (mapNo == 1753 && triangleID == 207)
-                    this.fieldmap.walkMesh.BGI_triSetActive(208U, (UInt32)isActive);
-                else if (mapNo == 1606 && triangleID == 107)
-                    isActive = 1;
-                this.fieldmap.walkMesh.BGI_triSetActive((UInt32)triangleID, (UInt32)isActive);
                 return 0;
             }
             case EBin.event_code_binary.TURNTO: // 0x9B, "TurnTowardPosition", "Turn the character toward a position (animated). The object's turn speed is used (default to 16)."
@@ -2057,23 +2068,24 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.POS3: // 0xA1, "MoveInstantXZY", "Instantatly move the object"
-            case EBin.event_code_binary.DPOS3: // 0xAD, "MoveInstantXZYEx", "Instantatly move an object"
+            case EBin.event_code_binary.POS3: // 0xA1, "MoveInstantXZY", "Instantly move the object"
+            case EBin.event_code_binary.DPOS3: // 0xAD, "MoveInstantXZYEx", "Instantly move an object"
             {
                 if (eventCodeBinary == EBin.event_code_binary.DPOS3)
                     po = (PosObj)this.GetObj1(); // arg1: object's entry
                 Int32 destX = this.getv2();
                 Int32 destZ = -this.getv2();
                 Int32 destY = this.getv2();
-                if ((this.gMode != 1 || (Int32)po.model == (Int32)UInt16.MaxValue ? 0 : 1) == 1)
+                if (this.gMode == 1 && po?.model != UInt16.MaxValue)
                 {
                     if (po != null)
                     {
-                        FieldMapActorController component = po.go.GetComponent<FieldMapActorController>();
-                        if ((UnityEngine.Object)component != (UnityEngine.Object)null && component.walkMesh != null)
-                            component.walkMesh.BGI_charSetActive(component, 0U);
-                        if (mapNo == 1205 && po.sid == 6 && (this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && destX == 418) && destY == 9733)
+                        FieldMapActorController actorController = po.go.GetComponent<FieldMapActorController>();
+                        if (actorController != null && actorController.walkMesh != null)
+                            actorController.walkMesh.BGI_charSetActive(actorController, 0u);
+                        if (mapNo == 1205 && po.sid == 6 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && destX == 418 && destY == 9733)
                         {
+                            // A. Castle/Chapel, Thorn's initial position (fix in some languages)
                             this._fixThornPosA = destX;
                             this._fixThornPosB = destZ;
                             this._fixThornPosC = destY;
@@ -2081,22 +2093,23 @@ public partial class EventEngine
                             destX = 600;
                             destY = 9999;
                         }
-                        if (mapNo == 563 && po.sid == 16 && destX == -1614)
+                        else if (mapNo == 563 && po.sid == 16 && destX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                             destX = -1635;
-                        else if (mapNo == 572 && po.sid == 16 && destX == -1750)
+                        else if (mapNo == 572 && po.sid == 16 && destX == -1750) // Lindblum/I.D. Station, Zidane's initial position when arriving with Air Cab
                             destX = -1765;
-                        else if (mapNo == 1310 && po.sid == 12 && destX == -1614)
+                        else if (mapNo == 1310 && po.sid == 12 && destX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                             destX = -1635;
-                        else if (mapNo == 2110 && po.sid == 9 && destX == -1614)
+                        else if (mapNo == 2110 && po.sid == 9 && destX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                             destX = -1635;
                         else if (mapNo == 1607)
                         {
+                            // Mdn. Sari/Kitchen, Cooked Fish and Stew Plate appearing on the foreground
                             Int32 counter = this.eBin.getVarManually(EBin.SC_COUNTER_SVR);
                             Int32 var9169 = this.eBin.getVarManually(9169);
-                            if ((po.model == 236 || po.model == 237) && (counter >= 6640 && counter < 6690) && var9169 == 0)
+                            if ((po.model == 236 || po.model == 237) && counter >= 6640 && counter < 6690 && var9169 == 0)
                                 destZ += 50000;
                         }
-                        else if (mapNo == 1606)
+                        else if (mapNo == 1606) // Mdn. Sari/Resting Room, initial position of moogles
                         {
                             if (po.uid == 9 && destX == -171 && destZ == 641 && destY == 1042
                             || po.uid == 128 && destX == -574 && destZ == 624 && destY == 903
@@ -2106,19 +2119,19 @@ public partial class EventEngine
                             || po.uid == 132 && destX == -689 && destZ == 621 && destY == 859)
                                 gameObject.GetComponent<FieldMapActor>().SetRenderQueue(2000);
                         }
+                        else if (mapNo == 1207 && actor.uid == 9 && actorController != null) // A. Castle/Garnet's Room, Dagger, fix for issue #666
+                            actorController._smoothUpdateRegistered = false;
                     }
-                    if (mapNo == 1756 && (Int32)po.sid == 6 && (destX == -3019 && destY == 1226))
+                    if (mapNo == 1756 && po.sid == 6 && destX == -3019 && destY == 1226) // Iifa Tree/Bottom, Soulcage when landing from above
                     {
                         destX = -3145;
                         destZ = -2035;
                         destY = 1274;
                     }
-                    if (mapNo == 2456 && actor.uid == 6) // Sligthy resize the rope in Alexandria/Steeple (CD3 & CD4)
-                    {
+                    else if (mapNo == 2456 && actor.uid == 6) // Sligthy resize the rope in Alexandria/Steeple (CD3 & CD4)
                         geo.geoScaleSetXYZ(po.go, 66 << 24 >> 18, 66 << 24 >> 18, 66 << 24 >> 18);
-                    }
                 }
-                this.SetActorPosition(po, (Single)destX, (Single)destZ, (Single)destY);
+                this.SetActorPosition(po, destX, destZ, destY);
                 if (po.cid == 4)
                     this.clrdist((Actor)po);
                 return 0;
@@ -2164,18 +2177,6 @@ public partial class EventEngine
                 this.StartTurn(actor, EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)angle), true, (Int32)actor.tspeed);
                 return 0;
             }
-            case EBin.event_code_binary.BGI: // 0xA8, "SetPathing", "Change the pathing of the character", true, 1, { 1 }, { "Pathing" }, { AT_BOOL }, 0
-            {
-                Int32 isPathingActive = this.getv1(); // arg1: boolean pathing on/off
-                if (mapNo == 2508 && (Int32)po.sid == 2 && isPathingActive == 1)
-                    isPathingActive = 0;
-                if ((Int32)po.model != (Int32)UInt16.MaxValue)
-                {
-                    FieldMapActorController FMactor = gameObject.GetComponent<FieldMapActorController>();
-                    FMactor.walkMesh.BGI_charSetActive(FMactor, (UInt32)isPathingActive);
-                }
-                return 0;
-            }
             case EBin.event_code_binary.GETSCREEN: // 0xA9, "CalculateScreenPosition", "Calculate the object's position in screen coordinates and store it in 'GetScreenCalculatedX' and 'GetScreenCalculatedY'."
             {
                 Obj obj1 = this.GetObj1();
@@ -2205,46 +2206,20 @@ public partial class EventEngine
                 PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(false);
                 return 1;
             }
-            case EBin.event_code_binary.DISCCHANGE: // 0xAC, "ChangeDisc", "Allow to save the game and change disc"
+            case EBin.event_code_binary.MENU: // 0x75, "Menu", "Open a menu"
             {
-                Int32 fieldAndDiscDest = this.getv2(); // arg1: gathered field destination and disc destination
-                Byte disc_id = (Byte)(fieldAndDiscDest >> 14 & 3);
-                UInt16 map_id = (UInt16)(fieldAndDiscDest & 16383);
-
-                //this._ff9fieldDisc.disc_id = disc_id;
-                //this._ff9fieldDisc.cdType = (byte)(1U << (int)disc_id);
-                this._ff9fieldDisc.FieldMapNo = (Int16)map_id;
-                //this._ff9fieldDisc.FieldLocNo = (short)-1;
-                FF9StateFieldSystem stateFieldSystem = FF9StateSystem.Field.FF9Field;
-                FF9StateSystem instance = PersistenSingleton<FF9StateSystem>.Instance;
-                stateFieldSystem.attr |= 1048576U;
-                instance.attr |= 8U;
-
+                UInt32 menuId = Convert.ToUInt32(this.getv1()); // arg1: menu type
+                UInt32 subId = Convert.ToUInt32(this.getv1()); // arg2: depends on the menu type. Naming Menu: character to name | Shop Menu: shop ID
+                if (Configuration.Hacks.DisableNameChoice && menuId == 1)
+                {
+                    CharacterId charId = this.chr2slot((Int32)subId);
+                    if (charId != CharacterId.NONE && NameSettingUI.IsDefaultName(charId))
+                        this._ff9.GetPlayer(charId).Name = FF9TextTool.CharacterDefaultName(charId);
+                    return 0;
+                }
+                EventService.StartMenu(menuId, subId);
+                PersistenSingleton<UIManager>.Instance.MenuOpenEvent();
                 return 1;
-            }
-            case EBin.event_code_binary.MINIGAME: // 0xAE, "TetraMaster", "Begin a card game"
-            {
-                Int32 minigameFlag = this.getv2(); // arg1: card deck of the opponent
-                EventService.SetMiniGame((UInt16)minigameFlag);
-                EMinigame.SetQuadmistStadiumOpponentId(this.gCur, minigameFlag);
-                EMinigame.SetThiefId(this.gCur);
-                EMinigame.SetFatChocoboId(this.gCur);
-                return 7;
-            }
-            case EBin.event_code_binary.DELETEALLCARD: // 0xAF, "DeleteAllCards", "Clear the player's Tetra Master's deck."
-            {
-                QuadMistDatabase.MiniGame_AwayAllCard();
-                return 0;
-            }
-            case EBin.event_code_binary.SETMAPNAME: // 0xB0, "SetFieldName", "Change the name of the field"
-            {
-                FF9StateSystem.Common.FF9.mapNameStr = FF9TextTool.FieldText(this.getv2()); // arg1: new name (unknown format)
-                return 0;
-            }
-            case EBin.event_code_binary.RESETMAPNAME: // 0xB1, "ResetFieldName", "Reset the name of the field."
-            {
-                FF9StateSystem.Common.FF9.mapNameStr = this._defaultMapName;
-                return 0;
             }
             case EBin.event_code_binary.PARTYMENU: // 0xB2, "Party", "Allow the player to change the members of its party"
             {
@@ -2273,6 +2248,43 @@ public partial class EventEngine
                 sPartyInfo.select = selectList.ToArray();
                 EventService.OpenPartyMenu(sPartyInfo);
                 return 1;
+            }
+            case EBin.event_code_binary.GAMEOVER: // 0xF5, "GameOver", "Terminate the game with a Game Over screen."
+            {
+                return 8;
+            }
+
+            // Minigames
+            case EBin.event_code_binary.MINIGAME: // 0xAE, "TetraMaster", "Begin a card game"
+            {
+                Int32 minigameFlag = this.getv2(); // arg1: card deck of the opponent
+                EventService.SetMiniGame((UInt16)minigameFlag);
+                EMinigame.SetQuadmistStadiumOpponentId(this.gCur, minigameFlag);
+                EMinigame.SetThiefId(this.gCur);
+                EMinigame.SetFatChocoboId(this.gCur);
+                return 7;
+            }
+            case EBin.event_code_binary.DELETEALLCARD: // 0xAF, "DeleteAllCards", "Clear the player's Tetra Master's deck."
+            {
+                QuadMistDatabase.MiniGame_AwayAllCard();
+                return 0;
+            }
+            case EBin.event_code_binary.INCFROG: // 0xE0, "AddFrog", "Add one frog to the frog counter."
+            {
+                _ff9.Frogs.Increment();
+                EMinigame.CatchingGoldenFrogAchievement(this.gCur);
+                return 0;
+            }
+
+            case EBin.event_code_binary.SETMAPNAME: // 0xB0, "SetFieldName", "Change the name of the field"
+            {
+                FF9StateSystem.Common.FF9.mapNameStr = FF9TextTool.FieldText(this.getv2()); // arg1: new name (unknown format)
+                return 0;
+            }
+            case EBin.event_code_binary.RESETMAPNAME: // 0xB1, "ResetFieldName", "Reset the name of the field."
+            {
+                FF9StateSystem.Common.FF9.mapNameStr = this._defaultMapName;
+                return 0;
             }
             case EBin.event_code_binary.SPS: // 0xB3, "RunSPSCode", "Run Sps code, which seems to be special model effects on the field"
             case EBin.event_code_binary.SPS2: // 0xDA, "RunSPSCodeSimple", "Run Sps code, which seems to be special model effects on the field"
@@ -2303,20 +2315,6 @@ public partial class EventEngine
                     ff9.world.WorldSPSSystem.SetObjParm(objNo, parmType, arg1, arg2, arg3);
                 return 0;
             }
-            case EBin.event_code_binary.FULLMEMBER: // 0xB4, "SetPartyReserve", "Define the party member availability for a future Party call"
-            {
-                Int32 reserveList = this.getv2(); // arg1: list of available characters
-                Int32 reserveExtendedList = reserveList & ~0xF00; // This opcode puts Beatrix as the 8th character, before Cinna/Marcus/Blank
-                reserveExtendedList |= (reserveList >> 1) & 0x700; // Cinna/Marcus/Blank -> shift the ID by 1
-                if ((reserveList & 0x100) != 0)
-                    reserveExtendedList |= 0x800; // Beatrix
-                foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
-                    ff9play.FF9Play_Delete(p);
-                foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
-                    if ((reserveExtendedList & (1 << (Int32)p.info.slot_no)) != 0)
-                        ff9play.FF9Play_Add(p);
-                return 0;
-            }
             case EBin.event_code_binary.PRETEND: // 0xB5, "PretendToBe", "Link the object to another object, forcing this object to follow the linked object's position and logical animations"
             {
                 Obj objToPretendToBe = this.GetObj1(); // arg1: object to pretend to be
@@ -2335,6 +2333,8 @@ public partial class EventEngine
                 }
                 return 0;
             }
+
+            // WorldMap
             case EBin.event_code_binary.WMAPJUMP: // 0xB6, "WorldMap", "Change the scene to a world map"
             {
                 this.SetNextMap(this.getv2()); // arg1: world map destination
@@ -2360,6 +2360,7 @@ public partial class EventEngine
                 }
                 return 0;
             }
+
             case EBin.event_code_binary.SETKEYMASK: // 0xB9, "AddControllerMask", "Prevent the input to be processed by the game", true, 2, { 1, 2 }, { "Pad", "Buttons" }, { AT_USPIN, AT_BUTTONLIST }, 0
             {
                 Int32 padNum = this.getv1(); // arg1: pad number (0 or 1)
@@ -2483,6 +2484,34 @@ public partial class EventEngine
                 this.fieldmap.walkMesh.BGI_floorSetActive(floorNdx, isActive);
                 return 0;
             }
+            case EBin.event_code_binary.BGIACTIVET: // 0x9A, "EnablePathTriangle", "Enable or disable a triangle of field pathing"
+            {
+                Int32 triangleID = this.getv2(); // arg1: triangle ID
+                Int32 isActive = this.getv1(); // arg2: boolean enable/disable
+                if (mapNo == 1753 && triangleID == 207)
+                    this.fieldmap.walkMesh.BGI_triSetActive(208U, (UInt32)isActive);
+                else if (mapNo == 1606 && triangleID == 107)
+                    isActive = 1;
+                this.fieldmap.walkMesh.BGI_triSetActive((UInt32)triangleID, (UInt32)isActive);
+                return 0;
+            }
+            case EBin.event_code_binary.BGI: // 0xA8, "SetPathing", "Change the pathing of the character"
+            {
+                Int32 isPathingActive = this.getv1(); // arg1: boolean pathing on/off
+                if (mapNo == 2508 && (Int32)po.sid == 2 && isPathingActive == 1)
+                    isPathingActive = 0;
+                if ((Int32)po.model != (Int32)UInt16.MaxValue)
+                {
+                    FieldMapActorController FMactor = gameObject.GetComponent<FieldMapActorController>();
+                    FMactor.walkMesh.BGI_charSetActive(FMactor, (UInt32)isPathingActive);
+                }
+                return 0;
+            }
+            case EBin.event_code_binary.BGIMASK: // 0x27, "SetTriangleFlagMask", "Set a bitmask for some of the walkmesh triangle flags"
+            {
+                this.BGI_systemSetAttributeMask((Byte)this.getv1()); // arg1: flag mask - 7: disable restricted triangles, 8: disable player-restricted triangles
+                return 0;
+            }
             case EBin.event_code_binary.CHRSET: // 0xCC, "AddCharacterAttribute", "Add specific attributes for the player character corresponding to the current's entry (should only be used by the entries of player characters)"
             {
                 Int32 attrFlag = this.getv2(); // arg1: attribute flags. 3: use a ladder. 5: hide shadow. 6: lock spin angle. 7: enable animation sounds. others: unknown.
@@ -2555,98 +2584,50 @@ public partial class EventEngine
                 }
                 return 0;
             }
-            case EBin.event_code_binary.AICON: // 0xD7, "ATE", "Enable or disable ATE"
+            case EBin.event_code_binary.SETROW: // 0x62, "SetRow", "Change the battle row of a party member"
             {
-                Int32 mode = this.getv1(); // arg1: mode (0 = disable, rest unknown)
-                EIcon.SetAIcon(mode);
+                CharacterId charId = this.chr2slot(this.getv1()); // arg1: party member
+                Int32 row = this.getv1(); // arg2: boolean front/back
+                if (charId != CharacterId.NONE)
+                    FF9StateSystem.Common.FF9.GetPlayer(charId).info.row = (Byte)row;
                 return 0;
             }
-            case EBin.event_code_binary.CLEARSTATUS: // 0xD9, "CureStatus", "Cure the status ailments of a party member"
+            case EBin.event_code_binary.JOIN: // 0xFE, "SetCharacterData", "Init a party's member battle and menu datas"
             {
                 CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
-                BattleStatus statusList = (BattleStatus)this.getv1(); // arg2: status list. 1: Petrified 2: Venom 3: Virus 4: Silence 5: Darkness 6: Trouble 7: Zombie
-                if (charId == CharacterId.NONE)
-                    return 0;
-                if ((Int32)statusList == 0x7F) // Usual vanilla "clear all statuses": make it clear extra statuses that could be "OutOfBattle" as well
-                    statusList = (BattleStatus)~0ul;
-                PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
-                SFieldCalculator.FieldRemoveStatus(player, statusList);
-                // https://github.com/Albeoris/Memoria/issues/22
-                if (!player.info.sub_replaced)
-                    SFieldCalculator.FieldRemoveStatus(FF9StateSystem.Common.FF9.GetPlayer(charId + 3), statusList);
-                if (charId == CharacterId.Beatrix)
-                    foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
-                        if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
-                            SFieldCalculator.FieldRemoveStatus(play, statusList);
-                return 0;
-            }
-            case EBin.event_code_binary.ADD_STATUS: // Apply a status to a unit in battle, with possible status parameters
-            {
-                UInt16 targetId = (UInt16)this.getv3(); // Unit to which the status is applied
-                BattleStatusId statusId = (BattleStatusId)this.getv3(); // The status to apply
-                Boolean permanent = this.getv3() != 0; // Whether it should be added as a permanent status
-                Int32 argument1 = this.getv3(); // A first parameter (to be handled by the status script's Apply)
-                Int32 argument2 = this.getv3(); // A second parameter
-                Int32 argument3 = this.getv3(); // A third parameter
-                if (this.gMode != 2)
-                    return 0;
-                foreach (BTL_DATA btl in btl_util.findAllBtlData(targetId))
-                {
-                    BattleUnit target = new BattleUnit(btl);
-                    btl_stat.AlterStatus(target, statusId, null, false, argument1, argument2, argument3);
-                    if (permanent && target.IsUnderAnyStatus(statusId))
-                        target.Data.stat.permanent |= statusId.ToBattleStatus();
-                }
-                return 0;
-            }
-            case EBin.event_code_binary.REMOVE_STATUS: // Remove a status from a unit in battle
-            {
-                UInt16 targetId = (UInt16)this.getv3(); // Unit from which the status is removed
-                BattleStatusId statusId = (BattleStatusId)this.getv3(); // The status to remove
-                Boolean permanent = this.getv3() != 0; // Whether it should be removed as a permanent status
-                if (this.gMode != 2)
-                    return 0;
-                foreach (BTL_DATA btl in btl_util.findAllBtlData(targetId))
-                {
-                    BattleUnit target = new BattleUnit(btl);
-                    if (permanent)
-                        target.Data.stat.permanent &= ~statusId.ToBattleStatus();
-                    btl_stat.RemoveStatus(target, statusId);
-                }
-                return 0;
-            }
-            case EBin.event_code_binary.WINPOSE: // 0xDB, "EnableVictoryPose", "Enable or disable the victory pose at the end of battles for a specific character"
-            {
-                CharacterId charId = this.chr2slot(this.getv1()); // arg1: which character
-                Int32 winPoseOnOff = this.getv1(); // arg2: boolean activate/deactivate
+                Int32 enableLeveling = this.getv1(); // arg2: boolean update level/don't update level
+                EquipmentSetId eqp_id = (EquipmentSetId)this.getv1(); // arg3: equipement set to use
                 if (charId != CharacterId.NONE)
-                    this._ff9.GetPlayer(charId).info.win_pose = (Byte)winPoseOnOff;
+                {
+                    PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
+                    Int32 category = this.getv1(); // arg4: character categories ; doesn't change if all are enabled. 1: male 2: female 3: gaian 4: terran 5: temporary character
+                    if (category != Byte.MaxValue)
+                        player.category = (Byte)category;
+                    CharacterPresetId charPreset = (CharacterPresetId)this.getv1(); // arg5: ability and command set to use
+                    if (charPreset != CharacterPresetId.NONE)
+                        player.info.menu_type = charPreset;
+                    ff9play.FF9Play_Change(player, enableLeveling != 0, eqp_id);
+                    player.info.sub_replaced = true;
+                }
+                else
+                {
+                    this.getv1();
+                    this.getv1();
+                }
                 return 0;
             }
-            case EBin.event_code_binary.SETVY3: // 0xE2, "SetupJump", "Setup datas for a Jump call"
+            case EBin.event_code_binary.FULLMEMBER: // 0xB4, "SetPartyReserve", "Define the party member availability for a future Party call"
             {
-                actor.jumpx = (Int16)this.getv2(); // 1st to arg3s: destination in (X, Z, Y)
-                actor.jumpy = (short)-this.getv2();
-                actor.jumpz = (Int16)this.getv2();
-                Int32 steps = (Int32)(Byte)this.getv1(); // arg4: number of steps for the jump
-                if (steps == 0)
-                    steps = 8;
-                actor.actf |= (UInt16)EventEngine.actJump;
-                ff9shadow.FF9ShadowOffField((Int32)actor.uid);
-                actor.inFrame = actor.jump0;
-                actor.outFrame = actor.jump1;
-                this.ExecAnim(actor, (Int32)actor.jump);
-                actor.aspeed = (Byte)(((Int32)actor.outFrame - (Int32)actor.inFrame << 4) / steps);
-                if (this.gMode == 1 && (Int32)po.model != (Int32)UInt16.MaxValue)
-                {
-                    fmac = gameObject.GetComponent<FieldMapActorController>();
-                    fmac.walkMesh.BGI_charSetActive(fmac, 0U);
-                }
-                actor.x0 = (Int16)fmac.curPos.x;
-                actor.y0 = (Int16)fmac.curPos.y;
-                actor.z0 = (Int16)fmac.curPos.z;
-                actor.jframe = (Byte)0;
-                actor.jframeN = (Byte)steps;
+                Int32 reserveList = this.getv2(); // arg1: list of available characters
+                Int32 reserveExtendedList = reserveList & ~0xF00; // This opcode puts Beatrix as the 8th character, before Cinna/Marcus/Blank
+                reserveExtendedList |= (reserveList >> 1) & 0x700; // Cinna/Marcus/Blank -> shift the ID by 1
+                if ((reserveList & 0x100) != 0)
+                    reserveExtendedList |= 0x800; // Beatrix
+                foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
+                    ff9play.FF9Play_Delete(p);
+                foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
+                    if ((reserveExtendedList & (1 << (Int32)p.info.slot_no)) != 0)
+                        ff9play.FF9Play_Add(p);
                 return 0;
             }
             case EBin.event_code_binary.PARTYDELETE: // 0xDD, "RemoveParty", "Remove a character from the player's team"
@@ -2676,88 +2657,6 @@ public partial class EventEngine
                 Int32 textId = this.getv2(); // arg2: new name
                 if (charId != CharacterId.NONE)
                     this._ff9.GetPlayer(charId).Name = FF9TextTool.RemoveOpCode(FF9TextTool.FieldText(textId));
-                return 0;
-            }
-            case EBin.event_code_binary.OVAL: //  // 0xDF, "SetObjectOvalRatio", "Define a stretching factor for the object's collisions (seems to only work on world maps). The collisions' shape is not exactly an oval but consists of two discs patched together"
-            {
-                po.ovalRatio = (Byte)this.getv1(); // arg1: increase of the collision in the facing direction of the object. //0 removes the feature(both circles are merged)
-                // 48 makes the object's collision twice higher toward the facing direction than on its sides //100 corresponds to a factor of about 2.7 in the facing direction  //255 corresponds to a factor of about 4
-                return 0;
-            }
-            case EBin.event_code_binary.INCFROG: // 0xE0, "AddFrog", "Add one frog to the frog counter."
-            {
-                _ff9.Frogs.Increment();
-                EMinigame.CatchingGoldenFrogAchievement(this.gCur);
-                return 0;
-            }
-            case EBin.event_code_binary.BEND: // 0xE1, "TerminateBattle", "Return to the field (or world map) when the rewards are disabled"
-            {
-                this._noEvents = true;
-                PersistenSingleton<UIManager>.Instance.BattleResultScene.ShutdownBattleResultUI();
-                return 0;
-            }
-            case EBin.event_code_binary.SETSIGNAL: // 0xE3, "SetDialogProgression", "Change the dialog progression value"
-            {
-                ETb.gMesSignal = this.getv1(); // arg1: new dialog progression value
-                return 0;
-            }
-            case EBin.event_code_binary.BTLSEQ: // 0xE5, "AttackSpecia", "Make the enemy instantatly use a special move. It doesn't use nor modify the battle state so it should be used when the battle is paused. The target(s) are to be set using the SV_Target variable"
-            {
-                btlseq.StartBtlSeq(this.GetSysList(1), this.GetSysList(0), this.getv1()); // arg1: attack to perform
-                return 0;
-            }
-            case EBin.event_code_binary.VRP: // 0xEA, "CalculateScreenOrigin", "Calculate the position of the top-left corner of the current camera view in screen coordinates and store it in 'GetScreenCalculatedX' and 'GetScreenCalculatedY'."
-            {
-                Int16 vrpX = 0;
-                Int16 vrpY = 0;
-                this.fieldmap.EBG_sceneGetVRP(ref vrpX, ref vrpY);
-                this.sSysX = vrpX;
-                this.sSysY = vrpY;
-                return 0;
-            }
-            case EBin.event_code_binary.CLOSEALL: // 0xEB, "CloseAllWindows", "Close all the dialogs and UI windows."
-            {
-                this.eTb.YWindow_CloseAll(true);
-                return 0;
-            }
-            case EBin.event_code_binary.WIPERGB: // 0xEC, "FadeFilter", "Apply a fade filter on the screen"
-            {
-                Int32 filterMode = this.getv1(); // arg1: filter mode (0 for ADD, 2 for SUBTRACT)
-                Int32 frame = this.getv1(); // arg2: fading time
-                this.getv1(); // arg3: unknown
-                Int32 cyan = this.getv1(); // 4 Cyan
-                Int32 magenta = this.getv1(); // 5 Magenta
-                Int32 yellow = this.getv1(); // 6 Yellow
-                if (mapNo == 1819 && scCounter == 7030 && cyan == 130 && magenta == 160 && yellow == 170)
-                {
-                    cyan = 81; magenta = 110; yellow = 121;
-                }
-
-                Color32 fadeColor = new Color((Single)cyan / (Single)Byte.MaxValue, (Single)magenta / (Single)Byte.MaxValue, (Single)yellow / (Single)Byte.MaxValue);
-                SceneDirector.InitFade((filterMode >> 1 & 1) != 0 ? FadeMode.Sub : FadeMode.Add, frame, fadeColor);
-                return 0;
-            }
-            case EBin.event_code_binary.BGVALPHA: // 0xED, "SetTileLoopAlpha", "Unknown opcode about tile looping movements (EBG_overlayDefineViewportAlpha)."
-            {
-                Int32 viewportNdx = this.getv1(); // arg1: viewport index
-                Int32 alphaX = this.getv2(); // 2nd and arg3s: unknown factors (X, Y).
-                Int32 alphaY = this.getv2();
-                this.fieldmap.EBG_overlayDefineViewportAlpha(viewportNdx, alphaX, alphaY);
-                return 0;
-            }
-            case EBin.event_code_binary.SLEEPON: // 0xEE, "EnableInactiveAnimation", "Allow the player's character to play its inactive animation. The inaction time required is:First Time = 200 + 4 * Random[0, 255]Following Times = 200 + 2 * Random[0, 255]"
-            {
-                this._context.idletimer = (Int16)0;
-                return 0;
-            }
-            case EBin.event_code_binary.HEREON: // 0xEF, "ShowHereIcon", "Show the Here icon over player's character"
-            {
-                EIcon.SetHereIcon(this.getv1()); // arg1: display type (0 to hide, 3 to show unconditionally)
-                return 0;
-            }
-            case EBin.event_code_binary.DASHON: // 0xF0, "EnableRun", "Allow the player's character to run."
-            {
-                this._context.dashinh = (Byte)0;
                 return 0;
             }
             case EBin.event_code_binary.SETHP: // 0xF1, "SetHP", "Change the HP of a party's member"
@@ -2830,9 +2729,146 @@ public partial class EventEngine
                     ff9abil.FF9Abil_SetMaster(FF9StateSystem.Common.FF9.GetPlayer(charId), abilIndex);
                 return 0;
             }
-            case EBin.event_code_binary.GAMEOVER: // 0xF5, "GameOver", "Terminate the game with a Game Over screen."
+            case EBin.event_code_binary.CLEARSTATUS: // 0xD9, "CureStatus", "Cure the status ailments of a party member"
             {
-                return 8;
+                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
+                BattleStatus statusList = (BattleStatus)this.getv1(); // arg2: status list. 1: Petrified 2: Venom 3: Virus 4: Silence 5: Darkness 6: Trouble 7: Zombie
+                if (charId == CharacterId.NONE)
+                    return 0;
+                if ((Int32)statusList == 0x7F) // Usual vanilla "clear all statuses": make it clear extra statuses that could be "OutOfBattle" as well
+                    statusList = FF9BattleDB.AllStatuses;
+                PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
+                FieldCalculator.RemoveStatuses(player, statusList);
+                // https://github.com/Albeoris/Memoria/issues/22
+                if (!player.info.sub_replaced)
+                    FieldCalculator.RemoveStatuses(FF9StateSystem.Common.FF9.GetPlayer(charId + 3), statusList);
+                if (charId == CharacterId.Beatrix)
+                    foreach (PLAYER play in FF9StateSystem.Common.FF9.PlayerList)
+                        if (play.Index > CharacterId.Amarant && play.Index != CharacterId.Beatrix)
+                            FieldCalculator.RemoveStatuses(play, statusList);
+                return 0;
+            }
+            case EBin.event_code_binary.ADD_STATUS: // Apply a status to a unit in battle, with possible status parameters
+            {
+                UInt16 targetId = (UInt16)this.getv3(); // Unit to which the status is applied
+                BattleStatusId statusId = (BattleStatusId)this.getv3(); // The status to apply
+                Boolean permanent = this.getv3() != 0; // Whether it should be added as a permanent status
+                Int32 argument1 = this.getv3(); // A first parameter (to be handled by the status script's Apply)
+                Int32 argument2 = this.getv3(); // A second parameter
+                Int32 argument3 = this.getv3(); // A third parameter
+                if (this.gMode != 2)
+                    return 0;
+                foreach (BTL_DATA btl in btl_util.findAllBtlData(targetId))
+                {
+                    BattleUnit target = new BattleUnit(btl);
+                    btl_stat.AlterStatus(target, statusId, null, false, argument1, argument2, argument3);
+                    if (permanent && target.IsUnderAnyStatus(statusId))
+                        target.Data.stat.permanent |= statusId.ToBattleStatus();
+                }
+                return 0;
+            }
+            case EBin.event_code_binary.REMOVE_STATUS: // Remove a status from a unit in battle
+            {
+                UInt16 targetId = (UInt16)this.getv3(); // Unit from which the status is removed
+                BattleStatusId statusId = (BattleStatusId)this.getv3(); // The status to remove
+                Boolean permanent = this.getv3() != 0; // Whether it should be removed as a permanent status
+                if (this.gMode != 2)
+                    return 0;
+                foreach (BTL_DATA btl in btl_util.findAllBtlData(targetId))
+                {
+                    BattleUnit target = new BattleUnit(btl);
+                    if (permanent)
+                        target.Data.stat.permanent &= ~statusId.ToBattleStatus();
+                    btl_stat.RemoveStatus(target, statusId);
+                }
+                return 0;
+            }
+            case EBin.event_code_binary.WINPOSE: // 0xDB, "EnableVictoryPose", "Enable or disable the victory pose at the end of battles for a specific character"
+            {
+                CharacterId charId = this.chr2slot(this.getv1()); // arg1: which character
+                Int32 winPoseOnOff = this.getv1(); // arg2: boolean activate/deactivate
+                if (charId != CharacterId.NONE)
+                    this._ff9.GetPlayer(charId).info.win_pose = (Byte)winPoseOnOff;
+                return 0;
+            }
+            case EBin.event_code_binary.SETVY3: // 0xE2, "SetupJump", "Setup datas for a Jump call"
+            {
+                actor.jumpx = (Int16)this.getv2(); // 1st to arg3s: destination in (X, Z, Y)
+                actor.jumpy = (short)-this.getv2();
+                actor.jumpz = (Int16)this.getv2();
+                Int32 steps = (Int32)(Byte)this.getv1(); // arg4: number of steps for the jump
+                if (steps == 0)
+                    steps = 8;
+                actor.actf |= (UInt16)EventEngine.actJump;
+                ff9shadow.FF9ShadowOffField((Int32)actor.uid);
+                actor.inFrame = actor.jump0;
+                actor.outFrame = actor.jump1;
+                this.ExecAnim(actor, (Int32)actor.jump);
+                actor.aspeed = (Byte)(((Int32)actor.outFrame - (Int32)actor.inFrame << 4) / steps);
+                if (this.gMode == 1 && (Int32)po.model != (Int32)UInt16.MaxValue)
+                {
+                    fmac = gameObject.GetComponent<FieldMapActorController>();
+                    fmac.walkMesh.BGI_charSetActive(fmac, 0U);
+                }
+                actor.x0 = (Int16)fmac.curPos.x;
+                actor.y0 = (Int16)fmac.curPos.y;
+                actor.z0 = (Int16)fmac.curPos.z;
+                actor.jframe = (Byte)0;
+                actor.jframeN = (Byte)steps;
+                return 0;
+            }
+            case EBin.event_code_binary.OVAL: //  // 0xDF, "SetObjectOvalRatio", "Define a stretching factor for the object's collisions (seems to only work on world maps). The collisions' shape is not exactly an oval but consists of two discs patched together"
+            {
+                po.ovalRatio = (Byte)this.getv1(); // arg1: increase of the collision in the facing direction of the object. //0 removes the feature(both circles are merged)
+                // 48 makes the object's collision twice higher toward the facing direction than on its sides //100 corresponds to a factor of about 2.7 in the facing direction  //255 corresponds to a factor of about 4
+                return 0;
+            }
+            case EBin.event_code_binary.BEND: // 0xE1, "TerminateBattle", "Return to the field (or world map) when the rewards are disabled"
+            {
+                this._noEvents = true;
+                PersistenSingleton<UIManager>.Instance.BattleResultScene.ShutdownBattleResultUI();
+                return 0;
+            }
+            case EBin.event_code_binary.SETSIGNAL: // 0xE3, "SetDialogProgression", "Change the dialog progression value"
+            {
+                ETb.gMesSignal = this.getv1(); // arg1: new dialog progression value
+                return 0;
+            }
+            case EBin.event_code_binary.BTLSEQ: // 0xE5, "AttackSpecial", "Make the enemy instantly use a special move. It doesn't use nor modify the battle state so it should be used when the battle is paused. The target(s) are to be set using the SV_Target variable"
+            {
+                btlseq.StartBtlSeq(this.GetSysList(1), this.GetSysList(0), this.getv1()); // arg1: attack to perform
+                return 0;
+            }
+            case EBin.event_code_binary.VRP: // 0xEA, "CalculateScreenOrigin", "Calculate the position of the top-left corner of the current camera view in screen coordinates and store it in 'GetScreenCalculatedX' and 'GetScreenCalculatedY'."
+            {
+                Int16 vrpX = 0;
+                Int16 vrpY = 0;
+                this.fieldmap.EBG_sceneGetVRP(ref vrpX, ref vrpY);
+                this.sSysX = vrpX;
+                this.sSysY = vrpY;
+                return 0;
+            }
+            case EBin.event_code_binary.SLEEPON: // 0xEE, "EnableInactiveAnimation", "Allow the player's character to play its inactive animation. The inaction time required is:First Time = 200 + 4 * Random[0, 255]Following Times = 200 + 2 * Random[0, 255]"
+            {
+                this._context.idletimer = (Int16)0;
+                return 0;
+            }
+
+            // Controls
+            case EBin.event_code_binary.HEREON: // 0xEF, "ShowHereIcon", "Show the Here icon over player's character"
+            {
+                EIcon.SetHereIcon(this.getv1()); // arg1: display type (0 to hide, 3 to show unconditionally)
+                return 0;
+            }
+            case EBin.event_code_binary.DASHOFF: // 0x6A, "DisableRun", "Make the player's character always walk."
+            {
+                this._context.dashinh = (Byte)1;
+                return 0;
+            }
+            case EBin.event_code_binary.DASHON: // 0xF0, "EnableRun", "Allow the player's character to run."
+            {
+                this._context.dashinh = (Byte)0;
+                return 0;
             }
             case EBin.event_code_binary.VIBSTART: // 0xF6, "VibrateController", "Start the vibration lifespan"
             {
@@ -2897,30 +2933,6 @@ public partial class EventEngine
                         field_object.SetActive(false);
                     }
                     this.sExternalFieldMode = true;
-                }
-                return 0;
-            }
-            case EBin.event_code_binary.JOIN: // 0xFE, "SetCharacterData", "Init a party's member battle and menu datas"
-            {
-                CharacterId charId = this.chr2slot(this.getv1()); // arg1: character
-                Int32 enableLeveling = this.getv1(); // arg2: boolean update level/don't update level
-                EquipmentSetId eqp_id = (EquipmentSetId)this.getv1(); // arg3: equipement set to use
-                if (charId != CharacterId.NONE)
-                {
-                    PLAYER player = FF9StateSystem.Common.FF9.GetPlayer(charId);
-                    Int32 category = this.getv1(); // arg4: character categories ; doesn't change if all are enabled. 1: male 2: female 3: gaian 4: terran 5: temporary character
-                    if (category != Byte.MaxValue)
-                        player.category = (Byte)category;
-                    CharacterPresetId charPreset = (CharacterPresetId)this.getv1(); // arg5: ability and command set to use
-                    if (charPreset != CharacterPresetId.NONE)
-                        player.info.menu_type = charPreset;
-                    ff9play.FF9Play_Change(player, enableLeveling != 0, eqp_id);
-                    player.info.sub_replaced = true;
-                }
-                else
-                {
-                    this.getv1();
-                    this.getv1();
                 }
                 return 0;
             }
@@ -3089,6 +3101,14 @@ public partial class EventEngine
                 {
                     ff9shadow.FF9ShadowOffField((Int32)po.uid);
                     po.isShadowOff = true;
+
+                    if (mapNo == 112 && po.model == 223 && po.uid == 6) // intercept to force attach glass in alex pub
+                    {
+                        GameObject attachedObjUnity = this.GetObjUID(6).go;
+                        GameObject targetObject = this.GetObjUID(4).go;
+                        if (attachedObjUnity != null && targetObject != null)
+                            geo.geoAttach(this.GetObjUID(6).go, this.GetObjUID(4).go, 13);
+                    }
                 }
                 else if (this.gMode == 2)
                     ff9shadow.FF9ShadowOffBattle(po.uid);

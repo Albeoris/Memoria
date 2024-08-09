@@ -147,14 +147,14 @@ namespace FF9
             return _FF9Abil_PaData[player.PresetId][index].Ap;
         }
 
-        public static Boolean FF9Abil_HasAp(Character play)
+        public static Boolean FF9Abil_HasAp(PLAYER play)
         {
             if (!_FF9Abil_PaData.ContainsKey(play.PresetId))
                 return false;
             return _FF9Abil_PaData[play.PresetId].Any(pa => pa.Ap > 0);
         }
 
-        public static Boolean FF9Abil_HasSA(Character play)
+        public static Boolean FF9Abil_HasSA(PLAYER play)
         {
             if (!_FF9Abil_PaData.ContainsKey(play.PresetId))
                 return false;

@@ -1,4 +1,5 @@
-﻿using Memoria.Scripts;
+using Memoria;
+using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -60,9 +61,9 @@ public class fldchar
                     ff9FieldCharMirror = (ff9FieldCharState.mirror = new FF9FieldCharMirror());
                     ff9Char2 = (ff9FieldCharMirror.chr = ff9Char);
                     ff9Char2.attr = 0u;
-                    ff9FieldCharMirror.geo = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue((Int32)ff9Char.evt.model), false);
+                    ff9FieldCharMirror.geo = ModelFactory.CreateModel(FF9BattleDB.GEO.GetValue((Int32)ff9Char.evt.model), false, true, Configuration.Graphics.ElementsSmoothTexture);
                     ff9FieldCharMirror.geo.name = ff9Char.geo.name + "_mirror";
-                    Shader shader = ShadersLoader.Find("PSX/FieldMapActor");
+                    Shader shader = ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
                     Renderer[] componentsInChildren = ff9FieldCharMirror.geo.GetComponentsInChildren<Renderer>();
                     Renderer[] array = componentsInChildren;
                     for (Int32 i = 0; i < (Int32)array.Length; i++)

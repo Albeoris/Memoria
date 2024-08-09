@@ -147,6 +147,7 @@ public class btl_cmd
         }
     }
 
+    /// <summary>Enqueue a command for a player character</summary>
     public static void SetCommand(CMD_DATA cmd, BattleCommandId commandId, Int32 sub_no, UInt16 tar_id, UInt32 cursor, Boolean forcePriority = false, BattleCommandMenu cmdMenu = BattleCommandMenu.None)
     {
         if (btl_cmd.CheckUsingCommand(cmd))
@@ -320,101 +321,25 @@ public class btl_cmd
         SetCommand(btl.cmd[1], commandId, sub_no, tar_id, Comn.countBits(tar_id) > 1 ? 1u : 0u, true);
     }
 
-    public static void SetEnemyCommandBySequence(UInt16 tar_id, BattleCommandId cmd_no, Int32 sub_no)
+    /// <summary>Enqueue a command for an enemy unit</summary>
+    public static void SetEnemyCommand(BattleUnit caster, BattleCommandId cmd_no, Int32 sub_no, UInt16 tar_id)
     {
-        FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
-        BattleUnit btl = btl_scrp.FindBattleUnit(16);
-        BTL_DATA[] btlDataArray = stateBattleSystem.btl_data;
-        SEQ_WORK_SET seqWorkSet = stateBattleSystem.seq_work_set;
-        Int32 enemyType = Array.IndexOf(seqWorkSet.AnmOfsList.Distinct().ToArray(), seqWorkSet.AnmOfsList[sub_no]);
-        for (Int32 index = 0; index < btlDataArray.Length; ++index)
-        {
-            if (enemyType == btlDataArray[index].typeNo)
-            {
-                btl = new BattleUnit(btlDataArray[index]);
-                break;
-            }
-        }
-        if (btl == null)
-            return;
-        if ((stateBattleSystem.cmd_status & 1) != 0 || btl.IsUnderAnyStatus(BattleStatusConst.PreventEnemyCmd))
-        {
-            btl.Data.sel_mode = 0;
-        }
-        else
-        {
-            CMD_DATA cmd;
-            if (cmd_no == BattleCommandId.EnemyAtk)
-            {
-                if (stateBattleSystem.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
-                {
-                    btl.Data.sel_mode = 0;
-                    return;
-                }
-                cmd = btl.Data.cmd[0];
-            }
-            else if (cmd_no == BattleCommandId.EnemyCounter)
-                cmd = btl.Data.cmd[1];
-            else if (cmd_no == BattleCommandId.EnemyDying)
-                cmd = btl.Data.cmd[1];
-            else if (cmd_no == BattleCommandId.ScriptCounter1)
-            {
-                cmd = btl.Data.cmd[3];
-                cmd_no = BattleCommandId.EnemyCounter;
-            }
-            else if (cmd_no == BattleCommandId.ScriptCounter2)
-            {
-                cmd = btl.Data.cmd[4];
-                cmd_no = BattleCommandId.EnemyCounter;
-            }
-            else if (cmd_no == BattleCommandId.ScriptCounter3)
-            {
-                cmd = btl.Data.cmd[5];
-                cmd_no = BattleCommandId.EnemyCounter;
-            }
-            else
-            {
-                btl.Data.sel_mode = 0;
-                return;
-            }
-            cmd.cmd_no = cmd_no;
-            cmd.sub_no = sub_no;
-            cmd.SetAAData(btl_util.GetCommandAction(cmd));
-            cmd.ScriptId = 26;
-            cmd.tar_id = tar_id;
-            cmd.info.cursor = cmd.aa.Info.Target <= TargetType.ManyEnemy || cmd.aa.Info.Target >= TargetType.Self ? (Byte)0 : (Byte)1;
-            cmd.IsShortRange = btl_util.IsAttackShortRange(cmd);
-            if (!btl_util.IsCommandDeclarable(cmd_no))
-                cmd.info.priority = 1;
-            if (cmd == btl.Data.cmd[0])
-                btl_stat.RemoveStatuses(btl, BattleStatusConst.RemoveOnMainCommand);
-            cmd.info.cover = 0;
-            cmd.info.dodge = 0;
-            cmd.info.reflec = 0;
-            btl.Data.bi.cmd_idle = 1;
-            EnqueueCommand(cmd);
-        }
-    }
-
-    public static void SetEnemyCommand(UInt16 own_id, UInt16 tar_id, BattleCommandId cmd_no, Int32 sub_no)
-    {
-        FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
-        BattleUnit caster = btl_scrp.FindBattleUnit(own_id);
-        if ((stateBattleSystem.cmd_status & 1) != 0 || caster.IsUnderAnyStatus(BattleStatusConst.PreventEnemyCmd))
+        FF9StateBattleSystem battleState = FF9StateSystem.Battle.FF9Battle;
+        if ((battleState.cmd_status & 1) != 0 || caster.IsUnderAnyStatus(BattleStatusConst.PreventEnemyCmd))
         {
             caster.Data.sel_mode = 0;
             return;
         }
-        if (btl_para.IsNonDyingVanillaBoss(caster.Data) && caster.CurrentHp < 10000 && stateBattleSystem.btl_phase == FF9StateBattleSystem.PHASE_NORMAL && btl_scrp.GetBattleID(1) == caster.Id)
+        if (btl_para.IsSpecialHPInDyingState(caster) && cmd_no != BattleCommandId.EnemyDying && battleState.btl_phase == FF9StateBattleSystem.PHASE_NORMAL && btl_scrp.GetBattleID(1) == caster.Id)
         {
-            // Avoid bosses to keep attacking under 10000 HP in Speed modes >= 3 (because their AI script will not enter the ending phase if SFX keep playing)
+            // Avoid bosses to keep attacking or counter-attacking under 10000 HP, especially in Speed modes >= 3 (because their AI script will not enter the ending phase if SFX keep playing)
             caster.Data.sel_mode = 0;
             return;
         }
         CMD_DATA cmd;
         if (cmd_no == BattleCommandId.EnemyAtk)
         {
-            if (stateBattleSystem.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
+            if (battleState.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
             {
                 caster.Data.sel_mode = 0;
                 return;
@@ -506,8 +431,6 @@ public class btl_cmd
                 || btl_stat.CheckStatus(cmd.regist, BattleStatus.Death) && cmd.cmd_no == BattleCommandId.SysPhantom
                 || Configuration.Battle.Speed >= 4 && btl_util.IsBtlUsingCommandMotion(cmd.regist)
                 || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0)
-                // TODO [DV] Apply another status than Sleep on bosses / easykill
-                //|| (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill) && btl_stat.CheckStatus(cmd.regist, BattleStatus.Sleep)) // [DV] Prevent command cancel for boss.
             {
                 if (Configuration.Battle.Speed == 4)
                 {
@@ -571,13 +494,6 @@ public class btl_cmd
                 BTL_DATA btl = cmd.regist;
                 if (btl_stat.CheckStatus(btl, BattleStatus.Heat))
                 {
-                    // TODO [DV] Apply another status than Heat on bosses / easykill
-                    //if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill)) // TRANCE SEEK - Boss don't die with Heat.
-                    //{
-                    //    btlsys.cur_cmd_list.Add(cmd);
-                    //    KillCommand(cmd);
-                    //    return;
-                    //}
                     if (btl_stat.AlterStatus(new BattleUnit(btl), BattleStatusId.Death) == btl_stat.ALTER_SUCCESS)
                     {
                         BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Heat);
@@ -1165,9 +1081,6 @@ public class btl_cmd
     {
         if (!btl_stat.CheckStatus(cmd.regist, BattleStatusConst.CannotUseMagic) || (cmd.AbilityCategory & 2) == 0)
             return true;
-        // TODO [DV] Apply a different status than Silence on bosses / easykill
-        //if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(cmd.regist, BattleStatus.EasyKill)) // [DV] - Bosses can use magic under silence but have malus
-        //    return true;
         UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotCast);
         foreach (BattleStatusId silenceStatus in (BattleStatusConst.CannotUseMagic & cmd.regist.stat.cur).ToStatusList())
             BattleVoice.TriggerOnStatusChange(cmd.regist, "Used", silenceStatus);
@@ -1627,7 +1540,7 @@ public class btl_cmd
     public static void DispSelectCursor(FF9StateGlobal sys, FF9StateBattleSystem btlsys, BTL_DATA btl)
     {
         GameObject cursorGo = btlsys.s_cur;
-        Vector3 pos = btl.gameObject.transform.localPosition;
+        Vector3 pos = btl.gameObject.transform.position;
         Vector3 rot = cursorGo.transform.localRotation.eulerAngles;
         cursorGo.transform.localPosition = new Vector3(pos.x, pos.y + btl.height, pos.z);
         Single angley = (Single)((((btlsys.btl_cnt & 15) << 8) + 1265) % 4096 / 4096f * 360f);

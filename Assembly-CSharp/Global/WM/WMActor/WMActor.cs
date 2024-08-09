@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using UnityEngine;
 using Object = System.Object;
 
@@ -423,16 +424,16 @@ public partial class WMActor : MonoBehaviour
 
     private Material[] GetMaterials()
     {
-        SkinnedMeshRenderer[] componentsInChildren = base.GetComponentsInChildren<SkinnedMeshRenderer>();
+        SkinnedMeshRenderer[] renderers = base.GetComponentsInChildren<SkinnedMeshRenderer>();
         Int32 num = 0;
-        Material[] array = new Material[(Int32)componentsInChildren.Length];
-        SkinnedMeshRenderer[] array2 = componentsInChildren;
-        for (Int32 i = 0; i < (Int32)array2.Length; i++)
+        Material[] materials = new Material[renderers.Length];
+        foreach (SkinnedMeshRenderer renderer in renderers)
         {
-            SkinnedMeshRenderer skinnedMeshRenderer = array2[i];
-            array[num++] = skinnedMeshRenderer.material;
+            Material material = renderer.material;
+            ModelFactory.SetMatFilter(material, Configuration.Graphics.WorldSmoothTexture);
+            materials[num++] = material;
         }
-        return array;
+        return materials;
     }
 
     public void SetFogByHeight()

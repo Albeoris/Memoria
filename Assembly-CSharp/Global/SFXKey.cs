@@ -66,7 +66,7 @@ public class SFXKey
 
     public static UInt32 GetFilter(UInt32 key)
     {
-        return key & FILLTER_MASK;
+        return key & FILTER_MASK;
     }
 
     public static Boolean isLinePolygon(UInt32 key)
@@ -100,11 +100,11 @@ public class SFXKey
 
     public const UInt32 ABR_SUB = 0x1000000u;
 
-    public const UInt32 FILLTER_POINT = 0x2000000u;
+    public const UInt32 FILTER_POINT = 0x2000000u;
 
-    public const UInt32 FILLTER_BILINEAR = 0x4000000u;
+    public const UInt32 FILTER_BILINEAR = 0x4000000u;
 
-    public const Int32 FILLTER_MASK = 0x6000000;
+    public const Int32 FILTER_MASK = 0x6000000;
 
     public const UInt32 LINE_POLYGON = 0x8000000u;
 

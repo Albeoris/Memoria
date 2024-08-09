@@ -17,8 +17,8 @@
                         </Style>
                     </Rectangle.Style>
                 </Rectangle>-->
-                <Border BorderThickness="2" Grid.Row="0" Grid.ColumnSpan="2"
-                        CornerRadius="0,0,4,4" BorderBrush="#dd616033" Background="Transparent">
+                <Border x:Name="ButtonBorder" BorderThickness="2" Grid.Row="0" Grid.ColumnSpan="2"
+                        CornerRadius="3,3,3,3" BorderBrush="#dd616033" Background="Transparent">
                 </Border>
                 <TextBlock TextWrapping="Wrap"
 				           Text="{Binding Label, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiModManagerButton}}}"

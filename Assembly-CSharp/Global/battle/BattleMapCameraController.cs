@@ -85,6 +85,10 @@ public class BattleMapCameraController : MonoBehaviour
 
     private void Update()
     {
+        Vector3 _MainLightDirection = new Vector3(-0.6f, 1, 0.6f);
+        Vector3 _EnemyMainLightDirection = new Vector3(-0.6f, 2f, 0.6f);
+        Shader.SetGlobalVector("_MainLightDirection", _MainLightDirection);
+        Shader.SetGlobalVector("_EnemyMainLightDirection", _EnemyMainLightDirection);
     }
 
     private void LateUpdate()

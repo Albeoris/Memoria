@@ -1,16 +1,24 @@
-﻿using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Memoria.Prime;
+using Memoria.Scripts;
 
 public class BattleStateSystem : MonoBehaviour
 {
     private void Awake()
     {
-        this.Init();
-        this.InitMapName();
-        this.IsPlayFieldBGMInCurrentBattle = false;
+        try
+        {
+            this.Init();
+            this.InitMapName();
+            this.IsPlayFieldBGMInCurrentBattle = false;
+        }
+        catch (Exception err)
+        {
+            Log.Error(err);
+        }
     }
 
     private void InitMapName()
@@ -50,7 +58,7 @@ public class BattleStateSystem : MonoBehaviour
         this.FF9Battle.aa_data = FF9BattleDB.CharacterActions;
         this.FF9Battle.add_status = FF9BattleDB.StatusSets;
         this.fadeShader = ShadersLoader.Find("PSX/BattleMap_Abr_1");
-        this.battleShader = ShadersLoader.Find("PSX/BattleMap_StatusEffect");
+        this.battleShader = ShadersLoader.Find(ShadersLoader.GetCurrentBattleCharcterShader);
         this.shadowShader = ShadersLoader.Find("PSX/BattleMap_Abr_2");
         this.detailTexture = AssetManager.Load<Texture2D>("EmbeddedAsset/BattleMap/detailTexture", false);
     }

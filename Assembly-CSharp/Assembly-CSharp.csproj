@@ -244,6 +244,7 @@
     <Compile Include="Global\battle\BattleMapCameraController.cs" />
     <Compile Include="Global\battle\BattlePlayerCharacter.cs" />
     <Compile Include="Global\battle\BattleRainRenderer.cs" />
+    <Compile Include="Global\NormalSolver.cs" />
     <Compile Include="Global\SPS\BattleSPSSystem.cs" />
     <Compile Include="Global\battle\BattleStateSystem.cs" />
     <Compile Include="Global\battle\BattleSwirl.cs" />
@@ -352,7 +353,9 @@
     <Compile Include="Memoria\Battle\Scripts\IOverloadableMethod.cs" />
     <Compile Include="Memoria\Battle\Scripts\IStatusScript.cs" />
     <Compile Include="Memoria\Configuration\Access\Interface.cs" />
+    <Compile Include="Memoria\Configuration\Access\Shaders.cs" />
     <Compile Include="Memoria\Configuration\Structure\InterfaceSection.cs" />
+    <Compile Include="Memoria\Configuration\Structure\ShadersSection.cs" />
     <Compile Include="Memoria\Data\Battle\BattleCommandMenu.cs" />
     <Compile Include="Memoria\Data\Battle\BattleMagicSwordSet.cs" />
     <Compile Include="Memoria\Data\Items\MixCommandType.cs" />
@@ -363,6 +366,7 @@
     <Compile Include="Memoria\Data\TetraMaster\TripleTriad.cs" />
     <Compile Include="Memoria\Data\TetraMaster\TripleTriadCard.cs" />
     <Compile Include="Memoria\Data\TetraMaster\TetraMasterCardId.cs" />
+    <Compile Include="Memoria\Field\FieldCalculator.cs" />
     <Compile Include="Memoria\Scenes\BattleHUD\BattleUIControlPanel.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlHelp.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlHitBox.cs" />
@@ -412,6 +416,7 @@
     <Compile Include="Memoria\Scripts\DefaultStatus\VirusStatusScript.cs" />
     <Compile Include="Memoria\Scripts\DefaultStatus\PetrifyStatusScript.cs" />
     <Compile Include="Memoria\Scripts\DefaultStatus\VenomStatusScript.cs" />
+    <Compile Include="Memoria\Field\IFieldScript.cs" />
     <Compile Include="Memoria\Speedrun\AutoSplitterPipe.cs" />
     <Compile Include="Memoria\Speedrun\Split.cs" />
     <Compile Include="Memoria\Speedrun\SpeedrunSettings.cs" />

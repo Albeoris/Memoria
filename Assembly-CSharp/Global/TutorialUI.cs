@@ -152,8 +152,15 @@ public class TutorialUI : UIScene
 
     public void OnOKButtonClick()
     {
-        this.AnimatePanel(new Vector3(0f, 0f, 0f));
-        base.StartCoroutine(this.WaitAndHide());
+        if (this.DisplayMode == TutorialUI.Mode.Libra && ++this.libraPage < this.libraMessages.Count)
+        {
+            this.battleBottomLabel.text = this.libraMessages[this.libraPage];
+        }
+        else
+        {
+            this.AnimatePanel(new Vector3(0f, 0f, 0f));
+            base.StartCoroutine(this.WaitAndHide());
+        }
     }
 
     private IEnumerator WaitAndHide()
@@ -190,6 +197,7 @@ public class TutorialUI : UIScene
         this.battleTutorialImage2Pointer.spriteName = "tutorial_help_cursor";
         this.battleLeftLabel.text = Localization.Get($"TutorialLeftParagraph{platformUpper}");
         this.battleRightLabel.text = Localization.Get($"TutorialRightParagraph{platformUpper}");
+        this.headerLabel.fontSize = 36;
         this.battleBottomLabel.SetAnchor(target: this.ContentPanel.transform, relTop: 0.33f);
         this.battleBottomLabel.fontSize = 24;
         this.battleBottomLabel.overflowMethod = UILabel.Overflow.ClampContent;
@@ -290,6 +298,7 @@ public class TutorialUI : UIScene
         photoSprite.texture = this.libraPhoto;
         this.headerLocalize.enabled = false;
         this.headerLabel.text = this.libraTitle;
+        this.headerLabel.fontSize = 44;
         this.battleTutorialImage1.spriteName = String.Empty;
         this.battleTutorialImage1.spriteName = "libra_photo";
         this.battleTutorialImage1.SetAnchor(target: this.ContentPanel.transform, relBottom: 1f, relRight: 0f, left: 100f, right: 100f + photoSprite.width, bottom: -100f - photoSprite.height, top: -100f);
@@ -304,10 +313,11 @@ public class TutorialUI : UIScene
         this.battleLeftLabel.text = String.Empty;
         this.battleRightLabel.text = String.Empty;
         this.battleBottomLocalize.enabled = false;
-        this.battleBottomLabel.SetAnchor(target: this.ContentPanel.transform, relLeft: 0.25f);
-        this.battleBottomLabel.text = this.libraMessage;
+        this.battleBottomLabel.SetAnchor(target: this.ContentPanel.transform, left: 100f + photoSprite.width);
+        this.battleBottomLabel.text = this.libraMessages[0];
         this.battleBottomLabel.fontSize = 42;
         this.battleBottomLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
+        this.libraPage = 0;
         base.Loading = true;
         this.AnimatePanel(new Vector3(1f, 1f, 1f));
     }
@@ -364,9 +374,11 @@ public class TutorialUI : UIScene
     [NonSerialized]
     public String libraTitle;
     [NonSerialized]
-    public String libraMessage;
+    public List<String> libraMessages;
     [NonSerialized]
     public Texture2D libraPhoto;
+    [NonSerialized]
+    public Int32 libraPage;
 
     public enum Mode
     {

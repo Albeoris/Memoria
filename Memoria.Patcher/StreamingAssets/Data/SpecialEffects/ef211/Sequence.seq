@@ -3,6 +3,9 @@
 SetBackgroundIntensity: Intensity=0 ; Time=14 ; HoldDuration=149
 Wait: Time=17
 ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+StartThread: Condition=SFXUseCamera && !CasterIsPlayer
+	ShiftWorld: Angle=(0, 180, 0)
+EndThread
 Wait: Time=20
 PlaySound: Sound=2835
 PlaySound: Sound=2836
@@ -11,7 +14,7 @@ PlaySound: Sound=2838
 Wait: Time=82
 PlaySound: Sound=185 ; SoundType=Song ; Volume=1.3
 Wait: Time=6
-ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsPlayer != CasterIsPlayer) ; Enable=True ; IsDisappear=True
 Wait: Time=25
 SetBackgroundIntensity: Intensity=0.4296875 ; Time=12 ; HoldDuration=138
 Wait: Time=67
@@ -20,20 +23,23 @@ PlaySound: Sound=2840
 PlaySound: Sound=2841
 PlaySound: Sound=2842
 Wait: Time=33
-ShowMesh: Char=AllEnemies ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsPlayer != CasterIsPlayer) ; Enable=False ; IsDisappear=True
 Wait: Time=38
-ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsPlayer != CasterIsPlayer) ; Enable=True ; IsDisappear=True
 SetBackgroundIntensity: Intensity=0.390625 ; Time=1 ; HoldDuration=157
 Wait: Time=62
-ShowMesh: Char=AllEnemies ; Enable=False ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsPlayer != CasterIsPlayer) ; Enable=False ; IsDisappear=True
 Wait: Time=91
-ShowMesh: Char=AllPlayers ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllPlayers ; Enable=True ; Time=11
+ShowMesh: Char=MatchingCondition(IsPlayer == CasterIsPlayer) ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsPlayer == CasterIsPlayer) ; Enable=True ; Time=11
 Wait: Time=3
-ShowMesh: Char=AllEnemies ; Enable=True ; IsDisappear=True
+ShowMesh: Char=MatchingCondition(IsPlayer != CasterIsPlayer) ; Enable=True ; IsDisappear=True
 EffectPoint: Char=AllTargets ; Type=Effect
 Wait: Time=1
 SetBackgroundIntensity: Intensity=1 ; Time=14
 Wait: Time=16
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=8
+StartThread: Condition=SFXUseCamera && !CasterIsPlayer
+	ShiftWorld: Angle=(0, 0, 0)
+EndThread

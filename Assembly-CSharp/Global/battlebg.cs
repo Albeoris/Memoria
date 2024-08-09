@@ -1,4 +1,5 @@
-﻿using Memoria.Prime;
+﻿using Memoria;
+using Memoria.Prime;
 using Memoria.Scripts;
 using System;
 using System.Collections.Generic;
@@ -7,9 +8,18 @@ using UnityEngine;
 
 public static class battlebg
 {
+    public static GameObject BattleRoot => battlebg.btlRoot;
+
+    public static void CreateBattleRoot()
+    {
+        if (battlebg.btlRoot == null)
+            battlebg.btlRoot = new GameObject("Battle Central Root");
+    }
+
     public static void nf_InitBattleBG(BBGINFO bbginfoPtr, GEOTEXHEADER tab)
     {
         battlebg.btlModel = FF9StateSystem.Battle.FF9Battle.map.btlBGPtr;
+        battlebg.btlModel.transform.parent = battlebg.btlRoot.transform;
         battlebg.nf_BbgInfoPtr = bbginfoPtr;
         battlebg.nf_BbgNumber = battlebg.nf_BbgInfoPtr.bbgnumber;
         battlebg.nf_SkyFixPositionFlag = 0;
@@ -27,7 +37,8 @@ public static class battlebg
         for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
         {
             String objName = $"BBG_B{battlebg.nf_BbgNumber:D3}_OBJ{i + 1}";
-            battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false);
+            battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false, false, Configuration.Graphics.BattleSmoothTexture);
+            battlebg.objAnimModel[i].transform.parent = battlebg.btlRoot.transform;
             battlebg.SetDefaultShader(battlebg.objAnimModel[i]);
             if (battlebg.nf_BbgNumber == 171 && i == 1) // Crystal World, Crystal
                 battlebg.SetMaterialShader(battlebg.objAnimModel[i], "PSX/BattleMap_Cystal");
@@ -75,6 +86,7 @@ public static class battlebg
                 Material material = materials[matID];
                 String text = material.name.Replace("(Instance)", String.Empty);
                 material.mainTexture.wrapMode = TextureWrapMode.Clamp; // Fixes PNG Textures having seams between them
+                ModelFactory.SetMatFilter(material, Configuration.Graphics.BattleSmoothTexture);
                 if (text.Contains("a"))
                 {
                     if (battlebg.nf_BbgNumber == 21) // Duel Amarant Zidane
@@ -143,8 +155,8 @@ public static class battlebg
         for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
         {
             battlebg.getBbgObjAnimation(battlebg.nf_BbgNumber, i, battlebg.nf_BbgTick, fullTime, out Vector3 bbgPos, out Quaternion bbgRot);
-            battlebg.objAnimModel[i].transform.localPosition = bbgPos;
-            battlebg.objAnimModel[i].transform.localRotation = bbgRot;
+            battlebg.objAnimModel[i].transform.localPosition = battlebg.nf_BbgOffset + bbgPos;
+            battlebg.objAnimModel[i].transform.localRotation = battlebg.nf_BbgAngle * bbgRot;
         }
     }
 
@@ -364,6 +376,63 @@ public static class battlebg
         }
     }
 
+    public static void ShiftWorld(Vector3 offset, Quaternion angle)
+    {
+        //Vector3 enemyPosMin = new Vector3(Single.MaxValue, 0f, Single.MaxValue);
+        //Vector3 enemyPosMax = new Vector3(Single.MinValue, 0f, Single.MinValue);
+        //foreach (BTL_DATA btl in FF9StateSystem.Battle.FF9Battle.btl_data)
+        //{
+        //    if (btl.btl_id != 0)
+        //    {
+        //        btl._smoothUpdateRegistered = false;
+        //        if (btl?.gameObject != null && btl.gameObject.transform.parent == null)
+        //            btl.gameObject.transform.parent = battlebg.btlRoot.transform;
+        //        if (btl.bi.player == 0)
+        //        {
+        //            enemyPosMin = Vector3.Min(enemyPosMin, btl.original_pos);
+        //            enemyPosMax = Vector3.Max(enemyPosMax, btl.original_pos);
+        //        }
+        //    }
+        //}
+        //Vector3 center = ((enemyPosMin + enemyPosMax) / 2 + new Vector3(0f, 0f, btl_init.PLAYER_ORIGINAL_Z)) / 2;
+        //center.y = 0f;
+        Vector3 center = new Vector3(-700f, 0f, -350f);
+        offset += center - (angle * center);
+        battlebg.btlRoot.transform.localPosition = offset;
+        battlebg.btlRoot.transform.localRotation = angle;
+        foreach (BTL_DATA btl in FF9StateSystem.Battle.FF9Battle.btl_data)
+            btl._smoothUpdateRegistered = false;
+        //Vector3 posUpdate = offset - battlebg.nf_BbgOffset;
+        //Quaternion angleUpdate = angle * Quaternion.Inverse(battlebg.nf_BbgAngle);
+        //battlebg.nf_BbgOffset = offset;
+        //battlebg.nf_BbgAngle = angle;
+        //Int32 fullTime = (Int32)Time.realtimeSinceStartup;
+        //for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
+        //{
+        //    battlebg.getBbgObjAnimation(battlebg.nf_BbgNumber, i, battlebg.nf_BbgTick, fullTime, out Vector3 bbgPos, out Quaternion bbgRot);
+        //    battlebg.objAnimModel[i].transform.localPosition = offset + bbgPos;
+        //    battlebg.objAnimModel[i].transform.localRotation = angle * bbgRot;
+        //}
+        //battlebg.btlModel.transform.localPosition = offset;
+        //battlebg.btlModel.transform.localRotation = angle;
+        //foreach (BTL_DATA btl in FF9StateSystem.Battle.FF9Battle.btl_data)
+        //{
+        //    btl.pos += posUpdate;
+        //    btl.evt.posBattle += posUpdate;
+        //    btl.base_pos += posUpdate;
+        //    btl.original_pos += posUpdate;
+        //    btl.rot = angleUpdate * btl.rot;
+        //    btl.evt.rotBattle = angleUpdate * btl.evt.rotBattle;
+        //}
+    }
+
+    public static void UnshiftWorld()
+    {
+        if (battlebg.nf_BbgOffset == Vector3.zero && battlebg.nf_BbgAngle == Quaternion.identity)
+            return;
+        ShiftWorld(Vector3.zero, Quaternion.identity);
+    }
+
     public static Int32 nf_GetBbgIntensity()
     {
         return battlebg.nf_BbgBrite;
@@ -417,7 +486,7 @@ public static class battlebg
                 for (Int32 i = 0; i < bbginfo.objanim; i++)
                 {
                     String objName = $"BBG_B{geotexheader.bbgnumber:D3}_OBJ{i + 1}";
-                    extraObj[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false);
+                    extraObj[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false, true, Configuration.Graphics.BattleSmoothTexture);
                 }
             }
             geotexheader.InitBBGTextureAnim(go, extraObj);
@@ -640,10 +709,13 @@ public static class battlebg
     public static Int32 nf_b007b;
     public static Int32 nf_BbgTick;
 
+    private static GameObject btlRoot;
     private static GameObject btlModel;
     private static GameObject[] objAnimModel;
 
     private static Byte nf_BbgBrite = 128;
+    private static Vector3 nf_BbgOffset = Vector3.zero;
+    private static Quaternion nf_BbgAngle = Quaternion.identity;
 
     private static readonly HashSet<Int32> bbg_KeepSkyScaleList =
     [

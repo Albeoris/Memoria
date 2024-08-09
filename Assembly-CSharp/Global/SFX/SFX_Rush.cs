@@ -63,14 +63,13 @@ public class SFX_Rush
         GL.LoadIdentity();
         GL.MultMatrix(Matrix4x4.Scale(new Vector3(1f, 2f, 1f)));
         GL.Viewport(new Rect(0.0f, 0.0f, Screen.width, Screen.height));
-
         for (Int32 index = 0; index < 2; ++index)
         {
             _texture[index] = new RenderTexture((Int32)screenSize.width, (Int32)screenSize.height, 0, RenderTextureFormat.ARGB32)
             {
                 enableRandomWrite = false,
                 wrapMode = TextureWrapMode.Clamp,
-                filterMode = FilterMode.Point,
+                filterMode = ModelFactory.GetFilterMode(Configuration.Graphics.SFXSmoothTexture, 0),
                 name = "Rush_RT_" + index
             };
             _texture[index].Create();

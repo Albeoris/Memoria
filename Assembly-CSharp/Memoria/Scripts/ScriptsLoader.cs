@@ -21,6 +21,46 @@ namespace Memoria.Scripts
         private static volatile Dictionary<String, Shader> s_shaders;
         private static volatile FileSystemWatcher s_watcher;
 
+        // TODO: these would rather be placed in "Memoria/Configuration/Access/Shaders.cs"
+        private const string DefaultBattleCharacterShader = "PSX/BattleMap_StatusEffect";
+        private const string ToonBattleCharacterShader = "PSX/BattleMap_StatusEffect_Toon";
+        private const string RealismBattleCharacterShader = "PSX/BattleMap_StatusEffect_RealLighting";
+        
+        private const string DefaultFieldCharacterShader = "PSX/FieldMapActor";
+        private const string ToonFieldCharacterShader = "PSX/FieldMapActor_Toon";
+        private const string RealismFieldCharacterShader = "PSX/FieldMapActor_RealLighting";
+
+        public static string GetCurrentBattleCharcterShader
+        {
+            get
+            {
+                if (Configuration.Shaders.CustomShaderEnabled == 1)
+                {
+                    if (Configuration.Shaders.Shader_Battle_Realism == 1)
+                        return RealismBattleCharacterShader;
+                    else if (Configuration.Shaders.Shader_Battle_Toon == 1)
+                        return ToonBattleCharacterShader;
+                }
+
+                return DefaultBattleCharacterShader;
+            }
+        }
+        
+        public static string GetCurrentFieldMapCharcterShader
+        {
+            get
+            {
+                if (Configuration.Shaders.CustomShaderEnabled == 1)
+                {
+                    if (Configuration.Shaders.Shader_Field_Realism == 1)
+                        return RealismFieldCharacterShader;
+                    else if (Configuration.Shaders.Shader_Field_Toon == 1)
+                        return ToonFieldCharacterShader;
+                }
+                return DefaultFieldCharacterShader;
+            }
+        }
+
         public static void InitializeAsync()
         {
             s_initializationTask = Task.Run(Initialize);
@@ -245,6 +285,14 @@ namespace Memoria.Scripts
             return null;
         }
 
+        public static FieldAbilityScriptBase GetFieldAbilityScript(Int32 scriptId)
+        {
+            foreach (Result result in s_result)
+                if (result.FieldAbilityScripts.TryGetValue(scriptId, out Type scriptType))
+                    return (FieldAbilityScriptBase)scriptType.GetConstructor(Type.EmptyTypes).Invoke(null);
+            return null;
+        }
+
         public static StatusScriptBase GetStatusScript(BattleStatusId statusId)
         {
             foreach (Result result in s_result)
@@ -324,6 +372,8 @@ namespace Memoria.Scripts
                 Type attributeType = attribute.GetType();
                 if (attributeType == TypeCache<BattleScriptAttribute>.Type)
                     ProcessBattleScript(type, result, attribute);
+                else if (attributeType == TypeCache<FieldAbilityScriptAttribute>.Type)
+                    result.FieldAbilityScripts[(attribute as FieldAbilityScriptAttribute).Id] = type;
                 else if (attributeType == TypeCache<StatusScriptAttribute>.Type)
                     result.StatusScripts[(attribute as StatusScriptAttribute).Id] = type;
             }
@@ -342,6 +392,8 @@ namespace Memoria.Scripts
                 if (interf == typeof(IOverloadOnFleeScript))
                     result.OverloadableMethodScripts[interf] = type;
                 if (interf == typeof(IOverloadDamageModifierScript))
+                    result.OverloadableMethodScripts[interf] = type;
+                if (interf == typeof(IOverloadOnBattleInitScript))
                     result.OverloadableMethodScripts[interf] = type;
             }
         }
@@ -363,6 +415,7 @@ namespace Memoria.Scripts
         {
             public readonly BattleScriptFactory[] BattleBaseScripts;
             public readonly Dictionary<Int32, BattleScriptFactory> BattleExtendedScripts;
+            public readonly Dictionary<Int32, Type> FieldAbilityScripts;
             public readonly Dictionary<BattleStatusId, Type> StatusScripts;
             public readonly Dictionary<Type, Type> OverloadableMethodScripts;
             public readonly String DLLPath;
@@ -371,6 +424,7 @@ namespace Memoria.Scripts
             {
                 BattleBaseScripts = new BattleScriptFactory[256];
                 BattleExtendedScripts = new Dictionary<Int32, BattleScriptFactory>();
+                FieldAbilityScripts = new Dictionary<Int32, Type>();
                 StatusScripts = new Dictionary<BattleStatusId, Type>();
                 OverloadableMethodScripts = new Dictionary<Type, Type>();
                 DLLPath = dllPath;

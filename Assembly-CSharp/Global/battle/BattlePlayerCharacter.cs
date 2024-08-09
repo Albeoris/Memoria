@@ -1,4 +1,5 @@
 ﻿using FF9;
+using Memoria;
 using Memoria.Data;
 using System;
 using System.Collections.Generic;
@@ -69,21 +70,23 @@ public class BattlePlayerCharacter : MonoBehaviour
         }
     }
 
-    public static void CreatePlayer(BTL_DATA btl, CharacterSerialNumber playerSerialNumber)
+    public static void CreatePlayer(BTL_DATA btl, PLAYER p)
     {
-        String path = btl_mot.BattleParameterList[playerSerialNumber].ModelId;
-        GameObject gameObject = ModelFactory.CreateModel(path, true);
-        BattlePlayerCharacter.CreateTranceModel(btl, playerSerialNumber);
-        BattlePlayerCharacter.CheckToHideBattleModel(gameObject, playerSerialNumber);
-        btl.gameObject = gameObject;
-        btl.originalGo = gameObject;
+        CharacterBattleParameter btlParam = btl_mot.BattleParameterList[p.info.serial_no];
+        p.wep_bone = btlParam.WeaponBone;
+        btl.gameObject = ModelFactory.CreateModel(btlParam.ModelId, true, true, Configuration.Graphics.ElementsSmoothTexture);
+        btl.originalGo = btl.gameObject;
+        BattlePlayerCharacter.CreateTranceModel(btl, btlParam.TranceModelId);
+        if (p.info.serial_no == CharacterSerialNumber.ZIDANE_SWORD)
+        {
+            BattlePlayerCharacter.HideZidaneOrichalcum(btl.gameObject);
+            BattlePlayerCharacter.HideZidaneOrichalcum(btl.tranceGo);
+        }
     }
 
-    private static void CreateTranceModel(BTL_DATA btl, CharacterSerialNumber serial)
+    private static void CreateTranceModel(BTL_DATA btl, String path)
     {
-        String path = btl_mot.BattleParameterList[serial].TranceModelId;
-        btl.tranceGo = ModelFactory.CreateModel(path, true);
-        BattlePlayerCharacter.CheckToHideBattleModel(btl.tranceGo, serial);
+        btl.tranceGo = ModelFactory.CreateModel(path, true, true, Configuration.Graphics.ElementsSmoothTexture);
         btl.tranceGo.transform.localPosition = new Vector3(btl.tranceGo.transform.localPosition.x, -10000f, btl.tranceGo.transform.localPosition.z);
         // Set custom trance texture, if they exist
         String tranceTexturePath = Path.GetDirectoryName(ModelFactory.GetRenameModelPath(ModelFactory.CheckUpscale(path))) + "/%_trance.png";
@@ -97,60 +100,61 @@ public class BattlePlayerCharacter : MonoBehaviour
                 renderer.material.mainTexture = texture;
             }
         }
+        SkinnedMeshRenderer[] componentsInChildren = btl.tranceGo.GetComponentsInChildren<SkinnedMeshRenderer>();
+        MeshRenderer[] componentsInChildren2 = btl.tranceGo.GetComponentsInChildren<MeshRenderer>();
+        NormalSolver.SmoothCharacterMesh(componentsInChildren);
+        NormalSolver.SmoothCharacterMesh(componentsInChildren2);
         btl.tranceGo.SetActive(false);
     }
 
-    private static void CheckToHideBattleModel(GameObject characterGo, CharacterSerialNumber serial)
+    private static void HideZidaneOrichalcum(GameObject characterGo)
     {
-        if (serial == CharacterSerialNumber.ZIDANE_SWORD)
+        Transform childByName = characterGo.transform.GetChildByName("battle_model");
+        if (childByName != null)
         {
-            Transform childByName = characterGo.transform.GetChildByName("battle_model");
-            if (childByName != null)
-            {
-                Renderer[] renderers = childByName.GetComponentsInChildren<Renderer>();
-                for (Int32 i = 0; i < renderers.Length; i++)
-                    renderers[i].enabled = false;
-            }
+            Renderer[] renderers = childByName.GetComponentsInChildren<Renderer>();
+            for (Int32 i = 0; i < renderers.Length; i++)
+                renderers[i].enabled = false;
         }
     }
 
     public static readonly String[] PlayerMotionNum = new String[] // Indented by "PlayerMotionIndex"
-	{
+    {
         "000", // MP_IDLE_NORMAL
-		"022", // MP_IDLE_DYING
-		"300", // MP_DAMAGE1
-		"310", // MP_DAMAGE2
-		"033", // MP_DISABLE
-		"020", // MP_GET_UP_DYING
-		"032", // MP_GET_UP_DISABLE
-		"002", // MP_DOWN_DYING
-		"023", // MP_DOWN_DISABLE
-		"011", // MP_IDLE_CMD
-		"001", // MP_NORMAL_TO_CMD
-		"021", // MP_DYING_TO_CMD
-		"400", // MP_IDLE_TO_DEF
-		"401", // MP_DEFENCE
-		"402", // MP_DEF_TO_IDLE
-		"410", // MP_COVER
-		"420", // MP_AVOID
-		"430", // MP_ESCAPE
-		"500", // MP_WIN
-		"501", // MP_WIN_LOOP
-		"100", // MP_SET
-		"101", // MP_RUN
-		"102", // MP_RUN_TO_ATTACK
-		"103", // MP_ATTACK
-		"104", // MP_BACK
-		"105", // MP_ATK_TO_NORMAL
-		"200", // MP_IDLE_TO_CHANT
-		"201", // MP_CHANT
-		"202", // MP_MAGIC
-		"040", // MP_STEP_FORWARD
-		"050", // MP_STEP_BACK
-		"210", // MP_ITEM1
-		"010", // MP_CMD_TO_NORMAL
-		"220"  // MP_SPECIAL1
-	};
+        "022", // MP_IDLE_DYING
+        "300", // MP_DAMAGE1
+        "310", // MP_DAMAGE2
+        "033", // MP_DISABLE
+        "020", // MP_GET_UP_DYING
+        "032", // MP_GET_UP_DISABLE
+        "002", // MP_DOWN_DYING
+        "023", // MP_DOWN_DISABLE
+        "011", // MP_IDLE_CMD
+        "001", // MP_NORMAL_TO_CMD
+        "021", // MP_DYING_TO_CMD
+        "400", // MP_IDLE_TO_DEF
+        "401", // MP_DEFENCE
+        "402", // MP_DEF_TO_IDLE
+        "410", // MP_COVER
+        "420", // MP_AVOID
+        "430", // MP_ESCAPE
+        "500", // MP_WIN
+        "501", // MP_WIN_LOOP
+        "100", // MP_SET
+        "101", // MP_RUN
+        "102", // MP_RUN_TO_ATTACK
+        "103", // MP_ATTACK
+        "104", // MP_BACK
+        "105", // MP_ATK_TO_NORMAL
+        "200", // MP_IDLE_TO_CHANT
+        "201", // MP_CHANT
+        "202", // MP_MAGIC
+        "040", // MP_STEP_FORWARD
+        "050", // MP_STEP_BACK
+        "210", // MP_ITEM1
+        "010", // MP_CMD_TO_NORMAL
+        "220"  // MP_SPECIAL1
+    };
 
     public static readonly Dictionary<String, String> PlayerModelToAnimationID = new Dictionary<String, String>
     {

@@ -216,6 +216,21 @@ namespace Memoria.Launcher
             public static readonly string UIColumnsChoice1 = GetSettings(nameof(UIColumnsChoice1));
             public static readonly string UIColumnsChoice2 = GetSettings(nameof(UIColumnsChoice2));
             public static readonly string NoAutoTrance = GetSettings(nameof(NoAutoTrance));
+            public static readonly string CardReduceRandom = GetSettings(nameof(CardReduceRandom));
+            public static readonly string tetraMasterReduceRandomBox0 = GetSettings(nameof(tetraMasterReduceRandomBox0));
+            public static readonly string tetraMasterReduceRandomBox1 = GetSettings(nameof(tetraMasterReduceRandomBox1));
+            public static readonly string tetraMasterReduceRandomBox2 = GetSettings(nameof(tetraMasterReduceRandomBox2));
+
+            // Advanced Settings
+            /* Unused for now
+            public static readonly string EnableCustomShader = GetSettings(nameof(EnableCustomShader));
+            public static readonly string Shader_Field_Realism = GetSettings(nameof(Shader_Field_Realism));
+            public static readonly string Shader_Field_Toon = GetSettings(nameof(Shader_Field_Toon));
+            public static readonly string Shader_Field_Outlines = GetSettings(nameof(Shader_Field_Outlines));
+            public static readonly string Shader_Battle_Realism = GetSettings(nameof(Shader_Battle_Realism));
+            public static readonly string Shader_Battle_Toon = GetSettings(nameof(Shader_Battle_Toon));
+            public static readonly string Shader_Battle_Outlines = GetSettings(nameof(Shader_Battle_Outlines));
+            */
 
             // Settings.ini Tooltips
             public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));
@@ -262,7 +277,7 @@ namespace Memoria.Launcher
             public static readonly string NoRandomBattles_Tooltip = GetSettings(nameof(NoRandomBattles_Tooltip));
             public static readonly string PermanentCheats_Tooltip = GetSettings(nameof(PermanentCheats_Tooltip));
             public static readonly string MaxCardCount_Tooltip = GetSettings(nameof(MaxCardCount_Tooltip));
-
+            public static readonly string CardReduceRandom_Tooltip = GetSettings(nameof(CardReduceRandom_Tooltip));
 
 
             public static readonly string FPSDropboxChoice = GetSettings(nameof(FPSDropboxChoice));

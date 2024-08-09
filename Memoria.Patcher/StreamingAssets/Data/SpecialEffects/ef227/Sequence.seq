@@ -3,6 +3,9 @@
 SetBackgroundIntensity: Intensity=0 ; Time=14 ; HoldDuration=116
 Wait: Time=18
 ShowMesh: Char=Everyone ; Enable=False ; IsDisappear=True
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 180, 0)
+EndThread
 Wait: Time=42
 PlaySound: Sound=2136
 PlaySound: Sound=2137
@@ -62,6 +65,9 @@ Wait: Time=12
 EffectPoint: Char=Everyone ; Type=Figure
 Wait: Time=18
 SetBackgroundIntensity: Intensity=1 ; Time=12
+StartThread: Condition=SFXUseCamera && AreTargetsPlayers
+	ShiftWorld: Angle=(0, 0, 0)
+EndThread
 ShowMesh: Char=Everyone ; Enable=True ; IsDisappear=True
-ShowMesh: Char=AllPlayers ; Enable=True ; Time=12
+ShowMesh: Char=AllNonTargets ; Enable=True ; Time=12
 Wait: Time=31

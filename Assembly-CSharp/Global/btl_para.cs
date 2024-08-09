@@ -16,7 +16,7 @@ public class btl_para
     {
         // Custom Memoria method for enemies with 10 000 HP more than they should for scripting purposes
         // It might be a good idea to rework completly the system (let some enemies be able to survive / perform ending attacks even with 0 HP for instance), but any solution requires a rewrite of AI scripts
-        // Even this solution requires a rework of many AI scripts since the HP gap is not always 10 000 (Kraken's tentacle for instance)
+        // Even this solution requires a rework of many AI scripts since the HP gap is not always 10 000 (Gizamaluke, Kraken's tentacle...)
         UInt32 hp = max ? btl.max.hp : btl.cur.hp;
         if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && btl.bi.player == 0 && (btl_util.getEnemyPtr(btl).info.flags & ENEMY.ENEMY_INFO.FLG_NON_DYING_BOSS) != 0)
         {
@@ -32,7 +32,6 @@ public class btl_para
     {
         if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
         {
-            // TODO [Tirlititi] Check that "IsNonDyingVanillaBoss" isn't needed at all in AF
             if (btl.bi.player == 0 && (btl_util.getEnemyPtr(btl).info.flags & ENEMY.ENEMY_INFO.FLG_NON_DYING_BOSS) != 0)
             {
                 if (newHP == 0)
@@ -249,35 +248,11 @@ public class btl_para
         UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            // TODO [DV] Code that in a custom PoisonStatusScript / VenomStatusScript
-            if (Configuration.Mod.TranceSeek)
-            {
-                damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 8 : 5);
-                if (battleUnit.IsUnderStatus(BattleStatus.Venom))
-                    damage = GetLogicalHP(btl, true) >> (battleUnit.IsUnderStatus(BattleStatus.EasyKill) ? 7 : 4);
-            }
-            else
-            {
-                damage = GetLogicalHP(btl, true) >> 4;
-                if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
-                    damage >>= 2;
-            }
+            damage = GetLogicalHP(btl, true) >> 4;
+            if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
+                damage >>= 2;
             if (!FF9StateSystem.Battle.isDebug)
             {
-                if (Configuration.Mod.TranceSeek && battleUnit.IsZombie)
-                {
-                    if (battleUnit.IsUnderStatus(BattleStatus.Poison)) // [DV] Zombie get healed by Poison in Trance Seek.
-                    {
-                        btl.cur.hp += damage;
-                        return;
-                    }
-                    if (battleUnit.IsUnderStatus(BattleStatus.Venom)) // [DV] Zombie get half damage by Venom in Trance Seek.
-                    {
-                        damage /= 2U;
-                        btl.cur.hp -= damage;
-                        return;
-                    }
-                }
                 if (GetLogicalHP(btl, false) > damage)
                 {
                     if (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull)
@@ -298,7 +273,7 @@ public class btl_para
         UInt32 recover = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            recover = GetLogicalHP(btl, true) >> (Configuration.Mod.TranceSeek ? (btl_stat.CheckStatus(btl, BattleStatus.EasyKill) ? 7 : 5) : 4);
+            recover = GetLogicalHP(btl, true) >> 4;
             if (new BattleUnit(btl).IsZombie)
             {
                 if (GetLogicalHP(btl, false) > recover)
@@ -321,17 +296,12 @@ public class btl_para
     public static void SetPoisonMpDamage(BTL_DATA btl)
     {
         // Dummied
-        // TODO [DV] Code that in a custom VenomStatusScript
-        if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.EasyKill)) // TRANCE SEEK - Venom didn't remove MP on bosses.
-            return;
         UInt32 damage = 0;
         if (!btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
-            damage = btl.max.mp >> (Configuration.Mod.TranceSeek ? 5 : 4);
+            damage = btl.max.mp >> 4;
             if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
                 damage >>= 2;
-            if (Configuration.Mod.TranceSeek && btl_stat.CheckStatus(btl, BattleStatus.Venom))
-                damage = btl.max.mp >> 4;
             if (!FF9StateSystem.Battle.isDebug && (btl.bi.player == 0 || !FF9StateSystem.Settings.IsHpMpFull))
             {
                 if (btl.cur.mp > damage)
@@ -365,7 +335,7 @@ public class btl_para
 
     public static Boolean IsNonDyingVanillaBoss(BTL_DATA btl)
     {
-        if (btl.bi.player != 0)
+        if (Configuration.Battle.CustomBattleFlagsMeaning != 0 || btl.bi.player != 0)
             return false;
         if (NonDyingBossBattles.Contains(FF9StateSystem.Battle.battleMapIndex))
         {
@@ -374,6 +344,22 @@ public class btl_para
             return true;
         }
         return false;
+    }
+
+    /// <summary>Check if an enemy has the special 10000 HP threshold system and if its current HP is under that threshold (typically ending the battle)</summary>
+    public static Boolean IsSpecialHPInDyingState(BTL_DATA btl)
+    {
+        if (btl.bi.player != 0)
+            return false;
+        if (Configuration.Battle.CustomBattleFlagsMeaning == 1)
+        {
+            return (btl_util.getEnemyPtr(btl).info.flags & ENEMY.ENEMY_INFO.FLG_NON_DYING_BOSS) != 0 && btl.cur.hp < 10000;
+        }
+        else
+        {
+            // This is not always correct: for enemies whose HP threshold is not 10000 (eg. Gizamaluke), it doesn't spot that the dying state is reached
+            return IsNonDyingVanillaBoss(btl) && btl.cur.hp < 10000;
+        }
     }
 
     private static HashSet<Int32> NonDyingBossBattles = new HashSet<Int32>()

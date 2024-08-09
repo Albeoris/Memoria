@@ -18,7 +18,6 @@ public class STAT_INFO
     public Dictionary<BattleStatusId, Int32> conti = new Dictionary<BattleStatusId, Int32>();
     public BattleStatus permanent_on_hold; // Statuses that cannot be applied yet but will be applied (as permanent) as soon as possible
 
-    // TODO [DV] Moved here for consistency
     public StatusModifier partial_resist = new StatusModifier(0f);
     public StatusModifier duration_factor = new StatusModifier(1f);
 }

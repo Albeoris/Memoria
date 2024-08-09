@@ -87,14 +87,30 @@ namespace Memoria.Patcher
             String executablePath = Assembly.GetEntryAssembly().Location;
             using (FileStream inputFile = File.OpenRead(executablePath))
             {
-                inputFile.Seek(-3 * 8, SeekOrigin.End);
+                Int64 magicNumber;
                 BinaryReader br = new BinaryReader(inputFile);
+                try
+                {
+                    // if the file is signed
+                    inputFile.Seek(-0x28B2, SeekOrigin.End);
 
-                Int64 magicNumber = br.ReadInt64();
+                    magicNumber = br.ReadInt64();
+                    if (magicNumber != 0x004149524F4D454D)// MEMORIA\0 
+                        throw new InvalidDataException("Invalid magic number: " + magicNumber);
+                }
+                catch (Exception ex)
+                {
+                    // if the file is not signed
+                    inputFile.Seek(-3 * 8, SeekOrigin.End);
+
+                    magicNumber = br.ReadInt64();
+                    if (magicNumber != 0x004149524F4D454D)// MEMORIA\0 
+                        throw new InvalidDataException("Invalid magic number: " + magicNumber);
+                }
+
+
                 Int64 uncompressedDataSize = br.ReadInt64();
                 Int64 compressedDataPosition = br.ReadInt64();
-                if (magicNumber != 0x004149524F4D454D) // MEMORIA\0
-                    throw new InvalidDataException("Invalid magic number: " + magicNumber);
 
                 Boolean isSteamOverlayFixed = GameLocationSteamRegistryProvider.IsSteamOverlayFixed();
                 Boolean fixReleased = false;
@@ -372,7 +388,9 @@ namespace Memoria.Patcher
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Failed to get a game location.");
+                Console.WriteLine("Failed to get a game location:");
+                Console.WriteLine("If you changed the game directory from your first install, install this from the new game location.");
+                Console.WriteLine("Make sure you have launched the game at least once.");
                 Console.WriteLine("---------------------------");
                 Console.WriteLine(ex);
                 Console.WriteLine("---------------------------");

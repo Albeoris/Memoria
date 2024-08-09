@@ -27,6 +27,7 @@ namespace Memoria.Assets
         private static Boolean orthoView = false;
         private static Boolean KeepCoordinates = true;
         private static Boolean UseModdedTextures = true;
+        private static Boolean IsMouseOverWindow = true;
         private static List<ModelObject> geoList;
         private static List<ModelObject> weapongeoList;
         private static List<KeyValuePair<Int32, String>> animList;
@@ -106,6 +107,7 @@ namespace Memoria.Assets
             spsEffect.meshRenderer = meshRenderer;
             spsEffect.meshFilter = meshFilter;
             
+            // Model Viewer UI
             if (infoPanel != null) // For Soft Reset
                 UnityEngine.Object.Destroy(infoPanel.BasePanel.gameObject);
             if (controlPanel != null)
@@ -120,7 +122,7 @@ namespace Memoria.Assets
             infoPanel.EndInitialization(UIWidget.Pivot.BottomRight);
             infoPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
             controlPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
-            controlLabel = controlPanel.AddSimpleLabel("", NGUIText.Alignment.Right, 10);
+            controlLabel = controlPanel.AddSimpleLabel("", NGUIText.Alignment.Right, 11);
             controlPanel.EndInitialization(UIWidget.Pivot.BottomRight);
             controlPanel.BasePanel.SetRect(-50f, 0f, 1000f, 580f);
             extraInfoPanel = new ControlPanel(PersistenSingleton<UIManager>.Instance.transform, "");
@@ -174,6 +176,30 @@ namespace Memoria.Assets
                 sprite.spriteName = String.Empty;
                 sprite.alpha = 0f;
             }
+
+            // Setup World Map lights
+            Light wmLight0 = GameObject.Find("ModelViewerWMLight0")?.GetComponent<Light>();
+            Light wmLight1 = GameObject.Find("ModelViewerWMLight1")?.GetComponent<Light>();
+            Light wmLight2 = GameObject.Find("ModelViewerWMLight2")?.GetComponent<Light>();
+            if (wmLight0 == null || wmLight1 == null || wmLight2 == null)
+            {
+                wmLight0 = new GameObject("ModelViewerWMLight0").AddComponent<Light>();
+                wmLight1 = new GameObject("ModelViewerWMLight1").AddComponent<Light>();
+                wmLight2 = new GameObject("ModelViewerWMLight2").AddComponent<Light>();
+            }
+            wmLight0.transform.position = new Vector3(0f, 5f, 0f);
+            wmLight1.transform.position = new Vector3(1f, 5f, 0f);
+            wmLight2.transform.position = new Vector3(2f, 5f, 0f);
+            wmLight0.transform.rotation = Quaternion.LookRotation(Vector3.down);
+            wmLight1.transform.rotation = Quaternion.LookRotation(Vector3.right);
+            wmLight2.transform.rotation = Quaternion.LookRotation(new Vector3(0f, -1f, -4f).normalized);
+            wmLight0.type = LightType.Directional;
+            wmLight1.type = LightType.Directional;
+            wmLight2.type = LightType.Directional;
+            wmLight0.color = new Color(0.247f, 0.247f, 0.247f); // The default ambiant lights
+            wmLight1.color = new Color(0.177f, 0.177f, 0.177f);
+            wmLight2.color = new Color(0.402f, 0.378f, 0.329f);
+
             // Usual models, of type ACC, MAIN, MON, NPC, SUB and WEP
             foreach (KeyValuePair<Int32, String> geo in FF9BattleDB.GEO)
             {
@@ -185,12 +211,18 @@ namespace Memoria.Assets
             }
             geoArchetype.Add(0);
             String lastArchetype = geoList[0].Name.Substring(0, 8);
+            Boolean reachedWorldArchetype = false;
             for (Int32 i = 0; i < geoList.Count; i++)
             {
                 if (!geoList[i].Name.StartsWith(lastArchetype))
                 {
                     geoArchetype.Add(i);
                     lastArchetype = geoList[i].Name.Substring(0, 8);
+                }
+                else if (!reachedWorldArchetype && geoList[i].Name.StartsWith("GEO_SUB_W0"))
+                {
+                    geoArchetype.Add(i);
+                    reachedWorldArchetype = true;
                 }
             }
             geoArchetype.Add(geoList.Count);
@@ -329,6 +361,8 @@ namespace Memoria.Assets
 
                 Boolean mouseLeftWasPressed = mouseLeftPressed;
                 Boolean mouseRightWasPressed = mouseRightPressed;
+                Boolean isMouseOverWindow_previous = IsMouseOverWindow;
+                IsMouseOverWindow = Input.mousePosition.x > 0 && Input.mousePosition.x < Screen.width && Input.mousePosition.y > 0 && Input.mousePosition.y < Screen.height;
                 Boolean downUpProcessed = false;
                 mouseLeftPressed = false;
                 mouseRightPressed = false;
@@ -476,9 +510,17 @@ namespace Memoria.Assets
                 {
                     KeepCoordinates = !KeepCoordinates;
                 }
-                if (Input.GetKeyDown(KeyCode.F5)) // Reload models
+                if (Input.GetKeyDown(KeyCode.F5)) // Reload models // if (!isMouseOverWindow_previous && IsMouseOverWindow) //
                 {
                     ChangeModel(currentGeoIndex);
+                }
+                if (Input.GetKeyDown(KeyCode.R)) // Reset position/rotation
+                {
+                    model_Horizontal_Rotation = 0f;
+                    model_Vertical_Rotation = (geoList[currentGeoIndex].Kind == MODEL_KIND_BBG || geoList[currentGeoIndex].Kind == MODEL_KIND_BBG_OBJ) ? 200f : 20f;
+                    model_Position = new Vector3(0f, 60f, 0f);
+                    scaleFactor = new Vector3(0.3f, 0.3f, 0.3f);
+                    UpdateModelCoordinates();
                 }
                 if (Input.GetKeyDown(KeyCode.W))
                 {
@@ -561,6 +603,10 @@ namespace Memoria.Assets
                 {
                     ChangeModel(GetFirstModelOfCategory(7));
                 }
+                else if (Input.GetKeyDown(KeyCode.Alpha9))
+                {
+                    ChangeModel(GetFirstModelOfCategory(8));
+                }
                 if (Input.GetKeyDown(KeyCode.P) && currentBonesID.Count > 0)
                 {
                     ChangeWeaponTexture = !ChangeWeaponTexture;
@@ -602,8 +648,7 @@ namespace Memoria.Assets
                     displayCurrentModel = !displayCurrentModel;
                     targetModel.gameObject.SetActive(displayCurrentModel);
                 }
-                if (Input.mouseScrollDelta.y != 0f && Input.mousePosition.x > 0 && Input.mousePosition.x < Screen.width 
-                && Input.mousePosition.y > 0 && Input.mousePosition.y < Screen.height) // Scroll wheel on mouse (ScalePosition) // Makes sure mouse is over the window
+                if (Input.mouseScrollDelta.y != 0f && IsMouseOverWindow) // Scroll wheel on mouse (ScalePosition)
                 {
                     if (currentWeaponModel && (shift || ctrl))
                     {
@@ -946,7 +991,7 @@ namespace Memoria.Assets
                     infoLabel.text = label;
                 if (!infoPanel.Show)
                     infoPanel.Show = true;
-                infoLabel.fontSize = 25;
+                infoLabel.fontSize = 22;
 
                 String controlist = "Hide UI [FFFF00][I][FFFFFF]\r\n";
                 foreach (KeyValuePair<String, String> entry in ControlsKeys)
@@ -958,8 +1003,7 @@ namespace Memoria.Assets
                 if (targetModel != null && targetModel == currentWeaponModel)
                 {
                     Transform transform = targetModel.transform;
-                    String lockedIcon = KeepCoordinates ? $"" : $"";
-                    extraInfo += $"{lockedIcon}";
+                    extraInfo += UseModdedTextures ? "text_mod | " : "text_orig | ";
                     extraInfo += $"Pos: [x]{transform.localPosition.x} [y]{transform.localPosition.y}";
                     extraInfo += $" Rot(Quat): [x]{Math.Round(transform.localRotation.x, 2)} [y]{Math.Round(transform.localRotation.y, 2)} [z]{Math.Round(transform.localRotation.z, 2)} [w]{Math.Round(transform.localRotation.w, 2)}";
                     extraInfo += $" Rot(Eul): {Math.Round(transform.localRotation.eulerAngles.x, 0)}/{Math.Round(transform.localRotation.eulerAngles.y, 0)}/{Math.Round(transform.localRotation.eulerAngles.z, 0)}";
@@ -969,18 +1013,17 @@ namespace Memoria.Assets
                     if (currentModelWrapper == null)
                         currentModelWrapper = new GameObject("CurrentModelWrapper");
                     currentModel.transform.SetParent(currentModelWrapper.transform);
-                    String lockedIcon = KeepCoordinates ? $"" : $"";
-                    extraInfo += $"{lockedIcon}";
-                    extraInfo += $"Pos: [x]{Math.Round(currentModelWrapper.transform.localPosition.x, 2)} [y]{Math.Round(currentModelWrapper.transform.localPosition.y, 2)}";
-                    extraInfo += $" Rot: [hor] {Math.Round(model_Horizontal_Rotation, 0)} [ver] {Math.Round(model_Vertical_Rotation, 0)}";
-                    extraInfo += $" Scale: {Math.Round(scaleFactor.x, 2)}";
+                    extraInfo += UseModdedTextures ? "text_mod" : "text_orig";
+                    extraInfo += $" / x {Math.Round(currentModelWrapper.transform.localPosition.x, 2)} y {Math.Round(currentModelWrapper.transform.localPosition.y, 2)}";
+                    extraInfo += $" / ↔ {Math.Round(model_Horizontal_Rotation, 0)} ↕ {Math.Round(model_Vertical_Rotation, 0)}";
+                    extraInfo += $" / ▣ {Math.Round(scaleFactor.x, 2)}";
                     //extraInfo += $" | Rot(Eul): {Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.x,0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.z, 0)}";
                 }
                 extraInfoLabel.text = extraInfo;
                 extraInfoLabel.fontSize = 16;
                 extraInfoLabel.effectDistance = new Vector2(2f, 2f);
-                extraInfoLabel.alignment = NGUIText.Alignment.Center;
-                extraInfoPanel.BasePanel.transform.localPosition = new Vector3(500, 0, 0);
+                extraInfoLabel.alignment = NGUIText.Alignment.Right;
+                extraInfoPanel.BasePanel.transform.localPosition = new Vector3(1000 + ControlPanelPosX, 0, 0);
                 if (KeepCoordinates)
                     extraInfoLabel.color = Color.yellow;
                 else
@@ -1000,7 +1043,7 @@ namespace Memoria.Assets
             }
             infoPanel.BasePanel.transform.localPosition = new Vector3(0 + InfoPanelPosX, 0, 0);
             controlPanel.BasePanel.transform.localPosition = new Vector3(1000 + ControlPanelPosX, 0, 0);
-            controlLabel.fontSize = 25;
+            controlLabel.fontSize = 22;
             //Log.Message("boneConnectModels.Count " + boneConnectModels.Count);
         }
 
@@ -1036,19 +1079,20 @@ namespace Memoria.Assets
 
         private static Int32 GetFirstModelOfCategory(Int32 categoryNum)
         {
-            List<int> categoriesThresholds = new List<int>(geoArchetype);
+            List<Int32> categoriesThresholds = new List<Int32>(geoArchetype);
             categoriesThresholds.Sort();
             categoryNum = Mathf.Clamp(categoryNum, 0, categoriesThresholds.Count - 1);
             return categoriesThresholds[categoryNum];
         }
 
-        private static List<string> categoryNames = new List<string>
+        private static List<String> categoryNames = new List<String>
         {
             "FIELD ITEMS",
             "ACTORS (MAIN)",
             "MONSTERS",
             "NPC",
-            "ACTORS/WM",
+            "ACTORS",
+            "WORLD",
             "WEAPONS",
             "BATTLE MAPS",
             "SPS (11)",
@@ -1079,6 +1123,7 @@ namespace Memoria.Assets
             {"L", "Read last exp."},
             {"F 1", "Keep coord."},
             {"F 5", "Refresh"},
+            {"R", "Reset position"},
             {"W", "Mod/orig textures"},
         };
 
@@ -1143,21 +1188,21 @@ namespace Memoria.Assets
             {
                 UpdateRender(); // Force refresh bones between different models
                 if (geoList[index].Kind == MODEL_KIND_NORMAL)
-                    currentModel = ModelFactory.CreateModel(geoList[index].Name, false, UseModdedTextures);
-                else if (geoList[index].Kind == MODEL_KIND_BBG)
+                    currentModel = ModelFactory.CreateModel(geoList[index].Name, false, UseModdedTextures, Configuration.Graphics.ElementsSmoothTexture);
+                else if (geoList[index].Kind == MODEL_KIND_BBG || geoList[index].Kind == MODEL_KIND_BBG_OBJ)
                 {
-                    currentModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{geoList[index].Name}/{geoList[index].Name}", true, UseModdedTextures);
-                    battlebg.nf_BbgNumber = Int32.Parse(geoList[index].Name.Replace("BBG_B", ""));
+                    currentModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{geoList[index].Name}/{geoList[index].Name}", geoList[index].Kind == MODEL_KIND_BBG, UseModdedTextures, Configuration.Graphics.BattleSmoothTexture);
+                    if (currentModel != null)
+                    {
+                        battlebg.nf_BbgNumber = Int32.Parse(geoList[index].Name.Replace("BBG_B", ""));
+                        battlebg.SetDefaultShader(currentModel);
+                        if (String.Equals(geoList[index].Name, "BBG_B171_OBJ2")) // Crystal World, Crystal
+                            battlebg.SetMaterialShader(currentModel, "PSX/BattleMap_Cystal");
+                    }
                 }
-                else if (geoList[index].Kind == MODEL_KIND_BBG_OBJ)
-                    currentModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{geoList[index].Name}/{geoList[index].Name}", false, UseModdedTextures);
                 else
-                    currentModel = null;
-                if (currentModel != null && (geoList[index].Kind == MODEL_KIND_BBG || geoList[index].Kind == MODEL_KIND_BBG_OBJ))
                 {
-                    battlebg.SetDefaultShader(currentModel);
-                    //if (String.Equals(geoList[index].Name, "BBG_B171_OBJ2")) // Crystal World, Crystal
-                    //    battlebg.SetMaterialShader(currentModel, "PSX/BattleMap_Cystal");
+                    currentModel = null;
                 }
             }
             else
@@ -1217,6 +1262,11 @@ namespace Memoria.Assets
                 currentModelBones = BoneHierarchyNode.CreateFromModel(currentModel);
                 //replaceOnce = 4;
                 postRefresh = 6;
+                // Disable fog effect for World Map models
+                foreach (Renderer renderer in currentModel.gameObject.GetComponentsInChildren<Renderer>())
+                    foreach (Material mat in renderer.materials)
+                        if (mat.shader.name.StartsWith("WorldMap/"))
+                            mat.SetFloat("_FogEnabled", 0f);
             }
             else if (geoList[index].Kind == MODEL_KIND_BBG)
             {
@@ -1282,7 +1332,7 @@ namespace Memoria.Assets
                         index -= weapongeoList.Count;
                     currentWeaponGeoIndex = index;
                     Log.Message($"[ModelViewerScene] Change weapon model: {weapongeoList[index].Name}");
-                    currentWeaponModel = ModelFactory.CreateModel(weapongeoList[index].Name);
+                    currentWeaponModel = ModelFactory.CreateModel(weapongeoList[index].Name, false, true, Configuration.Graphics.ElementsSmoothTexture);
                     WeaponAttach(currentWeaponModel, currentModel, currentBonesID[currentWeaponBoneIndex]);
                     isLoadingWeaponModel = false;
                 }

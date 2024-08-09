@@ -4,77 +4,77 @@ public class ByteEncryption
 {
     public static void Decryption(Byte[] src, ref Byte[] dst)
     {
-        Int64 num = 1024L;
-        Int64 num2 = (Int64)src.Length;
-        Int64 num3 = num2 - num;
-        Int64 num4 = 0L;
-        Int32 num5 = 0;
-        while ((Int64)num5 < num3)
+        Int64 blockSize = 1024L;
+        Int64 srcLength = (Int64)src.Length;
+        Int64 dstLength = srcLength - blockSize;
+        Int64 currentBlock = 0L;
+        Int32 dstIndex = 0;
+        while ((Int64)dstIndex < dstLength)
         {
-            if (num4 < num)
+            if (currentBlock < blockSize)
             {
-                dst[num5] = src[(Int32)(checked((IntPtr)(unchecked(num2 - num + num4))))];
-                num4 += 1L;
+                dst[dstIndex] = src[(Int32)(checked((IntPtr)(unchecked(srcLength - blockSize + currentBlock))))];
+                currentBlock += 1L;
             }
-            else if ((Int64)num5 < num2)
+            else if ((Int64)dstIndex < srcLength)
             {
-                dst[num5] = src[num5];
+                dst[dstIndex] = src[dstIndex];
             }
-            num5++;
+            dstIndex++;
         }
     }
 
     public static Byte[] Decryption(Byte[] bytes)
     {
-        Int64 num = 1024L;
-        Int64 num2 = (Int64)bytes.Length;
-        Int64 num3 = num2 - num;
-        Byte[] array = new Byte[num3];
-        Int64 num4 = 0L;
-        Int32 num5 = 0;
-        while ((Int64)num5 < num3)
+        Int64 blockSize = 1024L;
+        Int64 bytesLength = (Int64)bytes.Length;
+        Int64 decryptedLength = bytesLength - blockSize;
+        Byte[] decryptedArray = new Byte[decryptedLength];
+        Int64 currentBlock = 0L;
+        Int32 decryptedIndex = 0;
+        while ((Int64)decryptedIndex < decryptedLength)
         {
-            if (num4 < num)
+            if (currentBlock < blockSize)
             {
-                array[num5] = bytes[(Int32)(checked((IntPtr)(unchecked(num2 - num + num4))))];
-                num4 += 1L;
+                decryptedArray[decryptedIndex] = bytes[(Int32)(checked((IntPtr)(unchecked(bytesLength - blockSize + currentBlock))))];
+                currentBlock += 1L;
             }
-            else if ((Int64)num5 < num2)
+            else if ((Int64)decryptedIndex < bytesLength)
             {
-                array[num5] = bytes[num5];
+                decryptedArray[decryptedIndex] = bytes[decryptedIndex];
             }
-            num5++;
+            decryptedIndex++;
         }
-        return array;
+        return decryptedArray;
     }
 
     public static Byte[] Encryption(Byte[] bytes)
     {
-        Int64 num = 1024L;
-        Int64 num2 = (Int64)bytes.Length;
-        Int64 num3 = num2 + num;
-        Byte[] array = new Byte[num3];
-        Int64 num4 = 0L;
-        Int64 num5 = 0L;
-        Int32 num6 = 0;
-        while ((Int64)num6 < num3)
+        Int64 blockSize = 1024L;
+        Int64 bytesLength = (Int64)bytes.Length;
+        Int64 encryptedLength = bytesLength + blockSize;
+        Byte[] encryptedArray = new Byte[encryptedLength];
+        Int64 currentBlock = 0L;
+        Int64 remainingIndex = 0L;
+        Int32 encryptedIndex = 0;
+        while ((Int64)encryptedIndex < encryptedLength)
         {
-            if (num4 < num)
+            if (currentBlock < blockSize)
             {
-                array[num6] = bytes[(Int32)(checked((IntPtr)(unchecked(num4 + num))))];
-                num4 += 1L;
+                encryptedArray[encryptedIndex] = bytes[(Int32)(checked((IntPtr)(unchecked(currentBlock + blockSize))))];
+                currentBlock += 1L;
             }
-            else if ((Int64)num6 < num2)
+            else if ((Int64)encryptedIndex < bytesLength)
             {
-                array[num6] = bytes[num6];
+                encryptedArray[encryptedIndex] = bytes[encryptedIndex];
             }
             else
             {
-                array[num6] = bytes[(Int32)(checked((IntPtr)num5))];
-                num5 += 1L;
+                encryptedArray[encryptedIndex] = bytes[(Int32)(checked((IntPtr)remainingIndex))];
+                remainingIndex += 1L;
             }
-            num6++;
+            encryptedIndex++;
         }
-        return array;
+        return encryptedArray;
     }
 }

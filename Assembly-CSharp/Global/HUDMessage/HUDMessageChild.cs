@@ -6,55 +6,47 @@ using UnityEngine;
 [RequireComponent(typeof(TweenAlpha))]
 public class HUDMessageChild : MonoBehaviour
 {
-    public HUDMessage.MessageStyle DisplayStyle
-    {
-        get
-        {
-            return this.displayStyle;
-        }
-    }
-
-    public UIFollowTarget Follower
-    {
-        get
-        {
-            return this.follower;
-        }
-    }
+    public GameObject ParentGameObject => this.parentGameObject;
+    public HUDMessage.MessageStyle DisplayStyle => this.displayStyle;
+    public UIFollowTarget Follower => this.follower;
+    public Single Countdown => this.countdown;
 
     public Byte MessageId
     {
-        get
-        {
-            return this.messageId;
-        }
-        set
-        {
-            this.messageId = value;
-        }
-    }
-
-    public Single Countdown
-    {
-        get
-        {
-            return this.countdown;
-        }
+        get => this.messageId;
+        set => this.messageId = value;
     }
 
     public String Label
     {
-        set
-        {
-            this.label.text = value;
-        }
+        get => this.label.text;
+        set => this.label.text = value;
     }
 
-    public GameObject ParentGameObject
+    public Int32 FontSize
     {
         get
         {
-            return this.parentGameObject;
+            return this.label.fontSize;
+        }
+        set
+        {
+            this.label.fontSize = value;
+        }
+    }
+
+    public UILabel.Effect effectStyle
+    {
+        get
+        {
+            return this.label.effectStyle;
+        }
+        set
+        {
+            if (this.label.effectStyle != value)
+            {
+                this.label.effectStyle = value;
+            }
         }
     }
 
@@ -88,6 +80,7 @@ public class HUDMessageChild : MonoBehaviour
         this.displayStyle = style;
         this.follower.target = target;
         this.follower.targetTransformOffset = offset;
+        this.follower.clampToScreen = true;
         this.label.text = message;
         this.tweenPosition.duration = this.tweenPositionDuration / Singleton<HUDMessage>.Instance.Speed;
         this.tweenAlpha.duration = this.tweenAlphaDuration / Singleton<HUDMessage>.Instance.Speed;

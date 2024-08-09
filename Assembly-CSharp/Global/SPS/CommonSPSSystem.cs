@@ -1,4 +1,5 @@
-﻿using Memoria.Assets;
+﻿using Memoria;
+using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
 using System;
@@ -103,16 +104,16 @@ public class CommonSPSSystem
         }
         if (sps.pngTexture == null)
             return false;
-        sps.pngTexture.filterMode = FilterMode.Bilinear;
+        sps.pngTexture.filterMode = ModelFactory.GetFilterMode(Configuration.Graphics.SFXSmoothTexture, 1);
         this._spsTextureDict.Add(texturePath, sps.pngTexture);
         return true;
     }
 
-    private Vector3 adjustSpsPrecise(String name, Vector3 pos)
+    private Vector3 AdjustSpsPrecise(String name, Vector3 pos)
     {
         Int16 MapNo = FF9StateSystem.Common.FF9.fldMapNo;
         //Log.Message("if (MapNo == " + MapNo + " && name == \"" + name + "\" && pos.x == " + pos.x + " && pos.y == " + pos.y + " && pos.z == " + pos.z + ")"); // 3D positions, pos.y calculated from bottom
-        if (MapNo == 2215 && name == "SPS_0008" && pos.x == 1330 && pos.y == 1150 && pos.z == 1125)
+        if (MapNo == 2215 && name == "SPS_0008" && pos.x == 1330 && pos.y == 1150 && pos.z == 1125) // desert palace flame misaligned
         {
             pos.y = 1025;
         }
@@ -155,7 +156,6 @@ public class CommonSPSSystem
                     sps.pos = Vector3.zero;
                     sps.scale = SPSConst.SCALE_ONE;
                     sps.rot = Vector3.zero;
-                    sps.rotArg = Vector3.zero;
                 }
                 sps.Unload();
             }
@@ -185,7 +185,7 @@ public class CommonSPSSystem
         }
         else if (ParmType == SPSConst.OPERATION_POS)
         {
-            Vector3 adjustedFloatPos = adjustSpsPrecise(sps.name, new Vector3((Single)Arg0, -(Single)Arg1, (Single)Arg2));
+            Vector3 adjustedFloatPos = AdjustSpsPrecise(sps.name, new Vector3((Single)Arg0, -(Single)Arg1, (Single)Arg2));
             if (FF9StateSystem.Common.FF9.fldMapNo == 911 || FF9StateSystem.Common.FF9.fldMapNo == 1911)
             {
                 // Treno/Queen's House

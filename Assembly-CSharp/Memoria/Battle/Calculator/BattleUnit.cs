@@ -42,7 +42,6 @@ namespace Memoria
         public Boolean CanMove => Data.bi.atb != 0;
         public CharacterId PlayerIndex => IsPlayer ? (CharacterId)Data.bi.slot_no : CharacterId.NONE;
 
-        // TODO [DV] Code in a custom status Old (something similar to ChangeStatStatus for example)
         public Byte Level
         {
             get => Data.level;
@@ -234,7 +233,7 @@ namespace Memoria
               : Data.weapon.Ref.Power;
         }
 
-        public Character Player => Character.Find(this);
+        public PLAYER Player => FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex);
         public CharacterSerialNumber SerialNumber => btl_util.getSerialNumber(Data);
         public CharacterCategory PlayerCategory => IsPlayer ? Player.Category : 0;
         public EnemyCategory Category => IsPlayer ? EnemyCategory.Humanoid : (EnemyCategory)btl_util.getEnemyTypePtr(Data).category;
@@ -569,7 +568,7 @@ namespace Memoria
 
         public void ChangeRowToDefault()
         {
-            if (IsPlayer && Row != Player.Row)
+            if (IsPlayer && Row != Player.info.row)
                 btl_para.SwitchPlayerRow(Data);
         }
 
@@ -688,7 +687,6 @@ namespace Memoria
             Data.mesh_current = monsterParam.Mesh[0];
             Data.mesh_banish = monsterParam.Mesh[1];
             Data.tar_bone = monsterParam.Bone[3];
-            Data.weapon_bone = (Byte)monsterParam.WeaponAttachment;
             Data.shadow_bone[0] = monsterParam.ShadowBone;
             Data.shadow_bone[1] = monsterParam.ShadowBone2;
             btl_util.SetShadow(Data, monsterParam.ShadowX, monsterParam.ShadowZ);
@@ -782,7 +780,13 @@ namespace Memoria
             // Let the spell sequence handle the model fadings (in and out)
             //Data.SetActiveBtlData(false);
             String geoName = FF9BattleDB.GEO.GetValue(monsterParam.Geo);
-            Data.ChangeModel(ModelFactory.CreateModel(geoName, true), monsterParam.Geo);
+            Data.ChangeModel(ModelFactory.CreateModel(geoName, true, true, Configuration.Graphics.ElementsSmoothTexture), monsterParam.Geo);
+            Data.weapon_bone = (Byte)monsterParam.WeaponAttachment;
+            Data.weapon_scale = monsterParam.WeaponSize.ToVector3(true);
+            Data.weapon_offset_pos = monsterParam.WeaponOffsetPos.ToVector3(false);
+            Data.weapon_offset_rot = monsterParam.WeaponOffsetRot.ToVector3(false);
+            if (Data.builtin_weapon_mode)
+                geo.geoAttach(Data.weapon_geo, Data.gameObject, Data.weapon_bone);
             Data.bi.t_gauge = 0;
             if (IsUnderAnyStatus(BattleStatus.Trance))
             {
@@ -941,6 +945,7 @@ namespace Memoria
         {
             BTL_DATA.MONSTER_TRANSFORM monsterTransform = Data.monster_transform;
             PLAYER p = FF9StateSystem.Common.FF9.party.member[Position];
+            CharacterBattleParameter btlParam = btl_mot.BattleParameterList[p.info.serial_no];
             btl_stat.RemoveStatuses(this, BattleStatusConst.RemoveOnMonsterTransform);
             if (monsterTransform.replace_point)
             {
@@ -965,13 +970,12 @@ namespace Memoria
             }
             if (monsterTransform.replace_element)
                 btl_eqp.InitEquipPrivilegeAttrib(p, Data);
+            Data.is_monster_transform = false;
             ResistStatus &= ~monsterTransform.resist_added;
             btl_stat.MakeStatusesPermanent(this, monsterTransform.auto_added, false);
             Data.mesh_current = 0;
             Data.mesh_banish = UInt16.MaxValue;
             Data.tar_bone = 0;
-            Data.weapon_bone = p.wep_bone;
-            CharacterBattleParameter btlParam = btl_mot.BattleParameterList[p.info.serial_no];
             Data.shadow_bone[0] = btlParam.ShadowData[0];
             Data.shadow_bone[1] = btlParam.ShadowData[1];
             btl_util.SetShadow(Data, btlParam.ShadowData[2], btlParam.ShadowData[3]);
@@ -994,12 +998,10 @@ namespace Memoria
             else
                 btl_mot.setMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
             Data.evt.animFrame = 0;
-            Data.ChangeModel(Data.originalGo, btl_init.GetModelID(p.info.serial_no, false));
-            geo.geoAttach(Data.weapon_geo, Data.gameObject, Data.weapon_bone);
+            btl_vfx.SetTranceModel(Data, false);
             btl_mot.HideMesh(Data, UInt16.MaxValue);
             monsterTransform.fade_counter = 2;
             UIManager.Battle.ClearCursorMemorize(Position, monsterTransform.new_command);
-            Data.is_monster_transform = false;
         }
 
         public Object GetPropertyByName(String propertyName)
@@ -1039,7 +1041,7 @@ namespace Memoria
                 case "IsSlave": return IsSlave;
                 case "IsOutOfReach": return IsOutOfReach;
                 case "Level": return (Int32)Level;
-                case "Exp": return IsPlayer ? Player.Data.exp : 0u;
+                case "Exp": return IsPlayer ? Player.exp : 0u;
                 case "Speed": return (Int32)Dexterity;
                 case "Strength": return (Int32)Strength;
                 case "Magic": return (Int32)Magic;

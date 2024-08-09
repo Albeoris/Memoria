@@ -25,9 +25,6 @@ public static class btl_stat
 
     public static void StatusCommandCancel(BTL_DATA btl)
     {
-        // TODO [DV] Apply a different status than Sleep on bosses / easykill
-        //if (Configuration.Mod.TranceSeek && CheckStatus(btl, BattleStatus.EasyKill) && (status & BattleStatus.Sleep) != 0) // [DV] Prevent command cancel for boss.
-        //    return;
         if (btl.bi.player != 0)
             UIManager.Battle.RemovePlayerFromAction(btl.btl_id, true);
         if (!btl_cmd.KillCommand2(btl))
@@ -113,19 +110,6 @@ public static class btl_stat
                     stat.conti[statusId] = (Int16)Math.Min(val, Int16.MaxValue);
             }
             stat.conti[statusId] = (Int16)(stat.duration_factor[statusId] * stat.conti[statusId]);
-            // TODO [DV] Code that in a custom DoomStatusScript / GradualPetrifyStatusScript
-            //if ((status & (BattleStatus.Doom | BattleStatus.GradualPetrify)) != 0u)
-            //{
-            //    if (Configuration.Mod.TranceSeek && target.HasSupportAbility(SupportAbility1.AutoRegen)) // [DV] - SA Resilience
-            //    {
-            //        stat.cnt.conti[statusId] = (Int16)(statusData.ContiCnt * defaultFactor * 2);
-            //        stat.cnt.cdown_max = (Int16)Math.Max(1, stat.cnt.conti[statusId] / 2);
-            //    }
-            //    else
-            //    {
-            //        stat.cnt.cdown_max = Math.Max(1, stat.cnt.conti[statusId]);
-            //    }
-            //}
         }
         if (script is IOprStatusScript)
             SetOprStatusCount(target, statusId);
@@ -314,18 +298,6 @@ public static class btl_stat
         foreach (BattleStatusId statusId in removeList.ToStatusList())
             RemoveStatus(unit, statusId);
 
-        // TODO [DV] Code that in a custom VirusStatusScript
-        //if (Configuration.Mod.TranceSeek)
-        //{
-        //    if (unit.IsUnderAnyStatus(BattleStatus.Virus))
-        //    {
-        //        if (btl.cur.hp > 0U)
-        //            btl.cur.hp -= 1U;
-        //        else
-        //            unit.Kill();
-        //    }
-        //}
-
         ActiveTimeStatus(unit);
     }
 
@@ -388,7 +360,7 @@ public static class btl_stat
                         Byte g = (Byte)Mathf.Clamp(bbgInfoPtr.chr_g + retainedData[0].ColorBase[1], 0, Byte.MaxValue);
                         Byte b = (Byte)Mathf.Clamp(bbgInfoPtr.chr_b + retainedData[0].ColorBase[2], 0, Byte.MaxValue);
                         if (!FF9StateSystem.Battle.isFade)
-                            btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                            btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect", data);
                         btl_util.GeoSetColor2DrawPacket(data.gameObject, r, g, b, Byte.MaxValue);
                         if (data.weapon_geo)
                             btl_util.GeoSetColor2DrawPacket(data.weapon_geo, r, g, b, Byte.MaxValue);
@@ -403,7 +375,7 @@ public static class btl_stat
                         Int16 g = (Int16)((bbgInfoPtr.chr_g + retainedData[index].ColorBase[1]) * strength >> 3);
                         Int16 b = (Int16)((bbgInfoPtr.chr_b + retainedData[index].ColorBase[2]) * strength >> 3);
                         if (!FF9StateSystem.Battle.isFade)
-                            btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                            btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect", data);
                         GeoAddColor2DrawPacket(data.gameObject, r, g, b);
                         if (data.weapon_geo)
                             GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
@@ -420,7 +392,7 @@ public static class btl_stat
                             Int16 g = (Int16)((bbgInfoPtr.chr_g + glowingColor[1] - 128) * strength >> 3);
                             Int16 b = (Int16)((bbgInfoPtr.chr_b + glowingColor[2] - 128) * strength >> 3);
                             if (!FF9StateSystem.Battle.isFade)
-                                btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
+                                btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect", data);
                             GeoAddColor2DrawPacket(data.gameObject, r, g, b);
                             if (data.weapon_geo)
                                 GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
@@ -435,21 +407,6 @@ public static class btl_stat
             }
             if (!useColor)
                 SetDefaultShader(data);
-            // TODO [DV] That glow can be added by using "1;25;-192, -192, -192" as "ColorKind;ColorPriority;ColorBase" in the status data for Old in StatusData.csv
-            //if (data.special_status_old) // [DV] - Add a glow effect
-            //{
-            //    if (!FF9StateSystem.Battle.isFade)
-            //        btl_util.GeoSetABR(data.gameObject, "PSX/BattleMap_StatusEffect");
-            //    Byte counter = (Byte)(ff9Battle.btl_cnt % 24);
-            //    Byte strength = (Byte)(counter >= 8 ? (counter >= 16 ? (24 - counter) : 8) : (counter + 2));
-            //    Int32 OldGlow = -192;
-            //    Int16 r = (Int16)((bbgInfoPtr.chr_r - OldGlow) * strength >> 3);
-            //    Int16 g = (Int16)((bbgInfoPtr.chr_g - OldGlow) * strength >> 3);
-            //    Int16 b = (Int16)((bbgInfoPtr.chr_b - OldGlow) * strength >> 3);
-            //    GeoAddColor2DrawPacket(data.gameObject, r, g, b);
-            //    if (data.weapon_geo)
-            //        GeoAddColor2DrawPacket(data.weapon_geo, r, g, b);
-            //}
         }
         if (FF9StateSystem.Battle.isDebug && FF9StateSystem.Battle.isLevitate)
         {
@@ -469,7 +426,7 @@ public static class btl_stat
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
         if ((ff9Battle.btl_load_status & ff9btl.LOAD_CHR) == 0 || (ff9Battle.btl_load_status & ff9btl.LOAD_FADENPC) == 0 || FF9StateSystem.Battle.isFade)
             return;
-        btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect");
+        btl_util.GeoSetABR(btl.gameObject, "PSX/BattleMap_StatusEffect", btl);
         btl_util.GeoSetColor2DrawPacket(btl.gameObject, bbgInfoPtr.chr_r, bbgInfoPtr.chr_g, bbgInfoPtr.chr_b, Byte.MaxValue);
     }
 
@@ -529,66 +486,10 @@ public static class btl_stat
         STAT_INFO stat = btl.stat;
         foreach (BattleStatusId statusId in (stat.cur & BattleStatusConst.ContiCount).ToStatusList())
         {
-            // TODO [DV] Shouldn't be relevant anymore, nothing to do?
-            //if (stat.conti[statusId] >= 0) // [DV] For Trance Seek purpose, to make some status dissapear for bosses.
-            //    stat.conti[statusId] -= btl.cur.at_coef;
             stat.conti[statusId] -= btl.cur.at_coef;
             if (stat.conti[statusId] < 0)
             {
                 RemoveStatus(unit, statusId);
-                // TODO [DV] Code that in a custom DoomStatusScript
-                //if ((status & BattleStatus.Doom) != 0)
-                //{
-                //    if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
-                //    {
-                //        if (Configuration.Mod.TranceSeek) // TRANCE SEEK - Add 2 random status at the end of countdown.
-                //        {
-                //            List<BattleStatus> statuschoosen = new List<BattleStatus>{ BattleStatus.Poison, BattleStatus.Venom, BattleStatus.Blind, BattleStatus.Silence, BattleStatus.Trouble,
-                //            BattleStatus.Sleep, BattleStatus.Freeze, BattleStatus.Heat, BattleStatus.Mini, BattleStatus.Petrify, BattleStatus.GradualPetrify,
-                //            BattleStatus.Berserk, BattleStatus.Confuse, BattleStatus.Stop, BattleStatus.Zombie, BattleStatus.Slow };
-                //
-                //            for (Int32 i = 0; i < (statuschoosen.Count - 1); i++)
-                //            {
-                //                if ((statuschoosen[i] & btl.stat.invalid) != 0)
-                //                {
-                //                    statuschoosen.Remove(statuschoosen[i]);
-                //                }
-                //            }
-                //
-                //            for (Int32 i = 0; i < 2; i++)
-                //            {
-                //                AlterStatus(unit, statuschoosen[GameRandom.Next16() % statuschoosen.Count]);
-                //            }
-                //            RemoveStatus(unit, status);
-                //        }
-                //        else
-                //        {
-                //            // Enemies affected by Doom but with Easy kill proof (doesn't exist in vanilla) lose 1/5 of their Max HP instead (non-capped, except for avoiding softlocks)
-                //            Int32 doom_damage = (Int32)btl_para.GetLogicalHP(btl, true) / 5;
-                //            if (doom_damage > Math.Max(btl.cur.hp - 1, 9999))
-                //                doom_damage = (Int32)btl.cur.hp - 1;
-                //            if (doom_damage > 0)
-                //            {
-                //                BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Doom);
-                //                btl_stat.RemoveStatus(unit, status);
-                //                btl.fig_info = Param.FIG_INFO_DISP_HP;
-                //                btl_para.SetDamage(new BattleUnit(btl), doom_damage, (Byte)(btl_mot.checkMotion(btl, btl.bi.def_idle) ? 1 : 0));
-                //                btl2d.Btl2dReq(btl);
-                //            }
-                //            else
-                //            {
-                //                btl.fig_info |= Param.FIG_INFO_MISS;
-                //                btl2d.Btl2dReq(btl);
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatus.Doom);
-                //        btl_stat.AlterStatus(unit, BattleStatus.Death);
-                //        btl2d.Btl2dReq(btl);
-                //    }
-                //}
             }
         }
     }

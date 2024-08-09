@@ -127,14 +127,17 @@ namespace Memoria
             // Sky
             if (_bg == null && FF9StateSystem.Battle.FF9Battle.map.btlBGPtr != null && !_bgInitialised)
             {
-                foreach (Transform transform in FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.gameObject.transform)
+                if (battlebg.nf_BbgSkyRotation != 0 && battlebg.nf_BbgNumber != 7) // Fix #672: the sky against Nova Dragon has a sky rotation + a BbgObjAnimation. Come back to it when objAnimModel movements are smoothened (battlebg.getBbgObjAnimation)
                 {
-                    if (battlebg.getBbgAttr(transform.name) == 8 && battlebg.nf_BbgSkyRotation != 0)
+                    foreach (Transform transform in FF9StateSystem.Battle.FF9Battle.map.btlBGPtr.gameObject.transform)
                     {
-                        _bg = transform;
-                        _bgRotPrevious = _bg.localRotation;
-                        _bgRotActual = _bg.localRotation;
-                        break;
+                        if (battlebg.getBbgAttr(transform.name) == 8)
+                        {
+                            _bg = transform;
+                            _bgRotPrevious = _bg.localRotation;
+                            _bgRotActual = _bg.localRotation;
+                            break;
+                        }
                     }
                 }
                 _bgInitialised = true;
@@ -211,7 +214,7 @@ namespace Memoria
                 // Log.Message($"[DEBUG {Time.frameCount} cur {_bg.localRotation.eulerAngles} prev {_bgRotPrevious.eulerAngles} actual {_bgRotActual.eulerAngles} t {smoothFactor}");
             }
             // SPS
-            if (FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_ENTER)
+            if (FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_ENTER && FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_INIT_SYSTEM)
             {
                 btl2d.StatusUpdateVisuals(smoothFactor);
                 HonoluluBattleMain.battleSPS.GenerateSPS();
@@ -326,4 +329,5 @@ partial class BTL_DATA
     public Single _smoothUpdateAnimTimeActual;
     public Single _smoothUpdateAnimSpeed;
     public Vector3 _smoothUpdateBoneDelta;
+    public bool _hasMeshSmoothed;
 }

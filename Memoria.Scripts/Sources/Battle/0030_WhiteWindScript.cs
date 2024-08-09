@@ -25,7 +25,10 @@ namespace Memoria.Scripts.Battle
             if (!_v.Target.IsZombie)
                 _v.Target.Flags |= CalcFlag.HpRecovery;
 
-            _v.Target.HpDamage = (Int32)(_v.Caster.MaximumHp / 3);
+            if (_v.Command.Power == 0) // Value in vanilla
+                _v.Target.HpDamage = (Int32)(_v.Caster.MaximumHp / 3);
+            else
+                _v.Target.HpDamage = (Int32)(_v.Caster.MaximumHp * _v.Command.Power / 100);
         }
     }
 }

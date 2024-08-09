@@ -10,6 +10,7 @@ namespace Memoria
             public readonly IniValue<Int32> BattleSpeed;
             public readonly IniValue<Int32> AllCharactersAvailable;
             public readonly IniValue<Int32> RopeJumpingIncrement;
+            public readonly IniValue<Int32> SwordplayAssistance;
             public readonly IniValue<Int32> FrogCatchingIncrement;
             public readonly IniValue<Int32> HippaulRacingViviSpeed;
             public readonly IniValue<Int32> StealingAlwaysWorks;
@@ -21,6 +22,7 @@ namespace Memoria
                 BattleSpeed = BindInt32(nameof(BattleSpeed), 0);
                 AllCharactersAvailable = BindInt32(nameof(AllCharactersAvailable), 0);
                 RopeJumpingIncrement = BindInt32(nameof(RopeJumpingIncrement), 1);
+                SwordplayAssistance = BindInt32(nameof(SwordplayAssistance), 1);
                 FrogCatchingIncrement = BindInt32(nameof(FrogCatchingIncrement), 1);
                 HippaulRacingViviSpeed = BindInt32(nameof(HippaulRacingViviSpeed), 33);
                 StealingAlwaysWorks = BindInt32(nameof(StealingAlwaysWorks), 0);

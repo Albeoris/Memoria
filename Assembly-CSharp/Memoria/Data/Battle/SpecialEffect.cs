@@ -493,7 +493,7 @@
         SFX_Attack_Charge_And_Strike, // Charge (Flan, Myconid, Python, Yeti, Basilisk, Ochu)
         SFX_Attack_Blade_Long, // Blade (Maliris, Earth Guardian, Taharka, Clipper, Lizard Man)
         // These mostly bug when tried; better not play them
-        Unused_18 = 18, // Would apply effect instantatly
+        Unused_18 = 18, // Would apply effect instantly
         Unused_37 = 37, // Would never end
         Unused_39 = 39, // Would never end
         Unused_80 = 80, // Would run casting animation & apply effect

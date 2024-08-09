@@ -6,7 +6,6 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
-using Memoria.Field;
 using Memoria.Scenes;
 using System;
 using System.Collections.Generic;
@@ -294,171 +293,165 @@ public class AbilityUI : UIScene
 
     public override Boolean OnKeyConfirm(GameObject go)
     {
-        if (base.OnKeyConfirm(go))
+        if (!base.OnKeyConfirm(go))
+            return true;
+        if (ButtonGroupState.ActiveGroup == SubMenuGroupButton)
         {
-            if (ButtonGroupState.ActiveGroup == SubMenuGroupButton)
+            this.currentSubMenu = this.GetSubMenuFromGameObject(go);
+            if (this.currentSubMenu == SubMenu.Use && this.isAAEnable)
             {
-                this.currentSubMenu = this.GetSubMenuFromGameObject(go);
-                if (this.currentSubMenu == SubMenu.Use && this.isAAEnable)
-                {
-                    FF9Sfx.FF9SFX_Play(103);
-                    ButtonGroupState.ActiveGroup = ActionAbilityGroupButton;
-                    this.SetAbilityInfo(true);
-                    this.DisplayPlayerArrow(false);
-                    this.DisplaySubMenuArrow(false);
-                    ButtonGroupState.SetSecondaryOnGroup(SubMenuGroupButton);
-                    ButtonGroupState.HoldActiveStateOnGroup(SubMenuGroupButton);
-                }
-                else if (this.currentSubMenu == SubMenu.Equip && this.isSAEnable)
-                {
-                    FF9Sfx.FF9SFX_Play(103);
-                    ButtonGroupState.ActiveGroup = SupportAbilityGroupButton;
-                    this.SetAbilityInfo(true);
-                    this.DisplayPlayerArrow(false);
-                    this.DisplaySubMenuArrow(false);
-                    ButtonGroupState.SetSecondaryOnGroup(SubMenuGroupButton);
-                    ButtonGroupState.HoldActiveStateOnGroup(SubMenuGroupButton);
-                }
-                else
-                {
-                    FF9Sfx.FF9SFX_Play(102);
-                }
+                FF9Sfx.FF9SFX_Play(103);
+                ButtonGroupState.ActiveGroup = ActionAbilityGroupButton;
+                this.SetAbilityInfo(true);
+                this.DisplayPlayerArrow(false);
+                this.DisplaySubMenuArrow(false);
+                ButtonGroupState.SetSecondaryOnGroup(SubMenuGroupButton);
+                ButtonGroupState.HoldActiveStateOnGroup(SubMenuGroupButton);
             }
-            else if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
+            else if (this.currentSubMenu == SubMenu.Equip && this.isSAEnable)
             {
-                if (ButtonGroupState.ContainButtonInGroup(go, ActionAbilityGroupButton))
+                FF9Sfx.FF9SFX_Play(103);
+                ButtonGroupState.ActiveGroup = SupportAbilityGroupButton;
+                this.SetAbilityInfo(true);
+                this.DisplayPlayerArrow(false);
+                this.DisplaySubMenuArrow(false);
+                ButtonGroupState.SetSecondaryOnGroup(SubMenuGroupButton);
+                ButtonGroupState.HoldActiveStateOnGroup(SubMenuGroupButton);
+            }
+            else
+            {
+                FF9Sfx.FF9SFX_Play(102);
+            }
+        }
+        else if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
+        {
+            if (ButtonGroupState.ContainButtonInGroup(go, ActionAbilityGroupButton))
+            {
+                PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+                this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+                Int32 abilId = this.aaIdList[this.currentAbilityIndex];
+                if (abilId != 0 && ff9abil.IsAbilityActive(abilId))
                 {
-                    Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
-                    this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
-                    Int32 abilId = this.aaIdList[this.currentAbilityIndex];
-                    if (abilId != 0 && ff9abil.IsAbilityActive(abilId))
+                    BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abilId);
+                    BattleAbilityId patchedId = this.PatchAbility(battleAbilId);
+                    TargetType targetType = FF9BattleDB.CharacterActions[patchedId].Info.Target;
+                    this.canMultiTarget = this.CanToggleMulti(targetType);
+                    if (this.CheckAAType(abilId, player) == AbilityType.Enable)
                     {
-                        BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abilId);
-                        BattleAbilityId patchedId = this.PatchAbility(battleAbilId);
-                        this.canMultiTarget = this.IsMulti(patchedId);
-                        if (this.CheckAAType(abilId, player) == AbilityType.Enable)
+                        if (this.canMultiTarget)
                         {
-                            if (this.canMultiTarget)
-                            {
-                                this.allTargetButtonCollider.enabled = true;
-                                this.allTargetButtonComponent.SetState(UIButtonColor.State.Normal, true);
-                                this.allTargetButtonLabel.color = FF9TextTool.White;
-                            }
-                            else
-                            {
-                                this.allTargetButtonCollider.enabled = false;
-                                this.allTargetButtonComponent.SetState(UIButtonColor.State.Normal, true);
-                                this.allTargetButtonLabel.color = FF9TextTool.Gray;
-                            }
-                            FF9Sfx.FF9SFX_Play(103);
-                            this.currentAbilityIndex = go.transform.GetSiblingIndex();
-                            if (this.currentAbilityIndex % 2 == 0)
-                            {
-                                this.targetTransition.animatedInStartPosition = new Vector3(1543f, 0.0f, 0.0f);
-                                this.targetTransition.animatedOutEndPosition = new Vector3(1543f, 0.0f, 0.0f);
-                                this.TargetListPanel.transform.localPosition = new Vector3(TargetPositionXOffset, 0.0f, 0.0f);
-                            }
-                            else
-                            {
-                                this.targetTransition.animatedInStartPosition = new Vector3(-1543f, 0.0f, 0.0f);
-                                this.targetTransition.animatedOutEndPosition = new Vector3(-1543f, 0.0f, 0.0f);
-                                this.TargetListPanel.transform.localPosition = new Vector3(-TargetPositionXOffset - 60f, 0.0f, 0.0f);
-                            }
-                            this.targetTransition.DestinationPosition = new Vector3[1]
-                            {
-                                this.TargetListPanel.transform.localPosition
-                            };
-                            this.DisplayTarget();
-                            this.Loading = true;
-                            this.targetTransition.TweenIn(new Byte[1], () =>
-                            {
-                                this.Loading = false;
-                                ButtonGroupState.RemoveCursorMemorize(TargetGroupButton);
-                                ButtonGroupState.ActiveGroup = TargetGroupButton;
-                                ButtonGroupState.HoldActiveStateOnGroup(ActionAbilityGroupButton);
-                            });
+                            this.allTargetButtonCollider.enabled = true;
+                            this.allTargetButtonComponent.SetState(UIButtonColor.State.Normal, true);
+                            this.allTargetButtonLabel.color = FF9TextTool.White;
                         }
                         else
                         {
-                            FF9Sfx.FF9SFX_Play(102);
+                            this.allTargetButtonCollider.enabled = false;
+                            this.allTargetButtonComponent.SetState(UIButtonColor.State.Normal, true);
+                            this.allTargetButtonLabel.color = FF9TextTool.Gray;
                         }
+                        FF9Sfx.FF9SFX_Play(103);
+                        this.currentAbilityIndex = go.transform.GetSiblingIndex();
+                        if (this.currentAbilityIndex % 2 == 0)
+                        {
+                            this.targetTransition.animatedInStartPosition = new Vector3(1543f, 0.0f, 0.0f);
+                            this.targetTransition.animatedOutEndPosition = new Vector3(1543f, 0.0f, 0.0f);
+                            this.TargetListPanel.transform.localPosition = new Vector3(TargetPositionXOffset, 0.0f, 0.0f);
+                        }
+                        else
+                        {
+                            this.targetTransition.animatedInStartPosition = new Vector3(-1543f, 0.0f, 0.0f);
+                            this.targetTransition.animatedOutEndPosition = new Vector3(-1543f, 0.0f, 0.0f);
+                            this.TargetListPanel.transform.localPosition = new Vector3(-TargetPositionXOffset - 60f, 0.0f, 0.0f);
+                        }
+                        this.targetTransition.DestinationPosition = [this.TargetListPanel.transform.localPosition];
+                        this.DisplayTarget(targetType == TargetType.Self ? player : null);
+                        this.Loading = true;
+                        this.targetTransition.TweenIn([0], () =>
+                        {
+                            this.Loading = false;
+                            ButtonGroupState.RemoveCursorMemorize(TargetGroupButton);
+                            ButtonGroupState.ActiveGroup = TargetGroupButton;
+                            ButtonGroupState.HoldActiveStateOnGroup(ActionAbilityGroupButton);
+                            this.SetMultipleTarget(targetType == TargetType.All || targetType == TargetType.AllAlly || targetType == TargetType.AllEnemy || targetType == TargetType.Everyone);
+                        });
+                    }
+                    else
+                    {
+                        FF9Sfx.FF9SFX_Play(102);
                     }
                 }
-                else
-                {
-                    this.OnSecondaryGroupClick(go);
-                }
             }
-            else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton)
+            else
             {
-                if (ButtonGroupState.ContainButtonInGroup(go, SupportAbilityGroupButton))
+                this.OnSecondaryGroupClick(go);
+            }
+        }
+        else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton)
+        {
+            if (ButtonGroupState.ContainButtonInGroup(go, SupportAbilityGroupButton))
+            {
+                PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+                this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+                if (go.GetChild(0).activeSelf)
                 {
-                    Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
-                    this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
-                    if (go.GetChild(0).activeSelf)
+                    Int32 abilityId = this.saIdList[this.currentAbilityIndex];
+                    AbilityType abilityType = this.CheckSAType(abilityId, player);
+                    CharacterAbilityGems saData = ff9abil.GetSupportAbilityGem(abilityId);
+                    SupportAbility supportId = ff9abil.GetSupportAbilityFromAbilityId(abilityId);
+                    if (abilityType == AbilityType.Enable)
                     {
-                        Int32 abilityId = this.saIdList[this.currentAbilityIndex];
-                        AbilityType abilityType = this.CheckSAType(abilityId, player);
-                        CharacterAbilityGems saData = ff9abil.GetSupportAbilityGem(abilityId);
-                        SupportAbility supportId = ff9abil.GetSupportAbilityFromAbilityId(abilityId);
-                        if (abilityType == AbilityType.Enable)
+                        PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
+                        FF9Sfx.FF9SFX_Play(107);
+                        ff9abil.FF9Abil_SetEnableSA(player, supportId, true);
+                        player.cur.capa -= saData.GemsCount;
+                        ff9play.FF9Play_Update(player);
+                        this.DisplaySA();
+                        this.DisplayCharacter(true);
+                    }
+                    else if (abilityType == AbilityType.Selected)
+                    {
+                        PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
+                        FF9Sfx.FF9SFX_Play(107);
+                        Int32 boostMaxLevel = ff9abil.GetBoostedAbilityMaxLevel(player, supportId);
+                        if (boostMaxLevel > 0)
                         {
-                            PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
-                            FF9Sfx.FF9SFX_Play(107);
-                            ff9abil.FF9Abil_SetEnableSA(player.Data, supportId, true);
-                            player.Data.cur.capa -= saData.GemsCount;
-                            ff9play.FF9Play_Update(player.Data);
-                            this.DisplaySA();
-                            this.DisplayCharacter(true);
-                        }
-                        else if (abilityType == AbilityType.Selected)
-                        {
-                            PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
-                            FF9Sfx.FF9SFX_Play(107);
-                            Int32 boostMaxLevel = ff9abil.GetBoostedAbilityMaxLevel(player, supportId);
-                            if (boostMaxLevel > 0)
+                            Int32 boostLevel = Math.Min(boostMaxLevel, ff9abil.GetBoostedAbilityLevel(player, supportId));
+                            List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(supportId);
+                            Boolean enableNext = boostLevel < boostMaxLevel;
+                            if (enableNext)
                             {
-                                Int32 boostLevel = Math.Min(boostMaxLevel, ff9abil.GetBoostedAbilityLevel(player, supportId));
-                                List<SupportAbility> boostedList = ff9abil.GetBoostedAbilityList(supportId);
-                                Boolean enableNext = boostLevel < boostMaxLevel;
+                                CharacterAbilityGems nextBoost = ff9abil._FF9Abil_SaData[boostedList[boostLevel]];
+                                enableNext = this.CheckSAType(ff9abil.GetAbilityIdFromSupportAbility(nextBoost.Id), player) == AbilityType.Enable;
                                 if (enableNext)
                                 {
-                                    CharacterAbilityGems nextBoost = ff9abil._FF9Abil_SaData[boostedList[boostLevel]];
-                                    enableNext = this.CheckSAType(ff9abil.GetAbilityIdFromSupportAbility(nextBoost.Id), player) == AbilityType.Enable;
-                                    if (enableNext)
-                                    {
-                                        ff9abil.FF9Abil_SetEnableSA(player.Data, nextBoost.Id, true);
-                                        player.Data.cur.capa -= nextBoost.GemsCount;
-                                    }
-                                }
-                                if (!enableNext)
-                                {
-                                    foreach (SupportAbility boosted in boostedList)
-                                    {
-                                        if (ff9abil.FF9Abil_IsEnableSA(player.Data.saExtended, boosted))
-                                        {
-                                            CharacterAbilityGems boostedGem = ff9abil._FF9Abil_SaData[boosted];
-                                            ff9abil.FF9Abil_SetEnableSA(player.Data, boosted, false);
-                                            player.Data.cur.capa += boostedGem.GemsCount;
-                                        }
-                                    }
-                                    ff9abil.FF9Abil_SetEnableSA(player.Data, supportId, false);
-                                    player.Data.cur.capa += saData.GemsCount;
+                                    ff9abil.FF9Abil_SetEnableSA(player, nextBoost.Id, true);
+                                    player.cur.capa -= nextBoost.GemsCount;
                                 }
                             }
-                            else
+                            if (!enableNext)
                             {
-                                ff9abil.FF9Abil_SetEnableSA(player.Data, supportId, false);
-                                player.Data.cur.capa += saData.GemsCount;
+                                foreach (SupportAbility boosted in boostedList)
+                                {
+                                    if (ff9abil.FF9Abil_IsEnableSA(player.saExtended, boosted))
+                                    {
+                                        CharacterAbilityGems boostedGem = ff9abil._FF9Abil_SaData[boosted];
+                                        ff9abil.FF9Abil_SetEnableSA(player, boosted, false);
+                                        player.cur.capa += boostedGem.GemsCount;
+                                    }
+                                }
+                                ff9abil.FF9Abil_SetEnableSA(player, supportId, false);
+                                player.cur.capa += saData.GemsCount;
                             }
-                            ff9play.FF9Play_Update(player.Data);
-                            this.DisplaySA();
-                            this.DisplayCharacter(true);
                         }
                         else
                         {
-                            FF9Sfx.FF9SFX_Play(102);
+                            ff9abil.FF9Abil_SetEnableSA(player, supportId, false);
+                            player.cur.capa += saData.GemsCount;
                         }
+                        ff9play.FF9Play_Update(player);
+                        this.DisplaySA();
+                        this.DisplayCharacter(true);
                     }
                     else
                     {
@@ -467,50 +460,57 @@ public class AbilityUI : UIScene
                 }
                 else
                 {
-                    this.OnSecondaryGroupClick(go);
-                }
-            }
-            else if (ButtonGroupState.ActiveGroup == TargetGroupButton && (ButtonGroupState.ContainButtonInGroup(go, TargetGroupButton) || go == this.allTargetHitArea))
-            {
-                Boolean canUseAbility = false;
-                Int32 memberIndex = go.transform.GetSiblingIndex();
-                PLAYER caster = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-                BattleAbilityId abilId = ff9abil.GetActiveAbilityFromAbilityId(this.aaIdList[this.currentAbilityIndex]);
-                BattleAbilityId patchedId = this.PatchAbility(abilId);
-                AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[patchedId];
-                if (!this.multiTarget)
-                {
-                    canUseAbility = SFieldCalculator.FieldCalcMain(caster, FF9StateSystem.Common.FF9.party.member[memberIndex], aaData, aaData.Ref.ScriptId, 0U);
-                }
-                else
-                {
-                    for (Int32 i = 0; i < 4; ++i)
-                        if (FF9StateSystem.Common.FF9.party.member[i] != null)
-                            canUseAbility |= SFieldCalculator.FieldCalcMain(caster, FF9StateSystem.Common.FF9.party.member[i], aaData, aaData.Ref.ScriptId, 1U);
-                }
-                if (canUseAbility)
-                {
-                    PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
-                    FF9Sfx.FF9SFX_Play(106);
-                    Int32 mpCost = GetMp(aaData);
-                    if (!FF9StateSystem.Settings.IsHpMpFull)
-                        caster.cur.mp = (UInt32)(caster.cur.mp - mpCost);
-                    if (caster.cur.mp < mpCost)
-                    {
-                        this.DisplayAA();
-                        this.TargetListPanel.SetActive(false);
-                        ButtonGroupState.ActiveGroup = ActionAbilityGroupButton;
-                    }
-                    FF9StateSystem.EventState.IncreaseAAUsageCounter(patchedId);
-                    BattleAchievement.IncreaseNumber(ref FF9StateSystem.Achievement.whtMag_no, 1);
-                    AchievementManager.ReportAchievement(AcheivementKey.WhtMag200, FF9StateSystem.Achievement.whtMag_no);
-                    this.DisplayTarget();
-                    this.DisplayCharacter(true);
-                }
-                else
-                {
                     FF9Sfx.FF9SFX_Play(102);
                 }
+            }
+            else
+            {
+                this.OnSecondaryGroupClick(go);
+            }
+        }
+        else if (ButtonGroupState.ActiveGroup == TargetGroupButton && (ButtonGroupState.ContainButtonInGroup(go, TargetGroupButton) || go == this.allTargetHitArea))
+        {
+            Boolean canUseAbility = false;
+            Int32 memberIndex = go.transform.GetSiblingIndex();
+            PLAYER caster = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+            BattleAbilityId abilId = ff9abil.GetActiveAbilityFromAbilityId(this.aaIdList[this.currentAbilityIndex]);
+            BattleAbilityId patchedId = this.PatchAbility(abilId);
+            AA_DATA aaData = FF9StateSystem.Battle.FF9Battle.aa_data[patchedId];
+            if (!this.multiTarget)
+            {
+                canUseAbility = SFieldCalculator.FieldCalcMain(caster, FF9StateSystem.Common.FF9.party.member[memberIndex], patchedId, aaData, 0u);
+            }
+            else
+            {
+                for (Int32 i = 0; i < 4; ++i)
+                {
+                    PLAYER player = FF9StateSystem.Common.FF9.party.member[i];
+                    if (player != null)
+                        canUseAbility |= SFieldCalculator.FieldCalcMain(caster, player, patchedId, aaData, 1u);
+                }
+            }
+            if (canUseAbility)
+            {
+                PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
+                FF9Sfx.FF9SFX_Play(106);
+                Int32 mpCost = GetMp(aaData);
+                if (!FF9StateSystem.Settings.IsHpMpFull)
+                    caster.cur.mp = (UInt32)(caster.cur.mp - mpCost);
+                if (caster.cur.mp < mpCost)
+                {
+                    this.DisplayAA();
+                    this.TargetListPanel.SetActive(false);
+                    ButtonGroupState.ActiveGroup = ActionAbilityGroupButton;
+                }
+                FF9StateSystem.EventState.IncreaseAAUsageCounter(patchedId);
+                BattleAchievement.IncreaseNumber(ref FF9StateSystem.Achievement.whtMag_no, 1);
+                AchievementManager.ReportAchievement(AcheivementKey.WhtMag200, FF9StateSystem.Achievement.whtMag_no);
+                this.DisplayTarget(aaData.Info.Target == TargetType.Self ? caster : null);
+                this.DisplayCharacter(true);
+            }
+            else
+            {
+                FF9Sfx.FF9SFX_Play(102);
             }
         }
         return true;
@@ -518,47 +518,46 @@ public class AbilityUI : UIScene
 
     public override Boolean OnKeyCancel(GameObject go)
     {
-        if (base.OnKeyCancel(go))
+        if (!base.OnKeyCancel(go))
+            return true;
+        if (ButtonGroupState.ActiveGroup == SubMenuGroupButton)
         {
-            if (ButtonGroupState.ActiveGroup == SubMenuGroupButton)
+            FF9Sfx.FF9SFX_Play(101);
+            this.fastSwitch = false;
+            this.Hide(() =>
             {
-                FF9Sfx.FF9SFX_Play(101);
-                this.fastSwitch = false;
-                this.Hide(() =>
-                {
-                    PersistenSingleton<UIManager>.Instance.MainMenuScene.NeedTweenAndHideSubMenu = false;
-                    PersistenSingleton<UIManager>.Instance.MainMenuScene.CurrentSubMenu = MainMenuUI.SubMenu.Ability;
-                    PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.MainMenu);
-                });
-            }
-            else if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
+                PersistenSingleton<UIManager>.Instance.MainMenuScene.NeedTweenAndHideSubMenu = false;
+                PersistenSingleton<UIManager>.Instance.MainMenuScene.CurrentSubMenu = MainMenuUI.SubMenu.Ability;
+                PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.MainMenu);
+            });
+        }
+        else if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
+        {
+            FF9Sfx.FF9SFX_Play(101);
+            this.SetAbilityInfo(false);
+            this.DisplayPlayerArrow(true);
+            this.DisplaySubMenuArrow(true);
+            ButtonGroupState.ActiveGroup = SubMenuGroupButton;
+        }
+        else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton)
+        {
+            FF9Sfx.FF9SFX_Play(101);
+            this.SetAbilityInfo(false);
+            this.DisplayPlayerArrow(true);
+            this.DisplaySubMenuArrow(true);
+            ButtonGroupState.ActiveGroup = SubMenuGroupButton;
+        }
+        else if (ButtonGroupState.ActiveGroup == TargetGroupButton)
+        {
+            FF9Sfx.FF9SFX_Play(101);
+            this.SetMultipleTarget(false);
+            this.Loading = true;
+            // ISSUE: method pointer
+            this.targetTransition.TweenOut(new Byte[1], () =>
             {
-                FF9Sfx.FF9SFX_Play(101);
-                this.SetAbilityInfo(false);
-                this.DisplayPlayerArrow(true);
-                this.DisplaySubMenuArrow(true);
-                ButtonGroupState.ActiveGroup = SubMenuGroupButton;
-            }
-            else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton)
-            {
-                FF9Sfx.FF9SFX_Play(101);
-                this.SetAbilityInfo(false);
-                this.DisplayPlayerArrow(true);
-                this.DisplaySubMenuArrow(true);
-                ButtonGroupState.ActiveGroup = SubMenuGroupButton;
-            }
-            else if (ButtonGroupState.ActiveGroup == TargetGroupButton)
-            {
-                FF9Sfx.FF9SFX_Play(101);
-                this.SetMultipleTarget(false);
-                this.Loading = true;
-                // ISSUE: method pointer
-                this.targetTransition.TweenOut(new Byte[1], () =>
-                {
-                    this.Loading = false;
-                    ButtonGroupState.ActiveGroup = ActionAbilityGroupButton;
-                });
-            }
+                this.Loading = false;
+                ButtonGroupState.ActiveGroup = ActionAbilityGroupButton;
+            });
         }
         return true;
     }
@@ -587,7 +586,7 @@ public class AbilityUI : UIScene
         {
             if (ButtonGroupState.ContainButtonInGroup(go, SupportAbilityGroupButton))
             {
-                Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
+                PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
                 this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
                 if (go.GetChild(0).activeSelf)
                 {
@@ -599,8 +598,8 @@ public class AbilityUI : UIScene
                     {
                         PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
                         FF9Sfx.FF9SFX_Play(107);
-                        ff9abil.FF9Abil_SetEnableSA(player.Data, supportId, true);
-                        player.Data.cur.capa -= saData.GemsCount;
+                        ff9abil.FF9Abil_SetEnableSA(player, supportId, true);
+                        player.cur.capa -= saData.GemsCount;
                         Int32 boostMaxLevel = ff9abil.GetBoostedAbilityMaxLevel(player, supportId);
                         if (boostMaxLevel > 0)
                         {
@@ -610,8 +609,8 @@ public class AbilityUI : UIScene
                                 if (this.CheckSAType(ff9abil.GetAbilityIdFromSupportAbility(boosted), player) == AbilityType.Enable)
                                 {
                                     CharacterAbilityGems boostedGem = ff9abil._FF9Abil_SaData[boosted];
-                                    ff9abil.FF9Abil_SetEnableSA(player.Data, boosted, true);
-                                    player.Data.cur.capa -= boostedGem.GemsCount;
+                                    ff9abil.FF9Abil_SetEnableSA(player, boosted, true);
+                                    player.cur.capa -= boostedGem.GemsCount;
                                 }
                                 else
                                 {
@@ -619,7 +618,7 @@ public class AbilityUI : UIScene
                                 }
                             }
                         }
-                        ff9play.FF9Play_Update(player.Data);
+                        ff9play.FF9Play_Update(player);
                         this.DisplaySA();
                         this.DisplayCharacter(true);
                     }
@@ -638,9 +637,9 @@ public class AbilityUI : UIScene
                                 saData = ff9abil._FF9Abil_SaData[supportId];
                             }
                         }
-                        ff9abil.FF9Abil_SetEnableSA(player.Data, supportId, false);
-                        player.Data.cur.capa += saData.GemsCount;
-                        ff9play.FF9Play_Update(player.Data);
+                        ff9abil.FF9Abil_SetEnableSA(player, supportId, false);
+                        player.cur.capa += saData.GemsCount;
+                        ff9play.FF9Play_Update(player);
                         this.DisplaySA();
                         this.DisplayCharacter(true);
                     }
@@ -660,128 +659,125 @@ public class AbilityUI : UIScene
 
     public override Boolean OnKeyLeftBumper(GameObject go)
     {
-        if (base.OnKeyLeftBumper(go))
+        if (!base.OnKeyLeftBumper(go))
+            return true;
+        if (ButtonGroupState.ActiveGroup == SubMenuGroupButton)
         {
-            if (ButtonGroupState.ActiveGroup == SubMenuGroupButton)
+            if (this.CharacterArrowPanel.activeSelf)
             {
-                if (this.CharacterArrowPanel.activeSelf)
+                FF9Sfx.FF9SFX_Play(1047);
+                Int32 prev = ff9play.FF9Play_GetPrev(this.currentPartyIndex);
+                if (prev != this.currentPartyIndex)
                 {
-                    FF9Sfx.FF9SFX_Play(1047);
-                    Int32 prev = ff9play.FF9Play_GetPrev(this.currentPartyIndex);
-                    if (prev != this.currentPartyIndex)
-                    {
-                        this.currentPartyIndex = prev;
-                        PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-                        String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
-                        ButtonGroupState.RemoveCursorMemorize(ActionAbilityGroupButton);
-                        ButtonGroupState.RemoveCursorMemorize(SupportAbilityGroupButton);
-                        this.ShowPointerWhenLoading = true;
-                        this.Loading = true;
-                        Boolean isKnockOut = player.cur.hp == 0;
+                    this.currentPartyIndex = prev;
+                    PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+                    String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
+                    ButtonGroupState.RemoveCursorMemorize(ActionAbilityGroupButton);
+                    ButtonGroupState.RemoveCursorMemorize(SupportAbilityGroupButton);
+                    this.ShowPointerWhenLoading = true;
+                    this.Loading = true;
+                    Boolean isKnockOut = player.cur.hp == 0;
 
-                        this.avatarTransition.Change(spritName, HonoAvatarTweenPosition.Direction.LeftToRight, isKnockOut, () =>
-                        {
-                            this.DisplayHelp();
-                            this.DisplayCharacter(true);
-                            this.Loading = false;
-                            this.ShowPointerWhenLoading = false;
-                        });
-                        this.SwitchCharacter(false);
-                        UpdateUserInterface();
-                    }
+                    this.avatarTransition.Change(spritName, HonoAvatarTweenPosition.Direction.LeftToRight, isKnockOut, () =>
+                    {
+                        this.DisplayHelp();
+                        this.DisplayCharacter(true);
+                        this.Loading = false;
+                        this.ShowPointerWhenLoading = false;
+                    });
+                    this.SwitchCharacter(false);
+                    UpdateUserInterface();
                 }
             }
-            else if (ButtonGroupState.ActiveGroup == TargetGroupButton)
-            {
-                FF9Sfx.FF9SFX_Play(103);
-                this.ToggleMultipleTarget();
-            }
+        }
+        else if (ButtonGroupState.ActiveGroup == TargetGroupButton)
+        {
+            FF9Sfx.FF9SFX_Play(103);
+            this.ToggleMultipleTarget();
         }
         return true;
     }
 
     public override Boolean OnKeyRightBumper(GameObject go)
     {
-        if (base.OnKeyRightBumper(go))
+        if (!base.OnKeyRightBumper(go))
+            return true;
+        if (ButtonGroupState.ActiveGroup == SubMenuGroupButton)
         {
-            if (ButtonGroupState.ActiveGroup == SubMenuGroupButton)
+            if (this.CharacterArrowPanel.activeSelf)
             {
-                if (this.CharacterArrowPanel.activeSelf)
+                FF9Sfx.FF9SFX_Play(1047);
+                Int32 next = ff9play.FF9Play_GetNext(this.currentPartyIndex);
+                if (next != this.currentPartyIndex)
                 {
-                    FF9Sfx.FF9SFX_Play(1047);
-                    Int32 next = ff9play.FF9Play_GetNext(this.currentPartyIndex);
-                    if (next != this.currentPartyIndex)
+                    this.currentPartyIndex = next;
+                    PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+                    String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
+                    ButtonGroupState.RemoveCursorMemorize(ActionAbilityGroupButton);
+                    ButtonGroupState.RemoveCursorMemorize(SupportAbilityGroupButton);
+                    this.ShowPointerWhenLoading = true;
+                    this.Loading = true;
+                    Boolean isKnockOut = player.cur.hp == 0;
+                    this.avatarTransition.Change(spritName, HonoAvatarTweenPosition.Direction.RightToLeft, isKnockOut, () =>
                     {
-                        this.currentPartyIndex = next;
-                        PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-                        String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
-                        ButtonGroupState.RemoveCursorMemorize(ActionAbilityGroupButton);
-                        ButtonGroupState.RemoveCursorMemorize(SupportAbilityGroupButton);
-                        this.ShowPointerWhenLoading = true;
-                        this.Loading = true;
-                        Boolean isKnockOut = player.cur.hp == 0;
-                        this.avatarTransition.Change(spritName, HonoAvatarTweenPosition.Direction.RightToLeft, isKnockOut, () =>
-                        {
-                            this.DisplayHelp();
-                            this.DisplayCharacter(true);
-                            this.Loading = false;
-                            this.ShowPointerWhenLoading = false;
-                        });
-                        this.SwitchCharacter(false);
-                        UpdateUserInterface();
-                    }
+                        this.DisplayHelp();
+                        this.DisplayCharacter(true);
+                        this.Loading = false;
+                        this.ShowPointerWhenLoading = false;
+                    });
+                    this.SwitchCharacter(false);
+                    UpdateUserInterface();
                 }
             }
-            else if (ButtonGroupState.ActiveGroup == TargetGroupButton)
-            {
-                FF9Sfx.FF9SFX_Play(103);
-                this.ToggleMultipleTarget();
-            }
+        }
+        else if (ButtonGroupState.ActiveGroup == TargetGroupButton)
+        {
+            FF9Sfx.FF9SFX_Play(103);
+            this.ToggleMultipleTarget();
         }
         return true;
     }
 
     public override Boolean OnItemSelect(GameObject go)
     {
-        if (base.OnItemSelect(go))
+        if (!base.OnItemSelect(go))
+            return true;
+        if (ButtonGroupState.ActiveGroup == SubMenuGroupButton)
         {
-            if (ButtonGroupState.ActiveGroup == SubMenuGroupButton)
+            if (this.currentSubMenu != this.GetSubMenuFromGameObject(go))
             {
-                if (this.currentSubMenu != this.GetSubMenuFromGameObject(go))
+                this.currentSubMenu = this.GetSubMenuFromGameObject(go);
+                switch (this.currentSubMenu)
                 {
-                    this.currentSubMenu = this.GetSubMenuFromGameObject(go);
-                    switch (this.currentSubMenu)
-                    {
-                        case SubMenu.Use:
-                            this.CommandPanel.SetActive(true);
-                            this.ActiveAbilityListPanel.SetActive(true);
-                            this.MagicStonePanel.SetActive(false);
-                            this.SupportAbilityListPanel.SetActive(false);
-                            this.DisplayAA();
-                            break;
-                        case SubMenu.Equip:
-                            this.CommandPanel.SetActive(false);
-                            this.ActiveAbilityListPanel.SetActive(false);
-                            this.MagicStonePanel.SetActive(true);
-                            this.SupportAbilityListPanel.SetActive(true);
-                            this.DisplaySA();
-                            break;
-                    }
+                    case SubMenu.Use:
+                        this.CommandPanel.SetActive(true);
+                        this.ActiveAbilityListPanel.SetActive(true);
+                        this.MagicStonePanel.SetActive(false);
+                        this.SupportAbilityListPanel.SetActive(false);
+                        this.DisplayAA();
+                        break;
+                    case SubMenu.Equip:
+                        this.CommandPanel.SetActive(false);
+                        this.ActiveAbilityListPanel.SetActive(false);
+                        this.MagicStonePanel.SetActive(true);
+                        this.SupportAbilityListPanel.SetActive(true);
+                        this.DisplaySA();
+                        break;
                 }
             }
-            else if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
-            {
-                if (this.currentAbilityIndex != go.GetComponent<RecycleListItem>().ItemDataIndex)
-                {
-                    this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
-                    this.SetAbilityInfo(true);
-                }
-            }
-            else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton && this.currentAbilityIndex != go.GetComponent<RecycleListItem>().ItemDataIndex)
+        }
+        else if (ButtonGroupState.ActiveGroup == ActionAbilityGroupButton)
+        {
+            if (this.currentAbilityIndex != go.GetComponent<RecycleListItem>().ItemDataIndex)
             {
                 this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
                 this.SetAbilityInfo(true);
             }
+        }
+        else if (ButtonGroupState.ActiveGroup == SupportAbilityGroupButton && this.currentAbilityIndex != go.GetComponent<RecycleListItem>().ItemDataIndex)
+        {
+            this.currentAbilityIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
+            this.SetAbilityInfo(true);
         }
         return true;
     }
@@ -813,7 +809,7 @@ public class AbilityUI : UIScene
 
     private void DisplayHelp()
     {
-        Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
+        PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
         ButtonGroupState useSubMenu = this.UseSubMenu.GetComponent<ButtonGroupState>();
         ButtonGroupState equipSubMenu = this.EquipSubMenu.GetComponent<ButtonGroupState>();
         String mobileSuffix = FF9StateSystem.MobilePlatform ? "Mobile" : "";
@@ -848,15 +844,7 @@ public class AbilityUI : UIScene
     private void DisplayPlayerArrow(Boolean isEnable)
     {
         if (isEnable)
-        {
-            Int32 num = 0;
-            foreach (PLAYER player in FF9StateSystem.Common.FF9.party.member)
-            {
-                if (player != null)
-                    ++num;
-            }
-            this.CharacterArrowPanel.SetActive(num > 1);
-        }
+            this.CharacterArrowPanel.SetActive(FF9StateSystem.Common.FF9.party.member.Count(player => player != null) > 1);
         else
             this.CharacterArrowPanel.SetActive(false);
     }
@@ -865,9 +853,8 @@ public class AbilityUI : UIScene
     {
         PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
         FF9UIDataTool.DisplayCharacterDetail(player, this.characterHud);
-        if (!updateAvatar)
-            return;
-        FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(), new Vector3(), this.characterHud.AvatarSprite, false);
+        if (updateAvatar)
+            FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(), new Vector3(), this.characterHud.AvatarSprite, false);
     }
 
     private void DisplayAllButton()
@@ -892,7 +879,7 @@ public class AbilityUI : UIScene
     {
         if (isVisible)
         {
-            Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
+            PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
             Int32 abilId;
             AbilityType abilityType;
             Boolean isShowText;
@@ -917,7 +904,7 @@ public class AbilityUI : UIScene
             {
                 this.abilityInfoHud.APBar.Slider.gameObject.SetActive(true);
                 if (ff9abil.FF9Abil_HasAp(player))
-                    FF9UIDataTool.DisplayAPBar(player.Data, abilId, isShowText, this.abilityInfoHud.APBar);
+                    FF9UIDataTool.DisplayAPBar(player, abilId, isShowText, this.abilityInfoHud.APBar);
                 Int32 spriteSlot = 0;
                 if (this.equipmentPartInAbilityDict.ContainsKey(abilId))
                 {
@@ -951,7 +938,7 @@ public class AbilityUI : UIScene
     {
         if (this.currentSubMenu != SubMenu.Use)
             return;
-        Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
+        PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
         Int32 abilityId = this.aaIdList[this.currentAbilityIndex];
         this.commandLabel.text = this.CheckAAType(abilityId, player) == AbilityType.NoDraw
             ? String.Empty
@@ -962,20 +949,17 @@ public class AbilityUI : UIScene
     {
         this.firstActiveAbility = -1;
         List<ListDataTypeBase> inDataList = new List<ListDataTypeBase>();
-        Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
-        using (List<Int32>.Enumerator enumerator = this.aaIdList.GetEnumerator())
+        PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+        foreach (Int32 abilId in this.aaIdList)
         {
-            while (enumerator.MoveNext())
+            AbilityListData abilityListData = new AbilityListData
             {
-                AbilityListData abilityListData = new AbilityListData
-                {
-                    Id = enumerator.Current,
-                    Type = this.CheckAAType(enumerator.Current, player)
-                };
-                inDataList.Add(abilityListData);
-                if (this.firstActiveAbility == -1 && abilityListData.Type == AbilityType.Enable)
-                    this.firstActiveAbility = inDataList.Count - 1;
-            }
+                Id = abilId,
+                Type = this.CheckAAType(abilId, player)
+            };
+            inDataList.Add(abilityListData);
+            if (this.firstActiveAbility == -1 && abilityListData.Type == AbilityType.Enable)
+                this.firstActiveAbility = inDataList.Count - 1;
         }
         if (this.firstActiveAbility == -1)
             this.firstActiveAbility = 0;
@@ -1039,20 +1023,17 @@ public class AbilityUI : UIScene
     {
         this.firstActiveAbility = -1;
         List<ListDataTypeBase> inDataList = new List<ListDataTypeBase>();
-        Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
-        using (List<Int32>.Enumerator enumerator = this.saIdList.GetEnumerator())
+        PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+        foreach (Int32 abilId in this.saIdList)
         {
-            while (enumerator.MoveNext())
+            AbilityListData abilityListData = new AbilityListData
             {
-                AbilityListData abilityListData = new AbilityListData
-                {
-                    Id = enumerator.Current,
-                    Type = this.CheckSAType(enumerator.Current, player)
-                };
-                inDataList.Add(abilityListData);
-                if (this.firstActiveAbility == -1 && (abilityListData.Type == AbilityType.Enable || abilityListData.Type == AbilityType.Selected || abilityListData.Type == AbilityType.CantDisable))
-                    this.firstActiveAbility = inDataList.Count - 1;
-            }
+                Id = abilId,
+                Type = this.CheckSAType(abilId, player)
+            };
+            inDataList.Add(abilityListData);
+            if (this.firstActiveAbility == -1 && (abilityListData.Type == AbilityType.Enable || abilityListData.Type == AbilityType.Selected || abilityListData.Type == AbilityType.CantDisable))
+                this.firstActiveAbility = inDataList.Count - 1;
         }
         if (this.firstActiveAbility == -1)
             this.firstActiveAbility = 0;
@@ -1112,7 +1093,7 @@ public class AbilityUI : UIScene
             else if (abilityListData.Type == AbilityType.Selected || abilityListData.Type == AbilityType.CantDisable)
             {
                 Color labelColor = abilityListData.Type == AbilityType.Selected ? FF9TextTool.White : FF9TextTool.Gray;
-                Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
+                PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
                 detailWithIconHud.NameLabel.color = labelColor;
                 detailWithIconHud.NumberLabel.color = labelColor;
                 detailWithIconHud.IconSprite.color = BoostedAbilityColor[0];
@@ -1140,47 +1121,47 @@ public class AbilityUI : UIScene
         }
     }
 
-    private void DisplayTarget()
+    private void DisplayTarget(PLAYER onlySelfMode = null)
     {
-        Int32 num = 0;
+        Int32 hudIndex = 0;
         foreach (PLAYER player in FF9StateSystem.Common.FF9.party.member)
         {
-            CharacterDetailHUD charHud = this.targetHudList[num++];
+            CharacterDetailHUD charHud = this.targetHudList[hudIndex++];
             charHud.Self.SetActive(true);
-            if (player != null)
+            if (player == null || (onlySelfMode != null && player != onlySelfMode))
             {
-                charHud.Content.SetActive(true);
-                FF9UIDataTool.DisplayCharacterDetail(player, charHud);
-                FF9UIDataTool.DisplayCharacterAvatar(player, new Vector2(), new Vector2(), charHud.AvatarSprite, false);
-                AA_DATA patchedAbil = FF9StateSystem.Battle.FF9Battle.aa_data[this.PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(this.aaIdList[this.currentAbilityIndex]))];
-                switch (patchedAbil.Info.DisplayStats)
-                {
-                    case TargetDisplay.None:
-                    case TargetDisplay.Hp:
-                    case TargetDisplay.Mp:
-                        charHud.HPPanel.SetActive(true);
-                        charHud.MPPanel.SetActive(true);
-                        charHud.StatusesPanel.SetActive(false);
-                        continue;
-                    case TargetDisplay.Buffs:
-                    case TargetDisplay.Debuffs:
-                        charHud.HPPanel.SetActive(false);
-                        charHud.MPPanel.SetActive(false);
-                        charHud.StatusesPanel.SetActive(true);
-                        continue;
-                    default:
-                        continue;
-                }
-            }
-            else
                 charHud.Content.SetActive(false);
+                continue;
+            }
+            charHud.Content.SetActive(true);
+            FF9UIDataTool.DisplayCharacterDetail(player, charHud);
+            FF9UIDataTool.DisplayCharacterAvatar(player, new Vector2(), new Vector2(), charHud.AvatarSprite, false);
+            AA_DATA patchedAbil = FF9StateSystem.Battle.FF9Battle.aa_data[this.PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(this.aaIdList[this.currentAbilityIndex]))];
+            switch (patchedAbil.Info.DisplayStats)
+            {
+                case TargetDisplay.None:
+                case TargetDisplay.Hp:
+                case TargetDisplay.Mp:
+                    charHud.HPPanel.SetActive(true);
+                    charHud.MPPanel.SetActive(true);
+                    charHud.StatusesPanel.SetActive(false);
+                    continue;
+                case TargetDisplay.Buffs:
+                case TargetDisplay.Debuffs:
+                    charHud.HPPanel.SetActive(false);
+                    charHud.MPPanel.SetActive(false);
+                    charHud.StatusesPanel.SetActive(true);
+                    continue;
+                default:
+                    continue;
+            }
         }
         this.SetAvailableCharacter();
     }
 
-    private Boolean IsMulti(BattleAbilityId battleAbilityId)
+    private Boolean CanToggleMulti(TargetType targetType)
     {
-        switch (FF9BattleDB.CharacterActions[battleAbilityId].Info.Target)
+        switch (targetType)
         {
             case TargetType.ManyAny:
             case TargetType.ManyAlly:
@@ -1199,14 +1180,14 @@ public class AbilityUI : UIScene
         return false;
     }
 
-    private AbilityType CheckAAType(Int32 abilityId, Character player)
+    private AbilityType CheckAAType(Int32 abilityId, PLAYER player)
     {
         BattleAbilityId patchedId = this.PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(abilityId));
         AA_DATA patchedAbil = FF9BattleDB.CharacterActions[patchedId];
 
         if (!this.equipmentPartInAbilityDict.ContainsKey(abilityId))
         {
-            Int32 index = ff9abil.FF9Abil_GetIndex(player.Data, abilityId);
+            Int32 index = ff9abil.FF9Abil_GetIndex(player, abilityId);
             if (index < 0)
                 return AbilityType.NoDraw;
 
@@ -1214,47 +1195,47 @@ public class AbilityUI : UIScene
             {
                 if ((Configuration.Battle.LockEquippedAbilities == 2 || Configuration.Battle.LockEquippedAbilities == 3) && player.Index != CharacterId.Quina)
                     return AbilityType.NoDraw;
-                Int32 currentAp = player.Data.pa[index];
+                Int32 currentAp = player.pa[index];
                 Int32 learnAp = ff9abil._FF9Abil_PaData[player.PresetId][index].Ap;
                 if (currentAp < learnAp)
                     return AbilityType.NoDraw;
             }
         }
 
-        return (player.Data.status & BattleStatusConst.CannotUseAbilityInMenu) != 0 || (patchedAbil.Type & 1) == 0 || GetMp(patchedAbil) > player.Data.cur.mp ? AbilityType.CantSpell : AbilityType.Enable;
+        return (player.status & BattleStatusConst.CannotUseAbilityInMenu) != 0 || (patchedAbil.Type & 1) == 0 || GetMp(patchedAbil) > player.cur.mp ? AbilityType.CantSpell : AbilityType.Enable;
     }
 
-    private AbilityType CheckSAType(Int32 abilityId, Character player)
+    private AbilityType CheckSAType(Int32 abilityId, PLAYER player)
     {
         if (!ff9abil.IsAbilitySupport(abilityId))
             return AbilityType.NoDraw;
 
         if (Configuration.Battle.LockEquippedAbilities == 1 || Configuration.Battle.LockEquippedAbilities == 3)
         {
-            if (ff9abil.FF9Abil_GetIndex(player.Data, abilityId) < 0)
+            if (ff9abil.FF9Abil_GetIndex(player, abilityId) < 0)
                 return AbilityType.NoDraw;
             return this.equipmentPartInAbilityDict.ContainsKey(abilityId) ? AbilityType.CantDisable : AbilityType.CantSpell;
         }
 
-        if (ff9abil.FF9Abil_IsEnableSA(player.Data.saExtended, ff9abil.GetSupportAbilityFromAbilityId(abilityId)))
+        if (ff9abil.FF9Abil_IsEnableSA(player.saExtended, ff9abil.GetSupportAbilityFromAbilityId(abilityId)))
             return AbilityType.Selected;
 
         if (!this.equipmentPartInAbilityDict.ContainsKey(abilityId))
         {
-            Int32 index = ff9abil.FF9Abil_GetIndex(player.Data, abilityId);
+            Int32 index = ff9abil.FF9Abil_GetIndex(player, abilityId);
             if (index < 0)
                 return AbilityType.NoDraw;
 
             if (ff9abil.FF9Abil_HasAp(player))
             {
-                Int32 currentAp = player.Data.pa[index];
+                Int32 currentAp = player.pa[index];
                 Int32 learnAp = ff9abil._FF9Abil_PaData[player.PresetId][index].Ap;
                 if (currentAp < learnAp)
                     return AbilityType.NoDraw;
             }
         }
 
-        return ff9abil.GetSupportAbilityGem(abilityId).GemsCount > player.Data.cur.capa ? AbilityType.CantSpell : AbilityType.Enable;
+        return ff9abil.GetSupportAbilityGem(abilityId).GemsCount > player.cur.capa ? AbilityType.CantSpell : AbilityType.Enable;
     }
 
     private static Int32 GetMp(AA_DATA aa_data)
@@ -1265,7 +1246,7 @@ public class AbilityUI : UIScene
         return mpCost;
     }
 
-    private static BattleCommandId GetCommand(Int32 abil_id, Character play)
+    private static BattleCommandId GetCommand(Int32 abil_id, PLAYER play)
     {
         BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abil_id);
         for (Int32 commandNumber = 0; commandNumber < 2; ++commandNumber)
@@ -1305,22 +1286,18 @@ public class AbilityUI : UIScene
     private void SetAvailableCharacter()
     {
         List<CharacterDetailHUD> targetList = new List<CharacterDetailHUD>();
-        using (List<CharacterDetailHUD>.Enumerator enumerator = this.targetHudList.GetEnumerator())
+        foreach (CharacterDetailHUD charHUD in this.targetHudList)
         {
-            while (enumerator.MoveNext())
+            if (!this.multiTarget)
             {
-                CharacterDetailHUD curCharacter = enumerator.Current;
-                if (!this.multiTarget)
+                if (charHUD.Content.activeSelf)
                 {
-                    if (curCharacter.Content.activeSelf)
-                    {
-                        targetList.Add(curCharacter);
-                        ButtonGroupState.SetButtonEnable(curCharacter.Self, true);
-                    }
-                    else
-                    {
-                        ButtonGroupState.SetButtonEnable(curCharacter.Self, false);
-                    }
+                    targetList.Add(charHUD);
+                    ButtonGroupState.SetButtonEnable(charHUD.Self, true);
+                }
+                else
+                {
+                    ButtonGroupState.SetButtonEnable(charHUD.Self, false);
                 }
             }
         }
@@ -1343,11 +1320,8 @@ public class AbilityUI : UIScene
         ButtonGroupState.SetAllTarget(isActive);
         this.allTargetHitArea.SetActive(isActive);
         this.multiTarget = isActive;
-        using (List<CharacterDetailHUD>.Enumerator enumerator = this.targetHudList.GetEnumerator())
-        {
-            while (enumerator.MoveNext())
-                enumerator.Current.Self.GetComponent<ButtonGroupState>().Help.Enable = !isActive;
-        }
+        foreach (CharacterDetailHUD charHUD in this.targetHudList)
+            charHUD.Self.GetComponent<ButtonGroupState>().Help.Enable = !isActive;
         ButtonGroupState.UpdateActiveButton();
     }
 
@@ -1366,7 +1340,7 @@ public class AbilityUI : UIScene
         this.saIdList.Clear();
         this.equipmentPartInAbilityDict.Clear();
         this.equipmentIdInAbilityDict.Clear();
-        Character player = FF9StateSystem.Common.FF9.party.GetCharacter(this.currentPartyIndex);
+        PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
         if (ff9abil._FF9Abil_PaData.ContainsKey(player.PresetId))
         {
             CharacterAbility[] charAbil = ff9abil._FF9Abil_PaData[player.PresetId];
@@ -1395,7 +1369,7 @@ public class AbilityUI : UIScene
         this.saIdList.RemoveAll(id => boostedList.Contains(ff9abil.GetSupportAbilityFromAbilityId(id)));
         for (Int32 i = 0; i < 5; ++i)
         {
-            RegularItem itemId = player.Equipment[i];
+            RegularItem itemId = player.equip[i];
             if (itemId != RegularItem.NoItem)
             {
                 foreach (Int32 abilId in ff9item._FF9Item_Data[itemId].ability)
@@ -1409,7 +1383,7 @@ public class AbilityUI : UIScene
                 }
             }
         }
-        this.isAAEnable = !IsSubMenuDisabledByMainMenu(true) && player.Data.cur.hp > 0 && (player.Data.status & BattleStatusConst.CannotUseAbilityInMenu) == 0 && this.aaIdList.Count > 0 && FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] == 0;
+        this.isAAEnable = !IsSubMenuDisabledByMainMenu(true) && player.cur.hp > 0 && (player.status & BattleStatusConst.CannotUseAbilityInMenu) == 0 && this.aaIdList.Count > 0 && FF9StateSystem.EventState.gEventGlobal[FF9FABIL_EVENT_NOMAGIC] == 0;
         this.isSAEnable = !IsSubMenuDisabledByMainMenu(false) && ff9abil.FF9Abil_HasSA(player);
         this.useSubMenuLabel.color = !this.isAAEnable ? FF9TextTool.Gray : FF9TextTool.White;
         this.equipSubMenuLabel.color = !this.isSAEnable ? FF9TextTool.Gray : FF9TextTool.White;

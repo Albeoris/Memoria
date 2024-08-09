@@ -81,11 +81,11 @@ Snouz - resyncronization
 
 <Mod>
 	<Name>Alternate Fantasy</Name>
-	<Version>6.2</Version>
+	<Version>6.5</Version>
 	<InstallationPath>AlternateFantasy</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDate>28 Sep 2023</ReleaseDate>
-	<PatchNotes>Requires Memoria v2023.06.11</PatchNotes>
+	<ReleaseDate>6 Aug 2024</ReleaseDate>
+	<PatchNotes>Requires Memoria v2024.08.05</PatchNotes>
 	<Description>This mod aims at increasing the difficulty and, above all, to give a new fresh experience of FF9 for those who already know the game well.
 It includes:
 - Many changes in the battle system, the enemies and the abilities
@@ -96,7 +96,7 @@ It includes:
 More informations can be found on the mod's webpage.</Description>
 	<Category>Gameplay</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=16324.0</Website>
-	<DownloadUrl>https://www.dropbox.com/s/fyx4uqdhumbimeg/PC_AlternateFantasy.zip?dl=1</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/f0pprvqk3hmtz0p12zorl/PC_AlternateFantasy.zip?rlkey=b6lrylaanmqigdge8t647rolu&amp;dl=1</DownloadUrl>
 	<CompatibilityNotes OtherModLow="MoguriFiles">Keeping Moguri at the lowest priority is surely the best:
 - ".raw16" and ".raw17" assets are duplicates of the base game's assets in Moguri
 - Most of the "EventEngine" assets (field event scripts and battle AI) are also duplicates, except a couple of field scripts that don't overlap with Alternate Fantasy's</CompatibilityNotes>
@@ -216,17 +216,17 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Playable Character Pack</Name>
-	<Version>1.1</Version>
+	<Version>1.2</Version>
 	<InstallationPath>PlayableCharacterPack</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDate>2023-09-28</ReleaseDate>
-	<PatchNotes>Requires Memoria v2023.06.11</PatchNotes>
+	<ReleaseDate>2024-08-06</ReleaseDate>
+	<PatchNotes>Requires Memoria v2023.08.05</PatchNotes>
 	<Description>Add Kuja, Fratley and Lani as playable characters.
 You can press Alt+F2 in-game to access the party menu (changing the party at any time is a feature of Memoria, not related to this mod).
 You should set the priority of this mod to be higher than the priority of the Moguri mod but lower than other mods.</Description>
 	<Category>Gameplay</Category>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/3497635791229563331/</Website>
-	<DownloadUrl>https://www.dropbox.com/s/b5pbed8pshd3l4t/PC_PlayableCharacterPack.zip?dl=1</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/2nvxgs49ytlxctozel6ga/PC_PlayableCharacterPack.zip?rlkey=vrbnqez1rdtdhuxv7blp5tjdb&amp;dl=1</DownloadUrl>
 	<PreviewFile>Preview.png</PreviewFile>
 	<PreviewFileUrl>https://i.imgur.com/vZ8DbNQ.png</PreviewFileUrl>
 	<SubMod>
@@ -713,9 +713,9 @@ Complete changes and info can be found on this mod's page.</Description>
 
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.21</Version>
+	<Version>0.3.23</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
-	<ReleaseDate>2024-06-27</ReleaseDate>
+	<ReleaseDate>2024-08-09</ReleaseDate>
 	<Author>DV</Author>
 	<Description>
 	A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
@@ -738,24 +738,21 @@ Complete changes and info can be found on this mod's page.</Description>
 	/_!_\ IMPORTANT : Please read the README file inside the mod folder, the installation is not YET fully automatic ! (Just move 1 or 2 files, don't worry !)
 	</Description>
 	<PatchNotes>
-	- Corrected damage to Zidane's daggers when counterattacking
-	- Tantarian is now immune to Mini (he could have had it with Doom).
-	- Slight script modification against Red Scarlet.
-	- Correction (again...) of Tomberrys' AI in Ypsen Castle.
-	- Restoration of Tomberrys' death animations (which are not used as standard in the game).
-	- Ores cost reduced from 300 to 200 gils.
-	- Review of the cost of all ores, which can now be sold at a higher price (before 1 gil).
-	- Changes some items that can be stolen/earned from certain monsters.
-	- New rebalance and correction of treasures in Chocobo Forest and Chocobo Bay.
-	- Increased the chance of finding a chocograph in Chocobo Bay (33% => 50%).
-	- Corrected the description of the Gizamaluke Staff in some languages.
-	- Added Beatrix to the escape scene on the Invincible at CD3.
-	- Correction of the description of the Suiton item in various languages.
-	- Corrected the description of the following SA items: Devilkiller+, MP+5%, MP+10%.
-	- Debug removed from Memoria.ini
+	- [WIP] New spell kit for Marcus!
+	WARNING: If Marcus has a menu problem in combat or still has these old skills, you can talk to one of the guards at the Treno entrance to reset his data.
 
-	Known bug: Some animations (e.g. Steiner's Bulwark, Eiko's passive, Zidane's weapon mechanic) have been buggy since the last Memoria release.
-	The most problematic have been temporarily fixed. Under investigation for the next Memoria release.
+	- Tarask's boomerangs weapons are as effective in the second line as in the first (Long Range).
+	- Zidane's Bandit has been reworked.
+	- Fixed a major bug, where the game softlocked against a fight with Golem + Koa.
+	- Slight correction to script no. 19 (PhysicalAttackScript).
+	- Dagger steal bonus is now taken into account on the following skills/SAs: Mug, What’s That!? and Master Thief.
+	- Corrected EX Mode SA, which was not working on commands that did no damage (e.g. Steal).
+	- Correction of the description on several items.
+	- Fixed a bug on the Annoyntment item.
+	- Correction of Break/Up status scripts, which did not withdraw correctly when a character died.
+	- Temporary correction on Trouble status, which did not apply when a character died (reported to Tirlititi).
+	- Fixed a script bug in Treno/Auction House (1909).
+	- Major script bug fixed on A. Castle/Hallway (1807)
 	</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/NTbTds6/Logo-Trance-Seek.png</PreviewFileUrl>

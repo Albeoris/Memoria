@@ -4369,27 +4369,19 @@ public static class ff9
         ff9.w_light[0] = GameObject.Find("DirectionalLight0").GetComponent<Light>();
         ff9.w_light[1] = GameObject.Find("DirectionalLight1").GetComponent<Light>();
         ff9.w_light[2] = GameObject.Find("DirectionalLight2").GetComponent<Light>();
-        Single num = 4096f;
-        Transform transform = ff9.w_light[0].transform;
-        Vector3 vector = new Vector3(0f, -num, 0f);
-        transform.rotation = Quaternion.LookRotation(vector.normalized);
-        Transform transform2 = ff9.w_light[1].transform;
-        Vector3 vector2 = new Vector3(num, 0f, 0f);
-        transform2.rotation = Quaternion.LookRotation(vector2.normalized);
-        Transform transform3 = ff9.w_light[2].transform;
-        Vector3 vector3 = new Vector3(0f, -num / 4f, -num);
-        transform3.rotation = Quaternion.LookRotation(vector3.normalized);
+        ff9.w_light[0].transform.rotation = Quaternion.LookRotation(Vector3.down);
+        ff9.w_light[1].transform.rotation = Quaternion.LookRotation(Vector3.right);
+        ff9.w_light[2].transform.rotation = Quaternion.LookRotation(new Vector3(0f, -1f, -4f).normalized);
         ff9.w_lightChangeStat();
     }
 
     public static void w_lightChangeStat()
     {
-        Int32 num = 1;
-        Color32 color = default(Color32);
-        color.r = (Byte)(ff9.w_weatherColor.Color[16].ambient.vx * num);
-        color.g = (Byte)(ff9.w_weatherColor.Color[16].ambient.vy * num);
-        color.b = (Byte)(ff9.w_weatherColor.Color[16].ambient.vz * num);
-        color.a = Byte.MaxValue;
+        //Color32 color = default(Color32);
+        //color.r = (Byte)(ff9.w_weatherColor.Color[16].ambient.vx);
+        //color.g = (Byte)(ff9.w_weatherColor.Color[16].ambient.vy);
+        //color.b = (Byte)(ff9.w_weatherColor.Color[16].ambient.vz);
+        //color.a = Byte.MaxValue;
         Single lightColorFactor = ff9.w_weatherColor.Color[16].lightColorFactor;
         Color a = default(Color);
         a.r = ff9.w_weatherColor.Color[16].light0.vx * 0.000244140625f;

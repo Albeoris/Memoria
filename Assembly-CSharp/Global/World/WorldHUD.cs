@@ -1,6 +1,8 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
+using Memoria;
 using Memoria.Assets;
+using Memoria.Prime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -764,6 +766,61 @@ public class WorldHUD : UIScene
         {
             this.miniMapPlanePointer.gameObject.SetActive(false);
         }
+        this.SetMiniMapAndChocoPosition();
+    }
+
+    private void SetMiniMapAndChocoPosition()
+    {
+        Camera camera = NGUITools.FindCameraForLayer(base.gameObject.layer);
+        Vector3 camVector = camera.ScreenToWorldPoint(new Vector3((Int32)camera.pixelRect.width, (Int32)camera.pixelRect.height, 0));
+        Vector2 minimapSize = new Vector2(miniMapSprite.width, miniMapSprite.height);
+        Vector2 chocoSize = new Vector2((Int32)((chocographLocationSprite.width + 36f) * chocographLocationSprite.pixelSize), (Int32)((chocographLocationSprite.height + 36f) * chocographLocationSprite.pixelSize));
+
+        Transform minimap = this.miniMapButton.transform;
+        Transform choco = this.ChocographLocationPanel.transform;
+
+        Vector2 offsetBlackBars = Vector2.zero;
+        if (!Configuration.Graphics.WidescreenSupport) // offset of black bars, as screen reference is actual window
+        {
+            if (320f / 220f < (Single)Screen.width / (Single)Screen.height) // screen wider than world
+            {
+                Single realWidth = (Single)(Screen.height * 320f / 220f);
+                offsetBlackBars.x = realWidth > 0 ? (Int32)((Screen.width - realWidth) / 2) : 0;
+            }
+            else
+            {
+                Single realHeight = (Single)(Screen.width / 320f * 220f);
+                offsetBlackBars.y = realHeight > 0 ? (Int32)((Screen.height - realHeight) / 2) : 0;
+            }
+        }
+
+        if (Configuration.Interface.MinimapPreset == 0) // left position
+        {
+            minimap.position = new Vector3(-camVector.x, -camVector.y, 0); // bottom left of the screen
+            minimap.localPosition += new Vector3(20, 20, 0); // offset from border
+
+            choco.position = this.miniMapButton.transform.position; // center of chocograph = bottom left of minimap
+            choco.localPosition += new Vector3(chocoSize.x / 2, chocoSize.y / 2, 0); // bottom left of chocograph = bottom left of minimap
+            choco.localPosition += new Vector3(0f, minimapSize.y + 15, 0); // bottom left of chocograph = top left of minimap + 15f
+
+            minimap.localPosition += new Vector3(offsetBlackBars.x, offsetBlackBars.y, 0); // apply offset if not widescreen
+            choco.localPosition += new Vector3(offsetBlackBars.x, offsetBlackBars.y, 0);
+        }
+        else // right position
+        {
+            minimap.position = new Vector3(camVector.x, -camVector.y, 0); // bottom left of the screen
+            minimap.localPosition += new Vector3(-minimapSize.x, 0, 0); // take bottom right as corner point
+            minimap.localPosition += new Vector3(-20, 20, 0); // offset from border
+
+            choco.position = this.miniMapButton.transform.position; // center of chocograph = bottom left of minimap
+            choco.localPosition += new Vector3(-(Int32)(chocoSize.x / 2) + minimapSize.x, chocoSize.y / 2, 0); // bottom right of chocograph = bottom right of minimap
+            choco.localPosition += new Vector3(0, minimapSize.y + 15 , 0); // bottom right of chocograph = top left of minimap
+
+            minimap.localPosition += new Vector3(-offsetBlackBars.x, offsetBlackBars.y, 0); // apply offset if not widescreen
+            choco.localPosition += new Vector3(-offsetBlackBars.x, offsetBlackBars.y, 0);
+        }
+        minimap.localPosition += new Vector3(Configuration.Interface.MinimapOffset.x, Configuration.Interface.MinimapOffset.y, 0); // apply user set offset
+        choco.localPosition += new Vector3(Configuration.Interface.MinimapOffset.x, Configuration.Interface.MinimapOffset.y, 0);
     }
 
     public void DisplayFullmap()
@@ -1056,6 +1113,12 @@ public class WorldHUD : UIScene
     {
         this.MiniMapPanel.SetActive(isVisible);
         this.SetMinimapPressable(isVisible);
+        if (isVisible && FF9StateSystem.Common.FF9.wldMapNo == 9005)
+        {
+            // Fix #670: World Map - Hilda Garde 1. Maybe it should be always done like that when SetMinimapVisible is called
+            this.currentState = isVisible ? WorldHUD.State.HUD : WorldHUD.State.HUDNoMiniMap;
+            this.DisplayChocographLocation(isVisible);
+        }
     }
 
     public void SetMinimapPressable(Boolean isEnable)

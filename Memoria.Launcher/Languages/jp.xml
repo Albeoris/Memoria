@@ -138,6 +138,17 @@
 	WorldFPS_Tooltip = "ワールドマップの画像更新レート (デフォルト: 20)"
 	MaxCardCount_Tooltip = "インベントリ内のカードの制限を10000枚に引き上げます"
 	NoAutoTrance_Tooltip = "トランスは自動的に開始されません。「左キー」で起動します"
+	FPSDropboxChoice = "FPS"
+	FPSDropboxChoice0 = "ネイティブ (15/20/30)"
+	FPSDropboxChoice1 = "30"
+	FPSDropboxChoice2 = "60"
+	FPSDropboxChoice3 = "90"
+	FPSDropboxChoice4 = "120"
+	CardReduceRandom = "カードゲームのランダム性"
+	tetraMasterReduceRandomBox0 = "ノーマル"
+	tetraMasterReduceRandomBox1 = "ランダム性が少ない"
+	tetraMasterReduceRandomBox2 = "簡単な勝利"
+	CardReduceRandom_Tooltip = "TetraMasterのランダム性の制御"
 	/>
 
 	<SdLib
