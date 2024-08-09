@@ -1007,7 +1007,7 @@
                                HorizontalOffset="-116"><Border x:Name="bd" BorderBrush="#1f1f1f" BorderThickness="1"><StackPanel><RadioButton FontSize="12" IsChecked="{Binding PreviewIsAutoUpdateModsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,3,5,3" GroupName="modUpdateType"/><RadioButton FontSize="12" IsChecked="{Binding PreviewIgnoreModUpdatesChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,3,5,3" GroupName="modUpdateType"/><RadioButton FontSize="12" IsChecked="{Binding PreviewIsNotifyAboutUpdatesChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,3,5,3" GroupName="modUpdateType"/></StackPanel></Border></Popup>-->
 
                             <WrapPanel
-                            Grid.Row="4"
+                            Grid.Row="3"
                             Margin="0">
                                 <TextBlock
                                 x:Name="CaptionModReleaseOriginal"
@@ -1021,7 +1021,7 @@
                                 Text="" />
                             </WrapPanel>
                             <WrapPanel
-                            Grid.Row="5">
+                            Grid.Row="4">
                                 <Grid
                                 Margin="0,4,0,0" >
                                         <Border
@@ -1042,7 +1042,7 @@
                             </WrapPanel>
                             <WrapPanel
                             x:Name="PreviewSubModPanel"
-                            Grid.Row="6"
+                            Grid.Row="5"
                             Margin="3,3,3,3"
                             Visibility="Collapsed">
                                 <Grid x:Name="gridSubModInfo" Margin="0,0,0,3">
@@ -1089,7 +1089,7 @@
                                 </Grid>
                             </WrapPanel>
                             <ScrollViewer x:Name="ReleaseNotesBlock"
-                            Grid.Row="7"
+                            Grid.Row="6"
                             HorizontalAlignment="Stretch"
                             VerticalScrollBarVisibility="Auto" >
                                 <WrapPanel
