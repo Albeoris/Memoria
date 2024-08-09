@@ -949,7 +949,7 @@ namespace Memoria.Launcher
             header = new GridViewColumnHeader() { Content = Lang.ModEditor.Category };
             header.Click += OnClickCatalogHeader;
             colCatalogCategory.Header = header;
-            header = new GridViewColumnHeader() { Content = Lang.ModEditor.Installed };
+            header = new GridViewColumnHeader() { Content = "✔" }; // Lang.ModEditor.Installed
             header.Click += OnClickCatalogHeader;
             colCatalogInstalled.Header = header;
             colDownloadName.Header = Lang.ModEditor.Mod;

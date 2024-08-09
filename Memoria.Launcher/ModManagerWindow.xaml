@@ -430,7 +430,7 @@
             Grid.Row="0"
             Grid.RowSpan="2"
             Grid.Column="0"
-            Margin="15,15,7,0"
+            Margin="10,10,7,10"
             Padding="10,10,10,10"
             BorderThickness="0"
             Background="{StaticResource LightGreyUI}"
@@ -639,11 +639,10 @@
             <TabItem x:Name="tabCtrlCatalog">
                 <TabItem.Header>
                     <TextBlock
-                        x:Name="tabCatalog"
-                        Padding="15,3,15,3"
-                        Text="Catalog"
-                        Foreground="{StaticResource WhiteUI}"/>
-
+                    x:Name="tabCatalog"
+                    Padding="15,3,15,3"
+                    Text="Catalog"
+                    Foreground="{StaticResource WhiteUI}"/>
                 </TabItem.Header>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -831,7 +830,7 @@
         Grid.Row="0"
         Grid.RowSpan="3"
         Grid.Column="1"
-        Margin="7,0,0,23"
+        Margin="7,0,0,0"
         Padding="7,0,7,7"
         BorderThickness="0"
         Background="{StaticResource LightGreyUI}"
@@ -1165,7 +1164,7 @@
                 ScrollViewer.CanContentScroll="False" />
             </Grid>
         </Popup>
-        <StatusBar
+        <!--<StatusBar
         Grid.Row="2"
         Grid.ColumnSpan="2"
         Background="#333"
@@ -1230,6 +1229,6 @@
                     </Style>
                 </StatusBarItem.Style>
             </StatusBarItem>
-        </StatusBar>
+        </StatusBar>-->
     </Grid>
 </Window>
