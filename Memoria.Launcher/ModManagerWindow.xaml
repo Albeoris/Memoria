@@ -866,6 +866,22 @@
                         RenderOptions.BitmapScalingMode="HighQuality"
                         Stretch="UniformToFill"
                         />
+                        <Button
+                        x:Name="PreviewModWebsite"
+                        VerticalAlignment="Bottom"
+                        HorizontalAlignment="Right"
+                        Width="auto"
+                        Height="20"
+                        Margin="0,0,-7,0"
+                        Cursor="Hand"
+                        Click="OnClickWebsite"
+                        Content="Website"
+                        FontSize="12"
+                        FontWeight="DemiBold"
+                        IsEnabled="False"
+                        Style="{StaticResource OpenLinkStyle}"
+                        ToolTip="{Binding PreviewModLink}"
+                        />
                     </Grid>
 
                     <Grid x:Name="gridModName" 
@@ -880,9 +896,8 @@
                                 x:Name="PreviewModName"
                                 MinWidth="20"
                                 Style="{StaticResource ModTitleStyle}"
-                                Text="_"
-                                    VerticalAlignment="Bottom"
-                                    />
+                                VerticalAlignment="Bottom"
+                                Text="---" />
                                 <TextBlock
                                 x:Name="PreviewModVersion"
                                 Margin="0"
@@ -891,7 +906,7 @@
                                 Text="" />
                             </WrapPanel>
                         </ScrollViewer>
-                        <ScrollViewer
+                        <!--<ScrollViewer
                         Grid.Column="1"
                         HorizontalAlignment="Right"
                         VerticalScrollBarVisibility="Auto"
@@ -911,7 +926,7 @@
                             IsEnabled="False"
                             Style="{StaticResource OpenLinkStyle}"
                             ToolTip="{Binding PreviewModLink}" />
-                        </ScrollViewer>
+                        </ScrollViewer>-->
                     </Grid>
 
                     <ScrollViewer
@@ -940,7 +955,7 @@
                                 <TextBlock
                                 x:Name="PreviewModAuthor"
                                 Style="{StaticResource ModInfoDetailsStyle}"
-                                    VerticalAlignment="Bottom"
+                                VerticalAlignment="Bottom"
                                 Text="" />
 
                             </WrapPanel>
@@ -1064,44 +1079,42 @@
                                     <WrapPanel
                                     Grid.Row="2"
                                     Margin="3,0,3,0">
-                                        <TextBlock
-                                        x:Name="PreviewSubModDescription"
+                                        <TextBlock x:Name="PreviewSubModDescription"
                                         Style="{StaticResource ModInfoDetailsStyle}"
                                         Text="" />
                                     </WrapPanel>
                                 </Grid>
                             </WrapPanel>
                             <ScrollViewer
-                                Grid.Row="7"
-                                HorizontalAlignment="Stretch"
-                                VerticalScrollBarVisibility="Auto" >
-
+                            Grid.Row="7"
+                            HorizontalAlignment="Stretch"
+                            VerticalScrollBarVisibility="Auto" >
                                 <WrapPanel
-                                
                                 Background="{StaticResource DarkGreyUI}"
                                 Margin="0,7,6,0">
                                     <!--<TextBlock
                                 x:Name="CaptionModRelease"
                                 Style="{StaticResource ModInfoLabelStyle}"
                                 Text="Released:" />-->
-                                    <DockPanel
-                                        >
+                                    <DockPanel>
                                         <TextBlock
                                         x:Name="CaptionModReleaseNotes"
                                         Style="{StaticResource ModInfoLabelStyle}"
-                                        Margin="5"
+                                        Margin="5,5,0,5"
+                                        VerticalAlignment="Bottom"
                                         Text="Release Notes:" />
-
                                         <TextBlock
                                         x:Name="PreviewModRelease" 
                                         Style="{StaticResource ModInfoDetailsStyle}"
-                                        Margin="5"
-                                        Text="" />
+                                        Margin="5,5,0,5"
+                                        VerticalAlignment="Bottom"
+                                        Text="sd sds" />
                                     </DockPanel>
                                     <TextBlock
                                         x:Name="PreviewModReleaseNotes"
                                         Style="{StaticResource ModInfoDetailsStyle}"
-                                        Margin="5,0,5,5"
+                                        Margin="5,5,5,5"
+                                        VerticalAlignment="Bottom"
                                         Text="" />
 
                                 </WrapPanel>

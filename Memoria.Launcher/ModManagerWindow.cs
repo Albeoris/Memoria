@@ -927,11 +927,11 @@ namespace Memoria.Launcher
             PreviewSubModActive.Content = Lang.ModEditor.Active;
             CaptionSubModPanel.Text = Lang.ModEditor.SubModPanel + ":";
             tabMyMods.Text = Lang.ModEditor.TabMyMods;
-            colMyModsPriority.Header = Lang.ModEditor.Priority;
+            //colMyModsPriority.Header = Lang.ModEditor.Priority;
             colMyModsName.Header = Lang.ModEditor.Name;
             colMyModsAuthor.Header = Lang.ModEditor.Author;
             colMyModsCategory.Header = Lang.ModEditor.Category;
-            colMyModsActive.Header = Lang.ModEditor.Active;
+            //colMyModsActive.Header = Lang.ModEditor.Active;
             btnMoveUp.ToolTip = Lang.ModEditor.TooltipMoveUp;
             btnMoveDown.ToolTip = Lang.ModEditor.TooltipMoveDown;
             btnCheckCompatibility.ToolTip = Lang.ModEditor.TooltipCheckCompatibility;
