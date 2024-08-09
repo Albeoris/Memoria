@@ -713,15 +713,16 @@ namespace Memoria.Launcher
                 PreviewModName.Text = mod.Name;
                 PreviewModVersion.Text = mod.CurrentVersion?.ToString() ?? "";
                 PreviewModRelease.Text = mod.ReleaseDate ?? "";
-                PreviewModReleaseOriginal.Text = mod.ReleaseDateOriginal ?? "Unknown";
+                PreviewModReleaseOriginal.Text = mod.ReleaseDateOriginal ?? PreviewModRelease.Text;
                 PreviewModAuthor.Text = mod.Author ?? "Unknown";
-                PreviewModDescription.Text = mod.Description ?? "No description.";
+                PreviewModDescription.Text = mod.Description != null && mod.Description != "" ? mod.Description : "No description.";
                 PreviewModReleaseNotes.Text = mod.PatchNotes ?? "";
                 PreviewModCategory.Text = mod.Category ?? "Unknown";
                 PreviewModWebsite.ToolTip = mod.Website ?? String.Empty;
                 PreviewModWebsite.IsEnabled = !String.IsNullOrEmpty(mod.Website);
                 PreviewModWebsite.Visibility = PreviewModWebsite.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
                 PreviewSubModPanel.Visibility = hasSubMod ? Visibility.Visible : Visibility.Collapsed;
+                ReleaseNotesBlock.Visibility = PreviewModReleaseNotes.Text == "" && PreviewModRelease.Text == "" ? Visibility.Collapsed : Visibility.Visible;
                 if (hasSubMod)
                 {
                     if (modListCatalog.Contains(mod))
@@ -794,11 +795,11 @@ namespace Memoria.Launcher
             foreach (Mod mod in modListCatalog)
             {
                 if (Mod.SearchWithName(downloadList, mod.Name) != null)
-                    mod.Installed = "...";
+                    mod.Installed = "…";
                 else if (Mod.SearchWithName(modListInstalled, mod.Name) != null)
                     mod.Installed = "✔";
                 else
-                    mod.Installed = "✘";
+                    mod.Installed = "";
             }
             lstCatalogMods.Items.Refresh();
         }

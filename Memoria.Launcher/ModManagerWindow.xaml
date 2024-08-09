@@ -831,7 +831,7 @@
         Grid.Row="0"
         Grid.RowSpan="3"
         Grid.Column="1"
-        Margin="7,15,15,23"
+        Margin="7,0,0,23"
         Padding="7,0,7,7"
         BorderThickness="0"
         Background="{StaticResource LightGreyUI}"
@@ -839,7 +839,9 @@
             <TabItem x:Name="GroupModInfo"
             Style="{StaticResource GroupModInfo}" 
             Grid.Row="1"
-                     Height="0">
+            Height="0"
+            Padding="0"
+            Margin="0">
                 <TabItem.Header>
                     <TextBlock
                     x:Name="tabyMods"
@@ -847,7 +849,9 @@
                     Text="Installed Mods" 
                     Background="#333" />
                 </TabItem.Header>
-                <Grid x:Name="gridOuterMod">
+                <Grid x:Name="gridOuterMod"
+                      Margin="0,-2,0,0"
+                      >
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" MinHeight="20" MaxHeight="150" />
                         <RowDefinition Height="auto" />
@@ -856,13 +860,13 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Grid x:Name="imagewrapper"
-                    Height="auto">
+                    Height="auto"
+                    VerticalAlignment="Center"
+                    Margin="-7,0,-7,0">
                         <Image x:Name="PreviewModImage"
                         Source="Images/no-disc.jpg"
                         Grid.Row="0"
                         Grid.RowSpan="1"
-                        Margin="-7,0,-7,0"
-                        VerticalAlignment="Center"
                         RenderOptions.BitmapScalingMode="HighQuality"
                         Stretch="UniformToFill"
                         />
@@ -872,7 +876,7 @@
                         HorizontalAlignment="Right"
                         Width="auto"
                         Height="20"
-                        Margin="0,0,-7,0"
+                        Margin="0,0,0,0"
                         Cursor="Hand"
                         Click="OnClickWebsite"
                         Content="Website"
@@ -1085,13 +1089,14 @@
                                     </WrapPanel>
                                 </Grid>
                             </WrapPanel>
-                            <ScrollViewer
+                            <ScrollViewer x:Name="ReleaseNotesBlock"
                             Grid.Row="7"
                             HorizontalAlignment="Stretch"
                             VerticalScrollBarVisibility="Auto" >
                                 <WrapPanel
                                 Background="{StaticResource DarkGreyUI}"
-                                Margin="0,7,6,0">
+                                Margin="0,7,6,0"
+                                Visibility="Visible">
                                     <!--<TextBlock
                                 x:Name="CaptionModRelease"
                                 Style="{StaticResource ModInfoLabelStyle}"
@@ -1108,7 +1113,7 @@
                                         Style="{StaticResource ModInfoDetailsStyle}"
                                         Margin="5,5,0,5"
                                         VerticalAlignment="Bottom"
-                                        Text="sd sds" />
+                                        Text="" />
                                     </DockPanel>
                                     <TextBlock
                                         x:Name="PreviewModReleaseNotes"

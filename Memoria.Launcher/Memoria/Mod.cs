@@ -159,7 +159,7 @@ namespace Memoria.Launcher
             InstallationPath = elInstPath.InnerText;
             CurrentVersion = elVer != null ? new Version(elVer.InnerText) : null;
             ReleaseDate = modNode["ReleaseDate"]?.InnerText;
-            ReleaseDateOriginal = modNode["ReleaseDate"]?.InnerText;
+            ReleaseDateOriginal = modNode["ReleaseDateOriginal"]?.InnerText;
             Author = modNode["Author"]?.InnerText;
             Description = modNode["Description"]?.InnerText;
             PatchNotes = modNode["PatchNotes"]?.InnerText;
