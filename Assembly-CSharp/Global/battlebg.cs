@@ -37,7 +37,7 @@ public static class battlebg
         for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
         {
             String objName = $"BBG_B{battlebg.nf_BbgNumber:D3}_OBJ{i + 1}";
-            battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false, false, Configuration.Graphics.BattleSmoothTexture);
+            battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false, true, Configuration.Graphics.BattleSmoothTexture);
             battlebg.objAnimModel[i].transform.parent = battlebg.btlRoot.transform;
             battlebg.SetDefaultShader(battlebg.objAnimModel[i]);
             if (battlebg.nf_BbgNumber == 171 && i == 1) // Crystal World, Crystal
