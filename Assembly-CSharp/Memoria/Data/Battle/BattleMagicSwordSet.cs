@@ -30,8 +30,8 @@ namespace Memoria.Data
             }
             else
             {
-                SupporterBlockingStatus = BattleStatus.Silence | BattleStatus.Heat | BattleStatus.Mini;
-                BeneficiaryBlockingStatus = BattleStatus.Mini;
+                SupporterBlockingStatus = BattleStatus.Silence | BattleStatus.Confuse | BattleStatus.Berserk | BattleStatus.Sleep | BattleStatus.Heat | BattleStatus.Mini;
+                BeneficiaryBlockingStatus = BattleStatus.Sleep | BattleStatus.Mini;
             }
         }
 

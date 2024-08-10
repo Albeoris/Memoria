@@ -315,7 +315,7 @@ public static class battle
                                 proceedEnd = false;
                             break;
                         }
-                        if (!btl_stat.CheckStatus(data, BattleStatusConst.Immobilized) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
+                        if (!btl_stat.CheckStatus(data, BattleStatusConst.CannotAct) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL) && !btl_mot.checkMotion(data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
                             proceedEnd = false;
                         break;
                     case FF9StateBattleSystem.SEQ_MENU_OFF_ESCAPE:

@@ -11,7 +11,7 @@ namespace FF9
 
         public static Boolean TryReturnMagic(BattleUnit returner, BattleUnit originalCaster, BattleCommand command)
         {
-            if (returner.IsUnderAnyStatus(BattleStatusConst.CannotAct) || FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
+            if (returner.IsUnderAnyStatus(BattleStatusConst.PreventCounter) || FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_NORMAL)
                 return false;
             BattleCommandId cmdId = originalCaster.IsPlayer ? BattleCommandId.Counter : BattleCommandId.MagicCounter;
             if (Configuration.Battle.CountersBetterTarget)
@@ -48,7 +48,7 @@ namespace FF9
         public static Boolean CheckCounterAbility(BattleTarget defender, BattleCaster attacker, BattleCommand command)
         {
             // Dummied
-            if (defender.IsUnderAnyStatus(BattleStatusConst.NoReaction) || !btl_util.IsCommandDeclarable(command.Id))
+            if (defender.IsUnderAnyStatus(BattleStatusConst.Immobilized) || !btl_util.IsCommandDeclarable(command.Id))
                 return false;
 
             if (defender.HasSupportAbility(SupportAbility2.Counter) && (command.AbilityCategory & 8) != 0) // Physical
@@ -76,7 +76,7 @@ namespace FF9
             if (!defender.HasSupportAbility(SupportAbility2.AutoPotion))
                 return;
 
-            if (defender.IsUnderAnyStatus(BattleStatusConst.NoReaction) || !btl_util.IsCommandDeclarable(command.Id))
+            if (defender.IsUnderAnyStatus(BattleStatusConst.PreventCounter) || !btl_util.IsCommandDeclarable(command.Id))
                 return;
 
             RegularItem itemId = IsDefaultAutoPotionBehaviourEnabled()
@@ -231,7 +231,7 @@ namespace FF9
         public static void CheckReactionAbility(BTL_DATA btl, AA_DATA aa)
         {
             // Dummied
-            if (!btl_stat.CheckStatus(btl, BattleStatusConst.NoReaction))
+            if (!btl_stat.CheckStatus(btl, BattleStatusConst.Immobilized))
             {
                 if ((btl.sa[1] & (Int32)SupportAbility2.RestoreHP) != 0u && btl.cur.hp != 0 && btl_stat.CheckStatus(btl, BattleStatusId.LowHP))
                     btl.cur.hp = Math.Min(btl.cur.hp + btl.max.hp / 2, btl.max.hp);
