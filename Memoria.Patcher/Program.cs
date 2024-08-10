@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net.Mime;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace Memoria.Patcher
@@ -89,25 +90,42 @@ namespace Memoria.Patcher
             {
                 Int64 magicNumber;
                 BinaryReader br = new BinaryReader(inputFile);
-                try
-                {
-                    // if the file is signed
-                    inputFile.Seek(-0x28B2, SeekOrigin.End);
 
-                    magicNumber = br.ReadInt64();
-                    if (magicNumber != 0x004149524F4D454D)// MEMORIA\0 
-                        throw new InvalidDataException("Invalid magic number: " + magicNumber);
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                Module module = assembly.GetModules().First();
+                X509Certificate certificate = module.GetSignerCertificate();
+                // certificates vary slightly in size but are always within a few bytes this range is small enough that it's quick but will find the magic number if it's there
+                // how to sign this patcher once it's completly built run from Output directory
+                // signtool sign /d "Memoria Patcher for Modding FF9" /td SHA256 /fd SHA256 /sha1 {your certificates SHA1 signature} /tr http://timestamp.digicert.com .\Memoria.Patcher.exe 
+                if (certificate != null)
+                {
+                    Console.WriteLine("Memoria.Patcher is Digitally signed, please wait while we validate");
+                    Int64 possition = -0x2920;
+                    bool Found = false;
+                    while (!Found && possition < -0x2700)
+                    {
+                        inputFile.Seek(possition, SeekOrigin.End);
+                        magicNumber = br.ReadInt64();
+                        if (magicNumber == 0x004149524F4D454D)
+                        {
+                            Found = true;
+                            break;
+                        }
+                        possition += 1;
+                    }
+                    if (!Found)
+                        throw new InvalidDataException("File is Signed but could not find magic number, file is corrupt");
                 }
-                catch (Exception ex)
+                else
                 {
                     // if the file is not signed
-                    inputFile.Seek(-3 * 8, SeekOrigin.End);
+                    inputFile.Seek(-0x18, SeekOrigin.End);
 
                     magicNumber = br.ReadInt64();
                     if (magicNumber != 0x004149524F4D454D)// MEMORIA\0 
                         throw new InvalidDataException("Invalid magic number: " + magicNumber);
                 }
-
+                Console.Clear();
 
                 Int64 uncompressedDataSize = br.ReadInt64();
                 Int64 compressedDataPosition = br.ReadInt64();
