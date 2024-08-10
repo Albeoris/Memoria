@@ -37,7 +37,7 @@ public static class battlebg
         for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
         {
             String objName = $"BBG_B{battlebg.nf_BbgNumber:D3}_OBJ{i + 1}";
-            battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false, false, Configuration.Graphics.BattleSmoothTexture);
+            battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false, true, Configuration.Graphics.BattleSmoothTexture);
             battlebg.objAnimModel[i].transform.parent = battlebg.btlRoot.transform;
             battlebg.SetDefaultShader(battlebg.objAnimModel[i]);
             if (battlebg.nf_BbgNumber == 171 && i == 1) // Crystal World, Crystal
@@ -137,132 +137,192 @@ public static class battlebg
 
     public static void nf_BattleBG()
     {
+        Int32 num = 0;
+        Int32 num2 = 0;
+        Int32 num3 = 0;
+        Vector3 zero = Vector3.zero;
+        Vector3 zero2 = Vector3.zero;
         battlebg.nf_BbgTick++;
         if (battlebg.nf_BbgTexAnm != 0)
             battlebg.geoBGTexAnimService(battlebg.nf_BbgTabAddress);
-        foreach (Transform transform in battlebg.btlModel.transform)
+        GameObject gameObject = battlebg.btlModel;
+        for (; ; )
         {
-            if (battlebg.getBbgAttr(transform.name) == 8 && battlebg.nf_BbgSkyRotation != 0)
+            foreach (UnityEngine.Object obj in gameObject.transform)
             {
-                battlebg.nf_BbgSkyAngle_Y += battlebg.nf_BbgSkyRotation;
-                Vector3 eulerAngles = transform.localRotation.eulerAngles;
-                eulerAngles.y = battlebg.nf_BbgSkyAngle_Y / 8f / 4096f * 360f;
-                transform.localRotation = Quaternion.Euler(eulerAngles);
+                Transform transform = (Transform)obj;
+                if (battlebg.getBbgAttr(transform.name) == 8 && battlebg.nf_BbgSkyRotation != 0 && num == 0)
+                {
+                    battlebg.nf_BbgSkyAngle_Y += battlebg.nf_BbgSkyRotation;
+                    Vector3 eulerAngles = transform.localRotation.eulerAngles;
+                    eulerAngles.y = (battlebg.nf_BbgSkyAngle_Y / 8f) / 4096f * 360f;
+                    transform.localRotation = Quaternion.Euler(eulerAngles);
+                    num++;
+                }
+                battlebg.setBGColor(transform.gameObject);
             }
-            battlebg.setBGColor(transform.gameObject);
-        }
-        Int32 fullTime = (Int32)Time.realtimeSinceStartup;
-        for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
-        {
-            battlebg.getBbgObjAnimation(battlebg.nf_BbgNumber, i, battlebg.nf_BbgTick, fullTime, out Vector3 bbgPos, out Quaternion bbgRot);
-            battlebg.objAnimModel[i].transform.localPosition = battlebg.nf_BbgOffset + bbgPos;
-            battlebg.objAnimModel[i].transform.localRotation = battlebg.nf_BbgAngle * bbgRot;
-        }
-    }
-
-    public static void getBbgObjAnimation(Int32 bbgId, Int32 objIndex, Int32 tick, Int32 fullTime, out Vector3 pos, out Quaternion rot)
-    {
-        Boolean invertRot = false;
-        Vector3 angles = default;
-        pos = default;
-        switch (bbgId)
-        {
-            case 7:
-                if (objIndex == 0)
-                {
-                    if ((tick + 31 & 63) == 0)
-                        battlebg.nf_b007a = UnityEngine.Random.Range(0, 512);
-                    angles.y = battlebg.nf_b007a + UnityEngine.Random.Range(0, 64);
-                }
-                else
-                {
-                    if ((tick & 63) == 0)
-                        battlebg.nf_b007b = UnityEngine.Random.Range(0, 1024);
-                    angles.y = battlebg.nf_b007b + UnityEngine.Random.Range(0, 128);
-                }
+            if (num2 == (Int32)battlebg.nf_BbgInfoPtr.objanim)
+            {
                 break;
-            case 68:
-                angles.y += 3f;
-                pos.x = 0f;
-                pos.y = -10f;
-                pos.z = 0f;
-                break;
-            case 110:
-                angles.z = (Int32)(Mathf.Sin(((fullTime * 12) & 4095) / 4096f * 360f) * 4096f) / 64;
-                angles.y = 512f;
-                pos.x = 1500f;
-                pos.y = -7000f;
-                pos.z = 3750f;
-                break;
-            case 112:
-                switch (objIndex)
-                {
-                    case 0:
+            }
+            num2++;
+            gameObject = battlebg.objAnimModel[num2 - 1];
+            Single num4 = Time.realtimeSinceStartup;
+            Int16 bbgnumber = battlebg.nf_BbgInfoPtr.bbgnumber;
+            switch (bbgnumber)
+            {
+                case 168:
+                    zero.x = 0f;
+                    zero.z = 0f;
+                    if (num2 == 1)
                     {
-                        angles.z = 4095 - ((fullTime * 5) & 4095);
-                        angles.y = 4095 - ((fullTime * 3) & 4095);
-                        pos.x = -2100f;
-                        pos.y = -250f + (Int32)(Mathf.Sin((((fullTime + 8) * 22) & 4095) / 4096f * 360f) * 4096f) / 45;
-                        pos.z = -850f;
-                        break;
+                        zero.y = (Single)((Int32)num4 / 16 & 4095);
                     }
-                    case 1:
+                    else
                     {
-                        angles.y = 0f;
-                        angles.z = 0f;
-                        pos.x = 1725f;
-                        pos.y = -1500f + (Int32)(Mathf.Sin(((fullTime * 20) & 4095) / 4096f * 360f) * 4096f) / 64;
-                        pos.z = -75f;
-                        break;
+                        zero.y = (Single)((Int32)num4 / 8 & 4095);
                     }
-                    case 2:
+                    break;
+                case 169:
+                case 170:
+                IL_158:
+                    switch (bbgnumber)
                     {
-                        angles.z = (fullTime * 4) & 4095;
-                        angles.y = (fullTime * 3) & 4095;
-                        pos.x = 1750f;
-                        pos.y = -775f + (Int32)(Mathf.Sin((((fullTime + 16) * 21) & 4095) / 4096f * 360f) * 4096f) / 50;
-                        pos.z = 1025f;
-                        break;
+                        case 110:
+                        {
+                            Int32 num5 = (Int32)(num4 * 12f) & 4095;
+                            num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
+                            num5 /= 64;
+                            zero.z = (Single)num5;
+                            zero.y = 512f;
+                            zero2.x = 1500f;
+                            zero2.y = -7000f;
+                            zero2.z = 3750f;
+                            break;
+                        }
+                        case 111:
+                        IL_16E:
+                            if (bbgnumber != 7)
+                            {
+                                if (bbgnumber != 68)
+                                {
+                                    zero.y += 3f;
+                                    zero2.x = 0f;
+                                    zero2.y = -10f;
+                                    zero2.z = 0f;
+                                }
+                                else
+                                {
+                                    Int32 num5 = (Int32)(num4 * 26f) & 4095;
+                                    num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
+                                    num5 /= 5;
+                                    zero.z = (Single)num5;
+                                    zero2.x = 1065f;
+                                    zero2.y = -1345f;
+                                    zero2.z = 3749f;
+                                }
+                            }
+                            else if (num2 == 1)
+                            {
+                                if ((battlebg.nf_BbgTick + 31 & 63) == 0)
+                                {
+                                    battlebg.nf_b007a = (UnityEngine.Random.Range(0, 0x7FFF) & 511);
+                                }
+                                zero.y = (Single)(battlebg.nf_b007a + (UnityEngine.Random.Range(0, 0x7FFF) & 63));
+                            }
+                            else
+                            {
+                                if ((battlebg.nf_BbgTick & 63) == 0)
+                                {
+                                    battlebg.nf_b007b = (UnityEngine.Random.Range(0, 0x7FFF) & 1023);
+                                }
+                                zero.y = (Single)(battlebg.nf_b007b + (UnityEngine.Random.Range(0, 0x7FFF) & 127));
+                            }
+                            break;
+                        case 112:
+                            switch (num2)
+                            {
+                                case 1:
+                                {
+                                    Int32 num5 = (Int32)(num4 * 5f) & 4095;
+                                    zero.z = (Single)(4095 - num5);
+                                    num5 = ((Int32)(num4 * 3f) & 4095);
+                                    zero.y = (Single)(4095 - num5);
+                                    num5 = ((Int32)((num4 + 8f) * 22f) & 4095);
+                                    num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
+                                    zero2.x = -2100f;
+                                    zero2.y = (Single)(-250 + num5 / 45);
+                                    zero2.z = -850f;
+                                    break;
+                                }
+                                case 2:
+                                {
+                                    zero.y = 0f;
+                                    zero.z = 0f;
+                                    Int32 num5 = (Int32)(num4 * 20f) & 4095;
+                                    num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
+                                    zero2.x = 1725f;
+                                    zero2.y = (Single)(-1500 + num5 / 64);
+                                    zero2.z = -75f;
+                                    break;
+                                }
+                                case 3:
+                                {
+                                    Int32 num5 = (Int32)(num4 * 4f) & 4095;
+                                    zero.z = (Single)num5;
+                                    num5 = ((Int32)(num4 * 3f) & 4095);
+                                    zero.y = (Single)num5;
+                                    num5 = ((Int32)((num4 + 16f) * 21f) & 4095);
+                                    num5 = (Int32)(Mathf.Sin((Single)num5 / 4096f * 360f) * 4096f);
+                                    zero2.x = 1750f;
+                                    zero2.y = (Single)(-775 + num5 / 50);
+                                    zero2.z = 1025f;
+                                    break;
+                                }
+                            }
+                            break;
+                        default:
+                            goto IL_16E;
                     }
-                }
-                break;
-            case 168:
-                angles.x = 0f;
-                angles.z = 0f;
-                angles.y = (objIndex == 0 ? fullTime / 16 : fullTime / 8) & 4095;
-                break;
-            case 171:
-                fullTime = tick * 2;
-                if (objIndex == 0)
-                {
-                    angles.z = (fullTime * 12) & 4095;
-                    pos.x = 0f;
-                    pos.y = -2375f;
-                    pos.z = 3750f;
-                }
-                else
-                {
-                    angles.z = 3584f;
-                    angles.y = (fullTime * 22) & 4095;
-                    pos.x = 0f;
-                    pos.y = -2250f;
-                    pos.z = 7625f;
-                    invertRot = true;
-                }
-                break;
-            case 111:
-            case 169:
-            case 170:
-            default:
-                angles.z = (Int32)(Mathf.Sin(((fullTime * 26) & 4095) / 4096f * 360f) * 4096f) / 5;
-                pos.x = 1065f;
-                pos.y = -1345f;
-                pos.z = 3749f;
-                break;
+                    break;
+                case 171:
+                    num4 = (Single)(-(Single)(battlebg.nf_BbgTick * 2));
+                    if (num2 == 1)
+                    {
+                        Int32 num5 = (Int32)(num4 * -12f) & 4095;
+                        zero.z = (Single)num5;
+                        zero2.x = 0f;
+                        zero2.y = -2375f;
+                        zero2.z = 3750f;
+                    }
+                    else
+                    {
+                        Int32 num5 = (Int32)(num4 * -22f) & 4095;
+                        zero.z = 3584f;
+                        zero.y = (Single)num5;
+                        zero2.x = 0f;
+                        zero2.y = -2250f;
+                        zero2.z = 7625f;
+                        num3 = 1;
+                    }
+                    break;
+                default:
+                    goto IL_158;
+            }
+            zero2.y *= -1f;
+            zero.x = zero.x / 4096f * 360f;
+            zero.y = zero.y / 4096f * 360f;
+            zero.z = zero.z / 4096f * 360f;
+            gameObject.transform.localPosition = zero2;
+            if (num3 != 0)
+            {
+                gameObject.transform.localRotation = Quaternion.Inverse(Quaternion.Euler(zero));
+            }
+            else
+            {
+                gameObject.transform.localRotation = Quaternion.Euler(zero);
+            }
         }
-        pos.y *= -1f;
-        angles *= 360f / 4096f;
-        rot = invertRot ? Quaternion.Inverse(Quaternion.Euler(angles)) : Quaternion.Euler(angles);
     }
 
     public static Int32 getBbgAttr(String name)
