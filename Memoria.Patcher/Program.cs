@@ -91,8 +91,8 @@ namespace Memoria.Patcher
                 BinaryReader br = new BinaryReader(inputFile);
                 try
                 {
-                    // if the file is signed
-                    inputFile.Seek(-0x28B2, SeekOrigin.End);
+                    // if the file is not signed
+                    inputFile.Seek(-3 * 8, SeekOrigin.End);
 
                     magicNumber = br.ReadInt64();
                     if (magicNumber != 0x004149524F4D454D)// MEMORIA\0 
@@ -100,8 +100,10 @@ namespace Memoria.Patcher
                 }
                 catch (Exception ex)
                 {
-                    // if the file is not signed
-                    inputFile.Seek(-3 * 8, SeekOrigin.End);
+                    // if the file is signed this offset might change slightly due to the way signing works.
+                    // you will need to use a Hex editor to make sure that from the M of MEMORIA to the end of the file
+                    // is length you offset this by
+                    inputFile.Seek(-0x28F5, SeekOrigin.End);
 
                     magicNumber = br.ReadInt64();
                     if (magicNumber != 0x004149524F4D454D)// MEMORIA\0 
