@@ -118,10 +118,6 @@ namespace Memoria.Patcher
                 }
                 else
                 {
-                    // Confirm! do we want this?
-                    //Console.WriteLine("The Version of Memoria Patcher your using is not signed and is not the offical version");
-                    //Console.WriteLine("If you trust this source press enter to continue, otherwise close this window.");
-                    //Console.ReadLine();
                     // if the file is not signed
                     inputFile.Seek(-0x18, SeekOrigin.End);
 
