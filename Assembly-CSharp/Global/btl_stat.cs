@@ -78,10 +78,18 @@ public static class btl_stat
             HonoluluBattleMain.battleSPS.AddBtlSPSObj(target, statusId, spsId: statusData.SPSEffect, extraPos: statusData.SPSExtraPos);
         if (statusData.SHPEffect >= 0)
             HonoluluBattleMain.battleSPS.AddBtlSPSObj(target, statusId, shpId: statusData.SHPEffect, extraPos: statusData.SHPExtraPos);
-        if (btl.bi.player != 0 && !btl.is_monster_transform && (status & BattleStatusConst.Immobilized & BattleStatusConst.IdleDying) != 0 && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
+        if (btl.bi.player != 0 && !btl.is_monster_transform)
         {
-            btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
-            btl.evt.animFrame = 0;
+            if ((status & BattleStatusConst.FrozenAnimation & BattleStatusConst.IdleDying) != 0 && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING))
+            {
+                btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
+                btl.evt.animFrame = 0;
+            }
+            else if ((status & BattleStatusConst.FrozenAnimation & BattleStatusConst.IdleDefend) != 0 && !btl_mot.checkMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE))
+            {
+                btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE);
+                btl.evt.animFrame = 0;
+            }
         }
         if (FF9StateSystem.Battle.FF9Battle.btl_phase > FF9StateBattleSystem.PHASE_ENTER && (status & BattleStatusConst.BattleEnd) != 0)
             btl_sys.CheckBattlePhase(btl);

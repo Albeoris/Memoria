@@ -259,7 +259,7 @@ namespace FF9
         public static Boolean IsAnimationFrozen(BTL_DATA btl)
         {
             return btl.bi.slave != 0
-                || btl_stat.CheckStatus(btl, BattleStatusConst.Immobilized)
+                || btl_stat.CheckStatus(btl, BattleStatusConst.FrozenAnimation)
                 || (btl.animFlag & EventEngine.afFreeze) != 0
                 || btl.bi.stop_anim != 0;
         }
@@ -511,12 +511,20 @@ namespace FF9
         {
             BattlePlayerCharacter.PlayerMotionIndex targetAnim = (BattlePlayerCharacter.PlayerMotionIndex)btl.bi.def_idle;
             BattlePlayerCharacter.PlayerMotionIndex currentAnim = btl_mot.getMotion(btl);
-            if (btl_stat.CheckStatus(btl, BattleStatusConst.Immobilized))
+            if (btl_stat.CheckStatus(btl, BattleStatusConst.FrozenAnimation))
             {
-                if (btl.bi.player != 0 && !btl.is_monster_transform && btl_stat.CheckStatus(btl, BattleStatusConst.Immobilized & BattleStatusConst.IdleDying))
+                if (btl.bi.player != 0 && !btl.is_monster_transform)
                 {
-                    btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
-                    btl.evt.animFrame = 0;
+                    if (btl_stat.CheckStatus(btl, BattleStatusConst.FrozenAnimation & BattleStatusConst.IdleDying))
+                    {
+                        btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_DYING);
+                        btl.evt.animFrame = 0;
+                    }
+                    else if (btl_stat.CheckStatus(btl, BattleStatusConst.FrozenAnimation & BattleStatusConst.IdleDefend))
+                    {
+                        btl_mot.setMotion(btl, BattlePlayerCharacter.PlayerMotionIndex.MP_DEFENCE);
+                        btl.evt.animFrame = 0;
+                    }
                 }
                 return;
             }

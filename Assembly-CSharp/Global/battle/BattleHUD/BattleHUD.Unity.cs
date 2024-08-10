@@ -411,7 +411,7 @@ public partial class BattleHUD : UIScene
             if (detail.AbilityMagicSet.TryGetValue(ff9abil.GetAbilityIdFromActiveAbility(abilId), out BattleMagicSwordSet magicSet))
             {
                 BattleUnit supporter = BattleState.EnumerateUnits().FirstOrDefault(u => u.PlayerIndex == magicSet.Supporter);
-                if (supporter == null || btl.IsUnderAnyStatus(BattleStatusConst.NoInput | magicSet.BeneficiaryBlockingStatus) || supporter.IsUnderAnyStatus(BattleStatusConst.NoInput | magicSet.SupporterBlockingStatus))
+                if (supporter == null || btl.IsUnderAnyStatus(BattleStatusConst.Immobilized | magicSet.BeneficiaryBlockingStatus) || supporter.IsUnderAnyStatus(BattleStatusConst.Immobilized | magicSet.SupporterBlockingStatus))
                 {
                     FF9Sfx.FF9SFX_Play(101);
                     ResetToReady();

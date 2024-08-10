@@ -379,7 +379,7 @@ namespace Memoria.Data
                 return;
             try
             {
-                Boolean canMove = asTarget ? !calc.Target.IsUnderAnyStatus(BattleStatusConst.NoReaction) : !calc.Caster.IsUnderAnyStatus(BattleStatusConst.NoReaction);
+                Boolean canMove = asTarget ? !calc.Target.IsUnderAnyStatus(BattleStatusConst.Immobilized) : !calc.Caster.IsUnderAnyStatus(BattleStatusConst.Immobilized);
                 for (Int32 i = 0; i < AbilityEffect.Count; i++)
                 {
                     if (AbilityEffect[i].AsTarget == asTarget && (canMove || AbilityEffect[i].EvenImmobilized) && String.Equals(AbilityEffect[i].When, when))
@@ -582,7 +582,7 @@ namespace Memoria.Data
         {
             try
             {
-                Boolean canMove = !abilityUser.IsUnderAnyStatus(BattleStatusConst.NoReaction);
+                Boolean canMove = !abilityUser.IsUnderAnyStatus(BattleStatusConst.Immobilized);
                 BattleUnit caster = null;
                 BattleUnit target = null;
                 for (Int32 i = 0; i < CommandEffect.Count; i++)

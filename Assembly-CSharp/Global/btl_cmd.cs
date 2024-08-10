@@ -427,7 +427,7 @@ public class btl_cmd
         while (cmd != null)
         {
             if (cmd.regist != null && busyCasters.Contains(cmd.regist) && cmd.cmd_no != BattleCommandId.SysPhantom
-                || btl_stat.CheckStatus(cmd.regist, BattleStatusConst.Immobilized) && cmd.cmd_no != BattleCommandId.SysDead && cmd.cmd_no != BattleCommandId.SysReraise && cmd.cmd_no != BattleCommandId.SysStone && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysLastPhoenix
+                || btl_stat.CheckStatus(cmd.regist, BattleStatusConst.CannotAct) && cmd.cmd_no != BattleCommandId.SysDead && cmd.cmd_no != BattleCommandId.SysReraise && cmd.cmd_no != BattleCommandId.SysStone && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysLastPhoenix
                 || btl_stat.CheckStatus(cmd.regist, BattleStatus.Death) && cmd.cmd_no == BattleCommandId.SysPhantom
                 || Configuration.Battle.Speed >= 4 && btl_util.IsBtlUsingCommandMotion(cmd.regist)
                 || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0)
@@ -1583,14 +1583,14 @@ public class btl_cmd
 
     private static Boolean DecideMagicSword(BattleUnit attacker, BattleMagicSwordSet mgSet)
     {
-        if (attacker.IsUnderAnyStatus(BattleStatusConst.NoInput | mgSet.BeneficiaryBlockingStatus))
+        if (attacker.IsUnderAnyStatus(BattleStatusConst.Immobilized | mgSet.BeneficiaryBlockingStatus))
         {
             UIManager.Battle.SetBattleFollowMessage(BattleMesages.CombinationFailed);
             return false;
         }
 
         BattleUnit supporter = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().FirstOrDefault(unit => unit.PlayerIndex == mgSet.Supporter);
-        if (supporter != null && !supporter.IsUnderAnyStatus(BattleStatusConst.NoInput | mgSet.SupporterBlockingStatus))
+        if (supporter != null && !supporter.IsUnderAnyStatus(BattleStatusConst.Immobilized | mgSet.SupporterBlockingStatus))
             return true;
 
         UIManager.Battle.SetBattleFollowMessage(BattleMesages.CombinationFailed);
