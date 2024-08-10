@@ -6,6 +6,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net.Mime;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace Memoria.Patcher
@@ -89,27 +90,46 @@ namespace Memoria.Patcher
             {
                 Int64 magicNumber;
                 BinaryReader br = new BinaryReader(inputFile);
-                try
+
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                Module module = assembly.GetModules().First();
+                X509Certificate certificate = module.GetSignerCertificate();
+                // certificates vary slightly in size but are always within a few bys this range is small enough that it's quick but will find the magic number
+                // how to sign this patcher once it's completly built run from Output directory
+                // signtool sign /d "Memoria Patcher for Modding FF9" /td SHA256 /fd SHA256 /sha1 D0E766E285EBE4E93AC723FAE9369495440A67F9 /tr http://timestamp.digicert.com .\Memoria.Patcher.exe 
+                if (certificate != null)
                 {
+                    Console.WriteLine("Memoria.Patcher is Digitally signed, please wait while we validate");
+                    Int64 possition = -0x2920;
+                    bool Found = false;
+                    while (!Found && possition < -0x2700)
+                    {
+                        inputFile.Seek(possition, SeekOrigin.End);
+                        magicNumber = br.ReadInt64();
+                        if (magicNumber == 0x004149524F4D454D)
+                        {
+                            Found = true;
+                            break;
+                        }
+                        possition += 1;
+                    }
+                    if (!Found)
+                        throw new InvalidDataException("File is Signed but could not find magic number, file is corrupt please notify a Memoria Team Member.");
+                }
+                else
+                {
+                    // Confirm! do we want this?
+                    //Console.WriteLine("The Version of Memoria Patcher your using is not signed and is not the offical version");
+                    //Console.WriteLine("If you trust this source press enter to continue, otherwise close this window.");
+                    //Console.ReadLine();
                     // if the file is not signed
-                    inputFile.Seek(-3 * 8, SeekOrigin.End);
+                    inputFile.Seek(-0x18, SeekOrigin.End);
 
                     magicNumber = br.ReadInt64();
                     if (magicNumber != 0x004149524F4D454D)// MEMORIA\0 
                         throw new InvalidDataException("Invalid magic number: " + magicNumber);
                 }
-                catch (Exception ex)
-                {
-                    // if the file is signed this offset might change slightly due to the way signing works.
-                    // you will need to use a Hex editor to make sure that from the M of MEMORIA to the end of the file
-                    // is length you offset this by
-                    inputFile.Seek(-0x28F5, SeekOrigin.End);
-
-                    magicNumber = br.ReadInt64();
-                    if (magicNumber != 0x004149524F4D454D)// MEMORIA\0 
-                        throw new InvalidDataException("Invalid magic number: " + magicNumber);
-                }
-
+                Console.Clear();
 
                 Int64 uncompressedDataSize = br.ReadInt64();
                 Int64 compressedDataPosition = br.ReadInt64();
