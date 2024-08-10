@@ -713,9 +713,9 @@ Complete changes and info can be found on this mod's page.</Description>
 
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.23</Version>
+	<Version>0.3.24</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
-	<ReleaseDate>2024-08-09</ReleaseDate>
+	<ReleaseDate>2024-08-10</ReleaseDate>
 	<Author>DV</Author>
 	<Description>
 	A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
@@ -734,25 +734,30 @@ Complete changes and info can be found on this mod's page.</Description>
 
 	It's currently a demo : CD1 + CD2 + CD3 available but almost +30 hours of lifetime !
 	Don't hesitate to try!
-
-	/_!_\ IMPORTANT : Please read the README file inside the mod folder, the installation is not YET fully automatic ! (Just move 1 or 2 files, don't worry !)
+	
+	Recommended language : Français / English (UK)
+	Not supported language : Japenese
 	</Description>
 	<PatchNotes>
-	- [WIP] New spell kit for Marcus!
-	WARNING: If Marcus has a menu problem in combat or still has these old skills, you can talk to one of the guards at the Treno entrance to reset his data.
-
-	- Tarask's boomerangs weapons are as effective in the second line as in the first (Long Range).
-	- Zidane's Bandit has been reworked.
-	- Fixed a major bug, where the game softlocked against a fight with Golem + Koa.
-	- Slight correction to script no. 19 (PhysicalAttackScript).
-	- Dagger steal bonus is now taken into account on the following skills/SAs: Mug, What’s That!? and Master Thief.
-	- Corrected EX Mode SA, which was not working on commands that did no damage (e.g. Steal).
-	- Correction of the description on several items.
-	- Fixed a bug on the Annoyntment item.
-	- Correction of Break/Up status scripts, which did not withdraw correctly when a character died.
-	- Temporary correction on Trouble status, which did not apply when a character died (reported to Tirlititi).
-	- Fixed a script bug in Treno/Auction House (1909).
-	- Major script bug fixed on A. Castle/Hallway (1807)
+	- [WIP] Fixed "Sleep" status on bosses (Note: this gives a "freeze" effect on bosses for the moment, waiting for the next Memoria update).
+	- Added visual effect for Regen (not definitive).
+	- Eiko can now learn "Scan".
+	- Correction to the IOverloadDamageModifierScript script, concerning attacks that steal HP or MP (or both).
+	- Fixed a bug from a monster's Holy spell that use SFX Firaga under Boomerang effect.
+	- Fixed a bug on the "Trance" status, where a character lost all his Trance during a "Combo" attack.
+	- Amarant's claws now have an additional effect, as do most weapons.
+	- Major fix to SA Proliferation and Proliferation+.
+	- Curse and Curse+ have been corrected.
+	- Fragility and Fragility+ have been corrected.
+	- Beatrix's Illumina has been renamed Judgment, and is now a Magic Weapon attack.
+	- Corrected PowerBreak/MagicBreak/ArmorBreak/MentalBreak scripts, which did not take accuracy into account.
+	- Trance removes PowerBreak/MagicBreak/ArmorBreak/MentalBreak status.
+	- Cleave skill fixed.
+	- Correction of the description of Minimum.
+	- Limblulline item description corrected.
+	- Major fix to RagTime questions, which were buggy in the US version.
+	- Moug will not assist Eiko if she is under "Heat".
+	- Correction of a softlock in the Alexandria/Pub (field 112).
 	</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/NTbTds6/Logo-Trance-Seek.png</PreviewFileUrl>
