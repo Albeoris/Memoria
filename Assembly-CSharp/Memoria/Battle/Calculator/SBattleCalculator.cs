@@ -293,7 +293,7 @@ namespace Memoria
             if (target.bi.player != 0 || FF9StateSystem.Battle.isDebug)
                 return;
             UInt16 targetId = target.bi.slave == 0 ? target.btl_id : btl_util.GetMasterEnemyBtlPtr(target).Id;
-            if (caster.bi.player != 0 && !btl_stat.CheckStatus(target, BattleStatusConst.Immobilized))
+            if (caster.bi.player != 0 && !btl_stat.CheckStatus(target, BattleStatusConst.PreventCounter))
             {
                 if (v.Target.Enemy.AttackOnDeath && target.cur.hp == 0)
                     PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyDying, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
@@ -310,8 +310,7 @@ namespace Memoria
 
         private static Boolean CheckDamageMotion(BattleCalculator v)
         {
-            return ((v.Context.Flags & BattleCalcFlags.AddStat) == 0 || (FF9StateSystem.Battle.FF9Battle.add_status[v.Caster.Data.weapon.StatusIndex].Value & BattleStatusConst.NoReaction) == 0)
-                && (v.Command.AbilityCategory & 64) == 0
+            return (v.Command.AbilityCategory & 64) == 0
                 && v.Command.Data.info.cover == 0
                 && !btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.NoDamageMotion)
                 && v.Caster.Data != v.Target.Data;

@@ -50,6 +50,7 @@ Memoria Engine is an open-source community rewrite of Final Fantasy IX's engine 
 - **INSTALL**: Download and run [Memoria.Patcher.exe](https://github.com/Albeoris/Memoria/releases/)
   - Automatically finds the game path from Windows registry (if you've launched the game once and haven't moved the install folder)
   - If not, launch the patcher from the game folder, or provide a custom path in command line: 'Memoria.Patcher.exe "gameDirectory"'
+  - Mac users: The launcher has been shown to be currently only compatible with Crossover in Windows 10 32bit mode (Whiskey and 64bit give an error "mono-io-layer-error")
 - **UPDATE**: with the latest patcher exe or use "check for updates" in the launcher
 - **CONFIGURE**: Most crucial options and cheats are embedded in the game launcher
   - More in-depth configuration is available in the file Memoria.ini (in the game folder)

@@ -37,7 +37,7 @@ public static class battlebg
         for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
         {
             String objName = $"BBG_B{battlebg.nf_BbgNumber:D3}_OBJ{i + 1}";
-            battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false, false, Configuration.Graphics.BattleSmoothTexture);
+            battlebg.objAnimModel[i] = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{objName}/{objName}", false, true, Configuration.Graphics.BattleSmoothTexture);
             battlebg.objAnimModel[i].transform.parent = battlebg.btlRoot.transform;
             battlebg.SetDefaultShader(battlebg.objAnimModel[i]);
             if (battlebg.nf_BbgNumber == 171 && i == 1) // Crystal World, Crystal
@@ -151,7 +151,7 @@ public static class battlebg
             }
             battlebg.setBGColor(transform.gameObject);
         }
-        Int32 fullTime = (Int32)Time.realtimeSinceStartup;
+        Single fullTime = Time.realtimeSinceStartup;
         for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
         {
             battlebg.getBbgObjAnimation(battlebg.nf_BbgNumber, i, battlebg.nf_BbgTick, fullTime, out Vector3 bbgPos, out Quaternion bbgRot);
@@ -160,7 +160,7 @@ public static class battlebg
         }
     }
 
-    public static void getBbgObjAnimation(Int32 bbgId, Int32 objIndex, Int32 tick, Int32 fullTime, out Vector3 pos, out Quaternion rot)
+    public static void getBbgObjAnimation(Int32 bbgId, Int32 objIndex, Int32 tick, Single fullTime, out Vector3 pos, out Quaternion rot)
     {
         Boolean invertRot = false;
         Vector3 angles = default;
@@ -182,13 +182,13 @@ public static class battlebg
                 }
                 break;
             case 68:
-                angles.y += 3f;
-                pos.x = 0f;
-                pos.y = -10f;
-                pos.z = 0f;
+                angles.z = (Single)(Mathf.Sin(((Int32)(fullTime * 26) & 4095) / 4096f * 360f) * 4096f) / 5;
+                pos.x = 1065f;
+                pos.y = -1345f;
+                pos.z = 3749f;
                 break;
             case 110:
-                angles.z = (Int32)(Mathf.Sin(((fullTime * 12) & 4095) / 4096f * 360f) * 4096f) / 64;
+                angles.z = (Int32)(Mathf.Sin(((Int32)(fullTime * 12) & 4095) / 4096f * 360f) * 4096f) / 64;
                 angles.y = 512f;
                 pos.x = 1500f;
                 pos.y = -7000f;
@@ -199,10 +199,10 @@ public static class battlebg
                 {
                     case 0:
                     {
-                        angles.z = 4095 - ((fullTime * 5) & 4095);
-                        angles.y = 4095 - ((fullTime * 3) & 4095);
+                        angles.z = 4095 - ((Int32)(fullTime * 5) & 4095);
+                        angles.y = 4095 - ((Int32)(fullTime * 3) & 4095);
                         pos.x = -2100f;
-                        pos.y = -250f + (Int32)(Mathf.Sin((((fullTime + 8) * 22) & 4095) / 4096f * 360f) * 4096f) / 45;
+                        pos.y = -250f + (Int32)(Mathf.Sin((((Int32)(fullTime + 8) * 22) & 4095) / 4096f * 360f) * 4096f) / 45;
                         pos.z = -850f;
                         break;
                     }
@@ -211,16 +211,16 @@ public static class battlebg
                         angles.y = 0f;
                         angles.z = 0f;
                         pos.x = 1725f;
-                        pos.y = -1500f + (Int32)(Mathf.Sin(((fullTime * 20) & 4095) / 4096f * 360f) * 4096f) / 64;
+                        pos.y = -1500f + (Int32)(Mathf.Sin(((Int32)(fullTime * 20) & 4095) / 4096f * 360f) * 4096f) / 64;
                         pos.z = -75f;
                         break;
                     }
                     case 2:
                     {
-                        angles.z = (fullTime * 4) & 4095;
-                        angles.y = (fullTime * 3) & 4095;
+                        angles.z = (Int32)(fullTime * 4) & 4095;
+                        angles.y = (Int32)(fullTime * 3) & 4095;
                         pos.x = 1750f;
-                        pos.y = -775f + (Int32)(Mathf.Sin((((fullTime + 16) * 21) & 4095) / 4096f * 360f) * 4096f) / 50;
+                        pos.y = -775f + (Int32)(Mathf.Sin((((Int32)(fullTime + 16) * 21) & 4095) / 4096f * 360f) * 4096f) / 50;
                         pos.z = 1025f;
                         break;
                     }
@@ -229,13 +229,12 @@ public static class battlebg
             case 168:
                 angles.x = 0f;
                 angles.z = 0f;
-                angles.y = (objIndex == 0 ? fullTime / 16 : fullTime / 8) & 4095;
+                angles.y = (Int32)(objIndex == 0 ? fullTime / 16 : fullTime / 8) & 4095;
                 break;
             case 171:
-                fullTime = tick * 2;
                 if (objIndex == 0)
                 {
-                    angles.z = (fullTime * 12) & 4095;
+                    angles.z = (tick * 24) & 4095;
                     pos.x = 0f;
                     pos.y = -2375f;
                     pos.z = 3750f;
@@ -243,7 +242,7 @@ public static class battlebg
                 else
                 {
                     angles.z = 3584f;
-                    angles.y = (fullTime * 22) & 4095;
+                    angles.y = (tick * 44) & 4095;
                     pos.x = 0f;
                     pos.y = -2250f;
                     pos.z = 7625f;
@@ -254,10 +253,10 @@ public static class battlebg
             case 169:
             case 170:
             default:
-                angles.z = (Int32)(Mathf.Sin(((fullTime * 26) & 4095) / 4096f * 360f) * 4096f) / 5;
-                pos.x = 1065f;
-                pos.y = -1345f;
-                pos.z = 3749f;
+                angles.y += 3f;
+                pos.x = 0f;
+                pos.y = -10f;
+                pos.z = 0f;
                 break;
         }
         pos.y *= -1f;
@@ -406,7 +405,7 @@ public static class battlebg
         //Quaternion angleUpdate = angle * Quaternion.Inverse(battlebg.nf_BbgAngle);
         //battlebg.nf_BbgOffset = offset;
         //battlebg.nf_BbgAngle = angle;
-        //Int32 fullTime = (Int32)Time.realtimeSinceStartup;
+        //Single fullTime = Time.realtimeSinceStartup;
         //for (Int32 i = 0; i < battlebg.nf_BbgInfoPtr.objanim; i++)
         //{
         //    battlebg.getBbgObjAnimation(battlebg.nf_BbgNumber, i, battlebg.nf_BbgTick, fullTime, out Vector3 bbgPos, out Quaternion bbgRot);
