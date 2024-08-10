@@ -94,9 +94,9 @@ namespace Memoria.Patcher
                 Assembly assembly = Assembly.GetExecutingAssembly();
                 Module module = assembly.GetModules().First();
                 X509Certificate certificate = module.GetSignerCertificate();
-                // certificates vary slightly in size but are always within a few bys this range is small enough that it's quick but will find the magic number
+                // certificates vary slightly in size but are always within a few bytes this range is small enough that it's quick but will find the magic number if it's there
                 // how to sign this patcher once it's completly built run from Output directory
-                // signtool sign /d "Memoria Patcher for Modding FF9" /td SHA256 /fd SHA256 /sha1 D0E766E285EBE4E93AC723FAE9369495440A67F9 /tr http://timestamp.digicert.com .\Memoria.Patcher.exe 
+                // signtool sign /d "Memoria Patcher for Modding FF9" /td SHA256 /fd SHA256 /sha1 {your certificates SHA1 signature} /tr http://timestamp.digicert.com .\Memoria.Patcher.exe 
                 if (certificate != null)
                 {
                     Console.WriteLine("Memoria.Patcher is Digitally signed, please wait while we validate");
@@ -114,7 +114,7 @@ namespace Memoria.Patcher
                         possition += 1;
                     }
                     if (!Found)
-                        throw new InvalidDataException("File is Signed but could not find magic number, file is corrupt please notify a Memoria Team Member.");
+                        throw new InvalidDataException("File is Signed but could not find magic number, file is corrupt");
                 }
                 else
                 {
