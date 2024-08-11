@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -62,6 +63,7 @@ namespace Memoria.Launcher
             PreviewSubModActive.Unchecked += OnSubModActivate;
             if (modListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
+            UpdateModDetails((Mod)null);
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
@@ -99,7 +101,15 @@ namespace Memoria.Launcher
             foreach (Mod mod in lstCatalogMods.SelectedItems)
                 if (!String.IsNullOrEmpty(mod.DownloadUrl))
                     canDownload = true;
-            btnDownload.IsEnabled = canDownload;
+            if (canDownload)
+            {
+                btnDownload.IsEnabled = true;
+                btnDownload.Background = System.Windows.Media.Brushes.White;
+            }
+            else
+            {
+                btnDownload.Background = System.Windows.Media.Brushes.Transparent;
+            }
         }
         private void OnModListDoubleClick(Object sender, RoutedEventArgs e)
         {
@@ -711,10 +721,14 @@ namespace Memoria.Launcher
             currentMod = mod;
             if (mod == null || mod.Name == null)
             {
+                gridModName.Visibility = Visibility.Collapsed;
+                gridModInfo.Visibility = Visibility.Collapsed;
+                PreviewModWebsite.Visibility = Visibility.Collapsed;
             }
             else
             {
-                Boolean hasSubMod = mod.SubMod != null && mod.SubMod.Count > 0;
+                gridModName.Visibility = Visibility.Visible;
+                gridModInfo.Visibility = Visibility.Visible;
                 PreviewModName.Text = mod.Name;
                 PreviewModVersion.Text = mod.CurrentVersion?.ToString() ?? "";
                 PreviewModRelease.Text = mod.ReleaseDate ?? "";
@@ -726,7 +740,12 @@ namespace Memoria.Launcher
                 PreviewModWebsite.ToolTip = mod.Website ?? String.Empty;
                 PreviewModWebsite.IsEnabled = !String.IsNullOrEmpty(mod.Website);
                 PreviewModWebsite.Visibility = PreviewModWebsite.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
-                PreviewSubModPanel.Visibility = hasSubMod ? Visibility.Visible : Visibility.Collapsed;
+                PreviewSubModPanel.Visibility = Visibility.Collapsed;
+                Boolean hasSubMod = mod.SubMod != null && mod.SubMod.Count > 0;
+                if (hasSubMod)
+                {
+                    PreviewSubModPanel.Visibility = Visibility.Visible;
+                }
                 ReleaseNotesBlock.Visibility = PreviewModReleaseNotes.Text == "" && PreviewModRelease.Text == "" ? Visibility.Collapsed : Visibility.Visible;
                 if (hasSubMod)
                 {
@@ -941,8 +960,8 @@ namespace Memoria.Launcher
             btnMoveUp.ToolTip = Lang.ModEditor.TooltipMoveUp;
             btnMoveDown.ToolTip = Lang.ModEditor.TooltipMoveDown;
             btnCheckCompatibility.ToolTip = Lang.ModEditor.TooltipCheckCompatibility;
-            btnActivateAll.ToolTip = Lang.ModEditor.TooltipActivateAll;
-            btnDeactivateAll.ToolTip = Lang.ModEditor.TooltipDeactivateAll;
+            //btnActivateAll.ToolTip = Lang.ModEditor.TooltipActivateAll;
+            //btnDeactivateAll.ToolTip = Lang.ModEditor.TooltipDeactivateAll;
             btnUninstall.ToolTip = Lang.ModEditor.TooltipUninstall;
             tabCatalog.Text = Lang.ModEditor.TabCatalog;
             GridViewColumnHeader header = new GridViewColumnHeader() { Content = Lang.ModEditor.Name };

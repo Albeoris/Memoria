@@ -114,9 +114,15 @@ public class CommonSPSSystem
         Int16 MapNo = FF9StateSystem.Common.FF9.fldMapNo;
         //Log.Message("if (MapNo == " + MapNo + " && name == \"" + name + "\" && pos.x == " + pos.x + " && pos.y == " + pos.y + " && pos.z == " + pos.z + ")"); // 3D positions, pos.y calculated from bottom
         if (MapNo == 2215 && name == "SPS_0008" && pos.x == 1330 && pos.y == 1150 && pos.z == 1125) // desert palace flame misaligned
-        {
             pos.y = 1025;
-        }
+        if ((MapNo == 2301 || MapNo == 2302) && name == "SPS_0000" && pos.x == -1200 && pos.y == 690 && pos.z == 374) // esto gaza flames
+            pos = new Vector3(-1330, 710, 674);
+        if ((MapNo == 2301 || MapNo == 2302) && name == "SPS_0001" && pos.x == -620 && pos.y == 400 && pos.z == 504) // esto gaza flames
+            pos.y = 350;
+        if (MapNo == 2304 && name == "SPS_0000" && pos.x == -970 && pos.y == 1455 && pos.z == 1516) // esto gaza flames
+            pos = new Vector3(-1030, 1400, 1716);
+        if (MapNo == 2304 && name == "SPS_0001" && pos.x == 830 && pos.y == 1479 && pos.z == 1516) // esto gaza flames
+            pos = new Vector3(790, 1400, 2016);
         return pos;
     }
 
