@@ -1,4 +1,7 @@
 ﻿using Ini;
+using SharpCompress.Archives;
+using SharpCompress.Common;
+using SharpCompress.Readers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,7 +9,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -34,6 +36,8 @@ namespace Memoria.Launcher
         public ObservableCollection<Mod> modListCatalog = new ObservableCollection<Mod>();
         public ObservableCollection<Mod> downloadList = new ObservableCollection<Mod>();
         public String StatusMessage = "";
+
+        public String[] supportedArchives = { "rar", "unrar", "zip", "bzip2", "gzip", "tar", "7zip", "lzip", "gz" };
 
         public ModManagerWindow()
         {
@@ -309,7 +313,12 @@ namespace Memoria.Launcher
                 if (modUrl == null)
                     return;
                 Directory.CreateDirectory(Mod.INSTALLATION_TMP);
-                downloadingPath = Mod.INSTALLATION_TMP + "/" + (mod.InstallationPath ?? mod.Name) + ".zip";
+                string ext = mod.DownloadFormat ?? "zip";
+                if (ext.StartsWith("SingleFileWithPath"))
+                {
+                    ext = "zip";
+                }
+                downloadingPath = Mod.INSTALLATION_TMP + "/" + (mod.InstallationPath ?? mod.Name) + "." + ext;
                 downloadClient = new WebClient();
                 downloadClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadLoop);
                 downloadClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadEnd);
@@ -355,12 +364,40 @@ namespace Memoria.Launcher
                 Double timeSpan = (DateTime.Now - downloadBytesTime).TotalSeconds;
                 if (timeSpan <= 0.0)
                     timeSpan = 0.1;
-                downloadingMod.PercentComplete = e.ProgressPercentage;
-                downloadingMod.DownloadSpeed = $"{(Int64)(e.BytesReceived / 1024.0 / timeSpan)} {Lang.Measurement.KByteAbbr}/{Lang.Measurement.SecondAbbr}";
-                downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived):g}";
+                try
+                {
+                    downloadingMod.PercentComplete = e.ProgressPercentage;
+                    downloadingMod.DownloadSpeed = $"{(Int64)(e.BytesReceived / 1024.0 / timeSpan)} {Lang.Measurement.KByteAbbr}/{Lang.Measurement.SecondAbbr}";
+                    downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived):g}";
+                }
+                catch (NullReferenceException) // added to catch a race condition that sometimes occures where Ui tries to update but download has finished
+                {
+
+                }
                 lstDownloads.Items.Refresh();
             });
         }
+
+        private void ExtractAllFileFromArchive(String archivePath, String extactTo)
+        {
+            using (Stream stream = File.OpenRead(archivePath))
+            using (var reader = ReaderFactory.Open(stream))
+            {
+                while (reader.MoveToNextEntry())
+                {
+                    if (!reader.Entry.IsDirectory)
+                    {
+                        Console.WriteLine(reader.Entry.Key);
+                        reader.WriteEntryToDirectory(extactTo, new ExtractionOptions()
+                        {
+                            ExtractFullPath = true,
+                            Overwrite = true
+                        });
+                    }
+                }
+            }
+        }
+
         private void DownloadEnd(Object sender, AsyncCompletedEventArgs e)
         {
             if (e.Cancelled || e.Error != null)
@@ -378,7 +415,8 @@ namespace Memoria.Launcher
                 String downloadingModName = downloadingMod.Name;
                 String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingModName);
                 Boolean success = false;
-                if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || downloadingMod.DownloadFormat == "Zip")
+                String downloadFormatLower = downloadingMod.DownloadFormat ?? "zip".ToLower();
+                if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || supportedArchives.Contains(downloadFormatLower))
                 {
                     Directory.CreateDirectory(path);
                     try
@@ -388,8 +426,8 @@ namespace Memoria.Launcher
                         Boolean moveDesc = false;
                         String sourcePath = "";
                         String destPath = "";
-                        ZipFile.ExtractToDirectory(path + ".zip", path);
-                        File.Delete(path + ".zip");
+                        ExtractAllFileFromArchive(path + "." + downloadFormatLower, path);
+                        File.Delete(path + "." + downloadFormatLower);
                         if (File.Exists(path + "/" + Mod.DESCRIPTION_FILE))
                         {
                             hasDesc = true;

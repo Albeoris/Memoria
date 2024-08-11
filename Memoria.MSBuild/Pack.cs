@@ -2,6 +2,7 @@
 using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -43,6 +44,30 @@ namespace Memoria.MSBuild
                 Debugger.Launch();
 
             Stopwatch sw = Stopwatch.StartNew();
+            String ILMergePath = Path.GetFullPath(Path.Combine(TargetDir, @"..\Utils\ILRepack\ILRepack.exe"));
+            String LauncherDir = Path.GetFullPath(Path.Combine(TargetDir, @"Launcher"));
+
+            // pack everything into the Launcher
+            StringBuilder sb = new StringBuilder();
+            sb.Append("/log /verbose /pause ");
+            sb.Append("/out:Memoria.Launcher.Merged.exe ");
+            sb.Append("Memoria.Launcher.exe ");
+            sb.Append("ZstdSharp.dll ");
+            sb.Append("SharpCompress.dll ");
+            sb.Append("System.Buffers.dll ");
+            sb.Append("System.Memory.dll ");
+            sb.Append("System.Numerics.Vectors.dll ");
+            sb.Append("System.Runtime.CompilerServices.Unsafe.dll ");
+            sb.Append("System.Text.Encoding.CodePages.dll ");
+            sb.Append("System.Threading.Tasks.Extensions.dll ");
+            String args = sb.ToString();
+            Process merger = new Process();
+            merger.StartInfo = new ProcessStartInfo(ILMergePath, args);
+            merger.StartInfo.WorkingDirectory = LauncherDir;
+            merger.Start();
+            _log.LogMessage(MessageImportance.High, "\r\nPackaged: {0}\r\n Into {1}\r\n", args, ILMergePath);
+            merger.WaitForExit();
+
             using (FileStream executableFile = File.OpenWrite(TargetPath))
             {
                 Int64 compressedDataPosition = 0;
@@ -59,7 +84,7 @@ namespace Memoria.MSBuild
                     PackFolder("FF9_Data", "FF9_Data", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackFolder("Debugger", "Debugger", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackDLLs("", "{PLATFORM}\\FF9_Data\\Managed", compressStream, bw, pathMap, ref uncompressedDataSize);
-                    PackOptionalFile("Launcher\\Memoria.Launcher.exe", "FF9_Launcher.exe", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    PackOptionalFile("Launcher\\Memoria.Launcher.Merged.exe", "FF9_Launcher.exe", compressStream, bw, pathMap, ref uncompressedDataSize);                   
                     PackOptionalFile("Launcher\\Memoria.Launcher.exe.config", "FF9_Launcher.exe.config", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackOptionalFile("Launcher\\Memoria.SteamFix.exe", "Memoria.SteamFix.exe", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackOptionalFile("Launcher\\Memoria.ini", "Memoria.ini", compressStream, bw, pathMap, ref uncompressedDataSize);
