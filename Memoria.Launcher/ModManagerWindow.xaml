@@ -831,7 +831,7 @@
         Grid.RowSpan="3"
         Grid.Column="1"
         Margin="7,0,0,0"
-        Padding="7,0,7,7"
+        Padding="0,0,0,7"
         BorderThickness="0"
         Background="{StaticResource LightGreyUI}"
         SelectedIndex="0">
@@ -849,8 +849,7 @@
                     Background="#333" />
                 </TabItem.Header>
                 <Grid x:Name="gridOuterMod"
-                      Margin="0,-2,0,0"
-                      >
+                Margin="0,-2,0,0" >
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" MinHeight="20" MaxHeight="150" />
                         <RowDefinition Height="auto" />
@@ -859,9 +858,14 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Grid x:Name="imagewrapper"
+                    Grid.Row="0"
                     Height="auto"
                     VerticalAlignment="Center"
                     Margin="-7,0,-7,0">
+                        <!-- 
+                        Source="Images/no-disc.jpg"
+                        Source="Images/pc_launcher_bg.png"
+                        -->
                         <Image x:Name="PreviewModImage"
                         Source="Images/no-disc.jpg"
                         Grid.Row="0"
@@ -869,26 +873,26 @@
                         RenderOptions.BitmapScalingMode="HighQuality"
                         Stretch="UniformToFill"
                         />
-                        <Button
-                        x:Name="PreviewModWebsite"
-                        VerticalAlignment="Bottom"
-                        HorizontalAlignment="Right"
-                        Width="auto"
-                        Height="20"
-                        Margin="0,0,0,0"
-                        Cursor="Hand"
-                        Click="OnClickWebsite"
-                        Content="Website"
-                        FontSize="12"
-                        FontWeight="DemiBold"
-                        IsEnabled="False"
-                        Style="{StaticResource OpenLinkStyle}"
-                        ToolTip="{Binding PreviewModLink}"
-                        />
                     </Grid>
-
+                    <Button x:Name="PreviewModWebsite"
+                    Grid.Row="0"
+                    VerticalAlignment="Bottom"
+                    HorizontalAlignment="Right"
+                    Width="auto"
+                    Height="20"
+                    Margin="0,0,0,0"
+                    Cursor="Hand"
+                    Click="OnClickWebsite"
+                    Content="Website"
+                    FontSize="12"
+                    FontWeight="DemiBold"
+                    IsEnabled="False"
+                    Style="{StaticResource OpenLinkStyle}"
+                    ToolTip="{Binding PreviewModLink}"
+                    />
                     <Grid x:Name="gridModName" 
-                    Grid.Row="1">
+                    Grid.Row="1"
+                    Margin="7,0,7,0">
                         <ScrollViewer
                         HorizontalAlignment="Left"
                         VerticalScrollBarVisibility="Auto"
@@ -935,7 +939,8 @@
                     <ScrollViewer
                     Grid.Row="2"
                     HorizontalAlignment="Stretch"
-                    VerticalScrollBarVisibility="Auto">
+                    VerticalScrollBarVisibility="Auto"
+                        Margin="7,0,7,0">
                         <Grid x:Name="gridModInfo" Margin="0,0,0,3">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="auto" />
@@ -1020,130 +1025,123 @@
                                 VerticalAlignment="Bottom"
                                 Text="" />
                             </WrapPanel>
-                            <WrapPanel
-                            Grid.Row="4">
-                                <Grid
-                                Margin="0,4,0,0" >
-                                        <Border
-                                        Grid.Row="0"
-                                        BorderThickness="3,0,0,0"
-                                        BorderBrush="#333"
-                                        Margin="0,0,0,0"/>
-                                        <!--<TextBlock
-                                    x:Name="CaptionModDescription"
-                                    Style="{StaticResource ModInfoLabelStyle}"
-                                    Text="Description:" />-->
-                                        <TextBlock
-                                    x:Name="PreviewModDescription"
-                                    Style="{StaticResource ModDescriptionStyle}"
-                                    Margin="10,0,6,0"
-                                    Text="No description" />
-                                </Grid>
-                            </WrapPanel>
-                            <WrapPanel
-                            x:Name="PreviewSubModPanel"
-                            Grid.Row="5"
-                            Margin="3,3,3,3"
-                            Visibility="Collapsed">
-                                <Grid x:Name="gridSubModInfo" Margin="0,0,0,3">
+
+                            <ScrollViewer x:Name="ContentScroll"
+                            Grid.Row="4"
+                            HorizontalAlignment="Stretch"
+                            VerticalScrollBarVisibility="Auto"
+                            Height="454" >
+                                <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
                                         <RowDefinition Height="auto" />
                                         <RowDefinition Height="auto" />
                                     </Grid.RowDefinitions>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
                                     <WrapPanel
                                     Grid.Row="0"
-                                    Margin="3,0,3,0">
-                                        <TextBlock
-                                        x:Name="CaptionSubModPanel"
-                                        Style="{StaticResource ModInfoLabelStyle}"
-                                        Text="Mod options:" />
-                                    </WrapPanel>
-                                    <WrapPanel Grid.Row="1" Margin="3,0,3,0">
-                                        <ComboBox x:Name="PreviewSubModList" DataContext="{Binding Name}">
-                                            <ComboBox.ItemTemplate>
-                                                <DataTemplate>
-                                                    <TextBlock Text="{Binding Name}" />
-                                                </DataTemplate>
-                                            </ComboBox.ItemTemplate>
-                                        </ComboBox>
+                                    Height="auto">
+                                        <Grid
+                                        Margin="0,4,0,0" >
+                                            <Border
+                                            Grid.Row="0"
+                                            BorderThickness="3,0,0,0"
+                                            BorderBrush="#333"
+                                            Margin="0,0,0,0"/>
+                                            <TextBlock
+                                            x:Name="PreviewModDescription"
+                                            Style="{StaticResource ModDescriptionStyle}"
+                                            Margin="10,0,6,0"
+                                            Text="No description" />
+                                        </Grid>
                                     </WrapPanel>
                                     <WrapPanel
+                                    x:Name="PreviewSubModPanel"
                                     Grid.Row="1"
-                                    Grid.Column="1"
-                                    Margin="3,0,3,0"
-                                    VerticalAlignment="Center">
-                                        <CheckBox x:Name="PreviewSubModActive" Content="Active" />
+                                    Margin="0,3,3,3"
+                                    Visibility="Collapsed"
+                                    Height="auto">
+                                        <Grid x:Name="gridSubModInfo" Margin="0,0,0,3">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <WrapPanel
+                                            Grid.Row="0"
+                                            Margin="0,0,3,0">
+                                                <TextBlock
+                                                x:Name="CaptionSubModPanel"
+                                                Style="{StaticResource ModInfoLabelStyle}"
+                                                Text="Mod options:" />
+                                            </WrapPanel>
+                                            <WrapPanel
+                                            Grid.Row="1"
+                                            Margin="0,0,3,0">
+                                                <ComboBox x:Name="PreviewSubModList"
+                                                DataContext="{Binding Name}">
+                                                    <ComboBox.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding Name}" />
+                                                        </DataTemplate>
+                                                    </ComboBox.ItemTemplate>
+                                                </ComboBox>
+                                            </WrapPanel>
+                                            <WrapPanel
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Margin="3,0,3,0"
+                                            VerticalAlignment="Center">
+                                                <CheckBox x:Name="PreviewSubModActive" Content="Active" />
+                                            </WrapPanel>
+                                            <WrapPanel
+                                            Grid.Row="2"
+                                            Margin="0,0,3,0">
+                                                <TextBlock x:Name="PreviewSubModDescription"
+                                                Style="{StaticResource ModInfoDetailsStyle}"
+                                                Text="" />
+                                            </WrapPanel>
+                                        </Grid>
                                     </WrapPanel>
-                                    <WrapPanel
+                                    <ScrollViewer x:Name="ReleaseNotesBlock"
                                     Grid.Row="2"
-                                    Margin="3,0,3,0">
-                                        <TextBlock x:Name="PreviewSubModDescription"
-                                        Style="{StaticResource ModInfoDetailsStyle}"
-                                        Text="" />
-                                    </WrapPanel>
+                                    HorizontalAlignment="Stretch"
+                                    VerticalScrollBarVisibility="Auto">
+                                        <WrapPanel
+                                        Background="{StaticResource DarkGreyUI}"
+                                        Margin="0,7,6,0"
+                                        Visibility="Visible">
+                                            <DockPanel>
+                                                <TextBlock
+                                                x:Name="CaptionModReleaseNotes"
+                                                Style="{StaticResource ModInfoLabelStyle}"
+                                                Margin="5,5,0,5"
+                                                VerticalAlignment="Bottom"
+                                                Text="Release Notes:" />
+                                                <TextBlock
+                                                x:Name="PreviewModRelease" 
+                                                Style="{StaticResource ModInfoDetailsStyle}"
+                                                Margin="5,5,0,5"
+                                                VerticalAlignment="Bottom"
+                                                Text="" />
+                                            </DockPanel>
+                                            <TextBlock
+                                            x:Name="PreviewModReleaseNotes"
+                                            Style="{StaticResource ModInfoDetailsStyle}"
+                                            Margin="5,5,5,5"
+                                            VerticalAlignment="Bottom"
+                                            Text="" />
+                                        </WrapPanel>
+                                    </ScrollViewer>
                                 </Grid>
-                            </WrapPanel>
-                            <ScrollViewer x:Name="ReleaseNotesBlock"
-                            Grid.Row="6"
-                            HorizontalAlignment="Stretch"
-                            VerticalScrollBarVisibility="Auto" >
-                                <WrapPanel
-                                Background="{StaticResource DarkGreyUI}"
-                                Margin="0,7,6,0"
-                                Visibility="Visible">
-                                    <!--<TextBlock
-                                x:Name="CaptionModRelease"
-                                Style="{StaticResource ModInfoLabelStyle}"
-                                Text="Released:" />-->
-                                    <DockPanel>
-                                        <TextBlock
-                                        x:Name="CaptionModReleaseNotes"
-                                        Style="{StaticResource ModInfoLabelStyle}"
-                                        Margin="5,5,0,5"
-                                        VerticalAlignment="Bottom"
-                                        Text="Release Notes:" />
-                                        <TextBlock
-                                        x:Name="PreviewModRelease" 
-                                        Style="{StaticResource ModInfoDetailsStyle}"
-                                        Margin="5,5,0,5"
-                                        VerticalAlignment="Bottom"
-                                        Text="" />
-                                    </DockPanel>
-                                    <TextBlock
-                                        x:Name="PreviewModReleaseNotes"
-                                        Style="{StaticResource ModInfoDetailsStyle}"
-                                        Margin="5,5,5,5"
-                                        VerticalAlignment="Bottom"
-                                        Text="" />
-
-                                </WrapPanel>
                             </ScrollViewer>
                         </Grid>
                     </ScrollViewer>
-
-                    <!--<Image
-                    x:Name="PreviewModImage"
-                    Grid.Row="3"
-                    Margin="3"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Bottom"
-                    RenderOptions.BitmapScalingMode="HighQuality"
-                    Stretch="Uniform" />-->
-                    <!-- <TextBlock x:Name="PreviewModImageMissing"
-                           Grid.Row="1"
-                           Visibility="{Binding NoImageTextVisibility}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Text="No Preview Image"/>
-                -->
                 </Grid>
             </TabItem>
-
         </TabControl>
 
 
