@@ -184,6 +184,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\btnCloseimg.png" />
     <Resource Include="Images\no-disc.jpg" />
     <Resource Include="Images\shader_comparison2.jpg" />
     <Resource Include="Images\shader_comparison1.jpg" />
