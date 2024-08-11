@@ -60,6 +60,14 @@ namespace Memoria.MSBuild
                     PackFolder("Debugger", "Debugger", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackDLLs("", "{PLATFORM}\\FF9_Data\\Managed", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackOptionalFile("Launcher\\Memoria.Launcher.exe", "FF9_Launcher.exe", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    PackOptionalFile("Launcher\\ZstdSharp.dll", "ZstdSharp.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    PackOptionalFile("Launcher\\SharpCompress.dll", "SharpCompress.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    PackOptionalFile("Launcher\\System.Buffers.dll", "System.Buffers.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    PackOptionalFile("Launcher\\System.Memory.dll", "System.Memory.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    PackOptionalFile("Launcher\\System.Numerics.Vectors.dll", "System.Numerics.Vectors.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    PackOptionalFile("Launcher\\System.Runtime.CompilerServices.Unsafe.dll", "System.Runtime.CompilerServices.Unsafe.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    PackOptionalFile("Launcher\\System.Text.Encoding.CodePages.dll", "System.Text.Encoding.CodePages.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    PackOptionalFile("Launcher\\System.Threading.Tasks.Extensions.dll", "System.Threading.Tasks.Extensions.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackOptionalFile("Launcher\\Memoria.Launcher.exe.config", "FF9_Launcher.exe.config", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackOptionalFile("Launcher\\Memoria.SteamFix.exe", "Memoria.SteamFix.exe", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackOptionalFile("Launcher\\Memoria.ini", "Memoria.ini", compressStream, bw, pathMap, ref uncompressedDataSize);
