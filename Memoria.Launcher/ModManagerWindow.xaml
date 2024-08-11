@@ -444,6 +444,10 @@
                         Foreground="{StaticResource WhiteUI}"/>
                 </TabItem.Header>
                 <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition Width="*" />
@@ -453,7 +457,7 @@
                         x:Name="stackButtons"
                         Grid.Column="0"
                         HorizontalAlignment="Left"
-                        VerticalAlignment="Top">
+                        VerticalAlignment="Stretch">
                         <Button
                             x:Name="btnMoveUp"
                             Margin="0,3,0,3"
@@ -566,6 +570,23 @@
                             />
                         </Button>
                     </StackPanel>
+                    <Button
+                        x:Name="btnClose"
+                        Margin="0,3,0,3"
+                        Click="OnClickClose"
+                        MouseRightButtonDown="OnClickClose"
+                        TabIndex="28"
+                        ToolTip="Close Mod Manager"
+                        VerticalAlignment="Bottom">
+                        <Image
+                            x:Name="btncloseimg"
+                            Width="36"
+                            Height="36"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Source="/Images/btnCloseimg.png"
+                            />
+                    </Button>
                     <ListView x:Name="lstMods"
                     Margin="6,0,0,0"
                     BorderThickness="0"
@@ -757,7 +778,7 @@
                         Grid.Column="0"
                         Margin="0,5,0,0"
                         HorizontalAlignment="Right"
-                        VerticalAlignment="Top">
+                        VerticalAlignment="Stretch">
                         <Button
                             x:Name="btnCancel"
                             Click="OnClickCancel"
@@ -775,6 +796,23 @@
                                 Source="/Images/btnCancelimg.png"
                                 />
 
+                        </Button>
+                        <Button
+                            x:Name="btnCatalogClose"
+                            Margin="0,3,0,3"
+                            Click="OnClickClose"
+                            MouseRightButtonDown="OnClickClose"
+                            TabIndex="28"
+                            ToolTip="Close Mod Manager"
+                            VerticalAlignment="Bottom">
+                                <Image
+                                x:Name="btnCatalogCloseimg"
+                                Width="36"
+                                Height="36"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Source="/Images/btnCloseimg.png"
+                                />
                         </Button>
                     </StackPanel>
                     <ListView x:Name="lstDownloads"

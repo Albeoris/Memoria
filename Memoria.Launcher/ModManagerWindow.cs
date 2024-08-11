@@ -252,6 +252,11 @@ namespace Memoria.Launcher
             return dateTime1 >= dateTime2;
         }
 
+        private void OnClickClose(Object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
         private void OnClickCancel(Object sender, RoutedEventArgs e)
         {
             if (downloadThread != null)
