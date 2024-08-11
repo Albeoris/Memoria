@@ -513,6 +513,7 @@
                                 />
 
                         </Button>
+                        <!--
                         <Button
                             x:Name="btnActivateAll"
                             Margin="0,3,0,3"
@@ -547,34 +548,35 @@
                                 />
 
                         </Button>
+                        -->
                         <Button
-                            x:Name="btnUninstall"
-                            Margin="0,3,0,3"
-                            Click="OnClickUninstall"
-                            MouseRightButtonDown="OnClickUninstall"
-                            TabIndex="28"
-                            ToolTip="Uninstall Mod(s)" >
+                        x:Name="btnUninstall"
+                        Margin="0,3,0,3"
+                        Click="OnClickUninstall"
+                        MouseRightButtonDown="OnClickUninstall"
+                        TabIndex="28"
+                        ToolTip="Uninstall Mod(s)" >
                             <Image
-                                x:Name="btnUninstallimg"
-                                Width="36"
-                                Height="36"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Source="/Images/btnUninstallimg.png"
-                                />
-
+                            x:Name="btnUninstallimg"
+                            Width="36"
+                            Height="36"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Source="/Images/btnUninstallimg.png"
+                            />
                         </Button>
                     </StackPanel>
-                    <ListView
-                        x:Name="lstMods"
-                        Margin="6,0,0,0"
-                        Grid.Column="1"
-                        AllowDrop="True"
-                        Background="{StaticResource DarkGreyUI}"
-                        ItemsSource="{Binding modListInstalled}"
-                        ScrollViewer.CanContentScroll="False"
-                        ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                        VirtualizingStackPanel.IsVirtualizing="False">
+                    <ListView x:Name="lstMods"
+                    Margin="6,0,0,0"
+                    BorderThickness="0"
+                    Padding="0"
+                    Grid.Column="1"
+                    AllowDrop="True"
+                    Background="{StaticResource DarkGreyUI}"
+                    ItemsSource="{Binding modListInstalled}"
+                    ScrollViewer.CanContentScroll="False"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                    VirtualizingStackPanel.IsVirtualizing="False">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -596,8 +598,11 @@
                                 </Style.Triggers>
                             </Style>
                         </ListView.ItemContainerStyle>
-                        <ListView.View>
-                            <GridView>
+                        <ListView.View
+                            
+                                >
+                            <GridView
+                                >
                                 <GridViewColumn
                                 x:Name="colMyModsActive"
                                 Width="28"
@@ -655,36 +660,33 @@
                     </Grid.ColumnDefinitions>
                     <!--  ItemContainerStyle="{StaticResource ModListViewItem}"  -->
                     <StackPanel
-                        Grid.Column="0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Top">
-                        <Button
-                            x:Name="btnDownload"
-                            Click="OnClickDownload"
-                            Margin="0,3,0,3"
-                            MouseRightButtonDown="OnClickDownload"
-                            TabIndex="11"
-                            ToolTip="Download Selected Mod(s)" >
-                            <Image
-                                x:Name="btnDownloadimg"
-                                Width="36"
-                                Height="36"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Source="/Images/btnDownloadimg.png"
-                                />
-
+                    Grid.Column="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top">
+                        <Button x:Name="btnDownload"
+                        Click="OnClickDownload"
+                        Margin="0,3,0,3"
+                        MouseRightButtonDown="OnClickDownload"
+                        TabIndex="11"
+                        ToolTip="Download Selected Mod(s)" >
+                            <Image x:Name="btnDownloadimg"
+                            Width="36"
+                            Height="36"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Source="/Images/btnDownloadimg.png"
+                            />
                         </Button>
                     </StackPanel>
-                    <ListView
-                        x:Name="lstCatalogMods"
-                        Grid.Column="1"
-                        Margin="6,0,0,0"
-                        Background="{StaticResource DarkGreyUI}"
-                        ItemsSource="{Binding modListCatalog}"
-                        ScrollViewer.CanContentScroll="False"
-                        ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                        VirtualizingStackPanel.IsVirtualizing="False">
+                    <ListView x:Name="lstCatalogMods"
+                    Grid.Column="1"
+                    Margin="6,0,0,0"
+                    BorderThickness="0"
+                    Background="{StaticResource DarkGreyUI}"
+                    ItemsSource="{Binding modListCatalog}"
+                    ScrollViewer.CanContentScroll="False"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                    VirtualizingStackPanel.IsVirtualizing="False">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -726,25 +728,25 @@
                                     Header="Category" />-->
                                 <!--<GridViewColumn x:Name="colCatalogDownloadSize" Header="Size" Width="60" DisplayMemberBinding="{Binding DownloadSize}"/>-->
                                 <GridViewColumn
-                                    x:Name="colCatalogInstalled"
-                                    Width="28"
-                                    DisplayMemberBinding="{Binding Installed}"
-                                    Header="Installed" />
+                                x:Name="colCatalogInstalled"
+                                Width="28"
+                                DisplayMemberBinding="{Binding Installed}"
+                                Header="Installed" />
                                 <GridViewColumn
-                                    x:Name="colCatalogName"
-                                    Width="Auto"
-                                    DisplayMemberBinding="{Binding Name}"
-                                    Header="Name" />
+                                x:Name="colCatalogName"
+                                Width="Auto"
+                                DisplayMemberBinding="{Binding Name}"
+                                Header="Name" />
                                 <GridViewColumn
-                                    x:Name="colCatalogAuthor"
-                                    Width="Auto"
-                                    DisplayMemberBinding="{Binding Author}"
-                                    Header="Author(s)" />
+                                x:Name="colCatalogAuthor"
+                                Width="Auto"
+                                DisplayMemberBinding="{Binding Author}"
+                                Header="Author(s)" />
                                 <GridViewColumn
-                                    x:Name="colCatalogCategory"
-                                    Width="100"
-                                    DisplayMemberBinding="{Binding Category}"
-                                    Header="Category" />
+                                x:Name="colCatalogCategory"
+                                Width="100"
+                                DisplayMemberBinding="{Binding Category}"
+                                Header="Category" />
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -775,18 +777,18 @@
 
                         </Button>
                     </StackPanel>
-                    <ListView
-                        x:Name="lstDownloads"
-                        Grid.Row="1"
-                        Grid.Column="1"
-                        MinHeight="100"
-                        MaxHeight="150"
-                        Margin="6,5,0,0"
-                        Background="#333"
-                        Foreground="#FFF"
-                        ItemContainerStyle="{StaticResource DownloadListViewItem}"
-                        ItemsSource="{Binding downloadList, UpdateSourceTrigger=PropertyChanged}"
-                        SelectedItem="{Binding SelectedDownload, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ListView x:Name="lstDownloads"
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    MinHeight="100"
+                    MaxHeight="150"
+                    Margin="6,5,0,0"
+                    BorderThickness="0"
+                    Background="#333"
+                    Foreground="#FFF"
+                    ItemContainerStyle="{StaticResource DownloadListViewItem}"
+                    ItemsSource="{Binding downloadList, UpdateSourceTrigger=PropertyChanged}"
+                    SelectedItem="{Binding SelectedDownload, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn

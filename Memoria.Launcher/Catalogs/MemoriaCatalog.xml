@@ -19,8 +19,7 @@ Credits:
 Ze_PilOt - Created the mod
 Snouz - Backgrounds/videos/UI
 SamsamTS - Background text improved
-Caledor - HDChocographs
-</Description>
+Caledor - HDChocographs</Description>
 	<Category>Visual</Category>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/6iparht6jc04zq2fw0nvv/Moguri_Main.zip?rlkey=xh4punnutqqk8rsvd2o6witwm&amp;st=i0sznhhm&amp;dl=1</DownloadUrl>
 	<Website>https://sites.google.com/view/moguri-mod</Website>
@@ -35,8 +34,7 @@ Caledor - HDChocographs
 	<Author>Snouz</Author>
 	<Description>Moguri Mod is a faithful revamp of FF9 aided by AI (ESRGAN and Stable Diffusion). It makes backgrounds more detailed, highres, cleaner and less noisy. This contains 3D textures only.
 
-- 3D textures (worldmap, monsters, battles...) (not yet upgraded)
-</Description>
+- 3D textures (worldmap, monsters, battles...) (not yet upgraded)</Description>
 	<Category>Visual</Category>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/6jorkaxmdkrn971cqg9wj/Moguri_3DTextures.zip?rlkey=m20tlrx2pjvkc4kfamr6vf7qx&amp;st=numalm00&amp;dl=1</DownloadUrl>
 	<Website>https://sites.google.com/view/moguri-mod</Website>
@@ -684,7 +682,7 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Moguri Alt Soundtrack</Name>
-	<Version>1.0</Version>
+	<Version>8.3</Version>
 	<InstallationPath>MoguriSoundtrack</InstallationPath>
 	<ReleaseDateOriginal>2019-01-01</ReleaseDateOriginal>
 	<Author>Pontus Hultgren, Ze_PilOt</Author>
@@ -745,8 +743,7 @@ You should better use the Playable Characters Pack instead. This later one doesn
 	<Version>1.0</Version>
 	<Author>Caledor</Author>
 	<ReleaseDateOriginal>2021-05-12</ReleaseDateOriginal>
-	<Description>Chocographs remade from scratch by taking actual screenshots in FF9 Steam modded with Moguri Mod 8.2.
-(English layout only)</Description>
+	<Description>[Already integrated in Moguri 9.0] Chocographs remade from scratch by taking actual screenshots in FF9 Steam modded with Moguri Mod 8.2.</Description>
 	<Category>Visual</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=20657.0</Website>
 	<DownloadUrl>https://i.imgur.com/tpdfrUQ.png</DownloadUrl>

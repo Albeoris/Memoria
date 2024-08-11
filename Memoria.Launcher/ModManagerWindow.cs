@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -100,7 +101,15 @@ namespace Memoria.Launcher
             foreach (Mod mod in lstCatalogMods.SelectedItems)
                 if (!String.IsNullOrEmpty(mod.DownloadUrl))
                     canDownload = true;
-            btnDownload.IsEnabled = canDownload;
+            if (canDownload)
+            {
+                btnDownload.IsEnabled = true;
+                btnDownload.Background = System.Windows.Media.Brushes.White;
+            }
+            else
+            {
+                btnDownload.Background = System.Windows.Media.Brushes.Transparent;
+            }
         }
         private void OnModListDoubleClick(Object sender, RoutedEventArgs e)
         {
