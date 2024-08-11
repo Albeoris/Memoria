@@ -1030,7 +1030,7 @@
                             Grid.Row="4"
                             HorizontalAlignment="Stretch"
                             VerticalScrollBarVisibility="Auto"
-                            Height="454" >
+                            Height="436" >
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
