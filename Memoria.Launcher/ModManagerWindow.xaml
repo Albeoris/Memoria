@@ -777,7 +777,7 @@
                         Grid.Column="0"
                         Margin="0,5,0,0"
                         HorizontalAlignment="Right"
-                        VerticalAlignment="Top">
+                        VerticalAlignment="Stretch">
                         <Button
                             x:Name="btnCancel"
                             Click="OnClickCancel"
@@ -795,6 +795,23 @@
                                 Source="/Images/btnCancelimg.png"
                                 />
 
+                        </Button>
+                        <Button
+                            x:Name="btnCatalogClose"
+                            Margin="0,3,0,3"
+                            Click="OnClickClose"
+                            MouseRightButtonDown="OnClickClose"
+                            TabIndex="28"
+                            ToolTip="Close Mod Manager"
+                            VerticalAlignment="Bottom">
+                                <Image
+                                x:Name="btnCatalogCloseimg"
+                                Width="36"
+                                Height="36"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Source="/Images/btnCloseimg.png"
+                                />
                         </Button>
                     </StackPanel>
                     <ListView
