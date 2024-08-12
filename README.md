@@ -55,5 +55,5 @@
 
 ## DEVELOPERS
 
-[INFO for developers](https://github.com/Albeoris/Memoria/wiki/Developer-instructions)
-[visit our knowledge base](../../wiki#knowledge-base) for more modding information
+- [INFO for developers](https://github.com/Albeoris/Memoria/wiki/Developer-instructions)
+- [Knowledge base](../../wiki#knowledge-base)
