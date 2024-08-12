@@ -680,6 +680,35 @@ You should better use the Playable Characters Pack instead. This later one doesn
 </Mod>
 
 <Mod>
+	<Name>Moguri Mod (2020)</Name>
+	<Version>8.4</Version>
+	<InstallationPath>MoguriMain8</InstallationPath>
+	<ReleaseDateOriginal>2019-01-01</ReleaseDateOriginal>
+	<ReleaseDate>2024-08-12</ReleaseDate>
+	<Author>Ze_PilOt / Snouz</Author>
+	<Description>This is the old 2020 version of the Moguri backgrounds, but with all the rest (textures, UI, fixes, edge cutting, lights...) from Moguri 9. This version's backgrounds are more pixel-perfect, paint-like, but noisier.
+
+Moguri Mod is a rework of FFIX's visuals, helped by AI and polished with love. It's a faithful experience aimed at new players, veterans and nostalgic people alike
+
+- HD backgrounds (faithfully aided by AI, merged and polished by hand)
+- All 11k layer edges manually redrawn
+- Overhaul of all model textures
+- Improved FMVs that merge with backgrounds
+- HD places names, using original fonts
+- Rework of some UI elements (maps, minimap, menu...)
+- HD chocographs (based on Caledor's work with permission)
+- Visual bugfixes (some by SamsamTS)
+
+Note: 30fps videos and the alternative soundtrack are now separate mods</Description>
+	<PatchNotes>Version 8.4 has the same backgrounds as 8.3, but with some redone layer edges, lights, new battle textures, UI elements, NPC, bugfixes...</PatchNotes>
+	<MinimumMemoriaVersion>2024-08-04</MinimumMemoriaVersion>
+	<Category>Visual</Category>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/zzvq5gphe195qthq27b6r/MoguriMain8.zip?rlkey=po7bpmxpbvqr9kndxqjgzzvgr&amp;st=kbo43gcf&amp;dl=1</DownloadUrl>
+	<Website>https://sites.google.com/view/moguri-mod</Website>
+	<PreviewFileUrl>https://i.imgur.com/ywCN2EB.jpeg</PreviewFileUrl>
+</Mod>
+
+<Mod>
 	<Name>PSX Buttons</Name>
 	<Version>1.0</Version>
 	<InstallationPath>PSXButtons</InstallationPath>
