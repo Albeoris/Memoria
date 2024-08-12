@@ -707,7 +707,8 @@
                     ItemsSource="{Binding modListCatalog}"
                     ScrollViewer.CanContentScroll="False"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                    VirtualizingStackPanel.IsVirtualizing="False">
+                    VirtualizingStackPanel.IsVirtualizing="False"
+                    MouseDoubleClick="OnCatalogListDoubleClick">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />

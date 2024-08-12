@@ -114,6 +114,12 @@ namespace Memoria.Launcher
         private void OnModListDoubleClick(Object sender, RoutedEventArgs e)
         {
         }
+
+        private void OnCatalogListDoubleClick(Object sender, RoutedEventArgs e)
+        {
+            OnClickDownload(sender, e);
+        }
+
         private void OnSubModSelect(Object sender, RoutedEventArgs e)
         {
             UpdateSubModDetails((Mod)PreviewSubModList.SelectedItem);
