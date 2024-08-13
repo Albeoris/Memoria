@@ -32,7 +32,7 @@ namespace Memoria.DefaultScripts
             SpearCountdown = GetJumpDuration(target);
             SpearCommandId = parameters.Length > 0 ? (BattleCommandId)parameters[0] : BattleCommandId.Spear;
             SpearAbilityId = parameters.Length > 1 ? (BattleAbilityId)parameters[1] : BattleAbilityId.Spear1;
-            SpearTargetId = parameters.Length > 2 ? (UInt16)parameters[2] : btl_util.GetRandomBtlID(0);
+            SpearTargetId = parameters.Length > 2 ? Convert.ToUInt16(parameters[2]) : btl_util.GetRandomBtlID(0);
             return btl_stat.ALTER_SUCCESS;
         }
 

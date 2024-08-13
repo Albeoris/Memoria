@@ -173,9 +173,12 @@ public static class btl_stat
         STAT_INFO stat = unit.Data.stat;
         if (flag)
         {
-            UInt32 alterResult = AlterStatuses(unit, statuses, inflicter);
-            if (alterResult == ALTER_SUCCESS_NO_SET) // Try a second time, in case it removed an opposite status
-                AlterStatuses(unit, statuses, inflicter);
+            foreach (BattleStatusId statusId in statuses.ToStatusList())
+            {
+                UInt32 alterResult = AlterStatus(unit, statusId, inflicter);
+                if (alterResult == ALTER_SUCCESS_NO_SET) // Try a second time, in case it removed an opposite status
+                    AlterStatus(unit, statusId, inflicter);
+            }
             stat.permanent |= statuses & stat.cur;
             stat.permanent_on_hold = (stat.permanent_on_hold | statuses) & ~stat.permanent;
             // Permanent statuses should also be registered as current statuses

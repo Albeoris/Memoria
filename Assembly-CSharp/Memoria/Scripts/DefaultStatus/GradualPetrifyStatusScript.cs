@@ -56,7 +56,7 @@ namespace Memoria.DefaultScripts
                 if (tryPetrify == btl_stat.ALTER_SUCCESS || tryPetrify == btl_stat.ALTER_SUCCESS_NO_SET)
                     BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.GradualPetrify);
                 else
-                    btl2d.Btl2dReq(Target, Param.FIG_INFO_MISS, 0, 0);
+                    btl2d.Btl2dReqInstant(Target, Param.FIG_INFO_MISS, 0, 0);
             }
             return true;
         }

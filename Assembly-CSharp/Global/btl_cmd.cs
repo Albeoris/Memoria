@@ -483,7 +483,7 @@ public class btl_cmd
         IOverloadOnCommandRunScript overloadedMethod = ScriptsLoader.GetOverloadedMethod(typeof(IOverloadOnCommandRunScript)) as IOverloadOnCommandRunScript;
         if (overloadedMethod != null)
         {
-            if (overloadedMethod.OnCommandRun(cmd))
+            if (overloadedMethod.OnCommandRun(new BattleCommand(cmd)))
                 return;
         }
         else
@@ -1342,11 +1342,8 @@ public class btl_cmd
                 caster.CurrentAtb = (Int16)(caster.MaximumAtb - 1);
 
             foreach (BattleStatusId statusId in caster.CurrentStatus.ToStatusList())
-            {
-                if (!caster.Data.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
-                    continue;
-                (effect as IFinishCommandScript)?.OnFinishCommand(cmd, tranceDelta);
-            }
+                if (caster.Data.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
+                    (effect as IFinishCommandScript)?.OnFinishCommand(cmd, tranceDelta);
 
             btl_para.CheckPointData(caster);
         }

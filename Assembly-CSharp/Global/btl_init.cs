@@ -441,9 +441,8 @@ public static class btl_init
         btl.defence.MagicalEvade = p.defence.MagicalEvade;
         btl_eqp.InitEquipPrivilegeAttrib(p, btl);
         btl_util.GeoSetColor2Source(btl.weapon_geo, 0, 0, 0);
-        btl_stat.AlterStatuses(unit, p.status & ~BattleStatus.Petrify);
-        if ((p.status & BattleStatus.Petrify) != 0)
-            btl_stat.AlterStatus(unit, BattleStatusId.Petrify);
+        btl.stat.permanent = p.permanent_status;
+        btl.stat.cur = p.status;
         btl_abil.CheckStatusAbility(unit);
         BattleStatus resist_stat = btl.stat.invalid;
         BattleStatus permanent_stat = btl.stat.permanent;
@@ -556,9 +555,10 @@ public static class btl_init
         bi.select = 0;
         btl.escape_key = 0;
         btl.sel_menu = 0;
-        btl.fig_info = 0;
-        btl.fig = 0;
-        btl.m_fig = 0;
+        btl.fig.info = 0;
+        btl.fig.hp = 0;
+        btl.fig.mp = 0;
+        btl.fig.modifiers.Clear();
         btl.die_seq = 0;
         ff9char.btl = btl;
         btl.evt = ff9char.evt;

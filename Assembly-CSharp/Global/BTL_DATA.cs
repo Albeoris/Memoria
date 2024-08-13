@@ -153,9 +153,7 @@ public partial class BTL_DATA
 
     public Byte die_seq;
 
-    public UInt16 fig_info;
-    public Int32 fig;
-    public Int32 m_fig;
+    public Btl2dParam fig = new Btl2dParam();
 
     public Int16 dms_geo_id;
 

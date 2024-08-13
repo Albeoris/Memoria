@@ -61,7 +61,7 @@ public class BattleActionCode
         { "PlayMonsterSFX", new String[]{ "SFX", "Instance" } },
         { "LoadSFX", new String[]{ "SFX", "Char", "Target", "TargetPosition", "UseCamera", "FirstBone", "SecondBone", "Args", "MagicCaster" } },
         { "PlaySFX", new String[]{ "SFX", "Instance", "JumpToFrame", "SkipSequence", "HideMeshes", "MeshColors" } },
-        { "CreateVisualEffect", new String[]{ "SPS", "Char", "Bone", "Offset", "Size", "Time", "Speed", "UseSHP" } },
+        { "CreateVisualEffect", new String[]{ "SPS", "Char", "Bone", "Offset", "Size", "Time", "Speed", "UseSHP", "UseSFXModel" } },
         { "Turn", new String[]{ "Char", "BaseAngle", "Angle", "Time", "UsePitch" } },
         { "PlayAnimation", new String[]{ "Char", "Anim", "Speed", "Loop", "Palindrome", "Frame" } },
         { "PlayTextureAnimation", new String[]{ "Char", "Anim", "Once", "Stop" } },
@@ -80,7 +80,7 @@ public class BattleActionCode
         { "Message", new String[]{ "Text", "Title", "Priority" } },
         { "SetBackgroundIntensity", new String[]{ "Intensity", "Time", "HoldDuration" } },
         { "ShiftWorld", new String[]{ "Offset", "Angle" } },
-        { "SetVariable", new String[]{ "Variable", "Value", "Index" } },
+        { "SetVariable", new String[]{ "Variable", "Index", "Value" } },
         { "SetupReflect", new String[]{ "Delay" } },
         { "ActivateReflect", null },
         { "StartThread", new String[]{ "Condition", "LoopCount", "Target", "TargetLoop", "Chain", "Sync" } },
@@ -674,19 +674,18 @@ public class BattleActionCode
         return false;
     }
 
-    public Boolean TrySetVariable(String keyVar, String keyVal, String keyIndex)
+    public Boolean TrySetVariable(Dictionary<String, Int32> extraVar)
     {
-        String varName, valStr;
-        if (!argument.TryGetValue(keyVar, out varName))
+        if (!argument.TryGetValue("Variable", out String varName))
             return false;
-        if (!argument.TryGetValue(keyVal, out valStr))
+        if (!argument.TryGetValue("Value", out String valStr))
             return false;
-        Int32 arr = -1;
-        String arrStr;
-        if (argument.TryGetValue(keyIndex, out arrStr))
-            Int32.TryParse(arrStr, out arr);
         switch (varName)
         {
+            case "_ZWrite":
+                foreach (Material material in battlebg.GetShaders(2))
+                    material.SetInt("_ZWrite", ChangeVariable(material.GetInt("_ZWrite"), valStr));
+                return true;
             case "btl_seq":
                 FF9StateSystem.Battle.FF9Battle.btl_seq = (Byte)ChangeVariable(FF9StateSystem.Battle.FF9Battle.btl_seq, valStr);
                 return true;
@@ -694,22 +693,38 @@ public class BattleActionCode
                 FF9StateSystem.Battle.FF9Battle.cmd_status = (Byte)ChangeVariable(FF9StateSystem.Battle.FF9Battle.cmd_status, valStr);
                 return true;
             case "gEventGlobal":
-                if (arr < 0)
+            {
+                if (!argument.TryGetValue("Index", out String arrStr) || !Int32.TryParse(arrStr, out Int32 arr))
                     return false;
                 FF9StateSystem.EventState.gEventGlobal[arr] = (Byte)ChangeVariable(FF9StateSystem.EventState.gEventGlobal[arr], valStr);
                 return true;
-            case "_ZWrite":
-                foreach (Material material in battlebg.GetShaders(2))
-                    material.SetInt("_ZWrite", ChangeVariable(material.GetInt("_ZWrite"), valStr));
+            }
+            case "local":
+            {
+                if (!argument.TryGetValue("Index", out String keyStr))
+                    return false;
+                if (!extraVar.TryGetValue(keyStr, out Int32 val))
+                    val = 0;
+                extraVar[keyStr] = ChangeVariable(val, valStr);
                 return true;
+            }
         }
         return false;
     }
 
     private Int32 ChangeVariable(Int32 currentValue, String valStr)
     {
-        Int32 op = 0;
         valStr = valStr.Trim();
+        if (valStr.StartsWith("Formula(") && valStr.EndsWith(")"))
+        {
+            valStr = valStr.Substring("Formula(".Length, valStr.Length - "Formula()".Length);
+            Expression e = new Expression(valStr);
+            e.Parameters["Current"] = currentValue;
+            e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+            e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            return (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), currentValue);
+        }
+        Int32 op = 0;
         if (valStr.StartsWith("+"))
         {
             op = 1;
@@ -725,8 +740,7 @@ public class BattleActionCode
             op = 4;
             valStr = valStr.Substring(1);
         }
-        Int32 value;
-        if (!Int32.TryParse(valStr, out value))
+        if (!Int32.TryParse(valStr, out Int32 value))
             return currentValue;
         if (op == 0)
             return value;

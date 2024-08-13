@@ -685,7 +685,7 @@ namespace FF9
                 return;
             }
             // TODO: have some system to handle critical damage and evade movements (in SBattleCalculator.CalcResult) for potential other movement conflicts
-            if ((btl.Data.fig_info & Param.FIG_INFO_HP_CRITICAL) != 0)
+            if ((btl.Data.fig.info & Param.FIG_INFO_HP_CRITICAL) != 0)
                 btl.Data.pos[2] += (((btl.Data.rot.eulerAngles[1] + 90) % 360) < 180 ? 400 : -400) >> 1;
             btl.Data.bi.dmg_mot_f = 1;
 

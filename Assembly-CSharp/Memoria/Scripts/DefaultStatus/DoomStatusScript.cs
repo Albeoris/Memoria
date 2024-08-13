@@ -9,15 +9,13 @@ namespace Memoria.DefaultScripts
     public class DoomStatusScript : StatusScriptBase, IOprStatusScript
     {
         public HUDMessageChild Message = null;
-        public BattleUnit DoomInflicter = null;
         public Int32 Counter;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
             btl2d.GetIconPosition(target, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
-            DoomInflicter = inflicter;
-            Counter = parameters.Length > 0 ? (Int32)parameters[0] : 10;
+            Counter = parameters.Length > 0 ? Convert.ToInt32(parameters[0]) : 10;
             Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
             btl2d.StatusMessages.Add(Message);
             return btl_stat.ALTER_SUCCESS;
@@ -45,7 +43,7 @@ namespace Memoria.DefaultScripts
                 Message.Label = $"{Counter}";
                 return false;
             }
-            if (btl_stat.AlterStatus(Target, BattleStatusId.Death, DoomInflicter) == btl_stat.ALTER_SUCCESS)
+            if (btl_stat.AlterStatus(Target, BattleStatusId.Death, Inflicter) == btl_stat.ALTER_SUCCESS)
                 BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Doom);
             btl2d.Btl2dReq(Target);
             return true;

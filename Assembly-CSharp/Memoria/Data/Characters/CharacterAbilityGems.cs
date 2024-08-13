@@ -480,7 +480,7 @@ namespace Memoria.Data
                             else if (String.Equals(formula.Key, "EffectTargetFlags")) target.Flags = (CalcFlag)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)target.Flags);
                             else if (String.Equals(formula.Key, "HPDamage")) target.HpDamage = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.HpDamage);
                             else if (String.Equals(formula.Key, "MPDamage")) target.MpDamage = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.MpDamage);
-                            else if (String.Equals(formula.Key, "FigureInfo")) target.Data.fig_info = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Data.fig_info);
+                            else if (String.Equals(formula.Key, "FigureInfo")) target.Data.fig.info = (UInt16)NCalcUtility.ConvertNCalcResult(e.Evaluate(), target.Data.fig.info);
                             else if (String.Equals(formula.Key, "Power")) command.Power = (Byte)NCalcUtility.ConvertNCalcResult(e.Evaluate(), command.Power);
                             else if (String.Equals(formula.Key, "AbilityStatus")) command.AbilityStatus = (BattleStatus)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Int64)command.AbilityStatus);
                             else if (String.Equals(formula.Key, "AbilityElement")) command.Element = (EffectElement)NCalcUtility.ConvertNCalcResult(e.Evaluate(), (Byte)command.Element);

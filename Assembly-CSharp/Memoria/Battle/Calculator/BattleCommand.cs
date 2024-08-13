@@ -110,6 +110,7 @@ namespace Memoria
         public TargetType TargetType => Data.aa.Info.Target;
         public StatusSetId AbilityStatusIndex => Data.aa.AddStatusNo;
         public SpecialEffect SpecialEffect => (SpecialEffect)Data.aa.Info.VfxIndex;
+        public BattleUnit Caster => Data.regist != null ? new BattleUnit(Data.regist) : null;
         public Boolean IsATBCommand => Data.regist != null && Data == Data.regist.cmd[0];
         public Boolean IsMeteorMiss => Data.info.meteor_miss != 0;
         public Boolean IsShortSummon

@@ -19,6 +19,9 @@ namespace Memoria
         /// <summary>The unit on which the status has been inflicted, provided that base.Apply is called correctly</summary>
         public BattleUnit Target = null;
 
+        /// <summary>The unit who inflicted the status, possibly null</summary>
+        public BattleUnit Inflicter = null;
+
         /// <summary>Retrieve any public non-static field value specific to the status script code</summary>
         public T GetFieldValue<T>(String fieldName)
         {
@@ -39,6 +42,7 @@ namespace Memoria
         {
             if (Target == null)
                 Target = target;
+            Inflicter = inflicter;
             return btl_stat.ALTER_SUCCESS;
         }
 

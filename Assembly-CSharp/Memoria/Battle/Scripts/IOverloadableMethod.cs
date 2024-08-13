@@ -40,7 +40,7 @@ namespace Memoria
     {
         /// <summary>Run a code when a command starts (typically handles killing acting characters with Heat)</summary>
         /// <returns>Whether the command should be canceled</returns>
-        public Boolean OnCommandRun(CMD_DATA cmd);
+        public Boolean OnCommandRun(BattleCommand cmd);
     }
 
     public interface IOverloadOnGameOverScript
