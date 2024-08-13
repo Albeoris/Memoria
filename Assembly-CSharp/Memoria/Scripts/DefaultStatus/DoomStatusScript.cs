@@ -9,13 +9,15 @@ namespace Memoria.DefaultScripts
     public class DoomStatusScript : StatusScriptBase, IOprStatusScript
     {
         public HUDMessageChild Message = null;
+        public Int32 InitialCounter;
         public Int32 Counter;
 
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
             btl2d.GetIconPosition(target, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
-            Counter = parameters.Length > 0 ? Convert.ToInt32(parameters[0]) : 10;
+            InitialCounter = parameters.Length > 0 ? Convert.ToInt32(parameters[0]) : 10;
+            Counter = InitialCounter;
             Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
             btl2d.StatusMessages.Add(Message);
             return btl_stat.ALTER_SUCCESS;
