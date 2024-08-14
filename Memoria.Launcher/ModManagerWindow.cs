@@ -46,6 +46,12 @@ namespace Memoria.Launcher
 
             Loaded += OnLoaded;
             Closing += new CancelEventHandler(OnClosing);
+            KeyUp += ModManagerWindow_KeyUp;
+        }
+
+        private void ModManagerWindow_KeyUp(Object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            Uninstall();
         }
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
@@ -90,6 +96,24 @@ namespace Memoria.Launcher
 
         [DllImport("user32.dll")]
         public static extern Boolean ReleaseCapture();
+
+        private void Uninstall()
+        {
+            List<Mod> selectedMods = new List<Mod>();
+            foreach (Mod mod in lstMods.SelectedItems)
+                selectedMods.Add(mod);
+            foreach (Mod mod in selectedMods)
+            {
+                if (Directory.Exists(mod.InstallationPath))
+                    if (MessageBox.Show($"The mod folder {mod.InstallationPath} will be deleted.\nProceed?", "Updating", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        Directory.Delete(mod.InstallationPath, true);
+                        modListInstalled.Remove(mod);
+                        UpdateInstalledPriorityValue();
+                    }
+            }
+            UpdateCatalogInstallationState();
+        }
 
         private void OnModListSelect(Object sender, RoutedEventArgs e)
         {
@@ -148,20 +172,7 @@ namespace Memoria.Launcher
         }
         private void OnClickUninstall(Object sender, RoutedEventArgs e)
         {
-            List<Mod> selectedMods = new List<Mod>();
-            foreach (Mod mod in lstMods.SelectedItems)
-                selectedMods.Add(mod);
-            foreach (Mod mod in selectedMods)
-            {
-                if (Directory.Exists(mod.InstallationPath))
-                    if (MessageBox.Show($"The mod folder {mod.InstallationPath} will be deleted.\nProceed?", "Updating", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-                    {
-                        Directory.Delete(mod.InstallationPath, true);
-                        modListInstalled.Remove(mod);
-                        UpdateInstalledPriorityValue();
-                    }
-            }
-            UpdateCatalogInstallationState();
+            Uninstall();
         }
         private void OnClickMoveUp(Object sender, RoutedEventArgs e)
         {
