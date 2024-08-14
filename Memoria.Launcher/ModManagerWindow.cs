@@ -38,7 +38,7 @@ namespace Memoria.Launcher
         public ObservableCollection<Mod> downloadList = new ObservableCollection<Mod>();
         public String StatusMessage = "";
 
-        public String[] supportedArchives = { "rar", "unrar", "zip", "bzip2", "gzip", "tar", "7zip", "lzip", "gz" };
+        public String[] supportedArchives = { "rar", "unrar", "zip", "bzip2", "gzip", "tar", "7z", "lzip", "gz" };
 
         public ModManagerWindow()
         {
@@ -395,15 +395,13 @@ namespace Memoria.Launcher
 
         private void ExtractAllFileFromArchive(String archivePath, String extactTo)
         {
-            using (Stream stream = File.OpenRead(archivePath))
-            using (var reader = ReaderFactory.Open(stream))
+            using (var archive = ArchiveFactory.Open(archivePath))
             {
-                while (reader.MoveToNextEntry())
+                foreach (var entry in archive.Entries)
                 {
-                    if (!reader.Entry.IsDirectory)
+                    if (!entry.IsDirectory)
                     {
-                        Console.WriteLine(reader.Entry.Key);
-                        reader.WriteEntryToDirectory(extactTo, new ExtractionOptions()
+                        entry.WriteToDirectory(extactTo, new ExtractionOptions()
                         {
                             ExtractFullPath = true,
                             Overwrite = true
@@ -431,7 +429,7 @@ namespace Memoria.Launcher
                 String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingModName);
                 Boolean success = false;
                 String downloadFormatExtLower = (downloadingMod.DownloadFormat ?? "zip").ToLower();
-                if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || supportedArchives.Contains(downloadFormatLower))
+                if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || supportedArchives.Contains(downloadFormatExtLower))
                 {
                     Directory.CreateDirectory(path);
                     try
