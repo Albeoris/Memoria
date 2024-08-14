@@ -430,7 +430,7 @@ namespace Memoria.Launcher
                 String downloadingModName = downloadingMod.Name;
                 String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingModName);
                 Boolean success = false;
-                String downloadFormatLower = downloadingMod.DownloadFormat ?? "zip".ToLower();
+                String downloadFormatExtLower = (downloadingMod.DownloadFormat ?? "zip").ToLower();
                 if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || supportedArchives.Contains(downloadFormatLower))
                 {
                     Directory.CreateDirectory(path);
@@ -441,8 +441,8 @@ namespace Memoria.Launcher
                         Boolean moveDesc = false;
                         String sourcePath = "";
                         String destPath = "";
-                        ExtractAllFileFromArchive(path + "." + downloadFormatLower, path);
-                        File.Delete(path + "." + downloadFormatLower);
+                        ExtractAllFileFromArchive(path + "." + downloadFormatExtLower, path);
+                        File.Delete(path + "." + downloadFormatExtLower);
                         if (File.Exists(path + "/" + Mod.DESCRIPTION_FILE))
                         {
                             hasDesc = true;
