@@ -71,7 +71,7 @@ namespace Memoria.Launcher
             if (downloadList.Count > 0 || downloadingMod != null)
             {
                 e.Cancel = true;
-                MessageBox.Show($"Please don't close this window while downloads are on their way.", "Error", MessageBoxButtons.OK);
+                MessageBox.Show($"If you close this window while downloads are on their way, they will be cancelled.", "Warning", MessageBoxButtons.OK);
                 return;
             }
             if (downloadCatalogClient != null && downloadCatalogClient.IsBusy)
@@ -739,6 +739,7 @@ namespace Memoria.Launcher
                 PreviewModVersion.Text = mod.CurrentVersion?.ToString() ?? "";
                 PreviewModRelease.Text = mod.ReleaseDate ?? "";
                 PreviewModReleaseOriginal.Text = mod.ReleaseDateOriginal ?? PreviewModRelease.Text;
+                if (PreviewModRelease.Text == "" && PreviewModReleaseOriginal.Text != "") PreviewModRelease.Text = PreviewModReleaseOriginal.Text;
                 PreviewModAuthor.Text = mod.Author ?? "Unknown";
                 PreviewModDescription.Text = mod.Description != null && mod.Description != "" ? mod.Description : "No description.";
                 PreviewModReleaseNotes.Text = mod.PatchNotes ?? "";
@@ -953,7 +954,8 @@ namespace Memoria.Launcher
             CaptionModAuthor.Text = Lang.ModEditor.Author + ":";
             CaptionModCategory.Text = Lang.ModEditor.Category + ":";
             //CaptionModDescription.Text = Lang.ModEditor.Description + ":";
-            CaptionModReleaseOriginal.Text = Lang.ModEditor.Release + ":";
+            CaptionModRelease.Text = Lang.ModEditor.Release + ":";
+            CaptionModReleaseOriginal.Text = Lang.ModEditor.ReleaseOriginal + ":";
             CaptionModReleaseNotes.Text = Lang.ModEditor.ReleaseNotes + ":";
             PreviewSubModActive.Content = Lang.ModEditor.Active;
             CaptionSubModPanel.Text = Lang.ModEditor.SubModPanel + ":";
