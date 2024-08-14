@@ -446,8 +446,9 @@
                     Padding="15,6,15,6"
                     Text="Installed Mods"
                     Foreground="{StaticResource WhiteUI}"
+                    FontFamily="Century Gothic"
                     FontSize="15"
-                    FontWeight="SemiBold" />
+                    />
                 </TabItem.Header>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -466,7 +467,7 @@
                     VerticalAlignment="Stretch">
                         <Button
                         x:Name="btnMoveUp"
-                        Margin="0,3,0,3"
+                        Margin="0,0,0,3"
                         Click="OnClickMoveUp"
                         MouseRightButtonUp="OnClickSendTop"
                         TabIndex="21"
@@ -598,7 +599,7 @@
                     </StackPanel>
                     <Button
                     x:Name="btnClose"
-                    Margin="0,3,0,3"
+                    Margin="0,3,0,0"
                     Click="OnClickClose"
                     MouseRightButtonDown="OnClickClose"
                     TabIndex="28"
@@ -700,8 +701,8 @@
                     Padding="15,6,15,6"
                     Text="Catalog"
                     Foreground="{StaticResource WhiteUI}"
-                    FontSize="15"
-                    FontWeight="SemiBold" />
+                    FontFamily="Century Gothic"
+                    FontSize="15" />
                 </TabItem.Header>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -978,6 +979,21 @@
                     Style="{StaticResource OpenLinkStyle}"
                     ToolTip="{Binding PreviewModLink}"
                     />
+                    <Grid x:Name="PreviewModCategoryTagline"
+                    Grid.Column="0"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="left"
+                    Margin="10,4,2,2" >
+                        <Border x:Name="border"
+                        CornerRadius="6"
+                        Background="#8000" />
+                        <TextBlock
+                        x:Name="PreviewModCategory"
+                        Margin="6,0,6,4"
+                        Style="{StaticResource ModInfoDetailsStyle}"
+                        TextAlignment="Right"
+                        Text="category" />
+                    </Grid>
                     <Grid x:Name="gridModName" 
                     Grid.Row="1"
                     Margin="7,0,7,0">
@@ -1048,7 +1064,9 @@
                                         <ColumnDefinition Width="220" />
                                         <ColumnDefinition Width="220" />
                                     </Grid.ColumnDefinitions>
-                                    <WrapPanel Grid.Column="0" >
+                                    <WrapPanel
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2" >
                                         <TextBlock
                                         x:Name="CaptionModAuthor"
                                         Style="{StaticResource ModInfoLabelStyle}"
@@ -1060,7 +1078,9 @@
                                         VerticalAlignment="Bottom"
                                         Text="" />
                                     </WrapPanel>
-                                    <WrapPanel Grid.Column="1" >
+                                    <!--
+                                    <WrapPanel
+                                        Grid.Column="1" >
                                         <TextBlock
                                         x:Name="CaptionModCategory"
                                         Style="{StaticResource ModInfoLabelStyle}"
@@ -1070,8 +1090,9 @@
                                         x:Name="PreviewModCategory"
                                         Style="{StaticResource ModInfoDetailsStyle}"
                                         VerticalAlignment="Bottom"
-                                        Text="" />
+                                        Text="categories here tags" />
                                     </WrapPanel>
+                                    -->
                                 </Grid>
                             </WrapPanel>
 

@@ -730,11 +730,13 @@ namespace Memoria.Launcher
                 gridModName.Visibility = Visibility.Collapsed;
                 gridModInfo.Visibility = Visibility.Collapsed;
                 PreviewModWebsite.Visibility = Visibility.Collapsed;
+                PreviewModCategoryTagline.Visibility = Visibility.Collapsed;
             }
             else
             {
                 gridModName.Visibility = Visibility.Visible;
                 gridModInfo.Visibility = Visibility.Visible;
+                PreviewModCategoryTagline.Visibility = Visibility.Visible;
                 PreviewModName.Text = mod.Name;
                 PreviewModVersion.Text = mod.CurrentVersion?.ToString() ?? "";
                 PreviewModRelease.Text = mod.ReleaseDate ?? "";
@@ -952,7 +954,7 @@ namespace Memoria.Launcher
             GroupModInfo.Header = Lang.ModEditor.ModInfos;
             PreviewModWebsite.Content = Lang.ModEditor.Website;
             CaptionModAuthor.Text = Lang.ModEditor.Author + ":";
-            CaptionModCategory.Text = Lang.ModEditor.Category + ":";
+            //CaptionModCategory.Text = Lang.ModEditor.Category + ":";
             //CaptionModDescription.Text = Lang.ModEditor.Description + ":";
             CaptionModRelease.Text = Lang.ModEditor.Release + ":";
             CaptionModReleaseOriginal.Text = Lang.ModEditor.ReleaseOriginal + ":";
