@@ -10,7 +10,6 @@ namespace Memoria.DefaultScripts
     public class GradualPetrifyStatusScript : StatusScriptBase, IOprStatusScript
     {
         public HUDMessageChild Message = null;
-        public BattleUnit GPInflicter = null;
         public Int32 InitialCounter;
         public Int32 Counter;
 
@@ -18,8 +17,7 @@ namespace Memoria.DefaultScripts
         {
             base.Apply(target, inflicter, parameters);
             btl2d.GetIconPosition(target, btl2d.ICON_POS_NUMBER, out Transform attachTransf, out Vector3 iconOff);
-            GPInflicter = inflicter;
-            InitialCounter = parameters.Length > 0 ? (Int32)parameters[0] : 10;
+            InitialCounter = parameters.Length > 0 ? Convert.ToInt32(parameters[0]) : 10;
             Counter = InitialCounter;
             Message = Singleton<HUDMessage>.Instance.Show(attachTransf, $"{Counter}", HUDMessage.MessageStyle.DEATH_SENTENCE, new Vector3(0f, iconOff.y), 0);
             btl2d.StatusMessages.Add(Message);
@@ -52,11 +50,11 @@ namespace Memoria.DefaultScripts
             }
             if (!btl_cmd.CheckUsingCommand(Target.PetrifyCommand))
             {
-                UInt32 tryPetrify = btl_stat.AlterStatus(Target, BattleStatusId.Petrify, GPInflicter);
+                UInt32 tryPetrify = btl_stat.AlterStatus(Target, BattleStatusId.Petrify, Inflicter);
                 if (tryPetrify == btl_stat.ALTER_SUCCESS || tryPetrify == btl_stat.ALTER_SUCCESS_NO_SET)
                     BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.GradualPetrify);
                 else
-                    btl2d.Btl2dReq(Target, Param.FIG_INFO_MISS, 0, 0);
+                    btl2d.Btl2dReqInstant(Target, Param.FIG_INFO_MISS, 0, 0);
             }
             return true;
         }

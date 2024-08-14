@@ -8,12 +8,9 @@ namespace Memoria.DefaultScripts
     [StatusScript(BattleStatusId.Regen)]
     public class RegenStatusScript : StatusScriptBase, IOprStatusScript
     {
-        public BattleUnit RegenInflicter = null;
-
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
-            RegenInflicter = inflicter;
             return btl_stat.ALTER_SUCCESS;
         }
 
@@ -37,7 +34,7 @@ namespace Memoria.DefaultScripts
                 if (Target.CurrentHp > heal)
                     Target.CurrentHp -= heal;
                 else
-                    Target.Kill(RegenInflicter);
+                    Target.Kill(Inflicter);
             }
             else
             {

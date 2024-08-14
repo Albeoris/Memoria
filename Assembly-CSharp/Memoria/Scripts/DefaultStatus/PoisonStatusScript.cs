@@ -8,12 +8,9 @@ namespace Memoria.DefaultScripts
     [StatusScript(BattleStatusId.Poison)]
     public class PoisonStatusScript : StatusScriptBase, IOprStatusScript
     {
-        public BattleUnit PoisonInflicter = null;
-
         public override UInt32 Apply(BattleUnit target, BattleUnit inflicter, params Object[] parameters)
         {
             base.Apply(target, inflicter, parameters);
-            PoisonInflicter = inflicter;
             return btl_stat.ALTER_SUCCESS;
         }
 
@@ -33,7 +30,7 @@ namespace Memoria.DefaultScripts
             if (Target.CurrentHp > damage)
                 Target.CurrentHp -= damage;
             else
-                Target.Kill(PoisonInflicter);
+                Target.Kill(Inflicter);
             btl2d.Btl2dStatReq(Target, (Int32)damage, 0);
             BattleVoice.TriggerOnStatusChange(Target, "Used", BattleStatusId.Poison);
             return false;

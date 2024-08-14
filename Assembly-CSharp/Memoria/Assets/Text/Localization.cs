@@ -86,7 +86,7 @@ namespace Memoria.Assets
                 {
                     { "US", "Resistant to [FFCC00]%[FFFFFF]" },
                     { "UK", "Resistant to [FFCC00]%[FFFFFF]" },
-                    { "JP", "[FFCC00]%[FFFFFF]属性に耐性" },
+                    { "JP", "[FFCC00]%[FFFFFF]属性を半減" },
                     { "ES", "Resistente al elemento [FFCC00]%[FFFFFF]" },
                     { "FR", "Résiste à [FFCC00]%[FFFFFF]" },
                     { "GR", "Resistent gegen [FFCC00]%[FFFFFF]-Element" },
@@ -97,7 +97,7 @@ namespace Memoria.Assets
                 {
                     { "US", "Immune to [FFCC00]%[FFFFFF]" },
                     { "UK", "Immune to [FFCC00]%[FFFFFF]" },
-                    { "JP", "[FFCC00]%[FFFFFF]属性に免疫" },
+                    { "JP", "[FFCC00]%[FFFFFF]属性を無効" },
                     { "ES", "Inmune al elemento [FFCC00]%[FFFFFF]" },
                     { "FR", "Immunisé à [FFCC00]%[FFFFFF]" },
                     { "GR", "Immun gegen [FFCC00]%[FFFFFF]-Element" },
@@ -108,7 +108,7 @@ namespace Memoria.Assets
                 {
                     { "US", "Absorb [FFCC00]%[FFFFFF]" },
                     { "UK", "Absorb [FFCC00]%[FFFFFF]" },
-                    { "JP", "[FFCC00]%[FFFFFF]属性に吸収" },
+                    { "JP", "[FFCC00]%[FFFFFF]属性を吸収" },
                     { "ES", "Absorber el elemento [FFCC00]%[FFFFFF]" },
                     { "FR", "Absorbe l'élément [FFCC00]%[FFFFFF]" },
                     { "GR", "Absorbiert [FFCC00]%[FFFFFF]-Element" },
@@ -119,7 +119,7 @@ namespace Memoria.Assets
                 {
                     { "US", "Immune: [FFCC00]%[FFFFFF]" },
                     { "UK", "Immune: [FFCC00]%[FFFFFF]" },
-                    { "JP", "免疫 [FFCC00]%[FFFFFF]" },
+                    { "JP", "耐性 [FFCC00]%[FFFFFF]" },
                     { "ES", "Inmune: [FFCC00]%[FFFFFF]" },
                     { "FR", "Immunité : [FFCC00]%[FFFFFF]" },
                     { "GR", "Immunität [FFCC00]%[FFFFFF]" },
@@ -130,7 +130,7 @@ namespace Memoria.Assets
                 {
                     { "US", "Auto: [FFCC00]%[FFFFFF]" },
                     { "UK", "Auto: [FFCC00]%[FFFFFF]" },
-                    { "JP", "いつでも [FFCC00]%[FFFFFF]" },
+                    { "JP", "永続 [FFCC00]%[FFFFFF]" },
                     { "ES", "Auto: [FFCC00]%[FFFFFF]" },
                     { "FR", "Auto : [FFCC00]%[FFFFFF]" },
                     { "GR", "Auto [FFCC00]%[FFFFFF]" },
@@ -141,7 +141,7 @@ namespace Memoria.Assets
                 {
                     { "US", "Resist: [FFCC00]%[FFFFFF]" },
                     { "UK", "Resist: [FFCC00]%[FFFFFF]" },
-                    { "JP", "耐性 [FFCC00]%[FFFFFF]" },
+                    { "JP", "免疫 [FFCC00]%[FFFFFF]" },
                     { "ES", "Resistente: [FFCC00]%[FFFFFF]" },
                     { "FR", "Résistance : [FFCC00]%[FFFFFF]" },
                     { "GR", "Widersteht [FFCC00]%[FFFFFF]" },

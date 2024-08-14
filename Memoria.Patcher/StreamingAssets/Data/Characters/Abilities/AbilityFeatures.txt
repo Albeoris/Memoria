@@ -292,7 +292,7 @@
 ##   DisableSA 36 54 56
 ##  Permanent [code=Condition] WeaponId == RegularItem_MaceOfZeus [/code] [code=MPCostFactor] 0 [/code]
 ##  Command EvenImmobilized
-##   [code=Condition] IsTheCaster && IsSingleTarget && !IsSelfTarget && CheckAnyStatus(CurrentStatus | PermanentStatus, BattleStatus_Blind) [/code]
+##   [code=Condition] IsTheCaster && IsSingleTarget && !IsSelfTarget && CheckAnyStatus(CurrentStatus, BattleStatus_Blind) [/code]
 ##   [code=CommandTargetId] TargetPosition < CasterPosition ? GetRandomBit(BattleFilter((1 << CasterPosition) - 1, TargetIsPlayer ? 1 : 0, 1, BattleStatus_Jump)) : GetRandomBit(BattleFilter(256 - 2 * (1 << CasterPosition), TargetIsPlayer ? 1 : 0, 1, BattleStatus_Jump)) [/code]
 ##  StatusInit [code=Condition] AccessoryId == RegularItem_RosettaRing [/code] [code=PartialResistHeat] 0.5 [/code] [code=DurationFactorHeat] 0.5 [/code]
 ##  
@@ -325,7 +325,7 @@
 ##  [code=Condition] HPDamage >= TargetHP && TargetTrance >= 128 && CasterIsPlayer != TargetIsPlayer
 ##                && (EffectTargetFlags & CalcFlag_HpDamageOrHeal) == CalcFlag_HpAlteration [/code]
 ##  [code=TranceIncrease] -128 [/code]
-##  [code=TargetPermanentStatus] CombineStatuses(TargetPermanentStatus, BattleStatus_Berserk | BattleStatus_Vanish | BattleStatus_Reflect) [/code]
+##  [code=TargetPermanentStatus] CombineStatuses(TargetPermanentStatus, BattleStatus_Berserk, BattleStatus_Vanish, BattleStatus_Reflect) [/code]
 ##  [code=HPDamage] 0 [/code]
 ##  
 ##  
@@ -545,7 +545,7 @@
 ##  but it has to be switched to Carbuncle's Emerald effect (506) if that system is deactivated
 ##  
 ##  >AA 13 Haste
-##  [code=Target] HasSA(33) ? BattleFilter(255, 1, 1, BattleStatus_Death | BattleStatus_Jump) : -1 [/code]
+##  [code=Target] HasSA(33) ? BattleUnitFilter(CandidateIsPlayer == CasterIsPlayer && CandidateIsTargetable && !CheckAnyStatus(CandidateCurrentStatus, BattleStatus_Death, BattleStatus_Jump)) : -1 [/code]
 ##  [code=SpecialEffect] HasSA(33) ? (UseSFXRework ? 89 : 506) : -1 [/code]
 ##  
 ##  
@@ -561,7 +561,7 @@
 
 >SA Global Healing Rod's effect
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] CasterWeaponId == RegularItem_HealingRod && AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) == 0 && !CheckAnyStatus(TargetCurrentStatus | TargetPermanentStatus, BattleStatus_Zombie) [/code]
+[code=Condition] CasterWeaponId == RegularItem_HealingRod && AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) == 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_ZombieEffect) [/code]
 [code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpRecovery [/code]
 
 _____________________________________________________________________________________________________
@@ -676,7 +676,7 @@ Ability WhenSteal EvenImmobilized
 
 >SA 24 Healer
 Ability WhenCalcDamage EvenImmobilized
-[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) == 0 && !CheckAnyStatus(TargetCurrentStatus | TargetPermanentStatus, BattleStatus_Zombie) [/code]
+[code=Condition] AbilityId == BattleAbilityId_Attack && (TargetCategory & EnemyCategory_Undead) == 0 && !CheckAnyStatus(TargetCurrentStatus, BattleStatus_ZombieEffect) [/code]
 [code=EffectTargetFlags] EffectTargetFlags | CalcFlag_HpRecovery [/code]
 
 >SA 25 Add Status
@@ -740,13 +740,13 @@ DisableSA 36 54 56
 
 >SA 37 Cover
 Command
-[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus | PermanentStatus, BattleStatus_Heat) [/code]
-[code=TryCover] !CheckAnyStatus(TargetCurrentStatus | TargetPermanentStatus, BattleStatus_Death | BattleStatus_Petrify) && CheckAnyStatus(TargetCurrentStatus | TargetPermanentStatus, BattleStatus_LowHP) [/code]
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) [/code]
+[code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && CheckAnyStatus(TargetCurrentStatus, BattleStatus_LowHP) [/code]
 
 >SA 38 Protect Girls
 Command
-[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus | PermanentStatus, BattleStatus_Heat) [/code]
-[code=TryCover] !CheckAnyStatus(TargetCurrentStatus | TargetPermanentStatus, BattleStatus_Death | BattleStatus_Petrify) && (TargetPlayerCategory & CharacterCategory_Female) != 0 && TargetHP < TargetMaxHP / 2 [/code]
+[code=Condition] !IsTargeted && IsAllyOfTarget && CommandId == BattleCommandId_EnemyAtk && (AbilityCategory & 8) != 0 && IsSingleTarget && !CheckAnyStatus(CurrentStatus, BattleStatus_Heat) [/code]
+[code=TryCover] !CheckAnyStatus(TargetCurrentStatus, BattleStatus_Death, BattleStatus_Petrify) && (TargetPlayerCategory & CharacterCategory_Female) != 0 && TargetHP < TargetMaxHP / 2 [/code]
 
 >SA 39 Eye 4 Eye (effect is coded in SA 36)
 
@@ -790,7 +790,7 @@ StatusInit ResistStatus Silence
 
 >SA 52 Restore HP
 Ability AsTarget
-[code=Condition] CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & BattleCalcFlags_DirectHP) != 0) && TargetHP != 0 && CheckAnyStatus(TargetCurrentStatus | TargetPermanentStatus, BattleStatus_LowHP) [/code]
+[code=Condition] CasterIsPlayer != TargetIsPlayer && (HPDamage != 0 || (EffectFlags & BattleCalcFlags_DirectHP) != 0) && TargetHP != 0 && CheckAnyStatus(TargetCurrentStatus, BattleStatus_LowHP) [/code]
 [code=TargetHP] TargetHP + TargetMaxHP / 2 [/code]
 
 >SA 53 Jelly

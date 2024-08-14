@@ -1317,7 +1317,7 @@ public static class SFX
                 if (btl_util.getCurCmdPtr() != null)
                 {
                     BattleUnit targ = btl_scrp.FindBattleUnit(btl_util.getCurCmdPtr().tar_id);
-                    if (targ != null && (targ.Data.fig_info & Param.FIG_INFO_MISS) != 0)
+                    if (targ != null && (targ.Data.fig.info & Param.FIG_INFO_MISS) != 0)
                         break;
                 }
                 btlsnd.ff9btlsnd_sndeffect_play(btlsnd.ff9btlsnd_weapon_sfx(next.bi.line_no, FF9BatteSoundWeaponSndEffectType.FF9BTLSND_WEAPONSNDEFFECTTYPE_HIT), 0, 127, 128);

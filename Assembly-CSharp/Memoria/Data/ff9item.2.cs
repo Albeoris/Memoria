@@ -524,7 +524,10 @@ public class ff9item
     public static Object GetItemProperty(RegularItem itemId, String propertyName)
     {
         if (!_FF9Item_Data.TryGetValue(itemId, out FF9ITEM_DATA item))
-            return null;
+        {
+            Log.Error($"[ff9item] Unrecognized item \"{itemId}\"");
+            return -1;
+        }
         Boolean hasWeapon = HasItemWeapon(itemId);
         Boolean hasArmor = HasItemArmor(itemId);
         Boolean hasEffect = HasItemEffect(itemId);
@@ -536,32 +539,32 @@ public class ff9item
             case "EquipLevel": return item.eq_lv;
             case "SortOrder": return item.sort;
             case "Type": return (Int32)item.type;
-            case "WeaponCategory": return hasWeapon ? (Int32)GetItemWeapon(itemId).Category : null;
-            case "WeaponStatus": return hasWeapon ? (UInt64)FF9BattleDB.StatusSets[GetItemWeapon(itemId).StatusIndex].Value : null;
-            case "WeaponModelId": return hasWeapon ? (Int32)GetItemWeapon(itemId).ModelId : null;
-            case "WeaponScriptId": return hasWeapon ? GetItemWeapon(itemId).Ref.ScriptId : null;
-            case "WeaponPower": return hasWeapon ? GetItemWeapon(itemId).Ref.Power : null;
-            case "WeaponElement": return hasWeapon ? (Int32)GetItemWeapon(itemId).Ref.Elements : null;
-            case "WeaponStatusRate": return hasWeapon ? GetItemWeapon(itemId).Ref.Rate : null;
-            case "WeaponOffset1": return hasWeapon ? (Int32)GetItemWeapon(itemId).Offset1 : null;
-            case "WeaponOffset2": return hasWeapon ? (Int32)GetItemWeapon(itemId).Offset2 : null;
-            case "WeaponHitSfx": return hasWeapon ? (Int32)GetItemWeapon(itemId).HitSfx : null;
-            case "ArmorDefence": return hasArmor ? GetItemArmor(itemId).PhysicalDefence : null;
-            case "ArmorEvade": return hasArmor ? GetItemArmor(itemId).PhysicalEvade : null;
-            case "ArmorMagicDefence": return hasArmor ? GetItemArmor(itemId).MagicalDefence : null;
-            case "ArmorMagicEvade": return hasArmor ? GetItemArmor(itemId).MagicalEvade : null;
-            case "EffectTargetType": return hasEffect ? (Int32)GetItemEffect(itemId).info.Target : null;
-            case "EffectDefaultAlly": return hasEffect ? GetItemEffect(itemId).info.DefaultAlly : null;
-            case "EffectDisplayStats": return hasEffect ? (Int32)GetItemEffect(itemId).info.DisplayStats : null;
-            case "EffectVfxIndex": return hasEffect ? (Int32)GetItemEffect(itemId).info.VfxIndex : null;
-            case "EffectForDead": return hasEffect ? GetItemEffect(itemId).info.ForDead : null;
-            case "EffectDefaultCamera": return hasEffect ? GetItemEffect(itemId).info.DefaultCamera : null;
-            case "EffectDefaultOnDead": return hasEffect ? GetItemEffect(itemId).info.DefaultOnDead : null;
-            case "EffectScriptId": return hasEffect ? GetItemEffect(itemId).Ref.ScriptId : null;
-            case "EffectPower": return hasEffect ? GetItemEffect(itemId).Ref.Power : null;
-            case "EffectElement": return hasEffect ? (Int32)GetItemEffect(itemId).Ref.Elements : null;
-            case "EffectRate": return hasEffect ? GetItemEffect(itemId).Ref.Rate : null;
-            case "EffectStatus": return hasEffect ? (UInt64)GetItemEffect(itemId).status : null;
+            case "WeaponCategory": return hasWeapon ? (Int32)GetItemWeapon(itemId).Category : 0;
+            case "WeaponStatus": return hasWeapon ? (UInt64)FF9BattleDB.StatusSets[GetItemWeapon(itemId).StatusIndex].Value : 0;
+            case "WeaponModelId": return hasWeapon ? (Int32)GetItemWeapon(itemId).ModelId : -1;
+            case "WeaponScriptId": return hasWeapon ? GetItemWeapon(itemId).Ref.ScriptId : 0;
+            case "WeaponPower": return hasWeapon ? GetItemWeapon(itemId).Ref.Power : 0;
+            case "WeaponElement": return hasWeapon ? (Int32)GetItemWeapon(itemId).Ref.Elements : 0;
+            case "WeaponStatusRate": return hasWeapon ? GetItemWeapon(itemId).Ref.Rate : 0;
+            case "WeaponOffset1": return hasWeapon ? (Int32)GetItemWeapon(itemId).Offset1 : 0;
+            case "WeaponOffset2": return hasWeapon ? (Int32)GetItemWeapon(itemId).Offset2 : 0;
+            case "WeaponHitSfx": return hasWeapon ? (Int32)GetItemWeapon(itemId).HitSfx : 0;
+            case "ArmorDefence": return hasArmor ? GetItemArmor(itemId).PhysicalDefence : 0;
+            case "ArmorEvade": return hasArmor ? GetItemArmor(itemId).PhysicalEvade : 0;
+            case "ArmorMagicDefence": return hasArmor ? GetItemArmor(itemId).MagicalDefence : 0;
+            case "ArmorMagicEvade": return hasArmor ? GetItemArmor(itemId).MagicalEvade : 0;
+            case "EffectTargetType": return hasEffect ? (Int32)GetItemEffect(itemId).info.Target : 0;
+            case "EffectDefaultAlly": return hasEffect ? GetItemEffect(itemId).info.DefaultAlly : false;
+            case "EffectDisplayStats": return hasEffect ? (Int32)GetItemEffect(itemId).info.DisplayStats : 0;
+            case "EffectVfxIndex": return hasEffect ? (Int32)GetItemEffect(itemId).info.VfxIndex : -1;
+            case "EffectForDead": return hasEffect ? GetItemEffect(itemId).info.ForDead : false;
+            case "EffectDefaultCamera": return hasEffect ? GetItemEffect(itemId).info.DefaultCamera : false;
+            case "EffectDefaultOnDead": return hasEffect ? GetItemEffect(itemId).info.DefaultOnDead : false;
+            case "EffectScriptId": return hasEffect ? GetItemEffect(itemId).Ref.ScriptId : 0;
+            case "EffectPower": return hasEffect ? GetItemEffect(itemId).Ref.Power : 0;
+            case "EffectElement": return hasEffect ? (Int32)GetItemEffect(itemId).Ref.Elements : 0;
+            case "EffectRate": return hasEffect ? GetItemEffect(itemId).Ref.Rate : 0;
+            case "EffectStatus": return hasEffect ? (UInt64)GetItemEffect(itemId).status : 0;
         }
         if (propertyName.StartsWith("Ability ") && Int32.TryParse(propertyName.Substring("Ability ".Length), out Int32 index))
             return index >= 0 && index < item.ability.Length ? item.ability[index] : -1;

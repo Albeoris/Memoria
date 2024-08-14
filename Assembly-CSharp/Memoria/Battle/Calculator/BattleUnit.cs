@@ -208,18 +208,18 @@ namespace Memoria
 
         public Int32 Fig
         {
-            get => Data.fig;
-            set => Data.fig = value;
+            get => Data.fig.hp;
+            set => Data.fig.hp = value;
         }
         public Int32 MagicFig
         {
-            get => Data.m_fig;
-            set => Data.m_fig = value;
+            get => Data.fig.mp;
+            set => Data.fig.mp = value;
         }
         public UInt16 FigInfo
         {
-            get => Data.fig_info;
-            set => Data.fig_info = value;
+            get => Data.fig.info;
+            set => Data.fig.info = value;
         }
 
         public Int32 WeaponRate => Data.weapon != null ? Data.weapon.Ref.Rate : 0;
@@ -1081,7 +1081,7 @@ namespace Memoria
                 if (result == null)
                     return 0;
                 if (result is Enum)
-                    return (UInt64)result;
+                    return Convert.ToUInt64(result);
                 return result;
             }
             if (propertyName.StartsWith("HasSA ") && Int32.TryParse(propertyName.Substring("HasSA ".Length), out Int32 supportId))

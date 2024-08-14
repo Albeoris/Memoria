@@ -92,6 +92,7 @@ public static class UnifiedBattleSequencer
         public List<SequenceScale> scale = new List<SequenceScale>();
         public List<SequenceFade> fade = new List<SequenceFade>();
         public Dictionary<BTL_DATA, Btl2dParam> btl2dParam = new Dictionary<BTL_DATA, Btl2dParam>();
+        public Dictionary<String, Int32> extraVar = new Dictionary<String, Int32>();
 
         public static List<SequenceBBGIntensity> bbgIntensity = new List<SequenceBBGIntensity>();
         public static SoundProfile hackySoundProfile = null; // TODO: register sounds properly for stop/unload
@@ -376,12 +377,38 @@ public static class UnifiedBattleSequencer
                         }
                     break;
                 case "CreateVisualEffect":
-                    code.TryGetArgBoolean("UseSHP", out tmpBool);
-                    if (!code.TryGetArgInt32("SPS", out tmpInt))
+                {
+                    Int32 effectKind = 0;
+                    if (code.TryGetArgBoolean("UseSHP", out tmpBool) && tmpBool)
+                        effectKind = 1;
+                    else if (code.TryGetArgBoolean("UseSFXModel", out tmpBool) && tmpBool)
+                        effectKind = 2;
+                    tmpInt = 0;
+                    tmpStr = "";
+                    if (code.argument.ContainsKey("SPS"))
                     {
-                        if (!code.TryGetArgInt32("SHP", out tmpInt))
+                        if (effectKind == 0 || effectKind == 1)
+                            code.TryGetArgInt32("SPS", out tmpInt);
+                        else
+                            code.argument.TryGetValue("SPS", out tmpStr);
+                    }
+                    else if (code.argument.TryGetValue("SFXModel", out tmpStr))
+                        effectKind = 2;
+                    else if (!code.TryGetArgInt32("SHP", out tmpInt))
+                        effectKind = 1;
+                    else
+                        break;
+                    SFXDataMesh.JSON sfxModel = null;
+                    if (effectKind == 2)
+                    {
+                        SFXDataMesh.ModelSequence modelJSON = null;
+                        if (!tmpStr.StartsWith(DataResources.PureDataDirectory))
+                            tmpStr = AssetManager.SearchAssetOnDisc(tmpStr, true, false);
+                        modelJSON = SFXDataMesh.ModelSequence.Load(tmpStr);
+                        if (modelJSON == null)
                             break;
-                        tmpBool = true;
+                        sfxModel = new SFXDataMesh.JSON();
+                        sfxModel.model.Add(modelJSON);
                     }
                     code.TryGetArgVector("Offset", out tmpVec);
                     if (!code.TryGetArgInt32("Time", out tmpInt2))
@@ -395,16 +422,7 @@ public static class UnifiedBattleSequencer
                     {
                         if (!code.TryGetArgBone("Bone", btl, out tmpBone, out _))
                             tmpBone = btl.gameObject.transform;
-                        if (tmpBool)
-                        {
-                            SHPEffect shp = HonoluluBattleMain.battleSPS.AddSequenceSHP(tmpInt, tmpInt2, spsSpeed);
-                            if (shp == null)
-                                continue;
-                            shp.attach = tmpBone;
-                            shp.posOffset = tmpVec;
-                            shp.scale *= tmpSingle;
-                        }
-                        else
+                        if (effectKind == 0)
                         {
                             SPSEffect sps = HonoluluBattleMain.battleSPS.AddSequenceSPS(tmpInt, tmpInt2, spsSpeed);
                             if (sps == null)
@@ -414,8 +432,22 @@ public static class UnifiedBattleSequencer
                             sps.posOffset = tmpVec;
                             sps.scale = (Int32)(sps.scale * tmpSingle);
                         }
+                        else if (effectKind == 1)
+                        {
+                            SHPEffect shp = HonoluluBattleMain.battleSPS.AddSequenceSHP(tmpInt, tmpInt2, spsSpeed);
+                            if (shp == null)
+                                continue;
+                            shp.attach = tmpBone;
+                            shp.posOffset = tmpVec;
+                            shp.scale *= tmpSingle;
+                        }
+                        else if (effectKind == 2)
+                        {
+                            SFXChannel.PlayAnyEffect(sfxModel, btl, null, tmpVec, 0);
+                        }
                     }
                     break;
+                }
                 case "Turn":
                     Single tmpBaseAngle;
                     Boolean hasSingleAngle = code.TryGetArgSingle("Angle", out tmpSingle);
@@ -950,24 +982,27 @@ public static class UnifiedBattleSequencer
                             List<BTL_DATA> allBtl = btl_util.findAllBtlData(0xFF);
                             foreach (BTL_DATA c in allBtl)
                             {
-                                c.fig_info = 0;
-                                c.fig = c.m_fig = 0;
+                                c.fig.info = 0;
+                                c.fig.hp = c.fig.mp = 0;
+                                c.fig.modifiers.Clear();
                             }
                             btl_cmd.ExecVfxCommand(btl, cmd, runningThread);
                             foreach (BTL_DATA c in allBtl)
                             {
-                                if (c.fig_info != 0)
+                                if (c.fig.info != 0)
                                 {
-                                    Btl2dParam figParam;
-                                    if (!btl2dParam.TryGetValue(c, out figParam))
+                                    if (!btl2dParam.TryGetValue(c, out Btl2dParam figParam))
                                         figParam = new Btl2dParam();
-                                    figParam.info |= c.fig_info;
-                                    figParam.hp += c.fig;
-                                    figParam.mp += c.m_fig;
+                                    figParam.info |= c.fig.info;
+                                    figParam.hp += c.fig.hp;
+                                    figParam.mp += c.fig.mp;
+                                    foreach (IFigurePointStatusScript modifier in c.fig.modifiers)
+                                        figParam.modifiers.Add(modifier);
                                     btl2dParam[c] = figParam;
                                 }
-                                c.fig_info = 0;
-                                c.fig = c.m_fig = 0;
+                                c.fig.info = 0;
+                                c.fig.hp = c.fig.mp = 0;
+                                c.fig.modifiers.Clear();
                             }
                         }
                     }
@@ -975,10 +1010,9 @@ public static class UnifiedBattleSequencer
                     {
                         foreach (BTL_DATA btl in btl_util.findAllBtlData(tmpChar))
                         {
-                            Btl2dParam figParam;
-                            if (!btl2dParam.TryGetValue(btl, out figParam))
+                            if (!btl2dParam.TryGetValue(btl, out Btl2dParam figParam))
                                 continue;
-                            btl2d.Btl2dReq(btl, figParam.info, figParam.hp, figParam.mp);
+                            btl2d.Btl2dReq(btl, figParam);
                             btl2dParam.Remove(btl);
                         }
                     }
@@ -1022,7 +1056,7 @@ public static class UnifiedBattleSequencer
                     break;
                 }
                 case "SetVariable":
-                    code.TrySetVariable("Variable", "Value", "Index");
+                    code.TrySetVariable(extraVar);
                     break;
                 case "SetupReflect":
                     if (cancel)
@@ -1071,6 +1105,8 @@ public static class UnifiedBattleSequencer
                             NCalcUtility.InitializeExpressionUnit(ref c, caster, "Caster");
                             NCalcUtility.InitializeExpressionUnit(ref c, target, "Target");
                             NCalcUtility.InitializeExpressionCommand(ref c, new BattleCommand(cmd));
+                            foreach (KeyValuePair<String, Int32> kvp in extraVar)
+                                c.Parameters[$"local_{kvp.Key}"] = kvp.Value;
                             c.Parameters["IsSingleTarget"] = Comn.countBits(runningThread.targetId) == 1;
                             c.Parameters["AreTargetsPlayers"] = (runningThread.targetId & 0xF) == runningThread.targetId;
                             c.Parameters["AreCasterAndTargetsEnemies"] = caster.IsPlayer && (runningThread.targetId & 0xF0) == runningThread.targetId || !caster.IsPlayer && (runningThread.targetId & 0xF) == runningThread.targetId;
@@ -1611,13 +1647,6 @@ public static class UnifiedBattleSequencer
                 BattleAction.bbgIntensity.RemoveAll(f => f.frameCur >= f.frameEnd);
             }
         }
-    }
-
-    public class Btl2dParam
-    {
-        public UInt16 info = 0;
-        public Int32 hp = 0;
-        public Int32 mp = 0;
     }
 
     public enum EffectType

@@ -85,9 +85,9 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.24</Version>
+	<Version>0.3.25</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
-	<ReleaseDate>2024-08-10</ReleaseDate>
+	<ReleaseDate>2024-08-14</ReleaseDate>
 	<Author>DV</Author>
 	<Description>A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
 
@@ -106,27 +106,39 @@ This is not an EXTREME hardcore difficult mod: it only adds a higher difficulty 
 It's currently a demo : CD1 + CD2 + CD3 available but almost +30 hours of gameplay !
 Don't hesitate to try!
 
+/_!_\ IMPORTANT /_!_\
 Recommended language : Français / English (UK)
 Not supported language : Japanese</Description>
-	<PatchNotes>- [WIP] Fixed "Sleep" status on bosses (Note: this gives a "freeze" effect on bosses for the moment, waiting for the next Memoria update).
-- Added visual effect for Regen (not definitive).
-- Eiko can now learn "Scan".
-- Correction to the IOverloadDamageModifierScript script, concerning attacks that steal HP or MP (or both).
-- Fixed a bug from a monster's Holy spell that use SFX Firaga under Boomerang effect.
-- Fixed a bug on the "Trance" status, where a character lost all his Trance during a "Combo" attack.
-- Amarant's claws now have an additional effect, as do most weapons.
-- Major fix to SA Proliferation and Proliferation+.
-- Curse and Curse+ have been corrected.
-- Fragility and Fragility+ have been corrected.
-- Beatrix's Illumina has been renamed Judgment, and is now a Magic Weapon attack.
-- Corrected PowerBreak/MagicBreak/ArmorBreak/MentalBreak scripts, which did not take accuracy into account.
-- Trance removes PowerBreak/MagicBreak/ArmorBreak/MentalBreak status.
-- Cleave skill fixed.
-- Correction of the description of Minimum.
-- Limblulline item description corrected.
-- Major fix to RagTime questions, which were buggy in the US version.
-- Moug will not assist Eiko if she is under "Heat".
-- Correction of a softlock in the Alexandria/Pub (field 112)</PatchNotes>
+	<PatchNotes>- Rework of Rackets: now purely magical weapons, they depend on the attacker's magic and the target's magical defense.
+However, the weapon is still subject to physical dodge (and therefore sensitive to Darkness or Vanish).
+
+- The damage formula for "Heavy Spears" on the "Jump" skill has been fixed.
+- Added a description of the effects on the following weapons: Heavy Spears, Boomerangs and Rackets.
+- Improved Heat script on bosses (had a problem with counters).
+- Fix on Gizamaluke's fight (damage problem with "Heat").
+- Fixed "Heat" status script, which could kill bosses and softlock the game.
+- Fix scripts of "PerfectCrit" and "PerfectDodge" statuses.
+- Slight change to Garland's AI, concerning the end of the fight.
+- Fixed some Epitaf battles where softlocks was possible.
+- Correction of the "Doctor" SA, making it compatible with more heals.
+- The cost of the SA "Mug" has been increased from 4 to 6.
+- "Mug" and "Mug+" are now compatible with Eye of the Thief, Bandit+, Master Thief and the steal bonus under Trance.
+- Improved display of stolen items when Zidane attempts to "Mug" with these daggers.
+- Healer+ SA now inflicts 100% damage against zombies (as opposed to 200% previously).
+- Freyja can no longer learn "Healer" and is replaced by a new SA called "Dragon's Eye".
+- SOS-type SA are more precise in their triggering: they can be activated by Poison, for example.
+- SOS Regen cost modified: 5 -> 4.
+- SOS Haste cost modified: 4 -> 3.
+- "Esuna" now correctly removes Old.
+- Changed description of "Throw" command.
+- Corrected "Cook" damage formula.
+- Corrected animations of some Sand Scorpions in Clayra.
+- Changed a Raitaime question in French, which could lead to confusion.
+- Fixed a bug with Prison Cage and Vivi combat, where the AttachObject was incorrect.
+- Fixed the items to be stolen in Tantarian combat.
+- Improved script against the special boss at the entrance to Ypsen Castle at the start of CD3.
+- All new statuses are now correctly removed at the end of combat.
+- Redesign of several codes in AbilityFeatures.</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/NTbTds6/Logo-Trance-Seek.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/LogoTranceSeek.png</PreviewFile>
@@ -677,6 +689,35 @@ You should better use the Playable Characters Pack instead. This later one doesn
 	<DownloadUrl>https://www.dropbox.com/scl/fi/2ik6scpru390df5y09ir8/MoguriSoundtrack.zip?rlkey=2owvom7wm309bzes34dz0l0ax&amp;st=7yp8s1lp&amp;dl=1</DownloadUrl>
 	<PreviewFile>moguri_alternative_soundtrack.jpg</PreviewFile>
 	<PreviewFileUrl>https://i.imgur.com/ciiVRnY.jpeg</PreviewFileUrl>
+</Mod>
+
+<Mod>
+	<Name>Moguri Mod (2020)</Name>
+	<Version>8.4</Version>
+	<InstallationPath>MoguriMain8</InstallationPath>
+	<ReleaseDateOriginal>2019-01-01</ReleaseDateOriginal>
+	<ReleaseDate>2024-08-12</ReleaseDate>
+	<Author>Ze_PilOt / Snouz</Author>
+	<Description>This is the old 2020 version of the Moguri backgrounds, but with all the rest (textures, UI, fixes, edge cutting, lights...) from Moguri 9. This version's backgrounds are more pixel-perfect, paint-like, but noisier.
+
+Moguri Mod is a rework of FFIX's visuals, helped by AI and polished with love. It's a faithful experience aimed at new players, veterans and nostalgic people alike
+
+- HD backgrounds (faithfully aided by AI, merged and polished by hand)
+- All 11k layer edges manually redrawn
+- Overhaul of all model textures
+- Improved FMVs that merge with backgrounds
+- HD places names, using original fonts
+- Rework of some UI elements (maps, minimap, menu...)
+- HD chocographs (based on Caledor's work with permission)
+- Visual bugfixes (some by SamsamTS)
+
+Note: 30fps videos and the alternative soundtrack are now separate mods</Description>
+	<PatchNotes>Version 8.4 has the same backgrounds as 8.3, but with some redone layer edges, lights, new battle textures, UI elements, NPC, bugfixes...</PatchNotes>
+	<MinimumMemoriaVersion>2024-08-04</MinimumMemoriaVersion>
+	<Category>Visual</Category>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/zzvq5gphe195qthq27b6r/MoguriMain8.zip?rlkey=po7bpmxpbvqr9kndxqjgzzvgr&amp;st=kbo43gcf&amp;dl=1</DownloadUrl>
+	<Website>https://sites.google.com/view/moguri-mod</Website>
+	<PreviewFileUrl>https://i.imgur.com/ywCN2EB.jpeg</PreviewFileUrl>
 </Mod>
 
 <Mod>
