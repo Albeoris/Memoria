@@ -51,7 +51,7 @@ namespace Memoria.Launcher
 
         private void ModManagerWindow_KeyUp(Object sender, System.Windows.Input.KeyEventArgs e)
         {
-            Uninstall();
+            if(e.Key == System.Windows.Input.Key.Delete) Uninstall();
         }
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
