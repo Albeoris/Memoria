@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Markup;
@@ -39,6 +40,8 @@ namespace Memoria.Launcher
         public String StatusMessage = "";
 
         public String[] supportedArchives = { "rar", "unrar", "zip", "bzip2", "gzip", "tar", "7z", "lzip", "gz" };
+
+        private CancellationTokenSource ExtractionCancellationToken = new CancellationTokenSource();
 
         public ModManagerWindow()
         {
@@ -81,7 +84,7 @@ namespace Memoria.Launcher
             if (downloadList.Count > 0 || downloadingMod != null)
             {
                 e.Cancel = true;
-                MessageBox.Show($"Please don't close this window while downloads are on their way.", "Error", MessageBoxButtons.OK);
+                MessageBox.Show($"If you close this window while downloads are on their way, they will be cancelled.", "Warning", MessageBoxButtons.OK);
                 return;
             }
             if (downloadCatalogClient != null && downloadCatalogClient.IsBusy)
@@ -136,7 +139,7 @@ namespace Memoria.Launcher
             }
             else
             {
-                btnDownload.Background = System.Windows.Media.Brushes.Transparent;
+                btnDownload.Background = System.Windows.Media.Brushes.DarkGray;
             }
         }
         private void OnModListDoubleClick(Object sender, RoutedEventArgs e)
@@ -297,6 +300,7 @@ namespace Memoria.Launcher
                 downloadThread.Abort();
             if (downloadClient != null)
                 downloadClient.CancelAsync();
+            ExtractionCancellationToken.Cancel();
             downloadList.Clear();
             downloadingMod = null;
             UpdateCatalogInstallationState();
@@ -351,7 +355,7 @@ namespace Memoria.Launcher
                     ext = "zip";
                 }
                 downloadingPath = Mod.INSTALLATION_TMP + "/" + (mod.InstallationPath ?? mod.Name) + "." + ext;
-                downloadClient = new WebClient();
+                downloadClient = new ThrottledWebClient();
                 downloadClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadLoop);
                 downloadClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadEnd);
                 downloadClient.DownloadFileAsync(new Uri(modUrl), downloadingPath);
@@ -412,20 +416,14 @@ namespace Memoria.Launcher
 
         private void ExtractAllFileFromArchive(String archivePath, String extactTo)
         {
-            using (var archive = ArchiveFactory.Open(archivePath))
-            {
-                foreach (var entry in archive.Entries)
+            Task.Run(() => {
+                Extractor.ExtractAllFileFromArchive(archivePath, extactTo, ExtractionCancellationToken.Token);
+                if (ExtractionCancellationToken.IsCancellationRequested)
                 {
-                    if (!entry.IsDirectory)
-                    {
-                        entry.WriteToDirectory(extactTo, new ExtractionOptions()
-                        {
-                            ExtractFullPath = true,
-                            Overwrite = true
-                        });
-                    }
+                    ExtractionCancellationToken.Dispose();
+                    ExtractionCancellationToken = new CancellationTokenSource();
                 }
-            }
+            });
         }
 
         private void DownloadEnd(Object sender, AsyncCompletedEventArgs e)
@@ -777,15 +775,18 @@ namespace Memoria.Launcher
                 gridModName.Visibility = Visibility.Collapsed;
                 gridModInfo.Visibility = Visibility.Collapsed;
                 PreviewModWebsite.Visibility = Visibility.Collapsed;
+                PreviewModCategoryTagline.Visibility = Visibility.Collapsed;
             }
             else
             {
                 gridModName.Visibility = Visibility.Visible;
                 gridModInfo.Visibility = Visibility.Visible;
+                PreviewModCategoryTagline.Visibility = Visibility.Visible;
                 PreviewModName.Text = mod.Name;
                 PreviewModVersion.Text = mod.CurrentVersion?.ToString() ?? "";
                 PreviewModRelease.Text = mod.ReleaseDate ?? "";
                 PreviewModReleaseOriginal.Text = mod.ReleaseDateOriginal ?? PreviewModRelease.Text;
+                if (PreviewModRelease.Text == "" && PreviewModReleaseOriginal.Text != "") PreviewModRelease.Text = PreviewModReleaseOriginal.Text;
                 PreviewModAuthor.Text = mod.Author ?? "Unknown";
                 PreviewModDescription.Text = mod.Description != null && mod.Description != "" ? mod.Description : "No description.";
                 PreviewModReleaseNotes.Text = mod.PatchNotes ?? "";
@@ -799,7 +800,7 @@ namespace Memoria.Launcher
                 {
                     PreviewSubModPanel.Visibility = Visibility.Visible;
                 }
-                ReleaseNotesBlock.Visibility = PreviewModReleaseNotes.Text == "" && PreviewModRelease.Text == "" ? Visibility.Collapsed : Visibility.Visible;
+                ReleaseNotesBlock.Visibility = PreviewModReleaseNotes.Text == "" ? Visibility.Collapsed : Visibility.Visible;
                 if (hasSubMod)
                 {
                     if (modListCatalog.Contains(mod))
@@ -998,9 +999,10 @@ namespace Memoria.Launcher
             GroupModInfo.Header = Lang.ModEditor.ModInfos;
             PreviewModWebsite.Content = Lang.ModEditor.Website;
             CaptionModAuthor.Text = Lang.ModEditor.Author + ":";
-            CaptionModCategory.Text = Lang.ModEditor.Category + ":";
+            //CaptionModCategory.Text = Lang.ModEditor.Category + ":";
             //CaptionModDescription.Text = Lang.ModEditor.Description + ":";
-            CaptionModReleaseOriginal.Text = Lang.ModEditor.Release + ":";
+            CaptionModRelease.Text = Lang.ModEditor.Release + ":";
+            CaptionModReleaseOriginal.Text = Lang.ModEditor.ReleaseOriginal + ":";
             CaptionModReleaseNotes.Text = Lang.ModEditor.ReleaseNotes + ":";
             PreviewSubModActive.Content = Lang.ModEditor.Active;
             CaptionSubModPanel.Text = Lang.ModEditor.SubModPanel + ":";

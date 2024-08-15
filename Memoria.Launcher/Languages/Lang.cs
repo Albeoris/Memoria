@@ -577,6 +577,7 @@ namespace Memoria.Launcher
             public static readonly String Website = GetModEditor(nameof(Website));
             public static readonly String Author = GetModEditor(nameof(Author));
             public static readonly String Release = GetModEditor(nameof(Release));
+            public static readonly String ReleaseOriginal = GetModEditor(nameof(ReleaseOriginal));
             public static readonly String Category = GetModEditor(nameof(Category));
             public static readonly String Version = GetModEditor(nameof(Version));
             public static readonly String Description = GetModEditor(nameof(Description));
