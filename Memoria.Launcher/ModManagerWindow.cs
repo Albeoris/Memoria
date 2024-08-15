@@ -1,4 +1,7 @@
 ﻿using Ini;
+using SharpCompress.Archives;
+using SharpCompress.Common;
+using SharpCompress.Readers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,7 +10,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -36,12 +38,20 @@ namespace Memoria.Launcher
         public ObservableCollection<Mod> downloadList = new ObservableCollection<Mod>();
         public String StatusMessage = "";
 
+        public String[] supportedArchives = { "rar", "unrar", "zip", "bzip2", "gzip", "tar", "7z", "lzip", "gz" };
+
         public ModManagerWindow()
         {
             InitializeComponent();
 
             Loaded += OnLoaded;
             Closing += new CancelEventHandler(OnClosing);
+            KeyUp += ModManagerWindow_KeyUp;
+        }
+
+        private void ModManagerWindow_KeyUp(Object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(e.Key == System.Windows.Input.Key.Delete) Uninstall();
         }
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
@@ -86,6 +96,24 @@ namespace Memoria.Launcher
 
         [DllImport("user32.dll")]
         public static extern Boolean ReleaseCapture();
+
+        private void Uninstall()
+        {
+            List<Mod> selectedMods = new List<Mod>();
+            foreach (Mod mod in lstMods.SelectedItems)
+                selectedMods.Add(mod);
+            foreach (Mod mod in selectedMods)
+            {
+                if (Directory.Exists(mod.InstallationPath))
+                    if (MessageBox.Show($"The mod folder {mod.InstallationPath} will be deleted.\nProceed?", "Updating", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        Directory.Delete(mod.InstallationPath, true);
+                        modListInstalled.Remove(mod);
+                        UpdateInstalledPriorityValue();
+                    }
+            }
+            UpdateCatalogInstallationState();
+        }
 
         private void OnModListSelect(Object sender, RoutedEventArgs e)
         {
@@ -144,20 +172,7 @@ namespace Memoria.Launcher
         }
         private void OnClickUninstall(Object sender, RoutedEventArgs e)
         {
-            List<Mod> selectedMods = new List<Mod>();
-            foreach (Mod mod in lstMods.SelectedItems)
-                selectedMods.Add(mod);
-            foreach (Mod mod in selectedMods)
-            {
-                if (Directory.Exists(mod.InstallationPath))
-                    if (MessageBox.Show($"The mod folder {mod.InstallationPath} will be deleted.\nProceed?", "Updating", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-                    {
-                        Directory.Delete(mod.InstallationPath, true);
-                        modListInstalled.Remove(mod);
-                        UpdateInstalledPriorityValue();
-                    }
-            }
-            UpdateCatalogInstallationState();
+            Uninstall();
         }
         private void OnClickMoveUp(Object sender, RoutedEventArgs e)
         {
@@ -330,7 +345,12 @@ namespace Memoria.Launcher
                 if (modUrl == null)
                     return;
                 Directory.CreateDirectory(Mod.INSTALLATION_TMP);
-                downloadingPath = Mod.INSTALLATION_TMP + "/" + (mod.InstallationPath ?? mod.Name) + ".zip";
+                string ext = mod.DownloadFormat ?? "zip";
+                if (ext.StartsWith("SingleFileWithPath"))
+                {
+                    ext = "zip";
+                }
+                downloadingPath = Mod.INSTALLATION_TMP + "/" + (mod.InstallationPath ?? mod.Name) + "." + ext;
                 downloadClient = new WebClient();
                 downloadClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadLoop);
                 downloadClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadEnd);
@@ -376,12 +396,38 @@ namespace Memoria.Launcher
                 Double timeSpan = (DateTime.Now - downloadBytesTime).TotalSeconds;
                 if (timeSpan <= 0.0)
                     timeSpan = 0.1;
-                downloadingMod.PercentComplete = e.ProgressPercentage;
-                downloadingMod.DownloadSpeed = $"{(Int64)(e.BytesReceived / 1024.0 / timeSpan)} {Lang.Measurement.KByteAbbr}/{Lang.Measurement.SecondAbbr}";
-                downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived):g}";
+                try
+                {
+                    downloadingMod.PercentComplete = e.ProgressPercentage;
+                    downloadingMod.DownloadSpeed = $"{(Int64)(e.BytesReceived / 1024.0 / timeSpan)} {Lang.Measurement.KByteAbbr}/{Lang.Measurement.SecondAbbr}";
+                    downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived):g}";
+                }
+                catch (NullReferenceException) // added to catch a race condition that sometimes occures where Ui tries to update but download has finished
+                {
+
+                }
                 lstDownloads.Items.Refresh();
             });
         }
+
+        private void ExtractAllFileFromArchive(String archivePath, String extactTo)
+        {
+            using (var archive = ArchiveFactory.Open(archivePath))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    if (!entry.IsDirectory)
+                    {
+                        entry.WriteToDirectory(extactTo, new ExtractionOptions()
+                        {
+                            ExtractFullPath = true,
+                            Overwrite = true
+                        });
+                    }
+                }
+            }
+        }
+
         private void DownloadEnd(Object sender, AsyncCompletedEventArgs e)
         {
             if (e.Cancelled || e.Error != null)
@@ -399,7 +445,8 @@ namespace Memoria.Launcher
                 String downloadingModName = downloadingMod.Name;
                 String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingModName);
                 Boolean success = false;
-                if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || downloadingMod.DownloadFormat == "Zip")
+                String downloadFormatExtLower = (downloadingMod.DownloadFormat ?? "zip").ToLower();
+                if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || supportedArchives.Contains(downloadFormatExtLower))
                 {
                     Directory.CreateDirectory(path);
                     try
@@ -409,8 +456,8 @@ namespace Memoria.Launcher
                         Boolean moveDesc = false;
                         String sourcePath = "";
                         String destPath = "";
-                        ZipFile.ExtractToDirectory(path + ".zip", path);
-                        File.Delete(path + ".zip");
+                        ExtractAllFileFromArchive(path + "." + downloadFormatExtLower, path);
+                        File.Delete(path + "." + downloadFormatExtLower);
                         if (File.Exists(path + "/" + Mod.DESCRIPTION_FILE))
                         {
                             hasDesc = true;

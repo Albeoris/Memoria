@@ -421,8 +421,9 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="631*" />
-            <ColumnDefinition Width="461*" />
+            <ColumnDefinition Width="267*" />
+            <ColumnDefinition Width="51*"/>
+            <ColumnDefinition Width="232*" />
         </Grid.ColumnDefinitions>
 
         <TabControl
@@ -434,7 +435,7 @@
             Padding="10,10,10,10"
             BorderThickness="0"
             Background="{StaticResource LightGreyUI}"
-            SelectedIndex="0">
+            SelectedIndex="0" Grid.ColumnSpan="2">
             <TabItem x:Name="tabCtrlMods" Padding="10,0,10,0">
                 <TabItem.Header>
                     <TextBlock
@@ -806,7 +807,7 @@
                             TabIndex="28"
                             ToolTip="Close Mod Manager"
                             VerticalAlignment="Bottom">
-                                <Image
+                            <Image
                                 x:Name="btnCatalogCloseimg"
                                 Width="36"
                                 Height="36"
@@ -869,8 +870,8 @@
         <TabControl
         x:Name="GroupModInfoWrapper"
         Grid.Row="0"
-        Grid.RowSpan="3"
-        Grid.Column="1"
+        Grid.RowSpan="2"
+        Grid.Column="2"
         Margin="7,0,0,0"
         Padding="0,0,0,7"
         BorderThickness="0"
@@ -1187,7 +1188,7 @@
 
 
         <Popup x:Name="popupFilters"
-        Grid.ColumnSpan="2"
+        Grid.ColumnSpan="3"
         Margin="0,0,0,26"
         HorizontalOffset="-140"
         Placement="Bottom"
