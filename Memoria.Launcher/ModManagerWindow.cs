@@ -16,6 +16,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Markup;
@@ -39,6 +40,8 @@ namespace Memoria.Launcher
         public String StatusMessage = "";
 
         public String[] supportedArchives = { "rar", "unrar", "zip", "bzip2", "gzip", "tar", "7z", "lzip", "gz" };
+
+        private CancellationTokenSource ExtractionCancellationToken = new CancellationTokenSource();
 
         public ModManagerWindow()
         {
@@ -297,6 +300,7 @@ namespace Memoria.Launcher
                 downloadThread.Abort();
             if (downloadClient != null)
                 downloadClient.CancelAsync();
+            ExtractionCancellationToken.Cancel();
             downloadList.Clear();
             downloadingMod = null;
             UpdateCatalogInstallationState();
@@ -351,7 +355,7 @@ namespace Memoria.Launcher
                     ext = "zip";
                 }
                 downloadingPath = Mod.INSTALLATION_TMP + "/" + (mod.InstallationPath ?? mod.Name) + "." + ext;
-                downloadClient = new WebClient();
+                downloadClient = new ThrottledWebClient();
                 downloadClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadLoop);
                 downloadClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadEnd);
                 downloadClient.DownloadFileAsync(new Uri(modUrl), downloadingPath);
@@ -412,20 +416,14 @@ namespace Memoria.Launcher
 
         private void ExtractAllFileFromArchive(String archivePath, String extactTo)
         {
-            using (var archive = ArchiveFactory.Open(archivePath))
-            {
-                foreach (var entry in archive.Entries)
+            Task.Run(() => {
+                Extractor.ExtractAllFileFromArchive(archivePath, extactTo, ExtractionCancellationToken.Token);
+                if (ExtractionCancellationToken.IsCancellationRequested)
                 {
-                    if (!entry.IsDirectory)
-                    {
-                        entry.WriteToDirectory(extactTo, new ExtractionOptions()
-                        {
-                            ExtractFullPath = true,
-                            Overwrite = true
-                        });
-                    }
+                    ExtractionCancellationToken.Dispose();
+                    ExtractionCancellationToken = new CancellationTokenSource();
                 }
-            }
+            });
         }
 
         private void DownloadEnd(Object sender, AsyncCompletedEventArgs e)
