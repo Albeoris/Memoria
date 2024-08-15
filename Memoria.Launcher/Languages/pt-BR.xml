@@ -100,7 +100,7 @@
 	Use30FpsVideo = "Vídeos de 30 FPS (Moguri)"
 	MaxCardCount = "10 mil cartões"
 	NoAutoTrance = "Transe manual"
-	UIColumnsChoice = "Linhas da Interface do Usuário/Colunas"
+	UIColumnsChoice = "Linhas da UI/Colunas"
 	UIColumnsChoice0 = "Padrão"
 	UIColumnsChoice1 = "x1.5 (máximo de 3 colunas)"
 	UIColumnsChoice2 = "x2 (máximo de 4 colunas)"

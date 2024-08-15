@@ -440,6 +440,11 @@
             Background="{StaticResource LightGreyUI}"
             SelectedIndex="0"
             Grid.ColumnSpan="2" >
+            <TabControl.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="2,10,10,10"/>
+                </Style>
+            </TabControl.Resources>
             <TabItem x:Name="tabCtrlMods"
             Padding="10,0,10,0">
                 <TabItem.Header>
@@ -722,7 +727,7 @@
                     VerticalAlignment="Top">
                         <Button x:Name="btnDownload"
                         Click="OnClickDownload"
-                        Margin="0,3,0,3"
+                        Margin="0,0,0,3"
                         MouseRightButtonDown="OnClickDownload"
                         TabIndex="11"
                         ToolTip="Download Selected Mod(s)" >
@@ -824,7 +829,7 @@
                         <Button
                         x:Name="btnCancel"
                         Click="OnClickCancel"
-                        Margin="0,3,0,3"
+                        Margin="0,0,0,3"
                         MouseRightButtonDown="OnClickCancelAll"
                         TabIndex="14"
                         ToolTip="Cancel Current Download/Right-Click to Cancel All"
@@ -845,12 +850,13 @@
                         </Button>
                         <Button
                         x:Name="btnCatalogClose"
-                        Margin="0,3,0,3"
+                        Margin="0,3,0,0"
                         Click="OnClickClose"
                         MouseRightButtonDown="OnClickClose"
                         TabIndex="28"
                         ToolTip="Close Mod Manager"
-                        VerticalAlignment="Bottom">
+                        VerticalAlignment="Bottom"
+                            >
                             <Image
                             x:Name="btnCatalogCloseimg"
                             Width="36"
@@ -892,10 +898,10 @@
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <ProgressBar
-                                                Width="100"
-                                                Height="10"
-                                                Opacity="1"
-                                                Value="{Binding PercentComplete}" />
+                                            Width="100"
+                                            Height="10"
+                                            Opacity="1"
+                                            Value="{Binding PercentComplete}" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
