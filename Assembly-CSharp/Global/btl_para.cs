@@ -124,18 +124,18 @@ public class btl_para
         if (btl_stat.CheckStatus(btl, BattleStatus.Death))
         {
             if (requestFigureNow)
-                btl2d.Btl2dReq(btl, Param.FIG_INFO_MISS, 0, 0);
+                btl2d.Btl2dReqInstant(btl, Param.FIG_INFO_MISS, 0, 0);
             else
-                btl.fig_info = Param.FIG_INFO_MISS;
+                btl.fig.info = Param.FIG_INFO_MISS;
             return 0;
         }
 
         if (btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
             if (requestFigureNow)
-                btl2d.Btl2dReq(btl, Param.FIG_INFO_DISP_HP, 0, 0);
+                btl2d.Btl2dReqInstant(btl, Param.FIG_INFO_DISP_HP, 0, 0);
             else
-                btl.fig = 0;
+                btl.fig.hp = 0;
             return 0;
         }
 
@@ -156,7 +156,7 @@ public class btl_para
         }
 
         if (!requestFigureNow)
-            btl.fig = damage;
+            btl.fig.hp = damage;
         if (dmg_mot != 0)
             btl_mot.SetDamageMotion(unit, cmd);
         else if (unit.CurrentHp == 0)
@@ -164,7 +164,7 @@ public class btl_para
         if (unit.CurrentHp == 0)
             btl.killer_track = cmd?.regist;
         if (requestFigureNow)
-            btl2d.Btl2dReq(btl, Param.FIG_INFO_DISP_HP, damage, 0);
+            btl2d.Btl2dReqInstant(btl, Param.FIG_INFO_DISP_HP, damage, 0);
         return damage;
     }
 
@@ -174,17 +174,17 @@ public class btl_para
         if (btl_stat.CheckStatus(btl, BattleStatus.Death))
         {
             if (requestFigureNow)
-                btl2d.Btl2dReq(btl, Param.FIG_INFO_MISS, 0, 0);
+                btl2d.Btl2dReqInstant(btl, Param.FIG_INFO_MISS, 0, 0);
             else
-                btl.fig_info = Param.FIG_INFO_MISS;
+                btl.fig.info = Param.FIG_INFO_MISS;
             return 0;
         }
         if (btl_stat.CheckStatus(btl, BattleStatus.Petrify))
         {
             if (requestFigureNow)
-                btl2d.Btl2dReq(btl, Param.FIG_INFO_DISP_HP, 0, 0);
+                btl2d.Btl2dReqInstant(btl, Param.FIG_INFO_DISP_HP, 0, 0);
             else
-                btl.fig = 0;
+                btl.fig.hp = 0;
             return 0;
         }
         if (unit.CurrentHp + recover < unit.MaximumHp)
@@ -192,9 +192,9 @@ public class btl_para
         else
             unit.CurrentHp = unit.MaximumHp;
         if (requestFigureNow)
-            btl2d.Btl2dReq(btl, Param.FIG_INFO_DISP_HP | Param.FIG_INFO_HP_RECOVER, (Int32)recover, 0);
+            btl2d.Btl2dReqInstant(btl, Param.FIG_INFO_DISP_HP | Param.FIG_INFO_HP_RECOVER, (Int32)recover, 0);
         else
-            btl.fig = (Int32)recover;
+            btl.fig.hp = (Int32)recover;
         return (Int32)recover;
     }
 
@@ -202,12 +202,12 @@ public class btl_para
     {
         if (btl.IsUnderAnyStatus(BattleStatus.Death))
         {
-            btl.Data.fig_info = Param.FIG_INFO_MISS;
+            btl.Data.fig.info = Param.FIG_INFO_MISS;
             return 0;
         }
         else if (btl.IsUnderAnyStatus(BattleStatus.Petrify))
         {
-            btl.Data.m_fig = 0;
+            btl.Data.fig.mp = 0;
             return 0;
         }
         else if (!FF9StateSystem.Battle.isDebug && (btl.IsPlayer || !FF9StateSystem.Settings.IsHpMpFull))
@@ -217,7 +217,7 @@ public class btl_para
             else
                 btl.CurrentMp = 0;
         }
-        btl.Data.m_fig = (Int32)damage;
+        btl.Data.fig.mp = (Int32)damage;
         return (Int32)damage;
     }
 
@@ -225,19 +225,19 @@ public class btl_para
     {
         if (btl.IsUnderAnyStatus(BattleStatus.Death))
         {
-            btl.Data.fig_info = Param.FIG_INFO_MISS;
+            btl.Data.fig.info = Param.FIG_INFO_MISS;
             return 0;
         }
         if (btl.IsUnderAnyStatus(BattleStatus.Petrify))
         {
-            btl.Data.m_fig = 0;
+            btl.Data.fig.mp = 0;
             return 0;
         }
         if (btl.CurrentMp + recover < btl.MaximumMp)
             btl.CurrentMp += recover;
         else
             btl.CurrentMp = btl.MaximumMp;
-        btl.Data.m_fig = (Int32)recover;
+        btl.Data.fig.mp = (Int32)recover;
         return (Int32)recover;
     }
 

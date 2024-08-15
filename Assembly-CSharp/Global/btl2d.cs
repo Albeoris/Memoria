@@ -9,6 +9,14 @@ using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
+public class Btl2dParam
+{
+    public UInt16 info = 0;
+    public Int32 hp = 0;
+    public Int32 mp = 0;
+    public HashSet<IFigurePointStatusScript> modifiers = new HashSet<IFigurePointStatusScript>();
+}
+
 public static class btl2d
 {
     public static void Btl2dInit()
@@ -24,70 +32,78 @@ public static class btl2d
             Singleton<HUDMessage>.Instance.ReleaseObject(message);
     }
 
+    public static void Btl2dReqInstant(BTL_DATA btl, UInt16 fig_info, Int32 fig, Int32 m_fig)
+    {
+        Btl2dParam param = new Btl2dParam()
+        {
+            info = fig_info,
+            hp = fig,
+            mp = m_fig
+        };
+        foreach (BattleStatusId statusId in btl.stat.cur.ToStatusList())
+            if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect) && effect is IFigurePointStatusScript)
+                param.modifiers.Add(effect as IFigurePointStatusScript);
+        Btl2dReq(btl, param);
+    }
+
     public static void Btl2dReq(BattleUnit unit)
     {
-        Btl2dReq(unit.Data, ref unit.Data.fig_info, ref unit.Data.fig, ref unit.Data.m_fig);
+        Btl2dReq(unit.Data, unit.Data.fig);
     }
 
     public static void Btl2dReq(BTL_DATA btl)
     {
-        Btl2dReq(btl, ref btl.fig_info, ref btl.fig, ref btl.m_fig);
+        Btl2dReq(btl, btl.fig);
     }
 
-    public static void Btl2dReq(BTL_DATA btl, UInt16 fig_info, Int32 fig, Int32 m_fig)
-    {
-        Btl2dReq(btl, ref fig_info, ref fig, ref m_fig);
-    }
-
-    public static void Btl2dReq(BTL_DATA btl, ref UInt16 fig_info, ref Int32 fig, ref Int32 m_fig)
+    public static void Btl2dReq(BTL_DATA btl, Btl2dParam param)
     {
         Byte delay = 0;
         if (btl.bi.disappear == 0)
         {
-            foreach (BattleStatusId statusId in btl.stat.cur.ToStatusList())
-                if (btl.stat.effects.TryGetValue(statusId, out StatusScriptBase effect))
-                    (effect as IFigurePointStatusScript)?.OnFigurePoint(ref fig_info, ref fig, ref m_fig);
-            if ((fig_info & Param.FIG_INFO_GUARD) != 0)
+            foreach (IFigurePointStatusScript modifier in param.modifiers)
+                modifier.OnFigurePoint(ref param.info, ref param.hp, ref param.mp);
+            if ((param.info & Param.FIG_INFO_GUARD) != 0)
             {
                 btl2d.Btl2dReqSymbol(btl, 2, btl2d.DMG_COL_WHITE, 0);
             }
-            else if ((fig_info & (Param.FIG_INFO_MISS | Param.FIG_INFO_DEATH)) != 0)
+            else if ((param.info & (Param.FIG_INFO_MISS | Param.FIG_INFO_DEATH)) != 0)
             {
-                if ((fig_info & Param.FIG_INFO_MISS) != 0)
+                if ((param.info & Param.FIG_INFO_MISS) != 0)
                 {
                     btl2d.Btl2dReqSymbol(btl, 0, btl2d.DMG_COL_WHITE, 0);
                     delay = 2;
                 }
-                if ((fig_info & Param.FIG_INFO_DEATH) != 0)
+                if ((param.info & Param.FIG_INFO_DEATH) != 0)
                     btl2d.Btl2dReqSymbol(btl, 1, btl2d.DMG_COL_WHITE, delay);
             }
             else
             {
-                if ((fig_info & Param.FIG_INFO_DISP_HP) != 0)
+                if ((param.info & Param.FIG_INFO_DISP_HP) != 0)
                 {
-                    if ((fig_info & Param.FIG_INFO_HP_CRITICAL) != 0)
+                    if ((param.info & Param.FIG_INFO_HP_CRITICAL) != 0)
                     {
                         btl2d.Btl2dReqSymbol(btl, 3, btl2d.DMG_COL_YELLOW, 0);
                         delay = 2;
                     }
-                    if ((fig_info & Param.FIG_INFO_HP_RECOVER) != 0)
-                        btl2d.Btl2dReqHP(btl, fig, btl2d.DMG_COL_GREEN, delay);
+                    if ((param.info & Param.FIG_INFO_HP_RECOVER) != 0)
+                        btl2d.Btl2dReqHP(btl, param.hp, btl2d.DMG_COL_GREEN, delay);
                     else
-                        btl2d.Btl2dReqHP(btl, fig, btl2d.DMG_COL_WHITE, delay);
+                        btl2d.Btl2dReqHP(btl, param.hp, btl2d.DMG_COL_WHITE, delay);
                     delay += 4;
                 }
-                if ((fig_info & Param.FIG_INFO_DISP_MP) != 0)
+                if ((param.info & Param.FIG_INFO_DISP_MP) != 0)
                 {
-                    if ((fig_info & Param.FIG_INFO_MP_RECOVER) != 0)
-                        btl2d.Btl2dReqMP(btl, m_fig, btl2d.DMG_COL_GREEN, delay);
+                    if ((param.info & Param.FIG_INFO_MP_RECOVER) != 0)
+                        btl2d.Btl2dReqMP(btl, param.mp, btl2d.DMG_COL_GREEN, delay);
                     else
-                        btl2d.Btl2dReqMP(btl, m_fig, btl2d.DMG_COL_WHITE, delay);
+                        btl2d.Btl2dReqMP(btl, param.mp, btl2d.DMG_COL_WHITE, delay);
                 }
             }
         }
-        fig_info = 0;
-        fig = 0;
-        m_fig = 0;
+        param.info = 0;
+        param.hp = 0;
+        param.mp = 0;
     }
 
     public static void Btl2dStatReq(BTL_DATA btl, Int32 hp, Int32 mp)

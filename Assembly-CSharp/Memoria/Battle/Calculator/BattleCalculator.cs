@@ -775,7 +775,7 @@ namespace Memoria
         public void RaiseTrouble()
         {
             if (Command.Data.tar_id == Target.Id && Target.IsUnderAnyStatus(BattleStatusConst.ApplyTrouble & ~Context.AddedStatuses))
-                Target.Data.fig_info |= Param.FIG_INFO_TROUBLE;
+                Target.Data.fig.info |= Param.FIG_INFO_TROUBLE;
         }
     }
 }

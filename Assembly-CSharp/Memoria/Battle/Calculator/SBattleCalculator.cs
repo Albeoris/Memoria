@@ -146,10 +146,10 @@ namespace Memoria
                 saFeature.TriggerOnAbility(v, "BattleScriptEnd", true);
             v.ConsumeMpAttack();
             if ((v.Context.Flags & BattleCalcFlags.Guard) != 0)
-                target.fig_info |= Param.FIG_INFO_GUARD;
+                target.fig.info |= Param.FIG_INFO_GUARD;
             else if ((v.Context.Flags & BattleCalcFlags.Miss) != 0)
             {
-                target.fig_info |= Param.FIG_INFO_MISS;
+                target.fig.info |= Param.FIG_INFO_MISS;
                 if (target.cur.hp <= 0)
                     v.Context.Flags &= ~BattleCalcFlags.Dodge;
                 if ((v.Context.Flags & BattleCalcFlags.Dodge) != 0)
@@ -191,8 +191,8 @@ namespace Memoria
                 if ((v.Command.AbilityCategory & 16) != 0) // Is Magical
                     v.Target.RemoveStatus(BattleStatusConst.RemoveOnMagicallyAttacked & ~v.Context.AddedStatuses);
 
-                target.fig_info |= (UInt16)v.Target.Flags;
-                caster.fig_info |= (UInt16)v.Caster.Flags;
+                target.fig.info |= (UInt16)v.Target.Flags;
+                caster.fig.info |= (UInt16)v.Caster.Flags;
                 if (BattleCalculator.DamageModifierScript != null)
                 {
                     BattleCalculator.DamageModifierScript.OnDamageFinalChanges(v);
@@ -283,6 +283,9 @@ namespace Memoria
                 }
             }
             v.Context.AddedStatuses |= v.Target.AddededCheckPointStatuses;
+            foreach (BattleStatusId statusId in target.stat.cur.ToStatusList())
+                if (target.stat.effects.TryGetValue(statusId, out StatusScriptBase effect) && effect is IFigurePointStatusScript)
+                    target.fig.modifiers.Add(effect as IFigurePointStatusScript);
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(caster))
                 saFeature.TriggerOnAbility(v, "EffectDone", false);
             foreach (SupportingAbilityFeature saFeature in ff9abil.GetEnabledSA(target))
@@ -293,7 +296,7 @@ namespace Memoria
             if (target.bi.player != 0 || FF9StateSystem.Battle.isDebug)
                 return;
             UInt16 targetId = target.bi.slave == 0 ? target.btl_id : btl_util.GetMasterEnemyBtlPtr(target).Id;
-            if (caster.bi.player != 0 && !btl_stat.CheckStatus(target, BattleStatusConst.Immobilized))
+            if (caster.bi.player != 0 && !btl_stat.CheckStatus(target, BattleStatusConst.PreventCounter))
             {
                 if (v.Target.Enemy.AttackOnDeath && target.cur.hp == 0)
                     PersistenSingleton<EventEngine>.Instance.RequestAction(BattleCommandId.EnemyDying, targetId, caster.btl_id, (Int32)cmd.cmd_no, cmd.sub_no, cmd);
@@ -310,8 +313,7 @@ namespace Memoria
 
         private static Boolean CheckDamageMotion(BattleCalculator v)
         {
-            return ((v.Context.Flags & BattleCalcFlags.AddStat) == 0 || (FF9StateSystem.Battle.FF9Battle.add_status[v.Caster.Data.weapon.StatusIndex].Value & BattleStatusConst.NoReaction) == 0)
-                && (v.Command.AbilityCategory & 64) == 0
+            return (v.Command.AbilityCategory & 64) == 0
                 && v.Command.Data.info.cover == 0
                 && !btl_stat.CheckStatus(v.Target.Data, BattleStatusConst.NoDamageMotion)
                 && v.Caster.Data != v.Target.Data;

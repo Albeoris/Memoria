@@ -15,6 +15,7 @@ namespace Memoria.Launcher
         public String Name { get; set; }
         public Version CurrentVersion { get; set; }
         public String ReleaseDate { get; set; }
+        public String ReleaseDateOriginal { get; set; }
         public String Author { get; set; }
         public String Description { get; set; }
         public String PatchNotes { get; set; }
@@ -158,6 +159,7 @@ namespace Memoria.Launcher
             InstallationPath = elInstPath.InnerText;
             CurrentVersion = elVer != null ? new Version(elVer.InnerText) : null;
             ReleaseDate = modNode["ReleaseDate"]?.InnerText;
+            ReleaseDateOriginal = modNode["ReleaseDateOriginal"]?.InnerText;
             Author = modNode["Author"]?.InnerText;
             Description = modNode["Description"]?.InnerText;
             PatchNotes = modNode["PatchNotes"]?.InnerText;
@@ -230,6 +232,12 @@ namespace Memoria.Launcher
             {
                 el = doc.CreateElement("ReleaseDate");
                 el.InnerText = ReleaseDate;
+                mod.AppendChild(el);
+            }
+            if (ReleaseDateOriginal != null)
+            {
+                el = doc.CreateElement("ReleaseDateOriginal");
+                el.InnerText = ReleaseDateOriginal;
                 mod.AppendChild(el);
             }
             if (Author != null)

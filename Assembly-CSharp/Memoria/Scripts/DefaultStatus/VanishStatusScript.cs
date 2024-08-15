@@ -5,8 +5,7 @@ using Object = System.Object;
 
 namespace Memoria.DefaultScripts
 {
-    // NOTE: this status is still specifically handled by the game in some minor aspects
-    // You shouldn't recycle it for a completly different effect
+    // NOTE: this status is still specifically handled by the game in a minor aspect, concerning "mesh_banish"
 
     [StatusScript(BattleStatusId.Vanish)]
     public class VanishStatusScript : StatusScriptBase

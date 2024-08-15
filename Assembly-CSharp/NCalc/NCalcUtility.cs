@@ -380,6 +380,7 @@ namespace NCalc
             expr.Parameters[prefix + "IsPlayer"] = unit.IsPlayer;
             expr.Parameters[prefix + "IsSlave"] = unit.IsSlave;
             expr.Parameters[prefix + "IsOutOfReach"] = unit.IsOutOfReach;
+            expr.Parameters[prefix + "IsTargetable"] = unit.IsTargetable;
             expr.Parameters[prefix + "Level"] = (Int32)unit.Level;
             expr.Parameters[prefix + "Exp"] = unit.IsPlayer ? unit.Player.exp : 0u;
             expr.Parameters[prefix + "Speed"] = (Int32)unit.Dexterity;
@@ -464,6 +465,7 @@ namespace NCalc
             expr.Parameters[prefix + "IsPlayer"] = false;
             expr.Parameters[prefix + "IsSlave"] = false;
             expr.Parameters[prefix + "IsOutOfReach"] = false;
+            expr.Parameters[prefix + "IsTargetable"] = false;
             expr.Parameters[prefix + "Level"] = 0;
             expr.Parameters[prefix + "Exp"] = 0;
             expr.Parameters[prefix + "Speed"] = 0;
@@ -477,12 +479,6 @@ namespace NCalc
             expr.Parameters[prefix + "PlayerCategory"] = 0;
             expr.Parameters[prefix + "Category"] = 0;
             expr.Parameters[prefix + "CharacterIndex"] = 0;
-            expr.Parameters[prefix + "IsStrengthModified"] = false;
-            expr.Parameters[prefix + "IsMagicModified"] = false;
-            expr.Parameters[prefix + "IsDefenceModified"] = false;
-            expr.Parameters[prefix + "IsEvadeModified"] = false;
-            expr.Parameters[prefix + "IsMagicDefenceModified"] = false;
-            expr.Parameters[prefix + "IsMagicEvadeModified"] = false;
             expr.Parameters[prefix + "IsAlternateStand"] = false;
             expr.Parameters[prefix + "CriticalRateBonus"] = 0;
             expr.Parameters[prefix + "CriticalRateResistance"] = 0;
@@ -524,7 +520,7 @@ namespace NCalc
             expr.Parameters["EffectTargetFlags"] = (Int32)target.Flags;
             expr.Parameters["HPDamage"] = target.HpDamage;
             expr.Parameters["MPDamage"] = target.MpDamage;
-            expr.Parameters["FigureInfo"] = (Int32)target.Data.fig_info;
+            expr.Parameters["FigureInfo"] = (Int32)target.Data.fig.info;
             expr.Parameters["Attack"] = context.Attack;
             expr.Parameters["AttackPower"] = context.AttackPower;
             expr.Parameters["DefencePower"] = context.DefensePower;

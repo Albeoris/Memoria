@@ -1,12 +1,15 @@
 ﻿using Ini;
+using SharpCompress.Archives;
+using SharpCompress.Common;
+using SharpCompress.Readers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Globalization;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Reflection;
@@ -35,12 +38,20 @@ namespace Memoria.Launcher
         public ObservableCollection<Mod> downloadList = new ObservableCollection<Mod>();
         public String StatusMessage = "";
 
+        public String[] supportedArchives = { "rar", "unrar", "zip", "bzip2", "gzip", "tar", "7z", "lzip", "gz" };
+
         public ModManagerWindow()
         {
             InitializeComponent();
 
             Loaded += OnLoaded;
             Closing += new CancelEventHandler(OnClosing);
+            KeyUp += ModManagerWindow_KeyUp;
+        }
+
+        private void ModManagerWindow_KeyUp(Object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if(e.Key == System.Windows.Input.Key.Delete) Uninstall();
         }
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
@@ -62,6 +73,7 @@ namespace Memoria.Launcher
             PreviewSubModActive.Unchecked += OnSubModActivate;
             if (modListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
+            UpdateModDetails((Mod)null);
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
@@ -85,6 +97,24 @@ namespace Memoria.Launcher
         [DllImport("user32.dll")]
         public static extern Boolean ReleaseCapture();
 
+        private void Uninstall()
+        {
+            List<Mod> selectedMods = new List<Mod>();
+            foreach (Mod mod in lstMods.SelectedItems)
+                selectedMods.Add(mod);
+            foreach (Mod mod in selectedMods)
+            {
+                if (Directory.Exists(mod.InstallationPath))
+                    if (MessageBox.Show($"The mod folder {mod.InstallationPath} will be deleted.\nProceed?", "Updating", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                    {
+                        Directory.Delete(mod.InstallationPath, true);
+                        modListInstalled.Remove(mod);
+                        UpdateInstalledPriorityValue();
+                    }
+            }
+            UpdateCatalogInstallationState();
+        }
+
         private void OnModListSelect(Object sender, RoutedEventArgs e)
         {
             ListView lv = sender as ListView;
@@ -99,11 +129,25 @@ namespace Memoria.Launcher
             foreach (Mod mod in lstCatalogMods.SelectedItems)
                 if (!String.IsNullOrEmpty(mod.DownloadUrl))
                     canDownload = true;
-            btnDownload.IsEnabled = canDownload;
+            if (canDownload)
+            {
+                btnDownload.IsEnabled = true;
+                btnDownload.Background = System.Windows.Media.Brushes.White;
+            }
+            else
+            {
+                btnDownload.Background = System.Windows.Media.Brushes.Transparent;
+            }
         }
         private void OnModListDoubleClick(Object sender, RoutedEventArgs e)
         {
         }
+
+        private void OnCatalogListDoubleClick(Object sender, RoutedEventArgs e)
+        {
+            OnClickDownload(sender, e);
+        }
+
         private void OnSubModSelect(Object sender, RoutedEventArgs e)
         {
             UpdateSubModDetails((Mod)PreviewSubModList.SelectedItem);
@@ -128,20 +172,7 @@ namespace Memoria.Launcher
         }
         private void OnClickUninstall(Object sender, RoutedEventArgs e)
         {
-            List<Mod> selectedMods = new List<Mod>();
-            foreach (Mod mod in lstMods.SelectedItems)
-                selectedMods.Add(mod);
-            foreach (Mod mod in selectedMods)
-            {
-                if (Directory.Exists(mod.InstallationPath))
-                    if (MessageBox.Show($"The mod folder {mod.InstallationPath} will be deleted.\nProceed?", "Updating", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-                    {
-                        Directory.Delete(mod.InstallationPath, true);
-                        modListInstalled.Remove(mod);
-                        UpdateInstalledPriorityValue();
-                    }
-            }
-            UpdateCatalogInstallationState();
+            Uninstall();
         }
         private void OnClickMoveUp(Object sender, RoutedEventArgs e)
         {
@@ -229,7 +260,7 @@ namespace Memoria.Launcher
                 }
                 downloadList.Add(mod);
                 DownloadStart(mod);
-                mod.Installed = "...";
+                mod.Installed = "⌛";
             }
             lstCatalogMods.Items.Refresh();
         }
@@ -240,6 +271,11 @@ namespace Memoria.Launcher
             DateTime dateTime1 = DateTime.ParseExact(date1, format, CultureInfo.InvariantCulture);
             DateTime dateTime2 = DateTime.ParseExact(date2, format, CultureInfo.InvariantCulture);
             return dateTime1 >= dateTime2;
+        }
+
+        private void OnClickClose(Object sender, RoutedEventArgs e)
+        {
+            Close();
         }
 
         private void OnClickCancel(Object sender, RoutedEventArgs e)
@@ -309,7 +345,12 @@ namespace Memoria.Launcher
                 if (modUrl == null)
                     return;
                 Directory.CreateDirectory(Mod.INSTALLATION_TMP);
-                downloadingPath = Mod.INSTALLATION_TMP + "/" + (mod.InstallationPath ?? mod.Name) + ".zip";
+                string ext = mod.DownloadFormat ?? "zip";
+                if (ext.StartsWith("SingleFileWithPath"))
+                {
+                    ext = "zip";
+                }
+                downloadingPath = Mod.INSTALLATION_TMP + "/" + (mod.InstallationPath ?? mod.Name) + "." + ext;
                 downloadClient = new WebClient();
                 downloadClient.DownloadProgressChanged += new DownloadProgressChangedEventHandler(DownloadLoop);
                 downloadClient.DownloadFileCompleted += new AsyncCompletedEventHandler(DownloadEnd);
@@ -355,12 +396,38 @@ namespace Memoria.Launcher
                 Double timeSpan = (DateTime.Now - downloadBytesTime).TotalSeconds;
                 if (timeSpan <= 0.0)
                     timeSpan = 0.1;
-                downloadingMod.PercentComplete = e.ProgressPercentage;
-                downloadingMod.DownloadSpeed = $"{(Int64)(e.BytesReceived / 1024.0 / timeSpan)} {Lang.Measurement.KByteAbbr}/{Lang.Measurement.SecondAbbr}";
-                downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived):g}";
+                try
+                {
+                    downloadingMod.PercentComplete = e.ProgressPercentage;
+                    downloadingMod.DownloadSpeed = $"{(Int64)(e.BytesReceived / 1024.0 / timeSpan)} {Lang.Measurement.KByteAbbr}/{Lang.Measurement.SecondAbbr}";
+                    downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived):g}";
+                }
+                catch (NullReferenceException) // added to catch a race condition that sometimes occures where Ui tries to update but download has finished
+                {
+
+                }
                 lstDownloads.Items.Refresh();
             });
         }
+
+        private void ExtractAllFileFromArchive(String archivePath, String extactTo)
+        {
+            using (var archive = ArchiveFactory.Open(archivePath))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    if (!entry.IsDirectory)
+                    {
+                        entry.WriteToDirectory(extactTo, new ExtractionOptions()
+                        {
+                            ExtractFullPath = true,
+                            Overwrite = true
+                        });
+                    }
+                }
+            }
+        }
+
         private void DownloadEnd(Object sender, AsyncCompletedEventArgs e)
         {
             if (e.Cancelled || e.Error != null)
@@ -378,7 +445,8 @@ namespace Memoria.Launcher
                 String downloadingModName = downloadingMod.Name;
                 String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingModName);
                 Boolean success = false;
-                if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || downloadingMod.DownloadFormat == "Zip")
+                String downloadFormatExtLower = (downloadingMod.DownloadFormat ?? "zip").ToLower();
+                if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || supportedArchives.Contains(downloadFormatExtLower))
                 {
                     Directory.CreateDirectory(path);
                     try
@@ -388,8 +456,8 @@ namespace Memoria.Launcher
                         Boolean moveDesc = false;
                         String sourcePath = "";
                         String destPath = "";
-                        ZipFile.ExtractToDirectory(path + ".zip", path);
-                        File.Delete(path + ".zip");
+                        ExtractAllFileFromArchive(path + "." + downloadFormatExtLower, path);
+                        File.Delete(path + "." + downloadFormatExtLower);
                         if (File.Exists(path + "/" + Mod.DESCRIPTION_FILE))
                         {
                             hasDesc = true;
@@ -706,21 +774,32 @@ namespace Memoria.Launcher
             currentMod = mod;
             if (mod == null || mod.Name == null)
             {
+                gridModName.Visibility = Visibility.Collapsed;
+                gridModInfo.Visibility = Visibility.Collapsed;
+                PreviewModWebsite.Visibility = Visibility.Collapsed;
             }
             else
             {
-                Boolean hasSubMod = mod.SubMod != null && mod.SubMod.Count > 0;
+                gridModName.Visibility = Visibility.Visible;
+                gridModInfo.Visibility = Visibility.Visible;
                 PreviewModName.Text = mod.Name;
                 PreviewModVersion.Text = mod.CurrentVersion?.ToString() ?? "";
-                PreviewModRelease.Text = mod.ReleaseDate ?? "Unknown date";
-                PreviewModAuthor.Text = mod.Author ?? "Unknown author";
-                PreviewModDescription.Text = mod.Description ?? "No description.";
+                PreviewModRelease.Text = mod.ReleaseDate ?? "";
+                PreviewModReleaseOriginal.Text = mod.ReleaseDateOriginal ?? PreviewModRelease.Text;
+                PreviewModAuthor.Text = mod.Author ?? "Unknown";
+                PreviewModDescription.Text = mod.Description != null && mod.Description != "" ? mod.Description : "No description.";
                 PreviewModReleaseNotes.Text = mod.PatchNotes ?? "";
                 PreviewModCategory.Text = mod.Category ?? "Unknown";
                 PreviewModWebsite.ToolTip = mod.Website ?? String.Empty;
                 PreviewModWebsite.IsEnabled = !String.IsNullOrEmpty(mod.Website);
                 PreviewModWebsite.Visibility = PreviewModWebsite.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
-                PreviewSubModPanel.Visibility = hasSubMod ? Visibility.Visible : Visibility.Collapsed;
+                PreviewSubModPanel.Visibility = Visibility.Collapsed;
+                Boolean hasSubMod = mod.SubMod != null && mod.SubMod.Count > 0;
+                if (hasSubMod)
+                {
+                    PreviewSubModPanel.Visibility = Visibility.Visible;
+                }
+                ReleaseNotesBlock.Visibility = PreviewModReleaseNotes.Text == "" && PreviewModRelease.Text == "" ? Visibility.Collapsed : Visibility.Visible;
                 if (hasSubMod)
                 {
                     if (modListCatalog.Contains(mod))
@@ -752,6 +831,11 @@ namespace Memoria.Launcher
                             mod.PreviewImage.CacheOption = BitmapCacheOption.OnLoad;
                             mod.PreviewImage.EndInit();
                         }
+                    }
+                    else if (tabCtrlMain.SelectedIndex == 0 && mod.PreviewFileUrl != null)
+                    {
+                        mod.PreviewImage = new BitmapImage(new Uri(mod.PreviewFileUrl, UriKind.Absolute));
+                        mod.PreviewImage.DownloadCompleted += OnPreviewFileDownloaded;
                     }
                     else if (tabCtrlMain.SelectedIndex == 1 && mod.PreviewFileUrl != null)
                     {
@@ -788,11 +872,11 @@ namespace Memoria.Launcher
             foreach (Mod mod in modListCatalog)
             {
                 if (Mod.SearchWithName(downloadList, mod.Name) != null)
-                    mod.Installed = "...";
+                    mod.Installed = "⌛";
                 else if (Mod.SearchWithName(modListInstalled, mod.Name) != null)
                     mod.Installed = "✔";
                 else
-                    mod.Installed = "✘";
+                    mod.Installed = "";
             }
             lstCatalogMods.Items.Refresh();
         }
@@ -915,21 +999,22 @@ namespace Memoria.Launcher
             PreviewModWebsite.Content = Lang.ModEditor.Website;
             CaptionModAuthor.Text = Lang.ModEditor.Author + ":";
             CaptionModCategory.Text = Lang.ModEditor.Category + ":";
-            CaptionModDescription.Text = Lang.ModEditor.Description + ":";
+            //CaptionModDescription.Text = Lang.ModEditor.Description + ":";
+            CaptionModReleaseOriginal.Text = Lang.ModEditor.Release + ":";
             CaptionModReleaseNotes.Text = Lang.ModEditor.ReleaseNotes + ":";
             PreviewSubModActive.Content = Lang.ModEditor.Active;
             CaptionSubModPanel.Text = Lang.ModEditor.SubModPanel + ":";
             tabMyMods.Text = Lang.ModEditor.TabMyMods;
-            colMyModsPriority.Header = Lang.ModEditor.Priority;
+            //colMyModsPriority.Header = Lang.ModEditor.Priority;
             colMyModsName.Header = Lang.ModEditor.Name;
             colMyModsAuthor.Header = Lang.ModEditor.Author;
             colMyModsCategory.Header = Lang.ModEditor.Category;
-            colMyModsActive.Header = Lang.ModEditor.Active;
+            //colMyModsActive.Header = Lang.ModEditor.Active;
             btnMoveUp.ToolTip = Lang.ModEditor.TooltipMoveUp;
             btnMoveDown.ToolTip = Lang.ModEditor.TooltipMoveDown;
             btnCheckCompatibility.ToolTip = Lang.ModEditor.TooltipCheckCompatibility;
-            btnActivateAll.ToolTip = Lang.ModEditor.TooltipActivateAll;
-            btnDeactivateAll.ToolTip = Lang.ModEditor.TooltipDeactivateAll;
+            //btnActivateAll.ToolTip = Lang.ModEditor.TooltipActivateAll;
+            //btnDeactivateAll.ToolTip = Lang.ModEditor.TooltipDeactivateAll;
             btnUninstall.ToolTip = Lang.ModEditor.TooltipUninstall;
             tabCatalog.Text = Lang.ModEditor.TabCatalog;
             GridViewColumnHeader header = new GridViewColumnHeader() { Content = Lang.ModEditor.Name };
@@ -941,7 +1026,7 @@ namespace Memoria.Launcher
             header = new GridViewColumnHeader() { Content = Lang.ModEditor.Category };
             header.Click += OnClickCatalogHeader;
             colCatalogCategory.Header = header;
-            header = new GridViewColumnHeader() { Content = Lang.ModEditor.Installed };
+            header = new GridViewColumnHeader() { Content = "✔" }; // Lang.ModEditor.Installed
             header.Click += OnClickCatalogHeader;
             colCatalogInstalled.Header = header;
             colDownloadName.Header = Lang.ModEditor.Mod;

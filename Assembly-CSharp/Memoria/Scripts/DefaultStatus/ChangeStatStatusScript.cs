@@ -29,9 +29,11 @@ namespace Memoria.DefaultScripts
             for (Int32 i = 0; i < parameters.Length; i += 2)
             {
                 String kind = parameters[i] as String;
-                if (kind == null || parameters[i + 1] is not Int32)
+                if (kind == null)
                     continue;
-                Int32 amount = (Int32)parameters[i + 1];
+                if (parameters[i + 1] is not Int32 && parameters[i + 1] is not UInt32 && parameters[i + 1] is not Int16 && parameters[i + 1] is not Byte)
+                    continue;
+                Int32 amount = Convert.ToInt32(parameters[i + 1]);
                 switch (kind)
                 {
                     case "Level":

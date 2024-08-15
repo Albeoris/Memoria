@@ -6917,6 +6917,12 @@ public static class ff9
         ff9.w_naviCursolMove = true;
         ff9.w_naviActive = true;
         ff9.w_naviMode = ff9.byte_gEventGlobal_keventNaviModeNo();
+        if (ff9.w_naviMode >= 2)
+        {
+            // Fix for #697
+            ff9.w_naviMode = 0;
+            ff9.byte_gEventGlobal_updateNaviMode();
+        }
         ff9.w_naviModeOld = -1;
         ff9.w_naviTitleColor = 0;
         ff9.w_naviFadeInTime = ff9.w_setNaviFadeInTime ? ff9.w_naviFadeInTime : 20u;

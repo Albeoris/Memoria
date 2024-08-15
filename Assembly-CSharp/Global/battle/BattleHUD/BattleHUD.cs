@@ -668,7 +668,7 @@ public partial class BattleHUD : UIScene
         foreach (BattleMagicSwordSet magicSet in unitMagicSet)
         {
             BattleUnit supporter = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().FirstOrDefault(u => u.PlayerIndex == magicSet.Supporter);
-            newMagicSwordState = newMagicSwordState && supporter != null && !unit.IsUnderAnyStatus(BattleStatusConst.NoInput | magicSet.BeneficiaryBlockingStatus) && !supporter.IsUnderAnyStatus(BattleStatusConst.NoInput | magicSet.SupporterBlockingStatus);
+            newMagicSwordState = newMagicSwordState && supporter != null && !unit.IsUnderAnyStatus(BattleStatusConst.Immobilized | magicSet.BeneficiaryBlockingStatus) && !supporter.IsUnderAnyStatus(BattleStatusConst.Immobilized | magicSet.SupporterBlockingStatus);
         }
         if (_currentMagicSwordState != newMagicSwordState)
         {
@@ -1310,10 +1310,10 @@ public partial class BattleHUD : UIScene
 
         if (abilityPlayerDetail.AbilityMagicSet.TryGetValue(abilId, out BattleMagicSwordSet magicSet))
         {
-            if (unit.IsUnderAnyStatus(BattleStatusConst.NoInput | magicSet.BeneficiaryBlockingStatus))
+            if (unit.IsUnderAnyStatus(BattleStatusConst.Immobilized | magicSet.BeneficiaryBlockingStatus))
                 return AbilityStatus.Disable;
             BattleUnit supporter = FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits().FirstOrDefault(u => u.PlayerIndex == magicSet.Supporter);
-            if (supporter == null || supporter.IsUnderAnyStatus(BattleStatusConst.NoInput | magicSet.SupporterBlockingStatus))
+            if (supporter == null || supporter.IsUnderAnyStatus(BattleStatusConst.Immobilized | magicSet.SupporterBlockingStatus))
                 return AbilityStatus.Disable;
         }
 
