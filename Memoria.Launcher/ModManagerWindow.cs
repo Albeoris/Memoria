@@ -414,9 +414,9 @@ namespace Memoria.Launcher
             });
         }
 
-        private void ExtractAllFileFromArchive(String archivePath, String extactTo)
+        private Task ExtractAllFileFromArchive(String archivePath, String extactTo)
         {
-            Task.Run(() => {
+            return Task.Run(() => {
                 Extractor.ExtractAllFileFromArchive(archivePath, extactTo, ExtractionCancellationToken.Token);
                 if (ExtractionCancellationToken.IsCancellationRequested)
                 {
@@ -438,7 +438,7 @@ namespace Memoria.Launcher
                 return;
             }
             downloadingPath = "";
-            Dispatcher.BeginInvoke((MethodInvoker)delegate
+            Dispatcher.BeginInvoke((MethodInvoker)async delegate
             {
                 String downloadingModName = downloadingMod.Name;
                 String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingModName);
@@ -454,7 +454,7 @@ namespace Memoria.Launcher
                         Boolean moveDesc = false;
                         String sourcePath = "";
                         String destPath = "";
-                        ExtractAllFileFromArchive(path + "." + downloadFormatExtLower, path);
+                        await ExtractAllFileFromArchive(path + "." + downloadFormatExtLower, path);
                         File.Delete(path + "." + downloadFormatExtLower);
                         if (File.Exists(path + "/" + Mod.DESCRIPTION_FILE))
                         {
