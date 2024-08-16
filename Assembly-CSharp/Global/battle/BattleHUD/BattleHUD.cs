@@ -2720,7 +2720,10 @@ public partial class BattleHUD : UIScene
                 //btl_mot.SetPlayerDefMotion(btl, player.info.serial_no, (UInt32)unit.GetIndex());
                 //BattlePlayerCharacter.InitAnimation(btl);
                 if (btl.weapon != ff9item.GetItemWeapon(player.equip[0]))
+                {
                     btl_eqp.InitWeapon(player, btl);
+                    btl.weapon_offset_rot = btl_mot.BattleParameterList[player.info.serial_no].GetWeaponRotationFixed(btl.weapon.ModelId, false);
+                }
                 btl_eqp.InitEquipPrivilegeAttrib(player, btl);
             }
             foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())

@@ -208,6 +208,7 @@ public partial class BattleHUD : UIScene
                     lineCount += infoMessages.Count;
                 }
             }
+            HonoluluBattleMain.UpdateAttachModel();
             btl_eqp.UpdateWeaponOffsets();
             Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
             RenderTexture photoRender = RenderTexture.GetTemporary(Screen.width, Screen.height);

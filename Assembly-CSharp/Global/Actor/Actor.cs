@@ -14,36 +14,26 @@ public class Actor : PosObj
         this.idleSpeed = new Byte[4];
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
         base.cid = 4;
-        base.flags = (Byte)(base.flags | 4);
+        base.flags |= 4;
         this.speed = 30;
         this.speedth = 31;
-        this.aspeed = (this.aspeed0 = 16);
+        this.aspeed = 16;
+        this.aspeed0 = 16;
         this.outFrame = Byte.MaxValue;
         this.omega = 16;
-        if (FF9StateSystem.Common.FF9.fldMapNo == 2954 && sid == 4) // Chocobo’s Paradise, Gold Chocobo
-        {
+        if (FF9StateSystem.Common.FF9.fldMapNo == 2954 && sid == 4) // Chocobo's Paradise, Gold Chocobo
             this.omega = 96;
-        }
         else if (FF9StateSystem.Common.FF9.fldMapNo == 1656 && sid == 9) // Iifa Tree/Eidolon Mound, Vivi
-        {
             this.omega = 48;
-        }
         this.turninst0 = 4;
         this.turninst2 = 80;
         this.turninst3 = 4;
         this.tspeed = 16;
         this.listener = Byte.MaxValue;
-        for (Int32 i = 0; i < (Int32)this.idleSpeed.Length; i++)
-        {
+        for (Int32 i = 0; i < this.idleSpeed.Length; i++)
             this.idleSpeed[i] = 16;
-        }
-        if (instance.gMode != 1)
-        {
-            if (instance.gMode == 2)
-            {
-                instance.addObjPtrList(this);
-            }
-        }
+        if (instance.gMode == 2)
+            instance.addObjPtrList(this);
     }
 
     public void copy(Actor act)

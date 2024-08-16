@@ -198,16 +198,9 @@ namespace Memoria
 
         public void WeaponPhysicalParams()
         {
-            if (Caster.IsNonMorphedPlayer)
-            {
-                SetWeaponPower();
-                Caster.SetLowPhysicalAttack();
-                Target.SetPhysicalDefense();
-            }
-            else
-            {
-                NormalPhysicalParams();
-            }
+            SetWeaponPower();
+            Caster.SetLowPhysicalAttack();
+            Target.SetPhysicalDefense();
         }
 
         public void WeaponPhysicalParams(CalcAttackBonus bonus)
@@ -680,10 +673,10 @@ namespace Memoria
 
         public void SetWeaponPower()
         {
-            if (Caster.IsNonMorphedPlayer)
-                Context.AttackPower = (Int16)(Caster.GetWeaponPower(Command) * Command.Power / 10);
+            if (btl_util.IsCommandMonsterTransform(Command))
+                Context.AttackPower = Command.Power;
             else
-                SetCommandPower();
+                Context.AttackPower = (Int16)(Caster.GetWeaponPower(Command) * Command.Power / 10);
         }
 
         public void SetWeaponPowerSum()

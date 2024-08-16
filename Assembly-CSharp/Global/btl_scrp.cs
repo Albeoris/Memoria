@@ -396,16 +396,13 @@ public class btl_scrp
                 result = (Int32)btl.rot.eulerAngles.z;
                 break;
             case 146:
-                if (btl.bi.player == 0)
-                {
-                    result = (Int32)btl_util.getEnemyPtr(btl).bonus_exp;
-                }
+                result = btl.bi.player == 0 ? (Int32)btl_util.getEnemyPtr(btl).bonus_exp : 0;
                 break;
             case 147:
-                if (btl.bi.player == 0)
-                {
-                    result = (Int32)btl_util.getEnemyPtr(btl).bonus_gil;
-                }
+                result = btl.bi.player == 0 ? (Int32)btl_util.getEnemyPtr(btl).bonus_gil : 0;
+                break;
+            case 148:
+                result = btl.bi.t_gauge != 0 ? btl.trance : 0;
                 break;
         }
         return result;
@@ -681,11 +678,21 @@ public class btl_scrp
                 break;
             case 146:
                 if (btl.bi.player == 0)
-                    btl_util.getEnemyPtr(btl).bonus_exp = (uint)val;
+                    btl_util.getEnemyPtr(btl).bonus_exp = (UInt32)val;
                 break;
             case 147:
                 if (btl.bi.player == 0)
-                    btl_util.getEnemyPtr(btl).bonus_gil = (uint)val;
+                    btl_util.getEnemyPtr(btl).bonus_gil = (UInt32)val;
+                break;
+            case 148:
+                if (unit.HasTrance)
+                {
+                    btl.trance = (Byte)val;
+                    if (btl.trance == Byte.MaxValue && !unit.IsUnderAnyStatus(BattleStatus.Trance))
+                        btl_stat.AlterStatus(unit, BattleStatusId.Trance);
+                    else if (btl.trance == 0 && unit.IsUnderAnyStatus(BattleStatus.Trance))
+                        btl_stat.RemoveStatus(unit, BattleStatusId.Trance);
+                }
                 break;
         }
     }

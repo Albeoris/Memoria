@@ -1468,42 +1468,79 @@ public partial class EventEngine
             }
             case EBin.event_code_binary.ATTACH: // 0x4C, "AttachObject", "Attach an object to another one"
             {
-                Obj attachedObj = this.GetObj1(); // arg1: carried object
-                Obj targetObj = this.GetObj1(); // arg2: carrying object
-                GameObject attachedObjUnity = attachedObj.go;
-                GameObject targetObject = targetObj.go;
-                Int32 bone_index = this.getv1(); // arg3: attachment point (unknown format)
+                Int32 attachedUid = this.getv1(); // arg1: carried object
+                Int32 carryingUid = this.getv1(); // arg2: carrying object
+                Int32 bone_index = this.getv1(); // arg3: attachment point
 
-                if (mapNo == 112 && po.model == 223 && po.uid == 3) // [DV] Fix the glasses in Alexandria's pub at the begin of the game // snouz: placed red mage's glass to DisableShadow (this code is never called for glass 6)
-                {
+                if (this.gMode == 1 && mapNo == 112 && po.model == 223 && po.uid == 3) // [DV] Fix the glasses in Alexandria's pub at the begin of the game // snouz: placed red mage's glass to DisableShadow (this code is never called for glass 6)
                     geo.geoAttach(this.GetObjUID(3).go, this.GetObjUID(2).go, 13);
-                }
 
-                if ((UnityEngine.Object)attachedObjUnity != (UnityEngine.Object)null && (UnityEngine.Object)targetObject != (UnityEngine.Object)null)
+                if (this.gMode == 1 || this.gMode == 3)
                 {
-                    if (this.gMode == 1 || this.gMode == 2)
+                    Obj attachedObj = this.GetObjUID(attachedUid);
+                    Obj carryingObj = this.GetObjUID(carryingUid);
+                    GameObject attachedGo = attachedObj?.go;
+                    GameObject carryingGo = carryingObj?.go;
+                    if (attachedGo != null && carryingGo != null)
                     {
-                        if ((Int32)this.gCur.sid == 8 && mapNo == 62 || (Int32)this.gCur.sid == 2 && mapNo == 3010)
-                            bone_index = 19;
-                        geo.geoAttach(attachedObjUnity, targetObject, bone_index);
+                        if (this.gMode == 1)
+                        {
+                            if (this.gCur.sid == 8 && mapNo == 62 || this.gCur.sid == 2 && mapNo == 3010)
+                                bone_index = 19;
+                            geo.geoAttach(attachedGo, carryingGo, bone_index);
+                        }
+                        else
+                        {
+                            geo.geoAttachInWorld(attachedObj, carryingObj, bone_index);
+                        }
                     }
-                    else if (this.gMode == 3)
-                        geo.geoAttachInWorld(attachedObj, targetObj, bone_index);
+                }
+                else if (this.gMode == 2)
+                {
+                    BTL_DATA attachedBtl = null;
+                    BTL_DATA carryingBtl = null;
+                    if (attachedUid >= 0 && attachedUid < 8)
+                        attachedBtl = FF9StateSystem.Battle.FF9Battle.btl_data[attachedUid];
+                    else if (attachedUid >= 128 && attachedUid < 132)
+                        attachedBtl = FF9StateSystem.Battle.FF9Battle.btl_data[attachedUid - 128 + 4];
+                    else if (attachedUid >= 251 && attachedUid < 255)
+                        attachedBtl = FF9StateSystem.Battle.FF9Battle.btl_data[attachedUid - 251];
+                    if (carryingUid >= 0 && carryingUid < 8)
+                        carryingBtl = FF9StateSystem.Battle.FF9Battle.btl_data[carryingUid];
+                    else if (carryingUid >= 128 && carryingUid < 132)
+                        carryingBtl = FF9StateSystem.Battle.FF9Battle.btl_data[carryingUid - 128 + 4];
+                    else if (carryingUid >= 251 && carryingUid < 255)
+                        carryingBtl = FF9StateSystem.Battle.FF9Battle.btl_data[carryingUid - 251];
+                    if (attachedBtl != null && carryingBtl != null)
+                        HonoluluBattleMain.SetupAttachModel(carryingBtl, attachedBtl, bone_index, 100);
                 }
                 return 0;
             }
             case EBin.event_code_binary.DETACH: // 0x4D, "DetachObject", "Stop attaching an object to another one"
             {
-                Obj attachedObj = this.GetObj1(); // arg1: carried object
-                if (attachedObj != null)
+                Int32 attachedUid = this.getv1(); // arg1: carried object
+                if (this.gMode == 1 || this.gMode == 3)
                 {
-                    Boolean restorePosAndScaling = false;
-                    if (mapNo == 656 || mapNo == 657 || mapNo == 658 || mapNo == 659)
-                        restorePosAndScaling = true;
-                    if (this.gMode == 1)
-                        geo.geoDetach(attachedObj.go, restorePosAndScaling);
-                    else if (this.gMode != 2 && this.gMode == 3)
-                        geo.geoDetachInWorld(attachedObj);
+                    Obj attachedObj = this.GetObjUID(attachedUid);
+                    if (attachedObj != null)
+                    {
+                        if (this.gMode == 1)
+                            geo.geoDetach(attachedObj.go, mapNo == 656 || mapNo == 657 || mapNo == 658 || mapNo == 659);
+                        else
+                            geo.geoDetachInWorld(attachedObj);
+                    }
+                }
+                else if (this.gMode == 2)
+                {
+                    BTL_DATA attachedBtl = null;
+                    if (attachedUid >= 0 && attachedUid < 8)
+                        attachedBtl = FF9StateSystem.Battle.FF9Battle.btl_data[attachedUid];
+                    else if (attachedUid >= 128 && attachedUid < 132)
+                        attachedBtl = FF9StateSystem.Battle.FF9Battle.btl_data[attachedUid - 128 + 4];
+                    else if (attachedUid >= 251 && attachedUid < 255)
+                        attachedBtl = FF9StateSystem.Battle.FF9Battle.btl_data[attachedUid - 251];
+                    if (attachedBtl != null)
+                        HonoluluBattleMain.ClearAttachModel(attachedBtl);
                 }
                 return 0;
             }
