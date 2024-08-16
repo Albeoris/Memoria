@@ -218,7 +218,7 @@ public class BattleSPSSystem : MonoBehaviour
                 this._shpEffects[slot].Init(CommonSPSSystem.SHPPrototypes[shpId]);
                 this._shpEffects[slot].posOffset = extraPos;
             }
-            if (CommonSPSSystem.SHPPrototypes[shpId].OverlapGroup >= 0)
+            if (CommonSPSSystem.SHPPrototypes[shpId].OverlapGroup > 0)
             {
                 KeyValuePair<Int32, Int32> OverlapSHPUnit = new KeyValuePair<Int32, Int32>(unit.Position, CommonSPSSystem.SHPPrototypes[shpId].OverlapGroup);
                 if (_overlapSHPgroup.ContainsKey(OverlapSHPUnit))
@@ -255,7 +255,8 @@ public class BattleSPSSystem : MonoBehaviour
                 go.SetActive(false);
 
             KeyValuePair<Int32, Int32> OverlapSHPUnit = new KeyValuePair<Int32, Int32>(unit.Position, CommonSPSSystem.SHPPrototypes[this._shpEffects[shpIndex].shpId].OverlapGroup);
-            _overlapSHPgroup[OverlapSHPUnit].Remove(this._statusToSHPIndex[effectCode]);
+            if (_overlapSHPgroup.ContainsKey(OverlapSHPUnit))
+                _overlapSHPgroup[OverlapSHPUnit].Remove(this._statusToSHPIndex[effectCode]);
             //this._shpEffects[shpIndex].Unload();
             //this._statusToSHPIndex.Remove(effectCode);
         }
