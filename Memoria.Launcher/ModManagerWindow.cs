@@ -162,6 +162,7 @@ namespace Memoria.Launcher
             if (subMod != null)
                 subMod.IsActive = PreviewSubModActive.IsChecked ?? false;
         }
+        /*
         private void OnClickCheckConflicts(Object sender, RoutedEventArgs e)
         {
             ModConflictWindow conflictWindow = new ModConflictWindow(modListInstalled, true);
@@ -174,6 +175,7 @@ namespace Memoria.Launcher
             conflictWindow.Owner = this;
             conflictWindow.ShowDialog();
         }
+        */
         private void OnClickUninstall(Object sender, RoutedEventArgs e)
         {
             Uninstall();
@@ -229,18 +231,6 @@ namespace Memoria.Launcher
                 lstMods.SelectedItem = i1;
                 UpdateInstalledPriorityValue();
             }
-        }
-        private void OnClickActivateAll(Object sender, RoutedEventArgs e)
-        {
-            foreach (Mod mod in modListInstalled)
-                mod.IsActive = true;
-            lstMods.Items.Refresh();
-        }
-        private void OnClickDeactivateAll(Object sender, RoutedEventArgs e)
-        {
-            foreach (Mod mod in modListInstalled)
-                mod.IsActive = false;
-            lstMods.Items.Refresh();
         }
         private void OnClickDownload(Object sender, RoutedEventArgs e)
         {
@@ -737,6 +727,7 @@ namespace Memoria.Launcher
             String category = "";
             String description = "";
 
+            /*
             if (folderName == "MoguriFiles")
             {
                 name = "Moguri Mod";
@@ -760,6 +751,7 @@ namespace Memoria.Launcher
                 category = "Visual";
                 description = "";
             }
+            */
 
             File.WriteAllText(folderName + "/" + Mod.DESCRIPTION_FILE,
                 "<Mod>\n" +
