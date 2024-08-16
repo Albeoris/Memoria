@@ -155,9 +155,9 @@ public class BattleSPSSystem : MonoBehaviour
                             overlapSHPindex++;
 
                             if (overlapSHPindex >= _overlapSHPgroup[OverlapSHPUnit].Count)
-                                this._shpEffects[_overlapSHPgroup[OverlapSHPUnit][0]].attr &= unchecked((Byte)~(SPSConst.ATTR_OVERLAP_HIDDEN + SPSConst.ATTR_LAST_FRAME));
+                                this._shpEffects[_overlapSHPgroup[OverlapSHPUnit][0]].attr &= unchecked((Byte)~SPSConst.ATTR_OVERLAP_HIDDEN);
                             else
-                                this._shpEffects[_overlapSHPgroup[OverlapSHPUnit][overlapSHPindex]].attr &= unchecked((Byte)~(SPSConst.ATTR_OVERLAP_HIDDEN + SPSConst.ATTR_LAST_FRAME));
+                                this._shpEffects[_overlapSHPgroup[OverlapSHPUnit][overlapSHPindex]].attr &= unchecked((Byte)~(SPSConst.ATTR_OVERLAP_HIDDEN));
                         }
                     }
                 }
