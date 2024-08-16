@@ -1,6 +1,7 @@
-﻿using Memoria.Prime.CSV;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using UnityEngine;
+using Memoria.Prime;
+using Memoria.Prime.CSV;
 
 namespace Memoria.Data
 {
@@ -34,6 +35,14 @@ namespace Memoria.Data
         public Single[] TranceWeaponSize = [1f, 1f, 1f];
         public Single[] TranceWeaponOffsetPos = new Single[3];
         public Single[] TranceWeaponOffsetRot = new Single[3];
+
+        public Vector3 GetWeaponRotationFixed(UInt16 weaponModel, Boolean trance = false)
+        {
+            Single[] rot = trance ? TranceWeaponOffsetRot : WeaponOffsetRot;
+            if (weaponModel == 515) // Fix #739
+                return rot.ToVector3(false) + new Vector3(270f, 0f, 0f);
+            return rot.ToVector3(false);
+        }
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
         {

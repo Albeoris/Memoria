@@ -196,12 +196,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             PersistenSingleton<EventEngine>.Instance.eTb.InitMessage();
         }
         this.CreateBattleData(FF9);
-        if (battleSceneName == "EF_E006" || battleSceneName == "EF_E007")
-        {
-            BTL_DATA prisonCage = FF9StateSystem.Battle.FF9Battle.btl_data[4];
-            BTL_DATA prisoner = FF9StateSystem.Battle.FF9Battle.btl_data[5];
-            SetupAttachModel(prisonCage, prisoner, 55, 100);
-        }
         FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
         GEOTEXHEADER geotexheader = new GEOTEXHEADER();
         geotexheader.ReadBGTextureAnim(battleModelPath);
@@ -795,7 +789,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         }
     }
 
-    private static void UpdateAttachModel()
+    public static void UpdateAttachModel()
     {
         foreach (KeyValuePair<BTL_DATA, BTL_DATA> kvp in attachModel)
         {
@@ -815,9 +809,11 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
     public static void SetupAttachModel(BTL_DATA carryingBtl, BTL_DATA attachedBtl, Int32 boneIndex, Int32 offset)
     {
+        if (carryingBtl.gameObject == null || attachedBtl.gameObject == null)
+            return;
         Transform attachedTransform = attachedBtl.gameObject.transform;
         Transform rootTransform = attachedTransform.GetChildByName("bone000").transform;
-        Transform carryingBone = carryingBtl.gameObject.transform.GetChildByName("bone" + boneIndex.ToString("D3"));
+        Transform carryingBone = carryingBtl.gameObject.transform.GetChildByName($"bone{boneIndex:D3}");
         attachedTransform.parent = carryingBone.transform;
         attachedTransform.localPosition = Vector3.zero;
         attachedTransform.localRotation = Quaternion.identity;
@@ -832,7 +828,9 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
     public static void ClearAttachModel(BTL_DATA attachedBtl)
     {
         attachModel.RemoveAll(kvp => kvp.Value == attachedBtl);
-        attachedBtl.gameObject.transform.parent = battlebg.BattleRoot.transform;
+        attachedBtl.attachOffset = 0;
+        if (attachedBtl.gameObject != null)
+            attachedBtl.gameObject.transform.parent = battlebg.BattleRoot.transform;
     }
 
     public static Boolean IsAttachedModel(BTL_DATA btl)
