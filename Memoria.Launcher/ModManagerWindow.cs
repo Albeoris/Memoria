@@ -139,7 +139,8 @@ namespace Memoria.Launcher
             }
             else
             {
-                btnDownload.Background = System.Windows.Media.Brushes.DarkGray;
+                btnDownload.IsEnabled = false;
+                btnDownload.Background = System.Windows.Media.Brushes.Black;
             }
         }
         private void OnModListDoubleClick(Object sender, RoutedEventArgs e)

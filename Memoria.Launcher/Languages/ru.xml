@@ -312,7 +312,7 @@
     TooltipActivateAll = "Активировать Все"
     TooltipDeactivateAll = "Деактивировать Все"
     TooltipUninstall = "Удалить Мод(ы)"
-    TooltipDownload = "Скачать Мод(ы)"
+    TooltipDownload = "Скачать/Обновить"
     TooltipCancel = "Отменить Текущую Загрузка / Все Загрузок (правый клик)"
     />
 
