@@ -1015,7 +1015,7 @@ namespace Memoria.Launcher
             //colMyModsActive.Header = Lang.ModEditor.Active;
             btnMoveUp.ToolTip = Lang.ModEditor.TooltipMoveUp;
             btnMoveDown.ToolTip = Lang.ModEditor.TooltipMoveDown;
-            btnCheckCompatibility.ToolTip = Lang.ModEditor.TooltipCheckCompatibility;
+            //btnCheckCompatibility.ToolTip = Lang.ModEditor.TooltipCheckCompatibility;
             //btnActivateAll.ToolTip = Lang.ModEditor.TooltipActivateAll;
             //btnDeactivateAll.ToolTip = Lang.ModEditor.TooltipDeactivateAll;
             btnUninstall.ToolTip = Lang.ModEditor.TooltipUninstall;

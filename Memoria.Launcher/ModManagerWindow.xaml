@@ -545,6 +545,7 @@
                         ToolTip="Move Down/Right-Click to Move to Bottom" >
                             <Image Source="/Images/btnMoveDownimg.png" />
                         </Button>
+                        <!--
                         <Button
                         x:Name="btnCheckCompatibility"
                         Style="{StaticResource ButtonStyle}"
@@ -555,6 +556,7 @@
                         ToolTip="Check Mod Compatibilities/Right-Click to Check All" >
                             <Image Source="/Images/btnCheckCompatibilityimg.png" />
                         </Button>
+                        -->
                         <!--
                         <Button
                             x:Name="btnActivateAll"
