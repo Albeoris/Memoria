@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AdvOptionsWindow.cs" />
+    <Compile Include="Extractor.cs" />
     <Compile Include="Languages\Lang.cs" />
     <Compile Include="Languages\XmlDocumentExm.cs" />
     <Compile Include="Languages\XmlHelper.cs" />
@@ -108,6 +109,9 @@
     <Compile Include="Memoria\MemoriaIniControl.cs" />
     <Compile Include="Memoria\Mod.cs" />
     <Compile Include="Memoria\ShaderSettingControl.cs" />
+    <Compile Include="Memoria\ThrottledWebClient.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Memoria\UiLauncherAdvOptionsCloseButton.cs" />
     <Compile Include="Memoria\UiLauncherAdvOptionsButton.cs" />
     <Compile Include="Memoria\UiLauncherModelViewerButton.cs" />
