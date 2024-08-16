@@ -332,6 +332,21 @@ namespace Memoria.Launcher
                     SortCatalog(accessors[1], ascending);
             }
         }
+
+        private void OnClickActiveHeader(Object sender, EventArgs e)
+        {
+            MethodInfo[] accessors = null;
+            if (sender == colMyModsActive.Header)
+                accessors = typeof(Mod).GetProperty("IsActive")?.GetAccessors();
+            if (accessors != null && (Mod)modListInstalled[0] != null)
+            {
+                Boolean isFirstModActive = modListInstalled[0].IsActive;
+                foreach (Mod mod in modListInstalled)
+                    mod.IsActive = !isFirstModActive;
+                lstMods.Items.Refresh();
+            }
+        }
+
         private void OnPreviewFileDownloaded(Object sender, EventArgs e)
         {
             if (PreviewModImage.Source == sender)
@@ -1032,6 +1047,10 @@ namespace Memoria.Launcher
             header = new GridViewColumnHeader() { Content = "✔" }; // Lang.ModEditor.Installed
             header.Click += OnClickCatalogHeader;
             colCatalogInstalled.Header = header;
+
+            header = new GridViewColumnHeader() { Content = "✅" };
+            header.Click += OnClickActiveHeader;
+            colMyModsActive.Header = header;
             colDownloadName.Header = Lang.ModEditor.Mod;
             colDownloadProgress.Header = Lang.ModEditor.Progress;
             colDownloadSpeed.Header = Lang.ModEditor.Speed;
