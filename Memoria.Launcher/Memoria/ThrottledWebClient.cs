@@ -15,7 +15,7 @@ namespace Memoria
 
         public ThrottledWebClient()
         {
-            _timer = new Timer(500); // Set the interval to 500 milliseconds (or any desired interval)
+            _timer = new Timer(100);
             _timer.Elapsed += OnTimerElapsed;
             _timer.Start();
         }
