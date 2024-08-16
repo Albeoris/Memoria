@@ -55,6 +55,12 @@
             Direction="-45" 
             Color="#3333" 
             RenderingBias="Quality"/>
+        <DropShadowEffect x:Key="ButtondropShadowEffect"
+            BlurRadius="1" 
+            Direction="-45" 
+            Color="#3333" 
+            RenderingBias="Quality" 
+            ShadowDepth="2"/>
         <Style
             x:Key="ModTitleStyle"
             BasedOn="{StaticResource ModInfoLabelStyle}"
@@ -440,6 +446,11 @@
             Background="{StaticResource LightGreyUI}"
             SelectedIndex="0"
             Grid.ColumnSpan="2" >
+            <TabControl.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="2,10,10,10"/>
+                </Style>
+            </TabControl.Resources>
             <TabItem x:Name="tabCtrlMods"
             Padding="10,0,10,0">
                 <TabItem.Header>
@@ -485,6 +496,7 @@
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="5"/>
+                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
                                 </Style>
                             </Button.Resources>
 
@@ -516,6 +528,7 @@
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="5"/>
+                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
                                 </Style>
                             </Button.Resources>
                         </Button>
@@ -537,6 +550,7 @@
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="5"/>
+                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
                                 </Style>
                             </Button.Resources>
 
@@ -595,6 +609,7 @@
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="5"/>
+                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
                                 </Style>
                             </Button.Resources>
                         </Button>
@@ -618,6 +633,7 @@
                         <Button.Resources>
                             <Style TargetType="Border">
                                 <Setter Property="CornerRadius" Value="5"/>
+                                <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
                             </Style>
                         </Button.Resources>
                     </Button>
@@ -722,7 +738,7 @@
                     VerticalAlignment="Top">
                         <Button x:Name="btnDownload"
                         Click="OnClickDownload"
-                        Margin="0,3,0,3"
+                        Margin="0,0,0,3"
                         MouseRightButtonDown="OnClickDownload"
                         TabIndex="11"
                         ToolTip="Download Selected Mod(s)" >
@@ -736,6 +752,7 @@
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="5"/>
+                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
                                 </Style>
                             </Button.Resources>
                         </Button>
@@ -824,7 +841,7 @@
                         <Button
                         x:Name="btnCancel"
                         Click="OnClickCancel"
-                        Margin="0,3,0,3"
+                        Margin="0,0,0,3"
                         MouseRightButtonDown="OnClickCancelAll"
                         TabIndex="14"
                         ToolTip="Cancel Current Download/Right-Click to Cancel All"
@@ -840,32 +857,35 @@
                             <Button.Resources>
                                 <Style TargetType="Border">
                                     <Setter Property="CornerRadius" Value="5"/>
-                                </Style>
-                            </Button.Resources>
-                        </Button>
-                        <Button
-                        x:Name="btnCatalogClose"
-                        Margin="0,3,0,3"
-                        Click="OnClickClose"
-                        MouseRightButtonDown="OnClickClose"
-                        TabIndex="28"
-                        ToolTip="Close Mod Manager"
-                        VerticalAlignment="Bottom">
-                            <Image
-                            x:Name="btnCatalogCloseimg"
-                            Width="36"
-                            Height="36"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Source="/Images/btnCloseimg.png"
-                            />
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="5"/>
+                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
                                 </Style>
                             </Button.Resources>
                         </Button>
                     </StackPanel>
+                    <Button
+                    x:Name="btnCatalogClose"
+                    Grid.Row="1"
+                    Margin="0,3,0,0"
+                    Click="OnClickClose"
+                    MouseRightButtonDown="OnClickClose"
+                    TabIndex="28"
+                    ToolTip="Close Mod Manager"
+                    VerticalAlignment="Bottom" >
+                        <Image
+                        x:Name="btnCatalogCloseimg"
+                        Width="36"
+                        Height="36"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Source="/Images/btnCloseimg.png"
+                        />
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                                <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
                     <ListView x:Name="lstDownloads"
                     Grid.Row="1"
                     Grid.Column="1"
@@ -892,10 +912,10 @@
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <ProgressBar
-                                                Width="100"
-                                                Height="10"
-                                                Opacity="1"
-                                                Value="{Binding PercentComplete}" />
+                                            Width="100"
+                                            Height="10"
+                                            Opacity="1"
+                                            Value="{Binding PercentComplete}" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>

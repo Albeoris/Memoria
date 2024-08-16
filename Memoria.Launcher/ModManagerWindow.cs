@@ -800,7 +800,7 @@ namespace Memoria.Launcher
                 {
                     PreviewSubModPanel.Visibility = Visibility.Visible;
                 }
-                ReleaseNotesBlock.Visibility = PreviewModReleaseNotes.Text == "" && PreviewModRelease.Text == "" ? Visibility.Collapsed : Visibility.Visible;
+                ReleaseNotesBlock.Visibility = PreviewModReleaseNotes.Text == "" ? Visibility.Collapsed : Visibility.Visible;
                 if (hasSubMod)
                 {
                     if (modListCatalog.Contains(mod))

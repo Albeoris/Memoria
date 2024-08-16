@@ -20,6 +20,8 @@ namespace Memoria.Launcher
         public String Description { get; set; }
         public String PatchNotes { get; set; }
         public CompatibilityNoteClass CompatibilityNotes { get; set; }
+        public String IncompatibleWith { get; set; }
+        public String HasPriorityOverMods { get; set; }
         public String Category { get; set; }
         public String Website { get; set; }
         public String DownloadUrl { get; set; }
@@ -177,6 +179,8 @@ namespace Memoria.Launcher
                     CompatibilityNotes.GenericNotes = elComp.InnerText;
                 }
             }
+            IncompatibleWith = modNode["IncompatibleWith"]?.InnerText;
+            HasPriorityOverMods = modNode["HasPriorityOverMods"]?.InnerText;
             Category = modNode["Category"]?.InnerText;
             Website = modNode["Website"]?.InnerText;
             DownloadUrl = modNode["DownloadUrl"]?.InnerText;
@@ -256,6 +260,18 @@ namespace Memoria.Launcher
             {
                 el = doc.CreateElement("PatchNotes");
                 el.InnerText = PatchNotes;
+                mod.AppendChild(el);
+            }
+            if (IncompatibleWith != null)
+            {
+                el = doc.CreateElement("IncompatibleWith");
+                el.InnerText = IncompatibleWith;
+                mod.AppendChild(el);
+            }
+            if (HasPriorityOverMods != null)
+            {
+                el = doc.CreateElement("HasPriorityOverMods");
+                el.InnerText = HasPriorityOverMods;
                 mod.AppendChild(el);
             }
             if (Category != null)
