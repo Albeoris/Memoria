@@ -14,6 +14,8 @@ namespace Memoria.Launcher
         // Entries that can be defined in .xml descriptions
         public String Name { get; set; }
         public Version CurrentVersion { get; set; }
+        public Boolean IsOutdated { get; set; }
+        public String InfoIcon { get; set; }
         public String ReleaseDate { get; set; }
         public String ReleaseDateOriginal { get; set; }
         public String Author { get; set; }

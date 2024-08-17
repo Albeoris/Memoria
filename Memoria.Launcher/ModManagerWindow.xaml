@@ -144,6 +144,14 @@
             </Setter>
         </Style>
         <Style x:Key="MainListViewItemStyle" TargetType="{x:Type ListViewItem}">
+            <Style.Triggers>
+                <!-- DataTrigger to check if the mod is outdated -->
+                <DataTrigger Binding="{Binding IsOutdated}" Value="True">
+                    <Setter Property="Background" Value="LightCoral"/>
+                    <Setter Property="Foreground" Value="Yellow"/>
+                    <Setter Property="BorderBrush" Value="Yellow"/>
+                </DataTrigger>
+            </Style.Triggers>
             <Setter Property="SnapsToDevicePixels" Value="true" />
             <Setter Property="OverridesDefaultStyle" Value="true" />
             <Setter Property="BorderThickness" Value="0,0,0,0" />
@@ -647,11 +655,8 @@
                                 </Style.Triggers>
                             </Style>
                         </ListView.ItemContainerStyle>
-                        <ListView.View
-                            
-                                >
-                            <GridView
-                                >
+                        <ListView.View>
+                            <GridView>
                                 <GridViewColumn
                                 x:Name="colMyModsActive"
                                 Width="28"
@@ -667,9 +672,14 @@
                                 </GridViewColumn>
                                 <GridViewColumn
                                 x:Name="colMyModsPriority"
-                                Width="30"
+                                Width="28"
                                 DisplayMemberBinding="{Binding Priority}"
-                                Header="🠝🠟" />
+                                Header="⮝⮟" />
+                                <GridViewColumn
+                                x:Name="colMyModsInfoIcon"
+                                Width="28"
+                                DisplayMemberBinding="{Binding InfoIcon}"
+                                Header="" />
                                 <GridViewColumn
                                 x:Name="colMyModsName"
                                 Width="Auto"

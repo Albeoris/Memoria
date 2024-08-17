@@ -66,6 +66,7 @@ namespace Memoria.Launcher
             lstCatalogMods.ItemsSource = modListCatalog;
             lstMods.ItemsSource = modListInstalled;
             lstDownloads.ItemsSource = downloadList;
+            CheckOutdatedMods();
             UpdateCatalogInstallationState();
 
             lstCatalogMods.SelectionChanged += OnModListSelect;
@@ -77,6 +78,35 @@ namespace Memoria.Launcher
             if (modListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
+        }
+
+        private void CheckOutdatedMods()
+        {
+            Boolean allModsAreUpToDate = true;
+            foreach (Mod mod in modListInstalled)
+            {
+                if (mod != null && mod.Name != null & mod.CurrentVersion != null)
+                {
+                    foreach (Mod catalog_mod in modListCatalog)
+                    {
+                        if (catalog_mod != null && catalog_mod.Name != null & catalog_mod.CurrentVersion != null && mod.Name == catalog_mod.Name)
+                        {
+                            Boolean versionCorresponds = mod.CurrentVersion == catalog_mod.CurrentVersion;
+                            mod.IsOutdated = catalog_mod.IsOutdated = !versionCorresponds;
+                            if (mod.IsOutdated)
+                            {
+                                mod.InfoIcon = "⏫";
+                                allModsAreUpToDate = false;
+                            }
+                            else
+                            {
+                                mod.InfoIcon = "";
+                            }
+                        }
+                    }
+                }
+            }
+            colMyModsInfoIcon.Width = allModsAreUpToDate ? 0 : 28;
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
@@ -709,6 +739,7 @@ namespace Memoria.Launcher
                 }
             }
             UpdateInstalledPriorityValue();
+            CheckOutdatedMods();
         }
 
         private Boolean GenerateAutomaticDescriptionFile(String folderName)
@@ -882,6 +913,8 @@ namespace Memoria.Launcher
             {
                 if (Mod.SearchWithName(downloadList, mod.Name) != null)
                     mod.Installed = "⌛";
+                else if (Mod.SearchWithName(modListInstalled, mod.Name) != null && Mod.SearchWithName(modListInstalled, mod.Name).IsOutdated)
+                    mod.Installed = "⏫";
                 else if (Mod.SearchWithName(modListInstalled, mod.Name) != null)
                     mod.Installed = "✔";
                 else
@@ -1036,7 +1069,7 @@ namespace Memoria.Launcher
             header = new GridViewColumnHeader() { Content = Lang.ModEditor.Category };
             header.Click += OnClickCatalogHeader;
             colCatalogCategory.Header = header;
-            header = new GridViewColumnHeader() { Content = "✔" }; // Lang.ModEditor.Installed
+            header = new GridViewColumnHeader() { Content = "" }; // Lang.ModEditor.Installed
             header.Click += OnClickCatalogHeader;
             colCatalogInstalled.Header = header;
 
