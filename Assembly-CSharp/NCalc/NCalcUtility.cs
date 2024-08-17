@@ -260,12 +260,12 @@ namespace NCalc
                         {
                             if (enumValueStr.TryStaticFieldParse(typeof(BattleStatusConst), out FieldInfo field))
                             {
-                                args.Result = Convert.ToInt32(field.GetValue(null));
+                                args.Result = Convert.ToUInt64(field.GetValue(null));
                                 return;
                             }
                             else if (enumValueStr.StartsWith("Set_") && enumValueStr.Substring("Set_".Length).TryEnumParse(out StatusSetId setId))
                             {
-                                args.Result = Convert.ToInt32(FF9BattleDB.StatusSets[setId]);
+                                args.Result = Convert.ToUInt64(FF9BattleDB.StatusSets[setId]);
                                 return;
                             }
                         }

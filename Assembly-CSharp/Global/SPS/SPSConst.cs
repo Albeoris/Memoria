@@ -7,6 +7,7 @@ public static class SPSConst
     public const Byte ATTR_UPDATE_ANY_FRAME = 2;
     public const Byte ATTR_UPDATE_THIS_FRAME = 4;
     public const Byte ATTR_UNLOAD_ON_FINISH = 8;
+    public const Byte ATTR_HIDDEN = 16;
 
     public const Int32 FIELD_DEFAULT_OBJCOUNT = 16;
     public const Int32 BATTLE_DEFAULT_OBJCOUNT = 96;
