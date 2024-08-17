@@ -13,7 +13,6 @@ namespace Memoria.Data
         public Int32 TextureCount;
         public Byte ShaderType;
         public Int32 CycleDuration;
-        public Int32 OverlapGroup;
 
         private Texture2D[] textures = null;
         public Texture2D[] Textures
@@ -44,8 +43,6 @@ namespace Memoria.Data
             TextureCount = CsvParser.Int32(raw[index++]);
             ShaderType = CsvParser.Byte(raw[index++]);
             CycleDuration = CsvParser.Int32(raw[index++]);
-            if (metadata.HasOption($"IncludeOverlapGroup"))
-                OverlapGroup = CsvParser.Int32(raw[index++]);
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -57,8 +54,6 @@ namespace Memoria.Data
             sw.Int32(TextureCount);
             sw.Byte(ShaderType);
             sw.Int32(CycleDuration);
-            if (metadata.HasOption($"IncludeOverlapGroup"))
-                sw.Int32(OverlapGroup);
         }
     }
 }

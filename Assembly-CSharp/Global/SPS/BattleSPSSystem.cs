@@ -140,28 +140,6 @@ public class BattleSPSSystem : MonoBehaviour
         if (this._statusToSHPIndex.TryGetValue(effectCode, out Int32 shpIndex))
         {
             SHPEffect shp = this._shpEffects[shpIndex];
-            KeyValuePair<Int32, Int32> OverlapSHPUnit = new KeyValuePair<Int32, Int32>(unit.Position, CommonSPSSystem.SHPPrototypes[shp.shpId].OverlapGroup);
-            if (_overlapSHPgroup.ContainsKey(OverlapSHPUnit))
-            {
-                if (_overlapSHPgroup[OverlapSHPUnit].Count > 1)
-                {
-                    if ((shp.attr & SPSConst.ATTR_OVERLAP_HIDDEN) == 0)
-                    {
-                        if (shp.overlapDuration <= 0)
-                        {
-                            shp.attr |= SPSConst.ATTR_OVERLAP_HIDDEN;
-                            this._shpEffects[shpIndex].overlapDuration = CommonSPSSystem.SHPPrototypes[shp.shpId].TextureCount;
-                            int overlapSHPindex = _overlapSHPgroup[OverlapSHPUnit].FindIndex(a => (a == shpIndex));
-                            overlapSHPindex++;
-
-                            if (overlapSHPindex >= _overlapSHPgroup[OverlapSHPUnit].Count)
-                                this._shpEffects[_overlapSHPgroup[OverlapSHPUnit][0]].attr &= unchecked((Byte)~SPSConst.ATTR_OVERLAP_HIDDEN);
-                            else
-                                this._shpEffects[_overlapSHPgroup[OverlapSHPUnit][overlapSHPindex]].attr &= unchecked((Byte)~(SPSConst.ATTR_OVERLAP_HIDDEN));
-                        }
-                    }
-                }
-            }
             shp.attr |= SPSConst.ATTR_VISIBLE | SPSConst.ATTR_UPDATE_THIS_FRAME;
             if (shpPos.HasValue)
                 shp.pos = shpPos.Value;
@@ -204,7 +182,6 @@ public class BattleSPSSystem : MonoBehaviour
             {
                 this._shpEffects[shpIndex].attr |= SPSConst.ATTR_VISIBLE;
                 this._shpEffects[shpIndex].posOffset = extraPos;
-                this._shpEffects[shpIndex].overlapDuration = CommonSPSSystem.SHPPrototypes[shpId].TextureCount;
             }
             else
             {
@@ -217,22 +194,6 @@ public class BattleSPSSystem : MonoBehaviour
                 this._statusToSHPIndex[effectCode] = slot;
                 this._shpEffects[slot].Init(CommonSPSSystem.SHPPrototypes[shpId]);
                 this._shpEffects[slot].posOffset = extraPos;
-            }
-            if (CommonSPSSystem.SHPPrototypes[shpId].OverlapGroup > 0)
-            {
-                KeyValuePair<Int32, Int32> OverlapSHPUnit = new KeyValuePair<Int32, Int32>(unit.Position, CommonSPSSystem.SHPPrototypes[shpId].OverlapGroup);
-                if (_overlapSHPgroup.ContainsKey(OverlapSHPUnit))
-                {
-                    if (!_overlapSHPgroup[OverlapSHPUnit].Contains(this._statusToSHPIndex[effectCode]))
-                    {
-                        _overlapSHPgroup[OverlapSHPUnit].Add(this._statusToSHPIndex[effectCode]);
-                        this._shpEffects[this._statusToSHPIndex[effectCode]].attr = SPSConst.ATTR_OVERLAP_HIDDEN;
-                    }
-                }
-                else
-                {
-                    _overlapSHPgroup.Add(OverlapSHPUnit, new List<Int32> { this._statusToSHPIndex[effectCode] });
-                }
             }
         }
     }
@@ -253,10 +214,6 @@ public class BattleSPSSystem : MonoBehaviour
             this._shpEffects[shpIndex].attr = 0;
             foreach (GameObject go in this._shpEffects[shpIndex].shpGo)
                 go.SetActive(false);
-
-            KeyValuePair<Int32, Int32> OverlapSHPUnit = new KeyValuePair<Int32, Int32>(unit.Position, CommonSPSSystem.SHPPrototypes[this._shpEffects[shpIndex].shpId].OverlapGroup);
-            if (_overlapSHPgroup.ContainsKey(OverlapSHPUnit))
-                _overlapSHPgroup[OverlapSHPUnit].Remove(this._statusToSHPIndex[effectCode]);
             //this._shpEffects[shpIndex].Unload();
             //this._statusToSHPIndex.Remove(effectCode);
         }
@@ -366,6 +323,4 @@ public class BattleSPSSystem : MonoBehaviour
     private Dictionary<KeyValuePair<Int32, Int32>, Int32> _statusToSPSIndex;
     [NonSerialized]
     private Dictionary<KeyValuePair<Int32, Int32>, Int32> _statusToSHPIndex;
-    [NonSerialized]
-    public Dictionary<KeyValuePair<Int32, Int32>, List<Int32>> _overlapSHPgroup = new Dictionary<KeyValuePair<Int32, Int32>, List<Int32>>();
 }

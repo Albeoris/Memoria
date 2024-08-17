@@ -32,7 +32,6 @@ public class SHPEffect : MonoBehaviour
             this.shpGo[i] = go;
             this.shpGo[i].SetActive(false);
         }
-        this.overlapDuration = prototype.TextureCount;
     }
 
     public void Unload()
@@ -55,7 +54,7 @@ public class SHPEffect : MonoBehaviour
     {
         if ((this.attr & SPSConst.ATTR_VISIBLE) == 0)
             return;
-        if ((this.attr & (SPSConst.ATTR_UPDATE_THIS_FRAME | SPSConst.ATTR_UPDATE_ANY_FRAME)) != 0 && (this.attr & SPSConst.ATTR_OVERLAP_HIDDEN) == 0)
+        if ((this.attr & (SPSConst.ATTR_UPDATE_THIS_FRAME | SPSConst.ATTR_UPDATE_ANY_FRAME)) != 0 && (this.attr & SPSConst.ATTR_HIDDEN) == 0)
         {
             if (this.attach != null)
                 this.pos = this.attach.position;
@@ -70,15 +69,12 @@ public class SHPEffect : MonoBehaviour
             base.transform.localRotation = Quaternion.Euler(this.rot.x, this.rot.y, this.rot.z);
             base.transform.localPosition = this.pos + this.posOffset;
             base.transform.LookAt(base.transform.position + directionForward, -directionDown);
-            Int32 previousIndex = this.textureindex;
             foreach (GameObject go in this.shpGo)
                 go.SetActive(false);
-            this.textureindex = this.cycleDuration >= 0 ? (this.frame * this.shpGo.Length / this.cycleDuration) % this.shpGo.Length
-                             : this.shpGo.Length - 1 + (this.frame * this.shpGo.Length / this.cycleDuration) % this.shpGo.Length;
-            this.shpGo[this.textureindex].SetActive(true);
-            if (this.overlapDuration > 0 && previousIndex != this.textureindex)
-                this.overlapDuration--;
-            this.attr &= unchecked((Byte)~SPSConst.ATTR_UPDATE_THIS_FRAME);   
+            this.TextureIndex = this.cycleDuration >= 0 ? (this.frame * this.shpGo.Length / this.cycleDuration) % this.shpGo.Length
+                              : this.shpGo.Length - 1 + (this.frame * this.shpGo.Length / this.cycleDuration) % this.shpGo.Length;
+            this.shpGo[this.TextureIndex].SetActive(true);
+            this.attr &= unchecked((Byte)~SPSConst.ATTR_UPDATE_THIS_FRAME);
         }
         else
         {
@@ -87,16 +83,17 @@ public class SHPEffect : MonoBehaviour
         }
     }
 
+    public Boolean IsCyclingFrame => this.cycleDuration != 0 && (this.frame % this.cycleDuration) == Math.Abs(this.cycleDuration) - 1;
+    public Int32 TextureIndex { get; private set; }
+
     public Int32 shpId = -1;
 
     public GameObject[] shpGo;
 
     public Byte attr;
     public Int32 frame;
-    public Int32 textureindex;
     public Int32 duration;
     public Int32 cycleDuration;
-    public Int32 overlapDuration;
 
     public Vector3 pos;
     public Vector3 scale;
