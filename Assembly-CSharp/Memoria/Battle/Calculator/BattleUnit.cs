@@ -228,9 +228,13 @@ namespace Memoria
         public BattleStatus WeaponStatus => Data.weapon != null ? FF9StateSystem.Battle.FF9Battle.add_status[Data.weapon.StatusIndex].Value : 0;
         public Int32 GetWeaponPower(BattleCommand cmd)
         {
-            return Data.weapon == null ? 0
-              : Configuration.Battle.CustomBattleFlagsMeaning == 1 && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack && cmd != null && (cmd.AbilityType & 0x8) != 0 ? Math.Max(1, 60 - Data.weapon.Ref.Power)
-              : Data.weapon.Ref.Power;
+            if (IsMonsterTransform)
+                return Data.monster_transform.attack[Data.bi.def_idle]?.Ref.Power ?? 0;
+            if (Data.weapon == null)
+                return 0;
+            if (Configuration.Battle.CustomBattleFlagsMeaning == 1 && FF9StateSystem.Battle.FF9Battle.btl_scene.Info.ReverseAttack && cmd != null && (cmd.AbilityType & 0x8) != 0)
+                return Math.Max(1, 60 - WeaponPower);
+            return WeaponPower;
         }
 
         public PLAYER Player => FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex);

@@ -55,6 +55,12 @@
             Direction="-45" 
             Color="#3333" 
             RenderingBias="Quality"/>
+        <DropShadowEffect x:Key="ButtondropShadowEffect"
+            BlurRadius="1" 
+            Direction="-45" 
+            Color="#3333" 
+            RenderingBias="Quality" 
+            ShadowDepth="2"/>
         <Style
             x:Key="ModTitleStyle"
             BasedOn="{StaticResource ModInfoLabelStyle}"
@@ -187,9 +193,15 @@
                         <Border>
                             <Grid>
                                 <Grid>
-                                    <Border x:Name="border" CornerRadius="3,3,0,0" Background="#444" />
+                                    <Border x:Name="border"
+                                    CornerRadius="9,9,0,0"
+                                    Margin="0,0,3,0"
+                                    Background="#333" />
                                 </Grid>
-                                <ContentPresenter ContentSource="Header" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                <ContentPresenter 
+                                ContentSource="Header"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                             </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
@@ -207,10 +219,7 @@
             <Setter Property="Background" Value="{StaticResource LightGreyUI}" />
             <Setter Property="Height" Value="0" />
         </Style>
-
-
-
-
+        
         <DataTemplate x:Key="FilterItemTemplate">
             <Border
                 Padding="5"
@@ -414,7 +423,7 @@
                 Stretch="Fill" />
         </Canvas>
     </Window.Resources>
-    <Grid Background="#333">
+    <Grid Background="#181818">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" MinHeight="100"  />
             <RowDefinition />
@@ -431,18 +440,28 @@
             Grid.Row="0"
             Grid.RowSpan="2"
             Grid.Column="0"
-            Margin="10,10,7,10"
+            Margin="5,5,5,5"
             Padding="10,10,10,10"
             BorderThickness="0"
             Background="{StaticResource LightGreyUI}"
-            SelectedIndex="0" Grid.ColumnSpan="2">
-            <TabItem x:Name="tabCtrlMods" Padding="10,0,10,0">
+            SelectedIndex="0"
+            Grid.ColumnSpan="2" >
+            <TabControl.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="2,10,10,10"/>
+                </Style>
+            </TabControl.Resources>
+            <TabItem x:Name="tabCtrlMods"
+            Padding="10,0,10,0">
                 <TabItem.Header>
                     <TextBlock
-                        x:Name="tabMyMods"
-                        Padding="15,3,15,3"
-                        Text="Installed Mods"
-                        Foreground="{StaticResource WhiteUI}"/>
+                    x:Name="tabMyMods"
+                    Padding="15,6,15,6"
+                    Text="Installed Mods"
+                    Foreground="{StaticResource WhiteUI}"
+                    FontFamily="Century Gothic"
+                    FontSize="15"
+                    />
                 </TabItem.Header>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -455,25 +474,31 @@
                     </Grid.ColumnDefinitions>
 
                     <StackPanel
-                        x:Name="stackButtons"
-                        Grid.Column="0"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Stretch">
+                    x:Name="stackButtons"
+                    Grid.Column="0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Stretch">
                         <Button
-                            x:Name="btnMoveUp"
-                            Margin="0,3,0,3"
-                            Click="OnClickMoveUp"
-                            MouseRightButtonUp="OnClickSendTop"
-                            TabIndex="21"
-                            ToolTip="Move Up/Right-Click to Move to Top" >
+                        x:Name="btnMoveUp"
+                        Margin="0,0,0,3"
+                        Click="OnClickMoveUp"
+                        MouseRightButtonUp="OnClickSendTop"
+                        TabIndex="21"
+                        ToolTip="Move Up/Right-Click to Move to Top" >
                             <Image
-                                x:Name="btnMoveUpimg"
-                                Width="36"
-                                Height="36"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Source="/Images/btnMoveUpimg.png"
-                                />
+                            x:Name="btnMoveUpimg"
+                            Width="36"
+                            Height="36"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Source="/Images/btnMoveUpimg.png"
+                            />
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="5"/>
+                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
+                                </Style>
+                            </Button.Resources>
 
                         </Button>
                         <!--<Button
@@ -486,36 +511,48 @@
                             TabIndex="21"
                             ToolTip="Move Up/Right-Click to Move to Top" />-->
                         <Button
-                            x:Name="btnMoveDown"
-                            Margin="0,3,0,3"
-                            Click="OnClickMoveDown"
-                            MouseRightButtonDown="OnClickSendBottom"
-                            TabIndex="22"
-                            ToolTip="Move Down/Right-Click to Move to Bottom" >
+                        x:Name="btnMoveDown"
+                        Margin="0,3,0,3"
+                        Click="OnClickMoveDown"
+                        MouseRightButtonDown="OnClickSendBottom"
+                        TabIndex="22"
+                        ToolTip="Move Down/Right-Click to Move to Bottom" >
                             <Image
-                                x:Name="btnMoveDownimg"
-                                Width="36"
-                                Height="36"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Source="/Images/btnMoveDownimg.png"
-                                />
+                            x:Name="btnMoveDownimg"
+                            Width="36"
+                            Height="36"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Source="/Images/btnMoveDownimg.png"
+                            />
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="5"/>
+                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
+                                </Style>
+                            </Button.Resources>
                         </Button>
                         <Button
-                            x:Name="btnCheckCompatibility"
-                            Margin="0,3,0,3"
-                            Click="OnClickCheckConflicts"
-                            MouseRightButtonDown="OnClickCheckAllConflicts"
-                            TabIndex="25"
-                            ToolTip="Check Mod Compatibilities/Right-Click to Check All" >
+                        x:Name="btnCheckCompatibility"
+                        Margin="0,3,0,3"
+                        Click="OnClickCheckConflicts"
+                        MouseRightButtonDown="OnClickCheckAllConflicts"
+                        TabIndex="25"
+                        ToolTip="Check Mod Compatibilities/Right-Click to Check All" >
                             <Image
-                                x:Name="btnCheckCompatibilityimg"
-                                Width="36"
-                                Height="36"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Source="/Images/btnCheckCompatibilityimg.png"
-                                />
+                            x:Name="btnCheckCompatibilityimg"
+                            Width="36"
+                            Height="36"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Source="/Images/btnCheckCompatibilityimg.png"
+                            />
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="5"/>
+                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
+                                </Style>
+                            </Button.Resources>
 
                         </Button>
                         <!--
@@ -569,24 +606,36 @@
                             HorizontalAlignment="Center"
                             Source="/Images/btnUninstallimg.png"
                             />
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="5"/>
+                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
+                                </Style>
+                            </Button.Resources>
                         </Button>
                     </StackPanel>
                     <Button
-                        x:Name="btnClose"
-                        Margin="0,3,0,3"
-                        Click="OnClickClose"
-                        MouseRightButtonDown="OnClickClose"
-                        TabIndex="28"
-                        ToolTip="Close Mod Manager"
-                        VerticalAlignment="Bottom">
+                    x:Name="btnClose"
+                    Margin="0,3,0,0"
+                    Click="OnClickClose"
+                    MouseRightButtonDown="OnClickClose"
+                    TabIndex="28"
+                    ToolTip="Close Mod Manager"
+                    VerticalAlignment="Bottom">
                         <Image
-                            x:Name="btncloseimg"
-                            Width="36"
-                            Height="36"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Source="/Images/btnCloseimg.png"
-                            />
+                        x:Name="btncloseimg"
+                        Width="36"
+                        Height="36"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Source="/Images/btnCloseimg.png"
+                        />
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                                <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
+                            </Style>
+                        </Button.Resources>
                     </Button>
                     <ListView x:Name="lstMods"
                     Margin="6,0,0,0"
@@ -667,9 +716,11 @@
                 <TabItem.Header>
                     <TextBlock
                     x:Name="tabCatalog"
-                    Padding="15,3,15,3"
+                    Padding="15,6,15,6"
                     Text="Catalog"
-                    Foreground="{StaticResource WhiteUI}"/>
+                    Foreground="{StaticResource WhiteUI}"
+                    FontFamily="Century Gothic"
+                    FontSize="15" />
                 </TabItem.Header>
                 <Grid>
                     <Grid.RowDefinitions>
@@ -687,7 +738,7 @@
                     VerticalAlignment="Top">
                         <Button x:Name="btnDownload"
                         Click="OnClickDownload"
-                        Margin="0,3,0,3"
+                        Margin="0,0,0,3"
                         MouseRightButtonDown="OnClickDownload"
                         TabIndex="11"
                         ToolTip="Download Selected Mod(s)" >
@@ -698,6 +749,12 @@
                             HorizontalAlignment="Center"
                             Source="/Images/btnDownloadimg.png"
                             />
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="5"/>
+                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
+                                </Style>
+                            </Button.Resources>
                         </Button>
                     </StackPanel>
                     <ListView x:Name="lstCatalogMods"
@@ -782,41 +839,53 @@
                         HorizontalAlignment="Right"
                         VerticalAlignment="Stretch">
                         <Button
-                            x:Name="btnCancel"
-                            Click="OnClickCancel"
-                            Margin="0,3,0,3"
-                            MouseRightButtonDown="OnClickCancelAll"
-                            TabIndex="14"
-                            ToolTip="Cancel Current Download/Right-Click to Cancel All"
-                            ToolTipService.ShowOnDisabled="True"  >
+                        x:Name="btnCancel"
+                        Click="OnClickCancel"
+                        Margin="0,0,0,3"
+                        MouseRightButtonDown="OnClickCancelAll"
+                        TabIndex="14"
+                        ToolTip="Cancel Current Download/Right-Click to Cancel All"
+                        ToolTipService.ShowOnDisabled="True"  >
                             <Image
-                                x:Name="btnCancelimg"
-                                Width="36"
-                                Height="36"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Source="/Images/btnCancelimg.png"
-                                />
-
-                        </Button>
-                        <Button
-                            x:Name="btnCatalogClose"
-                            Margin="0,3,0,3"
-                            Click="OnClickClose"
-                            MouseRightButtonDown="OnClickClose"
-                            TabIndex="28"
-                            ToolTip="Close Mod Manager"
-                            VerticalAlignment="Bottom">
-                            <Image
-                                x:Name="btnCatalogCloseimg"
-                                Width="36"
-                                Height="36"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Source="/Images/btnCloseimg.png"
-                                />
+                            x:Name="btnCancelimg"
+                            Width="36"
+                            Height="36"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Source="/Images/btnCancelimg.png"
+                            />
+                            <Button.Resources>
+                                <Style TargetType="Border">
+                                    <Setter Property="CornerRadius" Value="5"/>
+                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
+                                </Style>
+                            </Button.Resources>
                         </Button>
                     </StackPanel>
+                    <Button
+                    x:Name="btnCatalogClose"
+                    Grid.Row="1"
+                    Margin="0,3,0,0"
+                    Click="OnClickClose"
+                    MouseRightButtonDown="OnClickClose"
+                    TabIndex="28"
+                    ToolTip="Close Mod Manager"
+                    VerticalAlignment="Bottom" >
+                        <Image
+                        x:Name="btnCatalogCloseimg"
+                        Width="36"
+                        Height="36"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Source="/Images/btnCloseimg.png"
+                        />
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                                <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
+                            </Style>
+                        </Button.Resources>
+                    </Button>
                     <ListView x:Name="lstDownloads"
                     Grid.Row="1"
                     Grid.Column="1"
@@ -843,10 +912,10 @@
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <ProgressBar
-                                                Width="100"
-                                                Height="10"
-                                                Opacity="1"
-                                                Value="{Binding PercentComplete}" />
+                                            Width="100"
+                                            Height="10"
+                                            Opacity="1"
+                                            Value="{Binding PercentComplete}" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -932,6 +1001,21 @@
                     Style="{StaticResource OpenLinkStyle}"
                     ToolTip="{Binding PreviewModLink}"
                     />
+                    <Grid x:Name="PreviewModCategoryTagline"
+                    Grid.Column="0"
+                    VerticalAlignment="Top"
+                    HorizontalAlignment="left"
+                    Margin="10,4,2,2" >
+                        <Border x:Name="border"
+                        CornerRadius="6"
+                        Background="#8000" />
+                        <TextBlock
+                        x:Name="PreviewModCategory"
+                        Margin="6,0,6,4"
+                        Style="{StaticResource ModInfoDetailsStyle}"
+                        TextAlignment="Right"
+                        Text="category" />
+                    </Grid>
                     <Grid x:Name="gridModName" 
                     Grid.Row="1"
                     Margin="7,0,7,0">
@@ -997,34 +1081,45 @@
                             <WrapPanel
                             Grid.Row="0"
                             Margin="0,4,0,0">
-                                <TextBlock
-                                x:Name="CaptionModAuthor"
-                                Style="{StaticResource ModInfoLabelStyle}"
-                                VerticalAlignment="Bottom"
-                                Text="Author(s):" />
-                                <TextBlock
-                                x:Name="PreviewModAuthor"
-                                Style="{StaticResource ModInfoDetailsStyle}"
-                                VerticalAlignment="Bottom"
-                                Text="" />
-
+                                <Grid Width="440">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220" />
+                                        <ColumnDefinition Width="220" />
+                                    </Grid.ColumnDefinitions>
+                                    <WrapPanel
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2" >
+                                        <TextBlock
+                                        x:Name="CaptionModAuthor"
+                                        Style="{StaticResource ModInfoLabelStyle}"
+                                        VerticalAlignment="Bottom"
+                                        Text="Author(s):" />
+                                        <TextBlock
+                                        x:Name="PreviewModAuthor"
+                                        Style="{StaticResource ModInfoDetailsStyle}"
+                                        VerticalAlignment="Bottom"
+                                        Text="" />
+                                    </WrapPanel>
+                                    <!--
+                                    <WrapPanel
+                                        Grid.Column="1" >
+                                        <TextBlock
+                                        x:Name="CaptionModCategory"
+                                        Style="{StaticResource ModInfoLabelStyle}"
+                                        VerticalAlignment="Bottom"
+                                        Text="Category:" />
+                                        <TextBlock
+                                        x:Name="PreviewModCategory"
+                                        Style="{StaticResource ModInfoDetailsStyle}"
+                                        VerticalAlignment="Bottom"
+                                        Text="categories here tags" />
+                                    </WrapPanel>
+                                    -->
+                                </Grid>
                             </WrapPanel>
 
 
-                            <WrapPanel
-                            Grid.Row="2"
-                            Margin="0">
-                                <TextBlock
-                                x:Name="CaptionModCategory"
-                                Style="{StaticResource ModInfoLabelStyle}"
-                                VerticalAlignment="Bottom"
-                                Text="Category:" />
-                                <TextBlock
-                                x:Name="PreviewModCategory"
-                                Style="{StaticResource ModInfoDetailsStyle}"
-                                VerticalAlignment="Bottom"
-                                Text="" />
-                            </WrapPanel>
+                            
                             <!--<WrapPanel
                             Grid.Row="3"
                             Grid.ColumnSpan="2"
@@ -1054,25 +1149,41 @@
                                HorizontalOffset="-116"><Border x:Name="bd" BorderBrush="#1f1f1f" BorderThickness="1"><StackPanel><RadioButton FontSize="12" IsChecked="{Binding PreviewIsAutoUpdateModsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,3,5,3" GroupName="modUpdateType"/><RadioButton FontSize="12" IsChecked="{Binding PreviewIgnoreModUpdatesChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,3,5,3" GroupName="modUpdateType"/><RadioButton FontSize="12" IsChecked="{Binding PreviewIsNotifyAboutUpdatesChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Margin="5,3,5,3" GroupName="modUpdateType"/></StackPanel></Border></Popup>-->
 
                             <WrapPanel
-                            Grid.Row="3"
+                            Grid.Row="1"
                             Margin="0">
-                                <TextBlock
-                                x:Name="CaptionModReleaseOriginal"
-                                Style="{StaticResource ModInfoLabelStyle}"
-                                VerticalAlignment="Bottom"
-                                Text="Released:" />
-                                <TextBlock
-                                x:Name="PreviewModReleaseOriginal"
-                                Style="{StaticResource ModInfoDetailsStyle}"
-                                VerticalAlignment="Bottom"
-                                Text="" />
+                                <Grid Width="Auto">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="220" />
+                                        <ColumnDefinition Width="220" />
+                                    </Grid.ColumnDefinitions>
+                                    <WrapPanel Grid.Column="0" >
+                                        <TextBlock x:Name="CaptionModRelease"
+                                        Style="{StaticResource ModInfoLabelStyle}"
+                                        VerticalAlignment="Bottom"
+                                        Text="Updated:" />
+                                        <TextBlock x:Name="PreviewModRelease"
+                                        Style="{StaticResource ModInfoDetailsStyle}"
+                                        VerticalAlignment="Bottom"
+                                        Text="🞨" />
+                                    </WrapPanel>
+                                    <WrapPanel Grid.Column="1" >
+                                        <TextBlock x:Name="CaptionModReleaseOriginal"
+                                        Style="{StaticResource ModInfoLabelStyle}"
+                                        VerticalAlignment="Bottom"
+                                        Text="Released:" />
+                                        <TextBlock x:Name="PreviewModReleaseOriginal"
+                                        Style="{StaticResource ModInfoDetailsStyle}"
+                                        VerticalAlignment="Bottom"
+                                        Text="🞨" />
+                                    </WrapPanel>
+                                </Grid>
                             </WrapPanel>
 
                             <ScrollViewer x:Name="ContentScroll"
-                            Grid.Row="4"
+                            Grid.Row="2"
                             HorizontalAlignment="Stretch"
                             VerticalScrollBarVisibility="Auto"
-                            Height="436" >
+                            Height="456" >
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="auto" />
@@ -1099,10 +1210,11 @@
                                     <WrapPanel
                                     x:Name="PreviewSubModPanel"
                                     Grid.Row="1"
-                                    Margin="0,3,3,3"
-                                    Visibility="Collapsed"
-                                    Height="auto">
-                                        <Grid x:Name="gridSubModInfo" Margin="0,0,0,3">
+                                    Margin="0,5,0,3"
+                                    Background="Gray"
+                                    Height="auto"
+                                    Visibility="Collapsed" >
+                                        <Grid x:Name="gridSubModInfo" Margin="5">
                                             <Grid.RowDefinitions>
                                                 <RowDefinition Height="auto" />
                                                 <RowDefinition Height="auto" />
@@ -1114,6 +1226,7 @@
                                             </Grid.ColumnDefinitions>
                                             <WrapPanel
                                             Grid.Row="0"
+                                                Grid.ColumnSpan="2"
                                             Margin="0,0,3,0">
                                                 <TextBlock
                                                 x:Name="CaptionSubModPanel"
@@ -1141,6 +1254,8 @@
                                             </WrapPanel>
                                             <WrapPanel
                                             Grid.Row="2"
+                                            Grid.ColumnSpan="2"
+                                            Height="Auto"
                                             Margin="0,0,3,0">
                                                 <TextBlock x:Name="PreviewSubModDescription"
                                                 Style="{StaticResource ModInfoDetailsStyle}"
@@ -1157,18 +1272,18 @@
                                         Margin="0,7,6,0"
                                         Visibility="Visible">
                                             <DockPanel>
-                                                <TextBlock
-                                                x:Name="CaptionModReleaseNotes"
+                                                <TextBlock x:Name="CaptionModReleaseNotes"
                                                 Style="{StaticResource ModInfoLabelStyle}"
                                                 Margin="5,5,0,5"
                                                 VerticalAlignment="Bottom"
-                                                Text="Release Notes:" />
-                                                <TextBlock
-                                                x:Name="PreviewModRelease" 
+                                                Text="Release notes:" />
+                                                <!--
+                                                <TextBlock x:Name="PreviewModRelease"
                                                 Style="{StaticResource ModInfoDetailsStyle}"
                                                 Margin="5,5,0,5"
                                                 VerticalAlignment="Bottom"
                                                 Text="" />
+                                                -->
                                             </DockPanel>
                                             <TextBlock
                                             x:Name="PreviewModReleaseNotes"

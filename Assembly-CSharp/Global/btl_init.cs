@@ -391,10 +391,6 @@ public static class btl_init
             btl.trance = p.trance;
         }
         btl.tar_bone = 0;
-        btl.weapon_bone = btlParam.WeaponBone;
-        btl.weapon_scale = btlParam.WeaponSize.ToVector3(true);
-        btl.weapon_offset_pos = btlParam.WeaponOffsetPos.ToVector3(false);
-        btl.weapon_offset_rot = btlParam.WeaponOffsetRot.ToVector3(false);
         btl.sa = p.sa;
         btl.saExtended = p.saExtended;
         btl.saMonster = new List<SupportingAbilityFeature>();
@@ -434,7 +430,11 @@ public static class btl_init
         btl.animSpeedStatusFactor = 1f;
         btl_mot.SetPlayerDefMotion(btl, p.info.serial_no, btl_no);
         BattlePlayerCharacter.InitAnimation(btl);
+        btl.weapon_bone = btlParam.WeaponBone;
         btl_eqp.InitWeapon(p, btl);
+        btl.weapon_scale = btlParam.WeaponSize.ToVector3(true);
+        btl.weapon_offset_pos = btlParam.WeaponOffsetPos.ToVector3(false);
+        btl.weapon_offset_rot = btlParam.GetWeaponRotationFixed(btl.weapon.ModelId, false);
         btl.defence.PhysicalDefence = p.defence.PhysicalDefence;
         btl.defence.PhysicalEvade = p.defence.PhysicalEvade;
         btl.defence.MagicalDefence = p.defence.MagicalDefence;

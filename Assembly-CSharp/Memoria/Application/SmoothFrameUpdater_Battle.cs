@@ -45,7 +45,7 @@ namespace Memoria
             if (!Enabled) return;
             for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
             {
-                if (next.bi.slave != 0 || next.gameObject == null || !next.gameObject.activeInHierarchy || HonoluluBattleMain.IsAttachedModel(next))
+                if (next.bi.slave != 0 || next.gameObject == null || !next.gameObject.activeInHierarchy)
                     continue;
 
                 String curAnim = next.currentAnimationName;
@@ -207,6 +207,7 @@ namespace Memoria
                     // if (next.btl_id == 1) Log.Message($"[DEBUG {Time.frameCount} curName {next.currentAnimationName} actualName {next._smoothUpdateAnimNameActual} prevName {next._smoothUpdateAnimNamePrevious} nextName {next._smoothUpdateAnimNameNext} speed {next._smoothUpdateAnimSpeed} {animState.enabled} animTime {animState.time} animLength {animState.length} t {smoothFactor} prev {next._smoothUpdateAnimTimePrevious} actual {next._smoothUpdateAnimTimeActual}");
                 }
             }
+            HonoluluBattleMain.UpdateAttachModel();
             // Sky
             if (_bg != null)
             {
