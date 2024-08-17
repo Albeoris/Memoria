@@ -63,6 +63,7 @@ namespace Memoria
                     }
                     else
                     {
+                        delta = -delta;
                         for (Int32 i = 0; i < delta; i++)
                             Attack >>= 1;
                     }
