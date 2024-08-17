@@ -166,6 +166,14 @@ namespace Global.Sound.SoLoud
                 double start = stream.akbHeader.LoopStart / (double)stream.akbHeader.SampleRate;
                 double end = stream.akbHeader.LoopEnd / (double)stream.akbHeader.SampleRate;
 
+                // Adjustement for looping sound at the top of Alexendria Castle (A. Castle/Altar)
+                // It still pops after a while, Soloud just isn't precise enough with the looping
+                if (streams[bankID].profile.ResourceID == "Sounds03/SE12/se120018")
+                {
+                    start = 104120 / (double)stream.akbHeader.SampleRate;
+                    end = 216632 / (double)stream.akbHeader.SampleRate;
+                }
+
                 SoundLib.Log($"LoopStart: {start} LoopEnd: {end} Length: {stream.data.getLength()}");
 
                 soloud.setLoopStartPoint((uint)soundID, start);
