@@ -310,7 +310,7 @@
 	TooltipActivateAll = "Увімкнути усі моди"
 	TooltipDeactivateAll = "Вимкнути усі моди"
 	TooltipUninstall = "Видалити мод(и)"
-	TooltipDownload = "Завантажити обраний мод(и)"
+	TooltipDownload = "Завантажити/Оновити"
 	TooltipCancel = "Скасувати поточне завантаження/Правий клік, щоб скасувати усі"
 	/>
 

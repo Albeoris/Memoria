@@ -127,8 +127,8 @@ However, the weapon is still subject to physical dodge (and therefore sensitive 
 - Healer+ SA now inflicts 100% damage against zombies (as opposed to 200% previously).
 - Freyja can no longer learn "Healer" and is replaced by a new SA called "Dragon's Eye".
 - SOS-type SA are more precise in their triggering: they can be activated by Poison, for example.
-- SOS Regen cost modified: 5 -> 4.
-- SOS Haste cost modified: 4 -> 3.
+- SOS Regen cost modified: 5 to 4.
+- SOS Haste cost modified: 4 to 3.
 - "Esuna" now correctly removes Old.
 - Changed description of "Throw" command.
 - Corrected "Cook" damage formula.
@@ -175,26 +175,29 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Tantalus</Name>
-	<Version>2.0</Version>
+	<Version>3.0</Version>
 	<InstallationPath>PlayableTantalus</InstallationPath>
-	<ReleaseDate>Jul 2024</ReleaseDate>
+	<ReleaseDateOriginal>2024-06-14</ReleaseDateOriginal>
+	<ReleaseDate>2024-08-18</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
 	<Author>Emeiru</Author>
 	<Description>Overhauls Blank, Cinna, and Marcus to become actually usable characters
-Includes:
+Includes: 
 - The tantalus trio with their own set of active and supporting abilities
 - Base stats improvements
 - Steal-Gil and Mug buffed
 - New items and tweaks to complement the trio and thief gameplay
-- Minor name and ability text changes (purely thematic)
-
-Complete changes and info can be found on this mod's page.</Description>
+- Minor name and ability text changes (purely thematic)</Description>
+	<PatchNotes>Complete changes and info can be found on this mod's page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/64</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/mkmzntygv46sh4qg4qjxi/PlayableTantalus.zip?rlkey=r92lksa6neyz3g52nkiyb6rhq&amp;dl=1</DownloadUrl>
+	<PreviewFile>Tantalus.jpg</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/64/64-1723918805-1871056882.jpeg</PreviewFileUrl>
 	<SubMod>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
-		<Description>Version for Alternate Fantasy 6.2+</Description>
+		<Description>Version for Alternate Fantasy</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
@@ -203,8 +206,6 @@ Complete changes and info can be found on this mod's page.</Description>
 		<Description>Version for regular FFIX</Description>
 		<Priority>2</Priority>
 	</SubMod>
-	<PreviewFile>Preview.JPG</PreviewFile>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/64/64-1718179640-480880001.png</PreviewFileUrl>
 </Mod>
 
 <Mod>
@@ -223,6 +224,41 @@ Complete changes and info can be found on this mod's page.</Description>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/19l0a7strjifbdpezs5op/BlackCat.zip?rlkey=6a3509xwdzpny23zvrnkpg3qx&amp;dl=1</DownloadUrl>
 	<PreviewFile>Preview.JPG</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/65/65-1720822585-1514609332.jpeg</PreviewFileUrl>
+</Mod>
+
+<Mod>
+	<Name>Amazing Quina</Name>
+	<Version>1.0</Version>
+	<InstallationPath>AmazingQuina</InstallationPath>
+	<ReleaseDateOriginal>2024-08-18</ReleaseDateOriginal>
+	<ReleaseDate>2024-08-18</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
+	<Author>Emeiru</Author>
+	<Description>Amazing tweaks and improvement for the quirky Quina
+Includes: 
+- Forks deal more consistent random damage
+- New endgame robe for Quina that removes LV spell multiplier
+- New trance command, Dbl Blu (from Alternate Fantasy)
+- Quina now learns Scan, Return Magic, and others
+- Tweaks to abilities like Goblin Punch, White Wind, and more</Description>
+	<PatchNotes>Complete changes and info can be found on this mod's page.</PatchNotes>
+	<Category>Gameplay</Category>
+	<PreviewFile>AmazingQuina.jpg</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/67/67-1723945766-725236022.jpeg</PreviewFileUrl>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/67/</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/b6d02h8wko3dx5weqk0n0/AmazingQuina.zip?rlkey=6ivxlj5cgfc51w9zokazcntye&amp;st=23hlrn9n&amp;dl=1</DownloadUrl>
+	<SubMod>
+		<Name>Alternate Fantasy</Name>
+		<InstallationPath>AlternateFantasy</InstallationPath>
+		<Description>Version for Alternate Fantasy</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Vanilla</Name>
+		<InstallationPath>Vanilla</InstallationPath>
+		<Description>Version for regular FFIX</Description>
+		<Priority>2</Priority>
+	</SubMod>
 </Mod>
 
 <Mod>

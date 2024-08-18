@@ -677,10 +677,12 @@ public class FieldMap : HonoBehavior
 
             Int32 threshmargin = Math.Min((Int32)bgCamera.w - PsxFieldWidth, 0); // Offset value for fields that are between 320 & 398
             //if (dbug) Log.Message("PsxFieldWidth" + PsxFieldWidth);
-            if (map == 1205 || map == 1652 || map == 2552 || map == 154 || map == 1215 || map == 1807) // A. Castle/Chapel, Iifa Tree/Roots, Earth Shrine/Interior, Alex grand hall
+            if (map == 1205 || map == 1652 || map == 2552 || map == 154 || map == 1215 || map == 1807 || map == 1055) // A. Castle/Chapel, Iifa Tree/Roots, Earth Shrine/Interior, Alex grand hall
             {
                 if (map == 1652 && this.camIdx == 0) // Iifa Tree/Roots
                     threshmargin += 16;
+                if (map == 1055)
+                    threshmargin += 1;
 
                 Int32 threshright = bgCamera.w - PsxFieldWidth - threshmargin;
 

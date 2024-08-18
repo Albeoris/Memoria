@@ -74,6 +74,7 @@ namespace Memoria.Launcher
             }
 
             // Make sure FMV059.bytes and FMV060.bytes don't exist: slightly bugged for minimal impact
+            /*
             if (Directory.Exists("MoguriVideo"))
             {
                 if (File.Exists("MoguriVideo/StreamingAssets/ma/FMV059.bytes"))
@@ -91,6 +92,7 @@ namespace Memoria.Launcher
                         File.Move("MoguriVideo/StreamingAssets/ma/FMV060.bytes", "MoguriVideo/StreamingAssets/ma/FMV060 - bugged.bytes");
                 }
             }
+            */
         }
 
         private void TryLoadImage()

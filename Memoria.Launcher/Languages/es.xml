@@ -306,7 +306,7 @@
 	TooltipActivateAll = "Activar todos los mods"
 	TooltipDeactivateAll = "Desactivar todos los mods"
 	TooltipUninstall = "Desinstalar mod(s)"
-	TooltipDownload = "Descargar mod(s) seleccionado(s)"
+	TooltipDownload = "Descargar/Actualizar"
 	TooltipCancel = "Cancelar descarga actual/Clic derecho para cancelar todo"
 	/>
 	

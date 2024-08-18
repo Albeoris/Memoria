@@ -311,7 +311,7 @@
 	TooltipActivateAll = "Attiva tutte le Mod"
 	TooltipDeactivateAll = "Disattiva tutte le Mod"
 	TooltipUninstall = "Disinstalla Mod"
-	TooltipDownload = "Scarica Mod selezionate"
+	TooltipDownload = "Scarica/Aggiorna"
 	TooltipCancel = "Annulla download in corso/Clic destro per annullare tutti"
 
 	/>

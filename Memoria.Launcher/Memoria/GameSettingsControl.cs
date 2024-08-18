@@ -113,7 +113,8 @@ namespace Memoria.Launcher
             checkUpdates.ToolTip = Lang.Settings.CheckUpdates_Tooltip;
 
             String OSversion = $"{Environment.OSVersion}";
-            if (OSversion.Contains("Windows"))
+            Boolean isRunningInWine = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WINELOADER"));
+            if (OSversion.Contains("Windows") && !isRunningInWine)
             {
                 UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 17, 0, 3, 8);
                 steamOverlayFix.Margin = rowMargin;

@@ -14,6 +14,19 @@ public class HUDMessage : Singleton<HUDMessage>
         set => this.worldCamera = value;
     }
 
+    private void CreateMessageInstance(Byte id)
+    {
+        GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.prototype);
+        gameObject.transform.parent = base.transform;
+        gameObject.transform.localPosition = Vector3.zero;
+        gameObject.transform.localScale = Vector3.one;
+        Transform child = gameObject.transform.GetChild(0);
+        this.childHud[id] = child.GetComponent<HUDMessageChild>();
+        this.childHud[id].Initial();
+        this.childHud[id].MessageId = id;
+        this.childHud[id].SetupCamera(this.worldCamera, this.uiCamera);
+    }
+
     private void Start()
     {
         this.worldCamera = PersistenSingleton<UIManager>.Instance.BattleCamera;
@@ -26,15 +39,7 @@ public class HUDMessage : Singleton<HUDMessage>
             this.activeIndexList[i] = Byte.MaxValue;
             if (childCount == 0)
             {
-                GameObject gameObject = UnityEngine.Object.Instantiate<GameObject>(this.prototype);
-                gameObject.transform.parent = base.transform;
-                gameObject.transform.localPosition = Vector3.zero;
-                gameObject.transform.localScale = Vector3.one;
-                Transform child = gameObject.transform.GetChild(0);
-                this.childHud[i] = child.GetComponent<HUDMessageChild>();
-                this.childHud[i].Initial();
-                this.childHud[i].MessageId = (Byte)i;
-                this.childHud[i].SetupCamera(this.worldCamera, this.uiCamera);
+                this.CreateMessageInstance((Byte)i);
             }
             else
             {
@@ -49,87 +54,59 @@ public class HUDMessage : Singleton<HUDMessage>
     private void OnEnable()
     {
         if (this.ready)
-        {
             this.Start();
-        }
     }
 
     private Byte GetReadyObjectIndex()
     {
-        Byte b = 0;
-        Byte b2 = Byte.MaxValue;
-        HUDMessageChild[] array = this.childHud;
-        for (Int32 i = 0; i < (Int32)array.Length; i++)
-        {
-            HUDMessageChild message = array[i];
-            if (this.IsMessageAvailable(message))
-            {
-                b2 = b;
-                break;
-            }
-            b = (Byte)(b + 1);
-        }
-        if (b2 == 255)
-        {
-            throw new Exception("HUD message is not available. We will throw System.Exception");
-        }
-        return b2;
+        Byte poolCount = (Byte)this.childHud.Length;
+        for (Byte i = 0; i < poolCount; i++)
+            if (this.ActivateMessageIfAvailable(this.childHud[i]))
+                return i;
+        Array.Resize(ref this.childHud, poolCount + 1);
+        Array.Resize(ref this.activeIndexList, poolCount + 1);
+        this.CreateMessageInstance(poolCount);
+        this.activeIndexList[poolCount] = Byte.MaxValue;
+        this.instanceNumber++;
+        return poolCount;
     }
 
     private Boolean IsMessageIdAvailable(Byte messageId)
     {
-        Boolean result = true;
-        Byte[] array = this.activeIndexList;
-        for (Int32 i = 0; i < (Int32)array.Length; i++)
-        {
-            Byte b = array[i];
-            if (b == messageId)
-            {
-                result = false;
-                break;
-            }
-        }
-        return result;
+        foreach (Byte index in this.activeIndexList)
+            if (index == messageId)
+                return false;
+        return true;
     }
 
     private Boolean SetMessagIdToActive(Byte messageId)
     {
-        Int32 num = 0;
-        Boolean result = false;
-        Byte[] array = this.activeIndexList;
-        for (Int32 i = 0; i < (Int32)array.Length; i++)
+        for (Int32 i = 0; i < this.activeIndexList.Length; i++)
         {
-            Byte b = array[i];
-            if (b == 255)
+            if (this.activeIndexList[i] == Byte.MaxValue)
             {
-                this.activeIndexList[num] = messageId;
-                result = true;
-                break;
+                this.activeIndexList[i] = messageId;
+                return true;
             }
-            num++;
         }
-        return result;
+        return false;
     }
 
-    private Boolean IsMessageAvailable(HUDMessageChild message)
+    private Boolean ActivateMessageIfAvailable(HUDMessageChild message)
     {
-        Boolean flag = !message.gameObject.activeInHierarchy && this.IsMessageIdAvailable(message.MessageId);
-        return (!flag) ? flag : this.SetMessagIdToActive(message.MessageId);
+        Boolean isAvailable = !message.gameObject.activeInHierarchy && this.IsMessageIdAvailable(message.MessageId);
+        return isAvailable ? this.SetMessagIdToActive(message.MessageId) : false;
     }
 
     private void RemoveFromActiveList(Byte messageId)
     {
-        Int32 num = 0;
-        Byte[] array = this.activeIndexList;
-        for (Int32 i = 0; i < (Int32)array.Length; i++)
+        for (Int32 i = 0; i < this.activeIndexList.Length; i++)
         {
-            Byte b = array[i];
-            if (b == messageId)
+            if (this.activeIndexList[i] == messageId)
             {
-                this.activeIndexList[num] = Byte.MaxValue;
-                break;
+                this.activeIndexList[i] = Byte.MaxValue;
+                return;
             }
-            num++;
         }
     }
 
@@ -195,33 +172,20 @@ public class HUDMessage : Singleton<HUDMessage>
 
     public void UpdateChildPosition()
     {
-        HUDMessageChild[] array = this.childHud;
-        for (Int32 i = 0; i < (Int32)array.Length; i++)
-        {
-            HUDMessageChild hudmessageChild = array[i];
-            if (hudmessageChild.gameObject.activeInHierarchy)
-            {
-                hudmessageChild.Follower.UpdateUIPosition();
-            }
-        }
+        foreach (HUDMessageChild message in this.childHud)
+            if (message.gameObject.activeInHierarchy)
+                message.Follower.UpdateUIPosition();
     }
 
     public void Pause(Boolean isPause)
     {
-        HUDMessageChild[] array = this.childHud;
-        for (Int32 i = 0; i < (Int32)array.Length; i++)
-        {
-            HUDMessageChild hudmessageChild = array[i];
-            if (hudmessageChild.gameObject.activeInHierarchy)
-            {
-                hudmessageChild.Pause(isPause);
-            }
-        }
+        foreach (HUDMessageChild message in this.childHud)
+            if (message.gameObject.activeInHierarchy)
+                message.Pause(isPause);
     }
 
     [SerializeField]
     private Camera worldCamera;
-
     public Camera uiCamera;
 
     public GameObject prototype;
@@ -236,19 +200,15 @@ public class HUDMessage : Singleton<HUDMessage>
     public AnimationCurve alphaTweenCurve;
 
     public Color damageColor;
-
     public AnimationCurve damageTweenCurve;
 
     public Color restoreColor;
-
     public AnimationCurve restoreTweenCurve;
 
     public Color criticalColor;
-
     public AnimationCurve criticalTweenCurve;
 
     public static readonly Vector3 NormalTargetPosition = new Vector3(0f, 25f * UIManager.ResourceYMultipier);
-
     public static readonly Vector3 RecoverTargetPosition = new Vector3(0f, 15f * UIManager.ResourceYMultipier);
 
     private HUDMessageChild[] childHud;
