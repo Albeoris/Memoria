@@ -85,6 +85,11 @@ namespace Memoria.Launcher
             Boolean allModsAreUpToDate = true;
             foreach (Mod mod in modListInstalled)
             {
+                if (mod != null && (mod.Name == "Moguri Mod" && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
+                {
+                    mod.Name = "⚠️ " + mod.Name + " (Outdated)";
+                    mod.Description = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
+                }
                 if (mod != null && mod.Name != null & mod.CurrentVersion != null)
                 {
                     foreach (Mod catalog_mod in modListCatalog)
