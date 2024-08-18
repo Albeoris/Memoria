@@ -44,11 +44,13 @@ Snouz - syncronization</Description>
 
 <Mod>
 	<Name>Alternate Fantasy</Name>
-	<Version>6.5</Version>
+	<Version>6.6</Version>
 	<InstallationPath>AlternateFantasy</InstallationPath>
 	<Author>Tirlititi</Author>
-	<ReleaseDate>6 Aug 2024</ReleaseDate>
-	<PatchNotes>Requires Memoria v2024.08.05</PatchNotes>
+	<ReleaseDateOriginal>4 Aug 2016</ReleaseDateOriginal>
+	<ReleaseDate>18 Aug 2024</ReleaseDate>
+	<MinimumMemoriaVersion>2024-08-18</MinimumMemoriaVersion>
+	<PatchNotes>Requires Memoria v2024.08.18</PatchNotes>
 	<Description>This mod aims at increasing the difficulty and, above all, to give a new fresh experience of FF9 for those who already know the game well.
 It includes:
 - Many changes in the battle system, the enemies and the abilities
@@ -61,6 +63,7 @@ More informations can be found on the mod's webpage.</Description>
 	<Website>https://forums.qhimm.com/index.php?topic=16324.0</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/f0pprvqk3hmtz0p12zorl/PC_AlternateFantasy.zip?rlkey=b6lrylaanmqigdge8t647rolu&amp;dl=1</DownloadUrl>
 	<PreviewFileUrl>https://i.imgur.com/GTrgRMK.png</PreviewFileUrl>
+	<PreviewFile>Preview.png</PreviewFile>
 	<CompatibilityNotes OtherModLow="MoguriFiles">Keeping Moguri at the lowest priority is surely the best:
 - ".raw16" and ".raw17" assets are duplicates of the base game's assets in Moguri
 - Most of the "EventEngine" assets (field event scripts and battle AI) are also duplicates, except a couple of field scripts that don't overlap with Alternate Fantasy's</CompatibilityNotes>
