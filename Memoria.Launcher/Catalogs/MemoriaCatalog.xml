@@ -323,20 +323,22 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Mog Add-ons</Name>
-	<Version>3.7.3</Version>
+	<Version>3.7.4</Version>
 	<InstallationPath>MogAddons</InstallationPath>
-	<ReleaseDate>2024-07-31</ReleaseDate>
+	<ReleaseDateOriginal>2021-06-14</ReleaseDateOriginal>
+	<ReleaseDate>2024-08-15</ReleaseDate>
 	<Author>faospark</Author>
-	<Description>A Library / Collection of Gameplay Tweaks, Graphical enhancement, Button Support and Many more
+	<Description>A Library / Collection of Gameplay Tweaks, Graphical enhancement , Button Support and Many more
 :: Submod activation and Notes :: 
-- Use the Mod Manager UI to activate each submods by using the drop down menu  
-- Compatible with Playable Character Pack, Beatrix mod and Tantalus Mod</Description>
-	<PatchNotes>Please open the Readme.txt File</PatchNotes>
+- Activate each submods by using the drop down menu below 
+- Compatible to Playable Character Pack and Beatrix mod and Tantalus Mod </Description>
+	<PatchNotes>Please open the Readme.txt File for Instructions</PatchNotes>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
 	<Category>Various</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/s/o1wjflgm0s3dicx/Mog%20Add-ons%20Mod%20FFIX.zip?dl=1</DownloadUrl>
 	<PreviewFile>preview/mog-addons.png</PreviewFile>
-	<PreviewFileUrl>https://i.imgur.com/RNkvz5s.png</PreviewFileUrl>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1723937529-218587144.png</PreviewFileUrl>
 	<SubMod>
 		<Name>Configure</Name>
 		<InstallationPath>Features/Zecrets</InstallationPath>
@@ -344,40 +346,40 @@ You should better use the Playable Characters Pack instead. This later one doesn
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Buttons : PS5</Name>
+		<Name>Buttons : PS5 (DualSense)</Name>
 		<InstallationPath>Features/Buttons/ButtonsPS5</InstallationPath>
 		<Description>Makes Button 5 like in PS5</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Buttons : PS Gloss</Name>
+		<Name>Buttons : PS Gloss (DS4)</Name>
 		<InstallationPath>Features/Buttons/ButtonsPS4Gloss</InstallationPath>
 		<Description>Glossy PS4 buttons</Description>
-		<Priority>5</Priority>
+		<Priority>2</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Buttons : Simple PS</Name>
+		<Name>Buttons : Simple PS (PSX)</Name>
 		<InstallationPath>Features/Buttons/ButtonsPSX</InstallationPath>
 		<Description>PS prompts in the same Style as the default xbox prompts</Description>
-		<Priority>4</Priority>
+		<Priority>3</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Buttons : Pixels (PSX)</Name>
+		<InstallationPath>Features/Buttons/ButtonsPixel</InstallationPath>
+		<Description>Pixelated Prompts if that is your thing</Description>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : Default Xbox</Name>
 		<InstallationPath>Features/Buttons/ButtonsXbox</InstallationPath>
 		<Description>Restores Default Xbox Prompts</Description>
-		<Priority>2</Priority>
+		<Priority>4</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : SNES</Name>
 		<InstallationPath>Features/Buttons/ButtonsSNES</InstallationPath>
 		<Description>A Requested SNES or Switch layout </Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Buttons : Pixels</Name>
-		<InstallationPath>Features/Buttons/ButtonsPixel</InstallationPath>
-		<Description>Pixelated Prompts if that is your thing</Description>
-		<Priority>1</Priority>
+		<Priority>5</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>-------\\   Portraits   \\---------</Name>
@@ -389,13 +391,13 @@ You should better use the Playable Characters Pack instead. This later one doesn
 		<Name>Portraits : Default Extended Cast</Name>
 		<InstallationPath>Features/Portraits/PortraitDefault</InstallationPath>
 		<Description>Default Portraits that includes Kuja, Fratly and Lani</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Portraits : PSX Upscaled</Name>
 		<InstallationPath>Features/Portraits/PortraitPSXUpscale</InstallationPath>
-		<Description>Portraits based from the original psx release Upscaled using waifu2x and Gigapixel</Description>
-		<Priority>1</Priority>
+		<Description>original psx release Upscaled using waifu2x and Gigapixel</Description>
+		<Priority>2</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Portraits : Opera Omnia</Name>
@@ -406,7 +408,7 @@ You should better use the Playable Characters Pack instead. This later one doesn
 	<SubMod>
 		<Name>Portraits : DFFOO Pluto Knight / White Mage </Name>
 		<InstallationPath>Features/Portraits/PortraitOperaOmniaPCP</InstallationPath>
-		<Description>Playable Character Pack DFFOO Style for Extra costumes for Zidane and Garnet </Description>
+		<Description>DFFOO Style for Extra costumes for Zidane and Garnet </Description>
 		<Priority>3</Priority>
 	</SubMod>
 	<SubMod>
@@ -449,13 +451,13 @@ You should better use the Playable Characters Pack instead. This later one doesn
 		<Name>Menu Bg : Tantalus</Name>
 		<InstallationPath>Features/Menubg/menubgtantalus</InstallationPath>
 		<Description>Tantalus Pattern on Menu Background</Description>
-		<Priority>1</Priority>
+		<Priority>2</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Menu Bg : Chocobo</Name>
 		<InstallationPath>Features/Menubg/menubgchocobo</InstallationPath>
 		<Description>Chocobo Pattern on Menu Background</Description>
-		<Priority>1</Priority>
+		<Priority>3</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Title Screen : Alternate </Name>
@@ -467,13 +469,13 @@ You should better use the Playable Characters Pack instead. This later one doesn
 		<Name>Title Screen : Recreation </Name>
 		<InstallationPath>Features/TitleLogo/TitleLogo2</InstallationPath>
 		<Description>Shows a Recreation title screen and Memoria Indicator</Description>
-		<Priority>1</Priority>
+		<Priority>3</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Title Screen : Old School </Name>
 		<InstallationPath>Features/TitleLogo/TitleLogo3</InstallationPath>
 		<Description>Shows an old school type of title screen</Description>
-		<Priority>1</Priority>
+		<Priority>2</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>UI : Concept Art Title Loop</Name>
@@ -520,14 +522,15 @@ You should better use the Playable Characters Pack instead. This later one doesn
 	<SubMod>
 		<Name>Tweak: 1 Gem Support Ability</Name>
 		<InstallationPath>Features/Tweaks/Ability</InstallationPath>
-		<Description>Enables 1 gem for passive abilities to be enabled Now Compatible to Alternate Fantasy</Description>
-		<Priority>1</Priority>
+		<Description>Enables 1 gem for passive abilities to be
+	enabled Now Compatible to Alternate Fantasy</Description>
+		<Priority>3</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: Halved count support Gem Ability</Name>
 		<InstallationPath>Features/Tweaks/AbilityHalf</InstallationPath>
 		<Description>Cuts ability gems to half for support abilites </Description>
-		<Priority>1</Priority>
+		<Priority>2</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 2x AP Gain</Name>
@@ -539,13 +542,13 @@ You should better use the Playable Characters Pack instead. This later one doesn
 		<Name>Tweak: 4x AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP4x</InstallationPath>
 		<Description>Gains 4x AP after battle</Description>
-		<Priority>1</Priority>
+		<Priority>2</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 99 AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP99</InstallationPath>
 		<Description>Gains 99 AP after battle</Description>
-		<Priority>1</Priority>
+		<Priority>3</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 2x EXP Gain</Name>
@@ -557,19 +560,19 @@ You should better use the Playable Characters Pack instead. This later one doesn
 		<Name>Tweak: 4x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP4x</InstallationPath>
 		<Description>Gains 4x EXP after battle</Description>
-		<Priority>1</Priority>
+		<Priority>2</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 8x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP8x</InstallationPath>
 		<Description>Gains 8x EXP after battle</Description>
-		<Priority>1</Priority>
+		<Priority>3</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: Halved EXP</Name>
 		<InstallationPath>Features/Tweaks/ExpHalf</InstallationPath>
 		<Description>Cuts the EXP requirement to level up faster</Description>
-		<Priority>1</Priority>
+		<Priority>4</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 2x gil</Name>
@@ -581,18 +584,19 @@ You should better use the Playable Characters Pack instead. This later one doesn
 		<Name>Tweak: 4x gil</Name>
 		<InstallationPath>Features/Tweaks/4xgil</InstallationPath>
 		<Description>4x Gil received after battle</Description>
-		<Priority>1</Priority>
+		<Priority>2</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 8x gil</Name>
 		<InstallationPath>Features/Tweaks/8xgil</InstallationPath>
 		<Description>8x Gil received after battle</Description>
-		<Priority>1</Priority>
+		<Priority>3</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: Get 2x of any item drop after battle </Name>
 		<InstallationPath>Features/Tweaks/2xitem</InstallationPath>
-		<Description>Any item received after battle would be multiplied by 2 , hence if a monster drops 2 potions you get 4  </Description>
+		<Description>Any item received after battle would be multiplied by 2 ,
+	hence if a monster drops 2 potions you get 4  </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
