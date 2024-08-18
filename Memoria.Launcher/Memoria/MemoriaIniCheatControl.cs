@@ -533,8 +533,11 @@ namespace Memoria.Launcher
                     value = " 100";
                     OnPropertyChanged(nameof(MaxCardCount));
                 }
-                if (!Int16.TryParse(value, out _maxcardcount))
+                Int16 cardCount = 100;
+                if (!Int16.TryParse(value, out cardCount))
                     _maxcardcount = 0;
+                else
+                    _maxcardcount = cardCount < 9999 ? (Int16)0 : (Int16)1;
 
 
                 value = iniFile.ReadValue("TetraMaster", nameof(ReduceRandom));
@@ -669,7 +672,7 @@ namespace Memoria.Launcher
                         }
                         break;
                     case nameof(ReduceRandom):
-                        if (MaxCardCount != 0)
+                        if (ReduceRandom != 0)
                             iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
                         iniFile.WriteValue("TetraMaster", propertyName + " ", " " + ReduceRandom);
                         break;

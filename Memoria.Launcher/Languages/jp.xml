@@ -305,7 +305,7 @@
 	TooltipActivateAll = "すべてのModを有効にする"
 	TooltipDeactivateAll = "すべてのModを無効にする"
 	TooltipUninstall = "Modのアンインストール"
-	TooltipDownload = "選択したModをダウンロード"
+	TooltipDownload = "ダウンロード/更新"
 	TooltipCancel = "現在のダウンロードをキャンセル/右クリックですべてのダウンロードをキャンセル"
 
 	/>

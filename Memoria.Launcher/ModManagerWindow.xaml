@@ -92,6 +92,10 @@
                     <Setter Property="Content" Value="{DynamicResource None}" />
                     <Setter Property="Padding" Value="2" />
                 </DataTrigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="Black"/>
+                    <Setter Property="Foreground" Value="Gray"/>
+                </Trigger>
             </Style.Triggers>
         </Style>
         <Style x:Key="OpenLinkStyle" TargetType="{x:Type Button}">
@@ -102,9 +106,52 @@
                     <Setter Property="Content" Value="{DynamicResource None}" />
                     <Setter Property="Padding" Value="2" />
                 </DataTrigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="Black"/>
+                    <Setter Property="Foreground" Value="Gray"/>
+                </Trigger>
             </Style.Triggers>
         </Style>
+        <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="5"
+                        Effect="{StaticResource ButtondropShadowEffect}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" 
+                        Width="36"
+                        Height="36"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#eee"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#44f"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="#fff"/>
+                                <Setter TargetName="border" Property="BorderBrush" Value="#44f"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Background" Value="#555"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="MainListViewItemStyle" TargetType="{x:Type ListViewItem}">
+            <Style.Triggers>
+                <!-- DataTrigger to check if the mod is outdated -->
+                <DataTrigger Binding="{Binding IsOutdated}" Value="True">
+                    <Setter Property="Background" Value="LightCoral"/>
+                    <Setter Property="Foreground" Value="Yellow"/>
+                    <Setter Property="BorderBrush" Value="Yellow"/>
+                </DataTrigger>
+            </Style.Triggers>
             <Setter Property="SnapsToDevicePixels" Value="true" />
             <Setter Property="OverridesDefaultStyle" Value="true" />
             <Setter Property="BorderThickness" Value="0,0,0,0" />
@@ -219,7 +266,7 @@
             <Setter Property="Background" Value="{StaticResource LightGreyUI}" />
             <Setter Property="Height" Value="0" />
         </Style>
-        
+
         <DataTemplate x:Key="FilterItemTemplate">
             <Border
                 Padding="5"
@@ -478,28 +525,14 @@
                     Grid.Column="0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Stretch">
-                        <Button
-                        x:Name="btnMoveUp"
+                        <Button x:Name="btnMoveUp"
+                        Style="{StaticResource ButtonStyle}"
                         Margin="0,0,0,3"
                         Click="OnClickMoveUp"
                         MouseRightButtonUp="OnClickSendTop"
                         TabIndex="21"
                         ToolTip="Move Up/Right-Click to Move to Top" >
-                            <Image
-                            x:Name="btnMoveUpimg"
-                            Width="36"
-                            Height="36"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Source="/Images/btnMoveUpimg.png"
-                            />
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="5"/>
-                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
-                                </Style>
-                            </Button.Resources>
-
+                            <Image Source="/Images/btnMoveUpimg.png" />
                         </Button>
                         <!--<Button
                             x:Name="btnMoveUp"
@@ -512,49 +545,26 @@
                             ToolTip="Move Up/Right-Click to Move to Top" />-->
                         <Button
                         x:Name="btnMoveDown"
+                        Style="{StaticResource ButtonStyle}"
                         Margin="0,3,0,3"
                         Click="OnClickMoveDown"
                         MouseRightButtonDown="OnClickSendBottom"
                         TabIndex="22"
                         ToolTip="Move Down/Right-Click to Move to Bottom" >
-                            <Image
-                            x:Name="btnMoveDownimg"
-                            Width="36"
-                            Height="36"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Source="/Images/btnMoveDownimg.png"
-                            />
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="5"/>
-                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
-                                </Style>
-                            </Button.Resources>
+                            <Image Source="/Images/btnMoveDownimg.png" />
                         </Button>
+                        <!--
                         <Button
                         x:Name="btnCheckCompatibility"
+                        Style="{StaticResource ButtonStyle}"
                         Margin="0,3,0,3"
                         Click="OnClickCheckConflicts"
                         MouseRightButtonDown="OnClickCheckAllConflicts"
                         TabIndex="25"
                         ToolTip="Check Mod Compatibilities/Right-Click to Check All" >
-                            <Image
-                            x:Name="btnCheckCompatibilityimg"
-                            Width="36"
-                            Height="36"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Source="/Images/btnCheckCompatibilityimg.png"
-                            />
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="5"/>
-                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
-                                </Style>
-                            </Button.Resources>
-
+                            <Image Source="/Images/btnCheckCompatibilityimg.png" />
                         </Button>
+                        -->
                         <!--
                         <Button
                             x:Name="btnActivateAll"
@@ -593,49 +603,25 @@
                         -->
                         <Button
                         x:Name="btnUninstall"
+                        Style="{StaticResource ButtonStyle}"
                         Margin="0,3,0,3"
                         Click="OnClickUninstall"
                         MouseRightButtonDown="OnClickUninstall"
                         TabIndex="28"
                         ToolTip="Uninstall Mod(s)" >
-                            <Image
-                            x:Name="btnUninstallimg"
-                            Width="36"
-                            Height="36"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Source="/Images/btnUninstallimg.png"
-                            />
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="5"/>
-                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
-                                </Style>
-                            </Button.Resources>
+                            <Image Source="/Images/btnUninstallimg.png" />
                         </Button>
                     </StackPanel>
                     <Button
                     x:Name="btnClose"
+                    Style="{StaticResource ButtonStyle}"
                     Margin="0,3,0,0"
                     Click="OnClickClose"
                     MouseRightButtonDown="OnClickClose"
                     TabIndex="28"
                     ToolTip="Close Mod Manager"
                     VerticalAlignment="Bottom">
-                        <Image
-                        x:Name="btncloseimg"
-                        Width="36"
-                        Height="36"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Source="/Images/btnCloseimg.png"
-                        />
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="5"/>
-                                <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
-                            </Style>
-                        </Button.Resources>
+                        <Image Source="/Images/btnCloseimg.png" />
                     </Button>
                     <ListView x:Name="lstMods"
                     Margin="6,0,0,0"
@@ -669,11 +655,8 @@
                                 </Style.Triggers>
                             </Style>
                         </ListView.ItemContainerStyle>
-                        <ListView.View
-                            
-                                >
-                            <GridView
-                                >
+                        <ListView.View>
+                            <GridView>
                                 <GridViewColumn
                                 x:Name="colMyModsActive"
                                 Width="28"
@@ -689,9 +672,14 @@
                                 </GridViewColumn>
                                 <GridViewColumn
                                 x:Name="colMyModsPriority"
-                                Width="30"
+                                Width="28"
                                 DisplayMemberBinding="{Binding Priority}"
-                                Header="🠝🠟" />
+                                Header="⮝⮟" />
+                                <GridViewColumn
+                                x:Name="colMyModsInfoIcon"
+                                Width="28"
+                                DisplayMemberBinding="{Binding InfoIcon}"
+                                Header="" />
                                 <GridViewColumn
                                 x:Name="colMyModsName"
                                 Width="Auto"
@@ -741,20 +729,10 @@
                         Margin="0,0,0,3"
                         MouseRightButtonDown="OnClickDownload"
                         TabIndex="11"
-                        ToolTip="Download Selected Mod(s)" >
-                            <Image x:Name="btnDownloadimg"
-                            Width="36"
-                            Height="36"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Source="/Images/btnDownloadimg.png"
-                            />
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="5"/>
-                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
-                                </Style>
-                            </Button.Resources>
+                        IsEnabled="false"
+                        Style="{StaticResource ButtonStyle}"
+                        ToolTip="Download/Update Selected Mod(s)" >
+                            <Image Source="/Images/btnDownloadimg.png" />
                         </Button>
                     </StackPanel>
                     <ListView x:Name="lstCatalogMods"
@@ -833,37 +811,24 @@
 
 
                     <StackPanel
-                        Grid.Row="1"
-                        Grid.Column="0"
-                        Margin="0,5,0,0"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Stretch">
-                        <Button
-                        x:Name="btnCancel"
+                    Grid.Row="1"
+                    Grid.Column="0"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Stretch">
+                        <Button x:Name="btnCancel"
+                        Style="{StaticResource ButtonStyle}"
                         Click="OnClickCancel"
                         Margin="0,0,0,3"
                         MouseRightButtonDown="OnClickCancelAll"
                         TabIndex="14"
                         ToolTip="Cancel Current Download/Right-Click to Cancel All"
                         ToolTipService.ShowOnDisabled="True"  >
-                            <Image
-                            x:Name="btnCancelimg"
-                            Width="36"
-                            Height="36"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Source="/Images/btnCancelimg.png"
-                            />
-                            <Button.Resources>
-                                <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="5"/>
-                                    <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
-                                </Style>
-                            </Button.Resources>
+                            <Image Source="/Images/btnCancelimg.png" />
                         </Button>
                     </StackPanel>
-                    <Button
-                    x:Name="btnCatalogClose"
+                    <Button x:Name="btnCatalogClose"
+                    Style="{StaticResource ButtonStyle}"
                     Grid.Row="1"
                     Margin="0,3,0,0"
                     Click="OnClickClose"
@@ -871,20 +836,7 @@
                     TabIndex="28"
                     ToolTip="Close Mod Manager"
                     VerticalAlignment="Bottom" >
-                        <Image
-                        x:Name="btnCatalogCloseimg"
-                        Width="36"
-                        Height="36"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Source="/Images/btnCloseimg.png"
-                        />
-                        <Button.Resources>
-                            <Style TargetType="Border">
-                                <Setter Property="CornerRadius" Value="5"/>
-                                <Setter Property="Effect" Value="{StaticResource ButtondropShadowEffect}" />
-                            </Style>
-                        </Button.Resources>
+                        <Image Source="/Images/btnCloseimg.png" />
                     </Button>
                     <ListView x:Name="lstDownloads"
                     Grid.Row="1"
@@ -1119,7 +1071,7 @@
                             </WrapPanel>
 
 
-                            
+
                             <!--<WrapPanel
                             Grid.Row="3"
                             Grid.ColumnSpan="2"

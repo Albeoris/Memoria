@@ -66,6 +66,7 @@ namespace Memoria.Launcher
             lstCatalogMods.ItemsSource = modListCatalog;
             lstMods.ItemsSource = modListInstalled;
             lstDownloads.ItemsSource = downloadList;
+            CheckOutdatedMods();
             UpdateCatalogInstallationState();
 
             lstCatalogMods.SelectionChanged += OnModListSelect;
@@ -77,6 +78,40 @@ namespace Memoria.Launcher
             if (modListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
+        }
+
+        private void CheckOutdatedMods()
+        {
+            Boolean allModsAreUpToDate = true;
+            foreach (Mod mod in modListInstalled)
+            {
+                if (mod != null && (mod.Name == "Moguri Mod" && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
+                {
+                    mod.Name = "⚠️ " + mod.Name + " (Outdated)";
+                    mod.Description = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
+                }
+                if (mod != null && mod.Name != null & mod.CurrentVersion != null)
+                {
+                    foreach (Mod catalog_mod in modListCatalog)
+                    {
+                        if (catalog_mod != null && catalog_mod.Name != null & catalog_mod.CurrentVersion != null && mod.Name == catalog_mod.Name)
+                        {
+                            Boolean versionCorresponds = mod.CurrentVersion == catalog_mod.CurrentVersion;
+                            mod.IsOutdated = catalog_mod.IsOutdated = !versionCorresponds;
+                            if (mod.IsOutdated)
+                            {
+                                mod.InfoIcon = "⏫";
+                                allModsAreUpToDate = false;
+                            }
+                            else
+                            {
+                                mod.InfoIcon = "";
+                            }
+                        }
+                    }
+                }
+            }
+            colMyModsInfoIcon.Width = allModsAreUpToDate ? 0 : 28;
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
@@ -139,7 +174,8 @@ namespace Memoria.Launcher
             }
             else
             {
-                btnDownload.Background = System.Windows.Media.Brushes.DarkGray;
+                btnDownload.IsEnabled = false;
+                btnDownload.Background = System.Windows.Media.Brushes.Black;
             }
         }
         private void OnModListDoubleClick(Object sender, RoutedEventArgs e)
@@ -161,6 +197,7 @@ namespace Memoria.Launcher
             if (subMod != null)
                 subMod.IsActive = PreviewSubModActive.IsChecked ?? false;
         }
+        /*
         private void OnClickCheckConflicts(Object sender, RoutedEventArgs e)
         {
             ModConflictWindow conflictWindow = new ModConflictWindow(modListInstalled, true);
@@ -173,6 +210,7 @@ namespace Memoria.Launcher
             conflictWindow.Owner = this;
             conflictWindow.ShowDialog();
         }
+        */
         private void OnClickUninstall(Object sender, RoutedEventArgs e)
         {
             Uninstall();
@@ -228,18 +266,6 @@ namespace Memoria.Launcher
                 lstMods.SelectedItem = i1;
                 UpdateInstalledPriorityValue();
             }
-        }
-        private void OnClickActivateAll(Object sender, RoutedEventArgs e)
-        {
-            foreach (Mod mod in modListInstalled)
-                mod.IsActive = true;
-            lstMods.Items.Refresh();
-        }
-        private void OnClickDeactivateAll(Object sender, RoutedEventArgs e)
-        {
-            foreach (Mod mod in modListInstalled)
-                mod.IsActive = false;
-            lstMods.Items.Refresh();
         }
         private void OnClickDownload(Object sender, RoutedEventArgs e)
         {
@@ -331,6 +357,21 @@ namespace Memoria.Launcher
                     SortCatalog(accessors[1], ascending);
             }
         }
+
+        private void OnClickActiveHeader(Object sender, EventArgs e)
+        {
+            MethodInfo[] accessors = null;
+            if (sender == colMyModsActive.Header)
+                accessors = typeof(Mod).GetProperty("IsActive")?.GetAccessors();
+            if (accessors != null && (Mod)modListInstalled[0] != null)
+            {
+                Boolean isFirstModActive = modListInstalled[0].IsActive;
+                foreach (Mod mod in modListInstalled)
+                    mod.IsActive = !isFirstModActive;
+                lstMods.Items.Refresh();
+            }
+        }
+
         private void OnPreviewFileDownloaded(Object sender, EventArgs e)
         {
             if (PreviewModImage.Source == sender)
@@ -703,6 +744,7 @@ namespace Memoria.Launcher
                 }
             }
             UpdateInstalledPriorityValue();
+            CheckOutdatedMods();
         }
 
         private Boolean GenerateAutomaticDescriptionFile(String folderName)
@@ -721,6 +763,7 @@ namespace Memoria.Launcher
             String category = "";
             String description = "";
 
+            /*
             if (folderName == "MoguriFiles")
             {
                 name = "Moguri Mod";
@@ -744,6 +787,7 @@ namespace Memoria.Launcher
                 category = "Visual";
                 description = "";
             }
+            */
 
             File.WriteAllText(folderName + "/" + Mod.DESCRIPTION_FILE,
                 "<Mod>\n" +
@@ -874,6 +918,8 @@ namespace Memoria.Launcher
             {
                 if (Mod.SearchWithName(downloadList, mod.Name) != null)
                     mod.Installed = "⌛";
+                else if (Mod.SearchWithName(modListInstalled, mod.Name) != null && Mod.SearchWithName(modListInstalled, mod.Name).IsOutdated)
+                    mod.Installed = "⏫";
                 else if (Mod.SearchWithName(modListInstalled, mod.Name) != null)
                     mod.Installed = "✔";
                 else
@@ -1014,7 +1060,7 @@ namespace Memoria.Launcher
             //colMyModsActive.Header = Lang.ModEditor.Active;
             btnMoveUp.ToolTip = Lang.ModEditor.TooltipMoveUp;
             btnMoveDown.ToolTip = Lang.ModEditor.TooltipMoveDown;
-            btnCheckCompatibility.ToolTip = Lang.ModEditor.TooltipCheckCompatibility;
+            //btnCheckCompatibility.ToolTip = Lang.ModEditor.TooltipCheckCompatibility;
             //btnActivateAll.ToolTip = Lang.ModEditor.TooltipActivateAll;
             //btnDeactivateAll.ToolTip = Lang.ModEditor.TooltipDeactivateAll;
             btnUninstall.ToolTip = Lang.ModEditor.TooltipUninstall;
@@ -1028,9 +1074,13 @@ namespace Memoria.Launcher
             header = new GridViewColumnHeader() { Content = Lang.ModEditor.Category };
             header.Click += OnClickCatalogHeader;
             colCatalogCategory.Header = header;
-            header = new GridViewColumnHeader() { Content = "✔" }; // Lang.ModEditor.Installed
+            header = new GridViewColumnHeader() { Content = "" }; // Lang.ModEditor.Installed
             header.Click += OnClickCatalogHeader;
             colCatalogInstalled.Header = header;
+
+            header = new GridViewColumnHeader() { Content = "✅" };
+            header.Click += OnClickActiveHeader;
+            colMyModsActive.Header = header;
             colDownloadName.Header = Lang.ModEditor.Mod;
             colDownloadProgress.Header = Lang.ModEditor.Progress;
             colDownloadSpeed.Header = Lang.ModEditor.Speed;
