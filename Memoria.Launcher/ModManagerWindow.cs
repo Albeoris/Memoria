@@ -79,7 +79,9 @@ namespace Memoria.Launcher
             {
                 if (mod != null && ((mod.Name == "Moguri Mod" || mod.Name == "MoguriFiles") && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
                 {
-                    mod.Name = "⚠️ " + mod.Name + " (Outdated)";
+                    mod.UpdateIcon = "⏫";
+                    allModsAreUpToDate = false;
+                    mod.Name = mod.Name + " 8 (Outdated)";
                     mod.Description = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
                 }
                 if (mod != null && mod.Name != null & mod.CurrentVersion != null)
@@ -92,18 +94,18 @@ namespace Memoria.Launcher
                             mod.IsOutdated = catalog_mod.IsOutdated = !versionCorresponds;
                             if (mod.IsOutdated)
                             {
-                                mod.InfoIcon = "⏫";
+                                mod.UpdateIcon = "⏫";
                                 allModsAreUpToDate = false;
                             }
                             else
                             {
-                                mod.InfoIcon = "";
+                                mod.UpdateIcon = null;
                             }
                         }
                     }
                 }
             }
-            colMyModsInfoIcon.Width = allModsAreUpToDate ? 0 : 28;
+            colMyModsUpdateIcon.Width = allModsAreUpToDate ? 0 : 28;
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)

@@ -676,10 +676,22 @@
                                 DisplayMemberBinding="{Binding Priority}"
                                 Header="⮝⮟" />
                                 <GridViewColumn
-                                x:Name="colMyModsInfoIcon"
+                                x:Name="colMyModsUpdateIcon"
                                 Width="28"
-                                DisplayMemberBinding="{Binding InfoIcon}"
-                                Header="" />
+                                Header="" >
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock x:Name="colMyModsUpdateText"
+                                                Text="{Binding UpdateIcon}"
+                                                FontWeight="Black"
+                                                ToolTip="Update available"
+                                                ToolTipService.InitialShowDelay="100"
+                                                Foreground="#efd525" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                                 <GridViewColumn
                                 x:Name="colMyModsName"
                                 Width="Auto"

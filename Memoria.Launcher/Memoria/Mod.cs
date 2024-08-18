@@ -15,7 +15,7 @@ namespace Memoria.Launcher
         public String Name { get; set; }
         public Version CurrentVersion { get; set; }
         public Boolean IsOutdated { get; set; }
-        public String InfoIcon { get; set; }
+        public String UpdateIcon { get; set; }
         public String ReleaseDate { get; set; }
         public String ReleaseDateOriginal { get; set; }
         public String Author { get; set; }
