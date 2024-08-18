@@ -268,6 +268,8 @@ namespace NCalc
                                 args.Result = Convert.ToUInt64(FF9BattleDB.StatusSets[setId]);
                                 return;
                             }
+                            args.Result = Convert.ToUInt64(Enum.Parse(t, enumValueStr));
+                            return;
                         }
                         args.Result = Convert.ToInt32(Enum.Parse(t, enumValueStr));
                         return;
