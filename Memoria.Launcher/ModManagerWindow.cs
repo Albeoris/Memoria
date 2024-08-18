@@ -1,13 +1,9 @@
 ﻿using Ini;
-using SharpCompress.Archives;
-using SharpCompress.Common;
-using SharpCompress.Readers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Drawing;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -21,14 +17,10 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
-using static System.Windows.Forms.DataFormats;
 using Application = System.Windows.Application;
-using Color = System.Drawing.Color;
-using GridView = System.Windows.Controls.GridView;
 using GridViewColumnHeader = System.Windows.Controls.GridViewColumnHeader;
 using ListView = System.Windows.Controls.ListView;
 using MessageBox = System.Windows.Forms.MessageBox;
-using Point = System.Drawing.Point;
 
 namespace Memoria.Launcher
 {
