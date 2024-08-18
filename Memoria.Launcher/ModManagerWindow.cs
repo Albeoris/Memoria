@@ -825,6 +825,8 @@ namespace Memoria.Launcher
                 if (PreviewModRelease.Text == "" && PreviewModReleaseOriginal.Text != "") PreviewModRelease.Text = PreviewModReleaseOriginal.Text;
                 PreviewModAuthor.Text = mod.Author ?? "Unknown";
                 PreviewModDescription.Text = mod.Description != null && mod.Description != "" ? mod.Description : "No description.";
+                if (mod.IncompatibleWith != null && mod.IncompatibleWith != "")
+                    mod.Description = $"⚠️ The mod is incompatible with: {mod.IncompatibleWith}.\n\n{mod.Description}";
                 PreviewModReleaseNotes.Text = mod.PatchNotes ?? "";
                 PreviewModCategory.Text = mod.Category ?? "Unknown";
                 PreviewModWebsite.ToolTip = mod.Website ?? String.Empty;
