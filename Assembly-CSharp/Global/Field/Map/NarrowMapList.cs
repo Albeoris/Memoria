@@ -1,6 +1,6 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using Memoria;
 
 public static class NarrowMapList
 {
@@ -34,8 +34,11 @@ public static class NarrowMapList
     {
         if (SpecificScenesNarrow(mapId))
             return 320;
-        if (mapId == 50 && FieldMap.ActualPsxScreenWidth > 480)
+        if ((mapId == 50 || mapId == 70) && FieldMap.ActualPsxScreenWidth > 478)
+        {
+            Configuration.Graphics.DisableWidescreenSupportForSingleMap();
             return 320;
+        }
 
         //return MapWidthList.FirstOrDefault(entry => entry[0] == mapId)?[1] ?? 500;
         foreach (Int32[] entry in MapWidthList)
