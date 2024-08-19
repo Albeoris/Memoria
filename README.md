@@ -45,7 +45,7 @@
 
 ## Use
 
-- **INSTALL**: Download and run [Memoria.Patcher.exe](https://github.com/Albeoris/Memoria/releases/)
+- **INSTALL**: Download and run [Memoria.Patcher.exe](https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe)
   - Automatically finds the game path from Windows registry (if you've launched the game once and haven't moved the install folder)
   - If not, launch the patcher from the game folder, or provide a custom path in command line: 'Memoria.Patcher.exe "gameDirectory"'
   - Mac users: The launcher has been shown to be currently only compatible with Crossover in Windows 10 32bit mode (Whiskey and 64bit give an error "mono-io-layer-error")
