@@ -1133,7 +1133,7 @@ namespace Memoria.Launcher
             tabMyMods.Text = Lang.ModEditor.TabMyMods;
             //colMyModsPriority.Header = Lang.ModEditor.Priority;
             colMyModsName.Header = Lang.ModEditor.Name;
-            colMyModsAuthor.Header = Lang.ModEditor.Author;
+            //colMyModsAuthor.Header = Lang.ModEditor.Author;
             colMyModsCategory.Header = Lang.ModEditor.Category;
             //colMyModsActive.Header = Lang.ModEditor.Active;
             btnMoveUp.ToolTip = Lang.ModEditor.TooltipMoveUp;

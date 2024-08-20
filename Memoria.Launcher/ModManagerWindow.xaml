@@ -715,11 +715,13 @@
                                 Width="Auto"
                                 DisplayMemberBinding="{Binding Name}"
                                 Header="Name" />
+                                <!--
                                 <GridViewColumn
                                 x:Name="colMyModsAuthor"
                                 Width="100"
                                 DisplayMemberBinding="{Binding Author}"
                                 Header="Author(s)" />
+                                -->
                                 <GridViewColumn
                                 x:Name="colMyModsCategory"
                                 Width="100"
