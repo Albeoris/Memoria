@@ -26,6 +26,22 @@ namespace Memoria.Launcher
 {
     public partial class ModManagerWindow : Window, IComponentConnector
     {
+        public static readonly String[] OutdatedModsVersions = // "Mod name_Version"
+        {
+            "Alternate Fantasy_6.0",
+            "Alternate Fantasy_6.1",
+            "Alternate Fantasy_6.2",
+            "Alternate Fantasy_6.3",
+            "Alternate Fantasy_6.4",
+            "Alternate Fantasy_6.5",
+            "Trance Seek_0.3.20",
+            "Trance Seek_0.3.21",
+            "Trance Seek_0.3.22",
+            "Trance Seek_0.3.23",
+            "Playable Character Pack_1.0",
+            "Playable Character Pack_1.1",
+        };
+
         public ObservableCollection<Mod> modListInstalled = new ObservableCollection<Mod>();
         public ObservableCollection<Mod> modListCatalog = new ObservableCollection<Mod>();
         public ObservableCollection<Mod> downloadList = new ObservableCollection<Mod>();
@@ -145,6 +161,22 @@ namespace Memoria.Launcher
 
                                 allModsAreCompatible = false;
                             }
+                        }
+                    }
+                }
+                if (mod != null && mod.Name != null && mod.CurrentVersion != null)
+                {
+                    String ver = mod.CurrentVersion?.ToString() ?? "0";
+                    foreach (String outdated in OutdatedModsVersions)
+                    {
+                        if (outdated == mod.Name + "_" + ver)
+                        {
+                            mod.IncompIcon = "⚔️";
+                            if (mod.ActiveIncompatibleMods == null)
+                                mod.ActiveIncompatibleMods = $"Mod version ({ver}) is incompatible with the current Memoria\nUpdate it from the mod catalog";
+                            else
+                                mod.ActiveIncompatibleMods += $"\n\nMod version({ver}) is incompatible with the current Memoria\nUpdate it from the mod catalog";
+                            allModsAreCompatible = false;
                         }
                     }
                 }
@@ -877,7 +909,7 @@ namespace Memoria.Launcher
                 if (PreviewModRelease.Text == "" && PreviewModReleaseOriginal.Text != "") PreviewModRelease.Text = PreviewModReleaseOriginal.Text;
                 PreviewModAuthor.Text = mod.Author ?? "Unknown";
                 PreviewModDescription.Text = mod.Description != null && mod.Description != "" ? mod.Description : "No description.";
-                if (mod.IncompatibleWith != null && mod.IncompatibleWith != "")
+                if (mod.IncompatibleWith != null && mod.IncompatibleWith != "" && !mod.Description.Contains("⚠️"))
                     mod.Description = $"⚠️ The mod is incompatible with: {mod.IncompatibleWith}.\n\n{mod.Description}";
                 PreviewModReleaseNotes.Text = mod.PatchNotes ?? "";
                 PreviewModCategory.Text = mod.Category ?? "Unknown";

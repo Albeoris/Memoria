@@ -705,7 +705,7 @@
                                                 ToolTip="{Binding ActiveIncompatibleMods}"
                                                 ToolTipService.InitialShowDelay="10"
                                                 ToolTipService.BetweenShowDelay="0"
-                                                Foreground="red" />
+                                                Foreground="#b51717" />
                                             </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
