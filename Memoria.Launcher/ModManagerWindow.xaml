@@ -713,8 +713,23 @@
                                 <GridViewColumn
                                 x:Name="colMyModsName"
                                 Width="Auto"
-                                DisplayMemberBinding="{Binding Name}"
-                                Header="Name" />
+                                Header="Name" >
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock x:Name="colMyModsNameText"
+                                                Text="{Binding Name}" />
+                                                <TextBlock x:Name="colMyModsVersionText"
+                                                Text="{Binding CurrentVersion}"
+                                                Margin="4,0,0,0"
+                                                FontSize="11"
+                                                VerticalAlignment="Bottom"
+                                                Foreground="#888"
+                                                />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                                 <!--
                                 <GridViewColumn
                                 x:Name="colMyModsAuthor"
