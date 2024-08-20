@@ -666,6 +666,7 @@
                                             <CheckBox
                                             HorizontalAlignment="Center"
                                             IsChecked="{Binding IsActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Click="CheckBox_Click"
                                             IsTabStop="False" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
@@ -686,8 +687,25 @@
                                                 Text="{Binding UpdateIcon}"
                                                 FontWeight="Black"
                                                 ToolTip="Update available"
-                                                ToolTipService.InitialShowDelay="100"
+                                                ToolTipService.InitialShowDelay="10"
                                                 Foreground="#efd525" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn
+                                x:Name="colMyModsIncompIcon"
+                                Width="28"
+                                Header="" >
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock x:Name="colMyModsIncompText"
+                                                Text="{Binding IncompIcon}"
+                                                ToolTip="{Binding ActiveIncompatibleMods}"
+                                                ToolTipService.InitialShowDelay="10"
+                                                ToolTipService.BetweenShowDelay="0"
+                                                Foreground="red" />
                                             </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>

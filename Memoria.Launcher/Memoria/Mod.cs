@@ -23,6 +23,8 @@ namespace Memoria.Launcher
         public String PatchNotes { get; set; }
         public CompatibilityNoteClass CompatibilityNotes { get; set; }
         public String IncompatibleWith { get; set; }
+        public String IncompIcon { get; set; }
+        public String ActiveIncompatibleMods { get; set; }
         public String HasPriorityOverMods { get; set; }
         public String Category { get; set; }
         public String Website { get; set; }

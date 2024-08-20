@@ -70,6 +70,7 @@ namespace Memoria.Launcher
             if (modListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
+            CheckIncompMods();
         }
 
         private void CheckOutdatedMods()
@@ -106,6 +107,55 @@ namespace Memoria.Launcher
                 }
             }
             colMyModsUpdateIcon.Width = allModsAreUpToDate ? 0 : 28;
+            lstMods.Items.Refresh();
+        }
+
+        private void CheckIncompMods()
+        {
+            Boolean allModsAreCompatible = true;
+            foreach (Mod mod in modListInstalled) // reset state
+            {
+                mod.IncompIcon = null;
+                mod.ActiveIncompatibleMods = null;
+            }
+            foreach (Mod mod in modListInstalled)
+            {
+                if (mod != null && mod.Name != null && mod.IncompatibleWith != null && mod.IsActive)
+                {
+                    IEnumerable<String> Incomps = mod.IncompatibleWith.Split(',');
+                    foreach (String Incomp in Incomps)
+                    {
+                        String incompName = Incomp.Trim();
+                        foreach (Mod other_mod in modListInstalled)
+                        {
+                            if (other_mod != null && other_mod.Name != null && other_mod.Name == incompName && other_mod.IsActive)
+                            {
+                                mod.IncompIcon = "⚔️";
+                                other_mod.IncompIcon = "⚔️";
+
+                                if (mod.ActiveIncompatibleMods == null)
+                                    mod.ActiveIncompatibleMods = "Mod Incompatible with: " + other_mod.Name;
+                                else
+                                    mod.ActiveIncompatibleMods += ", " + other_mod.Name;
+
+                                if (other_mod.ActiveIncompatibleMods == null)
+                                    other_mod.ActiveIncompatibleMods = "Mod Incompatible with: " + mod.Name;
+                                else
+                                    other_mod.ActiveIncompatibleMods += ", " + mod.Name;
+
+                                allModsAreCompatible = false;
+                            }
+                        }
+                    }
+                }
+            }
+            colMyModsIncompIcon.Width = allModsAreCompatible ? 0 : 28;
+            lstMods.Items.Refresh();
+        }
+
+        private void CheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            CheckIncompMods();
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
@@ -164,12 +214,10 @@ namespace Memoria.Launcher
             if (canDownload)
             {
                 btnDownload.IsEnabled = true;
-                btnDownload.Background = System.Windows.Media.Brushes.White;
             }
             else
             {
                 btnDownload.IsEnabled = false;
-                btnDownload.Background = System.Windows.Media.Brushes.Black;
             }
         }
         private void OnModListDoubleClick(Object sender, RoutedEventArgs e)
@@ -364,6 +412,7 @@ namespace Memoria.Launcher
                     mod.IsActive = !isFirstModActive;
                 lstMods.Items.Refresh();
             }
+            CheckIncompMods();
         }
 
         private void OnPreviewFileDownloaded(Object sender, EventArgs e)
@@ -739,6 +788,7 @@ namespace Memoria.Launcher
             }
             UpdateInstalledPriorityValue();
             CheckOutdatedMods();
+            CheckIncompMods();
         }
 
         private Boolean GenerateAutomaticDescriptionFile(String folderName)
