@@ -529,7 +529,14 @@ namespace Assets.Scripts.Common
 
         public static void InitDiscChange(Int32 disc_id)
         {
-            InitFade(FadeMode.Sub, 10, Color.black, disc_id);
+            try
+            {
+                InitFade(FadeMode.Sub, 10, Color.black, disc_id);
+            }
+            catch
+            {
+                Log.Message("Coun't load discchange");
+            }
         }
 
         public static void InitFade(FadeMode mode, Int32 frame, Color32 target, Int32 disc_id = 0)
