@@ -470,7 +470,7 @@
                 Stretch="Fill" />
         </Canvas>
     </Window.Resources>
-    <Grid Background="#181818">
+    <Grid Background="#000120">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" MinHeight="100"  />
             <RowDefinition />
@@ -491,6 +491,7 @@
             Padding="10,10,10,10"
             BorderThickness="0"
             Background="{StaticResource LightGreyUI}"
+            SelectionChanged="TabControl_SelectionChanged"
             SelectedIndex="0"
             Grid.ColumnSpan="2" >
             <TabControl.Resources>

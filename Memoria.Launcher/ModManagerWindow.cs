@@ -14,6 +14,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
@@ -97,8 +98,8 @@ namespace Memoria.Launcher
                 if (mod != null && ((mod.Name == "Moguri Mod" || mod.Name == "MoguriFiles") && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
                 {
                     mod.UpdateIcon = "⏫";
+                    mod.CurrentVersion = Version.Parse("8.3");
                     allModsAreUpToDate = false;
-                    mod.Name = mod.Name + " 8 (Outdated)";
                     mod.Description = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
                 }
                 if (mod != null && mod.Name != null & mod.CurrentVersion != null)
@@ -183,6 +184,12 @@ namespace Memoria.Launcher
             }
             colMyModsIncompIcon.Width = allModsAreCompatible ? 0 : 28;
             lstMods.Items.Refresh();
+        }
+
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            lstMods.Items.Refresh();
+            lstCatalogMods.Items.Refresh();
         }
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
