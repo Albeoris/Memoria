@@ -200,6 +200,7 @@
 	TimeLeft = "Время Вышло"
 	ActiveIncompatibleMods = "Мод несовместим с: "
 	IncompatibleWithMemoria = "Версия мода несовместима с текущей Memoria. Обновите её из каталога модов."
+	UpdateTooltip = "Новая версия этого мода доступна в каталоге модов: "
 	TooltipMoveUp = "Вверх / Переместить Наверх (правый клик)"
 	TooltipMoveDown = "Вниз / Переместить к Последнему (правый клик)"
 	TooltipCheckCompatibility = "Совместимость Мод(ы) / Все установленные Мод(ы) (правый клик)"

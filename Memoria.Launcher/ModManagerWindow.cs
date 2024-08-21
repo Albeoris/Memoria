@@ -27,7 +27,7 @@ namespace Memoria.Launcher
 {
     public partial class ModManagerWindow : Window, IComponentConnector
     {
-        public static readonly String[] OutdatedModsVersions = // "Mod name_Version"
+        public static readonly String[] OutdatedModsVersions = // "ModName_Version"
         {
             "Alternate Fantasy_6.0",
             "Alternate Fantasy_6.1",
@@ -101,6 +101,7 @@ namespace Memoria.Launcher
                     mod.CurrentVersion = Version.Parse("8.3");
                     allModsAreUpToDate = false;
                     mod.Description = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
+                    mod.UpdateTooltip = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
                 }
                 if (mod != null && mod.Name != null & mod.CurrentVersion != null)
                 {
@@ -113,6 +114,7 @@ namespace Memoria.Launcher
                             if (mod.IsOutdated)
                             {
                                 mod.UpdateIcon = "⏫";
+                                mod.UpdateTooltip = Lang.ModEditor.UpdateTooltip + catalog_mod.CurrentVersion;
                                 allModsAreUpToDate = false;
                             }
                             else

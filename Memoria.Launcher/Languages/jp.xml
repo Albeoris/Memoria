@@ -195,6 +195,7 @@
 	TimeLeft = "残り時間"
 	ActiveIncompatibleMods = "以下と互換性がないMod: "
 	IncompatibleWithMemoria = "このModのバージョンは現在のMemoriaと互換性がありません。Modカタログから更新してください。"
+	UpdateTooltip = "ModカタログにこのModの新しいバージョンがあります: "
 	TooltipMoveUp = "上へ移動/右クリックで先頭へ移動"
 	TooltipMoveDown = "下へ移動/右クリックで最後尾へ移動"
 	TooltipCheckCompatibility = "Modの互換性を確認/右クリックですべてのModを確認"

@@ -687,7 +687,7 @@
                                                 <TextBlock x:Name="colMyModsUpdateText"
                                                 Text="{Binding UpdateIcon}"
                                                 FontWeight="Black"
-                                                ToolTip="Update available"
+                                                ToolTip="{Binding UpdateTooltip}"
                                                 ToolTipService.InitialShowDelay="10"
                                                 Foreground="#efd525" />
                                             </StackPanel>

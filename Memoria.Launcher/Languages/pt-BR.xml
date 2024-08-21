@@ -202,6 +202,7 @@
 	TimeLeft = "Tempo Restante"
 	ActiveIncompatibleMods = "Mod incompatível com: "
 	IncompatibleWithMemoria = "A versão do mod é incompatível com o Memoria atual. Atualize-o a partir do catálogo de mods."
+	UpdateTooltip = "Nova versão deste mod disponível no catálogo de mods: "
 	TooltipMoveUp = "Mover pra Cima/Clique com o Botão Direito do Mouse pra Mover pro Topo"
 	TooltipMoveDown = "Mover pra Baixo/Clique com o Botão Direito de Mouse pra Mover pro Rodapé"
 	TooltipCheckCompatibility = "Verificar as Compatibilidades com o Mod/Clique com o Botão Direito do Mouse pra Verificar Tudo"
