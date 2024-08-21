@@ -8,6 +8,8 @@ Shader "PSX/BattleMap_StatusEffect_Toon" {
 		_IsEnemy ("Is Enemy", Float) = 0.000000
 		_StencilOp ("stencil op", Float) = 2
 		_OutlineWidth ("Outline width", Float) = 2
+		_StencilRef ("Stencil Pass Ref", Float) = 0
+		_StencilOpOutline ("Outline Stencil Pass op", Float) = 0
 	}
 	SubShader { 
 		LOD 100
@@ -16,9 +18,9 @@ Shader "PSX/BattleMap_StatusEffect_Toon" {
 			Tags { "LightMode" = "ForwardBase" "QUEUE"="AlphaTest+3" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutOff" }
 			GpuProgramID 15200
 			
-			Stencil
+            Stencil
             {
-              Ref 101
+              Ref [_StencilRef]
               Comp Always
               Pass [_StencilOp]
             }
@@ -154,6 +156,10 @@ Shader "PSX/BattleMap_StatusEffect_Toon" {
 		    Name "OUTLINE"
 		    Cull Front
 			Tags { "QUEUE"="AlphaTest+3" "IGNOREPROJECTOR"="true" "RenderType"="TransparentCutOff" }
+			Stencil {
+			    Ref [_StencilRef]
+                Comp [_StencilOpOutline]
+            }
 			Program "vp" {
 				SubProgram "d3d9 " {
 					Bind "vertex" Vertex

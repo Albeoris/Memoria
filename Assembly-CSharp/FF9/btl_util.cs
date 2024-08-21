@@ -462,7 +462,9 @@ namespace FF9
                     componentsInChildren[i].material.SetFloat("_OutlineWidth", 2.3f);
                     componentsInChildren[i].material.SetFloat("_ShowOutline", Configuration.Shaders.Shader_Battle_Outlines == 1 ? 1f : 0f);
                     componentsInChildren[i].material.SetFloat("_IsEnemy", btl.bi.player == 0 ? 1 : 0);
-                    componentsInChildren[i].material.SetInt("_StencilOp", btl.bi.player == 0 ? 2 : 1);   
+                    componentsInChildren[i].material.SetInt("_StencilOp", 2);
+                    componentsInChildren[i].material.SetInt("_StencilRef", 101);
+                    componentsInChildren[i].material.SetInt("_StencilOpOutline", btl.bi.player == 0 ? 6 : 8);
                 }
 			}
 			MeshRenderer[] componentsInChildren2 = go.GetComponentsInChildren<MeshRenderer>();
@@ -480,7 +482,9 @@ namespace FF9
                         material.SetFloat("_OutlineWidth", 2.3f);
                         material.SetFloat("_ShowOutline", Configuration.Shaders.Shader_Battle_Outlines == 1 ? 1f : 0f);
                         material.SetFloat("_IsEnemy", btl.bi.player == 0 ? 1 : 0);
-                        material.SetInt("_StencilOp", btl.bi.player == 0 ? 2 : 1);
+                        material.SetInt("_StencilOp", 2);
+                        material.SetInt("_StencilRef", 101);
+                        material.SetInt("_StencilOpOutline", btl.bi.player == 0 ? 6 : 8);
                     }
 				}
 			}
