@@ -47,7 +47,7 @@
         StageMagicBlank = 42,   // SFX containing Pyro
         StageMagicMarcus = 43,  // SFX containing Poly
         StageMagicCinna = 44,   // SFX containing Pyro
-        AccessMenu = 45,        // Unused - Related to the .ini option [Battle] AccessMenus
+        AccessMenu = 45,        // Related to the .ini option [Battle] AccessMenus
         Reserve4 = 46,          // Unused
         EnemyAtk = 47,          // Normal enemy attacks (function ATB)
         BoundaryCheck = 48,     // Used as a delimiter for commands that can be defined in "Commands.csv" (the following ones cannot)

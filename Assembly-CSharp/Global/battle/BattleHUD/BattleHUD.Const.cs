@@ -43,10 +43,13 @@ public partial class BattleHUD : UIScene
 
     static BattleHUD()
     {
+        // Ignore "CommandTitles.csv" for good
+        /*
         CmdTitleTable = LoadBattleCommandTitles();
         foreach (IdMap mappingId in CmdTitleTable.Values)
             if (FF9BattleDB.CharacterActions.ContainsKey(mappingId.Id))
                 FF9BattleDB.CharacterActions[mappingId.Id].CastingTitleType = mappingId.MappedId;
+        */
 
         DebuffIconNames = new Dictionary<BattleStatusId, String>
         {
@@ -104,8 +107,7 @@ public partial class BattleHUD : UIScene
         // TODO: Move it to an external file
         String abilityName = FF9TextTool.ActionAbilityName(btl_util.GetCommandMainActionIndex(pCmd));
 
-        String result;
-        if (TryFormatRussianMagicSwordAbility(abilityName, out result))
+        if (TryFormatRussianMagicSwordAbility(abilityName, out String result))
             return result;
 
         String commandTitle = FF9TextTool.BattleCommandTitleText(0);
@@ -212,53 +214,20 @@ public partial class BattleHUD : UIScene
         return false;
     }
 
-    private static BattleCommandId GetCommandFromCommandIndex(ref BattleCommandMenu commandIndex, Int32 playerIndex)
+    private static BattleCommandId GetCommandFromCommandIndex(BattleCommandMenu commandIndex, Int32 playerIndex)
     {
         BattleUnit player = FF9StateSystem.Battle.FF9Battle.GetUnit(playerIndex);
         CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.member[player.Position].PresetId;
-        BattleCommandId result = BattleCommandId.None;
-        switch (commandIndex)
+        if ((Int32)commandIndex >= 0 && (Int32)commandIndex < CharacterCommandSet.SupportedMenus.Count)
         {
-            case BattleCommandMenu.Attack:
-                result = BattleCommandId.Attack;
-                break;
-            case BattleCommandMenu.Defend:
-                result = BattleCommandId.Defend;
-                if (Configuration.Mod.TranceSeek) // [DV] - Change Steiner/Amarant's Defend Command 
-                {
-                    if (presetId == CharacterPresetId.Steiner) // Sentinel
-                        result = (BattleCommandId)10015;
-                    else if (presetId == CharacterPresetId.Amarant) // Dual
-                        result = (BattleCommandId)10016;
-                }
-                break;
-            case BattleCommandMenu.Ability1:
-            {
-                CharacterCommandSet commandSet = CharacterCommands.CommandSets[presetId];
-                Boolean underTrance = player.IsUnderAnyStatus(BattleStatus.Trance);
-                result = commandSet.Get(underTrance, 0);
-                break;
-            }
-            case BattleCommandMenu.Ability2:
-            {
-                CharacterCommandSet commandSet = CharacterCommands.CommandSets[presetId];
-                Boolean underTrance = player.IsUnderAnyStatus(BattleStatus.Trance);
-                result = commandSet.Get(underTrance, 1);
-                break;
-            }
-            case BattleCommandMenu.Item:
-                result = BattleCommandId.Item;
-                break;
-            case BattleCommandMenu.Change:
-                result = BattleCommandId.Change;
-                break;
+            BattleCommandId result = CharacterCommands.CommandSets[presetId].Get(player.IsUnderAnyStatus(BattleStatus.Trance), commandIndex);
+            return BattleCommandHelper.Patch(result, commandIndex, player.Player, player);
         }
-        if (player.Data.is_monster_transform && result == player.Data.monster_transform.base_command)
+        else if (commandIndex == BattleCommandMenu.AccessMenu)
         {
-            result = player.Data.monster_transform.new_command;
-            commandIndex = BattleCommandMenu.Ability1;
+            return BattleCommandHelper.Patch(BattleCommandId.AccessMenu, commandIndex, player.Player, player);
         }
-        return result;
+        return BattleCommandId.None;
     }
 
     private static Int32 GetFirstAlivePlayerIndex()

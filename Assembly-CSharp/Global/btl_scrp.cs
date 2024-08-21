@@ -4,6 +4,7 @@ using Memoria.Data;
 using Memoria.Speedrun;
 using System;
 using System.Linq;
+using UnityEngine;
 
 public class btl_scrp
 {
@@ -221,19 +222,19 @@ public class btl_scrp
                     result = btl_util.getEnemyTypePtr(btl).level;
                 break;
             case 42u:
-                result = (Int32)((UInt64)btl.stat.invalid >> 24);
+                result = (Int32)(((UInt64)btl.stat.invalid >> 24) & 0xFFFFFFu);
                 break;
             case 43u:
                 result = (Int32)((UInt64)btl.stat.invalid & 0xFFFFFFu);
                 break;
             case 44u:
-                result = (Int32)((UInt64)btl.stat.permanent >> 24);
+                result = (Int32)(((UInt64)btl.stat.permanent >> 24) & 0xFFFFFFu);
                 break;
             case 45u:
                 result = (Int32)((UInt64)btl.stat.permanent & 0xFFFFFFu);
                 break;
             case 46u:
-                result = (Int32)((UInt64)btl.stat.cur >> 24);
+                result = (Int32)(((UInt64)btl.stat.cur >> 24) & 0xFFFFFFu);
                 break;
             case 47u:
                 result = (Int32)((UInt64)btl.stat.cur & 0xFFFFFFu);
@@ -460,20 +461,20 @@ public class btl_scrp
                 btl.stat.invalid = (BattleStatus)(((UInt64)btl.stat.invalid & 0xFFFFFFFFFF000000ul) | (UInt32)val);
                 break;
             case 44u:
-                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt64)btl.stat.permanent & (~((UInt64)val << 24)) & 0xFFFFFFFFFF000000ul), false);
-                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)(val << 24), true);
+                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt64)btl.stat.permanent & (~((UInt64)val << 24)) & 0x0000FFFFFF000000ul), false);
+                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((val & 0xFFFFFFu) << 24), true);
                 break;
             case 45u:
-                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt64)btl.stat.permanent & (~(UInt64)val) & 0xFFFF000000FFFFFFul), false);
-                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt64)val & 0xFFFF000000FFFFFFul), true);
+                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt64)btl.stat.permanent & (~(UInt64)val) & 0x0000000000FFFFFFul), false);
+                btl_stat.MakeStatusesPermanent(unit, (BattleStatus)((UInt64)val & 0x0000000000FFFFFFul), true);
                 break;
             case 46u: // Statuses can be modified by battle scripts thanks to these: set SV_FunctionEnemy[STATUS_CURRENT_A] |=$ Status to add
-                btl_stat.RemoveStatuses(unit, (BattleStatus)((UInt64)btl.stat.cur & (~((UInt64)val << 24)) & 0xFFFFFFFFFF000000ul));
-                btl_stat.AlterStatuses(unit, (BattleStatus)(val << 24));
+                btl_stat.RemoveStatuses(unit, (BattleStatus)((UInt64)btl.stat.cur & (~((UInt64)val << 24)) & 0x0000FFFFFF000000ul));
+                btl_stat.AlterStatuses(unit, (BattleStatus)((val & 0xFFFFFFu) << 24));
                 break;
             case 47u:
-                btl_stat.RemoveStatuses(unit, (BattleStatus)((UInt64)btl.stat.cur & (~(UInt64)val) & 0xFFFF000000FFFFFFul));
-                btl_stat.AlterStatuses(unit, (BattleStatus)((UInt64)val & 0xFFFF000000FFFFFFul));
+                btl_stat.RemoveStatuses(unit, (BattleStatus)((UInt64)btl.stat.cur & (~(UInt64)val) & 0x0000000000FFFFFFul));
+                btl_stat.AlterStatuses(unit, (BattleStatus)((UInt64)val & 0x0000000000FFFFFFul));
                 break;
             case 48u:
                 btl.def_attr.invalid = (Byte)val;
@@ -665,16 +666,16 @@ public class btl_scrp
                 btl.evt.pos[2] = btl.pos.z;
                 break;
             case 143:
-                btl.rot.eulerAngles = new UnityEngine.Vector3(val, btl.rot.eulerAngles.y, btl.rot.eulerAngles.z);
-                btl.evt.rotBattle.eulerAngles = new UnityEngine.Vector3(val, btl.rot.eulerAngles.y, btl.rot.eulerAngles.z);
+                btl.rot.eulerAngles = new Vector3(val, btl.rot.eulerAngles.y, btl.rot.eulerAngles.z);
+                btl.evt.rotBattle.eulerAngles = new Vector3(val, btl.rot.eulerAngles.y, btl.rot.eulerAngles.z);
                 break;
             case 144:
-                btl.rot.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, val, btl.rot.eulerAngles.z);
-                btl.evt.rotBattle.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, val, btl.rot.eulerAngles.z);
+                btl.rot.eulerAngles = new Vector3(btl.rot.eulerAngles.x, val, btl.rot.eulerAngles.z);
+                btl.evt.rotBattle.eulerAngles = new Vector3(btl.rot.eulerAngles.x, val, btl.rot.eulerAngles.z);
                 break;
             case 145:
-                btl.rot.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, btl.rot.eulerAngles.y, val);
-                btl.evt.rotBattle.eulerAngles = new UnityEngine.Vector3(btl.rot.eulerAngles.x, btl.rot.eulerAngles.y, val);
+                btl.rot.eulerAngles = new Vector3(btl.rot.eulerAngles.x, btl.rot.eulerAngles.y, val);
+                btl.evt.rotBattle.eulerAngles = new Vector3(btl.rot.eulerAngles.x, btl.rot.eulerAngles.y, val);
                 break;
             case 146:
                 if (btl.bi.player == 0)
@@ -687,7 +688,7 @@ public class btl_scrp
             case 148:
                 if (unit.HasTrance)
                 {
-                    btl.trance = (Byte)val;
+                    btl.trance = (Byte)Mathf.Clamp(val, 0, Byte.MaxValue);
                     if (btl.trance == Byte.MaxValue && !unit.IsUnderAnyStatus(BattleStatus.Trance))
                         btl_stat.AlterStatus(unit, BattleStatusId.Trance);
                     else if (btl.trance == 0 && unit.IsUnderAnyStatus(BattleStatus.Trance))

@@ -870,3 +870,7 @@ ________________________________________________________________________________
 >AA 137 Curse (multi)
 [code=Element] 1 << GetRandom(0, 8) [/code]
 
+_____________________________________________________________________________________________________
+
+>CMD 31 Magic Sword
+[code=HardDisable] !IsCharacterInParty(CharacterId_Vivi) [/code]
