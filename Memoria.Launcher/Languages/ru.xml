@@ -14,20 +14,13 @@
 	EByteAbbr = "ЭБ"
 	/>
 
-	<Button
-	OK = "OK"
-	Cancel = "Отмена"
-	Continue = "Продолжить"
-	Clone = "Сдублировать"
-	Remove = "Удалить"
-	Rollback = "Откатить"
-	Inject = "Внедрить"
-	SaveAs = "Сохранить как..."
-	Exit = "Выход"
-	Exiting = "Выходим..."
+	<Launcher
 	Launch = "Запуск"
 	Launching = "Запускаем..."
 	ModManager = "Установить Моды"
+	QuestionTitle = "Вопрос"
+	ErrorTitle = "Ошибка!"
+	NewVersionIsAvailable = "Доступна новая версия, скачать сейчас?"
 	/>
 
 	<Settings
@@ -38,8 +31,6 @@
 	Window = "Оконный"
 	ExclusiveFullscreen = "Полноэкранный"
 	BorderlessFullscreen = "Оконный (без рамок)"
-	AudioSamplingFrequency = "Частота дискретизации звука:"
-	AudioSamplingFrequencyFormat = "{0} Гц"
 	Debuggable = "Отладка"
 	CheckUpdates = "Проверка обновлений"
 	IniOptions = "Опции"
@@ -174,115 +165,6 @@
 	RollbackAreYouSure = "Сейчас мы уберём внесённые изменения, после чего проблема со Steam Overlay вернётся.&#13;&#10;&#13;&#10;Это может привести к отключению достижений и проблемам с контроллером.&#13;&#10;&#13;&#10;Вы уверены, что хотите продолжить?"
 	/>
 
-	<InfoProvider>
-
-		<ApplicationConfig
-		Title="Настройки"
-		Description="Различные настройки приложения."
-		NewTitle="Новые"
-		NewDescription="Инициализирует все настройки значениями по умолчанию."
-		FileTitle="Из файла"
-		FileDescription="Считывает настройки приложения из файла {0}"
-		/>
-
-		<GameLocation
-		Title="Каталог игры"
-		Description="Местоположении игровых файлов."
-		ConfigurationTitle="Из настроек"
-		ConfigurationDescription="Использует информацию, сохранённую в настроечном файле."
-		SteamRegistryTitle="Из реестр (Steam)"
-		SteamRegistryDescription="Получает информацию из реестра Windows, используя данные Steam."
-		UserTitle="Ручной выбор"
-		UserDescription="Позволяет вручную выбрать каталог, в который была установлена игра."
-		/>
-
-		<WorkingLocation
-		Title="Рабочий каталог"
-		Description="Директория для хранения результатов работы приложения."
-		ConfigurationTitle="Из настроек"
-		ConfigurationDescription="Использует информацию, сохранённую в настроечном файле."
-		UserTitle="Ручной выбор"
-		UserDescription="Позволяет вручную выбрать рабочий каталог."
-		/>
-
-		<TextEncoding
-		Title="Кодировки"
-		Description="Кодировки для распаковки и упаковки игровых текстов."
-		NewTitle="Новая"
-		NewDescription="Инициализирует стандартную кодировку на основе Windows-1252 кодировки."
-		WorkingLocationTitle="Из рабочего каталога"
-		WorkingLocationDescription="Считывает кодировку из рабочего каталога."
-		UserTitle="Редактировать"
-		UserDescription="Изменить текущую кодировку."
-		/>
-
-		<AudioSettings
-		Title="Настройки звука"
-		Description="Настройки аудио-устройства, используемого для воспроизведения звука."
-		NewTitle="Новые"
-		NewDescription="Инициализирует стандартные настройки аудио-устройства."
-		/>
-
-	</InfoProvider>
-
-	<Dockable>
-
-		<DataSources Header="Источники данных"/>
-
-		<GameFileCommander
-		Header="Ресурсы игры"
-		Unpack="Распаковать"
-		Pack="Упаковать"
-		ArchivesNode ="Архивы"
-		/>
-
-		<GameFilePreview Header="Предпросмотр" >
-
-			<Ykd
-			ResourceRemovingTitle = "Удаление"
-			ConfirmResourceRemoving = "Вы уверены, что хотите удалить этот ресурс?"
-			/>
-
-		</GameFilePreview>
-
-	</Dockable>
-
-	<EncodingEditor>
-
-		<List
-		Name = "Название"
-		Pattern = "Маска"
-		Encoding = "Кодировка"
-		Font = "Шрифт"
-		Edit = "Ред."
-		/>
-
-		<EncodingSelectDialog
-		Title = "Выбор кодировки"
-		Watermark = "Введите имя кодировки..."
-		ConfirmMessageFormat = "Вы выбрали [{0}]. Верно?"
-		ErrorMessageFormat = "Не удалось распознать кодировку [{0}]."
-		/>
-
-		<EncodingEditDialog Title = "Настройка кодировки" />
-
-		<Main
-		Before = "До:"
-		Width = "Ширина:"
-		After = "После:"
-		FromText = "Из текста:"
-		ToText = "В текст:"
-		/>
-
-		<Extra
-		Row = "Ряд:"
-		Column = "Колонка:"
-		FromText = "Из текста:"
-		ToText = "В текст:"
-		/>
-
-	</EncodingEditor>
-
 	<ModEditor
     WindowTitle="Настройка Моды"
     ModInfos = "Информация о Мод"
@@ -315,39 +197,4 @@
     TooltipDownload = "Скачать/Обновить"
     TooltipCancel = "Отменить Текущую Загрузка / Все Загрузок (правый клик)"
     />
-
-	<Dialogue>
-
-		<SaveAs Title = "Сохранить как..." />
-
-	</Dialogue>
-
-	<Message>
-
-		<Done
-		Title = "Готово!"
-		ExtractionCompleteFormat = "Распаковка завершена за {0:hh\:mm\:ss}."
-		InjectionCompleteFormat = "Упаковка завершена за {0:hh\:mm\:ss}."
-		/>
-
-		<Question
-		Title = "Вопрос"
-		AreYouSureTitle = "Вы уверены?"
-		NewVersionIsAvailable = "Доступна новая версия. Скачать?"
-		/>
-
-		<Error Title = "Ошибка!" />
-
-	</Message>
-
-	<Error>
-
-		<File UnknownFormat = "Неизвестный формат файла." />
-
-		<Process CannotGetExecutablePath = "Не удаётся получить путь к исполняемому модулю процесса." />
-
-		<Text TooLongTagNameFormat = "Слишком длинное имя тэга: {0}" />
-
-	</Error>
-
 </Data>

@@ -13,20 +13,13 @@
 	EByteAbbr = "EB"
 	/>
 
-	<Button
-	OK = "OK"
-	Cancel = "Annulla"
-	Continue = "Continua"
-	Clone = "Clona"
-	Remove = "Rimuovi"
-	Rollback = "Annulla"
-	Inject = "Inietta"
-	SaveAs = "Salva come..."
-	Exit = "ESCI"
-	Exiting = "Uscita..."
+	<Launcher
 	Launch = "GIOCA"
 	Launching = "Avvio..."
 	ModManager = "GESTORE MOD"
+	QuestionTitle = "Domanda"
+	ErrorTitle = "Errore!"
+	NewVersionIsAvailable = "È disponibile una nuova versione, scaricare ora?"
 	/>
 
 	<Settings
@@ -38,8 +31,6 @@
 	Window = "In finestra"
 	ExclusiveFullscreen = "Schermo intero"
 	BorderlessFullscreen = "Schermo intero senza bordi"
-	AudioSamplingFrequency = "Frequenza di campionamento audio"
-	AudioSamplingFrequencyFormat = "{0} Hz"
 	Debuggable = "Debuggabile"
 	CheckUpdates = "Controlla aggiornamenti"
 	IniOptions = "Opzioni"
@@ -169,119 +160,6 @@
 	RollbackAreYouSure = "Ora rimuoveremo le modifiche apportate, dopo di che il problema con la Sovrapposizione di Steam tornerà.&#13;&#10;&#13;&#10;Questo potrebbe portare alla disabilitazione degli obiettivi e a problemi con i controller.&#13;&#10;&#13;&#10;Sei sicuro di voler continuare?"
 	/>
 
-	<InfoProvider>
-
-		<ApplicationConfig
-		Title = "Impostazioni"
-		Description = "Varie impostazioni dell'applicazione."
-		NewTitle = "Nuovo"
-		NewDescription = "Inizializza tutti i valori delle impostazioni ai valori predefiniti."
-		FileTitle = "Da file"
-		FileDescription = "Legge il file di configurazione dell'applicazione {0}"
-
-		/>
-
-		<GameLocation
-		Title = "Directory di gioco"
-		Description = "Posizione dei file di gioco."
-		ConfigurationTitle = "Impostazioni"
-		ConfigurationDescription = "Utilizza le informazioni memorizzate nel file di configurazione."
-		SteamRegistryTitle = "Dal registro (Steam)"
-		SteamRegistryDescription = "Recupera informazioni dal registro di Windows, utilizzando i dati da Steam."
-		UserTitle = "Manuale"
-		UserDescription = "Ti consente di selezionare manualmente la directory in cui hai installato il gioco."
-
-		/>
-
-		<WorkingLocation
-		Title = "Directory di lavoro"
-		Description = "La directory in cui memorizzare i risultati dell'applicazione."
-		ConfigurationTitle = "Impostazioni"
-		ConfigurationDescription = "Utilizza le informazioni memorizzate nel file di configurazione."
-		UserTitle = "Manuale"
-		UserDescription = "Ti consente di selezionare manualmente una directory di lavoro."
-
-		/>
-
-		<TextEncoding
-		Title = "Codifica"
-		Description = "Codifica per l'estrazione e la compressione del testo di gioco."
-		NewTitle = "Nuova"
-		NewDescription = "Inizializza la codifica standard basata sulla codifica Windows-1252."
-		WorkingLocationTitle = "Directory di lavoro"
-		WorkingLocationDescription = "Legge la codifica dalla directory di lavoro."
-		UserTitle = "Modifica"
-		UserDescription = "Modifica la codifica attuale."
-		/>
-
-		<AudioSettings
-		Title = "Impostazioni audio"
-		Description = "Impostazioni del dispositivo audio."
-		NewTitle = "Nuovo"
-		NewDescription = "Inizializza tutti i valori delle impostazioni ai valori predefiniti."
-
-		/>
-
-	</InfoProvider>
-	<Dockable>
-		<DataSources Header = "Fonti dati" />
-
-		<GameFileCommander
-		Header = "Game Resources"
-		Unpack = "Unpack"
-		Pack = "Pack"
-		ArchivesNode ="Archives"
-		/>
-
-		<GameFilePreview Header = "Anteprima" >
-
-			<Ykd
-			ResourceRemovingTitle = "Rimozione"
-			ConfirmResourceRemoving = "Sei sicuro di voler eliminare questa risorsa?"
-			/>
-
-		</GameFilePreview>
-	</Dockable>
-	<EncodingEditor>
-
-		<List
-		Name = "Nome"
-		Pattern = "Modello"
-		Encoding = "Codifica"
-		Font = "Carattere"
-		Edit = "Modifica"
-
-		/>
-
-		<EncodingSelectDialog
-		Title = "Scegli la codifica"
-		Watermark = "Inserisci il nome della codifica..."
-		ConfirmMessageFormat = "Hai scelto [{0}]. Giusto?"
-		ErrorMessageFormat = "Impossibile riconoscere la codifica [{0}]."
-
-		/>
-
-		<EncodingEditDialog
-		Title = "Modifica codifica"
-		/>
-
-		<Main
-		Before = "Prima:"
-		Width = "Larghezza:"
-		After = "Dopo:"
-		FromText = "Da testo:"
-		ToText = "A testo:"
-		/>
-
-		<Extra
-		Row = "Riga:"
-		Column = "Colonna:"
-		FromText = "Da testo:"
-		ToText = "A testo:"
-		/>
-
-	</EncodingEditor>
-
 	<ModEditor
 	WindowTitle = "Gestore Mod di Memoria"
 	ModInfos = "Informazioni sulla Mod"
@@ -313,39 +191,5 @@
 	TooltipUninstall = "Disinstalla Mod"
 	TooltipDownload = "Scarica/Aggiorna"
 	TooltipCancel = "Annulla download in corso/Clic destro per annullare tutti"
-
 	/>
-
-	<Dialogue>
-
-		<SaveAs Title = "Salva come..." />
-
-	</Dialogue>
-
-	<Message>
-
-		<Done
-		Title = "Fatto!"
-		ExtractionCompleteFormat = "Estrazione completata in {0:hh\:mm\:ss}."
-		InjectionCompleteFormat = "Iniezione completata in {0:hh\:mm\:ss}."
-		/>
-
-		<Question
-		Title = "Domanda"
-		AreYouSureTitle = "Sei sicuro?"
-		NewVersionIsAvailable = "È disponibile una nuova versione, desideri scaricarla ora?"
-		/>
-
-		<Error
-		Title = "Errore!"
-		/>
-
-	</Message>
-
-	<Error>
-		<File UnknownFormat = "Formato del file sconosciuto." />
-		<Process CannotGetExecutablePath = "Impossibile ottenere il percorso dell'assembly eseguibile." />
-		<Text TooLongTagNameFormat = "Nome del tag troppo lungo: {0}" />
-	</Error>
-
 </Data>
