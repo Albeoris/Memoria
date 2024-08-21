@@ -150,12 +150,12 @@ namespace Memoria.Launcher
                                 other_mod.IncompIcon = "⚔️";
 
                                 if (mod.ActiveIncompatibleMods == null)
-                                    mod.ActiveIncompatibleMods = "Mod Incompatible with: " + other_mod.Name;
+                                    mod.ActiveIncompatibleMods = Lang.ModEditor.ActiveIncompatibleMods + other_mod.Name;
                                 else
                                     mod.ActiveIncompatibleMods += ", " + other_mod.Name;
 
                                 if (other_mod.ActiveIncompatibleMods == null)
-                                    other_mod.ActiveIncompatibleMods = "Mod Incompatible with: " + mod.Name;
+                                    other_mod.ActiveIncompatibleMods = Lang.ModEditor.ActiveIncompatibleMods + mod.Name;
                                 else
                                     other_mod.ActiveIncompatibleMods += ", " + mod.Name;
 
@@ -173,9 +173,9 @@ namespace Memoria.Launcher
                         {
                             mod.IncompIcon = "⚔️";
                             if (mod.ActiveIncompatibleMods == null)
-                                mod.ActiveIncompatibleMods = $"Mod version ({ver}) is incompatible with the current Memoria\nUpdate it from the mod catalog";
+                                mod.ActiveIncompatibleMods = Lang.ModEditor.IncompatibleWithMemoria;
                             else
-                                mod.ActiveIncompatibleMods += $"\n\nMod version({ver}) is incompatible with the current Memoria\nUpdate it from the mod catalog";
+                                mod.ActiveIncompatibleMods += "\n\n" + Lang.ModEditor.IncompatibleWithMemoria;
                             allModsAreCompatible = false;
                         }
                     }

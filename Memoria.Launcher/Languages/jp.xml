@@ -144,6 +144,13 @@
 	tetraMasterReduceRandomBox1 = "ランダム性が少ない"
 	tetraMasterReduceRandomBox2 = "簡単な勝利"
 	CardReduceRandom_Tooltip = "TetraMasterのランダム性の制御"
+	
+	Shader_Enable = "カスタムシェーダー"
+	Shader_Field_chars = "戦闘外: "
+	Shader_Battle_chars = "戦闘中: "
+	Shader_Realism = "リアリズム"
+	Shader_Toon = "トゥーン"
+	Shader_Outlines = "モデルの輪郭"
 	/>
 
 	<SdLib
@@ -186,7 +193,8 @@
 	Progress = "進行状況"
 	Speed = "速度"
 	TimeLeft = "残り時間"
-	PreviewImageMissing = "プレビュー画像なし"
+	ActiveIncompatibleMods = "以下と互換性がないMod: "
+	IncompatibleWithMemoria = "このModのバージョンは現在のMemoriaと互換性がありません。Modカタログから更新してください。"
 	TooltipMoveUp = "上へ移動/右クリックで先頭へ移動"
 	TooltipMoveDown = "下へ移動/右クリックで最後尾へ移動"
 	TooltipCheckCompatibility = "Modの互換性を確認/右クリックですべてのModを確認"

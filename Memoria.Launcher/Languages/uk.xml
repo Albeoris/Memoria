@@ -149,6 +149,13 @@
 	tetraMasterReduceRandomBox1 = "Менше випадковості"
 	tetraMasterReduceRandomBox2 = "Легка перемога"
 	CardReduceRandom_Tooltip = "Контроль випадковості Tetra Master"
+	
+	Shader_Enable = "Користувацькі шейдери"
+	Shader_Field_chars = "Позабоєм: "
+	Shader_Battle_chars = "У бою: "
+	Shader_Realism = "Реалістичний"
+	Shader_Toon = "Мультяшний"
+	Shader_Outlines = "Контури моделі"
 	/>
 
 	<SdLib
@@ -191,7 +198,8 @@
 	Progress = "Прогрес"
 	Speed = "Швидкість"
 	TimeLeft = "Час що лишився"
-	PreviewImageMissing = "Без попереднього перегляду"
+	ActiveIncompatibleMods = "Мод несумісний з: "
+	IncompatibleWithMemoria = "Версія мода несумісна з поточною Memoria. Оновіть його з каталогу модів."
 	TooltipMoveUp = "Перемістити вгору/Правий клік, щоб перемістити на самий верх"
 	TooltipMoveDown = "Перемістити вниз/Правий клік, щоб перемістити на самий низ"
 	TooltipCheckCompatibility = "Перевірити сумісність модів/Правий клік, щоб перевірити усі"

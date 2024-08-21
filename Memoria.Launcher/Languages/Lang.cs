@@ -284,6 +284,14 @@ namespace Memoria.Launcher
             public static readonly string FPSDropboxChoice2 = GetSettings(nameof(FPSDropboxChoice2));
             public static readonly string FPSDropboxChoice3 = GetSettings(nameof(FPSDropboxChoice3));
             public static readonly string FPSDropboxChoice4 = GetSettings(nameof(FPSDropboxChoice4));
+
+            public static readonly string Shader_Enable = GetSettings(nameof(Shader_Enable));
+            public static readonly string Shader_Field_chars = GetSettings(nameof(Shader_Field_chars));
+            public static readonly string Shader_Battle_chars = GetSettings(nameof(Shader_Battle_chars));
+            public static readonly string Shader_Realism = GetSettings(nameof(Shader_Realism));
+            public static readonly string Shader_Toon = GetSettings(nameof(Shader_Toon));
+            public static readonly string Shader_Outlines = GetSettings(nameof(Shader_Outlines));
+
         }
 
 
@@ -364,7 +372,8 @@ namespace Memoria.Launcher
             public static readonly String Progress = GetModEditor(nameof(Progress));
             public static readonly String Speed = GetModEditor(nameof(Speed));
             public static readonly String TimeLeft = GetModEditor(nameof(TimeLeft));
-            public static readonly String PreviewImageMissing = GetModEditor(nameof(PreviewImageMissing));
+            public static readonly String ActiveIncompatibleMods = GetModEditor(nameof(ActiveIncompatibleMods));
+            public static readonly String IncompatibleWithMemoria = GetModEditor(nameof(IncompatibleWithMemoria));
             public static readonly String TooltipMoveUp = GetModEditor(nameof(TooltipMoveUp));
             public static readonly String TooltipMoveDown = GetModEditor(nameof(TooltipMoveDown));
             public static readonly String TooltipCheckCompatibility = GetModEditor(nameof(TooltipCheckCompatibility));

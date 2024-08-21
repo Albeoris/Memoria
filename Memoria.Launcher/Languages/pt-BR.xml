@@ -151,17 +151,14 @@
 	tetraMasterReduceRandomBox1 = "Aleatoriadade menor"
 	tetraMasterReduceRandomBox2 = "Vitória fácil"
 	CardReduceRandom_Tooltip = "Controla a aleatoriadade do Tetra Master"
-	/>
 	
-	<!-- 
-	EnableCustomShader = "Ativar Shaders Personalizados"
-	Shader_Field_Realism = "Usar Shading de Realismo no Campo"
-	Shader_Field_Toon = "Usar Shading de Desenho Animado no Campo"
-	Shader_Field_Outlines = "Ativar o Contorno pro Personagem do Campo"
-	Shader_Battle_Realism = "Usar o Shading de Realismo na Batalha"
-	Shader_Battle_Toon = "Usar o Shading de Desenho Animado na Batalha"
-	Shader_Battle_Outlines = "Ativar o Contorno pro Personagem da Batalha"
-	-->
+	Shader_Enable = "Shaders personalizados"
+	Shader_Field_chars = "Fora de batalha: "
+	Shader_Battle_chars = "Em batalha: "
+	Shader_Realism = "Realista"
+	Shader_Toon = "Desenho animado"
+	Shader_Outlines = "Contornos do modelo"
+	/>
 
 	<SdLib
 	Caption = "Aplicar o Patch no SdLib.dll"
@@ -203,7 +200,8 @@
 	Progress = "Progresso"
 	Speed = "Velocidade"
 	TimeLeft = "Tempo Restante"
-	PreviewImageMissing = "Nenhuma Imagem da Pré-Visualização"
+	ActiveIncompatibleMods = "Mod incompatível com: "
+	IncompatibleWithMemoria = "A versão do mod é incompatível com o Memoria atual. Atualize-o a partir do catálogo de mods."
 	TooltipMoveUp = "Mover pra Cima/Clique com o Botão Direito do Mouse pra Mover pro Topo"
 	TooltipMoveDown = "Mover pra Baixo/Clique com o Botão Direito de Mouse pra Mover pro Rodapé"
 	TooltipCheckCompatibility = "Verificar as Compatibilidades com o Mod/Clique com o Botão Direito do Mouse pra Verificar Tudo"

@@ -144,6 +144,13 @@
 	tetraMasterReduceRandomBox1 = "Weniger Zufälligkeit"
 	tetraMasterReduceRandomBox2 = "Leichter Sieg"
 	CardReduceRandom_Tooltip = "Kontrolle über die Zufälligkeit von Tetra Master"
+	
+	Shader_Enable = "Benutzerdefinierte Shader"
+	Shader_Field_chars = "Außerhalb des Kampfes: "
+	Shader_Battle_chars = "Im Kampf: "
+	Shader_Realism = "Realistisch"
+	Shader_Toon = "Comicstil"
+	Shader_Outlines = "Modellkonturen"
 	/>
 
 	<SdLib
@@ -186,7 +193,8 @@
 	Progress = "Fortschritt"
 	Speed = "Geschwindigkeit"
 	TimeLeft = "Verbleibende Zeit"
-	PreviewImageMissing = "Kein Vorschaubild"
+	ActiveIncompatibleMods = "Mod inkompatibel mit: "
+	IncompatibleWithMemoria = "Mod-Version ist mit der aktuellen Memoria inkompatibel. Aktualisieren Sie es aus dem Mod-Katalog."
 	TooltipMoveUp = "Nach oben bewegen/Rechtsklick zum Nach oben bewegen"
 	TooltipMoveDown = "Nach unten bewegen/Rechtsklick zum Nach unten bewegen"
 	TooltipCheckCompatibility = "Mod-Kompatibilität überprüfen/Rechtsklick zum Überprüfen aller"

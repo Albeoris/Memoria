@@ -151,17 +151,14 @@
 	tetraMasterReduceRandomBox1 = "Lower randomness"
 	tetraMasterReduceRandomBox2 = "Easy win"
 	CardReduceRandom_Tooltip = "Controls the randomness of Tetra Master"
-	/>
 	
-	<!-- 
-	EnableCustomShader = "Enable Custom Shaders"
-	Shader_Field_Realism = "Use Realism Shading In Field"
-	Shader_Field_Toon = "Use Toon Shading In Field"
-	Shader_Field_Outlines = "Enable Outline For Field Character"
-	Shader_Battle_Realism = "Use Realism Shading In Battle"
-	Shader_Battle_Toon = "Use Toon Shading In Battle"
-	Shader_Battle_Outlines = "Enable Outline For Battle Character"
-	-->
+	Shader_Enable = "Custom Shaders"
+	Shader_Field_chars = "Out of battle: "
+	Shader_Battle_chars = "In battle: "
+	Shader_Realism = "Realistic"
+	Shader_Toon = "Toon"
+	Shader_Outlines = "Model outlines"
+	/>
 
 	<SdLib
 	Caption = "Patch SdLib.dll"
@@ -203,7 +200,8 @@
 	Progress = "Progress"
 	Speed = "Speed"
 	TimeLeft = "Time Left"
-	PreviewImageMissing = "No Preview Image"
+	ActiveIncompatibleMods = "Mod Incompatible with: "
+	IncompatibleWithMemoria = "Mod version is incompatible with the current Memoria&#xA;Update it from the mod catalog"
 	TooltipMoveUp = "Move Up/Right-Click to Move to Top"
 	TooltipMoveDown = "Move Down/Right-Click to Move to Bottom"
 	TooltipCheckCompatibility = "Check Mod Compatibilities/Right-Click to Check All"
