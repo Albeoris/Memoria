@@ -21,6 +21,10 @@
 	QuestionTitle = "Question"
 	ErrorTitle = "Erreur !"
 	NewVersionIsAvailable = "Une nouvelle version est disponible, la télécharger maintenant ?"
+	AdvSettings = "Param. avancés"
+	AdvSettingsTitle = "Paramètres avancés et expérimentaux"
+	Return = "Retour"
+	ModelViewer = "Visionneuse de modèles"
 	/>
 
 	<Settings

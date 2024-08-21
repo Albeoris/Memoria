@@ -1221,7 +1221,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         }
         if (!obj.isAdditionCommand)
             return;
-        obj.RetunCall();
+        obj.ReturnCall();
     }
 
     public void SetFollow(Obj obj, Int32 winnum, Int32 flags)

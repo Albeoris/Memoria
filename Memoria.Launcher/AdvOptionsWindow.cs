@@ -18,6 +18,9 @@ namespace Memoria.Launcher
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
         {
+            Title = Lang.Settings.LauncherWindowTitle + " | " + Lang.Launcher.AdvSettingsTitle;
+            AdvSettingsTitle.Text = Lang.Launcher.AdvSettingsTitle;
+
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)

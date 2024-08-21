@@ -27,9 +27,9 @@
             </Rectangle.Style>
         </Rectangle>
 
-        <TextBlock x:Name="WindTitle"
+        <TextBlock x:Name="AdvSettingsTitle"
             Margin="0,27,0,0"
-            Text="Advanced and experimental settings"
+            Text="{Binding AdvSettingsTitle, FallbackValue='Advanced and experimental settings'}"
             TextAlignment="Center"
             Foreground="White"
             FontSize="20"

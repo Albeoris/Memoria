@@ -34,19 +34,6 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom" >
         </launcher:MemoriaIniControl>
-        <Rectangle Margin="0,0,0,0">
-            <Rectangle.Style>
-                <Style TargetType="{x:Type Rectangle}">
-                    <Setter Property="Fill" Value="#000" />
-                    <Setter Property="Width" Value="290" />
-                    <Setter Property="Height" Value="275" />
-                    <Setter Property="VerticalAlignment" Value="Bottom" />
-                    <Setter Property="HorizontalAlignment" Value="Center" />
-
-                    <Setter Property="Opacity" Value=".4" />
-                </Style>
-            </Rectangle.Style>
-        </Rectangle>
 
         <launcher:MemoriaIniCheatControl
             x:Name="MemoriaIniCheatControl"

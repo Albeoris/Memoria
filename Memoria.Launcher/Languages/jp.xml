@@ -20,6 +20,10 @@
 	QuestionTitle = "質問"
 	ErrorTitle = "エラー!"
 	NewVersionIsAvailable = "新しいバージョンが利用可能です。今すぐダウンロードしますか？"
+	AdvSettings = "詳細設定"
+	AdvSettingsTitle = "高度かつ実験的な設定"
+	Return = "戻る"
+	ModelViewer = "モデルビューア"
 	/>
 
 	<Settings

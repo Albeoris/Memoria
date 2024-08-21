@@ -21,6 +21,10 @@
 	QuestionTitle = "Вопрос"
 	ErrorTitle = "Ошибка!"
 	NewVersionIsAvailable = "Доступна новая версия, скачать сейчас?"
+	AdvSettings = "Доп. настройки"
+	AdvSettingsTitle = "Расширенные и экспериментальные настройки"
+	Return = "Вернуться"
+	ModelViewer = "Просмотрщик моделей"
 	/>
 
 	<Settings
