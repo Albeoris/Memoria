@@ -51,6 +51,7 @@ Snouz - syncronization</Description>
 	<ReleaseDate>18 Aug 2024</ReleaseDate>
 	<MinimumMemoriaVersion>2024-08-18</MinimumMemoriaVersion>
 	<PatchNotes>Requires Memoria v2024.08.18</PatchNotes>
+	<IncompatibleWith>Beatrix Mod, Trance Seek</IncompatibleWith>
 	<Description>This mod aims at increasing the difficulty and, above all, to give a new fresh experience of FF9 for those who already know the game well.
 It includes:
 - Many changes in the battle system, the enemies and the abilities
@@ -76,6 +77,7 @@ More informations can be found on the mod's webpage.</Description>
 	<InstallationPath>BeatrixMod</InstallationPath>
 	<Author>Tirlititi</Author>
 	<ReleaseDate>10 May 2021</ReleaseDate>
+	<IncompatibleWith>Alternate Fantasy, Trance Seek</IncompatibleWith>
 	<Description>Allow the optional recruitment of Beatrix as a permanent character.
 She must be met in Alexandria once the Hilda Gard III is obtained and before moving to Terra.
 
@@ -92,6 +94,7 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDate>2024-08-14</ReleaseDate>
 	<Author>DV</Author>
+	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
 	<Description>A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
 
 Currently, Trance Seek is...
@@ -297,17 +300,16 @@ Includes:
 	<Author>ChikoLad</Author>
 	<ReleaseDateOriginal>2020-07-30</ReleaseDateOriginal>
 	<Description>Freya Game+ is a Final Fantasy IX mod that allows you to have Freya in your party at almost all times throughout the game.
-This mod removes the need to do any save editing or setting personal restrictions if you want to do a Freya Solo Run.
-
-Note: this mod doesn't support automatic installation yet. Download from the website.</Description>
+This mod removes the need to do any save editing or setting personal restrictions if you want to do a Freya Solo Run.</Description>
 	<Category>Character Swap</Category>
-	<PreviewFileUrl>https://i.imgur.com/IvxwmJj.png</PreviewFileUrl>
-	<Website>https://forums.qhimm.com/index.php?topic=20257</Website>https://steamcommunity.com/app/377840/discussions/0/2790495251252776205/
-	<!-- Download URL: https://drive.google.com/uc?export=download&amp;id=1kAPolYDiKDgfeYOuLbjRzBFkeNOFcWGo&amp;confirm=t -->
-	<!-- Can't automatically install yet just because it's a .rar and not a .zip -->
+	<PreviewFileUrl>https://i.imgur.com/3trahGc.png</PreviewFileUrl>
+	<Website>https://forums.qhimm.com/index.php?topic=20257</Website>
+	<!-- https://steamcommunity.com/app/377840/discussions/0/2790495251252776205/ -->
+	<DownloadUrl>https://drive.google.com/uc?export=download&amp;id=1kAPolYDiKDgfeYOuLbjRzBFkeNOFcWGo&amp;confirm=t</DownloadUrl>
 	<PreviewFile>FreyaGame+_Logo.png</PreviewFile>
 </Mod>
 
+<!--
 <Mod>
 	<Name>Play as Kuja</Name>
 	<Version>0.1</Version>
@@ -323,6 +325,7 @@ You should better use the Playable Characters Pack instead. This later one doesn
 	<Website>https://steamcommunity.com/app/377840/discussions/0/4472613273101569368/</Website>
 	<DownloadUrl>https://www.dropbox.com/s/y3dw2gxfdw5kkl8/PC_PlayAsKuja.zip?dl=1</DownloadUrl>
 </Mod>
+-->
 
 <Mod>
 	<Name>Mog Add-ons</Name>
