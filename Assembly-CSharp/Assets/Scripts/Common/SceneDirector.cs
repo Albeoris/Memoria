@@ -286,11 +286,21 @@ namespace Assets.Scripts.Common
             if (SceneDirector._discChange != 0)
             {
                 Int32 discNum = SceneDirector._discChange + 1;
-                this.screenTex = AssetManager.Load<Texture2D>("EmbeddedAsset/UI/Sprites/changetodisc" + discNum + ".png");
+
+                try
+                {
+                    this.screenTex = AssetManager.Load<Texture2D>("EmbeddedAsset/UI/Sprites/changetodisc" + discNum + ".png");
+                }
+                catch { Log.Message("Errow while charging disc change screen (4)"); }
+
                 if (this.screenTex != null)
                 {
-                    if (this.screenTex.width < 321)
-                        this.screenTex.filterMode = FilterMode.Point;
+                    try
+                    {
+                        if (this.screenTex.width < 321)
+                            this.screenTex.filterMode = FilterMode.Point;
+                    }
+                    catch { Log.Message("Errow while charging disc change screen (5)"); }
 
                     Single rectwidth = Screen.height / 0.7f;
                     Rect screenRect = new((Screen.width - rectwidth) / 2f, 0f, rectwidth, Screen.height);
@@ -301,7 +311,12 @@ namespace Assets.Scripts.Common
 
                     for (Int32 i = 0; i <= 100; i++) // 100 frame fadein
                     {
-                        Graphics.DrawTexture(screenRect, this.screenTex, sourceRect, 0, 0, 0, 0, new Color(0.5f, 0.5f, 0.5f, i / 100f));
+                        try
+                        {
+                            Graphics.DrawTexture(screenRect, this.screenTex, sourceRect, 0, 0, 0, 0, new Color(0.5f, 0.5f, 0.5f, i / 100f));
+                        }
+                        catch { Log.Message("Errow while charging disc change screen (6)"); }
+
                         yield return new WaitForEndOfFrame();
                     }
                     while (!PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm)
@@ -319,12 +334,24 @@ namespace Assets.Scripts.Common
                         && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.LeftTrigger)
                         && !PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.RightTrigger))
                     {
-                        Graphics.DrawTexture(screenRect, this.screenTex);
+                        try
+                        {
+                            Graphics.DrawTexture(screenRect, this.screenTex);
+                        }
+                        catch { Log.Message("Errow while charging disc change screen (7)"); }
+
+                        
                         yield return new WaitForEndOfFrame();
                     }
                     for (Int32 i = 100; i > 0; i--) // 100 frame fadeout
                     {
-                        Graphics.DrawTexture(screenRect, this.screenTex, sourceRect, 0, 0, 0, 0, new Color(0.5f, 0.5f, 0.5f, i / 100f));
+                        try
+                        {
+                            Graphics.DrawTexture(screenRect, this.screenTex, sourceRect, 0, 0, 0, 0, new Color(0.5f, 0.5f, 0.5f, i / 100f));
+                        }
+                        catch { Log.Message("Errow while charging disc change screen (8)"); }
+
+                        
                         yield return new WaitForEndOfFrame();
                     }
                 }
@@ -332,30 +359,6 @@ namespace Assets.Scripts.Common
 
             this.IsFading = false;
             yield break;
-        }
-
-        private IEnumerator ChangeDisc()
-        {
-            Int32 discID = SceneDirector._discChange;
-            this.screenTex = AssetManager.Load<Texture2D>("EmbeddedAsset/UI/Sprites/insertdisc" + discID + ".png");
-            Rect screenRect = new(0f, 0f, Screen.width, Screen.height);
-            Rect sourceRect = new(0.25f, 0f, 0.75f, 1f);
-
-            for (Int32 i = 0; i <= 100; i++) // 100 frame fadein
-            {
-                Graphics.DrawTexture(screenRect, this.screenTex, sourceRect, 0, 0, 0, 0, new Color(0.5f, 0.5f, 0.5f, i / 100f));
-                yield return new WaitForEndOfFrame();
-            }
-            while (!PersistenSingleton<HonoInputManager>.Instance.IsInputDown(Control.Confirm))
-            {
-                Graphics.DrawTexture(screenRect, this.screenTex);
-                yield return new WaitForEndOfFrame();
-            }
-            for (Int32 i = 100; i > 0; i--) // 100 frame fadeout
-            {
-                Graphics.DrawTexture(screenRect, this.screenTex, sourceRect, 0, 0, 0, 0, new Color(0.5f, 0.5f, 0.5f, i / 100f));
-                yield return new WaitForEndOfFrame();
-            }
         }
 
         private void ChangeScene()
@@ -535,8 +538,9 @@ namespace Assets.Scripts.Common
             }
             catch
             {
-                Log.Message("Coun't load discchange");
+                Log.Message("Errow while charging disc change screen (2)");
             }
+
         }
 
         public static void InitFade(FadeMode mode, Int32 frame, Color32 target, Int32 disc_id = 0)
@@ -546,8 +550,16 @@ namespace Assets.Scripts.Common
             SceneDirector._targetColor = target;
             SceneDirector._SetFadeMode(mode);
             SceneDirector._prevColor = SceneDirector.abrColor[(Int32)SceneDirector.fadeMode];
-            if (disc_id > 0 && disc_id < 4) SceneDirector._discChange = disc_id;
-            else SceneDirector._discChange = 0;
+            try
+            {
+                if (disc_id > 0 && disc_id < 4)
+                    SceneDirector._discChange = disc_id;
+                else SceneDirector._discChange = 0;
+            }
+            catch
+            {
+                Log.Message("Errow while charging disc change screen (3)");
+            }
         }
 
         public static void ServiceFade()
