@@ -26,7 +26,7 @@ namespace Memoria.Launcher
         private void OnClosing(Object sender, CancelEventArgs e)
         {
             ((MainWindow)this.Owner).AdvOptionsWindow = null;
-            ((MainWindow)this.Owner).MemoriaIniControl.ComeBackToLauncherFromModManager();
+            ((MainWindow)this.Owner).MemoriaIniControl.ComeBackToLauncherReloadSettings();
         }
         
         private bool _isOption1Checked;

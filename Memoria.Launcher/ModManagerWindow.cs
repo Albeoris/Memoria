@@ -47,6 +47,8 @@ namespace Memoria.Launcher
         public ObservableCollection<Mod> modListCatalog = new ObservableCollection<Mod>();
         public ObservableCollection<Mod> downloadList = new ObservableCollection<Mod>();
         public String StatusMessage = "";
+        public Boolean AreThereModIncompatibilies = false;
+        public Boolean AreThereModUpdates = false;
 
         public String[] supportedArchives = { "rar", "unrar", "zip", "bzip2", "gzip", "tar", "7z", "lzip", "gz" };
 
@@ -92,14 +94,14 @@ namespace Memoria.Launcher
 
         private void CheckOutdatedMods()
         {
-            Boolean allModsAreUpToDate = true;
+            AreThereModUpdates = false;
             foreach (Mod mod in modListInstalled)
             {
                 if (mod != null && ((mod.Name == "Moguri Mod" || mod.Name == "MoguriFiles") && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
                 {
                     mod.UpdateIcon = "⏫";
                     mod.CurrentVersion = Version.Parse("8.3");
-                    allModsAreUpToDate = false;
+                    AreThereModUpdates = true;
                     mod.Description = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
                     mod.UpdateTooltip = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
                 }
@@ -115,7 +117,7 @@ namespace Memoria.Launcher
                             {
                                 mod.UpdateIcon = "⏫";
                                 mod.UpdateTooltip = Lang.ModEditor.UpdateTooltip + catalog_mod.CurrentVersion;
-                                allModsAreUpToDate = false;
+                                AreThereModUpdates = true;
                             }
                             else
                             {
@@ -125,13 +127,13 @@ namespace Memoria.Launcher
                     }
                 }
             }
-            colMyModsUpdateIcon.Width = allModsAreUpToDate ? 0 : 28;
+            colMyModsUpdateIcon.Width = AreThereModUpdates ? 28 : 0;
             lstMods.Items.Refresh();
         }
 
         private void CheckIncompMods()
         {
-            Boolean allModsAreCompatible = true;
+            AreThereModIncompatibilies = false;
             foreach (Mod mod in modListInstalled) // reset state
             {
                 mod.IncompIcon = null;
@@ -162,7 +164,7 @@ namespace Memoria.Launcher
                                 else
                                     other_mod.ActiveIncompatibleMods += ", " + mod.Name;
 
-                                allModsAreCompatible = false;
+                                AreThereModIncompatibilies = true;
                             }
                         }
                     }
@@ -179,12 +181,12 @@ namespace Memoria.Launcher
                                 mod.ActiveIncompatibleMods = Lang.ModEditor.IncompatibleWithMemoria;
                             else
                                 mod.ActiveIncompatibleMods += "\n\n" + Lang.ModEditor.IncompatibleWithMemoria;
-                            allModsAreCompatible = false;
+                            AreThereModIncompatibilies = true;
                         }
                     }
                 }
             }
-            colMyModsIncompIcon.Width = allModsAreCompatible ? 0 : 28;
+            colMyModsIncompIcon.Width = AreThereModIncompatibilies ? 28 : 0;
             lstMods.Items.Refresh();
         }
 
@@ -211,7 +213,8 @@ namespace Memoria.Launcher
                 downloadCatalogClient.CancelAsync();
             UpdateSettings();
             ((MainWindow)this.Owner).ModdingWindow = null;
-            ((MainWindow)this.Owner).MemoriaIniControl.ComeBackToLauncherFromModManager();
+            ((MainWindow)this.Owner).MemoriaIniControl.ComeBackToLauncherReloadSettings();
+            ((MainWindow)this.Owner).ComeBackToLauncherFromModManager(AreThereModUpdates, AreThereModIncompatibilies);
         }
 
         [DllImport("user32.dll")]

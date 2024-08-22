@@ -342,6 +342,8 @@ namespace Memoria.Launcher
             public static readonly string AdvSettingsTitle = GetLauncher("AdvSettingsTitle");
             public static readonly string Return = GetLauncher("Return");
             public static readonly string ModelViewer = GetLauncher("ModelViewer");
+            public static readonly string ModUpdateAvailable = GetLauncher("ModUpdateAvailable");
+            public static readonly string ModConflict = GetLauncher("ModConflict");
         }
 
         public static class ModEditor

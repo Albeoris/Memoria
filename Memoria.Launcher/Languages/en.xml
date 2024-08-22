@@ -24,6 +24,8 @@
 	AdvSettingsTitle = "Advanced and experimental settings"
 	Return = "Return"
 	ModelViewer = "Model Viewer"
+	ModUpdateAvailable="There are some mod updates available"
+	ModConflict="There are some mod conflicts"
 	/>
 
 	<Settings

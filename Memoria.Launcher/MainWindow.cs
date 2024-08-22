@@ -52,9 +52,34 @@ namespace Memoria.Launcher
             HotfixForMoguriMod();
             Title = Lang.Settings.LauncherWindowTitle + " | " + MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
 
+            // Creates a Mod Manager window (but completely invisible) to trigger "onLoaded" to download the mod catalog retrieve the info that updates or incompatibilities exist.
+            // It's instantly closed and the info is retrieved by ComeBackToLauncherFromModManager() to define if any icon is displayed
+            MainWindow mainWindow = (MainWindow)this.GetRootElement();
+            if (mainWindow.ModdingWindow == null)
+                mainWindow.ModdingWindow = new ModManagerWindow();
+            mainWindow.ModdingWindow.Owner = mainWindow;
+            mainWindow.ModdingWindow.Activate();
+            mainWindow.ModdingWindow.Visibility = System.Windows.Visibility.Hidden;
+            mainWindow.ModdingWindow.WindowStyle = WindowStyle.None;
+            mainWindow.ModdingWindow.AllowsTransparency = true;
+            mainWindow.ModdingWindow.Opacity = 0;
+            mainWindow.ModdingWindow.ShowInTaskbar = false;
+            mainWindow.ModdingWindow.ShowActivated = false;
+            mainWindow.ModdingWindow.Show();
+            mainWindow.ModdingWindow.Close();
+
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();
         }
+
+        public void ComeBackToLauncherFromModManager(Boolean updates, Boolean incompat)
+        {
+            alert_update_icon.Visibility = updates ? Visibility.Visible : Visibility.Collapsed;
+            alert_incompat_icon.Visibility = incompat ? Visibility.Visible : Visibility.Collapsed;
+            alert_update_icon.ToolTip = Lang.Launcher.ModUpdateAvailable;
+            alert_incompat_icon.ToolTip = Lang.Launcher.ModConflict;
+        }
+
         private void HotfixForMoguriMod()
         {
             // Make sure tiles are set to 64

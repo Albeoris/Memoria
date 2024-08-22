@@ -822,7 +822,7 @@ namespace Memoria.Launcher
         private readonly String _fontDefaultPSX = "Final Fantasy IX PSX";
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
 
-        public void ComeBackToLauncherFromModManager()
+        public void ComeBackToLauncherReloadSettings()
         {
             LoadSettings();
         }
