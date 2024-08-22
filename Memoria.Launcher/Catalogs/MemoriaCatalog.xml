@@ -175,7 +175,327 @@ You should set the priority of this mod to be higher than the priority of the Mo
 		<Description>When enabled, Garnet's battle model will wear the traditional White Mage robe.</Description>
 	</SubMod>
 </Mod>
+<Mod>
+	<Name>Support Ability Cost</Name>
+	<Version>4.0.1</Version>
+	<InstallationPath>KupoGemSATweak</InstallationPath>
+	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
+	<ReleaseDate>2024-08-22</ReleaseDate>
+	<Author>faospark / Tirlititi </Author>
+	<Description> Allows You to have 1 Gem cost per support ability or Half.
+[1] 1 Gem Cost is activate by default 
+[2] Half the cost of Support abilities
 
+Mod Order : Position 1 or on top of Any Gameplay mods such as Alternate Fantasy , Playable Character pack. Tantalus Etc 
+This was the earliest public release of this type of Mod that modifies the Gem Cost of Support Abilities 
+Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
+	</Description>
+	<PatchNotes>First Split Release</PatchNotes>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<Category>Gameplay</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/71w3a8qnfbg5g3lvnl1bd/KupoGemSATweak.zip?rlkey=qnsqgc70ngf3ix9u4f7ut82ob&amp;dl=1</DownloadUrl>
+	<PreviewFile>preview/kupo-Gem.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313895-1564815189.png</PreviewFileUrl>
+	<SubMod>
+		<Name>Tweak: Half Cost of Support Abilities</Name>
+		<InstallationPath>Features/Tweaks/AbilityHalf</InstallationPath>
+		<Description>Cuts ability gems to half for support abilites </Description>
+		<Priority>2</Priority>
+	</SubMod>
+		<SubMod>
+		<Name>Tweak: 1 Gem cost Support Ability</Name>
+		<InstallationPath>Features/Tweaks/Ability</InstallationPath>
+		<Description>1 Gen Support Ability [Already activated]</Description>
+		<Priority>3</Priority>
+	</SubMod>
+</Mod>
+<Mod>
+	<Name>Exp, AP, Gil , Rewards Tweaks</Name>
+	<Version>4.0.1</Version>
+	<InstallationPath>KupoTweaks</InstallationPath>
+	<ReleaseDateOriginal>2022-08-14</ReleaseDateOriginal>
+	<ReleaseDate>2024-08-22</ReleaseDate>
+	<Author>faospark</Author>
+	<Description>As the name suggests, this mod has several options that can multiply your Exp, AP , Gil and After Battle Rewards. 
+Mod Order : On top of any Gameplay Mod.
+Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</Description>
+	<PatchNotes>First Split Release </PatchNotes>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<Category>Gameplay</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/z2df6bk4hps21v53j105w/KupoTweaks.zip?rlkey=wfw287bn1u27gz4najtx1jm9a&amp;dl=1</DownloadUrl>
+	<PreviewFile>preview/kupo-exp.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313895-1037308229.png</PreviewFileUrl>
+	<SubMod>
+		<Name>Configure</Name>
+		<InstallationPath>Features/Zecrets</InstallationPath>
+		<Description>Click Here to Configure mods</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 2x AP Gain</Name>
+		<InstallationPath>Features/Tweaks/AP2x</InstallationPath>
+		<Description>Gains 2x AP after battle (Ignores AbilityUp)</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 4x AP Gain</Name>
+		<InstallationPath>Features/Tweaks/AP4x</InstallationPath>
+		<Description>Gains 4x AP after battle</Description>
+		<Priority>2</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 99 AP Gain</Name>
+		<InstallationPath>Features/Tweaks/AP99</InstallationPath>
+		<Description>Gains 99 AP after battle</Description>
+		<Priority>3</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 2x EXP Gain</Name>
+		<InstallationPath>Features/Tweaks/EXP2x</InstallationPath>
+		<Description>Gains 2x EXP after battle</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 4x EXP Gain</Name>
+		<InstallationPath>Features/Tweaks/EXP4x</InstallationPath>
+		<Description>Gains 4x EXP after battle</Description>
+		<Priority>2</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 8x EXP Gain</Name>
+		<InstallationPath>Features/Tweaks/EXP8x</InstallationPath>
+		<Description>Gains 8x EXP after battle</Description>
+		<Priority>3</Priority>
+	</SubMod>
+	<!-- <SubMod> -->
+		<!-- <Name>Tweak: Halved EXP</Name> -->
+		<!-- <InstallationPath>Features/Tweaks/ExpHalf</InstallationPath> -->
+		<!-- <Description>Cuts the EXP requirement to level up faster</Description> -->
+		<!-- <Priority>1</Priority> -->
+	<!-- </SubMod> -->
+	<SubMod>
+		<Name>Tweak: 2x gil</Name>
+		<InstallationPath>Features/Tweaks/2xgil</InstallationPath>
+		<Description>Doubles Gil received after battle</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 4x gil</Name>
+		<InstallationPath>Features/Tweaks/4xgil</InstallationPath>
+		<Description>4x Gil received after battle</Description>
+		<Priority>2</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: 8x gil</Name>
+		<InstallationPath>Features/Tweaks/8xgil</InstallationPath>
+		<Description>8x Gil received after battle</Description>
+		<Priority>3</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: Get 2x of any item drop after battle </Name>
+		<InstallationPath>Features/Tweaks/2xitem</InstallationPath>
+		<Description>Any item received after battle would be multiplied by 2 ,
+	hence if a monster drops 2 potions you get 4  </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Tweak: Get 4x of any item drop after battle </Name>
+		<InstallationPath>Features/Tweaks/4xitem</InstallationPath>
+		<Description>Any item received after battle would be multiplied by 4 ,
+	hence if a monster drops 2 potions you get 8  </Description>
+		<Priority>1</Priority>
+	</SubMod>
+</Mod>
+<Mod>
+	<Name>No Exp Plus </Name>
+	<Version>4.0.1</Version>
+	<InstallationPath>KupoNoEXP</InstallationPath>
+	<ReleaseDateOriginal>2023-07-20</ReleaseDateOriginal>
+	<ReleaseDate>2024-08-18</ReleaseDate>
+	<Author>faospark</Author>
+	<Description>If you want some degree of challenge. This mod basically suppresses leveling up in game and more
+Features: 
+[1] No / Zero AP and EXP Gain After Battle
+[2] No EXP Gain After Battle BUT GAINS AP
+[3] Doubled EXP Requirement
+[4] 8x EXP Requirement
+This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, previously known as Mog Add-ons.</Description>
+	<PatchNotes>First Split Release</PatchNotes>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<Category>Gameplay</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/yc3unvr4l9ra0pu7wzfjf/KupoNoEXP.zip?rlkey=twu5mwcm4aa20c3f76pvemurv&amp;dl=1</DownloadUrl>
+	<PreviewFile>preview/kuponoexp.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313900-1782999351.png</PreviewFileUrl>
+	<SubMod>
+		<Name>Configure</Name>
+		<InstallationPath>Features/Zecrets</InstallationPath>
+		<Description>Click Here to Configure</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Challenge: No / Zero AP and EXP Gain After Battle</Name>
+		<InstallationPath>Features/Tweaks/EXPAP0</InstallationPath>
+		<Description>If you like things hard.</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Challenge: No EXP Gain After Battle BUT GAINS AP</Name>
+		<InstallationPath>Features/Tweaks/EXP0</InstallationPath>
+		<Description>If you like things hard but still gain MP .</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Challenge: Doubled EXP Requirement</Name>
+		<InstallationPath>Features/Tweaks/ExpX2</InstallationPath>
+		<Description>Doubles EXP requirement so you level up slower</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Challenge: 8x EXP Requirement</Name>
+		<InstallationPath>Features/Tweaks/ExpX8</InstallationPath>
+		<Description>8 Times EXP requirement so you almost dont level up</Description>
+		<Priority>1</Priority>
+	</SubMod>
+
+</Mod>
+<Mod>
+	<Name>Kupo Heroes Pack </Name>
+	<Version>4.0.1</Version>
+	<InstallationPath>KupoHeroPack</InstallationPath>
+	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
+	<ReleaseDate>2024-08-22</ReleaseDate>
+	<Author>faospark</Author>
+	<Description>
+A set of Character enhancements that powers up characters and lessens the grind of the game. 
+Perfect for players who wants to experience something new for the characters without altering 
+the flow and story of the game. 
+
+== Features ==
+**ALL Characters:**
+- Adds resistance to Zombie (via Auto-Life) and Virus (via Anti-Body).
+- Replaces Auto-Potion with a 5% boost to both HP and MP.
+
+**Zidane:**
+- Gains a new support ability called *Pillage*, which doubles the damage output of *Thievery*,
+ effectively halving its execution time.
+
+**Vivi:**
+- Gains access to the spells *Aero*, *Quake*, and *Water*, each capable of targeting all enemies 
+and upgradable to their *AGA* versions.
+
+**Steiner:**
+- Can equip *Save The Queen* and gains access to all of Vivi's new black magic spells.
+
+**Quina:**
+- The effectiveness of their two primary abilities is enhanced: *Eat* can now be used when an 
+enemy's health is at 75%, and *Cook* can be used at 100% enemy health.
+
+**Freya:**
+- Gains the *High Jump* support ability, increasing the damage output of *Jump* by threefold.
+
+**Garnet:**
+- Gains a new spell called *Photon Beam*, a medium-level Holy damage spell available early in 
+the game to increase her effectiveness.
+
+**Amarant:**
+- Gains the *Tensai* support ability, allowing him to learn abilities eight times faster than 
+other characters, compensating for his late-game recruitment.
+
+**Eiko:**
+- The summons *Titan* and *Fenrir* are now independent: *Moonstone* grants *Fenrir*, while 
+*Sapphire* grants *Titan*.
+
+**Beatrix:**
+- Gains all enhancements available in Beatrix mods.
+
+See more on the readme.txt file 
+
+Mod Order: above Beatrix and Tantalus mods. not Yet compatible with Alternate fantasy
+
+Part of the Characters Enhancements feature of Kupo Mods Formerly Mog Add-ons</Description>
+	<PatchNotes>First Split Release </PatchNotes>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<Category>Gameplay</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/4v6b8ijknci17on89ow01/KupoHeroPack.zip?rlkey=xsdn7vf32f41eregepx2fu118&amp;dl=1</DownloadUrl>
+	<PreviewFile>preview/kupo-hero.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313899-1353498866.png</PreviewFileUrl>
+	<SubMod>
+		<Name>Configure</Name>
+		<InstallationPath>Features/Zecrets</InstallationPath>
+		<Description>Click Here to Configure mods</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[All] Add Resistance to Zombie and Virus   </Name>
+		<InstallationPath>Features/Enhance/All</InstallationPath>
+		<Description>Auto-life resists Zombie, Anti-body Resists Virus </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[All] Bye Auto-Potion </Name>
+		<InstallationPath>Features/Enhance/NoAutoPotion</InstallationPath>
+		<Description>Replace Auto-Potion with HP and MP 5% </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[Eiko] The Summoner  </Name>
+		<InstallationPath>Features/Enhance/Eiko</InstallationPath>
+		<Description>Splits Titan and Fenrir as their won independent summon</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[Freya] The Dragoon   </Name>
+		<InstallationPath>Features/Enhance/Freya</InstallationPath>
+		<Description>Make Freya's High Jump do 3x damage</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[Quina] The Chef </Name>
+		<InstallationPath>Features/Enhance/Quina</InstallationPath>
+		<Description>Better Eat at 50% Cook at 100% </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[Steiner] The Queens Knight</Name>
+		<InstallationPath>Features/Enhance/Steiner</InstallationPath>
+		<Description>Steiner can Equip Save the Queen </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[Vivi] The Warlock   </Name>
+		<InstallationPath>Features/Enhance/Vivi</InstallationPath>
+		<Description>Vivi and Steiner can Cast Aero,Quake,Water to RA to AGA spells </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[Garnet] The White Mage   </Name>
+		<InstallationPath>Features/Enhance/Garnet</InstallationPath>
+		<Description>Adds A White Magic Ability to Garnet that causes damage</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[Amaranth] The Genius Nomad </Name>
+		<InstallationPath>Features/Enhance/Amaranth</InstallationPath>
+		<Description>Amaranth learns the Passive Tensai which makes him Learn and Level UP fast</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Enhance:[Zidane] The Pillager</Name>
+		<InstallationPath>Features/Enhance/Zidane</InstallationPath>
+		<Description>Boosts damage of thievery </Description>
+		<Priority>1</Priority>
+	</SubMod>
+		<SubMod>
+		<Name>Enhance:[Beatrix] The Paladin </Name>
+		<InstallationPath>Features/Enhance/Beatrix</InstallationPath>
+		<Description>Add Basic stat Support for Beatrix based of the Beatrix mod  </Description>
+		<Priority>1</Priority>
+	</SubMod>
+</Mod>
 <Mod>
 	<Name>Tantalus</Name>
 	<Version>3.0</Version>
@@ -487,9 +807,9 @@ You should better use the Playable Characters Pack instead. This later one doesn
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>UI : Alternate World and Mist Continent Map</Name>
+		<Name>UI : Disable Alternate World and Mist Continent Map</Name>
 		<InstallationPath>Features/Maps</InstallationPath>
-		<Description>Alternative Over world Map </Description>
+		<Description>Disables Alternative Over world Map </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
@@ -776,7 +1096,71 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 	<PreviewFileUrl>https://i.imgur.com/eHSCN0r.png</PreviewFileUrl>
 	<PreviewFile>PreviewImage.png</PreviewFile>
 </Mod>
+<Mod>
+	<Name>Kupo Controller Pack</Name>
+	<Version>4.0.1</Version>
+	<InstallationPath>KupoButtonsPack</InstallationPath>
+	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
+	<ReleaseDate>2024-08-21</ReleaseDate>
+	<Author>faospark</Author>
+	<Description>The original COMPLETE controller buttons pack of FF9.
+Available Themes:
+- PlayStation Vanilla prompts [On by default]
+  the closest to the game stock UI, Turned on by Default
+- (Dualshock 4) PlayStation Gloss prompts 
+  a glossier type and default install
+- (Dualsense) PS5 white button prompts
+  Black and White look of PS5
+- Pixel Type Button Prompts
+  if you want it old School
+- SNES North American one [via request]
+  Because we can.
 
+ A component of Kupo Library formerly Mog Add-ons</Description>
+	<PatchNotes>First Split Release</PatchNotes>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<Category>Visual</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/aro9kltyr05pwgspwi9bg/KupoButtonsPack.zip?rlkey=6gg5g2fkizchhp4vthop0v4nd&amp;dl=1</DownloadUrl>
+	<PreviewFile>preview/kupo-buttons-pack.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313891-536918021.png</PreviewFileUrl>
+	<SubMod>
+		<Name>Buttons : PS5 (DualSense)</Name>
+		<InstallationPath>Features/Buttons/ButtonsPS5</InstallationPath>
+		<Description>Makes Button 5 like in PS5</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Buttons : PS Gloss (DS4)</Name>
+		<InstallationPath>Features/Buttons/ButtonsPS4Gloss</InstallationPath>
+		<Description>Glossy PS4 buttons</Description>
+		<Priority>2</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Buttons : PS Vanilla (PSX)</Name>
+		<InstallationPath>Features/Buttons/ButtonsPSX</InstallationPath>
+		<Description>PS prompts in the same Style as the default xbox prompts</Description>
+		<Priority>3</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Buttons : Pixels (PSX)</Name>
+		<InstallationPath>Features/Buttons/ButtonsPixel</InstallationPath>
+		<Description>Pixelated Prompts if that is your thing</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Buttons : Default Xbox</Name>
+		<InstallationPath>Features/Buttons/ButtonsXbox</InstallationPath>
+		<Description>Restores Default Xbox Prompts</Description>
+		<Priority>4</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Buttons : SNES</Name>
+		<InstallationPath>Features/Buttons/ButtonsSNES</InstallationPath>
+		<Description>A Requested SNES or Switch layout </Description>
+		<Priority>5</Priority>
+	</SubMod>
+</Mod>
 <Mod>
 	<Name>Dualsense Buttons</Name>
 	<Version>1.0</Version>
@@ -833,7 +1217,64 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 	<DownloadFormat>SingleFileWithPath:FF9_Data/EmbeddedAsset/UI/Atlas/Face Atlas</DownloadFormat>
 	<PreviewFileUrl>https://i.imgur.com/pfHQyOJ.png</PreviewFileUrl>
 </Mod>
-
+<Mod>
+	<Name>Portraits Pack</Name>
+	<Version>4.0.1</Version>
+	<InstallationPath>KupoPortraits</InstallationPath>
+	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
+	<ReleaseDate>2024-08-22</ReleaseDate>
+	<Author>faospark</Author>
+	<Description>
+The Original Portraits Pack, part of the Kupo Mods, formerly Mog Add-ons. 
+To DFFOO fans this is where the DFFOO portraits resides
+All presets contain portrait support for Kuja, Fratley , Lani and even some planned characters to be added. 
+	Available Presets: 
+	[1] Default Extended : contains a nodded version of the default portraits with enhanced Marcus, Cinna etc. 
+on by default	
+	[2] Opera Omnia Portraits : contains  Dissidia Final Fantasy Opera Omnia portraits
+	[2.1] Opera Omnia Portraits : contains  DFFOO Pluto Knight / White Mage
+	[3] PSX Upscaled : waifu2x Upscaled psx versions 
+Mod Order : Must be Place Above the mods mentioned above Playable Character Pack , Beatrix Mod , Tantalus mod and 
+Kupo UI Suite. 
+	</Description>
+	<PatchNotes>First Split Release</PatchNotes>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<Category>Visual</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/80dpdv5kn378cw27fay0q/KupoPortraits.zip?rlkey=dnb8htsnmqzoehuibij9tarxd&amp;dl=1</DownloadUrl>
+	<PreviewFile>preview/kupo-portraits.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313903-663823797.png</PreviewFileUrl>
+	<SubMod>
+		<Name>Configure</Name>
+		<InstallationPath>Features/Zecrets</InstallationPath>
+		<Description>Click Here to Configure</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Portraits : Default Extended Cast</Name>
+		<InstallationPath>Features/Portraits/PortraitDefault</InstallationPath>
+		<Description>Default Portraits that includes Kuja, Fratly and Lani [on by Default]</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Portraits : Opera Omnia</Name>
+		<InstallationPath>Features/Portraits/PortraitOperaOmnia</InstallationPath>
+		<Description>Dissidia Opera Omnia Portraits</Description>
+		<Priority>3</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Portraits : DFFOO Pluto Knight / White Mage </Name>
+		<InstallationPath>Features/Portraits/PortraitOperaOmniaPCP</InstallationPath>
+		<Description>DFFOO Style for Extra costumes for Zidane and Garnet, must be used with the Opera Omnia portraits </Description>
+		<Priority>4</Priority>
+	</SubMod>	
+	<SubMod>
+		<Name>Portraits : PSX Upscaled</Name>
+		<InstallationPath>Features/Portraits/PortraitPSXUpscale</InstallationPath>
+		<Description>original psx release Upscaled using waifu2x and Gigapixel</Description>
+		<Priority>2</Priority>
+	</SubMod>
+</Mod>
 <Mod>
 	<Name>No Cutscene</Name>
 	<Version>0.5</Version>
