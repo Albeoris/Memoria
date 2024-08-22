@@ -3,6 +3,7 @@ using Assets.Sources.Scripts.Common;
 using FF9;
 using Memoria;
 using Memoria.Data;
+using Memoria.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -499,19 +500,19 @@ public class BattleUI : MonoBehaviour
         }
         if (GUILayout.Button("Attack"))
         {
-            HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 0, 16, isTrance);
+            BattleUI.playCommand(FF9StateSystem.Battle.selectCharPosID, 0, 16, isTrance);
         }
         else if (GUILayout.Button("Skill1"))
         {
-            HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 1, 16, isTrance);
+            BattleUI.playCommand(FF9StateSystem.Battle.selectCharPosID, 1, 16, isTrance);
         }
         else if (GUILayout.Button("Skill2"))
         {
-            HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 2, 16, isTrance);
+            BattleUI.playCommand(FF9StateSystem.Battle.selectCharPosID, 2, 16, isTrance);
         }
         else if (GUILayout.Button("Item"))
         {
-            HonoluluBattleMain.playCommand(FF9StateSystem.Battle.selectCharPosID, 3, 16, isTrance);
+            BattleUI.playCommand(FF9StateSystem.Battle.selectCharPosID, 3, 16, isTrance);
         }
         GUILayout.EndHorizontal();
         GUILayout.BeginHorizontal("Box");
@@ -921,6 +922,61 @@ public class BattleUI : MonoBehaviour
             cmd.info.reflec = 0;
             btl.Data.bi.cmd_idle = 1;
             btl_cmd.EnqueueCommand(cmd);
+        }
+    }
+
+    public static void playCommand(Int32 characterNo, Int32 slotNo, Int32 target, Boolean isTrance = false)
+    {
+        if (slotNo < 0 || slotNo > 6)
+        {
+            Debug.LogError("slot number value can be only 0 to 5");
+        }
+        else if (characterNo < 0 || characterNo > 4)
+        {
+            Debug.LogError("character number value can be only 1 to 4");
+        }
+        else
+        {
+            BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_data[characterNo];
+            CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.member[characterNo].info.menu_type;
+            BattleCommandId commandId = BattleCommandId.None;
+            Int32 sub_no = 0;
+            switch (slotNo)
+            {
+                case 0:
+                    commandId = BattleCommandId.Attack;
+                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
+                    break;
+                case 1:
+                    commandId = CharacterCommands.CommandSets[presetId].Get(isTrance, BattleCommandMenu.Ability1);
+                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
+                    break;
+                case 2:
+                    commandId = CharacterCommands.CommandSets[presetId].Get(isTrance, BattleCommandMenu.Ability2);
+                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
+                    break;
+                case 3:
+                    commandId = BattleCommandId.Item;
+                    sub_no = 236; // Potion
+                    break;
+                case 4:
+                    commandId = BattleCommandId.Defend;
+                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
+                    break;
+                case 5:
+                    commandId = BattleCommandId.Change;
+                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
+                    break;
+            }
+
+            if (CharacterCommands.Commands[commandId].Type == CharacterCommandType.Throw)
+                sub_no = (Int32)RegularItem.Dagger;
+
+            if (commandId == BattleCommandId.None)
+                return;
+
+            CMD_DATA cmd = new CMD_DATA { regist = btlData };
+            btl_cmd.SetCommand(cmd, commandId, sub_no, (UInt16)target, 0u);
         }
     }
 }

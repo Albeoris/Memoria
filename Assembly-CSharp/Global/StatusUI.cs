@@ -286,16 +286,24 @@ public class StatusUI : UIScene
         FF9UIDataTool.DisplayItem(player.equip[3], _equipmentHud.Body.IconSprite, _equipmentHud.Body.NameLabel, true);
         FF9UIDataTool.DisplayItem(player.equip[4], _equipmentHud.Accessory.IconSprite, _equipmentHud.Accessory.NameLabel, true);
 
-        CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.member[_currentPartyIndex].info.menu_type;
-        BattleCommandId command1 = CharacterCommands.CommandSets[presetId].Regular1;
-        BattleCommandId command2 = CharacterCommands.CommandSets[presetId].Regular2;
-        _attackLabel.text = FF9TextTool.CommandName(BattleCommandId.Attack);
-        _ability1Label.text = FF9TextTool.CommandName(command1);
-        _ability2Label.text = FF9TextTool.CommandName(command2);
-        _itemLabel.text = FF9TextTool.CommandName(BattleCommandId.Item);
+        CharacterPresetId presetId = player.info.menu_type;
+        CharacterCommandSet cmdSet = CharacterCommands.CommandSets[presetId];
+        SetupCommandLabel(_attackLabel, BattleCommandMenu.Attack, player, cmdSet);
+        SetupCommandLabel(_ability1Label, BattleCommandMenu.Ability1, player, cmdSet);
+        SetupCommandLabel(_ability2Label, BattleCommandMenu.Ability2, player, cmdSet);
+        SetupCommandLabel(_itemLabel, BattleCommandMenu.Item, player, cmdSet);
 
         for (Int32 index = 0; index < _abilityHudList.Count; ++index)
             DrawAbilityInfo(_abilityHudList[index], index);
+    }
+
+    private void SetupCommandLabel(UILabel label, BattleCommandMenu menu, PLAYER player, CharacterCommandSet cmdSet)
+    {
+        BattleCommandId cmdId = BattleCommandHelper.Patch(cmdSet.GetRegular(menu), menu, player);
+        if (BattleCommandHelper.GetCommandEnabledState(cmdId, menu, player) > 0)
+            label.text = FF9TextTool.CommandName(cmdId);
+        else
+            label.text = String.Empty;
     }
 
     private void DisplayPlayer(Boolean updateAvatar)

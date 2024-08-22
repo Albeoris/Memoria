@@ -957,7 +957,6 @@ public class btl_cmd
         if (!BattleAbilityHelper.ApplySpecialCommandCondition(cmd))
             return false;
 
-
         BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
         if (caster != null)
         {
@@ -970,11 +969,9 @@ public class btl_cmd
         {
             case BattleCommandId.Jump:
                 btl_stat.AlterStatus(caster, BattleStatusId.Jump, caster, false, BattleCommandId.Spear, BattleAbilityId.Spear1, cmd.tar_id);
-                cmd.tar_id = caster.Id;
                 break;
             case BattleCommandId.JumpInTrance:
                 btl_stat.AlterStatus(caster, BattleStatusId.Jump, caster, false, BattleCommandId.SpearInTrance, BattleAbilityId.Spear2, btl_util.GetStatusBtlID(1, 0));
-                cmd.tar_id = caster.Id;
                 break;
             case BattleCommandId.MagicCounter:
                 UIManager.Battle.SetBattleFollowMessage(BattleMesages.ReturnMagic, msgCmd: cmd);
@@ -1149,7 +1146,7 @@ public class btl_cmd
     {
         Int32 mp = cmd.GetCommandMPCost();
         if (cmd.regist != null)
-            if (BattleAbilityHelper.GetPatchedMPCost(btl_util.GetCommandMainActionIndex(cmd), new BattleUnit(cmd.regist), ref mp, cmd: cmd))
+            if (BattleAbilityHelper.GetPatchedMPCost(ref mp, btl_util.GetCommandMainActionIndex(cmd), new BattleUnit(cmd.regist), cmd.cmd_no, cmd.info.cmdMenu, cmd.aa, cmd))
                 cmd.info.CustomMPCost = mp;
 
         if (battle.GARNET_SUMMON_FLAG != 0 && (cmd.AbilityType & 4) != 0)

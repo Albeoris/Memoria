@@ -417,7 +417,7 @@ namespace FF9
 
         public static void LoadAbilityFeatureFile(ref Dictionary<SupportAbility, SupportingAbilityFeature> entries, String input)
         {
-            MatchCollection abilMatches = new Regex(@"^(>SA|>AA)\s+(\d+|GlobalEnemyLast|GlobalEnemy|GlobalLast|Global)(\+?).*()", RegexOptions.Multiline).Matches(input);
+            MatchCollection abilMatches = new Regex(@"^(>SA|>AA|>CMD)\s+(\d+|GlobalEnemyLast|GlobalEnemy|GlobalLast|Global)(\+?).*()", RegexOptions.Multiline).Matches(input);
             for (Int32 i = 0; i < abilMatches.Count; i++)
             {
                 Int32 abilIndex;
@@ -431,19 +431,19 @@ namespace FF9
                     abilIndex = -4;
                 else if (!Int32.TryParse(abilMatches[i].Groups[2].Value, out abilIndex))
                     continue;
-                Boolean cumulate = String.Compare(abilMatches[i].Groups[3].Value, "+") == 0;
+                Boolean cumulate = String.Equals(abilMatches[i].Groups[3].Value, "+");
                 Int32 endPos, startPos = abilMatches[i].Groups[4].Captures[0].Index + 1;
                 if (i + 1 == abilMatches.Count)
                     endPos = input.Length;
                 else
                     endPos = abilMatches[i + 1].Groups[1].Captures[0].Index;
-                if (String.Compare(abilMatches[i].Groups[1].Value, ">SA") == 0)
+                if (String.Equals(abilMatches[i].Groups[1].Value, ">SA"))
                 {
                     if (!cumulate || !entries.ContainsKey((SupportAbility)abilIndex))
                         entries[(SupportAbility)abilIndex] = new SupportingAbilityFeature();
                     entries[(SupportAbility)abilIndex].ParseFeatures((SupportAbility)abilIndex, input.Substring(startPos, endPos - startPos));
                 }
-                else
+                else if (String.Equals(abilMatches[i].Groups[1].Value, ">AA"))
                 {
                     if (abilIndex > 0)
                     {
@@ -457,6 +457,25 @@ namespace FF9
                             BattleAbilityHelper.ClearFlexibleAbilityFeature();
                         BattleAbilityHelper.ParseAbilityFeature(input.Substring(startPos, endPos - startPos));
                     }
+                }
+                else if (String.Equals(abilMatches[i].Groups[1].Value, ">CMD"))
+                {
+                    if (abilIndex > 0)
+                    {
+                        if (!cumulate)
+                            BattleCommandHelper.ClearCommandFeature((BattleCommandId)abilIndex);
+                        BattleCommandHelper.ParseCommandFeature((BattleCommandId)abilIndex, input.Substring(startPos, endPos - startPos));
+                    }
+                    else if (abilIndex == -1)
+                    {
+                        if (!cumulate)
+                            BattleCommandHelper.ClearFlexibleCommandFeature();
+                        BattleCommandHelper.ParseCommandFeature(input.Substring(startPos, endPos - startPos));
+                    }
+                }
+                else
+                {
+                    Log.Warning($"[ff9abil] Failure of regex find: '{abilMatches[i].Value}'");
                 }
             }
         }
