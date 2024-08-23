@@ -378,61 +378,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         //frameTime = 1f / fps;
     }
 
-    public static void playCommand(Int32 characterNo, Int32 slotNo, Int32 target, Boolean isTrance = false)
-    {
-        if (slotNo < 0 || slotNo > 6)
-        {
-            Debug.LogError("slot number value can be only 0 to 5");
-        }
-        else if (characterNo < 0 || characterNo > 4)
-        {
-            Debug.LogError("character number value can be only 1 to 4");
-        }
-        else
-        {
-            BTL_DATA btlData = FF9StateSystem.Battle.FF9Battle.btl_data[characterNo];
-            CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.member[characterNo].info.menu_type;
-            BattleCommandId commandId = BattleCommandId.None;
-            Int32 sub_no = 0;
-            switch (slotNo)
-            {
-                case 0:
-                    commandId = BattleCommandId.Attack;
-                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
-                    break;
-                case 1:
-                    commandId = CharacterCommands.CommandSets[presetId].Get(isTrance, 0);
-                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
-                    break;
-                case 2:
-                    commandId = CharacterCommands.CommandSets[presetId].Get(isTrance, 1);
-                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
-                    break;
-                case 3:
-                    commandId = BattleCommandId.Item;
-                    sub_no = 236; // Potion
-                    break;
-                case 4:
-                    commandId = BattleCommandId.Defend;
-                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
-                    break;
-                case 5:
-                    commandId = BattleCommandId.Change;
-                    sub_no = CharacterCommands.Commands[commandId].MainEntry;
-                    break;
-            }
-
-            if (CharacterCommands.Commands[commandId].Type == CharacterCommandType.Throw)
-                sub_no = (Int32)RegularItem.Dagger;
-
-            if (commandId == BattleCommandId.None)
-                return;
-
-            CMD_DATA cmd = new CMD_DATA { regist = btlData };
-            btl_cmd.SetCommand(cmd, commandId, sub_no, (UInt16)target, 0u);
-        }
-    }
-
     private void YMenu_ManagerActiveTime()
     {
         BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next;
@@ -712,7 +657,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
             for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
                 btl.CheckDelayedModifier();
-            BattleCalculator.FrameAppliedEffectList.Clear();
 
             if (this.battleResult == 1)
             {
@@ -721,6 +665,9 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             }
         }
         SceneDirector.ServiceFade();
+        foreach (BattleCalculator calc in BattleCalculator.FrameAppliedEffectList)
+            BattleHUD.EffectedBtlId |= calc.Target.Id;
+        BattleCalculator.FrameAppliedEffectList.Clear();
     }
 
     private static void UpdateOverFrame()

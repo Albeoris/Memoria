@@ -69,11 +69,10 @@ public partial class BattleHUD : UIScene
         Boolean rightPressed = (ETb.sKey0 & (EventInput.Lright | EventInput.Pright)) != 0;
         if (_buttonSliding == null)
         {
-            BTL_DATA currentBtl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex).Data;
             GONavigationButton nextSlidingButton = null;
-            if (leftPressed && CommandIsEnabled(currentBtl, BattleCommandId.Change))
+            if (leftPressed && _commandEnabledState[BattleCommandMenu.Change] == 2)
                 nextSlidingButton = _commandPanel.Change;
-            else if (rightPressed && CommandIsEnabled(currentBtl, BattleCommandId.Defend))
+            else if (rightPressed && _commandEnabledState[BattleCommandMenu.Defend] == 2)
                 nextSlidingButton = _commandPanel.Defend;
             if (nextSlidingButton != null)
             {
@@ -152,79 +151,61 @@ public partial class BattleHUD : UIScene
         {
             FF9Sfx.FF9SFX_Play(103);
             _currentCommandIndex = (BattleCommandMenu)go.transform.GetSiblingIndex();
-            BattleCommandMenu menuType = _currentCommandIndex;
-            _currentCommandId = GetCommandFromCommandIndex(ref menuType, CurrentPlayerIndex);
+            _currentCommandId = GetCommandFromCommandIndex(_currentCommandIndex, CurrentPlayerIndex);
             ResetSlidingButton();
             TryMemorizeCommand();
-            _subMenuType = SubMenuType.Normal;
             if (IsDoubleCast)
                 _doubleCastCount = 1;
 
-            switch (menuType)
+            if (_isManualTrance && _currentCommandIndex == BattleCommandMenu.Change)
             {
-                case BattleCommandMenu.Attack:
+                _subMenuType = SubMenuType.Normal;
+                _targetCursor = TargetType.SingleAny;
+                BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
+                btl.Trance = Byte.MaxValue;
+                btl.AlterStatus(BattleStatusId.Trance);
+            }
+            else if (_currentCommandId == BattleCommandId.Defend || _currentCommandId == BattleCommandId.Change)
+            {
+                _subMenuType = SubMenuType.Normal;
+                _targetCursor = TargetType.SingleAny;
+                SendCommand(ProcessCommand(CurrentPlayerIndex, CursorGroup.Individual));
+                SetIdle();
+            }
+            else if (_currentCommandId == BattleCommandId.AccessMenu)
+            {
+                OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex)?.Player : null);
+            }
+            else
+            {
+                CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
+                if (ff9Command.Type == CharacterCommandType.Normal)
+                {
+                    _subMenuType = SubMenuType.Normal;
                     SetCommandVisibility(false, false);
                     SetTargetVisibility(true);
-                    break;
-                case BattleCommandMenu.Defend:
-                    _targetCursor = 0;
-                    SendCommand(ProcessCommand(CurrentPlayerIndex, CursorGroup.Individual));
-                    SetIdle();
-                    break;
-                case BattleCommandMenu.Ability1:
-                case BattleCommandMenu.Ability2:
-                    CharacterCommand ff9Command = CharacterCommands.Commands[_currentCommandId];
-                    if (ff9Command.Type == CharacterCommandType.Normal)
-                    {
-                        _subMenuType = SubMenuType.Normal;
-                        SetCommandVisibility(false, false);
-                        SetTargetVisibility(true);
-                    }
-                    else if (ff9Command.Type == CharacterCommandType.Ability)
-                    {
-                        _subMenuType = SubMenuType.Ability;
-                        DisplayAbility();
-                        SetCommandVisibility(false, false);
-                        SetAbilityPanelVisibility(true, false);
-                    }
-                    else if (ff9Command.Type == CharacterCommandType.Throw)
-                    {
-                        _subMenuType = SubMenuType.Throw;
-                        DisplayItem(true);
-                        SetCommandVisibility(false, false);
-                        SetItemPanelVisibility(true, false);
-                    }
-                    else if (ff9Command.Type == CharacterCommandType.Item)
-                    {
-                        _subMenuType = SubMenuType.Item;
-                        DisplayItem(false);
-                        SetCommandVisibility(false, false);
-                        SetItemPanelVisibility(true, false);
-                    }
-                    break;
-                case BattleCommandMenu.Item:
+                }
+                else if (ff9Command.Type == CharacterCommandType.Ability)
+                {
+                    _subMenuType = SubMenuType.Ability;
+                    DisplayAbility();
+                    SetCommandVisibility(false, false);
+                    SetAbilityPanelVisibility(true, false);
+                }
+                else if (ff9Command.Type == CharacterCommandType.Throw)
+                {
+                    _subMenuType = SubMenuType.Throw;
+                    DisplayItem(true);
+                    SetCommandVisibility(false, false);
+                    SetItemPanelVisibility(true, false);
+                }
+                else if (ff9Command.Type == CharacterCommandType.Item)
+                {
+                    _subMenuType = SubMenuType.Item;
                     DisplayItem(false);
                     SetCommandVisibility(false, false);
                     SetItemPanelVisibility(true, false);
-                    break;
-                case BattleCommandMenu.Change:
-                    _targetCursor = 0;
-                    if (_isManualTrance)
-                    {
-                        BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
-                        btl.Trance = Byte.MaxValue;
-                        btl.AlterStatus(BattleStatusId.Trance);
-                    }
-                    else
-                    {
-                        CommandDetail command = ProcessCommand(CurrentPlayerIndex, CursorGroup.Individual);
-                        SendCommand(command);
-                        SetIdle();
-                    }
-                    break;
-                case BattleCommandMenu.AccessMenu:
-                    OpenMainMenu(Configuration.Battle.AccessMenus <= 2 ? FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex)?.Player : null);
-                    break;
+                }
             }
         }
         else if (ButtonGroupState.ActiveGroup == TargetGroupButton)
@@ -319,37 +300,15 @@ public partial class BattleHUD : UIScene
         {
             if (ButtonGroupState.ActiveGroup == TargetGroupButton)
             {
-                BattleCommandMenu menuType = _currentCommandIndex;
-                GetCommandFromCommandIndex(ref menuType, CurrentPlayerIndex);
                 FF9Sfx.FF9SFX_Play(101);
                 SetTargetVisibility(false);
                 ClearModelPointer();
-                switch (menuType)
-                {
-                    case BattleCommandMenu.Attack:
-                        SetCommandVisibility(true, true);
-                        break;
-                    case BattleCommandMenu.Ability1:
-                    case BattleCommandMenu.Ability2:
-                        if (_subMenuType == SubMenuType.Ability)
-                        {
-                            SetAbilityPanelVisibility(true, true);
-                            break;
-                        }
-                        if (_subMenuType == SubMenuType.Throw)
-                        {
-                            SetItemPanelVisibility(true, true);
-                            break;
-                        }
-                        if (IsMixCast)
-                            SetItemPanelVisibility(true, true);
-                        else
-                            SetCommandVisibility(true, true);
-                        break;
-                    case BattleCommandMenu.Item:
-                        SetItemPanelVisibility(true, true);
-                        break;
-                }
+                if (_subMenuType == SubMenuType.Normal)
+                    SetCommandVisibility(true, true);
+                else if (_subMenuType == SubMenuType.Ability)
+                    SetAbilityPanelVisibility(true, true);
+                else
+                    SetItemPanelVisibility(true, true);
             }
             else if (ButtonGroupState.ActiveGroup == AbilityGroupButton)
             {
@@ -403,21 +362,18 @@ public partial class BattleHUD : UIScene
                     Int32 postponed = ReadyQueue[0];
                     ReadyQueue.RemoveAt(0);
                     ReadyQueue.Add(postponed);
-                    using (List<Int32>.Enumerator enumerator = ReadyQueue.GetEnumerator())
+                    for (Int32 i = 0; i < ReadyQueue.Count; i++)
                     {
-                        while (enumerator.MoveNext())
+                        Int32 current = ReadyQueue[i];
+                        if (!InputFinishList.Contains(current) && !_unconsciousStateList.Contains(current) && current != CurrentPlayerIndex)
                         {
-                            Int32 current = enumerator.Current;
-                            if (!InputFinishList.Contains(current) && !_unconsciousStateList.Contains(current) && current != CurrentPlayerIndex)
+                            if (i > 0)
                             {
-                                if (ReadyQueue.IndexOf(current) > 0)
-                                {
-                                    ReadyQueue.Remove(current);
-                                    ReadyQueue.Insert(0, current);
-                                }
-                                SwitchPlayer(current);
-                                return true;
+                                ReadyQueue.RemoveAt(i);
+                                ReadyQueue.Insert(0, current);
                             }
+                            SwitchPlayer(current);
+                            return true;
                         }
                     }
                     if (Configuration.Battle.Speed == 2)
@@ -436,7 +392,9 @@ public partial class BattleHUD : UIScene
                         return true;
                     }
                     else
+                    {
                         SwitchPlayer(ReadyQueue[0]);
+                    }
                 }
             }
             if (Configuration.Battle.AccessMenus <= 0)

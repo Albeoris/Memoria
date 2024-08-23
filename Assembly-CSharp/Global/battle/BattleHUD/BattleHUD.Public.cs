@@ -34,6 +34,7 @@ public partial class BattleHUD : UIScene
     public static Dictionary<BattleCommandId, MixCommandType> MixCommandSet = new Dictionary<BattleCommandId, MixCommandType>();
     public static Boolean ForceNextTurn = false;
     public static Int32 switchBtlId = -1;
+    public static Int32 EffectedBtlId = 0;
 
     public BattleHUD()
     {
@@ -60,6 +61,7 @@ public partial class BattleHUD : UIScene
         _matchBattleIdEnemyList = new List<Int32>();
         _itemIdList = new List<RegularItem>();
         _messageQueue = new Dictionary<String, Message>();
+        _commandEnabledState = new Dictionary<BattleCommandMenu, Int32>();
         _oneTime = true;
     }
 
@@ -229,7 +231,7 @@ public partial class BattleHUD : UIScene
             camera.worldToCameraMatrix = cameraOldMatrix;
             camera.projectionMatrix = PsxCamera.PsxProj2UnityProj(SFX.fxNearZ, SFX.fxFarZ);
             RenderTexture.active = photoRender;
-            Texture2D photo = new Texture2D((Int32)photoSize.x, (Int32)photoSize.y, TextureFormat.ARGB32, false);
+            Texture2D photo = new Texture2D((Int32)photoSize.x, (Int32)photoSize.y, TextureFormat.RGB24, false);
             photo.ReadPixels(new Rect((Screen.width - (Int32)photoSize.x) / 2, (Screen.height - (Int32)photoSize.y) / 2, photoRender.width, photoRender.height), 0, 0);
             photo.Apply();
             RenderTexture.active = null;

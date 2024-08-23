@@ -63,6 +63,8 @@ namespace Memoria.Data
                     set.AbilityMPCost = formula.Groups[2].Value;
                 else if (String.Equals(formula.Groups[1].Value, "ItemRequirement"))
                     set.AbilityItemRequirement = formula.Groups[2].Value;
+                else if (String.Equals(formula.Groups[1].Value, "Disable"))
+                    set.AbilityDisable = formula.Groups[2].Value;
             }
         }
 
@@ -81,12 +83,18 @@ namespace Memoria.Data
             try
             {
                 BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
+                BattleUnit caster = new BattleUnit(cmd.regist);
                 Int64 gilCost = 0;
-                foreach (FeatureSet feat in GetApplicableFeatures(abilId, new BattleUnit(cmd.regist), cmd: cmd))
+                foreach (FeatureSet feat in GetApplicableFeatures(abilId, caster, cmd.cmd_no, cmd.info.cmdMenu, cmd.aa, cmd))
                 {
                     feat.ApplyBasicModifiers(cmd);
                     if (!feat.ApplyCommandCondition(cmd, ref gilCost))
                         return false;
+                    if (feat.CheckAbilityIsDisabled(abilId, caster, cmd.cmd_no, cmd.info.cmdMenu, false))
+                    {
+                        UIManager.Battle.SetBattleFollowMessage(BattleMesages.CannotCast);
+                        return false;
+                    }
                 }
                 PARTY_DATA ff9party = FF9StateSystem.Common.FF9.party;
                 if (gilCost > ff9party.gil)
@@ -103,13 +111,21 @@ namespace Memoria.Data
             return true;
         }
 
-        public static Boolean GetPatchedMPCost(BattleAbilityId abilId, BattleUnit potentialCaster, ref Int32 mpCost, AA_DATA ability = null, CMD_DATA cmd = null, BattleCommandMenu menu = BattleCommandMenu.None)
+        public static Boolean IsAbilityDisabled(BattleAbilityId abilId, BattleUnit potentialCaster, BattleCommandId cmdId, BattleCommandMenu menu)
+        {
+            foreach (FeatureSet feat in GetApplicableFeatures(abilId, potentialCaster, cmdId, menu))
+                if (feat.CheckAbilityIsDisabled(abilId, potentialCaster, cmdId, menu, true))
+                    return true;
+            return false;
+        }
+
+        public static Boolean GetPatchedMPCost(ref Int32 mpCost, BattleAbilityId abilId, BattleUnit potentialCaster, BattleCommandId cmdId, BattleCommandMenu menu, AA_DATA ability = null, CMD_DATA cmd = null)
         {
             Boolean changeMPCost = false;
             try
             {
-                foreach (FeatureSet feat in GetApplicableFeatures(abilId, potentialCaster, ability: ability, cmd: cmd, menu: menu))
-                    if (feat.ApplyMPCost(abilId, potentialCaster, ref mpCost, ability: ability, cmd: cmd, menu: menu))
+                foreach (FeatureSet feat in GetApplicableFeatures(abilId, potentialCaster, cmdId, menu, ability, cmd))
+                    if (feat.ApplyMPCost(ref mpCost, abilId, potentialCaster, cmdId, menu, ability))
                         changeMPCost = true;
             }
             catch (Exception err)
@@ -124,7 +140,8 @@ namespace Memoria.Data
             try
             {
                 BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
-                foreach (FeatureSet feat in GetApplicableFeatures(abilId, new BattleUnit(cmd.regist), cmd: cmd))
+                BattleUnit caster = new BattleUnit(cmd.regist);
+                foreach (FeatureSet feat in GetApplicableFeatures(abilId, caster, cmd.cmd_no, cmd.info.cmdMenu, cmd.aa, cmd))
                     feat.ApplyPriority(cmd);
             }
             catch (Exception err)
@@ -149,12 +166,12 @@ namespace Memoria.Data
             return abilId;
         }
 
-        private static IEnumerable<FeatureSet> GetApplicableFeatures(BattleAbilityId abilId, BattleUnit caster, AA_DATA ability = null, CMD_DATA cmd = null, BattleCommandMenu menu = BattleCommandMenu.None)
+        private static IEnumerable<FeatureSet> GetApplicableFeatures(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu, AA_DATA ability = null, CMD_DATA cmd = null)
         {
             foreach (FeatureSet flexiSet in FlexibleFeatures)
-                if (flexiSet.CheckCondition(abilId, caster, ability, cmd, menu))
+                if (flexiSet.CheckCondition(abilId, caster, cmdId, menu, ability, cmd))
                     yield return flexiSet;
-            if (abilId != BattleAbilityId.Void && AbilityFeatures.TryGetValue(abilId, out FeatureSet abilSet) && abilSet.CheckCondition(abilId, caster, ability, cmd, menu))
+            if (abilId != BattleAbilityId.Void && AbilityFeatures.TryGetValue(abilId, out FeatureSet abilSet) && abilSet.CheckCondition(abilId, caster, cmdId, menu, ability, cmd))
                 yield return abilSet;
             yield break;
         }
@@ -173,35 +190,39 @@ namespace Memoria.Data
             public String AbilityGilCost = null;
             public String AbilityMPCost = null;
             public String AbilityItemRequirement = null;
+            public String AbilityDisable = null;
 
-            public Boolean CheckCondition(BattleAbilityId abilId, BattleUnit caster, AA_DATA ability = null, CMD_DATA cmd = null, BattleCommandMenu menu = BattleCommandMenu.None)
+            public Boolean CheckCondition(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu, AA_DATA ability = null, CMD_DATA cmd = null)
             {
                 if (String.IsNullOrEmpty(Condition))
                     return true;
                 if (cmd == null && ability == null && abilId == BattleAbilityId.Void)
                     return false;
+                if (ability == null && !FF9BattleDB.CharacterActions.TryGetValue(abilId, out ability))
+                    return false;
                 Expression c = new Expression(Condition);
                 NCalcUtility.InitializeExpressionUnit(ref c, caster, "Caster");
                 if (cmd != null)
-                {
                     NCalcUtility.InitializeExpressionCommand(ref c, new BattleCommand(cmd));
-                    c.Parameters["CommandId"] = (Int32)cmd.cmd_no;
-                    c.Parameters["CommandMenu"] = (Int32)cmd.info.cmdMenu;
-                }
                 else
-                {
-                    if (ability != null)
-                        NCalcUtility.InitializeExpressionRawAbility(ref c, ability, abilId);
-                    else
-                        NCalcUtility.InitializeExpressionRawAbility(ref c, FF9BattleDB.CharacterActions[abilId], abilId);
-                    if (menu == BattleCommandMenu.Ability1 && caster.IsPlayer)
-                        c.Parameters["CommandId"] = (Int32)CharacterCommands.CommandSets[caster.Player.PresetId].Get(caster.IsUnderAnyStatus(BattleStatus.Trance), 0);
-                    else if (menu == BattleCommandMenu.Ability2 && caster.IsPlayer)
-                        c.Parameters["CommandId"] = (Int32)CharacterCommands.CommandSets[caster.Player.PresetId].Get(caster.IsUnderAnyStatus(BattleStatus.Trance), 1);
-                    else
-                        c.Parameters["CommandId"] = (Int32)BattleCommandId.None;
-                    c.Parameters["CommandMenu"] = (Int32)menu;
-                }
+                    NCalcUtility.InitializeExpressionRawAbility(ref c, ability, abilId);
+                c.Parameters["CommandId"] = (Int32)cmdId;
+                c.Parameters["CommandMenu"] = (Int32)menu;
+                c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                return NCalcUtility.EvaluateNCalcCondition(c.Evaluate());
+            }
+
+            public Boolean CheckAbilityIsDisabled(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu, Boolean inMenu)
+            {
+                if (String.IsNullOrEmpty(AbilityDisable))
+                    return false;
+                Expression c = new Expression(AbilityDisable);
+                NCalcUtility.InitializeExpressionUnit(ref c, caster, "Caster");
+                NCalcUtility.InitializeExpressionRawAbility(ref c, FF9BattleDB.CharacterActions[abilId], abilId);
+                c.Parameters["CommandId"] = (Int32)cmdId;
+                c.Parameters["CommandMenu"] = (Int32)menu;
+                c.Parameters["CheckInMenu"] = inMenu;
                 c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                 c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
                 return NCalcUtility.EvaluateNCalcCondition(c.Evaluate());
@@ -310,37 +331,22 @@ namespace Memoria.Data
                 return true;
             }
 
-            public Boolean ApplyMPCost(BattleAbilityId abilId, BattleUnit potentialCaster, ref Int32 mpCost, AA_DATA ability = null, CMD_DATA cmd = null, BattleCommandMenu menu = BattleCommandMenu.None)
+            public Boolean ApplyMPCost(ref Int32 mpCost, BattleAbilityId abilId, BattleUnit potentialCaster, BattleCommandId cmdId, BattleCommandMenu menu, AA_DATA ability = null)
             {
-                if (ability == null && cmd == null)
+                if (ability == null)
                 {
                     if (abilId == BattleAbilityId.Void)
                         return false;
                     if (!FF9BattleDB.CharacterActions.TryGetValue(abilId, out ability))
                         return false;
                 }
-                if (ability == null && cmd != null)
-                    ability = cmd.aa;
                 if (!String.IsNullOrEmpty(AbilityMPCost))
                 {
                     Expression e = new Expression(AbilityMPCost);
                     NCalcUtility.InitializeExpressionUnit(ref e, potentialCaster, "Caster");
                     NCalcUtility.InitializeExpressionRawAbility(ref e, ability, abilId);
-                    if (cmd != null)
-                    {
-                        e.Parameters["CommandId"] = (Int32)cmd.cmd_no;
-                        e.Parameters["CommandMenu"] = (Int32)cmd.info.cmdMenu;
-                    }
-                    else
-                    {
-                        if (menu == BattleCommandMenu.Ability1 && potentialCaster.IsPlayer)
-                            e.Parameters["CommandId"] = (Int32)CharacterCommands.CommandSets[potentialCaster.Player.PresetId].Get(potentialCaster.IsUnderAnyStatus(BattleStatus.Trance), 0);
-                        else if (menu == BattleCommandMenu.Ability2 && potentialCaster.IsPlayer)
-                            e.Parameters["CommandId"] = (Int32)CharacterCommands.CommandSets[potentialCaster.Player.PresetId].Get(potentialCaster.IsUnderAnyStatus(BattleStatus.Trance), 1);
-                        else
-                            e.Parameters["CommandId"] = (Int32)BattleCommandId.None;
-                        e.Parameters["CommandMenu"] = (Int32)menu;
-                    }
+                    e.Parameters["CommandId"] = (Int32)cmdId;
+                    e.Parameters["CommandMenu"] = (Int32)menu;
                     e.Parameters["MPCost"] = (Int32)mpCost;
                     e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
                     e.EvaluateParameter += NCalcUtility.commonNCalcParameters;

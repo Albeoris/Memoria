@@ -40,6 +40,8 @@ namespace Memoria.Data
 
             if (metadata.HasOption($"Include{nameof(AA_DATA.CastingTitleType)}"))
                 ActionData.CastingTitleType = CsvParser.Byte(raw[index++]);
+            else
+                ActionData.CastingTitleType = 255;
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)

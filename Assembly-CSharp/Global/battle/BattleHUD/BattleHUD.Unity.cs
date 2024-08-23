@@ -252,15 +252,7 @@ public partial class BattleHUD : UIScene
                 if (ItemPanel.activeSelf)
                     DisplayItemRealTime();
 
-                // TODO handle that with a >CMD feature
-                //if (_currentCommandId == BattleCommandId.MagicSword && MagicSwordNotAvailable)
-                //{
-                //    FF9Sfx.FF9SFX_Play(101);
-                //    ResetToReady();
-                //    return;
-                //}
-
-                if (!_isTranceMenu && unit.IsUnderAnyStatus(BattleStatus.Trance))
+                if ((!_isTranceMenu && unit.IsUnderAnyStatus(BattleStatus.Trance)) || _commandEnabledState[_currentCommandIndex] < 2)
                 {
                     FF9Sfx.FF9SFX_Play(101);
                     ResetToReady();
@@ -292,23 +284,20 @@ public partial class BattleHUD : UIScene
             RemovePlayerFromAction(unit.Id, needToClearCommand);
         }
 
-        using (List<Int32>.Enumerator enumerator = ReadyQueue.GetEnumerator())
+        for (Int32 index = 0; index < ReadyQueue.Count; ++index)
         {
-            while (enumerator.MoveNext())
+            Int32 current = ReadyQueue[index];
+            if (InputFinishList.Contains(current) || _unconsciousStateList.Contains(current))
+                continue;
+
+            if (_isAutoAttack)
             {
-                Int32 current = enumerator.Current;
-                if (InputFinishList.Contains(current) || _unconsciousStateList.Contains(current))
-                    continue;
-
-                if (_isAutoAttack)
-                {
-                    SendAutoAttackCommand(current);
-                    break;
-                }
-
-                SwitchPlayer(current);
+                SendAutoAttackCommand(current);
                 break;
             }
+
+            SwitchPlayer(current);
+            break;
         }
     }
 
@@ -385,18 +374,23 @@ public partial class BattleHUD : UIScene
 
     private void ManagerInfo()
     {
-        if (_isTranceMenu || CurrentPlayerIndex == -1)
+        if (CurrentPlayerIndex < 0)
             return;
         BattleUnit unit = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
-        if (unit.IsUnderAnyStatus(BattleStatus.Trance))
+        if ((BattleHUD.EffectedBtlId & unit.Id) != 0)
+        {
+            if (ButtonGroupState.ActiveGroup == CommandGroupButton)
+                TryMemorizeCommand();
             DisplayCommand();
+        }
+        BattleHUD.EffectedBtlId = 0;
     }
 
     private Boolean ManageTargetCommand()
     {
         BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
 
-        if (!_isTranceMenu && btl.IsUnderAnyStatus(BattleStatus.Trance))
+        if ((!_isTranceMenu && btl.IsUnderAnyStatus(BattleStatus.Trance)) || _commandEnabledState[_currentCommandIndex] < 2)
         {
             FF9Sfx.FF9SFX_Play(101);
             ResetToReady();
