@@ -666,20 +666,20 @@ namespace Memoria.Launcher
                                     Process.Start(Path.GetFullPath(path));
                                     proceedNext = false;
                                 }
-                            }
+                            }*/
+                            if (Directory.Exists(destPath))
+                                Directory.Delete(destPath, true);
                             if (proceedNext)
                             {
-                                */
-                            Directory.Delete(destPath, true);
-                            Directory.Move(sourcePath, destPath);
-                            if (moveDesc)
-                                File.Move(path + "/" + Mod.DESCRIPTION_FILE, destPath + "/" + Mod.DESCRIPTION_FILE);
-                            else if (!hasDesc)
-                                downloadingMod.GenerateDescription(destPath);
-                            if (Directory.Exists(path))
-                                Directory.Delete(path, true);
-                            success = true;
-                            //}
+                                Directory.Move(sourcePath, destPath);
+                                if (moveDesc)
+                                    File.Move(path + "/" + Mod.DESCRIPTION_FILE, destPath + "/" + Mod.DESCRIPTION_FILE);
+                                else if (!hasDesc)
+                                    downloadingMod.GenerateDescription(destPath);
+                                if (Directory.Exists(path))
+                                    Directory.Delete(path, true);
+                                success = true;
+                            }
                         }
                     }
                     catch (Exception err)
