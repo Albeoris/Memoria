@@ -256,7 +256,14 @@ namespace Assets.Scripts.Common
                 this.fadeAmount = 0f;
                 while (this.fadeAmount < 1f)
                 {
-                    this.fadeAmount = Mathf.Clamp01(this.fadeAmount + Time.deltaTime / fadeOutTime);
+                    try
+                    {
+                        this.fadeAmount = Mathf.Clamp01(this.fadeAmount + Time.deltaTime / fadeOutTime);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error(e);
+                    }
                     yield return new WaitForEndOfFrame();
                 }
             }
@@ -265,7 +272,12 @@ namespace Assets.Scripts.Common
                 this.fadeAmount = 1f;
             }
             if (needChangeScene)
-                this.ChangeScene();
+            {
+                if (SceneDirector._discChange != 0)
+                    yield return StartCoroutine(ChangeSceneAsync()); // to fix crash on disc changes for some people #757
+                else
+                    this.ChangeScene();
+            }
             yield return new WaitForEndOfFrame();
             this.IsReady = true;
             if (fadeInTime < 0f)
@@ -279,7 +291,14 @@ namespace Assets.Scripts.Common
             this.curColor = fadeColor;
             while (this.fadeAmount > 0f)
             {
-                this.fadeAmount = Mathf.Clamp01(this.fadeAmount - Time.deltaTime / fadeInTime);
+                try
+                {
+                    this.fadeAmount = Mathf.Clamp01(this.fadeAmount - Time.deltaTime / fadeInTime);
+                }
+                catch (Exception e)
+                {
+                    Log.Error(e);
+                }
                 yield return new WaitForEndOfFrame();
             }
 
@@ -291,7 +310,10 @@ namespace Assets.Scripts.Common
                 {
                     this.screenTex = AssetManager.Load<Texture2D>("EmbeddedAsset/UI/Sprites/changetodisc" + discNum + ".png");
                 }
-                catch { Log.Message("Errow while charging disc change screen (4)"); }
+                catch (Exception e)
+                {
+                    Log.Error(e);
+                }
 
                 if (this.screenTex != null)
                 {
@@ -300,22 +322,26 @@ namespace Assets.Scripts.Common
                         if (this.screenTex.width < 321)
                             this.screenTex.filterMode = FilterMode.Point;
                     }
-                    catch { Log.Message("Errow while charging disc change screen (5)"); }
+                    catch (Exception e)
+                    {
+                        Log.Error(e);
+                    }
 
                     Single rectwidth = Screen.height / 0.7f;
                     Rect screenRect = new((Screen.width - rectwidth) / 2f, 0f, rectwidth, Screen.height);
                     Rect sourceRect = new(0f, 0f, 1f, 1f);
-
                     if (((Single)this.screenTex.height / (Single)this.screenTex.width) < 0.698f)
                         screenRect = new(0f, 0f, Screen.width, Screen.height);
-
                     for (Int32 i = 0; i <= 100; i++) // 100 frame fadein
                     {
                         try
                         {
                             Graphics.DrawTexture(screenRect, this.screenTex, sourceRect, 0, 0, 0, 0, new Color(0.5f, 0.5f, 0.5f, i / 100f));
                         }
-                        catch { Log.Message("Errow while charging disc change screen (6)"); }
+                        catch (Exception e)
+                        {
+                            Log.Error(e);
+                        }
 
                         yield return new WaitForEndOfFrame();
                     }
@@ -338,9 +364,10 @@ namespace Assets.Scripts.Common
                         {
                             Graphics.DrawTexture(screenRect, this.screenTex);
                         }
-                        catch { Log.Message("Errow while charging disc change screen (7)"); }
-
-                        
+                        catch (Exception e)
+                        {
+                            Log.Error(e);
+                        }
                         yield return new WaitForEndOfFrame();
                     }
                     for (Int32 i = 100; i > 0; i--) // 100 frame fadeout
@@ -349,9 +376,10 @@ namespace Assets.Scripts.Common
                         {
                             Graphics.DrawTexture(screenRect, this.screenTex, sourceRect, 0, 0, 0, 0, new Color(0.5f, 0.5f, 0.5f, i / 100f));
                         }
-                        catch { Log.Message("Errow while charging disc change screen (8)"); }
-
-                        
+                        catch (Exception e)
+                        {
+                            Log.Error(e);
+                        }
                         yield return new WaitForEndOfFrame();
                     }
                 }
@@ -390,7 +418,7 @@ namespace Assets.Scripts.Common
                     allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_STOP_ALL(new HashSet<Int32>
                     {
                         1261 // Sounds02/SE00/se000026, Save and Load game confirmed
-					});
+                    });
                     allSoundDispatchPlayer.FF9SOUND_STREAM_STOP();
                     FF9Snd.sndFuncPtr = new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9WorldSoundDispatch);
                     if (String.Equals(this.CurrentScene, SceneDirector.FieldMapSceneName))
@@ -417,6 +445,70 @@ namespace Assets.Scripts.Common
             }
             this.NextScene = String.Empty;
             SceneDirector.SetTargetFrameRateForCurrentScene();
+        }
+
+        private IEnumerator ChangeSceneAsync()
+        {
+            AutoSplitterPipe.SignalLoadStart();
+            if (this.CurrentScene == SceneDirector.BattleMapSceneName)
+                AutoSplitterPipe.SignalBattleEnd();
+            AsyncOperation loadingSceneOperation = Application.LoadLevelAsync("Loading");
+            yield return loadingSceneOperation;
+            yield return Resources.UnloadUnusedAssets();
+            yield return StartCoroutine(LoadNextSceneCoroutine());
+            if (this.CurrentScene != this.NextScene)
+            {
+                SoundLib.StopAllSoundEffects(); // Issue #140: don't stop sounds in field transitions
+                if (String.Equals(this.CurrentScene, "QuadMist"))
+                    SceneDirector.FF9Wipe_FadeInEx(30);
+                if (String.Equals(this.NextScene, "MainMenu"))
+                    SoundLib.StopAllSounds(true);
+                if (String.Equals(this.NextScene, SceneDirector.FieldMapSceneName))
+                {
+                    FF9Snd.sndFuncPtr = new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9FieldSoundDispatch);
+                    if (String.Equals(this.CurrentScene, SceneDirector.WorldMapSceneName))
+                        FF9Snd.HasJustChangedBetweenWorldAndField = true;
+                }
+                else if (String.Equals(this.NextScene, SceneDirector.WorldMapSceneName))
+                {
+                    AllSoundDispatchPlayer allSoundDispatchPlayer = SoundLib.GetAllSoundDispatchPlayer();
+                    allSoundDispatchPlayer.FF9SOUND_SNDEFFECTRES_STOPCURRENT();
+                    allSoundDispatchPlayer.FF9SOUND_SNDEFFECT_STOP_ALL(new HashSet<Int32>
+                    {
+                        1261 // Sounds02/SE00/se000026, Save and Load game confirmed
+                    });
+                    allSoundDispatchPlayer.FF9SOUND_STREAM_STOP();
+                    FF9Snd.sndFuncPtr = new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9WorldSoundDispatch);
+                    if (String.Equals(this.CurrentScene, SceneDirector.FieldMapSceneName))
+                        FF9Snd.HasJustChangedBetweenWorldAndField = true;
+                }
+                else if (!String.Equals(this.NextScene, SceneDirector.BattleMapSceneName))
+                {
+                    if (String.Equals(this.NextScene, "QuadMist"))
+                        FF9Snd.sndFuncPtr = new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9MiniGameSoundDispatch);
+                    else
+                        FF9Snd.sndFuncPtr = new FF9Snd.SoundDispatchDelegate(FF9Snd.FF9AllSoundDispatch);
+                }
+                if (String.IsNullOrEmpty(this.PendingCurrentScene))
+                {
+                    this.LastScene = this.CurrentScene;
+                }
+                else
+                {
+                    this.LastScene = this.PendingCurrentScene;
+                    this.PendingCurrentScene = String.Empty;
+                }
+                this.CurrentScene = this.NextScene;
+                global::Debug.Log("---------- Current Scene : " + PersistenSingleton<SceneDirector>.Instance.CurrentScene + " ----------");
+            }
+            this.NextScene = String.Empty;
+            SceneDirector.SetTargetFrameRateForCurrentScene();
+        }
+
+        private IEnumerator LoadNextSceneCoroutine()
+        {
+            AsyncOperation nextSceneOperation = Application.LoadLevelAsync(this.NextScene);
+            yield return nextSceneOperation;
         }
 
         private void Replace(Boolean needFade)
@@ -536,9 +628,9 @@ namespace Assets.Scripts.Common
             {
                 InitFade(FadeMode.Sub, 10, Color.black, disc_id);
             }
-            catch
+            catch (Exception e)
             {
-                Log.Message("Errow while charging disc change screen (2)");
+                Log.Error(e);
             }
 
         }
@@ -550,16 +642,9 @@ namespace Assets.Scripts.Common
             SceneDirector._targetColor = target;
             SceneDirector._SetFadeMode(mode);
             SceneDirector._prevColor = SceneDirector.abrColor[(Int32)SceneDirector.fadeMode];
-            try
-            {
-                if (disc_id > 0 && disc_id < 4)
-                    SceneDirector._discChange = disc_id;
-                else SceneDirector._discChange = 0;
-            }
-            catch
-            {
-                Log.Message("Errow while charging disc change screen (3)");
-            }
+            if (disc_id > 0 && disc_id < 4)
+                SceneDirector._discChange = disc_id;
+            else SceneDirector._discChange = 0;
         }
 
         public static void ServiceFade()
@@ -676,6 +761,7 @@ namespace Assets.Scripts.Common
 
         private static Int32 _initialized;
 
+        [NonSerialized]
         private static Int32 _discChange;
 
         private static void MemoriaExport()
