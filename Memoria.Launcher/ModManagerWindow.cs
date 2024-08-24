@@ -122,6 +122,8 @@ namespace Memoria.Launcher
                             else
                             {
                                 mod.UpdateIcon = null;
+                                if (catalog_mod.IncompatibleWith != null)
+                                    mod.IncompatibleWith = catalog_mod.IncompatibleWith;
                             }
                         }
                     }
