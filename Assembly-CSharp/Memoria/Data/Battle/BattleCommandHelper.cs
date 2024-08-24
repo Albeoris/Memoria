@@ -99,6 +99,17 @@ namespace Memoria.Data
                     cmdId = cmdSet.ApplyPatch(cmdId, menu, character, asUnit);
                 if (asUnit != null && asUnit.IsMonsterTransform && cmdId == asUnit.Data.monster_transform.base_command)
                     cmdId = asUnit.Data.monster_transform.new_command;
+
+                // TODO: Trance Seek hard-coded patch, to be removed once the mod itself contains the patched commands
+                if (Configuration.Mod.TranceSeek)
+                {
+                    if (cmdId == BattleCommandId.Defend && character.Index == CharacterId.Steiner)
+                        cmdId = (BattleCommandId)10015; // Sentinel
+                    else if (cmdId == BattleCommandId.Defend && character.Index == CharacterId.Amarant)
+                        cmdId = (BattleCommandId)10016; // Dual
+                    else if (character.PresetId == CharacterPresetId.Zidane && menu == BattleCommandMenu.Ability2 && asUnit != null && !asUnit.IsUnderAnyStatus(BattleStatus.Trance) && asUnit.SerialNumber != CharacterSerialNumber.ZIDANE_DAGGER)
+                        cmdId = (BattleCommandId)10001; // Bandit
+                }
             }
             catch (Exception err)
             {
