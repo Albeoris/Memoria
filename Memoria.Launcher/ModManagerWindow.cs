@@ -105,11 +105,11 @@ namespace Memoria.Launcher
                     mod.Description = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
                     mod.UpdateTooltip = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
                 }
-                if (mod != null && mod.Name != null & mod.CurrentVersion != null)
+                if (mod != null && mod.Name != null)
                 {
                     foreach (Mod catalog_mod in modListCatalog)
                     {
-                        if (catalog_mod != null && catalog_mod.Name != null & catalog_mod.CurrentVersion != null && mod.Name == catalog_mod.Name)
+                        if (catalog_mod != null && catalog_mod.Name != null && mod.Name == catalog_mod.Name)
                         {
                             Boolean versionCorresponds = mod.CurrentVersion == catalog_mod.CurrentVersion;
                             mod.IsOutdated = catalog_mod.IsOutdated = !versionCorresponds;
@@ -122,6 +122,8 @@ namespace Memoria.Launcher
                             else
                             {
                                 mod.UpdateIcon = null;
+                                if (catalog_mod.IncompatibleWith != null)
+                                    mod.IncompatibleWith = catalog_mod.IncompatibleWith;
                             }
                         }
                     }
