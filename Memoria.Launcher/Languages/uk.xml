@@ -13,20 +13,17 @@
 	EByteAbbr = "Еб"
 	/>
 
-	<Button
-	OK = "OK"
-	Cancel = "Скасувати"
-	Continue = "Продовжити"
-	Clone = "Клонувати"
-	Remove = "Вилучити"
-	Rollback = "Скасувати"
-	Inject = "Вбудувати"
-	SaveAs = "Зберегти як..."
-	Exit = "ВИХІД"
-	Exiting = "Виходимо..."
+	<Launcher
 	Launch = "ГРАТИ"
 	Launching = "Запускається..."
 	ModManager = "МЕНЕДЖЕР МОДІВ"
+	QuestionTitle = "Питання"
+	ErrorTitle = "Помилка!"
+	NewVersionIsAvailable = "Доступна нова версія, завантажити зараз?"
+	AdvSettings = "Дод. налаштування"
+	AdvSettingsTitle = "Розширені та експериментальні налаштування"
+	Return = "Повернутися"
+	ModelViewer = "Переглядач моделей"
 	/>
 
 	<Settings
@@ -38,8 +35,6 @@
 	Window = "У вікні"
 	ExclusiveFullscreen = "Повний екран"
 	BorderlessFullscreen = "Повний екран без меж"
-	AudioSamplingFrequency = "Частота дискретизації звуку"
-	AudioSamplingFrequencyFormat = "{0} Гц"
 	Debuggable = "Відлагодження"
 	CheckUpdates = "Перевірити оновлення"
 	IniOptions = "Параметри"
@@ -154,6 +149,13 @@
 	tetraMasterReduceRandomBox1 = "Менше випадковості"
 	tetraMasterReduceRandomBox2 = "Легка перемога"
 	CardReduceRandom_Tooltip = "Контроль випадковості Tetra Master"
+	
+	Shader_Enable = "Користувацькі шейдери"
+	Shader_Field_chars = "Позабоєм: "
+	Shader_Battle_chars = "У бою: "
+	Shader_Realism = "Реалістичний"
+	Shader_Toon = "Мультяшний"
+	Shader_Outlines = "Контури моделі"
 	/>
 
 	<SdLib
@@ -173,113 +175,6 @@
 	FixAreYouSure = "Зараз ми встановимо у вашу ОС перехоплювач, який запускатиме FF9_Launcher.fix замість файлу FF9_Launcher.exe. У цьому випадку всі перевірки цілісності файлів Steam будуть проходити успішно. Таким чином, це вирішить проблему, через яку у деяких користувачів періодично не працює функція Steam Overlay, а також пов'язані з нею можливості: досягнення та підтримка контролерів.&#13;&#10;&#13;&#10;Однак, будьте обережні і НЕ ВИДАЛЯЙТЕ гру, її теку або файл FF9_Launcher.fix без попереднього скасування внесених змін. Інакше перехоплювач залишиться у вашій системі, і після нового встановлення гри ви не зможете її запустити. Скасувати зміни можна в лаунчері або вручну, запустивши Memoria.SteamFix.exe у теці з грою.&#13;&#10;&#13;&#10;Ви впевнені, що все ще хочете продовжити?"
 	RollbackAreYouSure = "Зараз ми видалимо внесені зміни, після чого проблема зі Steam Overlay повернеться.&#13;&#10;&#13;&#10;Це може призвести до неможливості отримання досягнень і проблем з контролером.&#13;&#10;&#13;&#10;Ви впевнені, що хочете продовжити?"
 	/>
-
-	<InfoProvider>
-
-		<ApplicationConfig
-		Title = "Налаштування"
-		Description = "Різноманітні налаштування застосунку"
-		NewTitle = "Нові"
-		NewDescription = "Встановити типові значення для всіх параметрів."
-		FileTitle = "З файлу"
-		FileDescription = "Завантажити налаштування застосунку з файлу {0}"
-		/>
-
-		<GameLocation
-		Title = "Тека гри"
-		Description = "Розташування файлів гри."
-		ConfigurationTitle = "Налаштування"
-		ConfigurationDescription = "Використовує інформацію, що зберігається у файлі конфігурації."
-		SteamRegistryTitle = "З реєстру (Steam)"
-		SteamRegistryDescription = "Отримує інформацію з реєстру Windows, використовуючи дані зі Steam."
-		UserTitle = "Вручну"
-		UserDescription = "Дозволяє вручну вибрати теку, до якої ви встановили гру."
-		/>
-
-		<WorkingLocation
-		Title = "Робоча тека"
-		Description = "Тека для зберігання результатів роботи програми."
-		ConfigurationTitle = "Налаштування"
-		ConfigurationDescription = "Використовує інформацію, що зберігається у файлі конфігурації."
-		UserTitle = "Вручну"
-		UserDescription = "Дозволяє вручну вибрати робочу теку."
-		/>
-
-		<TextEncoding
-		Title = "Кодування"
-		Description = "Кодування для розпакування та запакування тексту гри."
-		NewTitle = "Нове"
-		NewDescription = "Ініціалізує стандартне кодування на основі кодування Windows-1252."
-		WorkingLocationTitle = "Робоча тека"
-		WorkingLocationDescription = "Завантажує кодування з робочої теки."
-		UserTitle = "Редагувати"
-		UserDescription = "Змінити поточне кодування."
-		/>
-
-		<AudioSettings
-		Title="Налаштування звуку"
-		Description="Налаштування звукового пристрою."
-		NewTitle="Нові"
-		NewDescription="Встановити типові значення для всіх параметрів."
-		/>
-
-	</InfoProvider>
-	<Dockable>
-		<DataSources Header = "Джерела даних" />
-
-		<GameFileCommander
-		Header = "Ресурси гри"
-		Unpack = "Розпакувати"
-		Pack = "Запакувати"
-		ArchivesNode ="Архіви"
-		/>
-
-		<GameFilePreview Header="Попередній перегляд" >
-
-			<Ykd
-			ResourceRemovingTitle = "Вилучити"
-			ConfirmResourceRemoving = "Ви дійсно хочете видалити цей ресурс?"
-			/>
-
-		</GameFilePreview>
-	</Dockable>
-	<EncodingEditor>
-
-		<List
-		Name = "Ім'я"
-		Pattern = "Шаблон"
-		Encoding = "Кодування"
-		Font = "Шрифт"
-		Edit = "Редагувати"
-		/>
-
-		<EncodingSelectDialog
-		Title = "Оберіть кодування"
-		Watermark = "Введіть назву кодування..."
-		ConfirmMessageFormat = "Ви обрали [{0}]. Вірно?"
-		ErrorMessageFormat = "Не вдалося розпізнати кодування [{0}]."
-		/>
-
-		<EncodingEditDialog
-		Title = "Редагувати кодування"
-		/>
-
-		<Main
-		Before = "До:"
-		Width = "Ширина:"
-		After = "Після:"
-		FromText = "З тексту:"
-		ToText = "У текст:"
-		/>
-
-		<Extra
-		Row = "Рядок:"
-		Column = "Стовпчик:"
-		FromText = "З тексту:"
-		ToText = "У текст:"
-		/>
-
-	</EncodingEditor>
 
 	<ModEditor
 	WindowTitle = "Менеджер модів Memoria Mod Manager"
@@ -303,7 +198,9 @@
 	Progress = "Прогрес"
 	Speed = "Швидкість"
 	TimeLeft = "Час що лишився"
-	PreviewImageMissing = "Без попереднього перегляду"
+	ActiveIncompatibleMods = "Мод несумісний з: "
+	IncompatibleWithMemoria = "Версія мода несумісна з поточною Memoria. Оновіть його з каталогу модів."
+	UpdateTooltip = "Нова версія цього мода доступна в каталозі модів: "
 	TooltipMoveUp = "Перемістити вгору/Правий клік, щоб перемістити на самий верх"
 	TooltipMoveDown = "Перемістити вниз/Правий клік, щоб перемістити на самий низ"
 	TooltipCheckCompatibility = "Перевірити сумісність модів/Правий клік, щоб перевірити усі"
@@ -313,37 +210,4 @@
 	TooltipDownload = "Завантажити/Оновити"
 	TooltipCancel = "Скасувати поточне завантаження/Правий клік, щоб скасувати усі"
 	/>
-
-	<Dialogue>
-
-		<SaveAs Title = "Зберегти як..." />
-
-	</Dialogue>
-
-	<Message>
-
-		<Done
-		Title = "Готово!"
-		ExtractionCompleteFormat = "Видобуток завершено за {0:hh\:mm\:ss}."
-		InjectionCompleteFormat = "Вставку завершено за {0:hh\:mm\:ss}."
-		/>
-
-		<Question
-		Title = "Питання"
-		AreYouSureTitle = "Ви впевнені?"
-		NewVersionIsAvailable = "Доступна нова версія, завантажити зараз?"
-		/>
-
-		<Error
-		Title = "Помилка!"
-		/>
-
-	</Message>
-
-	<Error>
-		<File UnknownFormat = "Невідомий формат файлу." />
-		<Process CannotGetExecutablePath = "Неможливо отримати шлях до виконуваної збірки." />
-		<Text TooLongTagNameFormat = "Надто довге ім'я тегу: {0}" />
-	</Error>
-
 </Data>

@@ -25,7 +25,7 @@ namespace Memoria.Launcher
         //public GameSettingsControl GameSettings { get; set; }
         public UiLauncherModelViewerButton()
         {
-            Label = "Model Viewer";
+            Label = Lang.Launcher.ModelViewer;
         }
 
         protected override async Task DoAction()

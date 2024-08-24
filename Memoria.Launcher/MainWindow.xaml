@@ -34,19 +34,6 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom" >
         </launcher:MemoriaIniControl>
-        <Rectangle Margin="0,0,0,0">
-            <Rectangle.Style>
-                <Style TargetType="{x:Type Rectangle}">
-                    <Setter Property="Fill" Value="#000" />
-                    <Setter Property="Width" Value="290" />
-                    <Setter Property="Height" Value="275" />
-                    <Setter Property="VerticalAlignment" Value="Bottom" />
-                    <Setter Property="HorizontalAlignment" Value="Center" />
-
-                    <Setter Property="Opacity" Value=".4" />
-                </Style>
-            </Rectangle.Style>
-        </Rectangle>
 
         <launcher:MemoriaIniCheatControl
             x:Name="MemoriaIniCheatControl"
@@ -68,6 +55,41 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             Content="" />
+        <Grid
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Width="282"
+            Margin="0,0,0,503" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+            <Image
+                x:Name="alert_incompat_icon"
+                Grid.Column="0"
+                Height="20"
+                Width="20"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Margin="0,0,3,0"
+                Panel.ZIndex="1"
+                Source="/Images/alert_incompat.png"
+                ToolTipService.InitialShowDelay="1"
+                ToolTip=""
+                Visibility="Collapsed" />
+            <Image
+                x:Name="alert_update_icon"
+                Grid.Column="1"
+                Height="20"
+                Width="20"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                Panel.ZIndex="1"
+                Source="/Images/alert_update.png"
+                ToolTipService.InitialShowDelay="1"
+                ToolTip=""
+                Visibility="Collapsed" />
+        </Grid>
         <launcher:UiLauncherAdvOptionsButton
             Width="251"
             Height="36"

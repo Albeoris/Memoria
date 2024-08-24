@@ -470,7 +470,7 @@
                 Stretch="Fill" />
         </Canvas>
     </Window.Resources>
-    <Grid Background="#181818">
+    <Grid Background="#000120">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" MinHeight="100"  />
             <RowDefinition />
@@ -491,6 +491,7 @@
             Padding="10,10,10,10"
             BorderThickness="0"
             Background="{StaticResource LightGreyUI}"
+            SelectionChanged="TabControl_SelectionChanged"
             SelectedIndex="0"
             Grid.ColumnSpan="2" >
             <TabControl.Resources>
@@ -666,6 +667,7 @@
                                             <CheckBox
                                             HorizontalAlignment="Center"
                                             IsChecked="{Binding IsActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                            Click="CheckBox_Click"
                                             IsTabStop="False" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
@@ -676,20 +678,66 @@
                                 DisplayMemberBinding="{Binding Priority}"
                                 Header="⮝⮟" />
                                 <GridViewColumn
-                                x:Name="colMyModsInfoIcon"
+                                x:Name="colMyModsUpdateIcon"
                                 Width="28"
-                                DisplayMemberBinding="{Binding InfoIcon}"
-                                Header="" />
+                                Header="" >
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock x:Name="colMyModsUpdateText"
+                                                Text="{Binding UpdateIcon}"
+                                                FontWeight="Black"
+                                                ToolTip="{Binding UpdateTooltip}"
+                                                ToolTipService.InitialShowDelay="10"
+                                                Foreground="#efd525" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn
+                                x:Name="colMyModsIncompIcon"
+                                Width="28"
+                                Header="" >
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock x:Name="colMyModsIncompText"
+                                                Text="{Binding IncompIcon}"
+                                                ToolTip="{Binding ActiveIncompatibleMods}"
+                                                ToolTipService.InitialShowDelay="10"
+                                                ToolTipService.BetweenShowDelay="0"
+                                                Foreground="#b51717" />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                                 <GridViewColumn
                                 x:Name="colMyModsName"
                                 Width="Auto"
-                                DisplayMemberBinding="{Binding Name}"
-                                Header="Name" />
+                                Header="Name" >
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock x:Name="colMyModsNameText"
+                                                Text="{Binding Name}" />
+                                                <TextBlock x:Name="colMyModsVersionText"
+                                                Text="{Binding CurrentVersion}"
+                                                Margin="4,0,0,0"
+                                                FontSize="11"
+                                                VerticalAlignment="Bottom"
+                                                Foreground="#888"
+                                                />
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <!--
                                 <GridViewColumn
                                 x:Name="colMyModsAuthor"
                                 Width="100"
                                 DisplayMemberBinding="{Binding Author}"
                                 Header="Author(s)" />
+                                -->
                                 <GridViewColumn
                                 x:Name="colMyModsCategory"
                                 Width="100"

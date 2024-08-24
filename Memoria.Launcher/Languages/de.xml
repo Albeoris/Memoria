@@ -13,20 +13,17 @@
 	EByteAbbr = "EB"
 	/>
 
-	<Button
-	OK = "OK"
-	Cancel = "Abbrechen"
-	Continue = "Weiter"
-	Clone = "Klonen"
-	Remove = "Entfernen"
-	Rollback = "Abbrechen"
-	Inject = "Einfügen"
-	SaveAs = "Speichern unter..."
-	Exit = "BEENDEN"
-	Exiting = "Beenden..."
+	<Launcher
 	Launch = "SPIELEN"
 	Launching = "Starten..."
 	ModManager = "MOD-VERWALTER"
+	QuestionTitle = "Frage"
+	ErrorTitle = "Fehler!"
+	NewVersionIsAvailable = "Eine neue Version ist verfügbar, jetzt herunterladen?"
+	AdvSettings = "Erw. Einstellungen"
+	AdvSettingsTitle = "Erweiterte und experimentelle Einstellungen"
+	Return = "Zurück"
+	ModelViewer = "Modell-Viewer"
 	/>
 
 	<Settings
@@ -38,8 +35,6 @@
 	Window = "Fenster"
 	ExclusiveFullscreen = "Vollbild"
 	BorderlessFullscreen = "Randloses Vollbild"
-	AudioSamplingFrequency = "Audioprobenfrequenz"
-	AudioSamplingFrequencyFormat = "{0} Hz"
 	Debuggable = "Debugging"
 	CheckUpdates = "Auf Updates prüfen"
 	IniOptions = "Optionen"
@@ -149,6 +144,13 @@
 	tetraMasterReduceRandomBox1 = "Weniger Zufälligkeit"
 	tetraMasterReduceRandomBox2 = "Leichter Sieg"
 	CardReduceRandom_Tooltip = "Kontrolle über die Zufälligkeit von Tetra Master"
+	
+	Shader_Enable = "Benutzerdefinierte Shader"
+	Shader_Field_chars = "Außerhalb des Kampfes: "
+	Shader_Battle_chars = "Im Kampf: "
+	Shader_Realism = "Realistisch"
+	Shader_Toon = "Comicstil"
+	Shader_Outlines = "Modellkonturen"
 	/>
 
 	<SdLib
@@ -168,118 +170,6 @@
 	FixAreYouSure = "Jetzt werden wir einen Hook in dein Betriebssystem installieren, der FF9_Launcher.fix anstelle der Datei FF9_Launcher.exe starten wird. In diesem Fall werden alle Integritätsprüfungen der Steam-Datei erfolgreich abgeschlossen. Dadurch wird das Problem gelöst, dass bei einigen Benutzern die Steam-Overlay-Funktionalität sowie damit verbundene Funktionen wie Erfolge und Controller-Unterstützung periodisch deaktiviert wurden.&#13;&#10;&#13;&#10;Bitte sei vorsichtig und LÖSCHEN SIE DAS SPIEL, SEINEN ORDNER ODER DIE DATEI FF9_Launcher.fix NICHT, BEVOR SIE DIE ÄNDERUNGEN ZURÜCKGESPIELT HABEN. Andernfalls bleibt der Hook in Ihrem System, und nach einer Neuinstallation des Spiels können Sie es nicht mehr starten. Sie können die Änderungen im Launcher rückgängig machen oder manuell durch Ausführen von Memoria.SteamFix.exe im Spieleordner.&#13;&#10;&#13;&#10;Sind Sie sicher, dass Sie fortfahren möchten?"
 	RollbackAreYouSure = "Jetzt werden die vorgenommenen Änderungen rückgängig gemacht, wodurch das Problem mit der Steam-Overlay-Funktion zurückkehren wird.&#13;&#10;&#13;&#10;Dies kann dazu führen, dass Erfolge deaktiviert werden und Probleme mit Controllern auftreten.&#13;&#10;&#13;&#10;Möchten Sie wirklich fortfahren?"
 	/>
-
-	<InfoProvider>
-
-		<ApplicationConfig
-		Title = "Einstellungen"
-		Description = "Verschiedene Einstellungen der Anwendung."
-		NewTitle = "Neu"
-		NewDescription = "Initialisiert alle Einstellungen mit Standardwerten."
-		FileTitle = "Aus Datei"
-		FileDescription = "Liest die Anwendungskonfigurationsdatei {0}"
-
-		/>
-
-		<GameLocation
-		Title = "Spieleverzeichnis"
-		Description = "Speicherort der Spieldateien."
-		ConfigurationTitle = "Einstellungen"
-		ConfigurationDescription = "Verwendet die Informationen, die in der Konfigurationsdatei gespeichert sind."
-		SteamRegistryTitle = "Aus der Registrierung (Steam)"
-		SteamRegistryDescription = "Holt Informationen aus der Windows-Registrierung, indem Daten von Steam verwendet werden."
-		UserTitle = "Manuell"
-		UserDescription = "Ermöglicht es Ihnen, das Verzeichnis manuell auszuwählen, in das Sie das Spiel installiert haben."
-
-		/>
-
-		<WorkingLocation
-		Title = "Arbeitsverzeichnis"
-		Description = "Das Verzeichnis zum Speichern der Ergebnisse der Anwendung."
-		ConfigurationTitle = "Einstellungen"
-		ConfigurationDescription = "Verwendet die Informationen, die in der Konfigurationsdatei gespeichert sind."
-		UserTitle = "Manuell"
-		UserDescription = "Ermöglicht es Ihnen, manuell ein Arbeitsverzeichnis auszuwählen."
-
-		/>
-
-		<TextEncoding
-		Title = "Kodierung"
-		Description = "Kodierung zum Entpacken und Packen des Spieltexts."
-		NewTitle = "Neu"
-		NewDescription = "Initialisiert die Standardkodierung basierend auf der Windows-1252-Kodierung."
-		WorkingLocationTitle = "Arbeitsverzeichnis"
-		WorkingLocationDescription = "Liest die Kodierung aus dem Arbeitsverzeichnis."
-		UserTitle = "Bearbeiten"
-		UserDescription = "Ändern Sie die aktuelle Kodierung."
-
-		/>
-
-		<AudioSettings
-		Title = "Audioeinstellungen"
-		Description = "Einstellungen des Audiogeräts."
-		NewTitle = "Neu"
-		NewDescription = "Initialisiert alle Einstellungen mit Standardwerten."
-
-		/>
-
-	</InfoProvider>
-	<Dockable>
-		<DataSources Header = "Data Sources" />
-
-		<GameFileCommander
-		Header = "Spielressourcen"
-		Unpack = "Entpacken"
-		Pack = "Packen"
-		ArchivesNode ="Archive"
-		/>
-
-		<GameFilePreview Header="Preview" >
-
-			<Ykd
-			ResourceRemovingTitle = "Entfernen"
-			ConfirmResourceRemoving = "Möchten Sie diese Ressource wirklich löschen?"
-			/>
-
-		</GameFilePreview>
-	</Dockable>
-	<EncodingEditor>
-
-		<List
-		Name = "Name"
-		Pattern = "Muster"
-		Encoding = "Kodierung"
-		Font = "Schriftart"
-		Edit = "Bearbeiten"
-		/>
-
-		<EncodingSelectDialog
-		Title = "Kodierung auswählen"
-		Watermark = "Geben Sie den Namen der Kodierung ein..."
-		ConfirmMessageFormat = "Sie haben [{0}] ausgewählt. Richtig?"
-		ErrorMessageFormat = "Die Kodierung [{0}] konnte nicht erkannt werden."
-		/>
-
-		<EncodingEditDialog
-		Title = "Kodierung bearbeiten"
-		/>
-
-		<Main
-		Before = "Vorher:"
-		Width = "Breite:"
-		After = "Nachher:"
-		FromText = "Von Text:"
-		ToText = "Zu Text:"
-		/>
-
-		<Extra
-		Row = "Row:"
-		Column = "Column:"
-		FromText = "From text:"
-		ToText = "To text:"
-		/>
-
-	</EncodingEditor>
 
 	<ModEditor
 	WindowTitle = "Memoria Mod Manager"
@@ -303,7 +193,9 @@
 	Progress = "Fortschritt"
 	Speed = "Geschwindigkeit"
 	TimeLeft = "Verbleibende Zeit"
-	PreviewImageMissing = "Kein Vorschaubild"
+	ActiveIncompatibleMods = "Mod inkompatibel mit: "
+	IncompatibleWithMemoria = "Mod-Version ist mit der aktuellen Memoria inkompatibel. Aktualisieren Sie es aus dem Mod-Katalog."
+	UpdateTooltip = "Neue Version dieses Mods im Mod-Katalog verfügbar: "
 	TooltipMoveUp = "Nach oben bewegen/Rechtsklick zum Nach oben bewegen"
 	TooltipMoveDown = "Nach unten bewegen/Rechtsklick zum Nach unten bewegen"
 	TooltipCheckCompatibility = "Mod-Kompatibilität überprüfen/Rechtsklick zum Überprüfen aller"
@@ -313,38 +205,5 @@
 	TooltipDownload = "Herunterladen/Aktualisieren"
 	TooltipCancel = "Aktuellen Download abbrechen/Rechtsklick zum Abbrechen aller"
 	/>
-
-	<Dialogue>
-
-		<SaveAs Title = "Speichern unter..." />
-
-	</Dialogue>
-
-	<Message>
-
-		<Done
-		Title = "Fertig!"
-		ExtractionCompleteFormat = "Extraktion abgeschlossen um {0:hh\:mm\:ss}."
-		InjectionCompleteFormat = "Injektion abgeschlossen um {0:hh\:mm\:ss}."
-
-		/>
-
-		<Question
-		Title = "Frage"
-		AreYouSureTitle = "Sind Sie sicher?"
-		NewVersionIsAvailable = "Eine neue Version ist verfügbar. Möchten Sie sie jetzt herunterladen?"
-		/>
-
-		<Error
-		Title = "Error!"
-		/>
-
-	</Message>
-
-	<Error>
-		<File UnknownFormat = "Unbekanntes Dateiformat." />
-		<Process CannotGetExecutablePath = "Der Pfad des ausführbaren Assemblies konnte nicht abgerufen werden." />
-		<Text TooLongTagNameFormat = "Tagname zu lang: {0}" />
-	</Error>
 
 </Data>

@@ -13,20 +13,19 @@
 	EByteAbbr = "EB"
 	/>
 
-	<Button
-	OK = "OK"
-	Cancel = "Cancel"
-	Continue = "Continue"
-	Clone = "Clone"
-	Remove = "Remove"
-	Rollback = "Cancel"
-	Inject = "Inject"
-	SaveAs = "Save as..."
-	Exit = "EXIT"
-	Exiting = "Exiting..."
+	<Launcher
 	Launch = "PLAY"
 	Launching = "Launching..."
 	ModManager = "MOD MANAGER"
+	QuestionTitle = "Question"
+	ErrorTitle = "Error!"
+	NewVersionIsAvailable = "A new version is available, download now?"
+	AdvSettings = "Adv. settings"
+	AdvSettingsTitle = "Advanced and experimental settings"
+	Return = "Return"
+	ModelViewer = "Model Viewer"
+	ModUpdateAvailable="There are some mod updates available"
+	ModConflict="There are some mod conflicts"
 	/>
 
 	<Settings
@@ -38,8 +37,6 @@
 	Window = "Windowed"
 	ExclusiveFullscreen = "Fullscreen"
 	BorderlessFullscreen = "Borderless Fullscreen"
-	AudioSamplingFrequency = "Audio sampling frequency"
-	AudioSamplingFrequencyFormat = "{0} Hz"
 	Debuggable = "Debuggable"
 	CheckUpdates = "Check for updates"
 	IniOptions = "Options"
@@ -156,17 +153,14 @@
 	tetraMasterReduceRandomBox1 = "Lower randomness"
 	tetraMasterReduceRandomBox2 = "Easy win"
 	CardReduceRandom_Tooltip = "Controls the randomness of Tetra Master"
-	/>
 	
-	<!-- 
-	EnableCustomShader = "Enable Custom Shaders"
-	Shader_Field_Realism = "Use Realism Shading In Field"
-	Shader_Field_Toon = "Use Toon Shading In Field"
-	Shader_Field_Outlines = "Enable Outline For Field Character"
-	Shader_Battle_Realism = "Use Realism Shading In Battle"
-	Shader_Battle_Toon = "Use Toon Shading In Battle"
-	Shader_Battle_Outlines = "Enable Outline For Battle Character"
-	-->
+	Shader_Enable = "Custom Shaders"
+	Shader_Field_chars = "Out of battle: "
+	Shader_Battle_chars = "In battle: "
+	Shader_Realism = "Realistic"
+	Shader_Toon = "Toon"
+	Shader_Outlines = "Model outlines"
+	/>
 
 	<SdLib
 	Caption = "Patch SdLib.dll"
@@ -185,113 +179,6 @@
 	FixAreYouSure = "Now we will install a hook into your OS that will launch FF9_Launcher.fix instead of the FF9_Launcher.exe file. In this case, all integrity checks of the Steam file will complete successfully. Thus, this will solve the problem that some users have periodically disabled Steam Overlay functionality, and related features: achievements and controller support.&#13;&#10;&#13;&#10;However, be careful and DO NOT DELETE the game, its folder or the FF9_Launcher.fix file without first rolling back the changes. Otherwise, the hook will remain in your system, and after a new installation of the game, you will not be able to launch it. You can roll back the changes in the launcher or manually by running Memoria.SteamFix.exe in the game folder.&#13;&#10;&#13;&#10;Are you sure you still want to continue?"
 	RollbackAreYouSure = "Now we will remove the changes made, after which the problem with Steam Overlay will return.&#13;&#10;&#13;&#10;This can lead to disabling achievements and controller issues.&#13;&#10;&#13;&#10;Are you sure you want to continue?"
 	/>
-
-	<InfoProvider>
-
-		<ApplicationConfig
-		Title = "Settings"
-		Description = "Various settings of the application."
-		NewTitle = "New"
-		NewDescription = "Initialize all settings default values."
-		FileTitle = "From file"
-		FileDescription = "Reads the application configuration file {0}"
-		/>
-
-		<GameLocation
-		Title = "Game Directory"
-		Description = "Location of the game files."
-		ConfigurationTitle = "Settings"
-		ConfigurationDescription = "Uses the information stored in the configuration file."
-		SteamRegistryTitle = "From registry (Steam)"
-		SteamRegistryDescription = "Retrieves information from Windows registry, using data from Steam."
-		UserTitle = "Manual"
-		UserDescription = "Allows you to manually select the directory to which you have installed the game."
-		/>
-
-		<WorkingLocation
-		Title = "Working Directory"
-		Description = "The directory to store the results of the application."
-		ConfigurationTitle = "Settings"
-		ConfigurationDescription = "Uses the information stored in the configuration file."
-		UserTitle = "Manual"
-		UserDescription = "Allows you to manually select a working directory."
-		/>
-
-		<TextEncoding
-		Title = "Encoding"
-		Description = "Encoding for unpacking and packing the game text."
-		NewTitle = "New"
-		NewDescription = "Initializes the standard encoding based on the Windows-1252 encoding."
-		WorkingLocationTitle = "Working directory"
-		WorkingLocationDescription = "Reads the encoding from the working directory."
-		UserTitle = "Edit"
-		UserDescription = "Change the current encoding."
-		/>
-
-		<AudioSettings
-		Title="Audio Settings"
-		Description="Settings of audio device."
-		NewTitle="New"
-		NewDescription="Initialize all settings default values."
-		/>
-
-	</InfoProvider>
-	<Dockable>
-		<DataSources Header = "Data Sources" />
-
-		<GameFileCommander
-		Header = "Game Resources"
-		Unpack = "Unpack"
-		Pack = "Pack"
-		ArchivesNode ="Archives"
-		/>
-
-		<GameFilePreview Header="Preview" >
-
-			<Ykd
-			ResourceRemovingTitle = "Removing"
-			ConfirmResourceRemoving = "Are you sure you want to delete this resource?"
-			/>
-
-		</GameFilePreview>
-	</Dockable>
-	<EncodingEditor>
-		
-		<List
-		Name = "Name"
-		Pattern = "Pattern"
-		Encoding = "Encoding"
-		Font = "Font"
-		Edit = "Edit"
-		/>
-
-		<EncodingSelectDialog
-		Title = "Choose the encoding"
-		Watermark = "Enter the encoding name..."
-		ConfirmMessageFormat = "You have chosen [{0}]. Right?"
-		ErrorMessageFormat = "Failed to recognize the encoding [{0}]."
-		/>
-
-		<EncodingEditDialog
-		Title = "Encoding edit"
-		/>
-
-		<Main
-		Before = "Before:"
-		Width = "Width:"
-		After = "After:"
-		FromText = "From text:"
-		ToText = "To text:"
-		/>
-
-		<Extra
-		Row = "Row:"
-		Column = "Column:"
-		FromText = "From text:"
-		ToText = "To text:"
-		/>
-
-	</EncodingEditor>
 
 	<ModEditor
 	WindowTitle = "Memoria Mod Manager"
@@ -315,7 +202,9 @@
 	Progress = "Progress"
 	Speed = "Speed"
 	TimeLeft = "Time Left"
-	PreviewImageMissing = "No Preview Image"
+	ActiveIncompatibleMods = "Mod Incompatible with: "
+	IncompatibleWithMemoria = "Mod version is incompatible with the current Memoria&#xA;Update it from the mod catalog"
+	UpdateTooltip = "New version of this mod available in mod catalog: "
 	TooltipMoveUp = "Move Up/Right-Click to Move to Top"
 	TooltipMoveDown = "Move Down/Right-Click to Move to Bottom"
 	TooltipCheckCompatibility = "Check Mod Compatibilities/Right-Click to Check All"
@@ -325,37 +214,4 @@
 	TooltipDownload = "Download/Update"
 	TooltipCancel = "Cancel Current Download/Right-Click to Cancel All"
 	/>
-	
-	<Dialogue>
-
-		<SaveAs Title = "Save as..." />
-
-	</Dialogue>
-
-	<Message>
-
-		<Done
-		Title = "Done!"
-		ExtractionCompleteFormat = "Extraction complete for {0:hh\:mm\:ss}."
-		InjectionCompleteFormat = "Injection complete for {0:hh\:mm\:ss}."
-		/>
-
-		<Question
-		Title = "Question"
-		AreYouSureTitle = "Are you sure?"
-		NewVersionIsAvailable = "A new version is available, download now?"
-		/>
-
-		<Error
-		Title = "Error!"
-		/>
-
-	</Message>
-
-	<Error>
-		<File UnknownFormat = "Unknown file format." />
-		<Process CannotGetExecutablePath = "Cannot get a path of the executable assembly." />
-		<Text TooLongTagNameFormat = "Too long name of tag: {0}" />
-	</Error>
-
 </Data>

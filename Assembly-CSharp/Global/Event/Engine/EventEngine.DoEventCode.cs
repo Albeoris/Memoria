@@ -570,11 +570,19 @@ public partial class EventEngine
             case EBin.event_code_binary.DISCCHANGE: // 0xAC, "ChangeDisc", "Allow to save the game and change disc"
             {
                 Int32 fieldAndDiscDest = this.getv2(); // arg1: gathered field destination and disc destination
-                Byte disc_id = (Byte)(fieldAndDiscDest >> 14 & 3);
                 UInt16 map_id = (UInt16)(fieldAndDiscDest & 16383);
-                Log.Message("Changing to disc_id: " + disc_id);
-                if (Configuration.Interface.DisplayPSXDiscChanges)
-                    SceneDirector.InitDiscChange(disc_id);
+
+                try
+                {
+                    Byte disc_id = (Byte)(fieldAndDiscDest >> 14 & 3);
+                    Log.Message("Changing to disc_id: " + disc_id);
+                    if (Configuration.Interface.DisplayPSXDiscChanges)
+                        SceneDirector.InitDiscChange(disc_id);
+                }
+                catch
+                {
+                    Log.Message("Errow while charging disc change screen (1)");
+                }
 
                 //this._ff9fieldDisc.disc_id = disc_id;
                 //this._ff9fieldDisc.cdType = (byte)(1U << (int)disc_id);

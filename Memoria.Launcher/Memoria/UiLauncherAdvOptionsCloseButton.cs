@@ -8,7 +8,7 @@ namespace Memoria.Launcher
     {
         public UiLauncherAdvOptionsCloseButton()
         {
-            Label = "↩ Return";
+            Label = "↩ " + Lang.Launcher.Return;
         }
 
         protected override async Task DoAction()
