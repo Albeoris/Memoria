@@ -14,7 +14,6 @@ public class MainMenuUI : UIScene
     public static MenuUIControlPanel UIControlPanel { get; set; }
 
     public Vector3 FrontRowPosition => new Vector3(-418f, 0f, 0f);
-
     public Vector3 BackRowPosition => new Vector3(-392f, 0f, 0f);
 
     public MainMenuUI.SubMenu CurrentSubMenu
@@ -76,6 +75,8 @@ public class MainMenuUI : UIScene
         this.OrderSubMenu.GetComponentInChildren<UILabel>().color = IsSubMenuEnabled(SubMenu.Order) ? FF9TextTool.White : FF9TextTool.Gray;
         this.CardSubMenu.GetComponentInChildren<UILabel>().color = IsSubMenuEnabled(SubMenu.Card) ? FF9TextTool.White : FF9TextTool.Gray;
         this.ConfigSubMenu.GetComponentInChildren<UILabel>().color = IsSubMenuEnabled(SubMenu.Config) ? FF9TextTool.White : FF9TextTool.Gray;
+        if (this.PartySubMenu != null)
+            this.PartySubMenu.GetComponentInChildren<UILabel>().color = IsSubMenuEnabled(SubMenu.Party) ? FF9TextTool.White : FF9TextTool.Gray;
         if (!UIManager.IsUIStateMenu(PersistenSingleton<UIManager>.Instance.PreviousState))
             ImpactfulActionCount = 0;
     }
@@ -133,6 +134,7 @@ public class MainMenuUI : UIScene
     {
         if (base.OnKeyConfirm(go))
         {
+            Single shiftFactor = this.PartySubMenu == null ? 1f : 7f / 8f;
             if (ButtonGroupState.ActiveGroup == MainMenuUI.SubMenuGroupButton)
             {
                 if (IsSubMenuEnabled(this.GetSubMenuFromGameObject(go)))
@@ -173,7 +175,7 @@ public class MainMenuUI : UIScene
                             break;
                         case MainMenuUI.SubMenu.Card:
                             this.NeedTweenAndHideSubMenu = false;
-                            this.submenuTransition.ShiftContentClip = new Vector2(0f, 499f);
+                            this.submenuTransition.ShiftContentClip = new Vector2(0f, 9f + shiftFactor * 490f);
                             this.CardSubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
                             this.Hide(delegate
                             {
@@ -183,11 +185,25 @@ public class MainMenuUI : UIScene
                             break;
                         case MainMenuUI.SubMenu.Config:
                             this.NeedTweenAndHideSubMenu = false;
-                            this.submenuTransition.ShiftContentClip = new Vector2(0f, 597f);
+                            this.submenuTransition.ShiftContentClip = new Vector2(0f, 9f + shiftFactor * (this.PartySubMenu == null ? 588f : 686f));
                             this.ConfigSubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
                             this.Hide(delegate
                             {
                                 PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.Config);
+                                base.Loading = true;
+                            });
+                            break;
+                        case MainMenuUI.SubMenu.Party:
+                            this.NeedTweenAndHideSubMenu = false;
+                            this.submenuTransition.ShiftContentClip = new Vector2(0f, 9f + shiftFactor * 588f);
+                            this.PartySubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
+                            this.Hide(delegate
+                            {
+                                PersistenSingleton<UIManager>.Instance.PartySettingScene.AccessFromMenu = true;
+                                PersistenSingleton<UIManager>.Instance.PartySettingScene.Info = UISceneHelper.GetCurrentPartyForMenu();
+                                if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+                                    PersistenSingleton<UIManager>.Instance.PartySettingScene.ExactPartyCount = FF9StateSystem.Common.FF9.party.MemberCount;
+                                PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.PartySetting);
                                 base.Loading = true;
                             });
                             break;
@@ -212,7 +228,7 @@ public class MainMenuUI : UIScene
                             case MainMenuUI.SubMenu.Ability:
                                 this.characterMemorize = go;
                                 this.NeedTweenAndHideSubMenu = false;
-                                this.submenuTransition.ShiftContentClip = new Vector2(0f, 107f);
+                                this.submenuTransition.ShiftContentClip = new Vector2(0f, 9f + shiftFactor * 98f);
                                 this.AbilitySubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
                                 this.Hide(delegate
                                 {
@@ -223,7 +239,7 @@ public class MainMenuUI : UIScene
                             case MainMenuUI.SubMenu.Equip:
                                 this.characterMemorize = go;
                                 this.NeedTweenAndHideSubMenu = false;
-                                this.submenuTransition.ShiftContentClip = new Vector2(0f, 205f);
+                                this.submenuTransition.ShiftContentClip = new Vector2(0f, 9f + shiftFactor * 196f);
                                 this.EquipSubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
                                 this.Hide(delegate
                                 {
@@ -234,7 +250,7 @@ public class MainMenuUI : UIScene
                             case MainMenuUI.SubMenu.Status:
                                 this.characterMemorize = go;
                                 this.NeedTweenAndHideSubMenu = false;
-                                this.submenuTransition.ShiftContentClip = new Vector2(0f, 303f);
+                                this.submenuTransition.ShiftContentClip = new Vector2(0f, 9f + shiftFactor * 294f);
                                 this.StatusSubMenu.GetComponent<UIButton>().SetState(UIButtonColor.State.Normal, false);
                                 this.Hide(delegate
                                 {
@@ -306,13 +322,9 @@ public class MainMenuUI : UIScene
             {
                 FF9Sfx.FF9SFX_Play(101);
                 if (this.currentMenu == MainMenuUI.SubMenu.Order)
-                {
                     this.characterOrderMemorize = go;
-                }
                 else
-                {
                     this.characterMemorize = go;
-                }
                 ButtonGroupState.ActiveGroup = MainMenuUI.SubMenuGroupButton;
             }
             else if (ButtonGroupState.ActiveGroup == MainMenuUI.OrderGroupButton)
@@ -330,19 +342,15 @@ public class MainMenuUI : UIScene
         {
             if (ButtonGroupState.ActiveGroup == MainMenuUI.CharacterGroupButton)
             {
-                Int32 siblingIndex = go.transform.GetSiblingIndex();
-                if (this.currentCharacterIndex != siblingIndex)
-                {
-                    this.currentCharacterIndex = siblingIndex;
-                }
+                Int32 selectedIndex = go.transform.GetSiblingIndex();
+                if (this.currentCharacterIndex != selectedIndex)
+                    this.currentCharacterIndex = selectedIndex;
             }
             else if (ButtonGroupState.ActiveGroup == MainMenuUI.OrderGroupButton)
             {
-                Int32 siblingIndex2 = go.transform.parent.GetSiblingIndex();
-                if (this.currentOrder != siblingIndex2)
-                {
-                    this.currentOrder = siblingIndex2;
-                }
+                Int32 selectedIndex = go.transform.parent.GetSiblingIndex();
+                if (this.currentOrder != selectedIndex)
+                    this.currentOrder = selectedIndex;
             }
         }
         return true;
@@ -546,6 +554,8 @@ public class MainMenuUI : UIScene
                 return this.CardSubMenu;
             case MainMenuUI.SubMenu.Config:
                 return this.ConfigSubMenu;
+            case MainMenuUI.SubMenu.Party:
+                return this.PartySubMenu;
             default:
                 return this.ItemSubMenu;
         }
@@ -567,6 +577,8 @@ public class MainMenuUI : UIScene
             return MainMenuUI.SubMenu.Status;
         if (go == this.OrderSubMenu)
             return MainMenuUI.SubMenu.Order;
+        if (go == this.PartySubMenu)
+            return MainMenuUI.SubMenu.Party;
         return MainMenuUI.SubMenu.None;
     }
 
@@ -662,6 +674,33 @@ public class MainMenuUI : UIScene
         this.OrderSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(4);
         this.CardSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(5);
         this.ConfigSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(6);
+        if (Configuration.Hacks.AllCharactersAvailable > 0 && this.PartySubMenu == null)
+        {
+            UITable table = this.SubMenuPanel.GetChild(0).GetChild(0).GetComponent<UITable>();
+            this.PartySubMenu = UnityEngine.Object.Instantiate(this.CardSubMenu);
+            UILocalize partyLocalize = this.PartySubMenu.GetChild(0).GetComponent<UILocalize>();
+            ButtonGroupState.HelpDetail partyHelp = this.PartySubMenu.GetComponent<ButtonGroupState>().Help;
+            partyLocalize.key = "Party";
+            partyHelp.TextKey = "Party";
+            this.ConfigSubMenu.transform.parent = null;
+            this.PartySubMenu.transform.parent = table.transform;
+            this.ConfigSubMenu.transform.parent = table.transform;
+            this.CardSubMenu.GetComponent<UIKeyNavigation>().onDown = this.PartySubMenu;
+            this.PartySubMenu.GetComponent<UIKeyNavigation>().onDown = this.ConfigSubMenu;
+            this.ConfigSubMenu.GetComponent<UIKeyNavigation>().onUp = this.PartySubMenu;
+            this.PartySubMenu.GetComponent<UIKeyNavigation>().onUp = this.CardSubMenu;
+            Vector3 buttonScale = new Vector3(1f, 7f / 8f, 1f);
+            this.ItemSubMenu.transform.localScale = buttonScale;
+            this.AbilitySubMenu.transform.localScale = buttonScale;
+            this.EquipSubMenu.transform.localScale = buttonScale;
+            this.StatusSubMenu.transform.localScale = buttonScale;
+            this.OrderSubMenu.transform.localScale = buttonScale;
+            this.CardSubMenu.transform.localScale = buttonScale;
+            this.PartySubMenu.transform.localScale = buttonScale;
+            this.ConfigSubMenu.transform.localScale = buttonScale;
+            //this.PartySubMenu.active = true;
+            table.repositionNow = true;
+        }
 
         UIEventListener.Get(this.ItemSubMenu).Click += onClick;
         UIEventListener.Get(this.AbilitySubMenu).Click += onClick;
@@ -670,6 +709,8 @@ public class MainMenuUI : UIScene
         UIEventListener.Get(this.OrderSubMenu).Click += onClick;
         UIEventListener.Get(this.CardSubMenu).Click += onClick;
         UIEventListener.Get(this.ConfigSubMenu).Click += onClick;
+        if (this.PartySubMenu != null)
+            UIEventListener.Get(this.PartySubMenu).Click += onClick;
 
         foreach (Transform tr in this.CharacterListPanel.transform)
         {
@@ -705,19 +746,12 @@ public class MainMenuUI : UIScene
     }
 
     public GameObject SubMenuPanel;
-
     public GameObject TransitionGroup;
-
     public GameObject CharacterListPanel;
-
     public GameObject GenericInfoPanel;
-
     public GameObject LocationInfoPanel;
-
     public GameObject HelpDespLabelGameObject;
-
     public GameObject ScreenFadeGameObject;
-
     public GameObject SubMenuTransitionGameObject;
 
     public HashSet<String> EnabledSubMenus = new HashSet<String>();
@@ -725,59 +759,41 @@ public class MainMenuUI : UIScene
     public Int32 ImpactfulActionCount;
 
     private static String SubMenuGroupButton = "MainMenu.SubMenu";
-
     private static String CharacterGroupButton = "MainMenu.Character";
-
     private static String OrderGroupButton = "MainMenu.Order";
 
     private GameObject ItemSubMenu;
-
     private GameObject AbilitySubMenu;
-
     private GameObject EquipSubMenu;
-
     private GameObject StatusSubMenu;
-
     private GameObject OrderSubMenu;
-
     private GameObject CardSubMenu;
-
     private GameObject ConfigSubMenu;
+    [NonSerialized]
+    private GameObject PartySubMenu;
 
     private UILabel gilLabel;
-
     private UILabel hourLabel;
-
     private UILabel minuteLabel;
-
     private UILabel secondLabel;
-
     private UILabel[] colonLabel;
-
     private UILabel locationNameLabel;
 
     private UIPanel screenFadePanel;
-
     private HonoTweenPosition characterTransition;
-
     private HonoTweenClipping submenuTransition;
 
     private Boolean isNeedCharacterTween = true;
-
     private Boolean isNeedHideSubMenu = true;
 
     private MainMenuUI.SubMenu currentMenu;
-
     private Int32 currentCharacterIndex = -1;
-
     private Int32 currentOrder = -1;
 
     private List<CharacterDetailHUD> CharacterHUDList = new List<CharacterDetailHUD>();
-
     private List<GameObject> CharacterOrderGameObjectList = new List<GameObject>();
 
     private GameObject characterMemorize;
-
     private GameObject characterOrderMemorize;
 
     public enum SubMenu
@@ -789,6 +805,7 @@ public class MainMenuUI : UIScene
         Order,
         Card,
         Config,
+        Party,
         None
     }
 }

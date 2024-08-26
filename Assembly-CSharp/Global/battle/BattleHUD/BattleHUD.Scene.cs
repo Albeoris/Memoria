@@ -4,6 +4,7 @@ using Memoria;
 using Memoria.Data;
 using Memoria.Database;
 using Memoria.Scenes;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -41,8 +42,15 @@ public partial class BattleHUD : UIScene
 
         if (_usingMainMenu)
         {
-            btl2d.ShowMessages(true);
-            UpdateBattleAfterMainMenu();
+            try
+            {
+                UpdateBattleAfterMainMenu();
+                btl2d.ShowMessages(true);
+            }
+            catch (Exception err)
+            {
+                Log.Error(err);
+            }
         }
 
         _isFromPause = false;
@@ -151,23 +159,25 @@ public partial class BattleHUD : UIScene
         {
             FF9Sfx.FF9SFX_Play(103);
             _currentCommandIndex = (BattleCommandMenu)go.transform.GetSiblingIndex();
-            _currentCommandId = GetCommandFromCommandIndex(_currentCommandIndex, CurrentPlayerIndex);
+            Boolean triggerManualTrance = _isManualTrance && _currentCommandIndex == BattleCommandMenu.Change;
+            _currentCommandId = triggerManualTrance ? BattleCommandId.None : GetCommandFromCommandIndex(_currentCommandIndex, CurrentPlayerIndex);
             ResetSlidingButton();
             TryMemorizeCommand();
-            if (IsDoubleCast)
+            if (!triggerManualTrance && IsDoubleCast)
                 _doubleCastCount = 1;
 
-            if (_isManualTrance && _currentCommandIndex == BattleCommandMenu.Change)
+            if (triggerManualTrance)
             {
-                _subMenuType = SubMenuType.Normal;
+                _subMenuType = SubMenuType.Instant;
                 _targetCursor = TargetType.SingleAny;
                 BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
                 btl.Trance = Byte.MaxValue;
                 btl.AlterStatus(BattleStatusId.Trance);
+                SetIdle();
             }
             else if (_currentCommandId == BattleCommandId.Defend || _currentCommandId == BattleCommandId.Change)
             {
-                _subMenuType = SubMenuType.Normal;
+                _subMenuType = SubMenuType.Instant;
                 _targetCursor = TargetType.SingleAny;
                 SendCommand(ProcessCommand(CurrentPlayerIndex, CursorGroup.Individual));
                 SetIdle();
@@ -205,6 +215,23 @@ public partial class BattleHUD : UIScene
                     DisplayItem(false);
                     SetCommandVisibility(false, false);
                     SetItemPanelVisibility(true, false);
+                }
+                else if (ff9Command.Type == CharacterCommandType.Instant)
+                {
+                    _subMenuType = SubMenuType.Instant;
+                    AA_DATA aaData = GetSelectedActiveAbility(CurrentPlayerIndex, _currentCommandId, -1, out _, out _);
+                    TargetType targetType = aaData.Info.Target;
+                    if (targetType == TargetType.Self)
+                        SendCommand(ProcessCommand(CurrentPlayerIndex, CursorGroup.Individual));
+                    else if (targetType == TargetType.Everyone)
+                        SendCommand(ProcessCommand(-1, CursorGroup.All));
+                    else if (targetType == TargetType.AllEnemy)
+                        SendCommand(ProcessCommand(-1, CursorGroup.AllEnemy));
+                    else if (targetType == TargetType.AllAlly)
+                        SendCommand(ProcessCommand(-1, CursorGroup.AllPlayer));
+                    else
+                        throw new Exception($"[BattleHUD] The command {_currentCommandId} uses an instant command type {(Int32)CharacterCommandType.Instant}, but its ability {aaData.Name} has a target type {targetType} which cannot be automatised");
+                    SetIdle();
                 }
             }
         }

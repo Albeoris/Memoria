@@ -92,93 +92,84 @@ public class UITable : UIWidgetContainer
 
     protected void RepositionVariableSize(List<Transform> children)
     {
-        Single num = 0f;
-        Single num2 = 0f;
-        Int32 num3 = (Int32)((this.columns <= 0) ? 1 : (children.Count / this.columns + 1));
-        Int32 num4 = (Int32)((this.columns <= 0) ? children.Count : this.columns);
-        Bounds[,] array = new Bounds[num3, num4];
-        Bounds[] array2 = new Bounds[num4];
-        Bounds[] array3 = new Bounds[num3];
-        Int32 num5 = 0;
-        Int32 num6 = 0;
-        Int32 i = 0;
-        Int32 count = children.Count;
-        while (i < count)
+        Single posX = 0f;
+        Single posY = 0f;
+        Int32 rowCount = this.columns <= 0 ? 1 : children.Count / this.columns + 1;
+        Int32 colCount = this.columns <= 0 ? children.Count : this.columns;
+        Bounds[,] allItemBounds = new Bounds[rowCount, colCount];
+        Bounds[] colBounds = new Bounds[colCount];
+        Bounds[] rowBounds = new Bounds[rowCount];
+        Int32 rowIndex = 0;
+        Int32 colIndex = 0;
+        for (Int32 i = 0; i < children.Count; i++)
         {
-            Transform transform = children[i];
-            Bounds bounds = NGUIMath.CalculateRelativeWidgetBounds(transform, !this.hideInactive);
-            Vector3 localScale = transform.localScale;
+            Transform item = children[i];
+            Bounds bounds = NGUIMath.CalculateRelativeWidgetBounds(item, !this.hideInactive);
+            Vector3 localScale = item.localScale;
             bounds.min = Vector3.Scale(bounds.min, localScale);
             bounds.max = Vector3.Scale(bounds.max, localScale);
-            array[num6, num5] = bounds;
-            array2[num5].Encapsulate(bounds);
-            array3[num6].Encapsulate(bounds);
-            if (++num5 >= this.columns && this.columns > 0)
+            allItemBounds[rowIndex, colIndex] = bounds;
+            colBounds[colIndex].Encapsulate(bounds);
+            rowBounds[rowIndex].Encapsulate(bounds);
+            if (++colIndex >= this.columns && this.columns > 0)
             {
-                num5 = 0;
-                num6++;
+                colIndex = 0;
+                rowIndex++;
             }
-            i++;
         }
-        num5 = 0;
-        num6 = 0;
+        colIndex = 0;
+        rowIndex = 0;
         Vector2 pivotOffset = NGUIMath.GetPivotOffset(this.cellAlignment);
-        Int32 j = 0;
-        Int32 count2 = children.Count;
-        while (j < count2)
+        for (Int32 i = 0; i < children.Count; i++)
         {
-            Transform transform2 = children[j];
-            Bounds bounds2 = array[num6, num5];
-            Bounds bounds3 = array2[num5];
-            Bounds bounds4 = array3[num6];
-            Vector3 localPosition = transform2.localPosition;
-            localPosition.x = num + bounds2.extents.x - bounds2.center.x;
-            localPosition.x -= Mathf.Lerp(0f, bounds2.max.x - bounds2.min.x - bounds3.max.x + bounds3.min.x, pivotOffset.x) - this.padding.x;
+            Transform item = children[i];
+            Bounds childBound = allItemBounds[rowIndex, colIndex];
+            Bounds colBound = colBounds[colIndex];
+            Bounds rowBound = rowBounds[rowIndex];
+            Vector3 itemPos = item.localPosition;
+            itemPos.x = posX + childBound.extents.x - childBound.center.x;
+            itemPos.x -= Mathf.Lerp(0f, childBound.max.x - childBound.min.x - colBound.max.x + colBound.min.x, pivotOffset.x) - this.padding.x;
             if (this.direction == UITable.Direction.Down)
             {
-                localPosition.y = -num2 - bounds2.extents.y - bounds2.center.y;
-                localPosition.y += Mathf.Lerp(bounds2.max.y - bounds2.min.y - bounds4.max.y + bounds4.min.y, 0f, pivotOffset.y) - this.padding.y;
+                itemPos.y = -posY - childBound.extents.y - childBound.center.y;
+                itemPos.y += Mathf.Lerp(childBound.max.y - childBound.min.y - rowBound.max.y + rowBound.min.y, 0f, pivotOffset.y) - this.padding.y;
             }
             else
             {
-                localPosition.y = num2 + bounds2.extents.y - bounds2.center.y;
-                localPosition.y -= Mathf.Lerp(0f, bounds2.max.y - bounds2.min.y - bounds4.max.y + bounds4.min.y, pivotOffset.y) - this.padding.y;
+                itemPos.y = posY + childBound.extents.y - childBound.center.y;
+                itemPos.y -= Mathf.Lerp(0f, childBound.max.y - childBound.min.y - rowBound.max.y + rowBound.min.y, pivotOffset.y) - this.padding.y;
             }
-            num += bounds3.size.x + this.padding.x * 2f;
-            transform2.localPosition = localPosition;
-            if (++num5 >= this.columns && this.columns > 0)
+            posX += colBound.size.x + this.padding.x * 2f;
+            item.localPosition = itemPos;
+            if (++colIndex >= this.columns && this.columns > 0)
             {
-                num5 = 0;
-                num6++;
-                num = 0f;
-                num2 += bounds4.size.y + this.padding.y * 2f;
+                colIndex = 0;
+                rowIndex++;
+                posX = 0f;
+                posY += rowBound.size.y + this.padding.y * 2f;
             }
-            j++;
         }
         if (this.pivot != UIWidget.Pivot.TopLeft)
         {
             pivotOffset = NGUIMath.GetPivotOffset(this.pivot);
-            Bounds bounds5 = NGUIMath.CalculateRelativeWidgetBounds(base.transform);
-            Single num7 = Mathf.Lerp(0f, bounds5.size.x, pivotOffset.x);
-            Single num8 = Mathf.Lerp(-bounds5.size.y, 0f, pivotOffset.y);
-            Transform transform3 = base.transform;
-            for (Int32 k = 0; k < transform3.childCount; k++)
+            Bounds fullBound = NGUIMath.CalculateRelativeWidgetBounds(base.transform);
+            Single pivotOffsetX = Mathf.Lerp(0f, fullBound.size.x, pivotOffset.x);
+            Single pivotOffsetY = Mathf.Lerp(-fullBound.size.y, 0f, pivotOffset.y);
+            for (Int32 i = 0; i < base.transform.childCount; i++)
             {
-                Transform child = transform3.GetChild(k);
-                SpringPosition component = child.GetComponent<SpringPosition>();
-                if (component != (UnityEngine.Object)null)
+                Transform child = base.transform.GetChild(i);
+                SpringPosition spring = child.GetComponent<SpringPosition>();
+                if (spring != null)
                 {
-                    SpringPosition springPosition = component;
-                    springPosition.target.x = springPosition.target.x - num7;
-                    SpringPosition springPosition2 = component;
-                    springPosition2.target.y = springPosition2.target.y - num8;
+                    spring.target.x -= pivotOffsetX;
+                    spring.target.y -= pivotOffsetY;
                 }
                 else
                 {
-                    Vector3 localPosition2 = child.localPosition;
-                    localPosition2.x -= num7;
-                    localPosition2.y -= num8;
-                    child.localPosition = localPosition2;
+                    Vector3 childPos = child.localPosition;
+                    childPos.x -= pivotOffsetX;
+                    childPos.y -= pivotOffsetY;
+                    child.localPosition = childPos;
                 }
             }
         }

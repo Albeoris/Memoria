@@ -1473,7 +1473,7 @@ public partial class BattleHUD : UIScene
         BattleCommandId cmdId = commandDetail.CommandId;
 
         CharacterCommandType commandType = CharacterCommands.Commands[cmdId].Type;
-        if (commandType == CharacterCommandType.Normal || commandType == CharacterCommandType.Ability)
+        if (commandType == CharacterCommandType.Normal || commandType == CharacterCommandType.Ability || commandType == CharacterCommandType.Instant)
             commandDetail.SubId = (Int32)PatchAbility(CharacterCommands.Commands[cmdId].GetAbilityId(_currentSubMenuIndex));
         else if (commandType == CharacterCommandType.Item || commandType == CharacterCommandType.Throw)
             commandDetail.SubId = (Int32)_itemIdList[_currentSubMenuIndex];
@@ -1695,23 +1695,14 @@ public partial class BattleHUD : UIScene
 
     private static ushort GetTargetFromType(CommandDetail cmddetail, CMD_DATA cmd, TargetType TargetType)
     {
-        if (TargetType == TargetType.AllAlly)
+        switch (TargetType)
         {
-            return 0x0F;
+            case TargetType.AllAlly: return 0x0F;
+            case TargetType.AllEnemy: return 0xF0;
+            case TargetType.Everyone: return 0xFF;
+            case TargetType.Self: return cmd.regist.btl_id;
+            default: return cmddetail.TargetId;
         }
-        else if (TargetType == TargetType.AllEnemy)
-        {
-            return 0xF0;
-        }
-        else if (TargetType == TargetType.Everyone)
-        {
-            return 0xFF;
-        }
-        else if (TargetType == TargetType.Self)
-        {
-            return cmd.regist.btl_id;
-        }
-        return cmddetail.TargetId;
     }
 
     private void SetCommandVisibility(Boolean isVisible, Boolean forceCursorMemo)
@@ -1734,13 +1725,8 @@ public partial class BattleHUD : UIScene
 
         if (_commandPanel.IsActive)
         {
-            GameObject previousSelection = commandObject;
-            if (commandObject.GetComponent<ButtonGroupState>().enabled)
-                TryGetMemorizedCommandObject(ref previousSelection, forceCursorMemo);
-            if (previousSelection.GetComponent<ButtonGroupState>().enabled)
-                commandObject = previousSelection;
-
-            ButtonGroupState.ActiveButton = commandObject;
+            if (ButtonGroupState.ActiveButton == null || (_buttonSliding == null && !ButtonGroupState.ActiveButton.GetComponent<ButtonGroupState>().enabled))
+                ButtonGroupState.ActiveButton = commandObject;
         }
         else
         {
@@ -2591,17 +2577,35 @@ public partial class BattleHUD : UIScene
     private void UpdateBattleAfterMainMenu()
     {
         Boolean menuHadImpact = PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount > 0;
+        PARTY_DATA party = FF9StateSystem.Common.FF9.party;
+        List<PLAYER> partyMembers = new List<PLAYER>();
+        for (Int32 i = 0; i < 4; i++)
+            partyMembers.Add(_mainMenuPlayerMemo[i].original);
         if (menuHadImpact)
         {
+            List<BattleUnit> oldSwappedOut = new List<BattleUnit>();
+            List<CharacterId> newSwappedIn = new List<CharacterId>();
+            foreach (PLAYER player in party.member)
+                if (player != null)
+                    newSwappedIn.Add(player.Index);
             foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
             {
                 if (!unit.IsPlayer)
                     continue;
                 if (_mainMenuSinglePlayer != null && unit.Player != _mainMenuSinglePlayer)
+                {
+                    newSwappedIn.Remove(unit.PlayerIndex);
                     continue;
-                BTL_DATA btl = unit.Data;
+                }
+                if (!party.IsInParty(unit.PlayerIndex))
+                {
+                    oldSwappedOut.Add(unit);
+                    continue;
+                }
+                newSwappedIn.Remove(unit.PlayerIndex);
                 PLAYER player = unit.Player;
                 PlayerMemo beforeMenu = _mainMenuPlayerMemo.Find(memo => memo.original == player);
+                BTL_DATA btl = unit.Data;
                 unit.Trance = player.trance;
                 btl_init.CopyPoints(btl.cur, player.cur);
                 player.permanent_status &= ~beforeMenu.battlePermanentStatus;
@@ -2645,16 +2649,57 @@ public partial class BattleHUD : UIScene
                 if (beforeMenu.battleRow != player.info.row)
                     btl_para.SwitchPlayerRow(btl, !btl_util.IsBtlBusy(btl, btl_util.BusyMode.CASTER));
 
-                // Todo: Serial number changed
-                //BattlePlayerCharacter.CreatePlayer(btl, player.info.serial_no);
-                //btl_mot.SetPlayerDefMotion(btl, player.info.serial_no, (UInt32)unit.GetIndex());
-                //BattlePlayerCharacter.InitAnimation(btl);
+                if (beforeMenu.serialNo != player.info.serial_no)
+                {
+                    if (unit.IsMonsterTransform)
+                        unit.ReleaseChangeToMonster();
+                    BattlePlayerCharacter.PlayerMotionIndex motion = btl_mot.getMotion(btl);
+                    if (motion == BattlePlayerCharacter.PlayerMotionIndex.MP_MAX)
+                        motion = BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL;
+                    BattlePlayerCharacter.CreatePlayer(btl, player);
+                    btl_mot.SetPlayerDefMotion(btl, player.info.serial_no, (UInt32)unit.GetIndex());
+                    BattlePlayerCharacter.InitAnimation(btl);
+                    if (unit.IsUnderAnyStatus(BattleStatus.Trance))
+                        btl.ChangeModel(btl.tranceGo, btl_init.GetModelID(player.info.serial_no, true));
+                    else
+                        btl.ChangeModel(btl.originalGo, btl_init.GetModelID(player.info.serial_no, false));
+                    btl_mot.setMotion(btl, motion);
+                }
                 if (btl.weapon != ff9item.GetItemWeapon(player.equip[0]))
                 {
                     btl_eqp.InitWeapon(player, btl);
                     btl.weapon_offset_rot = btl_mot.BattleParameterList[player.info.serial_no].GetWeaponRotationFixed(btl.weapon.ModelId, false);
                 }
                 btl_eqp.InitEquipPrivilegeAttrib(player, btl);
+            }
+            if (newSwappedIn.Count != oldSwappedOut.Count)
+                Log.Warning($"[BattleHUD] Error for character swap: {String.Join(", ", oldSwappedOut.ConvertAll(unit => unit.Name).ToArray())} -> {String.Join(", ", newSwappedIn.ConvertAll(charId => charId.ToString()).ToArray())}");
+            for (Int32 i = 0; i < newSwappedIn.Count && i < oldSwappedOut.Count; i++)
+            {
+                BattleUnit swappedOut = oldSwappedOut[i];
+                PLAYER swappedIn = FF9StateSystem.Common.FF9.player[newSwappedIn[i]];
+                for (Int32 j = 0; j < partyMembers.Count; j++)
+                {
+                    if (partyMembers[j] == swappedOut.Player)
+                    {
+                        partyMembers[j] = swappedIn;
+                        break;
+                    }
+                }
+                if (swappedOut.IsMonsterTransform)
+                    swappedOut.ReleaseChangeToMonster();
+                swappedOut.ResistStatus = 0;
+                btl_stat.MakeStatusesPermanent(swappedOut, FF9BattleDB.AllStatuses, false);
+                btl_stat.RemoveStatuses(swappedOut, FF9BattleDB.AllStatuses);
+                btl_sys.DelCharacter(swappedOut);
+                btl_init.SwapPlayerCharacter(swappedOut, swappedIn);
+                RemovePlayerFromAction(swappedOut.Id, true);
+                AbilityPlayerDetail abilityPlayer = _abilityDetailDict[swappedOut.GetIndex()];
+                abilityPlayer.Player = swappedIn;
+                abilityPlayer.HasAp = ff9abil.FF9Abil_HasAp(swappedIn);
+                abilityPlayer.AbilityPaList.Clear();
+                abilityPlayer.AbilityMaxPaList.Clear();
+                SetAbilityAp(abilityPlayer);
             }
             foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
             {
@@ -2674,12 +2719,13 @@ public partial class BattleHUD : UIScene
                 continue;
             PLAYER player = unit.Player;
             PlayerMemo beforeMenu = _mainMenuPlayerMemo.Find(memo => memo.original == player);
-            player.info.row = beforeMenu.row;
+            if (beforeMenu != null)
+                player.info.row = beforeMenu.row;
         }
         if (_mainMenuSinglePlayer != null)
         {
             for (Int32 i = 0; i < 4; i++)
-                FF9StateSystem.Common.FF9.party.member[i] = _mainMenuPlayerMemo[i].original;
+                party.member[i] = partyMembers[i];
             if (Configuration.Battle.AccessMenus <= 1 && menuHadImpact)
             {
                 BTL_DATA playerBtl = btl_util.getBattlePtr(_mainMenuSinglePlayer);

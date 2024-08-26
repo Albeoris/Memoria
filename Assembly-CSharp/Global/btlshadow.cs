@@ -6,7 +6,15 @@ public class btlshadow
 {
     public static void ff9battleShadowInit(BTL_DATA btl)
     {
-        GameObject shadow = new GameObject("shadow" + btl.bi.slot_no.ToString("D3"));
+        if (FF9StateSystem.Battle.FF9Battle.map.shadowArray.TryGetValue(btl, out GameObject shadow))
+        {
+            // Re-init
+            shadow.transform.localScale = new Vector3(224f, 0f, 192f);
+            shadow.GetComponent<MeshRenderer>().material.SetColor("_TintColor", new Color32(64, 64, 64, Byte.MaxValue));
+            shadow.SetActive(false);
+            return;
+        }
+        shadow = new GameObject("shadow" + btl.bi.slot_no.ToString("D3"));
         FF9StateSystem.Battle.FF9Battle.map.shadowArray[btl] = shadow;
         List<Vector3> vertList = new List<Vector3>();
         List<Color> colList = new List<Color>();

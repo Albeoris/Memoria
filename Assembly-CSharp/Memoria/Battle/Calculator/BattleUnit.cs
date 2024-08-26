@@ -937,6 +937,7 @@ namespace Memoria
             btl_stat.AlterStatuses(this, current_added);
             btl_stat.MakeStatusesPermanent(this, monsterTransform.auto_added, true);
             // TODO: handle "partialResist" and "durationFactor" properly (now, they are most likely applied but persist after "ReleaseChangeToMonster")
+            btl2d.ShowMessages(true);
         }
 
         private void ChangeToMonster_SetClip(String[] array, String animName, BattlePlayerCharacter.PlayerMotionIndex motion)

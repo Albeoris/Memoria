@@ -73,6 +73,11 @@ public class PartySettingUI : UIScene
     private static String SelectCharGroupButton = "Party.Select";
     private static String MoveCharGroupButton = "Party.Move";
 
+    [NonSerialized]
+    public Boolean AccessFromMenu = false;
+    [NonSerialized]
+    public Int32 ExactPartyCount = -1;
+
     public GameObject HelpDespLabelGameObject;
     public GameObject CurrentPartyPanel;
     public GameObject OutsidePartyPanel;
@@ -150,8 +155,10 @@ public class PartySettingUI : UIScene
             SceneDirector.FF9Wipe_FadeInEx(12);
         };
         if (afterFinished != null)
-            sceneVoidDelegate = (SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
+            sceneVoidDelegate += afterFinished;
         base.Hide(sceneVoidDelegate);
+        if (this.AccessFromMenu)
+            PersistenSingleton<UIManager>.Instance.MainMenuScene.StartSubmenuTweenIn();
         BattleAchievement.UpdateParty();
         this.RemoveCursorMemorize();
     }
@@ -223,6 +230,7 @@ public class PartySettingUI : UIScene
                 this.DisplayCharacterInfo(this.currentCharacterId);
                 ButtonGroupState.SetCursorMemorize(go.transform.parent.gameObject, SelectCharGroupButton);
                 ButtonGroupState.ActiveGroup = SelectCharGroupButton;
+                PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
             }
         }
         return true;
@@ -241,7 +249,12 @@ public class PartySettingUI : UIScene
                     FF9Sfx.FF9SFX_Play(103);
                     this.Hide(delegate
                     {
-                        PersistenSingleton<UIManager>.Instance.ChangeUIState(PersistenSingleton<UIManager>.Instance.HUDState);
+                        if (this.AccessFromMenu)
+                            PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.MainMenu);
+                        else
+                            PersistenSingleton<UIManager>.Instance.ChangeUIState(PersistenSingleton<UIManager>.Instance.HUDState);
+                        this.AccessFromMenu = false;
+                        this.ExactPartyCount = -1;
                     });
                 }
                 else
@@ -400,6 +413,8 @@ public class PartySettingUI : UIScene
                     healthyCnt++;
             }
         }
+        if (this.ExactPartyCount >= 0)
+            return charCnt == this.ExactPartyCount && healthyCnt != 0;
         return charCnt >= this.info.party_ct && healthyCnt != 0;
     }
 
