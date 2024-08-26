@@ -93,33 +93,52 @@ public class VoicePlayer : SoundPlayer
 
         specialAppend = "";
         // (special) Festival of the Hunt has take the lead and holds the lead
-        if (FieldZoneId == 276)
+        switch (FieldZoneId)
         {
-            switch (messageNumber)
+            case 276:
             {
-                case 540:// Zidane
-                case 541:// Vivi
-                case 542:// Frya
-                case 543:// Lani
-                case 544:// Gourmand
-                case 545:// Belna
-                case 546:// Genero
-                case 547:// Ivan
+                switch (messageNumber)
                 {
-                    var idShort = Convert.ToUInt16(messageNumber);
-                    if(idShort == specialLastPlayed)
+                    case 540:// Zidane
+                    case 541:// Vivi
+                    case 542:// Frya
+                    case 543:// Lani
+                    case 544:// Gourmand
+                    case 545:// Belna
+                    case 546:// Genero
+                    case 547:// Ivan
                     {
-                        specialAppend = "_held_"+ specialCount;
-                        specialCount += 1;
+                        var idShort = Convert.ToUInt16(messageNumber);
+                        if (idShort == specialLastPlayed)
+                        {
+                            specialAppend = "_held_" + specialCount;
+                            specialCount += 1;
+                        }
+                        else
+                        {
+                            specialAppend = "_taken";
+                            specialLastPlayed = idShort;
+                            specialCount = 0;
+                        }
+                        break;
                     }
-                    else
-                    {
-                        specialAppend = "_taken";
-                        specialLastPlayed = idShort;
-                        specialCount = 0;
-                    }
-                    break;
                 }
+                break;
+            }
+            // hot and cold
+            case 945:
+            {
+                if(messageNumber == 230)
+                {
+                    specialCount = 0;
+                }
+                // count up for each time you find something.
+                if(messageNumber == 301) // gained points
+                {
+                    specialAppend = "_" + specialCount;
+                    specialCount += 1;
+                }
+                break;
             }
         }
 
