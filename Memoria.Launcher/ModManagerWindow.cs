@@ -15,6 +15,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Forms;
 using System.Windows.Markup;
 using System.Windows.Media.Imaging;
@@ -66,6 +67,20 @@ namespace Memoria.Launcher
         private void ModManagerWindow_KeyUp(Object sender, System.Windows.Input.KeyEventArgs e)
         {
             if(e.Key == System.Windows.Input.Key.Delete) Uninstall();
+        }
+
+        private void HtmlTextBlock_Loaded(object sender, RoutedEventArgs e)
+        {
+            AddHandler(Hyperlink.ClickEvent, (RoutedEventHandler)Hyperlink_Click);
+        }
+
+        private void Hyperlink_Click(object sender, RoutedEventArgs e)
+        {
+            if (e.OriginalSource is Hyperlink)
+            {
+                Process.Start((e.OriginalSource as Hyperlink).NavigateUri.AbsoluteUri);
+                e.Handled = true;
+            }
         }
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
