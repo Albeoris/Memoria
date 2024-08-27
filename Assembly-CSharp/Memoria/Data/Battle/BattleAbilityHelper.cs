@@ -215,10 +215,6 @@ namespace Memoria.Data
 
             public Boolean CheckAbilityIsDisabled(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu, Boolean inMenu)
             {
-                // TODO: Trance Seek hard-coded disable, to be removed once the mod itself contains the disabling ability condition
-                if (Configuration.Mod.TranceSeek && (FF9BattleDB.CharacterActions[abilId].Type & 16) != 0)
-                    return true;
-
                 if (String.IsNullOrEmpty(AbilityDisable))
                     return false;
                 Expression c = new Expression(AbilityDisable);

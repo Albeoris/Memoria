@@ -90,9 +90,10 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.25</Version>
+	<Version>0.3.26</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
-	<ReleaseDate>2024-08-14</ReleaseDate>
+	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
+	<ReleaseDate>27 Aug 2024</ReleaseDate>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
 	<Description>A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
@@ -115,36 +116,64 @@ Don't hesitate to try!
 /_!_\ IMPORTANT /_!_\
 Recommended language : Français / English (UK)
 Not supported language : Japanese</Description>
-	<PatchNotes>- Rework of Rackets: now purely magical weapons, they depend on the attacker's magic and the target's magical defense.
-However, the weapon is still subject to physical dodge (and therefore sensitive to Darkness or Vanish).
+	<PatchNotes>
+	- "Break/Up" status now overlapped and scrolled, to make icons clearer in combat (code improved by Tirlititi, thanks to him!!)
+	- "Break/Up" status rework:
 
-- The damage formula for "Heavy Spears" on the "Jump" skill has been fixed.
-- Added a description of the effects on the following weapons: Heavy Spears, Boomerangs and Rackets.
-- Improved Heat script on bosses (had a problem with counters).
-- Fix on Gizamaluke's fight (damage problem with "Heat").
-- Fixed "Heat" status script, which could kill bosses and softlock the game.
-- Fix scripts of "PerfectCrit" and "PerfectDodge" statuses.
-- Slight change to Garland's AI, concerning the end of the fight.
-- Fixed some Epitaf battles where softlocks was possible.
-- Correction of the "Doctor" SA, making it compatible with more heals.
-- The cost of the SA "Mug" has been increased from 4 to 6.
-- "Mug" and "Mug+" are now compatible with Eye of the Thief, Bandit+, Master Thief and the steal bonus under Trance.
-- Improved display of stolen items when Zidane attempts to "Mug" with these daggers.
-- Healer+ SA now inflicts 100% damage against zombies (as opposed to 200% previously).
-- Freyja can no longer learn "Healer" and is replaced by a new SA called "Dragon's Eye".
-- SOS-type SA are more precise in their triggering: they can be activated by Poison, for example.
-- SOS Regen cost modified: 5 to 4.
-- SOS Haste cost modified: 4 to 3.
-- "Esuna" now correctly removes Old.
-- Changed description of "Throw" command.
-- Corrected "Cook" damage formula.
-- Corrected animations of some Sand Scorpions in Clayra.
-- Changed a Raitaime question in French, which could lead to confusion.
-- Fixed a bug with Prison Cage and Vivi combat, where the AttachObject was incorrect.
-- Fixed the items to be stolen in Tantarian combat.
-- Improved script against the special boss at the entrance to Ypsen Castle at the start of CD3.
-- All new statuses are now correctly removed at the end of combat.
-- Redesign of several codes in AbilityFeatures.</PatchNotes>
+	⚔️ PowerBreak/PowerUp: Increases/Decreases target's physical damage by 10%, cumulative up to 5 times.
+	🧙 MagicBreak/MagicUp: Increases/Decreases target's magical damage by 10%, cumulative up to 5 times.
+	🛡️ ArmorBreak/ArmorUp: Increases/Decreases target's physical damage received by 10%, cumulative up to 5 times.
+	🧠 MentalBreak/MentalUp: Increases/Decreases target's magical damage received by 10%, cumulative up to 5 times.
+
+	- [WIP] Stats readjustment for certain characters.
+	- [WIP] New script implemented when a character joins the team: better calculation of these stats (particularly visible for Amarant/Eiko/Beatrix).
+	- [WIP] Steiner can now use Swd Mag on multiple targets!
+	- [WIP] Gravity spells such as Demi now work on strong ennemies like bosses!
+	Against this type of enemy, the spell is much less effective and loses power with each use on the target.
+	The damage is rather interesting at the start of a fight, but the formula will maybe be reworked.
+
+	- Fixed a bug where Steiner would fail Vivi's focus passive if using a Swd Mag in multi-targets.
+	- Fixed a bug where Redemption was not taken into account for Beatrix's Seiken under Trance.
+	- Braver and Heroism grant two stacks of PowerUp and MagicUp instead of one.
+	- Plenitude no longer gives MagicUp and MentalUp, but a bonus in Magic and Psy (cumulative).
+	- Old status no longer works on bosses.
+	- Resilience+ SA corrected
+	- Slight correction on the description of SA Doctor and Doctor+.
+	- Corrected a problem with the SA Last Stand.
+	- Mug+ no longer works on itself.
+	- Correction of damage when a spell is cast on multiple targets.
+	- HitRateScript removed from Poison magic attacks (script 0119).
+	- Slight change to SFX for the following items: Phoenix Down and Phoenix Pinion.
+	- Fixed a bug on the CD3 superboss, where a softlock was possible with AutoLife or Last Stand.
+	- Fixed a bug on the CD3 superboss, where a Bio spell was not absorbed under Zombie.
+	- Fixed a bug with two monsters in the Treno arena.
+	- Slight correction to the position of the Brother and Sister swords.
+	- Some changes and improvements to Plant Brain combat.
+	- Slight changes to Ypsen's secret boss.
+	- Slight change to CD3 super boss level.
+	- Correction of various bugs against the Tantarian fight + some changes to the fight.
+	- Correction on Ragtimes combat, where it was possible to answer these 16 questions at CD1.
+	- Fixed a monster's Bio spell that was considered a "Thunder" type attack.
+	- New correction to the "Eat" damage formula.
+	- Fixed a bug on rackets, where elemental absorption was not taken into account.
+	- Corrected a major bug on "Darkside" skills, which no longer worked for monsters.
+	- "HP Absorb" and "MP Absorb" attacks are now subject to elemental affinities.
+	- Correction of some custom .seq files.
+	- "Cleave" .seq file corrected.
+	- "Water" .seq file changed.
+	- Changed stats on some weapons/accessories, as well as skills to learn.
+	- Corrected a major bug on field n°2850 (Hilda Garde 3/Bridge) where the Party Reserve was modified at each init.
+	- Slight correction to Scissor Fangs's description (in French).
+	- New dialogues for Mogster about Trance Seek!
+	- Slight change to a tutorial window at the start of the game, concerning the soft reset.
+	- Correction of dialogues in the Qu's Marsh in the "Spanish" version.
+	- Correction of dialogues on Cinna's store in Prima Vista (all languages except French)
+	- Correction of multiple dialogues in US on the following fields:
+	[352] Dali/Inn => Dali Inn Library + Dali Inn Fortune + Dali Inn Window (spying Garnet)
+	[550] Lindblum/Shopping Area => Woman with white dress.
+	[555] Lindblum/Shopping Area => The Small Town Knight In A Big City ATE
+
+	/_!_\ Known bug: Sentinel and Dual commands open the targeting window, unlike previous versions. This will be corrected in the next Memoria update!</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/HC3GH4j/Logo-Trance-Seek.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/LogoTranceSeek.png</PreviewFile>
@@ -781,9 +810,10 @@ to see previews and learn more about the mod visit the website url
 
 <Mod>
 	<Name>Playstation Sounds</Name>
-	<Version>2.1</Version>
+	<Version>2.2</Version>
 	<InstallationPath>PlaystationSounds</InstallationPath>
-	<ReleaseDate>2024-06-27</ReleaseDate>
+	<ReleaseDateOriginal>19 Mar 2022</ReleaseDateOriginal>
+	<ReleaseDate>27 Jun 2024</ReleaseDate>
 	<Author>DV</Author>
 	<Description>Replace the sound assets by the PSX sounds (specially Battle + Tetra Master + Miscellaneous). More than 1540 sound files fixed!</Description>
 	<PatchNotes>Improved "Trance Spear" SFX : se510236, se510237, se510238, se510240, se510241 et se510242 (report by Quetzal and SamsamTS)</PatchNotes>
@@ -1042,7 +1072,7 @@ Kupo UI Suite.
 	<Name>Triple Triad</Name>
 	<Version>1.0</Version>
 	<InstallationPath>TripleTriad</InstallationPath>
-	<ReleaseDateOriginal>Unknown</ReleaseDateOriginal>
+	<ReleaseDateOriginal>25 Jul 2023</ReleaseDateOriginal>
 	<Author>DV</Author>
 	<Description>Change the music and background to the Triple Triad FF8 version (based on Tripod !)
 Change some card textures (add boss + characters)</Description>
