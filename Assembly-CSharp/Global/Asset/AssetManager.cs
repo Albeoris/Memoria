@@ -38,6 +38,10 @@ public static class AssetManager
         DateTime assemblyDate = new DateTime(2000, 1, 1).AddDays(assemblyVersion.Build).AddSeconds(assemblyVersion.Revision * 2);
         Log.Message($"[Initialization] Memoria version: {assemblyDate.ToString("yyyy-MM-dd")}");
         Log.Message($"[Initialization] OS version: {Environment.OSVersion}");
+        String modsNames = "";
+        foreach (String name in Configuration.Mod.FolderNames)
+            modsNames += "'" + name + "' ";
+        Log.Message($"[Initialization] Mods: {modsNames}");
 
         AssetManager.IsFullyInitialized = false;
         Array moduleList = Enum.GetValues(typeof(AssetManagerUtil.ModuleBundle));

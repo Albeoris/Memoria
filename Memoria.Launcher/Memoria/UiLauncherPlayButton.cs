@@ -27,12 +27,12 @@ namespace Memoria.Launcher
 
         public UiLauncherPlayButton()
         {
-            Label = Lang.Button.Launch;
+            Label = Lang.Launcher.Launch;
         }
 
         protected override async Task DoAction()
         {
-            Label = Lang.Button.Launching;
+            Label = Lang.Launcher.Launching;
             try
             {
                 try
@@ -176,7 +176,7 @@ namespace Memoria.Launcher
             }
             finally
             {
-                Label = Lang.Button.Launch;
+                Label = Lang.Launcher.Launch;
             }
         }
 
@@ -189,7 +189,7 @@ namespace Memoria.Launcher
                 return false;
 
             StringBuilder messageSb = new StringBuilder(256);
-            messageSb.AppendLine(Lang.Message.Question.NewVersionIsAvailable);
+            messageSb.AppendLine(Lang.Launcher.NewVersionIsAvailable);
             Int64 size = 0;
             foreach (HttpFileInfo info in updateInfo)
             {
@@ -197,7 +197,7 @@ namespace Memoria.Launcher
                 messageSb.AppendLine($"{info.TargetName} - {info.LastModified} ({UiProgressWindow.FormatValue(info.ContentLength)})");
             }
 
-            if (MessageBox.Show(rootElement, messageSb.ToString(), Lang.Message.Question.Title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(rootElement, messageSb.ToString(), Lang.Launcher.QuestionTitle, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 List<String> success = new List<String>(updateInfo.Count);
                 List<String> failed = new List<String>();
@@ -234,7 +234,7 @@ namespace Memoria.Launcher
                 {
                     MessageBox.Show(rootElement,
                         "Failed to download:" + Environment.NewLine + String.Join(Environment.NewLine, failed),
-                        Lang.Message.Error.Title,
+                        Lang.Launcher.ErrorTitle,
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
                 }
@@ -243,7 +243,7 @@ namespace Memoria.Launcher
                 {
                     runPatcher = MessageBox.Show(rootElement,
                         "Download successful!\nRun the patcher?",
-                        Lang.Message.Question.Title,
+                        Lang.Launcher.QuestionTitle,
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Question) == MessageBoxResult.Yes;
                 }

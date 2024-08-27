@@ -8,7 +8,7 @@ namespace Memoria.Launcher
     {
         public UiLauncherAdvOptionsButton()
         {
-            Label = "Adv. settings";
+            Label = Lang.Launcher.AdvSettings;
         }
 
         protected override async Task DoAction()

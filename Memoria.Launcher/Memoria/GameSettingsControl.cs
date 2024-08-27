@@ -85,17 +85,6 @@ namespace Memoria.Launcher
             resolution.Height = 20;
             resolution.FontSize = 10;
 
-            /*UiTextBlock _audioText = UiTextBlockFactory.Create(Lang.Settings.AudioSamplingFrequency);
-            _audioText.FontSize *= 0.8;
-            _audioText.TextWrapping = TextWrapping.WrapWithOverflow;
-            AddUiElement(_audioText, row: 13, col: 0, rowSpan: 3, colSpan: 2).Margin = rowMargin;
-            UiComboBox audio = AddUiElement(UiComboBoxFactory.Create(), row: 13, col: 2, rowSpan: 3, colSpan: 2);
-            audio.ItemStringFormat = Lang.Settings.AudioSamplingFrequencyFormat;
-            audio.ItemsSource = EnumerateAudioSettings().ToArray();
-            audio.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(AudioFrequency)) {Mode = BindingMode.TwoWay});
-            audio.SetBinding(Selector.IsEnabledProperty, new Binding(nameof(AudioFrequencyEnabled)) {Mode = BindingMode.TwoWay});
-            audio.Margin = rowMargin;*/
-
             UiCheckBox x64 = AddUiElement(UiCheckBoxFactory.Create("x64", null), 13, 0, 3, 4);
             x64.Margin = rowMargin;
             x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) { Mode = BindingMode.TwoWay });
@@ -113,7 +102,8 @@ namespace Memoria.Launcher
             checkUpdates.ToolTip = Lang.Settings.CheckUpdates_Tooltip;
 
             String OSversion = $"{Environment.OSVersion}";
-            if (OSversion.Contains("Windows"))
+            Boolean isRunningInWine = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WINELOADER"));
+            if (OSversion.Contains("Windows") && !isRunningInWine)
             {
                 UiCheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 17, 0, 3, 8);
                 steamOverlayFix.Margin = rowMargin;
@@ -607,7 +597,7 @@ namespace Memoria.Launcher
             }
             catch (Exception ex)
             {
-                MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.CannotRead + $" {sdlibPath}{Environment.NewLine}{Environment.NewLine}{ex}", Lang.Message.Error.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.CannotRead + $" {sdlibPath}{Environment.NewLine}{Environment.NewLine}{ex}", Lang.Launcher.ErrorTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
                 samplingFrequency = 0;
                 return false;
             }
@@ -679,7 +669,7 @@ namespace Memoria.Launcher
             catch (Exception ex)
             {
                 if (!quiet)
-                    MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.CannotWrite + $" ({(isX64 ? "x64" : "x86")}){Environment.NewLine}{Environment.NewLine}{ex}", Lang.Message.Error.Title, MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.CannotWrite + $" ({(isX64 ? "x64" : "x86")}){Environment.NewLine}{Environment.NewLine}{ex}", Lang.Launcher.ErrorTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
 
                 samplingFrequency = 0;
                 return false;

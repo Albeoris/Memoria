@@ -8,7 +8,7 @@ namespace Memoria.Launcher
     {
         public UiLauncherModManagerButton()
         {
-            Label = Lang.Button.ModManager;
+            Label = Lang.Launcher.ModManager;
         }
 
         protected override async Task DoAction()

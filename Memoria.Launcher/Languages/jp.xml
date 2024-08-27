@@ -13,20 +13,17 @@
 	EByteAbbr = "EB"
 	/>
 
-	<Button
-	OK = "OK"
-	Cancel = "キャンセル"
-	Continue = "続行"
-	Clone = "複製"
-	Remove = "削除"
-	Rollback = "キャンセル"
-	Inject = "挿入"
-	SaveAs = "名前を付けて保存..."
-	Exit = "終了"
-	Exiting = "終了しています..."
+	<Launcher
 	Launch = "再生"
 	Launching = "再生中..."
 	ModManager = "MOD マネージャー"
+	QuestionTitle = "質問"
+	ErrorTitle = "エラー!"
+	NewVersionIsAvailable = "新しいバージョンが利用可能です。今すぐダウンロードしますか？"
+	AdvSettings = "詳細設定"
+	AdvSettingsTitle = "高度かつ実験的な設定"
+	Return = "戻る"
+	ModelViewer = "モデルビューア"
 	/>
 
 	<Settings
@@ -38,8 +35,6 @@
 	Window = "ウィンドウ モード"
 	ExclusiveFullscreen = "全画面"
 	BorderlessFullscreen = "ボーダーレス フルスクリーン"
-	AudioSamplingFrequency = "オーディオ サンプリング周波数"
-	AudioSamplingFrequencyFormat = "{0} Hz"
 	Debuggable = "デバッグ可能"
 	CheckUpdates = "更新をチェック"
 	IniOptions = "オプション"
@@ -149,6 +144,13 @@
 	tetraMasterReduceRandomBox1 = "ランダム性が少ない"
 	tetraMasterReduceRandomBox2 = "簡単な勝利"
 	CardReduceRandom_Tooltip = "TetraMasterのランダム性の制御"
+	
+	Shader_Enable = "カスタムシェーダー"
+	Shader_Field_chars = "戦闘外: "
+	Shader_Battle_chars = "戦闘中: "
+	Shader_Realism = "リアリズム"
+	Shader_Toon = "トゥーン"
+	Shader_Outlines = "モデルの輪郭"
 	/>
 
 	<SdLib
@@ -168,113 +170,6 @@
 	FixAreYouSure = "今、OSにフックをインストールし、FF9_Launcher.exeファイルの代わりにFF9_Launcher.fixを起動します。 この場合、Steamファイルのすべての整合性チェックが正常に完了します。 したがって、一部のユーザーが定期的にSteamオーバーレイ機能と関連機能（実績およびコントローラーサポート）を無効にしている問題が解決されます。&#13;&#10;&#13;&#10;ただし、注意してください。 ゲーム、そのフォルダー、またはFF9_Launcher.fixファイルを削除する前に、まず変更を元に戻さないでください。 そうしないと、フックがシステムに残り、ゲームを新しくインストールした後にそれを起動できなくなります。 ランチャーで変更を元に戻すか、ゲームフォルダー内のMemoria.SteamFix.exeを実行して手動で変更を元に戻すことができます。"
 	RollbackAreYouSure = "今、行った変更を取り消します。これにより、Steamオーバーレイに関する問題が再発します。&#13;&#10;&#13;&#10;これにより、実績が無効になり、コントローラーの問題が発生する可能性があります。&#13;&#10;&#13;&#10;本当に続行しますか？"
 	/>
-
-	<InfoProvider>
-
-		<ApplicationConfig
-		Title = "設定"
-		Description = "アプリケーションのさまざまな設定。"
-		NewTitle = "新規"
-		NewDescription = "すべての設定をデフォルト値に初期化します。"
-		FileTitle = "ファイルから"
-		FileDescription = "アプリケーションの設定ファイル {0} を読み込みます。"
-		/>
-
-		<GameLocation
-		Title = "ゲームディレクトリ"
-		Description = "ゲームファイルの場所。"
-		ConfigurationTitle = "設定"
-		ConfigurationDescription = "設定ファイルに保存されている情報を使用します。"
-		SteamRegistryTitle = "レジストリから（Steam）"
-		SteamRegistryDescription = "Windowsレジストリから情報を取得し、Steamからのデータを使用します。"
-		UserTitle = "手動"
-		UserDescription = "ゲームをインストールしたディレクトリを手動で選択できます。"
-		/>
-
-		<WorkingLocation
-		Title = "作業ディレクトリ"
-		Description = "アプリケーションの結果を保存するディレクトリ。"
-		ConfigurationTitle = "設定"
-		ConfigurationDescription = "設定ファイルに保存されている情報を使用します。"
-		UserTitle = "手動"
-		UserDescription = "作業ディレクトリを手動で選択できます。"
-		/>
-
-		<TextEncoding
-		Title = "エンコーディング"
-		Description = "ゲームテキストの展開とパッキングに使用するエンコーディング。"
-		NewTitle = "新規"
-		NewDescription = "Windows-1252エンコーディングを基にした標準エンコーディングを初期化します。"
-		WorkingLocationTitle = "作業ディレクトリ"
-		WorkingLocationDescription = "作業ディレクトリからエンコーディングを読み込みます。"
-		UserTitle = "編集"
-		UserDescription = "現在のエンコーディングを変更します。"
-		/>
-
-		<AudioSettings
-		Title = "オーディオ設定"
-		Description = "オーディオデバイスの設定。"
-		NewTitle = "新規"
-		NewDescription = "すべての設定をデフォルト値に初期化します。"
-		/>
-
-	</InfoProvider>
-	<Dockable>
-		<DataSources Header = "データソース" />
-
-		<GameFileCommander
-		Header = "ゲームリソース"
-		Unpack = "展開"
-		Pack = "パック"
-		ArchivesNode ="アーカイブ"
-		/>
-
-		<GameFilePreview Header="プレビュー" >
-
-			<Ykd
-			ResourceRemovingTitle = "削除中"
-			ConfirmResourceRemoving = "このリソースを削除してもよろしいですか？"
-			/>
-
-		</GameFilePreview>
-	</Dockable>
-	<EncodingEditor>
-
-		<List
-		Name = "名前"
-		Pattern = "パターン"
-		Encoding = "エンコーディング"
-		Font = "フォント"
-		Edit = "編集"
-		/>
-
-		<EncodingSelectDialog
-		Title = "エンコーディングを選択してください"
-		Watermark = "エンコーディング名を入力してください..."
-		ConfirmMessageFormat = "[{0}] を選択しました。よろしいですか？"
-		ErrorMessageFormat = "エンコーディング [{0}] を認識できませんでした。"
-		/>
-
-		<EncodingEditDialog
-		Title = "エンコーディングの編集"
-		/>
-
-		<Main
-		Before = "変更前:"
-		Width = "幅:"
-		After = "変更後:"
-		FromText = "元のテキスト:"
-		ToText = "変更後のテキスト:"
-		/>
-
-		<Extra
-		Row = "行:"
-		Column = "列:"
-		FromText = "元のテキスト:"
-		ToText = "変更後のテキスト:"
-		/>
-
-	</EncodingEditor>
 
 	<ModEditor
 	WindowTitle = "Memoria Mod Manager"
@@ -298,48 +193,16 @@
 	Progress = "進行状況"
 	Speed = "速度"
 	TimeLeft = "残り時間"
-	PreviewImageMissing = "プレビュー画像なし"
+	ActiveIncompatibleMods = "以下と互換性がないMod: "
+	IncompatibleWithMemoria = "このModのバージョンは現在のMemoriaと互換性がありません。Modカタログから更新してください。"
+	UpdateTooltip = "ModカタログにこのModの新しいバージョンがあります: "
 	TooltipMoveUp = "上へ移動/右クリックで先頭へ移動"
 	TooltipMoveDown = "下へ移動/右クリックで最後尾へ移動"
 	TooltipCheckCompatibility = "Modの互換性を確認/右クリックですべてのModを確認"
 	TooltipActivateAll = "すべてのModを有効にする"
 	TooltipDeactivateAll = "すべてのModを無効にする"
 	TooltipUninstall = "Modのアンインストール"
-	TooltipDownload = "選択したModをダウンロード"
+	TooltipDownload = "ダウンロード/更新"
 	TooltipCancel = "現在のダウンロードをキャンセル/右クリックですべてのダウンロードをキャンセル"
-
 	/>
-
-	<Dialogue>
-
-		<SaveAs Title = "名前を付けて保存..." />
-
-	</Dialogue>
-
-	<Message>
-
-		<Done
-		Title = "完了!"
-		ExtractionCompleteFormat = "{0:hh\:mm\:ss} に展開が完了しました。"
-		InjectionCompleteFormat = "{0:hh\:mm\:ss} に挿入が完了しました。"
-		/>
-
-		<Question
-		Title = "質問"
-		AreYouSureTitle = "本当によろしいですか？"
-		NewVersionIsAvailable = "新しいバージョンが利用可能です。今すぐダウンロードしますか？"
-		/>
-
-		<Error
-		Title = "エラー!"
-		/>
-
-	</Message>
-
-	<Error>
-		<File UnknownFormat = "未知のファイル形式です。" />
-		<Process CannotGetExecutablePath = "実行可能アセンブリのパスを取得できません。" />
-		<Text TooLongTagNameFormat = "タグ名が長すぎます: {0}" />
-	</Error>
-
 </Data>

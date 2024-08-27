@@ -47,6 +47,7 @@ public partial class BattleHUD : UIScene
     private RecycleListPopulator _abilityScrollList;
     private Boolean _isTranceMenu;
     private Boolean _isManualTrance;
+    private Dictionary<BattleCommandMenu, Int32> _commandEnabledState;
     private Boolean _needItemUpdate;
     private Boolean _currentSilenceStatus;
     private Boolean _currentMagicSwordState;
@@ -392,65 +393,34 @@ public partial class BattleHUD : UIScene
         }
     }
 
-    private Boolean CommandIsEnabled(BTL_DATA btl, BattleCommandId cmdId)
-    {
-        if (cmdId == BattleCommandId.None)
-            return false;
-        if (!btl.is_monster_transform)
-            return true;
-        BTL_DATA.MONSTER_TRANSFORM transform = btl.monster_transform;
-        if (transform.base_command == cmdId)
-            return true;
-        if (cmdId == BattleCommandId.Attack && transform.attack[btl.bi.def_idle] == null)
-            return false;
-        return !transform.disable_commands.Contains(cmdId);
-    }
-
     private void DisplayCommand()
     {
         BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
         BTL_DATA.MONSTER_TRANSFORM transform = btl.Data.is_monster_transform ? btl.Data.monster_transform : null;
         CharacterPresetId presetId = FF9StateSystem.Common.FF9.party.member[btl.Position].PresetId;
-        BattleCommandId command1;
-        BattleCommandId command2;
+        BattleCommandId[] commands = new BattleCommandId[CharacterCommandSet.SupportedMenus.Count];
+        _isTranceMenu = btl.IsUnderAnyStatus(BattleStatus.Trance);
 
-        if (btl.IsUnderAnyStatus(BattleStatus.Trance))
+        if (_isTranceMenu)
         {
-            command1 = CharacterCommands.CommandSets[presetId].Trance1;
-            command2 = CharacterCommands.CommandSets[presetId].Trance2;
             _commandPanel.SetCaptionText(Localization.Get("TranceCaption"));
-            _isTranceMenu = true;
         }
         else
         {
-            command1 = CharacterCommands.CommandSets[presetId].Regular1;
-            command2 = CharacterCommands.CommandSets[presetId].Regular2;
             _commandPanel.SetCaptionText(Localization.Get("CommandCaption"));
             _commandPanel.SetCaptionColor(FF9TextTool.White);
-            _isTranceMenu = false;
         }
 
-        if (btl.Data.is_monster_transform && transform.base_command == command1)
-            command1 = transform.new_command;
-        if (btl.Data.is_monster_transform && transform.base_command == command2)
-            command2 = transform.new_command;
-        Boolean attackIsEnable = CommandIsEnabled(btl.Data, BattleCommandId.Attack);
-        Boolean changeIsEnable = CommandIsEnabled(btl.Data, BattleCommandId.Change);
-        Boolean itemIsEnable = CommandIsEnabled(btl.Data, BattleCommandId.Item);
-        Boolean defendIsEnable = CommandIsEnabled(btl.Data, BattleCommandId.Defend);
-        Boolean menuIsEnable = CommandIsEnabled(btl.Data, BattleCommandId.AccessMenu);
-        BattleCommandId attackCmdId = !btl.Data.is_monster_transform || transform.base_command != BattleCommandId.Attack ? BattleCommandId.Attack : transform.new_command;
-        BattleCommandId changeCmdId = !btl.Data.is_monster_transform || transform.base_command != BattleCommandId.Change ? BattleCommandId.Change : transform.new_command;
-        BattleCommandId itemCmdId = !btl.Data.is_monster_transform || transform.base_command != BattleCommandId.Item ? BattleCommandId.Item : transform.new_command;
-        BattleCommandId defendCmdId = !btl.Data.is_monster_transform || transform.base_command != BattleCommandId.Defend ? BattleCommandId.Defend : transform.new_command;
-        Boolean command1IsEnable = CommandIsEnabled(btl.Data, command1);
-        Boolean command2IsEnable = CommandIsEnabled(btl.Data, command2);
-        // TODO Change that with a features of type >CMD similar to >AA
-        Boolean noMagicSword = false;
-        if (command2 == BattleCommandId.MagicSword)
-            noMagicSword = !BattleState.EnumerateUnits().Any(u => u.PlayerIndex == CharacterId.Vivi);
+        for (Int32 i = 0; i < CharacterCommandSet.SupportedMenus.Count; i++)
+        {
+            commands[i] = CharacterCommands.CommandSets[presetId].Get(_isTranceMenu, CharacterCommandSet.SupportedMenus[i]);
+            commands[i] = BattleCommandHelper.Patch(commands[i], CharacterCommandSet.SupportedMenus[i], btl.Player, btl);
+            _commandEnabledState[CharacterCommandSet.SupportedMenus[i]] = BattleCommandHelper.GetCommandEnabledState(commands[i], CharacterCommandSet.SupportedMenus[i], btl.Player, btl);
+        }
+        BattleCommandId accessMenuCommand = BattleCommandHelper.Patch(BattleCommandId.AccessMenu, BattleCommandMenu.AccessMenu, btl.Player, btl);
+        _commandEnabledState[BattleCommandMenu.AccessMenu] = BattleCommandHelper.GetCommandEnabledState(accessMenuCommand, BattleCommandMenu.AccessMenu, btl.Player, btl);
 
-        if (Configuration.Battle.NoAutoTrance && btl.Trance == Byte.MaxValue && !btl.IsUnderAnyStatus(BattleStatus.Trance))
+        if (Configuration.Battle.NoAutoTrance && btl.Trance == Byte.MaxValue && !_isTranceMenu)
         {
             if (!_isManualTrance)
             {
@@ -462,36 +432,20 @@ public partial class BattleHUD : UIScene
         }
         else
         {
-            SetupCommandButton(_commandPanel.Change, changeCmdId, changeIsEnable);
+            SetupCommandButton(_commandPanel.Change, commands[5], _commandEnabledState[BattleCommandMenu.Change] == 2, _commandEnabledState[BattleCommandMenu.Change] == 0);
             _isManualTrance = false;
         }
-
-        // TODO [DV] Must have a features of type >CMD similar to >AA
-        if (Configuration.Mod.TranceSeek) // [DV] - Special commands
-        {
-            if (presetId == CharacterPresetId.Zidane) // Change Zidane's commands depending the weapon
-            {
-                CharacterCommands.CommandSets[presetId].Regular2 = btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
-                command2 = btl.IsUnderAnyStatus(BattleStatus.Trance) ? CharacterCommands.CommandSets[presetId].Trance2 : btl_util.getSerialNumber(btl) == CharacterSerialNumber.ZIDANE_DAGGER ? BattleCommandId.SecretTrick : (BattleCommandId)10001;
-            }
-            else if (presetId == CharacterPresetId.Steiner)
-                defendCmdId = (BattleCommandId)10015; // Gardien
-            else if (presetId == CharacterPresetId.Amarant)
-                defendCmdId = (BattleCommandId)10016; // Duel
-        }
-
-        SetupCommandButton(_commandPanel.Skill1, command1, command1IsEnable);
-        SetupCommandButton(_commandPanel.Skill2, command2, command2IsEnable, noMagicSword);
-        SetupCommandButton(_commandPanel.Attack, attackCmdId, attackIsEnable);
-        SetupCommandButton(_commandPanel.Defend, defendCmdId, defendIsEnable);
-        SetupCommandButton(_commandPanel.Item, itemCmdId, itemIsEnable);
+        
+        SetupCommandButton(_commandPanel.Attack, commands[0], _commandEnabledState[BattleCommandMenu.Attack] == 2, _commandEnabledState[BattleCommandMenu.Attack] == 0);
+        SetupCommandButton(_commandPanel.Defend, commands[1], _commandEnabledState[BattleCommandMenu.Defend] == 2, _commandEnabledState[BattleCommandMenu.Defend] == 0);
+        SetupCommandButton(_commandPanel.Skill1, commands[2], _commandEnabledState[BattleCommandMenu.Ability1] == 2, _commandEnabledState[BattleCommandMenu.Ability1] == 0);
+        SetupCommandButton(_commandPanel.Skill2, commands[3], _commandEnabledState[BattleCommandMenu.Ability2] == 2, _commandEnabledState[BattleCommandMenu.Ability2] == 0);
+        SetupCommandButton(_commandPanel.Item, commands[4], _commandEnabledState[BattleCommandMenu.Item] == 2, _commandEnabledState[BattleCommandMenu.Item] == 0);
         if (_commandPanel.AccessMenu != null)
-            SetupCommandButton(_commandPanel.AccessMenu, BattleCommandId.AccessMenu, menuIsEnable && Configuration.Battle.AccessMenus > 0);
+            SetupCommandButton(_commandPanel.AccessMenu, accessMenuCommand, Configuration.Battle.AccessMenus > 0 && _commandEnabledState[BattleCommandMenu.AccessMenu] == 2);
 
-        if (ButtonGroupState.ActiveGroup != CommandGroupButton)
-            return;
-
-        SetCommandVisibility(true, false);
+        if (ButtonGroupState.ActiveGroup == CommandGroupButton)
+            SetCommandVisibility(true, false);
     }
 
     private void DisplayStatus(TargetDisplay subMode)
@@ -1233,7 +1187,10 @@ public partial class BattleHUD : UIScene
     private Int32 GetActionMpCost(AA_DATA aaData, BattleUnit unit, BattleAbilityId abilId = BattleAbilityId.Void, Boolean considerCommandMenu = true)
     {
         Int32 mpCost = aaData.MP;
-        BattleAbilityHelper.GetPatchedMPCost(abilId, unit, ref mpCost, ability: aaData, menu: considerCommandMenu ? _currentCommandIndex : BattleCommandMenu.None);
+        if (considerCommandMenu)
+            BattleAbilityHelper.GetPatchedMPCost(ref mpCost, abilId, unit, _currentCommandId, _currentCommandIndex, aaData);
+        else
+            BattleAbilityHelper.GetPatchedMPCost(ref mpCost, abilId, unit, BattleCommandId.None, BattleCommandMenu.None, aaData);
 
         if ((aaData.Type & 4) != 0 && battle.GARNET_SUMMON_FLAG != 0)
             mpCost *= 4;
@@ -1265,7 +1222,7 @@ public partial class BattleHUD : UIScene
                 return AbilityStatus.Disable;
         }
 
-        if (GetActionMpCost(aaData, unit, considerCommandMenu: checkCurrentPlayer) > unit.CurrentMp)
+        if (GetActionMpCost(aaData, unit, BattleAbilityId.Void, checkCurrentPlayer) > unit.CurrentMp)
             return AbilityStatus.Disable;
 
         return AbilityStatus.Enable;
@@ -1305,9 +1262,6 @@ public partial class BattleHUD : UIScene
                 return AbilityStatus.Disable;
         }
 
-        if (Configuration.Mod.TranceSeek && (patchedAbil.Type & 16) != 0) // TODO [DV] Unused (5) - To disable "Bandit !" if Zidane equip a Dagger, Mage Masher or Mythril Dagger.
-            return AbilityStatus.Disable;
-
         if (abilityPlayerDetail.AbilityMagicSet.TryGetValue(abilId, out BattleMagicSwordSet magicSet))
         {
             if (unit.IsUnderAnyStatus(BattleStatusConst.Immobilized | magicSet.BeneficiaryBlockingStatus))
@@ -1317,6 +1271,8 @@ public partial class BattleHUD : UIScene
                 return AbilityStatus.Disable;
         }
 
+        if (BattleAbilityHelper.IsAbilityDisabled(patchedId, unit, checkCurrentPlayer ? _currentCommandId : BattleCommandId.None, checkCurrentPlayer ? _currentCommandIndex : BattleCommandMenu.None))
+            return AbilityStatus.Disable;
         if (GetActionMpCost(patchedAbil, unit, patchedId, checkCurrentPlayer) > unit.CurrentMp)
             return AbilityStatus.Disable;
 
@@ -1363,10 +1319,10 @@ public partial class BattleHUD : UIScene
         if (!ff9abil.FF9Abil_HasAp(player))
             return;
 
-        for (Int32 k = 0; k < 2; k++)
+        for (Int32 i = 0; i < CharacterCommandSet.SupportedMenus.Count; i++)
         {
-            BattleCommandId normalCommandId = CharacterCommands.CommandSets[presetId].GetRegular(k);
-            BattleCommandId tranceCommandId = CharacterCommands.CommandSets[presetId].GetTrance(k);
+            BattleCommandId normalCommandId = CharacterCommands.CommandSets[presetId].GetRegular(CharacterCommandSet.SupportedMenus[i]);
+            BattleCommandId tranceCommandId = CharacterCommands.CommandSets[presetId].GetTrance(CharacterCommandSet.SupportedMenus[i]);
             if (normalCommandId == tranceCommandId)
                 continue;
             CharacterCommand normalCommand = CharacterCommands.Commands[normalCommandId];
@@ -1375,10 +1331,10 @@ public partial class BattleHUD : UIScene
                 continue;
 
             Int32 count = Math.Min(normalCommand.ListEntry.Length, tranceCommand.ListEntry.Length);
-            for (Int32 i = 0; i < count; ++i)
+            for (Int32 j = 0; j < count; ++j)
             {
-                Int32 normalId = normalCommand.ListEntry[i];
-                Int32 tranceId = tranceCommand.ListEntry[i];
+                Int32 normalId = normalCommand.ListEntry[j];
+                Int32 tranceId = tranceCommand.ListEntry[j];
                 if (normalId == tranceId)
                     continue;
 
@@ -1513,7 +1469,6 @@ public partial class BattleHUD : UIScene
             CommandId = _currentCommandId,
             SubId = 0
         };
-        GetCommandFromCommandIndex(ref commandDetail.Menu, CurrentPlayerIndex);
 
         BattleCommandId cmdId = commandDetail.CommandId;
 
@@ -1779,8 +1734,11 @@ public partial class BattleHUD : UIScene
 
         if (_commandPanel.IsActive)
         {
+            GameObject previousSelection = commandObject;
             if (commandObject.GetComponent<ButtonGroupState>().enabled)
-                TryGetMemorizedCommandObject(ref commandObject, forceCursorMemo);
+                TryGetMemorizedCommandObject(ref previousSelection, forceCursorMemo);
+            if (previousSelection.GetComponent<ButtonGroupState>().enabled)
+                commandObject = previousSelection;
 
             ButtonGroupState.ActiveButton = commandObject;
         }
@@ -1789,8 +1747,11 @@ public partial class BattleHUD : UIScene
             _commandPanel.IsActive = true;
             ButtonGroupState.RemoveCursorMemorize(CommandGroupButton);
 
+            GameObject previousSelection = commandObject;
             if (commandObject.GetComponent<ButtonGroupState>().enabled)
-                TryGetMemorizedCommandObject(ref commandObject, forceCursorMemo);
+                TryGetMemorizedCommandObject(ref previousSelection, forceCursorMemo);
+            if (previousSelection.GetComponent<ButtonGroupState>().enabled)
+                commandObject = previousSelection;
 
             ButtonGroupState.SetCursorMemorize(commandObject, CommandGroupButton);
         }
@@ -1812,9 +1773,7 @@ public partial class BattleHUD : UIScene
     {
         if (!forceCursorMemo && (Int64)FF9StateSystem.Settings.cfg.cursor == 0L)
             return;
-
-        BattleCommandMenu memorizedCommand;
-        if (_commandCursorMemorize.TryGetValue(CurrentPlayerIndex, out memorizedCommand))
+        if (_commandCursorMemorize.TryGetValue(CurrentPlayerIndex, out BattleCommandMenu memorizedCommand))
             commandObject = _commandPanel.GetCommandButton(memorizedCommand);
     }
 
@@ -1891,75 +1850,14 @@ public partial class BattleHUD : UIScene
             _defaultTargetDead = false;
             _targetDead = false;
             _bestTargetIndex = -1;
-            if (_currentCommandIndex == BattleCommandMenu.Ability1 || _currentCommandIndex == BattleCommandMenu.Ability2 || CommandIsMonsterTransformCommand(CurrentPlayerIndex, _currentCommandId, out _))
+
+            if (_currentCommandId == BattleCommandId.Attack)
             {
-                if (CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Item)
-                {
-                    RegularItem itemId = _itemIdList[_currentSubMenuIndex];
-                    ITEM_DATA itemData = ff9item.GetItemEffect(itemId);
-                    targetType = itemData.info.Target;
-                    _defaultTargetAlly = itemData.info.DefaultAlly;
-                    _defaultTargetDead = itemData.info.ForDead;
-                    _targetDead = itemData.info.ForDead;
-                    subMode = itemData.info.DisplayStats;
-                    if (!MixCommandSet.ContainsKey(_currentCommandId))
-                    {
-                        CMD_DATA testCommand = new CMD_DATA
-                        {
-                            regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
-                            cmd_no = _currentCommandId,
-                            sub_no = (Int32)itemId
-                        };
-
-                        testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityId.Void]);
-                        testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
-                        SelectBestTarget(targetType, testCommand);
-                    }
-                }
-                else
-                {
-                    AA_DATA aaData = GetSelectedActiveAbility(CurrentPlayerIndex, _currentCommandId, _currentSubMenuIndex, out Int32 subNo, out _);
-                    targetType = aaData.Info.Target;
-                    _defaultTargetAlly = aaData.Info.DefaultAlly;
-                    _defaultTargetDead = aaData.Info.DefaultOnDead;
-                    _targetDead = aaData.Info.ForDead;
-                    subMode = aaData.Info.DisplayStats;
-
-                    CMD_DATA testCommand = new CMD_DATA
-                    {
-                        regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
-                        cmd_no = _currentCommandId,
-                        sub_no = subNo
-                    };
-                    testCommand.SetAAData(aaData);
-                    testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
-
-                    if (Configuration.Mod.TranceSeek && _currentCommandId == BattleCommandId.Throw) // [DV] Change TargetType for throwing items (magic scrolls for Trance Seek)
-                    { // Or i can make it with the DictionaryPatch.txt instead ?
-                        ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
-                        if (((weapon.Category & WeaponCategory.Throw) != 0) && (weapon.ModelId == 65535 || weapon.ModelId == 0))
-                        {
-                            switch (weapon.Offset2)
-                            {
-                                case 1:
-                                    targetType = TargetType.SingleAlly;
-                                    break;
-                                case 6:
-                                    targetType = TargetType.All;
-                                    break;
-                                case 7:
-                                    targetType = TargetType.AllAlly;
-                                    break;
-                                case 8:
-                                    targetType = TargetType.AllEnemy;
-                                    break;
-                            }
-                        }
-                    }
-                    SelectBestTarget(targetType, testCommand);
-                }
+                BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
+                if (btl.IsHealingRod || btl.HasSupportAbility(SupportAbility1.Healer)) // TODO: should be coded as a SA feature instead of being hard-coded
+                    _defaultTargetHealingAttack = true;
             }
-            else if (_currentCommandIndex == BattleCommandMenu.Item)
+            else if (CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Item)
             {
                 RegularItem itemId = _itemIdList[_currentSubMenuIndex];
                 ITEM_DATA itemData = ff9item.GetItemEffect(itemId);
@@ -1976,19 +1874,51 @@ public partial class BattleHUD : UIScene
                         cmd_no = _currentCommandId,
                         sub_no = (Int32)itemId
                     };
-
                     testCommand.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[BattleAbilityId.Void]);
                     testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
                     SelectBestTarget(targetType, testCommand);
                 }
             }
-            else if (_currentCommandIndex == BattleCommandMenu.Attack && CurrentPlayerIndex > -1)
+            else
             {
-                BattleUnit btl = FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex);
-                if (btl.IsHealingRod || btl.HasSupportAbility(SupportAbility1.Healer)) // Todo: should be coded as a SA feature instead of being hard-coded
-                    _defaultTargetHealingAttack = true;
+                AA_DATA aaData = GetSelectedActiveAbility(CurrentPlayerIndex, _currentCommandId, _currentSubMenuIndex, out Int32 subNo, out _);
+                targetType = aaData.Info.Target;
+                _defaultTargetAlly = aaData.Info.DefaultAlly;
+                _defaultTargetDead = aaData.Info.DefaultOnDead;
+                _targetDead = aaData.Info.ForDead;
+                subMode = aaData.Info.DisplayStats;
+                CMD_DATA testCommand = new CMD_DATA
+                {
+                    regist = FF9StateSystem.Battle.FF9Battle.btl_data[CurrentPlayerIndex],
+                    cmd_no = _currentCommandId,
+                    sub_no = subNo
+                };
+                testCommand.SetAAData(aaData);
+                testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
+                if (Configuration.Mod.TranceSeek && CharacterCommands.Commands[_currentCommandId].Type == CharacterCommandType.Throw) // [DV] Change TargetType for throwing items (magic scrolls for Trance Seek)
+                { // Or i can make it with the DictionaryPatch.txt instead ?
+                    ItemAttack weapon = ff9item.GetItemWeapon(_itemIdList[_currentSubMenuIndex]);
+                    if (((weapon.Category & WeaponCategory.Throw) != 0) && (weapon.ModelId == 65535 || weapon.ModelId == 0))
+                    {
+                        switch (weapon.Offset2)
+                        {
+                            case 1:
+                                targetType = TargetType.SingleAlly;
+                                break;
+                            case 6:
+                                targetType = TargetType.All;
+                                break;
+                            case 7:
+                                targetType = TargetType.AllAlly;
+                                break;
+                            case 8:
+                                targetType = TargetType.AllEnemy;
+                                break;
+                        }
+                    }
+                }
+                SelectBestTarget(targetType, testCommand);
             }
-
             _isAllTarget = false;
             TargetPanel.SetActive(true);
             EnableTargetArea();

@@ -9,6 +9,9 @@ using UnityEngine;
 
 public class VoicePlayer : SoundPlayer
 {
+    private static ushort huntLastPlayed;
+    private static string huntAppend = "";
+    private static ushort countHeld = 0;
     public VoicePlayer()
     {
         this.playerPitch = 1f;
@@ -88,13 +91,46 @@ public class VoicePlayer : SoundPlayer
         if (!Configuration.VoiceActing.Enabled)
             return;
 
-        String vaPath = String.Format("Voices/{0}/{1}/va_{2}", Localization.GetSymbol(), FieldZoneId, messageNumber);
+        huntAppend = "";
+        // handle the Festival of the Hunt has take the lead and holds the lead
+        if (FieldZoneId == 276)
+        {
+            switch (messageNumber)
+            {
+                case 540:// Zidane
+                case 541:// Vivi
+                case 542:// Frya
+                case 543:// Lani
+                case 544:// Gourmand
+                case 545:// Belna
+                case 546:// Genero
+                case 547:// Ivan
+                {
+                    var idShort = Convert.ToUInt16(messageNumber);
+                    if(idShort == huntLastPlayed)
+                    {
+                        huntAppend = "_held_"+countHeld;
+                        countHeld += 1;
+                    }
+                    else
+                    {
+                        huntAppend = "_taken";
+                        huntLastPlayed = idShort;
+                        countHeld = 0;
+                    }
+                    break;
+                }
+            }
+        }
+
+        String vaPath = String.Format("Voices/{0}/{1}/va_{2}{3}", Localization.GetSymbol(), FieldZoneId, messageNumber, huntAppend);
         Boolean useAlternatePath = false;
         String vaAlternatePath = null;
         String vaAlternatePath2 = null;
+
         if (dialog.Po != null)
         {
-            vaAlternatePath = String.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FieldZoneId, messageNumber, dialog.Po.uid);
+            vaAlternatePath = String.Format("Voices/{0}/{1}/va_{2}_{3}{4}", Localization.GetSymbol(), FieldZoneId, messageNumber, dialog.Po.uid, huntAppend);
             if (AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath + ".ogg", true, false))
             {
                 vaPath = vaAlternatePath;
@@ -115,7 +151,7 @@ public class VoicePlayer : SoundPlayer
         if (!useAlternatePath && msgString.Length > 0 && msgString.Contains("\n“"))
         {
             string name = msgString.Split('\n')[0].Trim();
-            vaAlternatePath2 = string.Format("Voices/{0}/{1}/va_{2}_{3}", Localization.GetSymbol(), FieldZoneId, messageNumber, name);
+            vaAlternatePath2 = string.Format("Voices/{0}/{1}/va_{2}_{3}{4}", Localization.GetSymbol(), FieldZoneId, messageNumber, name, huntAppend);
             if (AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath2 + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath2 + ".ogg", true, false))
             {
                 vaPath = vaAlternatePath = vaAlternatePath2;

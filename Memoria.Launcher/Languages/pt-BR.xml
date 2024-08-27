@@ -13,20 +13,17 @@
 	EByteAbbr = "EBs"
 	/>
 
-	<Button
-	OK = "OK"
-	Cancel = "Cancelar"
-	Continue = "Continuar"
-	Clone = "Clonar"
-	Remove = "Remover"
-	Rollback = "Cancelar"
-	Inject = "Injetar"
-	SaveAs = "Salvar como..."
-	Exit = "SAIR"
-	Exiting = "Saindo..."
+	<Launcher
 	Launch = "JOGAR"
 	Launching = "Executando..."
 	ModManager = "GERENCIADOR DE MODS"
+	QuestionTitle = "Pergunta"
+	ErrorTitle = "Erro!"
+	NewVersionIsAvailable = "Uma nova versão está disponível, baixar agora?"
+	AdvSettings = "Conf. Avançadas"
+	AdvSettingsTitle = "Configurações avançadas e experimentais"
+	Return = "Voltar"
+	ModelViewer = "Visualizador de Modelos"
 	/>
 
 	<Settings
@@ -38,8 +35,6 @@
 	Window = "Modo Janela"
 	ExclusiveFullscreen = "Tela Cheia"
 	BorderlessFullscreen = "Tela Cheia Sem Bordas"
-	AudioSamplingFrequency = "Frequência da Amostra do Áudio"
-	AudioSamplingFrequencyFormat = "{0} Hz"
 	Debuggable = " Debugável"
 	CheckUpdates = " Procurar Atualizações"
 	IniOptions = "Opções"
@@ -156,17 +151,14 @@
 	tetraMasterReduceRandomBox1 = "Aleatoriadade menor"
 	tetraMasterReduceRandomBox2 = "Vitória fácil"
 	CardReduceRandom_Tooltip = "Controla a aleatoriadade do Tetra Master"
-	/>
 	
-	<!-- 
-	EnableCustomShader = "Ativar Shaders Personalizados"
-	Shader_Field_Realism = "Usar Shading de Realismo no Campo"
-	Shader_Field_Toon = "Usar Shading de Desenho Animado no Campo"
-	Shader_Field_Outlines = "Ativar o Contorno pro Personagem do Campo"
-	Shader_Battle_Realism = "Usar o Shading de Realismo na Batalha"
-	Shader_Battle_Toon = "Usar o Shading de Desenho Animado na Batalha"
-	Shader_Battle_Outlines = "Ativar o Contorno pro Personagem da Batalha"
-	-->
+	Shader_Enable = "Shaders personalizados"
+	Shader_Field_chars = "Fora de batalha: "
+	Shader_Battle_chars = "Em batalha: "
+	Shader_Realism = "Realista"
+	Shader_Toon = "Desenho animado"
+	Shader_Outlines = "Contornos do modelo"
+	/>
 
 	<SdLib
 	Caption = "Aplicar o Patch no SdLib.dll"
@@ -185,113 +177,6 @@
 	FixAreYouSure = "Agora nós instalaremos um gancho no seu SO que executará o FF9_Launcher.fix ao invés do arquivo FF9_Launcher.exe. Neste caso todas as verificações de integridade do arquivo do Steam completarão com sucesso. Assim isto resolverá o problema que alguns usuários tem periodicamente com a funcionalidade da Sobreposição do Steam e funções relacionadas desativadas: Suporte as conquistas e controles.&#13;&#10;&#13;&#10;Contudo, seja cuidadoso e NÃO APAGUE o jogo, a pasta dele ou o arquivo FF9_Launcher.fix sem primeiro reverter as mudanças. De outro modo o gancho permanecerá no seu sistema e após uma nova instalação do jogo você não será capaz de executá-lo. Você pode reverter as mudanças no executor ou manualmente executando o Memoria.SteamFix.exe na pasta do jogo.&#13;&#10;&#13;&#10;Você tem certeza que você ainda quer continuar?"
 	RollbackAreYouSure = "Agora nós removeremos as mudanças feitas após as quais o problema com a Sobreposição do Steam retornará.&#13;&#10;&#13;&#10;Isto pode levar a problemas com desativações das conquistas e controles.&#13;&#10;&#13;&#10;Você tem certeza que você quer continuar?"
 	/>
-
-	<InfoProvider>
-
-		<ApplicationConfig
-		Title = "Configurações"
-		Description = "Várias configurações do aplicativo."
-		NewTitle = "Novo"
-		NewDescription = "Inicializar todos os valores padrão das configurações."
-		FileTitle = "Do arquivo"
-		FileDescription = "Lê o arquivo de configuração do aplicativo {0}"
-		/>
-
-		<GameLocation
-		Title = "Diretório do Jogo"
-		Description = "Local dos arquivos do jogo."
-		ConfigurationTitle = "Configurações"
-		ConfigurationDescription = "Usa a informação armazenada no arquivo de configuração."
-		SteamRegistryTitle = "Do registro (Steam)"
-		SteamRegistryDescription = "Recupera a informação do registro do Windows usando os dados do Steam."
-		UserTitle = "Manual"
-		UserDescription = "Permite a você selecionar manualmente o diretório no qual você instalou o jogo."
-		/>
-
-		<WorkingLocation
-		Title = "Diretório de Trabalho"
-		Description = "O diretório pra armazenar os resultados do aplicativo."
-		ConfigurationTitle = "Configurações"
-		ConfigurationDescription = "Usa a informação armazenada no arquivo de configuração."
-		UserTitle = "Manual"
-		UserDescription = "Permite a você selecionar manualmente um diretório de trabalho."
-		/>
-
-		<TextEncoding
-		Title = "Codificação"
-		Description = "Codificação pra desempacotar e empacotar o texto do jogo."
-		NewTitle = "Novo"
-		NewDescription = "Inicializa a codificação padrão baseada na codificação Windows-1252."
-		WorkingLocationTitle = "Diretório de Trabalho"
-		WorkingLocationDescription = "Lê a codificação do diretório de trabalho."
-		UserTitle = "Editar"
-		UserDescription = "Muda a codificação atual."
-		/>
-
-		<AudioSettings
-		Title="Configurações do Áudio"
-		Description="Configurações do dispositivo de áudio."
-		NewTitle="Novo"
-		NewDescription="Inicializar todos os valores padrão das configurações."
-		/>
-
-	</InfoProvider>
-	<Dockable>
-		<DataSources Header = "Origens dos Dados" />
-
-		<GameFileCommander
-		Header = "Recursos do Jogo"
-		Unpack = "Desempacotar"
-		Pack = "Empacotar"
-		ArchivesNode ="Arquivos Compactados"
-		/>
-
-		<GameFilePreview Header="Pré-visualização" >
-
-			<Ykd
-			ResourceRemovingTitle = "Removendo"
-			ConfirmResourceRemoving = "Você tem certeza que você quer apagar este recurso?"
-			/>
-
-		</GameFilePreview>
-	</Dockable>
-	<EncodingEditor>
-
-		<List
-		Name = "Nome"
-		Pattern = "Modelo"
-		Encoding = "Codificação"
-		Font = "Fonte"
-		Edit = "Editar"
-		/>
-
-		<EncodingSelectDialog
-		Title = "Escolher a codificação"
-		Watermark = "Insira o nome da codificação..."
-		ConfirmMessageFormat = "Você escolheu o [{0}]. Correto?"
-		ErrorMessageFormat = "Falhou em reconhecer a codificação [{0}]."
-		/>
-
-		<EncodingEditDialog
-		Title = "Edição da codificação"
-		/>
-
-		<Main
-		Before = "Antes:"
-		Width = "Largura:"
-		After = "Depois:"
-		FromText = "Do texto:"
-		ToText = "Pro texto:"
-		/>
-
-		<Extra
-		Row = "Fileira:"
-		Column = "Coluna:"
-		FromText = "Do texto:"
-		ToText = "Pro texto:"
-		/>
-
-	</EncodingEditor>
 
 	<ModEditor
 	WindowTitle = "Gerenciador de Mods do Memoria"
@@ -315,47 +200,16 @@
 	Progress = "Progresso"
 	Speed = "Velocidade"
 	TimeLeft = "Tempo Restante"
-	PreviewImageMissing = "Nenhuma Imagem da Pré-Visualização"
+	ActiveIncompatibleMods = "Mod incompatível com: "
+	IncompatibleWithMemoria = "A versão do mod é incompatível com o Memoria atual. Atualize-o a partir do catálogo de mods."
+	UpdateTooltip = "Nova versão deste mod disponível no catálogo de mods: "
 	TooltipMoveUp = "Mover pra Cima/Clique com o Botão Direito do Mouse pra Mover pro Topo"
 	TooltipMoveDown = "Mover pra Baixo/Clique com o Botão Direito de Mouse pra Mover pro Rodapé"
 	TooltipCheckCompatibility = "Verificar as Compatibilidades com o Mod/Clique com o Botão Direito do Mouse pra Verificar Tudo"
 	TooltipActivateAll = "Ativar Todos os Mods"
 	TooltipDeactivateAll = "Desativar Todos os Mods"
 	TooltipUninstall = "Desinstalar o(s) Mod(s)"
-	TooltipDownload = "Baixar o(s) Mod(s) Selecionado(s)"
+	TooltipDownload = "Baixar/Atualizar"
 	TooltipCancel = "Cancelar o Download Atual/Clique com o Botão Direito do Mouse pra Cancelar Tudo"
 	/>
-
-	<Dialogue>
-
-		<SaveAs Title = "Salvar como..." />
-
-	</Dialogue>
-
-	<Message>
-
-		<Done
-		Title = "Feito!"
-		ExtractionCompleteFormat = "Extração completa pra {0:hh\:mm\:ss}."
-		InjectionCompleteFormat = "Injeção completa pra {0:hh\:mm\:ss}."
-		/>
-
-		<Question
-		Title = "Pergunta"
-		AreYouSureTitle = "Você tem certeza?"
-		NewVersionIsAvailable = "Uma nova versão está disponível, baixar agora?"
-		/>
-
-		<Error
-		Title = "Erro!"
-		/>
-
-	</Message>
-
-	<Error>
-		<File UnknownFormat = "Formato do arquivo desconhecido." />
-		<Process CannotGetExecutablePath = "Não pôde obter um caminho do assembly executável." />
-		<Text TooLongTagNameFormat = "Nome muito longo da etiqueta: {0}" />
-	</Error>
-
 </Data>

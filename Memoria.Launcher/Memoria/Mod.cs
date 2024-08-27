@@ -14,6 +14,9 @@ namespace Memoria.Launcher
         // Entries that can be defined in .xml descriptions
         public String Name { get; set; }
         public Version CurrentVersion { get; set; }
+        public Boolean IsOutdated { get; set; }
+        public String UpdateIcon { get; set; }
+        public String UpdateTooltip { get; set; }
         public String ReleaseDate { get; set; }
         public String ReleaseDateOriginal { get; set; }
         public String Author { get; set; }
@@ -21,6 +24,8 @@ namespace Memoria.Launcher
         public String PatchNotes { get; set; }
         public CompatibilityNoteClass CompatibilityNotes { get; set; }
         public String IncompatibleWith { get; set; }
+        public String IncompIcon { get; set; }
+        public String ActiveIncompatibleMods { get; set; }
         public String HasPriorityOverMods { get; set; }
         public String Category { get; set; }
         public String Website { get; set; }

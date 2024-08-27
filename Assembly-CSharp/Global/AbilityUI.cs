@@ -1249,13 +1249,29 @@ public class AbilityUI : UIScene
     private static BattleCommandId GetCommand(Int32 abil_id, PLAYER play)
     {
         BattleAbilityId battleAbilId = ff9abil.GetActiveAbilityFromAbilityId(abil_id);
-        for (Int32 commandNumber = 0; commandNumber < 2; ++commandNumber)
+        foreach (BattleCommandMenu menu in CharacterCommandSet.SupportedMenus)
         {
-            BattleCommandId cmdId = CharacterCommands.CommandSets[play.PresetId].GetRegular(commandNumber);
-            CharacterCommand ff9Command = CharacterCommands.Commands[cmdId];
-            foreach (BattleAbilityId abilId in ff9Command.EnumerateAbilities())
+            BattleCommandId cmdId = CharacterCommands.CommandSets[play.PresetId].GetRegular(menu);
+            foreach (BattleAbilityId abilId in CharacterCommands.Commands[cmdId].EnumerateAbilities())
                 if (abilId == battleAbilId)
                     return cmdId;
+            BattleCommandId patchedId = BattleCommandHelper.Patch(cmdId, menu, play);
+            if (patchedId != cmdId)
+                foreach (BattleAbilityId abilId in CharacterCommands.Commands[patchedId].EnumerateAbilities())
+                    if (abilId == battleAbilId)
+                        return cmdId;
+        }
+        foreach (BattleCommandMenu menu in CharacterCommandSet.SupportedMenus)
+        {
+            BattleCommandId cmdId = CharacterCommands.CommandSets[play.PresetId].GetTrance(menu);
+            foreach (BattleAbilityId abilId in CharacterCommands.Commands[cmdId].EnumerateAbilities())
+                if (abilId == battleAbilId)
+                    return cmdId;
+            BattleCommandId patchedId = BattleCommandHelper.Patch(cmdId, menu, play);
+            if (patchedId != cmdId)
+                foreach (BattleAbilityId abilId in CharacterCommands.Commands[patchedId].EnumerateAbilities())
+                    if (abilId == battleAbilId)
+                        return cmdId;
         }
         return BattleCommandId.None;
     }

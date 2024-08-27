@@ -13,20 +13,17 @@
 	EByteAbbr = "EB"
 	/>
 
-	<Button
-	OK = "OK"
-	Cancel = "Annulla"
-	Continue = "Continua"
-	Clone = "Clona"
-	Remove = "Rimuovi"
-	Rollback = "Annulla"
-	Inject = "Inietta"
-	SaveAs = "Salva come..."
-	Exit = "ESCI"
-	Exiting = "Uscita..."
+	<Launcher
 	Launch = "GIOCA"
 	Launching = "Avvio..."
 	ModManager = "GESTORE MOD"
+	QuestionTitle = "Domanda"
+	ErrorTitle = "Errore!"
+	NewVersionIsAvailable = "È disponibile una nuova versione, scaricare ora?"
+	AdvSettings = "Impost. avanzate"
+	AdvSettingsTitle = "Impostazioni avanzate e sperimentali"
+	Return = "Ritorno"
+	ModelViewer = "Visualizzatore modelli"
 	/>
 
 	<Settings
@@ -38,8 +35,6 @@
 	Window = "In finestra"
 	ExclusiveFullscreen = "Schermo intero"
 	BorderlessFullscreen = "Schermo intero senza bordi"
-	AudioSamplingFrequency = "Frequenza di campionamento audio"
-	AudioSamplingFrequencyFormat = "{0} Hz"
 	Debuggable = "Debuggabile"
 	CheckUpdates = "Controlla aggiornamenti"
 	IniOptions = "Opzioni"
@@ -149,6 +144,13 @@
 	tetraMasterReduceRandomBox1 = "Meno casualità"
 	tetraMasterReduceRandomBox2 = "Vittoria facile"
 	CardReduceRandom_Tooltip = "Controllo della casualità di Tetra Master"
+	
+	Shader_Enable = "Shader personalizzati"
+	Shader_Field_chars = "Fuori dal combattimento: "
+	Shader_Battle_chars = "In battaglia: "
+	Shader_Realism = "Realistico"
+	Shader_Toon = "Cartone animato"
+	Shader_Outlines = "Contorni dei modelli"
 	/>
 
 	<SdLib
@@ -168,119 +170,6 @@
 	FixAreYouSure = "Ora installeremo un hook nel tuo sistema operativo che avvierà FF9_Launcher.fix invece del file FF9_Launcher.exe. In questo modo, tutti i controlli di integrità del file di Steam verranno completati con successo. Questo risolverà il problema che alcuni utenti hanno occasionalmente disabilitato la funzionalità Sovrapposizione di Steam e le funzionalità correlate: obiettivi e supporto controller.&#13;&#10;&#13;&#10;Tuttavia, fai attenzione e NON ELIMINARE il gioco, la sua cartella o il file FF9_Launcher.fix senza ripristinare prima le modifiche. In caso contrario, l'hook rimarrà nel tuo sistema e, dopo una nuova installazione del gioco, non sarà possibile avviarlo. Puoi ripristinare le modifiche nel launcher o manualmente eseguendo Memoria.SteamFix.exe nella cartella del gioco.&#13;&#10;&#13;&#10;Sei sicuro di voler continuare?"
 	RollbackAreYouSure = "Ora rimuoveremo le modifiche apportate, dopo di che il problema con la Sovrapposizione di Steam tornerà.&#13;&#10;&#13;&#10;Questo potrebbe portare alla disabilitazione degli obiettivi e a problemi con i controller.&#13;&#10;&#13;&#10;Sei sicuro di voler continuare?"
 	/>
-
-	<InfoProvider>
-
-		<ApplicationConfig
-		Title = "Impostazioni"
-		Description = "Varie impostazioni dell'applicazione."
-		NewTitle = "Nuovo"
-		NewDescription = "Inizializza tutti i valori delle impostazioni ai valori predefiniti."
-		FileTitle = "Da file"
-		FileDescription = "Legge il file di configurazione dell'applicazione {0}"
-
-		/>
-
-		<GameLocation
-		Title = "Directory di gioco"
-		Description = "Posizione dei file di gioco."
-		ConfigurationTitle = "Impostazioni"
-		ConfigurationDescription = "Utilizza le informazioni memorizzate nel file di configurazione."
-		SteamRegistryTitle = "Dal registro (Steam)"
-		SteamRegistryDescription = "Recupera informazioni dal registro di Windows, utilizzando i dati da Steam."
-		UserTitle = "Manuale"
-		UserDescription = "Ti consente di selezionare manualmente la directory in cui hai installato il gioco."
-
-		/>
-
-		<WorkingLocation
-		Title = "Directory di lavoro"
-		Description = "La directory in cui memorizzare i risultati dell'applicazione."
-		ConfigurationTitle = "Impostazioni"
-		ConfigurationDescription = "Utilizza le informazioni memorizzate nel file di configurazione."
-		UserTitle = "Manuale"
-		UserDescription = "Ti consente di selezionare manualmente una directory di lavoro."
-
-		/>
-
-		<TextEncoding
-		Title = "Codifica"
-		Description = "Codifica per l'estrazione e la compressione del testo di gioco."
-		NewTitle = "Nuova"
-		NewDescription = "Inizializza la codifica standard basata sulla codifica Windows-1252."
-		WorkingLocationTitle = "Directory di lavoro"
-		WorkingLocationDescription = "Legge la codifica dalla directory di lavoro."
-		UserTitle = "Modifica"
-		UserDescription = "Modifica la codifica attuale."
-		/>
-
-		<AudioSettings
-		Title = "Impostazioni audio"
-		Description = "Impostazioni del dispositivo audio."
-		NewTitle = "Nuovo"
-		NewDescription = "Inizializza tutti i valori delle impostazioni ai valori predefiniti."
-
-		/>
-
-	</InfoProvider>
-	<Dockable>
-		<DataSources Header = "Fonti dati" />
-
-		<GameFileCommander
-		Header = "Game Resources"
-		Unpack = "Unpack"
-		Pack = "Pack"
-		ArchivesNode ="Archives"
-		/>
-
-		<GameFilePreview Header = "Anteprima" >
-
-			<Ykd
-			ResourceRemovingTitle = "Rimozione"
-			ConfirmResourceRemoving = "Sei sicuro di voler eliminare questa risorsa?"
-			/>
-
-		</GameFilePreview>
-	</Dockable>
-	<EncodingEditor>
-
-		<List
-		Name = "Nome"
-		Pattern = "Modello"
-		Encoding = "Codifica"
-		Font = "Carattere"
-		Edit = "Modifica"
-
-		/>
-
-		<EncodingSelectDialog
-		Title = "Scegli la codifica"
-		Watermark = "Inserisci il nome della codifica..."
-		ConfirmMessageFormat = "Hai scelto [{0}]. Giusto?"
-		ErrorMessageFormat = "Impossibile riconoscere la codifica [{0}]."
-
-		/>
-
-		<EncodingEditDialog
-		Title = "Modifica codifica"
-		/>
-
-		<Main
-		Before = "Prima:"
-		Width = "Larghezza:"
-		After = "Dopo:"
-		FromText = "Da testo:"
-		ToText = "A testo:"
-		/>
-
-		<Extra
-		Row = "Riga:"
-		Column = "Colonna:"
-		FromText = "Da testo:"
-		ToText = "A testo:"
-		/>
-
-	</EncodingEditor>
 
 	<ModEditor
 	WindowTitle = "Gestore Mod di Memoria"
@@ -304,48 +193,16 @@
 	Progress = "Avanzamento"
 	Speed = "Velocità"
 	TimeLeft = "Tempo rimanente"
-	PreviewImageMissing = "Immagine anteprima non disponibile"
+	ActiveIncompatibleMods = "Mod incompatibile con: "
+	IncompatibleWithMemoria = "La versione del mod è incompatibile con l'attuale Memoria. Aggiornarlo dal catalogo mod."
+	UpdateTooltip = "Nuova versione di questo mod disponibile nel catalogo mod: "
 	TooltipMoveUp = "Sposta su/Clic destro per spostare in cima"
 	TooltipMoveDown = "Sposta giù/Clic destro per spostare in fondo"
 	TooltipCheckCompatibility = "Controlla compatibilità delle Mod/Clic destro per controllare tutte"
 	TooltipActivateAll = "Attiva tutte le Mod"
 	TooltipDeactivateAll = "Disattiva tutte le Mod"
 	TooltipUninstall = "Disinstalla Mod"
-	TooltipDownload = "Scarica Mod selezionate"
+	TooltipDownload = "Scarica/Aggiorna"
 	TooltipCancel = "Annulla download in corso/Clic destro per annullare tutti"
-
 	/>
-
-	<Dialogue>
-
-		<SaveAs Title = "Salva come..." />
-
-	</Dialogue>
-
-	<Message>
-
-		<Done
-		Title = "Fatto!"
-		ExtractionCompleteFormat = "Estrazione completata in {0:hh\:mm\:ss}."
-		InjectionCompleteFormat = "Iniezione completata in {0:hh\:mm\:ss}."
-		/>
-
-		<Question
-		Title = "Domanda"
-		AreYouSureTitle = "Sei sicuro?"
-		NewVersionIsAvailable = "È disponibile una nuova versione, desideri scaricarla ora?"
-		/>
-
-		<Error
-		Title = "Errore!"
-		/>
-
-	</Message>
-
-	<Error>
-		<File UnknownFormat = "Formato del file sconosciuto." />
-		<Process CannotGetExecutablePath = "Impossibile ottenere il percorso dell'assembly eseguibile." />
-		<Text TooLongTagNameFormat = "Nome del tag troppo lungo: {0}" />
-	</Error>
-
 </Data>

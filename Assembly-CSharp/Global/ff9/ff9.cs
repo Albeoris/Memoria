@@ -409,14 +409,14 @@ public static class ff9
         ff9.w_musicSet = new Byte[]
         {
             69,		// Over the Hill
-			100,	// Ukulele de Chocobo
-			112,	// Aboard the Hilda Garde
-			45,		// Another Nightmare
-			95,		// Kuja's Theme
-			96,		// Desert Palace
-			61,		// Faerie Battle
-			62		// Steiner's Delusion
-		};
+            100,	// Ukulele de Chocobo
+            112,	// Aboard the Hilda Garde
+            45,		// Another Nightmare
+            95,		// Kuja's Theme
+            96,		// Desert Palace
+            61,		// Faerie Battle
+            62		// Steiner's Delusion
+        };
         ff9.navipos[,] array3 = new ff9.navipos[2, 64];
         array3[0, 0] = new ff9.navipos
         {
@@ -1445,9 +1445,9 @@ public static class ff9
         ff9.w_worldLocX = new Int32[]
         {
             229279, // Cleyra
-			130781, // Wind Shrine
-			299201  // Earth Shrine
-		};
+            130781, // Wind Shrine
+            299201  // Earth Shrine
+        };
         ff9.w_worldLocZ = new Int32[]
         {
             -198701,
@@ -1466,7 +1466,7 @@ public static class ff9
         ff9.w_moveCHRControl = new ff9.s_moveCHRControl[12]
         {
             new ff9.s_moveCHRControl // 0: walking by foot
-			{
+            {
                 type = 0,
                 flg_gake = 0,
                 speed_move = 112,
@@ -1490,7 +1490,7 @@ public static class ff9
                 }
             },
             new ff9.s_moveCHRControl // 1: Yellow Chocobo
-			{
+            {
                 type = 0,
                 flg_gake = 0,
                 speed_move = 200,
@@ -1514,7 +1514,7 @@ public static class ff9
                 }
             },
             new ff9.s_moveCHRControl // 2: Light Blue Chocobo
-			{
+            {
                 type = 0,
                 flg_gake = 1,
                 speed_move = 200,
@@ -1538,7 +1538,7 @@ public static class ff9
                 }
             },
             new ff9.s_moveCHRControl // 3: Red Chocobo
-			{
+            {
                 type = 0,
                 flg_gake = 1,
                 speed_move = 200,
@@ -1562,7 +1562,7 @@ public static class ff9
                 }
             },
             new ff9.s_moveCHRControl // 4: Deep Blue Chocobo
-			{
+            {
                 type = 0,
                 flg_gake = 1,
                 speed_move = 200,
@@ -1586,7 +1586,7 @@ public static class ff9
                 }
             },
             new ff9.s_moveCHRControl // 5: Gold Chocobo (ground)
-			{
+            {
                 type = 0,
                 flg_gake = 1,
                 speed_move = 200,
@@ -1610,7 +1610,7 @@ public static class ff9
                 }
             },
             new ff9.s_moveCHRControl // 6: Gold Chocobo (air)
-			{
+            {
                 type = 1,
                 flg_gake = 0,
                 speed_move = 300,
@@ -1635,7 +1635,7 @@ public static class ff9
                 }
             },
             new ff9.s_moveCHRControl // 7: Blue Narciss
-			{
+            {
                 type = 2,
                 flg_gake = 0,
                 speed_move = 240,
@@ -1659,7 +1659,7 @@ public static class ff9
                 }
             },
             new ff9.s_moveCHRControl // 8: Hilda Garde III
-			{
+            {
                 type = 1,
                 flg_gake = 0,
                 speed_move = 500,
@@ -1683,7 +1683,7 @@ public static class ff9
                 }
             },
             new ff9.s_moveCHRControl // 9: Invincible
-			{
+            {
                 type = 1,
                 flg_gake = 0,
                 speed_move = 500,
@@ -1707,7 +1707,7 @@ public static class ff9
                 }
             },
             new ff9.s_moveCHRControl // 10: ???
-			{
+            {
                 type = 3,
                 flg_gake = 0,
                 speed_move = 140,
@@ -1731,7 +1731,7 @@ public static class ff9
                 }
             },
             new ff9.s_moveCHRControl // 11: ???
-			{
+            {
                 type = 0,
                 flg_gake = 0,
                 speed_move = 0,
@@ -3766,7 +3766,7 @@ public static class ff9
         if (ff9.m_GetIDArea(idall) != 0 || ff9.m_GetIDTopograph(idall) == 0 || ff9.m_GetIDTopograph(idall) == 37)
             return FF9TextTool.WorldLocationText(ff9.m_GetIDArea(idall));
         //if (ff9.w_moveCHRControl_No >= 0 && ff9.w_moveCHRControl_No < ff9.w_moveCHRControl.Length)
-        //	return ff9.w_moveCHRControl_No.ToString();
+        //    return ff9.w_moveCHRControl_No.ToString();
         return String.Empty;
     }
 
@@ -6225,7 +6225,7 @@ public static class ff9
         {
             Single distanceToTargetX = (ff9.S(ff9.w_naviLocationPos[ff9.w_naviMapno, ff9.w_frameAutoid].tx) - ff9.w_moveActorPtr.RealPosition[0]) / 32f;
             Single distanceToTargetY = (ff9.S(ff9.w_naviLocationPos[ff9.w_naviMapno, ff9.w_frameAutoid].ty) - ff9.w_moveActorPtr.RealPosition[2]) / 32f;
-            ff9.w_moveCHRControl_XZSpeed = Math.Min(400, ff9.SquareRoot0(distanceToTargetX * distanceToTargetX + distanceToTargetY * distanceToTargetY));
+            ff9.w_moveCHRControl_XZSpeed = Math.Min(ff9.S(400), ff9.SquareRoot0(distanceToTargetX * distanceToTargetX + distanceToTargetY * distanceToTargetY));
             if (ff9.w_moveCHRControl_AutoPrev < ff9.w_moveCHRControl_XZSpeed || ff9.w_moveCHRControl_XZSpeed < ff9.S(50))
                 ff9.w_movementAutoPilotOFF();
             ff9.w_moveCHRControl_AutoPrev = ff9.w_moveCHRControl_XZSpeed;
@@ -6309,7 +6309,7 @@ public static class ff9
         if (ff9.UnityUnit(ff9.w_moveCHRControl_XZSpeed) != 0)
             ff9.w_movementCamRemain = 4096f;
         else
-            ff9.w_movementCamRemain = Math.Max(0, ff9.w_movementCamRemain - 512f);
+            ff9.w_movementCamRemain = Math.Max(0f, ff9.w_movementCamRemain - 512f);
         if (!ff9.w_moveCHRControl_LR && !ff9.w_cameraSysData.cameraNotrot && ff9.w_framePhase == 2)
         {
             ff9.cn2 = Mathf.Clamp(ff9.abs(rotationDifference), ff9.cn3, ff9.cn4);
@@ -10682,14 +10682,14 @@ public static class ff9
     public static HashSet<UInt16> w_ragtimeBattles = new HashSet<UInt16>()
     {
         627, // Green forest, Quizz result
-		634, // Green forest + Mist, Quizz result
-		753, // Brown forest, Quizz result
-		755, // Black forest, Quizz result
-		941, // Green forest + Mist, Quizz question
-		942, // Green forest, Quizz question
-		943, // Black forest, Quizz question
-		944	 // Brown forest, Quizz question
-	};
+        634, // Green forest + Mist, Quizz result
+        753, // Brown forest, Quizz result
+        755, // Black forest, Quizz result
+        941, // Green forest + Mist, Quizz question
+        942, // Green forest, Quizz question
+        943, // Black forest, Quizz question
+        944  // Brown forest, Quizz question
+    };
 
     public struct VECTOR
     {

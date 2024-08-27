@@ -4,7 +4,7 @@
 	<Measurement
 	Elapsed = "Terminé"
 	Remaining = "Restant"
-	SecondAbbr = "sec"
+	SecondAbbr = "s"
 	ByteAbbr = "octets"
 	KByteAbbr = "Ko"
 	MByteAbbr = "Mo"
@@ -14,20 +14,17 @@
 	EByteAbbr = "Eo"
 	/>
 
-	<Button
-	OK = "OK"
-	Cancel = "Annuler"
-	Continue = "Continuer"
-	Clone = "Cloner"
-	Remove = "Supprimer"
-	Rollback = "Revenir en arrière"
-	Inject = "Injecter"
-	SaveAs = "Enregistrer sous..."
-	Exit = "FERMER"
-	Exiting = "Fermeture..."
+	<Launcher
 	Launch = "JOUER"
 	Launching = "Lancement..."
 	ModManager = "MOD MANAGER"
+	QuestionTitle = "Question"
+	ErrorTitle = "Erreur !"
+	NewVersionIsAvailable = "Une nouvelle version est disponible, la télécharger maintenant ?"
+	AdvSettings = "Param. avancés"
+	AdvSettingsTitle = "Paramètres avancés et expérimentaux"
+	Return = "Retour"
+	ModelViewer = "Visionneuse de modèles"
 	/>
 
 	<Settings
@@ -39,8 +36,6 @@
 	Window = "Fenêtré"
 	ExclusiveFullscreen = "Plein écran exclusif"
 	BorderlessFullscreen = "Plein écran sans bordure"
-	AudioSamplingFrequency = "Fréquence d'échantillon audio"
-	AudioSamplingFrequencyFormat = "{0} Hz"
 	Debuggable = "Déboguable"
 	CheckUpdates = "Vérifier les mises à jour"
 	IniOptions = "Options"
@@ -150,6 +145,13 @@
 	tetraMasterReduceRandomBox1 = "Moins d'aléatoire"
 	tetraMasterReduceRandomBox2 = "Victoire facile"
 	CardReduceRandom_Tooltip = "Contrôle de l'aléatoire de Tetra Master"
+	
+	Shader_Enable = "Shaders personnalisés"
+	Shader_Field_chars = "Hors combat : "
+	Shader_Battle_chars = "En combat : "
+	Shader_Realism = "Réalisme"
+	Shader_Toon = "Dessin animé"
+	Shader_Outlines = "Contours des modèles"
 	/>
 
 	<SdLib
@@ -169,114 +171,6 @@
 	FixAreYouSure = "Nous allons maintenant installer un hook dans votre système d'exploitation qui lancera FF9_Launcher.fix au lieu du fichier FF9_Launcher.exe. Dans ce cas, toutes les vérifications d'intégrité du fichier Steam se termineront avec succès. Ainsi, cela résoudra le problème selon lequel certains utilisateurs ont périodiquement désactivé la fonctionnalité Steam Overlay et les fonctionnalités associées: réalisations et prise en charge du contrôleur.&#13;&#10;&#13;&#10;Cependant, soyez prudent et NE SUPPRIMEZ PAS le jeu, son dossier ou le fichier FF9_Launcher.fix sans d'abord annuler les modifications. Sinon, le hook restera dans votre système, et après une nouvelle installation du jeu, vous ne pourrez plus le lancer. Vous pouvez annuler les modifications dans le lanceur ou manuellement en exécutant Memoria.SteamFix.exe dans le dossier du jeu.&#13;&#10;&#13;&#10;Êtes-vous sûr de vouloir continuer?"
 	RollbackAreYouSure = "Nous allons maintenant supprimer les modifications apportées, après quoi le problème avec Steam Overlay reviendra.&#13;&#10;&#13;&#10;Cela peut entraîner la désactivation des succès et des problèmes de contrôleur.&#13;&#10;&#13;&#10;Es-tu sur de vouloir continuer?"
 	/>
-
-	<InfoProvider>
-
-		<ApplicationConfig
-		Title = "Settings"
-		Description = "Various settings of the application."
-		NewTitle = "New"
-		NewDescription = "Initialize all settings default values."
-		FileTitle = "From file"
-		FileDescription = "Reads the application configuration file {0}"
-		/>
-
-		<GameLocation
-		Title = "Game Directory"
-		Description = "Location of the game files."
-		ConfigurationTitle = "Settings"
-		ConfigurationDescription = "Uses the information stored in the configuration file."
-		SteamRegistryTitle = "From registry (Steam)"
-		SteamRegistryDescription = "Retrieves information from Windows registry, using data from Steam."
-		UserTitle = "Manual"
-		UserDescription = "Allows you to manually select the directory to which you have installed the game."
-		/>
-
-		<WorkingLocation
-		Title = "Working Directory"
-		Description = "The directory to store the results of the application."
-		ConfigurationTitle = "Settings"
-		ConfigurationDescription = "Uses the information stored in the configuration file."
-		UserTitle = "Manual"
-		UserDescription = "Allows you to manually select a working directory."
-		/>
-
-		<TextEncoding
-		Title = "Encoding"
-		Description = "Encoding for unpacking and packing the game text."
-		NewTitle = "New"
-		NewDescription = "Initializes the standard encoding based on the Windows-1252 encoding."
-		WorkingLocationTitle = "Working directory"
-		WorkingLocationDescription = "Reads the encoding from the working directory."
-		UserTitle = "Edit"
-		UserDescription = "Change the current encoding."
-		/>
-
-		<AudioSettings
-		Title="Audio Settings"
-		Description="Settings of audio device."
-		NewTitle="New"
-		NewDescription="Initialize all settings default values."
-		/>
-
-	</InfoProvider>
-
-	<Dockable>
-		
-		<DataSources Header = "Data Sources" />
-		
-		<GameFileCommander
-		Header = "Game Resources"
-		Unpack = "Unpack"
-		Pack = "Pack"
-		ArchivesNode ="Archives"
-		/>
-		
-		<GameFilePreview Header="Preview" >
-			
-			<Ykd
-			ResourceRemovingTitle = "Removing"
-			ConfirmResourceRemoving = "Are you sure you want to delete this resource?"
-			/>
-			
-		</GameFilePreview>
-		
-	</Dockable>
-	
-	<EncodingEditor>
-		
-		<List
-		Name = "Name"
-		Pattern = "Pattern"
-		Encoding = "Encoding"
-		Font = "Font"
-		Edit = "Edit"
-		/>
-		
-		<EncodingSelectDialog
-		Title = "Choose the encoding"
-		Watermark = "Enter the encoding name..."
-		ConfirmMessageFormat = "You have chosen [{0}]. Right?"
-		ErrorMessageFormat = "Failed to recognize the encoding [{0}]."
-		/>
-		
-		<EncodingEditDialog Title = "Encoding edit" />
-		<Main
-		Before = "Before:"
-		Width = "Width:"
-		After = "After:"
-		FromText = "From text:"
-		ToText = "To text:"
-		/>
-		
-		<Extra
-		Row = "Row:"
-		Column = "Column:"
-		FromText = "From text:"
-		ToText = "To text:"
-		/>
-		
-	</EncodingEditor>
 	
 	<ModEditor
 	WindowTitle = "Gestionnaire de mods"
@@ -300,49 +194,16 @@
 	Progress = "Téléchargement"
 	Speed = "Vitesse"
 	TimeLeft = "Temps Restant"
-	PreviewImageMissing = "Illustration Manquante"
+	ActiveIncompatibleMods = "Mod incompatible avec : "
+	IncompatibleWithMemoria = "La version du mod est incompatible avec la version actuelle de Memoria. Mettez-le à jour depuis le catalogue de mods."
+	UpdateTooltip = "Nouvelle version de ce mod disponible dans le catalogue de mods : "
 	TooltipMoveUp = "Déplacer vers le Haut (clic gauche) / En 1ère Position (clic droit)"
 	TooltipMoveDown = "Déplacer vers le Bas (clic gauche) / En dernière Position (clic droit)"
 	TooltipCheckCompatibility = "Vérifier la Compatibilité des Mods activés (clic gauche) / De tous les Mods installés (clic droit)"
 	TooltipActivateAll = "Activer Tous les Mods"
 	TooltipDeactivateAll = "Désactiver Tous les Mods"
 	TooltipUninstall = "Supprimer le(s) mod(s) sélectionné(s)"
-	TooltipDownload = "Télécharger le(s) mod(s) sélectionné(s)"
+	TooltipDownload = "Télécharger/Mettre à jour"
 	TooltipCancel = "Annuler le Téléchargement du Mod en cours (clic gauche) / De Tous les Mods (clic droit)"
 	/>
-	
-	<Dialogue>
-		
-		<SaveAs Title = "Save as..." />
-		
-	</Dialogue>
-	
-	<Message>
-		
-		<Done
-		Title = "Done!"
-		ExtractionCompleteFormat = "Extraction complete for {0:hh\:mm\:ss}."
-		InjectionCompleteFormat = "Injection complete for {0:hh\:mm\:ss}."
-		/>
-		
-		<Question
-		Title = "Question"
-		AreYouSureTitle = "Êtes-vous sur?"
-		NewVersionIsAvailable = "Une nouvelle version est disponible, télécharger maintenant?"
-		/>
-		
-		<Error Title = "Erreur" />
-		
-	</Message>
-	
-	<Error>
-		
-		<File UnknownFormat = "Format de fichier inconnu." />
-		
-		<Process CannotGetExecutablePath = "Impossible de trouver le chemin de l'exécutable." />
-		
-		<Text TooLongTagNameFormat = "Too long name of tag: {0}" />
-	
-	</Error>
-
 </Data>

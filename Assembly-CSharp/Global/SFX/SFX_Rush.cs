@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Common;
 using Memoria;
+using Memoria.Prime;
 using Memoria.Scripts;
 using System;
 using UnityEngine;
@@ -194,28 +195,34 @@ public class SFX_Rush
 
     public static void CreateScreen()
     {
-        Rect screenSize = GetScreenSize();
-        Int32 screenX = (Int32)screenSize.x;
-        Int32 screenY = (Int32)screenSize.y;
-        Int32 screenW = (Int32)screenSize.width;
-        Int32 screenH = (Int32)screenSize.height;
-        _result = new Texture2D((Int32)screenSize.width, (Int32)screenSize.height, TextureFormat.ARGB32, false);
-
-        Color color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-        for (Int32 x = 0; x < screenW; ++x)
+        try
         {
-            _result.SetPixel(x, 0, color);
-            _result.SetPixel(x, screenH - 1, color);
-        }
+            Rect screenSize = GetScreenSize();
+            Int32 screenX = (Int32)screenSize.x;
+            Int32 screenY = (Int32)screenSize.y;
+            Int32 screenW = (Int32)screenSize.width;
+            Int32 screenH = (Int32)screenSize.height;
+            _result = new Texture2D((Int32)screenSize.width, (Int32)screenSize.height, TextureFormat.ARGB32, false);
+            
+            Color color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+            for (Int32 x = 0; x < screenW; ++x)
+            {
+                _result.SetPixel(x, 0, color);
+                _result.SetPixel(x, screenH - 1, color);
+            }
 
-        for (Int32 y = 1; y < screenH - 1; ++y)
-        {
-            _result.SetPixel(0, y, color);
-            _result.SetPixel(screenW - 1, y, color);
-        }
+            for (Int32 y = 1; y < screenH - 1; ++y)
+            {
+                _result.SetPixel(0, y, color);
+                _result.SetPixel(screenW - 1, y, color);
+            }
 
-        _result.ReadPixels(new Rect(screenX + 1, screenY + 1, screenW - 2, screenH - 2), 1, 1, false);
-        _result.Apply();
+            _result.ReadPixels(new Rect(screenX + 1, screenY + 1, screenW - 2, screenH - 2), 1, 1, false);
+            _result.Apply();
+        }
+        catch (Exception e) {
+            Log.Error(e);
+        }
     }
 
     public static void SetCenterPosition(Int32 type)

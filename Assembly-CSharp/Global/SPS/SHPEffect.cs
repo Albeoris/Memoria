@@ -54,7 +54,7 @@ public class SHPEffect : MonoBehaviour
     {
         if ((this.attr & SPSConst.ATTR_VISIBLE) == 0)
             return;
-        if ((this.attr & (SPSConst.ATTR_UPDATE_THIS_FRAME | SPSConst.ATTR_UPDATE_ANY_FRAME)) != 0)
+        if ((this.attr & (SPSConst.ATTR_UPDATE_THIS_FRAME | SPSConst.ATTR_UPDATE_ANY_FRAME)) != 0 && (this.attr & SPSConst.ATTR_HIDDEN) == 0)
         {
             if (this.attach != null)
                 this.pos = this.attach.position;
@@ -71,9 +71,9 @@ public class SHPEffect : MonoBehaviour
             base.transform.LookAt(base.transform.position + directionForward, -directionDown);
             foreach (GameObject go in this.shpGo)
                 go.SetActive(false);
-            Int32 shpIndex = this.cycleDuration >= 0 ? (this.frame * this.shpGo.Length / this.cycleDuration) % this.shpGo.Length
-                             : this.shpGo.Length - 1 + (this.frame * this.shpGo.Length / this.cycleDuration) % this.shpGo.Length;
-            this.shpGo[shpIndex].SetActive(true);
+            this.TextureIndex = this.cycleDuration >= 0 ? (this.frame * this.shpGo.Length / this.cycleDuration) % this.shpGo.Length
+                              : this.shpGo.Length - 1 + (this.frame * this.shpGo.Length / this.cycleDuration) % this.shpGo.Length;
+            this.shpGo[this.TextureIndex].SetActive(true);
             this.attr &= unchecked((Byte)~SPSConst.ATTR_UPDATE_THIS_FRAME);
         }
         else
@@ -82,6 +82,9 @@ public class SHPEffect : MonoBehaviour
                 go.SetActive(false);
         }
     }
+
+    public Boolean IsCyclingFrame => this.cycleDuration != 0 && (this.frame % this.cycleDuration) == Math.Abs(this.cycleDuration) - 1;
+    public Int32 TextureIndex { get; private set; }
 
     public Int32 shpId = -1;
 
