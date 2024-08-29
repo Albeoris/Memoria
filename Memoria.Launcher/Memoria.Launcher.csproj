@@ -185,6 +185,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Memoria.ini</TargetPath>
     </EmbeddedResource>
+    <Resource Include="Fonts\centurygothic.ttf" />
+    <Resource Include="Fonts\notoemoji.ttf" />
+    <Resource Include="Fonts\overpass.ttf" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

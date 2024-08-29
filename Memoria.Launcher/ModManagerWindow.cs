@@ -43,6 +43,12 @@ namespace Memoria.Launcher
             "Playable Character Pack_1.1",
         };
 
+        private readonly string UpdateEmoji = "⏫";
+        private readonly string ConflictEmoji = "✖️";
+        private readonly string WaitingEmoji = "⌛";
+        private readonly string InstalledEmoji = "✔️";
+        private readonly string ActiveEmoji = "☑️";
+
         public ObservableCollection<Mod> modListInstalled = new ObservableCollection<Mod>();
         public ObservableCollection<Mod> modListCatalog = new ObservableCollection<Mod>();
         public ObservableCollection<Mod> downloadList = new ObservableCollection<Mod>();
@@ -99,7 +105,7 @@ namespace Memoria.Launcher
             {
                 if (mod != null && ((mod.Name == "Moguri Mod" || mod.Name == "MoguriFiles") && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
                 {
-                    mod.UpdateIcon = "⏫";
+                    mod.UpdateIcon = UpdateEmoji;
                     mod.CurrentVersion = Version.Parse("8.3");
                     AreThereModUpdates = true;
                     mod.Description = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
@@ -115,7 +121,7 @@ namespace Memoria.Launcher
                             mod.IsOutdated = catalog_mod.IsOutdated = !versionCorresponds;
                             if (mod.IsOutdated)
                             {
-                                mod.UpdateIcon = "⏫";
+                                mod.UpdateIcon = UpdateEmoji;
                                 mod.UpdateTooltip = Lang.ModEditor.UpdateTooltip + catalog_mod.CurrentVersion;
                                 AreThereModUpdates = true;
                             }
@@ -153,8 +159,8 @@ namespace Memoria.Launcher
                         {
                             if (other_mod != null && other_mod.Name != null && other_mod.Name == incompName && other_mod.IsActive)
                             {
-                                mod.IncompIcon = "⚔️";
-                                other_mod.IncompIcon = "⚔️";
+                                mod.IncompIcon = ConflictEmoji;
+                                other_mod.IncompIcon = ConflictEmoji;
 
                                 if (mod.ActiveIncompatibleMods == null)
                                     mod.ActiveIncompatibleMods = Lang.ModEditor.ActiveIncompatibleMods + other_mod.Name;
@@ -178,7 +184,7 @@ namespace Memoria.Launcher
                     {
                         if (outdated == mod.Name + "_" + ver)
                         {
-                            mod.IncompIcon = "⚔️";
+                            mod.IncompIcon = ConflictEmoji;
                             if (mod.ActiveIncompatibleMods == null)
                                 mod.ActiveIncompatibleMods = Lang.ModEditor.IncompatibleWithMemoria;
                             else
@@ -377,7 +383,7 @@ namespace Memoria.Launcher
                 }
                 downloadList.Add(mod);
                 DownloadStart(mod);
-                mod.Installed = "⌛";
+                mod.Installed = WaitingEmoji;
             }
             lstCatalogMods.Items.Refresh();
         }
@@ -1011,11 +1017,12 @@ namespace Memoria.Launcher
             foreach (Mod mod in modListCatalog)
             {
                 if (Mod.SearchWithName(downloadList, mod.Name) != null)
-                    mod.Installed = "⌛";
+                    mod.Installed = WaitingEmoji;
                 else if (Mod.SearchWithName(modListInstalled, mod.Name) != null && Mod.SearchWithName(modListInstalled, mod.Name).IsOutdated)
-                    mod.Installed = "⏫";
+                    mod.Installed = UpdateEmoji;
                 else if (Mod.SearchWithName(modListInstalled, mod.Name) != null)
-                    mod.Installed = "✔";
+                    mod.Installed = InstalledEmoji;
+
                 else
                     mod.Installed = "";
             }
@@ -1172,7 +1179,7 @@ namespace Memoria.Launcher
             header.Click += OnClickCatalogHeader;
             colCatalogInstalled.Header = header;
 
-            header = new GridViewColumnHeader() { Content = "✅" };
+            header = new GridViewColumnHeader() { Content = ActiveEmoji };
             header.Click += OnClickActiveHeader;
             colMyModsActive.Header = header;
             colDownloadName.Header = Lang.ModEditor.Mod;
