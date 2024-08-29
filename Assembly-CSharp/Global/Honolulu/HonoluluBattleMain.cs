@@ -270,11 +270,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     btl[i].weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + sb2MonParm.WeaponModel + "/" + sb2MonParm.WeaponModel, true, true, Configuration.Graphics.ElementsSmoothTexture);
                 else
                     btl[i].weapon_geo = ModelFactory.CreateModel(sb2MonParm.WeaponModel, true, true, Configuration.Graphics.ElementsSmoothTexture);
-                MeshRenderer[] weaponRenderers = btl[i].weapon_geo.GetComponentsInChildren<MeshRenderer>();
-                btl[i].weaponMeshCount = weaponRenderers.Length;
-                btl[i].weaponRenderer = new Renderer[btl[i].weaponMeshCount];
-                for (Int32 j = 0; j < btl[i].weaponMeshCount; ++j)
-                    btl[i].weaponRenderer[j] = weaponRenderers[j].GetComponent<Renderer>();
                 geo.geoAttach(btl[i].weapon_geo, btl[i].gameObject, sb2MonParm.WeaponAttachment);
                 if (btl_eqp.EnemyBuiltInWeaponTable.ContainsKey(sb2MonParm.Geo))
                     btl[i].builtin_weapon_mode = true;
@@ -284,11 +279,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 if (path.Contains("GEO_MON_B3_168"))
                     btl[i].gameObject.transform.FindChild("mesh5").gameObject.SetActive(false);
                 btl[i].weapon_geo = ModelFactory.CreateDefaultWeaponForCharacterWhenUseAsEnemy(path);
-                MeshRenderer[] weaponRenderers = btl[i].weapon_geo.GetComponentsInChildren<MeshRenderer>();
-                btl[i].weaponMeshCount = weaponRenderers.Length;
-                btl[i].weaponRenderer = new Renderer[btl[i].weaponMeshCount];
-                for (Int32 j = 0; j < btl[i].weaponMeshCount; ++j)
-                    btl[i].weaponRenderer[j] = weaponRenderers[j].GetComponent<Renderer>();
                 geo.geoAttach(btl[i].weapon_geo, btl[i].gameObject, ModelFactory.GetDefaultWeaponBoneIdForCharacterWhenUseAsEnemy(path));
             }
             else
@@ -299,14 +289,14 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 ModelFactory.ChangeModelTexture(btl[i].gameObject, sb2MonParm.TextureFiles);
             if (btl[i].weapon_geo != null)
             {
-                MeshRenderer[] componentsInChildren = btl[i].weapon_geo.GetComponentsInChildren<MeshRenderer>();
-                btl[i].weaponMeshCount = componentsInChildren.Length;
+                MeshRenderer[] weaponRenderers = btl[i].weapon_geo.GetComponentsInChildren<MeshRenderer>();
+                btl[i].weaponMeshCount = weaponRenderers.Length;
                 btl[i].weaponRenderer = new Renderer[btl[i].weaponMeshCount];
                 if (btl[i].weaponMeshCount > 0)
                 {
                     for (Int32 j = 0; j < btl[i].weaponMeshCount; j++)
                     {
-                        btl[i].weaponRenderer[j] = componentsInChildren[j].GetComponent<Renderer>();
+                        btl[i].weaponRenderer[j] = weaponRenderers[j].GetComponent<Renderer>();
                         if (sb2MonParm.WeaponTextureFiles != null && sb2MonParm.WeaponTextureFiles.Length > j && !String.IsNullOrEmpty(sb2MonParm.WeaponTextureFiles[j]))
                             btl[i].weaponRenderer[j].material.mainTexture = AssetManager.Load<Texture2D>(sb2MonParm.WeaponTextureFiles[j], false);
                     }
@@ -324,7 +314,6 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             btl[i].meshIsRendering = new Boolean[meshCount];
             for (Int32 j = 0; j < meshCount; ++j)
                 btl[i].meshIsRendering[j] = true;
-            btl[i].animation = btl[i].gameObject.GetComponent<Animation>();
             btl[i].animation = btl[i].gameObject.GetComponent<Animation>();
         }
     }

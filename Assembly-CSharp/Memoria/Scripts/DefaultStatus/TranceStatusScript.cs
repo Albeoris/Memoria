@@ -88,12 +88,13 @@ namespace Memoria.DefaultScripts
                 return true;
             }
             BattleAbilityId eidolon = (BattleAbilityId?)btl_util.GetBtlCurrentCommands(garnet).Find(cmd => cmd.cmd_no == BattleCommandId.Phantom)?.sub_no ?? BattleAbilityId.Void;
-            if (eidolon != BattleAbilityId.Void && eidolon != PhantomAbility)
+            if (PhantomCommandSent && eidolon != BattleAbilityId.Void && eidolon != PhantomAbility)
             {
                 CMD_DATA phantomCmd = garnet.Data.cmd[3];
-                if (PhantomCommandSent && phantomCmd.info.mode == command_mode_index.CMD_MODE_INSPECTION)
+                if (phantomCmd.info.mode == command_mode_index.CMD_MODE_INSPECTION)
                 {
                     PhantomAbility = EidolonToPhantom(eidolon);
+                    phantomCmd.sub_no = (Int32)PhantomAbility;
                     phantomCmd.SetAAData(FF9StateSystem.Battle.FF9Battle.aa_data[PhantomAbility]);
                     phantomCmd.ScriptId = btl_util.GetCommandScriptId(phantomCmd);
                     phantomCmd.IsShortRange = btl_util.IsAttackShortRange(phantomCmd);

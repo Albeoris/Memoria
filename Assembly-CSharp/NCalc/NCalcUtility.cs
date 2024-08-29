@@ -106,10 +106,7 @@ namespace NCalc
                     args.Result = 0;
             }
             else if (name == "IsCharacterInParty" && args.Parameters.Length == 1)
-            {
-                CharacterId index = (CharacterId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Byte.MaxValue);
-                args.Result = index != CharacterId.NONE && FF9StateSystem.Common.FF9.party.member.Any(p => p?.Index == index);
-            }
+                args.Result = FF9StateSystem.Common.FF9.party.IsInParty((CharacterId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int64)CharacterId.NONE));
             else if (name == "GetCategoryKillCount" && args.Parameters.Length == 1)
             {
                 Int32 index = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1);

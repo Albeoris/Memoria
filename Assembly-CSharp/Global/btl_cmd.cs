@@ -56,6 +56,7 @@ public class btl_cmd
         cmd.next = null;
         cmd.aa = null;
         cmd.tar_id = 0;
+        cmd.magic_caster_id = 0;
         cmd.cmd_no = BattleCommandId.None;
         cmd.sub_no = 0;
         cmd.info.Reset();
@@ -244,6 +245,13 @@ public class btl_cmd
             return;
         }
 
+        BattleAbilityId aaIndex = btl_util.GetCommandMainActionIndex(cmd);
+        if (caster != null && aaIndex != BattleAbilityId.Void)
+        {
+            BattleMagicSwordSet magicSet = UIManager.Battle.GetMagicSwordOfAbility(new BattleUnit(caster), ff9abil.GetAbilityIdFromActiveAbility(aaIndex));
+            if (magicSet != null)
+                cmd.magic_caster_id = BattleState.GetPlayerUnit(magicSet.Supporter)?.Id ?? 0;
+        }
         cmd.tar_id = tar_id;
         cmd.info.cursor = (Byte)cursor;
         cmd.info.cover = 0;
@@ -1115,9 +1123,8 @@ public class btl_cmd
     {
         if (btl.bi.player == 0 || btl.bi.slot_no != (Byte)CharacterId.Garnet)
             return;
-        FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
         KillSpecificCommand(btl, BattleCommandId.SysPhantom);
-        stateBattleSystem.cmd_status &= 0xFFF3;
+        FF9StateSystem.Battle.FF9Battle.cmd_status &= 0xFFF3;
     }
 
     public static void ManageDequeueCommand(CMD_DATA cp, CMD_DATA ncp)

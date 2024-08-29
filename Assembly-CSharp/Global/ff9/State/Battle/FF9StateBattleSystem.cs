@@ -119,7 +119,7 @@ public class FF9StateBattleSystem
 
     public IEnumerable<BattleUnit> EnumerateBattleUnits()
     {
-        for (BTL_DATA data = FF9StateSystem.Battle.FF9Battle.btl_list.next; data != null; data = data.next)
+        for (BTL_DATA data = btl_list.next; data != null; data = data.next)
             yield return new BattleUnit(data);
     }
 
@@ -127,5 +127,15 @@ public class FF9StateBattleSystem
     {
         BTL_DATA data = btl_data[index];
         return new BattleUnit(data);
+    }
+
+    public IEnumerable<BattleUnit> EnumerateDeletedUnits()
+    {
+        HashSet<UInt16> presentList = new HashSet<UInt16>();
+        for (BTL_DATA btl = btl_list.next; btl != null; btl = btl.next)
+            presentList.Add(btl.btl_id);
+        for (Int32 i = 0; i < 8; i++)
+            if (btl_data[i].btl_id != 0 && !presentList.Contains(btl_data[i].btl_id))
+                yield return new BattleUnit(btl_data[i]);
     }
 }
