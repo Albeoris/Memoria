@@ -70,7 +70,7 @@
             BasedOn="{StaticResource ModInfoLabelStyle}"
             TargetType="{x:Type TextBlock}">
             <Setter Property="FontWeight" Value="DemiBold" />
-            <Setter Property="FontFamily" Value="Century Gothic" />
+            <Setter Property="FontFamily" Value="{StaticResource CenturyGothic}" />
             <Setter Property="FontStretch" Value="UltraCondensed" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Padding" Value="0,0,0,0" />
@@ -83,6 +83,7 @@
             BasedOn="{StaticResource ModInfoLabelStyle}"
             TargetType="{x:Type TextBlock}">
             <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontFamily" Value="{StaticResource CenturyGothic}" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Padding" Value="1,0,0,2" />
             <Setter Property="FontSize" Value="14" />
@@ -126,9 +127,11 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="5"
                         Effect="{StaticResource ButtondropShadowEffect}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" 
-                        Width="36"
-                        Height="36"/>
+                            <ContentPresenter
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center" 
+                            Width="36"
+                            Height="36"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -707,6 +710,7 @@
                                                 FontWeight="Black"
                                                 ToolTip="{Binding UpdateTooltip}"
                                                 ToolTipService.InitialShowDelay="10"
+                                                Effect="{StaticResource ButtondropShadowEffect}"
                                                 Foreground="#efd525" />
                                             </StackPanel>
                                         </DataTemplate>
@@ -725,6 +729,7 @@
                                                 ToolTip="{Binding ActiveIncompatibleMods}"
                                                 ToolTipService.InitialShowDelay="10"
                                                 ToolTipService.BetweenShowDelay="0"
+                                                Effect="{StaticResource ButtondropShadowEffect}"
                                                 Foreground="#b51717" />
                                             </StackPanel>
                                         </DataTemplate>
