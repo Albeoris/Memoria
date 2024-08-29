@@ -607,14 +607,16 @@ public partial class BattleHUD : UIScene
                 ButtonGroupState.ActiveButton = ButtonGroupState.GetCursorStartSelect(TargetGroupButton);
             }
             _cursorType = CursorGroup.Individual;
-            _targetPanel.ActivateButtons(false);
+            _targetPanel.Buttons.Player.IsActive = false;
+            _targetPanel.Buttons.Enemy.IsActive = false;
         }
         else
         {
             ButtonGroupState.SetButtonAnimation(ButtonGroupState.ActiveButton, false);
             Singleton<PointerManager>.Instance.RemovePointerFromGameObject(ButtonGroupState.ActiveButton);
             _cursorType = _currentTargetIndex >= HonoluluBattleMain.EnemyStartIndex ? CursorGroup.AllEnemy : CursorGroup.AllPlayer;
-            _targetPanel.ActivateButtons(true);
+            _targetPanel.Buttons.Player.IsActive = _targetCursor != TargetType.ManyEnemy;
+            _targetPanel.Buttons.Enemy.IsActive = _targetCursor != TargetType.ManyAlly;
         }
         UpdateTargetStates();
         SetTargetHelp();

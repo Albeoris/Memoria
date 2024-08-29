@@ -349,9 +349,9 @@ public partial class BattleHUD : UIScene
 
     public BattleMagicSwordSet GetMagicSwordOfAbility(BattleUnit caster, Int32 abilId)
     {
-        if (!caster.IsPlayer || !_abilityDetailDict[caster.GetIndex()].AbilityMagicSet.TryGetValue(abilId, out BattleMagicSwordSet magicSet))
-            return null;
-        return magicSet;
+        if (caster.IsPlayer && _abilityDetailDict[caster.GetIndex()].AbilityMagicSet.TryGetValue(abilId, out BattleMagicSwordSet magicSet))
+            return magicSet;
+        return null;
     }
 
     public void DisplayParty(Boolean resetPointAnimations = false)
@@ -814,6 +814,29 @@ public partial class BattleHUD : UIScene
         if (!unit.IsPlayer)
             return true;
         return GetAbilityState(abilId, unit.GetIndex()) == AbilityStatus.Enable;
+    }
+
+    public HashSet<CharacterId> GetNonSwappableCharacters()
+    {
+        HashSet<CharacterId> fix = new HashSet<CharacterId>();
+        // In single-character menu mode, fix the characters that are in the team but not displayed in the menu
+        if (_mainMenuSinglePlayer != null)
+            foreach (PlayerMemo memo in _mainMenuPlayerMemo)
+                if (memo.original != null && memo.original != _mainMenuSinglePlayer)
+                    fix.Add(memo.original.Index);
+        // Don't allow swapping out characters that are currently targeted, acting or under a crippling status
+        foreach (BattleUnit unit in BattleState.EnumerateUnits())
+            if (unit.IsPlayer && (btl_util.IsBtlBusy(unit, btl_util.BusyMode.ANY_CURRENT) || unit.IsUnderAnyStatus(BattleStatusConst.NoInput)))
+                fix.Add(unit.PlayerIndex);
+        // Don't allow swapping in characters that are currently under a crippling status
+        foreach (PLAYER player in FF9StateSystem.Common.FF9.PlayerList)
+            if ((player.status & BattleStatusConst.NoInput) != 0 || player.cur.hp == 0)
+                fix.Add(player.Index);
+        // Don't allow swapping in/out characters that are currently disabled for the battle (eg. Blank against Plant Brain before he shows up)
+        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateDeletedUnits())
+            if (unit.IsPlayer)
+                fix.Add(unit.PlayerIndex);
+        return fix;
     }
 }
 

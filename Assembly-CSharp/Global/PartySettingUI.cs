@@ -75,8 +75,6 @@ public class PartySettingUI : UIScene
 
     [NonSerialized]
     public Boolean AccessFromMenu = false;
-    [NonSerialized]
-    public Int32 ExactPartyCount = -1;
 
     public GameObject HelpDespLabelGameObject;
     public GameObject CurrentPartyPanel;
@@ -204,33 +202,39 @@ public class PartySettingUI : UIScene
 
         if (ButtonGroupState.ActiveGroup == SelectCharGroupButton)
         {
-            FF9Sfx.FF9SFX_Play(103);
-            this.currentCharacterSelect = this.GetCurrentSelect(go);
-            this.currentCharacterId = this.GetCurrentId(go);
-            ButtonGroupState.SetCursorStartSelect((this.currentCharacterSelect.Group != Mode.Menu) ? go.GetChild(0) : go.GetChild(2), MoveCharGroupButton);
-            ButtonGroupState.RemoveCursorMemorize(MoveCharGroupButton);
-            ButtonGroupState.ActiveGroup = MoveCharGroupButton;
-            ButtonGroupState.HoldActiveStateOnGroup(SelectCharGroupButton);
-            foreach (CharacterOutsidePartyHud current in this.outsidePartyHudList)
-                ButtonGroupState.SetButtonEnable(current.MoveButton, this.currentCharacterId == CharacterId.NONE || !this.info.fix.Contains(this.currentCharacterId));
-        }
-        else if (ButtonGroupState.ActiveGroup == MoveCharGroupButton)
-        {
-            PartySelect currentSelect = this.GetCurrentSelect(go);
             CharacterId currentId = this.GetCurrentId(go);
-            if (this.currentCharacterSelect.Group == Mode.Select && currentId != CharacterId.NONE && this.info.fix.Contains(currentId))
+            if (currentId != CharacterId.NONE && this.info.fix.Contains(currentId))
             {
                 FF9Sfx.FF9SFX_Play(102);
             }
             else
             {
                 FF9Sfx.FF9SFX_Play(103);
-                this.SwapCharacter(this.currentCharacterSelect, currentSelect);
+                this.currentCharacterSelect = this.GetCurrentSelect(go);
+                this.currentCharacterId = this.GetCurrentId(go);
+                ButtonGroupState.SetCursorStartSelect((this.currentCharacterSelect.Group != Mode.Menu) ? go.GetChild(0) : go.GetChild(2), MoveCharGroupButton);
+                ButtonGroupState.RemoveCursorMemorize(MoveCharGroupButton);
+                ButtonGroupState.ActiveGroup = MoveCharGroupButton;
+                ButtonGroupState.HoldActiveStateOnGroup(SelectCharGroupButton);
+                foreach (CharacterOutsidePartyHud current in this.outsidePartyHudList)
+                    ButtonGroupState.SetButtonEnable(current.MoveButton, this.currentCharacterId == CharacterId.NONE || !this.info.fix.Contains(this.currentCharacterId));
+            }
+        }
+        else if (ButtonGroupState.ActiveGroup == MoveCharGroupButton)
+        {
+            CharacterId currentId = this.GetCurrentId(go);
+            if (currentId != CharacterId.NONE && this.info.fix.Contains(currentId))
+            {
+                FF9Sfx.FF9SFX_Play(102);
+            }
+            else
+            {
+                FF9Sfx.FF9SFX_Play(103);
+                this.SwapCharacter(this.currentCharacterSelect, this.GetCurrentSelect(go));
                 this.DisplayCharacters();
                 this.DisplayCharacterInfo(this.currentCharacterId);
                 ButtonGroupState.SetCursorMemorize(go.transform.parent.gameObject, SelectCharGroupButton);
                 ButtonGroupState.ActiveGroup = SelectCharGroupButton;
-                PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
             }
         }
         return true;
@@ -254,7 +258,6 @@ public class PartySettingUI : UIScene
                         else
                             PersistenSingleton<UIManager>.Instance.ChangeUIState(PersistenSingleton<UIManager>.Instance.HUDState);
                         this.AccessFromMenu = false;
-                        this.ExactPartyCount = -1;
                     });
                 }
                 else
@@ -413,8 +416,8 @@ public class PartySettingUI : UIScene
                     healthyCnt++;
             }
         }
-        if (this.ExactPartyCount >= 0)
-            return charCnt == this.ExactPartyCount && healthyCnt != 0;
+        if (this.info.exact_party_ct >= 0)
+            return charCnt == this.info.exact_party_ct && healthyCnt != 0;
         return charCnt >= this.info.party_ct && healthyCnt != 0;
     }
 
@@ -462,6 +465,8 @@ public class PartySettingUI : UIScene
             this.info.menu[oldSelect.Index] = char2;
         else if (oldSelect.Group == Mode.Select)
             this.info.select[4 * currentFloor + oldSelect.Index] = char2;
+        if (oldSelect.Group == Mode.Menu || newSelect.Group == Mode.Menu)
+            PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
     }
 
     private void Awake()

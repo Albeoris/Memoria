@@ -865,6 +865,10 @@ public partial class BattleHUD : UIScene
                     _currentCharacterHp[playerIndex] = playerHpState;
                     shouldUpdatePointer = true;
                 }
+                else if (!String.Equals(unit.Name, _targetPanel.Players[playerIndex].Name.Label.text))
+                {
+                    _targetPanel.Players[playerIndex].Name.Label.text = unit.Name;
+                }
                 ++playerIndex;
             }
             else
@@ -1990,73 +1994,58 @@ public partial class BattleHUD : UIScene
         if (cursor == TargetType.SingleAny)
         {
             _cursorType = CursorGroup.Individual;
-
             ChangeTargetAvailability(player: true, enemy: true, all: false, allPlayers: false, allEnemies: false);
         }
         else if (cursor == TargetType.SingleEnemy)
         {
             _cursorType = CursorGroup.Individual;
-
             ChangeTargetAvailability(player: false, enemy: true, all: false, allPlayers: false, allEnemies: false);
         }
         else if (cursor == TargetType.SingleAlly)
         {
             _cursorType = CursorGroup.Individual;
-
             ChangeTargetAvailability(player: true, enemy: false, all: false, allPlayers: false, allEnemies: false);
         }
         else if (cursor == TargetType.ManyAny)
         {
+            _cursorType = CursorGroup.Individual;
             ChangeTargetAvailability(player: true, enemy: true, all: FF9StateSystem.MobilePlatform, allPlayers: false, allEnemies: false);
         }
         else if (cursor == TargetType.ManyEnemy)
         {
+            _cursorType = CursorGroup.Individual;
             ChangeTargetAvailability(player: false, enemy: true, all: FF9StateSystem.MobilePlatform, allPlayers: false, allEnemies: false);
         }
         else if (cursor == TargetType.ManyAlly)
         {
+            _cursorType = CursorGroup.Individual;
             ChangeTargetAvailability(player: true, enemy: false, all: FF9StateSystem.MobilePlatform, allPlayers: false, allEnemies: false);
         }
         else if (cursor == TargetType.AllEnemy || cursor == TargetType.RandomEnemy)
         {
             _cursorType = CursorGroup.AllEnemy;
-
             ChangeTargetAvailability(player: false, enemy: true, all: false, allPlayers: false, allEnemies: true);
-
             _isAllTarget = true;
         }
         else if (cursor == TargetType.AllAlly || cursor == TargetType.RandomAlly)
         {
             _cursorType = CursorGroup.AllPlayer;
-
             ChangeTargetAvailability(player: true, enemy: false, all: false, allPlayers: true, allEnemies: false);
-
             _isAllTarget = true;
         }
         else if (cursor == TargetType.All || cursor == TargetType.Everyone || cursor == TargetType.Random)
         {
             if (cursor == TargetType.All || cursor == TargetType.Random)
-            {
-                if (_defaultTargetAlly)
-                    _cursorType = CursorGroup.AllPlayer;
-                else
-                    _cursorType = CursorGroup.AllEnemy;
-            }
+                _cursorType = _defaultTargetAlly ? CursorGroup.AllPlayer : CursorGroup.AllEnemy;
             else
-            {
                 _cursorType = CursorGroup.All;
-            }
-
             ChangeTargetAvailability(player: true, enemy: true, all: false, allPlayers: true, allEnemies: true);
-
             _isAllTarget = true;
         }
         else if (cursor == TargetType.Self)
         {
             _cursorType = CursorGroup.Individual;
-
             ChangeTargetAvailability(player: false, enemy: false, all: false, allPlayers: false, allEnemies: false);
-
             GONavigationButton currentPlayer = _targetPanel.Players[CurrentBattlePlayerIndex];
             ButtonGroupState.SetButtonEnable(currentPlayer, true);
         }
@@ -2548,39 +2537,31 @@ public partial class BattleHUD : UIScene
 
     private void UpdatePlayersForMainMenu()
     {
-        Dictionary<PLAYER, BattleStatus> statusLockDict = new Dictionary<PLAYER, BattleStatus>();
+        _mainMenuPlayerMemo.Clear();
+        for (Int32 i = 0; i < 4; i++)
+            _mainMenuPlayerMemo.Add(new PlayerMemo(null, true));
         foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
         {
             if (!unit.IsPlayer)
                 continue;
             PLAYER player = unit.Player;
             BattleStatus battlePermanent = unit.PermanentStatus & BattleStatusConst.OutOfBattle & ~player.permanent_status;
-            statusLockDict[player] = battlePermanent;
             player.permanent_status |= battlePermanent;
             player.trance = unit.Trance;
             btl_init.CopyPoints(player.cur, unit.Data.cur);
             btl_stat.SaveStatus(player, unit.Data);
+            _mainMenuPlayerMemo[unit.Position] = new PlayerMemo(player, true);
+            _mainMenuPlayerMemo[unit.Position].battlePermanentStatus = battlePermanent;
         }
-        _mainMenuPlayerMemo.Clear();
         for (Int32 i = 0; i < 4; i++)
-        {
-            _mainMenuPlayerMemo.Add(new PlayerMemo(FF9StateSystem.Common.FF9.party.member[i], true));
-            if (FF9StateSystem.Common.FF9.party.member[i] != null)
-                statusLockDict.TryGetValue(FF9StateSystem.Common.FF9.party.member[i], out _mainMenuPlayerMemo[i].battlePermanentStatus);
-        }
-        if (_mainMenuSinglePlayer != null)
-            for (Int32 i = 0; i < 4; i++)
-                if (_mainMenuSinglePlayer != FF9StateSystem.Common.FF9.party.member[i])
-                    FF9StateSystem.Common.FF9.party.member[i] = null;
+            if ((_mainMenuSinglePlayer != null && _mainMenuSinglePlayer != FF9StateSystem.Common.FF9.party.member[i]) || _mainMenuPlayerMemo[i].original == null)
+                FF9StateSystem.Common.FF9.party.member[i] = null;
     }
 
     private void UpdateBattleAfterMainMenu()
     {
         Boolean menuHadImpact = PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount > 0;
         PARTY_DATA party = FF9StateSystem.Common.FF9.party;
-        List<PLAYER> partyMembers = new List<PLAYER>();
-        for (Int32 i = 0; i < 4; i++)
-            partyMembers.Add(_mainMenuPlayerMemo[i].original);
         if (menuHadImpact)
         {
             List<BattleUnit> oldSwappedOut = new List<BattleUnit>();
@@ -2678,28 +2659,24 @@ public partial class BattleHUD : UIScene
             {
                 BattleUnit swappedOut = oldSwappedOut[i];
                 PLAYER swappedIn = FF9StateSystem.Common.FF9.player[newSwappedIn[i]];
-                for (Int32 j = 0; j < partyMembers.Count; j++)
-                {
-                    if (partyMembers[j] == swappedOut.Player)
-                    {
-                        partyMembers[j] = swappedIn;
-                        break;
-                    }
-                }
+                Boolean isSinglePlayer = _mainMenuSinglePlayer == swappedOut.Player;
                 if (swappedOut.IsMonsterTransform)
                     swappedOut.ReleaseChangeToMonster();
                 swappedOut.ResistStatus = 0;
                 btl_stat.MakeStatusesPermanent(swappedOut, FF9BattleDB.AllStatuses, false);
                 btl_stat.RemoveStatuses(swappedOut, FF9BattleDB.AllStatuses);
                 btl_sys.DelCharacter(swappedOut);
-                btl_init.SwapPlayerCharacter(swappedOut, swappedIn);
                 RemovePlayerFromAction(swappedOut.Id, true);
+                btl_cmd.KillCommand3(swappedOut);
+                btl_init.SwapPlayerCharacter(swappedOut, swappedIn);
                 AbilityPlayerDetail abilityPlayer = _abilityDetailDict[swappedOut.GetIndex()];
                 abilityPlayer.Player = swappedIn;
                 abilityPlayer.HasAp = ff9abil.FF9Abil_HasAp(swappedIn);
                 abilityPlayer.AbilityPaList.Clear();
                 abilityPlayer.AbilityMaxPaList.Clear();
                 SetAbilityAp(abilityPlayer);
+                if (isSinglePlayer)
+                    _mainMenuSinglePlayer = swappedIn;
             }
             foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
             {
@@ -2722,22 +2699,27 @@ public partial class BattleHUD : UIScene
             if (beforeMenu != null)
                 player.info.row = beforeMenu.row;
         }
-        if (_mainMenuSinglePlayer != null)
+        for (Int32 i = 0; i < 4; i++)
+            party.member[i] = null;
+        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateBattleUnits())
+            if (unit.IsPlayer)
+                party.member[unit.Position] = unit.Player;
+        foreach (BattleUnit unit in FF9StateSystem.Battle.FF9Battle.EnumerateDeletedUnits())
+            if (unit.IsPlayer)
+                party.member[unit.Position] = unit.Player;
+        if (_mainMenuSinglePlayer != null && Configuration.Battle.AccessMenus <= 1 && menuHadImpact)
         {
-            for (Int32 i = 0; i < 4; i++)
-                party.member[i] = partyMembers[i];
-            if (Configuration.Battle.AccessMenus <= 1 && menuHadImpact)
+            BTL_DATA playerBtl = btl_util.getBattlePtr(_mainMenuSinglePlayer);
+            if (playerBtl != null)
             {
-                BTL_DATA playerBtl = btl_util.getBattlePtr(_mainMenuSinglePlayer);
-                if (playerBtl != null)
-                {
-                    playerBtl.cur.at = 0;
-                    RemovePlayerFromAction(playerBtl.btl_id, true);
-                    if (1 << CurrentPlayerIndex == playerBtl.btl_id)
-                        SwitchAvailablePlayerOrIdle();
-                }
+                playerBtl.cur.at = 0;
+                RemovePlayerFromAction(playerBtl.btl_id, true);
+                if (1 << CurrentPlayerIndex == playerBtl.btl_id)
+                    SwitchAvailablePlayerOrIdle();
             }
         }
+        if (CommandPanel.activeSelf)
+            DisplayCommand();
         if (AbilityPanel.activeSelf)
             DisplayAbility();
         if (ItemPanel.activeSelf)

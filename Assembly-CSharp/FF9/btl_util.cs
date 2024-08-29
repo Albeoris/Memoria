@@ -110,7 +110,7 @@ namespace FF9
                         return true;
                     if ((mode & BusyMode.TARGET) != 0 && ((cmd.tar_id & btl.btl_id) != 0 || (btl_cmd.MergeReflecTargetID(cmd.reflec) & btl.btl_id) != 0))
                         return true;
-                    if ((mode & BusyMode.MAGIC_CASTER) != 0 && cmd.cmd_no == BattleCommandId.MagicSword && btl.bi.player != 0 && btl.bi.slot_no == 1)
+                    if ((mode & BusyMode.MAGIC_CASTER) != 0 && (cmd.magic_caster_id & btl.btl_id) != 0)
                         return true;
                 }
             if ((mode & BusyMode.ANY_QUEUED) != 0)
@@ -120,7 +120,7 @@ namespace FF9
                         return true;
                     if ((mode & BusyMode.QUEUED_TARGET) != 0 && (cmd.tar_id & btl.btl_id) != 0)
                         return true;
-                    if ((mode & BusyMode.QUEUED_MAGIC_CASTER) != 0 && cmd.cmd_no == BattleCommandId.MagicSword && btl.bi.player != 0 && btl.bi.slot_no == 1)
+                    if ((mode & BusyMode.QUEUED_MAGIC_CASTER) != 0 && (cmd.magic_caster_id & btl.btl_id) != 0)
                         return true;
                 }
             return false;

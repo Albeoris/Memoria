@@ -402,6 +402,7 @@ public static class btl_init
         btl.elem.mgc = p.elem.mgc;
         btl.elem.wpr = p.elem.wpr;
         btl.level = p.level;
+        Single atbProgress = reinit ? (Single)btl.cur.at / btl.max.at : 0f;
         btl_init.CopyPoints(btl.max, p.max);
         btl_init.CopyPoints(btl.cur, p.cur);
         btl.maxDamageLimit = p.maxDamageLimit;
@@ -426,9 +427,8 @@ public static class btl_init
         btl_para.SetupATBCoef(btl, btl_para.GetATBCoef());
         if (reinit)
         {
-            Single atbProgress = (Single)btl.cur.at / btl.max.at;
             btl.max.at = btl_para.GetMaxATB(unit);
-            btl.cur.at = (Int16)Math.Min(btl.max.at - 1, Math.Round(atbProgress * btl.max.at));
+            btl.cur.at = (Int16)Math.Floor(atbProgress * btl.max.at);
         }
         else
         {

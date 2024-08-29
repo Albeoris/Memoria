@@ -489,11 +489,12 @@ public class FieldHUD : UIScene
     {
         FF9PARTY_INFO defaultParty = new FF9PARTY_INFO
         {
-            menu = new CharacterId[4] { CharacterId.Zidane, CharacterId.Vivi, CharacterId.Garnet, CharacterId.Steiner },
-            select = new CharacterId[4] { CharacterId.Freya, CharacterId.Quina, CharacterId.Eiko, CharacterId.Amarant }
+            menu = [CharacterId.Zidane, CharacterId.Vivi, CharacterId.Garnet, CharacterId.Steiner],
+            select = [CharacterId.Freya, CharacterId.Quina, CharacterId.Eiko, CharacterId.Amarant]
         };
         defaultParty.fix.Add(CharacterId.Zidane);
         defaultParty.party_ct = 4;
+        defaultParty.exact_party_ct = -1;
         PersistenSingleton<UIManager>.Instance.PartySettingScene.Info = defaultParty;
         PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.PartySetting);
     }

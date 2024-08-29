@@ -201,8 +201,6 @@ public class MainMenuUI : UIScene
                             {
                                 PersistenSingleton<UIManager>.Instance.PartySettingScene.AccessFromMenu = true;
                                 PersistenSingleton<UIManager>.Instance.PartySettingScene.Info = UISceneHelper.GetCurrentPartyForMenu();
-                                if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
-                                    PersistenSingleton<UIManager>.Instance.PartySettingScene.ExactPartyCount = FF9StateSystem.Common.FF9.party.MemberCount;
                                 PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.PartySetting);
                                 base.Loading = true;
                             });
@@ -674,7 +672,7 @@ public class MainMenuUI : UIScene
         this.OrderSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(4);
         this.CardSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(5);
         this.ConfigSubMenu = this.SubMenuPanel.GetChild(0).GetChild(0).GetChild(6);
-        if (Configuration.Hacks.AllCharactersAvailable > 0 && this.PartySubMenu == null)
+        if (this.PartySubMenu == null && (Configuration.Hacks.AllCharactersAvailable > 0 || Configuration.Battle.IsMenuEnabledInBattle(SubMenu.Party)))
         {
             UITable table = this.SubMenuPanel.GetChild(0).GetChild(0).GetComponent<UITable>();
             this.PartySubMenu = UnityEngine.Object.Instantiate(this.CardSubMenu);

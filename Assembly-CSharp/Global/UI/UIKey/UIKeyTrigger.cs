@@ -925,6 +925,7 @@ namespace Memoria
                 if (p.info.party != 0)
                     selectList.Add(p.info.slot_no);
             party.party_ct = Math.Min(4, selectList.Count);
+            party.exact_party_ct = -1;
 
             for (Int32 memberIndex = 0; memberIndex < 4; ++memberIndex)
             {
@@ -939,8 +940,13 @@ namespace Memoria
                     party.menu[memberIndex] = CharacterId.NONE;
                 }
             }
-
             party.select = selectList.ToArray();
+
+            if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+            {
+                party.exact_party_ct = FF9StateSystem.Common.FF9.party.MemberCount;
+                party.fix = UIManager.Battle.GetNonSwappableCharacters();
+            }
             return party;
         }
 
