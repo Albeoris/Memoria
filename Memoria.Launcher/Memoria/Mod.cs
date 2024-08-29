@@ -26,6 +26,10 @@ namespace Memoria.Launcher
         public String IncompatibleWith { get; set; }
         public String IncompIcon { get; set; }
         public String ActiveIncompatibleMods { get; set; }
+        public String ActivateWithMod { get; set; }
+        public String ActivateWithoutMod { get; set; }
+        public String DeactivateWithMod { get; set; }
+        public String DeactivateWithoutMod { get; set; }
         public String HasPriorityOverMods { get; set; }
         public String Category { get; set; }
         public String Website { get; set; }
@@ -207,6 +211,11 @@ namespace Memoria.Launcher
                 sub.InstallationPath = elInstPath.InnerText;
                 sub.Description = subNode["Description"]?.InnerText;
                 sub.Category = subNode["Category"]?.InnerText;
+
+                sub.ActivateWithMod = subNode["ActivateWithMod"]?.InnerText;
+                sub.ActivateWithoutMod = subNode["ActivateWithoutMod"]?.InnerText;
+                sub.DeactivateWithMod = subNode["DeactivateWithMod"]?.InnerText;
+                sub.DeactivateWithoutMod = subNode["DeactivateWithoutMod"]?.InnerText;
                 if (Int64.TryParse(subNode["Priority"]?.InnerText ?? "0", out outParse))
                     sub.Priority = (Int32)outParse;
                 else
