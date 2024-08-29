@@ -83,7 +83,6 @@ namespace Memoria.Launcher
             lstCatalogMods.ItemsSource = modListCatalog;
             lstMods.ItemsSource = modListInstalled;
             lstDownloads.ItemsSource = downloadList;
-            CheckOutdatedMods();
             UpdateCatalogInstallationState();
 
             lstCatalogMods.SelectionChanged += OnModListSelect;
@@ -95,12 +94,22 @@ namespace Memoria.Launcher
             if (modListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
-            CheckIncompMods();
+            CheckOutdatedAndIncompatibleMods();
         }
 
-        private void CheckOutdatedMods()
+        private void CheckOutdatedAndIncompatibleMods()
         {
             AreThereModUpdates = false;
+            AreThereModIncompatibilies = false;
+
+            foreach (Mod mod in modListInstalled) // reset state
+            {
+                mod.UpdateIcon = null;
+                mod.UpdateTooltip = null;
+                mod.IncompIcon = null;
+                mod.ActiveIncompatibleMods = null;
+            }
+
             foreach (Mod mod in modListInstalled)
             {
                 if (mod != null && ((mod.Name == "Moguri Mod" || mod.Name == "MoguriFiles") && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
@@ -135,18 +144,7 @@ namespace Memoria.Launcher
                     }
                 }
             }
-            colMyModsUpdateIcon.Width = AreThereModUpdates ? 28 : 0;
-            lstMods.Items.Refresh();
-        }
-
-        private void CheckIncompMods()
-        {
-            AreThereModIncompatibilies = false;
-            foreach (Mod mod in modListInstalled) // reset state
-            {
-                mod.IncompIcon = null;
-                mod.ActiveIncompatibleMods = null;
-            }
+            
             foreach (Mod mod in modListInstalled)
             {
                 if (mod != null && mod.Name != null && mod.IncompatibleWith != null && mod.IsActive)
@@ -194,7 +192,13 @@ namespace Memoria.Launcher
                     }
                 }
             }
-            colMyModsIncompIcon.Width = AreThereModIncompatibilies ? 28 : 0;
+
+            if (AreThereModUpdates && AreThereModIncompatibilies)
+                colMyModsIcons.Width = 40;
+            else if (AreThereModUpdates || AreThereModIncompatibilies)
+                colMyModsIcons.Width = 25;
+            else
+                colMyModsIcons.Width = 0;
             lstMods.Items.Refresh();
         }
 
@@ -206,7 +210,7 @@ namespace Memoria.Launcher
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
-            CheckIncompMods();
+            CheckOutdatedAndIncompatibleMods();
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
@@ -464,7 +468,7 @@ namespace Memoria.Launcher
                     mod.IsActive = !isFirstModActive;
                 lstMods.Items.Refresh();
             }
-            CheckIncompMods();
+            CheckOutdatedAndIncompatibleMods();
         }
 
         private void OnPreviewFileDownloaded(Object sender, EventArgs e)
@@ -841,8 +845,7 @@ namespace Memoria.Launcher
                 }
             }
             UpdateInstalledPriorityValue();
-            CheckOutdatedMods();
-            CheckIncompMods();
+            CheckOutdatedAndIncompatibleMods();
         }
 
         private Boolean GenerateAutomaticDescriptionFile(String folderName)

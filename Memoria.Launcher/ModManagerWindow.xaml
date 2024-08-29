@@ -698,7 +698,7 @@
                                     </GridViewColumn.HeaderTemplate>
                                 </GridViewColumn>
                                 <GridViewColumn
-                                x:Name="colMyModsUpdateIcon"
+                                x:Name="colMyModsIcons"
                                 Width="28"
                                 Header="" >
                                     <GridViewColumn.CellTemplate>
@@ -712,17 +712,7 @@
                                                 ToolTipService.InitialShowDelay="10"
                                                 Effect="{StaticResource ButtondropShadowEffect}"
                                                 Foreground="#efd525" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn
-                                x:Name="colMyModsIncompIcon"
-                                Width="28"
-                                Header="" >
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
+
                                                 <TextBlock x:Name="colMyModsIncompText"
                                                 FontFamily="{StaticResource NotoEmoji}"
                                                 Text="{Binding IncompIcon}"
@@ -730,7 +720,7 @@
                                                 ToolTipService.InitialShowDelay="10"
                                                 ToolTipService.BetweenShowDelay="0"
                                                 Effect="{StaticResource ButtondropShadowEffect}"
-                                                Foreground="#b51717" />
+                                                Foreground="#f51818" />
                                             </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
