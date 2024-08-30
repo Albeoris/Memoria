@@ -539,6 +539,8 @@ public partial class BattleHUD : UIScene
             Int32 iconIndex = 0;
             foreach (KeyValuePair<BattleStatusId, String> status in iconNames)
             {
+                if (iconIndex >= uiStatus.Icons.Count)
+                    break;
                 if (!player.IsUnderAnyStatus(status.Key.ToBattleStatus()))
                     continue;
 
@@ -546,9 +548,6 @@ public partial class BattleHUD : UIScene
                 sprite.alpha = 1f;
                 sprite.spriteName = status.Value;
                 iconIndex++;
-
-                if (iconIndex > uiStatus.Icons.Count)
-                    break;
             }
             list.Remove(index1);
         }

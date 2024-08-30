@@ -168,6 +168,8 @@ namespace Memoria.Data
 
         private static IEnumerable<FeatureSet> GetApplicableFeatures(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu, AA_DATA ability = null, CMD_DATA cmd = null)
         {
+            if (!caster.IsPlayer)
+                yield break;
             foreach (FeatureSet flexiSet in FlexibleFeatures)
                 if (flexiSet.CheckCondition(abilId, caster, cmdId, menu, ability, cmd))
                     yield return flexiSet;

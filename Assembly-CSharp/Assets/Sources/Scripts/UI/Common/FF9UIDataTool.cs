@@ -140,8 +140,8 @@ namespace Assets.Sources.Scripts.UI.Common
                     // TODO Add more UISprite if the limit is reached?
                     if (statusSprite == null)
                         break;
-                    statusesSpriteList[spriteSlot].spriteName = spriteName;
-                    statusesSpriteList[spriteSlot].alpha = 1f;
+                    statusSprite.spriteName = spriteName;
+                    statusSprite.alpha = 1f;
                 }
             }
         }

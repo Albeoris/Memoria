@@ -73,7 +73,18 @@ namespace Memoria.Data
                     if (enabledState == 0)
                         return enabledState;
                 }
-                if (asUnit != null && asUnit.IsMonsterTransform)
+                if (asUnit != null && enabledState > 1 && CharacterCommands.Commands.TryGetValue(cmdId, out CharacterCommand ff9command))
+                {
+                    if (ff9command.Type == CharacterCommandType.Normal || ff9command.Type == CharacterCommandType.Throw || ff9command.Type == CharacterCommandType.Instant)
+                    {
+                        BattleAbilityId uniqueAbilId = ff9command.GetAbilityId();
+                        BattleAbilityId patchedId = BattleAbilityHelper.Patch(uniqueAbilId, character);
+                        AA_DATA patchedAbil = FF9StateSystem.Battle.FF9Battle.aa_data[patchedId];
+                        if (BattleAbilityHelper.IsAbilityDisabled(patchedId, asUnit, cmdId, menu))
+                            enabledState = Math.Min(enabledState, 1);
+                    }
+                }
+                if (asUnit != null && enabledState > 1 && asUnit.IsMonsterTransform)
                 {
                     BTL_DATA.MONSTER_TRANSFORM transform = asUnit.Data.monster_transform;
                     if (cmdId == BattleCommandId.Attack && transform.attack[asUnit.Data.bi.def_idle] == null)
