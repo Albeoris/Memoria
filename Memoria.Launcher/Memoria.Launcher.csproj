@@ -102,6 +102,7 @@
   <ItemGroup>
     <Compile Include="AdvOptionsWindow.cs" />
     <Compile Include="Extractor.cs" />
+    <Compile Include="Ini\IniReader.cs" />
     <Compile Include="Languages\Lang.cs" />
     <Compile Include="Languages\XmlDocumentExm.cs" />
     <Compile Include="Languages\XmlHelper.cs" />

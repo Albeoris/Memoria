@@ -65,7 +65,7 @@ namespace Memoria.Launcher
 
         private void ModManagerWindow_KeyUp(Object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(e.Key == System.Windows.Input.Key.Delete) Uninstall();
+            if (e.Key == System.Windows.Input.Key.Delete) Uninstall();
         }
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
@@ -200,6 +200,9 @@ namespace Memoria.Launcher
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
+            Mod mod = (sender as System.Windows.Controls.CheckBox)?.DataContext as Mod;
+            if (mod != null && mod.IsActive)
+                mod.TryApplyPreset();
             CheckIncompMods();
         }
 
@@ -455,7 +458,11 @@ namespace Memoria.Launcher
             {
                 Boolean isFirstModActive = modListInstalled[0].IsActive;
                 foreach (Mod mod in modListInstalled)
+                {
                     mod.IsActive = !isFirstModActive;
+                    if (mod.IsActive)
+                        mod.TryApplyPreset();
+                }
                 lstMods.Items.Refresh();
             }
             CheckIncompMods();
@@ -546,7 +553,8 @@ namespace Memoria.Launcher
 
         private Task ExtractAllFileFromArchive(String archivePath, String extactTo)
         {
-            return Task.Run(() => {
+            return Task.Run(() =>
+            {
                 Extractor.ExtractAllFileFromArchive(archivePath, extactTo, ExtractionCancellationToken.Token);
                 if (ExtractionCancellationToken.IsCancellationRequested)
                 {
@@ -746,7 +754,10 @@ namespace Memoria.Launcher
                 {
                     Mod newMod = Mod.SearchWithName(modListInstalled, downloadingModName);
                     if (newMod != null)
+                    {
                         newMod.IsActive = true;
+                        newMod.TryApplyPreset();
+                    }
                 }
             });
         }

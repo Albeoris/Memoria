@@ -3,8 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Text;
-using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
@@ -441,6 +441,7 @@ namespace Memoria.Launcher
             _fontChoiceBox.ItemsSource = fontNames;
             _fontChoiceBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(FontChoice)) { Mode = BindingMode.TwoWay });
 
+            SanitizeMemoriaIni();
             LoadSettings();
         }
 
@@ -820,7 +821,7 @@ namespace Memoria.Launcher
         private UiComboBox _fontChoiceBox;
         private readonly String _fontDefaultPC = "Final Fantasy IX PC";
         private readonly String _fontDefaultPSX = "Final Fantasy IX PSX";
-        private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
+        private readonly String _iniPath = @"./Memoria.ini";
 
         public void ComeBackToLauncherReloadSettings()
         {
@@ -831,16 +832,6 @@ namespace Memoria.Launcher
         {
             try
             {
-                if (!File.Exists(_iniPath))
-                {
-                    Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("Memoria.ini");
-                    StreamReader reader = new(input);
-                    string text = reader.ReadToEnd();
-                    File.WriteAllText(_iniPath, text);
-                }
-
-                SanitizeMemoriaIni();
-
                 IniFile iniFile = new(_iniPath);
 
                 String modstring = iniFile.ReadValue("Mod", "FolderNames");
@@ -1401,276 +1392,99 @@ namespace Memoria.Launcher
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
             }
         }
-        private async void SanitizeMemoriaIni()
+        private void SanitizeMemoriaIni()
         {
-            MakeSureSpacesAroundEqualsigns();
-
-            try
+            Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("Memoria.ini");
+            string text;
+            using (StreamReader reader = new(input))
             {
-                if (File.Exists(_iniPath))
+                text = reader.ReadToEnd();
+            }
+
+            if (!File.Exists(_iniPath))
+            {
+                File.WriteAllText(_iniPath, text);
+                return;
+            }
+
+            File.WriteAllLines(_iniPath, MergeIniFiles(text.Replace("\r", "").Split('\n'), File.ReadAllLines(_iniPath)));
+        }
+
+        private static String[] MergeIniFiles(String[] newIni, String[] previousIni)
+        {
+            List<String> mergedIni = new List<String>(previousIni.Where(line => !line.StartsWith("\t; "))); // In order to have a persisting custom comment, the user must use a slightly different format than "	; " (eg. "	;; ")
+            for (Int32 i = 0; i < mergedIni.Count; i++)
+            {
+                // Hotfix: replace incorrect default formulas by the correct ones
+                if (String.Compare(mergedIni[i], "StatusDurationFormula = ContiCnt * (IsNegativeStatus ? 8 * (60 - TargetSpirit) : 8 * TargetSpirit)") == 0
+                    || String.Compare(mergedIni[i], "StatusTickFormula = OprCnt * (IsNegativeStatus ? 4 * (60 - TargetSpirit) : 4 * TargetSpirit)") == 0)
                 {
-                    RemoveDuplicateKeys(_iniPath);
-                    IniFile iniFile = new(_iniPath);
-                    String _checklatestadded = iniFile.ReadValue("Interface", "SynthIngredientStockDisplayed"); // check if the latest ini parameter is already there
-                    if (String.IsNullOrEmpty(_checklatestadded))
-                    {
-                        MakeIniNotNull("Mod", "FolderNames", "");
-                        MakeIniNotNull("Mod", "Priorities", "");
-                        MakeIniNotNull("Mod", "UseFileList", "1");
-
-                        MakeIniNotNull("Font", "Enabled", "1");
-                        MakeIniNotNull("Font", "Names", "\"Arial\", \"Times Bold\"");
-                        MakeIniNotNull("Font", "Size", "24");
-
-                        MakeIniNotNull("Graphics", "Enabled", "0");
-                        MakeIniNotNull("Graphics", "BattleFPS", "60");
-                        MakeIniNotNull("Graphics", "BattleTPS", "15");
-                        MakeIniNotNull("Graphics", "FieldFPS", "60");
-                        MakeIniNotNull("Graphics", "FieldTPS", "30");
-                        MakeIniNotNull("Graphics", "WorldFPS", "60");
-                        MakeIniNotNull("Graphics", "WorldTPS", "20");
-                        MakeIniNotNull("Graphics", "MenuFPS", "60");
-                        MakeIniNotNull("Graphics", "MenuTPS", "60");
-                        MakeIniNotNull("Graphics", "BattleSwirlFrames", "0");
-                        MakeIniNotNull("Graphics", "WidescreenSupport", "1");
-                        MakeIniNotNull("Graphics", "SkipIntros", "0");
-                        MakeIniNotNull("Graphics", "GarnetHair", "0");
-                        MakeIniNotNull("Graphics", "TileSize", "32");
-                        MakeIniNotNull("Graphics", "AntiAliasing", "8");
-                        MakeIniNotNull("Graphics", "CameraStabilizer", "85");
-                        MakeIniNotNull("Graphics", "FieldSmoothTexture", "1");
-                        MakeIniNotNull("Graphics", "WorldSmoothTexture", "1");
-                        MakeIniNotNull("Graphics", "BattleSmoothTexture", "1");
-                        MakeIniNotNull("Graphics", "ElementsSmoothTexture", "1");
-                        MakeIniNotNull("Graphics", "SFXSmoothTexture", "-1");
-                        MakeIniNotNull("Graphics", "UISmoothTexture", "-1");
-
-                        MakeIniNotNull("Control", "Enabled", "1");
-                        MakeIniNotNull("Control", "DisableMouse", "0");
-                        MakeIniNotNull("Control", "DialogProgressButtons", "\"Confirm\"");
-                        MakeIniNotNull("Control", "WrapSomeMenus", "1");
-                        MakeIniNotNull("Control", "BattleAutoConfirm", "1");
-                        MakeIniNotNull("Control", "TurboDialog", "1");
-                        MakeIniNotNull("Control", "PSXScrollingMethod", "1");
-                        MakeIniNotNull("Control", "PSXMovementMethod", "1");
-                        MakeIniNotNull("Control", "AlwaysCaptureGamepad", "1");
-
-                        MakeIniNotNull("Battle", "Enabled", "0");
-                        MakeIniNotNull("Battle", "SFXRework", "1");
-                        MakeIniNotNull("Battle", "Speed", "0");
-                        MakeIniNotNull("Battle", "NoAutoTrance", "0");
-                        MakeIniNotNull("Battle", "EncounterInterval", "960");
-                        MakeIniNotNull("Battle", "EncounterInitial", "-1440");
-                        MakeIniNotNull("Battle", "PersistentDangerValue", "0");
-                        MakeIniNotNull("Battle", "AutoPotionOverhealLimit", "-1");
-                        MakeIniNotNull("Battle", "GarnetConcentrate", "0");
-                        MakeIniNotNull("Battle", "SelectBestTarget", "1");
-                        MakeIniNotNull("Battle", "BreakDamageLimit", "0");
-                        MakeIniNotNull("Battle", "ViviAutoAttack", "0");
-                        MakeIniNotNull("Battle", "CountersBetterTarget", "0");
-                        MakeIniNotNull("Battle", "LockEquippedAbilities", "0");
-                        MakeIniNotNull("Battle", "FloatEvadeBonus", "0");
-                        MakeIniNotNull("Battle", "AccessMenus", "0");
-                        MakeIniNotNull("Battle", "CustomBattleFlagsMeaning", "0");
-
-                        MakeIniNotNull("Icons", "Enabled", "1");
-                        MakeIniNotNull("Icons", "HideCursor", "0");
-                        MakeIniNotNull("Icons", "HideCards", "0");
-                        MakeIniNotNull("Icons", "HideExclamation", "0");
-                        MakeIniNotNull("Icons", "HideQuestion", "0");
-                        MakeIniNotNull("Icons", "HideBeach", "0");
-                        MakeIniNotNull("Icons", "HideSteam", "0");
-
-                        MakeIniNotNull("Cheats", "Enabled", "1");
-                        MakeIniNotNull("Cheats", "Rotation", "1");
-                        MakeIniNotNull("Cheats", "Perspective", "1");
-                        MakeIniNotNull("Cheats", "SpeedMode", "1");
-                        MakeIniNotNull("Cheats", "SpeedFactor", "3");
-                        MakeIniNotNull("Cheats", "SpeedTimer", "0");
-                        MakeIniNotNull("Cheats", "BattleAssistance", "0");
-                        MakeIniNotNull("Cheats", "Attack9999", "0");
-                        MakeIniNotNull("Cheats", "NoRandomEncounter", "1");
-                        MakeIniNotNull("Cheats", "MasterSkill", "0");
-                        MakeIniNotNull("Cheats", "LvMax", "0");
-                        MakeIniNotNull("Cheats", "GilMax", "0");
-
-                        MakeIniNotNull("Hacks", "Enabled", "0");
-                        MakeIniNotNull("Hacks", "AllCharactersAvailable", "0");
-                        MakeIniNotNull("Hacks", "RopeJumpingIncrement", "1");
-                        MakeIniNotNull("Hacks", "FrogCatchingIncrement", "1");
-                        MakeIniNotNull("Hacks", "HippaulRacingViviSpeed", "33");
-                        MakeIniNotNull("Hacks", "StealingAlwaysWorks", "0");
-                        MakeIniNotNull("Hacks", "DisableNameChoice", "0");
-                        MakeIniNotNull("Hacks", "ExcaliburIINoTimeLimit", "0");
-
-                        MakeIniNotNull("TetraMaster", "Enabled", "1");
-                        MakeIniNotNull("TetraMaster", "TripleTriad", "0");
-                        MakeIniNotNull("TetraMaster", "ReduceRandom", "0");
-                        MakeIniNotNull("TetraMaster", "MaxCardCount", "100");
-                        MakeIniNotNull("TetraMaster", "DiscardAutoButton", "1");
-                        MakeIniNotNull("TetraMaster", "DiscardAssaultCards", "0");
-                        MakeIniNotNull("TetraMaster", "DiscardFlexibleCards", "1");
-                        MakeIniNotNull("TetraMaster", "DiscardMaxAttack", "224");
-                        MakeIniNotNull("TetraMaster", "DiscardMaxPDef", "255");
-                        MakeIniNotNull("TetraMaster", "DiscardMaxMDef", "255");
-                        MakeIniNotNull("TetraMaster", "DiscardMaxSum", "480");
-                        MakeIniNotNull("TetraMaster", "DiscardMinDeckSize", "10");
-                        MakeIniNotNull("TetraMaster", "DiscardKeepSameType", "1");
-                        MakeIniNotNull("TetraMaster", "DiscardKeepSameArrow", "0");
-                        MakeIniNotNull("TetraMaster", "DiscardExclusions", "56, 75, 76, 77, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 98, 99, 100");
-
-                        MakeIniNotNull("Interface", "BattleRowCount", "5");
-                        MakeIniNotNull("Interface", "BattleColumnCount", "1");
-                        MakeIniNotNull("Interface", "BattleMenuPosX", "-400");
-                        MakeIniNotNull("Interface", "BattleMenuPosY", "-362");
-                        MakeIniNotNull("Interface", "BattleMenuWidth", "630");
-                        MakeIniNotNull("Interface", "BattleMenuHeight", "236");
-                        MakeIniNotNull("Interface", "BattleDetailPosX", "345");
-                        MakeIniNotNull("Interface", "BattleDetailPosY", "-380");
-                        MakeIniNotNull("Interface", "BattleDetailWidth", "796");
-                        MakeIniNotNull("Interface", "BattleDetailHeight", "230");
-                        MakeIniNotNull("Interface", "MinimapPreset", "1");
-                        MakeIniNotNull("Interface", "MinimapOffsetX", "0");
-                        MakeIniNotNull("Interface", "MinimapOffsetY", "0");
-                        MakeIniNotNull("Interface", "PSXBattleMenu", "0");
-                        MakeIniNotNull("Interface", "ScanDisplay", "1");
-                        MakeIniNotNull("Interface", "BattleCommandTitleFormat", "");
-                        MakeIniNotNull("Interface", "BattleDamageTextFormat", "");
-                        MakeIniNotNull("Interface", "BattleRestoreTextFormat", "");
-                        MakeIniNotNull("Interface", "BattleMPDamageTextFormat", "");
-                        MakeIniNotNull("Interface", "BattleMPRestoreTextFormat", "");
-                        MakeIniNotNull("Interface", "MenuItemRowCount", "8");
-                        MakeIniNotNull("Interface", "MenuAbilityRowCount", "6");
-                        MakeIniNotNull("Interface", "MenuEquipRowCount", "5");
-                        MakeIniNotNull("Interface", "MenuChocographRowCount", "5");
-                        MakeIniNotNull("Interface", "FadeDuration", "40");
-                        MakeIniNotNull("Interface", "SynthIngredientStockDisplayed", "1");
-                        MakeIniNotNull("Interface", "DisplayPSXDiscChanges", "1");
-
-                        MakeIniNotNull("Fixes", "Enabled", "1");
-                        MakeIniNotNull("Fixes", "KeepRestTimeInBattle", "1");
-
-                        MakeIniNotNull("SaveFile", "DisableAutoSave", "0");
-                        MakeIniNotNull("SaveFile", "AutoSaveOnlyAtMoogle", "0");
-                        MakeIniNotNull("SaveFile", "SaveOnCloud", "0");
-
-                        MakeIniNotNull("Speedrun", "Enabled", "0");
-                        MakeIniNotNull("Speedrun", "SplitSettingsPath", "");
-                        MakeIniNotNull("Speedrun", "LogGameTimePath", "");
-
-                        MakeIniNotNull("Debug", "Enabled", "0");
-                        MakeIniNotNull("Debug", "SigningEventObjects", "0");
-                        MakeIniNotNull("Debug", "StartModelViewer", "0");
-                        MakeIniNotNull("Debug", "StartFieldCreator", "0");
-                        MakeIniNotNull("Debug", "RenderWalkmeshes", "0");
-
-                        MakeIniNotNull("Shaders", "Enabled", "0");
-                        MakeIniNotNull("Shaders", "Shader_Field_Realism", "0");
-                        MakeIniNotNull("Shaders", "Shader_Field_Toon", "0");
-                        MakeIniNotNull("Shaders", "Shader_Field_Outlines", "0");
-                        MakeIniNotNull("Shaders", "Shader_Battle_Realism", "0");
-                        MakeIniNotNull("Shaders", "Shader_Battle_Toon", "0");
-                        MakeIniNotNull("Shaders", "Shader_Battle_Outlines", "0");
-
-                        MakeSureSpacesAroundEqualsigns();
-                    }
+                    mergedIni.RemoveAt(i--);
                 }
             }
-            catch (Exception ex)
+            String currentSection = "";
+            Int32 sectionFirstLine = 0;
+            Int32 sectionLastLine = 0;
+            foreach (String line in newIni)
             {
-                UiHelper.ShowError(Application.Current.MainWindow, ex);
-            }
-
-        }
-
-        private async void MakeSureSpacesAroundEqualsigns()
-        {
-            try
-            {
-                if (File.Exists(_iniPath))
-                {
-                    string wholeFile = File.ReadAllText(_iniPath);
-                    wholeFile = wholeFile.Replace("=", " = ");
-                    wholeFile = wholeFile.Replace("  ", " ");
-                    wholeFile = wholeFile.Replace("  ", " ");
-                    File.WriteAllText(_iniPath, wholeFile);
-                }
-            }
-            catch (Exception ex)
-            {
-                UiHelper.ShowError(Application.Current.MainWindow, ex);
-            }
-        }
-
-        private async void MakeIniNotNull(String Category, String Setting, String Defaultvalue)
-        {
-            IniFile iniFile = new(_iniPath);
-            String value = iniFile.ReadValue(Category, Setting);
-            if (String.IsNullOrEmpty(value))
-            {
-                iniFile.WriteValue(Category, Setting + " ", " " + Defaultvalue);
-            }
-        }
-        public static void RemoveDuplicateKeys(string iniPath)
-        {
-            string wholeFile = File.ReadAllText(iniPath);
-            string cleanedContent = RemoveDuplicateKeysFromContent(wholeFile);
-            File.WriteAllText(iniPath, cleanedContent);
-        }
-        private static string RemoveDuplicateKeysFromContent(string content)
-        {
-            var sections = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
-            string[] lines = content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            string currentSection = "";
-
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
+                String trimmedLine = line.Trim();
+                if (trimmedLine.Length == 0)
                     continue;
-                if (line.StartsWith("[") && line.EndsWith("]"))
+                if (trimmedLine.StartsWith("["))
                 {
-                    currentSection = line.Trim('[', ']');
-                    if (!sections.ContainsKey(currentSection))
+                    currentSection = trimmedLine.Substring(1, trimmedLine.IndexOf("]") - 1);
+                    sectionFirstLine = mergedIni.FindIndex(s => s.Trim().StartsWith("[" + currentSection + "]"));
+                    Boolean hasSection = sectionFirstLine >= 0;
+                    if (hasSection)
                     {
-                        sections[currentSection] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                    }
-                }
-                else if (!line.Contains(";") && line.Contains("=") && !line.StartsWith("="))
-                {
-                    var keyValue = line.Split(['='], 2);
-                    sections[currentSection][keyValue[0].Trim()] = keyValue[1].Trim();
-                }
-                else
-                {
-                    sections[currentSection][line] = "zzz";
-                }
-            }
-
-            return GenerateContentFromSections(sections);
-        }
-
-        private static string GenerateContentFromSections(Dictionary<string, Dictionary<string, string>> sections)
-        {
-            var result = new List<string>();
-
-            foreach (var section in sections)
-            {
-                result.Add($"[{section.Key}]");
-                foreach (var keyValue in section.Value)
-                {
-                    if (keyValue.Value != "zzz")
-                    {
-                        result.Add($"{keyValue.Key} = {keyValue.Value}");
+                        sectionFirstLine++;
+                        sectionLastLine = sectionFirstLine;
+                        while (sectionLastLine < mergedIni.Count)
+                        {
+                            if (mergedIni[sectionLastLine].Trim().StartsWith("["))
+                                break;
+                            sectionLastLine++;
+                        }
+                        while (sectionLastLine > 0 && mergedIni[sectionLastLine - 1].Trim().Length == 0)
+                            sectionLastLine--;
                     }
                     else
                     {
-                        result.Add($"{keyValue.Key}");
+                        mergedIni.Add("[" + currentSection + "]");
+                        sectionFirstLine = mergedIni.Count;
+                        sectionLastLine = sectionFirstLine;
                     }
                 }
-                result.Add(""); // Add a blank line after each section for readability
+                else if (trimmedLine.StartsWith(";"))
+                {
+                    if (!mergedIni.Exists(s => s.Trim() == trimmedLine))
+                    {
+                        mergedIni.Insert(sectionFirstLine, line);
+                        sectionFirstLine++;
+                        sectionLastLine++;
+                    }
+                }
+                else
+                {
+                    String fieldName = trimmedLine.Substring(0, trimmedLine.IndexOfAny(new Char[] { ' ', '\t', '=' }));
+                    Boolean fieldKnown = false;
+                    for (Int32 i = sectionFirstLine; i < sectionLastLine; i++)
+                    {
+                        if (mergedIni[i].Trim().StartsWith(fieldName))
+                        {
+                            fieldKnown = true;
+                            break;
+                        }
+                    }
+                    if (!fieldKnown)
+                    {
+                        mergedIni.Insert(sectionLastLine, line);
+                        sectionFirstLine++;
+                        sectionLastLine++;
+                    }
+                }
             }
-
-            return string.Join(Environment.NewLine, result);
+            return mergedIni.ToArray();
         }
     }
 }
