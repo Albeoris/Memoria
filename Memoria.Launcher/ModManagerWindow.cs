@@ -71,7 +71,7 @@ namespace Memoria.Launcher
 
         private void ModManagerWindow_KeyUp(Object sender, System.Windows.Input.KeyEventArgs e)
         {
-            if(e.Key == System.Windows.Input.Key.Delete) Uninstall();
+            if (e.Key == System.Windows.Input.Key.Delete) Uninstall();
         }
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
@@ -80,11 +80,11 @@ namespace Memoria.Launcher
             UpdateCatalog();
             LoadSettings();
             CheckForValidModFolder();
+            CheckOutdatedAndIncompatibleMods();
             lstCatalogMods.ItemsSource = modListCatalog;
             lstMods.ItemsSource = modListInstalled;
             lstDownloads.ItemsSource = downloadList;
             UpdateCatalogInstallationState();
-            CheckOutdatedAndIncompatibleMods();
 
             lstCatalogMods.SelectionChanged += OnModListSelect;
             lstMods.SelectionChanged += OnModListSelect;
@@ -173,7 +173,6 @@ namespace Memoria.Launcher
 
                                 AreThereModIncompatibilies = true;
                             }
-                            
                         }
                     }
                 }
@@ -185,13 +184,10 @@ namespace Memoria.Launcher
 
                     Boolean modFoundActive = false;
 
-
                     foreach (Mod other_mod in modListInstalled)
                     {
                         if (other_mod == null || other_mod.Name == null)
                             continue;
-
-                        //MessageBox.Show($"submod {subMod.Name}", "Test", MessageBoxButtons.OK);
 
                         if (subMod.ActivateWithMod != null && subMod.ActivateWithMod == other_mod.Name && other_mod.IsActive)
                             subMod.IsActive = true;
@@ -202,8 +198,6 @@ namespace Memoria.Launcher
                             modFoundActive = true;
                         if (subMod.DeactivateWithoutMod != null && subMod.DeactivateWithoutMod == other_mod.Name && other_mod.IsActive)
                             modFoundActive = true;
-
-
                     }
 
                     // apply when mod is not found active, even if not installed, and do nothing otherwise
@@ -212,9 +206,6 @@ namespace Memoria.Launcher
                     if (!modFoundActive && subMod.DeactivateWithoutMod != null)
                         subMod.IsActive = false;
 
-                    //if (mod.Name == "Tantalus" && subMod.Name == "Vanilla")
-                    //MessageBox.Show($"submod {subMod.Name} {subMod.IsActive} | {subMod.ActivateWithMod ?? "_"} {subMod.DeactivateWithMod ?? "_"} {subMod.ActivateWithoutMod ?? "_"} {subMod.DeactivateWithoutMod ?? "_"}", "Test", MessageBoxButtons.OK);
-                    
                     UpdateModDetails((Mod)lstMods.SelectedItem);
                 }
 
@@ -329,16 +320,48 @@ namespace Memoria.Launcher
         {
             UpdateSubModDetails((Mod)PreviewSubModList.SelectedItem);
         }
+
         private void OnSubModActivate(Object sender, RoutedEventArgs e)
         {
             Mod subMod = (Mod)PreviewSubModList.SelectedItem;
             if (subMod != null)
                 subMod.IsActive = PreviewSubModActive.IsChecked ?? false;
         }
+
         private void OnClickUninstall(Object sender, RoutedEventArgs e)
         {
             Uninstall();
         }
+
+        private void OnClickReorganize(Object sender, RoutedEventArgs e)
+        {
+            OrderInstalledByModsPriority();
+        }
+
+        public void OrderInstalledByModsPriority()
+        {
+            foreach (Mod mod in modListInstalled)
+            {
+                if (mod == null || mod.Name == null)
+                    continue;
+                foreach (Mod catalog_mod in modListCatalog)
+                {
+                    if (catalog_mod == null || catalog_mod.Name == null)
+                        continue;
+                    if (mod.Name == catalog_mod.Name)
+                    {
+                        mod.PriorityWeight = catalog_mod.PriorityWeight;
+                    }
+                }
+            }
+            List<Mod> orderedMods = modListInstalled.OrderByDescending(mod => mod.PriorityWeight).ToList();
+            modListInstalled.Clear();
+            foreach (Mod mod in orderedMods)
+                modListInstalled.Add(mod);
+
+            UpdateInstalledPriorityValue();
+        }
+
         private void OnClickMoveUp(Object sender, RoutedEventArgs e)
         {
             if (lstMods.SelectedIndex > 0)

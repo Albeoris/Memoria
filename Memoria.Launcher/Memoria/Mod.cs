@@ -49,6 +49,7 @@ namespace Memoria.Launcher
         public Boolean IsActive { get; set; }
         public String Installed { get; set; }
         public Int32 Priority { get; set; }
+        public Int32 PriorityWeight { get; set; }
         public BitmapImage PreviewImage { get; set; }
 
         // Entries for current download
@@ -190,6 +191,10 @@ namespace Memoria.Launcher
             }
             IncompatibleWith = modNode["IncompatibleWith"]?.InnerText;
             HasPriorityOverMods = modNode["HasPriorityOverMods"]?.InnerText;
+            if (Int64.TryParse(modNode["PriorityWeight"]?.InnerText ?? "0", out outParse))
+                PriorityWeight = (Int32)outParse;
+            else
+                PriorityWeight = 0;
             Category = modNode["Category"]?.InnerText;
             Website = modNode["Website"]?.InnerText;
             DownloadUrl = modNode["DownloadUrl"]?.InnerText;

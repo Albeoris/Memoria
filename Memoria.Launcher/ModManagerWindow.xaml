@@ -533,6 +533,14 @@
                     Grid.Column="0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Stretch">
+                        <Button x:Name="btnReorganize"
+                        Style="{StaticResource ButtonStyle}"
+                        Margin="0,0,0,3"
+                        Click="OnClickReorganize"
+                        TabIndex="21"
+                        ToolTip="Auto-organize mod by priority" >
+                            <Image Source="/Images/btnReorganize.png" />
+                        </Button>
                         <Button x:Name="btnMoveUp"
                         Style="{StaticResource ButtonStyle}"
                         Margin="0,0,0,3"

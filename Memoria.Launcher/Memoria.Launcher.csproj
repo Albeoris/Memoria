@@ -191,6 +191,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\btnReorganize.png" />
     <Resource Include="Images\alert_incompat.png" />
     <Resource Include="Images\alert_update.png" />
     <Resource Include="Images\btnCloseimg.png" />
