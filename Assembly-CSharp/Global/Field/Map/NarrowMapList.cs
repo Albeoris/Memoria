@@ -34,9 +34,8 @@ public static class NarrowMapList
     {
         if (SpecificScenesNarrow(mapId))
             return 320;
-        if ((mapId == 50 || mapId == 70) && FieldMap.ActualPsxScreenWidth > 478)
+        if ((mapId == 50 || mapId == 70 || mapId == 507) && FieldMap.ActualPsxScreenWidth > 478)
         {
-            Configuration.Graphics.DisableWidescreenSupportForSingleMap();
             return 320;
         }
 
