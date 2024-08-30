@@ -8,7 +8,7 @@ namespace Memoria
         public static class Battle
         {
             public static Boolean SFXRework => Instance._battle.SFXRework || Speed >= 3;
-            public static Int32 Speed => GetBattleSpeed();
+            public static Int32 Speed => Instance._battle.Speed;
             public static Int32 ATBMode
             {
                 get => Instance._battle.Speed;
@@ -47,15 +47,6 @@ namespace Memoria
             public static String SpiritStatFormula => Instance._battle.SpiritStatFormula;
             public static String MagicStoneStockFormula => Instance._battle.MagicStoneStockFormula;
             public static String TranceDecreaseFormula => Instance._battle.TranceDecreaseFormula;
-
-            private static Int32 GetBattleSpeed()
-            {
-                Int32 value = Math.Max(Instance._battle.Speed, Instance._hacks.BattleSpeed);
-                if (value == 0)
-                    return 0;
-
-                return value;
-            }
 
             public static void SaveBattleSpeed()
             {
