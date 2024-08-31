@@ -7,6 +7,7 @@ namespace Memoria
     {
         private sealed class HacksSection : IniSection
         {
+            public readonly IniValue<Int32> BattleSpeed;
             public readonly IniValue<Int32> AllCharactersAvailable;
             public readonly IniValue<Int32> RopeJumpingIncrement;
             public readonly IniValue<Int32> SwordplayAssistance;
@@ -18,6 +19,7 @@ namespace Memoria
 
             public HacksSection() : base(nameof(HacksSection), false)
             {
+                BattleSpeed = BindInt32(nameof(BattleSpeed), 0);
                 AllCharactersAvailable = BindInt32(nameof(AllCharactersAvailable), 0);
                 RopeJumpingIncrement = BindInt32(nameof(RopeJumpingIncrement), 1);
                 SwordplayAssistance = BindInt32(nameof(SwordplayAssistance), 1);
