@@ -305,7 +305,9 @@ public class VoicePlayer : SoundPlayer
 
     public static void FieldZoneDialogClosed(Dialog dialog)
     {
-        FieldZoneReleaseVoice(dialog, Configuration.VoiceActing.StopVoiceWhenDialogDismissed && !dialog.IsClosedByScript);
+        if (huntHeldCounter == null && huntTakenCounter == null) {
+            FieldZoneReleaseVoice(dialog, Configuration.VoiceActing.StopVoiceWhenDialogDismissed && !dialog.IsClosedByScript);
+        }
     }
 
     private static void FieldZoneReleaseVoice(Dialog dialog, Boolean stopSound)
