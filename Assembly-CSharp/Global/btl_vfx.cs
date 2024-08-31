@@ -210,6 +210,7 @@ public static class btl_vfx
         }
         geo.geoAttach(btl.weapon_geo, btl.gameObject, btl.weapon_bone);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);
+        btl2d.ShowMessages(true);
     }
 
     public static SpecialEffect GetPlayerAttackVfx(BTL_DATA btl)

@@ -359,7 +359,19 @@ public static class btl2d
     public static void ShowMessages(Boolean show = true)
     {
         foreach (HUDMessageChild message in btl2d.StatusMessages)
+        {
             message.gameObject.SetActive(show);
+            if (show && message.Follower.targetBtl != null && message.Follower.iconPosition >= 0)
+            {
+                // Check if the follow is still valid or needs update
+                btl2d.GetIconPosition(message.Follower.targetBtl, message.Follower.iconPosition, out Transform attach, out Vector3 off);
+                if (attach != message.Follower.target)
+                {
+                    message.Follower.target = attach;
+                    message.Follower.targetTransformOffset = off;
+                }
+            }
+        }
     }
 
     public static void GetIconPosition(BTL_DATA btl, out Byte[] iconBone, out SByte[] iconOffY, out SByte[] iconOffZ)

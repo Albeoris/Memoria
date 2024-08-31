@@ -64,4 +64,9 @@ public class UIFollowTarget : MonoBehaviour
 
     [NonSerialized]
     public Boolean clampToScreen;
+
+    [NonSerialized]
+    public BTL_DATA targetBtl;
+    [NonSerialized]
+    public Int32 iconPosition;
 }

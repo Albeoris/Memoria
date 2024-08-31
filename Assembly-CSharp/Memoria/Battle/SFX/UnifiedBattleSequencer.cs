@@ -330,7 +330,10 @@ public static class UnifiedBattleSequencer
                             sfxArg[3] |= 4;
                         customRequest.SetupVfxRequest(cmd, sfxArg, caster, tmpChar);
                         if (mcasterId != 0)
+                        {
+                            cmd.magic_caster_id |= mcasterId;
                             customRequest.mexe = btl_scrp.FindBattleUnit(mcasterId).Data;
+                        }
                         if (code.TryGetArgVector("TargetPosition", out tmpVec))
                         {
                             customRequest.trgcpos.vx = (Int32)tmpVec.x;

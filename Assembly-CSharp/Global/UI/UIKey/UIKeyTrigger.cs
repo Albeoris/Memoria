@@ -126,33 +126,40 @@ public class UIKeyTrigger : MonoBehaviour
 
     private void Update()
     {
-        GameLoopManager.RaiseUpdateEvent();
+        try
+        {
+            GameLoopManager.RaiseUpdateEvent();
 
-        if (UnityXInput.Input.GetAxis("Mouse X") < 1.0 / 1000.0 && UnityXInput.Input.GetAxis("Mouse Y") < 1.0 / 1000.0)
-        {
-            disableMouseCounter += Time.deltaTime;
+            if (UnityXInput.Input.GetAxis("Mouse X") < 1.0 / 1000.0 && UnityXInput.Input.GetAxis("Mouse Y") < 1.0 / 1000.0)
+            {
+                disableMouseCounter += Time.deltaTime;
+            }
+            else
+            {
+                disableMouseCounter = 0.0f;
+                if (!UICamera.list[0].useMouse)
+                    UICamera.list[0].useMouse = true;
+            }
+            if (UnityXInput.Input.GetMouseButton(0) || UnityXInput.Input.GetMouseButton(1) || (UnityXInput.Input.GetMouseButton(2) || Mathf.Abs(UnityXInput.Input.GetAxis("Mouse ScrollWheel")) > 0.00999999977648258))
+            {
+                disableMouseCounter = 0.0f;
+                if (!UICamera.list[0].useMouse)
+                    UICamera.list[0].useMouse = true;
+            }
+            if (disableMouseCounter > 1.0 && UICamera.list[0].useMouse)
+                UICamera.list[0].useMouse = false;
+            if (!UnityXInput.Input.anyKey && !isLockLazyInput)
+                ResetKeyCode();
+            AccelerateKeyNavigation();
+            if (HandleMenuControlKeyPressCustomInput())
+                return;
+            HandleBoosterButton();
+            HandleDialogControlKeyPressCustomInput();
         }
-        else
+        catch (Exception err)
         {
-            disableMouseCounter = 0.0f;
-            if (!UICamera.list[0].useMouse)
-                UICamera.list[0].useMouse = true;
+            Log.Error(err);
         }
-        if (UnityXInput.Input.GetMouseButton(0) || UnityXInput.Input.GetMouseButton(1) || (UnityXInput.Input.GetMouseButton(2) || Mathf.Abs(UnityXInput.Input.GetAxis("Mouse ScrollWheel")) > 0.00999999977648258))
-        {
-            disableMouseCounter = 0.0f;
-            if (!UICamera.list[0].useMouse)
-                UICamera.list[0].useMouse = true;
-        }
-        if (disableMouseCounter > 1.0 && UICamera.list[0].useMouse)
-            UICamera.list[0].useMouse = false;
-        if (!UnityXInput.Input.anyKey && !isLockLazyInput)
-            ResetKeyCode();
-        AccelerateKeyNavigation();
-        if (HandleMenuControlKeyPressCustomInput())
-            return;
-        HandleBoosterButton();
-        HandleDialogControlKeyPressCustomInput();
     }
 
     private void AccelerateKeyNavigation()
@@ -909,7 +916,7 @@ namespace Memoria
 {
     public static class UISceneHelper
     {
-        public static void OpenPartyMenu()
+        public static FF9PARTY_INFO GetCurrentPartyForMenu()
         {
             FF9PARTY_INFO party = new FF9PARTY_INFO();
             List<CharacterId> selectList = new List<CharacterId>();
@@ -918,6 +925,7 @@ namespace Memoria
                 if (p.info.party != 0)
                     selectList.Add(p.info.slot_no);
             party.party_ct = Math.Min(4, selectList.Count);
+            party.exact_party_ct = -1;
 
             for (Int32 memberIndex = 0; memberIndex < 4; ++memberIndex)
             {
@@ -932,9 +940,19 @@ namespace Memoria
                     party.menu[memberIndex] = CharacterId.NONE;
                 }
             }
-
             party.select = selectList.ToArray();
-            EventService.OpenPartyMenu(party);
+
+            if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
+            {
+                party.exact_party_ct = FF9StateSystem.Common.FF9.party.MemberCount;
+                party.fix = UIManager.Battle.GetNonSwappableCharacters();
+            }
+            return party;
+        }
+
+        public static void OpenPartyMenu()
+        {
+            EventService.OpenPartyMenu(GetCurrentPartyForMenu());
         }
     }
 }

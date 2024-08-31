@@ -9,9 +9,9 @@ using UnityEngine;
 
 public class VoicePlayer : SoundPlayer
 {
-    private static ushort huntLastPlayed;
-    private static string huntAppend = "";
-    private static ushort countHeld = 0;
+    private static ushort specialLastPlayed;
+    private static string specialAppend = "";
+    private static ushort specialCount = 0;
     public VoicePlayer()
     {
         this.playerPitch = 1f;
@@ -91,46 +91,65 @@ public class VoicePlayer : SoundPlayer
         if (!Configuration.VoiceActing.Enabled)
             return;
 
-        huntAppend = "";
-        // handle the Festival of the Hunt has take the lead and holds the lead
-        if (FieldZoneId == 276)
+        specialAppend = "";
+        // (special) Festival of the Hunt has take the lead and holds the lead
+        switch (FieldZoneId)
         {
-            switch (messageNumber)
+            case 276:
             {
-                case 540:// Zidane
-                case 541:// Vivi
-                case 542:// Frya
-                case 543:// Lani
-                case 544:// Gourmand
-                case 545:// Belna
-                case 546:// Genero
-                case 547:// Ivan
+                switch (messageNumber)
                 {
-                    var idShort = Convert.ToUInt16(messageNumber);
-                    if(idShort == huntLastPlayed)
+                    case 540:// Zidane
+                    case 541:// Vivi
+                    case 542:// Frya
+                    case 543:// Lani
+                    case 544:// Gourmand
+                    case 545:// Belna
+                    case 546:// Genero
+                    case 547:// Ivan
                     {
-                        huntAppend = "_held_"+countHeld;
-                        countHeld += 1;
+                        var idShort = Convert.ToUInt16(messageNumber);
+                        if (idShort == specialLastPlayed)
+                        {
+                            specialAppend = "_held_" + specialCount;
+                            specialCount += 1;
+                        }
+                        else
+                        {
+                            specialAppend = "_taken";
+                            specialLastPlayed = idShort;
+                            specialCount = 0;
+                        }
+                        break;
                     }
-                    else
-                    {
-                        huntAppend = "_taken";
-                        huntLastPlayed = idShort;
-                        countHeld = 0;
-                    }
-                    break;
                 }
+                break;
+            }
+            // hot and cold
+            case 945:
+            {
+                if(messageNumber == 230)
+                {
+                    specialCount = 0;
+                }
+                // count up for each time you find something.
+                if(messageNumber == 301) // gained points
+                {
+                    specialAppend = "_" + specialCount;
+                    specialCount += 1;
+                }
+                break;
             }
         }
 
-        String vaPath = String.Format("Voices/{0}/{1}/va_{2}{3}", Localization.GetSymbol(), FieldZoneId, messageNumber, huntAppend);
+        String vaPath = String.Format("Voices/{0}/{1}/va_{2}{3}", Localization.GetSymbol(), FieldZoneId, messageNumber, specialAppend);
         Boolean useAlternatePath = false;
         String vaAlternatePath = null;
         String vaAlternatePath2 = null;
 
         if (dialog.Po != null)
         {
-            vaAlternatePath = String.Format("Voices/{0}/{1}/va_{2}_{3}{4}", Localization.GetSymbol(), FieldZoneId, messageNumber, dialog.Po.uid, huntAppend);
+            vaAlternatePath = String.Format("Voices/{0}/{1}/va_{2}_{3}{4}", Localization.GetSymbol(), FieldZoneId, messageNumber, dialog.Po.uid, specialAppend);
             if (AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath + ".ogg", true, false))
             {
                 vaPath = vaAlternatePath;
@@ -151,7 +170,7 @@ public class VoicePlayer : SoundPlayer
         if (!useAlternatePath && msgString.Length > 0 && msgString.Contains("\n“"))
         {
             string name = msgString.Split('\n')[0].Trim();
-            vaAlternatePath2 = string.Format("Voices/{0}/{1}/va_{2}_{3}{4}", Localization.GetSymbol(), FieldZoneId, messageNumber, name, huntAppend);
+            vaAlternatePath2 = string.Format("Voices/{0}/{1}/va_{2}_{3}{4}", Localization.GetSymbol(), FieldZoneId, messageNumber, name, specialAppend);
             if (AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath2 + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath2 + ".ogg", true, false))
             {
                 vaPath = vaAlternatePath = vaAlternatePath2;

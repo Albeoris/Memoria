@@ -214,6 +214,8 @@ namespace Memoria
                 _bg.localRotation = Quaternion.Lerp(_bgRotPrevious, _bgRotActual, smoothFactor);
                 // Log.Message($"[DEBUG {Time.frameCount} cur {_bg.localRotation.eulerAngles} prev {_bgRotPrevious.eulerAngles} actual {_bgRotActual.eulerAngles} t {smoothFactor}");
             }
+            // Vertical texture animation of the background
+            battlebg.geoBGTexAnimSmoothen(smoothFactor);
             // SPS
             if (FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_ENTER && FF9StateSystem.Battle.FF9Battle.btl_phase != FF9StateBattleSystem.PHASE_INIT_SYSTEM)
             {

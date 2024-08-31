@@ -16,6 +16,7 @@ public class CMD_DATA
     public BTL_DATA regist;
     public AA_DATA aa;
     public UInt16 tar_id;
+    public UInt16 magic_caster_id;
     public BattleCommandId cmd_no;
     public Int32 sub_no;
     public CMD_DATA.SELECT_INFO info;
