@@ -73,7 +73,18 @@ namespace Memoria.Data
                     if (enabledState == 0)
                         return enabledState;
                 }
-                if (asUnit != null && asUnit.IsMonsterTransform)
+                if (asUnit != null && enabledState > 1 && CharacterCommands.Commands.TryGetValue(cmdId, out CharacterCommand ff9command))
+                {
+                    if (ff9command.Type == CharacterCommandType.Normal || ff9command.Type == CharacterCommandType.Throw || ff9command.Type == CharacterCommandType.Instant)
+                    {
+                        BattleAbilityId uniqueAbilId = ff9command.GetAbilityId();
+                        BattleAbilityId patchedId = BattleAbilityHelper.Patch(uniqueAbilId, character);
+                        AA_DATA patchedAbil = FF9StateSystem.Battle.FF9Battle.aa_data[patchedId];
+                        if (BattleAbilityHelper.IsAbilityDisabled(patchedId, asUnit, cmdId, menu))
+                            enabledState = Math.Min(enabledState, 1);
+                    }
+                }
+                if (asUnit != null && enabledState > 1 && asUnit.IsMonsterTransform)
                 {
                     BTL_DATA.MONSTER_TRANSFORM transform = asUnit.Data.monster_transform;
                     if (cmdId == BattleCommandId.Attack && transform.attack[asUnit.Data.bi.def_idle] == null)
@@ -99,17 +110,6 @@ namespace Memoria.Data
                     cmdId = cmdSet.ApplyPatch(cmdId, menu, character, asUnit);
                 if (asUnit != null && asUnit.IsMonsterTransform && cmdId == asUnit.Data.monster_transform.base_command)
                     cmdId = asUnit.Data.monster_transform.new_command;
-
-                // TODO: Trance Seek hard-coded patch, to be removed once the mod itself contains the patched commands
-                if (Configuration.Mod.TranceSeek)
-                {
-                    if (cmdId == BattleCommandId.Defend && character.Index == CharacterId.Steiner)
-                        cmdId = (BattleCommandId)10015; // Sentinel
-                    else if (cmdId == BattleCommandId.Defend && character.Index == CharacterId.Amarant)
-                        cmdId = (BattleCommandId)10016; // Dual
-                    else if (character.PresetId == CharacterPresetId.Zidane && menu == BattleCommandMenu.Ability2 && asUnit != null && !asUnit.IsUnderAnyStatus(BattleStatus.Trance) && asUnit.SerialNumber != CharacterSerialNumber.ZIDANE_DAGGER)
-                        cmdId = (BattleCommandId)10001; // Bandit
-                }
             }
             catch (Exception err)
             {

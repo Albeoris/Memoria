@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace Memoria
 {
@@ -62,6 +63,11 @@ namespace Memoria
                 Instance._battle.Enabled.Value = true;
                 SaveValue(Instance._battle.Name, Instance._battle.Enabled);
                 SaveValue(Instance._battle.Name, Instance._battle.Speed);
+            }
+
+            public static Boolean IsMenuEnabledInBattle(MainMenuUI.SubMenu subMenu)
+            {
+                return AccessMenus > 0 && (AvailableMenus.Length == 0 || AvailableMenus.Contains(subMenu.ToString()));
             }
         }
     }

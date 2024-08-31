@@ -21,8 +21,7 @@ public static class btl_init
         CharacterBattleParameter param = btl_mot.BattleParameterList[characterModelIndex];
         String modelId = isTrance ? param.TranceModelId : param.ModelId;
 
-        Int32 geoId;
-        if (FF9BattleDB.GEO.TryGetKey(modelId, out geoId))
+        if (FF9BattleDB.GEO.TryGetKey(modelId, out Int32 geoId))
             return (Int16)geoId;
 
         Log.Warning("[btl_init] Unknown model id: {0}", modelId);
@@ -324,50 +323,54 @@ public static class btl_init
             if (FF9StateSystem.Common.FF9.party.member[i] != null)
                 playerCount++;
         Int32 gap = 632;
-        Int32 bposFrontBack = btl_init.PLAYER_ORIGINAL_Z;
         Int32 posLeftRight = (Int16)((playerCount - 1) * gap / 2);
-        Int32 baseAngle = (Int16)((btl_scene.Info.StartType != battle_start_type_tags.BTL_START_BACK_ATTACK) ? 180 : 0);
         for (BTL_DATA btl = FF9StateSystem.Battle.FF9Battle.btl_list.next; btl != null; btl = btl.next)
         {
             if (btl.bi.player == 0)
                 break;
-            CharacterId charId = (CharacterId)btl.bi.slot_no;
-            btl.bi.row = FF9StateSystem.Common.FF9.player[charId].info.row;
-            if (btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
-                btl.bi.row ^= 1;
-            btl.original_pos[0] = posLeftRight;
-            btl.evt.posBattle[0] = posLeftRight;
-            btl.base_pos[0] = posLeftRight;
-            btl.pos[0] = posLeftRight;
-            Single posHeight = 0; // btl_stat.CheckStatus(btl, BattleStatus.Float) ? -200 : 0;
-            btl.original_pos[1] = 0;
-            btl.evt.posBattle[1] = posHeight;
-            btl.base_pos[1] = posHeight;
-            btl.pos[1] = posHeight;
-            Single posz = bposFrontBack + ((btl.bi.row == 0) ? -400 : 0);
-            btl.original_pos[2] = bposFrontBack;
-            btl.evt.posBattle[2] = posz;
-            btl.base_pos[2] = posz;
-            btl.pos[2] = posz;
-            btl.evt.rotBattle = Quaternion.Euler(new Vector3(0f, 180f, 180f));
-            btl.rot = Quaternion.Euler(new Vector3(0f, baseAngle, 180f));
-            //next.rot = (next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, baseAngle, 180f)));
-            btl.gameObject.transform.localPosition = btl.pos;
-            btl.gameObject.transform.localRotation = btl.rot;
-            CharacterBattleParameter btlParam = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[charId].info.serial_no];
-            btl.shadow_bone[0] = btlParam.ShadowData[0];
-            btl.shadow_bone[1] = btlParam.ShadowData[1];
-            btl_util.SetShadow(btl, btlParam.ShadowData[2], btlParam.ShadowData[3]);
-            btl.geo_scale_x = btl.geo_scale_y = btl.geo_scale_z = btl.geo_scale_default = 4096;
-            GameObject shadowObj = FF9StateSystem.Battle.FF9Battle.map.shadowArray[btl];
-            Vector3 shadowPos = shadowObj.transform.localPosition;
-            shadowPos.z = btlParam.ShadowData[4];
-            shadowObj.transform.localPosition = shadowPos;
+            SetupBattlePlayerSingle(btl, posLeftRight, btl_scene.Info.StartType);
             posLeftRight -= gap;
         }
     }
 
-    public static void OrganizePlayerData(PLAYER p, BTL_DATA btl, UInt16 cnt, UInt16 btl_no)
+    public static void SetupBattlePlayerSingle(BTL_DATA btl, Int32 posLeftRight, battle_start_type_tags startType)
+    {
+        Int32 baseAngle = (Int16)((startType != battle_start_type_tags.BTL_START_BACK_ATTACK) ? 180 : 0);
+        CharacterId charId = (CharacterId)btl.bi.slot_no;
+        btl.bi.row = FF9StateSystem.Common.FF9.player[charId].info.row;
+        if (startType == battle_start_type_tags.BTL_START_BACK_ATTACK)
+            btl.bi.row ^= 1;
+        btl.original_pos[0] = posLeftRight;
+        btl.evt.posBattle[0] = posLeftRight;
+        btl.base_pos[0] = posLeftRight;
+        btl.pos[0] = posLeftRight;
+        Single posHeight = 0; // btl_stat.CheckStatus(btl, BattleStatus.Float) ? -200 : 0;
+        btl.original_pos[1] = 0;
+        btl.evt.posBattle[1] = posHeight;
+        btl.base_pos[1] = posHeight;
+        btl.pos[1] = posHeight;
+        Single posz = btl_init.PLAYER_ORIGINAL_Z + ((btl.bi.row == 0) ? -400 : 0);
+        btl.original_pos[2] = btl_init.PLAYER_ORIGINAL_Z;
+        btl.evt.posBattle[2] = posz;
+        btl.base_pos[2] = posz;
+        btl.pos[2] = posz;
+        btl.evt.rotBattle = Quaternion.Euler(new Vector3(0f, 180f, 180f));
+        btl.rot = Quaternion.Euler(new Vector3(0f, baseAngle, 180f));
+        //next.rot = (next.evt.rotBattle = Quaternion.Euler(new Vector3(0f, baseAngle, 180f)));
+        btl.gameObject.transform.localPosition = btl.pos;
+        btl.gameObject.transform.localRotation = btl.rot;
+        CharacterBattleParameter btlParam = btl_mot.BattleParameterList[FF9StateSystem.Common.FF9.player[charId].info.serial_no];
+        btl.shadow_bone[0] = btlParam.ShadowData[0];
+        btl.shadow_bone[1] = btlParam.ShadowData[1];
+        btl_util.SetShadow(btl, btlParam.ShadowData[2], btlParam.ShadowData[3]);
+        btl.geo_scale_x = btl.geo_scale_y = btl.geo_scale_z = btl.geo_scale_default = 4096;
+        GameObject shadowObj = FF9StateSystem.Battle.FF9Battle.map.shadowArray[btl];
+        Vector3 shadowPos = shadowObj.transform.localPosition;
+        shadowPos.z = btlParam.ShadowData[4];
+        shadowObj.transform.localPosition = shadowPos;
+    }
+
+    public static void OrganizePlayerData(PLAYER p, BTL_DATA btl, UInt16 cnt, UInt16 btl_no, Boolean reinit = false)
     {
         BattleUnit unit = new BattleUnit(btl);
         CharacterBattleParameter btlParam = btl_mot.BattleParameterList[p.info.serial_no];
@@ -399,6 +402,7 @@ public static class btl_init
         btl.elem.mgc = p.elem.mgc;
         btl.elem.wpr = p.elem.wpr;
         btl.level = p.level;
+        Single atbProgress = reinit ? (Single)btl.cur.at / btl.max.at : 0f;
         btl_init.CopyPoints(btl.max, p.max);
         btl_init.CopyPoints(btl.cur, p.cur);
         btl.maxDamageLimit = p.maxDamageLimit;
@@ -409,23 +413,33 @@ public static class btl_init
         btl.uiLabelMP = null;
         btl.uiSpriteATB = BattleHUD.ATENormal;
         btl.uiSpriteATB = BattleHUD.ATENormal;
-        FF9Char ff9Char = new FF9Char();
+        FF9Char ff9Char = reinit ? FF9StateSystem.Common.FF9.charArray.Values.FirstOrDefault(ch => ch.btl == btl) : new FF9Char();
+        if (ff9Char == null)
+            ff9Char = new FF9Char();
         ff9Char.btl = btl;
         ff9Char.evt = btl.evt;
         if (ff9play.CharacterIDToEventId(p.Index) >= 0)
-            FF9StateSystem.Common.FF9.charArray.Add(ff9play.CharacterIDToEventId(p.Index), ff9Char);
+            FF9StateSystem.Common.FF9.charArray[ff9play.CharacterIDToEventId(p.Index)] = ff9Char;
         else
-            FF9StateSystem.Common.FF9.charArray.Add(9 + (Int32)p.Index, ff9Char);
+            FF9StateSystem.Common.FF9.charArray[9 + (Int32)p.Index] = ff9Char;
         btl_init.InitBattleData(btl, ff9Char);
         btl.mesh_banish = UInt16.MaxValue;
-        btl.max.at = btl_para.GetMaxATB(unit);
         btl_para.SetupATBCoef(btl, btl_para.GetATBCoef());
-        if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
-            btl.cur.at = 0;
-        else if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
-            btl.cur.at = (Int16)(btl.max.at - 1);
+        if (reinit)
+        {
+            btl.max.at = btl_para.GetMaxATB(unit);
+            btl.cur.at = (Int16)Math.Floor(atbProgress * btl.max.at);
+        }
         else
-            btl.cur.at = (Int16)(Comn.random16() % btl.max.at);
+        {
+            btl.max.at = btl_para.GetMaxATB(unit);
+            if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_BACK_ATTACK)
+                btl.cur.at = 0;
+            else if (FF9StateSystem.Battle.FF9Battle.btl_scene.Info.StartType == battle_start_type_tags.BTL_START_FIRST_ATTACK)
+                btl.cur.at = (Int16)(btl.max.at - 1);
+            else
+                btl.cur.at = (Int16)(Comn.random16() % btl.max.at);
+        }
         btl.geoScaleStatus = Vector3.one;
         btl.animSpeedStatusFactor = 1f;
         btl_mot.SetPlayerDefMotion(btl, p.info.serial_no, btl_no);
@@ -444,6 +458,8 @@ public static class btl_init
         btl.stat.permanent = p.permanent_status;
         btl.stat.cur = p.status;
         btl_abil.CheckStatusAbility(unit);
+        if (reinit)
+            btl.stat.cur = p.status;
         BattleStatus resist_stat = btl.stat.invalid;
         BattleStatus permanent_stat = btl.stat.permanent;
         BattleStatus current_stat = btl.stat.cur;
@@ -594,6 +610,40 @@ public static class btl_init
         GEOTEXHEADER tranceTextureAnim = new GEOTEXHEADER();
         tranceTextureAnim.ReadTranceTextureAnim(btl, tranceModelName);
         btl.tranceTexanimptr = tranceTextureAnim;
+    }
+
+    public static void SwapPlayerCharacter(BattleUnit unit, PLAYER newChar)
+    {
+        BTL_DATA btl = unit.Data;
+        // HonoluluBattleMain.CreateBattleData
+        BattlePlayerCharacter.CreatePlayer(btl, newChar);
+        Int32 meshCount = 0;
+        foreach (Transform transform in btl.gameObject.transform)
+            if (transform.name.Contains("mesh"))
+                meshCount++;
+        btl.meshCount = meshCount;
+        btl.meshIsRendering = new Boolean[meshCount];
+        for (Int32 i = 0; i < meshCount; ++i)
+            btl.meshIsRendering[i] = true;
+        btl.animation = btl.gameObject.GetComponent<Animation>();
+        // InitPlayerData
+        btl.dms_geo_id = GetModelID(newChar.info.serial_no);
+        OrganizePlayerData(newChar, btl, btl.bi.line_no, (UInt16)unit.GetIndex(), true);
+        SetBattleModel(btl);
+        if (btl_stat.CheckStatus(btl, BattleStatus.Death))
+        {
+            GeoTexAnim.geoTexAnimStop(btl.texanimptr, 2);
+            GeoTexAnim.geoTexAnimPlayOnce(btl.texanimptr, 0);
+            GeoTexAnim.geoTexAnimStop(btl.tranceTexanimptr, 2);
+            GeoTexAnim.geoTexAnimPlayOnce(btl.tranceTexanimptr, 0);
+        }
+        else
+        {
+            GeoTexAnim.geoTexAnimPlay(btl.texanimptr, 2);
+        }
+        btl_sys.AddCharacter(btl);
+        // Part of SetupBattlePlayer
+        SetupBattlePlayerSingle(btl, (Int32)btl.original_pos[0], battle_start_type_tags.BTL_START_NORMAL_ATTACK);
     }
 
     public const Int32 PLAYER_ORIGINAL_Z = -1560;

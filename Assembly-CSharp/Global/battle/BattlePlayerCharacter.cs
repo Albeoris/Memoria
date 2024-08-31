@@ -72,6 +72,8 @@ public class BattlePlayerCharacter : MonoBehaviour
 
     public static void CreatePlayer(BTL_DATA btl, PLAYER p)
     {
+        if (btl.gameObject != null)
+            UnityEngine.Object.Destroy(btl.gameObject);
         CharacterBattleParameter btlParam = btl_mot.BattleParameterList[p.info.serial_no];
         p.wep_bone = btlParam.WeaponBone;
         btl.gameObject = ModelFactory.CreateModel(btlParam.ModelId, true, true, Configuration.Graphics.ElementsSmoothTexture);
@@ -86,6 +88,8 @@ public class BattlePlayerCharacter : MonoBehaviour
 
     private static void CreateTranceModel(BTL_DATA btl, String path)
     {
+        if (btl.tranceGo != null)
+            UnityEngine.Object.Destroy(btl.tranceGo);
         btl.tranceGo = ModelFactory.CreateModel(path, true, true, Configuration.Graphics.ElementsSmoothTexture);
         btl.tranceGo.transform.localPosition = new Vector3(btl.tranceGo.transform.localPosition.x, -10000f, btl.tranceGo.transform.localPosition.z);
         // Set custom trance texture, if they exist

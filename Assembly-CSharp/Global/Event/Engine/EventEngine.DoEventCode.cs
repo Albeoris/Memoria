@@ -2270,7 +2270,8 @@ public partial class EventEngine
             {
                 FF9PARTY_INFO sPartyInfo = new FF9PARTY_INFO();
                 List<CharacterId> selectList = new List<CharacterId>();
-                sPartyInfo.party_ct = this.getv1(); // arg1: party size (if characters occupy slots beyond it, they are locked)
+                sPartyInfo.party_ct = this.getv1(); // arg1: minimal party size (if characters occupy slots beyond it, they are locked)
+                sPartyInfo.exact_party_ct = -1;
                 foreach (PLAYER p in FF9StateSystem.Common.FF9.PlayerList)
                     if (p.info.party != 0)
                         selectList.Add(p.info.slot_no);

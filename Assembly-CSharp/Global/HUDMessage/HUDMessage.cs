@@ -125,6 +125,21 @@ public class HUDMessage : Singleton<HUDMessage>
         return hudmessageChild;
     }
 
+    public HUDMessageChild Show(BTL_DATA target, Int32 iconPos, String message, HUDMessage.MessageStyle style)
+    {
+        HUDMessageChild hudmessageChild = null;
+        if (base.gameObject.activeInHierarchy)
+        {
+            Byte readyObjectIndex = this.GetReadyObjectIndex();
+            hudmessageChild = this.childHud[readyObjectIndex];
+            btl2d.GetIconPosition(target, iconPos, out Transform attach, out Vector3 offset);
+            hudmessageChild.Show(attach, message, style, offset);
+            hudmessageChild.Follower.targetBtl = target;
+            hudmessageChild.Follower.iconPosition = iconPos;
+        }
+        return hudmessageChild;
+    }
+
     private IEnumerator WaitForOriginalDelay(Byte delay)
     {
         Single cumulativeTime = 0f;

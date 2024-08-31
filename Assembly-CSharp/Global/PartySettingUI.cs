@@ -73,6 +73,9 @@ public class PartySettingUI : UIScene
     private static String SelectCharGroupButton = "Party.Select";
     private static String MoveCharGroupButton = "Party.Move";
 
+    [NonSerialized]
+    public Boolean AccessFromMenu = false;
+
     public GameObject HelpDespLabelGameObject;
     public GameObject CurrentPartyPanel;
     public GameObject OutsidePartyPanel;
@@ -150,8 +153,10 @@ public class PartySettingUI : UIScene
             SceneDirector.FF9Wipe_FadeInEx(12);
         };
         if (afterFinished != null)
-            sceneVoidDelegate = (SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
+            sceneVoidDelegate += afterFinished;
         base.Hide(sceneVoidDelegate);
+        if (this.AccessFromMenu)
+            PersistenSingleton<UIManager>.Instance.MainMenuScene.StartSubmenuTweenIn();
         BattleAchievement.UpdateParty();
         this.RemoveCursorMemorize();
     }
@@ -197,28 +202,35 @@ public class PartySettingUI : UIScene
 
         if (ButtonGroupState.ActiveGroup == SelectCharGroupButton)
         {
-            FF9Sfx.FF9SFX_Play(103);
-            this.currentCharacterSelect = this.GetCurrentSelect(go);
-            this.currentCharacterId = this.GetCurrentId(go);
-            ButtonGroupState.SetCursorStartSelect((this.currentCharacterSelect.Group != Mode.Menu) ? go.GetChild(0) : go.GetChild(2), MoveCharGroupButton);
-            ButtonGroupState.RemoveCursorMemorize(MoveCharGroupButton);
-            ButtonGroupState.ActiveGroup = MoveCharGroupButton;
-            ButtonGroupState.HoldActiveStateOnGroup(SelectCharGroupButton);
-            foreach (CharacterOutsidePartyHud current in this.outsidePartyHudList)
-                ButtonGroupState.SetButtonEnable(current.MoveButton, this.currentCharacterId == CharacterId.NONE || !this.info.fix.Contains(this.currentCharacterId));
-        }
-        else if (ButtonGroupState.ActiveGroup == MoveCharGroupButton)
-        {
-            PartySelect currentSelect = this.GetCurrentSelect(go);
             CharacterId currentId = this.GetCurrentId(go);
-            if (this.currentCharacterSelect.Group == Mode.Select && currentId != CharacterId.NONE && this.info.fix.Contains(currentId))
+            if (currentId != CharacterId.NONE && this.info.fix.Contains(currentId))
             {
                 FF9Sfx.FF9SFX_Play(102);
             }
             else
             {
                 FF9Sfx.FF9SFX_Play(103);
-                this.SwapCharacter(this.currentCharacterSelect, currentSelect);
+                this.currentCharacterSelect = this.GetCurrentSelect(go);
+                this.currentCharacterId = this.GetCurrentId(go);
+                ButtonGroupState.SetCursorStartSelect((this.currentCharacterSelect.Group != Mode.Menu) ? go.GetChild(0) : go.GetChild(2), MoveCharGroupButton);
+                ButtonGroupState.RemoveCursorMemorize(MoveCharGroupButton);
+                ButtonGroupState.ActiveGroup = MoveCharGroupButton;
+                ButtonGroupState.HoldActiveStateOnGroup(SelectCharGroupButton);
+                foreach (CharacterOutsidePartyHud current in this.outsidePartyHudList)
+                    ButtonGroupState.SetButtonEnable(current.MoveButton, this.currentCharacterId == CharacterId.NONE || !this.info.fix.Contains(this.currentCharacterId));
+            }
+        }
+        else if (ButtonGroupState.ActiveGroup == MoveCharGroupButton)
+        {
+            CharacterId currentId = this.GetCurrentId(go);
+            if (currentId != CharacterId.NONE && this.info.fix.Contains(currentId))
+            {
+                FF9Sfx.FF9SFX_Play(102);
+            }
+            else
+            {
+                FF9Sfx.FF9SFX_Play(103);
+                this.SwapCharacter(this.currentCharacterSelect, this.GetCurrentSelect(go));
                 this.DisplayCharacters();
                 this.DisplayCharacterInfo(this.currentCharacterId);
                 ButtonGroupState.SetCursorMemorize(go.transform.parent.gameObject, SelectCharGroupButton);
@@ -241,7 +253,11 @@ public class PartySettingUI : UIScene
                     FF9Sfx.FF9SFX_Play(103);
                     this.Hide(delegate
                     {
-                        PersistenSingleton<UIManager>.Instance.ChangeUIState(PersistenSingleton<UIManager>.Instance.HUDState);
+                        if (this.AccessFromMenu)
+                            PersistenSingleton<UIManager>.Instance.ChangeUIState(UIManager.UIState.MainMenu);
+                        else
+                            PersistenSingleton<UIManager>.Instance.ChangeUIState(PersistenSingleton<UIManager>.Instance.HUDState);
+                        this.AccessFromMenu = false;
                     });
                 }
                 else
@@ -400,6 +416,8 @@ public class PartySettingUI : UIScene
                     healthyCnt++;
             }
         }
+        if (this.info.exact_party_ct >= 0)
+            return charCnt == this.info.exact_party_ct && healthyCnt != 0;
         return charCnt >= this.info.party_ct && healthyCnt != 0;
     }
 
@@ -447,6 +465,8 @@ public class PartySettingUI : UIScene
             this.info.menu[oldSelect.Index] = char2;
         else if (oldSelect.Group == Mode.Select)
             this.info.select[4 * currentFloor + oldSelect.Index] = char2;
+        if (oldSelect.Group == Mode.Menu || newSelect.Group == Mode.Menu)
+            PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
     }
 
     private void Awake()

@@ -18,6 +18,7 @@ namespace Memoria.Data
             {
                 case CharacterCommandType.Throw:
                 case CharacterCommandType.Normal:
+                case CharacterCommandType.Instant:
                     yield return (BattleAbilityId)MainEntry;
                     yield break;
                 case CharacterCommandType.Ability:
@@ -33,6 +34,7 @@ namespace Memoria.Data
             {
                 case CharacterCommandType.Throw:
                 case CharacterCommandType.Normal:
+                case CharacterCommandType.Instant:
                     return (BattleAbilityId)MainEntry;
                 case CharacterCommandType.Ability:
                     if (index < 0 || index >= ListEntry.Length)

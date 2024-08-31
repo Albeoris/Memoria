@@ -171,6 +171,8 @@ public partial class BattleHUD : UIScene
                 Int32 index = 0;
                 foreach (KeyValuePair<BattleStatusId, String> current in iconDic)
                 {
+                    if (index >= statusHud.Icons.Count)
+                        break;
                     if (!bd.IsUnderAnyStatus(current.Key.ToBattleStatus()))
                         continue;
 
@@ -178,8 +180,7 @@ public partial class BattleHUD : UIScene
                     spriteObj.Sprite.alpha = 1f;
                     spriteObj.Sprite.spriteName = current.Value;
 
-                    if (++index > statusHud.Icons.Count)
-                        break;
+                    ++index;
                 }
             }
         }

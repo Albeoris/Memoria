@@ -54,7 +54,7 @@ public partial class BattleHUD : UIScene
         Ability,
         Item,
         Throw,
-        Slide,
+        Instant,
     }
 
     [Flags]
