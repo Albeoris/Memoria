@@ -9,9 +9,12 @@ using UnityEngine;
 
 public class VoicePlayer : SoundPlayer
 {
+    private static bool specialPreventOverlap = false;
     private static ushort specialLastPlayed;
     private static string specialAppend = "";
     private static ushort specialCount = 0;
+    private static Dictionary<ushort, ushort> huntTakenCounter;
+    private static Dictionary<ushort, ushort> huntHeldCounter;
     public VoicePlayer()
     {
         this.playerPitch = 1f;
@@ -86,6 +89,11 @@ public class VoicePlayer : SoundPlayer
         SoundLib.Log("StartSound Success");
     }
 
+    public static void disableOverlapProtection()
+    {
+        specialPreventOverlap = false;
+    }
+
     public static void PlayFieldZoneDialogAudio(Int32 FieldZoneId, Int32 messageNumber, Dialog dialog)
     {
         if (!Configuration.VoiceActing.Enabled)
@@ -95,10 +103,22 @@ public class VoicePlayer : SoundPlayer
         // (special) Festival of the Hunt has take the lead and holds the lead
         switch (FieldZoneId)
         {
+            case 22: // regent cids last line end of hunt
+                if (messageNumber == 513)
+                {
+                    // clean up memory
+                    huntTakenCounter = null;
+                    huntHeldCounter = null;
+                }
+                break;
             case 276:
             {
                 switch (messageNumber)
                 {
+                    case 519: // steiners last line before the hunt start
+                        huntTakenCounter = new Dictionary<ushort, ushort>();
+                        huntHeldCounter = new Dictionary<ushort, ushort>();
+                        break;
                     case 540:// Zidane
                     case 541:// Vivi
                     case 542:// Frya
@@ -107,18 +127,36 @@ public class VoicePlayer : SoundPlayer
                     case 545:// Belna
                     case 546:// Genero
                     case 547:// Ivan
-                    {
+                    { 
+                        if(huntTakenCounter == null || huntHeldCounter == null)
+                        {
+                            huntTakenCounter = new Dictionary<ushort, ushort>();
+                            huntHeldCounter = new Dictionary<ushort, ushort>();
+                        }
+                        if (specialPreventOverlap)
+                        {
+                            return;
+                        }
                         var idShort = Convert.ToUInt16(messageNumber);
                         if (idShort == specialLastPlayed)
                         {
-                            specialAppend = "_held_" + specialCount;
-                            specialCount += 1;
+                            if (!huntHeldCounter.ContainsKey(idShort))
+                            {
+                                huntHeldCounter.Add(idShort, 0);
+                            }
+                            specialAppend = "_held_" + huntHeldCounter[idShort]++;
+                            specialPreventOverlap = true;
                         }
                         else
                         {
-                            specialAppend = "_taken";
+
+                            if (!huntTakenCounter.ContainsKey(idShort))
+                            {
+                                huntTakenCounter.Add(idShort, 0);
+                            }
+                            specialAppend = "_taken_" + huntTakenCounter[idShort]++; ;
                             specialLastPlayed = idShort;
-                            specialCount = 0;
+                            specialPreventOverlap = true;
                         }
                         break;
                     }
@@ -181,10 +219,14 @@ public class VoicePlayer : SoundPlayer
         Boolean hasChoices = dialog.ChoiceNumber > 0;
         Boolean isMsgEmpty = msgString.Length == 0;
         Boolean shouldDismiss = Configuration.VoiceActing.AutoDismissDialogAfterCompletion && !hasChoices;
-        Action nonDismissAction = () => { soundOfDialog.Remove(dialog); };
+        Action nonDismissAction = () => {
+            disableOverlapProtection();
+            soundOfDialog.Remove(dialog); 
+        };
         Action dismissAction =
             () =>
             {
+                disableOverlapProtection();
                 soundOfDialog.Remove(dialog);
                 if (dialog.EndMode > 0 && FF9StateSystem.Common.FF9.fldMapNo != 3009 && FF9StateSystem.Common.FF9.fldMapNo != 3010)
                     return; // Timed dialog: let the dialog's own timed automatic closure handle it
@@ -203,6 +245,7 @@ public class VoicePlayer : SoundPlayer
         Action playSelectChoiceAction =
             () =>
             {
+                disableOverlapProtection();
                 soundOfDialog.Remove(dialog);
                 while (dialog.CurrentState == Dialog.State.OpenAnimation || dialog.CurrentState == Dialog.State.TextAnimation || !dialog.IsChoiceReady)
                     Thread.Sleep(1000 / Configuration.Graphics.FieldTPS);
@@ -227,6 +270,8 @@ public class VoicePlayer : SoundPlayer
                 SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}, multiplay-path:{4} (not found)", FieldZoneId, messageNumber, msgString, vaPath, vaAlternatePath));
             else
                 SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}, multiplay-path:{4} named-path:{5} (not found)", FieldZoneId, messageNumber, msgString, vaPath, vaAlternatePath, vaAlternatePath2));
+
+            disableOverlapProtection();
             isMsgEmpty = true;
         }
 
