@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using UnityEngine;
 
 namespace Memoria
 {
@@ -12,6 +12,7 @@ namespace Memoria
             public static Boolean LogVoiceActing => Instance._voiceActing.LogVoiceActing;
             public static Boolean StopVoiceWhenDialogDismissed = Instance._voiceActing.StopVoiceWhenDialogDismissed;
             public static Boolean AutoDismissDialogAfterCompletion = Instance._voiceActing.AutoDismissDialogAfterCompletion;
+            public static Int32 ForceMessageSpeed = Mathf.Clamp(Instance._voiceActing.ForceMessageSpeed.Value, -1, 6);
             public static Int32 Volume = Instance._voiceActing.Volume.Value;
 
             public static void SaveVolume()
