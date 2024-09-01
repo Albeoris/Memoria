@@ -677,6 +677,13 @@ public class FieldMap : HonoBehavior
 
             Int32 threshmargin = Math.Min((Int32)bgCamera.w - PsxFieldWidth, 0); // Offset value for fields that are between 320 & 398
             //if (dbug) Log.Message("PsxFieldWidth" + PsxFieldWidth);
+            //Log.Message("CamPositionY:" + CamPositionY + " this.charOffset.y:" + this.charOffset.y);
+
+            if (map == 609 || map == 2159)
+            {
+                CamPositionY = ((CamPositionY + 224f) * (CamPositionY + 224f) / 2f ) - 224f;
+                //Log.Message("NCamPositionY:" + CamPositionY + " this.charOffset.y:" + this.charOffset.y);
+            }
             if (map == 507) // Cargo Ship/Deck
             {
                 CamPositionX = CamPositionX + 1;
