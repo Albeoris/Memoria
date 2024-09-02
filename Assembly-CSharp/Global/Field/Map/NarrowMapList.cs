@@ -14,7 +14,7 @@ public static class NarrowMapList
         return false;
     }
 
-    public static Boolean SpecificScenesNarrow(Int32 mapId)
+    public static Boolean ConditionalForceNarrow(Int32 mapId)
     {
         if (PersistenSingleton<EventEngine>.Instance.eBin == null)
             return false;
@@ -30,7 +30,7 @@ public static class NarrowMapList
 
     public static Int32 MapWidth(Int32 mapId)
     {
-        if (SpecificScenesNarrow(mapId))
+        if (ConditionalForceNarrow(mapId))
             return 320;
 
         //return MapWidthList.FirstOrDefault(entry => entry[0] == mapId)?[1] ?? 500;
@@ -47,8 +47,13 @@ public static class NarrowMapList
         // [mapNo, max screenwidth, EBin.MAP_INDEX_SVR, EBin.SC_COUNTER_SVR], 
         [50, 478, -5, -5],
         [70, 478, -5, -5],
+        [501, 478, -5, -5],
         [507, 478, -5, -5],
-        [600, 432, 0, 3180],
+        [600, 432, -5, 3000],
+        [600, 432, -5, 3050],
+        [600, 432, -5, 3180],
+        [600, 432, -5, 3190],
+        //[850, 432, -5, 3118],
 
         [150, -5, 325, -5],       // Zidane infiltrate Alex Castle - better in narrow for the "Alex" text
         [254, -5, 26, -5],        // MBG103 - Evil Forest

@@ -276,8 +276,10 @@ public partial class EventEngine
                 Int32 posX = this.getv2(); // X position
                 Int32 posZ = this.getv2(); // Z position
                 Boolean isValid = this.gMode == 1 && po?.model != UInt16.MaxValue;
+                
                 if (isValid && po != null)
                 {
+                    Log.Message("mapNo == " + mapNo +  " && scCounter == " + scCounter + " && po.sid == " + po.sid + " && posX == " + posX + " && posZ == " + posZ);
                     FieldMapActorController actorController = po.go.GetComponent<FieldMapActorController>();
                     if (actorController != null && actorController.walkMesh != null)
                     {
@@ -315,6 +317,13 @@ public partial class EventEngine
                         posX = -1635;
                     else if (mapNo == 572 && po.sid == 16 && posX == -1750) // Lindblum/I.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1765;
+                    else if (mapNo == 850 && scCounter == 3118 && posX == 898 && posZ == -4972)
+                    { 
+                        if (po.sid == 16)
+                            posZ = -5372;
+                        if (po.sid == 2)
+                            posZ = -4772;
+                    }
                     else if (mapNo == 1310 && po.sid == 12 && posX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1635;
                     else if (mapNo == 1811 && scCounter == 7200 && po.sid == 13 && posX == 413 && posZ == -17294) // Vivi visible too soon

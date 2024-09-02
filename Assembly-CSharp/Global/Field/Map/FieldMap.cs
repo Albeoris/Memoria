@@ -679,7 +679,7 @@ public class FieldMap : HonoBehavior
             //if (dbug) Log.Message("PsxFieldWidth" + PsxFieldWidth);
             //Log.Message("CamPositionY:" + CamPositionY + " this.charOffset.y:" + this.charOffset.y);
 
-            if (map == 609 || map == 2159)
+            if ((map == 609 || map == 2159) && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) != 3110)
             {
                 CamPositionY = ((CamPositionY + 224f) * (CamPositionY + 224f) / 2f ) - 224f;
                 //Log.Message("NCamPositionY:" + CamPositionY + " this.charOffset.y:" + this.charOffset.y);
