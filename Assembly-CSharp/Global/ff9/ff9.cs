@@ -2090,10 +2090,12 @@ public static class ff9
         v1 = v0.normalized;
     }
 
+    /*
     public static void VectorNormalS(ref Vector3 v0, out Vector3 v1)
     {
         v1 = v0.normalized;
     }
+    */
 
     public static Single ratan2(Single y, Single x)
     {
@@ -2155,6 +2157,7 @@ public static class ff9
         v2 = Vector3.Cross(v0, v1);
     }
 
+    /*
     public static void InitWipe_WorldMap()
     {
     }
@@ -2171,6 +2174,7 @@ public static class ff9
     {
         return obj.cid == 4;
     }
+    */
 
     public static WMActor GetControlChar()
     {
