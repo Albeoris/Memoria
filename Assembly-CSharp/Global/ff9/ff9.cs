@@ -2665,14 +2665,14 @@ public static class ff9
             num = 9.5f;
         else if (ff9.w_moveCHRControlPtr.type_cam == 3)
             num = 8f;
-        ff9.world.MainCamera.fieldOfView = ff9.w_cameraPosstatNow.cameraPers / num;
+        ff9.world.MainCamera.fieldOfView = ff9.w_cameraPosstatNow.cameraPers / num * (Configuration.Graphics.WorldmapFieldOfView / 100f);
         if (ff9.w_moveCHRControlPtr.type == 1)
-            ff9.world.MainCamera.fieldOfView = 43.75f;
+            ff9.world.MainCamera.fieldOfView = 43.75f * (Configuration.Graphics.WorldmapFieldOfView / 100f);
         if (ff9.w_moveCHRControlPtr.type_cam == 1)
         {
             Int32 num2 = ff9.w_frameGetParameter(193);
             if (num2 == 36 || num2 == 37 || num2 == 38)
-                ff9.world.MainCamera.fieldOfView = 350f / 8f;
+                ff9.world.MainCamera.fieldOfView = 350f / 8f * (Configuration.Graphics.WorldmapFieldOfView / 100f);
         }
         ff9.w_cameraSysDataCamera.rotation %= 360f;
         ff9.w_cameraAimOffset = ff9.w_cameraPosstatNow.aimHight;
