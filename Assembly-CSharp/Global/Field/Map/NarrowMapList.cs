@@ -56,6 +56,7 @@ public static class NarrowMapList
         [150, 325, -5],       // Zidane infiltrate Alex Castle - better in narrow for the "Alex" text
         [254, 26, -5],        // MBG103 - Evil Forest
         [352, 3, -5],         // Arrival at Dali: vivi visible before sleeping
+        [615, 58, 3140],        // Lindblum tower scene part 2
         //[1550, -5, 6270],     // Mountain path - Quina stays there
         [1554, -5, 6300],     // MBG109 - roots
         [1554, -5, 6305],     // MBG109 - roots
