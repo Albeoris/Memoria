@@ -155,10 +155,14 @@ public partial class BattleHUD : UIScene
         Single additionalWidth = 0.0f;
         switch (info)
         {
-            case LibraInformation.Name: return [Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(unit.Name, ref additionalWidth)];
-            case LibraInformation.Level: return [FF9TextTool.BattleLibraText(10) + unit.Level.ToString()];
-            case LibraInformation.HP: return [FF9TextTool.BattleLibraText(11) + unit.CurrentHp + FF9TextTool.BattleLibraText(13) + unit.MaximumHp];
-            case LibraInformation.MP: return [FF9TextTool.BattleLibraText(12) + unit.CurrentMp + FF9TextTool.BattleLibraText(13) + unit.MaximumMp];
+            case LibraInformation.Name:
+                return [Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(unit.Name, ref additionalWidth)];
+            case LibraInformation.Level:
+                return [FF9TextTool.BattleLibraText(10) + unit.Level.ToString()];
+            case LibraInformation.HP:
+                return [FF9TextTool.BattleLibraText(11) + unit.CurrentHp + FF9TextTool.BattleLibraText(13) + unit.MaximumHp];
+            case LibraInformation.MP:
+                return [FF9TextTool.BattleLibraText(12) + unit.CurrentMp + FF9TextTool.BattleLibraText(13) + unit.MaximumMp];
             case LibraInformation.Category:
                 if (!unit.IsPlayer)
                 {
@@ -366,9 +370,7 @@ public partial class BattleHUD : UIScene
             id = _peepingEnmData.StealableItems[_currentPeepingReverseOrder ? _peepingEnmData.StealableItems.Length - stealIndex : stealIndex - 1];
         } while (id == RegularItem.NoItem);
 
-        SetBattleMessage(Localization.GetSymbol() != "JP"
-            ? FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(id)
-            : FF9TextTool.ItemName(id) + FF9TextTool.BattleLibraText(8), 3);
+        SetBattleMessage(Localization.GetSymbol() != "JP" ? FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(id) : FF9TextTool.ItemName(id) + FF9TextTool.BattleLibraText(8), 3);
         return true;
     }
 
@@ -1700,11 +1702,16 @@ public partial class BattleHUD : UIScene
     {
         switch (TargetType)
         {
-            case TargetType.AllAlly: return 0x0F;
-            case TargetType.AllEnemy: return 0xF0;
-            case TargetType.Everyone: return 0xFF;
-            case TargetType.Self: return cmd.regist.btl_id;
-            default: return cmddetail.TargetId;
+            case TargetType.AllAlly:
+                return 0x0F;
+            case TargetType.AllEnemy:
+                return 0xF0;
+            case TargetType.Everyone:
+                return 0xFF;
+            case TargetType.Self:
+                return cmd.regist.btl_id;
+            default:
+                return cmddetail.TargetId;
         }
     }
 

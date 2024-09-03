@@ -2239,10 +2239,12 @@ public static class ff9
         return num;
     }
 
+    /*
     public static Int32 WorldEventDebug(Int32 x, Int32 z, Int32 id)
     {
         return 0x8000 | (z << 8 & 0x3F00) | (x << 2 & 0xFC) | (id & 3);
     }
+    */
 
     public static Int32 ServiceEvents()
     {
@@ -2273,11 +2275,13 @@ public static class ff9
         FF9StateSystem.EventState.gEventGlobal[index] = value;
     }
 
+    /*
     public static void short_gEventGlobal_Write(Int32 index, Int16 value)
     {
         FF9StateSystem.EventState.gEventGlobal[index] = (Byte)(value & 255);
         FF9StateSystem.EventState.gEventGlobal[index + 1] = (Byte)(value >> 8 & 255);
     }
+    */
 
     public static void ushort_gEventGlobal_Write(Int32 index, UInt16 value)
     {
@@ -2342,11 +2346,6 @@ public static class ff9
         return (IDALL & 0xFC) >> 2;
     }
 
-    public static Int32 m_GetIDEtc(Int32 IDALL)
-    {
-        return IDALL & 3;
-    }
-
     public static Int32 m_moveActorID
     {
         get
@@ -2357,6 +2356,7 @@ public static class ff9
         }
     }
 
+    /*
     public static String GetName_kWorldPackEffect(Int32 index)
     {
         switch (index)
@@ -2393,6 +2393,7 @@ public static class ff9
                 return "default";
         }
     }
+    */
 
     public static FF9StateGlobal FF9Global => FF9StateSystem.Common.FF9;
     public static FF9StateSystem FF9Sys => PersistenSingleton<FF9StateSystem>.Instance;
@@ -2438,11 +2439,6 @@ public static class ff9
         while (diff.z < -640f)
             diff.z += 1280f;
         return diff;
-    }
-
-    public static String NotImplemented(String function)
-    {
-        return function + "() has not been implemented yet.";
     }
 
     public static Boolean NearlyEqual(Single a, Single b)
@@ -2508,12 +2504,14 @@ public static class ff9
         return UnityEngine.Random.Range(0, 65536);
     }
 
+    /*
     public static void FF9Wipe_WhiteInEx(Int32 frame)
     {
         if (FF9StateSystem.World.IsBeeScene)
             return;
         SceneDirector.FF9Wipe_WhiteInEx(frame);
     }
+    */
 
     public static void FF9Wipe_WhiteOutEx(Int32 frame)
     {
@@ -3277,6 +3275,7 @@ public static class ff9
         global::Debug.Log(matrix4x3);
     }
 
+    /*
     public static Int32 w_cameraGetMovepoint()
     {
         if (ff9.w_cameraSysDataCamera.upperCounter == 0)
@@ -3289,6 +3288,7 @@ public static class ff9
         }
         return 1;
     }
+    */
 
     public static Vector3 w_cameraGetAimPtr()
     {
@@ -3310,9 +3310,11 @@ public static class ff9
         ff9.w_cameraWorldEye = vector * 0.00390625f;
     }
 
+    /*
     public static void w_cellSystemConstructor()
     {
     }
+    */
 
     public static Boolean w_cellHit(ref Vector3 position, ref Int32 id, out Int32 pno, ff9.s_moveCHRCache cache, out Single height)
     {
@@ -3838,23 +3840,17 @@ public static class ff9
         ff9.w_musicUpdate();
     }
 
-    public static void w_frameMapDestructor()
-    {
-    }
-
-    public static void w_frameSystemDestructor()
-    {
-    }
-
     public static WMPad w_getPadPush()
     {
         return ff9.kPadPush;
     }
 
+    /*
     public static void w_frameSetParameter(Int32 function, Boolean value)
     {
         ff9.w_frameSetParameter(function, (!value) ? 0 : 1);
     }
+    */
 
     public static void w_frameSetParameter(Int32 function, Int32 value)
     {
@@ -4334,6 +4330,7 @@ public static class ff9
         return Color.Lerp(from, to, t2);
     }
 
+    /*
     public static Int32 w_frameInter8(Char from, Char to, Int32 t)
     {
         Int32 num = 0;
@@ -4341,6 +4338,7 @@ public static class ff9
         num += ((Int32)to << 10) * t >> 12;
         return num >> 10;
     }
+    */
 
     public static Boolean w_frameChocoboCheck()
     {
@@ -4591,7 +4589,7 @@ public static class ff9
             Obj obj = objList.obj;
             if (obj.cid == 4)
             {
-                PosObj posObj = (PosObj)obj;
+                /*PosObj posObj = (PosObj)obj;
                 Vector3 pos = ((Actor)posObj).wmActor.pos;
                 ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[posObj.index];
                 Boolean flag = false;
@@ -4601,7 +4599,7 @@ public static class ff9
                 s_moveCHRStatus.ground_height = ground_height;
                 s_moveCHRStatus.slice_height = ff9.w_movementGetSliceHeight(s_moveCHRStatus.slice_type, s_moveCHRStatus.id, ref flag);
                 ff9.w_movementSetheight(posObj);
-                posObj.lastx = posObj.pos[0];
+                posObj.lastx = posObj.pos[0];*/
             }
         }
         WMPhysics.CastRayFromSky = false;
@@ -4793,7 +4791,7 @@ public static class ff9
 
     public static void w_movementChrVerifyValidCastPosition(ref Int32 posX, ref Int32 posY, ref Int32 posZ)
     {
-        Int32 num = posX;
+        /*Int32 num = posX;
         Int32 num2 = posY;
         Int32 num3 = posZ;
         ff9.world.GetUnityPositionOf_FixedPoint(ref num, ref num2, ref num3);
@@ -4862,7 +4860,7 @@ public static class ff9
         }
         WMPhysics.CastRayFromSky = false;
         WMPhysics.IgnoreExceptions = false;
-        WMPhysics.UseInfiniteRaycast = false;
+        WMPhysics.UseInfiniteRaycast = false;*/
     }
 
     /*
@@ -5224,6 +5222,7 @@ public static class ff9
         }
     }
 
+    /*
     private static void w_Test()
     {
         WMActor wmactor = null;
@@ -5340,6 +5339,7 @@ public static class ff9
         WMPhysics.IgnoreExceptions = false;
         WMPhysics.UseInfiniteRaycast = false;
     }
+    */
 
     public static void w_movementSetheight(PosObj chr)
     {
@@ -6633,12 +6633,14 @@ public static class ff9
         return ff9.w_musicSet[(Int32)musicno];
     }
 
+    /*
     public static Boolean w_musicContinue()
     {
         UInt16 num = ff9.ushort_gEventGlobal(0);
         Byte b = ff9.byte_gEventGlobal(190);
         return (num >= 9600 && num < 9890) || (num >= 9890 && num < 9910) || (b == 8 || b == 9);
     }
+    */
 
     public static void w_musicSEPlay(Int32 seno, Byte vol)
     {
@@ -6899,7 +6901,6 @@ public static class ff9
         if (ff9.w_musicCheck() && ff9.w_frameResult != 3)
             ff9.FF9Global.attr |= 0x400000u;
     }
-    */
 
     public static Boolean w_musicCheck()
     {
@@ -6915,11 +6916,6 @@ public static class ff9
                 return true;
         }
         return false;
-    }
-
-    /*
-    public static void w_musicSystemDestructor()
-    {
     }
     */
 
@@ -7154,11 +7150,11 @@ public static class ff9
     public static void w_nwpInitialize(ff9.sNWBBlockHeader block)
     {
     }
-    */
 
     private static void w_nwpMakePages()
     {
     }
+    */
 
     public static Single w_nwpHit(ref Vector3 pos, out Int32 id, out Int32 pno, ff9.s_moveCHRCache cache)
     {
@@ -8212,6 +8208,7 @@ public static class ff9
         ff9.initialized_w_NormalTable = true;
     }
 
+    /*
     public static Vector3 GetNormalFrom_w_NormalTable(Int32 index)
     {
         if (index < 0)
@@ -8237,15 +8234,12 @@ public static class ff9
         }
         return array;
     }
+    */
 
     public static void w_textureUpdate()
     {
         ff9.w_texturePixelAnime();
         ff9.w_texturePaletScroll();
-    }
-
-    private static void w_texturePixelScroll()
-    {
     }
 
     public static void w_texturePixelAnime()
@@ -8673,7 +8667,7 @@ public static class ff9
     public static void w_worldSystemConstructor()
     {
         Int64 num = 0L;
-        ff9.w_cellSystemConstructor();
+        //ff9.w_cellSystemConstructor();
         ff9.w_blockSystemConstructor();
         for (Int64 num2 = 0L; num2 < 26L; num2 += 1L)
         {
@@ -8740,6 +8734,7 @@ public static class ff9
         return result;
     }
 
+    /*
     public static Byte[] w_framePackGetPtr_w_frameMessagePtr(Byte[] data, Int32 no)
     {
         if (no != 0)
@@ -8758,6 +8753,7 @@ public static class ff9
         }
         return result;
     }
+    */
 
     public static EncountData[] w_framePackGetPtr_w_frameBattleScenePtr(Byte[] data, Int32 no)
     {
@@ -8779,6 +8775,7 @@ public static class ff9
         return result;
     }
 
+    /*
     public static ff9.sw_weatherColor w_framePackGetPtr_sw_weatherColor(Byte[] data, Int32 no)
     {
         if (no != 5)
@@ -8798,6 +8795,7 @@ public static class ff9
         }
         return result;
     }
+    */
 
     public static ff9.stextureProject w_framePackGetPtr_w_textureProjWork(Byte[] data, Int32 no)
     {
@@ -8839,6 +8837,7 @@ public static class ff9
         return result;
     }
 
+    /*
     public static ff9.s_effectData w_framePackGetPtr_s_effectData(Byte[] data, Int32 no)
     {
         Int32 pos = ff9.w_framePackExtractPosition(data, no);
@@ -8854,6 +8853,7 @@ public static class ff9
         }
         return result;
     }
+    */
 
     public static ff9.s_effectDataList w_framePackGetPtr_s_effectDataList(Byte[] data, Int32 no)
     {
@@ -9064,11 +9064,13 @@ public static class ff9
         wmblock.SetForm(2);
     }
 
+    /*
     public static void mw_worldResetFormBit(Int32 x, Int32 z)
     {
         WMBlock wmblock = ff9.world.InitialBlocks[x, z];
         wmblock.SetForm(1);
     }
+    */
 
     public static Int32 w_worldArea2Zone(Int32 area)
     {
@@ -9107,14 +9109,6 @@ public static class ff9
         Int32 num = (Int32)(x / 32f);
         Int32 num2 = (Int32)(z / -32f);
         cell = num2 * 48 + num;
-    }
-
-    public static void ff9worldInternalLoopStart()
-    {
-    }
-
-    public static void ff9worldInternalLoopEnd()
-    {
     }
 
     public static void ff9worldInternalBattleEncountStart()
@@ -9177,20 +9171,6 @@ public static class ff9
                 break;
         }
     }
-
-    /*
-    public static void FF9WorldMain()
-    {
-    }
-
-    public static void ff9InitStateWorldSystem()
-    {
-    }
-
-    public static void ff9ShutdownStateWorldSystem()
-    {
-    }
-    */
 
     public const Int32 kSystemImage_AnimTexture = 0;
     public const Int32 kSystemImage_EffectData = 1;
@@ -9656,11 +9636,11 @@ public static class ff9
     public const Int32 AREA_O = 14;
     public const Int32 AREA_P = 15;
 
-    private const Single toPsxRot = 11.3777781f;
+    //private const Single toPsxRot = 11.3777781f;
 
-    private const Single toUnityRot = 0.087890625f;
+    //private const Single toUnityRot = 0.087890625f;
 
-    private const Single toUnityScale = 0.000244140625f;
+    //private const Single toUnityScale = 0.000244140625f;
 
     public const Int32 SC_COUNTER_ARMOR_BLANK_START = 1500;
     public const Int32 SC_COUNTER_ARMOR_BLANK_END = 1600;

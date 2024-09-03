@@ -9,7 +9,7 @@ public class FF9BattleLoadState
 
     private Int16[] state;
 
-    private Byte[] addr;
+    //private Byte[] addr;
 
-    private Byte[] usage;
+    //private Byte[] usage;
 }

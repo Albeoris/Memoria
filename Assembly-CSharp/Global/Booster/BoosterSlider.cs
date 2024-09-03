@@ -115,17 +115,17 @@ public class BoosterSlider : MonoBehaviour
         {
             this.isArrowHitPointActive = false;
             this.arrowHitPointTween.StopAnimation();
-            this.arrowHitPointTween.TweenOut(new Byte[1], delegate
-            {
-                this.waitForDrag = true;
-            });
+            this.arrowHitPointTween.TweenOut(new Byte[1], delegate { this.waitForDrag = true; });
         }
     }
 
     private Boolean canSlideBooster()
     {
         Boolean flag = !MBG.IsNull && !MBG.Instance.IsFinishedForDisableBooster();
-        return (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.FieldHUD && !flag) || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.BattleHUD || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD || (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Pause && !flag);
+        return (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.FieldHUD && !flag) 
+            || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.BattleHUD 
+            || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.WorldHUD 
+            || (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Pause && !flag);
     }
 
     private void AfterTweenIn()
@@ -138,10 +138,7 @@ public class BoosterSlider : MonoBehaviour
     {
         yield return new WaitForSeconds(2f);
         this.isArrowHitPointActive = false;
-        this.arrowHitPointTween.TweenOut(new Byte[1], delegate
-        {
-            this.waitForDrag = true;
-        });
+        this.arrowHitPointTween.TweenOut(new Byte[1], delegate { this.waitForDrag = true; });
         yield break;
     }
 
@@ -260,13 +257,7 @@ public class BoosterSlider : MonoBehaviour
                 this.boosterList[6].Self.SetActive(true);
                 this.boosterList[4].Self.SetActive(true);
                 this.currentThirdButton = this.boosterList[6].Self;
-                Int32[] buttonId = new Int32[]
-                {
-                0,
-                1,
-                3,
-                4
-                };
+                Int32[] buttonId = new Int32[] { 0, 1, 3, 4 };
                 this.GetButtonCurrentStatus(buttonId);
                 break;
             }
@@ -304,15 +295,7 @@ public class BoosterSlider : MonoBehaviour
                 this.currentThirdButton = this.boosterList[2].Self;
                 this.boosterList[2].Icon.spriteName = "button_rotate";
                 this.boosterList[2].IconToggle.spriteName = "button_rotate_act";
-                Int32[] buttonId = new Int32[]
-                {
-                0,
-                1,
-                2,
-                3,
-                4,
-                5
-                };
+                Int32[] buttonId = new Int32[] { 0, 1, 2, 3, 4, 5 };
                 this.GetButtonCurrentStatus(buttonId);
                 break;
             }
@@ -325,11 +308,11 @@ public class BoosterSlider : MonoBehaviour
                 this.boosterList[2].IconToggle.spriteName = "button_align_act";
                 Int32[] buttonId = new Int32[]
                 {
-                0,
-                1,
-                2,
-                3,
-                4
+                    0,
+                    1,
+                    2,
+                    3,
+                    4
                 };
                 this.GetButtonCurrentStatus(buttonId);
                 break;
@@ -344,12 +327,12 @@ public class BoosterSlider : MonoBehaviour
                 this.boosterList[2].IconToggle.spriteName = "button_align_act";
                 Int32[] buttonId = new Int32[]
                 {
-                0,
-                1,
-                2,
-                3,
-                4,
-                5
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
                 };
                 this.GetButtonCurrentStatus(buttonId);
                 break;
@@ -364,11 +347,11 @@ public class BoosterSlider : MonoBehaviour
                 this.boosterList[2].IconToggle.spriteName = "button_align_act";
                 Int32[] buttonId = new Int32[]
                 {
-                0,
-                1,
-                2,
-                3,
-                4
+                    0,
+                    1,
+                    2,
+                    3,
+                    4
                 };
                 this.GetButtonCurrentStatus(buttonId);
                 break;
@@ -378,7 +361,9 @@ public class BoosterSlider : MonoBehaviour
 
     public void ShowWaringDialog(BoosterType type, Action callback = null)
     {
-        if (this.needComfirmType == BoosterType.None && (PersistenSingleton<UIManager>.Instance.IsPlayerControlEnable || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Config) && EventHUD.CurrentHUD == MinigameHUD.None)
+        if (this.needComfirmType == BoosterType.None 
+            && (PersistenSingleton<UIManager>.Instance.IsPlayerControlEnable || PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Config) 
+            && EventHUD.CurrentHUD == MinigameHUD.None)
         {
             this.needComfirmType = type;
             String text = String.Empty;

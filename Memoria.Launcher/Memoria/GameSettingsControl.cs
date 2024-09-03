@@ -116,8 +116,7 @@ namespace Memoria.Launcher
                 //if (!ReferenceEquals(child, backround))
                 child.Margin = new Thickness(child.Margin.Left + 8, child.Margin.Top, child.Margin.Right + 8, child.Margin.Bottom);
 
-                TextBlock textblock = child as TextBlock;
-                if (textblock != null)
+                if (child is TextBlock textblock)
                 {
                     textblock.Foreground = Brushes.WhiteSmoke;
                     textblock.FontWeight = FontWeight.FromOpenTypeWeight(500);
@@ -125,7 +124,7 @@ namespace Memoria.Launcher
                 }
 
                 Control control = child as Control;
-                if (control != null && !(control is ComboBox))
+                if (control != null && control is not ComboBox)
                     control.Foreground = Brushes.WhiteSmoke;
             }
             try
@@ -671,7 +670,7 @@ namespace Memoria.Launcher
                 if (!quiet)
                     MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.CannotWrite + $" ({(isX64 ? "x64" : "x86")}){Environment.NewLine}{Environment.NewLine}{ex}", Lang.Launcher.ErrorTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
 
-                samplingFrequency = 0;
+                //samplingFrequency = 0;
                 return false;
             }
         }

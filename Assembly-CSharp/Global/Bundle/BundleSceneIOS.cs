@@ -72,32 +72,20 @@ public class BundleSceneIOS : MonoBehaviour
         });
         if (!this._isDownloading)
         {
-            if (GUILayout.Button("SSKK Server", new GUILayoutOption[]
-            {
-                GUILayout.Height(num * 2f)
-            }))
+            if (GUILayout.Button("SSKK Server", new GUILayoutOption[] { GUILayout.Height(num * 2f) }))
             {
                 this._UsingAssetBundlesFromSSKK();
             }
-            if (GUILayout.Button("Clear Cache", new GUILayoutOption[]
-            {
-                GUILayout.Height(num * 2f)
-            }))
+            if (GUILayout.Button("Clear Cache", new GUILayoutOption[] { GUILayout.Height(num * 2f) }))
             {
                 this._ClearCache();
             }
             GUILayout.Label(" ", new GUILayoutOption[0]);
-            if (Application.isEditor && GUILayout.Button("Disable Bundles", new GUILayoutOption[]
-            {
-                GUILayout.Height(num * 2.5f)
-            }))
+            if (Application.isEditor && GUILayout.Button("Disable Bundles", new GUILayoutOption[] { GUILayout.Height(num * 2.5f) }))
             {
                 this._DisableAssetBundles();
             }
-            if (GUILayout.Button("SST Server", new GUILayoutOption[]
-            {
-                GUILayout.Height(num * 2f)
-            }))
+            if (GUILayout.Button("SST Server", new GUILayoutOption[] { GUILayout.Height(num * 2f) }))
             {
                 this._UsingAssetBundlesFromSST();
             }
@@ -375,14 +363,7 @@ public class BundleSceneIOS : MonoBehaviour
 
     public static String GetFullURLForLocalBundles(Boolean isCompressedBundles, String bundleName)
     {
-        String text = String.Concat(new String[]
-        {
-            BundleSceneIOS.GetBasedURLForLocalBundles(),
-            AssetManagerUtil.GetPlatformPrefix(Application.platform),
-            AssetManagerUtil.GetCompressionPrefix(isCompressedBundles),
-            bundleName,
-            AssetManagerUtil.GetBundleExtension()
-        });
+        String text = String.Concat(new String[] { BundleSceneIOS.GetBasedURLForLocalBundles(), AssetManagerUtil.GetPlatformPrefix(Application.platform), AssetManagerUtil.GetCompressionPrefix(isCompressedBundles), bundleName, AssetManagerUtil.GetBundleExtension() });
         global::Debug.Log("GetFullURLForLocalBundles = " + text);
         return text;
     }
@@ -396,14 +377,14 @@ public class BundleSceneIOS : MonoBehaviour
         fullURLForLocalBundles = BundleSceneIOS.GetFullURLForLocalBundles(true, AssetManagerUtil.GetModuleBundleName(AssetManagerUtil.ModuleBundle.Models));
         Boolean flag3 = Caching.IsVersionCached(fullURLForLocalBundles, BundleScene.BundleVersionInt);
         global::Debug.Log(String.Concat(new Object[]
-        {
-            "Are3CompressedBundlesCached: isBundle2Cached = ",
-            flag,
-            ", isBundle3Cached = ",
-            flag2,
-            ", isBundle4Cached = ",
-            flag3
-        }));
+            {
+                "Are3CompressedBundlesCached: isBundle2Cached = ",
+                flag,
+                ", isBundle3Cached = ",
+                flag2,
+                ", isBundle4Cached = ",
+                flag3
+            }));
         return flag && flag2 && flag3;
     }
 
