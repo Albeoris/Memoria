@@ -29,6 +29,7 @@ namespace Memoria
             public readonly IniValue<Int32> SFXSmoothTexture;
             public readonly IniValue<Int32> UISmoothTexture;
             public readonly IniValue<Int32> WorldmapFieldOfView;
+            public readonly IniValue<Int32> WorldmapSpeedFieldOfViewBoost;
 
             public GraphicsSection() : base(nameof(GraphicsSection), false)
             {
@@ -54,6 +55,7 @@ namespace Memoria
                 SFXSmoothTexture = BindInt32(nameof(SFXSmoothTexture), -1);
                 SFXSmoothTexture = BindInt32(nameof(UISmoothTexture), -1);
                 WorldmapFieldOfView = BindInt32(nameof(WorldmapFieldOfView), 100);
+                WorldmapSpeedFieldOfViewBoost = BindInt32(nameof(WorldmapSpeedFieldOfViewBoost), 6);
             }
         }
     }

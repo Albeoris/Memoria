@@ -2654,25 +2654,20 @@ public static class ff9
     {
         if (!ff9.w_cameraFixMode)
             ff9.w_cameraChangeUpdate();
-        Single num = 8f;
-        if (ff9.w_moveCHRControlPtr.type_cam == 0)
-            num = 8f;
-        else if (ff9.w_moveCHRControlPtr.type_cam == 1)
-            num = 8f;
-        else if (ff9.w_moveCHRControlPtr.type_cam == 4)
-            num = 8f;
-        else if (ff9.w_moveCHRControlPtr.type_cam == 2)
-            num = 9.5f;
-        else if (ff9.w_moveCHRControlPtr.type_cam == 3)
-            num = 8f;
-        ff9.world.MainCamera.fieldOfView = ff9.w_cameraPosstatNow.cameraPers / num * (Configuration.Graphics.WorldmapFieldOfView / 100f);
+
+        Single fovDivider = ff9.w_moveCHRControlPtr.type_cam == 2 ? 9.5f : 8f; // exception for blue narciss
+        Boolean isAShip = ff9.w_moveCHRControlPtr.type == 1 || ff9.w_moveCHRControlPtr.type == 2;
+
+        Single speedmultiplier = isAShip ? Mathf.Max(w_moveCHRControl_XZSpeed * (Single)Configuration.Graphics.WorldmapSpeedFieldOfViewBoost, 0f) : 0f; // w_moveCHRControl_XZSpeed normally -1 to 2
+
+        ff9.world.MainCamera.fieldOfView = ff9.w_cameraPosstatNow.cameraPers / fovDivider * (Configuration.Graphics.WorldmapFieldOfView / 100f) + speedmultiplier;
         if (ff9.w_moveCHRControlPtr.type == 1)
-            ff9.world.MainCamera.fieldOfView = 43.75f * (Configuration.Graphics.WorldmapFieldOfView / 100f);
+            ff9.world.MainCamera.fieldOfView = 43.75f * (Configuration.Graphics.WorldmapFieldOfView / 100f) + speedmultiplier;
         if (ff9.w_moveCHRControlPtr.type_cam == 1)
         {
-            Int32 num2 = ff9.w_frameGetParameter(193);
-            if (num2 == 36 || num2 == 37 || num2 == 38)
-                ff9.world.MainCamera.fieldOfView = 350f / 8f * (Configuration.Graphics.WorldmapFieldOfView / 100f);
+            Int32 topoID = ff9.w_frameGetParameter(193);
+            if (topoID == 36 || topoID == 37 || topoID == 38)
+                ff9.world.MainCamera.fieldOfView = 43.75f * (Configuration.Graphics.WorldmapFieldOfView / 100f) + speedmultiplier;
         }
         ff9.w_cameraSysDataCamera.rotation %= 360f;
         ff9.w_cameraAimOffset = ff9.w_cameraPosstatNow.aimHight;
@@ -6236,13 +6231,15 @@ public static class ff9
         actorRot[1] += ff9.w_moveCHRControl_RotSpeed;
         actorRot[1] %= 360f;
         ff9.w_moveCHRControl_RotTrue = actorRot[1] % 360f;
+
         if (ff9.w_moveCHRControl_RotSpeed > 0f && ff9.w_cameraRotAngle > ff9.PsxRot(-(cameraChangeThreshold * 1)))
-            ff9.w_cameraRotAngle += ff9.PsxRot(cameraChangeThreshold / 8);
+            ff9.w_cameraRotAngle -= ff9.PsxRot(cameraChangeThreshold / 8);
         if (ff9.w_moveCHRControl_RotSpeed < 0f && ff9.w_cameraRotAngle < ff9.PsxRot(-(cameraChangeThreshold * 1)))
-            ff9.w_cameraRotAngle += ff9.PsxRot(cameraChangeThreshold / 8);
+            ff9.w_cameraRotAngle -= ff9.PsxRot(cameraChangeThreshold / 8);
         if (ff9.UnityUnit(ff9.w_moveCHRControl_XZSpeed) == 0)
-            ff9.w_cameraRotAngle += ff9.PsxRot(cameraChangeThreshold / 8);
+            ff9.w_cameraRotAngle -= ff9.PsxRot(cameraChangeThreshold / 8);
         ff9.w_cameraRotAngle = Mathf.Clamp(ff9.w_cameraRotAngle, ff9.PsxRot(-ff9.w_moveCHRControlPtr.speed_roll), ff9.PsxRot(ff9.w_moveCHRControlPtr.speed_roll));
+
         if (ff9.w_moveCHRControl_RotSpeed > 0f && actorRot[2] > ff9.PsxRot(-(cameraChangeThreshold * 2)))
             actorRot[2] += ff9.PsxRot(cameraChangeThreshold / 4);
         if (ff9.w_moveCHRControl_RotSpeed < 0f && actorRot[2] < ff9.PsxRot(-(cameraChangeThreshold * 2)))
