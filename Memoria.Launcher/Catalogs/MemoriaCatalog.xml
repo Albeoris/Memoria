@@ -90,10 +90,10 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.27</Version>
+	<Version>0.3.28</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
-	<ReleaseDate>31 Aug 2024</ReleaseDate>
+	<ReleaseDate>05 Sep 2024</ReleaseDate>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
 	<Description>A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
@@ -117,23 +117,48 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese</Description>
 	<PatchNotes>
-- Major correction to the new way of calculating stats for characters joining the team (duplicate equipment + ring that was not supposed to be obtained).
-- Major correction to damage calculations, particularly for boosts, weaknesses and elemental resistances.
-- Slight correction at the start of the game where Blank could use the “Concoction” skill.
-- Slight correction to Blank's SA menu.
-- Fixed two bosses that could be eaten by Quina. (nom nom nom)
-- Removed Markus's extra dialogue when he leaves Steiner on Disc 2 (no longer relevant since Markus and Eiko have been separated).
-- Fixed Power Break/Magic Break/Armor Break/Mental Break spell descriptions (except in FR language).
-- Spell descriptions for “Water Sword”, “Watera Sword” and “Poison Sword” have been corrected (except in FR language).
-- Slight correction to the “Flash” skill (except in FR language).
-- Slight correction to the description of the SA Clear Headed (except in FR language).
-- Slight correction to Magus Hat object (except in FR language).
-- Improvement to Bubbles' Sequence.seq file (for Water Sword)
-- Correction of Zorn's AI.
-- New correction of the Zuu “Aera” attack.
-- New IA for Zuus.
-- Readjustment of certain SHP in combat.
-- Correction of “Concoction” description.</PatchNotes>
+- Major correction to RagTime, which incorrectly declared certain variables.
+If you encounter the final RagTime without having answered all 16 questions, he will flee and reset the variables correctly.
+
+- Modification of certain accessories:
+Barrette => Strength +2 instead of +3
+Promist Ring => +1 Strength/Speed/Magic/Will instead of +2 Strength
+Birth Ring => +1 Magic and +3 Will instead of +4 Will
+
+Peridot => +1 Speed and +2 Magic instead of +2 Speed and +2 Magic
+Opal => +2 Magic and +1 Will instead of +2 Magic and +2 Will
+Topaz => +2 Strength and +1 Magic instead of +2 Strength and +2 Magic
+Ruby => +1 Speed and +2 Will instead of +1 Magic and +3 Will
+Emerald => +2 Speed and +1 Will instead of +3 Speed and +1 Will
+Beryl => +1 Magic and +2 Will instead of +1 Strength/+1 Speed/+1 Magic/+2 Will
+Amethyst => +1 Strength and +2 Magic instead of +1 Strength/+1 Speed/+2 Magic/+1 Will
+Garnet => +2 Strength/+1 Speed/+2 Magic/+1 Will instead of +2 Strength/+2 Speed/+2 Magic/+2 Will
+Phoenix Pinion => +1 Will
+
+- Improved the script for "Meo Twister", where the script could output an error under certain conditions.
+- Corrected the formula for Venom, Zombie, Silence, Poison, Blindness and Trouble alterations on EasyKill targets.
+- Fixed a bug in scripts 0094_AbsorbMagicScript.cs and 0095_AbsorbStrengthScript.cs.
+- Correction of the object obtained by "True".
+- Fixed a bug on Meltigemini's "Cellular Reaction" attack, where damage was not good when heals are returned under Reflect.
+- Fixed a bug on the "Zombie Armor" status.
+- Fixed a bug in the "Bravery" and "Heroism" skills.
+- "Virus" SHP no longer displayed on players.
+- Fixed a bug on SA Level Up++.
+- Corrected a bug on "Lucky Star" SA.
+- Freyja's "Jump" skill under Trance now ignores 50% of physical armor on all targets (instead of 40%).
+- Demi can now trigger Vivi's Focus effect (but does not benefit from the damage bonus).
+- Steiner's "Swd Mag" now also takes Vivi's weapon focus bonus into account.
+- Corrected a display bug where the Doom and Gradual Petrify counters disappeared in certain situations.
+- Fixed a bug on Lancer, which was not displaying any damage on specific situations.
+- Fixed the fountain script on field 1908 (Gate/Treno), where it was possible to have infinite Elixirs.
+- Improved end-of-battle on certain bosses (such as Black Waltz 3 on CD2).
+- Correction on the fight against Tantarian, where a softlock is possible.
+- Optimization and slight change to Tantarian's AI.
+- Correction of the "Watera Sword" sequence file for multiple targets.
+- Fixed an inconspicuous bug where Zidane would micro-teleport when changing weapon in combat.
+- Fixed multiple descriptions on skills and items (thanks @Luplow!).
+- Fixed a few item descriptions.
+- Fixed some dialogues.</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/HC3GH4j/Logo-Trance-Seek.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/LogoTranceSeek.png</PreviewFile>
