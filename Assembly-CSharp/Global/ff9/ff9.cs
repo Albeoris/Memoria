@@ -8391,63 +8391,47 @@ public static class ff9
         Log.Message("globalFog.enabled:" + globalFog.enabled + " ff9.w_frameFog:" + ff9.w_frameFog + " w_frameScenePtr:" + w_frameScenePtr);
         if (globalFog.enabled)
         {
+            globalFog.distanceFog = true;
+            globalFog.useRadialDistance = true;
+            Single t = ff9.w_frameCameraPtr.transform.position.y / 52.1875f;
+            if (ff9.world.SkyDome_Fog.gameObject.activeSelf)
+                ff9.world.SkyDome_Fog.gameObject.SetActive(false);
+
             if (ff9.w_frameFog == 1) // mist present (disc 1 & 4)
             {
-                globalFog.distanceFog = true;
-                globalFog.useRadialDistance = true;
                 globalFog.heightFog = true;
                 globalFog.height = 29f;
                 globalFog.heightDensity = 0.07f;
                 globalFog.startDistance = 55.5f * MistStartMul;
-                if (ff9.world.SkyDome_Fog.gameObject.activeSelf)
-                {
-                    ff9.world.SkyDome_Fog.gameObject.SetActive(false);
-                }
                 RenderSettings.fogStartDistance = 26.7f * MistStartMul;
                 RenderSettings.fogEndDistance = 80f * MistEndMul;
-                Single t = ff9.w_frameCameraPtr.transform.position.y / 52.1875f;
-                Single a = 26f;
-                Single b = 77.4f;
-                Single a2 = 65.9f;
-                Single b2 = 114.9f;
-                Single value = Mathf.Lerp(a, b, t);
-                Single value2 = Mathf.Lerp(a2, b2, t);
-                Shader.SetGlobalFloat("_FogStartDistance", value * MistStartMul);
-                Shader.SetGlobalFloat("_FogEndDistance", value2 * MistEndMul);
+                Single start = Mathf.Lerp(26f, 77.4f, t);
+                Single end = Mathf.Lerp(65.9f, 114.9f, t);
+                Shader.SetGlobalFloat("_FogStartDistance", start * MistStartMul);
+                Shader.SetGlobalFloat("_FogEndDistance", end * MistEndMul);
                 if (ff9.w_frameScenePtr == 2970 || ff9.w_frameScenePtr == 2980) // destroyed gate to Lindblum event
                 {
                     globalFog.startDistance = 55.5f;
                     RenderSettings.fogStartDistance = 46.8f;
                     RenderSettings.fogEndDistance = 82.8f;
-                    a = 46.8f;
-                    b = 82.8f;
-                    a2 = 85.8f;
-                    b2 = 114.2f;
-                    value = Mathf.Lerp(a, b, t);
-                    value2 = Mathf.Lerp(a2, b2, t);
-                    Shader.SetGlobalFloat("_FogStartDistance", value);
-                    Shader.SetGlobalFloat("_FogEndDistance", value2);
+                    start = Mathf.Lerp(46.8f, 82.8f, t);
+                    end = Mathf.Lerp(85.8f, 114.2f, t);
+                    Shader.SetGlobalFloat("_FogStartDistance", start);
+                    Shader.SetGlobalFloat("_FogEndDistance", end);
                 }
             }
             else if (ff9.w_frameFog == 0)
             {
-                globalFog.distanceFog = true;
-                globalFog.useRadialDistance = true;
                 globalFog.heightFog = false;
                 globalFog.height = 59.7f;
                 globalFog.heightDensity = 10f;
                 globalFog.startDistance = 0f;
-                if (ff9.world.SkyDome_Fog.gameObject.activeSelf)
-                {
-                    ff9.world.SkyDome_Fog.gameObject.SetActive(false);
-                }
                 RenderSettings.fogStartDistance = 86.25f * fogStartMul;
                 RenderSettings.fogEndDistance = 142.2f * fogEndMul;
-                Single t2 = ff9.w_frameCameraPtr.transform.position.y / 52.1875f;
-                Single value3 = Mathf.Lerp(88.6f, 92.6f, t2);
-                Single value4 = Mathf.Lerp(158.8f, 168.5f, t2);
-                Shader.SetGlobalFloat("_FogStartDistance", value3 * fogStartMul);
-                Shader.SetGlobalFloat("_FogEndDistance", value4 * fogEndMul);
+                Single start = Mathf.Lerp(88.6f, 92.6f, t);
+                Single end = Mathf.Lerp(158.8f, 168.5f, t);
+                Shader.SetGlobalFloat("_FogStartDistance", start * fogStartMul);
+                Shader.SetGlobalFloat("_FogEndDistance", end * fogEndMul);
             }
         }
         else if (ff9.w_frameFog == 1)
