@@ -10,6 +10,7 @@ namespace Memoria
             public static Boolean StartModelViewer => Instance._debug.StartModelViewer;
             public static Boolean StartFieldCreator => Instance._debug.StartFieldCreator;
             public static Boolean RenderWalkmeshes => Instance._debug.RenderWalkmeshes;
+            public static Int32 Test => Instance._debug.Test;
         }
     }
 }
