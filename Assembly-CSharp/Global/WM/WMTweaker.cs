@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -46,8 +47,10 @@ public class WMTweaker : Singleton<WMTweaker>
 
     private void SetShaderParameters()
     {
-        Shader.SetGlobalFloat("_FogStartDistance", this._FogStartDistance);
-        Shader.SetGlobalFloat("_FogEndDistance", this._FogEndDistance);
+        Single fogStartMul = Configuration.Worldmap.FogStartDistance / 100f;
+        Single fogEndMul = Configuration.Worldmap.FogEndDistance / 100f;
+        Shader.SetGlobalFloat("_FogStartDistance", this._FogStartDistance * fogStartMul);
+        Shader.SetGlobalFloat("_FogEndDistance", this._FogEndDistance * fogEndMul);
     }
 
     [ContextMenu("Reset Camera Matrix")]

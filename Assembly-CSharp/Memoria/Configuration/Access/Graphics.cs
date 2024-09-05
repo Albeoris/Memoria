@@ -28,8 +28,6 @@ namespace Memoria
             public static Int32 ElementsSmoothTexture => Instance._graphics.ElementsSmoothTexture;
             public static Int32 SFXSmoothTexture => Instance._graphics.SFXSmoothTexture;
             public static Int32 UISmoothTexture => Instance._graphics.UISmoothTexture;
-            public static Int32 WorldmapFieldOfView => Instance._graphics.WorldmapFieldOfView;
-            public static Int32 WorldmapSpeedFieldOfViewBoost => Instance._graphics.WorldmapSpeedFieldOfViewBoost;
 
             private static volatile Boolean _widescreenSupport = InitializeWidescreenSupport();
 
