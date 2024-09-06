@@ -515,12 +515,11 @@ Part of the Characters Enhancements feature of Kupo Mods Formerly Mog Add-ons</D
 </Mod>
 <Mod>
 	<Name>Tantalus</Name>
-	<Version>3.0</Version>
+	<Version>3.2</Version>
 	<InstallationPath>PlayableTantalus</InstallationPath>
 	<ReleaseDateOriginal>2024-06-14</ReleaseDateOriginal>
-	<ReleaseDate>2024-08-18</ReleaseDate>
+	<ReleaseDate>2024-09-03</ReleaseDate>
 	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
-	<IncompatibleWith>Beatrix Mod, Trance Seek</IncompatibleWith>
 	<Author>Emeiru</Author>
 	<Description>Overhauls Blank, Cinna, and Marcus to become actually usable characters
 Includes: 
@@ -528,7 +527,7 @@ Includes:
 - Base stats improvements
 - Steal-Gil and Mug buffed
 - New items and tweaks to complement the trio and thief gameplay
-- Minor name and ability text changes (purely thematic)</Description>
+- Minor name and ability text changes</Description>
 	<PatchNotes>Complete changes and info can be found on this mod's page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/64</Website>
@@ -542,7 +541,7 @@ Includes:
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Vanilla</Name>
+		<Name>Vanilla FFIX</Name>
 		<InstallationPath>Vanilla</InstallationPath>
 		<Description>Version for regular FFIX</Description>
 		<Priority>2</Priority>
@@ -569,16 +568,16 @@ Complete changes and info can be found on this mod's page.</Description>
 
 <Mod>
 	<Name>Amazing Quina</Name>
-	<Version>1.0</Version>
+	<Version>2.0</Version>
 	<InstallationPath>AmazingQuina</InstallationPath>
 	<ReleaseDateOriginal>2024-08-18</ReleaseDateOriginal>
-	<ReleaseDate>2024-08-18</ReleaseDate>
+	<ReleaseDate>2024-09-06</ReleaseDate>
 	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
 	<Author>Emeiru</Author>
 	<Description>Amazing tweaks and improvement for the quirky Quina
 Includes: 
 - Forks deal more consistent random damage
-- New endgame robe for Quina that removes LV spell multiplier
+- New endgame robe for Quina that removes LV spell requirement
 - New trance command, Dbl Blu (from Alternate Fantasy)
 - Quina now learns Scan, Return Magic, and others
 - Tweaks to abilities like Goblin Punch, White Wind, and more</Description>
