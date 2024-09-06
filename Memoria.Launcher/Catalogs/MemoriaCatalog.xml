@@ -520,6 +520,7 @@ Part of the Characters Enhancements feature of Kupo Mods Formerly Mog Add-ons</D
 	<ReleaseDateOriginal>2024-06-14</ReleaseDateOriginal>
 	<ReleaseDate>2024-09-03</ReleaseDate>
 	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
+	<IncompatibleWith>Beatrix Mod, Trance Seek</IncompatibleWith>
 	<Author>Emeiru</Author>
 	<Description>Overhauls Blank, Cinna, and Marcus to become actually usable characters
 Includes: 
