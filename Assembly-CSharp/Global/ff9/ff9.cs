@@ -152,81 +152,81 @@ public static class ff9
             {
                 cameraPers = 320f,
                 cameraDistance = 5000f,
-                cameraHight = -2200f,
+                cameraHeight = -2200f,
                 cameraCorrect = -3000f,
-                aimHight = -1000f
+                aimHeight = -1000f
             },
             new ff9.s_cameraPosstat
             {
                 cameraPers = 350f,
                 cameraDistance = 6000f,
-                cameraHight = -3200f,
+                cameraHeight = -3200f,
                 cameraCorrect = -3000f,
-                aimHight = -1200f
+                aimHeight = -1200f
             },
             new ff9.s_cameraPosstat
             {
                 cameraPers = 350f,
                 cameraDistance = 5500f,
-                cameraHight = -2400f,
+                cameraHeight = -2400f,
                 cameraCorrect = -3000f,
-                aimHight = -500f
+                aimHeight = -500f
             },
             new ff9.s_cameraPosstat
             {
                 cameraPers = 350f,
                 cameraDistance = 7000f,
-                cameraHight = -4400f,
+                cameraHeight = -4400f,
                 cameraCorrect = -500f,
-                aimHight = -1500f
+                aimHeight = -1500f
             },
             new ff9.s_cameraPosstat
             {
                 cameraPers = 320f,
                 cameraDistance = 6750f,
-                cameraHight = -400f,
+                cameraHeight = -400f,
                 cameraCorrect = -3600f,
-                aimHight = 0f
+                aimHeight = 0f
             },
             new ff9.s_cameraPosstat
             {
                 cameraPers = 320f,
                 cameraDistance = 6750f,
-                cameraHight = -400f,
+                cameraHeight = -400f,
                 cameraCorrect = -3400f,
-                aimHight = 0f
+                aimHeight = 0f
             },
             new ff9.s_cameraPosstat
             {
                 cameraPers = 320f,
                 cameraDistance = 6750f,
-                cameraHight = -400f,
+                cameraHeight = -400f,
                 cameraCorrect = -3600f,
-                aimHight = 0f
+                aimHeight = 0f
             },
             new ff9.s_cameraPosstat
             {
                 cameraPers = 350f,
                 cameraDistance = 4000f,
-                cameraHight = -7500f,
+                cameraHeight = -7500f,
                 cameraCorrect = -3000f,
-                aimHight = -1200f
+                aimHeight = -1200f
             },
             new ff9.s_cameraPosstat
             {
                 cameraPers = 320f,
                 cameraDistance = 5000f,
-                cameraHight = -400f,
+                cameraHeight = -400f,
                 cameraCorrect = -3500f,
-                aimHight = 0f
+                aimHeight = 0f
             },
             new ff9.s_cameraPosstat
             {
                 cameraPers = 380f,
                 cameraDistance = 7000f,
-                cameraHight = -2200f,
+                cameraHeight = -2200f,
                 cameraCorrect = -2400f,
-                aimHight = -1500f
+                aimHeight = -1500f
             }
         };
         ff9.s_cameraElement[,] array2 = new ff9.s_cameraElement[5, 3];
@@ -2590,9 +2590,9 @@ public static class ff9
             {
                 ff9.s_cameraPosstat s_cameraPosstat = ff9.w_cameraPosstat[i];
                 s_cameraPosstat.cameraDistance *= 0.00390625f;
-                s_cameraPosstat.cameraHight = s_cameraPosstat.cameraHight * 0.00390625f * -1f;
+                s_cameraPosstat.cameraHeight = s_cameraPosstat.cameraHeight * 0.00390625f * -1f;
                 s_cameraPosstat.cameraCorrect = s_cameraPosstat.cameraCorrect * 0.00390625f * -1f;
-                s_cameraPosstat.aimHight = s_cameraPosstat.aimHight * 0.00390625f * -1f;
+                s_cameraPosstat.aimHeight = s_cameraPosstat.aimHeight * 0.00390625f * -1f;
                 ff9.w_cameraPosstat[i] = s_cameraPosstat;
             }
             ff9.converted_w_cameraPosstat = true;
@@ -2661,7 +2661,7 @@ public static class ff9
         Boolean isAShip = ff9.w_moveCHRControlPtr.type == 1 || ff9.w_moveCHRControlPtr.type == 2; // flight (ship/choco) 1, boat 2
         //Log.Message("ff9.w_moveCHRControlPtr.type_cam " + ff9.w_moveCHRControlPtr.type_cam + " ff9.w_moveCHRControlPtr.type " + ff9.w_moveCHRControlPtr.type);
 
-        Single speedmultiplier = (isAShip && ff9.w_frameScenePtr != 2980) ? Mathf.Max(w_moveCHRControl_XZSpeed * (Configuration.Worldmap.FieldOfViewSpeedBoost / 20f), 0f) : 0f; // w_moveCHRControl_XZSpeed normally -1 to 2
+        Single speedmultiplier = (isAShip && ff9.w_frameScenePtr != 2980 && w_moveCHRControl_XZSpeed > 0) ? Mathf.Max(w_moveCHRControl_XZSpeed * Configuration.Worldmap.FieldOfViewSpeedBoost / 20f) : 0f; // w_moveCHRControl_XZSpeed normally -1 to 2
         Single fovSetting = ff9.w_frameScenePtr != 2980 ? Configuration.Worldmap.FieldOfView / 100f : 1f;
         ff9.world.MainCamera.fieldOfView = (ff9.w_cameraPosstatNow.cameraPers / fovDivider) * fovSetting + speedmultiplier;
         if (ff9.w_moveCHRControlPtr.type == 1)
@@ -2673,30 +2673,31 @@ public static class ff9
                 ff9.world.MainCamera.fieldOfView = 43.75f * fovSetting + speedmultiplier;
         }
         ff9.w_cameraSysDataCamera.rotation %= 360f;
-        ff9.w_cameraAimOffset = ff9.w_cameraPosstatNow.aimHight;
-        ff9.w_cameraEyeOffset.x = ff9.rsin(ff9.w_cameraSysDataCamera.rotation) * (ff9.w_cameraPosstatNow.cameraDistance * ff9.w_cameraDebugDist / 4096f);
-        ff9.w_cameraEyeOffset.y = ff9.w_cameraPosstatNow.cameraHight;
-        ff9.w_cameraEyeOffset.z = ff9.rcos(ff9.w_cameraSysDataCamera.rotation) * (ff9.w_cameraPosstatNow.cameraDistance * ff9.w_cameraDebugDist / 4096f);
+        ff9.w_cameraAimOffset = ff9.w_cameraPosstatNow.aimHeight * Configuration.Worldmap.CameraHeight / 100f;
+        ff9.w_cameraEyeOffset.y = ff9.w_cameraPosstatNow.cameraHeight;
+        ff9.w_cameraEyeOffset.x = ff9.rsin(ff9.w_cameraSysDataCamera.rotation) * (ff9.w_cameraPosstatNow.cameraDistance * (Configuration.Worldmap.CameraDistance / 100f) * ff9.w_cameraDebugDist / 4096f);
+        ff9.w_cameraEyeOffset.z = ff9.rcos(ff9.w_cameraSysDataCamera.rotation) * (ff9.w_cameraPosstatNow.cameraDistance * (Configuration.Worldmap.CameraDistance / 100f) * ff9.w_cameraDebugDist / 4096f);
         if (!ff9.w_cameraFixMode)
             ff9.w_cameraSetEyeAim();
         ff9.setVector(ref ff9.w_cameraFocusEye, ff9.w_cameraWorldAim.x - ff9.w_cameraWorldEye.x, ff9.w_cameraWorldAim.y - ff9.w_cameraWorldEye.y, ff9.w_cameraWorldAim.z - ff9.w_cameraWorldEye.z);
         if (ff9.tweaker.CustomCamera)
         {
+            
             Vector3 zero = Vector3.zero;
             zero.y = ff9.w_cameraSysDataCamera.rotation;
             Matrix4x4 matrix4x;
             ff9.RotMatrix(ref zero, out matrix4x);
-            Vector3 v;
-            ff9.ApplyMatrixLV(ref matrix4x, ref ff9.w_cameraUpvector, out v);
-            ff9.w_camera_makematrix(ff9.w_frameCameraPtr, ff9.w_cameraFocusEye, ff9.w_cameraFocusAim, v, ff9.w_cameraWorldEye);
-        }
+            ff9.ApplyMatrixLV(ref matrix4x, ref ff9.w_cameraUpvector, out Vector3 vec);
+            ff9.w_camera_makematrix(ff9.w_frameCameraPtr, ff9.w_cameraFocusEye, ff9.w_cameraFocusAim, vec, ff9.w_cameraWorldEye);
+            
+    }
         else
         {
-            Vector3 b = new Vector3(0f, ff9.tweaker.w_cameraWorldEye_Y * 0.00390625f, 0f);
-            Vector3 b2 = new Vector3(0f, ff9.tweaker.w_cameraWorldAim_Y * 0.00390625f, 0f);
+            Vector3 b = new Vector3(0f, ff9.tweaker.w_cameraWorldEye_Y * 0.00390625f * Configuration.Worldmap.CameraHeight / 100f, 0f);
+            Vector3 b2 = new Vector3(0f, ff9.tweaker.w_cameraWorldAim_Y * 0.00390625f * Configuration.Worldmap.CameraAimHeight / 100f, 0f);
             if (FF9StateSystem.World.FixTypeCam)
             {
-                if (ff9.w_moveCHRControlPtr.type_cam == 0)
+                if (ff9.w_moveCHRControlPtr.type_cam == 0) // on foot
                 {
                     ff9.tweaker.FixTypeCamEyeY = 558;
                     ff9.tweaker.FixTypeCamAimY = 312;
@@ -2729,8 +2730,8 @@ public static class ff9
                 }
                 ff9.tweaker.FixTypeCamEyeY = ff9.tweaker.FixTypeCamEyeYCurrent;
                 ff9.tweaker.FixTypeCamAimY = ff9.tweaker.FixTypeCamAimYCurrent;
-                b = new Vector3(0f, ff9.tweaker.FixTypeCamEyeY * 0.00390625f, 0f);
-                b2 = new Vector3(0f, ff9.tweaker.FixTypeCamAimY * 0.00390625f, 0f);
+                b = new Vector3(0f, ff9.tweaker.FixTypeCamEyeY * 0.00390625f * Configuration.Worldmap.CameraHeight / 100f, 0f);
+                b2 = new Vector3(0f, ff9.tweaker.FixTypeCamAimY * 0.00390625f * Configuration.Worldmap.CameraAimHeight / 100f, 0f);
             }
             Camera mainCamera = Singleton<WMWorld>.Instance.MainCamera;
             mainCamera.transform.position = ff9.w_cameraWorldEye + b;
@@ -2752,10 +2753,10 @@ public static class ff9
             ff9.w_cameraDirVector.x = ff9.w_cameraDirVector.x + 393216f;
         if (ff9.w_cameraDirVector.z < -65535f)
             ff9.w_cameraDirVector.z = ff9.w_cameraDirVector.z + 327680f;
-        Single num3 = ff9.ratan2(ff9.w_cameraDirVector.z, ff9.w_cameraDirVector.x);
-        num3 += ff9.w_cameraRotAngle * 0f;
-        ff9.w_cameraDirVector.x = ff9.rcos(num3);
-        ff9.w_cameraDirVector.z = ff9.rsin(num3);
+        Single angle = ff9.ratan2(ff9.w_cameraDirVector.z, ff9.w_cameraDirVector.x);
+        angle += ff9.w_cameraRotAngle * 0f;
+        ff9.w_cameraDirVector.x = ff9.rcos(angle);
+        ff9.w_cameraDirVector.z = ff9.rsin(angle);
         ff9.VectorNormal(ref ff9.w_cameraDirVector, out ff9.w_cameraDirVector);
         if (ff9.w_frameScenePtr < 4990 && ff9.m_GetIDArea(ff9.m_moveActorID) == 12)
             ff9.w_cameraSysDataCamera.upperCounterForce = true;
@@ -3158,9 +3159,9 @@ public static class ff9
             ff9.w_cameraGetPosstat(ff9.w_moveActorPtr.pos[1], ff9.w_cameraChangeChr, area, ff9.w_cameraSysDataCamera.upperCounter, out s_cameraPosstat);
             ff9.w_cameraPosstatNow.cameraPers = ff9.w_frameInter16(ff9.w_cameraPosstatPrev.cameraPers, s_cameraPosstat.cameraPers, ff9.w_cameraChangeCounter, 9);
             ff9.w_cameraPosstatNow.cameraDistance = ff9.w_frameInter16(ff9.w_cameraPosstatPrev.cameraDistance, s_cameraPosstat.cameraDistance, ff9.w_cameraChangeCounter, 15);
-            ff9.w_cameraPosstatNow.cameraHight = ff9.w_frameInter16(ff9.w_cameraPosstatPrev.cameraHight, s_cameraPosstat.cameraHight, ff9.w_cameraChangeCounter, 14);
+            ff9.w_cameraPosstatNow.cameraHeight = ff9.w_frameInter16(ff9.w_cameraPosstatPrev.cameraHeight, s_cameraPosstat.cameraHeight, ff9.w_cameraChangeCounter, 14);
             ff9.w_cameraPosstatNow.cameraCorrect = ff9.w_frameInter16(ff9.w_cameraPosstatPrev.cameraCorrect, s_cameraPosstat.cameraCorrect, ff9.w_cameraChangeCounter, 14);
-            ff9.w_cameraPosstatNow.aimHight = ff9.w_frameInter16(ff9.w_cameraPosstatPrev.aimHight, s_cameraPosstat.aimHight, ff9.w_cameraChangeCounter, 14);
+            ff9.w_cameraPosstatNow.aimHeight = ff9.w_frameInter16(ff9.w_cameraPosstatPrev.aimHeight, s_cameraPosstat.aimHeight, ff9.w_cameraChangeCounter, 14);
             if (ff9.w_cameraChangeCounter >= 4096)
                 ff9.w_cameraChangeCounterSpeed = 0;
         }
@@ -3179,14 +3180,14 @@ public static class ff9
         ff9.s_cameraPosstat s_cameraPosstat4;
         s_cameraPosstat4.cameraPers = ff9.w_frameInter16(s_cameraPosstat2.cameraPers, s_cameraPosstat3.cameraPers, t, 9);
         s_cameraPosstat4.cameraDistance = ff9.w_frameInter16(s_cameraPosstat2.cameraDistance, s_cameraPosstat3.cameraDistance, t, 14);
-        s_cameraPosstat4.cameraHight = ff9.w_frameInter16(s_cameraPosstat2.cameraHight, s_cameraPosstat3.cameraHight, t, 13);
+        s_cameraPosstat4.cameraHeight = ff9.w_frameInter16(s_cameraPosstat2.cameraHeight, s_cameraPosstat3.cameraHeight, t, 13);
         s_cameraPosstat4.cameraCorrect = ff9.w_frameInter16(s_cameraPosstat2.cameraCorrect, s_cameraPosstat3.cameraCorrect, t, 13);
-        s_cameraPosstat4.aimHight = ff9.w_frameInter16(s_cameraPosstat2.aimHight, s_cameraPosstat3.aimHight, t, 13);
+        s_cameraPosstat4.aimHeight = ff9.w_frameInter16(s_cameraPosstat2.aimHeight, s_cameraPosstat3.aimHeight, t, 13);
         data.cameraPers = ff9.w_frameInter16(s_cameraPosstat4.cameraPers, s_cameraPosstat.cameraPers, upper, 9);
         data.cameraDistance = ff9.w_frameInter16(s_cameraPosstat4.cameraDistance, s_cameraPosstat.cameraDistance, upper, 14);
-        data.cameraHight = ff9.w_frameInter16(s_cameraPosstat4.cameraHight, s_cameraPosstat.cameraHight, upper, 13);
+        data.cameraHeight = ff9.w_frameInter16(s_cameraPosstat4.cameraHeight, s_cameraPosstat.cameraHeight, upper, 13);
         data.cameraCorrect = ff9.w_frameInter16(s_cameraPosstat4.cameraCorrect, s_cameraPosstat.cameraCorrect, upper, 13);
-        data.aimHight = ff9.w_frameInter16(s_cameraPosstat4.aimHight, s_cameraPosstat.aimHight, upper, 13);
+        data.aimHeight = ff9.w_frameInter16(s_cameraPosstat4.aimHeight, s_cameraPosstat.aimHeight, upper, 13);
     }
 
     public static UInt16 w_cameraGetHeightParam(Single height)
@@ -8385,10 +8386,11 @@ public static class ff9
         }
         Single MistStartMul = Configuration.Worldmap.MistStartDistance / 100f;
         Single MistEndMul = Configuration.Worldmap.MistEndDistance / 100f;
+        Single MistDensity = Configuration.Worldmap.MistDensity / 100f;
         Single fogStartMul = Configuration.Worldmap.FogStartDistance / 100f;
         Single fogEndMul = Configuration.Worldmap.FogEndDistance / 100f;
         GlobalFog globalFog = ff9.world.GlobalFog;
-        Log.Message("globalFog.enabled:" + globalFog.enabled + " ff9.w_frameFog:" + ff9.w_frameFog + " w_frameScenePtr:" + w_frameScenePtr);
+        //Log.Message("globalFog.enabled:" + globalFog.enabled + " ff9.w_frameFog:" + ff9.w_frameFog + " w_frameScenePtr:" + w_frameScenePtr);
         if (globalFog.enabled)
         {
             globalFog.distanceFog = true;
@@ -8401,7 +8403,7 @@ public static class ff9
             {
                 globalFog.heightFog = true;
                 globalFog.height = 29f;
-                globalFog.heightDensity = 0.07f;
+                globalFog.heightDensity = 0.07f * MistDensity;
                 globalFog.startDistance = 55.5f * MistStartMul;
                 RenderSettings.fogStartDistance = 26.7f * MistStartMul;
                 RenderSettings.fogEndDistance = 80f * MistEndMul;
@@ -10750,11 +10752,11 @@ public static class ff9
 
         public Single cameraDistance;
 
-        public Single cameraHight;
+        public Single cameraHeight;
 
         public Single cameraCorrect;
 
-        public Single aimHight;
+        public Single aimHeight;
     }
 
     public class s_effectData
