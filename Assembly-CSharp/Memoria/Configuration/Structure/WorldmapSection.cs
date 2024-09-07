@@ -9,6 +9,7 @@ namespace Memoria
         {
             public readonly IniValue<Int32> FieldOfView;
             public readonly IniValue<Int32> FieldOfViewSpeedBoost;
+            public readonly IniValue<Int32> MistStartDistance_base;
             public readonly IniValue<Int32> MistStartDistance;
             public readonly IniValue<Int32> MistEndDistance;
             public readonly IniValue<Int32> MistDensity;
@@ -24,6 +25,7 @@ namespace Memoria
             {
                 FieldOfView = BindInt32(nameof(FieldOfView), 100);
                 FieldOfViewSpeedBoost = BindInt32(nameof(FieldOfViewSpeedBoost), 100);
+                MistStartDistance_base = BindInt32(nameof(MistStartDistance_base), 100);
                 MistStartDistance = BindInt32(nameof(MistStartDistance), 100);
                 MistEndDistance = BindInt32(nameof(MistEndDistance), 100);
                 MistDensity = BindInt32(nameof(MistDensity), 100);

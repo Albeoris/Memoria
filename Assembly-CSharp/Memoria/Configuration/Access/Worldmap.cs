@@ -11,6 +11,7 @@ namespace Memoria
         {
             public static Int32 FieldOfView => Instance._worldmap.FieldOfView;
             public static Int32 FieldOfViewSpeedBoost => Instance._worldmap.FieldOfViewSpeedBoost;
+            public static Int32 MistStartDistance_base => Instance._worldmap.MistStartDistance_base;
             public static Int32 MistStartDistance => Instance._worldmap.MistStartDistance;
             public static Int32 MistEndDistance => Instance._worldmap.MistEndDistance;
             public static Int32 MistDensity => Instance._worldmap.MistDensity;

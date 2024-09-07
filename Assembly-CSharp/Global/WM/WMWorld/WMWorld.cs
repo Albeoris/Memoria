@@ -793,8 +793,9 @@ public class WMWorld : Singleton<WMWorld>
             {
                 Single skyScale = Configuration.Worldmap.ViewDistance / 100f;
                 this.SkyDome_Sky.localScale = new Vector3(skyScale, skyScale, skyScale);
-                skyScale = Configuration.Worldmap.ViewDistance / 100f;
+                skyScale = (Configuration.Worldmap.ViewDistance / 100f) + 0.01f;
                 this.SkyDome_Bg.localScale = new Vector3(skyScale, skyScale, skyScale);
+                this.SkyDome_Fog.localScale = new Vector3(skyScale, skyScale, skyScale);
             }
 
             Vector3 b = ff9.w_effectLastPos + new Vector3(0f, -15.15f, 0f);

@@ -438,6 +438,8 @@ public partial class WMActor : MonoBehaviour
 
     public void SetFogByHeight()
     {
+        this.SetFog(1f);
+        /*
         if (this.pos.y < 22.5f)
         {
             if (ff9.w_moveActorPtr != this)
@@ -457,6 +459,7 @@ public partial class WMActor : MonoBehaviour
         {
             this.SetFog(0f);
         }
+        */
     }
 
     private void SetFog(Single enabled)
