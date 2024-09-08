@@ -429,12 +429,11 @@ public class btl_scrp
                 btl.getShadow().SetActive(false);
                 btl.SetIsEnabledWeaponRenderer(false);
                 btl.SetIsEnabledBattleModelRenderer(false);
-                btl_cmd.KillCommand2(btl);
+                btl_cmd.KillStandardCommands(btl);
                 btl_sys.DelCharacter(btl);
                 break;
             case 34u:
-                if (btl_cmd.KillCommand2(btl))
-                    btl.sel_mode = 0;
+                unit.KillStandardCommands();
                 break;
             case 35u:
                 btl.max.hp = (UInt32)val;

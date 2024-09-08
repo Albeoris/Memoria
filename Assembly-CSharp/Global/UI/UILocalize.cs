@@ -96,7 +96,7 @@ public class UILocalize : MonoBehaviour
         }
         if (!String.IsNullOrEmpty(this.key))
         {
-            this.value = Localization.Get(this.key);
+            this.value = Localization.GetWithDefault(this.key);
         }
     }
 

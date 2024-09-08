@@ -101,6 +101,7 @@ namespace Memoria
         public static implicit operator CMD_DATA(BattleCommand cmd) => cmd.Data;
 
         public BattleCommandId Id => Data.cmd_no;
+        public Int32 RawIndex => Data.sub_no;
         public String AbilityName => AbilityId != BattleAbilityId.Void ? FF9TextTool.ActionAbilityName(AbilityId) : ItemId != RegularItem.NoItem ? FF9TextTool.ItemName(ItemId) : Data.aa.Name;
         public String AbilityCastingName => UIManager.Battle.GetBattleCommandTitle(Data);
         public BattleAbilityId AbilityId => btl_util.GetCommandMainActionIndex(Data);

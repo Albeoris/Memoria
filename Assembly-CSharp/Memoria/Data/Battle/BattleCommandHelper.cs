@@ -120,9 +120,10 @@ namespace Memoria.Data
 
         private static IEnumerable<FeatureSet> GetApplicableFeatures(BattleCommandId cmdId, BattleCommandMenu menu, PLAYER character, BattleUnit asUnit = null)
         {
-            foreach (FeatureSet flexiSet in FlexibleFeatures)
-                if (flexiSet.CheckCondition(cmdId, menu, character, asUnit))
-                    yield return flexiSet;
+            if (cmdId < BattleCommandId.SysEscape || cmdId > BattleCommandId.SysStone)
+                foreach (FeatureSet flexiSet in FlexibleFeatures)
+                    if (flexiSet.CheckCondition(cmdId, menu, character, asUnit))
+                        yield return flexiSet;
             if (cmdId != BattleCommandId.None && CommandFeatures.TryGetValue(cmdId, out FeatureSet cmdSet) && cmdSet.CheckCondition(cmdId, menu, character, asUnit))
                 yield return cmdSet;
             yield break;
