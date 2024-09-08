@@ -3382,9 +3382,6 @@
     <Content Include="StreamingAssets\Shaders\PSX\Skybox_Cubemap.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="StreamingAssets\Data\Text\LocalizationPatch.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="StreamingAssets\Data\World\Environment.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -31,7 +31,11 @@ namespace Memoria.Database
                         if (cmds[i].Id < 0)
                             cmds[i].Id = (BattleCommandId)i;
                     foreach (CharacterCommand cmd in cmds)
+                    {
+                        if (cmd.Id >= BattleCommandId.BoundaryCheck && cmd.Id <= BattleCommandId.BoundaryUpperCheck)
+                            Log.Error($"[CharacterCommands] A command definition with ID {cmd.Id} is invalid in \"{DataResources.Characters.CommandsFile}\": commands must have an ID lower than {(Int32)BattleCommandId.BoundaryCheck} or higher than {(Int32)BattleCommandId.BoundaryUpperCheck}");
                         result[cmd.Id] = cmd;
+                    }
                 }
                 if (result.Count == 0)
                     throw new FileNotFoundException($"Cannot load character commands because a file does not exist: [{DataResources.Characters.Directory + DataResources.Characters.CommandsFile}].", DataResources.Characters.Directory + DataResources.Characters.CommandsFile);

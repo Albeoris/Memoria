@@ -2666,7 +2666,7 @@ public partial class BattleHUD : UIScene
                 btl_stat.RemoveStatuses(swappedOut, FF9BattleDB.AllStatuses);
                 btl_sys.DelCharacter(swappedOut);
                 RemovePlayerFromAction(swappedOut.Id, true);
-                btl_cmd.KillCommand3(swappedOut);
+                btl_cmd.KillAllCommands(swappedOut);
                 btl_init.SwapPlayerCharacter(swappedOut, swappedIn);
                 AbilityPlayerDetail abilityPlayer = _abilityDetailDict[swappedOut.GetIndex()];
                 abilityPlayer.Player = swappedIn;

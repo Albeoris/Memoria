@@ -11,6 +11,10 @@
     WindowStartupLocation="CenterScreen"
     Background="Black"
     WindowStyle="SingleBorderWindow">
+    
+    <Window.Resources>
+        <FontFamily x:Key="CenturyGothic">pack://application:,,,/Fonts/#Century Gothic</FontFamily>
+    </Window.Resources>
     <Grid>
         <Image x:Name="Launcher"
             Height="884"
@@ -33,7 +37,7 @@
             TextAlignment="Center"
             Foreground="White"
             FontSize="20"
-            FontFamily="Century Gothic"
+            FontFamily="{StaticResource CenturyGothic}"
             HorizontalAlignment="Center"
             VerticalAlignment="Top" />
 

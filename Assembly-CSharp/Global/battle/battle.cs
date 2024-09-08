@@ -64,7 +64,7 @@ public static class battle
         FF9StateBattleSystem ff9Battle = FF9StateSystem.Battle.FF9Battle;
         battlebg.nf_InitBattleBG(ff9Battle.map.btlBGInfoPtr, ff9Battle.map.btlBGTexAnimPtr);
         ff9Battle.btl_load_status |= ff9btl.LOAD_BBG;
-        btl_cmd.InitCommandSystem(ff9Battle);
+        btl_cmd.InitCommandSystem(ff9Battle, true);
         btl_cmd.InitSelectCursor(ff9Battle);
         btlseq.SetupBattleScene();
         battle.btl_bonus.Event = ff9Battle.btl_scene.Info.AfterEvent;
@@ -420,7 +420,7 @@ public static class battle
                     sys.btl_flag |= battle.BTL_CONTI_FLD_SONG;
                 btlsys.btl_phase = FF9StateBattleSystem.PHASE_EVENT;
                 btl_cmd.KillAllCommand(btlsys);
-                btl_cmd.InitCommandSystem(btlsys);
+                btl_cmd.InitCommandSystem(btlsys, false);
                 for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
                 {
                     btl_cmd.InitCommand(next);
