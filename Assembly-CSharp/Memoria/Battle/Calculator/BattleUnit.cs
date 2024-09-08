@@ -317,7 +317,33 @@ namespace Memoria
         public Boolean HasLongRangeWeapon => HasCategory(WeaponCategory.LongRange);
 
         public BattleCommand ATBCommand => new BattleCommand(Data.cmd[0]);
+        public BattleCommand CounterCommand => new BattleCommand(Data.cmd[1]);
         public BattleCommand PetrifyCommand => new BattleCommand(Data.cmd[2]);
+        public Boolean KillCommand(BattleCommand cmd, Boolean resetATBifNeeded = true)
+        {
+            Boolean isMainCommand = btl_util.IsCommandDeclarable(cmd.Id);
+            btl_cmd.KillCommand(cmd);
+            if (!isMainCommand)
+                return false;
+            if (IsPlayer)
+                UIManager.Battle.RemovePlayerFromAction(Id, true);
+            Data.sel_mode = 0;
+            if (resetATBifNeeded)
+                CurrentAtb = 0;
+            return true;
+        }
+        public Boolean KillStandardCommands(Boolean resetATBifNeeded = true)
+        {
+            Boolean killMainCommand = btl_cmd.KillStandardCommands(Data);
+            if (!killMainCommand)
+                return false;
+            if (IsPlayer)
+                UIManager.Battle.RemovePlayerFromAction(Id, true);
+            Data.sel_mode = 0;
+            if (resetATBifNeeded)
+                CurrentAtb = 0;
+            return true;
+        }
 
         public RegularItem Weapon => btl_util.getWeaponNumber(Data);
         public RegularItem Head => IsPlayer ? FF9StateSystem.Common.FF9.GetPlayer(PlayerIndex).equip.Head : RegularItem.NoItem;
@@ -548,7 +574,7 @@ namespace Memoria
         {
             battle.btl_bonus.member_flag &= (Byte)~(1 << Data.bi.line_no);
             btl_cmd.ClearSysPhantom(Data);
-            btl_cmd.KillCommand3(Data);
+            btl_cmd.KillAllCommands(Data);
             btl_sys.SavePlayerData(Data, true);
             btl_sys.DelCharacter(Data);
             if (makeDisappear)
@@ -937,6 +963,7 @@ namespace Memoria
             btl_stat.AlterStatuses(this, current_added);
             btl_stat.MakeStatusesPermanent(this, monsterTransform.auto_added, true);
             // TODO: handle "partialResist" and "durationFactor" properly (now, they are most likely applied but persist after "ReleaseChangeToMonster")
+            btl2d.ShowMessages(true);
         }
 
         private void ChangeToMonster_SetClip(String[] array, String animName, BattlePlayerCharacter.PlayerMotionIndex motion)

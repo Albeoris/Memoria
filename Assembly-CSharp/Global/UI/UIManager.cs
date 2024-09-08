@@ -4,6 +4,7 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Scenes;
 using Memoria.Scripts;
+using Memoria.Prime;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -635,33 +636,40 @@ public class UIManager : PersistenSingleton<UIManager>
     {
         if (uiState != this.state)
         {
-            this.prevState = this.state;
-            this.State = uiState;
-            UICamera.selectedObject = null;
-            ButtonGroupState.DisableAllGroup(true);
-            Singleton<HelpDialog>.Instance.SetDialogVisibility(false);
-            this.Booster.CloseBoosterPanelImmediately();
-            UIScene sceneFromState = this.GetSceneFromState(uiState);
-            if (sceneFromState != null)
-                sceneFromState.Show(null);
-            if (this.prevState == UIManager.UIState.MainMenu && this.state == UIManager.UIState.FieldHUD)
+            try
             {
-                global::Debug.Log("FIX SSTHON-3788 : Reset lazykey when state change from mainmenu to field");
-                UIManager.Input.ResetKeyCode();
+                this.prevState = this.state;
+                this.State = uiState;
+                UICamera.selectedObject = null;
+                ButtonGroupState.DisableAllGroup(true);
+                Singleton<HelpDialog>.Instance.SetDialogVisibility(false);
+                this.Booster.CloseBoosterPanelImmediately();
+                UIScene sceneFromState = this.GetSceneFromState(uiState);
+                if (sceneFromState != null)
+                    sceneFromState.Show(null);
+                if (this.prevState == UIManager.UIState.MainMenu && this.state == UIManager.UIState.FieldHUD)
+                {
+                    global::Debug.Log("FIX SSTHON-3788 : Reset lazykey when state change from mainmenu to field");
+                    UIManager.Input.ResetKeyCode();
+                }
+                // Use MenuFPS for the game menus even if the underlying SceneDirector's CurrentScene doesn't change
+                if (UIManager.IsUIStateMenu(this.prevState))
+                {
+                    if (this.state == UIState.FieldHUD)
+                        FPSManager.SetTargetFPS(Configuration.Graphics.FieldFPS);
+                    else if (this.state == UIState.WorldHUD)
+                        FPSManager.SetTargetFPS(Configuration.Graphics.WorldFPS);
+                    else if (this.state == UIState.BattleHUD)
+                        FPSManager.SetTargetFPS(Configuration.Graphics.BattleFPS);
+                }
+                else if (UIManager.IsUIStateMenu(this.state))
+                {
+                    FPSManager.SetTargetFPS(Configuration.Graphics.MenuFPS);
+                }
             }
-            // Use MenuFPS for the game menus even if the underlying SceneDirector's CurrentScene doesn't change
-            if (UIManager.IsUIStateMenu(this.prevState))
+            catch (Exception err)
             {
-                if (this.state == UIState.FieldHUD)
-                    FPSManager.SetTargetFPS(Configuration.Graphics.FieldFPS);
-                else if (this.state == UIState.WorldHUD)
-                    FPSManager.SetTargetFPS(Configuration.Graphics.WorldFPS);
-                else if (this.state == UIState.BattleHUD)
-                    FPSManager.SetTargetFPS(Configuration.Graphics.BattleFPS);
-            }
-            else if (UIManager.IsUIStateMenu(this.state))
-            {
-                FPSManager.SetTargetFPS(Configuration.Graphics.MenuFPS);
+                Log.Error(err);
             }
         }
     }

@@ -207,6 +207,7 @@
     <EmbeddedResource Include="Languages\pt-BR.xml" />
     <EmbeddedResource Include="Languages\en.xml" />
     <EmbeddedResource Include="Languages\ru.xml" />
+    <EmbeddedResource Include="Languages\zh-CN.xml" />
     <Resource Include="Images\btnActivateAllimg.png" />
     <Resource Include="Images\btnCancelimg.png" />
     <Resource Include="Images\btnCheckCompatibilityimg.png" />

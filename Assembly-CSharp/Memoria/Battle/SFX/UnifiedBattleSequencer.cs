@@ -330,7 +330,10 @@ public static class UnifiedBattleSequencer
                             sfxArg[3] |= 4;
                         customRequest.SetupVfxRequest(cmd, sfxArg, caster, tmpChar);
                         if (mcasterId != 0)
+                        {
+                            cmd.magic_caster_id |= mcasterId;
                             customRequest.mexe = btl_scrp.FindBattleUnit(mcasterId).Data;
+                        }
                         if (code.TryGetArgVector("TargetPosition", out tmpVec))
                         {
                             customRequest.trgcpos.vx = (Int32)tmpVec.x;
@@ -401,10 +404,7 @@ public static class UnifiedBattleSequencer
                     SFXDataMesh.JSON sfxModel = null;
                     if (effectKind == 2)
                     {
-                        SFXDataMesh.ModelSequence modelJSON = null;
-                        if (!tmpStr.StartsWith(DataResources.PureDataDirectory))
-                            tmpStr = AssetManager.SearchAssetOnDisc(tmpStr, true, false);
-                        modelJSON = SFXDataMesh.ModelSequence.Load(tmpStr);
+                        SFXDataMesh.ModelSequence modelJSON = SFXDataMesh.ModelSequence.Load(tmpStr);
                         if (modelJSON == null)
                             break;
                         sfxModel = new SFXDataMesh.JSON();
@@ -443,7 +443,7 @@ public static class UnifiedBattleSequencer
                         }
                         else if (effectKind == 2)
                         {
-                            SFXChannel.PlayAnyEffect(sfxModel, btl, null, tmpVec, 0);
+                            SFXChannel.PlayAnyEffect(sfxModel, cmd.regist, btl, tmpVec, 0);
                         }
                     }
                     break;

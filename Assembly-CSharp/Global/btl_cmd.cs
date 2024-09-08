@@ -56,6 +56,7 @@ public class btl_cmd
         cmd.next = null;
         cmd.aa = null;
         cmd.tar_id = 0;
+        cmd.magic_caster_id = 0;
         cmd.cmd_no = BattleCommandId.None;
         cmd.sub_no = 0;
         cmd.info.Reset();
@@ -67,11 +68,12 @@ public class btl_cmd
             cmd.reflec.tar_id[index] = 0;
     }
 
-    public static void InitCommandSystem(FF9StateBattleSystem btlsys)
+    public static void InitCommandSystem(FF9StateBattleSystem btlsys, Boolean isStart)
     {
         btlsys.cur_cmd_list.Clear();
         btlsys.cmd_status = 2;
-        btlsys.cmd_queue.regist = btlsys.cmd_escape.regist = null;
+        if (isStart)
+            btlsys.cmd_queue.regist = btlsys.cmd_escape.regist = null;
         ClearCommand(btlsys.cmd_queue);
         ClearCommand(btlsys.cmd_escape);
         btl_cmd.next_cmd_delay = 0;
@@ -244,6 +246,13 @@ public class btl_cmd
             return;
         }
 
+        BattleAbilityId aaIndex = btl_util.GetCommandMainActionIndex(cmd);
+        if (caster != null && aaIndex != BattleAbilityId.Void)
+        {
+            BattleMagicSwordSet magicSet = UIManager.Battle.GetMagicSwordOfAbility(new BattleUnit(caster), ff9abil.GetAbilityIdFromActiveAbility(aaIndex));
+            if (magicSet != null)
+                cmd.magic_caster_id = BattleState.GetPlayerUnit(magicSet.Supporter)?.Id ?? 0;
+        }
         cmd.tar_id = tar_id;
         cmd.info.cursor = (Byte)cursor;
         cmd.info.cover = 0;
@@ -426,21 +435,24 @@ public class btl_cmd
                     busyCasters.Add(next);
         while (cmd != null)
         {
-            if (cmd.regist != null && busyCasters.Contains(cmd.regist) && cmd.cmd_no != BattleCommandId.SysPhantom
-                || btl_stat.CheckStatus(cmd.regist, BattleStatusConst.CannotAct) && cmd.cmd_no != BattleCommandId.SysDead && cmd.cmd_no != BattleCommandId.SysReraise && cmd.cmd_no != BattleCommandId.SysStone && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysLastPhoenix
-                || btl_stat.CheckStatus(cmd.regist, BattleStatus.Death) && cmd.cmd_no == BattleCommandId.SysPhantom
-                || Configuration.Battle.Speed >= 4 && btl_util.IsBtlUsingCommandMotion(cmd.regist)
-                || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0)
+            if (cmd.regist != null)
             {
-                if (Configuration.Battle.Speed == 4)
+                if (busyCasters.Contains(cmd.regist) && cmd.cmd_no != BattleCommandId.SysPhantom
+                    || btl_stat.CheckStatus(cmd.regist, BattleStatusConst.CannotAct) && cmd.cmd_no != BattleCommandId.SysDead && cmd.cmd_no != BattleCommandId.SysReraise && cmd.cmd_no != BattleCommandId.SysStone && cmd.cmd_no != BattleCommandId.SysEscape && cmd.cmd_no != BattleCommandId.SysLastPhoenix
+                    || btl_stat.CheckStatus(cmd.regist, BattleStatus.Death) && cmd.cmd_no == BattleCommandId.SysPhantom
+                    || Configuration.Battle.Speed >= 4 && btl_util.IsBtlUsingCommandMotion(cmd.regist)
+                    || Configuration.Battle.Speed >= 5 && cmd.regist.bi.cover != 0)
                 {
-                    if (cmd.regist != null)
-                        busyCasters.Add(cmd.regist);
-                    foreach (BTL_DATA next in btl_util.findAllBtlData(cmd.tar_id))
-                        busyCasters.Add(next);
+                    if (Configuration.Battle.Speed == 4)
+                    {
+                        if (cmd.regist != null)
+                            busyCasters.Add(cmd.regist);
+                        foreach (BTL_DATA next in btl_util.findAllBtlData(cmd.tar_id))
+                            busyCasters.Add(next);
+                    }
+                    cmd = cmd.next;
+                    continue;
                 }
-                cmd = cmd.next;
-                continue;
             }
             break;
         }
@@ -647,7 +659,7 @@ public class btl_cmd
         return false;
     }
 
-    public static Boolean KillCommand2(BTL_DATA btl)
+    public static Boolean KillStandardCommands(BTL_DATA btl)
     {
         Boolean cancelMainCmd = false;
         btl.bi.cmd_idle = 0;
@@ -657,7 +669,7 @@ public class btl_cmd
             CMD_DATA cmd = parentCmd.next;
             if (cmd != null && cmd.regist == btl && (cmd.cmd_no < BattleCommandId.EnemyDying || cmd.cmd_no > BattleCommandId.BoundaryUpperCheck))
             {
-                if (btl_util.IsCommandDeclarable(cmd.cmd_no))
+                if (cmd == cmd.regist.cmd[0])
                     cancelMainCmd = true;
                 ResetItemCount(cmd);
                 DequeueCommand(parentCmd, true);
@@ -670,7 +682,7 @@ public class btl_cmd
         return cancelMainCmd;
     }
 
-    public static void KillCommand3(BTL_DATA btl)
+    public static void KillAllCommands(BTL_DATA btl)
     {
         CMD_DATA parentCmd = FF9StateSystem.Battle.FF9Battle.cmd_queue;
         while (parentCmd != null)
@@ -1115,9 +1127,8 @@ public class btl_cmd
     {
         if (btl.bi.player == 0 || btl.bi.slot_no != (Byte)CharacterId.Garnet)
             return;
-        FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
         KillSpecificCommand(btl, BattleCommandId.SysPhantom);
-        stateBattleSystem.cmd_status &= 0xFFF3;
+        FF9StateSystem.Battle.FF9Battle.cmd_status &= 0xFFF3;
     }
 
     public static void ManageDequeueCommand(CMD_DATA cp, CMD_DATA ncp)

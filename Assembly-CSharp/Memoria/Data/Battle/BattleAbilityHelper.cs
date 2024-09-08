@@ -82,6 +82,8 @@ namespace Memoria.Data
         {
             try
             {
+                if (cmd.regist == null)
+                    return true;
                 BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
                 BattleUnit caster = new BattleUnit(cmd.regist);
                 Int64 gilCost = 0;
@@ -139,6 +141,8 @@ namespace Memoria.Data
         {
             try
             {
+                if (cmd.regist == null)
+                    return;
                 BattleAbilityId abilId = btl_util.GetCommandMainActionIndex(cmd);
                 BattleUnit caster = new BattleUnit(cmd.regist);
                 foreach (FeatureSet feat in GetApplicableFeatures(abilId, caster, cmd.cmd_no, cmd.info.cmdMenu, cmd.aa, cmd))
@@ -168,9 +172,12 @@ namespace Memoria.Data
 
         private static IEnumerable<FeatureSet> GetApplicableFeatures(BattleAbilityId abilId, BattleUnit caster, BattleCommandId cmdId, BattleCommandMenu menu, AA_DATA ability = null, CMD_DATA cmd = null)
         {
-            foreach (FeatureSet flexiSet in FlexibleFeatures)
-                if (flexiSet.CheckCondition(abilId, caster, cmdId, menu, ability, cmd))
-                    yield return flexiSet;
+            if (!caster.IsPlayer)
+                yield break;
+            if (cmdId < BattleCommandId.SysEscape || cmdId > BattleCommandId.SysStone)
+                foreach (FeatureSet flexiSet in FlexibleFeatures)
+                    if (flexiSet.CheckCondition(abilId, caster, cmdId, menu, ability, cmd))
+                        yield return flexiSet;
             if (abilId != BattleAbilityId.Void && AbilityFeatures.TryGetValue(abilId, out FeatureSet abilSet) && abilSet.CheckCondition(abilId, caster, cmdId, menu, ability, cmd))
                 yield return abilSet;
             yield break;

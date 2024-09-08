@@ -25,28 +25,17 @@ public class HUDMessageChild : MonoBehaviour
 
     public Int32 FontSize
     {
-        get
-        {
-            return this.label.fontSize;
-        }
-        set
-        {
-            this.label.fontSize = value;
-        }
+        get => this.label.fontSize;
+        set => this.label.fontSize = value;
     }
 
     public UILabel.Effect effectStyle
     {
-        get
-        {
-            return this.label.effectStyle;
-        }
+        get => this.label.effectStyle;
         set
         {
             if (this.label.effectStyle != value)
-            {
                 this.label.effectStyle = value;
-            }
         }
     }
 
@@ -81,6 +70,8 @@ public class HUDMessageChild : MonoBehaviour
         this.follower.target = target;
         this.follower.targetTransformOffset = offset;
         this.follower.clampToScreen = true;
+        this.follower.targetBtl = null;
+        this.follower.iconPosition = -1;
         this.label.text = message;
         this.tweenPosition.duration = this.tweenPositionDuration / Singleton<HUDMessage>.Instance.Speed;
         this.tweenAlpha.duration = this.tweenAlphaDuration / Singleton<HUDMessage>.Instance.Speed;
