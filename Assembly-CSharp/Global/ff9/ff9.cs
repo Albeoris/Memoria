@@ -320,22 +320,22 @@ public static class ff9
             fly = 8
         };
         ff9.w_cameraElement = array2;
-        ff9.nsp = ff9.S(256);
+        ff9.nsp = 1f;
         ff9.sa0 = 1;
         ff9.sa1 = 4;
         ff9.sa2 = 0;
-        ff9.sa3 = ff9.S(256);
+        ff9.sa3 = 1f;
         ff9.sa4 = 16;
         ff9.vn1 = 16384;
         ff9.w_evaCoreSPSCurrentSize = 46000;
         ff9.w_evaCoreSPSSpeedtSize = 300;
         ff9.w_effectModelPos = new Vector3[9];
         ff9.w_effectModelRot = new Vector3[9];
-        ff9.w_effectMillPos = new Vector3(ff9.S(280140), ff9.S(7784), ff9.S(-206465));
+        ff9.w_effectMillPos = new Vector3(1094.296875f, 30.40625f, -806.50390625f);
         ff9.w_effectMillRot = Vector3.zero;
-        ff9.w_effectTwisPos = new Vector3(ff9.S(229007), ff9.S(0), ff9.S(-198927));
-        ff9.w_effectLastPos = new Vector3(ff9.S(196602), ff9.S(10882), ff9.S(-82002));
-        ff9.w_effectLastPos1 = new Vector3(ff9.S(196602), ff9.S(12000), ff9.S(-82002));
+        ff9.w_effectTwisPos = new Vector3(894.55859375f, 0f, -777.05859375f);
+        ff9.w_effectLastPos = new Vector3(767.9765625f, 42.5078125f, -320.3203125f);
+        ff9.w_effectLastPos1 = new Vector3(767.9765625f, 46.875f, -320.3203125f);
         ff9.w_effectTwisRot = Vector3.zero;
         ff9.w_effectLast1Rot = Vector3.zero;
         ff9.w_effectLast2Rot = Vector3.zero;
@@ -390,22 +390,22 @@ public static class ff9
         ff9.w_frameLine = 0u;
         ff9.kframeEventStartLoop = 4;
         ff9.w_light = new Light[3];
-        ff9.kFF9FogCharHI = ff9.S(-5279);
-        ff9.kFF9FogCharLOW = ff9.S(-3103);
+        ff9.kFF9FogCharHI = -20.62109375f;
+        ff9.kFF9FogCharLOW = -12.12109375f;
         ff9.p1 = 4;
         ff9.p2 = 8;
         ff9.p3 = 32;
-        ff9.WH1 = ff9.S(2048);
-        ff9.WH1b = ff9.S(5000);
-        ff9.SH1 = ff9.S(1800);
-        ff9.WH2 = ff9.S(100);
-        ff9.WH2b = ff9.S(5000);
-        ff9.SH2 = ff9.S(1800);
-        ff9.cn1 = ff9.S(8192);
+        ff9.WH1 = 8f;
+        ff9.WH1b = 19.53125f;
+        ff9.SH1 = 7.03125f;
+        ff9.WH2 = 0.390625f;
+        ff9.WH2b = 19.53125f;
+        ff9.SH2 = 7.03125f;
+        ff9.cn1 = 32f;
         ff9.cn2 = 0f;
-        ff9.cn3 = ff9.S(14000);
-        ff9.cn4 = ff9.S(65536);
-        ff9.cn5 = ff9.S(384);
+        ff9.cn3 = 54.6875f;
+        ff9.cn4 = 256f;
+        ff9.cn5 = 1.5f;
         ff9.forceUsingMobileInput = false;
         ff9.w_musicSet = new Byte[]
         {
@@ -2398,15 +2398,9 @@ public static class ff9
     private static WMRenderTextureBank renderTextureBank => Singleton<WMRenderTextureBank>.Instance;
     public static WMTweaker tweaker => Singleton<WMTweaker>.Instance;
 
-    public static Single S(Int32 fixedPoint)
-    {
-        return fixedPoint * 0.00390625f;
-    }
+    public static Single S(Int32 fixedPoint) => fixedPoint * 0.00390625f;
 
-    public static Int32 UnityUnit(Single f)
-    {
-        return (Int32)(f * 256f);
-    }
+    public static Int32 UnityUnit(Single f) => (Int32)(f * 256f);
 
     public static Int16 UnityRot(Single rotation)
     {
@@ -2598,7 +2592,7 @@ public static class ff9
         }
         ff9.w_cameraSysData = ff9.FF9Global.worldState;
         ff9.w_cameraSysDataCamera = ff9.w_cameraSysData.statecamera;
-        ff9.setVector(ref ff9.w_cameraUpvector, 0f, ff9.S(20000), 0f);
+        ff9.setVector(ref ff9.w_cameraUpvector, 0f, 78.125f, 0f);
         ff9.w_cameraFixMode = false;
         ff9.w_cameraFixModeY = false;
         ff9.w_cameraRotAngle = 0f;
@@ -2764,22 +2758,21 @@ public static class ff9
 
     public static void w_cameraSetEyeAim()
     {
-        Single num = ff9.S(4500);
-        Single num2 = ff9.S(1500);
-        Single num3 = ff9.S(16);
+        Single num = 17.578125f;
+        Single num3 = 0.0625f;
         Single y = 0f;
         if (!ff9.GetEventAim())
         {
-            Single num4 = ff9.w_moveActorPtr.pos[0];
-            Single num5 = ff9.w_moveActorPtr.pos[1] + ff9.w_cameraAimOffset;
-            Single num6 = ff9.w_moveActorPtr.pos[2];
+            Single posX = ff9.w_moveActorPtr.pos[0];
+            Single posY = ff9.w_moveActorPtr.pos[1] + ff9.w_cameraAimOffset;
+            Single posZ = ff9.w_moveActorPtr.pos[2];
             ff9.w_cameraInter = (ff9.w_cameraSmoothX | ff9.w_cameraSmoothY | ff9.w_cameraSmoothZ);
             ff9.w_cameraInter = false;
             if (ff9.w_cameraInter)
             {
                 if (ff9.w_cameraSmoothX)
                 {
-                    if (ff9.abs(ff9.w_cameraWorldAim.x - num4) < num3)
+                    if (ff9.abs(ff9.w_cameraWorldAim.x - posX) < num3)
                     {
                         ff9.w_cameraSmoothX = false;
                     }
@@ -2792,64 +2785,64 @@ public static class ff9
                 }
                 if (ff9.w_cameraSmoothY)
                 {
-                    if (ff9.abs(ff9.w_cameraWorldAim.y - num5) < num3)
+                    if (ff9.abs(ff9.w_cameraWorldAim.y - posY) < num3)
                     {
                         ff9.w_cameraSmoothY = false;
                     }
                     else
                     {
-                        Vector3 vector2 = ff9.w_cameraWorldAim;
-                        vector2.y += (ff9.GetControlChar().pos[1] - ff9.w_cameraWorldAim.y + ff9.w_cameraAimOffset) / 8f;
-                        ff9.w_cameraWorldAim = vector2;
+                        Vector3 vector = ff9.w_cameraWorldAim;
+                        vector.y += (ff9.GetControlChar().pos[1] - ff9.w_cameraWorldAim.y + ff9.w_cameraAimOffset) / 8f;
+                        ff9.w_cameraWorldAim = vector;
                     }
                 }
                 if (ff9.w_cameraSmoothZ)
                 {
-                    if (ff9.abs(ff9.w_cameraWorldAim.z - num6) < num3)
+                    if (ff9.abs(ff9.w_cameraWorldAim.z - posZ) < num3)
                     {
                         ff9.w_cameraSmoothZ = false;
                     }
                     else
                     {
-                        Vector3 vector3 = ff9.w_cameraWorldAim;
+                        Vector3 vector = ff9.w_cameraWorldAim;
                         ff9.w_cameraWorldAim.z = ff9.w_cameraWorldAim.z + (ff9.GetControlChar().pos[2] - ff9.w_cameraWorldAim.z) / 8f;
-                        ff9.w_cameraWorldAim = vector3;
+                        ff9.w_cameraWorldAim = vector;
                     }
                 }
                 if (!ff9.w_cameraSmoothX)
                 {
-                    ff9.w_cameraWorldAim.x = num4;
+                    ff9.w_cameraWorldAim.x = posX;
                 }
                 if (!ff9.w_cameraSmoothY)
                 {
-                    ff9.w_cameraWorldAim.y = num5;
+                    ff9.w_cameraWorldAim.y = posY;
                 }
                 if (!ff9.w_cameraSmoothZ)
                 {
-                    ff9.w_cameraWorldAim.z = num6;
+                    ff9.w_cameraWorldAim.z = posZ;
                 }
             }
             else
             {
-                Single num7 = num5 - ff9.w_cameraWorldAim.y;
+                Single diffY = posY - ff9.w_cameraWorldAim.y;
                 Single num8 = 0f;
                 Int32 num9 = 0;
-                if (num7 > ff9.S(128))
+                if (diffY > 0.5f)
                 {
                     num9 = 2;
                 }
-                if (num7 < ff9.S(-128))
+                if (diffY < -0.5f)
                 {
                     num9 = 1;
                 }
-                ff9.nsp = ff9.abs(num7) / 32f;
-                if (ff9.nsp < ff9.S(32))
+                ff9.nsp = ff9.abs(diffY) / 32f;
+                if (ff9.nsp < 0.125f)
                 {
-                    ff9.nsp = ff9.S(32);
+                    ff9.nsp = 0.125f;
                 }
-                if (ff9.nsp > ff9.S(256))
+                if (ff9.nsp > 1f)
                 {
-                    ff9.nsp = ff9.S(256);
+                    ff9.nsp = 1f;
                 }
                 if (num9 != 0)
                 {
@@ -2863,12 +2856,12 @@ public static class ff9
                             {
                                 if (num10 == 2)
                                 {
-                                    num8 = (num7 - ff9.S(128)) * ff9.S(256) / (32f * ff9.nsp);
+                                    num8 = (diffY - 0.5f) * 1f / (32f * ff9.nsp);
                                 }
                             }
                             else
                             {
-                                num8 = (num7 + ff9.S(128)) * ff9.S(256) / (32f * ff9.nsp);
+                                num8 = (diffY + 0.5f) * 1f / (32f * ff9.nsp);
                             }
                             break;
                         }
@@ -2880,20 +2873,20 @@ public static class ff9
                             {
                                 if (num10 == 2)
                                 {
-                                    num8 = (num7 - ff9.S(128)) / 8f;
+                                    num8 = (diffY - 0.5f) / 8f;
                                 }
                             }
                             else
                             {
-                                num8 = (num7 + ff9.S(128)) / 2f;
+                                num8 = (diffY + 0.5f) / 2f;
                             }
                             break;
                         }
                     }
                 }
-                ff9.w_cameraWorldAim.x = num4;
-                ff9.w_cameraWorldAim.z = num6;
-                if (ff9.abs(num8) > ff9.S(4) && !ff9.w_cameraFixModeY)
+                ff9.w_cameraWorldAim.x = posX;
+                ff9.w_cameraWorldAim.z = posZ;
+                if (ff9.abs(num8) > 0.015625f && !ff9.w_cameraFixModeY)
                 {
                     ff9.w_cameraWorldAim.y = ff9.w_cameraWorldAim.y + num8 * 2f;
                 }
@@ -2914,34 +2907,34 @@ public static class ff9
             Int32 num14 = -1;
             Int32 num15 = -1;
             Int32 num16 = -1;
-            Vector3 vector4 = default(Vector3);
-            Single num17 = ff9.S(256);
+            Vector3 vector = default(Vector3);
+            Single num17 = 1f;
             Single num18 = ff9.w_moveActorPtr.pos[0] + ff9.w_cameraEyeOffset.x;
             Single num19 = ff9.w_moveActorPtr.pos[1] + ff9.w_cameraEyeOffset.y;
             Single num20 = ff9.w_moveActorPtr.pos[2] + ff9.w_cameraEyeOffset.z;
-            vector4.x = num18 + ff9.w_cameraDirVector.x / 4f;
-            vector4.y = num19;
-            vector4.z = num20 + ff9.w_cameraDirVector.z / 4f;
+            vector.x = num18 + ff9.w_cameraDirVector.x / 4f;
+            vector.y = num19;
+            vector.z = num20 + ff9.w_cameraDirVector.z / 4f;
             WMPhysics.UseInfiniteRaycast = true;
             WMPhysics.CastRayFromSky = true;
             WMPhysics.IgnoreExceptions = true;
             if (ff9.w_cameraFuzzy)
             {
-                Single num21 = ff9.S(1408);
-                vector4.x += num21;
+                Single num21 = 5.5f;
+                vector.x += num21;
                 Int32 num22;
                 Single num23;
-                ff9.w_cellHit(ref vector4, ref num13, out num22, ff9.w_cameraHit[0], out num23);
-                vector4.x -= num21 * 2f;
+                ff9.w_cellHit(ref vector, ref num13, out num22, ff9.w_cameraHit[0], out num23);
+                vector.x -= num21 * 2f;
                 Single num24;
-                ff9.w_cellHit(ref vector4, ref num14, out num22, ff9.w_cameraHit[1], out num24);
-                vector4.x += num21;
-                vector4.z += num21;
+                ff9.w_cellHit(ref vector, ref num14, out num22, ff9.w_cameraHit[1], out num24);
+                vector.x += num21;
+                vector.z += num21;
                 Single num25;
-                ff9.w_cellHit(ref vector4, ref num15, out num22, ff9.w_cameraHit[2], out num25);
-                vector4.z -= num21 * 2f;
+                ff9.w_cellHit(ref vector, ref num15, out num22, ff9.w_cameraHit[2], out num25);
+                vector.z -= num21 * 2f;
                 Single num26;
-                ff9.w_cellHit(ref vector4, ref num16, out num22, ff9.w_cameraHit[3], out num26);
+                ff9.w_cellHit(ref vector, ref num16, out num22, ff9.w_cameraHit[3], out num26);
                 num12 = num23;
                 idall = num13;
                 if (num24 > num12)
@@ -2963,34 +2956,16 @@ public static class ff9
             else
             {
                 Int32 num22;
-                ff9.w_cellHit(ref vector4, ref idall, out num22, ff9.w_cameraHit[0], out num12);
+                ff9.w_cellHit(ref vector, ref idall, out num22, ff9.w_cameraHit[0], out num12);
             }
             WMPhysics.IgnoreExceptions = false;
             WMPhysics.UseInfiniteRaycast = false;
             WMPhysics.CastRayFromSky = false;
-            if (ff9.w_moveCHRControlPtr.type == 1)
-            {
-                if (num12 > ff9.S(8500)) // Max flying height
-                {
-                    num12 = ff9.S(8500);
-                }
-            }
-            else if (num12 > ff9.S(9500))
-            {
-                num12 = ff9.S(9500);
-            }
+            num12 = ff9.w_moveCHRControlPtr.type == 1 ? Mathf.Min(num12, 33.2f) : Mathf.Min(num12, 37.1f);
             if (ff9.w_cameraPosstatNow.cameraCorrect + num12 > num19)
             {
                 num11 = 1f;
-                if (ff9.m_GetIDTopograph(idall) == 49)
-                {
-                    num11 = 4f;
-                }
-                if (ff9.w_movePadDOWN)
-                {
-                    num11 = 4f;
-                }
-                if (ff9.w_movePadLR)
+                if (ff9.m_GetIDTopograph(idall) == 49 || ff9.w_movePadDOWN || ff9.w_movePadLR)
                 {
                     num11 = 4f;
                 }
@@ -3015,15 +2990,7 @@ public static class ff9
             {
                 num9 = 1;
             }
-            ff9.nsp = ff9.abs(num7) / 16f;
-            if (ff9.nsp < ff9.sa2)
-            {
-                ff9.nsp = ff9.sa2;
-            }
-            if (ff9.nsp > ff9.sa3)
-            {
-                ff9.nsp = ff9.sa3;
-            }
+            ff9.nsp = Mathf.Clamp(ff9.abs(num7) / 16f, ff9.sa2, ff9.sa3);
             if (num9 != 0)
             {
                 switch (ff9.w_moveCHRControlPtr.type)
@@ -3036,19 +3003,19 @@ public static class ff9
                         {
                             if (num10 == 2)
                             {
-                                num8 = (num7 - num17) * ff9.S(256) / ((ff9.S(ff9.sa4 - 2) * ff9.nsp * 8f - ff9.S(ff9.sa4 + 2) * ff9.nsp) / num11);
+                                num8 = (num7 - num17) * 1f / ((ff9.S(ff9.sa4 - 2) * ff9.nsp * 8f - ff9.S(ff9.sa4 + 2) * ff9.nsp) / num11);
                             }
                         }
                         else
                         {
-                            num8 = (num7 + num17) * ff9.S(256) / (ff9.S(ff9.sa4) * ff9.nsp * 3f);
+                            num8 = (num7 + num17) * 1f / (ff9.S(ff9.sa4) * ff9.nsp * 3f);
                         }
                         Single num27 = ff9.abs(num8);
-                        if (num27 > ff9.S(512))
+                        if (num27 > 2f)
                         {
-                            num27 = ff9.S(512);
+                            num27 = 2f;
                         }
-                        num27 = (ff9.S(512) - num27) * ff9.vn1 / 4096f + ff9.S(2048) * 2f;
+                        num27 = (2f - num27) * ff9.vn1 / 4096f + 16f;
                         num8 *= num27;
                         num8 /= 4096f;
                         break;
@@ -3074,19 +3041,19 @@ public static class ff9
             }
             ff9.w_cameraWorldEye.x = num18;
             ff9.w_cameraWorldEye.z = num20;
-            if (ff9.abs(num8) > ff9.S(4) && !ff9.w_cameraFixModeY)
+            if (ff9.abs(num8) > 0.015625f && !ff9.w_cameraFixModeY)
             {
                 ff9.w_cameraWorldEye.y = ff9.w_cameraWorldEye.y + num8;
             }
             y = num19;
         }
-        Single num28 = ff9.w_cameraWorldEye.x + ff9.S(196471);
-        Single num29 = ff9.w_cameraWorldEye.z + ff9.S(81969);
-        Single num30 = ff9.S(14000);
+        Single num28 = ff9.w_cameraWorldEye.x + 767.46484375f;
+        Single num29 = ff9.w_cameraWorldEye.z + 320.19140625f;
+        Single num30 = 54.6875f;
         if (ff9.abs(num28) < num30 && ff9.abs(num29) < num30)
         {
             Single num31 = num30 * num30 - num28 * num28 - num29 * num29;
-            Single num32 = ff9.SquareRoot0(num31) - ff9.S(2200);
+            Single num32 = ff9.SquareRoot0(num31) - 8.59375f;
             if (num31 > 0f && ff9.w_cameraWorldEye.y < num32)
             {
                 ff9.w_cameraWorldEye.y = num32;
@@ -3117,10 +3084,7 @@ public static class ff9
             ff9.w_cameraWorldEye.y = y;
             ff9.w_cameraWorldAim.y = ff9.w_moveActorPtr.pos[1] + ff9.w_cameraAimOffset;
         }
-        if (ff9.w_cameraWorldEye.y > ff9.S(18383))
-        {
-            ff9.w_cameraWorldEye.y = ff9.S(18383);
-        }
+        ff9.w_cameraWorldEye.y = Mathf.Min(ff9.w_cameraWorldEye.y, 71.80859375f);
     }
 
     public static void w_cameraChangeUpdate()
@@ -3352,9 +3316,9 @@ public static class ff9
                 ff9.setVector(ref ff9.w_effectModelRot[(Int32)((IntPtr)num)], 0f, 0f, 0f);
             }
         }
-        ff9.setVector(ref ff9.w_effectModelPos[0], ff9.S(280140), ff9.S(7784), ff9.S(-206465)); // Dali
-        ff9.setVector(ref ff9.w_effectModelPos[1], ff9.S(229467), ff9.S(-500), ff9.S(-198727)); // Cleyra
-        ff9.setVector(ref ff9.w_effectModelPos[6], ff9.S(196602), ff9.S(10882), ff9.S(-82002)); // Memoria
+        ff9.setVector(ref ff9.w_effectModelPos[0], 1094.296875f, 30.40625f, -806.50390625f); // Dali
+        ff9.setVector(ref ff9.w_effectModelPos[1], 896.35546875f, -1.953125f, -776.27734375f); // Cleyra
+        ff9.setVector(ref ff9.w_effectModelPos[6], 767.9765625f, 42.5078125f, -320.3203125f); // Memoria
         ff9.w_effectModelPos[2] = ff9.w_effectModelPos[1];
         ff9.w_effectModelPos[3] = ff9.w_effectModelPos[1];
         ff9.w_effectModelPos[4] = ff9.w_effectModelPos[1];
@@ -3487,7 +3451,7 @@ public static class ff9
                                 thunderTransform.rotation = Quaternion.Euler(ff9.w_effectLastRotT[i]);
                                 thunderTransform.localScale = new Vector3(ff9.PsxScale(12192), ff9.PsxScale(ff9.w_effectLastDisT[i]), ff9.PsxScale(6192));
                                 Transform sparkle = thunderTransform.GetChild(0);
-                                sparkle.localPosition = new Vector3(0f, ff9.S(700), 0f);
+                                sparkle.localPosition = new Vector3(0f, 2.734375f, 0f);
                                 Material material = sparkle.GetComponent<Renderer>().material;
                                 Color color = material.GetColor("_TintColor");
                                 color.a = (Byte)(255 - ff9.w_effectLastDisC[i] * 7) / 255f;
@@ -4908,7 +4872,7 @@ public static class ff9
                         useOwnShadow = false;
                     if ((posObj.index == 1 || posObj.index == 2) && ff9.w_moveCHRControl_No >= 1 && ff9.w_moveCHRControl_No <= 6)
                         useOwnShadow = false;
-                    Boolean displayShadow = useOwnShadow && ff9.w_moveCHRStatus[posObj.index].slice_height >= ff9.S(-3);
+                    Boolean displayShadow = useOwnShadow && ff9.w_moveCHRStatus[posObj.index].slice_height >= -0.01171875f;
                     ff9.w_FF9DisplayShadow(posObj, ref pos, 0, displayShadow);
                 }
                 else
@@ -4928,23 +4892,23 @@ public static class ff9
         {
             if (chr.index == 1 || chr.index == 2)
             {
-                Single num = 0.8545044f;
-                wmshadow = ff9.world.AddShadow(chr, new Vector3(num, num, num));
+                Single scale = 0.8545044f;
+                wmshadow = ff9.world.AddShadow(chr, new Vector3(scale, scale, scale));
             }
             else if (chr.index >= 3 && chr.index <= 7)
             {
-                Single num = 1.430598f;
-                wmshadow = ff9.world.AddShadow(chr, new Vector3(num, num, num));
+                Single scale = 1.430598f;
+                wmshadow = ff9.world.AddShadow(chr, new Vector3(scale, scale, scale));
             }
             else if (chr.index == 9 || chr.index == 10)
             {
-                Single num = 1.430598f;
-                wmshadow = ff9.world.AddShadow(chr, new Vector3(num, num, num));
+                Single scale = 1.430598f;
+                wmshadow = ff9.world.AddShadow(chr, new Vector3(scale, scale, scale));
             }
             else
             {
-                Single num = 1f;
-                wmshadow = ff9.world.AddShadow(chr, new Vector3(num, num, num));
+                Single scale = 1f;
+                wmshadow = ff9.world.AddShadow(chr, new Vector3(scale, scale, scale));
             }
         }
         if (display)
@@ -4962,7 +4926,7 @@ public static class ff9
         ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[chr.index];
         if (chr.index != 14 && wmshadow)
         {
-            Int32 num2 = ff9.UnityUnit(s_moveCHRStatus.ground_height - ff9.S((Int32)chr.pos[1]));
+            Int32 num2 = (Int32)(s_moveCHRStatus.ground_height * 256f - chr.pos[1]);
             pos.y += ff9.S(num2);
             pos.y -= ff9.S(num2) / 8f;
             Int32 num3 = 3096 - num2;
@@ -5356,13 +5320,13 @@ public static class ff9
                         }
                         else
                         {
-                            if (s_moveCHRStatus.slice_height < num - ff9.S(21))
+                            if (s_moveCHRStatus.slice_height < num - 0.08203125f)
                             {
-                                s_moveCHRStatus.slice_height += ff9.S(20);
+                                s_moveCHRStatus.slice_height += 0.078125f;
                             }
-                            if (s_moveCHRStatus.slice_height > num + ff9.S(21))
+                            if (s_moveCHRStatus.slice_height > num + 0.08203125f)
                             {
-                                s_moveCHRStatus.slice_height -= ff9.S(20);
+                                s_moveCHRStatus.slice_height -= 0.078125f;
                             }
                         }
                     }
@@ -5499,45 +5463,29 @@ public static class ff9
         Int32 num2;
         switch (num)
         {
+            case 36:
+            case 37:
+            case 38:
+                num2 = 0; break;
+            case 53:
+                num2 = 1; break;
+            case 54:
+                num2 = 2; break;
+            case 55:
+                num2 = 3; break;
+            case 56:
+                num2 = 4; break;
+            case 57:
+                num2 = 5; break;
+            case 51:
+                num2 = 6; break;
             case 48:
-                num2 = 7;
-                break;
+                num2 = 7; break;
             case 49:
             case 50:
             case 52:
-            IL_38:
-                switch (num)
-                {
-                    case 36:
-                    case 37:
-                    case 38:
-                        num2 = 0;
-                        break;
-                    default:
-                        num2 = 8;
-                        break;
-                }
-                break;
-            case 51:
-                num2 = 6;
-                break;
-            case 53:
-                num2 = 1;
-                break;
-            case 54:
-                num2 = 2;
-                break;
-            case 55:
-                num2 = 3;
-                break;
-            case 56:
-                num2 = 4;
-                break;
-            case 57:
-                num2 = 5;
-                break;
             default:
-                goto IL_38;
+                num2 = 8; break;
         }
         imd = (num2 <= 0);
         Int32 num3 = ff9.w_movementSinkArray[type, num2];
@@ -5621,7 +5569,7 @@ public static class ff9
 
     public static Boolean w_movementGetGetoff(ref Vector3 pos)
     {
-        Single num = ff9.S(500);
+        Single num = 1.953125f;
         Single[] array = new Single[2];
         Boolean flag = false;
         Boolean flag2 = false;
@@ -6314,7 +6262,7 @@ public static class ff9
         if (!ff9.w_moveCHRControl_LR && !ff9.w_cameraSysData.cameraNotrot && ff9.w_framePhase == 2)
         {
             ff9.cn2 = Mathf.Clamp(ff9.abs(rotationDifference), ff9.cn3, ff9.cn4);
-            Single rotationFactor = rotationDifference * ff9.S(256) / ff9.cn2;
+            Single rotationFactor = rotationDifference * 1f / ff9.cn2;
             Single rotationSpeedFactor = ((ff9.PsxRot(2048) - ff9.abs(rotationDifference)) * ff9.cn1 + 2048f) * 2f;
             rotationSpeedFactor = rotationSpeedFactor * ff9.w_movementCamRemain / 4096f;
             ff9.w_cameraSysDataCamera.rotation += rotationFactor * rotationSpeedFactor / 4096f;

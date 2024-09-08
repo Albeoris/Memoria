@@ -108,18 +108,22 @@ public class WMWorld : Singleton<WMWorld>
         this.SkyDome_Sky = UnityEngine.Object.Instantiate<GameObject>(original2).transform;
         this.SkyDome_Sky.parent = this.WorldMapEffectRoot;
         this.SkyDome_SkyMaterial = this.SkyDome_Sky.GetComponentInChildren<MeshRenderer>().material;
+        this.SkyDome_SkyMaterial.shader = Memoria.Scripts.ShadersLoader.Find("WorldMap/Cloud No Fog");
         GameObject original3 = AssetManager.Load<GameObject>("EmbeddedAsset/WorldMap_Local/MoveFromBundle/kWorldPackEffectSky_Bg", false);
         this.SkyDome_Bg = UnityEngine.Object.Instantiate<GameObject>(original3).transform;
         this.SkyDome_Bg.parent = this.WorldMapEffectRoot;
         this.SkyDowm_BgMaterial = this.SkyDome_Bg.GetComponentInChildren<MeshRenderer>().material;
+        this.SkyDowm_BgMaterial.shader = Memoria.Scripts.ShadersLoader.Find("WorldMap/SkyDome No Fog");
         GameObject original4 = AssetManager.Load<GameObject>("WorldMap/Prefabs/Effects/kWorldPackEffectSky_Fog", false);
         this.SkyDome_Fog = UnityEngine.Object.Instantiate<GameObject>(original4).transform;
         this.SkyDome_Fog.parent = this.WorldMapEffectRoot;
         this.SkyDowm_FogMaterial = this.SkyDome_Fog.GetComponentInChildren<MeshRenderer>().material;
-        if (FF9StateSystem.World.FixTypeCam)
+        if (ff9.w_frameScenePtr != 2970 && ff9.w_frameScenePtr != 2980) // WM cinematic, ship to Lindblum
         {
-            this.SkyDome_Sky.localScale = new Vector3(1f, 1f, 1f);
-            this.SkyDome_Bg.localScale = new Vector3(1.01f, 1.01f, 1.01f);
+            Single skyScale = Configuration.Worldmap.ViewDistance / 100f;
+            this.SkyDome_Sky.localScale = new Vector3(skyScale, skyScale, skyScale);
+            this.SkyDome_Bg.localScale = new Vector3(skyScale, skyScale, skyScale);
+            this.SkyDome_Fog.localScale = new Vector3(skyScale, skyScale, skyScale);
         }
         if (FF9StateSystem.World.IsBeeScene)
         {
@@ -779,24 +783,9 @@ public class WMWorld : Singleton<WMWorld>
             Vector3 vector = new Vector3(0f, 0f, 0f);
             vector.x += ff9.w_moveActorPtr.transform.position.x;
             vector.z += ff9.w_moveActorPtr.transform.position.z;
-            WMTweaker instance = Singleton<WMTweaker>.Instance;
-            vector = new Vector3(0f, 0f, 0f);
-            vector.x += ff9.w_moveActorPtr.transform.position.x;
-            vector.z += ff9.w_moveActorPtr.transform.position.z;
-            vector.y = instance.skydomeOffsetY;
             this.SkyDome_Sky.position = vector;
-            vector.y = instance.cloudOffsetY;
             this.SkyDome_Bg.position = vector;
             this.SkyDome_Fog.position = vector + new Vector3(0f, -2f, 0f);
-
-            if (ff9.w_frameScenePtr != 2970)
-            {
-                Single skyScale = Configuration.Worldmap.ViewDistance / 100f;
-                this.SkyDome_Sky.localScale = new Vector3(skyScale, skyScale, skyScale);
-                skyScale = (Configuration.Worldmap.ViewDistance / 100f) + 0.01f;
-                this.SkyDome_Bg.localScale = new Vector3(skyScale, skyScale, skyScale);
-                this.SkyDome_Fog.localScale = new Vector3(skyScale, skyScale, skyScale);
-            }
 
             Vector3 b = ff9.w_effectLastPos + new Vector3(0f, -15.15f, 0f);
             if (ff9.w_movePlanePtr != null && ff9.w_frameCounter >= 10)
