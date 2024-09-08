@@ -185,9 +185,13 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Memoria.ini</TargetPath>
     </EmbeddedResource>
+    <Resource Include="Fonts\centurygothic.ttf" />
+    <Resource Include="Fonts\notoemoji.ttf" />
+    <Resource Include="Fonts\overpass.ttf" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\btnReorganize.png" />
     <Resource Include="Images\alert_incompat.png" />
     <Resource Include="Images\alert_update.png" />
     <Resource Include="Images\btnCloseimg.png" />
@@ -203,6 +207,7 @@
     <EmbeddedResource Include="Languages\pt-BR.xml" />
     <EmbeddedResource Include="Languages\en.xml" />
     <EmbeddedResource Include="Languages\ru.xml" />
+    <EmbeddedResource Include="Languages\zh-CN.xml" />
     <Resource Include="Images\btnActivateAllimg.png" />
     <Resource Include="Images\btnCancelimg.png" />
     <Resource Include="Images\btnCheckCompatibilityimg.png" />

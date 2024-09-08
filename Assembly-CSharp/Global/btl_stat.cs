@@ -27,7 +27,7 @@ public static class btl_stat
     {
         if (btl.bi.player != 0)
             UIManager.Battle.RemovePlayerFromAction(btl.btl_id, true);
-        if (!btl_cmd.KillCommand2(btl))
+        if (!btl_cmd.KillStandardCommands(btl))
             return;
         btl.bi.atb = 0;
         if (btl.bi.player != 0 && !FF9StateSystem.Settings.IsATBFull)

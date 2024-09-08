@@ -4,35 +4,42 @@
                    x:Class="Memoria.Launcher.UiLauncherButton"
                    Width="240"
                    Height="72">
+    <launcher:UiButton.Resources>
+        <FontFamily x:Key="CenturyGothic">pack://application:,,,/Fonts/#Century Gothic</FontFamily>
+    </launcher:UiButton.Resources>
     <Button.Template>
         <ControlTemplate>
             <Grid x:Name="LayoutRoot"
-			      VerticalAlignment="Stretch"
-			      HorizontalAlignment="Stretch">
+            VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch">
                 <Rectangle Visibility="{Binding BlueRectVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}}">
                     <Rectangle.Style>
                         <Style TargetType="{x:Type Rectangle}">
-                            <Setter Property="Fill"
-							        Value="#dd616033"/>
+                            <Setter
+                            Property="Fill"
+                            Value="#dd616033"/>
                         </Style>
                     </Rectangle.Style>
                 </Rectangle>
-                <TextBlock TextWrapping="Wrap"
-				           Text="{Binding Label, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}}"
-				           FontFamily="Century Gothic"
-                           FontWeight="Bold"
-				           FontSize="28"
-				           Height="32"
-				           VerticalAlignment="Center"
-				           HorizontalAlignment="Center"
-				           Margin="0,0,0,0">
+                <TextBlock
+                TextWrapping="Wrap"
+                Text="{Binding Label, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}}"
+                FontFamily="{StaticResource CenturyGothic}"
+                FontWeight="Bold"
+                FontSize="32"
+                Height="38"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Margin="0,0,0,0">
                     <TextBlock.Foreground>
-                        <LinearGradientBrush EndPoint="0.5,1"
-						                     MappingMode="RelativeToBoundingBox"
-						                     StartPoint="0.5,0"
-						                     Opacity="0.885">
-                            <GradientStop Color="#DDffffff"
-							              Offset="0.000"/>
+                        <LinearGradientBrush
+                        EndPoint="0.5,1"
+                        MappingMode="RelativeToBoundingBox"
+                        StartPoint="0.5,0"
+                        Opacity="0.885">
+                            <GradientStop
+                            Color="#DDffffff"
+                            Offset="0.000"/>
                         </LinearGradientBrush>
                     </TextBlock.Foreground>
                 </TextBlock>
@@ -43,7 +50,6 @@
                             <Style.Triggers>
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter Property="Fill" Value="#33ffffff"/>
-
                                     <Setter Property="Cursor" Value="Hand" />
                                 </Trigger>
                             </Style.Triggers>

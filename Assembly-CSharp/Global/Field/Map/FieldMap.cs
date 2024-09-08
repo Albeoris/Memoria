@@ -677,7 +677,18 @@ public class FieldMap : HonoBehavior
 
             Int32 threshmargin = Math.Min((Int32)bgCamera.w - PsxFieldWidth, 0); // Offset value for fields that are between 320 & 398
             //if (dbug) Log.Message("PsxFieldWidth" + PsxFieldWidth);
-            if (map == 1205 || map == 1652 || map == 2552 || map == 154 || map == 1215 || map == 1807 || map == 1055) // A. Castle/Chapel, Iifa Tree/Roots, Earth Shrine/Interior, Alex grand hall
+            //Log.Message("CamPositionY:" + CamPositionY + " this.charOffset.y:" + this.charOffset.y);
+
+            if ((map == 609 || map == 2159) && PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR) != 3110)
+            {
+                CamPositionY = ((CamPositionY + 224f) * (CamPositionY + 224f) / 2f ) - 224f;
+                //Log.Message("NCamPositionY:" + CamPositionY + " this.charOffset.y:" + this.charOffset.y);
+            }
+            if (map == 507) // Cargo Ship/Deck
+            {
+                CamPositionX = CamPositionX + 1;
+            }
+            else if (map == 1205 || map == 1652 || map == 2552 || map == 154 || map == 1215 || map == 1807 || map == 1055) // A. Castle/Chapel, Iifa Tree/Roots, Earth Shrine/Interior, Alex grand hall
             {
                 if (map == 1652 && this.camIdx == 0) // Iifa Tree/Roots
                     threshmargin += 16;
@@ -689,7 +700,7 @@ public class FieldMap : HonoBehavior
                 CamPositionX = (float)Math.Max(threshmargin, CamPositionX);
                 CamPositionX = (float)Math.Min(threshright, CamPositionX);
             }
-            else if (mapWidth > PsxFieldWidth && map != 507) // Cargo Ship/Deck
+            else if (mapWidth > PsxFieldWidth)
             {
                 foreach (KeyValuePair<Int32, Int32> entry in NarrowMapList.mapCameraMargin)
                     if (map == entry.Key)
@@ -722,8 +733,6 @@ public class FieldMap : HonoBehavior
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 195 : 160; break;
                 case 505: // Cargo ship offset
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 70 : 105; break;
-                case 507: // Cargo ship offset (white line left)
-                    CamPositionX = CamPositionX + 1; break;
                 case 1153: // Rose Rouge cockpit offset
                     CamPositionX = Configuration.Graphics.ScreenIs16to10() ? 140 : 175; break;
                 case 2716: // fix for Kuja descending camera too high
