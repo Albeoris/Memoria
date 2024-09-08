@@ -6236,13 +6236,15 @@ public static class ff9
         actorRot[1] += ff9.w_moveCHRControl_RotSpeed;
         actorRot[1] %= 360f;
         ff9.w_moveCHRControl_RotTrue = actorRot[1] % 360f;
+
         if (ff9.w_moveCHRControl_RotSpeed > 0f && ff9.w_cameraRotAngle > ff9.PsxRot(-(cameraChangeThreshold * 1)))
-            ff9.w_cameraRotAngle += ff9.PsxRot(cameraChangeThreshold / 8);
+            ff9.w_cameraRotAngle -= ff9.PsxRot(cameraChangeThreshold / 8);
         if (ff9.w_moveCHRControl_RotSpeed < 0f && ff9.w_cameraRotAngle < ff9.PsxRot(-(cameraChangeThreshold * 1)))
-            ff9.w_cameraRotAngle += ff9.PsxRot(cameraChangeThreshold / 8);
+            ff9.w_cameraRotAngle -= ff9.PsxRot(cameraChangeThreshold / 8);
         if (ff9.UnityUnit(ff9.w_moveCHRControl_XZSpeed) == 0)
-            ff9.w_cameraRotAngle += ff9.PsxRot(cameraChangeThreshold / 8);
+            ff9.w_cameraRotAngle -= ff9.PsxRot(cameraChangeThreshold / 8);
         ff9.w_cameraRotAngle = Mathf.Clamp(ff9.w_cameraRotAngle, ff9.PsxRot(-ff9.w_moveCHRControlPtr.speed_roll), ff9.PsxRot(ff9.w_moveCHRControlPtr.speed_roll));
+
         if (ff9.w_moveCHRControl_RotSpeed > 0f && actorRot[2] > ff9.PsxRot(-(cameraChangeThreshold * 2)))
             actorRot[2] += ff9.PsxRot(cameraChangeThreshold / 4);
         if (ff9.w_moveCHRControl_RotSpeed < 0f && actorRot[2] < ff9.PsxRot(-(cameraChangeThreshold * 2)))
