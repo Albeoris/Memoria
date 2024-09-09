@@ -2655,21 +2655,21 @@ public static class ff9
         //Log.Message("ff9.w_moveCHRControlPtr.type_cam " + ff9.w_moveCHRControlPtr.type_cam + " ff9.w_moveCHRControlPtr.type " + ff9.w_moveCHRControlPtr.type);
 
         Single speedmultiplier = (isAShip && ff9.w_frameScenePtr != 2980 && w_moveCHRControl_XZSpeed > 0) ? Mathf.Max(w_moveCHRControl_XZSpeed * Configuration.Worldmap.FieldOfViewSpeedBoost / 20f) : 0f; // w_moveCHRControl_XZSpeed normally -1 to 2
-        Single fovSetting = ff9.w_frameScenePtr != 2980 ? Configuration.Worldmap.FieldOfView / 100f : 1f;
-        ff9.world.MainCamera.fieldOfView = (ff9.w_cameraPosstatNow.cameraPers / fovDivider) * fovSetting + speedmultiplier;
+        Single fovSetting = ff9.w_frameScenePtr != 2980 ? Configuration.Worldmap.FieldOfView : 43.75f;
+        ff9.world.MainCamera.fieldOfView = (ff9.w_cameraPosstatNow.cameraPers / fovDivider) * (fovSetting / 44f) + speedmultiplier;
         if (ff9.w_moveCHRControlPtr.type == 1)
-            ff9.world.MainCamera.fieldOfView = 43.75f * fovSetting + speedmultiplier;
+            ff9.world.MainCamera.fieldOfView = fovSetting + speedmultiplier;
         if (ff9.w_moveCHRControlPtr.type_cam == 1)
         {
             Int32 topoID = ff9.w_frameGetParameter(193);
             if (topoID == 36 || topoID == 37 || topoID == 38)
-                ff9.world.MainCamera.fieldOfView = 43.75f * fovSetting + speedmultiplier;
+                ff9.world.MainCamera.fieldOfView = fovSetting + speedmultiplier;
         }
         ff9.w_cameraSysDataCamera.rotation %= 360f;
-        ff9.w_cameraAimOffset = ff9.w_cameraPosstatNow.aimHeight * Configuration.Worldmap.CameraHeight / 100f;
-        ff9.w_cameraEyeOffset.y = ff9.w_cameraPosstatNow.cameraHeight;
-        ff9.w_cameraEyeOffset.x = ff9.rsin(ff9.w_cameraSysDataCamera.rotation) * (ff9.w_cameraPosstatNow.cameraDistance * (Configuration.Worldmap.CameraDistance / 100f) * ff9.w_cameraDebugDist / 4096f);
-        ff9.w_cameraEyeOffset.z = ff9.rcos(ff9.w_cameraSysDataCamera.rotation) * (ff9.w_cameraPosstatNow.cameraDistance * (Configuration.Worldmap.CameraDistance / 100f) * ff9.w_cameraDebugDist / 4096f);
+        ff9.w_cameraAimOffset = ff9.w_cameraPosstatNow.aimHeight * Configuration.Worldmap.CameraAimHeight / 100f;
+        ff9.w_cameraEyeOffset.y = ff9.w_cameraPosstatNow.cameraHeight * Configuration.Worldmap.CameraHeight / 100f;
+        ff9.w_cameraEyeOffset.x = ff9.rsin(ff9.w_cameraSysDataCamera.rotation) * (ff9.w_cameraPosstatNow.cameraDistance * ff9.w_cameraDebugDist / 4096f) * (Configuration.Worldmap.CameraDistance / 100f);
+        ff9.w_cameraEyeOffset.z = ff9.rcos(ff9.w_cameraSysDataCamera.rotation) * (ff9.w_cameraPosstatNow.cameraDistance * ff9.w_cameraDebugDist / 4096f) * (Configuration.Worldmap.CameraDistance / 100f);
         if (!ff9.w_cameraFixMode)
             ff9.w_cameraSetEyeAim();
         ff9.setVector(ref ff9.w_cameraFocusEye, ff9.w_cameraWorldAim.x - ff9.w_cameraWorldEye.x, ff9.w_cameraWorldAim.y - ff9.w_cameraWorldEye.y, ff9.w_cameraWorldAim.z - ff9.w_cameraWorldEye.z);
@@ -2686,8 +2686,8 @@ public static class ff9
     }
         else
         {
-            Vector3 b = new Vector3(0f, ff9.tweaker.w_cameraWorldEye_Y * 0.00390625f * Configuration.Worldmap.CameraHeight / 100f, 0f);
-            Vector3 b2 = new Vector3(0f, ff9.tweaker.w_cameraWorldAim_Y * 0.00390625f * Configuration.Worldmap.CameraAimHeight / 100f, 0f);
+            Vector3 b = new Vector3(0f, ff9.tweaker.w_cameraWorldEye_Y * 0.00390625f, 0f);
+            Vector3 b2 = new Vector3(0f, ff9.tweaker.w_cameraWorldAim_Y * 0.00390625f, 0f);
             if (FF9StateSystem.World.FixTypeCam)
             {
                 if (ff9.w_moveCHRControlPtr.type_cam == 0) // on foot
@@ -6183,14 +6183,14 @@ public static class ff9
         actorRot[1] %= 360f;
         ff9.w_moveCHRControl_RotTrue = actorRot[1] % 360f;
 
-        Single ShipCameraTilt = Configuration.Worldmap.ShipCameraTilt / 100f;
+        Single CameraTiltShip = Configuration.Worldmap.CameraTiltShip / 100f;
         if (ff9.w_moveCHRControl_RotSpeed > 0f && ff9.w_cameraRotAngle > ff9.PsxRot(-(cameraChangeThreshold * 1)))
-            ff9.w_cameraRotAngle -= ff9.PsxRot(cameraChangeThreshold / 8) * ShipCameraTilt;
+            ff9.w_cameraRotAngle -= ff9.PsxRot(cameraChangeThreshold / 8) * CameraTiltShip;
         if (ff9.w_moveCHRControl_RotSpeed < 0f && ff9.w_cameraRotAngle < ff9.PsxRot(-(cameraChangeThreshold * 1)))
-            ff9.w_cameraRotAngle -= ff9.PsxRot(cameraChangeThreshold / 8) * ShipCameraTilt;
+            ff9.w_cameraRotAngle -= ff9.PsxRot(cameraChangeThreshold / 8) * CameraTiltShip;
         if (ff9.UnityUnit(ff9.w_moveCHRControl_XZSpeed) == 0)
-            ff9.w_cameraRotAngle -= ff9.PsxRot(cameraChangeThreshold / 8) * ShipCameraTilt;
-        ff9.w_cameraRotAngle = Mathf.Clamp(ff9.w_cameraRotAngle, ff9.PsxRot(-ff9.w_moveCHRControlPtr.speed_roll) * ShipCameraTilt, ff9.PsxRot(ff9.w_moveCHRControlPtr.speed_roll) * ShipCameraTilt);
+            ff9.w_cameraRotAngle -= ff9.PsxRot(cameraChangeThreshold / 8) * CameraTiltShip;
+        ff9.w_cameraRotAngle = Mathf.Clamp(ff9.w_cameraRotAngle, ff9.PsxRot(-ff9.w_moveCHRControlPtr.speed_roll) * CameraTiltShip, ff9.PsxRot(ff9.w_moveCHRControlPtr.speed_roll) * CameraTiltShip);
 
         if (ff9.w_moveCHRControl_RotSpeed > 0f && actorRot[2] > ff9.PsxRot(-(cameraChangeThreshold * 2)))
             actorRot[2] += ff9.PsxRot(cameraChangeThreshold / 4);
@@ -8336,12 +8336,11 @@ public static class ff9
         Single MistStartMul = Configuration.Worldmap.MistStartDistance / 100f; // default 80
         Single MistEndMul = Configuration.Worldmap.MistEndDistance / 100f; // 80
         if (MistStartMul >= MistEndMul)
-            MistEndMul = MistStartMul + 0.1f;
-        Single MistDensity = Configuration.Worldmap.MistDensity / 100f;
+            MistEndMul = MistStartMul + 0.001f;
         Single fogStartMul = Configuration.Worldmap.FogStartDistance / 100f;
         Single fogEndMul = Configuration.Worldmap.FogEndDistance / 100f;
         if (fogStartMul >= fogEndMul)
-            fogEndMul = fogStartMul + 0.1f;
+            fogEndMul = fogStartMul + 0.001f;
         GlobalFog globalFog = GameObject.Find("WorldCamera").GetComponent<GlobalFog>(); // ff9.world.GlobalFog;
         //Log.Message("globalFog.enabled:" + globalFog.enabled + " ff9.w_frameFog:" + ff9.w_frameFog + " w_frameScenePtr:" + w_frameScenePtr);
         if (globalFog.enabled)
@@ -8356,7 +8355,7 @@ public static class ff9
             {
                 globalFog.heightFog = true;
                 globalFog.height = 29f;
-                globalFog.heightDensity = 0.07f * MistDensity;
+                globalFog.heightDensity = Configuration.Worldmap.MistDensity / 100f; // 0.07f; 0-10
                 globalFog.startDistance = 100f * MistStartDistance_base; // 55.5f;
                 /*
                 RenderSettings.fogStartDistance = 26.7f * MistStartMul;
@@ -8366,12 +8365,12 @@ public static class ff9
                 Shader.SetGlobalFloat("_FogStartDistance", start * MistStartMul);
                 Shader.SetGlobalFloat("_FogEndDistance", end * MistEndMul);
                 */
-                RenderSettings.fogStartDistance = 100f * MistStartMul;
-                RenderSettings.fogEndDistance = 100f * MistEndMul;
-                //Log.Message("t " + t);
-                Single t = ((ff9.w_frameCameraPtr.transform.position.y / 52.1875f) -0.5f) *2.4f ;
-                Single start = Mathf.Lerp(RenderSettings.fogStartDistance * 0.175f, RenderSettings.fogStartDistance, t);
-                Single end = Mathf.Lerp(RenderSettings.fogEndDistance * 0.175f, RenderSettings.fogEndDistance, t);
+                RenderSettings.fogStartDistance = 100f * MistStartMul; // 26.7f
+                RenderSettings.fogEndDistance = 100f * MistEndMul; // 80f
+                Single t = ((ff9.w_frameCameraPtr.transform.position.y / 52.1875f) -0.40f) *2.0f;
+                Single start = Mathf.Lerp(RenderSettings.fogStartDistance * 0.80f, RenderSettings.fogStartDistance, t) + globalFog.startDistance;
+                Single end = Mathf.Lerp(RenderSettings.fogEndDistance * 0.80f, RenderSettings.fogEndDistance, t) + globalFog.startDistance;
+                //Log.Message("t:" + t + " - start:" + start + " - end:" + end);
                 Shader.SetGlobalFloat("_FogStartDistance", start * MistStartMul);
                 Shader.SetGlobalFloat("_FogEndDistance", end * MistEndMul);
                 if (ff9.w_frameScenePtr == 2970 || ff9.w_frameScenePtr == 2980) // destroyed gate to Lindblum event
@@ -8399,25 +8398,28 @@ public static class ff9
                 Shader.SetGlobalFloat("_FogStartDistance", start);
                 Shader.SetGlobalFloat("_FogEndDistance", end);
                 */
-                RenderSettings.fogStartDistance = 100f * fogStartMul;
-                RenderSettings.fogEndDistance = 100f * fogEndMul;
+                RenderSettings.fogStartDistance = 100f * fogStartMul; // 86.25f
+                RenderSettings.fogEndDistance = 100f * fogEndMul; // 142.2f
                 Shader.SetGlobalFloat("_FogStartDistance", RenderSettings.fogStartDistance);
                 Shader.SetGlobalFloat("_FogEndDistance", RenderSettings.fogEndDistance);
             }
         }
-        else if (ff9.w_frameFog == 1)
+        else
         {
-            RenderSettings.fogStartDistance = 43.8f * MistStartMul;
-            RenderSettings.fogEndDistance = 96.7f * MistEndMul;
-            Shader.SetGlobalFloat("_FogStartDistance", 43.8f * MistStartMul);
-            Shader.SetGlobalFloat("_FogEndDistance", 96.7f * MistEndMul);
-        }
-        else if (ff9.w_frameFog == 0)
-        {
-            RenderSettings.fogStartDistance = 130.4f * fogStartMul;
-            RenderSettings.fogEndDistance = 165.9f * fogEndMul;
-            Shader.SetGlobalFloat("_FogStartDistance", 130.4f * fogStartMul);
-            Shader.SetGlobalFloat("_FogEndDistance", 165.9f * fogEndMul);
+            if (ff9.w_frameFog == 1)
+            {
+                RenderSettings.fogStartDistance = 100f * MistStartMul; // 43.8f
+                RenderSettings.fogEndDistance = 100f * MistEndMul; // 96.7f
+                Shader.SetGlobalFloat("_FogStartDistance", RenderSettings.fogStartDistance);
+                Shader.SetGlobalFloat("_FogEndDistance", RenderSettings.fogEndDistance);
+            }
+            else if (ff9.w_frameFog == 0)
+            {
+                RenderSettings.fogStartDistance = 100f * fogStartMul; // 130.4f
+                RenderSettings.fogEndDistance = 100f * fogEndMul; // 165.9f
+                Shader.SetGlobalFloat("_FogStartDistance", RenderSettings.fogStartDistance);
+                Shader.SetGlobalFloat("_FogEndDistance", RenderSettings.fogEndDistance);
+            }
         }
     }
 
