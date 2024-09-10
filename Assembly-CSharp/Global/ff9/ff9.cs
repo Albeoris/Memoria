@@ -4589,7 +4589,7 @@ public static class ff9
             Obj obj = objList.obj;
             if (obj.cid == 4)
             {
-                /*PosObj posObj = (PosObj)obj;
+                PosObj posObj = (PosObj)obj;
                 Vector3 pos = ((Actor)posObj).wmActor.pos;
                 ff9.s_moveCHRStatus s_moveCHRStatus = ff9.w_moveCHRStatus[posObj.index];
                 Boolean flag = false;
@@ -4599,7 +4599,7 @@ public static class ff9
                 s_moveCHRStatus.ground_height = ground_height;
                 s_moveCHRStatus.slice_height = ff9.w_movementGetSliceHeight(s_moveCHRStatus.slice_type, s_moveCHRStatus.id, ref flag);
                 ff9.w_movementSetheight(posObj);
-                posObj.lastx = posObj.pos[0];*/
+                posObj.lastx = posObj.pos[0];
             }
         }
         WMPhysics.CastRayFromSky = false;
@@ -4791,7 +4791,7 @@ public static class ff9
 
     public static void w_movementChrVerifyValidCastPosition(ref Int32 posX, ref Int32 posY, ref Int32 posZ)
     {
-        /*Int32 num = posX;
+        Int32 num = posX;
         Int32 num2 = posY;
         Int32 num3 = posZ;
         ff9.world.GetUnityPositionOf_FixedPoint(ref num, ref num2, ref num3);
@@ -4860,7 +4860,7 @@ public static class ff9
         }
         WMPhysics.CastRayFromSky = false;
         WMPhysics.IgnoreExceptions = false;
-        WMPhysics.UseInfiniteRaycast = false;*/
+        WMPhysics.UseInfiniteRaycast = false;
     }
 
     /*
