@@ -44,28 +44,6 @@ namespace Memoria.Launcher
 
             Int32 row = 0;
 
-            if (Directory.Exists("MoguriSoundtrack"))
-            {
-                CheckBox isUsingOrchestralMusic = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.UseOrchestralMusic, null), row, 0, 1, 9);
-                isUsingOrchestralMusic.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(OrchestralMusic)) { Mode = BindingMode.TwoWay });
-                isUsingOrchestralMusic.Foreground = Brushes.White;
-                isUsingOrchestralMusic.Margin = rowMargin;
-                isUsingOrchestralMusic.ToolTip = Lang.Settings.UseOrchestralMusic_Tooltip;
-
-                row++;
-            }
-
-            if (Directory.Exists("MoguriVideo"))
-            {
-                CheckBox isUsing30fpsVideo = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Use30FpsVideo, null), row, 0, 1, 9);
-                isUsing30fpsVideo.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(HighFpsVideo)) { Mode = BindingMode.TwoWay });
-                isUsing30fpsVideo.Foreground = Brushes.White;
-                isUsing30fpsVideo.Margin = rowMargin;
-                isUsing30fpsVideo.ToolTip = Lang.Settings.Use30FpsVideo_Tooltip;
-
-                row++;
-            }
-
             CheckBox isWidescreenSupport = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Widescreen, null), row, 0, 1, 9);
             isWidescreenSupport.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(WidescreenSupport)) { Mode = BindingMode.TwoWay });
             isWidescreenSupport.Foreground = Brushes.White;
@@ -448,31 +426,7 @@ namespace Memoria.Launcher
                 }
             }
         }
-        public Int16 OrchestralMusic
-        {
-            get { return _isusingorchestralmusic; }
-            set
-            {
-                if (_isusingorchestralmusic != value)
-                {
-                    _isusingorchestralmusic = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
-        public Int16 HighFpsVideo
-        {
-            get { return _isusin30fpsvideo; }
-            set
-            {
-                if (_isusin30fpsvideo != value)
-                {
-                    _isusin30fpsvideo = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
         public Int16 HideCards
         {
             get { return _ishidecards; }
@@ -594,7 +548,7 @@ namespace Memoria.Launcher
                 }
             }
         }
-        private Int16 _iswidescreensupport, _battleInterface, _uicolumnschoice, _fpsdropboxchoice, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _scaledbattleui, _sharedfps, _battlefps, _fieldfps, _worldfps, _camerastabilizer;
+        private Int16 _iswidescreensupport, _battleInterface, _uicolumnschoice, _fpsdropboxchoice, _isskipintros, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _scaledbattleui, _sharedfps, _battlefps, _fieldfps, _worldfps, _camerastabilizer;
         private double _scaledbattleuiscale;
         private String _fontChoice;
         private ComboBox _fontChoiceBox;
@@ -622,36 +576,6 @@ namespace Memoria.Launcher
                 SanitizeMemoriaIni();
 
                 IniFile iniFile = new(_iniPath);
-
-                String modstring = iniFile.ReadValue("Mod", "FolderNames");
-
-                if (String.IsNullOrEmpty(modstring))
-                {
-                    _isusingorchestralmusic = 0;
-                    _isusin30fpsvideo = 1;
-                    OnPropertyChanged(nameof(OrchestralMusic));
-                    OnPropertyChanged(nameof(HighFpsVideo));
-                }
-
-                string[] mods = modstring.Split(',');
-                char[] charsToTrim = { ' ', '\"' };
-                _isusingorchestralmusic = 0;
-                _isusin30fpsvideo = 0;
-                foreach (string mod in mods)
-                {
-                    string cleanmodString = mod.Trim(charsToTrim);
-                    if (cleanmodString == "MoguriSoundtrack")
-                    {
-                        _isusingorchestralmusic = 1;
-                        OnPropertyChanged(nameof(OrchestralMusic));
-                    }
-                    if (cleanmodString == "MoguriVideo")
-                    {
-                        _isusin30fpsvideo = 1;
-                        OnPropertyChanged(nameof(HighFpsVideo));
-                    }
-
-                }
 
                 String value = iniFile.ReadValue("Graphics", nameof(WidescreenSupport));
                 if (String.IsNullOrEmpty(value))
@@ -847,8 +771,6 @@ namespace Memoria.Launcher
                 Refresh(nameof(UIColumnsChoice));
                 Refresh(nameof(FPSDropboxChoice));
                 Refresh(nameof(SkipIntros));
-                Refresh(nameof(OrchestralMusic));
-                Refresh(nameof(HighFpsVideo));
                 Refresh(nameof(HideCards));
                 Refresh(nameof(Speed));
                 Refresh(nameof(TripleTriad));
@@ -879,42 +801,6 @@ namespace Memoria.Launcher
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
             }
         }
-        private string UpdateModList()
-        {
-            //List<string> modList = new List<string>();
-            IniFile iniFile = new(_iniPath);
-            String str = iniFile.ReadValue("Mod", "FolderNames");
-            if (String.IsNullOrEmpty(str))
-                str = "";
-            else
-            {
-                str = str.Replace("\"", "").Replace("MoguriSoundtrack", "").Replace("MoguriVideo", "");
-            }
-
-            if (Directory.Exists("MoguriSoundtrack") && OrchestralMusic == 1)
-                str += ",MoguriSoundtrack";
-            if (Directory.Exists("MoguriVideo") && HighFpsVideo == 1)
-                str += ",MoguriVideo";
-
-            String[] modList = Regex.Split(str, ",");
-            String modList2 = null;
-
-            for (Int32 i = 0; i < modList.Length; i++)
-            {
-                modList[i] = modList[i].Trim(' ');
-                if (!String.IsNullOrEmpty(modList[i]))
-                {
-                    if (String.IsNullOrEmpty(modList2))
-                        modList2 = "\"" + modList[i] + "\"";
-                    else
-                    {
-                        modList2 = modList2 + ", \"" + modList[i] + "\"";
-                    }
-
-                }
-            }
-            return modList2;
-        }
 
         private async void OnPropertyChanged([CallerMemberName] String propertyName = null)
         {
@@ -925,10 +811,6 @@ namespace Memoria.Launcher
                 IniFile iniFile = new(_iniPath);
                 switch (propertyName)
                 {
-                    case nameof(OrchestralMusic):
-                    case nameof(HighFpsVideo):
-                        iniFile.WriteValue("Mod", "FolderNames ", " " + UpdateModList());
-                        break;
                     case nameof(WidescreenSupport):
                         iniFile.WriteValue("Graphics", propertyName + " ", " " + WidescreenSupport.ToString());
                         if (WidescreenSupport == 1)
