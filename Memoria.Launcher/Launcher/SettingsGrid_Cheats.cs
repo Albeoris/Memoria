@@ -1,4 +1,3 @@
-﻿using Ini;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -20,7 +19,7 @@ using HorizontalAlignment = System.Windows.HorizontalAlignment;
 
 namespace Memoria.Launcher
 {
-    public sealed class SettingsGrid_Cheats : Settings
+    public sealed class SettingsGrid_Cheats : UiGrid, INotifyPropertyChanged
     {
         public SettingsGrid_Cheats()
         {

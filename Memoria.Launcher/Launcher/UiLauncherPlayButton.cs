@@ -1,5 +1,4 @@
-﻿using Ini;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -16,7 +15,6 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using Timer = System.Threading.Timer;
 
 namespace Memoria.Launcher
 {

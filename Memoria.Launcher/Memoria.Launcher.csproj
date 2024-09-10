@@ -118,7 +118,7 @@
     </Compile>
     <Compile Include="App.cs" />
     <Compile Include="MainWindow.cs" />
-    <Compile Include="Ini\IniFile.cs" />
+    <Compile Include="Launcher\IniFile.cs" />
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Launcher\SettingsGrid_Vanilla.cs" />
     <Compile Include="Launcher\Utils.cs" />

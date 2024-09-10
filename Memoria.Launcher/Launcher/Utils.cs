@@ -406,7 +406,6 @@ namespace Memoria.Launcher
         }
     }
 
-
     public static class ScreenInterrogatory
     {
         public const int ERROR_SUCCESS = 0;
