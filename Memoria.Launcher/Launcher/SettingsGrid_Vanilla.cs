@@ -17,16 +17,13 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Forms;
 using System.Windows.Media;
-using System.Windows.Shapes;
 using System.Windows.Threading;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
 using ComboBox = System.Windows.Controls.ComboBox;
 using Control = System.Windows.Controls.Control;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using MessageBox = System.Windows.MessageBox;
-using Path = System.IO.Path;
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable InconsistentNaming
@@ -37,9 +34,9 @@ using Path = System.IO.Path;
 
 namespace Memoria.Launcher
 {
-    public sealed class GameSettingsControl : UiGrid, INotifyPropertyChanged
+    public sealed class SettingsGrid_Vanilla : UiGrid, INotifyPropertyChanged
     {
-        public GameSettingsControl()
+        public SettingsGrid_Vanilla()
         {
             foreach (UInt16 frequency in EnumerateAudioSettings())
                 _validSamplingFrequency.Add(frequency);

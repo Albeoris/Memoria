@@ -22,7 +22,7 @@ namespace Memoria.Launcher
 {
     public sealed class UiLauncherPlayButton : UiLauncherButton
     {
-        public GameSettingsControl GameSettings { get; set; }
+        public SettingsGrid_Vanilla GameSettings { get; set; }
         private ManualResetEvent CancelEvent { get; } = new ManualResetEvent(false);
 
         public UiLauncherPlayButton()
@@ -180,7 +180,7 @@ namespace Memoria.Launcher
             }
         }
 
-        internal static async Task<Boolean> CheckUpdates(Window rootElement, ManualResetEvent cancelEvent, GameSettingsControl gameSettings)
+        internal static async Task<Boolean> CheckUpdates(Window rootElement, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
         {
             String applicationPath = Path.GetFullPath(Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path));
             String applicationDirectory = Path.GetDirectoryName(applicationPath);
@@ -282,7 +282,7 @@ namespace Memoria.Launcher
 
 
 
-        private static async Task<LinkedList<HttpFileInfo>> FindUpdatesInfo(String applicationDirectory, ManualResetEvent cancelEvent, GameSettingsControl gameSettings)
+        private static async Task<LinkedList<HttpFileInfo>> FindUpdatesInfo(String applicationDirectory, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
         {
             Downloader downloader = new Downloader(cancelEvent);
             String[] urls = gameSettings.DownloadMirrors;

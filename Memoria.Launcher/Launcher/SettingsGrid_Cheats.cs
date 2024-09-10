@@ -1,5 +1,4 @@
 ﻿using Ini;
-using SharpCompress.Common;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -21,9 +20,9 @@ using HorizontalAlignment = System.Windows.HorizontalAlignment;
 
 namespace Memoria.Launcher
 {
-    public sealed class MemoriaIniCheatControl : UiGrid, INotifyPropertyChanged
+    public sealed class SettingsGrid_Cheats : UiGrid, INotifyPropertyChanged
     {
-        public MemoriaIniCheatControl()
+        public SettingsGrid_Cheats()
         {
             SetRows(18);
             SetCols(8);
@@ -112,10 +111,6 @@ namespace Memoria.Launcher
 
             row++;
 
-            //UiTextBlock speedFactorText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedFactor), row, 0, 1, 3);
-            //speedFactorText.Foreground = Brushes.White;
-            //speedFactorText.Margin = rowMargin;
-            //speedFactorText.ToolTip = Lang.Settings.SpeedFactor_Tooltip;
             UiTextBlock speedFactorTextindex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
             speedFactorTextindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay, StringFormat = "{0}x" });
             speedFactorTextindex.Foreground = Brushes.White;
@@ -163,11 +158,6 @@ namespace Memoria.Launcher
 
             row++;
 
-            /*UiCheckBox attack9999 = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.MaxDamage, null), row++, 0, 1, 8);
-            attack9999.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Attack9999)) { Mode = BindingMode.TwoWay });
-            attack9999.Foreground = Brushes.White;
-            attack9999.Margin = rowMargin;*/
-
             UiCheckBox noRandomEncounter = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.NoRandomBattles, null), row, 0, 1, 8);
             noRandomEncounter.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(NoRandomEncounter)) { Mode = BindingMode.TwoWay });
             noRandomEncounter.Foreground = Brushes.White;
@@ -207,10 +197,6 @@ namespace Memoria.Launcher
             tetraMasterReduceRandomBox.Height = 20;
             tetraMasterReduceRandomBox.FontSize = 10;
             tetraMasterReduceRandomBox.Margin = rowMargin;
-
-
-            /*AddUiElement(UiTextBlockFactory.Create("──────────────────────────────────────"), row++, 0, 1, 8).Foreground = Brushes.White;*/
-
 
 
             LoadSettings();

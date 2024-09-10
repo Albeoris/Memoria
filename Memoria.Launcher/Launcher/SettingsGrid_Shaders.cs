@@ -22,9 +22,9 @@ using HorizontalAlignment = System.Windows.HorizontalAlignment;
 
 namespace Memoria.Launcher
 {
-    public sealed class ShaderSettingControl : UiGrid, INotifyPropertyChanged
+    public sealed class SettingsGrid_Shaders : UiGrid, INotifyPropertyChanged
     {
-        public ShaderSettingControl()
+        public SettingsGrid_Shaders()
         {
             SetRows(7);
             SetCols(8);
@@ -114,7 +114,6 @@ namespace Memoria.Launcher
             {
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
             }
-            //LoadSettings("");
         }
 
         #region Properties

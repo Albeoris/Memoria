@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Text;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -27,9 +26,9 @@ using HorizontalAlignment = System.Windows.HorizontalAlignment;
 
 namespace Memoria.Launcher
 {
-    public sealed class MemoriaIniControl : UiGrid, INotifyPropertyChanged
+    public sealed class SettingsGrid_Main : UiGrid, INotifyPropertyChanged
     {
-        public MemoriaIniControl()
+        public SettingsGrid_Main()
         {
             SetRows(22);
             SetCols(9);
@@ -43,12 +42,6 @@ namespace Memoria.Launcher
 
             Thickness rowMargin = new(8, 2, 3, 2);
 
-            /*UiTextBlock optionsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.IniOptions), 0, 0, 2, 8);
-            optionsText.Padding = new Thickness(0, 4, 0, 0);
-            optionsText.Foreground = Brushes.White;
-            optionsText.FontSize = 14;
-            optionsText.FontWeight = FontWeights.Bold;
-            optionsText.Margin = rowMargin;*/
             Int32 row = 0;
 
             if (Directory.Exists("MoguriSoundtrack"))
@@ -107,103 +100,6 @@ namespace Memoria.Launcher
             FPSDropbox.Margin = rowMargin;
 
             row++;
-
-            /*UiTextBlock sharedFpsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SharedFPS), row, 0, 1, 9);
-            sharedFpsText.Foreground = Brushes.White;
-            sharedFpsText.Margin = rowMargin;
-            sharedFpsText.ToolTip = Lang.Settings.SharedFPS_Tooltip;
-
-            row++;*/
-
-            /*UiTextBlock sharedFpsIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
-            sharedFpsIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SharedFPS)) { Mode = BindingMode.TwoWay });
-            sharedFpsIndex.Foreground = Brushes.White;
-            sharedFpsIndex.Margin = rowMargin;
-            Slider sharedFps = AddUiElement(UiSliderFactory.Create(0), row, 1, 1, 7);
-            sharedFps.SetBinding(Slider.ValueProperty, new Binding(nameof(SharedFPS)) { Mode = BindingMode.TwoWay });
-            sharedFps.TickFrequency = 5;
-            sharedFps.IsSnapToTickEnabled = true;
-            sharedFps.Minimum = 15;
-            sharedFps.Maximum = 120;
-            sharedFps.Margin = new Thickness(0, 0, 3, 0);*/
-
-            /*
-            UiTextBlock battleFPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleFPS), row, 0, 1, 3);
-            battleFPSText.Foreground = Brushes.White;
-            battleFPSText.Margin = rowMargin;
-            battleFPSText.ToolTip = Lang.Settings.BattleFPS_Tooltip;
-
-            UiTextBlock fieldFPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FieldFPS), row, 3, 1, 3);
-            fieldFPSText.Foreground = Brushes.White;
-            fieldFPSText.Margin = rowMargin;
-            fieldFPSText.ToolTip = Lang.Settings.FieldFPS_Tooltip;
-
-            UiTextBlock worldFPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WorldFPS), row, 6, 1, 3);
-            worldFPSText.Foreground = Brushes.White;
-            worldFPSText.Margin = rowMargin;
-            worldFPSText.ToolTip = Lang.Settings.WorldFPS_Tooltip;
-
-            row++;
-
-            DoubleCollection tickMarks = new DoubleCollection();
-            tickMarks.Add(20);
-            tickMarks.Add(30);
-            tickMarks.Add(60);
-            tickMarks.Add(120);
-
-            UiTextBlock battleFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
-            battleFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
-            battleFPSIndex.Foreground = Brushes.White;
-            battleFPSIndex.Margin = new(8, 0, 0, 2);
-            //battleFPSIndex.TextAlignment = TextAlignment.Right;
-            Slider battleFPSSlider = AddUiElement(UiSliderFactory.Create(60), row, 1, 1, 2);
-            battleFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleFPS)) { Mode = BindingMode.TwoWay });
-            battleFPSSlider.TickFrequency = 10;
-            battleFPSSlider.TickPlacement = TickPlacement.BottomRight;
-            battleFPSSlider.Ticks = tickMarks;
-            battleFPSSlider.Height = 20;
-            battleFPSSlider.IsSnapToTickEnabled = true;
-            battleFPSSlider.Minimum = 20;
-            battleFPSSlider.Maximum = 120;
-            battleFPSSlider.Margin = new(3, 0, 3, 0);
-
-            //row++;
-
-            UiTextBlock fieldFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 3, 1, 1);
-            fieldFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(FieldFPS)) { Mode = BindingMode.TwoWay });
-            fieldFPSIndex.Foreground = Brushes.White;
-            fieldFPSIndex.Margin = new(8, 0, 0, 2);
-            //fieldFPSIndex.TextAlignment = TextAlignment.Right;
-            Slider fieldFPSSlider = AddUiElement(UiSliderFactory.Create(60), row, 4, 1, 2);
-            fieldFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(FieldFPS)) { Mode = BindingMode.TwoWay });
-            fieldFPSSlider.TickFrequency = 10;
-            fieldFPSSlider.TickPlacement = TickPlacement.BottomRight;
-            fieldFPSSlider.Ticks = tickMarks;
-            fieldFPSSlider.Height = 20;
-            fieldFPSSlider.IsSnapToTickEnabled = true;
-            fieldFPSSlider.Minimum = 20;
-            fieldFPSSlider.Maximum = 120;
-            fieldFPSSlider.Margin = new(3, 0, 3, 0);
-
-            //row++;
-
-            UiTextBlock worldFPSIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 6, 1, 1);
-            worldFPSIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(WorldFPS)) { Mode = BindingMode.TwoWay });
-            worldFPSIndex.Foreground = Brushes.White;
-            worldFPSIndex.Margin = new(8, 0, 0, 2);
-            //worldFPSIndex.TextAlignment = TextAlignment.Right;
-            Slider worldFPSSlider = AddUiElement(UiSliderFactory.Create(60), row, 7, 1, 2);
-            worldFPSSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(WorldFPS)) { Mode = BindingMode.TwoWay });
-            worldFPSSlider.TickFrequency = 10;
-            worldFPSSlider.TickPlacement = TickPlacement.BottomRight;
-            worldFPSSlider.Ticks = tickMarks;
-            worldFPSSlider.Height = 20;
-            worldFPSSlider.IsSnapToTickEnabled = true;
-            worldFPSSlider.Minimum = 20;
-            worldFPSSlider.Maximum = 120;
-            worldFPSSlider.Margin = new(3, 0, 3, 0);
-
-            row++;*/
 
             UiTextBlock CameraStabilizerText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.CameraStabilizer), row, 0, 1, 8);
             CameraStabilizerText.Foreground = Brushes.White;
@@ -278,28 +174,6 @@ namespace Memoria.Launcher
 
             row++;
 
-            /*
-            UiTextBlock battleSwirlFramesText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SkipBattleLoading), row, 0, 1, 8);
-            battleSwirlFramesText.Foreground = Brushes.White;
-            battleSwirlFramesText.Margin = rowMargin;
-            row++;
-            UiTextBlock battleSwirlFramesTextindex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 2);
-            battleSwirlFramesTextindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleSwirlFrames)) { Mode = BindingMode.TwoWay });
-            battleSwirlFramesTextindex.Foreground = Brushes.White;
-            battleSwirlFramesTextindex.Margin = rowMargin;
-            Slider battleSwirlFrames = AddUiElement(UiSliderFactory.Create(0), row++, 1, 1, 6);
-            battleSwirlFrames.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleSwirlFrames)) { Mode = BindingMode.TwoWay });
-            battleSwirlFrames.TickFrequency = 5;
-            */
-
-            /*
-            //soundVolumeSlider.TickPlacement = TickPlacement.BottomRight;
-            battleSwirlFrames.IsSnapToTickEnabled = true;
-            battleSwirlFrames.Minimum = 0;
-            battleSwirlFrames.Maximum = 120;
-            battleSwirlFrames.Margin = rowMargin;
-            */
-
             UiCheckBox isHideCards = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.HideSteamBubbles, null), row, 0, 1, 9);
             isHideCards.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(HideCards)) { Mode = BindingMode.TwoWay });
             isHideCards.Foreground = Brushes.White;
@@ -344,75 +218,6 @@ namespace Memoria.Launcher
             tripleTriadBox.Margin = rowMargin;
 
             row++;
-
-            /*UiTextBlock volumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Volume), row++, 0, 1, 8);
-            volumeText.Foreground = Brushes.White;
-            volumeText.Margin = rowMargin;
-            volumeText.TextAlignment = TextAlignment.Center;*/
-            /*
-            UiTextBlock soundVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SoundVolume), row, 0, 1, 3);
-            soundVolumeText.Foreground = Brushes.White;
-            soundVolumeText.Margin = rowMargin;
-            soundVolumeText.ToolTip = Lang.Settings.SoundVolume_Tooltip;
-            UiTextBlock soundVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 3, 1, 1);
-            soundVolumeTextIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SoundVolume)) { Mode = BindingMode.TwoWay });
-            soundVolumeTextIndex.Foreground = Brushes.White;
-            soundVolumeTextIndex.Margin = rowMargin;
-            soundVolumeTextIndex.TextAlignment = TextAlignment.Right;
-            Slider soundVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row, 4, 1, 5);
-            soundVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(SoundVolume)) { Mode = BindingMode.TwoWay });
-            soundVolumeSlider.TickFrequency = 5;
-            soundVolumeSlider.IsSnapToTickEnabled = true;
-            soundVolumeSlider.TickPlacement = TickPlacement.BottomRight;
-            soundVolumeSlider.Height = 20;
-            soundVolumeSlider.Minimum = 0;
-            soundVolumeSlider.Maximum = 100;
-            soundVolumeSlider.Margin = new(3, 3, 3, 3);
-
-            row++;
-
-            UiTextBlock musicVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.MusicVolume), row, 0, 1, 3);
-            musicVolumeText.Foreground = Brushes.White;
-            musicVolumeText.Margin = rowMargin;
-            musicVolumeText.ToolTip = Lang.Settings.MusicVolume_Tooltip;
-            UiTextBlock musicVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 3, 1, 1);
-            musicVolumeTextIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(MusicVolume)) { Mode = BindingMode.TwoWay });
-            musicVolumeTextIndex.Foreground = Brushes.White;
-            musicVolumeTextIndex.Margin = rowMargin;
-            musicVolumeTextIndex.TextAlignment = TextAlignment.Right;
-            Slider musicVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row, 4, 1, 4);
-            musicVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(MusicVolume)) { Mode = BindingMode.TwoWay });
-            musicVolumeSlider.TickFrequency = 5;
-            musicVolumeSlider.IsSnapToTickEnabled = true;
-            musicVolumeSlider.TickPlacement = TickPlacement.BottomRight;
-            musicVolumeSlider.Height = 20;
-            musicVolumeSlider.Minimum = 0;
-            musicVolumeSlider.Maximum = 100;
-            musicVolumeSlider.Margin = new(3, 3, 3, 3);
-
-            row++;
-
-            UiTextBlock movieVolumeText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.MovieVolume), row, 0, 1, 3);
-            movieVolumeText.Foreground = Brushes.White;
-            movieVolumeText.Margin = rowMargin;
-            movieVolumeText.ToolTip = Lang.Settings.MovieVolume_Tooltip;
-            UiTextBlock movieVolumeTextIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 3, 1, 1);
-            movieVolumeTextIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(MovieVolume)) { Mode = BindingMode.TwoWay });
-            movieVolumeTextIndex.Foreground = Brushes.White;
-            movieVolumeTextIndex.Margin = rowMargin;
-            movieVolumeTextIndex.TextAlignment = TextAlignment.Right;
-            Slider movieVolumeSlider = AddUiElement(UiSliderFactory.Create(0), row, 4, 1, 4);
-            movieVolumeSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(MovieVolume)) { Mode = BindingMode.TwoWay });
-            movieVolumeSlider.TickFrequency = 5;
-            movieVolumeSlider.IsSnapToTickEnabled = true;
-            movieVolumeSlider.TickPlacement = TickPlacement.BottomRight;
-            movieVolumeSlider.Height = 20;
-            movieVolumeSlider.Minimum = 0;
-            movieVolumeSlider.Maximum = 100;
-            movieVolumeSlider.Margin = new(3, 3, 3, 3);
-
-            row++;
-            */
 
             UiCheckBox usePsxFont = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.UsePsxFont, null), row, 0, 1, 9);
             usePsxFont.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(UsePsxFont)) { Mode = BindingMode.TwoWay });
@@ -704,18 +509,6 @@ namespace Memoria.Launcher
                 }
             }
         }
-        /*public Int16 BattleSwirlFrames
-        {
-            get { return _battleswirlframes; }
-            set
-            {
-                if (_battleswirlframes != value)
-                {
-                    _battleswirlframes = value;
-                    OnPropertyChanged();
-                }
-            }
-        }*/
         public Int16 SoundVolume
         {
             get { return _soundvolume; }
@@ -801,6 +594,7 @@ namespace Memoria.Launcher
                 }
             }
         }
+        /*
         public bool IsOptionPresentInIni(String category, String option)
         {
             if (File.Exists(_iniPath))
@@ -814,6 +608,7 @@ namespace Memoria.Launcher
             }
             return false;
         }
+        */
         private Int16 _iswidescreensupport, _battleInterface, _uicolumnschoice, _fpsdropboxchoice, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _scaledbattleui, _sharedfps, _battlefps, _fieldfps, _worldfps, _camerastabilizer;
         private double _scaledbattleuiscale;
         private String _fontChoice;

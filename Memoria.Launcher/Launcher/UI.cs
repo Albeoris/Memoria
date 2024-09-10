@@ -3,6 +3,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Threading.Tasks;
 
 namespace Memoria.Launcher
 {
@@ -149,6 +150,77 @@ namespace Memoria.Launcher
                 element = VisualTreeHelper.GetParent(element);
             }
             return null;
+        }
+    }
+    public sealed class UiLauncherModManagerButton : UiModManagerButton
+    {
+        public UiLauncherModManagerButton()
+        {
+            Label = Lang.Launcher.ModManager;
+        }
+
+        protected override async Task DoAction()
+        {
+            MainWindow mainWindow = (MainWindow)this.GetRootElement();
+            if (mainWindow.ModdingWindow == null)
+                mainWindow.ModdingWindow = new ModManagerWindow();
+            mainWindow.ModdingWindow.Owner = mainWindow;
+            mainWindow.ModdingWindow.Show();
+            mainWindow.ModdingWindow.Activate();
+        }
+    }
+
+    public sealed class UiLauncherAdvOptionsButton : UiModManagerButton
+    {
+        public UiLauncherAdvOptionsButton()
+        {
+            Label = Lang.Launcher.AdvSettings;
+        }
+
+        protected override async Task DoAction()
+        {
+            MainWindow mainWindow = (MainWindow)this.GetRootElement();
+            if (mainWindow.AdvOptionsWindow == null)
+                mainWindow.AdvOptionsWindow = new AdvOptionsWindow();
+            mainWindow.AdvOptionsWindow.Owner = mainWindow;
+            mainWindow.AdvOptionsWindow.Show();
+            mainWindow.AdvOptionsWindow.Activate();
+        }
+    }
+
+    public sealed class UiLauncherAdvOptionsCloseButton : UiModManagerButton
+    {
+        public UiLauncherAdvOptionsCloseButton()
+        {
+            Label = "↩ " + Lang.Launcher.Return;
+        }
+
+        protected override async Task DoAction()
+        {
+            try
+            {
+                ((Window)this.GetRootElement()).Close();
+            }
+            catch (Exception) { }
+        }
+    }
+
+    public sealed class UiLauncherModelViewerButton : UiModManagerButton
+    {
+        public UiLauncherModelViewerButton()
+        {
+            Label = Lang.Launcher.ModelViewer;
+        }
+
+        protected override async Task DoAction()
+        {
+            try
+            {
+                Window adv = (Window)this.GetRootElement();
+                MainWindow mainWindow = (MainWindow)adv.Owner;
+                mainWindow.PlayButton.Click(true);
+            }
+            catch (Exception) { }
         }
     }
 }
