@@ -120,7 +120,7 @@ public class WorldHUD : UIScene
         PersistenSingleton<UIManager>.Instance.SetEventEnable(false);
     }
 
-    public void onMouseMove(Vector2 delta)
+    public void OnMouseMove(Vector2 delta)
     {
         if (FF9StateSystem.PCPlatform && this.controlPointEnable && HonoInputManager.MouseEnabled && !this.ignorePointerProcess)
         {
@@ -462,7 +462,7 @@ public class WorldHUD : UIScene
         }
     }
 
-    private void onConfirmNavi(Int32 choice)
+    private void OnConfirmNavi(Int32 choice)
     {
         if (choice == 0)
         {
@@ -606,7 +606,7 @@ public class WorldHUD : UIScene
             "=0]",
             text
         }), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
-        dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(this.onConfirmNavi);
+        dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(this.OnConfirmNavi);
         EventInput.IsProcessingInput = false;
     }
 
@@ -1196,6 +1196,7 @@ public class WorldHUD : UIScene
         FF9StateSystem.Settings.IsBoosterButtonActive[5] = isToggle;
     }
 
+    /*
     public void OnChocographClick(GameObject go, Boolean isClicked)
     {
         PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, delegate
@@ -1206,6 +1207,7 @@ public class WorldHUD : UIScene
             });
         });
     }
+    */
 
     public void ForceShowButton()
     {
@@ -1295,7 +1297,7 @@ public class WorldHUD : UIScene
     private void Awake()
     {
         if (HonoInputManager.MouseEnabled)
-            UICamera.onMouseMove = (UICamera.MoveDelegate)Delegate.Combine(UICamera.onMouseMove, new UICamera.MoveDelegate(this.onMouseMove));
+            UICamera.onMouseMove = (UICamera.MoveDelegate)Delegate.Combine(UICamera.onMouseMove, new UICamera.MoveDelegate(this.OnMouseMove));
         base.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
         this.chocographLocationSprite = this.ChocographLocationPanel.GetChild(0).GetComponent<UISprite>();
         this.menuButtonLabelGameObject = this.MenuButtonGameObject.GetChild(2);

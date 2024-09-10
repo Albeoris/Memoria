@@ -691,6 +691,7 @@ public static class battlebg
         return (pl.x * ll.y - pl.y * ll.x) / ll.magnitude;
     }
 
+    /*
     private static Boolean TriangleContains(Vector2[] tri, Vector2 p, Single eps)
     {
         if (tri[0] == tri[1] || tri[0] == tri[2] || tri[1] == tri[2])
@@ -703,6 +704,7 @@ public static class battlebg
             return d1 > -eps && d2 > -eps && d3 > -eps;
         return d1 < eps && d2 < eps && d3 < eps;
     }
+    */
     #endregion
 
     public const Int32 BBG_DISP_ATTRIBUTE_PLUS = 1;

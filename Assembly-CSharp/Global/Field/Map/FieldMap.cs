@@ -2196,7 +2196,7 @@ public class FieldMap : HonoBehavior
 
     public FieldMapEditor fmEditor;
 
-    private static readonly Dictionary<int, FieldMap.EbgCombineMeshData> combineMeshDict = new Dictionary<int, FieldMap.EbgCombineMeshData>
+    /*private static readonly Dictionary<int, FieldMap.EbgCombineMeshData> combineMeshDict = new Dictionary<int, FieldMap.EbgCombineMeshData>
     {
         {351, (FieldMap.EbgCombineMeshData)null},
         {358, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 13, 14 }}},
@@ -2286,7 +2286,7 @@ public class FieldMap : HonoBehavior
         {2906, (FieldMap.EbgCombineMeshData)null },
         {3100, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 38, 40, 46, 47, 48, 49, 50, 52 }}},
         {2107, new FieldMap.EbgCombineMeshData { skipOverlayList = new List<int> { 0, 1, 2, 3, 4, 5, 12 }}}
-    };
+    };*/
 
     public static readonly List<String> fieldMapNameWithAreaTitle = new List<String>
     {

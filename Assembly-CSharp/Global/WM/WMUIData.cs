@@ -194,10 +194,12 @@ public static class WMUIData
         }
     }
 
+    /*
     public static Boolean AutoPilotIsOn()
     {
         return ff9.w_moveAutoPilot != 0;
     }
+    */
 
     public static Boolean LocationAvailable(Int32 no)
     {
