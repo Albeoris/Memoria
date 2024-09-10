@@ -1,4 +1,5 @@
 ﻿using Ini;
+using SharpCompress.Common;
 using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
