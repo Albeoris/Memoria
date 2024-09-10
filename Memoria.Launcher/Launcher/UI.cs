@@ -27,12 +27,6 @@ namespace Memoria.Launcher
                 row.Height = height;
         }
 
-        public void SetColsWidth(GridLength width)
-        {
-            foreach (ColumnDefinition col in ColumnDefinitions)
-                col.Width = width;
-        }
-
         public T AddUiElement<T>(T uiElement, Int32 row, Int32 col, Int32 rowSpan = 0, Int32 colSpan = 0) where T : UIElement
         {
             if (row > 0) uiElement.SetValue(RowProperty, row);
@@ -43,51 +37,42 @@ namespace Memoria.Launcher
             Children.Add(uiElement);
             return uiElement;
         }
-
-        public void SetChildrenMargin(Double uniformLength)
-        {
-            Thickness margin = new Thickness(uniformLength);
-            foreach (FrameworkElement child in Children)
-                child.Margin = margin;
-        }
     }
 
-    public class UiTextBlock : TextBlock
-    {
-    }
     public static class UiTextBlockFactory
     {
-        public static UiTextBlock Create(String text)
+        public static TextBlock Create(String text)
         {
-            UiTextBlock textBlock = new UiTextBlock { Text = text };
-
+            TextBlock textBlock = new TextBlock
+            {
+                Text = text
+            };
             return textBlock;
         }
     }
 
-    public class UiCheckBox : CheckBox
-    {
-    }
     public static class UiCheckBoxFactory
     {
-        public static UiCheckBox Create(Object content, Boolean? isChecked)
+        public static CheckBox Create(Object content, Boolean? isChecked)
         {
-            return new UiCheckBox
+            CheckBox checkBox = new CheckBox
             {
                 Content = content,
                 IsChecked = isChecked
             };
+            return checkBox;
         }
     }
 
-    public class UiComboBox : ComboBox
-    {
-    }
     public static class UiComboBoxFactory
     {
-        public static UiComboBox Create()
+        public static ComboBox Create()
         {
-            return new UiComboBox();
+            ComboBox comboBox = new ComboBox
+            {
+
+            };
+            return comboBox;
         }
     }
 
@@ -95,10 +80,11 @@ namespace Memoria.Launcher
     {
         public static Slider Create(int value)
         {
-            return new Slider
+            Slider slider = new Slider
             {
                 Value = value
             };
+            return slider;
         }
     }
 

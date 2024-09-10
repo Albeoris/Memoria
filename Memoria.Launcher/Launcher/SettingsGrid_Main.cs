@@ -46,7 +46,7 @@ namespace Memoria.Launcher
 
             if (Directory.Exists("MoguriSoundtrack"))
             {
-                UiCheckBox isUsingOrchestralMusic = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.UseOrchestralMusic, null), row, 0, 1, 9);
+                CheckBox isUsingOrchestralMusic = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.UseOrchestralMusic, null), row, 0, 1, 9);
                 isUsingOrchestralMusic.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(OrchestralMusic)) { Mode = BindingMode.TwoWay });
                 isUsingOrchestralMusic.Foreground = Brushes.White;
                 isUsingOrchestralMusic.Margin = rowMargin;
@@ -57,7 +57,7 @@ namespace Memoria.Launcher
 
             if (Directory.Exists("MoguriVideo"))
             {
-                UiCheckBox isUsing30fpsVideo = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Use30FpsVideo, null), row, 0, 1, 9);
+                CheckBox isUsing30fpsVideo = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Use30FpsVideo, null), row, 0, 1, 9);
                 isUsing30fpsVideo.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(HighFpsVideo)) { Mode = BindingMode.TwoWay });
                 isUsing30fpsVideo.Foreground = Brushes.White;
                 isUsing30fpsVideo.Margin = rowMargin;
@@ -66,7 +66,7 @@ namespace Memoria.Launcher
                 row++;
             }
 
-            UiCheckBox isWidescreenSupport = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Widescreen, null), row, 0, 1, 9);
+            CheckBox isWidescreenSupport = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Widescreen, null), row, 0, 1, 9);
             isWidescreenSupport.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(WidescreenSupport)) { Mode = BindingMode.TwoWay });
             isWidescreenSupport.Foreground = Brushes.White;
             isWidescreenSupport.Margin = rowMargin;
@@ -74,7 +74,7 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiCheckBox isAntiAliasing = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.AntiAliasing, null), row, 0, 1, 9);
+            CheckBox isAntiAliasing = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.AntiAliasing, null), row, 0, 1, 9);
             isAntiAliasing.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(AntiAliasing)) { Mode = BindingMode.TwoWay });
             isAntiAliasing.Foreground = Brushes.White;
             isAntiAliasing.Margin = rowMargin;
@@ -82,11 +82,11 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiTextBlock FPSDropboxText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FPSDropboxChoice), row, 0, 1, 4);
+            TextBlock FPSDropboxText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FPSDropboxChoice), row, 0, 1, 4);
             FPSDropboxText.Foreground = Brushes.White;
             FPSDropboxText.Margin = rowMargin;
             FPSDropboxText.ToolTip = Lang.Settings.SharedFPS_Tooltip;
-            UiComboBox FPSDropbox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
+            ComboBox FPSDropbox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
             FPSDropbox.ItemsSource = new String[]{
                 Lang.Settings.FPSDropboxChoice0, // default 30 20 15
                 Lang.Settings.FPSDropboxChoice1, // 30
@@ -101,14 +101,14 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiTextBlock CameraStabilizerText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.CameraStabilizer), row, 0, 1, 8);
+            TextBlock CameraStabilizerText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.CameraStabilizer), row, 0, 1, 8);
             CameraStabilizerText.Foreground = Brushes.White;
             CameraStabilizerText.Margin = rowMargin;
             CameraStabilizerText.ToolTip = Lang.Settings.CameraStabilizer_Tooltip;
 
             row++;
 
-            UiTextBlock CameraStabilizerIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
+            TextBlock CameraStabilizerIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
             CameraStabilizerIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(CameraStabilizer)) { Mode = BindingMode.TwoWay });
             CameraStabilizerIndex.Foreground = Brushes.White;
             CameraStabilizerIndex.Margin = rowMargin;
@@ -124,11 +124,11 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiTextBlock battleInterfaceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleInterface), row, 0, 1, 4);
+            TextBlock battleInterfaceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleInterface), row, 0, 1, 4);
             battleInterfaceText.Foreground = Brushes.White;
             battleInterfaceText.Margin = rowMargin;
             battleInterfaceText.ToolTip = Lang.Settings.BattleInterface_Tooltip;
-            UiComboBox battleInterfaceBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
+            ComboBox battleInterfaceBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
             battleInterfaceBox.ItemsSource = new String[]{
                 Lang.Settings.BattleInterfaceType0,
                 Lang.Settings.BattleInterfaceType1,
@@ -141,11 +141,11 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiTextBlock UIColumnsChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.UIColumnsChoice), row, 0, 1, 4);
+            TextBlock UIColumnsChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.UIColumnsChoice), row, 0, 1, 4);
             UIColumnsChoiceText.Foreground = Brushes.White;
             UIColumnsChoiceText.Margin = rowMargin;
             UIColumnsChoiceText.ToolTip = Lang.Settings.UIColumnsChoice_Tooltip;
-            UiComboBox UIColumnsChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
+            ComboBox UIColumnsChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
             UIColumnsChoiceBox.ItemsSource = new String[]{
                 Lang.Settings.UIColumnsChoice0, // default 8 - 6
                 Lang.Settings.UIColumnsChoice1, // 3 columns
@@ -158,7 +158,7 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiCheckBox isSkipIntros = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SkipIntrosToMainMenu, null), row, 0, 1, 9);
+            CheckBox isSkipIntros = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SkipIntrosToMainMenu, null), row, 0, 1, 9);
             isSkipIntros.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SkipIntros)) { Mode = BindingMode.TwoWay });
             isSkipIntros.Foreground = Brushes.White;
             isSkipIntros.Margin = rowMargin;
@@ -166,7 +166,7 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiCheckBox isSkipBattleSwirl = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SkipBattleSwirl, null), row, 0, 1, 9);
+            CheckBox isSkipBattleSwirl = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SkipBattleSwirl, null), row, 0, 1, 9);
             isSkipBattleSwirl.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(BattleSwirlFrames)) { Mode = BindingMode.TwoWay });
             isSkipBattleSwirl.Foreground = Brushes.White;
             isSkipBattleSwirl.Margin = rowMargin;
@@ -174,7 +174,7 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiCheckBox isHideCards = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.HideSteamBubbles, null), row, 0, 1, 9);
+            CheckBox isHideCards = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.HideSteamBubbles, null), row, 0, 1, 9);
             isHideCards.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(HideCards)) { Mode = BindingMode.TwoWay });
             isHideCards.Foreground = Brushes.White;
             isHideCards.Margin = rowMargin;
@@ -182,11 +182,11 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiTextBlock speedChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedChoice), row, 0, 1, 4);
+            TextBlock speedChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedChoice), row, 0, 1, 4);
             speedChoiceText.Foreground = Brushes.White;
             speedChoiceText.Margin = rowMargin;
             speedChoiceText.ToolTip = Lang.Settings.SpeedChoice_Tooltip;
-            UiComboBox speedChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
+            ComboBox speedChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
             speedChoiceBox.ItemsSource = new String[]{
                 Lang.Settings.SpeedChoiceType0,
                 Lang.Settings.SpeedChoiceType1,
@@ -202,11 +202,11 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiTextBlock tripleTriadText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.TripleTriad), row, 0, 1, 4);
+            TextBlock tripleTriadText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.TripleTriad), row, 0, 1, 4);
             tripleTriadText.Foreground = Brushes.White;
             tripleTriadText.Margin = rowMargin;
             tripleTriadText.ToolTip = Lang.Settings.TripleTriad_Tooltip;
-            UiComboBox tripleTriadBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
+            ComboBox tripleTriadBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
             tripleTriadBox.ItemsSource = new String[]{
                 Lang.Settings.TripleTriadType0,
                 Lang.Settings.TripleTriadType1,
@@ -219,7 +219,7 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiCheckBox usePsxFont = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.UsePsxFont, null), row, 0, 1, 9);
+            CheckBox usePsxFont = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.UsePsxFont, null), row, 0, 1, 9);
             usePsxFont.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(UsePsxFont)) { Mode = BindingMode.TwoWay });
             usePsxFont.Foreground = Brushes.White;
             usePsxFont.Margin = rowMargin;
@@ -227,7 +227,7 @@ namespace Memoria.Launcher
 
             row++;
 
-            UiTextBlock fontChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FontChoice), row, 0, 1, 2);
+            TextBlock fontChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FontChoice), row, 0, 1, 2);
             fontChoiceText.Foreground = Brushes.White;
             fontChoiceText.Margin = rowMargin;
             fontChoiceText.ToolTip = Lang.Settings.FontChoice_Tooltip;
@@ -594,25 +594,10 @@ namespace Memoria.Launcher
                 }
             }
         }
-        /*
-        public bool IsOptionPresentInIni(String category, String option)
-        {
-            if (File.Exists(_iniPath))
-            {
-                IniFile iniFile = new(_iniPath);
-                String value = iniFile.ReadValue(category, option);
-                if (!String.IsNullOrEmpty(value))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-        */
         private Int16 _iswidescreensupport, _battleInterface, _uicolumnschoice, _fpsdropboxchoice, _isskipintros, _isusingorchestralmusic, _isusin30fpsvideo, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _scaledbattleui, _sharedfps, _battlefps, _fieldfps, _worldfps, _camerastabilizer;
         private double _scaledbattleuiscale;
         private String _fontChoice;
-        private UiComboBox _fontChoiceBox;
+        private ComboBox _fontChoiceBox;
         private readonly String _fontDefaultPC = "Final Fantasy IX PC";
         private readonly String _fontDefaultPSX = "Final Fantasy IX PSX";
         private readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
@@ -676,43 +661,6 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _iswidescreensupport))
                     _iswidescreensupport = 1;
-
-                /*value = iniFile.ReadValue("Graphics", "FieldFPS");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 30";
-                    OnPropertyChanged(nameof(SharedFPS));
-                }
-                if (!Int16.TryParse(value, out _sharedfps))
-                    _sharedfps = 30;
-
-                value = iniFile.ReadValue("Graphics", "BattleFPS");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 30";
-                    OnPropertyChanged(nameof(BattleFPS));
-                }
-                if (!Int16.TryParse(value, out _battlefps))
-                    _battlefps = 30;
-
-                value = iniFile.ReadValue("Graphics", "FieldFPS");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 30";
-                    OnPropertyChanged(nameof(FieldFPS));
-                }
-                if (!Int16.TryParse(value, out _fieldfps))
-                    _fieldfps = 30;
-
-                value = iniFile.ReadValue("Graphics", "WorldFPS");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 20";
-                    OnPropertyChanged(nameof(WorldFPS));
-                }
-                if (!Int16.TryParse(value, out _worldfps))
-                    _worldfps = 20;
-                */
 
 
                 value = iniFile.ReadValue("Graphics", "FieldFPS");
@@ -830,15 +778,6 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _tripleTriad))
                     _tripleTriad = 0;
 
-                /*value = iniFile.ReadValue("Graphics", nameof(BattleSwirlFrames));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 115";
-                    OnPropertyChanged(nameof(BattleSwirlFrames));
-                }
-                if (!Int16.TryParse(value, out _battleswirlframes))
-                    _battleswirlframes = 115;
-                */
                 value = iniFile.ReadValue("Audio", nameof(SoundVolume));
                 if (String.IsNullOrEmpty(value))
                 {
@@ -995,27 +934,6 @@ namespace Memoria.Launcher
                         if (WidescreenSupport == 1)
                             iniFile.WriteValue("Graphics", "Enabled ", " 1");
                         break;
-                    /*case nameof(SharedFPS):
-                        iniFile.WriteValue("Graphics", "BattleFPS ", " " + SharedFPS);
-                        iniFile.WriteValue("Graphics", "FieldFPS ", " " + SharedFPS);
-                        iniFile.WriteValue("Graphics", "WorldFPS ", " " + SharedFPS);
-                        iniFile.WriteValue("Graphics", "Enabled ", " 1");
-                        break;
-                    case nameof(BattleFPS):
-                        iniFile.WriteValue("Graphics", "BattleFPS ", " " + BattleFPS);
-                        if (BattleFPS != 30)
-                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
-                        break;
-                    case nameof(FieldFPS):
-                        iniFile.WriteValue("Graphics", "FieldFPS ", " " + FieldFPS);
-                        if (FieldFPS != 30)
-                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
-                        break;
-                    case nameof(WorldFPS):
-                        iniFile.WriteValue("Graphics", "WorldFPS ", " " + WorldFPS);
-                        if (WorldFPS != 20)
-                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
-                        break;*/
                     case nameof(CameraStabilizer):
                         iniFile.WriteValue("Graphics", "CameraStabilizer ", " " + CameraStabilizer);
                         if (CameraStabilizer != 0)
@@ -1136,10 +1054,6 @@ namespace Memoria.Launcher
                             iniFile.WriteValue("Graphics", propertyName + " ", " 0");
                         }
                         break;
-                    /*case nameof(BattleSwirlFrames):
-                        iniFile.WriteValue("Graphics", propertyName + " ", " " + BattleSwirlFrames);
-                        iniFile.WriteValue("Graphics", "Enabled ", " 1");
-                        break;*/
                     case nameof(SoundVolume):
                         iniFile.WriteValue("Audio", propertyName + " ", " " + SoundVolume);
                         //iniFile.WriteValue("Audio", "MovieVolume" + " ", " " + SoundVolume);

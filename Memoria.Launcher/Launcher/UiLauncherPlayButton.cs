@@ -429,7 +429,7 @@ namespace Memoria.Launcher
             root.SetRowsHeight(GridLength.Auto);
             root.Margin = new Thickness(5);
 
-            UiTextBlock titleTextBlock = UiTextBlockFactory.Create(title);
+            TextBlock titleTextBlock = UiTextBlockFactory.Create(title);
             {
                 titleTextBlock.VerticalAlignment = VerticalAlignment.Center;
                 titleTextBlock.HorizontalAlignment = HorizontalAlignment.Center;
@@ -478,10 +478,10 @@ namespace Memoria.Launcher
         }
 
         private readonly UiProgressBar _progressBar;
-        private readonly UiTextBlock _progressTextBlock;
-        private readonly UiTextBlock _elapsedTextBlock;
-        private readonly UiTextBlock _processedTextBlock;
-        private readonly UiTextBlock _remainingTextBlock;
+        private readonly TextBlock _progressTextBlock;
+        private readonly TextBlock _elapsedTextBlock;
+        private readonly TextBlock _processedTextBlock;
+        private readonly TextBlock _remainingTextBlock;
 
         private readonly System.Timers.Timer _timer;
 
