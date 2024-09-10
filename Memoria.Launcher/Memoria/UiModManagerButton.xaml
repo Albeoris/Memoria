@@ -1,4 +1,4 @@
-﻿<launcher:UiButton
+﻿<Button
 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 xmlns:launcher="clr-namespace:Memoria.Launcher"
@@ -6,9 +6,9 @@ x:Class="Memoria.Launcher.UiModManagerButton"
 Width="270"
 Height="35">
 
-    <launcher:UiButton.Resources>
+    <Button.Resources>
         <FontFamily x:Key="CenturyGothic">pack://application:,,,/Fonts/#Century Gothic</FontFamily>
-    </launcher:UiButton.Resources>
+    </Button.Resources>
     <Button.Template>
         <ControlTemplate>
             <Grid x:Name="LayoutRoot"
@@ -79,4 +79,4 @@ Height="35">
             </Grid>
         </ControlTemplate>
     </Button.Template>
-</launcher:UiButton>
+</Button>

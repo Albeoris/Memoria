@@ -112,6 +112,7 @@
     <Compile Include="Memoria\ThrottledWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Memoria\UI.cs" />
     <Compile Include="Memoria\UiLauncherAdvOptionsCloseButton.cs" />
     <Compile Include="Memoria\UiLauncherAdvOptionsButton.cs" />
     <Compile Include="Memoria\UiLauncherModelViewerButton.cs" />
@@ -119,9 +120,6 @@
       <DependentUpon>UiModManagerButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Memoria\UiLauncherModManagerButton.cs" />
-    <Compile Include="Memoria\UiSlider.cs" />
-    <Compile Include="Memoria\UiSliderFactory.cs" />
-    <Compile Include="Memoria\UiTextBox.cs" />
     <Compile Include="Memoria\ScreenInterrogatory.cs" />
     <Compile Include="Memoria\FrameworkElementExm.cs" />
     <Compile Include="App.cs" />
@@ -130,22 +128,10 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="Memoria\GameSettingsControl.cs" />
     <Compile Include="Memoria\JunctionPoint.cs" />
-    <Compile Include="Memoria\UiButton.cs" />
-    <Compile Include="Memoria\UiCheckBox.cs" />
-    <Compile Include="Memoria\UiCheckBoxFactory.cs" />
-    <Compile Include="Memoria\UiComboBox.cs" />
-    <Compile Include="Memoria\UiComboBoxFactory.cs" />
-    <Compile Include="Memoria\UiGrid.cs" />
-    <Compile Include="Memoria\UiHelper.cs" />
     <Compile Include="Memoria\UiLauncherPlayButton.cs" />
     <Compile Include="Memoria\UiLauncherButton.xaml.cs">
       <DependentUpon>UiLauncherButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Memoria\UiRadioButton.cs" />
-    <Compile Include="Memoria\UiRadioButtonFactory.cs" />
-    <Compile Include="Memoria\UiTextBlock.cs" />
-    <Compile Include="Memoria\UiTextBlockFactory.cs" />
-    <Compile Include="Memoria\UiTextBoxFactory.cs" />
     <Compile Include="ModConflictWindow.cs" />
     <Compile Include="ModManagerWindow.cs" />
     <Compile Include="Program.cs" />
