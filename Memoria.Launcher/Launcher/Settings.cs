@@ -21,6 +21,7 @@ namespace Memoria.Launcher
 
         private String _iniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
 
+        private Int16 _iswidescreensupport;
         public Int16 WidescreenSupport
         {
             get { return _iswidescreensupport; }
@@ -33,7 +34,7 @@ namespace Memoria.Launcher
                 }
             }
         }
-
+        private Int16 _sharedfps;
         public Int16 SharedFPS
         {
             get { return _sharedfps; }
@@ -46,7 +47,7 @@ namespace Memoria.Launcher
                 }
             }
         }
-
+        private Int16 _battlefps;
         public Int16 BattleFPS
         {
             get { return _battlefps; }
@@ -59,6 +60,7 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _fieldfps;
         public Int16 FieldFPS
         {
             get { return _fieldfps; }
@@ -71,6 +73,7 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _worldfps;
         public Int16 WorldFPS
         {
             get { return _worldfps; }
@@ -83,6 +86,7 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _camerastabilizer;
         public Int16 CameraStabilizer
         {
             get { return _camerastabilizer; }
@@ -95,6 +99,7 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _battleInterface;
         public Int16 BattleInterface
         {
             get { return _battleInterface; }
@@ -107,6 +112,7 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _fpsdropboxchoice;
         public Int16 FPSDropboxChoice
         {
             get { return _fpsdropboxchoice; }
@@ -119,6 +125,7 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _uicolumnschoice;
         public Int16 UIColumnsChoice
         {
             get { return _uicolumnschoice; }
@@ -179,6 +186,7 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _isskipintros;
         public Int16 SkipIntros
         {
             get { return _isskipintros; }
@@ -196,6 +204,7 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _battleswirlframes;
         public Int16 BattleSwirlFrames
         {
             get { return _battleswirlframes; }
@@ -208,6 +217,7 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _antialiasing;
         public Int16 AntiAliasing
         {
             get { return _antialiasing; }
@@ -220,7 +230,7 @@ namespace Memoria.Launcher
                 }
             }
         }
-
+        private Int16 _ishidecards;
         public Int16 HideCards
         {
             get { return _ishidecards; }
@@ -233,6 +243,7 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _speed;
         public Int16 Speed
         {
             get { return _speed; }
@@ -245,6 +256,7 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _tripleTriad;
         public Int16 TripleTriad
         {
             get { return _tripleTriad; }
@@ -257,42 +269,7 @@ namespace Memoria.Launcher
                 }
             }
         }
-        public Int16 SoundVolume
-        {
-            get { return _soundvolume; }
-            set
-            {
-                if (_soundvolume != value)
-                {
-                    _soundvolume = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        public Int16 MusicVolume
-        {
-            get { return _musicvolume; }
-            set
-            {
-                if (_musicvolume != value)
-                {
-                    _musicvolume = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        public Int16 MovieVolume
-        {
-            get { return _movievolume; }
-            set
-            {
-                if (_movievolume != value)
-                {
-                    _movievolume = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
+        private Int16 _usepsxfont;
         public Int16 UsePsxFont
         {
             get { return _usepsxfont; }
@@ -305,6 +282,7 @@ namespace Memoria.Launcher
                 }
             }
         }
+        protected String _fontChoice;
         public String FontChoice
         {
             get { return _fontChoice; }
@@ -318,9 +296,6 @@ namespace Memoria.Launcher
                 }
             }
         }
-        private Int16 _iswidescreensupport, _battleInterface, _uicolumnschoice, _fpsdropboxchoice, _isskipintros, _ishidecards, _speed, _tripleTriad, _battleswirlframes, _antialiasing, _soundvolume, _musicvolume, _movievolume, _usepsxfont, _sharedfps, _battlefps, _fieldfps, _worldfps, _camerastabilizer;
-        
-        protected String _fontChoice;
         protected String _fontDefaultPC = "Final Fantasy IX PC";
         protected String _fontDefaultPSX = "Final Fantasy IX PSX";
 
@@ -922,6 +897,8 @@ namespace Memoria.Launcher
 
         #endregion
 
+        #region LoadSettings
+
         public void LoadSettings()
         {
             try
@@ -1052,35 +1029,7 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _tripleTriad))
                     _tripleTriad = 0;
-
-                value = iniFile.ReadValue("Audio", nameof(SoundVolume));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 100";
-                    OnPropertyChanged(nameof(SoundVolume));
-                }
-                if (!Int16.TryParse(value, out _soundvolume))
-                    _soundvolume = 100;
-
-                value = iniFile.ReadValue("Audio", nameof(MusicVolume));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 100";
-                    OnPropertyChanged(nameof(MusicVolume));
-                }
-                if (!Int16.TryParse(value, out _musicvolume))
-                    _musicvolume = 100;
-
-                value = iniFile.ReadValue("Audio", nameof(MovieVolume));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 100";
-                    OnPropertyChanged(nameof(MovieVolume));
-                }
-                if (!Int16.TryParse(value, out _movievolume))
-                    _movievolume = 100;
-
-
+                
                 value = iniFile.ReadValue("Font", "Enabled");
                 if (String.IsNullOrEmpty(value) || !Int16.TryParse(value, out Int16 enabledFont) || enabledFont == 0)
                 {
@@ -1110,26 +1059,6 @@ namespace Memoria.Launcher
                         }
                     }
                 }
-
-                Refresh(nameof(WidescreenSupport));
-                Refresh(nameof(SharedFPS));
-                Refresh(nameof(BattleFPS));
-                Refresh(nameof(FieldFPS));
-                Refresh(nameof(WorldFPS));
-                Refresh(nameof(CameraStabilizer));
-                Refresh(nameof(BattleInterface));
-                Refresh(nameof(UIColumnsChoice));
-                Refresh(nameof(FPSDropboxChoice));
-                Refresh(nameof(SkipIntros));
-                Refresh(nameof(HideCards));
-                Refresh(nameof(Speed));
-                Refresh(nameof(TripleTriad));
-                Refresh(nameof(BattleSwirlFrames));
-                Refresh(nameof(AntiAliasing));
-                Refresh(nameof(SoundVolume));
-                Refresh(nameof(MusicVolume));
-                Refresh(nameof(MovieVolume));
-                Refresh(nameof(UsePsxFont));
 
 
 
@@ -1339,6 +1268,23 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _reducerandom))
                     _reducerandom = 0;
 
+                Refresh(nameof(WidescreenSupport));
+                Refresh(nameof(SharedFPS));
+                Refresh(nameof(BattleFPS));
+                Refresh(nameof(FieldFPS));
+                Refresh(nameof(WorldFPS));
+                Refresh(nameof(CameraStabilizer));
+                Refresh(nameof(BattleInterface));
+                Refresh(nameof(UIColumnsChoice));
+                Refresh(nameof(FPSDropboxChoice));
+                Refresh(nameof(SkipIntros));
+                Refresh(nameof(HideCards));
+                Refresh(nameof(Speed));
+                Refresh(nameof(TripleTriad));
+                Refresh(nameof(BattleSwirlFrames));
+                Refresh(nameof(AntiAliasing));
+                Refresh(nameof(UsePsxFont));
+
                 Refresh(nameof(StealingAlwaysWorks));
                 Refresh(nameof(NoAutoTrance));
                 Refresh(nameof(GarnetConcentrate));
@@ -1353,15 +1299,13 @@ namespace Memoria.Launcher
                 Refresh(nameof(MasterSkill));
                 Refresh(nameof(MaxCardCount));
                 Refresh(nameof(ReduceRandom));
-
-
             }
             catch (Exception ex)
             {
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
             }
         }
-
+        #endregion
 
 
         private async void Refresh([CallerMemberName] String propertyName = null)
