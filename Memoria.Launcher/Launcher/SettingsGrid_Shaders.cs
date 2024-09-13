@@ -36,14 +36,6 @@ namespace Memoria.Launcher
 
             Int32 row = 0;
 
-            CheckBox EnableCustomShader = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Shader_Enable, null), row, 0, 1, 8);
-            EnableCustomShader.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(this.EnableCustomShader)) { Mode = BindingMode.TwoWay });
-            EnableCustomShader.Foreground = Brushes.White;
-            EnableCustomShader.FontWeight = FontWeights.Bold;
-            EnableCustomShader.Margin = rowMargin;
-            EnableCustomShader.FontSize = 14;
-
-            row++;
 
             TextBlock separateLineField = AddUiElement(UiTextBlockFactory.Create("╙ " + Lang.Settings.Shader_Field_chars), row: row, col: 0, rowSpan: 1, colSpan: 8);
             separateLineField.Margin = rowMargin;
