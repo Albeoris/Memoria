@@ -39,29 +39,17 @@ namespace Memoria.Launcher
 
             Thickness rowMargin = new(8, 2, 3, 2);
 
-            Int32 row = 0;
 
-            CheckBox isWidescreenSupport = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Widescreen, null), row, 0, 1, 9);
-            isWidescreenSupport.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(WidescreenSupport)) { Mode = BindingMode.TwoWay });
-            isWidescreenSupport.Foreground = Brushes.White;
-            isWidescreenSupport.Margin = rowMargin;
-            isWidescreenSupport.ToolTip = Lang.Settings.Widescreen_Tooltip;
+            CreateCheckbox("WidescreenSupport", Lang.Settings.Widescreen, Lang.Settings.Widescreen_Tooltip);
+            CreateCheckbox("AntiAliasing", Lang.Settings.AntiAliasing, Lang.Settings.AntiAliasing_Tooltip);
 
-            row++;
+            Row++;
 
-            CheckBox isAntiAliasing = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.AntiAliasing, null), row, 0, 1, 9);
-            isAntiAliasing.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(AntiAliasing)) { Mode = BindingMode.TwoWay });
-            isAntiAliasing.Foreground = Brushes.White;
-            isAntiAliasing.Margin = rowMargin;
-            isAntiAliasing.ToolTip = Lang.Settings.AntiAliasing_Tooltip;
-
-            row++;
-
-            TextBlock FPSDropboxText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FPSDropboxChoice), row, 0, 1, 4);
+            TextBlock FPSDropboxText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FPSDropboxChoice), Row, 0, 1, 4);
             FPSDropboxText.Foreground = Brushes.White;
             FPSDropboxText.Margin = rowMargin;
             FPSDropboxText.ToolTip = Lang.Settings.SharedFPS_Tooltip;
-            ComboBox FPSDropbox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
+            ComboBox FPSDropbox = AddUiElement(UiComboBoxFactory.Create(), Row, 4, 1, 5);
             FPSDropbox.ItemsSource = new String[]{
                 Lang.Settings.FPSDropboxChoice0, // default 30 20 15
                 Lang.Settings.FPSDropboxChoice1, // 30
@@ -74,20 +62,20 @@ namespace Memoria.Launcher
             FPSDropbox.FontSize = 10;
             FPSDropbox.Margin = rowMargin;
 
-            row++;
+            Row++;
 
-            TextBlock CameraStabilizerText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.CameraStabilizer), row, 0, 1, 8);
+            TextBlock CameraStabilizerText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.CameraStabilizer), Row, 0, 1, 8);
             CameraStabilizerText.Foreground = Brushes.White;
             CameraStabilizerText.Margin = rowMargin;
             CameraStabilizerText.ToolTip = Lang.Settings.CameraStabilizer_Tooltip;
 
-            row++;
+            Row++;
 
-            TextBlock CameraStabilizerIndex = AddUiElement(UiTextBlockFactory.Create(""), row, 0, 1, 1);
+            TextBlock CameraStabilizerIndex = AddUiElement(UiTextBlockFactory.Create(""), Row, 0, 1, 1);
             CameraStabilizerIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(CameraStabilizer)) { Mode = BindingMode.TwoWay });
             CameraStabilizerIndex.Foreground = Brushes.White;
             CameraStabilizerIndex.Margin = rowMargin;
-            Slider CameraStabilizerSlider = AddUiElement(UiSliderFactory.Create(0), row, 1, 1, 8);
+            Slider CameraStabilizerSlider = AddUiElement(UiSliderFactory.Create(0), Row, 1, 1, 8);
             CameraStabilizerSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(CameraStabilizer)) { Mode = BindingMode.TwoWay });
             CameraStabilizerSlider.TickFrequency = 1;
             CameraStabilizerSlider.TickPlacement = TickPlacement.BottomRight;
@@ -97,13 +85,13 @@ namespace Memoria.Launcher
             CameraStabilizerSlider.Maximum = 99;
             CameraStabilizerSlider.Margin = new(3, 3, 3, 3);
 
-            row++;
+            Row++;
 
-            TextBlock battleInterfaceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleInterface), row, 0, 1, 4);
+            TextBlock battleInterfaceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleInterface), Row, 0, 1, 4);
             battleInterfaceText.Foreground = Brushes.White;
             battleInterfaceText.Margin = rowMargin;
             battleInterfaceText.ToolTip = Lang.Settings.BattleInterface_Tooltip;
-            ComboBox battleInterfaceBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
+            ComboBox battleInterfaceBox = AddUiElement(UiComboBoxFactory.Create(), Row, 4, 1, 5);
             battleInterfaceBox.ItemsSource = new String[]{
                 Lang.Settings.BattleInterfaceType0,
                 Lang.Settings.BattleInterfaceType1,
@@ -114,13 +102,13 @@ namespace Memoria.Launcher
             battleInterfaceBox.FontSize = 10;
             battleInterfaceBox.Margin = rowMargin;
 
-            row++;
+            Row++;
 
-            TextBlock UIColumnsChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.UIColumnsChoice), row, 0, 1, 4);
+            TextBlock UIColumnsChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.UIColumnsChoice), Row, 0, 1, 4);
             UIColumnsChoiceText.Foreground = Brushes.White;
             UIColumnsChoiceText.Margin = rowMargin;
             UIColumnsChoiceText.ToolTip = Lang.Settings.UIColumnsChoice_Tooltip;
-            ComboBox UIColumnsChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
+            ComboBox UIColumnsChoiceBox = AddUiElement(UiComboBoxFactory.Create(), Row, 4, 1, 5);
             UIColumnsChoiceBox.ItemsSource = new String[]{
                 Lang.Settings.UIColumnsChoice0, // default 8 - 6
                 Lang.Settings.UIColumnsChoice1, // 3 columns
@@ -131,37 +119,17 @@ namespace Memoria.Launcher
             UIColumnsChoiceBox.FontSize = 10;
             UIColumnsChoiceBox.Margin = rowMargin;
 
-            row++;
+            CreateCheckbox("SkipIntros", Lang.Settings.SkipIntrosToMainMenu, Lang.Settings.SkipIntrosToMainMenu_Tooltip);
+            CreateCheckbox("BattleSwirlFrames", Lang.Settings.SkipBattleSwirl, Lang.Settings.SkipBattleSwirl_Tooltip);
+            CreateCheckbox("HideCards", Lang.Settings.HideSteamBubbles, Lang.Settings.HideSteamBubbles_Tooltip);
 
-            CheckBox isSkipIntros = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SkipIntrosToMainMenu, null), row, 0, 1, 9);
-            isSkipIntros.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SkipIntros)) { Mode = BindingMode.TwoWay });
-            isSkipIntros.Foreground = Brushes.White;
-            isSkipIntros.Margin = rowMargin;
-            isSkipIntros.ToolTip = Lang.Settings.SkipIntrosToMainMenu_Tooltip;
+            Row++;
 
-            row++;
-
-            CheckBox isSkipBattleSwirl = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.SkipBattleSwirl, null), row, 0, 1, 9);
-            isSkipBattleSwirl.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(BattleSwirlFrames)) { Mode = BindingMode.TwoWay });
-            isSkipBattleSwirl.Foreground = Brushes.White;
-            isSkipBattleSwirl.Margin = rowMargin;
-            isSkipBattleSwirl.ToolTip = Lang.Settings.SkipBattleSwirl_Tooltip;
-
-            row++;
-
-            CheckBox isHideCards = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.HideSteamBubbles, null), row, 0, 1, 9);
-            isHideCards.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(HideCards)) { Mode = BindingMode.TwoWay });
-            isHideCards.Foreground = Brushes.White;
-            isHideCards.Margin = rowMargin;
-            isHideCards.ToolTip = Lang.Settings.HideSteamBubbles_Tooltip;
-
-            row++;
-
-            TextBlock speedChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedChoice), row, 0, 1, 4);
+            TextBlock speedChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedChoice), Row, 0, 1, 4);
             speedChoiceText.Foreground = Brushes.White;
             speedChoiceText.Margin = rowMargin;
             speedChoiceText.ToolTip = Lang.Settings.SpeedChoice_Tooltip;
-            ComboBox speedChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
+            ComboBox speedChoiceBox = AddUiElement(UiComboBoxFactory.Create(), Row, 4, 1, 5);
             speedChoiceBox.ItemsSource = new String[]{
                 Lang.Settings.SpeedChoiceType0,
                 Lang.Settings.SpeedChoiceType1,
@@ -175,13 +143,13 @@ namespace Memoria.Launcher
             speedChoiceBox.FontSize = 10;
             speedChoiceBox.Margin = rowMargin;
 
-            row++;
+            Row++;
 
-            TextBlock tripleTriadText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.TripleTriad), row, 0, 1, 4);
+            TextBlock tripleTriadText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.TripleTriad), Row, 0, 1, 4);
             tripleTriadText.Foreground = Brushes.White;
             tripleTriadText.Margin = rowMargin;
             tripleTriadText.ToolTip = Lang.Settings.TripleTriad_Tooltip;
-            ComboBox tripleTriadBox = AddUiElement(UiComboBoxFactory.Create(), row, 4, 1, 5);
+            ComboBox tripleTriadBox = AddUiElement(UiComboBoxFactory.Create(), Row, 4, 1, 5);
             tripleTriadBox.ItemsSource = new String[]{
                 Lang.Settings.TripleTriadType0,
                 Lang.Settings.TripleTriadType1,
@@ -192,21 +160,15 @@ namespace Memoria.Launcher
             tripleTriadBox.FontSize = 10;
             tripleTriadBox.Margin = rowMargin;
 
-            row++;
+            CreateCheckbox("UsePsxFont", Lang.Settings.UsePsxFont, Lang.Settings.UsePsxFont_Tooltip);
 
-            CheckBox usePsxFont = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.UsePsxFont, null), row, 0, 1, 9);
-            usePsxFont.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(UsePsxFont)) { Mode = BindingMode.TwoWay });
-            usePsxFont.Foreground = Brushes.White;
-            usePsxFont.Margin = rowMargin;
-            usePsxFont.ToolTip = Lang.Settings.UsePsxFont_Tooltip;
+            Row++;
 
-            row++;
-
-            TextBlock fontChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FontChoice), row, 0, 1, 2);
+            TextBlock fontChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FontChoice), Row, 0, 1, 2);
             fontChoiceText.Foreground = Brushes.White;
             fontChoiceText.Margin = rowMargin;
             fontChoiceText.ToolTip = Lang.Settings.FontChoice_Tooltip;
-            FontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), row, 2, 1, 7);
+            FontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), Row, 2, 1, 7);
             //_fontChoiceBox.IsEnabled = false;
             FontChoiceBox.Height = 20;
             FontChoiceBox.FontSize = 10;

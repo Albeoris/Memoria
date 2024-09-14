@@ -4,11 +4,21 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Threading.Tasks;
-
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using Binding = System.Windows.Data.Binding;
+using CheckBox = System.Windows.Controls.CheckBox;
+using ComboBox = System.Windows.Controls.ComboBox;
+using Control = System.Windows.Controls.Control;
+using MessageBox = System.Windows.MessageBox;
 namespace Memoria.Launcher
 {
     public class UiGrid : Grid
     {
+        public SolidColorBrush TextColor = Brushes.White;
+        public Thickness CommonMargin = new Thickness(0, 2, 0, 2);
+        public Int32 Row = 0;
+        public Int32 MaxColumns = 9;
         public void SetRows(Int32 count)
         {
             count -= RowDefinitions.Count;
@@ -36,6 +46,30 @@ namespace Memoria.Launcher
 
             Children.Add(uiElement);
             return uiElement;
+        }
+        public CheckBox CreateCheckbox(String property, object text, String tooltip = "", Int32 firstColumn = 0)
+        {
+            if (firstColumn == 0)
+            {
+                Row++;
+                RowDefinitions.Add(new RowDefinition());
+            }
+            CheckBox checkBox = new CheckBox
+            {
+                Content = text,
+                IsChecked = null
+            };
+            if (tooltip != "")
+                checkBox.ToolTip = tooltip;
+            checkBox.Foreground = TextColor;
+            checkBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(property) { Mode = BindingMode.TwoWay });
+            checkBox.Margin = CommonMargin;
+            checkBox.SetValue(RowProperty, Row);
+            checkBox.SetValue(RowSpanProperty, 1);
+            checkBox.SetValue(ColumnProperty, firstColumn);
+            checkBox.SetValue(ColumnSpanProperty, MaxColumns);
+            Children.Add(checkBox);
+            return checkBox;
         }
     }
 

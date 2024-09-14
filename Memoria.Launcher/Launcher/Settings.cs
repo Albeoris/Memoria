@@ -531,8 +531,7 @@ namespace Memoria.Launcher
 
         #endregion
 
-        #region Write ini
-
+        #region Simple settings list
         public readonly Object[][] SettingsList =
         {
             // variable, variable_ini, category_ini, //[0 -> ?], [1 -> ?]
@@ -563,11 +562,13 @@ namespace Memoria.Launcher
             ["NoRandomEncounter", "NoRandomEncounter", "Cheats"],
             ["MasterSkill", "MasterSkill", "Cheats"],
             ["MasterSkill", "LvMax", "Cheats"],
-            ["MasterSkill", "LvMax", "Cheats"],
+            ["MasterSkill", "GilMax", "Cheats"],
             ["ReduceRandom", "ReduceRandom", "TetraMaster"],
 
         };
+        #endregion
 
+        #region Write ini
         public event PropertyChangedEventHandler PropertyChanged;
         private async void OnPropertyChanged([CallerMemberName] String propertyName = null)
         {

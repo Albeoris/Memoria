@@ -34,48 +34,23 @@ namespace Memoria.Launcher
 
             Thickness rowMargin = new Thickness(0, 2, 0, 2);
 
-            Int32 row = 0;
 
 
-            TextBlock separateLineField = AddUiElement(UiTextBlockFactory.Create("╙ " + Lang.Settings.Shader_Field_chars), row: row, col: 0, rowSpan: 1, colSpan: 8);
+            TextBlock separateLineField = AddUiElement(UiTextBlockFactory.Create("╙ " + Lang.Settings.Shader_Field_chars), Row, 0, 1, 8);
             separateLineField.Margin = rowMargin;
 
-            row++;
+            CreateCheckbox("Shader_Field_Realism", Lang.Settings.Shader_Realism, "");
+            CreateCheckbox("Shader_Field_Toon", Lang.Settings.Shader_Toon, "", 4);
+            CreateCheckbox("Shader_Field_Outlines", Lang.Settings.Shader_Outlines, "");
 
-            CheckBox EnableRealismShadingForField = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Shader_Realism, null), row, 0, 1, 4);
-            EnableRealismShadingForField.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Shader_Field_Realism)) { Mode = BindingMode.TwoWay });
-            EnableRealismShadingForField.Foreground = Brushes.White;
-
-            CheckBox EnableToonShadingForField = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Shader_Toon, null), row, 3, 1, 4);
-            EnableToonShadingForField.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Shader_Field_Toon)) { Mode = BindingMode.TwoWay });
-            EnableToonShadingForField.Foreground = Brushes.White;
-
-            row++;
-
-            CheckBox EnableOutlineForFieldCharacter = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Shader_Outlines, null), row, 0, 1, 8);
-            EnableOutlineForFieldCharacter.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Shader_Field_Outlines)) { Mode = BindingMode.TwoWay });
-            EnableOutlineForFieldCharacter.Foreground = Brushes.White;
-
-            row++;
-
-            TextBlock separateLineBattle = AddUiElement(UiTextBlockFactory.Create("╙ " + Lang.Settings.Shader_Battle_chars), row: row, col: 0, rowSpan: 1, colSpan: 8);
+            Row++;
+            TextBlock separateLineBattle = AddUiElement(UiTextBlockFactory.Create("╙ " + Lang.Settings.Shader_Battle_chars), Row, 0, 1, 8);
             separateLineBattle.Margin = rowMargin;
 
-            row++;
+            CreateCheckbox("Shader_Battle_Realism", Lang.Settings.Shader_Realism, "");
+            CreateCheckbox("Shader_Battle_Toon", Lang.Settings.Shader_Toon, "", 4);
+            CreateCheckbox("Shader_Battle_Outlines", Lang.Settings.Shader_Outlines, "");
 
-            CheckBox EnableRealismShadingForBattle = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Shader_Realism, null), row, 0, 1, 4);
-            EnableRealismShadingForBattle.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Shader_Battle_Realism)) { Mode = BindingMode.TwoWay });
-            EnableRealismShadingForBattle.Foreground = Brushes.White;
-
-            CheckBox EnableToonShadingForBattle = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Shader_Toon, null), row, 3, 1, 4);
-            EnableToonShadingForBattle.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Shader_Battle_Toon)) { Mode = BindingMode.TwoWay });
-            EnableToonShadingForBattle.Foreground = Brushes.White;
-
-            row++;
-
-            CheckBox EnableOutlineForBattleCharacter = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Shader_Outlines, null), row, 0, 1, 8);
-            EnableOutlineForBattleCharacter.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(Shader_Battle_Outlines)) { Mode = BindingMode.TwoWay });
-            EnableOutlineForBattleCharacter.Foreground = Brushes.White;
 
             foreach (FrameworkElement child in Children)
             {
@@ -95,14 +70,7 @@ namespace Memoria.Launcher
                     control.Foreground = Brushes.WhiteSmoke;
             }
 
-            try
-            {
-                LoadSettings();
-            }
-            catch (Exception ex)
-            {
-                UiHelper.ShowError(Application.Current.MainWindow, ex);
-            }
+            LoadSettings();
         }
     }
 }
