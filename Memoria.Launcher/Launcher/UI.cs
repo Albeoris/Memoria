@@ -16,8 +16,8 @@ namespace Memoria.Launcher
     public class UiGrid : Grid
     {
         public SolidColorBrush TextColor = Brushes.White;
-        public Thickness CommonMargin = new Thickness(0, 2, 0, 2);
-        public Int32 Row = 0;
+        public Thickness CommonMargin = new Thickness(0, 3, 0, 3);
+        public Int32 Row;
         public Int32 MaxColumns = 9;
         public void SetRows(Int32 count)
         {
@@ -54,22 +54,38 @@ namespace Memoria.Launcher
                 Row++;
                 RowDefinitions.Add(new RowDefinition());
             }
-            CheckBox checkBox = new CheckBox
-            {
-                Content = text,
-                IsChecked = null
-            };
+            CheckBox checkBox = new CheckBox();
+            checkBox.Content = text;
+            checkBox.IsChecked = null;
             if (tooltip != "")
                 checkBox.ToolTip = tooltip;
             checkBox.Foreground = TextColor;
             checkBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(property) { Mode = BindingMode.TwoWay });
             checkBox.Margin = CommonMargin;
             checkBox.SetValue(RowProperty, Row);
-            checkBox.SetValue(RowSpanProperty, 1);
             checkBox.SetValue(ColumnProperty, firstColumn);
+            checkBox.SetValue(RowSpanProperty, 1);
             checkBox.SetValue(ColumnSpanProperty, MaxColumns);
             Children.Add(checkBox);
             return checkBox;
+        }
+        public TextBlock CreateTextbloc(String text, Boolean isBold = false, String tooltip = "")
+        {
+            Row++;
+            RowDefinitions.Add(new RowDefinition());
+            TextBlock textbloc = new TextBlock();
+            textbloc.Text = text;
+            if (tooltip != "")
+                textbloc.ToolTip = tooltip;
+            textbloc.Foreground = TextColor;
+            textbloc.FontWeight = isBold ? FontWeights.Bold : FontWeight.FromOpenTypeWeight(500);
+            textbloc.Margin = CommonMargin;
+            textbloc.SetValue(RowProperty, Row);
+            textbloc.SetValue(ColumnProperty, 0);
+            textbloc.SetValue(RowSpanProperty, 1);
+            textbloc.SetValue(ColumnSpanProperty, MaxColumns);
+            Children.Add(textbloc);
+            return textbloc;
         }
     }
 

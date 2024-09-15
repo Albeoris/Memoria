@@ -184,7 +184,7 @@
 	WindowTitle = "Memoria Mod Manager"
 	ModInfos = "Mod Infos"
 	TabMyMods = "Installed Mods"
-	TabCatalog = "Browse Catalog"
+	TabCatalog = "Mod Catalog"
 	Mod = "Mod"
 	Name = "Name"
 	Website = "Website"

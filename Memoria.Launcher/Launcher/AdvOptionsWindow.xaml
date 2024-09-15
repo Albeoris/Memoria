@@ -44,7 +44,6 @@
         <launcher:SettingsGrid_Shaders
             x:Name="SettingsGrid_Shaders"
             Width="260"
-            Height="157"
             Margin="614,0,0,68"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />

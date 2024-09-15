@@ -1,12 +1,9 @@
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
-using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 
@@ -23,25 +20,17 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Cheats()
         {
-            SetRows(18);
+            SetRows(7);
             SetCols(8);
 
             Width = 260;
-            VerticalAlignment = VerticalAlignment.Bottom;
-            HorizontalAlignment = HorizontalAlignment.Center;
             Margin = new Thickness(0);
 
             DataContext = this;
 
             Thickness rowMargin = new Thickness(8, 2, 3, 2);
 
-
-            TextBlock cheatOptionsText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.IniCheats), Row, 0, 2, 8);
-            cheatOptionsText.Padding = new Thickness(0, 4, 0, 2);
-            cheatOptionsText.Foreground = Brushes.White;
-            cheatOptionsText.FontSize = 14;
-            cheatOptionsText.FontWeight = FontWeights.Bold;
-            cheatOptionsText.Margin = rowMargin;
+            CreateTextbloc(Lang.Settings.IniCheats, true);
 
             Row++;
 
@@ -89,12 +78,7 @@ namespace Memoria.Launcher
             speedFactor.Maximum = 12;
             speedFactor.Margin = new Thickness(0, 0, 3, 0);
 
-            Row++;
-
-            TextBlock BattleTPSText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleTPS), Row, 0, 1, 8);
-            BattleTPSText.Foreground = Brushes.White;
-            BattleTPSText.Margin = rowMargin;
-            BattleTPSText.ToolTip = Lang.Settings.BattleTPS_Tooltip;
+            CreateTextbloc(Lang.Settings.BattleTPS, false, Lang.Settings.BattleTPS_Tooltip);
 
             Row++;
 

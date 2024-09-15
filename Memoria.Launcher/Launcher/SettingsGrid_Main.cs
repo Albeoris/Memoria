@@ -1,15 +1,10 @@
 using System;
-using System.ComponentModel;
 using System.Drawing.Text;
-using System.IO;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
-using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 
@@ -27,12 +22,10 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Main()
         {
-            SetRows(22);
+            SetRows(9);
             SetCols(9);
 
             Width = 260;
-            VerticalAlignment = VerticalAlignment.Bottom;
-            HorizontalAlignment = HorizontalAlignment.Right;
             Margin = new Thickness(0);
 
             DataContext = this;
@@ -62,12 +55,7 @@ namespace Memoria.Launcher
             FPSDropbox.FontSize = 10;
             FPSDropbox.Margin = rowMargin;
 
-            Row++;
-
-            TextBlock CameraStabilizerText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.CameraStabilizer), Row, 0, 1, 8);
-            CameraStabilizerText.Foreground = Brushes.White;
-            CameraStabilizerText.Margin = rowMargin;
-            CameraStabilizerText.ToolTip = Lang.Settings.CameraStabilizer_Tooltip;
+            CreateTextbloc(Lang.Settings.CameraStabilizer, true, Lang.Settings.CameraStabilizer_Tooltip);
 
             Row++;
 
