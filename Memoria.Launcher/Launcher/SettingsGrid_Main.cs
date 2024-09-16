@@ -22,44 +22,35 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Main()
         {
-            SetRows(9);
-            SetCols(9);
+            SetRows(2);
+            SetCols(8);
 
             Width = 260;
             Margin = new Thickness(0);
 
             DataContext = this;
 
-            Thickness rowMargin = new(8, 2, 3, 2);
+            Thickness rowMargin = new(0, 3, 0, 3);
 
 
             CreateCheckbox("WidescreenSupport", Lang.Settings.Widescreen, Lang.Settings.Widescreen_Tooltip);
             CreateCheckbox("AntiAliasing", Lang.Settings.AntiAliasing, Lang.Settings.AntiAliasing_Tooltip);
 
-            Row++;
-
-            TextBlock FPSDropboxText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FPSDropboxChoice), Row, 0, 1, 4);
-            FPSDropboxText.Foreground = Brushes.White;
-            FPSDropboxText.Margin = rowMargin;
-            FPSDropboxText.ToolTip = Lang.Settings.SharedFPS_Tooltip;
-            ComboBox FPSDropbox = AddUiElement(UiComboBoxFactory.Create(), Row, 4, 1, 5);
-            FPSDropbox.ItemsSource = new String[]{
+            CreateTextbloc(Lang.Settings.FPSDropboxChoice, false, Lang.Settings.SharedFPS_Tooltip);
+            String[] comboboxchoices = new String[]{
                 Lang.Settings.FPSDropboxChoice0, // default 30 20 15
                 Lang.Settings.FPSDropboxChoice1, // 30
                 Lang.Settings.FPSDropboxChoice2, // 60
                 Lang.Settings.FPSDropboxChoice3, // 90
                 Lang.Settings.FPSDropboxChoice4  // 120
             };
-            FPSDropbox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(FPSDropboxChoice)) { Mode = BindingMode.TwoWay });
-            FPSDropbox.Height = 20;
-            FPSDropbox.FontSize = 10;
-            FPSDropbox.Margin = rowMargin;
+            CreateCombobox("FPSDropboxChoice", comboboxchoices);
 
-            CreateTextbloc(Lang.Settings.CameraStabilizer, true, Lang.Settings.CameraStabilizer_Tooltip);
+            CreateTextbloc(Lang.Settings.CameraStabilizer, false, Lang.Settings.CameraStabilizer_Tooltip);
 
             Row++;
 
-            TextBlock CameraStabilizerIndex = AddUiElement(UiTextBlockFactory.Create(""), Row, 0, 1, 1);
+            TextBlock CameraStabilizerIndex = AddUiElement(UiTextBlockFactory.Create(""), Row, 0, 1, 8);
             CameraStabilizerIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(CameraStabilizer)) { Mode = BindingMode.TwoWay });
             CameraStabilizerIndex.Foreground = Brushes.White;
             CameraStabilizerIndex.Margin = rowMargin;
@@ -73,52 +64,29 @@ namespace Memoria.Launcher
             CameraStabilizerSlider.Maximum = 99;
             CameraStabilizerSlider.Margin = new(3, 3, 3, 3);
 
-            Row++;
 
-            TextBlock battleInterfaceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.BattleInterface), Row, 0, 1, 4);
-            battleInterfaceText.Foreground = Brushes.White;
-            battleInterfaceText.Margin = rowMargin;
-            battleInterfaceText.ToolTip = Lang.Settings.BattleInterface_Tooltip;
-            ComboBox battleInterfaceBox = AddUiElement(UiComboBoxFactory.Create(), Row, 4, 1, 5);
-            battleInterfaceBox.ItemsSource = new String[]{
+            CreateTextbloc(Lang.Settings.BattleInterface, false, Lang.Settings.BattleInterface_Tooltip);
+            comboboxchoices = new String[]{
                 Lang.Settings.BattleInterfaceType0,
                 Lang.Settings.BattleInterfaceType1,
                 Lang.Settings.BattleInterfaceType2
             };
-            battleInterfaceBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(BattleInterface)) { Mode = BindingMode.TwoWay });
-            battleInterfaceBox.Height = 20;
-            battleInterfaceBox.FontSize = 10;
-            battleInterfaceBox.Margin = rowMargin;
+            CreateCombobox("BattleInterface", comboboxchoices);
 
-            Row++;
-
-            TextBlock UIColumnsChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.UIColumnsChoice), Row, 0, 1, 4);
-            UIColumnsChoiceText.Foreground = Brushes.White;
-            UIColumnsChoiceText.Margin = rowMargin;
-            UIColumnsChoiceText.ToolTip = Lang.Settings.UIColumnsChoice_Tooltip;
-            ComboBox UIColumnsChoiceBox = AddUiElement(UiComboBoxFactory.Create(), Row, 4, 1, 5);
-            UIColumnsChoiceBox.ItemsSource = new String[]{
+            CreateTextbloc(Lang.Settings.UIColumnsChoice, false, Lang.Settings.UIColumnsChoice_Tooltip);
+            comboboxchoices = new String[]{
                 Lang.Settings.UIColumnsChoice0, // default 8 - 6
                 Lang.Settings.UIColumnsChoice1, // 3 columns
                 Lang.Settings.UIColumnsChoice2 // 4 columns
             };
-            UIColumnsChoiceBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(UIColumnsChoice)) { Mode = BindingMode.TwoWay });
-            UIColumnsChoiceBox.Height = 20;
-            UIColumnsChoiceBox.FontSize = 10;
-            UIColumnsChoiceBox.Margin = rowMargin;
+            CreateCombobox("UIColumnsChoice", comboboxchoices);
 
             CreateCheckbox("SkipIntros", Lang.Settings.SkipIntrosToMainMenu, Lang.Settings.SkipIntrosToMainMenu_Tooltip);
             CreateCheckbox("BattleSwirlFrames", Lang.Settings.SkipBattleSwirl, Lang.Settings.SkipBattleSwirl_Tooltip);
             CreateCheckbox("HideCards", Lang.Settings.HideSteamBubbles, Lang.Settings.HideSteamBubbles_Tooltip);
 
-            Row++;
-
-            TextBlock speedChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.SpeedChoice), Row, 0, 1, 4);
-            speedChoiceText.Foreground = Brushes.White;
-            speedChoiceText.Margin = rowMargin;
-            speedChoiceText.ToolTip = Lang.Settings.SpeedChoice_Tooltip;
-            ComboBox speedChoiceBox = AddUiElement(UiComboBoxFactory.Create(), Row, 4, 1, 5);
-            speedChoiceBox.ItemsSource = new String[]{
+            CreateTextbloc(Lang.Settings.SpeedChoice, false, Lang.Settings.SpeedChoice_Tooltip);
+            comboboxchoices = new String[]{
                 Lang.Settings.SpeedChoiceType0,
                 Lang.Settings.SpeedChoiceType1,
                 Lang.Settings.SpeedChoiceType2,
@@ -126,38 +94,20 @@ namespace Memoria.Launcher
                 //Lang.Settings.SpeedChoiceType4,
                 Lang.Settings.SpeedChoiceType5
             };
-            speedChoiceBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(Speed)) { Mode = BindingMode.TwoWay });
-            speedChoiceBox.Height = 20;
-            speedChoiceBox.FontSize = 10;
-            speedChoiceBox.Margin = rowMargin;
+            CreateCombobox("Speed", comboboxchoices);
 
-            Row++;
-
-            TextBlock tripleTriadText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.TripleTriad), Row, 0, 1, 4);
-            tripleTriadText.Foreground = Brushes.White;
-            tripleTriadText.Margin = rowMargin;
-            tripleTriadText.ToolTip = Lang.Settings.TripleTriad_Tooltip;
-            ComboBox tripleTriadBox = AddUiElement(UiComboBoxFactory.Create(), Row, 4, 1, 5);
-            tripleTriadBox.ItemsSource = new String[]{
+            CreateTextbloc(Lang.Settings.TripleTriad, false, Lang.Settings.TripleTriad_Tooltip);
+            comboboxchoices = new String[]{
                 Lang.Settings.TripleTriadType0,
                 Lang.Settings.TripleTriadType1,
                 Lang.Settings.TripleTriadType2
             };
-            tripleTriadBox.SetBinding(Selector.SelectedIndexProperty, new Binding(nameof(TripleTriad)) { Mode = BindingMode.TwoWay });
-            tripleTriadBox.Height = 20;
-            tripleTriadBox.FontSize = 10;
-            tripleTriadBox.Margin = rowMargin;
+            CreateCombobox("TripleTriad", comboboxchoices);
 
             CreateCheckbox("UsePsxFont", Lang.Settings.UsePsxFont, Lang.Settings.UsePsxFont_Tooltip);
 
-            Row++;
-
-            TextBlock fontChoiceText = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.FontChoice), Row, 0, 1, 2);
-            fontChoiceText.Foreground = Brushes.White;
-            fontChoiceText.Margin = rowMargin;
-            fontChoiceText.ToolTip = Lang.Settings.FontChoice_Tooltip;
+            CreateTextbloc(Lang.Settings.FontChoice, false, Lang.Settings.FontChoice_Tooltip);
             FontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), Row, 2, 1, 7);
-            //_fontChoiceBox.IsEnabled = false;
             FontChoiceBox.Height = 20;
             FontChoiceBox.FontSize = 10;
             FontChoiceBox.Margin = rowMargin;

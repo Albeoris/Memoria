@@ -11,6 +11,7 @@ using CheckBox = System.Windows.Controls.CheckBox;
 using ComboBox = System.Windows.Controls.ComboBox;
 using Control = System.Windows.Controls.Control;
 using MessageBox = System.Windows.MessageBox;
+using System.Collections;
 namespace Memoria.Launcher
 {
     public class UiGrid : Grid
@@ -18,25 +19,22 @@ namespace Memoria.Launcher
         public SolidColorBrush TextColor = Brushes.White;
         public Thickness CommonMargin = new Thickness(0, 3, 0, 3);
         public Int32 Row;
-        public Int32 MaxColumns = 9;
+        public Int32 MaxColumns = 8;
         public void SetRows(Int32 count)
         {
             count -= RowDefinitions.Count;
             if (count > 1) while (count-- > 0) RowDefinitions.Add(new RowDefinition());
         }
-
         public void SetCols(Int32 count)
         {
             count -= ColumnDefinitions.Count;
             if (count > 1) while (count-- > 0) ColumnDefinitions.Add(new ColumnDefinition());
         }
-
         public void SetRowsHeight(GridLength height)
         {
             foreach (RowDefinition row in RowDefinitions)
                 row.Height = height;
         }
-
         public T AddUiElement<T>(T uiElement, Int32 row, Int32 col, Int32 rowSpan = 0, Int32 colSpan = 0) where T : UIElement
         {
             if (row > 0) uiElement.SetValue(RowProperty, row);
@@ -86,6 +84,24 @@ namespace Memoria.Launcher
             textbloc.SetValue(ColumnSpanProperty, MaxColumns);
             Children.Add(textbloc);
             return textbloc;
+        }
+        public ComboBox CreateCombobox(String property, IEnumerable options, String tooltip = "", Int32 firstColumn = 4)
+        {
+            ComboBox comboBox = new ComboBox();
+            comboBox.ItemsSource = options;
+            if (tooltip != "")
+                comboBox.ToolTip = tooltip;
+            comboBox.Foreground = Brushes.Black;
+            comboBox.Margin = CommonMargin;
+            comboBox.Height = 18;
+            comboBox.FontSize = 10;
+            comboBox.SetBinding(Selector.SelectedIndexProperty, new Binding(property) { Mode = BindingMode.TwoWay });
+            comboBox.SetValue(RowProperty, Row);
+            comboBox.SetValue(ColumnProperty, firstColumn);
+            comboBox.SetValue(RowSpanProperty, 1);
+            comboBox.SetValue(ColumnSpanProperty, MaxColumns);
+            Children.Add(comboBox);
+            return comboBox;
         }
     }
 
