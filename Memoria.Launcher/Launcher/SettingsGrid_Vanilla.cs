@@ -38,9 +38,6 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Vanilla()
         {
-            foreach (UInt16 frequency in EnumerateAudioSettings())
-                _validSamplingFrequency.Add(frequency);
-
             SetRows(20);
             SetCols(8);
 
@@ -170,62 +167,6 @@ namespace Memoria.Launcher
                 if (_activeMonitor != value)
                 {
                     _activeMonitor = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        public UInt16 AudioFrequency
-        {
-            get { return _audioFrequency; }
-            set
-            {
-                if (_audioFrequency != value)
-                {
-                    if (MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.AreYouSure, Lang.SdLib.Caption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-                    {
-                        Boolean? x64 = TryWriteAudioSamplingFrequency(true, value, false);
-                        Boolean? x86 = TryWriteAudioSamplingFrequency(false, value, false);
-                        if (x64 == true && x86 == true)
-                        {
-                            MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.SuccessBoth, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Information);
-                            _audioFrequency = value;
-                            OnPropertyChanged();
-                        }
-                        else if (x64 == true)
-                        {
-                            MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.SuccessX64, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
-                            _audioFrequency = value;
-                            OnPropertyChanged();
-                        }
-                        else if (x86 == true)
-                        {
-                            MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.SuccessX86, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Warning);
-                            _audioFrequency = value;
-                            OnPropertyChanged();
-                        }
-                        else
-                        {
-                            Application.Current.Dispatcher.BeginInvoke(new Action(() => OnPropertyChanged()), DispatcherPriority.ContextIdle, null);
-                            MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.Fail, Lang.SdLib.Caption, MessageBoxButton.OK, MessageBoxImage.Error);
-                        }
-                    }
-                    else
-                    {
-                        Application.Current.Dispatcher.BeginInvoke(new Action(() => OnPropertyChanged()), DispatcherPriority.ContextIdle, null);
-                    }
-                }
-            }
-        }
-
-        public Boolean AudioFrequencyEnabled
-        {
-            get { return _audioFrequencyEnabled; }
-            set
-            {
-                if (_audioFrequencyEnabled != value)
-                {
-                    _audioFrequencyEnabled = value;
                     OnPropertyChanged();
                 }
             }
@@ -397,13 +338,9 @@ namespace Memoria.Launcher
         public static readonly String IniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Settings.ini";
         public static readonly String MemoriaIniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
 
-        private readonly HashSet<UInt16> _validSamplingFrequency = new HashSet<UInt16>();
-
         private String _resolution = "";
         private String _activeMonitor = "";
         private String _windowMode = "";
-        private UInt16 _audioFrequency = 48000;
-        private Boolean _audioFrequencyEnabled = true;
         private Boolean _isX64 = true;
         private Boolean _isX64Enabled = true;
         private Boolean _isDebugMode;
@@ -450,25 +387,6 @@ namespace Memoria.Launcher
                     _isX64Enabled = false;
                 }
 
-                UInt16 x64SamplingFrequency;
-                UInt16 x86SamplingFrequency;
-                Boolean? x64SamplingReaded = TryReadAudioSamplingFrequency(@"x64\FF9_Data\Plugins\SdLib.dll", out x64SamplingFrequency);
-                Boolean? x86SamplingReaded = TryReadAudioSamplingFrequency(@"x86\FF9_Data\Plugins\SdLib.dll", out x86SamplingFrequency);
-                if (x64SamplingReaded != true && x86SamplingReaded != true)
-                {
-                    _audioFrequency = 48000;
-                    _audioFrequencyEnabled = false;
-                }
-                else
-                {
-                    _audioFrequency = Math.Max(x86SamplingFrequency, x64SamplingFrequency);
-
-                    if (x64SamplingFrequency < x86SamplingFrequency)
-                        TryWriteAudioSamplingFrequency(true, _audioFrequency, true);
-                    else if (x86SamplingFrequency < x64SamplingFrequency)
-                        TryWriteAudioSamplingFrequency(false, _audioFrequency, true);
-                }
-
                 value = iniFile.ReadValue("Memoria", nameof(IsDebugMode));
                 if (String.IsNullOrEmpty(value))
                     value = "false";
@@ -500,8 +418,6 @@ namespace Memoria.Launcher
                 OnPropertyChanged(nameof(ScreenResolution));
                 OnPropertyChanged(nameof(ActiveMonitor));
                 OnPropertyChanged(nameof(WindowMode));
-                OnPropertyChanged(nameof(AudioFrequency));
-                OnPropertyChanged(nameof(AudioFrequencyEnabled));
                 OnPropertyChanged(nameof(IsX64));
                 OnPropertyChanged(nameof(IsX64Enabled));
                 OnPropertyChanged(nameof(IsDebugMode));
@@ -538,136 +454,6 @@ namespace Memoria.Launcher
             }
             catch
             {
-                return false;
-            }
-        }
-
-        private Boolean? TryReadAudioSamplingFrequency(String sdlibPath, out UInt16 samplingFrequency)
-        {
-            try
-            {
-                const Int64 offset1 = 0x3E52;
-                const Int64 offset2 = 0xFC38;
-
-                if (!File.Exists(sdlibPath))
-                {
-                    samplingFrequency = 0;
-                    return null;
-                }
-
-                Byte[] buff = new Byte[2];
-
-                using (FileStream input = File.OpenRead(sdlibPath))
-                {
-                    if (input.Length <= offset2)
-                    {
-                        samplingFrequency = 0;
-                        return false;
-                    }
-
-                    // Read value from by first offset
-                    input.Seek(offset1, SeekOrigin.Begin);
-                    if (input.Read(buff, 0, buff.Length) != buff.Length)
-                        throw new InvalidOperationException(Lang.Error.File.EndOfStream);
-                    samplingFrequency = BitConverter.ToUInt16(buff, 0);
-
-                    // Check the value
-                    if (!_validSamplingFrequency.Contains(samplingFrequency))
-                    {
-                        samplingFrequency = 0;
-                        return false;
-                    }
-
-                    // Check values are same
-                    input.Seek(offset2, SeekOrigin.Begin);
-                    if (input.Read(buff, 0, buff.Length) != buff.Length)
-                        throw new InvalidOperationException(Lang.Error.File.EndOfStream);
-                    if (samplingFrequency != BitConverter.ToUInt16(buff, 0))
-                    {
-                        samplingFrequency = 0;
-                        return false;
-                    }
-
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.CannotRead + $" {sdlibPath}{Environment.NewLine}{Environment.NewLine}{ex}", Lang.Launcher.ErrorTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
-                samplingFrequency = 0;
-                return false;
-            }
-        }
-
-        private Boolean? TryWriteAudioSamplingFrequency(Boolean isX64, UInt16 samplingFrequency, Boolean quiet)
-        {
-            try
-            {
-                const Int64 x64offset1 = 0x3E52;
-                const Int64 x64offset2 = 0xFC38;
-
-                const Int64 x86offset1 = 0x452D;
-                const Int64 x86offset2 = 0xE59D;
-
-                Int64 offset1, offset2;
-                String sdlibPath = @"\FF9_Data\Plugins\SdLib.dll";
-                if (isX64)
-                {
-                    offset1 = x64offset1;
-                    offset2 = x64offset2;
-                    sdlibPath = "x64" + sdlibPath;
-                }
-                else
-                {
-                    offset1 = x86offset1;
-                    offset2 = x86offset2;
-                    sdlibPath = "x86" + sdlibPath;
-                }
-
-                if (!File.Exists(sdlibPath))
-                    return null;
-
-                Byte[] buff = new Byte[2];
-
-                using (FileStream input = File.Open(sdlibPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
-                {
-                    if (input.Length <= offset2)
-                        return false;
-
-                    // Read value from by first offset
-                    input.Seek(offset1, SeekOrigin.Begin);
-                    if (input.Read(buff, 0, buff.Length) != buff.Length)
-                        throw new InvalidOperationException(Lang.Error.File.EndOfStream);
-                    UInt16 originalFrequency = BitConverter.ToUInt16(buff, 0);
-
-                    // Check the value
-                    if (!_validSamplingFrequency.Contains(originalFrequency))
-                        return false;
-
-                    // Check values are same
-                    input.Seek(offset2, SeekOrigin.Begin);
-                    if (input.Read(buff, 0, buff.Length) != buff.Length)
-                        throw new InvalidOperationException(Lang.Error.File.EndOfStream);
-                    if (originalFrequency != BitConverter.ToUInt16(buff, 0))
-                        return false;
-
-                    buff = BitConverter.GetBytes(samplingFrequency);
-
-                    input.Seek(offset2, SeekOrigin.Begin);
-                    input.Write(buff, 0, buff.Length);
-
-                    input.Seek(offset1, SeekOrigin.Begin);
-                    input.Write(buff, 0, buff.Length);
-
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                if (!quiet)
-                    MessageBox.Show((System.Windows.Window)this.GetRootElement(), Lang.SdLib.CannotWrite + $" ({(isX64 ? "x64" : "x86")}){Environment.NewLine}{Environment.NewLine}{ex}", Lang.Launcher.ErrorTitle, MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                //samplingFrequency = 0;
                 return false;
             }
         }
@@ -745,16 +531,6 @@ namespace Memoria.Launcher
                     _activeMonitor = result[index];
             }
             return result;
-        }
-
-        private IEnumerable<UInt16> EnumerateAudioSettings()
-        {
-            yield return 48000; // standard audio sampling rate used by professional digital video equipment such as tape recorders, video servers, vision mixers and so on.
-            yield return 47250; // world's first commercial PCM sound recorder by Nippon Columbia (Denon)
-            yield return 44100; // Audio CD, also most commonly used with MPEG-1 audio (VCD, SVCD, MP3). Originally chosen by Sony because it could be recorded on modified video equipment running at either 25 frames per second (PAL) or 30 frame/s (using an NTSC monochrome video recorder) and cover the 20 kHz bandwidth thought necessary to match professional analog recording equipment of the time. A PCM adaptor would fit digital audio samples into the analog video channel of, for example, PAL video tapes using 3 samples per line, 588 lines per frame, 25 frames per second.
-            yield return 44056; // Used by digital audio locked to NTSC color video signals (3 samples per line, 245 lines per field, 59.94 fields per second = 29.97 frames per second).
-            yield return 37800; // CD-XA audio
-            yield return 32000; // miniDV digital video camcorder, video tapes with extra channels of audio (e.g. DVCAM with 4 Channels of audio), DAT (LP mode), Germany's Digitales Satellitenradio, NICAM digital audio, used alongside analogue television sound in some countries. High-quality digital wireless microphones.[12] Suitable for digitizing FM radio.[citation needed]
         }
 
         private IEnumerable<String> EnumerateWindowModeSettings()
