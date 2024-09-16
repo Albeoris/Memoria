@@ -17,7 +17,6 @@ namespace Memoria
         private volatile ImportSection _import;
         private volatile ExportSection _export;
         private volatile TetraMasterSection _tetraMaster;
-        private volatile FixesSection _fixes;
         private volatile HacksSection _hacks;
         private volatile BattleSection _battle;
         private volatile IconsSection _icons;
@@ -39,7 +38,6 @@ namespace Memoria
             BindingSection(out _import, v => _import = v);
             BindingSection(out _export, v => _export = v);
             BindingSection(out _tetraMaster, v => _tetraMaster = v);
-            BindingSection(out _fixes, v => _fixes = v);
             BindingSection(out _hacks, v => _hacks = v);
             BindingSection(out _battle, v => _battle = v);
             BindingSection(out _icons, v => _icons = v);

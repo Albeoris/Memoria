@@ -459,7 +459,6 @@
     <Compile Include="Memoria\Configuration\Access\Control.cs" />
     <Compile Include="Memoria\Configuration\Access\Debug.cs" />
     <Compile Include="Memoria\Configuration\Access\Export.cs" />
-    <Compile Include="Memoria\Configuration\Access\Fixes.cs" />
     <Compile Include="Memoria\Configuration\Access\Font.cs" />
     <Compile Include="Memoria\Configuration\Access\Graphics.cs" />
     <Compile Include="Memoria\Configuration\Access\Battle.cs" />
@@ -482,7 +481,6 @@
     <Compile Include="Memoria\Configuration\Structure\IconsSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\ImportSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\DebugSection.cs" />
-    <Compile Include="Memoria\Configuration\Structure\FixesSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\HacksSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\SaveFileSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\TetraMasterSection.cs" />
