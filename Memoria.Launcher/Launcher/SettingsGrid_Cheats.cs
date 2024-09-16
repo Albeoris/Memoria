@@ -20,15 +20,13 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Cheats()
         {
-            SetRows(3);
+            SetRows(2);
             SetCols(8);
 
             Width = 260;
             Margin = new Thickness(0);
 
             DataContext = this;
-
-            Thickness rowMargin = new Thickness(0, 3, 0, 3);
 
             CreateTextbloc(Lang.Settings.IniCheats, true);
             CreateCheckbox("StealingAlwaysWorks", Lang.Settings.MaxStealRate, Lang.Settings.MaxStealRate_Tooltip);
@@ -50,7 +48,7 @@ namespace Memoria.Launcher
             TextBlock speedFactorTextindex = AddUiElement(UiTextBlockFactory.Create(""), Row, 0, 1, 8);
             speedFactorTextindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay, StringFormat = "{0}x" });
             speedFactorTextindex.Foreground = Brushes.White;
-            speedFactorTextindex.Margin = rowMargin;
+            speedFactorTextindex.Margin = CommonMargin;
             Slider speedFactor = AddUiElement(UiSliderFactory.Create(0), Row, 1, 1, 8);
             speedFactor.SetBinding(Slider.ValueProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay });
             speedFactor.TickFrequency = 1;
@@ -66,7 +64,7 @@ namespace Memoria.Launcher
             TextBlock BattleTPSindex = AddUiElement(UiTextBlockFactory.Create(""), Row, 0, 1, 8);
             BattleTPSindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleTPSDividedBy10)) { Mode = BindingMode.TwoWay, StringFormat = "{0}x" });
             BattleTPSindex.Foreground = Brushes.White;
-            BattleTPSindex.Margin = rowMargin;
+            BattleTPSindex.Margin = CommonMargin;
             Slider BattleTPSFactor = AddUiElement(UiSliderFactory.Create(0), Row, 1, 1, 8);
             BattleTPSFactor.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleTPS)) { Mode = BindingMode.TwoWay });
             BattleTPSFactor.TickFrequency = 1;

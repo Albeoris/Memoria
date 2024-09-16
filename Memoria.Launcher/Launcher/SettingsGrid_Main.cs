@@ -30,9 +30,6 @@ namespace Memoria.Launcher
 
             DataContext = this;
 
-            Thickness rowMargin = new(0, 3, 0, 3);
-
-
             CreateCheckbox("WidescreenSupport", Lang.Settings.Widescreen, Lang.Settings.Widescreen_Tooltip);
             CreateCheckbox("AntiAliasing", Lang.Settings.AntiAliasing, Lang.Settings.AntiAliasing_Tooltip);
 
@@ -53,7 +50,7 @@ namespace Memoria.Launcher
             TextBlock CameraStabilizerIndex = AddUiElement(UiTextBlockFactory.Create(""), Row, 0, 1, 8);
             CameraStabilizerIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(CameraStabilizer)) { Mode = BindingMode.TwoWay });
             CameraStabilizerIndex.Foreground = Brushes.White;
-            CameraStabilizerIndex.Margin = rowMargin;
+            CameraStabilizerIndex.Margin = CommonMargin;
             Slider CameraStabilizerSlider = AddUiElement(UiSliderFactory.Create(0), Row, 1, 1, 8);
             CameraStabilizerSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(CameraStabilizer)) { Mode = BindingMode.TwoWay });
             CameraStabilizerSlider.TickFrequency = 1;
@@ -110,7 +107,7 @@ namespace Memoria.Launcher
             FontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), Row, 2, 1, 7);
             FontChoiceBox.Height = 20;
             FontChoiceBox.FontSize = 10;
-            FontChoiceBox.Margin = rowMargin;
+            FontChoiceBox.Margin = CommonMargin;
 
             FontCollection installedFonts = new InstalledFontCollection();
             String[] fontNames = new String[installedFonts.Families.Length + 2];

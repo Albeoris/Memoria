@@ -17,8 +17,8 @@ namespace Memoria.Launcher
     public class UiGrid : Grid
     {
         public SolidColorBrush TextColor = Brushes.White;
-        public Thickness CommonMargin = new Thickness(0, 3, 0, 3);
-        public Int32 Row;
+        public Thickness CommonMargin = new Thickness(0, 2, 0, 2);
+        public Int32 Row = -1;
         public Int32 MaxColumns = 8;
         public void SetRows(Int32 count)
         {
@@ -87,6 +87,11 @@ namespace Memoria.Launcher
         }
         public ComboBox CreateCombobox(String property, IEnumerable options, String tooltip = "", Int32 firstColumn = 4)
         {
+            if (firstColumn == 0)
+            {
+                Row++;
+                RowDefinitions.Add(new RowDefinition());
+            }
             ComboBox comboBox = new ComboBox();
             comboBox.ItemsSource = options;
             if (tooltip != "")

@@ -18,7 +18,6 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Shaders()
         {
-            SetRows(2);
             SetCols(8);
 
             Width = 260;

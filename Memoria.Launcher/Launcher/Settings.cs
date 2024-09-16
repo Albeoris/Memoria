@@ -450,14 +450,14 @@ namespace Memoria.Launcher
                 if (_battletpsfactor != value)
                 {
                     _battletpsfactor = value;
-                    BattleTPSDividedBy10 = ((Decimal)value / 15);
+                    BattleTPSDividedBy10 = (float)Math.Round((double)value / 15, 2);
                     OnPropertyChanged();
                 }
             }
         }
-        public Decimal BattleTPSDividedBy10
+        public Single BattleTPSDividedBy10
         {
-            get { return ((Decimal)BattleTPS / 15); }
+            get { return (float)Math.Round((double)BattleTPS / 15, 2); }
             set
             {
                 OnPropertyChanged();
@@ -1043,8 +1043,8 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _battletpsfactor))
                     _battletpsfactor = 15;
-                Boolean valueexists = decimal.TryParse(value, out Decimal decvalue);
-                BattleTPSDividedBy10 = valueexists ? decvalue / 15 : (decimal)1.5;
+                Boolean valueexists = Single.TryParse(value, out Single decvalue);
+                BattleTPSDividedBy10 = valueexists ? decvalue / 15f : 1.5f;
 
                 value = iniFile.ReadValue("Cheats", nameof(BattleAssistance));
                 if (String.IsNullOrEmpty(value))
