@@ -5,6 +5,7 @@ using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
+using Memoria.Prime;
 using Memoria.Speedrun;
 using System;
 using UnityEngine;
@@ -132,6 +133,11 @@ public class SettingsState : MonoBehaviour
                 ScreenRotation = 3;
                 CurrentLanguage = GetSystemLanguage();
                 Debug.Log("serializer.ReadSystemData.callback 2 ReadSystemData : fail");
+            }
+            if(Configuration.VoiceActing.ForceLanguage >= 0)
+            {
+                CurrentLanguage = LanguageCode.ConvertToLanguageName(Configuration.VoiceActing.ForceLanguage);
+                Log.Message($"[VoiceActing] Language forced to '{CurrentLanguage}'");
             }
             PersistenSingleton<UIManager>.Instance.TitleScene.SetRotateScreen();
             Localization.CurrentLanguage = CurrentLanguage;

@@ -195,6 +195,8 @@
 	TimeLeft = "Tempo rimanente"
 	ActiveIncompatibleMods = "Mod incompatibile con: "
 	IncompatibleWithMemoria = "La versione del mod è incompatibile con l'attuale Memoria. Aggiornarlo dal catalogo mod."
+	ApplyModPresetText = "Vuoi applicare questa preimpostazione mod?"
+	ApplyModPresetCaption = "Applica preimpostazione"
 	UpdateTooltip = "Nuova versione di questo mod disponibile nel catalogo mod: "
 	TooltipMoveUp = "Sposta su/Clic destro per spostare in cima"
 	TooltipMoveDown = "Sposta giù/Clic destro per spostare in fondo"
