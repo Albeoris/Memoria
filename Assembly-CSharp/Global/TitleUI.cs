@@ -500,7 +500,10 @@ public class TitleUI : UIScene
                 }
                 else if (go == this.MenuLanguageButton)
                 {
-                    this.OnMenuLanguageButtonClick();
+                    if (Configuration.VoiceActing.ForceLanguage >= 0)
+                        FF9Sfx.FF9SFX_Play(102); // Language has been forced
+                    else
+                        this.OnMenuLanguageButtonClick();
                 }
                 else if (go == this.MenuStaffButton || go == this.MenuStaffPCButton)
                 {
