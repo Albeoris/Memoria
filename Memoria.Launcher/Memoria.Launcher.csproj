@@ -238,6 +238,12 @@
       <Version>0.37.2</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="extern\HtmlTextBlock\QuickZip.UserControls.HtmlTextBlock\QuickZip.UserControls.HtmlTextBlock.csproj">
+      <Project>{8e67c36f-4403-4724-96d4-af6e05744688}</Project>
+      <Name>QuickZip.UserControls.HtmlTextBlock</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">
     <ItemGroup>
