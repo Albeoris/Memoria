@@ -19,7 +19,7 @@ namespace Memoria.Launcher
     {
         #region Properties
 
-        private String _iniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
+        private String _iniPath = @"./Memoria.ini";
 
         private Int16 _iswidescreensupport;
         public Int16 WidescreenSupport
