@@ -339,10 +339,7 @@ namespace Memoria.Launcher
             using (SafeFileHandle handle = OpenReparsePoint(junctionPoint, EFileAccess.GenericRead))
             {
                 string target = InternalGetTarget(handle);
-                if (target == null)
-                    throw new IOException("Path is not a junction point.");
-
-                return target;
+                return (string)target ?? throw new IOException("Path is not a junction point.");
             }
         }
 

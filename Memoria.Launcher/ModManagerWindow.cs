@@ -43,6 +43,12 @@ namespace Memoria.Launcher
             "Playable Character Pack_1.1",
         };
 
+        private readonly string UpdateEmoji = "⏫";
+        private readonly string ConflictEmoji = "✖️";
+        private readonly string WaitingEmoji = "⌛";
+        private readonly string InstalledEmoji = "✔️";
+        private readonly string ActiveEmoji = "☑️";
+
         public ObservableCollection<Mod> modListInstalled = new ObservableCollection<Mod>();
         public ObservableCollection<Mod> modListCatalog = new ObservableCollection<Mod>();
         public ObservableCollection<Mod> downloadList = new ObservableCollection<Mod>();
@@ -74,10 +80,10 @@ namespace Memoria.Launcher
             UpdateCatalog();
             LoadSettings();
             CheckForValidModFolder();
+            CheckOutdatedAndIncompatibleMods();
             lstCatalogMods.ItemsSource = modListCatalog;
             lstMods.ItemsSource = modListInstalled;
             lstDownloads.ItemsSource = downloadList;
-            CheckOutdatedMods();
             UpdateCatalogInstallationState();
 
             lstCatalogMods.SelectionChanged += OnModListSelect;
@@ -89,61 +95,58 @@ namespace Memoria.Launcher
             if (modListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
-            CheckIncompMods();
+            CheckOutdatedAndIncompatibleMods();
         }
 
-        private void CheckOutdatedMods()
+        private void CheckOutdatedAndIncompatibleMods()
         {
             AreThereModUpdates = false;
+            AreThereModIncompatibilies = false;
+
+            foreach (Mod mod in modListInstalled) // reset state
+            {
+                mod.UpdateIcon = null;
+                mod.UpdateTooltip = null;
+                mod.IncompIcon = null;
+                mod.ActiveIncompatibleMods = null;
+            }
+
             foreach (Mod mod in modListInstalled)
             {
-                if (mod != null && ((mod.Name == "Moguri Mod" || mod.Name == "MoguriFiles") && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
+                if (mod == null || mod.Name == null)
+                    continue;
+                if (((mod.Name == "Moguri Mod" || mod.Name == "MoguriFiles") && mod.InstallationPath.Contains("MoguriFiles")) || (mod.Name == "Moguri - 3D textures" && mod.InstallationPath.Contains("Moguri_3Dtextures")))
                 {
-                    mod.UpdateIcon = "⏫";
+                    mod.UpdateIcon = UpdateEmoji;
                     mod.CurrentVersion = Version.Parse("8.3");
                     AreThereModUpdates = true;
                     mod.Description = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
                     mod.UpdateTooltip = "Please download the latest Moguri Mod from the catalog and disable/remove this one";
                 }
-                if (mod != null && mod.Name != null)
+
+                foreach (Mod catalog_mod in modListCatalog) // check updates
                 {
-                    foreach (Mod catalog_mod in modListCatalog)
+                    if (catalog_mod != null && catalog_mod.Name != null && mod.Name == catalog_mod.Name)
                     {
-                        if (catalog_mod != null && catalog_mod.Name != null && mod.Name == catalog_mod.Name)
+                        Boolean versionCorresponds = mod.CurrentVersion == catalog_mod.CurrentVersion;
+                        mod.IsOutdated = catalog_mod.IsOutdated = !versionCorresponds;
+                        if (mod.IsOutdated)
                         {
-                            Boolean versionCorresponds = mod.CurrentVersion == catalog_mod.CurrentVersion;
-                            mod.IsOutdated = catalog_mod.IsOutdated = !versionCorresponds;
-                            if (mod.IsOutdated)
-                            {
-                                mod.UpdateIcon = "⏫";
-                                mod.UpdateTooltip = Lang.ModEditor.UpdateTooltip + catalog_mod.CurrentVersion;
-                                AreThereModUpdates = true;
-                            }
-                            else
-                            {
-                                mod.UpdateIcon = null;
-                                if (catalog_mod.IncompatibleWith != null)
-                                    mod.IncompatibleWith = catalog_mod.IncompatibleWith;
-                            }
+                            mod.UpdateIcon = UpdateEmoji;
+                            mod.UpdateTooltip = Lang.ModEditor.UpdateTooltip + catalog_mod.CurrentVersion;
+                            AreThereModUpdates = true;
+                        }
+                        else
+                        {
+                            mod.UpdateIcon = null;
+                            if (catalog_mod.IncompatibleWith != null)
+                                mod.IncompatibleWith = catalog_mod.IncompatibleWith;
                         }
                     }
                 }
-            }
-            colMyModsUpdateIcon.Width = AreThereModUpdates ? 28 : 0;
-            lstMods.Items.Refresh();
-        }
+                
 
-        private void CheckIncompMods()
-        {
-            AreThereModIncompatibilies = false;
-            foreach (Mod mod in modListInstalled) // reset state
-            {
-                mod.IncompIcon = null;
-                mod.ActiveIncompatibleMods = null;
-            }
-            foreach (Mod mod in modListInstalled)
-            {
-                if (mod != null && mod.Name != null && mod.IncompatibleWith != null && mod.IsActive)
+                if (mod.IncompatibleWith != null && mod.IsActive) // Inter-mod compatibility
                 {
                     IEnumerable<String> Incomps = mod.IncompatibleWith.Split(',');
                     foreach (String Incomp in Incomps)
@@ -151,10 +154,12 @@ namespace Memoria.Launcher
                         String incompName = Incomp.Trim();
                         foreach (Mod other_mod in modListInstalled)
                         {
-                            if (other_mod != null && other_mod.Name != null && other_mod.Name == incompName && other_mod.IsActive)
+                            if (other_mod == null || other_mod.Name == null)
+                                continue;
+                            if (other_mod.Name == incompName && other_mod.IsActive)
                             {
-                                mod.IncompIcon = "⚔️";
-                                other_mod.IncompIcon = "⚔️";
+                                mod.IncompIcon = ConflictEmoji;
+                                other_mod.IncompIcon = ConflictEmoji;
 
                                 if (mod.ActiveIncompatibleMods == null)
                                     mod.ActiveIncompatibleMods = Lang.ModEditor.ActiveIncompatibleMods + other_mod.Name;
@@ -171,24 +176,60 @@ namespace Memoria.Launcher
                         }
                     }
                 }
-                if (mod != null && mod.Name != null && mod.CurrentVersion != null)
+
+                foreach (Mod subMod in mod.SubMod) // submod auto (de)activate based on others
                 {
-                    String ver = mod.CurrentVersion?.ToString() ?? "0";
-                    foreach (String outdated in OutdatedModsVersions)
+                    if (subMod == null || subMod.Name == null)
+                        continue;
+
+                    Boolean modFoundActive = false;
+
+                    foreach (Mod other_mod in modListInstalled)
                     {
-                        if (outdated == mod.Name + "_" + ver)
-                        {
-                            mod.IncompIcon = "⚔️";
-                            if (mod.ActiveIncompatibleMods == null)
-                                mod.ActiveIncompatibleMods = Lang.ModEditor.IncompatibleWithMemoria;
-                            else
-                                mod.ActiveIncompatibleMods += "\n\n" + Lang.ModEditor.IncompatibleWithMemoria;
-                            AreThereModIncompatibilies = true;
-                        }
+                        if (other_mod == null || other_mod.Name == null)
+                            continue;
+
+                        if (subMod.ActivateWithMod != null && subMod.ActivateWithMod == other_mod.Name && other_mod.IsActive)
+                            subMod.IsActive = true;
+                        if (subMod.DeactivateWithMod != null && subMod.DeactivateWithMod == other_mod.Name && other_mod.IsActive)
+                            subMod.IsActive = false;
+
+                        if (subMod.ActivateWithoutMod != null && subMod.ActivateWithoutMod == other_mod.Name && other_mod.IsActive)
+                            modFoundActive = true;
+                        if (subMod.DeactivateWithoutMod != null && subMod.DeactivateWithoutMod == other_mod.Name && other_mod.IsActive)
+                            modFoundActive = true;
+                    }
+
+                    // apply when mod is not found active, even if not installed, and do nothing otherwise
+                    if (!modFoundActive && subMod.ActivateWithoutMod != null)
+                        subMod.IsActive = true;
+                    if (!modFoundActive && subMod.DeactivateWithoutMod != null)
+                        subMod.IsActive = false;
+
+                    UpdateModDetails((Mod)lstMods.SelectedItem);
+                }
+
+                String ver = mod.CurrentVersion?.ToString() ?? "0";
+                foreach (String outdated in OutdatedModsVersions) // Memoria compatibility
+                {
+                    if (outdated == mod.Name + "_" + ver)
+                    {
+                        mod.IncompIcon = ConflictEmoji;
+                        if (mod.ActiveIncompatibleMods == null)
+                            mod.ActiveIncompatibleMods = Lang.ModEditor.IncompatibleWithMemoria;
+                        else
+                            mod.ActiveIncompatibleMods += "\n\n" + Lang.ModEditor.IncompatibleWithMemoria;
+                        AreThereModIncompatibilies = true;
                     }
                 }
             }
-            colMyModsIncompIcon.Width = AreThereModIncompatibilies ? 28 : 0;
+
+            if (AreThereModUpdates && AreThereModIncompatibilies)
+                colMyModsIcons.Width = 40;
+            else if (AreThereModUpdates || AreThereModIncompatibilies)
+                colMyModsIcons.Width = 25;
+            else
+                colMyModsIcons.Width = 0;
             lstMods.Items.Refresh();
         }
 
@@ -203,7 +244,7 @@ namespace Memoria.Launcher
             Mod mod = (sender as System.Windows.Controls.CheckBox)?.DataContext as Mod;
             if (mod != null && mod.IsActive)
                 mod.TryApplyPreset();
-            CheckIncompMods();
+            CheckOutdatedAndIncompatibleMods();
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
@@ -282,30 +323,48 @@ namespace Memoria.Launcher
         {
             UpdateSubModDetails((Mod)PreviewSubModList.SelectedItem);
         }
+
         private void OnSubModActivate(Object sender, RoutedEventArgs e)
         {
             Mod subMod = (Mod)PreviewSubModList.SelectedItem;
             if (subMod != null)
                 subMod.IsActive = PreviewSubModActive.IsChecked ?? false;
         }
-        /*
-        private void OnClickCheckConflicts(Object sender, RoutedEventArgs e)
-        {
-            ModConflictWindow conflictWindow = new ModConflictWindow(modListInstalled, true);
-            conflictWindow.Owner = this;
-            conflictWindow.ShowDialog();
-        }
-        private void OnClickCheckAllConflicts(Object sender, RoutedEventArgs e)
-        {
-            ModConflictWindow conflictWindow = new ModConflictWindow(modListInstalled, false);
-            conflictWindow.Owner = this;
-            conflictWindow.ShowDialog();
-        }
-        */
+
         private void OnClickUninstall(Object sender, RoutedEventArgs e)
         {
             Uninstall();
         }
+
+        private void OnClickReorganize(Object sender, RoutedEventArgs e)
+        {
+            OrderInstalledByModsPriority();
+        }
+
+        public void OrderInstalledByModsPriority()
+        {
+            foreach (Mod mod in modListInstalled)
+            {
+                if (mod == null || mod.Name == null)
+                    continue;
+                foreach (Mod catalog_mod in modListCatalog)
+                {
+                    if (catalog_mod == null || catalog_mod.Name == null)
+                        continue;
+                    if (mod.Name == catalog_mod.Name)
+                    {
+                        mod.PriorityWeight = catalog_mod.PriorityWeight;
+                    }
+                }
+            }
+            List<Mod> orderedMods = modListInstalled.OrderByDescending(mod => mod.PriorityWeight).ToList();
+            modListInstalled.Clear();
+            foreach (Mod mod in orderedMods)
+                modListInstalled.Add(mod);
+
+            UpdateInstalledPriorityValue();
+        }
+
         private void OnClickMoveUp(Object sender, RoutedEventArgs e)
         {
             if (lstMods.SelectedIndex > 0)
@@ -380,9 +439,10 @@ namespace Memoria.Launcher
                 }
                 downloadList.Add(mod);
                 DownloadStart(mod);
-                mod.Installed = "⌛";
+                mod.Installed = WaitingEmoji;
             }
             lstCatalogMods.Items.Refresh();
+            CheckOutdatedAndIncompatibleMods();
         }
 
         public static bool IsDate1EqualOrMoreRecent(string date1, string date2)
@@ -465,7 +525,7 @@ namespace Memoria.Launcher
                 }
                 lstMods.Items.Refresh();
             }
-            CheckIncompMods();
+            CheckOutdatedAndIncompatibleMods();
         }
 
         private void OnPreviewFileDownloaded(Object sender, EventArgs e)
@@ -759,6 +819,7 @@ namespace Memoria.Launcher
                         newMod.TryApplyPreset();
                     }
                 }
+                CheckOutdatedAndIncompatibleMods();
             });
         }
         private void DownloadCatalogEnd(Object sender, AsyncCompletedEventArgs e)
@@ -846,8 +907,7 @@ namespace Memoria.Launcher
                 }
             }
             UpdateInstalledPriorityValue();
-            CheckOutdatedMods();
-            CheckIncompMods();
+            CheckOutdatedAndIncompatibleMods();
         }
 
         private Boolean GenerateAutomaticDescriptionFile(String folderName)
@@ -923,6 +983,11 @@ namespace Memoria.Launcher
                 gridModInfo.Visibility = Visibility.Collapsed;
                 PreviewModWebsite.Visibility = Visibility.Collapsed;
                 PreviewModCategoryTagline.Visibility = Visibility.Collapsed;
+                BitmapImage bitmap = new BitmapImage();
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri("pack://application:,,,/Images/no-disc.jpg");
+                bitmap.EndInit();
+                PreviewModImage.Source = bitmap;
             }
             else
             {
@@ -995,7 +1060,11 @@ namespace Memoria.Launcher
                 }
                 if (mod.PreviewImage == null)
                 {
-                    PreviewModImage.Source = null;
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri("pack://application:,,,/Images/no-disc.jpg");
+                    bitmap.EndInit();
+                    PreviewModImage.Source = bitmap;
                 }
                 else if (mod.PreviewImage.IsDownloading)
                 {
@@ -1022,11 +1091,12 @@ namespace Memoria.Launcher
             foreach (Mod mod in modListCatalog)
             {
                 if (Mod.SearchWithName(downloadList, mod.Name) != null)
-                    mod.Installed = "⌛";
+                    mod.Installed = WaitingEmoji;
                 else if (Mod.SearchWithName(modListInstalled, mod.Name) != null && Mod.SearchWithName(modListInstalled, mod.Name).IsOutdated)
-                    mod.Installed = "⏫";
+                    mod.Installed = UpdateEmoji;
                 else if (Mod.SearchWithName(modListInstalled, mod.Name) != null)
-                    mod.Installed = "✔";
+                    mod.Installed = InstalledEmoji;
+
                 else
                     mod.Installed = "";
             }
@@ -1183,7 +1253,7 @@ namespace Memoria.Launcher
             header.Click += OnClickCatalogHeader;
             colCatalogInstalled.Header = header;
 
-            header = new GridViewColumnHeader() { Content = "✅" };
+            header = new GridViewColumnHeader() { Content = ActiveEmoji };
             header.Click += OnClickActiveHeader;
             colMyModsActive.Header = header;
             colDownloadName.Header = Lang.ModEditor.Mod;

@@ -29,6 +29,10 @@ namespace Memoria.Launcher
         public String IncompatibleWith { get; set; }
         public String IncompIcon { get; set; }
         public String ActiveIncompatibleMods { get; set; }
+        public String ActivateWithMod { get; set; }
+        public String ActivateWithoutMod { get; set; }
+        public String DeactivateWithMod { get; set; }
+        public String DeactivateWithoutMod { get; set; }
         public String HasPriorityOverMods { get; set; }
         public String Category { get; set; }
         public String Website { get; set; }
@@ -48,6 +52,7 @@ namespace Memoria.Launcher
         public Boolean IsActive { get; set; }
         public String Installed { get; set; }
         public Int32 Priority { get; set; }
+        public Int32 PriorityWeight { get; set; }
         public BitmapImage PreviewImage { get; set; }
         public IniReader PresetIni { get; set; }
 
@@ -194,6 +199,10 @@ namespace Memoria.Launcher
             }
             IncompatibleWith = modNode["IncompatibleWith"]?.InnerText;
             HasPriorityOverMods = modNode["HasPriorityOverMods"]?.InnerText;
+            if (Int64.TryParse(modNode["PriorityWeight"]?.InnerText ?? "0", out outParse))
+                PriorityWeight = (Int32)outParse;
+            else
+                PriorityWeight = 0;
             Category = modNode["Category"]?.InnerText;
             Website = modNode["Website"]?.InnerText;
             DownloadUrl = modNode["DownloadUrl"]?.InnerText;
@@ -219,6 +228,11 @@ namespace Memoria.Launcher
                 sub.InstallationPath = elInstPath.InnerText;
                 sub.Description = subNode["Description"]?.InnerText;
                 sub.Category = subNode["Category"]?.InnerText;
+
+                sub.ActivateWithMod = subNode["ActivateWithMod"]?.InnerText;
+                sub.ActivateWithoutMod = subNode["ActivateWithoutMod"]?.InnerText;
+                sub.DeactivateWithMod = subNode["DeactivateWithMod"]?.InnerText;
+                sub.DeactivateWithoutMod = subNode["DeactivateWithoutMod"]?.InnerText;
                 if (Int64.TryParse(subNode["Priority"]?.InnerText ?? "0", out outParse))
                     sub.Priority = (Int32)outParse;
                 else

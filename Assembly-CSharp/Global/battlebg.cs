@@ -375,6 +375,32 @@ public static class battlebg
         }
     }
 
+    public static void geoBGTexAnimSmoothen(Single smoothFactor)
+    {
+        if (battlebg.nf_BbgTexAnm != 0)
+        {
+            UInt16 count = battlebg.nf_BbgTabAddress.count;
+            GEOTEXANIMHEADER[] geotex = battlebg.nf_BbgTabAddress.geotex;
+            for (Int32 i = 0; i < count; i++)
+            {
+                GEOTEXANIMHEADER geotexanimheader = geotex[i];
+                if ((geotexanimheader.flags & 5) == 5 && geotexanimheader.numframes == 0)
+                {
+                    // Vertical texture scroll
+                    Int32 frameLong = geotexanimheader.frame + (Int32)Math.Round(smoothFactor * geotexanimheader.rate);
+                    Single dy = frameLong / 1048576f; // 4096 * 256 (ie. frame unit * texture base height)
+                    if (battlebg.nf_BbgNumber == 69 && i == 3) // Fossil Roo, Road accross water
+                        dy *= -1f;
+                    battlebg.nf_BbgTabAddress.materials[i].SetTextureOffset("_MainTex", new Vector2(0f, -dy));
+                    if (battlebg.nf_BbgNumber == 57) // Cleyra, Observation post
+                        battlebg.nf_BbgTabAddress.bbgExtraAimMaterials[i].SetTextureOffset("_MainTex", new Vector2(0f, -dy));
+                    else if (battlebg.nf_BbgNumber == 71) // Fossil Roo, Underground lake
+                        battlebg.nf_BbgTabAddress.bbgExtraAimMaterials[i].SetTextureOffset("_MainTex", new Vector2(0f, -dy));
+                }
+            }
+        }
+    }
+
     public static void ShiftWorld(Vector3 offset, Quaternion angle)
     {
         //Vector3 enemyPosMin = new Vector3(Single.MaxValue, 0f, Single.MaxValue);
@@ -665,6 +691,7 @@ public static class battlebg
         return (pl.x * ll.y - pl.y * ll.x) / ll.magnitude;
     }
 
+    /*
     private static Boolean TriangleContains(Vector2[] tri, Vector2 p, Single eps)
     {
         if (tri[0] == tri[1] || tri[0] == tri[2] || tri[1] == tri[2])
@@ -677,6 +704,7 @@ public static class battlebg
             return d1 > -eps && d2 > -eps && d3 > -eps;
         return d1 < eps && d2 < eps && d3 < eps;
     }
+    */
     #endregion
 
     public const Int32 BBG_DISP_ATTRIBUTE_PLUS = 1;

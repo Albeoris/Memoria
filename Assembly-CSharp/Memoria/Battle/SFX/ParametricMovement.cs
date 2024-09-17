@@ -162,6 +162,7 @@ public class ParametricMovement
             e.Parameters["CasterAngleY"] = caster != null ? caster.rot.eulerAngles.y : 0f;
             e.Parameters["CasterAngleZ"] = caster != null ? caster.rot.eulerAngles.z : 0f;
             e.Parameters["CasterRadius"] = caster != null ? (caster.bi.player == 0 ? caster.radius_effect : 256f) : 0f;
+            e.Parameters["CasterHeight"] = caster != null ? (caster.bi.player == 0 ? 1 : 2) * caster.radius_collision : 0f;
             e.Parameters["CasterIsPlayer"] = caster != null ? caster.bi.player != 0 : false;
             e.Parameters["TargetPositionX"] = target != null ? target.pos.x : 0f;
             e.Parameters["TargetPositionY"] = target != null ? target.pos.y : 0f;
@@ -179,6 +180,7 @@ public class ParametricMovement
             e.Parameters["TargetAngleY"] = target != null ? target.rot.eulerAngles.y : 0f;
             e.Parameters["TargetAngleZ"] = target != null ? target.rot.eulerAngles.z : 0f;
             e.Parameters["TargetRadius"] = target != null ? (target.bi.player == 0 ? target.radius_effect : 256f) : 0f;
+            e.Parameters["TargetHeight"] = target != null ? (target.bi.player == 0 ? 1 : 2) * target.radius_collision : 0f;
             e.Parameters["TargetIsPlayer"] = target != null ? target.bi.player != 0 : false;
             e.Parameters["TargetAveragePositionX"] = avgPos.x;
             e.Parameters["TargetAveragePositionY"] = avgPos.y;

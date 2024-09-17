@@ -17,6 +17,10 @@
 
     <Window.Resources>
 
+        <FontFamily x:Key="CenturyGothic">pack://application:,,,/Fonts/#Century Gothic</FontFamily>
+        <FontFamily x:Key="NotoEmoji">pack://application:,,,/Fonts/#Noto Emoji Regular</FontFamily>
+        <FontFamily x:Key="Overpass">pack://application:,,,/Fonts/#Overpass</FontFamily>
+
         <SolidColorBrush x:Key="WhiteUI" Color="#EEEEEE" />
         <SolidColorBrush x:Key="LightGreyUI" Color="#555555" />
         <SolidColorBrush x:Key="DarkGreyUI" Color="#333333" />
@@ -66,7 +70,7 @@
             BasedOn="{StaticResource ModInfoLabelStyle}"
             TargetType="{x:Type TextBlock}">
             <Setter Property="FontWeight" Value="DemiBold" />
-            <Setter Property="FontFamily" Value="Century Gothic" />
+            <Setter Property="FontFamily" Value="{StaticResource CenturyGothic}" />
             <Setter Property="FontStretch" Value="UltraCondensed" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Padding" Value="0,0,0,0" />
@@ -79,6 +83,7 @@
             BasedOn="{StaticResource ModInfoLabelStyle}"
             TargetType="{x:Type TextBlock}">
             <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="FontFamily" Value="{StaticResource CenturyGothic}" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Padding" Value="1,0,0,2" />
             <Setter Property="FontSize" Value="14" />
@@ -122,9 +127,11 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="5"
                         Effect="{StaticResource ButtondropShadowEffect}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" 
-                        Width="36"
-                        Height="36"/>
+                            <ContentPresenter
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center" 
+                            Width="36"
+                            Height="36"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
@@ -507,7 +514,7 @@
                     Padding="15,6,15,6"
                     Text="Installed Mods"
                     Foreground="{StaticResource WhiteUI}"
-                    FontFamily="Century Gothic"
+                    FontFamily="{StaticResource CenturyGothic}"
                     FontSize="15"
                     />
                 </TabItem.Header>
@@ -526,6 +533,14 @@
                     Grid.Column="0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Stretch">
+                        <Button x:Name="btnReorganize"
+                        Style="{StaticResource ButtonStyle}"
+                        Margin="0,0,0,3"
+                        Click="OnClickReorganize"
+                        TabIndex="21"
+                        ToolTip="Auto-organize mod by priority" >
+                            <Image Source="/Images/btnReorganize.png" />
+                        </Button>
                         <Button x:Name="btnMoveUp"
                         Style="{StaticResource ButtonStyle}"
                         Margin="0,0,0,3"
@@ -660,8 +675,7 @@
                             <GridView>
                                 <GridViewColumn
                                 x:Name="colMyModsActive"
-                                Width="28"
-                                Header="✅">
+                                Width="28">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <CheckBox
@@ -671,42 +685,50 @@
                                             IsTabStop="False" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                            Text="✅"
+                                            FontFamily="{StaticResource NotoEmoji}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
                                 </GridViewColumn>
                                 <GridViewColumn
                                 x:Name="colMyModsPriority"
                                 Width="28"
-                                DisplayMemberBinding="{Binding Priority}"
-                                Header="⮝⮟" />
+                                DisplayMemberBinding="{Binding Priority}" >
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                            Text="⮝⮟"
+                                            FontFamily="{StaticResource Overpass}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
                                 <GridViewColumn
-                                x:Name="colMyModsUpdateIcon"
+                                x:Name="colMyModsIcons"
                                 Width="28"
                                 Header="" >
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
                                                 <TextBlock x:Name="colMyModsUpdateText"
+                                                FontFamily="{StaticResource NotoEmoji}"
                                                 Text="{Binding UpdateIcon}"
                                                 FontWeight="Black"
                                                 ToolTip="{Binding UpdateTooltip}"
                                                 ToolTipService.InitialShowDelay="10"
+                                                Effect="{StaticResource ButtondropShadowEffect}"
                                                 Foreground="#efd525" />
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </GridViewColumn.CellTemplate>
-                                </GridViewColumn>
-                                <GridViewColumn
-                                x:Name="colMyModsIncompIcon"
-                                Width="28"
-                                Header="" >
-                                    <GridViewColumn.CellTemplate>
-                                        <DataTemplate>
-                                            <StackPanel Orientation="Horizontal">
+
                                                 <TextBlock x:Name="colMyModsIncompText"
+                                                FontFamily="{StaticResource NotoEmoji}"
                                                 Text="{Binding IncompIcon}"
                                                 ToolTip="{Binding ActiveIncompatibleMods}"
                                                 ToolTipService.InitialShowDelay="10"
                                                 ToolTipService.BetweenShowDelay="0"
-                                                Foreground="#b51717" />
+                                                Effect="{StaticResource ButtondropShadowEffect}"
+                                                Foreground="#f51818" />
                                             </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
@@ -755,7 +777,7 @@
                     Padding="15,6,15,6"
                     Text="Catalog"
                     Foreground="{StaticResource WhiteUI}"
-                    FontFamily="Century Gothic"
+                    FontFamily="{StaticResource CenturyGothic}"
                     FontSize="15" />
                 </TabItem.Header>
                 <Grid>
@@ -835,9 +857,22 @@
                                 <!--<GridViewColumn x:Name="colCatalogDownloadSize" Header="Size" Width="60" DisplayMemberBinding="{Binding DownloadSize}"/>-->
                                 <GridViewColumn
                                 x:Name="colCatalogInstalled"
-                                Width="28"
-                                DisplayMemberBinding="{Binding Installed}"
-                                Header="Installed" />
+                                Width="28" >
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                            Text="✅"
+                                            FontFamily="{StaticResource NotoEmoji}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                            Text="{Binding Installed}"
+                                            FontFamily="{StaticResource NotoEmoji}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                                 <GridViewColumn
                                 x:Name="colCatalogName"
                                 Width="Auto"

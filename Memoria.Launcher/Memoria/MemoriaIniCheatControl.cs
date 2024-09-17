@@ -1,6 +1,5 @@
 ﻿using Ini;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -11,7 +10,6 @@ using System.Windows.Media;
 using Application = System.Windows.Application;
 using Binding = System.Windows.Data.Binding;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
-
 
 // ReSharper disable UnusedMember.Local
 // ReSharper disable InconsistentNaming

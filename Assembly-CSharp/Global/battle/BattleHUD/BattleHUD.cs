@@ -155,10 +155,14 @@ public partial class BattleHUD : UIScene
         Single additionalWidth = 0.0f;
         switch (info)
         {
-            case LibraInformation.Name: return [Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(unit.Name, ref additionalWidth)];
-            case LibraInformation.Level: return [FF9TextTool.BattleLibraText(10) + unit.Level.ToString()];
-            case LibraInformation.HP: return [FF9TextTool.BattleLibraText(11) + unit.CurrentHp + FF9TextTool.BattleLibraText(13) + unit.MaximumHp];
-            case LibraInformation.MP: return [FF9TextTool.BattleLibraText(12) + unit.CurrentMp + FF9TextTool.BattleLibraText(13) + unit.MaximumMp];
+            case LibraInformation.Name:
+                return [Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(unit.Name, ref additionalWidth)];
+            case LibraInformation.Level:
+                return [FF9TextTool.BattleLibraText(10) + unit.Level.ToString()];
+            case LibraInformation.HP:
+                return [FF9TextTool.BattleLibraText(11) + unit.CurrentHp + FF9TextTool.BattleLibraText(13) + unit.MaximumHp];
+            case LibraInformation.MP:
+                return [FF9TextTool.BattleLibraText(12) + unit.CurrentMp + FF9TextTool.BattleLibraText(13) + unit.MaximumMp];
             case LibraInformation.Category:
                 if (!unit.IsPlayer)
                 {
@@ -366,9 +370,7 @@ public partial class BattleHUD : UIScene
             id = _peepingEnmData.StealableItems[_currentPeepingReverseOrder ? _peepingEnmData.StealableItems.Length - stealIndex : stealIndex - 1];
         } while (id == RegularItem.NoItem);
 
-        SetBattleMessage(Localization.GetSymbol() != "JP"
-            ? FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(id)
-            : FF9TextTool.ItemName(id) + FF9TextTool.BattleLibraText(8), 3);
+        SetBattleMessage(Localization.GetSymbol() != "JP" ? FF9TextTool.BattleLibraText(8) + FF9TextTool.ItemName(id) : FF9TextTool.ItemName(id) + FF9TextTool.BattleLibraText(8), 3);
         return true;
     }
 
@@ -539,6 +541,8 @@ public partial class BattleHUD : UIScene
             Int32 iconIndex = 0;
             foreach (KeyValuePair<BattleStatusId, String> status in iconNames)
             {
+                if (iconIndex >= uiStatus.Icons.Count)
+                    break;
                 if (!player.IsUnderAnyStatus(status.Key.ToBattleStatus()))
                     continue;
 
@@ -546,9 +550,6 @@ public partial class BattleHUD : UIScene
                 sprite.alpha = 1f;
                 sprite.spriteName = status.Value;
                 iconIndex++;
-
-                if (iconIndex > uiStatus.Icons.Count)
-                    break;
             }
             list.Remove(index1);
         }
@@ -1701,11 +1702,16 @@ public partial class BattleHUD : UIScene
     {
         switch (TargetType)
         {
-            case TargetType.AllAlly: return 0x0F;
-            case TargetType.AllEnemy: return 0xF0;
-            case TargetType.Everyone: return 0xFF;
-            case TargetType.Self: return cmd.regist.btl_id;
-            default: return cmddetail.TargetId;
+            case TargetType.AllAlly:
+                return 0x0F;
+            case TargetType.AllEnemy:
+                return 0xF0;
+            case TargetType.Everyone:
+                return 0xFF;
+            case TargetType.Self:
+                return cmd.regist.btl_id;
+            default:
+                return cmddetail.TargetId;
         }
     }
 
@@ -2667,7 +2673,7 @@ public partial class BattleHUD : UIScene
                 btl_stat.RemoveStatuses(swappedOut, FF9BattleDB.AllStatuses);
                 btl_sys.DelCharacter(swappedOut);
                 RemovePlayerFromAction(swappedOut.Id, true);
-                btl_cmd.KillCommand3(swappedOut);
+                btl_cmd.KillAllCommands(swappedOut);
                 btl_init.SwapPlayerCharacter(swappedOut, swappedIn);
                 AbilityPlayerDetail abilityPlayer = _abilityDetailDict[swappedOut.GetIndex()];
                 abilityPlayer.Player = swappedIn;

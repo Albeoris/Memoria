@@ -581,14 +581,14 @@ public class AnimationFactory
         }
     };
 
-    private static String[] defaultAnimation = new String[]
+    /*private static String[] defaultAnimation = new String[]
     {
         "IDLE",
         "WALK",
         "RUN",
         "TURN_L",
         "TURN_R"
-    };
+    };*/
 
     private static Dictionary<String, AnimationClip> animationEventClip = new Dictionary<String, AnimationClip>();
 

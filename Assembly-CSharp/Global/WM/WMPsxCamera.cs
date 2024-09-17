@@ -4,6 +4,7 @@ using Object = System.Object;
 
 public class WMPsxCamera
 {
+    /*
     public static void DebugLogPsxCam(Int16[,] psxRotation, Int32[] psxTranslation)
     {
         String text = String.Empty;
@@ -185,4 +186,5 @@ public class WMPsxCamera
     public Int32 PsxGeomScreen;
 
     public Int32 ClipDistance = 16383;
+    */
 }
