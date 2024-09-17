@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using System.Windows.Media.Imaging;
 using System.Xml;
 
@@ -51,6 +53,7 @@ namespace Memoria.Launcher
         public Int32 Priority { get; set; }
         public Int32 PriorityWeight { get; set; }
         public BitmapImage PreviewImage { get; set; }
+        public IniReader PresetIni { get; set; }
 
         // Entries for current download
         public String DownloadSpeed { get; set; }
@@ -58,6 +61,10 @@ namespace Memoria.Launcher
         public Int64 PercentComplete { get; set; }
 
         public String FullInstallationPath => ParentMod != null ? ParentMod.InstallationPath + "/" + InstallationPath : InstallationPath;
+
+        private static IniReader memoriaIni;
+
+        private const String presetFile = "Preset.ini";
 
         public Mod()
         {
@@ -204,6 +211,10 @@ namespace Memoria.Launcher
             MinimumMemoriaVersion = modNode["MinimumMemoriaVersion"]?.InnerText;
             if (Int64.TryParse(modNode["FullSize"]?.InnerText ?? "0", out outParse)) FullSize = outParse;
             if (Int64.TryParse(modNode["DownloadSize"]?.InnerText ?? "0", out outParse)) DownloadSize = outParse;
+            if (File.Exists(Path.Combine(FullInstallationPath, presetFile)))
+            {
+                PresetIni = new IniReader(Path.Combine(FullInstallationPath, presetFile));
+            }
             SubMod.Clear();
             foreach (XmlNode subNode in elSubMod)
             {
@@ -380,6 +391,39 @@ namespace Memoria.Launcher
                 }
             }
             File.WriteAllText(folderPath + "/" + DESCRIPTION_FILE, IndentXml(doc.OuterXml));
+        }
+
+        public void TryApplyPreset()
+        {
+            if (PresetIni == null) return;
+            if (memoriaIni == null)
+                memoriaIni = new IniReader(@"./Memoria.ini");
+
+            StringBuilder sb = new StringBuilder();
+            IniReader.Key presetNameKey = new IniReader.Key("Preset", "Name");
+            if (PresetIni.Options.ContainsKey(presetNameKey))
+            {
+                sb.AppendLine($"[{Name}] {PresetIni.Options[presetNameKey]}");
+            }
+            List<IniReader.Key> keys = new List<IniReader.Key>();
+            foreach (var key in PresetIni.Options.Keys)
+            {
+                if (memoriaIni.Options.ContainsKey(key))
+                {
+                    keys.Add(key);
+                    sb.AppendLine($"  [{key.Section}] {key.Name} = {PresetIni.Options[key]}");
+                }
+            }
+
+            if (keys.Count == 0) return;
+
+            if (MessageBox.Show($"{Lang.ModEditor.ApplyModPresetText}\n\n{sb}", Lang.ModEditor.ApplyModPresetCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                foreach (var key in keys)
+                {
+                    memoriaIni.IniFile.WriteValue(key.Section, key.Name, $" {PresetIni.Options[key]}");
+                }
+            }
         }
 
         public static String IndentXml(String xmlRaw)

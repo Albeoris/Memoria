@@ -364,6 +364,8 @@ namespace Memoria.Launcher
             public static readonly String TimeLeft = GetModEditor(nameof(TimeLeft));
             public static readonly String ActiveIncompatibleMods = GetModEditor(nameof(ActiveIncompatibleMods));
             public static readonly String IncompatibleWithMemoria = GetModEditor(nameof(IncompatibleWithMemoria));
+            public static readonly String ApplyModPresetText = GetModEditor(nameof(ApplyModPresetText));
+            public static readonly String ApplyModPresetCaption = GetModEditor(nameof(ApplyModPresetCaption));
             public static readonly String UpdateTooltip = GetModEditor(nameof(UpdateTooltip));
             public static readonly String TooltipMoveUp = GetModEditor(nameof(TooltipMoveUp));
             public static readonly String TooltipMoveDown = GetModEditor(nameof(TooltipMoveDown));
