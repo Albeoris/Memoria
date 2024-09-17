@@ -11,17 +11,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Forms;
-using System.Windows.Media;
 using System.Windows.Threading;
 using Application = System.Windows.Application;
-using Binding = System.Windows.Data.Binding;
-using ComboBox = System.Windows.Controls.ComboBox;
-using CheckBox = System.Windows.Controls.CheckBox;
-using Control = System.Windows.Controls.Control;
 using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using MessageBox = System.Windows.MessageBox;
 
@@ -38,89 +30,39 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Vanilla()
         {
-            SetRows(20);
             SetCols(8);
 
             Width = 260;
-            VerticalAlignment = VerticalAlignment.Bottom;
-            HorizontalAlignment = HorizontalAlignment.Left;
-            Margin = new Thickness(5);
+            Margin = new Thickness(0);
             DataContext = this;
 
-            Thickness rowMargin = new Thickness(0, 7, 0, 5);
+            Thickness rowMargin = new Thickness(0, 2, 0, 2);
 
-            TextBlock monitortext = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.ActiveMonitor), row: 0, col: 0, rowSpan: 3, colSpan: 8);
-            monitortext.Margin = rowMargin;
-            monitortext.ToolTip = Lang.Settings.ActiveMonitor_Tooltip;
-            ComboBox monitor = AddUiElement(UiComboBoxFactory.Create(), row: 2, col: 0, rowSpan: 3, colSpan: 8);
-            monitor.ItemsSource = GetAvailableMonitors();
-            monitor.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ActiveMonitor)) { Mode = BindingMode.TwoWay });
-            monitor.Margin = rowMargin;
-            monitor.Height = 20;
-            monitor.FontSize = 10;
+            CreateTextbloc(Lang.Settings.ActiveMonitor, false, Lang.Settings.ActiveMonitor_Tooltip);
+            String[] comboboxchoices = GetAvailableMonitors();
+            CreateCombobox("ActiveMonitor", comboboxchoices, 4, "", true);
 
-            TextBlock windowModetext = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.WindowMode), row: 5, col: 0, rowSpan: 3, colSpan: 8);
-            windowModetext.Margin = rowMargin;
-            windowModetext.ToolTip = Lang.Settings.WindowMode_Tooltip;
-            ComboBox windowMode = AddUiElement(UiComboBoxFactory.Create(), row: 7, col: 0, rowSpan: 3, colSpan: 8);
-            windowMode.ItemsSource = EnumerateWindowModeSettings().ToArray();
-            windowMode.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(WindowMode)) { Mode = BindingMode.TwoWay });
-            windowMode.Margin = rowMargin;
-            windowMode.Height = 20;
-            windowMode.FontSize = 10;
+            CreateTextbloc(Lang.Settings.WindowMode, false, Lang.Settings.WindowMode_Tooltip);
+            comboboxchoices = new String[]
+            {
+                Lang.Settings.Window,
+                Lang.Settings.ExclusiveFullscreen,
+                Lang.Settings.BorderlessFullscreen
+            };
+            CreateCombobox("WindowMode", comboboxchoices, 4);
 
-            TextBlock resolutiontext = AddUiElement(UiTextBlockFactory.Create(Lang.Settings.Resolution), row: 10, col: 0, rowSpan: 3, colSpan: 3);
-            resolutiontext.Margin = rowMargin;
-            resolutiontext.ToolTip = Lang.Settings.Resolution_Tooltip;
-            ComboBox resolution = AddUiElement(UiComboBoxFactory.Create(), row: 10, col: 3, rowSpan: 3, colSpan: 5);
-            resolution.ItemsSource = EnumerateDisplaySettings(true).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray();
-            resolution.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(ScreenResolution)) { Mode = BindingMode.TwoWay });
-            resolution.Margin = rowMargin;
-            resolution.Height = 20;
-            resolution.FontSize = 10;
+            CreateTextbloc(Lang.Settings.Resolution, false, Lang.Settings.Resolution_Tooltip);
+            comboboxchoices = EnumerateDisplaySettings(true).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray();
+            CreateCombobox("ScreenResolution", comboboxchoices, 4, "", true);
 
-            CheckBox x64 = AddUiElement(UiCheckBoxFactory.Create("x64", null), 13, 0, 3, 4);
-            x64.Margin = rowMargin;
-            x64.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsX64)) { Mode = BindingMode.TwoWay });
-            x64.SetBinding(ToggleButton.IsEnabledProperty, new Binding(nameof(IsX64Enabled)) { Mode = BindingMode.TwoWay });
-            x64.ToolTip = Lang.Settings.Xsixfour_Tooltip;
-
-            CheckBox debuggableCheckBox = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.Debuggable, null), 13, 3, 3, 5);
-            debuggableCheckBox.Margin = rowMargin;
-            debuggableCheckBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(IsDebugMode)) { Mode = BindingMode.TwoWay });
-            debuggableCheckBox.ToolTip = Lang.Settings.Debuggable_Tooltip;
-
-            CheckBox checkUpdates = AddUiElement(UiCheckBoxFactory.Create(Lang.Settings.CheckUpdates, null), 15, 0, 3, 8);
-            checkUpdates.Margin = rowMargin;
-            checkUpdates.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(CheckUpdates)) { Mode = BindingMode.TwoWay });
-            checkUpdates.ToolTip = Lang.Settings.CheckUpdates_Tooltip;
+            CreateCheckbox("IsX64", "x64", Lang.Settings.Xsixfour_Tooltip, 0, "IsX64Enabled");
+            CreateCheckbox("IsDebugMode", Lang.Settings.Debuggable, Lang.Settings.Debuggable_Tooltip, 4);
+            CreateCheckbox("CheckUpdates", Lang.Settings.CheckUpdates, Lang.Settings.CheckUpdates_Tooltip);
 
             String OSversion = $"{Environment.OSVersion}";
-            Boolean isRunningInWine = !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WINELOADER"));
-            if (OSversion.Contains("Windows") && !isRunningInWine)
-            {
-                CheckBox steamOverlayFix = AddUiElement(UiCheckBoxFactory.Create(Lang.SteamOverlay.OptionLabel, null), 17, 0, 3, 8);
-                steamOverlayFix.Margin = rowMargin;
-                steamOverlayFix.SetBinding(ToggleButton.IsCheckedProperty, new Binding(nameof(SteamOverlayFix)) { Mode = BindingMode.TwoWay });
-                steamOverlayFix.ToolTip = Lang.Settings.SteamOverlayFix_Tooltip;
-            }
+            if (OSversion.Contains("Windows") && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WINELOADER")))
+                CreateCheckbox("SteamOverlayFix", Lang.SteamOverlay.OptionLabel, Lang.Settings.SteamOverlayFix_Tooltip);
 
-            foreach (FrameworkElement child in Children)
-            {
-                //if (!ReferenceEquals(child, backround))
-                child.Margin = new Thickness(child.Margin.Left + 8, child.Margin.Top, child.Margin.Right + 8, child.Margin.Bottom);
-
-                if (child is TextBlock textblock)
-                {
-                    textblock.Foreground = Brushes.WhiteSmoke;
-                    textblock.FontWeight = FontWeight.FromOpenTypeWeight(500);
-                    continue;
-                }
-
-                Control control = child as Control;
-                if (control != null && control is not ComboBox)
-                    control.Foreground = Brushes.WhiteSmoke;
-            }
             try
             {
                 LoadSettings();
@@ -146,7 +88,7 @@ namespace Memoria.Launcher
             }
         }
 
-        public String WindowMode
+        public Int16 WindowMode
         {
             get { return _windowMode; }
             set
@@ -303,7 +245,7 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Settings", propertyName, ActiveMonitor ?? String.Empty);
                         break;
                     case nameof(WindowMode):
-                        iniFile.WriteValue("Settings", propertyName, WindowMode ?? Lang.Settings.Window);
+                        iniFile.WriteValue("Settings", propertyName, WindowMode.ToString());
                         break;
                     case nameof(IsDebugMode):
                         iniFile.WriteValue("Memoria", propertyName, IsDebugMode.ToString());
@@ -336,11 +278,10 @@ namespace Memoria.Launcher
         #endregion
 
         public static readonly String IniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Settings.ini";
-        public static readonly String MemoriaIniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
 
         private String _resolution = "";
         private String _activeMonitor = "";
-        private String _windowMode = "";
+        private Int16 _windowMode;
         private Boolean _isX64 = true;
         private Boolean _isX64Enabled = true;
         private Boolean _isDebugMode;
@@ -367,9 +308,13 @@ namespace Memoria.Launcher
 
                 value = iniFile.ReadValue("Settings", nameof(WindowMode));
                 if (!String.IsNullOrEmpty(value))
-                    _windowMode = value;
-                if (!EnumerateWindowModeSettings().Contains(_windowMode))
-                    _windowMode = Lang.Settings.Window;
+                {
+                    if (value == Lang.Settings.Window) value = "0";
+                    if (value == Lang.Settings.ExclusiveFullscreen) value = "1";
+                    if (value == Lang.Settings.BorderlessFullscreen) value = "2";
+                }
+                if (!Int16.TryParse(value, out _windowMode))
+                    _windowMode = 0;
 
                 value = iniFile.ReadValue("Memoria", nameof(IsX64));
                 if (String.IsNullOrEmpty(value))
@@ -531,13 +476,6 @@ namespace Memoria.Launcher
                     _activeMonitor = result[index];
             }
             return result;
-        }
-
-        private IEnumerable<String> EnumerateWindowModeSettings()
-        {
-            yield return Lang.Settings.Window; // Unity Player launches in a window with an OS-styled title-bar. Can be moved around by dragging the title-bar
-            yield return Lang.Settings.ExclusiveFullscreen; // Unity Player launches in full screen on the selected monitor. Screen disappears if the application loses focus (IE, by clicking on another application)
-            yield return Lang.Settings.BorderlessFullscreen; // If the resolution matches the target display then Unity Player launches in borderless fullscreen mode on that display. Unlike exclusive fullscreen the player will not disappear if the app loses focus. If the resolution is smaller than the display resolution then Unity player will launch as a window without a title-bar (sized to the chosen resolution). 
         }
 
         private struct DevMode

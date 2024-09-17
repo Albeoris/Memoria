@@ -45,7 +45,7 @@ namespace Memoria.Launcher
             Children.Add(uiElement);
             return uiElement;
         }
-        public CheckBox CreateCheckbox(String property, object text, String tooltip = "", Int32 firstColumn = 0)
+        public void CreateCheckbox(String property, object text, String tooltip = "", Int32 firstColumn = 0, String propertyToEnable = "")
         {
             if (firstColumn == 0)
             {
@@ -59,15 +59,16 @@ namespace Memoria.Launcher
                 checkBox.ToolTip = tooltip;
             checkBox.Foreground = TextColor;
             checkBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(property) { Mode = BindingMode.TwoWay });
+            if (propertyToEnable != "")
+                checkBox.SetBinding(ToggleButton.IsEnabledProperty, new Binding(propertyToEnable) { Mode = BindingMode.TwoWay });
             checkBox.Margin = CommonMargin;
             checkBox.SetValue(RowProperty, Row);
             checkBox.SetValue(ColumnProperty, firstColumn);
             checkBox.SetValue(RowSpanProperty, 1);
             checkBox.SetValue(ColumnSpanProperty, MaxColumns);
             Children.Add(checkBox);
-            return checkBox;
         }
-        public TextBlock CreateTextbloc(String text, Boolean isBold = false, String tooltip = "")
+        public void CreateTextbloc(String text, Boolean isBold = false, String tooltip = "")
         {
             Row++;
             RowDefinitions.Add(new RowDefinition());
@@ -83,9 +84,8 @@ namespace Memoria.Launcher
             textbloc.SetValue(RowSpanProperty, 1);
             textbloc.SetValue(ColumnSpanProperty, MaxColumns);
             Children.Add(textbloc);
-            return textbloc;
         }
-        public ComboBox CreateCombobox(String property, IEnumerable options, String tooltip = "", Int32 firstColumn = 4)
+        public void CreateCombobox(String property, IEnumerable options, Int32 firstColumn = 4, String tooltip = "", Boolean selectByName = false)
         {
             if (firstColumn == 0)
             {
@@ -100,13 +100,15 @@ namespace Memoria.Launcher
             comboBox.Margin = CommonMargin;
             comboBox.Height = 18;
             comboBox.FontSize = 10;
-            comboBox.SetBinding(Selector.SelectedIndexProperty, new Binding(property) { Mode = BindingMode.TwoWay });
+            if (selectByName)
+                comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(property) { Mode = BindingMode.TwoWay });
+            else
+                comboBox.SetBinding(Selector.SelectedIndexProperty, new Binding(property) { Mode = BindingMode.TwoWay });
             comboBox.SetValue(RowProperty, Row);
             comboBox.SetValue(ColumnProperty, firstColumn);
             comboBox.SetValue(RowSpanProperty, 1);
             comboBox.SetValue(ColumnSpanProperty, MaxColumns);
             Children.Add(comboBox);
-            return comboBox;
         }
     }
 

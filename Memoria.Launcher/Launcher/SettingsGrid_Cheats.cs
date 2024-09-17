@@ -41,7 +41,7 @@ namespace Memoria.Launcher
                 Lang.Settings.AccessBattleMenuType2,
                 Lang.Settings.AccessBattleMenuType3
             };
-            CreateCombobox("AccessBattleMenu", accessmenuchoices, Lang.Settings.AccessBattleMenu_Tooltip);
+            CreateCombobox("AccessBattleMenu", accessmenuchoices, 4, Lang.Settings.AccessBattleMenu_Tooltip);
 
             CreateCheckbox("SpeedMode", Lang.Settings.SpeedMode, Lang.Settings.SpeedMode_Tooltip);
             Row++;

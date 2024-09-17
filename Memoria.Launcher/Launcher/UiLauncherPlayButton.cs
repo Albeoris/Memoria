@@ -134,7 +134,7 @@ namespace Memoria.Launcher
                     }
                 }
 
-                String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {((GameSettings.WindowMode == Lang.Settings.Window ^ GameSettings.WindowMode == Lang.Settings.BorderlessFullscreen) ? "0" : "1")} {(GameSettings.WindowMode == Lang.Settings.BorderlessFullscreen ? "-popupwindow" : "")}";
+                String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {((GameSettings.WindowMode == 0 ^ GameSettings.WindowMode == 2) ? "0" : "1")} {(GameSettings.WindowMode == 2 ? "-popupwindow" : "")}";
                 await Task.Factory.StartNew(
                     () =>
                     {
