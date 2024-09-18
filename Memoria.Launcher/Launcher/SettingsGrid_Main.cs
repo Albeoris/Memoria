@@ -1,10 +1,6 @@
 using System;
 using System.Drawing.Text;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Media;
-using Binding = System.Windows.Data.Binding;
 
 namespace Memoria.Launcher
 {
@@ -29,22 +25,7 @@ namespace Memoria.Launcher
 
             CreateTextbloc(Lang.Settings.CameraStabilizer, false, Lang.Settings.CameraStabilizer_Tooltip);
 
-            Row++;
-
-            TextBlock CameraStabilizerIndex = AddUiElement(UiTextBlockFactory.Create(""), Row, 0, 1, 8);
-            CameraStabilizerIndex.SetBinding(TextBlock.TextProperty, new Binding(nameof(CameraStabilizer)) { Mode = BindingMode.TwoWay });
-            CameraStabilizerIndex.Foreground = Brushes.White;
-            CameraStabilizerIndex.Margin = CommonMargin;
-            Slider CameraStabilizerSlider = AddUiElement(UiSliderFactory.Create(0), Row, 1, 1, 8);
-            CameraStabilizerSlider.SetBinding(Slider.ValueProperty, new Binding(nameof(CameraStabilizer)) { Mode = BindingMode.TwoWay });
-            CameraStabilizerSlider.TickFrequency = 1;
-            CameraStabilizerSlider.TickPlacement = TickPlacement.BottomRight;
-            CameraStabilizerSlider.Height = 20;
-            CameraStabilizerSlider.IsSnapToTickEnabled = true;
-            CameraStabilizerSlider.Minimum = 0;
-            CameraStabilizerSlider.Maximum = 99;
-            CameraStabilizerSlider.Margin = new(3, 3, 3, 3);
-
+            CreateSlider("CameraStabilizer", "CameraStabilizer", 0, 99, 1);
 
             CreateTextbloc(Lang.Settings.BattleInterface, false, Lang.Settings.BattleInterface_Tooltip);
             comboboxchoices = new String[]{

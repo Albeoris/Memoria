@@ -9,7 +9,6 @@ using System.Windows.Data;
 using Binding = System.Windows.Data.Binding;
 using CheckBox = System.Windows.Controls.CheckBox;
 using ComboBox = System.Windows.Controls.ComboBox;
-using Control = System.Windows.Controls.Control;
 using MessageBox = System.Windows.MessageBox;
 using System.Collections;
 namespace Memoria.Launcher
@@ -20,6 +19,7 @@ namespace Memoria.Launcher
         public Thickness CommonMargin = new Thickness(0, 2, 0, 2);
         public Int32 Row = -1;
         public Int32 MaxColumns = 8;
+        public Int32 FontWeightNormal = 500;
         public void SetRows(Int32 count)
         {
             count -= RowDefinitions.Count;
@@ -58,6 +58,7 @@ namespace Memoria.Launcher
             if (tooltip != "")
                 checkBox.ToolTip = tooltip;
             checkBox.Foreground = TextColor;
+            checkBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightNormal);
             checkBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(property) { Mode = BindingMode.TwoWay });
             if (propertyToEnable != "")
                 checkBox.SetBinding(ToggleButton.IsEnabledProperty, new Binding(propertyToEnable) { Mode = BindingMode.TwoWay });
@@ -77,7 +78,7 @@ namespace Memoria.Launcher
             if (tooltip != "")
                 textbloc.ToolTip = tooltip;
             textbloc.Foreground = TextColor;
-            textbloc.FontWeight = isBold ? FontWeights.Bold : FontWeight.FromOpenTypeWeight(500);
+            textbloc.FontWeight = isBold ? FontWeights.Bold : FontWeight.FromOpenTypeWeight(FontWeightNormal);
             textbloc.Margin = CommonMargin;
             textbloc.SetValue(RowProperty, Row);
             textbloc.SetValue(ColumnProperty, 0);
@@ -97,6 +98,7 @@ namespace Memoria.Launcher
             if (tooltip != "")
                 comboBox.ToolTip = tooltip;
             comboBox.Foreground = Brushes.Black;
+            comboBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightNormal);
             comboBox.Margin = CommonMargin;
             comboBox.Height = 18;
             comboBox.FontSize = 10;
@@ -109,6 +111,39 @@ namespace Memoria.Launcher
             comboBox.SetValue(RowSpanProperty, 1);
             comboBox.SetValue(ColumnSpanProperty, MaxColumns);
             Children.Add(comboBox);
+        }
+        public void CreateSlider(String indexproperty, String sliderproperty, double min, double max, double tickFrequency, String stringFormat = "{0}", Int32 firstColumn = 1)
+        {
+            Row++;
+            RowDefinitions.Add(new RowDefinition());
+
+            TextBlock textbloc = new TextBlock();
+            textbloc.Text = "";
+            textbloc.SetBinding(TextBlock.TextProperty, new Binding(indexproperty) { Mode = BindingMode.TwoWay, StringFormat = stringFormat });
+            textbloc.Foreground = TextColor;
+            textbloc.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightNormal);
+            textbloc.Margin = CommonMargin;
+            textbloc.SetValue(RowProperty, Row);
+            textbloc.SetValue(ColumnProperty, 0);
+            textbloc.SetValue(RowSpanProperty, 1);
+            textbloc.SetValue(ColumnSpanProperty, MaxColumns);
+            Children.Add(textbloc);
+
+            Slider slider = new Slider();
+            slider.Value = 0;
+            slider.SetBinding(Slider.ValueProperty, new Binding(sliderproperty) { Mode = BindingMode.TwoWay });
+            slider.Height = 18;
+            slider.Margin = CommonMargin;
+            slider.Minimum = min;
+            slider.Maximum = max;
+            slider.TickFrequency = tickFrequency;
+            slider.IsSnapToTickEnabled = true;
+            slider.TickPlacement = TickPlacement.BottomRight;
+            slider.SetValue(RowProperty, Row);
+            slider.SetValue(ColumnProperty, firstColumn);
+            slider.SetValue(RowSpanProperty, 1);
+            slider.SetValue(ColumnSpanProperty, MaxColumns);
+            Children.Add(slider);
         }
     }
 

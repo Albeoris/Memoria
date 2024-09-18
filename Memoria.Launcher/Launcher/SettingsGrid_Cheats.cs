@@ -1,10 +1,4 @@
 using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Media;
-using Binding = System.Windows.Data.Binding;
 
 namespace Memoria.Launcher
 {
@@ -30,36 +24,10 @@ namespace Memoria.Launcher
             CreateCombobox("AccessBattleMenu", accessmenuchoices, 4, Lang.Settings.AccessBattleMenu_Tooltip);
 
             CreateCheckbox("SpeedMode", Lang.Settings.SpeedMode, Lang.Settings.SpeedMode_Tooltip);
-            Row++;
-            TextBlock speedFactorTextindex = AddUiElement(UiTextBlockFactory.Create(""), Row, 0, 1, 8);
-            speedFactorTextindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay, StringFormat = "{0}x" });
-            speedFactorTextindex.Foreground = Brushes.White;
-            speedFactorTextindex.Margin = CommonMargin;
-            Slider speedFactor = AddUiElement(UiSliderFactory.Create(0), Row, 1, 1, 8);
-            speedFactor.SetBinding(Slider.ValueProperty, new Binding(nameof(SpeedFactor)) { Mode = BindingMode.TwoWay });
-            speedFactor.TickFrequency = 1;
-            speedFactor.IsSnapToTickEnabled = true;
-            speedFactor.TickPlacement = TickPlacement.BottomRight;
-            speedFactor.Height = 20;
-            speedFactor.Minimum = 2;
-            speedFactor.Maximum = 12;
-            speedFactor.Margin = new Thickness(0, 0, 3, 0);
-
+            CreateSlider("SpeedFactor", "SpeedFactor", 2, 12, 1, "{0}x");
+            
             CreateTextbloc(Lang.Settings.BattleTPS, false, Lang.Settings.BattleTPS_Tooltip);
-            Row++;
-            TextBlock BattleTPSindex = AddUiElement(UiTextBlockFactory.Create(""), Row, 0, 1, 8);
-            BattleTPSindex.SetBinding(TextBlock.TextProperty, new Binding(nameof(BattleTPSDividedBy10)) { Mode = BindingMode.TwoWay, StringFormat = "{0}x" });
-            BattleTPSindex.Foreground = Brushes.White;
-            BattleTPSindex.Margin = CommonMargin;
-            Slider BattleTPSFactor = AddUiElement(UiSliderFactory.Create(0), Row, 1, 1, 8);
-            BattleTPSFactor.SetBinding(Slider.ValueProperty, new Binding(nameof(BattleTPS)) { Mode = BindingMode.TwoWay });
-            BattleTPSFactor.TickFrequency = 1;
-            BattleTPSFactor.IsSnapToTickEnabled = true;
-            BattleTPSFactor.TickPlacement = TickPlacement.BottomRight;
-            BattleTPSFactor.Height = 20;
-            BattleTPSFactor.Minimum = 15;
-            BattleTPSFactor.Maximum = 75;
-            BattleTPSFactor.Margin = new Thickness(0, 0, 3, 0);
+            CreateSlider("BattleTPSDividedBy10", "BattleTPS", 15, 75, 1, "{0}x");
 
             CreateCheckbox("BattleAssistance", Lang.Settings.BattleAssistance, Lang.Settings.BattleAssistance_Tooltip);
             CreateCheckbox("NoRandomEncounter", Lang.Settings.NoRandomBattles, Lang.Settings.NoRandomBattles_Tooltip);
