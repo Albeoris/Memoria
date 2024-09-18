@@ -14,15 +14,7 @@ using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Threading;
 using Application = System.Windows.Application;
-using HorizontalAlignment = System.Windows.HorizontalAlignment;
 using MessageBox = System.Windows.MessageBox;
-
-// ReSharper disable UnusedMember.Local
-// ReSharper disable InconsistentNaming
-// ReSharper disable ExplicitCallerInfoArgument
-// ReSharper disable ArrangeStaticMemberQualifier
-#pragma warning disable 649
-#pragma warning disable 169
 
 namespace Memoria.Launcher
 {

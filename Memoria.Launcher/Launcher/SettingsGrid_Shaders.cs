@@ -1,30 +1,9 @@
-﻿using System;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using ComboBox = System.Windows.Controls.ComboBox;
-using Control = System.Windows.Controls.Control;
-
-// ReSharper disable UnusedMember.Local
-// ReSharper disable InconsistentNaming
-// ReSharper disable ExplicitCallerInfoArgument
-// ReSharper disable ArrangeStaticMemberQualifier
-#pragma warning disable 649
-#pragma warning disable 169
-
-namespace Memoria.Launcher
+﻿namespace Memoria.Launcher
 {
     public sealed class SettingsGrid_Shaders : Settings
     {
         public SettingsGrid_Shaders()
         {
-            SetCols(8);
-
-            Width = 260;
-            Margin = new Thickness(0);
-            DataContext = this;
-
-
             CreateTextbloc(Lang.Settings.Shader_Enable, true);
             CreateTextbloc("╙ " + Lang.Settings.Shader_Field_chars);
 

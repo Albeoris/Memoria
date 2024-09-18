@@ -1,20 +1,10 @@
 using System;
 using System.Drawing.Text;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using Binding = System.Windows.Data.Binding;
-using HorizontalAlignment = System.Windows.HorizontalAlignment;
-
-
-// ReSharper disable UnusedMember.Local
-// ReSharper disable InconsistentNaming
-// ReSharper disable ExplicitCallerInfoArgument
-// ReSharper disable ArrangeStaticMemberQualifier
-#pragma warning disable 649
-#pragma warning disable 169
 
 namespace Memoria.Launcher
 {
@@ -23,13 +13,7 @@ namespace Memoria.Launcher
         public SettingsGrid_Main()
         {
             SetRows(2);
-            SetCols(8);
-
-            Width = 260;
-            Margin = new Thickness(0);
-
-            DataContext = this;
-
+            
             CreateCheckbox("WidescreenSupport", Lang.Settings.Widescreen, Lang.Settings.Widescreen_Tooltip);
             CreateCheckbox("AntiAliasing", Lang.Settings.AntiAliasing, Lang.Settings.AntiAliasing_Tooltip);
 
@@ -104,24 +88,17 @@ namespace Memoria.Launcher
             CreateCheckbox("UsePsxFont", Lang.Settings.UsePsxFont, Lang.Settings.UsePsxFont_Tooltip);
 
             CreateTextbloc(Lang.Settings.FontChoice, false, Lang.Settings.FontChoice_Tooltip);
-            FontChoiceBox = AddUiElement(UiComboBoxFactory.Create(), Row, 2, 1, 7);
-            FontChoiceBox.Height = 20;
-            FontChoiceBox.FontSize = 10;
-            FontChoiceBox.Margin = CommonMargin;
-
             FontCollection installedFonts = new InstalledFontCollection();
             String[] fontNames = new String[installedFonts.Families.Length + 2];
             fontNames[0] = "Final Fantasy IX PC";
             fontNames[1] = "Final Fantasy IX PSX";
             for (Int32 fontindex = 0; fontindex < installedFonts.Families.Length; ++fontindex)
                 fontNames[fontindex + 2] = installedFonts.Families[fontindex].Name;
-            FontChoiceBox.ItemsSource = fontNames;
-            FontChoiceBox.SetBinding(Selector.SelectedItemProperty, new Binding(nameof(FontChoice)) { Mode = BindingMode.TwoWay });
+            CreateCombobox("FontChoice", fontNames, 2, "", true);
 
             IniFile.SanitizeMemoriaIni();
 
             LoadSettings();
-            FontChoiceBox.SelectedItem = _fontChoice;
         }
 
         private ComboBox FontChoiceBox;

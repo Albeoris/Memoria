@@ -5,14 +5,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using Binding = System.Windows.Data.Binding;
-using HorizontalAlignment = System.Windows.HorizontalAlignment;
-
-// ReSharper disable UnusedMember.Local
-// ReSharper disable InconsistentNaming
-// ReSharper disable ExplicitCallerInfoArgument
-// ReSharper disable ArrangeStaticMemberQualifier
-#pragma warning disable 649
-#pragma warning disable 169
 
 namespace Memoria.Launcher
 {
@@ -21,12 +13,6 @@ namespace Memoria.Launcher
         public SettingsGrid_Cheats()
         {
             SetRows(2);
-            SetCols(8);
-
-            Width = 260;
-            Margin = new Thickness(0);
-
-            DataContext = this;
 
             CreateTextbloc(Lang.Settings.IniCheats, true);
             CreateCheckbox("StealingAlwaysWorks", Lang.Settings.MaxStealRate, Lang.Settings.MaxStealRate_Tooltip);

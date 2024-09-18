@@ -5,18 +5,17 @@ using Application = System.Windows.Application;
 using System.Windows;
 using MessageBox = System.Windows.Forms.MessageBox;
 
-
-// ReSharper disable UnusedMember.Local
-// ReSharper disable InconsistentNaming
-// ReSharper disable ExplicitCallerInfoArgument
-// ReSharper disable ArrangeStaticMemberQualifier
-#pragma warning disable 649
-#pragma warning disable 169
-
 namespace Memoria.Launcher
 {
     public class Settings : UiGrid, INotifyPropertyChanged
     {
+        public Settings()
+        {
+            SetCols(8);
+            Width = 260;
+            Margin = new Thickness(0);
+            DataContext = this;
+        }
         #region Properties
 
         private String _iniPath = @"./Memoria.ini";
