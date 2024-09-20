@@ -511,7 +511,7 @@
                 <TabItem.Header>
                     <TextBlock
                     x:Name="tabMyMods"
-                    Padding="15,6,15,6"
+                    Padding="15,3,15,3"
                     Text="Installed Mods"
                     Foreground="{StaticResource WhiteUI}"
                     FontFamily="{StaticResource CenturyGothic}"
@@ -774,8 +774,8 @@
                 <TabItem.Header>
                     <TextBlock
                     x:Name="tabCatalog"
-                    Padding="15,6,15,6"
-                    Text="Catalog"
+                    Padding="15,3,15,3"
+                    Text="Mod Catalog"
                     Foreground="{StaticResource WhiteUI}"
                     FontFamily="{StaticResource CenturyGothic}"
                     FontSize="15" />
@@ -1040,16 +1040,17 @@
                     Grid.Column="0"
                     VerticalAlignment="Top"
                     HorizontalAlignment="left"
-                    Margin="10,4,2,2" >
+                    Margin="10,4,2,2"
+                    Visibility="Visible" >
                         <Border x:Name="border"
                         CornerRadius="6"
                         Background="#8000" />
                         <TextBlock
                         x:Name="PreviewModCategory"
-                        Margin="6,0,6,4"
+                        Margin="6,1,6,3"
                         Style="{StaticResource ModInfoDetailsStyle}"
                         TextAlignment="Right"
-                        Text="category" />
+                        Text="Category" />
                     </Grid>
                     <Grid x:Name="gridModName" 
                     Grid.Row="1"

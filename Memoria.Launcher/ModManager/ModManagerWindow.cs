@@ -992,7 +992,7 @@ namespace Memoria.Launcher
             {
                 gridModName.Visibility = Visibility.Visible;
                 gridModInfo.Visibility = Visibility.Visible;
-                PreviewModCategoryTagline.Visibility = Visibility.Visible;
+                PreviewModCategoryTagline.Visibility = !String.IsNullOrEmpty(mod.Category) ? Visibility.Visible : Visibility.Collapsed;
                 PreviewModName.Text = mod.Name;
                 PreviewModVersion.Text = mod.CurrentVersion?.ToString() ?? "";
                 PreviewModRelease.Text = mod.ReleaseDate ?? "";
