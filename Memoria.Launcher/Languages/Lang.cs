@@ -279,6 +279,7 @@ namespace Memoria.Launcher
             public static readonly string Shader_Realism = GetSettings(nameof(Shader_Realism));
             public static readonly string Shader_Toon = GetSettings(nameof(Shader_Toon));
             public static readonly string Shader_Outlines = GetSettings(nameof(Shader_Outlines));
+            public static readonly string Custom = GetSettings(nameof(Custom));
 
         }
 

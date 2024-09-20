@@ -607,20 +607,24 @@ namespace Memoria.Launcher
                         iniFile.WriteValue("Interface", "PSXBattleMenu ", " " + (BattleInterface == 2 ? 1 : 0));
                         break;
                     case nameof(UIColumnsChoice):
-                        iniFile.WriteValue("Interface", "MenuItemRowCount ", " " + (Int32)((UIColumnsChoice + 2) * 4));
-                        iniFile.WriteValue("Interface", "MenuAbilityRowCount ", " " + (Int32)((UIColumnsChoice + 2) * 3));
                         if (UIColumnsChoice == 0)
                         {
+                            iniFile.WriteValue("Interface", "MenuItemRowCount ", " 8");
+                            iniFile.WriteValue("Interface", "MenuAbilityRowCount ", " 6");
                             iniFile.WriteValue("Interface", "MenuEquipRowCount ", " 5");
                             iniFile.WriteValue("Interface", "MenuChocographRowCount ", " 5");
                         }
                         else if (UIColumnsChoice == 1)
                         {
+                            iniFile.WriteValue("Interface", "MenuItemRowCount ", " 12");
+                            iniFile.WriteValue("Interface", "MenuAbilityRowCount ", " 9");
                             iniFile.WriteValue("Interface", "MenuEquipRowCount ", " 7");
                             iniFile.WriteValue("Interface", "MenuChocographRowCount ", " 7");
                         }
                         else if (UIColumnsChoice == 2)
                         {
+                            iniFile.WriteValue("Interface", "MenuItemRowCount ", " 16");
+                            iniFile.WriteValue("Interface", "MenuAbilityRowCount ", " 12");
                             iniFile.WriteValue("Interface", "MenuEquipRowCount ", " 8");
                             iniFile.WriteValue("Interface", "MenuChocographRowCount ", " 8");
                         }
@@ -833,14 +837,21 @@ namespace Memoria.Launcher
                     _isskipintros = 0;
 
                 value = iniFile.ReadValue("Interface", "MenuItemRowCount");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 8";
-                    OnPropertyChanged(nameof(UIColumnsChoice));
-                }
-                String newvalue = ((Int16.Parse(value) / 4) - 2).ToString();
-                if (!Int16.TryParse(newvalue, out _uicolumnschoice))
+                value1isInt = Int16.TryParse(value, out value1);
+                value = iniFile.ReadValue("Interface", "MenuAbilityRowCount");
+                value2isInt = Int16.TryParse(value, out value2);
+                value = iniFile.ReadValue("Interface", "MenuEquipRowCount");
+                value3isInt = Int16.TryParse(value, out value3);
+                value = iniFile.ReadValue("Interface", "MenuChocographRowCount");
+                Boolean value4isInt = Int16.TryParse(value, out Int16 value4);
+                if (value1 == 8 && value2 == 6 && value3 == 5 && value4 == 5)
                     _uicolumnschoice = 0;
+                else if (value1 == 12 && value2 == 9 && value3 == 7 && value4 == 7)
+                    _uicolumnschoice = 1;
+                else if (value1 == 16 && value2 == 12 && value3 == 8 && value4 == 8)
+                    _uicolumnschoice = 2;
+                else
+                    _uicolumnschoice = -1;
 
                 value = iniFile.ReadValue("Graphics", nameof(BattleSwirlFrames));
                 if (String.IsNullOrEmpty(value))
@@ -848,7 +859,7 @@ namespace Memoria.Launcher
                     value = " 1";
                     OnPropertyChanged(nameof(BattleSwirlFrames));
                 }
-                newvalue = (Int16.Parse(value) == 0) ? "1" : "0";
+                String newvalue = (Int16.Parse(value) == 0) ? "1" : "0";
                 if (!Int16.TryParse(newvalue, out _battleswirlframes))
                     _battleswirlframes = 0;
 

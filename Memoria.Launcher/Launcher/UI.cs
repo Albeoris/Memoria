@@ -159,43 +159,6 @@ namespace Memoria.Launcher
         }
     }
 
-    public static class UiCheckBoxFactory
-    {
-        public static CheckBox Create(Object content, Boolean? isChecked)
-        {
-            CheckBox checkBox = new CheckBox
-            {
-                Content = content,
-                IsChecked = isChecked
-            };
-            return checkBox;
-        }
-    }
-
-    public static class UiComboBoxFactory
-    {
-        public static ComboBox Create()
-        {
-            ComboBox comboBox = new ComboBox
-            {
-
-            };
-            return comboBox;
-        }
-    }
-
-    public static class UiSliderFactory
-    {
-        public static Slider Create(int value)
-        {
-            Slider slider = new Slider
-            {
-                Value = value
-            };
-            return slider;
-        }
-    }
-
     public static class UiHelper
     {
         public static void ShowError(FrameworkElement owner, Exception exception, String formatMessage = null, params Object[] args)

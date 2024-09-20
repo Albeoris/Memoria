@@ -152,6 +152,7 @@
 	Shader_Realism = "Realista"
 	Shader_Toon = "Dibujo animado"
 	Shader_Outlines = "Contornos del modelo"
+	Custom = "Personalizado"
 	/>
 
 	<SdLib
