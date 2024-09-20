@@ -1,16 +1,12 @@
-﻿using SharpCompress.Archives;
-using SharpCompress.Common;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
+using SharpCompress.Archives;
+using SharpCompress.Common;
 using System.Threading;
-using System.Threading.Tasks;
+
 
 namespace Memoria.Launcher
 {
-    public class Extractor
+    public static class Extractor
     {
         public static void ExtractAllFileFromArchive(string archivePath, string extractTo, CancellationToken cancellationToken)
         {

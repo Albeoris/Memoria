@@ -64,6 +64,7 @@ internal static class PSX
         return result;
     }
 
+    /*
     public static Vector3 CalculateGTE_RT(Vector3 vertex, Matrix4x4 localRTS, Matrix4x4 globalRT)
     {
         Vector3 v = localRTS.MultiplyPoint(vertex);
@@ -72,6 +73,7 @@ internal static class PSX
         result.y *= -1f;
         return result;
     }
+    */
 
     public static Color32 ConvertABGR16toABGR32(UInt16 vramPixel, Boolean enableSemiTransparent, Int32 abr)
     {
@@ -109,10 +111,12 @@ internal static class PSX
         return new Color32(r, g, b, a);
     }
 
+    /*
     public static Single Fp12ToFloat(Int32 fp)
     {
         return PSX.Fp12ToFloat((Int16)(fp & 65535));
     }
+    */
 
     public static Single Fp12ToFloat(Int16 fp)
     {
@@ -133,6 +137,7 @@ internal static class PSX
         return (Int16)num;
     }
 
+    /*
     public static Single hexToFloat(UInt32 hex)
     {
         return (Single)hex;
@@ -207,6 +212,7 @@ internal static class PSX
     {
         return PSX.FloatToFp12(f / 360f);
     }
+    */
 
     public const Single PIXEL_SCALE = 1f;
 

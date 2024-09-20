@@ -1,5 +1,4 @@
-﻿using Ini;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -241,6 +240,9 @@ namespace Memoria.Launcher
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
+            Mod mod = (sender as System.Windows.Controls.CheckBox)?.DataContext as Mod;
+            if (mod != null && mod.IsActive)
+                mod.TryApplyPreset();
             CheckOutdatedAndIncompatibleMods();
         }
 
@@ -256,7 +258,7 @@ namespace Memoria.Launcher
                 downloadCatalogClient.CancelAsync();
             UpdateSettings();
             ((MainWindow)this.Owner).ModdingWindow = null;
-            ((MainWindow)this.Owner).MemoriaIniControl.ComeBackToLauncherReloadSettings();
+            ((MainWindow)this.Owner).SettingsGrid_Main.ComeBackToLauncherReloadSettings();
             ((MainWindow)this.Owner).ComeBackToLauncherFromModManager(AreThereModUpdates, AreThereModIncompatibilies);
         }
 
@@ -515,7 +517,11 @@ namespace Memoria.Launcher
             {
                 Boolean isFirstModActive = modListInstalled[0].IsActive;
                 foreach (Mod mod in modListInstalled)
+                {
                     mod.IsActive = !isFirstModActive;
+                    if (mod.IsActive)
+                        mod.TryApplyPreset();
+                }
                 lstMods.Items.Refresh();
             }
             CheckOutdatedAndIncompatibleMods();
@@ -606,7 +612,8 @@ namespace Memoria.Launcher
 
         private Task ExtractAllFileFromArchive(String archivePath, String extactTo)
         {
-            return Task.Run(() => {
+            return Task.Run(() =>
+            {
                 Extractor.ExtractAllFileFromArchive(archivePath, extactTo, ExtractionCancellationToken.Token);
                 if (ExtractionCancellationToken.IsCancellationRequested)
                 {
@@ -806,7 +813,10 @@ namespace Memoria.Launcher
                 {
                     Mod newMod = Mod.SearchWithName(modListInstalled, downloadingModName);
                     if (newMod != null)
+                    {
                         newMod.IsActive = true;
+                        newMod.TryApplyPreset();
+                    }
                 }
                 CheckOutdatedAndIncompatibleMods();
             });
@@ -982,7 +992,7 @@ namespace Memoria.Launcher
             {
                 gridModName.Visibility = Visibility.Visible;
                 gridModInfo.Visibility = Visibility.Visible;
-                PreviewModCategoryTagline.Visibility = Visibility.Visible;
+                PreviewModCategoryTagline.Visibility = !String.IsNullOrEmpty(mod.Category) ? Visibility.Visible : Visibility.Collapsed;
                 PreviewModName.Text = mod.Name;
                 PreviewModVersion.Text = mod.CurrentVersion?.ToString() ?? "";
                 PreviewModRelease.Text = mod.ReleaseDate ?? "";

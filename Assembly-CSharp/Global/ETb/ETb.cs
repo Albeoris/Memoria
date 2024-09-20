@@ -554,4 +554,11 @@ public class ETb
     private static Single lastPlaySound;
 
     private static Int32 LastATEDialogID = -1;
+
+    internal class ETbEvent
+    {
+        public Int32 what;
+
+        public Int32 msg;
+    }
 }

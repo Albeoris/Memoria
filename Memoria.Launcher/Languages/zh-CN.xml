@@ -160,6 +160,7 @@
 	Shader_Realism = "Realistic"
 	Shader_Toon = "Toon"
 	Shader_Outlines = "模型描边"
+	Custom = "自定义"
 	/>
 
 	<SdLib

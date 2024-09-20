@@ -47,7 +47,9 @@ namespace Assets.Scripts.Common
 
         public static Boolean IsBattleScene()
         {
-            return String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.BattleMapSceneName) == 0 || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "BattleMapDebug") == 0 || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "SpecialEffectDebugRoom") == 0;
+            return String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.BattleMapSceneName) == 0 
+                || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "BattleMapDebug") == 0 
+                || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "SpecialEffectDebugRoom") == 0;
         }
 
         public static Boolean IsFieldScene()
@@ -644,7 +646,8 @@ namespace Assets.Scripts.Common
             SceneDirector._prevColor = SceneDirector.abrColor[(Int32)SceneDirector.fadeMode];
             if (disc_id > 0 && disc_id < 4)
                 SceneDirector._discChange = disc_id;
-            else SceneDirector._discChange = 0;
+            else
+                SceneDirector._discChange = 0;
         }
 
         public static void ServiceFade()

@@ -2091,10 +2091,12 @@ public static class ff9
         v1 = v0.normalized;
     }
 
+    /*
     public static void VectorNormalS(ref Vector3 v0, out Vector3 v1)
     {
         v1 = v0.normalized;
     }
+    */
 
     public static Single ratan2(Single y, Single x)
     {
@@ -2156,6 +2158,7 @@ public static class ff9
         v2 = Vector3.Cross(v0, v1);
     }
 
+    /*
     public static void InitWipe_WorldMap()
     {
     }
@@ -2172,6 +2175,7 @@ public static class ff9
     {
         return obj.cid == 4;
     }
+    */
 
     public static WMActor GetControlChar()
     {
@@ -2236,10 +2240,12 @@ public static class ff9
         return num;
     }
 
+    /*
     public static Int32 WorldEventDebug(Int32 x, Int32 z, Int32 id)
     {
         return 0x8000 | (z << 8 & 0x3F00) | (x << 2 & 0xFC) | (id & 3);
     }
+    */
 
     public static Int32 ServiceEvents()
     {
@@ -2270,11 +2276,13 @@ public static class ff9
         FF9StateSystem.EventState.gEventGlobal[index] = value;
     }
 
+    /*
     public static void short_gEventGlobal_Write(Int32 index, Int16 value)
     {
         FF9StateSystem.EventState.gEventGlobal[index] = (Byte)(value & 255);
         FF9StateSystem.EventState.gEventGlobal[index + 1] = (Byte)(value >> 8 & 255);
     }
+    */
 
     public static void ushort_gEventGlobal_Write(Int32 index, UInt16 value)
     {
@@ -2339,11 +2347,6 @@ public static class ff9
         return (IDALL & 0xFC) >> 2;
     }
 
-    public static Int32 m_GetIDEtc(Int32 IDALL)
-    {
-        return IDALL & 3;
-    }
-
     public static Int32 m_moveActorID
     {
         get
@@ -2354,6 +2357,7 @@ public static class ff9
         }
     }
 
+    /*
     public static String GetName_kWorldPackEffect(Int32 index)
     {
         switch (index)
@@ -2390,6 +2394,7 @@ public static class ff9
                 return "default";
         }
     }
+    */
 
     public static FF9StateGlobal FF9Global => FF9StateSystem.Common.FF9;
     public static FF9StateSystem FF9Sys => PersistenSingleton<FF9StateSystem>.Instance;
@@ -2429,11 +2434,6 @@ public static class ff9
         while (diff.z < -640f)
             diff.z += 1280f;
         return diff;
-    }
-
-    public static String NotImplemented(String function)
-    {
-        return function + "() has not been implemented yet.";
     }
 
     public static Boolean NearlyEqual(Single a, Single b)
@@ -2499,12 +2499,14 @@ public static class ff9
         return UnityEngine.Random.Range(0, 65536);
     }
 
+    /*
     public static void FF9Wipe_WhiteInEx(Int32 frame)
     {
         if (FF9StateSystem.World.IsBeeScene)
             return;
         SceneDirector.FF9Wipe_WhiteInEx(frame);
     }
+    */
 
     public static void FF9Wipe_WhiteOutEx(Int32 frame)
     {
@@ -3235,6 +3237,7 @@ public static class ff9
         global::Debug.Log(matrix4x3);
     }
 
+    /*
     public static Int32 w_cameraGetMovepoint()
     {
         if (ff9.w_cameraSysDataCamera.upperCounter == 0)
@@ -3247,6 +3250,7 @@ public static class ff9
         }
         return 1;
     }
+    */
 
     public static Vector3 w_cameraGetAimPtr()
     {
@@ -3268,9 +3272,11 @@ public static class ff9
         ff9.w_cameraWorldEye = vector * 0.00390625f;
     }
 
+    /*
     public static void w_cellSystemConstructor()
     {
     }
+    */
 
     public static Boolean w_cellHit(ref Vector3 position, ref Int32 id, out Int32 pno, ff9.s_moveCHRCache cache, out Single height)
     {
@@ -3796,23 +3802,17 @@ public static class ff9
         ff9.w_musicUpdate();
     }
 
-    public static void w_frameMapDestructor()
-    {
-    }
-
-    public static void w_frameSystemDestructor()
-    {
-    }
-
     public static WMPad w_getPadPush()
     {
         return ff9.kPadPush;
     }
 
+    /*
     public static void w_frameSetParameter(Int32 function, Boolean value)
     {
         ff9.w_frameSetParameter(function, (!value) ? 0 : 1);
     }
+    */
 
     public static void w_frameSetParameter(Int32 function, Int32 value)
     {
@@ -4021,7 +4021,7 @@ public static class ff9
                 ff9.w_movementChangeSP2();
                 break;
             case 32:
-                ff9.w_musicFade(value);
+                //ff9.w_musicFade(value);
                 break;
             case 33:
                 FF9Snd.ff9wldsnd_song_vol_intplall(value, 0);
@@ -4292,6 +4292,7 @@ public static class ff9
         return Color.Lerp(from, to, t2);
     }
 
+    /*
     public static Int32 w_frameInter8(Char from, Char to, Int32 t)
     {
         Int32 num = 0;
@@ -4299,6 +4300,7 @@ public static class ff9
         num += ((Int32)to << 10) * t >> 12;
         return num >> 10;
     }
+    */
 
     public static Boolean w_frameChocoboCheck()
     {
@@ -4823,6 +4825,7 @@ public static class ff9
         WMPhysics.UseInfiniteRaycast = false;
     }
 
+    /*
     public static void w_movementChrInitSlice(Int32 uid)
     {
         WMPhysics.UseInfiniteRaycast = true;
@@ -4855,6 +4858,7 @@ public static class ff9
         WMPhysics.CastRayFromSky = false;
         WMPhysics.UseInfiniteRaycast = false;
     }
+    */
 
     public static void w_movementService()
     {
@@ -5180,6 +5184,7 @@ public static class ff9
         }
     }
 
+    /*
     private static void w_Test()
     {
         WMActor wmactor = null;
@@ -5296,6 +5301,7 @@ public static class ff9
         WMPhysics.IgnoreExceptions = false;
         WMPhysics.UseInfiniteRaycast = false;
     }
+    */
 
     public static void w_movementSetheight(PosObj chr)
     {
@@ -6576,12 +6582,14 @@ public static class ff9
         return ff9.w_musicSet[(Int32)musicno];
     }
 
+    /*
     public static Boolean w_musicContinue()
     {
         UInt16 num = ff9.ushort_gEventGlobal(0);
         Byte b = ff9.byte_gEventGlobal(190);
         return (num >= 9600 && num < 9890) || (num >= 9890 && num < 9910) || (b == 8 || b == 9);
     }
+    */
 
     public static void w_musicSEPlay(Int32 seno, Byte vol)
     {
@@ -6824,11 +6832,13 @@ public static class ff9
             ff9.w_musicRequestNoIdx = no;
         }
     }
-
+    /*
     public static void w_musicFade(Int32 inter)
     {
     }
+    */
 
+    /*
     public static void w_musicMapDestructor()
     {
         for (Int32 i = 0; i < 7; i++)
@@ -6856,10 +6866,7 @@ public static class ff9
         }
         return false;
     }
-
-    public static void w_musicSystemDestructor()
-    {
-    }
+    */
 
     public static void w_naviSystemConstructor()
     {
@@ -7023,6 +7030,7 @@ public static class ff9
         }
     }
 
+    /*
     public static void w_nwpSystemConstructor()
     {
         ff9.w_nwpMakePages();
@@ -7030,6 +7038,7 @@ public static class ff9
         ff9.w_nwbPolyCheck = 0;
         ff9.w_nwbTEST = false;
     }
+    */
 
     public static void w_nwpChangeStat()
     {
@@ -7086,6 +7095,7 @@ public static class ff9
         skyDome_SkyMaterial.mainTextureOffset = mainTextureOffset;
     }
 
+    /*
     public static void w_nwpInitialize(ff9.sNWBBlockHeader block)
     {
     }
@@ -7093,6 +7103,7 @@ public static class ff9
     private static void w_nwpMakePages()
     {
     }
+    */
 
     public static Single w_nwpHit(ref Vector3 pos, out Int32 id, out Int32 pno, ff9.s_moveCHRCache cache)
     {
@@ -8146,6 +8157,7 @@ public static class ff9
         ff9.initialized_w_NormalTable = true;
     }
 
+    /*
     public static Vector3 GetNormalFrom_w_NormalTable(Int32 index)
     {
         if (index < 0)
@@ -8171,15 +8183,12 @@ public static class ff9
         }
         return array;
     }
+    */
 
     public static void w_textureUpdate()
     {
         ff9.w_texturePixelAnime();
         ff9.w_texturePaletScroll();
-    }
-
-    private static void w_texturePixelScroll()
-    {
     }
 
     public static void w_texturePixelAnime()
@@ -8624,7 +8633,7 @@ public static class ff9
     public static void w_worldSystemConstructor()
     {
         Int64 num = 0L;
-        ff9.w_cellSystemConstructor();
+        //ff9.w_cellSystemConstructor();
         ff9.w_blockSystemConstructor();
         for (Int64 num2 = 0L; num2 < 26L; num2 += 1L)
         {
@@ -8691,6 +8700,7 @@ public static class ff9
         return result;
     }
 
+    /*
     public static Byte[] w_framePackGetPtr_w_frameMessagePtr(Byte[] data, Int32 no)
     {
         if (no != 0)
@@ -8709,6 +8719,7 @@ public static class ff9
         }
         return result;
     }
+    */
 
     public static EncountData[] w_framePackGetPtr_w_frameBattleScenePtr(Byte[] data, Int32 no)
     {
@@ -8730,6 +8741,7 @@ public static class ff9
         return result;
     }
 
+    /*
     public static ff9.sw_weatherColor w_framePackGetPtr_sw_weatherColor(Byte[] data, Int32 no)
     {
         if (no != 5)
@@ -8749,6 +8761,7 @@ public static class ff9
         }
         return result;
     }
+    */
 
     public static ff9.stextureProject w_framePackGetPtr_w_textureProjWork(Byte[] data, Int32 no)
     {
@@ -8790,6 +8803,7 @@ public static class ff9
         return result;
     }
 
+    /*
     public static ff9.s_effectData w_framePackGetPtr_s_effectData(Byte[] data, Int32 no)
     {
         Int32 pos = ff9.w_framePackExtractPosition(data, no);
@@ -8805,6 +8819,7 @@ public static class ff9
         }
         return result;
     }
+    */
 
     public static ff9.s_effectDataList w_framePackGetPtr_s_effectDataList(Byte[] data, Int32 no)
     {
@@ -9015,11 +9030,13 @@ public static class ff9
         wmblock.SetForm(2);
     }
 
+    /*
     public static void mw_worldResetFormBit(Int32 x, Int32 z)
     {
         WMBlock wmblock = ff9.world.InitialBlocks[x, z];
         wmblock.SetForm(1);
     }
+    */
 
     public static Int32 w_worldArea2Zone(Int32 area)
     {
@@ -9058,14 +9075,6 @@ public static class ff9
         Int32 num = (Int32)(x / 32f);
         Int32 num2 = (Int32)(z / -32f);
         cell = num2 * 48 + num;
-    }
-
-    public static void ff9worldInternalLoopStart()
-    {
-    }
-
-    public static void ff9worldInternalLoopEnd()
-    {
     }
 
     public static void ff9worldInternalBattleEncountStart()
@@ -9129,42 +9138,18 @@ public static class ff9
         }
     }
 
-    public static void FF9WorldMain()
-    {
-    }
-
-    public static void ff9InitStateWorldSystem()
-    {
-    }
-
-    public static void ff9ShutdownStateWorldSystem()
-    {
-    }
-
     public const Int32 kSystemImage_AnimTexture = 0;
-
     public const Int32 kSystemImage_EffectData = 1;
-
     public const Int32 kSystemImage_BlockHeaderH = 2;
-
     public const Int32 kSystemImage_BlockHeaderV = 3;
-
     public const Int32 kSystemImage_BlockArea = 4;
-
     public const Int32 kSystemImage_Texture = 5;
-
     public const Int32 kSystemImage_Navimap = 6;
-
     public const Int32 kSystemImage_Hintmap = 7;
-
     public const Int32 kSystemImage_StaticTexture = 8;
-
     public const Int32 kSystemImage_Dynamic4Texture = 9;
-
     public const Int32 kSystemImage_EffectTexture = 10;
-
     public const Int32 kMapImage_ModelH = 11;
-
     public const Int32 kMapImage_ModelV = 12;
 
     public const Int32 kw_blockQFigure = 16;
@@ -9178,45 +9163,27 @@ public static class ff9
     public const Int32 kw_blockCellFigureSQ = 4;
 
     public const Int32 k_cameraPosstatLookup = 0;
-
     public const Int32 k_cameraPosstatDown = 1;
-
     public const Int32 k_cameraPosstatUp = 2;
-
     public const Int32 k_cameraPosstatUpper = 3;
-
     public const Int32 k_cameraPosstatFlyEtc = 4;
-
     public const Int32 k_cameraPosstatFlyShin = 5;
-
     public const Int32 k_cameraPosstatFlyBun = 6;
-
     public const Int32 k_cameraPosstatLookdown = 7;
-
     public const Int32 k_cameraPosstatFlyChoco = 8;
-
     public const Int32 k_cameraPosstatShip = 9;
-
     public const Int32 k_cameraPosstatFigure = 10;
 
     public const Int32 k_cameraCharacterZidane = 0;
-
     public const Int32 k_cameraCharacterChocobo = 1;
-
     public const Int32 k_cameraCharacterBlue = 2;
-
     public const Int32 k_cameraCharacterInvin = 3;
-
     public const Int32 k_cameraCharacterFlyChoco = 4;
-
     public const Int32 k_cameraCharacterFigure = 5;
 
     public const Int32 k_cameraPlaceBunmei = 0;
-
     public const Int32 k_cameraPlaceShintairiku = 1;
-
     public const Int32 k_cameraPlaceEtc = 2;
-
     public const Int32 k_cameraPlaceFigure = 3;
 
     public const Int32 k_cameraDumper0 = 255;
@@ -9226,149 +9193,90 @@ public static class ff9
     public const Int32 kw_cellDistance = 8192;
 
     public const Int32 kEffectBlockSGate = 1;
-
     public const Int32 kEffectBlockHokoraHi = 2;
-
     public const Int32 kEffectBlockSabaku = 3;
-
     public const Int32 kEffectBlockKureira = 4;
-
     public const Int32 kEffectBlockTaki = 5;
-
     public const Int32 kEffectBlockEva = 6;
-
     public const Int32 kEffectBlockDari = 7;
-
     public const Int32 kEffectBlockDagereo1 = 8;
-
     public const Int32 kEffectBlockDagereo2 = 9;
-
     public const Int32 kEffectBlockHokoraMizu = 10;
-
     public const Int32 kEffectBlockHokoraKaze = 11;
-
     public const Int32 kEffectBlockHokoraChi = 12;
-
     public const Int32 kEffectBlockFigure = 13;
 
     public const Int32 kEffectModelWindMill = 0;
-
     public const Int32 kEffectModelTwister = 1;
-
     public const Int32 kEffectModelTwisterR = 2;
-
     public const Int32 kEffectModelSpiral0 = 3;
-
     public const Int32 kEffectModelSpiral1 = 4;
-
     public const Int32 kEffectModelSpiral2 = 5;
-
     public const Int32 kEffectModelLast0 = 6;
-
     public const Int32 kEffectModelLast1 = 7;
-
     public const Int32 kEffectModelLastR = 8;
-
     public const Int32 kEffectModelFigure = 9;
 
     public const Int32 eNone = 0;
-
     public const Int32 eWait = 1;
-
     public const Int32 eDelete = 2;
-
     public const Int32 eEncount = 3;
-
     public const Int32 eJump = 4;
-
     public const Int32 eWJump = 5;
-
     public const Int32 eStop = 6;
-
     public const Int32 eMinigame = 7;
-
     public const Int32 eGameover = 8;
 
     public const Int32 classObj = 0;
-
     public const Int32 classSeq = 1;
-
     public const Int32 classThread = 2;
-
     public const Int32 classQuad = 3;
-
     public const Int32 classActor = 4;
-
     public const Int32 classEncPoint = 5;
 
     public const Int32 flagShow = 1;
-
     public const Int32 flagCollInhC = 2;
-
     public const Int32 flagCollInhNC = 4;
-
     public const Int32 flagTalkInh = 8;
-
     public const Int32 flagLockFreeInh = 16;
-
     public const Int32 flagHideInh = 32;
-
     public const Int32 flagTurn = 128;
 
     public const Int32 stateNew = 0;
-
     public const Int32 stateRunning = 1;
-
     public const Int32 stateInit = 2;
-
     public const Int32 stateSuspend = 3;
 
     public const Int32 kw_fileCDSectorSize = 2048;
 
     public const Int32 kw_fileOriginal = 0;
-
     public const Int32 kw_fileStatic = 1;
-
     public const Int32 kw_fileTemp = 2;
-
     public const Int32 kw_fileHGeometory = 3;
-
     public const Int32 kw_fileVGeometory = 4;
-
     public const Int32 kw_fileFigure = 5;
 
     public const Int32 kframePhaseInitEvent = 0;
-
     public const Int32 kframePhaseReadCD = 1;
-
     public const Int32 kframePhaseMainLoop = 2;
 
     public const Int32 kframeCDNone = 0;
-
     public const Int32 kframeCDGeom = 1;
-
     public const Int32 kframeCDMusic = 2;
-
     public const Int32 kframeCDMenu = 3;
 
     public const Int32 kmovementForestID1 = 36;
-
     public const Int32 kmovementForestID2 = 37;
-
     public const Int32 kmovementForestID3 = 38;
 
     public const Int32 kmovementShallowID1 = 53;
-
     public const Int32 kmovementShallowID2 = 54;
-
     public const Int32 kmovementShallowID3 = 55;
 
     public const Int32 kmovementSeaID1 = 56;
-
     public const Int32 kmovementSeaID2 = 57;
 
     public const Int32 kmovementRiverID1 = 51;
-
     public const Int32 kmovementRiverID2 = 48;
 
     public const Int32 kmovementBridgeID1 = 52;
@@ -9380,187 +9288,105 @@ public static class ff9
     public const Single kmovementMaximumHeight = 42.1875f;
 
     public const Int32 WM_ID_UNDEFINED = 0;
-
     public const Int32 WM_ID_CHR_ZIDANE = 1;
-
     public const Int32 WM_ID_CHR_DAGGER = 2;
-
     public const Int32 WM_ID_CHR_CHO_NML = 3;
-
     public const Int32 WM_ID_CHR_CHO_SHL = 4;
-
     public const Int32 WM_ID_CHR_CHO_MNT = 5;
-
     public const Int32 WM_ID_CHR_CHO_SEA = 6;
-
     public const Int32 WM_ID_CHR_CHO_SKY = 7;
-
     public const Int32 WM_ID_CHR_BLUE = 8;
-
     public const Int32 WM_ID_CHR_HLD_3 = 9;
-
     public const Int32 WM_ID_CHR_INVINCIBLE = 10;
-
     public const Int32 WM_ID_SUB_MOG = 11;
-
     public const Int32 WM_ID_SUB_TREASURE = 12;
-
     public const Int32 WM_ID_SUB_TENT = 13;
-
     public const Int32 WM_ID_SUB_SHADOW = 14;
-
     public const Int32 WM_ID_EVENT_CARGO = 15;
-
     public const Int32 WM_ID_EVENT_HLD_1 = 16;
-
     public const Int32 WM_ID_EXT_SHIP_A = 17;
-
     public const Int32 WM_ID_EXT_SHIP_A_SML = 18;
-
     public const Int32 WM_ID_EXT_SHIP_B = 19;
-
     public const Int32 WM_ID_EXT_SHIP_B_SML = 20;
-
     public const Int32 WM_ID_EXT_SHIP_C = 21;
-
     public const Int32 WM_ID_FIGURE = 22;
 
     public const Int32 k_moveCHRControl_Human = 0;
-
     public const Int32 k_moveCHRControl_Nomalchocobo = 1;
-
     public const Int32 k_moveCHRControl_Asasechocobo = 2;
-
     public const Int32 k_moveCHRControl_Yamachocobo = 3;
-
     public const Int32 k_moveCHRControl_Umichocobo = 4;
-
     public const Int32 k_moveCHRControl_SoraWalkchocobo = 5;
-
     public const Int32 k_moveCHRControl_SoraFlychocobo = 6;
-
     public const Int32 k_moveCHRControl_Bluenalusisu = 7;
-
     public const Int32 k_moveCHRControl_Hirudagarude = 8;
-
     public const Int32 k_moveCHRControl_Invincible = 9;
-
     public const Int32 k_moveCHRControl_Debug = 10;
-
     public const Int32 k_moveCHRControl_None = 11;
-
     public const Int32 k_moveCHRControl_Element = 12;
 
     public const Int32 k_moveCHRContolType_Human = 0;
-
     public const Int32 k_moveCHRContolType_Plane = 1;
-
     public const Int32 k_moveCHRContolType_Ship = 2;
-
     public const Int32 k_moveCHRContolType_Debug = 3;
 
     public const Int32 k_moveCHRStatus_Undefined = 0;
-
     public const Int32 k_moveCHRStatus_Zidane = 1;
-
     public const Int32 k_moveCHRStatus_Dagger = 2;
-
     public const Int32 k_moveCHRStatus_ChoNml = 3;
-
     public const Int32 k_moveCHRStatus_ChoShl = 4;
-
     public const Int32 k_moveCHRStatus_ChoMnt = 5;
-
     public const Int32 k_moveCHRStatus_ChoSea = 6;
-
     public const Int32 k_moveCHRStatus_ChoSky = 7;
-
     public const Int32 k_moveCHRStatus_Blue = 8;
-
     public const Int32 k_moveCHRStatus_Hilda3 = 9;
-
     public const Int32 k_moveCHRStatus_Invin = 10;
-
     public const Int32 k_moveCHRStatus_Mog = 11;
-
     public const Int32 k_moveCHRStatus_Treasure = 12;
-
     public const Int32 k_moveCHRStatus_Tent = 13;
-
     public const Int32 k_moveCHRStatus_Shadow = 14;
-
     public const Int32 k_moveCHRStatus_Cargo = 15;
-
     public const Int32 k_moveCHRStatus_Hilda1 = 16;
-
     public const Int32 k_moveCHRStatus_ShipA = 17;
-
     public const Int32 k_moveCHRStatus_ShipASml = 18;
-
     public const Int32 k_moveCHRStatus_ShipB = 19;
-
     public const Int32 k_moveCHRStatus_ShipBSml = 20;
-
     public const Int32 k_moveCHRStatus_ShipC = 21;
-
     public const Int32 k_moveCHRStatus_Element = 22;
 
     public const Int32 k_moveCHRStatusSlice_Type0 = 0;
-
     public const Int32 k_moveCHRStatusSlice_Type1 = 1;
-
     public const Int32 k_moveCHRStatusSlice_Type2 = 2;
 
     public const Int32 k_moveCHRCache_Actor = 0;
-
     public const Int32 k_moveCHRCache_Choco = 1;
-
     public const Int32 k_moveCHRCache_Plane = 2;
-
     public const Int32 k_moveCHRCache_Mog = 3;
-
     public const Int32 k_moveCHRCache_NPC1 = 4;
-
     public const Int32 k_moveCHRCache_NPC2 = 5;
-
     public const Int32 k_moveCHRCache_NPC3 = 6;
-
     public const Int32 k_moveCHRCache_NPC4 = 7;
-
     public const Int32 k_moveCHRCache_NPC5 = 8;
-
     public const Int32 k_moveCHRCache_Temp = 9;
-
     public const Int32 k_moveCHRCache_None = 10;
-
     public const Int32 k_moveCHRCache_Element = 11;
 
     public const Int32 kmusicFieldSongFigure = 5;
 
     public const Int32 kmusicProgressReady = 0;
-
     public const Int32 kmusicProgressRequest = 1;
-
     public const Int32 kmusicProgressReading = 2;
 
     public const Int32 kmusicNormal = 0;
-
     public const Int32 kmusicChocobo = 1;
-
     public const Int32 kmusicAirPlane = 2;
-
     public const Int32 kmusicDisc4 = 3;
-
     public const Int32 kmusicField1 = 4;
-
     public const Int32 kmusicField2 = 5;
-
     public const Int32 kmusicField3 = 6;
-
     public const Int32 kmusicField4 = 7;
 
     public const Int32 kmusicWavePlaneAndChocobo = 0;
-
     public const Int32 kmusicWaveNormalAndChocobo = 1;
 
     public const Int32 kmusicSEAttrGeneral = 524288;
@@ -9572,75 +9398,44 @@ public static class ff9
     public const Int32 kmusicSEAttrOther = 128;
 
     public const Int32 kmusicSESystemReserve0 = 0;
-
     public const Int32 kmusicSESystemReserve1 = 1;
-
     public const Int32 kmusicSESystemReserve2 = 2;
-
     public const Int32 kmusicSESystemReserve3 = 3;
-
     public const Int32 kmusicSESystemReserve4 = 4;
-
     public const Int32 kmusicSESystemReserve5 = 5;
-
     public const Int32 kmusicSESystemReserve6 = 6;
-
     public const Int32 kmusicSESystemReserve7 = 7;
 
     public const Int32 kmusicSEAirPlaneCargo = 20;
-
     public const Int32 kmusicSEAirPlaneHilda1 = 21;
-
     public const Int32 kmusicSEAirPlaneInvin = 22;
-
     public const Int32 kmusicSEAirPlaneHilda3 = 23;
-
     public const Int32 kmusicSEAirPlaneBlue = 24;
-
     public const Int32 kmusicSEZimen = 25;
-
     public const Int32 kmusicSEKaze = 26;
 
     public const Int32 kmusicSEReserveShiromoto0 = 30;
-
     public const Int32 kmusicSEReserveShiromoto1 = 31;
-
     public const Int32 kmusicSEReserveShiromoto2 = 32;
-
     public const Int32 kmusicSEReserveShiromoto3 = 33;
-
     public const Int32 kmusicSEReserveShiromoto4 = 34;
-
     public const Int32 kmusicSEReserveShiromoto5 = 35;
-
     public const Int32 kmusicSEReserveShiromoto6 = 36;
-
     public const Int32 kmusicSEReserveShiromoto7 = 37;
-
     public const Int32 kmusicSEReserveShiromoto8 = 38;
-
     public const Int32 kmusicSEReserveShiromoto9 = 39;
-
     public const Int32 kmusicSEReserveShiromoto10 = 40;
-
     public const Int32 kmusicSEReserveShiromoto11 = 41;
-
     public const Int32 kmusicSEReserveShiromoto12 = 42;
 
     public const Int32 knaviNone = 0;
-
     public const Int32 knaviSmall = 1;
-
     public const Int32 knaviLarge = 2;
-
     public const Int32 knaviHint = 3;
 
     public const Int32 knaviSmallBunmei = 0;
-
     public const Int32 knaviLargeBunmei = 1;
-
     public const Int32 knaviSmallZentai = 2;
-
     public const Int32 knaviLargeZentai = 3;
 
     public const Int32 knaveOTDepth = 10;
@@ -9710,69 +9505,39 @@ public static class ff9
     public const Int32 kw_textureWorkPosy = 248;
 
     public const Int32 kw_weatherFineU = 0;
-
     public const Int32 kw_weatherFineD = 1;
-
     public const Int32 kw_weatherFineUM = 2;
-
     public const Int32 kw_weatherFineDM = 3;
-
     public const Int32 kw_weatherSunsetU = 4;
-
     public const Int32 kw_weatherSunsetD = 5;
-
     public const Int32 kw_weatherSunsetUM = 6;
-
     public const Int32 kw_weatherSunsetDM = 7;
-
     public const Int32 kw_weatherNightU = 8;
-
     public const Int32 kw_weatherNightD = 9;
-
     public const Int32 kw_weatherNightUM = 10;
-
     public const Int32 kw_weatherNightDM = 11;
-
     public const Int32 kw_weatherEvaU = 12;
-
     public const Int32 kw_weatherEvaD = 13;
-
     public const Int32 kw_weatherEvaUM = 14;
-
     public const Int32 kw_weatherEvaDM = 15;
-
     public const Int32 kw_weatherNow = 16;
-
     public const Int32 kw_weatherFrom = 17;
-
     public const Int32 kw_weatherTo = 18;
-
     public const Int32 kw_weatherFrom1 = 19;
-
     public const Int32 kw_weatherFrom2 = 20;
-
     public const Int32 kw_weatherTo1 = 21;
-
     public const Int32 kw_weatherTo2 = 22;
-
     public const Int32 kw_weatherElement = 23;
 
     public const Int32 kw_weatherFine = 0;
-
     public const Int32 kw_weatherSunset = 1;
-
     public const Int32 kw_weatherNight = 2;
-
     public const Int32 kw_weatherEva = 3;
-
     public const Int32 kw_weatherAuto = 4;
-
     public const Int32 kw_weatherNochange = 5;
 
     public const Int32 kw_weatherFogOFF = 0;
-
     public const Int32 kw_weatherFogON = 1;
-
     public const Int32 kw_weatherFogNochange = 2;
 
     public const Int32 kw_worldBlockMaxX = 24;
@@ -9786,145 +9551,85 @@ public static class ff9
     public const Int32 kWorldCamInDist = 32768;
 
     public const Int32 kWorldPackEffectAreaBin = 0;
-
     public const Int32 kWorldPackChocoboPal = 1;
-
     public const Int32 kWorldPackPaletVolcano = 2;
-
     public const Int32 kWorldPackEncountTable = 3;
-
     public const Int32 kWorldPackEncountSpecial = 4;
-
     public const Int32 kWorldPackColorTable = 5;
-
     public const Int32 kWorldPackAnimationTable = 6;
-
     public const Int32 kWorldPackSPSData = 7;
 
     public const Int32 kWorldPackEffectBin = 41;
 
     public const Int32 kWorldPackEffectTwister = 53;
-
     public const Int32 kWorldPackEffectSpiral0 = 54;
-
     public const Int32 kWorldPackEffectSpiral1 = 55;
-
     public const Int32 kWorldPackEffectSpiral2 = 56;
-
     public const Int32 kWorldPackEffectWindmill = 57;
-
     public const Int32 kWorldPackEffectCore = 58;
-
     public const Int32 kWorldPackEffectSky = 59;
-
     public const Int32 kWorldPackEffectSphere1 = 60;
-
     public const Int32 kWorldPackEffectSphere2 = 61;
-
     public const Int32 kWorldPackEffectArch = 62;
-
     public const Int32 kWorldPackEffectBlack = 63;
-
     public const Int32 kWorldPackEffectThunder1 = 64;
-
     public const Int32 kWorldPackEffectThunder2 = 65;
-
     public const Int32 kWorldPackModelSea = 66;
 
     public const Int32 kworldLocTatsumaki = 0;
-
     public const Int32 kworldLocKazehokora = 1;
-
     public const Int32 kworldLocChihokora = 2;
-
     public const Int32 kworldLocFigure = 3;
 
     public const Int32 kworldSENone = 0;
-
     public const Int32 kworldSEPlay = 1;
-
     public const Int32 kworldSEIntpl = 2;
 
     public const Int32 AREA_A = 0;
-
     public const Int32 AREA_B = 1;
-
     public const Int32 AREA_C = 2;
-
     public const Int32 AREA_D = 3;
-
     public const Int32 AREA_E = 4;
-
     public const Int32 AREA_F = 5;
-
     public const Int32 AREA_G = 6;
-
     public const Int32 AREA_H = 7;
-
     public const Int32 AREA_I = 8;
-
     public const Int32 AREA_J = 9;
-
     public const Int32 AREA_K = 10;
-
     public const Int32 AREA_L = 11;
-
     public const Int32 AREA_M = 12;
-
     public const Int32 AREA_N = 13;
-
     public const Int32 AREA_O = 14;
-
     public const Int32 AREA_P = 15;
 
-    private const Single toPsxRot = 11.3777781f;
+    //private const Single toPsxRot = 11.3777781f;
 
-    private const Single toUnityRot = 0.087890625f;
+    //private const Single toUnityRot = 0.087890625f;
 
-    private const Single toUnityScale = 0.000244140625f;
+    //private const Single toUnityScale = 0.000244140625f;
 
     public const Int32 SC_COUNTER_ARMOR_BLANK_START = 1500;
-
     public const Int32 SC_COUNTER_ARMOR_BLANK_END = 1600;
-
     public const Int32 SC_COUNTER_WMTITLE_BUNMEI_ON = 2400;
-
     public const Int32 SC_COUNTER_SGATE_DESTROYED = 2990;
-
     public const Int32 SC_COUNTER_CLAY_DESTROYED = 4990;
-
     public const Int32 SC_COUNTER_LIND_DESTROYED = 5598;
-
     public const Int32 SC_COUNTER_FOG_END = 5990;
-
     public const Int32 SC_COUNTER_KUROMA_APPEAR = 6200;
-
     public const Int32 SC_COUNTER_DAGGER_AWAKE = 6875;
-
     public const Int32 SC_COUNTER_SGATE_RECOVER = 6990;
-
     public const Int32 SC_COUNTER_ALEX_DESTROYED = 8800;
-
     public const Int32 SC_COUNTER_SUNA_MAKYU_ON = 9450;
-
     public const Int32 SC_COUNTER_WMTITLE_NEW_ON = 9600;
-
     public const Int32 SC_COUNTER_SUNA_MAKYU_OFF = 9890;
-
     public const Int32 SC_COUNTER_CUT_HAIR = 10300;
-
     public const Int32 SC_COUNTER_GET_HILDA3 = 10400;
-
     public const Int32 SC_COUNTER_HOKORA_START = 10600;
-
     public const Int32 SC_COUNTER_HOKORA_END = 10700;
-
     public const Int32 SC_COUNTER_LAST_WORLD = 11090;
 
     private const Int32 CAMSAME = 0;
-
     private const Int32 CAMDOWN = 1;
-
     private const Int32 CAMUP = 2;
 
     public const Int32 w_evaCoreSPSMinSize = 46000;
@@ -9994,131 +9699,70 @@ public static class ff9
     public const Int32 knaviHintmapCY = 246;
 
     public const Int32 kframeWeather = 0;
-
     public const Int32 kframeActor = 1;
-
     public const Int32 kframeNaviActive = 2;
-
     public const Int32 kframeCamera = 3;
-
     public const Int32 kframeNaviMode = 4;
-
     public const Int32 kframeCameraFix = 5;
-
     public const Int32 kframeEffectPosX = 6;
-
     public const Int32 kframeEffectPosY = 7;
-
     public const Int32 kframeEffectPosZ = 8;
-
     public const Int32 kframeEffectSize = 9;
-
     public const Int32 kframeEffectID = 10;
-
     public const Int32 kframeTitleTime = 11;
-
     public const Int32 kframeDistance1 = 12;
-
     public const Int32 kframeDistance2 = 13;
-
     public const Int32 kframeWeatherSpeed = 14;
-
     public const Int32 kframeWeatherAuto = 15;
-
     public const Int32 kframeSEParam0 = 16;
-
     public const Int32 kframeSEParam1 = 17;
-
     public const Int32 kframeSEParam2 = 18;
-
     public const Int32 kframeSEParam3 = 19;
-
     public const Int32 kframeSEPlay = 20;
-
     public const Int32 kframeSEVol = 21;
-
     public const Int32 kframeSEVolIntpl = 22;
-
     public const Int32 kframeSEStop = 23;
-
     public const Int32 kframeMusicVol = 24;
-
     public const Int32 kframePRMCameraSmooth = 25;
-
     public const Int32 kframeEventBattleProb = 26;
-
     public const Int32 kframeEventNaviCursol = 27;
-
     public const Int32 kframeGetOff = 28;
-
     public const Int32 kframeChocoboCall = 29;
-
     public const Int32 kframeActorSP1 = 30;
-
     public const Int32 kframeActorSP2 = 31;
-
     public const Int32 kframeMusicFade = 32;
-
     public const Int32 kframeMusicFadeForce = 33;
-
     public const Int32 kframeAutoPilot = 34;
-
     public const Int32 kframeMogChoice = 35;
-
     public const Int32 kframeCursolDraw = 36;
-
     public const Int32 kframeAlphaZero = 37;
-
     public const Int32 kframeAutoPilotOFF = 38;
-
     public const Int32 kframeCDUseON = 39;
-
     public const Int32 kframeCDUseOFF = 40;
 
     public const Int32 kframeAreaID = 192;
-
     public const Int32 kframeTopographID = 193;
-
     public const Int32 kframeGetoffVehiclePosY = 194;
-
     public const Int32 kframeGetoffHumanPosX = 195;
-
     public const Int32 kframeGetoffHumanPosY = 196;
-
     public const Int32 kframeGetoffHumanPosZ = 197;
-
     public const Int32 kframeMapID = 198;
-
     public const Int32 kframeCameraRot = 199;
-
     public const Int32 kframeCDAccess = 200;
-
     public const Int32 kframeCharacterPosX = 201;
-
     public const Int32 kframeCharacterPosY = 202;
-
     public const Int32 kframeCharacterPosZ = 203;
-
     public const Int32 kframeDistanceEva = 204;
-
     public const Int32 kframeEventBattle = 205;
-
     public const Int32 kframeCharacterRotY = 206;
-
     public const Int32 kframeZoneID = 207;
-
     public const Int32 kframeMogSlice = 208;
-
     public const Int32 kframeBlockReady = 209;
-
     public const Int32 kframeLocationTitle = 210;
-
     public const Int32 kframeNaviDrawItem = 211;
 
     public const Int32 kframeChangeCharactorStatus_Debug = 500;
-
     public const Int32 kframeSetWorldMapState_Debug = 501;
-
     public const Int32 kframeResetWorldBlockSet_Debug = 502;
 
     public static Boolean w_blockReady = true;

@@ -13,22 +13,21 @@ namespace Memoria.Launcher
         {
             InitializeComponent();
             Loaded += OnLoaded;
-            Closing += new CancelEventHandler(OnClosing);
+            Closing += OnClosing;
         }
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
         {
             Title = Lang.Settings.LauncherWindowTitle + " | " + Lang.Launcher.AdvSettingsTitle;
             AdvSettingsTitle.Text = Lang.Launcher.AdvSettingsTitle;
-
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
         {
             ((MainWindow)this.Owner).AdvOptionsWindow = null;
-            ((MainWindow)this.Owner).MemoriaIniControl.ComeBackToLauncherReloadSettings();
+            ((MainWindow)this.Owner).SettingsGrid_Main.ComeBackToLauncherReloadSettings();
         }
-        
+
         private bool _isOption1Checked;
         public bool IsOption1Checked
         {
@@ -61,9 +60,5 @@ namespace Memoria.Launcher
 
         [DllImport("user32.dll")]
         public static extern Boolean ReleaseCapture();
-
-        private const String INI_PATH = "./Memoria.ini";
-        private const String CATALOG_PATH = "./ModCatalog.xml";
-        private const String CATALOG_URL = "https://raw.githubusercontent.com/Albeoris/Memoria/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml";
     }
 }

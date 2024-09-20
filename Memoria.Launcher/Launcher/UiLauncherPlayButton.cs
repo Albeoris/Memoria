@@ -1,5 +1,4 @@
-﻿using Ini;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -16,13 +15,12 @@ using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using Timer = System.Threading.Timer;
 
 namespace Memoria.Launcher
 {
     public sealed class UiLauncherPlayButton : UiLauncherButton
     {
-        public GameSettingsControl GameSettings { get; set; }
+        public SettingsGrid_Vanilla GameSettings { get; set; }
         private ManualResetEvent CancelEvent { get; } = new ManualResetEvent(false);
 
         public UiLauncherPlayButton()
@@ -136,7 +134,7 @@ namespace Memoria.Launcher
                     }
                 }
 
-                String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {((GameSettings.WindowMode == Lang.Settings.Window ^ GameSettings.WindowMode == Lang.Settings.BorderlessFullscreen) ? "0" : "1")} {(GameSettings.WindowMode == Lang.Settings.BorderlessFullscreen ? "-popupwindow" : "")}";
+                String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {((GameSettings.WindowMode == 0 ^ GameSettings.WindowMode == 2) ? "0" : "1")} {(GameSettings.WindowMode == 2 ? "-popupwindow" : "")}";
                 await Task.Factory.StartNew(
                     () =>
                     {
@@ -180,7 +178,7 @@ namespace Memoria.Launcher
             }
         }
 
-        internal static async Task<Boolean> CheckUpdates(Window rootElement, ManualResetEvent cancelEvent, GameSettingsControl gameSettings)
+        internal static async Task<Boolean> CheckUpdates(Window rootElement, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
         {
             String applicationPath = Path.GetFullPath(Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path));
             String applicationDirectory = Path.GetDirectoryName(applicationPath);
@@ -282,7 +280,7 @@ namespace Memoria.Launcher
 
 
 
-        private static async Task<LinkedList<HttpFileInfo>> FindUpdatesInfo(String applicationDirectory, ManualResetEvent cancelEvent, GameSettingsControl gameSettings)
+        private static async Task<LinkedList<HttpFileInfo>> FindUpdatesInfo(String applicationDirectory, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
         {
             Downloader downloader = new Downloader(cancelEvent);
             String[] urls = gameSettings.DownloadMirrors;
@@ -429,7 +427,7 @@ namespace Memoria.Launcher
             root.SetRowsHeight(GridLength.Auto);
             root.Margin = new Thickness(5);
 
-            UiTextBlock titleTextBlock = UiTextBlockFactory.Create(title);
+            TextBlock titleTextBlock = UiTextBlockFactory.Create(title);
             {
                 titleTextBlock.VerticalAlignment = VerticalAlignment.Center;
                 titleTextBlock.HorizontalAlignment = HorizontalAlignment.Center;
@@ -478,10 +476,10 @@ namespace Memoria.Launcher
         }
 
         private readonly UiProgressBar _progressBar;
-        private readonly UiTextBlock _progressTextBlock;
-        private readonly UiTextBlock _elapsedTextBlock;
-        private readonly UiTextBlock _processedTextBlock;
-        private readonly UiTextBlock _remainingTextBlock;
+        private readonly TextBlock _progressTextBlock;
+        private readonly TextBlock _elapsedTextBlock;
+        private readonly TextBlock _processedTextBlock;
+        private readonly TextBlock _remainingTextBlock;
 
         private readonly System.Timers.Timer _timer;
 

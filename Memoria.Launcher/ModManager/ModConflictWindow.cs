@@ -9,6 +9,7 @@ using System.Windows.Markup;
 
 namespace Memoria.Launcher
 {
+    // unused for now //
     public partial class ModConflictWindow : Window, IComponentConnector
     {
         public ObservableCollection<Mod> ModInstalledList;
