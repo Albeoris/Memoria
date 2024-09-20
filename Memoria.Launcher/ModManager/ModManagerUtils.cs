@@ -1,7 +1,8 @@
-﻿using SharpCompress.Archives;
-using SharpCompress.Common;
 using System.IO;
+using SharpCompress.Archives;
+using SharpCompress.Common;
 using System.Threading;
+
 
 namespace Memoria.Launcher
 {

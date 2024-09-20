@@ -151,6 +151,7 @@
 	Shader_Realism = "リアリズム"
 	Shader_Toon = "トゥーン"
 	Shader_Outlines = "モデルの輪郭"
+	Custom = "カスタム"
 	/>
 
 	<SdLib

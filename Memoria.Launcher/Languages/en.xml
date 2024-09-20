@@ -160,6 +160,7 @@
 	Shader_Realism = "Realistic"
 	Shader_Toon = "Toon"
 	Shader_Outlines = "Model outlines"
+	Custom = "Custom"
 	/>
 
 	<SdLib
@@ -184,7 +185,7 @@
 	WindowTitle = "Memoria Mod Manager"
 	ModInfos = "Mod Infos"
 	TabMyMods = "Installed Mods"
-	TabCatalog = "Browse Catalog"
+	TabCatalog = "Mod Catalog"
 	Mod = "Mod"
 	Name = "Name"
 	Website = "Website"

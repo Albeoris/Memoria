@@ -156,6 +156,7 @@
 	Shader_Realism = "Реалістичний"
 	Shader_Toon = "Мультяшний"
 	Shader_Outlines = "Контури моделі"
+	Custom = "Налаштований"
 	/>
 
 	<SdLib

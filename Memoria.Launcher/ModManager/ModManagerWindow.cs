@@ -1,5 +1,4 @@
-﻿using Ini;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -259,7 +258,7 @@ namespace Memoria.Launcher
                 downloadCatalogClient.CancelAsync();
             UpdateSettings();
             ((MainWindow)this.Owner).ModdingWindow = null;
-            ((MainWindow)this.Owner).MemoriaIniControl.ComeBackToLauncherReloadSettings();
+            ((MainWindow)this.Owner).SettingsGrid_Main.ComeBackToLauncherReloadSettings();
             ((MainWindow)this.Owner).ComeBackToLauncherFromModManager(AreThereModUpdates, AreThereModIncompatibilies);
         }
 
@@ -993,7 +992,7 @@ namespace Memoria.Launcher
             {
                 gridModName.Visibility = Visibility.Visible;
                 gridModInfo.Visibility = Visibility.Visible;
-                PreviewModCategoryTagline.Visibility = Visibility.Visible;
+                PreviewModCategoryTagline.Visibility = !String.IsNullOrEmpty(mod.Category) ? Visibility.Visible : Visibility.Collapsed;
                 PreviewModName.Text = mod.Name;
                 PreviewModVersion.Text = mod.CurrentVersion?.ToString() ?? "";
                 PreviewModRelease.Text = mod.ReleaseDate ?? "";

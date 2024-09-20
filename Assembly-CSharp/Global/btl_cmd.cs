@@ -1378,7 +1378,7 @@ public class btl_cmd
 
     private static void ResetCurrentBattlerActiveTime(BattleUnit unit)
     {
-        if (Configuration.Fixes.IsKeepRestTimeInBattle && unit.MaximumAtb > 0)
+        if (Configuration.Battle.IsKeepRestTimeInBattle && unit.MaximumAtb > 0)
             unit.CurrentAtb = (Int16)Math.Max(0, unit.CurrentAtb - unit.MaximumAtb);
         else
             unit.CurrentAtb = 0;
