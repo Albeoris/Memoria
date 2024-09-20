@@ -19,7 +19,10 @@ namespace Memoria.Launcher
         public Thickness CommonMargin = new Thickness(0, 2, 0, 2);
         public Int32 Row = -1;
         public Int32 MaxColumns = 8;
-        public Int32 FontWeightNormal = 500;
+        public Int32 FontWeightNormal = 400;
+        public Int32 FontWeightCombobox = 500;
+        public Int32 FontSizeNormal = 12;
+        public Int32 FontSizeCombobox = 10;
         public void SetRows(Int32 count)
         {
             count -= RowDefinitions.Count;
@@ -59,6 +62,7 @@ namespace Memoria.Launcher
                 checkBox.ToolTip = tooltip;
             checkBox.Foreground = TextColor;
             checkBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightNormal);
+            checkBox.FontSize = FontSizeNormal;
             checkBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(property) { Mode = BindingMode.TwoWay });
             if (propertyToEnable != "")
                 checkBox.SetBinding(ToggleButton.IsEnabledProperty, new Binding(propertyToEnable) { Mode = BindingMode.TwoWay });
@@ -79,6 +83,7 @@ namespace Memoria.Launcher
                 textbloc.ToolTip = tooltip;
             textbloc.Foreground = TextColor;
             textbloc.FontWeight = isBold ? FontWeights.Bold : FontWeight.FromOpenTypeWeight(FontWeightNormal);
+            textbloc.FontSize = FontSizeNormal;
             textbloc.Margin = CommonMargin;
             textbloc.SetValue(RowProperty, Row);
             textbloc.SetValue(ColumnProperty, 0);
@@ -98,10 +103,10 @@ namespace Memoria.Launcher
             if (tooltip != "")
                 comboBox.ToolTip = tooltip;
             comboBox.Foreground = Brushes.Black;
-            comboBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightNormal);
+            comboBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightCombobox);
             comboBox.Margin = CommonMargin;
-            comboBox.Height = 18;
-            comboBox.FontSize = 10;
+            comboBox.Height = 20;
+            comboBox.FontSize = FontSizeCombobox;
             if (selectByName)
                 comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(property) { Mode = BindingMode.TwoWay });
             else
@@ -122,6 +127,7 @@ namespace Memoria.Launcher
             textbloc.SetBinding(TextBlock.TextProperty, new Binding(indexproperty) { Mode = BindingMode.TwoWay, StringFormat = stringFormat });
             textbloc.Foreground = TextColor;
             textbloc.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightNormal);
+            textbloc.FontSize = FontSizeNormal;
             textbloc.Margin = CommonMargin;
             textbloc.SetValue(RowProperty, Row);
             textbloc.SetValue(ColumnProperty, 0);
@@ -132,13 +138,13 @@ namespace Memoria.Launcher
             Slider slider = new Slider();
             slider.Value = 0;
             slider.SetBinding(Slider.ValueProperty, new Binding(sliderproperty) { Mode = BindingMode.TwoWay });
-            slider.Height = 18;
+            slider.Height = 20;
             slider.Margin = CommonMargin;
             slider.Minimum = min;
             slider.Maximum = max;
             slider.TickFrequency = tickFrequency;
             slider.IsSnapToTickEnabled = true;
-            slider.TickPlacement = TickPlacement.BottomRight;
+            slider.TickPlacement = TickPlacement.None;
             slider.SetValue(RowProperty, Row);
             slider.SetValue(ColumnProperty, firstColumn);
             slider.SetValue(RowSpanProperty, 1);
