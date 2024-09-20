@@ -1411,7 +1411,7 @@ namespace Memoria.Launcher
                 {
                     RemoveDuplicateKeys(_iniPath);
                     IniFile iniFile = new(_iniPath);
-                    String _checklatestadded = iniFile.ReadValue("Worldmap", "ViewDistance"); // check if the latest ini parameter is already there
+                    String _checklatestadded = iniFile.ReadValue("Interface", "SynthIngredientStockDisplayed"); // check if the latest ini parameter is already there
                     if (String.IsNullOrEmpty(_checklatestadded))
                     {
                         MakeIniNotNull("Mod", "FolderNames", "");
@@ -1422,7 +1422,7 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Font", "Names", "\"Arial\", \"Times Bold\"");
                         MakeIniNotNull("Font", "Size", "24");
 
-                        MakeIniNotNull("Graphics", "Enabled", "1");
+                        MakeIniNotNull("Graphics", "Enabled", "0");
                         MakeIniNotNull("Graphics", "BattleFPS", "60");
                         MakeIniNotNull("Graphics", "BattleTPS", "15");
                         MakeIniNotNull("Graphics", "FieldFPS", "60");
@@ -1444,21 +1444,6 @@ namespace Memoria.Launcher
                         MakeIniNotNull("Graphics", "ElementsSmoothTexture", "1");
                         MakeIniNotNull("Graphics", "SFXSmoothTexture", "-1");
                         MakeIniNotNull("Graphics", "UISmoothTexture", "-1");
-
-                        MakeIniNotNull("Worldmap", "Enabled", "1");
-                        MakeIniNotNull("Worldmap", "ViewDistance", "100");
-                        MakeIniNotNull("Worldmap", "MistStartDistance_base", "55");
-                        MakeIniNotNull("Worldmap", "MistStartDistance", "27");
-                        MakeIniNotNull("Worldmap", "MistEndDistance", "80");
-                        MakeIniNotNull("Worldmap", "MistDensity", "7");
-                        MakeIniNotNull("Worldmap", "FogStartDistance", "86");
-                        MakeIniNotNull("Worldmap", "FogEndDistance", "142");
-                        MakeIniNotNull("Worldmap", "FieldOfView", "44");
-                        MakeIniNotNull("Worldmap", "FieldOfViewSpeedBoost", "100");
-                        MakeIniNotNull("Worldmap", "CameraDistance", "100");
-                        MakeIniNotNull("Worldmap", "CameraHeight", "100");
-                        MakeIniNotNull("Worldmap", "CameraAimHeight", "100");
-                        MakeIniNotNull("Worldmap", "CameraTiltShip", "100");
 
                         MakeIniNotNull("Control", "Enabled", "1");
                         MakeIniNotNull("Control", "DisableMouse", "0");
