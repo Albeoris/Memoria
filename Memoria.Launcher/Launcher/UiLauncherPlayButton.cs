@@ -179,7 +179,7 @@ namespace Memoria.Launcher
             }
         }
 
-        internal static async Task<Boolean> CheckUpdates(Window rootElement, ManualResetEvent cancelEvent, Settings_Vanilla gameSettings)
+        internal static async Task<Boolean> CheckUpdates(Window rootElement, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
         {
             String applicationPath = Path.GetFullPath(Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().Location).Path));
             String applicationDirectory = Path.GetDirectoryName(applicationPath);
@@ -281,7 +281,7 @@ namespace Memoria.Launcher
 
 
 
-        private static async Task<LinkedList<HttpFileInfo>> FindUpdatesInfo(String applicationDirectory, ManualResetEvent cancelEvent, Settings_Vanilla gameSettings)
+        private static async Task<LinkedList<HttpFileInfo>> FindUpdatesInfo(String applicationDirectory, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
         {
             Downloader downloader = new Downloader(cancelEvent);
             String[] urls = gameSettings.DownloadMirrors;

@@ -49,7 +49,6 @@
     <Compile Include="Launcher\SettingsGrid_Main.cs" />
     <Compile Include="Launcher\Settings.cs" />
     <Compile Include="Launcher\SettingsGrid_VanillaDisplay.cs" />
-    <Compile Include="Launcher\Settings_Vanilla.cs" />
     <Compile Include="ModManager\Mod.cs" />
     <Compile Include="Launcher\SettingsGrid_Shaders.cs" />
     <Compile Include="ModManager\ThrottledWebClient.cs">
