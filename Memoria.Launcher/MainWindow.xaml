@@ -18,6 +18,13 @@
             MouseDown="Launcher_MouseDown"
             Source="/Images/new_launcher_bg.png" />
 
+        <launcher:SettingsGrid_VanillaDisplay
+            x:Name="GameSettingsDisplay"
+            Width="260"
+            Margin="30,0,0,82"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom" />
+        
         <launcher:SettingsGrid_Vanilla
             x:Name="GameSettings"
             Width="260"
@@ -25,15 +32,14 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
 
-        <launcher:SettingsGrid_VanillaDisplay
-            x:Name="GameSettings2"
-            Width="260"
-            Margin="30,0,0,82"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Bottom" />
-
         <!--<Rectangle Width="1" Height="300" Fill="WhiteSmoke" Margin="269,336,524,10" />-->
 
+        <launcher:SettingsGrid_Cheats
+            x:Name="SettingsGrid_Cheats"
+            Width="260"
+            Margin="0,0,0,20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom" />
 
         <launcher:SettingsGrid_Main x:Name="SettingsGrid_Main"
             Width="260"
@@ -42,12 +48,6 @@
             VerticalAlignment="Bottom" >
         </launcher:SettingsGrid_Main>
 
-        <launcher:SettingsGrid_Cheats
-            x:Name="SettingsGrid_Cheats"
-            Width="260"
-            Margin="0,0,0,20"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Bottom" />
         <launcher:UiLauncherPlayButton
             x:Name="PlayButton"
             Width="260"
