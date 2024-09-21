@@ -21,6 +21,7 @@ using Application = System.Windows.Application;
 using GridViewColumnHeader = System.Windows.Controls.GridViewColumnHeader;
 using ListView = System.Windows.Controls.ListView;
 using MessageBox = System.Windows.Forms.MessageBox;
+using MethodInvoker = System.Windows.Forms.MethodInvoker;
 
 namespace Memoria.Launcher
 {

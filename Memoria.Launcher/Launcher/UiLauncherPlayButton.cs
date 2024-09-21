@@ -135,7 +135,7 @@ namespace Memoria.Launcher
                     }
                 }
 
-                String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {((GameSettings.WindowMode == 0 ^ GameSettings.WindowMode == 2) ? "0" : "1")} {(GameSettings.WindowMode == 2 ? "-popupwindow" : "")}";
+                String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {((GameSettingsDisplay.WindowMode == 0 ^ GameSettingsDisplay.WindowMode == 2) ? "0" : "1")} {(GameSettingsDisplay.WindowMode == 2 ? "-popupwindow" : "")}";
                 await Task.Factory.StartNew(
                     () =>
                     {
@@ -181,7 +181,7 @@ namespace Memoria.Launcher
 
         internal static async Task<Boolean> CheckUpdates(Window rootElement, ManualResetEvent cancelEvent, Settings_Vanilla gameSettings)
         {
-            String applicationPath = Path.GetFullPath(Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path));
+            String applicationPath = Path.GetFullPath(Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().Location).Path));
             String applicationDirectory = Path.GetDirectoryName(applicationPath);
             LinkedList<HttpFileInfo> updateInfo = await FindUpdatesInfo(applicationDirectory, cancelEvent, gameSettings);
             if (updateInfo.Count == 0)
