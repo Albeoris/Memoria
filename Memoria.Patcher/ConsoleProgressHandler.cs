@@ -16,7 +16,7 @@ namespace Memoria.Patcher
         {
             _totalSize = totalSize;
             _begin = DateTime.UtcNow;
-            Task.Run(() => BackgroundProcess());
+            Task.Factory.StartNew(() => BackgroundProcess());
         }
 
         public void Dispose()
