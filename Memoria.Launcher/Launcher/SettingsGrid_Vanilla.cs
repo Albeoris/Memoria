@@ -8,23 +8,6 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Vanilla()
         {
-            CreateTextbloc(Lang.Settings.ActiveMonitor, false, Lang.Settings.ActiveMonitor_Tooltip);
-            String[] comboboxchoices = GetAvailableMonitors();
-            CreateCombobox("ActiveMonitor", comboboxchoices, 4, "", true);
-
-            CreateTextbloc(Lang.Settings.WindowMode, false, Lang.Settings.WindowMode_Tooltip);
-            comboboxchoices = new String[]
-            {
-                Lang.Settings.Window,
-                Lang.Settings.ExclusiveFullscreen,
-                Lang.Settings.BorderlessFullscreen
-            };
-            CreateCombobox("WindowMode", comboboxchoices, 4);
-
-            CreateTextbloc(Lang.Settings.Resolution, false, Lang.Settings.Resolution_Tooltip);
-            comboboxchoices = EnumerateDisplaySettings(true).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray();
-            CreateCombobox("ScreenResolution", comboboxchoices, 4, "", true);
-
             CreateCheckbox("IsX64", "x64", Lang.Settings.Xsixfour_Tooltip, 0, "IsX64Enabled");
             CreateCheckbox("IsDebugMode", Lang.Settings.Debuggable, Lang.Settings.Debuggable_Tooltip, 4);
             CreateCheckbox("CheckUpdates", Lang.Settings.CheckUpdates, Lang.Settings.CheckUpdates_Tooltip);
