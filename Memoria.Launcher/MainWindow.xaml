@@ -91,7 +91,7 @@
                 Visibility="Collapsed" />
         </Grid>
         <launcher:UiLauncherAdvOptionsButton
-            Width="251"
+            Width="260"
             Height="36"
             Margin="0,0,30,20"
             HorizontalAlignment="Right"
