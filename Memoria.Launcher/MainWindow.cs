@@ -43,6 +43,7 @@ namespace Memoria.Launcher
             TryLoadImage();
 
             PlayButton.GameSettings = GameSettings;
+            PlayButton.GameSettingsDisplay = GameSettingsDisplay;
             Loaded += OnLoaded;
         }
 
