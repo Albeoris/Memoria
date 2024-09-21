@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -31,24 +32,28 @@ public class WMTweaker : Singleton<WMTweaker>
         this.CloudSpeed = 0.003f;
         this.w_cameraWorldEye_Y = 0;
         this.w_cameraWorldAim_Y = 0;
-        this.skydomeOffsetY = 20f;
-        this.cloudOffsetY = 20f;
+        //this.skydomeOffsetY = 20f; // these cause the flickering of github#820 but for ships
+        //this.cloudOffsetY = 20f;
         this.QuicksandScrollSpeed = 0.007f;
         this.WaterShrineScrollSpeed = 0.007f;
         this.ShadowScale = 1f;
-        this.SetShaderParameters();
+        //this.SetShaderParameters();
     }
 
     private void Start()
     {
-        this.SetShaderParameters();
+        //this.SetShaderParameters();
     }
 
+    /*
     private void SetShaderParameters()
     {
-        Shader.SetGlobalFloat("_FogStartDistance", this._FogStartDistance);
-        Shader.SetGlobalFloat("_FogEndDistance", this._FogEndDistance);
+        Single fogStartMul = Configuration.Worldmap.FogStartDistance / 100f;
+        Single fogEndMul = Configuration.Worldmap.FogEndDistance / 100f;
+        Shader.SetGlobalFloat("_FogStartDistance", this._FogStartDistance * fogStartMul);
+        Shader.SetGlobalFloat("_FogEndDistance", this._FogEndDistance * fogEndMul);
     }
+    */
 
     [ContextMenu("Reset Camera Matrix")]
     private void ResetCameraMatrix()
