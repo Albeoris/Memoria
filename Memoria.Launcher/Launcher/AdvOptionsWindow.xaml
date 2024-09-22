@@ -44,8 +44,8 @@
         <launcher:SettingsGrid_Shaders
             x:Name="SettingsGrid_Shaders"
             Width="260"
-            Margin="614,0,0,68"
-            HorizontalAlignment="Left"
+            Margin="0,0,30,66"
+            HorizontalAlignment="Right"
             VerticalAlignment="Bottom" />
 
         <launcher:UiLauncherModelViewerButton
@@ -57,7 +57,7 @@
             Content="" />
 
         <launcher:UiLauncherAdvOptionsCloseButton
-            Width="251"
+            Width="260"
             Height="36"
             Margin="0,0,30,20"
             HorizontalAlignment="Right"
@@ -67,21 +67,21 @@
         <Image x:Name="shader_comparison1_thumb"
             MouseEnter="Shader_comparison1_MouseEnter"
             MouseLeave="Shader_comparison1_MouseLeave"
-            Width="125"
+            Width="129"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Right"
             Source="/Images/shader_comparison1.jpg"
-            Margin="0,0,30,230"
+            Margin="0,0,35,205" Height="139"
             />
 
         <Image x:Name="shader_comparison2_thumb"
             MouseEnter="Shader_comparison2_MouseEnter"
             MouseLeave="Shader_comparison2_MouseLeave"
-            Width="117"
+            Width="121"
             VerticalAlignment="Bottom"
             HorizontalAlignment="Right"
             Source="/Images/shader_comparison2.jpg"
-            Margin="0,0,160,230"
+            Margin="0,0,169,204" Height="140"
             />
 
         <Image x:Name="shader_comparison1_full"

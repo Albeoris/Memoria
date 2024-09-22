@@ -9,26 +9,9 @@ namespace Memoria.Launcher
         public SettingsGrid_Main()
         {
             SetRows(2);
-            
-            CreateCheckbox("WidescreenSupport", Lang.Settings.Widescreen, Lang.Settings.Widescreen_Tooltip);
-            CreateCheckbox("AntiAliasing", Lang.Settings.AntiAliasing, Lang.Settings.AntiAliasing_Tooltip);
-
-            CreateTextbloc(Lang.Settings.FPSDropboxChoice, false, Lang.Settings.SharedFPS_Tooltip);
-            String[] comboboxchoices = new String[]{
-                Lang.Settings.FPSDropboxChoice0, // default 30 20 15
-                Lang.Settings.FPSDropboxChoice1, // 30
-                Lang.Settings.FPSDropboxChoice2, // 60
-                Lang.Settings.FPSDropboxChoice3, // 90
-                Lang.Settings.FPSDropboxChoice4  // 120
-            };
-            CreateCombobox("FPSDropboxChoice", comboboxchoices);
-
-            CreateTextbloc(Lang.Settings.CameraStabilizer, false, Lang.Settings.CameraStabilizer_Tooltip);
-
-            CreateSlider("CameraStabilizer", "CameraStabilizer", 0, 99, 1);
 
             CreateTextbloc(Lang.Settings.BattleInterface, false, Lang.Settings.BattleInterface_Tooltip);
-            comboboxchoices = new String[]{
+            String[] comboboxchoices = new String[]{
                 Lang.Settings.BattleInterfaceType0,
                 Lang.Settings.BattleInterfaceType1,
                 Lang.Settings.BattleInterfaceType2
@@ -66,23 +49,10 @@ namespace Memoria.Launcher
             };
             CreateCombobox("TripleTriad", comboboxchoices);
 
-            CreateCheckbox("UsePsxFont", Lang.Settings.UsePsxFont, Lang.Settings.UsePsxFont_Tooltip);
-
-            CreateTextbloc(Lang.Settings.FontChoice, false, Lang.Settings.FontChoice_Tooltip);
-            FontCollection installedFonts = new InstalledFontCollection();
-            String[] fontNames = new String[installedFonts.Families.Length + 2];
-            fontNames[0] = "Final Fantasy IX PC";
-            fontNames[1] = "Final Fantasy IX PSX";
-            for (Int32 fontindex = 0; fontindex < installedFonts.Families.Length; ++fontindex)
-                fontNames[fontindex + 2] = installedFonts.Families[fontindex].Name;
-            CreateCombobox("FontChoice", fontNames, 2, "", true);
-
             IniFile.SanitizeMemoriaIni();
 
             LoadSettings();
         }
-
-        private ComboBox FontChoiceBox;
 
         public void ComeBackToLauncherReloadSettings()
         {

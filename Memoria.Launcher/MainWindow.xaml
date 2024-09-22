@@ -11,38 +11,45 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="SingleBorderWindow">
     <Grid>
-        <Image
-            x:Name="Launcher"
+        <Image x:Name="Launcher"
             Height="800"
             VerticalAlignment="Top"
             MouseDown="Launcher_MouseDown"
             Source="/Images/new_launcher_bg.png" />
 
-        <launcher:SettingsGrid_Vanilla
-            x:Name="GameSettings"
+        <launcher:SettingsGrid_VanillaDisplay x:Name="GameSettingsDisplay"
             Width="260"
-            Margin="30,0,0,20"
+            Margin="30,0,0,179"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
 
-        <!--<Rectangle Width="1" Height="300" Fill="WhiteSmoke" Margin="269,336,524,10" />-->
-
-
-        <launcher:SettingsGrid_Main x:Name="SettingsGrid_Main"
+        <launcher:SettingsGrid_Display x:Name="SettingsGrid_Display"
             Width="260"
-            Margin="0,0,30,67"
-            HorizontalAlignment="Right"
+            Margin="30,0,0,25"
+            HorizontalAlignment="Left"
             VerticalAlignment="Bottom" >
-        </launcher:SettingsGrid_Main>
-
-        <launcher:SettingsGrid_Cheats
-            x:Name="SettingsGrid_Cheats"
+        </launcher:SettingsGrid_Display>
+        
+        <launcher:SettingsGrid_Cheats x:Name="SettingsGrid_Cheats"
             Width="260"
             Margin="0,0,0,20"
             HorizontalAlignment="Center"
             VerticalAlignment="Bottom" />
-        <launcher:UiLauncherPlayButton
-            x:Name="PlayButton"
+        
+        <launcher:SettingsGrid_Main x:Name="SettingsGrid_Main"
+            Width="260"
+            Margin="0,0,30,132"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom" >
+        </launcher:SettingsGrid_Main>
+        
+        <launcher:SettingsGrid_Vanilla x:Name="GameSettings"
+            Width="260"
+            Margin="0,0,30,70"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom" />
+
+        <launcher:UiLauncherPlayButton x:Name="PlayButton"
             Width="260"
             Height="72"
             Margin="0,0,30,552"
@@ -91,7 +98,7 @@
                 Visibility="Collapsed" />
         </Grid>
         <launcher:UiLauncherAdvOptionsButton
-            Width="251"
+            Width="260"
             Height="36"
             Margin="0,0,30,20"
             HorizontalAlignment="Right"
