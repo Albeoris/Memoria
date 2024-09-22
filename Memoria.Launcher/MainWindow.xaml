@@ -9,64 +9,180 @@
     BorderThickness="0"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
-    WindowStyle="SingleBorderWindow">
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Background="Transparent">
+
+    <Window.Resources>
+        <Style x:Key="TransparentGridStyle" TargetType="Grid">
+            <Setter Property="Background" Value="#88000000" />
+        </Style>
+
+        <Style TargetType="TabItem">
+            <Setter Property="Background" Value="#c000" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="FontSize" Value="20" />
+            <Setter Property="FontWeight" Value="Normal" />
+
+            <Setter Property="Margin" Value="0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Grid Background="{TemplateBinding Background}">
+                            <ContentPresenter ContentSource="Header"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="20,10"
+                                TextBlock.FontSize="{TemplateBinding FontSize}"
+                                TextBlock.FontWeight="{TemplateBinding FontWeight}"
+                                TextBlock.Foreground="#aaa" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <!-- Selected state: opaque black background and bold text -->
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#8000" />
+                    <Setter Property="Foreground" Value="#fff" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Grid Background="{TemplateBinding Background}">
+                                    <ContentPresenter ContentSource="Header"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Margin="20,10"
+                                        TextBlock.FontSize="{TemplateBinding FontSize}"
+                                        TextBlock.FontWeight="{TemplateBinding FontWeight}"
+                                        TextBlock.Foreground="#fff" />
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <!-- Optional color change -->
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <Grid>
+        <!-- Background Image -->
         <Image x:Name="Launcher"
             Height="800"
             VerticalAlignment="Top"
             MouseDown="Launcher_MouseDown"
             Source="/Images/new_launcher_bg.png" />
 
-        <launcher:SettingsGrid_VanillaDisplay x:Name="GameSettingsDisplay"
-            Width="260"
-            Margin="30,0,0,203"
+        <TextBlock x:Name="Nameandversion"
+            Text="{Binding MemoriaEngine, FallbackValue='Memoria Engine'}"
+            Foreground="#555"
+            FontSize="18"
+            FontWeight="Normal"
+            Margin="20,10"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
 
-        <launcher:SettingsGrid_Display x:Name="SettingsGrid_Display"
-            Width="260"
-            Margin="30,0,0,25"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Bottom" >
-        </launcher:SettingsGrid_Display>
-        
-        <launcher:SettingsGrid_Cheats x:Name="SettingsGrid_Cheats"
-            Width="260"
-            Margin="0,0,0,20"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Bottom" />
-        
-        <launcher:SettingsGrid_Main x:Name="SettingsGrid_Main"
-            Width="260"
-            Margin="0,0,30,132"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom" >
-        </launcher:SettingsGrid_Main>
-        
-        <launcher:SettingsGrid_Vanilla x:Name="GameSettings"
-            Width="260"
-            Margin="0,0,30,70"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom" />
+        <Button Content="X"
+                Width="52"
+                Height="23"
+                Background="#9777"
+                Foreground="White"
+                FontSize="14"
+                FontWeight="Bold"
+                BorderThickness="0"
+                BorderBrush="White"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Click="CloseButton_Click" />
 
+        <TabControl HorizontalAlignment="Center"
+                    VerticalAlignment="Top"
+                    Width="860"
+                    Height="520"
+                    Margin="0,140,0,0"
+                    Background="Transparent"
+                    BorderBrush="Transparent"
+                    BorderThickness="0"
+                    Padding="0">
+
+            <!-- Settings Tab -->
+            <TabItem Header="SETTINGS">
+                <Grid Style="{StaticResource TransparentGridStyle}">
+                    <launcher:SettingsGrid_VanillaDisplay x:Name="GameSettingsDisplay"
+                        Width="320"
+                        Margin="20"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top" />
+
+                    <launcher:SettingsGrid_Display x:Name="SettingsGrid_Display"
+                        Width="320"
+                        Margin="20,128,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top" />
+
+                    <launcher:SettingsGrid_Main x:Name="SettingsGrid_Main"
+                        Width="320"
+                        Margin="363,20,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top" />
+                </Grid>
+            </TabItem>
+
+            <!-- Cheats Tab -->
+            <TabItem Header="CHEATS">
+                <Grid Style="{StaticResource TransparentGridStyle}">
+                    <launcher:SettingsGrid_Cheats x:Name="SettingsGrid_Cheats"
+                        Width="260"
+                        Margin="20"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top" />
+                </Grid>
+            </TabItem>
+
+            <!-- Advanced Tab -->
+            <TabItem Header="ADVANCED">
+                <Grid Style="{StaticResource TransparentGridStyle}">
+                    <launcher:SettingsGrid_Vanilla x:Name="GameSettings"
+                        Width="260"
+                        Margin="20"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top" />
+
+                    <launcher:UiLauncherModelViewerButton
+                        Width="252"
+                        Height="36"
+                        Margin="20,0,0,20"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Bottom"
+                        Content="" />
+                </Grid>
+            </TabItem>
+        </TabControl>
+
+        <!-- Play Button -->
         <launcher:UiLauncherPlayButton x:Name="PlayButton"
             Width="260"
-            Height="72"
-            Margin="0,0,30,552"
+            Height="60"
+            Margin="0,42,20,0"
             HorizontalAlignment="Right"
-            VerticalAlignment="Bottom" />
+            VerticalAlignment="Top" />
+
+        <!-- Mod Manager Button -->
         <launcher:UiLauncherModManagerButton
             Width="260"
             Height="36"
-            Margin="0,0,30,512"
+            Margin="0,108,20,0"
             HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
+            VerticalAlignment="Top"
             Content="" />
+
         <Grid
             HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
-            Width="282"
-            Margin="0,0,0,503" >
+            VerticalAlignment="Top"
+            Width="260"
+            Margin="0,133,10,0" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
@@ -95,14 +211,7 @@
                 Source="/Images/alert_update.png"
                 ToolTipService.InitialShowDelay="1"
                 ToolTip=""
-                Visibility="Collapsed" />
+                Visibility="Visible" />
         </Grid>
-        <launcher:UiLauncherAdvOptionsButton
-            Width="260"
-            Height="36"
-            Margin="0,0,30,20"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Bottom"
-            Content="" />
     </Grid>
 </Window>

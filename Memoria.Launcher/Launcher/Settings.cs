@@ -19,7 +19,7 @@ namespace Memoria.Launcher
         }
         #region Properties
 
-        private String _iniPath = @"./Memoria.ini";
+        private readonly String _iniPath = @"./Memoria.ini";
 
         private Int16 _iswidescreensupport;
         public Int16 WidescreenSupport
@@ -371,9 +371,6 @@ namespace Memoria.Launcher
                 }
             }
         }
-
-
-
 
         private Int16 _stealingalwaysworks;
         public Int16 StealingAlwaysWorks

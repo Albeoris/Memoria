@@ -142,6 +142,7 @@ namespace Memoria.Launcher
             }
 
             public static readonly string LauncherWindowTitle = GetSettings(nameof(LauncherWindowTitle));
+            public static readonly string MemoriaEngine = GetSettings(nameof(MemoriaEngine));
 
             public static readonly string ActiveMonitor = GetSettings(nameof(ActiveMonitor));
             public static readonly string PrimaryMonitor = GetSettings(nameof(PrimaryMonitor));
@@ -265,7 +266,6 @@ namespace Memoria.Launcher
             public static readonly string MaxCardCount_Tooltip = GetSettings(nameof(MaxCardCount_Tooltip));
             public static readonly string CardReduceRandom_Tooltip = GetSettings(nameof(CardReduceRandom_Tooltip));
 
-
             public static readonly string FPSDropboxChoice = GetSettings(nameof(FPSDropboxChoice));
             public static readonly string FPSDropboxChoice0 = GetSettings(nameof(FPSDropboxChoice0));
             public static readonly string FPSDropboxChoice1 = GetSettings(nameof(FPSDropboxChoice1));
@@ -294,9 +294,7 @@ namespace Memoria.Launcher
             public static readonly string ShaderDropboxChoice2 = GetSettings(nameof(ShaderDropboxChoice2));
             public static readonly string ShaderDropboxChoice3 = GetSettings(nameof(ShaderDropboxChoice3));
             public static readonly string ShaderDropboxChoice4 = GetSettings(nameof(ShaderDropboxChoice4));
-
         }
-
 
         public static class SdLib
         {

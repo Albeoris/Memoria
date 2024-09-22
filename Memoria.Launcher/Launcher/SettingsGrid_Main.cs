@@ -1,6 +1,4 @@
 using System;
-using System.Drawing.Text;
-using System.Windows.Controls;
 
 namespace Memoria.Launcher
 {
@@ -9,6 +7,8 @@ namespace Memoria.Launcher
         public SettingsGrid_Main()
         {
             SetRows(2);
+
+            CreateTextbloc(Lang.Settings.Other, true);
 
             CreateTextbloc(Lang.Settings.BattleInterface, false, Lang.Settings.BattleInterface_Tooltip);
             String[] comboboxchoices = new String[]{

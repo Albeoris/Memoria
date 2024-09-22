@@ -69,7 +69,6 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Launcher\AdvOptionsWindow.cs" />
     <Compile Include="Languages\Lang.cs" />
     <Compile Include="Languages\XmlDocumentExm.cs" />
     <Compile Include="Languages\XmlHelper.cs" />
@@ -79,7 +78,6 @@
     <Compile Include="Launcher\Settings.cs" />
     <Compile Include="Launcher\SettingsGrid_VanillaDisplay.cs" />
     <Compile Include="ModManager\Mod.cs" />
-    <Compile Include="Launcher\SettingsGrid_Shaders.cs" />
     <Compile Include="ModManager\ThrottledWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -106,10 +104,6 @@
     <Resource Include="Images\pc_launcher_bg.png" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Launcher\AdvOptionsWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

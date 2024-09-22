@@ -16,13 +16,14 @@ namespace Memoria.Launcher
     public class UiGrid : Grid
     {
         public SolidColorBrush TextColor = Brushes.White;
-        public Thickness CommonMargin = new Thickness(0, 2, 0, 2);
+        public Thickness CommonMargin = new Thickness(0, 3, 0, 3);
         public Int32 Row = -1;
         public Int32 MaxColumns = 8;
         public Int32 FontWeightNormal = 400;
         public Int32 FontWeightCombobox = 500;
-        public Int32 FontSizeNormal = 12;
-        public Int32 FontSizeCombobox = 10;
+        public Int32 FontSizeNormal = 14;
+        public Int32 FontSizeCombobox = 12;
+        public Int32 ComboboxHeight = 22;
         public void SetRows(Int32 count)
         {
             count -= RowDefinitions.Count;
@@ -105,7 +106,7 @@ namespace Memoria.Launcher
             comboBox.Foreground = Brushes.Black;
             comboBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightCombobox);
             comboBox.Margin = CommonMargin;
-            comboBox.Height = 20;
+            comboBox.Height = ComboboxHeight;
             comboBox.FontSize = FontSizeCombobox;
             if (selectByName)
                 comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(property) { Mode = BindingMode.TwoWay });
@@ -233,41 +234,6 @@ namespace Memoria.Launcher
         }
     }
 
-    public sealed class UiLauncherAdvOptionsButton : UiModManagerButton
-    {
-        public UiLauncherAdvOptionsButton()
-        {
-            Label = Lang.Launcher.AdvSettings;
-        }
-
-        protected override async Task DoAction()
-        {
-            MainWindow mainWindow = (MainWindow)this.GetRootElement();
-            if (mainWindow.AdvOptionsWindow == null)
-                mainWindow.AdvOptionsWindow = new AdvOptionsWindow();
-            mainWindow.AdvOptionsWindow.Owner = mainWindow;
-            mainWindow.AdvOptionsWindow.Show();
-            mainWindow.AdvOptionsWindow.Activate();
-        }
-    }
-
-    public sealed class UiLauncherAdvOptionsCloseButton : UiModManagerButton
-    {
-        public UiLauncherAdvOptionsCloseButton()
-        {
-            Label = "↩ " + Lang.Launcher.Return;
-        }
-
-        protected override async Task DoAction()
-        {
-            try
-            {
-                ((Window)this.GetRootElement()).Close();
-            }
-            catch (Exception) { }
-        }
-    }
-
     public sealed class UiLauncherModelViewerButton : UiModManagerButton
     {
         public UiLauncherModelViewerButton()
@@ -279,8 +245,7 @@ namespace Memoria.Launcher
         {
             try
             {
-                Window adv = (Window)this.GetRootElement();
-                MainWindow mainWindow = (MainWindow)adv.Owner;
+                MainWindow mainWindow = (MainWindow)this.GetRootElement();
                 mainWindow.PlayButton.Click(true);
             }
             catch (Exception) { }

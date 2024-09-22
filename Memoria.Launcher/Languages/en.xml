@@ -30,6 +30,7 @@
 
 	<Settings
 	LauncherWindowTitle = "Final Fantasy IX | Memoria Launcher"
+	MemoriaEngine = "Memoria Engine"
 	ActiveMonitor = "Active monitor"
 	PrimaryMonitor = "[Primary]"
 	Resolution = "Resolution"

@@ -6,9 +6,6 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Cheats()
         {
-            SetRows(2);
-
-            CreateTextbloc(Lang.Settings.IniCheats, true);
             CreateCheckbox("StealingAlwaysWorks", Lang.Settings.MaxStealRate, Lang.Settings.MaxStealRate_Tooltip);
             CreateCheckbox("NoAutoTrance", Lang.Settings.NoAutoTrance, Lang.Settings.NoAutoTrance_Tooltip);
             CreateCheckbox("GarnetConcentrate", Lang.Settings.DisableCantConcentrate, Lang.Settings.DisableCantConcentrate_Tooltip);

@@ -17,7 +17,6 @@ namespace Memoria.Launcher
     public partial class MainWindow : Window, IComponentConnector
     {
         public ModManagerWindow ModdingWindow;
-        public AdvOptionsWindow AdvOptionsWindow;
         public DateTime MemoriaAssemblyCompileDate;
 
         public MainWindow()
@@ -51,6 +50,7 @@ namespace Memoria.Launcher
         {
             HotfixForMoguriMod();
             Title = Lang.Settings.LauncherWindowTitle + " | " + MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
+            Nameandversion.Text = Lang.Settings.MemoriaEngine + " " + MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
 
             // Creates a Mod Manager window (but completely invisible) to trigger "onLoaded" to download the mod catalog retrieve the info that updates or incompatibilities exist.
             // It's instantly closed and the info is retrieved by ComeBackToLauncherFromModManager() to define if any icon is displayed
@@ -70,6 +70,10 @@ namespace Memoria.Launcher
 
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();
+        }
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close(); // Closes the window when the button is clicked
         }
 
         public void ComeBackToLauncherFromModManager(Boolean updates, Boolean incompat)
