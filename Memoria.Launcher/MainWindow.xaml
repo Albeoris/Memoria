@@ -87,15 +87,35 @@
         <Button Content="X"
                 Width="52"
                 Height="23"
-                Background="#9777"
                 Foreground="White"
                 FontSize="14"
-                FontWeight="Bold"
+                FontWeight="Thin"
+                FontStretch="ExtraExpanded"
                 BorderThickness="0"
                 BorderBrush="White"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Top"
-                Click="CloseButton_Click" />
+                Click="CloseButton_Click">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </ControlTemplate>
+            </Button.Template>
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="#9777"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="Red"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
 
         <TabControl HorizontalAlignment="Center"
                     VerticalAlignment="Top"
@@ -134,7 +154,7 @@
             <TabItem Header="CHEATS">
                 <Grid Style="{StaticResource TransparentGridStyle}">
                     <launcher:SettingsGrid_Cheats x:Name="SettingsGrid_Cheats"
-                        Width="260"
+                        Width="320"
                         Margin="20"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
@@ -145,7 +165,7 @@
             <TabItem Header="ADVANCED">
                 <Grid Style="{StaticResource TransparentGridStyle}">
                     <launcher:SettingsGrid_Vanilla x:Name="GameSettings"
-                        Width="260"
+                        Width="320"
                         Margin="20"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
