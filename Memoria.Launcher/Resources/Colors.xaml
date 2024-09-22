@@ -1,0 +1,36 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Color x:Key="BackgroundColor">#FF333333</Color>
+    <Color x:Key="BackgroundColorShade1">#FF333333</Color>
+    <Color x:Key="BackgroundColorShade2">#FF333333</Color>
+    <Color x:Key="BackgroundColorShade3">#FF333333</Color>
+    <Color x:Key="AccentColor">#F03a6b77</Color>
+    <Color x:Key="AccentColorHover">#F0476A6E</Color>
+    <Color x:Key="AccentColorPressed">#F055797D</Color>
+    <Color x:Key="TextColor">#80FFFFFF</Color>
+    <Color x:Key="TextColorHover">#BFFFFFFF</Color>
+    <Color x:Key="TextColorPressed">#FFFFFFFF</Color>
+    <Color x:Key="DarkTextColor">#FF333333</Color>
+
+    <SolidColorBrush x:Key="BrushBackgroundColor" Color="{DynamicResource BackgroundColor}"/>
+    <SolidColorBrush x:Key="BrushBackgroundColorShade1" Color="{DynamicResource BackgroundColorShade1}"/>
+    <SolidColorBrush x:Key="BrushBackgroundColorShade2" Color="{DynamicResource BackgroundColorShade2}"/>
+    <SolidColorBrush x:Key="BrushBackgroundColorShade3" Color="{DynamicResource BackgroundColorShade3}"/>
+    <SolidColorBrush x:Key="BrushAccentColor" Color="{DynamicResource AccentColor}"/>
+    <SolidColorBrush x:Key="BrushAccentColorHover" Color="{DynamicResource AccentColorHover}"/>
+    <SolidColorBrush x:Key="BrushAccentColorPressed" Color="{DynamicResource AccentColorPressed}"/>
+    <SolidColorBrush x:Key="BrushTextColor" Color="{DynamicResource TextColor}"/>
+    <SolidColorBrush x:Key="BrushTextColorHover" Color="{DynamicResource TextColorHover}"/>
+    <SolidColorBrush x:Key="BrushTextColorPressed" Color="{DynamicResource TextColorPressed}"/>
+    <SolidColorBrush x:Key="BrushDarkTextColor" Color="{DynamicResource DarkTextColor}"/>
+
+    <Style x:Key="FocusVisualStyle">
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle Stroke="{DynamicResource BrushTextColorHover}" Margin="2" StrokeThickness="1" RadiusX="3" RadiusY="3" StrokeDashArray="1 2" SnapsToDevicePixels="True"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

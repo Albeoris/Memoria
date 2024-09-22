@@ -22,7 +22,7 @@ namespace Memoria.Launcher
         public Int32 FontWeightNormal = 400;
         public Int32 FontWeightCombobox = 500;
         public Int32 FontSizeNormal = 14;
-        public Int32 FontSizeCombobox = 12;
+        public Int32 FontSizeCombobox = 10;
         public Int32 ComboboxHeight = 22;
         public void SetRows(Int32 count)
         {
