@@ -152,6 +152,20 @@
 	Shader_Toon = "Comicstil"
 	Shader_Outlines = "Modellkonturen"
 	Custom = "Benutzerdefiniert"
+	
+	Other = "Andere"
+	Display = "Anzeige"
+	Cards = "Kartenspiel"
+	Advanced = "Erweitert"
+	FieldShader = "Feld-Shader"
+	BattleShader = "Kampf-Shader"
+	FieldShader_Tooltip = "Shader, der auf Charaktere außerhalb von Kämpfen angewendet wird"
+	BattleShader_Tooltip = "Shader, der auf Charaktere und Monster im Kampf angewendet wird"
+	ShaderDropboxChoice0 = "Keine (Standard)"
+	ShaderDropboxChoice1 = "Toon + Umrisse"
+	ShaderDropboxChoice2 = "Toon"
+	ShaderDropboxChoice3 = "Natürlich + Umrisse"
+	ShaderDropboxChoice4 = "Natürlich"
 	/>
 
 	<SdLib

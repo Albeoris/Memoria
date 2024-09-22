@@ -21,6 +21,9 @@ namespace Memoria.Launcher
             Margin = new Thickness(0);
             DataContext = this;
 
+
+            CreateTextbloc(Lang.Settings.Display, true);
+
             CreateTextbloc(Lang.Settings.ActiveMonitor, false, Lang.Settings.ActiveMonitor_Tooltip);
             String[] comboboxchoices = GetAvailableMonitors();
             CreateCombobox("ActiveMonitor", comboboxchoices, 4, "", true);

@@ -153,6 +153,20 @@
 	Shader_Toon = "Dessin animé"
 	Shader_Outlines = "Contours des modèles"
 	Custom = "Personnalisé"
+	
+	Other = "Autre"
+	Display = "Affichage"
+	Cards = "Jeu de cartes"
+	Advanced = "Avancé"
+	FieldShader = "Shader hors-combat"
+	BattleShader = "Shader de combat"
+	FieldShader_Tooltip = "Shader appliqué aux personnages en dehors des combats"
+	BattleShader_Tooltip = "Shader appliqué aux personnages et monstres en combat"
+	ShaderDropboxChoice0 = "Aucun (par défaut)"
+	ShaderDropboxChoice1 = "Cartoon + Contours"
+	ShaderDropboxChoice2 = "Cartoon"
+	ShaderDropboxChoice3 = "Naturel + Contours"
+	ShaderDropboxChoice4 = "Naturel"
 	/>
 
 	<SdLib

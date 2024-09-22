@@ -161,6 +161,20 @@
 	Shader_Toon = "Toon"
 	Shader_Outlines = "Model outlines"
 	Custom = "Custom"
+	
+	Other = "Other"
+	Display = "Display"
+	Cards = "Card minigame"
+	Advanced = "Advanced"
+	FieldShader = "Field Shader"
+	BattleShader = "Battle Shader"
+	FieldShader_Tooltip = "Shader to be applied on characters outside of battles"
+	BattleShader_Tooltip = "Shader to be applied on characters and monsters in battle"
+	ShaderDropboxChoice0 = "None (default)"
+	ShaderDropboxChoice1 = "Toon + Outlines"
+	ShaderDropboxChoice2 = "Toon"
+	ShaderDropboxChoice3 = "Natural + Outlines"
+	ShaderDropboxChoice4 = "Natural"
 	/>
 
 	<SdLib

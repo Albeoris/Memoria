@@ -41,12 +41,14 @@
             HorizontalAlignment="Center"
             VerticalAlignment="Top" />
 
+        <!--
         <launcher:SettingsGrid_Shaders
             x:Name="SettingsGrid_Shaders"
             Width="260"
             Margin="0,0,30,66"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom" />
+        -->
 
         <launcher:UiLauncherModelViewerButton
             Width="252"
@@ -64,6 +66,7 @@
             VerticalAlignment="Bottom"
             Content="" />
 
+        <!--
         <Image x:Name="shader_comparison1_thumb"
             MouseEnter="Shader_comparison1_MouseEnter"
             MouseLeave="Shader_comparison1_MouseLeave"
@@ -73,7 +76,7 @@
             Source="/Images/shader_comparison1.jpg"
             Margin="0,0,35,205" Height="139"
             />
-
+        
         <Image x:Name="shader_comparison2_thumb"
             MouseEnter="Shader_comparison2_MouseEnter"
             MouseLeave="Shader_comparison2_MouseLeave"
@@ -101,6 +104,7 @@
             Margin="0,0,282,146"
             Visibility="Collapsed"
             />
-
+        -->
+        
     </Grid>
 </Window>

@@ -152,6 +152,20 @@
 	Shader_Toon = "トゥーン"
 	Shader_Outlines = "モデルの輪郭"
 	Custom = "カスタム"
+	
+	Other = "その他"
+	Display = "ディスプレイ"
+	Cards = "カードミニゲーム"
+	Advanced = "高度設定"
+	FieldShader = "フィールドシェーダー"
+	BattleShader = "バトルシェーダー"
+	FieldShader_Tooltip = "バトル外のキャラクターに適用されるシェーダー"
+	BattleShader_Tooltip = "バトル中のキャラクターやモンスターに適用されるシェーダー"
+	ShaderDropboxChoice0 = "なし (デフォルト)"
+	ShaderDropboxChoice1 = "トゥーン + 輪郭"
+	ShaderDropboxChoice2 = "トゥーン"
+	ShaderDropboxChoice3 = "ナチュラル + 輪郭"
+	ShaderDropboxChoice4 = "ナチュラル"
 	/>
 
 	<SdLib

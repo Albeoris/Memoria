@@ -153,6 +153,20 @@
 	Shader_Toon = "Dibujo animado"
 	Shader_Outlines = "Contornos del modelo"
 	Custom = "Personalizado"
+	
+	Other = "Otro"
+	Display = "Pantalla"
+	Cards = "Minijuego de cartas"
+	Advanced = "Avanzado"
+	FieldShader = "Sombreado de campo"
+	BattleShader = "Sombreado de batalla"
+	FieldShader_Tooltip = "Sombreado aplicado a los personajes fuera de las batallas"
+	BattleShader_Tooltip = "Sombreado aplicado a personajes y monstruos en batalla"
+	ShaderDropboxChoice0 = "Ninguno (predeterminado)"
+	ShaderDropboxChoice1 = "Toon + Contornos"
+	ShaderDropboxChoice2 = "Toon"
+	ShaderDropboxChoice3 = "Natural + Contornos"
+	ShaderDropboxChoice4 = "Natural"
 	/>
 
 	<SdLib

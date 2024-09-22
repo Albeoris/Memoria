@@ -156,6 +156,20 @@
 	Shader_Toon = "Мультяшный"
 	Shader_Outlines = "Контуры модели"
 	Custom = "Настраиваемый"
+	
+	Other = "Другое"
+	Display = "Экран"
+	Cards = "Мини-игра с картами"
+	Advanced = "Расширенные настройки"
+	FieldShader = "Шейдер поля"
+	BattleShader = "Шейдер боя"
+	FieldShader_Tooltip = "Шейдер, применяемый к персонажам вне боя"
+	BattleShader_Tooltip = "Шейдер, применяемый к персонажам и монстрам в бою"
+	ShaderDropboxChoice0 = "Нет (по умолчанию)"
+	ShaderDropboxChoice1 = "Мультяшный + Контуры"
+	ShaderDropboxChoice2 = "Мультяшный"
+	ShaderDropboxChoice3 = "Натуральный + Контуры"
+	ShaderDropboxChoice4 = "Натуральный"
 	/>
 
 	<SdLib

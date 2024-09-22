@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using Application = System.Windows.Application;
 using System.Windows;
 using MessageBox = System.Windows.Forms.MessageBox;
+using SharpCompress.Common;
 
 namespace Memoria.Launcher
 {
@@ -68,6 +69,32 @@ namespace Memoria.Launcher
                 if (_fpsdropboxchoice != value)
                 {
                     _fpsdropboxchoice = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _shaderfieldchoice;
+        public Int16 ShaderFieldChoice
+        {
+            get { return _shaderfieldchoice; }
+            set
+            {
+                if (_shaderfieldchoice != value)
+                {
+                    _shaderfieldchoice = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _shaderbattlechoice;
+        public Int16 ShaderBattleChoice
+        {
+            get { return _shaderbattlechoice; }
+            set
+            {
+                if (_shaderbattlechoice != value)
+                {
+                    _shaderbattlechoice = value;
                     OnPropertyChanged();
                 }
             }
@@ -658,7 +685,67 @@ namespace Memoria.Launcher
                                 iniFile.WriteValue("Graphics", "BattleFPS ", " 120");
                                 iniFile.WriteValue("Graphics", "WorldFPS ", " 120");
                                 break;
-                            default:
+                        }
+                        break;
+                    case nameof(ShaderFieldChoice):
+                        iniFile.WriteValue("Shaders", "Enabled ", " 1");
+                        switch (ShaderFieldChoice)
+                        {
+                            case (0):
+                                iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " 0");
+                                break;
+                            case (1):
+                                iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " 1");
+                                iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " 1");
+                                break;
+                            case (2):
+                                iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " 1");
+                                iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " 0");
+                                break;
+                            case (3):
+                                iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " 1");
+                                iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " 1");
+                                break;
+                            case (4):
+                                iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " 1");
+                                iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " 0");
+                                break;
+                        }
+                        break;
+                    case nameof(ShaderBattleChoice):
+                        iniFile.WriteValue("Shaders", "Enabled ", " 1");
+                        switch (ShaderBattleChoice)
+                        {
+                            case (0):
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " 0");
+                                break;
+                            case (1):
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " 1");
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " 1");
+                                break;
+                            case (2):
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " 1");
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " 0");
+                                break;
+                            case (3):
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " 1");
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " 1");
+                                break;
+                            case (4):
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " 1");
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " 0");
                                 break;
                         }
                         break;
@@ -932,6 +1019,44 @@ namespace Memoria.Launcher
                 }
 
                 value = iniFile.ReadValue("Shaders", "Shader_Field_Realism");
+                value1isInt = Int16.TryParse(value, out value1);
+                value = iniFile.ReadValue("Shaders", "Shader_Field_Toon");
+                value2isInt = Int16.TryParse(value, out value2);
+                value = iniFile.ReadValue("Shaders", "Shader_Field_Outlines");
+                value3isInt = Int16.TryParse(value, out value3);
+                if (value1 == 0 && value2 == 0 && value3 == 0)
+                    _shaderfieldchoice = 0;
+                else if (value1 == 0 && value2 == 1 && value3 == 1)
+                    _shaderfieldchoice = 1;
+                else if (value1 == 0 && value2 == 1 && value3 == 0)
+                    _shaderfieldchoice = 2;
+                else if (value1 == 1 && value2 == 0 && value3 == 1)
+                    _shaderfieldchoice = 3;
+                else if (value1 == 1 && value2 == 0 && value3 == 0)
+                    _shaderfieldchoice = 4;
+                else
+                    _shaderfieldchoice = -1;
+
+                value = iniFile.ReadValue("Shaders", "Shader_Battle_Realism");
+                value1isInt = Int16.TryParse(value, out value1);
+                value = iniFile.ReadValue("Shaders", "Shader_Battle_Toon");
+                value2isInt = Int16.TryParse(value, out value2);
+                value = iniFile.ReadValue("Shaders", "Shader_Battle_Outlines");
+                value3isInt = Int16.TryParse(value, out value3);
+                if (value1 == 0 && value2 == 0 && value3 == 0)
+                    _shaderbattlechoice = 0;
+                else if (value1 == 0 && value2 == 1 && value3 == 1)
+                    _shaderbattlechoice = 1;
+                else if (value1 == 0 && value2 == 1 && value3 == 0)
+                    _shaderbattlechoice = 2;
+                else if (value1 == 1 && value2 == 0 && value3 == 1)
+                    _shaderbattlechoice = 3;
+                else if (value1 == 1 && value2 == 0 && value3 == 0)
+                    _shaderbattlechoice = 4;
+                else
+                    _shaderbattlechoice = -1;
+
+                value = iniFile.ReadValue("Shaders", "Shader_Field_Realism");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
@@ -1115,7 +1240,8 @@ namespace Memoria.Launcher
                         Refresh(property);
                     }
                 }
-
+                Refresh(nameof(ShaderFieldChoice));
+                Refresh(nameof(ShaderBattleChoice));
                 Refresh(nameof(BattleInterface));
                 Refresh(nameof(UIColumnsChoice));
                 Refresh(nameof(FPSDropboxChoice));

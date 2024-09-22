@@ -161,6 +161,20 @@
 	Shader_Toon = "Toon"
 	Shader_Outlines = "模型描边"
 	Custom = "自定义"
+	
+	Other = "其他"
+	Display = "显示"
+	Cards = "卡牌小游戏"
+	Advanced = "高级"
+	FieldShader = "场景着色器"
+	BattleShader = "战斗着色器"
+	FieldShader_Tooltip = "应用于战斗外角色的着色器"
+	BattleShader_Tooltip = "应用于战斗中角色和怪物的着色器"
+	ShaderDropboxChoice0 = "无 (默认)"
+	ShaderDropboxChoice1 = "卡通 + 轮廓"
+	ShaderDropboxChoice2 = "卡通"
+	ShaderDropboxChoice3 = "自然 + 轮廓"
+	ShaderDropboxChoice4 = "自然"
 	/>
 
 	<SdLib

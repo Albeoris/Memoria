@@ -1,6 +1,5 @@
 using System;
 using System.Drawing.Text;
-using System.Windows.Controls;
 
 namespace Memoria.Launcher
 {
@@ -26,6 +25,26 @@ namespace Memoria.Launcher
 
             CreateTextbloc(Lang.Settings.CameraStabilizer, false, Lang.Settings.CameraStabilizer_Tooltip);
             CreateSlider("CameraStabilizer", "CameraStabilizer", 0, 99, 1);
+
+            CreateTextbloc(Lang.Settings.FieldShader, false, Lang.Settings.FieldShader_Tooltip);
+            comboboxchoices = new String[]{
+                Lang.Settings.ShaderDropboxChoice0,
+                Lang.Settings.ShaderDropboxChoice1,
+                Lang.Settings.ShaderDropboxChoice2,
+                Lang.Settings.ShaderDropboxChoice3,
+                Lang.Settings.ShaderDropboxChoice4
+            };
+            CreateCombobox("ShaderFieldChoice", comboboxchoices);
+
+            CreateTextbloc(Lang.Settings.BattleShader, false, Lang.Settings.BattleShader_Tooltip);
+            comboboxchoices = new String[]{
+                Lang.Settings.ShaderDropboxChoice0,
+                Lang.Settings.ShaderDropboxChoice1,
+                Lang.Settings.ShaderDropboxChoice2,
+                Lang.Settings.ShaderDropboxChoice3,
+                Lang.Settings.ShaderDropboxChoice4
+            };
+            CreateCombobox("ShaderBattleChoice", comboboxchoices);
 
             CreateCheckbox("UsePsxFont", Lang.Settings.UsePsxFont, Lang.Settings.UsePsxFont_Tooltip);
 

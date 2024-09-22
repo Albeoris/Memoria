@@ -43,10 +43,12 @@ namespace Memoria.Launcher
         }
 
         // hover images
+        /*
         private void Shader_comparison1_MouseEnter(Object sender, System.Windows.Input.MouseEventArgs e) => shader_comparison1_full.Visibility = Visibility.Visible;
         private void Shader_comparison1_MouseLeave(Object sender, System.Windows.Input.MouseEventArgs e) => shader_comparison1_full.Visibility = Visibility.Collapsed;
         private void Shader_comparison2_MouseEnter(Object sender, System.Windows.Input.MouseEventArgs e) => shader_comparison2_full.Visibility = Visibility.Visible;
         private void Shader_comparison2_MouseLeave(Object sender, System.Windows.Input.MouseEventArgs e) => shader_comparison2_full.Visibility = Visibility.Collapsed;
+        */
 
         public event PropertyChangedEventHandler PropertyChanged;
 

@@ -281,6 +281,20 @@ namespace Memoria.Launcher
             public static readonly string Shader_Outlines = GetSettings(nameof(Shader_Outlines));
             public static readonly string Custom = GetSettings(nameof(Custom));
 
+            public static readonly string Other = GetSettings(nameof(Other));
+            public static readonly string Display = GetSettings(nameof(Display));
+            public static readonly string Cards = GetSettings(nameof(Cards));
+            public static readonly string Advanced = GetSettings(nameof(Advanced));
+            public static readonly string FieldShader = GetSettings(nameof(FieldShader));
+            public static readonly string BattleShader = GetSettings(nameof(BattleShader));
+            public static readonly string FieldShader_Tooltip = GetSettings(nameof(FieldShader_Tooltip));
+            public static readonly string BattleShader_Tooltip = GetSettings(nameof(BattleShader_Tooltip));
+            public static readonly string ShaderDropboxChoice0 = GetSettings(nameof(ShaderDropboxChoice0));
+            public static readonly string ShaderDropboxChoice1 = GetSettings(nameof(ShaderDropboxChoice1));
+            public static readonly string ShaderDropboxChoice2 = GetSettings(nameof(ShaderDropboxChoice2));
+            public static readonly string ShaderDropboxChoice3 = GetSettings(nameof(ShaderDropboxChoice3));
+            public static readonly string ShaderDropboxChoice4 = GetSettings(nameof(ShaderDropboxChoice4));
+
         }
 
 

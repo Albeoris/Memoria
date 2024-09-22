@@ -19,7 +19,7 @@
 
         <launcher:SettingsGrid_VanillaDisplay x:Name="GameSettingsDisplay"
             Width="260"
-            Margin="30,0,0,179"
+            Margin="30,0,0,203"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
 
