@@ -8,7 +8,7 @@ using System.Windows.Media;
 
 namespace Memoria.Launcher
 {
-    public class App : Application
+    public partial class App : Application
     {
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -19,7 +19,7 @@ namespace Memoria.Launcher
 
         [GeneratedCode("PresentationBuildTasks", "4.0.0.0")]
         [DebuggerNonUserCode]
-        public void InitializeComponent()
+        public void InitializeComponent2()
         {
             this.StartupUri = new Uri("MainWindow.xaml", UriKind.Relative);
         }

@@ -22,7 +22,7 @@ namespace Memoria.Launcher
             DataContext = this;
 
             CreateCheckbox("IsX64", "x64", Lang.Settings.Xsixfour_Tooltip, 0, "IsX64Enabled");
-            CreateCheckbox("IsDebugMode", Lang.Settings.Debuggable, Lang.Settings.Debuggable_Tooltip, 4);
+            CreateCheckbox("IsDebugMode", Lang.Settings.Debuggable, Lang.Settings.Debuggable_Tooltip);
             CreateCheckbox("CheckUpdates", Lang.Settings.CheckUpdates, Lang.Settings.CheckUpdates_Tooltip);
 
             String OSversion = $"{Environment.OSVersion}";

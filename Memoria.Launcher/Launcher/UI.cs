@@ -68,6 +68,7 @@ namespace Memoria.Launcher
             if (propertyToEnable != "")
                 checkBox.SetBinding(ToggleButton.IsEnabledProperty, new Binding(propertyToEnable) { Mode = BindingMode.TwoWay });
             checkBox.Margin = CommonMargin;
+            checkBox.Style = (Style)Application.Current.FindResource("ToggleStyle");
             checkBox.SetValue(RowProperty, Row);
             checkBox.SetValue(ColumnProperty, firstColumn);
             checkBox.SetValue(RowSpanProperty, 1);

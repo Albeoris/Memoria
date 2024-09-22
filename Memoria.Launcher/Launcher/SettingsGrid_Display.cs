@@ -21,10 +21,10 @@ namespace Memoria.Launcher
             CreateCombobox("FPSDropboxChoice", comboboxchoices);
 
             CreateCheckbox("WidescreenSupport", Lang.Settings.Widescreen, Lang.Settings.Widescreen_Tooltip);
-            CreateCheckbox("AntiAliasing", Lang.Settings.AntiAliasing, Lang.Settings.AntiAliasing_Tooltip, 4);
+            CreateCheckbox("AntiAliasing", Lang.Settings.AntiAliasing, Lang.Settings.AntiAliasing_Tooltip);
 
             CreateTextbloc(Lang.Settings.CameraStabilizer, false, Lang.Settings.CameraStabilizer_Tooltip);
-            CreateSlider("CameraStabilizer", "CameraStabilizer", 0, 99, 1);
+            CreateSlider("CameraStabilizer", "CameraStabilizer", 0, 97, 1);
 
             CreateTextbloc(Lang.Settings.FieldShader, false, Lang.Settings.FieldShader_Tooltip);
             comboboxchoices = new String[]{

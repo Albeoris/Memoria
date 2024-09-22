@@ -85,7 +85,7 @@
     <Compile Include="Launcher\UiModManagerButton.xaml.cs">
       <DependentUpon>UiModManagerButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="App.cs" />
+    <Compile Include="App.xaml.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Launcher\IniFile.cs" />
     <Compile Include="AssemblyInfo.cs" />
@@ -104,6 +104,13 @@
     <Resource Include="Images\pc_launcher_bg.png" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\ToggleStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

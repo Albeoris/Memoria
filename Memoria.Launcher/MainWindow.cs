@@ -49,8 +49,8 @@ namespace Memoria.Launcher
         private void OnLoaded(Object sender, RoutedEventArgs e)
         {
             HotfixForMoguriMod();
-            Title = Lang.Settings.LauncherWindowTitle + " | " + MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
-            Nameandversion.Text = Lang.Settings.MemoriaEngine + " " + MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
+            Title = Lang.Settings.LauncherWindowTitle + " | v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
+            Nameandversion.Text = Lang.Settings.MemoriaEngine + " v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
 
             // Creates a Mod Manager window (but completely invisible) to trigger "onLoaded" to download the mod catalog retrieve the info that updates or incompatibilities exist.
             // It's instantly closed and the info is retrieved by ComeBackToLauncherFromModManager() to define if any icon is displayed
