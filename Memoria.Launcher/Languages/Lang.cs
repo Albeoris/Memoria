@@ -294,6 +294,12 @@ namespace Memoria.Launcher
             public static readonly string ShaderDropboxChoice2 = GetSettings(nameof(ShaderDropboxChoice2));
             public static readonly string ShaderDropboxChoice3 = GetSettings(nameof(ShaderDropboxChoice3));
             public static readonly string ShaderDropboxChoice4 = GetSettings(nameof(ShaderDropboxChoice4));
+            public static readonly string menuSettings = GetSettings(nameof(menuSettings));
+            public static readonly string menuAdvanced = GetSettings(nameof(menuAdvanced));
+            public static readonly string menuCheats = GetSettings(nameof(menuCheats));
+            public static readonly string menuPresets = GetSettings(nameof(menuPresets));
+            public static readonly string Worldmap = GetSettings(nameof(Worldmap));
+            public static readonly string QoL = GetSettings(nameof(QoL));
         }
 
         public static class SdLib

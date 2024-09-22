@@ -171,6 +171,12 @@
 	ShaderDropboxChoice2 = "Мультяшний"
 	ShaderDropboxChoice3 = "Природний + Контури"
 	ShaderDropboxChoice4 = "Природний"
+	menuSettings = "НАЛАШТУВАННЯ"
+	menuAdvanced = "РОЗШИРЕНІ"
+	menuCheats = "ЧІТИ"
+	menuPresets = "ПРЕСЕТИ"
+	Worldmap = "Карта світу"
+	QoL = "QoL"
 	/>
 
 	<SdLib

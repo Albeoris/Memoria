@@ -166,6 +166,12 @@
 	ShaderDropboxChoice2 = "トゥーン"
 	ShaderDropboxChoice3 = "ナチュラル + 輪郭"
 	ShaderDropboxChoice4 = "ナチュラル"
+	menuSettings = "設定"
+	menuAdvanced = "高度設定"
+	menuCheats = "チート"
+	menuPresets = "プリセット"
+	Worldmap = "ワールドマップ"
+	QoL = "QoL"
 	/>
 
 	<SdLib

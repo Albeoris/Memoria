@@ -7,11 +7,12 @@
     xmlns:launcher="clr-namespace:Memoria.Launcher" 
     d:DataContext="{d:DesignInstance Type=launcher:SettingsGrid_Main}"
     Title="{Binding WindowTitle, FallbackValue='Memoria Mod Manager'}"
-    Width="1100"
-    Height="720"
-    MinWidth="870"
-    MinHeight="520"
-    WindowStartupLocation="CenterScreen"
+    Width="1000"
+    Height="700"
+    BorderThickness="1"
+    BorderBrush="Gray"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
     WindowState="Normal"
     mc:Ignorable="d">
 

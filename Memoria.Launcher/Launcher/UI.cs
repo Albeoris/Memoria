@@ -75,7 +75,7 @@ namespace Memoria.Launcher
             checkBox.SetValue(ColumnSpanProperty, MaxColumns);
             Children.Add(checkBox);
         }
-        public void CreateTextbloc(String text, Boolean isBold = false, String tooltip = "")
+        public void CreateTextbloc(String text, Boolean isHeading = false, String tooltip = "")
         {
             Row++;
             RowDefinitions.Add(new RowDefinition());
@@ -84,14 +84,31 @@ namespace Memoria.Launcher
             if (tooltip != "")
                 textbloc.ToolTip = tooltip;
             textbloc.Foreground = TextColor;
-            textbloc.FontWeight = isBold ? FontWeights.Bold : FontWeight.FromOpenTypeWeight(FontWeightNormal);
+            textbloc.Margin = new Thickness(0);
+
+            Border border = new Border();
             textbloc.FontSize = FontSizeNormal;
-            textbloc.Margin = CommonMargin;
-            textbloc.SetValue(RowProperty, Row);
-            textbloc.SetValue(ColumnProperty, 0);
-            textbloc.SetValue(RowSpanProperty, 1);
-            textbloc.SetValue(ColumnSpanProperty, MaxColumns);
-            Children.Add(textbloc);
+            border.Margin = CommonMargin;
+            border.SetValue(RowProperty, Row);
+            border.SetValue(ColumnProperty, 0);
+            border.SetValue(RowSpanProperty, 1);
+            border.SetValue(ColumnSpanProperty, MaxColumns);
+
+            if (isHeading)
+            {
+                textbloc.TextAlignment = TextAlignment.Center;  // Center the text
+                textbloc.HorizontalAlignment = HorizontalAlignment.Center;
+                textbloc.FontStretch = FontStretch.FromOpenTypeStretch(9);
+                textbloc.FontWeight = FontWeight.FromOpenTypeWeight(400);
+                border.Background = new SolidColorBrush(Color.FromArgb(0x88, 0x3A, 0x6B, 0x77));
+                border.CornerRadius = new CornerRadius(10);
+                border.Padding = new Thickness(10, 0, 10, 0);
+                border.Margin = new Thickness(0, 3, 0, 6); ;
+                border.HorizontalAlignment = HorizontalAlignment.Stretch;
+                border.VerticalAlignment = VerticalAlignment.Center;
+            }
+            border.Child = textbloc;
+            Children.Add(border);
         }
         public void CreateCombobox(String property, IEnumerable options, Int32 firstColumn = 4, String tooltip = "", Boolean selectByName = false)
         {

@@ -167,6 +167,12 @@
 	ShaderDropboxChoice2 = "Cartoon"
 	ShaderDropboxChoice3 = "Naturel + Contours"
 	ShaderDropboxChoice4 = "Naturel"
+	menuSettings = "PARAMÈTRES"
+	menuAdvanced = "AVANCÉ"
+	menuCheats = "TRICHE"
+	menuPresets = "PRESETS"
+	Worldmap = "Carte du monde"
+	QoL = "QoL"
 	/>
 
 	<SdLib

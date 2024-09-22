@@ -175,6 +175,12 @@
 	ShaderDropboxChoice2 = "卡通"
 	ShaderDropboxChoice3 = "自然 + 轮廓"
 	ShaderDropboxChoice4 = "自然"
+	menuSettings = "设置"
+	menuAdvanced = "高级"
+	menuCheats = "秘籍"
+	menuPresets = "预设"
+	Worldmap = "世界地图"
+	QoL = "QoL"
 	/>
 
 	<SdLib

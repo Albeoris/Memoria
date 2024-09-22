@@ -166,6 +166,12 @@
 	ShaderDropboxChoice2 = "Toon"
 	ShaderDropboxChoice3 = "Natürlich + Umrisse"
 	ShaderDropboxChoice4 = "Natürlich"
+	menuSettings = "EINSTELLUNGEN"
+	menuAdvanced = "ERWEITERT"
+	menuCheats = "CHEATS"
+	menuPresets = "VOREINSTELLUNGEN"
+	Worldmap = "Weltkarte"
+	QoL = "QoL"
 	/>
 
 	<SdLib

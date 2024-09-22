@@ -30,7 +30,7 @@
 
 	<Settings
 	LauncherWindowTitle = "Final Fantasy IX | Memoria Launcher"
-	MemoriaEngine = "Memoria Engine"
+	MemoriaEngine = "MEMORIA ENGINE"
 	ActiveMonitor = "Active monitor"
 	PrimaryMonitor = "[Primary]"
 	Resolution = "Resolution"
@@ -176,6 +176,12 @@
 	ShaderDropboxChoice2 = "Toon"
 	ShaderDropboxChoice3 = "Natural + Outlines"
 	ShaderDropboxChoice4 = "Natural"
+    menuSettings = "SETTINGS"
+    menuAdvanced = "ADVANCED"
+    menuCheats = "CHEATS"
+    menuPresets = "PRESETS"
+    Worldmap = "Worldmap"
+    QoL = "QoL"
 	/>
 
 	<SdLib

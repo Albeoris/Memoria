@@ -4,9 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:launcher="clr-namespace:Memoria.Launcher"
     Title="{Binding LauncherWindowTitle, FallbackValue='Final Fantasy IX | Memoria Launcher'}"
-    Width="900"
+    Width="1000"
     Height="700"
-    BorderThickness="0"
+    BorderThickness="1"
+    BorderBrush="#2fff"
     ResizeMode="NoResize"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
@@ -15,11 +16,11 @@
 
     <Window.Resources>
         <Style x:Key="TransparentGridStyle" TargetType="Grid">
-            <Setter Property="Background" Value="#88000000" />
+            <Setter Property="Background" Value="#9000" />
         </Style>
 
         <Style TargetType="TabItem">
-            <Setter Property="Background" Value="#c000" />
+            <Setter Property="Background" Value="#C000" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="FontSize" Value="20" />
@@ -44,7 +45,7 @@
             <Style.Triggers>
                 <!-- Selected state: opaque black background and bold text -->
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#8000" />
+                    <Setter Property="Background" Value="#9000" />
                     <Setter Property="Foreground" Value="#fff" />
                     <Setter Property="Template">
                         <Setter.Value>
@@ -70,19 +71,18 @@
     <Grid>
         <!-- Background Image -->
         <Image x:Name="Launcher"
-            Height="800"
+            Height="889"
             VerticalAlignment="Top"
             MouseDown="Launcher_MouseDown"
-            Source="/Images/new_launcher_bg.png" />
+            Source="/Images/new_launcher_bg.jpg" />
 
-        <TextBlock x:Name="Nameandversion"
-            Text="{Binding MemoriaEngine, FallbackValue='Memoria Engine'}"
-            Foreground="#555"
-            FontSize="18"
-            FontWeight="Normal"
-            Margin="20,10"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Bottom" />
+        <Image x:Name="LogoImage"
+            Height="250"
+            VerticalAlignment="Top"
+               HorizontalAlignment="Left"
+               Margin="20,-53,0,0"
+            MouseDown="Launcher_MouseDown"
+            Source="/Images/FF9_logo.png" />
 
         <Button Content="X"
                 Width="52"
@@ -118,62 +118,62 @@
         </Button>
 
         <TabControl HorizontalAlignment="Center"
-                    VerticalAlignment="Top"
-                    Width="860"
+                    VerticalAlignment="Bottom"
+                    Width="960"
                     Height="520"
-                    Margin="0,140,0,0"
+                    Margin="0,0,0,30"
                     Background="Transparent"
                     BorderBrush="Transparent"
                     BorderThickness="0"
                     Padding="0">
 
             <!-- Settings Tab -->
-            <TabItem Header="SETTINGS">
+            <TabItem x:Name="menuSettings" Header="SETTINGS">
                 <Grid Style="{StaticResource TransparentGridStyle}">
                     <launcher:SettingsGrid_VanillaDisplay x:Name="GameSettingsDisplay"
-                        Width="320"
-                        Margin="20"
+                        Width="293"
+                        Margin="20,15"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
 
                     <launcher:SettingsGrid_Display x:Name="SettingsGrid_Display"
-                        Width="320"
-                        Margin="20,128,0,0"
+                        Width="293"
+                        Margin="20,127,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
 
                     <launcher:SettingsGrid_Main x:Name="SettingsGrid_Main"
-                        Width="320"
-                        Margin="363,20,0,0"
-                        HorizontalAlignment="Left"
+                        Width="292"
+                        Margin="0,15,0,0"
+                        HorizontalAlignment="Center"
                         VerticalAlignment="Top" />
                 </Grid>
             </TabItem>
 
             <!-- Cheats Tab -->
-            <TabItem Header="CHEATS">
+            <TabItem x:Name="menuCheats" Header="CHEATS">
                 <Grid Style="{StaticResource TransparentGridStyle}">
                     <launcher:SettingsGrid_Cheats x:Name="SettingsGrid_Cheats"
-                        Width="320"
-                        Margin="20"
+                        Width="293"
+                        Margin="20,15"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
                 </Grid>
             </TabItem>
 
             <!-- Advanced Tab -->
-            <TabItem Header="ADVANCED">
+            <TabItem x:Name="menuAdvanced" Header="ADVANCED">
                 <Grid Style="{StaticResource TransparentGridStyle}">
                     <launcher:SettingsGrid_Vanilla x:Name="GameSettings"
-                        Width="320"
-                        Margin="20"
+                        Width="293"
+                        Margin="20,15"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
 
                     <launcher:UiLauncherModelViewerButton
-                        Width="252"
+                        Width="293"
                         Height="36"
-                        Margin="20,0,0,20"
+                        Margin="20,0,0,303"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Bottom"
                         Content="" />
@@ -184,8 +184,8 @@
         <!-- Play Button -->
         <launcher:UiLauncherPlayButton x:Name="PlayButton"
             Width="260"
-            Height="60"
-            Margin="0,42,20,0"
+            Height="69"
+            Margin="0,46,20,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top" />
 
@@ -193,7 +193,7 @@
         <launcher:UiLauncherModManagerButton
             Width="260"
             Height="36"
-            Margin="0,108,20,0"
+            Margin="0,120,20,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             Content="" />
@@ -202,7 +202,7 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             Width="260"
-            Margin="0,133,10,0" >
+            Margin="0,145,10,0" >
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto" />
                 <ColumnDefinition Width="auto" />
@@ -233,5 +233,16 @@
                 ToolTip=""
                 Visibility="Visible" />
         </Grid>
+
+
+        <TextBlock x:Name="Nameandversion"
+            Text="{Binding MemoriaEngine, FallbackValue='MEMORIA ENGINE'}"
+            Foreground="#cfff"
+            FontSize="18"
+            FontWeight="Normal"
+            Margin="20,0,0,5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom" />
+
     </Grid>
 </Window>
