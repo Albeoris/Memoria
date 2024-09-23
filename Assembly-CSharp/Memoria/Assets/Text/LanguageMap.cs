@@ -12,6 +12,7 @@ namespace Memoria.Assets
     {
         private const String LanguageKey = "KEY";
         private const String SymbolKey = "Symbol";
+        private const String ReadingDirectionKey = "ReadingDirection";
 
         private readonly String[] _knownLanguages;
         private readonly Dictionary<String, SortedList<String, String>> _languages;
@@ -93,6 +94,7 @@ namespace Memoria.Assets
                 Log.Error($"[LocalizationDictionary] Cannot find localisation data for the language [{language}].");
             }
             _currentSymbol = Get(SymbolKey);
+            NGUIText.readingDirection = Localization.GetWithDefault(ReadingDirectionKey) == UnicodeBIDI.DIRECTION_NAME_RIGHT_TO_LEFT ? UnicodeBIDI.LanguageReadingDirection.RightToLeft : UnicodeBIDI.LanguageReadingDirection.LeftToRight;
             UIRoot.Broadcast("OnLocalize");
         }
 
@@ -141,7 +143,7 @@ namespace Memoria.Assets
         {
             while (reader.canRead)
             {
-                BetterList<String> cells = reader.ReadCSV();
+                BetterList<String> cells = reader.ReadCSV(); // TODO: change to allow [OPCODES=0,0] with commas
                 if (cells == null || cells.size < 2)
                     continue;
 

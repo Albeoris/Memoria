@@ -55,6 +55,18 @@ namespace Memoria.Assets
 
         private static Dictionary<String, Dictionary<String, String>> _defaultDictionary = new Dictionary<String, Dictionary<String, String>>()
         {
+            // The base reading direction of the language
+            { "ReadingDirection", new Dictionary<String, String>()
+                {
+                    { "US", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "UK", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "JP", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "ES", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "FR", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "GR", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "IT", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT }
+                }
+            },
             // Language name in the title menu's button
             { "NameShort", new Dictionary<String, String>()
                 {

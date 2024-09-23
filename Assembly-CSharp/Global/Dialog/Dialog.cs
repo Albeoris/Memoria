@@ -1993,6 +1993,13 @@ public class Dialog : MonoBehaviour
         public Boolean checkFromConfig = true;
         public Boolean IsButton = true;
         public String tag = String.Empty;
+
+        [NonSerialized]
+        public String AtlasName = null;
+        [NonSerialized]
+        public String SpriteName = null;
+        [NonSerialized]
+        public Boolean Rescale = false;
     }
 
     public enum TailPosition

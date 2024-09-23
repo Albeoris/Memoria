@@ -317,6 +317,7 @@ public class TutorialUI : UIScene
         this.battleBottomLabel.text = this.libraMessages[0];
         this.battleBottomLabel.fontSize = 42;
         this.battleBottomLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
+        this.battleBottomLabel.PrintIconAfterProcessedText = true;
         this.libraPage = 0;
         base.Loading = true;
         this.AnimatePanel(new Vector3(1f, 1f, 1f));

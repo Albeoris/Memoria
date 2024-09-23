@@ -5,13 +5,13 @@ namespace Memoria.Assets
 {
     public static class DialogBoxSymbols
     {
-        public static Boolean ParseSymbol(String text, ref Int32 index, BetterList<Color> colors, Boolean premultiply, ref Int32 sub, ref Boolean bold, ref Boolean italic, ref Boolean underline, ref Boolean strike, ref Boolean ignoreColor, ref Boolean highShadow, ref Boolean center, ref Boolean justified, ref Int32 ff9Signal, ref Vector3 extraOffset, ref Single tabX, ref Dialog.DialogImage insertImage)
+        public static Boolean ParseSymbol(String text, ref Int32 index, Boolean premultiplyColor, FFIXTextModifier modifiers)
         {
-            Int32 length = text.Length;
+            Int32 textLength = text.Length;
             if (IsMemoriaTag(text, index))
             {
                 Char[] chars = text.ToCharArray();
-                if (DialogBoxRenderer.ProcessMemoriaTag(chars, ref index, colors, ref highShadow, ref center, ref justified, ref ff9Signal, ref extraOffset, ref tabX, ref insertImage))
+                if (DialogBoxRenderer.ProcessMemoriaTag(chars, ref index, modifiers))
                     return true;
 
                 return false;
@@ -24,120 +24,108 @@ namespace Memoria.Assets
             {
                 if (text[index + 1] == '-')
                 {
-                    if (colors != null && colors.size > 1)
-                    {
-                        colors.RemoveAt(colors.size - 1);
-                    }
+                    // [-] used by color encoding (eg. NGUIText.EncodeColor)
+                    if (modifiers.colors != null && modifiers.colors.size > 1)
+                        modifiers.colors.RemoveAt(modifiers.colors.size - 1);
                     index += 3;
                     return true;
                 }
-                String text2 = text.Substring(index, 3);
-                String text3 = text2;
-                switch (text3)
+                switch (text.Substring(index, 3))
                 {
+                    // Short tags
                     case "[b]":
-                        bold = true;
+                        modifiers.bold = true;
                         index += 3;
                         return true;
                     case "[i]":
-                        italic = true;
+                        modifiers.italic = true;
                         index += 3;
                         return true;
                     case "[u]":
-                        underline = true;
+                        modifiers.underline = true;
                         index += 3;
                         return true;
                     case "[s]":
-                        strike = true;
+                        modifiers.strike = true;
                         index += 3;
                         return true;
                     case "[c]":
-                        ignoreColor = true;
+                        modifiers.ignoreColor = true;
                         index += 3;
                         return true;
                 }
             }
-            if (index + 4 > length)
-            {
+            if (index + 4 > textLength)
                 return false;
-            }
             if (text[index + 3] == ']')
             {
-                String text4 = text.Substring(index, 4);
-                String text3 = text4;
-                switch (text3)
+                // Short tag ends
+                switch (text.Substring(index, 4))
                 {
                     case "[/b]":
-                        bold = false;
+                        modifiers.bold = false;
                         index += 4;
                         return true;
                     case "[/i]":
-                        italic = false;
+                        modifiers.italic = false;
                         index += 4;
                         return true;
                     case "[/u]":
-                        underline = false;
+                        modifiers.underline = false;
                         index += 4;
                         return true;
                     case "[/s]":
-                        strike = false;
+                        modifiers.strike = false;
                         index += 4;
                         return true;
                     case "[/c]":
-                        ignoreColor = false;
+                        modifiers.ignoreColor = false;
                         index += 4;
                         return true;
                 }
-                Char ch = text[index + 1];
-                Char ch2 = text[index + 2];
-                if (NGUIText.IsHex(ch) && NGUIText.IsHex(ch2))
+                Char tagChar1 = text[index + 1];
+                Char tagChar2 = text[index + 2];
+                if (NGUIText.IsHex(tagChar1) && NGUIText.IsHex(tagChar2))
                 {
-                    Int32 num2 = NGUIMath.HexToDecimal(ch) << 4 | NGUIMath.HexToDecimal(ch2);
-                    NGUIText.mAlpha = (Single)num2 / 255f;
+                    // 2-byte color tag (alpha)
+                    NGUIText.mAlpha = (NGUIMath.HexToDecimal(tagChar1) << 4 | NGUIMath.HexToDecimal(tagChar2)) / 255f;
                     index += 4;
                     return true;
                 }
             }
-            if (index + 5 > length)
-            {
+            if (index + 5 > textLength)
                 return false;
-            }
             if (text[index + 4] == ']')
             {
-                String text5 = text.Substring(index, 5);
-                switch (text5)
+                // 3-letter tags (except "url" which has parameters)
+                switch (text.Substring(index, 5))
                 {
                     case "[sub]":
-                        sub = 1;
+                        modifiers.sub = 1;
                         index += 5;
                         return true;
                     case "[sup]":
-                        sub = 2;
+                        modifiers.sub = 2;
                         index += 5;
                         return true;
 
                 }
             }
-            if (index + 6 > length)
-            {
+            if (index + 6 > textLength)
                 return false;
-            }
-            if (DialogBoxRenderer.ProcessOriginalTag(text.ToCharArray(), ref index, ref highShadow, ref center, ref ff9Signal, ref extraOffset, ref tabX, ref insertImage))
-            {
-                return true;
-            }
+            if (DialogBoxRenderer.ProcessOriginalTag(text.ToCharArray(), ref index, modifiers))
+                return true; // Usual tags
             if (text[index + 5] == ']')
             {
-                String text6 = text.Substring(index, 6);
-                String text3 = text6;
-                switch (text3)
+                switch (text.Substring(index, 6))
                 {
+                    // 3-letter tag ends
                     case "[/sub]":
-                        sub = 0;
+                        modifiers.sub = 0;
                         index += 6;
                         return true;
                     case "[/sup]":
-                        sub = 0;
+                        modifiers.sub = 0;
                         index += 6;
                         return true;
                     case "[/url]":
@@ -147,64 +135,56 @@ namespace Memoria.Assets
             }
             if (text[index + 1] == 'u' && text[index + 2] == 'r' && text[index + 3] == 'l' && text[index + 4] == '=')
             {
-                Int32 num3 = text.IndexOf(']', index + 4);
-                if (num3 != -1)
+                // url tag
+                Int32 urlEnd = text.IndexOf(']', index + 4);
+                if (urlEnd != -1)
                 {
-                    index = num3 + 1;
-                    center = true;
+                    index = urlEnd + 1;
+                    modifiers.center = true;
                     return true;
                 }
                 index = text.Length;
-                center = false;
+                modifiers.center = false;
                 return true;
             }
-            if (index + 8 > length)
-            {
+            if (index + 8 > textLength)
                 return false;
-            }
             if (text[index + 7] == ']')
             {
-                Color color = NGUIText.ParseColor24(text, index + 1);
-                if (NGUIText.EncodeColor24(color) != text.Substring(index + 1, 6).ToUpper())
-                {
+                // 6-byte color tags (RGB)
+                Color textColor = NGUIText.ParseColor24(text, index + 1);
+                if (NGUIText.EncodeColor24(textColor) != text.Substring(index + 1, 6).ToUpper())
                     return false;
-                }
-                if (colors != null)
+                if (modifiers.colors != null)
                 {
-                    color.a = colors[colors.size - 1].a;
-                    if (premultiply && color.a != 1f)
-                    {
-                        color = Color.Lerp(NGUIText.mInvisible, color, color.a);
-                    }
-                    colors.Add(color);
+                    if (modifiers.colors.size > 0)
+                        textColor.a = modifiers.colors[modifiers.colors.size - 1].a;
+                    if (premultiplyColor && textColor.a != 1f)
+                        textColor = Color.Lerp(NGUIText.mInvisible, textColor, textColor.a);
+                    modifiers.colors.Add(textColor);
                 }
                 index += 8;
                 return true;
             }
 
-            if (index + 10 > length)
-            {
+            if (index + 10 > textLength)
                 return false;
-            }
-            if (text[index + 9] != ']')
+            if (text[index + 9] == ']')
             {
-                return false;
-            }
-            Color color2 = NGUIText.ParseColor32(text, index + 1);
-            if (NGUIText.EncodeColor32(color2) != text.Substring(index + 1, 8).ToUpper())
-            {
-                return false;
-            }
-            if (colors != null)
-            {
-                if (premultiply && color2.a != 1f)
+                // 8-byte color tags (RGBA)
+                Color textColor = NGUIText.ParseColor32(text, index + 1);
+                if (NGUIText.EncodeColor32(textColor) != text.Substring(index + 1, 8).ToUpper())
+                    return false;
+                if (modifiers.colors != null)
                 {
-                    color2 = Color.Lerp(NGUIText.mInvisible, color2, color2.a);
+                    if (premultiplyColor && textColor.a != 1f)
+                        textColor = Color.Lerp(NGUIText.mInvisible, textColor, textColor.a);
+                    modifiers.colors.Add(textColor);
                 }
-                colors.Add(color2);
+                index += 10;
+                return true;
             }
-            index += 10;
-            return true;
+            return false;
         }
 
         private static Boolean IsOriginalTag(String text, Int32 index)

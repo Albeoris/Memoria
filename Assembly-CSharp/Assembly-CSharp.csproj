@@ -339,6 +339,8 @@
     <Compile Include="Memoria\Assets\FieldCreator\FieldCreatorScene.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\PointScreenAnchor.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\WavefrontObject.cs" />
+    <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextModifier.cs" />
+    <Compile Include="Memoria\Assets\Text\Strings\UnicodeBIDI.cs" />
     <Compile Include="Memoria\Assets\TIMUtils.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\ITextReader.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\ITextWriter.cs" />
