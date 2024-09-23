@@ -147,6 +147,12 @@
                         Margin="0,15,0,0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Top" />
+
+                    <launcher:SettingsGrid_Main2 x:Name="SettingsGrid_Main2"
+                        Width="293"
+                        Margin="0,15,20,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top" />
                 </Grid>
             </TabItem>
 

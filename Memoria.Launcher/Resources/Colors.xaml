@@ -4,8 +4,8 @@
     <Color x:Key="BackgroundColorShade1">#FF333333</Color>
     <Color x:Key="BackgroundColorShade2">#FF333333</Color>
     <Color x:Key="BackgroundColorShade3">#FF333333</Color>
-    <Color x:Key="AccentColor">#F03a6b77</Color>
-    <Color x:Key="AccentColorHover">#F0476A6E</Color>
+    <Color x:Key="AccentColor">#F0355566</Color>
+    <Color x:Key="AccentColorHover">#F0415864</Color>
     <Color x:Key="AccentColorPressed">#F055797D</Color>
     <Color x:Key="TextColor">#80FFFFFF</Color>
     <Color x:Key="TextColorHover">#BFFFFFFF</Color>

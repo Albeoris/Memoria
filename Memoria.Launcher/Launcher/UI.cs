@@ -100,9 +100,12 @@ namespace Memoria.Launcher
                 textbloc.HorizontalAlignment = HorizontalAlignment.Center;
                 textbloc.FontStretch = FontStretch.FromOpenTypeStretch(9);
                 textbloc.FontWeight = FontWeight.FromOpenTypeWeight(400);
-                border.Background = new SolidColorBrush(Color.FromArgb(0x88, 0x3A, 0x6B, 0x77));
-                border.CornerRadius = new CornerRadius(10);
-                border.Padding = new Thickness(10, 0, 10, 0);
+                textbloc.FontSize = 14;
+                //border.Background = new SolidColorBrush(Color.FromArgb(0x88, 0x3A, 0x6B, 0x77));
+                border.Background = (SolidColorBrush)Application.Current.FindResource("BrushAccentColor");
+                border.Opacity = 0.8;
+                border.CornerRadius = new CornerRadius(5);
+                border.Padding = new Thickness(10, 2, 10, 2);
                 border.Margin = new Thickness(0, 3, 0, 6); ;
                 border.HorizontalAlignment = HorizontalAlignment.Stretch;
                 border.VerticalAlignment = VerticalAlignment.Center;

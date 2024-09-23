@@ -27,7 +27,8 @@ Height="35">
                 Grid.Row="0"
                 Grid.ColumnSpan="2"
                 CornerRadius="3,3,3,3"
-                BorderBrush="#dd616033"
+                BorderBrush="{StaticResource BrushAccentColor}"
+                Opacity="0.8"
                 Background="Transparent" />
                 <TextBlock
                 TextWrapping="Wrap"

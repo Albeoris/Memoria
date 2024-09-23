@@ -13,7 +13,7 @@ namespace Memoria.Launcher
         public Settings()
         {
             SetCols(8);
-            Width = 260;
+            Width = 293;
             Margin = new Thickness(0);
             DataContext = this;
         }

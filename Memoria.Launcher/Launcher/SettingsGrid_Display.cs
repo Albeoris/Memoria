@@ -7,9 +7,6 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Display()
         {
-            SetRows(2);
-
-
             CreateTextbloc(Lang.Settings.FPSDropboxChoice, false, Lang.Settings.SharedFPS_Tooltip);
             String[] comboboxchoices = new String[]{
                 Lang.Settings.FPSDropboxChoice0, // default 30 20 15

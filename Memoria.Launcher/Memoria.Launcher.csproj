@@ -75,6 +75,7 @@
     <Compile Include="Languages\XmlHelper.cs" />
     <Compile Include="Launcher\SettingsGrid_Cheats.cs" />
     <Compile Include="Launcher\SettingsGrid_Display.cs" />
+    <Compile Include="Launcher\SettingsGrid_Main2.cs" />
     <Compile Include="Launcher\SettingsGrid_Main.cs" />
     <Compile Include="Launcher\Settings.cs" />
     <Compile Include="Launcher\SettingsGrid_VanillaDisplay.cs" />
