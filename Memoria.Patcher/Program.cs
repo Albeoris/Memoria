@@ -4,15 +4,16 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Net.Mime;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 
 namespace Memoria.Patcher
 {
     static class Program
     {
+        static Double ProgressPercent;
         static void Main(String[] args)
         {
             try
@@ -58,19 +59,48 @@ namespace Memoria.Patcher
                 else
                 {
                     Run(args);
-                    Console.WriteLine(Lang.Message.Done.Success);
+                    if (ProgressPercent == 100)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write("V ");
+                        Console.ResetColor();
+                        Console.WriteLine(Lang.Message.Done.Success);
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("X ");
+                        Console.ResetColor();
+                        Console.WriteLine($"The patching could only complete {ProgressPercent}%");
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Unexpected error has occurred.");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("An unexpected error has occurred.");
+                Console.ResetColor();
                 Console.WriteLine("---------------------------");
                 Console.WriteLine(ex);
                 Console.WriteLine("---------------------------");
             }
 
-            Console.WriteLine(Lang.Message.Done.PressEnterToExit);
-            Console.ReadLine();
+            
+            if (ProgressPercent == 100)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write("V ");
+                Console.ResetColor();
+                //Console.WriteLine(Lang.Message.Done.PressEnterToExit);
+                //Console.ReadLine();
+                Console.WriteLine("The console will close automatically");
+                Thread.Sleep(5000);
+            }
+            else
+            {
+                Console.WriteLine(Lang.Message.Done.PressEnterToExit);
+                Console.ReadLine();
+            }
         }
 
         private static void Run(String[] args)
@@ -84,7 +114,6 @@ namespace Memoria.Patcher
                 Console.ReadLine();
                 Environment.Exit(1);
             }
-
             String executablePath = Assembly.GetEntryAssembly().Location;
             using (FileStream inputFile = File.OpenRead(executablePath))
             {
@@ -114,7 +143,12 @@ namespace Memoria.Patcher
                         possition += 1;
                     }
                     if (!Found)
-                        throw new InvalidDataException("File is Signed but could not find magic number, file is corrupt");
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("File is Signed but could not find magic number, file might be corrupted");
+                        Console.ResetColor();
+                        throw new InvalidDataException("File is Signed but could not find magic number, file might be corrupted");
+                    }
                 }
                 else
                 {
@@ -125,150 +159,186 @@ namespace Memoria.Patcher
                     if (magicNumber != 0x004149524F4D454D)// MEMORIA\0 
                         throw new InvalidDataException("Invalid magic number: " + magicNumber);
                 }
-                Console.Clear();
-
-                Int64 uncompressedDataSize = br.ReadInt64();
-                Int64 compressedDataPosition = br.ReadInt64();
-
-                Boolean isSteamOverlayFixed = GameLocationSteamRegistryProvider.IsSteamOverlayFixed();
-                Boolean fixReleased = false;
-                if (isSteamOverlayFixed)
-                    fixReleased = gameLocation.FixSteamOverlay(false); // Release the registry lock
-
-                inputFile.Position = compressedDataPosition;
-                using (ConsoleProgressHandler progressHandler = new ConsoleProgressHandler(uncompressedDataSize))
-                using (GZipStream input = new GZipStream(inputFile, CompressionMode.Decompress))
-                using (br = new BinaryReader(input))
+                //Console.Clear();
+                try
                 {
-                    Int64 leftSize = uncompressedDataSize;
-                    ExtractFiles(gameLocation, input, br, ref leftSize, progressHandler);
-                }
+                    Int64 uncompressedDataSize = br.ReadInt64();
+                    Int64 compressedDataPosition = br.ReadInt64();
 
-                if (isSteamOverlayFixed && fixReleased)
-                    gameLocation.FixSteamOverlay(true); // Backup and redo the registry lock
+                    Boolean isSteamOverlayFixed = GameLocationSteamRegistryProvider.IsSteamOverlayFixed();
+                    Boolean fixReleased = false;
+                    if (isSteamOverlayFixed)
+                        fixReleased = gameLocation.FixSteamOverlay(false); // Release the registry lock
+
+                    inputFile.Position = compressedDataPosition;
+                    using (ConsoleProgressHandler progressHandler = new ConsoleProgressHandler(uncompressedDataSize))
+                    using (GZipStream input = new GZipStream(inputFile, CompressionMode.Decompress))
+                    using (br = new BinaryReader(input))
+                    {
+                        Int64 leftSize = uncompressedDataSize;
+                        ExtractFiles(gameLocation, input, br, ref leftSize, progressHandler);
+                        Thread.Sleep(1000);
+                        ProgressPercent = progressHandler.CurrentPercent;
+                    }
+
+                    if (isSteamOverlayFixed && fixReleased)
+                        gameLocation.FixSteamOverlay(true); // Backup and redo the registry lock
+                }
+                catch (Exception ex)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("A Patching error has occurred");
+                    Console.ResetColor();
+                    Console.WriteLine("---------------------------");
+                    Console.WriteLine(ex);
+                    Console.WriteLine("---------------------------");
+                }
             }
         }
 
         private static void ExtractFiles(GameLocationInfo gameLocation, GZipStream input, BinaryReader br, ref Int64 leftSize, ConsoleProgressHandler progressHandler)
         {
-            Dictionary<Int16, String> pathMap = new Dictionary<Int16, String>(400);
-            UInt16 idMask = 1 << 15;
-
-            Byte[] buff = new Byte[64 * 1024];
-
-            while (leftSize > 0)
+            try
             {
-                Int64 uncompressedSize = br.ReadUInt32();
-                DateTime writeTimeUtc = new DateTime(br.ReadInt64(), DateTimeKind.Utc);
+                Dictionary<Int16, String> pathMap = new Dictionary<Int16, String>(400);
+                UInt16 idMask = 1 << 15;
 
-                Boolean hasPlatform = false;
-                String[] pathParts = new String[br.ReadByte() + 1];
-                pathParts[0] = gameLocation.RootDirectory;
-                for (Int32 i = 1; i < pathParts.Length; i++)
+                Byte[] buff = new Byte[64 * 1024];
+
+                while (leftSize > 0)
                 {
-                    String part = null;
+                    Int64 uncompressedSize = br.ReadUInt32();
+                    DateTime writeTimeUtc = new DateTime(br.ReadInt64(), DateTimeKind.Utc);
 
-                    Int16 id = br.ReadInt16();
-                    if ((id & idMask) == idMask)
+                    Boolean hasPlatform = false;
+                    String[] pathParts = new String[br.ReadByte() + 1];
+                    pathParts[0] = gameLocation.RootDirectory;
+                    for (Int32 i = 1; i < pathParts.Length; i++)
                     {
-                        id = (Int16)(id & ~idMask);
+                        String part = null;
 
-                        Int32 bytesNumber = br.ReadByte();
-                        Int32 readed = 0;
-                        while (bytesNumber > 0)
+                        Int16 id = br.ReadInt16();
+                        if ((id & idMask) == idMask)
                         {
-                            readed = br.Read(buff, readed, bytesNumber);
-                            bytesNumber -= readed;
-                        }
+                            id = (Int16)(id & ~idMask);
 
-                        part = Encoding.UTF8.GetString(buff, 0, readed);
-                        pathParts[i] = part;
-                        pathMap.Add(id, part);
-                    }
-                    else
-                    {
-                        part = pathMap[id];
-                        pathParts[i] = part;
-                    }
+                            Int32 bytesNumber = br.ReadByte();
+                            Int32 readed = 0;
+                            while (bytesNumber > 0)
+                            {
+                                readed = br.Read(buff, readed, bytesNumber);
+                                bytesNumber -= readed;
+                            }
 
-                    if (part == "{PLATFORM}")
-                        hasPlatform = true;
-                }
-
-                String outputPath = Path.Combine(pathParts);
-
-                if (hasPlatform)
-                {
-                    if (Directory.Exists(gameLocation.ManagedPathX64))
-                    {
-                        if (Directory.Exists(gameLocation.ManagedPathX86))
-                        {
-                            String x64 = outputPath.Replace("{PLATFORM}", "x64");
-                            String x86 = outputPath.Replace("{PLATFORM}", "x86");
-                            ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, x64, x86);
+                            part = Encoding.UTF8.GetString(buff, 0, readed);
+                            pathParts[i] = part;
+                            pathMap.Add(id, part);
                         }
                         else
+                        {
+                            part = pathMap[id];
+                            pathParts[i] = part;
+                        }
+
+                        if (part == "{PLATFORM}")
+                            hasPlatform = true;
+                    }
+
+                    String outputPath = Path.Combine(pathParts);
+
+                    if (hasPlatform)
+                    {
+                        if (Directory.Exists(gameLocation.ManagedPathX64))
+                        {
+                            if (Directory.Exists(gameLocation.ManagedPathX86))
+                            {
+                                String x64 = outputPath.Replace("{PLATFORM}", "x64");
+                                String x86 = outputPath.Replace("{PLATFORM}", "x86");
+                                ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, x64, x86);
+                            }
+                            else
+                            {
+                                outputPath = outputPath.Replace("{PLATFORM}", "x86");
+                                ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, outputPath);
+                            }
+                        }
+                        else if (Directory.Exists(gameLocation.ManagedPathX86))
                         {
                             outputPath = outputPath.Replace("{PLATFORM}", "x86");
                             ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, outputPath);
                         }
-                    }
-                    else if (Directory.Exists(gameLocation.ManagedPathX86))
-                    {
-                        outputPath = outputPath.Replace("{PLATFORM}", "x86");
-                        ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, outputPath);
+                        else
+                        {
+                            progressHandler.IncrementProcessedSize(uncompressedSize);
+                        }
                     }
                     else
                     {
-                        progressHandler.IncrementProcessedSize(uncompressedSize);
+                        ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, outputPath);
                     }
-                }
-                else
-                {
-                    ExtractFile(input, uncompressedSize, buff, writeTimeUtc, progressHandler, outputPath);
-                }
 
-                leftSize -= uncompressedSize;
+                    leftSize -= uncompressedSize;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("An extraction error has occurred");
+                Console.ResetColor();
+                Console.WriteLine("---------------------------");
+                Console.WriteLine(ex);
+                Console.WriteLine("---------------------------");
             }
         }
 
         private static void ExtractFile(GZipStream input, Int64 uncompressedSize, Byte[] buff, DateTime writeTimeUtc, ConsoleProgressHandler progressHandler, params String[] outputPaths)
         {
-            List<FileStream> outputs = new List<FileStream>(outputPaths.Length);
-            Boolean isIni = outputPaths.Length > 0 && _iniFileName.Contains(Path.GetFileName(outputPaths[0]));
-            Boolean success = false;
-            try
-            {
-                foreach (String outputPath in outputPaths)
-                    outputs.Add(OverwriteFile(outputPath));
-
-                while (uncompressedSize > 0)
+            try {
+                List<FileStream> outputs = new List<FileStream>(outputPaths.Length);
+                Boolean isIni = outputPaths.Length > 0 && _iniFileName.Contains(Path.GetFileName(outputPaths[0]));
+                Boolean success = false;
+                try
                 {
-                    Int32 readed = input.Read(buff, 0, (Int32)Math.Min(uncompressedSize, buff.Length));
-                    uncompressedSize -= readed;
+                    foreach (String outputPath in outputPaths)
+                        outputs.Add(OverwriteFile(outputPath));
 
+                    while (uncompressedSize > 0)
+                    {
+                        Int32 readed = input.Read(buff, 0, (Int32)Math.Min(uncompressedSize, buff.Length));
+                        uncompressedSize -= readed;
+
+                        foreach (FileStream output in outputs)
+                            output.Write(buff, 0, readed);
+
+                        progressHandler.IncrementProcessedSize(readed);
+                    }
+
+                    success = true;
+                }
+                finally
+                {
                     foreach (FileStream output in outputs)
-                        output.Write(buff, 0, readed);
-
-                    progressHandler.IncrementProcessedSize(readed);
+                        output.Dispose();
                 }
 
-                success = true;
-            }
-            finally
-            {
-                foreach (FileStream output in outputs)
-                    output.Dispose();
-            }
+                if (isIni && success && File.Exists(outputPaths[0]) && File.Exists(outputPaths[0] + ".bak"))
+                {
+                    File.WriteAllLines(outputPaths[0], MergeIniFiles(File.ReadAllLines(outputPaths[0]), File.ReadAllLines(outputPaths[0] + ".bak")));
+                    File.Delete(outputPaths[0] + ".bak");
+                }
 
-            if (isIni && success && File.Exists(outputPaths[0]) && File.Exists(outputPaths[0] + ".bak"))
-            {
-                File.WriteAllLines(outputPaths[0], MergeIniFiles(File.ReadAllLines(outputPaths[0]), File.ReadAllLines(outputPaths[0] + ".bak")));
-                File.Delete(outputPaths[0] + ".bak");
+                foreach (String outputPath in outputPaths)
+                    File.SetLastWriteTimeUtc(outputPath, writeTimeUtc);
             }
-
-            foreach (String outputPath in outputPaths)
-                File.SetLastWriteTimeUtc(outputPath, writeTimeUtc);
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("An extraction error has occurred for a file");
+                Console.ResetColor();
+                Console.WriteLine("---------------------------");
+                Console.WriteLine(ex);
+                Console.WriteLine("---------------------------");
+            }
         }
 
         private static readonly HashSet<String> _filesForBackup = new HashSet<String>(StringComparer.OrdinalIgnoreCase) { ".exe", ".dll" };
@@ -390,10 +460,18 @@ namespace Memoria.Patcher
                     if (File.Exists(GameLocationInfo.LauncherName))
                     {
                         result = new GameLocationInfo(Environment.CurrentDirectory);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write("V ");
+                        Console.ResetColor();
+                        Console.WriteLine($"FF9_Launcher.exe found in Patcher directory directory {Environment.CurrentDirectory}");
                         result.Validate();
                     }
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.Write("V ");
+                        Console.ResetColor();
+                        Console.WriteLine($"Trying to find directory from Registry");
                         result = GameLocationSteamRegistryProvider.TryLoad();
                     }
                 }
@@ -406,7 +484,9 @@ namespace Memoria.Patcher
             }
             catch (Exception ex)
             {
-                Console.WriteLine("Failed to get a game location:");
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Failed to get a game location");
+                Console.ResetColor();
                 Console.WriteLine("If you changed the game directory from your first install, install this from the new game location.");
                 Console.WriteLine("Make sure you have launched the game at least once.");
                 Console.WriteLine("---------------------------");
