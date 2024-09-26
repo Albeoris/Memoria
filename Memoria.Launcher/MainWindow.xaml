@@ -26,13 +26,14 @@
             <Setter Property="FontSize" Value="20" />
             <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="Margin" Value="0" />
-
             <Setter Property="Height" Value="45" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
                         <Grid Background="{TemplateBinding Background}">
-                            <ContentPresenter ContentSource="Header"
+                            <Border Background="Transparent">
+                                <ContentPresenter x:Name="content"
+                                ContentSource="Header"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Margin="20,0"
@@ -40,6 +41,7 @@
                                 TextBlock.FontFamily="{DynamicResource CenturyGothic}"
                                 TextBlock.FontWeight="{TemplateBinding FontWeight}"
                                 TextBlock.Foreground="#aaa" />
+                            </Border>
                         </Grid>
                     </ControlTemplate>
                 </Setter.Value>
@@ -53,7 +55,8 @@
                         <Setter.Value>
                             <ControlTemplate TargetType="TabItem">
                                 <Grid Background="{TemplateBinding Background}">
-                                    <ContentPresenter ContentSource="Header"
+                                    <ContentPresenter x:Name="content"
+                                        ContentSource="Header"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Margin="20,0"
@@ -61,6 +64,13 @@
                                         TextBlock.FontFamily="{DynamicResource CenturyGothic}"
                                         TextBlock.FontWeight="{TemplateBinding FontWeight}"
                                         TextBlock.Foreground="#fff" />
+                                    <Rectangle x:Name="underline"
+                                        Fill="{DynamicResource BrushTextColorHover}"
+                                        Height="1"
+                                        Width="{Binding ActualWidth, ElementName=content}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Bottom" 
+                                        Margin="0,0,0,5" />
                                 </Grid>
                             </ControlTemplate>
                         </Setter.Value>
@@ -243,10 +253,9 @@
                 Visibility="Visible" />
         </Grid>
 
-
         <TextBlock x:Name="Nameandversion"
             Text="{Binding MemoriaEngine, FallbackValue='MEMORIA ENGINE'}"
-            Foreground="#cfff"
+            Foreground="#6fff"
             FontSize="15"
             FontWeight="Normal"
             FontFamily="{DynamicResource CenturyGothic}"

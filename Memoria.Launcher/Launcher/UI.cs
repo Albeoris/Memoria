@@ -22,7 +22,7 @@ namespace Memoria.Launcher
         public Int32 FontWeightNormal = 400;
         public Int32 FontWeightCombobox = 500;
         public Int32 FontSizeNormal = 14;
-        public Int32 FontSizeCombobox = 10;
+        //public Int32 FontSizeCombobox = 14;
         public Int32 ComboboxHeight = 22;
         public void SetRows(Int32 count)
         {
@@ -130,7 +130,7 @@ namespace Memoria.Launcher
             comboBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightCombobox);
             comboBox.Margin = CommonMargin;
             comboBox.Height = ComboboxHeight;
-            comboBox.FontSize = FontSizeCombobox;
+            //comboBox.FontSize = FontSizeCombobox;
             if (selectByName)
                 comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(property) { Mode = BindingMode.TwoWay });
             else
