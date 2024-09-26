@@ -177,7 +177,13 @@ namespace Memoria.Patcher
                     {
                         Int64 leftSize = uncompressedDataSize;
                         ExtractFiles(gameLocation, input, br, ref leftSize, progressHandler);
-                        Thread.Sleep(1000);
+                        for (Int32 i = 0; i < 5000; i = i + 50)
+                        {
+                            if (progressHandler.CurrentPercent == 100)
+                                i = 10000;
+                            else
+                                Thread.Sleep(50);
+                        }
                         ProgressPercent = progressHandler.CurrentPercent;
                     }
 
