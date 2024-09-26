@@ -18,10 +18,6 @@
 
     <Window.Resources>
 
-        <FontFamily x:Key="CenturyGothic">pack://application:,,,/Fonts/#Century Gothic</FontFamily>
-        <FontFamily x:Key="NotoEmoji">pack://application:,,,/Fonts/#Noto Emoji Regular</FontFamily>
-        <FontFamily x:Key="Overpass">pack://application:,,,/Fonts/#Overpass</FontFamily>
-
         <SolidColorBrush x:Key="WhiteUI" Color="#EEEEEE" />
         <SolidColorBrush x:Key="LightGreyUI" Color="#555555" />
         <SolidColorBrush x:Key="DarkGreyUI" Color="#333333" />

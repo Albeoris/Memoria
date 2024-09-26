@@ -6,9 +6,6 @@ x:Class="Memoria.Launcher.UiModManagerButton"
 Width="270"
 Height="35">
 
-    <Button.Resources>
-        <FontFamily x:Key="CenturyGothic">pack://application:,,,/Fonts/#Century Gothic</FontFamily>
-    </Button.Resources>
     <Button.Template>
         <ControlTemplate>
             <Grid x:Name="LayoutRoot"

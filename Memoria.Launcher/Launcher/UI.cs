@@ -99,8 +99,10 @@ namespace Memoria.Launcher
                 textbloc.TextAlignment = TextAlignment.Center;  // Center the text
                 textbloc.HorizontalAlignment = HorizontalAlignment.Center;
                 textbloc.FontStretch = FontStretch.FromOpenTypeStretch(9);
-                textbloc.FontWeight = FontWeight.FromOpenTypeWeight(400);
+                textbloc.FontWeight = FontWeight.FromOpenTypeWeight(500);
                 textbloc.FontSize = 14;
+                textbloc.Text = textbloc.Text.ToUpper();
+                textbloc.SetValue(TextBlock.FontFamilyProperty, Application.Current.FindResource("CenturyGothic") as FontFamily);
                 //border.Background = new SolidColorBrush(Color.FromArgb(0x88, 0x3A, 0x6B, 0x77));
                 border.Background = (SolidColorBrush)Application.Current.FindResource("BrushAccentColor");
                 border.Opacity = 0.8;

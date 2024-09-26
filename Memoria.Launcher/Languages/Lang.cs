@@ -300,6 +300,8 @@ namespace Memoria.Launcher
             public static readonly string menuPresets = GetSettings(nameof(menuPresets));
             public static readonly string Worldmap = GetSettings(nameof(Worldmap));
             public static readonly string QoL = GetSettings(nameof(QoL));
+            public static readonly string Battle = GetSettings(nameof(Battle));
+            public static readonly string VanillaCheats = GetSettings(nameof(VanillaCheats));
         }
 
         public static class SdLib

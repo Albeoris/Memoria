@@ -23,13 +23,14 @@
                     Visibility="{Binding BlueRectVisibility, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}}">
                 </Border>
                 <TextBlock TextWrapping="Wrap"
-                           Text="{Binding Label, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}}"
-                           FontWeight="Thin"
-                           FontSize="32"
-                           Height="38"
+                           Text="{Binding Label, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}, FallbackValue='PLAY'}"
+                           FontWeight="Bold"
+                           FontSize="38"
+                           FontFamily="{DynamicResource CenturyGothic}"
+                           Height="46"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
-                           Foreground="White">
+                           Foreground="#cfff">
                 </TextBlock>
             </Grid>
             <ControlTemplate.Triggers>

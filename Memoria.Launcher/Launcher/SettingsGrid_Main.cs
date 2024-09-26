@@ -28,7 +28,7 @@ namespace Memoria.Launcher
 
 
 
-            CreateTextbloc("Battle", true);
+            CreateTextbloc(Lang.Settings.Battle, true);
 
             CreateTextbloc(Lang.Settings.BattleInterface, false, Lang.Settings.BattleInterface_Tooltip);
             comboboxchoices = new String[]{

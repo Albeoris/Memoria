@@ -7,7 +7,7 @@ namespace Memoria.Launcher
         public SettingsGrid_Cheats()
         {
 
-            CreateTextbloc("Battle", true);
+            CreateTextbloc(Lang.Settings.Battle, true);
 
             CreateCheckbox("StealingAlwaysWorks", Lang.Settings.MaxStealRate, Lang.Settings.MaxStealRate_Tooltip);
             CreateCheckbox("GarnetConcentrate", Lang.Settings.DisableCantConcentrate, Lang.Settings.DisableCantConcentrate_Tooltip);
@@ -18,7 +18,7 @@ namespace Memoria.Launcher
 
 
 
-            CreateTextbloc("Vanilla Cheats", true);
+            CreateTextbloc(Lang.Settings.VanillaCheats, true);
 
             CreateCheckbox("SpeedMode", Lang.Settings.SpeedMode, Lang.Settings.SpeedMode_Tooltip);
             CreateSlider("SpeedFactor", "SpeedFactor", 2, 12, 1, "{0}x");

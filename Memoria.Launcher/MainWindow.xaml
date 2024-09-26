@@ -16,17 +16,18 @@
 
     <Window.Resources>
         <Style x:Key="TransparentGridStyle" TargetType="Grid">
-            <Setter Property="Background" Value="#9000" />
+            <Setter Property="Background" Value="#b000" />
         </Style>
 
         <Style TargetType="TabItem">
-            <Setter Property="Background" Value="#C000" />
+            <Setter Property="Background" Value="#D000" />
             <Setter Property="BorderBrush" Value="Transparent" />
             <Setter Property="BorderThickness" Value="0" />
             <Setter Property="FontSize" Value="20" />
             <Setter Property="FontWeight" Value="Normal" />
-
             <Setter Property="Margin" Value="0" />
+
+            <Setter Property="Height" Value="45" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
@@ -34,8 +35,9 @@
                             <ContentPresenter ContentSource="Header"
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
-                                Margin="20,10"
+                                Margin="20,0"
                                 TextBlock.FontSize="{TemplateBinding FontSize}"
+                                TextBlock.FontFamily="{DynamicResource CenturyGothic}"
                                 TextBlock.FontWeight="{TemplateBinding FontWeight}"
                                 TextBlock.Foreground="#aaa" />
                         </Grid>
@@ -45,7 +47,7 @@
             <Style.Triggers>
                 <!-- Selected state: opaque black background and bold text -->
                 <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#9000" />
+                    <Setter Property="Background" Value="#b000" />
                     <Setter Property="Foreground" Value="#fff" />
                     <Setter Property="Template">
                         <Setter.Value>
@@ -54,15 +56,15 @@
                                     <ContentPresenter ContentSource="Header"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Margin="20,10"
+                                        Margin="20,0"
                                         TextBlock.FontSize="{TemplateBinding FontSize}"
+                                        TextBlock.FontFamily="{DynamicResource CenturyGothic}"
                                         TextBlock.FontWeight="{TemplateBinding FontWeight}"
                                         TextBlock.Foreground="#fff" />
                                 </Grid>
                             </ControlTemplate>
                         </Setter.Value>
                     </Setter>
-                    <!-- Optional color change -->
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -120,8 +122,8 @@
         <TabControl HorizontalAlignment="Center"
                     VerticalAlignment="Bottom"
                     Width="960"
-                    Height="520"
-                    Margin="0,0,0,30"
+                    Height="528"
+                    Margin="0,0,0,22"
                     Background="Transparent"
                     BorderBrush="Transparent"
                     BorderThickness="0"
@@ -131,6 +133,7 @@
             <TabItem x:Name="menuSettings" Header="SETTINGS">
                 <Grid Style="{StaticResource TransparentGridStyle}">
                     <launcher:SettingsGrid_VanillaDisplay x:Name="GameSettingsDisplay"
+                                                          
                         Width="293"
                         Margin="20,15"
                         HorizontalAlignment="Left"
@@ -138,7 +141,7 @@
 
                     <launcher:SettingsGrid_Display x:Name="SettingsGrid_Display"
                         Width="293"
-                        Margin="20,127,0,0"
+                        Margin="20,129,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
 
@@ -244,9 +247,10 @@
         <TextBlock x:Name="Nameandversion"
             Text="{Binding MemoriaEngine, FallbackValue='MEMORIA ENGINE'}"
             Foreground="#cfff"
-            FontSize="18"
+            FontSize="15"
             FontWeight="Normal"
-            Margin="20,0,0,5"
+            FontFamily="{DynamicResource CenturyGothic}"
+            Margin="20,0,0,2"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
 

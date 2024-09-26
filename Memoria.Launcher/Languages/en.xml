@@ -176,12 +176,15 @@
 	ShaderDropboxChoice2 = "Toon"
 	ShaderDropboxChoice3 = "Natural + Outlines"
 	ShaderDropboxChoice4 = "Natural"
-    menuSettings = "SETTINGS"
-    menuAdvanced = "ADVANCED"
-    menuCheats = "CHEATS"
-    menuPresets = "PRESETS"
-    Worldmap = "Worldmap"
-    QoL = "QoL"
+	menuSettings = "SETTINGS"
+	menuAdvanced = "ADVANCED"
+	menuCheats = "CHEATS"
+	menuPresets = "PRESETS"
+	Worldmap = "Worldmap"
+	QoL = "QoL"
+	
+	Battle = "Battle"
+	VanillaCheats = "Vanilla cheats"
 	/>
 
 	<SdLib
