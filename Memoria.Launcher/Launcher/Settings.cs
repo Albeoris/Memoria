@@ -552,6 +552,20 @@ namespace Memoria.Launcher
             }
         }
 
+        private Int16 _easytetramaster;
+        public Int16 EasyTetraMaster
+        {
+            get { return _easytetramaster; }
+            set
+            {
+                if (_easytetramaster != value)
+                {
+                    _easytetramaster = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         #endregion
 
         #region Simple settings list
@@ -587,6 +601,7 @@ namespace Memoria.Launcher
             ["MasterSkill", "LvMax", "Cheats"],
             ["MasterSkill", "GilMax", "Cheats"],
             ["ReduceRandom", "ReduceRandom", "TetraMaster"],
+            ["EasyTetraMaster", "EasyWin", "TetraMaster"],
 
         };
         #endregion
@@ -816,11 +831,6 @@ namespace Memoria.Launcher
                         {
                             iniFile.WriteValue("TetraMaster", propertyName + " ", " 100");
                         }
-                        break;
-                    case nameof(ReduceRandom):
-                        if (ReduceRandom != 0)
-                            iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
-                        iniFile.WriteValue("TetraMaster", propertyName + " ", " " + ReduceRandom);
                         break;
                 }
             }
@@ -1218,7 +1228,7 @@ namespace Memoria.Launcher
                     _maxcardcount = cardCount < 9999 ? (Int16)0 : (Int16)1;
 
 
-                value = iniFile.ReadValue("TetraMaster", nameof(ReduceRandom));
+                value = iniFile.ReadValue("TetraMaster", "ReduceRandom");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
@@ -1227,7 +1237,14 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _reducerandom))
                     _reducerandom = 0;
 
-
+                value = iniFile.ReadValue("TetraMaster", "EasyWin");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                    OnPropertyChanged(nameof(EasyTetraMaster));
+                }
+                if (!Int16.TryParse(value, out _easytetramaster))
+                    _easytetramaster = 0;
 
 
                 foreach (Object[] item in SettingsList)

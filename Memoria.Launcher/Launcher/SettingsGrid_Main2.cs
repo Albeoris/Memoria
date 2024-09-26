@@ -16,14 +16,16 @@ namespace Memoria.Launcher
             };
             CreateCombobox("TripleTriad", comboboxchoices);
 
-            CreateTextbloc(Lang.Settings.CardReduceRandom, false, Lang.Settings.CardReduceRandom_Tooltip);
+            /*CreateTextbloc(Lang.Settings.CardReduceRandom, false, Lang.Settings.CardReduceRandom_Tooltip);
             comboboxchoices = new String[]
             {
                 Lang.Settings.tetraMasterReduceRandomBox0,
                 Lang.Settings.tetraMasterReduceRandomBox1,
                 Lang.Settings.tetraMasterReduceRandomBox2
             };
-            CreateCombobox("ReduceRandom", comboboxchoices);
+            CreateCombobox("ReduceRandom", comboboxchoices);*/
+
+            CreateCheckbox("ReduceRandom", Lang.Settings.CardReduceRandom, Lang.Settings.CardReduceRandom_Tooltip);
             CreateCheckbox("MaxCardCount", Lang.Settings.MaxCardCount, Lang.Settings.MaxCardCount_Tooltip);
             CreateCheckbox("HideCards", Lang.Settings.HideSteamBubbles, Lang.Settings.HideSteamBubbles_Tooltip);
 

@@ -18,6 +18,11 @@ namespace Memoria.Launcher
 
 
 
+
+            CreateCheckbox("EasyTetraMaster", Lang.Settings.EasyTetraMaster, Lang.Settings.EasyTetraMaster_Tooltip);
+
+
+
             CreateTextbloc(Lang.Settings.VanillaCheats, true);
 
             CreateCheckbox("SpeedMode", Lang.Settings.SpeedMode, Lang.Settings.SpeedMode_Tooltip);

@@ -214,7 +214,6 @@ namespace Memoria.Launcher
             public static readonly string UIColumnsChoice1 = GetSettings(nameof(UIColumnsChoice1));
             public static readonly string UIColumnsChoice2 = GetSettings(nameof(UIColumnsChoice2));
             public static readonly string NoAutoTrance = GetSettings(nameof(NoAutoTrance));
-            public static readonly string CardReduceRandom = GetSettings(nameof(CardReduceRandom));
             public static readonly string tetraMasterReduceRandomBox0 = GetSettings(nameof(tetraMasterReduceRandomBox0));
             public static readonly string tetraMasterReduceRandomBox1 = GetSettings(nameof(tetraMasterReduceRandomBox1));
             public static readonly string tetraMasterReduceRandomBox2 = GetSettings(nameof(tetraMasterReduceRandomBox2));
@@ -264,7 +263,6 @@ namespace Memoria.Launcher
             public static readonly string NoRandomBattles_Tooltip = GetSettings(nameof(NoRandomBattles_Tooltip));
             public static readonly string PermanentCheats_Tooltip = GetSettings(nameof(PermanentCheats_Tooltip));
             public static readonly string MaxCardCount_Tooltip = GetSettings(nameof(MaxCardCount_Tooltip));
-            public static readonly string CardReduceRandom_Tooltip = GetSettings(nameof(CardReduceRandom_Tooltip));
 
             public static readonly string FPSDropboxChoice = GetSettings(nameof(FPSDropboxChoice));
             public static readonly string FPSDropboxChoice0 = GetSettings(nameof(FPSDropboxChoice0));
@@ -300,8 +298,13 @@ namespace Memoria.Launcher
             public static readonly string menuPresets = GetSettings(nameof(menuPresets));
             public static readonly string Worldmap = GetSettings(nameof(Worldmap));
             public static readonly string QoL = GetSettings(nameof(QoL));
+
             public static readonly string Battle = GetSettings(nameof(Battle));
             public static readonly string VanillaCheats = GetSettings(nameof(VanillaCheats));
+            public static readonly string EasyTetraMaster = GetSettings(nameof(EasyTetraMaster));
+            public static readonly string EasyTetraMaster_Tooltip = GetSettings(nameof(EasyTetraMaster_Tooltip));
+            public static readonly string CardReduceRandom = GetSettings(nameof(CardReduceRandom));
+            public static readonly string CardReduceRandom_Tooltip = GetSettings(nameof(CardReduceRandom_Tooltip));
         }
 
         public static class SdLib
