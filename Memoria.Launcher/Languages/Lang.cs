@@ -324,9 +324,10 @@ namespace Memoria.Launcher
             public static readonly string WorldmapShipTilt = GetSettings(nameof(WorldmapShipTilt));
             public static readonly string WorldmapShipTilt_Tooltip = GetSettings(nameof(WorldmapShipTilt_Tooltip));
 
-
-
-
+            public static readonly string ExcaliburIINoTimeLimit = GetSettings(nameof(ExcaliburIINoTimeLimit));
+            public static readonly string ExcaliburIINoTimeLimit_Tooltip = GetSettings(nameof(ExcaliburIINoTimeLimit_Tooltip));
+            public static readonly string ViviAutoAttack = GetSettings(nameof(ViviAutoAttack));
+            public static readonly string ViviAutoAttack_Tooltip = GetSettings(nameof(ViviAutoAttack_Tooltip));
 
         }
 

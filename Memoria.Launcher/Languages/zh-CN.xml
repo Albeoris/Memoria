@@ -200,6 +200,11 @@
 	WorldmapBoost_Tooltip = "在飞行时基于速度添加轻微视野提升（默认: 关闭）"
 	WorldmapShipTilt = "相机倾斜"
 	WorldmapShipTilt_Tooltip = "飞行转向时倾斜相机（默认: 开启）"
+	
+	ExcaliburIINoTimeLimit = "Excalibur II: 移除时间限制"
+	ExcaliburIINoTimeLimit_Tooltip = "移除获得Excalibur II的10小时时间限制"
+	ViviAutoAttack = "Vivi 使用魔法攻击"
+	ViviAutoAttack_Tooltip = "Vivi 不进行普通物理攻击，而是使用免费的基础魔法（最有效的）"
 	/>
 
 	<SdLib

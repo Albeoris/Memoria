@@ -191,6 +191,11 @@
 	WorldmapBoost_Tooltip = "飛行時の速度に基づいて軽い視野角ブーストを追加します（バニラ: オフ）"
 	WorldmapShipTilt = "カメラ傾斜"
 	WorldmapShipTilt_Tooltip = "飛行中に回転するときにカメラを傾けます（バニラ: オン）"
+	
+	ExcaliburIINoTimeLimit = "エクスカリバーII: 時間制限を解除"
+	ExcaliburIINoTimeLimit_Tooltip = "エクスカリバーIIを取得するための10時間制限を解除します"
+	ViviAutoAttack = "ビビは魔法で攻撃"
+	ViviAutoAttack_Tooltip = "通常の物理攻撃の代わりに、ビビは無料の基礎魔法（最も効果的なもの）を使用します"
 	/>
 
 	<SdLib

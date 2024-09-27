@@ -202,6 +202,11 @@
 	WorldmapBoost_Tooltip = "Adds a slight field of view boost based on speed when flying (vanilla: off)"
 	WorldmapShipTilt = "Camera tilt"
 	WorldmapShipTilt_Tooltip = "Tilt the camera when you turn while flying (vanilla: on)"
+	
+	ExcaliburIINoTimeLimit = "Excalibur II: remove time limit"
+    ExcaliburIINoTimeLimit_Tooltip = "Removes the 10h time limit to get Excalibur II"
+    ViviAutoAttack = "Vivi attacks with magic"
+    ViviAutoAttack_Tooltip = "Instead of the normal physical attack, vivi uses a free base spell (the most effective)"
 	/>
 
 	<SdLib

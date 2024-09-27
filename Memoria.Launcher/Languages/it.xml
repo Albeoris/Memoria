@@ -191,6 +191,11 @@
 	WorldmapBoost_Tooltip = "Aggiunge un leggero incremento al campo visivo in base alla velocità durante il volo (vanilla: disattivato)"
 	WorldmapShipTilt = "Inclinazione della telecamera"
 	WorldmapShipTilt_Tooltip = "Inclina la telecamera quando si gira in volo (vanilla: attivato)"
+	
+	ExcaliburIINoTimeLimit = "Excalibur II: rimuovi limite di tempo"
+	ExcaliburIINoTimeLimit_Tooltip = "Rimuove il limite di tempo di 10 ore per ottenere Excalibur II"
+	ViviAutoAttack = "Vivi attacca con la magia"
+	ViviAutoAttack_Tooltip = "Invece di un attacco fisico normale, Vivi usa un incantesimo base gratuito (il più efficace)"
 	/>
 
 	<SdLib

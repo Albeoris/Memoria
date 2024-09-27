@@ -9,6 +9,7 @@ namespace Memoria.Launcher
 
             CreateTextbloc(Lang.Settings.Other, true);
             CreateCheckbox("EasyTetraMaster", Lang.Settings.EasyTetraMaster, Lang.Settings.EasyTetraMaster_Tooltip);
+            CreateCheckbox("ExcaliburIINoTimeLimit", Lang.Settings.ExcaliburIINoTimeLimit, Lang.Settings.ExcaliburIINoTimeLimit_Tooltip);
 
             LoadSettings();
         }

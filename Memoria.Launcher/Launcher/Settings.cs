@@ -631,6 +631,32 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _viviautoattack;
+        public Int16 ViviAutoAttack
+        {
+            get { return _viviautoattack; }
+            set
+            {
+                if (_viviautoattack != value)
+                {
+                    _viviautoattack = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _excaliburiinotimelimit;
+        public Int16 ExcaliburIINoTimeLimit
+        {
+            get { return _excaliburiinotimelimit; }
+            set
+            {
+                if (_excaliburiinotimelimit != value)
+                {
+                    _excaliburiinotimelimit = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
 
         #endregion
 
@@ -669,6 +695,8 @@ namespace Memoria.Launcher
             ["ReduceRandom", "ReduceRandom", "TetraMaster"],
             ["EasyTetraMaster", "EasyWin", "TetraMaster"],
             ["WorldmapFOV", "FieldOfView", "Worldmap"],
+            ["ViviAutoAttack", "ViviAutoAttack", "Battle"],
+            ["ExcaliburIINoTimeLimit", "ExcaliburIINoTimeLimit", "Hacks"],
 
         };
         #endregion
@@ -1475,6 +1503,24 @@ namespace Memoria.Launcher
                     _worldmapshiptilt = 0;
                 else
                     _worldmapshiptilt = 1;
+
+                value = iniFile.ReadValue("Battle", "ViviAutoAttack");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                    OnPropertyChanged(nameof(ViviAutoAttack));
+                }
+                if (!Int16.TryParse(value, out _viviautoattack))
+                    _viviautoattack = 0;
+
+                value = iniFile.ReadValue("Hacks", "ExcaliburIINoTimeLimit");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                    OnPropertyChanged(nameof(ExcaliburIINoTimeLimit));
+                }
+                if (!Int16.TryParse(value, out _excaliburiinotimelimit))
+                    _excaliburiinotimelimit = 0;
 
                 foreach (Object[] item in SettingsList)
                 {

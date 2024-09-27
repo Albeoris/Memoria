@@ -12,9 +12,11 @@ namespace Memoria.Launcher
             CreateCheckbox("StealingAlwaysWorks", Lang.Settings.MaxStealRate, Lang.Settings.MaxStealRate_Tooltip);
             CreateCheckbox("GarnetConcentrate", Lang.Settings.DisableCantConcentrate, Lang.Settings.DisableCantConcentrate_Tooltip);
             CreateCheckbox("BreakDamageLimit", Lang.Settings.BreakDamageLimit, Lang.Settings.BreakDamageLimit_Tooltip);
-            
+            CreateCheckbox("ViviAutoAttack", Lang.Settings.ViviAutoAttack, Lang.Settings.ViviAutoAttack_Tooltip);
+
             CreateTextbloc(Lang.Settings.BattleTPS, false, Lang.Settings.BattleTPS_Tooltip);
             CreateSlider("BattleTPSDividedBy10", "BattleTPS", 15, 75, 1, "{0}x");
+
 
 
             CreateTextbloc(Lang.Settings.VanillaCheats, true);
@@ -28,6 +30,5 @@ namespace Memoria.Launcher
 
             LoadSettings();
         }
-
     }
 }

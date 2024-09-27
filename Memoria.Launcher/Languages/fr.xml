@@ -170,8 +170,8 @@
 	QoL = "QoL"
 	Battle = "Combat"
 	VanillaCheats = "Triche (sans mod)"
-	EasyTetraMaster = "TetraMaster : victoire facile"
-	EasyTetraMaster_Tooltip = "TetraMaster : vous gagnez chaque affrontement de cartes"
+	EasyTetraMaster = "TetraMaster: victoire facile"
+	EasyTetraMaster_Tooltip = "TetraMaster: vous gagnez chaque affrontement de cartes"
 	CardReduceRandom = "Réduire l'aléatoire"
 	CardReduceRandom_Tooltip = "Réduit l'aléatoire dans Tetra Master"
 	WorldmapMistPreset = "Distance de brume"
@@ -187,11 +187,16 @@
 	WorldmapDistancePresetChoice2 = "x3"
 	WorldmapDistancePresetChoice3 = "x4,5"
 	WorldmapFOV = "Profondeur de champ (FOV)"
-	WorldmapFOV_Tooltip = "Champ de vision de la caméra de la carte du monde (par défaut : 44)"
+	WorldmapFOV_Tooltip = "Champ de vision de la caméra de la carte du monde (par défaut: 44)"
 	WorldmapBoost = "Boost de caméra"
-	WorldmapBoost_Tooltip = "Ajoute un léger boost de champ de vision en fonction de la vitesse en vol (vanilla : désactivé)"
+	WorldmapBoost_Tooltip = "Ajoute un léger boost de champ de vision en fonction de la vitesse en vol (vanilla: désactivé)"
 	WorldmapShipTilt = "Inclinaison de la caméra"
-	WorldmapShipTilt_Tooltip = "Incline la caméra en tournant pendant le vol (vanilla : activé)"
+	WorldmapShipTilt_Tooltip = "Incline la caméra en tournant pendant le vol (vanilla: activé)"
+	
+	ExcaliburIINoTimeLimit = "Excalibur II: supprimer la limite de temps"
+	ExcaliburIINoTimeLimit_Tooltip = "Supprime la limite de temps de 10h pour obtenir Excalibur II"
+	ViviAutoAttack = "Bibi attaque avec la magie"
+	ViviAutoAttack_Tooltip = "Au lieu d'une attaque physique normale, Bibi utilise un sort de base gratuit (le plus efficace)"
 	/>
 
 	<SdLib
