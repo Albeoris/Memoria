@@ -424,6 +424,20 @@ namespace Memoria.Launcher
                 }
             }
         }
+
+        private Int16 _accessbattlemenutoggle;
+        public Int16 AccessBattleMenuToggle
+        {
+            get { return _accessbattlemenutoggle; }
+            set
+            {
+                if (_accessbattlemenutoggle != value)
+                {
+                    _accessbattlemenutoggle = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         private Int16 _accessBattleMenu;
         public Int16 AccessBattleMenu
         {
@@ -1010,6 +1024,18 @@ namespace Memoria.Launcher
                             iniFile.WriteValue("Worldmap", "Enabled ", " 1");
                         }
                         break;
+                    case nameof(AccessBattleMenuToggle):
+                        if (AccessBattleMenuToggle == 0)
+                        {
+                            iniFile.WriteValue("Battle", "AccessMenus ", " 0");
+                        }
+                        else if (AccessBattleMenuToggle == 1)
+                        {
+                            iniFile.WriteValue("Battle", "AccessMenus ", " 3");
+                            iniFile.WriteValue("Battle", "AvailableMenus ", " \"Equip\", \"SupportingAbility\"");
+                            iniFile.WriteValue("Battle", "Enabled ", " 1");
+                        }
+                        break;
                 }
             }
             catch (Exception ex)
@@ -1522,6 +1548,18 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _excaliburiinotimelimit))
                     _excaliburiinotimelimit = 0;
 
+                value = iniFile.ReadValue("Battle", "AccessMenus");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                    OnPropertyChanged(nameof(AccessBattleMenuToggle));
+                }
+                value1isInt = Int16.TryParse(value, out value1);
+                if (value1 == 0)
+                    _accessbattlemenutoggle = 0;
+                else
+                    _accessbattlemenutoggle = 1;
+
                 foreach (Object[] item in SettingsList)
                 {
                     if (item[0] is String property)
@@ -1544,6 +1582,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(WorldmapFOV));
                 Refresh(nameof(WorldmapBoost));
                 Refresh(nameof(WorldmapShipTilt));
+                Refresh(nameof(AccessBattleMenuToggle));
 
             }
             catch (Exception ex)

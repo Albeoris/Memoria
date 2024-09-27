@@ -14,6 +14,10 @@ namespace Memoria.Launcher
             CreateCheckbox("BreakDamageLimit", Lang.Settings.BreakDamageLimit, Lang.Settings.BreakDamageLimit_Tooltip);
             CreateCheckbox("ViviAutoAttack", Lang.Settings.ViviAutoAttack, Lang.Settings.ViviAutoAttack_Tooltip);
 
+
+            CreateCheckbox("AccessBattleMenuToggle", Lang.Settings.AccessBattleMenuToggle, Lang.Settings.AccessBattleMenuToggle_Tooltip);
+
+
             CreateTextbloc(Lang.Settings.BattleTPS, false, Lang.Settings.BattleTPS_Tooltip);
             CreateSlider("BattleTPSDividedBy10", "BattleTPS", 15, 75, 1, "{0}x");
 

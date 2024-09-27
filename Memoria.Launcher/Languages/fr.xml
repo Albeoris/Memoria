@@ -193,7 +193,7 @@
 	WorldmapShipTilt = "Inclinaison de la caméra"
 	WorldmapShipTilt_Tooltip = "Incline la caméra en tournant pendant le vol (vanilla: activé)"
 	
-	ExcaliburIINoTimeLimit = "Excalibur II: supprimer la limite de temps"
+	ExcaliburIINoTimeLimit = "Excalibur II: pas de limite de temps"
 	ExcaliburIINoTimeLimit_Tooltip = "Supprime la limite de temps de 10h pour obtenir Excalibur II"
 	ViviAutoAttack = "Bibi attaque avec la magie"
 	ViviAutoAttack_Tooltip = "Au lieu d'une attaque physique normale, Bibi utilise un sort de base gratuit (le plus efficace)"

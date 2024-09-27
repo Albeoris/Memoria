@@ -329,6 +329,8 @@ namespace Memoria.Launcher
             public static readonly string ViviAutoAttack = GetSettings(nameof(ViviAutoAttack));
             public static readonly string ViviAutoAttack_Tooltip = GetSettings(nameof(ViviAutoAttack_Tooltip));
 
+            public static readonly string AccessBattleMenuToggle = GetSettings(nameof(AccessBattleMenuToggle));
+            public static readonly string AccessBattleMenuToggle_Tooltip = GetSettings(nameof(AccessBattleMenuToggle_Tooltip));
         }
 
         public static class SdLib

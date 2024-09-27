@@ -49,6 +49,7 @@ namespace Memoria.Launcher
             };
             CreateCombobox("Speed", comboboxchoices);
 
+            /*
             CreateTextbloc(Lang.Settings.AccessBattleMenu, false, Lang.Settings.AccessBattleMenu_Tooltip);
             String[] accessmenuchoices =
             {
@@ -58,6 +59,7 @@ namespace Memoria.Launcher
                 Lang.Settings.AccessBattleMenuType3
             };
             CreateCombobox("AccessBattleMenu", accessmenuchoices, 4, Lang.Settings.AccessBattleMenu_Tooltip);
+            */
 
             CreateCheckbox("NoAutoTrance", Lang.Settings.NoAutoTrance, Lang.Settings.NoAutoTrance_Tooltip);
 
