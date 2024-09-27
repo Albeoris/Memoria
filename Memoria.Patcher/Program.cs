@@ -290,6 +290,7 @@ namespace Memoria.Patcher
             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("An extraction error has occurred");
+                Console.WriteLine("Try running the patcher as administrator");
                 Console.ResetColor();
                 Console.WriteLine("---------------------------");
                 Console.WriteLine(ex);
