@@ -305,6 +305,29 @@ namespace Memoria.Launcher
             public static readonly string EasyTetraMaster_Tooltip = GetSettings(nameof(EasyTetraMaster_Tooltip));
             public static readonly string CardReduceRandom = GetSettings(nameof(CardReduceRandom));
             public static readonly string CardReduceRandom_Tooltip = GetSettings(nameof(CardReduceRandom_Tooltip));
+            public static readonly string WorldmapMistPreset = GetSettings(nameof(WorldmapMistPreset));
+            public static readonly string WorldmapMistPreset_Tooltip = GetSettings(nameof(WorldmapMistPreset_Tooltip));
+            public static readonly string WorldmapMistPresetChoice0 = GetSettings(nameof(WorldmapMistPresetChoice0));
+            public static readonly string WorldmapMistPresetChoice1 = GetSettings(nameof(WorldmapMistPresetChoice1));
+            public static readonly string WorldmapMistPresetChoice2 = GetSettings(nameof(WorldmapMistPresetChoice2));
+            public static readonly string WorldmapMistPresetChoice3 = GetSettings(nameof(WorldmapMistPresetChoice3));
+            public static readonly string WorldmapDistancePreset = GetSettings(nameof(WorldmapDistancePreset));
+            public static readonly string WorldmapDistancePreset_Tooltip = GetSettings(nameof(WorldmapDistancePreset_Tooltip));
+            public static readonly string WorldmapDistancePresetChoice0 = GetSettings(nameof(WorldmapDistancePresetChoice0));
+            public static readonly string WorldmapDistancePresetChoice1 = GetSettings(nameof(WorldmapDistancePresetChoice1));
+            public static readonly string WorldmapDistancePresetChoice2 = GetSettings(nameof(WorldmapDistancePresetChoice2));
+            public static readonly string WorldmapDistancePresetChoice3 = GetSettings(nameof(WorldmapDistancePresetChoice3));
+            public static readonly string WorldmapFOV = GetSettings(nameof(WorldmapFOV));
+            public static readonly string WorldmapFOV_Tooltip = GetSettings(nameof(WorldmapFOV_Tooltip));
+            public static readonly string WorldmapBoost = GetSettings(nameof(WorldmapBoost));
+            public static readonly string WorldmapBoost_Tooltip = GetSettings(nameof(WorldmapBoost_Tooltip));
+            public static readonly string WorldmapShipTilt = GetSettings(nameof(WorldmapShipTilt));
+            public static readonly string WorldmapShipTilt_Tooltip = GetSettings(nameof(WorldmapShipTilt_Tooltip));
+
+
+
+
+
         }
 
         public static class SdLib

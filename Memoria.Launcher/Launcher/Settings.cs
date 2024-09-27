@@ -566,6 +566,72 @@ namespace Memoria.Launcher
             }
         }
 
+        private Int16 _worldmapmistpreset;
+        public Int16 WorldmapMistPreset
+        {
+            get { return _worldmapmistpreset; }
+            set
+            {
+                if (_worldmapmistpreset != value)
+                {
+                    _worldmapmistpreset = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _worldmapdistancepreset;
+        public Int16 WorldmapDistancePreset
+        {
+            get { return _worldmapdistancepreset; }
+            set
+            {
+                if (_worldmapdistancepreset != value)
+                {
+                    _worldmapdistancepreset = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _worldmapfov;
+        public Int16 WorldmapFOV
+        {
+            get { return _worldmapfov; }
+            set
+            {
+                if (_worldmapfov != value)
+                {
+                    _worldmapfov = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _worldmapboost;
+        public Int16 WorldmapBoost
+        {
+            get { return _worldmapboost; }
+            set
+            {
+                if (_worldmapboost != value)
+                {
+                    _worldmapboost = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _worldmapshiptilt;
+        public Int16 WorldmapShipTilt
+        {
+            get { return _worldmapshiptilt; }
+            set
+            {
+                if (_worldmapshiptilt != value)
+                {
+                    _worldmapshiptilt = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         #endregion
 
         #region Simple settings list
@@ -602,6 +668,7 @@ namespace Memoria.Launcher
             ["MasterSkill", "GilMax", "Cheats"],
             ["ReduceRandom", "ReduceRandom", "TetraMaster"],
             ["EasyTetraMaster", "EasyWin", "TetraMaster"],
+            ["WorldmapFOV", "FieldOfView", "Worldmap"],
 
         };
         #endregion
@@ -832,6 +899,89 @@ namespace Memoria.Launcher
                             iniFile.WriteValue("TetraMaster", propertyName + " ", " 100");
                         }
                         break;
+
+                    case nameof(WorldmapMistPreset):
+                        iniFile.WriteValue("Worldmap", "Enabled ", " 1");
+                        switch (WorldmapMistPreset)
+                        {
+                            case (0):
+                                iniFile.WriteValue("Worldmap", "MistViewDistance ", " 100");
+                                iniFile.WriteValue("Worldmap", "MistStartDistance_base ", " 55");
+                                iniFile.WriteValue("Worldmap", "MistStartDistance ", " 27");
+                                iniFile.WriteValue("Worldmap", "MistEndDistance ", " 80");
+                                iniFile.WriteValue("Worldmap", "MistDensity ", " 7");
+                                break;
+                            case (1):
+                                iniFile.WriteValue("Worldmap", "MistViewDistance ", " 250");
+                                iniFile.WriteValue("Worldmap", "MistStartDistance_base ", " 10");
+                                iniFile.WriteValue("Worldmap", "MistStartDistance ", " 30");
+                                iniFile.WriteValue("Worldmap", "MistEndDistance ", " 200");
+                                iniFile.WriteValue("Worldmap", "MistDensity ", " 7");
+                                break;
+                            case (2):
+                                iniFile.WriteValue("Worldmap", "MistViewDistance ", " 400");
+                                iniFile.WriteValue("Worldmap", "MistStartDistance_base ", " 10");
+                                iniFile.WriteValue("Worldmap", "MistStartDistance ", " 50");
+                                iniFile.WriteValue("Worldmap", "MistEndDistance ", " 300");
+                                iniFile.WriteValue("Worldmap", "MistDensity ", " 4");
+                                break;
+                            case (3):
+                                iniFile.WriteValue("Worldmap", "MistViewDistance ", " 450");
+                                iniFile.WriteValue("Worldmap", "MistStartDistance_base ", " 0");
+                                iniFile.WriteValue("Worldmap", "MistStartDistance ", " 250");
+                                iniFile.WriteValue("Worldmap", "MistEndDistance ", " 330");
+                                iniFile.WriteValue("Worldmap", "MistDensity ", " 0");
+                                break;
+                        }
+                        break;
+                    case nameof(WorldmapDistancePreset):
+                        iniFile.WriteValue("Worldmap", "Enabled ", " 1");
+                        switch (WorldmapDistancePreset)
+                        {
+                            case (0):
+                                iniFile.WriteValue("Worldmap", "NoMistViewDistance ", " 100");
+                                iniFile.WriteValue("Worldmap", "FogStartDistance ", " 86");
+                                iniFile.WriteValue("Worldmap", "FogEndDistance ", " 142");
+                                break;
+                            case (1):
+                                iniFile.WriteValue("Worldmap", "NoMistViewDistance ", " 200");
+                                iniFile.WriteValue("Worldmap", "FogStartDistance ", " 150");
+                                iniFile.WriteValue("Worldmap", "FogEndDistance ", " 250");
+                                break;
+                            case (2):
+                                iniFile.WriteValue("Worldmap", "NoMistViewDistance ", " 300");
+                                iniFile.WriteValue("Worldmap", "FogStartDistance ", " 250");
+                                iniFile.WriteValue("Worldmap", "FogEndDistance ", " 350");
+                                break;
+                            case (3):
+                                iniFile.WriteValue("Worldmap", "NoMistViewDistance ", " 450");
+                                iniFile.WriteValue("Worldmap", "FogStartDistance ", " 400");
+                                iniFile.WriteValue("Worldmap", "FogEndDistance ", " 490");
+                                break;
+                        }
+                        break;
+                    case nameof(WorldmapBoost):
+                        if (WorldmapBoost == 0)
+                        {
+                            iniFile.WriteValue("Worldmap", "FieldOfViewSpeedBoost ", " 0");
+                        }
+                        else if (WorldmapBoost == 1)
+                        {
+                            iniFile.WriteValue("Worldmap", "FieldOfViewSpeedBoost ", " 100");
+                            iniFile.WriteValue("Worldmap", "Enabled ", " 1");
+                        }
+                        break;
+                    case nameof(WorldmapShipTilt):
+                        if (WorldmapShipTilt == 0)
+                        {
+                            iniFile.WriteValue("Worldmap", "CameraTiltShip ", " 0");
+                        }
+                        else if (WorldmapShipTilt == 1)
+                        {
+                            iniFile.WriteValue("Worldmap", "CameraTiltShip ", " 100");
+                            iniFile.WriteValue("Worldmap", "Enabled ", " 1");
+                        }
+                        break;
                 }
             }
             catch (Exception ex)
@@ -864,7 +1014,16 @@ namespace Memoria.Launcher
                     }
                 }*/
 
-
+                Boolean value1isInt;
+                Boolean value2isInt;
+                Boolean value3isInt;
+                Boolean value4isInt;
+                Boolean value5isInt;
+                Int16 value1;
+                Int16 value2;
+                Int16 value3;
+                Int16 value4;
+                Int16 value5;
 
                 String value = iniFile.ReadValue("Graphics", nameof(WidescreenSupport));
                 if (String.IsNullOrEmpty(value))
@@ -874,13 +1033,12 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _iswidescreensupport))
                     _iswidescreensupport = 1;
 
-
                 value = iniFile.ReadValue("Graphics", "FieldFPS");
-                Boolean value1isInt = Int16.TryParse(value, out Int16 value1);
+                value1isInt = Int16.TryParse(value, out value1);
                 value = iniFile.ReadValue("Graphics", "BattleFPS");
-                Boolean value2isInt = Int16.TryParse(value, out Int16 value2);
+                value2isInt = Int16.TryParse(value, out value2);
                 value = iniFile.ReadValue("Graphics", "WorldFPS");
-                Boolean value3isInt = Int16.TryParse(value, out Int16 value3);
+                value3isInt = Int16.TryParse(value, out value3);
                 if (value1isInt && value2isInt && value3isInt)
                 {
                     if (value1 == 30 && value2 == 15 && value3 == 20)
@@ -937,7 +1095,7 @@ namespace Memoria.Launcher
                 value = iniFile.ReadValue("Interface", "MenuEquipRowCount");
                 value3isInt = Int16.TryParse(value, out value3);
                 value = iniFile.ReadValue("Interface", "MenuChocographRowCount");
-                Boolean value4isInt = Int16.TryParse(value, out Int16 value4);
+                value4isInt = Int16.TryParse(value, out value4);
                 if (value1 == 8 && value2 == 6 && value3 == 5 && value4 == 5)
                     _uicolumnschoice = 0;
                 else if (value1 == 12 && value2 == 9 && value3 == 7 && value4 == 7)
@@ -1247,6 +1405,77 @@ namespace Memoria.Launcher
                     _easytetramaster = 0;
 
 
+                value = iniFile.ReadValue("Worldmap", "MistViewDistance");
+                value1isInt = Int16.TryParse(value, out value1);
+                value = iniFile.ReadValue("Worldmap", "MistStartDistance_base");
+                value2isInt = Int16.TryParse(value, out value2);
+                value = iniFile.ReadValue("Worldmap", "MistStartDistance");
+                value3isInt = Int16.TryParse(value, out value3);
+                value = iniFile.ReadValue("Worldmap", "MistEndDistance");
+                value4isInt = Int16.TryParse(value, out value4);
+                value = iniFile.ReadValue("Worldmap", "MistDensity");
+                value5isInt = Int16.TryParse(value, out value5);
+                if (value1 == 100 && value2 == 55 && value3 == 27 && value4 == 80 && value5 == 7)
+                    _worldmapmistpreset = 0;
+                else if (value1 == 250 && value2 == 10 && value3 == 30 && value4 == 200 && value5 == 7)
+                    _worldmapmistpreset = 1;
+                else if (value1 == 400 && value2 == 10 && value3 == 50 && value4 == 300 && value5 == 4)
+                    _worldmapmistpreset = 2;
+                else if (value1 == 450 && value2 == 0 && value3 == 250 && value4 == 330 && value5 == 0)
+                    _worldmapmistpreset = 3;
+                else
+                    _worldmapmistpreset = -1;
+
+                value = iniFile.ReadValue("Worldmap", "NoMistViewDistance");
+                value1isInt = Int16.TryParse(value, out value1);
+                value = iniFile.ReadValue("Worldmap", "FogStartDistance");
+                value2isInt = Int16.TryParse(value, out value2);
+                value = iniFile.ReadValue("Worldmap", "FogEndDistance");
+                value3isInt = Int16.TryParse(value, out value3);
+                if (value1 == 100 && value2 == 86 && value3 == 142)
+                    _worldmapdistancepreset = 0;
+                else if (value1 == 200 && value2 == 150 && value3 == 250)
+                    _worldmapdistancepreset = 1;
+                else if (value1 == 300 && value2 == 250 && value3 == 350)
+                    _worldmapdistancepreset = 2;
+                else if (value1 == 450 && value2 == 400 && value3 == 490)
+                    _worldmapdistancepreset = 3;
+                else
+                    _worldmapdistancepreset = -1;
+
+                value = iniFile.ReadValue("Worldmap", "FieldOfView");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                    OnPropertyChanged(nameof(WorldmapFOV));
+                }
+                if (!Int16.TryParse(value, out _worldmapfov))
+                    _worldmapfov = 0;
+
+                value = iniFile.ReadValue("Worldmap", "FieldOfViewSpeedBoost");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 100";
+                    OnPropertyChanged(nameof(WorldmapBoost));
+                }
+                value1isInt = Int16.TryParse(value, out value1);
+                if (value1 == 0)
+                    _worldmapboost = 0;
+                else
+                    _worldmapboost = 1;
+
+                value = iniFile.ReadValue("Worldmap", "CameraTiltShip");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 100";
+                    OnPropertyChanged(nameof(WorldmapShipTilt));
+                }
+                value1isInt = Int16.TryParse(value, out value1);
+                if (value1 == 0)
+                    _worldmapshiptilt = 0;
+                else
+                    _worldmapshiptilt = 1;
+
                 foreach (Object[] item in SettingsList)
                 {
                     if (item[0] is String property)
@@ -1264,7 +1493,12 @@ namespace Memoria.Launcher
                 Refresh(nameof(StealingAlwaysWorks));
                 Refresh(nameof(AccessBattleMenu));
                 Refresh(nameof(MaxCardCount));
-                
+                Refresh(nameof(WorldmapMistPreset));
+                Refresh(nameof(WorldmapDistancePreset));
+                Refresh(nameof(WorldmapFOV));
+                Refresh(nameof(WorldmapBoost));
+                Refresh(nameof(WorldmapShipTilt));
+
             }
             catch (Exception ex)
             {
