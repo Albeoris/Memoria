@@ -336,14 +336,7 @@ public class CloudUI : UIScene
             String text3 = ((Int32)(num3 / 60.0) % 60).ToString("0#");
             String text4 = ((Int32)num3 % 60).ToString("0#");
             fileHud.TimeLabel.color = color;
-            fileHud.TimeLabel.text = String.Concat(new String[]
-            {
-                text2,
-                " : ",
-                text3,
-                " : ",
-                text4
-            });
+            fileHud.TimeLabel.text = String.Concat(new String[] { text2, " : ", text3, " : ", text4 });
             this.DisplayWindowBackground(fileHud.Self, (file.win_type != 0UL) ? FF9UIDataTool.BlueAtlas : FF9UIDataTool.GrayAtlas);
         }
         else

@@ -291,7 +291,6 @@
     <Compile Include="Global\btlshadow.cs" />
     <Compile Include="Global\btlsnd.cs" />
     <Compile Include="Global\btl_cmd.cs" />
-    <Compile Include="Global\Btl_cmn.2.cs" />
     <Compile Include="Global\btl_cmn.cs" />
     <Compile Include="Global\BTL_DATA.cs" />
     <Compile Include="Global\BTL_DATA_INIT.cs" />
@@ -352,8 +351,10 @@
     <Compile Include="Memoria\Battle\Calculator\EatResult.cs" />
     <Compile Include="Memoria\Battle\Scripts\IOverloadableMethod.cs" />
     <Compile Include="Memoria\Battle\Scripts\IStatusScript.cs" />
+    <Compile Include="Memoria\Configuration\Access\Worldmap.cs" />
     <Compile Include="Memoria\Configuration\Access\Interface.cs" />
     <Compile Include="Memoria\Configuration\Access\Shaders.cs" />
+    <Compile Include="Memoria\Configuration\Structure\WorldmapSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\InterfaceSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\ShadersSection.cs" />
     <Compile Include="Memoria\Data\Battle\BattleCommandHelper.cs" />
@@ -460,7 +461,6 @@
     <Compile Include="Memoria\Configuration\Access\Control.cs" />
     <Compile Include="Memoria\Configuration\Access\Debug.cs" />
     <Compile Include="Memoria\Configuration\Access\Export.cs" />
-    <Compile Include="Memoria\Configuration\Access\Fixes.cs" />
     <Compile Include="Memoria\Configuration\Access\Font.cs" />
     <Compile Include="Memoria\Configuration\Access\Graphics.cs" />
     <Compile Include="Memoria\Configuration\Access\Battle.cs" />
@@ -483,7 +483,6 @@
     <Compile Include="Memoria\Configuration\Structure\IconsSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\ImportSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\DebugSection.cs" />
-    <Compile Include="Memoria\Configuration\Structure\FixesSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\HacksSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\SaveFileSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\TetraMasterSection.cs" />
@@ -597,7 +596,6 @@
     <Compile Include="Global\EBin.cs" />
     <Compile Include="Global\EIcon.cs" />
     <Compile Include="Global\ELEMENT.cs" />
-    <Compile Include="Global\EMain.cs" />
     <Compile Include="Global\EMinigame.cs" />
     <Compile Include="Global\EncountData.cs" />
     <Compile Include="Global\Ending\EndingMain.cs" />
@@ -620,7 +618,6 @@
     <Compile Include="Global\equipment_tags.cs" />
     <Compile Include="Global\EquipUI.cs" />
     <Compile Include="Global\ETb\ETb.cs" />
-    <Compile Include="Global\ETb\ETbEvent.cs" />
     <Compile Include="Global\Event\Engine\*.cs" />
     <Compile Include="Global\Event\EventButton.cs" />
     <Compile Include="Global\Event\EventCollision.cs" />
@@ -655,7 +652,6 @@
     <Compile Include="Global\ff9\FF9DBAll.Sound.cs" />
     <Compile Include="Global\ff9\FF9DBAll.Animation.cs" />
     <Compile Include="Global\ff9\FF9Define.cs" />
-    <Compile Include="Global\ff9\FF9FIELD_DISC.cs" />
     <Compile Include="Global\ff9\FF9ITEM.cs" />
     <Compile Include="Global\ff9\FF9ITEM_DATA.cs" />
     <Compile Include="Global\ff9\FF9ITEM_IMPORTANT.cs" />
@@ -768,7 +764,6 @@
     <Compile Include="Global\LocalizeIndex.cs" />
     <Compile Include="Global\MainMenuUI.cs" />
     <Compile Include="Global\MapConfiguration.cs" />
-    <Compile Include="Global\MaskFrame.cs" />
     <Compile Include="Global\MasterPointer.cs" />
     <Compile Include="Global\Match\MatchResult.cs" />
     <Compile Include="Global\Match\MatchState.cs" />
@@ -878,7 +873,6 @@
     <Compile Include="Global\ResultText.cs" />
     <Compile Include="Global\SamplePos.cs" />
     <Compile Include="Global\SaveLoadUI.cs" />
-    <Compile Include="Global\SB1_HEAD.cs" />
     <Compile Include="Global\SB2\SB2_ELEMENT.cs" />
     <Compile Include="Global\SB2\SB2_HEAD.cs" />
     <Compile Include="Global\SB2\SB2_MON_PARM.cs" />
@@ -1106,7 +1100,6 @@
     <Compile Include="Global\WM\WMProfiler.cs" />
     <Compile Include="Global\WM\WMPsxCamera.cs" />
     <Compile Include="Global\WM\WMRaycastHit.cs" />
-    <Compile Include="Global\WM\WMReadFile.cs" />
     <Compile Include="Global\WM\WMRenderTextureBank.cs" />
     <Compile Include="Global\WM\WMScriptDirector.cs" />
     <Compile Include="Global\WM\WMSetIcon.cs" />

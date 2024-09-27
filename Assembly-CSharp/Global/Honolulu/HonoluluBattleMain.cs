@@ -454,7 +454,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                     needContinue = false;
                 }
 
-                if (!Configuration.Fixes.IsKeepRestTimeInBattle)
+                if (!Configuration.Battle.IsKeepRestTimeInBattle)
                     current.at = maximum.at;
 
                 if (btl_stat.CheckStatus(btl, BattleStatusConst.PreventATBConfirm))

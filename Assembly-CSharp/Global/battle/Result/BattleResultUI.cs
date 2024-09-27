@@ -866,7 +866,7 @@ public class BattleResultUI : UIScene
     public GameObject ScreenFadeGameObject;
 
     public static Int32 ItemMax = 6;
-    private static Int32 ItemArgMax = 16;
+    //private static Int32 ItemArgMax = 16;
     private static Int32 EXPMinTick = 16;
     private static Int32 EXPDefaultAdd = 32;
     private static Int32 EXPTickMax = 192;

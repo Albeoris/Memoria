@@ -188,7 +188,7 @@ public class AllSoundDispatchPlayer : SoundPlayer
                 this.CreateSound(soundProfile);
                 soundProfile.SoundVolume = AllSoundDispatchPlayer.NormalizeVolume(vol);
                 ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_SetVolume(soundProfile.SoundID, soundProfile.SoundVolume * SoundLib.MusicPlayer.Volume, 0);
-                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, time);
+                ISdLibAPIProxy.Instance.SdSoundSystem_SoundCtrl_Start(soundProfile.SoundID, 0);
                 this.currentMusicID = ObjNo;
                 this.StopAndClearSuspendBGM(ObjNo, true);
             });

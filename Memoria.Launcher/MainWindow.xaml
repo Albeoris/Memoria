@@ -18,7 +18,7 @@
             MouseDown="Launcher_MouseDown"
             Source="/Images/new_launcher_bg.png" />
 
-        <launcher:GameSettingsControl
+        <launcher:SettingsGrid_Vanilla
             x:Name="GameSettings"
             Width="260"
             Margin="30,0,0,20"
@@ -28,15 +28,15 @@
         <!--<Rectangle Width="1" Height="300" Fill="WhiteSmoke" Margin="269,336,524,10" />-->
 
 
-        <launcher:MemoriaIniControl x:Name="MemoriaIniControl"
+        <launcher:SettingsGrid_Main x:Name="SettingsGrid_Main"
             Width="260"
             Margin="0,0,30,67"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom" >
-        </launcher:MemoriaIniControl>
+        </launcher:SettingsGrid_Main>
 
-        <launcher:MemoriaIniCheatControl
-            x:Name="MemoriaIniCheatControl"
+        <launcher:SettingsGrid_Cheats
+            x:Name="SettingsGrid_Cheats"
             Width="260"
             Margin="0,0,0,20"
             HorizontalAlignment="Center"

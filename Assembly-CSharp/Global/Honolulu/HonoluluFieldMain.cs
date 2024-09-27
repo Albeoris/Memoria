@@ -676,4 +676,11 @@ public class HonoluluFieldMain : HonoBehavior
     private String scString = String.Empty;
 
     private String mapIDString = String.Empty;
+
+    internal class EMain
+    {
+        private Boolean gNoEvents;
+        private EventEngine ee;
+        private ETb eTb;
+    }
 }

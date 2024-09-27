@@ -46,7 +46,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>ff9.ico</ApplicationIcon>
+    <ApplicationIcon>Images\ff9.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Memoria.Launcher.Program</StartupObject>
@@ -57,8 +57,8 @@
         ..\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
-    <Reference Include="SharpCompress, Version=0.37.2.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpCompress.0.37.2\lib\net462\SharpCompress.dll</HintPath>
+    <Reference Include="SharpCompress, Version=0.38.0.0, Culture=neutral, PublicKeyToken=afb0a02973931d96, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpCompress.0.38.0\lib\net462\SharpCompress.dll</HintPath>
     </Reference>
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -100,61 +100,42 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AdvOptionsWindow.cs" />
-    <Compile Include="Extractor.cs" />
+    <Compile Include="Launcher\AdvOptionsWindow.cs" />
     <Compile Include="Languages\Lang.cs" />
     <Compile Include="Languages\XmlDocumentExm.cs" />
     <Compile Include="Languages\XmlHelper.cs" />
-    <Compile Include="Memoria\MemoriaIniCheatControl.cs" />
-    <Compile Include="Memoria\MemoriaIniControl.cs" />
-    <Compile Include="Memoria\Mod.cs" />
-    <Compile Include="Memoria\ShaderSettingControl.cs" />
-    <Compile Include="Memoria\ThrottledWebClient.cs">
+    <Compile Include="Launcher\SettingsGrid_Cheats.cs" />
+    <Compile Include="Launcher\SettingsGrid_Main.cs" />
+    <Compile Include="Launcher\Settings.cs" />
+    <Compile Include="ModManager\Mod.cs" />
+    <Compile Include="Launcher\SettingsGrid_Shaders.cs" />
+    <Compile Include="ModManager\ThrottledWebClient.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Memoria\UiLauncherAdvOptionsCloseButton.cs" />
-    <Compile Include="Memoria\UiLauncherAdvOptionsButton.cs" />
-    <Compile Include="Memoria\UiLauncherModelViewerButton.cs" />
-    <Compile Include="Memoria\UiModManagerButton.xaml.cs">
+    <Compile Include="Launcher\UI.cs" />
+    <Compile Include="Launcher\UiModManagerButton.xaml.cs">
       <DependentUpon>UiModManagerButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Memoria\UiLauncherModManagerButton.cs" />
-    <Compile Include="Memoria\UiSlider.cs" />
-    <Compile Include="Memoria\UiSliderFactory.cs" />
-    <Compile Include="Memoria\UiTextBox.cs" />
-    <Compile Include="Memoria\ScreenInterrogatory.cs" />
-    <Compile Include="Memoria\FrameworkElementExm.cs" />
     <Compile Include="App.cs" />
     <Compile Include="MainWindow.cs" />
-    <Compile Include="Ini\IniFile.cs" />
+    <Compile Include="Launcher\IniFile.cs" />
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Memoria\GameSettingsControl.cs" />
-    <Compile Include="Memoria\JunctionPoint.cs" />
-    <Compile Include="Memoria\UiButton.cs" />
-    <Compile Include="Memoria\UiCheckBox.cs" />
-    <Compile Include="Memoria\UiCheckBoxFactory.cs" />
-    <Compile Include="Memoria\UiComboBox.cs" />
-    <Compile Include="Memoria\UiComboBoxFactory.cs" />
-    <Compile Include="Memoria\UiGrid.cs" />
-    <Compile Include="Memoria\UiHelper.cs" />
-    <Compile Include="Memoria\UiLauncherPlayButton.cs" />
-    <Compile Include="Memoria\UiLauncherButton.xaml.cs">
+    <Compile Include="Launcher\SettingsGrid_Vanilla.cs" />
+    <Compile Include="Launcher\Utils.cs" />
+    <Compile Include="Launcher\UiLauncherPlayButton.cs" />
+    <Compile Include="Launcher\UiLauncherButton.xaml.cs">
       <DependentUpon>UiLauncherButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Memoria\UiRadioButton.cs" />
-    <Compile Include="Memoria\UiRadioButtonFactory.cs" />
-    <Compile Include="Memoria\UiTextBlock.cs" />
-    <Compile Include="Memoria\UiTextBlockFactory.cs" />
-    <Compile Include="Memoria\UiTextBoxFactory.cs" />
-    <Compile Include="ModConflictWindow.cs" />
-    <Compile Include="ModManagerWindow.cs" />
+    <Compile Include="ModManager\ModConflictWindow.cs" />
+    <Compile Include="ModManager\ModManagerWindow.cs" />
+    <Compile Include="ModManager\ModManagerUtils.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\pc_launcher_bg.png" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="AdvOptionsWindow.xaml">
+    <Page Include="Launcher\AdvOptionsWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -162,19 +143,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Memoria\UiModManagerButton.xaml">
+    <Page Include="Launcher\UiModManagerButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Memoria\UiLauncherButton.xaml">
+    <Page Include="Launcher\UiLauncherButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="ModConflictWindow.xaml">
+    <Page Include="ModManager\ModConflictWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="ModManagerWindow.xaml">
+    <Page Include="ModManager\ModManagerWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -188,7 +169,6 @@
     <Resource Include="Fonts\centurygothic.ttf" />
     <Resource Include="Fonts\notoemoji.ttf" />
     <Resource Include="Fonts\overpass.ttf" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\btnReorganize.png" />
@@ -217,7 +197,7 @@
     <Resource Include="Images\btnMoveUpimg.png" />
     <Resource Include="Images\btnUninstallimg.png" />
     <None Include="Catalogs\MemoriaCatalog.xml" />
-    <Content Include="ff9.ico" />
+    <Content Include="Images\ff9.ico" />
     <Resource Include="Images\new_launcher_bg.png" />
   </ItemGroup>
   <ItemGroup>
@@ -234,9 +214,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SharpCompress">
-      <Version>0.37.2</Version>
+      <Version>0.38.0</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">
     <ItemGroup>

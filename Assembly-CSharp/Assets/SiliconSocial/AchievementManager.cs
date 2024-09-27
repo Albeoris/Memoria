@@ -290,32 +290,47 @@ namespace Assets.SiliconSocial
             switch (key)
             {
                 case AcheivementKey.Synth10:
-                    num = 10;
-                    break;
+                    num = 10; break;
                 case AcheivementKey.Synth30:
-                    num = 15;
-                    break;
+                    num = 15; break;
                 case AcheivementKey.BlkMag100:
-                    num = 50;
-                    break;
+                    num = 50; break;
                 case AcheivementKey.WhtMag200:
-                    num = 100;
-                    break;
+                    num = 100; break;
                 case AcheivementKey.BluMag100:
-                    num = 50;
-                    break;
+                    num = 50; break;
                 case AcheivementKey.Summon50:
-                    num = 25;
-                    break;
+                    num = 25; break;
                 case AcheivementKey.Defeat100:
-                    num = 100;
-                    break;
+                    num = 100; break;
                 case AcheivementKey.Defeat1000:
-                    num = 200;
-                    break;
+                    num = 200; break;
                 case AcheivementKey.Defeat10000:
-                    num = 1000;
-                    break;
+                    num = 1000; break;
+                case AcheivementKey.ChocoboLv99:
+                    num = 50; break;
+                case AcheivementKey.Frog99:
+                    num = 33; break;
+                case AcheivementKey.Auction10:
+                    num = 10; break;
+                case AcheivementKey.CardWin10:
+                    num = 10; break;
+                case AcheivementKey.CardWin100:
+                    num = 50; break;
+                case AcheivementKey.CardWinAll:
+                    num = 80; break;
+                case AcheivementKey.BackAttack30:
+                    num = 30; break;
+                case AcheivementKey.Steal50:
+                    num = 50; break;
+                case AcheivementKey.Defense50:
+                    num = 50; break;
+                case AcheivementKey.Trance50:
+                    num = 50; break;
+                case AcheivementKey.QueenReward10:
+                    num = 10; break;
+                case AcheivementKey.ATE80:
+                    num = 79; break;
                 case AcheivementKey.AllStiltzkinItem:
                 case AcheivementKey.AllPasssiveAbility:
                 case AcheivementKey.AllAbility:
@@ -326,63 +341,13 @@ namespace Assets.SiliconSocial
                 case AcheivementKey.MognetCentral:
                 case AcheivementKey.SuperSlickOil:
                 case AcheivementKey.GoldenFrog:
-                IL_62:
-                    switch (key)
-                    {
-                        case AcheivementKey.CardWin10:
-                            num = 10;
-                            break;
-                        case AcheivementKey.CardWin100:
-                            num = 50;
-                            break;
-                        case AcheivementKey.CardWinAll:
-                            num = 80;
-                            break;
-                        case AcheivementKey.Airship:
-                        case AcheivementKey.PartyWomen:
-                        case AcheivementKey.PartyMen:
-                        case AcheivementKey.AbnormalStatus:
-                        case AcheivementKey.Trance1:
-                        IL_9B:
-                            if (key != AcheivementKey.QueenReward10)
-                            {
-                                if (key == AcheivementKey.ATE80)
-                                {
-                                    num = 79;
-                                }
-                            }
-                            else
-                            {
-                                num = 10;
-                            }
-                            break;
-                        case AcheivementKey.BackAttack30:
-                            num = 30;
-                            break;
-                        case AcheivementKey.Steal50:
-                            num = 50;
-                            break;
-                        case AcheivementKey.Defense50:
-                            num = 50;
-                            break;
-                        case AcheivementKey.Trance50:
-                            num = 50;
-                            break;
-                        default:
-                            goto IL_9B;
-                    }
-                    break;
-                case AcheivementKey.ChocoboLv99:
-                    num = 50;
-                    break;
-                case AcheivementKey.Frog99:
-                    num = 33;
-                    break;
-                case AcheivementKey.Auction10:
-                    num = 10;
-                    break;
+                case AcheivementKey.Airship:
+                case AcheivementKey.PartyWomen:
+                case AcheivementKey.PartyMen:
+                case AcheivementKey.AbnormalStatus:
+                case AcheivementKey.Trance1:
                 default:
-                    goto IL_62;
+                    break;
             }
             return originalProgress * num;
         }

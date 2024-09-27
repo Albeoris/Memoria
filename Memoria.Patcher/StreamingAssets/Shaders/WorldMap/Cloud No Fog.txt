@@ -6,9 +6,9 @@ Shader "WorldMap/Cloud No Fog" {
 	}
 	SubShader { 
 		LOD 100
-		Tags { "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+		Tags { "Queue"="Geometry+2" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
 		Pass {
-			Tags { "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
+			Tags { "Queue"="Geometry+2" "IGNOREPROJECTOR"="true" "RenderType"="Transparent" }
 			ZWrite Off
 			Blend SrcAlpha OneMinusSrcAlpha
 			GpuProgramID 10619

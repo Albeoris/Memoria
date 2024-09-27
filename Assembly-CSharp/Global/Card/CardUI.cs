@@ -547,7 +547,7 @@ public class CardUI : UIScene
     private GameObject cardNumberGameObject;
 
     //private ButtonGroupState discardConfirmButton;
-    //
+
     //private ButtonGroupState discardCancelButton;
 
     private UILabel currentCardNumberLabel;

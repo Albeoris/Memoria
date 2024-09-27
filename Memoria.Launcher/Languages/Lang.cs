@@ -1,5 +1,4 @@
-﻿using Ini;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Reflection;
 using System.Xml;
@@ -23,7 +22,7 @@ namespace Memoria.Launcher
                 XmlElement def = XmlHelper.LoadEmbadedDocument(assembly, $"Languages.en.xml");
                 XmlElement cur = null;
 
-                IniFile iniFile = new IniFile(GameSettingsControl.IniPath);
+                IniFile iniFile = new IniFile(SettingsGrid_Vanilla.IniPath);
                 String forcedLang = iniFile.ReadValue("Memoria", "LauncherLanguage");
 
                 String[] fileNames = String.IsNullOrEmpty(forcedLang) ?
@@ -219,17 +218,6 @@ namespace Memoria.Launcher
             public static readonly string tetraMasterReduceRandomBox1 = GetSettings(nameof(tetraMasterReduceRandomBox1));
             public static readonly string tetraMasterReduceRandomBox2 = GetSettings(nameof(tetraMasterReduceRandomBox2));
 
-            // Advanced Settings
-            /* Unused for now
-            public static readonly string EnableCustomShader = GetSettings(nameof(EnableCustomShader));
-            public static readonly string Shader_Field_Realism = GetSettings(nameof(Shader_Field_Realism));
-            public static readonly string Shader_Field_Toon = GetSettings(nameof(Shader_Field_Toon));
-            public static readonly string Shader_Field_Outlines = GetSettings(nameof(Shader_Field_Outlines));
-            public static readonly string Shader_Battle_Realism = GetSettings(nameof(Shader_Battle_Realism));
-            public static readonly string Shader_Battle_Toon = GetSettings(nameof(Shader_Battle_Toon));
-            public static readonly string Shader_Battle_Outlines = GetSettings(nameof(Shader_Battle_Outlines));
-            */
-
             // Settings.ini Tooltips
             public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));
             public static readonly string WindowMode_Tooltip = GetSettings(nameof(WindowMode_Tooltip));
@@ -291,6 +279,7 @@ namespace Memoria.Launcher
             public static readonly string Shader_Realism = GetSettings(nameof(Shader_Realism));
             public static readonly string Shader_Toon = GetSettings(nameof(Shader_Toon));
             public static readonly string Shader_Outlines = GetSettings(nameof(Shader_Outlines));
+            public static readonly string Custom = GetSettings(nameof(Custom));
 
         }
 
@@ -376,6 +365,8 @@ namespace Memoria.Launcher
             public static readonly String TimeLeft = GetModEditor(nameof(TimeLeft));
             public static readonly String ActiveIncompatibleMods = GetModEditor(nameof(ActiveIncompatibleMods));
             public static readonly String IncompatibleWithMemoria = GetModEditor(nameof(IncompatibleWithMemoria));
+            public static readonly String ApplyModPresetText = GetModEditor(nameof(ApplyModPresetText));
+            public static readonly String ApplyModPresetCaption = GetModEditor(nameof(ApplyModPresetCaption));
             public static readonly String UpdateTooltip = GetModEditor(nameof(UpdateTooltip));
             public static readonly String TooltipMoveUp = GetModEditor(nameof(TooltipMoveUp));
             public static readonly String TooltipMoveDown = GetModEditor(nameof(TooltipMoveDown));

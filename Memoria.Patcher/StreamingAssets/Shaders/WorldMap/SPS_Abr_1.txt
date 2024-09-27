@@ -4,9 +4,9 @@ Shader "WorldMap/SPS_Abr_1" {
 		_MainTex ("Texture", 2D) = "black" { }
 	}
 	SubShader { 
-		Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Opaque" }
+		Tags { "QUEUE"="Geometry+2" "IGNOREPROJECTOR"="true" "RenderType"="Opaque" }
 		Pass {
-			Tags { "QUEUE"="Transparent" "IGNOREPROJECTOR"="true" "RenderType"="Opaque" }
+			Tags { "QUEUE"="Geometry+2" "IGNOREPROJECTOR"="true" "RenderType"="Opaque" }
 			ZWrite Off
 			Cull Off
 			Blend One One
