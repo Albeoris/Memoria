@@ -177,6 +177,11 @@
                         Margin="20,15"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
+                    <launcher:SettingsGrid_Cheats2 x:Name="SettingsGrid_Cheats2"
+                        Width="293"
+                        Margin="20,15"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top" />
                 </Grid>
             </TabItem>
 

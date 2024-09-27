@@ -17,12 +17,6 @@ namespace Memoria.Launcher
             CreateSlider("BattleTPSDividedBy10", "BattleTPS", 15, 75, 1, "{0}x");
 
 
-
-
-            CreateCheckbox("EasyTetraMaster", Lang.Settings.EasyTetraMaster, Lang.Settings.EasyTetraMaster_Tooltip);
-
-
-
             CreateTextbloc(Lang.Settings.VanillaCheats, true);
 
             CreateCheckbox("SpeedMode", Lang.Settings.SpeedMode, Lang.Settings.SpeedMode_Tooltip);
