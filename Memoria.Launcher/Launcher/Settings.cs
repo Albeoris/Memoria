@@ -672,6 +672,20 @@ namespace Memoria.Launcher
             }
         }
 
+        private Int16 _easyjumpropeminigame;
+        public Int16 EasyJumpRopeMinigame
+        {
+            get { return _easyjumpropeminigame; }
+            set
+            {
+                if (_easyjumpropeminigame != value)
+                {
+                    _easyjumpropeminigame = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         #endregion
 
         #region Simple settings list
@@ -1034,6 +1048,17 @@ namespace Memoria.Launcher
                             iniFile.WriteValue("Battle", "AccessMenus ", " 3");
                             iniFile.WriteValue("Battle", "AvailableMenus ", " \"Equip\", \"SupportingAbility\"");
                             iniFile.WriteValue("Battle", "Enabled ", " 1");
+                        }
+                        break;
+                    case nameof(EasyJumpRopeMinigame):
+                        if (EasyJumpRopeMinigame == 0)
+                        {
+                            iniFile.WriteValue("Hacks", "RopeJumpingIncrement ", " 1");
+                        }
+                        else if (EasyJumpRopeMinigame == 1)
+                        {
+                            iniFile.WriteValue("Hacks", "RopeJumpingIncrement ", " 1000");
+                            iniFile.WriteValue("Hacks", "Enabled ", " 1");
                         }
                         break;
                 }
@@ -1560,6 +1585,18 @@ namespace Memoria.Launcher
                 else
                     _accessbattlemenutoggle = 1;
 
+                value = iniFile.ReadValue("Hacks", "RopeJumpingIncrement");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 1";
+                    OnPropertyChanged(nameof(EasyJumpRopeMinigame));
+                }
+                value1isInt = Int16.TryParse(value, out value1);
+                if (value1 == 1)
+                    _easyjumpropeminigame = 0;
+                else
+                    _easyjumpropeminigame = 1;
+
                 foreach (Object[] item in SettingsList)
                 {
                     if (item[0] is String property)
@@ -1583,6 +1620,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(WorldmapBoost));
                 Refresh(nameof(WorldmapShipTilt));
                 Refresh(nameof(AccessBattleMenuToggle));
+                Refresh(nameof(EasyJumpRopeMinigame));
 
             }
             catch (Exception ex)
