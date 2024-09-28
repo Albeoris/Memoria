@@ -26,7 +26,7 @@ namespace Memoria.Launcher
 
             CreateTextbloc(Lang.Settings.ActiveMonitor, false, Lang.Settings.ActiveMonitor_Tooltip);
             String[] comboboxchoices = GetAvailableMonitors();
-            CreateCombobox("ActiveMonitor", comboboxchoices, 4, "", true);
+            CreateCombobox("ActiveMonitor", comboboxchoices, 50, "", true);
 
             CreateTextbloc(Lang.Settings.WindowMode, false, Lang.Settings.WindowMode_Tooltip);
             comboboxchoices = new String[]
@@ -35,11 +35,11 @@ namespace Memoria.Launcher
                 Lang.Settings.ExclusiveFullscreen,
                 Lang.Settings.BorderlessFullscreen
             };
-            CreateCombobox("WindowMode", comboboxchoices, 4);
+            CreateCombobox("WindowMode", comboboxchoices);
 
             CreateTextbloc(Lang.Settings.Resolution, false, Lang.Settings.Resolution_Tooltip);
             comboboxchoices = EnumerateDisplaySettings(true).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray();
-            CreateCombobox("ScreenResolution", comboboxchoices, 4, "", true);
+            CreateCombobox("ScreenResolution", comboboxchoices, 50, "", true);
 
             try
             {

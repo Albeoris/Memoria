@@ -64,6 +64,9 @@ namespace Memoria.Launcher
             CreateCheckbox("NoAutoTrance", Lang.Settings.NoAutoTrance, Lang.Settings.NoAutoTrance_Tooltip);
 
 
+            CreateTextbloc(Lang.Settings.BattleTPS, false, Lang.Settings.BattleTPS_Tooltip);
+            CreateSlider("BattleTPSDividedBy10", "BattleTPS", 15, 75, 1, "{0}x", 50);
+
 
             IniFile.SanitizeMemoriaIni();
             LoadSettings();

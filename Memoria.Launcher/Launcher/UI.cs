@@ -18,12 +18,13 @@ namespace Memoria.Launcher
         public SolidColorBrush TextColor = Brushes.White;
         public Thickness CommonMargin = new Thickness(0, 3, 0, 3);
         public Int32 Row = -1;
-        public Int32 MaxColumns = 8;
+        public Int32 MaxColumns = 100;
         public Int32 FontWeightNormal = 400;
         public Int32 FontWeightCombobox = 500;
         public Int32 FontSizeNormal = 14;
         //public Int32 FontSizeCombobox = 14;
         public Int32 ComboboxHeight = 22;
+        public Int32 TooltipDisplayDelay = 100;
         public void SetRows(Int32 count)
         {
             count -= RowDefinitions.Count;
@@ -31,6 +32,7 @@ namespace Memoria.Launcher
         }
         public void SetCols(Int32 count)
         {
+            count = 100;
             count -= ColumnDefinitions.Count;
             if (count > 1) while (count-- > 0) ColumnDefinitions.Add(new ColumnDefinition());
         }
@@ -59,8 +61,7 @@ namespace Memoria.Launcher
             CheckBox checkBox = new CheckBox();
             checkBox.Content = text;
             checkBox.IsChecked = null;
-            if (tooltip != "")
-                checkBox.ToolTip = tooltip;
+            MakeTooltip(checkBox, tooltip);
             checkBox.Foreground = TextColor;
             checkBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightNormal);
             checkBox.FontSize = FontSizeNormal;
@@ -75,17 +76,26 @@ namespace Memoria.Launcher
             checkBox.SetValue(ColumnSpanProperty, MaxColumns);
             Children.Add(checkBox);
         }
+
+        public void MakeTooltip(DependencyObject uiElement, String text = "")
+        {
+            if (text != "")
+            {
+                ToolTipService.SetToolTip(uiElement, text);
+                ToolTipService.SetInitialShowDelay(uiElement, TooltipDisplayDelay);
+                ToolTipService.SetShowDuration(uiElement, 5000);
+            }
+        }
+
         public void CreateTextbloc(String text, Boolean isHeading = false, String tooltip = "")
         {
             Row++;
             RowDefinitions.Add(new RowDefinition());
             TextBlock textbloc = new TextBlock();
             textbloc.Text = text;
-            if (tooltip != "")
-                textbloc.ToolTip = tooltip;
+            MakeTooltip(textbloc, tooltip);
             textbloc.Foreground = TextColor;
             textbloc.Margin = new Thickness(0);
-
             Border border = new Border();
             textbloc.FontSize = FontSizeNormal;
             border.Margin = CommonMargin;
@@ -115,7 +125,7 @@ namespace Memoria.Launcher
             border.Child = textbloc;
             Children.Add(border);
         }
-        public void CreateCombobox(String property, IEnumerable options, Int32 firstColumn = 4, String tooltip = "", Boolean selectByName = false)
+        public void CreateCombobox(String property, IEnumerable options, Int32 firstColumn = 50, String tooltip = "", Boolean selectByName = false)
         {
             if (firstColumn == 0)
             {
@@ -124,8 +134,7 @@ namespace Memoria.Launcher
             }
             ComboBox comboBox = new ComboBox();
             comboBox.ItemsSource = options;
-            if (tooltip != "")
-                comboBox.ToolTip = tooltip;
+            MakeTooltip(comboBox, tooltip);
             comboBox.Foreground = Brushes.Black;
             comboBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightCombobox);
             comboBox.Margin = CommonMargin;
@@ -138,32 +147,22 @@ namespace Memoria.Launcher
             comboBox.SetValue(RowProperty, Row);
             comboBox.SetValue(ColumnProperty, firstColumn);
             comboBox.SetValue(RowSpanProperty, 1);
-            comboBox.SetValue(ColumnSpanProperty, MaxColumns);
+            comboBox.SetValue(ColumnSpanProperty, MaxColumns - firstColumn);
             Children.Add(comboBox);
         }
-        public void CreateSlider(String indexproperty, String sliderproperty, double min, double max, double tickFrequency, String stringFormat = "{0}", Int32 firstColumn = 1)
+        public void CreateSlider(String indexproperty, String sliderproperty, double min, double max, double tickFrequency, String stringFormat = "{0}", Int32 firstColumn = 0)
         {
-            Row++;
-            RowDefinitions.Add(new RowDefinition());
-
-            TextBlock textbloc = new TextBlock();
-            textbloc.Text = "";
-            textbloc.SetBinding(TextBlock.TextProperty, new Binding(indexproperty) { Mode = BindingMode.TwoWay, StringFormat = stringFormat });
-            textbloc.Foreground = TextColor;
-            textbloc.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightNormal);
-            textbloc.FontSize = FontSizeNormal;
-            textbloc.Margin = CommonMargin;
-            textbloc.SetValue(RowProperty, Row);
-            textbloc.SetValue(ColumnProperty, 0);
-            textbloc.SetValue(RowSpanProperty, 1);
-            textbloc.SetValue(ColumnSpanProperty, MaxColumns);
-            Children.Add(textbloc);
-
+            if (firstColumn == 0)
+            {
+                Row++;
+                RowDefinitions.Add(new RowDefinition());
+            }
             Slider slider = new Slider();
             slider.Value = 0;
             slider.SetBinding(Slider.ValueProperty, new Binding(sliderproperty) { Mode = BindingMode.TwoWay });
             slider.Height = 20;
             slider.Margin = CommonMargin;
+            slider.Margin = new Thickness(0, 5, 0, 0);
             slider.Minimum = min;
             slider.Maximum = max;
             slider.TickFrequency = tickFrequency;
@@ -172,8 +171,25 @@ namespace Memoria.Launcher
             slider.SetValue(RowProperty, Row);
             slider.SetValue(ColumnProperty, firstColumn);
             slider.SetValue(RowSpanProperty, 1);
-            slider.SetValue(ColumnSpanProperty, MaxColumns);
+            slider.SetValue(ColumnSpanProperty, (MaxColumns - firstColumn - 12));
             Children.Add(slider);
+
+            TextBlock textbloc = new TextBlock();
+            textbloc.Text = "";
+            textbloc.SetBinding(TextBlock.TextProperty, new Binding(indexproperty) { Mode = BindingMode.TwoWay, StringFormat = stringFormat });
+            textbloc.Foreground = TextColor;
+            //textbloc.Background = Brushes.Black;
+            textbloc.Opacity = 0.6;
+            textbloc.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightNormal);
+            textbloc.FontSize = FontSizeNormal;
+            textbloc.HorizontalAlignment = HorizontalAlignment.Right;
+            textbloc.TextAlignment = TextAlignment.Right;
+            textbloc.Margin = CommonMargin;
+            textbloc.SetValue(RowProperty, Row);
+            textbloc.SetValue(ColumnProperty, firstColumn);
+            textbloc.SetValue(RowSpanProperty, 1);
+            textbloc.SetValue(ColumnSpanProperty, MaxColumns);
+            Children.Add(textbloc);
         }
     }
 
