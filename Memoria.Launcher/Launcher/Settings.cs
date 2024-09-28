@@ -4,7 +4,6 @@ using System.Runtime.CompilerServices;
 using Application = System.Windows.Application;
 using System.Windows;
 using MessageBox = System.Windows.Forms.MessageBox;
-using SharpCompress.Common;
 
 namespace Memoria.Launcher
 {
@@ -166,12 +165,7 @@ namespace Memoria.Launcher
             get { return _isskipintros; }
             set
             {
-                if (_isskipintros == 0)
-                {
-                    _isskipintros = 3;
-                    OnPropertyChanged();
-                }
-                else if (_isskipintros != value)
+                if (_isskipintros != value)
                 {
                     _isskipintros = value;
                     OnPropertyChanged();
@@ -693,39 +687,40 @@ namespace Memoria.Launcher
         {
             // variable, variable_ini, category_ini, //[0 -> ?], [1 -> ?]
             
-            ["WidescreenSupport", "WidescreenSupport", "Graphics"],
-            ["CameraStabilizer", "CameraStabilizer", "Graphics"],
-            ["SkipIntros", "SkipIntros", "Graphics"],
-            ["HideCards", "HideCards", "Icons"],
-            ["HideCards", "HideBeach", "Icons"],
-            ["HideCards", "HideSteam", "Icons"],
-            ["Speed", "Speed", "Battle"],
-            ["TripleTriad", "TripleTriad", "TetraMaster"],
-            ["AntiAliasing", "AntiAliasing", "Graphics"],
-            ["Shader_Field_Realism", "Shader_Field_Realism", "Shaders"],
-            ["Shader_Field_Toon", "Shader_Field_Toon", "Shaders"],
-            ["Shader_Field_Outlines", "Shader_Field_Outlines", "Shaders"],
-            ["Shader_Battle_Realism", "Shader_Battle_Realism", "Shaders"],
-            ["Shader_Battle_Toon", "Shader_Battle_Toon", "Shaders"],
-            ["Shader_Battle_Outlines", "Shader_Battle_Outlines", "Shaders"],
-            ["NoAutoTrance", "NoAutoTrance", "Battle"],
-            ["GarnetConcentrate", "GarnetConcentrate", "Battle"],
-            ["BreakDamageLimit", "BreakDamageLimit", "Battle"],
-            ["SpeedMode", "SpeedMode", "Cheats"],
-            ["SpeedFactor", "SpeedFactor", "Cheats"],
-            ["BattleTPS", "BattleTPS", "Graphics"],
-            ["BattleAssistance", "BattleAssistance", "Cheats"],
-            ["BattleAssistance", "Attack9999", "Cheats"],
-            ["NoRandomEncounter", "NoRandomEncounter", "Cheats"],
-            ["MasterSkill", "MasterSkill", "Cheats"],
-            ["MasterSkill", "LvMax", "Cheats"],
-            ["MasterSkill", "GilMax", "Cheats"],
-            ["ReduceRandom", "ReduceRandom", "TetraMaster"],
-            ["EasyTetraMaster", "EasyWin", "TetraMaster"],
-            ["WorldmapFOV", "FieldOfView", "Worldmap"],
-            ["ViviAutoAttack", "ViviAutoAttack", "Battle"],
-            ["ExcaliburIINoTimeLimit", "ExcaliburIINoTimeLimit", "Hacks"],
-
+            ["WidescreenSupport", "WidescreenSupport", "Graphics", 0, 1],
+            ["CameraStabilizer", "CameraStabilizer", "Graphics", 0, 1],
+            ["SkipIntros", "SkipIntros", "Graphics", 0, 3],
+            ["HideCards", "HideCards", "Icons", 0, 1],
+            ["HideCards", "HideBeach", "Icons", 0, 1],
+            ["HideCards", "HideSteam", "Icons", 0, 1],
+            ["Speed", "Speed", "Battle", 0, 1],
+            ["TripleTriad", "TripleTriad", "TetraMaster", 0, 1],
+            ["AntiAliasing", "AntiAliasing", "Graphics", 0, 1],
+            ["Shader_Field_Realism", "Shader_Field_Realism", "Shaders", 0, 1],
+            ["Shader_Field_Toon", "Shader_Field_Toon", "Shaders", 0, 1],
+            ["Shader_Field_Outlines", "Shader_Field_Outlines", "Shaders", 0, 1],
+            ["Shader_Battle_Realism", "Shader_Battle_Realism", "Shaders", 0, 1],
+            ["Shader_Battle_Toon", "Shader_Battle_Toon", "Shaders", 0, 1],
+            ["Shader_Battle_Outlines", "Shader_Battle_Outlines", "Shaders", 0, 1],
+            ["NoAutoTrance", "NoAutoTrance", "Battle", 0, 1],
+            ["GarnetConcentrate", "GarnetConcentrate", "Battle", 0, 1],
+            ["BreakDamageLimit", "BreakDamageLimit", "Battle", 0, 1],
+            ["SpeedMode", "SpeedMode", "Cheats", 0, 1],
+            ["SpeedFactor", "SpeedFactor", "Cheats", 0, 1],
+            ["BattleTPS", "BattleTPS", "Graphics", 0, 1],
+            ["BattleAssistance", "BattleAssistance", "Cheats", 0, 1],
+            ["BattleAssistance", "Attack9999", "Cheats", 0, 1],
+            ["NoRandomEncounter", "NoRandomEncounter", "Cheats", 0, 1],
+            ["MasterSkill", "MasterSkill", "Cheats", 0, 1],
+            ["MasterSkill", "LvMax", "Cheats", 0, 1],
+            ["MasterSkill", "GilMax", "Cheats", 0, 1],
+            ["ReduceRandom", "ReduceRandom", "TetraMaster", 0, 1],
+            ["EasyTetraMaster", "EasyWin", "TetraMaster", 0, 1],
+            ["WorldmapFOV", "FieldOfView", "Worldmap", 0, 1],
+            ["ViviAutoAttack", "ViviAutoAttack", "Battle", 0, 1],
+            ["ExcaliburIINoTimeLimit", "ExcaliburIINoTimeLimit", "Hacks", 0, 1],
+            ["BattleSwirlFrames", "BattleSwirlFrames", "Graphics", 70, 0],
+            ["StealingAlwaysWorks", "StealingAlwaysWorks", "Hacks", 0, 2],
         };
         #endregion
 
@@ -740,15 +735,26 @@ namespace Memoria.Launcher
                 IniFile iniFile = new IniFile(_iniPath);
 
                 foreach (Object[] item in SettingsList) {
-                    if (item[0] is String property && property == propertyName && item[1] is String name_ini && item[2] is String category)
+                    if (item[0] is String property && property == propertyName && item[1] is String name_ini && item[2] is String category && item[3] is Int32 valueZero && item[4] is Int32 valueOne) //  
                     {
-                        Object varValue = this.GetType().GetProperty(property)?.GetValue(this);
-                        //MessageBox.Show($"{varValue}", "debug", MessageBoxButtons.OK);
-                        if (varValue != null)
+                        Object propValue = this.GetType().GetProperty(property)?.GetValue(this);
+                        //MessageBox.Show($"{propValue}", "debug", MessageBoxButtons.OK);
+                        if (propValue != null && Int16.TryParse(propValue.ToString(), out Int16 varValue))
                         {
-                            iniFile.WriteValue(category, name_ini + " ", " " + varValue);
-                            if (varValue.ToString() != "0")
+                            if (varValue == 0)
+                            {
+                                iniFile.WriteValue(category, name_ini + " ", " " + valueZero);
+                            }
+                            else if (varValue == 1)
+                            {
+                                iniFile.WriteValue(category, name_ini + " ", " " + valueOne);
                                 iniFile.WriteValue(category, "Enabled ", " 1");
+                            }
+                            else
+                            {
+                                iniFile.WriteValue(category, name_ini + " ", " " + varValue);
+                                iniFile.WriteValue(category, "Enabled ", " 1");
+                            }
                         }
                     }
                 }
@@ -884,17 +890,6 @@ namespace Memoria.Launcher
                                 break;
                         }
                         break;
-                    case nameof(BattleSwirlFrames):
-                        if (BattleSwirlFrames == 1)
-                        {
-                            iniFile.WriteValue("Graphics", propertyName + " ", " 0");
-                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
-                        }
-                        else if (BattleSwirlFrames == 0)
-                        {
-                            iniFile.WriteValue("Graphics", propertyName + " ", " 70");
-                        }
-                        break;
                     case nameof(UsePsxFont):
                         if (UsePsxFont == 1)
                         {
@@ -924,18 +919,6 @@ namespace Memoria.Launcher
                             iniFile.WriteValue("Font", "Enabled ", " 1");
                             iniFile.WriteValue("Font", "Names ", " \"" + FontChoice + "\", \"Times Bold\"");
                             _usepsxfont = 0;
-                        }
-                        break;
-                    case nameof(StealingAlwaysWorks):
-                        iniFile.WriteValue("Hacks", propertyName + " ", " " + StealingAlwaysWorks);
-                        if (StealingAlwaysWorks == 0)
-                        {
-                            iniFile.WriteValue("Hacks", propertyName + " ", " 0");
-                        }
-                        else if (StealingAlwaysWorks == 1)
-                        {
-                            iniFile.WriteValue("Hacks", "Enabled ", " 1");
-                            iniFile.WriteValue("Hacks", propertyName + " ", " 2");
                         }
                         break;
                     case nameof(AccessBattleMenu):
@@ -1164,8 +1147,11 @@ namespace Memoria.Launcher
                 {
                     value = " 0";
                 }
-                if (!Int16.TryParse(value, out _isskipintros))
+                value1isInt = Int16.TryParse(value, out value1);
+                if (value1 == 0)
                     _isskipintros = 0;
+                else
+                    _isskipintros = 1;
 
                 value = iniFile.ReadValue("Interface", "MenuItemRowCount");
                 value1isInt = Int16.TryParse(value, out value1);
@@ -1609,9 +1595,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(BattleInterface));
                 Refresh(nameof(UIColumnsChoice));
                 Refresh(nameof(FPSDropboxChoice));
-                Refresh(nameof(BattleSwirlFrames));
                 Refresh(nameof(UsePsxFont));
-                Refresh(nameof(StealingAlwaysWorks));
                 Refresh(nameof(AccessBattleMenu));
                 Refresh(nameof(MaxCardCount));
                 Refresh(nameof(WorldmapMistPreset));
