@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Threading.Tasks;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Controls;
+using System.Windows.Media;
 using Binding = System.Windows.Data.Binding;
 using CheckBox = System.Windows.Controls.CheckBox;
 using ComboBox = System.Windows.Controls.ComboBox;
+using Image = System.Windows.Controls.Image;
 using MessageBox = System.Windows.MessageBox;
 using System.Collections;
+using System.Windows.Media.Imaging;
+using System.Windows.Input;
+using System.Windows.Media.Effects;
 namespace Memoria.Launcher
 {
     public class UiGrid : Grid
@@ -24,7 +28,7 @@ namespace Memoria.Launcher
         public Int32 FontSizeNormal = 14;
         //public Int32 FontSizeCombobox = 14;
         public Int32 ComboboxHeight = 22;
-        public Int32 TooltipDisplayDelay = 100;
+        public Int32 TooltipDisplayDelay = 1;
         public void SetRows(Int32 count)
         {
             count -= RowDefinitions.Count;
@@ -51,7 +55,122 @@ namespace Memoria.Launcher
             Children.Add(uiElement);
             return uiElement;
         }
-        public void CreateCheckbox(String property, object text, String tooltip = "", Int32 firstColumn = 0, String propertyToEnable = "")
+        public void MakeTooltip(FrameworkElement uiElement, String text = "", String imageName = "")
+        {
+            if (text != "" || imageName != "")
+            {
+                StackPanel tooltipStackPanel = new StackPanel
+                {
+                    Orientation = Orientation.Vertical,
+                    Margin = new Thickness(0)
+                };
+
+                Image helpIcon = new Image
+                {
+                    Source = new BitmapImage(new Uri("pack://application:,,,/Images/HelpIcon.png")),
+                    MaxWidth = 28,
+                    Opacity = 1,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Margin = new Thickness(0, 0, 0, 0)
+                };
+                tooltipStackPanel.Children.Add(helpIcon);
+
+                if (text != "")
+                {
+                    DropShadowEffect dropShadow = new DropShadowEffect
+                    {
+                        Color = (Color)ColorConverter.ConvertFromString("#7f93a8"),  // Your specific color
+                        BlurRadius = 0,
+                        ShadowDepth = 1,
+                        Direction = 320,
+                        Opacity = 1
+                    };
+                    TextBlock tooltipTextBlock = new TextBlock
+                    {
+                        Text = text,
+                        Opacity = 1,
+                        MaxWidth = 275,
+                        FontSize = 12,
+                        TextWrapping = TextWrapping.Wrap,
+                        Effect = dropShadow,
+                        Margin = new Thickness(0)
+                    };
+                    tooltipStackPanel.Children.Add(tooltipTextBlock);
+                }
+
+                if (imageName != "")
+                {
+                    String imagePath = "pack://application:,,,/Images/" + imageName;
+                    Image tooltipImage = new Image
+                    {
+                        Source = new BitmapImage(new Uri(imagePath)),
+                        MaxWidth = 275,
+                        MaxHeight = 150,
+                        Opacity = 1,
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Margin = new Thickness(0)
+                    };
+                    tooltipStackPanel.Children.Add(tooltipImage);
+                }
+
+                Border bottomrightBorder = new Border
+                {
+                    BorderThickness = new Thickness(0, 0, 2, 2),
+                    BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#487870")),
+                    Padding = new Thickness(5, 0, 5, 5),
+                    CornerRadius = new CornerRadius(7, 0, 7, 0),
+                    Child = tooltipStackPanel
+                };
+                Border topleftBorder = new Border
+                {
+                    BorderThickness = new Thickness(2, 2, 0, 0),
+                    BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#98c8b8")),
+                    CornerRadius = new CornerRadius(7, 0, 7, 0),
+                    Background = Brushes.Transparent,
+                    Child = bottomrightBorder
+                };
+                Border outerBorder = new Border
+                {
+                    BorderThickness = new Thickness(2, 2, 2, 2),
+                    BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#202830")),
+                    CornerRadius = new CornerRadius(7, 0, 7, 0),
+                    Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#78b0a7")),
+                    Child = topleftBorder
+                };
+                ToolTip toolTip = new ToolTip
+                {
+                    Content = outerBorder,
+                    Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#383840")),
+                    Background = Brushes.Transparent,
+                    HasDropShadow = false,
+                    BorderBrush = Brushes.Transparent,
+                    BorderThickness = new Thickness(0),
+                    Padding = new Thickness(0),
+                    Margin = new Thickness(0),
+                    PlacementTarget = uiElement,
+                    Placement = PlacementMode.Bottom,
+                    VerticalOffset = 0,
+                    HorizontalOffset = 0,
+                    ForceCursor = true,
+                    Opacity = 1
+                };
+                toolTip.Opened += (sender, e) => { Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/Images/moogle.cur")).Stream); };
+                toolTip.Closed += (sender, e) => { Mouse.OverrideCursor = null; };
+                uiElement.MouseEnter += (sender, e) =>
+                {
+                    ToolTipService.SetToolTip(uiElement, toolTip);
+                    ToolTipService.SetInitialShowDelay(uiElement, 0);
+                    toolTip.IsOpen = true;
+                };
+                uiElement.MouseLeave += (sender, e) =>
+                {
+                    toolTip.IsOpen = false; // Force close the tooltip when the mouse leaves the element
+                    ToolTipService.SetToolTip(uiElement, null);
+                };
+
+            }
+        }
+        public void CreateCheckbox(String property, object text, String tooltip = "", Int32 firstColumn = 0, String propertyToEnable = "", String tooltipImage = "")
         {
             if (firstColumn == 0)
             {
@@ -61,7 +180,7 @@ namespace Memoria.Launcher
             CheckBox checkBox = new CheckBox();
             checkBox.Content = text;
             checkBox.IsChecked = null;
-            MakeTooltip(checkBox, tooltip);
+            MakeTooltip(checkBox, tooltip, tooltipImage);
             checkBox.Foreground = TextColor;
             checkBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightNormal);
             checkBox.FontSize = FontSizeNormal;
@@ -76,24 +195,13 @@ namespace Memoria.Launcher
             checkBox.SetValue(ColumnSpanProperty, MaxColumns);
             Children.Add(checkBox);
         }
-
-        public void MakeTooltip(DependencyObject uiElement, String text = "")
-        {
-            if (text != "")
-            {
-                ToolTipService.SetToolTip(uiElement, text);
-                ToolTipService.SetInitialShowDelay(uiElement, TooltipDisplayDelay);
-                ToolTipService.SetShowDuration(uiElement, 5000);
-            }
-        }
-
-        public void CreateTextbloc(String text, Boolean isHeading = false, String tooltip = "")
+        public void CreateTextbloc(String text, Boolean isHeading = false, String tooltip = "", String tooltipImage = "")
         {
             Row++;
             RowDefinitions.Add(new RowDefinition());
             TextBlock textbloc = new TextBlock();
             textbloc.Text = text;
-            MakeTooltip(textbloc, tooltip);
+            MakeTooltip(textbloc, tooltip, tooltipImage);
             textbloc.Foreground = TextColor;
             textbloc.Margin = new Thickness(0);
             Border border = new Border();
@@ -113,7 +221,6 @@ namespace Memoria.Launcher
                 textbloc.FontSize = 14;
                 textbloc.Text = textbloc.Text.ToUpper();
                 textbloc.SetValue(TextBlock.FontFamilyProperty, Application.Current.FindResource("CenturyGothic") as FontFamily);
-                //border.Background = new SolidColorBrush(Color.FromArgb(0x88, 0x3A, 0x6B, 0x77));
                 border.Background = (SolidColorBrush)Application.Current.FindResource("BrushAccentColor");
                 border.Opacity = 0.8;
                 border.CornerRadius = new CornerRadius(5);
@@ -125,7 +232,7 @@ namespace Memoria.Launcher
             border.Child = textbloc;
             Children.Add(border);
         }
-        public void CreateCombobox(String property, IEnumerable options, Int32 firstColumn = 50, String tooltip = "", Boolean selectByName = false)
+        public void CreateCombobox(String property, IEnumerable options, Int32 firstColumn = 50, String tooltip = "", String tooltipImage = "", Boolean selectByName = false)
         {
             if (firstColumn == 0)
             {
@@ -134,12 +241,11 @@ namespace Memoria.Launcher
             }
             ComboBox comboBox = new ComboBox();
             comboBox.ItemsSource = options;
-            MakeTooltip(comboBox, tooltip);
+            MakeTooltip(comboBox, tooltip, tooltipImage);
             comboBox.Foreground = Brushes.Black;
             comboBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightCombobox);
             comboBox.Margin = CommonMargin;
             comboBox.Height = ComboboxHeight;
-            //comboBox.FontSize = FontSizeCombobox;
             if (selectByName)
                 comboBox.SetBinding(Selector.SelectedItemProperty, new Binding(property) { Mode = BindingMode.TwoWay });
             else

@@ -43,7 +43,7 @@ namespace Memoria.Launcher
             };
             CreateCombobox("ShaderBattleChoice", comboboxchoices);
 
-            CreateCheckbox("UsePsxFont", Lang.Settings.UsePsxFont, Lang.Settings.UsePsxFont_Tooltip);
+            CreateCheckbox("UsePsxFont", Lang.Settings.UsePsxFont, Lang.Settings.UsePsxFont_Tooltip, 0, "", "alexandriaPreview.png");
 
             CreateTextbloc(Lang.Settings.FontChoice, false, Lang.Settings.FontChoice_Tooltip);
             FontCollection installedFonts = new InstalledFontCollection();
@@ -52,7 +52,7 @@ namespace Memoria.Launcher
             fontNames[1] = "Final Fantasy IX PSX";
             for (Int32 fontindex = 0; fontindex < installedFonts.Families.Length; ++fontindex)
                 fontNames[fontindex + 2] = installedFonts.Families[fontindex].Name;
-            CreateCombobox("FontChoice", fontNames, 25, "", true);
+            CreateCombobox("FontChoice", fontNames, 25, "", "", true);
 
             LoadSettings();
         }
