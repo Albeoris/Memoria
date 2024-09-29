@@ -64,7 +64,6 @@ namespace Memoria.Launcher
                     Orientation = Orientation.Vertical,
                     Margin = new Thickness(0)
                 };
-
                 Image helpIcon = new Image
                 {
                     Source = new BitmapImage(new Uri("pack://application:,,,/Images/HelpIcon.png")),
@@ -154,8 +153,8 @@ namespace Memoria.Launcher
                     ForceCursor = true,
                     Opacity = 1
                 };
-                toolTip.Opened += (sender, e) => { Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/Images/moogle.cur")).Stream); };
-                toolTip.Closed += (sender, e) => { Mouse.OverrideCursor = null; };
+                //toolTip.Opened += (sender, e) => { Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/Images/moogle.cur")).Stream); };
+                //toolTip.Closed += (sender, e) => { Mouse.OverrideCursor = null; };
                 uiElement.MouseEnter += (sender, e) =>
                 {
                     ToolTipService.SetToolTip(uiElement, toolTip);
@@ -167,7 +166,6 @@ namespace Memoria.Launcher
                     toolTip.IsOpen = false; // Force close the tooltip when the mouse leaves the element
                     ToolTipService.SetToolTip(uiElement, null);
                 };
-
             }
         }
         public void CreateCheckbox(String property, object text, String tooltip = "", Int32 firstColumn = 0, String propertyToEnable = "", String tooltipImage = "")
