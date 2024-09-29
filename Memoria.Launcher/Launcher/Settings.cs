@@ -507,6 +507,19 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _attack9999;
+        public Int16 Attack9999
+        {
+            get { return _attack9999; }
+            set
+            {
+                if (_attack9999 != value)
+                {
+                    _attack9999 = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         private Int16 _norandomencounter;
         public Int16 NoRandomEncounter
         {
@@ -709,7 +722,7 @@ namespace Memoria.Launcher
             ["SpeedFactor", "SpeedFactor", "Cheats", 0, 1],
             ["BattleTPS", "BattleTPS", "Graphics", 0, 1],
             ["BattleAssistance", "BattleAssistance", "Cheats", 0, 1],
-            ["BattleAssistance", "Attack9999", "Cheats", 0, 1],
+            ["Attack9999", "Attack9999", "Cheats", 0, 1],
             ["NoRandomEncounter", "NoRandomEncounter", "Cheats", 0, 1],
             ["MasterSkill", "MasterSkill", "Cheats", 0, 1],
             ["MasterSkill", "LvMax", "Cheats", 0, 1],
@@ -1433,6 +1446,15 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _battleassistance))
                     _battleassistance = 0;
+
+                value = iniFile.ReadValue("Cheats", nameof(Attack9999));
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                    OnPropertyChanged(nameof(Attack9999));
+                }
+                if (!Int16.TryParse(value, out _attack9999))
+                    _attack9999 = 0;
 
                 value = iniFile.ReadValue("Cheats", nameof(NoRandomEncounter));
                 if (String.IsNullOrEmpty(value))

@@ -258,7 +258,6 @@ namespace Memoria.Launcher
             public static readonly string BreakDamageLimit_Tooltip = GetSettings(nameof(BreakDamageLimit_Tooltip));
             public static readonly string AccessBattleMenu_Tooltip = GetSettings(nameof(AccessBattleMenu_Tooltip));
             public static readonly string SpeedMode_Tooltip = GetSettings(nameof(SpeedMode_Tooltip));
-            public static readonly string SpeedFactor_Tooltip = GetSettings(nameof(SpeedFactor_Tooltip));
             public static readonly string BattleAssistance_Tooltip = GetSettings(nameof(BattleAssistance_Tooltip));
             public static readonly string NoRandomBattles_Tooltip = GetSettings(nameof(NoRandomBattles_Tooltip));
             public static readonly string PermanentCheats_Tooltip = GetSettings(nameof(PermanentCheats_Tooltip));
@@ -334,6 +333,8 @@ namespace Memoria.Launcher
             public static readonly string EasyJumpRopeMinigame = GetSettings(nameof(EasyJumpRopeMinigame));
             public static readonly string EasyJumpRopeMinigame_Tooltip = GetSettings(nameof(EasyJumpRopeMinigame_Tooltip));
             public static readonly string ShaderDropboxChoice5 = GetSettings(nameof(ShaderDropboxChoice5));
+            public static readonly string Attack9999 = GetSettings(nameof(Attack9999));
+            public static readonly string Attack9999_Tooltip = GetSettings(nameof(Attack9999_Tooltip));
         }
 
         public static class SdLib
