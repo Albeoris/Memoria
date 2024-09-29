@@ -29,7 +29,8 @@ namespace Memoria.Launcher
                 Lang.Settings.ShaderDropboxChoice1,
                 Lang.Settings.ShaderDropboxChoice2,
                 Lang.Settings.ShaderDropboxChoice3,
-                Lang.Settings.ShaderDropboxChoice4
+                Lang.Settings.ShaderDropboxChoice4,
+                Lang.Settings.ShaderDropboxChoice5
             };
             CreateCombobox("ShaderFieldChoice", comboboxchoices);
 
@@ -39,7 +40,8 @@ namespace Memoria.Launcher
                 Lang.Settings.ShaderDropboxChoice1,
                 Lang.Settings.ShaderDropboxChoice2,
                 Lang.Settings.ShaderDropboxChoice3,
-                Lang.Settings.ShaderDropboxChoice4
+                Lang.Settings.ShaderDropboxChoice4,
+                Lang.Settings.ShaderDropboxChoice5
             };
             CreateCombobox("ShaderBattleChoice", comboboxchoices);
 

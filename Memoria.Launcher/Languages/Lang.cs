@@ -333,6 +333,7 @@ namespace Memoria.Launcher
             public static readonly string AccessBattleMenuToggle_Tooltip = GetSettings(nameof(AccessBattleMenuToggle_Tooltip));
             public static readonly string EasyJumpRopeMinigame = GetSettings(nameof(EasyJumpRopeMinigame));
             public static readonly string EasyJumpRopeMinigame_Tooltip = GetSettings(nameof(EasyJumpRopeMinigame_Tooltip));
+            public static readonly string ShaderDropboxChoice5 = GetSettings(nameof(ShaderDropboxChoice5));
         }
 
         public static class SdLib

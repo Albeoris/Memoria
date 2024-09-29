@@ -857,6 +857,11 @@ namespace Memoria.Launcher
                                 iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " 0");
                                 iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " 0");
                                 break;
+                            case (5):
+                                iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " 1");
+                                break;
                         }
                         break;
                     case nameof(ShaderBattleChoice):
@@ -887,6 +892,11 @@ namespace Memoria.Launcher
                                 iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " 1");
                                 iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " 0");
                                 iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " 0");
+                                break;
+                            case (5):
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " 0");
+                                iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " 1");
                                 break;
                         }
                         break;
@@ -1264,6 +1274,8 @@ namespace Memoria.Launcher
                     _shaderfieldchoice = 3;
                 else if (value1 == 1 && value2 == 0 && value3 == 0)
                     _shaderfieldchoice = 4;
+                else if (value1 == 0 && value2 == 0 && value3 == 1)
+                    _shaderfieldchoice = 5;
                 else
                     _shaderfieldchoice = -1;
 
@@ -1283,6 +1295,8 @@ namespace Memoria.Launcher
                     _shaderbattlechoice = 3;
                 else if (value1 == 1 && value2 == 0 && value3 == 0)
                     _shaderbattlechoice = 4;
+                else if (value1 == 0 && value2 == 0 && value3 == 1)
+                    _shaderbattlechoice = 5;
                 else
                     _shaderbattlechoice = -1;
 

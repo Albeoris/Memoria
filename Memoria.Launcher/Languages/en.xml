@@ -212,6 +212,7 @@ AccessBattleMenuToggle = "Menu access in battle"
 AccessBattleMenuToggle_Tooltip = "Make the main menu openable in battle, allowing you to change equipment and abilities"
 EasyJumpRopeMinigame = "Easy jump rope"
 EasyJumpRopeMinigame_Tooltip = "Jump rope minigame: each jump counts as 1000"
+ShaderDropboxChoice5 = "Outlines"
 />
 
 <SdLib
