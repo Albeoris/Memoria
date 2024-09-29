@@ -211,18 +211,15 @@ namespace Memoria.Launcher
                 }
             }
         }
-        private Int16 _speed;
-        public Int16 Speed
+        private Int16 _atbmodechoice;
+        public Int16 ATBModeChoice
         {
-            get { return _speed; }
+            get { return _atbmodechoice; }
             set
             {
-                if (_speed != value)
+                if (_atbmodechoice != value)
                 {
-                    if (_speed == 3 || _speed == 4)
-                        _speed = 5;
-                    else
-                        _speed = value;
+                    _atbmodechoice = value;
                     OnPropertyChanged();
                 }
             }
@@ -269,103 +266,6 @@ namespace Memoria.Launcher
         }
         protected String _fontDefaultPC = "Final Fantasy IX PC";
         protected String _fontDefaultPSX = "Final Fantasy IX PSX";
-
-        private Int16 _realismShadingForField;
-        public Int16 Shader_Field_Realism
-        {
-            get { return _realismShadingForField; }
-            set
-            {
-                if (_realismShadingForField != value)
-                {
-                    if (value == 1)
-                    {
-                        Shader_Field_Toon = 0;
-                    }
-                    _realismShadingForField = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _toonShadingForField;
-        public Int16 Shader_Field_Toon
-        {
-            get { return _toonShadingForField; }
-            set
-            {
-                if (_toonShadingForField != value)
-                {
-                    if (value == 1)
-                    {
-                        Shader_Field_Realism = 0;
-                    }
-                    _toonShadingForField = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _outlineForField;
-        public Int16 Shader_Field_Outlines
-        {
-            get { return _outlineForField; }
-            set
-            {
-                if (_outlineForField != value)
-                {
-                    _outlineForField = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _realismShadingForBattle;
-        public Int16 Shader_Battle_Realism
-        {
-            get { return _realismShadingForBattle; }
-            set
-            {
-                if (_realismShadingForBattle != value)
-                {
-                    if (value == 1)
-                    {
-                        Shader_Battle_Toon = 0;
-                    }
-                    _realismShadingForBattle = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private Int16 _toonShadingForBattle;
-        public Int16 Shader_Battle_Toon
-        {
-            get { return _toonShadingForBattle; }
-            set
-            {
-                if (_toonShadingForBattle != value)
-                {
-                    if (value == 1)
-                    {
-                        Shader_Battle_Realism = 0;
-                    }
-                    _toonShadingForBattle = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _outlineForBattle;
-        public Int16 Shader_Battle_Outlines
-        {
-            get { return _outlineForBattle; }
-            set
-            {
-                if (_outlineForBattle != value)
-                {
-                    _outlineForBattle = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         private Int16 _stealingalwaysworks;
         public Int16 StealingAlwaysWorks
         {
@@ -432,20 +332,6 @@ namespace Memoria.Launcher
                 }
             }
         }
-        private Int16 _accessBattleMenu;
-        public Int16 AccessBattleMenu
-        {
-            get { return _accessBattleMenu; }
-            set
-            {
-                if (_accessBattleMenu != value)
-                {
-                    _accessBattleMenu = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        public String AvailableBattleMenus => AccessBattleMenu < 3 ? " \"Equip\", \"SupportingAbility\"" : "";
         private Int16 _speedmode;
         public Int16 SpeedMode
         {
@@ -559,20 +445,6 @@ namespace Memoria.Launcher
                 }
             }
         }
-        private Int16 _reducerandom;
-        public Int16 ReduceRandom
-        {
-            get { return _reducerandom; }
-            set
-            {
-                if (_reducerandom != value)
-                {
-                    _reducerandom = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         private Int16 _easytetramaster;
         public Int16 EasyTetraMaster
         {
@@ -586,7 +458,6 @@ namespace Memoria.Launcher
                 }
             }
         }
-
         private Int16 _worldmapmistpreset;
         public Int16 WorldmapMistPreset
         {
@@ -698,42 +569,44 @@ namespace Memoria.Launcher
         #region Simple settings list
         public readonly Object[][] SettingsList =
         {
-            // variable, variable_ini, category_ini, //[0 -> ?], [1 -> ?]
+            // variable, _variable, variable_ini, category_ini, //[0 -> ?], [1 -> ?]
             
+            // Checkboxes
             ["WidescreenSupport", "WidescreenSupport", "Graphics", 0, 1],
-            ["CameraStabilizer", "CameraStabilizer", "Graphics", 0, 1],
+            ["AntiAliasing", "AntiAliasing", "Graphics", 0, 1],
             ["SkipIntros", "SkipIntros", "Graphics", 0, 3],
+            ["BattleSwirlFrames", "BattleSwirlFrames", "Graphics", 70, 0],
+            ["MaxCardCount", "MaxCardCount", "TetraMaster", 100, 1000],
             ["HideCards", "HideCards", "Icons", 0, 1],
             ["HideCards", "HideBeach", "Icons", 0, 1],
             ["HideCards", "HideSteam", "Icons", 0, 1],
-            ["Speed", "Speed", "Battle", 0, 1],
-            ["TripleTriad", "TripleTriad", "TetraMaster", 0, 1],
-            ["AntiAliasing", "AntiAliasing", "Graphics", 0, 1],
-            ["Shader_Field_Realism", "Shader_Field_Realism", "Shaders", 0, 1],
-            ["Shader_Field_Toon", "Shader_Field_Toon", "Shaders", 0, 1],
-            ["Shader_Field_Outlines", "Shader_Field_Outlines", "Shaders", 0, 1],
-            ["Shader_Battle_Realism", "Shader_Battle_Realism", "Shaders", 0, 1],
-            ["Shader_Battle_Toon", "Shader_Battle_Toon", "Shaders", 0, 1],
-            ["Shader_Battle_Outlines", "Shader_Battle_Outlines", "Shaders", 0, 1],
+            ["WorldmapBoost", "FieldOfViewSpeedBoost", "Worldmap", 0, 100],
+            ["WorldmapShipTilt", "CameraTiltShip", "Worldmap", 0, 100],
+
+            ["StealingAlwaysWorks", "StealingAlwaysWorks", "Hacks", 0, 2],
             ["NoAutoTrance", "NoAutoTrance", "Battle", 0, 1],
-            ["GarnetConcentrate", "GarnetConcentrate", "Battle", 0, 1],
+            ["ViviAutoAttack", "ViviAutoAttack", "Battle", 0, 1],
             ["BreakDamageLimit", "BreakDamageLimit", "Battle", 0, 1],
+            ["AccessBattleMenuToggle", "AccessMenus", "Battle", 0, 3],
+            ["GarnetConcentrate", "GarnetConcentrate", "Battle", 0, 1],
+
             ["SpeedMode", "SpeedMode", "Cheats", 0, 1],
-            ["SpeedFactor", "SpeedFactor", "Cheats", 0, 1],
-            ["BattleTPS", "BattleTPS", "Graphics", 0, 1],
             ["BattleAssistance", "BattleAssistance", "Cheats", 0, 1],
             ["Attack9999", "Attack9999", "Cheats", 0, 1],
             ["NoRandomEncounter", "NoRandomEncounter", "Cheats", 0, 1],
             ["MasterSkill", "MasterSkill", "Cheats", 0, 1],
             ["MasterSkill", "LvMax", "Cheats", 0, 1],
             ["MasterSkill", "GilMax", "Cheats", 0, 1],
-            ["ReduceRandom", "ReduceRandom", "TetraMaster", 0, 1],
+
             ["EasyTetraMaster", "EasyWin", "TetraMaster", 0, 1],
-            ["WorldmapFOV", "FieldOfView", "Worldmap", 0, 1],
-            ["ViviAutoAttack", "ViviAutoAttack", "Battle", 0, 1],
             ["ExcaliburIINoTimeLimit", "ExcaliburIINoTimeLimit", "Hacks", 0, 1],
-            ["BattleSwirlFrames", "BattleSwirlFrames", "Graphics", 70, 0],
-            ["StealingAlwaysWorks", "StealingAlwaysWorks", "Hacks", 0, 2],
+            ["EasyJumpRopeMinigame", "RopeJumpingIncrement", "Hacks", 1, 1000],
+
+            // Sliders
+            ["CameraStabilizer", "CameraStabilizer", "Graphics", 0, 1],
+            ["BattleTPS", "BattleTPS", "Graphics", 0, 1],
+            ["WorldmapFOV", "FieldOfView", "Worldmap", 0, 1],
+            ["SpeedFactor", "SpeedFactor", "Cheats", 0, 1],
         };
         #endregion
 
@@ -774,6 +647,14 @@ namespace Memoria.Launcher
                 
                 switch (propertyName)
                 {
+                    case nameof(ATBModeChoice):
+                        if (ATBModeChoice != 0)
+                            iniFile.WriteValue("Battle", "Enabled ", " 1");
+                        if (ATBModeChoice == 3)
+                            iniFile.WriteValue("Battle", "Speed ", " 5");
+                        else
+                            iniFile.WriteValue("Battle", "Speed ", " " + ATBModeChoice);
+                        break;
                     case nameof(BattleInterface):
                         iniFile.WriteValue("Interface", "BattleMenuPosX ", " " + (Int32)BattleInterfaceMenu.X);
                         iniFile.WriteValue("Interface", "BattleMenuPosY ", " " + (Int32)BattleInterfaceMenu.Y);
@@ -808,6 +689,29 @@ namespace Memoria.Launcher
                             iniFile.WriteValue("Interface", "MenuAbilityRowCount ", " 12");
                             iniFile.WriteValue("Interface", "MenuEquipRowCount ", " 8");
                             iniFile.WriteValue("Interface", "MenuChocographRowCount ", " 8");
+                        }
+                        break;
+                    case nameof(TripleTriad):
+                        if (TripleTriad == 0)
+                        {
+                            iniFile.WriteValue("TetraMaster", "TripleTriad ", " 0");
+                            iniFile.WriteValue("TetraMaster", "ReduceRandom ", " 0");
+                        }
+                        else if (TripleTriad == 1)
+                        {
+                            iniFile.WriteValue("TetraMaster", "TripleTriad ", " 0");
+                            iniFile.WriteValue("TetraMaster", "ReduceRandom ", " 1");
+                            iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
+                        }
+                        else if (TripleTriad == 2)
+                        {
+                            iniFile.WriteValue("TetraMaster", "TripleTriad ", " 1");
+                            iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
+                        }
+                        else if (TripleTriad == 3)
+                        {
+                            iniFile.WriteValue("TetraMaster", "TripleTriad ", " 2");
+                            iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
                         }
                         break;
                     case nameof(FPSDropboxChoice):
@@ -944,24 +848,6 @@ namespace Memoria.Launcher
                             _usepsxfont = 0;
                         }
                         break;
-                    case nameof(AccessBattleMenu):
-                        iniFile.WriteValue("Battle", "AccessMenus ", " " + AccessBattleMenu);
-                        iniFile.WriteValue("Battle", "AvailableMenus ", AvailableBattleMenus);
-                        if (AccessBattleMenu > 0)
-                            iniFile.WriteValue("Battle", "Enabled ", " 1");
-                        break;
-                    case nameof(MaxCardCount):
-                        if (MaxCardCount == 1)
-                        {
-                            iniFile.WriteValue("TetraMaster", propertyName + " ", " 10000");
-                            iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
-                        }
-                        else if (MaxCardCount == 0)
-                        {
-                            iniFile.WriteValue("TetraMaster", propertyName + " ", " 100");
-                        }
-                        break;
-
                     case nameof(WorldmapMistPreset):
                         iniFile.WriteValue("Worldmap", "Enabled ", " 1");
                         switch (WorldmapMistPreset)
@@ -1020,51 +906,6 @@ namespace Memoria.Launcher
                                 iniFile.WriteValue("Worldmap", "FogStartDistance ", " 400");
                                 iniFile.WriteValue("Worldmap", "FogEndDistance ", " 490");
                                 break;
-                        }
-                        break;
-                    case nameof(WorldmapBoost):
-                        if (WorldmapBoost == 0)
-                        {
-                            iniFile.WriteValue("Worldmap", "FieldOfViewSpeedBoost ", " 0");
-                        }
-                        else if (WorldmapBoost == 1)
-                        {
-                            iniFile.WriteValue("Worldmap", "FieldOfViewSpeedBoost ", " 100");
-                            iniFile.WriteValue("Worldmap", "Enabled ", " 1");
-                        }
-                        break;
-                    case nameof(WorldmapShipTilt):
-                        if (WorldmapShipTilt == 0)
-                        {
-                            iniFile.WriteValue("Worldmap", "CameraTiltShip ", " 0");
-                        }
-                        else if (WorldmapShipTilt == 1)
-                        {
-                            iniFile.WriteValue("Worldmap", "CameraTiltShip ", " 100");
-                            iniFile.WriteValue("Worldmap", "Enabled ", " 1");
-                        }
-                        break;
-                    case nameof(AccessBattleMenuToggle):
-                        if (AccessBattleMenuToggle == 0)
-                        {
-                            iniFile.WriteValue("Battle", "AccessMenus ", " 0");
-                        }
-                        else if (AccessBattleMenuToggle == 1)
-                        {
-                            iniFile.WriteValue("Battle", "AccessMenus ", " 3");
-                            iniFile.WriteValue("Battle", "AvailableMenus ", " \"Equip\", \"SupportingAbility\"");
-                            iniFile.WriteValue("Battle", "Enabled ", " 1");
-                        }
-                        break;
-                    case nameof(EasyJumpRopeMinigame):
-                        if (EasyJumpRopeMinigame == 0)
-                        {
-                            iniFile.WriteValue("Hacks", "RopeJumpingIncrement ", " 1");
-                        }
-                        else if (EasyJumpRopeMinigame == 1)
-                        {
-                            iniFile.WriteValue("Hacks", "RopeJumpingIncrement ", " 1000");
-                            iniFile.WriteValue("Hacks", "Enabled ", " 1");
                         }
                         break;
                 }
@@ -1221,26 +1062,32 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _ishidecards))
                     _ishidecards = 0;
 
-                value = iniFile.ReadValue("Battle", nameof(Speed));
+                value = iniFile.ReadValue("Battle", "Speed");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
-                    OnPropertyChanged(nameof(Speed));
+                    OnPropertyChanged("ATBModeChoice");
                 }
-                if (!Int16.TryParse(value, out _speed))
-                    _speed = 0;
-                else if (_speed > 3)
-                    _speed = 3;
+                if (!Int16.TryParse(value, out _atbmodechoice))
+                    _atbmodechoice = 0;
+                else if (_atbmodechoice > 3)
+                    _atbmodechoice = 3;
 
-                value = iniFile.ReadValue("TetraMaster", nameof(TripleTriad));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(TripleTriad));
-                }
-                if (!Int16.TryParse(value, out _tripleTriad))
+                value = iniFile.ReadValue("TetraMaster", "TripleTriad");
+                value1isInt = Int16.TryParse(value, out value1);
+                value = iniFile.ReadValue("TetraMaster", "ReduceRandom");
+                value2isInt = Int16.TryParse(value, out value2);
+                if (value1 == 0 && value2 == 0)
                     _tripleTriad = 0;
-                
+                else if (value1 == 0 && value2 > 0)
+                    _tripleTriad = 1;
+                else if (value1 == 1)
+                    _tripleTriad = 2;
+                else if (value1 == 2)
+                    _tripleTriad = 3;
+                else
+                    _tripleTriad = -1;
+
                 value = iniFile.ReadValue("Font", "Enabled");
                 if (String.IsNullOrEmpty(value) || !Int16.TryParse(value, out Int16 enabledFont) || enabledFont == 0)
                 {
@@ -1313,55 +1160,6 @@ namespace Memoria.Launcher
                 else
                     _shaderbattlechoice = -1;
 
-                value = iniFile.ReadValue("Shaders", "Shader_Field_Realism");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                }
-                if (!Int16.TryParse(value, out _realismShadingForField))
-                    _realismShadingForField = 0;
-
-                value = iniFile.ReadValue("Shaders", "Shader_Field_Toon");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                }
-                if (!Int16.TryParse(value, out _toonShadingForField))
-                    _toonShadingForField = 0;
-
-                value = iniFile.ReadValue("Shaders", "Shader_Field_Outlines");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                }
-                if (!Int16.TryParse(value, out _outlineForField))
-                    _outlineForField = 0;
-
-                value = iniFile.ReadValue("Shaders", "Shader_Battle_Realism");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                }
-                if (!Int16.TryParse(value, out _realismShadingForBattle))
-                    _realismShadingForBattle = 0;
-
-                value = iniFile.ReadValue("Shaders", "Shader_Battle_Toon");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                }
-                if (!Int16.TryParse(value, out _toonShadingForBattle))
-                    _toonShadingForBattle = 0;
-
-                value = iniFile.ReadValue("Shaders", "Shader_Battle_Outlines");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                }
-                if (!Int16.TryParse(value, out _outlineForBattle))
-                    _outlineForBattle = 0;
-
-
                 value = iniFile.ReadValue("Hacks", nameof(StealingAlwaysWorks));
                 if (String.IsNullOrEmpty(value))
                 {
@@ -1398,15 +1196,6 @@ namespace Memoria.Launcher
                 }
                 if (!Int16.TryParse(value, out _breakDamageLimit))
                     _breakDamageLimit = 0;
-
-                value = iniFile.ReadValue("Battle", "AccessMenus");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(AccessBattleMenu));
-                }
-                if (!Int16.TryParse(value, out _accessBattleMenu))
-                    _accessBattleMenu = 0;
 
                 value = iniFile.ReadValue("Cheats", nameof(SpeedMode));
                 if (String.IsNullOrEmpty(value))
@@ -1474,27 +1263,17 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _masterskill))
                     _masterskill = 0;
 
-                value = iniFile.ReadValue("TetraMaster", nameof(MaxCardCount));
+                value = iniFile.ReadValue("TetraMaster", "MaxCardCount");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 100";
                     OnPropertyChanged(nameof(MaxCardCount));
                 }
-                Int16 cardCount = 100;
-                if (!Int16.TryParse(value, out cardCount))
+                value1isInt = Int16.TryParse(value, out value1);
+                if (value1 == 100)
                     _maxcardcount = 0;
                 else
-                    _maxcardcount = cardCount < 9999 ? (Int16)0 : (Int16)1;
-
-
-                value = iniFile.ReadValue("TetraMaster", "ReduceRandom");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(ReduceRandom));
-                }
-                if (!Int16.TryParse(value, out _reducerandom))
-                    _reducerandom = 0;
+                    _maxcardcount = 1;
 
                 value = iniFile.ReadValue("TetraMaster", "EasyWin");
                 if (String.IsNullOrEmpty(value))
@@ -1632,16 +1411,8 @@ namespace Memoria.Launcher
                 Refresh(nameof(UIColumnsChoice));
                 Refresh(nameof(FPSDropboxChoice));
                 Refresh(nameof(UsePsxFont));
-                Refresh(nameof(AccessBattleMenu));
-                Refresh(nameof(MaxCardCount));
                 Refresh(nameof(WorldmapMistPreset));
                 Refresh(nameof(WorldmapDistancePreset));
-                Refresh(nameof(WorldmapFOV));
-                Refresh(nameof(WorldmapBoost));
-                Refresh(nameof(WorldmapShipTilt));
-                Refresh(nameof(AccessBattleMenuToggle));
-                Refresh(nameof(EasyJumpRopeMinigame));
-
             }
             catch (Exception ex)
             {

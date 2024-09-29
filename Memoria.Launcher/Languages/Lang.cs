@@ -171,10 +171,9 @@ namespace Memoria.Launcher
             public static readonly string SpeedChoiceType1 = GetSettings(nameof(SpeedChoiceType1));
             public static readonly string SpeedChoiceType2 = GetSettings(nameof(SpeedChoiceType2));
             public static readonly string SpeedChoiceType3 = GetSettings(nameof(SpeedChoiceType3));
-            public static readonly string SpeedChoiceType4 = GetSettings(nameof(SpeedChoiceType4));
-            public static readonly string SpeedChoiceType5 = GetSettings(nameof(SpeedChoiceType5));
             public static readonly string TripleTriad = GetSettings(nameof(TripleTriad));
             public static readonly string TripleTriadType0 = GetSettings(nameof(TripleTriadType0));
+            public static readonly string TripleTriadType0_ReduceRandom = GetSettings(nameof(TripleTriadType0_ReduceRandom));
             public static readonly string TripleTriadType1 = GetSettings(nameof(TripleTriadType1));
             public static readonly string TripleTriadType2 = GetSettings(nameof(TripleTriadType2));
             public static readonly string Volume = GetSettings(nameof(Volume));
@@ -291,6 +290,7 @@ namespace Memoria.Launcher
             public static readonly string ShaderDropboxChoice2 = GetSettings(nameof(ShaderDropboxChoice2));
             public static readonly string ShaderDropboxChoice3 = GetSettings(nameof(ShaderDropboxChoice3));
             public static readonly string ShaderDropboxChoice4 = GetSettings(nameof(ShaderDropboxChoice4));
+            public static readonly string ShaderDropboxChoice5 = GetSettings(nameof(ShaderDropboxChoice5));
             public static readonly string menuSettings = GetSettings(nameof(menuSettings));
             public static readonly string menuAdvanced = GetSettings(nameof(menuAdvanced));
             public static readonly string menuCheats = GetSettings(nameof(menuCheats));
@@ -332,26 +332,8 @@ namespace Memoria.Launcher
             public static readonly string AccessBattleMenuToggle_Tooltip = GetSettings(nameof(AccessBattleMenuToggle_Tooltip));
             public static readonly string EasyJumpRopeMinigame = GetSettings(nameof(EasyJumpRopeMinigame));
             public static readonly string EasyJumpRopeMinigame_Tooltip = GetSettings(nameof(EasyJumpRopeMinigame_Tooltip));
-            public static readonly string ShaderDropboxChoice5 = GetSettings(nameof(ShaderDropboxChoice5));
             public static readonly string Attack9999 = GetSettings(nameof(Attack9999));
             public static readonly string Attack9999_Tooltip = GetSettings(nameof(Attack9999_Tooltip));
-        }
-
-        public static class SdLib
-        {
-            private static String GetSdLib(string name)
-            {
-                return Instance.Value.GetString(name, nameof(SdLib));
-            }
-
-            public static readonly string Caption = GetSdLib(nameof(Caption));
-            public static readonly string AreYouSure = GetSdLib(nameof(AreYouSure));
-            public static readonly String SuccessBoth = GetSdLib(nameof(SuccessBoth));
-            public static readonly String SuccessX64 = GetSdLib(nameof(SuccessX64));
-            public static readonly String SuccessX86 = GetSdLib(nameof(SuccessX86));
-            public static readonly String Fail = GetSdLib(nameof(Fail));
-            public static readonly String CannotRead = GetSdLib(nameof(CannotRead));
-            public static readonly String CannotWrite = GetSdLib(nameof(CannotWrite));
         }
 
         public static class SteamOverlay

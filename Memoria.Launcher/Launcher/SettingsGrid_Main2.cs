@@ -11,10 +11,11 @@ namespace Memoria.Launcher
             CreateTextbloc(Lang.Settings.TripleTriad, false, Lang.Settings.TripleTriad_Tooltip);
             String[] comboboxchoices = new String[]{
                 Lang.Settings.TripleTriadType0,
+                Lang.Settings.TripleTriadType0_ReduceRandom,
                 Lang.Settings.TripleTriadType1,
                 Lang.Settings.TripleTriadType2
             };
-            CreateCombobox("TripleTriad", comboboxchoices);
+            CreateCombobox("TripleTriad", comboboxchoices, 25);
 
             /*CreateTextbloc(Lang.Settings.CardReduceRandom, false, Lang.Settings.CardReduceRandom_Tooltip);
             comboboxchoices = new String[]
@@ -25,7 +26,7 @@ namespace Memoria.Launcher
             };
             CreateCombobox("ReduceRandom", comboboxchoices);*/
 
-            CreateCheckbox("ReduceRandom", Lang.Settings.CardReduceRandom, Lang.Settings.CardReduceRandom_Tooltip);
+            //CreateCheckbox("ReduceRandom", Lang.Settings.CardReduceRandom, Lang.Settings.CardReduceRandom_Tooltip);
             CreateCheckbox("MaxCardCount", Lang.Settings.MaxCardCount, Lang.Settings.MaxCardCount_Tooltip);
             CreateCheckbox("HideCards", Lang.Settings.HideSteamBubbles, Lang.Settings.HideSteamBubbles_Tooltip);
 

@@ -43,11 +43,9 @@ namespace Memoria.Launcher
                 Lang.Settings.SpeedChoiceType0,
                 Lang.Settings.SpeedChoiceType1,
                 Lang.Settings.SpeedChoiceType2,
-                //Lang.Settings.SpeedChoiceType3,
-                //Lang.Settings.SpeedChoiceType4,
-                Lang.Settings.SpeedChoiceType5
+                Lang.Settings.SpeedChoiceType3
             };
-            CreateCombobox("Speed", comboboxchoices);
+            CreateCombobox("ATBModeChoice", comboboxchoices);
 
             /*
             CreateTextbloc(Lang.Settings.AccessBattleMenu, false, Lang.Settings.AccessBattleMenu_Tooltip);
@@ -61,7 +59,6 @@ namespace Memoria.Launcher
             CreateCombobox("AccessBattleMenu", accessmenuchoices, 4, Lang.Settings.AccessBattleMenu_Tooltip);
             */
 
-            CreateCheckbox("NoAutoTrance", Lang.Settings.NoAutoTrance, Lang.Settings.NoAutoTrance_Tooltip);
 
 
             CreateTextbloc(Lang.Settings.BattleTPS, false, Lang.Settings.BattleTPS_Tooltip);
