@@ -58,6 +58,9 @@ namespace Memoria.Launcher
             }
 
             File.WriteAllLines(_iniPath, MergeIniFiles(text.Replace("\r", "").Split('\n'), File.ReadAllLines(_iniPath)));
+
+            MakeSureSpacesAroundEqualsigns();
+            RemoveDuplicateKeys(_iniPath);
         }
 
         private static String[] MergeIniFiles(String[] newIni, String[] previousIni)
@@ -136,10 +139,8 @@ namespace Memoria.Launcher
             }
             return mergedIni.ToArray();
         }
-    
 
-
-    private static async void MakeSureSpacesAroundEqualsigns()
+        private static async void MakeSureSpacesAroundEqualsigns()
         {
             try
             {
