@@ -23,7 +23,7 @@ namespace Memoria.Launcher
             CreateTextbloc(Lang.Settings.CameraStabilizer, false, Lang.Settings.CameraStabilizer_Tooltip);
             CreateSlider("CameraStabilizer", "CameraStabilizer", 0, 97, 1);
 
-            CreateTextbloc(Lang.Settings.FieldShader, false, Lang.Settings.FieldShader_Tooltip);
+            CreateTextbloc(Lang.Settings.FieldShader, false, Lang.Settings.FieldShader_Tooltip, "shader_comparison2.jpg");
             comboboxchoices = new String[]{
                 Lang.Settings.ShaderDropboxChoice0,
                 Lang.Settings.ShaderDropboxChoice1,
@@ -34,7 +34,7 @@ namespace Memoria.Launcher
             };
             CreateCombobox("ShaderFieldChoice", comboboxchoices);
 
-            CreateTextbloc(Lang.Settings.BattleShader, false, Lang.Settings.BattleShader_Tooltip);
+            CreateTextbloc(Lang.Settings.BattleShader, false, Lang.Settings.BattleShader_Tooltip, "shader_comparison2.jpg");
             comboboxchoices = new String[]{
                 Lang.Settings.ShaderDropboxChoice0,
                 Lang.Settings.ShaderDropboxChoice1,

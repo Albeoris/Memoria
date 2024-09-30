@@ -218,6 +218,9 @@
   <ItemGroup>
     <Resource Include="Images\alexandriaPreview.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\shader_comparison2.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">
     <ItemGroup>

@@ -13,7 +13,6 @@ using Image = System.Windows.Controls.Image;
 using MessageBox = System.Windows.MessageBox;
 using System.Collections;
 using System.Windows.Media.Imaging;
-using System.Windows.Input;
 using System.Windows.Media.Effects;
 namespace Memoria.Launcher
 {
