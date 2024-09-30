@@ -649,177 +649,52 @@ namespace Memoria.Launcher
                         }
                     }
                 }
-                
+                Int32 var0 = 0; Int32 var1 = 0; Int32 var2 = 0; Int32 var3 = 0; Int32 var4 = 0; Int32 var5 = 0;
                 switch (propertyName)
                 {
-                    case nameof(ATBModeChoice):
-                        if (ATBModeChoice != 0)
-                            iniFile.WriteValue("Battle", "Enabled ", " 1");
-                        if (ATBModeChoice == 3)
-                            iniFile.WriteValue("Battle", "Speed ", " 5");
-                        else
-                            iniFile.WriteValue("Battle", "Speed ", " " + ATBModeChoice);
-                        break;
-                    case nameof(BattleInterface):
-                        iniFile.WriteValue("Interface", "BattleMenuPosX ", " " + (Int32)BattleInterfaceMenu.X);
-                        iniFile.WriteValue("Interface", "BattleMenuPosY ", " " + (Int32)BattleInterfaceMenu.Y);
-                        iniFile.WriteValue("Interface", "BattleMenuWidth ", " " + (Int32)BattleInterfaceMenu.Width);
-                        iniFile.WriteValue("Interface", "BattleMenuHeight ", " " + (Int32)BattleInterfaceMenu.Height);
-                        iniFile.WriteValue("Interface", "BattleDetailPosX ", " " + (Int32)BattleInterfaceDetail.X);
-                        iniFile.WriteValue("Interface", "BattleDetailPosY ", " " + (Int32)BattleInterfaceDetail.Y);
-                        iniFile.WriteValue("Interface", "BattleDetailWidth ", " " + (Int32)BattleInterfaceDetail.Width);
-                        iniFile.WriteValue("Interface", "BattleDetailHeight ", " " + (Int32)BattleInterfaceDetail.Height);
-                        iniFile.WriteValue("Interface", "BattleRowCount ", " " + (BattleInterface == 2 ? 4 : 5));
-                        iniFile.WriteValue("Interface", "BattleColumnCount ", " " + (BattleInterface == 2 ? 1 : 1));
-                        iniFile.WriteValue("Interface", "PSXBattleMenu ", " " + (BattleInterface == 2 ? 1 : 0));
-                        break;
-                    case nameof(UIColumnsChoice):
-                        if (UIColumnsChoice == 0)
-                        {
-                            iniFile.WriteValue("Interface", "MenuItemRowCount ", " 8");
-                            iniFile.WriteValue("Interface", "MenuAbilityRowCount ", " 6");
-                            iniFile.WriteValue("Interface", "MenuEquipRowCount ", " 5");
-                            iniFile.WriteValue("Interface", "MenuChocographRowCount ", " 5");
-                        }
-                        else if (UIColumnsChoice == 1)
-                        {
-                            iniFile.WriteValue("Interface", "MenuItemRowCount ", " 12");
-                            iniFile.WriteValue("Interface", "MenuAbilityRowCount ", " 9");
-                            iniFile.WriteValue("Interface", "MenuEquipRowCount ", " 7");
-                            iniFile.WriteValue("Interface", "MenuChocographRowCount ", " 7");
-                        }
-                        else if (UIColumnsChoice == 2)
-                        {
-                            iniFile.WriteValue("Interface", "MenuItemRowCount ", " 16");
-                            iniFile.WriteValue("Interface", "MenuAbilityRowCount ", " 12");
-                            iniFile.WriteValue("Interface", "MenuEquipRowCount ", " 8");
-                            iniFile.WriteValue("Interface", "MenuChocographRowCount ", " 8");
-                        }
-                        break;
-                    case nameof(TripleTriad):
-                        if (TripleTriad == 0)
-                        {
-                            iniFile.WriteValue("TetraMaster", "TripleTriad ", " 0");
-                            iniFile.WriteValue("TetraMaster", "ReduceRandom ", " 0");
-                        }
-                        else if (TripleTriad == 1)
-                        {
-                            iniFile.WriteValue("TetraMaster", "TripleTriad ", " 0");
-                            iniFile.WriteValue("TetraMaster", "ReduceRandom ", " 1");
-                            iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
-                        }
-                        else if (TripleTriad == 2)
-                        {
-                            iniFile.WriteValue("TetraMaster", "TripleTriad ", " 1");
-                            iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
-                        }
-                        else if (TripleTriad == 3)
-                        {
-                            iniFile.WriteValue("TetraMaster", "TripleTriad ", " 2");
-                            iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
-                        }
-                        break;
                     case nameof(FPSDropboxChoice):
-                        iniFile.WriteValue("Graphics", "Enabled ", " 1");
-                        switch (FPSDropboxChoice)
+                        var0 = FPSDropboxChoice;
+                        if (var0 >= 0)
                         {
-                            case (0):
-                                iniFile.WriteValue("Graphics", "FieldFPS ", " 30");
-                                iniFile.WriteValue("Graphics", "BattleFPS ", " 15");
-                                iniFile.WriteValue("Graphics", "WorldFPS ", " 20");
-                                break;
-                            case (1):
-                                iniFile.WriteValue("Graphics", "FieldFPS ", " 30");
-                                iniFile.WriteValue("Graphics", "BattleFPS ", " 30");
-                                iniFile.WriteValue("Graphics", "WorldFPS ", " 30");
-                                break;
-                            case (2):
-                                iniFile.WriteValue("Graphics", "FieldFPS ", " 60");
-                                iniFile.WriteValue("Graphics", "BattleFPS ", " 60");
-                                iniFile.WriteValue("Graphics", "WorldFPS ", " 60");
-                                break;
-                            case (3):
-                                iniFile.WriteValue("Graphics", "FieldFPS ", " 90");
-                                iniFile.WriteValue("Graphics", "BattleFPS ", " 90");
-                                iniFile.WriteValue("Graphics", "WorldFPS ", " 90");
-                                break;
-                            case (4):
-                                iniFile.WriteValue("Graphics", "FieldFPS ", " 120");
-                                iniFile.WriteValue("Graphics", "BattleFPS ", " 120");
-                                iniFile.WriteValue("Graphics", "WorldFPS ", " 120");
-                                break;
+                            iniFile.WriteValue("Graphics", "Enabled ", " 1");
+                            if (var0 == 0) { var1 = 30; var2 = 15; var3 = 20; }
+                            if (var0 == 1) { var1 = 30; var2 = 30; var3 = 30; }
+                            if (var0 == 2) { var1 = 60; var2 = 60; var3 = 60; }
+                            if (var0 == 3) { var1 = 90; var2 = 90; var3 = 90; }
+                            if (var0 == 4) { var1 = 120; var2 = 120; var3 = 120; }
+                            iniFile.WriteValue("Graphics", "FieldFPS ", " " + var1);
+                            iniFile.WriteValue("Graphics", "BattleFPS ", " " + var2);
+                            iniFile.WriteValue("Graphics", "WorldFPS ", " " + var3);
                         }
                         break;
                     case nameof(ShaderFieldChoice):
-                        iniFile.WriteValue("Shaders", "Enabled ", " 1");
-                        switch (ShaderFieldChoice)
+                        var0 = ShaderFieldChoice;
+                        if (var0 >= 0)
                         {
-                            case (0):
-                                iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " 0");
-                                break;
-                            case (1):
-                                iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " 1");
-                                iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " 1");
-                                break;
-                            case (2):
-                                iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " 1");
-                                iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " 0");
-                                break;
-                            case (3):
-                                iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " 1");
-                                iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " 1");
-                                break;
-                            case (4):
-                                iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " 1");
-                                iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " 0");
-                                break;
-                            case (5):
-                                iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " 1");
-                                break;
+                            iniFile.WriteValue("Shaders", "Enabled ", " 1");
+                            if (var0 == 1) { var2 = 1; var3 = 1; }
+                            if (var0 == 2) { var2 = 1; }
+                            if (var0 == 3) { var1 = 1; var3 = 1; }
+                            if (var0 == 4) { var1 = 1; }
+                            if (var0 == 5) { var3 = 1; }
+                            iniFile.WriteValue("Shaders", "Shader_Field_Realism ", " " + var1);
+                            iniFile.WriteValue("Shaders", "Shader_Field_Toon ", " " + var2);
+                            iniFile.WriteValue("Shaders", "Shader_Field_Outlines ", " " + var3);
                         }
                         break;
                     case nameof(ShaderBattleChoice):
-                        iniFile.WriteValue("Shaders", "Enabled ", " 1");
-                        switch (ShaderBattleChoice)
+                        var0 = ShaderBattleChoice;
+                        if (var0 >= 0)
                         {
-                            case (0):
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " 0");
-                                break;
-                            case (1):
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " 1");
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " 1");
-                                break;
-                            case (2):
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " 1");
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " 0");
-                                break;
-                            case (3):
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " 1");
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " 1");
-                                break;
-                            case (4):
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " 1");
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " 0");
-                                break;
-                            case (5):
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " 0");
-                                iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " 1");
-                                break;
+                            iniFile.WriteValue("Shaders", "Enabled ", " 1");
+                            if (var0 == 1) { var2 = 1; var3 = 1; }
+                            if (var0 == 2) { var2 = 1; }
+                            if (var0 == 3) { var1 = 1; var3 = 1; }
+                            if (var0 == 4) { var1 = 1; }
+                            if (var0 == 5) { var3 = 1; }
+                            iniFile.WriteValue("Shaders", "Shader_Battle_Realism ", " " + var1);
+                            iniFile.WriteValue("Shaders", "Shader_Battle_Toon ", " " + var2);
+                            iniFile.WriteValue("Shaders", "Shader_Battle_Outlines ", " " + var3);
                         }
                         break;
                     case nameof(UsePsxFont):
@@ -853,64 +728,82 @@ namespace Memoria.Launcher
                             _usepsxfont = 0;
                         }
                         break;
-                    case nameof(WorldmapMistPreset):
-                        iniFile.WriteValue("Worldmap", "Enabled ", " 1");
-                        switch (WorldmapMistPreset)
+                    case nameof(UIColumnsChoice):
+                        var0 = UIColumnsChoice;
+                        if (var0 >= 0)
                         {
-                            case (0):
-                                iniFile.WriteValue("Worldmap", "MistViewDistance ", " 100");
-                                iniFile.WriteValue("Worldmap", "MistStartDistance_base ", " 55");
-                                iniFile.WriteValue("Worldmap", "MistStartDistance ", " 27");
-                                iniFile.WriteValue("Worldmap", "MistEndDistance ", " 80");
-                                iniFile.WriteValue("Worldmap", "MistDensity ", " 7");
-                                break;
-                            case (1):
-                                iniFile.WriteValue("Worldmap", "MistViewDistance ", " 250");
-                                iniFile.WriteValue("Worldmap", "MistStartDistance_base ", " 10");
-                                iniFile.WriteValue("Worldmap", "MistStartDistance ", " 30");
-                                iniFile.WriteValue("Worldmap", "MistEndDistance ", " 200");
-                                iniFile.WriteValue("Worldmap", "MistDensity ", " 7");
-                                break;
-                            case (2):
-                                iniFile.WriteValue("Worldmap", "MistViewDistance ", " 400");
-                                iniFile.WriteValue("Worldmap", "MistStartDistance_base ", " 10");
-                                iniFile.WriteValue("Worldmap", "MistStartDistance ", " 50");
-                                iniFile.WriteValue("Worldmap", "MistEndDistance ", " 300");
-                                iniFile.WriteValue("Worldmap", "MistDensity ", " 4");
-                                break;
-                            case (3):
-                                iniFile.WriteValue("Worldmap", "MistViewDistance ", " 450");
-                                iniFile.WriteValue("Worldmap", "MistStartDistance_base ", " 0");
-                                iniFile.WriteValue("Worldmap", "MistStartDistance ", " 250");
-                                iniFile.WriteValue("Worldmap", "MistEndDistance ", " 330");
-                                iniFile.WriteValue("Worldmap", "MistDensity ", " 0");
-                                break;
+                            iniFile.WriteValue("Interface", "Enabled ", " 1");
+                            if (var0 == 0) { var1 = 8; var2 = 6; var3 = 5; }
+                            if (var0 == 1) { var1 = 12; var2 = 9; var3 = 7; }
+                            if (var0 == 2) { var1 = 16; var2 = 12; var3 = 8; }
+                            iniFile.WriteValue("Interface", "MenuItemRowCount ", " " + var1);
+                            iniFile.WriteValue("Interface", "MenuAbilityRowCount ", " " + var2);
+                            iniFile.WriteValue("Interface", "MenuEquipRowCount ", " " + var3);
+                            iniFile.WriteValue("Interface", "MenuChocographRowCount ", " " + var3);
+                        }
+                        break;
+                    case nameof(BattleInterface):
+                        iniFile.WriteValue("Interface", "BattleMenuPosX ", " " + (Int32)BattleInterfaceMenu.X);
+                        iniFile.WriteValue("Interface", "BattleMenuPosY ", " " + (Int32)BattleInterfaceMenu.Y);
+                        iniFile.WriteValue("Interface", "BattleMenuWidth ", " " + (Int32)BattleInterfaceMenu.Width);
+                        iniFile.WriteValue("Interface", "BattleMenuHeight ", " " + (Int32)BattleInterfaceMenu.Height);
+                        iniFile.WriteValue("Interface", "BattleDetailPosX ", " " + (Int32)BattleInterfaceDetail.X);
+                        iniFile.WriteValue("Interface", "BattleDetailPosY ", " " + (Int32)BattleInterfaceDetail.Y);
+                        iniFile.WriteValue("Interface", "BattleDetailWidth ", " " + (Int32)BattleInterfaceDetail.Width);
+                        iniFile.WriteValue("Interface", "BattleDetailHeight ", " " + (Int32)BattleInterfaceDetail.Height);
+                        iniFile.WriteValue("Interface", "BattleRowCount ", " " + (BattleInterface == 2 ? 4 : 5));
+                        iniFile.WriteValue("Interface", "BattleColumnCount ", " " + (BattleInterface == 2 ? 1 : 1));
+                        iniFile.WriteValue("Interface", "PSXBattleMenu ", " " + (BattleInterface == 2 ? 1 : 0));
+                        break;
+                    case nameof(ATBModeChoice):
+                        if (ATBModeChoice != 0)
+                            iniFile.WriteValue("Battle", "Enabled ", " 1");
+                        if (ATBModeChoice == 3)
+                            iniFile.WriteValue("Battle", "Speed ", " 5");
+                        else
+                            iniFile.WriteValue("Battle", "Speed ", " " + ATBModeChoice);
+                        break;
+                    case nameof(TripleTriad):
+                        var0 = TripleTriad;
+                        if (var0 >= 0)
+                        {
+                            iniFile.WriteValue("TetraMaster", "Enabled ", " 1");
+                            if (var0 == 0) { var1 = 0; var2 = 0; }
+                            if (var0 == 1) { var1 = 0; var2 = 1; }
+                            if (var0 == 2) { var1 = 1; var2 = 0; }
+                            if (var0 == 3) { var1 = 2; var2 = 0; }
+                            iniFile.WriteValue("TetraMaster", "TripleTriad ", " " + var1);
+                            iniFile.WriteValue("TetraMaster", "ReduceRandom ", " " + var2);
+                        }
+                        break;
+                    case nameof(WorldmapMistPreset):
+                        var0 = WorldmapMistPreset;
+                        if (var0 >= 0)
+                        {
+                            iniFile.WriteValue("Worldmap", "Enabled ", " 1");
+                            if (var0 == 0) { var1 = 100; var2 = 55; var3 = 27; var4 = 80;  var5 = 7; }
+                            if (var0 == 1) { var1 = 250; var2 = 10; var3 = 30; var4 = 200; var5 = 7; }
+                            if (var0 == 2) { var1 = 400; var2 = 10; var3 = 50; var4 = 300; var5 = 4; }
+                            if (var0 == 3) { var1 = 450; var2 = 0; var3 = 250; var4 = 330; var5 = 0; }
+                            iniFile.WriteValue("Worldmap", "MistViewDistance ", " " + var1);
+                            iniFile.WriteValue("Worldmap", "MistStartDistance_base ", " " + var2);
+                            iniFile.WriteValue("Worldmap", "MistStartDistance ", " " + var3);
+                            iniFile.WriteValue("Worldmap", "MistEndDistance ", " " + var4);
+                            iniFile.WriteValue("Worldmap", "MistDensity ", " " + var5);
                         }
                         break;
                     case nameof(WorldmapDistancePreset):
-                        iniFile.WriteValue("Worldmap", "Enabled ", " 1");
-                        switch (WorldmapDistancePreset)
+                        var0 = WorldmapDistancePreset;
+                        if (var0 >= 0)
                         {
-                            case (0):
-                                iniFile.WriteValue("Worldmap", "NoMistViewDistance ", " 100");
-                                iniFile.WriteValue("Worldmap", "FogStartDistance ", " 86");
-                                iniFile.WriteValue("Worldmap", "FogEndDistance ", " 142");
-                                break;
-                            case (1):
-                                iniFile.WriteValue("Worldmap", "NoMistViewDistance ", " 200");
-                                iniFile.WriteValue("Worldmap", "FogStartDistance ", " 150");
-                                iniFile.WriteValue("Worldmap", "FogEndDistance ", " 250");
-                                break;
-                            case (2):
-                                iniFile.WriteValue("Worldmap", "NoMistViewDistance ", " 300");
-                                iniFile.WriteValue("Worldmap", "FogStartDistance ", " 250");
-                                iniFile.WriteValue("Worldmap", "FogEndDistance ", " 350");
-                                break;
-                            case (3):
-                                iniFile.WriteValue("Worldmap", "NoMistViewDistance ", " 450");
-                                iniFile.WriteValue("Worldmap", "FogStartDistance ", " 400");
-                                iniFile.WriteValue("Worldmap", "FogEndDistance ", " 490");
-                                break;
+                            iniFile.WriteValue("Worldmap", "Enabled ", " 1");
+                            if (var0 == 0) { var1 = 100; var2 = 86; var3 = 142; }
+                            if (var0 == 1) { var1 = 200; var2 = 150; var3 = 250; }
+                            if (var0 == 2) { var1 = 300; var2 = 250; var3 = 350; }
+                            if (var0 == 3) { var1 = 450; var2 = 400; var3 = 490; }
+                            iniFile.WriteValue("Worldmap", "NoMistViewDistance ", " " + var1);
+                            iniFile.WriteValue("Worldmap", "FogStartDistance ", " " + var2);
+                            iniFile.WriteValue("Worldmap", "FogEndDistance ", " " + var3);
                         }
                         break;
                 }
