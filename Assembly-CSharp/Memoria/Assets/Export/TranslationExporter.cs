@@ -501,7 +501,7 @@ namespace Memoria.Assets
 
         private static String ProcessStringForDatabaseMes(ref Int32 counter, String str, Int32 txtId)
         {
-            Boolean addCounterCode = counter + 1 == txtId;
+            Boolean addCounterCode = counter + 1 != txtId;
             counter = txtId;
             if (addCounterCode)
                 return $"[TXID={txtId}]{str}[ENDN]";
@@ -540,6 +540,8 @@ namespace Memoria.Assets
 
         private static void InitialiseStaticBatches()
         {
+            foreach (EtcImporter importer in EtcImporter.EnumerateImporters())
+                importer.LoadSync();
             _etcBatches =
             [
                 new EtcTextBatch("WorldLoc", "WorldLocations", 0, FF9TextTool.worldLocationText),

@@ -80,6 +80,8 @@ namespace Memoria.Assets
                 //  + ":texture=" + texture.name + "\n"
                 //  + ":normalmap=\n";
                     + ":size=" + texture.width + "x" + texture.height + "\n";
+                if (!exportFragments)
+                    tpsheetText += ":append=true\n";
                 foreach (UISpriteData sprite in atlas.spriteList)
                 {
                     tpsheetText += sprite.name + ";" + sprite.x + ";" + sprite.y + ";" + sprite.width + ";" + sprite.height;
@@ -128,6 +130,8 @@ namespace Memoria.Assets
                 //  + ":texture=" + texture.name + "\n"
                 //  + ":normalmap=\n";
                     + ":size=" + sharedTexture.width + "x" + sharedTexture.height + "\n";
+                if (!exportFragments)
+                    tpsheetText += ":append=true\n";
                 foreach (Sprite sprite in spriteList)
                 {
                     tpsheetText += sprite.name + ";" + (Int32)sprite.rect.x + ";" + (Int32)sprite.rect.y + ";" + (Int32)sprite.rect.width + ";" + (Int32)sprite.rect.height;
