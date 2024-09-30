@@ -77,18 +77,15 @@ public class WorldHUD : UIScene
                 this.DisplayChocographLocation(true);
             }
             if (PersistenSingleton<UIManager>.Instance.PreviousState == UIManager.UIState.Pause && this.currentState != WorldHUD.State.FullMap && PersistenSingleton<EventEngine>.Instance.GetUserControl())
-            {
                 base.StartCoroutine(this.DisableEventInputForAWhile());
-            }
         };
         if (afterFinished != null)
-        {
-            sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
+            sceneVoidDelegate += afterFinished;
         base.Show(sceneVoidDelegate);
         PersistenSingleton<UIManager>.Instance.SetEventEnable(true);
         PersistenSingleton<UIManager>.Instance.SetMenuControlEnable(ff9.GetUserControl());
-        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(ff9.GetUserControl(), (Action)null);
+        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(ff9.GetUserControl(), null);
+        this.EnableContinentTitle(false);
         this.InitialHUD();
         this.DisplayButtonHud();
         VirtualAnalog.Init(base.gameObject);
@@ -106,17 +103,13 @@ public class WorldHUD : UIScene
         UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
         {
             if (!base.NextSceneIsModal)
-            {
                 PersistenSingleton<UIManager>.Instance.SetGameCameraEnable(false);
-            }
         };
         if (afterFinished != null)
-        {
-            sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
+            sceneVoidDelegate += afterFinished;
         base.Hide(sceneVoidDelegate);
         this.PauseButtonGameObject.SetActive(false);
-        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, (Action)null);
+        PersistenSingleton<UIManager>.Instance.SetPlayerControlEnable(false, null);
         PersistenSingleton<UIManager>.Instance.SetEventEnable(false);
     }
 
@@ -974,21 +967,15 @@ public class WorldHUD : UIScene
     private void DisplayCameraOptionHud()
     {
         if (this.RotationLockButtonGameObject.activeInHierarchy)
-        {
             this.SetRotationLockToggle(FF9StateSystem.Settings.IsAutoRotation);
-        }
         if (this.PerspectiveButtonGameObject.activeInHierarchy)
-        {
             this.SetPerspectiveToggle(FF9StateSystem.Settings.IsPerspectCamera);
-        }
     }
 
     public void ClearFullMapLocations()
     {
-        if (this.mapLocationPointerPanel != (UnityEngine.Object)null)
-        {
+        if (this.mapLocationPointerPanel != null)
             this.mapLocationPointerPanel.transform.DestroyChildren();
-        }
         this.locationPointerList.Clear();
     }
 
@@ -998,6 +985,14 @@ public class WorldHUD : UIScene
         this.continentTitleShadow.sprite2D = FF9UIDataTool.LoadWorldTitle(titleId, true);
         this.continentTitleText.MakePixelPerfect();
         this.continentTitleShadow.MakePixelPerfect();
+        Rect spriteRect = WorldConfiguration.GetTitleSpriteRect(titleId);
+        this.continentTitleText.transform.localPosition = spriteRect.min;
+        this.continentTitleShadow.transform.localPosition = spriteRect.min;
+        if (spriteRect.x != this.continentTitleText.width || spriteRect.y != this.continentTitleText.height)
+        {
+            this.continentTitleText.SetDimensions((Int32)spriteRect.width, (Int32)spriteRect.height);
+            this.continentTitleShadow.SetDimensions((Int32)spriteRect.width, (Int32)spriteRect.height);
+        }
     }
 
     public void ShowContinentTitle(Int32 fadeInFrames)
@@ -1005,8 +1000,8 @@ public class WorldHUD : UIScene
         Single fadeInDuration = this.CalculateTitleFadeDuration(fadeInFrames);
         this.continentTitleTextFader.fadeInDuration = fadeInDuration;
         this.continentTitleShadowFader.fadeInDuration = fadeInDuration;
-        this.continentTitleTextFader.FadeIn((UIScene.SceneVoidDelegate)null);
-        this.continentTitleShadowFader.FadeIn((UIScene.SceneVoidDelegate)null);
+        this.continentTitleTextFader.FadeIn(null);
+        this.continentTitleShadowFader.FadeIn(null);
     }
 
     public void HideContinentTitle(Int32 fadeOutFrames)
@@ -1014,8 +1009,8 @@ public class WorldHUD : UIScene
         Single fadeOutDuration = this.CalculateTitleFadeDuration(fadeOutFrames);
         this.continentTitleTextFader.fadeOutDuration = fadeOutDuration;
         this.continentTitleShadowFader.fadeOutDuration = fadeOutDuration;
-        this.continentTitleTextFader.FadeOut((UIScene.SceneVoidDelegate)null);
-        this.continentTitleShadowFader.FadeOut((UIScene.SceneVoidDelegate)null);
+        this.continentTitleTextFader.FadeOut(null);
+        this.continentTitleShadowFader.FadeOut(null);
     }
 
     public void EnableContinentTitle(Boolean isActive)
@@ -1029,8 +1024,8 @@ public class WorldHUD : UIScene
 
     private Single CalculateTitleFadeDuration(Int32 frames)
     {
-        Single num = (Single)frames / 30f;
-        return (!HonoBehaviorSystem.Instance.IsFastForwardModeActive()) ? num : (num / (Single)FF9StateSystem.Settings.FastForwardFactor);
+        Single seconds = frames / 30f;
+        return HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? seconds / FF9StateSystem.Settings.FastForwardFactor : seconds;
     }
 
     public void SetButtonVisible(Boolean isVisible)

@@ -189,16 +189,24 @@ public partial class BattleHUD : UIScene
             case LibraInformation.StatusAuto:
             case LibraInformation.StatusImmune:
             {
-                // TODO Make it so status sprites are displayed
-                //BattleStatus status = info == LibraInformation.StatusAuto ? unit.PermanentStatus : unit.ResistStatus;
-                //Dictionary<BattleStatusId, String> icons = info == LibraInformation.StatusAuto ? BattleHUD.BuffIconNames : BattleHUD.DebuffIconNames;
-                //foreach (BattleStatusId statusId in status.ToStatusList())
-                //    if (icons.TryGetValue(statusId, out String spriteName))
-                //        messages.Add(spriteName);
-                //if (messages.Count == 0)
-                //    return [];
-                //return [Localization.GetWithDefault(info.ToString()).Replace("%", String.Join(" ", messages.ToArray()))];
-                return [];
+                BattleStatus status = info == LibraInformation.StatusAuto ? unit.PermanentStatus : unit.ResistStatus;
+                Dictionary<BattleStatusId, String> icons = info == LibraInformation.StatusAuto ? BattleHUD.BuffIconNames : BattleHUD.DebuffIconNames;
+                foreach (BattleStatusId statusId in status.ToStatusList())
+                    if (icons.TryGetValue(statusId, out String spriteName))
+                        messages.Add($"[SPRT={spriteName},48,48]");
+                if (messages.Count == 0)
+                    return [];
+                return [Localization.GetWithDefault(info.ToString()).Replace("%", String.Join("  ", messages.ToArray()))];
+            }
+            case LibraInformation.StatusResist:
+            {
+                String spriteName;
+                foreach (KeyValuePair<BattleStatusId, Single> resist in unit.PartialResistStatus)
+                    if (resist.Value > 0f && (BattleHUD.BuffIconNames.TryGetValue(resist.Key, out spriteName) || BattleHUD.DebuffIconNames.TryGetValue(resist.Key, out spriteName)))
+                        messages.Add($"[SPRT={spriteName},48,48]  ({(Int32)Math.Min(100, resist.Value * 100)}%)");
+                if (messages.Count == 0)
+                    return [];
+                return [Localization.GetWithDefault(info.ToString()).Replace("%", String.Join(", ", messages.ToArray())) + " "];
             }
             case LibraInformation.ItemSteal:
                 if (!unit.IsPlayer)

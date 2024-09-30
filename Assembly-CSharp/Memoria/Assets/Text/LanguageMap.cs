@@ -12,6 +12,7 @@ namespace Memoria.Assets
     {
         private const String LanguageKey = "KEY";
         private const String SymbolKey = "Symbol";
+        private const String ReadingDirectionKey = "ReadingDirection";
 
         private readonly String[] _knownLanguages;
         private readonly Dictionary<String, SortedList<String, String>> _languages;
@@ -93,6 +94,7 @@ namespace Memoria.Assets
                 Log.Error($"[LocalizationDictionary] Cannot find localisation data for the language [{language}].");
             }
             _currentSymbol = Get(SymbolKey);
+            NGUIText.readingDirection = Localization.GetWithDefault(ReadingDirectionKey) == UnicodeBIDI.DIRECTION_NAME_RIGHT_TO_LEFT ? UnicodeBIDI.LanguageReadingDirection.RightToLeft : UnicodeBIDI.LanguageReadingDirection.LeftToRight;
             UIRoot.Broadcast("OnLocalize");
         }
 
@@ -139,6 +141,7 @@ namespace Memoria.Assets
 
         private void ReadText(ByteReader reader, Dictionary<Int32, String> cellLanguages, Boolean init)
         {
+            Boolean firstEntry = true;
             while (reader.canRead)
             {
                 BetterList<String> cells = reader.ReadCSV();
@@ -149,15 +152,37 @@ namespace Memoria.Assets
                 if (String.IsNullOrEmpty(key))
                     continue;
 
-                for (Int32 i = 1; i < cells.size; i++)
+                if (firstEntry && !init && key == "KEY")
                 {
-                    String value = cells[i];
-                    String language = cellLanguages[i];
-                    if (init)
-                        StoreValue(language, key, value);
-                    else
-                        _languages[language][key] = value;
+                    Dictionary<Int32, String> customLayout = new Dictionary<Int32, String>();
+                    for (Int32 i = 1; i < cells.size; i++)
+                    {
+                        String value = cells[i];
+                        foreach (String language in cellLanguages.Values)
+                        {
+                            if (_languages[language]["KEY"] == value)
+                            {
+                                customLayout.Add(i, language);
+                                break;
+                            }
+                        }
+                    }
+                    cellLanguages = customLayout;
                 }
+                else
+                {
+                    for (Int32 i = 1; i < cells.size; i++)
+                    {
+                        String value = cells[i];
+                        if (!cellLanguages.TryGetValue(i, out String language))
+                            continue;
+                        if (init)
+                            StoreValue(language, key, value);
+                        else
+                            _languages[language][key] = value;
+                    }
+                }
+                firstEntry = false;
             }
         }
 

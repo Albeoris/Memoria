@@ -572,7 +572,7 @@ namespace Memoria.Assets
             {
                 scene.name = newName;
                 scene.ReadMemoriaBGS(filePath);
-                scene.CreateMemoriaScene(fieldMapGo.transform, freeCameraMode);
+                scene.CreatePureMemoriaScene(fieldMapGo.transform, freeCameraMode);
                 ChangeCameraSelection(cameraSelection, true);
                 ChangeOverlaySelection(overlaySelection);
             }
@@ -671,7 +671,7 @@ namespace Memoria.Assets
             freeCameraMode = free;
             shouldRefreshWalkmesh = true;
             DestroyMemoriaScene();
-            scene.CreateMemoriaScene(fieldMapGo.transform, freeCameraMode);
+            scene.CreatePureMemoriaScene(fieldMapGo.transform, freeCameraMode);
             SetupDummy();
             Camera camera = GetCamera();
             cameraPosition = free ? new Vector3(0f, 0f, -10000f) : Vector3.zero;

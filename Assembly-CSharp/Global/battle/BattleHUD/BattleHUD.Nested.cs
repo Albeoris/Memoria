@@ -74,11 +74,12 @@ public partial class BattleHUD : UIScene
         AttackList = 0x800,
         StatusAuto = 0x1000,
         StatusImmune = 0x2000,
+        StatusResist = 0x4000,
 
         NameLevel = Name | Level,
         HPMP = HP | MP,
         ElementalAffinities = ElementWeak | ElementResist | ElementImmune | ElementAbsorb,
-        StatusAffinities = StatusImmune | StatusAuto,
+        StatusAffinities = StatusAuto | StatusImmune | StatusResist,
 
         Default = NameLevel | HPMP | Category | ElementWeak,
         All = NameLevel | HPMP | ElementalAffinities | StatusAffinities | Category | ItemSteal | BlueLearn | AttackList
@@ -93,6 +94,7 @@ public partial class BattleHUD : UIScene
         LibraInformation.ElementAbsorb,
         LibraInformation.StatusAuto,
         LibraInformation.StatusImmune,
+        LibraInformation.StatusResist,
         LibraInformation.ItemSteal,
         LibraInformation.BlueLearn,
         LibraInformation.AttackList

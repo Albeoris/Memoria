@@ -19,10 +19,20 @@ namespace Memoria.Assets
             return result;
         }
 
-        public static Texture2D CopyAsReadable(Texture texture)
+        public static Texture2D CopyAsReadable(Texture texture, Boolean destroyOld = false)
         {
             if (texture == null)
                 return null;
+
+            if (texture is Texture2D texture2d)
+            {
+                try
+                {
+                    Color firstPixel = texture2d.GetPixel(0, 0);
+                    return texture2d;
+                }
+                catch (Exception) {}
+            }
 
             Camera camera = Camera.main ?? GameObject.Find("FieldMap Camera")?.GetComponent<Camera>() ?? GameObject.Find("UI Camera")?.GetComponent<Camera>() ?? UICamera.mainCamera;
             RenderTexture oldTarget = camera.targetTexture;
@@ -39,6 +49,8 @@ namespace Memoria.Assets
 
                 RenderTexture.active = rt;
                 result.ReadPixels(new Rect(0, 0, texture.width, texture.height), 0, 0);
+                if (destroyOld)
+                    UnityEngine.Object.DestroyImmediate(texture);
             }
             finally
             {

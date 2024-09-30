@@ -6949,8 +6949,11 @@ public static class ff9
 
     public static void w_naviTitleElement()
     {
-        UInt32 fadeoutTime = ff9.w_naviFadeInTime + 120u;
-        UInt32 closeTime = ff9.w_naviFadeInTime + 180u;
+        UInt32[] durations = WorldConfiguration.GetTitleSpriteDurations(ff9.w_naviTitle);
+        UInt32 fadeInDuration = Math.Max(2, durations[0]);
+        UInt32 fadeOutDuration = Math.Max(1, durations[2]);
+        UInt32 fadeoutTime = ff9.w_naviFadeInTime + fadeInDuration + durations[1];
+        UInt32 closeTime = fadeoutTime + fadeOutDuration + 1u;
         ff9.w_naviLocationDraw = 0;
         if (ff9.w_frameCounterReady > ff9.w_naviFadeInTime)
             ff9.w_naviLocationDraw = ff9.WorldTitleFadeInMode;
@@ -6979,10 +6982,9 @@ public static class ff9
                 ff9.w_naviTitleColor += 4;
             if (ff9.w_naviLocationDraw != ff9.lastTitleDrawState)
             {
-                Int32 fadeInFrames = Convert.ToInt32(fadeoutTime) - ff9.w_frameCounterReady;
                 PersistenSingleton<UIManager>.Instance.WorldHUDScene.SetContinentTitleSprite(ff9.w_naviTitle);
                 PersistenSingleton<UIManager>.Instance.WorldHUDScene.EnableContinentTitle(true);
-                PersistenSingleton<UIManager>.Instance.WorldHUDScene.ShowContinentTitle(fadeInFrames);
+                PersistenSingleton<UIManager>.Instance.WorldHUDScene.ShowContinentTitle((Int32)fadeInDuration);
                 PersistenSingleton<UIManager>.Instance.WorldHUDScene.SetButtonVisible(false);
             }
         }
@@ -6991,10 +6993,7 @@ public static class ff9
             if (ff9.w_naviTitleColor != 0)
                 ff9.w_naviTitleColor -= 4;
             if (ff9.w_naviLocationDraw != ff9.lastTitleDrawState)
-            {
-                Int32 fadeOutFrames = Convert.ToInt32(closeTime) - ff9.w_frameCounterReady;
-                PersistenSingleton<UIManager>.Instance.WorldHUDScene.HideContinentTitle(fadeOutFrames);
-            }
+                PersistenSingleton<UIManager>.Instance.WorldHUDScene.HideContinentTitle((Int32)fadeOutDuration);
         }
         else if (ff9.w_naviLocationDraw == ff9.WorldTitleCloseMode)
         {

@@ -14,6 +14,7 @@ namespace Memoria.Assets
         }
 
         public static ICollection<String> KnownLanguages => Provider.KnownLanguages;
+        public static Dictionary<String, Dictionary<String, String>> DefaultDictionary => _defaultDictionary;
 
         public static String CurrentLanguage
         {
@@ -29,6 +30,17 @@ namespace Memoria.Assets
         public static String Get(String key)
         {
             return Provider.Get(key);
+        }
+
+        public static String ProcessEntryForCSVWriting(String entry)
+        {
+            entry = entry.Replace("\n", "\\n");
+            if (entry.Contains("\"") || entry.Contains(","))
+            {
+                entry = entry.Replace("\"", "\"\"");
+                entry = "\"" + entry + "\"";
+            }
+            return entry;
         }
 
         /// <summary>Might be useful in the future to base a translation mod on another language</summary>
@@ -55,6 +67,18 @@ namespace Memoria.Assets
 
         private static Dictionary<String, Dictionary<String, String>> _defaultDictionary = new Dictionary<String, Dictionary<String, String>>()
         {
+            // The base reading direction of the language
+            { "ReadingDirection", new Dictionary<String, String>()
+                {
+                    { "US", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "UK", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "JP", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "ES", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "FR", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "GR", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "IT", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT }
+                }
+            },
             // Language name in the title menu's button
             { "NameShort", new Dictionary<String, String>()
                 {
@@ -70,7 +94,13 @@ namespace Memoria.Assets
             // Gil formatiing in multiple menu
             { "GilSymbol", new Dictionary<String, String>()
                 {
-                    { "US", "%[YSUB=1.3][sub]G" }
+                    { "US", "%[YSUB=1.3][sub]G" },
+                    { "UK", "%[YSUB=1.3][sub]G" },
+                    { "JP", "%[YSUB=1.3][sub]G" },
+                    { "ES", "%[YSUB=1.3][sub]G" },
+                    { "FR", "%[YSUB=1.3][sub]G" },
+                    { "GR", "%[YSUB=1.3][sub]G" },
+                    { "IT", "%[YSUB=1.3][sub]G" }
                 }
             },
             // New options in the config menu

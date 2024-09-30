@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using XInputDotNetPure;
-using static Memoria.Assets.DataResources;
 
 namespace Assets.Sources.Scripts.UI.Common
 {
@@ -341,7 +340,7 @@ namespace Assets.Sources.Scripts.UI.Common
             if (id == FF9UIDataTool.NewIconId)
                 spriteSize = new Vector2(115f, 64f);
             else if (FF9UIDataTool.IconSpriteName.ContainsKey(id))
-                spriteSize = FF9UIDataTool.GetSpriteSize(FF9UIDataTool.IconSpriteName[id]);
+                spriteSize = FF9UIDataTool.GetSpriteSize("IconAtlas", FF9UIDataTool.IconSpriteName[id]);
             return spriteSize;
         }
 
@@ -455,12 +454,38 @@ namespace Assets.Sources.Scripts.UI.Common
             if (!checkFromConfig && (FF9StateSystem.PCPlatform || FF9StateSystem.AndroidPlatform))
                 if (!global::GamePad.GetState(PlayerIndex.One).IsConnected && key == Control.Pause)
                     spriteName = "keyboard_button_backspace";
-            return FF9UIDataTool.GetSpriteSize(spriteName);
+            return FF9UIDataTool.GetSpriteSize("IconAtlas", spriteName);
         }
 
-        private static Vector2 GetSpriteSize(String spriteName)
+        public static GameObject SpriteGameObject(String atlasName, String spriteName)
         {
-            UISpriteData sprite = FF9UIDataTool.IconAtlas.GetSprite(spriteName);
+            switch (atlasName)
+            {
+                default:
+                case "IconAtlas":         return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, spriteName);
+                case "WindowAtlas":       return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.WindowAtlas, spriteName);
+                case "GrayAtlas":         return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.GrayAtlas, spriteName);
+                case "BlueAtlas":         return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.BlueAtlas, spriteName);
+                case "GeneralAtlas":      return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.GeneralAtlas, spriteName);
+                case "ScreenButtonAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.ScreenButtonAtlas, spriteName);
+                case "TutorialAtlas":     return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.TutorialAtlas, spriteName);
+            }
+        }
+
+        public static Vector2 GetSpriteSize(String atlasName, String spriteName)
+        {
+            UISpriteData sprite;
+            switch (atlasName)
+            {
+                default:
+                case "IconAtlas":         sprite = FF9UIDataTool.IconAtlas.GetSprite(spriteName);         break;
+                case "WindowAtlas":       sprite = FF9UIDataTool.WindowAtlas.GetSprite(spriteName);       break;
+                case "GrayAtlas":         sprite = FF9UIDataTool.GrayAtlas.GetSprite(spriteName);         break;
+                case "BlueAtlas":         sprite = FF9UIDataTool.BlueAtlas.GetSprite(spriteName);         break;
+                case "GeneralAtlas":      sprite = FF9UIDataTool.GeneralAtlas.GetSprite(spriteName);      break;
+                case "ScreenButtonAtlas": sprite = FF9UIDataTool.ScreenButtonAtlas.GetSprite(spriteName); break;
+                case "TutorialAtlas":     sprite = FF9UIDataTool.TutorialAtlas.GetSprite(spriteName);     break;
+            }
             if (sprite == null)
                 return new Vector2(64f, 64f);
             return new Vector2(sprite.width + sprite.paddingLeft + sprite.paddingRight, sprite.height + sprite.paddingTop + sprite.paddingBottom);
@@ -725,12 +750,26 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static Sprite LoadWorldTitle(SByte titleId, Boolean isShadow)
         {
-            Sprite sprite = null;
-            String langSymbol;
-            if (FF9StateSystem.Settings.CurrentLanguage == "English(UK)")
-                langSymbol = "US";
+            String langSymbol = Localization.GetSymbol();
+            String spriteName = GetWorldTitleSpriteName(titleId, isShadow, langSymbol);
+            Sprite sprite;
+            if (FF9UIDataTool.worldTitleSpriteList.ContainsKey(spriteName))
+            {
+                sprite = FF9UIDataTool.worldTitleSpriteList[spriteName];
+            }
             else
-                langSymbol = Localization.GetSymbol();
+            {
+                String path = "EmbeddedAsset/UI/Sprites/" + langSymbol + "/" + spriteName;
+                sprite = AssetManager.Load<Sprite>(path, false);
+                FF9UIDataTool.worldTitleSpriteList.Add(spriteName, sprite);
+            }
+            return sprite;
+        }
+
+        public static String GetWorldTitleSpriteName(SByte titleId, Boolean isShadow, String langSymbol)
+        {
+            if (langSymbol == "UK")
+                langSymbol = "US";
             String spriteName;
             if (titleId == FF9UIDataTool.WorldTitleMistContinent)
             {
@@ -751,255 +790,87 @@ namespace Assets.Sources.Scripts.UI.Common
             else
             {
                 global::Debug.LogError("World Continent Title: Could not found resource from titleId:" + titleId);
-                return sprite;
+                return null;
             }
             spriteName += isShadow ? "_shadow_" + langSymbol.ToLower() : "_" + langSymbol.ToLower();
-            if (FF9UIDataTool.worldTitleSpriteList.ContainsKey(spriteName))
-            {
-                sprite = FF9UIDataTool.worldTitleSpriteList[spriteName];
-            }
-            else
-            {
-                String path = "EmbeddedAsset/UI/Sprites/" + langSymbol + "/" + spriteName;
-                sprite = AssetManager.Load<Sprite>(path, false);
-                FF9UIDataTool.worldTitleSpriteList.Add(spriteName, sprite);
-            }
-            return sprite;
+            return spriteName;
         }
 
         public static readonly Int32 NewIconId = 400;
 
         private static UIAtlas generalAtlas;
-
         private static UIAtlas iconAtlas;
-
         private static UIAtlas grayAtlas;
-
         private static UIAtlas blueAtlas;
-
         private static UIAtlas screenButtonAtlas;
-
         private static UIAtlas tutorialAtlas;
 
         private static GameObject controllerSpritePrefab = null;
-
         private static GameObject controllerKeyboardPrefab = null;
-
         private static GameObject newIconPrefab = null;
 
         private static List<GameObject> bitmapKeyboardPool = new List<GameObject>();
-
         private static List<GameObject> bitmapSpritePool = new List<GameObject>();
-
         private static List<GameObject> bitmapNewIconPool = new List<GameObject>();
-
         private static List<GameObject> activeBitmapKeyboardList = new List<GameObject>();
-
         private static List<GameObject> activeBitmapSpriteList = new List<GameObject>();
-
         private static List<GameObject> activeBitmapNewIconList = new List<GameObject>();
-
-        public static Int32[] status_id = new Int32[]
-        {
-            154,
-            153,
-            152,
-            151,
-            150,
-            149,
-            148
-        };
 
         private static Dictionary<String, String> buttonSpriteNameiOSJoystick = new Dictionary<String, String>
         {
-            {
-                "JoystickButton14",
-                "joystick_button_a"
-            },
-            {
-                "JoystickButton13",
-                "joystick_button_b"
-            },
-            {
-                "JoystickButton15",
-                "joystick_button_x"
-            },
-            {
-                "JoystickButton12",
-                "joystick_button_y"
-            },
-            {
-                "JoystickButton8",
-                "joystick_l1"
-            },
-            {
-                "JoystickButton9",
-                "joystick_r1"
-            },
-            {
-                "JoystickButton10",
-                "joystick_l2"
-            },
-            {
-                "JoystickButton11",
-                "joystick_r2"
-            },
-            {
-                "JoystickButton0",
-                "joystick_start"
-            },
-            {
-                "Empty",
-                "joystick_analog_r"
-            },
-            {
-                "Up",
-                "ps_dpad_up"
-            },
-            {
-                "Down",
-                "ps_dpad_down"
-            },
-            {
-                "Left",
-                "ps_dpad_left"
-            },
-            {
-                "Right",
-                "ps_dpad_right"
-            },
-            {
-                "DPad",
-                "ps_dpad"
-            }
+            { "JoystickButton14",   "joystick_button_a" },
+            { "JoystickButton13",   "joystick_button_b" },
+            { "JoystickButton15",   "joystick_button_x" },
+            { "JoystickButton12",   "joystick_button_y" },
+            { "JoystickButton8",    "joystick_l1" },
+            { "JoystickButton9",    "joystick_r1" },
+            { "JoystickButton10",   "joystick_l2" },
+            { "JoystickButton11",   "joystick_r2" },
+            { "JoystickButton0",    "joystick_start" },
+            { "Empty",              "joystick_analog_r" },
+            { "Up",                 "ps_dpad_up" },
+            { "Down",               "ps_dpad_down" },
+            { "Left",               "ps_dpad_left" },
+            { "Right",              "ps_dpad_right" },
+            { "DPad",               "ps_dpad" }
         };
 
         private static Dictionary<String, String> buttonSpriteNameAndroidJoystick = new Dictionary<String, String>
         {
-            {
-                "JoystickButton0",
-                "joystick_button_a"
-            },
-            {
-                "JoystickButton1",
-                "joystick_button_b"
-            },
-            {
-                "JoystickButton2",
-                "joystick_button_x"
-            },
-            {
-                "JoystickButton3",
-                "joystick_button_y"
-            },
-            {
-                "JoystickButton4",
-                "joystick_l1"
-            },
-            {
-                "JoystickButton5",
-                "joystick_r1"
-            },
-            {
-                "LeftTrigger Android",
-                "joystick_l2"
-            },
-            {
-                "RightTrigger Android",
-                "joystick_r2"
-            },
-            {
-                "JoystickButton10",
-                "joystick_start"
-            },
-            {
-                "Empty",
-                "joystick_analog_r"
-            },
-            {
-                "Up",
-                "ps_dpad_up"
-            },
-            {
-                "Down",
-                "ps_dpad_down"
-            },
-            {
-                "Left",
-                "ps_dpad_left"
-            },
-            {
-                "Right",
-                "ps_dpad_right"
-            },
-            {
-                "DPad",
-                "ps_dpad"
-            }
+            { "JoystickButton0",        "joystick_button_a" },
+            { "JoystickButton1",        "joystick_button_b" },
+            { "JoystickButton2",        "joystick_button_x" },
+            { "JoystickButton3",        "joystick_button_y" },
+            { "JoystickButton4",        "joystick_l1" },
+            { "JoystickButton5",        "joystick_r1" },
+            { "LeftTrigger Android",    "joystick_l2" },
+            { "RightTrigger Android",   "joystick_r2" },
+            { "JoystickButton10",       "joystick_start" },
+            { "Empty",                  "joystick_analog_r" },
+            { "Up",                     "ps_dpad_up" },
+            { "Down",                   "ps_dpad_down" },
+            { "Left",                   "ps_dpad_left" },
+            { "Right",                  "ps_dpad_right" },
+            { "DPad",                   "ps_dpad" }
         };
 
         private static Dictionary<String, String> buttonSpriteNameJoystick = new Dictionary<String, String>
         {
-            {
-                "JoystickButton0",
-                "joystick_button_a"
-            },
-            {
-                "JoystickButton1",
-                "joystick_button_b"
-            },
-            {
-                "JoystickButton2",
-                "joystick_button_x"
-            },
-            {
-                "JoystickButton3",
-                "joystick_button_y"
-            },
-            {
-                "JoystickButton4",
-                "joystick_l1"
-            },
-            {
-                "JoystickButton5",
-                "joystick_r1"
-            },
-            {
-                "LeftTrigger",
-                "joystick_l2"
-            },
-            {
-                "RightTrigger",
-                "joystick_r2"
-            },
-            {
-                "JoystickButton6",
-                "joystick_start"
-            },
-            {
-                "JoystickButton7",
-                "joystick_select"
-            },
-            {
-                "Up",
-                "ps_dpad_up"
-            },
-            {
-                "Down",
-                "ps_dpad_down"
-            },
-            {
-                "Left",
-                "ps_dpad_left"
-            },
-            {
-                "Right",
-                "ps_dpad_right"
-            },
-            {
-                "DPad",
-                "ps_dpad"
-            }
+            { "JoystickButton0",    "joystick_button_a" },
+            { "JoystickButton1",    "joystick_button_b" },
+            { "JoystickButton2",    "joystick_button_x" },
+            { "JoystickButton3",    "joystick_button_y" },
+            { "JoystickButton4",    "joystick_l1" },
+            { "JoystickButton5",    "joystick_r1" },
+            { "LeftTrigger",        "joystick_l2" },
+            { "RightTrigger",       "joystick_r2" },
+            { "JoystickButton6",    "joystick_start" },
+            { "JoystickButton7",    "joystick_select" },
+            { "Up",                 "ps_dpad_up" },
+            { "Down",               "ps_dpad_down" },
+            { "Left",               "ps_dpad_left" },
+            { "Right",              "ps_dpad_right" },
+            { "DPad",               "ps_dpad" }
         };
 
         public static readonly Dictionary<Int32, String> IconSpriteName = new Dictionary<Int32, String>
@@ -1502,30 +1373,12 @@ namespace Assets.Sources.Scripts.UI.Common
 
         private static readonly Dictionary<String, String> iconLocalizeList = new Dictionary<String, String>
         {
-            {
-                "keyboard_button_enter#French",
-                "keyboard_button_enter_fr_gr"
-            },
-            {
-                "keyboard_button_enter#German",
-                "keyboard_button_enter_fr_gr"
-            },
-            {
-                "keyboard_button_enter#Italian",
-                "keyboard_button_enter_it"
-            },
-            {
-                "keyboard_button_backspace#French",
-                "keyboard_button_backspace_fr_gr_it"
-            },
-            {
-                "keyboard_button_backspace#German",
-                "keyboard_button_backspace_fr_gr_it"
-            },
-            {
-                "keyboard_button_backspace#Italian",
-                "keyboard_button_backspace_fr_gr_it"
-            }
+            { "keyboard_button_enter#French",       "keyboard_button_enter_fr_gr" },
+            { "keyboard_button_enter#German",       "keyboard_button_enter_fr_gr" },
+            { "keyboard_button_enter#Italian",      "keyboard_button_enter_it" },
+            { "keyboard_button_backspace#French",   "keyboard_button_backspace_fr_gr_it" },
+            { "keyboard_button_backspace#German",   "keyboard_button_backspace_fr_gr_it" },
+            { "keyboard_button_backspace#Italian",  "keyboard_button_backspace_fr_gr_it" }
         };
     }
 }

@@ -107,7 +107,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static IEnumerator InitializeCharacterNamesText()
         {
-            Log.Message(nameof(InitializeEtcText));
+            Log.Message(nameof(InitializeCharacterNamesText));
             return InitializeCharacterNamesTextInternal().GetEnumerator();
         }
 
@@ -352,9 +352,7 @@ namespace Assets.Sources.Scripts.UI.Common
             yield return base.StartCoroutine(FF9TextTool.InitializeEtcText());
             yield return base.StartCoroutine(FF9TextTool.InitializeCharacterNamesText());
             if (setMenuLanguageCallback != null)
-            {
                 setMenuLanguageCallback();
-            }
             yield break;
         }
 
@@ -366,12 +364,24 @@ namespace Assets.Sources.Scripts.UI.Common
             yield break;
         }
 
+        public Boolean UpdateFieldTextNow(Int32 _zoneId)
+        {
+            FF9TextTool.fieldZoneId = _zoneId;
+            return FF9TextTool.FieldImporter.LoadSync();
+        }
+
         public IEnumerator UpdateBattleText(Int32 _zoneId)
         {
             FF9TextTool.battleZoneId = _zoneId;
             PersistenSingleton<UIManager>.Instance.SetEventEnable(false);
             yield return base.StartCoroutine(FF9TextTool.InitializeBattleText());
             yield break;
+        }
+
+        public Boolean UpdateBattleTextNow(Int32 _zoneId)
+        {
+            FF9TextTool.battleZoneId = _zoneId;
+            return FF9TextTool.BattleImporter.LoadSync();
         }
 
         public static String ItemName(RegularItem id)
@@ -526,43 +536,40 @@ namespace Assets.Sources.Scripts.UI.Common
         public static event Action FieldTextUpdated;
 
         private static Int32 fieldZoneId = -1;
-
         private static Int32 battleZoneId = -1;
+        public static String[] fieldText;
+        public static String[] battleText;
 
-        private static String[] fieldText;
+        public static Dictionary<RegularItem, String> itemName = new Dictionary<RegularItem, String>();
+        public static Dictionary<RegularItem, String> itemBattleDesc = new Dictionary<RegularItem, String>();
+        public static Dictionary<RegularItem, String> itemHelpDesc = new Dictionary<RegularItem, String>();
 
-        private static String[] battleText;
+        public static Dictionary<Int32, String> importantSkinDesc = new Dictionary<Int32, String>();
+        public static Dictionary<Int32, String> importantItemHelpDesc = new Dictionary<Int32, String>();
+        public static Dictionary<Int32, String> importantItemName = new Dictionary<Int32, String>();
 
-        private static Dictionary<RegularItem, String> itemName = new Dictionary<RegularItem, String>();
-        private static Dictionary<RegularItem, String> itemBattleDesc = new Dictionary<RegularItem, String>();
-        private static Dictionary<RegularItem, String> itemHelpDesc = new Dictionary<RegularItem, String>();
+        public static Dictionary<SupportAbility, String> supportAbilityHelpDesc = new Dictionary<SupportAbility, String>();
+        public static Dictionary<SupportAbility, String> supportAbilityName = new Dictionary<SupportAbility, String>();
 
-        private static Dictionary<Int32, String> importantSkinDesc = new Dictionary<Int32, String>();
-        private static Dictionary<Int32, String> importantItemHelpDesc = new Dictionary<Int32, String>();
-        private static Dictionary<Int32, String> importantItemName = new Dictionary<Int32, String>();
+        public static Dictionary<BattleAbilityId, String> actionAbilityName = new Dictionary<BattleAbilityId, String>();
+        public static Dictionary<BattleAbilityId, String> actionAbilityHelpDesc = new Dictionary<BattleAbilityId, String>();
 
-        private static Dictionary<SupportAbility, String> supportAbilityHelpDesc = new Dictionary<SupportAbility, String>();
-        private static Dictionary<SupportAbility, String> supportAbilityName = new Dictionary<SupportAbility, String>();
+        public static Dictionary<CharacterId, String> characterNames;
 
-        private static Dictionary<BattleAbilityId, String> actionAbilityName = new Dictionary<BattleAbilityId, String>();
-        private static Dictionary<BattleAbilityId, String> actionAbilityHelpDesc = new Dictionary<BattleAbilityId, String>();
+        public static Dictionary<BattleCommandId, String> commandName = new Dictionary<BattleCommandId, String>();
+        public static Dictionary<BattleCommandId, String> commandHelpDesc = new Dictionary<BattleCommandId, String>();
 
-        private static Dictionary<CharacterId, String> characterNames;
-
-        private static Dictionary<BattleCommandId, String> commandName = new Dictionary<BattleCommandId, String>();
-        private static Dictionary<BattleCommandId, String> commandHelpDesc = new Dictionary<BattleCommandId, String>();
-
-        private static Dictionary<TetraMasterCardId, String> cardName = new Dictionary<TetraMasterCardId, String>();
-        private static String[] chocoUIText;
-        private static String[] cardLvName;
-        private static String[] followText;
-        private static String[] cmdTitleText;
-        private static String[] libraText;
-        private static String[] worldLocationText;
+        public static Dictionary<TetraMasterCardId, String> cardName = new Dictionary<TetraMasterCardId, String>();
+        public static String[] chocoUIText;
+        public static String[] cardLvName;
+        public static String[] followText;
+        public static String[] cmdTitleText;
+        public static String[] libraText;
+        public static String[] worldLocationText;
 
         private static String[][] tableText;
 
-        private static Dictionary<Int32, String> locationName = new Dictionary<Int32, String>();
+        public static Dictionary<Int32, String> locationName = new Dictionary<Int32, String>();
 
         public static Boolean IsLoading = false;
         public static Byte ChocographNameStartIndex = 10;
