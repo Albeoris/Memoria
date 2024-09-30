@@ -14,6 +14,7 @@ using MessageBox = System.Windows.MessageBox;
 using System.Collections;
 using System.Windows.Media.Imaging;
 using System.Windows.Media.Effects;
+using System.Windows.Input;
 namespace Memoria.Launcher
 {
     public class UiGrid : Grid
@@ -159,11 +160,13 @@ namespace Memoria.Launcher
                     ToolTipService.SetToolTip(uiElement, toolTip);
                     ToolTipService.SetInitialShowDelay(uiElement, 0);
                     toolTip.IsOpen = true;
+                    if (uiElement.IsMouseOver) Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/Images/moogle.cur")).Stream);
                 };
                 uiElement.MouseLeave += (sender, e) =>
                 {
                     toolTip.IsOpen = false; // Force close the tooltip when the mouse leaves the element
                     ToolTipService.SetToolTip(uiElement, null);
+                    if (!uiElement.IsMouseOver) Mouse.OverrideCursor = null;
                 };
             }
         }
