@@ -16,7 +16,7 @@ namespace Memoria.Launcher
             Margin = new Thickness(0);
             DataContext = this;
         }
-        #region Properties
+        #region Prop checkbox
 
         private readonly String _iniPath = @"./Memoria.ini";
 
@@ -33,6 +33,282 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _antialiasing;
+        public Int16 AntiAliasing
+        {
+            get { return _antialiasing; }
+            set
+            {
+                if (_antialiasing != value)
+                {
+                    _antialiasing = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _isskipintros;
+        public Int16 SkipIntros
+        {
+            get { return _isskipintros; }
+            set
+            {
+                if (_isskipintros != value)
+                {
+                    _isskipintros = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _battleswirlframes;
+        public Int16 BattleSwirlFrames
+        {
+            get { return _battleswirlframes; }
+            set
+            {
+                if (_battleswirlframes != value)
+                {
+                    _battleswirlframes = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _maxcardcount;
+        public Int16 MaxCardCount
+        {
+            get { return _maxcardcount; }
+            set
+            {
+                if (_maxcardcount != value)
+                {
+                    _maxcardcount = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _ishidecards;
+        public Int16 HideCards
+        {
+            get { return _ishidecards; }
+            set
+            {
+                if (_ishidecards != value)
+                {
+                    _ishidecards = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _worldmapboost;
+        public Int16 WorldmapBoost
+        {
+            get { return _worldmapboost; }
+            set
+            {
+                if (_worldmapboost != value)
+                {
+                    _worldmapboost = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _worldmapshiptilt;
+        public Int16 WorldmapShipTilt
+        {
+            get { return _worldmapshiptilt; }
+            set
+            {
+                if (_worldmapshiptilt != value)
+                {
+                    _worldmapshiptilt = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _stealingalwaysworks;
+        public Int16 StealingAlwaysWorks
+        {
+            get { return _stealingalwaysworks; }
+            set
+            {
+                if (_stealingalwaysworks != value)
+                {
+                    _stealingalwaysworks = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _noautotrance;
+        public Int16 NoAutoTrance
+        {
+            get { return _noautotrance; }
+            set
+            {
+                if (_noautotrance != value)
+                {
+                    _noautotrance = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _viviautoattack;
+        public Int16 ViviAutoAttack
+        {
+            get { return _viviautoattack; }
+            set
+            {
+                if (_viviautoattack != value)
+                {
+                    _viviautoattack = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _breakDamageLimit;
+        public Int16 BreakDamageLimit
+        {
+            get { return _breakDamageLimit; }
+            set
+            {
+                if (_breakDamageLimit != value)
+                {
+                    _breakDamageLimit = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _accessbattlemenutoggle;
+        public Int16 AccessBattleMenuToggle
+        {
+            get { return _accessbattlemenutoggle; }
+            set
+            {
+                if (_accessbattlemenutoggle != value)
+                {
+                    _accessbattlemenutoggle = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _garnetconcentrate;
+        public Int16 GarnetConcentrate
+        {
+            get { return _garnetconcentrate; }
+            set
+            {
+                if (_garnetconcentrate != value)
+                {
+                    _garnetconcentrate = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _speedmode;
+        public Int16 SpeedMode
+        {
+            get { return _speedmode; }
+            set
+            {
+                if (_speedmode != value)
+                {
+                    _speedmode = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _battleassistance;
+        public Int16 BattleAssistance
+        {
+            get { return _battleassistance; }
+            set
+            {
+                if (_battleassistance != value)
+                {
+                    _battleassistance = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _attack9999;
+        public Int16 Attack9999
+        {
+            get { return _attack9999; }
+            set
+            {
+                if (_attack9999 != value)
+                {
+                    _attack9999 = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _norandomencounter;
+        public Int16 NoRandomEncounter
+        {
+            get { return _norandomencounter; }
+            set
+            {
+                if (_norandomencounter != value)
+                {
+                    _norandomencounter = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _masterskill;
+        public Int16 MasterSkill
+        {
+            get { return _masterskill; }
+            set
+            {
+                if (_masterskill != value)
+                {
+                    _masterskill = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _easytetramaster;
+        public Int16 EasyTetraMaster
+        {
+            get { return _easytetramaster; }
+            set
+            {
+                if (_easytetramaster != value)
+                {
+                    _easytetramaster = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _excaliburiinotimelimit;
+        public Int16 ExcaliburIINoTimeLimit
+        {
+            get { return _excaliburiinotimelimit; }
+            set
+            {
+                if (_excaliburiinotimelimit != value)
+                {
+                    _excaliburiinotimelimit = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _easyjumpropeminigame;
+        public Int16 EasyJumpRopeMinigame
+        {
+            get { return _easyjumpropeminigame; }
+            set
+            {
+                if (_easyjumpropeminigame != value)
+                {
+                    _easyjumpropeminigame = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        #endregion
+
+        #region Prop sliders
         private Int16 _camerastabilizer;
         public Int16 CameraStabilizer
         {
@@ -46,6 +322,58 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _battletpsfactor;
+        public Int16 BattleTPS
+        {
+            get { return _battletpsfactor; }
+            set
+            {
+                if (_battletpsfactor != value)
+                {
+                    _battletpsfactor = value;
+                    BattleTPSDividedBy10 = (float)Math.Round((double)value / 15, 2);
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public Single BattleTPSDividedBy10
+        {
+            get { return (float)Math.Round((double)BattleTPS / 15, 2); }
+            set
+            {
+                OnPropertyChanged();
+            }
+        }
+        private Int16 _worldmapfov;
+        public Int16 WorldmapFOV
+        {
+            get { return _worldmapfov; }
+            set
+            {
+                if (_worldmapfov != value)
+                {
+                    _worldmapfov = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _speedfactor;
+        public Int16 SpeedFactor
+        {
+            get { return _speedfactor; }
+            set
+            {
+                if (_speedfactor != value)
+                {
+                    _speedfactor = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        #endregion
+
+        #region Prop other
+
         private Int16 _battleInterface;
         public Int16 BattleInterface
         {
@@ -159,58 +487,6 @@ namespace Memoria.Launcher
                 }
             }
         }
-        private Int16 _isskipintros;
-        public Int16 SkipIntros
-        {
-            get { return _isskipintros; }
-            set
-            {
-                if (_isskipintros != value)
-                {
-                    _isskipintros = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _battleswirlframes;
-        public Int16 BattleSwirlFrames
-        {
-            get { return _battleswirlframes; }
-            set
-            {
-                if (_battleswirlframes != value)
-                {
-                    _battleswirlframes = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _antialiasing;
-        public Int16 AntiAliasing
-        {
-            get { return _antialiasing; }
-            set
-            {
-                if (_antialiasing != value)
-                {
-                    _antialiasing = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _ishidecards;
-        public Int16 HideCards
-        {
-            get { return _ishidecards; }
-            set
-            {
-                if (_ishidecards != value)
-                {
-                    _ishidecards = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
         private Int16 _atbmodechoice;
         public Int16 ATBModeChoice
         {
@@ -266,198 +542,7 @@ namespace Memoria.Launcher
         }
         protected String _fontDefaultPC = "Final Fantasy IX PC";
         protected String _fontDefaultPSX = "Final Fantasy IX PSX";
-        private Int16 _stealingalwaysworks;
-        public Int16 StealingAlwaysWorks
-        {
-            get { return _stealingalwaysworks; }
-            set
-            {
-                if (_stealingalwaysworks != value)
-                {
-                    _stealingalwaysworks = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _noautotrance;
-        public Int16 NoAutoTrance
-        {
-            get { return _noautotrance; }
-            set
-            {
-                if (_noautotrance != value)
-                {
-                    _noautotrance = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _garnetconcentrate;
-        public Int16 GarnetConcentrate
-        {
-            get { return _garnetconcentrate; }
-            set
-            {
-                if (_garnetconcentrate != value)
-                {
-                    _garnetconcentrate = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _breakDamageLimit;
-        public Int16 BreakDamageLimit
-        {
-            get { return _breakDamageLimit; }
-            set
-            {
-                if (_breakDamageLimit != value)
-                {
-                    _breakDamageLimit = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
 
-        private Int16 _accessbattlemenutoggle;
-        public Int16 AccessBattleMenuToggle
-        {
-            get { return _accessbattlemenutoggle; }
-            set
-            {
-                if (_accessbattlemenutoggle != value)
-                {
-                    _accessbattlemenutoggle = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _speedmode;
-        public Int16 SpeedMode
-        {
-            get { return _speedmode; }
-            set
-            {
-                if (_speedmode != value)
-                {
-                    _speedmode = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _speedfactor;
-        public Int16 SpeedFactor
-        {
-            get { return _speedfactor; }
-            set
-            {
-                if (_speedfactor != value)
-                {
-                    _speedfactor = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _battletpsfactor;
-        public Int16 BattleTPS
-        {
-            get { return _battletpsfactor; }
-            set
-            {
-                if (_battletpsfactor != value)
-                {
-                    _battletpsfactor = value;
-                    BattleTPSDividedBy10 = (float)Math.Round((double)value / 15, 2);
-                    OnPropertyChanged();
-                }
-            }
-        }
-        public Single BattleTPSDividedBy10
-        {
-            get { return (float)Math.Round((double)BattleTPS / 15, 2); }
-            set
-            {
-                OnPropertyChanged();
-            }
-        }
-        private Int16 _battleassistance;
-        public Int16 BattleAssistance
-        {
-            get { return _battleassistance; }
-            set
-            {
-                if (_battleassistance != value)
-                {
-                    _battleassistance = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _attack9999;
-        public Int16 Attack9999
-        {
-            get { return _attack9999; }
-            set
-            {
-                if (_attack9999 != value)
-                {
-                    _attack9999 = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _norandomencounter;
-        public Int16 NoRandomEncounter
-        {
-            get { return _norandomencounter; }
-            set
-            {
-                if (_norandomencounter != value)
-                {
-                    _norandomencounter = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _masterskill;
-        public Int16 MasterSkill
-        {
-            get { return _masterskill; }
-            set
-            {
-                if (_masterskill != value)
-                {
-                    _masterskill = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _maxcardcount;
-        public Int16 MaxCardCount
-        {
-            get { return _maxcardcount; }
-            set
-            {
-                if (_maxcardcount != value)
-                {
-                    _maxcardcount = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _easytetramaster;
-        public Int16 EasyTetraMaster
-        {
-            get { return _easytetramaster; }
-            set
-            {
-                if (_easytetramaster != value)
-                {
-                    _easytetramaster = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
         private Int16 _worldmapmistpreset;
         public Int16 WorldmapMistPreset
         {
@@ -484,129 +569,49 @@ namespace Memoria.Launcher
                 }
             }
         }
-        private Int16 _worldmapfov;
-        public Int16 WorldmapFOV
-        {
-            get { return _worldmapfov; }
-            set
-            {
-                if (_worldmapfov != value)
-                {
-                    _worldmapfov = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _worldmapboost;
-        public Int16 WorldmapBoost
-        {
-            get { return _worldmapboost; }
-            set
-            {
-                if (_worldmapboost != value)
-                {
-                    _worldmapboost = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _worldmapshiptilt;
-        public Int16 WorldmapShipTilt
-        {
-            get { return _worldmapshiptilt; }
-            set
-            {
-                if (_worldmapshiptilt != value)
-                {
-                    _worldmapshiptilt = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _viviautoattack;
-        public Int16 ViviAutoAttack
-        {
-            get { return _viviautoattack; }
-            set
-            {
-                if (_viviautoattack != value)
-                {
-                    _viviautoattack = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        private Int16 _excaliburiinotimelimit;
-        public Int16 ExcaliburIINoTimeLimit
-        {
-            get { return _excaliburiinotimelimit; }
-            set
-            {
-                if (_excaliburiinotimelimit != value)
-                {
-                    _excaliburiinotimelimit = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
-        private Int16 _easyjumpropeminigame;
-        public Int16 EasyJumpRopeMinigame
-        {
-            get { return _easyjumpropeminigame; }
-            set
-            {
-                if (_easyjumpropeminigame != value)
-                {
-                    _easyjumpropeminigame = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-
         #endregion
 
         #region Simple settings list
         public readonly Object[][] SettingsList =
         {
-            // variable, _variable, variable_ini, category_ini, //[0 -> ?], [1 -> ?]
+            // Variable, _variable, variable_ini, category_ini, [0 -> ?], [1 -> ?], default value
             
             // Checkboxes
-            ["WidescreenSupport", "WidescreenSupport", "Graphics", 0, 1],
-            ["AntiAliasing", "AntiAliasing", "Graphics", 0, 1],
-            ["SkipIntros", "SkipIntros", "Graphics", 0, 3],
-            ["BattleSwirlFrames", "BattleSwirlFrames", "Graphics", 70, 0],
-            ["MaxCardCount", "MaxCardCount", "TetraMaster", 100, 1000],
-            ["HideCards", "HideCards", "Icons", 0, 1],
-            ["HideCards", "HideBeach", "Icons", 0, 1],
-            ["HideCards", "HideSteam", "Icons", 0, 1],
-            ["WorldmapBoost", "FieldOfViewSpeedBoost", "Worldmap", 0, 100],
-            ["WorldmapShipTilt", "CameraTiltShip", "Worldmap", 0, 100],
+            ["WidescreenSupport", "_iswidescreensupport", "WidescreenSupport", "Graphics", 0, 1],
+            ["AntiAliasing", "_antialiasing", "AntiAliasing", "Graphics", 0, 1],
+            ["SkipIntros", "_isskipintros", "SkipIntros", "Graphics", 0, 3],
+            ["BattleSwirlFrames", "_battleswirlframes", "BattleSwirlFrames", "Graphics", 70, 0],
+            ["MaxCardCount", "_maxcardcount", "MaxCardCount", "TetraMaster", 100, 1000],
+            ["HideCards", "_ishidecards", "HideCards", "Icons", 0, 1],
+            ["HideCards", "_ishidecards", "HideBeach", "Icons", 0, 1],
+            ["HideCards", "_ishidecards", "HideSteam", "Icons", 0, 1],
+            ["WorldmapBoost", "_worldmapboost", "FieldOfViewSpeedBoost", "Worldmap", 0, 100],
+            ["WorldmapShipTilt", "_worldmapshiptilt", "CameraTiltShip", "Worldmap", 0, 100],
 
-            ["StealingAlwaysWorks", "StealingAlwaysWorks", "Hacks", 0, 2],
-            ["NoAutoTrance", "NoAutoTrance", "Battle", 0, 1],
-            ["ViviAutoAttack", "ViviAutoAttack", "Battle", 0, 1],
-            ["BreakDamageLimit", "BreakDamageLimit", "Battle", 0, 1],
-            ["AccessBattleMenuToggle", "AccessMenus", "Battle", 0, 3],
-            ["GarnetConcentrate", "GarnetConcentrate", "Battle", 0, 1],
+            ["StealingAlwaysWorks", "_stealingalwaysworks", "StealingAlwaysWorks", "Hacks", 0, 2],
+            ["NoAutoTrance", "_noautotrance", "NoAutoTrance", "Battle", 0, 1],
+            ["ViviAutoAttack", "_viviautoattack", "ViviAutoAttack", "Battle", 0, 1],
+            ["BreakDamageLimit", "_breakDamageLimit", "BreakDamageLimit", "Battle", 0, 1],
+            ["AccessBattleMenuToggle", "_accessbattlemenutoggle", "AccessMenus", "Battle", 0, 3],
+            ["GarnetConcentrate", "_garnetconcentrate", "GarnetConcentrate", "Battle", 0, 1],
 
-            ["SpeedMode", "SpeedMode", "Cheats", 0, 1],
-            ["BattleAssistance", "BattleAssistance", "Cheats", 0, 1],
-            ["Attack9999", "Attack9999", "Cheats", 0, 1],
-            ["NoRandomEncounter", "NoRandomEncounter", "Cheats", 0, 1],
-            ["MasterSkill", "MasterSkill", "Cheats", 0, 1],
-            ["MasterSkill", "LvMax", "Cheats", 0, 1],
-            ["MasterSkill", "GilMax", "Cheats", 0, 1],
+            ["SpeedMode", "_speedmode", "SpeedMode", "Cheats", 0, 1],
+            ["BattleAssistance", "_battleassistance", "BattleAssistance", "Cheats", 0, 1],
+            ["Attack9999", "_attack9999", "Attack9999", "Cheats", 0, 1],
+            ["NoRandomEncounter", "_norandomencounter", "NoRandomEncounter", "Cheats", 0, 1],
+            ["MasterSkill", "_masterskill", "MasterSkill", "Cheats", 0, 1],
+            ["MasterSkill", "_masterskill", "LvMax", "Cheats", 0, 1],
+            ["MasterSkill", "_masterskill", "GilMax", "Cheats", 0, 1],
 
-            ["EasyTetraMaster", "EasyWin", "TetraMaster", 0, 1],
-            ["ExcaliburIINoTimeLimit", "ExcaliburIINoTimeLimit", "Hacks", 0, 1],
-            ["EasyJumpRopeMinigame", "RopeJumpingIncrement", "Hacks", 1, 1000],
+            ["EasyTetraMaster", "_easytetramaster", "EasyWin", "TetraMaster", 0, 1],
+            ["ExcaliburIINoTimeLimit", "_excaliburiinotimelimit", "ExcaliburIINoTimeLimit", "Hacks", 0, 1],
+            ["EasyJumpRopeMinigame", "_easyjumpropeminigame", "RopeJumpingIncrement", "Hacks", 1, 1000],
 
             // Sliders
-            ["CameraStabilizer", "CameraStabilizer", "Graphics", 0, 1],
-            ["BattleTPS", "BattleTPS", "Graphics", 0, 1],
-            ["WorldmapFOV", "FieldOfView", "Worldmap", 0, 1],
-            ["SpeedFactor", "SpeedFactor", "Cheats", 0, 1],
+            ["CameraStabilizer", "_camerastabilizer", "CameraStabilizer", "Graphics", 0, 1],
+            ["BattleTPS", "_battletpsfactor", "BattleTPS", "Graphics", 0, 1],
+            ["WorldmapFOV", "_worldmapfov", "FieldOfView", "Worldmap", 0, 1],
+            ["SpeedFactor", "_speedfactor", "SpeedFactor", "Cheats", 0, 1],
         };
         #endregion
 
@@ -621,7 +626,7 @@ namespace Memoria.Launcher
                 IniFile iniFile = new IniFile(_iniPath);
 
                 foreach (Object[] item in SettingsList) {
-                    if (item[0] is String property && property == propertyName && item[1] is String name_ini && item[2] is String category && item[3] is Int32 valueZero && item[4] is Int32 valueOne) //  
+                    if (item[0] is String property && property == propertyName && item[2] is String name_ini && item[3] is String category && item[4] is Int32 valueZero && item[5] is Int32 valueOne) //  
                     {
                         Object propValue = this.GetType().GetProperty(property)?.GetValue(this);
                         //MessageBox.Show($"{propValue}", "debug", MessageBoxButtons.OK);
