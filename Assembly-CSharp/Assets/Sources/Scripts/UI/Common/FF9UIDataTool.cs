@@ -750,12 +750,26 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static Sprite LoadWorldTitle(SByte titleId, Boolean isShadow)
         {
-            Sprite sprite = null;
-            String langSymbol;
-            if (FF9StateSystem.Settings.CurrentLanguage == "English(UK)")
-                langSymbol = "US";
+            String langSymbol = Localization.GetSymbol();
+            String spriteName = GetWorldTitleSpriteName(titleId, isShadow, langSymbol);
+            Sprite sprite;
+            if (FF9UIDataTool.worldTitleSpriteList.ContainsKey(spriteName))
+            {
+                sprite = FF9UIDataTool.worldTitleSpriteList[spriteName];
+            }
             else
-                langSymbol = Localization.GetSymbol();
+            {
+                String path = "EmbeddedAsset/UI/Sprites/" + langSymbol + "/" + spriteName;
+                sprite = AssetManager.Load<Sprite>(path, false);
+                FF9UIDataTool.worldTitleSpriteList.Add(spriteName, sprite);
+            }
+            return sprite;
+        }
+
+        public static String GetWorldTitleSpriteName(SByte titleId, Boolean isShadow, String langSymbol)
+        {
+            if (langSymbol == "UK")
+                langSymbol = "US";
             String spriteName;
             if (titleId == FF9UIDataTool.WorldTitleMistContinent)
             {
@@ -776,20 +790,10 @@ namespace Assets.Sources.Scripts.UI.Common
             else
             {
                 global::Debug.LogError("World Continent Title: Could not found resource from titleId:" + titleId);
-                return sprite;
+                return null;
             }
             spriteName += isShadow ? "_shadow_" + langSymbol.ToLower() : "_" + langSymbol.ToLower();
-            if (FF9UIDataTool.worldTitleSpriteList.ContainsKey(spriteName))
-            {
-                sprite = FF9UIDataTool.worldTitleSpriteList[spriteName];
-            }
-            else
-            {
-                String path = "EmbeddedAsset/UI/Sprites/" + langSymbol + "/" + spriteName;
-                sprite = AssetManager.Load<Sprite>(path, false);
-                FF9UIDataTool.worldTitleSpriteList.Add(spriteName, sprite);
-            }
-            return sprite;
+            return spriteName;
         }
 
         public static readonly Int32 NewIconId = 400;

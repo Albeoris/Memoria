@@ -141,9 +141,10 @@ namespace Memoria.Assets
 
         private void ReadText(ByteReader reader, Dictionary<Int32, String> cellLanguages, Boolean init)
         {
+            Boolean firstEntry = true;
             while (reader.canRead)
             {
-                BetterList<String> cells = reader.ReadCSV(); // TODO: change to allow [OPCODES=0,0] with commas
+                BetterList<String> cells = reader.ReadCSV();
                 if (cells == null || cells.size < 2)
                     continue;
 
@@ -151,15 +152,37 @@ namespace Memoria.Assets
                 if (String.IsNullOrEmpty(key))
                     continue;
 
-                for (Int32 i = 1; i < cells.size; i++)
+                if (firstEntry && !init && key == "KEY")
                 {
-                    String value = cells[i];
-                    String language = cellLanguages[i];
-                    if (init)
-                        StoreValue(language, key, value);
-                    else
-                        _languages[language][key] = value;
+                    Dictionary<Int32, String> customLayout = new Dictionary<Int32, String>();
+                    for (Int32 i = 1; i < cells.size; i++)
+                    {
+                        String value = cells[i];
+                        foreach (String language in cellLanguages.Values)
+                        {
+                            if (_languages[language]["KEY"] == value)
+                            {
+                                customLayout.Add(i, language);
+                                break;
+                            }
+                        }
+                    }
+                    cellLanguages = customLayout;
                 }
+                else
+                {
+                    for (Int32 i = 1; i < cells.size; i++)
+                    {
+                        String value = cells[i];
+                        if (!cellLanguages.TryGetValue(i, out String language))
+                            continue;
+                        if (init)
+                            StoreValue(language, key, value);
+                        else
+                            _languages[language][key] = value;
+                    }
+                }
+                firstEntry = false;
             }
         }
 

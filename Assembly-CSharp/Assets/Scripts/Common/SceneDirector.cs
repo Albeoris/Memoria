@@ -1,9 +1,9 @@
-﻿using Assets.Sources.Scripts.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Prime;
 using Memoria.Speedrun;
-using SiliconStudio;
+using Memoria.Prime.Threading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -771,8 +771,22 @@ namespace Assets.Scripts.Common
         {
             if (Interlocked.CompareExchange(ref _initialized, 1, 0) == 0)
             {
-                ResourceExporter.ExportSafe();
-                ResourceImporter.Initialize();
+                if (Configuration.Import.Enabled && Configuration.Export.Enabled)
+                {
+                    Thread importerThread = new Thread(ResourceImporter.Initialize);
+                    importerThread.Start();
+                    while (importerThread.ThreadState == ThreadState.Running || (FF9TextTool.BattleImporter.InitializationTask != null && FF9TextTool.BattleImporter.InitializationTask.State == TaskState.Running) || (FF9TextTool.FieldImporter.InitializationTask != null && FF9TextTool.FieldImporter.InitializationTask.State == TaskState.Running))
+                        Thread.Sleep(100);
+                    ResourceExporter.ExportSafe();
+                }
+                else if (Configuration.Import.Enabled)
+                {
+                    ResourceImporter.Initialize();
+                }
+                else if (Configuration.Export.Enabled)
+                {
+                    ResourceExporter.ExportSafe();
+                }
             }
         }
     }

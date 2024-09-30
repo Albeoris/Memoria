@@ -196,7 +196,7 @@ public partial class BattleHUD : UIScene
                         messages.Add($"[SPRT={spriteName},48,48]");
                 if (messages.Count == 0)
                     return [];
-                return [Localization.GetWithDefault(info.ToString()).Replace("%", String.Join("  ", messages.ToArray())) + " "];
+                return [Localization.GetWithDefault(info.ToString()).Replace("%", String.Join("  ", messages.ToArray()))];
             }
             case LibraInformation.StatusResist:
             {

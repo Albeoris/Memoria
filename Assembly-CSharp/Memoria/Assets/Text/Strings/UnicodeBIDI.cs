@@ -9,7 +9,7 @@ namespace Memoria.Assets
     //  https://www.w3.org/International/articles/inline-bidi-markup/uba-basics (summary of the BIDI algorithm)
     //  https://www.unicode.org/reports/tr44/ (overall Unicode database algorithms)
     //  https://www.unicode.org/reports/tr9/ (BIDI algorithm)
-    //  https://www.unicode.org/versions/Unicode10.0.0/ch09.pdf#G28212 (Character joinings and ligatures algorithm)
+    //  https://www.unicode.org/versions/Unicode15.0.0/ch09.pdf#G26848 (Character joinings and ligatures algorithm)
     // Databases:
     //  https://www.unicode.org/Public/16.0.0/ucd/extracted/DerivedBidiClass.txt (BIDI classes)
     //  https://www.unicode.org/Public/16.0.0/ucd/BidiMirroring.txt (BIDI characters to be mirrored in RTL)
@@ -29,6 +29,7 @@ namespace Memoria.Assets
             FullText = text;
             Int32 textLength = text.Length;
             Int32 index = 0;
+            Int32 closeIndex = 0;
             Int32 isolateCount = 0;
             Int32 overrideCount = 0;
             DirectionalStatus currentState = new DirectionalStatus
@@ -117,7 +118,7 @@ namespace Memoria.Assets
                         else
                         {
                             while (!currentState.isIsolate && !currentState.isOverride && !currentState.ltr && currentState.parent != null)
-                                DirectionalStatus.Pop(ref currentState, index);
+                                DirectionalStatus.Pop(ref currentState, closeIndex);
                             if (!currentState.ltr)
                                 DirectionalStatus.Push(ref currentState, index, true, OVERRIDE_STATUS_LTR, false, false);
                         }
@@ -132,7 +133,7 @@ namespace Memoria.Assets
                         else
                         {
                             while (!currentState.isIsolate && !currentState.isOverride && currentState.ltr && currentState.parent != null)
-                                DirectionalStatus.Pop(ref currentState, index);
+                                DirectionalStatus.Pop(ref currentState, closeIndex);
                             if (!currentState.ltr)
                                 DirectionalStatus.Push(ref currentState, index, false, OVERRIDE_STATUS_RTL, false, false);
                         }
@@ -154,6 +155,8 @@ namespace Memoria.Assets
                         break;
                 }
                 index++;
+                if (bidiClass != CharacterClass.White_Space && bidiClass != CharacterClass.Common_Separator && bidiClass != CharacterClass.European_Separator && bidiClass != CharacterClass.European_Terminator && bidiClass != CharacterClass.Segment_Separator && bidiClass != CharacterClass.Other_Neutral)
+                    closeIndex = index;
             }
             HashSet<Int32> pairPositions = new HashSet<Int32>();
             MustMirror = new HashSet<Int32>();

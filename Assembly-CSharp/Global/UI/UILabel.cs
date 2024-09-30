@@ -1,7 +1,8 @@
-﻿using Memoria.Assets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Memoria.Assets;
+using Memoria.Prime;
 
 [AddComponentMenu("NGUI/UI/NGUI Label")]
 [ExecuteInEditMode]
@@ -713,112 +714,119 @@ public class UILabel : UIWidget
 
     private void ProcessText(Boolean legacyMode, Boolean full)
     {
-        if (!this.isValid)
-            return;
-        this.mChanged = true;
-        this.shouldBeProcessed = false;
-        Single drawWidth = this.mDrawRegion.z - this.mDrawRegion.x;
-        Single drawHeight = this.mDrawRegion.w - this.mDrawRegion.y;
-        NGUIText.rectWidth = legacyMode ? (this.mMaxLineWidth == 0 ? 1000000 : this.mMaxLineWidth) : base.width;
-        NGUIText.rectHeight = legacyMode ? (this.mMaxLineHeight == 0 ? 1000000 : this.mMaxLineHeight) : base.height;
-        NGUIText.regionWidth = drawWidth == 1f ? NGUIText.rectWidth : Mathf.RoundToInt(NGUIText.rectWidth * drawWidth);
-        NGUIText.regionHeight = drawHeight == 1f ? NGUIText.rectHeight : Mathf.RoundToInt(NGUIText.rectHeight * drawHeight);
-        this.mFinalFontSize = Mathf.Abs(legacyMode ? Mathf.RoundToInt(base.cachedTransform.localScale.x) : this.defaultFontSize);
-        this.mScale = 1f;
-        if (NGUIText.regionWidth < 1 || NGUIText.regionHeight < 0)
+        try
         {
-            this.mProcessedText = String.Empty;
-            return;
-        }
-        Boolean hasTrueTypeFont = this.trueTypeFont != null;
-        if (hasTrueTypeFont && this.keepCrisp)
-        {
-            UIRoot root = base.root;
-            if (root != null)
-                this.mDensity = root == null ? 1f : root.pixelSizeAdjustment;
-        }
-        else
-        {
-            this.mDensity = 1f;
-        }
-        if (full)
-            this.UpdateNGUIText();
-        if (this.mOverflow == UILabel.Overflow.ResizeFreely)
-        {
-            NGUIText.rectWidth = 1000000;
-            NGUIText.regionWidth = 1000000;
-        }
-        if (this.mOverflow == UILabel.Overflow.ResizeFreely || this.mOverflow == UILabel.Overflow.ResizeHeight)
-        {
-            NGUIText.rectHeight = 1000000;
-            NGUIText.regionHeight = 1000000;
-        }
-        if (this.mFinalFontSize > 0)
-        {
-            Boolean keepCrisp = this.keepCrisp;
-            for (Int32 shrinkedFontSize = this.mFinalFontSize; shrinkedFontSize > 2; shrinkedFontSize -= 2)
+            if (!this.isValid)
+                return;
+            this.mChanged = true;
+            this.shouldBeProcessed = false;
+            Single drawWidth = this.mDrawRegion.z - this.mDrawRegion.x;
+            Single drawHeight = this.mDrawRegion.w - this.mDrawRegion.y;
+            NGUIText.rectWidth = legacyMode ? (this.mMaxLineWidth == 0 ? 1000000 : this.mMaxLineWidth) : base.width;
+            NGUIText.rectHeight = legacyMode ? (this.mMaxLineHeight == 0 ? 1000000 : this.mMaxLineHeight) : base.height;
+            NGUIText.regionWidth = drawWidth == 1f ? NGUIText.rectWidth : Mathf.RoundToInt(NGUIText.rectWidth * drawWidth);
+            NGUIText.regionHeight = drawHeight == 1f ? NGUIText.rectHeight : Mathf.RoundToInt(NGUIText.rectHeight * drawHeight);
+            this.mFinalFontSize = Mathf.Abs(legacyMode ? Mathf.RoundToInt(base.cachedTransform.localScale.x) : this.defaultFontSize);
+            this.mScale = 1f;
+            if (NGUIText.regionWidth < 1 || NGUIText.regionHeight < 0)
             {
-                if (keepCrisp)
+                this.mProcessedText = String.Empty;
+                return;
+            }
+            Boolean hasTrueTypeFont = this.trueTypeFont != null;
+            if (hasTrueTypeFont && this.keepCrisp)
+            {
+                UIRoot root = base.root;
+                if (root != null)
+                    this.mDensity = root == null ? 1f : root.pixelSizeAdjustment;
+            }
+            else
+            {
+                this.mDensity = 1f;
+            }
+            if (full)
+                this.UpdateNGUIText();
+            if (this.mOverflow == UILabel.Overflow.ResizeFreely)
+            {
+                NGUIText.rectWidth = 1000000;
+                NGUIText.regionWidth = 1000000;
+            }
+            if (this.mOverflow == UILabel.Overflow.ResizeFreely || this.mOverflow == UILabel.Overflow.ResizeHeight)
+            {
+                NGUIText.rectHeight = 1000000;
+                NGUIText.regionHeight = 1000000;
+            }
+            if (this.mFinalFontSize > 0)
+            {
+                Boolean keepCrisp = this.keepCrisp;
+                for (Int32 shrinkedFontSize = this.mFinalFontSize; shrinkedFontSize > 2; shrinkedFontSize -= 2)
                 {
-                    this.mFinalFontSize = shrinkedFontSize;
-                    NGUIText.fontSize = this.mFinalFontSize;
-                }
-                else
-                {
-                    this.mScale = (Single)shrinkedFontSize / this.mFinalFontSize;
-                    NGUIText.fontScale = hasTrueTypeFont ? this.mScale : this.mScale * this.mFontSize / this.mFont.defaultSize;
-                }
-                NGUIText.Update(false);
-                Boolean properWrapping = NGUIText.WrapText(this.mText, out this.mProcessedText, true, false);
-                if (this.mOverflow != UILabel.Overflow.ShrinkContent || properWrapping)
-                {
-                    if (this.mOverflow == UILabel.Overflow.ResizeFreely)
+                    if (keepCrisp)
                     {
-                        this.mCalculatedSize = NGUIText.CalculatePrintedSize(this.mProcessedText);
-                        this.mWidth = Mathf.Max(this.minWidth, Mathf.RoundToInt(this.mCalculatedSize.x));
-                        if (drawWidth != 1f)
-                            this.mWidth = Mathf.RoundToInt(this.mWidth / drawWidth);
-                        this.mHeight = Mathf.Max(this.minHeight, Mathf.RoundToInt(this.mCalculatedSize.y));
-                        if (drawHeight != 1f)
-                            this.mHeight = Mathf.RoundToInt(this.mHeight / drawHeight);
-                        if ((this.mWidth & 1) == 1)
-                            this.mWidth++;
-                        if ((this.mHeight & 1) == 1)
-                            this.mHeight++;
-                    }
-                    else if (this.mOverflow == UILabel.Overflow.ResizeHeight)
-                    {
-                        this.mCalculatedSize = NGUIText.CalculatePrintedSize(this.mProcessedText);
-                        this.mHeight = Mathf.Max(this.minHeight, Mathf.RoundToInt(this.mCalculatedSize.y));
-                        if (drawHeight != 1f)
-                            this.mHeight = Mathf.RoundToInt(this.mHeight / drawHeight);
-                        if ((this.mHeight & 1) == 1)
-                            this.mHeight++;
+                        this.mFinalFontSize = shrinkedFontSize;
+                        NGUIText.fontSize = this.mFinalFontSize;
                     }
                     else
                     {
-                        this.mCalculatedSize = NGUIText.CalculatePrintedSize(this.mProcessedText);
+                        this.mScale = (Single)shrinkedFontSize / this.mFinalFontSize;
+                        NGUIText.fontScale = hasTrueTypeFont ? this.mScale : this.mScale * this.mFontSize / this.mFont.defaultSize;
                     }
-                    if (legacyMode)
+                    NGUIText.Update(false);
+                    Boolean properWrapping = NGUIText.WrapText(this.mText, out this.mProcessedText, true, false);
+                    if (this.mOverflow != UILabel.Overflow.ShrinkContent || properWrapping)
                     {
-                        base.width = Mathf.RoundToInt(this.mCalculatedSize.x);
-                        base.height = Mathf.RoundToInt(this.mCalculatedSize.y);
-                        base.cachedTransform.localScale = Vector3.one;
+                        if (this.mOverflow == UILabel.Overflow.ResizeFreely)
+                        {
+                            this.mCalculatedSize = NGUIText.CalculatePrintedSize(this.mProcessedText);
+                            this.mWidth = Mathf.Max(this.minWidth, Mathf.RoundToInt(this.mCalculatedSize.x));
+                            if (drawWidth != 1f)
+                                this.mWidth = Mathf.RoundToInt(this.mWidth / drawWidth);
+                            this.mHeight = Mathf.Max(this.minHeight, Mathf.RoundToInt(this.mCalculatedSize.y));
+                            if (drawHeight != 1f)
+                                this.mHeight = Mathf.RoundToInt(this.mHeight / drawHeight);
+                            if ((this.mWidth & 1) == 1)
+                                this.mWidth++;
+                            if ((this.mHeight & 1) == 1)
+                                this.mHeight++;
+                        }
+                        else if (this.mOverflow == UILabel.Overflow.ResizeHeight)
+                        {
+                            this.mCalculatedSize = NGUIText.CalculatePrintedSize(this.mProcessedText);
+                            this.mHeight = Mathf.Max(this.minHeight, Mathf.RoundToInt(this.mCalculatedSize.y));
+                            if (drawHeight != 1f)
+                                this.mHeight = Mathf.RoundToInt(this.mHeight / drawHeight);
+                            if ((this.mHeight & 1) == 1)
+                                this.mHeight++;
+                        }
+                        else
+                        {
+                            this.mCalculatedSize = NGUIText.CalculatePrintedSize(this.mProcessedText);
+                        }
+                        if (legacyMode)
+                        {
+                            base.width = Mathf.RoundToInt(this.mCalculatedSize.x);
+                            base.height = Mathf.RoundToInt(this.mCalculatedSize.y);
+                            base.cachedTransform.localScale = Vector3.one;
+                        }
+                        break;
                     }
-                    break;
                 }
             }
+            else
+            {
+                base.cachedTransform.localScale = Vector3.one;
+                this.mProcessedText = String.Empty;
+                this.mScale = 1f;
+            }
+            if (full)
+            {
+                NGUIText.bitmapFont = null;
+                NGUIText.dynamicFont = null;
+            }
         }
-        else
+        catch (Exception err)
         {
-            base.cachedTransform.localScale = Vector3.one;
-            this.mProcessedText = String.Empty;
-            this.mScale = 1f;
-        }
-        if (full)
-        {
-            NGUIText.bitmapFont = null;
-            NGUIText.dynamicFont = null;
+            Log.Error(err);
         }
     }
 
@@ -1148,7 +1156,10 @@ public class UILabel : UIWidget
             if (this.printIconAfterProcessedText)
                 this.PrintIcon(this.imageList);
         }
-        catch (Exception err) { Memoria.Prime.Log.Error(err); }
+        catch (Exception err)
+        {
+            Log.Error(err);
+        }
     }
 
     public Vector2 ApplyOffset(BetterList<Vector3> verts, Int32 start)

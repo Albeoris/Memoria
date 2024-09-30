@@ -25,6 +25,8 @@
 ##  
 ##  Light -> Define ambiant light changes and locations, using one of the 4 different settings of WeatherColors.csv
 ##  
+##  Title -> Change the appearance of the continent titles
+##  
 ##  It is important for the keywords above to be written at the beginning of a new line in order to take effect
 ##  The parameter change instruction must be one-lined
 ##  
@@ -101,6 +103,12 @@
 ##    Light Add [Position=(128000, -202240)] [Radius=46080] [Light=1]
 ##  Have Memoria's surroundings use purple ambiant colors
 ##    Light Add [Condition=WorldDisc == 4] [Position=(196158, -81825)] [Radius=26080] [Light=3]
+##  
+##  Setup the default size and duration for all the title sprites in all languages
+##    Title MistContinent Any [Rect=(0, 144, 1024, 128)] [FadeIn=119] [Duration=1] [FadeOut=59]
+##    Title OuterContinent Any [Rect=(0, 144, 1024, 128)] [FadeIn=119] [Duration=1] [FadeOut=59]
+##    Title ForgottenContinent Any [Rect=(0, 144, 1024, 128)] [FadeIn=119] [Duration=1] [FadeOut=59]
+##    Title LostContinent Any [Rect=(0, 144, 1024, 128)] [FadeIn=119] [Duration=1] [FadeOut=59]
 ##  
 #####################################################################################################
 ##  

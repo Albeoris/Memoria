@@ -25,7 +25,7 @@ namespace Memoria.Assets
                     if (atlas != null)
                     {
                         path = GraphicResources.Export.GetAtlasPath(name);
-                        ExportAtlasSafe(path, atlas);
+                        ExportAtlasSafe(path, atlas, true);
                     }
                     else
                     {
@@ -36,7 +36,7 @@ namespace Memoria.Assets
                             continue;
                         }
                         path = GraphicResources.Export.GetAtlasPath(name);
-                        ExportSpriteListSafe(path, spriteList);
+                        ExportSpriteListSafe(path, spriteList, true);
                     }
                 }
 
@@ -48,16 +48,10 @@ namespace Memoria.Assets
             }
         }
 
-        public static void ExportAtlasSafe(String outputDirectory, UIAtlas atlas)
+        public static void ExportAtlasSafe(String outputDirectory, UIAtlas atlas, Boolean exportFragments)
         {
             try
             {
-                if (Directory.Exists(outputDirectory))
-                {
-                    Log.Warning("[GraphicResourceExporter] Export was skipped because a directory already exists: [{0}].", outputDirectory);
-                    return;
-                }
-
                 String outputPath = outputDirectory + ".png";
                 if (File.Exists(outputPath))
                 {
@@ -65,14 +59,20 @@ namespace Memoria.Assets
                     return;
                 }
 
-                Directory.CreateDirectory(outputDirectory);
+                if (exportFragments)
+                    Directory.CreateDirectory(outputDirectory);
+                else
+                    Directory.CreateDirectory(Path.GetDirectoryName(outputDirectory));
 
                 Texture2D texture = TextureHelper.CopyAsReadable(atlas.texture);
                 TextureHelper.WriteTextureToFile(texture, outputPath);
-                foreach (UISpriteData sprite in atlas.spriteList)
+                if (exportFragments)
                 {
-                    Texture2D fragment = TextureHelper.GetFragment(texture, sprite.x, texture.height - sprite.y - sprite.height, sprite.width, sprite.height);
-                    TextureHelper.WriteTextureToFile(fragment, Path.Combine(outputDirectory, sprite.name + ".png"));
+                    foreach (UISpriteData sprite in atlas.spriteList)
+                    {
+                        Texture2D fragment = TextureHelper.GetFragment(texture, sprite.x, texture.height - sprite.y - sprite.height, sprite.width, sprite.height);
+                        TextureHelper.WriteTextureToFile(fragment, Path.Combine(outputDirectory, sprite.name + ".png"));
+                    }
                 }
 
                 String outputPathTPSheet = outputDirectory + ".tpsheet";
@@ -96,16 +96,10 @@ namespace Memoria.Assets
             }
         }
 
-        public static void ExportSpriteListSafe(String outputDirectory, Sprite[] spriteList)
+        public static void ExportSpriteListSafe(String outputDirectory, Sprite[] spriteList, Boolean exportFragments)
         {
             try
             {
-                if (Directory.Exists(outputDirectory))
-                {
-                    Log.Warning("[GraphicResourceExporter] Export was skipped because a directory already exists: [{0}].", outputDirectory);
-                    return;
-                }
-
                 String outputPath = outputDirectory + ".png";
                 if (File.Exists(outputPath))
                 {
@@ -113,14 +107,20 @@ namespace Memoria.Assets
                     return;
                 }
 
-                Directory.CreateDirectory(outputDirectory);
+                if (exportFragments)
+                    Directory.CreateDirectory(outputDirectory);
+                else
+                    Directory.CreateDirectory(Path.GetDirectoryName(outputDirectory));
 
                 Texture2D sharedTexture = TextureHelper.CopyAsReadable(spriteList[0].texture);
                 TextureHelper.WriteTextureToFile(sharedTexture, outputDirectory + ".png");
-                foreach (Sprite sprite in spriteList)
+                if (exportFragments)
                 {
-                    Texture2D texture = TextureHelper.GetFragment(sharedTexture, (Int32)sprite.rect.x, (Int32)sprite.rect.y, (Int32)sprite.rect.width, (Int32)sprite.rect.height);
-                    TextureHelper.WriteTextureToFile(texture, Path.ChangeExtension(Path.Combine(outputDirectory, sprite.name), ".png"));
+                    foreach (Sprite sprite in spriteList)
+                    {
+                        Texture2D texture = TextureHelper.GetFragment(sharedTexture, (Int32)sprite.rect.x, (Int32)sprite.rect.y, (Int32)sprite.rect.width, (Int32)sprite.rect.height);
+                        TextureHelper.WriteTextureToFile(texture, Path.ChangeExtension(Path.Combine(outputDirectory, sprite.name), ".png"));
+                    }
                 }
 
                 String outputPathTPSheet = outputDirectory + ".tpsheet";

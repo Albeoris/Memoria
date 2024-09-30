@@ -20,6 +20,7 @@ namespace Memoria
             public static Boolean Audio => Enabled && Instance._export.Audio;
             public static Boolean Field => Enabled && Instance._export.Field;
             public static Boolean Battle => Enabled && Instance._export.Battle;
+            public static Boolean Translation => Enabled && Instance._export.Translation;
         }
     }
 }
