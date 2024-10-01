@@ -21,7 +21,7 @@ namespace Memoria.Launcher
             CreateCheckbox("AntiAliasing", Lang.Settings.AntiAliasing, Lang.Settings.AntiAliasing_Tooltip);
 
             CreateTextbloc(Lang.Settings.CameraStabilizer, false, Lang.Settings.CameraStabilizer_Tooltip);
-            CreateSlider("CameraStabilizer", "CameraStabilizer", 0, 97, 1);
+            CreateSlider("CameraStabilizer", "CameraStabilizer", 0, 97, 1, "{0}", 50);
 
             CreateTextbloc(Lang.Settings.FieldShader, false, Lang.Settings.FieldShader_Tooltip, "shader_comparison2.jpg");
             comboboxchoices = new String[]{

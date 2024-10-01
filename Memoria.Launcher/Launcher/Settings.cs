@@ -838,6 +838,7 @@ namespace Memoria.Launcher
                     }
                 }*/
 
+                String value;
                 Boolean value1isInt;
                 Boolean value2isInt;
                 Boolean value3isInt;
@@ -850,6 +851,7 @@ namespace Memoria.Launcher
                 Int16 value5;
 
                 String value = iniFile.ReadValue("Graphics", nameof(WidescreenSupport));
+                value = iniFile.ReadValue("Graphics", nameof(WidescreenSupport));
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 1";

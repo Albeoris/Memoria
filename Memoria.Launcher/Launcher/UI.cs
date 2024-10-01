@@ -187,7 +187,9 @@ namespace Memoria.Launcher
             checkBox.SetBinding(ToggleButton.IsCheckedProperty, new Binding(property) { Mode = BindingMode.TwoWay });
             if (propertyToEnable != "")
                 checkBox.SetBinding(ToggleButton.IsEnabledProperty, new Binding(propertyToEnable) { Mode = BindingMode.TwoWay });
-            checkBox.Margin = CommonMargin;
+            checkBox.VerticalContentAlignment = VerticalAlignment.Center;
+            checkBox.Margin = new Thickness(0);
+            checkBox.Height = 28;
             checkBox.Style = (Style)Application.Current.FindResource("ToggleStyle");
             checkBox.SetValue(RowProperty, Row);
             checkBox.SetValue(ColumnProperty, firstColumn);
@@ -195,7 +197,7 @@ namespace Memoria.Launcher
             checkBox.SetValue(ColumnSpanProperty, MaxColumns);
             Children.Add(checkBox);
         }
-        public void CreateTextbloc(String text, Boolean isHeading = false, String tooltip = "", String tooltipImage = "")
+        public void CreateTextbloc(String text, Boolean isHeading = false, String tooltip = "", String tooltipImage = "", Int32 columns = 100)
         {
             Row++;
             RowDefinitions.Add(new RowDefinition());
@@ -206,26 +208,32 @@ namespace Memoria.Launcher
             textbloc.Margin = new Thickness(0);
             Border border = new Border();
             textbloc.FontSize = FontSizeNormal;
-            border.Margin = CommonMargin;
+            textbloc.VerticalAlignment = VerticalAlignment.Center;
+            textbloc.Margin = new Thickness(0);
+            textbloc.Padding = new Thickness(0, 4, 0, 6);
+            border.VerticalAlignment = VerticalAlignment.Center;
             border.SetValue(RowProperty, Row);
             border.SetValue(ColumnProperty, 0);
             border.SetValue(RowSpanProperty, 1);
-            border.SetValue(ColumnSpanProperty, MaxColumns);
-
+            border.SetValue(ColumnSpanProperty, columns);
             if (isHeading)
             {
-                textbloc.TextAlignment = TextAlignment.Center;  // Center the text
+                textbloc.TextAlignment = TextAlignment.Center;
                 textbloc.HorizontalAlignment = HorizontalAlignment.Center;
                 textbloc.FontStretch = FontStretch.FromOpenTypeStretch(9);
                 textbloc.FontWeight = FontWeight.FromOpenTypeWeight(500);
                 textbloc.FontSize = 14;
                 textbloc.Text = textbloc.Text.ToUpper();
+                textbloc.VerticalAlignment = VerticalAlignment.Center;
+                textbloc.Margin = new Thickness(0);
+                textbloc.Height = 18;
+                textbloc.Padding = new Thickness(0);
                 textbloc.SetValue(TextBlock.FontFamilyProperty, Application.Current.FindResource("CenturyGothic") as FontFamily);
                 border.Background = (SolidColorBrush)Application.Current.FindResource("BrushAccentColor");
                 border.Opacity = 0.8;
                 border.CornerRadius = new CornerRadius(5);
-                border.Padding = new Thickness(10, 2, 10, 2);
-                border.Margin = new Thickness(0, 3, 0, 6); ;
+                border.Margin = new Thickness(0, 7, 0, 3);
+                border.Height = 20;
                 border.HorizontalAlignment = HorizontalAlignment.Stretch;
                 border.VerticalAlignment = VerticalAlignment.Center;
             }
@@ -266,9 +274,9 @@ namespace Memoria.Launcher
             Slider slider = new Slider();
             slider.Value = 0;
             slider.SetBinding(Slider.ValueProperty, new Binding(sliderproperty) { Mode = BindingMode.TwoWay });
-            slider.Height = 20;
-            slider.Margin = CommonMargin;
-            slider.Margin = new Thickness(0, 5, 0, 0);
+            slider.VerticalContentAlignment = VerticalAlignment.Center;
+            slider.VerticalAlignment = VerticalAlignment.Center;
+            slider.Margin = new Thickness(0);
             slider.Minimum = min;
             slider.Maximum = max;
             slider.TickFrequency = tickFrequency;
@@ -290,7 +298,10 @@ namespace Memoria.Launcher
             textbloc.FontSize = FontSizeNormal;
             textbloc.HorizontalAlignment = HorizontalAlignment.Right;
             textbloc.TextAlignment = TextAlignment.Right;
-            textbloc.Margin = CommonMargin;
+            textbloc.VerticalAlignment = VerticalAlignment.Center;
+            textbloc.Margin = new Thickness(0);
+            textbloc.Padding = new Thickness(0, 4, 0, 6);
+            textbloc.Height = 28;
             textbloc.SetValue(RowProperty, Row);
             textbloc.SetValue(ColumnProperty, firstColumn);
             textbloc.SetValue(RowSpanProperty, 1);
