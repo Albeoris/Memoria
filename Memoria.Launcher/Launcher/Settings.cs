@@ -627,7 +627,7 @@ namespace Memoria.Launcher
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-                IniFile iniFile = new IniFile(_iniPath);
+                IniFile iniFile = new IniFile(IniFile.IniPath);
 
                 foreach (Object[] item in SettingsList) {
                     if (item[0] is String property && property == propertyName && item[2] is String name_ini && item[3] is String category && item[4] is Int32 valueZero && item[5] is Int32 valueOne) //  
@@ -843,7 +843,7 @@ namespace Memoria.Launcher
         {
             try
             {
-                IniFile iniFile = new(_iniPath);
+                IniFile iniFile = new(IniFile.IniPath);
 
                 /*foreach (Object[] item in SettingsList2)
                 {
@@ -865,7 +865,6 @@ namespace Memoria.Launcher
                 Int16 value4;
                 Int16 value5;
 
-                String value = iniFile.ReadValue("Graphics", nameof(WidescreenSupport));
                 value = iniFile.ReadValue("Graphics", nameof(WidescreenSupport));
                 if (String.IsNullOrEmpty(value))
                 {

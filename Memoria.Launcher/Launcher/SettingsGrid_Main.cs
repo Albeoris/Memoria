@@ -64,8 +64,6 @@ namespace Memoria.Launcher
             //CreateTextbloc(Lang.Settings.BattleTPS, Lang.Settings.BattleTPS_Tooltip);
             CreateSlider("BattleTPSDividedBy10", "BattleTPS", 15, 75, 1, "{0}x", 50, Lang.Settings.BattleTPS, Lang.Settings.BattleTPS_Tooltip);
 
-
-            IniFile.SanitizeMemoriaIni();
             LoadSettings();
         }
 

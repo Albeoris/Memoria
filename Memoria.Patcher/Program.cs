@@ -391,6 +391,16 @@ namespace Memoria.Patcher
                 {
                     mergedIni.RemoveAt(i--);
                 }
+                // Make sure spaces are present around =
+                if (!mergedIni[i].Trim().StartsWith(";"))
+                {
+                    var split = mergedIni[i].Split('=');
+                    for (Int32 j = 0; j < split.Length; j++)
+                    {
+                        split[j] = split[j].Trim();
+                    }
+                    mergedIni[i] = String.Join(" = ", split);
+                }
             }
             String currentSection = "";
             Int32 sectionFirstLine = 0;
@@ -420,6 +430,7 @@ namespace Memoria.Patcher
                     }
                     else
                     {
+                        mergedIni.Add("");
                         mergedIni.Add("[" + currentSection + "]");
                         sectionFirstLine = mergedIni.Count;
                         sectionLastLine = sectionFirstLine;
@@ -449,7 +460,6 @@ namespace Memoria.Patcher
                     if (!fieldKnown)
                     {
                         mergedIni.Insert(sectionLastLine, line);
-                        sectionFirstLine++;
                         sectionLastLine++;
                     }
                 }
