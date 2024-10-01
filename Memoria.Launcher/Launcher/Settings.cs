@@ -331,14 +331,37 @@ namespace Memoria.Launcher
                 if (_battletpsfactor != value)
                 {
                     _battletpsfactor = value;
-                    BattleTPSDividedBy10 = (float)Math.Round((double)value / 15, 2);
+                    BattleTPSDividedBy15 = (float)Math.Round((double)value / 15, 2);
                     OnPropertyChanged();
                 }
             }
         }
-        public Single BattleTPSDividedBy10
+        public Single BattleTPSDividedBy15
         {
             get { return (float)Math.Round((double)BattleTPS / 15, 2); }
+            set
+            {
+                OnPropertyChanged();
+            }
+        }
+
+        private Int16 _worldmaptps;
+        public Int16 WorldmapTPS
+        {
+            get { return _worldmaptps; }
+            set
+            {
+                if (_worldmaptps != value)
+                {
+                    _worldmaptps = value;
+                    WorldmapTPSDividedby20 = (float)Math.Round((double)value / 20, 2);
+                    OnPropertyChanged();
+                }
+            }
+        }
+        public Single WorldmapTPSDividedby20
+        {
+            get { return (float)Math.Round((double)WorldmapTPS / 20, 2); }
             set
             {
                 OnPropertyChanged();
@@ -353,6 +376,19 @@ namespace Memoria.Launcher
                 if (_worldmapfov != value)
                 {
                     _worldmapfov = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+        private Int16 _wmcameraheight;
+        public Int16 WMCameraHeight
+        {
+            get { return _wmcameraheight; }
+            set
+            {
+                if (_wmcameraheight != value)
+                {
+                    _wmcameraheight = value;
                     OnPropertyChanged();
                 }
             }
@@ -629,7 +665,7 @@ namespace Memoria.Launcher
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-                IniFile iniFile = new IniFile(_iniPath);
+                IniFile iniFile = new IniFile(IniFile.IniPath);
 
                 foreach (Object[] item in SettingsList) {
                     if (item[0] is String property && property == propertyName && item[2] is String name_ini && item[3] is String category && item[4] is Int32 valueZero && item[5] is Int32 valueOne) //  
@@ -845,7 +881,7 @@ namespace Memoria.Launcher
         {
             try
             {
-                IniFile iniFile = new(_iniPath);
+                IniFile iniFile = new(IniFile.IniPath);
 
                 /*foreach (Object[] item in SettingsList2)
                 {
@@ -860,6 +896,26 @@ namespace Memoria.Launcher
                     if (item[0] is String property && item[1] is String _property && item[2] is String name_ini && item[3] is String category && item[4] is Int32 valueZero && item[5] is Int32 valueOne) //  
                     {
                         Object propValue = this.GetType().GetProperty(property)?.GetValue(this);
+                        //MessageBox.Show($"{propValue}", "debug", MessageBoxButtons.OK);
+                        if (propValue != null && Int16.TryParse(propValue.ToString(), out Int16 varValue))
+                        {
+                            if (varValue == 0)
+                            {
+                                iniFile.WriteValue(category, name_ini + " ", " " + valueZero);
+                            }
+                            else if (varValue == 1)
+                            {
+                                iniFile.WriteValue(category, name_ini + " ", " " + valueOne);
+                                iniFile.WriteValue(category, "Enabled ", " 1");
+                            }
+                            else
+                            {
+                                iniFile.WriteValue(category, name_ini + " ", " " + varValue);
+                                iniFile.WriteValue(category, "Enabled ", " 1");
+                            }
+                        }
+                    }
+                }*/
 
                 String value;
                 Boolean value1isInt;
@@ -873,7 +929,6 @@ namespace Memoria.Launcher
                 Int16 value4;
                 Int16 value5;
 
-                String value = iniFile.ReadValue("Graphics", nameof(WidescreenSupport));
                 value = iniFile.ReadValue("Graphics", nameof(WidescreenSupport));
                 if (String.IsNullOrEmpty(value))
                 {
@@ -1138,17 +1193,28 @@ namespace Memoria.Launcher
                     _speedfactor = 2;
                 Refresh(nameof(SpeedFactor));
 
-                value = iniFile.ReadValue("Graphics", " " + nameof(BattleTPS));
+                value = iniFile.ReadValue("Graphics", "BattleTPS");
                 if (String.IsNullOrEmpty(value))
                 {
-                    _battletpsfactor = 15;
                     value = " 15";
                     OnPropertyChanged(nameof(BattleTPS));
                 }
                 if (!Int16.TryParse(value, out _battletpsfactor))
                     _battletpsfactor = 15;
                 Boolean valueexists = Single.TryParse(value, out Single decvalue);
-                BattleTPSDividedBy10 = valueexists ? decvalue / 15f : 1.5f;
+                BattleTPSDividedBy15 = valueexists ? decvalue / 15f : 1f;
+
+                value = iniFile.ReadValue("Graphics", "WorldTPS");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 20";
+                    OnPropertyChanged(nameof(WorldmapTPS));
+                }
+                if (!Int16.TryParse(value, out _worldmaptps))
+                    _worldmaptps = 20;
+                valueexists = Single.TryParse(value, out decvalue);
+                WorldmapTPSDividedby20 = valueexists ? decvalue / 20f : 1f;
+
 
                 value = iniFile.ReadValue("Cheats", nameof(BattleAssistance));
                 if (String.IsNullOrEmpty(value))
@@ -1255,6 +1321,16 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _worldmapfov))
                     _worldmapfov = 0;
 
+
+                value = iniFile.ReadValue("Worldmap", "CameraHeight");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 100";
+                    OnPropertyChanged(nameof(WMCameraHeight));
+                }
+                if (!Int16.TryParse(value, out _wmcameraheight))
+                    _wmcameraheight = 100;
+
                 value = iniFile.ReadValue("Worldmap", "FieldOfViewSpeedBoost");
                 if (String.IsNullOrEmpty(value))
                 {
@@ -1336,6 +1412,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(UsePsxFont));
                 Refresh(nameof(WorldmapMistPreset));
                 Refresh(nameof(WorldmapDistancePreset));
+                Refresh(nameof(SpeedFactor));
             }
             catch (Exception ex)
             {

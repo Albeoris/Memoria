@@ -29,6 +29,8 @@ namespace Memoria.Launcher
         [DebuggerNonUserCode]
         public static void Main()
         {
+            IniFile.SanitizeMemoriaIni();
+
             App app = new App();
             app.InitializeComponent();
             app.Run();

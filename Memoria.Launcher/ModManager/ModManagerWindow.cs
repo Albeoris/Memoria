@@ -1273,7 +1273,7 @@ namespace Memoria.Launcher
         private WebClient downloadCatalogClient;
         private object ascendingSortedColumn = null;
 
-        private const String INI_PATH = "./Memoria.ini";
+        private const String INI_PATH = IniFile.IniPath;
         private const String CATALOG_PATH = "./ModCatalog.xml";
         private const String CATALOG_URL = "https://raw.githubusercontent.com/Albeoris/Memoria/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml";
     }

@@ -397,7 +397,7 @@ namespace Memoria.Launcher
         {
             if (PresetIni == null) return;
             if (memoriaIni == null)
-                memoriaIni = new IniReader(@"./Memoria.ini");
+                memoriaIni = new IniReader(IniFile.IniPath);
 
             StringBuilder sb = new StringBuilder();
             IniReader.Key presetNameKey = new IniReader.Key("Preset", "Name");
