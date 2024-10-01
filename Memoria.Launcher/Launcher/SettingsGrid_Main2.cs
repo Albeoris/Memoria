@@ -14,7 +14,7 @@ namespace Memoria.Launcher
                 Lang.Settings.TripleTriadType1,
                 Lang.Settings.TripleTriadType2
             };
-            CreateCombobox("TripleTriad", comboboxchoices, 25, Lang.Settings.TripleTriad, Lang.Settings.TripleTriad_Tooltip);
+            CreateCombobox("TripleTriad", comboboxchoices, 25, Lang.Settings.TripleTriad, Lang.Settings.TripleTriad_Tooltip, "comparison_cardgames.png");
 
             CreateCheckbox("MaxCardCount", Lang.Settings.MaxCardCount, Lang.Settings.MaxCardCount_Tooltip);
             CreateCheckbox("HideCards", Lang.Settings.HideSteamBubbles, Lang.Settings.HideSteamBubbles_Tooltip);
@@ -43,9 +43,9 @@ namespace Memoria.Launcher
             CreateCombobox("WorldmapDistancePreset", comboboxchoices, 50, Lang.Settings.WorldmapDistancePreset, Lang.Settings.WorldmapDistancePreset_Tooltip, "comparison_viewdistance.jpg");
 
             //CreateTextbloc(Lang.Settings.WorldmapFOV, Lang.Settings.WorldmapFOV_Tooltip);
-            CreateSlider("WorldmapFOV", "WorldmapFOV", 30, 130, 1, "", 50, Lang.Settings.WorldmapFOV, Lang.Settings.WorldmapFOV_Tooltip);
+            CreateSlider("WorldmapFOV", "WorldmapFOV", 30, 110, 1, "", 50, Lang.Settings.WorldmapFOV, Lang.Settings.WorldmapFOV_Tooltip, "comparison_worldmapfov.jpg");
 
-            CreateSlider("WMCameraHeight", "WMCameraHeight", -200, 700, 50, "{0}", 50, Lang.Settings.WMCameraHeight, Lang.Settings.WMCameraHeight_Tooltip);
+            CreateSlider("WMCameraHeight", "WMCameraHeight", -200, 600, 50, "{0}", 50, Lang.Settings.WMCameraHeight, Lang.Settings.WMCameraHeight_Tooltip, "comparison_cameraheight.jpg");
 
             CreateSlider("WorldmapTPSDividedby20", "WorldmapTPS", 20, 100, 4, "{0}x", 50, Lang.Settings.WorldmapTPS, Lang.Settings.WorldmapTPS_Tooltip);
 

@@ -175,7 +175,6 @@ TripleTriadType1 = "Tetra Triad (hybrid)"
 TripleTriadType2 = "Triple Triad (FF8)"
 Xsixfour_Tooltip = "• X64 (recommanded)&#xA;• X86 (legacy)"
 SpeedChoice_Tooltip = "• Normal: default&#xA;• Fast: no wait time&#xA;• Turn-based: No wait time + no rush to act&#xA;• Dynamic: everyone acts simultaneously"
-TripleTriad_Tooltip = "• Tetra Master: FF9's card game (default)&#xA;• Tetra Master (less random): FF9 card game with lower randomness&#xA;• Tetra Triad: FF8 rules on a 4x4 board&#xA;• Triple Triad: FF8's card game"
 WorldmapDistancePreset_Tooltip = "Increases the view distance on the worldmap"
 SpeedMode_Tooltip = "Fast game (Press F1 to activate)"
 BattleAssistance_Tooltip = "All characters stay in permanent transe (Press F2 to activate)"
@@ -194,6 +193,7 @@ WMCameraHeight = "Camera height"
 WMCameraHeight_Tooltip = "Height of the camera on the worldmap (base height is 100)"
 WorldmapTPS = "Worldmap speed"
 WorldmapTPS_Tooltip = "Worldmap speed multiplier"
+TripleTriad_Tooltip = "• Tetra Master (default)&#xA;• Tetra Master, battles are less random&#xA;• Tetra Triad: hybrid between FF9/FF8&#xA;• Triple Triad: FF8's card game"
 />
 
 <SteamOverlay
