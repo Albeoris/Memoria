@@ -337,6 +337,8 @@ namespace Memoria.Launcher
             public static readonly string WMCameraHeight_Tooltip = GetSettings(nameof(WMCameraHeight_Tooltip));
             public static readonly string WorldmapTPS = GetSettings(nameof(WorldmapTPS));
             public static readonly string WorldmapTPS_Tooltip = GetSettings(nameof(WorldmapTPS_Tooltip));
+            public static readonly string HippaulRacingViviSpeed = GetSettings(nameof(HippaulRacingViviSpeed));
+            public static readonly string HippaulRacingViviSpeed_Tooltip = GetSettings(nameof(HippaulRacingViviSpeed_Tooltip));
         }
 
         public static class SteamOverlay

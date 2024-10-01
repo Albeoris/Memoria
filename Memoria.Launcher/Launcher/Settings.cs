@@ -306,6 +306,19 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _hippaulracingvivispeed;
+        public Int16 HippaulRacingViviSpeed
+        {
+            get { return _hippaulracingvivispeed; }
+            set
+            {
+                if (_hippaulracingvivispeed != value)
+                {
+                    _hippaulracingvivispeed = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         #endregion
 
         #region Prop sliders
@@ -646,6 +659,7 @@ namespace Memoria.Launcher
             ["EasyTetraMaster", "_easytetramaster", "EasyWin", "TetraMaster", 0, 1],
             ["ExcaliburIINoTimeLimit", "_excaliburiinotimelimit", "ExcaliburIINoTimeLimit", "Hacks", 0, 1],
             ["EasyJumpRopeMinigame", "_easyjumpropeminigame", "RopeJumpingIncrement", "Hacks", 1, 1000],
+            ["HippaulRacingViviSpeed", "_hippaulracingvivispeed", "HippaulRacingViviSpeed", "Hacks", 33, 100],
 
             // Sliders
             ["CameraStabilizer", "_camerastabilizer", "CameraStabilizer", "Graphics", 0, 1],
@@ -1396,6 +1410,19 @@ namespace Memoria.Launcher
                     _easyjumpropeminigame = 0;
                 else
                     _easyjumpropeminigame = 1;
+
+
+                value = iniFile.ReadValue("Hacks", "HippaulRacingViviSpeed");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 33";
+                    OnPropertyChanged(nameof(HippaulRacingViviSpeed));
+                }
+                value1isInt = Int16.TryParse(value, out value1);
+                if (value1 == 33)
+                    _hippaulracingvivispeed = 0;
+                else
+                    _hippaulracingvivispeed = 1;
 
                 foreach (Object[] item in SettingsList)
                 {
