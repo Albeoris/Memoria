@@ -984,7 +984,7 @@ namespace Memoria.Launcher
                 PreviewModCategoryTagline.Visibility = Visibility.Collapsed;
                 BitmapImage bitmap = new BitmapImage();
                 bitmap.BeginInit();
-                bitmap.UriSource = new Uri("pack://application:,,,/Images/no-disc.jpg");
+                bitmap.UriSource = new Uri("pack://application:,,,/images/no-disc.jpg");
                 bitmap.EndInit();
                 PreviewModImage.Source = bitmap;
             }
@@ -1061,7 +1061,7 @@ namespace Memoria.Launcher
                 {
                     BitmapImage bitmap = new BitmapImage();
                     bitmap.BeginInit();
-                    bitmap.UriSource = new Uri("pack://application:,,,/Images/no-disc.jpg");
+                    bitmap.UriSource = new Uri("pack://application:,,,/images/no-disc.jpg");
                     bitmap.EndInit();
                     PreviewModImage.Source = bitmap;
                 }

@@ -6,9 +6,9 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Main2()
         {
-            CreateTextbloc(Lang.Settings.Cards, true);
+            CreateHeading(Lang.Settings.Cards);
 
-            CreateTextbloc(Lang.Settings.TripleTriad, false, Lang.Settings.TripleTriad_Tooltip);
+            CreateTextbloc(Lang.Settings.TripleTriad, Lang.Settings.TripleTriad_Tooltip);
             String[] comboboxchoices = new String[]{
                 Lang.Settings.TripleTriadType0,
                 Lang.Settings.TripleTriadType0_ReduceRandom,
@@ -34,10 +34,10 @@ namespace Memoria.Launcher
 
 
 
-            CreateTextbloc(Lang.Settings.Worldmap, true);
+            CreateHeading(Lang.Settings.Worldmap);
 
 
-            CreateTextbloc(Lang.Settings.WorldmapMistPreset, false, Lang.Settings.WorldmapMistPreset_Tooltip, "comparison_mist.jpg");
+            CreateTextbloc(Lang.Settings.WorldmapMistPreset, Lang.Settings.WorldmapMistPreset_Tooltip, "comparison_mist.jpg");
             comboboxchoices = new String[]{
                 Lang.Settings.WorldmapMistPresetChoice0,
                 Lang.Settings.WorldmapMistPresetChoice1,
@@ -46,7 +46,7 @@ namespace Memoria.Launcher
             };
             CreateCombobox("WorldmapMistPreset", comboboxchoices);
 
-            CreateTextbloc(Lang.Settings.WorldmapDistancePreset, false, Lang.Settings.WorldmapDistancePreset_Tooltip, "comparison_viewdistance.jpg");
+            CreateTextbloc(Lang.Settings.WorldmapDistancePreset, Lang.Settings.WorldmapDistancePreset_Tooltip, "comparison_viewdistance.jpg");
             comboboxchoices = new String[]{
                 Lang.Settings.WorldmapDistancePresetChoice0,
                 Lang.Settings.WorldmapDistancePresetChoice1,
@@ -55,8 +55,8 @@ namespace Memoria.Launcher
             };
             CreateCombobox("WorldmapDistancePreset", comboboxchoices);
 
-            CreateTextbloc(Lang.Settings.WorldmapFOV, false, Lang.Settings.WorldmapFOV_Tooltip);
-            CreateSlider("WorldmapFOV", "WorldmapFOV", 30, 130, 1);
+            //CreateTextbloc(Lang.Settings.WorldmapFOV, Lang.Settings.WorldmapFOV_Tooltip);
+            CreateSlider("WorldmapFOV", "WorldmapFOV", 30, 130, 1, "", 50, Lang.Settings.WorldmapFOV, Lang.Settings.WorldmapFOV_Tooltip);
 
             CreateCheckbox("WorldmapBoost", Lang.Settings.WorldmapBoost, Lang.Settings.WorldmapBoost_Tooltip);
             CreateCheckbox("WorldmapShipTilt", Lang.Settings.WorldmapShipTilt, Lang.Settings.WorldmapShipTilt_Tooltip);

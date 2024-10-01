@@ -6,7 +6,7 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Cheats()
         {
-            CreateTextbloc(Lang.Settings.Battle, true);
+            CreateHeading(Lang.Settings.Battle);
 
             CreateCheckbox("StealingAlwaysWorks", Lang.Settings.MaxStealRate, Lang.Settings.MaxStealRate_Tooltip);
             CreateCheckbox("NoAutoTrance", Lang.Settings.NoAutoTrance, Lang.Settings.NoAutoTrance_Tooltip);
@@ -18,10 +18,10 @@ namespace Memoria.Launcher
 
 
 
-            CreateTextbloc(Lang.Settings.VanillaCheats, true);
+            CreateHeading(Lang.Settings.VanillaCheats);
 
-            CreateCheckbox("SpeedMode", Lang.Settings.SpeedMode, Lang.Settings.SpeedMode_Tooltip);
-            CreateSlider("SpeedFactor", "SpeedFactor", 2, 12, 1, "{0}x");
+            //CreateCheckbox("SpeedMode", Lang.Settings.SpeedMode, Lang.Settings.SpeedMode_Tooltip);
+            CreateSlider("SpeedFactor", "SpeedFactor", 1, 12, 1, "{0}x", 50, Lang.Settings.SpeedMode, Lang.Settings.SpeedMode_Tooltip);
             CreateCheckbox("BattleAssistance", Lang.Settings.PermanentTranse, Lang.Settings.BattleAssistance_Tooltip);
             CreateCheckbox("Attack9999", Lang.Settings.Attack9999, Lang.Settings.Attack9999_Tooltip);
             CreateCheckbox("NoRandomEncounter", Lang.Settings.NoRandomBattles, Lang.Settings.NoRandomBattles_Tooltip);

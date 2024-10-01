@@ -7,13 +7,13 @@ namespace Memoria.Launcher
         public SettingsGrid_Main()
         {
 
-            CreateTextbloc(Lang.Settings.QoL, true);
+            CreateHeading(Lang.Settings.QoL);
 
 
             CreateCheckbox("SkipIntros", Lang.Settings.SkipIntrosToMainMenu, Lang.Settings.SkipIntrosToMainMenu_Tooltip);
             CreateCheckbox("BattleSwirlFrames", Lang.Settings.SkipBattleSwirl, Lang.Settings.SkipBattleSwirl_Tooltip);
 
-            CreateTextbloc(Lang.Settings.UIColumnsChoice, false, Lang.Settings.UIColumnsChoice_Tooltip);
+            CreateTextbloc(Lang.Settings.UIColumnsChoice, Lang.Settings.UIColumnsChoice_Tooltip);
             String[] comboboxchoices = new String[]{
                 Lang.Settings.UIColumnsChoice0, // default 8 - 6
                 Lang.Settings.UIColumnsChoice1, // 3 columns
@@ -28,9 +28,9 @@ namespace Memoria.Launcher
 
 
 
-            CreateTextbloc(Lang.Settings.Battle, true);
+            CreateHeading(Lang.Settings.Battle);
 
-            CreateTextbloc(Lang.Settings.BattleInterface, false, Lang.Settings.BattleInterface_Tooltip);
+            CreateTextbloc(Lang.Settings.BattleInterface, Lang.Settings.BattleInterface_Tooltip);
             comboboxchoices = new String[]{
                 Lang.Settings.BattleInterfaceType0,
                 Lang.Settings.BattleInterfaceType1,
@@ -38,7 +38,7 @@ namespace Memoria.Launcher
             };
             CreateCombobox("BattleInterface", comboboxchoices);
 
-            CreateTextbloc(Lang.Settings.SpeedChoice, false, Lang.Settings.SpeedChoice_Tooltip);
+            CreateTextbloc(Lang.Settings.SpeedChoice, Lang.Settings.SpeedChoice_Tooltip);
             comboboxchoices = new String[]{
                 Lang.Settings.SpeedChoiceType0,
                 Lang.Settings.SpeedChoiceType1,
@@ -61,8 +61,8 @@ namespace Memoria.Launcher
 
 
 
-            CreateTextbloc(Lang.Settings.BattleTPS, false, Lang.Settings.BattleTPS_Tooltip);
-            CreateSlider("BattleTPSDividedBy10", "BattleTPS", 15, 75, 1, "{0}x", 50);
+            //CreateTextbloc(Lang.Settings.BattleTPS, Lang.Settings.BattleTPS_Tooltip);
+            CreateSlider("BattleTPSDividedBy10", "BattleTPS", 15, 75, 1, "{0}x", 50, Lang.Settings.BattleTPS, Lang.Settings.BattleTPS_Tooltip);
 
 
             IniFile.SanitizeMemoriaIni();

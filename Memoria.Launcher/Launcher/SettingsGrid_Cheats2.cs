@@ -7,7 +7,7 @@ namespace Memoria.Launcher
         public SettingsGrid_Cheats2()
         {
 
-            CreateTextbloc(Lang.Settings.Other, true);
+            CreateHeading(Lang.Settings.Other);
             CreateCheckbox("EasyTetraMaster", Lang.Settings.EasyTetraMaster, Lang.Settings.EasyTetraMaster_Tooltip);
             CreateCheckbox("ExcaliburIINoTimeLimit", Lang.Settings.ExcaliburIINoTimeLimit, Lang.Settings.ExcaliburIINoTimeLimit_Tooltip);
             CreateCheckbox("EasyJumpRopeMinigame", Lang.Settings.EasyJumpRopeMinigame, Lang.Settings.EasyJumpRopeMinigame_Tooltip);

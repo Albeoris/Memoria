@@ -365,6 +365,10 @@ namespace Memoria.Launcher
             {
                 if (_speedfactor != value)
                 {
+                    if (_speedfactor == 0)
+                        _speedmode = 0;
+                    else
+                        _speedmode = 1;
                     _speedfactor = value;
                     OnPropertyChanged();
                 }
@@ -595,7 +599,7 @@ namespace Memoria.Launcher
             ["AccessBattleMenuToggle", "_accessbattlemenutoggle", "AccessMenus", "Battle", 0, 3],
             ["GarnetConcentrate", "_garnetconcentrate", "GarnetConcentrate", "Battle", 0, 1],
 
-            ["SpeedMode", "_speedmode", "SpeedMode", "Cheats", 0, 1],
+            //["SpeedMode", "_speedmode", "SpeedMode", "Cheats", 0, 1],
             ["BattleAssistance", "_battleassistance", "BattleAssistance", "Cheats", 0, 1],
             ["Attack9999", "_attack9999", "Attack9999", "Cheats", 0, 1],
             ["NoRandomEncounter", "_norandomencounter", "NoRandomEncounter", "Cheats", 0, 1],
@@ -611,7 +615,7 @@ namespace Memoria.Launcher
             ["CameraStabilizer", "_camerastabilizer", "CameraStabilizer", "Graphics", 0, 1],
             ["BattleTPS", "_battletpsfactor", "BattleTPS", "Graphics", 0, 1],
             ["WorldmapFOV", "_worldmapfov", "FieldOfView", "Worldmap", 0, 1],
-            ["SpeedFactor", "_speedfactor", "SpeedFactor", "Cheats", 0, 1],
+            //["SpeedFactor", "_speedfactor", "SpeedFactor", "Cheats", 0, 1],
         };
         #endregion
 
@@ -652,6 +656,17 @@ namespace Memoria.Launcher
                 Int32 var0 = 0; Int32 var1 = 0; Int32 var2 = 0; Int32 var3 = 0; Int32 var4 = 0; Int32 var5 = 0;
                 switch (propertyName)
                 {
+                    case nameof(SpeedFactor):
+                        var0 = SpeedFactor;
+                        iniFile.WriteValue("Cheats", "SpeedFactor ", " " + var0);
+                        if (var0 < 2)
+                            iniFile.WriteValue("Cheats", "SpeedMode ", " 0");
+                        else
+                        {
+                            iniFile.WriteValue("Cheats", "SpeedMode ", " 1");
+                            iniFile.WriteValue("Cheats", "Enabled ", " 1");
+                        }
+                        break;
                     case nameof(FPSDropboxChoice):
                         var0 = FPSDropboxChoice;
                         if (var0 >= 0)

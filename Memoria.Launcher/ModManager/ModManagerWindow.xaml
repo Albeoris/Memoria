@@ -536,7 +536,7 @@
                         Click="OnClickReorganize"
                         TabIndex="21"
                         ToolTip="Auto-organize mod by priority" >
-                            <Image Source="/Images/btnReorganize.png" />
+                            <Image Source="/images/btnReorganize.png" />
                         </Button>
                         <Button x:Name="btnMoveUp"
                         Style="{StaticResource ButtonStyle}"
@@ -545,7 +545,7 @@
                         MouseRightButtonUp="OnClickSendTop"
                         TabIndex="21"
                         ToolTip="Move Up/Right-Click to Move to Top" >
-                            <Image Source="/Images/btnMoveUpimg.png" />
+                            <Image Source="/images/btnMoveUpimg.png" />
                         </Button>
                         <!--<Button
                             x:Name="btnMoveUp"
@@ -564,7 +564,7 @@
                         MouseRightButtonDown="OnClickSendBottom"
                         TabIndex="22"
                         ToolTip="Move Down/Right-Click to Move to Bottom" >
-                            <Image Source="/Images/btnMoveDownimg.png" />
+                            <Image Source="/images/btnMoveDownimg.png" />
                         </Button>
                         <!--
                         <Button
@@ -575,7 +575,7 @@
                         MouseRightButtonDown="OnClickCheckAllConflicts"
                         TabIndex="25"
                         ToolTip="Check Mod Compatibilities/Right-Click to Check All" >
-                            <Image Source="/Images/btnCheckCompatibilityimg.png" />
+                            <Image Source="/images/btnCheckCompatibilityimg.png" />
                         </Button>
                         -->
                         <!--
@@ -592,7 +592,7 @@
                                 Height="36"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Source="/Images/btnActivateAllimg.png"
+                                Source="/images/btnActivateAllimg.png"
                                 />
 
                         </Button>
@@ -609,7 +609,7 @@
                                 Height="36"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
-                                Source="/Images/btnDeactivateAllimg.png"
+                                Source="/images/btnDeactivateAllimg.png"
                                 />
 
                         </Button>
@@ -622,7 +622,7 @@
                         MouseRightButtonDown="OnClickUninstall"
                         TabIndex="28"
                         ToolTip="Uninstall Mod(s)" >
-                            <Image Source="/Images/btnUninstallimg.png" />
+                            <Image Source="/images/btnUninstallimg.png" />
                         </Button>
                     </StackPanel>
                     <Button
@@ -634,7 +634,7 @@
                     TabIndex="28"
                     ToolTip="Close Mod Manager"
                     VerticalAlignment="Bottom">
-                        <Image Source="/Images/btnCloseimg.png" />
+                        <Image Source="/images/btnCloseimg.png" />
                     </Button>
                     <ListView x:Name="lstMods"
                     Margin="6,0,0,0"
@@ -799,7 +799,7 @@
                         IsEnabled="false"
                         Style="{StaticResource ButtonStyle}"
                         ToolTip="Download/Update Selected Mod(s)" >
-                            <Image Source="/Images/btnDownloadimg.png" />
+                            <Image Source="/images/btnDownloadimg.png" />
                         </Button>
                     </StackPanel>
                     <ListView x:Name="lstCatalogMods"
@@ -904,7 +904,7 @@
                         TabIndex="14"
                         ToolTip="Cancel Current Download/Right-Click to Cancel All"
                         ToolTipService.ShowOnDisabled="True"  >
-                            <Image Source="/Images/btnCancelimg.png" />
+                            <Image Source="/images/btnCancelimg.png" />
                         </Button>
                     </StackPanel>
                     <Button x:Name="btnCatalogClose"
@@ -916,7 +916,7 @@
                     TabIndex="28"
                     ToolTip="Close Mod Manager"
                     VerticalAlignment="Bottom" >
-                        <Image Source="/Images/btnCloseimg.png" />
+                        <Image Source="/images/btnCloseimg.png" />
                     </Button>
                     <ListView x:Name="lstDownloads"
                     Grid.Row="1"

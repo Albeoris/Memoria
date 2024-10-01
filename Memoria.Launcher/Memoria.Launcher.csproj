@@ -46,7 +46,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Images\ff9.ico</ApplicationIcon>
+    <ApplicationIcon>images\ff9.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>Memoria.Launcher.Program</StartupObject>
@@ -73,6 +73,7 @@
     <Compile Include="Languages\Lang.cs" />
     <Compile Include="Languages\XmlDocumentExm.cs" />
     <Compile Include="Languages\XmlHelper.cs" />
+    <Compile Include="Launcher\SettingsGrid_Advanced.cs" />
     <Compile Include="Launcher\SettingsGrid_Cheats2.cs" />
     <Compile Include="Launcher\SettingsGrid_Cheats.cs" />
     <Compile Include="Launcher\SettingsGrid_Display.cs" />
@@ -163,14 +164,14 @@
     <Resource Include="Fonts\overpass.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\FF9_logo.png" />
-    <Resource Include="Images\new_launcher_bg.jpg" />
-    <Resource Include="Images\btnReorganize.png" />
-    <Resource Include="Images\alert_incompat.png" />
-    <Resource Include="Images\alert_update.png" />
-    <Resource Include="Images\btnCloseimg.png" />
-    <Resource Include="Images\no-disc.jpg" />
-    <Resource Include="Images\shader_comparison1.jpg" />
+    <Resource Include="images\FF9_logo.png" />
+    <Resource Include="images\new_launcher_bg.jpg" />
+    <Resource Include="images\btnReorganize.png" />
+    <Resource Include="images\alert_incompat.png" />
+    <Resource Include="images\alert_update.png" />
+    <Resource Include="images\btnCloseimg.png" />
+    <Resource Include="images\no-disc.jpg" />
+    <Resource Include="images\shader_comparison1.jpg" />
     <EmbeddedResource Include="Languages\uk.xml" />
     <EmbeddedResource Include="Languages\it.xml" />
     <EmbeddedResource Include="Languages\jp.xml" />
@@ -181,12 +182,12 @@
     <EmbeddedResource Include="Languages\en.xml" />
     <EmbeddedResource Include="Languages\ru.xml" />
     <EmbeddedResource Include="Languages\zh-CN.xml" />
-    <Resource Include="Images\btnCancelimg.png" />
-    <Resource Include="Images\btnCheckCompatibilityimg.png" />
-    <Resource Include="Images\btnDownloadimg.png" />
-    <Resource Include="Images\btnMoveDownimg.png" />
-    <Resource Include="Images\btnMoveUpimg.png" />
-    <Resource Include="Images\btnUninstallimg.png" />
+    <Resource Include="images\btnCancelimg.png" />
+    <Resource Include="images\btnCheckCompatibilityimg.png" />
+    <Resource Include="images\btnDownloadimg.png" />
+    <Resource Include="images\btnMoveDownimg.png" />
+    <Resource Include="images\btnMoveUpimg.png" />
+    <Resource Include="images\btnUninstallimg.png" />
     <None Include="Catalogs\MemoriaCatalog.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -207,25 +208,25 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\ff9.ico" />
+    <Resource Include="images\ff9.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\HelpIcon.png" />
+    <Resource Include="images\helpicon.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\moogle.cur" />
+    <Resource Include="images\moogle.cur" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\alexandriaPreview.png" />
+    <Resource Include="images\alexandriaPreview.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\shader_comparison2.jpg" />
+    <Resource Include="images\shader_comparison2.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\comparison_viewdistance.jpg" />
+    <Resource Include="images\comparison_viewdistance.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Images\comparison_mist.jpg" />
+    <Resource Include="images\comparison_mist.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">

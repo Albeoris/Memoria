@@ -66,7 +66,7 @@ namespace Memoria.Launcher
                 };
                 Image helpIcon = new Image
                 {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/Images/HelpIcon.png")),
+                    Source = new BitmapImage(new Uri("pack://application:,,,/images/helpicon.png")),
                     MaxWidth = 28,
                     Opacity = 1,
                     HorizontalAlignment = HorizontalAlignment.Left,
@@ -99,7 +99,7 @@ namespace Memoria.Launcher
 
                 if (imageName != "")
                 {
-                    String imagePath = "pack://application:,,,/Images/" + imageName;
+                    String imagePath = "pack://application:,,,/images/" + imageName;
                     Image tooltipImage = new Image
                     {
                         Source = new BitmapImage(new Uri(imagePath)),
@@ -153,14 +153,14 @@ namespace Memoria.Launcher
                     ForceCursor = true,
                     Opacity = 1
                 };
-                //toolTip.Opened += (sender, e) => { Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/Images/moogle.cur")).Stream); };
+                //toolTip.Opened += (sender, e) => { Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/images/moogle.cur")).Stream); };
                 //toolTip.Closed += (sender, e) => { Mouse.OverrideCursor = null; };
                 uiElement.MouseEnter += (sender, e) =>
                 {
                     ToolTipService.SetToolTip(uiElement, toolTip);
                     ToolTipService.SetInitialShowDelay(uiElement, 0);
                     toolTip.IsOpen = true;
-                    if (uiElement.IsMouseOver) Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/Images/moogle.cur")).Stream);
+                    if (uiElement.IsMouseOver) Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/images/moogle.cur")).Stream);
                 };
                 uiElement.MouseLeave += (sender, e) =>
                 {
@@ -197,7 +197,7 @@ namespace Memoria.Launcher
             checkBox.SetValue(ColumnSpanProperty, MaxColumns);
             Children.Add(checkBox);
         }
-        public void CreateTextbloc(String text, Boolean isHeading = false, String tooltip = "", String tooltipImage = "", Int32 columns = 100)
+        public void CreateTextbloc(String text, String tooltip = "", String tooltipImage = "", Int32 columns = 100)
         {
             Row++;
             RowDefinitions.Add(new RowDefinition());
@@ -205,7 +205,6 @@ namespace Memoria.Launcher
             textbloc.Text = text;
             MakeTooltip(textbloc, tooltip, tooltipImage);
             textbloc.Foreground = TextColor;
-            textbloc.Margin = new Thickness(0);
             Border border = new Border();
             textbloc.FontSize = FontSizeNormal;
             textbloc.VerticalAlignment = VerticalAlignment.Center;
@@ -216,36 +215,52 @@ namespace Memoria.Launcher
             border.SetValue(ColumnProperty, 0);
             border.SetValue(RowSpanProperty, 1);
             border.SetValue(ColumnSpanProperty, columns);
-            if (isHeading)
-            {
-                textbloc.TextAlignment = TextAlignment.Center;
-                textbloc.HorizontalAlignment = HorizontalAlignment.Center;
-                textbloc.FontStretch = FontStretch.FromOpenTypeStretch(9);
-                textbloc.FontWeight = FontWeight.FromOpenTypeWeight(500);
-                textbloc.FontSize = 14;
-                textbloc.Text = textbloc.Text.ToUpper();
-                textbloc.VerticalAlignment = VerticalAlignment.Center;
-                textbloc.Margin = new Thickness(0);
-                textbloc.Height = 18;
-                textbloc.Padding = new Thickness(0);
-                textbloc.SetValue(TextBlock.FontFamilyProperty, Application.Current.FindResource("CenturyGothic") as FontFamily);
-                border.Background = (SolidColorBrush)Application.Current.FindResource("BrushAccentColor");
-                border.Opacity = 0.8;
-                border.CornerRadius = new CornerRadius(5);
-                border.Margin = new Thickness(0, 7, 0, 3);
-                border.Height = 20;
-                border.HorizontalAlignment = HorizontalAlignment.Stretch;
-                border.VerticalAlignment = VerticalAlignment.Center;
-            }
             border.Child = textbloc;
             Children.Add(border);
         }
-        public void CreateCombobox(String property, IEnumerable options, Int32 firstColumn = 50, String tooltip = "", String tooltipImage = "", Boolean selectByName = false)
+
+        public void CreateHeading(String text)
         {
-            if (firstColumn == 0)
+            Row++;
+            RowDefinitions.Add(new RowDefinition());
+            TextBlock textbloc = new TextBlock();
+            textbloc.Text = text.ToUpper();
+            textbloc.Foreground = TextColor;
+            textbloc.TextAlignment = TextAlignment.Center;
+            textbloc.HorizontalAlignment = HorizontalAlignment.Center;
+            textbloc.FontStretch = FontStretch.FromOpenTypeStretch(9);
+            textbloc.FontWeight = FontWeight.FromOpenTypeWeight(500);
+            textbloc.FontSize = 14;
+            textbloc.VerticalAlignment = VerticalAlignment.Center;
+            textbloc.Margin = new Thickness(0);
+            textbloc.Height = 18;
+            textbloc.Padding = new Thickness(0);
+            textbloc.SetValue(TextBlock.FontFamilyProperty, Application.Current.FindResource("CenturyGothic") as FontFamily);
+            Border border = new Border();
+            border.SetValue(RowProperty, Row);
+            border.SetValue(ColumnProperty, 0);
+            border.SetValue(RowSpanProperty, 1);
+            border.SetValue(ColumnSpanProperty, 100);
+            border.Background = (SolidColorBrush)Application.Current.FindResource("BrushAccentColor");
+            border.Opacity = 0.8;
+            border.CornerRadius = new CornerRadius(5);
+            border.Margin = new Thickness(0, 7, 0, 3);
+            border.Height = 20;
+            border.HorizontalAlignment = HorizontalAlignment.Stretch;
+            border.VerticalAlignment = VerticalAlignment.Center;
+            border.Child = textbloc;
+            Children.Add(border);
+        }
+        public void CreateCombobox(String property, IEnumerable options, Int32 firstColumn = 50, String text = "", String tooltip = "", String tooltipImage = "", Boolean selectByName = false)
+        {
+            if (firstColumn == 0 || text != "")
             {
                 Row++;
                 RowDefinitions.Add(new RowDefinition());
+            }
+            if (text != "")
+            {
+                CreateTextbloc(text, tooltip, tooltipImage, firstColumn);
             }
             ComboBox comboBox = new ComboBox();
             comboBox.ItemsSource = options;
@@ -264,12 +279,16 @@ namespace Memoria.Launcher
             comboBox.SetValue(ColumnSpanProperty, MaxColumns - firstColumn);
             Children.Add(comboBox);
         }
-        public void CreateSlider(String indexproperty, String sliderproperty, double min, double max, double tickFrequency, String stringFormat = "{0}", Int32 firstColumn = 0)
+        public void CreateSlider(String indexproperty, String sliderproperty, double min, double max, double tickFrequency, String stringFormat = "", Int32 firstColumn = 0, String text = "", String tooltip = "", String tooltipImage = "")
         {
-            if (firstColumn == 0)
+            if (firstColumn == 0 || text != "")
             {
                 Row++;
                 RowDefinitions.Add(new RowDefinition());
+            }
+            if (text != "" && firstColumn > 0)
+            {
+                CreateTextbloc(text, tooltip, tooltipImage, firstColumn);
             }
             Slider slider = new Slider();
             slider.Value = 0;
@@ -290,6 +309,7 @@ namespace Memoria.Launcher
 
             TextBlock textbloc = new TextBlock();
             textbloc.Text = "";
+            if (stringFormat == "") stringFormat = "{0}";
             textbloc.SetBinding(TextBlock.TextProperty, new Binding(indexproperty) { Mode = BindingMode.TwoWay, StringFormat = stringFormat });
             textbloc.Foreground = TextColor;
             //textbloc.Background = Brushes.Black;

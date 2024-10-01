@@ -86,7 +86,7 @@
             Height="889"
             VerticalAlignment="Top"
             MouseDown="Launcher_MouseDown"
-            Source="/Images/new_launcher_bg.jpg" />
+            Source="/images/new_launcher_bg.jpg" />
 
         <Image x:Name="LogoImage"
             Height="250"
@@ -94,7 +94,7 @@
                HorizontalAlignment="Left"
                Margin="20,-53,0,0"
             MouseDown="Launcher_MouseDown"
-            Source="/Images/FF9_logo.png" />
+            Source="/images/FF9_logo.png" />
 
         <Button Content="X"
                 Width="52"
@@ -143,7 +143,6 @@
             <TabItem x:Name="menuSettings" Header="SETTINGS">
                 <Grid Style="{StaticResource TransparentGridStyle}">
                     <launcher:SettingsGrid_VanillaDisplay x:Name="GameSettingsDisplay"
-                                                          
                         Width="293"
                         Margin="20,15"
                         HorizontalAlignment="Left"
@@ -151,7 +150,7 @@
 
                     <launcher:SettingsGrid_Display x:Name="SettingsGrid_Display"
                         Width="293"
-                        Margin="20,129,0,0"
+                        Margin="20,131,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
 
@@ -193,13 +192,19 @@
                         Margin="20,15"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
+                    <launcher:SettingsGrid_Advanced x:Name="SettingsGrid_Advanced"
+                        Width="293"
+                        Margin="20,156,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top" />
+
 
                     <launcher:UiLauncherModelViewerButton
-                        Width="293"
+                        Width="292"
                         Height="36"
-                        Margin="20,0,0,303"
-                        HorizontalAlignment="Left"
-                        VerticalAlignment="Bottom"
+                        Margin="0,20,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top"
                         Content="" />
                 </Grid>
             </TabItem>
@@ -240,7 +245,7 @@
                 VerticalAlignment="Bottom"
                 Margin="0,0,3,0"
                 Panel.ZIndex="1"
-                Source="/Images/alert_incompat.png"
+                Source="/images/alert_incompat.png"
                 ToolTipService.InitialShowDelay="1"
                 ToolTip=""
                 Visibility="Collapsed" />
@@ -252,7 +257,7 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Bottom"
                 Panel.ZIndex="1"
-                Source="/Images/alert_update.png"
+                Source="/images/alert_update.png"
                 ToolTipService.InitialShowDelay="1"
                 ToolTip=""
                 Visibility="Visible" />

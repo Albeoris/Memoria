@@ -45,7 +45,7 @@
 	BattleInterfaceType1 = "Petit"
 	BattleInterfaceType2 = "Style PS1"
 	SkipIntrosToMainMenu = "Passer les intros > menu"
-	SkipBattleSwirl = "Passer le chargement de combat"
+	SkipBattleSwirl = "Passer le chargement des combats"
 	AntiAliasing = "Anti-aliasing"
 	SkipBattleLoading = "Frames avant les combats"
 	HideCardsBubbles = "Cacher les bulles 'cartes'"
