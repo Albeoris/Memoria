@@ -37,7 +37,7 @@ namespace Memoria.Launcher
             CreateTextbloc(Lang.Settings.Worldmap, true);
 
 
-            CreateTextbloc(Lang.Settings.WorldmapMistPreset, false, Lang.Settings.WorldmapMistPreset_Tooltip);
+            CreateTextbloc(Lang.Settings.WorldmapMistPreset, false, Lang.Settings.WorldmapMistPreset_Tooltip, "comparison_mist.jpg");
             comboboxchoices = new String[]{
                 Lang.Settings.WorldmapMistPresetChoice0,
                 Lang.Settings.WorldmapMistPresetChoice1,
@@ -46,7 +46,7 @@ namespace Memoria.Launcher
             };
             CreateCombobox("WorldmapMistPreset", comboboxchoices);
 
-            CreateTextbloc(Lang.Settings.WorldmapDistancePreset, false, Lang.Settings.WorldmapDistancePreset_Tooltip);
+            CreateTextbloc(Lang.Settings.WorldmapDistancePreset, false, Lang.Settings.WorldmapDistancePreset_Tooltip, "comparison_viewdistance.jpg");
             comboboxchoices = new String[]{
                 Lang.Settings.WorldmapDistancePresetChoice0,
                 Lang.Settings.WorldmapDistancePresetChoice1,

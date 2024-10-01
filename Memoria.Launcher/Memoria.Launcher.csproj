@@ -221,6 +221,12 @@
   <ItemGroup>
     <Resource Include="Images\shader_comparison2.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\comparison_viewdistance.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\comparison_mist.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">
     <ItemGroup>
