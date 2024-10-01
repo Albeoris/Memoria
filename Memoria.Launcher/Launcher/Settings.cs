@@ -614,7 +614,9 @@ namespace Memoria.Launcher
             // Sliders
             ["CameraStabilizer", "_camerastabilizer", "CameraStabilizer", "Graphics", 0, 1],
             ["BattleTPS", "_battletpsfactor", "BattleTPS", "Graphics", 0, 1],
+            ["WorldmapTPS", "_worldmaptps", "WorldTPS", "Graphics", 0, 1],
             ["WorldmapFOV", "_worldmapfov", "FieldOfView", "Worldmap", 0, 1],
+            ["WMCameraHeight", "_wmcameraheight", "CameraHeight", "Worldmap", 0, 1],
             //["SpeedFactor", "_speedfactor", "SpeedFactor", "Cheats", 0, 1],
         };
         #endregion
@@ -836,7 +838,7 @@ namespace Memoria.Launcher
         public readonly Object[][] SettingsList2 =
         {
             // variable, variable_ini, category_ini
-            ["WidescreenSupport", "WidescreenSupport", "Graphics"],
+            ["WidescreenSupport", "_iswidescreensupport", "WidescreenSupport", "Graphics", 0, 1],
         };
 
         public void LoadSettings()
@@ -852,6 +854,12 @@ namespace Memoria.Launcher
                         
                     }
                 }*/
+                /*
+                foreach (Object[] item in SettingsList2)
+                {
+                    if (item[0] is String property && item[1] is String _property && item[2] is String name_ini && item[3] is String category && item[4] is Int32 valueZero && item[5] is Int32 valueOne) //  
+                    {
+                        Object propValue = this.GetType().GetProperty(property)?.GetValue(this);
 
                 String value;
                 Boolean value1isInt;

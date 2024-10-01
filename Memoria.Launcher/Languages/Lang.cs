@@ -191,7 +191,6 @@ namespace Memoria.Launcher
             public static readonly string AccessBattleMenuType3 = GetSettings(nameof(AccessBattleMenuType3));
             public static readonly string SpeedMode = GetSettings(nameof(SpeedMode));
             public static readonly string SpeedFactor = GetSettings(nameof(SpeedFactor));
-            public static readonly string BattleAssistance = GetSettings(nameof(BattleAssistance));
             public static readonly string PermanentTranse = GetSettings(nameof(PermanentTranse));
             public static readonly string MaxDamage = GetSettings(nameof(MaxDamage));
             public static readonly string NoRandomBattles = GetSettings(nameof(NoRandomBattles));
@@ -334,6 +333,10 @@ namespace Memoria.Launcher
             public static readonly string EasyJumpRopeMinigame_Tooltip = GetSettings(nameof(EasyJumpRopeMinigame_Tooltip));
             public static readonly string Attack9999 = GetSettings(nameof(Attack9999));
             public static readonly string Attack9999_Tooltip = GetSettings(nameof(Attack9999_Tooltip));
+            public static readonly string WMCameraHeight = GetSettings(nameof(WMCameraHeight));
+            public static readonly string WMCameraHeight_Tooltip = GetSettings(nameof(WMCameraHeight_Tooltip));
+            public static readonly string WorldmapTPS = GetSettings(nameof(WorldmapTPS));
+            public static readonly string WorldmapTPS_Tooltip = GetSettings(nameof(WorldmapTPS_Tooltip));
         }
 
         public static class SteamOverlay

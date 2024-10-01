@@ -253,14 +253,14 @@ namespace Memoria.Launcher
         }
         public void CreateCombobox(String property, IEnumerable options, Int32 firstColumn = 50, String text = "", String tooltip = "", String tooltipImage = "", Boolean selectByName = false)
         {
-            if (firstColumn == 0 || text != "")
-            {
-                Row++;
-                RowDefinitions.Add(new RowDefinition());
-            }
             if (text != "")
             {
                 CreateTextbloc(text, tooltip, tooltipImage, firstColumn);
+            }
+            else if (firstColumn == 0)
+            {
+                Row++;
+                RowDefinitions.Add(new RowDefinition());
             }
             ComboBox comboBox = new ComboBox();
             comboBox.ItemsSource = options;
@@ -281,14 +281,13 @@ namespace Memoria.Launcher
         }
         public void CreateSlider(String indexproperty, String sliderproperty, double min, double max, double tickFrequency, String stringFormat = "", Int32 firstColumn = 0, String text = "", String tooltip = "", String tooltipImage = "")
         {
-            if (firstColumn == 0 || text != "")
-            {
-                Row++;
-                RowDefinitions.Add(new RowDefinition());
-            }
             if (text != "" && firstColumn > 0)
             {
                 CreateTextbloc(text, tooltip, tooltipImage, firstColumn);
+            } else if (firstColumn == 0)
+            {
+                Row++;
+                RowDefinitions.Add(new RowDefinition());
             }
             Slider slider = new Slider();
             slider.Value = 0;
