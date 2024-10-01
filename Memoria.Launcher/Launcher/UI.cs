@@ -264,7 +264,7 @@ namespace Memoria.Launcher
             }
             ComboBox comboBox = new ComboBox();
             comboBox.ItemsSource = options;
-            MakeTooltip(comboBox, tooltip, tooltipImage);
+            //MakeTooltip(comboBox, tooltip, tooltipImage);
             comboBox.Foreground = Brushes.Black;
             comboBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightCombobox);
             comboBox.Margin = CommonMargin;

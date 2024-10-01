@@ -192,15 +192,13 @@
                         Margin="20,15"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
-                    
-                    <!--
+
                     <launcher:SettingsGrid_Advanced x:Name="SettingsGrid_Advanced"
                         Width="293"
                         Margin="20,156,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
-                    -->
-                    
+
                     <launcher:UiLauncherModelViewerButton
                         Width="292"
                         Height="36"

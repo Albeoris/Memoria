@@ -196,6 +196,8 @@ WorldmapTPS_Tooltip = "Worldmap speed multiplier"
 HippaulRacingViviSpeed = "Easy Hippaul race"
 HippaulRacingViviSpeed_Tooltip = "Makes the Hippaul race minigame in Alexandria easy by making Vivi 3 times as fast"
 TripleTriad_Tooltip = "• Tetra Master (default)&#xA;• Tetra Master, battles are less random&#xA;• Tetra Triad: hybrid between FF9/FF8&#xA;• Triple Triad: FF8's card game"
+AudioBackend = "New audio engine"
+AudioBackend_Tooltip = "The new audio engine sounds cleaner and clearer"
 />
 
 <SteamOverlay

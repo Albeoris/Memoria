@@ -319,6 +319,19 @@ namespace Memoria.Launcher
                 }
             }
         }
+        private Int16 _audiobackend;
+        public Int16 AudioBackend
+        {
+            get { return _audiobackend; }
+            set
+            {
+                if (_audiobackend != value)
+                {
+                    _audiobackend = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
         #endregion
 
         #region Prop sliders
@@ -660,6 +673,8 @@ namespace Memoria.Launcher
             ["ExcaliburIINoTimeLimit", "_excaliburiinotimelimit", "ExcaliburIINoTimeLimit", "Hacks", 0, 1],
             ["EasyJumpRopeMinigame", "_easyjumpropeminigame", "RopeJumpingIncrement", "Hacks", 1, 1000],
             ["HippaulRacingViviSpeed", "_hippaulracingvivispeed", "HippaulRacingViviSpeed", "Hacks", 33, 100],
+
+            ["AudioBackend", "_audiobackend", "Backend", "Audio", 0, 1],
 
             // Sliders
             ["CameraStabilizer", "_camerastabilizer", "CameraStabilizer", "Graphics", 0, 1],
@@ -1423,6 +1438,19 @@ namespace Memoria.Launcher
                     _hippaulracingvivispeed = 0;
                 else
                     _hippaulracingvivispeed = 1;
+
+
+                value = iniFile.ReadValue("Audio", "Backend");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 1";
+                    OnPropertyChanged(nameof(AudioBackend));
+                }
+                value1isInt = Int16.TryParse(value, out value1);
+                if (value1 == 0)
+                    _audiobackend = 0;
+                else
+                    _audiobackend = 1;
 
                 foreach (Object[] item in SettingsList)
                 {
