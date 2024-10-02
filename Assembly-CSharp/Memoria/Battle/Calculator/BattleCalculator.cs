@@ -72,7 +72,7 @@ namespace Memoria
     public static class BattleState
     {
         public static Boolean IsSpecialStart => FF9StateSystem.Battle.FF9Battle.btl_scene.Info.SpecialStart;
-        public static Boolean IsBattleStateEnabled => UIManager.Battle.FF9BMenu_IsEnable();
+        public static Boolean IsBattleStateEnabled => UIManager.Battle.FF9BMenu_IsEnable() || (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.Tutorial && PersistenSingleton<UIManager>.Instance.TutorialScene.DisplayMode == TutorialUI.Mode.Libra);
         public static Boolean IsATBEnabled => HonoluluBattleMain.counterATB > 0 || (UIManager.Battle.FF9BMenu_IsEnable() && UIManager.Battle.FF9BMenu_IsEnableAtb());
         public static Int32 ATBTickCount => HonoluluBattleMain.counterATB; // Number of times the ATB advanced this tick (it can be 2 or more only in turn-based and fast speed modes)
         public static Int32 SharedATBSpeedCoef => btl_para.GetATBCoef(); // Default increment for each ATB advancement

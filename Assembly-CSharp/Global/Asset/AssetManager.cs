@@ -419,8 +419,11 @@ public static class AssetManager
         return default(T);
     }
 
-    public static IEnumerable<T> LoadMultiple<T>(String name) where T : UnityEngine.Object
+    public static IEnumerable<T> LoadMultiple<T>(String name, Boolean checkOnDisc = true) where T : UnityEngine.Object
     {
+        // TODO: Might want to do a check on typeof(T) instead of providing "checkOnDisc"
+        // The problem to check externalised assets is that some of them have the same name but not the same type inside archives
+        // So using Load<GameObject>(path) for a path that corresponds to both a GameObject and a Texture2D will mistakenly confuse an external PNG as an external GameObject, unless "checkOnDisc" is disabled
         T result;
         if (AssetManagerForObb.IsUseOBB)
         {
@@ -436,9 +439,10 @@ public static class AssetManager
         }
         if (!UseBundles || AssetManagerUtil.IsEmbededAssets(name))
         {
-            foreach (AssetFolder modfold in FolderHighToLow)
-                if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
-                    yield return LoadFromDisc<T>(fullPath, name);
+            if (checkOnDisc)
+                foreach (AssetFolder modfold in FolderHighToLow)
+                    if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+                        yield return LoadFromDisc<T>(fullPath, name);
             result = Resources.Load<T>(name);
             if (result != null)
                 yield return result;
@@ -450,8 +454,9 @@ public static class AssetManager
             String nameInBundle = AssetManagerUtil.GetResourcesBasePath() + name + AssetManagerUtil.GetAssetExtension<T>(name);
             foreach (AssetFolder modfold in FolderHighToLow)
             {
-                if (modfold.TryFindAssetInModOnDisc(nameInBundle, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
-                    yield return LoadFromDisc<T>(fullPath, nameInBundle);
+                if (checkOnDisc)
+                    if (modfold.TryFindAssetInModOnDisc(nameInBundle, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
+                        yield return LoadFromDisc<T>(fullPath, nameInBundle);
                 if (modfold.IsAssetInModInBundle(belongingBundleFilename, nameInBundle, out AssetBundleRef assetBundleRef))
                 {
                     result = assetBundleRef.assetBundle.LoadAsset<T>(nameInBundle);
@@ -462,9 +467,10 @@ public static class AssetManager
         }
         if (ForceUseBundles)
             yield break;
-        foreach (AssetFolder modfold in FolderHighToLow)
-            if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
-                yield return LoadFromDisc<T>(fullPath, name);
+        if (checkOnDisc)
+            foreach (AssetFolder modfold in FolderHighToLow)
+                if (modfold.TryFindAssetInModOnDisc(name, out String fullPath, AssetManagerUtil.GetResourcesAssetsPath(true) + "/"))
+                    yield return LoadFromDisc<T>(fullPath, name);
         result = Resources.Load<T>(name);
         if (result != null)
             yield return result;
@@ -621,6 +627,16 @@ public static class AssetManager
         T mainFile = LoadMultiple<T>(name).FirstOrDefault();
         if (mainFile == null && !suppressMissingError)
             Log.Message("[AssetManager] Memoria asset not found: " + name);
+        return mainFile;
+    }
+
+    public static T LoadInArchive<T>(String name, Boolean suppressMissingError = false) where T : UnityEngine.Object
+    {
+        if (AssetManager.AnimationInFolder == null)
+            DelayedInitialization();
+        T mainFile = LoadMultiple<T>(name, false).FirstOrDefault();
+        if (mainFile == null && !suppressMissingError)
+            Log.Message("[AssetManager] Memoria asset not found in archives: " + name);
         return mainFile;
     }
 

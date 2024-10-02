@@ -1371,8 +1371,10 @@ public class Dialog : MonoBehaviour
     {
         if (speed != -1)
             this.messageSpeed[index] = speed * Dialog.FF9TextSpeedRatio * Configuration.Graphics.FieldTPS / 30f;
-        else
+        else if (Configuration.VoiceActing.ForceMessageSpeed < 0)
             this.messageSpeed[index] = Dialog.DialogTextAnimationTick[FF9StateSystem.Settings.cfg.fld_msg] * Dialog.FF9TextSpeedRatio * Configuration.Graphics.FieldTPS / 30f;
+        else
+            this.messageSpeed[index] = Dialog.DialogTextAnimationTick[Configuration.VoiceActing.ForceMessageSpeed] * Dialog.FF9TextSpeedRatio * Configuration.Graphics.FieldTPS / 30f;
     }
 
     public void SetMessageWait(Int32 ff9Frames, Int32 index)
@@ -1993,6 +1995,13 @@ public class Dialog : MonoBehaviour
         public Boolean checkFromConfig = true;
         public Boolean IsButton = true;
         public String tag = String.Empty;
+
+        [NonSerialized]
+        public String AtlasName = null;
+        [NonSerialized]
+        public String SpriteName = null;
+        [NonSerialized]
+        public Boolean Rescale = false;
     }
 
     public enum TailPosition

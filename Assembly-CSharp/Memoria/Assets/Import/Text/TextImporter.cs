@@ -27,6 +27,13 @@ namespace Memoria.Assets
                 throw new Exception("Failed to load embaded resources.");
         }
 
+        public Boolean LoadSync()
+        {
+            if (Configuration.Import.Text)
+                return LoadExternal();
+            return LoadInternal();
+        }
+
         protected abstract Boolean LoadExternal();
         protected abstract Boolean LoadInternal();
     }

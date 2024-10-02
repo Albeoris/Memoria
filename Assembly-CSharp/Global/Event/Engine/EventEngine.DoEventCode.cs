@@ -276,8 +276,10 @@ public partial class EventEngine
                 Int32 posX = this.getv2(); // X position
                 Int32 posZ = this.getv2(); // Z position
                 Boolean isValid = this.gMode == 1 && po?.model != UInt16.MaxValue;
+                
                 if (isValid && po != null)
                 {
+                    Log.Message("mapNo == " + mapNo +  " && scCounter == " + scCounter + " && po.sid == " + po.sid + " && posX == " + posX + " && posZ == " + posZ);
                     FieldMapActorController actorController = po.go.GetComponent<FieldMapActorController>();
                     if (actorController != null && actorController.walkMesh != null)
                     {
@@ -315,6 +317,13 @@ public partial class EventEngine
                         posX = -1635;
                     else if (mapNo == 572 && po.sid == 16 && posX == -1750) // Lindblum/I.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1765;
+                    else if (mapNo == 850 && scCounter == 3118 && posX == 898 && posZ == -4972)
+                    { 
+                        if (po.sid == 16)
+                            posZ = -5372;
+                        if (po.sid == 2)
+                            posZ = -4772;
+                    }
                     else if (mapNo == 1310 && po.sid == 12 && posX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1635;
                     else if (mapNo == 1811 && scCounter == 7200 && po.sid == 13 && posX == 413 && posZ == -17294) // Vivi visible too soon
@@ -1911,7 +1920,7 @@ public partial class EventEngine
                 if (player != null && player.cid == 4 && (mapNo == 153 || mapNo == 1214 || mapNo == 1806) && newCamIdx == 0) // Fix #493 - flapping camera
                 {
                     Vector3 pos = ((Actor)player).fieldMapActorController.lastPos;
-                    if ((pos.x > 500 || pos.y > 240) && !(scCounter == 1190 && pos.y > 314 && pos.y < 317)) // exception for scene with Steiner and plutos
+                    if ((pos.x > 500 || pos.y > 240) && !(scCounter == 1190 && pos.y > 305 && pos.y < 325)) // exception for scene with Steiner and plutos
                         return 0;
                 }
                 this.fieldmap.SetCurrentCameraIndex(newCamIdx);

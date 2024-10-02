@@ -1038,4 +1038,11 @@ public class MBG : HonoBehavior
     private Boolean tempVirtualAnalogStatus;
 
     private Boolean isPause;
+
+    internal class MaskFrame
+    {
+        public Vector4 frame;
+        public Vector4 sourceSize;
+        public Int32 sheetID;
+    }
 }

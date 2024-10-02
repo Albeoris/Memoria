@@ -158,6 +158,7 @@
 	Shader_Realism = "Realista"
 	Shader_Toon = "Desenho animado"
 	Shader_Outlines = "Contornos do modelo"
+	Custom = "Personalizado"
 	/>
 
 	<SdLib
@@ -202,6 +203,8 @@
 	TimeLeft = "Tempo Restante"
 	ActiveIncompatibleMods = "Mod incompatível com: "
 	IncompatibleWithMemoria = "A versão do mod é incompatível com o Memoria atual. Atualize-o a partir do catálogo de mods."
+	ApplyModPresetText = "Você deseja aplicar esta predefinição de mod?"
+	ApplyModPresetCaption = "Aplicar predefinição"
 	UpdateTooltip = "Nova versão deste mod disponível no catálogo de mods: "
 	TooltipMoveUp = "Mover pra Cima/Clique com o Botão Direito do Mouse pra Mover pro Topo"
 	TooltipMoveDown = "Mover pra Baixo/Clique com o Botão Direito de Mouse pra Mover pro Rodapé"

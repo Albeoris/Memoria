@@ -5,9 +5,9 @@ Shader "WorldMap/SkyDome No Fog" {
 	}
 	SubShader { 
 		LOD 100
-		Tags { "RenderType"="Opaque" }
+		Tags { "Queue"="Geometry+1" "RenderType"="Opaque" }
 		Pass {
-			Tags { "RenderType"="Opaque" }
+			Tags { "Queue"="Geometry+1" "RenderType"="Opaque" }
 			GpuProgramID 21450
 			Program "vp" {
 				SubProgram "d3d9 " {

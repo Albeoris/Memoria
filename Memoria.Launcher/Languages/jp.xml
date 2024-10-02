@@ -151,6 +151,7 @@
 	Shader_Realism = "リアリズム"
 	Shader_Toon = "トゥーン"
 	Shader_Outlines = "モデルの輪郭"
+	Custom = "カスタム"
 	/>
 
 	<SdLib
@@ -195,6 +196,8 @@
 	TimeLeft = "残り時間"
 	ActiveIncompatibleMods = "以下と互換性がないMod: "
 	IncompatibleWithMemoria = "このModのバージョンは現在のMemoriaと互換性がありません。Modカタログから更新してください。"
+	ApplyModPresetText = "この MOD プリセットを適用しますか?"
+	ApplyModPresetCaption = "プリセットを適用する"
 	UpdateTooltip = "ModカタログにこのModの新しいバージョンがあります: "
 	TooltipMoveUp = "上へ移動/右クリックで先頭へ移動"
 	TooltipMoveDown = "下へ移動/右クリックで最後尾へ移動"

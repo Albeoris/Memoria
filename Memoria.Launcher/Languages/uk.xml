@@ -156,6 +156,7 @@
 	Shader_Realism = "Реалістичний"
 	Shader_Toon = "Мультяшний"
 	Shader_Outlines = "Контури моделі"
+	Custom = "Налаштований"
 	/>
 
 	<SdLib
@@ -200,6 +201,8 @@
 	TimeLeft = "Час що лишився"
 	ActiveIncompatibleMods = "Мод несумісний з: "
 	IncompatibleWithMemoria = "Версія мода несумісна з поточною Memoria. Оновіть його з каталогу модів."
+	ApplyModPresetText = "Бажаєте застосувати цей стиль?"
+	ApplyModPresetCaption = "Застосувати попередні налаштування"
 	UpdateTooltip = "Нова версія цього мода доступна в каталозі модів: "
 	TooltipMoveUp = "Перемістити вгору/Правий клік, щоб перемістити на самий верх"
 	TooltipMoveDown = "Перемістити вниз/Правий клік, щоб перемістити на самий низ"

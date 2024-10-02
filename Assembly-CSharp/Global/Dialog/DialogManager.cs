@@ -23,9 +23,8 @@ public class DialogManager : Singleton<DialogManager>
         Int32 currentOffset = 0;
         Int32 length = fullText.Length;
         Single nextCharTime = 0f;
-        Int32 ff9Signal = 0;
-        Dialog.DialogImage insertImage = null;
         Single charsPerSecond = 0f;
+        Int32 ff9Signal = 0;
         while (currentOffset < length)
         {
             while (nextCharTime <= RealTime.time)
@@ -37,18 +36,14 @@ public class DialogManager : Singleton<DialogManager>
                     break;
                 }
                 if (label.supportEncoding)
-                {
-                    while (NGUIText.ParseSymbol(fullText, ref currentOffset, ref ff9Signal, ref insertImage))
-                    {
-                    }
-                }
+                    ff9Signal = NGUIText.GetNextFF9Signal(fullText, ref currentOffset);
                 currentOffset++;
                 Single delay = HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? 1f / (charsPerSecond * FF9StateSystem.Settings.FastForwardFactor) : 1f / charsPerSecond;
                 if (nextCharTime == 0f || nextCharTime + delay > RealTime.time)
                     nextCharTime = RealTime.time + delay;
                 else
                     nextCharTime += delay;
-                NGUIText.ProcessFF9Signal(ref ff9Signal);
+                NGUIText.ProcessFF9Signal(ff9Signal);
             }
             yield return new WaitForEndOfFrame();
         }

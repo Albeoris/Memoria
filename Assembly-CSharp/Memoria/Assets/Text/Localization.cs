@@ -14,6 +14,7 @@ namespace Memoria.Assets
         }
 
         public static ICollection<String> KnownLanguages => Provider.KnownLanguages;
+        public static Dictionary<String, Dictionary<String, String>> DefaultDictionary => _defaultDictionary;
 
         public static String CurrentLanguage
         {
@@ -29,6 +30,17 @@ namespace Memoria.Assets
         public static String Get(String key)
         {
             return Provider.Get(key);
+        }
+
+        public static String ProcessEntryForCSVWriting(String entry)
+        {
+            entry = entry.Replace("\n", "\\n");
+            if (entry.Contains("\"") || entry.Contains(","))
+            {
+                entry = entry.Replace("\"", "\"\"");
+                entry = "\"" + entry + "\"";
+            }
+            return entry;
         }
 
         /// <summary>Might be useful in the future to base a translation mod on another language</summary>
@@ -55,11 +67,143 @@ namespace Memoria.Assets
 
         private static Dictionary<String, Dictionary<String, String>> _defaultDictionary = new Dictionary<String, Dictionary<String, String>>()
         {
-            { "GilSymbol", new Dictionary<String, String>()
+            // The base reading direction of the language
+            { "ReadingDirection", new Dictionary<String, String>()
                 {
-                    { "US", "%[YSUB=1.3][sub]G" }
+                    { "US", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "UK", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "JP", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "ES", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "FR", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "GR", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT },
+                    { "IT", UnicodeBIDI.DIRECTION_NAME_LEFT_TO_RIGHT }
                 }
             },
+            // Language name in the title menu's button
+            { "NameShort", new Dictionary<String, String>()
+                {
+                    { "US", "US" },
+                    { "UK", "UK" },
+                    { "JP", "JP" },
+                    { "ES", "ES" },
+                    { "FR", "FR" },
+                    { "GR", "GR" },
+                    { "IT", "IT" }
+                }
+            },
+            // Gil formatiing in multiple menu
+            { "GilSymbol", new Dictionary<String, String>()
+                {
+                    { "US", "%[YSUB=1.3][sub]G" },
+                    { "UK", "%[YSUB=1.3][sub]G" },
+                    { "JP", "%[YSUB=1.3][sub]G" },
+                    { "ES", "%[YSUB=1.3][sub]G" },
+                    { "FR", "%[YSUB=1.3][sub]G" },
+                    { "GR", "%[YSUB=1.3][sub]G" },
+                    { "IT", "%[YSUB=1.3][sub]G" }
+                }
+            },
+            // New options in the config menu
+            { "SoundVolume", new Dictionary<String, String>()
+                {
+                    { "US", "Sound Volume" },
+                    { "UK", "Sound Volume" },
+                    { "JP", "サウンド音量" },
+                    { "ES", "Volumen de sonidos" },
+                    { "FR", "Volume des sons" },
+                    { "GR", "Lautstärke der Geräusche" },
+                    { "IT", "Volume dei suoni" }
+                }
+            },
+            { "MusicVolume", new Dictionary<String, String>()
+                {
+                    { "US", "Music Volume" },
+                    { "UK", "Music Volume" },
+                    { "JP", "音楽の音量" },
+                    { "ES", "Volumen de la música" },
+                    { "FR", "Volume de la musique" },
+                    { "GR", "Musiklautstärke" },
+                    { "IT", "Volume della musica" }
+                }
+            },
+            { "MovieVolume", new Dictionary<String, String>()
+                {
+                    { "US", "Movie Volume" },
+                    { "UK", "Movie Volume" },
+                    { "JP", "動画の音量" },
+                    { "ES", "Volumen de la película" },
+                    { "FR", "Volume des films" },
+                    { "GR", "Filmlautstärke" },
+                    { "IT", "Volume di film" }
+                }
+            },
+            { "VoiceVolume", new Dictionary<String, String>()
+                {
+                    { "US", "Voice Volume" },
+                    { "UK", "Voice Volume" },
+                    { "JP", "音声音量" },
+                    { "ES", "Volumen de voz" },
+                    { "FR", "Volume des voix" },
+                    { "GR", "Stimmen Lautstärke" },
+                    { "IT", "Volume della voce" }
+                }
+            },
+            { "ATBModeNormal", new Dictionary<String, String>()
+                {
+                    { "US", "ATB: Normal" },
+                    { "UK", "ATB: Normal" },
+                    { "JP", "ATBモード: 通常" },
+                    { "ES", "ATB: Normal" },
+                    { "FR", "ATB : Normal" },
+                    { "GR", "ATB: Normaler" },
+                    { "IT", "ATB: Normale" }
+                }
+            },
+            { "ATBModeFast", new Dictionary<String, String>()
+                {
+                    { "US", "ATB: Fast" },
+                    { "UK", "ATB: Fast" },
+                    { "JP", "ATBモード: 高速" },
+                    { "ES", "ATB: Rápido" },
+                    { "FR", "ATB : Rapide" },
+                    { "GR", "ATB: Schneller" },
+                    { "IT", "ATB: Veloce" }
+                }
+            },
+            { "ATBModeTurnBased", new Dictionary<String, String>()
+                {
+                    { "US", "ATB: Turn-Based" },
+                    { "UK", "ATB: Turn-Based" },
+                    { "JP", "ATBモード: ターン制" },
+                    { "ES", "ATB: Por Turnos" },
+                    { "FR", "ATB : Par Tour" },
+                    { "GR", "ATB: Turn" },
+                    { "IT", "ATB: A Turni" }
+                }
+            },
+            { "ATBModeDynamic", new Dictionary<String, String>()
+                {
+                    { "US", "ATB: Dynamic" },
+                    { "UK", "ATB: Dynamic" },
+                    { "JP", "ATBモード: 動的" },
+                    { "ES", "ATB: Dinámico" },
+                    { "FR", "ATB: Dynamique" },
+                    { "GR", "ATB: Dynamischer" },
+                    { "IT", "ATB: Dinamica" }
+                }
+            },
+            { "AutoText", new Dictionary<String, String>()
+                {
+                    { "US", "Auto Text" },
+                    { "UK", "Auto Text" },
+                    { "JP", "自動テキスト" },
+                    { "ES", "Texto Automático" },
+                    { "FR", "Texte Automatique" },
+                    { "GR", "Autotext" },
+                    { "IT", "Testo Automatico" }
+                }
+            },
+            // Mix battle message
             { "FailedMixMessage", new Dictionary<String, String>()
                 {
                     { "US", "The combination failed!" },
@@ -71,6 +215,7 @@ namespace Memoria.Assets
                     { "IT", "La miscela non è riuscita!" }
                 }
             },
+            // New parameters possibly displayed by Scan in battles
             { "ElementWeak", new Dictionary<String, String>()
                 {
                     { "US", "Weak to [FFCC00]%[FFFFFF]" },

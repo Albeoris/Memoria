@@ -360,8 +360,16 @@ public class SoundMetaData
         if (musicDictionary == null || !musicDictionary.TryGetValue(soundIndex, out text))
         {
             // Log for Memoria.Prime.Log as well: a missing sound may indicate something needs to be fixed (possibly a missing asset or a missing entry in metadata as it was the case for enemy death sounds)
-            SoundLib.Log($"Could not find the {type} with Id {soundIndex}");
-            Memoria.Prime.Log.Warning($"Could not find the {type} with Id {soundIndex}");
+            if (type == SoundProfileType.Music && soundIndex == 136)
+            {
+                SoundLib.Log($"Could not find the {type} with Id {soundIndex} (this is normal, remnant of PSX code)");
+                Memoria.Prime.Log.Warning($"Could not find the {type} with Id {soundIndex} (this is normal, remnant of PSX code)");
+            }
+            else
+            {
+                SoundLib.Log($"Could not find the {type} with Id {soundIndex}");
+                Memoria.Prime.Log.Warning($"Could not find the {type} with Id {soundIndex}");
+            }
             return null;
         }
         return new SoundProfile

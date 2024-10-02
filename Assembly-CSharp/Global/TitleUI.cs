@@ -500,7 +500,10 @@ public class TitleUI : UIScene
                 }
                 else if (go == this.MenuLanguageButton)
                 {
-                    this.OnMenuLanguageButtonClick();
+                    if (Configuration.VoiceActing.ForceLanguage >= 0)
+                        FF9Sfx.FF9SFX_Play(102); // Language has been forced
+                    else
+                        this.OnMenuLanguageButtonClick();
                 }
                 else if (go == this.MenuStaffButton || go == this.MenuStaffPCButton)
                 {
@@ -1167,78 +1170,42 @@ public class TitleUI : UIScene
     private void OnFaqsButtonClick()
     {
         FF9Sfx.FF9SFX_Play(103);
-        String language = Localization.CurrentLanguage;
-        switch (language)
+        switch (Localization.CurrentLanguage)
         {
-            case "English(US)":
-                Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_us");
-                break;
-            case "English(UK)":
-                Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_uk");
-                break;
-            case "Japanese":
-                Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_jp");
-                break;
-            case "Spanish":
-                Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_spa");
-                break;
-            case "French":
-                Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_fra");
-                break;
-            case "German":
-                Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_ger");
-                break;
-            case "Italian":
-                Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_ita");
-                break;
+            case "English(US)": Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_us");  break;
+            case "English(UK)": Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_uk");  break;
+            case "Japanese":    Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_jp");  break;
+            case "Spanish":     Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_spa"); break;
+            case "French":      Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_fra"); break;
+            case "German":      Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_ger"); break;
+            case "Italian":     Application.OpenURL("http://an.sqexm.net/sp/site/Page/sqmk/ff9/help/help_ita"); break;
         }
     }
 
     private void OnSquareEnixButtonClick()
     {
         if (FF9StateSystem.PCEStorePlatform)
-        {
             return;
-        }
 
         FF9Sfx.FF9SFX_Play(103);
-        String language = Localization.CurrentLanguage;
-        switch (language)
+        switch (Localization.CurrentLanguage)
         {
-            case "English(US)":
-                Application.OpenURL("http://sqex-bridge.jp/");
-                break;
-            case "English(UK)":
-                Application.OpenURL("http://sqex-bridge.jp/");
-                break;
-            case "Japanese":
-                Application.OpenURL("http://sqex-bridge.jp/");
-                break;
-            case "Spanish":
-                Application.OpenURL("http://sqex-bridge.jp/");
-                break;
-            case "French":
-                Application.OpenURL("http://sqex-bridge.jp/");
-                break;
-            case "German":
-                Application.OpenURL("http://sqex-bridge.jp/");
-                break;
-            case "Italian":
-                Application.OpenURL("http://sqex-bridge.jp/");
-                break;
+            case "English(US)": Application.OpenURL("http://sqex-bridge.jp/");  break;
+            case "English(UK)": Application.OpenURL("http://sqex-bridge.jp/");  break;
+            case "Japanese":    Application.OpenURL("http://sqex-bridge.jp/");  break;
+            case "Spanish":     Application.OpenURL("http://sqex-bridge.jp/");  break;
+            case "French":      Application.OpenURL("http://sqex-bridge.jp/");  break;
+            case "German":      Application.OpenURL("http://sqex-bridge.jp/");  break;
+            case "Italian":     Application.OpenURL("http://sqex-bridge.jp/");  break;
         }
     }
 
     public void SwapScreenRotation()
     {
         if (FF9StateSystem.Settings.ScreenRotation == 3)
-        {
             FF9StateSystem.Settings.ScreenRotation = 4;
-        }
         else if (FF9StateSystem.Settings.ScreenRotation == 4)
-        {
             FF9StateSystem.Settings.ScreenRotation = 3;
-        }
         this.SetRotateScreen();
     }
 
@@ -1247,9 +1214,7 @@ public class TitleUI : UIScene
         if (FF9StateSystem.Settings.ScreenRotation == 3)
         {
             if (this.rotateButtonSprite != null)
-            {
                 this.rotateButtonSprite.spriteName = "title_menu_rotate_right";
-            }
         }
         else if (FF9StateSystem.Settings.ScreenRotation == 4 && this.rotateButtonSprite != null)
         {
@@ -1262,17 +1227,15 @@ public class TitleUI : UIScene
     private void CheckAutoSaveSlot(DataSerializerErrorCode errNo, Boolean isSuccess)
     {
         this.canContinue = isSuccess;
-        this.continueButtonSprite.color = ((!isSuccess) ? new Color(1f, 1f, 1f, 0.5f) : new Color(1f, 1f, 1f, 1f));
+        this.continueButtonSprite.color = isSuccess ? new Color(1f, 1f, 1f, 1f) : new Color(1f, 1f, 1f, 0.5f);
         if (isSuccess && ButtonGroupState.ActiveGroup != MenuGroupButton && !ButtonGroupState.HaveCursorMemorize(MenuGroupButton))
-        {
             ButtonGroupState.SetCursorStartSelect(this.continueButton, MenuGroupButton);
-        }
     }
 
     private void CheckCloudAvalability()
     {
         this.canSync = SiliconStudio.Social.IsCloudAvailable();
-        this.cloudButtonSprite.color = ((!this.canSync) ? new Color(1f, 1f, 1f, 0.5f) : new Color(1f, 1f, 1f, 1f));
+        this.cloudButtonSprite.color = this.canSync ? new Color(1f, 1f, 1f, 1f) : new Color(1f, 1f, 1f, 0.5f);
     }
 
     private void CheckGameFinishFlag(DataSerializerErrorCode errNo, Boolean isLoadSuccess, Boolean isFinished)
@@ -1283,93 +1246,59 @@ public class TitleUI : UIScene
             {
                 this.MenuMovieButton.SetActive(true);
                 if (FF9StateSystem.PCPlatform)
-                {
                     this.MenuBlackjackPCButton.SetActive(true);
-                }
                 else
-                {
                     this.MenuBlackjackButton.SetActive(true);
-                }
             }
             else
             {
                 this.MenuMovieButton.gameObject.SetActive(false);
                 if (FF9StateSystem.PCPlatform)
-                {
                     this.MenuBlackjackPCButton.SetActive(false);
-                }
                 else
-                {
                     this.MenuBlackjackButton.SetActive(false);
-                }
             }
         }
         else
         {
             this.MenuMovieButton.gameObject.SetActive(false);
             if (FF9StateSystem.PCPlatform)
-            {
                 this.MenuBlackjackPCButton.SetActive(false);
-            }
             else
-            {
                 this.MenuBlackjackButton.SetActive(false);
-            }
         }
     }
 
     private MenuLanguage GetMenuLanguageFromGameObject(GameObject go)
     {
         if (go == this.englishUSButton)
-        {
             return MenuLanguage.EnglishUS;
-        }
         if (go == this.japaneseButton)
-        {
             return MenuLanguage.Japanese;
-        }
         if (go == this.germanButton)
-        {
             return MenuLanguage.German;
-        }
         if (go == this.spanishButton)
-        {
             return MenuLanguage.Spanish;
-        }
         if (go == this.italianButton)
-        {
             return MenuLanguage.Italian;
-        }
         if (go == this.frenchButton)
-        {
             return MenuLanguage.French;
-        }
         if (go == this.englishUKButton)
-        {
             return MenuLanguage.EnglishUK;
-        }
         return MenuLanguage.None;
     }
 
     private GameObject GetGameObjectFromCurrentLanguage()
     {
-        String language = Localization.CurrentLanguage;
-        switch (language)
+        switch (Localization.CurrentLanguage)
         {
-            case "English(US)":
-                return this.englishUSButton;
-            case "Japanese":
-                return this.japaneseButton;
-            case "German":
-                return this.germanButton;
-            case "Spanish":
-                return this.spanishButton;
-            case "Italian":
-                return this.italianButton;
-            case "French":
-                return this.frenchButton;
-            case "English(UK)":
-                return this.englishUKButton;
+            case "English(US)": return this.englishUSButton;
+            case "Japanese":    return this.japaneseButton;
+            case "German":      return this.germanButton;
+            case "Spanish":     return this.spanishButton;
+            case "Italian":     return this.italianButton;
+            case "French":      return this.frenchButton;
+            case "English(UK)": return this.englishUKButton;
         }
         return null;
     }
@@ -1495,8 +1424,7 @@ public class TitleUI : UIScene
             localPosition.y = -200f;
             this.ScreenRotateButton.transform.localPosition = localPosition;
             this.ScreenRotateButton.SetActive(true);
-            UIEventListener uieventListener = UIEventListener.Get(this.ScreenRotateButton);
-            uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(this.onClick));
+            UIEventListener.Get(this.ScreenRotateButton).onClick += this.onClick;
         }
 
         this.cloudButton.SetActive(false);
@@ -1521,9 +1449,7 @@ public class TitleUI : UIScene
     private void OnApplicationPause(Boolean pauseStatus)
     {
         if (!pauseStatus)
-        {
             this.CheckCloudAvalability();
-        }
     }
 
     private void Update()
@@ -1533,9 +1459,7 @@ public class TitleUI : UIScene
         {
             OSDLogger.AddStaticMessage(Time.frameCount + " : TAP!");
             if (!this.OnDoubleClickGalleryMovie())
-            {
                 base.StartCoroutine(this.StopGalleryMovieCoroutine());
-            }
         }
     }
 
@@ -1556,26 +1480,25 @@ public class TitleUI : UIScene
         this.rotateButtonSprite = this.ScreenRotateButton.GetComponent<UISprite>();
         this.continueButtonSprite = this.continueButton.GetComponent<UISprite>();
         this.cloudButtonSprite = this.cloudButton.GetComponent<UISprite>();
-        UIEventListener expr_B0 = UIEventListener.Get(this.continueButton);
-        expr_B0.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_B0.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_DD = UIEventListener.Get(this.newGameButton);
-        expr_DD.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_DD.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_10A = UIEventListener.Get(this.loadGameButton);
-        expr_10A.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_10A.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_137 = UIEventListener.Get(this.MenuLanguageButton);
-        expr_137.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_137.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_164 = UIEventListener.Get(this.MenuMovieButton);
-        expr_164.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_164.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_191 = UIEventListener.Get(this.StaffLicenseButton);
-        expr_191.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_191.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_1BE = UIEventListener.Get(this.StaffBackButton);
-        expr_1BE.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_1BE.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_1EB = UIEventListener.Get(this.LicenseBackButton);
-        expr_1EB.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_1EB.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_218 = UIEventListener.Get(this.MovieBackButton);
-        expr_218.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_218.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_245 = UIEventListener.Get(this.SquareEnixButton);
-        expr_245.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_245.onClick, new UIEventListener.VoidDelegate(this.onClick));
+        this.MenuLanguageButton.GetChild(0).GetComponent<UILocalize>().key = "NameShort";
+        UIEventListener.Get(this.continueButton).onClick += this.onClick;
+        UIEventListener.Get(this.newGameButton).onClick += this.onClick;
+        UIEventListener.Get(this.loadGameButton).onClick += this.onClick;
+        UIEventListener.Get(this.MenuLanguageButton).onClick += this.onClick;
+        UIEventListener.Get(this.MenuMovieButton).onClick += this.onClick;
+        UIEventListener.Get(this.StaffLicenseButton).onClick += this.onClick;
+        UIEventListener.Get(this.StaffBackButton).onClick += this.onClick;
+        UIEventListener.Get(this.LicenseBackButton).onClick += this.onClick;
+        UIEventListener.Get(this.MovieBackButton).onClick += this.onClick;
+        UIEventListener.Get(this.SquareEnixButton).onClick += this.onClick;
+        UIEventListener.Get(this.MenuStaffPCButton).onClick += this.onClick;
+        UIEventListener.Get(this.MenuBlackjackPCButton).onClick += this.onClick;
+        UIEventListener.Get(this.FaqsButton).onClick += this.onClick;
+        UIEventListener.Get(this.MenuStaffButton).onClick += this.onClick;
+        UIEventListener.Get(this.MenuBlackjackButton).onClick += this.onClick;
+        UIEventListener.Get(this.AchievementButton).onClick += this.onClick;
+        UIEventListener.Get(this.ScreenRotateButton).onClick += this.onClick;
+        UIEventListener.Get(this.cloudButton).onClick += this.onClick;
         if (FF9StateSystem.PCPlatform)
         {
             this.FaqsButton.SetActive(false);
@@ -1583,16 +1506,7 @@ public class TitleUI : UIScene
             this.MenuBlackjackButton.SetActive(false);
             this.MenuStaffPCButton.SetActive(true);
             this.MenuBlackjackPCButton.SetActive(true);
-
-            UIEventListener staffEvents = UIEventListener.Get(this.MenuStaffPCButton);
-            staffEvents.Click += onClick;
-
-            UIEventListener blackjackEvents = UIEventListener.Get(this.MenuBlackjackPCButton);
-            blackjackEvents.Click += onClick;
-
             this.SquareEnixButton.SetActive(true);
-            UIEventListener squareEnixEvents = UIEventListener.Get(this.SquareEnixButton);
-            squareEnixEvents.Click += onClick;
         }
         else
         {
@@ -1601,12 +1515,6 @@ public class TitleUI : UIScene
             this.MenuBlackjackButton.SetActive(true);
             this.MenuStaffPCButton.SetActive(false);
             this.MenuBlackjackPCButton.SetActive(false);
-            UIEventListener expr_353 = UIEventListener.Get(this.FaqsButton);
-            expr_353.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_353.onClick, new UIEventListener.VoidDelegate(this.onClick));
-            UIEventListener expr_380 = UIEventListener.Get(this.MenuStaffButton);
-            expr_380.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_380.onClick, new UIEventListener.VoidDelegate(this.onClick));
-            UIEventListener expr_3AD = UIEventListener.Get(this.MenuBlackjackButton);
-            expr_3AD.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_3AD.onClick, new UIEventListener.VoidDelegate(this.onClick));
             if (FF9StateSystem.AndroidAmazonPlatform)
             {
                 this.ScreenRotateButton.transform.position = this.AchievementButton.transform.position;
@@ -1618,17 +1526,9 @@ public class TitleUI : UIScene
         if (FF9StateSystem.MobilePlatform)
         {
             this.AchievementButton.SetActive(true);
-            UIEventListener expr_3F0 = UIEventListener.Get(this.AchievementButton);
-            expr_3F0.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_3F0.onClick, new UIEventListener.VoidDelegate(this.onClick));
             if (!FF9StateSystem.AndroidTVPlatform)
-            {
                 this.ScreenRotateButton.SetActive(true);
-                UIEventListener expr_433 = UIEventListener.Get(this.ScreenRotateButton);
-                expr_433.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_433.onClick, new UIEventListener.VoidDelegate(this.onClick));
-            }
         }
-        UIEventListener expr_460 = UIEventListener.Get(this.cloudButton);
-        expr_460.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_460.onClick, new UIEventListener.VoidDelegate(this.onClick));
         this.japaneseButton = this.LanguageGroupPanel.GetChild(0);
         this.englishUSButton = this.LanguageGroupPanel.GetChild(1);
         this.frenchButton = this.LanguageGroupPanel.GetChild(2);
@@ -1641,22 +1541,14 @@ public class TitleUI : UIScene
         //this.japaneseButton.SetActive(false);
         //this.LanguageGroupPanel.transform.localPosition = new Vector3(this.LanguageGroupPanel.transform.localPosition.x, this.LanguageGroupPanel.transform.localPosition.y + 100f, this.LanguageGroupPanel.transform.localPosition.z);
 
-        UIEventListener expr_57B = UIEventListener.Get(this.englishUSButton);
-        expr_57B.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_57B.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_5A8 = UIEventListener.Get(this.japaneseButton);
-        expr_5A8.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_5A8.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_5D5 = UIEventListener.Get(this.germanButton);
-        expr_5D5.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_5D5.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_602 = UIEventListener.Get(this.spanishButton);
-        expr_602.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_602.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_62F = UIEventListener.Get(this.italianButton);
-        expr_62F.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_62F.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_65C = UIEventListener.Get(this.frenchButton);
-        expr_65C.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_65C.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_689 = UIEventListener.Get(this.englishUKButton);
-        expr_689.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_689.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener expr_6B6 = UIEventListener.Get(this.BackButton);
-        expr_6B6.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(expr_6B6.onClick, new UIEventListener.VoidDelegate(this.onClick));
+        UIEventListener.Get(this.japaneseButton).onClick += this.onClick;
+        UIEventListener.Get(this.englishUSButton).onClick += this.onClick;
+        UIEventListener.Get(this.frenchButton).onClick += this.onClick;
+        UIEventListener.Get(this.spanishButton).onClick += this.onClick;
+        UIEventListener.Get(this.germanButton).onClick += this.onClick;
+        UIEventListener.Get(this.italianButton).onClick += this.onClick;
+        UIEventListener.Get(this.englishUKButton).onClick += this.onClick;
+        UIEventListener.Get(this.BackButton).onClick += this.onClick;
 
         String credits;
         if (FF9StateSystem.AndroidAmazonPlatform)
@@ -1673,54 +1565,39 @@ public class TitleUI : UIScene
         if (!String.IsNullOrEmpty(credits))
             this.StaffLabel.text = credits;
 
-        String str;
-        RuntimePlatform platform = Application.platform;
-
-        switch (platform)
+        String licensePlatform;
+        switch (Application.platform)
         {
             case RuntimePlatform.IPhonePlayer:
-                str = "iOS";
+                licensePlatform = "iOS";
+                break;
+            case RuntimePlatform.WindowsPlayer:
+                if (FF9StateSystem.PCEStorePlatform)
+                    licensePlatform = "EStore";
+                else
+                    licensePlatform = "Steam";
+                break;
+            case RuntimePlatform.Android:
+                if (FF9StateSystem.AndroidAmazonPlatform)
+                    licensePlatform = "Amazon";
+                else if (FF9StateSystem.AndroidSQEXMarket)
+                    licensePlatform = "AndroidSQEXMarket";
+                else
+                    licensePlatform = "Android";
                 break;
             case RuntimePlatform.PS3:
             case RuntimePlatform.XBOX360:
             default:
-                if (platform != RuntimePlatform.WindowsPlayer)
-                {
-                    str = "Steam";
-                }
-                else if (FF9StateSystem.PCEStorePlatform)
-                {
-                    str = "EStore";
-                }
-                else
-                {
-                    str = "Steam";
-                }
-                break;
-            case RuntimePlatform.Android:
-                if (FF9StateSystem.AndroidAmazonPlatform)
-                {
-                    str = "Amazon";
-                }
-                else if (FF9StateSystem.AndroidSQEXMarket)
-                {
-                    str = "AndroidSQEXMarket";
-                }
-                else
-                {
-                    str = "Android";
-                }
+                licensePlatform = "Steam";
                 break;
         }
 
-        String textAsset = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/License_" + str + ".txt");
-        if (textAsset != null)
-            this.UpdateLicenseText(textAsset);
+        String licenseText = AssetManager.LoadString("EmbeddedAsset/Manifest/Text/License_" + licensePlatform + ".txt");
+        if (licenseText != null)
+            this.UpdateLicenseText(licenseText);
 
-        UICenterOnChild expr_810 = this.MovieCenterOnChild;
-        expr_810.onCenter = (UICenterOnChild.OnCenterCallback)Delegate.Combine(expr_810.onCenter, new UICenterOnChild.OnCenterCallback(this.OnCenterMoviePage));
-        UICenterOnChild expr_837 = this.LicenseCenterOnChild;
-        expr_837.onCenter = (UICenterOnChild.OnCenterCallback)Delegate.Combine(expr_837.onCenter, new UICenterOnChild.OnCenterCallback(this.OnCenterLicensePage));
+        this.MovieCenterOnChild.onCenter += this.OnCenterMoviePage;
+        this.LicenseCenterOnChild.onCenter += this.OnCenterLicensePage;
         this.onResumeFromQuit = delegate
         {
             if (this.isPlayingMovie)
@@ -1733,11 +1610,9 @@ public class TitleUI : UIScene
             }
         };
         if (Application.isMobilePlatform)
-        {
             this.MovieCenterOnChild.nextPageThreshold = 10f;
-        }
         this.slashScreen = new SlashScreen(null, this.SpashText, this.SlideShowObject, this.SlideShowFadingObject, this.TitleImageTextObject0, this.TitleImageTextObject1, this.TitleImageTextJpObject0, this.TitleImageTextJpObject1);
-        UICamera.onNavigate = (UICamera.KeyCodeDelegate)Delegate.Combine(UICamera.onNavigate, new UICamera.KeyCodeDelegate(this.OnKeyNavigate));
+        UICamera.onNavigate += this.OnKeyNavigate;
 
         DataPatchers.Initialize();
         ScriptsLoader.InitializeAsync();

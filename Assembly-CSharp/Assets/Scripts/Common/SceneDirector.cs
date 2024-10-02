@@ -1,9 +1,9 @@
-﻿using Assets.Sources.Scripts.Common;
+﻿using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Prime;
 using Memoria.Speedrun;
-using SiliconStudio;
+using Memoria.Prime.Threading;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -47,7 +47,9 @@ namespace Assets.Scripts.Common
 
         public static Boolean IsBattleScene()
         {
-            return String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.BattleMapSceneName) == 0 || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "BattleMapDebug") == 0 || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "SpecialEffectDebugRoom") == 0;
+            return String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, SceneDirector.BattleMapSceneName) == 0 
+                || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "BattleMapDebug") == 0 
+                || String.Compare(PersistenSingleton<SceneDirector>.Instance.CurrentScene, "SpecialEffectDebugRoom") == 0;
         }
 
         public static Boolean IsFieldScene()
@@ -644,7 +646,8 @@ namespace Assets.Scripts.Common
             SceneDirector._prevColor = SceneDirector.abrColor[(Int32)SceneDirector.fadeMode];
             if (disc_id > 0 && disc_id < 4)
                 SceneDirector._discChange = disc_id;
-            else SceneDirector._discChange = 0;
+            else
+                SceneDirector._discChange = 0;
         }
 
         public static void ServiceFade()
@@ -768,8 +771,22 @@ namespace Assets.Scripts.Common
         {
             if (Interlocked.CompareExchange(ref _initialized, 1, 0) == 0)
             {
-                ResourceExporter.ExportSafe();
-                ResourceImporter.Initialize();
+                if (Configuration.Import.Enabled && Configuration.Export.Enabled)
+                {
+                    Thread importerThread = new Thread(ResourceImporter.Initialize);
+                    importerThread.Start();
+                    while (importerThread.ThreadState == ThreadState.Running || (FF9TextTool.BattleImporter.InitializationTask != null && FF9TextTool.BattleImporter.InitializationTask.State == TaskState.Running) || (FF9TextTool.FieldImporter.InitializationTask != null && FF9TextTool.FieldImporter.InitializationTask.State == TaskState.Running))
+                        Thread.Sleep(100);
+                    ResourceExporter.ExportSafe();
+                }
+                else if (Configuration.Import.Enabled)
+                {
+                    ResourceImporter.Initialize();
+                }
+                else if (Configuration.Export.Enabled)
+                {
+                    ResourceExporter.ExportSafe();
+                }
             }
         }
     }

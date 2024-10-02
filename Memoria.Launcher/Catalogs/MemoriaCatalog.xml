@@ -22,7 +22,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 	<PatchNotes>Version 9.0 is a full rework of all aspects with new technologies, especially the backgrounds and battle maps.</PatchNotes>
 	<MinimumMemoriaVersion>2024-08-04</MinimumMemoriaVersion>
 	<Category>Visual</Category>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/qcgo2bafhdwvqftfrik67/MoguriMain.zip?rlkey=jmnyty7p2ug6zgm1y4kvortel&amp;st=bvegxlky&amp;dl=1</DownloadUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/ho8jpjzl9k7z70swyjqjz/MoguriMain.zip?rlkey=b1xll4gu7gl0rms28caqiiqc0&amp;st=rjvftx8t&amp;dl=1</DownloadUrl>
 	<Website>https://sites.google.com/view/moguri-mod</Website>
 	<PreviewFileUrl>https://i.imgur.com/yz2cgYv.jpeg</PreviewFileUrl>
 </Mod>
@@ -228,7 +228,7 @@ Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 	</SubMod>
 </Mod>
 <Mod>
-	<Name>Exp, AP, Gil , Rewards Tweaks</Name>
+	<Name>Exp, AP, Gil, Rewards Tweaks</Name>
 	<Version>4.0.1</Version>
 	<InstallationPath>KupoTweaks</InstallationPath>
 	<ReleaseDateOriginal>2022-08-14</ReleaseDateOriginal>
@@ -515,10 +515,10 @@ Part of the Characters Enhancements feature of Kupo Mods Formerly Mog Add-ons</D
 </Mod>
 <Mod>
 	<Name>Tantalus</Name>
-	<Version>3.0</Version>
+	<Version>3.2</Version>
 	<InstallationPath>PlayableTantalus</InstallationPath>
 	<ReleaseDateOriginal>2024-06-14</ReleaseDateOriginal>
-	<ReleaseDate>2024-08-18</ReleaseDate>
+	<ReleaseDate>2024-09-03</ReleaseDate>
 	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
 	<IncompatibleWith>Beatrix Mod, Trance Seek</IncompatibleWith>
 	<Author>Emeiru</Author>
@@ -528,7 +528,7 @@ Includes:
 - Base stats improvements
 - Steal-Gil and Mug buffed
 - New items and tweaks to complement the trio and thief gameplay
-- Minor name and ability text changes (purely thematic)</Description>
+- Minor name and ability text changes</Description>
 	<PatchNotes>Complete changes and info can be found on this mod's page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/64</Website>
@@ -536,16 +536,20 @@ Includes:
 	<PreviewFile>Tantalus.jpg</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/64/64-1723918805-1871056882.jpeg</PreviewFileUrl>
 	<SubMod>
+		<Name>Vanilla FFIX</Name>
+		<InstallationPath>Vanilla</InstallationPath>
+		<Description>Version for regular FFIX</Description>
+		<Priority>1</Priority>
+		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
+		<DeactivateWithMod>Alternate Fantasy</DeactivateWithMod>
+	</SubMod>
+	<SubMod>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
 		<Description>Version for Alternate Fantasy</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Vanilla</Name>
-		<InstallationPath>Vanilla</InstallationPath>
-		<Description>Version for regular FFIX</Description>
 		<Priority>2</Priority>
+		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
+		<DeactivateWithoutMod>Alternate Fantasy</DeactivateWithoutMod>
 	</SubMod>
 </Mod>
 
@@ -569,16 +573,16 @@ Complete changes and info can be found on this mod's page.</Description>
 
 <Mod>
 	<Name>Amazing Quina</Name>
-	<Version>1.0</Version>
+	<Version>2.0</Version>
 	<InstallationPath>AmazingQuina</InstallationPath>
 	<ReleaseDateOriginal>2024-08-18</ReleaseDateOriginal>
-	<ReleaseDate>2024-08-18</ReleaseDate>
+	<ReleaseDate>2024-09-06</ReleaseDate>
 	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
 	<Author>Emeiru</Author>
 	<Description>Amazing tweaks and improvement for the quirky Quina
 Includes: 
 - Forks deal more consistent random damage
-- New endgame robe for Quina that removes LV spell multiplier
+- New endgame robe for Quina that removes LV spell requirement
 - New trance command, Dbl Blu (from Alternate Fantasy)
 - Quina now learns Scan, Return Magic, and others
 - Tweaks to abilities like Goblin Punch, White Wind, and more</Description>
@@ -589,16 +593,20 @@ Includes:
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/67/</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/b6d02h8wko3dx5weqk0n0/AmazingQuina.zip?rlkey=6ivxlj5cgfc51w9zokazcntye&amp;st=23hlrn9n&amp;dl=1</DownloadUrl>
 	<SubMod>
-		<Name>Alternate Fantasy</Name>
-		<InstallationPath>AlternateFantasy</InstallationPath>
-		<Description>Version for Alternate Fantasy</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
 		<Name>Vanilla</Name>
 		<InstallationPath>Vanilla</InstallationPath>
 		<Description>Version for regular FFIX</Description>
+		<Priority>1</Priority>
+		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
+		<DeactivateWithMod>Alternate Fantasy</DeactivateWithMod>
+	</SubMod>
+	<SubMod>
+		<Name>Alternate Fantasy</Name>
+		<InstallationPath>AlternateFantasy</InstallationPath>
+		<Description>Version for Alternate Fantasy</Description>
 		<Priority>2</Priority>
+		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
+		<DeactivateWithoutMod>Alternate Fantasy</DeactivateWithoutMod>
 	</SubMod>
 </Mod>
 

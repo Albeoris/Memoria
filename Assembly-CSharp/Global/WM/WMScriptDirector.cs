@@ -191,7 +191,7 @@ public class WMScriptDirector : HonoBehavior
         if ((this.FF9Sys.attr & 12289U) != 0U || (this.FF9Sys.attr & 4097U) != 0U)
         {
             ff9.ff9ShutdownStateWorldMap();
-            ff9.ff9ShutdownStateWorldSystem();
+            //ff9.ff9ShutdownStateWorldSystem();
             if (this.FF9Sys.mode == 1)
             {
                 AllSoundDispatchPlayer soundPlayer = SoundLib.GetAllSoundDispatchPlayer();

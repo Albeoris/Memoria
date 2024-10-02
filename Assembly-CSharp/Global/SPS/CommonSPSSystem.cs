@@ -410,10 +410,11 @@ public class CommonSPSSystem
             Directory.CreateDirectory($"{exportFolder}/Status/{prototype.Comment}");
             for (Int32 i = 0; i < prototype.TextureCount; i++)
             {
-                Texture2D shpTexture = AssetManager.Load<Texture2D>($"{prototype.TextureBasePath}_{i + 1}");
+                String path = prototype.TextureBasePath.Replace("%", (i + 1).ToString());
+                Texture2D shpTexture = AssetManager.Load<Texture2D>(path);
                 if (shpTexture == null)
                     continue;
-                File.WriteAllBytes($"{exportFolder}/Status/{prototype.Comment}/{Path.GetFileName(prototype.TextureBasePath)}_{i + 1}", TextureHelper.CopyAsReadable(shpTexture).EncodeToPNG());
+                File.WriteAllBytes($"{exportFolder}/Status/{prototype.Comment}/{Path.GetFileName(path)}", TextureHelper.CopyAsReadable(shpTexture).EncodeToPNG());
             }
         }
         foreach (SPSPrototype prototype in CommonSPSSystem.SPSPrototypes.Values)

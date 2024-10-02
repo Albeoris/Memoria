@@ -218,7 +218,7 @@ public class WorldSPSSystem : MonoBehaviour
                     case SPSConst.WorldSPSEffect.WATERFALL:
                         goPos.z += ff9.S(-250);
                         ff9.w_frameShadowOTOffset = 40;
-                        sps.fade = -1;
+                        sps.fade = 235;
                         sps.GenerateSPS();
                         break;
                     case SPSConst.WorldSPSEffect.MOVE_WATER:

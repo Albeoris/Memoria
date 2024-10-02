@@ -16,23 +16,29 @@ internal class BitmapIconManager : Singleton<BitmapIconManager>
 
     public GameObject InsertBitmapIcon(Dialog.DialogImage dialogImg, GameObject label)
     {
-        GameObject gameObject;
-        if (dialogImg.IsButton)
-        {
-            gameObject = FF9UIDataTool.ButtonGameObject((Control)dialogImg.Id, dialogImg.checkFromConfig, dialogImg.tag);
-        }
+        GameObject imgGo;
+        if (!String.IsNullOrEmpty(dialogImg.SpriteName))
+            imgGo = FF9UIDataTool.SpriteGameObject(dialogImg.AtlasName, dialogImg.SpriteName);
+        else if (dialogImg.IsButton)
+            imgGo = FF9UIDataTool.ButtonGameObject((Control)dialogImg.Id, dialogImg.checkFromConfig, dialogImg.tag);
         else
+            imgGo = FF9UIDataTool.IconGameObject(dialogImg.Id);
+        if (imgGo != null)
         {
-            gameObject = FF9UIDataTool.IconGameObject(dialogImg.Id);
+            imgGo.transform.parent = label.transform;
+            if (dialogImg.Rescale)
+            {
+                Vector2 defaultSize = FF9UIDataTool.GetSpriteSize(dialogImg.AtlasName, dialogImg.SpriteName);
+                imgGo.transform.localScale = new Vector3(dialogImg.Size.x / defaultSize.x, dialogImg.Size.y / defaultSize.y, 1f);
+            }
+            else
+            {
+                imgGo.transform.localScale = Vector3.one;
+            }
+            imgGo.transform.localPosition = new Vector3(dialogImg.LocalPosition.x, dialogImg.LocalPosition.y, 0f);
+            imgGo.SetActive(true);
         }
-        if (gameObject != (UnityEngine.Object)null)
-        {
-            gameObject.transform.parent = label.transform;
-            gameObject.transform.localScale = Vector3.one;
-            gameObject.transform.localPosition = new Vector3(dialogImg.LocalPosition.x, dialogImg.LocalPosition.y, 0f);
-            gameObject.SetActive(true);
-        }
-        return gameObject;
+        return imgGo;
     }
 
     public void RemoveBitmapIcon(GameObject bitmap)

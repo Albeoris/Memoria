@@ -13,6 +13,11 @@ namespace Memoria
 {
     public static class WorldConfiguration
     {
+        public const String CONTINENT_NAME_MIST = "MistContinent";
+        public const String CONTINENT_NAME_OUTER = "OuterContinent";
+        public const String CONTINENT_NAME_FORGOTTEN = "ForgottenContinent";
+        public const String CONTINENT_NAME_LOST = "LostContinent";
+
         public static void PatchAllWorldConfig()
         {
             PatchWorldEnvironment();
@@ -93,6 +98,7 @@ namespace Memoria
             _customDiscModifier.Clear();
             _customRainModifier.Clear();
             _customLightModifier.Clear();
+            _customTitleModifier.Clear();
             try
             {
                 Boolean foundOne = false;
@@ -312,28 +318,62 @@ namespace Memoria
             return lightIndex;
         }
 
+        public static Rect GetTitleSpriteRect(SByte titleId)
+        {
+            // Custom usage setting
+            foreach (TitleModifier modifier in _customTitleModifier)
+                if ((modifier._titleNo == -1 || modifier._titleNo == titleId) && (String.Equals(modifier._language, "Any") || String.Equals(modifier._language, Localization.GetSymbol())))
+                    return modifier._rect;
+            // Default usage setting
+            return new Rect(0f, 144f, 1024f, 128f);
+        }
+
+        public static UInt32[] GetTitleSpriteDurations(SByte titleId)
+        {
+            // Custom usage setting
+            foreach (TitleModifier modifier in _customTitleModifier)
+                if ((modifier._titleNo == -1 || modifier._titleNo == titleId) && (String.Equals(modifier._language, "Any") || String.Equals(modifier._language, Localization.GetSymbol())))
+                    return [modifier._fadein, modifier._duration, modifier._fadeout];
+            // Default usage setting
+            return [119u, 1u, 59u];
+        }
+
+        public static String GetContinentName(SByte titleId)
+        {
+            switch (titleId)
+            {
+                case 0: return CONTINENT_NAME_MIST;
+                case 1: return CONTINENT_NAME_OUTER;
+                case 2: return CONTINENT_NAME_FORGOTTEN;
+                case 3: return CONTINENT_NAME_LOST;
+            }
+            return String.Empty;
+        }
+
         private static Boolean LoadWorldEnvironmentFile(String input)
         {
             Boolean doneSomething = false;
-            MatchCollection codeMatches = new Regex(@"^(Place|Effect|Mist|Disc4|Rain|Light)\s+(.*)$", RegexOptions.Multiline).Matches(input);
+            MatchCollection codeMatches = new Regex(@"^(Place|Effect|Mist|Disc4|Rain|Light|Title)\s+(.*)$", RegexOptions.Multiline).Matches(input);
             for (Int32 i = 0; i < codeMatches.Count; i++)
             {
                 MatchCollection argMatches = new Regex(@"\s*(\[[^\]]*\]|[^\]][^\s]*)").Matches(codeMatches[i].Groups[2].Value.Trim());
                 String[] args = new String[argMatches.Count];
                 for (Int32 j = 0; j < argMatches.Count; j++)
                     args[j] = argMatches[j].Groups[1].Value;
-                if (String.Compare(codeMatches[i].Groups[1].Value, "Place") == 0)
+                if (String.Equals(codeMatches[i].Groups[1].Value, "Place"))
                     doneSomething = LoadWorldEnvironmentDictionaryToken(args, _customPlaceModifier) || doneSomething;
-                else if (String.Compare(codeMatches[i].Groups[1].Value, "Effect") == 0)
+                else if (String.Equals(codeMatches[i].Groups[1].Value, "Effect"))
                     doneSomething = LoadWorldEnvironmentDictionaryToken(args, _customEffectModifier) || doneSomething;
-                else if (String.Compare(codeMatches[i].Groups[1].Value, "Mist") == 0)
+                else if (String.Equals(codeMatches[i].Groups[1].Value, "Mist"))
                     doneSomething = LoadWorldEnvironmentSimpleToken(args, _customMistModifier) || doneSomething;
-                else if (String.Compare(codeMatches[i].Groups[1].Value, "Disc4") == 0)
+                else if (String.Equals(codeMatches[i].Groups[1].Value, "Disc4"))
                     doneSomething = LoadWorldEnvironmentSimpleToken(args, _customDiscModifier) || doneSomething;
-                else if (String.Compare(codeMatches[i].Groups[1].Value, "Rain") == 0)
+                else if (String.Equals(codeMatches[i].Groups[1].Value, "Rain"))
                     doneSomething = LoadWorldEnvironmentRainToken(args, _customRainModifier) || doneSomething;
-                else if (String.Compare(codeMatches[i].Groups[1].Value, "Light") == 0)
+                else if (String.Equals(codeMatches[i].Groups[1].Value, "Light"))
                     doneSomething = LoadWorldEnvironmentLightToken(args, _customLightModifier) || doneSomething;
+                else if (String.Equals(codeMatches[i].Groups[1].Value, "Title"))
+                    doneSomething = LoadWorldEnvironmentTitleToken(args, _customTitleModifier) || doneSomething;
             }
             return doneSomething;
         }
@@ -343,14 +383,14 @@ namespace Memoria
             if (args.Length == 0)
                 return false;
             T key;
-            if (String.Compare(args[0], "Clear") == 0)
+            if (String.Equals(args[0], "Clear"))
             {
                 dict.Clear();
                 return true;
             }
             if (args[0].TryEnumParse(out key) && args.Length >= 2)
             {
-                if (String.Compare(args[1], "Clear") == 0)
+                if (String.Equals(args[1], "Clear"))
                 {
                     dict.Remove(key);
                     return true;
@@ -374,7 +414,7 @@ namespace Memoria
         {
             if (args.Length == 0)
                 return false;
-            if (String.Compare(args[0], "Clear") == 0)
+            if (String.Equals(args[0], "Clear"))
             {
                 modifier._condition.Clear();
                 return true;
@@ -391,12 +431,12 @@ namespace Memoria
         {
             if (args.Length == 0)
                 return false;
-            if (String.Compare(args[0], "Clear") == 0)
+            if (String.Equals(args[0], "Clear"))
             {
                 modifierList.Clear();
                 return true;
             }
-            if (String.Compare(args[0], "Add") != 0)
+            if (!String.Equals(args[0], "Add"))
                 return false;
             RainModifier modifier = new RainModifier();
             Int32 coord;
@@ -451,19 +491,19 @@ namespace Memoria
                 }
             }
             modifierList.Add(modifier);
-            return false;
+            return true;
         }
 
         private static Boolean LoadWorldEnvironmentLightToken(String[] args, List<LightModifier> modifierList)
         {
             if (args.Length == 0)
                 return false;
-            if (String.Compare(args[0], "Clear") == 0)
+            if (String.Equals(args[0], "Clear"))
             {
                 modifierList.Clear();
                 return true;
             }
-            if (String.Compare(args[0], "Add") != 0)
+            if (!String.Equals(args[0], "Add"))
                 return false;
             LightModifier modifier = new LightModifier();
             Int32 coord;
@@ -508,7 +548,65 @@ namespace Memoria
                 }
             }
             modifierList.Add(modifier);
-            return false;
+            return true;
+        }
+
+        private static Boolean LoadWorldEnvironmentTitleToken(String[] args, List<TitleModifier> modifierList)
+        {
+            if (args.Length < 2)
+                return false;
+            TitleModifier modifier = new TitleModifier();
+            switch (args[0])
+            {
+                case "All":
+                    modifier._titleNo = -1;
+                    break;
+                case CONTINENT_NAME_MIST:
+                    modifier._titleNo = 0;
+                    break;
+                case CONTINENT_NAME_OUTER:
+                    modifier._titleNo = 1;
+                    break;
+                case CONTINENT_NAME_FORGOTTEN:
+                    modifier._titleNo = 2;
+                    break;
+                case CONTINENT_NAME_LOST:
+                    modifier._titleNo = 3;
+                    break;
+                default:
+                    return false;
+            }
+            modifier._language = args[1];
+            for (Int32 i = 2; i < args.Length; i++)
+            {
+                if (args[i].StartsWith("[Rect=") && args[i].EndsWith("]"))
+                {
+                    String posstr = args[i].Substring("[Rect=".Length, args[i].Length - "[Rect=]".Length);
+                    if (posstr.StartsWith("(") && posstr.EndsWith(")"))
+                        posstr = posstr.Substring(1, posstr.Length - 2);
+                    String[] coords = posstr.Split(',');
+                    Vector4 rect = default;
+                    if (coords.Length >= 2 && Single.TryParse(coords[0], out rect.x) && Single.TryParse(coords[1], out rect.y) && Single.TryParse(coords[2], out rect.z) && Single.TryParse(coords[3], out rect.w))
+                        modifier._rect.Set(rect.x, rect.y, rect.z, rect.w);
+                }
+                else if (args[i].StartsWith("[FadeIn=") && args[i].EndsWith("]"))
+                {
+                    if (UInt32.TryParse(args[i].Substring("[FadeIn=".Length, args[i].Length - "[FadeIn=]".Length), out UInt32 duration))
+                        modifier._fadein = duration;
+                }
+                else if (args[i].StartsWith("[Duration=") && args[i].EndsWith("]"))
+                {
+                    if (UInt32.TryParse(args[i].Substring("[Duration=".Length, args[i].Length - "[Duration=]".Length), out UInt32 duration))
+                        modifier._duration = duration;
+                }
+                else if (args[i].StartsWith("[FadeOut=") && args[i].EndsWith("]"))
+                {
+                    if (UInt32.TryParse(args[i].Substring("[FadeOut=".Length, args[i].Length - "[FadeOut=]".Length), out UInt32 duration))
+                        modifier._fadeout = duration;
+                }
+            }
+            modifierList.Add(modifier);
+            return true;
         }
 
         private class ConditionalModifier
@@ -593,11 +691,22 @@ namespace Memoria
             }
         }
 
+        private class TitleModifier
+        {
+            public SByte _titleNo = -1;
+            public String _language = "Any";
+            public Rect _rect = new Rect(0f, 144f, 1024f, 128f);
+            public UInt32 _duration = 1u;
+            public UInt32 _fadein = 119u;
+            public UInt32 _fadeout = 59u;
+        }
+
         private static Dictionary<WorldPlace, ConditionalModifier> _customPlaceModifier = new Dictionary<WorldPlace, ConditionalModifier>();
         private static Dictionary<WorldEffect, ConditionalModifier> _customEffectModifier = new Dictionary<WorldEffect, ConditionalModifier>();
         private static ConditionalModifier _customMistModifier = new ConditionalModifier();
         private static ConditionalModifier _customDiscModifier = new ConditionalModifier();
         private static List<RainModifier> _customRainModifier = new List<RainModifier>();
         private static List<LightModifier> _customLightModifier = new List<LightModifier>();
+        private static List<TitleModifier> _customTitleModifier = new List<TitleModifier>();
     }
 }

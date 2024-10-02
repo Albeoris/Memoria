@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-class SFXChannel
+public class SFXChannel
 {
     SFXDataMesh.JSON sfx;
     Int32 frame;
