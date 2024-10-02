@@ -341,6 +341,12 @@ namespace Memoria.Launcher
             public static readonly string HippaulRacingViviSpeed_Tooltip = GetSettings(nameof(HippaulRacingViviSpeed_Tooltip));
             public static readonly string AudioBackend = GetSettings(nameof(AudioBackend));
             public static readonly string AudioBackend_Tooltip = GetSettings(nameof(AudioBackend_Tooltip));
+            public static readonly string WorldSmoothTexture = GetSettings(nameof(WorldSmoothTexture));
+            public static readonly string WorldSmoothTexture_Tooltip = GetSettings(nameof(WorldSmoothTexture_Tooltip));
+            public static readonly string BattleSmoothTexture = GetSettings(nameof(BattleSmoothTexture));
+            public static readonly string BattleSmoothTexture_Tooltip = GetSettings(nameof(BattleSmoothTexture_Tooltip));
+            public static readonly string ElementsSmoothTexture = GetSettings(nameof(ElementsSmoothTexture));
+            public static readonly string ElementsSmoothTexture_Tooltip = GetSettings(nameof(ElementsSmoothTexture_Tooltip));
         }
 
         public static class SteamOverlay
