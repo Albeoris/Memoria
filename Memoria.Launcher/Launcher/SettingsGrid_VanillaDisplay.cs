@@ -16,9 +16,6 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_VanillaDisplay()
         {
-            SetCols(8);
-            Width = 260;
-            Margin = new Thickness(0);
             DataContext = this;
 
 

@@ -1,12 +1,14 @@
 using System;
 using System.Drawing.Text;
+using Application = System.Windows.Application;
 
 namespace Memoria.Launcher
 {
-    public sealed class SettingsGrid_Display : Settings
+    public sealed class SettingsGrid_Display : UiGrid
     {
         public SettingsGrid_Display()
         {
+            DataContext = (MainWindow)Application.Current.MainWindow;
             String[] comboboxchoices = new String[]{
                 Lang.Settings.FPSDropboxChoice0, // default 30 20 15
                 Lang.Settings.FPSDropboxChoice1, // 30
@@ -51,7 +53,6 @@ namespace Memoria.Launcher
                 fontNames[fontindex + 2] = installedFonts.Families[fontindex].Name;
             CreateCombobox("FontChoice", fontNames, 25, Lang.Settings.FontChoice, Lang.Settings.FontChoice_Tooltip, "", true);
 
-            LoadSettings();
         }
     }
 }

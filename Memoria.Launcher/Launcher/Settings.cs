@@ -8,15 +8,8 @@ using System.Reflection;
 
 namespace Memoria.Launcher
 {
-    public class Settings : UiGrid, INotifyPropertyChanged
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        public Settings()
-        {
-            SetCols(8);
-            Width = 293;
-            Margin = new Thickness(0);
-            DataContext = this;
-        }
         #region Prop checkbox
 
         private readonly String _iniPath = @"./Memoria.ini";

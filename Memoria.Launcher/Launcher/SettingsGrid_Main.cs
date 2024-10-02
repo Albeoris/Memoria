@@ -1,14 +1,15 @@
 using System;
+using Application = System.Windows.Application;
 
 namespace Memoria.Launcher
 {
-    public sealed class SettingsGrid_Main : Settings
+    public sealed class SettingsGrid_Main : UiGrid
     {
         public SettingsGrid_Main()
         {
+            DataContext = (MainWindow)Application.Current.MainWindow;
 
             CreateHeading(Lang.Settings.QoL);
-
 
             CreateCheckbox("SkipIntros", Lang.Settings.SkipIntrosToMainMenu, Lang.Settings.SkipIntrosToMainMenu_Tooltip);
             CreateCheckbox("BattleSwirlFrames", Lang.Settings.SkipBattleSwirl, Lang.Settings.SkipBattleSwirl_Tooltip);
@@ -41,12 +42,6 @@ namespace Memoria.Launcher
 
             CreateSlider("BattleTPSDividedBy15", "BattleTPS", 15, 75, 3, "{0}x", 50, Lang.Settings.BattleTPS, Lang.Settings.BattleTPS_Tooltip);
 
-            LoadSettings();
-        }
-
-        public void ComeBackToLauncherReloadSettings()
-        {
-            LoadSettings();
         }
     }
 }

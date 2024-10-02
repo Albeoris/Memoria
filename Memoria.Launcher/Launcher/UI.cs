@@ -19,6 +19,13 @@ namespace Memoria.Launcher
 {
     public class UiGrid : Grid
     {
+        public UiGrid()
+        {
+            SetCols(100);
+            Width = 293;
+            Margin = new Thickness(0);
+        }
+
         public SolidColorBrush TextColor = Brushes.White;
         public Thickness CommonMargin = new Thickness(0, 3, 0, 3);
         public Int32 Row = -1;
@@ -26,7 +33,6 @@ namespace Memoria.Launcher
         public Int32 FontWeightNormal = 400;
         public Int32 FontWeightCombobox = 500;
         public Int32 FontSizeNormal = 14;
-        //public Int32 FontSizeCombobox = 14;
         public Int32 ComboboxHeight = 22;
         public Int32 TooltipDisplayDelay = 1;
         public void SetRows(Int32 count)

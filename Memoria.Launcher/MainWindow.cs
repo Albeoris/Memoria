@@ -44,6 +44,7 @@ namespace Memoria.Launcher
             PlayButton.GameSettings = GameSettings;
             PlayButton.GameSettingsDisplay = GameSettingsDisplay;
             Loaded += OnLoaded;
+            LoadSettings();
         }
 
         private void OnLoaded(Object sender, RoutedEventArgs e)

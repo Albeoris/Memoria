@@ -258,7 +258,7 @@ namespace Memoria.Launcher
                 downloadCatalogClient.CancelAsync();
             UpdateSettings();
             ((MainWindow)this.Owner).ModdingWindow = null;
-            ((MainWindow)this.Owner).SettingsGrid_Main.ComeBackToLauncherReloadSettings();
+            ((MainWindow)this.Owner).LoadSettings();
             ((MainWindow)this.Owner).ComeBackToLauncherFromModManager(AreThereModUpdates, AreThereModIncompatibilies);
         }
 

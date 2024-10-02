@@ -12,8 +12,8 @@
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     AllowsTransparency="True"
-    Background="Transparent">
-
+    Background="Transparent"
+    DataContext="{Binding RelativeSource={RelativeSource Self}}">
     <Window.Resources>
         <Style x:Key="TransparentGridStyle" TargetType="Grid">
             <Setter Property="Background" Value="#b000" />

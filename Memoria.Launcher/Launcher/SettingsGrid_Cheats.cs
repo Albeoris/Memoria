@@ -1,11 +1,12 @@
-using System;
+using Application = System.Windows.Application;
 
 namespace Memoria.Launcher
 {
-    public sealed class SettingsGrid_Cheats : Settings
+    public sealed class SettingsGrid_Cheats : UiGrid
     {
         public SettingsGrid_Cheats()
         {
+            DataContext = (MainWindow)Application.Current.MainWindow;
             CreateHeading(Lang.Settings.Battle);
 
             CreateCheckbox("StealingAlwaysWorks", Lang.Settings.MaxStealRate, Lang.Settings.MaxStealRate_Tooltip);
@@ -27,7 +28,6 @@ namespace Memoria.Launcher
             CreateCheckbox("NoRandomEncounter", Lang.Settings.NoRandomBattles, Lang.Settings.NoRandomBattles_Tooltip);
             CreateCheckbox("MasterSkill", Lang.Settings.PermanentCheats, Lang.Settings.PermanentCheats_Tooltip);
 
-            LoadSettings();
         }
     }
 }

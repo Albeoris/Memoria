@@ -1,11 +1,14 @@
 using System;
+using Application = System.Windows.Application;
 
 namespace Memoria.Launcher
 {
-    public sealed class SettingsGrid_Main2 : Settings
+    public sealed class SettingsGrid_Main2 : UiGrid
     {
         public SettingsGrid_Main2()
         {
+            DataContext = (MainWindow)Application.Current.MainWindow;
+
             CreateHeading(Lang.Settings.Cards);
 
             String[] comboboxchoices = new String[]{
@@ -25,7 +28,6 @@ namespace Memoria.Launcher
 
             CreateHeading(Lang.Settings.Worldmap);
 
-
             comboboxchoices = new String[]{
                 Lang.Settings.WorldmapMistPresetChoice0,
                 Lang.Settings.WorldmapMistPresetChoice1,
@@ -42,7 +44,6 @@ namespace Memoria.Launcher
             };
             CreateCombobox("WorldmapDistancePreset", comboboxchoices, 50, Lang.Settings.WorldmapDistancePreset, Lang.Settings.WorldmapDistancePreset_Tooltip, "comparison_viewdistance.jpg");
 
-            //CreateTextbloc(Lang.Settings.WorldmapFOV, Lang.Settings.WorldmapFOV_Tooltip);
             CreateSlider("WorldmapFOV", "WorldmapFOV", 30, 110, 1, "", 50, Lang.Settings.WorldmapFOV, Lang.Settings.WorldmapFOV_Tooltip, "comparison_worldmapfov.jpg");
 
             CreateSlider("WMCameraHeight", "WMCameraHeight", -200, 600, 50, "{0}", 50, Lang.Settings.WMCameraHeight, Lang.Settings.WMCameraHeight_Tooltip, "comparison_cameraheight.jpg");
@@ -51,8 +52,6 @@ namespace Memoria.Launcher
 
             CreateCheckbox("WorldmapBoost", Lang.Settings.WorldmapBoost, Lang.Settings.WorldmapBoost_Tooltip);
             CreateCheckbox("WorldmapShipTilt", Lang.Settings.WorldmapShipTilt, Lang.Settings.WorldmapShipTilt_Tooltip);
-
-            LoadSettings();
         }
     }
 }
