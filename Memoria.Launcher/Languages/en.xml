@@ -181,7 +181,6 @@ BattleAssistance_Tooltip = "All characters stay in permanent transe (Press F2 to
 Attack9999 = "[F3] 9999 damage"
 Attack9999_Tooltip = "All your attacks deal maximum damage (Press F3 to activate)"
 NoRandomBattles_Tooltip = "No random encounters (Press F4 to activate)"
-PermanentCheats_Tooltip = "Maximum everything (F5/F6/F7). These cheats stay on your save and disable achievements"
 FontChoice_Tooltip = "Font displayed in dialogs and UI. Some fonts are not recognized by the engine"
 Cards = "Card game"
 TripleTriad = "Rules"
@@ -204,6 +203,7 @@ BattleSmoothTexture = "Texture filtering (Battle)"
 BattleSmoothTexture_Tooltip = "Texture bilinear filtering. Blurring between pixels. On by default"
 ElementsSmoothTexture = "Texture filtering (3D models)"
 ElementsSmoothTexture_Tooltip = "Texture bilinear filtering. Blurring between pixels. On by default. Applies to 3D models like characters and objects"
+PermanentCheats_Tooltip = "Maximum everything: [F5] all skills, [F6] max level, [F7] maximum gils. These cheats are irreversible and disable achievements"
 />
 
 <SteamOverlay

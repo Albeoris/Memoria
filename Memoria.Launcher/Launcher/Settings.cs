@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using Application = System.Windows.Application;
 using System.Windows;
 using MessageBox = System.Windows.Forms.MessageBox;
+using System.Reflection;
 
 namespace Memoria.Launcher
 {
@@ -33,21 +34,6 @@ namespace Memoria.Launcher
                 }
             }
         }
-        /*
-        private Int16 _antialiasing;
-        public Int16 AntiAliasing
-        {
-            get { return _antialiasing; }
-            set
-            {
-                if (_antialiasing != value)
-                {
-                    _antialiasing = value;
-                    OnPropertyChanged();
-                }
-            }
-        }
-        */
         private Int16 _isskipintros;
         public Int16 SkipIntros
         {
@@ -468,7 +454,7 @@ namespace Memoria.Launcher
             {
                 if (_speedfactor != value)
                 {
-                    if (_speedfactor == 0)
+                    if (_speedfactor == 1)
                         _speedmode = 0;
                     else
                         _speedmode = 1;
@@ -684,49 +670,46 @@ namespace Memoria.Launcher
             // Variable, _variable, variable_ini, category_ini, [0 -> ?], [1 -> ?], default value
             
             // Checkboxes
-            ["WidescreenSupport", "_iswidescreensupport", "WidescreenSupport", "Graphics", 0, 1],
-            //["AntiAliasing", "_antialiasing", "AntiAliasing2", "Graphics", 0, 1],
-            ["SkipIntros", "_isskipintros", "SkipIntros", "Graphics", 0, 3],
-            ["BattleSwirlFrames", "_battleswirlframes", "BattleSwirlFrames", "Graphics", 70, 0],
-            ["MaxCardCount", "_maxcardcount", "MaxCardCount", "TetraMaster", 100, 1000],
-            ["HideCards", "_ishidecards", "HideCards", "Icons", 0, 1],
-            ["HideCards", "_ishidecards", "HideBeach", "Icons", 0, 1],
-            ["HideCards", "_ishidecards", "HideSteam", "Icons", 0, 1],
-            ["WorldmapBoost", "_worldmapboost", "FieldOfViewSpeedBoost", "Worldmap", 0, 100],
-            ["WorldmapShipTilt", "_worldmapshiptilt", "CameraTiltShip", "Worldmap", 0, 100],
+            ["WidescreenSupport", "_iswidescreensupport", "WidescreenSupport", "Graphics", 0, 1, 1],
+            ["SkipIntros", "_isskipintros", "SkipIntros", "Graphics", 0, 3, 1],
+            ["BattleSwirlFrames", "_battleswirlframes", "BattleSwirlFrames", "Graphics", 70, 0, 0],
+            ["MaxCardCount", "_maxcardcount", "MaxCardCount", "TetraMaster", 100, 1000, 0],
+            ["HideCards", "_ishidecards", "HideCards", "Icons", 0, 1, 0],
+            ["HideCards", "_ishidecards", "HideBeach", "Icons", 0, 1, 0],
+            ["HideCards", "_ishidecards", "HideSteam", "Icons", 0, 1, 0],
+            ["WorldmapBoost", "_worldmapboost", "FieldOfViewSpeedBoost", "Worldmap", 0, 100, 1],
+            ["WorldmapShipTilt", "_worldmapshiptilt", "CameraTiltShip", "Worldmap", 0, 100, 1],
 
-            ["StealingAlwaysWorks", "_stealingalwaysworks", "StealingAlwaysWorks", "Hacks", 0, 2],
-            ["NoAutoTrance", "_noautotrance", "NoAutoTrance", "Battle", 0, 1],
-            ["ViviAutoAttack", "_viviautoattack", "ViviAutoAttack", "Battle", 0, 1],
-            ["BreakDamageLimit", "_breakDamageLimit", "BreakDamageLimit", "Battle", 0, 1],
-            ["AccessBattleMenuToggle", "_accessbattlemenutoggle", "AccessMenus", "Battle", 0, 3],
-            ["GarnetConcentrate", "_garnetconcentrate", "GarnetConcentrate", "Battle", 0, 1],
+            ["StealingAlwaysWorks", "_stealingalwaysworks", "StealingAlwaysWorks", "Hacks", 0, 2, 0],
+            ["NoAutoTrance", "_noautotrance", "NoAutoTrance", "Battle", 0, 1, 0],
+            ["ViviAutoAttack", "_viviautoattack", "ViviAutoAttack", "Battle", 0, 1, 0],
+            ["BreakDamageLimit", "_breakDamageLimit", "BreakDamageLimit", "Battle", 0, 1, 0],
+            ["AccessBattleMenuToggle", "_accessbattlemenutoggle", "AccessMenus", "Battle", 0, 3, 0],
+            ["GarnetConcentrate", "_garnetconcentrate", "GarnetConcentrate", "Battle", 0, 1, 0],
 
-            //["SpeedMode", "_speedmode", "SpeedMode", "Cheats", 0, 1],
-            ["BattleAssistance", "_battleassistance", "BattleAssistance", "Cheats", 0, 1],
-            ["Attack9999", "_attack9999", "Attack9999", "Cheats", 0, 1],
-            ["NoRandomEncounter", "_norandomencounter", "NoRandomEncounter", "Cheats", 0, 1],
-            ["MasterSkill", "_masterskill", "MasterSkill", "Cheats", 0, 1],
-            ["MasterSkill", "_masterskill", "LvMax", "Cheats", 0, 1],
-            ["MasterSkill", "_masterskill", "GilMax", "Cheats", 0, 1],
+            ["BattleAssistance", "_battleassistance", "BattleAssistance", "Cheats", 0, 1, 1],
+            ["Attack9999", "_attack9999", "Attack9999", "Cheats", 0, 1, 1],
+            ["NoRandomEncounter", "_norandomencounter", "NoRandomEncounter", "Cheats", 0, 1, 1],
+            ["MasterSkill", "_masterskill", "MasterSkill", "Cheats", 0, 1, 0],
+            ["MasterSkill", "_masterskill", "LvMax", "Cheats", 0, 1, 0],
+            ["MasterSkill", "_masterskill", "GilMax", "Cheats", 0, 1, 0],
 
-            ["EasyTetraMaster", "_easytetramaster", "EasyWin", "TetraMaster", 0, 1],
-            ["ExcaliburIINoTimeLimit", "_excaliburiinotimelimit", "ExcaliburIINoTimeLimit", "Hacks", 0, 1],
-            ["EasyJumpRopeMinigame", "_easyjumpropeminigame", "RopeJumpingIncrement", "Hacks", 1, 1000],
-            ["HippaulRacingViviSpeed", "_hippaulracingvivispeed", "HippaulRacingViviSpeed", "Hacks", 33, 100],
+            ["EasyTetraMaster", "_easytetramaster", "EasyWin", "TetraMaster", 0, 1, 0],
+            ["ExcaliburIINoTimeLimit", "_excaliburiinotimelimit", "ExcaliburIINoTimeLimit", "Hacks", 0, 1, 0],
+            ["EasyJumpRopeMinigame", "_easyjumpropeminigame", "RopeJumpingIncrement", "Hacks", 1, 1000, 0],
+            ["HippaulRacingViviSpeed", "_hippaulracingvivispeed", "HippaulRacingViviSpeed", "Hacks", 33, 100, 0],
 
-            ["AudioBackend", "_audiobackend", "Backend", "Audio", 0, 1],
-            ["WorldSmoothTexture", "_worldsmoothtexture", "WorldSmoothTexture", "Graphics", 0, 1],
-            ["BattleSmoothTexture", "_battlesmoothtexture", "BattleSmoothTexture", "Graphics", 0, 1],
-            ["ElementsSmoothTexture", "_elementssmoothtexture", "ElementsSmoothTexture", "Graphics", 0, 1],
+            ["AudioBackend", "_audiobackend", "Backend", "Audio", 0, 1, 1],
+            ["WorldSmoothTexture", "_worldsmoothtexture", "WorldSmoothTexture", "Graphics", 0, 1, 1],
+            ["BattleSmoothTexture", "_battlesmoothtexture", "BattleSmoothTexture", "Graphics", 0, 1, 1],
+            ["ElementsSmoothTexture", "_elementssmoothtexture", "ElementsSmoothTexture", "Graphics", 0, 1, 1],
 
             // Sliders
-            ["CameraStabilizer", "_camerastabilizer", "CameraStabilizer", "Graphics", 0, 1],
-            ["BattleTPS", "_battletpsfactor", "BattleTPS", "Graphics", 0, 1],
-            ["WorldmapTPS", "_worldmaptps", "WorldTPS", "Graphics", 0, 1],
-            ["WorldmapFOV", "_worldmapfov", "FieldOfView", "Worldmap", 0, 1],
-            ["WMCameraHeight", "_wmcameraheight", "CameraHeight", "Worldmap", 0, 1],
-            //["SpeedFactor", "_speedfactor", "SpeedFactor", "Cheats", 0, 1],
+            ["CameraStabilizer", "_camerastabilizer", "CameraStabilizer", "Graphics", 0, 1, 85],
+            ["BattleTPS", "_battletpsfactor", "BattleTPS", "Graphics", 0, 1, 15],
+            ["WorldmapTPS", "_worldmaptps", "WorldTPS", "Graphics", 0, 1, 20],
+            ["WorldmapFOV", "_worldmapfov", "FieldOfView", "Worldmap", 0, 1, 44],
+            ["WMCameraHeight", "_wmcameraheight", "CameraHeight", "Worldmap", 0, 1, 100],
         };
         #endregion
 
@@ -944,71 +927,67 @@ namespace Memoria.Launcher
 
         #region LoadSettings
 
-        public readonly Object[][] SettingsList2 =
-        {
-            // variable, variable_ini, category_ini
-            ["WidescreenSupport", "_iswidescreensupport", "WidescreenSupport", "Graphics", 0, 1],
-        };
-
         public void LoadSettings()
         {
             try
             {
                 IniFile iniFile = new(IniFile.IniPath);
 
-                /*foreach (Object[] item in SettingsList2)
+                foreach (Object[] item in SettingsList)
                 {
-                    if (item[0] is String name && item[1] is String name_ini && item[2] is String category)
+                    if (item[0] is String property && item[1] is String _property && item[2] is String name_ini && item[3] is String category && item[4] is Int32 valueZero && item[5] is Int32 valueOne && item[6] is Int32 defaultVal) //  
                     {
-                        
-                    }
-                }*/
-                /*
-                foreach (Object[] item in SettingsList2)
-                {
-                    if (item[0] is String property && item[1] is String _property && item[2] is String name_ini && item[3] is String category && item[4] is Int32 valueZero && item[5] is Int32 valueOne) //  
-                    {
-                        Object propValue = this.GetType().GetProperty(property)?.GetValue(this);
-                        //MessageBox.Show($"{propValue}", "debug", MessageBoxButtons.OK);
-                        if (propValue != null && Int16.TryParse(propValue.ToString(), out Int16 varValue))
+                        String INIvalueString = iniFile.ReadValue(category, name_ini);
+                        //MessageBox.Show($"type {type}", "debug", MessageBoxButtons.OK);
+                        PropertyInfo field = this.GetType().GetProperty(property);
+                        if (field != null)
                         {
-                            if (varValue == 0)
-                            {
-                                iniFile.WriteValue(category, name_ini + " ", " " + valueZero);
-                            }
-                            else if (varValue == 1)
-                            {
-                                iniFile.WriteValue(category, name_ini + " ", " " + valueOne);
-                                iniFile.WriteValue(category, "Enabled ", " 1");
-                            }
+                            if (String.IsNullOrEmpty(INIvalueString))
+                                INIvalueString = defaultVal.ToString();
+                            if (!Int16.TryParse(INIvalueString, out Int16 val3))
+                                val3 = (Int16)defaultVal;
+                            if (val3 == valueZero)
+                                field.SetValue(this, (Int16)0);
+                            else if(val3 == valueOne)
+                                field.SetValue(this, (Int16)1);
                             else
-                            {
-                                iniFile.WriteValue(category, name_ini + " ", " " + varValue);
-                                iniFile.WriteValue(category, "Enabled ", " 1");
-                            }
+                                field.SetValue(this, val3);
+
+                            Refresh(property);
                         }
                     }
-                }*/
+                }
 
-                String value;
-                Boolean value1isInt;
-                Boolean value2isInt;
-                Boolean value3isInt;
-                Boolean value4isInt;
-                Boolean value5isInt;
-                Int16 value1;
-                Int16 value2;
-                Int16 value3;
-                Int16 value4;
-                Int16 value5;
+                String value = iniFile.ReadValue("Worldmap", "MistViewDistance");
+                Boolean value1isInt = Int16.TryParse(value, out Int16 value1);
+                value = iniFile.ReadValue("Worldmap", "MistStartDistance_base");
+                Boolean value2isInt = Int16.TryParse(value, out Int16 value2);
+                value = iniFile.ReadValue("Worldmap", "MistStartDistance");
+                Boolean value3isInt = Int16.TryParse(value, out Int16 value3);
+                value = iniFile.ReadValue("Worldmap", "MistEndDistance");
+                Boolean value4isInt = Int16.TryParse(value, out Int16 value4);
+                value = iniFile.ReadValue("Worldmap", "MistDensity");
+                Boolean value5isInt = Int16.TryParse(value, out Int16 value5);
+                if (value1 == 100 && value2 == 55 && value3 == 27 && value4 == 80 && value5 == 7)
+                    _worldmapmistpreset = 0;
+                else if (value1 == 250 && value2 == 10 && value3 == 30 && value4 == 200 && value5 == 7)
+                    _worldmapmistpreset = 1;
+                else if (value1 == 400 && value2 == 10 && value3 == 50 && value4 == 300 && value5 == 4)
+                    _worldmapmistpreset = 2;
+                else if (value1 == 450 && value2 == 0 && value3 == 250 && value4 == 330 && value5 == 0)
+                    _worldmapmistpreset = 3;
+                else
+                    _worldmapmistpreset = -1;
+                Refresh(nameof(WorldmapMistPreset));
 
-                value = iniFile.ReadValue("Graphics", nameof(WidescreenSupport));
+                value = iniFile.ReadValue("Cheats", nameof(SpeedFactor));
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = " 1";
+                    value = " 3";
                 }
-                if (!Int16.TryParse(value, out _iswidescreensupport))
-                    _iswidescreensupport = 1;
+                if (!Int16.TryParse(value, out _speedfactor))
+                    _speedfactor = 3;
+                Refresh(nameof(SpeedFactor));
 
                 value = iniFile.ReadValue("Graphics", "FieldFPS");
                 value1isInt = Int16.TryParse(value, out value1);
@@ -1031,14 +1010,7 @@ namespace Memoria.Launcher
                     else
                         _fpsdropboxchoice = -1;
                 }
-
-                value = iniFile.ReadValue("Graphics", "CameraStabilizer");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 85";
-                }
-                if (!Int16.TryParse(value, out _camerastabilizer))
-                    _camerastabilizer = 85;
+                Refresh(nameof(FPSDropboxChoice));
 
                 String valueMenuPos = iniFile.ReadValue("Interface", "BattleMenuPosX");
                 String valuePSXMenu = iniFile.ReadValue("Interface", "PSXBattleMenu");
@@ -1056,17 +1028,7 @@ namespace Memoria.Launcher
                     _battleInterface = 1;
                 else
                     _battleInterface = 0;
-
-                value = iniFile.ReadValue("Graphics", nameof(SkipIntros));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                }
-                value1isInt = Int16.TryParse(value, out value1);
-                if (value1 == 0)
-                    _isskipintros = 0;
-                else
-                    _isskipintros = 1;
+                Refresh(nameof(BattleInterface));
 
                 value = iniFile.ReadValue("Interface", "MenuItemRowCount");
                 value1isInt = Int16.TryParse(value, out value1);
@@ -1084,34 +1046,7 @@ namespace Memoria.Launcher
                     _uicolumnschoice = 2;
                 else
                     _uicolumnschoice = -1;
-
-                value = iniFile.ReadValue("Graphics", nameof(BattleSwirlFrames));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 1";
-                    OnPropertyChanged(nameof(BattleSwirlFrames));
-                }
-                String newvalue = (Int16.Parse(value) == 0) ? "1" : "0";
-                if (!Int16.TryParse(newvalue, out _battleswirlframes))
-                    _battleswirlframes = 0;
-                /*
-                value = iniFile.ReadValue("Graphics", nameof(AntiAliasing));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 8";
-                    OnPropertyChanged(nameof(AntiAliasing));
-                }
-                if (!Int16.TryParse(value, out _antialiasing))
-                    _antialiasing = 1;
-                */
-                value = iniFile.ReadValue("Icons", nameof(HideCards));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(HideCards));
-                }
-                if (!Int16.TryParse(value, out _ishidecards))
-                    _ishidecards = 0;
+                Refresh(nameof(UIColumnsChoice));
 
                 value = iniFile.ReadValue("Battle", "Speed");
                 if (String.IsNullOrEmpty(value))
@@ -1138,6 +1073,7 @@ namespace Memoria.Launcher
                     _tripleTriad = 3;
                 else
                     _tripleTriad = -1;
+                Refresh(nameof(TripleTriad));
 
                 value = iniFile.ReadValue("Font", "Enabled");
                 if (String.IsNullOrEmpty(value) || !Int16.TryParse(value, out Int16 enabledFont) || enabledFont == 0)
@@ -1168,6 +1104,7 @@ namespace Memoria.Launcher
                         }
                     }
                 }
+                Refresh(nameof(UsePsxFont));
 
                 value = iniFile.ReadValue("Shaders", "Shader_Field_Realism");
                 value1isInt = Int16.TryParse(value, out value1);
@@ -1189,6 +1126,7 @@ namespace Memoria.Launcher
                     _shaderfieldchoice = 5;
                 else
                     _shaderfieldchoice = -1;
+                Refresh(nameof(ShaderFieldChoice));
 
                 value = iniFile.ReadValue("Shaders", "Shader_Battle_Realism");
                 value1isInt = Int16.TryParse(value, out value1);
@@ -1210,163 +1148,8 @@ namespace Memoria.Launcher
                     _shaderbattlechoice = 5;
                 else
                     _shaderbattlechoice = -1;
+                Refresh(nameof(ShaderBattleChoice));
 
-                value = iniFile.ReadValue("Hacks", nameof(StealingAlwaysWorks));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(StealingAlwaysWorks));
-                }
-                if (!Int16.TryParse(value, out _stealingalwaysworks))
-                    _stealingalwaysworks = 0;
-
-
-                value = iniFile.ReadValue("Battle", nameof(NoAutoTrance));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(NoAutoTrance));
-                }
-                if (!Int16.TryParse(value, out _noautotrance))
-                    _noautotrance = 0;
-
-                value = iniFile.ReadValue("Battle", nameof(GarnetConcentrate));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(GarnetConcentrate));
-                }
-                if (!Int16.TryParse(value, out _garnetconcentrate))
-                    _garnetconcentrate = 0;
-
-                value = iniFile.ReadValue("Battle", nameof(BreakDamageLimit));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(BreakDamageLimit));
-                }
-                if (!Int16.TryParse(value, out _breakDamageLimit))
-                    _breakDamageLimit = 0;
-
-                value = iniFile.ReadValue("Cheats", nameof(SpeedMode));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(SpeedMode));
-                }
-                if (!Int16.TryParse(value, out _speedmode))
-                    _speedmode = 0;
-
-                value = iniFile.ReadValue("Cheats", nameof(SpeedFactor));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 2";
-                }
-                if (!Int16.TryParse(value, out _speedfactor))
-                    _speedfactor = 2;
-                Refresh(nameof(SpeedFactor));
-
-                value = iniFile.ReadValue("Graphics", "BattleTPS");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 15";
-                    OnPropertyChanged(nameof(BattleTPS));
-                }
-                if (!Int16.TryParse(value, out _battletpsfactor))
-                    _battletpsfactor = 15;
-                Boolean valueexists = Single.TryParse(value, out Single decvalue);
-                BattleTPSDividedBy15 = valueexists ? decvalue / 15f : 1f;
-
-                value = iniFile.ReadValue("Graphics", "WorldTPS");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 20";
-                    OnPropertyChanged(nameof(WorldmapTPS));
-                }
-                if (!Int16.TryParse(value, out _worldmaptps))
-                    _worldmaptps = 20;
-                valueexists = Single.TryParse(value, out decvalue);
-                WorldmapTPSDividedby20 = valueexists ? decvalue / 20f : 1f;
-
-
-                value = iniFile.ReadValue("Cheats", nameof(BattleAssistance));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(BattleAssistance));
-                }
-                if (!Int16.TryParse(value, out _battleassistance))
-                    _battleassistance = 0;
-
-                value = iniFile.ReadValue("Cheats", nameof(Attack9999));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(Attack9999));
-                }
-                if (!Int16.TryParse(value, out _attack9999))
-                    _attack9999 = 0;
-
-                value = iniFile.ReadValue("Cheats", nameof(NoRandomEncounter));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(NoRandomEncounter));
-                }
-                if (!Int16.TryParse(value, out _norandomencounter))
-                    _norandomencounter = 0;
-
-                value = iniFile.ReadValue("Cheats", nameof(MasterSkill));
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(MasterSkill));
-                }
-                if (!Int16.TryParse(value, out _masterskill))
-                    _masterskill = 0;
-
-                value = iniFile.ReadValue("TetraMaster", "MaxCardCount");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 100";
-                    OnPropertyChanged(nameof(MaxCardCount));
-                }
-                value1isInt = Int16.TryParse(value, out value1);
-                if (value1 == 100)
-                    _maxcardcount = 0;
-                else
-                    _maxcardcount = 1;
-
-                value = iniFile.ReadValue("TetraMaster", "EasyWin");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(EasyTetraMaster));
-                }
-                if (!Int16.TryParse(value, out _easytetramaster))
-                    _easytetramaster = 0;
-
-
-                value = iniFile.ReadValue("Worldmap", "MistViewDistance");
-                value1isInt = Int16.TryParse(value, out value1);
-                value = iniFile.ReadValue("Worldmap", "MistStartDistance_base");
-                value2isInt = Int16.TryParse(value, out value2);
-                value = iniFile.ReadValue("Worldmap", "MistStartDistance");
-                value3isInt = Int16.TryParse(value, out value3);
-                value = iniFile.ReadValue("Worldmap", "MistEndDistance");
-                value4isInt = Int16.TryParse(value, out value4);
-                value = iniFile.ReadValue("Worldmap", "MistDensity");
-                value5isInt = Int16.TryParse(value, out value5);
-                if (value1 == 100 && value2 == 55 && value3 == 27 && value4 == 80 && value5 == 7)
-                    _worldmapmistpreset = 0;
-                else if (value1 == 250 && value2 == 10 && value3 == 30 && value4 == 200 && value5 == 7)
-                    _worldmapmistpreset = 1;
-                else if (value1 == 400 && value2 == 10 && value3 == 50 && value4 == 300 && value5 == 4)
-                    _worldmapmistpreset = 2;
-                else if (value1 == 450 && value2 == 0 && value3 == 250 && value4 == 330 && value5 == 0)
-                    _worldmapmistpreset = 3;
-                else
-                    _worldmapmistpreset = -1;
 
                 value = iniFile.ReadValue("Worldmap", "NoMistViewDistance");
                 value1isInt = Int16.TryParse(value, out value1);
@@ -1384,173 +1167,8 @@ namespace Memoria.Launcher
                     _worldmapdistancepreset = 3;
                 else
                     _worldmapdistancepreset = -1;
-
-                value = iniFile.ReadValue("Worldmap", "FieldOfView");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(WorldmapFOV));
-                }
-                if (!Int16.TryParse(value, out _worldmapfov))
-                    _worldmapfov = 0;
-
-
-                value = iniFile.ReadValue("Worldmap", "CameraHeight");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 100";
-                    OnPropertyChanged(nameof(WMCameraHeight));
-                }
-                if (!Int16.TryParse(value, out _wmcameraheight))
-                    _wmcameraheight = 100;
-
-                value = iniFile.ReadValue("Worldmap", "FieldOfViewSpeedBoost");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 100";
-                    OnPropertyChanged(nameof(WorldmapBoost));
-                }
-                value1isInt = Int16.TryParse(value, out value1);
-                if (value1 == 0)
-                    _worldmapboost = 0;
-                else
-                    _worldmapboost = 1;
-
-                value = iniFile.ReadValue("Worldmap", "CameraTiltShip");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 100";
-                    OnPropertyChanged(nameof(WorldmapShipTilt));
-                }
-                value1isInt = Int16.TryParse(value, out value1);
-                if (value1 == 0)
-                    _worldmapshiptilt = 0;
-                else
-                    _worldmapshiptilt = 1;
-
-                value = iniFile.ReadValue("Battle", "ViviAutoAttack");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(ViviAutoAttack));
-                }
-                if (!Int16.TryParse(value, out _viviautoattack))
-                    _viviautoattack = 0;
-
-                value = iniFile.ReadValue("Hacks", "ExcaliburIINoTimeLimit");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(ExcaliburIINoTimeLimit));
-                }
-                if (!Int16.TryParse(value, out _excaliburiinotimelimit))
-                    _excaliburiinotimelimit = 0;
-
-                value = iniFile.ReadValue("Battle", "AccessMenus");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 0";
-                    OnPropertyChanged(nameof(AccessBattleMenuToggle));
-                }
-                value1isInt = Int16.TryParse(value, out value1);
-                if (value1 == 0)
-                    _accessbattlemenutoggle = 0;
-                else
-                    _accessbattlemenutoggle = 1;
-
-                value = iniFile.ReadValue("Hacks", "RopeJumpingIncrement");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 1";
-                    OnPropertyChanged(nameof(EasyJumpRopeMinigame));
-                }
-                value1isInt = Int16.TryParse(value, out value1);
-                if (value1 == 1)
-                    _easyjumpropeminigame = 0;
-                else
-                    _easyjumpropeminigame = 1;
-
-
-                value = iniFile.ReadValue("Hacks", "HippaulRacingViviSpeed");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 33";
-                    OnPropertyChanged(nameof(HippaulRacingViviSpeed));
-                }
-                value1isInt = Int16.TryParse(value, out value1);
-                if (value1 == 33)
-                    _hippaulracingvivispeed = 0;
-                else
-                    _hippaulracingvivispeed = 1;
-
-
-                value = iniFile.ReadValue("Audio", "Backend");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 1";
-                    OnPropertyChanged(nameof(AudioBackend));
-                }
-                value1isInt = Int16.TryParse(value, out value1);
-                if (value1 == 0)
-                    _audiobackend = 0;
-                else
-                    _audiobackend = 1;
-
-
-                value = iniFile.ReadValue("Graphics", "WorldSmoothTexture");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 1";
-                    OnPropertyChanged(nameof(WorldSmoothTexture));
-                }
-                value1isInt = Int16.TryParse(value, out value1);
-                if (value1 == 0)
-                    _worldsmoothtexture = 0;
-                else
-                    _worldsmoothtexture = 1;
-
-
-                value = iniFile.ReadValue("Graphics", "BattleSmoothTexture");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 1";
-                    OnPropertyChanged(nameof(BattleSmoothTexture));
-                }
-                value1isInt = Int16.TryParse(value, out value1);
-                if (value1 == 0)
-                    _battlesmoothtexture = 0;
-                else
-                    _battlesmoothtexture = 1;
-
-                value = iniFile.ReadValue("Graphics", "ElementsSmoothTexture");
-                if (String.IsNullOrEmpty(value))
-                {
-                    value = " 1";
-                    OnPropertyChanged(nameof(ElementsSmoothTexture));
-                }
-                value1isInt = Int16.TryParse(value, out value1);
-                if (value1 == 0)
-                    _elementssmoothtexture = 0;
-                else
-                    _elementssmoothtexture = 1;
-
-
-                foreach (Object[] item in SettingsList)
-                {
-                    if (item[0] is String property)
-                    {
-                        Refresh(property);
-                    }
-                }
-                Refresh(nameof(ShaderFieldChoice));
-                Refresh(nameof(ShaderBattleChoice));
-                Refresh(nameof(BattleInterface));
-                Refresh(nameof(UIColumnsChoice));
-                Refresh(nameof(FPSDropboxChoice));
-                Refresh(nameof(UsePsxFont));
-                Refresh(nameof(WorldmapMistPreset));
                 Refresh(nameof(WorldmapDistancePreset));
-                Refresh(nameof(SpeedFactor));
+
             }
             catch (Exception ex)
             {
