@@ -10,8 +10,13 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type RepeatButton}">
                     <Border Background="Transparent">
-                        <Border CornerRadius="0,2,2,0" Opacity="0.5" Margin="-2,0,2,0" Background="{TemplateBinding Background}" Height="4" Width="{TemplateBinding Width}"/>
+                        <Border x:Name="border" CornerRadius="0,2,2,0" Opacity="0.5" Margin="-2,0,2,0" Background="{TemplateBinding Background}" Height="4" Width="{TemplateBinding Width}"/>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType={x:Type Slider}}}" Value="true">
+                            <Setter Property="Margin" TargetName="border" Value="0,0,2,0"/>
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -30,6 +35,7 @@
                     <ControlTemplate.Triggers>
                         <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType={x:Type Slider}}}" Value="true">
                             <Setter Property="Background" TargetName="border" Value="{DynamicResource BrushAccentColorHover}"/>
+                            <Setter Property="Margin" TargetName="border" Value="2,0,0,0"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

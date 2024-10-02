@@ -42,6 +42,13 @@ namespace Memoria.Launcher
 
             CreateSlider("BattleTPSDividedBy15", "BattleTPS", 15, 75, 3, "{0}x", 50, Lang.Settings.BattleTPS, Lang.Settings.BattleTPS_Tooltip);
 
+
+
+            CreateHeading(Lang.Settings.Volume);
+
+            CreateSlider("SoundVolume", "SoundVolume", 0, 100, 5, "{0}", 50, Lang.Settings.SoundVolume);
+            CreateSlider("MusicVolume", "MusicVolume", 0, 100, 5, "{0}", 50, Lang.Settings.MusicVolume);
+            CreateSlider("MovieVolume", "MovieVolume", 0, 100, 5, "{0}", 50, Lang.Settings.MovieVolume);
         }
     }
 }

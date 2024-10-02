@@ -1465,6 +1465,16 @@ public class TitleUI : UIScene
 
     private void Start()
     {
+        try
+        {
+            File.WriteAllLines("FontList", Font.GetOSInstalledFontNames());
+        }
+        catch(Exception e)
+        {
+            Log.Error("Couldn't write the font list");
+            Log.Error(e);
+        }
+
         SiliconStudio.Social.InitializeSocialPlatform();
         PersistenSingleton<UIManager>.Instance.WorldHUDScene.EnableContinentTitle(false);
     }

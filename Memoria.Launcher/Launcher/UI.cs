@@ -1,20 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Text;
-using System.Windows;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Effects;
+using System.Windows.Media.Imaging;
 using Binding = System.Windows.Data.Binding;
 using CheckBox = System.Windows.Controls.CheckBox;
 using ComboBox = System.Windows.Controls.ComboBox;
 using Image = System.Windows.Controls.Image;
 using MessageBox = System.Windows.MessageBox;
-using System.Collections;
-using System.Windows.Media.Imaging;
-using System.Windows.Media.Effects;
-using System.Windows.Input;
 namespace Memoria.Launcher
 {
     public class UiGrid : Grid
@@ -95,7 +95,7 @@ namespace Memoria.Launcher
                         Text = text,
                         Opacity = 1,
                         MaxWidth = 275,
-                        FontSize = 12,
+                        FontSize = FontSizeNormal,
                         TextWrapping = TextWrapping.Wrap,
                         Effect = dropShadow,
                         Margin = new Thickness(0)
@@ -175,6 +175,113 @@ namespace Memoria.Launcher
                     if (!uiElement.IsMouseOver) Mouse.OverrideCursor = null;
                 };
             }
+        }
+        public void MakeFontPreview(ComboBox uiElement)
+        {
+
+            StackPanel tooltipStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(10)
+            };
+
+            DropShadowEffect dropShadow = new DropShadowEffect
+            {
+                Color = (Color)ColorConverter.ConvertFromString("#707070"),  // This color is in linear space for some reason
+                BlurRadius = 0,
+                ShadowDepth = 5,
+                Direction = 315,
+                Opacity = 1
+            };
+            TextBlock tooltipTextBlock = new TextBlock
+            {
+                Text = "The quick brown fox jumps over the lazy dog",
+                Opacity = 1,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#C8C8C8")),
+                MaxWidth = 275,
+                FontSize = 24,
+                TextWrapping = TextWrapping.Wrap,
+                Effect = dropShadow,
+                Margin = new Thickness(0)
+            };
+            tooltipStackPanel.Children.Add(tooltipTextBlock);
+
+
+
+            Border bottomrightBorder = new Border
+            {
+                BorderThickness = new Thickness(0, 0, 2, 2),
+                BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#383840")),
+                CornerRadius = new CornerRadius(7, 0, 7, 0),
+                Child = tooltipStackPanel
+            };
+            Border topleftBorder = new Border
+            {
+                BorderThickness = new Thickness(2, 2, 0, 0),
+                BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#707878")),
+                CornerRadius = new CornerRadius(7, 0, 7, 0),
+                Background = Brushes.Transparent,
+                Child = bottomrightBorder
+            };
+            Border outerBorder = new Border
+            {
+                BorderThickness = new Thickness(2, 2, 2, 2),
+                BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#202830")),
+                CornerRadius = new CornerRadius(7, 0, 7, 0),
+                Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#595959")),
+                Child = topleftBorder
+            };
+            ToolTip toolTip = new ToolTip
+            {
+                Content = outerBorder,
+                Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#383840")),
+                Background = Brushes.Transparent,
+                HasDropShadow = false,
+                BorderBrush = Brushes.Transparent,
+                BorderThickness = new Thickness(0),
+                Padding = new Thickness(0),
+                Margin = new Thickness(0),
+                PlacementTarget = uiElement,
+                Placement = PlacementMode.Bottom,
+                VerticalOffset = 0,
+                HorizontalOffset = 0,
+                ForceCursor = true,
+                Opacity = 1
+            };
+            uiElement.MouseEnter += (sender, e) =>
+            {
+                if (!uiElement.SelectedValue.ToString().StartsWith("Final Fantasy IX"))
+                {
+                    ToolTipService.SetToolTip(uiElement, toolTip);
+                    ToolTipService.SetInitialShowDelay(uiElement, 0);
+                    toolTip.IsOpen = true;
+                }
+            };
+            uiElement.SelectionChanged += (sender, e) =>
+            {
+                if (!uiElement.SelectedValue.ToString().StartsWith("Final Fantasy IX"))
+                {
+                    String fontFamily = uiElement.SelectedValue.ToString().Replace("Bold", "").Replace("Italic", "");
+                    Boolean bold = uiElement.SelectedValue.ToString().Contains("Bold");
+                    Boolean italic = uiElement.SelectedValue.ToString().Contains("Italic");
+                    tooltipTextBlock.FontFamily = new FontFamily(fontFamily);
+                    tooltipTextBlock.FontStyle = italic ? FontStyles.Italic : FontStyles.Normal;
+                    tooltipTextBlock.FontWeight = bold ? FontWeights.Bold : FontWeights.Normal;
+                    ToolTipService.SetToolTip(uiElement, toolTip);
+                    ToolTipService.SetInitialShowDelay(uiElement, 0);
+                    toolTip.IsOpen = true;
+                }
+                else
+                {
+                    toolTip.IsOpen = false; // Force close the tooltip when the mouse leaves the element
+                    ToolTipService.SetToolTip(uiElement, null);
+                }
+            };
+            uiElement.MouseLeave += (sender, e) =>
+            {
+                toolTip.IsOpen = false; // Force close the tooltip when the mouse leaves the element
+                ToolTipService.SetToolTip(uiElement, null);
+            };
         }
         public void CreateCheckbox(String property, object text, String tooltip = "", Int32 firstColumn = 0, String propertyToEnable = "", String tooltipImage = "")
         {
@@ -271,6 +378,8 @@ namespace Memoria.Launcher
             ComboBox comboBox = new ComboBox();
             comboBox.ItemsSource = options;
             //MakeTooltip(comboBox, tooltip, tooltipImage);
+            if (property == "FontChoice")
+                MakeFontPreview(comboBox);
             comboBox.Foreground = Brushes.Black;
             comboBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightCombobox);
             comboBox.Margin = CommonMargin;
@@ -283,6 +392,10 @@ namespace Memoria.Launcher
             comboBox.SetValue(ColumnProperty, firstColumn);
             comboBox.SetValue(RowSpanProperty, 1);
             comboBox.SetValue(ColumnSpanProperty, MaxColumns - firstColumn);
+            comboBox.MouseEnter += (sender, e) =>
+            {
+                comboBox.Focus();
+            };
             Children.Add(comboBox);
         }
         public void CreateSlider(String indexproperty, String sliderproperty, double min, double max, double tickFrequency, String stringFormat = "", Int32 firstColumn = 0, String text = "", String tooltip = "", String tooltipImage = "")
@@ -290,7 +403,8 @@ namespace Memoria.Launcher
             if (text != "" && firstColumn > 0)
             {
                 CreateTextbloc(text, tooltip, tooltipImage, firstColumn);
-            } else if (firstColumn == 0)
+            }
+            else if (firstColumn == 0)
             {
                 Row++;
                 RowDefinitions.Add(new RowDefinition());
@@ -310,6 +424,10 @@ namespace Memoria.Launcher
             slider.SetValue(ColumnProperty, firstColumn);
             slider.SetValue(RowSpanProperty, 1);
             slider.SetValue(ColumnSpanProperty, (MaxColumns - firstColumn - 12));
+            slider.MouseWheel += (sender, e) =>
+            {
+                slider.Value = Math.Max(Math.Min(slider.Value + Math.Sign(e.Delta) * tickFrequency, max), min);
+            };
             Children.Add(slider);
 
             TextBlock textbloc = new TextBlock();
@@ -373,7 +491,7 @@ namespace Memoria.Launcher
             }
         }
     }
-    
+
     public static class FrameworkElementExm
     {
         public static FrameworkElement GetRootElement(this FrameworkElement self)
@@ -383,7 +501,7 @@ namespace Memoria.Launcher
                 element = (FrameworkElement)element.Parent;
             return element;
         }
-        
+
         public static T GetParentElement<T>(this FrameworkElement self) where T : FrameworkElement
         {
             DependencyObject element = VisualTreeHelper.GetParent(self);

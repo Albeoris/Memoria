@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq.Expressions;
 using System.Drawing.Text;
 using Application = System.Windows.Application;
 
@@ -45,12 +48,20 @@ namespace Memoria.Launcher
 
             CreateCheckbox("UsePsxFont", Lang.Settings.UsePsxFont, Lang.Settings.UsePsxFont_Tooltip, 0, "", "alexandriaPreview.png");
 
-            FontCollection installedFonts = new InstalledFontCollection();
-            String[] fontNames = new String[installedFonts.Families.Length + 2];
-            fontNames[0] = "Final Fantasy IX PC";
-            fontNames[1] = "Final Fantasy IX PSX";
-            for (Int32 fontindex = 0; fontindex < installedFonts.Families.Length; ++fontindex)
-                fontNames[fontindex + 2] = installedFonts.Families[fontindex].Name;
+            List<String> fontNames = ["Final Fantasy IX PC", "Final Fantasy IX PSX"];
+            if (File.Exists("FontList"))
+            {
+                try
+                {
+                    String[] fonts = File.ReadAllLines("FontList");
+                    foreach (String s in fonts)
+                    {
+                        if (String.IsNullOrWhiteSpace(s)) continue;
+                        fontNames.Add(s);
+                    }
+                }
+                catch { }
+            }
             CreateCombobox("FontChoice", fontNames, 25, Lang.Settings.FontChoice, Lang.Settings.FontChoice_Tooltip, "", true);
 
         }

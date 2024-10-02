@@ -391,6 +391,48 @@ namespace Memoria.Launcher
             }
         }
 
+        private Int16 _soundVolume;
+        public Int16 SoundVolume
+        {
+            get { return _soundVolume; }
+            set
+            {
+                if (_soundVolume != value)
+                {
+                    _soundVolume = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private Int16 _musicVolume;
+        public Int16 MusicVolume
+        {
+            get { return _musicVolume; }
+            set
+            {
+                if (_musicVolume != value)
+                {
+                    _musicVolume = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        private Int16 _movieVolume;
+        public Int16 MovieVolume
+        {
+            get { return _movieVolume; }
+            set
+            {
+                if (_movieVolume != value)
+                {
+                    _movieVolume = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         private Int16 _worldmaptps;
         public Int16 WorldmapTPS
         {
@@ -700,6 +742,9 @@ namespace Memoria.Launcher
             // Sliders
             ["CameraStabilizer", "_camerastabilizer", "CameraStabilizer", "Graphics", 0, 1, 85],
             ["BattleTPS", "_battletpsfactor", "BattleTPS", "Graphics", 0, 1, 15],
+            ["SoundVolume", "_soundVolume", "SoundVolume", "Audio", 0, 1, 100],
+            ["MusicVolume", "_musicVolume", "MusicVolume", "Audio", 0, 1, 100],
+            ["MovieVolume", "_movieVolume", "MovieVolume", "Audio", 0, 1, 100],
             ["WorldmapTPS", "_worldmaptps", "WorldTPS", "Graphics", 0, 1, 20],
             ["WorldmapFOV", "_worldmapfov", "FieldOfView", "Worldmap", 0, 1, 44],
             ["WMCameraHeight", "_wmcameraheight", "CameraHeight", "Worldmap", 0, 1, 100],
@@ -1142,7 +1187,6 @@ namespace Memoria.Launcher
                 else
                     _shaderbattlechoice = -1;
                 Refresh(nameof(ShaderBattleChoice));
-
 
                 value = iniFile.ReadValue("Worldmap", "NoMistViewDistance");
                 value1isInt = Int16.TryParse(value, out value1);
