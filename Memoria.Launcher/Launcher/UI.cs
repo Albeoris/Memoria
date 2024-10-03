@@ -70,15 +70,19 @@ namespace Memoria.Launcher
                     Orientation = Orientation.Vertical,
                     Margin = new Thickness(0)
                 };
-                Image helpIcon = new Image
+                try
                 {
-                    Source = new BitmapImage(new Uri("pack://application:,,,/images/helpicon.png")),
-                    MaxWidth = 28,
-                    Opacity = 1,
-                    HorizontalAlignment = HorizontalAlignment.Left,
-                    Margin = new Thickness(0, 0, 0, 0)
-                };
-                tooltipStackPanel.Children.Add(helpIcon);
+                    Image helpIcon = new Image
+                    {
+                        Source = new BitmapImage(new Uri("pack://application:,,,/images/helpicon.png")),
+                        MaxWidth = 28,
+                        Opacity = 1,
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Margin = new Thickness(0, 5, 0, 0)
+                    };
+                    tooltipStackPanel.Children.Add(helpIcon);
+                }
+                catch { }
 
                 if (text != "")
                 {
@@ -105,17 +109,21 @@ namespace Memoria.Launcher
 
                 if (imageName != "")
                 {
-                    String imagePath = "pack://application:,,,/images/" + imageName;
-                    Image tooltipImage = new Image
+                    try
                     {
-                        Source = new BitmapImage(new Uri(imagePath)),
-                        MaxWidth = 275,
-                        MaxHeight = 150,
-                        Opacity = 1,
-                        HorizontalAlignment = HorizontalAlignment.Left,
-                        Margin = new Thickness(0)
-                    };
-                    tooltipStackPanel.Children.Add(tooltipImage);
+                        String imagePath = "pack://application:,,,/images/" + imageName;
+                        Image tooltipImage = new Image
+                        {
+                            Source = new BitmapImage(new Uri(imagePath)),
+                            MaxWidth = 275,
+                            MaxHeight = 150,
+                            Opacity = 1,
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            Margin = new Thickness(0)
+                        };
+                        tooltipStackPanel.Children.Add(tooltipImage);
+                    }
+                    catch { }
                 }
 
                 Border bottomrightBorder = new Border
@@ -269,11 +277,11 @@ namespace Memoria.Launcher
                     tooltipTextBlock.FontWeight = bold ? FontWeights.Bold : FontWeights.Normal;
                     ToolTipService.SetToolTip(uiElement, toolTip);
                     ToolTipService.SetInitialShowDelay(uiElement, 0);
-                    toolTip.IsOpen = true;
+                    toolTip.IsOpen = uiElement.IsMouseOver;
                 }
                 else
                 {
-                    toolTip.IsOpen = false; // Force close the tooltip when the mouse leaves the element
+                    toolTip.IsOpen = false;
                     ToolTipService.SetToolTip(uiElement, null);
                 }
             };
