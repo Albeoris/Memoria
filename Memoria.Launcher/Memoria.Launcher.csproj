@@ -81,6 +81,7 @@
     <Compile Include="Launcher\SettingsGrid_Main.cs" />
     <Compile Include="Launcher\Settings.cs" />
     <Compile Include="Launcher\SettingsGrid_VanillaDisplay.cs" />
+    <Compile Include="Launcher\UiGrid.cs" />
     <Compile Include="ModManager\Mod.cs" />
     <Compile Include="ModManager\ThrottledWebClient.cs">
       <SubType>Component</SubType>
