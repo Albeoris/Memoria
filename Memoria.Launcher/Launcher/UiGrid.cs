@@ -427,9 +427,9 @@ namespace Memoria.Launcher
             slider.IsSnapToTickEnabled = true;
             slider.TickPlacement = TickPlacement.None;
             slider.SetValue(RowProperty, Row);
-            slider.SetValue(ColumnProperty, firstColumn);
+            slider.SetValue(ColumnProperty, firstColumn + 5);
             slider.SetValue(RowSpanProperty, 1);
-            slider.SetValue(ColumnSpanProperty, (MaxColumns - firstColumn - 12));
+            slider.SetValue(ColumnSpanProperty, (MaxColumns - firstColumn));
             slider.MouseWheel += (sender, e) =>
             {
                 slider.Value = Math.Max(Math.Min(slider.Value + Math.Sign(e.Delta) * tickFrequency, max), min);
@@ -452,9 +452,9 @@ namespace Memoria.Launcher
             textbloc.Padding = new Thickness(0, 4, 0, 6);
             textbloc.Height = 28;
             textbloc.SetValue(RowProperty, Row);
-            textbloc.SetValue(ColumnProperty, firstColumn);
+            textbloc.SetValue(ColumnProperty, firstColumn - 10);
             textbloc.SetValue(RowSpanProperty, 1);
-            textbloc.SetValue(ColumnSpanProperty, MaxColumns);
+            textbloc.SetValue(ColumnSpanProperty, 13);
             Children.Add(textbloc);
         }
     }
