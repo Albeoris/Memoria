@@ -5,7 +5,6 @@
     <Color x:Key="BackgroundColorShade2">#FF333333</Color>
     <Color x:Key="BackgroundColorShade3">#FF333333</Color>
     <Color x:Key="AccentColor">#F0355566</Color>
-    <!--F0355566-->
     <Color x:Key="AccentColorHover">#F04e6978</Color>
     <Color x:Key="AccentColorPressed">#F055797D</Color>
     <Color x:Key="TextColor">#80FFFFFF</Color>

@@ -82,10 +82,7 @@
     <Compile Include="Launcher\Settings.cs" />
     <Compile Include="Launcher\SettingsGrid_VanillaDisplay.cs" />
     <Compile Include="Launcher\UiGrid.cs" />
-    <Compile Include="ModManager\Mod.cs" />
-    <Compile Include="ModManager\ThrottledWebClient.cs">
-      <SubType>Component</SubType>
-    </Compile>
+    <Compile Include="Launcher\Mod.cs" />
     <Compile Include="Launcher\UI.cs" />
     <Compile Include="Launcher\UiModManagerButton.xaml.cs">
       <DependentUpon>UiModManagerButton.xaml</DependentUpon>
@@ -100,9 +97,7 @@
     <Compile Include="Launcher\UiLauncherButton.xaml.cs">
       <DependentUpon>UiLauncherButton.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ModManager\ModConflictWindow.cs" />
-    <Compile Include="ModManager\ModManagerWindow.cs" />
-    <Compile Include="ModManager\ModManagerUtils.cs" />
+    <Compile Include="MainWindow_ModManager.cs" />
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -147,10 +142,6 @@
     <Page Include="Launcher\UiLauncherButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="ModManager\ModConflictWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>

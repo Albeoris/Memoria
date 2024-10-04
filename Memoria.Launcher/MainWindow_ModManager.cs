@@ -737,18 +737,6 @@ namespace Memoria.Launcher
                         }
                         if (proceedNext)
                         {
-                            /*if (Directory.Exists(destPath))
-                            {
-                                if (MessageBox.Show($"The current version of the mod folder, {destPath}, will be deleted before moving the new version.\nProceed?", "Updating", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
-                                {
-                                    Directory.Delete(destPath, true);
-                                }
-                                else
-                                {
-                                    Process.Start(Path.GetFullPath(path));
-                                    proceedNext = false;
-                                }
-                            }*/
                             if (Directory.Exists(destPath))
                                 Directory.Delete(destPath, true);
                             if (proceedNext)
