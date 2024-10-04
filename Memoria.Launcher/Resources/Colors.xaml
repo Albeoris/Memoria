@@ -25,6 +25,11 @@
     <SolidColorBrush x:Key="BrushTextColorPressed" Color="{DynamicResource TextColorPressed}"/>
     <SolidColorBrush x:Key="BrushDarkTextColor" Color="{DynamicResource DarkTextColor}"/>
 
+    <SolidColorBrush x:Key="WhiteUI" Color="#EEEEEE" />
+    <SolidColorBrush x:Key="LightGreyUI" Color="#33555555" />
+    <SolidColorBrush x:Key="DarkGreyUI" Color="#cc333333" />
+    <SolidColorBrush x:Key="NonSelectedTabUI" Color="#c000" />
+
     <Style x:Key="FocusVisualStyle">
         <Setter Property="Control.Template">
             <Setter.Value>

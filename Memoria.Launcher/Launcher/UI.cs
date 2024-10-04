@@ -69,6 +69,7 @@ namespace Memoria.Launcher
             return null;
         }
     }
+    /*
     public sealed class UiLauncherModManagerButton : UiModManagerButton
     {
         public UiLauncherModManagerButton()
@@ -86,6 +87,7 @@ namespace Memoria.Launcher
             mainWindow.ModdingWindow.Activate();
         }
     }
+    */
 
     public sealed class UiLauncherModelViewerButton : UiModManagerButton
     {

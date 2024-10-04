@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +17,7 @@ namespace Memoria.Launcher
 {
     public partial class MainWindow : Window, IComponentConnector
     {
-        public ModManagerWindow ModdingWindow;
+        //public ModManagerWindow ModdingWindow;
         public DateTime MemoriaAssemblyCompileDate;
 
         public MainWindow()
@@ -44,7 +45,9 @@ namespace Memoria.Launcher
             PlayButton.GameSettings = GameSettings;
             PlayButton.GameSettingsDisplay = GameSettingsDisplay;
             Loaded += OnLoaded;
+            Closing += new CancelEventHandler(OnClosing);
             LoadSettings();
+            KeyUp += ModManagerWindow_KeyUp;
         }
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
@@ -58,7 +61,7 @@ namespace Memoria.Launcher
 
             // Creates a Mod Manager window (but completely invisible) to trigger "onLoaded" to download the mod catalog retrieve the info that updates or incompatibilities exist.
             // It's instantly closed and the info is retrieved by ComeBackToLauncherFromModManager() to define if any icon is displayed
-            MainWindow mainWindow = (MainWindow)this.GetRootElement();
+            /*MainWindow mainWindow = (MainWindow)this.GetRootElement();
             if (mainWindow.ModdingWindow == null)
                 mainWindow.ModdingWindow = new ModManagerWindow();
             mainWindow.ModdingWindow.Owner = mainWindow;
@@ -71,9 +74,39 @@ namespace Memoria.Launcher
             mainWindow.ModdingWindow.ShowActivated = false;
             mainWindow.ModdingWindow.Show();
             mainWindow.ModdingWindow.Close();
+            */
+
+
+
+
+            SetupFrameLang();
+            UpdateCatalog();
+            LoadSettings2();
+            CheckForValidModFolder();
+            CheckOutdatedAndIncompatibleMods();
+            lstCatalogMods.ItemsSource = modListCatalog;
+            lstMods.ItemsSource = modListInstalled;
+            lstDownloads.ItemsSource = downloadList;
+            UpdateCatalogInstallationState();
+
+            lstCatalogMods.SelectionChanged += OnModListSelect;
+            lstMods.SelectionChanged += OnModListSelect;
+            tabCtrlMain.SelectionChanged += OnModListSelect;
+            PreviewSubModList.SelectionChanged += OnSubModSelect;
+            PreviewSubModActive.Checked += OnSubModActivate;
+            PreviewSubModActive.Unchecked += OnSubModActivate;
+            if (modListInstalled.Count == 0)
+                tabCtrlMain.SelectedIndex = 1;
+            UpdateModDetails((Mod)null);
+            CheckOutdatedAndIncompatibleMods();
+
+
 
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();
+
+
+
         }
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
@@ -82,10 +115,12 @@ namespace Memoria.Launcher
 
         public void ComeBackToLauncherFromModManager(Boolean updates, Boolean incompat)
         {
+            /*
             alert_update_icon.Visibility = updates ? Visibility.Visible : Visibility.Collapsed;
             alert_incompat_icon.Visibility = incompat ? Visibility.Visible : Visibility.Collapsed;
             alert_update_icon.ToolTip = Lang.Launcher.ModUpdateAvailable;
             alert_incompat_icon.ToolTip = Lang.Launcher.ModConflict;
+            */
         }
 
         private void HotfixForMoguriMod()

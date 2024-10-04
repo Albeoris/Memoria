@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -15,7 +15,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
+using System.Windows.Input;
 using System.Windows.Markup;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using Application = System.Windows.Application;
 using GridViewColumnHeader = System.Windows.Controls.GridViewColumnHeader;
@@ -24,7 +26,7 @@ using MessageBox = System.Windows.Forms.MessageBox;
 
 namespace Memoria.Launcher
 {
-    public partial class ModManagerWindow : Window, IComponentConnector
+    public partial class MainWindow : Window, IComponentConnector
     {
         public static readonly String[] OutdatedModsVersions = // "ModName_Version"
         {
@@ -59,42 +61,53 @@ namespace Memoria.Launcher
 
         private CancellationTokenSource ExtractionCancellationToken = new CancellationTokenSource();
 
-        public ModManagerWindow()
-        {
-            InitializeComponent();
-
-            Loaded += OnLoaded;
-            Closing += new CancelEventHandler(OnClosing);
-            KeyUp += ModManagerWindow_KeyUp;
-        }
 
         private void ModManagerWindow_KeyUp(Object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.Delete) Uninstall();
         }
 
-        private void OnLoaded(Object sender, RoutedEventArgs e)
+        private Boolean previousTabWasMod = false;
+        private void Tabs_SelectionChanged(object sender, MouseButtonEventArgs e)
         {
-            SetupFrameLang();
-            UpdateCatalog();
-            LoadSettings();
-            CheckForValidModFolder();
-            CheckOutdatedAndIncompatibleMods();
-            lstCatalogMods.ItemsSource = modListCatalog;
-            lstMods.ItemsSource = modListInstalled;
-            lstDownloads.ItemsSource = downloadList;
-            UpdateCatalogInstallationState();
+            if (!previousTabWasMod && ModManagerTab.IsSelected)
+            {
+                AnimateHeight(ContentTabControl, 520, 600, TimeSpan.FromMilliseconds(500));
+                AnimateMargin(LogoImage, new Thickness(20, -53, 0, 0), new Thickness(20, -40, 0, 0), TimeSpan.FromMilliseconds(500));
+                AnimateHeight(LogoImage, 250, 150, TimeSpan.FromMilliseconds(500));
+                previousTabWasMod = true;
+            }
+            else if (previousTabWasMod && !ModManagerTab.IsSelected)
+            {
+                AnimateHeight(ContentTabControl, 600, 520, TimeSpan.FromMilliseconds(500));
+                AnimateMargin(LogoImage, new Thickness(20, -40, 0, 0), new Thickness(20, -53, 0, 0), TimeSpan.FromMilliseconds(500));
+                AnimateHeight(LogoImage, 150, 250, TimeSpan.FromMilliseconds(500));
+                previousTabWasMod = false;
+            }
+        }
+        private void AnimateHeight(FrameworkElement element, double from, double to, TimeSpan duration)
+        {
+            DoubleAnimation heightAnimation = new DoubleAnimation
+            {
+                From = from,
+                To = to,
+                Duration = new Duration(duration),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
+            };
 
-            lstCatalogMods.SelectionChanged += OnModListSelect;
-            lstMods.SelectionChanged += OnModListSelect;
-            tabCtrlMain.SelectionChanged += OnModListSelect;
-            PreviewSubModList.SelectionChanged += OnSubModSelect;
-            PreviewSubModActive.Checked += OnSubModActivate;
-            PreviewSubModActive.Unchecked += OnSubModActivate;
-            if (modListInstalled.Count == 0)
-                tabCtrlMain.SelectedIndex = 1;
-            UpdateModDetails((Mod)null);
-            CheckOutdatedAndIncompatibleMods();
+            element.BeginAnimation(FrameworkElement.HeightProperty, heightAnimation);
+        }
+        private void AnimateMargin(FrameworkElement element, Thickness from, Thickness to, TimeSpan duration)
+        {
+            ThicknessAnimation marginAnimation = new ThicknessAnimation
+            {
+                From = from,
+                To = to,
+                Duration = new Duration(duration),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
+            };
+
+            element.BeginAnimation(FrameworkElement.MarginProperty, marginAnimation);
         }
 
         private void CheckOutdatedAndIncompatibleMods()
@@ -143,7 +156,7 @@ namespace Memoria.Launcher
                         }
                     }
                 }
-                
+
 
                 if (mod.IncompatibleWith != null && mod.IsActive) // Inter-mod compatibility
                 {
@@ -257,16 +270,11 @@ namespace Memoria.Launcher
             if (downloadCatalogClient != null && downloadCatalogClient.IsBusy)
                 downloadCatalogClient.CancelAsync();
             UpdateSettings();
-            ((MainWindow)this.Owner).ModdingWindow = null;
-            ((MainWindow)this.Owner).LoadSettings();
-            ((MainWindow)this.Owner).ComeBackToLauncherFromModManager(AreThereModUpdates, AreThereModIncompatibilies);
+            //((MainWindow)this.Owner).ModdingWindow = null;
+            //((MainWindow)this.Owner).LoadSettings();
+            //((MainWindow)this.Owner).ComeBackToLauncherFromModManager(AreThereModUpdates, AreThereModIncompatibilies);
         }
 
-        [DllImport("user32.dll")]
-        public static extern Int32 SendMessage(IntPtr hWnd, Int32 msg, Int32 wParam, Int32 lParam);
-
-        [DllImport("user32.dll")]
-        public static extern Boolean ReleaseCapture();
 
         private void Uninstall()
         {
@@ -424,6 +432,7 @@ namespace Memoria.Launcher
                     return;
                 if (!String.IsNullOrEmpty(mod.MinimumMemoriaVersion))
                 {
+                    /*
                     String memoriaVersion = ((MainWindow)this.Owner).MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
                     DateTime tempDate;
                     Boolean isDate1Valid = DateTime.TryParseExact(memoriaVersion, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out tempDate);
@@ -435,6 +444,7 @@ namespace Memoria.Launcher
                             MessageBox.Show($"The mod \"{mod.Name}\" requires Memoria v{mod.MinimumMemoriaVersion} or above to work correctly.\n\nPlease update Memoria to the latest version.", "Warning", MessageBoxButtons.OK);
                         }
                     }
+                    */
                 }
                 downloadList.Add(mod);
                 DownloadStart(mod);
@@ -454,7 +464,7 @@ namespace Memoria.Launcher
 
         private void OnClickClose(Object sender, RoutedEventArgs e)
         {
-            Close();
+            //Close();
         }
 
         private void OnClickCancel(Object sender, RoutedEventArgs e)
@@ -557,6 +567,9 @@ namespace Memoria.Launcher
                 downloadClient.DownloadFileAsync(new Uri(modUrl), downloadingPath);
             });
             downloadThread.Start();
+            lstDownloads.MinHeight = 100;
+            lstDownloads.Height = 100;
+            btnCancelStackpanel.Height = 100;
         }
         private String TryGetModdbMirror(String modUrl)
         {
@@ -807,6 +820,12 @@ namespace Memoria.Launcher
                 downloadingMod = null;
                 if (downloadList.Count > 0)
                     DownloadStart(downloadList[0]);
+                else
+                {
+                    lstDownloads.MinHeight = 0;
+                    lstDownloads.Height = 0;
+                    btnCancelStackpanel.Height = 0;
+                }
                 CheckForValidModFolder();
                 UpdateCatalogInstallationState();
                 if (activateTheNewMod)
@@ -1130,7 +1149,7 @@ namespace Memoria.Launcher
             lstCatalogMods.ItemsSource = modListCatalog;
         }
 
-        private void LoadSettings()
+        private void LoadSettings2()
         {
             modListInstalled.Clear();
             try
@@ -1215,7 +1234,7 @@ namespace Memoria.Launcher
 
         private void SetupFrameLang()
         {
-            Title = Lang.ModEditor.WindowTitle + " | " + ((MainWindow)this.Owner).MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
+            //Title = Lang.ModEditor.WindowTitle + " | " + ((MainWindow)this.Owner).MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
             GroupModInfo.Header = Lang.ModEditor.ModInfos;
             PreviewModWebsite.Content = Lang.ModEditor.Website;
             CaptionModAuthor.Text = Lang.ModEditor.Author + ":";
