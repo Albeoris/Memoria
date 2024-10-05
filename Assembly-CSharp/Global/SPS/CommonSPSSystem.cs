@@ -129,6 +129,8 @@ public class CommonSPSSystem
             pos.x = -122;
         if (MapNo == 207 && name == "SPS_0000" && pos.x == 865 && pos.y == 465 && pos.z == -22) // prima vista candle
             pos = new Vector3(845, 485, -82);
+        if (MapNo == 262 && name == "SPS_0000" && pos.x == 355 && pos.y == 160 && pos.z == 4150)
+            pos.x = 385;
         return pos;
     }
 
