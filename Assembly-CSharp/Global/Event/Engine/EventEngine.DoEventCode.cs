@@ -1659,6 +1659,8 @@ public partial class EventEngine
                 Single dx = (Single)this.getv2(); // arg2: x movement
                 Single dy = (Single)this.getv2(); // arg3: y movement
                 Int16 dz = (Int16)this.getv2(); // arg4: depth, with higher value being further away from camera
+                if (mapNo == 2953 && overlayNdx == 26 && dx == 0 && dy == 48 && dz == 0) // fix chocobo dream title visibly scrolling on the screen
+                    SmoothFrameUpdater_Field.Skip = 1;
                 this.fieldmap.EBG_overlayMove(overlayNdx, dx, dy, dz);
                 return 0;
             }
