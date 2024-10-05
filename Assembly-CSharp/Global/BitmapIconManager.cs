@@ -36,6 +36,14 @@ internal class BitmapIconManager : Singleton<BitmapIconManager>
                 imgGo.transform.localScale = Vector3.one;
             }
             imgGo.transform.localPosition = new Vector3(dialogImg.LocalPosition.x, dialogImg.LocalPosition.y, 0f);
+            UISprite sprite = imgGo.GetComponent<UISprite>();
+            if (sprite != null)
+            {
+                if (dialogImg.Mirror)
+                    sprite.flip = UIBasicSprite.Flip.Horizontally;
+                else
+                    sprite.flip = UIBasicSprite.Flip.Nothing;
+            }
             imgGo.SetActive(true);
         }
         return imgGo;

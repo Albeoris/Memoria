@@ -307,6 +307,12 @@ namespace Memoria.Assets
                 Int32 iconID = NGUIText.GetOneParameterFromTag(text, index, ref closingBracket);
                 OnMobileIcon(index, ref modifiers.insertImage, iconID);
             }
+            else if (tag == NGUIText.TextOffset)
+            {
+                Single[] offXY = NGUIText.GetAllParameters(text, index, ref closingBracket);
+                modifiers.extraOffset.x += (offXY[0] - 4f) * UIManager.ResourceXMultipier;
+                modifiers.extraOffset.y -= offXY[1] * UIManager.ResourceYMultipier;
+            }
             else if (tag == NGUIText.IconSprite)
             {
                 closingBracket = Array.IndexOf(text, ']', index + 4);
@@ -314,11 +320,15 @@ namespace Memoria.Assets
                 modifiers.insertImage = NGUIText.CreateSpriteImage(spriteCode);
                 modifiers.insertImage.TextPosition = index;
             }
-            else if (tag == NGUIText.TextOffset)
+            else if (tag == NGUIText.Justified)
             {
-                Single[] offXY = NGUIText.GetAllParameters(text, index, ref closingBracket);
-                modifiers.extraOffset.x += (offXY[0] - 4f) * UIManager.ResourceXMultipier;
-                modifiers.extraOffset.y -= offXY[1] * UIManager.ResourceYMultipier;
+                closingBracket = Array.IndexOf(text, ']', index + 4);
+                modifiers.justified = true;
+            }
+            else if (tag == NGUIText.Mirrored)
+            {
+                closingBracket = Array.IndexOf(text, ']', index + 4);
+                modifiers.mirror = !modifiers.mirror;
             }
             else
             {

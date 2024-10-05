@@ -2002,6 +2002,8 @@ public class Dialog : MonoBehaviour
         public String SpriteName = null;
         [NonSerialized]
         public Boolean Rescale = false;
+        [NonSerialized]
+        public Boolean Mirror = false;
     }
 
     public enum TailPosition

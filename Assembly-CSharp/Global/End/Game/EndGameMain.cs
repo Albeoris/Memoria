@@ -7,6 +7,26 @@ using Object = System.Object;
 
 public class EndGameMain : MonoBehaviour
 {
+    public static Dictionary<String, Sprite> SpriteAtlas;
+
+    static EndGameMain()
+    {
+        // TODO: allow AssetManager.LoadFromDisc if a mod folder changes it
+        Sprite[] spriteList = Resources.LoadAll<Sprite>("EmbeddedAsset/EndGame/Card_Image");
+        SpriteAtlas = new Dictionary<String, Sprite>();
+        foreach (Sprite sprite in spriteList)
+            SpriteAtlas.Add(sprite.name, sprite);
+    }
+
+    public static Sprite GetSprite(String name)
+    {
+        if (!name.EndsWith(".png"))
+            name += ".png";
+        if (SpriteAtlas.TryGetValue(name, out Sprite sprite))
+            return sprite;
+        return null;
+    }
+
     private void Exit()
     {
         FF9Snd.ff9endsnd_song_vol_intpl(156, 60, 0);
@@ -181,15 +201,7 @@ public class EndGameMain : MonoBehaviour
             "hearts",
             "spades"
         };
-        // Todo: allow AssetManager.LoadFromDisc if a mod folder changes it
-        Sprite[] array4 = Resources.LoadAll<Sprite>("EmbeddedAsset/EndGame/card_image");
-        Dictionary<String, Sprite> dictionary = new Dictionary<String, Sprite>();
-        Sprite[] array5 = array4;
-        for (Int32 i = 0; i < (Int32)array5.Length; i++)
-        {
-            Sprite sprite = array5[i];
-            dictionary.Add(sprite.name, sprite);
-        }
+        Dictionary<String, Sprite> dictionary = EndGameMain.SpriteAtlas;
         this.GameCards = new List<List<GameObject>>();
         for (Int32 j = 0; j < 13; j++)
         {

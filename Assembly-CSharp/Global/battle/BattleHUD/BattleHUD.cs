@@ -196,7 +196,17 @@ public partial class BattleHUD : UIScene
                         messages.Add($"[SPRT={spriteName},48,48]");
                 if (messages.Count == 0)
                     return [];
-                return [Localization.GetWithDefault(info.ToString()).Replace("%", String.Join("  ", messages.ToArray()))];
+                if (messages.Count <= 10)
+                    return [Localization.GetWithDefault(info.ToString()).Replace("%", String.Join("  ", messages.ToArray())) + " "];
+                List<String> result = new List<String>();
+                result.Add(Localization.GetWithDefault(info.ToString()).Replace("%", String.Join("  ", messages.Take(10).ToArray())) + " ");
+                messages.RemoveRange(0, 10);
+                while (messages.Count > 0)
+                {
+                    result.Add("-" + String.Join("  ", messages.Take(10).ToArray()) + " -");
+                    messages.RemoveRange(0, Math.Min(10, messages.Count));
+                }
+                return result;
             }
             case LibraInformation.StatusResist:
             {
@@ -206,7 +216,17 @@ public partial class BattleHUD : UIScene
                         messages.Add($"[SPRT={spriteName},48,48]  ({(Int32)Math.Min(100, resist.Value * 100)}%)");
                 if (messages.Count == 0)
                     return [];
-                return [Localization.GetWithDefault(info.ToString()).Replace("%", String.Join(", ", messages.ToArray())) + " "];
+                if (messages.Count <= 10)
+                    return [Localization.GetWithDefault(info.ToString()).Replace("%", String.Join(", ", messages.ToArray())) + " "];
+                List<String> result = new List<String>();
+                result.Add(Localization.GetWithDefault(info.ToString()).Replace("%", String.Join("  ", messages.Take(10).ToArray())) + " ");
+                messages.RemoveRange(0, 10);
+                while (messages.Count > 0)
+                {
+                    result.Add("-" + String.Join("  ", messages.Take(10).ToArray()) + " -");
+                    messages.RemoveRange(0, Math.Min(10, messages.Count));
+                }
+                return result;
             }
             case LibraInformation.ItemSteal:
                 if (!unit.IsPlayer)
@@ -1688,7 +1708,7 @@ public partial class BattleHUD : UIScene
             }
             else
             {
-                // Use the mix command with the non-registed request (it is added to the database with a negative ID)
+                // Use the mix command with the non-registered request (it is added to the database with a negative ID)
                 mixRequest.Id = -1 - CurrentPlayerIndex;
                 ff9mixitem.MixItemsData[mixRequest.Id] = mixRequest;
                 if (mixInfo.failType == FailedMixType.FAIL_ITEM)

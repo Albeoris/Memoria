@@ -9,7 +9,9 @@ namespace FF9
         {
             // Dummied (a similar code is in ShopUI.OnKeyConfirm)
             FF9ITEM_DATA itemData = ff9item._FF9Item_Data[itemId];
-            UInt32 sellingPrice = itemData.price >> 1;
+            Int32 sellingPrice = itemData.selling_price;
+            if (sellingPrice < 0)
+                return;
             Int32 sellingCount = ff9item.FF9Item_Remove(itemId, sell_ct);
             if (sellingCount > 0)
             {

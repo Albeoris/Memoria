@@ -194,7 +194,7 @@ public class ItemUI : UIScene
         //keyItemPrefab.NewIcon.SetAnchor(target: _keyItemPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.184f, relTop: 0.816f, relLeft: 0.75f, relRight: 0.9f);
         keyItemPrefab.NewIcon.SetDimensions((Int32)Math.Round(117f * scaleFactor), (Int32)Math.Round(64f * scaleFactor));
         keyItemPrefab.NewIconSprite.SetDimensions((Int32)Math.Round(44f * scaleFactor), (Int32)Math.Round(58f * scaleFactor));
-        keyItemPrefab.NewIconLabelSprite.SetDimensions((Int32)Math.Round(90f * scaleFactor), (Int32)Math.Round(58f * scaleFactor));
+        keyItemPrefab.NewIconLabelSprite.SetAnchor(keyItemPrefab.NewIconSprite.transform, 0.6f, 0f, 0.6f, 0f, 0, 0, 90f * scaleFactor, 58f * scaleFactor);
         keyItemPrefab.NameLabel.fontSize = (Int32)Math.Round(36f * scaleFactor);
         keyItemPrefab.NameLabel.effectDistance = new Vector2((Int32)Math.Round(4f * scaleFactor), (Int32)Math.Round(4f * scaleFactor));
         _keyItemPanel.SubPanel.RecycleListPopulator.RefreshTableView();

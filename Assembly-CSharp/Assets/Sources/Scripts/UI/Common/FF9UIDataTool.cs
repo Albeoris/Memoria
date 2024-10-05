@@ -321,6 +321,12 @@ namespace Assets.Sources.Scripts.UI.Common
             }
         }
 
+        public static UIAtlas ChocographAtlas => PersistenSingleton<UIManager>.Instance.ChocographScene.HintMap.atlas;
+        public static UIAtlas FaceAtlas => PersistenSingleton<UIManager>.Instance.StatusScene.CharacterDetailPanel.GetChild(0).GetChild(0).GetComponent<UISprite>().atlas;
+        public static UIAtlas MovieGalleryAtlas => PersistenSingleton<UIManager>.Instance.TitleScene.MoviePageGrid.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<UISprite>().atlas;
+        public static UIAtlas QuadMistImageAtlas => PersistenSingleton<UIManager>.Instance.CardScene.CardInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetChild(2).GetComponent<UISprite>().atlas;
+        public static UIAtlas QuadMistCardAtlas => PersistenSingleton<UIManager>.Instance.CardScene.CardInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetChild(3).GetComponent<UISprite>().atlas;
+
         public static GameObject IconGameObject(Int32 id)
         {
             GameObject result = null;
@@ -462,33 +468,43 @@ namespace Assets.Sources.Scripts.UI.Common
             switch (atlasName)
             {
                 default:
-                case "IconAtlas":         return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, spriteName);
-                case "WindowAtlas":       return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.WindowAtlas, spriteName);
-                case "GrayAtlas":         return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.GrayAtlas, spriteName);
-                case "BlueAtlas":         return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.BlueAtlas, spriteName);
-                case "GeneralAtlas":      return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.GeneralAtlas, spriteName);
-                case "ScreenButtonAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.ScreenButtonAtlas, spriteName);
-                case "TutorialAtlas":     return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.TutorialAtlas, spriteName);
+                case "IconAtlas":          return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, spriteName);
+                case "WindowAtlas":        return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.WindowAtlas, spriteName);
+                case "GrayAtlas":          return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.GrayAtlas, spriteName);
+                case "BlueAtlas":          return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.BlueAtlas, spriteName);
+                case "GeneralAtlas":       return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.GeneralAtlas, spriteName);
+                case "ScreenButtonAtlas":  return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.ScreenButtonAtlas, spriteName);
+                case "TutorialAtlas":      return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.TutorialAtlas, spriteName);
+                case "ChocographAtlas":    return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.ChocographAtlas, spriteName);
+                case "FaceAtlas":          return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.FaceAtlas, spriteName);
+                case "MovieGalleryAtlas":  return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.MovieGalleryAtlas, spriteName);
+                case "QuadMistImageAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.QuadMistImageAtlas, spriteName);
+                case "QuadMistCardAtlas":  return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.QuadMistCardAtlas, spriteName);
             }
         }
 
         public static Vector2 GetSpriteSize(String atlasName, String spriteName)
         {
-            UISpriteData sprite;
+            UISpriteData spriteData;
             switch (atlasName)
             {
                 default:
-                case "IconAtlas":         sprite = FF9UIDataTool.IconAtlas.GetSprite(spriteName);         break;
-                case "WindowAtlas":       sprite = FF9UIDataTool.WindowAtlas.GetSprite(spriteName);       break;
-                case "GrayAtlas":         sprite = FF9UIDataTool.GrayAtlas.GetSprite(spriteName);         break;
-                case "BlueAtlas":         sprite = FF9UIDataTool.BlueAtlas.GetSprite(spriteName);         break;
-                case "GeneralAtlas":      sprite = FF9UIDataTool.GeneralAtlas.GetSprite(spriteName);      break;
-                case "ScreenButtonAtlas": sprite = FF9UIDataTool.ScreenButtonAtlas.GetSprite(spriteName); break;
-                case "TutorialAtlas":     sprite = FF9UIDataTool.TutorialAtlas.GetSprite(spriteName);     break;
+                case "IconAtlas":          spriteData = FF9UIDataTool.IconAtlas.GetSprite(spriteName);          break;
+                case "WindowAtlas":        spriteData = FF9UIDataTool.WindowAtlas.GetSprite(spriteName);        break;
+                case "GrayAtlas":          spriteData = FF9UIDataTool.GrayAtlas.GetSprite(spriteName);          break;
+                case "BlueAtlas":          spriteData = FF9UIDataTool.BlueAtlas.GetSprite(spriteName);          break;
+                case "GeneralAtlas":       spriteData = FF9UIDataTool.GeneralAtlas.GetSprite(spriteName);       break;
+                case "ScreenButtonAtlas":  spriteData = FF9UIDataTool.ScreenButtonAtlas.GetSprite(spriteName);  break;
+                case "TutorialAtlas":      spriteData = FF9UIDataTool.TutorialAtlas.GetSprite(spriteName);      break;
+                case "ChocographAtlas":    spriteData = FF9UIDataTool.ChocographAtlas.GetSprite(spriteName);    break;
+                case "FaceAtlas":          spriteData = FF9UIDataTool.FaceAtlas.GetSprite(spriteName);          break;
+                case "MovieGalleryAtlas":  spriteData = FF9UIDataTool.MovieGalleryAtlas.GetSprite(spriteName);  break;
+                case "QuadMistImageAtlas": spriteData = FF9UIDataTool.QuadMistImageAtlas.GetSprite(spriteName); break;
+                case "QuadMistCardAtlas":  spriteData = FF9UIDataTool.QuadMistCardAtlas.GetSprite(spriteName);  break;
             }
-            if (sprite == null)
+            if (spriteData == null)
                 return new Vector2(64f, 64f);
-            return new Vector2(sprite.width + sprite.paddingLeft + sprite.paddingRight, sprite.height + sprite.paddingTop + sprite.paddingBottom);
+            return new Vector2(spriteData.width + spriteData.paddingLeft + spriteData.paddingRight, spriteData.height + spriteData.paddingTop + spriteData.paddingBottom);
         }
 
         private static GameObject DrawButton(BitmapIconType bitmapIconType)
@@ -499,16 +515,16 @@ namespace Assets.Sources.Scripts.UI.Common
         private static GameObject DrawButton(BitmapIconType bitmapIconType, UIAtlas atlas, String spriteName)
         {
             spriteName = FF9UIDataTool.CheckIconLocalize(spriteName);
-            GameObject controllerGameObject = FF9UIDataTool.GetControllerGameObject(bitmapIconType);
-            FF9UIDataTool.DrawSprite(controllerGameObject, atlas, spriteName);
-            return controllerGameObject;
+            GameObject controllerGo = FF9UIDataTool.GetControllerGameObject(bitmapIconType);
+            FF9UIDataTool.DrawSprite(controllerGo, atlas, spriteName);
+            return controllerGo;
         }
 
         private static GameObject DrawButton(BitmapIconType bitmapIconType, KeyCode keycode)
         {
-            GameObject controllerGameObject = FF9UIDataTool.GetControllerGameObject(bitmapIconType);
-            FF9UIDataTool.DrawLabel(controllerGameObject.GetChild(0), keycode);
-            return controllerGameObject;
+            GameObject controllerGo = FF9UIDataTool.GetControllerGameObject(bitmapIconType);
+            FF9UIDataTool.DrawLabel(controllerGo.GetChild(0), keycode);
+            return controllerGo;
         }
 
         private static GameObject GetControllerGameObject(BitmapIconType bitmapIconType)
@@ -521,7 +537,7 @@ namespace Assets.Sources.Scripts.UI.Common
                     if (iconObject == null)
                     {
                         if (FF9UIDataTool.controllerSpritePrefab == null)
-                            FF9UIDataTool.controllerSpritePrefab = (Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Sprite") as GameObject);
+                            FF9UIDataTool.controllerSpritePrefab = Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Sprite") as GameObject;
                         iconObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.controllerSpritePrefab);
                         iconObject.tag = "BitmapSprite";
                     }
@@ -533,7 +549,7 @@ namespace Assets.Sources.Scripts.UI.Common
                     if (iconObject == null)
                     {
                         if (FF9UIDataTool.controllerKeyboardPrefab == null)
-                            FF9UIDataTool.controllerKeyboardPrefab = (Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Keyboard") as GameObject);
+                            FF9UIDataTool.controllerKeyboardPrefab = Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Keyboard") as GameObject;
                         iconObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.controllerKeyboardPrefab);
                         iconObject.tag = "BitmapKeyboard";
                     }
@@ -561,7 +577,7 @@ namespace Assets.Sources.Scripts.UI.Common
             GameObject gameObject = null;
             if (currentPool.Count > 0)
             {
-                gameObject = currentPool.Pop<GameObject>();
+                gameObject = currentPool.Pop();
                 gameObject.SetActive(false);
             }
             return gameObject;
@@ -577,9 +593,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void ReleaseBitmapIconToPool(GameObject bitmap)
         {
-            List<GameObject> inactivePool;
-            List<GameObject> activePool;
-            FF9UIDataTool.GetCurrentPool(bitmap.tag, out inactivePool, out activePool);
+            FF9UIDataTool.GetCurrentPool(bitmap.tag, out List<GameObject> inactivePool, out List<GameObject> activePool);
             bitmap.transform.parent = PersistenSingleton<UIManager>.Instance.transform;
             bitmap.SetActive(false);
             activePool.Remove(bitmap);
