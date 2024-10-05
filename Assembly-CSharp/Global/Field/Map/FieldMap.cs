@@ -1474,7 +1474,9 @@ public class FieldMap : HonoBehavior
 
         foreach (int[] entry in FixDepthOfLayer)
         {
-            if (entry[0] == FF9StateSystem.Common.FF9.fldMapNo && entry[1] == this.camIdx && entry[2] == ovrNdx)
+            if (Configuration.Graphics.TileSize == 32 && (entry[0] == 562 || entry[0] == 1309 || entry[0] == 2109))
+            { }
+            else if (entry[0] == FF9StateSystem.Common.FF9.fldMapNo && entry[1] == this.camIdx && entry[2] == ovrNdx)
             {
                 bgOverlay.curZ = (ushort)entry[3];
                 bgOverlay.transform.localPosition = new Vector3(bgOverlay.transform.localPosition.x, bgOverlay.transform.localPosition.y, entry[3]);
