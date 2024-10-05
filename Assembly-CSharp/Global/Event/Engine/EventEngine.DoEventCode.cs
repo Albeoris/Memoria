@@ -279,7 +279,7 @@ public partial class EventEngine
                 
                 if (isValid && po != null)
                 {
-                    Log.Message("mapNo == " + mapNo +  " && scCounter == " + scCounter + " && po.sid == " + po.sid + " && posX == " + posX + " && posZ == " + posZ);
+                    //Log.Message("mapNo == " + mapNo +  " && scCounter == " + scCounter + " && po.sid == " + po.sid + " && posX == " + posX + " && posZ == " + posZ);
                     FieldMapActorController actorController = po.go.GetComponent<FieldMapActorController>();
                     if (actorController != null && actorController.walkMesh != null)
                     {
@@ -313,12 +313,17 @@ public partial class EventEngine
                         ff9shadow.FF9ShadowOffField(po.uid);
                         po.isShadowOff = true;
                     }
-                    if (mapNo == 563 && po.sid == 16 && posX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
+                    if (mapNo == 257 && scCounter == 2300 && po.sid == 8 && posX == 96 && posZ == -736) // evil forest, steiner position (fix #892)
+                    {
+                        posX = 30;
+                        posZ = -716;
+                    }
+                    else if (mapNo == 563 && po.sid == 16 && posX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1635;
                     else if (mapNo == 572 && po.sid == 16 && posX == -1750) // Lindblum/I.D. Station, Zidane's initial position when arriving with Air Cab
                         posX = -1765;
                     else if (mapNo == 850 && scCounter == 3118 && posX == 898 && posZ == -4972)
-                    { 
+                    {
                         if (po.sid == 16)
                             posZ = -5372;
                         if (po.sid == 2)
