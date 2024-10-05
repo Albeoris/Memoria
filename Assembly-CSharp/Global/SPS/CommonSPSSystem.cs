@@ -123,6 +123,8 @@ public class CommonSPSSystem
             pos = new Vector3(-1030, 1400, 1716);
         if (MapNo == 2304 && name == "SPS_0001" && pos.x == 830 && pos.y == 1479 && pos.z == 1516) // esto gaza flames
             pos = new Vector3(790, 1400, 2016);
+        if (MapNo == 303 && name == "SPS_0002")
+            pos = new Vector3(4330, -1227, -700);
         return pos;
     }
 
