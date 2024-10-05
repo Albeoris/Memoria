@@ -131,6 +131,16 @@ public class CommonSPSSystem
             pos = new Vector3(845, 485, -82);
         if (MapNo == 262 && name == "SPS_0000" && pos.x == 355 && pos.y == 160 && pos.z == 4150)
             pos.x = 385;
+        if (MapNo == 162 && name == "SPS_0002" && pos.x == -340 && pos.y == 660 && pos.z == -314)
+            pos = new Vector3(-350, 640, -314);
+        if (MapNo == 162 && name == "SPS_0003" && pos.x == -460 && pos.y == 670 && pos.z == -314)
+            pos = new Vector3(-470, 650, -314);
+        if (MapNo == 162 && name == "SPS_0004" && pos.x == -570 && pos.y == 654 && pos.z == -314)
+            pos = new Vector3(-580, 640, -314);
+        if (MapNo == 163 && name == "SPS_0002" && pos.x == 821 && pos.y == 502 && pos.z == 4389)
+            pos = new Vector3(735, 475, 4000);
+        if (MapNo == 163 && name == "SPS_0001" && pos.x == 1150 && pos.y == 529 && pos.z == 4306)
+            pos = new Vector3(1060, 505, 4000);
         return pos;
     }
 
