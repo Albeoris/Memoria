@@ -123,8 +123,12 @@ public class CommonSPSSystem
             pos = new Vector3(-1030, 1400, 1716);
         if (MapNo == 2304 && name == "SPS_0001" && pos.x == 830 && pos.y == 1479 && pos.z == 1516) // esto gaza flames
             pos = new Vector3(790, 1400, 2016);
-        if (MapNo == 303 && name == "SPS_0002")
+        if (MapNo == 303 && name == "SPS_0002") // Ice cave smoke
             pos = new Vector3(4330, -1227, -700);
+        if (MapNo == 205 && name == "SPS_0000" && pos.x == -110 && pos.y == 850 && pos.z == 510) // prima vista candle
+            pos.x = -122;
+        if (MapNo == 207 && name == "SPS_0000" && pos.x == 865 && pos.y == 465 && pos.z == -22) // prima vista candle
+            pos = new Vector3(845, 485, -82);
         return pos;
     }
 
