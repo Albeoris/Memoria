@@ -254,6 +254,6 @@ MaxCardCount_Tooltip = "Ліміт карт в інвентарі збільше
 	TooltipDeactivateAll = "Вимкнути усі моди"
 	TooltipUninstall = "Видалити мод(и)"
 	TooltipDownload = "Завантажити/Оновити"
-	TooltipCancel = "Скасувати поточне завантаження/Правий клік, щоб скасувати усі"
+	TooltipCancel = "Скасувати поточне завантаження"
 	/>
 </Data>

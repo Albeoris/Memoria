@@ -252,6 +252,6 @@ TooltipActivateAll = "Activate All Mods"
 TooltipDeactivateAll = "Deactivate All Mods"
 TooltipUninstall = "Uninstall Mod(s)"
 TooltipDownload = "Download/Update"
-TooltipCancel = "Cancel Current Download/Right-Click to Cancel All"
+TooltipCancel = "Cancel Current Downloads"
 />
 </Data>

@@ -249,6 +249,6 @@ MaxCardCount_Tooltip = "卡牌库存上限提升至10000张"
 	TooltipDeactivateAll = "停用全部模组"
 	TooltipUninstall = "删除模组"
 	TooltipDownload = "下载/更新"
-	TooltipCancel = "取消当前下载/点击右键取消全部"
+	TooltipCancel = "取消当前下载"
 	/>
 </Data>

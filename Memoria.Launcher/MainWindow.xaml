@@ -403,7 +403,7 @@
                                 Margin="5,5,5,5"
                                 Padding="10,10,10,10"
                                 BorderThickness="0"
-                                Background="{StaticResource LightGreyUI}"
+                                Background="Transparent"
                                 SelectionChanged="TabControl_SelectionChanged"
                                 SelectedIndex="0"
                                 Grid.ColumnSpan="2" >

@@ -221,6 +221,13 @@
   <ItemGroup>
     <Resource Include="images\Gradient.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\tickboxFF9_off.png" />
+    <Resource Include="images\tickboxFF9_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\tickboxFF9_hover.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">
     <ItemGroup>

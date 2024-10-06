@@ -1017,6 +1017,7 @@ namespace Memoria.Launcher
                 PreviewModReleaseNotes.Text = mod.PatchNotes ?? "";
                 PreviewModCategory.Text = mod.Category ?? "Unknown";
                 PreviewModWebsite.ToolTip = mod.Website ?? String.Empty;
+                UiGrid.MakeTooltip(PreviewModWebsite, PreviewModWebsite.ToolTip.ToString(), "");
                 PreviewModWebsite.IsEnabled = !String.IsNullOrEmpty(mod.Website);
                 PreviewModWebsite.Visibility = PreviewModWebsite.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
                 PreviewSubModPanel.Visibility = Visibility.Collapsed;

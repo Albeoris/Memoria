@@ -250,6 +250,6 @@ MaxCardCount_Tooltip = "カードインベントリの制限が10,000に増加"
 	TooltipDeactivateAll = "すべてのModを無効にする"
 	TooltipUninstall = "Modのアンインストール"
 	TooltipDownload = "ダウンロード/更新"
-	TooltipCancel = "現在のダウンロードをキャンセル/右クリックですべてのダウンロードをキャンセル"
+	TooltipCancel = "現在のダウンロードをキャンセル"
 	/>
 </Data>

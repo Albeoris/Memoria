@@ -150,7 +150,7 @@
     </Style>
 
     <Style x:Key="{x:Type ListView}" TargetType="ListView">
-        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontSize" Value="14" />
         <Setter Property="Foreground" Value="White" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -188,8 +188,8 @@
                 <ControlTemplate TargetType="ListBoxItem">
                     <Grid>
                         <Border x:Name="Border" SnapsToDevicePixels="true" Background="{DynamicResource BrushAccentColor}" Opacity="0"/>
-                        <Border Padding="3,4,3,3" Background="Transparent">
-                            <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                        <Border Padding="0,2,0,0" Background="Transparent" VerticalAlignment="Center">
+                            <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Height="23" />
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>

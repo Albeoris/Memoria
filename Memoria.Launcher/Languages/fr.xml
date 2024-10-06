@@ -252,6 +252,6 @@ MaxCardCount_Tooltip = "Limite de cartes dans l'inventaire augmentée à 10000"
 	TooltipDeactivateAll = "Désactiver Tous les Mods"
 	TooltipUninstall = "Supprimer le(s) mod(s) sélectionné(s)"
 	TooltipDownload = "Télécharger/Mettre à jour"
-	TooltipCancel = "Annuler le Téléchargement du Mod en cours (clic gauche) / De Tous les Mods (clic droit)"
+	TooltipCancel = "Annuler les téléchargements"
 	/>
 </Data>
