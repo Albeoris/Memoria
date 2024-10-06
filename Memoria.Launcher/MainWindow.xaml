@@ -22,7 +22,7 @@
     <Window.Resources>
         
         <Style x:Key="ModInfoLabelStyle" TargetType="{x:Type TextBlock}">
-            <Setter Property="FontSize" Value="13" />
+            <Setter Property="FontSize" Value="14" />
             <Setter Property="Margin" Value="0,0,3,1" />
             <Setter Property="FontWeight" Value="DemiBold" />
             <Setter Property="VerticalAlignment" Value="Top" />
@@ -35,7 +35,7 @@
             <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Padding" Value="0" />
-            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontSize" Value="14" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
         </Style>
@@ -46,7 +46,7 @@
             <Setter Property="FontWeight" Value="Normal" />
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Padding" Value="0" />
-            <Setter Property="FontSize" Value="12" />
+            <Setter Property="FontSize" Value="14" />
             <Setter Property="VerticalAlignment" Value="Top" />
             <!--<Setter Property="Background" Value="#88404845" />-->
             <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
@@ -70,10 +70,9 @@
             <Setter Property="FontFamily" Value="{StaticResource CenturyGothic}" />
             <Setter Property="FontStretch" Value="UltraCondensed" />
             <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Padding" Value="0,0,0,0" />
-            <Setter Property="FontSize" Value="20" />
+            <Setter Property="Padding" Value="0,5,0,0" />
+            <Setter Property="FontSize" Value="28" />
             <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
-            <Setter Property="Effect" Value="{StaticResource dropShadowEffect}" />
         </Style>
         <Style
             x:Key="ModVersionStyle"
@@ -86,159 +85,101 @@
             <Setter Property="FontSize" Value="14" />
             <Setter Property="Foreground" Value="#BBB" />
         </Style>
-        
+
         <Style x:Key="OpenLinkStyle" TargetType="{x:Type Button}">
-            <Setter Property="Content" Value="Website" />
-            <Setter Property="Padding" Value="5,2,2,2" />
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding PreviewModHasLink, FallbackValue='False'}" Value="False">
-                    <Setter Property="Content" Value="Website" />
-                    <Setter Property="Padding" Value="2" />
-                </DataTrigger>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="Black"/>
-                    <Setter Property="Foreground" Value="Gray"/>
-                </Trigger>
-            </Style.Triggers>
+            <Setter Property="Foreground" Value="{DynamicResource BrushDarkTextColor}"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="border"
+                            Background="{DynamicResource BrushLightColorNormal}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="0"
+                            CornerRadius="5"
+                            Padding="5,2,5,2"
+                            Height="auto"
+                            Width="auto"
+                            Cursor="Hand">
+                            <ContentPresenter
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource BrushLightColorHover}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource BrushLightColorPressed}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="border" Property="Opacity" Value="0.2"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border x:Name="border"
-                            Background="{TemplateBinding Background}"
+                        <Border
+                            x:Name="border"
+                            Background="{DynamicResource BrushLightColorNormal}"
                             BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="{TemplateBinding BorderThickness}"
+                            BorderThickness="0"
                             CornerRadius="5"
-                            Effect="{StaticResource ButtondropShadowEffect}">
+                            Cursor="Hand">
                             <ContentPresenter
                                 HorizontalAlignment="Center" 
                                 VerticalAlignment="Center" 
                                 Width="36"
-                                Height="36"/>
+                                Height="36"
+                                Opacity="0.8"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#eee"/>
-                                <Setter TargetName="border" Property="BorderBrush" Value="#44f"/>
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource BrushLightColorHover}"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="#fff"/>
-                                <Setter TargetName="border" Property="BorderBrush" Value="#44f"/>
+                                <Setter TargetName="border" Property="Background" Value="{DynamicResource BrushLightColorPressed}"/>
                             </Trigger>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter TargetName="border" Property="Background" Value="#555"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="MainListViewItemStyle" TargetType="{x:Type ListViewItem}">
-            <Style.Triggers>
-                <!-- DataTrigger to check if the mod is outdated -->
-                <DataTrigger Binding="{Binding IsOutdated}" Value="True">
-                    <Setter Property="Background" Value="LightCoral"/>
-                    <Setter Property="Foreground" Value="Yellow"/>
-                    <Setter Property="BorderBrush" Value="Yellow"/>
-                </DataTrigger>
-            </Style.Triggers>
-            <Setter Property="SnapsToDevicePixels" Value="true" />
-            <Setter Property="OverridesDefaultStyle" Value="true" />
-            <Setter Property="BorderThickness" Value="0,0,0,0" />
-            <Setter Property="BorderBrush" Value="{DynamicResource PrimaryControlPressed}" />
-            <Setter Property="FocusVisualStyle" Value="{DynamicResource MainFocusVisualStyle}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListViewItem">
-                        <Grid>
-                            <Rectangle
-                                x:Name="bg"
-                                Fill="Transparent"
-                                IsHitTestVisible="False"
-                                Opacity="1" />
-                            <Border
-                                x:Name="Border"
-                                Padding="2"
-                                Background="Transparent"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                SnapsToDevicePixels="true">
-                                <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" TextElement.Foreground="{DynamicResource PrimaryControlForeground}" />
-                            </Border>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger SourceName="Border" Property="IsMouseOver" Value="True">
-                                <Setter TargetName="bg" Property="Fill" Value="{DynamicResource PrimaryControlMouseOver}" />
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="bg" Property="Fill" Value="{DynamicResource PrimaryControlPressed}" />
-                            </Trigger>
-                            <!--  Checking the Tag property to determine if background should be slightly transparent  -->
-                            <Trigger Property="Tag" Value="TransparentBg">
-                                <Setter TargetName="bg" Property="Opacity" Value="0.5" />
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="border" Property="Opacity" Value="0.2"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style
-            x:Key="ControlListViewItemStyle"
-            BasedOn="{StaticResource MainListViewItemStyle}"
-            TargetType="{x:Type ListViewItem}">
-            <Setter Property="Height" Value="34" />
-            <Setter Property="VerticalContentAlignment" Value="Center" />
-            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-        </Style>
-        <Style
-            x:Key="ModListViewItem"
-            BasedOn="{StaticResource ControlListViewItemStyle}"
-            TargetType="{x:Type ListViewItem}">
-            <EventSetter Event="MouseDoubleClick" Handler="OnModListDoubleClick" />
-            <EventSetter Event="Selected" Handler="OnModListSelect" />
-            <Setter Property="Tag" Value="TransparentBg" />
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding ElementName=ctrlCatalog, Path=DataContext.ThemeImage}" Value="{x:Null}">
-                    <Setter Property="Tag" Value="" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
-        <Style
-            x:Key="DownloadListViewItem"
-            BasedOn="{StaticResource ControlListViewItemStyle}"
-            TargetType="{x:Type ListViewItem}">
-            <Setter Property="Tag" Value="TransparentBg" />
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsSelected}" Value="False">
-                    <Setter Property="Tag" Value="" />
-                </DataTrigger>
-            </Style.Triggers>
-        </Style>
+        
         <Style x:Key="SmallImageButton" TargetType="{x:Type Button}">
             <Setter Property="Height" Value="44" />
             <Setter Property="Width" Value="44" />
         </Style>
 
         <Style x:Name="subtab" TargetType="{x:Type TabItem}" x:Key="subtab">
+            <Setter Property="Margin" Value="-2,0,2,0"/>
+            <Setter Property="Background" Value="#d000"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TabItem}">
-                        <Border>
-                            <Grid>
-                                <Grid>
-                                    <Border x:Name="border"
-                                        CornerRadius="9,9,0,0"
-                                        Margin="0,0,3,0"
-                                        Background="{StaticResource NonSelectedTabUI}" />
-                                </Grid>
-                                <ContentPresenter
-                                    x:Name="contentpresenter"
-                                    ContentSource="Header"
-                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-                            </Grid>
-                        </Border>
+                        <Grid Margin="0, 0, 2, 0">
+                            <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="5,5,0,0">
+                                <ContentPresenter x:Name="content"
+                                ContentSource="Header"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Margin="20,0"
+                                Cursor="Hand"
+                                TextBlock.FontSize="{TemplateBinding FontSize}"
+                                TextBlock.FontFamily="{DynamicResource CenturyGothic}"
+                                TextBlock.FontWeight="{TemplateBinding FontWeight}"
+                                TextBlock.Foreground="#aaa" />
+                            </Border>
+                        </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="border" Property="Background" Value="{StaticResource LightGreyUI}" />
@@ -468,7 +409,7 @@
                                 Grid.ColumnSpan="2" >
                                 <TabControl.Resources>
                                     <Style TargetType="Border">
-                                        <Setter Property="CornerRadius" Value="2,10,10,10"/>
+                                        <Setter Property="CornerRadius" Value="0,7,7,7"/>
                                     </Style>
                                 </TabControl.Resources>
                                 <TabItem x:Name="tabCtrlMods"
@@ -505,7 +446,7 @@
                                                 Click="OnClickReorganize"
                                                 TabIndex="21"
                                                 ToolTip="Auto-organize mod by priority" >
-                                                <Image Source="/images/btnReorganize.png" />
+                                                <Image Source="/images/btnReorganize.png"/>
                                             </Button>
                                             <Button x:Name="btnMoveUp"
                                                 Style="{StaticResource ButtonStyle}"
@@ -514,7 +455,7 @@
                                                 MouseRightButtonUp="OnClickSendTop"
                                                 TabIndex="21"
                                                 ToolTip="Move Up/Right-Click to Move to Top" >
-                                                <Image Source="/images/btnMoveUpimg.png" />
+                                                <Image Source="/images/btnMoveUpimg.png"/>
                                             </Button>
                                             <Button
                                                 x:Name="btnMoveDown"
@@ -524,7 +465,7 @@
                                                 MouseRightButtonDown="OnClickSendBottom"
                                                 TabIndex="22"
                                                 ToolTip="Move Down/Right-Click to Move to Bottom" >
-                                                <Image Source="/images/btnMoveDownimg.png" />
+                                                <Image Source="/images/btnMoveDownimg.png"/>
                                             </Button>
                                             <Button
                                                 x:Name="btnUninstall"
@@ -534,50 +475,24 @@
                                                 MouseRightButtonDown="OnClickUninstall"
                                                 TabIndex="28"
                                                 ToolTip="Uninstall Mod(s)" >
-                                                <Image Source="/images/btnUninstallimg.png" />
+                                                <Image Source="/images/btnUninstallimg.png"/>
                                             </Button>
                                         </StackPanel>
                                         <ListView x:Name="lstMods"
-                                            FontSize="12"
                                             Margin="6,0,0,0"
-                                            BorderThickness="0"
-                                            Padding="0"
                                             Grid.Column="1"
-                                            AllowDrop="True"
-                                            Background="{StaticResource DarkGreyUI}"
                                             ItemsSource="{Binding modListInstalled}"
                                             ScrollViewer.CanContentScroll="False"
                                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
                                             VirtualizingStackPanel.IsVirtualizing="False">
-                                            <ListView.ItemContainerStyle>
-                                                <Style TargetType="ListViewItem">
-                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                                    <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
-                                                    <Setter Property="BorderThickness" Value="0" />
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Trigger.Setters>
-                                                                <Setter Property="Background" Value="{StaticResource LightGreyUI}" />
-                                                                <Setter Property="BorderThickness" Value="0" />
-                                                            </Trigger.Setters>
-                                                        </Trigger>
-                                                        <Trigger Property="IsSelected" Value="True">
-                                                            <Trigger.Setters>
-                                                                <Setter Property="Background" Value="#dd616033" />
-                                                                <Setter Property="BorderThickness" Value="0" />
-                                                            </Trigger.Setters>
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </ListView.ItemContainerStyle>
                                             <ListView.View>
                                                 <GridView>
                                                     <GridViewColumn
-                                                        x:Name="colMyModsActive"
-                                                        Width="28">
+                                                        x:Name="colMyModsActive">
                                                         <GridViewColumn.CellTemplate>
                                                             <DataTemplate>
                                                                 <CheckBox
+                                                                    Style="{StaticResource CheckBoxStyle}"
                                                                     HorizontalAlignment="Center"
                                                                     IsChecked="{Binding IsActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                                                     Click="CheckBox_Click"
@@ -594,7 +509,6 @@
                                                     </GridViewColumn>
                                                     <GridViewColumn
                                                         x:Name="colMyModsPriority"
-                                                        Width="28"
                                                         DisplayMemberBinding="{Binding Priority}" >
                                                         <GridViewColumn.HeaderTemplate>
                                                             <DataTemplate>
@@ -606,7 +520,6 @@
                                                     </GridViewColumn>
                                                     <GridViewColumn
                                                         x:Name="colMyModsIcons"
-                                                        Width="28"
                                                         Header="" >
                                                         <GridViewColumn.CellTemplate>
                                                             <DataTemplate>
@@ -634,7 +547,6 @@
                                                     </GridViewColumn>
                                                     <GridViewColumn
                                                         x:Name="colMyModsName"
-                                                        Width="Auto"
                                                         Header="Name" >
                                                         <GridViewColumn.CellTemplate>
                                                             <DataTemplate>
@@ -644,7 +556,6 @@
                                                                     <TextBlock x:Name="colMyModsVersionText"
                                                                         Text="{Binding CurrentVersion}"
                                                                         Margin="4,0,0,0"
-                                                                        FontSize="11"
                                                                         VerticalAlignment="Bottom"
                                                                         Foreground="#888"
                                                                         />
@@ -654,7 +565,6 @@
                                                     </GridViewColumn>
                                                     <GridViewColumn
                                                         x:Name="colMyModsCategory"
-                                                        Width="100"
                                                         DisplayMemberBinding="{Binding Category}"
                                                         Header="Category" />
                                                 </GridView>
@@ -697,42 +607,20 @@
                                             </Button>
                                         </StackPanel>
                                         <ListView x:Name="lstCatalogMods"
-                                            FontSize="12"
-                                            Grid.Column="1"
                                             Margin="6,0,0,0"
-                                            BorderThickness="0"
-                                            Background="{StaticResource DarkGreyUI}"
+                                            Grid.Column="1"
                                             ItemsSource="{Binding modListCatalog}"
                                             ScrollViewer.CanContentScroll="False"
                                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                            VirtualizingStackPanel.IsVirtualizing="False"
-                                            MouseDoubleClick="OnCatalogListDoubleClick">
+                                            VirtualizingStackPanel.IsVirtualizing="False">
                                             <ListView.ItemContainerStyle>
-                                                <Style TargetType="ListViewItem">
-                                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                                    <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
-                                                    <Setter Property="BorderThickness" Value="0" />
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Trigger.Setters>
-                                                                <Setter Property="Background" Value="{StaticResource LightGreyUI}" />
-                                                                <Setter Property="BorderThickness" Value="0" />
-                                                            </Trigger.Setters>
-                                                        </Trigger>
-                                                        <Trigger Property="IsSelected" Value="True">
-                                                            <Trigger.Setters>
-                                                                <Setter Property="Background" Value="#dd616033" />
-                                                                <Setter Property="BorderThickness" Value="0" />
-                                                            </Trigger.Setters>
-                                                        </Trigger>
-                                                    </Style.Triggers>
+                                                <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                                                    <EventSetter Event="MouseDoubleClick" Handler="OnCatalogListDoubleClick"/>
                                                 </Style>
                                             </ListView.ItemContainerStyle>
                                             <ListView.View>
                                                 <GridView>
-                                                    <GridViewColumn
-                                                        x:Name="colCatalogInstalled"
-                                                        Width="28" >
+                                                    <GridViewColumn x:Name="colCatalogInstalled">
                                                         <GridViewColumn.HeaderTemplate>
                                                             <DataTemplate>
                                                                 <TextBlock Text="✅" FontFamily="{StaticResource NotoEmoji}" />
@@ -746,19 +634,16 @@
                                                     </GridViewColumn>
                                                     <GridViewColumn
                                                         x:Name="colCatalogName"
-                                                        Width="Auto"
                                                         DisplayMemberBinding="{Binding Name}"
                                                         Header="Name" />
                                                     <GridViewColumn
-                                                        x:Name="colCatalogAuthor"
-                                                        Width="Auto"
-                                                        DisplayMemberBinding="{Binding Author}"
-                                                        Header="Author(s)" />
-                                                    <GridViewColumn
                                                         x:Name="colCatalogCategory"
-                                                        Width="100"
                                                         DisplayMemberBinding="{Binding Category}"
                                                         Header="Category" />
+                                                    <GridViewColumn
+                                                        x:Name="colCatalogAuthor"
+                                                        DisplayMemberBinding="{Binding Author}"
+                                                        Header="Author(s)" />
                                                 </GridView>
                                             </ListView.View>
                                         </ListView>
@@ -782,17 +667,12 @@
                                             </Button>
                                         </StackPanel>
                                         <ListView x:Name="lstDownloads"
-                                            FontSize="12"
+                                            Margin="6,0,0,0"
                                             Grid.Row="1"
                                             Grid.Column="1"
                                             MinHeight="0"
-                                            Height="0"
                                             MaxHeight="100"
-                                            Margin="6,5,0,0"
-                                            BorderThickness="0"
-                                            Background="#333"
-                                            Foreground="#FFF"
-                                            ItemContainerStyle="{StaticResource DownloadListViewItem}"
+                                            Height="0"
                                             ItemsSource="{Binding downloadList, UpdateSourceTrigger=PropertyChanged}"
                                             SelectedItem="{Binding SelectedDownload, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                             <ListView.View>
@@ -838,7 +718,7 @@
                                 Grid.Row="0"
                                 Grid.RowSpan="2"
                                 Grid.Column="2"
-                                Margin="7,0,0,0"
+                                Margin="7,-2,0,0"
                                 Padding="0,0,0,7"
                                 BorderThickness="0"
                                 Background="{StaticResource LightGreyUI}"
@@ -857,21 +737,19 @@
                                             Background="#333" />
                                     </TabItem.Header>
                                     <Grid x:Name="gridOuterMod"
-                                        Margin="0,-2,0,0" >
+                                        Margin="0">
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="auto" MinHeight="20" MaxHeight="150" />
                                             <RowDefinition Height="auto" />
-                                            <RowDefinition Height="auto" />
                                             <RowDefinition Height="1*" />
-                                            <RowDefinition Height="auto"/>
                                         </Grid.RowDefinitions>
                                         <Grid x:Name="imagewrapper"
                                             Grid.Row="0"
                                             Height="auto"
                                             VerticalAlignment="Center"
-                                            Margin="-7,0,-7,0">
+                                            Margin="0">
                                             <Image x:Name="PreviewModImage"
-                                                Source="Images/no-disc.jpg"
+                                                Source="Images/Gradient.png"
                                                 Grid.Row="0"
                                                 Grid.RowSpan="1"
                                                 RenderOptions.BitmapScalingMode="HighQuality"
@@ -882,14 +760,10 @@
                                             Grid.Row="0"
                                             VerticalAlignment="Bottom"
                                             HorizontalAlignment="Right"
-                                            Width="auto"
-                                            Height="20"
                                             Margin="0,0,0,0"
                                             Cursor="Hand"
                                             Click="OnClickWebsite"
                                             Content="Website"
-                                            FontSize="12"
-                                            FontWeight="DemiBold"
                                             IsEnabled="False"
                                             Style="{StaticResource OpenLinkStyle}"
                                             ToolTip="{Binding PreviewModLink}"
@@ -913,33 +787,28 @@
                                         <Grid x:Name="gridModName" 
                                             Grid.Row="1"
                                             Margin="7,0,7,0">
-                                            <ScrollViewer
-                                                HorizontalAlignment="Left"
-                                                VerticalScrollBarVisibility="Auto"
-                                                Height="auto">
-                                                <WrapPanel
-                                                    Grid.Row="0">
-                                                    <TextBlock
-                                                        x:Name="PreviewModName"
-                                                        MinWidth="20"
-                                                        Style="{StaticResource ModTitleStyle}"
-                                                        VerticalAlignment="Bottom"
-                                                        Text="---" />
-                                                    <TextBlock
-                                                        x:Name="PreviewModVersion"
-                                                        Margin="0"
-                                                        Style="{StaticResource ModVersionStyle}"
-                                                        VerticalAlignment="Bottom"
-                                                        Text="" />
-                                                </WrapPanel>
-                                            </ScrollViewer>
+                                            <WrapPanel
+                                                Grid.Row="0">
+                                                <TextBlock
+                                                    x:Name="PreviewModName"
+                                                    MinWidth="20"
+                                                    Style="{StaticResource ModTitleStyle}"
+                                                    VerticalAlignment="Bottom"
+                                                    Text="---" />
+                                                <TextBlock
+                                                    x:Name="PreviewModVersion"
+                                                    Margin="0"
+                                                    Style="{StaticResource ModVersionStyle}"
+                                                    VerticalAlignment="Bottom"
+                                                    Text="" />
+                                            </WrapPanel>
                                         </Grid>
 
                                         <ScrollViewer
                                             Grid.Row="2"
                                             HorizontalAlignment="Stretch"
                                             VerticalScrollBarVisibility="Auto"
-                                            Margin="7,0,7,0">
+                                            Margin="7,0,0,0">
                                             <Grid x:Name="gridModInfo" Margin="0,0,0,3">
                                                 <Grid.RowDefinitions>
                                                     <RowDefinition Height="auto" />
@@ -1006,11 +875,8 @@
                                                     </Grid>
                                                 </WrapPanel>
 
-                                                <ScrollViewer x:Name="ContentScroll"
-                                                    Grid.Row="2"
-                                                    HorizontalAlignment="Stretch"
-                                                    VerticalScrollBarVisibility="Auto"
-                                                    Height="456" >
+                                                <Grid x:Name="ContentScroll"
+                                                    Grid.Row="2">
                                                     <Grid>
                                                         <Grid.RowDefinitions>
                                                             <RowDefinition Height="auto" />
@@ -1020,7 +886,7 @@
                                                         <WrapPanel
                                                             Grid.Row="0"
                                                             Height="auto">
-                                                            <Grid Margin="0,4,0,0" >
+                                                            <Grid Margin="0,10,0,0" >
                                                                 <Border
                                                                     Grid.Row="0"
                                                                     BorderThickness="3,0,0,0"
@@ -1036,7 +902,7 @@
                                                         <WrapPanel
                                                             x:Name="PreviewSubModPanel"
                                                             Grid.Row="1"
-                                                            Margin="0,5,0,3"
+                                                            Margin="0,5,6,3"
                                                             Background="Gray"
                                                             Height="auto"
                                                             Visibility="Collapsed" >
@@ -1076,7 +942,7 @@
                                                                     Grid.Column="1"
                                                                     Margin="3,0,3,0"
                                                                     VerticalAlignment="Center">
-                                                                    <CheckBox x:Name="PreviewSubModActive" Content="Active" />
+                                                                    <CheckBox x:Name="PreviewSubModActive" Content="Active" Style="{StaticResource CheckBoxStyle}" />
                                                                 </WrapPanel>
                                                                 <WrapPanel
                                                                     Grid.Row="2"
@@ -1089,13 +955,12 @@
                                                                 </WrapPanel>
                                                             </Grid>
                                                         </WrapPanel>
-                                                        <ScrollViewer x:Name="ReleaseNotesBlock"
+                                                        <Grid x:Name="ReleaseNotesBlock"
                                                             Grid.Row="2"
-                                                            HorizontalAlignment="Stretch"
-                                                            VerticalScrollBarVisibility="Auto">
+                                                            HorizontalAlignment="Stretch">
                                                             <WrapPanel
                                                                 Background="{StaticResource DarkGreyUI}"
-                                                                Margin="0,7,6,0"
+                                                                Margin="0,10,6,0"
                                                                 Visibility="Visible">
                                                                 <DockPanel>
                                                                     <TextBlock x:Name="CaptionModReleaseNotes"
@@ -1111,9 +976,9 @@
                                                                     VerticalAlignment="Bottom"
                                                                     Text="" />
                                                             </WrapPanel>
-                                                        </ScrollViewer>
+                                                        </Grid>
                                                     </Grid>
-                                                </ScrollViewer>
+                                                </Grid>
                                             </Grid>
                                         </ScrollViewer>
                                     </Grid>
@@ -1146,7 +1011,7 @@
         <!-- Play Button -->
         <launcher:UiLauncherPlayButton x:Name="PlayButton"
             Width="260"
-            Height="69"
+            Height="70"
             Margin="0,46,20,0"
             HorizontalAlignment="Right"
             VerticalAlignment="Top" />

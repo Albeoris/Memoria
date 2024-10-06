@@ -2,7 +2,7 @@
 
     <Style x:Key="RepeatButtonRight" TargetType="{x:Type RepeatButton}">
         <Setter Property="OverridesDefaultStyle" Value="true"/>
-        <Setter Property="Background" Value="{DynamicResource BrushTextColor}"/>
+        <Setter Property="Background" Value="{DynamicResource BrushLightColorNormal}"/>
         <Setter Property="Focusable" Value="false"/>
         <Setter Property="IsTabStop" Value="false"/>
         <Setter Property="Template">
@@ -42,17 +42,17 @@
         </Setter>
     </Style>
     <ControlTemplate x:Key="SliderThumbHorizontalDefault" TargetType="{x:Type Thumb}">
-        <Border x:Name="grip" CornerRadius="6" Margin="2" Background="{DynamicResource BrushTextColor}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <Border x:Name="grip" CornerRadius="6" Margin="2" Background="{DynamicResource BrushLightColorNormal}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         <ControlTemplate.Triggers>
             <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType={x:Type Slider}}}" Value="true">
                 <Setter Property="Margin" TargetName="grip" Value="0"/>
                 <Setter Property="CornerRadius" TargetName="grip" Value="10"/>
             </DataTrigger>
             <Trigger Property="IsMouseOver" Value="true">
-                <Setter Property="Background" TargetName="grip" Value="{DynamicResource BrushTextColorHover}"/>
+                <Setter Property="Background" TargetName="grip" Value="{DynamicResource BrushLightColorHover}"/>
             </Trigger>
             <Trigger Property="IsDragging" Value="true">
-                <Setter Property="Background" TargetName="grip" Value="{DynamicResource BrushTextColorPressed}"/>
+                <Setter Property="Background" TargetName="grip" Value="{DynamicResource BrushLightColorPressed}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
                 <Setter Property="Opacity" TargetName="grip" Value="0.5"/>
@@ -61,14 +61,14 @@
     </ControlTemplate>
     <ControlTemplate x:Key="SliderThumbHorizontalTop" TargetType="{x:Type Thumb}">
         <Grid HorizontalAlignment="Center" UseLayoutRounding="True" Margin="2,-2,2,0" VerticalAlignment="Center">
-            <Path x:Name="grip" Data="M 0,6 C0,6 5.5,0 5.5,0 5.5,0 11,6 11,6 11,6 11,18 11,18 11,18 0,18 0,18 0,18 0,6 0,6 z" Fill="{DynamicResource BrushTextColor}" SnapsToDevicePixels="True" Stretch="Fill" UseLayoutRounding="True" VerticalAlignment="Center"/>
+            <Path x:Name="grip" Data="M 0,6 C0,6 5.5,0 5.5,0 5.5,0 11,6 11,6 11,6 11,18 11,18 11,18 0,18 0,18 0,18 0,6 0,6 z" Fill="{DynamicResource BrushLightColorNormal}" SnapsToDevicePixels="True" Stretch="Fill" UseLayoutRounding="True" VerticalAlignment="Center"/>
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="true">
-                <Setter Property="Fill" TargetName="grip" Value="{DynamicResource BrushTextColorHover}"/>
+                <Setter Property="Fill" TargetName="grip" Value="{DynamicResource BrushLightColorHover}"/>
             </Trigger>
             <Trigger Property="IsDragging" Value="true">
-                <Setter Property="Fill" TargetName="grip" Value="{DynamicResource BrushTextColorPressed}"/>
+                <Setter Property="Fill" TargetName="grip" Value="{DynamicResource BrushLightColorPressed}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
                 <Setter Property="Opacity" TargetName="grip" Value="0.5"/>
@@ -77,14 +77,14 @@
     </ControlTemplate>
     <ControlTemplate x:Key="SliderThumbHorizontalBottom" TargetType="{x:Type Thumb}">
         <Grid HorizontalAlignment="Center" UseLayoutRounding="True" Margin="2,0,2,-2" VerticalAlignment="Center">
-            <Path x:Name="grip" Data="M 0,12 C0,12 5.5,18 5.5,18 5.5,18 11,12 11,12 11,12 11,0 11,0 11,0 0,0 0,0 0,0 0,12 0,12 z" Fill="{DynamicResource BrushTextColor}" SnapsToDevicePixels="True" Stretch="Fill" UseLayoutRounding="True" VerticalAlignment="Center"/>
+            <Path x:Name="grip" Data="M 0,12 C0,12 5.5,18 5.5,18 5.5,18 11,12 11,12 11,12 11,0 11,0 11,0 0,0 0,0 0,0 0,12 0,12 z" Fill="{DynamicResource BrushLightColorNormal}" SnapsToDevicePixels="True" Stretch="Fill" UseLayoutRounding="True" VerticalAlignment="Center"/>
         </Grid>
         <ControlTemplate.Triggers>
             <Trigger Property="IsMouseOver" Value="true">
-                <Setter Property="Fill" TargetName="grip" Value="{DynamicResource BrushTextColorHover}"/>
+                <Setter Property="Fill" TargetName="grip" Value="{DynamicResource BrushLightColorHover}"/>
             </Trigger>
             <Trigger Property="IsDragging" Value="true">
-                <Setter Property="Fill" TargetName="grip" Value="{DynamicResource BrushTextColorPressed}"/>
+                <Setter Property="Fill" TargetName="grip" Value="{DynamicResource BrushLightColorPressed}"/>
             </Trigger>
             <Trigger Property="IsEnabled" Value="false">
                 <Setter Property="Opacity" TargetName="grip" Value="0.5"/>
@@ -143,8 +143,7 @@
         <Setter Property="Stylus.IsPressAndHoldEnabled" Value="false"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
-        <Setter Property="Foreground" Value="{DynamicResource BrushTextColor}"/>
+        <Setter Property="Foreground" Value="{DynamicResource BrushLightColorNormal}"/>
         <Setter Property="Template" Value="{StaticResource SliderHorizontal}"/>
-        <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisualStyle}"/>
     </Style>
 </ResourceDictionary>

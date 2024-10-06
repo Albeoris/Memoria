@@ -6,7 +6,7 @@
         <Setter Property="Background" Value="#D000" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
-        <Setter Property="FontSize" Value="21" />
+        <Setter Property="FontSize" Value="18" />
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Margin" Value="-4,2,0,0" />
         <Setter Property="Height" Value="45" />
@@ -26,7 +26,7 @@
                             TextBlock.Foreground="#aaa" />
                         </Border>
                         <Rectangle x:Name="underline"
-                            Fill="{DynamicResource BrushTextColorHover}"
+                            Fill="{DynamicResource BrushLightColorNormal}"
                             Height="1"
                             Width="{Binding ActualWidth, ElementName=content}"
                             HorizontalAlignment="Center"
@@ -36,7 +36,7 @@
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Margin" Value="-4,1,0,0" />
-                            <Setter TargetName="content" Property="TextElement.Foreground" Value="{DynamicResource BrushTextColorHover}"/>
+                            <Setter TargetName="content" Property="TextElement.Foreground" Value="{DynamicResource BrushLightColorNormal}"/>
                         </Trigger>
                         <Trigger SourceName="border" Property="IsMouseOver" Value="True">
                             <Setter Property="Cursor" Value="Hand" />
@@ -44,7 +44,7 @@
                         <Trigger Property="IsSelected" Value="True">
                             <Setter Property="Margin" Value="-4,0,0,0" />
                             <Setter Property="Background" Value="#b000" />
-                            <Setter TargetName="content" Property="TextElement.Foreground" Value="{DynamicResource BrushTextColorHover}"/>
+                            <Setter TargetName="content" Property="TextElement.Foreground" Value="{DynamicResource BrushLightColorNormal}"/>
                             <Trigger.EnterActions>
                                 <BeginStoryboard>
                                     <Storyboard>

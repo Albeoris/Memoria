@@ -12,6 +12,9 @@
                 <ResourceDictionary Source="Resources/TextBoxStyle.xaml"/>
                 <ResourceDictionary Source="Resources/ToggleStyle.xaml"/>
                 <ResourceDictionary Source="Resources/TabItemStyle.xaml"/>
+                <ResourceDictionary Source="Resources/ScrollBarStyle.xaml"/>
+                <ResourceDictionary Source="Resources/ListViewStyle.xaml"/>
+                <ResourceDictionary Source="Resources/CheckBoxStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
