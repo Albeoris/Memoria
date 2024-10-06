@@ -2524,6 +2524,9 @@ public class FieldMap : HonoBehavior
         [2207,0,5,0],       // Desert palace teleporter light 5
         [2209,0,0,0],       // Desert palace teleporter light
         [2211,0,8,400],     // Desert palace teleporter light
+        [2217,0,1,1847],    // Candle light
+        [2217,0,6,3000],    // Candle light
+        [2217,0,8,5000],    // Candle light
         [2221,0,17,2200],   // Candle light
         [2222,0,2,1000],    // Desert palace teleporter light
         [2502,0,14,1400],   // Ypsen, entrance light
