@@ -1149,17 +1149,13 @@ public partial class EventEngine
 
                 if (this.gMode == 1)
                 {
+                    //if (actor.uid == 5) Log.Message("mapNo == " + mapNo + " && angle == " + angle);// + " && actor.uid == " + actor.uid);
+                    if (mapNo == 103 && angle == 228 && po.model == 224 && actor.uid == 9) // Jump rope from little girls at Alexandria (before Alexandria destruction)
+                        angle = 229;
                     if (mapNo == 504 && (Int32)po.sid == 15 && (this.eBin.getVarManually(EBin.MAP_INDEX_SVR) == 4 && angle == 240))
                         angle = 128;
-
-                    if (mapNo == 103 && angle == 228 && po.model == 224 && actor.uid == 9) // Jump rope from little girls at Alexandria (before Alexandria destruction)
-                    {
-                        angle = 229;
-                    }
                     if (mapNo == 2456 && angle == 0 && po.model == 224 && actor.uid == 6) // Jump rope from little girls at Alexandria (after Alexandria destruction)
-                    {
                         angle = 1;
-                    }
                     Vector3 eulerAngles2 = po.go.transform.localRotation.eulerAngles;
                     eulerAngles2.y = EventEngineUtils.ConvertFixedPointAngleToDegree((Int16)(angle << 4));
                     po.rotAngle[1] = eulerAngles2.y;
