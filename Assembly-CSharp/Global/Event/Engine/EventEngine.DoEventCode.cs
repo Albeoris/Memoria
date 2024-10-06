@@ -2133,58 +2133,58 @@ public partial class EventEngine
                 Int32 destX = this.getv2();
                 Int32 destZ = -this.getv2();
                 Int32 destY = this.getv2();
-                if (this.gMode == 1 && po?.model != UInt16.MaxValue)
+                if (this.gMode == 1 && po?.model != UInt16.MaxValue && po != null)
                 {
-                    if (po != null)
+                    Log.Message("if (mapNo == " + mapNo + " && po.sid == " + po.sid + " && destX == " + destX + " && destY == " + destY + " && destZ == " + destZ + ")");
+                    FieldMapActorController actorController = po.go.GetComponent<FieldMapActorController>();
+                    if (actorController != null && actorController.walkMesh != null)
+                        actorController.walkMesh.BGI_charSetActive(actorController, 0u);
+                    if (mapNo == 563 && po.sid == 16 && destX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
+                        destX = -1635;
+                    else if (mapNo == 572 && po.sid == 16 && destX == -1750) // Lindblum/I.D. Station, Zidane's initial position when arriving with Air Cab
+                        destX = -1765;
+                    else if (mapNo == 1205 && po.sid == 6 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && destX == 418 && destY == 9733)
                     {
-                        FieldMapActorController actorController = po.go.GetComponent<FieldMapActorController>();
-                        if (actorController != null && actorController.walkMesh != null)
-                            actorController.walkMesh.BGI_charSetActive(actorController, 0u);
-                        if (mapNo == 1205 && po.sid == 6 && this.eBin.getVarManually(EBin.SC_COUNTER_SVR) == 4800 && destX == 418 && destY == 9733)
-                        {
-                            // A. Castle/Chapel, Thorn's initial position (fix in some languages)
-                            this._fixThornPosA = destX;
-                            this._fixThornPosB = destZ;
-                            this._fixThornPosC = destY;
-                            this._fixThornPosObj = po;
-                            destX = 600;
-                            destY = 9999;
-                        }
-                        else if (mapNo == 563 && po.sid == 16 && destX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
-                            destX = -1635;
-                        else if (mapNo == 572 && po.sid == 16 && destX == -1750) // Lindblum/I.D. Station, Zidane's initial position when arriving with Air Cab
-                            destX = -1765;
-                        else if (mapNo == 1310 && po.sid == 12 && destX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
-                            destX = -1635;
-                        else if (mapNo == 2110 && po.sid == 9 && destX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
-                            destX = -1635;
-                        else if (mapNo == 1607)
-                        {
-                            // Mdn. Sari/Kitchen, Cooked Fish and Stew Plate appearing on the foreground
-                            Int32 counter = this.eBin.getVarManually(EBin.SC_COUNTER_SVR);
-                            Int32 var9169 = this.eBin.getVarManually(9169);
-                            if ((po.model == 236 || po.model == 237) && counter >= 6640 && counter < 6690 && var9169 == 0)
-                                destZ += 50000;
-                        }
-                        else if (mapNo == 1606) // Mdn. Sari/Resting Room, initial position of moogles
-                        {
-                            if (po.uid == 9 && destX == -171 && destZ == 641 && destY == 1042
-                            || po.uid == 128 && destX == -574 && destZ == 624 && destY == 903
-                            || po.uid == 129 && destX == -226 && destZ == 639 && destY == 1009
-                            || po.uid == 130 && destX == -93 && destZ == 647 && destY == 1017
-                            || po.uid == 131 && destX == 123 && destZ == 667 && destY == 1006
-                            || po.uid == 132 && destX == -689 && destZ == 621 && destY == 859)
-                                gameObject.GetComponent<FieldMapActor>().SetRenderQueue(2000);
-                        }
-                        else if (mapNo == 1207 && actor.uid == 9 && actorController != null) // A. Castle/Garnet's Room, Dagger, fix for issue #666
-                            actorController._smoothUpdateRegistered = false;
+                        // A. Castle/Chapel, Thorn's initial position (fix in some languages)
+                        this._fixThornPosA = destX;
+                        this._fixThornPosB = destZ;
+                        this._fixThornPosC = destY;
+                        this._fixThornPosObj = po;
+                        destX = 600;
+                        destY = 9999;
                     }
-                    if (mapNo == 1756 && po.sid == 6 && destX == -3019 && destY == 1226) // Iifa Tree/Bottom, Soulcage when landing from above
+                    else if (mapNo == 1207 && actor.uid == 9 && actorController != null) // A. Castle/Garnet's Room, Dagger, fix for issue #666
+                        actorController._smoothUpdateRegistered = false;
+                    else if (mapNo == 1310 && po.sid == 12 && destX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
+                        destX = -1635;
+                    else if (mapNo == 1607)
+                    {
+                        // Mdn. Sari/Kitchen, Cooked Fish and Stew Plate appearing on the foreground
+                        Int32 counter = this.eBin.getVarManually(EBin.SC_COUNTER_SVR);
+                        Int32 var9169 = this.eBin.getVarManually(9169);
+                        if ((po.model == 236 || po.model == 237) && counter >= 6640 && counter < 6690 && var9169 == 0)
+                            destZ += 50000;
+                    }
+                    else if (mapNo == 1606) // Mdn. Sari/Resting Room, initial position of moogles
+                    {
+                        if (po.uid == 9 && destX == -171 && destZ == 641 && destY == 1042
+                        || po.uid == 128 && destX == -574 && destZ == 624 && destY == 903
+                        || po.uid == 129 && destX == -226 && destZ == 639 && destY == 1009
+                        || po.uid == 130 && destX == -93 && destZ == 647 && destY == 1017
+                        || po.uid == 131 && destX == 123 && destZ == 667 && destY == 1006
+                        || po.uid == 132 && destX == -689 && destZ == 621 && destY == 859)
+                            gameObject.GetComponent<FieldMapActor>().SetRenderQueue(2000);
+                    }
+                    else if (mapNo == 1756 && po.sid == 6 && destX == -3019 && destY == 1226) // Iifa Tree/Bottom, Soulcage when landing from above
                     {
                         destX = -3145;
                         destZ = -2035;
                         destY = 1274;
                     }
+                    else if (mapNo == 2110&& po.sid == 9 && destX == -1614) // Lindblum/T.D. Station, Zidane's initial position when arriving with Air Cab
+                        destX = -1635;
+                    else if (mapNo == 2209 && scCounter == 9520 && po.sid == 4 && destX == 1123 && destY == 1067 && destZ == 98) // Kuja to the right to fix surprise (#860)
+                        destX = 1323;
                     else if (mapNo == 2456 && actor.uid == 6) // Sligthy resize the rope in Alexandria/Steeple (CD3 & CD4)
                         geo.geoScaleSetXYZ(po.go, 66 << 24 >> 18, 66 << 24 >> 18, 66 << 24 >> 18);
                 }
