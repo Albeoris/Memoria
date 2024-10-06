@@ -657,11 +657,11 @@
                                             VerticalAlignment="Stretch">
                                             <Button x:Name="btnCancel"
                                                 Style="{StaticResource ButtonStyle}"
-                                                Click="OnClickCancel"
-                                                Margin="0,0,0,3"
+                                                Click="OnClickCancelAll"
                                                 MouseRightButtonDown="OnClickCancelAll"
+                                                Margin="0,0,0,3"
                                                 TabIndex="14"
-                                                ToolTip="Cancel Current Download/Right-Click to Cancel All"
+                                                ToolTip="Cancel Current Downloads"
                                                 ToolTipService.ShowOnDisabled="True"  >
                                                 <Image Source="/images/btnCancelimg.png" />
                                             </Button>

@@ -474,6 +474,12 @@ namespace Memoria.Launcher
             downloadingMod = null;
             if (downloadList.Count > 0)
                 DownloadStart(downloadList[0]);
+            else
+            {
+                lstDownloads.MinHeight = 0;
+                lstDownloads.Height = 0;
+                btnCancelStackpanel.Height = 0;
+            }
             UpdateCatalogInstallationState();
         }
         private void OnClickCancelAll(Object sender, RoutedEventArgs e)
@@ -486,6 +492,9 @@ namespace Memoria.Launcher
             downloadList.Clear();
             downloadingMod = null;
             UpdateCatalogInstallationState();
+            lstDownloads.MinHeight = 0;
+            lstDownloads.Height = 0;
+            btnCancelStackpanel.Height = 0;
         }
         private void OnClickWebsite(Object sender, RoutedEventArgs e)
         {

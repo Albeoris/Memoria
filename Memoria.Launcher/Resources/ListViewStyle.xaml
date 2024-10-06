@@ -150,7 +150,7 @@
     </Style>
 
     <Style x:Key="{x:Type ListView}" TargetType="ListView">
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="13" />
         <Setter Property="Foreground" Value="White" />
         <Setter Property="SnapsToDevicePixels" Value="true" />
         <Setter Property="OverridesDefaultStyle" Value="true" />
@@ -188,16 +188,16 @@
                 <ControlTemplate TargetType="ListBoxItem">
                     <Grid>
                         <Border x:Name="Border" SnapsToDevicePixels="true" Background="{DynamicResource BrushAccentColor}" Opacity="0"/>
-                        <Border Padding="3,5,3,5" Background="Transparent">
+                        <Border Padding="3,4,3,3" Background="Transparent">
                             <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
-                            <Setter Property="Opacity" Value="0.5" TargetName="Border"/>
+                            <Setter Property="Opacity" Value="0.7" TargetName="Border"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Opacity" Value="0.25" TargetName="Border"/>
+                            <Setter Property="Opacity" Value="0.45" TargetName="Border"/>
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -206,7 +206,7 @@
                             </MultiTrigger.Conditions>
                             <MultiTrigger.Setters>
                                 <Setter Property="Background" Value="{DynamicResource BrushAccentColorHover}" TargetName="Border"/>
-                                <Setter Property="Opacity" Value="0.6" TargetName="Border"/>
+                                <Setter Property="Opacity" Value="0.8" TargetName="Border"/>
                             </MultiTrigger.Setters>
                         </MultiTrigger>
                     </ControlTemplate.Triggers>

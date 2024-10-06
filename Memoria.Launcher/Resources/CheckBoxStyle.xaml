@@ -15,8 +15,8 @@
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Border x:Name="toggleBackground" HorizontalAlignment="Left" Grid.Column="0" BorderThickness="2" CornerRadius="2" Width="20" Height="20" Margin="0,0,5,0" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" VerticalAlignment="Bottom">
-                            <TextBlock x:Name="checkMark" Text="✔️" FontSize="12" VerticalAlignment="Center" HorizontalAlignment="Center" Opacity="0" />
+                        <Border x:Name="toggleBackground" HorizontalAlignment="Left" Grid.Column="0" BorderThickness="2" CornerRadius="2" Width="17" Height="17" Margin="-5,0,0,0" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" VerticalAlignment="Bottom">
+                            <TextBlock x:Name="checkMark" Text="✔️" FontSize="12" VerticalAlignment="Center" Margin="0,-5,0,0"  HorizontalAlignment="Center" Opacity="0" />
                         </Border>
                         <ContentPresenter x:Name="contentPresenter" Grid.Column="1" Focusable="False" VerticalAlignment="Center" HorizontalAlignment="Left" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                     </Grid>
@@ -28,7 +28,7 @@
                             <Setter Property="Opacity" Value="0.5"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="toggleBackground" Property="Background" Value="{StaticResource BrushAccentColor}"/>
+                            <Setter TargetName="toggleBackground" Property="Background" Value="{StaticResource BrushAccentColorBrighter}"/>
                             <Setter TargetName="toggleBackground" Property="BorderThickness" Value="0"/>
                             <Setter TargetName="checkMark" Property="Opacity" Value="1"/>
                         </Trigger>

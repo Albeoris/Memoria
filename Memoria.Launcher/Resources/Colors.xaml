@@ -1,5 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <Color x:Key="AccentColorBrighter">#F02e5b72</Color>
     <Color x:Key="AccentColor">#F0355566</Color>
     <Color x:Key="AccentColorHover">#F04e6978</Color>
     <Color x:Key="AccentColorPressed">#F055797D</Color>
@@ -9,6 +10,7 @@
     <Color x:Key="LightColorPressed">#FFFFFFFF</Color>
     <Color x:Key="DarkTextColor">#FF333333</Color>
 
+    <SolidColorBrush x:Key="BrushAccentColorBrighter" Color="{DynamicResource AccentColorBrighter}"/>
     <SolidColorBrush x:Key="BrushAccentColor" Color="{DynamicResource AccentColor}"/>
     <SolidColorBrush x:Key="BrushAccentColorHover" Color="{DynamicResource AccentColorHover}"/>
     <SolidColorBrush x:Key="BrushAccentColorPressed" Color="{DynamicResource AccentColorPressed}"/>

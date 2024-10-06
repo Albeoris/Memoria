@@ -59,26 +59,6 @@ namespace Memoria.Launcher
             menuCheats.Header = Lang.Settings.menuCheats;
             menuAdvanced.Header = Lang.Settings.menuAdvanced;
 
-            // Creates a Mod Manager window (but completely invisible) to trigger "onLoaded" to download the mod catalog retrieve the info that updates or incompatibilities exist.
-            // It's instantly closed and the info is retrieved by ComeBackToLauncherFromModManager() to define if any icon is displayed
-            /*MainWindow mainWindow = (MainWindow)this.GetRootElement();
-            if (mainWindow.ModdingWindow == null)
-                mainWindow.ModdingWindow = new ModManagerWindow();
-            mainWindow.ModdingWindow.Owner = mainWindow;
-            mainWindow.ModdingWindow.Activate();
-            mainWindow.ModdingWindow.Visibility = System.Windows.Visibility.Hidden;
-            mainWindow.ModdingWindow.WindowStyle = WindowStyle.None;
-            mainWindow.ModdingWindow.AllowsTransparency = true;
-            mainWindow.ModdingWindow.Opacity = 0;
-            mainWindow.ModdingWindow.ShowInTaskbar = false;
-            mainWindow.ModdingWindow.ShowActivated = false;
-            mainWindow.ModdingWindow.Show();
-            mainWindow.ModdingWindow.Close();
-            */
-
-
-
-
             SetupFrameLang();
             UpdateCatalog();
             LoadSettings2();
@@ -100,13 +80,16 @@ namespace Memoria.Launcher
             UpdateModDetails((Mod)null);
             CheckOutdatedAndIncompatibleMods();
 
-
+            // add tooltip style to manager's buttons
+            UiGrid.MakeTooltip(btnReorganize, btnReorganize.ToolTip.ToString(), "");
+            UiGrid.MakeTooltip(btnMoveUp, btnMoveUp.ToolTip.ToString(), "");
+            UiGrid.MakeTooltip(btnMoveDown, btnMoveDown.ToolTip.ToString(), "");
+            UiGrid.MakeTooltip(btnUninstall, btnUninstall.ToolTip.ToString(), "");
+            UiGrid.MakeTooltip(btnDownload, btnDownload.ToolTip.ToString(), "");
+            UiGrid.MakeTooltip(btnCancel, btnCancel.ToolTip.ToString(), "");
 
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();
-
-
-
         }
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {

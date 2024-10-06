@@ -59,7 +59,7 @@ namespace Memoria.Launcher
             Children.Add(uiElement);
             return uiElement;
         }
-        public void MakeTooltip(FrameworkElement uiElement, String text = "", String imageName = "")
+        public static void MakeTooltip(FrameworkElement uiElement, String text = "", String imageName = "")
         {
             if (text != "" || imageName != "")
             {
@@ -97,7 +97,7 @@ namespace Memoria.Launcher
                         Text = text,
                         Opacity = 1,
                         MaxWidth = 275,
-                        FontSize = FontSizeNormal,
+                        FontSize = 14,
                         TextWrapping = TextWrapping.Wrap,
                         Effect = dropShadow,
                         Margin = new Thickness(0)
