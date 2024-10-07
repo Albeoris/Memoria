@@ -81,12 +81,12 @@ namespace Memoria.Launcher
             CheckOutdatedAndIncompatibleMods();
 
             // add tooltip style to manager's buttons
-            UiGrid.MakeTooltip(btnReorganize, btnReorganize.ToolTip.ToString(), "");
-            UiGrid.MakeTooltip(btnMoveUp, btnMoveUp.ToolTip.ToString(), "");
-            UiGrid.MakeTooltip(btnMoveDown, btnMoveDown.ToolTip.ToString(), "");
-            UiGrid.MakeTooltip(btnUninstall, btnUninstall.ToolTip.ToString(), "");
-            UiGrid.MakeTooltip(btnDownload, btnDownload.ToolTip.ToString(), "");
-            UiGrid.MakeTooltip(btnCancel, btnCancel.ToolTip.ToString(), "");
+            UiGrid.MakeTooltip(btnReorganize, btnReorganize.ToolTip.ToString(), "", "hand");
+            UiGrid.MakeTooltip(btnMoveUp, btnMoveUp.ToolTip.ToString(), "", "hand");
+            UiGrid.MakeTooltip(btnMoveDown, btnMoveDown.ToolTip.ToString(), "", "hand");
+            UiGrid.MakeTooltip(btnUninstall, btnUninstall.ToolTip.ToString(), "", "hand");
+            UiGrid.MakeTooltip(btnDownload, btnDownload.ToolTip.ToString(), "", "hand");
+            UiGrid.MakeTooltip(btnCancel, btnCancel.ToolTip.ToString(), "", "hand");
 
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();

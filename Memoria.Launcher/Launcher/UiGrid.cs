@@ -59,7 +59,7 @@ namespace Memoria.Launcher
             Children.Add(uiElement);
             return uiElement;
         }
-        public static void MakeTooltip(FrameworkElement uiElement, String text = "", String imageName = "")
+        public static void MakeTooltip(FrameworkElement uiElement, String text = "", String imageName = "", String curstorType = "mog")
         {
             if (text != "" || imageName != "")
             {
@@ -172,7 +172,13 @@ namespace Memoria.Launcher
                     ToolTipService.SetToolTip(uiElement, toolTip);
                     ToolTipService.SetInitialShowDelay(uiElement, 0);
                     toolTip.IsOpen = true;
-                    if (uiElement.IsMouseOver) Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/images/moogle.cur")).Stream);
+                    if (uiElement.IsMouseOver)
+                    {
+                        if (curstorType == "mog")
+                            Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/images/moogle.cur")).Stream);
+                        else if (curstorType == "hand")
+                            Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/images/cursorHand.cur")).Stream);
+                    }
                 };
                 uiElement.MouseLeave += (sender, e) =>
                 {

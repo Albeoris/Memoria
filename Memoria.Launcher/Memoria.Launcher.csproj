@@ -228,6 +228,9 @@
   <ItemGroup>
     <Resource Include="images\tickboxFF9_hover.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\cursorHand.cur" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">
     <ItemGroup>
