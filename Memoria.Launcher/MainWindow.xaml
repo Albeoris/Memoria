@@ -183,11 +183,18 @@
                         </Grid>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{StaticResource LightGreyUI}" />
+                                <Setter TargetName="border" Property="Opacity" Value="0.9" />
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource BrushAccentColor}" />
                                 <Setter TargetName="content" Property="TextBlock.FontWeight" Value="Bold" />
+                                <Setter TargetName="content" Property="TextBlock.Effect" Value="{StaticResource ButtondropShadowEffect}" />
+                                
                             </Trigger>
                             <Trigger Property="IsSelected" Value="False">
-                                <Setter TargetName="border" Property="Opacity" Value="0.7" />
+                                <Setter TargetName="border" Property="Opacity" Value="0.8" />
+                                <Setter TargetName="border" Property="Background" Value="{StaticResource BrushAccentColorFaint}" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="Cursor" Value="Hand" />
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -385,6 +392,7 @@
 
             <TabItem x:Name="ModManagerTab"
                 Header="MODS"
+                Tag="16"
                 Style="{StaticResource MainTabs}" >
                 <Grid Style="{StaticResource TransparentGridStyle}">
                     <Grid>
@@ -419,7 +427,7 @@
                                         <TextBlock
                                             x:Name="tabMyMods"
                                             Padding="15,3,15,3"
-                                            Text="Installed Mods"
+                                            Text="My Mods"
                                             Foreground="{StaticResource WhiteUI}"
                                             FontFamily="{StaticResource CenturyGothic}"
                                             FontSize="18"

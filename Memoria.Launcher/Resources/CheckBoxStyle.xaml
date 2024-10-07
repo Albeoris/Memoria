@@ -3,11 +3,13 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type CheckBox}">
-                    <Image x:Name="toggleImage" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center">
-                        <Image.Source>
-                            <BitmapImage UriSource="/images/tickboxFF9_off.png" />
-                        </Image.Source>
-                    </Image>
+                    <Border BorderBrush="Transparent" BorderThickness="3,1,3,1" Margin="-3,0,-3,0">
+                        <Image x:Name="toggleImage" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Center">
+                            <Image.Source>
+                                <BitmapImage UriSource="/images/tickboxFF9_off.png" />
+                            </Image.Source>
+                        </Image>
+                    </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsChecked" Value="true">
                             <Setter TargetName="toggleImage" Property="Source" Value="/images/tickboxFF9_on.png" />

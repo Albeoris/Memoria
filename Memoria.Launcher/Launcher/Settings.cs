@@ -67,6 +67,31 @@ namespace Memoria.Launcher
 
         private readonly String _iniPath = @"./Memoria.ini";
 
+
+
+        private Boolean _areThereModIncompatibilies;
+        public Boolean AreThereModIncompatibilies
+        {
+            get => _areThereModIncompatibilies;
+            set
+            {
+                _areThereModIncompatibilies = value;
+                OnPropertyChanged(nameof(AreThereModIncompatibilies));
+            }
+        }
+
+        private Boolean _areThereModUpdates;
+        public Boolean AreThereModUpdates
+        {
+            get => _areThereModUpdates;
+            set
+            {
+                _areThereModUpdates = value;
+                OnPropertyChanged(nameof(AreThereModUpdates));
+            }
+        }
+
+
         ////////////////
         // CHECKBOXES //
         ////////////////

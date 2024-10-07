@@ -21,13 +21,13 @@
                     CornerRadius="7">
                 </Border>
                 <TextBlock TextWrapping="Wrap"
-                           Text="{Binding Label, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}, FallbackValue='PLAY'}"
-                           FontWeight="Bold"
-                           FontSize="28"
-                           FontFamily="{DynamicResource CenturyGothic}"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
-                           Foreground="#cfff">
+                    Text="{Binding Label, Mode=OneWay, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type launcher:UiLauncherButton}}, FallbackValue='PLAY'}"
+                    FontWeight="Normal"
+                    FontSize="28"
+                    FontFamily="{DynamicResource CenturyGothic}"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Foreground="#cfff">
                 </TextBlock>
             </Grid>
             <ControlTemplate.Triggers>

@@ -54,8 +54,6 @@ namespace Memoria.Launcher
         public ObservableCollection<Mod> modListCatalog = new ObservableCollection<Mod>();
         public ObservableCollection<Mod> downloadList = new ObservableCollection<Mod>();
         public String StatusMessage = "";
-        public Boolean AreThereModIncompatibilies = false;
-        public Boolean AreThereModUpdates = false;
 
         public String[] supportedArchives = { "rar", "unrar", "zip", "bzip2", "gzip", "tar", "7z", "lzip", "gz" };
 
@@ -1229,28 +1227,19 @@ namespace Memoria.Launcher
 
         private void SetupFrameLang()
         {
-            //Title = Lang.ModEditor.WindowTitle + " | " + ((MainWindow)this.Owner).MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
             GroupModInfo.Header = Lang.ModEditor.ModInfos;
             PreviewModWebsite.Content = Lang.ModEditor.Website;
             CaptionModAuthor.Text = Lang.ModEditor.Author + ":";
-            //CaptionModCategory.Text = Lang.ModEditor.Category + ":";
-            //CaptionModDescription.Text = Lang.ModEditor.Description + ":";
             CaptionModRelease.Text = Lang.ModEditor.Release + ":";
             CaptionModReleaseOriginal.Text = Lang.ModEditor.ReleaseOriginal + ":";
             CaptionModReleaseNotes.Text = Lang.ModEditor.ReleaseNotes + ":";
             PreviewSubModActive.Content = Lang.ModEditor.Active;
             CaptionSubModPanel.Text = Lang.ModEditor.SubModPanel + ":";
             tabMyMods.Text = Lang.ModEditor.TabMyMods;
-            //colMyModsPriority.Header = Lang.ModEditor.Priority;
             colMyModsName.Header = Lang.ModEditor.Name;
-            //colMyModsAuthor.Header = Lang.ModEditor.Author;
             colMyModsCategory.Header = Lang.ModEditor.Category;
-            //colMyModsActive.Header = Lang.ModEditor.Active;
             btnMoveUp.ToolTip = Lang.ModEditor.TooltipMoveUp;
             btnMoveDown.ToolTip = Lang.ModEditor.TooltipMoveDown;
-            //btnCheckCompatibility.ToolTip = Lang.ModEditor.TooltipCheckCompatibility;
-            //btnActivateAll.ToolTip = Lang.ModEditor.TooltipActivateAll;
-            //btnDeactivateAll.ToolTip = Lang.ModEditor.TooltipDeactivateAll;
             btnUninstall.ToolTip = Lang.ModEditor.TooltipUninstall;
             tabCatalog.Text = Lang.ModEditor.TabCatalog;
             GridViewColumnHeader header = new GridViewColumnHeader() { Content = Lang.ModEditor.Name };
@@ -1262,10 +1251,9 @@ namespace Memoria.Launcher
             header = new GridViewColumnHeader() { Content = Lang.ModEditor.Category };
             header.Click += OnClickCatalogHeader;
             colCatalogCategory.Header = header;
-            header = new GridViewColumnHeader() { Content = "" }; // Lang.ModEditor.Installed
+            header = new GridViewColumnHeader() { Content = "" };
             header.Click += OnClickCatalogHeader;
             colCatalogInstalled.Header = header;
-
             header = new GridViewColumnHeader() { Content = ActiveEmoji };
             header.Click += OnClickActiveHeader;
             colMyModsActive.Header = header;

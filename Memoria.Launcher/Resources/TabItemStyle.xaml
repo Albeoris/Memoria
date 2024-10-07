@@ -10,30 +10,56 @@
         <Setter Property="FontWeight" Value="Normal" />
         <Setter Property="Margin" Value="-4,2,0,0" />
         <Setter Property="Height" Value="45" />
+        <Setter Property="Tag" Value="0" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
                     <Grid Width="160" Margin="0,0,2,0">
                         <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="15,15,0,0" BorderThickness="0,2,0,0" BorderBrush="#6666" >
-                            <ContentPresenter x:Name="content"
-                            ContentSource="Header"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Margin="20,0"
-                            TextBlock.FontSize="{TemplateBinding FontSize}"
-                            TextBlock.FontFamily="{DynamicResource CenturyGothic}"
-                            TextBlock.FontWeight="{TemplateBinding FontWeight}"
-                            TextBlock.Foreground="#aaa" />
+                            <Border >
+                                <StackPanel x:Name="contentwrap" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <Image x:Name="IncompatImage" Source="/images/alert_incompat.png" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}" Height="16" Margin="0,0,3,0" Visibility="Collapsed" />
+                                    <Image x:Name="UpdateImage" Source="/images/alert_update.png" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}" Height="16" Margin="0,0,3,0" Visibility="Collapsed" />
+                                    <ContentPresenter x:Name="content" 
+                                        ContentSource="Header"
+                                        VerticalAlignment="Center"
+                                        TextBlock.FontSize="{TemplateBinding FontSize}"
+                                        TextBlock.FontFamily="{DynamicResource CenturyGothic}"
+                                        TextBlock.FontWeight="{TemplateBinding FontWeight}"
+                                        TextBlock.Foreground="#aaa">
+                                    </ContentPresenter>
+                                </StackPanel>
+                            </Border>
                         </Border>
                         <Rectangle x:Name="underline"
                             Fill="{DynamicResource BrushLightColorNormal}"
                             Height="1"
-                            Width="{Binding ActualWidth, ElementName=content}"
+                            Width="{Binding ActualWidth, ElementName=contentwrap}"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
                             Margin="100,0,100,5"/>
                     </Grid>
                     <ControlTemplate.Triggers>
+
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding AreThereModIncompatibilies}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter TargetName="IncompatImage" Property="Visibility" Value="Visible" />
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
+
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+
+                                <Condition Binding="{Binding AreThereModUpdates}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter TargetName="UpdateImage" Property="Visibility" Value="Visible" />
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
+
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Margin" Value="-4,1,0,0" />
                             <Setter TargetName="content" Property="TextElement.Foreground" Value="{DynamicResource BrushLightColorNormal}"/>

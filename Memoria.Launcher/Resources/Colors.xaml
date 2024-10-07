@@ -2,6 +2,7 @@
 
     <Color x:Key="AccentColorBrighter">#F02e5b72</Color>
     <Color x:Key="AccentColor">#F0355566</Color>
+    <Color x:Key="AccentColorFaint">#88355566</Color>
     <Color x:Key="AccentColorHover">#F04e6978</Color>
     <Color x:Key="AccentColorPressed">#F055797D</Color>
     <Color x:Key="LightColorFaded">#80FFFFFF</Color>
@@ -12,6 +13,7 @@
 
     <SolidColorBrush x:Key="BrushAccentColorBrighter" Color="{DynamicResource AccentColorBrighter}"/>
     <SolidColorBrush x:Key="BrushAccentColor" Color="{DynamicResource AccentColor}"/>
+    <SolidColorBrush x:Key="BrushAccentColorFaint" Color="{DynamicResource AccentColorFaint}"/>
     <SolidColorBrush x:Key="BrushAccentColorHover" Color="{DynamicResource AccentColorHover}"/>
     <SolidColorBrush x:Key="BrushAccentColorPressed" Color="{DynamicResource AccentColorPressed}"/>
     <SolidColorBrush x:Key="BrushLightColorFaded" Color="{DynamicResource LightColorFaded}"/>
