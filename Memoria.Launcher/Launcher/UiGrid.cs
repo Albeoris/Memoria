@@ -165,27 +165,33 @@ namespace Memoria.Launcher
                     ForceCursor = true,
                     Opacity = 1
                 };
-                //toolTip.Opened += (sender, e) => { Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/images/moogle.cur")).Stream); };
-                //toolTip.Closed += (sender, e) => { Mouse.OverrideCursor = null; };
-                uiElement.MouseEnter += (sender, e) =>
+                if (uiElement.ToolTip == null || uiElement.ToolTip is string)
                 {
-                    ToolTipService.SetToolTip(uiElement, toolTip);
-                    ToolTipService.SetInitialShowDelay(uiElement, 0);
-                    toolTip.IsOpen = true;
-                    if (uiElement.IsMouseOver)
+                    uiElement.MouseEnter += (sender, e) =>
                     {
-                        if (curstorType == "mog")
-                            Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/images/moogle.cur")).Stream);
-                        else if (curstorType == "hand")
-                            Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/images/cursorHand.cur")).Stream);
-                    }
-                };
-                uiElement.MouseLeave += (sender, e) =>
-                {
-                    toolTip.IsOpen = false; // Force close the tooltip when the mouse leaves the element
-                    ToolTipService.SetToolTip(uiElement, null);
-                    if (!uiElement.IsMouseOver) Mouse.OverrideCursor = null;
-                };
+                        if (uiElement.ToolTip is ToolTip)
+                        {
+                            ((ToolTip)uiElement.ToolTip).IsOpen = true;
+                            if (uiElement.IsMouseOver)
+                            {
+                                if (curstorType == "mog")
+                                    Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/images/moogle.cur")).Stream);
+                                else if (curstorType == "hand")
+                                    Mouse.OverrideCursor = new Cursor(Application.GetResourceStream(new Uri("pack://application:,,,/images/cursorHand.cur")).Stream);
+                            }
+                        }
+                    };
+                    uiElement.MouseLeave += (sender, e) =>
+                    {
+                        if (uiElement.ToolTip is ToolTip)
+                        {
+                            ((ToolTip)uiElement.ToolTip).IsOpen = false; // Force close the tooltip when the mouse leaves the element
+                            if (!uiElement.IsMouseOver) Mouse.OverrideCursor = null;
+                        }
+                    };
+                }
+                ToolTipService.SetToolTip(uiElement, toolTip);
+                ToolTipService.SetInitialShowDelay(uiElement, 0);
             }
         }
         public void MakeFontPreview(ComboBox uiElement)
@@ -217,8 +223,6 @@ namespace Memoria.Launcher
                 Margin = new Thickness(0)
             };
             tooltipStackPanel.Children.Add(tooltipTextBlock);
-
-
 
             Border bottomrightBorder = new Border
             {

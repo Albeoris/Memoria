@@ -91,7 +91,7 @@
                         <Border
                             x:Name="HeaderBorder"
                             BorderThickness="0"
-                            Padding="3"
+                            Padding="6,4,6,4"
                             Background="{TemplateBinding Background}">
                             <ContentPresenter
                                 x:Name="HeaderContent"
@@ -188,8 +188,8 @@
                 <ControlTemplate TargetType="ListBoxItem">
                     <Grid>
                         <Border x:Name="Border" SnapsToDevicePixels="true" Background="{DynamicResource BrushAccentColor}" Opacity="0"/>
-                        <Border Padding="0,2,0,0" Background="Transparent" VerticalAlignment="Center">
-                            <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Height="23" />
+                        <Border Padding="0,4,0,4" Background="Transparent" VerticalAlignment="Center">
+                            <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
                         </Border>
                     </Grid>
                     <ControlTemplate.Triggers>

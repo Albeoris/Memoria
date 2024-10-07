@@ -161,13 +161,13 @@
         </Style>
 
         <Style x:Name="subtab" TargetType="{x:Type TabItem}" x:Key="subtab">
-            <Setter Property="Margin" Value="-2,0,2,0"/>
+            <Setter Property="Margin" Value="-2,0,0,0"/>
             <Setter Property="Width" Value="269"/>
             <Setter Property="Background" Value="#d000"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TabItem}">
-                        <Grid Margin="10,0,2,0">
+                        <Grid Margin="10,0,0,0">
                             <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="10" BorderThickness="1" BorderBrush="#5aaa">
                                 <ContentPresenter x:Name="content"
                                     ContentSource="Header"
@@ -405,7 +405,7 @@
                                 Grid.Row="0"
                                 Grid.RowSpan="2"
                                 Grid.Column="0"
-                                Margin="5,5,5,5"
+                                Margin="5,15,0,5"
                                 Padding="10,10,10,10"
                                 BorderThickness="0"
                                 Background="Transparent"
@@ -425,154 +425,167 @@
                                             FontSize="18"
                                             />
                                     </TabItem.Header>
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="auto" />
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-
-                                        <StackPanel
-                                            x:Name="stackButtons"
-                                            Grid.Column="0"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Stretch">
-                                            <Button x:Name="btnReorganize"
-                                                Style="{StaticResource ButtonStyle}"
-                                                Margin="0,0,0,3"
-                                                Click="OnClickReorganize"
-                                                TabIndex="21"
-                                                ToolTip="Auto-organize mod by priority" >
-                                                <Image Source="/images/btnReorganize.png"/>
-                                            </Button>
-                                            <Button x:Name="btnMoveUp"
-                                                Style="{StaticResource ButtonStyle}"
-                                                Margin="0,3,0,3"
-                                                Click="OnClickMoveUp"
-                                                MouseRightButtonUp="OnClickSendTop"
-                                                TabIndex="21"
-                                                ToolTip="Move Up/Right-Click to Move to Top" >
-                                                <Image Source="/images/btnMoveUpimg.png"/>
-                                            </Button>
-                                            <Button
-                                                x:Name="btnMoveDown"
-                                                Style="{StaticResource ButtonStyle}"
-                                                Margin="0,3,0,3"
-                                                Click="OnClickMoveDown"
-                                                MouseRightButtonDown="OnClickSendBottom"
-                                                TabIndex="22"
-                                                ToolTip="Move Down/Right-Click to Move to Bottom" >
-                                                <Image Source="/images/btnMoveDownimg.png"/>
-                                            </Button>
-                                            <Button
-                                                x:Name="btnUninstall"
-                                                Style="{StaticResource ButtonStyle}"
-                                                Margin="0,3,0,3"
-                                                Click="OnClickUninstall"
-                                                MouseRightButtonDown="OnClickUninstall"
-                                                TabIndex="28"
-                                                ToolTip="Uninstall Mod(s)" >
-                                                <Image Source="/images/btnUninstallimg.png"/>
-                                            </Button>
-                                        </StackPanel>
-                                        <ListView x:Name="lstMods"
-                                            Margin="6,0,0,0"
-                                            Grid.Column="1"
-                                            ItemsSource="{Binding modListInstalled}"
-                                            ScrollViewer.CanContentScroll="False"
-                                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                            VirtualizingStackPanel.IsVirtualizing="False">
-                                            <ListView.View>
-                                                <GridView>
-                                                    <GridViewColumn
-                                                        x:Name="colMyModsActive">
-                                                        <GridViewColumn.CellTemplate>
-                                                            <DataTemplate>
-                                                                <CheckBox
-                                                                    Style="{StaticResource CheckBoxStyle}"
-                                                                    HorizontalAlignment="Center"
-                                                                    IsChecked="{Binding IsActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                                                    Click="CheckBox_Click"
-                                                                    IsTabStop="False" />
-                                                            </DataTemplate>
-                                                        </GridViewColumn.CellTemplate>
-                                                        <GridViewColumn.HeaderTemplate>
-                                                            <DataTemplate>
-                                                                <TextBlock
-                                                                    Text="✅"
-                                                                    FontFamily="{StaticResource NotoEmoji}" />
-                                                            </DataTemplate>
-                                                        </GridViewColumn.HeaderTemplate>
-                                                    </GridViewColumn>
-                                                    <!--
-                                                    <GridViewColumn
-                                                        x:Name="colMyModsPriority"
-                                                        DisplayMemberBinding="{Binding Priority}" >
-                                                        <GridViewColumn.HeaderTemplate>
-                                                            <DataTemplate>
-                                                                <TextBlock
-                                                                    Text="⮝⮟"
-                                                                    FontFamily="{StaticResource Overpass}" />
-                                                            </DataTemplate>
-                                                        </GridViewColumn.HeaderTemplate>
-                                                    </GridViewColumn>
-                                                    -->
-                                                    <GridViewColumn
-                                                        x:Name="colMyModsIcons"
-                                                        Header="" >
-                                                        <GridViewColumn.CellTemplate>
-                                                            <DataTemplate>
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <TextBlock x:Name="colMyModsUpdateText"
-                                                                        FontFamily="{StaticResource NotoEmoji}"
-                                                                        Text="{Binding UpdateIcon}"
-                                                                        FontWeight="Black"
-                                                                        ToolTip="{Binding UpdateTooltip}"
-                                                                        ToolTipService.InitialShowDelay="10"
-                                                                        Effect="{StaticResource ButtondropShadowEffect}"
-                                                                        Foreground="#efd525" />
-
-                                                                    <TextBlock x:Name="colMyModsIncompText"
-                                                                        FontFamily="{StaticResource NotoEmoji}"
-                                                                        Text="{Binding IncompIcon}"
-                                                                        ToolTip="{Binding ActiveIncompatibleMods}"
-                                                                        ToolTipService.InitialShowDelay="10"
-                                                                        ToolTipService.BetweenShowDelay="0"
-                                                                        Effect="{StaticResource ButtondropShadowEffect}"
-                                                                        Foreground="#f51818" />
-                                                                </StackPanel>
-                                                            </DataTemplate>
-                                                        </GridViewColumn.CellTemplate>
-                                                    </GridViewColumn>
-                                                    <GridViewColumn
-                                                        x:Name="colMyModsName"
-                                                        Header="Name" >
-                                                        <GridViewColumn.CellTemplate>
-                                                            <DataTemplate>
-                                                                <StackPanel Orientation="Horizontal">
-                                                                    <TextBlock x:Name="colMyModsNameText"
-                                                                        Text="{Binding Name}" />
-                                                                    <TextBlock x:Name="colMyModsVersionText"
-                                                                        Text="{Binding CurrentVersion}"
-                                                                        Margin="4,0,0,0"
-                                                                        VerticalAlignment="Bottom"
-                                                                        Foreground="#888"
-                                                                        />
-                                                                </StackPanel>
-                                                            </DataTemplate>
-                                                        </GridViewColumn.CellTemplate>
-                                                    </GridViewColumn>
-                                                    <GridViewColumn
-                                                        x:Name="colMyModsCategory"
-                                                        DisplayMemberBinding="{Binding Category}"
-                                                        Header="Category" />
-                                                </GridView>
-                                            </ListView.View>
-                                        </ListView>
-                                    </Grid>
+                                    <Border Background="{StaticResource LightGreyUI}" Padding="6" CornerRadius="6">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel
+                                                x:Name="stackButtons"
+                                                Grid.Column="0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Stretch">
+                                                <Button x:Name="btnReorganize"
+                                                    Style="{StaticResource ButtonStyle}"
+                                                    Margin="0,0,0,3"
+                                                    Click="OnClickReorganize"
+                                                    TabIndex="21"
+                                                    ToolTip="Auto-organize mod by priority" >
+                                                    <Image Source="/images/btnReorganize.png"/>
+                                                </Button>
+                                                <Button x:Name="btnMoveUp"
+                                                    Style="{StaticResource ButtonStyle}"
+                                                    Margin="0,3,0,3"
+                                                    Click="OnClickMoveUp"
+                                                    MouseRightButtonUp="OnClickSendTop"
+                                                    TabIndex="21"
+                                                    ToolTip="Move Up/Right-Click to Move to Top" >
+                                                    <Image Source="/images/btnMoveUpimg.png"/>
+                                                </Button>
+                                                <Button
+                                                    x:Name="btnMoveDown"
+                                                    Style="{StaticResource ButtonStyle}"
+                                                    Margin="0,3,0,3"
+                                                    Click="OnClickMoveDown"
+                                                    MouseRightButtonDown="OnClickSendBottom"
+                                                    TabIndex="22"
+                                                    ToolTip="Move Down/Right-Click to Move to Bottom" >
+                                                    <Image Source="/images/btnMoveDownimg.png"/>
+                                                </Button>
+                                                <Button
+                                                    x:Name="btnUninstall"
+                                                    Style="{StaticResource ButtonStyle}"
+                                                    Margin="0,3,0,3"
+                                                    Click="OnClickUninstall"
+                                                    MouseRightButtonDown="OnClickUninstall"
+                                                    TabIndex="28"
+                                                    ToolTip="Uninstall Mod(s)" >
+                                                    <Image Source="/images/btnUninstallimg.png"/>
+                                                </Button>
+                                            </StackPanel>
+                                            <ListView x:Name="lstMods"
+                                                Margin="6,0,0,0"
+                                                Grid.Column="1"
+                                                ItemsSource="{Binding modListInstalled}"
+                                                ScrollViewer.CanContentScroll="False"
+                                                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                VirtualizingStackPanel.IsVirtualizing="False">
+                                                <ListView.View>
+                                                    <GridView>
+                                                        <GridViewColumn
+                                                            x:Name="colMyModsActive">
+                                                            <GridViewColumn.CellTemplate>
+                                                                <DataTemplate>
+                                                                    <CheckBox
+                                                                        Style="{StaticResource CheckBoxStyle}"
+                                                                        HorizontalAlignment="Center"
+                                                                        IsChecked="{Binding IsActive, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                                        Click="CheckBox_Click"
+                                                                        IsTabStop="False" />
+                                                                </DataTemplate>
+                                                            </GridViewColumn.CellTemplate>
+                                                            <GridViewColumn.HeaderTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock
+                                                                        Text="✅"
+                                                                        FontFamily="{StaticResource NotoEmoji}" />
+                                                                </DataTemplate>
+                                                            </GridViewColumn.HeaderTemplate>
+                                                        </GridViewColumn>
+                                                        <!--
+                                                        <GridViewColumn
+                                                            x:Name="colMyModsPriority"
+                                                            DisplayMemberBinding="{Binding Priority}" >
+                                                            <GridViewColumn.HeaderTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock
+                                                                        Text="⮝⮟"
+                                                                        FontFamily="{StaticResource Overpass}" />
+                                                                </DataTemplate>
+                                                            </GridViewColumn.HeaderTemplate>
+                                                        </GridViewColumn>
+                                                        -->
+                                                        <GridViewColumn
+                                                            x:Name="colMyModsIcons"
+                                                            Header="" >
+                                                            <GridViewColumn.CellTemplate>
+                                                                <DataTemplate>
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <TextBlock x:Name="colMyModsUpdateText"
+                                                                        Padding="0,3,0,0"
+                                                                            FontFamily="{StaticResource NotoEmoji}"
+                                                                            Text="{Binding UpdateIcon}"
+                                                                            FontWeight="Black"
+                                                                            ToolTip="{Binding UpdateTooltip}"
+                                                                            ToolTipService.InitialShowDelay="10"
+                                                                            Effect="{StaticResource ButtondropShadowEffect}"
+                                                                            Foreground="#efd525" />
+                                                                        <TextBlock x:Name="colMyModsIncompText"
+                                                                            Padding="0,3,0,0"
+                                                                            FontFamily="{StaticResource NotoEmoji}"
+                                                                            Text="{Binding IncompIcon}"
+                                                                            ToolTip="{Binding ActiveIncompatibleMods}"
+                                                                            ToolTipService.InitialShowDelay="10"
+                                                                            ToolTipService.BetweenShowDelay="0"
+                                                                            Effect="{StaticResource ButtondropShadowEffect}"
+                                                                            Foreground="#f51818" />
+                                                                    </StackPanel>
+                                                                </DataTemplate>
+                                                            </GridViewColumn.CellTemplate>
+                                                        </GridViewColumn>
+                                                        <GridViewColumn
+                                                            x:Name="colMyModsName"
+                                                            Header="Name" >
+                                                            <GridViewColumn.HeaderContainerStyle>
+                                                                <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                                </Style>
+                                                            </GridViewColumn.HeaderContainerStyle>
+                                                            <GridViewColumn.CellTemplate>
+                                                                <DataTemplate>
+                                                                    <StackPanel Orientation="Horizontal">
+                                                                        <TextBlock x:Name="colMyModsNameText"
+                                                                            Text="{Binding Name}" />
+                                                                        <TextBlock x:Name="colMyModsVersionText"
+                                                                            Text="{Binding CurrentVersion}"
+                                                                            Margin="4,0,0,0"
+                                                                            VerticalAlignment="Bottom"
+                                                                            Foreground="#888"
+                                                                            FontSize="12"/>
+                                                                    </StackPanel>
+                                                                </DataTemplate>
+                                                            </GridViewColumn.CellTemplate>
+                                                        </GridViewColumn>
+                                                        <GridViewColumn
+                                                            x:Name="colMyModsCategory"
+                                                            DisplayMemberBinding="{Binding Category}"
+                                                            Header="Category">
+                                                            <GridViewColumn.HeaderContainerStyle>
+                                                                <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                                </Style>
+                                                            </GridViewColumn.HeaderContainerStyle>
+                                                        </GridViewColumn>
+                                                    </GridView>
+                                                </ListView.View>
+                                            </ListView>
+                                        </Grid>
+                                    </Border>
                                 </TabItem>
                                 <TabItem x:Name="tabCtrlCatalog" Style="{StaticResource subtab}" >
                                     <TabItem.Header>
@@ -584,134 +597,153 @@
                                             FontFamily="{StaticResource CenturyGothic}"
                                             FontSize="18" />
                                     </TabItem.Header>
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition Height="*" />
-                                            <RowDefinition Height="auto" />
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="auto" />
-                                            <ColumnDefinition Width="*" />
-                                        </Grid.ColumnDefinitions>
-                                        <StackPanel
-                                            Grid.Column="0"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Top">
-                                            <Button x:Name="btnDownload"
-                                                Click="OnClickDownload"
-                                                Margin="0,0,0,3"
-                                                MouseRightButtonDown="OnClickDownload"
-                                                TabIndex="11"
-                                                IsEnabled="false"
-                                                Style="{StaticResource ButtonStyle}"
-                                                ToolTip="Download/Update Selected Mod(s)" >
-                                                <Image Source="/images/btnDownloadimg.png" />
-                                            </Button>
-                                        </StackPanel>
-                                        <ListView x:Name="lstCatalogMods"
-                                            Margin="6,0,0,0"
-                                            Grid.Column="1"
-                                            ItemsSource="{Binding modListCatalog}"
-                                            ScrollViewer.CanContentScroll="False"
-                                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                                            VirtualizingStackPanel.IsVirtualizing="False">
-                                            <ListView.ItemContainerStyle>
-                                                <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
-                                                    <EventSetter Event="MouseDoubleClick" Handler="OnCatalogListDoubleClick"/>
-                                                </Style>
-                                            </ListView.ItemContainerStyle>
-                                            <ListView.View>
-                                                <GridView>
-                                                    <GridViewColumn x:Name="colCatalogInstalled">
-                                                        <GridViewColumn.HeaderTemplate>
-                                                            <DataTemplate>
-                                                                <TextBlock Text="✅" FontFamily="{StaticResource NotoEmoji}" />
-                                                            </DataTemplate>
-                                                        </GridViewColumn.HeaderTemplate>
-                                                        <GridViewColumn.CellTemplate>
-                                                            <DataTemplate>
-                                                                <TextBlock Text="{Binding Installed}" FontFamily="{StaticResource NotoEmoji}" />
-                                                            </DataTemplate>
-                                                        </GridViewColumn.CellTemplate>
-                                                    </GridViewColumn>
-                                                    <GridViewColumn
-                                                        x:Name="colCatalogName"
-                                                        DisplayMemberBinding="{Binding Name}"
-                                                        Header="Name" />
-                                                    <GridViewColumn
-                                                        x:Name="colCatalogCategory"
-                                                        DisplayMemberBinding="{Binding Category}"
-                                                        Header="Category" />
-                                                    <GridViewColumn
-                                                        x:Name="colCatalogAuthor"
-                                                        DisplayMemberBinding="{Binding Author}"
-                                                        Header="Author(s)" />
-                                                </GridView>
-                                            </ListView.View>
-                                        </ListView>
-
-                                        <StackPanel x:Name="btnCancelStackpanel"
-                                            Height="0"
-                                            Grid.Row="1"
-                                            Grid.Column="0"
-                                            Margin="0,5,0,0"
-                                            HorizontalAlignment="Right"
-                                            VerticalAlignment="Stretch">
-                                            <Button x:Name="btnCancel"
-                                                Style="{StaticResource ButtonStyle}"
-                                                Click="OnClickCancelAll"
-                                                MouseRightButtonDown="OnClickCancelAll"
-                                                Margin="0,0,0,3"
-                                                TabIndex="14"
-                                                ToolTip="Cancel Current Downloads"
-                                                ToolTipService.ShowOnDisabled="True"  >
-                                                <Image Source="/images/btnCancelimg.png" />
-                                            </Button>
-                                        </StackPanel>
-                                        <ListView x:Name="lstDownloads"
-                                            Margin="6,0,0,0"
-                                            Grid.Row="1"
-                                            Grid.Column="1"
-                                            MinHeight="0"
-                                            MaxHeight="100"
-                                            Height="0"
-                                            ItemsSource="{Binding downloadList, UpdateSourceTrigger=PropertyChanged}"
-                                            SelectedItem="{Binding SelectedDownload, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                            <ListView.View>
-                                                <GridView>
-                                                    <GridViewColumn
-                                                        x:Name="colDownloadName"
-                                                        Width="200"
-                                                        DisplayMemberBinding="{Binding Name}"
-                                                        Header="Mod" />
-                                                    <GridViewColumn
-                                                        x:Name="colDownloadProgress"
-                                                        Width="100"
-                                                        Header="Progress">
-                                                        <GridViewColumn.CellTemplate>
-                                                            <DataTemplate>
-                                                                <ProgressBar
-                                                                Width="100"
-                                                                Height="10"
-                                                                Opacity="1"
-                                                                Value="{Binding PercentComplete}" />
-                                                            </DataTemplate>
-                                                        </GridViewColumn.CellTemplate>
-                                                    </GridViewColumn>
-                                                    <GridViewColumn
-                                                        x:Name="colDownloadSpeed"
-                                                        Width="70"
-                                                        DisplayMemberBinding="{Binding DownloadSpeed}"
-                                                        Header="Speed" />
-                                                    <GridViewColumn
-                                                        x:Name="colDownloadTimeLeft"
-                                                        Width="80"
-                                                        DisplayMemberBinding="{Binding RemainingTime}"
-                                                        Header="Time Left" />
-                                                </GridView>
-                                            </ListView.View>
-                                        </ListView>
-                                    </Grid>
+                                    <Border Background="{StaticResource LightGreyUI}" Padding="6" CornerRadius="6">
+                                        <Grid>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="auto" />
+                                            </Grid.RowDefinitions>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="auto" />
+                                                <ColumnDefinition Width="*" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel
+                                                Grid.Column="0"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Top">
+                                                <Button x:Name="btnDownload"
+                                                    Click="OnClickDownload"
+                                                    Margin="0,0,0,3"
+                                                    MouseRightButtonDown="OnClickDownload"
+                                                    TabIndex="11"
+                                                    IsEnabled="false"
+                                                    Style="{StaticResource ButtonStyle}"
+                                                    ToolTip="Download/Update Selected Mod(s)" >
+                                                    <Image Source="/images/btnDownloadimg.png" />
+                                                </Button>
+                                            </StackPanel>
+                                            <ListView x:Name="lstCatalogMods"
+                                                Margin="6,0,0,0"
+                                                Grid.Column="1"
+                                                ItemsSource="{Binding modListCatalog}"
+                                                ScrollViewer.CanContentScroll="False"
+                                                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                VirtualizingStackPanel.IsVirtualizing="False">
+                                                <ListView.ItemContainerStyle>
+                                                    <Style TargetType="ListViewItem" BasedOn="{StaticResource {x:Type ListViewItem}}">
+                                                        <EventSetter Event="MouseDoubleClick" Handler="OnCatalogListDoubleClick"/>
+                                                    </Style>
+                                                </ListView.ItemContainerStyle>
+                                                <ListView.View>
+                                                    <GridView>
+                                                        <GridViewColumn x:Name="colCatalogInstalled">
+                                                            <GridViewColumn.HeaderTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Text="✅" FontFamily="{StaticResource NotoEmoji}" />
+                                                                </DataTemplate>
+                                                            </GridViewColumn.HeaderTemplate>
+                                                            <GridViewColumn.CellTemplate>
+                                                                <DataTemplate>
+                                                                    <TextBlock Text="{Binding Installed}" FontFamily="{StaticResource NotoEmoji}" />
+                                                                </DataTemplate>
+                                                            </GridViewColumn.CellTemplate>
+                                                        </GridViewColumn>
+                                                        <GridViewColumn
+                                                            x:Name="colCatalogName"
+                                                            DisplayMemberBinding="{Binding Name}"
+                                                            Header="Name">
+                                                            <GridViewColumn.HeaderContainerStyle>
+                                                                <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                                </Style>
+                                                            </GridViewColumn.HeaderContainerStyle>
+                                                        </GridViewColumn>
+                                                        <GridViewColumn
+                                                            x:Name="colCatalogCategory"
+                                                            DisplayMemberBinding="{Binding Category}"
+                                                            Header="Category">
+                                                            <GridViewColumn.HeaderContainerStyle>
+                                                                <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                                </Style>
+                                                            </GridViewColumn.HeaderContainerStyle>
+                                                        </GridViewColumn>
+                                                        <GridViewColumn
+                                                            x:Name="colCatalogAuthor"
+                                                            DisplayMemberBinding="{Binding Author}"
+                                                            Header="Author(s)">
+                                                            <GridViewColumn.HeaderContainerStyle>
+                                                                <Style TargetType="{x:Type GridViewColumnHeader}" BasedOn="{StaticResource {x:Type GridViewColumnHeader}}">
+                                                                    <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                                                </Style>
+                                                            </GridViewColumn.HeaderContainerStyle>
+                                                        </GridViewColumn>
+                                                    </GridView>
+                                                </ListView.View>
+                                            </ListView>
+                                            <StackPanel x:Name="btnCancelStackpanel"
+                                                Height="0"
+                                                Grid.Row="1"
+                                                Grid.Column="0"
+                                                Margin="0,0,0,0"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Stretch">
+                                                <Button x:Name="btnCancel"
+                                                    Style="{StaticResource ButtonStyle}"
+                                                    Click="OnClickCancelAll"
+                                                    MouseRightButtonDown="OnClickCancelAll"
+                                                    Margin="0,0,0,3"
+                                                    TabIndex="14"
+                                                    ToolTip="Cancel Current Downloads"
+                                                    ToolTipService.ShowOnDisabled="True"  >
+                                                    <Image Source="/images/btnCancelimg.png" />
+                                                </Button>
+                                            </StackPanel>
+                                            <ListView x:Name="lstDownloads"
+                                                Margin="6,0,0,0"
+                                                Grid.Row="1"
+                                                Grid.Column="1"
+                                                MinHeight="0"
+                                                MaxHeight="100"
+                                                Height="0"
+                                                ItemsSource="{Binding downloadList, UpdateSourceTrigger=PropertyChanged}"
+                                                SelectedItem="{Binding SelectedDownload, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                <ListView.View>
+                                                    <GridView>
+                                                        <GridViewColumn
+                                                            x:Name="colDownloadName"
+                                                            Width="200"
+                                                            DisplayMemberBinding="{Binding Name}"
+                                                            Header="Mod" />
+                                                        <GridViewColumn
+                                                            x:Name="colDownloadProgress"
+                                                            Width="100"
+                                                            Header="Progress">
+                                                            <GridViewColumn.CellTemplate>
+                                                                <DataTemplate>
+                                                                    <ProgressBar
+                                                                        Width="100"
+                                                                        Height="10"
+                                                                        Opacity="1"
+                                                                        Value="{Binding PercentComplete}" />
+                                                                </DataTemplate>
+                                                            </GridViewColumn.CellTemplate>
+                                                        </GridViewColumn>
+                                                        <GridViewColumn
+                                                            x:Name="colDownloadSpeed"
+                                                            Width="70"
+                                                            DisplayMemberBinding="{Binding DownloadSpeed}"
+                                                            Header="Speed" />
+                                                        <GridViewColumn
+                                                            x:Name="colDownloadTimeLeft"
+                                                            Width="80"
+                                                            DisplayMemberBinding="{Binding RemainingTime}"
+                                                            Header="Time Left" />
+                                                    </GridView>
+                                                </ListView.View>
+                                            </ListView>
+                                        </Grid>
+                                    </Border>
                                 </TabItem>
                             </TabControl>
 
@@ -720,7 +752,7 @@
                                 Grid.Row="0"
                                 Grid.RowSpan="2"
                                 Grid.Column="2"
-                                Margin="0,10,15,15"
+                                Margin="0,15,15,15"
                                 Padding="0,0,0,7"
                                 BorderThickness="0"
                                 Background="{StaticResource LightGreyUI}"

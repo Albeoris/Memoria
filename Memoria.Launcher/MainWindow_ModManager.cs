@@ -1016,8 +1016,8 @@ namespace Memoria.Launcher
                     mod.Description = $"⚠️ The mod is incompatible with: {mod.IncompatibleWith}.\n\n{mod.Description}";
                 PreviewModReleaseNotes.Text = mod.PatchNotes ?? "";
                 PreviewModCategory.Text = mod.Category ?? "Unknown";
-                PreviewModWebsite.ToolTip = mod.Website ?? String.Empty;
-                UiGrid.MakeTooltip(PreviewModWebsite, PreviewModWebsite.ToolTip.ToString(), "", "hand");
+                PreviewModWebsite.ToolTip = null;
+                UiGrid.MakeTooltip(PreviewModWebsite, mod.Website ?? String.Empty, "", "hand");
                 PreviewModWebsite.IsEnabled = !String.IsNullOrEmpty(mod.Website);
                 PreviewModWebsite.Visibility = PreviewModWebsite.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
                 PreviewSubModPanel.Visibility = Visibility.Collapsed;
