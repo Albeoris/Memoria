@@ -534,6 +534,7 @@ public class ff9item
         switch (propertyName)
         {
             case "Price": return item.price;
+            case "SellingPrice": return item.selling_price;
             case "Shape": return (Int32)item.shape;
             case "Color": return (Int32)item.color;
             case "EquipLevel": return item.eq_lv;

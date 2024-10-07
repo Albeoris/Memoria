@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using XInputDotNetPure;
-using static Memoria.Assets.DataResources;
 
 namespace Assets.Sources.Scripts.UI.Common
 {
@@ -322,6 +321,12 @@ namespace Assets.Sources.Scripts.UI.Common
             }
         }
 
+        public static UIAtlas ChocographAtlas => PersistenSingleton<UIManager>.Instance.ChocographScene.HintMap.atlas;
+        public static UIAtlas FaceAtlas => PersistenSingleton<UIManager>.Instance.StatusScene.CharacterDetailPanel.GetChild(0).GetChild(0).GetComponent<UISprite>().atlas;
+        public static UIAtlas MovieGalleryAtlas => PersistenSingleton<UIManager>.Instance.TitleScene.MoviePageGrid.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<UISprite>().atlas;
+        public static UIAtlas QuadMistImageAtlas => PersistenSingleton<UIManager>.Instance.CardScene.CardInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetChild(2).GetComponent<UISprite>().atlas;
+        public static UIAtlas QuadMistCardAtlas => PersistenSingleton<UIManager>.Instance.CardScene.CardInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetChild(3).GetComponent<UISprite>().atlas;
+
         public static GameObject IconGameObject(Int32 id)
         {
             GameObject result = null;
@@ -341,7 +346,7 @@ namespace Assets.Sources.Scripts.UI.Common
             if (id == FF9UIDataTool.NewIconId)
                 spriteSize = new Vector2(115f, 64f);
             else if (FF9UIDataTool.IconSpriteName.ContainsKey(id))
-                spriteSize = FF9UIDataTool.GetSpriteSize(FF9UIDataTool.IconSpriteName[id]);
+                spriteSize = FF9UIDataTool.GetSpriteSize("IconAtlas", FF9UIDataTool.IconSpriteName[id]);
             return spriteSize;
         }
 
@@ -455,15 +460,51 @@ namespace Assets.Sources.Scripts.UI.Common
             if (!checkFromConfig && (FF9StateSystem.PCPlatform || FF9StateSystem.AndroidPlatform))
                 if (!global::GamePad.GetState(PlayerIndex.One).IsConnected && key == Control.Pause)
                     spriteName = "keyboard_button_backspace";
-            return FF9UIDataTool.GetSpriteSize(spriteName);
+            return FF9UIDataTool.GetSpriteSize("IconAtlas", spriteName);
         }
 
-        private static Vector2 GetSpriteSize(String spriteName)
+        public static GameObject SpriteGameObject(String atlasName, String spriteName)
         {
-            UISpriteData sprite = FF9UIDataTool.IconAtlas.GetSprite(spriteName);
-            if (sprite == null)
+            switch (atlasName)
+            {
+                default:
+                case "IconAtlas":          return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, spriteName);
+                case "WindowAtlas":        return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.WindowAtlas, spriteName);
+                case "GrayAtlas":          return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.GrayAtlas, spriteName);
+                case "BlueAtlas":          return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.BlueAtlas, spriteName);
+                case "GeneralAtlas":       return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.GeneralAtlas, spriteName);
+                case "ScreenButtonAtlas":  return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.ScreenButtonAtlas, spriteName);
+                case "TutorialAtlas":      return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.TutorialAtlas, spriteName);
+                case "ChocographAtlas":    return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.ChocographAtlas, spriteName);
+                case "FaceAtlas":          return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.FaceAtlas, spriteName);
+                case "MovieGalleryAtlas":  return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.MovieGalleryAtlas, spriteName);
+                case "QuadMistImageAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.QuadMistImageAtlas, spriteName);
+                case "QuadMistCardAtlas":  return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.QuadMistCardAtlas, spriteName);
+            }
+        }
+
+        public static Vector2 GetSpriteSize(String atlasName, String spriteName)
+        {
+            UISpriteData spriteData;
+            switch (atlasName)
+            {
+                default:
+                case "IconAtlas":          spriteData = FF9UIDataTool.IconAtlas.GetSprite(spriteName);          break;
+                case "WindowAtlas":        spriteData = FF9UIDataTool.WindowAtlas.GetSprite(spriteName);        break;
+                case "GrayAtlas":          spriteData = FF9UIDataTool.GrayAtlas.GetSprite(spriteName);          break;
+                case "BlueAtlas":          spriteData = FF9UIDataTool.BlueAtlas.GetSprite(spriteName);          break;
+                case "GeneralAtlas":       spriteData = FF9UIDataTool.GeneralAtlas.GetSprite(spriteName);       break;
+                case "ScreenButtonAtlas":  spriteData = FF9UIDataTool.ScreenButtonAtlas.GetSprite(spriteName);  break;
+                case "TutorialAtlas":      spriteData = FF9UIDataTool.TutorialAtlas.GetSprite(spriteName);      break;
+                case "ChocographAtlas":    spriteData = FF9UIDataTool.ChocographAtlas.GetSprite(spriteName);    break;
+                case "FaceAtlas":          spriteData = FF9UIDataTool.FaceAtlas.GetSprite(spriteName);          break;
+                case "MovieGalleryAtlas":  spriteData = FF9UIDataTool.MovieGalleryAtlas.GetSprite(spriteName);  break;
+                case "QuadMistImageAtlas": spriteData = FF9UIDataTool.QuadMistImageAtlas.GetSprite(spriteName); break;
+                case "QuadMistCardAtlas":  spriteData = FF9UIDataTool.QuadMistCardAtlas.GetSprite(spriteName);  break;
+            }
+            if (spriteData == null)
                 return new Vector2(64f, 64f);
-            return new Vector2(sprite.width + sprite.paddingLeft + sprite.paddingRight, sprite.height + sprite.paddingTop + sprite.paddingBottom);
+            return new Vector2(spriteData.width + spriteData.paddingLeft + spriteData.paddingRight, spriteData.height + spriteData.paddingTop + spriteData.paddingBottom);
         }
 
         private static GameObject DrawButton(BitmapIconType bitmapIconType)
@@ -474,16 +515,16 @@ namespace Assets.Sources.Scripts.UI.Common
         private static GameObject DrawButton(BitmapIconType bitmapIconType, UIAtlas atlas, String spriteName)
         {
             spriteName = FF9UIDataTool.CheckIconLocalize(spriteName);
-            GameObject controllerGameObject = FF9UIDataTool.GetControllerGameObject(bitmapIconType);
-            FF9UIDataTool.DrawSprite(controllerGameObject, atlas, spriteName);
-            return controllerGameObject;
+            GameObject controllerGo = FF9UIDataTool.GetControllerGameObject(bitmapIconType);
+            FF9UIDataTool.DrawSprite(controllerGo, atlas, spriteName);
+            return controllerGo;
         }
 
         private static GameObject DrawButton(BitmapIconType bitmapIconType, KeyCode keycode)
         {
-            GameObject controllerGameObject = FF9UIDataTool.GetControllerGameObject(bitmapIconType);
-            FF9UIDataTool.DrawLabel(controllerGameObject.GetChild(0), keycode);
-            return controllerGameObject;
+            GameObject controllerGo = FF9UIDataTool.GetControllerGameObject(bitmapIconType);
+            FF9UIDataTool.DrawLabel(controllerGo.GetChild(0), keycode);
+            return controllerGo;
         }
 
         private static GameObject GetControllerGameObject(BitmapIconType bitmapIconType)
@@ -496,7 +537,7 @@ namespace Assets.Sources.Scripts.UI.Common
                     if (iconObject == null)
                     {
                         if (FF9UIDataTool.controllerSpritePrefab == null)
-                            FF9UIDataTool.controllerSpritePrefab = (Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Sprite") as GameObject);
+                            FF9UIDataTool.controllerSpritePrefab = Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Sprite") as GameObject;
                         iconObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.controllerSpritePrefab);
                         iconObject.tag = "BitmapSprite";
                     }
@@ -508,7 +549,7 @@ namespace Assets.Sources.Scripts.UI.Common
                     if (iconObject == null)
                     {
                         if (FF9UIDataTool.controllerKeyboardPrefab == null)
-                            FF9UIDataTool.controllerKeyboardPrefab = (Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Keyboard") as GameObject);
+                            FF9UIDataTool.controllerKeyboardPrefab = Resources.Load("EmbeddedAsset/UI/Prefabs/Controller Keyboard") as GameObject;
                         iconObject = UnityEngine.Object.Instantiate<GameObject>(FF9UIDataTool.controllerKeyboardPrefab);
                         iconObject.tag = "BitmapKeyboard";
                     }
@@ -536,7 +577,7 @@ namespace Assets.Sources.Scripts.UI.Common
             GameObject gameObject = null;
             if (currentPool.Count > 0)
             {
-                gameObject = currentPool.Pop<GameObject>();
+                gameObject = currentPool.Pop();
                 gameObject.SetActive(false);
             }
             return gameObject;
@@ -552,9 +593,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static void ReleaseBitmapIconToPool(GameObject bitmap)
         {
-            List<GameObject> inactivePool;
-            List<GameObject> activePool;
-            FF9UIDataTool.GetCurrentPool(bitmap.tag, out inactivePool, out activePool);
+            FF9UIDataTool.GetCurrentPool(bitmap.tag, out List<GameObject> inactivePool, out List<GameObject> activePool);
             bitmap.transform.parent = PersistenSingleton<UIManager>.Instance.transform;
             bitmap.SetActive(false);
             activePool.Remove(bitmap);
@@ -725,12 +764,26 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static Sprite LoadWorldTitle(SByte titleId, Boolean isShadow)
         {
-            Sprite sprite = null;
-            String langSymbol;
-            if (FF9StateSystem.Settings.CurrentLanguage == "English(UK)")
-                langSymbol = "US";
+            String langSymbol = Localization.GetSymbol();
+            String spriteName = GetWorldTitleSpriteName(titleId, isShadow, langSymbol);
+            Sprite sprite;
+            if (FF9UIDataTool.worldTitleSpriteList.ContainsKey(spriteName))
+            {
+                sprite = FF9UIDataTool.worldTitleSpriteList[spriteName];
+            }
             else
-                langSymbol = Localization.GetSymbol();
+            {
+                String path = "EmbeddedAsset/UI/Sprites/" + langSymbol + "/" + spriteName;
+                sprite = AssetManager.Load<Sprite>(path, false);
+                FF9UIDataTool.worldTitleSpriteList.Add(spriteName, sprite);
+            }
+            return sprite;
+        }
+
+        public static String GetWorldTitleSpriteName(SByte titleId, Boolean isShadow, String langSymbol)
+        {
+            if (langSymbol == "UK")
+                langSymbol = "US";
             String spriteName;
             if (titleId == FF9UIDataTool.WorldTitleMistContinent)
             {
@@ -751,255 +804,87 @@ namespace Assets.Sources.Scripts.UI.Common
             else
             {
                 global::Debug.LogError("World Continent Title: Could not found resource from titleId:" + titleId);
-                return sprite;
+                return null;
             }
             spriteName += isShadow ? "_shadow_" + langSymbol.ToLower() : "_" + langSymbol.ToLower();
-            if (FF9UIDataTool.worldTitleSpriteList.ContainsKey(spriteName))
-            {
-                sprite = FF9UIDataTool.worldTitleSpriteList[spriteName];
-            }
-            else
-            {
-                String path = "EmbeddedAsset/UI/Sprites/" + langSymbol + "/" + spriteName;
-                sprite = AssetManager.Load<Sprite>(path, false);
-                FF9UIDataTool.worldTitleSpriteList.Add(spriteName, sprite);
-            }
-            return sprite;
+            return spriteName;
         }
 
         public static readonly Int32 NewIconId = 400;
 
         private static UIAtlas generalAtlas;
-
         private static UIAtlas iconAtlas;
-
         private static UIAtlas grayAtlas;
-
         private static UIAtlas blueAtlas;
-
         private static UIAtlas screenButtonAtlas;
-
         private static UIAtlas tutorialAtlas;
 
         private static GameObject controllerSpritePrefab = null;
-
         private static GameObject controllerKeyboardPrefab = null;
-
         private static GameObject newIconPrefab = null;
 
         private static List<GameObject> bitmapKeyboardPool = new List<GameObject>();
-
         private static List<GameObject> bitmapSpritePool = new List<GameObject>();
-
         private static List<GameObject> bitmapNewIconPool = new List<GameObject>();
-
         private static List<GameObject> activeBitmapKeyboardList = new List<GameObject>();
-
         private static List<GameObject> activeBitmapSpriteList = new List<GameObject>();
-
         private static List<GameObject> activeBitmapNewIconList = new List<GameObject>();
-
-        public static Int32[] status_id = new Int32[]
-        {
-            154,
-            153,
-            152,
-            151,
-            150,
-            149,
-            148
-        };
 
         private static Dictionary<String, String> buttonSpriteNameiOSJoystick = new Dictionary<String, String>
         {
-            {
-                "JoystickButton14",
-                "joystick_button_a"
-            },
-            {
-                "JoystickButton13",
-                "joystick_button_b"
-            },
-            {
-                "JoystickButton15",
-                "joystick_button_x"
-            },
-            {
-                "JoystickButton12",
-                "joystick_button_y"
-            },
-            {
-                "JoystickButton8",
-                "joystick_l1"
-            },
-            {
-                "JoystickButton9",
-                "joystick_r1"
-            },
-            {
-                "JoystickButton10",
-                "joystick_l2"
-            },
-            {
-                "JoystickButton11",
-                "joystick_r2"
-            },
-            {
-                "JoystickButton0",
-                "joystick_start"
-            },
-            {
-                "Empty",
-                "joystick_analog_r"
-            },
-            {
-                "Up",
-                "ps_dpad_up"
-            },
-            {
-                "Down",
-                "ps_dpad_down"
-            },
-            {
-                "Left",
-                "ps_dpad_left"
-            },
-            {
-                "Right",
-                "ps_dpad_right"
-            },
-            {
-                "DPad",
-                "ps_dpad"
-            }
+            { "JoystickButton14",   "joystick_button_a" },
+            { "JoystickButton13",   "joystick_button_b" },
+            { "JoystickButton15",   "joystick_button_x" },
+            { "JoystickButton12",   "joystick_button_y" },
+            { "JoystickButton8",    "joystick_l1" },
+            { "JoystickButton9",    "joystick_r1" },
+            { "JoystickButton10",   "joystick_l2" },
+            { "JoystickButton11",   "joystick_r2" },
+            { "JoystickButton0",    "joystick_start" },
+            { "Empty",              "joystick_analog_r" },
+            { "Up",                 "ps_dpad_up" },
+            { "Down",               "ps_dpad_down" },
+            { "Left",               "ps_dpad_left" },
+            { "Right",              "ps_dpad_right" },
+            { "DPad",               "ps_dpad" }
         };
 
         private static Dictionary<String, String> buttonSpriteNameAndroidJoystick = new Dictionary<String, String>
         {
-            {
-                "JoystickButton0",
-                "joystick_button_a"
-            },
-            {
-                "JoystickButton1",
-                "joystick_button_b"
-            },
-            {
-                "JoystickButton2",
-                "joystick_button_x"
-            },
-            {
-                "JoystickButton3",
-                "joystick_button_y"
-            },
-            {
-                "JoystickButton4",
-                "joystick_l1"
-            },
-            {
-                "JoystickButton5",
-                "joystick_r1"
-            },
-            {
-                "LeftTrigger Android",
-                "joystick_l2"
-            },
-            {
-                "RightTrigger Android",
-                "joystick_r2"
-            },
-            {
-                "JoystickButton10",
-                "joystick_start"
-            },
-            {
-                "Empty",
-                "joystick_analog_r"
-            },
-            {
-                "Up",
-                "ps_dpad_up"
-            },
-            {
-                "Down",
-                "ps_dpad_down"
-            },
-            {
-                "Left",
-                "ps_dpad_left"
-            },
-            {
-                "Right",
-                "ps_dpad_right"
-            },
-            {
-                "DPad",
-                "ps_dpad"
-            }
+            { "JoystickButton0",        "joystick_button_a" },
+            { "JoystickButton1",        "joystick_button_b" },
+            { "JoystickButton2",        "joystick_button_x" },
+            { "JoystickButton3",        "joystick_button_y" },
+            { "JoystickButton4",        "joystick_l1" },
+            { "JoystickButton5",        "joystick_r1" },
+            { "LeftTrigger Android",    "joystick_l2" },
+            { "RightTrigger Android",   "joystick_r2" },
+            { "JoystickButton10",       "joystick_start" },
+            { "Empty",                  "joystick_analog_r" },
+            { "Up",                     "ps_dpad_up" },
+            { "Down",                   "ps_dpad_down" },
+            { "Left",                   "ps_dpad_left" },
+            { "Right",                  "ps_dpad_right" },
+            { "DPad",                   "ps_dpad" }
         };
 
         private static Dictionary<String, String> buttonSpriteNameJoystick = new Dictionary<String, String>
         {
-            {
-                "JoystickButton0",
-                "joystick_button_a"
-            },
-            {
-                "JoystickButton1",
-                "joystick_button_b"
-            },
-            {
-                "JoystickButton2",
-                "joystick_button_x"
-            },
-            {
-                "JoystickButton3",
-                "joystick_button_y"
-            },
-            {
-                "JoystickButton4",
-                "joystick_l1"
-            },
-            {
-                "JoystickButton5",
-                "joystick_r1"
-            },
-            {
-                "LeftTrigger",
-                "joystick_l2"
-            },
-            {
-                "RightTrigger",
-                "joystick_r2"
-            },
-            {
-                "JoystickButton6",
-                "joystick_start"
-            },
-            {
-                "JoystickButton7",
-                "joystick_select"
-            },
-            {
-                "Up",
-                "ps_dpad_up"
-            },
-            {
-                "Down",
-                "ps_dpad_down"
-            },
-            {
-                "Left",
-                "ps_dpad_left"
-            },
-            {
-                "Right",
-                "ps_dpad_right"
-            },
-            {
-                "DPad",
-                "ps_dpad"
-            }
+            { "JoystickButton0",    "joystick_button_a" },
+            { "JoystickButton1",    "joystick_button_b" },
+            { "JoystickButton2",    "joystick_button_x" },
+            { "JoystickButton3",    "joystick_button_y" },
+            { "JoystickButton4",    "joystick_l1" },
+            { "JoystickButton5",    "joystick_r1" },
+            { "LeftTrigger",        "joystick_l2" },
+            { "RightTrigger",       "joystick_r2" },
+            { "JoystickButton6",    "joystick_start" },
+            { "JoystickButton7",    "joystick_select" },
+            { "Up",                 "ps_dpad_up" },
+            { "Down",               "ps_dpad_down" },
+            { "Left",               "ps_dpad_left" },
+            { "Right",              "ps_dpad_right" },
+            { "DPad",               "ps_dpad" }
         };
 
         public static readonly Dictionary<Int32, String> IconSpriteName = new Dictionary<Int32, String>
@@ -1502,30 +1387,12 @@ namespace Assets.Sources.Scripts.UI.Common
 
         private static readonly Dictionary<String, String> iconLocalizeList = new Dictionary<String, String>
         {
-            {
-                "keyboard_button_enter#French",
-                "keyboard_button_enter_fr_gr"
-            },
-            {
-                "keyboard_button_enter#German",
-                "keyboard_button_enter_fr_gr"
-            },
-            {
-                "keyboard_button_enter#Italian",
-                "keyboard_button_enter_it"
-            },
-            {
-                "keyboard_button_backspace#French",
-                "keyboard_button_backspace_fr_gr_it"
-            },
-            {
-                "keyboard_button_backspace#German",
-                "keyboard_button_backspace_fr_gr_it"
-            },
-            {
-                "keyboard_button_backspace#Italian",
-                "keyboard_button_backspace_fr_gr_it"
-            }
+            { "keyboard_button_enter#French",       "keyboard_button_enter_fr_gr" },
+            { "keyboard_button_enter#German",       "keyboard_button_enter_fr_gr" },
+            { "keyboard_button_enter#Italian",      "keyboard_button_enter_it" },
+            { "keyboard_button_backspace#French",   "keyboard_button_backspace_fr_gr_it" },
+            { "keyboard_button_backspace#German",   "keyboard_button_backspace_fr_gr_it" },
+            { "keyboard_button_backspace#Italian",  "keyboard_button_backspace_fr_gr_it" }
         };
     }
 }

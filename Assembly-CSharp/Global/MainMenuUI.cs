@@ -741,6 +741,10 @@ public class MainMenuUI : UIScene
         this.screenFadePanel = this.ScreenFadeGameObject.GetParent().GetComponent<UIPanel>();
         this.characterMemorize = this.CharacterHUDList[this.GetFirstPlayer()].Self;
         this.characterOrderMemorize = this.CharacterHUDList[0].Self;
+
+        UIWidget locationFrame = this.LocationInfoPanel.GetComponent<UIWidget>();
+        locationFrame.leftAnchor.target = this.transform;
+        locationFrame.leftAnchor.Set(0f, 30f);
     }
 
     public GameObject SubMenuPanel;

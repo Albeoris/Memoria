@@ -18,14 +18,25 @@ namespace Memoria.Assets
                     return;
                 }
 
-                foreach (String name in EnumerateAtlases())
+                foreach (String name in GraphicResources.AtlasList.Keys)
                 {
                     String path = GraphicResources.Embedded.GetAtlasPath(name);
-                    UIAtlas atlas = Resources.Load(path, typeof(UIAtlas)) as UIAtlas;
+                    UIAtlas atlas = AssetManager.Load<UIAtlas>(path, true);
                     if (atlas != null)
                     {
                         path = GraphicResources.Export.GetAtlasPath(name);
-                        ExportAtlasSafe(path, atlas);
+                        ExportAtlasSafe(path, atlas, true);
+                    }
+                    else
+                    {
+                        Sprite[] spriteList = Resources.LoadAll<Sprite>(path);
+                        if (spriteList == null || spriteList.Length == 0)
+                        {
+                            Log.Message($"[GraphicResourceExporter] Failed to export '{path}' as an atlas or a sprite list");
+                            continue;
+                        }
+                        path = GraphicResources.Export.GetAtlasPath(name);
+                        ExportSpriteListSafe(path, spriteList, true);
                     }
                 }
 
@@ -37,16 +48,10 @@ namespace Memoria.Assets
             }
         }
 
-        public static void ExportAtlasSafe(String outputDirectory, UIAtlas atlas)
+        public static void ExportAtlasSafe(String outputDirectory, UIAtlas atlas, Boolean exportFragments)
         {
             try
             {
-                if (Directory.Exists(outputDirectory))
-                {
-                    Log.Warning("[GraphicResourceExporter] Export was skipped because a directory already exists: [{0}].", outputDirectory);
-                    return;
-                }
-
                 String outputPath = outputDirectory + ".png";
                 if (File.Exists(outputPath))
                 {
@@ -54,14 +59,20 @@ namespace Memoria.Assets
                     return;
                 }
 
-                Directory.CreateDirectory(outputDirectory);
+                if (exportFragments)
+                    Directory.CreateDirectory(outputDirectory);
+                else
+                    Directory.CreateDirectory(Path.GetDirectoryName(outputDirectory));
 
                 Texture2D texture = TextureHelper.CopyAsReadable(atlas.texture);
                 TextureHelper.WriteTextureToFile(texture, outputPath);
-                foreach (UISpriteData sprite in atlas.spriteList)
+                if (exportFragments)
                 {
-                    Texture2D fragment = TextureHelper.GetFragment(texture, sprite.x, texture.height - sprite.y - sprite.height, sprite.width, sprite.height);
-                    TextureHelper.WriteTextureToFile(fragment, Path.Combine(outputDirectory, sprite.name + ".png"));
+                    foreach (UISpriteData sprite in atlas.spriteList)
+                    {
+                        Texture2D fragment = TextureHelper.GetFragment(texture, sprite.x, texture.height - sprite.y - sprite.height, sprite.width, sprite.height);
+                        TextureHelper.WriteTextureToFile(fragment, Path.Combine(outputDirectory, sprite.name + ".png"));
+                    }
                 }
 
                 String outputPathTPSheet = outputDirectory + ".tpsheet";
@@ -69,6 +80,8 @@ namespace Memoria.Assets
                 //  + ":texture=" + texture.name + "\n"
                 //  + ":normalmap=\n";
                     + ":size=" + texture.width + "x" + texture.height + "\n";
+                if (!exportFragments)
+                    tpsheetText += ":append=true\n";
                 foreach (UISpriteData sprite in atlas.spriteList)
                 {
                     tpsheetText += sprite.name + ";" + sprite.x + ";" + sprite.y + ";" + sprite.width + ";" + sprite.height;
@@ -85,19 +98,54 @@ namespace Memoria.Assets
             }
         }
 
-        private static IEnumerable<String> EnumerateAtlases()
+        public static void ExportSpriteListSafe(String outputDirectory, Sprite[] spriteList, Boolean exportFragments)
         {
-            yield return GraphicResources.GrayAtlasName;
-            yield return GraphicResources.BlueAtlasName;
-            yield return GraphicResources.IconAtlasName;
-            yield return GraphicResources.GeneralAtlasName;
-            yield return GraphicResources.ScreenButtonAtlasName;
-            yield return GraphicResources.TutorialUIAtlasName;
-            yield return GraphicResources.EndGameAtlasName;
-            yield return GraphicResources.FaceAtlasName;
-            yield return GraphicResources.ChocographAtlasName;
-            yield return GraphicResources.MovieGalleryAtlasName;
-            yield return GraphicResources.EndingTextUsJpGrAtlasName;
+            try
+            {
+                String outputPath = outputDirectory + ".png";
+                if (File.Exists(outputPath))
+                {
+                    Log.Warning("[GraphicResourceExporter] Export was skipped because a file already exists: [{0}].", outputPath);
+                    return;
+                }
+
+                if (exportFragments)
+                    Directory.CreateDirectory(outputDirectory);
+                else
+                    Directory.CreateDirectory(Path.GetDirectoryName(outputDirectory));
+
+                Texture2D sharedTexture = TextureHelper.CopyAsReadable(spriteList[0].texture);
+                TextureHelper.WriteTextureToFile(sharedTexture, outputDirectory + ".png");
+                if (exportFragments)
+                {
+                    foreach (Sprite sprite in spriteList)
+                    {
+                        Texture2D texture = TextureHelper.GetFragment(sharedTexture, (Int32)sprite.rect.x, (Int32)sprite.rect.y, (Int32)sprite.rect.width, (Int32)sprite.rect.height);
+                        TextureHelper.WriteTextureToFile(texture, Path.ChangeExtension(Path.Combine(outputDirectory, sprite.name), ".png"));
+                    }
+                }
+
+                String outputPathTPSheet = outputDirectory + ".tpsheet";
+                String tpsheetText = ":format=40000\n"
+                //  + ":texture=" + texture.name + "\n"
+                //  + ":normalmap=\n";
+                    + ":size=" + sharedTexture.width + "x" + sharedTexture.height + "\n";
+                if (!exportFragments)
+                    tpsheetText += ":append=true\n";
+                foreach (Sprite sprite in spriteList)
+                {
+                    tpsheetText += sprite.name + ";" + (Int32)sprite.rect.x + ";" + (Int32)sprite.rect.y + ";" + (Int32)sprite.rect.width + ";" + (Int32)sprite.rect.height;
+                    tpsheetText += ";0;0"; // pivotX & pivotY, unused
+                    tpsheetText += ";0;0;0;0"; // paddings, nulled for sprite lists
+                    tpsheetText += ";0;0;0;0"; // borders, nulled for sprite lists
+                    tpsheetText += "\n";
+                }
+                File.WriteAllText(outputPathTPSheet, tpsheetText);
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "[GraphicResourceExporter] Failed to export atlas [{0}].", Path.GetFileName(outputDirectory));
+            }
         }
     }
 }

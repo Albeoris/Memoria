@@ -77,10 +77,13 @@ namespace FF9
             return cmdUsed != null;
         }
 
-        public static Boolean IsBtlTargetOfCommand(BTL_DATA btl, List<CMD_DATA> cmdList = null)
+        public static Boolean IsBtlTargetOfCommand(BTL_DATA btl)
         {
-            if (cmdList == null)
-                return FF9StateSystem.Battle.FF9Battle.cur_cmd_list.Any(cmd => (cmd.tar_id & btl.btl_id) != 0);
+            return FF9StateSystem.Battle.FF9Battle.cur_cmd_list.Any(cmd => (cmd.tar_id & btl.btl_id) != 0);
+        }
+
+        public static Boolean IsBtlTargetOfCommand(BTL_DATA btl, out List<CMD_DATA> cmdList)
+        {
             cmdList = FF9StateSystem.Battle.FF9Battle.cur_cmd_list.FindAll(cmd => (cmd.tar_id & btl.btl_id) != 0);
             return cmdList.Count > 0;
         }

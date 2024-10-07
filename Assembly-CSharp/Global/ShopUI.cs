@@ -315,7 +315,7 @@ public class ShopUI : UIScene
                 {
                     this.currentItemIndex = go.GetComponent<RecycleListItem>().ItemDataIndex;
                     RegularItem sellingItem = this.sellItemIdList[this.currentItemIndex];
-                    if (!this.soldItemIdDict.ContainsKey(sellingItem))
+                    if (!this.soldItemIdDict.ContainsKey(sellingItem) && ff9item._FF9Item_Data[sellingItem].selling_price >= 0)
                     {
                         FF9Sfx.FF9SFX_Play(103);
                         this.StartCountSell();
@@ -387,10 +387,15 @@ public class ShopUI : UIScene
                 }
                 else
                 {
-                    FF9Sfx.FF9SFX_Play(1045);
                     RegularItem sellingItem = this.sellItemIdList[this.currentItemIndex];
                     FF9ITEM_DATA item = ff9item._FF9Item_Data[sellingItem];
-                    UInt32 sellingPrice = item.price >> 1;
+                    Int32 sellingPrice = item.selling_price;
+                    if (sellingPrice < 0)
+                    {
+                        FF9Sfx.FF9SFX_Play(102);
+                        return true;
+                    }
+                    FF9Sfx.FF9SFX_Play(1045);
                     Int32 countRemoved = ff9item.FF9Item_Remove(sellingItem, this.count);
                     if (countRemoved != 0)
                     {
@@ -905,7 +910,7 @@ public class ShopUI : UIScene
         }
         if (this.shopSellItemScrollList.ItemsPool.Count == 0)
         {
-            this.shopSellItemScrollList.PopulateListItemWithData = new Action<Transform, ListDataTypeBase, Int32, Boolean>(this.DisplaySellItemDetail);
+            this.shopSellItemScrollList.PopulateListItemWithData = this.DisplaySellItemDetail;
             this.shopSellItemScrollList.OnRecycleListItemClick += this.OnListItemClick;
             this.shopSellItemScrollList.InitTableView(list, 0);
         }
@@ -923,9 +928,10 @@ public class ShopUI : UIScene
             this.DisplayWindowBackground(item.gameObject, null);
         if (shopSellItemListData.Count > 0)
         {
-            FF9UIDataTool.DisplayItem(shopSellItemListData.Id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, true);
+            Boolean canSell = ff9item._FF9Item_Data[shopSellItemListData.Id].selling_price >= 0;
+            FF9UIDataTool.DisplayItem(shopSellItemListData.Id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, canSell);
             itemListDetailWithIconHUD.NumberLabel.text = shopSellItemListData.Count.ToString();
-            itemListDetailWithIconHUD.NumberLabel.color = FF9TextTool.White;
+            itemListDetailWithIconHUD.NumberLabel.color = canSell ? FF9TextTool.White : FF9TextTool.Gray;
             ButtonGroupState.SetButtonAnimation(itemListDetailWithIconHUD.Self, true);
         }
         else
@@ -1037,13 +1043,13 @@ public class ShopUI : UIScene
         }
         else
         {
+            RegularItem itemId = this.sellItemIdList[this.currentItemIndex];
+            Int32 sellingPrice = ff9item._FF9Item_Data[itemId].selling_price;
             this.InputQuantityDialog.SetActive(true);
             this.InputQuantityDialog.transform.localPosition = new Vector3(0f, 50f, 0f);
             FF9UIDataTool.DisplayTextLocalize(this.HelpLabel, "SellQtyHelp");
             this.InfoDialog.SetActive(true);
-            RegularItem itemId = this.sellItemIdList[this.currentItemIndex];
             FF9UIDataTool.DisplayItem(itemId, this.confirmItemHud.IconSprite, this.confirmItemHud.NameLabel, true);
-            UInt32 sellingPrice = ff9item._FF9Item_Data[itemId].price >> 1;
             this.confirmQuantityLabel.text = this.count.ToString();
             this.confirmPriceLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", (this.count * sellingPrice).ToString());
             Boolean isEquipment = (ff9item._FF9Item_Data[itemId].type & ItemType.AnyEquipment) != 0;

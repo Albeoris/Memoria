@@ -430,9 +430,18 @@ public class btl_cmd
         CMD_DATA cmd = btlsys.cmd_queue.next;
         HashSet<BTL_DATA> busyCasters = new HashSet<BTL_DATA>();
         if (Configuration.Battle.Speed == 4)
-            for (BTL_DATA next = btlsys.btl_list.next; next != null; next = next.next)
-                if (btl_util.IsBtlBusy(next, btl_util.BusyMode.ANY_CURRENT))
-                    busyCasters.Add(next);
+            for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
+                if (btl_util.IsBtlBusy(btl, btl_util.BusyMode.ANY_CURRENT))
+                    busyCasters.Add(btl);
+        Boolean hasPlayerAlive = false;
+        for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
+        {
+            if (btl.bi.player != 0 && !btl_stat.CheckStatus(btl, BattleStatusConst.BattleEndFull))
+            {
+                hasPlayerAlive = true;
+                break;
+            }
+        }
         while (cmd != null)
         {
             if (cmd.regist != null)
@@ -450,6 +459,11 @@ public class btl_cmd
                         foreach (BTL_DATA next in btl_util.findAllBtlData(cmd.tar_id))
                             busyCasters.Add(next);
                     }
+                    cmd = cmd.next;
+                    continue;
+                }
+                if (!hasPlayerAlive && cmd.regist.bi.player == 0 && (cmd.cmd_no == BattleCommandId.EnemyAtk || cmd.cmd_no == BattleCommandId.EnemyCounter))
+                {
                     cmd = cmd.next;
                     continue;
                 }
@@ -501,12 +515,28 @@ public class btl_cmd
         else
         {
             // Default method
-            if (cmd.cmd_no < BattleCommandId.EnemyReaction || cmd.cmd_no > BattleCommandId.BoundaryUpperCheck)
+            if (cmd.regist != null && (cmd.cmd_no < BattleCommandId.EnemyReaction || cmd.cmd_no > BattleCommandId.BoundaryUpperCheck))
             {
                 BTL_DATA btl = cmd.regist;
                 if (btl_stat.CheckStatus(btl, BattleStatus.Heat))
                 {
-                    if (btl_stat.AlterStatus(new BattleUnit(btl), BattleStatusId.Death) == btl_stat.ALTER_SUCCESS)
+                    if (btl_stat.CheckStatus(btl, BattleStatus.EasyKill))
+                    {
+                        btl_para.SetLogicalHP(btl, 0, false);
+                        BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Heat);
+                        KillCommand(cmd);
+                        if (btl.cur.hp == 0 && btl.bi.player == 0) // Prevent dying animation for enemies
+                        {
+                            ENEMY enemy = btl_util.getEnemyPtr(btl);
+                            if (!enemy.info.die_atk)
+                            {
+                                btl_util.SetEnemyDieSound(btl, enemy.et.die_snd_no);
+                                btl.die_seq = 3;
+                            }
+                        }
+                        return;
+                    }
+                    else if (btl_stat.AlterStatus(new BattleUnit(btl), BattleStatusId.Death) == btl_stat.ALTER_SUCCESS)
                     {
                         BattleVoice.TriggerOnStatusChange(btl, "Used", BattleStatusId.Heat);
                         KillCommand(cmd);

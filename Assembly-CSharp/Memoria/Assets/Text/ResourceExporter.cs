@@ -20,6 +20,7 @@ namespace Memoria.Assets
                 GraphicResourceExporter.ExportSafe();
                 FieldSceneExporter.ExportSafe();
                 BattleSceneExporter.ExportSafe();
+                TranslationExporter.ExportSafe();
                 Log.Message("[ResourceExporter] Application will now quit. Please disable Configuration.Export.Enabled and restart the game.");
                 UIManager.Input.ConfirmQuit();
             }

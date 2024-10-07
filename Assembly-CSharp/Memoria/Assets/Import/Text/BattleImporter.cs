@@ -79,8 +79,9 @@ namespace Memoria.Assets
             Int32 battleZoneId = FF9TextTool.BattleZoneId;
             String path = EmbadedTextResources.GetCurrentPath("/Battle/" + battleZoneId + ".mes");
             String[] text = EmbadedSentenseLoader.LoadSentense(path);
-            if (text != null)
-                FF9TextTool.SetBattleText(text);
+            if (text == null)
+                return false;
+            FF9TextTool.SetBattleText(text);
             return true;
         }
 
