@@ -44,6 +44,8 @@ namespace Memoria.Launcher
             ["ExcaliburIINoTimeLimit", "_excaliburiinotimelimit", "ExcaliburIINoTimeLimit", "Hacks", 0, 1, 0],
             ["EasyJumpRopeMinigame", "_easyjumpropeminigame", "RopeJumpingIncrement", "Hacks", 1, 1000, 0],
             ["HippaulRacingViviSpeed", "_hippaulracingvivispeed", "HippaulRacingViviSpeed", "Hacks", 33, 100, 0],
+            ["SwordplayAssistance", "_swordplayassistance", "SwordplayAssistance", "Hacks", 1, 2, 1],
+            ["FrogCatchingIncrement", "_frogcatchingincrement", "FrogCatchingIncrement", "Hacks", 1, 100, 1],
 
             ["AudioBackend", "_audiobackend", "Backend", "Audio", 0, 1, 1],
             ["WorldSmoothTexture", "_worldsmoothtexture", "WorldSmoothTexture", "Graphics", 0, 1, 1],
@@ -111,6 +113,9 @@ namespace Memoria.Launcher
             get => _worldmapshiptilt;
             set => SetProperty(ref _worldmapshiptilt, value);
         }
+
+        // Cheats //
+
         private Int16 _stealingalwaysworks;
         public Int16 StealingAlwaysWorks
         {
@@ -201,6 +206,22 @@ namespace Memoria.Launcher
             get => _hippaulracingvivispeed;
             set => SetProperty(ref _hippaulracingvivispeed, value);
         }
+        private Int16 _swordplayassistance;
+        public Int16 SwordplayAssistance
+        {
+            get => _swordplayassistance;
+            set => SetProperty(ref _swordplayassistance, value);
+        }
+
+        private Int16 _frogcatchingincrement;
+        public Int16 FrogCatchingIncrement
+        {
+            get => _frogcatchingincrement;
+            set => SetProperty(ref _frogcatchingincrement, value);
+        }
+
+        // advanced //
+
         private Int16 _audiobackend;
         public Int16 AudioBackend
         {

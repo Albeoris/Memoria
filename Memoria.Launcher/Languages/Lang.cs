@@ -347,6 +347,12 @@ namespace Memoria.Launcher
             public static readonly string BattleSmoothTexture_Tooltip = GetSettings(nameof(BattleSmoothTexture_Tooltip));
             public static readonly string ElementsSmoothTexture = GetSettings(nameof(ElementsSmoothTexture));
             public static readonly string ElementsSmoothTexture_Tooltip = GetSettings(nameof(ElementsSmoothTexture_Tooltip));
+            public static readonly string SwordplayAssistance = GetSettings(nameof(SwordplayAssistance));
+            public static readonly string SwordplayAssistance_Tooltip = GetSettings(nameof(SwordplayAssistance_Tooltip));
+            public static readonly string FrogCatchingIncrement = GetSettings(nameof(FrogCatchingIncrement));
+            public static readonly string FrogCatchingIncrement_Tooltip = GetSettings(nameof(FrogCatchingIncrement_Tooltip));
+            public static readonly string Minigames = GetSettings(nameof(Minigames));
+
         }
 
         public static class SteamOverlay
