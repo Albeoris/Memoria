@@ -30,7 +30,7 @@ namespace Memoria.Launcher
             ["NoAutoTrance", "_noautotrance", "NoAutoTrance", "Battle", 0, 1, 0],
             ["ViviAutoAttack", "_viviautoattack", "ViviAutoAttack", "Battle", 0, 1, 0],
             ["BreakDamageLimit", "_breakDamageLimit", "BreakDamageLimit", "Battle", 0, 1, 0],
-            ["AccessBattleMenuToggle", "_accessbattlemenutoggle", "AccessMenus", "Battle", 0, 3, 0],
+            //["AccessBattleMenuToggle", "_accessbattlemenutoggle", "AccessMenus", "Battle", 0, 3, 0],
             ["GarnetConcentrate", "_garnetconcentrate", "GarnetConcentrate", "Battle", 0, 1, 0],
 
             ["BattleAssistance", "_battleassistance", "BattleAssistance", "Cheats", 0, 1, 1],
@@ -453,6 +453,13 @@ namespace Memoria.Launcher
             get => _worldmapdistancepreset;
             set => SetProperty(ref _worldmapdistancepreset, value);
         }
+        private Int16 _accessBattleMenu;
+        public Int16 AccessBattleMenu
+        {
+            get => _accessBattleMenu;
+            set => SetProperty(ref _accessBattleMenu, value);
+        }
+        public String AvailableBattleMenus => AccessBattleMenu < 3 ? " \"Equip\", \"SupportingAbility\"" : "";
         #endregion
 
         #region Write ini
@@ -656,6 +663,12 @@ namespace Memoria.Launcher
                             iniFile.WriteValue("Worldmap", "FogStartDistance ", " " + var2);
                             iniFile.WriteValue("Worldmap", "FogEndDistance ", " " + var3);
                         }
+                        break;
+                    case nameof(AccessBattleMenu):
+                        iniFile.WriteValue("Battle", "AccessMenus ", " " + AccessBattleMenu);
+                        iniFile.WriteValue("Battle", "AvailableMenus ", AvailableBattleMenus);
+                        if (AccessBattleMenu > 0)
+                            iniFile.WriteValue("Battle", "Enabled ", " 1");
                         break;
                 }
             }
@@ -909,6 +922,17 @@ namespace Memoria.Launcher
                 else
                     _worldmapdistancepreset = -1;
                 Refresh(nameof(WorldmapDistancePreset));
+
+
+                value = iniFile.ReadValue("Battle", "AccessMenus");
+                if (String.IsNullOrEmpty(value))
+                {
+                    value = " 0";
+                    OnPropertyChanged(nameof(AccessBattleMenu));
+                }
+                if (!Int16.TryParse(value, out _accessBattleMenu))
+                    _accessBattleMenu = 0;
+                Refresh(nameof(AccessBattleMenu));
 
             }
             catch (Exception ex)

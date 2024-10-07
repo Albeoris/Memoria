@@ -1,3 +1,4 @@
+using System;
 using Application = System.Windows.Application;
 
 namespace Memoria.Launcher
@@ -13,9 +14,17 @@ namespace Memoria.Launcher
             CreateCheckbox("NoAutoTrance", Lang.Settings.NoAutoTrance, Lang.Settings.NoAutoTrance_Tooltip);
             CreateCheckbox("ViviAutoAttack", Lang.Settings.ViviAutoAttack, Lang.Settings.ViviAutoAttack_Tooltip);
             CreateCheckbox("BreakDamageLimit", Lang.Settings.BreakDamageLimit, Lang.Settings.BreakDamageLimit_Tooltip);
-            CreateCheckbox("AccessBattleMenuToggle", Lang.Settings.AccessBattleMenuToggle, Lang.Settings.AccessBattleMenuToggle_Tooltip);
+            //CreateCheckbox("AccessBattleMenuToggle", Lang.Settings.AccessBattleMenuToggle, Lang.Settings.AccessBattleMenuToggle_Tooltip);
             CreateCheckbox("GarnetConcentrate", Lang.Settings.DisableCantConcentrate, Lang.Settings.DisableCantConcentrate_Tooltip);
 
+            String[] accessmenuchoices =
+            {
+                Lang.Settings.AccessBattleMenuType0,
+                Lang.Settings.AccessBattleMenuType1,
+                Lang.Settings.AccessBattleMenuType2,
+                Lang.Settings.AccessBattleMenuType3
+            };
+            CreateCombobox("AccessBattleMenu", accessmenuchoices, 50, Lang.Settings.AccessBattleMenu, Lang.Settings.AccessBattleMenu_Tooltip);
 
 
 
