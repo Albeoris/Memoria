@@ -4,6 +4,13 @@
         x:Class="Memoria.Launcher.UiLauncherButton"
         Width="240"
         Height="72">
+    <Button.Resources>
+        <DropShadowEffect x:Key="bdropShadowEffect"
+            BlurRadius="4" 
+            Direction="-45" 
+            Color="#555"
+            RenderingBias="Quality"/>
+    </Button.Resources>
     <Button.Template>
         <ControlTemplate TargetType="Button">
             <Grid x:Name="LayoutRoot"
@@ -14,7 +21,6 @@
                     Opacity="0.8"
                     CornerRadius="7">
                 </Border>
-
                 <Border x:Name="HoverOverlay"
                     Background="{StaticResource BrushAccentColorHover}"
                     Opacity="0"
@@ -26,6 +32,7 @@
                     FontSize="28"
                     FontFamily="{DynamicResource CenturyGothic}"
                     VerticalAlignment="Center"
+                    Effect="{StaticResource bdropShadowEffect}"
                     HorizontalAlignment="Center"
                     Foreground="#cfff">
                 </TextBlock>

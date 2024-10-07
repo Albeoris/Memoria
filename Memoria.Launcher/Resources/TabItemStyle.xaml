@@ -18,8 +18,8 @@
                         <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="15,15,0,0" BorderThickness="0,2,0,0" BorderBrush="#6666" >
                             <Border >
                                 <StackPanel x:Name="contentwrap" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <Image x:Name="IncompatImage" Source="/images/alert_incompat.png" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}" Height="16" Margin="0,0,3,0" Visibility="Collapsed" />
-                                    <Image x:Name="UpdateImage" Source="/images/alert_update.png" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}" Height="16" Margin="0,0,3,0" Visibility="Collapsed" />
+                                    <Image x:Name="IncompatImage" Source="/images/alert_incompat.png" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}" Height="16" Margin="0" Visibility="Collapsed" />
+                                    <Image x:Name="UpdateImage" Source="/images/alert_update.png" Width="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabItem}}, Path=Tag}" Height="16" Margin="0" Visibility="Collapsed" />
                                     <ContentPresenter x:Name="content" 
                                         ContentSource="Header"
                                         VerticalAlignment="Center"
@@ -52,7 +52,6 @@
 
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-
                                 <Condition Binding="{Binding AreThereModUpdates}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.Setters>
@@ -71,6 +70,7 @@
                             <Setter Property="Margin" Value="-4,0,0,0" />
                             <Setter Property="Background" Value="#b000" />
                             <Setter TargetName="content" Property="TextElement.Foreground" Value="{DynamicResource BrushLightColorNormal}"/>
+                            <Setter TargetName="content" Property="TextElement.FontWeight" Value="Bold"/>
                             <Trigger.EnterActions>
                                 <BeginStoryboard>
                                     <Storyboard>

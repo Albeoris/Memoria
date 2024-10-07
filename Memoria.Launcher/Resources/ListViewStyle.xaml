@@ -188,7 +188,7 @@
                 <ControlTemplate TargetType="ListBoxItem">
                     <Grid>
                         <Border x:Name="Border" SnapsToDevicePixels="true" Background="{DynamicResource BrushAccentColor}" Opacity="0"/>
-                        <Border Padding="0,0,0,0" Background="Transparent" VerticalAlignment="Center">
+                        <Border Padding="0,3,0,1" Background="Transparent" VerticalAlignment="Center">
                             <GridViewRowPresenter VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Height="22"/>
                         </Border>
                     </Grid>
