@@ -179,7 +179,6 @@
                                     Cursor="Hand"
                                     TextBlock.FontSize="{TemplateBinding FontSize}"
                                     TextBlock.FontFamily="{DynamicResource CenturyGothic}"
-                                    TextBlock.FontWeight="{TemplateBinding FontWeight}"
                                     TextBlock.Foreground="{TemplateBinding Foreground}" />
                                 </Border>
                             </Border>
@@ -188,15 +187,16 @@
                             <Trigger Property="IsSelected" Value="True">
                                 <Setter TargetName="borderbottom" Property="Opacity" Value="0.9" />
                                 <Setter TargetName="borderbottom" Property="Background" Value="{StaticResource BrushAccentColor}" />
-                                <Setter TargetName="bordertop" Property="BorderBrush" Value="{StaticResource BrushAccentColorHover}" />
-                                <Setter TargetName="borderbottom" Property="BorderBrush" Value="{StaticResource BrushAccentColorDarker}" />
+                                <Setter TargetName="bordertop" Property="BorderBrush" Value="{StaticResource BrushAccentColorDarker}" />
+                                <Setter TargetName="borderbottom" Property="BorderBrush" Value="{StaticResource BrushAccentColorHover}" />
                                 <Setter TargetName="content" Property="TextBlock.Effect" Value="{StaticResource ButtondropShadowEffect}" />
                             </Trigger>
                             <Trigger Property="IsSelected" Value="False">
                                 <Setter TargetName="borderbottom" Property="Opacity" Value="0.8" />
-                                <Setter TargetName="bordertop" Property="BorderBrush" Value="#8333" />
-                                <Setter TargetName="borderbottom" Property="BorderBrush" Value="#5aaa" />
+                                <Setter TargetName="bordertop" Property="BorderBrush" Value="#5aaa" />
+                                <Setter TargetName="borderbottom" Property="BorderBrush" Value="#8333" />
                                 <Setter TargetName="borderbottom" Property="Background" Value="{StaticResource TabGradientUnselected}" />
+                                <Setter TargetName="content" Property="TextBlock.FontWeight" Value="Normal" />
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter TargetName="borderbottom" Property="Cursor" Value="Hand" />
