@@ -1474,7 +1474,9 @@ public class FieldMap : HonoBehavior
 
         foreach (int[] entry in FixDepthOfLayer)
         {
-            if (entry[0] == FF9StateSystem.Common.FF9.fldMapNo && entry[1] == this.camIdx && entry[2] == ovrNdx)
+            if (Configuration.Graphics.TileSize == 32 && (entry[0] == 562 || entry[0] == 1309 || entry[0] == 2109))
+            { }
+            else if (entry[0] == FF9StateSystem.Common.FF9.fldMapNo && entry[1] == this.camIdx && entry[2] == ovrNdx)
             {
                 bgOverlay.curZ = (ushort)entry[3];
                 bgOverlay.transform.localPosition = new Vector3(bgOverlay.transform.localPosition.x, bgOverlay.transform.localPosition.y, entry[3]);
@@ -2522,6 +2524,9 @@ public class FieldMap : HonoBehavior
         [2207,0,5,0],       // Desert palace teleporter light 5
         [2209,0,0,0],       // Desert palace teleporter light
         [2211,0,8,400],     // Desert palace teleporter light
+        [2217,0,1,1847],    // Candle light
+        [2217,0,6,3000],    // Candle light
+        [2217,0,8,5000],    // Candle light
         [2221,0,17,2200],   // Candle light
         [2222,0,2,1000],    // Desert palace teleporter light
         [2502,0,14,1400],   // Ypsen, entrance light
@@ -2538,7 +2543,7 @@ public class FieldMap : HonoBehavior
         [2600,0,13,8000],   // Branbal, background
         [2605,0,3,2200],    // Branbal, light of light net
         [2657,0,4,2040],    // Branbal, light in the room
-        [2800,0,26,1700],   // Dagguereo Zidane behind beckground on left path
+        //[2800,0,26,1700],   // Dagguereo Zidane behind beckground on left path
         [2922,0,8,4329],    // Crystal world (was not active on PSX)
         [2922,0,10,3179],   // Crystal world (was not active on PSX)
         [2922,0,11,3179],   // Crystal world (was not active on PSX)

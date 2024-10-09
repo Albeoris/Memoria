@@ -21,6 +21,7 @@ namespace Memoria.Launcher
     public sealed class UiLauncherPlayButton : UiLauncherButton
     {
         public SettingsGrid_Vanilla GameSettings { get; set; }
+        public SettingsGrid_VanillaDisplay GameSettingsDisplay { get; set; }
         private ManualResetEvent CancelEvent { get; } = new ManualResetEvent(false);
 
         public UiLauncherPlayButton()
@@ -55,19 +56,19 @@ namespace Memoria.Launcher
                         return;
                 }
 
-                if (GameSettings.ScreenResolution == null)
+                if (GameSettingsDisplay.ScreenResolution == null)
                 {
                     MessageBox.Show((Window)this.GetRootElement(), "Please select an available resolution.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                     return;
                 }
 
                 Int32 activeMonitor = -1;
-                if (!String.IsNullOrEmpty(GameSettings.ActiveMonitor))
+                if (!String.IsNullOrEmpty(GameSettingsDisplay.ActiveMonitor))
                 {
-                    Int32 spaceIndex = GameSettings.ActiveMonitor.IndexOf(' ');
+                    Int32 spaceIndex = GameSettingsDisplay.ActiveMonitor.IndexOf(' ');
                     if (spaceIndex > 0)
                     {
-                        String activeMonitorNumber = GameSettings.ActiveMonitor.Substring(0, spaceIndex);
+                        String activeMonitorNumber = GameSettingsDisplay.ActiveMonitor.Substring(0, spaceIndex);
                         Int32.TryParse(activeMonitorNumber, NumberStyles.Integer, CultureInfo.InvariantCulture, out activeMonitor);
                     }
                 }
@@ -78,7 +79,7 @@ namespace Memoria.Launcher
                     return;
                 }
 
-                String[] strArray = GameSettings.ScreenResolution.Split(' ')[0].Split('x');
+                String[] strArray = GameSettingsDisplay.ScreenResolution.Split(' ')[0].Split('x');
                 Int32 screenWidth;
                 Int32 screenHeight;
                 if (strArray.Length < 2 || !Int32.TryParse(strArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenWidth) || !Int32.TryParse(strArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenHeight))
@@ -134,7 +135,7 @@ namespace Memoria.Launcher
                     }
                 }
 
-                String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {((GameSettings.WindowMode == 0 ^ GameSettings.WindowMode == 2) ? "0" : "1")} {(GameSettings.WindowMode == 2 ? "-popupwindow" : "")}";
+                String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {((GameSettingsDisplay.WindowMode == 0 ^ GameSettingsDisplay.WindowMode == 2) ? "0" : "1")} {(GameSettingsDisplay.WindowMode == 2 ? "-popupwindow" : "")}";
                 await Task.Factory.StartNew(
                     () =>
                     {

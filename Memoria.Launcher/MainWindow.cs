@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
@@ -16,8 +17,7 @@ namespace Memoria.Launcher
 {
     public partial class MainWindow : Window, IComponentConnector
     {
-        public ModManagerWindow ModdingWindow;
-        public AdvOptionsWindow AdvOptionsWindow;
+        //public ModManagerWindow ModdingWindow;
         public DateTime MemoriaAssemblyCompileDate;
 
         public MainWindow()
@@ -43,17 +43,25 @@ namespace Memoria.Launcher
             TryLoadImage();
 
             PlayButton.GameSettings = GameSettings;
+            PlayButton.GameSettingsDisplay = GameSettingsDisplay;
             Loaded += OnLoaded;
+            Closing += new CancelEventHandler(OnClosing);
+            LoadSettings();
+            KeyUp += ModManagerWindow_KeyUp;
         }
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
         {
             HotfixForMoguriMod();
-            Title = Lang.Settings.LauncherWindowTitle + " | " + MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
+            Title = Lang.Settings.LauncherWindowTitle + " | v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
+            Nameandversion.Text = Lang.Settings.MemoriaEngine + " v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
+            menuSettings.Header = Lang.Settings.menuSettings;
+            menuCheats.Header = Lang.Settings.menuCheats;
+            menuAdvanced.Header = Lang.Settings.menuAdvanced;
 
             // Creates a Mod Manager window (but completely invisible) to trigger "onLoaded" to download the mod catalog retrieve the info that updates or incompatibilities exist.
             // It's instantly closed and the info is retrieved by ComeBackToLauncherFromModManager() to define if any icon is displayed
-            MainWindow mainWindow = (MainWindow)this.GetRootElement();
+            /*MainWindow mainWindow = (MainWindow)this.GetRootElement();
             if (mainWindow.ModdingWindow == null)
                 mainWindow.ModdingWindow = new ModManagerWindow();
             mainWindow.ModdingWindow.Owner = mainWindow;
@@ -66,17 +74,53 @@ namespace Memoria.Launcher
             mainWindow.ModdingWindow.ShowActivated = false;
             mainWindow.ModdingWindow.Show();
             mainWindow.ModdingWindow.Close();
+            */
+
+
+
+
+            SetupFrameLang();
+            UpdateCatalog();
+            LoadSettings2();
+            CheckForValidModFolder();
+            CheckOutdatedAndIncompatibleMods();
+            lstCatalogMods.ItemsSource = modListCatalog;
+            lstMods.ItemsSource = modListInstalled;
+            lstDownloads.ItemsSource = downloadList;
+            UpdateCatalogInstallationState();
+
+            lstCatalogMods.SelectionChanged += OnModListSelect;
+            lstMods.SelectionChanged += OnModListSelect;
+            tabCtrlMain.SelectionChanged += OnModListSelect;
+            PreviewSubModList.SelectionChanged += OnSubModSelect;
+            PreviewSubModActive.Checked += OnSubModActivate;
+            PreviewSubModActive.Unchecked += OnSubModActivate;
+            if (modListInstalled.Count == 0)
+                tabCtrlMain.SelectedIndex = 1;
+            UpdateModDetails((Mod)null);
+            CheckOutdatedAndIncompatibleMods();
+
+
 
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();
+
+
+
+        }
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close(); // Closes the window when the button is clicked
         }
 
         public void ComeBackToLauncherFromModManager(Boolean updates, Boolean incompat)
         {
+            /*
             alert_update_icon.Visibility = updates ? Visibility.Visible : Visibility.Collapsed;
             alert_incompat_icon.Visibility = incompat ? Visibility.Visible : Visibility.Collapsed;
             alert_update_icon.ToolTip = Lang.Launcher.ModUpdateAvailable;
             alert_incompat_icon.ToolTip = Lang.Launcher.ModConflict;
+            */
         }
 
         private void HotfixForMoguriMod()

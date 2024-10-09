@@ -123,6 +123,24 @@ public class CommonSPSSystem
             pos = new Vector3(-1030, 1400, 1716);
         if (MapNo == 2304 && name == "SPS_0001" && pos.x == 830 && pos.y == 1479 && pos.z == 1516) // esto gaza flames
             pos = new Vector3(790, 1400, 2016);
+        if (MapNo == 303 && name == "SPS_0002") // Ice cave smoke
+            pos = new Vector3(4330, -1227, -700);
+        if (MapNo == 205 && name == "SPS_0000" && pos.x == -110 && pos.y == 850 && pos.z == 510) // prima vista candle
+            pos.x = -122;
+        if (MapNo == 207 && name == "SPS_0000" && pos.x == 865 && pos.y == 465 && pos.z == -22) // prima vista candle
+            pos = new Vector3(845, 485, -82);
+        if (MapNo == 262 && name == "SPS_0000" && pos.x == 355 && pos.y == 160 && pos.z == 4150)
+            pos.x = 385;
+        if (MapNo == 162 && name == "SPS_0002" && pos.x == -340 && pos.y == 660 && pos.z == -314)
+            pos = new Vector3(-350, 640, -314);
+        if (MapNo == 162 && name == "SPS_0003" && pos.x == -460 && pos.y == 670 && pos.z == -314)
+            pos = new Vector3(-470, 650, -314);
+        if (MapNo == 162 && name == "SPS_0004" && pos.x == -570 && pos.y == 654 && pos.z == -314)
+            pos = new Vector3(-580, 640, -314);
+        if (MapNo == 163 && name == "SPS_0002" && pos.x == 821 && pos.y == 502 && pos.z == 4389)
+            pos = new Vector3(735, 475, 4000);
+        if (MapNo == 163 && name == "SPS_0001" && pos.x == 1150 && pos.y == 529 && pos.z == 4306)
+            pos = new Vector3(1060, 505, 4000);
         return pos;
     }
 

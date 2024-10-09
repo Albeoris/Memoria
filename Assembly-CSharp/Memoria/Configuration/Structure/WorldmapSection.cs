@@ -7,11 +7,12 @@ namespace Memoria
     {
         private sealed class WorldmapSection : IniSection
         {
-            public readonly IniValue<Int32> ViewDistance;
+            public readonly IniValue<Int32> MistViewDistance;
             public readonly IniValue<Int32> MistStartDistance_base;
             public readonly IniValue<Int32> MistStartDistance;
             public readonly IniValue<Int32> MistEndDistance;
             public readonly IniValue<Int32> MistDensity;
+            public readonly IniValue<Int32> NoMistViewDistance;
             public readonly IniValue<Int32> FogStartDistance;
             public readonly IniValue<Int32> FogEndDistance;
             public readonly IniValue<Int32> FieldOfView;
@@ -23,11 +24,12 @@ namespace Memoria
 
             public WorldmapSection() : base(nameof(WorldmapSection), false)
             {
-                ViewDistance = BindInt32(nameof(ViewDistance), 100);
+                MistViewDistance = BindInt32(nameof(MistViewDistance), 100);
                 MistStartDistance_base = BindInt32(nameof(MistStartDistance_base), 55);
                 MistStartDistance = BindInt32(nameof(MistStartDistance), 27);
                 MistEndDistance = BindInt32(nameof(MistEndDistance), 80);
                 MistDensity = BindInt32(nameof(MistDensity), 7);
+                NoMistViewDistance = BindInt32(nameof(NoMistViewDistance), 100);
                 FogStartDistance = BindInt32(nameof(FogStartDistance), 86);
                 FogEndDistance = BindInt32(nameof(FogEndDistance), 142);
                 FieldOfView = BindInt32(nameof(FieldOfView), 44);

@@ -142,6 +142,7 @@ namespace Memoria.Launcher
             }
 
             public static readonly string LauncherWindowTitle = GetSettings(nameof(LauncherWindowTitle));
+            public static readonly string MemoriaEngine = GetSettings(nameof(MemoriaEngine));
 
             public static readonly string ActiveMonitor = GetSettings(nameof(ActiveMonitor));
             public static readonly string PrimaryMonitor = GetSettings(nameof(PrimaryMonitor));
@@ -170,10 +171,9 @@ namespace Memoria.Launcher
             public static readonly string SpeedChoiceType1 = GetSettings(nameof(SpeedChoiceType1));
             public static readonly string SpeedChoiceType2 = GetSettings(nameof(SpeedChoiceType2));
             public static readonly string SpeedChoiceType3 = GetSettings(nameof(SpeedChoiceType3));
-            public static readonly string SpeedChoiceType4 = GetSettings(nameof(SpeedChoiceType4));
-            public static readonly string SpeedChoiceType5 = GetSettings(nameof(SpeedChoiceType5));
             public static readonly string TripleTriad = GetSettings(nameof(TripleTriad));
             public static readonly string TripleTriadType0 = GetSettings(nameof(TripleTriadType0));
+            public static readonly string TripleTriadType0_ReduceRandom = GetSettings(nameof(TripleTriadType0_ReduceRandom));
             public static readonly string TripleTriadType1 = GetSettings(nameof(TripleTriadType1));
             public static readonly string TripleTriadType2 = GetSettings(nameof(TripleTriadType2));
             public static readonly string Volume = GetSettings(nameof(Volume));
@@ -191,7 +191,6 @@ namespace Memoria.Launcher
             public static readonly string AccessBattleMenuType3 = GetSettings(nameof(AccessBattleMenuType3));
             public static readonly string SpeedMode = GetSettings(nameof(SpeedMode));
             public static readonly string SpeedFactor = GetSettings(nameof(SpeedFactor));
-            public static readonly string BattleAssistance = GetSettings(nameof(BattleAssistance));
             public static readonly string PermanentTranse = GetSettings(nameof(PermanentTranse));
             public static readonly string MaxDamage = GetSettings(nameof(MaxDamage));
             public static readonly string NoRandomBattles = GetSettings(nameof(NoRandomBattles));
@@ -213,7 +212,6 @@ namespace Memoria.Launcher
             public static readonly string UIColumnsChoice1 = GetSettings(nameof(UIColumnsChoice1));
             public static readonly string UIColumnsChoice2 = GetSettings(nameof(UIColumnsChoice2));
             public static readonly string NoAutoTrance = GetSettings(nameof(NoAutoTrance));
-            public static readonly string CardReduceRandom = GetSettings(nameof(CardReduceRandom));
             public static readonly string tetraMasterReduceRandomBox0 = GetSettings(nameof(tetraMasterReduceRandomBox0));
             public static readonly string tetraMasterReduceRandomBox1 = GetSettings(nameof(tetraMasterReduceRandomBox1));
             public static readonly string tetraMasterReduceRandomBox2 = GetSettings(nameof(tetraMasterReduceRandomBox2));
@@ -258,13 +256,10 @@ namespace Memoria.Launcher
             public static readonly string BreakDamageLimit_Tooltip = GetSettings(nameof(BreakDamageLimit_Tooltip));
             public static readonly string AccessBattleMenu_Tooltip = GetSettings(nameof(AccessBattleMenu_Tooltip));
             public static readonly string SpeedMode_Tooltip = GetSettings(nameof(SpeedMode_Tooltip));
-            public static readonly string SpeedFactor_Tooltip = GetSettings(nameof(SpeedFactor_Tooltip));
             public static readonly string BattleAssistance_Tooltip = GetSettings(nameof(BattleAssistance_Tooltip));
             public static readonly string NoRandomBattles_Tooltip = GetSettings(nameof(NoRandomBattles_Tooltip));
             public static readonly string PermanentCheats_Tooltip = GetSettings(nameof(PermanentCheats_Tooltip));
             public static readonly string MaxCardCount_Tooltip = GetSettings(nameof(MaxCardCount_Tooltip));
-            public static readonly string CardReduceRandom_Tooltip = GetSettings(nameof(CardReduceRandom_Tooltip));
-
 
             public static readonly string FPSDropboxChoice = GetSettings(nameof(FPSDropboxChoice));
             public static readonly string FPSDropboxChoice0 = GetSettings(nameof(FPSDropboxChoice0));
@@ -281,24 +276,77 @@ namespace Memoria.Launcher
             public static readonly string Shader_Outlines = GetSettings(nameof(Shader_Outlines));
             public static readonly string Custom = GetSettings(nameof(Custom));
 
-        }
+            public static readonly string Other = GetSettings(nameof(Other));
+            public static readonly string Display = GetSettings(nameof(Display));
+            public static readonly string Cards = GetSettings(nameof(Cards));
+            public static readonly string Advanced = GetSettings(nameof(Advanced));
+            public static readonly string FieldShader = GetSettings(nameof(FieldShader));
+            public static readonly string BattleShader = GetSettings(nameof(BattleShader));
+            public static readonly string FieldShader_Tooltip = GetSettings(nameof(FieldShader_Tooltip));
+            public static readonly string BattleShader_Tooltip = GetSettings(nameof(BattleShader_Tooltip));
+            public static readonly string ShaderDropboxChoice0 = GetSettings(nameof(ShaderDropboxChoice0));
+            public static readonly string ShaderDropboxChoice1 = GetSettings(nameof(ShaderDropboxChoice1));
+            public static readonly string ShaderDropboxChoice2 = GetSettings(nameof(ShaderDropboxChoice2));
+            public static readonly string ShaderDropboxChoice3 = GetSettings(nameof(ShaderDropboxChoice3));
+            public static readonly string ShaderDropboxChoice4 = GetSettings(nameof(ShaderDropboxChoice4));
+            public static readonly string ShaderDropboxChoice5 = GetSettings(nameof(ShaderDropboxChoice5));
+            public static readonly string menuSettings = GetSettings(nameof(menuSettings));
+            public static readonly string menuAdvanced = GetSettings(nameof(menuAdvanced));
+            public static readonly string menuCheats = GetSettings(nameof(menuCheats));
+            public static readonly string menuPresets = GetSettings(nameof(menuPresets));
+            public static readonly string Worldmap = GetSettings(nameof(Worldmap));
+            public static readonly string QoL = GetSettings(nameof(QoL));
 
+            public static readonly string Battle = GetSettings(nameof(Battle));
+            public static readonly string VanillaCheats = GetSettings(nameof(VanillaCheats));
+            public static readonly string EasyTetraMaster = GetSettings(nameof(EasyTetraMaster));
+            public static readonly string EasyTetraMaster_Tooltip = GetSettings(nameof(EasyTetraMaster_Tooltip));
+            public static readonly string CardReduceRandom = GetSettings(nameof(CardReduceRandom));
+            public static readonly string CardReduceRandom_Tooltip = GetSettings(nameof(CardReduceRandom_Tooltip));
+            public static readonly string WorldmapMistPreset = GetSettings(nameof(WorldmapMistPreset));
+            public static readonly string WorldmapMistPreset_Tooltip = GetSettings(nameof(WorldmapMistPreset_Tooltip));
+            public static readonly string WorldmapMistPresetChoice0 = GetSettings(nameof(WorldmapMistPresetChoice0));
+            public static readonly string WorldmapMistPresetChoice1 = GetSettings(nameof(WorldmapMistPresetChoice1));
+            public static readonly string WorldmapMistPresetChoice2 = GetSettings(nameof(WorldmapMistPresetChoice2));
+            public static readonly string WorldmapMistPresetChoice3 = GetSettings(nameof(WorldmapMistPresetChoice3));
+            public static readonly string WorldmapDistancePreset = GetSettings(nameof(WorldmapDistancePreset));
+            public static readonly string WorldmapDistancePreset_Tooltip = GetSettings(nameof(WorldmapDistancePreset_Tooltip));
+            public static readonly string WorldmapDistancePresetChoice0 = GetSettings(nameof(WorldmapDistancePresetChoice0));
+            public static readonly string WorldmapDistancePresetChoice1 = GetSettings(nameof(WorldmapDistancePresetChoice1));
+            public static readonly string WorldmapDistancePresetChoice2 = GetSettings(nameof(WorldmapDistancePresetChoice2));
+            public static readonly string WorldmapDistancePresetChoice3 = GetSettings(nameof(WorldmapDistancePresetChoice3));
+            public static readonly string WorldmapFOV = GetSettings(nameof(WorldmapFOV));
+            public static readonly string WorldmapFOV_Tooltip = GetSettings(nameof(WorldmapFOV_Tooltip));
+            public static readonly string WorldmapBoost = GetSettings(nameof(WorldmapBoost));
+            public static readonly string WorldmapBoost_Tooltip = GetSettings(nameof(WorldmapBoost_Tooltip));
+            public static readonly string WorldmapShipTilt = GetSettings(nameof(WorldmapShipTilt));
+            public static readonly string WorldmapShipTilt_Tooltip = GetSettings(nameof(WorldmapShipTilt_Tooltip));
 
-        public static class SdLib
-        {
-            private static String GetSdLib(string name)
-            {
-                return Instance.Value.GetString(name, nameof(SdLib));
-            }
+            public static readonly string ExcaliburIINoTimeLimit = GetSettings(nameof(ExcaliburIINoTimeLimit));
+            public static readonly string ExcaliburIINoTimeLimit_Tooltip = GetSettings(nameof(ExcaliburIINoTimeLimit_Tooltip));
+            public static readonly string ViviAutoAttack = GetSettings(nameof(ViviAutoAttack));
+            public static readonly string ViviAutoAttack_Tooltip = GetSettings(nameof(ViviAutoAttack_Tooltip));
 
-            public static readonly string Caption = GetSdLib(nameof(Caption));
-            public static readonly string AreYouSure = GetSdLib(nameof(AreYouSure));
-            public static readonly String SuccessBoth = GetSdLib(nameof(SuccessBoth));
-            public static readonly String SuccessX64 = GetSdLib(nameof(SuccessX64));
-            public static readonly String SuccessX86 = GetSdLib(nameof(SuccessX86));
-            public static readonly String Fail = GetSdLib(nameof(Fail));
-            public static readonly String CannotRead = GetSdLib(nameof(CannotRead));
-            public static readonly String CannotWrite = GetSdLib(nameof(CannotWrite));
+            public static readonly string AccessBattleMenuToggle = GetSettings(nameof(AccessBattleMenuToggle));
+            public static readonly string AccessBattleMenuToggle_Tooltip = GetSettings(nameof(AccessBattleMenuToggle_Tooltip));
+            public static readonly string EasyJumpRopeMinigame = GetSettings(nameof(EasyJumpRopeMinigame));
+            public static readonly string EasyJumpRopeMinigame_Tooltip = GetSettings(nameof(EasyJumpRopeMinigame_Tooltip));
+            public static readonly string Attack9999 = GetSettings(nameof(Attack9999));
+            public static readonly string Attack9999_Tooltip = GetSettings(nameof(Attack9999_Tooltip));
+            public static readonly string WMCameraHeight = GetSettings(nameof(WMCameraHeight));
+            public static readonly string WMCameraHeight_Tooltip = GetSettings(nameof(WMCameraHeight_Tooltip));
+            public static readonly string WorldmapTPS = GetSettings(nameof(WorldmapTPS));
+            public static readonly string WorldmapTPS_Tooltip = GetSettings(nameof(WorldmapTPS_Tooltip));
+            public static readonly string HippaulRacingViviSpeed = GetSettings(nameof(HippaulRacingViviSpeed));
+            public static readonly string HippaulRacingViviSpeed_Tooltip = GetSettings(nameof(HippaulRacingViviSpeed_Tooltip));
+            public static readonly string AudioBackend = GetSettings(nameof(AudioBackend));
+            public static readonly string AudioBackend_Tooltip = GetSettings(nameof(AudioBackend_Tooltip));
+            public static readonly string WorldSmoothTexture = GetSettings(nameof(WorldSmoothTexture));
+            public static readonly string WorldSmoothTexture_Tooltip = GetSettings(nameof(WorldSmoothTexture_Tooltip));
+            public static readonly string BattleSmoothTexture = GetSettings(nameof(BattleSmoothTexture));
+            public static readonly string BattleSmoothTexture_Tooltip = GetSettings(nameof(BattleSmoothTexture_Tooltip));
+            public static readonly string ElementsSmoothTexture = GetSettings(nameof(ElementsSmoothTexture));
+            public static readonly string ElementsSmoothTexture_Tooltip = GetSettings(nameof(ElementsSmoothTexture_Tooltip));
         }
 
         public static class SteamOverlay
