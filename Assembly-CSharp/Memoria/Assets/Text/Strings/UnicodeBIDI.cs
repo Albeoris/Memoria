@@ -95,7 +95,7 @@ namespace Memoria.Assets
                     case CharacterClass.Boundary_Neutral:
                     case CharacterClass.Paragraph_Separator:
                         while (currentState.parent != null)
-                            DirectionalStatus.Pop(ref currentState, index);
+                            DirectionalStatus.Pop(ref currentState, closeIndex);
                         currentState.end = index;
                         currentState = new DirectionalStatus
                         {
@@ -134,7 +134,7 @@ namespace Memoria.Assets
                         {
                             while (!currentState.isIsolate && !currentState.isOverride && currentState.ltr && currentState.parent != null)
                                 DirectionalStatus.Pop(ref currentState, closeIndex);
-                            if (!currentState.ltr)
+                            if (currentState.ltr)
                                 DirectionalStatus.Push(ref currentState, index, false, OVERRIDE_STATUS_RTL, false, false);
                         }
                         break;
@@ -158,6 +158,8 @@ namespace Memoria.Assets
                 if (bidiClass != CharacterClass.White_Space && bidiClass != CharacterClass.Common_Separator && bidiClass != CharacterClass.European_Separator && bidiClass != CharacterClass.European_Terminator && bidiClass != CharacterClass.Segment_Separator && bidiClass != CharacterClass.Other_Neutral)
                     closeIndex = index;
             }
+            while (currentState.parent != null)
+                DirectionalStatus.Pop(ref currentState, closeIndex);
             HashSet<Int32> pairPositions = new HashSet<Int32>();
             MustMirror = new HashSet<Int32>();
             Reposition = new Int32[FullText.Length];
@@ -209,48 +211,67 @@ namespace Memoria.Assets
             Int32 chPos = index;
             Char ch = FullText[index++];
             Char transform, transformNext;
-            Boolean canJoin = false;
+            Boolean initJoin = false;
+            Int32 joinCount = 0;
             if (BeforeJoiningCharacters.TryGetValue(ch, out transform) || DualJoiningCharacters.TryGetValue(ch, out transform))
             {
-                canJoin = true;
+                initJoin = true;
             }
             else if (JoinCausingCharacters.Contains(ch))
             {
                 transform = ch;
-                canJoin = true;
+                initJoin = true;
             }
-            while (canJoin && index < FullText.Length)
+            if (initJoin)
             {
-                ch = FullText[index];
-                if (DualJoiningCharacters.TryGetValue(ch, out transformNext))
+                while (index < FullText.Length)
                 {
-                    FullText[chPos] = transform;
-                    chPos = index++;
-                    transform = transformNext;
-                    canJoin = true;
+                    ch = FullText[index];
+                    if (ch == 0x0627 && FullText[chPos] == 0x0644) // Lam-Aleph ligatures
+                    {
+                        if (joinCount == 0)
+                            FullText[chPos] = (Char)0xFEFB; // isolated form
+                        else
+                            FullText[chPos] = (Char)0xFEFC; // final form
+                        FullText[index++] = (Char)0x200B; // Zero-width space, which is join-transparent, in order to keep the same character count
+                        return;
+                    }
+                    else if (DualJoiningCharacters.TryGetValue(ch, out transformNext))
+                    {
+                        FullText[chPos] = transform;
+                        chPos = index++;
+                        transform = transformNext;
+                        joinCount++;
+                    }
+                    else if (AfterJoiningCharacters.TryGetValue(ch, out transformNext))
+                    {
+                        FullText[chPos] = transform;
+                        FullText[index++] = transformNext;
+                        return;
+                    }
+                    else if (JoinCausingCharacters.Contains(ch))
+                    {
+                        FullText[chPos] = transform;
+                        chPos = index++;
+                        transform = ch;
+                        joinCount++;
+                    }
+                    else if (IsJoinTransparent(ch))
+                    {
+                        ++index;
+                    }
+                    else
+                    {
+                        ++index;
+                        break;
+                    }
                 }
-                else if (AfterJoiningCharacters.TryGetValue(ch, out transformNext))
+                if (joinCount > 0)
                 {
-                    FullText[chPos] = transform;
-                    FullText[index++] = transformNext;
-                    canJoin = false;
-                }
-                else if (JoinCausingCharacters.Contains(ch))
-                {
-                    FullText[chPos] = transform;
-                    chPos = index++;
-                    transform = ch;
-                    canJoin = true;
-                }
-                else if (IsJoinTransparent(ch))
-                {
-                    canJoin = true;
-                    ++index;
-                }
-                else
-                {
-                    canJoin = false;
-                    ++index;
+                    if (AfterJoiningCharacters.TryGetValue(FullText[chPos], out transformNext))
+                        FullText[chPos] = transformNext;
+                    else
+                        FullText[chPos] = transform;
                 }
             }
         }
@@ -1300,6 +1321,7 @@ namespace Memoria.Assets
 
         private static Dictionary<Char, Char> DualJoiningCharacters = new Dictionary<Char, Char>()
         {
+            { (Char)0x0626, (Char)0xFE8C },
             { (Char)0x0628, (Char)0xFE92 },
             { (Char)0x062A, (Char)0xFE98 },
             { (Char)0x062B, (Char)0xFE9C },
@@ -1326,6 +1348,7 @@ namespace Memoria.Assets
 
         private static Dictionary<Char, Char> BeforeJoiningCharacters = new Dictionary<Char, Char>()
         {
+            { (Char)0x0626, (Char)0xFE8B },
             { (Char)0x0628, (Char)0xFE91 },
             { (Char)0x062A, (Char)0xFE97 },
             { (Char)0x062B, (Char)0xFE9B },
@@ -1352,8 +1375,11 @@ namespace Memoria.Assets
 
         private static Dictionary<Char, Char> AfterJoiningCharacters = new Dictionary<Char, Char>()
         {
+            { (Char)0x0622, (Char)0xFE82 },
+            { (Char)0x0626, (Char)0xFE8A },
             { (Char)0x0627, (Char)0xFE8E },
             { (Char)0x0628, (Char)0xFE90 },
+            { (Char)0x0629, (Char)0xFE94 },
             { (Char)0x062A, (Char)0xFE96 },
             { (Char)0x062B, (Char)0xFE9A },
             { (Char)0x062C, (Char)0xFE9E },
@@ -1379,10 +1405,8 @@ namespace Memoria.Assets
             { (Char)0x0646, (Char)0xFEE6 },
             { (Char)0x0647, (Char)0xFEEA },
             { (Char)0x0648, (Char)0xFEEE },
-            { (Char)0x064A, (Char)0xFEF2 },
-            { (Char)0x0622, (Char)0xFE82 },
-            { (Char)0x0629, (Char)0xFE94 },
             { (Char)0x0649, (Char)0xFEF0 },
+            { (Char)0x064A, (Char)0xFEF2 },
         };
 
         private static HashSet<Char> JoinCausingCharacters = new HashSet<Char>()

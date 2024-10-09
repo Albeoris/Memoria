@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
@@ -173,7 +174,7 @@ public static class battle
         }
         if (!FF9StateSystem.Battle.isDebug)
             PersistenSingleton<EventEngine>.Instance.ServiceEvents();
-        if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_NORMAL && ff9Battle.cur_cmd_list.Count == 0 && btl_scrp.GetBattleID(1u) == 0)
+        if (ff9Battle.btl_phase == FF9StateBattleSystem.PHASE_NORMAL && ff9Battle.cur_cmd_list.Count == 0 && btl_scrp.GetBattleID(1u) == 0 && BattleState.EnumerateUnits().Any(unit => !unit.IsUnderAnyStatus(BattleStatusConst.BattleEndFull)))
         {
             // Automatically end a battle when there is no enemy anymore, typically they escaped (warning: enemies that are not targetable but still present don't trigger the end)
             UIManager.Battle.FF9BMenu_EnableMenu(false);

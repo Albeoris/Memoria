@@ -77,6 +77,8 @@ namespace FF9
                 }
                 if (!playerStillAlive)
                     return;
+                if (btl_cmd.CheckSpecificCommand2(BattleCommandId.EnemyDying))
+                    return;
                 if (ff9Battle.btl_seq != FF9StateBattleSystem.SEQ_MENU_OFF_DEFEAT)
                     ff9Battle.btl_seq = FF9StateBattleSystem.SEQ_MENU_OFF_VICTORY;
             }

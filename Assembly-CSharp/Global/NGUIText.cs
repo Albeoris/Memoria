@@ -69,7 +69,9 @@ public static class NGUIText
             NGUIText.SpacingY,
             NGUIText.JoyStickButtonIcon,
             NGUIText.KeyboardButtonIcon,
-            NGUIText.IconSprite
+            NGUIText.IconSprite,
+            NGUIText.Justified,
+            NGUIText.Mirrored
         ];
         NGUIText.TextOffsetOpcodeSymbols =
         [
@@ -432,6 +434,7 @@ public static class NGUIText
         Vector2 printedSize = Vector2.zero;
         if (!String.IsNullOrEmpty(text))
         {
+            NGUIText.spaceWidth = NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
             if (NGUIText.encoding)
                 text = NGUIText.StripSymbols2(text);
             NGUIText.mTextModifiers.Reset();
@@ -469,7 +472,7 @@ public static class NGUIText
                         }
                         if (NGUIText.mTextModifiers.insertImage != null)
                         {
-                            currentX += NGUIText.mTextModifiers.insertImage.Size.x - 20f;
+                            currentX += NGUIText.mTextModifiers.insertImage.Size.x - NGUIText.spaceWidth;
                             NGUIText.mTextModifiers.insertImage = null;
                         }
                         if (NGUIText.mTextModifiers.extraOffset != Vector3.zero)
@@ -528,6 +531,7 @@ public static class NGUIText
 
     public static Single[] CalculateAllCharacterAdvances(String text)
     {
+        NGUIText.spaceWidth = NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
         NGUIText.Prepare(text);
         NGUIText.mTextModifiers.Reset();
         Int32 textLength = text.Length;
@@ -549,7 +553,7 @@ public static class NGUIText
                 {
                     charAdvances[texti] = NGUIText.mTextModifiers.extraOffset.x;
                     if (NGUIText.mTextModifiers.insertImage != null)
-                        charAdvances[texti] += NGUIText.mTextModifiers.insertImage.Size.x - 20f;
+                        charAdvances[texti] += NGUIText.mTextModifiers.insertImage.Size.x - NGUIText.spaceWidth;
                     texti = nexti - 1;
                 }
                 else
@@ -648,16 +652,17 @@ public static class NGUIText
                 dialogImage.LocalPosition += padding;
     }
 
-    private static void AddSpecialIconToList(BetterList<Dialog.DialogImage> specialImages, BetterList<Int32> imageAlignmentList, ref Dialog.DialogImage insertImage, Vector3 extraOffset, ref Single currentX, Single currentY, Int32 printedLine)
+    private static void ProcessInsertImage(BetterList<Dialog.DialogImage> specialImages, BetterList<Int32> imageAlignmentList, ref FFIXTextModifier modifier, ref Single currentX, Single currentY, Int32 printedLine)
     {
-        if (insertImage != null)
+        if (modifier.insertImage != null)
         {
-            insertImage.LocalPosition = new Vector3(currentX + extraOffset.x, extraOffset.y - currentY);
-            insertImage.PrintedLine = printedLine;
+            modifier.insertImage.LocalPosition = new Vector3(currentX + modifier.extraOffset.x, modifier.extraOffset.y - currentY);
+            modifier.insertImage.PrintedLine = printedLine;
+            modifier.insertImage.Mirror = modifier.mirror;
             imageAlignmentList.Add(specialImages.size);
-            specialImages.Add(insertImage);
-            currentX += insertImage.Size.x - 20f;
-            insertImage = null;
+            specialImages.Add(modifier.insertImage);
+            currentX += modifier.insertImage.Size.x - NGUIText.spaceWidth;
+            modifier.insertImage = null;
         }
     }
 
@@ -926,7 +931,7 @@ public static class NGUIText
 
     public static void Align(BetterList<Vector3> verts, Int32 indexOffset, Int32 printedLine, Single printedWidth, Int32 vertCountByCharacter, BetterList<Dialog.DialogImage> imageList)
     {
-        if (verts.size == 0 || verts.size <= indexOffset)
+        if ((verts.size == 0 || verts.size <= indexOffset) && (imageList == null || imageList.size == 0))
             return;
         Alignment bidiAlignement = NGUIText.alignment;
         if (NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft && bidiAlignement == Alignment.Left)
@@ -985,6 +990,8 @@ public static class NGUIText
             }
             case NGUIText.Alignment.Justified:
             {
+                if (verts.size == 0 || verts.size <= indexOffset)
+                    return;
                 if (printedWidth < NGUIText.rectWidth * 0.65f)
                 {
                     if (NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft)
@@ -1440,6 +1447,7 @@ public static class NGUIText
         vertsLineOffsets = new BetterList<Int32>();
         if (String.IsNullOrEmpty(text))
             return;
+        NGUIText.spaceWidth = NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
         Int32 vIndex = verts.size;
         NGUIText.Prepare(text);
         Int32 prevCh = 0;
@@ -1508,9 +1516,8 @@ public static class NGUIText
                 vIndex = verts.size;
                 vertsLineOffsets.Add(vIndex);
                 NGUIText.alignment = defaultAlignment;
-                NGUIText.mTextModifiers.center = false;
+                NGUIText.mTextModifiers.ResetLine();
                 containCharAlignment = false;
-                NGUIText.mTextModifiers.extraOffset = Vector3.zero;
                 printedLine++;
                 currentX = 0f;
                 textHeight += NGUIText.finalLineHeight;
@@ -1543,7 +1550,6 @@ public static class NGUIText
                     gradientColorBottom = NGUIText.gradientBottom * colorFromOpcode;
                     gradientColorTop = NGUIText.gradientTop * colorFromOpcode;
                 }
-                NGUIText.AddSpecialIconToList(specialImages, imgNotYetAligned, ref NGUIText.mTextModifiers.insertImage, NGUIText.mTextModifiers.extraOffset, ref currentX, textHeight, printedLine);
                 texti--;
             }
             else
@@ -1561,6 +1567,7 @@ public static class NGUIText
                     currentX = NGUIText.mTextModifiers.tabX;
                     NGUIText.mTextModifiers.tabX = 0f;
                 }
+                NGUIText.ProcessInsertImage(specialImages, imgNotYetAligned, ref NGUIText.mTextModifiers, ref currentX, textHeight, printedLine);
                 BMSymbol bmsymbol = NGUIText.useSymbols ? NGUIText.GetSymbol(text, texti, textLength) : null;
                 if (bmsymbol != null)
                 {
@@ -1580,8 +1587,7 @@ public static class NGUIText
                             vertsLineOffsets.Add(vIndex);
                         }
                         NGUIText.alignment = defaultAlignment;
-                        NGUIText.mTextModifiers.center = false;
-                        NGUIText.mTextModifiers.extraOffset = Vector3.zero;
+                        NGUIText.mTextModifiers.ResetLine();
                         printedLine++;
                         v0x -= currentX;
                         v1x -= currentX;
@@ -1601,7 +1607,7 @@ public static class NGUIText
                         Single yMin = uvRect.yMin;
                         Single xMax = uvRect.xMax;
                         Single yMax = uvRect.yMax;
-                        if (useBIDI && bidi.MustMirror.Contains(texti))
+                        if (NGUIText.mTextModifiers.mirror ^ (useBIDI && bidi.MustMirror.Contains(texti)))
                         {
                             xMin = xMax;
                             xMax = uvRect.xMin;
@@ -1672,7 +1678,6 @@ public static class NGUIText
                                 vIndex = verts.size;
                                 vertsLineOffsets.Add(vIndex);
                             }
-                            NGUIText.mTextModifiers.extraOffset = Vector3.zero;
                             v0x -= currentX;
                             v1x -= currentX;
                             v0y -= NGUIText.finalLineHeight;
@@ -1681,7 +1686,7 @@ public static class NGUIText
                             textHeight += NGUIText.finalLineHeight;
                             previousX = 0f;
                             NGUIText.alignment = defaultAlignment;
-                            NGUIText.mTextModifiers.center = false;
+                            NGUIText.mTextModifiers.ResetLine();
                         }
                         if (NGUIText.IsSpace(ch))
                         {
@@ -1706,7 +1711,7 @@ public static class NGUIText
                                     glyphInfo.u3.x = glyphInfo.u2.x;
                                     glyphInfo.u3.y = glyphInfo.u0.y;
                                 }
-                                if (useBIDI && bidi.MustMirror.Contains(texti))
+                                if (NGUIText.mTextModifiers.mirror ^ (useBIDI && bidi.MustMirror.Contains(texti)))
                                 {
                                     Single xMin = glyphInfo.u0.x;
                                     Single xMax = glyphInfo.u2.x;
@@ -1901,7 +1906,7 @@ public static class NGUIText
                 }
             }
         }
-        NGUIText.AddSpecialIconToList(specialImages, imgNotYetAligned, ref NGUIText.mTextModifiers.insertImage, NGUIText.mTextModifiers.extraOffset, ref currentX, textHeight, printedLine);
+        NGUIText.ProcessInsertImage(specialImages, imgNotYetAligned, ref NGUIText.mTextModifiers, ref currentX, textHeight, printedLine);
         if (vIndex < verts.size)
         {
             if (useBIDI)
@@ -2387,6 +2392,8 @@ public static class NGUIText
     public const String JoyStickButtonIcon = "JCBT";
     public const String NoTurboDialog = "NTUR";
     public const String IconSprite = "SPRT";
+    public const String Justified = "JSTF";
+    public const String Mirrored = "MIRR";
 
     public static readonly HashSet<String> RenderOpcodeSymbols;
     public static readonly HashSet<String> TextOffsetOpcodeSymbols;
@@ -2414,6 +2421,7 @@ public static class NGUIText
     public static Int32 fontSize = 16;
     public static Single fontScale = 1f;
     public static Single pixelDensity = 1f;
+    public static Single spaceWidth = 20f;
 
     public static FontStyle fontStyle = FontStyle.Normal;
     public static NGUIText.Alignment alignment = NGUIText.Alignment.Left;

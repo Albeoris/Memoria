@@ -7,6 +7,7 @@ namespace Memoria.Data
     {
         public RegularItem Id;
         public UInt32 Price;
+        public Int32 SellingPrice;
         public ItemCharacter CharacterMask;
         public Byte GraphicsId;
         public Byte ColorId;
@@ -30,6 +31,10 @@ namespace Memoria.Data
             EffectId = hasAuxIds || metadata.HasOption($"Include{nameof(EffectId)}") ? CsvParser.Int32(raw[index++]) : -1;
 
             Price = CsvParser.UInt32(raw[index++]);
+            if (metadata.HasOption($"Include{nameof(SellingPrice)}"))
+                SellingPrice = CsvParser.Int32(raw[index++]);
+            else
+                SellingPrice = (Int32)(Price / 2);
             GraphicsId = CsvParser.Byte(raw[index++]);
             ColorId = CsvParser.Byte(raw[index++]);
             Quality = CsvParser.Single(raw[index++]);
@@ -72,6 +77,8 @@ namespace Memoria.Data
                 writer.Int32(EffectId);
 
             writer.UInt32(Price);
+            if (metadata.HasOption($"Include{nameof(SellingPrice)}"))
+                writer.Int32(SellingPrice);
             writer.Byte(GraphicsId);
             writer.Byte(ColorId);
             writer.Single(Quality);
@@ -105,7 +112,7 @@ namespace Memoria.Data
 
         public FF9ITEM_DATA ToItemData()
         {
-            return new FF9ITEM_DATA(Price, (UInt64)CharacterMask, GraphicsId, ColorId, Quality, BonusId, AbilityIds, TypeMask, Order, WeaponId, ArmorId, EffectId);
+            return new FF9ITEM_DATA(Price, SellingPrice, (UInt64)CharacterMask, GraphicsId, ColorId, Quality, BonusId, AbilityIds, TypeMask, Order, WeaponId, ArmorId, EffectId);
         }
 
         public Boolean Weapon => (TypeMask & ItemType.Weapon) == ItemType.Weapon;

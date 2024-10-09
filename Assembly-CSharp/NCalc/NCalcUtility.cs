@@ -91,6 +91,8 @@ namespace NCalc
                 args.Result = GameState.AbilityUsage((BattleAbilityId)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 0));
             else if (name == "GetItemCount" && args.Parameters.Length == 1)
                 args.Result = GameState.ItemCount((RegularItem)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)RegularItem.NoItem));
+            else if (name == "HasKeyItem" && args.Parameters.Length == 1)
+                args.Result = GameState.HasKeyItem((Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1));
             else if (name == "GetItemProperty" && args.Parameters.Length == 2)
                 args.Result = ff9item.GetItemProperty((RegularItem)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)RegularItem.NoItem), NCalcUtility.EvaluateNCalcString(args.Parameters[1].Evaluate(), "Invalid"));
             else if (name == "GetPartyMemberLevel" && args.Parameters.Length == 1)
@@ -127,6 +129,28 @@ namespace NCalc
                     args.Result = (Int32)FF9StateSystem.EventState.gEventGlobal[index];
                 else
                     args.Result = 0;
+            }
+            else if (name == "GetMemoriaVector" && args.Parameters.Length == 2)
+            {
+                args.Result = 0;
+                Int32 id = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1);
+                if (FF9StateSystem.EventState.gScriptVector.TryGetValue(id, out List<Int32> vector))
+                {
+                    Int32 index = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), -1);
+                    if (index >= 0 && index < vector.Count)
+                        args.Result = vector[index];
+                }
+            }
+            else if (name == "GetMemoriaDictionary" && args.Parameters.Length == 2)
+            {
+                args.Result = 0;
+                Int32 id = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), -1);
+                if (FF9StateSystem.EventState.gScriptDictionary.TryGetValue(id, out Dictionary<Int32, Int32> dict))
+                {
+                    Int32 index = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), -1);
+                    if (dict.TryGetValue(index, out Int32 result))
+                        args.Result = result;
+                }
             }
             else if ((name == "CheckAnyStatus" || name == "CheckAllStatus") && args.Parameters.Length >= 2) // operators & and | are only working with UInt16 and smaller types in NCalc...
             {

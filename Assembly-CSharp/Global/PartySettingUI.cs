@@ -20,18 +20,20 @@ public class PartySettingUI : UIScene
 
     public class CharacterDetailPartyHUD : CharacterDetailHUD
     {
+        public GameObject MoveButton;
         public UILabel EmptyLabel;
         public UISprite[] StatusesAvatar;
 
         public CharacterDetailPartyHUD(GameObject go, Boolean isTargetHud) : base(go, isTargetHud)
         {
+            this.MoveButton = go.GetChild(2);
             this.EmptyLabel = go.GetChild(1).GetComponent<UILabel>();
-            this.StatusesAvatar = new[]
-            {
+            this.StatusesAvatar =
+            [
                 this.AvatarSprite.gameObject.GetChild(0).GetComponent<UISprite>(),
                 this.AvatarSprite.gameObject.GetChild(1).GetComponent<UISprite>(),
                 this.AvatarSprite.gameObject.GetChild(2).GetComponent<UISprite>()
-            };
+            ];
         }
     }
 
@@ -49,12 +51,14 @@ public class PartySettingUI : UIScene
             this.MoveButton = go.GetChild(0);
             this.Highlight = go.GetChild(1);
             this.Avatar = go.GetChild(2).GetComponent<UISprite>();
-            this.StatusesAvatar = new[]
-            {
+            this.StatusesAvatar =
+            [
                 go.GetChild(2).GetChild(0).GetComponent<UISprite>(),
                 go.GetChild(2).GetChild(1).GetComponent<UISprite>(),
                 go.GetChild(2).GetChild(2).GetComponent<UISprite>()
-            };
+            ];
+            this.Highlight.transform.localScale = new Vector3(Configuration.Graphics.WidescreenSupport ? 0.45f : 1f, 1f, 1f);
+            this.Highlight.GetComponent<UISprite>().SetDimensions(186, 232);
         }
     }
 
@@ -120,19 +124,13 @@ public class PartySettingUI : UIScene
 
         SceneVoidDelegate sceneVoidDelegate = delegate
         {
-            if (Configuration.Graphics.WidescreenSupport)
+            Single widthFactor = Configuration.Graphics.WidescreenSupport ? 0.45f : 1f;
+            foreach (CharacterOutsidePartyHud charHud in this.outsidePartyHudList)
             {
-                ButtonGroupState.SetPointerOffsetToGroup(new Vector2(150f, -18f), MoveCharGroupButton);
-                foreach (CharacterOutsidePartyHud charHud in this.outsidePartyHudList)
-                    charHud.Highlight.transform.localScale = new Vector3(0.45f, 1f, 1f);
+                charHud.Highlight.transform.localScale = new Vector3(widthFactor, 1f, 1f);
+                charHud.Highlight.GetComponent<UISprite>().SetRawRect(0, 0, 186, 232);
             }
-            else
-            {
-                ButtonGroupState.SetPointerOffsetToGroup(new Vector2(18f, -18f), MoveCharGroupButton);
-                foreach (CharacterOutsidePartyHud charHud in this.outsidePartyHudList)
-                    charHud.Highlight.transform.localScale = new Vector3(1f, 1f, 1f);
-            }
-
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(18f, -18f), MoveCharGroupButton);
             ButtonGroupState.SetPointerDepthToGroup(6, MoveCharGroupButton);
             ButtonGroupState.ActiveGroup = SelectCharGroupButton;
         };

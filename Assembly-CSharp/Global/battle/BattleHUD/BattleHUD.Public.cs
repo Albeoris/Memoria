@@ -117,11 +117,11 @@ public partial class BattleHUD : UIScene
         }
         if (MixCommandSet.ContainsKey(pCmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(pCmd.sub_no, out MixItems MixChoosen))
             return FF9TextTool.ItemName(MixChoosen.Result);
+        CharacterCommandType cmdType = btl_util.GetCommandTypeSafe(pCmd.cmd_no);
+        if (cmdType == CharacterCommandType.Item || cmdType == CharacterCommandType.Throw)
+            return FF9TextTool.ItemName((RegularItem)pCmd.sub_no);
         switch (pCmd.cmd_no)
         {
-            case BattleCommandId.Item:
-            case BattleCommandId.Throw:
-                return FF9TextTool.ItemName((RegularItem)pCmd.sub_no);
             case BattleCommandId.AutoPotion:
                 return String.Empty;
             case BattleCommandId.MagicCounter:
@@ -142,10 +142,6 @@ public partial class BattleHUD : UIScene
                         default:
                             return type < 192 ? FF9TextTool.ActionAbilityName((BattleAbilityId)type) : FF9TextTool.BattleCommandTitleText((type & 63) + 1);
                     }
-                }
-                else
-                {
-                    return FF9TextTool.ActionAbilityName(abilId);
                 }
                 break;
         }
@@ -349,7 +345,7 @@ public partial class BattleHUD : UIScene
 
     public BattleMagicSwordSet GetMagicSwordOfAbility(BattleUnit caster, Int32 abilId)
     {
-        if (caster.IsPlayer && _abilityDetailDict[caster.GetIndex()].AbilityMagicSet.TryGetValue(abilId, out BattleMagicSwordSet magicSet))
+        if (caster.IsPlayer && _abilityDetailDict.TryGetValue(caster.GetIndex(), out AbilityPlayerDetail detail) && detail.AbilityMagicSet.TryGetValue(abilId, out BattleMagicSwordSet magicSet))
             return magicSet;
         return null;
     }

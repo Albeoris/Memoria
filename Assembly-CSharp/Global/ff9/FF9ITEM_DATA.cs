@@ -3,9 +3,10 @@ using System;
 
 public class FF9ITEM_DATA
 {
-    public FF9ITEM_DATA(UInt32 price, UInt64 equip, Byte shape, Byte color, Single eq_lv, Int32 bonus, Int32[] ability, ItemType type, Single sort, Int32 weapon = -1, Int32 armor = -1, Int32 effect = -1)
+    public FF9ITEM_DATA(UInt32 price, Int32 selling_price, UInt64 equip, Byte shape, Byte color, Single eq_lv, Int32 bonus, Int32[] ability, ItemType type, Single sort, Int32 weapon = -1, Int32 armor = -1, Int32 effect = -1)
     {
         this.price = price;
+        this.selling_price = selling_price;
         this.equip = equip;
         this.shape = shape;
         this.color = color;
@@ -21,11 +22,11 @@ public class FF9ITEM_DATA
     }
 
     public UInt32 price;
+    public Int32 selling_price;
 
     public UInt64 equip;
 
     public Byte shape;
-
     public Byte color;
 
     public Single eq_lv;

@@ -668,9 +668,35 @@ public class SFXRender
             return;
         }
         // Fix specific exceptions
+        if (SFX.currentEffectID == SpecialEffect.Leviathan__Full || SFX.currentEffectID == SpecialEffect.Leviathan__Short)
+        {
+            if (meshKey == 0x00800000u) // Blue foreground overlay for underwater effect
+            {
+                // 0x00800000u is used by many meshes in many frames, potentially with parts that are widescreens and parts that are not; they are the trickiest
+                Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
+                if (x0 == 0 && x2 == 0)
+                {
+                    x0 -= widescreenOffset;
+                    x2 -= widescreenOffset;
+                }
+                if (x1 == 320 && x3 == 320)
+                {
+                    x1 += widescreenOffset;
+                    x3 += widescreenOffset;
+                }
+            }
+            else if (SFX.currentEffectID == SpecialEffect.Leviathan__Full && meshKey == 0x009CBD0D) // Background tidal wave
+            {
+                Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
+                x0 += (Int16)((x0 - 160) * widescreenOffset / 160);
+                x1 += (Int16)((x1 - 160) * widescreenOffset / 160);
+                x2 += (Int16)((x2 - 160) * widescreenOffset / 160);
+                x3 += (Int16)((x3 - 160) * widescreenOffset / 160);
+            }
+            return;
+        }
         if (SFX.currentEffectID == SpecialEffect.Phoenix__Full && meshKey == 0x00800000u) // Fire on the foreground
         {
-            // 0x00800000u is used by many meshes in many frames, potentially with parts that are widescreens and parts that are not; they are the trickiest
             Int16 widescreenOffset = (Int16)CalculateWidescreenOffsetX();
             if (x0 == 0 && x2 == 0)
             {
