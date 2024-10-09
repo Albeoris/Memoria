@@ -8,11 +8,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
-using Binding = System.Windows.Data.Binding;
-using CheckBox = System.Windows.Controls.CheckBox;
-using ComboBox = System.Windows.Controls.ComboBox;
-using Image = System.Windows.Controls.Image;
-using MessageBox = System.Windows.MessageBox;
 namespace Memoria.Launcher
 {
     public class UiGrid : Grid

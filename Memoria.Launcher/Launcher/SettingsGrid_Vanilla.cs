@@ -7,8 +7,6 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using Application = System.Windows.Application;
-using MessageBox = System.Windows.MessageBox;
 
 namespace Memoria.Launcher
 {
@@ -198,9 +196,9 @@ namespace Memoria.Launcher
         {
             try
             {
-                IniFile iniFile = new IniFile(IniPath);
+                IniReader iniReader = new IniReader(IniPath);
 
-                String value = iniFile.ReadValue("Memoria", nameof(IsX64));
+                String value = iniReader.GetSetting("Memoria", nameof(IsX64));
                 if (String.IsNullOrEmpty(value))
                     value = "true";
                 if (!Boolean.TryParse(value, out _isX64))
@@ -216,24 +214,24 @@ namespace Memoria.Launcher
                     _isX64Enabled = false;
                 }
 
-                value = iniFile.ReadValue("Memoria", nameof(IsDebugMode));
+                value = iniReader.GetSetting("Memoria", nameof(IsDebugMode));
                 if (String.IsNullOrEmpty(value))
                     value = "false";
                 if (!Boolean.TryParse(value, out _isDebugMode))
                     _isDebugMode = false;
 
-                value = iniFile.ReadValue("Memoria", nameof(CheckUpdates));
+                value = iniReader.GetSetting("Memoria", nameof(CheckUpdates));
                 if (String.IsNullOrEmpty(value))
                     value = "true";
                 if (!Boolean.TryParse(value, out _checkUpdates))
                     _checkUpdates = true;
 
-                value = iniFile.ReadValue("Memoria", nameof(AutoRunGame));
+                value = iniReader.GetSetting("Memoria", nameof(AutoRunGame));
                 if (String.IsNullOrEmpty(value))
                     value = "false";
                 AutoRunGame = App.AutoRunGame || (Boolean.TryParse(value, out var autoRunGame) && autoRunGame);
 
-                value = iniFile.ReadValue("Memoria", nameof(DownloadMirrors));
+                value = iniReader.GetSetting("Memoria", nameof(DownloadMirrors));
                 if (String.IsNullOrEmpty(value))
                 {
                     _downloadMirrors = ["https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe"];

@@ -33,11 +33,11 @@
                         </Border>
                         <Rectangle x:Name="underline"
                             Fill="{DynamicResource BrushLightColorNormal}"
-                            Height="1"
+                            Height="2"
                             Width="{Binding ActualWidth, ElementName=contentwrap}"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
-                            Margin="100,0,100,5"/>
+                            Margin="100,0,100,6"/>
                     </Grid>
                     <ControlTemplate.Triggers>
 

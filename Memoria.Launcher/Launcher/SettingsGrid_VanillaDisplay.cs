@@ -6,7 +6,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Windows;
 using System.Windows.Forms;
 using Application = System.Windows.Application;
 
@@ -121,9 +120,9 @@ namespace Memoria.Launcher
         {
             try
             {
-                IniFile iniFile = new IniFile(IniPath);
+                IniReader iniReader = new IniReader(IniPath);
 
-                String value = iniFile.ReadValue("Settings", nameof(ScreenResolution)).Split('|')[0].Trim(' ');
+                String value = iniReader.GetSetting("Settings", nameof(ScreenResolution)).Split('|')[0].Trim(' ');
                 //if res in settings.ini exists AND corresponds to something in the res list
                 if ((!String.IsNullOrEmpty(value)) && EnumerateDisplaySettings(false).ToArray().Any(value.Contains))
                     _resolution = addRatio(value);
@@ -131,11 +130,11 @@ namespace Memoria.Launcher
                 else
                     _resolution = EnumerateDisplaySettings(false).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray()[0];
 
-                value = iniFile.ReadValue("Settings", nameof(ActiveMonitor));
+                value = iniReader.GetSetting("Settings", nameof(ActiveMonitor));
                 if (!String.IsNullOrEmpty(value))
                     _activeMonitor = value;
 
-                value = iniFile.ReadValue("Settings", nameof(WindowMode));
+                value = iniReader.GetSetting("Settings", nameof(WindowMode));
                 if (!String.IsNullOrEmpty(value))
                 {
                     if (value == Lang.Settings.Window) value = "0";

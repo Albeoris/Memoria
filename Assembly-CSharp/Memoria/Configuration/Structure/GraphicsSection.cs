@@ -18,7 +18,7 @@ namespace Memoria
             public readonly IniValue<Int32> BattleSwirlFrames;
             public readonly IniValue<Boolean> WidescreenSupport;
             public readonly IniValue<Int32> TileSize;
-            public readonly IniValue<Int32> AntiAliasing2;
+            public readonly IniValue<Int32> AntiAliasing;
             public readonly IniValue<Int32> SkipIntros;
             public readonly IniValue<Int32> GarnetHair;
             public readonly IniValue<Int32> CameraStabilizer;
@@ -42,7 +42,7 @@ namespace Memoria
                 BattleSwirlFrames = BindInt32(nameof(BattleSwirlFrames), 115);
                 WidescreenSupport = BindBoolean(nameof(WidescreenSupport), true);
                 TileSize = BindInt32(nameof(TileSize), 32);
-                AntiAliasing2 = BindInt32(nameof(AntiAliasing2), 0);
+                AntiAliasing = BindInt32(nameof(AntiAliasing), 0);
                 SkipIntros = BindInt32(nameof(SkipIntros), 0);
                 GarnetHair = BindInt32(nameof(GarnetHair), 0);
                 CameraStabilizer = BindInt32(nameof(CameraStabilizer), 0);

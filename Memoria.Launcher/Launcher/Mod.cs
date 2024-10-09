@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
+using System.Windows;
 using System.Windows.Media.Imaging;
 using System.Xml;
 
@@ -417,12 +417,12 @@ namespace Memoria.Launcher
 
             if (keys.Count == 0) return;
 
-            if (MessageBox.Show($"{Lang.ModEditor.ApplyModPresetText}\n\n{sb}", Lang.ModEditor.ApplyModPresetCaption, MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show($"{Lang.ModEditor.ApplyModPresetText}\n\n{sb}", Lang.ModEditor.ApplyModPresetCaption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                foreach (var key in keys)
-                {
-                    memoriaIni.IniFile.WriteValue(key.Section, key.Name, $" {PresetIni.Options[key]}");
-                }
+                PresetIni.WriteAllSettings(IniFile.IniPath, ["Preset"]);
+
+                MainWindow mainWindow = App.Current.MainWindow as MainWindow;
+                mainWindow.LoadSettings();
             }
         }
 

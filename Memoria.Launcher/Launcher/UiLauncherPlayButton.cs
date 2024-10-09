@@ -36,16 +36,15 @@ namespace Memoria.Launcher
             {
                 try
                 {
-                    String iniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
-                    IniFile iniFile = new(iniPath);
+                    IniFile iniFile = new(IniFile.IniPath);
                     if (LaunchModelViewer)
                     {
-                        iniFile.WriteValue("Debug", "Enabled ", " 1");
-                        iniFile.WriteValue("Debug", "StartModelViewer ", " 1");
+                        iniFile.WriteValue("Debug", "Enabled", "1");
+                        iniFile.WriteValue("Debug", "StartModelViewer", "1");
                     }
                     else
                     {
-                        iniFile.WriteValue("Debug", "StartModelViewer ", " 0");
+                        iniFile.WriteValue("Debug", "StartModelViewer", "0");
                     }
                 }
                 catch (Exception) { }

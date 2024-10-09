@@ -164,7 +164,7 @@
             <Setter Property="Margin" Value="0,0,0,0"/>
             <Setter Property="Width" Value="269"/>
             <Setter Property="Background" Value="#d000"/>
-            <Setter Property="Foreground" Value="#fff" />
+            <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type TabItem}">
@@ -324,15 +324,22 @@
                 Header="SETTINGS"
                 Style="{StaticResource MainTabs}" >
                 <Grid Style="{StaticResource TransparentGridStyle}">
+
+                    <launcher:SettingsGrid_Presets x:Name="SettingsGrid_Presets"
+                        Width="293"
+                        Margin="20,15,0,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top" />
+                    
                     <launcher:SettingsGrid_VanillaDisplay x:Name="GameSettingsDisplay"
                         Width="293"
-                        Margin="20,15"
+                        Margin="20,73,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
 
                     <launcher:SettingsGrid_Display x:Name="SettingsGrid_Display"
                         Width="293"
-                        Margin="20,131,0,0"
+                        Margin="20,190,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
 
@@ -433,7 +440,6 @@
                                             x:Name="tabMyMods"
                                             Padding="15,3,15,3"
                                             Text="My Mods"
-                                            Foreground="{StaticResource WhiteUI}"
                                             FontFamily="{StaticResource CenturyGothic}"
                                             FontSize="18"
                                             />
@@ -606,7 +612,6 @@
                                             x:Name="tabCatalog"
                                             Padding="15,3,15,3"
                                             Text="Mod Catalog"
-                                            Foreground="{StaticResource WhiteUI}"
                                             FontFamily="{StaticResource CenturyGothic}"
                                             FontSize="18" />
                                     </TabItem.Header>
@@ -819,11 +824,12 @@
                                             Grid.Column="0"
                                             VerticalAlignment="Top"
                                             HorizontalAlignment="left"
-                                            Margin="10,4,2,2"
+                                            Margin="5,5,2,2"
                                             Visibility="Visible" >
+                                            <!-- Looks like a button with a border -->
                                             <Border x:Name="border"
                                                 CornerRadius="6"
-                                                BorderThickness="2"
+                                                BorderThickness="0"
                                                 BorderBrush="#4888"
                                                 Background="#e222" />
                                             <TextBlock

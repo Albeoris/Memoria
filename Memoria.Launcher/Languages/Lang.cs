@@ -22,8 +22,8 @@ namespace Memoria.Launcher
                 XmlElement def = XmlHelper.LoadEmbadedDocument(assembly, $"Languages.en.xml");
                 XmlElement cur = null;
 
-                IniFile iniFile = new IniFile(SettingsGrid_Vanilla.IniPath);
-                String forcedLang = iniFile.ReadValue("Memoria", "LauncherLanguage");
+                IniReader iniReader = new IniReader(SettingsGrid_Vanilla.IniPath);
+                String forcedLang = iniReader.GetSetting("Memoria", "LauncherLanguage");
 
                 String[] fileNames = String.IsNullOrEmpty(forcedLang) ?
                     new String[] { CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName } :

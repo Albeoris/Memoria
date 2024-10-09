@@ -176,7 +176,7 @@
         <Setter Property="BorderBrush" Value="{DynamicResource BrushLightColorNormal}"/>
         <Setter Property="Foreground" Value="{DynamicResource BrushDarkTextColor}"/>
         <Setter Property="FontFamily" Value="Segoe UI"/>
-        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontSize" Value="13"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>

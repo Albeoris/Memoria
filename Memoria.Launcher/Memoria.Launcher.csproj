@@ -80,6 +80,7 @@
     <Compile Include="Launcher\SettingsGrid_Main2.cs" />
     <Compile Include="Launcher\SettingsGrid_Main.cs" />
     <Compile Include="Launcher\Settings.cs" />
+    <Compile Include="Launcher\SettingsGrid_Presets.cs" />
     <Compile Include="Launcher\SettingsGrid_VanillaDisplay.cs" />
     <Compile Include="Launcher\UiGrid.cs" />
     <Compile Include="Launcher\Mod.cs" />
@@ -161,6 +162,14 @@
     <EmbeddedResource Include="Ini\Memoria.ini">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Memoria.ini</TargetPath>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Presets\PSXPreset.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>PSXPreset.ini</TargetPath>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Presets\SteamPreset.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>SteamPreset.ini</TargetPath>
     </EmbeddedResource>
     <Resource Include="Fonts\centurygothic-bold.ttf" />
     <Resource Include="Fonts\centurygothic.ttf" />

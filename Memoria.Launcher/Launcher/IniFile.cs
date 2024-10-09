@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.IO;
-using Application = System.Windows.Application;
-using System.Reflection;
-using System.Linq;
 
 namespace Memoria.Launcher
 {
@@ -26,10 +25,14 @@ namespace Memoria.Launcher
 
         public void WriteValue(String Section, String Key, String Value)
         {
-            IniFile.WritePrivateProfileString(Section, Key, Value, this.path);
+            Section = Section.Trim();
+            Key = Key.Trim();
+            Value = Value.Trim();
+
+            IniFile.WritePrivateProfileString(Section, $"{Key} ", $" {Value}", this.path);
         }
 
-        public String ReadValue(String Section, String Key)
+        /*public String ReadValue(String Section, String Key)
         {
             _retBuffer.Clear();
             IniFile.GetPrivateProfileString(Section, Key, "", _retBuffer, _bufferSize, this.path);
@@ -37,7 +40,7 @@ namespace Memoria.Launcher
         }
 
         private const Int32 _bufferSize = 10000;
-        private StringBuilder _retBuffer = new StringBuilder(_bufferSize);
+        private StringBuilder _retBuffer = new StringBuilder(_bufferSize);*/
 
         public const String IniPath = @"./Memoria.ini";
 
@@ -75,7 +78,7 @@ namespace Memoria.Launcher
                 if (!mergedIni[i].Trim().StartsWith(";"))
                 {
                     var split = mergedIni[i].Split('=');
-                    for(Int32 j=0; j < split.Length; j++)
+                    for (Int32 j = 0; j < split.Length; j++)
                     {
                         split[j] = split[j].Trim();
                     }
@@ -110,7 +113,7 @@ namespace Memoria.Launcher
                     }
                     else
                     {
-                        if(mergedIni.Count > 0 && mergedIni.Last().Length > 0)
+                        if (mergedIni.Count > 0 && mergedIni.Last().Length > 0)
                             mergedIni.Add("");
 
                         mergedIni.Add("[" + currentSection + "]");
@@ -152,8 +155,6 @@ namespace Memoria.Launcher
 
     public class IniReader
     {
-        public IniFile IniFile;
-
         public struct Key
         {
             public String Section;
@@ -170,9 +171,65 @@ namespace Memoria.Launcher
 
         public IniReader(String path)
         {
-            IniFile = new IniFile(path);
             if (!File.Exists(path)) return;
-            using (Stream input = File.OpenRead(IniFile.path))
+            using (Stream input = File.OpenRead(path))
+            {
+                Init(input);
+            }
+        }
+
+        public IniReader(Stream input)
+        {
+            Init(input);
+        }
+
+        public String GetSetting(String section, String key)
+        {
+            Key k = new Key(section, key);
+            return Options.ContainsKey(k) ? Options[k] : "";
+        }
+
+        public void WriteAllSettings(String path, String[] ignoreSections = null)
+        {
+            List<String> lines = new List<string>(File.ReadAllLines(path));
+
+            foreach (var option in Options)
+            {
+                if (ignoreSections != null && ignoreSections.Contains(option.Key.Section))
+                    continue;
+
+                Boolean sectionFound = false;
+                for (Int32 i = 0; i < lines.Count; i++)
+                {
+                    string trimmed = lines[i].Trim();
+                    if (!sectionFound)
+                    {
+                        if (trimmed == $"[{option.Key.Section}]")
+                            sectionFound = true;
+                        continue;
+                    }
+
+                    if (trimmed.StartsWith("[")) break;
+
+                    if (trimmed.StartsWith($"{option.Key.Name} ="))
+                    {
+                        lines[i] = $"{option.Key.Name} = {option.Value}";
+                        break;
+                    }
+                }
+
+                if (!sectionFound)
+                {
+                    lines.Add($"[{option.Key.Section}]");
+                    lines.Add($"{option.Key.Name} = {option.Value}");
+                }
+            }
+
+            File.WriteAllLines(path, lines.ToArray());
+        }
+
+        private void Init(Stream input)
+        {
             using (StreamReader sr = new StreamReader(input))
             {
                 String section = null;

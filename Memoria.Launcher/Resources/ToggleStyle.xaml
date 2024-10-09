@@ -5,7 +5,7 @@
         <Setter Property="Foreground" Value="{StaticResource {x:Static SystemColors.ControlTextBrushKey}}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="FontFamily" Value="Segoe UI"/>
-        <Setter Property="FontSize" Value="14pt"/>
+        <Setter Property="FontSize" Value="14"/>
         <Setter Property="Foreground" Value="{StaticResource BrushLightColorNormal}"/>
         <Setter Property="Template">
             <Setter.Value>

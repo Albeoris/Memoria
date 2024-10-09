@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -8,21 +8,16 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Markup;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
-using Application = System.Windows.Application;
-using GridViewColumnHeader = System.Windows.Controls.GridViewColumnHeader;
-using ListView = System.Windows.Controls.ListView;
-using MessageBox = System.Windows.Forms.MessageBox;
+using MethodInvoker = System.Windows.Forms.MethodInvoker;
 
 namespace Memoria.Launcher
 {
@@ -258,7 +253,7 @@ namespace Memoria.Launcher
             if (downloadList.Count > 0 || downloadingMod != null)
             {
                 e.Cancel = true;
-                MessageBox.Show($"If you close this window while downloads are on their way, they will be cancelled.", "Warning", MessageBoxButtons.OK);
+                MessageBox.Show($"If you close this window while downloads are on their way, they will be cancelled.", "Warning", MessageBoxButton.OK);
                 return;
             }
             if (downloadCatalogClient != null && downloadCatalogClient.IsBusy)
@@ -278,7 +273,7 @@ namespace Memoria.Launcher
             foreach (Mod mod in selectedMods)
             {
                 if (Directory.Exists(mod.InstallationPath))
-                    if (MessageBox.Show($"The mod folder {mod.InstallationPath} will be deleted.\nProceed?", "Updating", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                    if (MessageBox.Show($"The mod folder {mod.InstallationPath} will be deleted.\nProceed?", "Updating", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
                         Directory.Delete(mod.InstallationPath, true);
                         modListInstalled.Remove(mod);
@@ -702,7 +697,7 @@ namespace Memoria.Launcher
                             }
                             else
                             {
-                                MessageBox.Show($"Please install the mod folder manually.", "Warning", MessageBoxButtons.OK);
+                                MessageBox.Show($"Please install the mod folder manually.", "Warning", MessageBoxButton.OK);
                                 Process.Start(Path.GetFullPath(path));
                             }
                         }
@@ -733,7 +728,7 @@ namespace Memoria.Launcher
                                     }
                                 if (!proceedNext)
                                 {
-                                    MessageBox.Show($"Please install the mod folder manually.", "Warning", MessageBoxButtons.OK);
+                                    MessageBox.Show($"Please install the mod folder manually.", "Warning", MessageBoxButton.OK);
                                     Process.Start(Path.GetFullPath(path));
                                 }
                             }
@@ -757,7 +752,7 @@ namespace Memoria.Launcher
                     }
                     catch (Exception err)
                     {
-                        MessageBox.Show($"Failed to automatically install the mod {path}\n\n{err.Message}", "Error", MessageBoxButtons.OK);
+                        MessageBox.Show($"Failed to automatically install the mod {path}\n\n{err.Message}", "Error", MessageBoxButton.OK);
                     }
                 }
                 else if (downloadingMod.DownloadFormat.StartsWith("SingleFileWithPath:"))
@@ -766,7 +761,7 @@ namespace Memoria.Launcher
                     String modInstallPath = downloadingMod.InstallationPath ?? downloadingModName;
                     if (Directory.Exists(modInstallPath))
                     {
-                        if (MessageBox.Show($"The current version of the mod folder, {modInstallPath}, will be deleted before moving the new version.\nProceed?", "Updating", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                        if (MessageBox.Show($"The current version of the mod folder, {modInstallPath}, will be deleted before moving the new version.\nProceed?", "Updating", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                         {
                             Directory.Delete(modInstallPath, true);
                         }
@@ -884,7 +879,7 @@ namespace Memoria.Launcher
             }
             catch (Exception err)
             {
-                MessageBox.Show(err.Message, "Error", MessageBoxButtons.OK);
+                MessageBox.Show(err.Message, "Error", MessageBoxButton.OK);
             }
         }
 
@@ -1147,13 +1142,14 @@ namespace Memoria.Launcher
             modListInstalled.Clear();
             try
             {
-                IniFile iniFile = new IniFile(INI_PATH);
-                String str = iniFile.ReadValue("Mod", "FolderNames");
+                IniReader iniReader = new IniReader(INI_PATH);
+
+                String str = iniReader.GetSetting("Mod", "FolderNames");
                 if (String.IsNullOrEmpty(str))
                     str = "";
                 str = str.Trim().Trim('"');
                 String[] iniModActiveList = Regex.Split(str, @""",\s*""");
-                str = iniFile.ReadValue("Mod", "Priorities");
+                str = iniReader.GetSetting("Mod", "Priorities");
                 if (String.IsNullOrEmpty(str))
                     str = "";
                 str = str.Trim().Trim('"');
