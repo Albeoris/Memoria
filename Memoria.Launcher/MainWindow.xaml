@@ -154,7 +154,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+
         <Style x:Key="SmallImageButton" TargetType="{x:Type Button}">
             <Setter Property="Height" Value="44" />
             <Setter Property="Width" Value="44" />
@@ -257,7 +257,7 @@
             </Setter>
         </Style>
     </Window.Resources>
-    
+
     <Grid>
         <!-- Background Image -->
         <Image x:Name="Launcher"
@@ -330,7 +330,7 @@
                         Margin="20,15,0,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top" />
-                    
+
                     <launcher:SettingsGrid_VanillaDisplay x:Name="GameSettingsDisplay"
                         Width="293"
                         Margin="20,73,0,0"
@@ -388,16 +388,28 @@
 
                     <launcher:SettingsGrid_Advanced x:Name="SettingsGrid_Advanced"
                         Width="293"
-                        Margin="20,156,0,0"
+                        Margin="20,184,0,0"
                         HorizontalAlignment="Left"
+                        VerticalAlignment="Top" />
+                    
+                    <launcher:SettingsGrid_Advanced2 x:Name="SettingsGrid_Advanced2"
+                        Width="293"
+                        Margin="0,15,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Top" />
+
+                    <launcher:SettingsGrid_Advanced3 x:Name="SettingsGrid_Advanced3"
+                        Width="293"
+                        Margin="20,15,20,0"
+                        HorizontalAlignment="Right"
                         VerticalAlignment="Top" />
 
                     <launcher:UiLauncherModelViewerButton
                         Width="292"
                         Height="36"
-                        Margin="0,20,0,0"
+                        Margin="0,0,0,20"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Top"
+                        VerticalAlignment="Bottom"
                         Content="" />
                 </Grid>
             </TabItem>
