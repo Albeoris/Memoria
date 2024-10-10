@@ -10,8 +10,7 @@ namespace Memoria.Patcher
 
         public static GameLocationInfo TryLoad()
         {
-            return TryLoadLocation(RegistryView.Registry64)
-                   ?? TryLoadLocation(RegistryView.Registry32);
+            return TryLoadLocation(RegistryView.Registry64) ?? TryLoadLocation(RegistryView.Registry32);
         }
 
         private static GameLocationInfo TryLoadLocation(RegistryView view)

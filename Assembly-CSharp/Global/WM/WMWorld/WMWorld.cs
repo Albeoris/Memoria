@@ -120,7 +120,11 @@ public class WMWorld : Singleton<WMWorld>
         this.SkyDowm_FogMaterial = this.SkyDome_Fog.GetComponentInChildren<MeshRenderer>().material;
         if (ff9.w_frameScenePtr != 2970 && ff9.w_frameScenePtr != 2980) // WM cinematic, ship to Lindblum
         {
-            Single skyScale = Configuration.Worldmap.ViewDistance / 100f;
+            Single skyScale = 1;
+            if (ff9.w_frameFog == 1)
+                skyScale = Configuration.Worldmap.MistViewDistance / 100f;
+            else
+                skyScale = Configuration.Worldmap.NoMistViewDistance / 100f;
             this.SkyDome_Sky.localScale = new Vector3(skyScale, skyScale, skyScale);
             this.SkyDome_Bg.localScale = new Vector3(skyScale, skyScale, skyScale);
             this.SkyDome_Fog.localScale = new Vector3(skyScale, skyScale, skyScale);
@@ -1480,7 +1484,11 @@ public class WMWorld : Singleton<WMWorld>
         Int32 distanceHardLimit = 8; // above 8 bugs
         if (ff9.w_frameScenePtr == 2970 || ff9.w_frameScenePtr == 2980) // force default value for scripted wm event
             distanceHardLimit = 3;
-        Int32 maxDist = -Mathf.FloorToInt(-2f * (Configuration.Worldmap.ViewDistance / 100f));
+        Int32 maxDist;
+        if (ff9.w_frameFog == 1)
+            maxDist = -Mathf.FloorToInt(-2f * (Configuration.Worldmap.MistViewDistance / 100f));
+        else
+            maxDist = -Mathf.FloorToInt(-2f * (Configuration.Worldmap.NoMistViewDistance / 100f));
         maxDist += FF9StateSystem.Settings.IsFastForward ? 1 : 0;
         maxDist = Mathf.Clamp(maxDist, 2, distanceHardLimit);
 

@@ -9,8 +9,8 @@ namespace Memoria
         {
             public static Boolean IsEnabled => Instance._tetraMaster.Enabled;
             public static Int32 TripleTriad => Instance._tetraMaster.TripleTriad;
-            public static Boolean IsEasyWin => IsEnabled && Instance._tetraMaster.ReduceRandom == 2;
-            public static Boolean IsReduceRandom => IsEnabled && Instance._tetraMaster.ReduceRandom == 1;
+            public static Boolean EasyWin => Instance._tetraMaster.EasyWin;
+            public static Boolean ReduceRandom => Instance._tetraMaster.ReduceRandom;
             public static Int32 MaxCardCount => Instance._tetraMaster.MaxCardCount;
 
             public static Boolean DiscardAutoButton => Instance._tetraMaster.DiscardAutoButton;

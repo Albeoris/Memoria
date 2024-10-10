@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Configuration;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -9,15 +9,13 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Markup;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
 namespace Memoria.Launcher
 {
     public partial class MainWindow : Window, IComponentConnector
     {
-        public ModManagerWindow ModdingWindow;
-        public AdvOptionsWindow AdvOptionsWindow;
+        //public ModManagerWindow ModdingWindow;
         public DateTime MemoriaAssemblyCompileDate;
 
         public MainWindow()
@@ -40,43 +38,76 @@ namespace Memoria.Launcher
             }
 
             InitializeComponent();
-            TryLoadImage();
 
             PlayButton.GameSettings = GameSettings;
+            PlayButton.GameSettingsDisplay = GameSettingsDisplay;
             Loaded += OnLoaded;
+            Closing += new CancelEventHandler(OnClosing);
+            LoadSettings();
+            KeyUp += ModManagerWindow_KeyUp;
+
+            //SetAccentColor((Color)ColorConverter.ConvertFromString("#CC355566"));
+            //SetAccentColor((Color)ColorConverter.ConvertFromString("#CCC9AD1D"));
+            //Launcher.Source = new BitmapImage(new Uri($"{Directory.GetCurrentDirectory()}\\Echo-S-9\\LauncherBackground.jpg", UriKind.Absolute));
         }
+
+        public const String DefaultAccentColor = "#CC355566";
+        public const String DefaultBackgroundImage = "pack://application:,,,/images/new_launcher_bg.jpg";
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
         {
             HotfixForMoguriMod();
-            Title = Lang.Settings.LauncherWindowTitle + " | " + MemoriaAssemblyCompileDate.ToString("yyyy-MM-dd");
+            Title = Lang.Settings.LauncherWindowTitle + " | v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
+            Nameandversion.Text = Lang.Settings.MemoriaEngine + " v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
+            menuSettings.Header = Lang.Settings.menuSettings;
+            menuCheats.Header = Lang.Settings.menuCheats;
+            menuAdvanced.Header = Lang.Settings.menuAdvanced;
 
-            // Creates a Mod Manager window (but completely invisible) to trigger "onLoaded" to download the mod catalog retrieve the info that updates or incompatibilities exist.
-            // It's instantly closed and the info is retrieved by ComeBackToLauncherFromModManager() to define if any icon is displayed
-            MainWindow mainWindow = (MainWindow)this.GetRootElement();
-            if (mainWindow.ModdingWindow == null)
-                mainWindow.ModdingWindow = new ModManagerWindow();
-            mainWindow.ModdingWindow.Owner = mainWindow;
-            mainWindow.ModdingWindow.Activate();
-            mainWindow.ModdingWindow.Visibility = System.Windows.Visibility.Hidden;
-            mainWindow.ModdingWindow.WindowStyle = WindowStyle.None;
-            mainWindow.ModdingWindow.AllowsTransparency = true;
-            mainWindow.ModdingWindow.Opacity = 0;
-            mainWindow.ModdingWindow.ShowInTaskbar = false;
-            mainWindow.ModdingWindow.ShowActivated = false;
-            mainWindow.ModdingWindow.Show();
-            mainWindow.ModdingWindow.Close();
+            SetupFrameLang();
+            UpdateCatalog();
+            LoadSettings2();
+            CheckForValidModFolder();
+            CheckOutdatedAndIncompatibleMods();
+            lstCatalogMods.ItemsSource = modListCatalog;
+            lstMods.ItemsSource = modListInstalled;
+            lstDownloads.ItemsSource = downloadList;
+            UpdateCatalogInstallationState();
+
+            lstCatalogMods.SelectionChanged += OnModListSelect;
+            lstMods.SelectionChanged += OnModListSelect;
+            tabCtrlMain.SelectionChanged += OnModListSelect;
+            PreviewSubModList.SelectionChanged += OnSubModSelect;
+            PreviewSubModActive.Checked += OnSubModActivate;
+            PreviewSubModActive.Unchecked += OnSubModActivate;
+            if (modListInstalled.Count == 0)
+                tabCtrlMain.SelectedIndex = 1;
+            UpdateModDetails((Mod)null);
+            CheckOutdatedAndIncompatibleMods();
+
+            // add tooltip style to manager's buttons
+            UiGrid.MakeTooltip(btnReorganize, btnReorganize.ToolTip.ToString(), "", "hand");
+            UiGrid.MakeTooltip(btnMoveUp, btnMoveUp.ToolTip.ToString(), "", "hand");
+            UiGrid.MakeTooltip(btnMoveDown, btnMoveDown.ToolTip.ToString(), "", "hand");
+            UiGrid.MakeTooltip(btnUninstall, btnUninstall.ToolTip.ToString(), "", "hand");
+            UiGrid.MakeTooltip(btnDownload, btnDownload.ToolTip.ToString(), "", "hand");
+            UiGrid.MakeTooltip(btnCancel, btnCancel.ToolTip.ToString(), "", "hand");
 
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();
         }
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close(); // Closes the window when the button is clicked
+        }
 
         public void ComeBackToLauncherFromModManager(Boolean updates, Boolean incompat)
         {
+            /*
             alert_update_icon.Visibility = updates ? Visibility.Visible : Visibility.Collapsed;
             alert_incompat_icon.Visibility = incompat ? Visibility.Visible : Visibility.Collapsed;
             alert_update_icon.ToolTip = Lang.Launcher.ModUpdateAvailable;
             alert_incompat_icon.ToolTip = Lang.Launcher.ModConflict;
+            */
         }
 
         private void HotfixForMoguriMod()
@@ -119,22 +150,26 @@ namespace Memoria.Launcher
             */
         }
 
-        private void TryLoadImage()
+        public static void SetAccentColor(ALChColor color)
         {
-            try
-            {
-                String backgroundImagePath = ConfigurationManager.AppSettings["backgroundImagePath"];
-                if (String.IsNullOrEmpty(backgroundImagePath) || !File.Exists(backgroundImagePath))
-                    return;
+            float shade = 0.05f;
 
-                String path = Path.GetFullPath(backgroundImagePath);
+            ALChColor darker = new ALChColor(color);
+            darker.L -= shade;
+            Application.Current.Resources["AccentColorDarker"] = (Color)darker;
+            Application.Current.Resources["BrushAccentColorDarker"] = new SolidColorBrush(darker);
 
-                ImageSource imageSource = new BitmapImage(new Uri(path, UriKind.Absolute));
-                Launcher.Source = imageSource;
-            }
-            catch
-            {
-            }
+            Application.Current.Resources["AccentColor"] = (Color)color;
+            Application.Current.Resources["BrushAccentColor"] = new SolidColorBrush(color);
+            color.L += shade;
+            Application.Current.Resources["AccentColorHover"] = (Color)color;
+            Application.Current.Resources["BrushAccentColorHover"] = new SolidColorBrush((Color)color);
+            color.L += shade;
+            Application.Current.Resources["AccentColorPressed"] = (Color)color;
+            Application.Current.Resources["BrushAccentColorPressed"] = new SolidColorBrush((Color)color);
+            color.L += shade;
+            Application.Current.Resources["AccentColorBrighter"] = (Color)color;
+            Application.Current.Resources["BrushAccentColorBrighter"] = new SolidColorBrush((Color)color);
         }
 
         [DllImport("user32.dll")]

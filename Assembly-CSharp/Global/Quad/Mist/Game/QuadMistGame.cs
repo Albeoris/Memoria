@@ -994,7 +994,7 @@ public class QuadMistGame : MonoBehaviour
         if (battleCalculation.defStart == 0)
             battleCalculation.defStart = 1;
 
-        if (Configuration.TetraMaster.IsEasyWin)
+        if (Configuration.TetraMaster.EasyWin)
         {
             if (attacker.side == 0) // Player
             {
@@ -1007,7 +1007,7 @@ public class QuadMistGame : MonoBehaviour
                 battleCalculation.defFinish = 100;
             }
         }
-        else if (Configuration.TetraMaster.IsReduceRandom)
+        else if (Configuration.TetraMaster.ReduceRandom)
         {
             Single ak = 1f - attacker.ArrowNumber / 10f; // The attack is 20% less susceptible to randomness.
             Single dk = 1f - defender.ArrowNumber / 8f;
