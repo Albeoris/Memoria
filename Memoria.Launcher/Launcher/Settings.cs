@@ -17,7 +17,6 @@ namespace Memoria.Launcher
             // Checkboxes
             ["WidescreenSupport", "_iswidescreensupport", "WidescreenSupport", "Graphics", 0, 1, 1],
             ["SkipIntros", "_isskipintros", "SkipIntros", "Graphics", 0, 3, 1],
-            ["BattleSwirlFrames", "_battleswirlframes", "BattleSwirlFrames", "Graphics", 70, 0, 0],
             ["MaxCardCount", "_maxcardcount", "MaxCardCount", "TetraMaster", 100, 1000, 0],
             ["HideCards", "_ishidecards", "HideCards", "Icons", 0, 1, 0],
             ["HideCards", "_ishidecards", "HideBeach", "Icons", 0, 1, 0],
@@ -462,8 +461,15 @@ namespace Memoria.Launcher
         private Int16 _usepsxfont;
         public Int16 UsePsxFont
         {
-            get => _usepsxfont;
-            set => SetProperty(ref _usepsxfont, value);
+            get { return _usepsxfont; }
+            set
+            {
+                if (_usepsxfont != value)
+                {
+                    _usepsxfont = value;
+                    OnPropertyChanged();
+                }
+            }
         }
         protected String _fontChoice;
         public String FontChoice
@@ -539,6 +545,18 @@ namespace Memoria.Launcher
                 Int32 var0 = 0; Int32 var1 = 0; Int32 var2 = 0; Int32 var3 = 0; Int32 var4 = 0; Int32 var5 = 0;
                 switch (propertyName)
                 {
+                    case nameof(BattleSwirlFrames):
+                        var0 = BattleSwirlFrames;
+                        if (var0 == 1)
+                        {
+                            iniFile.WriteValue("Graphics", "Enabled", "1");
+                            iniFile.WriteValue("Graphics", "BattleSwirlFrames", "0");
+                        }
+                        else if (var0 == 0)
+                        {
+                            iniFile.WriteValue("Graphics", "BattleSwirlFrames", "70");
+                        }
+                        break;
                     case nameof(SpeedFactor):
                         var0 = SpeedFactor;
                         iniFile.WriteValue("Cheats", "SpeedFactor", $"{var0}");
@@ -605,6 +623,7 @@ namespace Memoria.Launcher
                         else if (UsePsxFont == 0)
                         {
                             _usepsxfont = 0;
+                            if (FontChoice.CompareTo(_fontDefaultPSX) == 0) FontChoice = _fontDefaultPC;
                         }
                         break;
                     case nameof(FontChoice):
@@ -775,13 +794,41 @@ namespace Memoria.Launcher
                     _worldmapmistpreset = -1;
                 Refresh(nameof(WorldmapMistPreset));
 
-                value = iniReader.GetSetting("Cheats", nameof(SpeedFactor));
+                value = iniReader.GetSetting("Graphics", "BattleSwirlFrames");
+                if (String.IsNullOrEmpty(value))
+                    value = " 0";
+                value1isInt = Int16.TryParse(value, out value1);
+                if (value1isInt)
+                {
+                    BattleSwirlFrames = (value1 == 0) ? (Int16)1 : (Int16)0; // activates BattleSwirlFrames only when frames are zero
+                }
+                Refresh(nameof(BattleSwirlFrames));
+
+
+
+                value = iniReader.GetSetting("Cheats", "SpeedMode");
                 if (String.IsNullOrEmpty(value))
                 {
-                    value = " 3";
+                    value = " 1";
                 }
-                if (!Int16.TryParse(value, out _speedfactor))
-                    _speedfactor = 3;
+                value1isInt = Int16.TryParse(value, out value1);
+                if (value1isInt && value1 == 0)
+                {
+                    SpeedMode = 0;
+                    SpeedFactor = 1;
+                }
+                else
+                {
+                    SpeedMode = 1;
+                    value = iniReader.GetSetting("Cheats", "SpeedFactor");
+                    if (String.IsNullOrEmpty(value))
+                    {
+                        value = " 3";
+                    }
+                    if (!Int16.TryParse(value, out _speedfactor))
+                        _speedfactor = 3;
+                }
+                Refresh(nameof(SpeedMode));
                 Refresh(nameof(SpeedFactor));
 
                 value = iniReader.GetSetting("Graphics", "FieldFPS");
