@@ -89,7 +89,6 @@
 	CheckUpdates_Tooltip = "再生ボタンを押した際に、最新のMemoriaをgithubから自動的にダウンロードするかどうかを尋ねます"
 	UseOrchestralMusic_Tooltip = "Moguri mod: Pontus Hultgrenによるオーケストラのサウンドトラック&#xA;オリジナルの体験を望む方にはお勧めしません"
 	Use30FpsVideo_Tooltip = "Moguri mod: 30fpsのFMV (元の15fpsから)&#xA;AIによって作成された間画像が含まれています"
-	AntiAliasing_Tooltip = "アンチエイリアシングを有効にします"
 	CameraStabilizer_Tooltip = "プレイヤーとカメラの間の遅延の値&#xA;ゲームをよりスムーズにプレイできます&#xA;0は機能を無効にします&#xA;推奨値: 80から90の間"
 	SkipIntrosToMainMenu_Tooltip = "ロゴや警告をスキップしてメインメニューへ"
 	SkipBattleSwirl_Tooltip = "オン: バトルが即座に開始されます (デフォルト)&#xA;オフ: オリジナルのように、バトルの前にわずかな遅延があります"
