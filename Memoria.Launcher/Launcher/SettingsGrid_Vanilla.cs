@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Runtime.ConstrainedExecution;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -25,6 +26,9 @@ namespace Memoria.Launcher
             String OSversion = $"{Environment.OSVersion}";
             if (OSversion.Contains("Windows") && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WINELOADER")))
                 CreateCheckbox("SteamOverlayFix", Lang.SteamOverlay.OptionLabel, Lang.Settings.SteamOverlayFix_Tooltip);
+
+
+            CreateCombobox("LauncherLanguage", LauncherLanguageList, 50, Lang.Settings.LauncherLanguage, Lang.Settings.LauncherLanguage_Tooltip, "", true);
 
             try
             {
@@ -143,6 +147,29 @@ namespace Memoria.Launcher
             }
         }
 
+        private String[] LauncherLanguageList = { "en", "de", "es", "fr", "it", "jp", "pt-BR", "ru", "uk", "zh-CN" };
+        private String _launcherlanguage;
+        public String LauncherLanguage
+        {
+            get => _launcherlanguage;
+            set
+            {
+                if (_launcherlanguage != value)
+                {
+                    if (!String.IsNullOrEmpty(_launcherlanguage)) {
+                        _launcherlanguage = value;
+                        OnPropertyChanged();
+                        ReloadApplication();
+                    }
+                    else
+                    {
+                        _launcherlanguage = value;
+                        OnPropertyChanged();
+                    }
+                }
+            }
+        }
+
         public Boolean AutoRunGame { get; private set; }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -176,6 +203,9 @@ namespace Memoria.Launcher
                         }
                         break;
                     }
+                    case nameof(LauncherLanguage):
+                        iniFile.WriteValue("Memoria", propertyName, LauncherLanguage);
+                        break;
                 }
             }
             catch (Exception ex)
@@ -242,11 +272,17 @@ namespace Memoria.Launcher
                     _downloadMirrors = value.Split(',');
                 }
 
+                value = iniReader.GetSetting("Memoria", "LauncherLanguage").Trim();
+                if (String.IsNullOrEmpty(value))
+                    value = "en";
+                _launcherlanguage = value;
+
                 OnPropertyChanged(nameof(IsX64));
                 OnPropertyChanged(nameof(IsX64Enabled));
                 OnPropertyChanged(nameof(IsDebugMode));
                 OnPropertyChanged(nameof(CheckUpdates));
                 OnPropertyChanged(nameof(DownloadMirrors));
+                OnPropertyChanged(nameof(LauncherLanguage));
             }
             catch (Exception ex)
             {
@@ -279,6 +315,13 @@ namespace Memoria.Launcher
             {
                 return false;
             }
+        }
+
+        private void ReloadApplication()
+        {
+            string exePath = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+            System.Diagnostics.Process.Start(exePath);
+            Application.Current.Shutdown();
         }
     }
 }

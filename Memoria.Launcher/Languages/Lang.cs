@@ -353,6 +353,10 @@ namespace Memoria.Launcher
             public static readonly string FrogCatchingIncrement_Tooltip = GetSettings(nameof(FrogCatchingIncrement_Tooltip));
             public static readonly string Minigames = GetSettings(nameof(Minigames));
 
+            public static readonly string LauncherLanguage = GetSettings(nameof(LauncherLanguage));
+            public static readonly string LauncherLanguage_Tooltip = GetSettings(nameof(LauncherLanguage_Tooltip));
+            public static readonly string UI = GetSettings(nameof(UI));
+
         }
 
         public static class SteamOverlay
