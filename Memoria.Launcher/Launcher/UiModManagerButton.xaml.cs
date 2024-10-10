@@ -13,7 +13,7 @@ namespace Memoria.Launcher
             InitializeComponent();
         }
 
-        public void Click()
+        public new void Click()
         {
             if (!IsEnabled)
                 return;

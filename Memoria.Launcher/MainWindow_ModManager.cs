@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -15,6 +16,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Markup;
+using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using MethodInvoker = System.Windows.Forms.MethodInvoker;
@@ -912,6 +914,42 @@ namespace Memoria.Launcher
             }
             UpdateInstalledPriorityValue();
             CheckOutdatedAndIncompatibleMods();
+            //UpdateLauncherTheme();
+        }
+
+        private static String currentColor;
+        private static String currentImage;
+
+        private void UpdateLauncherTheme()
+        {
+            String color = DefaultAccentColor;
+            String image = DefaultBackgroundImage;
+            foreach (var mod in modListInstalled)
+            {
+                if (!mod.IsActive) continue;
+
+                if (mod.LauncherBackground != null)
+                {
+                    String newImage = $"{Directory.GetCurrentDirectory()}\\{mod.FullInstallationPath}\\{mod.LauncherBackground}";
+                    if (!File.Exists(newImage))
+                        continue;
+                    image = newImage;
+
+                    if(mod.LauncherColor != null)
+                        color = $"#CC{mod.LauncherColor.Replace("#", "")}";
+                    break;
+                }
+            }
+            if (color != currentColor)
+            {
+                SetAccentColor((Color)ColorConverter.ConvertFromString(color));
+                currentColor = color;
+            }
+            if (image != currentImage)
+            {
+                Launcher.Source = new BitmapImage(new Uri(image, UriKind.Absolute));
+                currentImage = image;
+            }
         }
 
         private Boolean GenerateAutomaticDescriptionFile(String folderName)
@@ -1081,6 +1119,7 @@ namespace Memoria.Launcher
                     PreviewModImage.Source = mod.PreviewImage;
                 }
             }
+            UpdateLauncherTheme();
         }
 
         private void UpdateSubModDetails(Mod subMod)

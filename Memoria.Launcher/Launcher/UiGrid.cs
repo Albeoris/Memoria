@@ -365,8 +365,9 @@ namespace Memoria.Launcher
             border.SetValue(ColumnProperty, 0);
             border.SetValue(RowSpanProperty, 1);
             border.SetValue(ColumnSpanProperty, 100);
-            border.Background = (SolidColorBrush)Application.Current.FindResource("BrushAccentColor");
-            border.Opacity = 0.8;
+            //border.Background = (SolidColorBrush)Application.Current.FindResource("BrushAccentColor");
+            border.SetResourceReference(Border.BackgroundProperty, "BrushAccentColor");
+            //border.Opacity = 0.8;
             border.CornerRadius = new CornerRadius(5);
             border.Margin = new Thickness(0, 7, 0, 3);
             border.Height = 20;
@@ -391,8 +392,6 @@ namespace Memoria.Launcher
             //MakeTooltip(comboBox, tooltip, tooltipImage);
             if (property == "FontChoice")
                 MakeFontPreview(comboBox);
-            comboBox.Foreground = Brushes.Black;
-            comboBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightCombobox);
             comboBox.Margin = CommonMargin;
             comboBox.Height = ComboboxHeight;
             if (selectByName)

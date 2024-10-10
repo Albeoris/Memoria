@@ -6,9 +6,10 @@
         Height="72">
     <Button.Resources>
         <DropShadowEffect x:Key="bdropShadowEffect"
-            BlurRadius="4" 
-            Direction="-45" 
-            Color="#555"
+            BlurRadius="4"
+            ShadowDepth="4"
+            Direction="-45"
+            Opacity="0.6"
             RenderingBias="Quality"/>
     </Button.Resources>
     <Button.Template>
@@ -17,12 +18,14 @@
                   VerticalAlignment="Stretch"
                   HorizontalAlignment="Stretch">
                 <Border x:Name="OuterBorder"
-                    Background="{StaticResource BrushAccentColor}"
-                    Opacity="0.8"
+                    Background="{DynamicResource BrushAccentColor}"
                     CornerRadius="7">
+                    <Border.Effect>
+                        <DropShadowEffect ShadowDepth="5" BlurRadius="5" Opacity="0.3" />
+                    </Border.Effect>
                 </Border>
                 <Border x:Name="HoverOverlay"
-                    Background="{StaticResource BrushAccentColorHover}"
+                    Background="{DynamicResource BrushAccentColorHover}"
                     Opacity="0"
                     CornerRadius="7">
                 </Border>
@@ -34,7 +37,7 @@
                     VerticalAlignment="Center"
                     Effect="{StaticResource bdropShadowEffect}"
                     HorizontalAlignment="Center"
-                    Foreground="#cfff">
+                    Foreground="{StaticResource WhiteUI}">
                 </TextBlock>
             </Grid>
             <ControlTemplate.Triggers>

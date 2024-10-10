@@ -29,7 +29,7 @@
                             <Setter Property="Opacity" Value="0.5"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="true">
-                            <Setter TargetName="toggleBackground" Property="Background" Value="{StaticResource BrushAccentColor}"/>
+                            <Setter TargetName="toggleBackground" Property="Background" Value="{DynamicResource BrushAccentColor}"/>
                             <Setter TargetName="toggleBackground" Property="BorderThickness" Value="0"/>
                             <Setter TargetName="toggleThumb" Property="Background" Value="{StaticResource BrushLightColorNormal}"/>
                             <Trigger.EnterActions>
@@ -59,11 +59,11 @@
                                 <Condition Property="IsMouseOver" Value="true"/>
                             </MultiTrigger.Conditions>
                             <MultiTrigger.Setters>
-                                <Setter TargetName="toggleBackground" Property="Background" Value="{StaticResource BrushAccentColorHover}"/>
+                                <Setter TargetName="toggleBackground" Property="Background" Value="{DynamicResource BrushAccentColorHover}"/>
                             </MultiTrigger.Setters>
                         </MultiTrigger>
                         <Trigger Property="IsPressed" Value="true">
-                            <Setter TargetName="toggleBackground" Property="Background" Value="{StaticResource BrushAccentColorPressed}"/>
+                            <Setter TargetName="toggleBackground" Property="Background" Value="{DynamicResource BrushAccentColorPressed}"/>
                             <Setter TargetName="toggleBackground" Property="BorderThickness" Value="0"/>
                             <Setter TargetName="toggleThumb" Property="Background" Value="{StaticResource BrushLightColorPressed}"/>
                         </Trigger>

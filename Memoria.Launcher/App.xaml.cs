@@ -47,7 +47,7 @@ namespace Memoria.Launcher
             HandleException((Exception)e.ExceptionObject);
         }
 
-        private void TaskSchedulerOnUnobservedTaskException(Object? sender, UnobservedTaskExceptionEventArgs e)
+        private void TaskSchedulerOnUnobservedTaskException(Object sender, UnobservedTaskExceptionEventArgs e)
         {
             HandleException(e.Exception);
         }

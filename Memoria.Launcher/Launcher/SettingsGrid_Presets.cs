@@ -19,7 +19,7 @@ namespace Memoria.Launcher
             }
             catch { }
 
-            CreateHeading("Presets"); // TODO language
+            CreateHeading(Lang.Settings.Presets);
 
             Row++;
             RowDefinitions.Add(new RowDefinition());
@@ -43,9 +43,9 @@ namespace Memoria.Launcher
             Children.Add(comboBox);
 
             Button applyBtn = new Button();
-            applyBtn.Content = "Apply"; // TODO language
-            applyBtn.Height = ComboboxHeight;
-            applyBtn.FontSize = 13;
+            applyBtn.Content = Lang.Settings.Apply;
+            applyBtn.Height = ComboboxHeight + 2;
+            applyBtn.SetResourceReference(Button.StyleProperty, "ButtonStyle");
             applyBtn.SetValue(RowProperty, Row);
             applyBtn.SetValue(ColumnProperty, 61);
             applyBtn.SetValue(RowSpanProperty, 1);
@@ -58,8 +58,7 @@ namespace Memoria.Launcher
 
         private void ApplyBtn_Click(Object sender, RoutedEventArgs e)
         {
-            // TODO: language
-            if (MessageBox.Show("Are you sure you want to apply this preset?", "Apply Preset", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(Lang.Settings.ApplyPresetText, Lang.Settings.ApplyPresetCaption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 IniReader settings = Presets[comboBox.SelectedIndex].Settings;
                 settings.WriteAllSettings(IniFile.IniPath, ["Preset"]);
@@ -105,8 +104,8 @@ namespace Memoria.Launcher
 
             Presets.Add(new Preset()
             {
-                Name = "Memoria Default", // TODO language
-                Description = "Reset all settings to Memoria default values", // TODO language
+                Name = Lang.Settings.PresetMemoria,// "Memoria Default", // TODO language
+                Description = Lang.Settings.PresetMemoria_ToolTip, //"Reset all settings to Memoria default values", // TODO language
                 Settings = new IniReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Memoria.ini"))
             });
 
@@ -125,15 +124,15 @@ namespace Memoria.Launcher
 
             Presets.Add(new Preset()
             {
-                Name = "Steam Default", // TODO language
-                Description = "*Not recommended*\nReset all settings to Steam default values", // TODO language
+                Name = Lang.Settings.PresetSteam,//"Steam Default", // TODO language
+                Description = Lang.Settings.PresetSteam_ToolTip,//"*Not recommended*\nReset all settings to Steam default values", // TODO language
                 Settings = new IniReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("SteamPreset.ini"))
             });
 
             Presets.Add(new Preset()
             {
-                Name = "PSX-like", // TODO language
-                Description = "Closest settings to the original release on PSX such as encounter method, battle menu and more", // TODO language
+                Name = Lang.Settings.PresetPSX,//"PSX-like", // TODO language
+                Description = Lang.Settings.PresetPSX_ToolTip,//"Closest settings to the original release on PSX such as encounter method, battle menu and more", // TODO language
                 Settings = new IniReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("PSXPreset.ini"))
             });
 

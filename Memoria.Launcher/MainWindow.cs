@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
@@ -10,7 +9,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Markup;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 
 namespace Memoria.Launcher
@@ -40,7 +38,6 @@ namespace Memoria.Launcher
             }
 
             InitializeComponent();
-            TryLoadImage();
 
             PlayButton.GameSettings = GameSettings;
             PlayButton.GameSettingsDisplay = GameSettingsDisplay;
@@ -48,7 +45,14 @@ namespace Memoria.Launcher
             Closing += new CancelEventHandler(OnClosing);
             LoadSettings();
             KeyUp += ModManagerWindow_KeyUp;
+
+            //SetAccentColor((Color)ColorConverter.ConvertFromString("#CC355566"));
+            //SetAccentColor((Color)ColorConverter.ConvertFromString("#CCC9AD1D"));
+            //Launcher.Source = new BitmapImage(new Uri($"{Directory.GetCurrentDirectory()}\\Echo-S-9\\LauncherBackground.jpg", UriKind.Absolute));
         }
+
+        public const String DefaultAccentColor = "#CC355566";
+        public const String DefaultBackgroundImage = "pack://application:,,,/images/new_launcher_bg.jpg";
 
         private void OnLoaded(Object sender, RoutedEventArgs e)
         {
@@ -146,22 +150,26 @@ namespace Memoria.Launcher
             */
         }
 
-        private void TryLoadImage()
+        public static void SetAccentColor(ALChColor color)
         {
-            try
-            {
-                String backgroundImagePath = ConfigurationManager.AppSettings["backgroundImagePath"];
-                if (String.IsNullOrEmpty(backgroundImagePath) || !File.Exists(backgroundImagePath))
-                    return;
+            float shade = 0.05f;
 
-                String path = Path.GetFullPath(backgroundImagePath);
+            ALChColor darker = new ALChColor(color);
+            darker.L -= shade;
+            Application.Current.Resources["AccentColorDarker"] = (Color)darker;
+            Application.Current.Resources["BrushAccentColorDarker"] = new SolidColorBrush(darker);
 
-                ImageSource imageSource = new BitmapImage(new Uri(path, UriKind.Absolute));
-                Launcher.Source = imageSource;
-            }
-            catch
-            {
-            }
+            Application.Current.Resources["AccentColor"] = (Color)color;
+            Application.Current.Resources["BrushAccentColor"] = new SolidColorBrush(color);
+            color.L += shade;
+            Application.Current.Resources["AccentColorHover"] = (Color)color;
+            Application.Current.Resources["BrushAccentColorHover"] = new SolidColorBrush((Color)color);
+            color.L += shade;
+            Application.Current.Resources["AccentColorPressed"] = (Color)color;
+            Application.Current.Resources["BrushAccentColorPressed"] = new SolidColorBrush((Color)color);
+            color.L += shade;
+            Application.Current.Resources["AccentColorBrighter"] = (Color)color;
+            Application.Current.Resources["BrushAccentColorBrighter"] = new SolidColorBrush((Color)color);
         }
 
         [DllImport("user32.dll")]

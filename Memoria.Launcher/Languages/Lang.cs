@@ -216,6 +216,19 @@ namespace Memoria.Launcher
             public static readonly string tetraMasterReduceRandomBox1 = GetSettings(nameof(tetraMasterReduceRandomBox1));
             public static readonly string tetraMasterReduceRandomBox2 = GetSettings(nameof(tetraMasterReduceRandomBox2));
 
+            // Presets
+            public static readonly string Presets = GetSettings(nameof(Presets));
+            public static readonly string Apply = GetSettings(nameof(Apply));
+            public static readonly string ApplyPresetText = GetSettings(nameof(ApplyPresetText));
+            public static readonly string ApplyPresetCaption = GetSettings(nameof(ApplyPresetCaption));
+            public static readonly string PresetMemoria = GetSettings(nameof(PresetMemoria));
+            public static readonly string PresetMemoria_ToolTip = GetSettings(nameof(PresetMemoria_ToolTip));
+            public static readonly string PresetSteam = GetSettings(nameof(PresetSteam));
+            public static readonly string PresetSteam_ToolTip = GetSettings(nameof(PresetSteam_ToolTip));
+            public static readonly string PresetPSX = GetSettings(nameof(PresetPSX));
+            public static readonly string PresetPSX_ToolTip = GetSettings(nameof(PresetPSX_ToolTip));
+
+
             // Settings.ini Tooltips
             public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));
             public static readonly string WindowMode_Tooltip = GetSettings(nameof(WindowMode_Tooltip));

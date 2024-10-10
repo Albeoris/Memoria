@@ -40,6 +40,8 @@ namespace Memoria.Launcher
         public String DownloadFormat { get; set; }
         public String PreviewFile { get; set; }
         public String PreviewFileUrl { get; set; }
+        public String LauncherColor { get; set; }
+        public String LauncherBackground { get; set; }
         public Int64 DownloadSize { get; set; } // TODO
         public Int64 FullSize { get; set; } // TODO
         public List<Mod> SubMod { get; set; }
@@ -209,6 +211,8 @@ namespace Memoria.Launcher
             PreviewFile = modNode["PreviewFile"]?.InnerText;
             PreviewFileUrl = modNode["PreviewFileUrl"]?.InnerText;
             MinimumMemoriaVersion = modNode["MinimumMemoriaVersion"]?.InnerText;
+            LauncherColor = modNode["LauncherColor"]?.InnerText;
+            LauncherBackground = modNode["LauncherBackground"]?.InnerText;
             if (Int64.TryParse(modNode["FullSize"]?.InnerText ?? "0", out outParse)) FullSize = outParse;
             if (Int64.TryParse(modNode["DownloadSize"]?.InnerText ?? "0", out outParse)) DownloadSize = outParse;
             if (File.Exists(Path.Combine(FullInstallationPath, presetFile)))

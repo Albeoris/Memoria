@@ -73,6 +73,7 @@
     <Compile Include="Languages\Lang.cs" />
     <Compile Include="Languages\XmlDocumentExm.cs" />
     <Compile Include="Languages\XmlHelper.cs" />
+    <Compile Include="Launcher\ALChColor.cs" />
     <Compile Include="Launcher\SettingsGrid_Advanced3.cs" />
     <Compile Include="Launcher\SettingsGrid_Advanced2.cs" />
     <Compile Include="Launcher\SettingsGrid_Advanced.cs" />
