@@ -283,5 +283,6 @@ PresetPSX_ToolTip = "最接近 PSX 原版发布的设置，如遇敌方式、战
 	TooltipUninstall = "删除模组"
 	TooltipDownload = "下载/更新"
 	TooltipCancel = "取消当前下载"
+	TooltipReorganize = "根据优先级自动整理模组"
 	/>
 </Data>

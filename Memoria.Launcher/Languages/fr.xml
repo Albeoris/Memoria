@@ -290,5 +290,6 @@ PresetPSX_ToolTip = "Paramètres les plus proches de la version originale sur PS
 	TooltipUninstall = "Supprimer le(s) mod(s) sélectionné(s)"
 	TooltipDownload = "Télécharger/Mettre à jour"
 	TooltipCancel = "Annuler les téléchargements"
+	TooltipReorganize = "Réorganiser automatiquement les mods par priorité"
 	/>
 </Data>

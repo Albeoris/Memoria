@@ -292,5 +292,6 @@ PresetPSX_ToolTip = "Настройки, наиболее близкие к ор
 	TooltipUninstall = "Удалить Мод(ы)"
 	TooltipDownload = "Скачать/Обновить"
 	TooltipCancel = "Отменить Текущую Загрузка"
+	TooltipReorganize = "Автоматически организовать моды по приоритету"
 	/>
 </Data>

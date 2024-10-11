@@ -447,6 +447,7 @@ namespace Memoria.Launcher
             public static readonly String TooltipUninstall = GetModEditor(nameof(TooltipUninstall));
             public static readonly String TooltipDownload = GetModEditor(nameof(TooltipDownload));
             public static readonly String TooltipCancel = GetModEditor(nameof(TooltipCancel));
+            public static readonly String TooltipReorganize = GetModEditor(nameof(TooltipReorganize));
         }
 
         public static class Error

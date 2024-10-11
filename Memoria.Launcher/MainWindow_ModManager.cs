@@ -1273,6 +1273,7 @@ namespace Memoria.Launcher
             tabMyMods.Text = Lang.ModEditor.TabMyMods;
             colMyModsName.Header = Lang.ModEditor.Name;
             colMyModsCategory.Header = Lang.ModEditor.Category;
+            btnReorganize.ToolTip = Lang.ModEditor.TooltipReorganize;
             btnMoveUp.ToolTip = Lang.ModEditor.TooltipMoveUp;
             btnMoveDown.ToolTip = Lang.ModEditor.TooltipMoveDown;
             btnUninstall.ToolTip = Lang.ModEditor.TooltipUninstall;

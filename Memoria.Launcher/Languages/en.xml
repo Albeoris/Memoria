@@ -277,5 +277,6 @@ TooltipDeactivateAll = "Deactivate All Mods"
 TooltipUninstall = "Uninstall Mod(s)"
 TooltipDownload = "Download/Update"
 TooltipCancel = "Cancel Current Downloads"
+TooltipReorganize = "Auto-organize mods by priority"
 />
 </Data>

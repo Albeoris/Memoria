@@ -256,5 +256,6 @@ MaxCardCount_Tooltip = "Limite de cartas no inventário aumentado para 10000"
 	TooltipUninstall = "Desinstalar o(s) Mod(s)"
 	TooltipDownload = "Baixar/Atualizar"
 	TooltipCancel = "Cancelar o Download Atual"
+	TooltipReorganize = "Organizar mods automaticamente por prioridade"
 	/>
 </Data>

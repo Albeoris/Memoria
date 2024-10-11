@@ -289,5 +289,6 @@ PresetPSX_ToolTip = "Configuraciones más cercanas al lanzamiento original en PS
 	TooltipUninstall = "Desinstalar mod(s)"
 	TooltipDownload = "Descargar/Actualizar"
 	TooltipCancel = "Cancelar descarga actual"
+	TooltipReorganize = "Organizar mods automáticamente por prioridad"
 	/>
 </Data>
