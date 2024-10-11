@@ -13,6 +13,7 @@ namespace Memoria.Launcher
 
         private static readonly Lazy<Lang> Instance = new Lazy<Lang>(Initialize, true);
 
+        public static String[] LauncherLanguageList = { "en", "de", "es", "fr", "it", "jp", "pt-BR", "ru", "uk", "zh-CN" };
         private static Lang Initialize()
         {
             try
