@@ -12,7 +12,6 @@
                             Opacity="0.8"
                             CornerRadius="3">
                         </Border>
-
                         <Border x:Name="HoverOverlay"
                             Background="#FFFFFF"
                             Opacity="0"

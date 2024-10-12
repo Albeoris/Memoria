@@ -405,6 +405,13 @@ namespace Memoria.Launcher
             public static readonly string ModelViewer = GetLauncher("ModelViewer");
             public static readonly string ModUpdateAvailable = GetLauncher("ModUpdateAvailable");
             public static readonly string ModConflict = GetLauncher("ModConflict");
+            public static readonly string CopyLogButton = GetLauncher("CopyLogButton");
+            public static readonly string CopyLogButton_Tooltip = GetLauncher("CopyLogButton_Tooltip");
+            public static readonly string CopyLogButton_Success = GetLauncher("CopyLogButton_Success");
+            public static readonly string CopyLogButton_Empty = GetLauncher("CopyLogButton_Empty");
+            public static readonly string CopyLogButton_Doesntexist = GetLauncher("CopyLogButton_Doesntexist");
+            public static readonly string CopyLogButton_Error = GetLauncher("CopyLogButton_Error");
+            public static readonly string ModelViewerButton_Tooltip = GetLauncher("ModelViewerButton_Tooltip");
         }
 
         public static class ModEditor

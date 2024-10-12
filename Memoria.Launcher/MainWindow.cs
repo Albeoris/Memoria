@@ -63,6 +63,9 @@ namespace Memoria.Launcher
             menuCheats.Header = Lang.Settings.menuCheats;
             menuAdvanced.Header = Lang.Settings.menuAdvanced;
             ModelViewerButton.Content = Lang.Launcher.ModelViewer;
+            UiGrid.MakeTooltip(ModelViewerButton, Lang.Launcher.ModelViewerButton_Tooltip, "", "hand");
+            CopyLogButton.Content = Lang.Launcher.CopyLogButton;
+            UiGrid.MakeTooltip(CopyLogButton, Lang.Launcher.CopyLogButton_Tooltip, "", "hand");
 
             SetupFrameLang();
             UpdateCatalog();
@@ -103,6 +106,47 @@ namespace Memoria.Launcher
         private void ModelViewerButton_Click(object sender, RoutedEventArgs e)
         {
             this.PlayButton.Click(true);
+        }
+        private void CopyLogButton_Click(object sender, RoutedEventArgs e)
+        {
+            string logFilePath = "Memoria.log";
+            try
+            {
+                if (File.Exists(logFilePath))
+                {
+                    string logContent = File.ReadAllText(logFilePath);
+                    if (!string.IsNullOrWhiteSpace(logContent))
+                    {
+                        Clipboard.SetText(logContent);
+                        ShowTemporaryMessage(Lang.Launcher.CopyLogButton_Success, true);
+                    }
+                    else
+                        ShowTemporaryMessage(Lang.Launcher.CopyLogButton_Empty, false);
+                }
+                else
+                    ShowTemporaryMessage(Lang.Launcher.CopyLogButton_Doesntexist, false);
+            }
+            catch (Exception ex)
+            {
+                ShowTemporaryMessage(Lang.Launcher.CopyLogButton_Error + ex.Message, false);
+            }
+        }
+
+        private void ShowTemporaryMessage(string message, bool success)
+        {
+            CopyLogButton_StatusMessage.Text = message;
+            CopyLogButton_StatusMessage.Foreground = success ? Brushes.LightGreen : Brushes.Red;
+            CopyLogButton_StatusMessage.Visibility = Visibility.Visible;
+
+            var timer = new System.Windows.Threading.DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(3);
+            timer.Tick += (s, args) =>
+            {
+                CopyLogButton_StatusMessage.Text = "";
+                CopyLogButton_StatusMessage.Visibility = Visibility.Collapsed;
+                timer.Stop();
+            };
+            timer.Start();
         }
 
         private void HotfixForMoguriMod()

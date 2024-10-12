@@ -26,6 +26,13 @@ Return = "Return"
 ModelViewer = "Model Viewer"
 ModUpdateAvailable="There are some mod updates available"
 ModConflict="There are some mod conflicts"
+CopyLogButton = "Copy log"
+CopyLogButton_Tooltip = "Copy the content of the log file in your clipboard, you can then paste it in your Github ticket to add context"
+CopyLogButton_Success = "Memoria.log content copied to clipboard"
+CopyLogButton_Empty = "Memoria.log is empty"
+CopyLogButton_Doesntexist = "Memoria.log does not exist"
+CopyLogButton_Error = "Error copying file: "
+ModelViewerButton_Tooltip = "Launches the model viewer that allows you to browse and pose all characters, objects, SFX, battle backgrounds..."
 />
 
 <Settings

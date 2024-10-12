@@ -439,6 +439,28 @@
                             Margin="0,0,0,15"
                             Content="Model Viewer"
                             Click="ModelViewerButton_Click"/>
+
+                        <StackPanel
+                            Orientation="Vertical"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Width="293"
+                            Margin="0,0,15,15" >
+                            <TextBlock x:Name="CopyLogButton_StatusMessage"
+                                Visibility="Collapsed"
+                                HorizontalAlignment="Center"
+                                Background="Black"
+                                Padding="5"
+                                FontSize="14"
+                                TextWrapping="Wrap"
+                                Foreground="Green" />
+                            <Button Name="CopyLogButton"
+                                Style="{StaticResource ButtonStyle2}"
+                                Height="35"
+                                Content="Copy Log"
+                                Click="CopyLogButton_Click"/>
+
+                        </StackPanel>
                     </Grid>
                 </Border>
             </TabItem>
