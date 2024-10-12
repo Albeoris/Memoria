@@ -15,7 +15,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="TabItem">
-                    <Grid Width="160" Margin="0,0,2,0">
+                    <Grid Width="169" Margin="0,0,2,0">
                         <Border x:Name="border" Background="{TemplateBinding Background}" CornerRadius="15,15,0,0" BorderThickness="0,2,0,0" BorderBrush="#6666" >
                             <Border >
                                 <StackPanel x:Name="contentwrap" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">

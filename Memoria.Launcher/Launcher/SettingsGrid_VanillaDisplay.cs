@@ -132,7 +132,10 @@ namespace Memoria.Launcher
 
                 value = iniReader.GetSetting("Settings", nameof(ActiveMonitor));
                 if (!String.IsNullOrEmpty(value))
-                    _activeMonitor = value;
+                {
+                    var i = value.IndexOf("[");
+                    _activeMonitor = i < 0 ? value : value.Substring(0, i) + Lang.Settings.PrimaryMonitor;
+                }
 
                 value = iniReader.GetSetting("Settings", nameof(WindowMode));
                 if (!String.IsNullOrEmpty(value))

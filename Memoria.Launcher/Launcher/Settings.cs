@@ -1,10 +1,10 @@
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using Application = System.Windows.Application;
-using System.Windows;
-using System.Reflection;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Windows;
+using Application = System.Windows.Application;
 
 namespace Memoria.Launcher
 {
@@ -23,6 +23,7 @@ namespace Memoria.Launcher
             ["HideCards", "_ishidecards", "HideSteam", "Icons", 0, 1, 0],
             ["WorldmapBoost", "_worldmapboost", "FieldOfViewSpeedBoost", "Worldmap", 0, 100, 1],
             ["WorldmapShipTilt", "_worldmapshiptilt", "CameraTiltShip", "Worldmap", 0, 100, 1],
+            ["SaveOnCloud", "_saveOnCloud", "SaveOnCloud", "SaveFile", 0, 1, 0],
 
             ["StealingAlwaysWorks", "_stealingalwaysworks", "StealingAlwaysWorks", "Hacks", 0, 2, 0],
             ["NoAutoTrance", "_noautotrance", "NoAutoTrance", "Battle", 0, 1, 0],
@@ -131,6 +132,12 @@ namespace Memoria.Launcher
         {
             get => _worldmapshiptilt;
             set => SetProperty(ref _worldmapshiptilt, value);
+        }
+        private Int16 _saveOnCloud;
+        public Int16 SaveOnCloud
+        {
+            get => _saveOnCloud;
+            set => SetProperty(ref _saveOnCloud, value);
         }
 
         // Cheats //
@@ -506,6 +513,12 @@ namespace Memoria.Launcher
             get => _accessBattleMenu;
             set => SetProperty(ref _accessBattleMenu, value);
         }
+        private Int16 _autoSave;
+        public Int16 AutoSave
+        {
+            get => _autoSave;
+            set => SetProperty(ref _autoSave, value);
+        }
         public String AvailableBattleMenus => AccessBattleMenu < 3 ? " \"Equip\", \"SupportingAbility\"" : "";
         #endregion
 
@@ -519,7 +532,8 @@ namespace Memoria.Launcher
 
                 IniFile iniFile = new IniFile(IniFile.IniPath);
 
-                foreach (Object[] item in SettingsList) {
+                foreach (Object[] item in SettingsList)
+                {
                     if (item[0] is String property && property == propertyName && item[2] is String name_ini && item[3] is String category && item[4] is Int32 valueZero && item[5] is Int32 valueOne) //  
                     {
                         Object propValue = this.GetType().GetProperty(property)?.GetValue(this);
@@ -729,6 +743,10 @@ namespace Memoria.Launcher
                         if (AccessBattleMenu > 0)
                             iniFile.WriteValue("Battle", "Enabled", "1");
                         break;
+                    case nameof(AutoSave):
+                        iniFile.WriteValue("SaveFile", "DisableAutoSave", AutoSave == 1 ? "1" : "0");
+                        iniFile.WriteValue("SaveFile", "AutoSaveOnlyAtMoogle", AutoSave == 2 ? "1" : "0");
+                        break;
                 }
             }
             catch (Exception ex)
@@ -762,7 +780,7 @@ namespace Memoria.Launcher
                                 val3 = (Int16)defaultVal;
                             if (val3 == valueZero)
                                 field.SetValue(this, (Int16)0);
-                            else if(val3 == valueOne)
+                            else if (val3 == valueOne)
                                 field.SetValue(this, (Int16)1);
                             else
                                 field.SetValue(this, val3);
@@ -1022,6 +1040,15 @@ namespace Memoria.Launcher
                     _accessBattleMenu = 0;
                 Refresh(nameof(AccessBattleMenu));
 
+
+                value = iniReader.GetSetting("SaveFile", "DisableAutoSave");
+                value1isInt = Int16.TryParse(value, out value1);
+                value = iniReader.GetSetting("SaveFile", "AutoSaveOnlyAtMoogle");
+                value2isInt = Int16.TryParse(value, out value2);
+                if (!value1isInt) value1 = 0;
+                if (!value2isInt) value2 = 0;
+                _autoSave = (short)(value1 == 1 ? 1 : value2 == 0 ? 0 : 2);
+                Refresh(nameof(AutoSave));
             }
             catch (Exception ex)
             {

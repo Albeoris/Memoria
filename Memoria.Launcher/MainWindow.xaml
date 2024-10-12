@@ -15,284 +15,13 @@
     Background="Transparent"
     DataContext="{Binding RelativeSource={RelativeSource Self}}">
 
-    <Window.Resources>
-        <Style x:Key="ModInfoLabelStyle" TargetType="{x:Type TextBlock}">
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="Margin" Value="0,0,3,1" />
-            <Setter Property="FontWeight" Value="DemiBold" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
-        </Style>
-        <Style
-            x:Key="ModInfoDetailsStyle"
-            BasedOn="{StaticResource ModInfoLabelStyle}"
-            TargetType="{x:Type TextBlock}">
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
-        </Style>
-        <Style
-            x:Key="ModDescriptionStyle"
-            BasedOn="{StaticResource ModInfoLabelStyle}"
-            TargetType="{x:Type TextBlock}">
-            <Setter Property="FontWeight" Value="Normal" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="VerticalAlignment" Value="Top" />
-            <!--<Setter Property="Background" Value="#88404845" />-->
-            <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
-        </Style>
-        <DropShadowEffect x:Key="dropShadowEffect"
-            BlurRadius="2" 
-            Direction="-45" 
-            Color="#3333" 
-            RenderingBias="Quality"/>
-        <DropShadowEffect x:Key="ButtondropShadowEffect"
-            BlurRadius="1" 
-            Direction="-45" 
-            Color="#3333" 
-            RenderingBias="Quality" 
-            ShadowDepth="2"/>
-        <Style
-            x:Key="ModTitleStyle"
-            BasedOn="{StaticResource ModInfoLabelStyle}"
-            TargetType="{x:Type TextBlock}">
-            <Setter Property="FontWeight" Value="DemiBold" />
-            <Setter Property="FontFamily" Value="{StaticResource CenturyGothic}" />
-            <Setter Property="FontStretch" Value="UltraCondensed" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Padding" Value="0,5,0,0" />
-            <Setter Property="FontSize" Value="24" />
-            <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
-        </Style>
-        <Style
-            x:Key="ModVersionStyle"
-            BasedOn="{StaticResource ModInfoLabelStyle}"
-            TargetType="{x:Type TextBlock}">
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="FontFamily" Value="{StaticResource CenturyGothic}" />
-            <Setter Property="TextWrapping" Value="Wrap" />
-            <Setter Property="Padding" Value="1,0,0,2" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="Foreground" Value="#BBB" />
-        </Style>
-
-        <Style x:Key="OpenLinkStyle" TargetType="{x:Type Button}">
-            <Setter Property="Foreground" Value="{DynamicResource BrushDarkTextColor}"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                            x:Name="border"
-                            Background="{DynamicResource BrushLightColorNormal}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="0"
-                            CornerRadius="5"
-                            Padding="5,2,5,2"
-                            Height="auto"
-                            Width="auto"
-                            Cursor="Hand">
-                            <ContentPresenter
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{DynamicResource BrushLightColorHover}"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{DynamicResource BrushLightColorPressed}"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter TargetName="border" Property="Opacity" Value="0.2"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="ButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Foreground" Value="{DynamicResource WhiteUI}"/>
-            <Setter Property="FontFamily" Value="Segoe UI"/>
-            <Setter Property="FontWeight" Value="Medium"/>
-            <Setter Property="FontSize" Value="13"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border x:Name="borderbottom" Background="{StaticResource TabGradientUnselected}" CornerRadius="5" BorderThickness="0,0,1,2" BorderBrush="#8333"
-                            Cursor="Hand">
-                            <Border x:Name="bordertop" Background="Transparent" CornerRadius="5" BorderThickness="1,2,0,0" BorderBrush="#5aaa">
-                                <ContentPresenter
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center"/>
-                            </Border>
-                            <Border.Effect>
-                                <DropShadowEffect ShadowDepth="5" BlurRadius="5" Opacity="0.3" />
-                            </Border.Effect>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="borderbottom" Property="Background" Value="{DynamicResource BrushAccentColor}"/>
-                                <Setter TargetName="borderbottom" Property="BorderBrush" Value="{DynamicResource BrushAccentColorDarker}" />
-                                <Setter TargetName="bordertop" Property="BorderBrush" Value="{DynamicResource BrushAccentColorHover}" />
-                                <Setter TargetName="bordertop" Property="BorderThickness" Value="1,1,0,0" />
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="borderbottom" Property="Background" Value="{DynamicResource BrushAccentColor}"/>
-                                <Setter TargetName="bordertop" Property="BorderBrush" Value="{DynamicResource BrushAccentColorDarker}" />
-                                <Setter TargetName="borderbottom" Property="BorderBrush" Value="{DynamicResource BrushAccentColorHover}" />
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter TargetName="borderbottom" Property="Opacity" Value="0.2"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="ToolButtonStyle" TargetType="{x:Type Button}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                            x:Name="border"
-                            Background="{DynamicResource BrushLightColorNormal}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
-                            BorderThickness="0"
-                            CornerRadius="5"
-                            Cursor="Hand">
-                            <ContentPresenter
-                                HorizontalAlignment="Center" 
-                                VerticalAlignment="Center" 
-                                Width="36"
-                                Height="36"
-                                Opacity="0.8"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{DynamicResource BrushLightColorHover}"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter TargetName="border" Property="Background" Value="{DynamicResource BrushLightColorPressed}"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter TargetName="border" Property="Opacity" Value="0.2"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="subtab" TargetType="{x:Type TabItem}">
-            <Setter Property="Width" Value="269"/>
-            <Setter Property="Margin" Value="-12,0,0,0"/>
-            <Setter Property="Background" Value="#d000"/>
-            <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TabItem}">
-                        <Grid Margin="6,0,0,0">
-                            <Border x:Name="borderbottom" Background="{TemplateBinding Background}" CornerRadius="6,6,6,6" BorderThickness="0,0,1,2" BorderBrush="#caaa">
-                                <Border x:Name="bordertop" Background="Transparent" CornerRadius="6" BorderThickness="1,2,0,0" BorderBrush="#caaa">
-                                    <ContentPresenter x:Name="content"
-                                    ContentSource="Header"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Margin="20,0"
-                                    Cursor="Hand"
-                                    TextBlock.FontSize="{TemplateBinding FontSize}"
-                                    TextBlock.FontFamily="{DynamicResource CenturyGothic}"
-                                    TextBlock.Foreground="{TemplateBinding Foreground}" />
-                                </Border>
-                            </Border>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="borderbottom" Property="Opacity" Value="0.9" />
-                                <Setter TargetName="borderbottom" Property="Background" Value="{DynamicResource BrushAccentColor}" />
-                                <Setter TargetName="bordertop" Property="BorderBrush" Value="{DynamicResource BrushAccentColorDarker}" />
-                                <Setter TargetName="borderbottom" Property="BorderBrush" Value="{DynamicResource BrushAccentColorHover}" />
-                                <Setter TargetName="content" Property="TextBlock.Effect" Value="{StaticResource ButtondropShadowEffect}" />
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="False">
-                                <Setter TargetName="borderbottom" Property="Opacity" Value="0.8" />
-                                <Setter TargetName="bordertop" Property="BorderBrush" Value="#5aaa" />
-                                <Setter TargetName="borderbottom" Property="BorderBrush" Value="#8333" />
-                                <Setter TargetName="borderbottom" Property="Background" Value="{StaticResource TabGradientUnselected}" />
-                                <Setter TargetName="content" Property="TextBlock.FontWeight" Value="Normal" />
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="borderbottom" Property="Cursor" Value="Hand" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <Style x:Key="GroupModInfo" TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}">
-            <Setter Property="Background" Value="{StaticResource LightGreyUI}" />
-            <Setter Property="Height" Value="0" />
-        </Style>
-
-        <DataTemplate x:Key="FilterItemTemplate">
-            <Border
-                Padding="5"
-                Background="{DynamicResource PrimaryControlBackground}"
-                Focusable="False">
-                <CheckBox Content="{Binding Name, FallbackValue='Category Name'}" IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            </Border>
-        </DataTemplate>
-        <DataTemplate x:Key="FilterItemSeparatorTemplate">
-            <Border
-                Height="2"
-                Padding="5"
-                Background="{DynamicResource SecondaryAppBackground}"
-                Focusable="False" />
-        </DataTemplate>
-        <Style x:Key="CategoryFilterListBoxItem" TargetType="{x:Type ListBoxItem}">
-            <Setter Property="Background" Value="{DynamicResource PrimaryControlBackground}" />
-            <Setter Property="ContentTemplate" Value="{StaticResource FilterItemTemplate}" />
-            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="ListBoxItem">
-                        <Border
-                            x:Name="Border"
-                            Padding="2"
-                            Background="{TemplateBinding Background}"
-                            SnapsToDevicePixels="true">
-                            <ContentPresenter
-                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                ContentTemplate="{TemplateBinding ContentTemplate}"
-                                TextElement.Foreground="{DynamicResource PrimaryControlForeground}" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <DataTrigger Binding="{Binding FilterType, FallbackValue='0'}" Value="3">
-                                <Setter Property="ContentTemplate" Value="{StaticResource FilterItemSeparatorTemplate}" />
-                                <Setter Property="IsEnabled" Value="False" />
-                                <Setter Property="IsHitTestVisible" Value="False" />
-                                <Setter Property="Focusable" Value="False" />
-                            </DataTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
-
-    <Grid>
+    <Grid x:Name="MainWindowGrid">
         <!-- Background Image -->
         <Image x:Name="Launcher"
             Stretch="UniformToFill"
             VerticalAlignment="Top"
             MouseDown="Launcher_MouseDown"
+            RenderOptions.BitmapScalingMode="HighQuality"
             Source="/images/new_launcher_bg.jpg" />
 
         <Image x:Name="LogoImage"
@@ -301,6 +30,7 @@
             HorizontalAlignment="Left"
             Margin="20,-53,0,0"
             MouseDown="Launcher_MouseDown"
+            RenderOptions.BitmapScalingMode="HighQuality"
             Source="/images/FF9_logo.png" />
 
         <Button Width="45"
@@ -376,6 +106,16 @@
                             Margin="0,15,20,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top" />
+
+                        <Button Name="NewPresetButton"
+                            Style="{StaticResource ButtonStyle2}"
+                            Width="293"
+                            Height="35"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Margin="20"
+                            Content="Save settings"
+                            Click="SavePreset_Click"/>
                     </Grid>
                 </Border>
             </TabItem>
@@ -436,7 +176,7 @@
                             Height="35"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
-                            Margin="0,0,0,15"
+                            Margin="0,0,0,20"
                             Content="Model Viewer"
                             Click="ModelViewerButton_Click"/>
 
@@ -445,7 +185,7 @@
                             HorizontalAlignment="Right"
                             VerticalAlignment="Bottom"
                             Width="293"
-                            Margin="0,0,15,15" >
+                            Margin="20" >
                             <TextBlock x:Name="CopyLogButton_StatusMessage"
                                 Visibility="Collapsed"
                                 HorizontalAlignment="Center"
@@ -465,6 +205,7 @@
                 </Border>
             </TabItem>
 
+            <!-- Mods Tab -->
             <TabItem x:Name="ModManagerTab"
                 Header="MODS"
                 Tag="16"
@@ -1175,6 +916,5 @@
             Margin="22,0,0,2"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
-
     </Grid>
 </Window>

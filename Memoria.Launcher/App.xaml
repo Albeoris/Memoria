@@ -16,6 +16,7 @@
                 <ResourceDictionary Source="Resources/ScrollBarStyle.xaml"/>
                 <ResourceDictionary Source="Resources/ListViewStyle.xaml"/>
                 <ResourceDictionary Source="Resources/CheckBoxStyle.xaml"/>
+                <ResourceDictionary Source="Resources/ModManagerStyle.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

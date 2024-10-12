@@ -1,0 +1,132 @@
+﻿<UserControl x:Class="Memoria.Launcher.Window_NewPreset"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Stretch"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBoxBase}">
+                        <Border Name="Border"
+                            CornerRadius="2"
+                            Padding="3"
+                            BorderThickness="1"
+                            Background="{StaticResource BrushLightColorNormal}">
+                            <ScrollViewer Margin="0" x:Name="PART_ContentHost" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="True">
+                                <Setter TargetName="Border" Property="Background" Value="{StaticResource BrushLightColorHover}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    <Border x:Name="Bg" Background="#6000" MouseDown="Bg_MouseDown" MouseUp="Bg_MouseUp">
+        <Border
+        x:Name="Window"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center"
+        Background="#e000"
+        BorderBrush="#6666"
+        BorderThickness="1"
+        Padding="15"
+        MouseDown="Window_MouseDown">
+        <Grid>
+            <StackPanel>
+                <Label
+                    x:Name="NewPresetLabel"
+                    Content="New Preset"
+                    Foreground="{StaticResource WhiteUI}"
+                    FontFamily="{StaticResource CenturyGothic}"
+                    FontSize="18"
+                    Padding="0"
+                    Height="28"
+                    Margin="-5,-10,0,0"/>
+                <Label
+                    x:Name="PresetNameLabel"
+                    Content="Name"
+                    Foreground="{StaticResource WhiteUI}"
+                    FontSize="14"
+                    Padding="0"
+                    Margin="0,6"/>
+                <TextBox
+                    x:Name="PresetName"
+                    Style="{StaticResource TextBoxStyle}"
+                    TextWrapping="NoWrap"
+                    Width="346"
+                    MaxLength="32"
+                    TextChanged="PresetName_TextChanged"
+                    KeyUp="PresetName_KeyUp"/>
+
+                <Label
+                    x:Name="PresetDescLabel"
+                    Content="Description (optional)"
+                    Foreground="{StaticResource WhiteUI}"
+                    FontSize="14"
+                    Padding="0"
+                    Margin="0,6"/>
+                <TextBox
+                    x:Name="PresetDescription"
+                    Style="{StaticResource TextBoxStyle}"
+                    TextWrapping="Wrap"
+                    AcceptsReturn="True"
+                    Height="70"
+                    Width="346"/>
+                <CheckBox x:Name="IncludeMods" Content="Include Mods" Style="{DynamicResource ToggleStyle}" Margin="0,6"/>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <Button
+                        x:Name="Cancel"
+                        Content="Cancel"
+                        Style="{StaticResource ButtonStyle}"
+                        Height="30"
+                        Width="170"
+                        Click="Close"/>
+                    <Button
+                        x:Name="Ok"
+                        IsEnabled="False"
+                        Content="Ok"
+                        Margin="6,0,0,0"
+                        Style="{StaticResource ButtonStyle}"
+                        Height="30"
+                        Width="170"
+                        Click="Ok_Click"/>
+                </StackPanel>
+            </StackPanel>
+            <Button
+                Width="45"
+                Height="28"
+                Margin="-15"
+                BorderThickness="0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Top"
+                Click="Close">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}" BorderBrush="{TemplateBinding BorderBrush}">
+                            <Path Width="10" Height="10" Data="M0,0L10,10M10,0L0,10" Stroke="White" />
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="#6AAA"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#E81123"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
+    </Border>
+    </Border>
+</UserControl>

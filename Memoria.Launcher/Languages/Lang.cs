@@ -229,6 +229,13 @@ namespace Memoria.Launcher
             public static readonly string PresetPSX = GetSettings(nameof(PresetPSX));
             public static readonly string PresetPSX_ToolTip = GetSettings(nameof(PresetPSX_ToolTip));
 
+            // SaveFiles
+            public static readonly string SaveFiles = GetSettings(nameof(SaveFiles));
+            public static readonly string AutoSave = GetSettings(nameof(AutoSave));
+            public static readonly string AutoSaveOptions = GetSettings(nameof(AutoSaveOptions));
+            public static readonly string AutoSave_ToolTip = GetSettings(nameof(AutoSave_ToolTip));
+            public static readonly string SaveOnCloud = GetSettings(nameof(SaveOnCloud));
+            public static readonly string SaveOnCloud_ToolTip = GetSettings(nameof(SaveOnCloud_ToolTip));
 
             // Settings.ini Tooltips
             public static readonly string ActiveMonitor_Tooltip = GetSettings(nameof(ActiveMonitor_Tooltip));
@@ -355,6 +362,7 @@ namespace Memoria.Launcher
             public static readonly string HippaulRacingViviSpeed_Tooltip = GetSettings(nameof(HippaulRacingViviSpeed_Tooltip));
             public static readonly string AudioBackend = GetSettings(nameof(AudioBackend));
             public static readonly string AudioBackend_Tooltip = GetSettings(nameof(AudioBackend_Tooltip));
+            public static readonly string TextureFiltering = GetSettings(nameof(TextureFiltering));
             public static readonly string WorldSmoothTexture = GetSettings(nameof(WorldSmoothTexture));
             public static readonly string WorldSmoothTexture_Tooltip = GetSettings(nameof(WorldSmoothTexture_Tooltip));
             public static readonly string BattleSmoothTexture = GetSettings(nameof(BattleSmoothTexture));

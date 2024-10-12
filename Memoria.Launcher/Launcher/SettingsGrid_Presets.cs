@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -70,9 +71,12 @@ namespace Memoria.Launcher
 
         private void ComboBox_SelectionChanged(Object sender, SelectionChangedEventArgs e)
         {
-            if(comboBox.ToolTip is ToolTip toolTip)
+            if (comboBox.ToolTip is ToolTip toolTip)
                 toolTip.IsOpen = false;
             comboBox.ToolTip = null;
+
+            if (comboBox.SelectedIndex < 0)
+                return;
 
             if (!String.IsNullOrEmpty(Presets[comboBox.SelectedIndex].Description))
             {
@@ -96,7 +100,7 @@ namespace Memoria.Launcher
             }
         }
 
-        public List<Preset> Presets = new List<Preset>();
+        public ObservableCollection<Preset> Presets = new ObservableCollection<Preset>();
 
         public void RefreshPresets()
         {
@@ -104,15 +108,16 @@ namespace Memoria.Launcher
 
             Presets.Add(new Preset()
             {
-                Name = Lang.Settings.PresetMemoria,// "Memoria Default", // TODO language
-                Description = Lang.Settings.PresetMemoria_ToolTip, //"Reset all settings to Memoria default values", // TODO language
+                Name = Lang.Settings.PresetMemoria,
+                Description = Lang.Settings.PresetMemoria_ToolTip,
                 Settings = new IniReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Memoria.ini"))
             });
 
             List<IniReader.Key> toRemove = new List<IniReader.Key>();
             foreach (var key in Presets[0].Settings.Options.Keys)
             {
-                if (key.Section == "Mod")
+                List<String> options = ["Audio.MusicVolume", "Audio.SoundVolume", "Audio.MovieVolume", "VoiceActing.Volume"];
+                if (key.Section == "Mod" || options.Contains($"{key.Section}.{key.Name}"))
                     toRemove.Add(key);
             }
             foreach (var key in toRemove)
@@ -120,19 +125,17 @@ namespace Memoria.Launcher
                 Presets[0].Settings.Options.Remove(key);
             }
 
-            var st = Assembly.GetExecutingAssembly().GetManifestResourceStream("SteamPreset.ini");
-
             Presets.Add(new Preset()
             {
-                Name = Lang.Settings.PresetSteam,//"Steam Default", // TODO language
-                Description = Lang.Settings.PresetSteam_ToolTip,//"*Not recommended*\nReset all settings to Steam default values", // TODO language
+                Name = Lang.Settings.PresetSteam,
+                Description = Lang.Settings.PresetSteam_ToolTip,
                 Settings = new IniReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("SteamPreset.ini"))
             });
 
             Presets.Add(new Preset()
             {
-                Name = Lang.Settings.PresetPSX,//"PSX-like", // TODO language
-                Description = Lang.Settings.PresetPSX_ToolTip,//"Closest settings to the original release on PSX such as encounter method, battle menu and more", // TODO language
+                Name = Lang.Settings.PresetPSX,
+                Description = Lang.Settings.PresetPSX_ToolTip,
                 Settings = new IniReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("PSXPreset.ini"))
             });
 
@@ -147,11 +150,16 @@ namespace Memoria.Launcher
                     Presets.Add(new Preset()
                     {
                         Name = (settings.Options.ContainsKey(nameKey)) ? settings.Options[nameKey] : Path.GetFileNameWithoutExtension(file),
-                        Description = (settings.Options.ContainsKey(descKey)) ? settings.Options[descKey].Replace("\\n","\n") : "",
+                        Description = (settings.Options.ContainsKey(descKey)) ? settings.Options[descKey].Replace("\\n", "\n") : "",
                         Settings = settings
                     });
-                    
+
                 }
+            }
+            if (comboBox != null)
+            {
+                comboBox.SelectedIndex = 0;
+                MakeTooltip(comboBox, Presets[0].Description);
             }
         }
     }

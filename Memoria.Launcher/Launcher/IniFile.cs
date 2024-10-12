@@ -189,16 +189,19 @@ namespace Memoria.Launcher
             return Options.ContainsKey(k) ? Options[k] : "";
         }
 
-        public void WriteAllSettings(String path, String[] ignoreSections = null)
+        public void WriteAllSettings(String path, String[] ignoreSections = null, String[] ignoreOptions = null)
         {
             List<String> lines = new List<string>(File.ReadAllLines(path));
 
             foreach (var option in Options)
             {
+                if (ignoreOptions != null && ignoreOptions.Contains($"{option.Key.Section}.{option.Key.Name}"))
+                    continue;
                 if (ignoreSections != null && ignoreSections.Contains(option.Key.Section))
                     continue;
 
                 Boolean sectionFound = false;
+                Boolean optionFound = false;
                 for (Int32 i = 0; i < lines.Count; i++)
                 {
                     string trimmed = lines[i].Trim();
@@ -209,18 +212,28 @@ namespace Memoria.Launcher
                         continue;
                     }
 
-                    if (trimmed.StartsWith("[")) break;
+                    if (trimmed.StartsWith("["))
+                    {
+                        if (sectionFound)
+                        {
+                            lines.Insert(i, $"{option.Key.Name} = {option.Value}");
+                            optionFound = true;
+                        }
+                        break;
+                    }
 
                     if (trimmed.StartsWith($"{option.Key.Name} ="))
                     {
                         lines[i] = $"{option.Key.Name} = {option.Value}";
+                        optionFound = true;
                         break;
                     }
                 }
 
-                if (!sectionFound)
+                if (!optionFound)
                 {
-                    lines.Add($"[{option.Key.Section}]");
+                    if (!sectionFound)
+                        lines.Add($"\n[{option.Key.Section}]");
                     lines.Add($"{option.Key.Name} = {option.Value}");
                 }
             }

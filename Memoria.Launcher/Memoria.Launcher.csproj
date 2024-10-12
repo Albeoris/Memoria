@@ -74,6 +74,9 @@
     <Compile Include="Languages\XmlDocumentExm.cs" />
     <Compile Include="Languages\XmlHelper.cs" />
     <Compile Include="Launcher\ALChColor.cs" />
+    <Compile Include="Launcher\Window_NewPreset.xaml.cs">
+      <DependentUpon>Window_NewPreset.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Launcher\SettingsGrid_Advanced3.cs" />
     <Compile Include="Launcher\SettingsGrid_Advanced2.cs" />
     <Compile Include="Launcher\SettingsGrid_Advanced.cs" />
@@ -105,6 +108,10 @@
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Launcher\Window_NewPreset.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Resources\ButtonsStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -120,6 +127,10 @@
     <Page Include="Resources\ListViewStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\ModManagerStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\ScrollBarStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -240,6 +251,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="images\cursorHand.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\texture_filtering.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\texture_filtering2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">

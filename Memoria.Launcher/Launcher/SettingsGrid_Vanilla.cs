@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
-using System.Runtime.ConstrainedExecution;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
@@ -155,7 +154,8 @@ namespace Memoria.Launcher
             {
                 if (_launcherlanguage != value)
                 {
-                    if (!String.IsNullOrEmpty(_launcherlanguage)) {
+                    if (!String.IsNullOrEmpty(_launcherlanguage))
+                    {
                         _launcherlanguage = value;
                         OnPropertyChanged();
                         ReloadApplication();

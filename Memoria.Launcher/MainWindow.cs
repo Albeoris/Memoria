@@ -10,6 +10,7 @@ using System.Windows.Interop;
 using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using System.Windows.Threading;
 
 namespace Memoria.Launcher
 {
@@ -106,6 +107,18 @@ namespace Memoria.Launcher
         private void ModelViewerButton_Click(object sender, RoutedEventArgs e)
         {
             this.PlayButton.Click(true);
+        }
+
+        private void SavePreset_Click(object sender, RoutedEventArgs e)
+        {
+            var presetWindow = new Window_NewPreset();
+            MainWindowGrid.Children.Add(presetWindow);
+            Dispatcher.BeginInvoke(DispatcherPriority.Input,
+                new Action(delegate ()
+                {
+                    presetWindow.PresetName.Focus();         // Set Logical Focus
+                    Keyboard.Focus(presetWindow.PresetName); // Set Keyboard Focus
+                }));
         }
         private void CopyLogButton_Click(object sender, RoutedEventArgs e)
         {
