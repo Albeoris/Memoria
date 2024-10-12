@@ -88,9 +88,6 @@
     <Compile Include="Launcher\UiGrid.cs" />
     <Compile Include="Launcher\Mod.cs" />
     <Compile Include="Launcher\UI.cs" />
-    <Compile Include="Launcher\UiModManagerButton.xaml.cs">
-      <DependentUpon>UiModManagerButton.xaml</DependentUpon>
-    </Compile>
     <Compile Include="App.xaml.cs" />
     <Compile Include="MainWindow.cs" />
     <Compile Include="Launcher\IniFile.cs" />
@@ -107,6 +104,10 @@
   <ItemGroup>
     <Page Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Resources\ButtonsStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Resources\CheckBoxStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -148,10 +149,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Launcher\UiModManagerButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

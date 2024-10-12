@@ -68,41 +68,4 @@ namespace Memoria.Launcher
             return null;
         }
     }
-    /*
-    public sealed class UiLauncherModManagerButton : UiModManagerButton
-    {
-        public UiLauncherModManagerButton()
-        {
-            Label = Lang.Launcher.ModManager;
-        }
-
-        protected override async Task DoAction()
-        {
-            MainWindow mainWindow = (MainWindow)this.GetRootElement();
-            if (mainWindow.ModdingWindow == null)
-                mainWindow.ModdingWindow = new ModManagerWindow();
-            mainWindow.ModdingWindow.Owner = mainWindow;
-            mainWindow.ModdingWindow.Show();
-            mainWindow.ModdingWindow.Activate();
-        }
-    }
-    */
-
-    public sealed class UiLauncherModelViewerButton : UiModManagerButton
-    {
-        public UiLauncherModelViewerButton()
-        {
-            Label = Lang.Launcher.ModelViewer;
-        }
-
-        protected override async Task DoAction()
-        {
-            try
-            {
-                MainWindow mainWindow = (MainWindow)this.GetRootElement();
-                mainWindow.PlayButton.Click(true);
-            }
-            catch (Exception) { }
-        }
-    }
 }

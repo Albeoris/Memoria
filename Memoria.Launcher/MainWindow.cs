@@ -62,6 +62,7 @@ namespace Memoria.Launcher
             menuSettings.Header = Lang.Settings.menuSettings;
             menuCheats.Header = Lang.Settings.menuCheats;
             menuAdvanced.Header = Lang.Settings.menuAdvanced;
+            ModelViewerButton.Content = Lang.Launcher.ModelViewer;
 
             SetupFrameLang();
             UpdateCatalog();
@@ -99,15 +100,9 @@ namespace Memoria.Launcher
         {
             this.Close(); // Closes the window when the button is clicked
         }
-
-        public void ComeBackToLauncherFromModManager(Boolean updates, Boolean incompat)
+        private void ModelViewerButton_Click(object sender, RoutedEventArgs e)
         {
-            /*
-            alert_update_icon.Visibility = updates ? Visibility.Visible : Visibility.Collapsed;
-            alert_incompat_icon.Visibility = incompat ? Visibility.Visible : Visibility.Collapsed;
-            alert_update_icon.ToolTip = Lang.Launcher.ModUpdateAvailable;
-            alert_incompat_icon.ToolTip = Lang.Launcher.ModConflict;
-            */
+            this.PlayButton.Click(true);
         }
 
         private void HotfixForMoguriMod()

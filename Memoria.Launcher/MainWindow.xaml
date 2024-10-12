@@ -430,13 +430,15 @@
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top" />
 
-                        <launcher:UiLauncherModelViewerButton
-                        Width="292"
-                        Height="36"
-                        Margin="0,0,0,20"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Bottom"
-                        Content="" />
+                        <Button Name="ModelViewerButton"
+                            Style="{StaticResource ButtonStyle2}"
+                            Width="293"
+                            Height="35"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Bottom"
+                            Margin="0,0,0,15"
+                            Content="Model Viewer"
+                            Click="ModelViewerButton_Click"/>
                     </Grid>
                 </Border>
             </TabItem>
