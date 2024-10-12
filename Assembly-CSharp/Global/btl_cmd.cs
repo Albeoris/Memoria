@@ -1223,6 +1223,10 @@ public class btl_cmd
                 forDead = cmd.aa.Info.ForDead;
                 break;
         }
+
+        if (BattleHUD.MixCommandSet.ContainsKey(cmd.cmd_no) && ff9mixitem.MixItemsData.TryGetValue(cmd.sub_no, out MixItems MixChoosen))
+            forDead = ff9item.GetItemEffect(MixChoosen.Result).info.ForDead;
+
         for (BTL_DATA btl = btlsys.btl_list.next; btl != null; btl = btl.next)
             if (btl.bi.target != 0 && (btl.btl_id & cmd.tar_id) != 0 && (forDead && btl.bi.player != 0 || !btl_stat.CheckStatus(btl, BattleStatus.Death)) && (!btl.out_of_reach || !cmd.IsShortRange))
                 validTarId |= btl.btl_id;
