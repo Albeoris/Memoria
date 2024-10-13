@@ -7,8 +7,6 @@ namespace Memoria
         public static class Cheats
         {
             public static Boolean Enabled => Instance._cheats.Enabled;
-            public static Boolean Rotation => Instance._cheats.Rotation;
-            public static Boolean Perspective => Instance._cheats.Perspective;
             public static Boolean SpeedMode => Instance._cheats.SpeedMode;
             public static Int32 SpeedFactor => Instance._cheats.SpeedFactor;
             public static Boolean SpeedTimer => Instance._cheats.SpeedTimer;
