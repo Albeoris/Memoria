@@ -17,10 +17,11 @@ namespace Memoria.Launcher
     public partial class MainWindow : Window, IComponentConnector
     {
         //public ModManagerWindow ModdingWindow;
-        public DateTime MemoriaAssemblyCompileDate;
+        public static DateTime MemoriaAssemblyCompileDate;
 
         public MainWindow()
         {
+            Lang.Initialize();
             String launcherDirectory = Directory.GetCurrentDirectory();
             try
             {
@@ -46,10 +47,6 @@ namespace Memoria.Launcher
             Closing += new CancelEventHandler(OnClosing);
             LoadSettings();
             KeyUp += ModManagerWindow_KeyUp;
-
-            //SetAccentColor((Color)ColorConverter.ConvertFromString("#CC355566"));
-            //SetAccentColor((Color)ColorConverter.ConvertFromString("#CCC9AD1D"));
-            //Launcher.Source = new BitmapImage(new Uri($"{Directory.GetCurrentDirectory()}\\Echo-S-9\\LauncherBackground.jpg", UriKind.Absolute));
         }
 
         public const String DefaultAccentColor = "#CC355566";
@@ -58,19 +55,16 @@ namespace Memoria.Launcher
         private void OnLoaded(Object sender, RoutedEventArgs e)
         {
             HotfixForMoguriMod();
-            Title = Lang.Settings.LauncherWindowTitle + " | v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
-            Nameandversion.Text = Lang.Settings.MemoriaEngine + " v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
-            menuSettings.Header = Lang.Settings.menuSettings;
-            menuCheats.Header = Lang.Settings.menuCheats;
-            menuAdvanced.Header = Lang.Settings.menuAdvanced;
-            ModelViewerButton.Content = Lang.Launcher.ModelViewer;
-            UiGrid.MakeTooltip(ModelViewerButton, Lang.Launcher.ModelViewerButton_Tooltip, "", "hand");
-            CopyLogButton.Content = Lang.Launcher.CopyLogButton;
-            UiGrid.MakeTooltip(CopyLogButton, Lang.Launcher.CopyLogButton_Tooltip, "", "hand");
+            Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
+            Lang.Res["Settings.MemoriaEngine"] += " v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
+
+            UiGrid.MakeTooltip(NewPresetButton, "Launcher.SaveSettings_Tooltip", "", "hand");
+            UiGrid.MakeTooltip(ModelViewerButton, "Launcher.ModelViewerButton_Tooltip", "", "hand");
+            UiGrid.MakeTooltip(CopyLogButton, "Launcher.CopyLogButton_Tooltip", "", "hand");
 
             SetupFrameLang();
             UpdateCatalog();
-            LoadSettings2();
+            LoadModSettings();
             CheckForValidModFolder();
             CheckOutdatedAndIncompatibleMods();
             lstCatalogMods.ItemsSource = modListCatalog;
@@ -90,12 +84,12 @@ namespace Memoria.Launcher
             CheckOutdatedAndIncompatibleMods();
 
             // add tooltip style to manager's buttons
-            UiGrid.MakeTooltip(btnReorganize, btnReorganize.ToolTip.ToString(), "", "hand");
-            UiGrid.MakeTooltip(btnMoveUp, btnMoveUp.ToolTip.ToString(), "", "hand");
-            UiGrid.MakeTooltip(btnMoveDown, btnMoveDown.ToolTip.ToString(), "", "hand");
-            UiGrid.MakeTooltip(btnUninstall, btnUninstall.ToolTip.ToString(), "", "hand");
-            UiGrid.MakeTooltip(btnDownload, btnDownload.ToolTip.ToString(), "", "hand");
-            UiGrid.MakeTooltip(btnCancel, btnCancel.ToolTip.ToString(), "", "hand");
+            UiGrid.MakeTooltip(btnReorganize, "ModEditor.TooltipReorganize", "", "hand");
+            UiGrid.MakeTooltip(btnMoveUp, "ModEditor.TooltipMoveUp", "", "hand");
+            UiGrid.MakeTooltip(btnMoveDown, "ModEditor.TooltipMoveDown", "", "hand");
+            UiGrid.MakeTooltip(btnUninstall, "ModEditor.TooltipUninstall", "", "hand");
+            UiGrid.MakeTooltip(btnDownload, "ModEditor.TooltipDownload", "", "hand");
+            UiGrid.MakeTooltip(btnCancel, "ModEditor.TooltipCancel", "", "hand");
 
             if (GameSettings.AutoRunGame)
                 PlayButton.Click();
@@ -131,17 +125,17 @@ namespace Memoria.Launcher
                     if (!string.IsNullOrWhiteSpace(logContent))
                     {
                         Clipboard.SetText(logContent);
-                        ShowTemporaryMessage(Lang.Launcher.CopyLogButton_Success, true);
+                        ShowTemporaryMessage((String)Lang.Res["Launcher.CopyLogButton_Success"], true);
                     }
                     else
-                        ShowTemporaryMessage(Lang.Launcher.CopyLogButton_Empty, false);
+                        ShowTemporaryMessage((String)Lang.Res["Launcher.CopyLogButton_Empty"], false);
                 }
                 else
-                    ShowTemporaryMessage(Lang.Launcher.CopyLogButton_Doesntexist, false);
+                    ShowTemporaryMessage((String)Lang.Res["Launcher.CopyLogButton_Doesntexist"], false);
             }
             catch (Exception ex)
             {
-                ShowTemporaryMessage(Lang.Launcher.CopyLogButton_Error + ex.Message, false);
+                ShowTemporaryMessage((String)Lang.Res["Launcher.CopyLogButton_Error"] + ex.Message, false);
             }
         }
 

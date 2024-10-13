@@ -46,7 +46,54 @@
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <Style x:Key="ButtonStyleRed" TargetType="{x:Type Button}">
+        <Setter Property="Foreground" Value="{DynamicResource WhiteUI}"/>
+        <Setter Property="FontFamily" Value="Segoe UI"/>
+        <Setter Property="FontWeight" Value="Medium"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="borderbottom" Background="{StaticResource TabGradientUnselected}" CornerRadius="5" BorderThickness="0,0,1,2" BorderBrush="#8333"
+                            Cursor="Hand">
+                        <Border x:Name="bordertop" Background="Transparent" CornerRadius="5" BorderThickness="1,2,0,0" BorderBrush="#5aaa">
+                            <ContentPresenter
+                                HorizontalAlignment="Center" 
+                                VerticalAlignment="Center"/>
+                        </Border>
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="5" BlurRadius="5" Opacity="0.3" />
+                        </Border.Effect>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="borderbottom" Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+                                        <GradientStop Color="#b800" Offset="0.0" />
+                                        <GradientStop Color="#bb00" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter TargetName="borderbottom" Property="BorderBrush" Value="#b800" />
+                            <Setter TargetName="bordertop" Property="BorderBrush" Value="#bA00" />
+                            <Setter TargetName="bordertop" Property="BorderThickness" Value="1,1,0,0" />
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="borderbottom" Property="Background" Value="#b900"/>
+                            <Setter TargetName="bordertop" Property="BorderBrush" Value="#b800" />
+                            <Setter TargetName="borderbottom" Property="BorderBrush" Value="#ba00" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="borderbottom" Property="Opacity" Value="0.2"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <Style x:Key="ButtonStyle2" TargetType="Button">
         <Setter Property="Template">
             <Setter.Value>

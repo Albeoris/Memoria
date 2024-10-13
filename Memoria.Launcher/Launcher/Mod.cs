@@ -421,7 +421,7 @@ namespace Memoria.Launcher
 
             if (keys.Count == 0) return;
 
-            if (MessageBox.Show($"{Lang.ModEditor.ApplyModPresetText}\n\n{sb}", Lang.ModEditor.ApplyModPresetCaption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show($"{Lang.Res["ModEditor.ApplyModPresetText"]}\n\n{sb}", (String)Lang.Res["ModEditor.ApplyModPresetCaption"], MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 PresetIni.WriteAllSettings(IniFile.IniPath, ["Preset"]);
 

@@ -136,6 +136,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Resources\Strings.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Resources\TabItemStyle.xaml">
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -257,6 +261,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="images\texture_filtering2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\btnUninstallimg_small.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">

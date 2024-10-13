@@ -16,18 +16,18 @@ namespace Memoria.Launcher
         {
             DataContext = this;
 
-            CreateHeading(Lang.Settings.Advanced);
+            CreateHeading("Settings.Advanced");
 
-            CreateCheckbox("IsX64", "x64", Lang.Settings.Xsixfour_Tooltip, 0, "IsX64Enabled");
-            CreateCheckbox("IsDebugMode", Lang.Settings.Debuggable, Lang.Settings.Debuggable_Tooltip);
-            CreateCheckbox("CheckUpdates", Lang.Settings.CheckUpdates, Lang.Settings.CheckUpdates_Tooltip);
+            CreateCheckbox("IsX64", "x64", "Settings.Xsixfour_Tooltip", 0, "IsX64Enabled");
+            CreateCheckbox("IsDebugMode", "Settings.Debuggable", "Settings.Debuggable_Tooltip");
+            CreateCheckbox("CheckUpdates", "Settings.CheckUpdates", "Settings.CheckUpdates_Tooltip");
 
             String OSversion = $"{Environment.OSVersion}";
             if (OSversion.Contains("Windows") && string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WINELOADER")))
-                CreateCheckbox("SteamOverlayFix", Lang.SteamOverlay.OptionLabel, Lang.Settings.SteamOverlayFix_Tooltip);
+                CreateCheckbox("SteamOverlayFix", "SteamOverlay.OptionLabel", "Settings.SteamOverlayFix_Tooltip");
 
 
-            CreateCombobox("LauncherLanguage", Lang.LauncherLanguageList, 50, Lang.Settings.LauncherLanguage, Lang.Settings.LauncherLanguage_Tooltip, "", true);
+            CreateCombobox("LauncherLanguage", Lang.LauncherLanguageList, 50, "Settings.LauncherLanguage", "Settings.LauncherLanguage_Tooltip", "", true);
 
             try
             {
@@ -111,7 +111,7 @@ namespace Memoria.Launcher
             {
                 MessageBoxResult ShowMessage(String message, MessageBoxButton button, MessageBoxImage image)
                 {
-                    return MessageBox.Show((System.Windows.Window)this.GetRootElement(), message, Lang.SteamOverlay.Caption, button, image);
+                    return MessageBox.Show((System.Windows.Window)this.GetRootElement(), message, (String)Lang.Res["teamOverlay.Caption"], button, image);
                 }
 
                 if (IsSteamOverlayFixed() == value)
@@ -119,7 +119,7 @@ namespace Memoria.Launcher
 
                 if (value)
                 {
-                    if (ShowMessage(Lang.SteamOverlay.FixAreYouSure, MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
+                    if (ShowMessage((String)Lang.Res["SteamOverlay.FixAreYouSure"], MessageBoxButton.YesNo, MessageBoxImage.Exclamation) != MessageBoxResult.Yes)
                     {
                         Application.Current.Dispatcher.BeginInvoke(new Action(() => OnPropertyChanged()), DispatcherPriority.ContextIdle, null);
                         return;
@@ -132,7 +132,7 @@ namespace Memoria.Launcher
                 }
                 else
                 {
-                    if (ShowMessage(Lang.SteamOverlay.RollbackAreYouSure, MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+                    if (ShowMessage((String)Lang.Res["SteamOverlay.RollbackAreYouSure"], MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
                     {
                         Application.Current.Dispatcher.BeginInvoke(new Action(() => OnPropertyChanged()), DispatcherPriority.ContextIdle, null);
                         return;
@@ -158,7 +158,13 @@ namespace Memoria.Launcher
                     {
                         _launcherlanguage = value;
                         OnPropertyChanged();
-                        ReloadApplication();
+                        //ReloadApplication();
+                        IniFile.PreventWrite = true;
+                        Lang.LoadLanguageResources(value);
+                        RefereshComboBoxes();
+                        Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MainWindow.MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
+                        ((MainWindow)Application.Current.MainWindow).SettingsGrid_Presets.RefreshPresets();
+                        IniFile.PreventWrite = false;
                     }
                     else
                     {

@@ -5,11 +5,15 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media.Imaging;
 
 namespace Memoria.Launcher
 {
     public sealed class SettingsGrid_Presets : UiGrid
     {
+        private ComboBox comboBox;
+        private Button deleteBtn;
+
         public SettingsGrid_Presets()
         {
             DataContext = this;
@@ -17,14 +21,14 @@ namespace Memoria.Launcher
             try
             {
                 RefreshPresets();
+
             }
             catch { }
 
-            CreateHeading(Lang.Settings.Presets);
+            CreateHeading("Settings.Presets");
 
             Row++;
             RowDefinitions.Add(new RowDefinition());
-
             comboBox = new ComboBox();
             comboBox.ItemsSource = Presets;
             comboBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightCombobox);
@@ -34,8 +38,12 @@ namespace Memoria.Launcher
             comboBox.SetValue(ColumnProperty, 0);
             comboBox.SetValue(RowSpanProperty, 1);
             comboBox.SetValue(ColumnSpanProperty, 60);
-            comboBox.SelectedIndex = 0;
-            MakeTooltip(comboBox, Presets[0].Description);
+            try
+            {
+                comboBox.SelectedIndex = 0;
+                MakeTooltip(comboBox, Presets[0].Description);
+            }
+            catch { }
             comboBox.MouseEnter += (sender, e) =>
             {
                 comboBox.Focus();
@@ -43,29 +51,64 @@ namespace Memoria.Launcher
             comboBox.SelectionChanged += ComboBox_SelectionChanged;
             Children.Add(comboBox);
 
+            deleteBtn = new Button();
+            deleteBtn.SetResourceReference(Button.StyleProperty, "ButtonStyleRed");
+            deleteBtn.Height = ComboboxHeight + 2;
+            deleteBtn.IsEnabled = false;
+            deleteBtn.Visibility = Visibility.Hidden;
+            deleteBtn.SetValue(RowProperty, Row);
+            deleteBtn.SetValue(ColumnProperty, 52);
+            deleteBtn.SetValue(RowSpanProperty, 1);
+            deleteBtn.SetValue(ColumnSpanProperty, 8);
+            deleteBtn.Content = new Image
+            {
+                Source = new BitmapImage(new Uri("pack://application:,,,/images/btnUninstallimg_small.png")),
+                Height = 15,
+                Width = 15,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0)
+            };
+            deleteBtn.Click += DeleteBtn_Click;
+            Children.Add(deleteBtn);
+
+            MakeTooltip(deleteBtn, "Launcher.DeletePreset_Tooltip", "", "hand");
+
             Button applyBtn = new Button();
-            applyBtn.Content = Lang.Settings.Apply;
-            applyBtn.Height = ComboboxHeight + 2;
+            applyBtn.SetResourceReference(Button.ContentProperty, "Settings.Apply");
             applyBtn.SetResourceReference(Button.StyleProperty, "ButtonStyle");
+            applyBtn.Height = ComboboxHeight + 2;
             applyBtn.SetValue(RowProperty, Row);
             applyBtn.SetValue(ColumnProperty, 61);
             applyBtn.SetValue(RowSpanProperty, 1);
-            applyBtn.SetValue(ColumnSpanProperty, MaxColumns - 61);
+            applyBtn.SetValue(ColumnSpanProperty, MaxColumns);
             applyBtn.Click += ApplyBtn_Click;
             Children.Add(applyBtn);
         }
 
-        private ComboBox comboBox;
+        private void DeleteBtn_Click(Object sender, RoutedEventArgs e)
+        {
+            if (comboBox.SelectedIndex < 0 || Presets[comboBox.SelectedIndex].Path == null)
+                return;
+
+            if (MessageBox.Show((String)Lang.Res["Launcher.DeletePresetText"], (String)Lang.Res["Launcher.DeletePresetCaption"], MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                File.Delete(Presets[comboBox.SelectedIndex].Path);
+                RefreshPresets();
+            }
+        }
 
         private void ApplyBtn_Click(Object sender, RoutedEventArgs e)
         {
-            if (MessageBox.Show(Lang.Settings.ApplyPresetText, Lang.Settings.ApplyPresetCaption, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show((String)Lang.Res["Settings.ApplyPresetText"], (String)Lang.Res["Settings.ApplyPresetCaption"], MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 IniReader settings = Presets[comboBox.SelectedIndex].Settings;
                 settings.WriteAllSettings(IniFile.IniPath, ["Preset"]);
 
                 MainWindow mainWindow = (MainWindow)this.GetRootElement();
                 mainWindow.LoadSettings();
+                mainWindow.LoadModSettings();
+                mainWindow.UpdateLauncherTheme();
             }
         }
 
@@ -78,6 +121,19 @@ namespace Memoria.Launcher
             if (comboBox.SelectedIndex < 0)
                 return;
 
+            if (comboBox.SelectedIndex < 3)
+            {
+                comboBox.SetValue(ColumnSpanProperty, 60);
+                deleteBtn.IsEnabled = false;
+                deleteBtn.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                comboBox.SetValue(ColumnSpanProperty, 51);
+                deleteBtn.IsEnabled = true;
+                deleteBtn.Visibility = Visibility.Visible;
+            }
+
             if (!String.IsNullOrEmpty(Presets[comboBox.SelectedIndex].Description))
             {
                 MakeTooltip(comboBox, Presets[comboBox.SelectedIndex].Description);
@@ -89,6 +145,7 @@ namespace Memoria.Launcher
 
         public struct Preset
         {
+            public String Path;
             public String Name;
             public String Description;
 
@@ -106,10 +163,17 @@ namespace Memoria.Launcher
         {
             Presets.Clear();
 
+            if (comboBox != null && deleteBtn != null)
+            {
+                comboBox.SetValue(ColumnSpanProperty, 60);
+                deleteBtn.IsEnabled = false;
+                deleteBtn.Visibility = Visibility.Hidden;
+            }
+
             Presets.Add(new Preset()
             {
-                Name = Lang.Settings.PresetMemoria,
-                Description = Lang.Settings.PresetMemoria_ToolTip,
+                Name = (String)Lang.Res["Settings.PresetMemoria"],
+                Description = (String)Lang.Res["Settings.PresetMemoria_Tooltip"],
                 Settings = new IniReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Memoria.ini"))
             });
 
@@ -127,15 +191,15 @@ namespace Memoria.Launcher
 
             Presets.Add(new Preset()
             {
-                Name = Lang.Settings.PresetSteam,
-                Description = Lang.Settings.PresetSteam_ToolTip,
+                Name = (String)Lang.Res["Settings.PresetSteam"],
+                Description = (String)Lang.Res["Settings.PresetSteam_Tooltip"],
                 Settings = new IniReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("SteamPreset.ini"))
             });
 
             Presets.Add(new Preset()
             {
-                Name = Lang.Settings.PresetPSX,
-                Description = Lang.Settings.PresetPSX_ToolTip,
+                Name = (String)Lang.Res["Settings.PresetPSX"],
+                Description = (String)Lang.Res["Settings.PresetPSX_Tooltip"],
                 Settings = new IniReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("PSXPreset.ini"))
             });
 
@@ -149,6 +213,7 @@ namespace Memoria.Launcher
                     IniReader.Key descKey = new IniReader.Key("Preset", "Description");
                     Presets.Add(new Preset()
                     {
+                        Path = file,
                         Name = (settings.Options.ContainsKey(nameKey)) ? settings.Options[nameKey] : Path.GetFileNameWithoutExtension(file),
                         Description = (settings.Options.ContainsKey(descKey)) ? settings.Options[descKey].Replace("\\n", "\n") : "",
                         Settings = settings

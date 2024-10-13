@@ -43,7 +43,7 @@
             <StackPanel>
                 <Label
                     x:Name="NewPresetLabel"
-                    Content="New Preset"
+                    Content="{DynamicResource Launcher.NewPreset}"
                     Foreground="{StaticResource WhiteUI}"
                     FontFamily="{StaticResource CenturyGothic}"
                     FontSize="18"
@@ -52,7 +52,7 @@
                     Margin="-5,-10,0,0"/>
                 <Label
                     x:Name="PresetNameLabel"
-                    Content="Name"
+                    Content="{DynamicResource Launcher.PresetName}"
                     Foreground="{StaticResource WhiteUI}"
                     FontSize="14"
                     Padding="0"
@@ -68,7 +68,7 @@
 
                 <Label
                     x:Name="PresetDescLabel"
-                    Content="Description (optional)"
+                    Content="{DynamicResource Launcher.PresetDescription}"
                     Foreground="{StaticResource WhiteUI}"
                     FontSize="14"
                     Padding="0"
@@ -80,19 +80,19 @@
                     AcceptsReturn="True"
                     Height="70"
                     Width="346"/>
-                <CheckBox x:Name="IncludeMods" Content="Include Mods" Style="{DynamicResource ToggleStyle}" Margin="0,6"/>
+                <CheckBox x:Name="IncludeMods" Content="{DynamicResource Launcher.IncludeMods}" Style="{DynamicResource ToggleStyle}" Margin="0,6"/>
                 <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                     <Button
                         x:Name="Cancel"
-                        Content="Cancel"
+                        Content="{DynamicResource Launcher.Cancel}"
                         Style="{StaticResource ButtonStyle}"
                         Height="30"
                         Width="170"
                         Click="Close"/>
                     <Button
                         x:Name="Ok"
+                        Content="{DynamicResource Launcher.OK}"
                         IsEnabled="False"
-                        Content="Ok"
                         Margin="6,0,0,0"
                         Style="{StaticResource ButtonStyle}"
                         Height="30"

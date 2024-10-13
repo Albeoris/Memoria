@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -140,7 +139,7 @@ namespace Memoria.Launcher
                         if (mod.IsOutdated)
                         {
                             mod.UpdateIcon = UpdateEmoji;
-                            mod.UpdateTooltip = Lang.ModEditor.UpdateTooltip + catalog_mod.CurrentVersion;
+                            mod.UpdateTooltip = (String)Lang.Res["ModEditor.UpdateTooltip"] + catalog_mod.CurrentVersion;
                             AreThereModUpdates = true;
                         }
                         else
@@ -169,12 +168,12 @@ namespace Memoria.Launcher
                                 other_mod.IncompIcon = ConflictEmoji;
 
                                 if (mod.ActiveIncompatibleMods == null)
-                                    mod.ActiveIncompatibleMods = Lang.ModEditor.ActiveIncompatibleMods + other_mod.Name;
+                                    mod.ActiveIncompatibleMods = (String)Lang.Res["ModEditor.ActiveIncompatibleMods"] + other_mod.Name;
                                 else
                                     mod.ActiveIncompatibleMods += ", " + other_mod.Name;
 
                                 if (other_mod.ActiveIncompatibleMods == null)
-                                    other_mod.ActiveIncompatibleMods = Lang.ModEditor.ActiveIncompatibleMods + mod.Name;
+                                    other_mod.ActiveIncompatibleMods = (String)Lang.Res["ModEditor.ActiveIncompatibleMods"] + mod.Name;
                                 else
                                     other_mod.ActiveIncompatibleMods += ", " + mod.Name;
 
@@ -223,9 +222,9 @@ namespace Memoria.Launcher
                     {
                         mod.IncompIcon = ConflictEmoji;
                         if (mod.ActiveIncompatibleMods == null)
-                            mod.ActiveIncompatibleMods = Lang.ModEditor.IncompatibleWithMemoria;
+                            mod.ActiveIncompatibleMods = (String)Lang.Res["ModEditor.IncompatibleWithMemoria"];
                         else
-                            mod.ActiveIncompatibleMods += "\n\n" + Lang.ModEditor.IncompatibleWithMemoria;
+                            mod.ActiveIncompatibleMods += "\n\n" + (String)Lang.Res["ModEditor.IncompatibleWithMemoria"];
                         AreThereModIncompatibilies = true;
                     }
                 }
@@ -260,7 +259,7 @@ namespace Memoria.Launcher
             }
             if (downloadCatalogClient != null && downloadCatalogClient.IsBusy)
                 downloadCatalogClient.CancelAsync();
-            UpdateSettings();
+            UpdateModSettings();
             //((MainWindow)this.Owner).ModdingWindow = null;
             //((MainWindow)this.Owner).LoadSettings();
             //((MainWindow)this.Owner).ComeBackToLauncherFromModManager(AreThereModUpdates, AreThereModIncompatibilies);
@@ -612,7 +611,7 @@ namespace Memoria.Launcher
                 try
                 {
                     downloadingMod.PercentComplete = e.ProgressPercentage;
-                    downloadingMod.DownloadSpeed = $"{(Int64)(e.BytesReceived / 1024.0 / timeSpan)} {Lang.Measurement.KByteAbbr}/{Lang.Measurement.SecondAbbr}";
+                    downloadingMod.DownloadSpeed = $"{(Int64)(e.BytesReceived / 1024.0 / timeSpan)} {(String)Lang.Res["Measurement.KByteAbbr"]}/{(String)Lang.Res["Measurement.SecondAbbr"]}";
                     downloadingMod.RemainingTime = $"{TimeSpan.FromSeconds((e.TotalBytesToReceive - e.BytesReceived) * timeSpan / e.BytesReceived):g}";
                 }
                 catch (NullReferenceException) // added to catch a race condition that sometimes occures where Ui tries to update but download has finished
@@ -920,7 +919,7 @@ namespace Memoria.Launcher
         private static String currentColor;
         private static String currentImage;
 
-        private void UpdateLauncherTheme()
+        public void UpdateLauncherTheme()
         {
             String color = DefaultAccentColor;
             String image = DefaultBackgroundImage;
@@ -935,7 +934,7 @@ namespace Memoria.Launcher
                         continue;
                     image = newImage;
 
-                    if(mod.LauncherColor != null)
+                    if (mod.LauncherColor != null)
                         color = $"#CC{mod.LauncherColor.Replace("#", "")}";
                     break;
                 }
@@ -1176,7 +1175,7 @@ namespace Memoria.Launcher
             lstCatalogMods.ItemsSource = modListCatalog;
         }
 
-        private void LoadSettings2()
+        public void LoadModSettings()
         {
             modListInstalled.Clear();
             try
@@ -1242,7 +1241,7 @@ namespace Memoria.Launcher
             catch (Exception ex) { UiHelper.ShowError(Application.Current.MainWindow, ex); }
         }
 
-        private void UpdateSettings()
+        public void UpdateModSettings()
         {
             try
             {
@@ -1262,43 +1261,64 @@ namespace Memoria.Launcher
 
         private void SetupFrameLang()
         {
-            GroupModInfo.Header = Lang.ModEditor.ModInfos;
-            PreviewModWebsite.Content = Lang.ModEditor.Website;
-            CaptionModAuthor.Text = Lang.ModEditor.Author + ":";
-            CaptionModRelease.Text = Lang.ModEditor.Release + ":";
-            CaptionModReleaseOriginal.Text = Lang.ModEditor.ReleaseOriginal + ":";
-            CaptionModReleaseNotes.Text = Lang.ModEditor.ReleaseNotes + ":";
-            PreviewSubModActive.Content = Lang.ModEditor.Active;
-            CaptionSubModPanel.Text = Lang.ModEditor.SubModPanel + ":";
-            tabMyMods.Text = Lang.ModEditor.TabMyMods;
-            colMyModsName.Header = Lang.ModEditor.Name;
-            colMyModsCategory.Header = Lang.ModEditor.Category;
-            btnReorganize.ToolTip = Lang.ModEditor.TooltipReorganize;
-            btnMoveUp.ToolTip = Lang.ModEditor.TooltipMoveUp;
-            btnMoveDown.ToolTip = Lang.ModEditor.TooltipMoveDown;
-            btnUninstall.ToolTip = Lang.ModEditor.TooltipUninstall;
-            tabCatalog.Text = Lang.ModEditor.TabCatalog;
-            GridViewColumnHeader header = new GridViewColumnHeader() { Content = Lang.ModEditor.Name };
+            GroupModInfo.SetResourceReference(TabItem.HeaderProperty, "ModEditor.ModInfos");
+            PreviewModWebsite.SetResourceReference(ContentProperty, "ModEditor.Website");
+            CaptionModAuthor.SetResourceReference(TextBlock.TextProperty, "ModEditor.Author");
+            CaptionModRelease.SetResourceReference(TextBlock.TextProperty, "ModEditor.Release");
+            CaptionModReleaseOriginal.SetResourceReference(TextBlock.TextProperty, "ModEditor.ReleaseOriginal");
+            CaptionModReleaseNotes.SetResourceReference(TextBlock.TextProperty, "ModEditor.ReleaseNotes");
+            PreviewSubModActive.SetResourceReference(ContentProperty, "ModEditor.Active");
+            CaptionSubModPanel.SetResourceReference(TextBlock.TextProperty, "ModEditor.SubModPanel");
+            tabMyMods.SetResourceReference(TextBlock.TextProperty, "ModEditor.TabMyMods");
+
+            GridViewColumnHeader header = new GridViewColumnHeader();
+            header.SetResourceReference(ContentProperty, "ModEditor.Name");
+            colMyModsName.Header = header;
+
+            header = new GridViewColumnHeader();
+            header.SetResourceReference(ContentProperty, "ModEditor.Category");
+            colMyModsCategory.Header = header;
+
+            tabCatalog.SetResourceReference(TextBlock.TextProperty, "ModEditor.TabCatalog");
+
+            header = new GridViewColumnHeader();
+            header.SetResourceReference(ContentProperty, "ModEditor.Mod");
+            colDownloadName.Header = header;
+
+            header = new GridViewColumnHeader();
+            header.SetResourceReference(ContentProperty, "ModEditor.Progress");
+            colDownloadProgress.Header = header;
+
+            header = new GridViewColumnHeader();
+            header.SetResourceReference(ContentProperty, "ModEditor.Speed");
+            colDownloadSpeed.Header = header;
+
+            header = new GridViewColumnHeader();
+            header.SetResourceReference(ContentProperty, "ModEditor.TimeLeft");
+            colDownloadTimeLeft.Header = header;
+
+            header = new GridViewColumnHeader();
+            header.SetResourceReference(ContentProperty, "ModEditor.Name");
             header.Click += OnClickCatalogHeader;
             colCatalogName.Header = header;
-            header = new GridViewColumnHeader() { Content = Lang.ModEditor.Author };
+
+            header = new GridViewColumnHeader();
+            header.SetResourceReference(ContentProperty, "ModEditor.Author");
             header.Click += OnClickCatalogHeader;
             colCatalogAuthor.Header = header;
-            header = new GridViewColumnHeader() { Content = Lang.ModEditor.Category };
+
+            header = new GridViewColumnHeader();
+            header.SetResourceReference(ContentProperty, "ModEditor.Category");
             header.Click += OnClickCatalogHeader;
             colCatalogCategory.Header = header;
+
             header = new GridViewColumnHeader() { Content = "" };
             header.Click += OnClickCatalogHeader;
             colCatalogInstalled.Header = header;
+
             header = new GridViewColumnHeader() { Content = ActiveEmoji };
             header.Click += OnClickActiveHeader;
             colMyModsActive.Header = header;
-            colDownloadName.Header = Lang.ModEditor.Mod;
-            colDownloadProgress.Header = Lang.ModEditor.Progress;
-            colDownloadSpeed.Header = Lang.ModEditor.Speed;
-            colDownloadTimeLeft.Header = Lang.ModEditor.TimeLeft;
-            btnDownload.ToolTip = Lang.ModEditor.TooltipDownload;
-            btnCancel.ToolTip = Lang.ModEditor.TooltipCancel;
         }
 
         private Mod currentMod;

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -89,7 +89,6 @@ namespace Memoria.Launcher
                     };
                     TextBlock tooltipTextBlock = new TextBlock
                     {
-                        Text = text,
                         Opacity = 1,
                         MaxWidth = 275,
                         FontSize = 14,
@@ -97,6 +96,14 @@ namespace Memoria.Launcher
                         Effect = dropShadow,
                         Margin = new Thickness(0)
                     };
+                    if (Lang.Res.Contains(text))
+                    {
+                        tooltipTextBlock.SetResourceReference(TextBlock.TextProperty, text);
+                    }
+                    else
+                    {
+                        tooltipTextBlock.Text = text;
+                    }
                     tooltipStackPanel.Children.Add(tooltipTextBlock);
                 }
 
@@ -295,7 +302,7 @@ namespace Memoria.Launcher
                 ToolTipService.SetToolTip(uiElement, null);
             };
         }
-        public void CreateCheckbox(String property, object text, String tooltip = "", Int32 firstColumn = 0, String propertyToEnable = "", String tooltipImage = "")
+        public void CreateCheckbox(String property, String text, String tooltip = "", Int32 firstColumn = 0, String propertyToEnable = "", String tooltipImage = "")
         {
             if (firstColumn == 0)
             {
@@ -303,7 +310,14 @@ namespace Memoria.Launcher
                 RowDefinitions.Add(new RowDefinition());
             }
             CheckBox checkBox = new CheckBox();
-            checkBox.Content = text;
+            if (Lang.Res.Contains(text))
+            {
+                checkBox.SetResourceReference(ContentControl.ContentProperty, text);
+            }
+            else
+            {
+                checkBox.Content = text;
+            }
             checkBox.IsChecked = null;
             MakeTooltip(checkBox, tooltip, tooltipImage);
             checkBox.Foreground = TextColor;
@@ -327,7 +341,14 @@ namespace Memoria.Launcher
             Row++;
             RowDefinitions.Add(new RowDefinition());
             TextBlock textbloc = new TextBlock();
-            textbloc.Text = text;
+            if (Lang.Res.Contains(text))
+            {
+                textbloc.SetResourceReference(TextBlock.TextProperty, text);
+            }
+            else
+            {
+                textbloc.Text = text;
+            }
             MakeTooltip(textbloc, tooltip, tooltipImage);
             textbloc.Foreground = TextColor;
             Border border = new Border();
@@ -349,7 +370,14 @@ namespace Memoria.Launcher
             Row++;
             RowDefinitions.Add(new RowDefinition());
             TextBlock textbloc = new TextBlock();
-            textbloc.Text = text.ToUpper();
+            if (Lang.Res.Contains(text))
+            {
+                textbloc.SetResourceReference(TextBlock.TextProperty, text);
+            }
+            else
+            {
+                textbloc.Text = text;
+            }
             textbloc.Foreground = TextColor;
             textbloc.TextAlignment = TextAlignment.Center;
             textbloc.HorizontalAlignment = HorizontalAlignment.Center;
@@ -377,7 +405,27 @@ namespace Memoria.Launcher
             border.Child = textbloc;
             Children.Add(border);
         }
-        public void CreateCombobox(String property, IEnumerable options, Int32 firstColumn = 50, String text = "", String tooltip = "", String tooltipImage = "", Boolean selectByName = false)
+
+        private static Dictionary<ComboBox, List<String>> _comboBoxes = new Dictionary<ComboBox, List<String>>();
+        public static void RefereshComboBoxes()
+        {
+            foreach (ComboBox comboBox in _comboBoxes.Keys)
+            {
+                Int32 i = comboBox.SelectedIndex;
+                List<String> choices = new List<String>();
+                foreach (String value in _comboBoxes[comboBox])
+                {
+                    if (Lang.Res.Contains(value))
+                        choices.Add((String)Lang.Res[value]);
+                    else
+                        choices.Add(value);
+                }
+                comboBox.ItemsSource = choices;
+                comboBox.SelectedIndex = i;
+            }
+        }
+
+        public void CreateCombobox(String property, IEnumerable<String> options, Int32 firstColumn = 50, String text = "", String tooltip = "", String tooltipImage = "", Boolean selectByName = false)
         {
             if (text != "")
             {
@@ -388,8 +436,18 @@ namespace Memoria.Launcher
                 Row++;
                 RowDefinitions.Add(new RowDefinition());
             }
+
+            List<String> choices = new List<String>();
+            foreach (String value in options)
+            {
+                if (Lang.Res.Contains(value))
+                    choices.Add((String)Lang.Res[value]);
+                else
+                    choices.Add(value);
+            }
+
             ComboBox comboBox = new ComboBox();
-            comboBox.ItemsSource = options;
+            comboBox.ItemsSource = choices;
             //MakeTooltip(comboBox, tooltip, tooltipImage);
             if (property == "FontChoice")
                 MakeFontPreview(comboBox);
@@ -408,6 +466,8 @@ namespace Memoria.Launcher
                 comboBox.Focus();
             };
             Children.Add(comboBox);
+
+            _comboBoxes[comboBox] = new List<string>(options);
         }
         public void CreateSlider(String indexproperty, String sliderproperty, double min, double max, double tickFrequency, String stringFormat = "", Int32 firstColumn = 0, String text = "", String tooltip = "", String tooltipImage = "")
         {

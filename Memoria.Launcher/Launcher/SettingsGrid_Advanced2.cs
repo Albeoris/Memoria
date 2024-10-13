@@ -1,3 +1,4 @@
+using System;
 using Application = System.Windows.Application;
 
 namespace Memoria.Launcher
@@ -6,11 +7,18 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Advanced2()
         {
+
             DataContext = (MainWindow)Application.Current.MainWindow;
 
-            CreateHeading(Lang.Settings.SaveFiles);
-            CreateCombobox("AutoSave", Lang.Settings.AutoSaveOptions.Replace(", ", ",").Split(','), 50, Lang.Settings.AutoSave, Lang.Settings.AutoSave_ToolTip);
-            CreateCheckbox("SaveOnCloud", Lang.Settings.SaveOnCloud, Lang.Settings.SaveOnCloud_ToolTip);
+            CreateHeading("Settings.SaveFiles");
+            String[] autosavechoices =
+            {
+                "Settings.AutoSaveChoice0",
+                "Settings.AutoSaveChoice1",
+                "Settings.AutoSaveChoice2"
+            };
+            CreateCombobox("AutoSave", autosavechoices, 50, "Settings.AutoSave", "Settings.AutoSave_Tooltip");
+            CreateCheckbox("SaveOnCloud", "Settings.SaveOnCloud", "Settings.SaveOnCloud_Tooltip");
         }
     }
 }

@@ -23,8 +23,12 @@ namespace Memoria.Launcher
         [DllImport("kernel32")]
         private static extern Int32 GetPrivateProfileString(String section, String key, String def, StringBuilder retVal, Int32 size, String filePath);
 
+        public static Boolean PreventWrite = false;
+
         public void WriteValue(String Section, String Key, String Value)
         {
+            if (PreventWrite) return;
+
             Section = Section.Trim();
             Key = Key.Trim();
             Value = Value.Trim();

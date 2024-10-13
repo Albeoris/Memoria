@@ -1,0 +1,23 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:system="clr-namespace:System;assembly=mscorlib">
+
+    <system:String x:Key="Settings.LauncherWindowTitle">Final Fantasy IX | Memoria Launcher</system:String>
+    <system:String x:Key="Settings.MemoriaEngine">MEMORIA ENGINE</system:String>
+    
+    <system:String x:Key="Settings.menuSettings">SETTINGS</system:String>
+    <system:String x:Key="Settings.menuAdvanced">ADVANCED</system:String>
+    <system:String x:Key="Settings.menuCheats">CHEATS</system:String>
+    <system:String x:Key="Settings.menuMods">MODS</system:String>
+    
+    <system:String x:Key="Launcher.SaveSettings">Save Settings</system:String>
+
+    <system:String x:Key="Launcher.ModelViewer">Model Viewer</system:String>
+    <system:String x:Key="Launcher.CopyLogButton">Copy Log</system:String>
+
+    <system:String x:Key="Launcher.NewPreset">New Preset</system:String>
+    <system:String x:Key="Launcher.PresetName">Name</system:String>
+    <system:String x:Key="Launcher.PresetDescription">Description (optional)</system:String>
+    <system:String x:Key="Launcher.IncludeMods">Include mods</system:String>
+    <system:String x:Key="Launcher.OK">OK</system:String>
+    <system:String x:Key="Launcher.Cancel">Cancel</system:String>
+
+</ResourceDictionary>

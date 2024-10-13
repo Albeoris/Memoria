@@ -18,21 +18,21 @@ namespace Memoria.Launcher
             DataContext = this;
 
 
-            CreateHeading(Lang.Settings.Display);
+            CreateHeading("Settings.Display");
 
             String[] comboboxchoices = GetAvailableMonitors();
-            CreateCombobox("ActiveMonitor", comboboxchoices, 50, Lang.Settings.ActiveMonitor, Lang.Settings.ActiveMonitor_Tooltip, "", true);
+            CreateCombobox("ActiveMonitor", comboboxchoices, 50, "Settings.ActiveMonitor", "Settings.ActiveMonitor_Tooltip", "", true);
 
             comboboxchoices = new String[]
             {
-                Lang.Settings.Window,
-                Lang.Settings.ExclusiveFullscreen,
-                Lang.Settings.BorderlessFullscreen
+                "Settings.Window",
+                "Settings.ExclusiveFullscreen",
+                "Settings.BorderlessFullscreen"
             };
-            CreateCombobox("WindowMode", comboboxchoices, 50, Lang.Settings.WindowMode, Lang.Settings.WindowMode_Tooltip);
+            CreateCombobox("WindowMode", comboboxchoices, 50, "Settings.WindowMode", "Settings.WindowMode_Tooltip");
 
             comboboxchoices = EnumerateDisplaySettings(true).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray();
-            CreateCombobox("ScreenResolution", comboboxchoices, 50, Lang.Settings.Resolution, Lang.Settings.Resolution_Tooltip, "", true);
+            CreateCombobox("ScreenResolution", comboboxchoices, 50, "Settings.Resolution", "Settings.Resolution_Tooltip", "", true);
 
             try
             {
@@ -134,15 +134,15 @@ namespace Memoria.Launcher
                 if (!String.IsNullOrEmpty(value))
                 {
                     var i = value.IndexOf("[");
-                    _activeMonitor = i < 0 ? value : value.Substring(0, i) + Lang.Settings.PrimaryMonitor;
+                    _activeMonitor = i < 0 ? value : value.Substring(0, i) + (String)Lang.Res["Settings.PrimaryMonitor"];
                 }
 
                 value = iniReader.GetSetting("Settings", nameof(WindowMode));
                 if (!String.IsNullOrEmpty(value))
                 {
-                    if (value == Lang.Settings.Window) value = "0";
-                    if (value == Lang.Settings.ExclusiveFullscreen) value = "1";
-                    if (value == Lang.Settings.BorderlessFullscreen) value = "2";
+                    if (value == (String)Lang.Res["Settings.Window"]) value = "0";
+                    if (value == (String)Lang.Res["Settings.ExclusiveFullscreen"]) value = "1";
+                    if (value == (String)Lang.Res["Settings.BorderlessFullscreen"]) value = "2";
                 }
                 if (!Int16.TryParse(value, out _windowMode))
                     _windowMode = 0;
@@ -222,7 +222,7 @@ namespace Memoria.Launcher
                 sb.Append(name);
 
                 if (screen.Primary)
-                    sb.Append(Lang.Settings.PrimaryMonitor);
+                    sb.Append((String)Lang.Res["Settings.PrimaryMonitor"]);
 
                 result[index] = sb.ToString();
 
