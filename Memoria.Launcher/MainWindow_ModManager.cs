@@ -247,6 +247,7 @@ namespace Memoria.Launcher
             if (mod != null && mod.IsActive)
                 mod.TryApplyPreset();
             CheckOutdatedAndIncompatibleMods();
+            UpdateModSettings();
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
@@ -825,6 +826,7 @@ namespace Memoria.Launcher
                     }
                 }
                 CheckOutdatedAndIncompatibleMods();
+                UpdateModSettings();
             });
         }
         private void DownloadCatalogEnd(Object sender, AsyncCompletedEventArgs e)

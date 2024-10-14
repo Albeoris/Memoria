@@ -55,7 +55,6 @@ namespace Memoria.Launcher
         private void Ok_Click(Object sender, RoutedEventArgs e)
         {
             MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-            mainWindow.UpdateModSettings();
 
             String path = $"Presets/{PresetName.Text.Trim()}.ini";
             if (File.Exists(path))
