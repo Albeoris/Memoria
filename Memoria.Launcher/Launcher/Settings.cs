@@ -713,7 +713,7 @@ namespace Memoria.Launcher
                         {
                             iniFile.WriteValue("Worldmap", "Enabled", "1");
                             if (var0 == 0) { var1 = 100; var2 = 55; var3 = 27; var4 = 80;  var5 = 7; }
-                            if (var0 == 1) { var1 = 250; var2 = 10; var3 = 30; var4 = 200; var5 = 7; }
+                            if (var0 == 1) { var1 = 290; var2 = 40; var3 = 27; var4 = 250; var5 = 15; }
                             if (var0 == 2) { var1 = 400; var2 = 10; var3 = 50; var4 = 300; var5 = 4; }
                             if (var0 == 3) { var1 = 450; var2 = 0; var3 = 250; var4 = 330; var5 = 0; }
                             iniFile.WriteValue("Worldmap", "MistViewDistance", $"{var1}");
@@ -802,7 +802,7 @@ namespace Memoria.Launcher
                 Boolean value5isInt = Int16.TryParse(value, out Int16 value5);
                 if (value1 == 100 && value2 == 55 && value3 == 27 && value4 == 80 && value5 == 7)
                     _worldmapmistpreset = 0;
-                else if (value1 == 250 && value2 == 10 && value3 == 30 && value4 == 200 && value5 == 7)
+                else if (value1 == 290 && value2 == 40 && value3 == 25 && value4 == 250 && value5 == 15)
                     _worldmapmistpreset = 1;
                 else if (value1 == 400 && value2 == 10 && value3 == 50 && value4 == 300 && value5 == 4)
                     _worldmapmistpreset = 2;
