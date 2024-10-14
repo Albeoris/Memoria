@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.IO;
-using Application = System.Windows.Application;
-using System.Reflection;
-using System.Linq;
 
 namespace Memoria.Launcher
 {
@@ -24,12 +23,20 @@ namespace Memoria.Launcher
         [DllImport("kernel32")]
         private static extern Int32 GetPrivateProfileString(String section, String key, String def, StringBuilder retVal, Int32 size, String filePath);
 
+        public static Boolean PreventWrite = false;
+
         public void WriteValue(String Section, String Key, String Value)
         {
-            IniFile.WritePrivateProfileString(Section, Key, Value, this.path);
+            if (PreventWrite) return;
+
+            Section = Section.Trim();
+            Key = Key.Trim();
+            Value = Value.Trim();
+
+            IniFile.WritePrivateProfileString(Section, $"{Key} ", $" {Value}", this.path);
         }
 
-        public String ReadValue(String Section, String Key)
+        /*public String ReadValue(String Section, String Key)
         {
             _retBuffer.Clear();
             IniFile.GetPrivateProfileString(Section, Key, "", _retBuffer, _bufferSize, this.path);
@@ -37,9 +44,9 @@ namespace Memoria.Launcher
         }
 
         private const Int32 _bufferSize = 10000;
-        private StringBuilder _retBuffer = new StringBuilder(_bufferSize);
+        private StringBuilder _retBuffer = new StringBuilder(_bufferSize);*/
 
-        private static readonly String _iniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
+        public const String IniPath = @"./Memoria.ini";
 
 
         public static void SanitizeMemoriaIni()
@@ -51,13 +58,13 @@ namespace Memoria.Launcher
                 text = reader.ReadToEnd();
             }
 
-            if (!File.Exists(_iniPath))
+            if (!File.Exists(IniPath))
             {
-                File.WriteAllText(_iniPath, text);
+                File.WriteAllText(IniPath, text);
                 return;
             }
 
-            File.WriteAllLines(_iniPath, MergeIniFiles(text.Replace("\r", "").Split('\n'), File.ReadAllLines(_iniPath)));
+            File.WriteAllLines(IniPath, MergeIniFiles(text.Replace("\r", "").Split('\n'), File.ReadAllLines(IniPath)));
         }
 
         private static String[] MergeIniFiles(String[] newIni, String[] previousIni)
@@ -70,6 +77,16 @@ namespace Memoria.Launcher
                     || String.Compare(mergedIni[i], "StatusTickFormula = OprCnt * (IsNegativeStatus ? 4 * (60 - TargetSpirit) : 4 * TargetSpirit)") == 0)
                 {
                     mergedIni.RemoveAt(i--);
+                }
+                // Make sure spaces are present around =
+                if (!mergedIni[i].Trim().StartsWith(";"))
+                {
+                    var split = mergedIni[i].Split('=');
+                    for (Int32 j = 0; j < split.Length; j++)
+                    {
+                        split[j] = split[j].Trim();
+                    }
+                    mergedIni[i] = String.Join(" = ", split);
                 }
             }
             String currentSection = "";
@@ -100,6 +117,9 @@ namespace Memoria.Launcher
                     }
                     else
                     {
+                        if (mergedIni.Count > 0 && mergedIni.Last().Length > 0)
+                            mergedIni.Add("");
+
                         mergedIni.Add("[" + currentSection + "]");
                         sectionFirstLine = mergedIni.Count;
                         sectionLastLine = sectionFirstLine;
@@ -120,7 +140,7 @@ namespace Memoria.Launcher
                     Boolean fieldKnown = false;
                     for (Int32 i = sectionFirstLine; i < sectionLastLine; i++)
                     {
-                        if (mergedIni[i].Trim().StartsWith(fieldName))
+                        if (mergedIni[i].Trim().StartsWith(fieldName + " ="))
                         {
                             fieldKnown = true;
                             break;
@@ -129,112 +149,16 @@ namespace Memoria.Launcher
                     if (!fieldKnown)
                     {
                         mergedIni.Insert(sectionLastLine, line);
-                        sectionFirstLine++;
                         sectionLastLine++;
                     }
                 }
             }
             return mergedIni.ToArray();
         }
-    
-
-
-    private static async void MakeSureSpacesAroundEqualsigns()
-        {
-            try
-            {
-                if (File.Exists(_iniPath))
-                {
-                    string wholeFile = File.ReadAllText(_iniPath);
-                    wholeFile = wholeFile.Replace("=", " = ");
-                    wholeFile = wholeFile.Replace("  ", " ");
-                    wholeFile = wholeFile.Replace("  ", " ");
-                    File.WriteAllText(_iniPath, wholeFile);
-                }
-            }
-            catch (Exception ex)
-            {
-                UiHelper.ShowError(Application.Current.MainWindow, ex);
-            }
-        }
-
-        private static async void MakeIniNotNull(String Category, String Setting, String Defaultvalue)
-        {
-            IniFile iniFile = new(_iniPath);
-            String value = iniFile.ReadValue(Category, Setting);
-            if (String.IsNullOrEmpty(value))
-            {
-                iniFile.WriteValue(Category, Setting + " ", " " + Defaultvalue);
-            }
-        }
-
-        public static void RemoveDuplicateKeys(string iniPath)
-        {
-            string wholeFile = File.ReadAllText(iniPath);
-            string cleanedContent = RemoveDuplicateKeysFromContent(wholeFile);
-            File.WriteAllText(iniPath, cleanedContent);
-        }
-
-        private static string RemoveDuplicateKeysFromContent(string content)
-        {
-            var sections = new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase);
-            string[] lines = content.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            string currentSection = "";
-
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-                if (line.StartsWith("[") && line.EndsWith("]"))
-                {
-                    currentSection = line.Trim('[', ']');
-                    if (!sections.ContainsKey(currentSection))
-                    {
-                        sections[currentSection] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-                    }
-                }
-                else if (!line.Contains(";") && line.Contains("=") && !line.StartsWith("="))
-                {
-                    var keyValue = line.Split(['='], 2);
-                    sections[currentSection][keyValue[0].Trim()] = keyValue[1].Trim();
-                }
-                else
-                {
-                    sections[currentSection][line] = "zzz";
-                }
-            }
-
-            return GenerateContentFromSections(sections);
-        }
-
-        private static string GenerateContentFromSections(Dictionary<string, Dictionary<string, string>> sections)
-        {
-            var result = new List<string>();
-
-            foreach (var section in sections)
-            {
-                result.Add($"[{section.Key}]");
-                foreach (var keyValue in section.Value)
-                {
-                    if (keyValue.Value != "zzz")
-                    {
-                        result.Add($"{keyValue.Key} = {keyValue.Value}");
-                    }
-                    else
-                    {
-                        result.Add($"{keyValue.Key}");
-                    }
-                }
-                result.Add(""); // Add a blank line after each section for readability
-            }
-            return string.Join(Environment.NewLine, result);
-        }
     }
 
     public class IniReader
     {
-        public IniFile IniFile;
-
         public struct Key
         {
             public String Section;
@@ -251,9 +175,78 @@ namespace Memoria.Launcher
 
         public IniReader(String path)
         {
-            IniFile = new IniFile(path);
             if (!File.Exists(path)) return;
-            using (Stream input = File.OpenRead(IniFile.path))
+            using (Stream input = File.OpenRead(path))
+            {
+                Init(input);
+            }
+        }
+
+        public IniReader(Stream input)
+        {
+            Init(input);
+        }
+
+        public String GetSetting(String section, String key)
+        {
+            Key k = new Key(section, key);
+            return Options.ContainsKey(k) ? Options[k] : "";
+        }
+
+        public void WriteAllSettings(String path, String[] ignoreSections = null, String[] ignoreOptions = null)
+        {
+            List<String> lines = new List<string>(File.ReadAllLines(path));
+
+            foreach (var option in Options)
+            {
+                if (ignoreOptions != null && ignoreOptions.Contains($"{option.Key.Section}.{option.Key.Name}"))
+                    continue;
+                if (ignoreSections != null && ignoreSections.Contains(option.Key.Section))
+                    continue;
+
+                Boolean sectionFound = false;
+                Boolean optionFound = false;
+                for (Int32 i = 0; i < lines.Count; i++)
+                {
+                    string trimmed = lines[i].Trim();
+                    if (!sectionFound)
+                    {
+                        if (trimmed == $"[{option.Key.Section}]")
+                            sectionFound = true;
+                        continue;
+                    }
+
+                    if (trimmed.StartsWith("["))
+                    {
+                        if (sectionFound)
+                        {
+                            lines.Insert(i, $"{option.Key.Name} = {option.Value}");
+                            optionFound = true;
+                        }
+                        break;
+                    }
+
+                    if (trimmed.StartsWith($"{option.Key.Name} ="))
+                    {
+                        lines[i] = $"{option.Key.Name} = {option.Value}";
+                        optionFound = true;
+                        break;
+                    }
+                }
+
+                if (!optionFound)
+                {
+                    if (!sectionFound)
+                        lines.Add($"\n[{option.Key.Section}]");
+                    lines.Add($"{option.Key.Name} = {option.Value}");
+                }
+            }
+
+            File.WriteAllLines(path, lines.ToArray());
+        }
+
+        private void Init(Stream input)
+        {
             using (StreamReader sr = new StreamReader(input))
             {
                 String section = null;

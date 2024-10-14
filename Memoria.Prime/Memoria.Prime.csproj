@@ -15,7 +15,7 @@
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
     <FrameworkPathOverride>$(SolutionDir)\References\</FrameworkPathOverride>
-      </PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -25,7 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-      </PropertyGroup>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
@@ -34,7 +34,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-      </PropertyGroup>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\References\Assembly-CSharp-firstpass.dll</HintPath>

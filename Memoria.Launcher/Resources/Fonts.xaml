@@ -1,0 +1,6 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <FontFamily x:Key="CenturyGothic">pack://application:,,,/Fonts/#Century Gothic</FontFamily>
+    <FontFamily x:Key="CenturyGothic-Bold">pack://application:,,,/Fonts/centurygothic-bold.ttf</FontFamily>
+    <FontFamily x:Key="NotoEmoji">pack://application:,,,/Fonts/#Noto Emoji Regular</FontFamily>
+    <FontFamily x:Key="Overpass">pack://application:,,,/Fonts/#Overpass</FontFamily>
+</ResourceDictionary>

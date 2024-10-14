@@ -6,10 +6,16 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Linq;
-
+using SharpCompress.Archives;
+using SharpCompress.Common;
+using System.Threading;
+using System.Net;
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace Memoria.Launcher
 {
+    #region JunctionPoint
     /// <summary>
     /// Provides access to NTFS junction points in .Net.
     /// http://www.codeproject.com/Articles/15633/Manipulating-NTFS-Junction-Points-in-NET
@@ -405,12 +411,13 @@ namespace Memoria.Launcher
             throw new IOException(message, Marshal.GetExceptionForHR(Marshal.GetHRForLastWin32Error()));
         }
     }
+    #endregion
 
+    #region ScreenInterro
     public static class ScreenInterrogatory
     {
         public const int ERROR_SUCCESS = 0;
 
-        #region enums
 
         public enum QUERY_DEVICE_CONFIG_FLAGS : uint
         {
@@ -498,10 +505,6 @@ namespace Memoria.Launcher
             DISPLAYCONFIG_DEVICE_INFO_GET_TARGET_BASE_TYPE = 6,
             DISPLAYCONFIG_DEVICE_INFO_FORCE_UINT32 = 0xFFFFFFFF
         }
-
-        #endregion
-
-        #region structs
 
         [StructLayout(LayoutKind.Sequential)]
         public struct LUID
@@ -637,10 +640,6 @@ namespace Memoria.Launcher
             [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 128)] public string monitorDevicePath;
         }
 
-        #endregion
-
-        #region DLL-Imports
-
         [DllImport("user32.dll")]
         public static extern int GetDisplayConfigBufferSizes(
             QUERY_DEVICE_CONFIG_FLAGS flags, out uint numPathArrayElements, out uint numModeInfoArrayElements);
@@ -655,8 +654,6 @@ namespace Memoria.Launcher
 
         [DllImport("user32.dll")]
         public static extern int DisplayConfigGetDeviceInfo(ref DISPLAYCONFIG_TARGET_DEVICE_NAME deviceName);
-
-        #endregion
 
         private static string MonitorFriendlyName(LUID adapterId, uint targetId)
         {
@@ -707,4 +704,71 @@ namespace Memoria.Launcher
             }
         }
     }
+    #endregion
+
+    #region Extractor
+    public static class Extractor
+    {
+        public static void ExtractAllFileFromArchive(string archivePath, string extractTo, CancellationToken cancellationToken)
+        {
+            if (!File.Exists(archivePath))
+            {
+                return;
+            }
+            using (var archive = ArchiveFactory.Open(archivePath))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
+                    if (!entry.IsDirectory)
+                    {
+                        entry.WriteToDirectory(extractTo, new ExtractionOptions()
+                        {
+                            ExtractFullPath = true,
+                            Overwrite = true
+                        });
+                    }
+                }
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    Directory.Delete(extractTo, true);
+                }
+            }
+        }
+    }
+    #endregion
+
+    #region ThrottledWeb
+
+    public class ThrottledWebClient : WebClient
+    {
+        private Timer _timer;
+        private bool _updatePending;
+
+        public ThrottledWebClient()
+        {
+            _timer = new Timer(100);
+            _timer.Elapsed += OnTimerElapsed;
+            _timer.Start();
+        }
+
+        protected override void OnDownloadProgressChanged(DownloadProgressChangedEventArgs e)
+        {
+            if (!_updatePending)
+            {
+                _updatePending = true;
+                base.OnDownloadProgressChanged(e);
+            }
+        }
+
+        private void OnTimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            _updatePending = false;
+        }
+    }
+    #endregion
 }

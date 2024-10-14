@@ -1465,6 +1465,16 @@ public class TitleUI : UIScene
 
     private void Start()
     {
+        try
+        {
+            File.WriteAllLines("FontList", Font.GetOSInstalledFontNames());
+        }
+        catch(Exception e)
+        {
+            Log.Error("Couldn't write the font list");
+            Log.Error(e);
+        }
+
         SiliconStudio.Social.InitializeSocialPlatform();
         PersistenSingleton<UIManager>.Instance.WorldHUDScene.EnableContinentTitle(false);
     }
@@ -1616,7 +1626,7 @@ public class TitleUI : UIScene
 
         DataPatchers.Initialize();
         ScriptsLoader.InitializeAsync();
-        QualitySettings.antiAliasing = Configuration.Graphics.AntiAliasing;
+        //QualitySettings.antiAliasing = Configuration.Graphics.AntiAliasing;
     }
 
     private class SlideShow
