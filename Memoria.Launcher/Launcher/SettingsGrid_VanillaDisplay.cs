@@ -110,7 +110,7 @@ namespace Memoria.Launcher
             }
         }
 
-        public static readonly String IniPath = "Settings.ini";
+        public static readonly String IniPath = "./Settings.ini";
 
         private String _resolution = "";
         private String _activeMonitor = "";
@@ -147,9 +147,12 @@ namespace Memoria.Launcher
                 if (!Int16.TryParse(value, out _windowMode))
                     _windowMode = 0;
 
+                IniFile.PreventWrite = true;
                 OnPropertyChanged(nameof(ScreenResolution));
                 OnPropertyChanged(nameof(ActiveMonitor));
                 OnPropertyChanged(nameof(WindowMode));
+                IniFile.PreventWrite = false;
+
             }
             catch (Exception ex)
             {

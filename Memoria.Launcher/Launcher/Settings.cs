@@ -763,6 +763,7 @@ namespace Memoria.Launcher
         {
             try
             {
+                IniFile.PreventWrite = true;
                 //IniFile iniFile = new(IniFile.IniPath);
                 IniReader iniReader = new IniReader(IniFile.IniPath);
 
@@ -1053,6 +1054,10 @@ namespace Memoria.Launcher
             catch (Exception ex)
             {
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+            finally
+            {
+                IniFile.PreventWrite = false;
             }
         }
         #endregion

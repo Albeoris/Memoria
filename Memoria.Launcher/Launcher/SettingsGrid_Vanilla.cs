@@ -27,7 +27,7 @@ namespace Memoria.Launcher
                 CreateCheckbox("SteamOverlayFix", "SteamOverlay.OptionLabel", "Settings.SteamOverlayFix_Tooltip");
 
 
-            CreateCombobox("LauncherLanguage", Lang.LauncherLanguageList, 50, "Settings.LauncherLanguage", "Settings.LauncherLanguage_Tooltip", "", true);
+            CreateCombobox("LauncherLanguage", Lang.LauncherLanguageNames, 50, "Settings.LauncherLanguage", "Settings.LauncherLanguage_Tooltip", "");
 
             try
             {
@@ -146,30 +146,25 @@ namespace Memoria.Launcher
             }
         }
 
-        private String _launcherlanguage;
-        public String LauncherLanguage
+        private Int32 _launcherlanguage;
+        public Int32 LauncherLanguage
         {
             get => _launcherlanguage;
             set
             {
                 if (_launcherlanguage != value)
                 {
-                    if (!String.IsNullOrEmpty(_launcherlanguage))
+                    if (value >= 0 && !IniFile.PreventWrite)
                     {
                         _launcherlanguage = value;
                         OnPropertyChanged();
                         //ReloadApplication();
                         IniFile.PreventWrite = true;
-                        Lang.LoadLanguageResources(value);
+                        Lang.LoadLanguageResources(Lang.LauncherLanguageList[value]);
                         RefereshComboBoxes();
                         Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MainWindow.MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
                         ((MainWindow)Application.Current.MainWindow).SettingsGrid_Presets.RefreshPresets();
                         IniFile.PreventWrite = false;
-                    }
-                    else
-                    {
-                        _launcherlanguage = value;
-                        OnPropertyChanged();
                     }
                 }
             }
@@ -209,7 +204,7 @@ namespace Memoria.Launcher
                         break;
                     }
                     case nameof(LauncherLanguage):
-                        iniFile.WriteValue("Memoria", propertyName, LauncherLanguage);
+                        iniFile.WriteValue("Memoria", propertyName, Lang.LauncherLanguageList[LauncherLanguage]);
                         break;
                 }
             }
@@ -219,7 +214,7 @@ namespace Memoria.Launcher
             }
         }
 
-        public static readonly String IniPath = "Settings.ini";
+        public static readonly String IniPath = "./Settings.ini";
 
         private Boolean _isX64 = true;
         private Boolean _isX64Enabled = true;
@@ -280,14 +275,24 @@ namespace Memoria.Launcher
                 value = iniReader.GetSetting("Memoria", "LauncherLanguage").Trim();
                 if (String.IsNullOrEmpty(value))
                     value = Lang.LangName;
-                _launcherlanguage = value;
+                _launcherlanguage = 0;
+                for (Int32 i = 0; i< Lang.LauncherLanguageList.Length; i++)
+                {
+                    if (Lang.LauncherLanguageList[i] == value)
+                    {
+                        _launcherlanguage = i;
+                        break;
+                    }
+                }
 
+                IniFile.PreventWrite = true;
                 OnPropertyChanged(nameof(IsX64));
                 OnPropertyChanged(nameof(IsX64Enabled));
                 OnPropertyChanged(nameof(IsDebugMode));
                 OnPropertyChanged(nameof(CheckUpdates));
                 OnPropertyChanged(nameof(DownloadMirrors));
                 OnPropertyChanged(nameof(LauncherLanguage));
+                IniFile.PreventWrite = false;
             }
             catch (Exception ex)
             {
