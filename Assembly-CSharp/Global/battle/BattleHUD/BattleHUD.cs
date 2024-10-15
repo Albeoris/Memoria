@@ -1902,6 +1902,8 @@ public partial class BattleHUD : UIScene
                     testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
                     SelectBestTarget(targetType, testCommand);
                 }
+                else
+                    _targetDead = true; // Always true to target any player, whatever the result. (with a Mix Command)
             }
             else
             {
