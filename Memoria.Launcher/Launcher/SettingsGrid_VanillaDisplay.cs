@@ -110,7 +110,7 @@ namespace Memoria.Launcher
             }
         }
 
-        public static readonly String IniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Settings.ini";
+        public static readonly String IniPath = "Settings.ini";
 
         private String _resolution = "";
         private String _activeMonitor = "";

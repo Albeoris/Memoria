@@ -219,7 +219,7 @@ namespace Memoria.Launcher
             }
         }
 
-        public static readonly String IniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Settings.ini";
+        public static readonly String IniPath = "Settings.ini";
 
         private Boolean _isX64 = true;
         private Boolean _isX64Enabled = true;
@@ -279,7 +279,7 @@ namespace Memoria.Launcher
 
                 value = iniReader.GetSetting("Memoria", "LauncherLanguage").Trim();
                 if (String.IsNullOrEmpty(value))
-                    value = "en";
+                    value = Lang.LangName;
                 _launcherlanguage = value;
 
                 OnPropertyChanged(nameof(IsX64));
