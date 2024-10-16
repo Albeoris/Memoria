@@ -159,12 +159,22 @@ namespace Memoria.Launcher
                         _launcherlanguage = value;
                         OnPropertyChanged();
                         //ReloadApplication();
-                        IniFile.PreventWrite = true;
-                        Lang.LoadLanguageResources(Lang.LauncherLanguageList[value]);
-                        RefereshComboBoxes();
-                        Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MainWindow.MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
-                        ((MainWindow)Application.Current.MainWindow).SettingsGrid_Presets.RefreshPresets();
-                        IniFile.PreventWrite = false;
+                        try
+                        {
+                            IniFile.PreventWrite = true;
+                            Lang.LoadLanguageResources(Lang.LauncherLanguageList[value]);
+                            RefereshComboBoxes();
+                            Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MainWindow.MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
+                            ((MainWindow)Application.Current.MainWindow).SettingsGrid_Presets.RefreshPresets();
+                        }
+                        catch (Exception ex)
+                        {
+                            UiHelper.ShowError(Application.Current.MainWindow, ex);
+                        }
+                        finally
+                        {
+                            IniFile.PreventWrite = false;
+                        }
                     }
                 }
             }
@@ -180,18 +190,18 @@ namespace Memoria.Launcher
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-                IniFile iniFile = new IniFile(IniPath);
+                IniFile iniFile = IniFile.SettingsIni;
                 switch (propertyName)
                 {
                     case nameof(IsDebugMode):
-                        iniFile.WriteValue("Memoria", propertyName, IsDebugMode.ToString());
+                        iniFile.SetSetting("Memoria", propertyName, IsDebugMode.ToString());
                         break;
                     case nameof(IsX64):
-                        iniFile.WriteValue("Memoria", propertyName, IsX64.ToString());
+                        iniFile.SetSetting("Memoria", propertyName, IsX64.ToString());
                         break;
                     case nameof(CheckUpdates):
                     {
-                        iniFile.WriteValue("Memoria", propertyName, CheckUpdates.ToString());
+                        iniFile.SetSetting("Memoria", propertyName, CheckUpdates.ToString());
                         if (CheckUpdates)
                         {
                             using (ManualResetEvent evt = new ManualResetEvent(false))
@@ -204,17 +214,16 @@ namespace Memoria.Launcher
                         break;
                     }
                     case nameof(LauncherLanguage):
-                        iniFile.WriteValue("Memoria", propertyName, Lang.LauncherLanguageList[LauncherLanguage]);
+                        iniFile.SetSetting("Memoria", propertyName, Lang.LauncherLanguageList[LauncherLanguage]);
                         break;
                 }
+                iniFile.Save();
             }
             catch (Exception ex)
             {
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
             }
         }
-
-        public static readonly String IniPath = "./Settings.ini";
 
         private Boolean _isX64 = true;
         private Boolean _isX64Enabled = true;
@@ -226,9 +235,9 @@ namespace Memoria.Launcher
         {
             try
             {
-                IniReader iniReader = new IniReader(IniPath);
+                IniFile iniFile = IniFile.SettingsIni;
 
-                String value = iniReader.GetSetting("Memoria", nameof(IsX64));
+                String value = iniFile.GetSetting("Memoria", nameof(IsX64));
                 if (String.IsNullOrEmpty(value))
                     value = "true";
                 if (!Boolean.TryParse(value, out _isX64))
@@ -244,24 +253,24 @@ namespace Memoria.Launcher
                     _isX64Enabled = false;
                 }
 
-                value = iniReader.GetSetting("Memoria", nameof(IsDebugMode));
+                value = iniFile.GetSetting("Memoria", nameof(IsDebugMode));
                 if (String.IsNullOrEmpty(value))
                     value = "false";
                 if (!Boolean.TryParse(value, out _isDebugMode))
                     _isDebugMode = false;
 
-                value = iniReader.GetSetting("Memoria", nameof(CheckUpdates));
+                value = iniFile.GetSetting("Memoria", nameof(CheckUpdates));
                 if (String.IsNullOrEmpty(value))
                     value = "true";
                 if (!Boolean.TryParse(value, out _checkUpdates))
                     _checkUpdates = true;
 
-                value = iniReader.GetSetting("Memoria", nameof(AutoRunGame));
+                value = iniFile.GetSetting("Memoria", nameof(AutoRunGame));
                 if (String.IsNullOrEmpty(value))
                     value = "false";
                 AutoRunGame = App.AutoRunGame || (Boolean.TryParse(value, out var autoRunGame) && autoRunGame);
 
-                value = iniReader.GetSetting("Memoria", nameof(DownloadMirrors));
+                value = iniFile.GetSetting("Memoria", nameof(DownloadMirrors));
                 if (String.IsNullOrEmpty(value))
                 {
                     _downloadMirrors = ["https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe"];
@@ -272,11 +281,11 @@ namespace Memoria.Launcher
                     _downloadMirrors = value.Split(',');
                 }
 
-                value = iniReader.GetSetting("Memoria", "LauncherLanguage").Trim();
+                value = iniFile.GetSetting("Memoria", "LauncherLanguage").Trim();
                 if (String.IsNullOrEmpty(value))
                     value = Lang.LangName;
                 _launcherlanguage = 0;
-                for (Int32 i = 0; i< Lang.LauncherLanguageList.Length; i++)
+                for (Int32 i = 0; i < Lang.LauncherLanguageList.Length; i++)
                 {
                     if (Lang.LauncherLanguageList[i] == value)
                     {
@@ -292,11 +301,14 @@ namespace Memoria.Launcher
                 OnPropertyChanged(nameof(CheckUpdates));
                 OnPropertyChanged(nameof(DownloadMirrors));
                 OnPropertyChanged(nameof(LauncherLanguage));
-                IniFile.PreventWrite = false;
             }
             catch (Exception ex)
             {
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+            finally
+            {
+                IniFile.PreventWrite = false;
             }
         }
         private Boolean IsSteamOverlayFixed()

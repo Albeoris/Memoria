@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Reflection;
-using System.Runtime.ConstrainedExecution;
 using System.Windows;
 using System.Xml;
 
@@ -25,12 +24,12 @@ namespace Memoria.Launcher
 
                 XmlElement cur = null;
 
-                IniReader iniReader = new IniReader(SettingsGrid_Vanilla.IniPath);
-                String forcedLang = iniReader.GetSetting("Memoria", "LauncherLanguage");
+                IniFile iniFile = IniFile.SettingsIni;
+                String forcedLang = iniFile.GetSetting("Memoria", "LauncherLanguage");
 
                 String[] fileNames = String.IsNullOrEmpty(forcedLang) ?
-                    new String[] { CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName } :
-                    new String[] { forcedLang, CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName, };
+                    [CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName] :
+                    [forcedLang, CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName,];
                 foreach (String name in fileNames)
                 {
                     cur = XmlHelper.LoadEmbadedDocument(assembly, $"Languages.{name}.xml");

@@ -1182,16 +1182,14 @@ namespace Memoria.Launcher
             modListInstalled.Clear();
             try
             {
-                IniReader iniReader = new IniReader(INI_PATH);
+                IniFile iniFile = IniFile.MemoriaIni;
 
-                String str = iniReader.GetSetting("Mod", "FolderNames");
+                String str = iniFile.GetSetting("Mod", "FolderNames");
                 if (String.IsNullOrEmpty(str))
                     str = "";
                 str = str.Trim().Trim('"');
                 String[] iniModActiveList = Regex.Split(str, @""",\s*""");
-                str = iniReader.GetSetting("Mod", "Priorities");
-                if (String.IsNullOrEmpty(str))
-                    str = "";
+                str = iniFile.GetSetting("Mod", "Priorities");
                 str = str.Trim().Trim('"');
                 String[] iniModPriorityList = Regex.Split(str, @""",\s*""");
                 String[][] listCouple = new String[][] { iniModPriorityList, iniModActiveList };
@@ -1254,9 +1252,10 @@ namespace Memoria.Launcher
                     iniModActiveList.AddRange(mod.EnumerateModAndSubModFoldersOrdered(true));
                     iniModPriorityList.Add(mod.InstallationPath);
                 }
-                IniFile iniFile = new IniFile(INI_PATH);
-                iniFile.WriteValue("Mod", "FolderNames", iniModActiveList.Count > 0 ? " \"" + String.Join("\", \"", iniModActiveList) + "\"" : "");
-                iniFile.WriteValue("Mod", "Priorities", iniModPriorityList.Count > 0 ? " \"" + String.Join("\", \"", iniModPriorityList) + "\"" : "");
+                IniFile iniFile = IniFile.MemoriaIni;
+                iniFile.SetSetting("Mod", "FolderNames", iniModActiveList.Count > 0 ? " \"" + String.Join("\", \"", iniModActiveList) + "\"" : "");
+                iniFile.SetSetting("Mod", "Priorities", iniModPriorityList.Count > 0 ? " \"" + String.Join("\", \"", iniModPriorityList) + "\"" : "");
+                iniFile.Save();
             }
             catch (Exception ex) { UiHelper.ShowError(Application.Current.MainWindow, ex); }
         }
@@ -1333,7 +1332,6 @@ namespace Memoria.Launcher
         private WebClient downloadCatalogClient;
         private object ascendingSortedColumn = null;
 
-        private const String INI_PATH = IniFile.IniPath;
         private const String CATALOG_PATH = "./ModCatalog.xml";
         private const String CATALOG_URL = "https://raw.githubusercontent.com/Albeoris/Memoria/main/Memoria.Launcher/Catalogs/MemoriaCatalog.xml";
     }

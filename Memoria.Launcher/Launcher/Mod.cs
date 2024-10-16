@@ -55,7 +55,7 @@ namespace Memoria.Launcher
         public Int32 Priority { get; set; }
         public Int32 PriorityWeight { get; set; }
         public BitmapImage PreviewImage { get; set; }
-        public IniReader PresetIni { get; set; }
+        public IniFile PresetIni { get; set; }
 
         // Entries for current download
         public String DownloadSpeed { get; set; }
@@ -63,8 +63,6 @@ namespace Memoria.Launcher
         public Int64 PercentComplete { get; set; }
 
         public String FullInstallationPath => ParentMod != null ? ParentMod.InstallationPath + "/" + InstallationPath : InstallationPath;
-
-        private static IniReader memoriaIni;
 
         private const String presetFile = "Preset.ini";
 
@@ -217,7 +215,7 @@ namespace Memoria.Launcher
             if (Int64.TryParse(modNode["DownloadSize"]?.InnerText ?? "0", out outParse)) DownloadSize = outParse;
             if (File.Exists(Path.Combine(FullInstallationPath, presetFile)))
             {
-                PresetIni = new IniReader(Path.Combine(FullInstallationPath, presetFile));
+                PresetIni = new IniFile(Path.Combine(FullInstallationPath, presetFile));
             }
             SubMod.Clear();
             foreach (XmlNode subNode in elSubMod)
@@ -400,19 +398,17 @@ namespace Memoria.Launcher
         public void TryApplyPreset()
         {
             if (PresetIni == null) return;
-            if (memoriaIni == null)
-                memoriaIni = new IniReader(IniFile.IniPath);
 
             StringBuilder sb = new StringBuilder();
-            IniReader.Key presetNameKey = new IniReader.Key("Preset", "Name");
+            IniFile.Key presetNameKey = new IniFile.Key("Preset", "Name");
             if (PresetIni.Options.ContainsKey(presetNameKey))
             {
                 sb.AppendLine($"[{Name}] {PresetIni.Options[presetNameKey]}");
             }
-            List<IniReader.Key> keys = new List<IniReader.Key>();
+            List<IniFile.Key> keys = new List<IniFile.Key>();
             foreach (var key in PresetIni.Options.Keys)
             {
-                if (memoriaIni.Options.ContainsKey(key))
+                if (IniFile.MemoriaIni.Options.ContainsKey(key))
                 {
                     keys.Add(key);
                     sb.AppendLine($"  [{key.Section}] {key.Name} = {PresetIni.Options[key]}");
@@ -423,7 +419,7 @@ namespace Memoria.Launcher
 
             if (MessageBox.Show($"{Lang.Res["ModEditor.ApplyModPresetText"]}\n\n{sb}", (String)Lang.Res["ModEditor.ApplyModPresetCaption"], MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                PresetIni.WriteAllSettings(IniFile.IniPath, ["Preset"]);
+                PresetIni.WriteAllSettings(IniFile.MemoriaIniPath, ["Preset"]);
 
                 MainWindow mainWindow = App.Current.MainWindow as MainWindow;
                 mainWindow.LoadSettings();

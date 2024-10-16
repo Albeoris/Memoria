@@ -102,8 +102,8 @@ namespace Memoria.Launcher
         {
             if (MessageBox.Show((String)Lang.Res["Settings.ApplyPresetText"], (String)Lang.Res["Settings.ApplyPresetCaption"], MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                IniReader settings = Presets[comboBox.SelectedIndex].Settings;
-                settings.WriteAllSettings(IniFile.IniPath, ["Preset"]);
+                IniFile settings = Presets[comboBox.SelectedIndex].Settings;
+                settings.WriteAllSettings(IniFile.MemoriaIniPath, ["Preset"]);
 
                 MainWindow mainWindow = (MainWindow)this.GetRootElement();
                 mainWindow.LoadSettings();
@@ -149,7 +149,7 @@ namespace Memoria.Launcher
             public String Name;
             public String Description;
 
-            public IniReader Settings;
+            public IniFile Settings;
 
             public override String ToString()
             {
@@ -174,10 +174,10 @@ namespace Memoria.Launcher
             {
                 Name = (String)Lang.Res["Settings.PresetMemoria"],
                 Description = (String)Lang.Res["Settings.PresetMemoria_Tooltip"],
-                Settings = new IniReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("Memoria.ini"))
+                Settings = new IniFile(Assembly.GetExecutingAssembly().GetManifestResourceStream("Memoria.ini"))
             });
 
-            List<IniReader.Key> toRemove = new List<IniReader.Key>();
+            List<IniFile.Key> toRemove = new List<IniFile.Key>();
             foreach (var key in Presets[0].Settings.Options.Keys)
             {
                 List<String> options = ["Audio.MusicVolume", "Audio.SoundVolume", "Audio.MovieVolume", "VoiceActing.Volume"];
@@ -193,24 +193,24 @@ namespace Memoria.Launcher
             {
                 Name = (String)Lang.Res["Settings.PresetSteam"],
                 Description = (String)Lang.Res["Settings.PresetSteam_Tooltip"],
-                Settings = new IniReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("SteamPreset.ini"))
+                Settings = new IniFile(Assembly.GetExecutingAssembly().GetManifestResourceStream("SteamPreset.ini"))
             });
 
             Presets.Add(new Preset()
             {
                 Name = (String)Lang.Res["Settings.PresetPSX"],
                 Description = (String)Lang.Res["Settings.PresetPSX_Tooltip"],
-                Settings = new IniReader(Assembly.GetExecutingAssembly().GetManifestResourceStream("PSXPreset.ini"))
+                Settings = new IniFile(Assembly.GetExecutingAssembly().GetManifestResourceStream("PSXPreset.ini"))
             });
 
             if (Directory.Exists("Presets"))
             {
                 foreach (String file in Directory.EnumerateFiles("Presets", "*.ini"))
                 {
-                    IniReader settings = new IniReader(file);
+                    IniFile settings = new IniFile(file);
 
-                    IniReader.Key nameKey = new IniReader.Key("Preset", "Name");
-                    IniReader.Key descKey = new IniReader.Key("Preset", "Description");
+                    IniFile.Key nameKey = new IniFile.Key("Preset", "Name");
+                    IniFile.Key descKey = new IniFile.Key("Preset", "Description");
                     Presets.Add(new Preset()
                     {
                         Path = file,

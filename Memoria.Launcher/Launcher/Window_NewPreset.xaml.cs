@@ -74,8 +74,8 @@ namespace Memoria.Launcher
 
             File.WriteAllText(path, header);
 
-            IniReader reader = new IniReader(IniFile.IniPath);
-            if(IncludeMods.IsChecked == true)
+            IniFile reader = IniFile.MemoriaIni;
+            if (IncludeMods.IsChecked == true)
                 reader.WriteAllSettings(path, ["Debug", "Export", "Import"], ["Mod.UseFileList", "Mod.MergeScripts", "Audio.MusicVolume", "Audio.SoundVolume", "Audio.MovieVolume", "VoiceActing.Volume"]);
             else
                 reader.WriteAllSettings(path, ["Mod", "Debug", "Export", "Import"], ["Audio.MusicVolume", "Audio.SoundVolume", "Audio.MovieVolume", "VoiceActing.Volume"]);

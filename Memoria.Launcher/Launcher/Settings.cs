@@ -530,7 +530,7 @@ namespace Memoria.Launcher
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-                IniFile iniFile = new IniFile(IniFile.IniPath);
+                IniFile iniFile = IniFile.MemoriaIni;
 
                 foreach (Object[] item in SettingsList)
                 {
@@ -541,17 +541,17 @@ namespace Memoria.Launcher
                         {
                             if (varValue == 0)
                             {
-                                iniFile.WriteValue(category, name_ini, $"{valueZero}");
+                                iniFile.SetSetting(category, name_ini, $"{valueZero}");
                             }
                             else if (varValue == 1)
                             {
-                                iniFile.WriteValue(category, name_ini, $"{valueOne}");
-                                iniFile.WriteValue(category, "Enabled", "1");
+                                iniFile.SetSetting(category, name_ini, $"{valueOne}");
+                                iniFile.SetSetting(category, "Enabled", "1");
                             }
                             else
                             {
-                                iniFile.WriteValue(category, name_ini, $"{varValue}");
-                                iniFile.WriteValue(category, "Enabled", "1");
+                                iniFile.SetSetting(category, name_ini, $"{varValue}");
+                                iniFile.SetSetting(category, "Enabled", "1");
                             }
                         }
                     }
@@ -563,75 +563,75 @@ namespace Memoria.Launcher
                         var0 = BattleSwirlFrames;
                         if (var0 == 1)
                         {
-                            iniFile.WriteValue("Graphics", "Enabled", "1");
-                            iniFile.WriteValue("Graphics", "BattleSwirlFrames", "0");
+                            iniFile.SetSetting("Graphics", "Enabled", "1");
+                            iniFile.SetSetting("Graphics", "BattleSwirlFrames", "0");
                         }
                         else if (var0 == 0)
                         {
-                            iniFile.WriteValue("Graphics", "BattleSwirlFrames", "70");
+                            iniFile.SetSetting("Graphics", "BattleSwirlFrames", "70");
                         }
                         break;
                     case nameof(SpeedFactor):
                         var0 = SpeedFactor;
-                        iniFile.WriteValue("Cheats", "SpeedFactor", $"{var0}");
+                        iniFile.SetSetting("Cheats", "SpeedFactor", $"{var0}");
                         if (var0 < 2)
-                            iniFile.WriteValue("Cheats", "SpeedMode", "0");
+                            iniFile.SetSetting("Cheats", "SpeedMode", "0");
                         else
                         {
-                            iniFile.WriteValue("Cheats", "SpeedMode", "1");
-                            iniFile.WriteValue("Cheats", "Enabled", "1");
+                            iniFile.SetSetting("Cheats", "SpeedMode", "1");
+                            iniFile.SetSetting("Cheats", "Enabled", "1");
                         }
                         break;
                     case nameof(FPSDropboxChoice):
                         var0 = FPSDropboxChoice;
                         if (var0 >= 0)
                         {
-                            iniFile.WriteValue("Graphics", "Enabled", "1");
+                            iniFile.SetSetting("Graphics", "Enabled", "1");
                             if (var0 == 0) { var1 = 30; var2 = 15; var3 = 20; }
                             if (var0 == 1) { var1 = 30; var2 = 30; var3 = 30; }
                             if (var0 == 2) { var1 = 60; var2 = 60; var3 = 60; }
                             if (var0 == 3) { var1 = 90; var2 = 90; var3 = 90; }
                             if (var0 == 4) { var1 = 120; var2 = 120; var3 = 120; }
-                            iniFile.WriteValue("Graphics", "FieldFPS", $"{var1}");
-                            iniFile.WriteValue("Graphics", "BattleFPS", $"{var2}");
-                            iniFile.WriteValue("Graphics", "WorldFPS", $"{var3}");
+                            iniFile.SetSetting("Graphics", "FieldFPS", $"{var1}");
+                            iniFile.SetSetting("Graphics", "BattleFPS", $"{var2}");
+                            iniFile.SetSetting("Graphics", "WorldFPS", $"{var3}");
                         }
                         break;
                     case nameof(ShaderFieldChoice):
                         var0 = ShaderFieldChoice;
                         if (var0 >= 0)
                         {
-                            iniFile.WriteValue("Shaders", "Enabled", "1");
+                            iniFile.SetSetting("Shaders", "Enabled", "1");
                             if (var0 == 1) { var2 = 1; var3 = 1; }
                             if (var0 == 2) { var2 = 1; }
                             if (var0 == 3) { var1 = 1; var3 = 1; }
                             if (var0 == 4) { var1 = 1; }
                             if (var0 == 5) { var3 = 1; }
-                            iniFile.WriteValue("Shaders", "Shader_Field_Realism", $"{var1}");
-                            iniFile.WriteValue("Shaders", "Shader_Field_Toon", $"{var2}");
-                            iniFile.WriteValue("Shaders", "Shader_Field_Outlines", $"{var3}");
+                            iniFile.SetSetting("Shaders", "Shader_Field_Realism", $"{var1}");
+                            iniFile.SetSetting("Shaders", "Shader_Field_Toon", $"{var2}");
+                            iniFile.SetSetting("Shaders", "Shader_Field_Outlines", $"{var3}");
                         }
                         break;
                     case nameof(ShaderBattleChoice):
                         var0 = ShaderBattleChoice;
                         if (var0 >= 0)
                         {
-                            iniFile.WriteValue("Shaders", "Enabled", "1");
+                            iniFile.SetSetting("Shaders", "Enabled", "1");
                             if (var0 == 1) { var2 = 1; var3 = 1; }
                             if (var0 == 2) { var2 = 1; }
                             if (var0 == 3) { var1 = 1; var3 = 1; }
                             if (var0 == 4) { var1 = 1; }
                             if (var0 == 5) { var3 = 1; }
-                            iniFile.WriteValue("Shaders", "Shader_Battle_Realism", $"{var1}");
-                            iniFile.WriteValue("Shaders", "Shader_Battle_Toon", $"{var2}");
-                            iniFile.WriteValue("Shaders", "Shader_Battle_Outlines", $"{var3}");
+                            iniFile.SetSetting("Shaders", "Shader_Battle_Realism", $"{var1}");
+                            iniFile.SetSetting("Shaders", "Shader_Battle_Toon", $"{var2}");
+                            iniFile.SetSetting("Shaders", "Shader_Battle_Outlines", $"{var3}");
                         }
                         break;
                     case nameof(UsePsxFont):
                         if (UsePsxFont == 1)
                         {
-                            iniFile.WriteValue("Font", "Enabled", "1");
-                            iniFile.WriteValue("Font", "Names", "\"Alexandria\", \"Garnet\"");
+                            iniFile.SetSetting("Font", "Enabled", "1");
+                            iniFile.SetSetting("Font", "Names", "\"Alexandria\", \"Garnet\"");
                             FontChoice = _fontDefaultPSX;
                         }
                         else if (UsePsxFont == 0)
@@ -643,19 +643,19 @@ namespace Memoria.Launcher
                     case nameof(FontChoice):
                         if (FontChoice.CompareTo(_fontDefaultPC) == 0)
                         {
-                            iniFile.WriteValue("Font", "Enabled", "0");
+                            iniFile.SetSetting("Font", "Enabled", "0");
                             _usepsxfont = 0;
                         }
                         else if (FontChoice.CompareTo(_fontDefaultPSX) == 0)
                         {
-                            iniFile.WriteValue("Font", "Enabled", "1");
-                            iniFile.WriteValue("Font", "Names", "\"Alexandria\", \"Garnet\"");
+                            iniFile.SetSetting("Font", "Enabled", "1");
+                            iniFile.SetSetting("Font", "Names", "\"Alexandria\", \"Garnet\"");
                             _usepsxfont = 1;
                         }
                         else
                         {
-                            iniFile.WriteValue("Font", "Enabled", "1");
-                            iniFile.WriteValue("Font", "Names", "\"" + FontChoice + "\", \"Times Bold\"");
+                            iniFile.SetSetting("Font", "Enabled", "1");
+                            iniFile.SetSetting("Font", "Names", "\"" + FontChoice + "\", \"Times Bold\"");
                             _usepsxfont = 0;
                         }
                         break;
@@ -663,91 +663,92 @@ namespace Memoria.Launcher
                         var0 = UIColumnsChoice;
                         if (var0 >= 0)
                         {
-                            iniFile.WriteValue("Interface", "Enabled", "1");
+                            iniFile.SetSetting("Interface", "Enabled", "1");
                             if (var0 == 0) { var1 = 8; var2 = 6; var3 = 5; }
                             if (var0 == 1) { var1 = 12; var2 = 9; var3 = 7; }
                             if (var0 == 2) { var1 = 16; var2 = 12; var3 = 8; }
-                            iniFile.WriteValue("Interface", "MenuItemRowCount", $"{var1}");
-                            iniFile.WriteValue("Interface", "MenuAbilityRowCount", $"{var2}");
-                            iniFile.WriteValue("Interface", "MenuEquipRowCount", $"{var3}");
-                            iniFile.WriteValue("Interface", "MenuChocographRowCount", $"{var3}");
+                            iniFile.SetSetting("Interface", "MenuItemRowCount", $"{var1}");
+                            iniFile.SetSetting("Interface", "MenuAbilityRowCount", $"{var2}");
+                            iniFile.SetSetting("Interface", "MenuEquipRowCount", $"{var3}");
+                            iniFile.SetSetting("Interface", "MenuChocographRowCount", $"{var3}");
                         }
                         break;
                     case nameof(BattleInterface):
-                        iniFile.WriteValue("Interface", "BattleMenuPosX", $"{(Int32)BattleInterfaceMenu.X}");
-                        iniFile.WriteValue("Interface", "BattleMenuPosY", $"{(Int32)BattleInterfaceMenu.Y}");
-                        iniFile.WriteValue("Interface", "BattleMenuWidth", $"{(Int32)BattleInterfaceMenu.Width}");
-                        iniFile.WriteValue("Interface", "BattleMenuHeight", $"{(Int32)BattleInterfaceMenu.Height}");
-                        iniFile.WriteValue("Interface", "BattleDetailPosX", $"{(Int32)BattleInterfaceDetail.X}");
-                        iniFile.WriteValue("Interface", "BattleDetailPosY", $"{(Int32)BattleInterfaceDetail.Y}");
-                        iniFile.WriteValue("Interface", "BattleDetailWidth", $"{(Int32)BattleInterfaceDetail.Width}");
-                        iniFile.WriteValue("Interface", "BattleDetailHeight", $"{(Int32)BattleInterfaceDetail.Height}");
-                        iniFile.WriteValue("Interface", "BattleRowCount", $"{(BattleInterface == 2 ? 4 : 5)}");
-                        iniFile.WriteValue("Interface", "BattleColumnCount", $"{(BattleInterface == 2 ? 1 : 1)}");
-                        iniFile.WriteValue("Interface", "PSXBattleMenu", $"{(BattleInterface == 2 ? 1 : 0)}");
+                        iniFile.SetSetting("Interface", "BattleMenuPosX", $"{(Int32)BattleInterfaceMenu.X}");
+                        iniFile.SetSetting("Interface", "BattleMenuPosY", $"{(Int32)BattleInterfaceMenu.Y}");
+                        iniFile.SetSetting("Interface", "BattleMenuWidth", $"{(Int32)BattleInterfaceMenu.Width}");
+                        iniFile.SetSetting("Interface", "BattleMenuHeight", $"{(Int32)BattleInterfaceMenu.Height}");
+                        iniFile.SetSetting("Interface", "BattleDetailPosX", $"{(Int32)BattleInterfaceDetail.X}");
+                        iniFile.SetSetting("Interface", "BattleDetailPosY", $"{(Int32)BattleInterfaceDetail.Y}");
+                        iniFile.SetSetting("Interface", "BattleDetailWidth", $"{(Int32)BattleInterfaceDetail.Width}");
+                        iniFile.SetSetting("Interface", "BattleDetailHeight", $"{(Int32)BattleInterfaceDetail.Height}");
+                        iniFile.SetSetting("Interface", "BattleRowCount", $"{(BattleInterface == 2 ? 4 : 5)}");
+                        iniFile.SetSetting("Interface", "BattleColumnCount", $"{(BattleInterface == 2 ? 1 : 1)}");
+                        iniFile.SetSetting("Interface", "PSXBattleMenu", $"{(BattleInterface == 2 ? 1 : 0)}");
                         break;
                     case nameof(ATBModeChoice):
                         if (ATBModeChoice != 0)
-                            iniFile.WriteValue("Battle", "Enabled", "1");
+                            iniFile.SetSetting("Battle", "Enabled", "1");
                         if (ATBModeChoice == 3)
-                            iniFile.WriteValue("Battle", "Speed", "5");
+                            iniFile.SetSetting("Battle", "Speed", "5");
                         else
-                            iniFile.WriteValue("Battle", "Speed", $"{ATBModeChoice}");
+                            iniFile.SetSetting("Battle", "Speed", $"{ATBModeChoice}");
                         break;
                     case nameof(TripleTriad):
                         var0 = TripleTriad;
                         if (var0 >= 0)
                         {
-                            iniFile.WriteValue("TetraMaster", "Enabled", "1");
+                            iniFile.SetSetting("TetraMaster", "Enabled", "1");
                             if (var0 == 0) { var1 = 0; var2 = 0; }
                             if (var0 == 1) { var1 = 0; var2 = 1; }
                             if (var0 == 2) { var1 = 1; var2 = 0; }
                             if (var0 == 3) { var1 = 2; var2 = 0; }
-                            iniFile.WriteValue("TetraMaster", "TripleTriad", $"{var1}");
-                            iniFile.WriteValue("TetraMaster", "ReduceRandom", $"{var2}");
+                            iniFile.SetSetting("TetraMaster", "TripleTriad", $"{var1}");
+                            iniFile.SetSetting("TetraMaster", "ReduceRandom", $"{var2}");
                         }
                         break;
                     case nameof(WorldmapMistPreset):
                         var0 = WorldmapMistPreset;
                         if (var0 >= 0)
                         {
-                            iniFile.WriteValue("Worldmap", "Enabled", "1");
-                            if (var0 == 0) { var1 = 100; var2 = 55; var3 = 27; var4 = 80;  var5 = 7; }
+                            iniFile.SetSetting("Worldmap", "Enabled", "1");
+                            if (var0 == 0) { var1 = 100; var2 = 55; var3 = 27; var4 = 80; var5 = 7; }
                             if (var0 == 1) { var1 = 250; var2 = 10; var3 = 30; var4 = 200; var5 = 7; }
                             if (var0 == 2) { var1 = 400; var2 = 10; var3 = 50; var4 = 300; var5 = 4; }
                             if (var0 == 3) { var1 = 450; var2 = 0; var3 = 250; var4 = 330; var5 = 0; }
-                            iniFile.WriteValue("Worldmap", "MistViewDistance", $"{var1}");
-                            iniFile.WriteValue("Worldmap", "MistStartDistance_base", $"{var2}");
-                            iniFile.WriteValue("Worldmap", "MistStartDistance", $"{var3}");
-                            iniFile.WriteValue("Worldmap", "MistEndDistance", $"{var4}");
-                            iniFile.WriteValue("Worldmap", "MistDensity", $"{var5}");
+                            iniFile.SetSetting("Worldmap", "MistViewDistance", $"{var1}");
+                            iniFile.SetSetting("Worldmap", "MistStartDistance_base", $"{var2}");
+                            iniFile.SetSetting("Worldmap", "MistStartDistance", $"{var3}");
+                            iniFile.SetSetting("Worldmap", "MistEndDistance", $"{var4}");
+                            iniFile.SetSetting("Worldmap", "MistDensity", $"{var5}");
                         }
                         break;
                     case nameof(WorldmapDistancePreset):
                         var0 = WorldmapDistancePreset;
                         if (var0 >= 0)
                         {
-                            iniFile.WriteValue("Worldmap", "Enabled", "1");
+                            iniFile.SetSetting("Worldmap", "Enabled", "1");
                             if (var0 == 0) { var1 = 100; var2 = 86; var3 = 142; }
                             if (var0 == 1) { var1 = 200; var2 = 150; var3 = 250; }
                             if (var0 == 2) { var1 = 300; var2 = 250; var3 = 350; }
                             if (var0 == 3) { var1 = 450; var2 = 400; var3 = 490; }
-                            iniFile.WriteValue("Worldmap", "NoMistViewDistance", $"{var1}");
-                            iniFile.WriteValue("Worldmap", "FogStartDistance", $"{var2}");
-                            iniFile.WriteValue("Worldmap", "FogEndDistance", $"{var3}");
+                            iniFile.SetSetting("Worldmap", "NoMistViewDistance", $"{var1}");
+                            iniFile.SetSetting("Worldmap", "FogStartDistance", $"{var2}");
+                            iniFile.SetSetting("Worldmap", "FogEndDistance", $"{var3}");
                         }
                         break;
                     case nameof(AccessBattleMenu):
-                        iniFile.WriteValue("Battle", "AccessMenus", $"{AccessBattleMenu}");
-                        iniFile.WriteValue("Battle", "AvailableMenus", AvailableBattleMenus);
+                        iniFile.SetSetting("Battle", "AccessMenus", $"{AccessBattleMenu}");
+                        iniFile.SetSetting("Battle", "AvailableMenus", AvailableBattleMenus);
                         if (AccessBattleMenu > 0)
-                            iniFile.WriteValue("Battle", "Enabled", "1");
+                            iniFile.SetSetting("Battle", "Enabled", "1");
                         break;
                     case nameof(AutoSave):
-                        iniFile.WriteValue("SaveFile", "DisableAutoSave", AutoSave == 1 ? "1" : "0");
-                        iniFile.WriteValue("SaveFile", "AutoSaveOnlyAtMoogle", AutoSave == 2 ? "1" : "0");
+                        iniFile.SetSetting("SaveFile", "DisableAutoSave", AutoSave == 1 ? "1" : "0");
+                        iniFile.SetSetting("SaveFile", "AutoSaveOnlyAtMoogle", AutoSave == 2 ? "1" : "0");
                         break;
                 }
+                iniFile.Save();
             }
             catch (Exception ex)
             {
@@ -764,14 +765,19 @@ namespace Memoria.Launcher
             try
             {
                 IniFile.PreventWrite = true;
-                //IniFile iniFile = new(IniFile.IniPath);
-                IniReader iniReader = new IniReader(IniFile.IniPath);
+                IniFile iniFile = IniFile.MemoriaIni;
 
                 foreach (Object[] item in SettingsList)
                 {
-                    if (item[0] is String property && item[1] is String _property && item[2] is String name_ini && item[3] is String category && item[4] is Int32 valueZero && item[5] is Int32 valueOne && item[6] is Int32 defaultVal) //  
+                    if (item[0] is String property &&
+                        //item[1] is String _property &&
+                        item[2] is String name_ini &&
+                        item[3] is String category &&
+                        item[4] is Int32 valueZero &&
+                        item[5] is Int32 valueOne &&
+                        item[6] is Int32 defaultVal)
                     {
-                        String INIvalueString = iniReader.GetSetting(category, name_ini);
+                        String INIvalueString = iniFile.GetSetting(category, name_ini);
                         PropertyInfo field = this.GetType().GetProperty(property);
                         if (field != null)
                         {
@@ -791,15 +797,15 @@ namespace Memoria.Launcher
                     }
                 }
 
-                String value = iniReader.GetSetting("Worldmap", "MistViewDistance");
+                String value = iniFile.GetSetting("Worldmap", "MistViewDistance");
                 Boolean value1isInt = Int16.TryParse(value, out Int16 value1);
-                value = iniReader.GetSetting("Worldmap", "MistStartDistance_base");
+                value = iniFile.GetSetting("Worldmap", "MistStartDistance_base");
                 Boolean value2isInt = Int16.TryParse(value, out Int16 value2);
-                value = iniReader.GetSetting("Worldmap", "MistStartDistance");
+                value = iniFile.GetSetting("Worldmap", "MistStartDistance");
                 Boolean value3isInt = Int16.TryParse(value, out Int16 value3);
-                value = iniReader.GetSetting("Worldmap", "MistEndDistance");
+                value = iniFile.GetSetting("Worldmap", "MistEndDistance");
                 Boolean value4isInt = Int16.TryParse(value, out Int16 value4);
-                value = iniReader.GetSetting("Worldmap", "MistDensity");
+                value = iniFile.GetSetting("Worldmap", "MistDensity");
                 Boolean value5isInt = Int16.TryParse(value, out Int16 value5);
                 if (value1 == 100 && value2 == 55 && value3 == 27 && value4 == 80 && value5 == 7)
                     _worldmapmistpreset = 0;
@@ -813,7 +819,7 @@ namespace Memoria.Launcher
                     _worldmapmistpreset = -1;
                 Refresh(nameof(WorldmapMistPreset));
 
-                value = iniReader.GetSetting("Graphics", "BattleSwirlFrames");
+                value = iniFile.GetSetting("Graphics", "BattleSwirlFrames");
                 if (String.IsNullOrEmpty(value))
                     value = " 0";
                 value1isInt = Int16.TryParse(value, out value1);
@@ -825,7 +831,7 @@ namespace Memoria.Launcher
 
 
 
-                value = iniReader.GetSetting("Cheats", "SpeedMode");
+                value = iniFile.GetSetting("Cheats", "SpeedMode");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 1";
@@ -839,7 +845,7 @@ namespace Memoria.Launcher
                 else
                 {
                     SpeedMode = 1;
-                    value = iniReader.GetSetting("Cheats", "SpeedFactor");
+                    value = iniFile.GetSetting("Cheats", "SpeedFactor");
                     if (String.IsNullOrEmpty(value))
                     {
                         value = " 3";
@@ -850,11 +856,11 @@ namespace Memoria.Launcher
                 Refresh(nameof(SpeedMode));
                 Refresh(nameof(SpeedFactor));
 
-                value = iniReader.GetSetting("Graphics", "FieldFPS");
+                value = iniFile.GetSetting("Graphics", "FieldFPS");
                 value1isInt = Int16.TryParse(value, out value1);
-                value = iniReader.GetSetting("Graphics", "BattleFPS");
+                value = iniFile.GetSetting("Graphics", "BattleFPS");
                 value2isInt = Int16.TryParse(value, out value2);
-                value = iniReader.GetSetting("Graphics", "WorldFPS");
+                value = iniFile.GetSetting("Graphics", "WorldFPS");
                 value3isInt = Int16.TryParse(value, out value3);
                 if (value1isInt && value2isInt && value3isInt)
                 {
@@ -873,8 +879,8 @@ namespace Memoria.Launcher
                 }
                 Refresh(nameof(FPSDropboxChoice));
 
-                String valueMenuPos = iniReader.GetSetting("Interface", "BattleMenuPosX");
-                String valuePSXMenu = iniReader.GetSetting("Interface", "PSXBattleMenu");
+                String valueMenuPos = iniFile.GetSetting("Interface", "BattleMenuPosX");
+                String valuePSXMenu = iniFile.GetSetting("Interface", "PSXBattleMenu");
                 Int32 menuPosX = -400;
                 Int32 psxMenu = 0;
                 if (!String.IsNullOrEmpty(valueMenuPos))
@@ -891,13 +897,13 @@ namespace Memoria.Launcher
                     _battleInterface = 0;
                 Refresh(nameof(BattleInterface));
 
-                value = iniReader.GetSetting("Interface", "MenuItemRowCount");
+                value = iniFile.GetSetting("Interface", "MenuItemRowCount");
                 value1isInt = Int16.TryParse(value, out value1);
-                value = iniReader.GetSetting("Interface", "MenuAbilityRowCount");
+                value = iniFile.GetSetting("Interface", "MenuAbilityRowCount");
                 value2isInt = Int16.TryParse(value, out value2);
-                value = iniReader.GetSetting("Interface", "MenuEquipRowCount");
+                value = iniFile.GetSetting("Interface", "MenuEquipRowCount");
                 value3isInt = Int16.TryParse(value, out value3);
-                value = iniReader.GetSetting("Interface", "MenuChocographRowCount");
+                value = iniFile.GetSetting("Interface", "MenuChocographRowCount");
                 value4isInt = Int16.TryParse(value, out value4);
                 if (value1 == 8 && value2 == 6 && value3 == 5 && value4 == 5)
                     _uicolumnschoice = 0;
@@ -909,7 +915,7 @@ namespace Memoria.Launcher
                     _uicolumnschoice = -1;
                 Refresh(nameof(UIColumnsChoice));
 
-                value = iniReader.GetSetting("Battle", "Speed");
+                value = iniFile.GetSetting("Battle", "Speed");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
@@ -920,9 +926,9 @@ namespace Memoria.Launcher
                 else if (_atbmodechoice > 3)
                     _atbmodechoice = 3;
 
-                value = iniReader.GetSetting("TetraMaster", "TripleTriad");
+                value = iniFile.GetSetting("TetraMaster", "TripleTriad");
                 value1isInt = Int16.TryParse(value, out value1);
-                value = iniReader.GetSetting("TetraMaster", "ReduceRandom");
+                value = iniFile.GetSetting("TetraMaster", "ReduceRandom");
                 value2isInt = Int16.TryParse(value, out value2);
                 if (value1 == 0 && value2 == 0)
                     _tripleTriad = 0;
@@ -936,7 +942,7 @@ namespace Memoria.Launcher
                     _tripleTriad = -1;
                 Refresh(nameof(TripleTriad));
 
-                value = iniReader.GetSetting("Font", "Enabled");
+                value = iniFile.GetSetting("Font", "Enabled");
                 if (String.IsNullOrEmpty(value) || !Int16.TryParse(value, out Int16 enabledFont) || enabledFont == 0)
                 {
                     _fontChoice = _fontDefaultPC;
@@ -944,7 +950,7 @@ namespace Memoria.Launcher
                 }
                 else
                 {
-                    value = iniReader.GetSetting("Font", "Names");
+                    value = iniFile.GetSetting("Font", "Names");
                     if (String.IsNullOrEmpty(value) || value.Length < 2)
                     {
                         _fontChoice = _fontDefaultPC;
@@ -968,11 +974,11 @@ namespace Memoria.Launcher
                 Refresh(nameof(UsePsxFont));
                 Refresh(nameof(FontChoice));
 
-                value = iniReader.GetSetting("Shaders", "Shader_Field_Realism");
+                value = iniFile.GetSetting("Shaders", "Shader_Field_Realism");
                 value1isInt = Int16.TryParse(value, out value1);
-                value = iniReader.GetSetting("Shaders", "Shader_Field_Toon");
+                value = iniFile.GetSetting("Shaders", "Shader_Field_Toon");
                 value2isInt = Int16.TryParse(value, out value2);
-                value = iniReader.GetSetting("Shaders", "Shader_Field_Outlines");
+                value = iniFile.GetSetting("Shaders", "Shader_Field_Outlines");
                 value3isInt = Int16.TryParse(value, out value3);
                 if (value1 == 0 && value2 == 0 && value3 == 0)
                     _shaderfieldchoice = 0;
@@ -990,11 +996,11 @@ namespace Memoria.Launcher
                     _shaderfieldchoice = -1;
                 Refresh(nameof(ShaderFieldChoice));
 
-                value = iniReader.GetSetting("Shaders", "Shader_Battle_Realism");
+                value = iniFile.GetSetting("Shaders", "Shader_Battle_Realism");
                 value1isInt = Int16.TryParse(value, out value1);
-                value = iniReader.GetSetting("Shaders", "Shader_Battle_Toon");
+                value = iniFile.GetSetting("Shaders", "Shader_Battle_Toon");
                 value2isInt = Int16.TryParse(value, out value2);
-                value = iniReader.GetSetting("Shaders", "Shader_Battle_Outlines");
+                value = iniFile.GetSetting("Shaders", "Shader_Battle_Outlines");
                 value3isInt = Int16.TryParse(value, out value3);
                 if (value1 == 0 && value2 == 0 && value3 == 0)
                     _shaderbattlechoice = 0;
@@ -1012,11 +1018,11 @@ namespace Memoria.Launcher
                     _shaderbattlechoice = -1;
                 Refresh(nameof(ShaderBattleChoice));
 
-                value = iniReader.GetSetting("Worldmap", "NoMistViewDistance");
+                value = iniFile.GetSetting("Worldmap", "NoMistViewDistance");
                 value1isInt = Int16.TryParse(value, out value1);
-                value = iniReader.GetSetting("Worldmap", "FogStartDistance");
+                value = iniFile.GetSetting("Worldmap", "FogStartDistance");
                 value2isInt = Int16.TryParse(value, out value2);
-                value = iniReader.GetSetting("Worldmap", "FogEndDistance");
+                value = iniFile.GetSetting("Worldmap", "FogEndDistance");
                 value3isInt = Int16.TryParse(value, out value3);
                 if (value1 == 100 && value2 == 86 && value3 == 142)
                     _worldmapdistancepreset = 0;
@@ -1031,7 +1037,7 @@ namespace Memoria.Launcher
                 Refresh(nameof(WorldmapDistancePreset));
 
 
-                value = iniReader.GetSetting("Battle", "AccessMenus");
+                value = iniFile.GetSetting("Battle", "AccessMenus");
                 if (String.IsNullOrEmpty(value))
                 {
                     value = " 0";
@@ -1042,9 +1048,9 @@ namespace Memoria.Launcher
                 Refresh(nameof(AccessBattleMenu));
 
 
-                value = iniReader.GetSetting("SaveFile", "DisableAutoSave");
+                value = iniFile.GetSetting("SaveFile", "DisableAutoSave");
                 value1isInt = Int16.TryParse(value, out value1);
-                value = iniReader.GetSetting("SaveFile", "AutoSaveOnlyAtMoogle");
+                value = iniFile.GetSetting("SaveFile", "AutoSaveOnlyAtMoogle");
                 value2isInt = Int16.TryParse(value, out value2);
                 if (!value1isInt) value1 = 0;
                 if (!value2isInt) value2 = 0;
