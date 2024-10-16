@@ -7,50 +7,59 @@ using UnityEngine;
 
 public class ParametricMovement
 {
-    private class MovementSetup
+    private MovementSetup setup;
+    private MovementSetup.Piece currentPiece;
+    private Int32 currentPieceID;
+    private Boolean isScaling;
+    private Int32 duration;
+    private Vector3 currentOrigin;
+    private Vector3 currentDest;
+
+    public Int32 Duration => duration;
+
+    public ParametricMovement(Boolean asScaling = false)
     {
-        public class Piece
-        {
-            public Expression[] origin = new Expression[3] { null, null, null };
-            public Expression[] dest = new Expression[3] { null, null, null };
-            public InterpolateType[] interpolate = new InterpolateType[3] { InterpolateType.Linear, InterpolateType.Linear, InterpolateType.Linear };
-            public Int32 min = 0;
-            public Int32 max = 1;
-        }
-
-        public List<Piece> piece = new List<Piece>();
-    }
-
-    private MovementSetup setup = null;
-    private MovementSetup.Piece currentPiece = null;
-    private Int32 currentPieceID = -1;
-    public Vector3 currentOrigin = default(Vector3);
-    public Vector3 currentDest = default(Vector3);
-
-    public ParametricMovement()
-    {
-        setup = null;
+        setup = new MovementSetup();
         currentPiece = null;
         currentPieceID = -1;
-        currentOrigin = default(Vector3);
-        currentDest = default(Vector3);
+        isScaling = asScaling;
+        duration = 0;
+        if (isScaling)
+        {
+            currentOrigin = Vector3.one;
+            currentDest = Vector3.one;
+        }
+        else
+        {
+            currentOrigin = Vector3.zero;
+            currentDest = Vector3.zero;
+        }
     }
 
     public ParametricMovement(ParametricMovement basis)
     {
         setup = basis.setup;
+        isScaling = basis.isScaling;
+        duration = basis.duration;
         currentPiece = null;
         currentPieceID = -1;
-        currentOrigin = default(Vector3);
-        currentDest = default(Vector3);
+        if (isScaling)
+        {
+            currentOrigin = Vector3.one;
+            currentDest = Vector3.one;
+        }
+        else
+        {
+            currentOrigin = Vector3.zero;
+            currentDest = Vector3.zero;
+        }
     }
 
     public void LoadFromJSON(JSONNode node)
     {
-        setup = new MovementSetup();
+        setup.piece.Clear();
         if (node == null || (node is not JSONArray && node is not JSONClass))
             return;
-        Int32 pieceID = 0;
         JSONClass[] classList;
         if (node is JSONArray)
         {
@@ -62,14 +71,14 @@ public class ParametricMovement
         {
             classList = new JSONClass[] { node as JSONClass };
         }
-        Int32 duration;
         MovementSetup.Piece lastPiece = null;
+        duration = 0;
         for (Int32 i = 0; i < classList.Length; i++)
         {
             if (classList[i] == null)
                 continue;
             MovementSetup.Piece p = new MovementSetup.Piece();
-            duration = classList[i]["Duration"] != null ? classList[i]["Duration"].AsInt : 1;
+            Int32 pieceDuration = classList[i]["Duration"] != null ? classList[i]["Duration"].AsInt : 1;
             if (classList[i]["OriginX"] != null)
             {
                 p.origin[0] = new Expression(classList[i]["OriginX"]);
@@ -118,10 +127,10 @@ public class ParametricMovement
                 TryParseInterpolateType(classList[i]["InterpolationTypeY"], out p.interpolate[1]);
             if (classList[i]["InterpolationTypeZ"] != null)
                 TryParseInterpolateType(classList[i]["InterpolationTypeZ"], out p.interpolate[2]);
-            p.min = pieceID;
-            p.max = pieceID + duration;
+            p.min = duration;
+            duration += pieceDuration;
+            p.max = duration;
             setup.piece.Add(p);
-            pieceID += duration;
             lastPiece = p;
         }
     }
@@ -195,22 +204,27 @@ public class ParametricMovement
     {
         Int32 pieceID;
         for (pieceID = 0; pieceID < setup.piece.Count; pieceID++)
-            if (setup.piece[pieceID].min <= frame && setup.piece[pieceID].max >= frame)
+            if (setup.piece[pieceID].min <= frame && frame <= setup.piece[pieceID].max)
                 break;
-        if (pieceID < setup.piece.Count && pieceID != currentPieceID)
+        if (pieceID >= setup.piece.Count)
+        {
+            currentPiece = null;
+            currentPieceID = -1;
+        }
+        else if (pieceID != currentPieceID)
         {
             MovementSetup.Piece p = setup.piece[pieceID];
             InitExpressions(p.origin, customParam, caster, target, avgPos);
             InitExpressions(p.dest, customParam, caster, target, avgPos);
             for (Int32 i = 0; i < 3; i++)
-                currentOrigin[i] = p.origin[i] != null ? NCalcUtility.ConvertNCalcResult(p.origin[i].Evaluate(), 0f) : currentOrigin[i];
+                currentOrigin[i] = p.origin[i] != null ? NCalcUtility.ConvertNCalcResult(p.origin[i].Evaluate(), 0f) : currentDest[i];
             for (Int32 i = 0; i < 3; i++)
-                currentDest[i] = p.dest[i] != null ? NCalcUtility.ConvertNCalcResult(p.dest[i].Evaluate(), 0f) : currentDest[i];
+                currentDest[i] = p.dest[i] != null ? NCalcUtility.ConvertNCalcResult(p.dest[i].Evaluate(), 0f) : currentOrigin[i];
             currentPieceID = pieceID;
             currentPiece = p;
         }
         if (currentPiece == null)
-            return default(Vector3);
+            return currentDest;
         Single[] r = new Single[3];
         for (Int32 i = 0; i < 3; i++)
         {
@@ -229,6 +243,20 @@ public class ParametricMovement
             r[i] = Interpolate(cur, max, currentOrigin[i], currentDest[i], currentPiece.interpolate[i]);
         }
         return new Vector3(r[0], r[1], r[2]);
+    }
+
+    private class MovementSetup
+    {
+        public class Piece
+        {
+            public Expression[] origin = new Expression[3] { null, null, null };
+            public Expression[] dest = new Expression[3] { null, null, null };
+            public InterpolateType[] interpolate = new InterpolateType[3] { InterpolateType.Linear, InterpolateType.Linear, InterpolateType.Linear };
+            public Int32 min = 0;
+            public Int32 max = 1;
+        }
+
+        public List<Piece> piece = new List<Piece>();
     }
 
     public enum InterpolateType

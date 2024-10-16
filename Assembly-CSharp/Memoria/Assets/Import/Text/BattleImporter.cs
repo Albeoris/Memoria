@@ -77,12 +77,10 @@ namespace Memoria.Assets
         protected override Boolean LoadInternal()
         {
             Int32 battleZoneId = FF9TextTool.BattleZoneId;
+            FF9TextTool.battleText.Clear();
             String path = EmbadedTextResources.GetCurrentPath("/Battle/" + battleZoneId + ".mes");
-            String[] text = EmbadedSentenseLoader.LoadSentense(path);
-            if (text == null)
-                return false;
-            FF9TextTool.SetBattleText(text);
-            return true;
+            FF9TextTool.ImportStrtWithCumulativeModFiles<Int32>(path, FF9TextTool.battleText);
+            return FF9TextTool.battleText.Count > 0;
         }
 
         protected override Boolean LoadExternal()

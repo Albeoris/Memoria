@@ -210,16 +210,20 @@ public class DialogManager : Singleton<DialogManager>
                 dialogFromPool.Phrase = FF9TextTool.FieldText(textId);
 
                 // Subscribe
-                Action onFieldTextUpdated = () =>
+                // TODO: https://github.com/Albeoris/Memoria/issues/515
+                Action<Int32> onFieldTextUpdated = (id) =>
                 {
-                    dialogFromPool.Phrase = FF9TextTool.FieldText(textId);
-                    dialogFromPool.Show();
+                    if (id == textId)
+                    {
+                        dialogFromPool.Phrase = FF9TextTool.FieldText(textId);
+                        dialogFromPool.Show();
+                    }
                 };
                 FF9TextTool.FieldTextUpdated += onFieldTextUpdated;
 
                 // Unsubscribe
                 Dialog.DialogIntDelegate unsubscribe = (c) => FF9TextTool.FieldTextUpdated -= onFieldTextUpdated;
-                listener = listener != null ? (Dialog.DialogIntDelegate)Delegate.Combine(unsubscribe, listener) : unsubscribe;
+                listener = listener != null ? unsubscribe + listener : unsubscribe;
             }
             dialogFromPool.Show();
             dialogFromPool.AfterDialogHidden = listener;

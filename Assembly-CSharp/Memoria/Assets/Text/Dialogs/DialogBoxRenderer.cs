@@ -226,12 +226,15 @@ namespace Memoria.Assets
 
         private static void OnColor(BetterList<Color> colors, String colorText)
         {
-            Color color = NGUIText.ParseColor24(colorText, 0);
             if (colors != null)
             {
-                color.a = colors[colors.size - 1].a;
-                if (NGUIText.premultiply && color.a != 1f)
-                    color = Color.Lerp(NGUIText.mInvisible, color, color.a);
+                Color color = NGUIText.ParseColor24(colorText, 0);
+                if (colors.size > 0)
+                {
+                    color.a = colors[colors.size - 1].a;
+                    if (NGUIText.premultiply && color.a != 1f)
+                        color = Color.Lerp(NGUIText.mInvisible, color, color.a);
+                }
                 colors.Add(color);
             }
         }
