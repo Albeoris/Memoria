@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Reflection;
-using System.Runtime.ConstrainedExecution;
 using System.Windows;
 using System.Xml;
 
@@ -13,6 +12,9 @@ namespace Memoria.Launcher
         public static ResourceDictionary Res => Application.Current.Resources;
 
         public static String[] LauncherLanguageList = { "en", "de", "es", "fr", "it", "jp", "pt-BR", "ru", "uk", "zh-CN" };
+
+        public static String[] LauncherLanguageNames = { "English", "Deutsch", "Español", "Français", "Italiano", "日本語", "Português (brasileiro)", "Русский", "Українська", "中文" };
+
         public static void Initialize()
         {
             try
@@ -22,12 +24,12 @@ namespace Memoria.Launcher
 
                 XmlElement cur = null;
 
-                IniReader iniReader = new IniReader(SettingsGrid_Vanilla.IniPath);
-                String forcedLang = iniReader.GetSetting("Memoria", "LauncherLanguage");
+                IniFile iniFile = IniFile.SettingsIni;
+                String forcedLang = iniFile.GetSetting("Memoria", "LauncherLanguage");
 
                 String[] fileNames = String.IsNullOrEmpty(forcedLang) ?
-                    new String[] { CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName } :
-                    new String[] { forcedLang, CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName, };
+                    [CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName] :
+                    [forcedLang, CultureInfo.CurrentCulture.Name, CultureInfo.CurrentCulture.TwoLetterISOLanguageName, CultureInfo.CurrentCulture.ThreeLetterISOLanguageName,];
                 foreach (String name in fileNames)
                 {
                     cur = XmlHelper.LoadEmbadedDocument(assembly, $"Languages.{name}.xml");

@@ -269,7 +269,7 @@ namespace Memoria.Launcher
             };
             uiElement.MouseEnter += (sender, e) =>
             {
-                if (!uiElement.SelectedValue.ToString().StartsWith("Final Fantasy IX"))
+                if (uiElement.SelectedValue != null && !uiElement.SelectedValue.ToString().StartsWith("Final Fantasy IX"))
                 {
                     ToolTipService.SetToolTip(uiElement, toolTip);
                     ToolTipService.SetInitialShowDelay(uiElement, 0);
