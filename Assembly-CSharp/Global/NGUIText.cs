@@ -434,7 +434,7 @@ public static class NGUIText
         Vector2 printedSize = Vector2.zero;
         if (!String.IsNullOrEmpty(text))
         {
-            NGUIText.spaceWidth = NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
+            NGUIText.spaceWidth = 20f;// NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
             if (NGUIText.encoding)
                 text = NGUIText.StripSymbols2(text);
             NGUIText.mTextModifiers.Reset();
@@ -531,7 +531,7 @@ public static class NGUIText
 
     public static Single[] CalculateAllCharacterAdvances(String text)
     {
-        NGUIText.spaceWidth = NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
+        NGUIText.spaceWidth = 20f;// NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
         NGUIText.Prepare(text);
         NGUIText.mTextModifiers.Reset();
         Int32 textLength = text.Length;
@@ -1447,7 +1447,7 @@ public static class NGUIText
         vertsLineOffsets = new BetterList<Int32>();
         if (String.IsNullOrEmpty(text))
             return;
-        NGUIText.spaceWidth = NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
+        NGUIText.spaceWidth = 20f;// NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
         Int32 vIndex = verts.size;
         NGUIText.Prepare(text);
         Int32 prevCh = 0;

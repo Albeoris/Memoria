@@ -164,14 +164,14 @@ public class SoundEffectPlayer : SoundPlayer
             {
                 soundProfile = SoundMetaData.GetSoundProfile(soundIndex, type);
             }
-            soundProfile.SoundVolume = soundVolume;
-            soundProfile.Panning = panning;
-            soundProfile.Pitch = pitch;
             if (soundProfile == null)
             {
                 SoundLib.LogError("soundIndex: " + soundIndex + " is not exist");
                 return;
             }
+            soundProfile.SoundVolume = soundVolume;
+            soundProfile.Panning = panning;
+            soundProfile.Pitch = pitch;
             this.activeSoundEffect = soundProfile;
             if (this.onTheFlySoundDatabase.ReadAll().Count >= 20)
             {

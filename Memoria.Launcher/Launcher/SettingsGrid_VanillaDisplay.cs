@@ -90,27 +90,26 @@ namespace Memoria.Launcher
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
-                IniFile iniFile = new IniFile(IniPath);
+                IniFile iniFile = IniFile.SettingsIni;
                 switch (propertyName)
                 {
                     case nameof(ScreenResolution):
-                        iniFile.WriteValue("Settings", propertyName, ScreenResolution.Split('|')[0].Trim(' ') ?? "1280x960");
+                        iniFile.SetSetting("Settings", propertyName, ScreenResolution.Split('|')[0].Trim(' ') ?? "1280x960");
                         break;
                     case nameof(ActiveMonitor):
-                        iniFile.WriteValue("Settings", propertyName, ActiveMonitor ?? String.Empty);
+                        iniFile.SetSetting("Settings", propertyName, ActiveMonitor ?? String.Empty);
                         break;
                     case nameof(WindowMode):
-                        iniFile.WriteValue("Settings", propertyName, WindowMode.ToString());
+                        iniFile.SetSetting("Settings", propertyName, WindowMode.ToString());
                         break;
                 }
+                iniFile.Save();
             }
             catch (Exception ex)
             {
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
             }
         }
-
-        public static readonly String IniPath = AppDomain.CurrentDomain.BaseDirectory + "\\Settings.ini";
 
         private String _resolution = "";
         private String _activeMonitor = "";
@@ -120,9 +119,10 @@ namespace Memoria.Launcher
         {
             try
             {
-                IniReader iniReader = new IniReader(IniPath);
+                IniFile.PreventWrite = true;
+                IniFile iniFile = IniFile.SettingsIni;
 
-                String value = iniReader.GetSetting("Settings", nameof(ScreenResolution)).Split('|')[0].Trim(' ');
+                String value = iniFile.GetSetting("Settings", nameof(ScreenResolution)).Split('|')[0].Trim(' ');
                 //if res in settings.ini exists AND corresponds to something in the res list
                 if ((!String.IsNullOrEmpty(value)) && EnumerateDisplaySettings(false).ToArray().Any(value.Contains))
                     _resolution = addRatio(value);
@@ -130,14 +130,14 @@ namespace Memoria.Launcher
                 else
                     _resolution = EnumerateDisplaySettings(false).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray()[0];
 
-                value = iniReader.GetSetting("Settings", nameof(ActiveMonitor));
+                value = iniFile.GetSetting("Settings", nameof(ActiveMonitor));
                 if (!String.IsNullOrEmpty(value))
                 {
                     var i = value.IndexOf("[");
                     _activeMonitor = i < 0 ? value : value.Substring(0, i) + (String)Lang.Res["Settings.PrimaryMonitor"];
                 }
 
-                value = iniReader.GetSetting("Settings", nameof(WindowMode));
+                value = iniFile.GetSetting("Settings", nameof(WindowMode));
                 if (!String.IsNullOrEmpty(value))
                 {
                     if (value == (String)Lang.Res["Settings.Window"]) value = "0";
@@ -150,10 +150,15 @@ namespace Memoria.Launcher
                 OnPropertyChanged(nameof(ScreenResolution));
                 OnPropertyChanged(nameof(ActiveMonitor));
                 OnPropertyChanged(nameof(WindowMode));
+
             }
             catch (Exception ex)
             {
                 UiHelper.ShowError(Application.Current.MainWindow, ex);
+            }
+            finally
+            {
+                IniFile.PreventWrite = false;
             }
         }
 

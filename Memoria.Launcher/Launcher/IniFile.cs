@@ -3,53 +3,99 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
 
 namespace Memoria.Launcher
 {
     public class IniFile
     {
-        public String path;
+        public const String MemoriaIniPath = @"./Memoria.ini";
+        public const String SettingsIniPath = @"./Settings.ini";
 
-        public IniFile(String INIPath)
-        {
-            this.path = INIPath;
-        }
-
-        [DllImport("kernel32")]
-        private static extern Int64 WritePrivateProfileString(String section, String key, String val, String filePath);
-
-        [DllImport("kernel32")]
-        private static extern Int32 GetPrivateProfileString(String section, String key, String def, StringBuilder retVal, Int32 size, String filePath);
+        private String _path;
+        private static IniFile _settings;
+        private static IniFile _memoria;
 
         public static Boolean PreventWrite = false;
 
-        public void WriteValue(String Section, String Key, String Value)
+        public static IniFile SettingsIni
         {
-            if (PreventWrite) return;
-
-            Section = Section.Trim();
-            Key = Key.Trim();
-            Value = Value.Trim();
-
-            IniFile.WritePrivateProfileString(Section, $"{Key} ", $" {Value}", this.path);
+            get
+            {
+                if (_settings == null)
+                    _settings = new IniFile(IniFile.SettingsIniPath);
+                return _settings;
+            }
+        }
+        public static IniFile MemoriaIni
+        {
+            get
+            {
+                if (_memoria == null)
+                {
+                    SanitizeMemoriaIni();
+                    _memoria = new IniFile(IniFile.MemoriaIniPath);
+                }
+                return _memoria;
+            }
         }
 
-        /*public String ReadValue(String Section, String Key)
+        public struct Key
         {
-            _retBuffer.Clear();
-            IniFile.GetPrivateProfileString(Section, Key, "", _retBuffer, _bufferSize, this.path);
-            return _retBuffer.ToString();
+            public String Section;
+            public String Name;
+
+            public Key(String section, String name)
+            {
+                Section = section;
+                Name = name;
+            }
         }
 
-        private const Int32 _bufferSize = 10000;
-        private StringBuilder _retBuffer = new StringBuilder(_bufferSize);*/
+        public Dictionary<Key, String> Options = new Dictionary<Key, String>();
 
-        public const String IniPath = @"./Memoria.ini";
+        public IniFile(String path)
+        {
+            _path = path;
+            if (!File.Exists(path)) return;
+            using (Stream input = File.OpenRead(path))
+            {
+                Init(input);
+            }
+        }
 
+        public IniFile(Stream input)
+        {
+            Init(input);
+        }
 
-        public static void SanitizeMemoriaIni()
+        public String GetSetting(String section, String key, String _default = "")
+        {
+            Key k = new Key(section, key);
+            return Options.ContainsKey(k) ? Options[k] : _default;
+        }
+
+        public void SetSetting(String Section, String Key, String Value)
+        {
+            Key k = new Key(Section, Key);
+            Options[k] = Value;
+        }
+
+        public void Save()
+        {
+            if (_path == null) throw new NullReferenceException("This IniFile was created without a path, values cannot be written.");
+            WriteAllSettings(_path);
+        }
+
+        public void Reload()
+        {
+            if (_path == null) throw new NullReferenceException("This IniFile was created without a path, it cannot be reloaded.");
+            using (Stream input = File.OpenRead(_path))
+            {
+                Init(input);
+            }
+        }
+
+        private static void SanitizeMemoriaIni()
         {
             Stream input = Assembly.GetExecutingAssembly().GetManifestResourceStream("Memoria.ini");
             string text;
@@ -58,13 +104,13 @@ namespace Memoria.Launcher
                 text = reader.ReadToEnd();
             }
 
-            if (!File.Exists(IniPath))
+            if (!File.Exists(MemoriaIniPath))
             {
-                File.WriteAllText(IniPath, text);
+                File.WriteAllText(MemoriaIniPath, text);
                 return;
             }
 
-            File.WriteAllLines(IniPath, MergeIniFiles(text.Replace("\r", "").Split('\n'), File.ReadAllLines(IniPath)));
+            File.WriteAllLines(MemoriaIniPath, MergeIniFiles(text.Replace("\r", "").Split('\n'), File.ReadAllLines(MemoriaIniPath)));
         }
 
         private static String[] MergeIniFiles(String[] newIni, String[] previousIni)
@@ -155,43 +201,6 @@ namespace Memoria.Launcher
             }
             return mergedIni.ToArray();
         }
-    }
-
-    public class IniReader
-    {
-        public struct Key
-        {
-            public String Section;
-            public String Name;
-
-            public Key(String section, String name)
-            {
-                Section = section;
-                Name = name;
-            }
-        }
-
-        public Dictionary<Key, String> Options = new Dictionary<Key, String>();
-
-        public IniReader(String path)
-        {
-            if (!File.Exists(path)) return;
-            using (Stream input = File.OpenRead(path))
-            {
-                Init(input);
-            }
-        }
-
-        public IniReader(Stream input)
-        {
-            Init(input);
-        }
-
-        public String GetSetting(String section, String key)
-        {
-            Key k = new Key(section, key);
-            return Options.ContainsKey(k) ? Options[k] : "";
-        }
 
         public void WriteAllSettings(String path, String[] ignoreSections = null, String[] ignoreOptions = null)
         {
@@ -208,7 +217,7 @@ namespace Memoria.Launcher
                 Boolean optionFound = false;
                 for (Int32 i = 0; i < lines.Count; i++)
                 {
-                    string trimmed = lines[i].Trim();
+                    string trimmed = lines[i].Replace(" =", "=").Trim();
                     if (!sectionFound)
                     {
                         if (trimmed == $"[{option.Key.Section}]")
@@ -226,7 +235,7 @@ namespace Memoria.Launcher
                         break;
                     }
 
-                    if (trimmed.StartsWith($"{option.Key.Name} ="))
+                    if (trimmed.StartsWith($"{option.Key.Name}="))
                     {
                         lines[i] = $"{option.Key.Name} = {option.Value}";
                         optionFound = true;
