@@ -106,6 +106,7 @@ public static class btl_vfx
     public static void SelectCommandVfx(CMD_DATA cmd)
     {
         BTL_DATA regist = cmd.regist;
+
         if (Configuration.Battle.SFXRework)
         {
             if (cmd.cmd_no != BattleCommandId.MagicCounter)
@@ -115,6 +116,11 @@ public static class btl_vfx
                     String sequenceText = AssetManager.LoadString(cmd.aa.Info.SequenceFile);
                     if (sequenceText != null)
                         cmd.aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(sequenceText);
+                }
+                if (cmd.aa.Info.SequenceFile == null && regist.bi.player == 0)
+                {
+                    if (regist.dms_geo_id == 427 && cmd.aa.Info.VfxIndex == 457) // Thunder Slash with Beatrix (Boss version)
+                        cmd.aa.Info.VfxAction = new UnifiedBattleSequencer.BattleAction(ThunderSlashBeatrixFix);
                 }
                 if (cmd.aa.Info.VfxAction != null)
                 {
@@ -221,4 +227,6 @@ public static class btl_vfx
                 btl_mot.BattleParameterList[serialNo].TranceAttackSequence : btl_mot.BattleParameterList[serialNo].AttackSequence;
         return SpecialEffect.Special_No_Effect;
     }
+
+    const String ThunderSlashBeatrixFix = "SetupReflect: Delay=SFXLoaded\r\nLoadMonsterSFX: SFX=Thunder_Slash_3 ; FirstBone=0 ; SecondBone=0 ; Args=0 ; Reflect=True\r\nWaitMonsterSFXLoaded: Reflect=True\r\nWaitAnimation: Char=Caster\r\nMessage: Text=[CastName] ; Priority=1 ; Title=True ; Reflect=False\r\nPlayAnimation: Char=Caster ; Anim=ANH_MON_B3_155_010\r\nWaitAnimation: Char=Caster\r\nPlayAnimation: Char=Caster ; Anim=ANH_MON_B3_155_011\r\nTurn: Char=Caster ; BaseAngle=AllTargets ; Angle=0 ; Time=6\r\nMoveToTarget: Char=Caster ; Target=AllTargets ; Time=6 ; Distance=1300\r\nWaitMove: Char=Caster\r\nPlayAnimation: Char=Caster ; Anim=ANH_MON_B3_155_012\r\nStartThread\r\n\tWait: Time=1\r\n\tPlaySound: Sound=673 ; Volume=1 ; Once=False\r\nEndThread\r\nWait: Time=10\r\nPlayMonsterSFX: Reflect=True\r\nWaitAnimation: Char=Caster\r\nPlayAnimation: Char=Caster ; Anim=ANH_MON_B3_155_013\r\nTurn: Char=Caster ; BaseAngle=Default ; Angle=0 ; Time=5\r\nMoveToPosition: Char=Caster ; Time=5 ; AbsolutePosition=Default ; MoveHeight=true\r\nWaitMove: Char=Caster\r\nPlayAnimation: Char=Caster ; Anim=ANH_MON_B3_155_014\r\nWaitAnimation: Char=Caster\r\nPlayAnimation: Char=Caster ; Anim=Idle\r\nWaitMonsterSFXDone: Reflect=True\r\nWaitTurn: Char=Caster\r\nActivateReflect\r\nWaitReflect\r\n";
 }

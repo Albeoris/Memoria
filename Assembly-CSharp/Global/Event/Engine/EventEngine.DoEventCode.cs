@@ -2135,7 +2135,7 @@ public partial class EventEngine
                 Int32 destY = this.getv2();
                 if (this.gMode == 1 && po?.model != UInt16.MaxValue && po != null)
                 {
-                    Log.Message("if (mapNo == " + mapNo + " && po.sid == " + po.sid + " && destX == " + destX + " && destY == " + destY + " && destZ == " + destZ + ")");
+                    //Log.Message("if (mapNo == " + mapNo + " && po.sid == " + po.sid + " && destX == " + destX + " && destY == " + destY + " && destZ == " + destZ + ")");
                     FieldMapActorController actorController = po.go.GetComponent<FieldMapActorController>();
                     if (actorController != null && actorController.walkMesh != null)
                         actorController.walkMesh.BGI_charSetActive(actorController, 0u);
