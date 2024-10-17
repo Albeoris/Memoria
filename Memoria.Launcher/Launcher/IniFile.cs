@@ -82,8 +82,17 @@ namespace Memoria.Launcher
 
         public void Save()
         {
-            if (_path == null) throw new NullReferenceException("This IniFile was create without a path, value cannot be written.");
+            if (_path == null) throw new NullReferenceException("This IniFile was created without a path, values cannot be written.");
             WriteAllSettings(_path);
+        }
+
+        public void Reload()
+        {
+            if (_path == null) throw new NullReferenceException("This IniFile was created without a path, it cannot be reloaded.");
+            using (Stream input = File.OpenRead(_path))
+            {
+                Init(input);
+            }
         }
 
         private static void SanitizeMemoriaIni()

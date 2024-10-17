@@ -104,6 +104,7 @@ namespace Memoria.Launcher
             {
                 IniFile settings = Presets[comboBox.SelectedIndex].Settings;
                 settings.WriteAllSettings(IniFile.MemoriaIniPath, ["Preset"]);
+                IniFile.MemoriaIni.Reload();
 
                 MainWindow mainWindow = (MainWindow)this.GetRootElement();
                 mainWindow.LoadSettings();

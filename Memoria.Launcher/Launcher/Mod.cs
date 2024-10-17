@@ -420,6 +420,7 @@ namespace Memoria.Launcher
             if (MessageBox.Show($"{Lang.Res["ModEditor.ApplyModPresetText"]}\n\n{sb}", (String)Lang.Res["ModEditor.ApplyModPresetCaption"], MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 PresetIni.WriteAllSettings(IniFile.MemoriaIniPath, ["Preset"]);
+                IniFile.MemoriaIni.Reload();
 
                 MainWindow mainWindow = App.Current.MainWindow as MainWindow;
                 mainWindow.LoadSettings();
