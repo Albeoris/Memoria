@@ -276,14 +276,14 @@ namespace UnityXInput
 
         public static Single GetAxis(String axisName)
         {
-            return Input.GetAxisRaw(axisName);
+            Single axis = UnityEngine.Input.GetAxis(axisName);
+            return (axis == 0f) ? Input.GetXAxis(axisName) : axis;
         }
 
         public static Single GetAxisRaw(String axisName)
         {
-            float axisRaw = UnityEngine.Input.GetAxisRaw(axisName);
-            axisRaw += Input.GetXAxis(axisName);
-            return Mathf.Clamp(axisRaw, -1f, 1f);
+            Single axisRaw = UnityEngine.Input.GetAxisRaw(axisName);
+            return (axisRaw == 0f) ? Input.GetXAxis(axisName) : axisRaw;
         }
 
         public static Boolean GetButtonUp(String keyName)
