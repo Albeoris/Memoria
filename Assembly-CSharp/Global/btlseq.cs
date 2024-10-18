@@ -595,6 +595,8 @@ public class btlseq
         {
             Int32 animId = pSeqWork.AnmIDOfs + animCode;
             String animName = FF9BattleDB.Animation[instance.seq_work_set.AnmAddrList[animId]];
+            if (pMe.gameObject.GetComponent<Animation>().GetClip(animName) == null)
+                AnimationFactory.AddAnimWithAnimatioName(pMe.gameObject, animName);
             btl_mot.setMotion(pMe, animName);
         }
         pMe.evt.animFrame = 0;

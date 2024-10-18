@@ -980,6 +980,12 @@ public partial class BattleHUD : UIScene
                         ButtonGroupState.SetButtonEnable(labelObj, true);
                     nameLabel.color = unit.UIColorHP;
                 }
+                if (_targetCursor == TargetType.Self && unit.GetIndex() == CurrentPlayerIndex && currentTargetLabel != labelObj)
+                {
+                    Singleton<PointerManager>.Instance.RemovePointerFromGameObject(currentTargetLabel);
+                    _currentTargetIndex = unit.GetIndex();
+                    currentTargetLabel = labelObj;
+                }
                 ++playerIndex;
             }
             else
