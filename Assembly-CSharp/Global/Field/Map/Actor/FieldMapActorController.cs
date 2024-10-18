@@ -599,11 +599,13 @@ public partial class FieldMapActorController : HonoBehavior
         else if (analogControlEnabled)
         {
             analogVector = PersistenSingleton<HonoInputManager>.Instance.GetAxis();
+            if (analogVector.sqrMagnitude > 1f)
+                analogVector.Normalize();
             analogMove = true;
         }
 
         if (analogMove)
-            analogMove = Mathf.Abs(analogVector.x) >= 0.1f || Mathf.Abs(analogVector.y) >= 0.1f;
+            analogMove = analogVector.magnitude > stickThreshold;
         else
             analogVector = PersistenSingleton<HonoInputManager>.Instance.GetAxis();
 
@@ -691,6 +693,7 @@ public partial class FieldMapActorController : HonoBehavior
             if (analogMove)
             {
                 this.moveVec = new Vector3(analogVector.x, 0f, analogVector.y);
+                this.moveVec *= this.moveVec.sqrMagnitude;
             }
             else
             {
@@ -723,21 +726,14 @@ public partial class FieldMapActorController : HonoBehavior
         // This block sets correct state and speed based on stick magnitude.
         if (analogControlEnabled)
         {
-            Single currentSpeed;
+            Single currentSpeed = Mathf.Lerp(this.minimumSpeed, this.speed, moveVec.magnitude);
             Boolean dashInhibited = PersistenSingleton<EventEngine>.Instance.GetDashInh() == 1;
-            if (moveVec.magnitude > 0.5 && (UIManager.Input.GetKey(Control.Cancel) ^ FF9StateSystem.Settings.cfg.move == 1UL) && !dashInhibited)
-            {
-                this.isRunning = true;
-                currentSpeed = Mathf.Lerp(this.minimumSpeed / 2.0f, this.speed, moveVec.magnitude);
-            }
-            else
-            {
-                this.isRunning = false;
-                currentSpeed = Mathf.Lerp(this.minimumSpeed, this.speed, moveVec.magnitude);
-            }
+            Single trigger = wasRunning ? 0.5f : 0.6f;
+            this.isRunning = (moveVec.magnitude > trigger && (UIManager.Input.GetKey(Control.Cancel) ^ FF9StateSystem.Settings.cfg.move == 1UL) && !dashInhibited);
+            wasRunning = isRunning;
             actualMoveVec = this.moveVec.normalized * currentSpeed;
             // Inihibit movement if below threshold
-            if (this.moveVec.magnitude <= stickThreshold)
+            if (analogVector.magnitude <= stickThreshold)
                 actualMoveVec = Vector3.zero;
         }
 
@@ -2312,6 +2308,8 @@ public partial class FieldMapActorController : HonoBehavior
     private Boolean isMoving;
 
     private Boolean isRunning;
+
+    private Boolean wasRunning = false;
 
     private Single cTime;
 
