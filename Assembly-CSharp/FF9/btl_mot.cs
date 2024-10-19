@@ -14,6 +14,7 @@ namespace FF9
         public static BattlePlayerCharacter.PlayerMotionStance[,] mot_stance;
         public static HashSet<BattlePlayerCharacter.PlayerMotionIndex> unstoppable_mot;
         public static Dictionary<CharacterSerialNumber, CharacterBattleParameter> BattleParameterList;
+        public static HashSet<BTL_DATA> BtlActivatedThisFrame = new HashSet<BTL_DATA>();
 
         static btl_mot()
         {

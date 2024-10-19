@@ -266,6 +266,18 @@ public class btlseq
         }
     }
 
+    public static void DispCharactersAppearedThisFrame()
+    {
+        foreach (BTL_DATA btl in btl_mot.BtlActivatedThisFrame)
+        {
+            if (btl.bi.disappear != 0)
+                continue;
+            for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+                if (next == btl)
+                    btlseq.DispCharacter(btl, false);
+        }
+    }
+
     public static void DispCharacter(BTL_DATA btl, Boolean advanceAnim = true)
     {
         if (btl.bi.slave != 0)
