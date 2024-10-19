@@ -139,7 +139,7 @@ public partial class FieldMapActorController : HonoBehavior
         this.foundTris = new List<Int32>();
         this.adjacentActiveTris = new List<Int32>();
         this.analogControlEnabled = Configuration.AnalogControl.Enabled;
-        this.stickThreshold = Configuration.AnalogControl.StickThreshold / 100.0f;
+        this.stickThreshold = Configuration.AnalogControl.StickThreshold;
         this.minimumSpeed = Mathf.Min(Configuration.AnalogControl.MinimumSpeed, 30.0f);
     }
 

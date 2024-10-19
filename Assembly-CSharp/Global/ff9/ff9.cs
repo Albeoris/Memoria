@@ -5976,8 +5976,10 @@ public static class ff9
             ff9.w_moveCHRControl_LR = true;
             ff9.w_cameraSysDataCamera.rotation += ff9.PsxRot(32);
         }
-        var RightStick = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right;
-        ff9.w_cameraSysDataCamera.rotation += RightStick.X * 6.0f;
+        Single rightStickX = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.X;
+        if (Mathf.Abs(rightStickX) <= Configuration.AnalogControl.StickThreshold)
+            rightStickX = 0f;
+        ff9.w_cameraSysDataCamera.rotation += rightStickX * 6.0f;
         ff9.w_cameraSysDataCamera.rotation %= 360f;
         if (moveSpeed != 0 || ff9.w_movePadLR)
         {
@@ -6050,8 +6052,10 @@ public static class ff9
             ff9.w_cameraSysDataCamera.rotation += ff9.PsxRot(32);
             ff9.w_moveCHRControl_LR = true;
         }
-        var RightStick = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right;
-        ff9.w_cameraSysDataCamera.rotation += RightStick.X * 6.0f;
+        Single rightStickX = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.X;
+        if (Mathf.Abs(rightStickX) <= Configuration.AnalogControl.StickThreshold)
+            rightStickX = 0f;
+        ff9.w_cameraSysDataCamera.rotation += rightStickX * 6.0f;
         ff9.w_cameraSysDataCamera.rotation %= 360f;
         ff9.w_cameraSysDataCamera.rotationRev = 0f;
         Single moveAcc = ff9.S(ff9.w_moveCHRControlPtr.speed_move * moveFrontBack / ff9.p1);
@@ -6113,8 +6117,10 @@ public static class ff9
                 ff9.w_moveCHRControl_LR = true;
             }
         }
-        var RightStick = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right;
-        ff9.w_cameraSysDataCamera.rotation += RightStick.X * 6.0f;
+        Single rightStickX = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.X;
+        if (Mathf.Abs(rightStickX) <= Configuration.AnalogControl.StickThreshold)
+            rightStickX = 0f;
+        ff9.w_cameraSysDataCamera.rotation += rightStickX * 6.0f;
         ff9.w_cameraSysDataCamera.rotation %= 360f;
         ff9.w_cameraSysDataCamera.rotationRev = 0f;
         ff9.w_moveCHRControl_RotSpeed = ff9.PsxRot(ff9.w_moveCHRControlPtr.speed_rotation * leftStickX >> 7);
@@ -6462,12 +6468,12 @@ public static class ff9
         }
         else
         {
-            Single rightStickY = PersistenSingleton<UnityXInput.XInputManager>.Instance.CurrentState.ThumbSticks.Right.Y;
-            if (rightStickY < -0.1f || rightStickY > 0.1f)
+            Single rightStickY = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.Y;
+            if (Mathf.Abs(rightStickY) > Configuration.AnalogControl.StickThreshold)
             {
                 if (Configuration.AnalogControl.Enabled)
                     vy = (Int32)(rightStickY * 128.0f);
-                else if (rightStickY < -0.1f)
+                else if (rightStickY < 0f)
                     vy = -128;
                 else
                     vy = 128;
