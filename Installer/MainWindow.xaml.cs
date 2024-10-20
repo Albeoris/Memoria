@@ -20,8 +20,10 @@ namespace Installer
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        private string[] startupArgs;
+        public MainWindow(string[] args)
         {
+            startupArgs = args;
             InitializeComponent();
         }
 
@@ -49,6 +51,12 @@ namespace Installer
             {
                 Application.Current.Shutdown();
             }
+        }
+
+        private void Hyperlink_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(e.Uri.AbsoluteUri) { UseShellExecute = true });
+            e.Handled = true;
         }
     }
 }

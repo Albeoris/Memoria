@@ -13,5 +13,11 @@ namespace Installer
     /// </summary>
     public partial class App : Application
     {
+        private void Application_Startup(Object sender, StartupEventArgs e)
+        {
+                // Create and show the main window
+                MainWindow mainWindow = new MainWindow(e.Args);
+                mainWindow.Show();
+        }
     }
 }
