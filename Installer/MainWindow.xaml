@@ -1,0 +1,69 @@
+﻿<Window x:Class="Installer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Installer"
+        mc:Ignorable="d"
+        Title="Memoria Engine Installer" 
+        Height="470" 
+        Width="500" 
+        ResizeMode="NoResize" 
+        WindowStyle="None">
+    <Grid x:Name="MainWindowGrid">
+        <Image x:Name="Launcher"
+            Stretch="UniformToFill"
+            VerticalAlignment="Top"
+            RenderOptions.BitmapScalingMode="HighQuality"
+            Source="/images/new_launcher_bg.jpg" />
+        <Image x:Name="LogoImage"
+            Height="250"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Left"
+            Margin="20,-33,0,0"
+            RenderOptions.BitmapScalingMode="HighQuality"
+            Source="/images/FF9_logo.png" />
+        
+        <Grid x:Name="TitleGrid" Background="Black" Margin="0,0,0,445" MouseDown="TitleGrid_MouseDown">
+            <TextBlock Margin="5,2,0,0">
+                <Run FontSize="11pt" FontWeight="SemiBold" Foreground="White">Memoria Engine Setup</Run>
+            </TextBlock>
+            <TextBlock Margin="480,0,0,5">
+                <Run x:Name="CloseBtnTxt" 
+                     MouseEnter="CloseBtnTxt_MouseEnter" 
+                     MouseLeave="CloseBtnTxt_MouseLeave"
+                     MouseDown="CloseBtnTxt_MouseDown"
+                     Foreground="White" FontWeight="Bold" FontSize="13pt">X</Run>
+            </TextBlock>
+        </Grid>
+
+        <Grid x:Name="SettingsGrid" Margin="5, 155, 5, 270">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="12*"></ColumnDefinition>
+                    <ColumnDefinition Width="5"></ColumnDefinition>
+                    <ColumnDefinition Width="4*"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition></RowDefinition>
+                    <RowDefinition></RowDefinition>
+                </Grid.RowDefinitions>
+                <TextBlock >
+                <Run Foreground="White">Game Install Location:</Run>
+                </TextBlock>
+                <TextBox x:Name="GamePath" Grid.Row="1" Grid.Column="0"></TextBox>
+                <Button Content="Browse" Grid.Row="1" Grid.Column="2" />
+            </Grid>
+        </Grid>
+
+        <Grid x:Name="ModsGrid">
+        </Grid>
+        <Button x:Name="InstallBtn" Content="Install" Margin="400,430,5,5" IsEnabled="False" />
+        <Button x:Name="CancelBtn" Content="Cancel" Margin="300,430,105,5" IsEnabled="True" />
+        <CheckBox x:Name="TermsChkBx" Margin="10,440,5,12" />
+        <TextBlock x:Name="TermsLbl" Margin="30,440,5,12">
+            <Run Foreground="White">I Agree to the</Run>
+            <Hyperlink Foreground="White" NavigateUri="https://raw.githubusercontent.com/Albeoris/Memoria/refs/heads/main/LICENSE">MIT License for Memoria</Hyperlink>
+        </TextBlock>
+    </Grid>
+</Window>
