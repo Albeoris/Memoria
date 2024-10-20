@@ -711,7 +711,7 @@ namespace Memoria.Launcher
                         var0 = WorldmapMistPreset;
                         if (var0 >= 0)
                         {
-                            iniFile.WriteValue("Worldmap", "Enabled", "1");
+                            iniFile.SetSetting("Worldmap", "Enabled", "1");
                             if (var0 == 0) { var1 = 100; var2 = 55; var3 = 27; var4 = 80;  var5 = 7; }
                             if (var0 == 1) { var1 = 290; var2 = 40; var3 = 27; var4 = 250; var5 = 15; }
                             if (var0 == 2) { var1 = 400; var2 = 10; var3 = 50; var4 = 300; var5 = 4; }
