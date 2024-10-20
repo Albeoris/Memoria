@@ -360,7 +360,7 @@ public partial class FieldMapActorController : HonoBehavior
         if ((this.charFlags & 1) != 0)
             movementFlags = this.ServiceChar();
         this.isMoving = (movementFlags & 1) != 0;
-        if (FF9StateSystem.Field.isDebug && VirtualAnalog.GetAnalogValue().magnitude > 0.1f)
+        if (FF9StateSystem.Field.isDebug && VirtualAnalog.GetAnalogValue().magnitude > Configuration.AnalogControl.StickThreshold)
             this.isMoving = true;
         if ((this.charFlags & 1) != 0)
             this.UpdateActiveTri();
@@ -609,10 +609,10 @@ public partial class FieldMapActorController : HonoBehavior
         else
             analogVector = PersistenSingleton<HonoInputManager>.Instance.GetAxis();
 
-        Boolean movingUp = UIManager.Input.GetKey(Control.Up) || analogVector.y >= 0.1f;
-        Boolean movingDown = UIManager.Input.GetKey(Control.Down) || analogVector.y <= -0.1f;
-        Boolean movingLeft = UIManager.Input.GetKey(Control.Left) || analogVector.x <= -0.1f;
-        Boolean movingRight = UIManager.Input.GetKey(Control.Right) || analogVector.x >= 0.1f;
+        Boolean movingUp = UIManager.Input.GetKey(Control.Up) || analogVector.y > Configuration.AnalogControl.StickThreshold;
+        Boolean movingDown = UIManager.Input.GetKey(Control.Down) || analogVector.y < -Configuration.AnalogControl.StickThreshold;
+        Boolean movingLeft = UIManager.Input.GetKey(Control.Left) || analogVector.x < -Configuration.AnalogControl.StickThreshold;
+        Boolean movingRight = UIManager.Input.GetKey(Control.Right) || analogVector.x > Configuration.AnalogControl.StickThreshold;
 
         // In RuntimePlatform.WindowsPlayer mode:
         //  PersistenSingleton<HonoInputManager>.Instance.GetAxis -> UnityEngine's GetAxis and UnityXInput's GetXAxis

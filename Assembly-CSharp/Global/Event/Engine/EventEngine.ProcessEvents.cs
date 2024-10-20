@@ -425,9 +425,9 @@ public partial class EventEngine
                         cameraMove.x = -1f;
                     else if (UIManager.Input.GetKey(Control.Right))
                         cameraMove.x = 1f;
-                    if (Mathf.Abs(cameraMove.y) > 0.1f)
+                    if (Mathf.Abs(cameraMove.y) > Configuration.AnalogControl.StickThreshold)
                         new_camera_position.y -= cameraMove.y * 5f;
-                    if (Mathf.Abs(cameraMove.x) > 0.1f)
+                    if (Mathf.Abs(cameraMove.x) > Configuration.AnalogControl.StickThreshold)
                         new_camera_position.x += cameraMove.x * 5f;
                     new_camera_position.x = Mathf.Clamp(new_camera_position.x, bgCamera.vrpMinX, bgCamera.vrpMaxX);
                     new_camera_position.y = Mathf.Clamp(new_camera_position.y, bgCamera.vrpMinY, bgCamera.vrpMaxY);

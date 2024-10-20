@@ -7,7 +7,7 @@ namespace Memoria
         public static class AnalogControl
         {
             public static Boolean Enabled => Instance._analogControl.Enabled;
-            public static Single StickThreshold => Instance._analogControl.StickThreshold / 100.0f;
+            public static Single StickThreshold = Instance._analogControl.StickThreshold / 100.0f;
             public static Int32 MinimumSpeed => Instance._analogControl.MinimumSpeed;
             public static Int32 UseAbsoluteOrientation => Instance._analogControl.UseAbsoluteOrientation;
             public static Boolean UseAbsoluteOrientationStick => UseAbsoluteOrientation == 1 || UseAbsoluteOrientation == 3;
