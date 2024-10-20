@@ -12,13 +12,12 @@ using System.Text.Json;
 using System.Windows;
 using System.Xml.Linq;
 using System.Windows.Controls;
+using static System.Net.WebRequestMethods;
 
 namespace Installer.Classes
 {
     public class Installer
     {
-        private static readonly string _githubRepoUrl = "https://api.github.com/repos/Albeoris/Memoria/releases/latest";
-
         public static async Task<bool> DownloadLatestReleaseAsync(string downloadPath, IProgress<double> progress, TextBlock progressText)
         {
             try
@@ -27,57 +26,44 @@ namespace Installer.Classes
                 progressText.Text = "Downloading Latest Memoria";
                 using (HttpClient client = new HttpClient())
                 {
-                    client.DefaultRequestHeaders.UserAgent.ParseAdd("request");
+                    string downloadUrl = "https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe";
 
-                    var response = await client.GetAsync(_githubRepoUrl);
-                    if (!response.IsSuccessStatusCode)
+                    using (var downloadResponse = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
                     {
-                        return false;
-                    }
-
-                    var releaseInfoString = await response.Content.ReadAsStringAsync();
-                    using (JsonDocument doc = JsonDocument.Parse(releaseInfoString))
-                    {
-                        var root = doc.RootElement;
-                        var downloadUrl = root.GetProperty("assets")[0].GetProperty("browser_download_url").GetString();
-
-                        using (var downloadResponse = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
+                        if (!downloadResponse.IsSuccessStatusCode)
                         {
-                            if (!downloadResponse.IsSuccessStatusCode)
+                            return false;
+                        }
+
+                        var totalBytes = downloadResponse.Content.Headers.ContentLength ?? -1L;
+                        var canReportProgress = totalBytes != -1;
+
+                        using (var contentStream = await downloadResponse.Content.ReadAsStreamAsync())
+                        using (var fileStream = new FileStream(downloadPath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
+                        {
+                            var totalRead = 0L;
+                            var buffer = new byte[8192];
+                            var isMoreToRead = true;
+
+                            do
                             {
-                                return false;
-                            }
-
-                            var totalBytes = downloadResponse.Content.Headers.ContentLength ?? -1L;
-                            var canReportProgress = totalBytes != -1;
-
-                            using (var contentStream = await downloadResponse.Content.ReadAsStreamAsync())
-                            using (var fileStream = new FileStream(downloadPath, FileMode.Create, FileAccess.Write, FileShare.None, 8192, true))
-                            {
-                                var totalRead = 0L;
-                                var buffer = new byte[8192];
-                                var isMoreToRead = true;
-
-                                do
+                                var read = await contentStream.ReadAsync(buffer, 0, buffer.Length);
+                                if (read == 0)
                                 {
-                                    var read = await contentStream.ReadAsync(buffer, 0, buffer.Length);
-                                    if (read == 0)
-                                    {
-                                        isMoreToRead = false;
-                                        progress.Report(100);
-                                        continue;
-                                    }
-
-                                    await fileStream.WriteAsync(buffer, 0, read);
-
-                                    totalRead += read;
-                                    if (canReportProgress)
-                                    {
-                                        progress.Report((totalRead * 1d) / (totalBytes * 1d) * 100);
-                                    }
+                                    isMoreToRead = false;
+                                    progress.Report(100);
+                                    continue;
                                 }
-                                while (isMoreToRead);
+
+                                await fileStream.WriteAsync(buffer, 0, read);
+
+                                totalRead += read;
+                                if (canReportProgress)
+                                {
+                                    progress.Report((totalRead * 1d) / (totalBytes * 1d) * 100);
+                                }
                             }
+                            while (isMoreToRead);
                         }
                     }
                 }
