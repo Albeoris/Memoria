@@ -27,7 +27,8 @@ namespace Installer.Classes
             }
         }
 
-        public string GetGameInstallPath
+
+        public string? GetGameInstallPath
         {
             get
             {
@@ -46,17 +47,17 @@ namespace Installer.Classes
             }
         }
 
-        public void AddToUninstallList()
+        public void AddToUninstallList(string InstallPath)
         {
             string appName = "Memoria";
-            string displayName = "Memoria Engine for FF9 Steam";
+            string displayName = "Memoria Engine for FFIX";
             string displayVersion = "1.0.0";
             string publisher = "Memoria Team";
-            string installLocation = GetGameInstallPath;
-            string uninstallString = GetGameInstallPath+@"\setup.exe uninstall";
-            string modifyPath = GetGameInstallPath + @"\setup.exe modify";
-            string repairPath = GetGameInstallPath + @"\setup.exe repair";
-            string iconPath = GetGameInstallPath + @"\setup.exe,0";
+            string installLocation = InstallPath;
+            string uninstallString = InstallPath+@"\setup.exe uninstall";
+            string modifyPath = InstallPath + @"\setup.exe modify";
+            string repairPath = InstallPath + @"\setup.exe repair";
+            string iconPath = InstallPath + @"\setup.exe,0";
             string installDate = DateTime.Now.ToString("yyyyMMdd");
 
             using (RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall", true))

@@ -14,8 +14,13 @@ namespace Memoria.Patcher
     static class Program
     {
         static Double ProgressPercent;
+        static bool isInstaller = false;
         static void Main(String[] args)
         {
+            if(args.Length > 1 && args[0] == "-installer")
+            {
+                isInstaller = true;
+            }
             try
             {
                 if (args.Length > 1 && args[0] == "-update")
@@ -93,8 +98,11 @@ namespace Memoria.Patcher
                 Console.ResetColor();
                 //Console.WriteLine(Lang.Message.Done.PressEnterToExit);
                 //Console.ReadLine();
-                Console.WriteLine("The console will close automatically");
-                Thread.Sleep(5000);
+                if (!isInstaller)
+                {
+                    Console.WriteLine("The console will close automatically");
+                    Thread.Sleep(5000);
+                }
             }
             else
             {

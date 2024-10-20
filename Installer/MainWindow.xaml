@@ -51,8 +51,13 @@
                 <TextBlock Margin="0,7,0,0">
                 <Run Foreground="White">Game Install Location:</Run>
                 </TextBlock>
-                <TextBox x:Name="GamePathText" Grid.Row="1" Grid.Column="0"></TextBox>
-                <Button x:Name="GapePathBrowseBtn" Content="Browse" Grid.Row="1" Grid.Column="2" />
+                <TextBox x:Name="GamePathText" 
+                         FontSize="11pt" 
+                         Grid.Row="1" Grid.Column="0" 
+                         IsReadOnly="True" 
+                         VerticalAlignment="Center"
+                         MouseDown="GamePathText_MouseDown" TextChanged="GamePathText_TextChanged"></TextBox>
+                <Button x:Name="GamePathBrowseBtn" Content="Browse" Grid.Row="1" Grid.Column="2" Click="GamePathBrowseBtn_Click" />
             </Grid>
         </Grid>
         
@@ -112,11 +117,12 @@
         <Grid x:Name="ModsGrid">
         </Grid>
         <Button x:Name="InstallBtn" Content="Install" Margin="400,430,5,5" IsEnabled="False" />
-        <Button x:Name="CancelBtn" Content="Cancel" Margin="300,430,105,5" IsEnabled="True" />
-        <CheckBox x:Name="TermsChkBx" Margin="10,440,5,12" />
-        <TextBlock x:Name="TermsLbl" Margin="30,440,210,12">
+        <Button x:Name="CancelBtn" Content="Cancel" Margin="300,430,105,5" IsEnabled="True" Click="CancelBtn_Click" />
+        <CheckBox x:Name="TermsChkBx" Margin="10,440,250,12" Click="TermsChkBx_Click">
+            <TextBlock x:Name="TermsLbl">
             <Run Foreground="White">I Agree to the</Run>
             <Hyperlink RequestNavigate="Hyperlink_RequestNavigate" Foreground="White" NavigateUri="https://raw.githubusercontent.com/Albeoris/Memoria/refs/heads/main/LICENSE">MIT License for Memoria</Hyperlink>
-        </TextBlock>
+            </TextBlock>
+        </CheckBox>
     </Grid>
 </Window>
