@@ -115,4 +115,11 @@
     <EmbeddedResource Include="../Output/Memoria.Patcher.exe" Link="Memoria.Patcher.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>cd "$(ProjectDir)..\Output" &amp;&amp; signtool sign /d "Memoria Patcher for Modding FF9" /td SHA256 /fd SHA256 /sha1 d0e766e285ebe4e93ac723fae9369495440a67f9 /tr http://timestamp.digicert.com .\Memoria.Patcher.exe</PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>cd "$(TargetDir)" &amp;&amp; signtool sign /d "Memoria Patcher for Modding FF9" /td SHA256 /fd SHA256 /sha1 d0e766e285ebe4e93ac723fae9369495440a67f9   /tr http://timestamp.digicert.com "$(TargetPath)"
+</PostBuildEvent>
+  </PropertyGroup>
 </Project>
