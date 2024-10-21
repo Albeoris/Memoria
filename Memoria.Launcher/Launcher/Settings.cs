@@ -21,7 +21,7 @@ namespace Memoria.Launcher
             ["HideCards", "_ishidecards", "HideCards", "Icons", 0, 1, 0],
             ["HideCards", "_ishidecards", "HideBeach", "Icons", 0, 1, 0],
             ["HideCards", "_ishidecards", "HideSteam", "Icons", 0, 1, 0],
-            ["AlternateControls", "_alternateControls", "AlternateControls", "Worldmap", 0, 100, 1],
+            ["AlternateControls", "_alternateControls", "AlternateControls", "Worldmap", 0, 1, 1],
             ["WorldmapBoost", "_worldmapboost", "FieldOfViewSpeedBoost", "Worldmap", 0, 100, 1],
             ["WorldmapShipTilt", "_worldmapshiptilt", "CameraTiltShip", "Worldmap", 0, 100, 1],
             ["SaveOnCloud", "_saveOnCloud", "SaveOnCloud", "SaveFile", 0, 1, 0],
@@ -56,7 +56,7 @@ namespace Memoria.Launcher
             ["InvertedCameraY", "_invertedCameraY", "InvertedCameraY", "AnalogControl", 0, 1, 1],
             ["InvertedFlightY", "_invertedFlightY", "InvertedFlightY", "AnalogControl", 0, 1, 1],
             ["UseAbsoluteOrientation", "_useAbsoluteOrientation", "UseAbsoluteOrientation", "AnalogControl", 0, 1, 1],
-            ["AlwaysCaptureGamepad", "_alwaysCaptureGamepad", "AlwaysCaptureGamepad", "AnalogControl", 0, 1, 1],
+            ["AlwaysCaptureGamepad", "_alwaysCaptureGamepad", "AlwaysCaptureGamepad", "Control", 0, 1, 1],
 
             // Sliders
             ["CameraStabilizer", "_camerastabilizer", "CameraStabilizer", "Graphics", 0, 1, 85],
@@ -583,6 +583,7 @@ namespace Memoria.Launcher
             {
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
+                if (IniFile.PreventWrite) return;
                 IniFile iniFile = IniFile.MemoriaIni;
 
                 foreach (Object[] item in SettingsList)
@@ -801,7 +802,7 @@ namespace Memoria.Launcher
                         iniFile.SetSetting("SaveFile", "AutoSaveOnlyAtMoogle", AutoSave == 2 ? "1" : "0");
                         break;
                     case nameof(UseAbsoluteOrientation):
-                        iniFile.SetSetting("SaveFile", "DisableAutoSave", UseAbsoluteOrientation == 1 ? "3" : "0");
+                        iniFile.SetSetting("AnalogControl", "UseAbsoluteOrientation", UseAbsoluteOrientation == 1 ? "3" : "0");
                         break;
                 }
                 iniFile.Save();
@@ -1115,7 +1116,7 @@ namespace Memoria.Launcher
 
                 value = iniFile.GetSetting("AnalogControl", "UseAbsoluteOrientation");
                 value1isInt = Int16.TryParse(value, out value1);
-                _useAbsoluteOrientation = (Int16)(value1 > 0 ? 1 : 0);
+                _useAbsoluteOrientation = (Int16)(value1 == 3 ? 1 : 0);
                 Refresh(nameof(UseAbsoluteOrientation));
             }
             catch (Exception ex)
