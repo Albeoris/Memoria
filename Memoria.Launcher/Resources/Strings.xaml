@@ -8,7 +8,7 @@
     <system:String x:Key="Settings.menuCheats">CHEATS</system:String>
     <system:String x:Key="Settings.menuMods">MODS</system:String>
     
-    <system:String x:Key="Launcher.SaveSettings">Save Settings</system:String>
+    <system:String x:Key="Launcher.CreatePreset">Create Preset</system:String>
 
     <system:String x:Key="Launcher.ModelViewer">Model Viewer</system:String>
     <system:String x:Key="Launcher.CopyLogButton">Copy Log</system:String>

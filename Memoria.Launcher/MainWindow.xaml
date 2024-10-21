@@ -106,16 +106,6 @@
                             Margin="0,15,20,0"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top" />
-
-                        <Button Name="NewPresetButton"
-                            Content="{DynamicResource Launcher.SaveSettings}"
-                            Style="{StaticResource ButtonStyle2}"
-                            Width="293"
-                            Height="35"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Bottom"
-                            Margin="20"
-                            Click="SavePreset_Click"/>
                     </Grid>
                 </Border>
             </TabItem>
@@ -179,6 +169,16 @@
                             VerticalAlignment="Bottom"
                             Margin="0,0,0,20"
                             Click="ModelViewerButton_Click"/>
+
+                        <Button Name="NewPresetButton"
+                            Content="{DynamicResource Launcher.CreatePreset}"
+                            Style="{StaticResource ButtonStyle2}"
+                            Width="293"
+                            Height="35"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Bottom"
+                            Margin="20"
+                            Click="SavePreset_Click"/>
 
                         <StackPanel
                             Orientation="Vertical"
