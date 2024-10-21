@@ -265,6 +265,9 @@
   <ItemGroup>
     <Resource Include="images\btnUninstallimg_small.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="images\alternative_controls.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="AfterResolveReferences">
     <ItemGroup>

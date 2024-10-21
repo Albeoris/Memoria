@@ -83,6 +83,7 @@ namespace Memoria.Launcher
         public void Save()
         {
             if (_path == null) throw new NullReferenceException("This IniFile was created without a path, values cannot be written.");
+            if (!File.Exists(_path)) return;
             WriteAllSettings(_path);
         }
 

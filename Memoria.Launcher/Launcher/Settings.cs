@@ -21,6 +21,7 @@ namespace Memoria.Launcher
             ["HideCards", "_ishidecards", "HideCards", "Icons", 0, 1, 0],
             ["HideCards", "_ishidecards", "HideBeach", "Icons", 0, 1, 0],
             ["HideCards", "_ishidecards", "HideSteam", "Icons", 0, 1, 0],
+            ["AlternateControls", "_alternateControls", "AlternateControls", "Worldmap", 0, 100, 1],
             ["WorldmapBoost", "_worldmapboost", "FieldOfViewSpeedBoost", "Worldmap", 0, 100, 1],
             ["WorldmapShipTilt", "_worldmapshiptilt", "CameraTiltShip", "Worldmap", 0, 100, 1],
             ["SaveOnCloud", "_saveOnCloud", "SaveOnCloud", "SaveFile", 0, 1, 0],
@@ -51,6 +52,12 @@ namespace Memoria.Launcher
             ["BattleSmoothTexture", "_battlesmoothtexture", "BattleSmoothTexture", "Graphics", 0, 1, 1],
             ["ElementsSmoothTexture", "_elementssmoothtexture", "ElementsSmoothTexture", "Graphics", 0, 1, 1],
 
+            ["RightStickCamera", "_rightStickCamera", "RightStickCamera", "AnalogControl", 0, 1, 1],
+            ["InvertedCameraY", "_invertedCameraY", "InvertedCameraY", "AnalogControl", 0, 1, 1],
+            ["InvertedFlightY", "_invertedFlightY", "InvertedFlightY", "AnalogControl", 0, 1, 1],
+            ["UseAbsoluteOrientation", "_useAbsoluteOrientation", "UseAbsoluteOrientation", "AnalogControl", 0, 1, 1],
+            ["AlwaysCaptureGamepad", "_alwaysCaptureGamepad", "AlwaysCaptureGamepad", "AnalogControl", 0, 1, 1],
+
             // Sliders
             ["CameraStabilizer", "_camerastabilizer", "CameraStabilizer", "Graphics", 0, 1, 85],
             ["BattleTPS", "_battletpsfactor", "BattleTPS", "Graphics", 0, 1, 15],
@@ -60,6 +67,7 @@ namespace Memoria.Launcher
             ["WorldmapTPS", "_worldmaptps", "WorldTPS", "Graphics", 0, 1, 20],
             ["WorldmapFOV", "_worldmapfov", "FieldOfView", "Worldmap", 0, 1, 44],
             ["WMCameraHeight", "_wmcameraheight", "CameraHeight", "Worldmap", 0, 1, 100],
+            ["StickThreshold", "_stickThreshold", "StickThreshold", "AnalogControl", 0, 1, 10],
         };
 
         #region Properties
@@ -133,6 +141,13 @@ namespace Memoria.Launcher
             get => _worldmapshiptilt;
             set => SetProperty(ref _worldmapshiptilt, value);
         }
+        private Int16 _alternateControls;
+        public Int16 AlternateControls
+        {
+            get => _alternateControls;
+            set => SetProperty(ref _alternateControls, value);
+        }
+
         private Int16 _saveOnCloud;
         public Int16 SaveOnCloud
         {
@@ -273,6 +288,38 @@ namespace Memoria.Launcher
             set => SetProperty(ref _elementssmoothtexture, value);
         }
 
+
+        private Int16 _rightStickCamera;
+        public Int16 RightStickCamera
+        {
+            get => _rightStickCamera;
+            set => SetProperty(ref _rightStickCamera, value);
+        }
+        private Int16 _invertedCameraY;
+        public Int16 InvertedCameraY
+        {
+            get => _invertedCameraY;
+            set => SetProperty(ref _invertedCameraY, value);
+        }
+        private Int16 _invertedFlightY;
+        public Int16 InvertedFlightY
+        {
+            get => _invertedFlightY;
+            set => SetProperty(ref _invertedFlightY, value);
+        }
+        private Int16 _useAbsoluteOrientation;
+        public Int16 UseAbsoluteOrientation
+        {
+            get => _useAbsoluteOrientation;
+            set => SetProperty(ref _useAbsoluteOrientation, value);
+        }
+        private Int16 _alwaysCaptureGamepad;
+        public Int16 AlwaysCaptureGamepad
+        {
+            get => _alwaysCaptureGamepad;
+            set => SetProperty(ref _alwaysCaptureGamepad, value);
+        }
+
         /////////////
         // SLIDERS //
         /////////////
@@ -369,6 +416,12 @@ namespace Memoria.Launcher
                     OnPropertyChanged();
                 }
             }
+        }
+        private Int16 _stickThreshold;
+        public Int16 StickThreshold
+        {
+            get => _stickThreshold;
+            set => SetProperty(ref _stickThreshold, value);
         }
 
         ////////////////
@@ -747,6 +800,9 @@ namespace Memoria.Launcher
                         iniFile.SetSetting("SaveFile", "DisableAutoSave", AutoSave == 1 ? "1" : "0");
                         iniFile.SetSetting("SaveFile", "AutoSaveOnlyAtMoogle", AutoSave == 2 ? "1" : "0");
                         break;
+                    case nameof(UseAbsoluteOrientation):
+                        iniFile.SetSetting("SaveFile", "DisableAutoSave", UseAbsoluteOrientation == 1 ? "3" : "0");
+                        break;
                 }
                 iniFile.Save();
             }
@@ -1056,6 +1112,11 @@ namespace Memoria.Launcher
                 if (!value2isInt) value2 = 0;
                 _autoSave = (short)(value1 == 1 ? 1 : value2 == 0 ? 0 : 2);
                 Refresh(nameof(AutoSave));
+
+                value = iniFile.GetSetting("AnalogControl", "UseAbsoluteOrientation");
+                value1isInt = Int16.TryParse(value, out value1);
+                _useAbsoluteOrientation = (Int16)(value1 > 0 ? 1 : 0);
+                Refresh(nameof(UseAbsoluteOrientation));
             }
             catch (Exception ex)
             {
