@@ -10,12 +10,18 @@ namespace Memoria
             public readonly IniValue<Int32> StickThreshold;
             public readonly IniValue<Int32> MinimumSpeed;
             public readonly IniValue<Int32> UseAbsoluteOrientation;
+            public readonly IniValue<Boolean> RightStickCamera;
+            public readonly IniValue<Boolean> InvertedCameraY;
+            public readonly IniValue<Boolean> InvertedFlightY;
 
             public AnalogControlSection() : base(nameof(AnalogControlSection), true)
             {
                 StickThreshold = BindInt32(nameof(StickThreshold), 10);
                 MinimumSpeed = BindInt32(nameof(MinimumSpeed), 5);
-                UseAbsoluteOrientation = BindInt32(nameof(UseAbsoluteOrientation), 0);
+                UseAbsoluteOrientation = BindInt32(nameof(UseAbsoluteOrientation), 3);
+                RightStickCamera = BindBoolean(nameof(RightStickCamera), true);
+                InvertedCameraY = BindBoolean(nameof(InvertedCameraY), false);
+                InvertedFlightY = BindBoolean(nameof(InvertedFlightY), true);
             }
         }
 
@@ -41,7 +47,7 @@ namespace Memoria
                 SoftReset = BindBoolean(nameof(SoftReset), false);
                 PSXScrollingMethod = BindBoolean(nameof(PSXScrollingMethod), true);
                 PSXMovementMethod = BindBoolean(nameof(PSXMovementMethod), false);
-                AlwaysCaptureGamepad = BindBoolean(nameof(AlwaysCaptureGamepad), false);
+                AlwaysCaptureGamepad = BindBoolean(nameof(AlwaysCaptureGamepad), true);
             }
         }
     }

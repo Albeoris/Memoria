@@ -2647,6 +2647,21 @@ public static class ff9
         ff9.w_cameraSmoothZ = true;
     }
 
+    private static Single cameraAimTweak = 0;
+    private static void ProcessCameraControl(Single stickX, Single stickY, Single speedX, Single speedY)
+    {
+        if (Mathf.Abs(stickY) <= Configuration.AnalogControl.StickThreshold)
+            stickY = 0f;
+        stickY *= Configuration.AnalogControl.InvertedCameraY;
+        Single target = Mathf.LerpUnclamped(0, ff9.w_cameraWorldEye.y, stickY);
+        cameraAimTweak += (target - cameraAimTweak) * (1 - Mathf.Exp(-0.1f * speedY));
+
+        if (Mathf.Abs(stickX) <= Configuration.AnalogControl.StickThreshold)
+            stickX = 0f;
+        ff9.w_cameraSysDataCamera.rotation += stickX * speedX;
+        ff9.w_cameraSysDataCamera.rotation %= 360f;
+    }
+
     public static void w_cameraUpdate()
     {
         if (!ff9.w_cameraFixMode)
@@ -2668,7 +2683,7 @@ public static class ff9
                 ff9.world.MainCamera.fieldOfView = fovSetting + speedmultiplier;
         }
         ff9.w_cameraSysDataCamera.rotation %= 360f;
-        ff9.w_cameraAimOffset = ff9.w_cameraPosstatNow.aimHeight * Configuration.Worldmap.CameraAimHeight / 100f;
+        ff9.w_cameraAimOffset = cameraAimTweak + ff9.w_cameraPosstatNow.aimHeight * Configuration.Worldmap.CameraAimHeight / 100f;
         ff9.w_cameraEyeOffset.y = ff9.w_cameraPosstatNow.cameraHeight * Configuration.Worldmap.CameraHeight / 100f;
         ff9.w_cameraEyeOffset.x = ff9.rsin(ff9.w_cameraSysDataCamera.rotation) * (ff9.w_cameraPosstatNow.cameraDistance * ff9.w_cameraDebugDist / 4096f) * (Configuration.Worldmap.CameraDistance / 100f);
         ff9.w_cameraEyeOffset.z = ff9.rcos(ff9.w_cameraSysDataCamera.rotation) * (ff9.w_cameraPosstatNow.cameraDistance * ff9.w_cameraDebugDist / 4096f) * (Configuration.Worldmap.CameraDistance / 100f);
@@ -5976,11 +5991,12 @@ public static class ff9
             ff9.w_moveCHRControl_LR = true;
             ff9.w_cameraSysDataCamera.rotation += ff9.PsxRot(32);
         }
-        Single rightStickX = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.X;
-        if (Mathf.Abs(rightStickX) <= Configuration.AnalogControl.StickThreshold)
-            rightStickX = 0f;
-        ff9.w_cameraSysDataCamera.rotation += rightStickX * 6.0f;
-        ff9.w_cameraSysDataCamera.rotation %= 360f;
+        if (Configuration.AnalogControl.RightStickCamera)
+        {
+            Single rightStickX = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.X;
+            Single rightStickY = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.Y;
+            ProcessCameraControl(rightStickX, rightStickY, 6f, 2f);
+        }
         if (moveSpeed != 0 || ff9.w_movePadLR)
         {
             ff9.w_cameraSysDataCamera.rotationMax = ff9.rsin(moveDirection);
@@ -6052,11 +6068,14 @@ public static class ff9
             ff9.w_cameraSysDataCamera.rotation += ff9.PsxRot(32);
             ff9.w_moveCHRControl_LR = true;
         }
-        Single rightStickX = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.X;
-        if (Mathf.Abs(rightStickX) <= Configuration.AnalogControl.StickThreshold)
-            rightStickX = 0f;
-        ff9.w_cameraSysDataCamera.rotation += rightStickX * 6.0f;
-        ff9.w_cameraSysDataCamera.rotation %= 360f;
+        if (Configuration.AnalogControl.RightStickCamera)
+        {
+            Single rightStickX = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.X;
+            Single rightStickY = 0f;
+            if (Configuration.Worldmap.AlternateControls)
+                rightStickY = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.Y;
+            ProcessCameraControl(rightStickX, rightStickY, 6f, 2f);
+        }
         ff9.w_cameraSysDataCamera.rotationRev = 0f;
         Single moveAcc = ff9.S(ff9.w_moveCHRControlPtr.speed_move * moveFrontBack / ff9.p1);
         ff9.w_moveCHRControl_XZAlpha += (moveAcc - ff9.w_moveCHRControl_XZAlpha) / ff9.p2;
@@ -6091,8 +6110,17 @@ public static class ff9
         ff9.w_moveGetPadStateLX(out Int32 leftStickX);
         ff9.w_moveGetPadStateLY(out Int32 leftStickY);
         ff9.w_moveGetPadStateR(out Int32 rightStick);
+        if (Configuration.Worldmap.AlternateControls)
+        {
+            Single y = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.Y;
+            if (Mathf.Abs(y) <= Configuration.AnalogControl.StickThreshold)
+            {
+                y = 0f;
+            }
+            leftStickY = (Int32)(-y * 128f);
+        }
         ff9.w_movePadDOWN = rightStick < 0;
-        leftStickY = -leftStickY;
+        leftStickY *= (Int32)Configuration.AnalogControl.InvertedFlightY;
         Int32 cameraChangeThreshold = leftStickX;
         ff9.w_moveCHRControl_LR = false;
         if (ff9.Pad.kPadR1 && ff9.Pad.kPadL1 && !ff9.w_cameraSysData.cameraNotrot && ff9.w_moveAutoPilot != 0)
@@ -6117,11 +6145,11 @@ public static class ff9
                 ff9.w_moveCHRControl_LR = true;
             }
         }
-        Single rightStickX = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.X;
-        if (Mathf.Abs(rightStickX) <= Configuration.AnalogControl.StickThreshold)
-            rightStickX = 0f;
-        ff9.w_cameraSysDataCamera.rotation += rightStickX * 6.0f;
-        ff9.w_cameraSysDataCamera.rotation %= 360f;
+        if (Configuration.AnalogControl.RightStickCamera)
+        {
+            Single rightStickX = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.X;
+            ProcessCameraControl(rightStickX, 0, 6f, 0f);
+        }
         ff9.w_cameraSysDataCamera.rotationRev = 0f;
         ff9.w_moveCHRControl_RotSpeed = ff9.PsxRot(ff9.w_moveCHRControlPtr.speed_rotation * leftStickX >> 7);
         Single verticalMovementSpeed = ff9.S(-(Int32)ff9.w_moveCHRControlPtr.speed_updown * leftStickY / ff9.p1);
@@ -6379,6 +6407,7 @@ public static class ff9
     public static void w_moveGetPadStateLY(out Int32 vy)
     {
         Boolean flyingVehicle = ff9.w_moveCHRControlPtr != null && ff9.w_moveCHRControlPtr.flg_fly;
+        Single y = HonoInputManager.Instance.GetAxis().y;
         if ((Application.platform == RuntimePlatform.IPhonePlayer || Application.platform == RuntimePlatform.Android || ff9.forceUsingMobileInput) && flyingVehicle)
         {
             Boolean goDown = false;
@@ -6393,7 +6422,6 @@ public static class ff9
                 sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetDirectionAxisSource();
                 if (sourceControl == SourceControl.Joystick || sourceControl == SourceControl.KeyBoard)
                 {
-                    Single y = PersistenSingleton<HonoInputManager>.Instance.GetAxis().y;
                     goDown = y > 0.1f;
                     goUp = y < -0.1f;
                 }
@@ -6408,9 +6436,8 @@ public static class ff9
                 sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetDirectionAxisSource();
                 if (sourceControl == SourceControl.Joystick || sourceControl == SourceControl.KeyBoard)
                 {
-                    Single y2 = PersistenSingleton<HonoInputManager>.Instance.GetAxis().y;
-                    goDown = y2 > 0.1f;
-                    goUp = y2 < -0.1f;
+                    goDown = y > 0.1f;
+                    goUp = y < -0.1f;
                 }
             }
             vy = 0;
@@ -6421,14 +6448,13 @@ public static class ff9
         }
         else
         {
-            Single y3 = PersistenSingleton<HonoInputManager>.Instance.GetAxis().y;
-            Boolean goDown = y3 > 0.1f;
-            Boolean goUp = y3 < -0.1f;
+            Boolean goDown = y > 0.1f;
+            Boolean goUp = y < -0.1f;
             vy = 0;
             if (Configuration.AnalogControl.Enabled)
             {
                 if (goDown || goUp)
-                    vy = (Int32)(-y3 * 128.0f);
+                    vy = (Int32)(-y * 128.0f);
             }
             else
             {
@@ -6469,9 +6495,11 @@ public static class ff9
         else
         {
             Single rightStickY = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Right.Y;
+            if (Configuration.Worldmap.AlternateControls)
+                rightStickY = UnityXInput.XInputManager.Instance.CurrentState.ThumbSticks.Left.Y;
             if (Mathf.Abs(rightStickY) > Configuration.AnalogControl.StickThreshold)
             {
-                if (Configuration.AnalogControl.Enabled)
+                if (Configuration.AnalogControl.Enabled && !Configuration.Worldmap.AlternateControls)
                     vy = (Int32)(rightStickY * 128.0f);
                 else if (rightStickY < 0f)
                     vy = -128;

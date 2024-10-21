@@ -12,6 +12,9 @@ namespace Memoria
             public static Int32 UseAbsoluteOrientation => Instance._analogControl.UseAbsoluteOrientation;
             public static Boolean UseAbsoluteOrientationStick => UseAbsoluteOrientation == 1 || UseAbsoluteOrientation == 3;
             public static Boolean UseAbsoluteOrientationKeys => UseAbsoluteOrientation == 1 || UseAbsoluteOrientation == 2;
+            public static Boolean RightStickCamera => Instance._analogControl.RightStickCamera;
+            public static Single InvertedCameraY => Instance._analogControl.InvertedCameraY ? -1f : 1f;
+            public static Single InvertedFlightY => Instance._analogControl.InvertedFlightY ? -1f : 1f;
         }
 
         public static class Control
