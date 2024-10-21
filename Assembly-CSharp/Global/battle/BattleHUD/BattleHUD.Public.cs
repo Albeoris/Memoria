@@ -439,6 +439,11 @@ public partial class BattleHUD : UIScene
             charDetail.MP.Label.SetAnchor(target: charDetail.Transform, relLeft: 0.59f, relRight: 0.71f);
             charDetail.ATBBar.Sprite.SetAnchor(target: charDetail.Transform, relLeft: 0.725f, relRight: 0.977f, relBottom: 0.55f, relTop: 0.78f);
             charDetail.TranceBar.Sprite.SetAnchor(target: charDetail.Transform, relLeft: 0.748f, relRight: 1f, relBottom: 0.28f, relTop: 0.52f);
+            if (Configuration.Interface.ThickerATBBar)
+            {
+                charDetail.ATBBar.Sprite.SetAnchor(charDetail.Transform, 0.725f, 0.65f, 0.975f, 0.8f, 0f, -5f, 0f, 10f); // made by Resinated
+                charDetail.TranceBar.Sprite.SetAnchor(charDetail.Transform, 0.75f, 0.25f, 1f, 0.4f, 0f, -5f, 0f, 10f);
+            }
         }
         _statusPanel.Transform.SetXY(detailPos.x, detailPos.y);
         foreach (var statusSubPanel in new[] { hp, mp })
