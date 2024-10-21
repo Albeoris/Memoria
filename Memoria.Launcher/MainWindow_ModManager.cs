@@ -106,6 +106,7 @@ namespace Memoria.Launcher
 
         private void CheckOutdatedAndIncompatibleMods()
         {
+            IniFile.PreventWrite = true;
             AreThereModUpdates = false;
             AreThereModIncompatibilies = false;
 
@@ -233,6 +234,7 @@ namespace Memoria.Launcher
             colMyModsIcons.Width = colMyModsIcons.ActualWidth;
             colMyModsIcons.Width = double.NaN;
             lstMods.Items.Refresh();
+            IniFile.PreventWrite = false;
         }
 
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -260,7 +262,7 @@ namespace Memoria.Launcher
             }
             if (downloadCatalogClient != null && downloadCatalogClient.IsBusy)
                 downloadCatalogClient.CancelAsync();
-            UpdateModSettings();
+            //UpdateModSettings();
             //((MainWindow)this.Owner).ModdingWindow = null;
             //((MainWindow)this.Owner).LoadSettings();
             //((MainWindow)this.Owner).ComeBackToLauncherFromModManager(AreThereModUpdates, AreThereModIncompatibilies);

@@ -1389,7 +1389,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
     public static Int32 DefaultInputKeysCount = 10;
 
-    public static Single AnalogThreadhold = 0.1f;
+    public static Single AnalogThreadhold = Configuration.AnalogControl.StickThreshold;
 
     private static Int32 procId;
 

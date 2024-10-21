@@ -62,10 +62,10 @@ namespace Memoria
                 BattleMPRestoreTextFormat = BindString(nameof(BattleMPRestoreTextFormat), String.Empty);
                 BattleCommandTitleFormat = BindString(nameof(BattleCommandTitleFormat), String.Empty);
 
-                MenuItemRowCount = BindInt32(nameof(MenuItemRowCount), 8); // Default PC: 8, PSX: 11
-                MenuAbilityRowCount = BindInt32(nameof(MenuAbilityRowCount), 6); // Default PC: 6, PSX: 8
-                MenuEquipRowCount = BindInt32(nameof(MenuEquipRowCount), 5); // Default PC: 5, PSX: 6
-                MenuChocographRowCount = BindInt32(nameof(MenuChocographRowCount), 5); // Default PC: 5, PSX: 7
+                MenuItemRowCount = BindInt32(nameof(MenuItemRowCount), 12); // Default PC: 8, PSX: 11
+                MenuAbilityRowCount = BindInt32(nameof(MenuAbilityRowCount), 9); // Default PC: 6, PSX: 8
+                MenuEquipRowCount = BindInt32(nameof(MenuEquipRowCount), 7); // Default PC: 5, PSX: 6
+                MenuChocographRowCount = BindInt32(nameof(MenuChocographRowCount), 7); // Default PC: 5, PSX: 7
                 // Shop menu -- Default PC: 5/8, PSX: 7/11 (with/without portraits)
                 // Status menu -- Default PC: 8, PSX: 8
                 // Config menu -- Default PC: 6/8, PSX: 9

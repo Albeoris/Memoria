@@ -21,6 +21,7 @@ namespace Memoria
             public readonly IniValue<Int32> CameraHeight;
             public readonly IniValue<Int32> CameraAimHeight;
             public readonly IniValue<Int32> CameraTiltShip;
+            public readonly IniValue<Boolean> AlternateControls;
 
             public WorldmapSection() : base(nameof(WorldmapSection), false)
             {
@@ -38,6 +39,7 @@ namespace Memoria
                 CameraHeight = BindInt32(nameof(CameraHeight), 100);
                 CameraAimHeight = BindInt32(nameof(CameraAimHeight), 100);
                 CameraTiltShip = BindInt32(nameof(CameraTiltShip), 100);
+                AlternateControls = BindBoolean(nameof(AlternateControls), false);
             }
         }
     }
