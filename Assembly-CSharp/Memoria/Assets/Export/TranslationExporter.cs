@@ -68,13 +68,14 @@ namespace Memoria.Assets
                     continue;
                 String textAsMes = "";
                 String textAsHW = $"#HW filetype TEXT\n#HW language {symbol.ToLower()}\n#HW fileid {zoneId}\n\n";
-                for (Int32 i = 0; i < FF9TextTool.fieldText.Length; i++)
+                Int32 idCounter = -1;
+                foreach (KeyValuePair<Int32, String> pair in FF9TextTool.fieldText)
                 {
-                    String sentence = FF9TextTool.FieldText(i);
-                    textAsMes += ProcessStringForStrtMes(sentence);
+                    String sentence = pair.Value;
+                    textAsMes += ProcessStringForStrtMes(ref idCounter, sentence, pair.Key);
                     if (sentence.EndsWith("[ENDN]"))
                         sentence = sentence.Substring(0, sentence.Length - 6);
-                    textAsHW += $"#HW newtext {i + 1}\n{sentence}\n\n"; // TODO: have HW handle non-shifted text ID
+                    textAsHW += $"#HW newtext {pair.Key + 1}\n{sentence}\n\n"; // TODO: have HW handle non-shifted text ID
                 }
                 File.WriteAllText($"{exportDirectoryMes}{zoneId}.mes", textAsMes);
                 File.WriteAllText($"{exportDirectoryHW}{FF9DBAll.MesDB[zoneId]}.txt", textAsHW);
@@ -89,31 +90,33 @@ namespace Memoria.Assets
             String exportDirectoryHW = $"{modFolder}HadesWorkshop/Battle/";
             Directory.CreateDirectory(exportDirectoryMes);
             Directory.CreateDirectory(exportDirectoryHW);
-            foreach (KeyValuePair<String, Int32> pair in FF9BattleDB.SceneData)
+            foreach (KeyValuePair<String, Int32> battlePair in FF9BattleDB.SceneData)
             {
-                Int32 battleId = pair.Value;
+                Int32 battleId = battlePair.Value;
                 if (!PersistenSingleton<FF9TextTool>.Instance.UpdateBattleTextNow(battleId))
                     continue;
                 BTL_SCENE scene = new BTL_SCENE();
-                scene.ReadBattleScene(pair.Key.Substring(4));
+                scene.ReadBattleScene(battlePair.Key.Substring(4));
                 Int32 typCount = scene.header.TypCount;
                 Int32 typAtkCount = typCount + scene.header.AtkCount;
                 if (typAtkCount == 0)
                     continue;
                 String textAsMes = "";
                 String textAsHW = $"#HW filetype TEXT_BATTLE\n#HW language {symbol.ToLower()}\n#HW fileid {battleId}\n\n";
-                for (Int32 i = 0; i < FF9TextTool.battleText.Length; i++)
+                Int32 idCounter = -1;
+                foreach (KeyValuePair<Int32, String> pair in FF9TextTool.battleText)
                 {
-                    String sentence = FF9TextTool.BattleText(i);
-                    textAsMes += ProcessStringForStrtMes(sentence);
+                    String sentence = pair.Value;
+                    Int32 strIndex = pair.Key;
+                    textAsMes += ProcessStringForStrtMes(ref idCounter, sentence, strIndex);
                     if (sentence.EndsWith("[ENDN]"))
                         sentence = sentence.Substring(0, sentence.Length - 6);
-                    if (i < typCount)
-                        textAsHW += $"#HW enemyname {i}\n{sentence}\n\n";
-                    else if (i < typAtkCount)
-                        textAsHW += $"#HW attackname {i - typCount}\n{sentence}\n\n";
+                    if (strIndex < typCount)
+                        textAsHW += $"#HW enemyname {strIndex}\n{sentence}\n\n";
+                    else if (strIndex < typAtkCount)
+                        textAsHW += $"#HW attackname {strIndex - typCount}\n{sentence}\n\n";
                     else
-                        textAsHW += $"#HW text {i - typAtkCount}\n{sentence}\n\n";
+                        textAsHW += $"#HW text {strIndex - typAtkCount}\n{sentence}\n\n";
                 }
                 File.WriteAllText($"{exportDirectoryMes}{battleId}.mes", textAsMes);
                 File.WriteAllText($"{exportDirectoryHW}{battleId}.txt", textAsHW);
@@ -427,28 +430,33 @@ namespace Memoria.Assets
         private static void ExportMessageAtlases(String symbol, String modFolder)
         {
             Log.Message("[TranslationExporter] Exporting message atlases...");
+            String symbolLow = symbol.ToLower();
             foreach (AtlasWithMessage messAtlas in _messageAtlases)
             {
                 if (!messAtlas.languages.Contains(symbol))
                     continue;
                 String exportPath = $"{modFolder}FF9_Data/{messAtlas.atlasPath}";
-                String exportDirectory = Path.GetDirectoryName(exportPath);
                 UIAtlas atlas = AssetManager.Load<UIAtlas>(messAtlas.atlasPath, true);
                 if (atlas != null)
                 {
-                    Directory.CreateDirectory(exportDirectory);
-                    GraphicResourceExporter.ExportAtlasSafe(exportPath, atlas, false);
+                    List<UISpriteData> spriteList = atlas.spriteList;
+                    spriteList.RemoveAll(sprt => !messAtlas.isTextSprite(symbolLow, sprt.name));
+                    atlas.spriteList = spriteList;
+                    GraphicResourceExporter.ExportPartialAtlasSafe(exportPath, atlas);
                 }
                 else
                 {
-                    Sprite[] spriteList = Resources.LoadAll<Sprite>(messAtlas.atlasPath);
-                    if (spriteList == null || spriteList.Length == 0)
+                    Sprite[] spriteArray = Resources.LoadAll<Sprite>(messAtlas.atlasPath);
+                    if (spriteArray == null || spriteArray.Length == 0)
                     {
                         Log.Message($"[TranslationExporter] Failed to export '{exportPath}' as an atlas or a sprite list");
                         continue;
                     }
-                    Directory.CreateDirectory(exportDirectory);
-                    GraphicResourceExporter.ExportSpriteListSafe(exportPath, spriteList, false);
+                    List<Sprite> spriteList = new List<Sprite>();
+                    foreach (Sprite sprt in spriteArray)
+                        if (messAtlas.isTextSprite(symbolLow, sprt.name))
+                            spriteList.Add(sprt);
+                    GraphicResourceExporter.ExportPartialSpriteListSafe(exportPath, spriteList);
                 }
             }
             String titleImageDirectory = $"EmbeddedAsset/UI/Sprites/{symbol}/";
@@ -470,8 +478,10 @@ namespace Memoria.Assets
             Log.Message("[TranslationExporter] Done.");
         }
 
-        private static String ProcessStringForStrtMes(String str)
+        private static String ProcessStringForStrtMes(ref Int32 counter, String str, Int32 txtId)
         {
+            Boolean addCounterCode = counter + 1 != txtId;
+            counter = txtId;
             if (!str.StartsWith("[STRT=")) // Make sure the string starts with a [STRT] opcode...
             {
                 Int32 width;
@@ -496,6 +506,8 @@ namespace Memoria.Assets
             }
             if (!str.EndsWith("]")) // ...and ends with either [ENDN] or [TIME=XXX]
                 str += "[ENDN]";
+            if (addCounterCode)
+                return $"[TXID={txtId}]" + str;
             return str;
         }
 
@@ -525,13 +537,20 @@ namespace Memoria.Assets
 
         private class AtlasWithMessage
         {
-            // TODO: Maybe register the specific sprites that are textual messages
             public String atlasPath;
             public HashSet<String> languages;
+            public Func<String, String, Boolean> isTextSprite;
             public AtlasWithMessage(String p, HashSet<String> l)
             {
                 atlasPath = p;
                 languages = l;
+                if (p.Contains("QuadMist_Text"))
+                    isTextSprite = (lang, sprt) => !sprt.Contains("arrow") && !sprt.Contains("digit") && !sprt.Contains("text_combo_");
+                else if (p.Contains("General Atlas"))
+                    isTextSprite = (lang, sprt) => sprt.EndsWith($"_{lang}") || sprt.Contains($"_{lang}_") || sprt == Localization.Get(TitleUI.GetLanguageSpriteName(lang.ToUpper()))
+                                                || sprt == Localization.Get("TitleBack") || sprt == Localization.Get("TitleCloud") || sprt == Localization.Get("TitleContinue") || sprt == Localization.Get("TitleInfo") || sprt == Localization.Get("TitleLanguageHeaderSprite") || sprt == Localization.Get("TitleLoadGame") || sprt == Localization.Get("TitleMenuSqen") || sprt == Localization.Get("TitleMovieGallery") || sprt == Localization.Get("TitleNewGame");
+                else
+                    isTextSprite = (lang, sprt) => sprt.EndsWith($"_{lang}") || sprt.Contains($"_{lang}_");
             }
         }
 

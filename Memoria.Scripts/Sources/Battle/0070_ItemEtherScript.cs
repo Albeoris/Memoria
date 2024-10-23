@@ -21,7 +21,7 @@ namespace Memoria.Scripts.Battle
         public void Perform()
         {
             _v.Context.Attack = 15;
-            _v.Context.AttackPower = _v.Command.Item.Power;
+            _v.Context.AttackPower = _v.Command.ItemId != RegularItem.NoItem ? _v.Command.Item.Power : _v.Command.Power;
             _v.Context.DefensePower = 0;
 
             _v.CalcMpMagicRecovery();
@@ -30,7 +30,7 @@ namespace Memoria.Scripts.Battle
         public Single RateTarget()
         {
             _v.Context.Attack = 15;
-            _v.Context.AttackPower = _v.Command.Item.Power;
+            _v.Context.AttackPower = _v.Command.ItemId != RegularItem.NoItem ? _v.Command.Item.Power : _v.Command.Power;
             _v.Context.DefensePower = 0;
 
             _v.CalcMpMagicRecovery();

@@ -235,6 +235,7 @@ public static class battle
         }
         btl_cmd.CommandEngine(btlsys);
         battle.BattleSubSystem(sys, btlsys);
+        btlseq.DispCharactersAppearedThisFrame();
     }
 
     private static Boolean BattleIdleLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)
@@ -271,6 +272,7 @@ public static class battle
         if (btlsys.btl_phase == FF9StateBattleSystem.PHASE_DEFEAT && !btlsys.btl_scene.Info.NoGameOver && !btl_util.ManageBattleSong(sys, 30, 6))
             flag = false;
         battle.BattleSubSystem(sys, btlsys);
+        btlseq.DispCharactersAppearedThisFrame();
         return flag;
     }
 
@@ -361,6 +363,7 @@ public static class battle
         {
             btl_cmd.CommandEngine(btlsys);
             battle.BattleSubSystem(sys, btlsys);
+            btlseq.DispCharactersAppearedThisFrame();
             return;
         }
         switch (btlsys.btl_seq)
@@ -475,6 +478,7 @@ public static class battle
                 btlsys.btl_seq = FF9StateBattleSystem.SEQ_DEFEATCLOSE_FADEOUT;
         }
         battle.BattleSubSystem(sys, btlsys);
+        btlseq.DispCharactersAppearedThisFrame();
     }
 
     private static void BattleLoadLoop(FF9StateGlobal sys, FF9StateBattleSystem btlsys)

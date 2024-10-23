@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using UnityEngine;
 
 public class WMBeeMovementAnimation : Singleton<WMBeeMovementAnimation>
@@ -31,7 +32,7 @@ public class WMBeeMovementAnimation : Singleton<WMBeeMovementAnimation>
         a = a.normalized;
         Vector3 a2 = new Vector3(a.z, 0f, -a.x);
         Vector2 axis = PersistenSingleton<HonoInputManager>.Instance.GetAxis();
-        Single num = axis.x;
+        Single x = axis.x;
         Single y = axis.y;
         if (y < -0.2f)
         {
@@ -42,12 +43,12 @@ public class WMBeeMovementAnimation : Singleton<WMBeeMovementAnimation>
             controlledDebugDebugActor.MovingBack = false;
         }
         Boolean isMoving = controlledDebugDebugActor.isMoving;
-        controlledDebugDebugActor.isMoving = (Mathf.Abs(num) > 0.1f || Mathf.Abs(y) > 0.1f);
-        if (Mathf.Abs(num) < 0.7f)
+        controlledDebugDebugActor.isMoving = axis.magnitude > Configuration.AnalogControl.StickThreshold;
+        if (Mathf.Abs(x) < 0.7f)
         {
-            num = 0f;
+            x = 0f;
         }
-        Vector3 vector = num * a2 + y * a;
+        Vector3 vector = x * a2 + y * a;
         if (flag)
         {
             controlledDebugDebugActor.LockCameraTimer += Time.deltaTime;
@@ -71,7 +72,7 @@ public class WMBeeMovementAnimation : Singleton<WMBeeMovementAnimation>
             Single num2 = Mathf.Min(vector.magnitude, 1f);
             Boolean flag2 = true;
             controlledDebugDebugActor.State = WMActorStateDebug.Idle;
-            if (num != 0f || y != 0f)
+            if (x != 0f || y != 0f)
             {
                 flag2 = false;
             }

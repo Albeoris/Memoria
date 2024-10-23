@@ -9,10 +9,10 @@ namespace Memoria
     {
         public static class Worldmap
         {
-            public static Int32 ViewDistance
+            public static Int32 MistViewDistance
             {
-                get => Mathf.Clamp(Instance._worldmap.ViewDistance, 10, 450);
-                set => Instance._worldmap.ViewDistance.Value = Mathf.Clamp(value, 10, 450);
+                get => Mathf.Clamp(Instance._worldmap.MistViewDistance, 10, 450);
+                set => Instance._worldmap.MistViewDistance.Value = Mathf.Clamp(value, 10, 450);
             }
             public static Int32 MistStartDistance_base => Instance._worldmap.MistStartDistance_base;
             public static Int32 MistStartDistance => Instance._worldmap.MistStartDistance;
@@ -21,6 +21,11 @@ namespace Memoria
             {
                 get => Mathf.Clamp(Instance._worldmap.MistDensity, 0, 1000);
                 set => Instance._worldmap.MistDensity.Value = Mathf.Clamp(value, 0, 1000);
+            }
+            public static Int32 NoMistViewDistance
+            {
+                get => Mathf.Clamp(Instance._worldmap.NoMistViewDistance, 10, 450);
+                set => Instance._worldmap.NoMistViewDistance.Value = Mathf.Clamp(value, 10, 450);
             }
             public static Int32 FogStartDistance => Instance._worldmap.FogStartDistance;
             public static Int32 FogEndDistance => Instance._worldmap.FogEndDistance;
@@ -42,6 +47,7 @@ namespace Memoria
                 get => Mathf.Clamp(Instance._worldmap.CameraTiltShip, 0, 200);
                 set => Instance._worldmap.CameraTiltShip.Value = Mathf.Clamp(value, 0, 200);
             }
+            public static Boolean AlternateControls => Instance._worldmap.AlternateControls;
         }
     }
 }

@@ -266,6 +266,18 @@ public class btlseq
         }
     }
 
+    public static void DispCharactersAppearedThisFrame()
+    {
+        foreach (BTL_DATA btl in btl_mot.BtlActivatedThisFrame)
+        {
+            if (btl.bi.disappear != 0)
+                continue;
+            for (BTL_DATA next = FF9StateSystem.Battle.FF9Battle.btl_list.next; next != null; next = next.next)
+                if (next == btl)
+                    btlseq.DispCharacter(btl, false);
+        }
+    }
+
     public static void DispCharacter(BTL_DATA btl, Boolean advanceAnim = true)
     {
         if (btl.bi.slave != 0)
@@ -595,6 +607,8 @@ public class btlseq
         {
             Int32 animId = pSeqWork.AnmIDOfs + animCode;
             String animName = FF9BattleDB.Animation[instance.seq_work_set.AnmAddrList[animId]];
+            if (pMe.gameObject.GetComponent<Animation>().GetClip(animName) == null)
+                AnimationFactory.AddAnimWithAnimatioName(pMe.gameObject, animName);
             btl_mot.setMotion(pMe, animName);
         }
         pMe.evt.animFrame = 0;

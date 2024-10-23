@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Memoria;
+using System;
 using UnityEngine;
 
 public class EventInput
@@ -286,7 +287,7 @@ public class EventInput
         if (VirtualAnalog.HasInput())
         {
             Vector2 vector = VirtualAnalog.GetAnalogValue();
-            if (Mathf.Abs(vector.x) >= 0.1f || Mathf.Abs(vector.y) >= 0.1f)
+            if (vector.magnitude > Configuration.AnalogControl.StickThreshold)
             {
                 if (vector.y > 0f)
                     inputs |= EventInput.Pup;

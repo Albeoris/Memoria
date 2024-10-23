@@ -980,6 +980,12 @@ public partial class BattleHUD : UIScene
                         ButtonGroupState.SetButtonEnable(labelObj, true);
                     nameLabel.color = unit.UIColorHP;
                 }
+                if (_targetCursor == TargetType.Self && unit.GetIndex() == CurrentPlayerIndex && currentTargetLabel != labelObj)
+                {
+                    Singleton<PointerManager>.Instance.RemovePointerFromGameObject(currentTargetLabel);
+                    _currentTargetIndex = unit.GetIndex();
+                    currentTargetLabel = labelObj;
+                }
                 ++playerIndex;
             }
             else
@@ -1902,6 +1908,8 @@ public partial class BattleHUD : UIScene
                     testCommand.ScriptId = btl_util.GetCommandScriptId(testCommand);
                     SelectBestTarget(targetType, testCommand);
                 }
+                else
+                    _targetDead = true; // Always true to target any player, whatever the result. (with a Mix Command)
             }
             else
             {

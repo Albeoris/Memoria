@@ -25,6 +25,7 @@ public partial class BTL_DATA
             weapon_geo.transform.localScale = Vector3.one;
         builtin_weapon_mode = weapon_geo != null && weapon_geo.name != btl_eqp.DummyWeaponName && btl_eqp.EnemyBuiltInWeaponTable.ContainsKey(geoID);
         _smoothUpdateRegistered = false;
+        btl_mot.BtlActivatedThisFrame.Add(this);
     }
 
     public void SetDisappear(Boolean disappear, Byte priority)
@@ -45,13 +46,17 @@ public partial class BTL_DATA
 
     public void SetActiveBtlData(Boolean value)
     {
+        Boolean wasActive = this.gameObject.active;
         GameObject shadow = this.getShadow();
         this.gameObject.SetActive(value);
         btl_stat.SetStatusClut(this, btl_stat.CheckStatus(this, BattleStatusConst.ChgPolyClut));
         if (this.bi.shadow != 0)
             shadow.SetActive(value);
-        if (value)
+        if (value && !wasActive)
+        {
             _smoothUpdateRegistered = false;
+            btl_mot.BtlActivatedThisFrame.Add(this);
+        }
     }
 
     public void SetIsEnabledMeshRenderer(Int32 mesh, Boolean isEnabled)

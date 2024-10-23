@@ -1,0 +1,198 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style x:Key="ModInfoLabelStyle" TargetType="{x:Type TextBlock}">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Margin" Value="0,0,3,1" />
+        <Setter Property="FontWeight" Value="DemiBold" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
+    </Style>
+    <Style
+        x:Key="ModInfoDetailsStyle"
+        BasedOn="{StaticResource ModInfoLabelStyle}"
+        TargetType="{x:Type TextBlock}">
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
+    </Style>
+    <Style
+        x:Key="ModDescriptionStyle"
+        BasedOn="{StaticResource ModInfoLabelStyle}"
+        TargetType="{x:Type TextBlock}">
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Padding" Value="0" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
+    </Style>
+    <DropShadowEffect x:Key="dropShadowEffect"
+        BlurRadius="2" 
+        Direction="-45" 
+        Color="#3333" 
+        RenderingBias="Quality"/>
+    <DropShadowEffect x:Key="ButtondropShadowEffect"
+        BlurRadius="1" 
+        Direction="-45" 
+        Color="#3333" 
+        RenderingBias="Quality" 
+        ShadowDepth="2"/>
+    <Style
+        x:Key="ModTitleStyle"
+        BasedOn="{StaticResource ModInfoLabelStyle}"
+        TargetType="{x:Type TextBlock}">
+        <Setter Property="FontWeight" Value="DemiBold" />
+        <Setter Property="FontFamily" Value="{StaticResource CenturyGothic}" />
+        <Setter Property="FontStretch" Value="UltraCondensed" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Padding" Value="0,5,0,0" />
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
+    </Style>
+    <Style
+        x:Key="ModVersionStyle"
+        BasedOn="{StaticResource ModInfoLabelStyle}"
+        TargetType="{x:Type TextBlock}">
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="FontFamily" Value="{StaticResource CenturyGothic}" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="Padding" Value="1,0,0,2" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Foreground" Value="#BBB" />
+    </Style>
+
+    <Style x:Key="OpenLinkStyle" TargetType="{x:Type Button}">
+        <Setter Property="Foreground" Value="{DynamicResource BrushDarkTextColor}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="border"
+                        Background="{DynamicResource BrushLightColorNormal}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="0"
+                        CornerRadius="5"
+                        Padding="5,2,5,2"
+                        Height="auto"
+                        Width="auto"
+                        Cursor="Hand">
+                        <ContentPresenter
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource BrushLightColorHover}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource BrushLightColorPressed}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="border" Property="Opacity" Value="0.2"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ToolButtonStyle" TargetType="{x:Type Button}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border
+                        x:Name="border"
+                        Background="{DynamicResource BrushLightColorNormal}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="0"
+                        CornerRadius="5"
+                        Cursor="Hand">
+                        <ContentPresenter
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Center" 
+                            Width="36"
+                            Height="36"
+                            Opacity="0.8"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource BrushLightColorHover}"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="True">
+                            <Setter TargetName="border" Property="Background" Value="{DynamicResource BrushLightColorPressed}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter TargetName="border" Property="Opacity" Value="0.2"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="subtab" TargetType="{x:Type TabItem}">
+        <Setter Property="Width" Value="269"/>
+        <Setter Property="Margin" Value="-12,0,0,0"/>
+        <Setter Property="Background" Value="#d000"/>
+        <Setter Property="Foreground" Value="{StaticResource WhiteUI}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabItem}">
+                    <Grid Margin="6,0,0,0">
+                        <Border x:Name="borderbottom" Background="{TemplateBinding Background}" CornerRadius="6,6,6,6" BorderThickness="0,0,1,2" BorderBrush="#caaa">
+                            <Border x:Name="bordertop" Background="Transparent" CornerRadius="6" BorderThickness="1,2,0,0" BorderBrush="#caaa">
+                                <ContentPresenter x:Name="content"
+                                    ContentSource="Header"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="20,0"
+                                    Cursor="Hand"
+                                    TextBlock.FontSize="{TemplateBinding FontSize}"
+                                    TextBlock.FontFamily="{DynamicResource CenturyGothic}"
+                                    TextBlock.Foreground="{TemplateBinding Foreground}" />
+                            </Border>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="borderbottom" Property="Opacity" Value="0.9" />
+                            <Setter TargetName="borderbottom" Property="Background" Value="{DynamicResource BrushAccentColor}" />
+                            <Setter TargetName="bordertop" Property="BorderBrush" Value="{DynamicResource BrushAccentColorDarker}" />
+                            <Setter TargetName="borderbottom" Property="BorderBrush" Value="{DynamicResource BrushAccentColorHover}" />
+                            <Setter TargetName="content" Property="TextBlock.Effect" Value="{StaticResource ButtondropShadowEffect}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="False">
+                            <Setter TargetName="borderbottom" Property="Opacity" Value="0.8" />
+                            <Setter TargetName="bordertop" Property="BorderBrush" Value="#5aaa" />
+                            <Setter TargetName="borderbottom" Property="BorderBrush" Value="#8333" />
+                            <Setter TargetName="borderbottom" Property="Background" Value="{StaticResource TabGradientUnselected}" />
+                            <Setter TargetName="content" Property="TextBlock.FontWeight" Value="Normal" />
+                        </Trigger>
+                        <Trigger SourceName="borderbottom" Property="IsMouseOver" Value="True">
+                            <Setter TargetName="content" Property="TextBlock.Effect" Value="{StaticResource ButtondropShadowEffect}" />
+                            <Setter TargetName="borderbottom" Property="Opacity" Value="1" />
+                            <Setter TargetName="borderbottom" Property="BorderBrush" Value="{DynamicResource BrushAccentColorDarker}" />
+                            <Setter TargetName="borderbottom" Property="Cursor" Value="Hand" />
+                            <Setter TargetName="borderbottom" Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0.5,1" EndPoint="0.5,0">
+                                        <GradientStop Color="{DynamicResource AccentColorDarker}" Offset="0.0" />
+                                        <GradientStop Color="{DynamicResource AccentColorHover}" Offset="1.0" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="GroupModInfo" TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}">
+        <Setter Property="Background" Value="{StaticResource LightGreyUI}" />
+        <Setter Property="Height" Value="0" />
+    </Style>
+</ResourceDictionary>

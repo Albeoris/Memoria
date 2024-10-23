@@ -11,12 +11,13 @@ namespace Memoria.Patcher
         private readonly DateTime _begin;
 
         private Int64 _processedSize = 0;
+        public double CurrentPercent;
 
         public ConsoleProgressHandler(Int64 totalSize)
         {
             _totalSize = totalSize;
             _begin = DateTime.UtcNow;
-            Task.Run(() => BackgroundProcess());
+            Task.Factory.StartNew(() => BackgroundProcess());
         }
 
         public void Dispose()
@@ -48,14 +49,14 @@ namespace Memoria.Patcher
 
         private void Refresh()
         {
-            Double percents = (_totalSize == 0) ? 0.0 : 100 * _processedSize / (double)_totalSize;
+            CurrentPercent = (_totalSize == 0) ? 0.0 : 100 * _processedSize / (double)_totalSize;
             TimeSpan elapsed = DateTime.UtcNow - _begin;
             Double speed = _processedSize / Math.Max(elapsed.TotalSeconds, 1);
             if (speed < 1) speed = 1;
             TimeSpan left = TimeSpan.FromSeconds((_totalSize - _processedSize) / speed);
 
             Console.Title = String.Format("Patching... {0:F2}%  {1}: {2:mm\\:ss}  {3} / {4}  {5}: {6:mm\\:ss}",
-                percents,
+                CurrentPercent,
                 Lang.Measurement.Elapsed, elapsed,
                 FormatBytes(_processedSize), FormatBytes(_totalSize),
                 Lang.Measurement.Remaining, left);

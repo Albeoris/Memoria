@@ -434,7 +434,7 @@ public static class NGUIText
         Vector2 printedSize = Vector2.zero;
         if (!String.IsNullOrEmpty(text))
         {
-            NGUIText.spaceWidth = NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
+            NGUIText.spaceWidth = 20f;// NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
             if (NGUIText.encoding)
                 text = NGUIText.StripSymbols2(text);
             NGUIText.mTextModifiers.Reset();
@@ -464,11 +464,11 @@ public static class NGUIText
                     }
                     else
                     {
-                        if (NGUIText.mTextModifiers.tabX != 0f)
+                        if (NGUIText.mTextModifiers.tabX.HasValue)
                         {
                             NGUIText.mTextModifiers.extraOffset.x = 0f;
-                            currentX = NGUIText.mTextModifiers.tabX;
-                            NGUIText.mTextModifiers.tabX = 0f;
+                            currentX = NGUIText.mTextModifiers.tabX.Value;
+                            NGUIText.mTextModifiers.tabX = null;
                         }
                         if (NGUIText.mTextModifiers.insertImage != null)
                         {
@@ -531,7 +531,7 @@ public static class NGUIText
 
     public static Single[] CalculateAllCharacterAdvances(String text)
     {
-        NGUIText.spaceWidth = NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
+        NGUIText.spaceWidth = 20f;// NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
         NGUIText.Prepare(text);
         NGUIText.mTextModifiers.Reset();
         Int32 textLength = text.Length;
@@ -1447,7 +1447,7 @@ public static class NGUIText
         vertsLineOffsets = new BetterList<Int32>();
         if (String.IsNullOrEmpty(text))
             return;
-        NGUIText.spaceWidth = NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
+        NGUIText.spaceWidth = 20f;// NGUIText.GetGlyph(' ', 0)?.advance ?? 20f;
         Int32 vIndex = verts.size;
         NGUIText.Prepare(text);
         Int32 prevCh = 0;
@@ -1561,11 +1561,11 @@ public static class NGUIText
                     NGUIText.alignment = NGUIText.Alignment.Center;
                 else
                     NGUIText.alignment = defaultAlignment;
-                if (NGUIText.mTextModifiers.tabX != 0f)
+                if (NGUIText.mTextModifiers.tabX.HasValue)
                 {
                     NGUIText.mTextModifiers.extraOffset.x = 0f;
-                    currentX = NGUIText.mTextModifiers.tabX;
-                    NGUIText.mTextModifiers.tabX = 0f;
+                    currentX = NGUIText.mTextModifiers.tabX.Value;
+                    NGUIText.mTextModifiers.tabX = null;
                 }
                 NGUIText.ProcessInsertImage(specialImages, imgNotYetAligned, ref NGUIText.mTextModifiers, ref currentX, textHeight, printedLine);
                 BMSymbol bmsymbol = NGUIText.useSymbols ? NGUIText.GetSymbol(text, texti, textLength) : null;
