@@ -385,6 +385,11 @@ namespace Memoria.Assets
             FF9TextTool.fieldText.Clear();
             String path = EmbadedTextResources.GetCurrentPath("/Field/" + FF9TextTool.GetFieldTextFileName(fieldZoneId) + ".mes");
             FF9TextTool.ImportStrtWithCumulativeModFiles<Int32>(path, FF9TextTool.fieldText);
+
+            // TODO: Handle (some of) these modifiers better, like adding a sprite animation instead of ReplaceMogIconText
+            foreach (Int32 key in FF9TextTool.fieldText.Keys.ToList())
+                FF9TextTool.fieldText[key] = TextOpCodeModifier.Modify(FF9TextTool.fieldText[key]);
+
             FF9TextTool.SetTableText(FF9TextTool.ExtractTableText(FF9TextTool.fieldText.Values));
 
             if (FF9TextTool.fieldText.Count == 0)

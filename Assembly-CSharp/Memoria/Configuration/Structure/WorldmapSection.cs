@@ -21,23 +21,25 @@ namespace Memoria
             public readonly IniValue<Int32> CameraHeight;
             public readonly IniValue<Int32> CameraAimHeight;
             public readonly IniValue<Int32> CameraTiltShip;
+            public readonly IniValue<Boolean> AlternateControls;
 
             public WorldmapSection() : base(nameof(WorldmapSection), false)
             {
-                MistViewDistance = BindInt32(nameof(MistViewDistance), 100);
-                MistStartDistance_base = BindInt32(nameof(MistStartDistance_base), 55);
-                MistStartDistance = BindInt32(nameof(MistStartDistance), 27);
-                MistEndDistance = BindInt32(nameof(MistEndDistance), 80);
-                MistDensity = BindInt32(nameof(MistDensity), 7);
-                NoMistViewDistance = BindInt32(nameof(NoMistViewDistance), 100);
-                FogStartDistance = BindInt32(nameof(FogStartDistance), 86);
-                FogEndDistance = BindInt32(nameof(FogEndDistance), 142);
+                MistViewDistance = BindInt32(nameof(MistViewDistance), 290);
+                MistStartDistance_base = BindInt32(nameof(MistStartDistance_base), 40);
+                MistStartDistance = BindInt32(nameof(MistStartDistance), 25);
+                MistEndDistance = BindInt32(nameof(MistEndDistance), 250);
+                MistDensity = BindInt32(nameof(MistDensity), 15);
+                NoMistViewDistance = BindInt32(nameof(NoMistViewDistance), 300);
+                FogStartDistance = BindInt32(nameof(FogStartDistance), 250);
+                FogEndDistance = BindInt32(nameof(FogEndDistance), 350);
                 FieldOfView = BindInt32(nameof(FieldOfView), 44);
                 FieldOfViewSpeedBoost = BindInt32(nameof(FieldOfViewSpeedBoost), 100);
                 CameraDistance = BindInt32(nameof(CameraDistance), 100);
                 CameraHeight = BindInt32(nameof(CameraHeight), 100);
                 CameraAimHeight = BindInt32(nameof(CameraAimHeight), 100);
                 CameraTiltShip = BindInt32(nameof(CameraTiltShip), 100);
+                AlternateControls = BindBoolean(nameof(AlternateControls), false);
             }
         }
     }

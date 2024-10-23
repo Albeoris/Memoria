@@ -50,6 +50,8 @@ namespace Memoria.Launcher
 
             CreateSlider("WorldmapTPSDividedby20", "WorldmapTPS", 20, 100, 4, "{0}x", 50, "Settings.WorldmapTPS", "Settings.WorldmapTPS_Tooltip");
 
+            CreateCheckbox("AlternateControls", "Settings.AlternateControls", "Settings.AlternateControls_Tooltip", tooltipImage: "alternative_controls.png");
+
             CreateCheckbox("WorldmapBoost", "Settings.WorldmapBoost", "Settings.WorldmapBoost_Tooltip");
             CreateCheckbox("WorldmapShipTilt", "Settings.WorldmapShipTilt", "Settings.WorldmapShipTilt_Tooltip");
         }

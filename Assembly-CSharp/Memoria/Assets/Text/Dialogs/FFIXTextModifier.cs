@@ -18,7 +18,7 @@ namespace Memoria.Assets
         public Boolean mirror;
         public Int32 ff9Signal;
         public Vector3 extraOffset;
-        public Single tabX;
+        public Single? tabX;
         public Dialog.DialogImage insertImage;
 
         public void Reset()
@@ -36,7 +36,7 @@ namespace Memoria.Assets
             mirror = false;
             ff9Signal = 0;
             extraOffset = Vector3.zero;
-            tabX = 0f;
+            tabX = null;
             insertImage = null;
         }
 

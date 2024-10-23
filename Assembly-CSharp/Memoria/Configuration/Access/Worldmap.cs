@@ -47,6 +47,7 @@ namespace Memoria
                 get => Mathf.Clamp(Instance._worldmap.CameraTiltShip, 0, 200);
                 set => Instance._worldmap.CameraTiltShip.Value = Mathf.Clamp(value, 0, 200);
             }
+            public static Boolean AlternateControls => Instance._worldmap.AlternateControls;
         }
     }
 }

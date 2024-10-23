@@ -464,11 +464,11 @@ public static class NGUIText
                     }
                     else
                     {
-                        if (NGUIText.mTextModifiers.tabX != 0f)
+                        if (NGUIText.mTextModifiers.tabX.HasValue)
                         {
                             NGUIText.mTextModifiers.extraOffset.x = 0f;
-                            currentX = NGUIText.mTextModifiers.tabX;
-                            NGUIText.mTextModifiers.tabX = 0f;
+                            currentX = NGUIText.mTextModifiers.tabX.Value;
+                            NGUIText.mTextModifiers.tabX = null;
                         }
                         if (NGUIText.mTextModifiers.insertImage != null)
                         {
@@ -1561,11 +1561,11 @@ public static class NGUIText
                     NGUIText.alignment = NGUIText.Alignment.Center;
                 else
                     NGUIText.alignment = defaultAlignment;
-                if (NGUIText.mTextModifiers.tabX != 0f)
+                if (NGUIText.mTextModifiers.tabX.HasValue)
                 {
                     NGUIText.mTextModifiers.extraOffset.x = 0f;
-                    currentX = NGUIText.mTextModifiers.tabX;
-                    NGUIText.mTextModifiers.tabX = 0f;
+                    currentX = NGUIText.mTextModifiers.tabX.Value;
+                    NGUIText.mTextModifiers.tabX = null;
                 }
                 NGUIText.ProcessInsertImage(specialImages, imgNotYetAligned, ref NGUIText.mTextModifiers, ref currentX, textHeight, printedLine);
                 BMSymbol bmsymbol = NGUIText.useSymbols ? NGUIText.GetSymbol(text, texti, textLength) : null;

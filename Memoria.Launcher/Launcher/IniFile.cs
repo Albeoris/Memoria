@@ -76,13 +76,16 @@ namespace Memoria.Launcher
 
         public void SetSetting(String Section, String Key, String Value)
         {
+            if (PreventWrite) return;
             Key k = new Key(Section, Key);
             Options[k] = Value;
         }
 
         public void Save()
         {
+            if (PreventWrite) return;
             if (_path == null) throw new NullReferenceException("This IniFile was created without a path, values cannot be written.");
+            if (!File.Exists(_path)) return;
             WriteAllSettings(_path);
         }
 
