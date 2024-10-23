@@ -845,6 +845,7 @@ namespace Memoria.Launcher
                     File.Delete(CATALOG_PATH);
                 File.Move(CATALOG_PATH + ".tmp", CATALOG_PATH);
                 ReadCatalog();
+                CheckOutdatedAndIncompatibleMods();
             });
         }
 
@@ -890,6 +891,7 @@ namespace Memoria.Launcher
 
         private void UpdateModListInstalled()
         {
+            Boolean hasChanged = false;
             foreach (String dir in Directory.EnumerateDirectories("."))
             {
                 if (File.Exists(dir + "/" + Mod.DESCRIPTION_FILE))
@@ -899,6 +901,7 @@ namespace Memoria.Launcher
                     if (previousMod == null)
                     {
                         modListInstalled.Insert(0, updatedMod);
+                        hasChanged = true;
                     }
                     else if ((updatedMod.CurrentVersion != null && previousMod.CurrentVersion == null) || (previousMod.CurrentVersion != null && updatedMod.CurrentVersion != null && previousMod.CurrentVersion < updatedMod.CurrentVersion))
                     {
@@ -912,12 +915,13 @@ namespace Memoria.Launcher
                         modListInstalled.RemoveAt(index);
                         modListInstalled.Insert(index, updatedMod);
                         updatedMod.IsActive = previousMod.IsActive;
+                        hasChanged = true;
                     }
                 }
             }
             UpdateInstalledPriorityValue();
-            CheckOutdatedAndIncompatibleMods();
-            //UpdateLauncherTheme();
+            if (hasChanged)
+                UpdateModSettings();
         }
 
         private static String currentColor;
@@ -1016,7 +1020,6 @@ namespace Memoria.Launcher
                 if (shortName != "x64" && shortName != "x86" && Mod.LooksLikeAModFolder(shortName))
                     GenerateAutomaticDescriptionFile(shortName);
             }
-            UpdateModListInstalled();
         }
 
         private void UpdateModDetails(Mod mod)

@@ -66,7 +66,7 @@ namespace Memoria.Launcher
             UpdateCatalog();
             LoadModSettings();
             CheckForValidModFolder();
-            //CheckOutdatedAndIncompatibleMods();
+            UpdateModListInstalled();
             lstCatalogMods.ItemsSource = modListCatalog;
             lstMods.ItemsSource = modListInstalled;
             lstDownloads.ItemsSource = downloadList;
