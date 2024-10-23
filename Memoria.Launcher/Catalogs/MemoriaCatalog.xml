@@ -117,7 +117,7 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (until full release... sorry !)</Description>
 	<PatchNotes>
-	-----------------------------------------[0.3.29F]------------------------------------------
+	------[0.3.29.2]------
 
 	- Major hotfix for the difficulty system: "small" mistake where damage is all doubled... woopsi.
 	I made an emergency hotfix a few days after this bug was reported to me, but for players who use only the Memoria launcher, they may not be aware of this fix
@@ -129,9 +129,9 @@ Not supported language : Japanese (until full release... sorry !)</Description>
 	- Modification to certain scripts (e.g. Maelstorm), where the message will display "Guard!" instead of "Miss!" if the monster is immune.
 	- Correction about the targeting of the "Emerald" item.
 	- Fixed some dialogues.
-		
-	-----------------------------------------[0.3.29]------------------------------------------
-		
+
+	------[0.3.29]------
+
 	- [WIP] Difficulty modes now available!
 	This is no definitive, but here's an idea I've had in the back of my mind for several months: the ability to choose an in-game difficulty!
 	There are currently 5 difficulty levels:
