@@ -15,19 +15,29 @@ using System.Windows.Controls;
 using static System.Net.WebRequestMethods;
 using System.Threading;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace Installer.Classes
 {
     public class Installer
     {
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        private const int SW_HIDE = 0;
+        private const int SW_SHOW = 5;
+
         private static async Task<bool> DownloadLatestReleaseAsync(string downloadPath, IProgress<double> progress, TextBlock progressText)
         {
             try
             {
+                //throw new NotImplementedException();
                 progressText.Text = "Downloading Latest Memoria";
                 using (HttpClient client = new HttpClient())
                 {
-                    string downloadUrl = "https://github.com/Albeoris/Memoria/releases/latest/download/Memoria.Patcher.exe";
+                    string downloadUrl = "https://github.com/barkermn01/Memoria/releases/latest/download/Memoria.Patcher.exe";
 
                     using (var downloadResponse = await client.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead))
                     {
@@ -110,7 +120,7 @@ namespace Installer.Classes
 
         private static void parseTitle(string title, ProgressBar progressBar, TextBlock progressText)
         {
-            string pattern = @"Patching... (?<percent>\d+\.\d+)%  Elapsed: (?<elapsed>\d+:\d+)  (?<processed>\d+ \w+) / (?<total>\d+ \w+)  Remaining: (?<remaining>\d+:\d+)";
+            string pattern = @"(?<percent>\d+\.\d+)%\s+Elapsed:\s+(?<elapsed>\d{2}:\d{2})\s+(?<processed>\d+\.\d+ \w+)\s+/\s+(?<total>\d+\.\d+ \w+)\s+Remaining:\s+(?<remaining>\d{2}:\d{2})";
             Match match = Regex.Match(title, pattern);
 
             if (match.Success)
@@ -128,7 +138,7 @@ namespace Installer.Classes
             }
         }
 
-        public static void RunPatcher(string gameDirectory, ProgressBar downloadProgressBar, TextBlock progressText)
+        public async static Task<bool> RunPatcher(string gameDirectory, ProgressBar downloadProgressBar, TextBlock progressText)
         {
             // run the patcher
             progressText.Text = "Patching FFIX Game Files";
@@ -141,7 +151,6 @@ namespace Installer.Classes
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
-                CreateNoWindow = true
             };
 
             using (Process process = new Process { StartInfo = startInfo })
@@ -155,15 +164,33 @@ namespace Installer.Classes
                     Console.WriteLine(e.Data);
                 };
                 process.Start();
-                process.StandardInput.WriteLine("");
-                // Periodically check the console window title
-                while (!process.HasExited)
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
+                // Wait a moment to ensure the window is created
+                await Task.Delay(100);
+
+                // Find the console window and hide it
+                IntPtr hWnd = FindWindow(null, process.MainWindowTitle);
+                if (hWnd != IntPtr.Zero)
                 {
-                    parseTitle(process.MainWindowTitle, downloadProgressBar, progressText);
-                    Thread.Sleep(200);
+                    ShowWindow(hWnd, SW_HIDE);
                 }
+
+                await Task.Run(() =>
+                {
+                    while (!process.HasExited)
+                    {
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            parseTitle(process.MainWindowTitle == "" ? Console.Title : process.MainWindowTitle, downloadProgressBar, progressText);
+                        });
+                        Thread.Sleep(200);
+                        process.StandardInput.WriteLine("");
+                    }
+                });
+                progressText.Text = "Game Has been patched";
             }
-            progressText.Text = "Game Has been patched";
+            return true;
         }
 
         public async static Task<bool> CopySetup(string gameDirectory, TextBlock progressText)

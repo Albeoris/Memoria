@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -101,14 +102,18 @@ namespace Installer
 
         private async void Install()
         {
-            ProgressGrid.Visibility = Visibility.Visible;
-            CancelBtn.Visibility = Visibility.Hidden;
-            InstallBtn.Content = "Please Wait.";
-            GamePathBrowseBtn.IsEnabled = false;
-            GamePathText.IsEnabled = false;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                TermsChkBx.Visibility = Visibility.Hidden;
+                ProgressGrid.Visibility = Visibility.Visible;
+                CancelBtn.Visibility = Visibility.Hidden;
+                InstallBtn.Content = "Please Wait.";
+                GamePathBrowseBtn.IsEnabled = false;
+                GamePathText.IsEnabled = false;
+            });
 
             await Classes.Installer.DownloadOrUsePatcher(GamePathText.Text, ProgressBar, ProgressText);
-            Classes.Installer.RunPatcher(GamePathText.Text, ProgressBar, ProgressText);
+            await Classes.Installer.RunPatcher(GamePathText.Text, ProgressBar, ProgressText);
             await Classes.Installer.CopySetup(GamePathText.Text, ProgressText);
             RegistryValues.Instance.AddToUninstallList(GamePathText.Text);
 
@@ -116,20 +121,23 @@ namespace Installer
             Finished();
         }
 
-        private async void Repare()
+        private async void Repair()
         {
-            ProgressGrid.Visibility = Visibility.Visible;
-            CancelBtn.Visibility = Visibility.Hidden;
-            InstallBtn.Content = "Please Wait.";
-            GamePathBrowseBtn.IsEnabled = false;
-            GamePathText.IsEnabled = false;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ProgressGrid.Visibility = Visibility.Visible;
+                CancelBtn.Visibility = Visibility.Hidden;
+                InstallBtn.Content = "Please Wait.";
+                GamePathBrowseBtn.IsEnabled = false;
+                GamePathText.IsEnabled = false;
+            });            
 
             await Classes.Installer.DownloadOrUsePatcher(GamePathText.Text, ProgressBar, ProgressText);
-            Classes.Installer.RunPatcher(GamePathText.Text, ProgressBar, ProgressText);
+            await Classes.Installer.RunPatcher(GamePathText.Text, ProgressBar, ProgressText);
             await Classes.Installer.CopySetup(GamePathText.Text, ProgressText);
             RegistryValues.Instance.AddToUninstallList(GamePathText.Text);
 
-            ProgressText.Text = "Memoria Reinstalled.";
+            ProgressText.Text = "Memoria Repaired.";
             Finished();
         }
 
@@ -142,7 +150,6 @@ namespace Installer
                 CancelBtn.Visibility = Visibility.Hidden;
                 InstallBtn.Content = "Please Wait.";
 
-                ProgressText.Text = "Please Wait steam is cleaning your game.";
                 Classes.Uninstaller.CleanGameFiles(GamePathText.Text);
                 RegistryValues.Instance.RemoveFromUninstallList();
                 ProgressText.Text = "Memoria Removed Successfully.";
@@ -268,7 +275,7 @@ namespace Installer
 
             if (IsRepair)
             {
-                Repare();
+                Repair();
             }
 
             if(IsInstall)
