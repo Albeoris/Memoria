@@ -55,7 +55,6 @@ namespace Installer.Classes
             string publisher = "Memoria Team";
             string installLocation = InstallPath;
             string uninstallString = InstallPath+@"\setup.exe uninstall";
-            string modifyPath = InstallPath + @"\setup.exe modify";
             string repairPath = InstallPath + @"\setup.exe repair";
             string iconPath = InstallPath + @"\setup.exe,0";
             string installDate = DateTime.Now.ToString("yyyyMMdd");
@@ -74,7 +73,6 @@ namespace Installer.Classes
                             appKey.SetValue("InstallLocation", installLocation);
                             appKey.SetValue("UninstallString", uninstallString);
                             appKey.SetValue("InstallDate", installDate);
-                            appKey.SetValue("ModifyPath", modifyPath);
                             appKey.SetValue("RepairPath", repairPath);
                             appKey.SetValue("DisplayIcon", iconPath);
                         }
@@ -91,7 +89,11 @@ namespace Installer.Classes
             {
                 if (key != null)
                 {
-                    key.DeleteSubKeyTree(appName);
+                    try
+                    {
+                        key.DeleteSubKeyTree(appName);
+                    }
+                    catch (ArgumentException) { }
                 }
             }
         }

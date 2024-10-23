@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -15,9 +17,9 @@ namespace Installer
     {
         private void Application_Startup(Object sender, StartupEventArgs e)
         {
-                // Create and show the main window
-                MainWindow mainWindow = new MainWindow(e.Args);
-                mainWindow.Show();
+            // Create and show the main window
+            MainWindow mainWindow = new MainWindow(e.Args);
+            mainWindow.Show();
         }
     }
 }

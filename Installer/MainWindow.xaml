@@ -61,7 +61,7 @@
             </Grid>
         </Grid>
         
-        <Grid x:Name="ProgressGrid" Margin="5, 350, 5, 50">
+        <Grid x:Name="ProgressGrid" Margin="5, 350, 5, 50" Visibility="Hidden">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
@@ -70,8 +70,8 @@
                     <RowDefinition></RowDefinition>
                     <RowDefinition></RowDefinition>
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,10,0,0">
-                    <Run Foreground="White" Name="ProgressText">Waiting for User</Run>
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,10,0,0" Foreground="White" x:Name="ProgressText">
+                   Waiting for User
                 </TextBlock>
                 <ProgressBar x:Name="ProgressBar" Grid.Row="1" Height="35" Value="0">
                     <ProgressBar.Style>
@@ -116,7 +116,7 @@
 
         <Grid x:Name="ModsGrid">
         </Grid>
-        <Button x:Name="InstallBtn" Content="Install" Margin="400,430,5,5" IsEnabled="False" />
+        <Button x:Name="InstallBtn" Content="Install" Margin="400,430,5,5" IsEnabled="False" Click="InstallBtn_Click" />
         <Button x:Name="CancelBtn" Content="Cancel" Margin="300,430,105,5" IsEnabled="True" Click="CancelBtn_Click" />
         <CheckBox x:Name="TermsChkBx" Margin="10,440,250,12" Click="TermsChkBx_Click">
             <TextBlock x:Name="TermsLbl">

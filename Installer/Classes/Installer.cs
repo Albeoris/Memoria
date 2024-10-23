@@ -13,16 +13,17 @@ using System.Windows;
 using System.Xml.Linq;
 using System.Windows.Controls;
 using static System.Net.WebRequestMethods;
+using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace Installer.Classes
 {
     public class Installer
     {
-        public static async Task<bool> DownloadLatestReleaseAsync(string downloadPath, IProgress<double> progress, TextBlock progressText)
+        private static async Task<bool> DownloadLatestReleaseAsync(string downloadPath, IProgress<double> progress, TextBlock progressText)
         {
             try
             {
-
                 progressText.Text = "Downloading Latest Memoria";
                 using (HttpClient client = new HttpClient())
                 {
@@ -77,7 +78,7 @@ namespace Installer.Classes
             }
         }
 
-        private static void ExtractEmbeddedResource(string gameDirectory, IProgress<double> progress, TextBlock progressText)
+        private async static Task<bool> ExtractEmbeddedResource(string gameDirectory, IProgress<double> progress, TextBlock progressText)
         {
             string resourceName = "Installer.Memoria.Patcher.exe";
             Assembly assembly = Assembly.GetExecutingAssembly();
@@ -104,20 +105,42 @@ namespace Installer.Classes
                 }
                 progressText.Text = "Memoria Extracted";
             }
+            return true;
         }
 
-        private static void RunPatcher(string gameDirectory, ProgressBar downloadProgressBar, TextBlock progressText)
+        private static void parseTitle(string title, ProgressBar progressBar, TextBlock progressText)
+        {
+            string pattern = @"Patching... (?<percent>\d+\.\d+)%  Elapsed: (?<elapsed>\d+:\d+)  (?<processed>\d+ \w+) / (?<total>\d+ \w+)  Remaining: (?<remaining>\d+:\d+)";
+            Match match = Regex.Match(title, pattern);
+
+            if (match.Success)
+            {
+                // Extract and parse the values
+                double CurrentPercent = double.Parse(match.Groups["percent"].Value);
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    progressBar.Value = CurrentPercent;
+                });
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    progressText.Text = "Installing Memoria";
+                });
+            }
+        }
+
+        public static void RunPatcher(string gameDirectory, ProgressBar downloadProgressBar, TextBlock progressText)
         {
             // run the patcher
             progressText.Text = "Patching FFIX Game Files";
-            downloadProgressBar.Value = 100;
+            downloadProgressBar.Value = 0;
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
-                FileName = gameDirectory + "Memoria.Patcher.exe",
-                Arguments = "-installer",
-                UseShellExecute = true,
+                FileName = gameDirectory + @"\Memoria.Patcher.exe",
+                WorkingDirectory = gameDirectory,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
+                RedirectStandardInput = true,
+                UseShellExecute = false,
                 CreateNoWindow = true
             };
 
@@ -132,37 +155,37 @@ namespace Installer.Classes
                     Console.WriteLine(e.Data);
                 };
                 process.Start();
-                process.WaitForExit();
+                process.StandardInput.WriteLine("");
+                // Periodically check the console window title
+                while (!process.HasExited)
+                {
+                    parseTitle(process.MainWindowTitle, downloadProgressBar, progressText);
+                    Thread.Sleep(200);
+                }
             }
             progressText.Text = "Game Has been patched";
         }
 
-        private static void CopySetup(string gameDirectory, TextBlock progressText)
+        public async static Task<bool> CopySetup(string gameDirectory, TextBlock progressText)
         {
             // copy setup file to directory
             string sourcePath = Assembly.GetExecutingAssembly().Location;
             string destinationPath = gameDirectory + "/setup.exe";
 
-            File.Copy(sourcePath, destinationPath, true);
+            System.IO.File.Copy(sourcePath, destinationPath, true);
             progressText.Text = "Install Complete";
+            return true;
         }
 
-        // don't actually call this method it's here to keep track of what needs to be called as part of the installer
-        private static async void Run(string gameDirectory, ProgressBar downloadProgressBar, TextBlock progressText)
+        public async static Task<bool> DownloadOrUsePatcher(string gameDirectory, ProgressBar downloadProgressBar, TextBlock progressText)
         {
-
-            // Attempting download of patcher
             var progress = new Progress<double>(value => downloadProgressBar.Value = value);
-            bool success = await DownloadLatestReleaseAsync(gameDirectory + "Memoria.Patcher.exe", progress, progressText);
+            bool success = await DownloadLatestReleaseAsync(gameDirectory + @"\Memoria.Patcher.exe", progress, progressText);
             if (!success)
             {
-                ExtractEmbeddedResource(gameDirectory, progress, progressText);
+                await ExtractEmbeddedResource(gameDirectory, progress, progressText);
             }
-
-            RunPatcher(gameDirectory, downloadProgressBar, progressText);
-            CopySetup(gameDirectory, progressText);
-
-            RegistryValues.Instance.AddToUninstallList(gameDirectory);
+            return true;
         }
     }
 }

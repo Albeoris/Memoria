@@ -23,20 +23,142 @@ namespace Installer
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static bool IsInstall{
+            get; private set;
+        } = false;
+
+        public static bool IsRepair
+        {
+            get; private set;
+        } = false;
+
+        public static bool IsModify
+        {
+            get; private set;
+        } = false;
+        public static bool IsUninstall
+        {
+            get; private set;
+        } = false;
+        public static bool IsFinished
+        {
+            get; private set;
+        } = false;
+
         private string[] startupArgs;
         public MainWindow(string[] args)
         {
             startupArgs = args;
             InitializeComponent();
+
             if(RegistryValues.Instance.GetGameInstallPath != null)
             {
                 GamePathText.Text = RegistryValues.Instance.GetGameInstallPath;
+            }
+
+            if(args.Length >= 1) {
+                switch (args[0])
+                {
+                    case "repair":
+                    {
+                        IsRepair = true;
+                        InstallBtn.Content = "Repair";
+                        InstallBtn.IsEnabled = true;
+                        TermsChkBx.Visibility = Visibility.Hidden;
+                        GamePathBrowseBtn.IsEnabled = false;
+                        break;
+                    }
+                    case "uninstall":
+                    { 
+                        IsUninstall = true;
+                        InstallBtn.Content = "Remove";
+                        InstallBtn.IsEnabled = true;
+                        TermsChkBx.Visibility = Visibility.Hidden;
+                        GamePathBrowseBtn.IsEnabled = false;
+                        break; 
+                    }
+                    default:
+                    case "install":
+                    {
+                        IsInstall = true;
+                        InstallBtn.Content = "Install";
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                IsInstall = true;
+            }
+        }
+
+        private void Finished()
+        {
+            IsFinished = true;
+            ProgressBar.Value = 100;
+            InstallBtn.Content = "Exit Setup.";
+        }
+
+        private async void Install()
+        {
+            ProgressGrid.Visibility = Visibility.Visible;
+            CancelBtn.Visibility = Visibility.Hidden;
+            InstallBtn.Content = "Please Wait.";
+            GamePathBrowseBtn.IsEnabled = false;
+            GamePathText.IsEnabled = false;
+
+            await Classes.Installer.DownloadOrUsePatcher(GamePathText.Text, ProgressBar, ProgressText);
+            Classes.Installer.RunPatcher(GamePathText.Text, ProgressBar, ProgressText);
+            await Classes.Installer.CopySetup(GamePathText.Text, ProgressText);
+            RegistryValues.Instance.AddToUninstallList(GamePathText.Text);
+
+            ProgressText.Text = "Memoria Installed Successfully.";
+            Finished();
+        }
+
+        private async void Repare()
+        {
+            ProgressGrid.Visibility = Visibility.Visible;
+            CancelBtn.Visibility = Visibility.Hidden;
+            InstallBtn.Content = "Please Wait.";
+            GamePathBrowseBtn.IsEnabled = false;
+            GamePathText.IsEnabled = false;
+
+            await Classes.Installer.DownloadOrUsePatcher(GamePathText.Text, ProgressBar, ProgressText);
+            Classes.Installer.RunPatcher(GamePathText.Text, ProgressBar, ProgressText);
+            await Classes.Installer.CopySetup(GamePathText.Text, ProgressText);
+            RegistryValues.Instance.AddToUninstallList(GamePathText.Text);
+
+            ProgressText.Text = "Memoria Reinstalled.";
+            Finished();
+        }
+
+        private void Uninstall()
+        {
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to Unistall Memoria?", "Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                ProgressGrid.Visibility = Visibility.Visible;
+                CancelBtn.Visibility = Visibility.Hidden;
+                InstallBtn.Content = "Please Wait.";
+
+                ProgressText.Text = "Please Wait steam is cleaning your game.";
+                Classes.Uninstaller.CleanGameFiles(GamePathText.Text);
+                RegistryValues.Instance.RemoveFromUninstallList();
+                ProgressText.Text = "Memoria Removed Successfully.";
+                MessageBox.Show("Memoria has been removed please use steam to validate your game files to restore you game to default.", "Game Validation Needed", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+                Finished();
+            }
+            else
+            {
+                Environment.Exit(0);
             }
         }
 
         private void checkExit()
         {
-            MessageBoxResult result = MessageBox.Show("Are you sure you want to exit the installer?", "Exit Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            MessageBoxResult result = MessageBox.Show("Are you sure you want to exit the Memoria installer?", "Exit Confirmation", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)
             {
@@ -60,16 +182,19 @@ namespace Installer
 
         private void browseForFile()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog
+            if (GamePathBrowseBtn.IsEnabled)
             {
-                InitialDirectory = RegistryValues.Instance.GetGameInstallPath,
-                Filter = "Final Fantasy IX Launcher|FF9_Launcher.exe",
-                Title = "Select FF9_Launcher.exe"
-            };
+                OpenFileDialog openFileDialog = new OpenFileDialog
+                {
+                    InitialDirectory = RegistryValues.Instance.GetGameInstallPath,
+                    Filter = "Final Fantasy IX Launcher|FF9_Launcher.exe",
+                    Title = "Select FF9_Launcher.exe"
+                };
 
-            if (openFileDialog.ShowDialog() == true)
-            {
-                GamePathText.Text = (new FileInfo(openFileDialog.FileName)).Directory.FullName;
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    GamePathText.Text = (new FileInfo(openFileDialog.FileName)).Directory.FullName;
+                }
             }
         }
 
@@ -132,6 +257,28 @@ namespace Installer
         private void CancelBtn_Click(Object sender, RoutedEventArgs e)
         {
             checkExit();
+        }
+
+        private void InstallBtn_Click(Object sender, RoutedEventArgs e)
+        {
+            if (IsFinished)
+            {
+                Environment.Exit(0);
+            }
+
+            if (IsRepair)
+            {
+                Repare();
+            }
+
+            if(IsInstall)
+            {
+                Install();
+            }
+
+            if (IsUninstall) { 
+                Uninstall(); 
+            }
         }
     }
 }

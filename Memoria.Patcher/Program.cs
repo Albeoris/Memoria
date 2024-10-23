@@ -17,10 +17,6 @@ namespace Memoria.Patcher
         static bool isInstaller = false;
         static void Main(String[] args)
         {
-            if(args.Length > 1 && args[0] == "-installer")
-            {
-                isInstaller = true;
-            }
             try
             {
                 if (args.Length > 1 && args[0] == "-update")

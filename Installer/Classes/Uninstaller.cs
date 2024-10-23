@@ -2,7 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +13,7 @@ namespace Installer.Classes
 {
     internal class Uninstaller
     {
+        private static bool isX64 = false;
         private static string GetSteamPath()
         {
             string steamPath = null;
@@ -19,6 +23,7 @@ namespace Installer.Classes
             {
                 if (key != null)
                 {
+                    isX64 = true;
                     steamPath = key.GetValue("InstallPath") as string;
                 }
             }
@@ -38,33 +43,15 @@ namespace Installer.Classes
             return steamPath;
         }
 
-        private static void CleanGameFiles()
+        public static async void CleanGameFiles(String gamePath)
         {
-            string steamPath = GetSteamPath();
-            string arguments = "-validate 377840";
-
-            ProcessStartInfo startInfo = new ProcessStartInfo
+            if (File.Exists(gamePath + @"\FF9_Launcher.bak"))
             {
-                FileName = steamPath,
-                Arguments = arguments,
-                UseShellExecute = true,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                CreateNoWindow = true
-            };
-
-            using (Process process = new Process { StartInfo = startInfo })
-            {
-                process.Start();
-                process.WaitForExit();
+                File.Delete(gamePath + @"\FF9_Launcher.exe");
+                File.Move(gamePath + @"\FF9_Launcher.bak", gamePath + @"\FF9_Launcher.exe");
             }
         }
 
-        // don't actually run it's just here so i can keep track of what needs to run in this senario
-        private static void Run()
-        {
-            CleanGameFiles();
-            RegistryValues.Instance.RemoveFromUninstallList();
-        }
+
     }
 }
