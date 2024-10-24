@@ -13,7 +13,13 @@
     WindowStyle="None"
     AllowsTransparency="True"
     Background="Transparent"
-    DataContext="{Binding RelativeSource={RelativeSource Self}}">
+    DataContext="{Binding RelativeSource={RelativeSource Self}}"
+    AllowDrop="True"
+    DragEnter="MainWindow_DragEnter"
+    DragOver="MainWindow_DragOver"
+    DragLeave="MainWindow_DragLeave"
+    Drop="MainWindow_Drop"
+    >
 
     <Grid x:Name="MainWindowGrid">
         <!-- Background Image -->
@@ -916,5 +922,16 @@
             Margin="22,0,0,2"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom" />
+        <Border x:Name="dropBackground" Background="#d000" Visibility="Hidden">
+            <Label
+                x:Name="dropLabel"
+                Content="Install mod(s)"
+                Foreground="{StaticResource WhiteUI}"
+                FontSize="16"
+                FontWeight="Normal"
+                FontFamily="{DynamicResource CenturyGothic}"
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"/>
+        </Border>
     </Grid>
 </Window>

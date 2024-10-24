@@ -1,7 +1,9 @@
-﻿using System;
+﻿using SharpCompress.Archives;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -136,6 +138,131 @@ namespace Memoria.Launcher
             catch (Exception ex)
             {
                 ShowTemporaryMessage((String)Lang.Res["Launcher.CopyLogButton_Error"] + ex.Message, false);
+            }
+        }
+
+        private void MainWindow_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            try
+            {
+                if (!e.Data.GetDataPresent(DataFormats.FileDrop, true))
+                    return;
+
+                string[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+                foreach (string filename in filenames)
+                {
+                    if (!supportedArchives.Contains(Path.GetExtension(filename).ToLowerInvariant()))
+                        continue;
+
+                    IArchive archive = ArchiveFactory.Open(filename);
+                    foreach (var entry in archive.Entries)
+                    {
+                        if (entry.Key != null && entry.Key.Contains(Mod.DESCRIPTION_FILE))
+                        {
+                            // TODO translate:
+                            dropLabel.Content = Lang.Res["Launcher.InstallMod"];
+                            dropBackground.Visibility = Visibility.Visible;
+                            return;
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+        private void MainWindow_DragOver(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            if (dropBackground.Visibility != Visibility.Visible)
+                e.Effects = DragDropEffects.None;
+            else
+                e.Effects = DragDropEffects.Copy;
+        }
+        private void MainWindow_DragLeave(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            dropBackground.Visibility = Visibility.Hidden;
+        }
+
+        private async void MainWindow_Drop(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            try
+            {
+                if (!e.Data.GetDataPresent(DataFormats.FileDrop, true))
+                    return;
+
+                Activate();
+
+                String[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as String[];
+                foreach (string filename in filenames)
+                {
+                    if (!supportedArchives.Contains(Path.GetExtension(filename).ToLowerInvariant()))
+                        continue;
+                    // Find if it is a mod
+                    IArchive archive = ArchiveFactory.Open(filename);
+                    String root = null;
+                    foreach (var entry in archive.Entries)
+                    {
+                        if (entry.Key != null && entry.Key.Contains(Mod.DESCRIPTION_FILE))
+                        {
+                            String dir = Path.GetDirectoryName(entry.Key);
+                            if (dir.Length == 0 || Path.GetDirectoryName(dir).Length == 0)
+                            {
+                                root = dir;
+                                break;
+                            }
+                        }
+                    }
+                    if (root == null) continue;
+
+                    // Extract the archive
+                    // TODO language:
+                    dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}'";
+                    String path = Mod.INSTALLATION_TMP + "/" + Path.GetFileNameWithoutExtension(filename);
+                    Directory.CreateDirectory(path);
+                    await ExtractAllFileFromArchive(filename, path);
+
+                    // Move it to the right installation path
+                    String modPath = Path.Combine(path, root);
+                    Mod modInfo = new Mod(modPath);
+                    // TODO language:
+                    dropLabel.Content = $"Installing '{Path.GetFileNameWithoutExtension(modInfo.Name)}'";
+                    if (Directory.Exists(modInfo.InstallationPath))
+                    {
+                        // TODO language:
+                        if (MessageBox.Show($"The mod folder '{modInfo.InstallationPath}' already exits.\nWould you like to overwrite it?", "Overwrite mod?", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                            Directory.Delete(modInfo.InstallationPath, true);
+                        else
+                            continue;
+                    }
+                    Directory.Move(modPath, modInfo.InstallationPath);
+
+                    // Refresh mods list and activate the mod
+                    UpdateModListInstalled();
+                    UpdateCatalogInstallationState();
+                    Mod newMod = Mod.SearchWithName(modListInstalled, modInfo.Name);
+                    if (newMod != null)
+                    {
+                        newMod.IsActive = true;
+                        newMod.TryApplyPreset();
+                    }
+                    CheckOutdatedAndIncompatibleMods();
+                    UpdateModSettings();
+                    // TODO language:
+                    MessageBox.Show($"The mod '{modInfo.Name}' has been successfully installed and activated", "Mod installed", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception err)
+            {
+                // TODO language:
+                MessageBox.Show($"Failed to automatically install the mod {err.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                dropBackground.Visibility = Visibility.Hidden;
+                if (Directory.Exists(Mod.INSTALLATION_TMP))
+                    Directory.Delete(Mod.INSTALLATION_TMP, true);
             }
         }
 

@@ -17,6 +17,7 @@
     <system:String x:Key="Launcher.PresetName">Name</system:String>
     <system:String x:Key="Launcher.PresetDescription">Description (optional)</system:String>
     <system:String x:Key="Launcher.IncludeMods">Include mods</system:String>
+    <system:String x:Key="Launcher.InstallMod">Install mod(s)</system:String>
     <system:String x:Key="Launcher.OK">OK</system:String>
     <system:String x:Key="Launcher.Cancel">Cancel</system:String>
 
