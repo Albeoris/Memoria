@@ -246,6 +246,7 @@ You should set the priority of this mod to be higher than the priority of the Mo
 		<Description>When enabled, Garnet's battle model will wear the traditional White Mage robe.</Description>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>Support Ability Cost</Name>
 	<Version>4.0.1</Version>
@@ -281,6 +282,7 @@ Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 		<Priority>3</Priority>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>Exp, AP, Gil, Rewards Tweaks</Name>
 	<Version>4.0.1</Version>
@@ -430,8 +432,8 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 		<Description>8 Times EXP requirement so you almost dont level up</Description>
 		<Priority>1</Priority>
 	</SubMod>
-
 </Mod>
+
 <Mod>
 	<Name>Kupo Heroes Pack </Name>
 	<Version>4.0.1</Version>
@@ -567,6 +569,7 @@ Part of the Characters Enhancements feature of Kupo Mods Formerly Mog Add-ons</D
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>Tantalus</Name>
 	<Version>3.2</Version>
@@ -604,6 +607,62 @@ Includes:
 		<Priority>2</Priority>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
 		<DeactivateWithoutMod>Alternate Fantasy</DeactivateWithoutMod>
+	</SubMod>
+</Mod>
+
+<Mod>
+	<Name>Perfect Stats</Name>
+	<Version>1.0</Version>
+	<Author>Emeiru</Author>
+	<InstallationPath>PerfectStats</InstallationPath>
+	<ReleaseDateOriginal>2024-10-25</ReleaseDateOriginal>
+	<ReleaseDate>2024-10-25</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
+	<Description>[!] A new save game is recommended [!]
+Removes the equipment stat-boosting mechanic and replaces it with a fixed additional per level stat-gain. Players will no longer need to mind their equipment and wear stat-boosting gear on level-up. Party members will always achieve a fixed maximum stat just by leveling. Note that this will naturally decrease the difficulty of the game due to stats having linear progression now. A new save game is required to apply these changes, but if you installed this mod mid-game, you can also visit Chocobo's Forest to inject the mod's changes, level up, and see the new stats.
+
+Choose ONLY one of the three stats settings:
+
+Perfect Stats
+- Partially based on KADFC Max Stats Guide, this setting will allow the party to achieve near-perfect stats as if they pursued a level 1 max stats run. Significantly decreases game difficulty due to overall higher stats.
+
+Perfect Rebalanced
+- Max stats configuration by Emeiru, aims to buff party members with low combined stats and make it rebalanced across the board. 
+
+No Bonus Stat Growth
+- Completely removes the bonus stat growth formula. Optional choice to remove stat management altogether, making the game harder.
+
+Optional: Fixed Magic Stones
+- Reworks the magic stone growth formula to ensure every party member will get their max number of magic stones.</Description>
+	<PatchNotes>Complete changes and info can be found on this mod's page.</PatchNotes>
+	<Category>Gameplay</Category>
+	<PreviewFile>Preview.jpg</PreviewFile>
+	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/Preview.jpg</PreviewFileUrl>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/77</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/xlb9saal8iycbpfbicwbz/PerfectStats.zip?rlkey=mx7jvttuuntzx3d7ud8nnmw2c&amp;st=4hnksd03&amp;dl=1</DownloadUrl>
+	<SubMod>
+		<Name>Perfect Stats</Name>
+		<InstallationPath>PerfectStats</InstallationPath>
+		<Description>Based on KADFC Max Stats</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Perfect Rebalanced</Name>
+		<InstallationPath>PerfectRebalanced</InstallationPath>
+		<Description>Author configured stats, rebalanced stats across the board</Description>
+		<Priority>2</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>No Bonus Stat Growth</Name>
+		<InstallationPath>NoBonus</InstallationPath>
+		<Description>Removes stat bonuses altogether</Description>
+		<Priority>3</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Fixed Magic Stones</Name>
+		<InstallationPath>PerfectStones</InstallationPath>
+		<Description>Fixed magic stone growth formula</Description>
+		<Priority>4</Priority>
 	</SubMod>
 </Mod>
 
