@@ -152,19 +152,39 @@ namespace Memoria.Launcher
                 string[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
                 foreach (string filename in filenames)
                 {
-                    if (!supportedArchives.Contains(Path.GetExtension(filename).ToLowerInvariant()))
+                    String ext = Path.GetExtension(filename).ToLowerInvariant();
+
+                    // Check if it's a Preset
+                    if (ext == ".ini")
+                    {
+                        foreach (String line in File.ReadLines(filename))
+                        {
+                            if (!line.StartsWith("[Preset]"))
+                                continue;
+                            // TODO language:
+                            dropLabel.Content = "Install Preset";
+                            dropBackground.Visibility = Visibility.Visible;
+                            Activate();
+                            break;
+                        }
+                        continue;
+                    }
+
+                    // Check if it's a Mod
+                    if (!supportedArchives.Contains(ext))
                         continue;
 
                     IArchive archive = ArchiveFactory.Open(filename);
                     foreach (var entry in archive.Entries)
                     {
-                        if (entry.Key != null && entry.Key.Contains(Mod.DESCRIPTION_FILE))
-                        {
-                            // TODO translate:
-                            dropLabel.Content = Lang.Res["Launcher.InstallMod"];
-                            dropBackground.Visibility = Visibility.Visible;
-                            return;
-                        }
+                        if (entry.Key == null || !entry.Key.Contains(Mod.DESCRIPTION_FILE))
+                            continue;
+
+                        // TODO translate:
+                        dropLabel.Content = Lang.Res["Launcher.InstallMod"];
+                        dropBackground.Visibility = Visibility.Visible;
+                        Activate();
+                        return;
                     }
                 }
             }
@@ -197,21 +217,73 @@ namespace Memoria.Launcher
                 String[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as String[];
                 foreach (string filename in filenames)
                 {
-                    if (!supportedArchives.Contains(Path.GetExtension(filename).ToLowerInvariant()))
+                    String ext = Path.GetExtension(filename).ToLowerInvariant();
+
+                    // Check if it's a Preset
+                    if (ext == ".ini")
+                    {
+                        foreach (String line in File.ReadLines(filename))
+                        {
+                            if (!line.StartsWith("[Preset]"))
+                                continue;
+
+                            // Install the preset
+                            IniFile preset = new IniFile(filename);
+                            String dst = Path.Combine("Presets", Path.GetFileName(filename));
+                            if (File.Exists(dst))
+                            {
+                                // TODO language:
+                                if (MessageBox.Show($"The preset '{Path.GetFileNameWithoutExtension(filename)}' already exits.\nWould you like to overwrite it?", "Overwrite preset?", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                                    continue;
+                                File.Delete(dst);
+                            }
+                            if (!Directory.Exists("Presets"))
+                                Directory.CreateDirectory("Presets");
+                            File.Copy(filename, dst);
+                            SettingsGrid_Presets.RefreshPresets();
+
+                            String presetName = preset.GetSetting("Preset", "Name", Path.GetFileNameWithoutExtension(filename));
+                            foreach (SettingsGrid_Presets.Preset item in SettingsGrid_Presets.Presets)
+                            {
+                                if (item.Name != presetName)
+                                    continue;
+
+                                SettingsGrid_Presets.PresetsComboBox.SelectedItem = item;
+                                break;
+                            }
+
+                            // Apply the preset
+                            // TODO language:
+                            if (MessageBox.Show($"Would you like to apply the preset '{presetName}' now?", "Apply preset?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                                continue;
+
+                            preset.WriteAllSettings(IniFile.MemoriaIniPath, ["Preset"]);
+                            IniFile.MemoriaIni.Reload();
+
+                            MainWindow mainWindow = (MainWindow)this.GetRootElement();
+                            mainWindow.LoadSettings();
+                            mainWindow.LoadModSettings();
+                            mainWindow.UpdateLauncherTheme();
+                            break;
+                        }
+                        continue;
+                    }
+
+                    if (!supportedArchives.Contains(ext))
                         continue;
                     // Find if it is a mod
                     IArchive archive = ArchiveFactory.Open(filename);
                     String root = null;
                     foreach (var entry in archive.Entries)
                     {
-                        if (entry.Key != null && entry.Key.Contains(Mod.DESCRIPTION_FILE))
+                        if (entry.Key == null || !entry.Key.Contains(Mod.DESCRIPTION_FILE))
+                            continue;
+
+                        String dir = Path.GetDirectoryName(entry.Key);
+                        if (dir.Length == 0 || Path.GetDirectoryName(dir).Length == 0)
                         {
-                            String dir = Path.GetDirectoryName(entry.Key);
-                            if (dir.Length == 0 || Path.GetDirectoryName(dir).Length == 0)
-                            {
-                                root = dir;
-                                break;
-                            }
+                            root = dir;
+                            break;
                         }
                     }
                     if (root == null) continue;
