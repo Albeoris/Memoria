@@ -18,7 +18,7 @@ namespace Memoria.Assets
                 String importDirectory = ImportDirectory;
                 if (!Directory.Exists(importDirectory))
                 {
-                    Log.Warning($"[{TypeName}] Import was skipped bacause a directory does not exist: [{importDirectory}].");
+                    Log.Warning($"[{TypeName}] Import was skipped because a directory does not exist: [{importDirectory}].");
                     return false;
                 }
 
