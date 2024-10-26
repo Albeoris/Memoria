@@ -21,31 +21,32 @@ namespace Memoria.Launcher
     public sealed class UiLauncherPlayButton : UiLauncherButton
     {
         public SettingsGrid_Vanilla GameSettings { get; set; }
+        public SettingsGrid_VanillaDisplay GameSettingsDisplay { get; set; }
         private ManualResetEvent CancelEvent { get; } = new ManualResetEvent(false);
 
         public UiLauncherPlayButton()
         {
-            Label = Lang.Launcher.Launch;
+            SetResourceReference(LabelProperty, "Launcher.Launch");
         }
 
         protected override async Task DoAction()
         {
-            Label = Lang.Launcher.Launching;
+            SetResourceReference(LabelProperty, "Launcher.Launching");
             try
             {
                 try
                 {
-                    String iniPath = AppDomain.CurrentDomain.BaseDirectory + @"Memoria.ini";
-                    IniFile iniFile = new(iniPath);
+                    IniFile iniFile = IniFile.MemoriaIni;
                     if (LaunchModelViewer)
                     {
-                        iniFile.WriteValue("Debug", "Enabled ", " 1");
-                        iniFile.WriteValue("Debug", "StartModelViewer ", " 1");
+                        iniFile.SetSetting("Debug", "Enabled", "1");
+                        iniFile.SetSetting("Debug", "StartModelViewer", "1");
                     }
                     else
                     {
-                        iniFile.WriteValue("Debug", "StartModelViewer ", " 0");
+                        iniFile.SetSetting("Debug", "StartModelViewer", "0");
                     }
+                    iniFile.Save();
                 }
                 catch (Exception) { }
 
@@ -55,19 +56,19 @@ namespace Memoria.Launcher
                         return;
                 }
 
-                if (GameSettings.ScreenResolution == null)
+                if (GameSettingsDisplay.ScreenResolution == null)
                 {
                     MessageBox.Show((Window)this.GetRootElement(), "Please select an available resolution.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                     return;
                 }
 
                 Int32 activeMonitor = -1;
-                if (!String.IsNullOrEmpty(GameSettings.ActiveMonitor))
+                if (!String.IsNullOrEmpty(GameSettingsDisplay.ActiveMonitor))
                 {
-                    Int32 spaceIndex = GameSettings.ActiveMonitor.IndexOf(' ');
+                    Int32 spaceIndex = GameSettingsDisplay.ActiveMonitor.IndexOf(' ');
                     if (spaceIndex > 0)
                     {
-                        String activeMonitorNumber = GameSettings.ActiveMonitor.Substring(0, spaceIndex);
+                        String activeMonitorNumber = GameSettingsDisplay.ActiveMonitor.Substring(0, spaceIndex);
                         Int32.TryParse(activeMonitorNumber, NumberStyles.Integer, CultureInfo.InvariantCulture, out activeMonitor);
                     }
                 }
@@ -78,7 +79,7 @@ namespace Memoria.Launcher
                     return;
                 }
 
-                String[] strArray = GameSettings.ScreenResolution.Split(' ')[0].Split('x');
+                String[] strArray = GameSettingsDisplay.ScreenResolution.Split(' ')[0].Split('x');
                 Int32 screenWidth;
                 Int32 screenHeight;
                 if (strArray.Length < 2 || !Int32.TryParse(strArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenWidth) || !Int32.TryParse(strArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenHeight))
@@ -134,7 +135,7 @@ namespace Memoria.Launcher
                     }
                 }
 
-                String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {((GameSettings.WindowMode == 0 ^ GameSettings.WindowMode == 2) ? "0" : "1")} {(GameSettings.WindowMode == 2 ? "-popupwindow" : "")}";
+                String arguments = $"-runbylauncher -single-instance -monitor {activeMonitor.ToString(CultureInfo.InvariantCulture)} -screen-width {screenWidth.ToString(CultureInfo.InvariantCulture)} -screen-height {screenHeight.ToString(CultureInfo.InvariantCulture)} -screen-fullscreen {((GameSettingsDisplay.WindowMode == 0 ^ GameSettingsDisplay.WindowMode == 2) ? "0" : "1")} {(GameSettingsDisplay.WindowMode == 2 ? "-popupwindow" : "")}";
                 await Task.Factory.StartNew(
                     () =>
                     {
@@ -174,7 +175,7 @@ namespace Memoria.Launcher
             }
             finally
             {
-                Label = Lang.Launcher.Launch;
+                SetResourceReference(LabelProperty, "Launcher.Launch");
             }
         }
 
@@ -187,7 +188,7 @@ namespace Memoria.Launcher
                 return false;
 
             StringBuilder messageSb = new StringBuilder(256);
-            messageSb.AppendLine(Lang.Launcher.NewVersionIsAvailable);
+            messageSb.AppendLine((String)Lang.Res["Launcher.NewVersionIsAvailable"]);
             Int64 size = 0;
             foreach (HttpFileInfo info in updateInfo)
             {
@@ -195,12 +196,12 @@ namespace Memoria.Launcher
                 messageSb.AppendLine($"{info.TargetName} - {info.LastModified} ({UiProgressWindow.FormatValue(info.ContentLength)})");
             }
 
-            if (MessageBox.Show(rootElement, messageSb.ToString(), Lang.Launcher.QuestionTitle, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            if (MessageBox.Show(rootElement, messageSb.ToString(), (String)Lang.Res["Launcher.QuestionTitle"], MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 List<String> success = new List<String>(updateInfo.Count);
                 List<String> failed = new List<String>();
 
-                using (UiProgressWindow progress = new UiProgressWindow("Downloading..."))
+                using (UiProgressWindow progress = new UiProgressWindow("Downloading...")) // TODO language?
                 {
                     progress.SetTotal(size);
                     progress.Show();
@@ -232,7 +233,7 @@ namespace Memoria.Launcher
                 {
                     MessageBox.Show(rootElement,
                         "Failed to download:" + Environment.NewLine + String.Join(Environment.NewLine, failed),
-                        Lang.Launcher.ErrorTitle,
+                        (String)Lang.Res["Launcher.ErrorTitle"],
                         MessageBoxButton.OK,
                         MessageBoxImage.Error);
                 }
@@ -241,7 +242,7 @@ namespace Memoria.Launcher
                 {
                     runPatcher = MessageBox.Show(rootElement,
                         "Download successful!\nRun the patcher?",
-                        Lang.Launcher.QuestionTitle,
+                        (String)Lang.Res["Launcher.QuestionTitle"],
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Question) == MessageBoxResult.Yes;
                 }
@@ -446,7 +447,7 @@ namespace Memoria.Launcher
                 root.AddUiElement(_progressTextBlock, 1, 0);
             }
 
-            _elapsedTextBlock = UiTextBlockFactory.Create(Lang.Measurement.Elapsed + ": 00:00");
+            _elapsedTextBlock = UiTextBlockFactory.Create((String)Lang.Res["Measurement.Elapsed"] + ": 00:00");
             {
                 _elapsedTextBlock.HorizontalAlignment = HorizontalAlignment.Left;
                 root.AddUiElement(_elapsedTextBlock, 2, 0);
@@ -458,7 +459,7 @@ namespace Memoria.Launcher
                 root.AddUiElement(_processedTextBlock, 2, 0);
             }
 
-            _remainingTextBlock = UiTextBlockFactory.Create(Lang.Measurement.Remaining + ": 00:00");
+            _remainingTextBlock = UiTextBlockFactory.Create((String)Lang.Res["Measurement.Remaining"] + ": 00:00");
             {
                 _remainingTextBlock.HorizontalAlignment = HorizontalAlignment.Right;
                 root.AddUiElement(_remainingTextBlock, 2, 0);
@@ -535,9 +536,9 @@ namespace Memoria.Launcher
             TimeSpan left = TimeSpan.FromSeconds((_totalCount - _processedCount) / speed);
 
             _progressTextBlock.Text = $"{percents:F2}%";
-            _elapsedTextBlock.Text = String.Format("{1}: {0:mm\\:ss}", elapsed, Lang.Measurement.Elapsed);
+            _elapsedTextBlock.Text = String.Format("{1}: {0:mm\\:ss}", elapsed, (String)Lang.Res["Measurement.Elapsed"]);
             _processedTextBlock.Text = $"{FormatValue(_processedCount)} / {FormatValue(_totalCount)}";
-            _remainingTextBlock.Text = String.Format("{1}: {0:mm\\:ss}", left, Lang.Measurement.Remaining);
+            _remainingTextBlock.Text = String.Format("{1}: {0:mm\\:ss}", left, (String)Lang.Res["Measurement.Remaining"]);
 
             _timer.Elapsed += OnTimer;
         }
@@ -555,19 +556,19 @@ namespace Memoria.Launcher
             switch (i)
             {
                 case 0:
-                    return String.Format("{0:F2} " + Lang.Measurement.ByteAbbr, dec);
+                    return String.Format("{0:F2} " + (String)Lang.Res["Measurement.ByteAbbr"], dec);
                 case 1:
-                    return String.Format("{0:F2} " + Lang.Measurement.KByteAbbr, dec);
+                    return String.Format("{0:F2} " + (String)Lang.Res["Measurement.KByteAbbr"], dec);
                 case 2:
-                    return String.Format("{0:F2} " + Lang.Measurement.MByteAbbr, dec);
+                    return String.Format("{0:F2} " + (String)Lang.Res["Measurement.MByteAbbr"], dec);
                 case 3:
-                    return String.Format("{0:F2} " + Lang.Measurement.GByteAbbr, dec);
+                    return String.Format("{0:F2} " + (String)Lang.Res["Measurement.GByteAbbr"], dec);
                 case 4:
-                    return String.Format("{0:F2} " + Lang.Measurement.TByteAbbr, dec);
+                    return String.Format("{0:F2} " + (String)Lang.Res["Measurement.TByteAbbr"], dec);
                 case 5:
-                    return String.Format("{0:F2} " + Lang.Measurement.PByteAbbr, dec);
+                    return String.Format("{0:F2} " + (String)Lang.Res["Measurement.PByteAbbr"], dec);
                 case 6:
-                    return String.Format("{0:F2} " + Lang.Measurement.EByteAbbr, dec);
+                    return String.Format("{0:F2} " + (String)Lang.Res["Measurement.EByteAbbr"], dec);
                 default:
                     throw new ArgumentOutOfRangeException(nameof(value));
             }

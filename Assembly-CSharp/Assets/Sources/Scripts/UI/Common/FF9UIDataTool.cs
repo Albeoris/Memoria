@@ -591,6 +591,14 @@ namespace Assets.Sources.Scripts.UI.Common
             return spriteName;
         }
 
+        /// <summary>Take the ownership of a sprite, so FF9UIDataTool will never release it back to its sprite pool and the calling class is in charge of releasing it</summary>
+        public static void TakeBitmapOwnership(GameObject gameObject)
+        {
+            FF9UIDataTool.activeBitmapKeyboardList.Remove(gameObject);
+            FF9UIDataTool.activeBitmapSpriteList.Remove(gameObject);
+            FF9UIDataTool.activeBitmapNewIconList.Remove(gameObject);
+        }
+
         public static void ReleaseBitmapIconToPool(GameObject bitmap)
         {
             FF9UIDataTool.GetCurrentPool(bitmap.tag, out List<GameObject> inactivePool, out List<GameObject> activePool);

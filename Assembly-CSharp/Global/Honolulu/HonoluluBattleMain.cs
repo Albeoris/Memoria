@@ -657,6 +657,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         foreach (BattleCalculator calc in BattleCalculator.FrameAppliedEffectList)
             BattleHUD.EffectedBtlId |= calc.Target.Id;
         BattleCalculator.FrameAppliedEffectList.Clear();
+        btl_mot.BtlActivatedThisFrame.Clear();
     }
 
     private static void UpdateOverFrame()

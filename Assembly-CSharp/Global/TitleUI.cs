@@ -1303,6 +1303,25 @@ public class TitleUI : UIScene
         return null;
     }
 
+    public static String GetLanguageSpriteName(String symbol)
+    {
+        TitleUI titleScene = PersistenSingleton<UIManager>.Instance.TitleScene; // Not necessarily initialized
+        GameObject buttonGo = null;
+        switch (symbol)
+        {
+            case "JP": buttonGo = titleScene.LanguageGroupPanel.GetChild(0); break;
+            case "US": buttonGo = titleScene.LanguageGroupPanel.GetChild(1); break;
+            case "FR": buttonGo = titleScene.LanguageGroupPanel.GetChild(2); break;
+            case "ES": buttonGo = titleScene.LanguageGroupPanel.GetChild(3); break;
+            case "GR": buttonGo = titleScene.LanguageGroupPanel.GetChild(4); break;
+            case "IT": buttonGo = titleScene.LanguageGroupPanel.GetChild(5); break;
+            case "UK": buttonGo = titleScene.LanguageGroupPanel.GetChild(6); break;
+        }
+        if (buttonGo == null)
+            return String.Empty;
+        return buttonGo.GetComponent<UISprite>().spriteName;
+    }
+
     private void SetLanguage(String selectedLanguage)
     {
         FF9Sfx.FF9SFX_Play(103);
@@ -1465,6 +1484,16 @@ public class TitleUI : UIScene
 
     private void Start()
     {
+        try
+        {
+            File.WriteAllLines("FontList", Font.GetOSInstalledFontNames());
+        }
+        catch(Exception e)
+        {
+            Log.Error("Couldn't write the font list");
+            Log.Error(e);
+        }
+
         SiliconStudio.Social.InitializeSocialPlatform();
         PersistenSingleton<UIManager>.Instance.WorldHUDScene.EnableContinentTitle(false);
     }
@@ -1616,7 +1645,7 @@ public class TitleUI : UIScene
 
         DataPatchers.Initialize();
         ScriptsLoader.InitializeAsync();
-        QualitySettings.antiAliasing = Configuration.Graphics.AntiAliasing;
+        //QualitySettings.antiAliasing = Configuration.Graphics.AntiAliasing;
     }
 
     private class SlideShow

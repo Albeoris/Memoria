@@ -703,11 +703,12 @@ public abstract class SFXDataMesh
                 {
                     ModelSequence.FBX fbx = new ModelSequence.FBX();
                     fbx.fbxPath = copyfbx.fbxPath;
-                    fbx.animPath = new List<String>(copyfbx.animPath);
+                    fbx.animPath = new List<KeyValuePair<String, Single>>(copyfbx.animPath);
                     fbx.movement = new ParametricMovement(copyfbx.movement);
+                    fbx.rotation = new ParametricMovement(copyfbx.rotation);
+                    fbx.scaling = new ParametricMovement(copyfbx.scaling);
                     fbx.startFrame = copyfbx.startFrame;
                     fbx.endFrame = copyfbx.endFrame;
-                    fbx.scale = copyfbx.scale;
                     seq.fbxList.Add(fbx);
                 }
                 foreach (ModelSequence.Sprite copysprite in copyseq.spriteList)
@@ -745,24 +746,27 @@ public abstract class SFXDataMesh
                         continue;
                     Animation component = tok.unityObject.GetComponent<Animation>();
                     Int32 animDuration = 0;
-                    foreach (String anim in tok.animPath)
+                    for (Int32 i = 0; i < tok.animPath.Count; i++)
                     {
+                        String anim = tok.animPath[i].Key;
                         String animName = Path.GetFileNameWithoutExtension(anim);
-                        if (component.GetClip(animName) == null)
+                        AnimationClip clip = component.GetClip(animName);
+                        if (clip == null)
                         {
-                            AnimationClip clip = AssetManager.Load<AnimationClip>(anim, false);
-                            if (anim != null)
-                            {
+                            clip = AssetManager.Load<AnimationClip>(anim, false);
+                            if (clip != null)
                                 component.AddClip(clip, animName);
-                                animDuration += GeoAnim.geoAnimGetNumFrames(tok.unityObject, animName);
-                            }
                         }
+                        if (clip != null)
+                            animDuration += (Int32)Math.Ceiling(GeoAnim.geoAnimGetNumFrames(tok.unityObject, animName) / tok.animPath[i].Value);
+                        else
+                            tok.animPath.RemoveAt(i--);
                     }
                     tok.unityObject.SetActive(false);
-                    tok.unityObject.transform.localScale = new Vector3(tok.scale, tok.scale, tok.scale);
                     if (tok.endFrame == tok.startFrame)
                     {
-                        tok.endFrame += animDuration;
+                        Int32 duration = Math.Max(Math.Max(Math.Max(animDuration, tok.movement.Duration), tok.rotation.Duration), tok.scaling.Duration);
+                        tok.endFrame += duration;
                         mseq.lastFrame = Math.Max(mseq.lastFrame, tok.endFrame);
                     }
                 }
@@ -800,27 +804,32 @@ public abstract class SFXDataMesh
                     renderSomething = true;
                     tok.unityObject.SetActive(true);
                     tok.unityObject.transform.position = tok.movement.GetPosition(frame, null, caster, target, averageTarget);
-                    tok.unityObject.transform.rotation = Quaternion.Euler(0f, 0f, 180f); // TODO: add a way to rotate the model, maybe similar to ParamtricMovement
+                    tok.unityObject.transform.eulerAngles = tok.rotation.GetPosition(frame, null, caster, target, averageTarget);
+                    tok.unityObject.transform.localScale = tok.scaling.GetPosition(frame, null, caster, target, averageTarget);
                     if (tok.animPath.Count == 0)
                         continue;
                     Int32 animIndex = 0;
                     Int32 frameCounter = 0;
                     Int32[] animMaxFrame = new Int32[tok.animPath.Count];
                     for (Int32 i = 0; i < tok.animPath.Count; i++)
-                        animMaxFrame[i] = Math.Max(0, GeoAnim.geoAnimGetNumFrames(tok.unityObject, Path.GetFileNameWithoutExtension(tok.animPath[i])));
+                        animMaxFrame[i] = Math.Max(0, (Int32)Math.Ceiling(GeoAnim.geoAnimGetNumFrames(tok.unityObject, Path.GetFileNameWithoutExtension(tok.animPath[i].Key)) / tok.animPath[i].Value));
                     while (animIndex < tok.animPath.Count && frame >= tok.startFrame + frameCounter + animMaxFrame[animIndex])
                         frameCounter += animMaxFrame[animIndex++];
-                    Int32 animFrame = frame - tok.startFrame - frameCounter;
-                    if (animIndex >= tok.animPath.Count)
+                    Int32 animFrame;
+                    if (animIndex < tok.animPath.Count)
+                    {
+                        animFrame = (Int32)Math.Floor((frame - tok.startFrame - frameCounter) * tok.animPath[animIndex].Value);
+                    }
+                    else
                     {
                         animIndex = tok.animPath.Count - 1;
                         animFrame = animMaxFrame[animIndex];
                     }
-                    String animName = Path.GetFileNameWithoutExtension(tok.animPath[animIndex]);
+                    String animName = Path.GetFileNameWithoutExtension(tok.animPath[animIndex].Key);
                     AnimationState clipState = tok.unityObject.GetComponent<Animation>()[animName];
                     tok.unityObject.GetComponent<Animation>().Play(animName);
                     clipState.speed = 0f;
-                    clipState.time = (Single)animFrame / (Single)animMaxFrame[animIndex] * clipState.length;
+                    clipState.time = clipState.length * animFrame / animMaxFrame[animIndex];
                     tok.unityObject.GetComponent<Animation>().Sample();
                 }
                 RenderTexture activeRender = RenderTexture.active;
@@ -958,20 +967,35 @@ public abstract class SFXDataMesh
                     fbx.startFrame = objectNode["Start"].AsInt;
                 if (objectNode["End"] != null)
                     fbx.endFrame = objectNode["End"].AsInt;
-                if (objectNode["Scale"] != null)
-                    fbx.scale = objectNode["Scale"].AsFloat;
-                if (objectNode["Movement"] != null && objectNode["Movement"].AsObject != null)
-                    fbx.movement.LoadFromJSON(objectNode["Movement"].AsObject);
+                if (objectNode["Movement"] != null)
+                    fbx.movement.LoadFromJSON(objectNode["Movement"]);
+                if (objectNode["Rotation"] != null)
+                    fbx.rotation.LoadFromJSON(objectNode["Rotation"]);
+                if (objectNode["Scaling"] != null)
+                    fbx.scaling.LoadFromJSON(objectNode["Scaling"]);
                 if (objectNode["Animations"] == null)
                     continue;
                 foreach (JSONNode animNode in objectNode["Animations"] as JSONArray)
                 {
-                    String animPath = animNode;
+                    String animPath;
+                    Single animSpeed = 1f;
+                    if (animNode is JSONClass animClass)
+                    {
+                        if (animClass["Path"] == null)
+                            continue;
+                        animPath = animClass["Path"];
+                        if (animClass["Speed"] != null)
+                            animSpeed = animClass["Speed"].AsFloat;
+                    }
+                    else
+                    {
+                        animPath = animNode;
+                    }
                     if (!animPath.Contains("/"))
                         animPath = modelSeq.defaultFolder + "/" + animPath;
                     else if (animPath.StartsWith("./"))
                         animPath = modelSeq.defaultFolder + animPath.Substring(1);
-                    fbx.animPath.Add(animPath);
+                    fbx.animPath.Add(new KeyValuePair<String, Single>(animPath, animSpeed));
                 }
                 if (fbx.startFrame == Int32.MaxValue)
                     fbx.startFrame = 0;
@@ -1184,12 +1208,13 @@ public abstract class SFXDataMesh
         public class FBX
         {
             public String fbxPath = "";
-            public List<String> animPath = new List<String>();
+            public List<KeyValuePair<String, Single>> animPath = new List<KeyValuePair<String, Single>>();
             public GameObject unityObject = null;
             public ParametricMovement movement = new ParametricMovement();
+            public ParametricMovement rotation = new ParametricMovement();
+            public ParametricMovement scaling = new ParametricMovement(true);
             public Int32 startFrame = Int32.MaxValue;
             public Int32 endFrame = -1;
-            public Single scale = 1f;
         }
 
         public class Sprite

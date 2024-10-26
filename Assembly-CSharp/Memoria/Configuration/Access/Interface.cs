@@ -33,6 +33,11 @@ namespace Memoria
                 get => Instance._interface.DisplayPSXDiscChanges;
                 set => Instance._interface.DisplayPSXDiscChanges.Value = value;
             }
+            public static Boolean ThickerATBBar
+            {
+                get => Instance._interface.ThickerATBBar;
+                set => Instance._interface.ThickerATBBar.Value = value;
+            }
             public static Int32 BattleRowCount
             {
                 get => Math.Max(1, Instance._interface.BattleRowCount);

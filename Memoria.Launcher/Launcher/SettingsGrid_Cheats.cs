@@ -1,50 +1,43 @@
 using System;
+using Application = System.Windows.Application;
 
 namespace Memoria.Launcher
 {
-    public sealed class SettingsGrid_Cheats : Settings
+    public sealed class SettingsGrid_Cheats : UiGrid
     {
         public SettingsGrid_Cheats()
         {
-            SetRows(2);
+            DataContext = (MainWindow)Application.Current.MainWindow;
+            CreateHeading("Settings.Battle");
 
-            CreateTextbloc(Lang.Settings.IniCheats, true);
-            CreateCheckbox("StealingAlwaysWorks", Lang.Settings.MaxStealRate, Lang.Settings.MaxStealRate_Tooltip);
-            CreateCheckbox("NoAutoTrance", Lang.Settings.NoAutoTrance, Lang.Settings.NoAutoTrance_Tooltip);
-            CreateCheckbox("GarnetConcentrate", Lang.Settings.DisableCantConcentrate, Lang.Settings.DisableCantConcentrate_Tooltip);
-            CreateCheckbox("BreakDamageLimit", Lang.Settings.BreakDamageLimit, Lang.Settings.BreakDamageLimit_Tooltip);
-            CreateTextbloc(Lang.Settings.AccessBattleMenu, false, Lang.Settings.AccessBattleMenu_Tooltip);
+            CreateCheckbox("StealingAlwaysWorks", "Settings.MaxStealRate", "Settings.MaxStealRate_Tooltip");
+            CreateCheckbox("NoAutoTrance", "Settings.NoAutoTrance", "Settings.NoAutoTrance_Tooltip");
+            CreateCheckbox("ViviAutoAttack", "Settings.ViviAutoAttack", "Settings.ViviAutoAttack_Tooltip");
+            CreateCheckbox("BreakDamageLimit", "Settings.BreakDamageLimit", "Settings.BreakDamageLimit_Tooltip");
+            //CreateCheckbox("AccessBattleMenuToggle", Lang.Settings.AccessBattleMenuToggle, Lang.Settings.AccessBattleMenuToggle_Tooltip);
+            CreateCheckbox("GarnetConcentrate", "Settings.DisableCantConcentrate", "Settings.DisableCantConcentrate_Tooltip");
+
+
             String[] accessmenuchoices =
             {
-                Lang.Settings.AccessBattleMenuType0,
-                Lang.Settings.AccessBattleMenuType1,
-                Lang.Settings.AccessBattleMenuType2,
-                Lang.Settings.AccessBattleMenuType3
+                "Settings.AccessBattleMenuType0",
+                "Settings.AccessBattleMenuType1",
+                "Settings.AccessBattleMenuType2",
+                "Settings.AccessBattleMenuType3"
             };
-            CreateCombobox("AccessBattleMenu", accessmenuchoices, 4, Lang.Settings.AccessBattleMenu_Tooltip);
+            CreateCombobox("AccessBattleMenu", accessmenuchoices, 50, "Settings.AccessBattleMenu", "Settings.AccessBattleMenu_Tooltip");
 
-            CreateCheckbox("SpeedMode", Lang.Settings.SpeedMode, Lang.Settings.SpeedMode_Tooltip);
-            CreateSlider("SpeedFactor", "SpeedFactor", 2, 12, 1, "{0}x");
-            
-            CreateTextbloc(Lang.Settings.BattleTPS, false, Lang.Settings.BattleTPS_Tooltip);
-            CreateSlider("BattleTPSDividedBy10", "BattleTPS", 15, 75, 1, "{0}x");
 
-            CreateCheckbox("BattleAssistance", Lang.Settings.BattleAssistance, Lang.Settings.BattleAssistance_Tooltip);
-            CreateCheckbox("NoRandomEncounter", Lang.Settings.NoRandomBattles, Lang.Settings.NoRandomBattles_Tooltip);
-            CreateCheckbox("MasterSkill", Lang.Settings.PermanentCheats, Lang.Settings.PermanentCheats_Tooltip);
-            CreateCheckbox("MaxCardCount", Lang.Settings.MaxCardCount, Lang.Settings.MaxCardCount_Tooltip);
 
-            CreateTextbloc(Lang.Settings.CardReduceRandom, false, Lang.Settings.CardReduceRandom_Tooltip);
-            String[] reducerandomchoice =
-            {
-                Lang.Settings.tetraMasterReduceRandomBox0,
-                Lang.Settings.tetraMasterReduceRandomBox1,
-                Lang.Settings.tetraMasterReduceRandomBox2,
-            };
-            CreateCombobox("ReduceRandom", reducerandomchoice);
+            CreateHeading("Settings.VanillaCheats");
 
-            LoadSettings();
+            //CreateCheckbox("SpeedMode", Lang.Settings.SpeedMode, Lang.Settings.SpeedMode_Tooltip);
+            CreateSlider("SpeedFactor", "SpeedFactor", 1, 12, 1, "{0}x", 50, "Settings.SpeedMode", "Settings.SpeedMode_Tooltip");
+            CreateCheckbox("BattleAssistance", "Settings.PermanentTranse", "Settings.BattleAssistance_Tooltip");
+            CreateCheckbox("Attack9999", "Settings.Attack9999", "Settings.Attack9999_Tooltip");
+            CreateCheckbox("NoRandomEncounter", "Settings.NoRandomBattles", "Settings.NoRandomBattles_Tooltip");
+            CreateCheckbox("MasterSkill", "Settings.PermanentCheats", "Settings.PermanentCheats_Tooltip");
+
         }
-
     }
 }

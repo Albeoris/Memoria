@@ -90,10 +90,10 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.28</Version>
+	<Version>0.3.29.2</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
-	<ReleaseDate>05 Sep 2024</ReleaseDate>
+	<ReleaseDate>23 Oct 2024</ReleaseDate>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
 	<Description>A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
@@ -115,50 +115,104 @@ Don't hesitate to try!
 
 /_!_\ IMPORTANT /_!_\
 Recommended language : Français / English (UK)
-Not supported language : Japanese</Description>
+Not supported language : Japanese (until full release... sorry !)</Description>
 	<PatchNotes>
-- Major correction to RagTime, which incorrectly declared certain variables.
-If you encounter the final RagTime without having answered all 16 questions, he will flee and reset the variables correctly.
+	------[0.3.29.2]------
 
-- Modification of certain accessories:
-Barrette => Strength +2 instead of +3
-Promist Ring => +1 Strength/Speed/Magic/Will instead of +2 Strength
-Birth Ring => +1 Magic and +3 Will instead of +4 Will
+	- Major hotfix for the difficulty system: "small" mistake where damage is all doubled... woopsi.
+	I made an emergency hotfix a few days after this bug was reported to me, but for players who use only the Memoria launcher, they may not be aware of this fix
+	if they don't update the mod... which is why i am releasing this version!
+	Sorry for the disruption and enjoy!
 
-Peridot => +1 Speed and +2 Magic instead of +2 Speed and +2 Magic
-Opal => +2 Magic and +1 Will instead of +2 Magic and +2 Will
-Topaz => +2 Strength and +1 Magic instead of +2 Strength and +2 Magic
-Ruby => +1 Speed and +2 Will instead of +1 Magic and +3 Will
-Emerald => +2 Speed and +1 Will instead of +3 Speed and +1 Will
-Beryl => +1 Magic and +2 Will instead of +1 Strength/+1 Speed/+1 Magic/+2 Will
-Amethyst => +1 Strength and +2 Magic instead of +1 Strength/+1 Speed/+2 Magic/+1 Will
-Garnet => +2 Strength/+1 Speed/+2 Magic/+1 Will instead of +2 Strength/+2 Speed/+2 Magic/+2 Will
-Phoenix Pinion => +1 Will
+	- Easy Kill monsters (excluding bosses) can now be scanned, especially those in Pandemonium.
+	- Correction of Rataïme's dialogues in English (US) at the start of combat.
+	- Modification to certain scripts (e.g. Maelstorm), where the message will display "Guard!" instead of "Miss!" if the monster is immune.
+	- Correction about the targeting of the "Emerald" item.
+	- Fixed some dialogues.
 
-- Improved the script for "Meo Twister", where the script could output an error under certain conditions.
-- Corrected the formula for Venom, Zombie, Silence, Poison, Blindness and Trouble alterations on EasyKill targets.
-- Fixed a bug in scripts 0094_AbsorbMagicScript.cs and 0095_AbsorbStrengthScript.cs.
-- Correction of the object obtained by "True".
-- Fixed a bug on Meltigemini's "Cellular Reaction" attack, where damage was not good when heals are returned under Reflect.
-- Fixed a bug on the "Zombie Armor" status.
-- Fixed a bug in the "Bravery" and "Heroism" skills.
-- "Virus" SHP no longer displayed on players.
-- Fixed a bug on SA Level Up++.
-- Corrected a bug on "Lucky Star" SA.
-- Freyja's "Jump" skill under Trance now ignores 50% of physical armor on all targets (instead of 40%).
-- Demi can now trigger Vivi's Focus effect (but does not benefit from the damage bonus).
-- Steiner's "Swd Mag" now also takes Vivi's weapon focus bonus into account.
-- Corrected a display bug where the Doom and Gradual Petrify counters disappeared in certain situations.
-- Fixed a bug on Lancer, which was not displaying any damage on specific situations.
-- Fixed the fountain script on field 1908 (Gate/Treno), where it was possible to have infinite Elixirs.
-- Improved end-of-battle on certain bosses (such as Black Waltz 3 on CD2).
-- Correction on the fight against Tantarian, where a softlock is possible.
-- Optimization and slight change to Tantarian's AI.
-- Correction of the "Watera Sword" sequence file for multiple targets.
-- Fixed an inconspicuous bug where Zidane would micro-teleport when changing weapon in combat.
-- Fixed multiple descriptions on skills and items (thanks @Luplow!).
-- Fixed a few item descriptions.
-- Fixed some dialogues.</PatchNotes>
+	------[0.3.29]------
+
+	- [WIP] Difficulty modes now available!
+	This is no definitive, but here's an idea I've had in the back of my mind for several months: the ability to choose an in-game difficulty!
+	There are currently 5 difficulty levels:
+
+	{Vivi Mode}:
+	→ -50% of damage inflicted by enemies.
+	→ +25% EXP gained from enemies.
+	→ +25% gils gained from enemies.
+	→ Venom is less lethal on players.
+
+	{Eiko Mode}:
+	→ -25% damage dealt by enemies.
+
+	{Zidane Mode}:
+	→ No modifiers ! (difficulty by default)
+
+	{Kuja Mode}:
+	→ +25% Strength/Magic for enemies.
+	→ +10% maximum HP for enemies.
+
+	{Necron Mode} :
+	→ +50% Strength/Magic for enemies.
+	→ +25% maximum HP for enemies.
+	→ EXP gain divided by 2.
+	→ Gils gain divided by 10.
+
+	The main reason for adding this system is to give certain players a chance to discover my mod, without being blocked by the basic difficulty... or for those who like to suffer, hehe!
+
+	I haven't necessarily tested certain difficulties in depth, especially the last ones if they make certain bosses impossible... I'll be fine-tuning this when the Disc 4 will be released, but at least the system is there!
+	It's also possible to change the difficulty at any time with the Mog in the Qu's swamps => In future, this solution will no longer exist and the player will only be able to lower the difficulty
+	but never raise it, which will make Necron Mode rather unique.
+
+	- Change to the chocograph script: rollback of the forest and lagoon scripts to avoid any more problems with the mog (particularly detecting the remaining chocographs).
+	From now on, certain chocographs can only be opened after a certain stage of the game => If you ever come across this type of situation, Zidane will make a reflection at a certain point in the game, which will indicate that the chocograph is open.
+	which will indicate that the chocograph will be available!
+
+	- The frogs in the swamp mini-game can no longer be played if you haven't progressed far enough in the scenario.
+	It is deactivated if one of the following conditions is met:
+	=> More than 10 frogs before the end of Disc 1.
+	=> More than 40 frogs before the end of Disc 2.
+	=> More than 70 frogs before the Shrines.
+
+	- Reverse the reward at 80 and 90 frogs in the swamp mini-game.
+	- [WIP] If the damage does not exceed 15% of the target's Maximum HP, the target will not gain Trance. The formula is not currently definitive.
+	- Stop no longer triggers a Game Over.
+	- Addition of the "Stop" effect on powerful monsters: this state alteration shares the same characteristics as Sleep and Freeze, i.e. the duration is reduced each time it is used.
+	- Addition of the "Zombie" effect on powerful monsters: the next heal given (including absorption) is reduced to 0 and then Zombie is removed.
+	- Optimised the code for "Rei's Wind".
+	- The Dragon effect of "Rei's Wind" has been modified.
+	- Several monsters have had their stealable/gainable items changed.
+	- "Rebirth Flame" from Phoenix now removes "Vanish".
+	- Smoke no longer allows you to escape certain combats.
+	- Cure, Cura and Curaga spells can no longer target knocked-out allies.
+	- The targeting of "Maelstorm" has been corrected following the latest Memoria update.
+	- The duration of "Slow" on powerful enemies is now reduced to 70%.
+	- Fixed the AI of "Sand Worm", which can generate a softlock because of Freyja.
+	- Slight correction to Fabryce's AI.
+	- Correction to Lovecraft's AI.
+	- Lovecraft is now immune to "Gravity" attacks (to avoid a bug caused by his AI).
+	- Steiner's "Sentinel" no longer reduces physical damage by 75% (rollback to 50%, due to the "Defence" status). This probably reflects a slight reworking of his passive...
+	- Change to "Flawless" SA
+	- Correction to the "Power Up" SA
+	- AtoMoug and SidéMoug can be reflected.
+	- Vivi's "Focus" no longer triggers twice if the spell is returned by Reflect and inflicts damage on other targets with a single command.
+	- Fixed multiple formulas that had the wrong damage bonus (example: Berserk gave +25% damage instead of 50%).
+	- Slight correction to "Racket" type weapons, which did not have the damage bonus against enemies from behind.
+	- The SA "Hold Up" (as well as its boosted version) now works with "Mug".
+	- "Healer" SA no longer triggers Zidane's passive.
+	- The gain of gils under "Aboule Gils" and HP under "Mug+" are unified in a single message.
+	- "Auto-Life" no longer works if the target is a Zombie.
+	- Monsters can now use "Auto-Life", protecting them from an attack and leaving them at 1 HP.
+	- It is no longer possible to collect MPs from the Prima Vista bed at Disc 1.
+	- Fixed the script when Beatrix joins the team at Disc 3, where stats were calculated from level 1 and not the level when she leaves Steiner in Alexandria.
+	- Fixed a display bug where the level of a status (such as Emousse) was not refreshed if the size of the model varied (via Mini for example).
+	- It's now possible to fight with the Mog just before Clayra's Beatrix.
+	- It's possible to save when Steiner joins Zidane, during the rescue in Alexandria (Disc 2) (and therefore before the timer).
+	- Markus automatically removes all his equipment when he leaves Steiner in Alexandria (Disc 2).
+	- "Chemist+" code improved.
+	- Improve the code for the various SAs that can restore HP or MP.
+	- Changed a few dialogues.
+	- Fixed a few sequence files.</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/HC3GH4j/Logo-Trance-Seek.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/LogoTranceSeek.png</PreviewFile>
@@ -192,6 +246,7 @@ You should set the priority of this mod to be higher than the priority of the Mo
 		<Description>When enabled, Garnet's battle model will wear the traditional White Mage robe.</Description>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>Support Ability Cost</Name>
 	<Version>4.0.1</Version>
@@ -227,6 +282,7 @@ Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 		<Priority>3</Priority>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>Exp, AP, Gil, Rewards Tweaks</Name>
 	<Version>4.0.1</Version>
@@ -376,8 +432,8 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 		<Description>8 Times EXP requirement so you almost dont level up</Description>
 		<Priority>1</Priority>
 	</SubMod>
-
 </Mod>
+
 <Mod>
 	<Name>Kupo Heroes Pack </Name>
 	<Version>4.0.1</Version>
@@ -513,6 +569,7 @@ Part of the Characters Enhancements feature of Kupo Mods Formerly Mog Add-ons</D
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>Tantalus</Name>
 	<Version>3.2</Version>
@@ -550,6 +607,62 @@ Includes:
 		<Priority>2</Priority>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
 		<DeactivateWithoutMod>Alternate Fantasy</DeactivateWithoutMod>
+	</SubMod>
+</Mod>
+
+<Mod>
+	<Name>Perfect Stats</Name>
+	<Version>1.0</Version>
+	<Author>Emeiru</Author>
+	<InstallationPath>PerfectStats</InstallationPath>
+	<ReleaseDateOriginal>2024-10-25</ReleaseDateOriginal>
+	<ReleaseDate>2024-10-25</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
+	<Description>[!] A new save game is recommended [!]
+Removes the equipment stat-boosting mechanic and replaces it with a fixed additional per level stat-gain. Players will no longer need to mind their equipment and wear stat-boosting gear on level-up. Party members will always achieve a fixed maximum stat just by leveling. Note that this will naturally decrease the difficulty of the game due to stats having linear progression now. A new save game is required to apply these changes, but if you installed this mod mid-game, you can also visit Chocobo's Forest to inject the mod's changes, level up, and see the new stats.
+
+Choose ONLY one of the three stats settings:
+
+Perfect Stats
+- Partially based on KADFC Max Stats Guide, this setting will allow the party to achieve near-perfect stats as if they pursued a level 1 max stats run. Significantly decreases game difficulty due to overall higher stats.
+
+Perfect Rebalanced
+- Max stats configuration by Emeiru, aims to buff party members with low combined stats and make it rebalanced across the board. 
+
+No Bonus Stat Growth
+- Completely removes the bonus stat growth formula. Optional choice to remove stat management altogether, making the game harder.
+
+Optional: Fixed Magic Stones
+- Reworks the magic stone growth formula to ensure every party member will get their max number of magic stones.</Description>
+	<PatchNotes>Complete changes and info can be found on this mod's page.</PatchNotes>
+	<Category>Gameplay</Category>
+	<PreviewFile>Preview.jpg</PreviewFile>
+	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/Preview.jpg</PreviewFileUrl>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/77</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/xlb9saal8iycbpfbicwbz/PerfectStats.zip?rlkey=mx7jvttuuntzx3d7ud8nnmw2c&amp;st=4hnksd03&amp;dl=1</DownloadUrl>
+	<SubMod>
+		<Name>Perfect Stats</Name>
+		<InstallationPath>PerfectStats</InstallationPath>
+		<Description>Based on KADFC Max Stats</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Perfect Rebalanced</Name>
+		<InstallationPath>PerfectRebalanced</InstallationPath>
+		<Description>Author configured stats, rebalanced stats across the board</Description>
+		<Priority>2</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>No Bonus Stat Growth</Name>
+		<InstallationPath>NoBonus</InstallationPath>
+		<Description>Removes stat bonuses altogether</Description>
+		<Priority>3</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Fixed Magic Stones</Name>
+		<InstallationPath>PerfectStones</InstallationPath>
+		<Description>Fixed magic stone growth formula</Description>
+		<Priority>4</Priority>
 	</SubMod>
 </Mod>
 
