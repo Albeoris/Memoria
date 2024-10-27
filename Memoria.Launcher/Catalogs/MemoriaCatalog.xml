@@ -668,20 +668,36 @@ Optional: Fixed Magic Stones
 
 <Mod>
 	<Name>Black Cat - Endgame Shop</Name>
-	<Version>1.0</Version>
-	<ReleaseDateOriginal>2024-07-01</ReleaseDateOriginal>
-	<Author>Emeiru</Author>
+	<Version>2.0</Version>
 	<InstallationPath>BlackCat</InstallationPath>
+	<ReleaseDateOriginal>2024-07-13</ReleaseDateOriginal>
+	<ReleaseDate>2024-10-27</ReleaseDate>
+	<Author>Emeiru</Author>
 	<Category>Gameplay</Category>
 	<Description>The Black Mage Village (Disc 4) now sells almost every item in the game!
 - No. 239's Weapon and Armor Shop now sells every purchasable weapon and armor.
 - The Black Cat Synthesis Shop now can synthesize all regular equipment.
 
+Additionally, penultimate items can be synthesized at Daguerreo (Disc 3) now!
+
 Complete changes and info can be found on this mod's page.</Description>
+	<PatchNotes>Requires the latest Memoria Engine version</PatchNotes>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/65</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/19l0a7strjifbdpezs5op/BlackCat.zip?rlkey=6a3509xwdzpny23zvrnkpg3qx&amp;dl=1</DownloadUrl>
 	<PreviewFile>Preview.JPG</PreviewFile>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/65/65-1720822585-1514609332.jpeg</PreviewFileUrl>
+	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/6daBlackCat.jpg</PreviewFileUrl>
+	<SubMod>
+		<Name>Alternate Fantasy</Name>
+		<InstallationPath>AlternateFantasy</InstallationPath>
+		<Description>Version for Alternate Fantasy</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Vanilla</Name>
+		<InstallationPath>Vanilla</InstallationPath>
+		<Description>Version for regular FFIX</Description>
+		<Priority>2</Priority>
+	</SubMod>
 </Mod>
 
 <Mod>
