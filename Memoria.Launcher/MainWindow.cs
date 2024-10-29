@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -93,7 +94,15 @@ namespace Memoria.Launcher
             UiGrid.MakeTooltip(btnDownload, "ModEditor.TooltipDownload", "", "hand");
             UiGrid.MakeTooltip(btnCancel, "ModEditor.TooltipCancel", "", "hand");
 
-            if (GameSettings.AutoRunGame)
+            String version = IniFile.SettingsIni.GetSetting("Memoria", "Version");
+            DateTime currentVersion = DateTime.ParseExact(MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"), "yyyy.MM.dd", CultureInfo.InvariantCulture);
+            if (String.IsNullOrEmpty(version) || !DateTime.TryParseExact(version, "yyyy.MM.dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) || date < currentVersion)
+            {
+                ShowReleaseNotes(null, null);
+                IniFile.SettingsIni.SetSetting("Memoria", "Version", MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"));
+                IniFile.SettingsIni.Save();
+            }
+            else if (GameSettings.AutoRunGame)
                 PlayButton.Click();
         }
         private void CloseButton_Click(object sender, RoutedEventArgs e)
@@ -434,6 +443,12 @@ namespace Memoria.Launcher
 
             ReleaseCapture();
             SendMessage(new WindowInteropHelper(this).Handle, 161, 2, 0);
+        }
+
+        private void ShowReleaseNotes(Object sender, MouseButtonEventArgs e)
+        {
+            var releaseWindow = new Window_ChangeLog();
+            MainWindowGrid.Children.Add(releaseWindow);
         }
 
         private void OnHyperlinkClick(object sender, RequestNavigateEventArgs e)

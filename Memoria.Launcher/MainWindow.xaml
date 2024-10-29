@@ -866,53 +866,6 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Top" />
 
-        <!-- Mod Manager Button -->
-        <!--
-        <launcher:UiLauncherModManagerButton
-            Width="260"
-            Height="36"
-            Margin="0,120,20,0"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Content="" />
-        
-        <Grid
-            HorizontalAlignment="Right"
-            VerticalAlignment="Top"
-            Width="260"
-            Margin="0,145,10,0" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
-                <ColumnDefinition Width="auto" />
-            </Grid.ColumnDefinitions>
-            <Image
-                x:Name="alert_incompat_icon"
-                Grid.Column="0"
-                Height="20"
-                Width="20"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Bottom"
-                Margin="0,0,3,0"
-                Panel.ZIndex="1"
-                Source="/images/alert_incompat.png"
-                ToolTipService.InitialShowDelay="1"
-                ToolTip=""
-                Visibility="Collapsed" />
-            <Image
-                x:Name="alert_update_icon"
-                Grid.Column="1"
-                Height="20"
-                Width="20"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Bottom"
-                Panel.ZIndex="1"
-                Source="/images/alert_update.png"
-                ToolTipService.InitialShowDelay="1"
-                ToolTip=""
-                Visibility="Visible" />
-        </Grid>
-
-        -->
         <TextBlock x:Name="Nameandversion"
             Text="{DynamicResource Settings.MemoriaEngine}"
             Foreground="#6fff"
@@ -921,7 +874,10 @@
             FontFamily="{DynamicResource CenturyGothic}"
             Margin="22,0,0,2"
             HorizontalAlignment="Left"
-            VerticalAlignment="Bottom" />
+            VerticalAlignment="Bottom"
+            Cursor="Hand"
+            MouseUp="ShowReleaseNotes"/>
+        
         <Border x:Name="dropBackground" Background="#d000" Visibility="Hidden">
             <Label
                 x:Name="dropLabel"
