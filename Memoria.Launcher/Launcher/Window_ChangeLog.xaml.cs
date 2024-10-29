@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Drawing.Printing;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -27,7 +26,7 @@ namespace Memoria.Launcher
             {
                 lines = reader.ReadToEnd().Split('\n');
             }
-            
+
             List list = null;
             foreach (String line in lines)
             {
@@ -35,7 +34,7 @@ namespace Memoria.Launcher
                 if (trimmed.Length == 0)
                     continue;
 
-                if(trimmed.StartsWith("#Version") || trimmed.StartsWith("#Patch"))
+                if (trimmed.StartsWith("#Version") || trimmed.StartsWith("#Patch"))
                 {
                     Paragraph p = new Paragraph(new Run(trimmed.TrimStart('#')))
                     {
@@ -57,7 +56,6 @@ namespace Memoria.Launcher
                         p.Inlines.Add(link);
                     }
                     Document.Blocks.Add(p);
-                    list = null;
                     continue;
                 }
 
@@ -75,7 +73,7 @@ namespace Memoria.Launcher
 
                 String tabbed = line.Replace("    ", "\t");
                 Int32 indent = tabbed.Length - tabbed.TrimStart().Length;
-                if(indent == 0)
+                if (indent == 0)
                 {
                     Paragraph p = new Paragraph(new Run(trimmed))
                     {
@@ -89,7 +87,7 @@ namespace Memoria.Launcher
                     Paragraph p = new Paragraph(new Run(trimmed));
                     ListItem item = new ListItem(p);
                     item.Margin = new Thickness(20 + indent * 20, 0, 0, 0);
-                    if(list == null)
+                    if (list == null)
                     {
                         list = new List();
                         list.Padding = new Thickness(0, 0, 0, 0);
@@ -99,11 +97,12 @@ namespace Memoria.Launcher
                 }
             }
         }
+
         private void Close(Object sender, RoutedEventArgs e)
         {
             MainWindow mainWindow = (MainWindow)this.GetRootElement();
             ((Grid)this.Parent).Children.Remove(this);
-            
+
             if (mainWindow.GameSettings.AutoRunGame)
                 mainWindow.PlayButton.Click();
         }
@@ -120,6 +119,17 @@ namespace Memoria.Launcher
         private void Window_MouseDown(Object sender, MouseButtonEventArgs e)
         {
             e.Handled = true;
+        }
+
+        private void DocumentScrollViewer_PreviewMouseWheel(Object sender, MouseWheelEventArgs e)
+        {
+            FlowDocumentScrollViewer o = (FlowDocumentScrollViewer)sender;
+            ScrollViewer scrollViewer = o.Template?.FindName("PART_ContentHost", o) as ScrollViewer;
+            if (scrollViewer is not null)
+            {
+                double offset = scrollViewer.VerticalOffset - (e.Delta / 3f);
+                scrollViewer.ScrollToVerticalOffset(offset < 0 ? 0 : offset > scrollViewer.ExtentHeight ? scrollViewer.ExtentHeight : offset);
+            }
         }
     }
 }

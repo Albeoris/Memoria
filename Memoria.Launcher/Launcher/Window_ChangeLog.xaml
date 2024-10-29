@@ -65,7 +65,8 @@
                         Height="400"
                         Padding="0"
                         Margin="-15,6"
-                        VerticalScrollBarVisibility="Auto">
+                        VerticalScrollBarVisibility="Auto"
+                        PreviewMouseWheel="DocumentScrollViewer_PreviewMouseWheel">
                         <FlowDocument
                             x:Name="Document"
                             PagePadding="15,0"
