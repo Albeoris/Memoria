@@ -33,7 +33,7 @@ namespace Memoria.Launcher
                 if (trimmed.Length == 0)
                     continue;
 
-                if(trimmed.StartsWith("#Version"))
+                if(trimmed.StartsWith("#Version") || trimmed.StartsWith("#Patch"))
                 {
                     Paragraph p = new Paragraph(new Run(trimmed.TrimStart('#')))
                     {
