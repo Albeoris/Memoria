@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing.Printing;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Windows;
@@ -40,6 +42,20 @@ namespace Memoria.Launcher
                         Margin = new Thickness(0, 20, 0, 20),
                         FontSize = 26
                     };
+                    String version = trimmed.Split(' ')?[1] ?? "";
+                    if (trimmed.StartsWith("#Version") && DateTime.TryParseExact(version, "yyyy.MM.dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+                    {
+                        Hyperlink link = new Hyperlink();
+                        link.FontSize = 16;
+                        link.Inlines.Add("Complete changelog ↗");
+                        link.NavigateUri = new Uri("https://github.com/Albeoris/Memoria/wiki/Changelog-v" + version);
+                        link.RequestNavigate += (s, e) =>
+                        {
+                            Process.Start(e.Uri.ToString());
+                        };
+                        p.Inlines.Add(new LineBreak());
+                        p.Inlines.Add(link);
+                    }
                     Document.Blocks.Add(p);
                     list = null;
                     continue;

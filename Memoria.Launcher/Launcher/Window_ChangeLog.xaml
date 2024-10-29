@@ -28,6 +28,16 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style TargetType="{x:Type Hyperlink}">
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Foreground" Value="#4493f8" />
+        <Setter Property="TextBlock.TextDecorations" Value="{x:Null}" />
+        <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
     </UserControl.Resources>
     <Border x:Name="Bg" Background="#6000" MouseDown="Bg_MouseDown" MouseUp="Bg_MouseUp">
         <Border
