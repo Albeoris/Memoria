@@ -385,6 +385,7 @@
     <Compile Include="Memoria\Scenes\ControlPanel\ControlSlider.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlToggle.cs" />
     <Compile Include="Memoria\Scenes\GOButtonPrefab.cs" />
+    <Compile Include="Memoria\Scenes\GOMenuBackground.cs" />
     <Compile Include="Memoria\Scenes\MenuHUD\MenuUIControlPanel.cs" />
     <Compile Include="Memoria\Scenes\GOScrollablePanel.cs" />
     <Compile Include="Memoria\Scripts\DefaultStatusDatabase.cs" />

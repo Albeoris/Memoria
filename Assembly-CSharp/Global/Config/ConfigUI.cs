@@ -2,6 +2,7 @@
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Prime;
+using Memoria.Scenes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -191,6 +192,8 @@ public class ConfigUI : UIScene
     private GameObject lvMaxButtonGameObject;
     private GameObject gilMaxButtonGameObject;
     private GameObject backButtonGameObject;
+    [NonSerialized]
+    private GOMenuBackground background;
 
     private UILabel masterSkillLabel;
     private UILabel lvMaxLabel;
@@ -1769,5 +1772,7 @@ public class ConfigUI : UIScene
         {
             ConfigFieldList[ConfigFieldList.Count - 1].ConfigParent.GetComponent<UIKeyNavigation>().onDown = masterSkillButtonGameObject;
         }
+
+        background = new GOMenuBackground(this.transform.GetChild(8).gameObject, "config_bg");
     }
 }

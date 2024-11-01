@@ -158,13 +158,13 @@ public class SB2_MON_PARM
     public List<SupportingAbilityFeature> SupportingAbilityFeatures;
 
     [Memoria.PatchableFieldAttribute]
-    public String WeaponModel;
+    public String[] WeaponModel;
     [Memoria.PatchableFieldAttribute]
     public String[] WeaponTextureFiles;
     [Memoria.PatchableFieldAttribute]
     public Single[] WeaponSize;
     [Memoria.PatchableFieldAttribute]
-    public Int32 WeaponAttachment;
+    public Int32[] WeaponAttachment;
     [Memoria.PatchableFieldAttribute]
     public Single[] WeaponOffsetPos;
     [Memoria.PatchableFieldAttribute]

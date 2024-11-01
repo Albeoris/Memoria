@@ -1,11 +1,11 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using System.Collections;
+using UnityEngine;
+using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Assets;
 using Memoria.Data;
-using SiliconStudio;
-using System;
-using System.Collections;
-using UnityEngine;
+using Memoria.Scenes;
 
 public class CloudUI : UIScene
 {
@@ -870,113 +870,73 @@ public class CloudUI : UIScene
         this.loadingAccessLocalize = this.LoadingAccessDialog.GetChild(1).GetComponent<UILocalize>();
         this.progressBar = this.LoadingAccessDialog.GetChild(2).GetComponent<UISlider>();
         this.syncStatusLabel = this.FileListPanel.GetChild(1).GetChild(1).GetComponent<UILabel>();
-        this.arrowSprites = new UISprite[]
-        {
+        this.arrowSprites =
+        [
             this.FileListPanel.GetChild(1).GetChild(0).GetComponent<UISprite>(),
             this.FileListPanel.GetChild(1).GetChild(2).GetComponent<UISprite>()
-        };
-        UIEventListener uieventListener = UIEventListener.Get(this.InfoButton);
-        uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener uieventListener2 = UIEventListener.Get(this.UploadButton);
-        uieventListener2.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener2.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener uieventListener3 = UIEventListener.Get(this.DownloadButton);
-        uieventListener3.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener3.onClick, new UIEventListener.VoidDelegate(this.onClick));
+        ];
+        UIEventListener.Get(this.InfoButton).onClick += this.onClick;
+        UIEventListener.Get(this.UploadButton).onClick += this.onClick;
+        UIEventListener.Get(this.DownloadButton).onClick += this.onClick;
         this.localFileHud = new CloudUI.FileCloudInfoHUD(this.FileListPanel.GetChild(2));
         this.cloudFileHud = new CloudUI.FileCloudInfoHUD(this.FileListPanel.GetChild(0));
-        UIEventListener uieventListener4 = UIEventListener.Get(this.localFileHud.Self);
-        uieventListener4.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener4.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener uieventListener5 = UIEventListener.Get(this.cloudFileHud.Self);
-        uieventListener5.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener5.onClick, new UIEventListener.VoidDelegate(this.onClick));
+        UIEventListener.Get(this.localFileHud.Self).onClick += this.onClick;
+        UIEventListener.Get(this.cloudFileHud.Self).onClick += this.onClick;
         this.uploadButtonLabel = this.UploadButton.GetChild(1).GetComponent<UILabel>();
         this.downloadButtonLabel = this.DownloadButton.GetChild(1).GetComponent<UILabel>();
         this.overWriteDialogDespLabel = this.OverWriteDialog.GetChild(0).GetComponent<UILabel>();
-        UIEventListener uieventListener6 = UIEventListener.Get(this.OverWriteDialog.GetChild(1));
-        uieventListener6.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener6.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener uieventListener7 = UIEventListener.Get(this.OverWriteDialog.GetChild(2));
-        uieventListener7.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener7.onClick, new UIEventListener.VoidDelegate(this.onClick));
+        UIEventListener.Get(this.OverWriteDialog.GetChild(1)).onClick += this.onClick;
+        UIEventListener.Get(this.OverWriteDialog.GetChild(2)).onClick += this.onClick;
         this.successfulAccessLabel = this.SuccessfulAccessPanel.GetChild(0).GetComponent<UILabel>();
+        this.background = new GOMenuBackground(this.transform.GetChild(9).gameObject, "cloud_bg");
     }
 
     private static String SubMenuGroupButton = "Cloud.SubMenu";
-
     private static String LocalFileGroupButton = "Cloud.LocalFile";
-
     private static String CloudFileGroupButton = "Cloud.CloudFile";
-
     private static String ConfirmDialogGroupButton = "Cloud.Choice";
 
     public GameObject HelpPanel;
-
     public GameObject FileListPanel;
-
     public GameObject InfoPanel;
-
     public GameObject LoadingPreviewDialog;
-
     public GameObject OverWriteDialog;
-
     public GameObject LoadingAccessDialog;
-
     public GameObject SuccessfulAccessPanel;
-
     public GameObject InfoButton;
-
     public GameObject UploadButton;
-
     public GameObject DownloadButton;
-
     public GameObject ScreenFadeGameObject;
 
     private GameObject slotGameObject;
-
     private UISlider progressBar;
-
     private UILabel helpTitleLabel;
-
     private UILabel helpSlotLabel;
-
     private UILabel syncStatusLabel;
-
     private UILabel successfulAccessLabel;
-
     private UISprite[] arrowSprites;
-
     private CloudUI.FileCloudInfoHUD localFileHud;
-
     private CloudUI.FileCloudInfoHUD cloudFileHud;
-
     private UILabel infoLabel;
-
     private UILabel uploadButtonLabel;
-
     private UILabel downloadButtonLabel;
-
     private UILabel overWriteDialogDespLabel;
-
     private UILocalize loadingAccessLocalize;
-
     private Dialog saveCorruptDialog;
+    [NonSerialized]
+    private GOMenuBackground background;
 
     private Single timeCounter;
-
     private CloudUI.Sync syncState;
-
     private CloudUI.State currentState;
-
     private Boolean isSyncSuccess;
-
     private CloudUI.Sync corruptFile;
-
     private Boolean isLocalFileExist;
-
     private Boolean isCloudFileExist;
-
     private Double latestLocalTime;
-
     private Double latestCloudTime;
 
     private SharedDataPreviewSlot localPreview;
-
     private SharedDataPreviewSlot cloudPreview;
 
     private struct FileCloudInfoHUD
@@ -1005,29 +965,17 @@ public class CloudUI : UIScene
         }
 
         public GameObject Self;
-
         public GameObject Container;
-
         public ButtonGroupState Button;
-
         public UILabel LatestTimeLabel;
-
         public UILabel LeaderNameLabel;
-
         public UILabel LeaderLvLabel;
-
         public UILabel GilLabel;
-
         public UILabel TimeLabel;
-
         public UILabel LocationNameLabel;
-
         public GameObject EmptySlotTextGameObject;
-
         public UILabel EmptySlotTextLabel;
-
         public UILabel FileNoLabel;
-
         public UISprite[] CharacterAvatarList;
     }
 

@@ -811,12 +811,16 @@ namespace Memoria
             //Data.SetActiveBtlData(false);
             String geoName = FF9BattleDB.GEO.GetValue(monsterParam.Geo);
             Data.ChangeModel(ModelFactory.CreateModel(geoName, true, true, Configuration.Graphics.ElementsSmoothTexture), monsterParam.Geo);
-            Data.weapon_bone = (Byte)monsterParam.WeaponAttachment;
-            Data.weapon_scale = monsterParam.WeaponSize.ToVector3(true);
-            Data.weapon_offset_pos = monsterParam.WeaponOffsetPos.ToVector3(false);
-            Data.weapon_offset_rot = monsterParam.WeaponOffsetRot.ToVector3(false);
-            if (Data.builtin_weapon_mode)
-                geo.geoAttach(Data.weapon_geo, Data.gameObject, Data.weapon_bone);
+            if (!btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(monsterParam.Geo, out Int32[] builtInWeapons))
+                builtInWeapons = null;
+            for (i = 0; i < Data.weaponModels.Count; i++)
+            {
+                BTL_DATA.WEAPON_MODEL weapon = Data.weaponModels[i];
+                btl_eqp.SetupWeaponAttachmentFromMonster(weapon, monsterParam, i);
+                weapon.builtin_mode = weapon.geo != null && builtInWeapons != null && builtInWeapons.Contains(weapon.bone);
+                if (weapon.geo != null && weapon.bone >= 0)
+                    geo.geoAttach(weapon.geo, Data.gameObject, weapon.bone);
+            }
             Data.bi.t_gauge = 0;
             if (IsUnderAnyStatus(BattleStatus.Trance))
             {
@@ -1029,6 +1033,8 @@ namespace Memoria
             else
                 btl_mot.setMotion(Data, BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL);
             Data.evt.animFrame = 0;
+            if (Data.weaponModels.Count > 0)
+                Data.weaponModels[0].builtin_mode = false;
             btl_vfx.SetTranceModel(Data, false);
             btl_mot.HideMesh(Data, UInt16.MaxValue);
             monsterTransform.fade_counter = 2;

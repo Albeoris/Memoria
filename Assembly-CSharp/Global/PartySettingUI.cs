@@ -3,6 +3,7 @@ using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
+using Memoria.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -85,6 +86,9 @@ public class PartySettingUI : UIScene
     public GameObject OutsidePartyPanel;
     public GameObject HelpInfoPanel;
     public GameObject ScreenFadeGameObject;
+
+    [NonSerialized]
+    private GOMenuBackground background;
 
     private UILabel helpLabel;
     private CharacterDetailPartyHUD currentCharacterHud;
@@ -486,6 +490,7 @@ public class PartySettingUI : UIScene
             this.outsidePartyHudList.Add(new CharacterOutsidePartyHud(go));
         }
         this.currentCharacterHud = new CharacterDetailPartyHUD(this.OutsidePartyPanel.GetChild(0), false);
+        this.background = new GOMenuBackground(this.transform.GetChild(5).gameObject, "party_setting_bg");
     }
 
     private void ExtendSelectSlots()
