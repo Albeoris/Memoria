@@ -2336,6 +2336,8 @@ public partial class BattleHUD : UIScene
 
     private void ProcessAutoBattleInput()
     {
+        if (!Configuration.Cheats.AutoBattle) return;
+
         _isAutoAttack = !_isAutoAttack;
         _autoBattleToggle.value = _isAutoAttack;
         AutoBattleHud.SetActive(_isAutoAttack);

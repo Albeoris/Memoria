@@ -33,6 +33,7 @@ namespace Memoria.Launcher
             //["AccessBattleMenuToggle", "_accessbattlemenutoggle", "AccessMenus", "Battle", 0, 3, 0],
             ["GarnetConcentrate", "_garnetconcentrate", "GarnetConcentrate", "Battle", 0, 1, 0],
 
+            ["AutoBattle", "_autoBattle", "AutoBattle", "Cheats", 0, 1, 1],
             ["BattleAssistance", "_battleassistance", "BattleAssistance", "Cheats", 0, 1, 1],
             ["Attack9999", "_attack9999", "Attack9999", "Cheats", 0, 1, 1],
             ["NoRandomEncounter", "_norandomencounter", "NoRandomEncounter", "Cheats", 0, 1, 1],
@@ -192,6 +193,12 @@ namespace Memoria.Launcher
         {
             get => _garnetconcentrate;
             set => SetProperty(ref _garnetconcentrate, value);
+        }
+        private Int16 _autoBattle;
+        public Int16 AutoBattle
+        {
+            get => _autoBattle;
+            set => SetProperty(ref _autoBattle, value);
         }
         private Int16 _speedmode;
         public Int16 SpeedMode
