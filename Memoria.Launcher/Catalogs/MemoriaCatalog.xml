@@ -251,7 +251,7 @@ You should set the priority of this mod to be higher than the priority of the Mo
 	<Name>Support Ability Cost</Name>
 	<Version>4.1.0</Version>
 	<InstallationPath>KupoGemSATweak</InstallationPath>
-	<ReleaseDate>2024-08-22</ReleaseDate>
+	<ReleaseDate>2024-11-01</ReleaseDate>
 	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
 	<Author>faospark / Tirlititi </Author>
 	<Description> Allows You to have 1 Gem cost per support ability or Half.
@@ -287,7 +287,7 @@ Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 	<Name>Exp, AP, Gil, Rewards Tweaks</Name>
 	<Version>4.1.0</Version>
 	<InstallationPath>KupoTweaks</InstallationPath>
-	<ReleaseDate>2024-08-22</ReleaseDate>
+	<ReleaseDate>2024-11-01</ReleaseDate>
 	<ReleaseDateOriginal>2022-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>As the name suggests, this mod has several options that can multiply your Exp, AP , Gil and After Battle Rewards. 
@@ -379,7 +379,7 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 	<Name>No Exp Plus </Name>
 	<Version>4.1.0</Version>
 	<InstallationPath>KupoNoEXP</InstallationPath>
-	<ReleaseDate>2024-08-18</ReleaseDate>
+	<ReleaseDate>2024-11-01</ReleaseDate>
 	<ReleaseDateOriginal>2023-07-20</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>If you want some degree of challenge. This mod basically suppresses leveling up in game and more
@@ -432,7 +432,7 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 	<Name>Kupo Heroes Pack </Name>
 	<Version>4.1.0</Version>
 	<InstallationPath>KupoHeroPack</InstallationPath>
-	<ReleaseDate>2024-08-28</ReleaseDate>
+	<ReleaseDate>2024-11-01</ReleaseDate>
 	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A set of Character enhancements that powers up characters and reduces grind. Ideal for players seeking a fresh character experience without changing the story, flow, or core gameplay mechanics.
@@ -791,7 +791,7 @@ You should better use the Playable Characters Pack instead. This later one doesn
 	<Name>Kupo UI Suite</Name>
 	<Version>4.1.0</Version>
 	<InstallationPath>KupoUISuite</InstallationPath>
-	<ReleaseDate>2024-08-28</ReleaseDate>
+	<ReleaseDate>2024-11-01</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>
@@ -1124,7 +1124,7 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 	<Name>Kupo Controller Pack</Name>
 	<Version>4.1.0</Version>
 	<InstallationPath>KupoButtonsPack</InstallationPath>
-	<ReleaseDate>2024-08-21</ReleaseDate>
+	<ReleaseDate>2024-11-01</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-27</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>The original COMPLETE controller buttons pack of FF9.
@@ -1251,7 +1251,7 @@ Available Themes:
 	<Name>Portraits Pack</Name>
 	<Version>4.1.0</Version>
 	<InstallationPath>KupoPortraits</InstallationPath>
-	<ReleaseDate>2024-10-18</ReleaseDate>
+	<ReleaseDate>2024-11-01</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>To DFFOO fans this is where the DFFOO portraits resides
