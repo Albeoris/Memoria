@@ -2355,6 +2355,11 @@ public partial class BattleHUD : UIScene
         }
     }
 
+    public void DisableAutoBattle()
+    {
+        _isAutoAttack = false;
+    }
+
 
     private BattleAbilityId PatchAbility(BattleAbilityId id)
     {
