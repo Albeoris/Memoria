@@ -329,6 +329,7 @@ namespace Memoria.Launcher
             Mod subMod = (Mod)PreviewSubModList.SelectedItem;
             if (subMod != null)
                 subMod.IsActive = PreviewSubModActive.IsChecked ?? false;
+            UpdateModSettings();
         }
 
         private void OnClickUninstall(Object sender, RoutedEventArgs e)
