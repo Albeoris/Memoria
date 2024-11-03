@@ -79,6 +79,10 @@ namespace Memoria.Launcher
             lstMods.SelectionChanged += OnModListSelect;
             tabCtrlMain.SelectionChanged += OnModListSelect;
             PreviewSubModList.SelectionChanged += OnSubModSelect;
+            PreviewSubModList.MouseEnter += (sender, e) =>
+            {
+                PreviewSubModList.Focus();
+            };
             PreviewSubModActive.Checked += OnSubModActivate;
             PreviewSubModActive.Unchecked += OnSubModActivate;
             if (modListInstalled.Count == 0)
