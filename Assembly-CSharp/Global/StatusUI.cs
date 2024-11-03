@@ -1,9 +1,9 @@
 ﻿using Assets.Sources.Scripts.UI.Common;
 using FF9;
-using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Database;
+using Memoria.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +33,7 @@ public class StatusUI : UIScene
 
     public Int32 CurrentPartyIndex
     {
-        set { _currentPartyIndex = value; }
+        set => _currentPartyIndex = value;
     }
 
     private Int32 _currentPartyIndex;
@@ -54,6 +54,8 @@ public class StatusUI : UIScene
     private readonly List<AbilityItemHUD> _abilityHudList;
     private readonly List<GameObject> _abilityCaptionList;
     private Boolean _fastSwitch;
+    [NonSerialized]
+    private GOMenuBackground _background;
 
     public StatusUI()
     {
@@ -418,6 +420,8 @@ public class StatusUI : UIScene
         this._parameterHud.EvadeLabel.height = 40;
         this._parameterHud.MagicDefLabel.height = 40;
         this._parameterHud.MagicEvaLabel.height = 40;
+
+        this._background = new GOMenuBackground(this.transform.GetChild(10).gameObject, "status_bg");
     }
 
     public class ParameterDetailHUD

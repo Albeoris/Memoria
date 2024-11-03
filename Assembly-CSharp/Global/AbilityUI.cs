@@ -77,6 +77,8 @@ public class AbilityUI : UIScene
     private Dictionary<Int32, RegularItem[]> equipmentIdInAbilityDict;
     private GOScrollablePanel _abilityPanel;
     private GOScrollablePanel _supportPanel;
+    [NonSerialized]
+    private GOMenuBackground _background;
 
     public static Color[] BoostedAbilityColor = new Color[]
     {
@@ -1454,6 +1456,7 @@ public class AbilityUI : UIScene
         this.avatarTransition = this.CharacterDetailPanel.GetChild(0).GetChild(6).GetChild(0).GetComponent<HonoAvatarTweenPosition>();
         this._abilityPanel = new GOScrollablePanel(this.ActiveAbilityListPanel);
         this._supportPanel = new GOScrollablePanel(this.SupportAbilityListPanel);
+        this._background = new GOMenuBackground(this.transform.GetChild(7).gameObject, "ability_bg");
     }
 
     private Boolean IsSubMenuDisabledByMainMenu(Boolean useMenu)

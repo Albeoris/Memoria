@@ -447,6 +447,28 @@ namespace Memoria
                         FF9TextTool.ChangeCharacterName((CharacterId)ID, nameDict[(CharacterId)ID]);
                     }
                 }
+                else if (String.Equals(entry[0], "CharacterSecondWeapon") && entry.Length >= 4)
+                {
+                    // For now, it can only be used with SerialNo == 0 (
+                    // eg.: CharacterSecondWeapon ZIDANE_DAGGER 6 SAME_AS_MAIN
+                    // eg.: CharacterSecondWeapon ZIDANE_DAGGER 6 GEO_WEP_B1_013 CustomTextures/MageMasher2.png
+                    // eg.: CharacterSecondWeapon ZIDANE_DAGGER 6 FORMULA "WeaponId == RegularItem_MageMasher ? 'GEO_WEP_B1_013' : 'NONE'"
+                    if (!entry[1].TryEnumParse(out CharacterSerialNumber serialNo))
+                        continue;
+                    if (!Int32.TryParse(entry[2], out Int32 boneId))
+                        continue;
+                    btl_eqp.CharacterSecondaryWeapon charWeap = new btl_eqp.CharacterSecondaryWeapon();
+                    charWeap.Attachment = boneId;
+                    charWeap.Mode = entry[3];
+                    if (entry.Length >= 5)
+                    {
+                        if (String.Equals(entry[3], "FORMULA"))
+                            charWeap.Formula = String.Join(" ", entry.Skip(4).ToArray()).Trim(_formulaTrim);
+                        else if (!String.Equals(entry[4], "null"))
+                            charWeap.Texture = entry[4];
+                    }
+                    btl_eqp.SecondaryWeaponData[serialNo] = charWeap;
+                }
                 else if (String.Equals(entry[0], "3DModel"))
                 {
                     // For both field models and enemy battle models (+ animations)
@@ -526,7 +548,7 @@ namespace Memoria
             {
                 if (s.StartsWith("//"))
                     continue;
-                String[] entry = s.Trim(new char[] { ' ', '\t', '\r', '\n', '=' }).Split(new char[] { ' ' }, 2, StringSplitOptions.RemoveEmptyEntries);
+                String[] entry = s.Trim(_battleTrim).Split(_battleSeparator, 2, StringSplitOptions.RemoveEmptyEntries);
                 if (entry.Length != 2)
                     continue;
                 String opcode = entry[0].TrimEnd(':');
@@ -683,5 +705,9 @@ namespace Memoria
 
         private static List<BattlePatch> _battlePatch = new List<BattlePatch>();
         private static Int32 _selectedBattleId;
+
+        private static Char[] _formulaTrim = ['"'];
+        private static Char[] _battleSeparator = [' '];
+        private static Char[] _battleTrim = [' ', '\t', '\r', '\n', '='];
     }
 }

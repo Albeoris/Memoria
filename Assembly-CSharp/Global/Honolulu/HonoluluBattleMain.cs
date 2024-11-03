@@ -240,6 +240,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
         {
             btl[i] = new BTL_DATA();
             btl[i].typeNo = Byte.MaxValue;
+            btl[i].weaponModels.Clear();
             if (FF9.party.member[i] != null)
             {
                 BattlePlayerCharacter.CreatePlayer(btl[pindex], FF9.party.member[i]);
@@ -264,22 +265,36 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             //var vector3 = new Vector3(sb2Pattern.Put[index2 - 4].Xpos, sb2Pattern.Put[index2 - 4].Ypos * -1, sb2Pattern.Put[index2 - 4].Zpos);
             btl[i] = new BTL_DATA { gameObject = ModelFactory.CreateModel(path, true, true, Configuration.Graphics.ElementsSmoothTexture) };
             btl[i].typeNo = monType;
-            if (!String.IsNullOrEmpty(sb2MonParm.WeaponModel))
+            btl[i].weaponModels.Clear();
+            if (sb2MonParm.WeaponAttachment != null)
             {
-                if (sb2MonParm.WeaponModel.Contains("GEO_WEP"))
-                    btl[i].weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + sb2MonParm.WeaponModel + "/" + sb2MonParm.WeaponModel, true, true, Configuration.Graphics.ElementsSmoothTexture);
-                else
-                    btl[i].weapon_geo = ModelFactory.CreateModel(sb2MonParm.WeaponModel, true, true, Configuration.Graphics.ElementsSmoothTexture);
-                geo.geoAttach(btl[i].weapon_geo, btl[i].gameObject, sb2MonParm.WeaponAttachment);
-                if (btl_eqp.EnemyBuiltInWeaponTable.ContainsKey(sb2MonParm.Geo))
-                    btl[i].builtin_weapon_mode = true;
+                if (!btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(sb2MonParm.Geo, out Int32[] builtInWeapons))
+                    builtInWeapons = null;
+                for (Int32 j = 0; j < sb2MonParm.WeaponAttachment.Length; j++)
+                {
+                    BTL_DATA.WEAPON_MODEL weapon = new BTL_DATA.WEAPON_MODEL();
+                    btl_eqp.SetupWeaponAttachmentFromMonster(weapon, sb2MonParm, j);
+                    if (sb2MonParm.WeaponModel == null || sb2MonParm.WeaponModel.Length <= j || sb2MonParm.WeaponModel[j] == "DEFAULT")
+                        weapon.geo = null;
+                    else if (sb2MonParm.WeaponModel[j] == "NONE")
+                        weapon.geo = new GameObject(btl_eqp.DummyWeaponName);
+                    else if (sb2MonParm.WeaponModel[j].Contains("GEO_WEP"))
+                        weapon.geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + sb2MonParm.WeaponModel[j] + "/" + sb2MonParm.WeaponModel[j], true, true, Configuration.Graphics.ElementsSmoothTexture);
+                    else
+                        weapon.geo = ModelFactory.CreateModel(sb2MonParm.WeaponModel[j], true, true, Configuration.Graphics.ElementsSmoothTexture);
+                    weapon.builtin_mode = weapon.geo != null && builtInWeapons != null && builtInWeapons.Contains(weapon.bone);
+                    if (weapon.geo != null)
+                        geo.geoAttach(weapon.geo, btl[i].gameObject, weapon.bone);
+                    btl[i].weaponModels.Add(weapon);
+                }
             }
             else if (ModelFactory.IsUseAsEnemyCharacter(path))
             {
                 if (path.Contains("GEO_MON_B3_168"))
                     btl[i].gameObject.transform.FindChild("mesh5").gameObject.SetActive(false);
                 btl[i].weapon_geo = ModelFactory.CreateDefaultWeaponForCharacterWhenUseAsEnemy(path);
-                geo.geoAttach(btl[i].weapon_geo, btl[i].gameObject, ModelFactory.GetDefaultWeaponBoneIdForCharacterWhenUseAsEnemy(path));
+                btl[i].weapon_bone = ModelFactory.GetDefaultWeaponBoneIdForCharacterWhenUseAsEnemy(path);
+                geo.geoAttach(btl[i].weapon_geo, btl[i].gameObject, btl[i].weapon_bone);
             }
             else
             {
@@ -293,17 +308,38 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                 btl[i].weaponMeshCount = weaponRenderers.Length;
                 btl[i].weaponRenderer = new Renderer[btl[i].weaponMeshCount];
                 if (btl[i].weaponMeshCount > 0)
-                {
                     for (Int32 j = 0; j < btl[i].weaponMeshCount; j++)
-                    {
                         btl[i].weaponRenderer[j] = weaponRenderers[j].GetComponent<Renderer>();
-                        if (sb2MonParm.WeaponTextureFiles != null && sb2MonParm.WeaponTextureFiles.Length > j && !String.IsNullOrEmpty(sb2MonParm.WeaponTextureFiles[j]))
-                            btl[i].weaponRenderer[j].material.mainTexture = AssetManager.Load<Texture2D>(sb2MonParm.WeaponTextureFiles[j], false);
-                    }
-                }
-                else if (sb2MonParm.WeaponTextureFiles != null) // Other kind of model have no btl.weaponMeshCount
+            }
+            if (sb2MonParm.WeaponTextureFiles != null)
+            {
+                for (Int32 j = 0; j < btl[i].weaponModels.Count; j++)
                 {
-                    ModelFactory.ChangeModelTexture(btl[i].weapon_geo, sb2MonParm.WeaponTextureFiles);
+                    if (btl[i].weaponModels[j].geo == null || btl[i].weaponModels[j].geo.name == btl_eqp.DummyWeaponName)
+                        continue;
+                    List<String> textureFiles = new List<String>();
+                    for (Int32 k = 0; k < sb2MonParm.WeaponTextureFiles.Length; k++)
+                    {
+                        String file = sb2MonParm.WeaponTextureFiles[k];
+                        Int32 weaponIndex = 0;
+                        String[] splitted = file.Split([':'], 2);
+                        if (splitted.Length == 2)
+                        {
+                            Int32.TryParse(splitted[0], out weaponIndex);
+                            file = splitted[1];
+                        }
+                        if (weaponIndex == j)
+                            textureFiles.Add(file);
+                    }
+                    if (textureFiles.Count > 0)
+                    {
+                        MeshRenderer[] weaponRenderers = btl[i].weaponModels[j].geo.GetComponentsInChildren<MeshRenderer>();
+                        if (weaponRenderers.Length > 0)
+                            for (Int32 k = 0; k < weaponRenderers.Length && k < textureFiles.Count; k++)
+                                weaponRenderers[k].GetComponent<Renderer>().material.mainTexture = AssetManager.Load<Texture2D>(textureFiles[k], false);
+                        else // Other kind of model have no btl.weaponMeshCount
+                            ModelFactory.ChangeModelTexture(btl[i].weaponModels[j].geo, textureFiles.ToArray());
+                    }
                 }
             }
             Int32 meshCount = 0;

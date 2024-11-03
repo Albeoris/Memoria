@@ -2691,7 +2691,7 @@ public partial class BattleHUD : UIScene
                 if (btl.weapon != ff9item.GetItemWeapon(player.equip[0]))
                 {
                     btl_eqp.InitWeapon(player, btl);
-                    btl.weapon_offset_rot = btl_mot.BattleParameterList[player.info.serial_no].GetWeaponRotationFixed(btl.weapon.ModelId, false);
+                    btl.weaponModels[0].offset_rot = btl_mot.BattleParameterList[player.info.serial_no].GetWeaponRotationFixed(btl.weapon.ModelId, false);
                 }
                 btl_eqp.InitEquipPrivilegeAttrib(player, btl);
             }

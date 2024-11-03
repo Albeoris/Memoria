@@ -189,14 +189,6 @@ namespace Memoria.Patcher
 
                     if (isSteamOverlayFixed && fixReleased)
                         gameLocation.FixSteamOverlay(true); // Backup and redo the registry lock
-
-                    // Remove Memoria's LocalizationPatch.txt: the added UI texts are now stored in Localization.cs directly
-                    if (File.Exists(Path.Combine(gameLocation.StreamingAssetsPath, "Data/Text/LocalizationPatch.txt")))
-                    {
-                        File.Delete(Path.Combine(gameLocation.StreamingAssetsPath, "Data/Text/LocalizationPatch.txt"));
-                        if (Directory.GetFiles(Path.Combine(gameLocation.StreamingAssetsPath, "Data/Text")).Length == 0)
-                            Directory.Delete(Path.Combine(gameLocation.StreamingAssetsPath, "Data/Text"));
-                    }
                 }
                 catch (Exception ex)
                 {

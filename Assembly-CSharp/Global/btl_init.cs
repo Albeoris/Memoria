@@ -166,10 +166,6 @@ public static class btl_init
         pBtl.mesh_current = pParm.Mesh[0];
         pBtl.mesh_banish = pParm.Mesh[1];
         pBtl.tar_bone = pParm.Bone[3];
-        pBtl.weapon_bone = (Byte)pParm.WeaponAttachment;
-        pBtl.weapon_scale = pParm.WeaponSize.ToVector3(true);
-        pBtl.weapon_offset_pos = pParm.WeaponOffsetPos.ToVector3(false);
-        pBtl.weapon_offset_rot = pParm.WeaponOffsetRot.ToVector3(false);
         // New field "out_of_reach"
         pBtl.out_of_reach = pParm.OutOfReach || FF9StateSystem.Battle.FF9Battle.btl_scene.Info.NoNeighboring;
         ENEMY enemy = FF9StateSystem.Battle.FF9Battle.enemy[pBtl.bi.slot_no];
@@ -446,9 +442,9 @@ public static class btl_init
         BattlePlayerCharacter.InitAnimation(btl);
         btl.weapon_bone = btlParam.WeaponBone;
         btl_eqp.InitWeapon(p, btl);
-        btl.weapon_scale = btlParam.WeaponSize.ToVector3(true);
-        btl.weapon_offset_pos = btlParam.WeaponOffsetPos.ToVector3(false);
-        btl.weapon_offset_rot = btlParam.GetWeaponRotationFixed(btl.weapon.ModelId, false);
+        btl.weaponModels[0].scale = btlParam.WeaponSize.ToVector3(true);
+        btl.weaponModels[0].offset_pos = btlParam.WeaponOffsetPos.ToVector3(false);
+        btl.weaponModels[0].offset_rot = btlParam.GetWeaponRotationFixed(btl.weapon.ModelId, false);
         btl.defence.PhysicalDefence = p.defence.PhysicalDefence;
         btl.defence.PhysicalEvade = p.defence.PhysicalEvade;
         btl.defence.MagicalDefence = p.defence.MagicalDefence;

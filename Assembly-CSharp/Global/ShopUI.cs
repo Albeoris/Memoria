@@ -1281,6 +1281,7 @@ public class ShopUI : UIScene
         this.triggerCounter = ShopUI.TRIGGER_DURATION;
         this.confirmQuantityLabel.width = 60;
         this.confirmQuantityLabel.height = 64;
+        this._background = new GOMenuBackground(this.transform.GetChild(7).gameObject, "shop_bg");
     }
 
     private void Update()
@@ -1457,6 +1458,8 @@ public class ShopUI : UIScene
     private GOScrollablePanel _shopItemPanel;
     private GOScrollablePanel _shopWeaponPanel;
     private GOScrollablePanel _shopSellItemPanel;
+    [NonSerialized]
+    private GOMenuBackground _background;
 
     private List<ShopUI.CharacterWeaponInfoHUD> charInfoHud = new List<ShopUI.CharacterWeaponInfoHUD>();
 

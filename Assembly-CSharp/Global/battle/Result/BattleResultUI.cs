@@ -1,13 +1,14 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using Memoria.Scenes;
 using Object = System.Object;
 
 public class BattleResultUI : UIScene
@@ -655,13 +656,7 @@ public class BattleResultUI : UIScene
         {
             if (this.isReadyToShowNextAbil[i] && this.abilityLearned[i].Count != 0)
             {
-                global::Debug.Log(String.Concat(new Object[]
-                {
-                    "index: ",
-                    i,
-                    " abilityLearned[index].Count: ",
-                    this.abilityLearned[i].Count
-                }));
+                global::Debug.Log($"index: {i} abilityLearned[index].Count: {this.abilityLearned[i].Count}");
                 this.isReadyToShowNextAbil[i] = false;
                 base.StartCoroutine(this.ApDraw(i));
             }
@@ -799,12 +794,8 @@ public class BattleResultUI : UIScene
     private void Awake()
     {
         base.FadingComponent = this.ScreenFadeGameObject.GetComponent<HonoFading>();
-        foreach (Object obj in this.CharacterInfoPanel.GetChild(0).transform)
-        {
-            Transform transform = (Transform)obj;
-            BattleResultUI.CharacterBattleResultInfoHUD item = new BattleResultUI.CharacterBattleResultInfoHUD(transform.gameObject);
-            this.characterBRInfoHudList.Add(item);
-        }
+        foreach (Transform transform in this.CharacterInfoPanel.GetChild(0).transform)
+            this.characterBRInfoHudList.Add(new BattleResultUI.CharacterBattleResultInfoHUD(transform.gameObject));
         this.expReceiveLabel = this.EXPPanel.GetChild(1).GetComponent<UILabel>();
         this.apReceiveLabel = this.APPanel.GetChild(1).GetComponent<UILabel>();
         this.receiveGilLabel = this.ReceiveGilPanel.GetChild(1).GetComponent<UILabel>();
@@ -815,15 +806,11 @@ public class BattleResultUI : UIScene
         this.noItemLabel = this.ItemListPanel.GetChild(0).GetChild(1);
         for (Int32 i = 0; i < childCount; i++)
         {
-            GameObject child = this.ItemListPanel.GetChild(0).GetChild(0).GetChild(i);
+            GameObject itemSlot = this.ItemListPanel.GetChild(0).GetChild(0).GetChild(i);
             if (i == childCount - 1)
-            {
-                this.cardHud = new ItemListDetailWithIconHUD(child, false);
-            }
+                this.cardHud = new ItemListDetailWithIconHUD(itemSlot, false);
             else if (i != childCount - 2)
-            {
-                this.itemHudList.Add(new ItemListDetailWithIconHUD(child, true));
-            }
+                this.itemHudList.Add(new ItemListDetailWithIconHUD(itemSlot, true));
         }
         this.screenFadePanel = this.ScreenFadeGameObject.GetParent().GetComponent<UIPanel>();
         this.expLeftSideTween = this.TransitionPanel.GetChild(0).GetComponent<HonoTweenPosition>();
@@ -843,13 +830,12 @@ public class BattleResultUI : UIScene
         this.abilityLearnedPanelTween[2] = this.TransitionPanel.GetChild(12).GetComponent<HonoTweenClipping>();
         this.abilityLearnedPanelTween[3] = this.TransitionPanel.GetChild(13).GetComponent<HonoTweenClipping>();
         if (FF9StateSystem.MobilePlatform)
-        {
             this.AllPanel.GetChild(3).GetChild(0).GetComponent<UILocalize>().key = "TouchToConfirm";
-        }
         GameObject child2 = this.GilAndItemPhrasePanel.GetChild(0);
         GameObject child3 = this.GilAndItemPhrasePanel.GetChild(0).GetChild(0);
         child2.GetComponent<UIPanel>().depth = 2;
         child3.GetComponent<UIPanel>().depth = 3;
+        this.background = new GOMenuBackground(this.AllPanel.transform.GetChild(4).gameObject, "battle_result_bg");
     }
 
     public GameObject AllPanel;
@@ -879,6 +865,8 @@ public class BattleResultUI : UIScene
     private UILabel apReceiveLabel;
     private UILabel receiveGilLabel;
     private UILabel currentGilLabel;
+    [NonSerialized]
+    private GOMenuBackground background;
 
     private List<ItemListDetailWithIconHUD> itemHudList = new List<ItemListDetailWithIconHUD>();
     private ItemListDetailWithIconHUD cardHud = new ItemListDetailWithIconHUD();
