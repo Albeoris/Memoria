@@ -1384,6 +1384,8 @@ public class EquipUI : UIScene
             this.OptimizeSubMenu.GetComponent<ButtonGroupState>().Help.TextKey = "OptimizeHelpForMobile";
             this.OffSubMenu.GetComponent<ButtonGroupState>().Help.TextKey = "OffEquipmentHelpForMobile";
         }
+
+        this._background = new GOMenuBackground(this.transform.GetChild(6).gameObject, "equip_bg");
     }
 
     private void ChangeEquipButtonWidth()
@@ -1420,6 +1422,8 @@ public class EquipUI : UIScene
     private GameObject submenuArrowGameObject;
     private RecycleListPopulator equipSelectScrollList;
     private GOScrollablePanel _equipSelectPanel;
+    [NonSerialized]
+    private GOMenuBackground _background;
 
     private static String SubMenuGroupButton = "Equip.SubMenu";
     private static String EquipmentGroupButton = "Equip.Equipment";

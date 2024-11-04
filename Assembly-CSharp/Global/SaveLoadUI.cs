@@ -4,6 +4,7 @@ using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
+using Memoria.Scenes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -689,17 +690,10 @@ public class SaveLoadUI : UIScene
 
     private void setSerialzeType(SaveLoadUI.SerializeType serailizeType)
     {
-        if (serailizeType != SaveLoadUI.SerializeType.Save)
-        {
-            if (serailizeType == SaveLoadUI.SerializeType.Load)
-            {
-                FF9UIDataTool.DisplayTextLocalize(this.SerailizeTitleLabel, "Load");
-            }
-        }
-        else
-        {
+        if (serailizeType == SaveLoadUI.SerializeType.Load)
+            FF9UIDataTool.DisplayTextLocalize(this.SerailizeTitleLabel, "Load");
+        else if (serailizeType == SaveLoadUI.SerializeType.Save)
             FF9UIDataTool.DisplayTextLocalize(this.SerailizeTitleLabel, "Save");
-        }
     }
 
     private void Awake()
@@ -710,92 +704,64 @@ public class SaveLoadUI : UIScene
         this.fileScrollList = this.FileListPanel.GetChild(1).GetComponent<SnapDragScrollView>();
         this.progressBar = this.LoadingAccessPanel.GetChild(2).GetComponent<UISlider>();
         this.loadingAccessText = this.LoadingAccessPanel.GetChild(1);
-        foreach (Object obj in this.SlotListPanel.transform)
+        foreach (Transform slotTransform in this.SlotListPanel.transform)
         {
-            Transform transform = (Transform)obj;
-            Int32 siblingIndex = transform.GetSiblingIndex();
+            Int32 siblingIndex = slotTransform.GetSiblingIndex();
             if (siblingIndex != 10)
             {
-                UILabel component = transform.gameObject.GetChild(0).GetComponent<UILabel>();
-                this.slotNameLabelList.Add(component);
-                this.slotNameButtonList.Add(transform.gameObject.GetComponent<ButtonGroupState>());
-                UIEventListener uieventListener = UIEventListener.Get(transform.gameObject);
-                uieventListener.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener.onClick, new UIEventListener.VoidDelegate(this.onClick));
+                this.slotNameLabelList.Add(slotTransform.gameObject.GetChild(0).GetComponent<UILabel>());
+                this.slotNameButtonList.Add(slotTransform.gameObject.GetComponent<ButtonGroupState>());
+                UIEventListener.Get(slotTransform.gameObject).onClick += this.onClick;
             }
         }
-        foreach (Object obj2 in this.FileListPanel.GetChild(1).GetChild(0).transform)
+        foreach (Transform fileTransform in this.FileListPanel.GetChild(1).GetChild(0).transform)
         {
-            Transform transform2 = (Transform)obj2;
-            SaveLoadUI.FileInfoHUD item = new SaveLoadUI.FileInfoHUD(transform2.gameObject);
-            this.fileInfoHudList.Add(item);
-            UIEventListener uieventListener2 = UIEventListener.Get(transform2.gameObject);
-            uieventListener2.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener2.onClick, new UIEventListener.VoidDelegate(this.onClick));
+            this.fileInfoHudList.Add(new SaveLoadUI.FileInfoHUD(fileTransform.gameObject));
+            UIEventListener.Get(fileTransform.gameObject).onClick += this.onClick;
         }
         this.screenFadePanel = this.ScreenFadeGameObject.GetParent().GetComponent<UIPanel>();
-        UIEventListener uieventListener3 = UIEventListener.Get(this.OverWriteDialog.GetChild(1));
-        uieventListener3.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener3.onClick, new UIEventListener.VoidDelegate(this.onClick));
-        UIEventListener uieventListener4 = UIEventListener.Get(this.OverWriteDialog.GetChild(2));
-        uieventListener4.onClick = (UIEventListener.VoidDelegate)Delegate.Combine(uieventListener4.onClick, new UIEventListener.VoidDelegate(this.onClick));
+        UIEventListener.Get(this.OverWriteDialog.GetChild(1)).onClick += this.onClick;
+        UIEventListener.Get(this.OverWriteDialog.GetChild(2)).onClick += this.onClick;
+        this.background = new GOMenuBackground(this.transform.GetChild(8).gameObject, "save_load_bg");
     }
 
     private static String SlotGroupButton = "Save.Slot";
-
     private static String FileGroupButton = "Save.File";
-
     private static String ConfirmDialogGroupButton = "Save.Choice";
 
     public GameObject SerailizeTitleLabel;
-
     public GameObject HelpTitleLabel;
-
     public GameObject HelpDespLabelGameObject;
-
     public GameObject SlotListPanel;
-
     public GameObject FileListPanel;
-
     public GameObject HelpPanel;
-
     public GameObject LoadingPreviewDialog;
-
     public GameObject OverWriteDialog;
-
     public GameObject LoadingAccessPanel;
-
     public GameObject SuccessfulAccessPanel;
-
     public GameObject ScreenFadeGameObject;
 
     private UISlider progressBar;
-
     private SnapDragScrollView fileScrollList;
-
     private GameObject successfulAccessGameObject;
-
     private GameObject loadingAccessText;
-
     private UILabel helpSlotLabel;
+    [NonSerialized]
+    private GOMenuBackground background;
 
     private List<SaveLoadUI.FileInfoHUD> fileInfoHudList = new List<SaveLoadUI.FileInfoHUD>();
-
     private List<UILabel> slotNameLabelList = new List<UILabel>();
-
     private List<ButtonGroupState> slotNameButtonList = new List<ButtonGroupState>();
 
     private UIPanel screenFadePanel;
 
     private List<Boolean> isFileExistList = new List<Boolean>();
-
     private List<Boolean> isFileCorrupt = new List<Boolean>();
 
     private SaveLoadUI.SerializeType type;
-
     private Int32 currentSlot;
-
     private Int32 currentFile;
-
     private Single timeCounter;
-
     private Dialog noSaveDataDialog;
 
     private struct FileInfoHUD
@@ -823,27 +789,17 @@ public class SaveLoadUI : UIScene
         }
 
         public GameObject Self;
-
         public GameObject Container;
 
         public ButtonGroupState Button;
-
         public UILabel LeaderNameLabel;
-
         public UILabel LeaderLvLabel;
-
         public UILabel GilLabel;
-
         public UILabel TimeLabel;
-
         public UILabel LocationNameLabel;
-
         public GameObject EmptySlotTextGameObject;
-
         public UILabel EmptySlotTextLabel;
-
         public UILabel FileNoLabel;
-
         public UISprite[] CharacterAvatarList;
     }
 

@@ -13,10 +13,18 @@ namespace Memoria.Assets
         protected override void ProcessEntries(TxtEntry[] entreis)
         {
             String[] characterNamesArray = CharacterNamesFormatter.Parse(entreis);
-            Dictionary<CharacterId, String> characterNames = new Dictionary<CharacterId, String>();
             for (Int32 i = 0; i < characterNamesArray.Length; i++)
-                characterNames[(CharacterId)i] = characterNamesArray[i];
-            FF9TextTool.SetCharacterNames(characterNames);
+            {
+                foreach (PLAYER player in FF9StateSystem.Common.FF9.player.Values)
+                {
+                    // Note: "CharacterNames.strings" sort its entries according to preset IDs
+                    if (player.PresetId == (CharacterPresetId)i)
+                    {
+                        FF9TextTool.ChangeCharacterName(player.Index, characterNamesArray[i]);
+                        break;
+                    }
+                }
+            }
         }
 
         protected override Boolean LoadInternal()

@@ -502,84 +502,58 @@ public class CardUI : UIScene
         component.SetAnchor((Transform)null);
         component.width = 332;
         component.height = 40;
+
+        this.background = new GOMenuBackground(this.transform.GetChild(6).gameObject, "card_bg");
     }
 
     private static String CardGroupButton = "Card.Card";
-
     private static String DiscardDialogButtonGroup = "Card.Choice";
-
     private static Int32 FF9FCARD_ARROW_TYPE_MAX = 256;
-
     private static Int32 FF9FCAZRD_LV_MAX = 32;
 
     public GameObject CardSelectionListPanel;
-
     public GameObject PlayerInfoPanel;
-
     public GameObject CardInfoPanel;
-
     public GameObject DeleteDialogGameObject;
-
     public GameObject DeleteSubmenuButton;
-
     public GameObject HelpDespLabelGameObject;
-
     public GameObject TransitionPanel;
-
     public GameObject ScreenFadeGameObject;
 
     private UILabel levelLabel;
-
     private UILabel classNameLabel;
-
     private UILabel winCountLabel;
-
     private UILabel loseCountLabel;
-
     private UILabel drawCountLabel;
-
     private UILabel stockCountLabel;
-
     private UILabel typeCountLabel;
-
     private GameObject cardInfoContentGameObject;
-
     private GameObject cardNumberGameObject;
+    [NonSerialized]
+    private GOMenuBackground background;
 
     //private ButtonGroupState discardConfirmButton;
-
     //private ButtonGroupState discardCancelButton;
 
     private UILabel currentCardNumberLabel;
-
     private UILabel totalCardNumberLabel;
-
     private UILabel cardNameLabel;
-
     private BoxCollider prevOffsetButton;
-
     private BoxCollider nextOffsetButton;
-
     private HonoTweenPosition cardDetailTransition;
-
     private HonoTweenClipping deleteDialogTransition;
 
     private List<CardUI.CardListHUD> cardHudList = new List<CardUI.CardListHUD>();
-
     private List<CardDetailHUD> cardDetailHudList = new List<CardDetailHUD>();
 
     private Boolean fastSwitch;
-
     private Int32 currentCardId;
-
     private Int32 deleteCardId;
 
     private Int32[] offset = new Int32[CardPool.TOTAL_CARDS];
-
     private Byte[] count = new Byte[CardPool.TOTAL_CARDS];
 
     private Int32 lv_collector;
-
     private Int32 point;
 
     private UiDiscardDialog _uiDiscardDialog;
@@ -601,15 +575,11 @@ public class CardUI : UIScene
         }
 
         public GameObject Self;
-
         public Int32 Id;
 
         public UISprite CardIconSprite;
-
         public UILabel CardAmountLabel;
-
         public UISpriteAnimation CardHighlightAnimation;
-
         public ButtonGroupState CardButtonGroup;
     }
 

@@ -3344,6 +3344,9 @@
     <Content Include="FF9_Data\EmbeddedAsset\UI\Sprites\changetodisc4.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="streamingassets\data\text\LocalizationPatch.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <Content Include="StreamingAssets\Shaders\PSX\BattleCharacterShaderRef.txt" />
     <Content Include="StreamingAssets\Shaders\PSX\BattleMap_StatusEffect_RealLighting.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -3791,6 +3794,9 @@
     <None Include="StreamingAssets\Scripts\Project\Memoria.Scripts.sln">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="StreamingAssets\Data\Text\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

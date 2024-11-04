@@ -296,7 +296,7 @@ namespace Memoria.Assets
             Log.Message("[TranslationExporter] Exporting character names...");
             String textAsDP = "";
             foreach (PLAYER player in FF9StateSystem.Common.FF9.PlayerList)
-                textAsDP += $"CharacterDefaultName {(Int32)player.Index} {symbol} {player.Name}\n";
+                textAsDP += $"CharacterDefaultName {(Int32)player.Index} {symbol} {FF9TextTool.CharacterDefaultName(player.Index)}\n";
             File.WriteAllText($"{modFolder}DictionaryPatch.txt", textAsDP);
             Log.Message("[TranslationExporter] Done.");
         }
@@ -561,6 +561,7 @@ namespace Memoria.Assets
         {
             foreach (EtcImporter importer in EtcImporter.EnumerateImporters())
                 importer.LoadSync();
+            new CharacterNamesImporter().LoadSync();
             _etcBatches =
             [
                 new EtcTextBatch("WorldLoc", "WorldLocations", 0, FF9TextTool.worldLocationText),
