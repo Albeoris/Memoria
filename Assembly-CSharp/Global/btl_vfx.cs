@@ -203,16 +203,16 @@ public static class btl_vfx
         if (isTrance && btlParam.TranceParameters)
         {
             btl.weapon_bone = btlParam.TranceWeaponBone;
-            btl.weapon_scale = btlParam.TranceWeaponSize.ToVector3(true);
-            btl.weapon_offset_pos = btlParam.TranceWeaponOffsetPos.ToVector3(false);
-            btl.weapon_offset_rot = btlParam.GetWeaponRotationFixed(btl.weapon.ModelId, true);
+            btl.weaponModels[0].scale = btlParam.TranceWeaponSize.ToVector3(true);
+            btl.weaponModels[0].offset_pos = btlParam.TranceWeaponOffsetPos.ToVector3(false);
+            btl.weaponModels[0].offset_rot = btlParam.GetWeaponRotationFixed(btl.weapon.ModelId, true);
         }
         else
         {
             btl.weapon_bone = btlParam.WeaponBone;
-            btl.weapon_scale = btlParam.WeaponSize.ToVector3(true);
-            btl.weapon_offset_pos = btlParam.WeaponOffsetPos.ToVector3(false);
-            btl.weapon_offset_rot = btlParam.GetWeaponRotationFixed(btl.weapon.ModelId, false);
+            btl.weaponModels[0].scale = btlParam.WeaponSize.ToVector3(true);
+            btl.weaponModels[0].offset_pos = btlParam.WeaponOffsetPos.ToVector3(false);
+            btl.weaponModels[0].offset_rot = btlParam.GetWeaponRotationFixed(btl.weapon.ModelId, false);
         }
         geo.geoAttach(btl.weapon_geo, btl.gameObject, btl.weapon_bone);
         AnimationFactory.AddAnimToGameObject(btl.gameObject, btl_mot.BattleParameterList[serialNo].ModelId, true);

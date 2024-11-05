@@ -21,9 +21,9 @@ public partial class BTL_DATA
         for (Int32 i = 0; i < meshCount; i++)
             meshIsRendering[i] = true;
         dms_geo_id = geoID;
-        if (builtin_weapon_mode && weapon_geo != null)
-            weapon_geo.transform.localScale = Vector3.one;
-        builtin_weapon_mode = weapon_geo != null && weapon_geo.name != btl_eqp.DummyWeaponName && btl_eqp.EnemyBuiltInWeaponTable.ContainsKey(geoID);
+        foreach (WEAPON_MODEL weapon in weaponModels)
+            if (weapon.geo != null && weapon.builtin_mode)
+                weapon.geo.transform.localScale = weapon.scale;
         _smoothUpdateRegistered = false;
         btl_mot.BtlActivatedThisFrame.Add(this);
     }
@@ -174,11 +174,26 @@ public partial class BTL_DATA
     public Single animSpeed;
     public Single animFrameFrac;
 
-    public GameObject weapon_geo;
-    public Byte weapon_bone;
-    public Vector3 weapon_scale;
-    public Vector3 weapon_offset_pos;
-    public Vector3 weapon_offset_rot;
+    public GameObject weapon_geo
+    {
+        get => weaponModels.Count > 0 ? weaponModels[0].geo : null;
+        set
+        {
+            if (weaponModels.Count == 0)
+                weaponModels.Add(new WEAPON_MODEL());
+            weaponModels[0].geo = value;
+        }
+    }
+    public Int32 weapon_bone
+    {
+        get => weaponModels.Count > 0 ? weaponModels[0].bone : -1;
+        set
+        {
+            if (weaponModels.Count == 0)
+                weaponModels.Add(new WEAPON_MODEL());
+            weaponModels[0].bone = value;
+        }
+    }
 
     public UInt16 mesh_current;
     public UInt16 mesh_banish;
@@ -275,10 +290,20 @@ public partial class BTL_DATA
 
     public BTL_DATA killer_track;
 
-    public Boolean builtin_weapon_mode;
+    public List<WEAPON_MODEL> weaponModels = new List<WEAPON_MODEL>();
 
     public Boolean is_monster_transform;
     public MONSTER_TRANSFORM monster_transform;
+
+    public class WEAPON_MODEL
+    {
+        public GameObject geo = null;
+        public Int32 bone = -1;
+        public Boolean builtin_mode = false;
+        public Vector3 scale = Vector3.one;
+        public Vector3 offset_pos = Vector3.zero;
+        public Vector3 offset_rot = Vector3.zero;
+    }
 
     public class MONSTER_TRANSFORM
     {

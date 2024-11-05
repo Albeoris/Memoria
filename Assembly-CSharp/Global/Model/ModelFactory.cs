@@ -63,10 +63,10 @@ public static class ModelFactory
         String modelNameId = path;
         path = ModelFactory.CheckUpscale(path);
         String renameModelPath = ModelFactory.GetRenameModelPath(path);
-        UnityEngine.Object model = AssetManager.Load<GameObject>(renameModelPath, false);
+        GameObject model = AssetManager.Load<GameObject>(renameModelPath, false);
         if (model == null)
             return null;
-        GameObject gameObject = (GameObject)UnityEngine.Object.Instantiate(model);
+        GameObject gameObject = UnityEngine.Object.Instantiate(model);
         if (modelNameId == "GEO_MAIN_F3_ZDN" || modelNameId == "GEO_MAIN_F4_ZDN" || modelNameId == "GEO_MAIN_F5_ZDN")
         {
             Renderer[] renderers = gameObject.GetComponentsInChildren<Renderer>();
