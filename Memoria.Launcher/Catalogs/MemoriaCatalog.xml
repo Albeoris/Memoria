@@ -789,9 +789,9 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Kupo UI Suite</Name>
-	<Version>4.1.0</Version>
+	<Version>4.1.1</Version>
 	<InstallationPath>KupoUISuite</InstallationPath>
-	<ReleaseDate>2024-11-01</ReleaseDate>
+	<ReleaseDate>2024-11-6</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>
@@ -799,23 +799,7 @@ The First User Interface Suite for FFIX. This mod allows you to change the ff:
 Dialogue UI, Menu, Title Screen, Menu Bg , World Map , Title loop , Triple Triad Mat. 
 Also Included Text UI helpers Synthesis menus 
 
-== Dialogue / UI ==
-Darker UI (original preset transforms blue to teal and gray to almost black gray)
-Flat UI for gray and classic choices
-Darker UI frame from The Pixel Remaster 
-== Title Screen ==
-Recreation || Alternative || Old School
-== Menu Bg ==
-Black || Stone || Tantalus || Chocobo 
-== World Map ===
-Colored Mist Continent and World Map 
-== Title Loop ==
-Complete replacement using enhance concept Art
-== Triple Triad Mat ==
-Changes the mat of tetra master to triple triad. this will automatically turn on triple triad mode
-
-Default turned on mods : Darker UI + Recreation TS + Colored World Map   
-+ default extended of portraits pack and simple psx button [See Recommendations below]
+See More information on the Readme.txt file 
 
 Mod Order : Position one or on top of Any Gameplay mod .
 
@@ -825,7 +809,7 @@ Best used with Portrait Mod and Buttons Pack that are also part of The Kupo Mods
 Originally released as part of Kupo Mods formerly Mog-Addons
 to see previews and learn more about the mod visit the website url
 	</Description>
-	<PatchNotes>First Split Release</PatchNotes>
+	<PatchNotes>See Readme.txt</PatchNotes>
 	<Category>Various</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/bwgd9529j6wx7jhiju419/KupoUISuite.zip?rlkey=z8yybpjg9i5fi9vu3kz33zeiw&amp;dl=1</DownloadUrl>
@@ -914,25 +898,25 @@ to see previews and learn more about the mod visit the website url
 		<Name>Menu Bg Full : Forest</Name>
 		<InstallationPath>Features/Menubg/menubgfull01</InstallationPath>
 		<Description>A save point in the forest</Description>
-		<Priority>4</Priority>
+		<Priority>10</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Menu Bg Full : Huts</Name>
 		<InstallationPath>Features/Menubg/menubgfull02</InstallationPath>
 		<Description>The huts of the Black Mage</Description>
-		<Priority>4</Priority>
+		<Priority>10</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Menu Bg Full : Secret Room</Name>
 		<InstallationPath>Features/Menubg/menubgfull03</InstallationPath>
 		<Description>An Unused Room room for the game </Description>
-		<Priority>4</Priority>
+		<Priority>10</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Title Screen : Normal </Name>
 		<InstallationPath>Features/TitleLogo/TitleLogo0</InstallationPath>
 		<Description>Normal Title Screen Credits to Moguri mod </Description>
-		<Priority>1</Priority>
+		<Priority>10</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Title Screen : Alternate </Name>
@@ -950,12 +934,18 @@ to see previews and learn more about the mod visit the website url
 		<Name>Title Screen : Old School </Name>
 		<InstallationPath>Features/TitleLogo/TitleLogo3</InstallationPath>
 		<Description>Shows an old school type of title screen</Description>
-		<Priority>2</Priority>
+		<Priority>4</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Title Screen : Origins </Name>
+		<InstallationPath>Features/TitleLogo/TitleLogo4</InstallationPath>
+		<Description>Original concept of the logo </Description>
+		<Priority>6</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>UI Option: Borderless</Name>
 		<InstallationPath>Features/frames/borderless</InstallationPath>
-		<Description>Remove white Border</Description>
+		<Description>Remove white Border mostly for testing purposes </Description>
 		<Priority>5</Priority>
 	</SubMod>
 	<SubMod>
