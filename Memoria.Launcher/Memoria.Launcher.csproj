@@ -186,11 +186,9 @@
       <TargetPath>Memoria.ini</TargetPath>
     </EmbeddedResource>
     <EmbeddedResource Include="Presets\PSXPreset.ini">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>PSXPreset.ini</TargetPath>
     </EmbeddedResource>
     <EmbeddedResource Include="Presets\SteamPreset.ini">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>SteamPreset.ini</TargetPath>
     </EmbeddedResource>
     <Resource Include="Fonts\centurygothic-bold.ttf" />
@@ -216,6 +214,7 @@
     <EmbeddedResource Include="Languages\pt-BR.xml" />
     <EmbeddedResource Include="Languages\en.xml" />
     <EmbeddedResource Include="Languages\ru.xml" />
+    <EmbeddedResource Include="Languages\tr.xml" />
     <EmbeddedResource Include="Languages\zh-CN.xml" />
     <Resource Include="images\btnCancelimg.png" />
     <Resource Include="images\btnCheckCompatibilityimg.png" />
@@ -233,6 +232,15 @@
     <Resource Include="images\comparison_cameraheight.jpg" />
     <Resource Include="images\comparison_worldmapfov.jpg" />
     <Resource Include="images\comparison_cardgames.png" />
+    <Resource Include="images\Gradient.png" />
+    <Resource Include="images\tickboxFF9_off.png" />
+    <Resource Include="images\tickboxFF9_on.png" />
+    <Resource Include="images\tickboxFF9_hover.png" />
+    <Resource Include="images\cursorHand.cur" />
+    <Resource Include="images\texture_filtering.png" />
+    <Resource Include="images\texture_filtering2.png" />
+    <Resource Include="images\btnUninstallimg_small.png" />
+    <Resource Include="images\alternative_controls.png" />
     <None Include="Catalogs\MemoriaCatalog.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -249,31 +257,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="SharpCompress" Version="0.38.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="images\Gradient.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="images\tickboxFF9_off.png" />
-    <Resource Include="images\tickboxFF9_on.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="images\tickboxFF9_hover.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="images\cursorHand.cur" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="images\texture_filtering.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="images\texture_filtering2.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="images\btnUninstallimg_small.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="images\alternative_controls.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\ChangeLog.txt">

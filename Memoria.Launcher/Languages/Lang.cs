@@ -11,9 +11,9 @@ namespace Memoria.Launcher
         public static String LangName = "en";
         public static ResourceDictionary Res => Application.Current.Resources;
 
-        public static String[] LauncherLanguageList = { "en", "de", "es", "fr", "it", "jp", "pt-BR", "ru", "uk", "zh-CN" };
+        public static String[] LauncherLanguageList = { "en", "de", "es", "fr", "it", "jp", "pt-BR", "ru", "tr", "uk", "zh-CN" };
 
-        public static String[] LauncherLanguageNames = { "English", "Deutsch", "Español", "Français", "Italiano", "日本語", "Português (brasileiro)", "Русский", "Українська", "中文" };
+        public static String[] LauncherLanguageNames = { "English", "Deutsch", "Español", "Français", "Italiano", "日本語", "Português (brasileiro)", "Русский", "Türkçe", "Українська", "中文" };
 
         public static void Initialize()
         {
