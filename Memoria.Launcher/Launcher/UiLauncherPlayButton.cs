@@ -88,13 +88,6 @@ namespace Memoria.Launcher
                     return;
                 }
 
-                SettingsGrid_VanillaDisplay.MaxDisplaySettings(activeMonitor, out Int32 maxScreenWidth, out Int32 maxScreenHeight);
-                if(screenHeight > maxScreenHeight || screenWidth > maxScreenWidth)
-                {
-                    screenWidth = maxScreenWidth;
-                    screenHeight = maxScreenHeight;
-                }
-
                 String directoyPath = Path.GetFullPath(".\\" + (GameSettings.IsX64 ? "x64" : "x86"));
 
                 String executablePath = directoyPath + "\\FF9.exe";

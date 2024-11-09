@@ -185,22 +185,6 @@ namespace Memoria.Launcher
             }
         }
 
-        public static void MaxDisplaySettings(Int32 monitor, out Int32 x, out Int32 y)
-        {
-            DevMode devMode = new DevMode();
-            Int32 modeNum = 0;
-            x = 640;
-            y = 480;
-            while (EnumDisplaySettings(null, modeNum++, ref devMode))
-            {
-                if (devMode.dmDisplayFixedOutput == monitor && (devMode.dmPelsWidth >= x || devMode.dmPelsHeight >= y))
-                {
-                    x = devMode.dmPelsWidth;
-                    y = devMode.dmPelsHeight;
-                }
-            }
-        }
-
         private String addRatio(String resolution)
         {
             if (!resolution.Contains("|") && resolution.Contains("x"))
