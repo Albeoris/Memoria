@@ -319,6 +319,7 @@ namespace NCalc
             expr.Parameters["Spirit"] = (Int32)play.elem.wpr;
             expr.Parameters["Defence"] = play.defence.PhysicalDefence;
             expr.Parameters["Evade"] = play.defence.PhysicalEvade;
+            expr.Parameters["Trance"] = play.trance;
             expr.Parameters["PlayerStatus"] = (UInt64)play.status;
             expr.Parameters["PlayerPermanentStatus"] = (UInt64)play.permanent_status;
             expr.Parameters["MagicDefence"] = play.defence.MagicalDefence;
