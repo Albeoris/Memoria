@@ -1403,194 +1403,30 @@ TODO: manage translation mods
 many download links should be changed and several ones use the "[Import] Text" feature of Memoria instead of "[Mod] FolderNames"
 -->
 <Mod>
-	<Name>Kupo UI Suite</Name>
-	<Version>4.1.2</Version>
-	<InstallationPath>KupoUISuite</InstallationPath>
-	<ReleaseDate>2024-11-6</ReleaseDate>
-	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
+	<Name>Modern Labels + </Name>
+	<Version>4.1.1</Version>
+	<InstallationPath>KupoModernLabels</InstallationPath>
+	<ReleaseDate>2024-10-29</ReleaseDate>
+	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
 	<Author>faospark</Author>
-	<Description>
-The First User Interface Suite for FFIX. This mod allows you to change the ff:
-Dialogue UI, Menu, Title Screen, Menu Bg , World Map , Title loop , Triple Triad Mat. 
-Also Included Text UI helpers Synthesis menus 
-
-See More information on the Readme.txt file 
-
-Mod Order : Position one or on top of Any Gameplay mod .
-
-Recommendations
-Best used with Portrait Mod and Buttons Pack that are also part of The Kupo Mods Umbrella 
-
-Originally released as part of Kupo Mods formerly Mog-Addons
-to see previews and learn more about the mod visit the website url
+	<Description>A mod that replaces old item, spell and UI names / labels to their modern counterparts 
+Ideal for those who were introduced to the series post final fantasy 12. 
+Simply activate and that should work. 
+For now the primary focus of the mod is the US and UK translation of the game so non english language players feel free to message me if you have something you want to change in your 
+Language of choice. 
 	</Description>
-	<PatchNotes>See Readme.txt</PatchNotes>
-	<Category>Various</Category>
+	<PatchNotes>Added option for additional field script and corrected Key Item desciption bug. 
+Expanded project scope to include interface, commands and more. </PatchNotes>
+	<Category>Translation</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
-	<DownloadUrl>https://www.dropbox.com/scl/fi/bwgd9529j6wx7jhiju419/KupoUISuite.zip?rlkey=z8yybpjg9i5fi9vu3kz33zeiw&amp;dl=1</DownloadUrl>
-	<PreviewFile>preview/kupo-ui-pack.png</PreviewFile>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313891-596422989.png</PreviewFileUrl>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/mi4qmy3h2qqoa57bf8wzu/KupoModernLabels.zip?rlkey=hfbawmgaiijosth1u6wcomwbk&amp;st=zcvbfu94&amp;dl=1</DownloadUrl>
+	<PreviewFile>preview/kupo-Modern-Items-spells.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/74/74-1729218273-991909550.png</PreviewFileUrl>
 	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
 	<SubMod>
-		<Name>Configure</Name>
-		<InstallationPath>Features/Zecrets</InstallationPath>
-		<Description>Click Here to Configure mods</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Cards: Triple Triad Mat</Name>
-		<InstallationPath>Features/Cards</InstallationPath>
-		<Description>Triple triad inspired mat and UI for the Game</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI: New Curative item Icons</Name>
-		<InstallationPath>Features/NewIcons</InstallationPath>
-		<Description>NewIcons</Description>
-		<Priority>4</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI: Alt Cursor Sound  </Name>
-		<InstallationPath>Features/CursorSound</InstallationPath>
-		<Description>What i think is a better cursor sound</Description>
-		<Priority>4</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Theme: Default</Name>
-		<InstallationPath>Features/DialogueBox/DxDefault</InstallationPath>
-		<Description>Disables Darker UI</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Theme: Darker UI</Name>
-		<InstallationPath>Features/DialogueBox/DarkerUI</InstallationPath>
-		<Description>Forces Darker UI</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Theme: Flat</Name>
-		<InstallationPath>Features/DialogueBox/FlatUI</InstallationPath>
-		<Description>Just Full Solid colors like the old games</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Theme: Modern [Transparent]</Name>
-		<InstallationPath>Features/DialogueBox/Modern</InstallationPath>
-		<Description>New Transparent UI</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Theme : Pixel Frame</Name>
-		<InstallationPath>Features/DialogueBox/PRFrame</InstallationPath>
-		<Description>Pixel Remaster Frame</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Theme: Scroll</Name>
-		<InstallationPath>Features/DialogueBox/Scroll</InstallationPath>
-		<Description>So Ugly... you'll Love it </Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Menu Bg : Pure Black</Name>
-		<InstallationPath>Features/Menubg/menubgblack</InstallationPath>
-		<Description>Removes the store pattern in Menu Background</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Menu Bg : Tantalus</Name>
-		<InstallationPath>Features/Menubg/menubgtantalus</InstallationPath>
-		<Description>Tantalus Pattern on Menu Background</Description>
-		<Priority>2</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Menu Bg : Chocobo</Name>
-		<InstallationPath>Features/Menubg/menubgchocobo</InstallationPath>
-		<Description>Chocobo Pattern on Menu Background</Description>
-		<Priority>3</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Menu Bg : Stone</Name>
-		<InstallationPath>Features/Menubg/menubgstone</InstallationPath>
-		<Description>Stone Pattern on Menu Background</Description>
-		<Priority>4</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Menu Bg Full : Forest</Name>
-		<InstallationPath>Features/Menubg/menubgfull01</InstallationPath>
-		<Description>A save point in the forest</Description>
-		<Priority>10</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Menu Bg Full : Huts</Name>
-		<InstallationPath>Features/Menubg/menubgfull02</InstallationPath>
-		<Description>The huts of the Black Mage</Description>
-		<Priority>10</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Menu Bg Full : Secret Room</Name>
-		<InstallationPath>Features/Menubg/menubgfull03</InstallationPath>
-		<Description>An Unused Room room for the game </Description>
-		<Priority>10</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Title Screen : Normal </Name>
-		<InstallationPath>Features/TitleLogo/TitleLogo0</InstallationPath>
-		<Description>Normal Title Screen Credits to Moguri mod </Description>
-		<Priority>10</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Title Screen : Alternate </Name>
-		<InstallationPath>Features/TitleLogo/TitleLogo1</InstallationPath>
-		<Description>Shows an Alternative title screen and Memoria Indicator</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Title Screen : Recreation </Name>
-		<InstallationPath>Features/TitleLogo/TitleLogo2</InstallationPath>
-		<Description>Shows a Recreation title screen and Memoria Indicator</Description>
-		<Priority>3</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Title Screen : Old School </Name>
-		<InstallationPath>Features/TitleLogo/TitleLogo3</InstallationPath>
-		<Description>Shows an old school type of title screen</Description>
-		<Priority>4</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Title Screen : Origins </Name>
-		<InstallationPath>Features/TitleLogo/TitleLogo4</InstallationPath>
-		<Description>Original concept of the logo </Description>
-		<Priority>6</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Option: Borderless</Name>
-		<InstallationPath>Features/frames/borderless</InstallationPath>
-		<Description>Remove white Border mostly for testing purposes </Description>
-		<Priority>5</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Option: No Divider</Name>
-		<InstallationPath>Features/frames/divideless</InstallationPath>
-		<Description>removes dividers in menu</Description>
-		<Priority>5</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Option: No Highlight</Name>
-		<InstallationPath>Features/frames/highlightless</InstallationPath>
-		<Description>removes dividers in menu</Description>
-		<Priority>5</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI : Concept Art Title Loop</Name>
-		<InstallationPath>Features/TitleLogo/TitleLoop</InstallationPath>
-		<Description>Replace Title Loop Images with Concept Art</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI : Disable Alternate Colored Map</Name>
-		<InstallationPath>Features/Maps</InstallationPath>
-		<Description>Disables Alternative Over world Map </Description>
+		<Name>Enable Extended</Name>
+		<InstallationPath>extended</InstallationPath>
+		<Description>Enable extended field scripts</Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
