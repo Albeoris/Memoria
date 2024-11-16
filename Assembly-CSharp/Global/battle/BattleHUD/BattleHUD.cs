@@ -2336,6 +2336,8 @@ public partial class BattleHUD : UIScene
 
     private void ProcessAutoBattleInput()
     {
+        if (!Configuration.Cheats.AutoBattle) return;
+
         _isAutoAttack = !_isAutoAttack;
         _autoBattleToggle.value = _isAutoAttack;
         AutoBattleHud.SetActive(_isAutoAttack);
@@ -2351,6 +2353,11 @@ public partial class BattleHUD : UIScene
             foreach (UI.PanelParty.Character character in _partyDetail.Characters.Entries)
                 character.ATBBlink = ReadyQueue.Contains(character.PlayerId) && !InputFinishList.Contains(character.PlayerId);
         }
+    }
+
+    public void DisableAutoBattle()
+    {
+        _isAutoAttack = false;
     }
 
 

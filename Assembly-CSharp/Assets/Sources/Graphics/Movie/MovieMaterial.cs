@@ -174,6 +174,13 @@ namespace Assets.Sources.Graphics.Movie
                             // Forces sync with audio
                             this.m_elapsedTime = elapsedTime;
                         }
+                        if (elapsedTime > 0 && Math.Abs(elapsedTime - m_elapsedTime) > 0.1 && (Time.realtimeSinceStartup - m_syncTime > 10f))
+                        {
+                            // Forces sync with audio
+                            Log.Message($"[FMV] Audio sync ({Math.Round((m_elapsedTime - elapsedTime) * 1000f)}ms)");
+                            this.m_elapsedTime = elapsedTime;
+                            m_syncTime = Time.realtimeSinceStartup;
+                        }
 
                         if (this.isFMV)
                         {
@@ -640,6 +647,8 @@ namespace Assets.Sources.Graphics.Movie
         private Vector2 m_uvCrCbOffset;
 
         private Texture2D[] m_ChannelTextures;
+
+        private Single m_syncTime = 0f;
 
         private Double m_elapsedTime;
 

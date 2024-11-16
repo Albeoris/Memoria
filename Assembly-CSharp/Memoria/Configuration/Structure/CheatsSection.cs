@@ -8,6 +8,8 @@ namespace Memoria
     {
         private sealed class CheatsSection : IniSection
         {
+            public readonly IniValue<Boolean> AutoBattle;
+
             public readonly IniValue<Boolean> SpeedMode;
             public readonly IniValue<Int32> SpeedFactor;
             public readonly IniValue<Boolean> SpeedTimer;
@@ -21,6 +23,8 @@ namespace Memoria
 
             public CheatsSection() : base(nameof(CheatsSection), false)
             {
+                AutoBattle = BindBoolean(nameof(AutoBattle), true);
+
                 SpeedMode = BindBoolean(nameof(SpeedMode), false);
                 SpeedFactor = BindInt32(nameof(SpeedFactor), 3);
                 SpeedTimer = BindBoolean(nameof(SpeedTimer), false);

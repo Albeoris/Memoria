@@ -308,6 +308,7 @@ public class UIKeyTrigger : MonoBehaviour
                 return;
             }
 
+            Log.Message("[Soft Reset]");
             preventTurboKey = false;
 
             if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World && PersistenSingleton<UIManager>.Instance.WorldHUDScene != (UnityEngine.Object)null) // World Map
@@ -335,6 +336,8 @@ public class UIKeyTrigger : MonoBehaviour
             UIManager.Battle.FF9BMenu_EnableMenu(false);
             if (PersistenSingleton<UIManager>.Instance.IsPause)
                 PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyPause(null);
+            FF9StateSystem.Battle.FF9Battle.btl_seq = 1; // Prevent the Start button to pause again
+            UIManager.Battle.DisableAutoBattle();
             EventHUD.Cleanup();
             EventInput.ClearPadMask();
             TimerUI.SetEnable(false);

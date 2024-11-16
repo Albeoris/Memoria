@@ -51,7 +51,7 @@ namespace Memoria.Launcher
         public ObservableCollection<Mod> downloadList = new ObservableCollection<Mod>();
         public String StatusMessage = "";
 
-        public String[] supportedArchives = { "rar", "unrar", "zip", "bzip2", "gzip", "tar", "7z", "lzip", "gz" };
+        public static String[] supportedArchives = [".rar", ".unrar", ".zip", ".bzip2", ".gzip", ".tar", ".7z", ".lzip", ".gz"];
 
         private CancellationTokenSource ExtractionCancellationToken = new CancellationTokenSource();
 
@@ -257,33 +257,33 @@ namespace Memoria.Launcher
             if (downloadList.Count > 0 || downloadingMod != null)
             {
                 e.Cancel = true;
+                // TODO language:
                 MessageBox.Show($"If you close this window while downloads are on their way, they will be cancelled.", "Warning", MessageBoxButton.OK);
                 return;
             }
             if (downloadCatalogClient != null && downloadCatalogClient.IsBusy)
                 downloadCatalogClient.CancelAsync();
-            //UpdateModSettings();
-            //((MainWindow)this.Owner).ModdingWindow = null;
-            //((MainWindow)this.Owner).LoadSettings();
-            //((MainWindow)this.Owner).ComeBackToLauncherFromModManager(AreThereModUpdates, AreThereModIncompatibilies);
         }
 
 
         private void Uninstall()
         {
-            List<Mod> selectedMods = new List<Mod>();
+            List<Mod> toRemove = new List<Mod>();
             foreach (Mod mod in lstMods.SelectedItems)
-                selectedMods.Add(mod);
-            foreach (Mod mod in selectedMods)
             {
                 if (Directory.Exists(mod.InstallationPath))
+                    // TODO language:
                     if (MessageBox.Show($"The mod folder {mod.InstallationPath} will be deleted.\nProceed?", "Updating", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                     {
                         Directory.Delete(mod.InstallationPath, true);
-                        modListInstalled.Remove(mod);
-                        UpdateInstalledPriorityValue();
+                        toRemove.Add(mod);
                     }
             }
+            foreach (Mod mod in toRemove)
+            {
+                modListInstalled.Remove(mod);
+            }
+            UpdateInstalledPriorityValue();
             UpdateCatalogInstallationState();
         }
 
@@ -328,7 +328,10 @@ namespace Memoria.Launcher
         {
             Mod subMod = (Mod)PreviewSubModList.SelectedItem;
             if (subMod != null)
+            {
                 subMod.IsActive = PreviewSubModActive.IsChecked ?? false;
+                UpdateModSettings();
+            }
         }
 
         private void OnClickUninstall(Object sender, RoutedEventArgs e)
@@ -625,11 +628,11 @@ namespace Memoria.Launcher
             });
         }
 
-        private Task ExtractAllFileFromArchive(String archivePath, String extactTo)
+        private Task ExtractAllFileFromArchive(String archivePath, String extractTo)
         {
             return Task.Run(() =>
             {
-                Extractor.ExtractAllFileFromArchive(archivePath, extactTo, ExtractionCancellationToken.Token);
+                Extractor.ExtractAllFileFromArchive(archivePath, extractTo, ExtractionCancellationToken.Token);
                 if (ExtractionCancellationToken.IsCancellationRequested)
                 {
                     ExtractionCancellationToken.Dispose();
@@ -655,7 +658,7 @@ namespace Memoria.Launcher
                 String downloadingModName = downloadingMod.Name;
                 String path = Mod.INSTALLATION_TMP + "/" + (downloadingMod.InstallationPath ?? downloadingModName);
                 Boolean success = false;
-                String downloadFormatExtLower = (downloadingMod.DownloadFormat ?? "zip").ToLower();
+                String downloadFormatExtLower = "." + (downloadingMod.DownloadFormat ?? "zip").ToLower();
                 if (String.IsNullOrEmpty(downloadingMod.DownloadFormat) || supportedArchives.Contains(downloadFormatExtLower))
                 {
                     Directory.CreateDirectory(path);
@@ -666,8 +669,8 @@ namespace Memoria.Launcher
                         Boolean moveDesc = false;
                         String sourcePath = "";
                         String destPath = "";
-                        await ExtractAllFileFromArchive(path + "." + downloadFormatExtLower, path);
-                        File.Delete(path + "." + downloadFormatExtLower);
+                        await ExtractAllFileFromArchive(path + downloadFormatExtLower, path);
+                        File.Delete(path + downloadFormatExtLower);
                         if (File.Exists(path + "/" + Mod.DESCRIPTION_FILE))
                         {
                             hasDesc = true;
@@ -701,6 +704,7 @@ namespace Memoria.Launcher
                             }
                             else
                             {
+                                // TODO language:
                                 MessageBox.Show($"Please install the mod folder manually.", "Warning", MessageBoxButton.OK);
                                 Process.Start(Path.GetFullPath(path));
                             }
@@ -732,6 +736,7 @@ namespace Memoria.Launcher
                                     }
                                 if (!proceedNext)
                                 {
+                                    // TODO language:
                                     MessageBox.Show($"Please install the mod folder manually.", "Warning", MessageBoxButton.OK);
                                     Process.Start(Path.GetFullPath(path));
                                 }
@@ -756,6 +761,7 @@ namespace Memoria.Launcher
                     }
                     catch (Exception err)
                     {
+                        // TODO language:
                         MessageBox.Show($"Failed to automatically install the mod {path}\n\n{err.Message}", "Error", MessageBoxButton.OK);
                     }
                 }
@@ -765,6 +771,7 @@ namespace Memoria.Launcher
                     String modInstallPath = downloadingMod.InstallationPath ?? downloadingModName;
                     if (Directory.Exists(modInstallPath))
                     {
+                        // TODO language:
                         if (MessageBox.Show($"The current version of the mod folder, {modInstallPath}, will be deleted before moving the new version.\nProceed?", "Updating", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                         {
                             Directory.Delete(modInstallPath, true);
@@ -816,6 +823,7 @@ namespace Memoria.Launcher
                     lstDownloads.Height = 0;
                     btnCancelStackpanel.Height = 0;
                 }
+                UpdateModListInstalled();
                 CheckForValidModFolder();
                 UpdateCatalogInstallationState();
                 if (activateTheNewMod)
@@ -845,6 +853,7 @@ namespace Memoria.Launcher
                     File.Delete(CATALOG_PATH);
                 File.Move(CATALOG_PATH + ".tmp", CATALOG_PATH);
                 ReadCatalog();
+                CheckOutdatedAndIncompatibleMods();
             });
         }
 
@@ -890,6 +899,7 @@ namespace Memoria.Launcher
 
         private void UpdateModListInstalled()
         {
+            Boolean hasChanged = false;
             foreach (String dir in Directory.EnumerateDirectories("."))
             {
                 if (File.Exists(dir + "/" + Mod.DESCRIPTION_FILE))
@@ -899,6 +909,7 @@ namespace Memoria.Launcher
                     if (previousMod == null)
                     {
                         modListInstalled.Insert(0, updatedMod);
+                        hasChanged = true;
                     }
                     else if ((updatedMod.CurrentVersion != null && previousMod.CurrentVersion == null) || (previousMod.CurrentVersion != null && updatedMod.CurrentVersion != null && previousMod.CurrentVersion < updatedMod.CurrentVersion))
                     {
@@ -912,12 +923,13 @@ namespace Memoria.Launcher
                         modListInstalled.RemoveAt(index);
                         modListInstalled.Insert(index, updatedMod);
                         updatedMod.IsActive = previousMod.IsActive;
+                        hasChanged = true;
                     }
                 }
             }
             UpdateInstalledPriorityValue();
-            CheckOutdatedAndIncompatibleMods();
-            //UpdateLauncherTheme();
+            if (hasChanged)
+                UpdateModSettings();
         }
 
         private static String currentColor;
@@ -1016,7 +1028,6 @@ namespace Memoria.Launcher
                 if (shortName != "x64" && shortName != "x86" && Mod.LooksLikeAModFolder(shortName))
                     GenerateAutomaticDescriptionFile(shortName);
             }
-            UpdateModListInstalled();
         }
 
         private void UpdateModDetails(Mod mod)
