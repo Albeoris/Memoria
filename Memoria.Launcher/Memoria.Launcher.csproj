@@ -191,6 +191,10 @@
     <EmbeddedResource Include="Presets\SteamPreset.ini">
       <TargetPath>SteamPreset.ini</TargetPath>
     </EmbeddedResource>
+    <EmbeddedResource Include="Ini\Settings.ini">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>Settings.ini</TargetPath>
+    </EmbeddedResource>
     <Resource Include="Fonts\centurygothic-bold.ttf" />
     <Resource Include="Fonts\centurygothic.ttf" />
     <Resource Include="Fonts\notoemoji.ttf" />

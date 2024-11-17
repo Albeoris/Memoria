@@ -2692,15 +2692,15 @@ public static class ff9
         ff9.setVector(ref ff9.w_cameraFocusEye, ff9.w_cameraWorldAim.x - ff9.w_cameraWorldEye.x, ff9.w_cameraWorldAim.y - ff9.w_cameraWorldEye.y, ff9.w_cameraWorldAim.z - ff9.w_cameraWorldEye.z);
         if (ff9.tweaker.CustomCamera)
         {
-            
+
             Vector3 zero = Vector3.zero;
             zero.y = ff9.w_cameraSysDataCamera.rotation;
             Matrix4x4 matrix4x;
             ff9.RotMatrix(ref zero, out matrix4x);
             ff9.ApplyMatrixLV(ref matrix4x, ref ff9.w_cameraUpvector, out Vector3 vec);
             ff9.w_camera_makematrix(ff9.w_frameCameraPtr, ff9.w_cameraFocusEye, ff9.w_cameraFocusAim, vec, ff9.w_cameraWorldEye);
-            
-    }
+
+        }
         else
         {
             Vector3 b = new Vector3(0f, ff9.tweaker.w_cameraWorldEye_Y * 0.00390625f, 0f);
@@ -8389,7 +8389,7 @@ public static class ff9
         {
             globalFog.distanceFog = true;
             globalFog.useRadialDistance = true;
-            
+
             if (ff9.world.SkyDome_Fog.gameObject.activeSelf)
                 ff9.world.SkyDome_Fog.gameObject.SetActive(false);
 
@@ -8409,13 +8409,13 @@ public static class ff9
                 */
                 RenderSettings.fogStartDistance = 100f * MistStartMul; // 26.7f
                 RenderSettings.fogEndDistance = 100f * MistEndMul; // 80f
-                Single t = ((ff9.w_frameCameraPtr.transform.position.y / 52.1875f) -0.40f) *2.0f;
+                Single t = ((ff9.w_frameCameraPtr.transform.position.y / 52.1875f) - 0.40f) * 2.0f;
                 Single start = Mathf.Lerp(RenderSettings.fogStartDistance * 0.80f, RenderSettings.fogStartDistance, t) + globalFog.startDistance;
                 Single end = Mathf.Lerp(RenderSettings.fogEndDistance * 0.80f, RenderSettings.fogEndDistance, t) + globalFog.startDistance;
                 //Log.Message("t:" + t + " - start:" + start + " - end:" + end);
                 Shader.SetGlobalFloat("_FogStartDistance", start * MistStartMul);
                 Shader.SetGlobalFloat("_FogEndDistance", end * MistEndMul);
-                if (ff9.w_frameScenePtr == 2970 || ff9.w_frameScenePtr == 2980) // destroyed gate to Lindblum event
+                if (ff9.IsEventWorldMap)
                 {
                     globalFog.startDistance = 55.5f;
                     RenderSettings.fogStartDistance = 46.8f;
@@ -10332,6 +10332,16 @@ public static class ff9
         942, // Green forest, Quizz question
         943, // Black forest, Quizz question
         944  // Brown forest, Quizz question
+    };
+
+    // World maps that consist only of cutscenes
+    public static Boolean IsEventWorldMap => eventWorldMaps.Contains(FF9StateSystem.Common.FF9.wldMapNo);
+    public static HashSet<Int16> eventWorldMaps = new HashSet<Int16>()
+    {
+        9001, // World Map/Event: Cargo Ship
+        9004, // World Map/Event: Hilda Garde 1
+        9006, // World Map/Event: Track Kuja
+        9012, // World Map/Event: Chocobo Treasure
     };
 
     public struct VECTOR

@@ -540,6 +540,7 @@ public class PartySettingUI : UIScene
         }
 
         partyInfo.select = selectList.ToArray();
-        partyInfo.party_ct = 1;
+        if (FF9StateSystem.EventState.ScenarioCounter != 9520) // Prevent selecting fewer than 4 characters when Kuja sends a team to Oeilvert (to properly setup an initial team)
+            partyInfo.party_ct = 1;
     }
 }

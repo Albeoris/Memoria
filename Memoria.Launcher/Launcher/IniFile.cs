@@ -22,7 +22,11 @@ namespace Memoria.Launcher
             get
             {
                 if (_settings == null)
+                {
+                    if (!File.Exists(SettingsIniPath))
+                        File.WriteAllText(SettingsIniPath, "[Settings]\nActiveMonitor = 0\nWindowMode = 0\nScreenResolution = 1920x1080\n");
                     _settings = new IniFile(IniFile.SettingsIniPath);
+                }
                 return _settings;
             }
         }

@@ -118,13 +118,9 @@ public class WMWorld : Singleton<WMWorld>
         this.SkyDome_Fog = UnityEngine.Object.Instantiate<GameObject>(original4).transform;
         this.SkyDome_Fog.parent = this.WorldMapEffectRoot;
         this.SkyDowm_FogMaterial = this.SkyDome_Fog.GetComponentInChildren<MeshRenderer>().material;
-        if (ff9.w_frameScenePtr != 2970 && ff9.w_frameScenePtr != 2980) // WM cinematic, ship to Lindblum
+        if (!ff9.IsEventWorldMap)
         {
-            Single skyScale = 1;
-            if (ff9.w_frameFog == 1)
-                skyScale = Configuration.Worldmap.MistViewDistance / 100f;
-            else
-                skyScale = Configuration.Worldmap.NoMistViewDistance / 100f;
+            Single skyScale = (ff9.w_frameFog == 1 ? Configuration.Worldmap.MistViewDistance : Configuration.Worldmap.NoMistViewDistance) / 100f;
             this.SkyDome_Sky.localScale = new Vector3(skyScale, skyScale, skyScale);
             this.SkyDome_Bg.localScale = new Vector3(skyScale, skyScale, skyScale);
             this.SkyDome_Fog.localScale = new Vector3(skyScale, skyScale, skyScale);
@@ -1482,7 +1478,7 @@ public class WMWorld : Singleton<WMWorld>
     private void DetectUnseenBlocks()
     {
         Int32 distanceHardLimit = 8; // above 8 bugs
-        if (ff9.w_frameScenePtr == 2970 || ff9.w_frameScenePtr == 2980) // force default value for scripted wm event
+        if (ff9.IsEventWorldMap || ff9.w_frameScenePtr == 9605) // force default value for scripted wm event
             distanceHardLimit = 3;
         Int32 maxDist;
         if (ff9.w_frameFog == 1)

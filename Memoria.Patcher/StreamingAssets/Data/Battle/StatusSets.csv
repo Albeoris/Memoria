@@ -10,7 +10,7 @@ Set 1;1;Regen(18);# Regen
 Set 2;2;Death(8);# Life
 Set 3;3;Venom(1), Poison(16);# Panacea
 Set 4;4;Petrify(0), GradualPetrify(31);# Stona
-Set 5;5;Silence(3), Blind(5), Confuse(10), Poison(16), Sleep(17), Heat(24), Freeze(25), Mini(28), GradualPetrify(31);# Esuna
+Set 5;5;Silence(3), Blind(4), Confuse(10), Poison(16), Sleep(17), Heat(24), Freeze(25), Mini(28), GradualPetrify(31);# Esuna
 Set 6;6;Shell(22);# Shell
 Set 7;7;Protect(23);# Protect
 Set 8;8;Haste(19);# Haste
