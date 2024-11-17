@@ -48,41 +48,51 @@ namespace Memoria
 
         public static void CenterWindow()
         {
-            Int32 monitor = Int32.Parse(IniFile.SettingsIni.GetSetting("Settings", "ActiveMonitor", "0 ").Split(' ')[0]);
-            Int32 windowMode = Int32.Parse(IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "0"));
-
-            IntPtr hWindow = GetActiveWindow();
-            RECT windowRect = new RECT();
-            GetWindowRect(hWindow, ref windowRect);
-
-            if (monitor > Displays.Count - 1) return;
-            var display = Displays[monitor]; // Hopefully it's the same order
-
-            RECT rect = windowMode > 0 ? display.rcMonitor : display.rcWork;
-
-            int displayWidth = rect.right - rect.left;
-            int displayHeight = rect.bottom - rect.top;
-
-            int borderWidth = windowRect.right - windowRect.left - Screen.width;
-            int borderHeight = windowRect.bottom - windowRect.top - Screen.height;
-
-            // We make sure the window fits into the screen
-            int height = Math.Min(displayHeight, windowRect.bottom - windowRect.top);
-            int width = (height - borderHeight) * Screen.width / Screen.height + borderWidth; // We want to keep the propotions
-
-            if (width > displayWidth)
+            try
             {
-                width = displayWidth;
-                height = (width - borderWidth) * Screen.height / Screen.width + borderHeight;
+                Int32 monitor = 0;
+                Int32 windowMode = 0;
+
+                Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "ActiveMonitor", "0 -").Split(' ')[0], out monitor);
+                Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "0"), out windowMode);
+
+                IntPtr hWindow = GetActiveWindow();
+                RECT windowRect = new RECT();
+                GetWindowRect(hWindow, ref windowRect);
+
+                if (monitor > Displays.Count - 1) return;
+                var display = Displays[monitor]; // Hopefully it's the same order
+
+                RECT rect = windowMode > 0 ? display.rcMonitor : display.rcWork;
+
+                int displayWidth = rect.right - rect.left;
+                int displayHeight = rect.bottom - rect.top;
+
+                int borderWidth = windowRect.right - windowRect.left - Screen.width;
+                int borderHeight = windowRect.bottom - windowRect.top - Screen.height;
+
+                // We make sure the window fits into the screen
+                int height = Math.Min(displayHeight, windowRect.bottom - windowRect.top);
+                int width = (height - borderHeight) * Screen.width / Screen.height + borderWidth; // We want to keep the propotions
+
+                if (width > displayWidth)
+                {
+                    width = displayWidth;
+                    height = (width - borderWidth) * Screen.height / Screen.width + borderHeight;
+                }
+
+                int x = rect.left + (displayWidth - width) / 2;
+                int y = rect.top + (displayHeight - height) / 2;
+
+                if (x != windowRect.left || y != windowRect.top)
+                {
+                    Log.Message($"[WindowManager] Moving window to ({x},{y}) with size ({width},{height}) on monitor {monitor}");
+                    MoveWindow(hWindow, x, y, width, height, true);
+                }
             }
-
-            int x = rect.left + (displayWidth - width) / 2;
-            int y = rect.top + (displayHeight - height) / 2;
-
-            if (x != windowRect.left || y != windowRect.top)
+            catch (Exception e)
             {
-                Log.Message($"[WindowManager] Moving window to ({x},{y}) with size ({width},{height}) on monitor {monitor}");
-                MoveWindow(hWindow, x, y, width, height, true);
+                Log.Error(e);
             }
         }
 
