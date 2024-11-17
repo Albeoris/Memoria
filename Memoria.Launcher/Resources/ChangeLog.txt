@@ -1,4 +1,60 @@
-﻿#Version 2024.08.05
+﻿#Version 2024.11.17
+
+World Map settings, revamped launcher, better translation support...
+
+#Features
+
+    World map customization:
+        View distance (up to 4.5x), Mist/fog distance, FOV, camera distance and more
+        Look up! Use the right stick to look around, including up (can be disabled)
+        Alternative flight control (swaps sticks left and right vertical axis)
+    Settings:
+        Auto-battle toggle [J/RT] can now be turned off
+        Invert camera vertical control
+        Invert flight control
+        New Form party button in the menu when AllCharactersAvailable is activated, accessible in battle (via menu access)
+        New cheat for Tetra master easy win
+        Thicker ATB bar (feat Resinated)
+    Improved analog movement (closer to the PSX version)
+    Improved the controls tutorial window to be more accurate with Memoria changes
+
+#Launcher
+
+    Full redesign with integrated mod manager
+    A plethora of settings from Memoria.ini exposed, including some new settings
+    Presets with three pre-made presets: Memoria default, Steam default and PSX default
+    Button to save current settings as preset
+    Button to copy the content of Memoria.log
+    A changelog window will appear after an update or by clicking on Memoria's version.
+    Button to auto-reorder mods
+    Mods downloaded separately can now be installed via drag-and-drop
+    Translations:
+        Spanish fixed by Carú
+        Brazilian-Portuguese fixed by dkPsycho
+        Chinese (Simplified) fixed by imcloud
+        Turkish written by sangacanga1
+
+#Modding
+
+    Translation support improvements (right-to-left, support of arabic texts and more)
+    Improved modding system and capabilities
+    Voice acting: Added ForceMessageSpeed, ForceLanguage and support for Special Events for Hot and Cold and Festival of the Hunt
+    Sub-mods can have conditional values based on another mod being on/off
+    Mods can include a preset (Preset.ini) applied when activated (with user prompt)
+
+#Bugfixes
+
+    Fixed some soft-locks
+    Fixed manual trance broken with PSX GUI
+    Fixed many gameplay issues
+    Fixed music starting later in the track
+    Fixed worldmap, fields and battle graphical issues
+    Fixed some shader issues
+
+
+
+
+#Version 2024.08.05
 
 Modding extension, shaders, model viewer, QoL...
 
