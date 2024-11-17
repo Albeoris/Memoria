@@ -380,6 +380,7 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>No Exp Plus </Name>
 	<Version>4.1.1</Version>
@@ -1052,6 +1053,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 	<Website>https://sites.google.com/view/moguri-mod</Website>
 	<PreviewFileUrl>https://i.imgur.com/ywCN2EB.jpeg</PreviewFileUrl>
 </Mod>
+
 <Mod>
 	<Name>Cursors Mod</Name>
 	<Version>4.1.0</Version>
@@ -1118,6 +1120,7 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 		<Priority>10</Priority>
 	</SubMod>	
 </Mod>
+
 <Mod>
 	<Name>PSX Buttons</Name>
 	<Version>1.0</Version>
@@ -1131,6 +1134,7 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 	<PreviewFileUrl>https://i.imgur.com/eHSCN0r.png</PreviewFileUrl>
 	<PreviewFile>PreviewImage.png</PreviewFile>
 </Mod>
+
 <Mod>
 	<Name>Kupo Controller Pack</Name>
 	<Version>4.1.0</Version>
@@ -1202,6 +1206,7 @@ Available Themes:
 		<Priority>5</Priority>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>Dualsense Buttons</Name>
 	<Version>1.0</Version>
@@ -1230,7 +1235,6 @@ Available Themes:
 	<PreviewFile>PreviewImage.jpg</PreviewFile>
 </Mod>
 
-
 <Mod>
 	<Name>High-Res Chocographs</Name>
 	<InstallationPath>HDChocographs</InstallationPath>
@@ -1258,6 +1262,7 @@ Available Themes:
 	<DownloadFormat>SingleFileWithPath:FF9_Data/EmbeddedAsset/UI/Atlas/Face Atlas</DownloadFormat>
 	<PreviewFileUrl>https://i.imgur.com/pfHQyOJ.png</PreviewFileUrl>
 </Mod>
+
 <Mod>
 	<Name>Portraits Pack</Name>
 	<Version>4.1.0</Version>
@@ -1317,6 +1322,7 @@ The Original Portraits Pack, part of the Kupo Mods, formerly Mog Add-ons.
 		<Priority>2</Priority>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>No Cutscene</Name>
 	<Version>0.5</Version>
@@ -1387,21 +1393,7 @@ Idea by Snouz and made by DV.</Description>
 	<PreviewFileUrl>https://i.ibb.co/47NThCX/Better-Card-Drop.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/BetterCardDrop.png</PreviewFile>
 </Mod>
-	
-<!--
-<Mod>
-	<Name>Nexus Mods</Name>
-	<Description>There are many mods available on the Nexus Mods website.
-Because there is no public direct link for many of them, they cannot be installed directly from this manager.
-Check them out at https://www.nexusmods.com/finalfantasy9/mods/</Description>
-	<Website>https://www.nexusmods.com/finalfantasy9/mods/</Website>
-</Mod>
--->
 
-<!--
-TODO: manage translation mods
-many download links should be changed and several ones use the "[Import] Text" feature of Memoria instead of "[Mod] FolderNames"
--->
 <Mod>
 	<Name>Modern Labels + </Name>
 	<Version>4.1.1</Version>
@@ -1430,6 +1422,27 @@ Expanded project scope to include interface, commands and more. </PatchNotes>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
+
+<Mod>
+	<Name>Ukrainian Translation</Name>
+	<Version>1.0</Version>
+	<Author>Дракон Сходу (DragonOfTheEast)</Author>
+	<InstallationPath>TranslationUkr</InstallationPath>
+	<ReleaseDateOriginal>2024-05-02</ReleaseDateOriginal>
+	<ReleaseDate>2024-11-17</ReleaseDate>
+	<MinimumMemoriaVersion>2024-11-17</MinimumMemoriaVersion>
+	<Category>Translation</Category>
+	<Description>Українська локалізація гри.</Description>
+	<DownloadUrl>https://github.com/DragonOfTheEastUA/FFIX-Ukr-Localization/archive/refs/heads/main.zip</DownloadUrl>
+	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=3237680302</Website>
+	<PreviewFileUrl>https://i.imgur.com/8YOLByj.png</PreviewFileUrl>
+	<PreviewFile>Preview.jpg</PreviewFile>
+</Mod>
+
+<!--
+TODO: manage translation mods
+many download links should be changed and several ones use the "[Import] Text" feature of Memoria instead of "[Mod] FolderNames"
+-->
 <Mod>
 	<Name>Brazilian-Portuguese Translation</Name>
 	<InstallationPath>BrazilianTranslation</InstallationPath>
@@ -1481,19 +1494,6 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Website>https://ff9.ffrtt.ru/viewtopic.php?f=14&amp;t=38</Website>
 </Mod>
 
-	 
-<Mod>
-	<Name>Ukrainian Translation</Name>
-	<InstallationPath>UkrainianTranslation</InstallationPath>
-	<Author>Дракон Сходу (DragonOfTheEast)</Author>
-	<Description>Українська локалізація гри.
-
-Note: this mod doesn't support automatic installation yet. Download it from its website.</Description>
-	<Category>Translation</Category>
-	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=3237680302</Website>
-	<PreviewFileUrl>https://i.imgur.com/8YOLByj.png</PreviewFileUrl>
-</Mod>
-
 <!--
 This one needs investigation to know who are the authors:
 
@@ -1508,6 +1508,15 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Website>https://steamcommunity.com/app/377840/discussions/0/2956041222219522184/</Website>
 </Mod>
 -->
+	
+<!--
+<Mod>
+	<Name>Nexus Mods</Name>
+	<Description>There are many mods available on the Nexus Mods website.
+Because there is no public direct link for many of them, they cannot be installed directly from this manager.
+Check them out at https://www.nexusmods.com/finalfantasy9/mods/</Description>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/</Website>
+</Mod>
+-->
 
 </ModCatalog>
-
