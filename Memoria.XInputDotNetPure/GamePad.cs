@@ -339,7 +339,7 @@ namespace XInputDotNetPure
     {
         public static GamePadState GetState(PlayerIndex playerIndex)
         {
-            return GetState(playerIndex, GamePadDeadZone.None);
+            return GetState(playerIndex, GamePadDeadZone.Circular);
         }
 
         public static GamePadState GetState(PlayerIndex playerIndex, GamePadDeadZone deadZone)
@@ -402,6 +402,8 @@ namespace XInputDotNetPure
             }
             return new GamePadState(result == Utils.Success, rawState, deadZone);
         }
+
+        public static Single Threshold { set; get; }
 
         public static void SetVibration(PlayerIndex playerIndex, float leftMotor, float rightMotor)
         {

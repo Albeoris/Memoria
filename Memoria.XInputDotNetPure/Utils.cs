@@ -7,8 +7,6 @@ namespace XInputDotNetPure
         public const uint Success = 0x000;
         public const uint NotConnected = 0x000;
 
-        private const int LeftStickDeadZone = 7849;
-        private const int RightStickDeadZone = 8689;
         private const int TriggerDeadZone = 30;
 
         public static float ApplyTriggerDeadZone(byte value, GamePadDeadZone deadZoneMode)
@@ -25,12 +23,12 @@ namespace XInputDotNetPure
 
         public static GamePadThumbSticks.StickValue ApplyLeftStickDeadZone(short valueX, short valueY, GamePadDeadZone deadZoneMode)
         {
-            return ApplyStickDeadZone(valueX, valueY, deadZoneMode, LeftStickDeadZone);
+            return ApplyStickDeadZone(valueX, valueY, deadZoneMode, (int)(32768 * GamePad.Threshold));
         }
 
         public static GamePadThumbSticks.StickValue ApplyRightStickDeadZone(short valueX, short valueY, GamePadDeadZone deadZoneMode)
         {
-            return ApplyStickDeadZone(valueX, valueY, deadZoneMode, RightStickDeadZone);
+            return ApplyStickDeadZone(valueX, valueY, deadZoneMode, (int)(32768 * GamePad.Threshold));
         }
 
         private static GamePadThumbSticks.StickValue ApplyStickDeadZone(short valueX, short valueY, GamePadDeadZone deadZoneMode, int deadZoneSize)

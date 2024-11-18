@@ -56,6 +56,15 @@ namespace Memoria
                 Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "ActiveMonitor", "0 -").Split(' ')[0], out monitor);
                 Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "0"), out windowMode);
 
+                Int32 targetWidth = 1280;
+                Int32 targetHeight = 960;
+                String[] resolution = IniFile.SettingsIni.GetSetting("Settings", "ScreenResolution", "1280x960").Split('x');
+                if (resolution.Length == 2)
+                {
+                    Int32.TryParse(resolution[0], out targetWidth);
+                    Int32.TryParse(resolution[1], out targetHeight);
+                }
+
                 IntPtr hWindow = GetActiveWindow();
                 RECT windowRect = new RECT();
                 GetWindowRect(hWindow, ref windowRect);
@@ -73,12 +82,12 @@ namespace Memoria
 
                 // We make sure the window fits into the screen
                 int height = Math.Min(displayHeight, windowRect.bottom - windowRect.top);
-                int width = (height - borderHeight) * Screen.width / Screen.height + borderWidth; // We want to keep the propotions
+                int width = (height - borderHeight) * targetWidth / targetHeight + borderWidth; // We want to keep the propotions
 
                 if (width > displayWidth)
                 {
                     width = displayWidth;
-                    height = (width - borderWidth) * Screen.height / Screen.width + borderHeight;
+                    height = (width - borderWidth) * targetHeight / targetWidth + borderHeight;
                 }
 
                 int x = rect.left + (displayWidth - width) / 2;
