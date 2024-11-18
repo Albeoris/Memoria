@@ -62,10 +62,6 @@
       <HintPath>..\References\System.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="XInputDotNetPure">
-      <HintPath>..\References\XInputDotNetPure.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="Properties\" />
@@ -1403,6 +1399,10 @@
     <ProjectReference Include="..\Memoria.Prime\Memoria.Prime.csproj">
       <Project>{110f557e-abff-44c5-886a-c7c7f0614558}</Project>
       <Name>Memoria.Prime</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Memoria.XInputDotNetPure\Memoria.XInputDotNetPure.csproj">
+      <Project>{952700cd-a384-43a4-ac4b-52256f83836e}</Project>
+      <Name>Memoria.XInputDotNetPure</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.UI\UnityEngine.UI.csproj">
       <Project>{cbc800df-4de1-4cbc-9c97-98cbb375204f}</Project>
