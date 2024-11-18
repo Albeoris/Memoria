@@ -185,6 +185,22 @@ namespace Memoria.Launcher
             }
         }
 
+        public static Int32[] GetMaxResolution(Int32 display)
+        {
+            Int32[] res = [0,0];
+
+            DevMode devMode = new DevMode();
+            Int32 modeNum = 0;
+            while (EnumDisplaySettings(null, modeNum++, ref devMode))
+            {
+                if (display != devMode.dmDisplayFixedOutput) continue;
+
+                res[0] = Math.Max(res[0], devMode.dmPelsWidth);
+                res[1] = Math.Max(res[1], devMode.dmPelsHeight);
+            }
+            return res;
+        }
+
         private String addRatio(String resolution)
         {
             if (!resolution.Contains("|") && resolution.Contains("x"))
