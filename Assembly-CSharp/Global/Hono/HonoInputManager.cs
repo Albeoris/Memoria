@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using UnityXInput;
 using XInputDotNetPure;
 
 public class HonoInputManager : PersistenSingleton<HonoInputManager>
@@ -12,6 +11,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     public HonoInputManager()
     {
         this.analogControlEnabled = Configuration.AnalogControl.Enabled;
+        XInputDotNetPure.GamePad.Threshold = Configuration.AnalogControl.StickThreshold;
         KeyCode[] array = new KeyCode[3];
         array[0] = KeyCode.KeypadEnter;
         array[1] = KeyCode.Mouse1;
