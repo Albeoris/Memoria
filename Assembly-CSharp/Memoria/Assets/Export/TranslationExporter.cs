@@ -138,6 +138,7 @@ namespace Memoria.Assets
                 if (FF9TextTool.commandHelpDesc.TryGetValue(pair.Key, out String help))
                     textAsHW += $"#HW help {(Int32)pair.Key}\n{help}\n\n";
             }
+            idCounter = -1;
             foreach (KeyValuePair<BattleCommandId, String> pair in FF9TextTool.commandHelpDesc)
                 helpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
             String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/Command/";

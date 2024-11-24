@@ -73,6 +73,7 @@ public class HUDMessageChild : MonoBehaviour
         this.follower.targetBtl = null;
         this.follower.iconPosition = -1;
         this.label.text = message;
+        this.label.PrintIconAfterProcessedText = true;
         this.tweenPosition.duration = this.tweenPositionDuration / Singleton<HUDMessage>.Instance.Speed;
         this.tweenAlpha.duration = this.tweenAlphaDuration / Singleton<HUDMessage>.Instance.Speed;
         switch (style)

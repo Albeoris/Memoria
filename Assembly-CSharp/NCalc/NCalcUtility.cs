@@ -213,19 +213,21 @@ namespace NCalc
                         btlIdFiltered |= unit.Id;
                 args.Result = btlIdFiltered;
             }
-            else if (name == "Min" && args.Parameters.Length == 2)
+            else if (name == "Min" && args.Parameters.Length >= 2)
             {
-                Int64 v1 = NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Int64.MaxValue);
-                Int64 v2 = NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), Int64.MaxValue);
-                if (v1 != Int64.MaxValue || v2 != Int64.MaxValue)
-                    args.Result = Math.Min(v1, v2);
+                Int64 res = NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Int64.MaxValue);
+                for (Int32 i = 1; i < args.Parameters.Length; i++)
+                    res = Math.Min(res, NCalcUtility.ConvertNCalcResult(args.Parameters[i].Evaluate(), Int64.MaxValue));
+                if (res != Int64.MaxValue)
+                    args.Result = res;
             }
-            else if (name == "Max" && args.Parameters.Length == 2)
+            else if (name == "Max" && args.Parameters.Length >= 2)
             {
-                Int64 v1 = NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Int64.MinValue);
-                Int64 v2 = NCalcUtility.ConvertNCalcResult(args.Parameters[1].Evaluate(), Int64.MinValue);
-                if (v1 != Int64.MinValue || v2 != Int64.MinValue)
-                    args.Result = Math.Max(v1, v2);
+                Int64 res = NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), Int64.MinValue);
+                for (Int32 i = 1; i < args.Parameters.Length; i++)
+                    res = Math.Max(res, NCalcUtility.ConvertNCalcResult(args.Parameters[i].Evaluate(), Int64.MinValue));
+                if (res != Int64.MinValue)
+                    args.Result = res;
             }
             else if (name == "MemoriaLog" && args.Parameters.Length == 1)
             {

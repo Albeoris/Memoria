@@ -783,7 +783,10 @@ namespace Assets.Sources.Scripts.UI.Common
             {
                 String path = "EmbeddedAsset/UI/Sprites/" + langSymbol + "/" + spriteName;
                 sprite = AssetManager.Load<Sprite>(path, false);
-                FF9UIDataTool.worldTitleSpriteList.Add(spriteName, sprite);
+                // Don't use that dictionary at all to store the sprites:
+                // they are not requested often (normally not more than once)
+                // and storing them could make the wrong sprite appears if the player changes the language
+                //FF9UIDataTool.worldTitleSpriteList.Add(spriteName, sprite);
             }
             return sprite;
         }

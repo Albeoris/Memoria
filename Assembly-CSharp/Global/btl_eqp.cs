@@ -27,38 +27,38 @@ public static class btl_eqp
     {
         if (!EnemyBuiltInWeaponTable.TryGetValue(btl.dms_geo_id, out Int32[] builtInWeapons))
             builtInWeapons = null;
-        if (btl.weaponModels.Count > 0)
+        if (btl.weaponModels.Count == 0)
+            btl.weaponModels.Add(new BTL_DATA.WEAPON_MODEL());
+        BTL_DATA.WEAPON_MODEL mainWeapon = btl.weaponModels[0];
+        if (mainWeapon.geo != null)
+            UnityEngine.Object.Destroy(mainWeapon.geo);
+        mainWeapon.geo = null;
+        if (builtInWeapons != null && builtInWeapons.Length > 0)
         {
-            BTL_DATA.WEAPON_MODEL weapon = btl.weaponModels[0];
-            if (weapon.geo != null)
-                UnityEngine.Object.Destroy(weapon.geo);
-            weapon.geo = null;
-            if (builtInWeapons != null && builtInWeapons.Length > 0)
-            {
-                weapon.builtin_mode = true;
-                weapon.bone = builtInWeapons[0];
-            }
-            else
-            {
-                weapon.builtin_mode = false;
-            }
+            mainWeapon.builtin_mode = true;
+            mainWeapon.bone = builtInWeapons[0];
+        }
+        else
+        {
+            mainWeapon.builtin_mode = false;
         }
         btl.weapon = ff9item.GetItemWeapon(p.equip[0]);
         if (btl.weapon.ModelId != UInt16.MaxValue)
         {
             String modelName = FF9BattleDB.GEO.GetValue(btl.weapon.ModelId);
             if (modelName.Contains("GEO_WEP"))
-                btl.weapon_geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + modelName + "/" + modelName, true, true, Configuration.Graphics.ElementsSmoothTexture);
+                mainWeapon.geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + modelName + "/" + modelName, true, true, Configuration.Graphics.ElementsSmoothTexture);
             else
-                btl.weapon_geo = ModelFactory.CreateModel(modelName, true, true, Configuration.Graphics.ElementsSmoothTexture);
-            if (btl.weapon_geo == null)
-                btl.weapon_geo = new GameObject(DummyWeaponName);
+                mainWeapon.geo = ModelFactory.CreateModel(modelName, true, true, Configuration.Graphics.ElementsSmoothTexture);
+            if (mainWeapon.geo == null)
+                mainWeapon.geo = new GameObject(DummyWeaponName);
         }
         else
         {
-            btl.weapon_geo = new GameObject(DummyWeaponName);
+            mainWeapon.geo = new GameObject(DummyWeaponName);
+            mainWeapon.bone = -1;
         }
-        MeshRenderer[] componentsInChildren = btl.weapon_geo.GetComponentsInChildren<MeshRenderer>();
+        MeshRenderer[] componentsInChildren = mainWeapon.geo.GetComponentsInChildren<MeshRenderer>();
         btl.weaponMeshCount = componentsInChildren.Length;
         btl.weaponRenderer = new Renderer[btl.weaponMeshCount];
         if (btl.weaponMeshCount > 0)
@@ -72,16 +72,16 @@ public static class btl_eqp
         }
         else if (btl.weapon.CustomTexture != null) // Other kind of model have no btl.weaponMeshCount
         {
-            ModelFactory.ChangeModelTexture(btl.weapon_geo, btl.weapon.CustomTexture);
+            ModelFactory.ChangeModelTexture(mainWeapon.geo, btl.weapon.CustomTexture);
         }
-        btl_util.SetBBGColor(btl.weapon_geo);
+        btl_util.SetBBGColor(mainWeapon.geo);
         if (SecondaryWeaponData.TryGetValue(p.info.serial_no, out CharacterSecondaryWeapon charWeap))
         {
             while (btl.weaponModels.Count < 2)
                 btl.weaponModels.Add(new BTL_DATA.WEAPON_MODEL());
-            BTL_DATA.WEAPON_MODEL weapon = btl.weaponModels[1];
-            if (weapon.geo != null)
-                UnityEngine.Object.Destroy(weapon.geo);
+            BTL_DATA.WEAPON_MODEL secondWeapon = btl.weaponModels[1];
+            if (secondWeapon.geo != null)
+                UnityEngine.Object.Destroy(secondWeapon.geo);
             String mode = charWeap.Mode;
             if (!String.IsNullOrEmpty(charWeap.Mode) && String.Equals(charWeap.Mode, "FORMULA"))
             {
@@ -93,30 +93,30 @@ public static class btl_eqp
             }
             if (String.IsNullOrEmpty(mode) || String.Equals(mode, "ORICHALCUM") || String.Equals(mode, "DEFAULT"))
             {
-                weapon.geo = null;
-                weapon.builtin_mode = false;
+                secondWeapon.geo = null;
+                secondWeapon.builtin_mode = false;
             }
             else
             {
                 if (String.Equals(mode, "SAME_AS_MAIN"))
-                    weapon.geo = UnityEngine.Object.Instantiate(btl.weapon_geo);
+                    secondWeapon.geo = UnityEngine.Object.Instantiate(mainWeapon.geo);
                 else if (String.Equals(mode, "NONE"))
-                    weapon.geo = new GameObject(DummyWeaponName);
+                    secondWeapon.geo = new GameObject(DummyWeaponName);
                 else if (mode.Contains("GEO_WEP"))
-                    weapon.geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + mode + "/" + mode, true, true, Configuration.Graphics.ElementsSmoothTexture);
+                    secondWeapon.geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + mode + "/" + mode, true, true, Configuration.Graphics.ElementsSmoothTexture);
                 else
-                    weapon.geo = ModelFactory.CreateModel(mode, true, true, Configuration.Graphics.ElementsSmoothTexture);
-                if (weapon.geo != null && !String.IsNullOrEmpty(charWeap.Texture))
+                    secondWeapon.geo = ModelFactory.CreateModel(mode, true, true, Configuration.Graphics.ElementsSmoothTexture);
+                if (secondWeapon.geo != null && !String.IsNullOrEmpty(charWeap.Texture))
                 {
                     Texture texture = AssetManager.Load<Texture>(charWeap.Texture, false);
-                    foreach (Renderer renderer in weapon.geo.GetComponentsInChildren<Renderer>())
+                    foreach (Renderer renderer in secondWeapon.geo.GetComponentsInChildren<Renderer>())
                     {
                         renderer.material.SetTexture("_MainTex", texture);
                         ModelFactory.SetMatFilter(renderer.material, Configuration.Graphics.ElementsSmoothTexture);
                     }
                 }
-                weapon.bone = charWeap.Attachment;
-                weapon.builtin_mode = charWeap.Attachment == 6 && (btl.dms_geo_id == 5414 || btl.dms_geo_id == 581); // Zidane with dagger, normal and trance
+                secondWeapon.bone = charWeap.Attachment;
+                secondWeapon.builtin_mode = charWeap.Attachment == 6 && (btl.dms_geo_id == 5414 || btl.dms_geo_id == 581); // Zidane with dagger, normal and trance
             }
         }
         else if (btl.weaponModels.Count >= 2)
