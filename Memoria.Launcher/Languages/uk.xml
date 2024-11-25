@@ -45,6 +45,7 @@ DeletePresetText = "Цю дію неможливо скасувати. Ви вп
 DeletePresetCaption = "Видалити стиль?"
 OK = "ОК"
 Cancel = "Скасувати"
+Auto = "Авто"
 />
 
 <Settings

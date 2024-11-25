@@ -425,7 +425,7 @@ namespace Memoria.Launcher
             }
         }
 
-        public void CreateCombobox(String property, IEnumerable<String> options, Int32 firstColumn = 50, String text = "", String tooltip = "", String tooltipImage = "", Boolean selectByName = false)
+        public ComboBox CreateCombobox(String property, IEnumerable<String> options, Int32 firstColumn = 50, String text = "", String tooltip = "", String tooltipImage = "", Boolean selectByName = false)
         {
             if (text != "")
             {
@@ -468,6 +468,7 @@ namespace Memoria.Launcher
             Children.Add(comboBox);
 
             _comboBoxes[comboBox] = new List<string>(options);
+            return comboBox;
         }
         public void CreateSlider(String indexproperty, String sliderproperty, double min, double max, double tickFrequency, String stringFormat = "", Int32 firstColumn = 0, String text = "", String tooltip = "", String tooltipImage = "")
         {

@@ -45,6 +45,7 @@ DeletePresetText = "Dies kann nicht rückgängig gemacht werden. Möchten Sie di
 DeletePresetCaption = "Vorgabe löschen?"
 OK = "OK"
 Cancel = "Abbrechen"
+Auto = "Auto"
 />
 
 <Settings

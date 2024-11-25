@@ -45,6 +45,7 @@ DeletePresetText = "Impossibile annullare questa operazione. Vuoi davvero elimin
 DeletePresetCaption = "Eliminare la preimpostazione?"
 OK = "OK"
 Cancel = "Annulla"
+Auto = "Auto"
 />
 
 <Settings

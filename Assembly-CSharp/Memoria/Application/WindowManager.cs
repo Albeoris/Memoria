@@ -56,15 +56,6 @@ namespace Memoria
                 Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "ActiveMonitor", "0 -").Split(' ')[0], out monitor);
                 Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "0"), out windowMode);
 
-                Int32 targetWidth = 1280;
-                Int32 targetHeight = 960;
-                String[] resolution = IniFile.SettingsIni.GetSetting("Settings", "ScreenResolution", "1280x960").Split('x');
-                if (resolution.Length == 2)
-                {
-                    Int32.TryParse(resolution[0], out targetWidth);
-                    Int32.TryParse(resolution[1], out targetHeight);
-                }
-
                 IntPtr hWindow = GetActiveWindow();
                 RECT windowRect = new RECT();
                 GetWindowRect(hWindow, ref windowRect);
@@ -77,17 +68,42 @@ namespace Memoria
                 int displayWidth = rect.right - rect.left;
                 int displayHeight = rect.bottom - rect.top;
 
-                int borderWidth = windowRect.right - windowRect.left - Screen.width;
-                int borderHeight = windowRect.bottom - windowRect.top - Screen.height;
+                // In mode fullscreen or borderless we use the selected display resolution for the window size
+                int width = displayWidth;
+                int height = displayHeight;
 
-                // We make sure the window fits into the screen
-                int height = Math.Min(displayHeight, windowRect.bottom - windowRect.top);
-                int width = (height - borderHeight) * targetWidth / targetHeight + borderWidth; // We want to keep the propotions
-
-                if (width > displayWidth)
+                if (windowMode == 0)
                 {
-                    width = displayWidth;
-                    height = (width - borderWidth) * targetHeight / targetWidth + borderHeight;
+                    Int32 targetWidth = 0;
+                    Int32 targetHeight = 0;
+                    String[] resolution = IniFile.SettingsIni.GetSetting("Settings", "ScreenResolution", "0x0").Split('x');
+                    if (resolution.Length == 2)
+                    {
+                        Int32.TryParse(resolution[0], out targetWidth);
+                        Int32.TryParse(resolution[1], out targetHeight);
+                    }
+
+                    int borderWidth = windowRect.right - windowRect.left - Screen.width;
+                    int borderHeight = windowRect.bottom - windowRect.top - Screen.height;
+
+                    // Auto resolution
+                    if (targetWidth == 0 || targetHeight == 0)
+                    {
+                        width = displayWidth;
+                        height = displayHeight;
+                    }
+                    else
+                    {
+                        // We make sure the window fits into the screen
+                        height = Math.Min(displayHeight, windowRect.bottom - windowRect.top);
+                        width = (height - borderHeight) * targetWidth / targetHeight + borderWidth; // We want to keep the propotions
+
+                        if (width > displayWidth)
+                        {
+                            width = displayWidth;
+                            height = (width - borderWidth) * targetHeight / targetWidth + borderHeight;
+                        }
+                    }
                 }
 
                 int x = rect.left + (displayWidth - width) / 2;

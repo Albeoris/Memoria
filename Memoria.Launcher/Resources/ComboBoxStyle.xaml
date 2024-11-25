@@ -29,7 +29,7 @@
                 <ControlTemplate TargetType="{x:Type ToggleButton}">
                     <Border x:Name="templateRoot" CornerRadius="3" Opacity="1" Background="{DynamicResource BrushLightColorNormal}" BorderThickness="0" SnapsToDevicePixels="true">
                         <Border x:Name="splitBorder" HorizontalAlignment="Right" Margin="0,0,8,0" SnapsToDevicePixels="true" Width="Auto">
-                            <Path x:Name="arrow" Data="F1 M 0,0 L 5,5 L 10,0 L 10,-2 L 5,3 L0,-2 L0,0 Z" Fill="{DynamicResource BrushDarkTextColor}" HorizontalAlignment="Center" Margin="0,2,0,0" VerticalAlignment="Center"/>
+                            <Path x:Name="arrow" Data="F1 M 0,0 L 5,5 L 10,0 L 10,-2 L 5,3 L0,-2 L0,0 Z" Fill="{TemplateBinding Foreground}" HorizontalAlignment="Center" Margin="0,2,0,0" VerticalAlignment="Center"/>
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
@@ -191,6 +191,10 @@
                 <Setter Property="IsTabStop" Value="False"/>
                 <Setter Property="Padding" Value="5,4,5,4"/>
                 <Setter Property="Template" Value="{StaticResource ComboBoxEditableTemplate}"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Opacity" Value="0.8"/>
+                <Setter Property="Foreground" Value="{DynamicResource BrushDarkTextColorDisabled}"/>
             </Trigger>
         </Style.Triggers>
     </Style>

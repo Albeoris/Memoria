@@ -45,6 +45,7 @@ DeletePresetText = "Esto no se puede deshacer. ¿Está seguro de que desea elimi
 DeletePresetCaption = "¿Eliminar ajuste preestablecido?"
 OK = "OK"
 Cancel = "Cancelar"
+Auto = "Auto"
 />
 
 <Settings

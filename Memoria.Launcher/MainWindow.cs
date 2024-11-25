@@ -98,11 +98,18 @@ namespace Memoria.Launcher
             UiGrid.MakeTooltip(btnDownload, "ModEditor.TooltipDownload", "", "hand");
             UiGrid.MakeTooltip(btnCancel, "ModEditor.TooltipCancel", "", "hand");
 
-            String version = IniFile.SettingsIni.GetSetting("Memoria", "Version");
+            String version = IniFile.SettingsIni.GetSetting("Memoria", "Version", "2000.01.01");
             DateTime currentVersion = DateTime.ParseExact(MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"), "yyyy.MM.dd", CultureInfo.InvariantCulture);
-            if (String.IsNullOrEmpty(version) || !DateTime.TryParseExact(version, "yyyy.MM.dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) || date < currentVersion)
+            if (!DateTime.TryParseExact(version, "yyyy.MM.dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) || date < currentVersion)
             {
                 ShowReleaseNotes(null, null);
+                // One time patches
+                if(date < new DateTime(2024, 11, 25))
+                {
+                    // Patch resolution to Auto
+                    if (IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "0") != "0")
+                        GameSettingsDisplay.ScreenResolution = (String)Lang.Res["Launcher.Auto"];
+                }
                 IniFile.SettingsIni.SetSetting("Memoria", "Version", MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"));
                 IniFile.SettingsIni.Save();
             }

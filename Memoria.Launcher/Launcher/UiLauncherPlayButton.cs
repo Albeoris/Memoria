@@ -89,8 +89,16 @@ namespace Memoria.Launcher
                 }
 
                 Int32[] maxRes = SettingsGrid_VanillaDisplay.GetMaxResolution(activeMonitor);
-                screenWidth = Math.Min(screenWidth, maxRes[0]);
-                screenHeight = Math.Min(screenHeight, maxRes[1]);
+                if (GameSettingsDisplay.WindowMode == 2 || screenWidth == 0 || screenHeight == 0)
+                {
+                    screenWidth = maxRes[0];
+                    screenHeight = maxRes[1];
+                }
+                else
+                {
+                    screenWidth = Math.Min(screenWidth, maxRes[0]);
+                    screenHeight = Math.Min(screenHeight, maxRes[1]);
+                }
 
                 String directoyPath = Path.GetFullPath(".\\" + (GameSettings.IsX64 ? "x64" : "x86"));
 

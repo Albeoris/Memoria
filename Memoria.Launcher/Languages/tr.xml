@@ -45,6 +45,7 @@ DeletePresetText = "Bu geri alınamaz. Bu ön ayarı silmek istediğinizden emin
 DeletePresetCaption = "Ön ayar silinsin mi?"
 OK = "TAMAM"
 Cancel = "İptal"
+Auto = "Otomatik"
 />
 
 <Settings

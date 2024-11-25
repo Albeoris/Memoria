@@ -10,6 +10,7 @@
     <Color x:Key="LightColorHover">#DFFFFFFF</Color>
     <Color x:Key="LightColorPressed">#FFFFFFFF</Color>
     <Color x:Key="DarkTextColor">#FF333333</Color>
+    <Color x:Key="DarkTextColorDisabled">#77333333</Color>
 
     <SolidColorBrush x:Key="BrushAccentColorBrighter" Color="{DynamicResource AccentColorBrighter}"/>
     <SolidColorBrush x:Key="BrushAccentColor" Color="{DynamicResource AccentColor}"/>
@@ -21,6 +22,7 @@
     <SolidColorBrush x:Key="BrushLightColorHover" Color="{DynamicResource LightColorHover}"/>
     <SolidColorBrush x:Key="BrushLightColorPressed" Color="{DynamicResource LightColorPressed}"/>
     <SolidColorBrush x:Key="BrushDarkTextColor" Color="{DynamicResource DarkTextColor}"/>
+    <SolidColorBrush x:Key="BrushDarkTextColorDisabled" Color="{DynamicResource DarkTextColorDisabled}"/>
 
     <SolidColorBrush x:Key="WhiteUI" Color="#EEEEEE" />
     <SolidColorBrush x:Key="LightGreyUI" Color="#8333" />
