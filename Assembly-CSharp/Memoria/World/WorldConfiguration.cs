@@ -325,6 +325,8 @@ namespace Memoria
                 if ((modifier._titleNo == -1 || modifier._titleNo == titleId) && (String.Equals(modifier._language, "Any") || String.Equals(modifier._language, Localization.GetSymbol())))
                     return modifier._rect;
             // Default usage setting
+            if (Localization.GetSymbol() == "JP")
+                return new Rect(0f, 144f, 512f, 256f);
             return new Rect(0f, 144f, 1024f, 128f);
         }
 

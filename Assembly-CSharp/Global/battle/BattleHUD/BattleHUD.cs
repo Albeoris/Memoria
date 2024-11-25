@@ -678,7 +678,23 @@ public partial class BattleHUD : UIScene
         {
             if (ff9Item.count <= 0)
                 continue;
-            if ((isThrow && ff9item.CanThrowItem(ff9Item.id)) || (!isThrow && ff9item.HasItemEffect(ff9Item.id)))
+            FF9ITEM_DATA itemData = ff9item._FF9Item_Data[ff9Item.id];
+            Boolean canBeUsed;
+            if (isThrow)
+                canBeUsed = ff9item.CanThrowItem(itemData);
+            else
+                canBeUsed = ff9item.HasItemEffect(ff9Item.id) && (itemData.type & ItemType.Item) != 0;
+            if (canBeUsed && CurrentPlayerIndex >= 0 && !String.IsNullOrEmpty(itemData.use_condition))
+            {
+                Expression c = new Expression(itemData.use_condition);
+                NCalcUtility.InitializeExpressionUnit(ref c, FF9StateSystem.Battle.FF9Battle.GetUnit(CurrentPlayerIndex));
+                c.Parameters["CommandId"] = (Int32)_currentCommandId;
+                c.Parameters["CommandMenu"] = (Int32)_currentCommandIndex;
+                c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+                c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+                canBeUsed = NCalcUtility.EvaluateNCalcCondition(c.Evaluate());
+            }
+            if (canBeUsed)
             {
                 _itemIdList.Add(ff9Item.id);
                 BattleItemListData battleItemListData = new BattleItemListData
