@@ -254,9 +254,9 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Support Ability Cost</Name>
-	<Version>4.1.0</Version>
+	<Version>4.1.1</Version>
 	<InstallationPath>KupoGemSATweak</InstallationPath>
-	<ReleaseDate>2024-11-01</ReleaseDate>
+	<ReleaseDate>2024-08-22</ReleaseDate>
 	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
 	<Author>faospark / Tirlititi </Author>
 	<Description> Allows You to have 1 Gem cost per support ability or Half.
@@ -274,6 +274,12 @@ Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 	<PreviewFile>preview/kupo-Gem.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313895-1564815189.png</PreviewFileUrl>
 	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+		<SubMod>
+		<Name>Configure</Name>
+		<InstallationPath>Preview</InstallationPath>
+		<Description>Click Here to Configure mods</Description>
+		<Priority>100</Priority>
+	</SubMod>
 	<SubMod>
 		<Name>Tweak: Half Cost of Support Abilities</Name>
 		<InstallationPath>Features/Tweaks/AbilityHalf</InstallationPath>
@@ -290,9 +296,9 @@ Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 
 <Mod>
 	<Name>Exp, AP, Gil, Rewards Tweaks</Name>
-	<Version>4.1.0</Version>
+	<Version>4.1.1</Version>
 	<InstallationPath>KupoTweaks</InstallationPath>
-	<ReleaseDate>2024-11-01</ReleaseDate>
+	<ReleaseDate>2024-08-22</ReleaseDate>
 	<ReleaseDateOriginal>2022-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>As the name suggests, this mod has several options that can multiply your Exp, AP , Gil and After Battle Rewards. 
@@ -321,13 +327,13 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<Name>Tweak: 4x AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP4x</InstallationPath>
 		<Description>Gains 4x AP after battle</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 99 AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP99</InstallationPath>
 		<Description>Gains 99 AP after battle</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 2x EXP Gain</Name>
@@ -339,13 +345,13 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<Name>Tweak: 4x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP4x</InstallationPath>
 		<Description>Gains 4x EXP after battle</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 8x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP8x</InstallationPath>
 		<Description>Gains 8x EXP after battle</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 2x gil</Name>
@@ -357,13 +363,13 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<Name>Tweak: 4x gil</Name>
 		<InstallationPath>Features/Tweaks/4xgil</InstallationPath>
 		<Description>4x Gil received after battle</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 8x gil</Name>
 		<InstallationPath>Features/Tweaks/8xgil</InstallationPath>
 		<Description>8x Gil received after battle</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: Get 2x of any item drop after battle </Name>
@@ -383,7 +389,7 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 
 <Mod>
 	<Name>No Exp Plus </Name>
-	<Version>4.1.1</Version>
+	<Version>4.1.2</Version>
 	<InstallationPath>KupoNoEXP</InstallationPath>
 	<ReleaseDate>2024-11-15</ReleaseDate>
 	<ReleaseDateOriginal>2023-07-20</ReleaseDateOriginal>
@@ -406,7 +412,7 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 		<Name>Configure</Name>
 		<InstallationPath>Features/Zecrets</InstallationPath>
 		<Description>Click Here to Configure</Description>
-		<Priority>1</Priority>
+		<Priority>100</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Challenge: No / Zero AP and EXP Gain After Battle</Name>
@@ -442,7 +448,7 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 
 <Mod>
 	<Name>Kupo Heroes Pack </Name>
-	<Version>4.1.1</Version>
+	<Version>4.1.2</Version>
 	<InstallationPath>KupoHeroPack</InstallationPath>
 	<ReleaseDate>2024-08-28</ReleaseDate>
 	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
@@ -486,7 +492,7 @@ Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
 		<Name>Configure</Name>
 		<InstallationPath>Features/Zecrets</InstallationPath>
 		<Description>Click Here to Configure mods</Description>
-		<Priority>1</Priority>
+		<Priority>100</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>[All] Add Resistance to Zombie and Virus   </Name>
@@ -805,7 +811,7 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Kupo UI Suite</Name>
-	<Version>4.1.2</Version>
+	<Version>4.1.3</Version>
 	<InstallationPath>KupoUISuite</InstallationPath>
 	<ReleaseDate>2024-11-6</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
@@ -836,7 +842,7 @@ to see previews and learn more about the mod visit the website url
 		<Name>Configure</Name>
 		<InstallationPath>Features/Zecrets</InstallationPath>
 		<Description>Click Here to Configure mods</Description>
-		<Priority>1</Priority>
+		<Priority>100</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Cards: Triple Triad Mat</Name>
@@ -848,13 +854,13 @@ to see previews and learn more about the mod visit the website url
 		<Name>UI: New Curative item Icons</Name>
 		<InstallationPath>Features/NewIcons</InstallationPath>
 		<Description>NewIcons</Description>
-		<Priority>4</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>UI: Alt Cursor Sound  </Name>
 		<InstallationPath>Features/CursorSound</InstallationPath>
 		<Description>What i think is a better cursor sound</Description>
-		<Priority>4</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>UI Theme: Default</Name>
@@ -902,43 +908,43 @@ to see previews and learn more about the mod visit the website url
 		<Name>Menu Bg : Tantalus</Name>
 		<InstallationPath>Features/Menubg/menubgtantalus</InstallationPath>
 		<Description>Tantalus Pattern on Menu Background</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Menu Bg : Chocobo</Name>
 		<InstallationPath>Features/Menubg/menubgchocobo</InstallationPath>
 		<Description>Chocobo Pattern on Menu Background</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Menu Bg : Stone</Name>
 		<InstallationPath>Features/Menubg/menubgstone</InstallationPath>
 		<Description>Stone Pattern on Menu Background</Description>
-		<Priority>4</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Menu Bg Full : Forest</Name>
 		<InstallationPath>Features/Menubg/menubgfull01</InstallationPath>
 		<Description>A save point in the forest</Description>
-		<Priority>10</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Menu Bg Full : Huts</Name>
 		<InstallationPath>Features/Menubg/menubgfull02</InstallationPath>
 		<Description>The huts of the Black Mage</Description>
-		<Priority>10</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Menu Bg Full : Secret Room</Name>
 		<InstallationPath>Features/Menubg/menubgfull03</InstallationPath>
 		<Description>An Unused Room room for the game </Description>
-		<Priority>10</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Title Screen : Normal </Name>
 		<InstallationPath>Features/TitleLogo/TitleLogo0</InstallationPath>
 		<Description>Normal Title Screen Credits to Moguri mod </Description>
-		<Priority>10</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Title Screen : Alternate </Name>
@@ -950,37 +956,37 @@ to see previews and learn more about the mod visit the website url
 		<Name>Title Screen : Recreation </Name>
 		<InstallationPath>Features/TitleLogo/TitleLogo2</InstallationPath>
 		<Description>Shows a Recreation title screen and Memoria Indicator</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Title Screen : Old School </Name>
 		<InstallationPath>Features/TitleLogo/TitleLogo3</InstallationPath>
 		<Description>Shows an old school type of title screen</Description>
-		<Priority>4</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Title Screen : Origins </Name>
 		<InstallationPath>Features/TitleLogo/TitleLogo4</InstallationPath>
 		<Description>Original concept of the logo </Description>
-		<Priority>6</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>UI Option: Borderless</Name>
 		<InstallationPath>Features/frames/borderless</InstallationPath>
 		<Description>Remove white Border mostly for testing purposes </Description>
-		<Priority>5</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>UI Option: No Divider</Name>
 		<InstallationPath>Features/frames/divideless</InstallationPath>
 		<Description>removes dividers in menu</Description>
-		<Priority>5</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>UI Option: No Highlight</Name>
 		<InstallationPath>Features/frames/highlightless</InstallationPath>
 		<Description>removes dividers in menu</Description>
-		<Priority>5</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>UI : Concept Art Title Loop</Name>
@@ -1056,7 +1062,7 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 
 <Mod>
 	<Name>Cursors Mod</Name>
-	<Version>4.1.0</Version>
+	<Version>4.1.1</Version>
 	<InstallationPath>KupoCursors</InstallationPath>
 	<ReleaseDate>2024-10-01</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
@@ -1075,7 +1081,7 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 		<Name>Configure</Name>
 		<InstallationPath>Features/Zecrets</InstallationPath>
 		<Description>Click Here to Configure mods</Description>
-		<Priority>1</Priority>
+		<Priority>100</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Cursor : Dagger</Name>
@@ -1137,9 +1143,9 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 
 <Mod>
 	<Name>Kupo Controller Pack</Name>
-	<Version>4.1.0</Version>
+	<Version>4.1.1</Version>
 	<InstallationPath>KupoButtonsPack</InstallationPath>
-	<ReleaseDate>2024-11-01</ReleaseDate>
+	<ReleaseDate>2024-08-21</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-27</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>The original COMPLETE controller buttons pack of FF9.
@@ -1167,7 +1173,7 @@ Available Themes:
 		<Name>Configure</Name>
 		<InstallationPath>Features/Zecrets</InstallationPath>
 		<Description>Click Here to Configure mods</Description>
-		<Priority>1</Priority>
+		<Priority>100</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : PS5 (DualSense)</Name>
@@ -1179,13 +1185,13 @@ Available Themes:
 		<Name>Buttons : PS Gloss (DS4)</Name>
 		<InstallationPath>Features/ButtonsPS4Gloss</InstallationPath>
 		<Description>Glossy PS4 buttons</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : PS Vanilla (PSX)</Name>
 		<InstallationPath>Features/ButtonsPSX</InstallationPath>
 		<Description>PS prompts in the same Style as the default xbox prompts</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : Pixels (PSX)</Name>
@@ -1197,13 +1203,13 @@ Available Themes:
 		<Name>Buttons : Default Xbox</Name>
 		<InstallationPath>Features/ButtonsXbox</InstallationPath>
 		<Description>Restores Default Xbox Prompts</Description>
-		<Priority>4</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : SNES</Name>
 		<InstallationPath>Features/ButtonsSNES</InstallationPath>
 		<Description>A Requested SNES or Switch layout </Description>
-		<Priority>5</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 </Mod>
 
@@ -1265,9 +1271,9 @@ Available Themes:
 
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.1.0</Version>
+	<Version>4.1.2</Version>
 	<InstallationPath>KupoPortraits</InstallationPath>
-	<ReleaseDate>2024-11-01</ReleaseDate>
+	<ReleaseDate>2024-10-18</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>To DFFOO fans this is where the DFFOO portraits resides
@@ -1295,7 +1301,7 @@ The Original Portraits Pack, part of the Kupo Mods, formerly Mog Add-ons.
 		<Name>Configure</Name>
 		<InstallationPath>Features/Zecrets</InstallationPath>
 		<Description>Click Here to Configure</Description>
-		<Priority>1</Priority>
+		<Priority>100</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Portraits : Default Extended Cast</Name>
@@ -1307,19 +1313,19 @@ The Original Portraits Pack, part of the Kupo Mods, formerly Mog Add-ons.
 		<Name>Portraits : Opera Omnia</Name>
 		<InstallationPath>Features/PortraitOperaOmnia</InstallationPath>
 		<Description>Dissidia Opera Omnia Portraits</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Portraits : DFFOO Pluto Knight / White Mage </Name>
 		<InstallationPath>Features/PortraitOperaOmniaPCP</InstallationPath>
 		<Description>DFFOO Style for Extra costumes for Zidane and Garnet, must be used with the Opera Omnia portraits </Description>
-		<Priority>4</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Portraits : PSX Upscaled</Name>
 		<InstallationPath>Features/PortraitPSXUpscale</InstallationPath>
 		<Description>original psx release Upscaled using waifu2x and Gigapixel</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 </Mod>
 
