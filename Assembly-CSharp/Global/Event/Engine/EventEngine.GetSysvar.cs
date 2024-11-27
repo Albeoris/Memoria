@@ -1,8 +1,7 @@
 ﻿using FF9;
 using Memoria;
+using Memoria.Data;
 using System;
-using System.Reflection;
-using UnityEngine;
 
 public partial class EventEngine
 {
@@ -121,10 +120,16 @@ public partial class EventEngine
                 num = (Int32)this._ff9.btl_result;
                 break;
             case 28:
-                num = EventEngine._btlCmdPrmCmd;
+                if (this.gExec.level <= 2)
+                    num = EventEngine._btlCmdPrmCmd;
+                else
+                    num = (Int32)(btl_scrp.GetCurrentCommandSmart(btl_scrp.FindBattleUnitUnlimited((UInt16)this.GetSysList(1))?.Data)?.cmd_no ?? BattleCommandId.None);
                 break;
             case 29:
-                num = EventEngine._btlCmdPrmSub;
+                if (this.gExec.level <= 2)
+                    num = EventEngine._btlCmdPrmSub;
+                else
+                    num = btl_scrp.GetCurrentCommandSmart(btl_scrp.FindBattleUnitUnlimited((UInt16)this.GetSysList(1))?.Data)?.sub_no ?? 0;
                 break;
             case 30:
                 num = (Int32)stateBattleSystem.btl_phase;

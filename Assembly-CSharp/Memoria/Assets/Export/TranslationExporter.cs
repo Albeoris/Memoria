@@ -382,6 +382,7 @@ namespace Memoria.Assets
                 Directory.CreateDirectory(exportDirectory);
                 BGSCENE_DEF scene = new BGSCENE_DEF(true);
                 scene.LoadResources(scenePath, pair.Key);
+                scene.LoadLocalizationInfo(pair.Key, scenePath);
                 for (Int32 i = pair.Value.startOvrIdx; i <= pair.Value.endOvrIdx; i++)
                 {
                     if (!scene.overlayList[i].isMemoria)

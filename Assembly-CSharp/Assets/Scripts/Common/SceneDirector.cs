@@ -773,11 +773,14 @@ namespace Assets.Scripts.Common
             {
                 if (Configuration.Import.Enabled && Configuration.Export.Enabled)
                 {
-                    Thread importerThread = new Thread(ResourceImporter.Initialize);
-                    importerThread.Start();
-                    while (importerThread.ThreadState == ThreadState.Running || (FF9TextTool.BattleImporter.InitializationTask != null && FF9TextTool.BattleImporter.InitializationTask.State == TaskState.Running) || (FF9TextTool.FieldImporter.InitializationTask != null && FF9TextTool.FieldImporter.InitializationTask.State == TaskState.Running))
-                        Thread.Sleep(100);
-                    ResourceExporter.ExportSafe();
+                    FF9StateSystem.Settings.ReadSystemData(() =>
+                    {
+                        Thread importerThread = new Thread(ResourceImporter.Initialize);
+                        importerThread.Start();
+                        while (importerThread.ThreadState == ThreadState.Running || (FF9TextTool.BattleImporter.InitializationTask != null && FF9TextTool.BattleImporter.InitializationTask.State == TaskState.Running) || (FF9TextTool.FieldImporter.InitializationTask != null && FF9TextTool.FieldImporter.InitializationTask.State == TaskState.Running))
+                            Thread.Sleep(100);
+                        ResourceExporter.ExportSafe();
+                    });
                 }
                 else if (Configuration.Import.Enabled)
                 {
@@ -785,7 +788,7 @@ namespace Assets.Scripts.Common
                 }
                 else if (Configuration.Export.Enabled)
                 {
-                    ResourceExporter.ExportSafe();
+                    FF9StateSystem.Settings.ReadSystemData(ResourceExporter.ExportSafe);
                 }
             }
         }
