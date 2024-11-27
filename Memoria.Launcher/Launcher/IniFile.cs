@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
 
 namespace Memoria.Launcher
 {
@@ -36,7 +37,14 @@ namespace Memoria.Launcher
             {
                 if (_memoria == null)
                 {
-                    SanitizeMemoriaIni();
+                    try
+                    {
+                        SanitizeMemoriaIni();
+                    }
+                    catch (Exception ex)
+                    {
+                        UiHelper.ShowError(Application.Current.MainWindow, ex);
+                    }
                     _memoria = new IniFile(IniFile.MemoriaIniPath);
                 }
                 return _memoria;
@@ -89,7 +97,6 @@ namespace Memoria.Launcher
         {
             if (PreventWrite) return;
             if (_path == null) throw new NullReferenceException("This IniFile was created without a path, values cannot be written.");
-            if (!File.Exists(_path)) return;
             WriteAllSettings(_path);
         }
 
