@@ -59,7 +59,7 @@ namespace Memoria.Assets
             TextResourceReference importPath = ModTextResources.Import.Battle;
             if (!importPath.IsExists(out TextResourcePath existingFile))
             {
-                Log.Warning($"[{TypeName}] Import was skipped bacause a file does not exist: [{importPath}].");
+                Log.Warning($"[{TypeName}] Import was skipped because a file does not exist: [{importPath}].");
                 dic = null;
                 return false;
             }

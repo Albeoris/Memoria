@@ -138,6 +138,7 @@ namespace Memoria.Assets
                 if (FF9TextTool.commandHelpDesc.TryGetValue(pair.Key, out String help))
                     textAsHW += $"#HW help {(Int32)pair.Key}\n{help}\n\n";
             }
+            idCounter = -1;
             foreach (KeyValuePair<BattleCommandId, String> pair in FF9TextTool.commandHelpDesc)
                 helpAsMes += ProcessStringForDatabaseMes(ref idCounter, pair.Value, (Int32)pair.Key);
             String exportDirectoryMes = $"{modFolder}FF9_Data/EmbeddedAsset/Text/{symbol}/Command/";
@@ -296,7 +297,7 @@ namespace Memoria.Assets
             Log.Message("[TranslationExporter] Exporting character names...");
             String textAsDP = "";
             foreach (PLAYER player in FF9StateSystem.Common.FF9.PlayerList)
-                textAsDP += $"CharacterDefaultName {(Int32)player.Index} {symbol} {player.Name}\n";
+                textAsDP += $"CharacterDefaultName {(Int32)player.Index} {symbol} {FF9TextTool.CharacterDefaultName(player.Index)}\n";
             File.WriteAllText($"{modFolder}DictionaryPatch.txt", textAsDP);
             Log.Message("[TranslationExporter] Done.");
         }
@@ -381,6 +382,7 @@ namespace Memoria.Assets
                 Directory.CreateDirectory(exportDirectory);
                 BGSCENE_DEF scene = new BGSCENE_DEF(true);
                 scene.LoadResources(scenePath, pair.Key);
+                scene.LoadLocalizationInfo(pair.Key, scenePath);
                 for (Int32 i = pair.Value.startOvrIdx; i <= pair.Value.endOvrIdx; i++)
                 {
                     if (!scene.overlayList[i].isMemoria)
@@ -561,6 +563,7 @@ namespace Memoria.Assets
         {
             foreach (EtcImporter importer in EtcImporter.EnumerateImporters())
                 importer.LoadSync();
+            new CharacterNamesImporter().LoadSync();
             _etcBatches =
             [
                 new EtcTextBatch("WorldLoc", "WorldLocations", 0, FF9TextTool.worldLocationText),

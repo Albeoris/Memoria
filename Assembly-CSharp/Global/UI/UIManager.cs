@@ -44,20 +44,9 @@ public class UIManager : PersistenSingleton<UIManager>
         }
     }
 
-    public static Vector2 UIScreenTopLeftCoOrdinate
-    {
-        get => new Vector2(-UIManager.UIActualScreenSize.x / 2f, -UIManager.UIActualScreenSize.y / 2f);
-    }
-
-    public static Vector2 UIScreenBottomRightCoOrdinate
-    {
-        get => new Vector2(UIManager.UIActualScreenSize.x / 2f, UIManager.UIActualScreenSize.y / 2f);
-    }
-
-    public static Vector4 UIScreenCoOrdinate
-    {
-        get => new Vector4(-UIManager.UIActualScreenSize.x / 2f, -UIManager.UIActualScreenSize.y / 2f, UIManager.UIActualScreenSize.x / 2f, UIManager.UIActualScreenSize.y / 2f);
-    }
+    public static Vector2 UIScreenTopLeftCoOrdinate => new Vector2(-UIManager.UIActualScreenSize.x / 2f, -UIManager.UIActualScreenSize.y / 2f);
+    public static Vector2 UIScreenBottomRightCoOrdinate => new Vector2(UIManager.UIActualScreenSize.x / 2f, UIManager.UIActualScreenSize.y / 2f);
+    public static Vector4 UIScreenCoOrdinate => new Vector4(-UIManager.UIActualScreenSize.x / 2f, -UIManager.UIActualScreenSize.y / 2f, UIManager.UIActualScreenSize.x / 2f, UIManager.UIActualScreenSize.y / 2f);
 
     public UIManager.UIState State
     {
@@ -103,20 +92,9 @@ public class UIManager : PersistenSingleton<UIManager>
         }
     }
 
-    public Boolean IsPause
-    {
-        get => this.state == UIManager.UIState.Pause || this.state == UIManager.UIState.Quit || this.QuitScene.isShowQuitUI;
-    }
-
-    public Boolean IsEventEnable
-    {
-        get => (FF9StateSystem.Common.FF9.attr & 2u) == 0u;
-    }
-
-    public Boolean IsLoading
-    {
-        get => (PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State) != null && PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).Loading) || PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.None;
-    }
+    public Boolean IsPause => this.state == UIManager.UIState.Pause || this.state == UIManager.UIState.Quit || this.QuitScene.isShowQuitUI;
+    public Boolean IsEventEnable => (FF9StateSystem.Common.FF9.attr & 2u) == 0u;
+    public Boolean IsLoading => (PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State) != null && PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).Loading) || PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.None;
 
     public String StateName
     {
@@ -201,39 +179,19 @@ public class UIManager : PersistenSingleton<UIManager>
         }
     }
 
-    public static UIKeyTrigger Input
-    {
-        get => PersistenSingleton<UIManager>.Instance.gameObject != null ? PersistenSingleton<UIManager>.Instance.gameObject.GetComponent<UIKeyTrigger>() : null;
-    }
+    public static UIKeyTrigger Input => PersistenSingleton<UIManager>.Instance.gameObject?.GetComponent<UIKeyTrigger>();
 
-    public static FieldHUD Field
-    {
-        get => PersistenSingleton<UIManager>.Instance.gameObject != null ? PersistenSingleton<UIManager>.Instance.FieldHUDScene : null;
-    }
+    public static FieldHUD Field => PersistenSingleton<UIManager>.Instance.gameObject != null ? PersistenSingleton<UIManager>.Instance.FieldHUDScene : null;
+    public static BattleHUD Battle => PersistenSingleton<UIManager>.Instance.gameObject != null ? PersistenSingleton<UIManager>.Instance.BattleHUDScene : null;
+    public static WorldHUD World => PersistenSingleton<UIManager>.Instance.gameObject != null ? PersistenSingleton<UIManager>.Instance.WorldHUDScene : null;
 
-    public static BattleHUD Battle
-    {
-        get => PersistenSingleton<UIManager>.Instance.gameObject != null ? PersistenSingleton<UIManager>.Instance.BattleHUDScene : null;
-    }
+    public Camera BattleCamera => this.battleCamera;
 
-    public static WorldHUD World
-    {
-        get => PersistenSingleton<UIManager>.Instance.gameObject != null ? PersistenSingleton<UIManager>.Instance.WorldHUDScene : null;
-    }
-
-    public Camera BattleCamera
-    {
-        get => this.battleCamera;
-    }
-
-    public GameObject FastTrophy
-    {
-        get => this.fastTrophy;
-    }
+    public GameObject FastTrophy => this.fastTrophy;
 
     private void Start()
     {
-        base.StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateTextLocalization((Action)null));
+        base.StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateTextLocalization(null));
         this.InitFadeTexture();
         OverlayCanvas instance = PersistenSingleton<OverlayCanvas>.Instance;
         this.fastTrophy = GameObject.Find("UI Root/Submenu Container/Fast Trophy");
@@ -376,8 +334,7 @@ public class UIManager : PersistenSingleton<UIManager>
 
     public void AnchorToUIRoot(GameObject go)
     {
-        UIWidget component = go.GetComponent<UIWidget>();
-        component.SetAnchor(base.gameObject);
+        go.GetComponent<UIWidget>().SetAnchor(base.gameObject);
     }
 
     public UIScene GetSceneFromState(UIManager.UIState state)
@@ -459,17 +416,10 @@ public class UIManager : PersistenSingleton<UIManager>
 
     public void SetEventEnable(Boolean isEnable)
     {
-        FF9StateGlobal ff = FF9StateSystem.Common.FF9;
         if (isEnable)
-        {
-            ff.attr &= 4294967293u;
-            ff.attr &= 4294967039u;
-        }
+            FF9StateSystem.Common.FF9.attr &= 0xFFFFFEFDu;
         else
-        {
-            ff.attr |= 2u;
-            ff.attr |= 256u;
-        }
+            FF9StateSystem.Common.FF9.attr |= 0x102u;
     }
 
     public void SetPlayerControlEnable(Boolean isEnable, Action onFinished)
@@ -490,58 +440,44 @@ public class UIManager : PersistenSingleton<UIManager>
                 isEnable = true;
                 this.IsPlayerControlEnable = true;
             }
-            if (PersistenSingleton<EventEngine>.Instance.fieldmap == (UnityEngine.Object)null)
+            if (PersistenSingleton<EventEngine>.Instance.fieldmap == null)
             {
                 if (onFinished != null)
-                {
                     onFinished();
-                }
                 yield break;
             }
             UIManager.PlayerActorController = PersistenSingleton<EventEngine>.Instance.fieldmap.playerController;
-            if (UIManager.PlayerActorController != (UnityEngine.Object)null)
-            {
+            if (UIManager.PlayerActorController != null)
                 UIManager.PlayerActorController.SetActive(isEnable);
-            }
         }
         else if (this.UnityScene == UIManager.Scene.World)
         {
             PersistenSingleton<HonoInputManager>.Instance.SetVirtualAnalogEnable(isEnable);
-            Single factor = (!HonoBehaviorSystem.Instance.IsFastForwardModeActive()) ? 1f : ((Single)HonoBehaviorSystem.Instance.GetFastForwardFactor());
-            WMScriptDirector.Instance.SetAnimationSpeeds(((!isEnable) ? 0f : 0.667f) * factor);
+            Single factor = HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? HonoBehaviorSystem.Instance.GetFastForwardFactor() : 1f;
+            WMScriptDirector.Instance.SetAnimationSpeeds((isEnable ? 0.667f : 0f) * factor);
             if (Singleton<VirtualAnalog>.Instance.IsActive != isEnable)
-            {
                 PersistenSingleton<HonoInputManager>.Instance.SetVirtualAnalogEnable(isEnable);
-            }
         }
         else if (this.UnityScene == UIManager.Scene.Battle)
         {
-            while (UIManager.battleMainBehavior == (UnityEngine.Object)null)
+            while (UIManager.battleMainBehavior == null)
             {
                 GameObject go = GameObject.Find("Battle Main");
-                if (go != (UnityEngine.Object)null)
-                {
+                if (go != null)
                     UIManager.battleMainBehavior = go.GetComponent<HonoluluBattleMain>();
-                }
                 else
-                {
                     yield return new WaitForEndOfFrame();
-                }
             }
             UIManager.battleMainBehavior.SetActive(isEnable);
             if (!Singleton<VirtualAnalog>.Instance.IsActive)
-            {
                 PersistenSingleton<HonoInputManager>.Instance.SetVirtualAnalogEnable(false);
-            }
         }
         else if (this.UnityScene == UIManager.Scene.QuadMist)
         {
             PersistenSingleton<HonoInputManager>.Instance.SetVirtualAnalogEnable(false);
         }
         if (onFinished != null)
-        {
             onFinished();
-        }
         yield break;
     }
 
@@ -568,12 +504,10 @@ public class UIManager : PersistenSingleton<UIManager>
                 isEnable = true;
                 this.IsMenuControlEnable = true;
             }
-            if (this.FieldHUDScene != (UnityEngine.Object)null)
-            {
+            if (this.FieldHUDScene != null)
                 this.FieldHUDScene.SetButtonVisible(isEnable);
-            }
         }
-        else if (this.UnityScene == UIManager.Scene.World && this.WorldHUDScene != (UnityEngine.Object)null)
+        else if (this.UnityScene == UIManager.Scene.World && this.WorldHUDScene != null)
         {
             this.WorldHUDScene.SetButtonVisible(isEnable);
         }
@@ -585,12 +519,10 @@ public class UIManager : PersistenSingleton<UIManager>
         this.IsPauseControlEnable = isEnable;
         if (this.UnityScene == UIManager.Scene.Field)
         {
-            if (this.FieldHUDScene != (UnityEngine.Object)null)
-            {
+            if (this.FieldHUDScene != null)
                 this.FieldHUDScene.SetPauseVisible(isEnable);
-            }
         }
-        else if (this.UnityScene == UIManager.Scene.World && this.WorldHUDScene != (UnityEngine.Object)null)
+        else if (this.UnityScene == UIManager.Scene.World && this.WorldHUDScene != null)
         {
             this.WorldHUDScene.SetPauseVisible(isEnable);
         }
@@ -599,17 +531,11 @@ public class UIManager : PersistenSingleton<UIManager>
     public void SetLoadingForSceneChange()
     {
         if (this.UnityScene == UIManager.Scene.Field)
-        {
             this.FieldHUDScene.Loading = true;
-        }
         else if (this.UnityScene == UIManager.Scene.World)
-        {
             this.WorldHUDScene.Loading = true;
-        }
         else if (this.UnityScene == UIManager.Scene.Battle)
-        {
             this.BattleResultScene.Loading = true;
-        }
     }
 
     public void MenuOpenEvent()
@@ -617,8 +543,8 @@ public class UIManager : PersistenSingleton<UIManager>
         if (this.UnityScene == UIManager.Scene.World)
         {
             EventEngine instance = PersistenSingleton<EventEngine>.Instance;
-            Int32 sysvar = PersistenSingleton<EventEngine>.Instance.GetSysvar(192);
-            FF9StateSystem.Common.FF9.mapNameStr = FF9TextTool.WorldLocationText(sysvar);
+            Int32 worldLocationId = PersistenSingleton<EventEngine>.Instance.GetSysvar(192);
+            FF9StateSystem.Common.FF9.mapNameStr = FF9TextTool.WorldLocationText(worldLocationId);
             instance.Request(instance.FindObjByUID(0), 1, 4, false);
         }
     }
@@ -677,24 +603,21 @@ public class UIManager : PersistenSingleton<UIManager>
     public void InitFadeTexture()
     {
         GameObject addTexture = GameObject.Find("UI Root/Submenu Container/Event Fader Panel/Fading Texture Add");
-
         if (addTexture != null)
         {
             this.eventFadeTextureAdd = addTexture.GetComponent<UITexture>();
             this.eventFadeTextureAdd.mainTexture = Texture2D.whiteTexture;
             this.eventFadeTextureAdd.material = new Material(ShadersLoader.Find("PSX/Fade_Abr_1 1"));
-
             if (Configuration.Graphics.WidescreenSupport)
                 eventFadeTextureAdd.width = eventFadeTextureAdd.height * Screen.width / Screen.height;
         }
-        GameObject subTexture = GameObject.Find("UI Root/Submenu Container/Event Fader Panel/Fading Texture Sub");
 
+        GameObject subTexture = GameObject.Find("UI Root/Submenu Container/Event Fader Panel/Fading Texture Sub");
         if (subTexture != null)
         {
             this.eventFadeTextureSub = subTexture.GetComponent<UITexture>();
             this.eventFadeTextureSub.mainTexture = Texture2D.whiteTexture;
             this.eventFadeTextureSub.material = new Material(ShadersLoader.Find("PSX/Fade_Abr_2 1"));
-
             if (Configuration.Graphics.WidescreenSupport)
                 eventFadeTextureSub.width = eventFadeTextureSub.height * Screen.width / Screen.height;
         }
@@ -728,25 +651,20 @@ public class UIManager : PersistenSingleton<UIManager>
     public static volatile Single ResourceYMultipier = CalcResourceYMultipier();
 
     private static FieldMapActorController PlayerActorController;
-
     private static HonoluluBattleMain battleMainBehavior;
 
     [SerializeField]
     private UIManager.UIState state;
-
     [SerializeField]
     private UIManager.UIState prevState;
 
     private Camera fieldCamera;
-
     private Camera battleCamera;
-
     private Camera worldCamera;
 
     private GameObject fastTrophy;
 
     private UITexture eventFadeTextureAdd;
-
     private UITexture eventFadeTextureSub;
 
     public UIManager.Scene UnityScene;
@@ -754,69 +672,40 @@ public class UIManager : PersistenSingleton<UIManager>
     public String CurrentButtonGroup;
 
     public Boolean IsPlayerControlEnable;
-
     public Boolean IsMenuControlEnable;
-
     public Boolean IsPauseControlEnable = true;
-
     public Boolean IsWarningDialogEnable;
 
     [Header("Scene")]
     public FieldHUD FieldHUDScene;
-
     public WorldHUD WorldHUDScene;
-
     public BattleHUD BattleHUDScene;
-
     public MainMenuUI MainMenuScene;
-
     public ItemUI ItemScene;
-
     public AbilityUI AbilityScene;
-
     public EquipUI EquipScene;
-
     public StatusUI StatusScene;
-
     public CardUI CardScene;
-
     public ConfigUI ConfigScene;
-
     public SaveLoadUI SaveLoadScene;
-
     public CloudUI CloudScene;
-
     public PauseUI PauseScene;
-
     public ShopUI ShopScene;
-
     public NameSettingUI NameSettingScene;
-
     public PartySettingUI PartySettingScene;
-
     public TutorialUI TutorialScene;
-
     public BattleResultUI BattleResultScene;
-
     public GameOverUI GameOverScene;
-
     public TitleUI TitleScene;
-
     public QuadMistUI QuadMistScene;
-
     public QuitUI QuitScene;
-
     public ChocographUI ChocographScene;
-
     public EndingUI EndingScene;
-
     public EndGameHUD EndGameScene;
-
     public NoneUI NoneScene;
 
     [Header("ETC")]
     public DialogManager Dialogs;
-
     public BoosterSlider Booster;
 
     public enum UIState
@@ -880,4 +769,53 @@ public class UIManager : PersistenSingleton<UIManager>
 
     private static Single CalcResourceYMultipier() => UIContentSize.y / OriginScreenSize.y;
     private static Single CalcResourceXMultipier() => UIContentSize.x / OriginScreenSize.x;
+
+    public static void DebugLogComponents(GameObject startGo, Func<Component, String> logger = null, String indent = "")
+    {
+        if (logger == null)
+        {
+            logger = c =>
+            {
+                if (c is Transform t)
+                {
+                    if (t.parent != null)
+                        return $"{t.gameObject} is the child {t.GetSiblingIndex()} of {t.parent.gameObject}";
+                    return $"{t.gameObject} is a root node";
+                }
+                String res = $"└─> {c.GetType()}";
+                if (c is UIRect rect)
+                {
+                    Vector3[] corners = rect.worldCorners;
+                    res += $" - Position: ({corners[0].x}, {corners[0].y}), Size: ({corners[2].x - corners[0].x}, {corners[2].y - corners[0].y})";
+                    if (rect.leftAnchor.target != null)
+                        res += $", LeftAnchor: ({rect.leftAnchor.target.gameObject}, {rect.leftAnchor.absolute}, {rect.leftAnchor.relative})";
+                    if (rect.rightAnchor.target != null)
+                        res += $", RightAnchor: ({rect.rightAnchor.target.gameObject}, {rect.rightAnchor.absolute}, {rect.rightAnchor.relative})";
+                    if (rect.bottomAnchor.target != null)
+                        res += $", BottomAnchor: ({rect.bottomAnchor.target.gameObject}, {rect.bottomAnchor.absolute}, {rect.bottomAnchor.relative})";
+                    if (rect.topAnchor.target != null)
+                        res += $", TopAnchor: ({rect.topAnchor.target.gameObject}, {rect.topAnchor.absolute}, {rect.topAnchor.relative})";
+                    if (c is UIWidget widget)
+                        res += $", Depth: {widget.depth}";
+                    if (c is UISprite sprite)
+                        res += $", SpriteName: {sprite.spriteName}, Atlas: {sprite.atlas?.name ?? "[No Atlas]"}";
+                    if (c is UILabel label)
+                        res += $", Label: {label.text.Replace("\n", "\\n")}";
+                }
+                if (c is UILocalize localize)
+                    res += $" - Localize: {localize.key}";
+                if (c is ButtonGroupState buttonGroup)
+                    res += $" - ButtonGroup: {buttonGroup.GroupName}";
+                return res;
+            };
+        }
+        foreach (Component comp in startGo.GetComponents<Component>())
+        {
+            String log = logger(comp);
+            if (!String.IsNullOrEmpty(log))
+                Log.Message($"[UIManager] {indent}{log}");
+        }
+        for (Int32 i = 0; i < startGo.transform.childCount; i++)
+            DebugLogComponents(startGo.GetChild(i), logger, indent + " ");
+    }
 }

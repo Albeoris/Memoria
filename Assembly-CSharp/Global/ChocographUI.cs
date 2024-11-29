@@ -1,11 +1,10 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Scenes;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Object = System.Object;
 
 public class ChocographUI : UIScene
 {
@@ -436,6 +435,7 @@ public class ChocographUI : UIScene
         this.ChocoboAbilityInfo.ClearAbility();
         this.HintAbilityRequired = new ChocographUI.ChocoboAbility(this.HintAbilityRequiredPanel);
         this.HintAbilityRequired.ClearAbility();
+        this.background = new GOMenuBackground(this.transform.GetChild(7).gameObject, "chocograph_bg");
     }
 
     private const Int32 HintMapMax = 24;
@@ -478,6 +478,8 @@ public class ChocographUI : UIScene
     private GOScrollablePanel _chocographPanel;
     private SnapDragScrollView chocographScrollList;
     private ScrollButton chocoboScrollButton;
+    [NonSerialized]
+    private GOMenuBackground background;
 
     private Boolean hasSelectedItem;
 

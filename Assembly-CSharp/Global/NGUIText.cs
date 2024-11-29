@@ -204,7 +204,8 @@ public static class NGUIText
                 case 26: // [PTY3]
                 case 27: // [PTY4]
                 {
-                    extraWidth += NGUIText.GetTextWidthFromFF9Font(phraseLabel, member[specialCode - 24]?.Name);
+                    if (member[specialCode - 24] != null)
+                        extraWidth += NGUIText.GetTextWidthFromFF9Font(phraseLabel, member[specialCode - 24].Name);
                     break;
                 }
                 case 64: // [NUMB=SCRIPTID]

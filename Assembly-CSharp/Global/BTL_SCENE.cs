@@ -121,7 +121,7 @@ public class BTL_SCENE
                 monParam.Pad1 = binaryReader.ReadUInt16();
                 monParam.Pad2 = binaryReader.ReadUInt16();
                 if (btl_eqp.EnemyBuiltInWeaponTable.TryGetValue(monParam.Geo, out Int32[] weaponBones))
-                    monParam.WeaponAttachment = weaponBones[0];
+                    monParam.WeaponAttachment = weaponBones;
             }
             binaryReader.BaseStream.Seek(8 + 56 * this.header.PatCount + 116 * this.header.TypCount, SeekOrigin.Begin);
             for (Int32 i = 0; i < this.header.AtkCount; i++)

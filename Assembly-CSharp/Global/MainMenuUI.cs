@@ -426,8 +426,7 @@ public class MainMenuUI : UIScene
                         {
                             FF9ITEM_DATA itemData = ff9item._FF9Item_Data[equipId];
                             String itemIconSpriteName = "item" + itemData.shape.ToString("0#") + "_" + itemData.color.ToString("0#");
-                            Int32 spriteKey = FF9UIDataTool.IconSpriteName.FirstOrDefault(pair => pair.Value == itemIconSpriteName).Key;
-                            help += $"[ICON={spriteKey}] [FEED=1]{FF9TextTool.ItemName(equipId)}";
+                            help += $"[SPRT={itemIconSpriteName},64,64]  [FEED=1]{FF9TextTool.ItemName(equipId)}";
                         }
                         if (i < 4)
                             help += "\n";
@@ -745,6 +744,8 @@ public class MainMenuUI : UIScene
         UIWidget locationFrame = this.LocationInfoPanel.GetComponent<UIWidget>();
         locationFrame.leftAnchor.target = this.transform;
         locationFrame.leftAnchor.Set(0f, 30f);
+
+        this.Background = new GOMenuBackground(this.transform.GetChild(4).gameObject, "main_menu_bg");
     }
 
     public GameObject SubMenuPanel;
@@ -773,6 +774,8 @@ public class MainMenuUI : UIScene
     private GameObject ConfigSubMenu;
     [NonSerialized]
     private GameObject PartySubMenu;
+    [NonSerialized]
+    private GOMenuBackground Background;
 
     private UILabel gilLabel;
     private UILabel hourLabel;

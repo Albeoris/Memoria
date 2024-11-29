@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp\Assembly-CSharp.csproj", "{3FE6492C-C2E2-48EE-9AD6-B2D9A7D43C93}"
+	ProjectSection(ProjectDependencies) = postProject
+		{952700CD-A384-43A4-AC4B-52256F83836E} = {952700CD-A384-43A4-AC4B-52256F83836E}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Memoria.Prime", "Memoria.Prime\Memoria.Prime.csproj", "{110F557E-ABFF-44C5-886A-C7C7F0614558}"
 	ProjectSection(ProjectDependencies) = postProject

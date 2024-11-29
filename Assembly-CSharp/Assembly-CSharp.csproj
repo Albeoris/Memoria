@@ -62,10 +62,6 @@
       <HintPath>..\References\System.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="XInputDotNetPure">
-      <HintPath>..\References\XInputDotNetPure.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <AppDesigner Include="Properties\" />
@@ -336,6 +332,7 @@
     <Compile Include="Global\Sound\SoLoud\WavStream.cs" />
     <Compile Include="Global\SPS\CommonSPSSystem.cs" />
     <Compile Include="Global\SPS\SHPEffect.cs" />
+    <Compile Include="Memoria\Application\WindowManager.cs" />
     <Compile Include="Memoria\Assets\Export\TranslationExporter.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\FieldCreatorScene.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\PointScreenAnchor.cs" />
@@ -357,6 +354,7 @@
     <Compile Include="Memoria\Configuration\Access\Worldmap.cs" />
     <Compile Include="Memoria\Configuration\Access\Interface.cs" />
     <Compile Include="Memoria\Configuration\Access\Shaders.cs" />
+    <Compile Include="Memoria\Configuration\IniFile.cs" />
     <Compile Include="Memoria\Configuration\Structure\WorldmapSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\InterfaceSection.cs" />
     <Compile Include="Memoria\Configuration\Structure\ShadersSection.cs" />
@@ -385,6 +383,7 @@
     <Compile Include="Memoria\Scenes\ControlPanel\ControlSlider.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlToggle.cs" />
     <Compile Include="Memoria\Scenes\GOButtonPrefab.cs" />
+    <Compile Include="Memoria\Scenes\GOMenuBackground.cs" />
     <Compile Include="Memoria\Scenes\MenuHUD\MenuUIControlPanel.cs" />
     <Compile Include="Memoria\Scenes\GOScrollablePanel.cs" />
     <Compile Include="Memoria\Scripts\DefaultStatusDatabase.cs" />
@@ -1400,6 +1399,10 @@
     <ProjectReference Include="..\Memoria.Prime\Memoria.Prime.csproj">
       <Project>{110f557e-abff-44c5-886a-c7c7f0614558}</Project>
       <Name>Memoria.Prime</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Memoria.XInputDotNetPure\Memoria.XInputDotNetPure.csproj">
+      <Project>{952700cd-a384-43a4-ac4b-52256f83836e}</Project>
+      <Name>Memoria.XInputDotNetPure</Name>
     </ProjectReference>
     <ProjectReference Include="..\UnityEngine.UI\UnityEngine.UI.csproj">
       <Project>{cbc800df-4de1-4cbc-9c97-98cbb375204f}</Project>

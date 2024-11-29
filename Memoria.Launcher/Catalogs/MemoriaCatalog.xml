@@ -90,10 +90,10 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.29.2</Version>
+	<Version>0.3.29.3</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
-	<ReleaseDate>23 Oct 2024</ReleaseDate>
+	<ReleaseDate>04 Nov 2024</ReleaseDate>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
 	<Description>A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
@@ -117,6 +117,11 @@ Don't hesitate to try!
 Recommended language : Français / English (UK)
 Not supported language : Japanese (until full release... sorry !)</Description>
 	<PatchNotes>
+	------[0.3.29.3]------
+
+	- Fixed a softlock at the end of Disc 1, where the last cinematic would not start.
+	- Additional information added at the start of the game, when playing a new game. (concerning certain cheats that no longer exist).
+
 	------[0.3.29.2]------
 
 	- Major hotfix for the difficulty system: "small" mistake where damage is all doubled... woopsi.
@@ -246,12 +251,13 @@ You should set the priority of this mod to be higher than the priority of the Mo
 		<Description>When enabled, Garnet's battle model will wear the traditional White Mage robe.</Description>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>Support Ability Cost</Name>
-	<Version>4.0.1</Version>
+	<Version>4.1.1</Version>
 	<InstallationPath>KupoGemSATweak</InstallationPath>
-	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
 	<ReleaseDate>2024-08-22</ReleaseDate>
+	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
 	<Author>faospark / Tirlititi </Author>
 	<Description> Allows You to have 1 Gem cost per support ability or Half.
 [1] 1 Gem Cost is activate by default 
@@ -262,42 +268,49 @@ This was the earliest public release of this type of Mod that modifies the Gem C
 Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 	</Description>
 	<PatchNotes>First Split Release</PatchNotes>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/71w3a8qnfbg5g3lvnl1bd/KupoGemSATweak.zip?rlkey=qnsqgc70ngf3ix9u4f7ut82ob&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-Gem.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313895-1564815189.png</PreviewFileUrl>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+		<SubMod>
+		<Name>Configure</Name>
+		<InstallationPath>Preview</InstallationPath>
+		<Description>Click Here to Configure mods</Description>
+		<Priority>100</Priority>
+	</SubMod>
 	<SubMod>
 		<Name>Tweak: Half Cost of Support Abilities</Name>
 		<InstallationPath>Features/Tweaks/AbilityHalf</InstallationPath>
 		<Description>Cuts ability gems to half for support abilites </Description>
 		<Priority>2</Priority>
 	</SubMod>
-		<SubMod>
+	<SubMod>
 		<Name>Tweak: 1 Gem cost Support Ability</Name>
 		<InstallationPath>Features/Tweaks/Ability</InstallationPath>
 		<Description>1 Gen Support Ability [Already activated]</Description>
 		<Priority>3</Priority>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>Exp, AP, Gil, Rewards Tweaks</Name>
-	<Version>4.0.1</Version>
+	<Version>4.1.1</Version>
 	<InstallationPath>KupoTweaks</InstallationPath>
-	<ReleaseDateOriginal>2022-08-14</ReleaseDateOriginal>
 	<ReleaseDate>2024-08-22</ReleaseDate>
+	<ReleaseDateOriginal>2022-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>As the name suggests, this mod has several options that can multiply your Exp, AP , Gil and After Battle Rewards. 
 Mod Order : On top of any Gameplay Mod.
 Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</Description>
 	<PatchNotes>First Split Release </PatchNotes>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/z2df6bk4hps21v53j105w/KupoTweaks.zip?rlkey=wfw287bn1u27gz4najtx1jm9a&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-exp.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313895-1037308229.png</PreviewFileUrl>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
 	<SubMod>
 		<Name>Configure</Name>
 		<InstallationPath>Features/Zecrets</InstallationPath>
@@ -314,13 +327,13 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<Name>Tweak: 4x AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP4x</InstallationPath>
 		<Description>Gains 4x AP after battle</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 99 AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP99</InstallationPath>
 		<Description>Gains 99 AP after battle</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 2x EXP Gain</Name>
@@ -332,20 +345,14 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<Name>Tweak: 4x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP4x</InstallationPath>
 		<Description>Gains 4x EXP after battle</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 8x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP8x</InstallationPath>
 		<Description>Gains 8x EXP after battle</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
 	</SubMod>
-	<!-- <SubMod> -->
-		<!-- <Name>Tweak: Halved EXP</Name> -->
-		<!-- <InstallationPath>Features/Tweaks/ExpHalf</InstallationPath> -->
-		<!-- <Description>Cuts the EXP requirement to level up faster</Description> -->
-		<!-- <Priority>1</Priority> -->
-	<!-- </SubMod> -->
 	<SubMod>
 		<Name>Tweak: 2x gil</Name>
 		<InstallationPath>Features/Tweaks/2xgil</InstallationPath>
@@ -356,35 +363,36 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<Name>Tweak: 4x gil</Name>
 		<InstallationPath>Features/Tweaks/4xgil</InstallationPath>
 		<Description>4x Gil received after battle</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: 8x gil</Name>
 		<InstallationPath>Features/Tweaks/8xgil</InstallationPath>
 		<Description>8x Gil received after battle</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: Get 2x of any item drop after battle </Name>
 		<InstallationPath>Features/Tweaks/2xitem</InstallationPath>
 		<Description>Any item received after battle would be multiplied by 2 ,
-	hence if a monster drops 2 potions you get 4  </Description>
+		hence if a monster drops 2 potions you get 4  </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: Get 4x of any item drop after battle </Name>
 		<InstallationPath>Features/Tweaks/4xitem</InstallationPath>
 		<Description>Any item received after battle would be multiplied by 4 ,
-	hence if a monster drops 2 potions you get 8  </Description>
+		hence if a monster drops 2 potions you get 8  </Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>No Exp Plus </Name>
-	<Version>4.0.1</Version>
+	<Version>4.1.2</Version>
 	<InstallationPath>KupoNoEXP</InstallationPath>
+	<ReleaseDate>2024-11-15</ReleaseDate>
 	<ReleaseDateOriginal>2023-07-20</ReleaseDateOriginal>
-	<ReleaseDate>2024-08-18</ReleaseDate>
 	<Author>faospark</Author>
 	<Description>If you want some degree of challenge. This mod basically suppresses leveling up in game and more
 Features: 
@@ -393,18 +401,18 @@ Features:
 [3] Doubled EXP Requirement
 [4] 8x EXP Requirement
 This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, previously known as Mog Add-ons.</Description>
-	<PatchNotes>First Split Release</PatchNotes>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<PatchNotes>Added 1.5 EXP requirement</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/yc3unvr4l9ra0pu7wzfjf/KupoNoEXP.zip?rlkey=twu5mwcm4aa20c3f76pvemurv&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kuponoexp.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313900-1782999351.png</PreviewFileUrl>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
 	<SubMod>
 		<Name>Configure</Name>
 		<InstallationPath>Features/Zecrets</InstallationPath>
 		<Description>Click Here to Configure</Description>
-		<Priority>1</Priority>
+		<Priority>100</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Challenge: No / Zero AP and EXP Gain After Battle</Name>
@@ -419,154 +427,159 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
+		<Name>Challenge: 1.5 EXP Requirement</Name>
+		<InstallationPath>Features/Tweaks/ExpX1andhalf</InstallationPath>
+		<Description>1.5 EXP requirement for perfect stats mod</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
 		<Name>Challenge: Doubled EXP Requirement</Name>
 		<InstallationPath>Features/Tweaks/ExpX2</InstallationPath>
 		<Description>Doubles EXP requirement so you level up slower</Description>
 		<Priority>1</Priority>
-	</SubMod>
+	</SubMod>	
 	<SubMod>
 		<Name>Challenge: 8x EXP Requirement</Name>
 		<InstallationPath>Features/Tweaks/ExpX8</InstallationPath>
 		<Description>8 Times EXP requirement so you almost dont level up</Description>
 		<Priority>1</Priority>
 	</SubMod>
-
 </Mod>
+
 <Mod>
 	<Name>Kupo Heroes Pack </Name>
-	<Version>4.0.1</Version>
+	<Version>4.1.2</Version>
 	<InstallationPath>KupoHeroPack</InstallationPath>
+	<ReleaseDate>2024-08-28</ReleaseDate>
 	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
-	<ReleaseDate>2024-08-22</ReleaseDate>
 	<Author>faospark</Author>
-	<Description>
-A set of Character enhancements that powers up characters and lessens the grind of the game. 
-Perfect for players who wants to experience something new for the characters without altering 
-the flow and story of the game. 
+	<Description>A set of Character enhancements that powers up characters and reduces grind. Ideal for players seeking a fresh character experience without changing the story, flow, or core gameplay mechanics.
 
-== Features ==
-**ALL Characters:**
+ALL Characters:
 - Adds resistance to Zombie (via Auto-Life) and Virus (via Anti-Body).
-- Replaces Auto-Potion with a 5% boost to both HP and MP.
+- Replaces Auto-Potion with +5% HP and MP.
 
-**Zidane:**
-- Gains a new support ability called *Pillage*, which doubles the damage output of *Thievery*,
- effectively halving its execution time.
+Transportation:
+- Increases Airship and Chocobo speed.
 
-**Vivi:**
-- Gains access to the spells *Aero*, *Quake*, and *Water*, each capable of targeting all enemies 
-and upgradable to their *AGA* versions.
+Characters:
+- Zidane gains *Pillage*, which doubles *Thievery* damage, items, and gil received after battles.
+- Amarant gains *Tensai*, allowing him to learn abilities and gain experience 8x faster, balancing his late recruitment.
+- Vivi gains *Aero*, *Quake*, and *Water*, each upgraded to *AGA* level.
+- Steiner can equip *Save The Queen* and gains Vivi's new black magic.
+- Garnet gains *Photons*, a medium Holy damage spell, to increase utility.
+- Eiko’s *Titan* and *Fenrir* summons are independent: *Moonstone* grants *Fenrir*, *Sapphire* grants *Titan*.
+- Quina’s *Eat* is usable at 50% enemy HP; *Cook* at 100%.
+- Freya gains *High Jump* early, with *Jump* damage increased.
+- Gains all enhancements in Beatrix mod / Alternate fantasy; retains stats if the Beatrix mod is off.
 
-**Steiner:**
-- Can equip *Save The Queen* and gains access to all of Vivi's new black magic spells.
+See the readme.txt for more details.
 
-**Quina:**
-- The effectiveness of their two primary abilities is enhanced: *Eat* can now be used when an 
-enemy's health is at 75%, and *Cook* can be used at 100% enemy health.
+Mod Order:
+- Place above Beatrix and Tantalus mods.
+- Partially compatible with Alternate Fantasy, though some skills may interfere.
 
-**Freya:**
-- Gains the *High Jump* support ability, increasing the damage output of *Jump* by threefold.
-
-**Garnet:**
-- Gains a new spell called *Photon Beam*, a medium-level Holy damage spell available early in 
-the game to increase her effectiveness.
-
-**Amarant:**
-- Gains the *Tensai* support ability, allowing him to learn abilities eight times faster than 
-other characters, compensating for his late-game recruitment.
-
-**Eiko:**
-- The summons *Titan* and *Fenrir* are now independent: *Moonstone* grants *Fenrir*, while 
-*Sapphire* grants *Titan*.
-
-**Beatrix:**
-- Gains all enhancements available in Beatrix mods.
-
-See more on the readme.txt file 
-
-Mod Order: above Beatrix and Tantalus mods. not Yet compatible with Alternate fantasy
-
-Part of the Characters Enhancements feature of Kupo Mods Formerly Mog Add-ons</Description>
-	<PatchNotes>First Split Release </PatchNotes>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
+	</Description>
+	<PatchNotes>2nd Release, please read the log. Moving forward this will have a different version from Kupo Mods.</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/4v6b8ijknci17on89ow01/KupoHeroPack.zip?rlkey=xsdn7vf32f41eregepx2fu118&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-hero.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313899-1353498866.png</PreviewFileUrl>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
 	<SubMod>
 		<Name>Configure</Name>
 		<InstallationPath>Features/Zecrets</InstallationPath>
 		<Description>Click Here to Configure mods</Description>
-		<Priority>1</Priority>
+		<Priority>100</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance:[All] Add Resistance to Zombie and Virus   </Name>
-		<InstallationPath>Features/Enhance/All</InstallationPath>
+		<Name>[All] Add Resistance to Zombie and Virus   </Name>
+		<InstallationPath>Features/All</InstallationPath>
 		<Description>Auto-life resists Zombie, Anti-body Resists Virus </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance:[All] Bye Auto-Potion </Name>
-		<InstallationPath>Features/Enhance/NoAutoPotion</InstallationPath>
+		<Name>[All] Bye Auto-Potion </Name>
+		<InstallationPath>Features/NoAutoPotion</InstallationPath>
 		<Description>Replace Auto-Potion with HP and MP 5% </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance:[Eiko] The Summoner  </Name>
-		<InstallationPath>Features/Enhance/Eiko</InstallationPath>
+		<Name>[Transportation] Faster travel </Name>
+		<InstallationPath>Features/Transpo</InstallationPath>
+		<Description>Alternative perspective</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Transportation] Hilda Garde Music on Disc 4 </Name>
+		<InstallationPath>Features/WorldSound/Disk3</InstallationPath>
+		<Description>Change Disk 4 Airship Music to Disc 3</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Transportation] Blue Narciss Music on Disc 4 </Name>
+		<InstallationPath>Features/WorldSound/Disk3</InstallationPath>
+		<Description>Change Disk 4 Ship Music to Disc 2</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>[Eiko] The Summoner  </Name>
+		<InstallationPath>Features/Eiko</InstallationPath>
 		<Description>Splits Titan and Fenrir as their won independent summon</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance:[Freya] The Dragoon   </Name>
-		<InstallationPath>Features/Enhance/Freya</InstallationPath>
+		<Name>[Freya] The Dragoon   </Name>
+		<InstallationPath>Features/Freya</InstallationPath>
 		<Description>Make Freya's High Jump do 3x damage</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance:[Quina] The Chef </Name>
-		<InstallationPath>Features/Enhance/Quina</InstallationPath>
+		<Name>[Quina] The Chef </Name>
+		<InstallationPath>Features/Quina</InstallationPath>
 		<Description>Better Eat at 50% Cook at 100% </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance:[Steiner] The Queens Knight</Name>
-		<InstallationPath>Features/Enhance/Steiner</InstallationPath>
+		<Name>[Steiner] The Queens Knight</Name>
+		<InstallationPath>Features/Steiner</InstallationPath>
 		<Description>Steiner can Equip Save the Queen </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance:[Vivi] The Warlock   </Name>
-		<InstallationPath>Features/Enhance/Vivi</InstallationPath>
+		<Name>[Vivi] The Warlock   </Name>
+		<InstallationPath>Features/Vivi</InstallationPath>
 		<Description>Vivi and Steiner can Cast Aero,Quake,Water to RA to AGA spells </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance:[Garnet] The White Mage   </Name>
-		<InstallationPath>Features/Enhance/Garnet</InstallationPath>
+		<Name>[Garnet] The White Mage   </Name>
+		<InstallationPath>Features/Garnet</InstallationPath>
 		<Description>Adds A White Magic Ability to Garnet that causes damage</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance:[Amaranth] The Genius Nomad </Name>
-		<InstallationPath>Features/Enhance/Amaranth</InstallationPath>
+		<Name>[Amaranth] The Genius Nomad </Name>
+		<InstallationPath>Features/Amaranth</InstallationPath>
 		<Description>Amaranth learns the Passive Tensai which makes him Learn and Level UP fast</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Enhance:[Zidane] The Pillager</Name>
-		<InstallationPath>Features/Enhance/Zidane</InstallationPath>
+		<Name>[Zidane] The Pillager</Name>
+		<InstallationPath>Features/Zidane</InstallationPath>
 		<Description>Boosts damage of thievery </Description>
 		<Priority>1</Priority>
 	</SubMod>
-		<SubMod>
-		<Name>Enhance:[Beatrix] The Paladin </Name>
-		<InstallationPath>Features/Enhance/Beatrix</InstallationPath>
+	<SubMod>
+		<Name>[Beatrix] The Paladin </Name>
+		<InstallationPath>Features/Beatrix</InstallationPath>
 		<Description>Add Basic stat Support for Beatrix based of the Beatrix mod  </Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>Tantalus</Name>
 	<Version>3.2</Version>
@@ -608,21 +621,93 @@ Includes:
 </Mod>
 
 <Mod>
-	<Name>Black Cat - Endgame Shop</Name>
+	<Name>Perfect Stats</Name>
 	<Version>1.0</Version>
-	<ReleaseDateOriginal>2024-07-01</ReleaseDateOriginal>
 	<Author>Emeiru</Author>
+	<InstallationPath>PerfectStats</InstallationPath>
+	<ReleaseDateOriginal>2024-10-25</ReleaseDateOriginal>
+	<ReleaseDate>2024-10-25</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
+	<Description>[!] A new save game is recommended [!]
+Removes the equipment stat-boosting mechanic and replaces it with a fixed additional per level stat-gain. Players will no longer need to mind their equipment and wear stat-boosting gear on level-up. Party members will always achieve a fixed maximum stat just by leveling. Note that this will naturally decrease the difficulty of the game due to stats having linear progression now. A new save game is required to apply these changes, but if you installed this mod mid-game, you can also visit Chocobo's Forest to inject the mod's changes, level up, and see the new stats.
+
+Choose ONLY one of the three stats settings:
+
+Perfect Stats
+- Partially based on KADFC Max Stats Guide, this setting will allow the party to achieve near-perfect stats as if they pursued a level 1 max stats run. Significantly decreases game difficulty due to overall higher stats.
+
+Perfect Rebalanced
+- Max stats configuration by Emeiru, aims to buff party members with low combined stats and make it rebalanced across the board. 
+
+No Bonus Stat Growth
+- Completely removes the bonus stat growth formula. Optional choice to remove stat management altogether, making the game harder.
+
+Optional: Fixed Magic Stones
+- Reworks the magic stone growth formula to ensure every party member will get their max number of magic stones.</Description>
+	<PatchNotes>Complete changes and info can be found on this mod's page.</PatchNotes>
+	<Category>Gameplay</Category>
+	<PreviewFile>Preview.jpg</PreviewFile>
+	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/Preview.jpg</PreviewFileUrl>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/77</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/xlb9saal8iycbpfbicwbz/PerfectStats.zip?rlkey=mx7jvttuuntzx3d7ud8nnmw2c&amp;st=4hnksd03&amp;dl=1</DownloadUrl>
+	<SubMod>
+		<Name>Perfect Stats</Name>
+		<InstallationPath>PerfectStats</InstallationPath>
+		<Description>Based on KADFC Max Stats</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Perfect Rebalanced</Name>
+		<InstallationPath>PerfectRebalanced</InstallationPath>
+		<Description>Author configured stats, rebalanced stats across the board</Description>
+		<Priority>2</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>No Bonus Stat Growth</Name>
+		<InstallationPath>NoBonus</InstallationPath>
+		<Description>Removes stat bonuses altogether</Description>
+		<Priority>3</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Fixed Magic Stones</Name>
+		<InstallationPath>PerfectStones</InstallationPath>
+		<Description>Fixed magic stone growth formula</Description>
+		<Priority>4</Priority>
+	</SubMod>
+</Mod>
+
+<Mod>
+	<Name>Black Cat - Endgame Shop</Name>
+	<Version>2.0</Version>
 	<InstallationPath>BlackCat</InstallationPath>
+	<ReleaseDateOriginal>2024-07-13</ReleaseDateOriginal>
+	<ReleaseDate>2024-10-27</ReleaseDate>
+	<Author>Emeiru</Author>
 	<Category>Gameplay</Category>
 	<Description>The Black Mage Village (Disc 4) now sells almost every item in the game!
 - No. 239's Weapon and Armor Shop now sells every purchasable weapon and armor.
 - The Black Cat Synthesis Shop now can synthesize all regular equipment.
 
+Additionally, penultimate items can be synthesized at Daguerreo (Disc 3) now!
+
 Complete changes and info can be found on this mod's page.</Description>
+	<PatchNotes>Requires the latest Memoria Engine version</PatchNotes>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/65</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/19l0a7strjifbdpezs5op/BlackCat.zip?rlkey=6a3509xwdzpny23zvrnkpg3qx&amp;dl=1</DownloadUrl>
 	<PreviewFile>Preview.JPG</PreviewFile>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/65/65-1720822585-1514609332.jpeg</PreviewFileUrl>
+	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/6daBlackCat.jpg</PreviewFileUrl>
+	<SubMod>
+		<Name>Alternate Fantasy</Name>
+		<InstallationPath>AlternateFantasy</InstallationPath>
+		<Description>Version for Alternate Fantasy</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Vanilla</Name>
+		<InstallationPath>Vanilla</InstallationPath>
+		<Description>Version for regular FFIX</Description>
+		<Priority>2</Priority>
+	</SubMod>
 </Mod>
 
 <Mod>
@@ -726,9 +811,9 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Kupo UI Suite</Name>
-	<Version>4.0.1</Version>
+	<Version>4.1.3</Version>
 	<InstallationPath>KupoUISuite</InstallationPath>
-	<ReleaseDate>2024-08-22</ReleaseDate>
+	<ReleaseDate>2024-11-6</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>
@@ -736,23 +821,7 @@ The First User Interface Suite for FFIX. This mod allows you to change the ff:
 Dialogue UI, Menu, Title Screen, Menu Bg , World Map , Title loop , Triple Triad Mat. 
 Also Included Text UI helpers Synthesis menus 
 
-== Dialogue / UI ==
-Darker UI (original preset transforms blue to teal and gray to almost black gray)
-Flat UI for gray and classic choices
-Darker UI frame from The Pixel Remaster 
-== Title Screen ==
-Recreation || Alternative || Old School
-== Menu Bg ==
-Black || Tantalus || Chocobo 
-== World Map ===
-Colored Mist Continent and World Map 
-== Title Loop ==
-Complete replacement using enhance concept Art
-== Triple Triad Mat ==
-Changes the mat of tetra master to triple triad. this will automatically turn on triple triad mode
-
-Default turned on mods : Darker UI + Recreation TS + Colored World Map   
-+ default extended of portraits pack and simple psx button [See Recommendations below]
+See More information on the Readme.txt file 
 
 Mod Order : Position one or on top of Any Gameplay mod .
 
@@ -762,7 +831,7 @@ Best used with Portrait Mod and Buttons Pack that are also part of The Kupo Mods
 Originally released as part of Kupo Mods formerly Mog-Addons
 to see previews and learn more about the mod visit the website url
 	</Description>
-	<PatchNotes>First Split Release</PatchNotes>
+	<PatchNotes>See Readme.txt</PatchNotes>
 	<Category>Various</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/bwgd9529j6wx7jhiju419/KupoUISuite.zip?rlkey=z8yybpjg9i5fi9vu3kz33zeiw&amp;dl=1</DownloadUrl>
@@ -773,30 +842,60 @@ to see previews and learn more about the mod visit the website url
 		<Name>Configure</Name>
 		<InstallationPath>Features/Zecrets</InstallationPath>
 		<Description>Click Here to Configure mods</Description>
+		<Priority>100</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Cards: Triple Triad Mat</Name>
+		<InstallationPath>Features/Cards</InstallationPath>
+		<Description>Triple triad inspired mat and UI for the Game</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Dialogue Box : Default</Name>
+		<Name>UI: New Curative item Icons</Name>
+		<InstallationPath>Features/NewIcons</InstallationPath>
+		<Description>NewIcons</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>UI: Alt Cursor Sound  </Name>
+		<InstallationPath>Features/CursorSound</InstallationPath>
+		<Description>What i think is a better cursor sound</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>UI Theme: Default</Name>
 		<InstallationPath>Features/DialogueBox/DxDefault</InstallationPath>
 		<Description>Disables Darker UI</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Dialogue Box : Darker UI</Name>
+		<Name>UI Theme: Darker UI</Name>
 		<InstallationPath>Features/DialogueBox/DarkerUI</InstallationPath>
 		<Description>Forces Darker UI</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Dialogue Box : Flat</Name>
+		<Name>UI Theme: Flat</Name>
 		<InstallationPath>Features/DialogueBox/FlatUI</InstallationPath>
-		<Description>Just a Full Solid colors like the old games</Description>
+		<Description>Just Full Solid colors like the old games</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Dialogue Box : PR Darker UI</Name>
-		<InstallationPath>Features/DialogueBox/PRDarkerUI</InstallationPath>
-		<Description>Pixel Remaster Version of Darker UI</Description>
+		<Name>UI Theme: Modern [Transparent]</Name>
+		<InstallationPath>Features/DialogueBox/Modern</InstallationPath>
+		<Description>New Transparent UI</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>UI Theme : Pixel Frame</Name>
+		<InstallationPath>Features/DialogueBox/PRFrame</InstallationPath>
+		<Description>Pixel Remaster Frame</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>UI Theme: Scroll</Name>
+		<InstallationPath>Features/DialogueBox/Scroll</InstallationPath>
+		<Description>So Ugly... you'll Love it </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
@@ -809,13 +908,43 @@ to see previews and learn more about the mod visit the website url
 		<Name>Menu Bg : Tantalus</Name>
 		<InstallationPath>Features/Menubg/menubgtantalus</InstallationPath>
 		<Description>Tantalus Pattern on Menu Background</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Menu Bg : Chocobo</Name>
 		<InstallationPath>Features/Menubg/menubgchocobo</InstallationPath>
 		<Description>Chocobo Pattern on Menu Background</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Menu Bg : Stone</Name>
+		<InstallationPath>Features/Menubg/menubgstone</InstallationPath>
+		<Description>Stone Pattern on Menu Background</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Menu Bg Full : Forest</Name>
+		<InstallationPath>Features/Menubg/menubgfull01</InstallationPath>
+		<Description>A save point in the forest</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Menu Bg Full : Huts</Name>
+		<InstallationPath>Features/Menubg/menubgfull02</InstallationPath>
+		<Description>The huts of the Black Mage</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Menu Bg Full : Secret Room</Name>
+		<InstallationPath>Features/Menubg/menubgfull03</InstallationPath>
+		<Description>An Unused Room room for the game </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Title Screen : Normal </Name>
+		<InstallationPath>Features/TitleLogo/TitleLogo0</InstallationPath>
+		<Description>Normal Title Screen Credits to Moguri mod </Description>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Title Screen : Alternate </Name>
@@ -827,13 +956,37 @@ to see previews and learn more about the mod visit the website url
 		<Name>Title Screen : Recreation </Name>
 		<InstallationPath>Features/TitleLogo/TitleLogo2</InstallationPath>
 		<Description>Shows a Recreation title screen and Memoria Indicator</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Title Screen : Old School </Name>
 		<InstallationPath>Features/TitleLogo/TitleLogo3</InstallationPath>
 		<Description>Shows an old school type of title screen</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Title Screen : Origins </Name>
+		<InstallationPath>Features/TitleLogo/TitleLogo4</InstallationPath>
+		<Description>Original concept of the logo </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>UI Option: Borderless</Name>
+		<InstallationPath>Features/frames/borderless</InstallationPath>
+		<Description>Remove white Border mostly for testing purposes </Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>UI Option: No Divider</Name>
+		<InstallationPath>Features/frames/divideless</InstallationPath>
+		<Description>removes dividers in menu</Description>
+		<Priority>1</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>UI Option: No Highlight</Name>
+		<InstallationPath>Features/frames/highlightless</InstallationPath>
+		<Description>removes dividers in menu</Description>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>UI : Concept Art Title Loop</Name>
@@ -842,15 +995,9 @@ to see previews and learn more about the mod visit the website url
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>UI : Disable Alternate World and Mist Continent Map</Name>
+		<Name>UI : Disable Alternate Colored Map</Name>
 		<InstallationPath>Features/Maps</InstallationPath>
 		<Description>Disables Alternative Over world Map </Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI: Triple Triad Mat</Name>
-		<InstallationPath>Features/Cards</InstallationPath>
-		<Description>Triple triad inspired mat and UI for the Game</Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
@@ -914,6 +1061,73 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 </Mod>
 
 <Mod>
+	<Name>Cursors Mod</Name>
+	<Version>4.1.1</Version>
+	<InstallationPath>KupoCursors</InstallationPath>
+	<ReleaseDate>2024-10-01</ReleaseDate>
+	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
+	<Author>faospark</Author>
+	<Description>Makes the game menu cursor a lot smaller.
+Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff	
+	</Description>
+	<PatchNotes>Second Release</PatchNotes>
+	<Category>Visual</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/ztddigympwe7shemwy6in/KupoCursors.zip?rlkey=jsa3vs0e9ioybf7upznt0qsyo&amp;st=waxr6kzw&amp;dl=1</DownloadUrl>
+	<PreviewFile>preview/kupo-Cursors.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313891-596422989.png</PreviewFileUrl>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<SubMod>
+		<Name>Configure</Name>
+		<InstallationPath>Features/Zecrets</InstallationPath>
+		<Description>Click Here to Configure mods</Description>
+		<Priority>100</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Cursor : Dagger</Name>
+		<InstallationPath>Features/Dagger</InstallationPath>
+		<Description>Transforms cursor to a Dagger</Description>
+		<Priority>10</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Cursor : Ultima Blade</Name>
+		<InstallationPath>Features/Ultimablade</InstallationPath>
+		<Description>Transforms cursor to the head of Ultima Weapon</Description>
+		<Priority>10</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Cursor : Staff</Name>
+		<InstallationPath>Features/Staff</InstallationPath>
+		<Description>Transforms cursor to the head of Ultima Weapon</Description>
+		<Priority>10</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Cursor : Pixel</Name>
+		<InstallationPath>Features/Pixel</InstallationPath>
+		<Description>Transforms cursor to the og Pixelated version</Description>
+		<Priority>10</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Cursor : Outlined</Name>
+		<InstallationPath>Features/Outlined</InstallationPath>
+		<Description>Transforms cursor to an Outlined Version by Resinated</Description>
+		<Priority>10</Priority>
+	</SubMod>
+	<SubMod>
+		<Name>Cursor : Record Keeper</Name>
+		<InstallationPath>Features/Record</InstallationPath>
+		<Description>Transforms cursor to the one of Record Keeper</Description>
+		<Priority>10</Priority>
+	</SubMod>				
+	<SubMod>
+		<Name>Cursor : Feather</Name>
+		<InstallationPath>Features/Feather</InstallationPath>
+		<Description>Transforms cursor to look like a quill </Description>
+		<Priority>10</Priority>
+	</SubMod>	
+</Mod>
+
+<Mod>
 	<Name>PSX Buttons</Name>
 	<Version>1.0</Version>
 	<InstallationPath>PSXButtons</InstallationPath>
@@ -926,12 +1140,13 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 	<PreviewFileUrl>https://i.imgur.com/eHSCN0r.png</PreviewFileUrl>
 	<PreviewFile>PreviewImage.png</PreviewFile>
 </Mod>
+
 <Mod>
 	<Name>Kupo Controller Pack</Name>
-	<Version>4.0.1</Version>
+	<Version>4.1.1</Version>
 	<InstallationPath>KupoButtonsPack</InstallationPath>
-	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
 	<ReleaseDate>2024-08-21</ReleaseDate>
+	<ReleaseDateOriginal>2021-08-27</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>The original COMPLETE controller buttons pack of FF9.
 Available Themes:
@@ -948,49 +1163,56 @@ Available Themes:
 
  A component of Kupo Library formerly Mog Add-ons</Description>
 	<PatchNotes>First Split Release</PatchNotes>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/aro9kltyr05pwgspwi9bg/KupoButtonsPack.zip?rlkey=6gg5g2fkizchhp4vthop0v4nd&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-buttons-pack.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313891-536918021.png</PreviewFileUrl>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<SubMod>
+		<Name>Configure</Name>
+		<InstallationPath>Features/Zecrets</InstallationPath>
+		<Description>Click Here to Configure mods</Description>
+		<Priority>100</Priority>
+	</SubMod>
 	<SubMod>
 		<Name>Buttons : PS5 (DualSense)</Name>
-		<InstallationPath>Features/Buttons/ButtonsPS5</InstallationPath>
+		<InstallationPath>Features/ButtonsPS5</InstallationPath>
 		<Description>Makes Button 5 like in PS5</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : PS Gloss (DS4)</Name>
-		<InstallationPath>Features/Buttons/ButtonsPS4Gloss</InstallationPath>
+		<InstallationPath>Features/ButtonsPS4Gloss</InstallationPath>
 		<Description>Glossy PS4 buttons</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : PS Vanilla (PSX)</Name>
-		<InstallationPath>Features/Buttons/ButtonsPSX</InstallationPath>
+		<InstallationPath>Features/ButtonsPSX</InstallationPath>
 		<Description>PS prompts in the same Style as the default xbox prompts</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : Pixels (PSX)</Name>
-		<InstallationPath>Features/Buttons/ButtonsPixel</InstallationPath>
+		<InstallationPath>Features/ButtonsPixel</InstallationPath>
 		<Description>Pixelated Prompts if that is your thing</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : Default Xbox</Name>
-		<InstallationPath>Features/Buttons/ButtonsXbox</InstallationPath>
+		<InstallationPath>Features/ButtonsXbox</InstallationPath>
 		<Description>Restores Default Xbox Prompts</Description>
-		<Priority>4</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Buttons : SNES</Name>
-		<InstallationPath>Features/Buttons/ButtonsSNES</InstallationPath>
+		<InstallationPath>Features/ButtonsSNES</InstallationPath>
 		<Description>A Requested SNES or Switch layout </Description>
-		<Priority>5</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>Dualsense Buttons</Name>
 	<Version>1.0</Version>
@@ -1019,7 +1241,6 @@ Available Themes:
 	<PreviewFile>PreviewImage.jpg</PreviewFile>
 </Mod>
 
-
 <Mod>
 	<Name>High-Res Chocographs</Name>
 	<InstallationPath>HDChocographs</InstallationPath>
@@ -1047,64 +1268,67 @@ Available Themes:
 	<DownloadFormat>SingleFileWithPath:FF9_Data/EmbeddedAsset/UI/Atlas/Face Atlas</DownloadFormat>
 	<PreviewFileUrl>https://i.imgur.com/pfHQyOJ.png</PreviewFileUrl>
 </Mod>
+
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.0.1</Version>
+	<Version>4.1.2</Version>
 	<InstallationPath>KupoPortraits</InstallationPath>
-	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
-	<ReleaseDate>2024-08-22</ReleaseDate>
+	<ReleaseDate>2024-10-18</ReleaseDate>
+	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
-	<Description>
-The Original Portraits Pack, part of the Kupo Mods, formerly Mog Add-ons. 
-To DFFOO fans this is where the DFFOO portraits resides
+	<Description>To DFFOO fans this is where the DFFOO portraits resides
 All presets contain portrait support for Kuja, Fratley , Lani and even some planned characters to be added. 
-	Available Presets: 
-	[1] Default Extended : contains a nodded version of the default portraits with enhanced Marcus, Cinna etc. 
+
+Available Presets: 
+[1] Default Extended : contains a nodded version of the default portraits with enhanced Marcus, Cinna etc. 
 on by default	
-	[2] Opera Omnia Portraits : contains  Dissidia Final Fantasy Opera Omnia portraits
-	[2.1] Opera Omnia Portraits : contains  DFFOO Pluto Knight / White Mage
-	[3] PSX Upscaled : waifu2x Upscaled psx versions 
+[2] Opera Omnia Portraits : contains  Dissidia Final Fantasy Opera Omnia portraits
+[2.1] Opera Omnia Portraits : contains  DFFOO Pluto Knight / White Mage
+[3] PSX Upscaled : waifu2x Upscaled psx versions 
+
 Mod Order : Must be Place Above the mods mentioned above Playable Character Pack , Beatrix Mod , Tantalus mod and 
 Kupo UI Suite. 
+The Original Portraits Pack, part of the Kupo Mods, formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>First Split Release</PatchNotes>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<PatchNotes>Version bump and new default portrait for Cinna and description update</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/80dpdv5kn378cw27fay0q/KupoPortraits.zip?rlkey=dnb8htsnmqzoehuibij9tarxd&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-portraits.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313903-663823797.png</PreviewFileUrl>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
 	<SubMod>
 		<Name>Configure</Name>
 		<InstallationPath>Features/Zecrets</InstallationPath>
 		<Description>Click Here to Configure</Description>
-		<Priority>1</Priority>
+		<Priority>100</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Portraits : Default Extended Cast</Name>
-		<InstallationPath>Features/Portraits/PortraitDefault</InstallationPath>
+		<InstallationPath>Features/PortraitDefault</InstallationPath>
 		<Description>Default Portraits that includes Kuja, Fratly and Lani [on by Default]</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Portraits : Opera Omnia</Name>
-		<InstallationPath>Features/Portraits/PortraitOperaOmnia</InstallationPath>
+		<InstallationPath>Features/PortraitOperaOmnia</InstallationPath>
 		<Description>Dissidia Opera Omnia Portraits</Description>
-		<Priority>3</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>Portraits : DFFOO Pluto Knight / White Mage </Name>
-		<InstallationPath>Features/Portraits/PortraitOperaOmniaPCP</InstallationPath>
+		<InstallationPath>Features/PortraitOperaOmniaPCP</InstallationPath>
 		<Description>DFFOO Style for Extra costumes for Zidane and Garnet, must be used with the Opera Omnia portraits </Description>
-		<Priority>4</Priority>
-	</SubMod>	
+		<Priority>1</Priority>
+	</SubMod>
 	<SubMod>
 		<Name>Portraits : PSX Upscaled</Name>
-		<InstallationPath>Features/Portraits/PortraitPSXUpscale</InstallationPath>
+		<InstallationPath>Features/PortraitPSXUpscale</InstallationPath>
 		<Description>original psx release Upscaled using waifu2x and Gigapixel</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
 	</SubMod>
 </Mod>
+
 <Mod>
 	<Name>No Cutscene</Name>
 	<Version>0.5</Version>
@@ -1175,22 +1399,56 @@ Idea by Snouz and made by DV.</Description>
 	<PreviewFileUrl>https://i.ibb.co/47NThCX/Better-Card-Drop.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/BetterCardDrop.png</PreviewFile>
 </Mod>
-	
-<!--
+
 <Mod>
-	<Name>Nexus Mods</Name>
-	<Description>There are many mods available on the Nexus Mods website.
-Because there is no public direct link for many of them, they cannot be installed directly from this manager.
-Check them out at https://www.nexusmods.com/finalfantasy9/mods/</Description>
-	<Website>https://www.nexusmods.com/finalfantasy9/mods/</Website>
+	<Name>Modern Labels + </Name>
+	<Version>4.1.1</Version>
+	<InstallationPath>KupoModernLabels</InstallationPath>
+	<ReleaseDate>2024-10-29</ReleaseDate>
+	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
+	<Author>faospark</Author>
+	<Description>A mod that replaces old item, spell and UI names / labels to their modern counterparts 
+Ideal for those who were introduced to the series post final fantasy 12. 
+Simply activate and that should work. 
+For now the primary focus of the mod is the US and UK translation of the game so non english language players feel free to message me if you have something you want to change in your 
+Language of choice. 
+	</Description>
+	<PatchNotes>Added option for additional field script and corrected Key Item desciption bug. 
+Expanded project scope to include interface, commands and more. </PatchNotes>
+	<Category>Translation</Category>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/mi4qmy3h2qqoa57bf8wzu/KupoModernLabels.zip?rlkey=hfbawmgaiijosth1u6wcomwbk&amp;st=zcvbfu94&amp;dl=1</DownloadUrl>
+	<PreviewFile>preview/kupo-Modern-Items-spells.png</PreviewFile>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/74/74-1729218273-991909550.png</PreviewFileUrl>
+	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<SubMod>
+		<Name>Enable Extended</Name>
+		<InstallationPath>extended</InstallationPath>
+		<Description>Enable extended field scripts</Description>
+		<Priority>1</Priority>
+	</SubMod>
 </Mod>
--->
+
+<Mod>
+	<Name>Ukrainian Translation</Name>
+	<Version>1.0</Version>
+	<Author>Дракон Сходу (DragonOfTheEast)</Author>
+	<InstallationPath>TranslationUkr</InstallationPath>
+	<ReleaseDateOriginal>2024-05-02</ReleaseDateOriginal>
+	<ReleaseDate>2024-11-17</ReleaseDate>
+	<MinimumMemoriaVersion>2024-11-17</MinimumMemoriaVersion>
+	<Category>Translation</Category>
+	<Description>Українська локалізація гри.</Description>
+	<DownloadUrl>https://github.com/DragonOfTheEastUA/FFIX-Ukr-Localization/archive/refs/heads/main.zip</DownloadUrl>
+	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=3237680302</Website>
+	<PreviewFileUrl>https://i.imgur.com/8YOLByj.png</PreviewFileUrl>
+	<PreviewFile>Preview.jpg</PreviewFile>
+</Mod>
 
 <!--
 TODO: manage translation mods
 many download links should be changed and several ones use the "[Import] Text" feature of Memoria instead of "[Mod] FolderNames"
 -->
-
 <Mod>
 	<Name>Brazilian-Portuguese Translation</Name>
 	<InstallationPath>BrazilianTranslation</InstallationPath>
@@ -1233,26 +1491,16 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 <!-- Note to Albeoris: you know better about the genesis of it (to fix/correct/contact the author)-->
 <Mod>
 	<Name>Russian Translation</Name>
-	<InstallationPath>RussianTranslation</InstallationPath>
+	<Version>1.0</Version>
+	<InstallationPath>TranslationRu</InstallationPath>
+	<ReleaseDate>2024-11-22</ReleaseDate>
+	<ReleaseDateOriginal>2013-12-27</ReleaseDateOriginal>
 	<Author>RGR Studio</Author>
-	<Description>Перевод игры на русский язык.
-
-Note: this mod doesn't support automatic installation yet. Download it from its website.</Description>
+	<Description>Перевод игры на русский язык.</Description>
 	<Category>Translation</Category>
 	<Website>https://ff9.ffrtt.ru/viewtopic.php?f=14&amp;t=38</Website>
-</Mod>
-
-	 
-<Mod>
-	<Name>Ukrainian Translation</Name>
-	<InstallationPath>UkrainianTranslation</InstallationPath>
-	<Author>Дракон Сходу (DragonOfTheEast)</Author>
-	<Description>Українська локалізація гри.
-
-Note: this mod doesn't support automatic installation yet. Download it from its website.</Description>
-	<Category>Translation</Category>
-	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=3237680302</Website>
-	<PreviewFileUrl>https://i.imgur.com/8YOLByj.png</PreviewFileUrl>
+	<DownloadUrl>https://ff9.ffrtt.ru/rus/RussianLocalization_MemoriaMod_mes.zip</DownloadUrl>
+	<MinimumMemoriaVersion>2024-11-17</MinimumMemoriaVersion>
 </Mod>
 
 <!--
@@ -1267,6 +1515,16 @@ Note: this mod doesn't support automatic installation yet. Download it from its 
 	<Category>Translation</Category>
 	<Website>https://steamcommunity.com/sharedfiles/filedetails/?id=2797209969</Website>
 	<Website>https://steamcommunity.com/app/377840/discussions/0/2956041222219522184/</Website>
+</Mod>
+-->
+	
+<!--
+<Mod>
+	<Name>Nexus Mods</Name>
+	<Description>There are many mods available on the Nexus Mods website.
+Because there is no public direct link for many of them, they cannot be installed directly from this manager.
+Check them out at https://www.nexusmods.com/finalfantasy9/mods/</Description>
+	<Website>https://www.nexusmods.com/finalfantasy9/mods/</Website>
 </Mod>
 -->
 

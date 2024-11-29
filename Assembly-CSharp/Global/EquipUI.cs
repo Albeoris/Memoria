@@ -5,11 +5,10 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Scenes;
+using NCalc;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = System.Object;
-// ReSharper disable InconsistentNaming
 
 public class EquipUI : UIScene
 {
@@ -908,8 +907,19 @@ public class EquipUI : UIScene
     {
         if ((itemData.equip & characterMask) == 0)
             return false;
-
-        return (itemData.type & equipSlotMask) != 0;
+        if ((itemData.type & equipSlotMask) == 0)
+            return false;
+        if (!String.IsNullOrEmpty(itemData.use_condition))
+        {
+            Expression c = new Expression(itemData.use_condition);
+            NCalcUtility.InitializeExpressionPlayer(ref c, player);
+            c.Parameters["CommandId"] = (Int32)BattleCommandId.None;
+            c.Parameters["CommandMenu"] = (Int32)BattleCommandMenu.None;
+            c.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
+            c.EvaluateParameter += NCalcUtility.commonNCalcParameters;
+            return NCalcUtility.EvaluateNCalcCondition(c.Evaluate());
+        }
+        return true;
     }
 
     private void DisplayInventoryInfo(Transform item, ListDataTypeBase data, Int32 index, Boolean isInit)
@@ -1048,10 +1058,7 @@ public class EquipUI : UIScene
                     continue;
 
                 FF9ITEM_DATA itemData = ff9item._FF9Item_Data[item.id];
-                if ((itemData.type & this.partMask[itemType]) == 0)
-                    continue;
-
-                if ((itemData.equip & characterMask) == 0)
+                if (!CanEquip(item, itemData, player, characterMask, this.partMask[itemType]))
                     continue;
 
                 if (itemData.eq_lv > betterLevel)
@@ -1275,7 +1282,7 @@ public class EquipUI : UIScene
                 if (item.count > 0)
                 {
                     FF9ITEM_DATA itemData = ff9item._FF9Item_Data[item.id];
-                    if ((itemData.type & this.partMask[i]) != 0 && (itemData.equip & characterMask) != 0 && itemData.eq_lv > bestLevel)
+                    if (CanEquip(item, itemData, player, characterMask, this.partMask[i]) && itemData.eq_lv > bestLevel)
                     {
                         bestLevel = itemData.eq_lv;
                         bestItemId = item.id;
@@ -1384,6 +1391,8 @@ public class EquipUI : UIScene
             this.OptimizeSubMenu.GetComponent<ButtonGroupState>().Help.TextKey = "OptimizeHelpForMobile";
             this.OffSubMenu.GetComponent<ButtonGroupState>().Help.TextKey = "OffEquipmentHelpForMobile";
         }
+
+        this._background = new GOMenuBackground(this.transform.GetChild(6).gameObject, "equip_bg");
     }
 
     private void ChangeEquipButtonWidth()
@@ -1420,6 +1429,8 @@ public class EquipUI : UIScene
     private GameObject submenuArrowGameObject;
     private RecycleListPopulator equipSelectScrollList;
     private GOScrollablePanel _equipSelectPanel;
+    [NonSerialized]
+    private GOMenuBackground _background;
 
     private static String SubMenuGroupButton = "Equip.SubMenu";
     private static String EquipmentGroupButton = "Equip.Equipment";

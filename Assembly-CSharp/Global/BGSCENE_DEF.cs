@@ -883,7 +883,7 @@ public class BGSCENE_DEF
             this.GenerateAtlasFromBinary();
     }
 
-    private void loadLocalizationInfo(String newName, String path)
+    public void LoadLocalizationInfo(String newName, String path)
     {
         String symbol = Localization.GetSymbol();
         if (symbol == "US")
@@ -947,7 +947,7 @@ public class BGSCENE_DEF
             this.combineMeshes = list.Contains(FF9StateSystem.Common.FF9.fldMapNo);
             if (this.combineMeshes && !Configuration.Import.Field)
             {
-                this.loadLocalizationInfo(newName, path);
+                this.LoadLocalizationInfo(newName, path);
                 this.CreateSceneCombined(fieldMap, this.useUpscaleFM);
             }
             else
@@ -1372,7 +1372,7 @@ public class BGSCENE_DEF
                     Log.Message($"{e}");
                 }
             }
-            this.loadLocalizationInfo(this.mapName, path);
+            this.LoadLocalizationInfo(this.mapName, path);
             if (Configuration.Import.Field && !Configuration.Export.Field && File.Exists(atlasPath))
                 this.importOverlaysFromPsd(fieldMap, UseUpscalFM, externalPath);
             else

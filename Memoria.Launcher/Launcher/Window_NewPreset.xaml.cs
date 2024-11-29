@@ -82,6 +82,14 @@ namespace Memoria.Launcher
 
 
             mainWindow.SettingsGrid_Presets.RefreshPresets();
+            foreach (SettingsGrid_Presets.Preset item in mainWindow.SettingsGrid_Presets.Presets)
+            {
+                if (item.Name == PresetName.Text)
+                {
+                    mainWindow.SettingsGrid_Presets.PresetsComboBox.SelectedItem = item;
+                    break;
+                }
+            }
 
             Close(this, null);
         }

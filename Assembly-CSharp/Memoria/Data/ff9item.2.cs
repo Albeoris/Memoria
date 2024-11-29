@@ -478,42 +478,46 @@ public class ff9item
 
     public static Boolean CanThrowItem(RegularItem itemId)
     {
-        if (!HasItemWeapon(itemId))
+        return ff9item.CanThrowItem(_FF9Item_Data[itemId]);
+    }
+    public static Boolean CanThrowItem(FF9ITEM_DATA itemData)
+    {
+        if (!ff9weap.WeaponData.TryGetValue(itemData.weapon_id, out ItemAttack weapData))
             return false;
-        return (ff9item.GetItemWeapon(itemId).Category & WeaponCategory.Throw) != 0;
+        return (weapData.Category & WeaponCategory.Throw) != 0;
     }
 
     public static ItemAttack GetItemWeapon(RegularItem itemId)
     {
         FF9ITEM_DATA item = _FF9Item_Data[itemId];
-        if (item.weapon_id < 0 || !ff9weap.WeaponData.ContainsKey(item.weapon_id))
+        if (item.weapon_id < 0 || !ff9weap.WeaponData.TryGetValue(item.weapon_id, out ItemAttack result))
         {
             Log.Error($"[ff9item] Trying to use the weapon data of {itemId} which has no valid weapon data");
             return ff9weap.WeaponData[0];
         }
-        return ff9weap.WeaponData[item.weapon_id];
+        return result;
     }
 
     public static ItemDefence GetItemArmor(RegularItem itemId)
     {
         FF9ITEM_DATA item = _FF9Item_Data[itemId];
-        if (item.armor_id < 0 || !ff9armor.ArmorData.ContainsKey(item.armor_id))
+        if (item.armor_id < 0 || !ff9armor.ArmorData.TryGetValue(item.armor_id, out ItemDefence result))
         {
             Log.Error($"[ff9item] Trying to use the armor data of {itemId} which has no valid armor data");
             return ff9armor.ArmorData[0];
         }
-        return ff9armor.ArmorData[item.armor_id];
+        return result;
     }
 
     public static ITEM_DATA GetItemEffect(RegularItem itemId)
     {
         FF9ITEM_DATA item = _FF9Item_Data[itemId];
-        if (item.effect_id < 0 || !_FF9Item_Info.ContainsKey(item.effect_id))
+        if (item.effect_id < 0 || !_FF9Item_Info.TryGetValue(item.effect_id, out ITEM_DATA result))
         {
             Log.Error($"[ff9item] Trying to use the effect data of {itemId} which has no valid effect data");
             return _FF9Item_Info[0];
         }
-        return _FF9Item_Info[item.effect_id];
+        return result;
     }
 
     private static Int32 GetItemModuledId(Int32 itemId)

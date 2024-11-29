@@ -74,6 +74,8 @@ public class ItemUI : UIScene
     private Int32 _defaultSkinLabelSpacingY;
     private GOScrollablePanel _itemPanel;
     private GOScrollablePanel _keyItemPanel;
+    [NonSerialized]
+    private GOMenuBackground _background;
 
     [NonSerialized]
     private Boolean _multiTarget;
@@ -994,9 +996,7 @@ public class ItemUI : UIScene
         foreach (Component component in TargetListPanel.GetChild(0).transform)
         {
             GameObject go = component.gameObject;
-
             UIEventListener.Get(go).Click += onClick;
-
             _targetHudList.Add(new CharacterDetailHUD(go, true));
             if (FF9StateSystem.MobilePlatform)
                 go.GetComponent<ButtonGroupState>().Help.TextKey = "TargetHelpMobile";
@@ -1026,6 +1026,8 @@ public class ItemUI : UIScene
             ArrangeDialog.GetChild(0).GetChild(0).GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
             ArrangeDialog.GetChild(0).GetChild(1).GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
         }
+
+        _background = new GOMenuBackground(this.transform.GetChild(6).gameObject, "item_bg");
     }
 
     private void RemoveLeftAnchorFromItemNumberLabels()

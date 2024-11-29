@@ -79,7 +79,7 @@ namespace Memoria.Launcher
                     return;
                 }
 
-                String[] strArray = GameSettingsDisplay.ScreenResolution.Split(' ')[0].Split('x');
+                String[] strArray = IniFile.SettingsIni.GetSetting("Settings", "ScreenResolution", GameSettingsDisplay.ScreenResolution).Split(' ')[0].Split('x');
                 Int32 screenWidth;
                 Int32 screenHeight;
                 if (strArray.Length < 2 || !Int32.TryParse(strArray[0], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenWidth) || !Int32.TryParse(strArray[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out screenHeight))
@@ -87,6 +87,10 @@ namespace Memoria.Launcher
                     MessageBox.Show((Window)this.GetRootElement(), "Please select an available resolution.", "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                     return;
                 }
+
+                Int32[] maxRes = SettingsGrid_VanillaDisplay.GetMaxResolution(activeMonitor);
+                screenWidth = Math.Min(screenWidth, maxRes[0]);
+                screenHeight = Math.Min(screenHeight, maxRes[1]);
 
                 String directoyPath = Path.GetFullPath(".\\" + (GameSettings.IsX64 ? "x64" : "x86"));
 

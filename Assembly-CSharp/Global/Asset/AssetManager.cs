@@ -43,6 +43,8 @@ public static class AssetManager
             modsNames += "'" + name + "' ";
         Log.Message($"[Initialization] Mods: {modsNames}");
 
+        WindowManager.CenterWindow();
+
         AssetManager.IsFullyInitialized = false;
         Array moduleList = Enum.GetValues(typeof(AssetManagerUtil.ModuleBundle));
         String[] foldname = new String[Configuration.Mod.FolderNames.Length + 1];

@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Memoria.Launcher
+namespace Memoria
 {
     public class IniFile
     {
@@ -22,11 +22,7 @@ namespace Memoria.Launcher
             get
             {
                 if (_settings == null)
-                {
-                    if (!File.Exists(SettingsIniPath))
-                        File.WriteAllText(SettingsIniPath, "[Settings]\nActiveMonitor = 0\nWindowMode = 0\nScreenResolution = 1920x1080\n");
                     _settings = new IniFile(IniFile.SettingsIniPath);
-                }
                 return _settings;
             }
         }
@@ -131,12 +127,14 @@ namespace Memoria.Launcher
                 {
                     mergedIni.RemoveAt(i--);
                 }
-                // Make sure spaces are present around the = separating the field name from its value
+                // Make sure spaces are present around =
                 if (!mergedIni[i].Trim().StartsWith(";"))
                 {
-                    var split = mergedIni[i].Split(['='], 2);
+                    var split = mergedIni[i].Split('=');
                     for (Int32 j = 0; j < split.Length; j++)
+                    {
                         split[j] = split[j].Trim();
+                    }
                     mergedIni[i] = String.Join(" = ", split);
                 }
             }

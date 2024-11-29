@@ -416,26 +416,5 @@ namespace Memoria.Scenes
         private Dictionary<UIWidget, List<List<UIWidget>>> panelRegister = new Dictionary<UIWidget, List<List<UIWidget>>>();
         private Dictionary<Int32, Int32> panelParentLink = new Dictionary<Int32, Int32>();
         private Int32 activePanelIndex = 0;
-
-        public static void DebugLogComponents(GameObject startGo, Boolean recursive, Boolean recChild, Func<Component, String> logger)
-        {
-            foreach (Component comp in startGo.GetComponents<Component>())
-            {
-                String log = logger(comp);
-                if (!String.IsNullOrEmpty(log))
-                    Log.Message($"[PANEL] {startGo} logs: {log}");
-            }
-            if (!recursive)
-                return;
-            if (recChild)
-            {
-                for (Int32 i = 0; i < startGo.transform.childCount; i++)
-                    DebugLogComponents(startGo.GetChild(i), recursive, recChild, logger);
-            }
-            else if (startGo.transform.parent != null)
-            {
-                DebugLogComponents(startGo.transform.parent.gameObject, recursive, recChild, logger);
-            }
-        }
     }
 }
