@@ -216,7 +216,7 @@ namespace Memoria.Launcher
 
         public void WriteAllSettings(String path, String[] ignoreSections = null, String[] ignoreOptions = null)
         {
-            List<String> lines = new List<string>(File.ReadAllLines(path));
+            List<String> lines = File.Exists(path) ? new List<string>(File.ReadAllLines(path)) : [];
 
             foreach (var option in Options)
             {
@@ -239,11 +239,12 @@ namespace Memoria.Launcher
 
                     if (trimmed.StartsWith("["))
                     {
-                        if (sectionFound)
-                        {
+                        if (lines[i - 1].Trim().Length == 0)
+                            lines.Insert(i - 1, $"{option.Key.Name} = {option.Value}");
+                        else
                             lines.Insert(i, $"{option.Key.Name} = {option.Value}");
-                            optionFound = true;
-                        }
+
+                        optionFound = true;
                         break;
                     }
 
@@ -258,7 +259,10 @@ namespace Memoria.Launcher
                 if (!optionFound)
                 {
                     if (!sectionFound)
-                        lines.Add($"\n[{option.Key.Section}]");
+                    {
+                        if (lines.Last().Trim().Length != 0) lines.Add("");
+                        lines.Add($"[{option.Key.Section}]");
+                    }
                     lines.Add($"{option.Key.Name} = {option.Value}");
                 }
             }

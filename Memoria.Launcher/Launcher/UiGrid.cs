@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -111,7 +112,9 @@ namespace Memoria.Launcher
                 {
                     try
                     {
-                        String imagePath = "pack://application:,,,/images/" + imageName;
+                        String imagePath = File.Exists(imageName) ? Path.GetFullPath(imageName) : "pack://application:,,,/images/" + imageName;
+                        if (imageName.StartsWith("http"))
+                            imagePath = imageName;
                         Image tooltipImage = new Image
                         {
                             Source = new BitmapImage(new Uri(imagePath)),
@@ -119,7 +122,7 @@ namespace Memoria.Launcher
                             MaxHeight = 150,
                             Opacity = 1,
                             HorizontalAlignment = HorizontalAlignment.Left,
-                            Margin = new Thickness(0)
+                            Margin = new Thickness(0, 3, 0, 0)
                         };
                         RenderOptions.SetBitmapScalingMode(tooltipImage, BitmapScalingMode.HighQuality);
                         tooltipStackPanel.Children.Add(tooltipImage);

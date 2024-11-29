@@ -28,10 +28,6 @@ namespace Memoria.Launcher
         public String IncompatibleWith { get; set; }
         public String IncompIcon { get; set; }
         public String ActiveIncompatibleMods { get; set; }
-        public String ActivateWithMod { get; set; }
-        public String ActivateWithoutMod { get; set; }
-        public String DeactivateWithMod { get; set; }
-        public String DeactivateWithoutMod { get; set; }
         public String HasPriorityOverMods { get; set; }
         public String Category { get; set; }
         public String Website { get; set; }
@@ -45,15 +41,21 @@ namespace Memoria.Launcher
         public Int64 DownloadSize { get; set; } // TODO
         public Int64 FullSize { get; set; } // TODO
         public List<Mod> SubMod { get; set; }
-        public Mod ParentMod { get; set; }
         public String MinimumMemoriaVersion { get; set; }
+
+        // Entries for sub-mods only
+        public Mod ParentMod { get; set; }
+        public String Group { get; set; }
+        public Boolean IsHeader { get; set; }
+        public Boolean IsDefault { get; set; }
+        public List<String> ActivateWithMod { get; set; }
+        public List<String> ActivateWithoutMod { get; set; }
 
         // Entries that are computed in the Mod Manager
         public HashSet<String> FileContent { get; set; }
         public Boolean IsActive { get; set; }
         public String Installed { get; set; }
         public Int32 Priority { get; set; }
-        public Int32 PriorityWeight { get; set; }
         public BitmapImage PreviewImage { get; set; }
         public IniFile PresetIni { get; set; }
 
@@ -123,18 +125,19 @@ namespace Memoria.Launcher
             if (activeOnly && !IsActive)
                 yield break;
             Int32 subModIndex = 0;
-            SubMod.Sort((a, b) => b.Priority - a.Priority);
-            while (subModIndex < SubMod.Count && SubMod[subModIndex].Priority >= 0)
+            List<Mod> mods = new List<Mod>(SubMod);
+            mods.Sort((a, b) => b.Priority - a.Priority);
+            while (subModIndex < mods.Count && mods[subModIndex].Priority >= 0)
             {
-                if (!activeOnly || SubMod[subModIndex].IsActive)
-                    yield return returnPaths ? SubMod[subModIndex].FullInstallationPath : SubMod[subModIndex];
+                if (!activeOnly || mods[subModIndex].IsActive)
+                    yield return returnPaths ? mods[subModIndex].FullInstallationPath : mods[subModIndex];
                 subModIndex++;
             }
             yield return returnPaths ? InstallationPath : this;
-            while (subModIndex < SubMod.Count)
+            while (subModIndex < mods.Count)
             {
-                if (!activeOnly || SubMod[subModIndex].IsActive)
-                    yield return returnPaths ? SubMod[subModIndex].FullInstallationPath : SubMod[subModIndex];
+                if (!activeOnly || mods[subModIndex].IsActive)
+                    yield return returnPaths ? mods[subModIndex].FullInstallationPath : mods[subModIndex];
                 subModIndex++;
             }
         }
@@ -172,7 +175,6 @@ namespace Memoria.Launcher
             if (elName == null || elInstPath == null)
                 return false;
             XmlElement elVer = modNode["Version"];
-            XmlNodeList elSubMod = modNode.SelectNodes("SubMod");
             Int64 outParse;
             Name = elName.InnerText;
             InstallationPath = elInstPath.InnerText;
@@ -198,10 +200,10 @@ namespace Memoria.Launcher
             }
             IncompatibleWith = modNode["IncompatibleWith"]?.InnerText;
             HasPriorityOverMods = modNode["HasPriorityOverMods"]?.InnerText;
-            if (Int64.TryParse(modNode["PriorityWeight"]?.InnerText ?? "0", out outParse))
-                PriorityWeight = (Int32)outParse;
+            if (Int64.TryParse(modNode["Priority"]?.InnerText ?? "0", out outParse))
+                Priority = (Int32)outParse;
             else
-                PriorityWeight = 0;
+                Priority = 0;
             Category = modNode["Category"]?.InnerText;
             Website = modNode["Website"]?.InnerText;
             DownloadUrl = modNode["DownloadUrl"]?.InnerText;
@@ -218,9 +220,20 @@ namespace Memoria.Launcher
                 PresetIni = new IniFile(Path.Combine(FullInstallationPath, presetFile));
             }
             SubMod.Clear();
-            foreach (XmlNode subNode in elSubMod)
+            foreach (XmlNode subNode in modNode.ChildNodes)
             {
+                if (subNode.Name != "SubMod" && subNode.Name != "Header")
+                    continue;
+
                 Mod sub = new Mod();
+                if (subNode.Name == "Header")
+                {
+                    sub.Name = subNode.InnerText;
+                    sub.IsHeader = true;
+                    if (!String.IsNullOrEmpty(sub.Name))
+                        SubMod.Add(sub);
+                    continue;
+                }
                 elName = subNode["Name"];
                 elInstPath = subNode["InstallationPath"];
                 if (elName == null || elInstPath == null)
@@ -229,11 +242,23 @@ namespace Memoria.Launcher
                 sub.InstallationPath = elInstPath.InnerText;
                 sub.Description = subNode["Description"]?.InnerText;
                 sub.Category = subNode["Category"]?.InnerText;
+                sub.PreviewFile = subNode["PreviewFile"]?.InnerText;
+                sub.PreviewFileUrl = subNode["PreviewFileUrl"]?.InnerText;
 
-                sub.ActivateWithMod = subNode["ActivateWithMod"]?.InnerText;
-                sub.ActivateWithoutMod = subNode["ActivateWithoutMod"]?.InnerText;
-                sub.DeactivateWithMod = subNode["DeactivateWithMod"]?.InnerText;
-                sub.DeactivateWithoutMod = subNode["DeactivateWithoutMod"]?.InnerText;
+                sub.Group = subNode["Group"]?.InnerText;
+                sub.IsDefault = subNode["Default"] != null;
+                if (subNode["ActivateWithMod"] != null)
+                {
+                    sub.ActivateWithMod = new List<string>();
+                    foreach (String mod in subNode["ActivateWithMod"].InnerText.Split(','))
+                        sub.ActivateWithMod.Add(mod.Trim());
+                }
+                else if (subNode["ActivateWithoutMod"] != null)
+                {
+                    sub.ActivateWithoutMod = new List<string>();
+                    foreach (String mod in subNode["ActivateWithoutMod"].InnerText.Split(','))
+                        sub.ActivateWithoutMod.Add(mod.Trim());
+                }
                 if (Int64.TryParse(subNode["Priority"]?.InnerText ?? "0", out outParse))
                     sub.Priority = (Int32)outParse;
                 else

@@ -192,7 +192,6 @@
       <TargetPath>SteamPreset.ini</TargetPath>
     </EmbeddedResource>
     <EmbeddedResource Include="Ini\Settings.ini">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <TargetPath>Settings.ini</TargetPath>
     </EmbeddedResource>
     <Resource Include="Fonts\centurygothic-bold.ttf" />
@@ -228,6 +227,7 @@
     <Resource Include="images\btnUninstallimg.png" />
     <Resource Include="images\ff9.ico" />
     <Resource Include="images\helpicon.png" />
+    <Resource Include="images\modOptions.png" />
     <Resource Include="images\moogle.cur" />
     <Resource Include="images\alexandriaPreview.png" />
     <Resource Include="images\shader_comparison2.jpg" />

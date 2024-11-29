@@ -398,10 +398,10 @@ namespace Memoria.Patcher
                 {
                     mergedIni.RemoveAt(i--);
                 }
-                // Make sure spaces are present around =
+                // Make sure spaces are present around the = separating the field name from its value
                 if (!mergedIni[i].Trim().StartsWith(";"))
                 {
-                    var split = mergedIni[i].Split('=');
+                    var split = mergedIni[i].Split(['='], 2);
                     for (Int32 j = 0; j < split.Length; j++)
                     {
                         split[j] = split[j].Trim();

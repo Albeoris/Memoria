@@ -8,10 +8,12 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 
@@ -78,13 +80,7 @@ namespace Memoria.Launcher
             lstCatalogMods.SelectionChanged += OnModListSelect;
             lstMods.SelectionChanged += OnModListSelect;
             tabCtrlMain.SelectionChanged += OnModListSelect;
-            PreviewSubModList.SelectionChanged += OnSubModSelect;
-            PreviewSubModList.MouseEnter += (sender, e) =>
-            {
-                PreviewSubModList.Focus();
-            };
-            PreviewSubModActive.Checked += OnSubModActivate;
-            PreviewSubModActive.Unchecked += OnSubModActivate;
+            ModOptionsHeaderButton.MouseUp += ModOptionsHeaderButton_MouseUp;
             if (modListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
@@ -104,7 +100,7 @@ namespace Memoria.Launcher
             {
                 ShowReleaseNotes(null, null);
                 // One time patches
-                if(date < new DateTime(2024, 11, 25))
+                if (date < new DateTime(2024, 11, 25))
                 {
                     // Patch resolution to Auto
                     if (IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "0") != "0")
@@ -116,6 +112,22 @@ namespace Memoria.Launcher
             else if (GameSettings.AutoRunGame)
                 PlayButton.Click();
         }
+
+        private void ModOptionsHeaderButton_MouseUp(Object sender, MouseButtonEventArgs e)
+        {
+            Boolean collapsed = (String)ModOptionsHeaderArrow.Content == "▲";
+            ModOptionsHeaderArrow.Content = collapsed ? "▼" : "▲";
+
+            DoubleAnimation animation = new DoubleAnimation
+            {
+                From = collapsed ? ModOptionsHeaderButton.ActualHeight : GroupModInfoWrapper.ActualHeight,
+                To = collapsed ? GroupModInfoWrapper.ActualHeight : ModOptionsHeaderButton.ActualHeight,
+                Duration = new TimeSpan(0, 0, 0, 0, 150),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
+            };
+            ModOptions.BeginAnimation(RowDefinition.MaxHeightProperty, animation);
+        }
+
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close(); // Closes the window when the button is clicked
@@ -337,6 +349,8 @@ namespace Memoria.Launcher
                     if (newMod != null)
                     {
                         newMod.IsActive = true;
+                        foreach (Mod submod in newMod.SubMod)
+                            submod.IsActive = submod.IsDefault;
                         newMod.TryApplyPreset();
                     }
                     CheckOutdatedAndIncompatibleMods();

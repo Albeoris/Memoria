@@ -186,37 +186,7 @@ namespace Memoria.Launcher
                         }
                     }
 
-                    foreach (Mod subMod in mod.SubMod) // submod auto (de)activate based on others
-                    {
-                        if (subMod == null || subMod.Name == null)
-                            continue;
-
-                        Boolean modFoundActive = false;
-
-                        foreach (Mod other_mod in modListInstalled)
-                        {
-                            if (other_mod == null || other_mod.Name == null)
-                                continue;
-
-                            if (subMod.ActivateWithMod != null && subMod.ActivateWithMod == other_mod.Name && other_mod.IsActive)
-                                subMod.IsActive = true;
-                            if (subMod.DeactivateWithMod != null && subMod.DeactivateWithMod == other_mod.Name && other_mod.IsActive)
-                                subMod.IsActive = false;
-
-                            if (subMod.ActivateWithoutMod != null && subMod.ActivateWithoutMod == other_mod.Name && other_mod.IsActive)
-                                modFoundActive = true;
-                            if (subMod.DeactivateWithoutMod != null && subMod.DeactivateWithoutMod == other_mod.Name && other_mod.IsActive)
-                                modFoundActive = true;
-                        }
-
-                        // apply when mod is not found active, even if not installed, and do nothing otherwise
-                        if (!modFoundActive && subMod.ActivateWithoutMod != null)
-                            subMod.IsActive = true;
-                        if (!modFoundActive && subMod.DeactivateWithoutMod != null)
-                            subMod.IsActive = false;
-
-                        UpdateModDetails((Mod)lstMods.SelectedItem);
-                    }
+                    AutoActivateSubMods(mod);
 
                     String ver = mod.CurrentVersion?.ToString() ?? "0";
                     foreach (String outdated in OutdatedModsVersions) // Memoria compatibility
@@ -236,6 +206,7 @@ namespace Memoria.Launcher
                 colMyModsIcons.Width = colMyModsIcons.ActualWidth;
                 colMyModsIcons.Width = double.NaN;
                 lstMods.Items.Refresh();
+                UpdateLauncherTheme();
             }
             catch (Exception ex)
             {
@@ -247,6 +218,31 @@ namespace Memoria.Launcher
             }
         }
 
+        private void AutoActivateSubMods(Mod mod)
+        {
+            foreach (Mod subMod in mod.SubMod) // submod auto (de)activate based on others
+            {
+                if (subMod == null || subMod.Name == null)
+                    continue;
+
+                Int32 modFoundActive = 0;
+
+                foreach (Mod other_mod in modListInstalled)
+                {
+                    if (other_mod == null || other_mod.Name == null)
+                        continue;
+
+                    if (other_mod.IsActive && ((subMod.ActivateWithoutMod?.Contains(other_mod.Name) ?? false) || (subMod.ActivateWithMod?.Contains(other_mod.Name) ?? false)))
+                        modFoundActive++;
+                }
+
+                if (subMod.ActivateWithMod != null)
+                    subMod.IsActive = modFoundActive  == subMod.ActivateWithMod.Count;
+                if (subMod.ActivateWithoutMod != null)
+                    subMod.IsActive = modFoundActive == 0;
+            }
+        }
+
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             lstMods.Items.Refresh();
@@ -255,11 +251,12 @@ namespace Memoria.Launcher
 
         private void CheckBox_Click(object sender, RoutedEventArgs e)
         {
-            Mod mod = (sender as System.Windows.Controls.CheckBox)?.DataContext as Mod;
+            Mod mod = (sender as CheckBox)?.DataContext as Mod;
             if (mod != null && mod.IsActive)
                 mod.TryApplyPreset();
             CheckOutdatedAndIncompatibleMods();
             UpdateModSettings();
+            RefreshModOptions();
         }
 
         private void OnClosing(Object sender, CancelEventArgs e)
@@ -351,11 +348,11 @@ namespace Memoria.Launcher
                         continue;
                     if (mod.Name == catalog_mod.Name)
                     {
-                        mod.PriorityWeight = catalog_mod.PriorityWeight;
+                        mod.Priority = catalog_mod.Priority;
                     }
                 }
             }
-            List<Mod> orderedMods = modListInstalled.OrderByDescending(mod => mod.PriorityWeight).ToList();
+            List<Mod> orderedMods = modListInstalled.OrderByDescending(mod => mod.Priority).ToList();
             modListInstalled.Clear();
             foreach (Mod mod in orderedMods)
                 modListInstalled.Add(mod);
@@ -451,11 +448,6 @@ namespace Memoria.Launcher
             DateTime dateTime1 = DateTime.ParseExact(date1, format, CultureInfo.InvariantCulture);
             DateTime dateTime2 = DateTime.ParseExact(date2, format, CultureInfo.InvariantCulture);
             return dateTime1 >= dateTime2;
-        }
-
-        private void OnClickClose(Object sender, RoutedEventArgs e)
-        {
-            //Close();
         }
 
         private void OnClickCancel(Object sender, RoutedEventArgs e)
@@ -827,6 +819,8 @@ namespace Memoria.Launcher
                     if (newMod != null)
                     {
                         newMod.IsActive = true;
+                        foreach (Mod submod in newMod.SubMod)
+                            submod.IsActive = submod.IsDefault;
                         newMod.TryApplyPreset();
                     }
                 }
@@ -1027,7 +1021,9 @@ namespace Memoria.Launcher
 
         private void UpdateModDetails(Mod mod)
         {
+            if (mod != null && mod == currentMod) return;
             currentMod = mod;
+
             if (mod == null || mod.Name == null)
             {
                 gridModName.Visibility = Visibility.Collapsed;
@@ -1039,6 +1035,12 @@ namespace Memoria.Launcher
                 bitmap.UriSource = new Uri("pack://application:,,,/images/Gradient.png");
                 bitmap.EndInit();
                 PreviewModImage.Source = bitmap;
+                DoubleAnimation animation = new DoubleAnimation
+                {
+                    To = 0,
+                    Duration = new TimeSpan(0),
+                };
+                ModOptions.BeginAnimation(RowDefinition.MaxHeightProperty, animation);
             }
             else
             {
@@ -1060,28 +1062,32 @@ namespace Memoria.Launcher
                 UiGrid.MakeTooltip(PreviewModWebsite, mod.Website ?? String.Empty, "", "hand");
                 PreviewModWebsite.IsEnabled = !String.IsNullOrEmpty(mod.Website);
                 PreviewModWebsite.Visibility = PreviewModWebsite.IsEnabled ? Visibility.Visible : Visibility.Collapsed;
-                PreviewSubModPanel.Visibility = Visibility.Collapsed;
-                Boolean hasSubMod = mod.SubMod != null && mod.SubMod.Count > 0;
                 ReleaseNotesBlock.Visibility = PreviewModReleaseNotes.Text == "" ? Visibility.Collapsed : Visibility.Visible;
-                if (hasSubMod)
+
+                Mod installedVersion = Mod.SearchWithName(modListInstalled, mod.Name);
+                if (installedVersion != null)
                 {
-                    if (modListCatalog.Contains(mod))
+                    foreach (Mod subMod in mod.SubMod)
                     {
-                        Mod installedVersion = Mod.SearchWithName(modListInstalled, mod.Name);
-                        if (installedVersion != null)
-                        {
-                            foreach (Mod subMod in mod.SubMod)
-                            {
-                                Mod installedSub = Mod.SearchWithPath(installedVersion.SubMod, subMod.InstallationPath);
-                                if (installedSub != null)
-                                    subMod.IsActive = installedSub.IsActive;
-                            }
-                        }
+                        Mod installedSub = Mod.SearchWithPath(installedVersion.SubMod, subMod.InstallationPath);
+                        if (installedSub != null)
+                            subMod.IsActive = installedSub.IsActive;
                     }
-                    PreviewSubModList.ItemsSource = mod.SubMod;
-                    PreviewSubModList.SelectedItem = mod.SubMod[0];
-                    UpdateSubModDetails(mod.SubMod[0]);
                 }
+
+                Int32 nOptions = PopulateModOptions(mod, tabCtrlMain.SelectedIndex == 0);
+                ModOptionsHeaderLabel.Content = $"{Lang.Res["ModEditor.SubModPanel"]} ({nOptions})";
+                DoubleAnimation animation = new DoubleAnimation
+                {
+                    To = nOptions > 0 ? (String)ModOptionsHeaderArrow.Content == "▲" ? ModOptionsHeaderButton.ActualHeight : GroupModInfoWrapper.ActualHeight : 0,
+                    Duration = new TimeSpan(0),
+                    EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
+                };
+                ModOptions.BeginAnimation(RowDefinition.MaxHeightProperty, animation);
+                ModOptionsGrid.MaxHeight = GroupModInfoWrapper.ActualHeight;
+                ModOptionsScrollViewer.ScrollToTop();
+                ModOptionsScrollViewer.ScrollToLeftEnd();
+
                 if (mod.PreviewImage == null)
                 {
                     if (tabCtrlMain.SelectedIndex == 0 && mod.PreviewFile != null)
@@ -1124,7 +1130,122 @@ namespace Memoria.Launcher
                     PreviewModImage.Source = mod.PreviewImage;
                 }
             }
-            UpdateLauncherTheme();
+        }
+
+        private Int32 PopulateModOptions(Mod mod, Boolean isEnabled)
+        {
+            ModOptionsPanel.Children.Clear();
+            Int32 count = 0;
+            foreach (Mod submod in mod.SubMod)
+            {
+                if (submod.ActivateWithMod != null || submod.ActivateWithoutMod != null)
+                    continue;
+                if (submod.IsHeader)
+                {
+                    TextBlock textbloc = new TextBlock();
+                    textbloc.Text = submod.Name;
+                    textbloc.TextAlignment = TextAlignment.Center;
+                    textbloc.HorizontalAlignment = HorizontalAlignment.Center;
+                    textbloc.FontStretch = FontStretch.FromOpenTypeStretch(9);
+                    textbloc.FontWeight = FontWeight.FromOpenTypeWeight(500);
+                    textbloc.FontSize = 14;
+                    textbloc.VerticalAlignment = VerticalAlignment.Center;
+                    textbloc.Margin = new Thickness(0);
+                    textbloc.Height = 18;
+                    textbloc.Padding = new Thickness(0);
+                    textbloc.SetValue(TextBlock.FontFamilyProperty, Application.Current.FindResource("CenturyGothic") as FontFamily);
+                    Border border = new Border();
+                    border.SetResourceReference(Border.BackgroundProperty, "BrushAccentColor");
+                    border.CornerRadius = new CornerRadius(5);
+                    border.Margin = new Thickness(0, 7, 0, 7);
+                    border.Height = 20;
+                    border.HorizontalAlignment = HorizontalAlignment.Stretch;
+                    border.VerticalAlignment = VerticalAlignment.Center;
+                    border.Child = textbloc;
+                    ModOptionsPanel.Children.Add(border);
+                    continue;
+                }
+                CheckBox checkBox = new CheckBox();
+                checkBox.Tag = submod;
+                checkBox.Content = submod.Name;
+                checkBox.IsChecked = submod.IsActive && isEnabled;
+                checkBox.IsEnabled = isEnabled && mod.IsActive;
+                checkBox.Style = (Style)Application.Current.FindResource("CheckBoxStyle");
+                checkBox.Margin = new Thickness(0, 0, 0, 4);
+
+                checkBox.Checked += SubMod_CheckChanged;
+                checkBox.Unchecked += SubMod_CheckChanged;
+
+                Grid grid = new Grid();
+                grid.Children.Add(checkBox);
+                ModOptionsPanel.Children.Add(grid);
+
+                if (!String.IsNullOrEmpty(submod.Description))
+                {
+                    String previewPath = "";
+                    if (!String.IsNullOrEmpty(submod.PreviewFile))
+                        previewPath = $"./{submod.ParentMod.InstallationPath}/{submod.PreviewFile}";
+                    if (!String.IsNullOrEmpty(submod.PreviewFileUrl) && (String.IsNullOrEmpty(submod.PreviewFile) || !File.Exists(previewPath)))
+                        previewPath = submod.PreviewFileUrl;
+                    UiGrid.MakeTooltip(grid, submod.Description, previewPath, "");
+                }
+                count++;
+            }
+
+            return count;
+        }
+
+        private Boolean preventCheckLoop = false;
+        private void SubMod_CheckChanged(Object sender, RoutedEventArgs e)
+        {
+            if (preventCheckLoop) return;
+
+            CheckBox checkbox = sender as CheckBox;
+            Mod mod = (Mod)checkbox.Tag;
+            mod.IsActive = checkbox.IsChecked == true;
+
+            if (mod.Group != null && checkbox.IsChecked == true)
+            {
+                // Deactivate all other sub-mods in the group
+                foreach (Mod submod in mod.ParentMod.SubMod)
+                {
+                    if (submod == mod || submod.Group != mod.Group)
+                        continue;
+                    submod.IsActive = false;
+                }
+            }
+            else if (mod.Group != null && checkbox.IsChecked == false)
+            {
+                // Activate the default of the group if found
+                Mod defaultmod = null;
+                foreach (Mod submod in mod.ParentMod.SubMod)
+                {
+                    if (submod.Group == mod.Group && submod.IsDefault)
+                    {
+                        defaultmod = submod;
+                        break;
+                    }
+                }
+                if (defaultmod != null) defaultmod.IsActive = true;
+            }
+
+            RefreshModOptions();
+            // Save
+            UpdateModSettings();
+        }
+
+        private void RefreshModOptions()
+        {
+            // Refresh the checkboxes
+            preventCheckLoop = true;
+            foreach (var el in ModOptionsPanel.Children)
+            {
+                if (el is not Grid grid) continue;
+                CheckBox option = grid.Children[0] as CheckBox;
+                option.IsEnabled = ((Mod)option.Tag).ParentMod.IsActive;
+                option.IsChecked = ((Mod)option.Tag).IsActive;
+            }
+            preventCheckLoop = false;
         }
 
         private void UpdateCatalogInstallationState()
@@ -1188,6 +1309,9 @@ namespace Memoria.Launcher
                 str = str.Trim().Trim('"');
                 String[] iniModPriorityList = Regex.Split(str, @""",\s*""");
                 String[][] listCouple = new String[][] { iniModPriorityList, iniModActiveList };
+                List<String> activeSubMods = new List<String>();
+                foreach (String submod in iniFile.GetSetting("Mod", "ActiveSubMods").Split(','))
+                    activeSubMods.Add(submod.Trim());
                 List<String> subModList = new List<String>();
                 for (Int32 listI = 0; listI < 2; ++listI)
                 {
@@ -1220,6 +1344,12 @@ namespace Memoria.Launcher
                         modListInstalled.Add(mod);
                     }
                 }
+
+                foreach (Mod mod in modListInstalled)
+                    foreach (Mod sub in mod.SubMod)
+                        if (activeSubMods.Contains($"{mod.InstallationPath}/{sub.InstallationPath}"))
+                            sub.IsActive = true;
+
                 foreach (String path in subModList)
                 {
                     Int32 sepIndex = path.IndexOf("/");
@@ -1241,15 +1371,49 @@ namespace Memoria.Launcher
             try
             {
                 List<String> iniModActiveList = new List<String>();
+                List<String> iniModActiveSubList = new List<String>();
                 List<String> iniModPriorityList = new List<String>();
+
+                // First time saving the mods active sub-mods?
+                Boolean firstSave = IniFile.MemoriaIni.GetSetting("Mod", "ActiveSubMods", null) == null;
+
                 foreach (Mod mod in modListInstalled)
                 {
+                    // Saving the active sub-mods
+                    if (firstSave)
+                    {
+                        if (mod.IsActive) AutoActivateSubMods(mod);
+                        foreach (Mod submod in mod.SubMod)
+                        {
+                            // Making sure the default of the group is active if none selected
+                            if (submod.Group == null) continue;
+                            Mod defaultmod = null;
+                            foreach(Mod groupMod in mod.SubMod)
+                            {
+                                if(groupMod.Group != submod.Group) continue;
+                                if(groupMod.IsDefault) defaultmod = groupMod;
+                                if(groupMod.IsActive)
+                                {
+                                    // We found an active mod in the group
+                                    defaultmod = null;
+                                    break;
+                                }
+                            }
+                            if (defaultmod != null) defaultmod.IsActive = true;
+                        }
+                    }
+                    foreach(Mod submod in mod.SubMod)
+                        if (submod.IsActive && submod.ActivateWithMod == null && submod.ActivateWithoutMod == null)
+                            iniModActiveSubList.Add($"{mod.InstallationPath}/{submod.InstallationPath}");
+
                     iniModActiveList.AddRange(mod.EnumerateModAndSubModFoldersOrdered(true));
                     iniModPriorityList.Add(mod.InstallationPath);
                 }
+
                 IniFile iniFile = IniFile.MemoriaIni;
-                iniFile.SetSetting("Mod", "FolderNames", iniModActiveList.Count > 0 ? " \"" + String.Join("\", \"", iniModActiveList) + "\"" : "");
-                iniFile.SetSetting("Mod", "Priorities", iniModPriorityList.Count > 0 ? " \"" + String.Join("\", \"", iniModPriorityList) + "\"" : "");
+                iniFile.SetSetting("Mod", "FolderNames", iniModActiveList.Count > 0 ? "\"" + String.Join("\", \"", iniModActiveList) + "\"" : "");
+                iniFile.SetSetting("Mod", "Priorities", iniModPriorityList.Count > 0 ? "\"" + String.Join("\", \"", iniModPriorityList) + "\"" : "");
+                iniFile.SetSetting("Mod", "ActiveSubMods", String.Join(", ", iniModActiveSubList));
                 iniFile.Save();
             }
             catch (Exception ex) { UiHelper.ShowError(Application.Current.MainWindow, ex); }
@@ -1263,8 +1427,6 @@ namespace Memoria.Launcher
             CaptionModRelease.SetResourceReference(TextBlock.TextProperty, "ModEditor.Release");
             CaptionModReleaseOriginal.SetResourceReference(TextBlock.TextProperty, "ModEditor.ReleaseOriginal");
             CaptionModReleaseNotes.SetResourceReference(TextBlock.TextProperty, "ModEditor.ReleaseNotes");
-            PreviewSubModActive.SetResourceReference(ContentProperty, "ModEditor.Active");
-            CaptionSubModPanel.SetResourceReference(TextBlock.TextProperty, "ModEditor.SubModPanel");
             tabMyMods.SetResourceReference(TextBlock.TextProperty, "ModEditor.TabMyMods");
 
             GridViewColumnHeader header = new GridViewColumnHeader();
