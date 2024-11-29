@@ -164,7 +164,11 @@ public class UIKeyTrigger : MonoBehaviour
 
     private void AccelerateKeyNavigation()
     {
-        if (!UnityXInput.Input.anyKey && PersistenSingleton<HonoInputManager>.Instance.GetHorizontalNavigation() <= (Double)HonoInputManager.AnalogThreadhold && (PersistenSingleton<HonoInputManager>.Instance.GetHorizontalNavigation() >= -(Double)HonoInputManager.AnalogThreadhold && PersistenSingleton<HonoInputManager>.Instance.GetVerticalNavigation() <= (Double)HonoInputManager.AnalogThreadhold) && PersistenSingleton<HonoInputManager>.Instance.GetVerticalNavigation() >= -(Double)HonoInputManager.AnalogThreadhold)
+        if (!UnityXInput.Input.anyKey &&
+            HonoInputManager.Instance.GetHorizontalNavigation() <= HonoInputManager.AnalogThreadhold &&
+            HonoInputManager.Instance.GetHorizontalNavigation() >= -HonoInputManager.AnalogThreadhold &&
+            HonoInputManager.Instance.GetVerticalNavigation() <= HonoInputManager.AnalogThreadhold &&
+            HonoInputManager.Instance.GetVerticalNavigation() >= -HonoInputManager.AnalogThreadhold)
         {
             if (!firstTimeInput)
                 UICamera.EventWaitTime = 0.175f;
