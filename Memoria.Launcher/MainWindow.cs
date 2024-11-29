@@ -105,6 +105,8 @@ namespace Memoria.Launcher
                     // Patch resolution to Auto
                     if (IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "0") != "0")
                         GameSettingsDisplay.ScreenResolution = (String)Lang.Res["Launcher.Auto"];
+                    // Set AntiAliasing to 0
+                    IniFile.MemoriaIni.SetSetting("Graphics", "AntiAliasing", "0");
                 }
                 IniFile.SettingsIni.SetSetting("Memoria", "Version", MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"));
                 IniFile.SettingsIni.Save();

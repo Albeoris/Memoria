@@ -1645,7 +1645,7 @@ public class TitleUI : UIScene
 
         DataPatchers.Initialize();
         ScriptsLoader.InitializeAsync();
-        //QualitySettings.antiAliasing = Configuration.Graphics.AntiAliasing;
+        QualitySettings.antiAliasing = Configuration.Graphics.AntiAliasing;
     }
 
     private class SlideShow
