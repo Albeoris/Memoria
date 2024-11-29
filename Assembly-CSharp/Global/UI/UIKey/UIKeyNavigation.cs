@@ -157,12 +157,14 @@ public class UIKeyNavigation : MonoBehaviour
         // Todo: this doesn't seem to work well with scrollable lists for some reason
         UIKeyNavigation invertNavig = this;
         GameObject invertObj = invertGetter(this);
+        GameObject startingObj = invertObj;
         while (invertObj != null && invertObj != this.gameObject)
         {
             invertNavig = invertObj.GetComponent<UIKeyNavigation>();
             if (invertNavig == null)
                 break;
             invertObj = invertGetter(invertNavig);
+            if (invertObj == startingObj) return null;
         }
         return invertNavig != this ? invertNavig.gameObject : null;
     }
