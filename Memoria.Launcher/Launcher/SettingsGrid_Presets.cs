@@ -182,7 +182,7 @@ namespace Memoria.Launcher
             List<IniFile.Key> toRemove = new List<IniFile.Key>();
             foreach (var key in Presets[0].Settings.Options.Keys)
             {
-                List<String> options = ["Audio.MusicVolume", "Audio.SoundVolume", "Audio.MovieVolume", "VoiceActing.Volume"];
+                List<String> options = ["Graphics.AntiAliasing", "Control.MovementKeyBindings", "AnalogControl.StickThreshold", "Audio.MusicVolume", "Audio.SoundVolume", "Audio.MovieVolume", "VoiceActing.Volume"];
                 if (key.Section == "Mod" || options.Contains($"{key.Section}.{key.Name}"))
                     toRemove.Add(key);
             }
