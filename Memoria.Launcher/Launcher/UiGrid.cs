@@ -78,6 +78,7 @@ namespace Memoria.Launcher
                 }
                 catch { }
 
+                TextBlock tooltipTextBlock = null;
                 if (text != "")
                 {
                     DropShadowEffect dropShadow = new DropShadowEffect
@@ -88,12 +89,13 @@ namespace Memoria.Launcher
                         Direction = 320,
                         Opacity = 1
                     };
-                    TextBlock tooltipTextBlock = new TextBlock
+                    tooltipTextBlock = new TextBlock
                     {
                         Opacity = 1,
                         MaxWidth = 275,
                         FontSize = 14,
                         TextWrapping = TextWrapping.Wrap,
+                        HorizontalAlignment= HorizontalAlignment.Left,
                         Effect = dropShadow,
                         Margin = new Thickness(0)
                     };
@@ -117,13 +119,32 @@ namespace Memoria.Launcher
                             imagePath = imageName;
                         Image tooltipImage = new Image
                         {
-                            Source = new BitmapImage(new Uri(imagePath)),
-                            MaxWidth = 275,
-                            MaxHeight = 150,
-                            Opacity = 1,
                             HorizontalAlignment = HorizontalAlignment.Left,
-                            Margin = new Thickness(0, 3, 0, 0)
+                            Margin = new Thickness(0, 3, 0, 0),
+                            
                         };
+                        tooltipImage.Loaded += (s, e) =>
+                        {
+                            // DPI can mess with the size so we force the actual pixel size
+                            tooltipImage.Width = (tooltipImage.Source as BitmapSource).PixelWidth;
+                            tooltipImage.Height = (tooltipImage.Source as BitmapSource).PixelHeight;
+
+                            if(tooltipImage.Width > 550)
+                            {
+                                tooltipImage.Height = Math.Floor(550 * tooltipImage.Height / tooltipImage.Width);
+                                tooltipImage.Width = 550;
+                            }
+
+                            if(tooltipImage.Height > 300)
+                            {
+                                tooltipImage.Width = Math.Floor(300 * tooltipImage.Width / tooltipImage.Height);
+                                tooltipImage.Height = 300;
+                            }
+
+                            if (tooltipTextBlock != null && tooltipImage.Width > 275)
+                                tooltipTextBlock.MaxWidth = tooltipImage.Width;
+                        };
+                        tooltipImage.Source = new BitmapImage(new Uri(imagePath));
                         RenderOptions.SetBitmapScalingMode(tooltipImage, BitmapScalingMode.HighQuality);
                         tooltipStackPanel.Children.Add(tooltipImage);
                     }
