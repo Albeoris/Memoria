@@ -1065,7 +1065,7 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
     private Boolean GetDirectionKey(Control key)
     {
-        // We don't want stick to be too sensitive for navigation
+        // Threshold: We don't want the stick to be too sensitive for navigation
         Single Threshold = 0.3f;
         if (key == Control.Left)
         {

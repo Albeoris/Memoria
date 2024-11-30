@@ -391,16 +391,16 @@ namespace Assets.Sources.Scripts.UI.Common
                         result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.Alpha1);
                         break;
                     case Control.Up:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.W);
+                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, UnityXInput.Input.MovementKeyCodes[0]);
                         break;
                     case Control.Down:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.S);
+                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, UnityXInput.Input.MovementKeyCodes[2]);
                         break;
                     case Control.Left:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.A);
+                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, UnityXInput.Input.MovementKeyCodes[1]);
                         break;
                     case Control.Right:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.D);
+                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, UnityXInput.Input.MovementKeyCodes[3]);
                         break;
                     case Control.DPad:
                         result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "ps_dpad");
