@@ -108,6 +108,10 @@ namespace Memoria.Launcher
                     // Set AntiAliasing to 0
                     IniFile.MemoriaIni.SetSetting("Graphics", "AntiAliasing", "0");
                 }
+                // Set windows mode to 0 if it can't be parsed
+                if (!Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "null"), NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
+                    IniFile.SettingsIni.SetSetting("Settings", "WindowMode", "0");
+
                 IniFile.SettingsIni.SetSetting("Memoria", "Version", MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"));
                 IniFile.SettingsIni.Save();
             }
