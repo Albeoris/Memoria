@@ -3,15 +3,15 @@ using Memoria;
 using Memoria.Assets;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using UnityEngine;
 
 public class VoicePlayer : SoundPlayer
 {
-    private static bool specialPreventOverlap = false;
+    private static Dialog specialDialog;
     private static ushort specialLastPlayed;
-    private static string specialAppend = "";
     private static ushort specialCount = 0;
     private static Dictionary<ushort, ushort> huntTakenCounter;
     private static Dictionary<ushort, ushort> huntHeldCounter;
@@ -89,144 +89,69 @@ public class VoicePlayer : SoundPlayer
         SoundLib.Log("StartSound Success");
     }
 
-    public static void disableOverlapProtection()
-    {
-        specialPreventOverlap = false;
-    }
-
     public static void PlayFieldZoneDialogAudio(Int32 FieldZoneId, Int32 messageNumber, Dialog dialog)
     {
         if (!Configuration.VoiceActing.Enabled)
             return;
 
-        specialAppend = "";
-        // (special) Festival of the Hunt has take the lead and holds the lead
-        switch (FieldZoneId)
-        {
-            case 22: // regent cids last line end of hunt
-                if (messageNumber == 513)
-                {
-                    // clean up memory
-                    huntTakenCounter = null;
-                    huntHeldCounter = null;
-                }
-                break;
-            case 276:
-            {
-                switch (messageNumber)
-                {
-                    case 519: // steiners last line before the hunt start
-                        huntTakenCounter = new Dictionary<ushort, ushort>();
-                        huntHeldCounter = new Dictionary<ushort, ushort>();
-                        break;
-                    case 540:// Zidane
-                    case 541:// Vivi
-                    case 542:// Frya
-                    case 543:// Lani
-                    case 544:// Gourmand
-                    case 545:// Belna
-                    case 546:// Genero
-                    case 547:// Ivan
-                    { 
-                        if(huntTakenCounter == null || huntHeldCounter == null)
-                        {
-                            huntTakenCounter = new Dictionary<ushort, ushort>();
-                            huntHeldCounter = new Dictionary<ushort, ushort>();
-                        }
-                        if (specialPreventOverlap)
-                        {
-                            return;
-                        }
-                        var idShort = Convert.ToUInt16(messageNumber);
-                        if (idShort == specialLastPlayed)
-                        {
-                            if (!huntHeldCounter.ContainsKey(idShort))
-                            {
-                                huntHeldCounter.Add(idShort, 0);
-                            }
-                            specialAppend = "_held_" + huntHeldCounter[idShort]++;
-                            specialPreventOverlap = true;
-                        }
-                        else
-                        {
+        String specialAppend = GetSpecialAppend(FieldZoneId, messageNumber);
 
-                            if (!huntTakenCounter.ContainsKey(idShort))
-                            {
-                                huntTakenCounter.Add(idShort, 0);
-                            }
-                            specialAppend = "_taken_" + huntTakenCounter[idShort]++; ;
-                            specialLastPlayed = idShort;
-                            specialPreventOverlap = true;
-                        }
-                        break;
-                    }
-                }
-                break;
-            }
-            // hot and cold
-            case 945:
+        // Compile the list of candidate paths for the file name
+        List<String> candidates = new List<string>();
+        String lang = Localization.GetSymbol();
+        String pageIndex = dialog.SubPage.Count > 1 ? $"_{Math.Max(0, dialog.CurrentPage - 1)}" : "";
+
+        // Path for the hunt/hot and cold
+        if (specialAppend.Length > 0)
+        {
+            String path = $"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{specialAppend}";
+            if (!AssetManager.HasAssetOnDisc($"Sounds/{path}.akb", true, true) && !AssetManager.HasAssetOnDisc($"Sounds/{path}.ogg", true, false))
             {
-                if(messageNumber == 230)
+                // Cycle back to 0
+                if (specialAppend.Contains("_held"))
                 {
-                    specialCount = 0;
+                    huntHeldCounter[Convert.ToUInt16(messageNumber)] = 1;
+                    specialAppend = "_held_0";
+                    path = $"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{specialAppend}";
                 }
-                // count up for each time you find something.
-                if(messageNumber == 301) // gained points
+                else if (specialAppend.Contains("_taken"))
                 {
-                    specialAppend = "_" + specialCount;
-                    specialCount += 1;
+                    huntTakenCounter[Convert.ToUInt16(messageNumber)] = 1;
+                    specialAppend = "_taken_0";
+                    path = $"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{specialAppend}";
                 }
-                break;
             }
+            candidates.Add(path);
         }
 
-        String vaPath = String.Format("Voices/{0}/{1}/va_{2}{3}", Localization.GetSymbol(), FieldZoneId, messageNumber, specialAppend);
-        Boolean useAlternatePath = false;
-        String vaAlternatePath = null;
-        String vaAlternatePath2 = null;
-
+        // Path using the object id
         if (dialog.Po != null)
-        {
-            vaAlternatePath = String.Format("Voices/{0}/{1}/va_{2}_{3}{4}", Localization.GetSymbol(), FieldZoneId, messageNumber, dialog.Po.uid, specialAppend);
-            if (AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath + ".ogg", true, false))
-            {
-                vaPath = vaAlternatePath;
-                useAlternatePath = true;
-            }
-        }
-        if (dialog.SubPage.Count > 1)
-        {
-            String pageIndex = "_" + Math.Max(0, dialog.CurrentPage - 1).ToString();
-            vaPath += pageIndex;
-            if (!String.IsNullOrEmpty(vaAlternatePath))
-                vaAlternatePath += pageIndex;
-        }
+            candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_{dialog.Po.uid}{pageIndex}");
 
-        String[] msgStrings = dialog.Phrase.Split(new String[] { "[CHOO]" }, StringSplitOptions.None);
+        // Path using the character name at the top of the box
+        String[] msgStrings = dialog.Phrase.Split(["[CHOO]"], StringSplitOptions.None);
         String msgString = msgStrings.Length > 0 ? messageOpcodeRegex.Replace(msgStrings[0], (match) => { return ""; }) : "";
-
-        if (!useAlternatePath && msgString.Length > 0 && msgString.Contains("\n“"))
+        if (msgString.Length > 0 && msgString.Contains("\n“"))
         {
             string name = msgString.Split('\n')[0].Trim();
-            vaAlternatePath2 = string.Format("Voices/{0}/{1}/va_{2}_{3}{4}", Localization.GetSymbol(), FieldZoneId, messageNumber, name, specialAppend);
-            if (AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath2 + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaAlternatePath2 + ".ogg", true, false))
-            {
-                vaPath = vaAlternatePath = vaAlternatePath2;
-                useAlternatePath = true;
-            }
+            candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_{name}{pageIndex}");
         }
+
+        // Default path
+        candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}{pageIndex}");
 
         Boolean hasChoices = dialog.ChoiceNumber > 0;
         Boolean isMsgEmpty = msgString.Length == 0;
         Boolean shouldDismiss = Configuration.VoiceActing.AutoDismissDialogAfterCompletion && !hasChoices;
-        Action nonDismissAction = () => {
-            disableOverlapProtection();
-            soundOfDialog.Remove(dialog); 
+        Action nonDismissAction = () =>
+        {
+            if (dialog == specialDialog) specialDialog = null;
+            soundOfDialog.Remove(dialog);
         };
         Action dismissAction =
             () =>
             {
-                disableOverlapProtection();
+                if (dialog == specialDialog) specialDialog = null;
                 soundOfDialog.Remove(dialog);
                 if (dialog.EndMode > 0 && FF9StateSystem.Common.FF9.fldMapNo != 3009 && FF9StateSystem.Common.FF9.fldMapNo != 3010)
                     return; // Timed dialog: let the dialog's own timed automatic closure handle it
@@ -245,33 +170,36 @@ public class VoicePlayer : SoundPlayer
         Action playSelectChoiceAction =
             () =>
             {
-                disableOverlapProtection();
+                if (dialog == specialDialog) specialDialog = null;
                 soundOfDialog.Remove(dialog);
                 while (dialog.CurrentState == Dialog.State.OpenAnimation || dialog.CurrentState == Dialog.State.TextAnimation || !dialog.IsChoiceReady)
                     Thread.Sleep(1000 / Configuration.Graphics.FieldTPS);
                 dialog.OnOptionChange?.Invoke(dialog.Id, dialog.SelectChoice); // Simulate a choice change so the default selected line plays
             };
 
-        if (useAlternatePath)
+        // Try to find one of the candidates
+        Boolean found = false;
+        foreach (String path in candidates)
         {
-            SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}", FieldZoneId, messageNumber, msgString, vaAlternatePath));
-            soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaAlternatePath.GetHashCode(), vaAlternatePath, shouldDismiss ? dismissAction : (hasChoices ? playSelectChoiceAction : nonDismissAction));
-        }
-        else if (AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".akb", true, true) || AssetManager.HasAssetOnDisc("Sounds/" + vaPath + ".ogg", true, false))
-        {
-            SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}", FieldZoneId, messageNumber, msgString, vaPath));
-            soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaPath.GetHashCode(), vaPath, shouldDismiss ? dismissAction : (hasChoices ? playSelectChoiceAction : nonDismissAction));
-        }
-        else
-        {
-            if (String.IsNullOrEmpty(vaAlternatePath))
-                SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3} (not found)", FieldZoneId, messageNumber, msgString, vaPath));
-            else if (String.IsNullOrEmpty(vaAlternatePath2))
-                SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}, multiplay-path:{4} (not found)", FieldZoneId, messageNumber, msgString, vaPath, vaAlternatePath));
-            else
-                SoundLib.VALog(String.Format("field:{0}, msg:{1}, text:{2}, path:{3}, multiplay-path:{4} named-path:{5} (not found)", FieldZoneId, messageNumber, msgString, vaPath, vaAlternatePath, vaAlternatePath2));
+            if (AssetManager.HasAssetOnDisc($"Sounds/{path}.akb", true, true) || AssetManager.HasAssetOnDisc($"Sounds/{path}.ogg", true, false))
+            {
+                SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, text:{msgString}, path:{path}");
+                // Special dialog
+                if (path.Contains("_taken") || path.Contains("_held"))
+                {
+                    if (specialDialog != null) FieldZoneReleaseVoice(specialDialog, true);
+                    specialDialog = dialog;
+                }
+                soundOfDialog[dialog] = CreateLoadThenPlayVoice(path.GetHashCode(), path, shouldDismiss ? dismissAction : (hasChoices ? playSelectChoiceAction : nonDismissAction));
 
-            disableOverlapProtection();
+                found = true;
+                break;
+            }
+        }
+        if (!found)
+        {
+            candidates.Reverse(); // Reverse for display
+            SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, text:{msgString}, path(s):'{String.Join("', '", candidates.ToArray())}' (not found)");
             isMsgEmpty = true;
         }
 
@@ -282,19 +210,19 @@ public class VoicePlayer : SoundPlayer
                 if (dialog.CurrentState != Dialog.State.CompleteAnimation || !dialog.IsChoiceReady)
                     return;
 
-                String vaOptionPath = vaPath + "_" + optionIndex;
-                String[] options = msgStrings.Length >= 2 ? msgStrings[1].Split('\n') : new String[0];
+                String vaOptionPath = candidates.Last() + "_" + optionIndex;
+                String[] options = msgStrings.Length >= 2 ? msgStrings[1].Split('\n') : [];
                 Int32 selectedVisibleOption = dialog.ActiveIndexes.Count > 0 ? Math.Max(0, dialog.ActiveIndexes.FindIndex(index => index == optionIndex)) : optionIndex;
                 String optString = selectedVisibleOption < options.Length ? messageOpcodeRegex.Replace(options[selectedVisibleOption].Trim(), (match) => { return ""; }) : "[Invalid option index]";
 
-                if (!AssetManager.HasAssetOnDisc("Sounds/" + vaOptionPath + ".akb", true, true) && !AssetManager.HasAssetOnDisc("Sounds/" + vaOptionPath + ".ogg", true, false))
+                if (!AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPath}.akb", true, true) && !AssetManager.HasAssetOnDisc($"Sounds/{vaOptionPath}.ogg", true, false))
                 {
-                    SoundLib.VALog(String.Format("field:{0}, msg:{1}, opt:{2}, text:{3} path:{4} (not found)", FieldZoneId, messageNumber, optionIndex, optString, vaOptionPath));
+                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPath} (not found)");
                 }
                 else
                 {
                     FieldZoneReleaseVoice(dialog, true);
-                    SoundLib.VALog(String.Format("field:{0}, msg:{1}, opt:{2}, text:{3} path:{4}", FieldZoneId, messageNumber, optionIndex, optString, vaOptionPath));
+                    SoundLib.VALog($"field:{FieldZoneId}, msg:{messageNumber}, opt:{optionIndex}, text:{optString} path:{vaOptionPath}");
                     soundOfDialog[dialog] = CreateLoadThenPlayVoice(vaOptionPath.GetHashCode(), vaOptionPath, nonDismissAction);
                 }
             };
@@ -303,9 +231,86 @@ public class VoicePlayer : SoundPlayer
         }
     }
 
+    private static String GetSpecialAppend(Int32 FieldZoneId, Int32 messageNumber)
+    {
+        String specialAppend = "";
+        // (special) Festival of the Hunt has take the lead and holds the lead
+        // TODO /!\ messageNumber may not be the same for all languages /!\ - SamsamTS
+        switch (FieldZoneId)
+        {
+            case 22: // regent cids last line end of hunt
+                if (messageNumber == 513)
+                {
+                    // clean up memory
+                    huntTakenCounter = null;
+                    huntHeldCounter = null;
+                }
+                break;
+            case 276:
+            {
+                if (FF9StateSystem.EventState.ScenarioCounter > 3170 && FF9StateSystem.EventState.ScenarioCounter < 3180)
+                {
+                    switch (messageNumber)
+                    {
+                        case 540:// Zidane
+                        case 541:// Vivi
+                        case 542:// Frya
+                        case 543:// Lani
+                        case 544:// Gourmand
+                        case 545:// Belna
+                        case 546:// Genero
+                        case 547:// Ivan
+                        {
+                            if (huntTakenCounter == null || huntHeldCounter == null)
+                            {
+                                huntTakenCounter = new Dictionary<ushort, ushort>();
+                                huntHeldCounter = new Dictionary<ushort, ushort>();
+                            }
+
+                            var idShort = Convert.ToUInt16(messageNumber);
+                            if (idShort == specialLastPlayed)
+                            {
+                                if (specialDialog != null) return specialAppend;
+                                if (!huntHeldCounter.ContainsKey(idShort))
+                                    huntHeldCounter.Add(idShort, 0);
+                                specialAppend = "_held_" + huntHeldCounter[idShort]++;
+                            }
+                            else
+                            {
+                                if (!huntTakenCounter.ContainsKey(idShort))
+                                    huntTakenCounter.Add(idShort, 0);
+                                specialAppend = "_taken_" + huntTakenCounter[idShort]++; ;
+                                specialLastPlayed = idShort;
+                            }
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+            // hot and cold
+            case 945:
+            {
+                if (messageNumber == 230)
+                {
+                    specialCount = 0;
+                }
+                // count up for each time you find something.
+                if (messageNumber == 301) // gained points
+                {
+                    specialAppend = "_" + specialCount;
+                    specialCount += 1;
+                }
+                break;
+            }
+        }
+        return specialAppend;
+    }
+
     public static void FieldZoneDialogClosed(Dialog dialog)
     {
-        if (huntHeldCounter == null && huntTakenCounter == null) {
+        if (huntHeldCounter == null && huntTakenCounter == null)
+        {
             FieldZoneReleaseVoice(dialog, Configuration.VoiceActing.StopVoiceWhenDialogDismissed && !dialog.IsClosedByScript);
         }
     }
