@@ -1065,21 +1065,21 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
 
     private Boolean GetDirectionKey(Control key)
     {
-        // Threshold: We don't want the stick to be too sensitive for navigation
-        Single Threshold = 0.3f;
+        // Threshold: We don't want the stick to be too sensitive for UI navigation
+        Single threshold = Mathf.Max(0.3f, AnalogThreadhold);
         if (key == Control.Left)
         {
-            return this.GetHorizontalNavigation() < -Threshold || this.CheckPersistentDirectionInput(key);
+            return this.GetHorizontalNavigation() < -threshold || this.CheckPersistentDirectionInput(key);
         }
         if (key == Control.Right)
         {
-            return this.GetHorizontalNavigation() > Threshold || this.CheckPersistentDirectionInput(key);
+            return this.GetHorizontalNavigation() > threshold || this.CheckPersistentDirectionInput(key);
         }
         if (key == Control.Up)
         {
-            return this.GetVerticalNavigation() > Threshold || this.CheckPersistentDirectionInput(key);
+            return this.GetVerticalNavigation() > threshold || this.CheckPersistentDirectionInput(key);
         }
-        return key == Control.Down && (this.GetVerticalNavigation() < -Threshold || this.CheckPersistentDirectionInput(key));
+        return key == Control.Down && (this.GetVerticalNavigation() < -threshold || this.CheckPersistentDirectionInput(key));
     }
 
     private Boolean GetDirectionKeyDown(Control control)
@@ -1392,7 +1392,6 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     public static Int32 DefaultInputKeysCount = 10;
 
     public static Single AnalogThreadhold = Configuration.AnalogControl.StickThreshold;
-    public static Single AnalogThreadhold1 = 0.9f;
 
     private static Int32 procId;
 
