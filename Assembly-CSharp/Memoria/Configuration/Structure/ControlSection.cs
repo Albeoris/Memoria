@@ -27,7 +27,7 @@ namespace Memoria
 
         private sealed class ControlSection : IniSection
         {
-            public readonly IniArray<String> MovementKeyBindings;
+            public readonly IniArray<String> KeyBindings;
             public readonly IniValue<Int32> DisableMouse;
             public readonly IniArray<String> DialogProgressButtons;
             public readonly IniValue<Boolean> WrapSomeMenus;
@@ -40,7 +40,7 @@ namespace Memoria
 
             public ControlSection() : base(nameof(ControlSection), true)
             {
-                MovementKeyBindings = BindStringArray(nameof(MovementKeyBindings), ["W", "A", "S" ,"D"]);
+                KeyBindings = BindStringArray(nameof(KeyBindings), ["W", "A", "S" ,"D"]);
                 DisableMouse = BindInt32(nameof(DisableMouse), 0);
                 DialogProgressButtons = BindStringArray(nameof(DialogProgressButtons), ["Confirm"]);
                 WrapSomeMenus = BindBoolean(nameof(WrapSomeMenus), true);

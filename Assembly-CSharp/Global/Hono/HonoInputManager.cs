@@ -1,4 +1,5 @@
 ﻿using Memoria;
+using Memoria.Prime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -34,8 +35,8 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
             KeyCode.H,
             KeyCode.F,
             KeyCode.J,
-            KeyCode.Backspace,
-            KeyCode.Alpha1
+            MemoriaKeyBindings[4], // Backspace,
+            MemoriaKeyBindings[5] // Alpha1
         };
         this.defaultJoystickInputKeys = new String[]
         {
@@ -108,6 +109,56 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
         this.rightAnalogButtonStatus = new Boolean[3];
         this.isButtonDown = new Boolean[10];
     }
+
+    public static KeyCode[] MemoriaKeyBindings = InitKeyBindings();
+    private static KeyCode[] InitKeyBindings()
+    {
+        KeyCode[] codes = [KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.Backspace, KeyCode.Alpha1];
+        // Movements
+        try
+        {
+            KeyCode[] parsed = [
+                (KeyCode)Enum.Parse(typeof(KeyCode), Configuration.Control.KeyBindings[0], true),
+                (KeyCode)Enum.Parse(typeof(KeyCode), Configuration.Control.KeyBindings[1], true),
+                (KeyCode)Enum.Parse(typeof(KeyCode), Configuration.Control.KeyBindings[2], true),
+                (KeyCode)Enum.Parse(typeof(KeyCode), Configuration.Control.KeyBindings[3], true)
+            ];
+            Log.Message($"[KeyBinding] Succesfully parsed movement key bindings ({Configuration.Control.KeyBindings[0]}, {Configuration.Control.KeyBindings[1]}, {Configuration.Control.KeyBindings[2]}, {Configuration.Control.KeyBindings[3]})");
+            codes[0] = parsed[0];
+            codes[1] = parsed[1];
+            codes[2] = parsed[2];
+            codes[3] = parsed[3];
+        }
+        catch
+        {
+            Log.Warning("[KeyBinding] Couldn't parse movement key bindings. Defaulting to WASD");
+        }
+        // Pause
+        try
+        {
+            KeyCode parsed = (KeyCode)Enum.Parse(typeof(KeyCode), Configuration.Control.KeyBindings[4], true);
+            Log.Message($"[KeyBinding] Succesfully parsed pause key bindings ({Configuration.Control.KeyBindings[4]})");
+            codes[4] = parsed;
+        }
+        catch
+        {
+            Log.Warning("[KeyBinding] Couldn't parse pause key bindings. Defaulting to Backspace");
+        }
+        // Help
+        try
+        {
+
+            KeyCode parsed = (KeyCode)Enum.Parse(typeof(KeyCode), Configuration.Control.KeyBindings[5], true);
+            Log.Message($"[KeyBinding] Succesfully parsed help key bindings ({Configuration.Control.KeyBindings[5]})");
+            codes[5] = parsed;
+        }
+        catch
+        {
+            Log.Warning("[KeyBinding] Couldn't parse help key bindings. Defaulting to Alpha1");
+        }
+        return codes;
+    }
+
 
     static HonoInputManager()
     {
@@ -1415,7 +1466,8 @@ public class HonoInputManager : PersistenSingleton<HonoInputManager>
     private KeyCode[] inputKeys2 = new KeyCode[]
     {
         KeyCode.Return,
-        KeyCode.Escape,
+        // Disable Escape as cancel if bound to pause
+        HonoInputManager.MemoriaKeyBindings[4] == KeyCode.Escape ? KeyCode.None : KeyCode.Escape,
         KeyCode.Tab
     };
 

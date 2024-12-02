@@ -19,7 +19,7 @@ namespace Memoria
 
         public static class Control
         {
-            public static String[] MovementKeyBindings = Instance._control.MovementKeyBindings;
+            public static String[] KeyBindings = Instance._control.KeyBindings;
             public static Int32 DisableMouse => Instance._control.DisableMouse;
             public static Boolean DisableMouseForMenus => (DisableMouse & 1) != 0;
             public static Boolean DisableMouseInFields => (DisableMouse & 2) != 0;

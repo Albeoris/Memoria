@@ -274,40 +274,19 @@ namespace UnityXInput
                 return (Double)previousState.Triggers.Right == 0.0;
             return false;
         }
-
-        public static KeyCode[] MovementKeyCodes = InitMovementKeyCodes();
-        private static KeyCode[] InitMovementKeyCodes()
-        {
-            try
-            {
-                KeyCode[] codes = [
-                    (KeyCode)Enum.Parse(typeof(KeyCode), Configuration.Control.MovementKeyBindings[0], true),
-                    (KeyCode)Enum.Parse(typeof(KeyCode), Configuration.Control.MovementKeyBindings[1], true),
-                    (KeyCode)Enum.Parse(typeof(KeyCode), Configuration.Control.MovementKeyBindings[2], true),
-                    (KeyCode)Enum.Parse(typeof(KeyCode), Configuration.Control.MovementKeyBindings[3], true)
-                ];
-                Log.Message($"[KeyBinding] Succesfully parsed movement key bindings ({Configuration.Control.MovementKeyBindings[0]}, {Configuration.Control.MovementKeyBindings[1]}, {Configuration.Control.MovementKeyBindings[2]}, {Configuration.Control.MovementKeyBindings[3]})");
-                return codes;
-            }
-            catch
-            {
-                Log.Warning("[KeyBinding] Couldn't parse movement key bindings. Defaulting to WASD");
-            }
-            return [KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D];
-        }
-
+        
         public static Single GetAxis(String axisName)
         {
             Single axis = 0f;
             if (axisName == "Horizontal")
             {
-                if (GetKey(KeyCode.LeftArrow) || GetKey(MovementKeyCodes[1])) axis = - 1f;
-                if (GetKey(KeyCode.RightArrow) || GetKey(MovementKeyCodes[3])) axis += 1f;
+                if (GetKey(KeyCode.LeftArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[1])) axis = - 1f;
+                if (GetKey(KeyCode.RightArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[3])) axis += 1f;
             }
             else if(axisName == "Vertical")
             {
-                if (GetKey(KeyCode.UpArrow) || GetKey(MovementKeyCodes[0])) axis = 1f;
-                if (GetKey(KeyCode.DownArrow) || GetKey(MovementKeyCodes[2])) axis += -1f;
+                if (GetKey(KeyCode.UpArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[0])) axis = 1f;
+                if (GetKey(KeyCode.DownArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[2])) axis += -1f;
 
             }
             else
@@ -322,13 +301,13 @@ namespace UnityXInput
             Single axisRaw = 0f;
             if (axisName == "Horizontal")
             {
-                if (GetKey(KeyCode.LeftArrow) || GetKey(MovementKeyCodes[1])) axisRaw = -1f;
-                if (GetKey(KeyCode.RightArrow) || GetKey(MovementKeyCodes[3])) axisRaw += 1f;
+                if (GetKey(KeyCode.LeftArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[1])) axisRaw = -1f;
+                if (GetKey(KeyCode.RightArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[3])) axisRaw += 1f;
             }
             else if (axisName == "Vertical")
             {
-                if (GetKey(KeyCode.UpArrow) || GetKey(MovementKeyCodes[0])) axisRaw = 1f;
-                if (GetKey(KeyCode.DownArrow) || GetKey(MovementKeyCodes[2])) axisRaw += -1f;
+                if (GetKey(KeyCode.UpArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[0])) axisRaw = 1f;
+                if (GetKey(KeyCode.DownArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[2])) axisRaw += -1f;
 
             }
             else
