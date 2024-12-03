@@ -231,15 +231,25 @@ public class VoicePlayer : SoundPlayer
         }
     }
 
+    private static Dictionary<String, Int32[]> specialMessageIds = new Dictionary<String, Int32[]>()
+    {
+        // Hunt, H&C start, H&C points
+        {"English(US)"  , [540, 228, 301]},
+        {"English(UK)"  , [540, 228, 301]},
+        {"Japanese"     , [560, 227, 306]},
+        {"German"       , [560, 228, 307]},
+        {"French"       , [550, 228, 307]},
+        {"Italian"      , [560, 228, 307]},
+        {"Spanish"      , [552, 228, 307]}
+    };
     private static String GetSpecialAppend(Int32 FieldZoneId, Int32 messageNumber)
     {
         String specialAppend = "";
         // (special) Festival of the Hunt has take the lead and holds the lead
-        // TODO /!\ messageNumber may not be the same for all languages /!\ - SamsamTS
         switch (FieldZoneId)
         {
-            case 22: // regent cids last line end of hunt
-                if (messageNumber == 513)
+            case 22:
+                if (FF9StateSystem.EventState.ScenarioCounter == 3180 && huntTakenCounter != null)
                 {
                     // clean up memory
                     huntTakenCounter = null;
@@ -248,41 +258,33 @@ public class VoicePlayer : SoundPlayer
                 break;
             case 276:
             {
+                // Festival of the hunt
                 if (FF9StateSystem.EventState.ScenarioCounter > 3170 && FF9StateSystem.EventState.ScenarioCounter < 3180)
                 {
-                    switch (messageNumber)
+                    Int32[] numbers = specialMessageIds.ContainsKey(Localization.CurrentLanguage) ? specialMessageIds[Localization.CurrentLanguage] : specialMessageIds["English(US)"];
+                    // Points message for one of the 8 participants?
+                    if (messageNumber >= numbers[0] && messageNumber <= numbers[0] + 7)
                     {
-                        case 540:// Zidane
-                        case 541:// Vivi
-                        case 542:// Frya
-                        case 543:// Lani
-                        case 544:// Gourmand
-                        case 545:// Belna
-                        case 546:// Genero
-                        case 547:// Ivan
+                        if (huntTakenCounter == null || huntHeldCounter == null)
                         {
-                            if (huntTakenCounter == null || huntHeldCounter == null)
-                            {
-                                huntTakenCounter = new Dictionary<ushort, ushort>();
-                                huntHeldCounter = new Dictionary<ushort, ushort>();
-                            }
+                            huntTakenCounter = new Dictionary<ushort, ushort>();
+                            huntHeldCounter = new Dictionary<ushort, ushort>();
+                        }
 
-                            var idShort = Convert.ToUInt16(messageNumber);
-                            if (idShort == specialLastPlayed)
-                            {
-                                if (specialDialog != null) return specialAppend;
-                                if (!huntHeldCounter.ContainsKey(idShort))
-                                    huntHeldCounter.Add(idShort, 0);
-                                specialAppend = "_held_" + huntHeldCounter[idShort]++;
-                            }
-                            else
-                            {
-                                if (!huntTakenCounter.ContainsKey(idShort))
-                                    huntTakenCounter.Add(idShort, 0);
-                                specialAppend = "_taken_" + huntTakenCounter[idShort]++; ;
-                                specialLastPlayed = idShort;
-                            }
-                            break;
+                        var idShort = Convert.ToUInt16(messageNumber);
+                        if (idShort == specialLastPlayed)
+                        {
+                            if (specialDialog != null) return "";
+                            if (!huntHeldCounter.ContainsKey(idShort))
+                                huntHeldCounter.Add(idShort, 0);
+                            specialAppend = "_held_" + huntHeldCounter[idShort]++;
+                        }
+                        else
+                        {
+                            if (!huntTakenCounter.ContainsKey(idShort))
+                                huntTakenCounter.Add(idShort, 0);
+                            specialAppend = "_taken_" + huntTakenCounter[idShort]++; ;
+                            specialLastPlayed = idShort;
                         }
                     }
                 }
@@ -291,12 +293,14 @@ public class VoicePlayer : SoundPlayer
             // hot and cold
             case 945:
             {
-                if (messageNumber == 230)
+                Int32[] numbers = specialMessageIds.ContainsKey(Localization.CurrentLanguage) ? specialMessageIds[Localization.CurrentLanguage] : specialMessageIds["English(US)"];
+                if (messageNumber >= numbers[1] && messageNumber <= numbers[1] + 3) // Game start
                 {
                     specialCount = 0;
                 }
                 // count up for each time you find something.
-                if (messageNumber == 301) // gained points
+                // 
+                if (messageNumber == numbers[2]) // gained points
                 {
                     specialAppend = "_" + specialCount;
                     specialCount += 1;
