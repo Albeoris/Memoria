@@ -131,9 +131,15 @@ public class VoicePlayer : SoundPlayer
         // Path using the character name at the top of the box
         String[] msgStrings = dialog.Phrase.Split(["[CHOO]"], StringSplitOptions.None);
         String msgString = msgStrings.Length > 0 ? messageOpcodeRegex.Replace(msgStrings[0], (match) => { return ""; }) : "";
-        if (msgString.Length > 0 && msgString.Contains("\n“"))
+        if (msgString.Length > 0 && (
+            // Languages have various ways of presenting the name
+            msgString.Contains("\n“") || // English
+            msgString.Contains("\n「") || // Japanese
+            msgString.Contains(":\n") || // German, French
+            msgString.Contains("\n─") // Italian, Spanish
+            ))
         {
-            string name = msgString.Split('\n')[0].Trim();
+            string name = msgString.Split('\n')[0].Replace(":", "").Trim();
             candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_{name}{pageIndex}");
         }
 
