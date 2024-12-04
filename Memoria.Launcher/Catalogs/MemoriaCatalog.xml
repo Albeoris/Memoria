@@ -608,7 +608,6 @@ Includes:
 		<Description>Version for regular FFIX</Description>
 		<Priority>1</Priority>
 		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
-		<DeactivateWithMod>Alternate Fantasy</DeactivateWithMod>
 	</SubMod>
 	<SubMod>
 		<Name>Alternate Fantasy</Name>
@@ -616,7 +615,6 @@ Includes:
 		<Description>Version for Alternate Fantasy</Description>
 		<Priority>2</Priority>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
-		<DeactivateWithoutMod>Alternate Fantasy</DeactivateWithoutMod>
 	</SubMod>
 </Mod>
 
@@ -737,7 +735,6 @@ Includes:
 		<Description>Version for regular FFIX</Description>
 		<Priority>1</Priority>
 		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
-		<DeactivateWithMod>Alternate Fantasy</DeactivateWithMod>
 	</SubMod>
 	<SubMod>
 		<Name>Alternate Fantasy</Name>
@@ -745,7 +742,6 @@ Includes:
 		<Description>Version for Alternate Fantasy</Description>
 		<Priority>2</Priority>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
-		<DeactivateWithoutMod>Alternate Fantasy</DeactivateWithoutMod>
 	</SubMod>
 </Mod>
 
