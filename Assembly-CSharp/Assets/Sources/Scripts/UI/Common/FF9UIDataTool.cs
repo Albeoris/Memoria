@@ -385,22 +385,25 @@ namespace Assets.Sources.Scripts.UI.Common
                         break;
                     }
                     case Control.Pause:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "keyboard_button_backspace");
+                        if (HonoInputManager.MemoriaKeyBindings[4] == KeyCode.Backspace)
+                            result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "keyboard_button_backspace");
+                        else
+                            result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, HonoInputManager.MemoriaKeyBindings[4]);
                         break;
                     case Control.Select:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.Alpha1);
+                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, HonoInputManager.MemoriaKeyBindings[5]);
                         break;
                     case Control.Up:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.W);
+                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, HonoInputManager.MemoriaKeyBindings[0]);
                         break;
                     case Control.Down:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.S);
+                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, HonoInputManager.MemoriaKeyBindings[2]);
                         break;
                     case Control.Left:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.A);
+                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, HonoInputManager.MemoriaKeyBindings[1]);
                         break;
                     case Control.Right:
-                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, KeyCode.D);
+                        result = FF9UIDataTool.DrawButton(BitmapIconType.Keyboard, HonoInputManager.MemoriaKeyBindings[3]);
                         break;
                     case Control.DPad:
                         result = FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, "ps_dpad");
@@ -468,18 +471,18 @@ namespace Assets.Sources.Scripts.UI.Common
             switch (atlasName)
             {
                 default:
-                case "IconAtlas":          return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, spriteName);
-                case "WindowAtlas":        return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.WindowAtlas, spriteName);
-                case "GrayAtlas":          return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.GrayAtlas, spriteName);
-                case "BlueAtlas":          return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.BlueAtlas, spriteName);
-                case "GeneralAtlas":       return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.GeneralAtlas, spriteName);
-                case "ScreenButtonAtlas":  return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.ScreenButtonAtlas, spriteName);
-                case "TutorialAtlas":      return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.TutorialAtlas, spriteName);
-                case "ChocographAtlas":    return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.ChocographAtlas, spriteName);
-                case "FaceAtlas":          return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.FaceAtlas, spriteName);
-                case "MovieGalleryAtlas":  return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.MovieGalleryAtlas, spriteName);
+                case "IconAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.IconAtlas, spriteName);
+                case "WindowAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.WindowAtlas, spriteName);
+                case "GrayAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.GrayAtlas, spriteName);
+                case "BlueAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.BlueAtlas, spriteName);
+                case "GeneralAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.GeneralAtlas, spriteName);
+                case "ScreenButtonAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.ScreenButtonAtlas, spriteName);
+                case "TutorialAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.TutorialAtlas, spriteName);
+                case "ChocographAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.ChocographAtlas, spriteName);
+                case "FaceAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.FaceAtlas, spriteName);
+                case "MovieGalleryAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.MovieGalleryAtlas, spriteName);
                 case "QuadMistImageAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.QuadMistImageAtlas, spriteName);
-                case "QuadMistCardAtlas":  return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.QuadMistCardAtlas, spriteName);
+                case "QuadMistCardAtlas": return FF9UIDataTool.DrawButton(BitmapIconType.Sprite, FF9UIDataTool.QuadMistCardAtlas, spriteName);
             }
         }
 
@@ -489,18 +492,18 @@ namespace Assets.Sources.Scripts.UI.Common
             switch (atlasName)
             {
                 default:
-                case "IconAtlas":          spriteData = FF9UIDataTool.IconAtlas.GetSprite(spriteName);          break;
-                case "WindowAtlas":        spriteData = FF9UIDataTool.WindowAtlas.GetSprite(spriteName);        break;
-                case "GrayAtlas":          spriteData = FF9UIDataTool.GrayAtlas.GetSprite(spriteName);          break;
-                case "BlueAtlas":          spriteData = FF9UIDataTool.BlueAtlas.GetSprite(spriteName);          break;
-                case "GeneralAtlas":       spriteData = FF9UIDataTool.GeneralAtlas.GetSprite(spriteName);       break;
-                case "ScreenButtonAtlas":  spriteData = FF9UIDataTool.ScreenButtonAtlas.GetSprite(spriteName);  break;
-                case "TutorialAtlas":      spriteData = FF9UIDataTool.TutorialAtlas.GetSprite(spriteName);      break;
-                case "ChocographAtlas":    spriteData = FF9UIDataTool.ChocographAtlas.GetSprite(spriteName);    break;
-                case "FaceAtlas":          spriteData = FF9UIDataTool.FaceAtlas.GetSprite(spriteName);          break;
-                case "MovieGalleryAtlas":  spriteData = FF9UIDataTool.MovieGalleryAtlas.GetSprite(spriteName);  break;
+                case "IconAtlas": spriteData = FF9UIDataTool.IconAtlas.GetSprite(spriteName); break;
+                case "WindowAtlas": spriteData = FF9UIDataTool.WindowAtlas.GetSprite(spriteName); break;
+                case "GrayAtlas": spriteData = FF9UIDataTool.GrayAtlas.GetSprite(spriteName); break;
+                case "BlueAtlas": spriteData = FF9UIDataTool.BlueAtlas.GetSprite(spriteName); break;
+                case "GeneralAtlas": spriteData = FF9UIDataTool.GeneralAtlas.GetSprite(spriteName); break;
+                case "ScreenButtonAtlas": spriteData = FF9UIDataTool.ScreenButtonAtlas.GetSprite(spriteName); break;
+                case "TutorialAtlas": spriteData = FF9UIDataTool.TutorialAtlas.GetSprite(spriteName); break;
+                case "ChocographAtlas": spriteData = FF9UIDataTool.ChocographAtlas.GetSprite(spriteName); break;
+                case "FaceAtlas": spriteData = FF9UIDataTool.FaceAtlas.GetSprite(spriteName); break;
+                case "MovieGalleryAtlas": spriteData = FF9UIDataTool.MovieGalleryAtlas.GetSprite(spriteName); break;
                 case "QuadMistImageAtlas": spriteData = FF9UIDataTool.QuadMistImageAtlas.GetSprite(spriteName); break;
-                case "QuadMistCardAtlas":  spriteData = FF9UIDataTool.QuadMistCardAtlas.GetSprite(spriteName);  break;
+                case "QuadMistCardAtlas": spriteData = FF9UIDataTool.QuadMistCardAtlas.GetSprite(spriteName); break;
             }
             if (spriteData == null)
                 return new Vector2(64f, 64f);
@@ -1297,6 +1300,7 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static readonly Dictionary<KeyCode, String> KeyboardIconLabel = new Dictionary<KeyCode, String>
         {
+            { KeyCode.Backspace,    "BS" },
             { KeyCode.Exclaim,      "!" },
             { KeyCode.DoubleQuote,  "\"" },
             { KeyCode.Hash,         "#" },

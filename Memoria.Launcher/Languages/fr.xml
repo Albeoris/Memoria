@@ -45,6 +45,7 @@ DeletePresetText = "Cette opération est irréversible. Êtes-vous sûr de voulo
 DeletePresetCaption = "Supprimer le préréglage ?"
 OK = "OK"
 Cancel = "Annuler"
+Auto = "Auto"
 />
 
 <Settings

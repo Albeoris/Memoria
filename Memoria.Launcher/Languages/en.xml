@@ -45,6 +45,7 @@ DeletePresetText = "This cannot be undone. Are you sure you want to delete this 
 DeletePresetCaption = "Delete preset?"
 OK = "OK"
 Cancel = "Cancel"
+Auto = "Auto"
 />
 
 <Settings

@@ -5,6 +5,7 @@
 // Compiler-generated code is shown
 
 using Memoria;
+using Memoria.Prime;
 using System;
 using UnityEngine;
 using XInputDotNetPure;
@@ -273,16 +274,46 @@ namespace UnityXInput
                 return (Double)previousState.Triggers.Right == 0.0;
             return false;
         }
-
+        
         public static Single GetAxis(String axisName)
         {
-            Single axis = UnityEngine.Input.GetAxis(axisName);
+            Single axis = 0f;
+            if (axisName == "Horizontal")
+            {
+                if (GetKey(KeyCode.LeftArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[1])) axis = - 1f;
+                if (GetKey(KeyCode.RightArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[3])) axis += 1f;
+            }
+            else if(axisName == "Vertical")
+            {
+                if (GetKey(KeyCode.UpArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[0])) axis = 1f;
+                if (GetKey(KeyCode.DownArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[2])) axis += -1f;
+
+            }
+            else
+            {
+                axis = UnityEngine.Input.GetAxis(axisName);
+            }
             return (axis == 0f) ? Input.GetXAxis(axisName) : axis;
         }
 
         public static Single GetAxisRaw(String axisName)
         {
-            Single axisRaw = UnityEngine.Input.GetAxisRaw(axisName);
+            Single axisRaw = 0f;
+            if (axisName == "Horizontal")
+            {
+                if (GetKey(KeyCode.LeftArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[1])) axisRaw = -1f;
+                if (GetKey(KeyCode.RightArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[3])) axisRaw += 1f;
+            }
+            else if (axisName == "Vertical")
+            {
+                if (GetKey(KeyCode.UpArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[0])) axisRaw = 1f;
+                if (GetKey(KeyCode.DownArrow) || GetKey(HonoInputManager.MemoriaKeyBindings[2])) axisRaw += -1f;
+
+            }
+            else
+            {
+                axisRaw = UnityEngine.Input.GetAxisRaw(axisName);
+            }
             return (axisRaw == 0f) ? Input.GetXAxis(axisName) : axisRaw;
         }
 

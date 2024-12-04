@@ -10461,10 +10461,10 @@ public static class ff9
 
     public static class Pad
     {
-        public static Boolean kPadLLeft => Input.GetKey(KeyCode.A);
-        public static Boolean kPadLRight => Input.GetKey(KeyCode.D);
-        public static Boolean kPadLUp => Input.GetKey(KeyCode.W);
-        public static Boolean kPadLDown => Input.GetKey(KeyCode.S);
+        public static Boolean kPadLLeft => Input.GetKey(HonoInputManager.MemoriaKeyBindings[1]); // A
+        public static Boolean kPadLRight => Input.GetKey(HonoInputManager.MemoriaKeyBindings[3]); // D
+        public static Boolean kPadLUp => Input.GetKey(HonoInputManager.MemoriaKeyBindings[0]); // W
+        public static Boolean kPadLDown => Input.GetKey(HonoInputManager.MemoriaKeyBindings[2]); // S
         public static Boolean kPadL1 => UIManager.Input.GetKey(Control.LeftBumper);
         public static Boolean kPadL2 => Input.GetKey(KeyCode.E);
         public static Boolean kPadRLeft => Input.GetKey(KeyCode.J);

@@ -45,6 +45,7 @@ DeletePresetText = "此操作无法撤消。您确定要删除此预设吗？"
 DeletePresetCaption = "删除预设？"
 OK = "确定"
 Cancel = "取消"
+Auto = "自动"
 />
 
 <Settings

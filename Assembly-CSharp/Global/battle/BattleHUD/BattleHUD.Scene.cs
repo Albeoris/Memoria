@@ -73,8 +73,11 @@ public partial class BattleHUD : UIScene
     {
         if (!Configuration.Interface.PSXBattleMenu || ButtonGroupState.ActiveGroup != CommandGroupButton)
             return;
-        Boolean leftPressed = (ETb.sKey0 & (EventInput.Lleft | EventInput.Pleft)) != 0;
-        Boolean rightPressed = (ETb.sKey0 & (EventInput.Lright | EventInput.Pright)) != 0;
+        Single axis = HonoInputManager.Instance.GetHorizontalNavigation();
+        // Threshold: We don't want the stick to be too sensitive for UI navigation
+        Single threshold = Mathf.Max(0.7f, HonoInputManager.AnalogThreadhold);
+        Boolean leftPressed = axis < -threshold;
+        Boolean rightPressed = axis > threshold;
         if (_buttonSliding == null)
         {
             GONavigationButton nextSlidingButton = null;

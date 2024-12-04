@@ -1,4 +1,40 @@
-﻿#Version 2024.11.17
+﻿#Version 2024.12.04
+
+Key bindings, auto resolution, better mod options...
+
+#Features
+
+    Added ability to rebind the keys WASD, Pause and Help (via Memoria.ini)
+    Restored AntiAliasing option, only accessible via Memoria.ini (use at your own risk)
+    Reduced sensitivity of UI navigation with the analog stick
+
+#Launcher
+
+    Auto resolution has been added
+    Borderless Fullscreen mode will now always use the current resolution of the selected display
+    Improved Mod options functionality and display
+    Updated brazilian portuguese translation by @Felipefpl
+    Fixed Excalibur II time limit tooltips @SimonAfek
+
+#Backend
+
+    It is now possible to specify a condition in Items.csv for using the item
+    Items not marked as "Usable" cannot be used in battles anymore. This allows to have items that can be used out of battles only ("Consumable")
+    Min and Max in NCalc formulas can now be used with more than 2 arguments
+    Add the possibility to use icons in btl2d messages
+
+#Bugfixes
+
+    Fixed a hard-lock that could occur when using the PSX-Like command menu
+    Fixed mod options deactivating while using the launcher #971
+    The game window will no longer be resized when Fullscreen is selected
+    Various fixes regarding languages and translations
+    Various other small fixes
+
+
+
+
+#Version 2024.11.17
 
 World Map settings, revamped launcher, better translation support...
 

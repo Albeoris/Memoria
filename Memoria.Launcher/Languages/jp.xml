@@ -45,6 +45,7 @@ DeletePresetText = "元に戻すことはできません。このプリセット
 DeletePresetCaption = "プリセットを削除しますか?"
 OK = "OK"
 Cancel = "キャンセル"
+Auto = "自動"
 />
 
 <Settings

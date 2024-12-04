@@ -22,4 +22,6 @@
     <system:String x:Key="Launcher.OK">OK</system:String>
     <system:String x:Key="Launcher.Cancel">Cancel</system:String>
 
+    <system:String x:Key="ModEditor.SubModPanel">Mod options</system:String>
+
 </ResourceDictionary>

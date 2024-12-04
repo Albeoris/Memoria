@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Application = System.Windows.Application;
+using ComboBox = System.Windows.Controls.ComboBox;
 
 namespace Memoria.Launcher
 {
@@ -29,10 +30,19 @@ namespace Memoria.Launcher
                 "Settings.ExclusiveFullscreen",
                 "Settings.BorderlessFullscreen"
             };
-            CreateCombobox("WindowMode", comboboxchoices, 50, "Settings.WindowMode", "Settings.WindowMode_Tooltip");
+            ComboBox modeComboBox = CreateCombobox("WindowMode", comboboxchoices, 50, "Settings.WindowMode", "Settings.WindowMode_Tooltip");
 
-            comboboxchoices = EnumerateDisplaySettings(true).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray();
-            CreateCombobox("ScreenResolution", comboboxchoices, 50, "Settings.Resolution", "Settings.Resolution_Tooltip", "", true);
+            List<String> reschoices =
+            [
+                "Launcher.Auto",
+                .. EnumerateDisplaySettings(true).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0]))
+            ];
+            ComboBox resComboBox = CreateCombobox("ScreenResolution", reschoices, 50, "Settings.Resolution", "Settings.Resolution_Tooltip", "", true);
+
+            modeComboBox.SelectionChanged += (s, e) =>
+            {
+                resComboBox.IsEnabled = modeComboBox.SelectedIndex != 2;
+            };
 
             try
             {
@@ -46,12 +56,15 @@ namespace Memoria.Launcher
 
         public String ScreenResolution
         {
-            get { return _resolution; }
+            get { return _resolution == "0x0" ? (String)Lang.Res["Launcher.Auto"] : _resolution; }
             set
             {
-                if (_resolution != value)
+                if (value != null && _resolution != value)
                 {
-                    _resolution = addRatio(value);
+                    if (value == (String)Lang.Res["Launcher.Auto"])
+                        _resolution = "0x0";
+                    else
+                        _resolution = addRatio(value);
                     OnPropertyChanged();
                 }
             }
@@ -94,7 +107,7 @@ namespace Memoria.Launcher
                 switch (propertyName)
                 {
                     case nameof(ScreenResolution):
-                        iniFile.SetSetting("Settings", propertyName, ScreenResolution.Split('|')[0].Trim(' ') ?? "1280x960");
+                        iniFile.SetSetting("Settings", propertyName, _resolution?.Split('|')[0].Trim(' ') ?? "0x0");
                         break;
                     case nameof(ActiveMonitor):
                         iniFile.SetSetting("Settings", propertyName, ActiveMonitor ?? String.Empty);
@@ -127,6 +140,8 @@ namespace Memoria.Launcher
                 if ((!String.IsNullOrEmpty(value)) && EnumerateDisplaySettings(false).ToArray().Any(value.Contains))
                     _resolution = addRatio(value);
                 //else we choose the largest available one
+                else if (value == "0x0")
+                    _resolution = value;
                 else
                     _resolution = EnumerateDisplaySettings(false).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray()[0];
 
@@ -183,22 +198,6 @@ namespace Memoria.Launcher
                         yield return resolution;
                 }
             }
-        }
-
-        public static Int32[] GetMaxResolution(Int32 display)
-        {
-            Int32[] res = [0,0];
-
-            DevMode devMode = new DevMode();
-            Int32 modeNum = 0;
-            while (EnumDisplaySettings(null, modeNum++, ref devMode))
-            {
-                if (display != devMode.dmDisplayFixedOutput) continue;
-
-                res[0] = Math.Max(res[0], devMode.dmPelsWidth);
-                res[1] = Math.Max(res[1], devMode.dmPelsHeight);
-            }
-            return res;
         }
 
         private String addRatio(String resolution)
