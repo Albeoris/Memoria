@@ -40,7 +40,7 @@ namespace Memoria
 
             public ControlSection() : base(nameof(ControlSection), true)
             {
-                KeyBindings = BindStringArray(nameof(KeyBindings), ["W", "A", "S" ,"D"]);
+                KeyBindings = BindStringArray(nameof(KeyBindings), ["W", "A", "S" ,"D", "Backspace", "Alpha1"]);
                 DisableMouse = BindInt32(nameof(DisableMouse), 0);
                 DialogProgressButtons = BindStringArray(nameof(DialogProgressButtons), ["Confirm"]);
                 WrapSomeMenus = BindBoolean(nameof(WrapSomeMenus), true);
