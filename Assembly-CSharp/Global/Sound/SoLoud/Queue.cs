@@ -18,7 +18,8 @@ namespace Global.Sound.SoLoud
         internal static extern IntPtr Queue_destroy(IntPtr aObjHandle);
         ~Queue()
         {
-            Queue_destroy(objhandle);
+            // Can cause a crash if called while quitting 
+            if (!SdLibAPIWithSoloud.isQuitting) Queue_destroy(objhandle);
         }
 
         [DllImport("soloud", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Queue_play")]

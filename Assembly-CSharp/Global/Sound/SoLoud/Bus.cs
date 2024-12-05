@@ -18,7 +18,8 @@ namespace Global.Sound.SoLoud
         internal static extern IntPtr Bus_destroy(IntPtr aObjHandle);
         ~Bus()
         {
-            Bus_destroy(objhandle);
+            // Can cause a crash if called while quitting 
+            if (!SdLibAPIWithSoloud.isQuitting) Bus_destroy(objhandle);
         }
 
         [DllImport("soloud", CallingConvention = CallingConvention.Cdecl, EntryPoint = "Bus_setFilter")]
