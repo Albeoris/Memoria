@@ -155,9 +155,18 @@ namespace Memoria.Launcher
                 value = iniFile.GetSetting("Settings", nameof(WindowMode));
                 if (!String.IsNullOrEmpty(value))
                 {
-                    if (value == (String)Lang.Res["Settings.Window"]) value = "0";
-                    if (value == (String)Lang.Res["Settings.ExclusiveFullscreen"]) value = "1";
-                    if (value == (String)Lang.Res["Settings.BorderlessFullscreen"]) value = "2";
+                    String newvalue = "";
+                    if (value == (String)Lang.Res["Settings.Window"]) newvalue = "0";
+                    if (value == (String)Lang.Res["Settings.ExclusiveFullscreen"]) newvalue = "1";
+                    if (value == (String)Lang.Res["Settings.BorderlessFullscreen"]) newvalue = "2";
+                    if (newvalue.Length > 0)
+                    {
+                        value = newvalue;
+                        IniFile.PreventWrite = false;
+                        iniFile.SetSetting("Settings", nameof(WindowMode), value);
+                        iniFile.Save();
+                        IniFile.PreventWrite = true;
+                    }
                 }
                 if (!Int16.TryParse(value, out _windowMode))
                     _windowMode = 0;
