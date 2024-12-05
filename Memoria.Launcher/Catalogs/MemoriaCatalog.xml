@@ -254,9 +254,9 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Support Ability Cost</Name>
-	<Version>4.1.1</Version>
+	<Version>4.1.2</Version>
 	<InstallationPath>KupoGemSATweak</InstallationPath>
-	<ReleaseDate>2024-08-22</ReleaseDate>
+	<ReleaseDate>2024-12-05</ReleaseDate>
 	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
 	<Author>faospark / Tirlititi </Author>
 	<Description> Allows You to have 1 Gem cost per support ability or Half.
@@ -267,131 +267,124 @@ Mod Order : Position 1 or on top of Any Gameplay mods such as Alternate Fantasy 
 This was the earliest public release of this type of Mod that modifies the Gem Cost of Support Abilities 
 Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 	</Description>
-	<PatchNotes>First Split Release</PatchNotes>
+	<PatchNotes>- changed implention of submods to be compatible with the latest version of the mod manager</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/71w3a8qnfbg5g3lvnl1bd/KupoGemSATweak.zip?rlkey=qnsqgc70ngf3ix9u4f7ut82ob&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-Gem.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313895-1564815189.png</PreviewFileUrl>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
-		<SubMod>
-		<Name>Configure</Name>
-		<InstallationPath>Preview</InstallationPath>
-		<Description>Click Here to Configure mods</Description>
-		<Priority>100</Priority>
+	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
+	<SubMod>
+		<Name>Tweak: 1 Gem cost Support Ability</Name>
+		<InstallationPath>Features/Tweaks/Ability</InstallationPath>
+		<Description>1 Gen Support Ability</Description>
+		<Default/>
+		<Group>g-ab</Group>
 	</SubMod>
 	<SubMod>
 		<Name>Tweak: Half Cost of Support Abilities</Name>
 		<InstallationPath>Features/Tweaks/AbilityHalf</InstallationPath>
 		<Description>Cuts ability gems to half for support abilites </Description>
-		<Priority>2</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Tweak: 1 Gem cost Support Ability</Name>
-		<InstallationPath>Features/Tweaks/Ability</InstallationPath>
-		<Description>1 Gen Support Ability [Already activated]</Description>
-		<Priority>3</Priority>
+		<Group>g-ab</Group>
 	</SubMod>
 </Mod>
 
 <Mod>
 	<Name>Exp, AP, Gil, Rewards Tweaks</Name>
-	<Version>4.1.1</Version>
+	<Version>4.1.2</Version>
 	<InstallationPath>KupoTweaks</InstallationPath>
-	<ReleaseDate>2024-08-22</ReleaseDate>
+	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2022-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>As the name suggests, this mod has several options that can multiply your Exp, AP , Gil and After Battle Rewards. 
 Mod Order : On top of any Gameplay Mod.
 Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</Description>
-	<PatchNotes>First Split Release </PatchNotes>
+	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/z2df6bk4hps21v53j105w/KupoTweaks.zip?rlkey=wfw287bn1u27gz4najtx1jm9a&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-exp.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313895-1037308229.png</PreviewFileUrl>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
+	<Header>Ability Points Modifier</Header>
 	<SubMod>
-		<Name>Configure</Name>
-		<InstallationPath>Features/Zecrets</InstallationPath>
-		<Description>Click Here to Configure mods</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Tweak: 2x AP Gain</Name>
+		<Name>2x AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP2x</InstallationPath>
 		<Description>Gains 2x AP after battle (Ignores AbilityUp)</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: 4x AP Gain</Name>
+		<Name>4x AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP4x</InstallationPath>
 		<Description>Gains 4x AP after battle</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: 99 AP Gain</Name>
+		<Name>99 AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP99</InstallationPath>
 		<Description>Gains 99 AP after battle</Description>
 		<Priority>1</Priority>
 	</SubMod>
+	<Header>Experience Gain Modifier</Header>
 	<SubMod>
-		<Name>Tweak: 2x EXP Gain</Name>
+		<Name>2x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP2x</InstallationPath>
 		<Description>Gains 2x EXP after battle</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: 4x EXP Gain</Name>
+		<Name>4x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP4x</InstallationPath>
 		<Description>Gains 4x EXP after battle</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: 8x EXP Gain</Name>
+		<Name>8x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP8x</InstallationPath>
 		<Description>Gains 8x EXP after battle</Description>
 		<Priority>1</Priority>
 	</SubMod>
+	<Header>Earned Gil Modifier</Header>
 	<SubMod>
-		<Name>Tweak: 2x gil</Name>
+		<Name>2x gil</Name>
 		<InstallationPath>Features/Tweaks/2xgil</InstallationPath>
 		<Description>Doubles Gil received after battle</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: 4x gil</Name>
+		<Name>4x gil</Name>
 		<InstallationPath>Features/Tweaks/4xgil</InstallationPath>
 		<Description>4x Gil received after battle</Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: 8x gil</Name>
+		<Name>8x gil</Name>
 		<InstallationPath>Features/Tweaks/8xgil</InstallationPath>
 		<Description>8x Gil received after battle</Description>
 		<Priority>1</Priority>
 	</SubMod>
+	<Header>Item Drop Multiplier</Header>
 	<SubMod>
-		<Name>Tweak: Get 2x of any item drop after battle </Name>
+		<Name>Get 2x of any item drop after battle </Name>
 		<InstallationPath>Features/Tweaks/2xitem</InstallationPath>
 		<Description>Any item received after battle would be multiplied by 2 ,
-		hence if a monster drops 2 potions you get 4  </Description>
+			hence if a monster drops 2 potions you get 4  </Description>
 		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
-		<Name>Tweak: Get 4x of any item drop after battle </Name>
+		<Name>Get 4x of any item drop after battle </Name>
 		<InstallationPath>Features/Tweaks/4xitem</InstallationPath>
 		<Description>Any item received after battle would be multiplied by 4 ,
-		hence if a monster drops 2 potions you get 8  </Description>
+			hence if a monster drops 2 potions you get 8  </Description>
 		<Priority>1</Priority>
 	</SubMod>
 </Mod>
 
 <Mod>
 	<Name>No Exp Plus </Name>
-	<Version>4.1.2</Version>
+	<Version>4.1.3</Version>
 	<InstallationPath>KupoNoEXP</InstallationPath>
-	<ReleaseDate>2024-11-15</ReleaseDate>
+	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2023-07-20</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>If you want some degree of challenge. This mod basically suppresses leveling up in game and more
@@ -401,56 +394,50 @@ Features:
 [3] Doubled EXP Requirement
 [4] 8x EXP Requirement
 This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, previously known as Mog Add-ons.</Description>
-	<PatchNotes>Added 1.5 EXP requirement</PatchNotes>
+	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/yc3unvr4l9ra0pu7wzfjf/KupoNoEXP.zip?rlkey=twu5mwcm4aa20c3f76pvemurv&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kuponoexp.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313900-1782999351.png</PreviewFileUrl>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
-	<SubMod>
-		<Name>Configure</Name>
-		<InstallationPath>Features/Zecrets</InstallationPath>
-		<Description>Click Here to Configure</Description>
-		<Priority>100</Priority>
-	</SubMod>
+	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
 	<SubMod>
 		<Name>Challenge: No / Zero AP and EXP Gain After Battle</Name>
 		<InstallationPath>Features/Tweaks/EXPAP0</InstallationPath>
 		<Description>If you like things hard.</Description>
-		<Priority>1</Priority>
+		<Group>g-exp</Group>
 	</SubMod>
 	<SubMod>
 		<Name>Challenge: No EXP Gain After Battle BUT GAINS AP</Name>
 		<InstallationPath>Features/Tweaks/EXP0</InstallationPath>
 		<Description>If you like things hard but still gain MP .</Description>
-		<Priority>1</Priority>
+		<Group>g-exp</Group>
 	</SubMod>
 	<SubMod>
 		<Name>Challenge: 1.5 EXP Requirement</Name>
 		<InstallationPath>Features/Tweaks/ExpX1andhalf</InstallationPath>
 		<Description>1.5 EXP requirement for perfect stats mod</Description>
-		<Priority>1</Priority>
+		<Group>g-exp</Group>
 	</SubMod>
 	<SubMod>
 		<Name>Challenge: Doubled EXP Requirement</Name>
 		<InstallationPath>Features/Tweaks/ExpX2</InstallationPath>
 		<Description>Doubles EXP requirement so you level up slower</Description>
-		<Priority>1</Priority>
-	</SubMod>	
+		<Group>g-exp</Group>
+	</SubMod>
 	<SubMod>
 		<Name>Challenge: 8x EXP Requirement</Name>
 		<InstallationPath>Features/Tweaks/ExpX8</InstallationPath>
 		<Description>8 Times EXP requirement so you almost dont level up</Description>
-		<Priority>1</Priority>
+		<Group>g-exp</Group>
 	</SubMod>
 </Mod>
 
 <Mod>
 	<Name>Kupo Heroes Pack </Name>
-	<Version>4.1.2</Version>
+	<Version>4.1.3</Version>
 	<InstallationPath>KupoHeroPack</InstallationPath>
-	<ReleaseDate>2024-08-28</ReleaseDate>
+	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A set of Character enhancements that powers up characters and reduces grind. Ideal for players seeking a fresh character experience without changing the story, flow, or core gameplay mechanics.
@@ -481,102 +468,97 @@ Mod Order:
 
 Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>2nd Release, please read the log. Moving forward this will have a different version from Kupo Mods.</PatchNotes>
+	<PatchNotes>Improved compatibility with the mod manager </PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/4v6b8ijknci17on89ow01/KupoHeroPack.zip?rlkey=xsdn7vf32f41eregepx2fu118&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-hero.png</PreviewFile>
-	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313899-1353498866.png</PreviewFileUrl>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/78/78-1733396525-286566443.png</PreviewFileUrl>
+	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
+	<Header>All Characters</Header>
 	<SubMod>
-		<Name>Configure</Name>
-		<InstallationPath>Features/Zecrets</InstallationPath>
-		<Description>Click Here to Configure mods</Description>
-		<Priority>100</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>[All] Add Resistance to Zombie and Virus   </Name>
+		<Name>Add Resistance to Zombie and Virus </Name>
 		<InstallationPath>Features/All</InstallationPath>
 		<Description>Auto-life resists Zombie, Anti-body Resists Virus </Description>
-		<Priority>1</Priority>
+		<Default/>		
 	</SubMod>
 	<SubMod>
-		<Name>[All] Bye Auto-Potion </Name>
+		<Name>Bye Auto-Potion </Name>
 		<InstallationPath>Features/NoAutoPotion</InstallationPath>
 		<Description>Replace Auto-Potion with HP and MP 5% </Description>
-		<Priority>1</Priority>
 	</SubMod>
+	<Header>Transportation</Header>
 	<SubMod>
-		<Name>[Transportation] Faster travel </Name>
+		<Name>Faster travel </Name>
 		<InstallationPath>Features/Transpo</InstallationPath>
-		<Description>Alternative perspective</Description>
-		<Priority>1</Priority>
+		<Description>Faster Travel using Airship and Chocobo</Description>
 	</SubMod>
 	<SubMod>
-		<Name>[Transportation] Hilda Garde Music on Disc 4 </Name>
+		<Name>Hilda Garde Music on Disc 4 </Name>
 		<InstallationPath>Features/WorldSound/Disk3</InstallationPath>
 		<Description>Change Disk 4 Airship Music to Disc 3</Description>
-		<Priority>1</Priority>
+		<Group>g-wm</Group>
 	</SubMod>
 	<SubMod>
-		<Name>[Transportation] Blue Narciss Music on Disc 4 </Name>
+		<Name>Blue Narciss Music on Disc 4 </Name>
 		<InstallationPath>Features/WorldSound/Disk3</InstallationPath>
 		<Description>Change Disk 4 Ship Music to Disc 2</Description>
-		<Priority>1</Priority>
+		<Group>g-wm</Group>
 	</SubMod>
+	<Header>Character Tweaks</Header>
 	<SubMod>
 		<Name>[Eiko] The Summoner  </Name>
 		<InstallationPath>Features/Eiko</InstallationPath>
 		<Description>Splits Titan and Fenrir as their won independent summon</Description>
-		<Priority>1</Priority>
+		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Freya] The Dragoon   </Name>
 		<InstallationPath>Features/Freya</InstallationPath>
 		<Description>Make Freya's High Jump do 3x damage</Description>
-		<Priority>1</Priority>
+		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Quina] The Chef </Name>
 		<InstallationPath>Features/Quina</InstallationPath>
 		<Description>Better Eat at 50% Cook at 100% </Description>
-		<Priority>1</Priority>
+		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Steiner] The Queens Knight</Name>
 		<InstallationPath>Features/Steiner</InstallationPath>
 		<Description>Steiner can Equip Save the Queen </Description>
-		<Priority>1</Priority>
+		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Vivi] The Warlock   </Name>
 		<InstallationPath>Features/Vivi</InstallationPath>
 		<Description>Vivi and Steiner can Cast Aero,Quake,Water to RA to AGA spells </Description>
-		<Priority>1</Priority>
+		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Garnet] The White Mage   </Name>
 		<InstallationPath>Features/Garnet</InstallationPath>
 		<Description>Adds A White Magic Ability to Garnet that causes damage</Description>
-		<Priority>1</Priority>
+		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Amaranth] The Genius Nomad </Name>
 		<InstallationPath>Features/Amaranth</InstallationPath>
 		<Description>Amaranth learns the Passive Tensai which makes him Learn and Level UP fast</Description>
-		<Priority>1</Priority>
+		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Zidane] The Pillager</Name>
 		<InstallationPath>Features/Zidane</InstallationPath>
 		<Description>Boosts damage of thievery </Description>
-		<Priority>1</Priority>
+		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>[Beatrix] The Paladin </Name>
 		<InstallationPath>Features/Beatrix</InstallationPath>
 		<Description>Add Basic stat Support for Beatrix based of the Beatrix mod  </Description>
-		<Priority>1</Priority>
+		<Default/>
 	</SubMod>
 </Mod>
 
@@ -807,194 +789,196 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Kupo UI Suite</Name>
-	<Version>4.1.3</Version>
+	<Version>4.1.4</Version>
 	<InstallationPath>KupoUISuite</InstallationPath>
-	<ReleaseDate>2024-11-6</ReleaseDate>
+	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>
-The First User Interface Suite for FFIX. This mod allows you to change the ff:
-Dialogue UI, Menu, Title Screen, Menu Bg , World Map , Title loop , Triple Triad Mat. 
-Also Included Text UI helpers Synthesis menus 
+The First User Interface Suite for FFIX. This mod allows you to change the ff: Dialogue UI, Menu, Title Screen, Menu Bg , World Map , Title loop , Triple Triad Mat. Also Included Text UI helpers Synthesis menus 
 
 See More information on the Readme.txt file 
 
 Mod Order : Position one or on top of Any Gameplay mod .
 
-Recommendations
-Best used with Portrait Mod and Buttons Pack that are also part of The Kupo Mods Umbrella 
-
-Originally released as part of Kupo Mods formerly Mog-Addons
-to see previews and learn more about the mod visit the website url
+Recommendations: Best used with Cursors, Portrait Mod and Buttons Pack that are also part of The Kupo Mods Umbrella. 
+Originally released as part of Kupo Mods formerly Mog-Addons to see previews and learn more about the mod visit the website url
 	</Description>
-	<PatchNotes>See Readme.txt</PatchNotes>
+	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
 	<Category>Various</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/bwgd9529j6wx7jhiju419/KupoUISuite.zip?rlkey=z8yybpjg9i5fi9vu3kz33zeiw&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-ui-pack.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313891-596422989.png</PreviewFileUrl>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
+	<Header>UI Themes</Header>
 	<SubMod>
-		<Name>Configure</Name>
-		<InstallationPath>Features/Zecrets</InstallationPath>
-		<Description>Click Here to Configure mods</Description>
-		<Priority>100</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Cards: Triple Triad Mat</Name>
-		<InstallationPath>Features/Cards</InstallationPath>
-		<Description>Triple triad inspired mat and UI for the Game</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI: New Curative item Icons</Name>
-		<InstallationPath>Features/NewIcons</InstallationPath>
-		<Description>NewIcons</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI: Alt Cursor Sound  </Name>
-		<InstallationPath>Features/CursorSound</InstallationPath>
-		<Description>What i think is a better cursor sound</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Theme: Default</Name>
-		<InstallationPath>Features/DialogueBox/DxDefault</InstallationPath>
-		<Description>Disables Darker UI</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Theme: Darker UI</Name>
+		<Name>Darker UI</Name>
 		<InstallationPath>Features/DialogueBox/DarkerUI</InstallationPath>
 		<Description>Forces Darker UI</Description>
-		<Priority>1</Priority>
+		<Default/>
+		<Group>g-ui-theme</Group>
+		<PreviewFile>preview/d1.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>UI Theme: Flat</Name>
-		<InstallationPath>Features/DialogueBox/FlatUI</InstallationPath>
-		<Description>Just Full Solid colors like the old games</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI Theme: Modern [Transparent]</Name>
+		<Name>Modern [Transparent]</Name>
 		<InstallationPath>Features/DialogueBox/Modern</InstallationPath>
 		<Description>New Transparent UI</Description>
-		<Priority>1</Priority>
+		<Group>g-ui-theme</Group>
+		<PreviewFile>preview/d2.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>UI Theme : Pixel Frame</Name>
+		<Name>Flat</Name>
+		<InstallationPath>Features/DialogueBox/FlatUI</InstallationPath>
+		<Description>Just Full Solid colors like the old games</Description>
+		<Group>g-ui-theme</Group>
+		<PreviewFile>preview/d3.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Pixel Frame</Name>
 		<InstallationPath>Features/DialogueBox/PRFrame</InstallationPath>
 		<Description>Pixel Remaster Frame</Description>
-		<Priority>1</Priority>
+		<Group>g-ui-theme</Group>
+		<PreviewFile>preview/d4.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>UI Theme: Scroll</Name>
+		<Name>Scroll</Name>
 		<InstallationPath>Features/DialogueBox/Scroll</InstallationPath>
 		<Description>So Ugly... you'll Love it </Description>
-		<Priority>1</Priority>
+		<Group>g-ui-theme</Group>
+		<PreviewFile>preview/d5.png</PreviewFile>
 	</SubMod>
-	<SubMod>
-		<Name>Menu Bg : Pure Black</Name>
-		<InstallationPath>Features/Menubg/menubgblack</InstallationPath>
-		<Description>Removes the store pattern in Menu Background</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Menu Bg : Tantalus</Name>
-		<InstallationPath>Features/Menubg/menubgtantalus</InstallationPath>
-		<Description>Tantalus Pattern on Menu Background</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Menu Bg : Chocobo</Name>
-		<InstallationPath>Features/Menubg/menubgchocobo</InstallationPath>
-		<Description>Chocobo Pattern on Menu Background</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Menu Bg : Stone</Name>
-		<InstallationPath>Features/Menubg/menubgstone</InstallationPath>
-		<Description>Stone Pattern on Menu Background</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Menu Bg Full : Forest</Name>
-		<InstallationPath>Features/Menubg/menubgfull01</InstallationPath>
-		<Description>A save point in the forest</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Menu Bg Full : Huts</Name>
-		<InstallationPath>Features/Menubg/menubgfull02</InstallationPath>
-		<Description>The huts of the Black Mage</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Menu Bg Full : Secret Room</Name>
-		<InstallationPath>Features/Menubg/menubgfull03</InstallationPath>
-		<Description>An Unused Room room for the game </Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Title Screen : Normal </Name>
-		<InstallationPath>Features/TitleLogo/TitleLogo0</InstallationPath>
-		<Description>Normal Title Screen Credits to Moguri mod </Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Title Screen : Alternate </Name>
-		<InstallationPath>Features/TitleLogo/TitleLogo1</InstallationPath>
-		<Description>Shows an Alternative title screen and Memoria Indicator</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Title Screen : Recreation </Name>
-		<InstallationPath>Features/TitleLogo/TitleLogo2</InstallationPath>
-		<Description>Shows a Recreation title screen and Memoria Indicator</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Title Screen : Old School </Name>
-		<InstallationPath>Features/TitleLogo/TitleLogo3</InstallationPath>
-		<Description>Shows an old school type of title screen</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Title Screen : Origins </Name>
-		<InstallationPath>Features/TitleLogo/TitleLogo4</InstallationPath>
-		<Description>Original concept of the logo </Description>
-		<Priority>1</Priority>
-	</SubMod>
+	<Header>UI Misc Options</Header>
 	<SubMod>
 		<Name>UI Option: Borderless</Name>
 		<InstallationPath>Features/frames/borderless</InstallationPath>
 		<Description>Remove white Border mostly for testing purposes </Description>
-		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>UI Option: No Divider</Name>
 		<InstallationPath>Features/frames/divideless</InstallationPath>
 		<Description>removes dividers in menu</Description>
-		<Priority>1</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>UI Option: No Highlight</Name>
 		<InstallationPath>Features/frames/highlightless</InstallationPath>
-		<Description>removes dividers in menu</Description>
-		<Priority>1</Priority>
+		<Description>Removes dividers in menu</Description>
+	</SubMod>
+	<Header>Tiled Menu Backgrounds</Header>
+	<SubMod>
+		<Name>Stone</Name>
+		<InstallationPath>Features/Menubg/menubgstone</InstallationPath>
+		<Description>Stone Pattern on Menu Background</Description>
+		<Group>g-menu-bg</Group>
+		<Default/>
+		<PreviewFile>preview/b4.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>UI : Concept Art Title Loop</Name>
+		<Name>Pure Black</Name>
+		<InstallationPath>Features/Menubg/menubgblack</InstallationPath>
+		<Description>Removes the store pattern in Menu Background</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/b1.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Tantalus</Name>
+		<InstallationPath>Features/Menubg/menubgtantalus</InstallationPath>
+		<Description>Tantalus Pattern on Menu Background</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/b3.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Chocobo</Name>
+		<InstallationPath>Features/Menubg/menubgchocobo</InstallationPath>
+		<Description>Chocobo Pattern on Menu Background</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/b2.png</PreviewFile>
+	</SubMod>
+	<Header>Full Menu Backgrounds</Header>
+	<SubMod>
+		<Name>Crash Site Forest </Name>
+		<InstallationPath>Features/Menubg/menubgfull01</InstallationPath>
+		<Description>A save point in the forest</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/f1.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Black Mage Village Huts</Name>
+		<InstallationPath>Features/Menubg/menubgfull02</InstallationPath>
+		<Description>The huts of the Black Mage</Description>
+		<Group>g-menu-bg</Group>
+		<PreviewFile>preview/f2.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Secret Room</Name>
+		<InstallationPath>Features/Menubg/menubgfull03</InstallationPath>
+		<Description>An Unused Room room for the game </Description>
+		<PreviewFile>preview/f3.png</PreviewFile>
+		<Group>g-menu-bg</Group>
+	</SubMod>
+	<Header>Title Screen</Header>
+	<SubMod>
+		<Name>Recreation</Name>
+		<InstallationPath>Features/TitleLogo/TitleLogo2</InstallationPath>
+		<Description>Shows a much detailed Recreation of title screen</Description>
+		<Default/>
+		<Group>g-title</Group>
+		<PreviewFile>preview/t2.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Alternate</Name>
+		<InstallationPath>Features/TitleLogo/TitleLogo1</InstallationPath>
+		<Description>Shows an Alternative title screen and Memoria Indicator</Description>
+		<Group>g-title</Group>
+		<PreviewFile>preview/t4.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Old School</Name>
+		<InstallationPath>Features/TitleLogo/TitleLogo3</InstallationPath>
+		<Description>Shows an old school type of title screen</Description>
+		<Group>g-title</Group>
+		<PreviewFile>preview/t3.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Origins</Name>
+		<InstallationPath>Features/TitleLogo/TitleLogo4</InstallationPath>
+		<Description>Original concept of the logo </Description>
+		<Group>g-title</Group>
+		<PreviewFile>preview/t1.png</PreviewFile>
+	</SubMod>
+	<Header>Extended Options</Header>
+	<SubMod>
+		<Name>Cards: Triple Triad Mat</Name>
+		<InstallationPath>Features/Cards</InstallationPath>
+		<Description>Triple triad inspired mat and UI for the Game</Description>
+		<PreviewFile>preview/tm.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Alternate Colored Maps</Name>
+		<InstallationPath>Features/Maps</InstallationPath>
+		<Description>Alternative Over world Map </Description>
+		<PreviewFile>preview/map1.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Icons: New Curative item Icons</Name>
+		<InstallationPath>Features/NewIcons</InstallationPath>
+		<Description>An reworked set of icons for certain items</Description>
+		<PreviewFile>preview/i1.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>UI Sound: Alt Cursor Sound  </Name>
+		<InstallationPath>Features/CursorSound</InstallationPath>
+		<Description>What i think is a better cursor sound</Description>
+		<Default/>
+	</SubMod>
+	<SubMod>
+		<Name>Concept Art Title Loop</Name>
 		<InstallationPath>Features/TitleLogo/TitleLoop</InstallationPath>
 		<Description>Replace Title Loop Images with Concept Art</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>UI : Disable Alternate Colored Map</Name>
-		<InstallationPath>Features/Maps</InstallationPath>
-		<Description>Disables Alternative Over world Map </Description>
-		<Priority>1</Priority>
+		<PreviewFile>preview/titleloop.png</PreviewFile>
 	</SubMod>
 </Mod>
 
@@ -1058,69 +1042,86 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 
 <Mod>
 	<Name>Cursors Mod</Name>
-	<Version>4.1.1</Version>
+	<Version>4.1.2</Version>
 	<InstallationPath>KupoCursors</InstallationPath>
-	<ReleaseDate>2024-10-01</ReleaseDate>
+	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>Makes the game menu cursor a lot smaller.
 Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff	
 	</Description>
-	<PatchNotes>Second Release</PatchNotes>
+	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/ztddigympwe7shemwy6in/KupoCursors.zip?rlkey=jsa3vs0e9ioybf7upznt0qsyo&amp;st=waxr6kzw&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-Cursors.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313891-596422989.png</PreviewFileUrl>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
 	<SubMod>
-		<Name>Configure</Name>
-		<InstallationPath>Features/Zecrets</InstallationPath>
-		<Description>Click Here to Configure mods</Description>
-		<Priority>100</Priority>
+		<Name>Cursor : Hand</Name>
+		<InstallationPath>Features/SmallHand</InstallationPath>
+		<Description>Transforms cursor to a Scaled down original cursor</Description>
+		<Priority>10</Priority>
+		<Default/>
+		<Group>g-cursors</Group>
+		<PreviewFile>preview/curso-preview-hand.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>Cursor : Dagger</Name>
 		<InstallationPath>Features/Dagger</InstallationPath>
 		<Description>Transforms cursor to a Dagger</Description>
 		<Priority>10</Priority>
+		<Group>g-cursors</Group>
+		<PreviewFile>preview/curso-preview-dagger.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>Cursor : Ultima Blade</Name>
 		<InstallationPath>Features/Ultimablade</InstallationPath>
 		<Description>Transforms cursor to the head of Ultima Weapon</Description>
 		<Priority>10</Priority>
+		<Group>g-cursors</Group>
+		<PreviewFile>preview/curso-preview-ultima.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>Cursor : Staff</Name>
 		<InstallationPath>Features/Staff</InstallationPath>
 		<Description>Transforms cursor to the head of Ultima Weapon</Description>
 		<Priority>10</Priority>
+		<Group>g-cursors</Group>
+		<PreviewFile>preview/curso-preview-staff.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>Cursor : Pixel</Name>
 		<InstallationPath>Features/Pixel</InstallationPath>
 		<Description>Transforms cursor to the og Pixelated version</Description>
 		<Priority>10</Priority>
+		<Group>g-cursors</Group>
+		<PreviewFile>preview/curso-preview-pixel.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>Cursor : Outlined</Name>
 		<InstallationPath>Features/Outlined</InstallationPath>
 		<Description>Transforms cursor to an Outlined Version by Resinated</Description>
 		<Priority>10</Priority>
+		<Group>g-cursors</Group>
+		<PreviewFile>preview/curso-preview-outline.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
 		<Name>Cursor : Record Keeper</Name>
 		<InstallationPath>Features/Record</InstallationPath>
 		<Description>Transforms cursor to the one of Record Keeper</Description>
 		<Priority>10</Priority>
-	</SubMod>				
+		<Group>g-cursors</Group>
+		<PreviewFile>preview/curso-preview-record.jpg</PreviewFile>
+	</SubMod>
 	<SubMod>
 		<Name>Cursor : Feather</Name>
 		<InstallationPath>Features/Feather</InstallationPath>
 		<Description>Transforms cursor to look like a quill </Description>
 		<Priority>10</Priority>
-	</SubMod>	
+		<Group>g-cursors</Group>
+		<PreviewFile>preview/curso-preview-feather.jpg</PreviewFile>
+	</SubMod>
 </Mod>
 
 <Mod>
@@ -1139,9 +1140,9 @@ Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff
 
 <Mod>
 	<Name>Kupo Controller Pack</Name>
-	<Version>4.1.1</Version>
+	<Version>4.1.3</Version>
 	<InstallationPath>KupoButtonsPack</InstallationPath>
-	<ReleaseDate>2024-08-21</ReleaseDate>
+	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-27</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>The original COMPLETE controller buttons pack of FF9.
@@ -1156,56 +1157,56 @@ Available Themes:
   if you want it old School
 - SNES North American one [via request]
   Because we can.
-
  A component of Kupo Library formerly Mog Add-ons</Description>
-	<PatchNotes>First Split Release</PatchNotes>
+	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/aro9kltyr05pwgspwi9bg/KupoButtonsPack.zip?rlkey=6gg5g2fkizchhp4vthop0v4nd&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-buttons-pack.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313891-536918021.png</PreviewFileUrl>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
+	<Header>Buttons Prompts</Header>
 	<SubMod>
-		<Name>Configure</Name>
-		<InstallationPath>Features/Zecrets</InstallationPath>
-		<Description>Click Here to Configure mods</Description>
-		<Priority>100</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Buttons : PS5 (DualSense)</Name>
-		<InstallationPath>Features/ButtonsPS5</InstallationPath>
-		<Description>Makes Button 5 like in PS5</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Buttons : PS Gloss (DS4)</Name>
+		<Name>PS Gloss (DS4)</Name>
 		<InstallationPath>Features/ButtonsPS4Gloss</InstallationPath>
 		<Description>Glossy PS4 buttons</Description>
-		<Priority>1</Priority>
+		<Default/>
+		<Group>g-controller</Group>
+		<PreviewFile>preview/controller-ps4gloss.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Buttons : PS Vanilla (PSX)</Name>
+		<Name>PS5 (DualSense)</Name>
+		<InstallationPath>Features/ButtonsPS5</InstallationPath>
+		<Description>Makes Button 5 like in PS5</Description>
+		<Group>g-controller</Group>
+		<PreviewFile>preview/controller-ps5.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>PS Vanilla (PSX)</Name>
 		<InstallationPath>Features/ButtonsPSX</InstallationPath>
 		<Description>PS prompts in the same Style as the default xbox prompts</Description>
-		<Priority>1</Priority>
+		<Group>g-controller</Group>
+		<PreviewFile>preview/controller-psx.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Buttons : Pixels (PSX)</Name>
+		<Name>Pixels (PSX)</Name>
 		<InstallationPath>Features/ButtonsPixel</InstallationPath>
 		<Description>Pixelated Prompts if that is your thing</Description>
-		<Priority>1</Priority>
+		<Group>g-controller</Group>
+		<PreviewFile>preview/controller-pixel.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Buttons : Default Xbox</Name>
-		<InstallationPath>Features/ButtonsXbox</InstallationPath>
-		<Description>Restores Default Xbox Prompts</Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Buttons : SNES</Name>
+		<Name>SNES</Name>
 		<InstallationPath>Features/ButtonsSNES</InstallationPath>
 		<Description>A Requested SNES or Switch layout </Description>
-		<Priority>1</Priority>
+		<Group>g-controller</Group>
+		<PreviewFile>preview/controller-snes.jpg</PreviewFile>
+	</SubMod>
+		<SubMod>
+		<Name>Default Xbox</Name>
+		<InstallationPath>Features/ButtonsXbox</InstallationPath>
+		<Description>Restores Default Xbox Prompts</Description>
+		<Group>g-controller</Group>
 	</SubMod>
 </Mod>
 
@@ -1267,61 +1268,61 @@ Available Themes:
 
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.1.2</Version>
+	<Version>4.1.3</Version>
 	<InstallationPath>KupoPortraits</InstallationPath>
-	<ReleaseDate>2024-10-18</ReleaseDate>
+	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>To DFFOO fans this is where the DFFOO portraits resides
 All presets contain portrait support for Kuja, Fratley , Lani and even some planned characters to be added. 
-
 Available Presets: 
-[1] Default Extended : contains a nodded version of the default portraits with enhanced Marcus, Cinna etc. 
-on by default	
-[2] Opera Omnia Portraits : contains  Dissidia Final Fantasy Opera Omnia portraits
-[2.1] Opera Omnia Portraits : contains  DFFOO Pluto Knight / White Mage
-[3] PSX Upscaled : waifu2x Upscaled psx versions 
+Default Extended : contains a nodded version of the default portraits with enhanced Marcus, Cinna etc.	
+Opera Omnia : contains  Dissidia Final Fantasy Opera Omnia portraits
+Opera Omnia Alt :  DFFOO Pluto Knight / White Mage
+PSX Upscaled : waifu2x Upscaled psx versions 
 
 Mod Order : Must be Place Above the mods mentioned above Playable Character Pack , Beatrix Mod , Tantalus mod and 
 Kupo UI Suite. 
 The Original Portraits Pack, part of the Kupo Mods, formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Version bump and new default portrait for Cinna and description update</PatchNotes>
+	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/80dpdv5kn378cw27fay0q/KupoPortraits.zip?rlkey=dnb8htsnmqzoehuibij9tarxd&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-portraits.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/31/31-1724313903-663823797.png</PreviewFileUrl>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
+	<Header>Regular Portraits</Header>
 	<SubMod>
-		<Name>Configure</Name>
-		<InstallationPath>Features/Zecrets</InstallationPath>
-		<Description>Click Here to Configure</Description>
-		<Priority>100</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Portraits : Default Extended Cast</Name>
+		<Name>Default Extended Cast</Name>
 		<InstallationPath>Features/PortraitDefault</InstallationPath>
 		<Description>Default Portraits that includes Kuja, Fratly and Lani [on by Default]</Description>
-		<Priority>1</Priority>
+		<Default/>
+		<Group>g-port</Group>
+		<PreviewFile>preview/ext.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Portraits : Opera Omnia</Name>
+		<Name>PSX Upscaled</Name>
+		<InstallationPath>Features/PortraitPSXUpscale</InstallationPath>
+		<Description>original psx release Upscaled using waifu2x and Gigapixel</Description>
+		<Group>g-port</Group>
+		<PreviewFile>preview/old.jpg</PreviewFile>		
+	</SubMod>
+	<Header>DFFOO Portraits</Header>
+	<SubMod>
+		<Name>Opera Omnia</Name>
 		<InstallationPath>Features/PortraitOperaOmnia</InstallationPath>
 		<Description>Dissidia Opera Omnia Portraits</Description>
 		<Priority>1</Priority>
+		<Group>g-port</Group>
+		<PreviewFile>preview/dffoo-alt.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Portraits : DFFOO Pluto Knight / White Mage </Name>
+		<Name>DFFOO Pluto Knight / White Mage </Name>
 		<InstallationPath>Features/PortraitOperaOmniaPCP</InstallationPath>
 		<Description>DFFOO Style for Extra costumes for Zidane and Garnet, must be used with the Opera Omnia portraits </Description>
-		<Priority>1</Priority>
-	</SubMod>
-	<SubMod>
-		<Name>Portraits : PSX Upscaled</Name>
-		<InstallationPath>Features/PortraitPSXUpscale</InstallationPath>
-		<Description>original psx release Upscaled using waifu2x and Gigapixel</Description>
-		<Priority>1</Priority>
+		<Priority>2</Priority>
+		<PreviewFile>preview/dffoo.jpg</PreviewFile>		
 	</SubMod>
 </Mod>
 
@@ -1398,9 +1399,9 @@ Idea by Snouz and made by DV.</Description>
 
 <Mod>
 	<Name>Modern Labels + </Name>
-	<Version>4.1.1</Version>
+	<Version>4.1.2</Version>
 	<InstallationPath>KupoModernLabels</InstallationPath>
-	<ReleaseDate>2024-10-29</ReleaseDate>
+	<ReleaseDate>2024-12-06</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A mod that replaces old item, spell and UI names / labels to their modern counterparts 
@@ -1409,14 +1410,13 @@ Simply activate and that should work.
 For now the primary focus of the mod is the US and UK translation of the game so non english language players feel free to message me if you have something you want to change in your 
 Language of choice. 
 	</Description>
-	<PatchNotes>Added option for additional field script and corrected Key Item desciption bug. 
-Expanded project scope to include interface, commands and more. </PatchNotes>
+	<PatchNotes>Improved compatibility with the mod manager </PatchNotes>
 	<Category>Translation</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/mi4qmy3h2qqoa57bf8wzu/KupoModernLabels.zip?rlkey=hfbawmgaiijosth1u6wcomwbk&amp;st=zcvbfu94&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-Modern-Items-spells.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/74/74-1729218273-991909550.png</PreviewFileUrl>
-	<MinimumMemoriaVersion>2022.11.11</MinimumMemoriaVersion>
+	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
 	<SubMod>
 		<Name>Enable Extended</Name>
 		<InstallationPath>extended</InstallationPath>
