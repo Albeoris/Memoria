@@ -1323,6 +1323,14 @@ The Original Portraits Pack, part of the Kupo Mods, formerly Mog Add-ons.
 		<PreviewFile>preview/ext.jpg</PreviewFile>
 	</SubMod>
 	<SubMod>
+		<Name>PSX Like</Name>
+		<InstallationPath>Features/PortraitPSXLike</InstallationPath>
+		<Description> PSX Like includes Kuja, Fratly and Lani</Description>
+		<Default/>
+		<Group>g-port</Group>
+		<PreviewFile>preview/ext.jpg</PreviewFile>
+	</SubMod>
+	<SubMod>
 		<Name>PSX Upscaled</Name>
 		<InstallationPath>Features/PortraitPSXUpscale</InstallationPath>
 		<Description>original psx release Upscaled using waifu2x and Gigapixel</Description>
