@@ -897,17 +897,17 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<PreviewFile>preview/b3.png</PreviewFile>
 	</SubMod>
 	<SubMod>
-		<Name>Default</Name>
-		<InstallationPath>Features/Menubg/</InstallationPath>
-		<Description>Default Background</Description>
-		<Group>g-menu-bg</Group>
-	</SubMod>
-	<SubMod>
 		<Name>Chocobo</Name>
 		<InstallationPath>Features/Menubg/menubgchocobo</InstallationPath>
 		<Description>Chocobo Pattern on Menu Background</Description>
 		<Group>g-menu-bg</Group>
 		<PreviewFile>preview/b2.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Default</Name>
+		<InstallationPath>Features/Menubg/</InstallationPath>
+		<Description>Default Background</Description>
+		<Group>g-menu-bg</Group>
 	</SubMod>
 	<Header>Full Menu Backgrounds</Header>
 	<SubMod>
