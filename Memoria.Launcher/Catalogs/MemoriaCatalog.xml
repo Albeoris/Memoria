@@ -848,21 +848,30 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<Group>g-ui-theme</Group>
 		<PreviewFile>preview/d5.png</PreviewFile>
 	</SubMod>
+	<SubMod>
+		<Name>Default</Name>
+		<InstallationPath>Features/DialogueBox/</InstallationPath>
+		<Description>Default</Description>
+		<Group>g-ui-theme</Group>
+	</SubMod>
 	<Header>UI Misc Options</Header>
 	<SubMod>
 		<Name>UI Option: Borderless</Name>
 		<InstallationPath>Features/frames/borderless</InstallationPath>
 		<Description>Remove white Border mostly for testing purposes </Description>
+		<Priority>4</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>UI Option: No Divider</Name>
 		<InstallationPath>Features/frames/divideless</InstallationPath>
 		<Description>removes dividers in menu</Description>
+		<Priority>4</Priority>
 	</SubMod>
 	<SubMod>
 		<Name>UI Option: No Highlight</Name>
 		<InstallationPath>Features/frames/highlightless</InstallationPath>
 		<Description>Removes dividers in menu</Description>
+		<Priority>4</Priority>
 	</SubMod>
 	<Header>Tiled Menu Backgrounds</Header>
 	<SubMod>
@@ -886,6 +895,12 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<Description>Tantalus Pattern on Menu Background</Description>
 		<Group>g-menu-bg</Group>
 		<PreviewFile>preview/b3.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Default</Name>
+		<InstallationPath>Features/Menubg/</InstallationPath>
+		<Description>Default Background</Description>
+		<Group>g-menu-bg</Group>
 	</SubMod>
 	<SubMod>
 		<Name>Chocobo</Name>
@@ -945,6 +960,12 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<Description>Original concept of the logo </Description>
 		<Group>g-title</Group>
 		<PreviewFile>preview/t1.png</PreviewFile>
+	</SubMod>
+	<SubMod>
+		<Name>Default</Name>
+		<InstallationPath>Features/TitleLogo/</InstallationPath>
+		<Description>Original concept of the logo </Description>
+		<Group>g-title</Group>
 	</SubMod>
 	<Header>Extended Options</Header>
 	<SubMod>
