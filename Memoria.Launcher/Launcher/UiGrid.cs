@@ -144,7 +144,12 @@ namespace Memoria.Launcher
                             if (tooltipTextBlock != null && tooltipImage.Width > 275)
                                 tooltipTextBlock.MaxWidth = tooltipImage.Width;
                         };
-                        tooltipImage.Source = new BitmapImage(new Uri(imagePath));
+                        BitmapImage bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.UriSource = new Uri(imagePath);
+                        bitmap.EndInit();
+                        tooltipImage.Source = bitmap;
                         RenderOptions.SetBitmapScalingMode(tooltipImage, BitmapScalingMode.HighQuality);
                         tooltipStackPanel.Children.Add(tooltipImage);
                     }
