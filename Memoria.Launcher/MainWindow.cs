@@ -54,7 +54,7 @@ namespace Memoria.Launcher
             KeyUp += ModManagerWindow_KeyUp;
         }
 
-        public const String DefaultAccentColor = "#CC355566";
+        public static readonly Color DefaultAccentColor = (Color)ColorConverter.ConvertFromString("#CC355566");
         public const String DefaultBackgroundImage = "pack://application:,,,/images/new_launcher_bg.jpg";
 
         private void OnLoaded(Object sender, RoutedEventArgs e)

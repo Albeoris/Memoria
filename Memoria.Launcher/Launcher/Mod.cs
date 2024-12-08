@@ -244,6 +244,8 @@ namespace Memoria.Launcher
                 sub.Category = subNode["Category"]?.InnerText;
                 sub.PreviewFile = subNode["PreviewFile"]?.InnerText;
                 sub.PreviewFileUrl = subNode["PreviewFileUrl"]?.InnerText;
+                sub.LauncherColor = subNode["LauncherColor"]?.InnerText;
+                sub.LauncherBackground = subNode["LauncherBackground"]?.InnerText;
 
                 sub.Group = subNode["Group"]?.InnerText;
                 sub.IsDefault = subNode["Default"] != null;
