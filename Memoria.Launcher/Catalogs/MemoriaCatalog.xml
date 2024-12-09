@@ -564,38 +564,43 @@ Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
 
 <Mod>
 	<Name>Tantalus</Name>
-	<Version>3.2</Version>
+	<Version>3.3</Version>
 	<InstallationPath>PlayableTantalus</InstallationPath>
 	<ReleaseDateOriginal>2024-06-14</ReleaseDateOriginal>
-	<ReleaseDate>2024-09-03</ReleaseDate>
-	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
+	<ReleaseDate>2024-12-09</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
 	<IncompatibleWith>Beatrix Mod, Trance Seek</IncompatibleWith>
 	<Author>Emeiru</Author>
-	<Description>Overhauls Blank, Cinna, and Marcus to become actually usable characters
-Includes: 
+<Description>Overhauls Blank, Cinna, and Marcus to become actually usable characters
 - The tantalus trio with their own set of active and supporting abilities
 - Base stats improvements
 - Steal-Gil and Mug buffed
 - New items and tweaks to complement the trio and thief gameplay
-- Minor name and ability text changes</Description>
-	<PatchNotes>Complete changes and info can be found on this mod's page.</PatchNotes>
+- Minor name and ability text changes
+
+Compatible with Alternate Fantasy</Description>
+	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/64</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/mkmzntygv46sh4qg4qjxi/PlayableTantalus.zip?rlkey=r92lksa6neyz3g52nkiyb6rhq&amp;dl=1</DownloadUrl>
 	<PreviewFile>Tantalus.jpg</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/64/64-1723918805-1871056882.jpeg</PreviewFileUrl>
+	<Header>Game Mode</Header>
 	<SubMod>
-		<Name>Vanilla FFIX</Name>
+		<Name>Vanilla</Name>
 		<InstallationPath>Vanilla</InstallationPath>
 		<Description>Version for regular FFIX</Description>
 		<Priority>1</Priority>
+		<Group>GameMode</Group>
 		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
+		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
 		<Description>Version for Alternate Fantasy</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
+		<Group>GameMode</Group>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
 	</SubMod>
 </Mod>
