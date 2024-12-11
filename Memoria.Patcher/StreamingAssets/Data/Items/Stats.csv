@@ -4,183 +4,183 @@
 # 1-Fire, 2-Ice, 4-Thunder, 8-Earth,
 # 16-Water, 32-Wind, 64-Holy, 128-Dark,
 # 192-Holy+Dark , 255-All
-# -----------------------------------------------
-# Comment                                           ;Id    ;Dexterity ;Strength ;Magic ;Will ;AttackElement ;GuardElement ;AbsorbElement ;HalfElement ;WeakElement
-# String                                            ;Int32 ;Byte      ;Byte     ;Byte  ;Byte ;Byte          ;Byte         ;Byte          ;Byte        ;Byte
-# -----------------------------------------------
-Bonus 0000 -Empty-                                  ;0     ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0001 Wrist                                    ;1     ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0002 Leather Wrist                            ;2     ;0         ;0        ;0     ;1    ;0             ;0            ;0             ;0           ;0
-Bonus 0003 Glass Armlet                             ;3     ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;16          ;0
-Bonus 0004 Bone Wrist                               ;4     ;0         ;1        ;0     ;0    ;8             ;0            ;0             ;0           ;0
-Bonus 0005 Mythril Armlet                           ;5     ;0         ;0        ;0     ;1    ;0             ;0            ;0             ;0           ;0
-Bonus 0006 Magic Armlet                             ;6     ;0         ;0        ;2     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0007 Chimera Armlet                           ;7     ;0         ;0        ;0     ;0    ;0             ;64           ;0             ;0           ;0
-Bonus 0008 Egoist's Armlet                          ;8     ;0         ;0        ;0     ;0    ;0             ;128          ;0             ;0           ;0
-Bonus 0009 N-Kai Armlet                             ;9     ;0         ;0        ;0     ;2    ;0             ;0            ;0             ;0           ;0
-Bonus 0010 Jade Armlet                              ;10    ;0         ;0        ;0     ;0    ;64            ;0            ;0             ;0           ;0
-Bonus 0011 Thief Gloves                             ;11    ;1         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0012 Dragon Wrist                             ;12    ;0         ;0        ;0     ;1    ;0             ;0            ;0             ;128         ;0
-Bonus 0013 Power Wrist                              ;13    ;0         ;2        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0014 Bracer                                   ;14    ;0         ;1        ;0     ;0    ;32            ;0            ;0             ;0           ;0
-Bonus 0015 Bronze Gloves                            ;15    ;0         ;0        ;0     ;1    ;0             ;0            ;0             ;0           ;0
-Bonus 0016 Silver Gloves                            ;16    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;2           ;0
-Bonus 0017 Mythril Gloves                           ;17    ;0         ;0        ;0     ;1    ;0             ;0            ;0             ;0           ;0
-Bonus 0018 Thunder Gloves                           ;18    ;0         ;0        ;0     ;0    ;4             ;0            ;0             ;4           ;0
-Bonus 0019 Diamond Gloves                           ;19    ;0         ;0        ;0     ;0    ;0             ;16           ;0             ;0           ;0
-Bonus 0020 Venetia Shield                           ;20    ;0         ;1        ;1     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0021 Defense Gloves                           ;21    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;7           ;0
-Bonus 0022 Genji Gloves                             ;22    ;0         ;0        ;2     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0023 Aegis Gloves                             ;23    ;0         ;0        ;0     ;0    ;0             ;1            ;0             ;0           ;0
-Bonus 0024 Gauntlets                                ;24    ;1         ;0        ;0     ;0    ;0             ;0            ;0             ;57          ;0
-Bonus 0025 Leather Hat                              ;25    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0026 Straw Hat                                ;26    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;255
-Bonus 0027 Feather Hat                              ;27    ;0         ;0        ;0     ;1    ;32            ;0            ;0             ;0           ;0
-Bonus 0028 Steepled Hat                             ;28    ;0         ;1        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0029 Headgear                                 ;29    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;16          ;0
-Bonus 0030 Magus Hat                                ;30    ;0         ;0        ;0     ;0    ;2             ;0            ;0             ;0           ;0
-Bonus 0031 Bandana                                  ;31    ;1         ;0        ;0     ;1    ;0             ;0            ;0             ;0           ;0
-Bonus 0032 Mage's Hat                               ;32    ;0         ;0        ;1     ;0    ;192           ;0            ;0             ;0           ;0
-Bonus 0033 Lamia's Tiara                            ;33    ;0         ;0        ;1     ;1    ;0             ;0            ;0             ;32          ;0
-Bonus 0034 Ritual Hat                               ;34    ;0         ;1        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0035 Twist Headband                           ;35    ;0         ;1        ;0     ;0    ;8             ;0            ;0             ;0           ;0
-Bonus 0036 Mantra Band                              ;36    ;0         ;0        ;1     ;1    ;0             ;0            ;0             ;0           ;0
-Bonus 0037 Dark Hat                                 ;37    ;0         ;0        ;0     ;0    ;0             ;2            ;0             ;0           ;0
-Bonus 0038 Green Beret                              ;38    ;1         ;1        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0039 Black Hood                               ;39    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;21          ;0
-Bonus 0040 Red Hat                                  ;40    ;0         ;0        ;0     ;0    ;1             ;0            ;0             ;0           ;0
-Bonus 0041 Golden Hairpin                           ;41    ;0         ;0        ;1     ;0    ;16            ;0            ;0             ;0           ;0
-Bonus 0042 Coronet                                  ;42    ;0         ;0        ;0     ;0    ;0             ;32           ;0             ;0           ;0
-Bonus 0043 Flash Hat                                ;43    ;1         ;0        ;0     ;0    ;68            ;0            ;0             ;0           ;0
-Bonus 0044 Adaman Hat                               ;44    ;0         ;0        ;0     ;0    ;0             ;4            ;0             ;0           ;0
-Bonus 0045 Thief Hat                                ;45    ;2         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0046 Holy Miter                               ;46    ;0         ;0        ;1     ;2    ;0             ;0            ;0             ;0           ;0
-Bonus 0047 Golden Skullcap                          ;47    ;0         ;0        ;0     ;0    ;16            ;0            ;0             ;8           ;0
-Bonus 0048 Circlet                                  ;48    ;0         ;0        ;0     ;0    ;0             ;8            ;0             ;0           ;0
-Bonus 0049 Rubber Helm                              ;49    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;4           ;0
-Bonus 0050 Bronze Helm                              ;50    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;16          ;0
-Bonus 0051 Iron Helm                                ;51    ;0         ;0        ;0     ;1    ;0             ;0            ;0             ;0           ;0
-Bonus 0052 Barbut                                   ;52    ;0         ;0        ;0     ;2    ;0             ;0            ;0             ;0           ;0
-Bonus 0053 Mythril Helm                             ;53    ;0         ;0        ;0     ;1    ;64            ;0            ;0             ;0           ;0
-Bonus 0054 Gold Helm                                ;54    ;0         ;0        ;1     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0055 Cross Helm                               ;55    ;0         ;1        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0056 Diamond Helm                             ;56    ;0         ;0        ;0     ;1    ;0             ;0            ;0             ;0           ;0
-Bonus 0057 Platinum Helm                            ;57    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;2           ;0
-Bonus 0058 Kaiser Helm                              ;58    ;0         ;1        ;1     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0059 Genji Helmet                             ;59    ;0         ;0        ;2     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0060 Grand Helm                               ;60    ;1         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0061 Aloha T-shirt                            ;61    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0062 Leather Shirt                            ;62    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0063 Silk Shirt                               ;63    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;4           ;1
-Bonus 0064 Leather Plate                            ;64    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;2           ;0
-Bonus 0065 Bronze Vest                              ;65    ;0         ;0        ;0     ;1    ;0             ;0            ;0             ;0           ;0
-Bonus 0066 Chain Plate                              ;66    ;0         ;1        ;0     ;0    ;0             ;0            ;0             ;0           ;4
-Bonus 0067 Mythril Vest                             ;67    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;16          ;0
-Bonus 0068 Adaman Vest                              ;68    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;1           ;0
-Bonus 0069 Magician Cloak                           ;69    ;0         ;0        ;1     ;0    ;2             ;0            ;0             ;0           ;0
-Bonus 0070 Survival Vest                            ;70    ;0         ;0        ;0     ;2    ;0             ;0            ;0             ;0           ;0
-Bonus 0071 Brigandine                               ;71    ;0         ;1        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0072 Judo Uniform                             ;72    ;0         ;1        ;0     ;1    ;0             ;0            ;0             ;0           ;0
-Bonus 0073 Power Vest                               ;73    ;0         ;2        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0074 Gaia Gear                                ;74    ;0         ;0        ;0     ;0    ;8             ;0            ;8             ;0           ;0
-Bonus 0075 Demon's Vest                             ;75    ;0         ;0        ;1     ;0    ;0             ;0            ;0             ;128         ;0
-Bonus 0076 Minerva's Plate                          ;76    ;0         ;1        ;2     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0077 Ninja Gear                               ;77    ;1         ;0        ;0     ;0    ;0             ;0            ;128           ;0           ;0
-Bonus 0078 Dark Gear                                ;78    ;0         ;0        ;0     ;3    ;0             ;0            ;0             ;0           ;0
-Bonus 0079 Rubber Suit                              ;79    ;0         ;0        ;0     ;0    ;0             ;4            ;0             ;0           ;0
-Bonus 0080 Brave Suit                               ;80    ;0         ;0        ;0     ;1    ;1             ;0            ;0             ;0           ;0
-Bonus 0081 Cotton Robe                              ;81    ;0         ;1        ;1     ;0    ;0             ;0            ;0             ;0           ;1
-Bonus 0082 Silk Robe                                ;82    ;0         ;1        ;1     ;0    ;0             ;0            ;0             ;0           ;1
-Bonus 0083 Magician Robe                            ;83    ;0         ;0        ;2     ;0    ;0             ;0            ;0             ;0           ;1
-Bonus 0084 Glutton's Robe                           ;84    ;0         ;1        ;1     ;0    ;0             ;0            ;0             ;0           ;1
-Bonus 0085 White Robe                               ;85    ;0         ;0        ;2     ;0    ;64            ;0            ;0             ;0           ;1
-Bonus 0086 Black Robe                               ;86    ;0         ;0        ;2     ;0    ;128           ;0            ;0             ;0           ;1
-Bonus 0087 Light Robe                               ;87    ;0         ;1        ;1     ;1    ;192           ;0            ;0             ;0           ;1
-Bonus 0088 Robe of Lords                            ;88    ;1         ;1        ;1     ;1    ;0             ;32           ;0             ;0           ;0
-Bonus 0089 Tin Armor                                ;89    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0090 Bronze Armor                             ;90    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;32          ;0
-Bonus 0091 Linen Cuirass                            ;91    ;0         ;0        ;1     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0092 Chain Mail                               ;92    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;8           ;0
-Bonus 0093 Mythril Armor                            ;93    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;16          ;0
-Bonus 0094 Plate Mail                               ;94    ;0         ;0        ;0     ;1    ;0             ;0            ;0             ;0           ;0
-Bonus 0095 Gold Armor                               ;95    ;0         ;0        ;1     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0096 Shield Armor                             ;96    ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;7           ;0
-Bonus 0097 Demon's Mail                             ;97    ;0         ;0        ;0     ;0    ;128           ;0            ;128           ;0           ;0
-Bonus 0098 Diamond Armor                            ;98    ;0         ;1        ;1     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0099 Platina Armor                            ;99    ;0         ;0        ;0     ;0    ;0             ;2            ;0             ;0           ;0
-Bonus 0100 Carabini Mail                            ;100   ;1         ;0        ;0     ;1    ;0             ;0            ;0             ;0           ;0
-Bonus 0101 Dragon Mail                              ;101   ;0         ;1        ;1     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0102 Genji Armor                              ;102   ;0         ;0        ;2     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0103 Maximillian                              ;103   ;0         ;0        ;0     ;3    ;0             ;0            ;0             ;0           ;0
-Bonus 0104 Grand Armor                              ;104   ;0         ;1        ;0     ;0    ;0             ;0            ;0             ;128         ;0
-Bonus 0105 Desert Boots                             ;105   ;0         ;0        ;1     ;1    ;0             ;0            ;0             ;8           ;16
-Bonus 0106 Magician Shoes                           ;106   ;0         ;0        ;2     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0107 Germinas Boots                           ;107   ;0         ;1        ;0     ;0    ;8             ;0            ;0             ;0           ;0
-Bonus 0108 Sandals                                  ;108   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0109 Feather Boots                            ;109   ;0         ;0        ;0     ;0    ;0             ;0            ;8             ;0           ;0
-Bonus 0110 Battle Boots                             ;110   ;0         ;2        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0111 Running Shoes                            ;111   ;2         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0112 Anklet                                   ;112   ;0         ;0        ;3     ;1    ;0             ;0            ;0             ;0           ;0
-Bonus 0113 Power Belt                               ;113   ;0         ;3        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0114 Black Belt                               ;114   ;0         ;2        ;0     ;2    ;32            ;0            ;0             ;0           ;0
-Bonus 0115 Glass Buckle                             ;115   ;0         ;1        ;1     ;2    ;0             ;0            ;0             ;0           ;0
-Bonus 0116 Madain's Ring                            ;116   ;0         ;0        ;0     ;2    ;0             ;0            ;2             ;0           ;0
-Bonus 0117 Rosetta Ring                             ;117   ;0         ;0        ;1     ;0    ;0             ;0            ;1             ;0           ;0
-Bonus 0118 Reflect Ring                             ;118   ;0         ;1        ;0     ;1    ;0             ;0            ;0             ;0           ;7
-Bonus 0119 Coral Ring                               ;119   ;0         ;0        ;0     ;2    ;0             ;0            ;4             ;0           ;0
-Bonus 0120 Promist Ring                             ;120   ;0         ;2        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0121 Rebirth Ring                             ;121   ;0         ;0        ;0     ;4    ;64            ;0            ;0             ;0           ;0
-Bonus 0122 Protect Ring                             ;122   ;0         ;0        ;0     ;1    ;0             ;0            ;0             ;255         ;0
-Bonus 0123 Pumice Piece                             ;123   ;0         ;2        ;2     ;0    ;0             ;0            ;192           ;0           ;0
-Bonus 0124 Pumice                                   ;124   ;1         ;0        ;1     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0125 Yellow Scarf                             ;125   ;0         ;2        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0126 Gold Choker                              ;126   ;0         ;0        ;2     ;0    ;128           ;0            ;0             ;32          ;0
-Bonus 0127 Fairy Earrings                           ;127   ;0         ;0        ;0     ;2    ;32            ;0            ;0             ;0           ;0
-Bonus 0128 Angel Earrings                           ;128   ;0         ;2        ;0     ;0    ;64            ;0            ;0             ;0           ;0
-Bonus 0129 Pearl Rouge                              ;129   ;0         ;0        ;2     ;4    ;16            ;0            ;0             ;64          ;0
-Bonus 0130 Pearl Armlet                             ;130   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0131 Cachusha                                 ;131   ;1         ;0        ;2     ;1    ;1             ;0            ;0             ;0           ;0
-Bonus 0132 Barette                                  ;132   ;0         ;3        ;1     ;1    ;2             ;0            ;0             ;0           ;0
-Bonus 0133 Extension                                ;133   ;0         ;1        ;2     ;1    ;4             ;0            ;0             ;0           ;0
-Bonus 0134 Ribbon                                   ;134   ;0         ;1        ;3     ;1    ;0             ;0            ;48            ;71          ;0
-Bonus 0135 Maiden Prayer                            ;135   ;0         ;0        ;1     ;0    ;64            ;0            ;0             ;0           ;128
-Bonus 0136 Ancient Aroma                            ;136   ;0         ;2        ;0     ;0    ;128           ;0            ;0             ;0           ;64
-Bonus 0137 Garnet                                   ;137   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0138 Amethyst                                 ;138   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0139 Aquamarine                               ;139   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0140 Diamond                                  ;140   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0141 Emerald                                  ;141   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0142 Moonstone                                ;142   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0143 Ruby                                     ;143   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0144 Peridot                                  ;144   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0145 Sapphire                                 ;145   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0146 Opal                                     ;146   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0147 Topaz                                    ;147   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0148 Lapis Lazuli                             ;148   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0149 Orichalcon                               ;149   ;1         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0150 Masamune                                 ;150   ;1         ;0        ;2     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0151 Defender                                 ;151   ;0         ;0        ;0     ;3    ;0             ;0            ;0             ;6           ;0
-Bonus 0152 Save The Queen                           ;152   ;1         ;2        ;2     ;5    ;0             ;0            ;0             ;1           ;0
-Bonus 0153 Magic Racket                             ;153   ;0         ;0        ;2     ;0    ;64            ;0            ;0             ;0           ;0
-Bonus 0154 Stardust Rod                             ;154   ;0         ;0        ;0     ;2    ;0             ;0            ;0             ;128         ;0
-Bonus 0155 Octagon Rod                              ;155   ;0         ;0        ;0     ;0    ;16            ;0            ;48            ;0           ;32
-Bonus 0156 Dark Matter                              ;156   ;0         ;3        ;2     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0157 -Empty-                                  ;157   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0158 -Empty-                                  ;158   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0159 -Empty-                                  ;159   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0160 -Empty-                                  ;160   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0161 -Empty-                                  ;161   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0162 -Empty-                                  ;162   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0163 -Empty-                                  ;163   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0164 -Empty-                                  ;164   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0165 -Empty-                                  ;165   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0166 -Empty-                                  ;166   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0167 -Empty-                                  ;167   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0168 -Empty-                                  ;168   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0169 -Empty-                                  ;169   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0170 -Empty-                                  ;170   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0171 -Empty-                                  ;171   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0172 -Empty-                                  ;172   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0173 -Empty-                                  ;173   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0174 -Empty-                                  ;174   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
-Bonus 0175 -Empty-                                  ;175   ;0         ;0        ;0     ;0    ;0             ;0            ;0             ;0           ;0
+# -----------------------------
+# Comment;Id;Dexterity;Strength;Magic;Will;AttackElement;GuardElement;AbsorbElement;HalfElement;WeakElement
+# String;Int32;Byte;Byte;Byte;Byte;Byte;Byte;Byte;Byte;Byte
+# -----------------------------
+Bonus 0000 -Free-;0;0;0;0;0;0;0;0;0;0
+Bonus 0001 Wrist;1;0;0;0;0;0;0;0;0;0
+Bonus 0002 Leather Wrist;2;0;0;0;1;0;0;0;0;0
+Bonus 0003 Glass Armlet;3;0;0;0;0;0;0;0;16;0
+Bonus 0004 Bone Wrist;4;0;1;0;0;8;0;0;0;0
+Bonus 0005 Mythril Armlet;5;0;0;0;1;0;0;0;0;0
+Bonus 0006 Magic Armlet;6;0;0;2;0;0;0;0;0;0
+Bonus 0007 Chimera Armlet;7;0;0;0;0;0;64;0;0;0
+Bonus 0008 Egoist's Armlet;8;0;0;0;0;0;128;0;0;0
+Bonus 0009 N-Kai Armlet;9;0;0;0;2;0;0;0;0;0
+Bonus 0010 Jade Armlet;10;0;0;0;0;64;0;0;0;0
+Bonus 0011 Thief Gloves;11;1;0;0;0;0;0;0;0;0
+Bonus 0012 Dragon Wrist;12;0;0;0;1;0;0;0;128;0
+Bonus 0013 Power Wrist;13;0;2;0;0;0;0;0;0;0
+Bonus 0014 Bracer;14;0;1;0;0;32;0;0;0;0
+Bonus 0015 Bronze Gloves;15;0;0;0;1;0;0;0;0;0
+Bonus 0016 Silver Gloves;16;0;0;0;0;0;0;0;2;0
+Bonus 0017 Mythril Gloves;17;0;0;0;1;0;0;0;0;0
+Bonus 0018 Thunder Gloves;18;0;0;0;0;4;0;0;4;0
+Bonus 0019 Diamond Gloves;19;0;0;0;0;0;16;0;0;0
+Bonus 0020 Venetia Shield;20;0;1;1;0;0;0;0;0;0
+Bonus 0021 Defense Gloves;21;0;0;0;0;0;0;0;7;0
+Bonus 0022 Genji Gloves;22;0;0;2;0;0;0;0;0;0
+Bonus 0023 Aegis Gloves;23;0;0;0;0;0;1;0;0;0
+Bonus 0024 Gauntlets;24;1;0;0;0;0;0;0;57;0
+Bonus 0025 Leather Hat;25;0;0;0;0;0;0;0;0;0
+Bonus 0026 Straw Hat;26;0;0;0;0;0;0;0;0;255
+Bonus 0027 Feather Hat;27;0;0;0;1;32;0;0;0;0
+Bonus 0028 Steepled Hat;28;0;1;0;0;0;0;0;0;0
+Bonus 0029 Headgear;29;0;0;0;0;0;0;0;16;0
+Bonus 0030 Magus Hat;30;0;0;0;0;2;0;0;0;0
+Bonus 0031 Bandana;31;1;0;0;1;0;0;0;0;0
+Bonus 0032 Mage's Hat;32;0;0;1;0;192;0;0;0;0
+Bonus 0033 Lamia's Tiara;33;0;0;1;1;0;0;0;32;0
+Bonus 0034 Ritual Hat;34;0;1;0;0;0;0;0;0;0
+Bonus 0035 Twist Headband;35;0;1;0;0;8;0;0;0;0
+Bonus 0036 Mantra Band;36;0;0;1;1;0;0;0;0;0
+Bonus 0037 Dark Hat;37;0;0;0;0;0;2;0;0;0
+Bonus 0038 Green Beret;38;1;1;0;0;0;0;0;0;0
+Bonus 0039 Black Hood;39;0;0;0;0;0;0;0;21;0
+Bonus 0040 Red Hat;40;0;0;0;0;1;0;0;0;0
+Bonus 0041 Golden Hairpin;41;0;0;1;0;16;0;0;0;0
+Bonus 0042 Coronet;42;0;0;0;0;0;32;0;0;0
+Bonus 0043 Flash Hat;43;1;0;0;0;68;0;0;0;0
+Bonus 0044 Adaman Hat;44;0;0;0;0;0;4;0;0;0
+Bonus 0045 Thief Hat;45;2;0;0;0;0;0;0;0;0
+Bonus 0046 Holy Miter;46;0;0;1;2;0;0;0;0;0
+Bonus 0047 Golden Skullcap;47;0;0;0;0;16;0;0;8;0
+Bonus 0048 Circlet;48;0;0;0;0;0;8;0;0;0
+Bonus 0049 Rubber Helm;49;0;0;0;0;0;0;0;4;0
+Bonus 0050 Bronze Helm;50;0;0;0;0;0;0;0;16;0
+Bonus 0051 Iron Helm;51;0;0;0;1;0;0;0;0;0
+Bonus 0052 Barbut;52;0;0;0;2;0;0;0;0;0
+Bonus 0053 Mythril Helm;53;0;0;0;1;64;0;0;0;0
+Bonus 0054 Gold Helm;54;0;0;1;0;0;0;0;0;0
+Bonus 0055 Cross Helm;55;0;1;0;0;0;0;0;0;0
+Bonus 0056 Diamond Helm;56;0;0;0;1;0;0;0;0;0
+Bonus 0057 Platinum Helm;57;0;0;0;0;0;0;0;2;0
+Bonus 0058 Kaiser Helm;58;0;1;1;0;0;0;0;0;0
+Bonus 0059 Genji Helmet;59;0;0;2;0;0;0;0;0;0
+Bonus 0060 Grand Helm;60;1;0;0;0;0;0;0;0;0
+Bonus 0061 Aloha T-shirt;61;0;0;0;0;0;0;0;0;0
+Bonus 0062 Leather Shirt;62;0;0;0;0;0;0;0;0;0
+Bonus 0063 Silk Shirt;63;0;0;0;0;0;0;0;4;1
+Bonus 0064 Leather Plate;64;0;0;0;0;0;0;0;2;0
+Bonus 0065 Bronze Vest;65;0;0;0;1;0;0;0;0;0
+Bonus 0066 Chain Plate;66;0;1;0;0;0;0;0;0;4
+Bonus 0067 Mythril Vest;67;0;0;0;0;0;0;0;16;0
+Bonus 0068 Adaman Vest;68;0;0;0;0;0;0;0;1;0
+Bonus 0069 Magician Cloak;69;0;0;1;0;2;0;0;0;0
+Bonus 0070 Survival Vest;70;0;0;0;2;0;0;0;0;0
+Bonus 0071 Brigandine;71;0;1;0;0;0;0;0;0;0
+Bonus 0072 Judo Uniform;72;0;1;0;1;0;0;0;0;0
+Bonus 0073 Power Vest;73;0;2;0;0;0;0;0;0;0
+Bonus 0074 Gaia Gear;74;0;0;0;0;8;0;8;0;0
+Bonus 0075 Demon's Vest;75;0;0;1;0;0;0;0;128;0
+Bonus 0076 Minerva's Plate;76;0;1;2;0;0;0;0;0;0
+Bonus 0077 Ninja Gear;77;1;0;0;0;0;0;128;0;0
+Bonus 0078 Dark Gear;78;0;0;0;3;0;0;0;0;0
+Bonus 0079 Rubber Suit;79;0;0;0;0;0;4;0;0;0
+Bonus 0080 Brave Suit;80;0;0;0;1;1;0;0;0;0
+Bonus 0081 Cotton Robe;81;0;1;1;0;0;0;0;0;1
+Bonus 0082 Silk Robe;82;0;1;1;0;0;0;0;0;1
+Bonus 0083 Magician Robe;83;0;0;2;0;0;0;0;0;1
+Bonus 0084 Glutton's Robe;84;0;1;1;0;0;0;0;0;1
+Bonus 0085 White Robe;85;0;0;2;0;64;0;0;0;1
+Bonus 0086 Black Robe;86;0;0;2;0;128;0;0;0;1
+Bonus 0087 Light Robe;87;0;1;1;1;192;0;0;0;1
+Bonus 0088 Robe of Lords;88;1;1;1;1;0;32;0;0;0
+Bonus 0089 Tin Armor;89;0;0;0;0;0;0;0;0;0
+Bonus 0090 Bronze Armor;90;0;0;0;0;0;0;0;32;0
+Bonus 0091 Linen Cuirass;91;0;0;1;0;0;0;0;0;0
+Bonus 0092 Chain Mail;92;0;0;0;0;0;0;0;8;0
+Bonus 0093 Mythril Armor;93;0;0;0;0;0;0;0;16;0
+Bonus 0094 Plate Mail;94;0;0;0;1;0;0;0;0;0
+Bonus 0095 Gold Armor;95;0;0;1;0;0;0;0;0;0
+Bonus 0096 Shield Armor;96;0;0;0;0;0;0;0;7;0
+Bonus 0097 Demon's Mail;97;0;0;0;0;128;0;128;0;0
+Bonus 0098 Diamond Armor;98;0;1;1;0;0;0;0;0;0
+Bonus 0099 Platina Armor;99;0;0;0;0;0;2;0;0;0
+Bonus 0100 Carabini Mail;100;1;0;0;1;0;0;0;0;0
+Bonus 0101 Dragon Mail;101;0;1;1;0;0;0;0;0;0
+Bonus 0102 Genji Armor;102;0;0;2;0;0;0;0;0;0
+Bonus 0103 Maximillian;103;0;0;0;3;0;0;0;0;0
+Bonus 0104 Grand Armor;104;0;1;0;0;0;0;0;128;0
+Bonus 0105 Desert Boots;105;0;0;1;1;0;0;0;8;16
+Bonus 0106 Magician Shoes;106;0;0;2;0;0;0;0;0;0
+Bonus 0107 Germinas Boots;107;0;1;0;0;8;0;0;0;0
+Bonus 0108 Sandals;108;0;0;0;0;0;0;0;0;0
+Bonus 0109 Feather Boots;109;0;0;0;0;0;0;8;0;0
+Bonus 0110 Battle Boots;110;0;2;0;0;0;0;0;0;0
+Bonus 0111 Running Shoes;111;2;0;0;0;0;0;0;0;0
+Bonus 0112 Anklet;112;0;0;3;1;0;0;0;0;0
+Bonus 0113 Power Belt;113;0;3;0;0;0;0;0;0;0
+Bonus 0114 Black Belt;114;0;2;0;2;32;0;0;0;0
+Bonus 0115 Glass Buckle;115;0;1;1;2;0;0;0;0;0
+Bonus 0116 Madain's Ring;116;0;0;0;2;0;0;2;0;0
+Bonus 0117 Rosetta Ring;117;0;0;1;0;0;0;1;0;0
+Bonus 0118 Reflect Ring;118;0;1;0;1;0;0;0;0;7
+Bonus 0119 Coral Ring;119;0;0;0;2;0;0;4;0;0
+Bonus 0120 Promist Ring;120;0;2;0;0;0;0;0;0;0
+Bonus 0121 Rebirth Ring;121;0;0;0;4;64;0;0;0;0
+Bonus 0122 Protect Ring;122;0;0;0;1;0;0;0;255;0
+Bonus 0123 Pumice Piece;123;0;2;2;0;0;0;192;0;0
+Bonus 0124 Pumice;124;1;0;1;0;0;0;0;0;0
+Bonus 0125 Yellow Scarf;125;0;2;0;0;0;0;0;0;0
+Bonus 0126 Gold Choker;126;0;0;2;0;128;0;0;32;0
+Bonus 0127 Fairy Earrings;127;0;0;0;2;32;0;0;0;0
+Bonus 0128 Angel Earrings;128;0;2;0;0;64;0;0;0;0
+Bonus 0129 Pearl Rouge;129;0;0;2;4;16;0;0;64;0
+Bonus 0130 Pearl Armlet;130;0;0;0;0;0;0;0;0;0
+Bonus 0131 Cachusha;131;1;0;2;1;1;0;0;0;0
+Bonus 0132 Barette;132;0;3;1;1;2;0;0;0;0
+Bonus 0133 Extension;133;0;1;2;1;4;0;0;0;0
+Bonus 0134 Ribbon;134;0;1;3;1;0;0;48;71;0
+Bonus 0135 Maiden Prayer;135;0;0;1;0;64;0;0;0;128
+Bonus 0136 Ancient Aroma;136;0;2;0;0;128;0;0;0;64
+Bonus 0137 Garnet;137;0;0;0;0;0;0;0;0;0
+Bonus 0138 Amethyst;138;0;0;0;0;0;0;0;0;0
+Bonus 0139 Aquamarine;139;0;0;0;0;0;0;0;0;0
+Bonus 0140 Diamond;140;0;0;0;0;0;0;0;0;0
+Bonus 0141 Emerald;141;0;0;0;0;0;0;0;0;0
+Bonus 0142 Moonstone;142;0;0;0;0;0;0;0;0;0
+Bonus 0143 Ruby;143;0;0;0;0;0;0;0;0;0
+Bonus 0144 Peridot;144;0;0;0;0;0;0;0;0;0
+Bonus 0145 Sapphire;145;0;0;0;0;0;0;0;0;0
+Bonus 0146 Opal;146;0;0;0;0;0;0;0;0;0
+Bonus 0147 Topaz;147;0;0;0;0;0;0;0;0;0
+Bonus 0148 Lapis Lazuli;148;0;0;0;0;0;0;0;0;0
+Bonus 0149 Orichalcon;149;1;0;0;0;0;0;0;0;0
+Bonus 0150 Masamune;150;1;0;2;0;0;0;0;0;0
+Bonus 0151 Defender;151;0;0;0;3;0;0;0;6;0
+Bonus 0152 Save The Queen;152;1;2;2;5;0;0;0;1;0
+Bonus 0153 Magic Racket;153;0;0;2;0;64;0;0;0;0
+Bonus 0154 Stardust Rod;154;0;0;0;2;0;0;0;128;0
+Bonus 0155 Octagon Rod;155;0;0;0;0;16;0;48;0;32
+Bonus 0156 Dark Matter;156;0;3;2;0;0;0;0;0;0
+Bonus 0157 -Free-;157;0;0;0;0;0;0;0;0;0
+Bonus 0158 -Free-;158;0;0;0;0;0;0;0;0;0
+Bonus 0159 -Free-;159;0;0;0;0;0;0;0;0;0
+Bonus 0160 -Free-;160;0;0;0;0;0;0;0;0;0
+Bonus 0161 -Free-;161;0;0;0;0;0;0;0;0;0
+Bonus 0162 -Free-;162;0;0;0;0;0;0;0;0;0
+Bonus 0163 -Free-;163;0;0;0;0;0;0;0;0;0
+Bonus 0164 -Free-;164;0;0;0;0;0;0;0;0;0
+Bonus 0165 -Free-;165;0;0;0;0;0;0;0;0;0
+Bonus 0166 -Free-;166;0;0;0;0;0;0;0;0;0
+Bonus 0167 -Free-;167;0;0;0;0;0;0;0;0;0
+Bonus 0168 -Free-;168;0;0;0;0;0;0;0;0;0
+Bonus 0169 -Free-;169;0;0;0;0;0;0;0;0;0
+Bonus 0170 -Free-;170;0;0;0;0;0;0;0;0;0
+Bonus 0171 -Free-;171;0;0;0;0;0;0;0;0;0
+Bonus 0172 -Free-;172;0;0;0;0;0;0;0;0;0
+Bonus 0173 -Free-;173;0;0;0;0;0;0;0;0;0
+Bonus 0174 -Free-;174;0;0;0;0;0;0;0;0;0
+Bonus 0175 -Free-;175;0;0;0;0;0;0;0;0;0
