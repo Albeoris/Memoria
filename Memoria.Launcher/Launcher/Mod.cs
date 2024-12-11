@@ -389,6 +389,13 @@ namespace Memoria.Launcher
             {
                 foreach (Mod sub in SubMod)
                 {
+                    if(String.IsNullOrEmpty(sub.InstallationPath))
+                    {
+                        el = doc.CreateElement("Header");
+                        el.InnerText = sub.Name;
+                        mod.AppendChild(el);
+                        continue;
+                    }
                     el = doc.CreateElement("SubMod");
                     XmlElement subEl = doc.CreateElement("Name");
                     subEl.InnerText = sub.Name;
@@ -406,6 +413,41 @@ namespace Memoria.Launcher
                     {
                         subEl = doc.CreateElement("Category");
                         subEl.InnerText = sub.Category;
+                        el.AppendChild(subEl);
+                    }
+                    if (sub.PreviewFile != null)
+                    {
+                        subEl = doc.CreateElement("PreviewFile");
+                        subEl.InnerText = sub.PreviewFile;
+                        el.AppendChild(subEl);
+                    }
+                    if (sub.PreviewFileUrl != null)
+                    {
+                        subEl = doc.CreateElement("PreviewFileUrl");
+                        subEl.InnerText = sub.PreviewFileUrl;
+                        el.AppendChild(subEl);
+                    }
+                    if (sub.Group != null)
+                    {
+                        subEl = doc.CreateElement("Group");
+                        subEl.InnerText = sub.Group;
+                        el.AppendChild(subEl);
+                    }
+                    if (sub.IsDefault)
+                    {
+                        subEl = doc.CreateElement("Default");
+                        el.AppendChild(subEl);
+                    }
+                    if (sub.ActivateWithMod != null)
+                    {
+                        subEl = doc.CreateElement("ActivateWithMod");
+                        subEl.InnerText = String.Join(", ", sub.ActivateWithMod);
+                        el.AppendChild(subEl);
+                    }
+                    if (sub.ActivateWithoutMod != null)
+                    {
+                        subEl = doc.CreateElement("ActivateWithoutMod");
+                        subEl.InnerText = String.Join(", ", sub.ActivateWithMod);
                         el.AppendChild(subEl);
                     }
                     if (sub.Priority != 0)

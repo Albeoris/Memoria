@@ -237,7 +237,7 @@ namespace Memoria.Launcher
                 }
 
                 if (subMod.ActivateWithMod != null)
-                    subMod.IsActive = modFoundActive  == subMod.ActivateWithMod.Count;
+                    subMod.IsActive = modFoundActive == subMod.ActivateWithMod.Count;
                 if (subMod.ActivateWithoutMod != null)
                     subMod.IsActive = modFoundActive == 0;
             }
@@ -652,15 +652,20 @@ namespace Memoria.Launcher
                     try
                     {
                         Boolean proceedNext = false;
-                        Boolean hasDesc = false;
                         Boolean moveDesc = false;
                         String sourcePath = "";
                         String destPath = "";
                         await ExtractAllFileFromArchive(path + downloadFormatExtLower, path);
                         File.Delete(path + downloadFormatExtLower);
+
+                        String descPath = null;
                         if (File.Exists(path + "/" + Mod.DESCRIPTION_FILE))
+                            descPath = path + "/" + Mod.DESCRIPTION_FILE;
+                        else if (File.Exists(path + "/" + (downloadingMod.InstallationPath ?? downloadingModName) + "/" + Mod.DESCRIPTION_FILE))
+                            descPath = path + "/" + (downloadingMod.InstallationPath ?? downloadingModName) + "/" + Mod.DESCRIPTION_FILE;
+
+                        if (descPath != null)
                         {
-                            hasDesc = true;
                             Mod modInfo = new Mod(path);
                             if (!String.IsNullOrEmpty(modInfo.InstallationPath) && Directory.Exists(path + "/" + modInfo.InstallationPath))
                             {
@@ -736,9 +741,9 @@ namespace Memoria.Launcher
                             if (proceedNext)
                             {
                                 Directory.Move(sourcePath, destPath);
-                                if (moveDesc)
-                                    File.Move(path + "/" + Mod.DESCRIPTION_FILE, destPath + "/" + Mod.DESCRIPTION_FILE);
-                                else if (!hasDesc)
+                                if (moveDesc && descPath != null && File.Exists(descPath))
+                                    File.Move(descPath, destPath + "/" + Mod.DESCRIPTION_FILE);
+                                else if (descPath == null)
                                     downloadingMod.GenerateDescription(destPath);
                                 if (Directory.Exists(path))
                                     Directory.Delete(path, true);
@@ -1374,35 +1379,31 @@ namespace Memoria.Launcher
                 List<String> iniModActiveSubList = new List<String>();
                 List<String> iniModPriorityList = new List<String>();
 
-                // First time saving the mods active sub-mods?
-                Boolean firstSave = IniFile.MemoriaIni.GetSetting("Mod", "ActiveSubMods", null) == null;
-
                 foreach (Mod mod in modListInstalled)
                 {
-                    // Saving the active sub-mods
-                    if (firstSave)
+                    if (!mod.IsActive) continue;
+                    
+                    AutoActivateSubMods(mod);
+                    foreach (Mod submod in mod.SubMod)
                     {
-                        if (mod.IsActive) AutoActivateSubMods(mod);
-                        foreach (Mod submod in mod.SubMod)
+                        // Making sure the default of the group is active if none selected
+                        if (submod.Group == null) continue;
+                        Mod defaultmod = null;
+                        foreach (Mod groupMod in mod.SubMod)
                         {
-                            // Making sure the default of the group is active if none selected
-                            if (submod.Group == null) continue;
-                            Mod defaultmod = null;
-                            foreach(Mod groupMod in mod.SubMod)
+                            if (groupMod.Group != submod.Group) continue;
+                            if (groupMod.IsDefault) defaultmod = groupMod;
+                            if (groupMod.IsActive)
                             {
-                                if(groupMod.Group != submod.Group) continue;
-                                if(groupMod.IsDefault) defaultmod = groupMod;
-                                if(groupMod.IsActive)
-                                {
-                                    // We found an active mod in the group
-                                    defaultmod = null;
-                                    break;
-                                }
+                                // We found an active mod in the group
+                                defaultmod = null;
+                                break;
                             }
-                            if (defaultmod != null) defaultmod.IsActive = true;
                         }
+                        if (defaultmod != null) defaultmod.IsActive = true;
                     }
-                    foreach(Mod submod in mod.SubMod)
+                    // Saving the active sub-mods
+                    foreach (Mod submod in mod.SubMod)
                         if (submod.IsActive && submod.ActivateWithMod == null && submod.ActivateWithoutMod == null)
                             iniModActiveSubList.Add($"{mod.InstallationPath}/{submod.InstallationPath}");
 
