@@ -2,7 +2,7 @@
 # You can set any number of different items.
 # 1-Fire 2-Ice 4-Thunder 8-Earth
 # 16-Water 32-Wind 64-Holy 128-Dark
-# 192-Holy and Dark 255-All
+# 7-Fire/Ice/Thunder 57-Fire/Earth/Water/Wind 192-Holy/Dark 255-All
 # -----------------------------------------------
 # Comment;Id;Dexterity;Strength;Magic;Will;AttackElement;GuardElement;AbsorbElement;HalfElement;WeakElement
 #;Int32;Byte;Byte;Byte;Byte;Byte;Byte;Byte;Byte;Byte
