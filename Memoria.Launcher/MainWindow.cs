@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -57,7 +58,7 @@ namespace Memoria.Launcher
         public static readonly Color DefaultAccentColor = (Color)ColorConverter.ConvertFromString("#CC355566");
         public const String DefaultBackgroundImage = "pack://application:,,,/images/new_launcher_bg.jpg";
 
-        private void OnLoaded(Object sender, RoutedEventArgs e)
+        private async void OnLoaded(Object sender, RoutedEventArgs e)
         {
             HotfixForMoguriMod();
             Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
@@ -117,6 +118,12 @@ namespace Memoria.Launcher
             }
             else if (GameSettings.AutoRunGame)
                 PlayButton.Click();
+
+            String checkUpdates = IniFile.SettingsIni.GetSetting("Memoria", "CheckUpdates", "True");
+            if (checkUpdates == "True")
+            {
+                await UiLauncherPlayButton.CheckUpdates((Window)this.GetRootElement(), new ManualResetEvent(false), GameSettings);
+            }
         }
 
         private void ModOptionsHeaderButton_MouseUp(Object sender, MouseButtonEventArgs e)

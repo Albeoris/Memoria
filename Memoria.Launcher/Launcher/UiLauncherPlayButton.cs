@@ -23,7 +23,6 @@ namespace Memoria.Launcher
     {
         public SettingsGrid_Vanilla GameSettings { get; set; }
         public SettingsGrid_VanillaDisplay GameSettingsDisplay { get; set; }
-        private ManualResetEvent CancelEvent { get; } = new ManualResetEvent(false);
 
         public UiLauncherPlayButton()
         {
@@ -50,12 +49,6 @@ namespace Memoria.Launcher
                     iniFile.Save();
                 }
                 catch (Exception) { }
-
-                if (GameSettings.CheckUpdates)
-                {
-                    if (await CheckUpdates((Window)this.GetRootElement(), CancelEvent, GameSettings))
-                        return;
-                }
 
                 if (GameSettingsDisplay.ScreenResolution == null)
                 {
@@ -240,8 +233,8 @@ namespace Memoria.Launcher
 
         internal static async Task<Boolean> CheckUpdates(Window rootElement, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
         {
-            String applicationPath = Path.GetFullPath(Uri.UnescapeDataString(new UriBuilder(Assembly.GetExecutingAssembly().CodeBase).Path));
-            String applicationDirectory = Path.GetDirectoryName(applicationPath);
+            String applicationDirectory = Path.GetFullPath("./");
+            String applicationPath = Path.Combine(applicationDirectory, Path.GetFileName(Assembly.GetExecutingAssembly().Location));
             LinkedList<HttpFileInfo> updateInfo = await FindUpdatesInfo(applicationDirectory, cancelEvent, gameSettings);
             if (updateInfo.Count == 0)
                 return false;
@@ -337,7 +330,6 @@ namespace Memoria.Launcher
 
             return false;
         }
-
 
 
         private static async Task<LinkedList<HttpFileInfo>> FindUpdatesInfo(String applicationDirectory, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
