@@ -435,9 +435,9 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 
 <Mod>
 	<Name>Kupo Heroes Pack </Name>
-	<Version>4.1.3</Version>
+	<Version>4.1.4</Version>
 	<InstallationPath>KupoHeroPack</InstallationPath>
-	<ReleaseDate>2024-12-06</ReleaseDate>
+	<ReleaseDate>2024-12-11</ReleaseDate>
 	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A set of Character enhancements that powers up characters and reduces grind. Ideal for players seeking a fresh character experience without changing the story, flow, or core gameplay mechanics.
@@ -468,7 +468,7 @@ Mod Order:
 
 Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Improved compatibility with the mod manager </PatchNotes>
+	<PatchNotes>Fixed directory of Blue Narciss music</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/4v6b8ijknci17on89ow01/KupoHeroPack.zip?rlkey=xsdn7vf32f41eregepx2fu118&amp;dl=1</DownloadUrl>
@@ -501,7 +501,7 @@ Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
 	</SubMod>
 	<SubMod>
 		<Name>Blue Narciss Music on Disc 4 </Name>
-		<InstallationPath>Features/WorldSound/Disk3</InstallationPath>
+		<InstallationPath>Features/WorldSound/Disk2</InstallationPath>
 		<Description>Change Disk 4 Ship Music to Disc 2</Description>
 		<Group>g-wm</Group>
 	</SubMod>
@@ -564,51 +564,56 @@ Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
 
 <Mod>
 	<Name>Tantalus</Name>
-	<Version>3.2</Version>
+	<Version>3.3</Version>
 	<InstallationPath>PlayableTantalus</InstallationPath>
 	<ReleaseDateOriginal>2024-06-14</ReleaseDateOriginal>
-	<ReleaseDate>2024-09-03</ReleaseDate>
-	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
+	<ReleaseDate>2024-12-09</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
 	<IncompatibleWith>Beatrix Mod, Trance Seek</IncompatibleWith>
 	<Author>Emeiru</Author>
-	<Description>Overhauls Blank, Cinna, and Marcus to become actually usable characters
-Includes: 
+<Description>Overhauls Blank, Cinna, and Marcus to become actually usable characters
 - The tantalus trio with their own set of active and supporting abilities
 - Base stats improvements
 - Steal-Gil and Mug buffed
 - New items and tweaks to complement the trio and thief gameplay
-- Minor name and ability text changes</Description>
-	<PatchNotes>Complete changes and info can be found on this mod's page.</PatchNotes>
+- Minor name and ability text changes
+
+Compatible with Alternate Fantasy</Description>
+	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/64</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/mkmzntygv46sh4qg4qjxi/PlayableTantalus.zip?rlkey=r92lksa6neyz3g52nkiyb6rhq&amp;dl=1</DownloadUrl>
 	<PreviewFile>Tantalus.jpg</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/64/64-1723918805-1871056882.jpeg</PreviewFileUrl>
+	<Header>Game Mode</Header>
 	<SubMod>
-		<Name>Vanilla FFIX</Name>
+		<Name>Vanilla</Name>
 		<InstallationPath>Vanilla</InstallationPath>
 		<Description>Version for regular FFIX</Description>
 		<Priority>1</Priority>
+		<Group>GameMode</Group>
 		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
+		<Default/>
 	</SubMod>
 	<SubMod>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
 		<Description>Version for Alternate Fantasy</Description>
-		<Priority>2</Priority>
+		<Priority>1</Priority>
+		<Group>GameMode</Group>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
 	</SubMod>
 </Mod>
 
 <Mod>
-	<Name>Perfect Stats</Name>
-	<Version>1.0</Version>
+    <Name>Perfect Stats</Name>
+    <Version>1.1</Version>
 	<Author>Emeiru</Author>
 	<InstallationPath>PerfectStats</InstallationPath>
 	<ReleaseDateOriginal>2024-10-25</ReleaseDateOriginal>
-	<ReleaseDate>2024-10-25</ReleaseDate>
-	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
-	<Description>[!] A new save game is recommended [!]
+	<ReleaseDate>2024-12-09</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
+<Description>[!] A new save game is recommended [!]
 Removes the equipment stat-boosting mechanic and replaces it with a fixed additional per level stat-gain. Players will no longer need to mind their equipment and wear stat-boosting gear on level-up. Party members will always achieve a fixed maximum stat just by leveling. Note that this will naturally decrease the difficulty of the game due to stats having linear progression now. A new save game is required to apply these changes, but if you installed this mod mid-game, you can also visit Chocobo's Forest to inject the mod's changes, level up, and see the new stats.
 
 Choose ONLY one of the three stats settings:
@@ -624,107 +629,126 @@ No Bonus Stat Growth
 
 Optional: Fixed Magic Stones
 - Reworks the magic stone growth formula to ensure every party member will get their max number of magic stones.</Description>
-	<PatchNotes>Complete changes and info can be found on this mod's page.</PatchNotes>
+	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFile>Preview.jpg</PreviewFile>
 	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/Preview.jpg</PreviewFileUrl>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/77</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/xlb9saal8iycbpfbicwbz/PerfectStats.zip?rlkey=mx7jvttuuntzx3d7ud8nnmw2c&amp;st=4hnksd03&amp;dl=1</DownloadUrl>
+<Header>Settings</Header>
 	<SubMod>
 		<Name>Perfect Stats</Name>
 		<InstallationPath>PerfectStats</InstallationPath>
 		<Description>Based on KADFC Max Stats</Description>
 		<Priority>1</Priority>
-	</SubMod>
+		<Group>Settings</Group>
+		</SubMod>
 	<SubMod>
 		<Name>Perfect Rebalanced</Name>
 		<InstallationPath>PerfectRebalanced</InstallationPath>
 		<Description>Author configured stats, rebalanced stats across the board</Description>
 		<Priority>2</Priority>
-	</SubMod>
+		<Group>Settings</Group>
+		</SubMod>
 	<SubMod>
 		<Name>No Bonus Stat Growth</Name>
 		<InstallationPath>NoBonus</InstallationPath>
 		<Description>Removes stat bonuses altogether</Description>
 		<Priority>3</Priority>
-	</SubMod>
+		<Group>Settings</Group>
+		</SubMod>
+<Header>Optional</Header>
 	<SubMod>
 		<Name>Fixed Magic Stones</Name>
 		<InstallationPath>PerfectStones</InstallationPath>
 		<Description>Fixed magic stone growth formula</Description>
 		<Priority>4</Priority>
-	</SubMod>
+		<Group>Optional</Group>
+		</SubMod>
 </Mod>
 
 <Mod>
 	<Name>Black Cat - Endgame Shop</Name>
-	<Version>2.0</Version>
+	<Version>2.1</Version>
 	<InstallationPath>BlackCat</InstallationPath>
 	<ReleaseDateOriginal>2024-07-13</ReleaseDateOriginal>
-	<ReleaseDate>2024-10-27</ReleaseDate>
+	<ReleaseDate>2024-12-09</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
 	<Author>Emeiru</Author>
 	<Category>Gameplay</Category>
 	<Description>The Black Mage Village (Disc 4) now sells almost every item in the game!
-- No. 239's Weapon and Armor Shop now sells every purchasable weapon and armor.
+- No. 239 Weapon and Armor Shop now sells every purchasable weapon and armor.
 - The Black Cat Synthesis Shop now can synthesize all regular equipment.
 
 Additionally, penultimate items can be synthesized at Daguerreo (Disc 3) now!
 
-Complete changes and info can be found on this mod's page.</Description>
-	<PatchNotes>Requires the latest Memoria Engine version</PatchNotes>
+Alternate Fantasy
+- Compatible with the synthesis changes from Alternate Fantasy.</Description>
+	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/65</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/19l0a7strjifbdpezs5op/BlackCat.zip?rlkey=6a3509xwdzpny23zvrnkpg3qx&amp;dl=1</DownloadUrl>
 	<PreviewFile>Preview.JPG</PreviewFile>
 	<PreviewFileUrl>https://u.cubeupload.com/Emeiru/6daBlackCat.jpg</PreviewFileUrl>
-	<SubMod>
-		<Name>Alternate Fantasy</Name>
-		<InstallationPath>AlternateFantasy</InstallationPath>
-		<Description>Version for Alternate Fantasy</Description>
-		<Priority>1</Priority>
-	</SubMod>
+<Header>Game Mode</Header>
 	<SubMod>
 		<Name>Vanilla</Name>
 		<InstallationPath>Vanilla</InstallationPath>
 		<Description>Version for regular FFIX</Description>
+		<Priority>1</Priority>
+		<Group>GameMode</Group>
+		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
+		<Default/>
+		</SubMod>
+	<SubMod>
+		<Name>Alternate Fantasy</Name>
+		<InstallationPath>AlternateFantasy</InstallationPath>
+		<Description>Version for Alternate Fantasy</Description>
 		<Priority>2</Priority>
-	</SubMod>
+		<Group>GameMode</Group>
+		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
+		</SubMod>
 </Mod>
 
 <Mod>
 	<Name>Amazing Quina</Name>
-	<Version>2.0</Version>
+	<Version>2.1</Version>
 	<InstallationPath>AmazingQuina</InstallationPath>
 	<ReleaseDateOriginal>2024-08-18</ReleaseDateOriginal>
-	<ReleaseDate>2024-09-06</ReleaseDate>
-	<MinimumMemoriaVersion>v2024.08.05</MinimumMemoriaVersion>
+	<ReleaseDate>2024-12-09</ReleaseDate>
+	<MinimumMemoriaVersion>v2024.12.04</MinimumMemoriaVersion>
 	<Author>Emeiru</Author>
-	<Description>Amazing tweaks and improvement for the quirky Quina
-Includes: 
+<Description>Amazing tweaks and improvement for the quirky Quina
 - Forks deal more consistent random damage
 - New endgame robe for Quina that removes LV spell requirement
 - New trance command, Dbl Blu (from Alternate Fantasy)
 - Quina now learns Scan, Return Magic, and others
-- Tweaks to abilities like Goblin Punch, White Wind, and more</Description>
-	<PatchNotes>Complete changes and info can be found on this mod's page.</PatchNotes>
+- Tweaks to abilities like Goblin Punch, White Wind, and more
+
+Compatible with Alternate Fantasy</Description>
+	<PatchNotes>Complete changes can be found on the mod page.</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFile>AmazingQuina.jpg</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/67/67-1723945766-725236022.jpeg</PreviewFileUrl>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/67/</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/b6d02h8wko3dx5weqk0n0/AmazingQuina.zip?rlkey=6ivxlj5cgfc51w9zokazcntye&amp;st=23hlrn9n&amp;dl=1</DownloadUrl>
+<Header>Game Mode</Header>
 	<SubMod>
 		<Name>Vanilla</Name>
 		<InstallationPath>Vanilla</InstallationPath>
 		<Description>Version for regular FFIX</Description>
 		<Priority>1</Priority>
+		<Group>GameMode</Group>
 		<ActivateWithoutMod>Alternate Fantasy</ActivateWithoutMod>
-	</SubMod>
+		<Default/>
+		</SubMod>
 	<SubMod>
 		<Name>Alternate Fantasy</Name>
 		<InstallationPath>AlternateFantasy</InstallationPath>
 		<Description>Version for Alternate Fantasy</Description>
 		<Priority>2</Priority>
+		<Group>GameMode</Group>
 		<ActivateWithMod>Alternate Fantasy</ActivateWithMod>
-	</SubMod>
+		</SubMod>
 </Mod>
 
 <Mod>
@@ -1063,15 +1087,15 @@ Note: 30fps videos and the alternative soundtrack are now separate mods</Descrip
 
 <Mod>
 	<Name>Cursors Mod</Name>
-	<Version>4.1.2</Version>
+	<Version>4.1.3</Version>
 	<InstallationPath>KupoCursors</InstallationPath>
-	<ReleaseDate>2024-12-06</ReleaseDate>
+	<ReleaseDate>2024-12-11</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>Makes the game menu cursor a lot smaller.
 Defaults to smaller cursor but has several options Dagger, Ultima Blade, Staff	
 	</Description>
-	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
+	<PatchNotes>Improved Coordinates</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/ztddigympwe7shemwy6in/KupoCursors.zip?rlkey=jsa3vs0e9ioybf7upznt0qsyo&amp;st=waxr6kzw&amp;dl=1</DownloadUrl>
@@ -1289,21 +1313,22 @@ Available Themes:
 
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.1.3</Version>
+	<Version>4.2.0</Version>
 	<InstallationPath>KupoPortraits</InstallationPath>
-	<ReleaseDate>2024-12-06</ReleaseDate>
+	<ReleaseDate>2024-12-11</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>To DFFOO fans this is where the DFFOO portraits resides
 All presets contain portrait support for Kuja, Fratley , Lani and even some planned characters to be added. 
+
 Available Presets: 
 Default Extended : contains a nodded version of the default portraits with enhanced Marcus, Cinna etc.	
+PSX Like : Recreation of portraits to make like their psx verion 
+PSX Upscaled : waifu2x Upscaled psx versions 
 Opera Omnia : contains  Dissidia Final Fantasy Opera Omnia portraits
 Opera Omnia Alt :  DFFOO Pluto Knight / White Mage
-PSX Upscaled : waifu2x Upscaled psx versions 
 
-Mod Order : Must be Place Above the mods mentioned above Playable Character Pack , Beatrix Mod , Tantalus mod and 
-Kupo UI Suite. 
+Mod Order : Must be Place Above the mods mentioned above Playable Character Pack , Beatrix Mod , Tantalus mod and Kupo UI Suite. 
 The Original Portraits Pack, part of the Kupo Mods, formerly Mog Add-ons.
 	</Description>
 	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
