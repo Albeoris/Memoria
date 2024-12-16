@@ -181,6 +181,8 @@ public class GeoTexAnim : HonoBehavior
             return;
         for (Int32 i = 0; i < texHeader.count; i++)
         {
+            if (texHeader._invalidAnimation[i])
+                continue;
             GEOTEXANIMHEADER geotexanimheader = texHeader.geotex[i];
             if ((geotexanimheader.flags & 1) != 0)
             {
