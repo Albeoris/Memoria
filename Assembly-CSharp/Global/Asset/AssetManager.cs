@@ -364,7 +364,7 @@ public static class AssetManager
         return null;
     }
 
-    public static T LoadFromDisc<T>(String name, String archiveName)
+    public static T LoadFromDisc<T>(String name, String archiveName = "")
     {
         /*
 		Types used by the game by default:
@@ -854,6 +854,14 @@ public static class AssetManager
             if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
                 return CsvReader.Read<T>(fullPath);
         return null;
+    }
+
+    /// <summary>API for paths that are defined in other resource files (most likely but not necessarily pointing at a file in the same folder)</summary>
+    public static String UsePathWithDefaultFolder(String defaultFolder, String path)
+    {
+        if (!path.Contains("/"))
+            path = Path.Combine(defaultFolder, path);
+        return path;
     }
 
     // .memnfo files are not used anymore, except for sound meta-datas

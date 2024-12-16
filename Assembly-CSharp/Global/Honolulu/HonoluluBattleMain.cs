@@ -457,7 +457,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
 
                     changed = true;
                     if (advanceAtb)
-                        current.at += (Int16)Math.Max(1, current.at_coef * 4);
+                        current.at += (Int16)(current.at_coef * 4);
                     else
                         needContinue = false;
                 }

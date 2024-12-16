@@ -309,6 +309,8 @@ public static class battlebg
         GEOTEXANIMHEADER[] geotex = texheaderptr.geotex;
         for (Int32 i = 0; i < count; i++)
         {
+            if (texheaderptr._invalidAnimation[i])
+                continue;
             GEOTEXANIMHEADER geotexanimheader = geotex[i];
             if ((geotexanimheader.flags & 1) != 0)
             {
@@ -383,6 +385,8 @@ public static class battlebg
             GEOTEXANIMHEADER[] geotex = battlebg.nf_BbgTabAddress.geotex;
             for (Int32 i = 0; i < count; i++)
             {
+                if (battlebg.nf_BbgTabAddress._invalidAnimation[i])
+                    continue;
                 GEOTEXANIMHEADER geotexanimheader = geotex[i];
                 if ((geotexanimheader.flags & 5) == 5 && geotexanimheader.numframes == 0)
                 {
@@ -517,6 +521,8 @@ public static class battlebg
             geotexheader.InitBBGTextureAnim(go, extraObj);
             for (Int32 i = 0; i < geotexheader.count; i++)
             {
+                if (geotexheader._invalidAnimation[i])
+                    continue;
                 GEOTEXANIMHEADER anim = geotexheader.geotex[i];
                 Texture2D texture = textureDict[geotexheader.materials[i].mainTexture.name];
                 //List<Vector2[]> area = areaDict[texture.name];
