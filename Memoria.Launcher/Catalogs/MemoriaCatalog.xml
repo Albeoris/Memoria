@@ -367,9 +367,9 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 
 <Mod>
 	<Name>Kupo Heroes Pack </Name>
-	<Version>4.1.4</Version>
+	<Version>4.1.5</Version>
 	<InstallationPath>KupoHeroPack</InstallationPath>
-	<ReleaseDate>2024-12-11</ReleaseDate>
+	<ReleaseDate>2024-12-22</ReleaseDate>
 	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A set of Character enhancements that powers up characters and reduces grind. Ideal for players seeking a fresh character experience without changing the story, flow, or core gameplay mechanics.
@@ -418,6 +418,11 @@ Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
 		<Name>Bye Auto-Potion </Name>
 		<InstallationPath>Features/NoAutoPotion</InstallationPath>
 		<Description>Replace Auto-Potion with HP and MP 5% </Description>
+	</SubMod>
+	<SubMod>
+		<Name>Phoenix Pinion usable</Name>
+		<InstallationPath>Features/Sitem</InstallationPath>
+		<Description>Phoenix Pinion Usable outside battle </Description>
 	</SubMod>
 	<Header>Transportation</Header>
 	<SubMod>
@@ -745,9 +750,9 @@ You should better use the Playable Characters Pack instead. This later one doesn
 
 <Mod>
 	<Name>Kupo UI Suite</Name>
-	<Version>4.1.4</Version>
+	<Version>4.1.5</Version>
 	<InstallationPath>KupoUISuite</InstallationPath>
-	<ReleaseDate>2024-12-06</ReleaseDate>
+	<ReleaseDate>2024-12-22</ReleaseDate>
 	<ReleaseDateOriginal>2021-08-14</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>
@@ -779,7 +784,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 	<SubMod>
 		<Name>Modern [Transparent]</Name>
 		<InstallationPath>Features/DialogueBox/Modern</InstallationPath>
-		<Description>New Transparent UI</Description>
+		<Description>Recommended to use with Dynamic Backgrounds</Description>
 		<Group>g-ui-theme</Group>
 		<PreviewFile>preview/d2.png</PreviewFile>
 	</SubMod>
@@ -820,7 +825,7 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 	<SubMod>
 		<Name>UI Option: No Divider</Name>
 		<InstallationPath>Features/frames/divideless</InstallationPath>
-		<Description>removes dividers in menu</Description>
+		<Description>removes dividers in menu, recommended to be on. </Description>
 		<Priority>4</Priority>
 	</SubMod>
 	<SubMod>
@@ -887,6 +892,13 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<PreviewFile>preview/f3.png</PreviewFile>
 		<Group>g-menu-bg</Group>
 	</SubMod>
+	<SubMod>
+		<Name>Dynamic</Name>
+		<InstallationPath>Features/Menubg/menubgdynamic</InstallationPath>
+		<Description>Dynamically changes depending on the window </Description>
+		<PreviewFile>preview/f3.png</PreviewFile>
+		<Group>g-menu-bg</Group>
+	</SubMod>
 	<Header>Title Screen</Header>
 	<SubMod>
 		<Name>Recreation</Name>
@@ -927,10 +939,10 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 	<SubMod>
 		<Name>Cards: Triple Triad Mat</Name>
 		<InstallationPath>Features/Cards</InstallationPath>
-		<Description>Triple triad inspired mat and UI for the Game</Description>
+		<Description>Triple triad inspired mat and UI for the Game, This automatically sets the game to be in triple triad mode </Description>
 		<PreviewFile>preview/tm.png</PreviewFile>
 		<Default/>
-	</SubMod>
+	</SubMod>	
 	<SubMod>
 		<Name>Alternate Colored Maps</Name>
 		<InstallationPath>Features/Maps</InstallationPath>
@@ -946,11 +958,24 @@ Originally released as part of Kupo Mods formerly Mog-Addons to see previews and
 		<Default/>
 	</SubMod>
 	<SubMod>
+		<Name>Icons: Extended Icons</Name>
+		<InstallationPath>Features/NewElementIcons</InstallationPath>
+		<Description>A Set of Extended Icons that modders can use in game</Description>
+		<PreviewFile>preview/i2.png</PreviewFile>
+		<Default/>
+	</SubMod>
+	<SubMod>
 		<Name>UI Sound: Alt Cursor Sound  </Name>
 		<InstallationPath>Features/CursorSound</InstallationPath>
 		<Description>What i think is a better cursor sound</Description>
 		<Default/>
 	</SubMod>
+	<SubMod>
+		<Name>Key Item Background</Name>
+		<InstallationPath>Features/KeyItem</InstallationPath>
+		<Description>A custom Key Item background when reading description.</Description>
+		<Default/>
+	</SubMod>	
 	<SubMod>
 		<Name>Concept Art Title Loop</Name>
 		<InstallationPath>Features/TitleLogo/TitleLoop</InstallationPath>
@@ -1245,9 +1270,9 @@ Available Themes:
 
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.2.0</Version>
+	<Version>4.2.1</Version>
 	<InstallationPath>KupoPortraits</InstallationPath>
-	<ReleaseDate>2024-12-11</ReleaseDate>
+	<ReleaseDate>2024-12-22</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>To DFFOO fans this is where the DFFOO portraits resides
@@ -1263,7 +1288,7 @@ Opera Omnia Alt :  DFFOO Pluto Knight / White Mage
 Mod Order : Must be Place Above the mods mentioned above Playable Character Pack , Beatrix Mod , Tantalus mod and Kupo UI Suite. 
 The Original Portraits Pack, part of the Kupo Mods, formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
+	<PatchNotes>See Read-me.txt</PatchNotes>
 	<Category>Visual</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/80dpdv5kn378cw27fay0q/KupoPortraits.zip?rlkey=dnb8htsnmqzoehuibij9tarxd&amp;dl=1</DownloadUrl>
@@ -1274,8 +1299,7 @@ The Original Portraits Pack, part of the Kupo Mods, formerly Mog Add-ons.
 	<SubMod>
 		<Name>Default Extended Cast</Name>
 		<InstallationPath>Features/PortraitDefault</InstallationPath>
-		<Description>Default Portraits that includes Kuja, Fratly and Lani [on by Default]</Description>
-		<Default/>
+		<Description>Default Portraits that includes Kuja, Fratly and Lani</Description>
 		<Group>g-port</Group>
 		<PreviewFile>preview/ext.jpg</PreviewFile>
 	</SubMod>
@@ -1385,9 +1409,9 @@ Idea by Snouz and made by DV.</Description>
 
 <Mod>
 	<Name>Modern Labels + </Name>
-	<Version>4.1.2</Version>
+	<Version>4.1.4</Version>
 	<InstallationPath>KupoModernLabels</InstallationPath>
-	<ReleaseDate>2024-12-06</ReleaseDate>
+	<ReleaseDate>2024-12-22</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A mod that replaces old item, spell and UI names / labels to their modern counterparts 
@@ -1396,7 +1420,9 @@ Simply activate and that should work.
 For now the primary focus of the mod is the US and UK translation of the game so non english language players feel free to message me if you have something you want to change in your 
 Language of choice. 
 	</Description>
-	<PatchNotes>Improved compatibility with the mod manager </PatchNotes>
+	<PatchNotes>- Added Extended Icons Support.
+- added extra iconography on item helpers. 
+</PatchNotes>
 	<Category>Translation</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/mi4qmy3h2qqoa57bf8wzu/KupoModernLabels.zip?rlkey=hfbawmgaiijosth1u6wcomwbk&amp;st=zcvbfu94&amp;dl=1</DownloadUrl>
