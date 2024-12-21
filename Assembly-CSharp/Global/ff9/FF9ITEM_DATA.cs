@@ -3,7 +3,7 @@ using System;
 
 public class FF9ITEM_DATA
 {
-    public FF9ITEM_DATA(UInt32 price, Int32 selling_price, UInt64 equip, Byte shape, Byte color, Single eq_lv, Int32 bonus, Int32[] ability, ItemType type, Single sort, Int32 weapon = -1, Int32 armor = -1, Int32 effect = -1)
+    public FF9ITEM_DATA(UInt32 price, Int32 selling_price, UInt64 equip, Byte shape, Byte color, Single eq_lv, Int32 bonus, Int32[] ability, ItemType type, Single sort, String use_condition, Int32 weapon = -1, Int32 armor = -1, Int32 effect = -1)
     {
         this.price = price;
         this.selling_price = selling_price;
@@ -15,6 +15,7 @@ public class FF9ITEM_DATA
         this.ability = ability;
         this.type = type;
         this.sort = sort;
+        this.use_condition = use_condition;
         this.pad = 0;
         this.weapon_id = weapon;
         this.armor_id = armor;
@@ -38,6 +39,8 @@ public class FF9ITEM_DATA
     public ItemType type;
 
     public Single sort;
+
+    public String use_condition;
 
     public Byte pad;
 

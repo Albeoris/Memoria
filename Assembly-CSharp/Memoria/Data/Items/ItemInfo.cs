@@ -16,6 +16,7 @@ namespace Memoria.Data
         public Int32[] AbilityIds;
         public ItemType TypeMask;
         public Single Order;
+        public String UseCondition;
         public Int32 WeaponId;
         public Int32 ArmorId;
         public Int32 EffectId;
@@ -50,6 +51,11 @@ namespace Memoria.Data
             TypeMask = (ItemType)type;
 
             Order = CsvParser.Single(raw[index++]);
+
+            if (metadata.HasOption($"Include{nameof(UseCondition)}"))
+                UseCondition = CsvParser.String(raw[index++]);
+            else
+                UseCondition = String.Empty;
 
             UInt64 equippable = 0;
             for (Int32 i = 0; i < 12; i++)
@@ -96,6 +102,9 @@ namespace Memoria.Data
 
             writer.Single(Order);
 
+            if (metadata.HasOption($"Include{nameof(UseCondition)}"))
+                writer.String(UseCondition);
+
             writer.Boolean(Zidane);
             writer.Boolean(Vivi);
             writer.Boolean(Garnet);
@@ -112,7 +121,7 @@ namespace Memoria.Data
 
         public FF9ITEM_DATA ToItemData()
         {
-            return new FF9ITEM_DATA(Price, SellingPrice, (UInt64)CharacterMask, GraphicsId, ColorId, Quality, BonusId, AbilityIds, TypeMask, Order, WeaponId, ArmorId, EffectId);
+            return new FF9ITEM_DATA(Price, SellingPrice, (UInt64)CharacterMask, GraphicsId, ColorId, Quality, BonusId, AbilityIds, TypeMask, Order, UseCondition, WeaponId, ArmorId, EffectId);
         }
 
         public Boolean Weapon => (TypeMask & ItemType.Weapon) == ItemType.Weapon;

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows;
 
 namespace Memoria.Launcher
 {
@@ -22,7 +23,11 @@ namespace Memoria.Launcher
             get
             {
                 if (_settings == null)
+                {
+                    if (!File.Exists(SettingsIniPath))
+                        File.WriteAllText(SettingsIniPath, "[Settings]\nActiveMonitor = 0\nWindowMode = 0\nScreenResolution = 1920x1080\n");
                     _settings = new IniFile(IniFile.SettingsIniPath);
+                }
                 return _settings;
             }
         }
@@ -32,7 +37,14 @@ namespace Memoria.Launcher
             {
                 if (_memoria == null)
                 {
-                    SanitizeMemoriaIni();
+                    try
+                    {
+                        SanitizeMemoriaIni();
+                    }
+                    catch (Exception ex)
+                    {
+                        UiHelper.ShowError(Application.Current.MainWindow, ex);
+                    }
                     _memoria = new IniFile(IniFile.MemoriaIniPath);
                 }
                 return _memoria;
@@ -85,7 +97,6 @@ namespace Memoria.Launcher
         {
             if (PreventWrite) return;
             if (_path == null) throw new NullReferenceException("This IniFile was created without a path, values cannot be written.");
-            if (!File.Exists(_path)) return;
             WriteAllSettings(_path);
         }
 
@@ -127,14 +138,12 @@ namespace Memoria.Launcher
                 {
                     mergedIni.RemoveAt(i--);
                 }
-                // Make sure spaces are present around =
+                // Make sure spaces are present around the = separating the field name from its value
                 if (!mergedIni[i].Trim().StartsWith(";"))
                 {
-                    var split = mergedIni[i].Split('=');
+                    var split = mergedIni[i].Split(['='], 2);
                     for (Int32 j = 0; j < split.Length; j++)
-                    {
                         split[j] = split[j].Trim();
-                    }
                     mergedIni[i] = String.Join(" = ", split);
                 }
             }
@@ -207,7 +216,7 @@ namespace Memoria.Launcher
 
         public void WriteAllSettings(String path, String[] ignoreSections = null, String[] ignoreOptions = null)
         {
-            List<String> lines = new List<string>(File.ReadAllLines(path));
+            List<String> lines = File.Exists(path) ? new List<string>(File.ReadAllLines(path)) : [];
 
             foreach (var option in Options)
             {
@@ -230,11 +239,12 @@ namespace Memoria.Launcher
 
                     if (trimmed.StartsWith("["))
                     {
-                        if (sectionFound)
-                        {
+                        if (lines[i - 1].Trim().Length == 0)
+                            lines.Insert(i - 1, $"{option.Key.Name} = {option.Value}");
+                        else
                             lines.Insert(i, $"{option.Key.Name} = {option.Value}");
-                            optionFound = true;
-                        }
+
+                        optionFound = true;
                         break;
                     }
 
@@ -249,7 +259,10 @@ namespace Memoria.Launcher
                 if (!optionFound)
                 {
                     if (!sectionFound)
-                        lines.Add($"\n[{option.Key.Section}]");
+                    {
+                        if (lines.Last().Trim().Length != 0) lines.Add("");
+                        lines.Add($"[{option.Key.Section}]");
+                    }
                     lines.Add($"{option.Key.Name} = {option.Value}");
                 }
             }

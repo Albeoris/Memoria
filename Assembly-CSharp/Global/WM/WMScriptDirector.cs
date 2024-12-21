@@ -54,7 +54,7 @@ public class WMScriptDirector : HonoBehavior
         this.FF9World = FF9StateSystem.World.FF9World;
         this.FF9WorldMap = FF9StateSystem.World.FF9World.map;
         this.FF9WorldMap.nextMode = 3;
-        ff9.ff9InitStateWorldMap((Int32)this.FF9.wldMapNo);
+        ff9.ff9InitStateWorldMap(this.FF9.wldMapNo);
         base.StartCoroutine(PersistenSingleton<FF9TextTool>.Instance.UpdateFieldText(68));
         if (!FF9StateSystem.World.IsBeeScene)
             PersistenSingleton<EventEngine>.Instance.ServiceEvents();

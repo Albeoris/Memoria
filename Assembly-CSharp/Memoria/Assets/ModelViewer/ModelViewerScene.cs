@@ -270,9 +270,9 @@ namespace Memoria.Assets
             foreach (SPSPrototype sps in CommonSPSSystem.SPSPrototypes.Values)
                 geoList.Add(new ModelObject() { Id = sps.Id, Name = "FromPrototype", Kind = MODEL_KIND_SPS });
             geoArchetype.Add(geoList.Count);
-            ReadModelViewerConfigFile(ParamIni.MODEL_INDEX, out string ModelIndex);
-            if (!String.IsNullOrEmpty(ModelIndex))
-                ChangeModel(Int32.Parse(ModelIndex));
+            ReadModelViewerConfigFile(ParamIni.MODEL_INDEX, out String ModelIndex);
+            if (!String.IsNullOrEmpty(ModelIndex) && Int32.TryParse(ModelIndex, out Int32 initialModel))
+                ChangeModel(initialModel);
             else
                 ChangeModel(0);
             SceneDirector.ClearFadeColor();
@@ -283,19 +283,19 @@ namespace Memoria.Assets
             initialized = true;
             currentWeaponGeoIndex = 557; // Start at weapon, so the Hammer.
 
-            ReadModelViewerConfigFile(ParamIni.MODEL_ANIMATION, out string IndexAnimation);
-            if (!String.IsNullOrEmpty(IndexAnimation))
-                ChangeAnimation(Int32.Parse(IndexAnimation));
+            ReadModelViewerConfigFile(ParamIni.MODEL_ANIMATION, out String IndexAnimation);
+            if (!String.IsNullOrEmpty(IndexAnimation) && Int32.TryParse(IndexAnimation, out Int32 initialAnimation))
+                ChangeAnimation(initialAnimation);
             else
                 ChangeModel(0);
 
-            ReadModelViewerConfigFile(ParamIni.INFOPANEL_POSITION, out string InfoPanelPostion);
-            if (!String.IsNullOrEmpty(InfoPanelPostion))
-                InfoPanelPosX = Int32.Parse(InfoPanelPostion);
+            ReadModelViewerConfigFile(ParamIni.INFOPANEL_POSITION, out String InfoPanelPostion);
+            if (!String.IsNullOrEmpty(InfoPanelPostion) && Int32.TryParse(InfoPanelPostion, out Int32 initialInfoPos))
+                InfoPanelPosX = initialInfoPos;
 
-            ReadModelViewerConfigFile(ParamIni.CONTROLPANEL_POSITION, out string ControlPanelPosition);
-            if (!String.IsNullOrEmpty(ControlPanelPosition))
-                ControlPanelPosX = Int32.Parse(ControlPanelPosition);
+            ReadModelViewerConfigFile(ParamIni.CONTROLPANEL_POSITION, out String ControlPanelPosition);
+            if (!String.IsNullOrEmpty(ControlPanelPosition) && Int32.TryParse(ControlPanelPosition, out Int32 initialControlPos))
+                ControlPanelPosX = initialControlPos;
 
             LoadCoordinatesConfig();
             currentModelWrapper.transform.localPosition = model_Position;
@@ -1194,7 +1194,7 @@ namespace Memoria.Assets
                     currentModel = ModelFactory.CreateModel($"BattleMap/BattleModel/battleMap_all/{geoList[index].Name}/{geoList[index].Name}", geoList[index].Kind == MODEL_KIND_BBG, UseModdedTextures, Configuration.Graphics.BattleSmoothTexture);
                     if (currentModel != null)
                     {
-                        battlebg.nf_BbgNumber = Int32.Parse(geoList[index].Name.Replace("BBG_B", ""));
+                        Int32.TryParse(geoList[index].Name.Replace("BBG_B", ""), out battlebg.nf_BbgNumber);
                         battlebg.SetDefaultShader(currentModel);
                         if (String.Equals(geoList[index].Name, "BBG_B171_OBJ2")) // Crystal World, Crystal
                             battlebg.SetMaterialShader(currentModel, "PSX/BattleMap_Cystal");
@@ -1538,11 +1538,11 @@ namespace Memoria.Assets
                     else if (line.StartsWith("ExportPath:"))
                         outputPathList.Add(line.Substring("ExportPath:".Length));
                     else if (line.StartsWith("DeleteThisOnSuccess:"))
-                        deleteConfig = Boolean.Parse(line.Substring("DeleteThisOnSuccess:".Length));
+                        Boolean.TryParse(line.Substring("DeleteThisOnSuccess:".Length), out deleteConfig);
                     else if (line.StartsWith("FrameRate:"))
-                        frameRate = Single.Parse(line.Substring("FrameRate:".Length));
+                        Single.TryParse(line.Substring("FrameRate:".Length), out frameRate);
                     else if (line.StartsWith("Reverse:"))
-                        reverseAnim = Boolean.Parse(line.Substring("Reverse:".Length));
+                        Boolean.TryParse(line.Substring("Reverse:".Length), out reverseAnim);
                     else if (line.StartsWith("AnimPatch:"))
                     {
                         String[] param = line.Substring("AnimPatch:".Length).Split(';');
@@ -1763,7 +1763,7 @@ namespace Memoria.Assets
             File.WriteAllText(ModelViewerConfigPath, config);
         }
 
-        public static void ReadModelViewerConfigFile(ParamIni Parameter, out string Line)
+        public static void ReadModelViewerConfigFile(ParamIni Parameter, out String Line)
         {
             Line = "";
             if (!File.Exists(ModelViewerConfigPath))
@@ -1841,6 +1841,7 @@ namespace Memoria.Assets
                         break;
                 }
             }
+            Line = "";
         }
 
         // TODO: maybe add that kind of API somewhere else (ExtensionMethodsVector3?)

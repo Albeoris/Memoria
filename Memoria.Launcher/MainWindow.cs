@@ -1,14 +1,19 @@
-﻿using System;
+﻿using SharpCompress.Archives;
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
 
@@ -58,7 +63,7 @@ namespace Memoria.Launcher
             Lang.Res["Settings.LauncherWindowTitle"] += " | v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
             Lang.Res["Settings.MemoriaEngine"] += " v" + MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd");
 
-            UiGrid.MakeTooltip(NewPresetButton, "Launcher.SaveSettings_Tooltip", "", "hand");
+            UiGrid.MakeTooltip(NewPresetButton, "Launcher.CreatePreset_Tooltip", "", "hand");
             UiGrid.MakeTooltip(ModelViewerButton, "Launcher.ModelViewerButton_Tooltip", "", "hand");
             UiGrid.MakeTooltip(CopyLogButton, "Launcher.CopyLogButton_Tooltip", "", "hand");
 
@@ -66,7 +71,7 @@ namespace Memoria.Launcher
             UpdateCatalog();
             LoadModSettings();
             CheckForValidModFolder();
-            //CheckOutdatedAndIncompatibleMods();
+            UpdateModListInstalled();
             lstCatalogMods.ItemsSource = modListCatalog;
             lstMods.ItemsSource = modListInstalled;
             lstDownloads.ItemsSource = downloadList;
@@ -75,9 +80,7 @@ namespace Memoria.Launcher
             lstCatalogMods.SelectionChanged += OnModListSelect;
             lstMods.SelectionChanged += OnModListSelect;
             tabCtrlMain.SelectionChanged += OnModListSelect;
-            PreviewSubModList.SelectionChanged += OnSubModSelect;
-            PreviewSubModActive.Checked += OnSubModActivate;
-            PreviewSubModActive.Unchecked += OnSubModActivate;
+            ModOptionsHeaderButton.MouseUp += ModOptionsHeaderButton_MouseUp;
             if (modListInstalled.Count == 0)
                 tabCtrlMain.SelectedIndex = 1;
             UpdateModDetails((Mod)null);
@@ -91,9 +94,46 @@ namespace Memoria.Launcher
             UiGrid.MakeTooltip(btnDownload, "ModEditor.TooltipDownload", "", "hand");
             UiGrid.MakeTooltip(btnCancel, "ModEditor.TooltipCancel", "", "hand");
 
-            if (GameSettings.AutoRunGame)
+            String version = IniFile.SettingsIni.GetSetting("Memoria", "Version", "2000.01.01");
+            DateTime currentVersion = DateTime.ParseExact(MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"), "yyyy.MM.dd", CultureInfo.InvariantCulture);
+            if (!DateTime.TryParseExact(version, "yyyy.MM.dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) || date < currentVersion)
+            {
+                ShowReleaseNotes(null, null);
+                // One time patches
+                if (date < new DateTime(2024, 11, 25))
+                {
+                    // Patch resolution to Auto
+                    if (IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "0") != "0")
+                        GameSettingsDisplay.ScreenResolution = (String)Lang.Res["Launcher.Auto"];
+                    // Set AntiAliasing to 0
+                    IniFile.MemoriaIni.SetSetting("Graphics", "AntiAliasing", "0");
+                }
+                // Set windows mode to 0 if it can't be parsed
+                if (!Int32.TryParse(IniFile.SettingsIni.GetSetting("Settings", "WindowMode", "null"), NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
+                    IniFile.SettingsIni.SetSetting("Settings", "WindowMode", "0");
+
+                IniFile.SettingsIni.SetSetting("Memoria", "Version", MemoriaAssemblyCompileDate.ToString("yyyy.MM.dd"));
+                IniFile.SettingsIni.Save();
+            }
+            else if (GameSettings.AutoRunGame)
                 PlayButton.Click();
         }
+
+        private void ModOptionsHeaderButton_MouseUp(Object sender, MouseButtonEventArgs e)
+        {
+            Boolean collapsed = (String)ModOptionsHeaderArrow.Content == "▲";
+            ModOptionsHeaderArrow.Content = collapsed ? "▼" : "▲";
+
+            DoubleAnimation animation = new DoubleAnimation
+            {
+                From = collapsed ? ModOptionsHeaderButton.ActualHeight : GroupModInfoWrapper.ActualHeight,
+                To = collapsed ? GroupModInfoWrapper.ActualHeight : ModOptionsHeaderButton.ActualHeight,
+                Duration = new TimeSpan(0, 0, 0, 0, 150),
+                EasingFunction = new CubicEase { EasingMode = EasingMode.EaseInOut }
+            };
+            ModOptions.BeginAnimation(RowDefinition.MaxHeightProperty, animation);
+        }
+
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
             this.Close(); // Closes the window when the button is clicked
@@ -136,6 +176,205 @@ namespace Memoria.Launcher
             catch (Exception ex)
             {
                 ShowTemporaryMessage((String)Lang.Res["Launcher.CopyLogButton_Error"] + ex.Message, false);
+            }
+        }
+
+        private void MainWindow_DragEnter(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            try
+            {
+                if (!e.Data.GetDataPresent(DataFormats.FileDrop, true))
+                    return;
+
+                string[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+                foreach (string filename in filenames)
+                {
+                    String ext = Path.GetExtension(filename).ToLowerInvariant();
+
+                    // Check if it's a Preset
+                    if (ext == ".ini")
+                    {
+                        foreach (String line in File.ReadLines(filename))
+                        {
+                            if (!line.StartsWith("[Preset]"))
+                                continue;
+                            // TODO language:
+                            dropLabel.Content = "Install Preset";
+                            dropBackground.Visibility = Visibility.Visible;
+                            Activate();
+                            break;
+                        }
+                        continue;
+                    }
+
+                    // Check if it's a Mod
+                    if (!supportedArchives.Contains(ext))
+                        continue;
+
+                    IArchive archive = ArchiveFactory.Open(filename);
+                    foreach (var entry in archive.Entries)
+                    {
+                        if (entry.Key == null || !entry.Key.Contains(Mod.DESCRIPTION_FILE))
+                            continue;
+
+                        // TODO translate:
+                        dropLabel.Content = Lang.Res["Launcher.InstallMod"];
+                        dropBackground.Visibility = Visibility.Visible;
+                        Activate();
+                        return;
+                    }
+                }
+            }
+            catch { }
+        }
+        private void MainWindow_DragOver(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            if (dropBackground.Visibility != Visibility.Visible)
+                e.Effects = DragDropEffects.None;
+            else
+                e.Effects = DragDropEffects.Copy;
+        }
+        private void MainWindow_DragLeave(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            dropBackground.Visibility = Visibility.Hidden;
+        }
+
+        private async void MainWindow_Drop(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+            try
+            {
+                if (!e.Data.GetDataPresent(DataFormats.FileDrop, true))
+                    return;
+
+                Activate();
+
+                String[] filenames = e.Data.GetData(DataFormats.FileDrop, true) as String[];
+                foreach (string filename in filenames)
+                {
+                    String ext = Path.GetExtension(filename).ToLowerInvariant();
+
+                    // Check if it's a Preset
+                    if (ext == ".ini")
+                    {
+                        foreach (String line in File.ReadLines(filename))
+                        {
+                            if (!line.StartsWith("[Preset]"))
+                                continue;
+
+                            // Install the preset
+                            IniFile preset = new IniFile(filename);
+                            String dst = Path.Combine("Presets", Path.GetFileName(filename));
+                            if (File.Exists(dst))
+                            {
+                                // TODO language:
+                                if (MessageBox.Show($"The preset '{Path.GetFileNameWithoutExtension(filename)}' already exits.\nWould you like to overwrite it?", "Overwrite preset?", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                                    continue;
+                                File.Delete(dst);
+                            }
+                            if (!Directory.Exists("Presets"))
+                                Directory.CreateDirectory("Presets");
+                            File.Copy(filename, dst);
+                            SettingsGrid_Presets.RefreshPresets();
+
+                            String presetName = preset.GetSetting("Preset", "Name", Path.GetFileNameWithoutExtension(filename));
+                            foreach (SettingsGrid_Presets.Preset item in SettingsGrid_Presets.Presets)
+                            {
+                                if (item.Name != presetName)
+                                    continue;
+
+                                SettingsGrid_Presets.PresetsComboBox.SelectedItem = item;
+                                break;
+                            }
+
+                            // Apply the preset
+                            // TODO language:
+                            if (MessageBox.Show($"Would you like to apply the preset '{presetName}' now?", "Apply preset?", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.No)
+                                continue;
+
+                            preset.WriteAllSettings(IniFile.MemoriaIniPath, ["Preset"]);
+                            IniFile.MemoriaIni.Reload();
+
+                            MainWindow mainWindow = (MainWindow)this.GetRootElement();
+                            mainWindow.LoadSettings();
+                            mainWindow.LoadModSettings();
+                            mainWindow.UpdateLauncherTheme();
+                            break;
+                        }
+                        continue;
+                    }
+
+                    if (!supportedArchives.Contains(ext))
+                        continue;
+                    // Find if it is a mod
+                    IArchive archive = ArchiveFactory.Open(filename);
+                    String root = null;
+                    foreach (var entry in archive.Entries)
+                    {
+                        if (entry.Key == null || !entry.Key.Contains(Mod.DESCRIPTION_FILE))
+                            continue;
+
+                        String dir = Path.GetDirectoryName(entry.Key);
+                        if (dir.Length == 0 || Path.GetDirectoryName(dir).Length == 0)
+                        {
+                            root = dir;
+                            break;
+                        }
+                    }
+                    if (root == null) continue;
+
+                    // Extract the archive
+                    // TODO language:
+                    dropLabel.Content = $"Extracting '{Path.GetFileName(filename)}'";
+                    String path = Mod.INSTALLATION_TMP + "/" + Path.GetFileNameWithoutExtension(filename);
+                    Directory.CreateDirectory(path);
+                    await ExtractAllFileFromArchive(filename, path);
+
+                    // Move it to the right installation path
+                    String modPath = Path.Combine(path, root);
+                    Mod modInfo = new Mod(modPath);
+                    // TODO language:
+                    dropLabel.Content = $"Installing '{Path.GetFileNameWithoutExtension(modInfo.Name)}'";
+                    if (Directory.Exists(modInfo.InstallationPath))
+                    {
+                        // TODO language:
+                        if (MessageBox.Show($"The mod folder '{modInfo.InstallationPath}' already exits.\nWould you like to overwrite it?", "Overwrite mod?", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+                            Directory.Delete(modInfo.InstallationPath, true);
+                        else
+                            continue;
+                    }
+                    Directory.Move(modPath, modInfo.InstallationPath);
+
+                    // Refresh mods list and activate the mod
+                    UpdateModListInstalled();
+                    UpdateCatalogInstallationState();
+                    Mod newMod = Mod.SearchWithName(modListInstalled, modInfo.Name);
+                    if (newMod != null)
+                    {
+                        newMod.IsActive = true;
+                        foreach (Mod submod in newMod.SubMod)
+                            submod.IsActive = submod.IsDefault;
+                        newMod.TryApplyPreset();
+                    }
+                    CheckOutdatedAndIncompatibleMods();
+                    UpdateModSettings();
+                    // TODO language:
+                    MessageBox.Show($"The mod '{modInfo.Name}' has been successfully installed and activated", "Mod installed", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception err)
+            {
+                // TODO language:
+                MessageBox.Show($"Failed to automatically install the mod {err.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            finally
+            {
+                dropBackground.Visibility = Visibility.Hidden;
+                if (Directory.Exists(Mod.INSTALLATION_TMP))
+                    Directory.Delete(Mod.INSTALLATION_TMP, true);
             }
         }
 
@@ -235,6 +474,12 @@ namespace Memoria.Launcher
 
             ReleaseCapture();
             SendMessage(new WindowInteropHelper(this).Handle, 161, 2, 0);
+        }
+
+        private void ShowReleaseNotes(Object sender, MouseButtonEventArgs e)
+        {
+            var releaseWindow = new Window_ChangeLog();
+            MainWindowGrid.Children.Add(releaseWindow);
         }
 
         private void OnHyperlinkClick(object sender, RequestNavigateEventArgs e)

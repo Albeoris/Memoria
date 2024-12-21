@@ -120,7 +120,7 @@ public class ActiveTimeEvent : MonoBehaviour
                 this.ButtonSprite.spriteName = "keyboard_button";
                 if (this.buttonLabel != (UnityEngine.Object)null)
                 {
-                    this.buttonLabel.text = FF9UIDataTool.KeyboardIconLabel[KeyCode.Alpha1];
+                    this.buttonLabel.text = FF9UIDataTool.KeyboardIconLabel[HonoInputManager.MemoriaKeyBindings[5]]; // Alpha1
                 }
             }
             this.ButtonSprite.MakePixelPerfect();

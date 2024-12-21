@@ -1583,7 +1583,7 @@ public static class SFX
             Camera camera = Camera.main ? Camera.main : GameObject.Find("Battle Camera").GetComponent<BattleMapCameraController>().GetComponent<Camera>();
             SFX.fxNearZ = array[12];
             SFX.fxFarZ = 65535f;
-            camera.nearClipPlane = SFX.fxNearZ;
+            camera.nearClipPlane = 0.1f; //SFX.fxNearZ (fix most clipping issues in battle)
             camera.farClipPlane = SFX.fxFarZ;
             camera.worldToCameraMatrix = PsxCamera.PsxMatrix2UnityMatrix(array, SFX.cameraOffset);
             camera.projectionMatrix = PsxCamera.PsxProj2UnityProj(SFX.fxNearZ, SFX.fxFarZ);

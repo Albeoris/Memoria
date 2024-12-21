@@ -9,7 +9,6 @@ using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Scenes;
-using Object = System.Object;
 
 public class BattleResultUI : UIScene
 {

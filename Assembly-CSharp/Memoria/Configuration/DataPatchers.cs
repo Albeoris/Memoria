@@ -449,7 +449,6 @@ namespace Memoria
                 }
                 else if (String.Equals(entry[0], "CharacterSecondWeapon") && entry.Length >= 4)
                 {
-                    // For now, it can only be used with SerialNo == 0 (
                     // eg.: CharacterSecondWeapon ZIDANE_DAGGER 6 SAME_AS_MAIN
                     // eg.: CharacterSecondWeapon ZIDANE_DAGGER 6 GEO_WEP_B1_013 CustomTextures/MageMasher2.png
                     // eg.: CharacterSecondWeapon ZIDANE_DAGGER 6 FORMULA "WeaponId == RegularItem_MageMasher ? 'GEO_WEP_B1_013' : 'NONE'"

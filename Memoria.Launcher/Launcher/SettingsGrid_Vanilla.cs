@@ -158,7 +158,6 @@ namespace Memoria.Launcher
                     {
                         _launcherlanguage = value;
                         OnPropertyChanged();
-                        //ReloadApplication();
                         try
                         {
                             IniFile.PreventWrite = true;

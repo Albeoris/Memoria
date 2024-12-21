@@ -31,9 +31,10 @@ namespace Memoria.Launcher
 
             CreateHeading("Settings.VanillaCheats");
 
+            CreateCheckbox("AutoBattle", "Settings.AutoBattle", "Settings.AutoBattle_Tooltip");
             //CreateCheckbox("SpeedMode", Lang.Settings.SpeedMode, Lang.Settings.SpeedMode_Tooltip);
             CreateSlider("SpeedFactor", "SpeedFactor", 1, 12, 1, "{0}x", 50, "Settings.SpeedMode", "Settings.SpeedMode_Tooltip");
-            CreateCheckbox("BattleAssistance", "Settings.PermanentTranse", "Settings.BattleAssistance_Tooltip");
+            CreateCheckbox("BattleAssistance", "Settings.PermanentTrance", "Settings.BattleAssistance_Tooltip");
             CreateCheckbox("Attack9999", "Settings.Attack9999", "Settings.Attack9999_Tooltip");
             CreateCheckbox("NoRandomEncounter", "Settings.NoRandomBattles", "Settings.NoRandomBattles_Tooltip");
             CreateCheckbox("MasterSkill", "Settings.PermanentCheats", "Settings.PermanentCheats_Tooltip");

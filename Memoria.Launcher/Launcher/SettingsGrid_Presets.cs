@@ -11,8 +11,9 @@ namespace Memoria.Launcher
 {
     public sealed class SettingsGrid_Presets : UiGrid
     {
-        private ComboBox comboBox;
-        private Button deleteBtn;
+        public ComboBox PresetsComboBox { get; private set; }
+        public Button DeleteButton { get; private set; }
+        public Button ApplyButton { get; private set; }
 
         public SettingsGrid_Presets()
         {
@@ -29,38 +30,38 @@ namespace Memoria.Launcher
 
             Row++;
             RowDefinitions.Add(new RowDefinition());
-            comboBox = new ComboBox();
-            comboBox.ItemsSource = Presets;
-            comboBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightCombobox);
-            comboBox.Margin = CommonMargin;
-            comboBox.Height = ComboboxHeight;
-            comboBox.SetValue(RowProperty, Row);
-            comboBox.SetValue(ColumnProperty, 0);
-            comboBox.SetValue(RowSpanProperty, 1);
-            comboBox.SetValue(ColumnSpanProperty, 60);
+            PresetsComboBox = new ComboBox();
+            PresetsComboBox.ItemsSource = Presets;
+            PresetsComboBox.FontWeight = FontWeight.FromOpenTypeWeight(FontWeightCombobox);
+            PresetsComboBox.Margin = CommonMargin;
+            PresetsComboBox.Height = ComboboxHeight;
+            PresetsComboBox.SetValue(RowProperty, Row);
+            PresetsComboBox.SetValue(ColumnProperty, 0);
+            PresetsComboBox.SetValue(RowSpanProperty, 1);
+            PresetsComboBox.SetValue(ColumnSpanProperty, 60);
             try
             {
-                comboBox.SelectedIndex = 0;
-                MakeTooltip(comboBox, Presets[0].Description);
+                PresetsComboBox.SelectedIndex = 0;
+                MakeTooltip(PresetsComboBox, Presets[0].Description);
             }
             catch { }
-            comboBox.MouseEnter += (sender, e) =>
+            PresetsComboBox.MouseEnter += (sender, e) =>
             {
-                comboBox.Focus();
+                PresetsComboBox.Focus();
             };
-            comboBox.SelectionChanged += ComboBox_SelectionChanged;
-            Children.Add(comboBox);
+            PresetsComboBox.SelectionChanged += PresetsComboBox_SelectionChanged;
+            Children.Add(PresetsComboBox);
 
-            deleteBtn = new Button();
-            deleteBtn.SetResourceReference(Button.StyleProperty, "ButtonStyleRed");
-            deleteBtn.Height = ComboboxHeight + 2;
-            deleteBtn.IsEnabled = false;
-            deleteBtn.Visibility = Visibility.Hidden;
-            deleteBtn.SetValue(RowProperty, Row);
-            deleteBtn.SetValue(ColumnProperty, 52);
-            deleteBtn.SetValue(RowSpanProperty, 1);
-            deleteBtn.SetValue(ColumnSpanProperty, 8);
-            deleteBtn.Content = new Image
+            DeleteButton = new Button();
+            DeleteButton.SetResourceReference(Button.StyleProperty, "ButtonStyleRed");
+            DeleteButton.Height = ComboboxHeight + 2;
+            DeleteButton.IsEnabled = false;
+            DeleteButton.Visibility = Visibility.Hidden;
+            DeleteButton.SetValue(RowProperty, Row);
+            DeleteButton.SetValue(ColumnProperty, 52);
+            DeleteButton.SetValue(RowSpanProperty, 1);
+            DeleteButton.SetValue(ColumnSpanProperty, 8);
+            DeleteButton.Content = new Image
             {
                 Source = new BitmapImage(new Uri("pack://application:,,,/images/btnUninstallimg_small.png")),
                 Height = 15,
@@ -69,31 +70,31 @@ namespace Memoria.Launcher
                 VerticalAlignment = VerticalAlignment.Center,
                 Margin = new Thickness(0)
             };
-            deleteBtn.Click += DeleteBtn_Click;
-            Children.Add(deleteBtn);
+            DeleteButton.Click += DeleteBtn_Click;
+            Children.Add(DeleteButton);
 
-            MakeTooltip(deleteBtn, "Launcher.DeletePreset_Tooltip", "", "hand");
+            MakeTooltip(DeleteButton, "Launcher.DeletePreset_Tooltip", "", "hand");
 
-            Button applyBtn = new Button();
-            applyBtn.SetResourceReference(Button.ContentProperty, "Settings.Apply");
-            applyBtn.SetResourceReference(Button.StyleProperty, "ButtonStyle");
-            applyBtn.Height = ComboboxHeight + 2;
-            applyBtn.SetValue(RowProperty, Row);
-            applyBtn.SetValue(ColumnProperty, 61);
-            applyBtn.SetValue(RowSpanProperty, 1);
-            applyBtn.SetValue(ColumnSpanProperty, MaxColumns);
-            applyBtn.Click += ApplyBtn_Click;
-            Children.Add(applyBtn);
+            ApplyButton = new Button();
+            ApplyButton.SetResourceReference(Button.ContentProperty, "Settings.Apply");
+            ApplyButton.SetResourceReference(Button.StyleProperty, "ButtonStyle");
+            ApplyButton.Height = ComboboxHeight + 2;
+            ApplyButton.SetValue(RowProperty, Row);
+            ApplyButton.SetValue(ColumnProperty, 61);
+            ApplyButton.SetValue(RowSpanProperty, 1);
+            ApplyButton.SetValue(ColumnSpanProperty, MaxColumns);
+            ApplyButton.Click += ApplyBtn_Click;
+            Children.Add(ApplyButton);
         }
 
         private void DeleteBtn_Click(Object sender, RoutedEventArgs e)
         {
-            if (comboBox.SelectedIndex < 0 || Presets[comboBox.SelectedIndex].Path == null)
+            if (PresetsComboBox.SelectedIndex < 0 || Presets[PresetsComboBox.SelectedIndex].Path == null)
                 return;
 
             if (MessageBox.Show((String)Lang.Res["Launcher.DeletePresetText"], (String)Lang.Res["Launcher.DeletePresetCaption"], MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
             {
-                File.Delete(Presets[comboBox.SelectedIndex].Path);
+                File.Delete(Presets[PresetsComboBox.SelectedIndex].Path);
                 RefreshPresets();
             }
         }
@@ -102,7 +103,7 @@ namespace Memoria.Launcher
         {
             if (MessageBox.Show((String)Lang.Res["Settings.ApplyPresetText"], (String)Lang.Res["Settings.ApplyPresetCaption"], MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
-                IniFile settings = Presets[comboBox.SelectedIndex].Settings;
+                IniFile settings = Presets[PresetsComboBox.SelectedIndex].Settings;
                 settings.WriteAllSettings(IniFile.MemoriaIniPath, ["Preset"]);
                 IniFile.MemoriaIni.Reload();
 
@@ -113,33 +114,33 @@ namespace Memoria.Launcher
             }
         }
 
-        private void ComboBox_SelectionChanged(Object sender, SelectionChangedEventArgs e)
+        private void PresetsComboBox_SelectionChanged(Object sender, SelectionChangedEventArgs e)
         {
-            if (comboBox.ToolTip is ToolTip toolTip)
+            if (PresetsComboBox.ToolTip is ToolTip toolTip)
                 toolTip.IsOpen = false;
-            comboBox.ToolTip = null;
+            PresetsComboBox.ToolTip = null;
 
-            if (comboBox.SelectedIndex < 0)
+            if (PresetsComboBox.SelectedIndex < 0)
                 return;
 
-            if (comboBox.SelectedIndex < 3)
+            if (PresetsComboBox.SelectedIndex < 3)
             {
-                comboBox.SetValue(ColumnSpanProperty, 60);
-                deleteBtn.IsEnabled = false;
-                deleteBtn.Visibility = Visibility.Hidden;
+                PresetsComboBox.SetValue(ColumnSpanProperty, 60);
+                DeleteButton.IsEnabled = false;
+                DeleteButton.Visibility = Visibility.Hidden;
             }
             else
             {
-                comboBox.SetValue(ColumnSpanProperty, 51);
-                deleteBtn.IsEnabled = true;
-                deleteBtn.Visibility = Visibility.Visible;
+                PresetsComboBox.SetValue(ColumnSpanProperty, 51);
+                DeleteButton.IsEnabled = true;
+                DeleteButton.Visibility = Visibility.Visible;
             }
 
-            if (!String.IsNullOrEmpty(Presets[comboBox.SelectedIndex].Description))
+            if (!String.IsNullOrEmpty(Presets[PresetsComboBox.SelectedIndex].Description))
             {
-                MakeTooltip(comboBox, Presets[comboBox.SelectedIndex].Description);
+                MakeTooltip(PresetsComboBox, Presets[PresetsComboBox.SelectedIndex].Description);
 
-                if (comboBox.ToolTip is ToolTip newToolTip && comboBox.IsMouseOver)
+                if (PresetsComboBox.ToolTip is ToolTip newToolTip && PresetsComboBox.IsMouseOver)
                     newToolTip.IsOpen = true;
             }
         }
@@ -164,11 +165,11 @@ namespace Memoria.Launcher
         {
             Presets.Clear();
 
-            if (comboBox != null && deleteBtn != null)
+            if (PresetsComboBox != null && DeleteButton != null)
             {
-                comboBox.SetValue(ColumnSpanProperty, 60);
-                deleteBtn.IsEnabled = false;
-                deleteBtn.Visibility = Visibility.Hidden;
+                PresetsComboBox.SetValue(ColumnSpanProperty, 60);
+                DeleteButton.IsEnabled = false;
+                DeleteButton.Visibility = Visibility.Hidden;
             }
 
             Presets.Add(new Preset()
@@ -181,7 +182,7 @@ namespace Memoria.Launcher
             List<IniFile.Key> toRemove = new List<IniFile.Key>();
             foreach (var key in Presets[0].Settings.Options.Keys)
             {
-                List<String> options = ["Audio.MusicVolume", "Audio.SoundVolume", "Audio.MovieVolume", "VoiceActing.Volume"];
+                List<String> options = ["Graphics.AntiAliasing", "Control.KeyBindings", "AnalogControl.StickThreshold", "Audio.MusicVolume", "Audio.SoundVolume", "Audio.MovieVolume", "VoiceActing.Volume"];
                 if (key.Section == "Mod" || options.Contains($"{key.Section}.{key.Name}"))
                     toRemove.Add(key);
             }
@@ -222,10 +223,10 @@ namespace Memoria.Launcher
 
                 }
             }
-            if (comboBox != null)
+            if (PresetsComboBox != null)
             {
-                comboBox.SelectedIndex = 0;
-                MakeTooltip(comboBox, Presets[0].Description);
+                PresetsComboBox.SelectedIndex = 0;
+                MakeTooltip(PresetsComboBox, Presets[0].Description);
             }
         }
     }

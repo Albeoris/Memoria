@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using Application = System.Windows.Application;
+using ComboBox = System.Windows.Controls.ComboBox;
 
 namespace Memoria.Launcher
 {
@@ -29,10 +30,19 @@ namespace Memoria.Launcher
                 "Settings.ExclusiveFullscreen",
                 "Settings.BorderlessFullscreen"
             };
-            CreateCombobox("WindowMode", comboboxchoices, 50, "Settings.WindowMode", "Settings.WindowMode_Tooltip");
+            ComboBox modeComboBox = CreateCombobox("WindowMode", comboboxchoices, 50, "Settings.WindowMode", "Settings.WindowMode_Tooltip");
 
-            comboboxchoices = EnumerateDisplaySettings(true).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray();
-            CreateCombobox("ScreenResolution", comboboxchoices, 50, "Settings.Resolution", "Settings.Resolution_Tooltip", "", true);
+            List<String> reschoices =
+            [
+                "Launcher.Auto",
+                .. EnumerateDisplaySettings(true).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0]))
+            ];
+            ComboBox resComboBox = CreateCombobox("ScreenResolution", reschoices, 50, "Settings.Resolution", "Settings.Resolution_Tooltip", "", true);
+
+            modeComboBox.SelectionChanged += (s, e) =>
+            {
+                resComboBox.IsEnabled = modeComboBox.SelectedIndex != 2;
+            };
 
             try
             {
@@ -46,12 +56,15 @@ namespace Memoria.Launcher
 
         public String ScreenResolution
         {
-            get { return _resolution; }
+            get { return _resolution == "0x0" ? (String)Lang.Res["Launcher.Auto"] : _resolution; }
             set
             {
-                if (_resolution != value)
+                if (value != null && _resolution != value)
                 {
-                    _resolution = addRatio(value);
+                    if (value == (String)Lang.Res["Launcher.Auto"])
+                        _resolution = "0x0";
+                    else
+                        _resolution = addRatio(value);
                     OnPropertyChanged();
                 }
             }
@@ -94,7 +107,7 @@ namespace Memoria.Launcher
                 switch (propertyName)
                 {
                     case nameof(ScreenResolution):
-                        iniFile.SetSetting("Settings", propertyName, ScreenResolution.Split('|')[0].Trim(' ') ?? "1280x960");
+                        iniFile.SetSetting("Settings", propertyName, _resolution?.Split('|')[0].Trim(' ') ?? "0x0");
                         break;
                     case nameof(ActiveMonitor):
                         iniFile.SetSetting("Settings", propertyName, ActiveMonitor ?? String.Empty);
@@ -127,6 +140,8 @@ namespace Memoria.Launcher
                 if ((!String.IsNullOrEmpty(value)) && EnumerateDisplaySettings(false).ToArray().Any(value.Contains))
                     _resolution = addRatio(value);
                 //else we choose the largest available one
+                else if (value == "0x0")
+                    _resolution = value;
                 else
                     _resolution = EnumerateDisplaySettings(false).OrderByDescending(x => Convert.ToInt32(x.Split('x')[0])).ToArray()[0];
 
@@ -140,9 +155,18 @@ namespace Memoria.Launcher
                 value = iniFile.GetSetting("Settings", nameof(WindowMode));
                 if (!String.IsNullOrEmpty(value))
                 {
-                    if (value == (String)Lang.Res["Settings.Window"]) value = "0";
-                    if (value == (String)Lang.Res["Settings.ExclusiveFullscreen"]) value = "1";
-                    if (value == (String)Lang.Res["Settings.BorderlessFullscreen"]) value = "2";
+                    String newvalue = "";
+                    if (value == (String)Lang.Res["Settings.Window"]) newvalue = "0";
+                    if (value == (String)Lang.Res["Settings.ExclusiveFullscreen"]) newvalue = "1";
+                    if (value == (String)Lang.Res["Settings.BorderlessFullscreen"]) newvalue = "2";
+                    if (newvalue.Length > 0)
+                    {
+                        value = newvalue;
+                        IniFile.PreventWrite = false;
+                        iniFile.SetSetting("Settings", nameof(WindowMode), value);
+                        iniFile.Save();
+                        IniFile.PreventWrite = true;
+                    }
                 }
                 if (!Int16.TryParse(value, out _windowMode))
                     _windowMode = 0;

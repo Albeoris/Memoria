@@ -41,7 +41,7 @@ namespace Memoria.Data
             if (metadata.HasOption($"Include{nameof(AA_DATA.CastingTitleType)}"))
                 ActionData.CastingTitleType = CsvParser.Byte(raw[index++]);
             else
-                ActionData.CastingTitleType = 255;
+                ActionData.CastingTitleType = GetDefaultCastingTitleType(Id);
         }
 
         public void WriteEntry(CsvWriter sw, CsvMetaData metadata)
@@ -69,6 +69,44 @@ namespace Memoria.Data
             sw.Byte(ActionData.Type);
             if (metadata.HasOption($"Include{nameof(AA_DATA.CastingTitleType)}"))
                 sw.Byte(ActionData.CastingTitleType);
+        }
+
+        public static Byte GetDefaultCastingTitleType(BattleAbilityId id)
+        {
+            switch (id)
+            {
+                case BattleAbilityId.FireSword:
+                case BattleAbilityId.FiraSword:
+                case BattleAbilityId.FiragaSword:
+                case BattleAbilityId.BlizzardSword:
+                case BattleAbilityId.BlizzaraSword:
+                case BattleAbilityId.BlizzagaSword:
+                case BattleAbilityId.ThunderSword:
+                case BattleAbilityId.ThundaraSword:
+                case BattleAbilityId.ThundagaSword:
+                case BattleAbilityId.BioSword:
+                case BattleAbilityId.WaterSword:
+                case BattleAbilityId.FlareSword:
+                case BattleAbilityId.DoomsdaySword:
+                    return 254;
+                case BattleAbilityId.Shiva:      return 153;
+                case BattleAbilityId.Ifrit:      return 154;
+                case BattleAbilityId.Ramuh:      return 155;
+                case BattleAbilityId.Atomos:     return 192;
+                case BattleAbilityId.Odin:       return 157;
+                case BattleAbilityId.Leviathan:  return 158;
+                case BattleAbilityId.Bahamut:    return 159;
+                case BattleAbilityId.Ark:        return 160;
+                case BattleAbilityId.Fenrir1:    return 194;
+                case BattleAbilityId.Fenrir2:    return 193;
+                case BattleAbilityId.Carbuncle1: return 195;
+                case BattleAbilityId.Carbuncle2: return 196;
+                case BattleAbilityId.Carbuncle3: return 197;
+                case BattleAbilityId.Carbuncle4: return 198;
+                case BattleAbilityId.Phoenix:    return 73;
+                case BattleAbilityId.Madeen:     return 187;
+            }
+            return 255;
         }
     }
 }

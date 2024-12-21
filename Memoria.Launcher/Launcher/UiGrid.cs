@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -77,6 +78,7 @@ namespace Memoria.Launcher
                 }
                 catch { }
 
+                TextBlock tooltipTextBlock = null;
                 if (text != "")
                 {
                     DropShadowEffect dropShadow = new DropShadowEffect
@@ -87,12 +89,13 @@ namespace Memoria.Launcher
                         Direction = 320,
                         Opacity = 1
                     };
-                    TextBlock tooltipTextBlock = new TextBlock
+                    tooltipTextBlock = new TextBlock
                     {
                         Opacity = 1,
                         MaxWidth = 275,
                         FontSize = 14,
                         TextWrapping = TextWrapping.Wrap,
+                        HorizontalAlignment= HorizontalAlignment.Left,
                         Effect = dropShadow,
                         Margin = new Thickness(0)
                     };
@@ -111,16 +114,42 @@ namespace Memoria.Launcher
                 {
                     try
                     {
-                        String imagePath = "pack://application:,,,/images/" + imageName;
+                        String imagePath = File.Exists(imageName) ? Path.GetFullPath(imageName) : "pack://application:,,,/images/" + imageName;
+                        if (imageName.StartsWith("http"))
+                            imagePath = imageName;
                         Image tooltipImage = new Image
                         {
-                            Source = new BitmapImage(new Uri(imagePath)),
-                            MaxWidth = 275,
-                            MaxHeight = 150,
-                            Opacity = 1,
                             HorizontalAlignment = HorizontalAlignment.Left,
-                            Margin = new Thickness(0)
+                            Margin = new Thickness(0, 3, 0, 0),
+                            
                         };
+                        tooltipImage.Loaded += (s, e) =>
+                        {
+                            // DPI can mess with the size so we force the actual pixel size
+                            tooltipImage.Width = (tooltipImage.Source as BitmapSource).PixelWidth;
+                            tooltipImage.Height = (tooltipImage.Source as BitmapSource).PixelHeight;
+
+                            if(tooltipImage.Width > 550)
+                            {
+                                tooltipImage.Height = Math.Floor(550 * tooltipImage.Height / tooltipImage.Width);
+                                tooltipImage.Width = 550;
+                            }
+
+                            if(tooltipImage.Height > 300)
+                            {
+                                tooltipImage.Width = Math.Floor(300 * tooltipImage.Width / tooltipImage.Height);
+                                tooltipImage.Height = 300;
+                            }
+
+                            if (tooltipTextBlock != null && tooltipImage.Width > 275)
+                                tooltipTextBlock.MaxWidth = tooltipImage.Width;
+                        };
+                        BitmapImage bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                        bitmap.UriSource = new Uri(imagePath);
+                        bitmap.EndInit();
+                        tooltipImage.Source = bitmap;
                         RenderOptions.SetBitmapScalingMode(tooltipImage, BitmapScalingMode.HighQuality);
                         tooltipStackPanel.Children.Add(tooltipImage);
                     }
@@ -425,7 +454,7 @@ namespace Memoria.Launcher
             }
         }
 
-        public void CreateCombobox(String property, IEnumerable<String> options, Int32 firstColumn = 50, String text = "", String tooltip = "", String tooltipImage = "", Boolean selectByName = false)
+        public ComboBox CreateCombobox(String property, IEnumerable<String> options, Int32 firstColumn = 50, String text = "", String tooltip = "", String tooltipImage = "", Boolean selectByName = false)
         {
             if (text != "")
             {
@@ -468,6 +497,7 @@ namespace Memoria.Launcher
             Children.Add(comboBox);
 
             _comboBoxes[comboBox] = new List<string>(options);
+            return comboBox;
         }
         public void CreateSlider(String indexproperty, String sliderproperty, double min, double max, double tickFrequency, String stringFormat = "", Int32 firstColumn = 0, String text = "", String tooltip = "", String tooltipImage = "")
         {

@@ -64,6 +64,7 @@ namespace Memoria.MSBuild
                     PackOptionalFile("Launcher\\Memoria.Launcher.exe.config", "FF9_Launcher.exe.config", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackOptionalFile("Launcher\\Memoria.SteamFix.exe", "Memoria.SteamFix.exe", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackOptionalFile("Launcher\\Memoria.ini", "Memoria.ini", compressStream, bw, pathMap, ref uncompressedDataSize);
+                    PackOptionalFile("Launcher\\Settings.ini", "Settings.ini", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackOptionalFile("XInputDotNetPure.dll", "{PLATFORM}\\FF9_Data\\Managed\\XInputDotNetPure.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackOptionalFile("Newtonsoft.Json.dll", "{PLATFORM}\\FF9_Data\\Managed\\Newtonsoft.Json.dll", compressStream, bw, pathMap, ref uncompressedDataSize);
                     PackOptionalFile("System.Runtime.Serialization.dll", "{PLATFORM}\\FF9_Data\\Managed\\System.Runtime.Serialization.dll", compressStream, bw, pathMap, ref uncompressedDataSize);

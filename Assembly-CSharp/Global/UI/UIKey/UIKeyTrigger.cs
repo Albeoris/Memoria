@@ -164,7 +164,11 @@ public class UIKeyTrigger : MonoBehaviour
 
     private void AccelerateKeyNavigation()
     {
-        if (!UnityXInput.Input.anyKey && PersistenSingleton<HonoInputManager>.Instance.GetHorizontalNavigation() <= (Double)HonoInputManager.AnalogThreadhold && (PersistenSingleton<HonoInputManager>.Instance.GetHorizontalNavigation() >= -(Double)HonoInputManager.AnalogThreadhold && PersistenSingleton<HonoInputManager>.Instance.GetVerticalNavigation() <= (Double)HonoInputManager.AnalogThreadhold) && PersistenSingleton<HonoInputManager>.Instance.GetVerticalNavigation() >= -(Double)HonoInputManager.AnalogThreadhold)
+        if (!UnityXInput.Input.anyKey &&
+            HonoInputManager.Instance.GetHorizontalNavigation() <= HonoInputManager.AnalogThreadhold &&
+            HonoInputManager.Instance.GetHorizontalNavigation() >= -HonoInputManager.AnalogThreadhold &&
+            HonoInputManager.Instance.GetVerticalNavigation() <= HonoInputManager.AnalogThreadhold &&
+            HonoInputManager.Instance.GetVerticalNavigation() >= -HonoInputManager.AnalogThreadhold)
         {
             if (!firstTimeInput)
                 UICamera.EventWaitTime = 0.175f;
@@ -308,6 +312,7 @@ public class UIKeyTrigger : MonoBehaviour
                 return;
             }
 
+            Log.Message("[Soft Reset]");
             preventTurboKey = false;
 
             if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.World && PersistenSingleton<UIManager>.Instance.WorldHUDScene != (UnityEngine.Object)null) // World Map
@@ -335,6 +340,8 @@ public class UIKeyTrigger : MonoBehaviour
             UIManager.Battle.FF9BMenu_EnableMenu(false);
             if (PersistenSingleton<UIManager>.Instance.IsPause)
                 PersistenSingleton<UIManager>.Instance.GetSceneFromState(PersistenSingleton<UIManager>.Instance.State).OnKeyPause(null);
+            FF9StateSystem.Battle.FF9Battle.btl_seq = 1; // Prevent the Start button to pause again
+            UIManager.Battle.DisableAutoBattle();
             EventHUD.Cleanup();
             EventInput.ClearPadMask();
             TimerUI.SetEnable(false);
