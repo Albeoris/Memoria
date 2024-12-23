@@ -8,7 +8,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -82,16 +81,16 @@ namespace Memoria.Launcher
                     return;
                 }
 
-                var display = Displays[activeMonitor];
+                var display = DisplayInfo.Displays[activeMonitor];
                 if (GameSettingsDisplay.WindowMode == 2 || screenWidth == 0 || screenHeight == 0)
                 {
-                    screenWidth = display.rcMonitor.right - display.rcMonitor.left;
-                    screenHeight = display.rcMonitor.bottom - display.rcMonitor.top;
+                    screenWidth = display.monitorArea.right - display.monitorArea.left;
+                    screenHeight = display.monitorArea.bottom - display.monitorArea.top;
                 }
                 else
                 {
-                    screenWidth = Math.Min(screenWidth, display.rcMonitor.right - display.rcMonitor.left);
-                    screenHeight = Math.Min(screenHeight, display.rcMonitor.bottom - display.rcMonitor.top);
+                    screenWidth = Math.Min(screenWidth, display.monitorArea.right - display.monitorArea.left);
+                    screenHeight = Math.Min(screenHeight, display.monitorArea.bottom - display.monitorArea.top);
                 }
 
                 String directoyPath = Path.GetFullPath(".\\" + (GameSettings.IsX64 ? "x64" : "x86"));
@@ -183,52 +182,6 @@ namespace Memoria.Launcher
             {
                 SetResourceReference(LabelProperty, "Launcher.Launch");
             }
-        }
-
-        [DllImport("user32.dll")]
-        private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
-        delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
-
-        [DllImport("User32.dll", CharSet = CharSet.Auto)]
-        private static extern bool GetMonitorInfo(IntPtr hmonitor, [In, Out] MONITORINFOEX info);
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct RECT
-        {
-            public int left;
-            public int top;
-            public int right;
-            public int bottom;
-        }
-
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto, Pack = 4)]
-        public class MONITORINFOEX
-        {
-            public int cbSize = Marshal.SizeOf(typeof(MONITORINFOEX));
-            public RECT rcMonitor = new RECT();
-            public RECT rcWork = new RECT();
-            public int dwFlags = 0;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
-            public char[] szDevice = new char[32];
-        }
-
-        public static List<MONITORINFOEX> Displays { get; private set; } = GetDisplays();
-        private static List<MONITORINFOEX> GetDisplays()
-        {
-            List<MONITORINFOEX> col = new List<MONITORINFOEX>();
-
-            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero,
-                delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData)
-                {
-                    MONITORINFOEX mi = new MONITORINFOEX();
-                    mi.cbSize = Marshal.SizeOf(mi);
-                    if (GetMonitorInfo(hMonitor, mi))
-                    {
-                        col.Add(mi);
-                    }
-                    return true;
-                }, IntPtr.Zero);
-            return col;
         }
 
         internal static async Task<Boolean> CheckUpdates(Window rootElement, ManualResetEvent cancelEvent, SettingsGrid_Vanilla gameSettings)
