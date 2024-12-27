@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Text;
 using System.IO;
-using System.IO.Compression;
+using InvalidDataException = Compression.InvalidDataException;
+using CompressionMode = System.IO.Compression.CompressionMode;
 
 namespace Memoria.Assets
 {
-    /// <summary>
-    /// Reads FBX nodes from a binary stream
-    /// </summary>
+    /// <summary>Reads FBX nodes from a binary stream</summary>
     public class FbxBinaryReader : FbxBinary
     {
         private readonly BinaryReader stream;
@@ -15,13 +14,10 @@ namespace Memoria.Assets
 
         private delegate object ReadPrimitive(BinaryReader reader);
 
-        /// <summary>
-        /// Creates a new reader
-        /// </summary>
+        /// <summary>Creates a new reader</summary>
         /// <param name="stream">The stream to read from</param>
         /// <param name="errorLevel">When to throw an <see cref="FbxException"/></param>
-        /// <exception cref="ArgumentException"><paramref name="stream"/> does
-        /// not support seeking</exception>
+        /// <exception cref="ArgumentException"><paramref name="stream"/> does not support seeking</exception>
         public FbxBinaryReader(Stream stream, FbxErrorLevel errorLevel = FbxErrorLevel.Checked)
         {
             if (stream == null)
@@ -97,6 +93,7 @@ namespace Memoria.Assets
             var ret = Array.CreateInstance(arrayType, len);
             var s = stream;
             var endPos = stream.BaseStream.Position + compressedLen;
+            FbxDeflateWithChecksum codec = null;
             if (encoding != 0)
             {
                 if (errorLevel >= FbxErrorLevel.Checked)
@@ -120,7 +117,7 @@ namespace Memoria.Assets
                 {
                     stream.BaseStream.Position += 2;
                 }
-                var codec = new FbxDeflateWithChecksum(stream.BaseStream, CompressionMode.Decompress);
+                codec = new FbxDeflateWithChecksum(stream.BaseStream, CompressionMode.Decompress);
                 s = new BinaryReader(codec);
             }
             try
@@ -128,10 +125,9 @@ namespace Memoria.Assets
                 for (int i = 0; i < len; i++)
                     ret.SetValue(readPrimitive(s), i);
             }
-            catch (Exception) // InvalidDataException
+            catch (InvalidDataException)
             {
-                throw new FbxException(stream.BaseStream.Position - 1,
-                    "Compressed data was malformed");
+                throw new FbxException(stream.BaseStream.Position - 1, "Compressed data was malformed");
             }
             if (encoding != 0)
             {
@@ -143,7 +139,7 @@ namespace Memoria.Assets
                     int checksum = 0;
                     for (int i = 0; i < checksumBytes.Length; i++)
                         checksum = (checksum << 8) + checksumBytes[i];
-                    if (checksum != ((FbxDeflateWithChecksum)s.BaseStream).Checksum)
+                    if (checksum != codec.Checksum)
                         throw new FbxException(stream.BaseStream.Position,
                             "Compressed data has invalid checksum");
                 }
@@ -155,15 +151,10 @@ namespace Memoria.Assets
             return ret;
         }
 
-        /// <summary>
-        /// Reads a single node.
-        /// </summary>
-        /// <remarks>
-        /// This won't read the file header or footer, and as such will fail if the stream is a full FBX file
-        /// </remarks>
+        /// <summary>Reads a single node.</summary>
+        /// <remarks>This won't read the file header or footer, and as such will fail if the stream is a full FBX file</remarks>
         /// <returns>The node</returns>
-        /// <exception cref="FbxException">The FBX data was malformed
-        /// for the reader's error level</exception>
+        /// <exception cref="FbxException">The FBX data was malformed for the reader's error level</exception>
         public FbxNode ReadNode(FbxDocument document)
         {
             var endOffset = document.Version >= FbxVersion.v7_5 ? stream.ReadInt64() : stream.ReadInt32();
@@ -212,12 +203,9 @@ namespace Memoria.Assets
             return node;
         }
 
-        /// <summary>
-        /// Reads an FBX document from the stream
-        /// </summary>
+        /// <summary>Reads an FBX document from the stream</summary>
         /// <returns>The top-level node</returns>
-        /// <exception cref="FbxException">The FBX data was malformed
-        /// for the reader's error level</exception>
+        /// <exception cref="FbxException">The FBX data was malformed for the reader's error level</exception>
         public FbxDocument Read()
         {
             // Read header

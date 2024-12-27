@@ -116,10 +116,10 @@ public static class ModelFactory
                 {
                     foreach (Material mat in renderer.materials)
                     {
-                        String externalPath = AssetManager.SearchAssetOnDisc(texturePath.Replace("%", mat.mainTexture.name), true, false);
-                        if (!String.IsNullOrEmpty(externalPath))
+                        String externalTexturePath = AssetManager.SearchAssetOnDisc(texturePath.Replace("%", mat.mainTexture.name), true, false);
+                        if (!String.IsNullOrEmpty(externalTexturePath))
                         {
-                            Texture texture = AssetManager.LoadFromDisc<Texture2D>(externalPath);
+                            Texture texture = AssetManager.LoadFromDisc<Texture2D>(externalTexturePath);
                             texture.name = mat.mainTexture.name;
                             mat.mainTexture = texture;
                         }

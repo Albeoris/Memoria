@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-using System.IO.Compression;
 using System.Runtime.InteropServices;
+using CompressionMode = System.IO.Compression.CompressionMode;
 
 namespace Memoria.Assets
 {
-    /// <summary>
-    /// Writes an FBX document to a binary stream
-    /// </summary>
+    /// <summary>Writes an FBX document to a binary stream</summary>
     public class FbxBinaryWriter : FbxBinary
     {
         private readonly Stream output;
@@ -18,14 +16,10 @@ namespace Memoria.Assets
 
         readonly Stack<string> nodePath = new Stack<string>();
 
-        /// <summary>
-        /// The minimum size of an array in bytes before it is compressed
-        /// </summary>
+        /// <summary>The minimum size of an array in bytes before it is compressed</summary>
         public int CompressionThreshold { get; set; } = 1024;
 
-        /// <summary>
-        /// Creates a new writer
-        /// </summary>
+        /// <summary>Creates a new writer</summary>
         /// <param name="stream"></param>
         public FbxBinaryWriter(Stream stream)
         {
@@ -247,9 +241,7 @@ namespace Memoria.Assets
             }
         }
 
-        /// <summary>
-        /// Writes an FBX file to the output
-        /// </summary>
+        /// <summary>Writes an FBX file to the output</summary>
         /// <param name="document"></param>
         public void Write(FbxDocument document)
         {

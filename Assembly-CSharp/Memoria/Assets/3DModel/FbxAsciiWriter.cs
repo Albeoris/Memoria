@@ -5,16 +5,12 @@ using System.Collections.Generic;
 
 namespace Memoria.Assets
 {
-    /// <summary>
-    /// Writes an FBX document in a text format
-    /// </summary>
+    /// <summary>Writes an FBX document in a text format</summary>
     public class FbxAsciiWriter
     {
         private readonly Stream stream;
 
-        /// <summary>
-        /// Creates a new reader
-        /// </summary>
+        /// <summary>Creates a new reader</summary>
         /// <param name="stream"></param>
         public FbxAsciiWriter(Stream stream)
         {
@@ -23,9 +19,7 @@ namespace Memoria.Assets
             this.stream = stream;
         }
 
-        /// <summary>
-        /// The maximum line length in characters when outputting arrays
-        /// </summary>
+        /// <summary>The maximum line length in characters when outputting arrays</summary>
         /// <remarks>
         /// Lines might end up being a few characters longer than this, visibly and otherwise,
         /// so don't rely on it as a hard limit in code!
@@ -126,13 +120,9 @@ namespace Memoria.Assets
             nodePath.Pop();
         }
 
-        /// <summary>
-        /// Writes an FBX document to the stream
-        /// </summary>
+        /// <summary>Writes an FBX document to the stream</summary>
         /// <param name="document"></param>
-        /// <remarks>
-        /// ASCII FBX files have no header or footer, so you can call this multiple times
-        /// </remarks>
+        /// <remarks>ASCII FBX files have no header or footer, so you can call this multiple times</remarks>
         public void Write(FbxDocument document)
         {
             if (document == null)

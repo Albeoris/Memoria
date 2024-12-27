@@ -5,16 +5,14 @@ using System.Text;
 
 namespace Memoria.Assets
 {
-    /// <summary>
-    /// Base class for binary stream wrappers
-    /// </summary>
+    /// <summary>Base class for binary stream wrappers</summary>
     public abstract class FbxBinary
     {
         // Header string, found at the top of all compliant files
         private static readonly byte[] headerString
             = Encoding.ASCII.GetBytes("Kaydara FBX Binary  \0\x1a\0");
 
-        // This data was entirely calculated by me, honest. Turns out it works, fancy that!
+        // This data was entirely calculated by me [hamish-milne], honest. Turns out it works, fancy that!
         private static readonly byte[] sourceId =
             { 0x58, 0xAB, 0xA9, 0xF0, 0x6C, 0xA2, 0xD8, 0x3F, 0x4D, 0x47, 0x49, 0xA3, 0xB4, 0xB2, 0xE7, 0x3D };
         private static readonly byte[] key =
@@ -28,24 +26,16 @@ namespace Memoria.Assets
         // Number of null bytes between the footer version and extension code
         private const int footerZeroes2 = 120;
 
-        /// <summary>
-        /// The size of the footer code
-        /// </summary>
+        /// <summary>The size of the footer code</summary>
         protected const int footerCodeSize = 16;
 
-        /// <summary>
-        /// The namespace separator in the binary format (remember to reverse the identifiers)
-        /// </summary>
+        /// <summary>The namespace separator in the binary format (remember to reverse the identifiers)</summary>
         protected const string binarySeparator = "\0\x1";
 
-        /// <summary>
-        /// The namespace separator in the ASCII format and in object data
-        /// </summary>
+        /// <summary>The namespace separator in the ASCII format and in object data</summary>
         protected const string asciiSeparator = "::";
 
-        /// <summary>
-        /// Checks if the first part of 'data' matches 'original'
-        /// </summary>
+        /// <summary>Checks if the first part of 'data' matches 'original'</summary>
         /// <param name="data"></param>
         /// <param name="original"></param>
         /// <returns><c>true</c> if it does, otherwise <c>false</c></returns>
@@ -57,18 +47,14 @@ namespace Memoria.Assets
             return true;
         }
 
-        /// <summary>
-        /// Writes the FBX header string
-        /// </summary>
+        /// <summary>Writes the FBX header string</summary>
         /// <param name="stream"></param>
         protected static void WriteHeader(Stream stream)
         {
             stream.Write(headerString, 0, headerString.Length);
         }
 
-        /// <summary>
-        /// Reads the FBX header string
-        /// </summary>
+        /// <summary>Reads the FBX header string</summary>
         /// <param name="stream"></param>
         /// <returns><c>true</c> if it's compliant</returns>
         public static bool ReadHeader(Stream stream)
@@ -91,7 +77,7 @@ namespace Memoria.Assets
 
         const string timePath1 = "FBXHeaderExtension";
         const string timePath2 = "CreationTimeStamp";
-        static readonly Stack<string> timePath = new Stack<string>(new[] { timePath1, timePath2 });
+        static readonly Stack<string> timePath = new Stack<string>([timePath1, timePath2]);
 
         // Gets a single timestamp component
         static int GetTimestampVar(FbxNode timestamp, string element)
@@ -100,15 +86,13 @@ namespace Memoria.Assets
             if (elementNode != null && elementNode.Properties.Count > 0)
             {
                 var prop = elementNode.Properties[0];
-                if (prop is int || prop is long)
-                    return (int)prop;
+                if (prop is byte || prop is short || prop is int || prop is long)
+                    return Convert.ToInt32(prop);
             }
             throw new FbxException(timePath, -1, "Timestamp has no " + element);
         }
 
-        /// <summary>
-        /// Generates the unique footer code based on the document's timestamp
-        /// </summary>
+        /// <summary>Generates the unique footer code based on the document's timestamp</summary>
         /// <param name="document"></param>
         /// <returns>A 16-byte code</returns>
         protected static byte[] GenerateFooterCode(FbxNodeList document)
@@ -134,9 +118,7 @@ namespace Memoria.Assets
             }
         }
 
-        /// <summary>
-        /// Generates a unique footer code based on a timestamp
-        /// </summary>
+        /// <summary>Generates a unique footer code based on a timestamp</summary>
         /// <param name="year"></param>
         /// <param name="month"></param>
         /// <param name="day"></param>
@@ -165,7 +147,7 @@ namespace Memoria.Assets
                 throw new ArgumentOutOfRangeException(nameof(millisecond));
 
             var str = (byte[])sourceId.Clone();
-            var mangledTime = $"{second:00}{month:00}{hour:00}{day:00}{(millisecond / 10):00}{year:0000}{minute:00}";
+            var mangledTime = $"{second:00}{month:00}{hour:00}{day:00}{millisecond / 10:00}{year:0000}{minute:00}";
             var mangledBytes = Encoding.ASCII.GetBytes(mangledTime);
             Encrypt(str, mangledBytes);
             Encrypt(str, key);
@@ -173,9 +155,7 @@ namespace Memoria.Assets
             return str;
         }
 
-        /// <summary>
-        /// Writes the FBX footer extension (NB - not the unique footer code)
-        /// </summary>
+        /// <summary>Writes the FBX footer extension (NB - not the unique footer code)</summary>
         /// <param name="stream"></param>
         /// <param name="version"></param>
         protected void WriteFooter(BinaryWriter stream, int version)
@@ -195,9 +175,7 @@ namespace Memoria.Assets
             return true;
         }
 
-        /// <summary>
-        /// Reads and checks the FBX footer extension (NB - not the unique footer code)
-        /// </summary>
+        /// <summary>Reads and checks the FBX footer extension (NB - not the unique footer code)</summary>
         /// <param name="stream"></param>
         /// <param name="version"></param>
         /// <returns><c>true</c> if it's compliant</returns>

@@ -3,6 +3,7 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 using Memoria.Scripts;
+using Memoria.Prime;
 
 namespace Memoria.Assets
 {
@@ -120,182 +121,190 @@ namespace Memoria.Assets
             }
             catch (Exception err)
             {
-                Memoria.Prime.Log.Error(err);
+                Log.Error($"When importing FBX '{completePath}':\n{err}");
             }
             return null;
         }
 
         public static GameObject CreateCustomModelFromRawText(String completePath)
         {
-            // The format there is just used for tests and will change in the future
-            String folderPath = Path.GetDirectoryName(completePath);
-            CustomModelMinimalInfos baseMesh = new CustomModelMinimalInfos();
-            CustomModelTextured texture = null;
-            CustomModelAnimated anim = null;
-            CustomModelExtraInfos extra = null;
-            Boolean hasTexture = true;
-            Boolean hasAnim = true;
-            Boolean hasMeshName = false;
-            Boolean hasNormal = true;
-            Boolean hasTangent = false;
-            Boolean hasColor = false;
-            Boolean hasUV2 = false;
-            Int32 meshCount = 1;
-            Int32 materialCount = 1;
-            Int32 boneCount = 0;
+            try
+            {
+                // The format there is just used for tests and will change in the future
+                String folderPath = Path.GetDirectoryName(completePath);
+                CustomModelMinimalInfos baseMesh = new CustomModelMinimalInfos();
+                CustomModelTextured texture = null;
+                CustomModelAnimated anim = null;
+                CustomModelExtraInfos extra = null;
+                Boolean hasTexture = true;
+                Boolean hasAnim = true;
+                Boolean hasMeshName = false;
+                Boolean hasNormal = true;
+                Boolean hasTangent = false;
+                Boolean hasColor = false;
+                Boolean hasUV2 = false;
+                Int32 meshCount = 1;
+                Int32 materialCount = 1;
+                Int32 boneCount = 0;
 
-            String[] customMeshFile = File.ReadAllLines(completePath);
-            Int32 meshFilei = 9;
+                String[] customMeshFile = File.ReadAllLines(completePath);
+                Int32 meshFilei = 9;
 
-            baseMesh.name = Path.GetFileNameWithoutExtension(completePath);
-            baseMesh.matIndex = new Int32[meshCount];
-            baseMesh.vert = new Vector3[meshCount][];
-            baseMesh.tri = new Int32[meshCount][];
-            baseMesh.shader = new String[materialCount];
-            if (hasTexture)
-            {
-                texture = new CustomModelTextured();
-                texture.uv = new Vector2[meshCount][];
-                texture.texturePath = new String[materialCount];
-            }
-            if (hasAnim)
-            {
-                anim = new CustomModelAnimated();
-                anim.bw = new BoneWeight[meshCount][];
-                anim.boneId = new UInt32[boneCount];
-                anim.boneParentId = new Int32[boneCount];
-                anim.bonePos = new Vector3[boneCount];
-                anim.boneRot = new Quaternion[boneCount];
-                anim.boneScale = new Vector3[boneCount];
-            }
-            if (hasMeshName || hasNormal || hasTangent || hasColor || hasUV2)
-            {
-                extra = new CustomModelExtraInfos();
-                if (hasMeshName)
-                    extra.meshName = new String[meshCount];
-                if (hasNormal)
-                    extra.normal = new Vector3[meshCount][];
-                if (hasTangent)
-                    extra.tangent = new Vector4[meshCount][];
-                if (hasColor)
-                    extra.color = new Color[meshCount][];
-                if (hasUV2)
-                    extra.uv2 = new Vector2[meshCount][];
-            }
-            for (Int32 i = 0; i < meshCount; i++)
-            {
-                if (hasMeshName)
-                    extra.meshName[i] = customMeshFile[0];
-                Int32.TryParse(customMeshFile[0], out Int32 vCount);
-                Int32.TryParse(customMeshFile[6], out Int32 tCount);
-
-                baseMesh.matIndex[i] = 0;
-                baseMesh.vert[i] = new Vector3[vCount];
-                baseMesh.tri[i] = new Int32[tCount];
-                for (Int32 j = 0; j < vCount; j++)
-                {
-                    String[] line = customMeshFile[meshFilei++].Split(' ');
-                    Single.TryParse(line[0], out baseMesh.vert[i][j].x);
-                    Single.TryParse(line[1], out baseMesh.vert[i][j].y);
-                    Single.TryParse(line[2], out baseMesh.vert[i][j].z);
-                    baseMesh.vert[i][j] *= 75f;
-                }
+                baseMesh.name = Path.GetFileNameWithoutExtension(completePath);
+                baseMesh.matIndex = new Int32[meshCount];
+                baseMesh.vert = new Vector3[meshCount][];
+                baseMesh.tri = new Int32[meshCount][];
+                baseMesh.shader = new String[materialCount];
                 if (hasTexture)
                 {
-                    texture.uv[i] = new Vector2[vCount];
-                    for (Int32 j = 0; j < vCount; j++)
-                    {
-                        String[] line = customMeshFile[meshFilei++].Split(' ');
-                        Single.TryParse(line[0], out texture.uv[i][j].x);
-                        Single.TryParse(line[1], out texture.uv[i][j].y);
-                    }
+                    texture = new CustomModelTextured();
+                    texture.uv = new Vector2[meshCount][];
+                    texture.texturePath = new String[materialCount];
                 }
-                if (hasUV2)
-                {
-                    extra.uv2[i] = new Vector2[vCount];
-                    for (Int32 j = 0; j < vCount; j++)
-                    {
-                        String[] line = customMeshFile[meshFilei++].Split(' ');
-                        Single.TryParse(line[0], out extra.uv2[i][j].x);
-                        Single.TryParse(line[1], out extra.uv2[i][j].y);
-                    }
-                }
-                if (hasNormal)
-                {
-                    extra.normal[i] = new Vector3[vCount];
-                    for (Int32 j = 0; j < vCount; j++)
-                    {
-                        String[] line = customMeshFile[meshFilei++].Split(' ');
-                        Single.TryParse(line[0], out extra.normal[i][j].x);
-                        Single.TryParse(line[1], out extra.normal[i][j].y);
-                        Single.TryParse(line[2], out extra.normal[i][j].z);
-                    }
-                }
-                if (hasTangent)
-                {
-                    extra.tangent[i] = new Vector4[vCount];
-                    for (Int32 j = 0; j < vCount; j++)
-                    {
-                        String[] line = customMeshFile[meshFilei++].Split(' ');
-                        Single.TryParse(line[0], out extra.tangent[i][j].x);
-                        Single.TryParse(line[1], out extra.tangent[i][j].y);
-                        Single.TryParse(line[2], out extra.tangent[i][j].z);
-                        Single.TryParse(line[3], out extra.tangent[i][j].w);
-                    }
-                }
-                if (hasColor)
-                {
-                    extra.color[i] = new Color[vCount];
-                    for (Int32 j = 0; j < vCount; j++)
-                    {
-                        String[] line = customMeshFile[meshFilei++].Split(' ');
-                        Single.TryParse(line[0], out extra.color[i][j].r);
-                        Single.TryParse(line[1], out extra.color[i][j].g);
-                        Single.TryParse(line[2], out extra.color[i][j].b);
-                        Single.TryParse(line[3], out extra.color[i][j].a);
-                    }
-                }
-                for (Int32 j = 0; j < tCount; j++)
-                    Int32.TryParse(customMeshFile[meshFilei++], out baseMesh.tri[i][j]);
                 if (hasAnim)
                 {
-                    anim.bw[i] = new BoneWeight[vCount];
+                    anim = new CustomModelAnimated();
+                    anim.bw = new BoneWeight[meshCount][];
+                    anim.boneId = new UInt32[boneCount];
+                    anim.boneParentId = new Int32[boneCount];
+                    anim.bonePos = new Vector3[boneCount];
+                    anim.boneRot = new Quaternion[boneCount];
+                    anim.boneScale = new Vector3[boneCount];
+                }
+                if (hasMeshName || hasNormal || hasTangent || hasColor || hasUV2)
+                {
+                    extra = new CustomModelExtraInfos();
+                    if (hasMeshName)
+                        extra.meshName = new String[meshCount];
+                    if (hasNormal)
+                        extra.normal = new Vector3[meshCount][];
+                    if (hasTangent)
+                        extra.tangent = new Vector4[meshCount][];
+                    if (hasColor)
+                        extra.color = new Color[meshCount][];
+                    if (hasUV2)
+                        extra.uv2 = new Vector2[meshCount][];
+                }
+                for (Int32 i = 0; i < meshCount; i++)
+                {
+                    if (hasMeshName)
+                        extra.meshName[i] = customMeshFile[0];
+                    Int32.TryParse(customMeshFile[0], out Int32 vCount);
+                    Int32.TryParse(customMeshFile[6], out Int32 tCount);
+
+                    baseMesh.matIndex[i] = 0;
+                    baseMesh.vert[i] = new Vector3[vCount];
+                    baseMesh.tri[i] = new Int32[tCount];
                     for (Int32 j = 0; j < vCount; j++)
                     {
                         String[] line = customMeshFile[meshFilei++].Split(' ');
-                        anim.bw[i][j].boneIndex0 = Int32.Parse(line[0]);
-                        anim.bw[i][j].boneIndex1 = Int32.Parse(line[1]);
-                        anim.bw[i][j].boneIndex2 = Int32.Parse(line[2]);
-                        anim.bw[i][j].boneIndex3 = Int32.Parse(line[3]);
+                        Single.TryParse(line[0], out baseMesh.vert[i][j].x);
+                        Single.TryParse(line[1], out baseMesh.vert[i][j].y);
+                        Single.TryParse(line[2], out baseMesh.vert[i][j].z);
+                        baseMesh.vert[i][j] *= 75f;
                     }
-                    for (Int32 j = 0; j < vCount; j++)
+                    if (hasTexture)
                     {
-                        String[] line = customMeshFile[meshFilei++].Split(' ');
-                        anim.bw[i][j].weight0 = Single.Parse(line[0]);
-                        anim.bw[i][j].weight1 = Single.Parse(line[1]);
-                        anim.bw[i][j].weight2 = Single.Parse(line[2]);
-                        anim.bw[i][j].weight3 = Single.Parse(line[3]);
+                        texture.uv[i] = new Vector2[vCount];
+                        for (Int32 j = 0; j < vCount; j++)
+                        {
+                            String[] line = customMeshFile[meshFilei++].Split(' ');
+                            Single.TryParse(line[0], out texture.uv[i][j].x);
+                            Single.TryParse(line[1], out texture.uv[i][j].y);
+                        }
+                    }
+                    if (hasUV2)
+                    {
+                        extra.uv2[i] = new Vector2[vCount];
+                        for (Int32 j = 0; j < vCount; j++)
+                        {
+                            String[] line = customMeshFile[meshFilei++].Split(' ');
+                            Single.TryParse(line[0], out extra.uv2[i][j].x);
+                            Single.TryParse(line[1], out extra.uv2[i][j].y);
+                        }
+                    }
+                    if (hasNormal)
+                    {
+                        extra.normal[i] = new Vector3[vCount];
+                        for (Int32 j = 0; j < vCount; j++)
+                        {
+                            String[] line = customMeshFile[meshFilei++].Split(' ');
+                            Single.TryParse(line[0], out extra.normal[i][j].x);
+                            Single.TryParse(line[1], out extra.normal[i][j].y);
+                            Single.TryParse(line[2], out extra.normal[i][j].z);
+                        }
+                    }
+                    if (hasTangent)
+                    {
+                        extra.tangent[i] = new Vector4[vCount];
+                        for (Int32 j = 0; j < vCount; j++)
+                        {
+                            String[] line = customMeshFile[meshFilei++].Split(' ');
+                            Single.TryParse(line[0], out extra.tangent[i][j].x);
+                            Single.TryParse(line[1], out extra.tangent[i][j].y);
+                            Single.TryParse(line[2], out extra.tangent[i][j].z);
+                            Single.TryParse(line[3], out extra.tangent[i][j].w);
+                        }
+                    }
+                    if (hasColor)
+                    {
+                        extra.color[i] = new Color[vCount];
+                        for (Int32 j = 0; j < vCount; j++)
+                        {
+                            String[] line = customMeshFile[meshFilei++].Split(' ');
+                            Single.TryParse(line[0], out extra.color[i][j].r);
+                            Single.TryParse(line[1], out extra.color[i][j].g);
+                            Single.TryParse(line[2], out extra.color[i][j].b);
+                            Single.TryParse(line[3], out extra.color[i][j].a);
+                        }
+                    }
+                    for (Int32 j = 0; j < tCount; j++)
+                        Int32.TryParse(customMeshFile[meshFilei++], out baseMesh.tri[i][j]);
+                    if (hasAnim)
+                    {
+                        anim.bw[i] = new BoneWeight[vCount];
+                        for (Int32 j = 0; j < vCount; j++)
+                        {
+                            String[] line = customMeshFile[meshFilei++].Split(' ');
+                            anim.bw[i][j].boneIndex0 = Int32.Parse(line[0]);
+                            anim.bw[i][j].boneIndex1 = Int32.Parse(line[1]);
+                            anim.bw[i][j].boneIndex2 = Int32.Parse(line[2]);
+                            anim.bw[i][j].boneIndex3 = Int32.Parse(line[3]);
+                        }
+                        for (Int32 j = 0; j < vCount; j++)
+                        {
+                            String[] line = customMeshFile[meshFilei++].Split(' ');
+                            anim.bw[i][j].weight0 = Single.Parse(line[0]);
+                            anim.bw[i][j].weight1 = Single.Parse(line[1]);
+                            anim.bw[i][j].weight2 = Single.Parse(line[2]);
+                            anim.bw[i][j].weight3 = Single.Parse(line[3]);
+                        }
                     }
                 }
-            }
 
-            for (Int32 i = 0; i < boneCount; i++)
+                for (Int32 i = 0; i < boneCount; i++)
+                {
+                    anim.boneId[i] = (UInt32)i;
+                    anim.boneParentId[i] = i - 1;
+                    anim.bonePos[i] = Vector3.zero;
+                    anim.boneRot[i] = Quaternion.identity;
+                    anim.boneScale[i] = Vector3.one;
+                }
+
+                for (Int32 i = 0; i < materialCount; i++)
+                {
+                    baseMesh.shader[i] = "Default";
+                    if (hasTexture)
+                        texture.texturePath[i] = AssetManager.UsePathWithDefaultFolder(folderPath, "mesh0_1.png");
+                }
+
+                return CreateCustomModel(baseMesh, texture, anim, extra);
+            }
+            catch (Exception err)
             {
-                anim.boneId[i] = (UInt32)i;
-                anim.boneParentId[i] = i - 1;
-                anim.bonePos[i] = Vector3.zero;
-                anim.boneRot[i] = Quaternion.identity;
-                anim.boneScale[i] = Vector3.one;
+                Log.Error($"When importing custom model '{completePath}':\n{err}");
+                return null;
             }
-
-            for (Int32 i = 0; i < materialCount; i++)
-            {
-                baseMesh.shader[i] = "Default";
-                if (hasTexture)
-                    texture.texturePath[i] = AssetManager.UsePathWithDefaultFolder(folderPath, "mesh0_1.png");
-            }
-
-            return CreateCustomModel(baseMesh, texture, anim, extra);
         }
 
         private static GameObject CreateCustomModel(CustomModelMinimalInfos baseMesh, CustomModelTextured texture = null, CustomModelAnimated anim = null, CustomModelExtraInfos extra = null)

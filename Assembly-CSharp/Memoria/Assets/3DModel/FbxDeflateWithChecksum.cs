@@ -1,26 +1,23 @@
 ﻿using System.IO;
-using System.IO.Compression;
+using Compression;
+using CompressionMode = System.IO.Compression.CompressionMode;
 
 namespace Memoria.Assets
 {
-    // TODO: because of an error in the version of the System.dll used by FF9,
-    // it misses the internal method "CreateZStream"
-    // which makes the use of DeflateStream (compression algorithm) impossible
+    // NOTE: because of an error in the version of the System.dll used by FF9,
+    // System.IO.Compression.DeflateStream misses the internal method "CreateZStream"
+    // which makes its use (compression algorithm) impossible
     // ... even if there's no problem using them in the launcher and such
-    // Thus, FBX binary format isn't supported for now
+    // Thus, another DeflateStream is used here
 
-    /// <summary>
-    /// A wrapper for DeflateStream that calculates the Adler32 checksum of the payload
-    /// </summary>
+    /// <summary>A wrapper for DeflateStream that calculates the Adler32 checksum of the payload</summary>
     public class FbxDeflateWithChecksum : DeflateStream
     {
         private const int modAdler = 65521;
         private uint checksumA;
         private uint checksumB;
 
-        /// <summary>
-        /// Gets the Adler32 checksum at the current point in the stream
-        /// </summary>
+        /// <summary>Gets the Adler32 checksum at the current point in the stream</summary>
         public int Checksum
         {
             get
@@ -76,9 +73,7 @@ namespace Memoria.Assets
             return ret;
         }
 
-        /// <summary>
-        /// Initializes the checksum values
-        /// </summary>
+        /// <summary>Initializes the checksum values</summary>
         public void ResetChecksum()
         {
             checksumA = 1;

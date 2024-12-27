@@ -24,15 +24,11 @@ namespace Memoria.Assets
     // Documentation: https://code.blender.org/2013/08/fbx-binary-file-format-specification/
     // and: https://archive.blender.org/wiki/2015/index.php/User:Mont29/Foundation/FBX_File_Structure/
 
-    /// <summary>
-    /// Static read and write methods
-    /// </summary>
+    /// <summary>Static read and write methods</summary>
     // IO is an acronym
     public static class FbxIO
     {
-        /// <summary>
-        /// Reads a binary FBX file
-        /// </summary>
+        /// <summary>Reads a binary FBX file</summary>
         /// <param name="path"></param>
         /// <returns>The top level document node</returns>
         public static FbxDocument ReadBinary(string path)
@@ -46,9 +42,7 @@ namespace Memoria.Assets
             }
         }
 
-        /// <summary>
-        /// Reads an ASCII FBX file
-        /// </summary>
+        /// <summary>Reads an ASCII FBX file</summary>
         /// <param name="path"></param>
         /// <returns>The top level document node</returns>
         public static FbxDocument ReadAscii(string path)
@@ -62,9 +56,7 @@ namespace Memoria.Assets
             }
         }
 
-        /// <summary>
-        /// Reads a FBX file in ASCII or Binary format
-        /// </summary>
+        /// <summary>Reads a FBX file in ASCII or Binary format</summary>
         /// <param name="path"></param>
         /// <returns>The top level document node</returns>
         public static FbxDocument ReadFlexible(string path)
@@ -88,9 +80,7 @@ namespace Memoria.Assets
             }
         }
 
-        /// <summary>
-        /// Writes an FBX document
-        /// </summary>
+        /// <summary>Writes an FBX document in Binary format</summary>
         /// <param name="document">The top level document node</param>
         /// <param name="path"></param>
         public static void WriteBinary(FbxDocument document, string path)
@@ -104,9 +94,7 @@ namespace Memoria.Assets
             }
         }
 
-        /// <summary>
-        /// Writes an FBX document
-        /// </summary>
+        /// <summary>Writes an FBX document in ASCII format</summary>
         /// <param name="document">The top level document node</param>
         /// <param name="path"></param>
         public static void WriteAscii(FbxDocument document, string path)
