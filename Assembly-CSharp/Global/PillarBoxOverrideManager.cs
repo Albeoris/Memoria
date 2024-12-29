@@ -32,10 +32,10 @@ public class PillarBoxOverrideManager : MonoBehaviour
 
     private void UpdatePillarSize()
     {
-        this.topRect.sizeDelta = new Vector2(0f, Mathf.Max(UIManager.UIPillarBoxSize.y, 0f));
-        this.bottomRect.sizeDelta = new Vector2(0f, Mathf.Max(UIManager.UIPillarBoxSize.y, 0f));
-        this.leftRect.sizeDelta = new Vector2(Mathf.Max(UIManager.UIPillarBoxSize.x, 0f), 0f);
-        this.rightRect.sizeDelta = new Vector2(Mathf.Max(UIManager.UIPillarBoxSize.x, 0f), 0f);
+        this.topRect.sizeDelta = new Vector2(0f, UIManager.UIPillarBoxSize.y);
+        this.bottomRect.sizeDelta = new Vector2(0f, UIManager.UIPillarBoxSize.y);
+        this.leftRect.sizeDelta = new Vector2(UIManager.UIPillarBoxSize.x, 0f);
+        this.rightRect.sizeDelta = new Vector2(UIManager.UIPillarBoxSize.x, 0f);
     }
 
     private RectTransform topRect;
