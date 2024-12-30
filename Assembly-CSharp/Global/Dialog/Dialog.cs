@@ -28,7 +28,15 @@ public class Dialog : MonoBehaviour
     {
         // Note: this type is marked as 'beforefieldinit'.
         Dialog.DialogGroupButton = "Dialog.Choice";
-        Dialog.DefaultOffset = new Vector2(36f, 0f);
+
+        float xOffset = 36f;
+
+        if (Configuration.Font.Enabled && Configuration.Font.Names?.FirstOrDefault() == "Alexandria")
+        {
+            xOffset = 8f;
+        }
+
+        Dialog.DefaultOffset = new Vector2(xOffset, 0f);
     }
 
     public Int32 StartChoiceRow
