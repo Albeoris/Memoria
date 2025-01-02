@@ -11,8 +11,8 @@ public class FF9CFG
         this.cursor = 0UL;
         this.atb = 1UL;
         this.camera = 0UL;
-        this.move = 0UL;
-        this.vibe = 1UL;
+        this.move = 1UL; // Run by default
+        this.vibe = FF9CFG_VIBE_ON; // Vibration ON by default
         this.btl_speed = 1UL;
         this.skip_btl_camera = 1UL;
         this.btl_msg = 3UL;
