@@ -253,9 +253,7 @@ public class SFXData
                 String[] arguments = line.Split(' ');
                 if (arguments[0] == "Model" && arguments.Length >= 2)
                 {
-                    String meshPath = arguments[1];
-                    if (!meshPath.Contains("/"))
-                        meshPath = defaultFolder + meshPath;
+                    String meshPath = AssetManager.UsePathWithDefaultFolder(defaultFolder, arguments[1]);
                     SFXDataMesh.ModelSequence modelJSON = SFXDataMesh.ModelSequence.Load(meshPath);
                     if (modelJSON == null)
                         continue;
@@ -266,9 +264,7 @@ public class SFXData
                 }
                 if (arguments[0] == "Camera" && arguments.Length >= 2 && useCamera)
                 {
-                    String cameraPath = arguments[1];
-                    if (!cameraPath.Contains("/"))
-                        cameraPath = defaultFolder + cameraPath;
+                    String cameraPath = AssetManager.UsePathWithDefaultFolder(defaultFolder, arguments[1]);
                     SFXDataCamera camJSON = SFXDataCamera.LoadFromJSON(cameraPath);
                     if (camJSON == null)
                         continue;

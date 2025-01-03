@@ -1,4 +1,5 @@
 using Memoria;
+using Memoria.Prime;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -68,14 +69,24 @@ public class GEOTEXHEADER
                 _subTextureIndexs[i] = i;
             }
         }
+        this._invalidAnimation = new Boolean[this.count];
         for (Int32 i = 0; i < this.count; i++)
         {
+            if (this._mainTextureIndexs[i] < 0 || this._mainTextureIndexs[i] >= this.materials.Length || this._subTextureIndexs[i] < 0 || this._subTextureIndexs[i] >= this.materials.Length)
+            {
+                Log.Error($"[{nameof(GEOTEXHEADER)}] Invalid mapping for texture animation of {geoName}");
+                this._invalidAnimation[i] = true;
+                continue;
+            }
             MapTextureToTexAnimIndex(this._mainTextureIndexs[i], this.materials[this._mainTextureIndexs[i]].mainTexture);
             MapTextureToTexAnimIndex(this._subTextureIndexs[i], this.materials[this._subTextureIndexs[i]].mainTexture);
             MapRenderTexToTexAnimIndex(this._mainTextureIndexs[i], this.materials[this._mainTextureIndexs[i]], this.TextureMapping[this._mainTextureIndexs[i]]);
+            this._invalidAnimation[i] = false;
         }
         for (Int32 i = 0; i < this.count; i++)
         {
+            if (this._invalidAnimation[i])
+                continue;
             Single scalex = this.TextureMapping[this._mainTextureIndexs[i]].width / 128f;
             Single scaley = this.TextureMapping[this._mainTextureIndexs[i]].height / 128f;
             Single subw = this.TextureMapping[this._subTextureIndexs[i]].width;
@@ -152,6 +163,8 @@ public class GEOTEXHEADER
     {
         for (Int32 i = 0; i < this.count; i++)
         {
+            if (this._invalidAnimation[i])
+                continue;
             RenderTexture renderTexture = this.RenderTexMapping[this._mainTextureIndexs[i]];
             if (!renderTexture.IsCreated())
             {
@@ -201,17 +214,29 @@ public class GEOTEXHEADER
         MeshRenderer[] bbgmrs = bbgObj.GetComponentsInChildren<MeshRenderer>();
         this.materials = new Material[this.count];
         this.bbgExtraAimMaterials = this.bbgnumber == 57 || this.bbgnumber == 71 ? new Material[this.count] : [];
+        this._invalidAnimation = new Boolean[this.count];
         for (Int32 i = 0; i < this.count; i++)
         {
+            this._invalidAnimation[i] = false;
             if (this.bbgnumber == 7 && i != 0) // Memoria, Nova Dragon battle
             {
-                if (i == 1)
-                    this.materials[i] = bbgObjAnim[0].GetComponentsInChildren<MeshRenderer>()[bgobjIndex.groupIndex[i]].materials[bgobjIndex.materialIndex[i]];
-                else
-                    this.materials[i] = bbgObjAnim[1].GetComponentsInChildren<MeshRenderer>()[bgobjIndex.groupIndex[i]].materials[bgobjIndex.materialIndex[i]];
+                MeshRenderer renderer = bbgObjAnim[i == 1 ? 0 : 1].GetComponentsInChildren<MeshRenderer>()[bgobjIndex.groupIndex[i]];
+                if (bgobjIndex.materialIndex[i] < 0 || bgobjIndex.materialIndex[i] >= renderer.materials.Length)
+                {
+                    Log.Error($"[{nameof(GEOTEXHEADER)}] Invalid mapping for texture animation of Battle Background {this.bbgnumber}");
+                    this._invalidAnimation[i] = true;
+                    continue;
+                }
+                this.materials[i] = renderer.materials[bgobjIndex.materialIndex[i]];
             }
             else
             {
+                if (bgobjIndex.materialIndex[i] < 0 || bgobjIndex.materialIndex[i] >= bbgmrs[bgobjIndex.groupIndex[i]].materials.Length)
+                {
+                    Log.Error($"[{nameof(GEOTEXHEADER)}] Invalid mapping for texture animation of Battle Background {this.bbgnumber}");
+                    this._invalidAnimation[i] = true;
+                    continue;
+                }
                 this.materials[i] = bbgmrs[bgobjIndex.groupIndex[i]].materials[bgobjIndex.materialIndex[i]];
                 if (this.bbgnumber == 57) // Cleyra, Observation post
                     this.bbgExtraAimMaterials[i] = bbgmrs[2].materials[0];
@@ -230,6 +255,7 @@ public class GEOTEXHEADER
 
     public Material[] bbgExtraAimMaterials;
 
+    public Boolean[] _invalidAnimation;
     public Int32[] _mainTextureIndexs;
     public Int32[] _subTextureIndexs;
 
