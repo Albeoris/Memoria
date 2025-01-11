@@ -89,6 +89,7 @@
     <Compile Include="ExtensionMethodsArray.cs" />
     <Compile Include="ExtensionMethodsGameObject.cs" />
     <Compile Include="ExtensionMethodsIEnumerable.cs" />
+    <Compile Include="ExtensionMethodsQuaternion.cs" />
     <Compile Include="ExtensionMethodsVector3.cs" />
     <Compile Include="FileCommander.cs" />
     <Compile Include="GameLoopManager.cs" />

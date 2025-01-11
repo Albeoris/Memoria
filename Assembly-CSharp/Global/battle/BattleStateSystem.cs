@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using Memoria;
 using Memoria.Prime;
 using Memoria.Scripts;
 
@@ -29,7 +30,7 @@ public class BattleStateSystem : MonoBehaviour
         String battleParamLine;
         while ((battleParamLine = battleList.ReadLine()) != null)
         {
-            String[] battleParams = battleParamLine.Split(new Char[] { ',' });
+            String[] battleParams = battleParamLine.Split(',');
             Int32.TryParse(battleParams[0], out Int32 battleId);
             if (battleId != -1)
                 this.mapName.Add(battleId, battleParams[1]);
@@ -58,7 +59,7 @@ public class BattleStateSystem : MonoBehaviour
         this.FF9Battle.aa_data = FF9BattleDB.CharacterActions;
         this.FF9Battle.add_status = FF9BattleDB.StatusSets;
         this.fadeShader = ShadersLoader.Find("PSX/BattleMap_Abr_1");
-        this.battleShader = ShadersLoader.Find(ShadersLoader.GetCurrentBattleCharcterShader);
+        this.battleShader = ShadersLoader.Find(Configuration.Shaders.BattleCharacterShader);
         this.shadowShader = ShadersLoader.Find("PSX/BattleMap_Abr_2");
         this.detailTexture = AssetManager.Load<Texture2D>("EmbeddedAsset/BattleMap/detailTexture", false);
     }
@@ -71,42 +72,28 @@ public class BattleStateSystem : MonoBehaviour
     public Dictionary<Int32, String> mapName;
 
     public Int32 battleMapIndex;
-
     public Byte patternIndex;
 
     public Boolean isFrontRow;
-
     public battle_start_type_tags debugStartType;
-
     public Boolean isLevitate;
-
     public Boolean[] isTrance;
-
     public Boolean isFade;
-
     public Boolean isDebug;
-
     public Boolean mappingBattleIDWithMapList;
-
     public Boolean isTutorial;
-
     public Boolean isRandomEncounter;
 
     public Int32 selectCharPosID;
-
     public Int32 selectPlayerCount;
 
     public Texture2D detailTexture;
-
     public Shader fadeShader;
-
     public Shader battleShader;
-
     public Shader shadowShader;
 
     public FF9StateBattleSystem FF9Battle;
 
     public Boolean IsPlayFieldBGMInCurrentBattle;
-
     public Boolean isEncount;
 }
