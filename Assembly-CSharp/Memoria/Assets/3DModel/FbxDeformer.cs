@@ -4,7 +4,7 @@ namespace Memoria.Assets
 {
     public class FbxDeformer
     {
-        public FbxNode DeformerNode;
+        public readonly FbxNode DeformerNode;
 
         public FbxDeformer(FbxNode deformerNode)
         {

@@ -92,7 +92,7 @@ namespace Memoria.Assets
                     }
                 }
                 else if (p is char)
-                    sb.Append((int)p); // Write chars as int (eg. Shading property)
+                    sb.Append(Convert.ToInt32(p)); // Write chars as int (eg. Shading property)
                 else if (p.GetType().IsPrimitive && p is IFormattable)
                     sb.Append(p);
                 else

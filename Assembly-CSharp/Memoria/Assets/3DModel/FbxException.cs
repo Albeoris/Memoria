@@ -3,14 +3,10 @@ using System.Collections.Generic;
 
 namespace Memoria.Assets
 {
-    /// <summary>
-    /// An error with the FBX data input
-    /// </summary>
+    /// <summary>An error with the FBX data input</summary>
     public class FbxException : Exception
     {
-        /// <summary>
-        /// An error at a binary stream offset
-        /// </summary>
+        /// <summary>An error at a binary stream offset</summary>
         /// <param name="position"></param>
         /// <param name="message"></param>
         public FbxException(long position, string message) :
@@ -18,9 +14,7 @@ namespace Memoria.Assets
         {
         }
 
-        /// <summary>
-        /// An error in a text file
-        /// </summary>
+        /// <summary>An error in a text file</summary>
         /// <param name="line"></param>
         /// <param name="column"></param>
         /// <param name="message"></param>
@@ -29,9 +23,7 @@ namespace Memoria.Assets
         {
         }
 
-        /// <summary>
-        /// An error in a node object
-        /// </summary>
+        /// <summary>An error in a node object</summary>
         /// <param name="nodePath"></param>
         /// <param name="propertyID"></param>
         /// <param name="message"></param>

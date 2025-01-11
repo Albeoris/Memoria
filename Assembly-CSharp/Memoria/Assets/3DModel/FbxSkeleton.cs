@@ -9,48 +9,50 @@ namespace Memoria.Assets
     public class FbxSkeleton
     {
         public List<FbxBone> Bones { get; } = new List<FbxBone>();
-        public FbxBone this[UInt32 id] => Bones.Find(b => b.Id == id);
+        public FbxBone this[UInt32 id] => Bones.Find(b => b.BoneId == id);
 
-        public FbxSkeleton(FbxNode objects, FbxNode connections)
+        public FbxSkeleton(FbxNode connections, List<FbxBone> allBones)
         {
-            List<FbxNode> modelPossibleBones = new List<FbxNode>(objects.GetNodesByName("Model").Where(n => n.Properties.Count == 3));
             List<FbxNode> objectConnections = new List<FbxNode>(connections.GetNodesByName("C").Where(c => c.Properties.Count == 3 && (String)c.Properties[0] == "OO"));
-            List<FbxNode> boneNodes = new List<FbxNode>();
-            List<FbxNode> rootNodes = new List<FbxNode>();
+            List<FbxBone> boneNodes = new List<FbxBone>();
+            List<FbxBone> rootNodes = new List<FbxBone>();
             HashSet<Int32> boneIds = new HashSet<Int32>();
             HashSet<Int32> rootIds = new HashSet<Int32>();
-            foreach (FbxNode node in modelPossibleBones)
+            foreach (FbxBone bone in allBones)
             {
-                if ((String)node.Properties[2] == "LimbNode")
+                if (bone.BoneNode.Properties.Count >= 3)
                 {
-                    boneNodes.Add(node);
-                    boneIds.Add(node.Id);
-                }
-                else if ((String)node.Properties[2] == "Root")
-                {
-                    rootNodes.Add(node);
-                    rootIds.Add(node.Id);
+                    if ((String)bone.BoneNode.Properties[2] == "LimbNode")
+                    {
+                        boneNodes.Add(bone);
+                        boneIds.Add(bone.BoneNode.Id);
+                    }
+                    else if ((String)bone.BoneNode.Properties[2] == "Root")
+                    {
+                        rootNodes.Add(bone);
+                        rootIds.Add(bone.BoneNode.Id);
+                    }
                 }
             }
             FbxNode rootConnection = objectConnections.FirstOrDefault(c => boneIds.Contains(Convert.ToInt32(c.Properties[1])) && rootIds.Contains(Convert.ToInt32(c.Properties[2])));
             Boolean tryFallbackRoot = rootConnection == null;
             Int32 rootId = -1;
-            FbxNode rootNode = null;
+            FbxBone rootNode = null;
             if (!tryFallbackRoot)
             {
                 rootId = Convert.ToInt32(rootConnection.Properties[2]);
-                rootNode = rootNodes.FirstOrDefault(n => n.Id == rootId);
+                rootNode = rootNodes.FirstOrDefault(b => b.BoneNode.Id == rootId);
                 tryFallbackRoot = rootNode == null;
             }
             if (tryFallbackRoot)
             {
                 // Root might be one of the LimbNodes
-                foreach (FbxNode node in boneNodes)
+                foreach (FbxBone bone in boneNodes)
                 {
-                    rootId = node.Id;
+                    rootId = bone.BoneNode.Id;
                     if (objectConnections.Any(c => Convert.ToInt32(c.Properties[1]) == rootId && boneIds.Contains(Convert.ToInt32(c.Properties[2]))))
                         continue;
-                    rootNode = node;
+                    rootNode = bone;
                     break;
                 }
                 if (rootNode == null)
@@ -58,41 +60,37 @@ namespace Memoria.Assets
                 boneIds.Remove(rootId);
                 boneNodes.Remove(rootNode);
             }
-            HashSet<UInt32> assignedBoneNameIds = [0];
+            HashSet<Int32> assignedBoneNameIds = [0];
             Dictionary<Int32, FbxBone> processedBones = new Dictionary<Int32, FbxBone>()
-                { { rootId, AddBone(null, 0, rootNode)} };
-            UInt32 nameIdCounter = 1;
+                { { rootId, RegisterBone(rootNode, 0)} };
+            Int32 nameIdCounter = 1;
             Boolean propagating = true;
             while (propagating && processedBones.Count <= boneIds.Count)
             {
                 propagating = false;
-                foreach (FbxNode bone in boneNodes)
+                foreach (FbxBone bone in boneNodes)
                 {
-                    Int32 boneId = bone.Id;
+                    Int32 boneId = bone.BoneNode.Id;
                     if (processedBones.ContainsKey(boneId))
                         continue;
-                    FbxBone parentBone = null;
-                    FbxNode boneConnection = objectConnections.FirstOrDefault(c => Convert.ToInt32(c.Properties[1]) == boneId && processedBones.TryGetValue(Convert.ToInt32(c.Properties[2]), out parentBone));
-                    if (boneConnection == null)
-                        continue;
-                    Int32 boneParentId = Convert.ToInt32(boneConnection.Properties[2]);
-                    String boneName = (String)bone.Properties[1];
-                    if (boneName.Length < 3 || !UInt32.TryParse(boneName.Substring(boneName.Length - 3), out UInt32 boneNameId))
+                    String boneName = (String)bone.BoneNode.Properties[1];
+                    if (boneName.Length < 3 || !Int32.TryParse(boneName.Substring(boneName.Length - 3), out Int32 boneNameId))
                     {
                         while (assignedBoneNameIds.Contains(nameIdCounter))
                             nameIdCounter++;
                         boneNameId = nameIdCounter++;
                     }
-                    assignedBoneNameIds.Add(boneNameId);
-                    processedBones.Add(boneId, AddBone(parentBone, boneNameId, bone));
+                    if (!assignedBoneNameIds.Add(boneNameId))
+                        throw new IndexOutOfRangeException($"Model bone '{boneName}': the bone with ID {boneNameId} is defined twice");
+                    processedBones.Add(boneId, RegisterBone(bone, boneNameId));
                     propagating = true;
                 }
             }
         }
 
-        private FbxBone AddBone(FbxBone parent, UInt32 id, FbxNode boneNode)
+        private FbxBone RegisterBone(FbxBone bone, Int32 id)
         {
-            FbxBone bone = new FbxBone(parent, id, boneNode);
+            bone.BoneId = id;
             Bones.Add(bone);
             return bone;
         }

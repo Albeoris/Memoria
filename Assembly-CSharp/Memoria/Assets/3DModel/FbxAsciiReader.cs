@@ -6,9 +6,7 @@ using System.Globalization;
 
 namespace Memoria.Assets
 {
-    /// <summary>
-    /// Reads FBX nodes from a text stream
-    /// </summary>
+    /// <summary>Reads FBX nodes from a text stream</summary>
     public class FbxAsciiReader
     {
         private readonly Stream stream;
@@ -17,9 +15,7 @@ namespace Memoria.Assets
         private int line = 1;
         private int column = 1;
 
-        /// <summary>
-        /// Creates a new reader
-        /// </summary>
+        /// <summary>Creates a new reader</summary>
         /// <param name="stream"></param>
         /// <param name="errorLevel"></param>
         public FbxAsciiReader(Stream stream, FbxErrorLevel errorLevel = FbxErrorLevel.Checked)
@@ -30,9 +26,7 @@ namespace Memoria.Assets
             this.errorLevel = errorLevel;
         }
 
-        /// <summary>
-        /// The maximum array size that will be allocated
-        /// </summary>
+        /// <summary>The maximum array size that will be allocated</summary>
         /// <remarks>
         /// If you trust the source, you can expand this value as necessary.
         /// Malformed files could cause large amounts of memory to be allocated
@@ -443,9 +437,7 @@ namespace Memoria.Assets
             return ret;
         }
 
-        /// <summary>
-        /// Reads the next node from the stream
-        /// </summary>
+        /// <summary>Reads the next node from the stream</summary>
         /// <returns>The read node, or <c>null</c></returns>
         public FbxNode ReadNode()
         {
@@ -510,9 +502,7 @@ namespace Memoria.Assets
             return node;
         }
 
-        /// <summary>
-        /// Reads a full document from the stream
-        /// </summary>
+        /// <summary>Reads a full document from the stream</summary>
         /// <returns>The complete document object</returns>
         public FbxDocument Read()
         {

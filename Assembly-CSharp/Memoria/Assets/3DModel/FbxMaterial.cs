@@ -1,17 +1,13 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Memoria.Assets
 {
-    /// <summary>
-    /// API for Material / Texture nodes
-    /// </summary>
+    /// <summary>API for Material / Texture nodes</summary>
     public class FbxMaterial
     {
-        public FbxNode MaterialNode;
-        public FbxNode TextureNode = null;
+        public readonly FbxNode MaterialNode;
+        public readonly FbxNode TextureNode = null;
 
         public String TexturePath => (String)TextureNode?["RelativeFilename"]?.Value;
         public String Shader

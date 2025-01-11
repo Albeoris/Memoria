@@ -53,9 +53,10 @@ namespace Memoria.Assets
                 if (fbx == null)
                     return null;
                 String folderPath = Path.GetDirectoryName(completePath);
+                //FbxIO.WriteAscii(fbx, Path.Combine(folderPath, "exportascii.fbx"));
                 List<FbxGeometry> geometries = fbx.GetGeometries();
                 List<FbxMaterial> materials = fbx.GetMaterials();
-                FbxSkeleton skeleton = fbx.GetSkeleton(geometries);
+                FbxSkeleton skeleton = fbx.GetSkeleton();
                 CustomModelMinimalInfos baseMesh = new CustomModelMinimalInfos();
                 CustomModelTextured texture = new CustomModelTextured();
                 CustomModelAnimated anim = new CustomModelAnimated();
@@ -84,26 +85,38 @@ namespace Memoria.Assets
                     FbxGeometry geo = geometries[i];
                     baseMesh.vert[i] = geo.GetVertices();
                     baseMesh.tri[i] = geo.GetTriangleIndices();
-                    baseMesh.matIndex[i] = fbx.GetMaterialIndex(geo, materials);
+                    baseMesh.matIndex[i] = fbx.GetMaterialIndex(geo);
                     extra.meshName[i] = geo.Name;
-                    extra.normal[i] = geo.GetNormals(baseMesh.vert[i], baseMesh.tri[i]);
-                    extra.tangent[i] = geo.GetTangents(baseMesh.vert[i], baseMesh.tri[i]);
-                    extra.color[i] = geo.GetColors(baseMesh.vert[i], baseMesh.tri[i]);
-                    texture.uv[i] = geo.GetUVs(baseMesh.vert[i], baseMesh.tri[i]);
+                    extra.normal[i] = geo.GetNormals();
+                    extra.tangent[i] = geo.GetTangents();
+                    extra.color[i] = geo.GetColors();
+                    texture.uv[i] = geo.GetUVs();
                     if (!hasTexture && texture.uv[i] != null)
                         hasTexture = true;
-                    anim.bw[i] = geo.GetBoneWeights(baseMesh.vert[i], skeleton);
+                    anim.bw[i] = geo.GetBoneWeights(skeleton);
                     if (!hasAnim && anim.bw[i] != null)
                         hasAnim = true;
                 }
                 for (Int32 i = 0; i < skeleton.Bones.Count; i++)
                 {
                     FbxBone bone = skeleton.Bones[i];
-                    anim.boneId[i] = bone.Id;
-                    anim.boneParentId[i] = (Int32?)bone.Parent?.Id ?? -1;
-                    anim.bonePos[i] = bone.Position;
-                    anim.boneRot[i] = bone.Rotation;
-                    anim.boneScale[i] = bone.Scale;
+                    anim.boneId[i] = (UInt32)bone.BoneId;
+                    anim.boneParentId[i] = bone.Parent?.BoneId ?? -1;
+                    if (anim.boneParentId[i] < 0)
+                    {
+                        // Root bone that possibly has parent transform(s)
+                        Matrix4x4 rootTransform = bone.Parent.GetLocalToWorldMatrix();
+                        anim.bonePos[i] = rootTransform.MultiplyPoint3x4(bone.Position);
+                        anim.boneRot[i] = bone.GetComposedRotation();
+                        // TODO: the only way to properly support this is to create intermediate GameObjects
+                        anim.boneScale[i] = bone.CombineScalingFactors();
+                    }
+                    else
+                    {
+                        anim.bonePos[i] = bone.Position;
+                        anim.boneRot[i] = bone.Rotation;
+                        anim.boneScale[i] = bone.Scale;
+                    }
                 }
                 for (Int32 i = 0; i < materials.Count; i++)
                 {
@@ -322,13 +335,7 @@ namespace Memoria.Assets
                 bones = new Transform[boneCount];
                 bindPoses = new Matrix4x4[boneCount];
                 for (Int32 i = 0; i < boneCount; i++)
-                {
                     bones[i] = new GameObject($"bone{anim.boneId[i]:D3}").transform;
-                    bones[i].localPosition = anim.bonePos[i];
-                    bones[i].localRotation = anim.boneRot[i];
-                    bones[i].localScale = anim.boneScale[i];
-                    bindPoses[i] = bones[i].worldToLocalMatrix * baseObject.transform.localToWorldMatrix;
-                }
                 for (Int32 i = 0; i < boneCount; i++)
                 {
                     if (anim.boneParentId[i] < 0)
@@ -336,16 +343,17 @@ namespace Memoria.Assets
                         bones[i].parent = baseObject.transform;
                         continue;
                     }
-                    for (Int32 j = 0; j < boneCount; j++)
-                    {
-                        if (anim.boneParentId[i] == anim.boneId[j])
-                        {
-                            bones[i].parent = bones[j];
-                            break;
-                        }
-                    }
-                    if (bones[i].parent == null)
+                    Int32 parentIndex = Array.FindIndex(anim.boneId, id => id == anim.boneParentId[i]);
+                    if (parentIndex < 0)
                         throw new IndexOutOfRangeException($"Model skeleton: bone{anim.boneId[i]:D3} has invalid parent bone ({anim.boneParentId[i]:D3})");
+                    bones[i].parent = bones[parentIndex];
+                }
+                for (Int32 i = 0; i < boneCount; i++)
+                {
+                    bones[i].localPosition = anim.bonePos[i];
+                    bones[i].localRotation = anim.boneRot[i];
+                    bones[i].localScale = anim.boneScale[i];
+                    bindPoses[i] = bones[i].worldToLocalMatrix * baseObject.transform.localToWorldMatrix;
                 }
             }
             for (Int32 i = 0; i < materialCount; i++)

@@ -15,46 +15,33 @@ public static class ModelFactory
     {
         String text = Path.GetFileNameWithoutExtension(upscalePath);
         if (ModelFactory.revertUpscaleTable.ContainsKey(text))
-        {
             text = ModelFactory.revertUpscaleTable[text];
-        }
         else
-        {
             text = ModelFactory.GetNameFromFF9DBALL(text);
-        }
-        Int32 geoid = ModelFactory.GetGEOID(text);
-        String text2 = String.Empty;
-        if (geoid == -1)
-        {
+        Int32 geoId = ModelFactory.GetGEOID(text);
+        if (geoId == -1)
             return upscalePath;
-        }
         ModelType modelType;
         if (text.StartsWith("GEO_WEP"))
         {
-            text2 = FF9BattleDB.GEO.GetValue(geoid);
             modelType = ModelType.battle_weapon;
-            return String.Format("BattleMap/BattleModel/{0}/{1}/{1}", (Int32)modelType, geoid, text);
+            return String.Format("BattleMap/BattleModel/{0}/{1}/{1}", (Int32)modelType, geoId);
         }
-        text2 = FF9BattleDB.GEO.GetValue(geoid);
         modelType = ModelFactory.GetModelType(upscalePath);
-        if (geoid == 429 || geoid == 430)
-        {
+        if (geoId == 429 || geoId == 430)
             modelType = ModelType.sub;
-        }
-        return String.Format("Models/{0}/{1}/{1}", (Int32)modelType, geoid, text);
+        return String.Format("Models/{0}/{1}/{1}", (Int32)modelType, geoId);
     }
 
     public static String GetRenameTexturePath(String texturePath)
     {
         OSDLogger.AddStaticMessage("---------End GetRenameTexturePath-----------------");
-        String result = String.Empty;
         String fileNameWithoutExtension = Path.GetFileNameWithoutExtension(texturePath);
         String nameFromFF9DBALL = ModelFactory.GetNameFromFF9DBALL(fileNameWithoutExtension);
         Int32 geoid = ModelFactory.GetGEOID(nameFromFF9DBALL);
         String modelName = FF9BattleDB.GEO.GetValue(geoid);
         ModelType modelType = ModelFactory.GetModelType(modelName);
-        Char c = fileNameWithoutExtension[fileNameWithoutExtension.Length - 1];
-        result = String.Format("Models/{0}/{1}/{1}", (Int32)modelType, geoid);
+        String result = String.Format("Models/{0}/{1}/{1}", (Int32)modelType, geoid);
         OSDLogger.AddStaticMessage("---------End GetRenameModelPath-----------------");
         return result;
     }
@@ -65,7 +52,7 @@ public static class ModelFactory
         path = ModelFactory.CheckUpscale(path);
         String renameModelPath = ModelFactory.GetRenameModelPath(path);
         GameObject model;
-        String externalPath = AssetManager.SearchAssetOnDisc(renameModelPath, true, false);
+        String externalPath = AssetManager.SearchAssetOnDisc(renameModelPath + ".fbx", true, false);
         if (!String.IsNullOrEmpty(externalPath))
         {
             // External model
@@ -369,67 +356,57 @@ public static class ModelFactory
 
     public static String GetNameFromFF9DBALL(String modelName)
     {
-        String text = Path.GetFileNameWithoutExtension(modelName);
-        if (text == null)
+        String geoName = Path.GetFileNameWithoutExtension(modelName);
+        if (geoName == null)
             return null;
-
-        switch (text)
+        switch (geoName)
         {
             case "GEO_MAIN_UP3_ZDN":
-                text = "GEO_MAIN_F3_ZDN";
+                geoName = "GEO_MAIN_F3_ZDN";
                 break;
             case "GEO_MAIN_UP4_ZDN":
-                text = "GEO_MAIN_F4_ZDN";
+                geoName = "GEO_MAIN_F4_ZDN";
                 break;
             case "GEO_MAIN_UP5_ZDN":
-                text = "GEO_MAIN_F5_ZDN";
+                geoName = "GEO_MAIN_F5_ZDN";
                 break;
             case "GEO_MAIN_UP3_ZDN_0":
-                text = "GEO_MAIN_F3_ZDN";
+                geoName = "GEO_MAIN_F3_ZDN";
                 break;
             case "GEO_MAIN_UP4_ZDN_0":
-                text = "GEO_MAIN_F4_ZDN";
+                geoName = "GEO_MAIN_F4_ZDN";
                 break;
             case "GEO_MAIN_UP5_ZDN_0":
-                text = "GEO_MAIN_F5_ZDN";
+                geoName = "GEO_MAIN_F5_ZDN";
                 break;
             case "GEO_MAIN_UP3_ZDN_1":
-                text = "GEO_MAIN_F3_ZDN";
+                geoName = "GEO_MAIN_F3_ZDN";
                 break;
             case "GEO_MAIN_UP4_ZDN_1":
-                text = "GEO_MAIN_F4_ZDN";
+                geoName = "GEO_MAIN_F4_ZDN";
                 break;
             case "GEO_MAIN_UP5_ZDN_1":
-                text = "GEO_MAIN_F5_ZDN";
+                geoName = "GEO_MAIN_F5_ZDN";
                 break;
             case "GEO_MAIN_UP4_GRN":
-                text = "GEO_MAIN_F4_GRN";
+                geoName = "GEO_MAIN_F4_GRN";
                 break;
         }
-
-        String result;
-        if (ModelFactory.revertUpscaleTable.TryGetValue(text, out result))
-            text = result;
-
-        return text;
+        if (ModelFactory.revertUpscaleTable.TryGetValue(geoName, out String revertUpscaleName))
+            return revertUpscaleName;
+        return geoName;
     }
 
     public static Int32 GetGEOID(String modelName)
     {
         String fileNameWithoutExtension = Path.GetFileNameWithoutExtension(modelName);
         if (fileNameWithoutExtension.Equals("GEO_MON_B3_110"))
-        {
             return 347;
-        }
         if (modelName.Equals("GEO_MON_B3_109"))
-        {
             return 5461;
-        }
-
-        Int32 id;
-        if (!FF9BattleDB.GEO.TryGetKey(modelName, out id))
-            id = -1;
-        return id;
+        if (FF9BattleDB.GEO.TryGetKey(modelName, out Int32 id))
+            return id;
+        return -1;
     }
 
     public static ModelType GetModelType(String modelName)
@@ -437,7 +414,7 @@ public static class ModelFactory
         Int32 num = modelName.IndexOf('_');
         Int32 num2 = modelName.IndexOf('_', num + 1);
         String value = modelName.Substring(num + 1, num2 - num - 1).ToLower();
-        return (ModelType)((Int32)Enum.Parse(typeof(ModelType), value));
+        return (ModelType)(Int32)Enum.Parse(typeof(ModelType), value);
     }
 
     public static GameObject CreateUIModel(PrimitiveType shape, Color color, Single size, Vector3 screenPosition, Vector3? screenPosition2 = null)

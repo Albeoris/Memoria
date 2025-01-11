@@ -26,6 +26,7 @@ namespace FF9
         {
             try
             {
+                DataPatchers.Initialize(); // Initialize now in case of custom weapon model
                 String inputPath = DataResources.Items.PureDirectory + DataResources.Items.WeaponsFile;
                 Dictionary<Int32, ItemAttack> result = new Dictionary<Int32, ItemAttack>();
                 foreach (ItemAttack[] attacks in AssetManager.EnumerateCsvFromLowToHigh<ItemAttack>(inputPath))

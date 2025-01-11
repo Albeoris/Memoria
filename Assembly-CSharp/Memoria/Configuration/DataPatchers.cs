@@ -27,8 +27,10 @@ namespace Memoria
         public const String MemoriaDictionaryPatcherPath = "DictionaryPatch.txt";
         public const String MemoriaBattlePatcherPath = "BattlePatch.txt";
 
-        public static void Initialize()
+        public static void Initialize(Boolean forceInit = false)
         {
+            if (_isInitialized && !forceInit)
+                return;
             // Apply patches; the default folder (out of any mod folder) is ignored
             try
             {
@@ -47,6 +49,7 @@ namespace Memoria
                         DataPatchers.PatchBattles(patch);
                     }
                 }
+                _isInitialized = true;
             }
             catch (Exception err)
             {
@@ -701,6 +704,8 @@ namespace Memoria
                 IsTokenApplicable = tokCheck;
             }
         }
+
+        private static Boolean _isInitialized;
 
         private static List<BattlePatch> _battlePatch = new List<BattlePatch>();
         private static Int32 _selectedBattleId;
