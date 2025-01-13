@@ -620,7 +620,7 @@ namespace Memoria.Assets
                         }
                         else
                         {
-                            material.shader = ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
+                            material.shader = ShadersLoader.Find(Configuration.Shaders.FieldCharacterShader);
                             material.SetColor("_Color", new Color32(128, 128, 128, 255));
                         }
                     }

@@ -422,46 +422,29 @@ public static class AssetManagerUtil
 
     public static String GetAssetExtension<T>(String name) where T : UnityEngine.Object
     {
-        String result = String.Empty;
         if (typeof(T) == typeof(TextAsset))
-        {
-            result = ".bytes";
-        }
-        else if (typeof(T) == typeof(Texture2D) || typeof(T) == typeof(Texture))
+            return ".bytes";
+        if (typeof(T) == typeof(Texture2D) || typeof(T) == typeof(Texture))
         {
             if (name.IndexOf("atlas_a") != -1)
-            {
-                result = ".jpg";
-            }
+                return ".jpg";
             else
-            {
-                result = ".png";
-            }
+                return ".png";
         }
-        else if (typeof(T) == typeof(RenderTexture))
-        {
-            result = ".renderTexture";
-        }
-        else if (typeof(T) == typeof(Material))
-        {
-            result = ".mat";
-        }
-        else if (typeof(T) == typeof(AnimationClip))
-        {
-            result = ".anim";
-        }
-        else if (typeof(T) == typeof(GameObject))
+        if (typeof(T) == typeof(RenderTexture))
+            return ".renderTexture";
+        if (typeof(T) == typeof(Material))
+            return ".mat";
+        if (typeof(T) == typeof(AnimationClip))
+            return ".anim";
+        if (typeof(T) == typeof(GameObject))
         {
             if (AssetManagerUtil.CheckModuleBundleFromName(AssetManagerUtil.ModuleBundle.BattleMaps, name) || AssetManagerUtil.CheckModuleBundleFromName(AssetManagerUtil.ModuleBundle.Models, name))
-            {
-                result = ".fbx";
-            }
+                return ".fbx";
             else
-            {
-                result = ".prefab";
-            }
+                return ".prefab";
         }
-        return result;
+        return String.Empty;
     }
 
     public enum AvailablePlatform // Not very interesting... use RuntimePlatform (Application.platform) instead

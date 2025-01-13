@@ -537,7 +537,7 @@ public class FieldMap : HonoBehavior
         {
             foreach (Material material in renderer.materials)
             {
-                material.shader = FF9StateSystem.Field.isDebugWalkMesh ? ShadersLoader.Find("Unlit/Transparent Cutout") : ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
+                material.shader = FF9StateSystem.Field.isDebugWalkMesh ? ShadersLoader.Find("Unlit/Transparent Cutout") : ShadersLoader.Find(Configuration.Shaders.FieldCharacterShader);
                 ModelFactory.SetMatFilter(material, Configuration.Graphics.ElementsSmoothTexture);
             }
         }
@@ -625,7 +625,7 @@ public class FieldMap : HonoBehavior
                 else if (actorOfObj.model == 395) // BlueMagicLight
                     material.shader = ShadersLoader.Find("PSX/Actor_Abr_1");
                 else
-                    material.shader = ShadersLoader.Find(ShadersLoader.GetCurrentFieldMapCharcterShader);
+                    material.shader = ShadersLoader.Find(Configuration.Shaders.FieldCharacterShader);
                 ModelFactory.SetMatFilter(material, Configuration.Graphics.ElementsSmoothTexture);
             }
         }

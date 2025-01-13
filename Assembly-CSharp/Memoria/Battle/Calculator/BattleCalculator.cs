@@ -140,6 +140,8 @@ namespace Memoria
 
         public static BattleUnit GetPlayerUnit(CharacterId id)
         {
+            if (id == CharacterId.NONE)
+                return null;
             foreach (BattleUnit unit in EnumerateUnits())
                 if (unit.PlayerIndex == id)
                     return unit;

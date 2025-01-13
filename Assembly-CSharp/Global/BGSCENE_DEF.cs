@@ -300,7 +300,7 @@ public class BGSCENE_DEF
         //}
         else if (operation == "Image" && arguments.Length >= 1)
         {
-            bgOverlay.memoriaImage = AssetManager.LoadTextureGeneric(File.ReadAllBytes(this.memoriaDirectory + arguments[0]));
+            bgOverlay.memoriaImage = AssetManager.LoadFromDisc<Texture2D>(AssetManager.UsePathWithDefaultFolder(this.memoriaDirectory, arguments[0]));
             if (bgOverlay.memoriaMaterial != null)
                 bgOverlay.memoriaMaterial.mainTexture = bgOverlay.memoriaImage;
         }
