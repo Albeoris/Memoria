@@ -186,20 +186,21 @@ You should set the priority of this mod to be higher than the priority of the Mo
 
 <Mod>
 	<Name>Support Ability Cost</Name>
-	<Version>4.1.2</Version>
+	<Version>4.1.3</Version>
 	<InstallationPath>KupoGemSATweak</InstallationPath>
-	<ReleaseDate>2024-12-05</ReleaseDate>
+	<ReleaseDate>2025-01-13</ReleaseDate>
 	<ReleaseDateOriginal>2022-4-14</ReleaseDateOriginal>
 	<Author>faospark / Tirlititi </Author>
 	<Description> Allows You to have 1 Gem cost per support ability or Half.
 [1] 1 Gem Cost is activate by default 
 [2] Half the cost of Support abilities
-
+[3] Double the cost of Support abilities
+ 
 Mod Order : Position 1 or on top of Any Gameplay mods such as Alternate Fantasy , Playable Character pack. Tantalus Etc 
 This was the earliest public release of this type of Mod that modifies the Gem Cost of Support Abilities 
 Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 	</Description>
-	<PatchNotes>- changed implention of submods to be compatible with the latest version of the mod manager</PatchNotes>
+	<PatchNotes>added third option for increased difficulty</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/71w3a8qnfbg5g3lvnl1bd/KupoGemSATweak.zip?rlkey=qnsqgc70ngf3ix9u4f7ut82ob&amp;dl=1</DownloadUrl>
@@ -219,19 +220,25 @@ Originally released as part of the tweaks of Kupo Mods formerly Mog Add-ons
 		<Description>Cuts ability gems to half for support abilites </Description>
 		<Group>g-ab</Group>
 	</SubMod>
+	<SubMod>
+		<Name>Tweak: Double Cost of Support Abilities</Name>
+		<InstallationPath>Features/Tweaks/AbilityDbl</InstallationPath>
+		<Description>Doubles the gem requirement for support abilites for increased difficulty </Description>
+		<Group>g-ab</Group>
+	</SubMod>
 </Mod>
 
 <Mod>
 	<Name>Exp, AP, Gil, Rewards Tweaks</Name>
-	<Version>4.1.2</Version>
+	<Version>4.1.3</Version>
 	<InstallationPath>KupoTweaks</InstallationPath>
-	<ReleaseDate>2024-12-06</ReleaseDate>
-	<ReleaseDateOriginal>2022-08-14</ReleaseDateOriginal>
+	<ReleaseDate>2025-01-13</ReleaseDate>
+	<ReleaseDateOriginal>2025-01-09</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>As the name suggests, this mod has several options that can multiply your Exp, AP , Gil and After Battle Rewards. 
 Mod Order : On top of any Gameplay Mod.
 Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</Description>
-	<PatchNotes>Improved compatibility with the mod manager</PatchNotes>
+	<PatchNotes>Added Mod Grouping to ensure one mod can be activated per category</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/z2df6bk4hps21v53j105w/KupoTweaks.zip?rlkey=wfw287bn1u27gz4najtx1jm9a&amp;dl=1</DownloadUrl>
@@ -244,18 +251,21 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<InstallationPath>Features/Tweaks/AP2x</InstallationPath>
 		<Description>Gains 2x AP after battle (Ignores AbilityUp)</Description>
 		<Priority>1</Priority>
+		<Group>AP</Group>
 	</SubMod>
 	<SubMod>
 		<Name>4x AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP4x</InstallationPath>
 		<Description>Gains 4x AP after battle</Description>
 		<Priority>1</Priority>
+		<Group>AP</Group>
 	</SubMod>
 	<SubMod>
 		<Name>99 AP Gain</Name>
 		<InstallationPath>Features/Tweaks/AP99</InstallationPath>
 		<Description>Gains 99 AP after battle</Description>
 		<Priority>1</Priority>
+		<Group>AP</Group>
 	</SubMod>
 	<Header>Experience Gain Modifier</Header>
 	<SubMod>
@@ -263,18 +273,21 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<InstallationPath>Features/Tweaks/EXP2x</InstallationPath>
 		<Description>Gains 2x EXP after battle</Description>
 		<Priority>1</Priority>
+		<Group>EXP</Group>
 	</SubMod>
 	<SubMod>
 		<Name>4x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP4x</InstallationPath>
 		<Description>Gains 4x EXP after battle</Description>
 		<Priority>1</Priority>
+		<Group>EXP</Group>
 	</SubMod>
 	<SubMod>
 		<Name>8x EXP Gain</Name>
 		<InstallationPath>Features/Tweaks/EXP8x</InstallationPath>
 		<Description>Gains 8x EXP after battle</Description>
 		<Priority>1</Priority>
+		<Group>EXP</Group>
 	</SubMod>
 	<Header>Earned Gil Modifier</Header>
 	<SubMod>
@@ -282,33 +295,38 @@ Originally released as the tweaks component of Kupo Mods Formerly Mog Add-ons</D
 		<InstallationPath>Features/Tweaks/2xgil</InstallationPath>
 		<Description>Doubles Gil received after battle</Description>
 		<Priority>1</Priority>
+		<Group>GIL</Group>	
 	</SubMod>
 	<SubMod>
 		<Name>4x gil</Name>
 		<InstallationPath>Features/Tweaks/4xgil</InstallationPath>
 		<Description>4x Gil received after battle</Description>
 		<Priority>1</Priority>
+		<Group>GIL</Group>
 	</SubMod>
 	<SubMod>
 		<Name>8x gil</Name>
 		<InstallationPath>Features/Tweaks/8xgil</InstallationPath>
 		<Description>8x Gil received after battle</Description>
 		<Priority>1</Priority>
+		<Group>GIL</Group>
 	</SubMod>
 	<Header>Item Drop Multiplier</Header>
 	<SubMod>
 		<Name>Get 2x of any item drop after battle </Name>
 		<InstallationPath>Features/Tweaks/2xitem</InstallationPath>
 		<Description>Any item received after battle would be multiplied by 2 ,
-			hence if a monster drops 2 potions you get 4  </Description>
+				hence if a monster drops 2 potions you get 4  </Description>
 		<Priority>1</Priority>
+		<Group>ITEM</Group>
 	</SubMod>
 	<SubMod>
 		<Name>Get 4x of any item drop after battle </Name>
 		<InstallationPath>Features/Tweaks/4xitem</InstallationPath>
 		<Description>Any item received after battle would be multiplied by 4 ,
-			hence if a monster drops 2 potions you get 8  </Description>
+				hence if a monster drops 2 potions you get 8  </Description>
 		<Priority>1</Priority>
+		<Group>ITEM</Group>
 	</SubMod>
 </Mod>
 
@@ -367,9 +385,9 @@ This mod was initially introduced as the Exp challenge tweaks within Kupo Mods, 
 
 <Mod>
 	<Name>Kupo Heroes Pack </Name>
-	<Version>4.1.5</Version>
+	<Version>4.1.6</Version>
 	<InstallationPath>KupoHeroPack</InstallationPath>
-	<ReleaseDate>2024-12-22</ReleaseDate>
+	<ReleaseDate>2025-01-13</ReleaseDate>
 	<ReleaseDateOriginal>2024-05-10</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>A set of Character enhancements that powers up characters and reduces grind. Ideal for players seeking a fresh character experience without changing the story, flow, or core gameplay mechanics.
@@ -394,20 +412,21 @@ Characters:
 
 See the readme.txt for more details.
 
+
 Mod Order:
 - Place above Beatrix and Tantalus mods.
 - Partially compatible with Alternate Fantasy, though some skills may interfere.
 
-Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
+Part of Kupo Mods’ Characte formerly Mog Add-ons.
 	</Description>
-	<PatchNotes>Fixed directory of Blue Narciss music</PatchNotes>
+	<PatchNotes>Read the Readme file</PatchNotes>
 	<Category>Gameplay</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/4v6b8ijknci17on89ow01/KupoHeroPack.zip?rlkey=xsdn7vf32f41eregepx2fu118&amp;dl=1</DownloadUrl>
 	<PreviewFile>preview/kupo-hero.png</PreviewFile>
 	<PreviewFileUrl>https://staticdelivery.nexusmods.com/mods/1948/images/78/78-1733396525-286566443.png</PreviewFileUrl>
 	<MinimumMemoriaVersion>2024.05.19</MinimumMemoriaVersion>
-	<Header>All Characters</Header>
+	<Header>General</Header>
 	<SubMod>
 		<Name>Add Resistance to Zombie and Virus </Name>
 		<InstallationPath>Features/All</InstallationPath>
@@ -423,6 +442,12 @@ Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
 		<Name>Phoenix Pinion usable</Name>
 		<InstallationPath>Features/Sitem</InstallationPath>
 		<Description>Phoenix Pinion Usable outside battle </Description>
+	</SubMod>
+	<SubMod>
+		<Name>Mirrored Daggers</Name>
+		<InstallationPath>Features/ZidaneWep</InstallationPath>
+		<Description>Have Zidane Equip identical daggers</Description>
+		<Default/>
 	</SubMod>
 	<Header>Transportation</Header>
 	<SubMod>
@@ -464,7 +489,7 @@ Part of Kupo Mods’ Character Enhancements, formerly Mog Add-ons.
 	<SubMod>
 		<Name>[Steiner] The Queens Knight</Name>
 		<InstallationPath>Features/Steiner</InstallationPath>
-		<Description>Steiner can Equip Save the Queen </Description>
+		<Description>Steiner can Equip Save the Queen, has access to all Vivi's additional spell </Description>
 		<Default/>
 	</SubMod>
 	<SubMod>
@@ -1270,9 +1295,9 @@ Available Themes:
 
 <Mod>
 	<Name>Portraits Pack</Name>
-	<Version>4.2.1</Version>
+	<Version>4.2.2</Version>
 	<InstallationPath>KupoPortraits</InstallationPath>
-	<ReleaseDate>2024-12-22</ReleaseDate>
+	<ReleaseDate>2025-01-13</ReleaseDate>
 	<ReleaseDateOriginal>2021-10-18</ReleaseDateOriginal>
 	<Author>faospark</Author>
 	<Description>To DFFOO fans this is where the DFFOO portraits resides
@@ -1409,21 +1434,17 @@ Idea by Snouz and made by DV.</Description>
 
 <Mod>
 	<Name>Modern Labels + </Name>
-	<Version>4.1.4</Version>
+	<Version>4.1.5</Version>
 	<InstallationPath>KupoModernLabels</InstallationPath>
-	<ReleaseDate>2024-12-22</ReleaseDate>
+	<ReleaseDate>2025-01-13</ReleaseDate>
 	<ReleaseDateOriginal>2024-10-01</ReleaseDateOriginal>
 	<Author>faospark</Author>
-	<Description>A mod that replaces old item, spell and UI names / labels to their modern counterparts 
-Ideal for those who were introduced to the series post final fantasy 12. 
-Simply activate and that should work. 
+	<Description>A mod that replaces old item, spell and UI names / labels to their modern counterparts or their now known consistent naming convention 
+Ideal for those who were introduced to the series post final fantasy 12. Simply activate and that should work. 
 For now the primary focus of the mod is the US and UK translation of the game so non english language players feel free to message me if you have something you want to change in your 
 Language of choice. 
 	</Description>
-	<PatchNotes>- Added Extended Icons Support.
-- changed some sections of the tutorial.
-- added extra iconography on item helpers. 
-</PatchNotes>
+	<PatchNotes>Read Readme file</PatchNotes>
 	<Category>Translation</Category>
 	<Website>https://www.nexusmods.com/finalfantasy9/mods/31</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/mi4qmy3h2qqoa57bf8wzu/KupoModernLabels.zip?rlkey=hfbawmgaiijosth1u6wcomwbk&amp;st=zcvbfu94&amp;dl=1</DownloadUrl>
@@ -1435,6 +1456,7 @@ Language of choice.
 		<InstallationPath>extended</InstallationPath>
 		<Description>Enable extended field scripts</Description>
 		<Priority>1</Priority>
+		<Default/>
 	</SubMod>
 </Mod>
 
