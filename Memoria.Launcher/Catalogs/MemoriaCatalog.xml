@@ -1476,6 +1476,24 @@ Language of choice.
 	<PreviewFile>Preview.jpg</PreviewFile>
 </Mod>
 
+<Mod>
+	<Name>Hungarian Translation</Name>
+	<Version>1.0</Version>
+	<InstallationPath>TranslationHun</InstallationPath>
+	<ReleaseDate>2025-01-23</ReleaseDate>
+	<ReleaseDateOriginal>2016-09-21</ReleaseDateOriginal>
+	<Author>HUNosítók Team</Author>
+	<Description>A Final Fantasy IX játék magyar fordítása.
+
+Fordítás: Ardea, Konyak, Owen_eX, Zeneger
+Technikai támogatás: noname06
+Eredeti telepítő: Evin</Description>
+	<Category>Translation</Category>
+	<Website>https://magyaritasok.hu/download/2396/final-fantasy-9</Website>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/smkheykr9k84ief7qrnv5/PC_TranslationHungarian.zip?rlkey=ow9amfo4vct78950rlhd928nw&amp;st=61rccqx4&amp;dl=1</DownloadUrl>
+	<MinimumMemoriaVersion>2024-11-17</MinimumMemoriaVersion>
+</Mod>
+
 <!--
 TODO: manage translation mods
 many download links should be changed and several ones use the "[Import] Text" feature of Memoria instead of "[Mod] FolderNames"
