@@ -169,8 +169,8 @@ public class VoicePlayer : SoundPlayer
                     dialog.ForceClose();
                 else if (VoicePlayer.scriptRequestedButtonPress) // It looks like this dialog is closed by the script on a key press
                 {
-                    ETb.sKey0 &= ~(EventInput.Pcircle | EventInput.Lcircle);
-                    EventInput.ReceiveInput(EventInput.Pcircle | EventInput.Lcircle);
+                    ETb.sKey &= ~EventInput.GetKeyMaskFromControl(Control.Confirm);
+                    EventInput.ReceiveInput(EventInput.GetKeyMaskFromControl(Control.Confirm));
                 }
             };
         Action playSelectChoiceAction =

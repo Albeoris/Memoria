@@ -338,21 +338,19 @@ internal class EIcon
         };
     }
 
-    public static void SetHereIcon(Int32 f)
+    public static void SetHereIcon(Int32 importance)
     {
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
-        if (f <= 0 || EventHUD.CurrentHUD == MinigameHUD.ChocoHot)
+        if (importance <= 0 || EventHUD.CurrentHUD == MinigameHUD.ChocoHot)
         {
             EIcon.sHereIconTimer = 0;
             EIcon.sHereIconForce = false;
         }
         else
         {
-            UInt64 num = (UInt64)((FF9StateSystem.Settings.cfg.here_icon > 0UL) ? 0UL : 1UL);
-            if (f > 2 || (instance.GetUserControl() && (num > 1UL || (num == 1UL && (f == 2 || instance.gAnimCount > 0 || instance.eTb.gMesCount >= 3)))))
-            {
+            UInt64 num = FF9StateSystem.Settings.cfg.here_icon > 0 ? 0UL : 1UL;
+            if (importance > 2 || (instance.GetUserControl() && num == 1UL && (importance == 2 || instance.gAnimCount > 0 || ETb.gMesCount >= 3)))
                 EIcon.sHereIconTimer = 60;
-            }
         }
     }
 
@@ -369,13 +367,9 @@ internal class EIcon
         {
             EIcon.sHereIconTimer--;
             if (EIcon.sHereIconTimer <= 0)
-            {
                 EIcon.sHereIconForce = false;
-            }
             if (instance.gMode == 1 && !EIcon.hereIconShow && EIcon.lastPollType == EIcon.PollType.NONE && EIcon.sHereIconTimer > 0 && EIcon.sHereIconTimer < 58)
-            {
                 EIcon.ShowHereIcon(po);
-            }
         }
         else
         {

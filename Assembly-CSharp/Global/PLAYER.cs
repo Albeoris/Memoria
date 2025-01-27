@@ -83,7 +83,7 @@ public class PLAYER
 
     public void ValidateMaxStone()
     {
-        if (this.max.capa < (Byte)ff9level.FF9Level_GetCap(this, this.level, false))
+        if (this.max.capa < ff9level.FF9Level_GetCap(this, this.level, false))
             ff9play.FF9Play_Build(this, this.level, false, false);
     }
 
@@ -100,6 +100,23 @@ public class PLAYER
         BattleStatus oldPerm = permanent_status;
         permanent_status = newPerm;
         status = (status | permanent_status) & ~(oldPerm & ~permanent_status);
+    }
+
+    public Int32 GetPlayerStat(Int32 statIndex)
+    {
+        switch (statIndex)
+        {
+            case 0: return elem.dex;
+            case 1: return elem.str;
+            case 2: return elem.mgc;
+            case 3: return elem.wpr;
+            case 4: return equip.Weapon != RegularItem.NoItem ? ff9item.GetItemWeapon(equip.Weapon).Ref.Power : 0;
+            case 5: return defence.PhysicalDefence;
+            case 6: return defence.PhysicalEvade;
+            case 7: return defence.MagicalDefence;
+            case 8: return defence.MagicalEvade;
+        }
+        return 0;
     }
 
     public String Name
@@ -163,7 +180,7 @@ public class PLAYER
     public CharacterEquipment equip;
     public FF9LEVEL_BONUS bonus;
 
-    public Byte[] pa;
+    public Int32[] pa;
 
     public UInt32[] sa;
     public HashSet<SupportAbility> saExtended;

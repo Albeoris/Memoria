@@ -1,4 +1,5 @@
-﻿using FF9;
+﻿using Assets.Sources.Scripts.UI.Common;
+using FF9;
 using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
@@ -110,6 +111,22 @@ public partial class BattleHUD : UIScene
         if (Configuration.Control.WrapSomeMenus)
             foreach (GONavigationButton button in _targetPanel.AllTargets)
                 button.KeyNavigation.wrapUpDown = true;
+    }
+
+    private void UpdateSprites()
+    {
+        UISprite[] relevantUI = gameObject.GetComponentsInChildren<UISprite>(true);
+        BetterList<String> atlasSpriteList = FF9UIDataTool.WindowAtlas.GetListOfSprites();
+        foreach (UISprite ui in relevantUI)
+        {
+            if (ui.atlas == FF9UIDataTool.WindowAtlas)
+            {
+                if (!ui.spriteName.StartsWith("battle_") && atlasSpriteList.Contains("battle_" + ui.spriteName))
+                    ui.spriteName = "battle_" + ui.spriteName;
+                else if (ui.spriteName.StartsWith("battle_") && !atlasSpriteList.Contains(ui.spriteName))
+                    ui.spriteName = ui.spriteName.Substring("battle_".Length);
+            }
+        }
     }
 
     private void UpdateAndroidTV()

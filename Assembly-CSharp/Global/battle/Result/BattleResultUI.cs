@@ -625,12 +625,12 @@ public class BattleResultUI : UIScene
                             {
                                 if (max_ap <= cur_ap + ap)
                                 {
-                                    player.pa[abilIndex] = (Byte)max_ap;
+                                    player.pa[abilIndex] = max_ap;
                                     this.ApLearned(id, abil);
                                 }
                                 else
                                 {
-                                    player.pa[abilIndex] += (Byte)ap;
+                                    player.pa[abilIndex] += (Int32)ap;
                                 }
                             }
                         }

@@ -3,6 +3,7 @@ using Memoria;
 using Memoria.Data;
 using Memoria.Scripts;
 using Memoria.Assets;
+using Memoria.Prime.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -274,22 +275,12 @@ public static class ModelFactory
     private static String findModelFilePathFromModelCode(String modelCode)
     {
         if (modelCode == null)
-        {
-            return (String)null;
-        }
-        String result;
-        if (modelCode.Contains("GEO_WEP"))
-        {
-            result = "BattleMap/BattleModel/battle_weapon";
-        }
-        else
-        {
-            Int32 num = modelCode.IndexOf('_');
-            Int32 num2 = modelCode.IndexOf('_', num + 1);
-            String text = modelCode.Substring(num + 1, num2 - num - 1);
-            result = "Models/" + text.ToLower();
-        }
-        return result;
+            return null;
+        if (modelCode.StartsWith("GEO_WEP"))
+            return "BattleMap/BattleModel/battle_weapon";
+        Int32 sep1 = modelCode.IndexOf('_');
+        Int32 sep2 = modelCode.IndexOf('_', sep1 + 1);
+        return "Models/" + modelCode.Substring(sep1 + 1, sep2 - sep1 - 1).ToLower();
     }
 
     public static GameObject CreateModel(String path, Vector3 position, Vector3 rotation, Boolean isBattle = false)
@@ -411,10 +402,12 @@ public static class ModelFactory
 
     public static ModelType GetModelType(String modelName)
     {
-        Int32 num = modelName.IndexOf('_');
-        Int32 num2 = modelName.IndexOf('_', num + 1);
-        String value = modelName.Substring(num + 1, num2 - num - 1).ToLower();
-        return (ModelType)(Int32)Enum.Parse(typeof(ModelType), value);
+        Int32 sep1 = modelName.IndexOf('_');
+        Int32 sep2 = modelName.IndexOf('_', sep1 + 1);
+        String typeStr = modelName.Substring(sep1 + 1, sep2 - sep1 - 1).ToLower();
+        if (typeStr.TryEnumParse(out ModelType type))
+            return type;
+        return ModelType.none;
     }
 
     public static GameObject CreateUIModel(PrimitiveType shape, Color color, Single size, Vector3 screenPosition, Vector3? screenPosition2 = null)

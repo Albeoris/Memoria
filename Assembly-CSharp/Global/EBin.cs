@@ -68,7 +68,6 @@ public class EBin
     //private static Int32 _t4;
 
     private readonly EventEngine _eventEngine;
-    private readonly ETb _eTb;
     private Byte[] _instance;
     private Int32 _instanceVOfs;
     private Boolean _exprLoop;
@@ -79,7 +78,6 @@ public class EBin
     public EBin(EventEngine ee)
     {
         _eventEngine = ee;
-        _eTb = _eventEngine.eTb;
         InitializeATanTable();
         _s7 = calcstack;
     }
@@ -143,7 +141,7 @@ public class EBin
                     {
                         s1.wait = 0;
                     }
-                    else if (!_eTb.MesWinActive(s1.winnum))
+                    else if (!ETb.MesWinActive(s1.winnum))
                     {
                         s1.winnum = 255;
                         s1.wait = 0;
@@ -1069,7 +1067,7 @@ public class EBin
             case op_binary.B_KEYON: // B_KEYON = 79
             {
                 VoicePlayer.scriptRequestedButtonPress = true;
-                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOn()) <= 0) ? 0 : 1;
+                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOn(true)) <= 0) ? 0 : 1;
                 expr_Push_v0_Int24();
                 break;
             }
@@ -1089,13 +1087,13 @@ public class EBin
             }
             case op_binary.B_KEYOFF:
             {
-                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOff()) <= 0) ? 0 : 1;
+                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.KeyOff(true)) <= 0) ? 0 : 1;
                 expr_Push_v0_Int24();
                 break;
             }
             case op_binary.B_KEY:
             {
-                _v0 = (Mathf.Abs(EvaluateValueExpression() & _eTb.PadReadE()) <= 0) ? 0 : 1;
+                _v0 = (Mathf.Abs(EvaluateValueExpression() & ETb.GetInputs(true)) <= 0) ? 0 : 1;
                 expr_Push_v0_Int24();
                 break;
             }

@@ -111,6 +111,24 @@ public static class NGUIText
         NGUIText.MobileTouchToConfirmJP = 322;
         NGUIText.MobileTouchToConfirmUS = 323;
         NGUIText.forceShowButton = false;
+        NGUIText.ButtonNames =
+        [
+            "CROSS",
+            "CIRCLE",
+            "TRIANGLE",
+            "SQUARE",
+            "L1",
+            "R1",
+            "L2",
+            "R2",
+            "START",
+            "SELECT",
+            "UP",
+            "DOWN",
+            "LEFT",
+            "RIGHT",
+            "PAD"
+        ];
     }
 
     public static void RegisterCustomNameKeywork(String keyword, CharacterId charId)
@@ -140,7 +158,7 @@ public static class NGUIText
         return textWidth / UIManager.ResourceXMultipier + 1f;
     }
 
-    public static Single GetDialogWidthFromSpecialOpcode(List<Int32> specialCodeList, ETb eTb, UILabel phraseLabel)
+    public static Single GetDialogWidthFromSpecialOpcode(List<Int32> specialCodeList, UILabel phraseLabel)
     {
         Single extraWidth = 0f;
         FF9StateGlobal ff = FF9StateSystem.Common.FF9;
@@ -162,7 +180,7 @@ public static class NGUIText
                     }
                     else
                     {
-                        extraWidth += NGUIText.GetTextWidthFromFF9Font(phraseLabel, eTb.GetStringFromTable(tableId >> 4 & 3u, tableId & 7u));
+                        extraWidth += NGUIText.GetTextWidthFromFF9Font(phraseLabel, ETb.GetStringFromTable(tableId >> 4 & 3u, tableId & 7u));
                         i++;
                     }
                     break;
@@ -170,7 +188,7 @@ public static class NGUIText
                 case 14: // [ITEM=SCRIPTID]
                 {
                     Int32 scriptId = specialCodeList[i + 1];
-                    String itemName = ETb.GetItemName(eTb.gMesValue[scriptId]);
+                    String itemName = ETb.GetItemName(ETb.gMesValue[scriptId]);
                     extraWidth += NGUIText.GetTextWidthFromFF9Font(phraseLabel, itemName);
                     i++;
                     break;
@@ -211,12 +229,12 @@ public static class NGUIText
                 case 64: // [NUMB=SCRIPTID]
                 {
                     Int32 scriptId = specialCodeList[i + 1];
-                    extraWidth += NGUIText.GetTextWidthFromFF9Font(phraseLabel, eTb.gMesValue[scriptId].ToString());
+                    extraWidth += NGUIText.GetTextWidthFromFF9Font(phraseLabel, ETb.gMesValue[scriptId].ToString());
                     i++;
                     break;
                 }
                 case 112: // [PNEW=SCRIPTID]
-                    if ((eTb.gMesValue[0] & (1 << specialCodeList[++i])) != 0)
+                    if ((ETb.gMesValue[0] & (1 << specialCodeList[++i])) != 0)
                         extraWidth += 30f;
                     break;
             }
@@ -264,16 +282,10 @@ public static class NGUIText
                 control = Control.Right;
                 break;
             case "CIRCLE":
-                if (checkConfig)
-                    control = EventInput.IsJapaneseLayout ? Control.Confirm : Control.Cancel;
-                else
-                    control = Control.Confirm;
+                control = EventInput.IsJapaneseLayout ? Control.Confirm : Control.Cancel;
                 break;
             case "CROSS":
-                if (checkConfig)
-                    control = EventInput.IsJapaneseLayout ? Control.Cancel : Control.Confirm;
-                else
-                    control = Control.Cancel;
+                control = EventInput.IsJapaneseLayout ? Control.Cancel : Control.Confirm;
                 break;
             case "TRIANGLE":
                 control = Control.Menu;
@@ -2454,6 +2466,8 @@ public static class NGUIText
     public static Single finalLineHeight = 0f;
     public static Single baseline = 0f;
     public static Boolean useSymbols = false;
+
+    public static String[] ButtonNames;
 
     internal static Color mInvisible = new Color(0f, 0f, 0f, 0f);
 

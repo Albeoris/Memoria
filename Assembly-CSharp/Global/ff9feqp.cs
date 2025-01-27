@@ -52,9 +52,9 @@ public static class ff9feqp
                 if (ff9abil.FF9Abil_IsEnableSA(player, saIndex) && !equipSAList.Contains(saIndex) && player.pa[k] < playerAbilList[k].Ap)
                 {
                     ff9abil.FF9Abil_SetEnableSA(player, saIndex, false);
-                    Byte capa_val = ff9abil._FF9Abil_SaData[saIndex].GemsCount;
+                    Int32 capa_val = ff9abil._FF9Abil_SaData[saIndex].GemsCount;
                     if (player.max.capa - player.cur.capa >= capa_val)
-                        player.cur.capa += capa_val;
+                        player.cur.capa = (UInt32)(player.cur.capa + capa_val);
                     else
                         player.cur.capa = player.max.capa;
                 }

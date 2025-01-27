@@ -15,16 +15,12 @@ public class PLAYER_INFO
     }
 
     public CharacterId slot_no;
-
     public CharacterSerialNumber serial_no;
+    public CharacterPresetId menu_type;
 
     public Byte row;
-
     public Byte win_pose;
-
     public Byte party;
-
-    public CharacterPresetId menu_type;
 
     public Boolean sub_replaced;
 }

@@ -290,8 +290,7 @@ public class Dialog : MonoBehaviour
         get => this.phrase;
         set
         {
-            String text = this.OverwritePrerenderText(value);
-            DialogBoxConstructor.PhrasePreOpcodeSymbol(text, this);
+            DialogBoxConstructor.PhrasePreOpcodeSymbol(value, this);
             this.PrepareNextPage();
         }
     }
@@ -1462,7 +1461,7 @@ public class Dialog : MonoBehaviour
         Boolean result = false;
         foreach (KeyValuePair<Int32, Int32> keyValuePair in this.messageValues)
         {
-            if (PersistenSingleton<EventEngine>.Instance.eTb.gMesValue[keyValuePair.Key] != keyValuePair.Value)
+            if (ETb.gMesValue[keyValuePair.Key] != keyValuePair.Value)
             {
                 result = true;
                 break;
@@ -1473,10 +1472,10 @@ public class Dialog : MonoBehaviour
 
     private void ReplaceMessageValue()
     {
-        Int32[] gMesValue = PersistenSingleton<EventEngine>.Instance.eTb.gMesValue;
+        Int32[] gMesValue = ETb.gMesValue;
         String text = this.phraseMessageValue;
-        String formattedValue = String.Empty;
-        for (Int32 i = 0; i < (Int32)gMesValue.Length; i++)
+        String formattedValue;
+        for (Int32 i = 0; i < gMesValue.Length; i++)
         {
             if (this.messageValues.ContainsKey(i))
             {
@@ -1500,25 +1499,20 @@ public class Dialog : MonoBehaviour
     private Boolean HasOverlayChanged()
     {
         if (this.IsOverlayDialog)
-        {
             return false;
-        }
         Dialog overlayDialog = Singleton<DialogManager>.Instance.GetOverlayDialog();
-        Int32 num = -1;
-        if (overlayDialog != (UnityEngine.Object)null)
+        Int32 messNum = -1;
+        if (overlayDialog != null)
         {
             using (Dictionary<Int32, Int32>.Enumerator enumerator = overlayDialog.MessageValues.GetEnumerator())
             {
                 if (enumerator.MoveNext())
-                {
-                    KeyValuePair<Int32, Int32> keyValuePair = enumerator.Current;
-                    num = keyValuePair.Key;
-                }
+                    messNum = enumerator.Current.Key;
             }
         }
-        if (num != this.overlayMessageNumber)
+        if (messNum != this.overlayMessageNumber)
         {
-            this.overlayMessageNumber = num;
+            this.overlayMessageNumber = messNum;
             return true;
         }
         return false;
@@ -1529,13 +1523,9 @@ public class Dialog : MonoBehaviour
         if (this.isReadyToFollow && this.focusToActor)
         {
             if (this.IsAutoPositionMode())
-            {
                 this.FollowTarget();
-            }
             else
-            {
                 this.isReadyToFollow = false;
-            }
         }
     }
 
@@ -1544,24 +1534,16 @@ public class Dialog : MonoBehaviour
         if (isPause)
         {
             if (this.currentState != Dialog.State.CompleteAnimation)
-            {
                 this.dialogAnimator.Pause = true;
-            }
             if (this.currentState == Dialog.State.TextAnimation)
-            {
                 this.phraseEffect.Pause();
-            }
         }
         else
         {
             if (this.currentState != Dialog.State.CompleteAnimation)
-            {
                 this.dialogAnimator.Pause = false;
-            }
             if (this.currentState == Dialog.State.TextAnimation)
-            {
                 this.phraseEffect.Resume();
-            }
             if (this.StartChoiceRow > -1)
             {
                 this.isMuteSelectSound = true;
@@ -1594,9 +1576,7 @@ public class Dialog : MonoBehaviour
         {
             String text = NGUIText.StripSymbols(inputPharse);
             if (text.Length < 6 && text.Contains("!"))
-            {
                 inputPharse = "[CENT]" + inputPharse;
-            }
         }
         return inputPharse;
     }
@@ -1610,9 +1590,7 @@ public class Dialog : MonoBehaviour
             Singleton<BitmapIconManager>.Instance.RemoveBitmapIcon(gameObject);
         }
         if (this.phraseLabel.ImageList != null)
-        {
             this.phraseLabel.ImageList.Clear();
-        }
         this.imageList.Clear();
     }
 
@@ -1626,40 +1604,30 @@ public class Dialog : MonoBehaviour
             this.phraseLabel.height = (Int32)UIManager.UIContentSize.y;
             this.phraseLabel.ProcessText();
             this.phraseLabel.UpdateNGUIText();
-            Single num = 0f;
-            foreach (String text in this.subPage)
+            Single allPagesWidth = 0f;
+            foreach (String pageTextRaw in this.subPage)
             {
-                String text2 = text;
+                String pageText = pageTextRaw;
                 if (this.messageNeedUpdate)
-                {
-                    text2 = NGUIText.ReplaceNumberValue(text2, this);
-                }
-                Single num2 = (NGUIText.CalculatePrintedSize2(text2).x + Dialog.DialogPhraseXPadding * 2f) / UIManager.ResourceXMultipier;
-                if (num2 > num)
-                {
-                    num = num2;
-                }
+                    pageText = NGUIText.ReplaceNumberValue(pageText, this);
+                Single pageWidth = (NGUIText.CalculatePrintedSize2(pageText).x + Dialog.DialogPhraseXPadding * 2f) / UIManager.ResourceXMultipier;
+                if (pageWidth > allPagesWidth)
+                    allPagesWidth = pageWidth;
             }
-            if (num < this.originalWidth / 2f)
+            if (allPagesWidth < this.originalWidth / 2f)
             {
-                num = this.originalWidth - 1f;
+                allPagesWidth = this.originalWidth - 1f;
             }
             else
             {
                 foreach (Dialog.DialogImage dialogImage in this.imageList)
-                {
-                    if (dialogImage.Id == 27)
-                    {
-                        num += 8f;
-                    }
-                }
+                    if (dialogImage.Id == 27) // help_mog_dialog
+                        allPagesWidth += 8f;
             }
-            Single num3 = Dialog.DialogPhraseXPadding * 2f / UIManager.ResourceXMultipier;
-            if (num < this.captionWidth + num3)
-            {
-                num = this.captionWidth + num3;
-            }
-            this.Width = num + 1f;
+            Single extraPadding = Dialog.DialogPhraseXPadding * 2f / UIManager.ResourceXMultipier;
+            if (allPagesWidth < this.captionWidth + extraPadding)
+                allPagesWidth = this.captionWidth + extraPadding;
+            this.Width = allPagesWidth + 1f;
             this.phraseLabel.height = height;
         }
     }
@@ -1667,27 +1635,19 @@ public class Dialog : MonoBehaviour
     private Boolean CanResizeWidth()
     {
         if (this.id == 9)
-        {
             return false;
-        }
         if (PersistenSingleton<EventEngine>.Instance.gMode == 1)
         {
-            Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
+            Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
             if (fldMapNo >= 1400 && fldMapNo <= 1425 && (this.tailPosition == Dialog.TailPosition.UpperLeft || this.tailPosition == Dialog.TailPosition.UpperRight))
             {
                 if (this.windowStyle == Dialog.WindowStyle.WindowStyleTransparent)
-                {
                     return false;
-                }
                 if (this.windowStyle == Dialog.WindowStyle.WindowStylePlain && this.startChoiceRow == -1)
-                {
                     return false;
-                }
             }
             if (EventHUD.CurrentHUD == MinigameHUD.Auction && this.windowStyle == Dialog.WindowStyle.WindowStyleTransparent)
-            {
                 return false;
-            }
             if (EventHUD.CurrentHUD == MinigameHUD.ChocoHot && this.windowStyle == Dialog.WindowStyle.WindowStylePlain)
             {
                 String currentLanguage = FF9StateSystem.Settings.CurrentLanguage;
@@ -1698,7 +1658,6 @@ public class Dialog : MonoBehaviour
                     case "English(US)":
                         return this.textId != 275;
                 }
-
                 return this.textId != 276;
             }
         }
@@ -1710,7 +1669,7 @@ public class Dialog : MonoBehaviour
         Boolean result = false;
         if (PersistenSingleton<EventEngine>.Instance.gMode == 1)
         {
-            Int32 fldMapNo = (Int32)FF9StateSystem.Common.FF9.fldMapNo;
+            Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
             if (fldMapNo == 1608)
             {
                 Int32 varManually = PersistenSingleton<EventEngine>.Instance.eBin.getVarManually(EBin.SC_COUNTER_SVR);
@@ -1719,11 +1678,11 @@ public class Dialog : MonoBehaviour
                     FieldMap fieldmap = PersistenSingleton<EventEngine>.Instance.fieldmap;
                     Camera mainCamera = fieldmap.GetMainCamera();
                     Vector3 localPosition = mainCamera.transform.localPosition;
-                    result = (localPosition.x == 32f && localPosition.y == 0f && localPosition.z == 0f && this.targetPos.sid != 11 && this.targetPos.sid != 9);
+                    result = localPosition.x == 32f && localPosition.y == 0f && localPosition.z == 0f && this.targetPos.sid != 11 && this.targetPos.sid != 9;
                 }
                 else if (varManually == 6850)
                 {
-                    result = (this.targetPos.sid != 9);
+                    result = this.targetPos.sid != 9;
                 }
             }
         }
@@ -1744,13 +1703,6 @@ public class Dialog : MonoBehaviour
                 }
             }
         }
-    }
-
-    private String OverwritePrerenderText(String text)
-    {
-        if (PersistenSingleton<UIManager>.Instance.State == UIManager.UIState.FieldHUD && FF9TextTool.FieldZoneId == 2 && this.textId > 0)
-            text = TextOpCodeModifier.ReplaceChanbaraArrow(text); // Prima Vista's text block (Blank sword minigame)
-        return text;
     }
 
     public GameObject DialogChoicePrefab;

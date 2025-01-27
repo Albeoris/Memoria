@@ -9,31 +9,18 @@ public class WMPad
     }
 
     public Boolean kPadLLeft { get; private set; }
-
     public Boolean kPadLRight { get; private set; }
-
     public Boolean kPadLUp { get; private set; }
-
     public Boolean kPadLDown { get; private set; }
-
     public Boolean kPadL1 { get; private set; }
-
     public Boolean kPadL2 { get; private set; }
-
     public Boolean kPadRLeft { get; private set; }
-
     public Boolean kPadRRight { get; private set; }
-
     public Boolean kPadRUp { get; private set; }
-
     public Boolean kPadRDown { get; private set; }
-
     public Boolean kPadR1 { get; private set; }
-
     public Boolean kPadR2 { get; private set; }
-
     public Boolean kPadSelect { get; private set; }
-
     public Boolean kPadStart { get; private set; }
 
     public void CollectInput()
@@ -45,13 +32,9 @@ public class WMPad
         else if (this.Type == WMPadType.Push)
         {
             if (FF9StateSystem.World.IsBeeScene)
-            {
                 this.OnUpdatePush_DebugScene();
-            }
             else
-            {
                 this.OnUpdatePush();
-            }
         }
     }
 
@@ -79,17 +62,17 @@ public class WMPad
 
     private void OnUpdatePush()
     {
-        if (FPSManager.IsDelayedInputTrigger(EventInput.PL2 | EventInput.LL2))
+        if (FPSManager.IsDelayedInputTrigger(EventInput.GetKeyMaskFromControl(Control.LeftTrigger)))
             this.kPadL2 = true;
-        if (FPSManager.IsDelayedInputTrigger(EventInput.PR2 | EventInput.LR2))
+        if (FPSManager.IsDelayedInputTrigger(EventInput.GetKeyMaskFromControl(Control.RightTrigger)))
             this.kPadR2 = true;
     }
 
     private void OnUpdatePush_DebugScene()
     {
-        if (FPSManager.IsDelayedInputTrigger(EventInput.PL2 | EventInput.LL2))
+        if (FPSManager.IsDelayedInputTrigger(EventInput.GetKeyMaskFromControl(Control.LeftTrigger)))
             this.kPadL2 = true;
-        if (FPSManager.IsDelayedInputTrigger(EventInput.PR2 | EventInput.LR2))
+        if (FPSManager.IsDelayedInputTrigger(EventInput.GetKeyMaskFromControl(Control.RightTrigger)))
             this.kPadR2 = true;
     }
 

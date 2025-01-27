@@ -2,7 +2,7 @@
 # You must set at least 12 different items.
 # -----------------------------------------------
 # Comment;Id;Dexterity;Strength;Magic;Will;Gems
-# ;Int32;UInt8;UInt8;UInt8;UInt8;UInt8
+# ;Int32;UInt8;UInt8;UInt8;UInt8;UInt32
 # -----------------------------------------------
 Zidane;0;23;21;18;23;18
 Vivi;1;16;12;24;19;14

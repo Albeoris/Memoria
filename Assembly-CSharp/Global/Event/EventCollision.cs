@@ -60,13 +60,13 @@ public class EventCollision
     public static Boolean CheckQuadInput(PosObj po)
     {
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
-        UInt32 num = ETb.KeyOn() & (UInt32)((instance.gMode != 1) ? EventInput.Lcircle : (EventInput.Lcircle | 524288u));
-        if (num > 0u)
+        UInt32 interactInput = ETb.KeyOn() & (instance.gMode != 1 ? EventInput.Confirm : (EventInput.Confirm | EventInput.Special));
+        if (interactInput > 0u)
         {
             Obj obj = instance.TreadQuad(po, 4);
             if (obj != null && EventCollision.IsQuadTalkable(po, obj))
             {
-                if (num == 524288u && instance.Request(obj, 1, 8, false))
+                if (interactInput == EventInput.Special && instance.Request(obj, 1, 8, false))
                 {
                     EventCollision.ClearPathFinding(po);
                     EMinigame.SetQuadmistOpponentId(obj);
@@ -85,33 +85,30 @@ public class EventCollision
     public static Boolean CheckNPCInput(PosObj po)
     {
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
-        UInt32 num = ETb.KeyOn() & (UInt32)((instance.gMode != 1) ? EventInput.Lcircle : (EventInput.Lcircle | 524288u));
-        if (num > 0u)
+        UInt32 interactInput = ETb.KeyOn() & (instance.gMode != 1 ? EventInput.Confirm : (EventInput.Confirm | EventInput.Special));
+        if (interactInput > 0u)
         {
-            Int32 nil = instance.nil;
-            Single nilFloat = instance.nilFloat;
-            Obj obj = EventCollision.Collision(instance, po, 4, ref nilFloat);
+            Single distance = instance.nilFloat;
+            Obj obj = EventCollision.Collision(instance, po, 4, ref distance);
             if (obj != null && EventCollision.IsNPCTalkable(obj))
             {
                 EventCollision.sSysAngle = EventCollision.CollisionAngle(po, obj);
                 if (EventCollision.sSysAngle > -1024 && EventCollision.sSysAngle < 1024)
                 {
                     ((Actor)po).listener = obj.uid;
-                    if (num == 524288u)
+                    if (interactInput == EventInput.Special)
                     {
-                        Boolean flag = instance.Request(obj, 1, 8, false);
-                        if (flag)
+                        if (instance.Request(obj, 1, 8, false))
                         {
                             EventCollision.ClearPathFinding(po);
                             EMinigame.SetQuadmistOpponentId(obj);
-                            return flag;
+                            return true;
                         }
                     }
-                    Boolean flag2 = instance.Request(obj, 1, 3, false);
-                    if (flag2)
+                    if (instance.Request(obj, 1, 3, false))
                     {
                         EventCollision.ClearPathFinding(po);
-                        return flag2;
+                        return true;
                     }
                 }
             }
@@ -240,15 +237,12 @@ public class EventCollision
     {
         Boolean flag = false;
         EventEngine instance = PersistenSingleton<EventEngine>.Instance;
-        Int32 nil = instance.nil;
         Single nilFloat = instance.nilFloat;
         Obj obj;
         if (EventCollision.CheckNPCInput(po))
         {
             if (instance.gMode != 3)
-            {
                 return;
-            }
             obj = EventCollision.Collision(instance, po, 2, ref nilFloat);
         }
         else
@@ -260,13 +254,9 @@ public class EventCollision
                 if (EventCollision.sSysAngle > -1024 && EventCollision.sSysAngle < 1024)
                 {
                     if (EventCollision.IsNPCTalkable(obj))
-                    {
                         flag = EIcon.PollCollisionIcon(obj);
-                    }
                     if (!flag)
-                    {
                         obj = EventCollision.Collision(instance, po, 2, ref nilFloat);
-                    }
                 }
                 else
                 {
@@ -280,20 +270,14 @@ public class EventCollision
                 {
                     WMActor wmActor = ((Actor)po).wmActor;
                     if (wmActor.ControlNo == 0)
-                    {
                         flag = EIcon.PollCollisionIcon(obj);
-                    }
                 }
             }
         }
         if (obj != null && EventCollision.CheckNPCPush((PosObj)obj))
-        {
             instance.Request(obj, 1, 2, false);
-        }
         if (EventCollision.CheckQuadInput(po))
-        {
             return;
-        }
         obj = instance.TreadQuad(po, 2);
         if (obj != null)
         {
@@ -310,28 +294,20 @@ public class EventCollision
                     if (fldMapNo == 2108)
                     {
                         if (EventCollision.CheckQuadTalk(po, obj))
-                        {
                             EIcon.PollFIcon(BubbleUI.IconType.Exclamation);
-                        }
                     }
                 }
             }
         }
         obj = instance.TreadQuad(po, 4);
         if (obj != null && EventCollision.CheckQuadTalk(po, obj) && EventCollision.IsQuadTalkable(po, obj))
-        {
             EIcon.PollCollisionIcon(obj);
-        }
         if (instance.gMode == 3 && obj == null)
         {
             if (EventCollision.IsChocoboWalkingOrFlyingInForestArea())
-            {
                 EIcon.PollFIcon(BubbleUI.IconType.Exclamation);
-            }
             else if (!flag && EMinigame.CheckBeachMinigame())
-            {
                 EIcon.PollFIcon(BubbleUI.IconType.Beach);
-            }
         }
     }
 

@@ -700,8 +700,6 @@
     <Compile Include="Global\ff9\FF9PLAY_BASE.cs" />
     <Compile Include="Global\ff9\FF9PLAY_CHAR.cs" />
     <Compile Include="Global\ff9\FF9PLAY_EQUIP.cs" />
-    <Compile Include="Global\ff9\FF9PLAY_INFO.cs" />
-    <Compile Include="Global\ff9\FF9PLAY_SKILL.cs" />
     <Compile Include="Global\ff9\FF9PLAY_WEAPON.cs" />
     <Compile Include="Global\ff9\FF9SAVE_MINIGAME.cs" />
     <Compile Include="Global\ff9\FF9Sfx.cs" />

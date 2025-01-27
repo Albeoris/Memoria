@@ -54,7 +54,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     public String sOriginalFieldName;
     #endregion
     public Int16 sOriginalFieldNo;
-    /// <summary>gamemode: 1=Field, 2=Battle, 3=Worldmap</summary>
+    /// <summary>gamemode: 1=Field, 2=Battle, 3=Worldmap, 4=End of Battle</summary>
     public Int32 gMode;
     public Obj gCur;
     public Int32 gArgFlag;
@@ -71,7 +71,6 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
     public Int64 sLockTimer;
     public Int64 sLockFree;
     public EBin eBin;
-    public ETb eTb;
     public Byte[][] allObjsEBData;
     public List<Int32> toBeAddedObjUIDList;
     public Boolean requiredAddActor;
@@ -116,16 +115,16 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
 
     public Int32 ServiceEvents()
     {
-        Int32 num = 0;
+        Int32 returnCode = 0;
         if (!this._noEvents)
         {
-            this.eTb.ProcessKeyEvents();
+            ETb.ProcessKeyEvents();
             this.CheckSleep();
-            num = this.ProcessEvents();
+            returnCode = this.ProcessEvents();
             EIcon.ProcessFIcon();
             EIcon.ProcessAIcon();
         }
-        return num;
+        return returnCode;
     }
 
     public Int32 GetFldMapNoAfterChangeDisc()
@@ -578,7 +577,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         this._context.dashinh = 0;
         this._context.twist_a = 0;
         this._context.twist_d = 0;
-        this.eTb.gMesCount = this.gAnimCount = 10;
+        ETb.gMesCount = this.gAnimCount = 10;
         this._noEvents = false;
         this.InitEncount();
         NewThread(0, 0);
@@ -593,11 +592,11 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         {
             for (Int32 index = 0; index < 4; ++index)
             {
-                Int32 memberIndex = ff9play.CharacterIDToEventId(this.eTb.GetPartyMember(index));
+                Int32 memberIndex = ff9play.CharacterIDToEventId(ETb.GetPartyMember(index));
                 if (memberIndex >= 0)
                     new Actor(this.sSourceObjN - 9 + memberIndex, 0, sizeOfActor);
                 else
-                    new Actor(this.sSourceObjN - 9, this.sSourceObjN + (Int32)this.eTb.GetPartyMember(index), sizeOfActor);
+                    new Actor(this.sSourceObjN - 9, this.sSourceObjN + (Int32)ETb.GetPartyMember(index), sizeOfActor);
             }
             this._context.partyObjTail = this._context.activeObjTail;
         }
@@ -749,7 +748,7 @@ public partial class EventEngine : PersistenSingleton<EventEngine>
         }
         for (Int32 index = 0; index < 4; ++index)
         {
-            CharacterId memberId = this.eTb.GetPartyMember(index);
+            CharacterId memberId = ETb.GetPartyMember(index);
             Int32 memberIndex = ff9play.CharacterIDToEventId(memberId);
             Boolean shouldHack = false; // https://github.com/Albeoris/Memoria/issues/3
             Boolean eikoAbducted = FF9StateSystem.EventState.IsEikoAbducted;

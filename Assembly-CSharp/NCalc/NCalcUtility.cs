@@ -344,8 +344,18 @@ namespace NCalc
             {
                 if (name == "HasSA" && args.Parameters.Length == 1)
                 {
-                    Int32 saIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), 63);
-                    args.Result = ff9abil.FF9Abil_IsEnableSA(play.saExtended, (SupportAbility)saIndex);
+                    Int32 saId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
+                    args.Result = ff9abil.FF9Abil_IsEnableSA(play.saExtended, (SupportAbility)saId);
+                }
+                else if (name == "HasLearntAbility" && args.Parameters.Length == 1)
+                {
+                    Int32 aaId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)BattleAbilityId.Void);
+                    args.Result = ff9abil.FF9Abil_IsMaster(play, ff9abil.GetAbilityIdFromActiveAbility((BattleAbilityId)aaId));
+                }
+                else if (name == "HasLearntSupport" && args.Parameters.Length == 1)
+                {
+                    Int32 saId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
+                    args.Result = ff9abil.FF9Abil_IsMaster(play, ff9abil.GetAbilityIdFromSupportAbility((SupportAbility)saId));
                 }
             };
         }
@@ -445,6 +455,16 @@ namespace NCalc
                     Int32 aaIndex = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)BattleAbilityId.Void);
                     args.Result = unit.IsAbilityAvailable((BattleAbilityId)aaIndex);
                 }
+                else if (name == prefix + "HasLearntAbility" && args.Parameters.Length == 1)
+                {
+                    Int32 aaId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)BattleAbilityId.Void);
+                    args.Result = unit.HasLearntAbility((BattleAbilityId)aaId);
+                }
+                else if (name == prefix + "HasLearntSupport" && args.Parameters.Length == 1)
+                {
+                    Int32 saId = (Int32)NCalcUtility.ConvertNCalcResult(args.Parameters[0].Evaluate(), (Int32)SupportAbility.Void);
+                    args.Result = unit.HasLearntAbility((SupportAbility)saId);
+                }
                 else if (name == prefix + "PropertyByName" && args.Parameters.Length == 1)
                 {
                     args.Result = unit.GetPropertyByName(NCalcUtility.EvaluateNCalcString(args.Parameters[0].Evaluate(), ""));
@@ -523,6 +543,10 @@ namespace NCalc
                 if (name == prefix + "HasSA" && args.Parameters.Length == 1)
                     args.Result = false;
                 else if (name == prefix + "CanUseAbility" && args.Parameters.Length == 1)
+                    args.Result = false;
+                else if (name == prefix + "HasLearntAbility" && args.Parameters.Length == 1)
+                    args.Result = false;
+                else if (name == prefix + "HasLearntSupport" && args.Parameters.Length == 1)
                     args.Result = false;
                 else if (name == prefix + "PropertyByName" && args.Parameters.Length == 1)
                     args.Result = 0;

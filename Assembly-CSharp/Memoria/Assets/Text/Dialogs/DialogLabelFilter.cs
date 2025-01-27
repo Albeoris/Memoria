@@ -134,63 +134,61 @@ namespace Memoria.Assets
 
         private void ProcessOriginalTag(ref Int32 index)
         {
-            Int32 num2 = index;
-            String text3 = new String(_chars, index, 5);
-            if (text3 == "[" + NGUIText.IconVar)
+            Int32 nextIndex = index;
+            String textTag = new String(_chars, index + 1, 4);
+            if (textTag == NGUIText.IconVar)
             {
-                Int32 oneParameterFromTag = NGUIText.GetOneParameterFromTag(_chars, index, ref num2);
-                OnIcon(oneParameterFromTag);
+                OnIcon(NGUIText.GetOneParameterFromTag(_chars, index, ref nextIndex));
             }
-            else if (text3 == "[" + NGUIText.CustomButtonIcon || text3 == "[" + NGUIText.ButtonIcon || text3 == "[" + NGUIText.JoyStickButtonIcon || text3 == "[" + NGUIText.KeyboardButtonIcon)
+            else if (textTag == NGUIText.CustomButtonIcon || textTag == NGUIText.ButtonIcon || textTag == NGUIText.JoyStickButtonIcon || textTag == NGUIText.KeyboardButtonIcon)
             {
-                num2 = Array.IndexOf(_chars, ']', index + 4);
-                String text5 = new String(_chars, index + 6, num2 - index - 6);
+                nextIndex = Array.IndexOf(_chars, ']', index + 4);
+                String iconName = new String(_chars, index + 6, nextIndex - index - 6);
                 if (!FF9StateSystem.MobilePlatform || NGUIText.ForceShowButton)
                 {
-                    _sb.Append(text3);
+                    _sb.Append("[");
+                    _sb.Append(textTag);
                     _sb.Append("=");
-                    _sb.Append(text5);
+                    _sb.Append(iconName);
                     _sb.Append("] ");
                 }
             }
-            else if (text3 == "[" + NGUIText.MobileIcon)
+            else if (textTag == NGUIText.MobileIcon)
             {
-                Int32 oneParameterFromTag2 = NGUIText.GetOneParameterFromTag(_chars, index, ref num2);
-                OnMobileIcon(oneParameterFromTag2);
+                OnMobileIcon(NGUIText.GetOneParameterFromTag(_chars, index, ref nextIndex));
             }
-            else if (NGUIText.nameKeywordList.Contains(text3.Remove(0, 1)))
+            else if (NGUIText.nameKeywordList.Contains(textTag))
             {
-                String a = text3.Remove(0, 1);
-                num2 = Array.IndexOf(_chars, ']', index + 4);
-                if (a == NGUIText.Zidane)
+                nextIndex = Array.IndexOf(_chars, ']', index + 4);
+                if (textTag == NGUIText.Zidane)
                     OnCharacterName(CharacterId.Zidane);
-                else if (a == NGUIText.Vivi)
+                else if (textTag == NGUIText.Vivi)
                     OnCharacterName(CharacterId.Vivi);
-                else if (a == NGUIText.Dagger)
+                else if (textTag == NGUIText.Dagger)
                     OnCharacterName(CharacterId.Garnet);
-                else if (a == NGUIText.Steiner)
+                else if (textTag == NGUIText.Steiner)
                     OnCharacterName(CharacterId.Steiner);
-                else if (a == NGUIText.Freya)
+                else if (textTag == NGUIText.Freya)
                     OnCharacterName(CharacterId.Freya);
-                else if (a == NGUIText.Quina)
+                else if (textTag == NGUIText.Quina)
                     OnCharacterName(CharacterId.Quina);
-                else if (a == NGUIText.Eiko)
+                else if (textTag == NGUIText.Eiko)
                     OnCharacterName(CharacterId.Eiko);
-                else if (a == NGUIText.Amarant)
+                else if (textTag == NGUIText.Amarant)
                     OnCharacterName(CharacterId.Amarant);
-                else if (a == NGUIText.Party1)
+                else if (textTag == NGUIText.Party1)
                     OnPartyMemberName(0);
-                else if (a == NGUIText.Party2)
+                else if (textTag == NGUIText.Party2)
                     OnPartyMemberName(1);
-                else if (a == NGUIText.Party3)
+                else if (textTag == NGUIText.Party3)
                     OnPartyMemberName(2);
-                else if (a == NGUIText.Party4)
+                else if (textTag == NGUIText.Party4)
                     OnPartyMemberName(3);
                 else
                 {
                     foreach (KeyValuePair<String, CharacterId> kv in NGUIText.nameCustomKeywords)
                     {
-                        if (a == kv.Key)
+                        if (textTag == kv.Key)
                         {
                             OnCharacterName(kv.Value);
                             break;
@@ -198,62 +196,54 @@ namespace Memoria.Assets
                     }
                 }
             }
-            else if (text3 == "[" + NGUIText.NumberVar)
+            else if (textTag == NGUIText.NumberVar)
             {
-                Int32 num4 = 0;
-                Int32 oneParameterFromTag3 = NGUIText.GetOneParameterFromTag(_chars, index, ref num4);
-                num2 = Array.IndexOf(_chars, ']', index + 4);
-                OnVariable(oneParameterFromTag3);
+                Int32 endArg = 0;
+                Int32 tagParameter = NGUIText.GetOneParameterFromTag(_chars, index, ref endArg);
+                nextIndex = Array.IndexOf(_chars, ']', index + 4);
+                OnVariable(tagParameter);
             }
-            else if (text3 == "[" + NGUIText.MessageTab)
+            else if (textTag == NGUIText.MessageTab)
             {
-                Int32 oneParameterFromTag4 = NGUIText.GetOneParameterFromTag(_chars, index, ref num2);
-                OnMessageX(oneParameterFromTag4);
+                OnMessageX(NGUIText.GetOneParameterFromTag(_chars, index, ref nextIndex));
             }
-            else if (text3 == "[" + NGUIText.MessageFeed)
+            else if (textTag == NGUIText.MessageFeed)
             {
-                Int32 oneParameterFromTag5 = NGUIText.GetOneParameterFromTag(_chars, index, ref num2);
-                OnMessageFeed(oneParameterFromTag5);
+                OnMessageFeed(NGUIText.GetOneParameterFromTag(_chars, index, ref nextIndex));
             }
-            else if (text3 == "[" + NGUIText.SpacingY)
+            else if (textTag == NGUIText.SpacingY)
             {
-                _label.spacingY = NGUIText.GetOneParameterFromTag(_chars, index, ref num2);
+                _label.spacingY = NGUIText.GetOneParameterFromTag(_chars, index, ref nextIndex);
             }
-            if (num2 == index)
-            {
+            if (nextIndex == index)
                 _sb.Append(_chars[index]);
-            }
-            else if (num2 != -1)
-            {
-                index = num2;
-            }
+            else if (nextIndex != -1)
+                index = nextIndex;
             else
-            {
                 index = _chars.Length;
-            }
         }
 
-        private void OnMessageFeed(Int32 oneParameterFromTag5)
+        private void OnMessageFeed(Int32 tagParameter)
         {
-            _currentWidth += oneParameterFromTag5 * 3;
+            _currentWidth += tagParameter * 3;
             _sb.Append("[FEED=");
-            _sb.Append(oneParameterFromTag5);
+            _sb.Append(tagParameter);
             _sb.Append(']');
         }
 
-        private void OnMessageX(Int32 oneParameterFromTag4)
+        private void OnMessageX(Int32 tagParameter)
         {
-            _currentWidth += oneParameterFromTag4 * 3;
+            _currentWidth += tagParameter * 3;
             _sb.Append("[XTAB=");
-            _sb.Append(oneParameterFromTag4);
+            _sb.Append(tagParameter);
             _sb.Append(']');
         }
 
-        private void OnVariable(Int32 oneParameterFromTag3)
+        private void OnVariable(Int32 tagParameter)
         {
-            Int32 num5 = PersistenSingleton<EventEngine>.Instance.eTb.gMesValue[oneParameterFromTag3];
-            _sb.Append(num5.ToString());
-            _currentWidth += NGUIText.GetTextWidthFromFF9Font(_label, num5.ToString());
+            String variableValue = ETb.gMesValue[tagParameter].ToString();
+            _sb.Append(variableValue);
+            _currentWidth += NGUIText.GetTextWidthFromFF9Font(_label, variableValue);
         }
 
         private void OnCharacterName(CharacterId charId)
@@ -272,17 +262,17 @@ namespace Memoria.Assets
             }
         }
 
-        private void OnMobileIcon(Int32 oneParameterFromTag2)
+        private void OnMobileIcon(Int32 tagParameter)
         {
-            DialogBoxConstructor.KeepMobileIcon(_sb, oneParameterFromTag2);
-            _currentWidth += FF9UIDataTool.GetIconSize(oneParameterFromTag2).x;
+            DialogBoxConstructor.KeepMobileIcon(_sb, tagParameter);
+            _currentWidth += FF9UIDataTool.GetIconSize(tagParameter).x;
         }
 
-        private void OnIcon(Int32 oneParameterFromTag)
+        private void OnIcon(Int32 tagParameter)
         {
             String parsed;
             Boolean isIcon = true;
-            switch (oneParameterFromTag)
+            switch (tagParameter)
             {
                 case 34:
                     parsed = "[sub]0[/sub]";
@@ -318,7 +308,7 @@ namespace Memoria.Assets
                     parsed = "/";
                     break;
                 default:
-                    parsed = String.Concat("[ICON", "=", oneParameterFromTag, "] ");
+                    parsed = String.Concat("[ICON", "=", tagParameter, "] ");
                     isIcon = false;
                     break;
             }
@@ -326,7 +316,7 @@ namespace Memoria.Assets
             if (isIcon)
                 _currentWidth += NGUIText.GetTextWidthFromFF9Font(_label, FF9TextTool.RemoveOpCode(parsed));
             else
-                _currentWidth += FF9UIDataTool.GetIconSize(oneParameterFromTag).x;
+                _currentWidth += FF9UIDataTool.GetIconSize(tagParameter).x;
         }
     }
 }

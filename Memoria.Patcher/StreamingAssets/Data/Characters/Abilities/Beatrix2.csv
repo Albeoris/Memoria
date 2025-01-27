@@ -3,7 +3,7 @@
 # Use 0 for a void ability, AA:X for active abilities and SA:X for passive abilities.
 # -----------------------------------
 # Id;AP
-# Ability;UInt8
+# Ability;Int32
 # -----------------------------------
 AA:149;0;# Thunder Slash
 AA:150;0;# Stock Break

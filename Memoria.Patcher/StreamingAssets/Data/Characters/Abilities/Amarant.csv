@@ -3,7 +3,7 @@
 # Use 0 for a void ability, AA:X for active abilities and SA:X for passive abilities.
 # -----------------------------------
 # Id;AP
-# Ability;UInt8
+# Ability;Int32
 # -----------------------------------
 AA:125;30;# Chakra
 AA:126;90;# Spare Change

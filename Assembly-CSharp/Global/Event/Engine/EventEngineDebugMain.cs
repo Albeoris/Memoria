@@ -9,7 +9,6 @@ public class EventEngineDebugMain : MonoBehaviour
         this.ee = PersistenSingleton<EventEngine>.Instance;
         this.ee.InitEvents();
         this.eBin = this.ee.eBin;
-        this.eTb = this.ee.eTb;
         this.ee.StartEventsByEBFileName("CommonAsset/EventEngine/EventBinary/US/EVT_ALEX1_TS_CARGO_0.eb");
     }
 
@@ -24,8 +23,5 @@ public class EventEngineDebugMain : MonoBehaviour
     }
 
     private EventEngine ee;
-
     private EBin eBin;
-
-    private ETb eTb;
 }

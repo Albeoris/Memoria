@@ -177,7 +177,7 @@ public static class ff9level
         return spirit;
     }
 
-    public static Int32 FF9Level_GetCap(PLAYER player, Int32 lv, Boolean lvup)
+    public static UInt32 FF9Level_GetCap(PLAYER player, Int32 lv, Boolean lvup)
     {
         FF9LEVEL_BONUS bonus = player.bonus;
         CharacterBaseStats baseStats = ff9level.CharacterBaseStats[player.Index];
@@ -191,19 +191,19 @@ public static class ff9level
             Int32 equipBonus = 0;
             bonus.cap += (UInt16)(capaBonus + equipBonus);
         }
-        Int32 gemCount = Math.Min(99, baseStats.Gems + lv * 4 / 10 + (bonus.cap >> 5));
+        UInt32 gemCount = (UInt32)(baseStats.Gems + lv * 4 / 10 + (bonus.cap >> 5));
         if (!String.IsNullOrEmpty(Configuration.Battle.MagicStoneStockFormula))
         {
             Expression e = new Expression(Configuration.Battle.MagicStoneStockFormula);
             NCalcUtility.InitializeExpressionPlayer(ref e, player);
-            e.Parameters["Level"] = (Int32)lv; // overrides "player.level"
+            e.Parameters["Level"] = lv; // overrides "player.level"
             e.Parameters["MagicStoneBonus"] = (Int32)bonus.cap; // MagicStoneBonus contains the bonus from level ups (x5)
             e.Parameters["MagicStoneBase"] = (Int32)baseStats.Gems;
             e.EvaluateFunction += NCalcUtility.commonNCalcFunctions;
             e.EvaluateParameter += NCalcUtility.commonNCalcParameters;
             Int32 val = (Int32)NCalcUtility.ConvertNCalcResult(e.Evaluate(), -1);
             if (val >= 0)
-                gemCount = Math.Min(val, UInt16.MaxValue); // "player.basis.cap" is a UInt16, so it's better to force a limit there
+                gemCount = (UInt32)val;
         }
         return gemCount;
     }

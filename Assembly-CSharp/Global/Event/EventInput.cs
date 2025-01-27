@@ -2,7 +2,7 @@
 using System;
 using UnityEngine;
 
-public class EventInput
+public static class EventInput
 {
     public static Boolean IsJapaneseLayout
     {
@@ -38,57 +38,48 @@ public class EventInput
 
     public static Boolean IsMenuON
     {
-        get => (EventInput.PSXCntlPadMask[0] & EventInput.Lmenu) == 0u;
+        get => (EventInput.PSXCntlPadMask[0] & EventInput.MenuControl) == 0u;
     }
 
     public static Boolean IsKeyboardOrJoystickInput
     {
         get
         {
-            SourceControl currentInputSource = EventInput.GetCurrentInputSource();
-            Boolean result = PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect;
-            switch (currentInputSource)
+            switch (EventInput.GetCurrentInputSource())
             {
                 case SourceControl.KeyBoard:
                 case SourceControl.Joystick:
-                    result = true;
-                    break;
+                    return true;
                 case SourceControl.Touch:
-                    result = false;
-                    break;
+                    return false;
             }
-            return result;
+            return PersistenSingleton<HonoInputManager>.Instance.IsControllerConnect;
         }
     }
 
     public static void ChangeInputLayout(String language)
     {
+        // TODO: maybe add a configuration for that? As a Localization entry (like "ReadingDirection")?
         if (language == "Japanese")
-            EventInput.SetJapaneseLayput();
+            EventInput.SetJapaneseLayout();
         else
             EventInput.SetOtherLangLayout();
-        EventInput.ConfirmMask = EventInput.Lcircle | EventInput.Pcircle;
-        EventInput.CancelMask = EventInput.Lx | EventInput.Px;
     }
 
-    private static void SetJapaneseLayput()
+    private static void SetJapaneseLayout()
     {
-        EventInput.Lcircle = 0x10000u;
-        EventInput.Lx = 0x20000u;
-        EventInput.Fcircle = 0x10000u;
-        EventInput.Fx = 0x20000u;
         EventInput.isJapaneseLayout = true;
-        EventInput.HippualMask = EventInput.Lcircle | EventInput.Lsquare;
+        NGUIText.ButtonNames[0] = "CIRCLE";
+        NGUIText.ButtonNames[1] = "CROSS";
+        PersistenSingleton<HonoInputManager>.Instance.SetJapaneseLayout(true);
     }
 
     private static void SetOtherLangLayout()
     {
-        EventInput.Lcircle = 0x20000u;
-        EventInput.Lx = 0x10000u;
-        EventInput.Fcircle = 0x10000u;
-        EventInput.Fx = 0x20000u;
         EventInput.isJapaneseLayout = false;
-        EventInput.HippualMask = EventInput.Lx | EventInput.Lsquare;
+        NGUIText.ButtonNames[0] = "CROSS";
+        NGUIText.ButtonNames[1] = "CIRCLE";
+        PersistenSingleton<HonoInputManager>.Instance.SetJapaneseLayout(false);
     }
 
     public static UInt32 ReadInput()
@@ -140,13 +131,13 @@ public class EventInput
                 inputs &= EventInput.ChanbaraMask;
                 if (FF9StateSystem.MobilePlatform)
                 {
-                    if ((inputs & EventInput.Pstart) > 0u)
+                    if ((inputs & EventInput.Start) > 0u)
                     {
                         EventInput.IsNeedAddStartSignal = true;
                     }
                     else if (EventInput.addStartSignal > 0)
                     {
-                        inputs |= EventInput.Pstart;
+                        inputs |= EventInput.Start;
                         EventInput.addStartSignal--;
                         EventInput.InputLog("Extra Start");
                     }
@@ -197,39 +188,30 @@ public class EventInput
         inputs |= EventInput.eventButtonInput;
         if (EventInput.isDialogConfirm)
         {
-            inputs |= EventInput.ConfirmMask;
+            inputs |= EventInput.GetKeyMaskFromControl(Control.Confirm);
             EventInput.isDialogConfirm = false;
         }
         if (HonoBehaviorSystem.Instance.IsFastForwardModeActive())
-        {
-            if (FF9StateSystem.MobilePlatform)
-            {
-                if (fldMapNo == 909 || fldMapNo == 1909) // Treno/Auction Site or Treno/Auction House
-                    inputs = EventInput.FastForwardProcess(gMode, fldMapNo, inputs);
-            }
-            else
-            {
+            if (!FF9StateSystem.MobilePlatform || fldMapNo == 909 || fldMapNo == 1909) // Treno/Auction Site or Treno/Auction House
                 inputs = EventInput.FastForwardProcess(gMode, fldMapNo, inputs);
-            }
-        }
         inputs &= ~EventInput.PSXCntlPadMask[0];
         if (FF9StateSystem.MobilePlatform && gMode == 3 && EventCollision.IsRidingChocobo())
         {
-            if ((inputs & EventInput.Lsquare) > 0u || (inputs & EventInput.Psquare) > 0u)
+            if ((inputs & EventInput.GetKeyMaskFromControl(Control.Special)) > 0u)
                 EventInput.isPressedDig = true;
-            else if ((inputs & EventInput.Ltriangle) > 0u || (inputs & EventInput.Ptriangle) > 0u)
+            else if ((inputs & EventInput.GetKeyMaskFromControl(Control.Menu)) > 0u)
                 EventInput.isPressedDig = false;
-            else if ((inputs & EventInput.Lx) > 0u || (inputs & EventInput.Px) > 0u)
+            else if ((inputs & EventInput.GetKeyMaskFromControl(Control.Cancel)) > 0u)
                 EventInput.isPressedDig = false;
-            else if ((inputs & EventInput.Lselect) > 0u || (inputs & EventInput.Pselect) > 0u)
+            else if ((inputs & EventInput.Select) > 0u)
                 EventInput.isPressedDig = false;
         }
         if (gMode == 3 && EventEngineUtils.IsMogCalled(PersistenSingleton<EventEngine>.Instance))
             ff9.w_isMogActive = true;
-        if (gMode == 3 && EMinigame.CheckBeachMinigame() && EventCollision.IsWorldTrigger() && (inputs & CancelMask) > 0u)
+        if (gMode == 3 && EMinigame.CheckBeachMinigame() && EventCollision.IsWorldTrigger() && (inputs & EventInput.GetKeyMaskFromControl(Control.Confirm)) > 0u)
         {
-            inputs &= ~CancelMask;
-            EventInput.InputLog("Remove cancel mask for <SQEX> #2893");
+            inputs &= ~EventInput.GetKeyMaskFromControl(Control.Confirm);
+            EventInput.InputLog("Remove confirm mask for <SQEX> #2893");
         }
         EventInput.eventButtonInput = 0u;
         EventInput.ResetWorldTriggerButton();
@@ -238,16 +220,15 @@ public class EventInput
 
     public static UInt32 ReadInputLight()
     {
-        UInt32 inputs = 0u;
         if (!EventInput.isProcessingInput)
-            return inputs;
+            return 0u;
         Int32 fldMapNo = FF9StateSystem.Common.FF9.fldMapNo;
         Int32 gMode = PersistenSingleton<EventEngine>.Instance.gMode;
-        inputs = EventInput.ProcessInput(false, false);
+        UInt32 inputs = EventInput.ProcessInput(false, false);
         inputs |= EventInput.eventButtonInput;
         if (EventInput.isDialogConfirm)
         {
-            inputs |= EventInput.ConfirmMask;
+            inputs |= EventInput.GetKeyMaskFromControl(Control.Confirm);
             EventInput.isDialogConfirm = false;
         }
         if (HonoBehaviorSystem.Instance.IsFastForwardModeActive())
@@ -290,83 +271,83 @@ public class EventInput
             if (vector.magnitude > Configuration.AnalogControl.StickThreshold)
             {
                 if (vector.y > 0f)
-                    inputs |= EventInput.Pup;
+                    inputs |= EventInput.Up;
                 if (vector.y < 0f)
-                    inputs |= EventInput.Pdown;
+                    inputs |= EventInput.Down;
                 if (vector.x < 0f)
-                    inputs |= EventInput.Pleft;
+                    inputs |= EventInput.Left;
                 if (vector.x > 0f)
-                    inputs |= EventInput.Pright;
+                    inputs |= EventInput.Right;
             }
         }
         if (EventInput.GetKey(Control.Menu, isTriggerButton))
         {
-            inputs |= EventInput.Ptriangle | EventInput.Ltriangle;
+            inputs |= EventInput.GetKeyMaskFromControl(Control.Menu);
             EventInput.InputLog("Press /_\\");
         }
         if (EventInput.GetKey(Control.Confirm, isTriggerButton))
         {
-            inputs |= EventInput.Pcircle | EventInput.Lcircle;
-            EventInput.InputLog("Press 0");
+            inputs |= EventInput.GetKeyMaskFromControl(Control.Confirm);
+            EventInput.InputLog("Press X");
         }
         if (EventInput.GetKey(Control.Cancel, isTriggerButton))
         {
-            inputs |= EventInput.Px | EventInput.Lx;
-            EventInput.InputLog("Press X");
+            inputs |= EventInput.GetKeyMaskFromControl(Control.Cancel);
+            EventInput.InputLog("Press 0");
         }
         if (EventInput.GetKey(Control.Special, isTriggerButton))
         {
-            inputs |= EventInput.Psquare | EventInput.Lsquare;
+            inputs |= EventInput.GetKeyMaskFromControl(Control.Special);
             EventInput.InputLog("Press []");
         }
         if (EventInput.GetKey(Control.Select, isTriggerButton))
         {
-            inputs |= EventInput.Pselect;
+            inputs |= EventInput.Select;
             EventInput.InputLog("Press Select");
         }
         if (EventInput.GetKey(Control.Pause, isTriggerButton))
         {
-            inputs |= EventInput.Pstart;
+            inputs |= EventInput.Start;
             EventInput.InputLog("Press Start");
         }
         if (EventInput.GetKey(Control.LeftBumper, isTriggerButton))
         {
-            inputs |= EventInput.PL1 | EventInput.LL1;
+            inputs |= EventInput.GetKeyMaskFromControl(Control.LeftBumper);
             EventInput.InputLog("Press L1");
         }
         if (EventInput.GetKey(Control.RightBumper, isTriggerButton))
         {
-            inputs |= EventInput.PR1 | EventInput.LR1;
+            inputs |= EventInput.GetKeyMaskFromControl(Control.RightBumper);
             EventInput.InputLog("Press R1");
         }
         if (EventInput.GetKey(Control.LeftTrigger, isTriggerButton))
         {
-            inputs |= EventInput.PL2 | EventInput.LL2;
+            inputs |= EventInput.GetKeyMaskFromControl(Control.LeftTrigger);
             EventInput.InputLog("Press L2");
         }
         if (EventInput.GetKey(Control.RightTrigger, isTriggerButton))
         {
-            inputs |= EventInput.PR2 | EventInput.LR2;
+            inputs |= EventInput.GetKeyMaskFromControl(Control.RightTrigger);
             EventInput.InputLog("Press R2");
         }
         if (EventInput.GetKey(Control.Up, isTriggerDirection))
         {
-            inputs |= EventInput.Pup;
+            inputs |= EventInput.Up;
             EventInput.InputLog("Press ^");
         }
         if (EventInput.GetKey(Control.Down, isTriggerDirection))
         {
-            inputs |= EventInput.Pdown;
+            inputs |= EventInput.Down;
             EventInput.InputLog("Press v");
         }
         if (EventInput.GetKey(Control.Left, isTriggerDirection))
         {
-            inputs |= EventInput.Pleft;
+            inputs |= EventInput.Left;
             EventInput.InputLog("Press <");
         }
         if (EventInput.GetKey(Control.Right, isTriggerDirection))
         {
-            inputs |= EventInput.Pright;
+            inputs |= EventInput.Right;
             EventInput.InputLog("Press >");
         }
         return inputs;
@@ -392,7 +373,7 @@ public class EventInput
                 input &= ~EventInput.OperationMask;
             else if (input != 0u)
                 EventInput.lastTimeInput = RealTime.time;
-        if (EventHUD.CurrentHUD == MinigameHUD.RacingHippaul && (input & EventInput.HippualMask) == EventInput.HippualMask)
+        if (EventHUD.CurrentHUD == MinigameHUD.RacingHippaul && (input & EventInput.HippaulMask) == EventInput.HippaulMask)
             input = 0u;
         return input;
     }
@@ -455,9 +436,8 @@ public class EventInput
         SourceControl sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetDirectionAxisSource();
         if (sourceControl != SourceControl.None)
             return sourceControl;
-        Int32 num = 14;
-        for (Int32 i = 0; i < num; i++)
-            if (PersistenSingleton<HonoInputManager>.Instance.GetSource((Control)i) != SourceControl.None)
+        for (Int32 i = 0; i < 14; i++)
+            if ((sourceControl = PersistenSingleton<HonoInputManager>.Instance.GetSource((Control)i)) != SourceControl.None)
                 break;
         return sourceControl;
     }
@@ -470,22 +450,22 @@ public class EventInput
             UInt32 inputs = 0u;
             if (PersistenSingleton<AndroidEventInputManager>.Instance.GetKeyTrigger(Control.Menu))
             {
-                inputs |= EventInput.Ptriangle | EventInput.Ltriangle;
+                inputs |= EventInput.GetKeyMaskFromControl(Control.Menu);
                 EventInput.InputLog("Press /_\\");
             }
             if (PersistenSingleton<AndroidEventInputManager>.Instance.GetKeyTrigger(Control.Confirm))
             {
-                inputs |= EventInput.Pcircle | EventInput.Lcircle;
-                EventInput.InputLog("Press 0");
+                inputs |= EventInput.GetKeyMaskFromControl(Control.Confirm);
+                EventInput.InputLog("Press X");
             }
             if (PersistenSingleton<AndroidEventInputManager>.Instance.GetKeyTrigger(Control.Cancel))
             {
-                inputs |= EventInput.Px | EventInput.Lx;
-                EventInput.InputLog("Press X");
+                inputs |= EventInput.GetKeyMaskFromControl(Control.Cancel);
+                EventInput.InputLog("Press 0");
             }
             if (PersistenSingleton<AndroidEventInputManager>.Instance.GetKeyTrigger(Control.Special))
             {
-                inputs |= EventInput.Psquare | EventInput.Lsquare;
+                inputs |= EventInput.GetKeyMaskFromControl(Control.Special);
                 EventInput.InputLog("Press []");
             }
             currentInput |= inputs;
@@ -498,103 +478,111 @@ public class EventInput
             PersistenSingleton<AndroidEventInputManager>.Instance.Reset();
     }
 
-    public const UInt32 Pselect = 1u;
+    public static UInt32 GetKeyMaskFromControl(Control control)
+    {
+        UInt32 logicalInput = 0u;
+        switch (control)
+        {
+            case Control.Confirm:
+                logicalInput = EventInput.Confirm;
+                break;
+            case Control.Cancel:
+                logicalInput = EventInput.Cancel;
+                break;
+            case Control.Menu:
+                logicalInput = EventInput.Menu;
+                break;
+            case Control.Special:
+                logicalInput = EventInput.Special;
+                break;
+            case Control.LeftBumper:
+                logicalInput = EventInput.LeftBumper;
+                break;
+            case Control.RightBumper:
+                logicalInput = EventInput.RightBumper;
+                break;
+            case Control.LeftTrigger:
+                logicalInput = EventInput.LeftTrigger;
+                break;
+            case Control.RightTrigger:
+                logicalInput = EventInput.RightTrigger;
+                break;
+            case Control.Pause:
+                return EventInput.Start;
+            case Control.Select:
+                return EventInput.Select;
+            case Control.Up:
+                return EventInput.Up;
+            case Control.Down:
+                return EventInput.Up;
+            case Control.Left:
+                return EventInput.Up;
+            case Control.Right:
+                return EventInput.Up;
+            case Control.DPad:
+            case Control.None:
+                return 0u;
+        }
+        Int32 buttonIndex = PersistenSingleton<HonoInputManager>.Instance.LogicalControlToPhysicalButton(control);
+        switch (buttonIndex)
+        {
+            case 0: return logicalInput | EventInput.Cross;
+            case 1: return logicalInput | EventInput.Circle;
+            case 2: return logicalInput | EventInput.Triangle;
+            case 3: return logicalInput | EventInput.Square;
+            case 4: return logicalInput | EventInput.L1;
+            case 5: return logicalInput | EventInput.R1;
+            case 6: return logicalInput | EventInput.L2;
+            case 7: return logicalInput | EventInput.R2;
+        }
+        return logicalInput;
+    }
 
-    public const UInt32 Lselect = 1u;
+    // Physical buttons
+    public const UInt32 Select = 1u;
+    public const UInt32 Start = 8u;
+    public const UInt32 Up = 0x10u;
+    public const UInt32 Right = 0x20u;
+    public const UInt32 Down = 0x40u;
+    public const UInt32 Left = 0x80u;
+    public const UInt32 L2 = 0x100u;
+    public const UInt32 R2 = 0x200u;
+    public const UInt32 L1 = 0x400u;
+    public const UInt32 R1 = 0x800u;
+    public const UInt32 Triangle = 0x1000u;
+    public const UInt32 Circle = 0x2000u;
+    public const UInt32 Cross = 0x4000u;
+    public const UInt32 Square = 0x8000u;
 
-    public const UInt32 Pstart = 8u;
+    // Logical buttons
+    public const UInt32 Cancel = 0x10000u;
+    public const UInt32 Confirm = 0x20000u;
+    public const UInt32 MenuControl = 0x40000u;
+    public const UInt32 Special = 0x80000u;
+    public const UInt32 LeftBumper = 0x100000u;
+    public const UInt32 RightBumper = 0x200000u;
+    public const UInt32 LeftTrigger = 0x400000u;
+    public const UInt32 RightTrigger = 0x800000u;
+    public const UInt32 Menu = 0x1000000u;
+    public const UInt32 NaviControl = 0x2000000u;
 
-    public const UInt32 Lstart = 8u;
-
-    public const UInt32 Pup = 0x10u;
-
-    public const UInt32 Lup = 0x10u;
-
-    public const UInt32 Pright = 0x20u;
-
-    public const UInt32 Lright = 0x20u;
-
-    public const UInt32 Pdown = 0x40u;
-
-    public const UInt32 Ldown = 0x40u;
-
-    public const UInt32 Pleft = 0x80u;
-
-    public const UInt32 Lleft = 0x80u;
-
-    public const UInt32 PL2 = 0x100u;
-
-    public const UInt32 PR2 = 0x200u;
-
-    public const UInt32 PL1 = 0x400u;
-
-    public const UInt32 PR1 = 0x800u;
-
-    public const UInt32 Ptriangle = 0x1000u;
-
-    public const UInt32 Pcircle = 0x2000u;
-
-    public const UInt32 Px = 0x4000u;
-
-    public const UInt32 Psquare = 0x8000u;
-
-    public const UInt32 Lmenu = 0x40000u;
-
-    public const UInt32 Lsquare = 0x80000u;
-
-    public const UInt32 LL1 = 0x100000u;
-
-    public const UInt32 LR1 = 0x200000u;
-
-    public const UInt32 LL2 = 0x400000u;
-
-    public const UInt32 LR2 = 0x800000u;
-
-    public const UInt32 Ltriangle = 0x1000000u;
-
-    public const UInt32 Lnavi = 0x2000000u;
-
-    public const UInt32 Lmog = EventInput.Lsquare;
+    public static Boolean isJapaneseLayout = false;
 
     public const Byte PSXCNTL_MAX_PADS = 2;
 
-    public static UInt32 Lcircle = 0x20000u;
-
-    public static UInt32 Lx = 0x10000u;
-
-    public static UInt32 Fcircle = 0x10000u;
-
-    public static UInt32 Fx = 0x20000u;
-
     private static Boolean showLog = false;
 
-    private static Boolean isJapaneseLayout = false;
-
     private static UInt32[] PSXCntlPadMask = new UInt32[2];
-
-    private static readonly UInt32 MovementMask = EventInput.Pup | EventInput.Pright | EventInput.Pdown | EventInput.Pleft; // 0xF0
-
-    private static readonly UInt32 ChanbaraMask = 0xFFFFFFFEu;
-
-    private static readonly UInt32 OperationMask = EventInput.Lx | EventInput.Px | EventInput.Lcircle | EventInput.Pcircle | EventInput.Lsquare | EventInput.Psquare | EventInput.Ltriangle | EventInput.Ptriangle; // 0x10BF000u
-
-    private static UInt32 ConfirmMask = 0u;
-
-    private static UInt32 CancelMask = 0u;
+    private static readonly UInt32 MovementMask = EventInput.Up | EventInput.Right | EventInput.Down | EventInput.Left;
+    private static readonly UInt32 ChanbaraMask = ~EventInput.Select; // Blank sword fight mini-game
+    private static readonly UInt32 OperationMask = EventInput.Confirm | EventInput.Cross | EventInput.Cancel | EventInput.Circle | EventInput.Special | EventInput.Square | EventInput.Menu | EventInput.Triangle;
 
     private static Boolean isMovementControl = true;
-
     private static Boolean isProcessingInput = true;
-
     private static Boolean isDialogConfirm = false;
-
     private static Int32 addStartSignal = 0;
-
     private static Single lastTimeInput = 0f;
-
     private static Boolean isPressedDig = false;
-
     private static UInt32 eventButtonInput = 0u;
-
-    private static UInt32 HippualMask = 0u;
+    private static UInt32 HippaulMask = EventInput.Cancel | EventInput.Special; // Hippaul race mini-game
 }

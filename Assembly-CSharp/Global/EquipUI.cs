@@ -7,6 +7,7 @@ using Memoria.Data;
 using Memoria.Scenes;
 using NCalc;
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -150,7 +151,6 @@ public class EquipUI : UIScene
         {
             if (oldEquip == RegularItem.Moonstone)
                 ff9item.DecreaseMoonStoneCount();
-
             ff9item.FF9Item_Add(oldEquip, 1);
         }
 
@@ -167,7 +167,7 @@ public class EquipUI : UIScene
         this.DisplayPlayerArrow(true);
         ButtonGroupState.ActiveGroup = EquipUI.EquipmentGroupButton;
         base.Loading = true;
-        this.equipmentSelectionTransition.TweenOut(new Byte[1], delegate { base.Loading = false; });
+        this.equipmentSelectionTransition.TweenOut([0], delegate { base.Loading = false; });
         this.equipmentPartCaption.SetActive(true);
     }
 
@@ -193,7 +193,6 @@ public class EquipUI : UIScene
                     FF9Sfx.FF9SFX_Play(107);
                     if (itemId == RegularItem.Moonstone)
                         ff9item.DecreaseMoonStoneCount();
-
                     ff9item.FF9Item_Add(itemId, 1);
                     player.equip[this.currentEquipPart] = RegularItem.NoItem;
                     this.UpdateCharacterData(player);
@@ -245,7 +244,7 @@ public class EquipUI : UIScene
 
             this.selectedCaption.key = key;
             base.Loading = true;
-            this.equipmentSelectionTransition.TweenIn(new Byte[1], delegate
+            this.equipmentSelectionTransition.TweenIn([0], delegate
             {
                 base.Loading = false;
                 ButtonGroupState.RemoveCursorMemorize(EquipUI.InventoryGroupButton);
@@ -319,7 +318,7 @@ public class EquipUI : UIScene
             ButtonGroupState.ActiveGroup = EquipUI.EquipmentGroupButton;
             this.DisplayEquiptmentInfo();
             base.Loading = true;
-            this.equipmentSelectionTransition.TweenOut(new Byte[1], delegate { base.Loading = false; });
+            this.equipmentSelectionTransition.TweenOut([0], delegate { base.Loading = false; });
             this.equipmentPartCaption.SetActive(true);
         }
 
@@ -386,10 +385,10 @@ public class EquipUI : UIScene
             return true;
 
         FF9Sfx.FF9SFX_Play(1047);
-        Int32 num = ff9play.FF9Play_GetPrev(this.currentPartyIndex);
-        if (num != this.currentPartyIndex)
+        Int32 prevIndex = ff9play.FF9Play_GetPrev(this.currentPartyIndex);
+        if (prevIndex != this.currentPartyIndex)
         {
-            this.currentPartyIndex = num;
+            this.currentPartyIndex = prevIndex;
             PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
             String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
             base.Loading = true;
@@ -413,10 +412,10 @@ public class EquipUI : UIScene
             return true;
 
         FF9Sfx.FF9SFX_Play(1047);
-        Int32 num = ff9play.FF9Play_GetNext(this.currentPartyIndex);
-        if (num != this.currentPartyIndex)
+        Int32 nextIndex = ff9play.FF9Play_GetNext(this.currentPartyIndex);
+        if (nextIndex != this.currentPartyIndex)
         {
-            this.currentPartyIndex = num;
+            this.currentPartyIndex = nextIndex;
             PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
             String spritName = FF9UIDataTool.AvatarSpriteName(player.info.serial_no);
             Boolean isKnockOut = player.cur.hp == 0;
@@ -475,46 +474,15 @@ public class EquipUI : UIScene
 
     private void DisplaySubMenuArrow(Boolean isEnable)
     {
-        if (isEnable)
-        {
-            if (FF9StateSystem.PCPlatform)
-            {
-                this.submenuArrowGameObject.SetActive(false);
-            }
-            else
-            {
-                this.submenuArrowGameObject.SetActive(true);
-            }
-        }
-        else
-        {
-            this.submenuArrowGameObject.SetActive(false);
-        }
+        this.submenuArrowGameObject.SetActive(isEnable && !FF9StateSystem.PCPlatform);
     }
 
     private void DisplayPlayerArrow(Boolean isEnable)
     {
         if (isEnable)
         {
-            Int32 num = 0;
-            PLAYER[] member = FF9StateSystem.Common.FF9.party.member;
-            for (Int32 i = 0; i < member.Length; i++)
-            {
-                PLAYER player = member[i];
-                if (player != null)
-                {
-                    num++;
-                }
-            }
-
-            if (num > 1)
-            {
-                this.CharacterArrowPanel.SetActive(true);
-            }
-            else
-            {
-                this.CharacterArrowPanel.SetActive(false);
-            }
+            Int32 playerCount = FF9StateSystem.Common.FF9.party.member.Count(p => p != null);
+            this.CharacterArrowPanel.SetActive(playerCount > 1);
         }
         else
         {
@@ -533,130 +501,78 @@ public class EquipUI : UIScene
     private void DisplayParameter()
     {
         PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-        this.parameterHud.ParameterLabel[0].text = player.elem.dex.ToString();
-        this.parameterHud.ParameterLabel[1].text = player.elem.str.ToString();
-        this.parameterHud.ParameterLabel[2].text = player.elem.mgc.ToString();
-        this.parameterHud.ParameterLabel[3].text = player.elem.wpr.ToString();
-        this.parameterHud.ParameterLabel[4].text = ff9item.GetItemWeapon(player.equip[0]).Ref.Power.ToString();
-        this.parameterHud.ParameterLabel[5].text = player.defence.PhysicalDefence.ToString();
-        this.parameterHud.ParameterLabel[6].text = player.defence.PhysicalEvade.ToString();
-        this.parameterHud.ParameterLabel[7].text = player.defence.MagicalDefence.ToString();
-        this.parameterHud.ParameterLabel[8].text = player.defence.MagicalEvade.ToString();
-        if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton || (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentMenu == SubMenu.Off))
+        Boolean checkOtherEquip = ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton && this.currentItemIndex >= 0 && this.itemIdList[this.currentEquipPart][this.currentItemIndex].id != RegularItem.NoItem;
+        Boolean checkUnequip = ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentMenu == SubMenu.Off && this.currentEquipPart != 0 && player.equip[this.currentEquipPart] != RegularItem.NoItem;
+        if (checkOtherEquip || checkUnequip)
         {
-            if (ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentMenu == SubMenu.Off)
-            {
-                if (player.equip[this.currentEquipPart] == RegularItem.NoItem)
-                {
-                    this.ClearChangeParameter();
-                    return;
-                }
-
-                if (this.currentEquipPart == 0)
-                {
-                    this.ClearChangeParameter();
-                    return;
-                }
-            }
-            else if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton && (this.currentItemIndex == -1 || this.itemIdList[this.currentEquipPart][this.currentItemIndex].id == RegularItem.NoItem))
-            {
-                this.ClearChangeParameter();
-                return;
-            }
-
             for (Int32 i = 0; i < 9; i++)
             {
                 this.parameterHud.ArrowSprite[i].gameObject.SetActive(true);
                 this.parameterHud.NewParameterLabel[i].gameObject.SetActive(true);
             }
-
-            FF9PLAY_SKILL ff9PLAY_SKILL = new FF9PLAY_SKILL();
-            FF9PLAY_SKILL ff9PLAY_SKILL2 = this.CalculateSkill();
-            ff9PLAY_SKILL.Base[0] = player.elem.dex;
-            ff9PLAY_SKILL.Base[1] = player.elem.str;
-            ff9PLAY_SKILL.Base[2] = player.elem.mgc;
-            ff9PLAY_SKILL.Base[3] = player.elem.wpr;
-            ff9PLAY_SKILL.defParam[0] = ff9item.GetItemWeapon(player.equip[0]).Ref.Power;
-            ff9PLAY_SKILL.defParam[1] = player.defence.PhysicalDefence;
-            ff9PLAY_SKILL.defParam[2] = player.defence.PhysicalEvade;
-            ff9PLAY_SKILL.defParam[3] = player.defence.MagicalDefence;
-            ff9PLAY_SKILL.defParam[4] = player.defence.MagicalEvade;
-            Int32 j;
-            for (j = 0; j < 4; j++)
+            RegularItem itemEquipped = player.equip[this.currentEquipPart];
+            UInt32 currentMaxHp = player.max.hp;
+            UInt32 currentMaxMp = player.max.mp;
+            UInt32 previewMaxHp;
+            UInt32 previewMaxMp;
+            Int32[] currentStats = new Int32[9];
+            Int32[] previewStats = new Int32[9];
+            if (checkOtherEquip)
+                player.equip[this.currentEquipPart] = this.itemIdList[this.currentEquipPart][this.currentItemIndex].id;
+            else
+                player.equip[this.currentEquipPart] = RegularItem.NoItem;
+            if (player.equip[this.currentEquipPart] != itemEquipped)
             {
-                this.parameterHud.NewParameterLabel[j].text = ff9PLAY_SKILL2.Base[j].ToString();
+                ff9play.FF9Play_Update(player);
+                previewMaxHp = player.max.hp;
+                previewMaxMp = player.max.mp;
+                for (Int32 i = 0; i < 9; i++)
+                    previewStats[i] = player.GetPlayerStat(i);
+                player.equip[this.currentEquipPart] = itemEquipped;
+                ff9play.FF9Play_Update(player);
+                for (Int32 i = 0; i < 9; i++)
+                    currentStats[i] = player.GetPlayerStat(i);
             }
-
-            while (j < 9)
+            else
             {
-                this.parameterHud.NewParameterLabel[j].text = ff9PLAY_SKILL2.defParam[j - 4].ToString();
-                j++;
-            }
-
-            for (j = 0; j < 4; j++)
-            {
-                if (ff9PLAY_SKILL.Base[j] != ff9PLAY_SKILL2.Base[j])
+                previewMaxHp = currentMaxHp;
+                previewMaxMp = currentMaxMp;
+                for (Int32 i = 0; i < 9; i++)
                 {
-                    this.parameterHud.ArrowTween[j].enabled = true;
+                    currentStats[i] = player.GetPlayerStat(i);
+                    previewStats[i] = currentStats[i];
+                }
+            }
+            this.characterHud.HPMaxLabel.text = previewMaxHp.ToString();
+            this.characterHud.MPMaxLabel.text = previewMaxMp.ToString();
+            this.characterHud.HPMaxLabel.color = currentMaxHp < previewMaxHp ? FF9TextTool.Green : (currentMaxHp > previewMaxHp ? FF9TextTool.Red : FF9TextTool.White);
+            this.characterHud.MPMaxLabel.color = currentMaxMp < previewMaxMp ? FF9TextTool.Green : (currentMaxMp > previewMaxMp ? FF9TextTool.Red : FF9TextTool.White);
+            for (Int32 i = 0; i < 9; i++)
+            {
+                this.parameterHud.ParameterLabel[i].text = currentStats[i].ToString();
+                this.parameterHud.NewParameterLabel[i].text = previewStats[i].ToString();
+                if (currentStats[i] < previewStats[i])
+                {
+                    this.parameterHud.ArrowTween[i].enabled = true;
+                    this.parameterHud.NewParameterLabel[i].color = FF9TextTool.Green;
+                }
+                else if (currentStats[i] > previewStats[i])
+                {
+                    this.parameterHud.ArrowTween[i].enabled = true;
+                    this.parameterHud.NewParameterLabel[i].color = FF9TextTool.Red;
                 }
                 else
                 {
-                    this.parameterHud.ArrowTween[j].enabled = false;
-                    this.parameterHud.ArrowSprite[j].color = new Color(1f, 1f, 1f, 0.7058824f);
+                    this.parameterHud.ArrowTween[i].enabled = false;
+                    this.parameterHud.ArrowSprite[i].color = new Color(1f, 1f, 1f, 0.7058824f);
+                    this.parameterHud.NewParameterLabel[i].color = FF9TextTool.White;
                 }
-            }
-
-            while (j < 9)
-            {
-                if (ff9PLAY_SKILL.defParam[j - 4] != ff9PLAY_SKILL2.defParam[j - 4])
-                {
-                    this.parameterHud.ArrowTween[j].enabled = true;
-                }
-                else
-                {
-                    this.parameterHud.ArrowTween[j].enabled = false;
-                    this.parameterHud.ArrowSprite[j].color = new Color(1f, 1f, 1f, 0.7058824f);
-                }
-
-                j++;
-            }
-
-            for (j = 0; j < 4; j++)
-            {
-                if (ff9PLAY_SKILL.Base[j] < ff9PLAY_SKILL2.Base[j])
-                {
-                    this.parameterHud.NewParameterLabel[j].color = FF9TextTool.Green;
-                }
-                else if (ff9PLAY_SKILL.Base[j] > ff9PLAY_SKILL2.Base[j])
-                {
-                    this.parameterHud.NewParameterLabel[j].color = FF9TextTool.Red;
-                }
-                else
-                {
-                    this.parameterHud.NewParameterLabel[j].color = FF9TextTool.White;
-                }
-            }
-
-            while (j < 9)
-            {
-                if (ff9PLAY_SKILL.defParam[j - 4] < ff9PLAY_SKILL2.defParam[j - 4])
-                {
-                    this.parameterHud.NewParameterLabel[j].color = FF9TextTool.Green;
-                }
-                else if (ff9PLAY_SKILL.defParam[j - 4] > ff9PLAY_SKILL2.defParam[j - 4])
-                {
-                    this.parameterHud.NewParameterLabel[j].color = FF9TextTool.Red;
-                }
-                else
-                {
-                    this.parameterHud.NewParameterLabel[j].color = FF9TextTool.White;
-                }
-
-                j++;
             }
         }
         else
         {
+            for (Int32 i = 0; i < 9; i++)
+                this.parameterHud.ParameterLabel[i].text = player.GetPlayerStat(i).ToString();
             this.ClearChangeParameter();
         }
     }
@@ -966,6 +882,11 @@ public class EquipUI : UIScene
 
     private void ClearChangeParameter()
     {
+        PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
+        this.characterHud.HPMaxLabel.text = player.max.hp.ToString();
+        this.characterHud.MPMaxLabel.text = player.max.mp.ToString();
+        this.characterHud.HPMaxLabel.color = FF9TextTool.White;
+        this.characterHud.MPMaxLabel.color = FF9TextTool.White;
         for (Int32 i = 0; i < 9; i++)
         {
             this.parameterHud.ArrowSprite[i].gameObject.SetActive(false);
@@ -1307,36 +1228,6 @@ public class EquipUI : UIScene
 
         this.UpdateCharacterData(player);
         FF9Sfx.FF9SFX_Play(107);
-    }
-
-    private FF9PLAY_SKILL CalculateSkill()
-    {
-        PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-        FF9PLAY_INFO info = new FF9PLAY_INFO();
-        FF9PLAY_SKILL result = new FF9PLAY_SKILL();
-        RegularItem itemId;
-        if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton)
-            itemId = this.itemIdList[this.currentEquipPart][this.currentItemIndex].id;
-        else
-            itemId = player.equip[this.currentEquipPart];
-
-        info.Base = player.basis;
-        info.cur_hp = player.cur.hp;
-        info.cur_mp = player.cur.mp;
-        info.equip.Absorb(player.equip);
-
-        if (ButtonGroupState.ActiveGroup == EquipUI.InventoryGroupButton)
-        {
-            info.equip[this.currentEquipPart] = itemId;
-            ff9play.FF9Play_GetSkill(ref info, ref result);
-        }
-        else if (this.currentMenu == SubMenu.Off && ButtonGroupState.ActiveGroup == EquipUI.EquipmentGroupButton && this.currentEquipPart != 0)
-        {
-            info.equip[this.currentEquipPart] = RegularItem.NoItem;
-            ff9play.FF9Play_GetSkill(ref info, ref result);
-        }
-
-        return result;
     }
 
     public SubMenu GetSubMenuFromGameObject(GameObject go)

@@ -193,7 +193,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
             FF9StateBattleMap ff9StateBattleMap = FF9StateSystem.Battle.FF9Battle.map;
             ff9StateBattleMap.evtPtr = EventEngineUtils.loadEventData(ebFileName, "Battle/");
             PersistenSingleton<EventEngine>.Instance.StartEvents(ff9StateBattleMap.evtPtr);
-            PersistenSingleton<EventEngine>.Instance.eTb.InitMessage();
+            ETb.InitMessage();
         }
         this.CreateBattleData(FF9);
         FF9StateBattleSystem stateBattleSystem = FF9StateSystem.Battle.FF9Battle;
@@ -278,7 +278,7 @@ public class HonoluluBattleMain : PersistenSingleton<MonoBehaviour>
                         weapon.geo = null;
                     else if (sb2MonParm.WeaponModel[j] == "NONE")
                         weapon.geo = new GameObject(btl_eqp.DummyWeaponName);
-                    else if (sb2MonParm.WeaponModel[j].Contains("GEO_WEP"))
+                    else if (sb2MonParm.WeaponModel[j].StartsWith("GEO_WEP"))
                         weapon.geo = ModelFactory.CreateModel("BattleMap/BattleModel/battle_weapon/" + sb2MonParm.WeaponModel[j] + "/" + sb2MonParm.WeaponModel[j], true, true, Configuration.Graphics.ElementsSmoothTexture);
                     else
                         weapon.geo = ModelFactory.CreateModel(sb2MonParm.WeaponModel[j], true, true, Configuration.Graphics.ElementsSmoothTexture);

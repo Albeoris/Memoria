@@ -642,6 +642,20 @@ namespace Memoria
             return UIManager.Battle.IsAbilityAvailable(this, ff9abil.GetAbilityIdFromSupportAbility(abilId));
         }
 
+        public Boolean HasLearntAbility(BattleAbilityId abilId)
+        {
+            if (!IsPlayer)
+                return false;
+            return ff9abil.FF9Abil_IsMaster(Player, ff9abil.GetAbilityIdFromActiveAbility(abilId));
+        }
+
+        public Boolean HasLearntAbility(SupportAbility abilId)
+        {
+            if (!IsPlayer)
+                return false;
+            return ff9abil.FF9Abil_IsMaster(Player, ff9abil.GetAbilityIdFromSupportAbility(abilId));
+        }
+
         public void DamageWithoutContext(Int32 damage, Int32 mpdamage = 0, Boolean hitAnimIfRelevant = true)
         {
             if (damage != 0)
@@ -1125,6 +1139,10 @@ namespace Memoria
                 return HasSupportAbilityByIndex((SupportAbility)supportId);
             if (propertyName.StartsWith("CanUseAbility ") && Int32.TryParse(propertyName.Substring("CanUseAbility ".Length), out Int32 abilId))
                 return IsAbilityAvailable((BattleAbilityId)abilId);
+            if (propertyName.StartsWith("HasLearntAbility ") && Int32.TryParse(propertyName.Substring("HasLearntAbility ".Length), out Int32 aaId))
+                return HasLearntAbility((BattleAbilityId)aaId);
+            if (propertyName.StartsWith("HasLearntSupport ") && Int32.TryParse(propertyName.Substring("HasLearntSupport ".Length), out Int32 saId))
+                return HasLearntAbility((SupportAbility)saId);
             Log.Error($"[BattleUnit] Unrecognized unit property \"{propertyName}\"");
             return -1;
         }

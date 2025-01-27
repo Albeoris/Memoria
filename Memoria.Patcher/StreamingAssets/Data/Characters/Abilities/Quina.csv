@@ -3,7 +3,7 @@
 # Use 0 for a void ability, AA:X for active abilities and SA:X for passive abilities.
 # -----------------------------------
 # Id;AP
-# Ability;UInt8
+# Ability;Int32
 # -----------------------------------
 AA:77;1;# Goblin Punch
 AA:78;1;# LV5 Death

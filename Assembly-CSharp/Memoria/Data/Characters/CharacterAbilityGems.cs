@@ -14,7 +14,7 @@ namespace Memoria.Data
         public String Comment;
         public SupportAbility Id;
 
-        public Byte GemsCount;
+        public Int32 GemsCount;
         public List<SupportAbility> Boosted;
 
         public void ParseEntry(String[] raw, CsvMetaData metadata)
@@ -22,7 +22,7 @@ namespace Memoria.Data
             Comment = CsvParser.String(raw[0]);
             Id = (SupportAbility)CsvParser.Int32(raw[1]);
 
-            GemsCount = CsvParser.Byte(raw[2]);
+            GemsCount = CsvParser.Int32(raw[2]);
             Boosted = new List<SupportAbility>();
             if (metadata.HasOption($"Include{nameof(Boosted)}"))
                 foreach (Int32 abilId in CsvParser.Int32Array(raw[3]))
@@ -34,7 +34,7 @@ namespace Memoria.Data
             writer.String(Comment);
             writer.Int32((Int32)Id);
 
-            writer.Byte(GemsCount);
+            writer.Int32(GemsCount);
             if (metadata.HasOption($"Include{nameof(Boosted)}"))
                 writer.Int32Array(Boosted.ConvertAll(abilId => (Int32)abilId).ToArray());
         }
