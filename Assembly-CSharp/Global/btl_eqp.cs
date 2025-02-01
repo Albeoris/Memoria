@@ -70,7 +70,7 @@ public static class btl_eqp
                     btl.weaponRenderer[i].material.mainTexture = AssetManager.Load<Texture2D>(btl.weapon.CustomTexture[i], false);
             }
         }
-        else if (btl.weapon.CustomTexture != null) // Other kind of model have no btl.weaponMeshCount
+        else if (btl.weapon.CustomTexture != null && btl.weapon.CustomTexture.Length > 0) // Other kind of model have no btl.weaponMeshCount
         {
             ModelFactory.ChangeModelTexture(mainWeapon.geo, btl.weapon.CustomTexture);
         }
@@ -127,7 +127,7 @@ public static class btl_eqp
         }
         foreach (BTL_DATA.WEAPON_MODEL weapon in btl.weaponModels)
             if (weapon.geo != null && weapon.bone >= 0)
-                    geo.geoAttach(weapon.geo, btl.gameObject, weapon.bone);
+                geo.geoAttach(weapon.geo, btl.gameObject, weapon.bone);
     }
 
     public static void SetupWeaponAttachmentFromMonster(BTL_DATA.WEAPON_MODEL weapon, SB2_MON_PARM monsterParam, Int32 index)

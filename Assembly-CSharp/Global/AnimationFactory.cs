@@ -74,8 +74,11 @@ public class AnimationFactory
             for (Int32 i = 0; i < animNameList.Length; i++)
             {
                 String animName = animNameList[i];
-                AnimationClip clip = AnimationFactory.animationEventClip[animName];
-                goAnimations.AddClip(clip, animName);
+                if (goAnimations.GetClip(animName) == null)
+                {
+                    AnimationClip clip = AnimationFactory.animationEventClip[animName];
+                    goAnimations.AddClip(clip, animName);
+                }
             }
         }
         if (addAutoAnim)
@@ -93,7 +96,8 @@ public class AnimationFactory
                     animName = FF9DBAll.AnimationDB.GetValue(animKey);
                 if (!AnimationFactory.animationEventClip.ContainsKey(animName))
                     AnimationFactory.animationEventClip.Add(animName, clip);
-                goAnimations.AddClip(clip, animName);
+                if (goAnimations.GetClip(animName) == null)
+                    goAnimations.AddClip(clip, animName);
             }
             // Wraith (Ice): the following code used to load Wraith (Fire)'s casting animations but it wasn't enough
             // The current fix is to make Wraith (Ice) use Wraith (Ice)'s casting animations
@@ -131,6 +135,9 @@ public class AnimationFactory
 
     public static String GetRenameAnimationPath(String animationPath)
     {
+        Int32 duplicateIndex;
+        if (animationPath.EndsWith(" Duplicate)") && (duplicateIndex = animationPath.LastIndexOf('(')) > 0)
+            animationPath = animationPath.Substring(0, duplicateIndex - 1);
         String animName = Path.GetFileNameWithoutExtension(animationPath);
         if (FF9DBAll.AnimationDB.TryGetKey(animName, out Int32 animKey))
         {

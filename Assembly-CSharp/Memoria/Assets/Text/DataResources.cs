@@ -8,9 +8,9 @@ namespace Memoria.Assets
         // In general:
         // - Default file path is obtained by DataResources.SECTION.PureDirectory + DataResources.SECTION.TYPEFile
         // - The Asset Path Prefix to be used in TryFindAssetInModOnDisc is: AssetManagerUtil.GetStreamingAssetsPath() + "/"
-        public static readonly String PureDataDirectory = "Data/";
-        public static readonly String PureScriptsDirectory = "Scripts/";
-        public static readonly String PureShadersDirectory = "Shaders/";
+        public const String PureDataDirectory = "Data/";
+        public const String PureScriptsDirectory = "Scripts/";
+        public const String PureShadersDirectory = "Shaders/";
         public static readonly String DataDirectory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDataDirectory;
         public static readonly String ScriptsDirectory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureScriptsDirectory;
         public static readonly String ShadersDirectory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureShadersDirectory;
@@ -33,16 +33,17 @@ namespace Memoria.Assets
             public static readonly String PureDirectory = PureDataDirectory + "Items/";
             public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 
-            public static String ItemsFile => "Items.csv";
-            public static String StatsFile => "Stats.csv";
-            public static String ArmorsFile => "Armors.csv";
-            public static String WeaponsFile => "Weapons.csv";
-            public static String SynthesisFile => "Synthesis.csv";
-            public static String ItemEffectsFile => "ItemEffects.csv";
-            public static String ShopItems => "ShopItems.csv";
-            public static String InitialItemsFile => "InitialItems.csv";
-            public static String MixItemsFile => "MixItems.csv";
-            public static String ItemEquipPatchFile => "ItemEquipPatch.txt";
+            public const String ItemsFile = "Items.csv";
+            public const String StatsFile = "Stats.csv";
+            public const String ArmorsFile = "Armors.csv";
+            public const String WeaponsFile = "Weapons.csv";
+            public const String SynthesisFile = "Synthesis.csv";
+            public const String ItemEffectsFile = "ItemEffects.csv";
+            public const String ShopItems = "ShopItems.csv";
+            public const String InitialItemsFile = "InitialItems.csv";
+            public const String MixItemsFile = "MixItems.csv";
+            public const String ItemEquipPatchFile = "ItemEquipPatch.txt";
+            public const String ShopPatchFile = "ShopPatch.txt";
 
             public static String ModDirectory(String modFolder)
             {
@@ -57,14 +58,14 @@ namespace Memoria.Assets
             public static readonly String PureDirectory = PureDataDirectory + "Characters/";
             public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 
-            public static String CommandsFile => "Commands.csv";
-            public static String CommandSetsFile => "CommandSets.csv";
-            public static String CommandTitlesFile => "CommandTitles.csv";
-            public static String DefaultEquipmentsFile => "DefaultEquipment.csv";
-            public static String CharacterParametersFile => "CharacterParameters.csv";
-            public static String CharacterBattleParametersFile => "BattleParameters.csv";
-            public static String BaseStatsFile => "BaseStats.csv";
-            public static String Leveling => "Leveling.csv";
+            public const String CommandsFile = "Commands.csv";
+            public const String CommandSetsFile = "CommandSets.csv";
+            public const String CommandTitlesFile = "CommandTitles.csv";
+            public const String DefaultEquipmentsFile = "DefaultEquipment.csv";
+            public const String CharacterParametersFile = "CharacterParameters.csv";
+            public const String CharacterBattleParametersFile = "BattleParameters.csv";
+            public const String BaseStatsFile = "BaseStats.csv";
+            public const String Leveling = "Leveling.csv";
 
             public static String ModDirectory(String modFolder)
             {
@@ -79,8 +80,8 @@ namespace Memoria.Assets
                 public static readonly String PureDirectory = Characters.PureDirectory + "Abilities/";
                 public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 
-                public static String GemsFile => "AbilityGems.csv";
-                public static String SAFeaturesFile => "AbilityFeatures.txt";
+                public const String GemsFile = "AbilityGems.csv";
+                public const String SAFeaturesFile = "AbilityFeatures.txt";
 
                 public static String GetPresetAbilitiesPath(CharacterPresetId presetId)
                 {
@@ -101,10 +102,10 @@ namespace Memoria.Assets
             public static readonly String PureDirectory = PureDataDirectory + "Battle/";
             public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 
-            public static String StatusSetsFile => "StatusSets.csv";
-            public static String ActionsFile => "Actions.csv";
-            public static String StatusDataFile => "StatusData.csv";
-            public static String MagicSwordSetFile => "MagicSwordSets.csv";
+            public const String StatusSetsFile = "StatusSets.csv";
+            public const String ActionsFile = "Actions.csv";
+            public const String StatusDataFile = "StatusData.csv";
+            public const String MagicSwordSetFile = "MagicSwordSets.csv";
 
             public static String ModDirectory(String modFolder)
             {
@@ -119,9 +120,9 @@ namespace Memoria.Assets
             public static readonly String PureDirectory = PureDataDirectory + "World/";
             public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 
-            public static String CHRControlFile => "TransportControls.csv";
-            public static String WeatherColorFile => "WeatherColors.csv";
-            public static String EnvironmentPatchFile => "Environment.txt";
+            public const String CHRControlFile = "TransportControls.csv";
+            public const String WeatherColorFile = "WeatherColors.csv";
+            public const String EnvironmentPatchFile = "Environment.txt";
 
             public static String ModDirectory(String modFolder)
             {
@@ -136,7 +137,7 @@ namespace Memoria.Assets
             public static readonly String PureDirectory = PureDataDirectory + "Text/";
             public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 
-            public static String LocalizationPatchFile => "LocalizationPatch.txt";
+            public const String LocalizationPatchFile = "LocalizationPatch.txt";
 
             public static String ModDirectoryWithLang(String modFolder, String langSymbol)
             {
@@ -158,7 +159,7 @@ namespace Memoria.Assets
             public static readonly String PureDirectory = PureDataDirectory + "TetraMaster/";
             public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 
-            public static String TripleTriadFile => "TripleTriad.csv";
+            public const String TripleTriadFile = "TripleTriad.csv";
 
             public static String ModDirectory(String modFolder)
             {
@@ -173,8 +174,8 @@ namespace Memoria.Assets
             public static readonly String PureDirectory = PureDataDirectory + "SpecialEffects/";
             public static readonly String Directory = AssetManagerUtil.GetStreamingAssetsPath() + "/" + PureDirectory;
 
-            public static String SPSPrototypeFile => "Common/SPS.csv";
-            public static String SHPPrototypeFile => "Common/SHP.csv";
+            public const String SPSPrototypeFile = "Common/SPS.csv";
+            public const String SHPPrototypeFile = "Common/SHP.csv";
 
             public static String ModDirectory(String modFolder)
             {

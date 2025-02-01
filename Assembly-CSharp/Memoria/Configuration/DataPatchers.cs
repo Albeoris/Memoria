@@ -27,6 +27,8 @@ namespace Memoria
         public const String MemoriaDictionaryPatcherPath = "DictionaryPatch.txt";
         public const String MemoriaBattlePatcherPath = "BattlePatch.txt";
 
+        public static Char[] SpaceSeparators = [' ', '\t'];
+
         public static void Initialize(Boolean forceInit = false)
         {
             if (_isInitialized && !forceInit)

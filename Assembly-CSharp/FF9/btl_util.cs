@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace FF9
 {
-    public class btl_util
+    public static class btl_util
     {
         public static List<BTL_DATA> findAllBtlData(UInt16 id)
         {

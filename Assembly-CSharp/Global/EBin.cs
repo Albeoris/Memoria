@@ -1978,7 +1978,16 @@ public class EBin
             case VariableType.Int24:
             case VariableType.UInt24:
                 if (EventHUD.CurrentHUD == MinigameHUD.JumpingRope && Configuration.Hacks.Enabled && (ofs == 43 || ofs == 59))
-                    value = value - 1 + Configuration.Hacks.RopeJumpingIncrement;
+                {
+                    Int32 rewardStep = Int32.MaxValue;
+                    if (value <= 20) rewardStep = 20;
+                    else if (value <= 50 && QuadMistDatabase.MiniGame_GetCardCount(TetraMasterCardId.Cactuar) == 0) rewardStep = 50;
+                    else if (value <= 100 && QuadMistDatabase.MiniGame_GetCardCount(TetraMasterCardId.Genji) == 0) rewardStep = 100;
+                    else if (value <= 200 && QuadMistDatabase.MiniGame_GetCardCount(TetraMasterCardId.Alexandria) == 0) rewardStep = 200;
+                    else if (value <= 300 && QuadMistDatabase.MiniGame_GetCardCount(TetraMasterCardId.TigerRacket) == 0) rewardStep = 300;
+                    else if (value <= 1000) rewardStep = 1000;
+                    value = Math.Min(value - 1 + Configuration.Hacks.RopeJumpingIncrement, rewardStep);
+                }
                 buffer[ofs + bufferOffset] = (Byte)(value & 0xFF);
                 buffer[ofs + 1 + bufferOffset] = (Byte)((value >> 8) & 0xFF);
                 buffer[ofs + 2 + bufferOffset] = (Byte)((value >> 16) & 0xFF);

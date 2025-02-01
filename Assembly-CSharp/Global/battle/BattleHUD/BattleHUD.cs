@@ -2699,22 +2699,14 @@ public partial class BattleHUD : UIScene
                 {
                     if (unit.IsMonsterTransform)
                         unit.ReleaseChangeToMonster();
-                    BattlePlayerCharacter.PlayerMotionIndex motion = btl_mot.getMotion(btl);
-                    if (motion == BattlePlayerCharacter.PlayerMotionIndex.MP_MAX)
-                        motion = BattlePlayerCharacter.PlayerMotionIndex.MP_IDLE_NORMAL;
                     BattlePlayerCharacter.CreatePlayer(btl, player);
-                    btl_mot.SetPlayerDefMotion(btl, player.info.serial_no, (UInt32)unit.GetIndex());
-                    BattlePlayerCharacter.InitAnimation(btl);
-                    if (unit.IsUnderAnyStatus(BattleStatus.Trance))
-                        btl.ChangeModel(btl.tranceGo, btl_init.GetModelID(player.info.serial_no, true));
-                    else
-                        btl.ChangeModel(btl.originalGo, btl_init.GetModelID(player.info.serial_no, false));
-                    btl_mot.setMotion(btl, motion);
+                    btl_vfx.SetTranceModel(btl, unit.IsUnderAnyStatus(BattleStatus.Trance));
                 }
                 if (btl.weapon != ff9item.GetItemWeapon(player.equip[0]))
                 {
                     btl_eqp.InitWeapon(player, btl);
                     btl.weaponModels[0].offset_rot = btl_mot.BattleParameterList[player.info.serial_no].GetWeaponRotationFixed(btl.weapon.ModelId, false);
+                    SFX.InitBattleParty();
                 }
                 btl_eqp.InitEquipPrivilegeAttrib(player, btl);
             }

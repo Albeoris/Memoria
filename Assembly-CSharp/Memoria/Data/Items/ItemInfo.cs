@@ -160,7 +160,8 @@ namespace Memoria.Data
         Gem = 2,
         Usable = 1,
 
-        AnyEquipment = Weapon | Armlet | Helmet | Armor | Accessory
+        AnyEquipment = Weapon | Armlet | Helmet | Armor | Accessory,
+        AnyItem = Item | Gem | Usable
     }
 
     [Flags]

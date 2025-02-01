@@ -247,13 +247,17 @@ public static class AssetManager
             modelAnimList = new List<String>();
         for (Int32 i = 0; i < addedAnimList.Length; ++i)
         {
-            if (!AssetManager.AnimationReverseFolder.TryGetValue(addedAnimList[i], out animModelName)) // Animation registered in "AnimationFolderMapping.txt": use name ID of already registered model
+            String animName = addedAnimList[i];
+            Int32 duplicateIndex;
+            if (animName.EndsWith(" Duplicate)") && (duplicateIndex = animName.LastIndexOf('(')) > 0)
+                animName = animName.Substring(0, duplicateIndex - 1);
+            if (!AssetManager.AnimationReverseFolder.TryGetValue(animName, out animModelName)) // Animation registered in "AnimationFolderMapping.txt": use name ID of already registered model
                 animModelName = modelName; // Custom animation: use name ID of the specified model
-            animPath = "Animations/" + animModelName + "/" + addedAnimList[i];
+            animPath = "Animations/" + animModelName + "/" + animName;
             if (!modelAnimList.Contains(animPath))
             {
                 modelAnimList.Add(animPath);
-                AssetManager.AnimationReverseFolder[addedAnimList[i]] = animModelName;
+                AssetManager.AnimationReverseFolder[animName] = animModelName;
             }
         }
         AssetManager.AnimationInFolder[animDir] = modelAnimList;
@@ -283,34 +287,34 @@ public static class AssetManager
         foreach (String s in memoriaInfo)
         {
             String[] textureCode = s.Split(' ');
-            if (textureCode.Length >= 2 && String.Compare(textureCode[0], "AnisotropicLevel") == 0)
+            if (textureCode.Length >= 2 && String.Equals(textureCode[0], "AnisotropicLevel"))
             {
                 Int32 anisoLevel;
                 if (Int32.TryParse(textureCode[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out anisoLevel) && anisoLevel >= 1 && anisoLevel <= 9)
                     texture.anisoLevel = anisoLevel;
             }
-            else if (textureCode.Length >= 2 && String.Compare(textureCode[0], "FilterMode") == 0)
+            else if (textureCode.Length >= 2 && String.Equals(textureCode[0], "FilterMode"))
             {
                 foreach (FilterMode m in (FilterMode[])Enum.GetValues(typeof(FilterMode)))
-                    if (String.Compare(textureCode[1], m.ToString()) == 0)
+                    if (String.Equals(textureCode[1], m.ToString()))
                         texture.filterMode = m;
             }
-            else if (textureCode.Length >= 2 && String.Compare(textureCode[0], "HideFlags") == 0)
+            else if (textureCode.Length >= 2 && String.Equals(textureCode[0], "HideFlags"))
             {
                 foreach (HideFlags f in (HideFlags[])Enum.GetValues(typeof(HideFlags)))
-                    if (String.Compare(textureCode[1], f.ToString()) == 0)
+                    if (String.Equals(textureCode[1], f.ToString()))
                         texture.hideFlags = f;
             }
-            else if (textureCode.Length >= 2 && String.Compare(textureCode[0], "MipMapBias") == 0)
+            else if (textureCode.Length >= 2 && String.Equals(textureCode[0], "MipMapBias"))
             {
                 Single mipMapBias;
                 if (Single.TryParse(textureCode[1], out mipMapBias))
                     texture.mipMapBias = mipMapBias;
             }
-            else if (textureCode.Length >= 2 && String.Compare(textureCode[0], "WrapMode") == 0)
+            else if (textureCode.Length >= 2 && String.Equals(textureCode[0], "WrapMode"))
             {
                 foreach (TextureWrapMode m in (TextureWrapMode[])Enum.GetValues(typeof(TextureWrapMode)))
-                    if (String.Compare(textureCode[1], m.ToString()) == 0)
+                    if (String.Equals(textureCode[1], m.ToString()))
                         texture.wrapMode = m;
             }
         }
@@ -833,7 +837,7 @@ public static class AssetManager
                 String renameAnimationPath = AnimationFactory.GetRenameAnimationPath(clipNameList[i]);
                 clipList[i] = Load<T>(renameAnimationPath, false);
                 AnimationClip clip = clipList[i] as AnimationClip;
-                if (clip != null && String.Compare(clip.name, "CUSTOM_MUST_RENAME") == 0)
+                if (clip != null && String.Equals(clip.name, "CUSTOM_MUST_RENAME"))
                     clip.name = Path.GetFileNameWithoutExtension(clipNameList[i]);
             }
             return clipList;

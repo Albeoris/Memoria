@@ -1,5 +1,6 @@
 ﻿using Assets.SiliconSocial;
 using FF9;
+using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
 using Memoria.Prime;
@@ -46,7 +47,7 @@ public class ff9item
     {
         _FF9Item_Data = LoadItems();
         _FF9Item_Info = LoadItemEffects();
-        PatchItemEquipability(_FF9Item_Data);
+        PatchItemEquipability();
     }
 
     public static void FF9Item_Init()
@@ -92,14 +93,14 @@ public class ff9item
         }
     }
 
-    private static void PatchItemEquipability(Dictionary<RegularItem, FF9ITEM_DATA> itemDatabase)
+    private static void PatchItemEquipability()
     {
         try
         {
             String inputPath = DataResources.Items.PureDirectory + DataResources.Items.ItemEquipPatchFile;
             foreach (AssetManager.AssetFolder folder in AssetManager.FolderLowToHigh)
                 if (folder.TryFindAssetInModOnDisc(inputPath, out String fullPath, AssetManagerUtil.GetStreamingAssetsPath() + "/"))
-                    ApplyItemEquipabilityPatchFile(itemDatabase, File.ReadAllLines(fullPath));
+                    ApplyItemEquipabilityPatchFile(File.ReadAllLines(fullPath));
         }
         catch (Exception ex)
         {
@@ -581,7 +582,7 @@ public class ff9item
         return -1;
     }
 
-    private static void ApplyItemEquipabilityPatchFile(Dictionary<RegularItem, FF9ITEM_DATA> itemDatabase, String[] allLines)
+    private static void ApplyItemEquipabilityPatchFile(String[] allLines)
     {
         foreach (String line in allLines)
         {
@@ -589,45 +590,32 @@ public class ff9item
             // (allows Garnet to equip Dagger and Mage Masher but disallows her to equip Tiger Racket)
             if (String.IsNullOrEmpty(line) || line.Trim().StartsWith("//"))
                 continue;
-            String[] allWords = line.Trim().Split(new char[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            String[] allWords = line.Trim().Split(DataPatchers.SpaceSeparators, StringSplitOptions.RemoveEmptyEntries);
             if (allWords.Length < 3)
                 continue;
-            Int32 charId;
-            if (!Int32.TryParse(allWords[0], out charId))
+            if (!Int32.TryParse(allWords[0], out Int32 charId))
             {
-                CharacterId charIdAsStr;
-                if (!allWords[0].TryEnumParse(out charIdAsStr))
+                if (!allWords[0].TryEnumParse(out CharacterId charIdAsStr))
                     continue;
                 charId = (Int32)charIdAsStr;
             }
-            Boolean isAdd = false;
-            Boolean isRemove = false;
-            Int32 itemId;
+            Int32 currentOperation = -1;
             UInt64 charMask = ff9feqp.GetCharacterEquipMaskFromId((CharacterId)charId);
             for (Int32 wordIndex = 1; wordIndex < allWords.Length; wordIndex++)
             {
                 String word = allWords[wordIndex].Trim();
-                if (String.Compare(word, "Add") == 0)
+                if (String.Equals(word, "Add"))
+                    currentOperation = 0;
+                else if (String.Equals(word, "Remove"))
+                    currentOperation = 1;
+                else
                 {
-                    isAdd = true;
-                    isRemove = false;
-                }
-                else if (String.Compare(word, "Remove") == 0)
-                {
-                    isAdd = false;
-                    isRemove = true;
-                }
-                else if (isAdd)
-                {
-                    if (!Int32.TryParse(word, out itemId) || !itemDatabase.ContainsKey((RegularItem)itemId))
+                    if (!Int32.TryParse(word, out Int32 itemId) || !_FF9Item_Data.ContainsKey((RegularItem)itemId))
                         continue;
-                    itemDatabase[(RegularItem)itemId].equip |= charMask;
-                }
-                else if (isRemove)
-                {
-                    if (!Int32.TryParse(word, out itemId) || !itemDatabase.ContainsKey((RegularItem)itemId))
-                        continue;
-                    itemDatabase[(RegularItem)itemId].equip &= ~charMask;
+                    if (currentOperation == 0)
+                        _FF9Item_Data[(RegularItem)itemId].equip |= charMask;
+                    else if (currentOperation == 1)
+                        _FF9Item_Data[(RegularItem)itemId].equip &= ~charMask;
                 }
             }
         }

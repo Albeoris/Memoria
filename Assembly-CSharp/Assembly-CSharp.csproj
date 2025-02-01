@@ -1214,7 +1214,6 @@
     <Compile Include="FF9\FF9FEQP_EQUIP.cs" />
     <Compile Include="FF9\ff9mix.cs" />
     <Compile Include="FF9\FF9MIX_DATA.cs" />
-    <Compile Include="FF9\FF9MIX_INFO.cs" />
     <Compile Include="FF9\ff9sell.cs" />
     <Compile Include="Memoria\Data\ff9shop.cs" />
     <Compile Include="FF9\FF9SHOP_INFO.cs" />

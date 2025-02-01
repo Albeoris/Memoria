@@ -30,13 +30,6 @@ public class FF9StateBattleSystem
 
     public FF9StateBattleSystem()
     {
-        this.p_mot = new String[][]
-        {
-            new String[34],
-            new String[34],
-            new String[34],
-            new String[34]
-        };
         this.enemy = new ENEMY[4];
         for (Int32 i = 0; i < this.enemy.Length; i++)
             this.enemy[i] = new ENEMY();
@@ -64,8 +57,6 @@ public class FF9StateBattleSystem
     public ff9btl.ATTR attr;
 
     public Char usage;
-
-    public String[][] p_mot;
 
     public ENEMY[] enemy;
     public List<ENEMY_TYPE> enemy_type;
