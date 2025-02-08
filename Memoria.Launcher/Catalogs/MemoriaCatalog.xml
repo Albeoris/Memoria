@@ -97,103 +97,103 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
 	<Description>
-		A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
+A hard mod that allows you to experience a new whole adventure! All the monsters and bosses have been redesigned (not only a stats boost but all the AIs are revisited), new skills, mechanics and many other things!
 
-		Currently, Trance Seek is...
-		- A thoughtfully increased difficulty, designed for players seeking challenge.
-		- A complete overhaul of all combat, in terms of stats, AI and skills.
-		- Around 30 new bosses added (including 2 superbosses): all the game's bosses have been reworked to offer different mechanics and more!
-		- The game has a total of 84 SA + 84 additional enhanced versions (WIP).
-		- All characters have 44 SA available (not counting boosted versions, so a total of 88 SA each!).
-		- Each character has its own unique passive or mechanic. +40 new skills added.
-		- 59 new items (WIP) !
-		- And lots more ^_^
+Currently, Trance Seek is...
+- A thoughtfully increased difficulty, designed for players seeking challenge.
+- A complete overhaul of all combat, in terms of stats, AI and skills.
+- Around 30 new bosses added (including 2 superbosses): all the game's bosses have been reworked to offer different mechanics and more!
+- The game has a total of 84 SA + 84 additional enhanced versions (WIP).
+- All characters have 44 SA available (not counting boosted versions, so a total of 88 SA each!).
+- Each character has its own unique passive or mechanic. +40 new skills added.
+- 59 new items (WIP) !
+- And lots more ^_^
 
-		This is not an EXTREME hardcore difficult mod: it only adds a higher difficulty than the original version while keeping a constant progression.
+This is not an EXTREME hardcore difficult mod: it only adds a higher difficulty than the original version while keeping a constant progression.
 
-		It's currently a demo : Disc1/2/3 available but almost +30 hours of gameplay !
-		Don't hesitate to try!
+It's currently a demo : Disc1/2/3 available but almost +30 hours of gameplay !
+Don't hesitate to try!
 
-		/_!_\ IMPORTANT /_!_\
-		Recommended language : Français / English (UK)
-		Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
+/_!_\ IMPORTANT /_!_\
+Recommended language : Français / English (UK)
+Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
-		------[0.3.31]------
+------[0.3.31]------
 
-		{Characters}
-		- New script on summons, notably concerning the chances of applying status.
-		In addition, "Short" type summons are less likely to inflict the associated status alteration (as is damage).
-		- [WIP] Review of the cost of learning certain skills, particularly Dagga summons.
+{Characters}
+- New script on summons, notably concerning the chances of applying status.
+In addition, "Short" type summons are less likely to inflict the associated status alteration (as is damage).
+- [WIP] Review of the cost of learning certain skills, particularly Dagga summons.
 
-		- When Moug casts a skill for the first time, it will appear in Eiko's skill menu for more details.
-		- Moug will have a slightly more ghostly texture after Mount Gulug.
-		- Moug's appearance rate has been increased from 1/30 to 1/40.
+- When Moug casts a skill for the first time, it will appear in Eiko's skill menu for more details.
+- Moug will have a slightly more ghostly texture after Mount Gulug.
+- Moug's appearance rate has been increased from 1/30 to 1/40.
 
-		- Fixed a bug where Amarant could not critically hit with his weapon under certain conditions.
-		- Fixed Beatrix's mechanic, where some of her magics would not grant her the "Redemption" status.
-		- Slight change to the formula to prevent players from easily gaining Trance => from 15% to 10% of maximum HP. (not final ?)
-		- Fixed a bug with the "Old" status, where malus would accumulate each time the status was applied.
+- Fixed a bug where Amarant could not critically hit with his weapon under certain conditions.
+- Fixed Beatrix's mechanic, where some of her magics would not grant her the "Redemption" status.
+- Slight change to the formula to prevent players from easily gaining Trance => from 15% to 10% of maximum HP. (not final ?)
+- Fixed a bug with the "Old" status, where malus would accumulate each time the status was applied.
 
-		{Skills}
-		- Improved [Steal] command: from now on, it will benefit from the effect of the old SA Bandit+, meaning that it will be increasingly easy to steal items from a monster.
-		The formula is as follows: for each failed theft, add +8 to the theft rate of one of the monster's items, which corresponds to an addition of 3.125% (as the +8 influences a byte value).
-		Remember that this bonus is also added if Eye of the Thief fails and also with the SA "Mug".
+{Skills}
+- Improved [Steal] command: from now on, it will benefit from the effect of the old SA Bandit+, meaning that it will be increasingly easy to steal items from a monster.
+The formula is as follows: for each failed theft, add +8 to the theft rate of one of the monster's items, which corresponds to an addition of 3.125% (as the +8 influences a byte value).
+Remember that this bonus is also added if Eye of the Thief fails and also with the SA "Mug".
 
-		- Displays an "Eye of the thief!" message on the monster if the theft is successful thanks to this effect.
-		- The SA "Bandit+" has been modified => Increases the chance to steal.
-		You will also counterattack with [Steal] for each attack received.
+- Displays an "Eye of the thief!" message on the monster if the theft is successful thanks to this effect.
+- The SA "Bandit+" has been modified => Increases the chance to steal.
+You will also counterattack with [Steal] for each attack received.
 
-		- The "Tacle" skill has been renamed "Kick" (only available in French).
-		- The "Transmute" skill can no longer be used if Vivi is on Silence.
-		- The SA "Concentration" and "Sorcery" now work with "Summons".
-		- "Mog Heal" and "Mog Hug" no longer heal if Eiko is under Zombie but inflict damage instead.
-		- Fixed "Overload+" SA.
-		- Fixed "Auto-Potion+" SA. In addition, a character with a permanent status will no longer use the appropriate remedy (example: Garnet Depression)
-		- Much more precise formula for the "Blessing" and "Blessing+" SAs, as well as the Ruby item for Dagga.
-		- The "Sorcery" SA has been renamed "Maleficent".
+- The "Tacle" skill has been renamed "Kick" (only available in French).
+- The "Transmute" skill can no longer be used if Vivi is on Silence.
+- The SA "Concentration" and "Sorcery" now work with "Summons".
+- "Mog Heal" and "Mog Hug" no longer heal if Eiko is under Zombie but inflict damage instead.
+- Fixed "Overload+" SA.
+- Fixed "Auto-Potion+" SA. In addition, a character with a permanent status will no longer use the appropriate remedy (example: Garnet Depression)
+- Much more precise formula for the "Blessing" and "Blessing+" SAs, as well as the Ruby item for Dagga.
+- The "Sorcery" SA has been renamed "Maleficent".
 
-		- Fixed a bug in the "Accuracy+" and "Accuracy++" SAs, where the character could miss the target when it is immobilised (example with Freeze status).
-		- Corrected the description of the "Overload" and "Overload+" SAs.
-		- Correction to the sequence files for several spells, particularly summons, which could force certain hidden monsters to be displayed (e.g. Boss in the Beatrix CD3 quest).
-		- Fixed the description of several skills (player and enemy).
-		- The SA "Cover" only works if the character is in the front line.
-		- The SA "Bandit" has been renamed to "Lupin" in English (US/UK).
-		- The AA "Bandit" is renamed "Brigand" in all languages.
-		- The "Pakaho" effect has been renamed "Aureole" in French descriptions.
+- Fixed a bug in the "Accuracy+" and "Accuracy++" SAs, where the character could miss the target when it is immobilised (example with Freeze status).
+- Corrected the description of the "Overload" and "Overload+" SAs.
+- Correction to the sequence files for several spells, particularly summons, which could force certain hidden monsters to be displayed (e.g. Boss in the Beatrix CD3 quest).
+- Fixed the description of several skills (player and enemy).
+- The SA "Cover" only works if the character is in the front line.
+- The SA "Bandit" has been renamed to "Lupin" in English (US/UK).
+- The AA "Bandit" is renamed "Brigand" in all languages.
+- The "Pakaho" effect has been renamed "Aureole" in French descriptions.
 
-		{Items}
-		- New weapon added: the "Claymore" => Two-handed swords allow you to learn unique SAs compared to classic swords.
-		- Fixed the "Emerald" item, which was acting like an Elixir.
-		- Fixed the SFX of the "Diamond" and "Emerald" items.
-		- The cursed ring only deals 25% more damage and only from the [Attack] command.
-		- Fixed the description of several items.
-		- The items "Hamelin" and "Siren’s Flute" reduce the MP cost of Recover and Life spells respectively to zero (instead of half).
+{Items}
+- New weapon added: the "Claymore" => Two-handed swords allow you to learn unique SAs compared to classic swords.
+- Fixed the "Emerald" item, which was acting like an Elixir.
+- Fixed the SFX of the "Diamond" and "Emerald" items.
+- The cursed ring only deals 25% more damage and only from the [Attack] command.
+- Fixed the description of several items.
+- The items "Hamelin" and "Siren’s Flute" reduce the MP cost of Recover and Life spells respectively to zero (instead of half).
 
-		{Monsters / Bosses}
-		- Changed Ironite's "Dragon Force" spell effect.
-		- Fixed Dagga and Vivi's HP when fighting Maton on Kuja/Necron difficulty.
-		- New damage formula for Prison Cage's "Absorb" attack.
-		- Improvement to friendly Feather Circle's AI.
-		- Improved and corrected combat against Mimics.
-		- Fixed Arkh's "Bombardment" sequence file, which was causing a softlock if the attack resulted in a game over.
-		- Fixed the AI of Friendly Garuda, which was causing a game over when a character revives with AutoLife.
-		- The Sand Worm's "Quicksand" removes Booster and Somni.
-		- Optimisation of the Mad Alchemist's AI, particularly in terms of size management, which can lead to visual bugs with Demi, for example.
-		Also, these changes to stats adapt correctly to all difficulties.
-		- It is no longer possible to check the HP of Tomberries via Scan.
-		- The "Elixir" on Ifa's superboss at CD3 also removes all status alterations, allowing him to use her counter-attack.
-		- Slight correction to the AI against Lani, who could die under a specific condition.
-		- Blind Dragon's "Aïkido" is no longer a precise physical attack, and can therefore be dodged.
-		- Fixed the name of some monster/boss attacks.
-		- Fixed some dialogue boxes against Lamie.
+{Monsters / Bosses}
+- Changed Ironite's "Dragon Force" spell effect.
+- Fixed Dagga and Vivi's HP when fighting Maton on Kuja/Necron difficulty.
+- New damage formula for Prison Cage's "Absorb" attack.
+- Improvement to friendly Feather Circle's AI.
+- Improved and corrected combat against Mimics.
+- Fixed Arkh's "Bombardment" sequence file, which was causing a softlock if the attack resulted in a game over.
+- Fixed the AI of Friendly Garuda, which was causing a game over when a character revives with AutoLife.
+- The Sand Worm's "Quicksand" removes Booster and Somni.
+- Optimisation of the Mad Alchemist's AI, particularly in terms of size management, which can lead to visual bugs with Demi, for example.
+Also, these changes to stats adapt correctly to all difficulties.
+- It is no longer possible to check the HP of Tomberries via Scan.
+- The "Elixir" on Ifa's superboss at CD3 also removes all status alterations, allowing him to use her counter-attack.
+- Slight correction to the AI against Lani, who could die under a specific condition.
+- Blind Dragon's "Aïkido" is no longer a precise physical attack, and can therefore be dodged.
+- Fixed the name of some monster/boss attacks.
+- Fixed some dialogue boxes against Lamie.
 
-		{Fields}
-		- Fixed the Mog in Clayra's temple in all languages.
-		- Fixed the music in random battles in the Shadow Field/Desert Palace (2221).
-		- Added Beatrix to the last scene of "You are not alone", where all the characters gather near the Mog.
-		- Fixed the Mene rewards dialogue box in the "Hot and Cold" zones.
-		- Fixed dialogue against Lani in all languages.
-		- Fixed the script on the Interior/Ifa field (1759) where the superboss could be available before CD3.</PatchNotes>
+{Fields}
+- Fixed the Mog in Clayra's temple in all languages.
+- Fixed the music in random battles in the Shadow Field/Desert Palace (2221).
+- Added Beatrix to the last scene of "You are not alone", where all the characters gather near the Mog.
+- Fixed the Mene rewards dialogue box in the "Hot and Cold" zones.
+- Fixed dialogue against Lani in all languages.
+- Fixed the script on the Interior/Ifa field (1759) where the superboss could be available before CD3.</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/HC3GH4j/Logo-Trance-Seek.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/LogoTranceSeek.png</PreviewFile>
