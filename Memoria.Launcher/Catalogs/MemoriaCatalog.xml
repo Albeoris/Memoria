@@ -90,10 +90,10 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 	
 <Mod>
 	<Name>Trance Seek</Name>
-	<Version>0.3.30</Version>
+	<Version>0.3.31</Version>
 	<InstallationPath>TranceSeek</InstallationPath>
 	<ReleaseDateOriginal>28 Jan 2022</ReleaseDateOriginal>
-	<ReleaseDate>21 Dec 2024</ReleaseDate>
+	<ReleaseDate>08 Feb 2025</ReleaseDate>
 	<Author>DV</Author>
 	<IncompatibleWith>Alternate Fantasy,Amazing Quina,Beatrix Mod,Black Cat - Endgame Shop,David Bowie Edition,Freya Game+,Garnet is Main Character,Play As Kuja,Playable Character Pack,Tantalus</IncompatibleWith>
 	<Description>
@@ -116,40 +116,84 @@ This is actually a lighter version of Alternate Fantasy, to benefit from its add
 
 		/_!_\ IMPORTANT /_!_\
 		Recommended language : Français / English (UK)
-		Not supported language : Japanese (until full release... sorry !)</Description>
+		Not supported language : Japanese (a lot of things get deleted... need to wait until full release... sorry !)</Description>
 	<PatchNotes>
-		------[0.3.30]------
+		------[0.3.31]------
 
-		- Changes on Kuja and Necron mode at the start of the game: enemy bonuses are much less important, until Zidane/Steiner/Vivi team up in the Evil Forest.
+		{Characters}
+		- New script on summons, notably concerning the chances of applying status.
+		In addition, "Short" type summons are less likely to inflict the associated status alteration (as is damage).
+		- [WIP] Review of the cost of learning certain skills, particularly Dagga summons.
 
-		{Kuja Mode}:
-		→ +1 Strength/Magic for enemies (instead of 25%).
-		→ +5% maximum HP for enemies (instead of 10%).
+		- When Moug casts a skill for the first time, it will appear in Eiko's skill menu for more details.
+		- Moug will have a slightly more ghostly texture after Mount Gulug.
+		- Moug's appearance rate has been increased from 1/30 to 1/40.
 
-		{Necron Mode} :
-		→ +2 Strength/Magic for enemies. (instead of 50%)
-		→ +12.5% maximum HP for enemies (instead of 25%)
+		- Fixed a bug where Amarant could not critically hit with his weapon under certain conditions.
+		- Fixed Beatrix's mechanic, where some of her magics would not grant her the "Redemption" status.
+		- Slight change to the formula to prevent players from easily gaining Trance => from 15% to 10% of maximum HP. (not final ?)
+		- Fixed a bug with the "Old" status, where malus would accumulate each time the status was applied.
 
-		- Baku gives better rewards if defeated at the very beginning of the game (fight against Masked Man)
-		- Zidane and Marcus have access to the "Steal" command against Steiner (2nd fight).
-		- Slight change against the Plant Brain fight: Blank will restore all the team's HP/MP when he appears.
-		- The "Heat" effect of Plant Brain's Buzz attack has been reduced by 75%.
-		- Two chests edited in Prima Vista (Disc 1).
-		- Correction to script 0086_AtomosScript.cs.
-		- Atomos' power has been increased from 35 to 50. Like Demi, this damage depends on the target's current HP and can inflict damage on bosses.
-		- Trance Seek features are availables to Mogster in the ATEs.
-		- Added a new dialogue from Mogster in the swamps, about the front/back row mechanic.
-		- Changed the script for the Sand Worm's "Quicksand" attack, to fix a softlock... ?
-		- Fixed a bug on Amarant where he could physically attack a target under Vanish.
-		- Fixed a display bug on field 2221 (Shadow/Desert Palace), where the staircase would not show up after a fight.
-		- Fixed a major bug against Thorn and Zorn in Alexandria, where their HP overflowed in Kuja and Necron mode.
-		- Fixed a bug where HP calculation was erroneous on Kuja/Necron difficulty on Hagen and Weimar.
-		- Fixed the HPs of certain bosses in Kuja and Necron mode, where their HPs were rewritten in hard in their AI and therefore did not benefit from the HP bonus.
-		- Fixed various bugs on Meltigemini, notably by improving its AI.
-		- Fixed the Mog dialogue box in the Antlion pit (Disc 2 in Cleyra).
-		- Fixed certain magic spells used by enemies that did not remove "Vanish".
-		- Fixed Garland's mechanical armor, which could be reflected.
-		- Fixed some French descriptions.</PatchNotes>
+		{Skills}
+		- Improved [Steal] command: from now on, it will benefit from the effect of the old SA Bandit+, meaning that it will be increasingly easy to steal items from a monster.
+		The formula is as follows: for each failed theft, add +8 to the theft rate of one of the monster's items, which corresponds to an addition of 3.125% (as the +8 influences a byte value).
+		Remember that this bonus is also added if Eye of the Thief fails and also with the SA "Mug".
+
+		- Displays an "Eye of the thief!" message on the monster if the theft is successful thanks to this effect.
+		- The SA "Bandit+" has been modified => Increases the chance to steal.
+		You will also counterattack with [Steal] for each attack received.
+
+		- The "Tacle" skill has been renamed "Kick" (only available in French).
+		- The "Transmute" skill can no longer be used if Vivi is on Silence.
+		- The SA "Concentration" and "Sorcery" now work with "Summons".
+		- "Mog Heal" and "Mog Hug" no longer heal if Eiko is under Zombie but inflict damage instead.
+		- Fixed "Overload+" SA.
+		- Fixed "Auto-Potion+" SA. In addition, a character with a permanent status will no longer use the appropriate remedy (example: Garnet Depression)
+		- Much more precise formula for the "Blessing" and "Blessing+" SAs, as well as the Ruby item for Dagga.
+		- The "Sorcery" SA has been renamed "Maleficent".
+
+		- Fixed a bug in the "Accuracy+" and "Accuracy++" SAs, where the character could miss the target when it is immobilised (example with Freeze status).
+		- Corrected the description of the "Overload" and "Overload+" SAs.
+		- Correction to the sequence files for several spells, particularly summons, which could force certain hidden monsters to be displayed (e.g. Boss in the Beatrix CD3 quest).
+		- Fixed the description of several skills (player and enemy).
+		- The SA "Cover" only works if the character is in the front line.
+		- The SA "Bandit" has been renamed to "Lupin" in English (US/UK).
+		- The AA "Bandit" is renamed "Brigand" in all languages.
+		- The "Pakaho" effect has been renamed "Aureole" in French descriptions.
+
+		{Items}
+		- New weapon added: the "Claymore" => Two-handed swords allow you to learn unique SAs compared to classic swords.
+		- Fixed the "Emerald" item, which was acting like an Elixir.
+		- Fixed the SFX of the "Diamond" and "Emerald" items.
+		- The cursed ring only deals 25% more damage and only from the [Attack] command.
+		- Fixed the description of several items.
+		- The items "Hamelin" and "Siren’s Flute" reduce the MP cost of Recover and Life spells respectively to zero (instead of half).
+
+		{Monsters / Bosses}
+		- Changed Ironite's "Dragon Force" spell effect.
+		- Fixed Dagga and Vivi's HP when fighting Maton on Kuja/Necron difficulty.
+		- New damage formula for Prison Cage's "Absorb" attack.
+		- Improvement to friendly Feather Circle's AI.
+		- Improved and corrected combat against Mimics.
+		- Fixed Arkh's "Bombardment" sequence file, which was causing a softlock if the attack resulted in a game over.
+		- Fixed the AI of Friendly Garuda, which was causing a game over when a character revives with AutoLife.
+		- The Sand Worm's "Quicksand" removes Booster and Somni.
+		- Optimisation of the Mad Alchemist's AI, particularly in terms of size management, which can lead to visual bugs with Demi, for example.
+		Also, these changes to stats adapt correctly to all difficulties.
+		- It is no longer possible to check the HP of Tomberries via Scan.
+		- The "Elixir" on Ifa's superboss at CD3 also removes all status alterations, allowing him to use her counter-attack.
+		- Slight correction to the AI against Lani, who could die under a specific condition.
+		- Blind Dragon's "Aïkido" is no longer a precise physical attack, and can therefore be dodged.
+		- Fixed the name of some monster/boss attacks.
+		- Fixed some dialogue boxes against Lamie.
+
+		{Fields}
+		- Fixed the Mog in Clayra's temple in all languages.
+		- Fixed the music in random battles in the Shadow Field/Desert Palace (2221).
+		- Added Beatrix to the last scene of "You are not alone", where all the characters gather near the Mog.
+		- Fixed the Mene rewards dialogue box in the "Hot and Cold" zones.
+		- Fixed dialogue against Lani in all languages.
+		- Fixed the script on the Interior/Ifa field (1759) where the superboss could be available before CD3.</PatchNotes>
 	<Category>Gameplay</Category>
 	<PreviewFileUrl>https://i.ibb.co/HC3GH4j/Logo-Trance-Seek.png</PreviewFileUrl>
 	<PreviewFile>Thumbnail/LogoTranceSeek.png</PreviewFile>
