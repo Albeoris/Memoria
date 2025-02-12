@@ -776,10 +776,16 @@ Compatible with Alternate Fantasy</Description>
 	<InstallationPath>GarnetIsMainCharacter</InstallationPath>
 	<Author>piano221</Author>
 	<ReleaseDateOriginal>2021-04-05</ReleaseDateOriginal>
-	<Description>This mod allow you to change Zidane for Garnet as the field main character.</Description>
+	<Description>This mod allow you to change Zidane for Garnet as the field main character.
+
+Currently, this mod must be installed manually from its website:
+1) Download and extract the file "p0data7.bin"
+2) Create a folder "GarnetIsMainCharacter/StreamingAssets/" in the game's directory
+3) Place "p0data7.bin" in that folder</Description>
 	<Category>Character Swap</Category>
 	<Website>https://forums.qhimm.com/index.php?topic=20605.0</Website>
-	<DownloadUrl>https://download944.mediafire.com/ud6vuwre8sag/10illq7tkuxixhb/p0data7.bin</DownloadUrl>
+	<!-- Note: Mediafire download links seem to be temporary (maybe with a long existence, or maybe when the website updates...) -->
+	<!-- <DownloadUrl>https://download944.mediafire.com/ud6vuwre8sag/10illq7tkuxixhb/p0data7.bin</DownloadUrl> -->
 	<DownloadFormat>SingleFileWithPath:StreamingAssets/p0data7.bin</DownloadFormat>
 </Mod>
 
@@ -1536,6 +1542,21 @@ Eredeti telepítő: Evin</Description>
 	<Website>https://magyaritasok.hu/download/2396/final-fantasy-9</Website>
 	<DownloadUrl>https://www.dropbox.com/scl/fi/smkheykr9k84ief7qrnv5/PC_TranslationHungarian.zip?rlkey=ow9amfo4vct78950rlhd928nw&amp;st=61rccqx4&amp;dl=1</DownloadUrl>
 	<MinimumMemoriaVersion>2024-11-17</MinimumMemoriaVersion>
+</Mod>
+
+<Mod>
+	<Name>Modern German</Name>
+	<Version>1.0</Version>
+	<Author>Plasquar</Author>
+	<InstallationPath>ModernGerman</InstallationPath>
+	<Category>Translation</Category>
+	<ReleaseDateOriginal>12 Feb 2025</ReleaseDateOriginal>
+	<ReleaseDate>12 Feb 2025</ReleaseDate>
+	<MinimumMemoriaVersion>2024-08-18</MinimumMemoriaVersion>
+	<Description>Diese Mod behebt ein paar Rechtschreibfehler und aktualisiert die deutsche Übersetzung von FF9 auf die neue deutsche Rechtschreibung.
+ Beispiel: "Wir müßen hier weg!" -> "Wir müssen hier weg!".
+ Diese Mod ist NICHT notwendig, wenn ihr mit "Alternate Fantasy" spielt, dort ist "Modern German" bereits integriert.</Description>
+	<DownloadUrl>https://www.dropbox.com/scl/fi/br6xjl22auu284caaxd8n/PC_ModernGerman.zip?rlkey=2pl7a5cycqg4pgiy53u5lwewp&amp;dl=1</DownloadUrl>
 </Mod>
 
 <!--
