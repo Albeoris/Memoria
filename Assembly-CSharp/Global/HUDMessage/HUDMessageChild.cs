@@ -19,8 +19,8 @@ public class HUDMessageChild : MonoBehaviour
 
     public String Label
     {
-        get => this.label.text;
-        set => this.label.text = value;
+        get => this.label.rawText;
+        set => this.label.rawText = value;
     }
 
     public Int32 FontSize
@@ -72,8 +72,7 @@ public class HUDMessageChild : MonoBehaviour
         this.follower.clampToScreen = true;
         this.follower.targetBtl = null;
         this.follower.iconPosition = -1;
-        this.label.text = message;
-        this.label.PrintIconAfterProcessedText = true;
+        this.label.rawText = message;
         this.tweenPosition.duration = this.tweenPositionDuration / Singleton<HUDMessage>.Instance.Speed;
         this.tweenAlpha.duration = this.tweenAlphaDuration / Singleton<HUDMessage>.Instance.Speed;
         switch (style)
@@ -122,7 +121,7 @@ public class HUDMessageChild : MonoBehaviour
 
     private void RestoreSetting()
     {
-        this.label.text = NGUIText.EncodeColor(this.label.text, Singleton<HUDMessage>.Instance.restoreColor);
+        this.label.rawText = NGUIText.EncodeColor(this.label.rawText, Singleton<HUDMessage>.Instance.restoreColor);
         this.tweenPosition.animationCurve = Singleton<HUDMessage>.Instance.restoreTweenCurve;
         this.tweenPosition.to = HUDMessage.RecoverTargetPosition;
         this.EnableTween(true);
@@ -185,7 +184,7 @@ public class HUDMessageChild : MonoBehaviour
         if (!this.isInitialized || this.displayStyle == HUDMessage.MessageStyle.NONE || this.follower.target == null)
             return;
         if (this.hideWithTarget && !this.follower.target.gameObject.activeInHierarchy)
-            this.label.text = String.Empty;
+            this.label.rawText = String.Empty;
     }
 
     [SerializeField]

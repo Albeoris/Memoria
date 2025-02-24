@@ -574,31 +574,13 @@ public class WorldHUD : UIScene
 
     private void ProcessTouchedLocation()
     {
-        Int32 num = this.locationPointerList[this.currentLocationIndex].locationId;
-        this.navigateLocationIndex = num;
-        if (num == 63)
-        {
-            num = 49;
-        }
+        Int32 locId = this.locationPointerList[this.currentLocationIndex].locationId;
+        this.navigateLocationIndex = locId;
+        if (locId == 63)
+            locId = 49; // Chocobo's Paradise (I think)
         this.ShowMapPointer(false);
-        String text = Localization.Get("NavigateDialog");
-        String text2 = this.locationName[num + 1];
-        text = text.Replace("{0}", text2);
-        Int32 fontSize = this.mapLocationLabel.fontSize;
-        this.mapLocationLabel.fontSize = 50;
-        Single textWidthFromFF9Font = NGUIText.GetTextWidthFromFF9Font(this.mapLocationLabel, text2);
-        this.mapLocationLabel.fontSize = fontSize;
-        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(String.Concat(new Object[]
-        {
-            "[",
-            NGUIText.StartSentense,
-            "=",
-            Convert.ToInt32(textWidthFromFF9Font + (Single)this.GetConfirmDialogStartSize()),
-            ",3][",
-            NGUIText.Center,
-            "=0]",
-            text
-        }), 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
+        String message = Localization.Get("NavigateDialog").Replace("{0}", this.locationName[locId + 1]);
+        Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog($"[{NGUIText.StartSentense}=0,3][{NGUIText.Center}=0]{message}", 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
         dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(this.OnConfirmNavi);
         EventInput.IsProcessingInput = false;
     }
@@ -915,7 +897,7 @@ public class WorldHUD : UIScene
             {
                 num = 49;
             }
-            this.mapLocationLabel.text = NGUIText.FF9WhiteColor + this.locationName[num + 1];
+            this.mapLocationLabel.rawText = NGUIText.FF9WhiteColor + this.locationName[num + 1];
             this.mapLocationPanel.SetActive(true);
             this.mapLocationBody.UpdateAnchors();
             this.mapLocationBorder.UpdateAnchors();

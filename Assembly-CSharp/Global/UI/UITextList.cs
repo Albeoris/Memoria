@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
+/// <summary>This class seems to be completly unused</summary>
 [AddComponentMenu("NGUI/UI/Text List")]
 public class UITextList : MonoBehaviour
 {
@@ -170,30 +171,16 @@ public class UITextList : MonoBehaviour
             for (Int32 i = 0; i < this.paragraphs.size; i++)
             {
                 UITextList.Paragraph paragraph = this.mParagraphs.buffer[i];
-                String text;
-                NGUIText.WrapText(paragraph.text, out text, false, true);
-                paragraph.lines = text.Split(new Char[]
-                {
-                    '\n'
-                });
-                this.mTotalLines += (Int32)paragraph.lines.Length;
+                //NGUIText.WrapText(paragraph.text, out String text); [DBG]
+                //paragraph.lines = text.Split(['\n']);
+                this.mTotalLines += paragraph.lines.Length;
             }
             this.mTotalLines = 0;
-            Int32 j = 0;
-            Int32 size = this.mParagraphs.size;
-            while (j < size)
-            {
-                this.mTotalLines += (Int32)this.mParagraphs.buffer[j].lines.Length;
-                j++;
-            }
-            if (this.scrollBar != (UnityEngine.Object)null)
-            {
-                UIScrollBar uiscrollBar = this.scrollBar as UIScrollBar;
-                if (uiscrollBar != (UnityEngine.Object)null)
-                {
-                    uiscrollBar.barSize = ((this.mTotalLines != 0) ? (1f - (Single)this.scrollHeight / (Single)this.mTotalLines) : 1f);
-                }
-            }
+            for (Int32 i = 0; i < this.mParagraphs.size; i++)
+                this.mTotalLines += this.mParagraphs.buffer[i].lines.Length;
+            UIScrollBar uiscrollBar = this.scrollBar as UIScrollBar;
+            if (uiscrollBar != null)
+                uiscrollBar.barSize = this.mTotalLines != 0 ? 1f - (Single)this.scrollHeight / this.mTotalLines : 1f;
             this.UpdateVisibleText();
         }
     }
@@ -204,7 +191,7 @@ public class UITextList : MonoBehaviour
         {
             if (this.mTotalLines == 0)
             {
-                this.textLabel.text = String.Empty;
+                this.textLabel.rawText = String.Empty;
                 return;
             }
             Int32 num = Mathf.FloorToInt((Single)this.textLabel.height / this.lineHeight);
@@ -242,7 +229,7 @@ public class UITextList : MonoBehaviour
                 }
                 num4++;
             }
-            this.textLabel.text = stringBuilder.ToString();
+            this.textLabel.rawText = stringBuilder.ToString();
         }
     }
 

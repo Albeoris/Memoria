@@ -1000,14 +1000,14 @@ public class TitleUI : UIScene
             GameObject child = obj.GetChild(i);
             UILabel component = child.GetChild(0).GetComponent<UILabel>();
             child.SetActive(true);
-            component.text = array[i];
+            component.rawText = array[i];
         }
     }
 
     private void OnCenterLicensePage(GameObject centeredObject)
     {
         Int32 siblingIndex = centeredObject.transform.GetSiblingIndex();
-        this.LicensePageIndicator.text = (siblingIndex + 1).ToString() + "/" + this.licensePageNum;
+        this.LicensePageIndicator.rawText = (siblingIndex + 1).ToString() + "/" + this.licensePageNum;
         GameObject parent = centeredObject.GetParent();
         for (Int32 i = 0; i < parent.transform.childCount; i++)
         {
@@ -1592,7 +1592,7 @@ public class TitleUI : UIScene
             credits = CreditsImporter.TryLoadCredits("EmbeddedAsset/Manifest/Text/StaffCredits_Steam.txt", ModTextResources.Import.CreditsSteam);
 
         if (!String.IsNullOrEmpty(credits))
-            this.StaffLabel.text = credits;
+            this.StaffLabel.rawText = credits;
 
         String licensePlatform;
         switch (Application.platform)
@@ -2108,7 +2108,7 @@ public class TitleUI : UIScene
             //{
             //    text = "US";
             //}
-            this.spashText.text = AssetManager.LoadString("EmbeddedAsset/Text/" + text + "/Title/warning");
+            this.spashText.rawText = AssetManager.LoadString("EmbeddedAsset/Text/" + text + "/Title/warning");
             this.spashText.alignment = NGUIText.Alignment.Left;
             this.spashText.gameObject.SetActive(true);
             SceneVoidDelegate postIdleScreenFadeOut = delegate

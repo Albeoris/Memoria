@@ -476,7 +476,7 @@ public class FieldHUD : UIScene
 
     private static void OnDialogClickAttach()
     {
-        Singleton<DialogManager>.Instance.AttachDialog(NGUIText.GetTestingResource(), 0, 0, Dialog.TailPosition.AutoPosition, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
+        Singleton<DialogManager>.Instance.AttachDialog(String.Empty, 0, 0, Dialog.TailPosition.AutoPosition, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.None);
     }
 
     private static void OnSaveClickSwitchScene()

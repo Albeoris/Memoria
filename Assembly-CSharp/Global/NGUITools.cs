@@ -1,10 +1,8 @@
-﻿using Memoria.Prime;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using UnityEngine;
-using Object = System.Object;
 
 public static class NGUITools
 {
@@ -764,15 +762,13 @@ public static class NGUITools
 
     public static T FindInParents<T>(GameObject go) where T : Component
     {
-        if (go == (UnityEngine.Object)null)
-        {
-            return (T)((Object)null);
-        }
+        if (go == null)
+            return null;
         T component = go.GetComponent<T>();
-        if (component == (UnityEngine.Object)null)
+        if (component == null)
         {
             Transform parent = go.transform.parent;
-            while (parent != (UnityEngine.Object)null && component == (UnityEngine.Object)null)
+            while (parent != null && component == null)
             {
                 component = parent.gameObject.GetComponent<T>();
                 parent = parent.parent;
@@ -783,11 +779,7 @@ public static class NGUITools
 
     public static T FindInParents<T>(Transform trans) where T : Component
     {
-        if (trans == (UnityEngine.Object)null)
-        {
-            return (T)((Object)null);
-        }
-        return trans.GetComponentInParent<T>();
+        return trans?.GetComponentInParent<T>();
     }
 
     public static void Destroy(UnityEngine.Object obj)
@@ -878,7 +870,7 @@ public static class NGUITools
         }
     }
 
-    public static void Broadcast(String funcName, Object param)
+    public static void Broadcast(String funcName, System.Object param)
     {
         GameObject[] array = UnityEngine.Object.FindObjectsOfType(typeof(GameObject)) as GameObject[];
         Int32 i = 0;
@@ -1164,32 +1156,9 @@ public static class NGUITools
         }
     }
 
-    [Obsolete("Use NGUIText.EncodeColor instead")]
-    public static String EncodeColor(Color c)
-    {
-        return NGUIText.EncodeColor24(c);
-    }
-
-    [Obsolete("Use NGUIText.ParseColor instead")]
-    public static Color ParseColor(String text, Int32 offset)
-    {
-        return NGUIText.ParseColor24(text, offset);
-    }
-
-    [Obsolete("Use NGUIText.StripSymbols instead")]
-    public static String StripSymbols(String text)
-    {
-        return NGUIText.StripSymbols(text);
-    }
-
     public static T AddMissingComponent<T>(this GameObject go) where T : Component
     {
-        T t = go.GetComponent<T>();
-        if (t == (UnityEngine.Object)null)
-        {
-            t = go.AddComponent<T>();
-        }
-        return t;
+        return go.GetComponent<T>() ?? go.AddComponent<T>();
     }
 
     public static Vector3[] GetSides(this Camera cam)
@@ -1313,19 +1282,15 @@ public static class NGUITools
         return NGUITools.mSides;
     }
 
-    public static String GetFuncName(Object obj, String method)
+    public static String GetFuncName(System.Object obj, String method)
     {
         if (obj == null)
-        {
             return "<null>";
-        }
-        String text = obj.GetType().ToString();
-        Int32 num = text.LastIndexOf('/');
-        if (num > 0)
-        {
-            text = text.Substring(num + 1);
-        }
-        return (!String.IsNullOrEmpty(method)) ? (text + "/" + method) : text;
+        String typeName = obj.GetType().ToString();
+        Int32 slashIndex = typeName.LastIndexOf('/');
+        if (slashIndex > 0)
+            typeName = typeName.Substring(slashIndex + 1);
+        return String.IsNullOrEmpty(method) ? typeName : typeName + "/" + method;
     }
 
     public static void Execute<T>(GameObject go, String funcName) where T : Component

@@ -987,8 +987,7 @@ namespace Memoria.Assets
                 }
                 else
                     label += "\n\n\n";
-                if (!String.Equals(infoLabel.text, label))
-                    infoLabel.text = label;
+                infoLabel.rawText = label;
                 if (!infoPanel.Show)
                     infoPanel.Show = true;
                 infoLabel.fontSize = 22;
@@ -996,7 +995,7 @@ namespace Memoria.Assets
                 String controlist = "Hide UI [FFFF00][I][FFFFFF]\r\n";
                 foreach (KeyValuePair<String, String> entry in ControlsKeys)
                     controlist += $"{entry.Value} [FFFF00][{entry.Key}][FFFFFF]\r\n";
-                controlLabel.text = controlist;
+                controlLabel.rawText = controlist;
 
                 GameObject targetModel = ControlWeapon ? currentWeaponModel : currentModel;
                 String extraInfo = "";
@@ -1019,7 +1018,7 @@ namespace Memoria.Assets
                     extraInfo += $" / ▣ {Math.Round(scaleFactor.x, 2)}";
                     //extraInfo += $" | Rot(Eul): {Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.x,0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.y, 0)}/{Math.Round(currentModelWrapper.transform.localRotation.eulerAngles.z, 0)}";
                 }
-                extraInfoLabel.text = extraInfo;
+                extraInfoLabel.rawText = extraInfo;
                 extraInfoLabel.fontSize = 16;
                 extraInfoLabel.effectDistance = new Vector2(2f, 2f);
                 extraInfoLabel.alignment = NGUIText.Alignment.Right;

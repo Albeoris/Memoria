@@ -15,7 +15,7 @@ namespace Memoria.Scenes
 
         public void SetText(String value)
         {
-            Label.text = value;
+            Label.rawText = value;
         }
 
         public void SetColor(Color value)

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace Memoria.Assets
@@ -19,15 +20,27 @@ namespace Memoria.Assets
         public const String DIRECTION_NAME_LEFT_TO_RIGHT = "Left_To_Right";
         public const String DIRECTION_NAME_RIGHT_TO_LEFT = "Right_To_Left";
 
-        public readonly Char[] FullText;
-        public readonly Int32[] Reposition;
+        public readonly List<Char> FullText;
+        public readonly List<Int32> Reposition;
         public readonly HashSet<Int32> MustMirror;
+
+        private UnicodeBIDI(List<Char> txt, List<Int32> rep, HashSet<Int32> mirr)
+        {
+            FullText = new List<Char>(txt);
+            Reposition = new List<Int32>(rep);
+            MustMirror = new HashSet<Int32>(mirr);
+        }
+
+        public static UnicodeBIDI Copy(UnicodeBIDI from)
+        {
+            return from == null ? null : new UnicodeBIDI(from.FullText, from.Reposition, from.MustMirror);
+        }
 
         public UnicodeBIDI(Char[] text, LanguageReadingDirection paragraphDirection)
         {
             // Non-compliant implementation of the algorithm
-            FullText = text;
-            Int32 textLength = text.Length;
+            FullText = new List<Char>(text);
+            Int32 textLength = FullText.Count;
             Int32 index = 0;
             Int32 closeIndex = 0;
             Int32 isolateCount = 0;
@@ -162,9 +175,9 @@ namespace Memoria.Assets
                 DirectionalStatus.Pop(ref currentState, closeIndex);
             HashSet<Int32> pairPositions = new HashSet<Int32>();
             MustMirror = new HashSet<Int32>();
-            Reposition = new Int32[FullText.Length];
+            Reposition = new List<Int32>(FullText.Count);
             for (Int32 i = 0; i < textLength; i++)
-                Reposition[i] = i;
+                Reposition.Add(i);
             foreach (DirectionalStatus lineStatus in DirectionalStackRoot)
             {
                 foreach (DirectionalStatus status in lineStatus.GetAllDirectionChanges(true))
@@ -190,12 +203,11 @@ namespace Memoria.Assets
                     }
                 }
             }
-            for (Int32 i = 0; i < textLength; i++)
-                if (pairPositions.Contains(i))
-                    FullText[i] = GetMirroredCharacter(FullText[i]);
-            for (Int32 i = 0; i < textLength;)
-                ApplyWordJoining(ref i);
             DirectionalStackRoot.Clear();
+            foreach (Int32 pair in pairPositions)
+                FullText[pair] = GetMirroredCharacter(FullText[pair]);
+            for (Int32 i = 0; i < FullText.Count;)
+                ApplyWordJoining(ref i);
         }
 
         public static Char GetMirroredCharacter(Char c)
@@ -206,7 +218,26 @@ namespace Memoria.Assets
             return c;
         }
 
-        public void ApplyWordJoining(ref Int32 index)
+        public void RemovePart(Int32 pos, Int32 length)
+        {
+            FullText.RemoveRange(pos, length);
+            Reposition.RemoveRange(pos, length);
+            for (Int32 i = 0; i < Reposition.Count; i++)
+                if (Reposition[i] >= pos)
+                    Reposition[i] -= length;
+            HashSet<Int32> shiftedSet = new HashSet<Int32>();
+            foreach (Int32 mirrorPos in MustMirror.ToArray())
+            {
+                if (mirrorPos >= pos)
+                {
+                    MustMirror.Remove(mirrorPos);
+                    if (mirrorPos >= pos + length)
+                        MustMirror.Add(mirrorPos - length);
+                }
+            }
+        }
+
+        private void ApplyWordJoining(ref Int32 index)
         {
             Int32 chPos = index;
             Char ch = FullText[index++];
@@ -224,7 +255,7 @@ namespace Memoria.Assets
             }
             if (initJoin)
             {
-                while (index < FullText.Length)
+                while (index < FullText.Count)
                 {
                     ch = FullText[index];
                     if (ch == 0x0627 && FullText[chPos] == 0x0644) // Lam-Aleph ligatures
@@ -233,7 +264,7 @@ namespace Memoria.Assets
                             FullText[chPos] = (Char)0xFEFB; // isolated form
                         else
                             FullText[chPos] = (Char)0xFEFC; // final form
-                        FullText[index++] = (Char)0x200B; // Zero-width space, which is join-transparent, in order to keep the same character count
+                        RemovePart(index, 1);
                         return;
                     }
                     else if (DualJoiningCharacters.TryGetValue(ch, out transformNext))
@@ -280,10 +311,13 @@ namespace Memoria.Assets
         {
             if (c <= 0x058F)
             {
-                if (c == '[') // Brackets, used for text opcodes, force a left-to-right isolate
-                    return CharacterClass.Left_To_Right_Isolate;
-                if (c == ']') // The game uses the special characters【】(0x3010 and 0x3011) for non-opcode brackets
-                    return CharacterClass.Pop_Directional_Isolate;
+                // Brackets and braces are used for text tags
+                // However, there shouldn't be any text tag in textual format by the time BIDI is called, so the exception is disabled
+                // Note that the game uses the special characters【】(0x3010 and 0x3011) for non-opcode brackets
+                //if (c == '[' || c == '{')
+                //    return CharacterClass.Left_To_Right_Isolate;
+                //if (c == ']' || c == '}')
+                //    return CharacterClass.Pop_Directional_Isolate;
                 if (c >= 0x0000 && c <= 0x0008)
                     return CharacterClass.Boundary_Neutral;
                 if (c == 0x000C || c == 0x0020)
@@ -479,15 +513,15 @@ namespace Memoria.Assets
             return CharacterClass.Left_To_Right;
         }
 
-        private static void ChangeDirection(Int32[] array, Int32 start, Int32 endInclusive)
+        private static void ChangeDirection(List<Int32> positions, Int32 start, Int32 endInclusive)
         {
             Int32 count = (endInclusive - start + 1) / 2;
             Int32 tmp;
             for (Int32 i = 0; i < count; i++)
             {
-                tmp = array[start + i];
-                array[start + i] = array[endInclusive - i];
-                array[endInclusive - i] = tmp;
+                tmp = positions[start + i];
+                positions[start + i] = positions[endInclusive - i];
+                positions[endInclusive - i] = tmp;
             }
         }
 
@@ -768,8 +802,8 @@ namespace Memoria.Assets
             { ')', '(' },
             { '<', '>' },
             { '>', '<' },
-            //{ '[', ']' },
-            //{ ']', '[' },
+            { '[', ']' },
+            { ']', '[' },
             { '{', '}' },
             { '}', '{' },
             { '«', '»' },

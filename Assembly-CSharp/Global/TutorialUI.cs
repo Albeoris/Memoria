@@ -154,7 +154,7 @@ public class TutorialUI : UIScene
     {
         if (this.DisplayMode == TutorialUI.Mode.Libra && ++this.libraPage < this.libraMessages.Count)
         {
-            this.battleBottomLabel.text = this.libraMessages[this.libraPage];
+            this.battleBottomLabel.rawText = this.libraMessages[this.libraPage];
         }
         else
         {
@@ -195,8 +195,8 @@ public class TutorialUI : UIScene
         this.battleTutorialDialogImage2.spriteName = Localization.Get($"TutorialTapOnCharacterIcon{platformUpper}");
         this.battleTutorialImage2Dialog.spriteName = "tutorial_help_02";
         this.battleTutorialImage2Pointer.spriteName = "tutorial_help_cursor";
-        this.battleLeftLabel.text = Localization.Get($"TutorialLeftParagraph{platformUpper}");
-        this.battleRightLabel.text = Localization.Get($"TutorialRightParagraph{platformUpper}");
+        this.battleLeftLabel.rawText = Localization.Get($"TutorialLeftParagraph{platformUpper}");
+        this.battleRightLabel.rawText = Localization.Get($"TutorialRightParagraph{platformUpper}");
         this.headerLabel.fontSize = 36;
         this.battleBottomLabel.SetAnchor(target: this.ContentPanel.transform, relTop: 0.33f);
         this.battleBottomLabel.fontSize = 24;
@@ -297,7 +297,7 @@ public class TutorialUI : UIScene
         photoSprite.height = this.libraPhoto.height;
         photoSprite.texture = this.libraPhoto;
         this.headerLocalize.enabled = false;
-        this.headerLabel.text = this.libraTitle;
+        this.headerLabel.rawText = this.libraTitle;
         this.headerLabel.fontSize = 44;
         this.battleTutorialImage1.spriteName = String.Empty;
         this.battleTutorialImage1.spriteName = "libra_photo";
@@ -310,14 +310,13 @@ public class TutorialUI : UIScene
         this.battleTutorialDialogImage2.spriteName = String.Empty;
         this.battleTutorialImage2Dialog.spriteName = String.Empty;
         this.battleTutorialImage2Pointer.spriteName = String.Empty;
-        this.battleLeftLabel.text = String.Empty;
-        this.battleRightLabel.text = String.Empty;
+        this.battleLeftLabel.rawText = String.Empty;
+        this.battleRightLabel.rawText = String.Empty;
         this.battleBottomLocalize.enabled = false;
         this.battleBottomLabel.SetAnchor(target: this.ContentPanel.transform, left: 100f + photoSprite.width);
-        this.battleBottomLabel.text = this.libraMessages[0];
+        this.battleBottomLabel.rawText = this.libraMessages[0];
         this.battleBottomLabel.fontSize = 42;
         this.battleBottomLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
-        this.battleBottomLabel.PrintIconAfterProcessedText = true;
         this.libraPage = 0;
         base.Loading = true;
         this.AnimatePanel(new Vector3(1f, 1f, 1f));

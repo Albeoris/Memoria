@@ -732,7 +732,7 @@ public class QuadMistGame : MonoBehaviour
             if (PersistenSingleton<UIManager>.Instance.Dialogs.CheckDialogShowing(1))
                 return;
             Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get("QuadMistTournamentDraw"), 110, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(0.0f, 0.0f), Dialog.CaptionType.None);
-            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(265f, 0.0f), Dialog.DialogGroupButton);
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(265f, 0f), Dialog.DialogGroupButton);
             dialog.AfterDialogHidden = onRematchDialogHidden;
             dialog.Id = 1;
         }
@@ -760,7 +760,7 @@ public class QuadMistGame : MonoBehaviour
             else
             {
                 Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get("QuadMistRematch"), 110, 3, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(0.0f, 0.0f), Dialog.CaptionType.None);
-                ButtonGroupState.SetPointerOffsetToGroup(new Vector2(265f, 0.0f), Dialog.DialogGroupButton);
+                ButtonGroupState.SetPointerOffsetToGroup(new Vector2(265f, 0f), Dialog.DialogGroupButton);
                 dialog.AfterDialogHidden = onRematchDialogHidden;
                 dialog.Id = 1;
             }

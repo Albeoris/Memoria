@@ -103,6 +103,18 @@ namespace Memoria.Assets
                     { "IT", "%[YSUB=1.3][sub]G" }
                 }
             },
+            // Number of points for Tetra Master
+            { "CardPoints", new Dictionary<String, String>()
+                {
+                    { "US", "%p" },
+                    { "UK", "%p" },
+                    { "JP", "%p" },
+                    { "ES", "%p" },
+                    { "FR", "%p" },
+                    { "GR", "%p" },
+                    { "IT", "%p" }
+                }
+            },
             // New options in the config menu
             { "SoundVolume", new Dictionary<String, String>()
                 {

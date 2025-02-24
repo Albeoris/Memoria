@@ -16,10 +16,11 @@ namespace Memoria.Assets
         public Boolean center;
         public Boolean justified;
         public Boolean mirror;
-        public Int32 ff9Signal;
-        public Vector3 extraOffset;
+        public Boolean choice;
+        public Vector2 extraOffset;
         public Single? tabX;
-        public Dialog.DialogImage insertImage;
+        public DialogImage insertImage;
+        public Single appearanceSpeed;
 
         public void Reset()
         {
@@ -34,17 +35,85 @@ namespace Memoria.Assets
             center = false;
             justified = false;
             mirror = false;
-            ff9Signal = 0;
-            extraOffset = Vector3.zero;
+            choice = false;
+            extraOffset = Vector2.zero;
             tabX = null;
             insertImage = null;
+            SetAppearanceSpeed(-1f);
         }
 
         public void ResetLine()
         {
             center = false;
-            //justified = false; // TODO: check usage of {Justified} Memoria tag?
-            extraOffset = Vector3.zero;
+            extraOffset = Vector2.zero;
+        }
+
+        public void SetAppearanceSpeed(Single speed)
+        {
+            Single baseRatio = speed > 0f ? speed : (Configuration.VoiceActing.ForceMessageSpeed < 0 ? Dialog.DialogTextAnimationTick[FF9StateSystem.Settings.cfg.fld_msg] : Dialog.DialogTextAnimationTick[Configuration.VoiceActing.ForceMessageSpeed]);
+            appearanceSpeed = 30f / (Configuration.Graphics.FieldTPS * Dialog.FF9TextSpeedRatio * baseRatio);
+        }
+
+        public void UpdateSettingsAfterTag(ref Single currentX, ref Single currentY, ref Boolean afterImage, ref BetterList<DialogImage> specialImages, ref Color32 textColor, ref Color gradientColorBottom, ref Color gradientColorTop, NGUIText.Alignment defaultAlignment, Int32 printedLine, Single typicalCharacterHeight)
+        {
+            if (extraOffset != Vector2.zero)
+            {
+                currentX += extraOffset.x;
+                currentY += extraOffset.y;
+                extraOffset = Vector2.zero;
+                afterImage = false;
+            }
+            else if (insertImage != null)
+            {
+                Boolean recycleImg = false;
+                foreach (DialogImage img in specialImages)
+                {
+                    if (!img.IsRegistered && DialogImage.CompareImages(img, insertImage))
+                    {
+                        // This dialog image was already generated (typically from a previous NGUIText.GenerateTextRender call)
+                        insertImage = img;
+                        recycleImg = true;
+                        break;
+                    }
+                }
+                insertImage.LocalPosition = new Vector3(currentX, -currentY);
+                insertImage.PrintedLine = printedLine;
+                insertImage.Mirror = mirror;
+                currentX += insertImage.Size.x;
+                if (NGUIText.ShouldAlignImageVertically(insertImage))
+                    insertImage.LocalPosition.y += insertImage.Size.y + insertImage.Offset.y - typicalCharacterHeight;
+                insertImage.IsRegistered = true;
+                if (!recycleImg)
+                    specialImages.Add(insertImage);
+                insertImage = null;
+                afterImage = true;
+            }
+            else if (tabX.HasValue)
+            {
+                currentX = tabX.Value;
+                tabX = null;
+                afterImage = false;
+            }
+            Color colorFromOpcode;
+            if (ignoreColor)
+            {
+                colorFromOpcode = colors[colors.size - 1];
+                colorFromOpcode.a *= NGUIText.mAlpha * NGUIText.tint.a;
+            }
+            else
+            {
+                colorFromOpcode = NGUIText.tint * colors[colors.size - 1];
+                colorFromOpcode.a *= NGUIText.mAlpha;
+            }
+            textColor = colorFromOpcode;
+            for (Int32 i = 0; i < colors.size - 2; i++)
+                colorFromOpcode.a *= colors[i].a;
+            if (NGUIText.gradient)
+            {
+                gradientColorBottom = NGUIText.gradientBottom * colorFromOpcode;
+                gradientColorTop = NGUIText.gradientTop * colorFromOpcode;
+            }
+            NGUIText.alignment = justified ? NGUIText.Alignment.Justified : (center ? NGUIText.Alignment.Center : defaultAlignment);
         }
     }
 }

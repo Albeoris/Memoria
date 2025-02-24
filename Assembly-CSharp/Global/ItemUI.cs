@@ -1,10 +1,8 @@
 ﻿using Assets.Scripts.Common;
 using Assets.Sources.Scripts.UI.Common;
-using FF9;
 using Memoria;
 using Memoria.Assets;
 using Memoria.Data;
-using Memoria.Prime;
 using Memoria.Scenes;
 using System;
 using System.Collections;
@@ -25,12 +23,13 @@ using UnityEngine;
 
 public class ItemUI : UIScene
 {
-    public static String SubMenuGroupButton;
-    public static String ItemGroupButton;
-    public static String KeyItemGroupButton;
-    public static String TargetGroupButton;
-    public static String ArrangeMenuGroupButton;
-    public static String ItemArrangeGroupButton;
+    public const String SubMenuGroupButton = "Item.SubMenu";
+    public const String ItemGroupButton = "Item.Item";
+    public const String KeyItemGroupButton = "Item.KeyItem";
+    public const String TargetGroupButton = "Item.Target";
+    public const String ArrangeMenuGroupButton = "Item.ArrangeMenu";
+    public const String ItemArrangeGroupButton = "Item.Arrange";
+
     public GameObject TransitionGroup;
     public GameObject UseSubMenu;
     public GameObject ArrangeSubMenu;
@@ -42,14 +41,13 @@ public class ItemUI : UIScene
     public GameObject KeyItemDetailPanel;
     public GameObject ArrangeDialog;
     public GameObject ScreenFadeGameObject;
-    private static Int32 FF9FITEM_RARE_MAX;
-    private static Int32 FF9FITEM_RARE_NONE;
-    private static Int32 FF9FITEM_CHOCOBO_NONE;
-    private static Int32 FF9FITEM_ID_VEGETABLE;
-    private static Int32 FF9FITEM_EVENT_VEGETABLE;
-    private static Int32 FF9FITEM_EVENT_KIND_CHOCOBO;
-    private static Int32 MaxItemSlot;
-    private static Single TargetPositionXOffset;
+
+    private const Int32 FF9FITEM_RARE_NONE = Byte.MaxValue;
+    private const Int32 FF9FITEM_CHOCOBO_NONE = 0;
+    private const Int32 FF9FITEM_EVENT_VEGETABLE = 181;
+    private const Int32 FF9FITEM_EVENT_KIND_CHOCOBO = 191;
+    private const Single TargetPositionXOffset = 338f;
+
     private readonly List<RegularItem> _itemIdList;
     private readonly List<RegularItem> _usedItemIdList;
     //private List<Int32> _ketIdList;
@@ -75,28 +73,14 @@ public class ItemUI : UIScene
     private GOScrollablePanel _itemPanel;
     private GOScrollablePanel _keyItemPanel;
     [NonSerialized]
+    private ArrangeDialogHUD _arrangeDialog;
+    [NonSerialized]
     private GOMenuBackground _background;
 
     [NonSerialized]
     private Boolean _multiTarget;
     [NonSerialized]
     private Boolean _canMultiTarget;
-
-    static ItemUI()
-    {
-        SubMenuGroupButton = "Item.SubMenu";
-        ItemGroupButton = "Item.Item";
-        KeyItemGroupButton = "Item.KeyItem";
-        TargetGroupButton = "Item.Target";
-        ArrangeMenuGroupButton = "Item.ArrangeMenu";
-        ItemArrangeGroupButton = "Item.Arrange";
-        FF9FITEM_RARE_MAX = 80;
-        FF9FITEM_RARE_NONE = Byte.MaxValue;
-        FF9FITEM_EVENT_VEGETABLE = 181;
-        FF9FITEM_EVENT_KIND_CHOCOBO = 191;
-        MaxItemSlot = 256;
-        TargetPositionXOffset = 338f;
-    }
 
     public ItemUI()
     {
@@ -116,7 +100,7 @@ public class ItemUI : UIScene
             ButtonGroupState.SetPointerDepthToGroup(7, TargetGroupButton);
             ButtonGroupState.SetPointerOffsetToGroup(new Vector2(54f, 0.0f), ItemGroupButton);
             ButtonGroupState.SetPointerOffsetToGroup(new Vector2(54f, 0.0f), KeyItemGroupButton);
-            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(160f, 10f), ArrangeMenuGroupButton);
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(-20f, 10f), ArrangeMenuGroupButton);
             ButtonGroupState.SetPointerOffsetToGroup(new Vector2(48f, -6f), ItemArrangeGroupButton);
             ButtonGroupState.SetScrollButtonToGroup(_itemScrollList.ScrollButton, ItemGroupButton);
             ButtonGroupState.SetScrollButtonToGroup(_itemScrollList.ScrollButton, ItemArrangeGroupButton);
@@ -711,7 +695,7 @@ public class ItemUI : UIScene
                 ButtonGroupState.SetButtonAnimation(item.gameObject, true);
         }
         FF9UIDataTool.DisplayItem(fieldItemListData.ItemId, itemDetailHud.IconSprite, itemDetailHud.NameLabel, fieldItemListData.Enable);
-        itemDetailHud.NumberLabel.text = fieldItemListData.ItemCount.ToString();
+        itemDetailHud.NumberLabel.rawText = fieldItemListData.ItemCount.ToString();
         itemDetailHud.NumberLabel.color = !fieldItemListData.Enable ? FF9TextTool.Gray : FF9TextTool.White;
         itemDetailHud.Button.Help.Enable = true;
         itemDetailHud.Button.Help.Text = FF9TextTool.ItemHelpDescription(fieldItemListData.ItemId);
@@ -760,7 +744,7 @@ public class ItemUI : UIScene
         else
         {
             keyItemDetailHud.NameLabel.gameObject.SetActive(true);
-            keyItemDetailHud.NameLabel.text = FF9TextTool.ImportantItemName(fieldKeyItemListData.KeyItemId);
+            keyItemDetailHud.NameLabel.rawText = FF9TextTool.ImportantItemName(fieldKeyItemListData.KeyItemId);
             if (ff9item.FF9Item_IsUsedImportant(fieldKeyItemListData.KeyItemId))
             {
                 keyItemDetailHud.NewIconSprite.spriteName = String.Empty;
@@ -818,11 +802,10 @@ public class ItemUI : UIScene
         if (visibility)
         {
             Int32 keyItemId = _keyItemIdList[_currentItemIndex];
-            _keyItemDetailName.text = FF9TextTool.ImportantItemName(keyItemId);
+            _keyItemDetailName.rawText = FF9TextTool.ImportantItemName(keyItemId);
             _keyItemDetailDescription.spacingY = _defaultSkinLabelSpacingY;
             String description = FF9TextTool.ImportantItemSkin(keyItemId);
-            Single additionalWidth = 0.0f;
-            _keyItemDetailDescription.text = _keyItemDetailDescription.PhrasePreOpcodeSymbol(description, ref additionalWidth);
+            _keyItemDetailDescription.rawText = _keyItemDetailDescription.PhrasePreOpcodeSymbol(description);
             Loading = true;
             // ISSUE: method pointer
             _keyItemSkinTransition.TweenIn(new Byte[1], () =>
@@ -956,7 +939,7 @@ public class ItemUI : UIScene
 
     public Boolean FF9FItem_Vegetable()
     {
-        if (PersistenSingleton<FF9StateSystem>.Instance.mode != 3 || FF9FITEM_CHOCOBO_NONE == FF9StateSystem.EventState.gEventGlobal[FF9FITEM_EVENT_KIND_CHOCOBO] || (FF9StateSystem.EventState.gEventGlobal[FF9FITEM_EVENT_VEGETABLE] != 0 || !ff9.w_frameChocoboCheck()))
+        if (PersistenSingleton<FF9StateSystem>.Instance.mode != 3 || FF9FITEM_CHOCOBO_NONE == FF9StateSystem.EventState.gEventGlobal[FF9FITEM_EVENT_KIND_CHOCOBO] || FF9StateSystem.EventState.gEventGlobal[FF9FITEM_EVENT_VEGETABLE] != 0 || !ff9.w_frameChocoboCheck())
             return false;
         FF9StateSystem.EventState.gEventGlobal[FF9FITEM_EVENT_VEGETABLE] = 1;
         _chocoboDialog = Singleton<DialogManager>.Instance.AttachDialog(Localization.Get("UseChocoboItem"), (Int32)(400.0 / UIManager.ResourceXMultipier), 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, Vector2.zero, Dialog.CaptionType.Chocobo);
@@ -1005,27 +988,21 @@ public class ItemUI : UIScene
         //this._importantItemHitArea = KeyItemDetailPanel.GetChild(0);
         _keyItemDetailName = KeyItemDetailPanel.GetChild(1).GetComponent<UILabel>();
         _keyItemDetailDescription = KeyItemDetailPanel.GetChild(2).GetComponent<UILabel>();
-        _keyItemDetailDescription.PrintIconAfterProcessedText = true;
         _defaultSkinLabelSpacingY = _keyItemDetailDescription.spacingY;
         _itemScrollList = ItemListPanel.GetChild(1).GetComponent<RecycleListPopulator>();
         _keyItemScrollList = KeyItemListPanel.GetChild(1).GetComponent<RecycleListPopulator>();
         _itemPanel = new GOScrollablePanel(ItemListPanel);
         _keyItemPanel = new GOScrollablePanel(KeyItemListPanel);
+        _arrangeDialog = new ArrangeDialogHUD(ArrangeDialog);
 
         RemoveLeftAnchorFromItemNumberLabels();
 
-        UIEventListener.Get(ArrangeDialog.GetChild(0).GetChild(0)).Click += onClick;
-        UIEventListener.Get(ArrangeDialog.GetChild(0).GetChild(1)).Click += onClick;
+        foreach (var button in _arrangeDialog.Choices)
+            button.EventListener.Click += onClick;
 
         _targetTransition = TransitionGroup.GetChild(0).GetComponent<HonoTweenPosition>();
         _keyItemSkinTransition = TransitionGroup.GetChild(1).GetComponent<HonoTweenPosition>();
         _arrangeTransition = TransitionGroup.GetChild(2).GetComponent<HonoTweenClipping>();
-
-        if (Configuration.Control.WrapSomeMenus)
-        {
-            ArrangeDialog.GetChild(0).GetChild(0).GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
-            ArrangeDialog.GetChild(0).GetChild(1).GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
-        }
 
         _background = new GOMenuBackground(this.transform.GetChild(6).gameObject, "item_bg");
     }
@@ -1035,7 +1012,7 @@ public class ItemUI : UIScene
         GameObject itemListCaptionBackgroundPanel = ItemListPanel.GetChild(2).GetChild(4);
         foreach (UILabel label in itemListCaptionBackgroundPanel.GetComponentsInChildren<UILabel>(true))
         {
-            if (label.text == "NUM")
+            if (label.rawText == "NUM")
             {
                 label.leftAnchor.absolute -= 90;
                 label.UpdateAnchors();
@@ -1061,6 +1038,23 @@ public class ItemUI : UIScene
             NewIcon = go.GetChild(1).GetComponent<UIWidget>();
             NewIconSprite = go.GetChild(1).GetChild(0).GetComponent<UISprite>();
             NewIconLabelSprite = go.GetChild(1).GetChild(1).GetComponent<UISprite>();
+        }
+    }
+
+    private class ArrangeDialogHUD : GOPanel
+    {
+        public readonly UIPanel ChoicePanel;
+        public readonly List<GOSimpleButton<GOLocalizableLabel>> Choices;
+        public readonly GOFrameBackground Background;
+
+        public ArrangeDialogHUD(GameObject go) : base(go)
+        {
+            ChoicePanel = go.GetChild(0).GetComponent<UIPanel>();
+            Int32 choiceCount = go.GetChild(0).transform.childCount;
+            Choices = new List<GOSimpleButton<GOLocalizableLabel>>(choiceCount);
+            for (Int32 i = 0; i < choiceCount; i++)
+                Choices.Add(new GOSimpleButton<GOLocalizableLabel>(go.GetChild(0).GetChild(i)));
+            Background = new GOFrameBackground(go.GetChild(1));
         }
     }
 

@@ -651,7 +651,7 @@ public class UIPopupList : UIWidgetContainer
                 uilabel.trueTypeFont = this.trueTypeFont;
                 uilabel.fontSize = this.fontSize;
                 uilabel.fontStyle = this.fontStyle;
-                uilabel.text = ((!this.isLocalized) ? text : Localization.Get(text));
+                uilabel.rawText = ((!this.isLocalized) ? text : Localization.Get(text));
                 uilabel.color = this.textColor;
                 uilabel.cachedTransform.localPosition = new Vector3(border.x + this.padding.x - uilabel.pivotOffset.x, num5, -1f);
                 uilabel.overflowMethod = UILabel.Overflow.ResizeFreely;

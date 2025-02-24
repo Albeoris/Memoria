@@ -278,8 +278,8 @@ public class ChocographUI : UIScene
 
     private void DisplayInventoryInfo()
     {
-        this.InventoryNumber.text = this.mapCount.ToString();
-        this.LocationFoundNumber.text = this.gemCount.ToString();
+        this.InventoryNumber.rawText = this.mapCount.ToString();
+        this.LocationFoundNumber.rawText = this.gemCount.ToString();
     }
 
     private void ClearLatestUI()
@@ -306,7 +306,7 @@ public class ChocographUI : UIScene
                 chocographItem.Content.SetActive(true);
                 String iconSprite = this.GetIconSprite((ChocographUI.Icon)((!this.hasGem[i]) ? ((ChocographUI.Icon)((!flag) ? ChocographUI.Icon.BoxDisableClose : ChocographUI.Icon.BoxClose)) : ((ChocographUI.Icon)((!flag) ? ChocographUI.Icon.BoxDisableOpen : ChocographUI.Icon.BoxOpen))));
                 chocographItem.IconSprite.spriteName = iconSprite;
-                chocographItem.ItemName.text = FF9TextTool.ChocoboUIText(i + (Int32)FF9TextTool.ChocographNameStartIndex);
+                chocographItem.ItemName.rawText = FF9TextTool.ChocoboUIText(i + (Int32)FF9TextTool.ChocographNameStartIndex);
                 chocographItem.ItemName.color = ((!flag) ? FF9TextTool.Gray : FF9TextTool.White);
                 chocographItem.Button.Help.Enable = true;
                 chocographItem.Button.Help.TextKey = String.Empty;
@@ -352,7 +352,7 @@ public class ChocographUI : UIScene
     {
         this.HintAbilityRequired.ClearAbility();
         this.HintMap.spriteName = "chocograph_map_" + currentOnSelectItemIndex.ToString("D" + 2);
-        this.HintText.text = FF9TextTool.ChocoboUIText(currentOnSelectItemIndex + (Int32)FF9TextTool.ChocographDetailStartIndex);
+        this.HintText.rawText = FF9TextTool.ChocoboUIText(currentOnSelectItemIndex + (Int32)FF9TextTool.ChocographDetailStartIndex);
         Int32 iconType = this.GetIconType(currentOnSelectItemIndex);
         for (Int32 i = 0; i <= iconType; i++)
         {
@@ -415,7 +415,7 @@ public class ChocographUI : UIScene
         this.SelectedContentPanel.SetActive(true);
         this.SelectedMap.spriteName = "chocograph_map_" + currentSelectedItemIndex.ToString("0#");
         this.SelectedItemIcon.spriteName = this.chocographItemList[currentSelectedItemIndex].IconSprite.spriteName;
-        this.SelectedItemLabel.text = this.chocographItemList[currentSelectedItemIndex].ItemName.text;
+        this.SelectedItemLabel.rawText = this.chocographItemList[currentSelectedItemIndex].ItemName.rawText;
     }
 
     private void Awake()

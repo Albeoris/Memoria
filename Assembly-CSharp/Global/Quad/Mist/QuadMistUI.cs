@@ -398,7 +398,7 @@ public class QuadMistUI : UIScene
                 if (kindCount > 1)
                 {
                     cardListHUD.CardAmountLabel.gameObject.SetActive(true);
-                    cardListHUD.CardAmountLabel.text = kindCount.ToString();
+                    cardListHUD.CardAmountLabel.rawText = kindCount.ToString();
                 }
                 else
                 {
@@ -420,14 +420,14 @@ public class QuadMistUI : UIScene
         {
             cardInfoContentGameObject.SetActive(true);
             ShowCardDetailHudAmount(num);
-            cardIdLabel.text = "No" + (currentCardId + 1).ToString("0#");
+            cardIdLabel.rawText = "No" + (currentCardId + 1).ToString("0#");
             FF9UIDataTool.DisplayCard(GetCardInfo(currentCardId, currentCardOffset), cardDetailHudList[0], false);
-            cardNameLabel.text = FF9TextTool.CardName((TetraMasterCardId)currentCardId);
+            cardNameLabel.rawText = FF9TextTool.CardName((TetraMasterCardId)currentCardId);
             if (num > 1)
             {
                 cardNumberGameObject.SetActive(true);
-                currentCardNumberLabel.text = (currentCardOffset + 1).ToString();
-                totalCardNumberLabel.text = num.ToString();
+                currentCardNumberLabel.rawText = (currentCardOffset + 1).ToString();
+                totalCardNumberLabel.rawText = num.ToString();
                 for (Int32 i = 1; i < Math.Min(num, 5); i++)
                     FF9UIDataTool.DisplayCard(GetCardInfo(currentCardId, 0), cardDetailHudList[i], true);
             }
@@ -450,9 +450,9 @@ public class QuadMistUI : UIScene
             Int32 num = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetWinCount());
             Int32 num2 = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetLoseCount());
             Int32 num3 = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetDrawCount());
-            winCountLabel.text = num.ToString();
-            loseCountLabel.text = num2.ToString();
-            drawCountLabel.text = num3.ToString();
+            winCountLabel.rawText = num.ToString();
+            loseCountLabel.rawText = num2.ToString();
+            drawCountLabel.rawText = num3.ToString();
         }
         else
         {
@@ -523,8 +523,8 @@ public class QuadMistUI : UIScene
 
     private void UpdateAmountLabel()
     {
-        stockCountLabel.text = QuadMistDatabase.MiniGame_GetAllCardCount().ToString();
-        typeCountLabel.text = QuadMistDatabase.MiniGame_GetCardKindCount().ToString();
+        stockCountLabel.rawText = QuadMistDatabase.MiniGame_GetAllCardCount().ToString();
+        typeCountLabel.rawText = QuadMistDatabase.MiniGame_GetCardKindCount().ToString();
     }
 
     private void Awake()

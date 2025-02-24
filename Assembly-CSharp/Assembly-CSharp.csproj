@@ -375,7 +375,9 @@
     <Compile Include="Memoria\Assets\FieldCreator\FieldCreatorScene.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\PointScreenAnchor.cs" />
     <Compile Include="Memoria\Assets\FieldCreator\WavefrontObject.cs" />
+    <Compile Include="Memoria\Assets\Text\Dialogs\DialogImage.cs" />
     <Compile Include="Memoria\Assets\Text\Dialogs\FFIXTextModifier.cs" />
+    <Compile Include="Memoria\Assets\Text\Dialogs\TextParser.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\UnicodeBIDI.cs" />
     <Compile Include="Memoria\Assets\TIMUtils.cs" />
     <Compile Include="Memoria\Assets\Text\Strings\ITextReader.cs" />
@@ -421,7 +423,10 @@
     <Compile Include="Memoria\Scenes\ControlPanel\ControlSlider.cs" />
     <Compile Include="Memoria\Scenes\ControlPanel\ControlToggle.cs" />
     <Compile Include="Memoria\Scenes\GOButtonPrefab.cs" />
+    <Compile Include="Memoria\Scenes\GOFrameBackground.cs" />
     <Compile Include="Memoria\Scenes\GOMenuBackground.cs" />
+    <Compile Include="Memoria\Scenes\GOSimpleButton.cs" />
+    <Compile Include="Memoria\Scenes\GOSlider.cs" />
     <Compile Include="Memoria\Scenes\MenuHUD\MenuUIControlPanel.cs" />
     <Compile Include="Memoria\Scenes\GOScrollablePanel.cs" />
     <Compile Include="Memoria\Scripts\DefaultStatusDatabase.cs" />

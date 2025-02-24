@@ -171,7 +171,6 @@ public partial class BattleHUD : UIScene
     {
         if (Configuration.Interface.ScanDisplay)
         {
-            Single additionalWidth = 0.0f;
             String libraBaseMessage = $"[{NGUIText.Center}]";
             if ((infos & LibraInformation.Name) != 0)
                 libraBaseMessage += GetLibraMessages(pBtl, LibraInformation.Name)[0];
@@ -237,7 +236,7 @@ public partial class BattleHUD : UIScene
             _currentButtonGroup = !_hidingHud ? ButtonGroupState.ActiveGroup : _currentButtonGroup;
             FF9BMenu_EnableMenu(false);
             TutorialUI tutorialUI = PersistenSingleton<UIManager>.Instance.TutorialScene;
-            tutorialUI.libraTitle = "[b][F0A0F0]" + Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(pBtl.Name, ref additionalWidth);
+            tutorialUI.libraTitle = "[b][F0A0F0]" + Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(pBtl.Name);
             tutorialUI.libraMessages = libraMessages;
             tutorialUI.libraPhoto = photo;
             tutorialUI.DisplayMode = TutorialUI.Mode.Libra;

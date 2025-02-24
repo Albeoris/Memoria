@@ -17,11 +17,7 @@ public class HelpDialog : Singleton<HelpDialog>
 
     public String Phrase
     {
-        set
-        {
-            Single num = 0f;
-            this.phrase = "[383840]" + this.phraseLabel.PhrasePreOpcodeSymbol(value, ref num);
-        }
+        set => this.phrase = NGUIText.FF9DarkBlueColor + this.phraseLabel.PhrasePreOpcodeSymbol(value);
     }
 
     public Vector2 Position
@@ -62,8 +58,8 @@ public class HelpDialog : Singleton<HelpDialog>
     public void ShowDialog()
     {
         base.gameObject.SetActive(true);
+        this.phraseLabel.rawText = this.phrase;
         this.InitializeDialog();
-        this.phraseLabel.text = this.phrase;
     }
 
     public void HideDialog()
@@ -75,13 +71,11 @@ public class HelpDialog : Singleton<HelpDialog>
     {
         if (isVisible && ButtonGroupState.HelpEnabled && ButtonGroupState.ActiveGroup != String.Empty)
         {
-            if (ButtonGroupState.ActiveButton != (UnityEngine.Object)null)
+            if (ButtonGroupState.ActiveButton != null)
             {
-                ButtonGroupState component = ButtonGroupState.ActiveButton.GetComponent<ButtonGroupState>();
-                if (component != (UnityEngine.Object)null && component.Help.Enable)
-                {
+                ButtonGroupState buttonGroup = ButtonGroupState.ActiveButton.GetComponent<ButtonGroupState>();
+                if (buttonGroup != null && buttonGroup.Help.Enable)
                     ButtonGroupState.ShowHelpDialog(ButtonGroupState.ActiveButton);
-                }
             }
         }
         else
@@ -97,13 +91,15 @@ public class HelpDialog : Singleton<HelpDialog>
         this.phraseLabel.fontSize = 42;
         Vector4 rectVector;
         Single tailX = 0f;
-        if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Battle)
+        if (PersistenSingleton<UIManager>.Instance.UnityScene != UIManager.Scene.Battle || UIManager.IsUIStateMenu(PersistenSingleton<UIManager>.Instance.State))
         {
+            this.phraseLabel.overflowMethod = UILabel.Overflow.ResizeFreely;
             tailX = this.FF9Help_ComputeWindow();
             rectVector = this.dialogRect;
         }
         else
         {
+            this.phraseLabel.overflowMethod = UILabel.Overflow.ShrinkContent;
             this.dialogTail = HelpDialog.FF9HELP_NONE;
             if (Configuration.Interface.IsEnabled)
             {
@@ -157,28 +153,18 @@ public class HelpDialog : Singleton<HelpDialog>
         this.bodyWidget.height = (Int32)rectVector.w;
         this.borderWidget.width = (Int32)(rectVector.z + 36f);
         this.borderWidget.height = (Int32)(rectVector.w + 36f);
-        this.captionWidget.transform.localPosition = new Vector3(-(rectVector.z / 2f - (Single)(this.captionWidget.width / 2) - 22f), rectVector.w / 2f - (Single)(this.captionWidget.height / 2) + 2f, 0f);
-        this.phraseLabel.width = (Int32)(rectVector.z - (Single)(HelpDialog.HelpDialogTextXPadding * 2 - 4));
-        this.phraseLabel.height = (Int32)(rectVector.w - (Single)(HelpDialog.HelpDialogTextYPadding - 4));
-        this.phraseLabel.transform.localPosition = new Vector3(-(rectVector.z / 2f) + (Single)HelpDialog.HelpDialogTextXPadding, rectVector.w / 2f - (Single)HelpDialog.HelpDialogTextYPadding, 0f);
+        this.captionWidget.transform.localPosition = new Vector3(22f - rectVector.z / 2f + this.captionWidget.width / 2, rectVector.w / 2f - this.captionWidget.height / 2 + 2f, 0f);
+        this.phraseLabel.width = (Int32)(rectVector.z - HelpDialog.HelpDialogTextXPadding * 2 + 4);
+        this.phraseLabel.height = (Int32)(rectVector.w - HelpDialog.HelpDialogTextYPadding + 4);
+        this.phraseLabel.transform.localPosition = new Vector3(-rectVector.z / 2f + HelpDialog.HelpDialogTextXPadding, rectVector.w / 2f - HelpDialog.HelpDialogTextYPadding, 0f);
         this.DisplayDialogTail(tailX);
     }
 
     private Single FF9Help_ComputeWindow()
     {
         this.phraseLabel.ProcessText();
-        this.phraseLabel.UpdateNGUIText();
-        Vector2 vector = NGUIText.CalculatePrintedSize2(this.phrase);
-        this.dialogRect.z = vector.x + (Single)HelpDialog.FF9HELP_X_SPACE;
-        this.dialogRect.w = vector.y + (Single)HelpDialog.FF9HELP_Y_SPACE;
-        if (this.dialogRect.z >= this.clipRect.z)
-        {
-            this.dialogRect.z = this.clipRect.z;
-        }
-        if (this.dialogRect.w >= this.clipRect.w)
-        {
-            this.dialogRect.w = this.clipRect.w;
-        }
+        this.dialogRect.z = Math.Min(this.phraseLabel.Parser.MaxWidth + HelpDialog.FF9HELP_X_SPACE, this.clipRect.z);
+        this.dialogRect.w = Math.Min(this.phraseLabel.Parser.RawHeight + HelpDialog.FF9HELP_Y_SPACE, this.clipRect.w);
         if (!this.tail)
         {
             this.dialogTail = HelpDialog.FF9HELP_NONE;
@@ -186,45 +172,39 @@ public class HelpDialog : Singleton<HelpDialog>
             this.dialogRect.y = this.position.y;
             return 0f;
         }
-        Int32 num = (Int32)(this.position.y + (Single)HelpDialog.FF9HELP_GAP_BOTTOM - this.clipRect.y);
-        Int32 num2 = (Int32)(this.clipRect.y + this.clipRect.w - (this.position.y + (Single)HelpDialog.FF9HELP_GAP_TOP));
-        if (num > num2)
+        Int32 freeSpaceBelow = (Int32)(this.position.y + HelpDialog.FF9HELP_GAP_BOTTOM - this.clipRect.y);
+        Int32 freeSpaceAbove = (Int32)(this.clipRect.y + this.clipRect.w - (this.position.y + HelpDialog.FF9HELP_GAP_TOP));
+        if (freeSpaceBelow > freeSpaceAbove)
         {
             this.dialogTail = HelpDialog.FF9HELP_BOTTOM;
-            this.dialogRect.y = this.position.y + (Single)HelpDialog.FF9HELP_GAP_BOTTOM - this.dialogRect.w / 2f;
+            this.dialogRect.y = this.position.y + HelpDialog.FF9HELP_GAP_BOTTOM - this.dialogRect.w / 2f;
         }
         else
         {
             this.dialogTail = HelpDialog.FF9HELP_TOP;
-            this.dialogRect.y = this.position.y + (Single)HelpDialog.FF9HELP_GAP_TOP + this.dialogRect.w / 2f;
+            this.dialogRect.y = this.position.y + HelpDialog.FF9HELP_GAP_TOP + this.dialogRect.w / 2f;
         }
-        num = (Int32)(this.position.x + (Single)HelpDialog.FF9HELP_GAP_RIGHT - this.clipRect.x);
-        num2 = (Int32)(this.clipRect.x + this.clipRect.z / 2f - (this.position.x + (Single)HelpDialog.FF9HELP_GAP_LEFT));
-        Int32 num3;
-        if (num > num2)
+        Int32 freeSpaceRight = (Int32)(this.position.x + HelpDialog.FF9HELP_GAP_RIGHT - this.clipRect.x);
+        Int32 freeSpaceLeft = (Int32)(this.clipRect.x + this.clipRect.z / 2f - (this.position.x + HelpDialog.FF9HELP_GAP_LEFT));
+        Int32 posX;
+        if (freeSpaceRight > freeSpaceLeft)
         {
             this.dialogTail |= HelpDialog.FF9HELP_RIGHT;
-            num3 = (Int32)this.position.x + HelpDialog.FF9HELP_GAP_RIGHT;
+            posX = (Int32)this.position.x + HelpDialog.FF9HELP_GAP_RIGHT;
         }
         else
         {
             this.dialogTail |= HelpDialog.FF9HELP_LEFT;
-            num3 = (Int32)this.position.x;
+            posX = (Int32)this.position.x;
         }
-        this.dialogRect.x = (Single)(num3 - ((Int32)this.dialogRect.z >> 1));
+        this.dialogRect.x = posX - ((Int32)this.dialogRect.z >> 1);
         if (this.dialogRect.x - this.dialogRect.z / 2f < this.clipRect.x)
-        {
             this.dialogRect.x = this.clipRect.x + this.dialogRect.z / 2f;
-        }
         if (this.dialogRect.x + this.dialogRect.z / 2f > this.clipRect.x + this.clipRect.z)
-        {
             this.dialogRect.x = this.clipRect.x + this.clipRect.z - this.dialogRect.z / 2f;
-        }
         if ((this.dialogTail & HelpDialog.FF9HELP_RIGHT) != 0)
-        {
-            return (Single)num3 - this.dialogRect.x;
-        }
-        return Mathf.Max((Single)HelpDialog.FF9HELP_WIN_MINX, (Single)num3 - (this.dialogRect.x - this.dialogRect.z / 2f));
+            return posX - this.dialogRect.x;
+        return Mathf.Max(HelpDialog.FF9HELP_WIN_MINX, posX - (this.dialogRect.x - this.dialogRect.z / 2f));
     }
 
     private void DisplayDialogTail(Single x)
@@ -232,24 +212,9 @@ public class HelpDialog : Singleton<HelpDialog>
         if (this.dialogTail != HelpDialog.FF9HELP_NONE)
         {
             this.tailSprite.alpha = 1f;
-            Single num;
-            if (HelpDialog.FF9HELP_BOTTOM <= this.dialogTail)
-            {
-                num = -this.dialogRect.w / 2f + (Single)this.tailSprite.height / 2f;
-            }
-            else
-            {
-                num = this.dialogRect.w / 2f - (Single)this.tailSprite.height / 2f;
-            }
-            if (this.dialogTail % 2 == HelpDialog.FF9HELP_LEFT)
-            {
-                x = x - this.dialogRect.z / 2f + (Single)this.tailSprite.width / 2f;
-            }
-            else
-            {
-                x -= (Single)this.tailSprite.width / 2f;
-            }
-            Vector3 localPosition = new Vector3((Single)((Int32)x), (Single)((Int32)num), 0f);
+            Single y = (HelpDialog.FF9HELP_BOTTOM <= this.dialogTail ? 1 : -1) * (this.tailSprite.height / 2f - this.dialogRect.w / 2f);
+            x += (this.dialogTail % 2 == HelpDialog.FF9HELP_LEFT) ? this.tailSprite.width / 2f - this.dialogRect.z / 2f : -this.tailSprite.width / 2f;
+            Vector3 localPosition = new Vector3((Int32)x, (Int32)y, 0f);
             this.tailSprite.transform.localPosition = localPosition;
             switch (this.dialogTail)
             {
@@ -283,70 +248,42 @@ public class HelpDialog : Singleton<HelpDialog>
         this.tailSprite = base.gameObject.GetChild(4).GetComponent<UISprite>();
         this.captionWidget = base.gameObject.GetChild(2).GetComponent<UIWidget>();
         this.clipRect = HelpDialog.DefaultClipRect;
-        this.phraseLabel.PrintIconAfterProcessedText = true;
     }
 
     public static Int32 FF9HELP_X_SPACE = (Int32)(UIManager.ResourceXMultipier * 12f);
-
     public static Int32 FF9HELP_Y_SPACE = (Int32)(UIManager.ResourceYMultipier * 12f);
-
     public static Int32 FF9HELP_MOG_X = (Int32)(UIManager.ResourceXMultipier * 5f);
-
     public static Int32 FF9HELP_MOG_Y = (Int32)(UIManager.ResourceYMultipier * 2f);
-
     public static Int32 FF9HELP_GAP_TOP = (Int32)(UIManager.ResourceYMultipier * 10f);
-
     public static Int32 FF9HELP_GAP_BOTTOM = (Int32)(UIManager.ResourceYMultipier * -16f);
-
     public static Int32 FF9HELP_GAP_LEFT = (Int32)(UIManager.ResourceXMultipier * 18f);
-
     public static Int32 FF9HELP_GAP_RIGHT = (Int32)(UIManager.ResourceXMultipier * -19f);
-
     public static Int32 FF9HELP_WIN_MINX = (Int32)(UIManager.ResourceXMultipier * 8f);
-
     public static Int32 FF9HELP_TALK_WD = (Int32)(UIManager.ResourceXMultipier * 16f);
-
     public static Int32 FF9HELP_TALK_HG = (Int32)(UIManager.ResourceYMultipier * 14f);
-
     public static Int32 FF9HELP_MINX = (Int32)(UIManager.ResourceXMultipier * 8f);
-
     public static Int32 FF9HELP_MINY = (Int32)(UIManager.ResourceYMultipier * 8f);
-
-    public static Int32 FF9HELP_MAXX = (Int32)(UIManager.UIContentSize.x - (Single)HelpDialog.FF9HELP_MINX);
-
-    public static Int32 FF9HELP_MAXY = (Int32)(UIManager.UIContentSize.y - (Single)HelpDialog.FF9HELP_MINY);
-
+    public static Int32 FF9HELP_MAXX = (Int32)(UIManager.UIContentSize.x - HelpDialog.FF9HELP_MINX);
+    public static Int32 FF9HELP_MAXY = (Int32)(UIManager.UIContentSize.y - HelpDialog.FF9HELP_MINY);
     public static Int32 FF9HELP_MAXW = HelpDialog.FF9HELP_MAXX - HelpDialog.FF9HELP_MINX + 1 * (Int32)UIManager.ResourceXMultipier;
-
     public static Int32 FF9HELP_MAXH = HelpDialog.FF9HELP_MAXY - HelpDialog.FF9HELP_MINY + 1 * (Int32)UIManager.ResourceYMultipier;
-
-    public static Int32 FF9HELP_DEFMAXX = (Int32)(UIManager.ResourceXMultipier * FieldMap.PsxFieldWidth - (Single)HelpDialog.FF9HELP_MINX);
-
-    public static Int32 FF9HELP_DEFMAXY = (Int32)(UIManager.ResourceYMultipier * FieldMap.PsxFieldHeightNative - (Single)HelpDialog.FF9HELP_MINY);
-
+    public static Int32 FF9HELP_DEFMAXX = (Int32)(UIManager.ResourceXMultipier * FieldMap.PsxFieldWidth - HelpDialog.FF9HELP_MINX);
+    public static Int32 FF9HELP_DEFMAXY = (Int32)(UIManager.ResourceYMultipier * FieldMap.PsxFieldHeightNative - HelpDialog.FF9HELP_MINY);
     public static Int32 FF9HELP_DEFMAXW = HelpDialog.FF9HELP_DEFMAXX - HelpDialog.FF9HELP_MINX + 1 * (Int32)UIManager.ResourceXMultipier;
-
     public static Int32 FF9HELP_DEFMAXH = HelpDialog.FF9HELP_DEFMAXY - HelpDialog.FF9HELP_MINY + 1 * (Int32)UIManager.ResourceYMultipier;
 
     public static Int32 FF9HELP_TOP = 0;
-
     public static Int32 FF9HELP_LEFT = 0;
-
     public static Int32 FF9HELP_BOTTOM = 2;
-
     public static Int32 FF9HELP_RIGHT = 1;
-
     public static Int32 FF9HELP_NONE = 255;
 
     public static Int32 HelpDialogXPadding = 18;
-
     public static Int32 HelpDialogYPadding = 62;
-
     public static Int32 HelpDialogTextXPadding = 30;
-
     public static Int32 HelpDialogTextYPadding = 58;
 
-    public static Vector4 DefaultClipRect = new Vector4((Single)HelpDialog.FF9HELP_MINX, (Single)HelpDialog.FF9HELP_MINY, (Single)HelpDialog.FF9HELP_DEFMAXW, (Single)HelpDialog.FF9HELP_DEFMAXH);
+    public static Vector4 DefaultClipRect = new Vector4(HelpDialog.FF9HELP_MINX, HelpDialog.FF9HELP_MINY, HelpDialog.FF9HELP_DEFMAXW, HelpDialog.FF9HELP_DEFMAXH);
 
     [SerializeField]
     private Vector3 position;
@@ -355,7 +292,6 @@ public class HelpDialog : Singleton<HelpDialog>
     private Int32 dialogTail;
 
     private Vector2 pointerOffset;
-
     private Vector4 pointerLimitRect;
 
     private String phrase;
@@ -363,20 +299,14 @@ public class HelpDialog : Singleton<HelpDialog>
     private Boolean tail;
 
     private Vector4 clipRect;
-
     private Vector4 dialogRect;
 
     private Int32 depth;
 
     private UIPanel panel;
-
     private UIWidget bodyWidget;
-
     private UIWidget borderWidget;
-
     private UILabel phraseLabel;
-
     private UISprite tailSprite;
-
     private UIWidget captionWidget;
 }

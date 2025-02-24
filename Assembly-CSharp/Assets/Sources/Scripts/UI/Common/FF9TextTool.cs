@@ -296,6 +296,7 @@ namespace Assets.Sources.Scripts.UI.Common
             return table;
         }
 
+        /// <summary>Dummied: table texts are now extracted whenever they are requested from other texts</summary>
         public static String[][] ExtractTableText(IEnumerable<String> extactedList)
         {
             String[] array = extactedList.Where(t => t.Contains("[TBLE=")).ToArray();
@@ -496,32 +497,32 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String ChocoboUIText(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.chocoUIText.Length) ? String.Empty : FF9TextTool.chocoUIText[id];
+            return (id >= FF9TextTool.chocoUIText.Length) ? String.Empty : FF9TextTool.chocoUIText[id];
         }
 
         public static String CardLevelName(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.cardLvName.Length) ? String.Empty : FF9TextTool.cardLvName[id];
+            return (id >= FF9TextTool.cardLvName.Length) ? String.Empty : FF9TextTool.cardLvName[id];
         }
 
         public static String BattleFollowText(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.followText.Length) ? String.Empty : FF9TextTool.followText[id];
+            return (id >= FF9TextTool.followText.Length) ? String.Empty : FF9TextTool.followText[id];
         }
 
         public static String BattleLibraText(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.libraText.Length) ? String.Empty : FF9TextTool.libraText[id];
+            return (id >= FF9TextTool.libraText.Length) ? String.Empty : FF9TextTool.libraText[id];
         }
 
         public static String BattleCommandTitleText(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.cmdTitleText.Length) ? String.Empty : FF9TextTool.cmdTitleText[id];
+            return (id >= FF9TextTool.cmdTitleText.Length) ? String.Empty : FF9TextTool.cmdTitleText[id];
         }
 
         public static String WorldLocationText(Int32 id)
         {
-            return (id >= (Int32)FF9TextTool.worldLocationText.Length) ? String.Empty : FF9TextTool.worldLocationText[id];
+            return (id >= FF9TextTool.worldLocationText.Length) ? String.Empty : FF9TextTool.worldLocationText[id];
         }
 
         public static String RemoveOpCode(String textList)
@@ -532,7 +533,13 @@ namespace Assets.Sources.Scripts.UI.Common
 
         public static String[] GetTableText(UInt32 index)
         {
-            return ((UInt64)index >= (UInt64)((Int64)FF9TextTool.tableText.Length)) ? null : FF9TextTool.tableText[(Int32)((UIntPtr)index)];
+            if (FF9TextTool.tableText.TryGetValue(index, out String[] table))
+                return table;
+            if (!FF9TextTool.fieldText.TryGetValue((Int32)index, out String rawText))
+                return null;
+            table = DialogBoxSymbols.ParseTextSplitTags(rawText).ToArray();
+            FF9TextTool.tableText[index] = table;
+            return table;
         }
 
         public static String GetDialogCaptionText(Dialog.CaptionType captionType)
@@ -584,7 +591,7 @@ namespace Assets.Sources.Scripts.UI.Common
         public static String[] libraText;
         public static String[] worldLocationText;
 
-        private static String[][] tableText;
+        private static Dictionary<UInt32, String[]> tableText = new Dictionary<UInt32, String[]>();
 
         public static Dictionary<Int32, String> locationName = new Dictionary<Int32, String>();
 
@@ -615,9 +622,9 @@ namespace Assets.Sources.Scripts.UI.Common
             FieldTextUpdated?.Invoke(id);
         }
 
-        public static void SetTableText(String[][] value)
+        public static void ClearTableText()
         {
-            tableText = value;
+            tableText.Clear();
         }
 
         public static void SetBattleText(String[] value)

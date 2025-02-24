@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Threading;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria.Data;
@@ -506,7 +506,7 @@ namespace Memoria.Assets
                 }
                 str = $"[STRT={width},{lineNo}]" + str;
             }
-            if (!str.EndsWith("]")) // ...and ends with either [ENDN] or [TIME=XXX]
+            if (new Regex(@"(\[ENDN\]|\[TIME=[\-0-9]+\]|\{TIME [\-0-9]+\})").Match(str).Success) // ...and ends with either [ENDN] or [TIME=XXX] or {Time XXX}
                 str += "[ENDN]";
             if (addCounterCode)
                 return $"[TXID={txtId}]" + str;

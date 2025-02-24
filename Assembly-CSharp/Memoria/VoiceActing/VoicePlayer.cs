@@ -129,6 +129,7 @@ public class VoicePlayer : SoundPlayer
             candidates.Add($"Voices/{lang}/{FieldZoneId}/va_{messageNumber}_{dialog.Po.uid}{pageIndex}");
 
         // Path using the character name at the top of the box
+        // [DBG] Surely broken now: rather use dialog.StartChoiceRow to split the different parts of the VA
         String[] msgStrings = dialog.Phrase.Split(["[CHOO]"], StringSplitOptions.None);
         String msgString = msgStrings.Length > 0 ? messageOpcodeRegex.Replace(msgStrings[0], (match) => { return ""; }) : "";
         if (msgString.Length > 0 && (

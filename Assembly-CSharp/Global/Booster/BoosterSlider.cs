@@ -323,8 +323,9 @@ public class BoosterSlider : MonoBehaviour
             }
             ETb.sChoose = 1;
             Dialog dialog = Singleton<DialogManager>.Instance.AttachDialog(text, 0, 0, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStylePlain, new Vector2(0f, 0f), Dialog.CaptionType.None);
-            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(620f, 0f), Dialog.DialogGroupButton);
-            dialog.AfterDialogHidden = new Dialog.DialogIntDelegate(this.OnConfirmDialogHidden);
+            //dialog.PhraseLabel.fixedAlignment = true;
+            //ButtonGroupState.SetPointerOffsetToGroup(new Vector2(620f, 0f), Dialog.DialogGroupButton);
+            dialog.AfterDialogHidden = this.OnConfirmDialogHidden;
             this.warningCallback = callback;
             if (PersistenSingleton<UIManager>.Instance.State != UIManager.UIState.Config)
             {

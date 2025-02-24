@@ -144,19 +144,17 @@ public partial class BattleHUD : UIScene
             }
         }
 
-        Single additionalWidth = 0.0f;
-        _battleDialogLabel.text = _battleDialogLabel.PhrasePreOpcodeSymbol(str, ref additionalWidth);
+        _battleDialogLabel.rawText = _battleDialogLabel.PhrasePreOpcodeSymbol(str);
         BattleDialogGameObject.SetActive(true);
     }
 
     private List<String> GetLibraMessages(BattleUnit unit, LibraInformation info)
     {
         List<String> messages = new List<String>();
-        Single additionalWidth = 0.0f;
         switch (info)
         {
             case LibraInformation.Name:
-                return [Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(unit.Name, ref additionalWidth)];
+                return [Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(unit.Name)];
             case LibraInformation.Level:
                 return [FF9TextTool.BattleLibraText(10) + unit.Level.ToString()];
             case LibraInformation.HP:
@@ -819,17 +817,17 @@ public partial class BattleHUD : UIScene
             {
                 AA_DATA aaData = transform.spell[battleAbilityListData.Id];
                 mp = GetActionMpCost(aaData, curUnit);
-                itemListDetailHud.NameLabel.text = aaData.Name;
+                itemListDetailHud.NameLabel.rawText = aaData.Name;
                 itemListDetailHud.Button.Help.Text = String.Empty;
             }
             else
             {
                 BattleAbilityId patchedID = PatchAbility(ff9abil.GetActiveAbilityFromAbilityId(battleAbilityListData.Id));
                 mp = GetActionMpCost(FF9StateSystem.Battle.FF9Battle.aa_data[patchedID], curUnit, patchedID);
-                itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(patchedID);
+                itemListDetailHud.NameLabel.rawText = FF9TextTool.ActionAbilityName(patchedID);
                 itemListDetailHud.Button.Help.Text = FF9TextTool.ActionAbilityHelpDescription(patchedID);
             }
-            itemListDetailHud.NumberLabel.text = mp == 0 ? String.Empty : mp.ToString();
+            itemListDetailHud.NumberLabel.rawText = mp == 0 ? String.Empty : mp.ToString();
 
             if (abilityState == AbilityStatus.Disable)
             {
@@ -910,9 +908,9 @@ public partial class BattleHUD : UIScene
                     _currentCharacterHp[playerIndex] = playerHpState;
                     shouldUpdatePointer = true;
                 }
-                else if (!String.Equals(unit.Name, _targetPanel.Players[playerIndex].Name.Label.text))
+                else
                 {
-                    _targetPanel.Players[playerIndex].Name.Label.text = unit.Name;
+                    _targetPanel.Players[playerIndex].Name.Label.rawText = unit.Name;
                 }
                 ++playerIndex;
             }
@@ -960,7 +958,7 @@ public partial class BattleHUD : UIScene
                 GameObject labelObj = playerHUD.GameObject;
                 UILabel nameLabel = playerHUD.Name.Label;
                 labelObj.SetActive(true);
-                nameLabel.text = unit.Player.Name;
+                nameLabel.rawText = unit.Player.Name;
                 if (_currentCharacterHp[playerIndex] == ParameterStatus.Dead)
                 {
                     if (_cursorType == CursorGroup.Individual)
@@ -1009,9 +1007,8 @@ public partial class BattleHUD : UIScene
                 GONavigationButton enemyHUD = _targetPanel.Enemies[enemyIndex];
                 GameObject labelObj = enemyHUD.GameObject;
                 UILabel nameLabel = enemyHUD.Name.Label;
-                Single additionalWidth = 0.0f;
                 labelObj.SetActive(true);
-                nameLabel.text = nameLabel.PhrasePreOpcodeSymbol(unit.Enemy.Name, ref additionalWidth);
+                nameLabel.rawText = nameLabel.PhrasePreOpcodeSymbol(unit.Enemy.Name);
                 if (_currentEnemyDieState[enemyIndex])
                 {
                     if (_cursorType == CursorGroup.Individual)
@@ -1842,7 +1839,7 @@ public partial class BattleHUD : UIScene
             else if (IsDoubleCast && _doubleCastCount == 2)
                 ButtonGroupState.SetPointerNumberToGroup(2, ItemGroupButton);
             else
-                ButtonGroupState.SetPointerNumberToGroup(0, ItemGroupButton);
+                ButtonGroupState.SetPointerNumberToGroup(-1, ItemGroupButton);
             ButtonGroupState.ActiveGroup = ItemGroupButton;
             ButtonGroupState.UpdateActiveButton();
         }
@@ -1873,7 +1870,7 @@ public partial class BattleHUD : UIScene
             else if (IsDoubleCast && _doubleCastCount == 2)
                 ButtonGroupState.SetPointerNumberToGroup(2, AbilityGroupButton);
             else
-                ButtonGroupState.SetPointerNumberToGroup(0, AbilityGroupButton);
+                ButtonGroupState.SetPointerNumberToGroup(-1, AbilityGroupButton);
             ButtonGroupState.ActiveGroup = AbilityGroupButton;
             ButtonGroupState.UpdateActiveButton();
         }
@@ -2308,8 +2305,7 @@ public partial class BattleHUD : UIScene
             else
             {
                 GONavigationButton targetHud = _targetPanel.Enemies[enemyIndex];
-                Single additionalWidth = 0.0f;
-                String targetName = displayName ? Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(unit.Enemy.Name, ref additionalWidth) : String.Empty;
+                String targetName = displayName ? Singleton<HelpDialog>.Instance.PhraseLabel.PhrasePreOpcodeSymbol(unit.Enemy.Name) : String.Empty;
                 targetHud.ButtonGroup.Help.Enable = true;
                 targetHud.ButtonGroup.Help.Text = cursorHelp + "\n" + targetName;
                 ++enemyIndex;
@@ -2582,8 +2578,8 @@ public partial class BattleHUD : UIScene
         if (battleItemListData.Id == RegularItem.NoItem)
         {
             detailWithIconHud.IconSprite.alpha = 0.0f;
-            detailWithIconHud.NameLabel.text = String.Empty;
-            detailWithIconHud.NumberLabel.text = String.Empty;
+            detailWithIconHud.NameLabel.rawText = String.Empty;
+            detailWithIconHud.NumberLabel.rawText = String.Empty;
             detailWithIconHud.Button.Help.Enable = false;
             detailWithIconHud.Button.Help.TextKey = String.Empty;
             detailWithIconHud.Button.Help.Text = String.Empty;
@@ -2591,7 +2587,7 @@ public partial class BattleHUD : UIScene
         else
         {
             FF9UIDataTool.DisplayItem(battleItemListData.Id, detailWithIconHud.IconSprite, detailWithIconHud.NameLabel, true);
-            detailWithIconHud.NumberLabel.text = battleItemListData.Count.ToString();
+            detailWithIconHud.NumberLabel.rawText = battleItemListData.Count.ToString();
             detailWithIconHud.NameLabel.color = FirstIngredientMixed ? (battleItemListData.Count == 0 ? FF9TextTool.DarkYellow : FF9TextTool.Yellow) : (battleItemListData.Count == 0 ? FF9TextTool.Gray : FF9TextTool.White);
             detailWithIconHud.NumberLabel.color = FirstIngredientMixed ? (battleItemListData.Count == 0 ? FF9TextTool.DarkYellow : FF9TextTool.Yellow) : (battleItemListData.Count == 0 ? FF9TextTool.Gray : FF9TextTool.White);
             detailWithIconHud.Button.Help.Enable = true;

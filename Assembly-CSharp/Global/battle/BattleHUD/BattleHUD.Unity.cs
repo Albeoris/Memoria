@@ -95,7 +95,6 @@ public partial class BattleHUD : UIScene
 
         _battleDialogWidget = BattleDialogGameObject.GetComponent<UIWidget>();
         _battleDialogLabel = BattleDialogGameObject.GetChild(1).GetComponent<UILabel>();
-        _battleDialogLabel.PrintIconAfterProcessedText = true;
 
         _targetPanel.Buttons.Player.EventListener.Click += OnAllTargetClick;
         _targetPanel.Buttons.Player.EventListener.Hover += OnAllTargetHover;

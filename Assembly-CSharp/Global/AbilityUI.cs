@@ -124,8 +124,8 @@ public class AbilityUI : UIScene
             ButtonGroupState.SetScrollButtonToGroup(this.supportAbilityScrollList.ScrollButton, SupportAbilityGroupButton);
             ButtonGroupState.SetPointerDepthToGroup(4, ActionAbilityGroupButton);
             ButtonGroupState.SetPointerDepthToGroup(7, TargetGroupButton);
-            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(40f, 0.0f), ActionAbilityGroupButton);
-            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(40f, 0.0f), SupportAbilityGroupButton);
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(40f, 0f), ActionAbilityGroupButton);
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(40f, 0f), SupportAbilityGroupButton);
             ButtonGroupState.SetPointerLimitRectToGroup(this.ActiveAbilityListPanel.GetComponent<UIWidget>(), this.activeAbilityScrollList.cellHeight, ActionAbilityGroupButton);
             ButtonGroupState.SetPointerLimitRectToGroup(this.SupportAbilityListPanel.GetComponent<UIWidget>(), this.supportAbilityScrollList.cellHeight, SupportAbilityGroupButton);
             ButtonGroupState.ActiveGroup = SubMenuGroupButton;
@@ -148,6 +148,20 @@ public class AbilityUI : UIScene
 
     public void UpdateUserInterface()
     {
+        abilityInfoHud.SetupEquipmentList();
+        if (NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft)
+        {
+            abilityInfoHud.APLabel.SetAnchor(abilityInfoHud.Self.transform, 0f, 0.5f, 1f, 1f, 30, 32, -30, -22);
+            abilityInfoHud.APColon.rawText = "";
+            abilityInfoHud.EquipmentLabel.SetAnchor(abilityInfoHud.Self.transform, 0f, 0.5f, 1f, 0.5f, 30, -19, -30, 18);
+            abilityInfoHud.APBar.SliderSprite.SetAnchor(abilityInfoHud.Self.transform, 0f, 1f, 0f, 1f, 54, -64, 234, -30);
+            abilityInfoHud.EquipmentColon.rawText = "";
+        }
+        else
+        {
+            abilityInfoHud.APBar.SliderSprite.SetAnchor(abilityInfoHud.Self.transform, 1f, 1f, 1f, 1f, -234, -64, -54, -30);
+        }
+
         if (!Configuration.Interface.IsEnabled)
             return;
 
@@ -199,9 +213,7 @@ public class AbilityUI : UIScene
         _abilityPanel.Background.Panel.Info2.Label.alpha = alphaColumnTitles;
 
         if (columnPerPage * linePerPage >= this.aaIdList.Count)
-        {
             _abilityPanel.ScrollButton.Panel.alpha = 0f;
-        }
 
         _abilityPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, panelOriginalWidth / columnPerPage, lineHeight);
         _abilityPanel.SubPanel.ButtonPrefab.NameLabel.SetAnchor(target: _abilityPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.091f, relRight: 0.795f);
@@ -252,9 +264,7 @@ public class AbilityUI : UIScene
         _supportPanel.Background.Panel.Info2.Label.alpha = alphaColumnTitles;
 
         if (columnPerPage * linePerPage >= this.saIdList.Count)
-        {
             _supportPanel.ScrollButton.Panel.alpha = 0f;
-        }
 
         _supportPanel.SubPanel.ChangeDims(columnPerPage, linePerPage, panelOriginalWidth / columnPerPage, lineHeight);
         _supportPanel.SubPanel.ButtonPrefab.IconSprite.SetAnchor(target: _supportPanel.SubPanel.ButtonPrefab.Transform, relBottom: 0.152f, relTop: 0.848f, relLeft: 0.09f, relRight: 0.176f);
@@ -932,7 +942,7 @@ public class AbilityUI : UIScene
         {
             this.abilityInfoHud.ClearEquipmentIcon();
             this.abilityInfoHud.APBar.Slider.gameObject.SetActive(false);
-            this.commandLabel.text = String.Empty;
+            this.commandLabel.rawText = String.Empty;
         }
     }
 
@@ -942,7 +952,7 @@ public class AbilityUI : UIScene
             return;
         PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
         Int32 abilityId = this.aaIdList[this.currentAbilityIndex];
-        this.commandLabel.text = this.CheckAAType(abilityId, player) == AbilityType.NoDraw
+        this.commandLabel.rawText = this.CheckAAType(abilityId, player) == AbilityType.NoDraw
             ? String.Empty
             : FF9TextTool.CommandName(GetCommand(abilityId, player));
     }
@@ -999,8 +1009,8 @@ public class AbilityUI : UIScene
             ButtonGroupState.SetButtonAnimation(itemListDetailHud.Self, abilityListData.Type == AbilityType.Enable);
             BattleAbilityId patchedId = this.PatchAbility(battleAbilId);
             Int32 mp = GetMp(FF9StateSystem.Battle.FF9Battle.aa_data[patchedId]);
-            itemListDetailHud.NameLabel.text = FF9TextTool.ActionAbilityName(patchedId);
-            itemListDetailHud.NumberLabel.text = mp != 0 ? mp.ToString() : String.Empty;
+            itemListDetailHud.NameLabel.rawText = FF9TextTool.ActionAbilityName(patchedId);
+            itemListDetailHud.NumberLabel.rawText = mp != 0 ? mp.ToString() : String.Empty;
             if (abilityListData.Type == AbilityType.CantSpell)
             {
                 itemListDetailHud.NameLabel.color = FF9TextTool.Gray;
@@ -1072,8 +1082,8 @@ public class AbilityUI : UIScene
             SupportAbility supportId = ff9abil.GetSupportAbilityFromAbilityId(abilityListData.Id);
             detailWithIconHud.Content.SetActive(true);
             ButtonGroupState.SetButtonAnimation(detailWithIconHud.Self, true);
-            detailWithIconHud.NameLabel.text = FF9TextTool.SupportAbilityName(supportId);
-            detailWithIconHud.NumberLabel.text = saData.GemsCount.ToString();
+            detailWithIconHud.NameLabel.rawText = FF9TextTool.SupportAbilityName(supportId);
+            detailWithIconHud.NumberLabel.rawText = saData.GemsCount.ToString();
             detailWithIconHud.IconSprite.preventPixelPerfect = Configuration.Interface.IsEnabled;
             detailWithIconHud.IconSprite.color = Color.white;
             if (abilityListData.Type == AbilityType.CantSpell)
@@ -1112,8 +1122,8 @@ public class AbilityUI : UIScene
                         stoneCost += ff9abil._FF9Abil_SaData[boostedList[i]].GemsCount;
                     if (level > 0)
                         supportId = boostedList[level - 1];
-                    detailWithIconHud.NameLabel.text = FF9TextTool.SupportAbilityName(supportId);
-                    detailWithIconHud.NumberLabel.text = stoneCost.ToString();
+                    detailWithIconHud.NameLabel.rawText = FF9TextTool.SupportAbilityName(supportId);
+                    detailWithIconHud.NumberLabel.rawText = stoneCost.ToString();
                     detailWithIconHud.IconSprite.color = BoostedAbilityColor[Math.Min(level, BoostedAbilityColor.Length - 1)];
                 }
             }
@@ -1470,28 +1480,55 @@ public class AbilityUI : UIScene
     {
         public GameObject Self;
         public ButtonGroupState Button;
+        public UILabel APLabel;
+        public UILabel APColon;
         public APBarHUD APBar;
+        public UILabel EquipmentLabel;
+        public UILabel EquipmentColon;
         public UISprite[] EquipmentSpriteList;
 
         public AbilityInfoHUD(GameObject go)
         {
             this.Self = go;
             this.Button = go.GetComponent<ButtonGroupState>();
+            this.APLabel = go.GetChild(0).GetChild(0).GetComponent<UILabel>();
+            this.APColon = go.GetChild(0).GetChild(1).GetComponent<UILabel>();
             this.APBar = new APBarHUD(go.GetChild(0).GetChild(2));
-            this.EquipmentSpriteList = new UISprite[5]
-            {
-                go.GetChild(1).GetChild(2).GetChild(0).GetComponent<UISprite>(),
-                go.GetChild(1).GetChild(2).GetChild(1).GetComponent<UISprite>(),
-                go.GetChild(1).GetChild(2).GetChild(2).GetComponent<UISprite>(),
-                go.GetChild(1).GetChild(2).GetChild(3).GetComponent<UISprite>(),
-                go.GetChild(1).GetChild(2).GetChild(4).GetComponent<UISprite>()
-            };
+            this.EquipmentLabel = go.GetChild(1).GetChild(0).GetComponent<UILabel>();
+            this.EquipmentColon = go.GetChild(1).GetChild(1).GetComponent<UILabel>();
+            this.SetupEquipmentList();
         }
 
         public void ClearEquipmentIcon()
         {
             foreach (UISprite uiSprite in this.EquipmentSpriteList)
                 uiSprite.spriteName = String.Empty;
+        }
+
+        public void SetupEquipmentList()
+        {
+            if (NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft)
+            {
+                this.EquipmentSpriteList =
+                [
+                    this.Self.GetChild(1).GetChild(2).GetChild(4).GetComponent<UISprite>(),
+                    this.Self.GetChild(1).GetChild(2).GetChild(3).GetComponent<UISprite>(),
+                    this.Self.GetChild(1).GetChild(2).GetChild(2).GetComponent<UISprite>(),
+                    this.Self.GetChild(1).GetChild(2).GetChild(1).GetComponent<UISprite>(),
+                    this.Self.GetChild(1).GetChild(2).GetChild(0).GetComponent<UISprite>()
+                ];
+            }
+            else
+            {
+                this.EquipmentSpriteList =
+                [
+                    this.Self.GetChild(1).GetChild(2).GetChild(0).GetComponent<UISprite>(),
+                    this.Self.GetChild(1).GetChild(2).GetChild(1).GetComponent<UISprite>(),
+                    this.Self.GetChild(1).GetChild(2).GetChild(2).GetComponent<UISprite>(),
+                    this.Self.GetChild(1).GetChild(2).GetChild(3).GetComponent<UISprite>(),
+                    this.Self.GetChild(1).GetChild(2).GetChild(4).GetComponent<UISprite>()
+                ];
+            }
         }
     }
 

@@ -1,82 +1,44 @@
-﻿using Assets.Scripts.Common;
+﻿using System;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
 using Assets.Sources.Scripts.UI.Common;
 using Memoria;
 using Memoria.Assets;
-using Memoria.Scenes;
-using Memoria.Scripts;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using Object = System.Object;
 
 public class DialogManager : Singleton<DialogManager>
 {
-    public void StartSignalProcess(UILabel label, String fullText, Int32 targetSignal, Dictionary<Int32, Single> dynamicCharsPerSecond, Dictionary<Int32, Single> waitList)
+    public void StartAppearanceProcess(TextParser parser)
     {
-        base.StartCoroutine(this.SignalProcess(label, fullText, targetSignal, dynamicCharsPerSecond, waitList));
+        base.StartCoroutine(this.AppearanceProcess(parser));
     }
 
-    private IEnumerator SignalProcess(UILabel label, String fullText, Int32 targetSignal, Dictionary<Int32, Single> dynamicCharsPerSecond, Dictionary<Int32, Single> waitList)
+    private IEnumerator AppearanceProcess(TextParser parser)
     {
-        Int32 currentOffset = 0;
-        Int32 length = fullText.Length;
-        Single nextCharTime = 0f;
-        Single charsPerSecond = 0f;
-        Int32 ff9Signal = 0;
-        while (currentOffset < length)
+        Single progress = 0f;
+        Single prevTime = RealTime.time;
+        while (!parser.AdvanceProgress(progress))
         {
-            while (nextCharTime <= RealTime.time)
-            {
-                charsPerSecond = dynamicCharsPerSecond.ContainsKey(currentOffset) ? dynamicCharsPerSecond[currentOffset] : Mathf.Max(1f, charsPerSecond);
-                if (waitList.ContainsKey(currentOffset) && waitList[currentOffset] > 0f)
-                {
-                    waitList[currentOffset] -= HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? Time.deltaTime * FF9StateSystem.Settings.FastForwardFactor : Time.deltaTime;
-                    break;
-                }
-                if (label.supportEncoding)
-                    ff9Signal = NGUIText.GetNextFF9Signal(fullText, ref currentOffset);
-                currentOffset++;
-                Single delay = HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? 1f / (charsPerSecond * FF9StateSystem.Settings.FastForwardFactor) : 1f / charsPerSecond;
-                if (nextCharTime == 0f || nextCharTime + delay > RealTime.time)
-                    nextCharTime = RealTime.time + delay;
-                else
-                    nextCharTime += delay;
-                NGUIText.ProcessFF9Signal(ff9Signal);
-            }
             yield return new WaitForEndOfFrame();
+            progress += (RealTime.time - prevTime) * (HonoBehaviorSystem.Instance.IsFastForwardModeActive() ? FF9StateSystem.Settings.FastForwardFactor : 1f);
+            prevTime = RealTime.time;
+            //parser.LabelContainer.Update(); // [DBG] maybe not required
         }
+        Dialog dialog = parser.LabelContainer.DialogWindow;
+        if (dialog != null && dialog.CurrentState == Dialog.State.TextAnimation)
+            dialog.AfterSentenseShown();
         yield break;
     }
 
     public static Int32 SelectChoice
     {
-        get
-        {
-            return DialogManager.selectChoice;
-        }
-        set
-        {
-            DialogManager.selectChoice = value;
-        }
+        get => DialogManager.selectChoice;
+        set => DialogManager.selectChoice = value;
     }
 
-    public Queue<Dialog> DialogPool
-    {
-        get
-        {
-            return this.dialogPool;
-        }
-    }
-
-    public List<Dialog> ActiveDialogList
-    {
-        get
-        {
-            return this.activeDialogList;
-        }
-    }
+    public Queue<Dialog> DialogPool => this.dialogPool;
+    public List<Dialog> ActiveDialogList => this.activeDialogList;
 
     public Camera CurrentUICamera
     {
@@ -98,21 +60,8 @@ public class DialogManager : Singleton<DialogManager>
         }
     }
 
-    public Boolean Activate
-    {
-        get
-        {
-            return this.isActivate;
-        }
-    }
-
-    public Boolean Visible
-    {
-        get
-        {
-            return this.activeDialogList.Count<Dialog>() > 0;
-        }
-    }
+    public Boolean Activate => this.isActivate;
+    public Boolean Visible => this.activeDialogList.Count() > 0;
 
     public Boolean CompletlyVisible
     {
@@ -125,38 +74,26 @@ public class DialogManager : Singleton<DialogManager>
         }
     }
 
-    public UIWidget Widget
-    {
-        get
-        {
-            return this.widget;
-        }
-    }
+    public UIWidget Widget => this.widget;
 
-    public Boolean HasChocoboMenu
-    {
-        get
-        {
-            return EventCollision.IsRidingChocobo() && (this.GetChoiceDialog() != null || this.IsDialogNeedControl());
-        }
-    }
+    public Boolean HasChocoboMenu => EventCollision.IsRidingChocobo() && (this.GetChoiceDialog() != null || this.IsDialogNeedControl());
 
     public int CurMesId
     {
-        get { return this.curMesId; }
-        set { this.curMesId = value; }
+        get => this.curMesId;
+        set => this.curMesId = value;
     }
 
     public int PressMesId
     {
-        get { return this.pressMesId; }
-        set { this.pressMesId = value; }
+        get => this.pressMesId;
+        set => this.pressMesId = value;
     }
 
     public int ReleaseMesId
     {
-        get { return this.releaseMesId; }
-        set { this.releaseMesId = value; }
+        get => this.releaseMesId;
+        set => this.releaseMesId = value;
     }
 
     public Dialog AttachDialog(String phrase, Int32 width, Int32 lineCount, Dialog.TailPosition tailPos, Dialog.WindowStyle style, Vector2 pos, Dialog.CaptionType captionType = Dialog.CaptionType.None)
@@ -165,6 +102,7 @@ public class DialogManager : Singleton<DialogManager>
         if (dialogFromPool != null)
         {
             dialogFromPool.Reset();
+            dialogFromPool.IsETbDialog = false;
             dialogFromPool.Width = width;
             dialogFromPool.LineNumber = lineCount;
             dialogFromPool.Style = style;
@@ -186,13 +124,13 @@ public class DialogManager : Singleton<DialogManager>
         if (dialogFromPool != null)
         {
             dialogFromPool.Reset();
+            dialogFromPool.IsETbDialog = true;
             dialogFromPool.Id = dialogId;
             dialogFromPool.Style = style;
             dialogFromPool.Po = po;
             dialogFromPool.TextId = textId;
             dialogFromPool.Caption = FF9TextTool.GetDialogCaptionText(captionType);
             dialogFromPool.CapType = captionType;
-            dialogFromPool.OnOptionChange = null;
             if (PersistenSingleton<UIManager>.Instance.UnityScene == UIManager.Scene.Battle)
             {
                 if (FF9TextTool.IsBattleTextLoaded)
@@ -378,7 +316,7 @@ public class DialogManager : Singleton<DialogManager>
 
     private void PreloadDialog()
     {
-        for (Int32 i = 0; i < DialogManager.MaximumDialogCount - 1; i++)
+        for (Int32 i = 0; i < DialogManager.InitialDialogCount - 1; i++)
             this.AttachDialog("[STRT=10,1][IMME]Load[TIME=1]", 10, 1, Dialog.TailPosition.Center, Dialog.WindowStyle.WindowStyleTransparent, new Vector2(10000f, 10000f), Dialog.CaptionType.None);
     }
 
@@ -401,9 +339,9 @@ public class DialogManager : Singleton<DialogManager>
         if (choiceDialog != null)
         {
             if (delta.y < -50f)
-                choiceDialog.SetCurrentChoiceRef(1);
+                choiceDialog.MoveCurrentChoice(1);
             else if (delta.y > 50f)
-                choiceDialog.SetCurrentChoiceRef(-1);
+                choiceDialog.MoveCurrentChoice(-1);
         }
     }
 
@@ -524,9 +462,9 @@ public class DialogManager : Singleton<DialogManager>
     {
         foreach (Transform transform in base.transform)
         {
-            Dialog component = transform.GetComponent<Dialog>();
-            if (component != null)
-                return component.PhraseLabel;
+            Dialog dialog = transform.GetComponent<Dialog>();
+            if (dialog != null)
+                return dialog.PhraseLabel;
         }
         return null;
     }
@@ -560,35 +498,26 @@ public class DialogManager : Singleton<DialogManager>
         base.gameObject.GetComponent<BoxCollider>().enabled = value;
     }
 
-    public static Byte MaximumDialogCount = 10;
+    private const Byte InitialDialogCount = 10;
+    private const Int32 UIDialogId = 9;
 
     private static Int32 selectChoice;
 
-    private static Int32 UIDialogId = 9;
-
     public GameObject DialogChoiceConfirmHud;
-
     public GameObject DialogChoiceCancelHud;
-
     public GameObject DialogPrefab;
 
     private Queue<Dialog> dialogPool = new Queue<Dialog>();
-
     private List<Dialog> activeDialogList = new List<Dialog>();
 
     private Boolean isActivate;
-
     private Boolean isHudActive;
 
     private Camera uiCamera;
-
     private UIPanel pointerPanel;
-
     private UIWidget widget;
 
-    private int curMesId = -1;
-
-    private int pressMesId = -1;
-
-    private int releaseMesId = -1;
+    private Int32 curMesId = -1;
+    private Int32 pressMesId = -1;
+    private Int32 releaseMesId = -1;
 }

@@ -247,18 +247,17 @@ public static class ETb
 
     public static String GetStringFromTable(UInt32 bank, UInt32 index)
     {
-        String result = String.Empty;
-        if (bank < 4u && index < 8u)
+        if (index < 8u)
         {
             String[] tableText = FF9TextTool.GetTableText(bank);
             if (tableText != null)
             {
                 Int32 tableIndex = ETb.gMesValue[index];
                 if (tableIndex < tableText.Length)
-                    result = tableText[tableIndex];
+                    return tableText[tableIndex];
             }
         }
-        return result;
+        return String.Empty;
     }
 
     private static Boolean IsSkipped(EventEngine eventEngine, Int32 mes, Int32 winID, Int32 flags, PosObj targetPo)

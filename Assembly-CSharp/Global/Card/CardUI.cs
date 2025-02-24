@@ -4,29 +4,28 @@ using Memoria;
 using Memoria.Data;
 using Memoria.Prime;
 using Memoria.Scenes;
+using Memoria.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Object = System.Object;
 
 public class CardUI : UIScene
 {
     public override void Show(UIScene.SceneVoidDelegate afterFinished = null)
     {
-        UIScene.SceneVoidDelegate sceneVoidDelegate = delegate
+        UIScene.SceneVoidDelegate afterShowDelegate = delegate
         {
             PersistenSingleton<UIManager>.Instance.MainMenuScene.SubMenuPanel.SetActive(false);
             ButtonGroupState.SetPointerDepthToGroup(2, CardUI.CardGroupButton);
-            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(134f, 10f), CardUI.DiscardDialogButtonGroup);
+            ButtonGroupState.SetPointerOffsetToGroup(new Vector2(60f, 10f), CardUI.DiscardDialogButtonGroup);
             ButtonGroupState.ActiveGroup = CardUI.CardGroupButton;
         };
         if (afterFinished != null)
-        {
-            sceneVoidDelegate = (UIScene.SceneVoidDelegate)Delegate.Combine(sceneVoidDelegate, afterFinished);
-        }
+            afterShowDelegate += afterFinished;
         SceneDirector.FadeEventSetColor(FadeMode.Sub, Color.black);
-        base.Show(sceneVoidDelegate);
+        base.Show(afterShowDelegate);
+        UpdateUserInterface();
         FF9FCard_Build();
         DisplayInfo();
         DisplayHelp();
@@ -43,6 +42,16 @@ public class CardUI : UIScene
             PersistenSingleton<UIManager>.Instance.MainMenuScene.StartSubmenuTweenIn();
             RemoveCursorMemorize();
         }
+    }
+
+    private void UpdateUserInterface()
+    {
+        String colon = NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft ? "" : ":";
+        infoPanel.CollectorLevelSprite.alpha = NGUIText.readingDirection == UnicodeBIDI.LanguageReadingDirection.RightToLeft ? 0f : 1f;
+        infoPanel.CollectorLevelColon.rawText = colon;
+        infoPanel.WinColon.rawText = colon;
+        infoPanel.LoseColon.rawText = colon;
+        infoPanel.DrawColon.rawText = colon;
     }
 
     private void RemoveCursorMemorize()
@@ -81,12 +90,8 @@ public class CardUI : UIScene
             else if (ButtonGroupState.ActiveGroup == CardUI.DiscardDialogButtonGroup)
             {
                 if (go == DeleteSubmenuButton)
-                {
                     return true;
-                }
-
                 OnDiscardDialogKeyConfirm(go);
-
                 base.Loading = true;
                 deleteDialogTransition.TweenOut(delegate
                 {
@@ -109,8 +114,7 @@ public class CardUI : UIScene
             {
                 if (count[deleteCardId] < 1)
                     goto case 2;
-
-                DiscardSeletctedCard();
+                DiscardSelectedCard();
                 break;
             }
             case 2: // Cancel
@@ -124,7 +128,7 @@ public class CardUI : UIScene
         }
     }
 
-    private void DiscardSeletctedCard()
+    private void DiscardSelectedCard()
     {
         PersistenSingleton<UIManager>.Instance.MainMenuScene.ImpactfulActionCount++;
         FF9Sfx.FF9SFX_Play(103);
@@ -175,9 +179,7 @@ public class CardUI : UIScene
             else if (ButtonGroupState.ActiveGroup == CardUI.DiscardDialogButtonGroup)
             {
                 if (go == DeleteSubmenuButton)
-                {
                     return true;
-                }
                 FF9Sfx.FF9SFX_Play(101);
                 base.Loading = true;
                 deleteDialogTransition.TweenOut(delegate
@@ -196,16 +198,16 @@ public class CardUI : UIScene
     {
         if (base.OnKeyLeftBumper(go) && ButtonGroupState.ActiveGroup == CardUI.CardGroupButton)
         {
-            Byte b = count[currentCardId];
-            if (b > 1)
+            Byte selectedCardCount = count[currentCardId];
+            if (selectedCardCount > 1)
             {
                 FF9Sfx.FF9SFX_Play(1047);
-                offset[currentCardId] = (offset[currentCardId] + (Int32)b - 1) % (Int32)b;
-                Byte[] dialogIndexes = (from i in Enumerable.Range(0, Mathf.Min((Int32)(b - 1), 4))
-                                        select (Byte)i).ToArray<Byte>();
+                offset[currentCardId] = (offset[currentCardId] + selectedCardCount - 1) % selectedCardCount;
+                Byte[] dialogIndexes = (from i in Enumerable.Range(0, Mathf.Min(selectedCardCount - 1, 4))
+                                        select (Byte)i).ToArray();
                 base.ShowPointerWhenLoading = true;
                 base.Loading = true;
-                cardDetailTransition.TweenPingPong(dialogIndexes, (UIScene.SceneVoidDelegate)null, delegate
+                cardDetailTransition.TweenPingPong(dialogIndexes, null, delegate
                 {
                     base.Loading = false;
                     base.ShowPointerWhenLoading = false;
@@ -220,16 +222,16 @@ public class CardUI : UIScene
     {
         if (base.OnKeyRightBumper(go) && ButtonGroupState.ActiveGroup == CardUI.CardGroupButton)
         {
-            Byte b = count[currentCardId];
-            if (b > 1)
+            Byte selectedCardCount = count[currentCardId];
+            if (selectedCardCount > 1)
             {
                 FF9Sfx.FF9SFX_Play(1047);
-                offset[currentCardId] = (offset[currentCardId] + (Int32)b + 1) % (Int32)b;
-                Byte[] dialogIndexes = (from i in Enumerable.Range(0, Mathf.Min((Int32)(b - 1), 4))
-                                        select (Byte)i).ToArray<Byte>();
+                offset[currentCardId] = (offset[currentCardId] + selectedCardCount + 1) % selectedCardCount;
+                Byte[] dialogIndexes = (from i in Enumerable.Range(0, Mathf.Min(selectedCardCount - 1, 4))
+                                        select (Byte)i).ToArray();
                 base.ShowPointerWhenLoading = true;
                 base.Loading = true;
-                cardDetailTransition.TweenPingPong(dialogIndexes, (UIScene.SceneVoidDelegate)null, delegate
+                cardDetailTransition.TweenPingPong(dialogIndexes, null, delegate
                 {
                     base.Loading = false;
                     base.ShowPointerWhenLoading = false;
@@ -249,18 +251,16 @@ public class CardUI : UIScene
     {
         if (base.OnItemSelect(go) && ButtonGroupState.ActiveGroup == CardUI.CardGroupButton)
         {
-            CardUI.CardListHUD cardListHUD = cardHudList[go.transform.GetSiblingIndex()];
-            CardUI.CardListHUD cardListHUD2 = (currentCardId == -1) ? null : cardHudList[currentCardId];
-            Int32 id = cardListHUD.Id;
+            CardUI.CardListHUD newSelectionHUD = cardHudList[go.transform.GetSiblingIndex()];
+            CardUI.CardListHUD oldSelectionHUD = currentCardId == -1 ? null : cardHudList[currentCardId];
+            Int32 id = newSelectionHUD.Id;
             if (currentCardId != id)
             {
                 currentCardId = id;
                 DisplayCardDetail();
-                cardListHUD.CardHighlightAnimation.enabled = true;
-                if (cardListHUD2 != null || cardListHUD.Id == cardListHUD2.Id)
-                {
-                    cardListHUD2.CardHighlightAnimation.enabled = false;
-                }
+                newSelectionHUD.CardHighlightAnimation.enabled = true;
+                if (oldSelectionHUD != null || newSelectionHUD.Id == oldSelectionHUD.Id)
+                    oldSelectionHUD.CardHighlightAnimation.enabled = false;
             }
         }
         return true;
@@ -338,26 +338,19 @@ public class CardUI : UIScene
 
     private void DisplayCardList()
     {
-        Int32 id;
-        for (id = 0; id < CardPool.TOTAL_CARDS; id++)
+        for (Int32 id = 0; id < CardPool.TOTAL_CARDS; id++)
         {
-            Byte b = count[id];
+            Byte selectedCardCount = count[id];
             CardUI.CardListHUD cardListHUD = cardHudList.First((CardUI.CardListHUD hud) => hud.Id == id);
-            if (b > 0)
+            if (selectedCardCount > 0)
             {
                 CardIcon.Attribute attribute = QuadMistDatabase.MiniGame_GetCardAttribute(id);
-                String spriteName = String.Concat(new Object[]
-                {
-                    "card_type",
-                    (Int32)attribute,
-                    "_",
-                    (b <= 1) ? "normal" : "select"
-                });
+                String spriteName = $"card_type{(Int32)attribute}_" + (selectedCardCount <= 1 ? "normal" : "select");
                 cardListHUD.CardIconSprite.spriteName = spriteName;
-                if (b > 1)
+                if (selectedCardCount > 1)
                 {
                     cardListHUD.CardAmountLabel.gameObject.SetActive(true);
-                    cardListHUD.CardAmountLabel.text = b.ToString();
+                    cardListHUD.CardAmountLabel.rawText = selectedCardCount.ToString();
                 }
                 else
                 {
@@ -370,28 +363,26 @@ public class CardUI : UIScene
                 cardListHUD.CardIconSprite.spriteName = "card_slot";
             }
         }
-        stockCountLabel.text = QuadMistDatabase.MiniGame_GetAllCardCount().ToString();
-        typeCountLabel.text = QuadMistDatabase.MiniGame_GetCardKindCount().ToString();
+        stockCountLabel.rawText = QuadMistDatabase.MiniGame_GetAllCardCount().ToString();
+        typeCountLabel.rawText = QuadMistDatabase.MiniGame_GetCardKindCount().ToString();
     }
 
     private void DisplayCardDetail()
     {
-        Int32 num = (Int32)count[currentCardId];
-        if (num > 0)
+        Int32 selectedCardCount = count[currentCardId];
+        if (selectedCardCount > 0)
         {
             cardInfoContentGameObject.SetActive(true);
-            ShowCardDetailHudNumber(num);
+            ShowCardDetailHudNumber(selectedCardCount);
             FF9UIDataTool.DisplayCard(QuadMistDatabase.MiniGame_GetCardInfoPtr((TetraMasterCardId)currentCardId, offset[currentCardId]), cardDetailHudList[0], false);
-            cardNameLabel.text = FF9TextTool.CardName((TetraMasterCardId)currentCardId);
-            if (num > 1)
+            cardNameLabel.rawText = FF9TextTool.CardName((TetraMasterCardId)currentCardId);
+            if (selectedCardCount > 1)
             {
                 cardNumberGameObject.SetActive(true);
-                currentCardNumberLabel.text = (offset[currentCardId] + 1).ToString();
-                totalCardNumberLabel.text = num.ToString();
-                for (Int32 i = 1; i < Math.Min(num, 5); i++)
-                {
+                currentCardNumberLabel.rawText = (offset[currentCardId] + 1).ToString();
+                totalCardNumberLabel.rawText = selectedCardCount.ToString();
+                for (Int32 i = 1; i < Math.Min(selectedCardCount, 5); i++)
                     FF9UIDataTool.DisplayCard(QuadMistDatabase.MiniGame_GetCardInfoPtr((TetraMasterCardId)currentCardId, 0), cardDetailHudList[i], true);
-                }
             }
             else
             {
@@ -406,15 +397,15 @@ public class CardUI : UIScene
 
     private void DisplayInfo()
     {
-        Int32 num = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetWinCount());
-        Int32 num2 = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetLoseCount());
-        Int32 num3 = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetDrawCount());
+        Int32 winCount = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetWinCount());
+        Int32 loseCount = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetLoseCount());
+        Int32 drawCount = Mathf.Min(99999, QuadMistDatabase.MiniGame_GetDrawCount());
         FF9FCard_GetPoint();
-        levelLabel.text = point.ToString() + "p";
-        classNameLabel.text = FF9TextTool.CardLevelName(lv_collector);
-        winCountLabel.text = num.ToString();
-        loseCountLabel.text = num2.ToString();
-        drawCountLabel.text = num3.ToString();
+        levelLabel.rawText = Localization.GetWithDefault("CardPoints").Replace("%", point.ToString());
+        classNameLabel.rawText = FF9TextTool.CardLevelName(lv_collector);
+        winCountLabel.rawText = winCount.ToString();
+        loseCountLabel.rawText = loseCount.ToString();
+        drawCountLabel.rawText = drawCount.ToString();
     }
 
     private void FF9FCard_Build()
@@ -439,19 +430,8 @@ public class CardUI : UIScene
 
     private void ShowCardDetailHudNumber(Int32 number)
     {
-        Int32 num = 0;
-        foreach (CardDetailHUD cardDetailHUD in cardDetailHudList)
-        {
-            if (num < number)
-            {
-                cardDetailHUD.Self.SetActive(true);
-            }
-            else
-            {
-                cardDetailHUD.Self.SetActive(false);
-            }
-            num++;
-        }
+        for (Int32 i = 0; i < cardDetailHudList.Count; i++)
+            cardDetailHudList[i].Self.SetActive(i < number);
     }
 
     private void Awake()
@@ -483,33 +463,31 @@ public class CardUI : UIScene
             UIEventListener.Get(cardListHUD.Self).onClick += onClick;
         }
         foreach (Transform transf in CardInfoPanel.GetChild(0).GetChild(0).transform)
-        {
-            CardDetailHUD item = new CardDetailHUD(transf.gameObject);
-            cardDetailHudList.Add(item);
-        }
+            cardDetailHudList.Add(new CardDetailHUD(transf.gameObject));
         UIEventListener.Get(DeleteSubmenuButton).Click += onClick;
 
-        _uiDiscardDialog = new UiDiscardDialog(DeleteDialogGameObject);
-        _uiDiscardDialog.Content.Confirm.UiEventListener.onClick += onClick;
-        _uiDiscardDialog.Content.Cancel.UiEventListener.onClick += onClick;
+        _uiDiscardDialog = new DiscardDialogHUD(DeleteDialogGameObject);
+        foreach (var button in _uiDiscardDialog.Choices)
+            button.EventListener.onClick += onClick;
 
-        if (_uiDiscardDialog.Content.Auto != null)
-            _uiDiscardDialog.Content.Auto.UiEventListener.onClick += onClick;
+        infoPanel = new GOCardInfoPanel(PlayerInfoPanel);
 
         cardDetailTransition = TransitionPanel.GetChild(0).GetComponent<HonoTweenPosition>();
         deleteDialogTransition = TransitionPanel.GetChild(1).GetComponent<HonoTweenClipping>();
-        UILabel component = PlayerInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetComponent<UILabel>();
-        component.SetAnchor((Transform)null);
-        component.width = 332;
-        component.height = 40;
+        UILabel collectorLevel = PlayerInfoPanel.GetChild(0).GetChild(0).GetChild(0).GetComponent<UILabel>();
+        collectorLevel.SetAnchor((Transform)null);
+        collectorLevel.width = 332;
+        collectorLevel.height = 40;
+        cardNameLabel.fixedAlignment = true;
+        totalCardNumberLabel.fixedAlignment = true;
 
-        this.background = new GOMenuBackground(this.transform.GetChild(6).gameObject, "card_bg");
+        background = new GOMenuBackground(this.transform.GetChild(6).gameObject, "card_bg");
     }
 
-    private static String CardGroupButton = "Card.Card";
-    private static String DiscardDialogButtonGroup = "Card.Choice";
-    private static Int32 FF9FCARD_ARROW_TYPE_MAX = 256;
-    private static Int32 FF9FCAZRD_LV_MAX = 32;
+    private const String CardGroupButton = "Card.Card";
+    private const String DiscardDialogButtonGroup = "Card.Choice";
+    private const Int32 FF9FCARD_ARROW_TYPE_MAX = 256;
+    private const Int32 FF9FCAZRD_LV_MAX = 32;
 
     public GameObject CardSelectionListPanel;
     public GameObject PlayerInfoPanel;
@@ -531,6 +509,8 @@ public class CardUI : UIScene
     private GameObject cardNumberGameObject;
     [NonSerialized]
     private GOMenuBackground background;
+    [NonSerialized]
+    private GOCardInfoPanel infoPanel;
 
     //private ButtonGroupState discardConfirmButton;
     //private ButtonGroupState discardCancelButton;
@@ -556,11 +536,11 @@ public class CardUI : UIScene
     private Int32 lv_collector;
     private Int32 point;
 
-    private UiDiscardDialog _uiDiscardDialog;
+    private DiscardDialogHUD _uiDiscardDialog;
 
-    private ButtonGroupState DiscardConfirmButton => _uiDiscardDialog.Content.Confirm.GroupState;
-    private ButtonGroupState DiscardCancelButton => _uiDiscardDialog.Content.Cancel.GroupState;
-    private ButtonGroupState DiscardAutoButton => _uiDiscardDialog.Content.Auto?.GroupState;
+    private ButtonGroupState DiscardConfirmButton => _uiDiscardDialog.Choices[0].ButtonGroup;
+    private ButtonGroupState DiscardCancelButton => _uiDiscardDialog.Choices[1].ButtonGroup;
+    private ButtonGroupState DiscardAutoButton => _uiDiscardDialog.Choices.Count >= 3 ? _uiDiscardDialog.Choices[2].ButtonGroup : null;
 
     public class CardListHUD
     {
@@ -583,17 +563,62 @@ public class CardUI : UIScene
         public ButtonGroupState CardButtonGroup;
     }
 
-    private sealed class UiDiscardDialog
+    private class GOCardInfoPanel : GOWidget
     {
-        public readonly TextPanel Content;
-        public readonly FrameBackground Background;
-        public readonly UIPanel Panel;
+        public GOLocalizableLabel CollectorLevelLabel;
+        public UISprite CollectorLevelSprite;
+        public UILabel CollectorLevelColon;
+        public UILabel CollectorLevelValue;
+        public UILabel CollectorClass;
+        public UISprite CollectorSpliter;
+        public GOLocalizableLabel WinLabel;
+        public UILabel WinColon;
+        public UILabel WinValue;
+        public GOLocalizableLabel LoseLabel;
+        public UILabel LoseColon;
+        public UILabel LoseValue;
+        public GOLocalizableLabel DrawLabel;
+        public UILabel DrawColon;
+        public UILabel DrawValue;
+        public GOFrameBackground Background;
 
-        public UiDiscardDialog(GameObject obj)
+        public GOCardInfoPanel(GameObject go) : base(go)
         {
-            Content = new TextPanel(obj.GetChild(0));
-            Background = new FrameBackground(obj.GetChild(1));
-            Panel = obj.GetExactComponent<UIPanel>();
+            CollectorLevelLabel = new GOLocalizableLabel(go.GetChild(0).GetChild(0).GetChild(0));
+            CollectorLevelSprite = go.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<UISprite>();
+            CollectorLevelColon = go.GetChild(0).GetChild(0).GetChild(2).GetComponent<UILabel>();
+            CollectorLevelValue = go.GetChild(0).GetChild(0).GetChild(3).GetComponent<UILabel>();
+            CollectorClass = go.GetChild(0).GetChild(1).GetComponent<UILabel>();
+            CollectorSpliter = go.GetChild(0).GetChild(2).GetComponent<UISprite>();
+            WinLabel = new GOLocalizableLabel(go.GetChild(1).GetChild(0).GetChild(0));
+            WinColon = go.GetChild(1).GetChild(0).GetChild(1).GetComponent<UILabel>();
+            WinValue = go.GetChild(1).GetChild(0).GetChild(2).GetComponent<UILabel>();
+            LoseLabel = new GOLocalizableLabel(go.GetChild(1).GetChild(1).GetChild(0));
+            LoseColon = go.GetChild(1).GetChild(1).GetChild(1).GetComponent<UILabel>();
+            LoseValue = go.GetChild(1).GetChild(1).GetChild(2).GetComponent<UILabel>();
+            DrawLabel = new GOLocalizableLabel(go.GetChild(1).GetChild(2).GetChild(0));
+            DrawColon = go.GetChild(1).GetChild(2).GetChild(1).GetComponent<UILabel>();
+            DrawValue = go.GetChild(1).GetChild(2).GetChild(2).GetComponent<UILabel>();
+            Background = new GOFrameBackground(go.GetChild(2));
+        }
+    }
+
+    private sealed class DiscardDialogHUD : GOPanel
+    {
+        public readonly UIPanel TextPanel;
+        public readonly GOLocalizableLabel Label;
+        public readonly List<GOSimpleButton<GOLocalizableLabel>> Choices;
+        public readonly GOFrameBackground Background;
+
+        public DiscardDialogHUD(GameObject go) : base(go)
+        {
+            TextPanel = go.GetChild(0).GetComponent<UIPanel>();
+            Label = new GOLocalizableLabel(go.GetChild(0).GetChild(0));
+            Int32 choiceCount = go.GetChild(0).transform.childCount - 1;
+            Choices = new List<GOSimpleButton<GOLocalizableLabel>>(choiceCount);
+            for (Int32 i = 0; i < choiceCount; i++)
+                Choices.Add(new GOSimpleButton<GOLocalizableLabel>(go.GetChild(0).GetChild(i + 1)));
+            Background = new GOFrameBackground(go.GetChild(1));
 
             if (Configuration.TetraMaster.DiscardAutoButton)
                 AddAutoButton();
@@ -602,92 +627,28 @@ public class CardUI : UIScene
         public void AddAutoButton()
         {
             Panel.clipping = UIDrawCall.Clipping.None;
-
-            Background.OnAutoButtonAdded();
-            Content.OnAutoButtonAdded();
-        }
-
-        public sealed class TextPanel : GOBase
-        {
-            public readonly GOLocalizableLabel Question;
-            public readonly Button Confirm;
-            public readonly Button Cancel;
-            public Button Auto;
-
-            public TextPanel(GameObject obj)
-                : base(obj)
+            Background.Widget.height = 408;
+            TextPanel.transform.localPosition = new Vector3(-13, 40, 0);
+            Label.Transform.localPosition = new Vector3(-90, Label.Transform.localPosition.y, Label.Transform.localPosition.z);
+            GameObject autoGo = UnityEngine.Object.Instantiate(Choices[Choices.Count - 1].GameObject);
+            GOSimpleButton<GOLocalizableLabel> autoButton = new GOSimpleButton<GOLocalizableLabel>(autoGo);
+            autoGo.name = "Auto";
+            autoGo.transform.SetParent(TextPanel.transform, false);
+            autoGo.transform.localPosition = new Vector3(0, -386f, 0);
+            autoButton.Content.Localize.key = null;
+            autoButton.Content.Label.rawText = "Auto";
+            Choices.Add(autoButton);
+            foreach (var button in Choices)
             {
-                Question = new GOLocalizableLabel(obj.GetChild(0));
-                Confirm = new Button(obj.GetChild(1));
-                Cancel = new Button(obj.GetChild(2));
-            }
-
-            public void OnAutoButtonAdded()
-            {
-                Transform.localPosition = new Vector3(-13, 40, 0);
-                Question.Transform.localPosition = new Vector3(-90, Question.Transform.localPosition.y, Question.Transform.localPosition.z);
-
-                GameObject autoGo = Instantiate(Cancel.GameObject);
-                autoGo.name = "Auto";
-                autoGo.transform.SetParent(Transform, false);
-
-                Auto = new Button(autoGo);
-                Auto.Transform.localPosition = new Vector3(0, -386f, 0);
-                Auto.UiLocalize.key = null;
-                Auto.UiLabel.text = "Auto";
-
-                Confirm.OnAutoButtonAdded();
-                Cancel.OnAutoButtonAdded();
-                Auto.OnAutoButtonAdded();
-            }
-
-            public sealed class Button : GOBase
-            {
-                public readonly ButtonGroupState GroupState;
-                public readonly UIButton UiButton;
-                public readonly UILocalize UiLocalize;
-                public readonly UILabel UiLabel;
-                public readonly UIEventListener UiEventListener;
-
-                public Button(GameObject obj)
-                    : base(obj)
-                {
-                    GroupState = obj.GetExactComponent<ButtonGroupState>();
-                    UiButton = obj.GetExactComponent<UIButton>();
-                    UiLocalize = obj.GetExactComponent<UILocalize>();
-                    UiLabel = obj.GetExactComponent<UILabel>();
-                    UiEventListener = obj.EnsureExactComponent<UIEventListener>();
-                    if (Configuration.Control.WrapSomeMenus)
-                        obj.GetExactComponent<UIKeyNavigation>().wrapUpDown = true;
-                }
-
-                public void OnAutoButtonAdded()
-                {
-                    UiLocalize.TextOverwriting += OnTextOverwriting;
-                    Transform.localPosition = new Vector3(0, Transform.localPosition.y, Transform.localPosition.z);
-                }
-
-                private String OnTextOverwriting(String key, String text)
-                {
-                    if (text.StartsWith("[CENT]"))
-                        return text;
-
-                    return "[CENT]" + text;
-                }
+                button.Content.Localize.TextOverwriting += PrependCenterText;
+                button.Transform.localPosition = new Vector3(0, button.Transform.localPosition.y, button.Transform.localPosition.z);
             }
         }
 
-        public sealed class FrameBackground : GOWidget
+        private static void PrependCenterText(String key, ref String text)
         {
-            public FrameBackground(GameObject obj)
-                : base(obj)
-            {
-            }
-
-            public void OnAutoButtonAdded()
-            {
-                Widget.height = 408;
-            }
+            if (!text.StartsWith("[CENT]"))
+                text = "[CENT]" + text;
         }
     }
 }

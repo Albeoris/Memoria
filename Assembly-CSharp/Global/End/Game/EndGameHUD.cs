@@ -26,8 +26,8 @@ public class EndGameHUD : UIScene
             this.splitButtonGo,
             this.backButtonGo
         };
-        this.BankRollLabel.text = EndGameMain.Instance.bankRoll.ToString();
-        this.WageAmountLabel.text = EndGameMain.Instance.wager.ToString();
+        this.BankRollLabel.rawText = EndGameMain.Instance.bankRoll.ToString();
+        this.WageAmountLabel.rawText = EndGameMain.Instance.wager.ToString();
         foreach (GameObject go in this.buttonGoList)
         {
             UIEventListener uieventListener = UIEventListener.Get(go);
@@ -134,12 +134,12 @@ public class EndGameHUD : UIScene
             Int64 wager = EndGameMain.Instance.wager;
             if (this.prevBankRoll == -1L || this.prevBankRoll != bankRoll)
             {
-                this.BankRollLabel.text = bankRoll.ToString();
+                this.BankRollLabel.rawText = bankRoll.ToString();
                 this.prevBankRoll = bankRoll;
             }
             if (this.prevWager == -1L || this.prevWager != wager)
             {
-                this.WageAmountLabel.text = wager.ToString();
+                this.WageAmountLabel.rawText = wager.ToString();
                 this.prevWager = wager;
             }
             this.ValidateWager();
@@ -214,24 +214,24 @@ public class EndGameHUD : UIScene
                 this.hasSplitAllowed = EndGameMain.Instance.endGame.ff9endingGameSplitAllowed;
             }
         }
-        this.dealerCardTotalLabel.text = EndGameMain.Instance.endGameScore.dealerCardTotal;
+        this.dealerCardTotalLabel.rawText = EndGameMain.Instance.endGameScore.dealerCardTotal;
         if (String.IsNullOrEmpty(EndGameMain.Instance.endGameScore.splitCardTotal))
         {
-            this.playerSplitCardTotalLabel.text = String.Empty;
-            this.playerSplitMinTotalLabel.text = String.Empty;
-            this.splitCardTotalLabel.text = String.Empty;
-            this.splitMinTotalLabel.text = String.Empty;
-            this.playerCardTotalLabel.text = EndGameMain.Instance.endGameScore.playerCardTotal;
-            this.playerMinTotalLabel.text = EndGameMain.Instance.endGameScore.playerMinTotal;
+            this.playerSplitCardTotalLabel.rawText = String.Empty;
+            this.playerSplitMinTotalLabel.rawText = String.Empty;
+            this.splitCardTotalLabel.rawText = String.Empty;
+            this.splitMinTotalLabel.rawText = String.Empty;
+            this.playerCardTotalLabel.rawText = EndGameMain.Instance.endGameScore.playerCardTotal;
+            this.playerMinTotalLabel.rawText = EndGameMain.Instance.endGameScore.playerMinTotal;
         }
         else
         {
-            this.playerCardTotalLabel.text = String.Empty;
-            this.playerMinTotalLabel.text = String.Empty;
-            this.playerSplitCardTotalLabel.text = EndGameMain.Instance.endGameScore.playerCardTotal;
-            this.playerSplitMinTotalLabel.text = EndGameMain.Instance.endGameScore.playerMinTotal;
-            this.splitCardTotalLabel.text = EndGameMain.Instance.endGameScore.splitCardTotal;
-            this.splitMinTotalLabel.text = EndGameMain.Instance.endGameScore.splitMinTotal;
+            this.playerCardTotalLabel.rawText = String.Empty;
+            this.playerMinTotalLabel.rawText = String.Empty;
+            this.playerSplitCardTotalLabel.rawText = EndGameMain.Instance.endGameScore.playerCardTotal;
+            this.playerSplitMinTotalLabel.rawText = EndGameMain.Instance.endGameScore.playerMinTotal;
+            this.splitCardTotalLabel.rawText = EndGameMain.Instance.endGameScore.splitCardTotal;
+            this.splitMinTotalLabel.rawText = EndGameMain.Instance.endGameScore.splitMinTotal;
         }
     }
 
@@ -239,12 +239,12 @@ public class EndGameHUD : UIScene
     {
         if (isEnable)
         {
-            this.doubleButtonLabel.text = "DOUBLE";
+            this.doubleButtonLabel.rawText = "DOUBLE";
             this.doubleButton.isEnabled = true;
         }
         else
         {
-            this.doubleButtonLabel.text = "-----";
+            this.doubleButtonLabel.rawText = "-----";
             this.doubleButton.isEnabled = false;
             ButtonGroupState.ActiveButton = this.standButtonGo;
         }
@@ -254,12 +254,12 @@ public class EndGameHUD : UIScene
     {
         if (isEnable)
         {
-            this.splitButtonLabel.text = "SPLIT";
+            this.splitButtonLabel.rawText = "SPLIT";
             this.splitButton.isEnabled = true;
         }
         else
         {
-            this.splitButtonLabel.text = "-----";
+            this.splitButtonLabel.rawText = "-----";
             this.splitButton.isEnabled = false;
             ButtonGroupState.ActiveButton = this.standButtonGo;
         }
@@ -271,12 +271,12 @@ public class EndGameHUD : UIScene
         ButtonGroupState.ActiveButton = this.standButtonGo;
         if (!this.hasDoubleAllowed)
         {
-            this.doubleButtonLabel.text = "-----";
+            this.doubleButtonLabel.rawText = "-----";
             this.doubleButton.isEnabled = false;
         }
         if (!this.hasSplitAllowed)
         {
-            this.splitButtonLabel.text = "-----";
+            this.splitButtonLabel.rawText = "-----";
             this.splitButton.isEnabled = false;
         }
     }

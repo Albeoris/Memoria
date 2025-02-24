@@ -220,34 +220,30 @@ public class UIInput : MonoBehaviour
 
     private void Start()
     {
-        if (this.selectOnTab != (UnityEngine.Object)null)
+        if (this.selectOnTab != null)
         {
             UIKeyNavigation uikeyNavigation = base.GetComponent<UIKeyNavigation>();
-            if (uikeyNavigation == (UnityEngine.Object)null)
+            if (uikeyNavigation == null)
             {
                 uikeyNavigation = base.gameObject.AddComponent<UIKeyNavigation>();
                 uikeyNavigation.onDown = this.selectOnTab;
             }
-            this.selectOnTab = (GameObject)null;
+            this.selectOnTab = null;
             NGUITools.SetDirty(this);
         }
         if (this.mLoadSavedValue && !String.IsNullOrEmpty(this.savedAs))
-        {
             this.LoadValue();
-        }
         else
-        {
             this.value = this.mValue.Replace("\\n", "\n");
-        }
         this.isAndroidTV = FF9StateSystem.AndroidTVPlatform;
     }
 
     protected void Init()
     {
-        if (this.mDoInit && this.label != (UnityEngine.Object)null)
+        if (this.mDoInit && this.label != null)
         {
             this.mDoInit = false;
-            this.mDefaultText = this.label.text;
+            this.mDefaultText = this.label.rawText;
             this.mDefaultColor = this.label.color;
             this.label.supportEncoding = false;
             if (this.label.alignment == NGUIText.Alignment.Justified)
@@ -322,12 +318,12 @@ public class UIInput : MonoBehaviour
             this.mValue = this.value;
             if (String.IsNullOrEmpty(this.mValue))
             {
-                this.label.text = this.mDefaultText;
+                this.label.rawText = this.mDefaultText;
                 this.label.color = this.mDefaultColor;
             }
             else
             {
-                this.label.text = this.mValue;
+                this.label.rawText = this.mValue;
             }
             Input.imeCompositionMode = IMECompositionMode.Auto;
             this.RestoreLabelPivot();
@@ -942,7 +938,7 @@ public class UIInput : MonoBehaviour
                     this.RestoreLabelPivot();
                 }
             }
-            this.label.text = text;
+            this.label.rawText = text;
             if (isSelected)
             {
                 Int32 num3 = this.mSelectionStart - UIInput.mDrawStart;

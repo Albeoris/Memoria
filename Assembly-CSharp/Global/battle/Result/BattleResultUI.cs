@@ -156,8 +156,8 @@ public class BattleResultUI : UIScene
     {
         this.EXPAndAPPhrasePanel.SetActive(true);
         this.GilAndItemPhrasePanel.SetActive(false);
-        this.expReceiveLabel.text = this.defaultExp.ToString();
-        this.apReceiveLabel.text = this.defaultAp.ToString();
+        this.expReceiveLabel.rawText = this.defaultExp.ToString();
+        this.apReceiveLabel.rawText = this.defaultAp.ToString();
         FF9UIDataTool.DisplayTextLocalize(this.infoLabelGameObject, "BattleResultInfoEXPAP");
     }
 
@@ -165,8 +165,8 @@ public class BattleResultUI : UIScene
     {
         this.EXPAndAPPhrasePanel.SetActive(false);
         this.GilAndItemPhrasePanel.SetActive(true);
-        this.receiveGilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", (this.gilValue.value - this.gilValue.current).ToString());
-        this.currentGilLabel.text = Localization.GetWithDefault("GilSymbol").Replace("%", Mathf.Min(FF9StateSystem.Common.FF9.party.gil, 9999999f).ToString());
+        this.receiveGilLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", (this.gilValue.value - this.gilValue.current).ToString());
+        this.currentGilLabel.rawText = Localization.GetWithDefault("GilSymbol").Replace("%", Mathf.Min(FF9StateSystem.Common.FF9.party.gil, 9999999f).ToString());
         FF9UIDataTool.DisplayTextLocalize(this.infoLabelGameObject, "BattleResultInfoGilItem");
         if (this.itemList.Count > 0)
         {
@@ -178,7 +178,7 @@ public class BattleResultUI : UIScene
                 ItemListDetailWithIconHUD itemListDetailWithIconHUD = this.itemHudList[num];
                 itemListDetailWithIconHUD.Self.SetActive(true);
                 FF9UIDataTool.DisplayItem(ff9ITEM.id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, true);
-                itemListDetailWithIconHUD.NumberLabel.text = ff9ITEM.count.ToString();
+                itemListDetailWithIconHUD.NumberLabel.rawText = ff9ITEM.count.ToString();
                 num++;
             }
         }
@@ -191,7 +191,7 @@ public class BattleResultUI : UIScene
         {
             this.ItemDetailPanel.SetActive(true);
             this.cardHud.Self.SetActive(true);
-            this.cardHud.NameLabel.text = FF9TextTool.CardName(this.defaultCard);
+            this.cardHud.NameLabel.rawText = FF9TextTool.CardName(this.defaultCard);
         }
     }
 
@@ -205,10 +205,10 @@ public class BattleResultUI : UIScene
                 UInt64 nextLvl = (player.level >= ff9level.LEVEL_COUNT) ? player.exp : ff9level.CharacterLevelUps[player.level].ExperienceToLevel;
                 BattleResultUI.CharacterBattleResultInfoHUD infoHUD = this.characterBRInfoHudList[i];
                 infoHUD.Content.SetActive(true);
-                infoHUD.NameLabel.text = player.Name;
-                infoHUD.LevelLabel.text = player.level.ToString();
-                infoHUD.ExpLabel.text = player.exp.ToString();
-                infoHUD.NextLvLabel.text = (nextLvl - player.exp).ToString();
+                infoHUD.NameLabel.rawText = player.Name;
+                infoHUD.LevelLabel.rawText = player.level.ToString();
+                infoHUD.ExpLabel.rawText = player.exp.ToString();
+                infoHUD.NextLvLabel.rawText = (nextLvl - player.exp).ToString();
                 FF9UIDataTool.DisplayCharacterAvatar(player, new Vector3(0f, 0f, 0f), new Vector3(0f, 0f, 0f), infoHUD.AvatarSprite, false);
                 UISprite[] statusesSpriteList = infoHUD.StatusesSpriteList;
                 foreach (UISprite statusSprite in statusesSpriteList)
@@ -680,7 +680,7 @@ public class BattleResultUI : UIScene
             spriteName = ff9abil.FF9Abil_IsEnableSA(FF9StateSystem.Common.FF9.party.member[id], saIndex) ? "skill_stone_on" : "skill_stone_off";
         }
         this.characterBRInfoHudList[id].AbiltySprite.spriteName = spriteName;
-        this.characterBRInfoHudList[id].AbilityLabel.text = abilName;
+        this.characterBRInfoHudList[id].AbilityLabel.rawText = abilName;
         this.abilityLearnedPanelTween[id].TweenIn(null);
         yield return new WaitForSeconds(1f);
         this.abilityLearnedPanelTween[id].TweenOut(delegate

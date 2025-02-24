@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Collections.Generic;
 using UnityEngine;
 
 public static class NGUIMath
@@ -15,7 +16,7 @@ public static class NGUIMath
     [DebuggerStepThrough]
     public static Int32 ClampIndex(Int32 val, Int32 max)
     {
-        return (Int32)((val >= 0) ? ((Int32)((val >= max) ? (max - 1) : val)) : 0);
+        return val < 0 ? 0 : (val >= max ? max - 1 : val);
     }
 
     [DebuggerHidden]
@@ -23,17 +24,11 @@ public static class NGUIMath
     public static Int32 RepeatIndex(Int32 val, Int32 max)
     {
         if (max < 1)
-        {
             return 0;
-        }
         while (val < 0)
-        {
             val += max;
-        }
         while (val >= max)
-        {
             val -= max;
-        }
         return val;
     }
 
@@ -42,13 +37,9 @@ public static class NGUIMath
     public static Single WrapAngle(Single angle)
     {
         while (angle > 180f)
-        {
             angle -= 360f;
-        }
         while (angle < -180f)
-        {
             angle += 360f;
-        }
         return angle;
     }
 
@@ -56,7 +47,7 @@ public static class NGUIMath
     [DebuggerStepThrough]
     public static Single Wrap01(Single val)
     {
-        return val - (Single)Mathf.FloorToInt(val);
+        return val - Mathf.FloorToInt(val);
     }
 
     [DebuggerHidden]
@@ -85,48 +76,26 @@ public static class NGUIMath
                 return 8;
             case '9':
                 return 9;
-            case ':':
-            case ';':
-            case '<':
-            case '=':
-            case '>':
-            case '?':
-            case '@':
-            IL_67:
-                switch (ch)
-                {
-                    case 'a':
-                        break;
-                    case 'b':
-                        return 11;
-                    case 'c':
-                        return 12;
-                    case 'd':
-                        return 13;
-                    case 'e':
-                        return 14;
-                    case 'f':
-                        return 15;
-                    default:
-                        return 15;
-                }
-                break;
+            case 'a':
             case 'A':
-                break;
+                return 10;
+            case 'b':
             case 'B':
                 return 11;
+            case 'c':
             case 'C':
                 return 12;
+            case 'd':
             case 'D':
                 return 13;
+            case 'e':
             case 'E':
                 return 14;
+            case 'f':
             case 'F':
                 return 15;
-            default:
-                goto IL_67;
         }
-        return 10;
+        return 15;
     }
 
     [DebuggerHidden]
@@ -134,21 +103,17 @@ public static class NGUIMath
     public static Char DecimalToHexChar(Int32 num)
     {
         if (num > 15)
-        {
             return 'F';
-        }
         if (num < 10)
-        {
-            return (Char)(48 + num);
-        }
-        return (Char)(65 + num - 10);
+            return (Char)('0' + num);
+        return (Char)('A' + num - 10);
     }
 
     [DebuggerHidden]
     [DebuggerStepThrough]
     public static String DecimalToHex8(Int32 num)
     {
-        num &= 255;
+        num &= 0xFF;
         return num.ToString("X2");
     }
 
@@ -156,7 +121,7 @@ public static class NGUIMath
     [DebuggerStepThrough]
     public static String DecimalToHex24(Int32 num)
     {
-        num &= 16777215;
+        num &= 0xFFFFFF;
         return num.ToString("X6");
     }
 
@@ -182,13 +147,13 @@ public static class NGUIMath
     [DebuggerStepThrough]
     public static Color IntToColor(Int32 val)
     {
-        Single num = 0.003921569f;
-        Color black = Color.black;
-        black.r = num * (Single)(val >> 24 & 255);
-        black.g = num * (Single)(val >> 16 & 255);
-        black.b = num * (Single)(val >> 8 & 255);
-        black.a = num * (Single)(val & 255);
-        return black;
+        Single factor = 0.003921569f; // 1/255
+        Color col = Color.black;
+        col.r = factor * (val >> 24 & 255);
+        col.g = factor * (val >> 16 & 255);
+        col.b = factor * (val >> 8 & 255);
+        col.a = factor * (val & 255);
+        return col;
     }
 
     [DebuggerHidden]
@@ -200,10 +165,8 @@ public static class NGUIMath
         while (i > 0)
         {
             if (i == 8 || i == 16 || i == 24)
-            {
                 text += " ";
-            }
-            text += (Char)(((val & 1 << --i) == 0) ? '0' : '1');
+            text += ((val & 1 << --i) == 0) ? '0' : '1';
         }
         return text;
     }
@@ -218,12 +181,12 @@ public static class NGUIMath
     public static Rect ConvertToTexCoords(Rect rect, Int32 width, Int32 height)
     {
         Rect result = rect;
-        if ((Single)width != 0f && (Single)height != 0f)
+        if (width != 0 && height != 0)
         {
-            result.xMin = rect.xMin / (Single)width;
-            result.xMax = rect.xMax / (Single)width;
-            result.yMin = 1f - rect.yMax / (Single)height;
-            result.yMax = 1f - rect.yMin / (Single)height;
+            result.xMin = rect.xMin / width;
+            result.xMax = rect.xMax / width;
+            result.yMin = 1f - rect.yMax / height;
+            result.yMax = 1f - rect.yMin / height;
         }
         return result;
     }
@@ -233,129 +196,116 @@ public static class NGUIMath
         Rect result = rect;
         if (round)
         {
-            result.xMin = (Single)Mathf.RoundToInt(rect.xMin * (Single)width);
-            result.xMax = (Single)Mathf.RoundToInt(rect.xMax * (Single)width);
-            result.yMin = (Single)Mathf.RoundToInt((1f - rect.yMax) * (Single)height);
-            result.yMax = (Single)Mathf.RoundToInt((1f - rect.yMin) * (Single)height);
+            result.xMin = Mathf.RoundToInt(rect.xMin * width);
+            result.xMax = Mathf.RoundToInt(rect.xMax * width);
+            result.yMin = Mathf.RoundToInt((1f - rect.yMax) * height);
+            result.yMax = Mathf.RoundToInt((1f - rect.yMin) * height);
         }
         else
         {
-            result.xMin = rect.xMin * (Single)width;
-            result.xMax = rect.xMax * (Single)width;
-            result.yMin = (1f - rect.yMax) * (Single)height;
-            result.yMax = (1f - rect.yMin) * (Single)height;
+            result.xMin = rect.xMin * width;
+            result.xMax = rect.xMax * width;
+            result.yMin = (1f - rect.yMax) * height;
+            result.yMax = (1f - rect.yMin) * height;
         }
         return result;
     }
 
     public static Rect MakePixelPerfect(Rect rect)
     {
-        rect.xMin = (Single)Mathf.RoundToInt(rect.xMin);
-        rect.yMin = (Single)Mathf.RoundToInt(rect.yMin);
-        rect.xMax = (Single)Mathf.RoundToInt(rect.xMax);
-        rect.yMax = (Single)Mathf.RoundToInt(rect.yMax);
+        rect.xMin = Mathf.RoundToInt(rect.xMin);
+        rect.yMin = Mathf.RoundToInt(rect.yMin);
+        rect.xMax = Mathf.RoundToInt(rect.xMax);
+        rect.yMax = Mathf.RoundToInt(rect.yMax);
         return rect;
     }
 
     public static Rect MakePixelPerfect(Rect rect, Int32 width, Int32 height)
     {
         rect = NGUIMath.ConvertToPixels(rect, width, height, true);
-        rect.xMin = (Single)Mathf.RoundToInt(rect.xMin);
-        rect.yMin = (Single)Mathf.RoundToInt(rect.yMin);
-        rect.xMax = (Single)Mathf.RoundToInt(rect.xMax);
-        rect.yMax = (Single)Mathf.RoundToInt(rect.yMax);
+        rect.xMin = Mathf.RoundToInt(rect.xMin);
+        rect.yMin = Mathf.RoundToInt(rect.yMin);
+        rect.xMax = Mathf.RoundToInt(rect.xMax);
+        rect.yMax = Mathf.RoundToInt(rect.yMax);
         return NGUIMath.ConvertToTexCoords(rect, width, height);
     }
 
     public static Vector2 ConstrainRect(Vector2 minRect, Vector2 maxRect, Vector2 minArea, Vector2 maxArea)
     {
-        Vector2 zero = Vector2.zero;
-        Single num = maxRect.x - minRect.x;
-        Single num2 = maxRect.y - minRect.y;
-        Single num3 = maxArea.x - minArea.x;
-        Single num4 = maxArea.y - minArea.y;
-        if (num > num3)
+        Vector2 result = Vector2.zero;
+        Single rectWidth = maxRect.x - minRect.x;
+        Single rectHeight = maxRect.y - minRect.y;
+        Single areaWidth = maxArea.x - minArea.x;
+        Single areaHeight = maxArea.y - minArea.y;
+        if (rectWidth > areaWidth)
         {
-            Single num5 = num - num3;
-            minArea.x -= num5;
-            maxArea.x += num5;
+            Single widthDiff = rectWidth - areaWidth;
+            minArea.x -= widthDiff;
+            maxArea.x += widthDiff;
         }
-        if (num2 > num4)
+        if (rectHeight > areaHeight)
         {
-            Single num6 = num2 - num4;
-            minArea.y -= num6;
-            maxArea.y += num6;
+            Single heightDiff = rectHeight - areaHeight;
+            minArea.y -= heightDiff;
+            maxArea.y += heightDiff;
         }
         if (minRect.x < minArea.x)
-        {
-            zero.x += minArea.x - minRect.x;
-        }
+            result.x += minArea.x - minRect.x;
         if (maxRect.x > maxArea.x)
-        {
-            zero.x -= maxRect.x - maxArea.x;
-        }
+            result.x -= maxRect.x - maxArea.x;
         if (minRect.y < minArea.y)
-        {
-            zero.y += minArea.y - minRect.y;
-        }
+            result.y += minArea.y - minRect.y;
         if (maxRect.y > maxArea.y)
-        {
-            zero.y -= maxRect.y - maxArea.y;
-        }
-        return zero;
+            result.y -= maxRect.y - maxArea.y;
+        return result;
     }
 
-    public static Bounds CalculateAbsoluteWidgetBounds(Transform trans)
+    public static Rect GetBoundingBox(IEnumerable<Vector3> vCollection)
     {
-        if (!(trans != (UnityEngine.Object)null))
+        Vector2 min = new Vector2(Single.MaxValue, Single.MaxValue);
+        Vector2 max = new Vector2(Single.MinValue, Single.MinValue);
+        foreach (Vector2 v in vCollection)
         {
+            min = Vector2.Min(min, v);
+            max = Vector2.Max(max, v);
+        }
+        if (min.x == Single.MaxValue)
+            return new Rect();
+        return new Rect(min, max - min);
+    }
+
+    public static Bounds CalculateAbsoluteWidgetBounds(Transform transform)
+    {
+        if (transform == null)
             return new Bounds(Vector3.zero, Vector3.zero);
-        }
-        UIWidget[] componentsInChildren = trans.GetComponentsInChildren<UIWidget>();
-        if (componentsInChildren.Length == 0)
-        {
-            return new Bounds(trans.position, Vector3.zero);
-        }
+        UIWidget[] allWidgets = transform.GetComponentsInChildren<UIWidget>();
+        if (allWidgets.Length == 0)
+            return new Bounds(transform.position, Vector3.zero);
         Vector3 center = new Vector3(Single.MaxValue, Single.MaxValue, Single.MaxValue);
         Vector3 point = new Vector3(Single.MinValue, Single.MinValue, Single.MinValue);
-        Int32 i = 0;
-        Int32 num = (Int32)componentsInChildren.Length;
-        while (i < num)
+        for (Int32 i = 0; i < allWidgets.Length; i++)
         {
-            UIWidget uiwidget = componentsInChildren[i];
-            if (uiwidget.enabled)
+            UIWidget widget = allWidgets[i];
+            if (widget.enabled)
             {
-                Vector3[] worldCorners = uiwidget.worldCorners;
+                Vector3[] corners = widget.worldCorners;
                 for (Int32 j = 0; j < 4; j++)
                 {
-                    Vector3 vector = worldCorners[j];
-                    if (vector.x > point.x)
-                    {
-                        point.x = vector.x;
-                    }
-                    if (vector.y > point.y)
-                    {
-                        point.y = vector.y;
-                    }
-                    if (vector.z > point.z)
-                    {
-                        point.z = vector.z;
-                    }
-                    if (vector.x < center.x)
-                    {
-                        center.x = vector.x;
-                    }
-                    if (vector.y < center.y)
-                    {
-                        center.y = vector.y;
-                    }
-                    if (vector.z < center.z)
-                    {
-                        center.z = vector.z;
-                    }
+                    Vector3 corner = corners[j];
+                    if (corner.x > point.x)
+                        point.x = corner.x;
+                    if (corner.y > point.y)
+                        point.y = corner.y;
+                    if (corner.z > point.z)
+                        point.z = corner.z;
+                    if (corner.x < center.x)
+                        center.x = corner.x;
+                    if (corner.y < center.y)
+                        center.y = corner.y;
+                    if (corner.z < center.z)
+                        center.z = corner.z;
                 }
             }
-            i++;
         }
         Bounds result = new Bounds(center, Vector3.zero);
         result.Encapsulate(point);
@@ -379,14 +329,14 @@ public static class NGUIMath
 
     public static Bounds CalculateRelativeWidgetBounds(Transform relativeTo, Transform content, Boolean considerInactive, Boolean considerChildren = true)
     {
-        if (content != (UnityEngine.Object)null && relativeTo != (UnityEngine.Object)null)
+        if (content != null && relativeTo != null)
         {
-            Boolean flag = false;
+            Boolean isSet = false;
             Matrix4x4 worldToLocalMatrix = relativeTo.worldToLocalMatrix;
             Vector3 center = new Vector3(Single.MaxValue, Single.MaxValue, Single.MaxValue);
             Vector3 point = new Vector3(Single.MinValue, Single.MinValue, Single.MinValue);
-            NGUIMath.CalculateRelativeWidgetBounds(content, considerInactive, true, ref worldToLocalMatrix, ref center, ref point, ref flag, considerChildren);
-            if (flag)
+            NGUIMath.CalculateRelativeWidgetBounds(content, considerInactive, true, ref worldToLocalMatrix, ref center, ref point, ref isSet, considerChildren);
+            if (isSet)
             {
                 Bounds result = new Bounds(center, Vector3.zero);
                 result.Encapsulate(point);
@@ -400,158 +350,107 @@ public static class NGUIMath
     [DebuggerStepThrough]
     private static void CalculateRelativeWidgetBounds(Transform content, Boolean considerInactive, Boolean isRoot, ref Matrix4x4 toLocal, ref Vector3 vMin, ref Vector3 vMax, ref Boolean isSet, Boolean considerChildren)
     {
-        if (content == (UnityEngine.Object)null)
-        {
+        if (content == null)
             return;
-        }
         if (!considerInactive && !NGUITools.GetActive(content.gameObject))
-        {
             return;
-        }
-        UIPanel uipanel = (!isRoot) ? content.GetComponent<UIPanel>() : ((UIPanel)null);
-        if (uipanel != (UnityEngine.Object)null && !uipanel.enabled)
-        {
+        UIPanel panel = isRoot ? null : content.GetComponent<UIPanel>();
+        if (panel != null && !panel.enabled)
             return;
-        }
-        if (uipanel != (UnityEngine.Object)null && uipanel.clipping != UIDrawCall.Clipping.None)
+        if (panel != null && panel.clipping != UIDrawCall.Clipping.None)
         {
-            Vector3[] worldCorners = uipanel.worldCorners;
+            Vector3[] worldCorners = panel.worldCorners;
             for (Int32 i = 0; i < 4; i++)
             {
-                Vector3 vector = toLocal.MultiplyPoint3x4(worldCorners[i]);
-                if (vector.x > vMax.x)
-                {
-                    vMax.x = vector.x;
-                }
-                if (vector.y > vMax.y)
-                {
-                    vMax.y = vector.y;
-                }
-                if (vector.z > vMax.z)
-                {
-                    vMax.z = vector.z;
-                }
-                if (vector.x < vMin.x)
-                {
-                    vMin.x = vector.x;
-                }
-                if (vector.y < vMin.y)
-                {
-                    vMin.y = vector.y;
-                }
-                if (vector.z < vMin.z)
-                {
-                    vMin.z = vector.z;
-                }
+                Vector3 localCorner = toLocal.MultiplyPoint3x4(worldCorners[i]);
+                if (localCorner.x > vMax.x)
+                    vMax.x = localCorner.x;
+                if (localCorner.y > vMax.y)
+                    vMax.y = localCorner.y;
+                if (localCorner.z > vMax.z)
+                    vMax.z = localCorner.z;
+                if (localCorner.x < vMin.x)
+                    vMin.x = localCorner.x;
+                if (localCorner.y < vMin.y)
+                    vMin.y = localCorner.y;
+                if (localCorner.z < vMin.z)
+                    vMin.z = localCorner.z;
                 isSet = true;
             }
         }
         else
         {
-            UIWidget component = content.GetComponent<UIWidget>();
-            if (component != (UnityEngine.Object)null && component.enabled)
+            UIWidget widget = content.GetComponent<UIWidget>();
+            if (widget != null && widget.enabled)
             {
-                Vector3[] worldCorners2 = component.worldCorners;
-                for (Int32 j = 0; j < 4; j++)
+                Vector3[] worldCorners = widget.worldCorners;
+                for (Int32 i = 0; i < 4; i++)
                 {
-                    Vector3 vector2 = toLocal.MultiplyPoint3x4(worldCorners2[j]);
-                    if (vector2.x > vMax.x)
-                    {
-                        vMax.x = vector2.x;
-                    }
-                    if (vector2.y > vMax.y)
-                    {
-                        vMax.y = vector2.y;
-                    }
-                    if (vector2.z > vMax.z)
-                    {
-                        vMax.z = vector2.z;
-                    }
-                    if (vector2.x < vMin.x)
-                    {
-                        vMin.x = vector2.x;
-                    }
-                    if (vector2.y < vMin.y)
-                    {
-                        vMin.y = vector2.y;
-                    }
-                    if (vector2.z < vMin.z)
-                    {
-                        vMin.z = vector2.z;
-                    }
+                    Vector3 localCorner = toLocal.MultiplyPoint3x4(worldCorners[i]);
+                    if (localCorner.x > vMax.x)
+                        vMax.x = localCorner.x;
+                    if (localCorner.y > vMax.y)
+                        vMax.y = localCorner.y;
+                    if (localCorner.z > vMax.z)
+                        vMax.z = localCorner.z;
+                    if (localCorner.x < vMin.x)
+                        vMin.x = localCorner.x;
+                    if (localCorner.y < vMin.y)
+                        vMin.y = localCorner.y;
+                    if (localCorner.z < vMin.z)
+                        vMin.z = localCorner.z;
                     isSet = true;
                 }
                 if (!considerChildren)
-                {
                     return;
-                }
             }
-            Int32 k = 0;
-            Int32 childCount = content.childCount;
-            while (k < childCount)
-            {
-                NGUIMath.CalculateRelativeWidgetBounds(content.GetChild(k), considerInactive, false, ref toLocal, ref vMin, ref vMax, ref isSet, true);
-                k++;
-            }
+            for (Int32 i = 0; i < content.childCount; i++)
+                NGUIMath.CalculateRelativeWidgetBounds(content.GetChild(i), considerInactive, false, ref toLocal, ref vMin, ref vMax, ref isSet, true);
         }
     }
 
     public static Vector3 SpringDampen(ref Vector3 velocity, Single strength, Single deltaTime)
     {
         if (deltaTime > 1f)
-        {
             deltaTime = 1f;
-        }
         Single f = 1f - strength * 0.001f;
-        Int32 num = Mathf.RoundToInt(deltaTime * 1000f);
-        Single num2 = Mathf.Pow(f, (Single)num);
-        Vector3 a = velocity * ((num2 - 1f) / Mathf.Log(f));
-        velocity *= num2;
-        return a * 0.06f;
+        Int32 iteration = Mathf.RoundToInt(deltaTime * 1000f);
+        Single shrinkFactor = Mathf.Pow(f, iteration);
+        velocity *= shrinkFactor;
+        return velocity * ((shrinkFactor - 1f) / Mathf.Log(f)) * 0.06f;
     }
 
     public static Vector2 SpringDampen(ref Vector2 velocity, Single strength, Single deltaTime)
     {
         if (deltaTime > 1f)
-        {
             deltaTime = 1f;
-        }
         Single f = 1f - strength * 0.001f;
-        Int32 num = Mathf.RoundToInt(deltaTime * 1000f);
-        Single num2 = Mathf.Pow(f, (Single)num);
-        Vector2 a = velocity * ((num2 - 1f) / Mathf.Log(f));
-        velocity *= num2;
-        return a * 0.06f;
+        Int32 iteration = Mathf.RoundToInt(deltaTime * 1000f);
+        Single shrinkFactor = Mathf.Pow(f, (Single)iteration);
+        velocity *= shrinkFactor;
+        return velocity * ((shrinkFactor - 1f) / Mathf.Log(f)) * 0.06f;
     }
 
     public static Single SpringLerp(Single strength, Single deltaTime)
     {
         if (deltaTime > 1f)
-        {
             deltaTime = 1f;
-        }
-        Int32 num = Mathf.RoundToInt(deltaTime * 1000f);
+        Int32 iteration = Mathf.RoundToInt(deltaTime * 1000f);
         deltaTime = 0.001f * strength;
-        Single num2 = 0f;
-        for (Int32 i = 0; i < num; i++)
-        {
-            num2 = Mathf.Lerp(num2, 1f, deltaTime);
-        }
-        return num2;
+        Single result = 0f;
+        for (Int32 i = 0; i < iteration; i++)
+            result = Mathf.Lerp(result, 1f, deltaTime);
+        return result;
     }
 
     public static Single SpringLerp(Single from, Single to, Single strength, Single deltaTime)
     {
         if (deltaTime > 1f)
-        {
             deltaTime = 1f;
-        }
-        Int32 num = Mathf.RoundToInt(deltaTime * 1000f);
+        Int32 iteration = Mathf.RoundToInt(deltaTime * 1000f);
         deltaTime = 0.001f * strength;
-        for (Int32 i = 0; i < num; i++)
-        {
+        for (Int32 i = 0; i < iteration; i++)
             from = Mathf.Lerp(from, to, deltaTime);
-        }
         return from;
     }
 
@@ -572,104 +471,70 @@ public static class NGUIMath
 
     public static Single RotateTowards(Single from, Single to, Single maxAngle)
     {
-        Single num = NGUIMath.WrapAngle(to - from);
-        if (Mathf.Abs(num) > maxAngle)
-        {
-            num = maxAngle * Mathf.Sign(num);
-        }
-        return from + num;
+        Single deltaAngle = NGUIMath.WrapAngle(to - from);
+        if (Mathf.Abs(deltaAngle) > maxAngle)
+            deltaAngle = maxAngle * Mathf.Sign(deltaAngle);
+        return from + deltaAngle;
     }
 
     private static Single DistancePointToLineSegment(Vector2 point, Vector2 a, Vector2 b)
     {
         Single sqrMagnitude = (b - a).sqrMagnitude;
         if (sqrMagnitude == 0f)
-        {
             return (point - a).magnitude;
-        }
-        Single num = Vector2.Dot(point - a, b - a) / sqrMagnitude;
-        if (num < 0f)
-        {
+        Single k = Vector2.Dot(point - a, b - a) / sqrMagnitude;
+        if (k < 0f)
             return (point - a).magnitude;
-        }
-        if (num > 1f)
-        {
+        if (k > 1f)
             return (point - b).magnitude;
-        }
-        Vector2 b2 = a + num * (b - a);
-        return (point - b2).magnitude;
+        Vector2 proj = a + k * (b - a);
+        return (point - proj).magnitude;
     }
 
     public static Single DistanceToRectangle(Vector2[] screenPoints, Vector2 mousePos)
     {
-        Boolean flag = false;
-        Int32 val = 4;
-        for (Int32 i = 0; i < 5; i++)
+        Boolean isInside = true;
+        for (Int32 i = 0; i < 4; i++)
         {
-            Vector3 vector = screenPoints[NGUIMath.RepeatIndex(i, 4)];
-            Vector3 vector2 = screenPoints[NGUIMath.RepeatIndex(val, 4)];
-            if (vector.y > mousePos.y != vector2.y > mousePos.y && mousePos.x < (vector2.x - vector.x) * (mousePos.y - vector.y) / (vector2.y - vector.y) + vector.x)
-            {
-                flag = !flag;
-            }
-            val = i;
+            Int32 j = i > 0 ? i - 1 : 3;
+            if (Vector3.Cross(mousePos - screenPoints[i], screenPoints[j] - screenPoints[i]).z >= 0)
+                isInside = false;
         }
-        if (!flag)
+        if (!isInside)
         {
-            Single num = -1f;
-            for (Int32 j = 0; j < 4; j++)
+            Single dist = -1f;
+            for (Int32 i = 0; i < 4; i++)
             {
-                Vector3 v = screenPoints[j];
-                Vector3 v2 = screenPoints[NGUIMath.RepeatIndex(j + 1, 4)];
-                Single num2 = NGUIMath.DistancePointToLineSegment(mousePos, v, v2);
-                if (num2 < num || num < 0f)
-                {
-                    num = num2;
-                }
+                Int32 j = i < 3 ? i + 1 : 0;
+                Single lineDist = NGUIMath.DistancePointToLineSegment(mousePos, screenPoints[i], screenPoints[j]);
+                if (lineDist < dist || dist < 0f)
+                    dist = lineDist;
             }
-            return num;
+            return dist;
         }
         return 0f;
     }
 
     public static Single DistanceToRectangle(Vector3[] worldPoints, Vector2 mousePos, Camera cam)
     {
-        Vector2[] array = new Vector2[4];
+        Vector2[] screenPoints = new Vector2[4];
         for (Int32 i = 0; i < 4; i++)
-        {
-            array[i] = cam.WorldToScreenPoint(worldPoints[i]);
-        }
-        return NGUIMath.DistanceToRectangle(array, mousePos);
+            screenPoints[i] = cam.WorldToScreenPoint(worldPoints[i]);
+        return NGUIMath.DistanceToRectangle(screenPoints, mousePos);
     }
 
     public static Vector2 GetPivotOffset(UIWidget.Pivot pv)
     {
-        Vector2 zero = Vector2.zero;
+        Vector2 offset = Vector2.zero;
         if (pv == UIWidget.Pivot.Top || pv == UIWidget.Pivot.Center || pv == UIWidget.Pivot.Bottom)
-        {
-            zero.x = 0.5f;
-        }
+            offset.x = 0.5f;
         else if (pv == UIWidget.Pivot.TopRight || pv == UIWidget.Pivot.Right || pv == UIWidget.Pivot.BottomRight)
-        {
-            zero.x = 1f;
-        }
-        else
-        {
-            zero.x = 0f;
-        }
+            offset.x = 1f;
         if (pv == UIWidget.Pivot.Left || pv == UIWidget.Pivot.Center || pv == UIWidget.Pivot.Right)
-        {
-            zero.y = 0.5f;
-        }
+            offset.y = 0.5f;
         else if (pv == UIWidget.Pivot.TopLeft || pv == UIWidget.Pivot.Top || pv == UIWidget.Pivot.TopRight)
-        {
-            zero.y = 1f;
-        }
-        else
-        {
-            zero.y = 0f;
-        }
-        return zero;
+            offset.y = 1f;
+        return offset;
     }
 
     public static UIWidget.Pivot GetPivot(Vector2 offset)
@@ -677,39 +542,24 @@ public static class NGUIMath
         if (offset.x == 0f)
         {
             if (offset.y == 0f)
-            {
                 return UIWidget.Pivot.BottomLeft;
-            }
             if (offset.y == 1f)
-            {
                 return UIWidget.Pivot.TopLeft;
-            }
             return UIWidget.Pivot.Left;
         }
         else if (offset.x == 1f)
         {
             if (offset.y == 0f)
-            {
                 return UIWidget.Pivot.BottomRight;
-            }
             if (offset.y == 1f)
-            {
                 return UIWidget.Pivot.TopRight;
-            }
             return UIWidget.Pivot.Right;
         }
-        else
-        {
-            if (offset.y == 0f)
-            {
-                return UIWidget.Pivot.Bottom;
-            }
-            if (offset.y == 1f)
-            {
-                return UIWidget.Pivot.Top;
-            }
-            return UIWidget.Pivot.Center;
-        }
+        if (offset.y == 0f)
+            return UIWidget.Pivot.Bottom;
+        if (offset.y == 1f)
+            return UIWidget.Pivot.Top;
+        return UIWidget.Pivot.Center;
     }
 
     public static void MoveWidget(UIRect w, Single x, Single y)

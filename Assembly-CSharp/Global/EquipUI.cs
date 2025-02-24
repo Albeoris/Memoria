@@ -543,14 +543,14 @@ public class EquipUI : UIScene
                     previewStats[i] = currentStats[i];
                 }
             }
-            this.characterHud.HPMaxLabel.text = previewMaxHp.ToString();
-            this.characterHud.MPMaxLabel.text = previewMaxMp.ToString();
+            this.characterHud.HPMaxLabel.rawText = previewMaxHp.ToString();
+            this.characterHud.MPMaxLabel.rawText = previewMaxMp.ToString();
             this.characterHud.HPMaxLabel.color = currentMaxHp < previewMaxHp ? FF9TextTool.Green : (currentMaxHp > previewMaxHp ? FF9TextTool.Red : FF9TextTool.White);
             this.characterHud.MPMaxLabel.color = currentMaxMp < previewMaxMp ? FF9TextTool.Green : (currentMaxMp > previewMaxMp ? FF9TextTool.Red : FF9TextTool.White);
             for (Int32 i = 0; i < 9; i++)
             {
-                this.parameterHud.ParameterLabel[i].text = currentStats[i].ToString();
-                this.parameterHud.NewParameterLabel[i].text = previewStats[i].ToString();
+                this.parameterHud.ParameterLabel[i].rawText = currentStats[i].ToString();
+                this.parameterHud.NewParameterLabel[i].rawText = previewStats[i].ToString();
                 if (currentStats[i] < previewStats[i])
                 {
                     this.parameterHud.ArrowTween[i].enabled = true;
@@ -572,7 +572,7 @@ public class EquipUI : UIScene
         else
         {
             for (Int32 i = 0; i < 9; i++)
-                this.parameterHud.ParameterLabel[i].text = player.GetPlayerStat(i).ToString();
+                this.parameterHud.ParameterLabel[i].rawText = player.GetPlayerStat(i).ToString();
             this.ClearChangeParameter();
         }
     }
@@ -633,7 +633,7 @@ public class EquipUI : UIScene
                 itemData = ff9item._FF9Item_Data[itemId];
             }
 
-            FF9UIDataTool.DisplayItem(itemId, this.equipmentSelectHud.Equipment.IconSprite, this.equipmentSelectHud.Equipment.NameLabel, true);
+            FF9UIDataTool.DisplayItem(itemId, this.equipmentSelectHud.EquipIconSprite, this.equipmentSelectHud.EquipNameLabel, true);
             this.equipmentAbilitySelectHudList[0].Self.SetActive(false);
             this.equipmentAbilitySelectHudList[1].Self.SetActive(false);
             this.equipmentAbilitySelectHudList[2].Self.SetActive(false);
@@ -719,7 +719,7 @@ public class EquipUI : UIScene
                             this.equipmentAbilitySelectHudList[abilHudSlot].APBar.Self.SetActive(false);
                         }
 
-                        this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.text = abilityName;
+                        this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.rawText = abilityName;
                         this.equipmentAbilitySelectHudList[abilHudSlot].IconSprite.spriteName = stoneSprite;
                         this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.color = hasAbil ? FF9TextTool.White : FF9TextTool.Gray;
                     }
@@ -727,7 +727,7 @@ public class EquipUI : UIScene
                     {
                         String stoneSprite = ff9abil.IsAbilityActive(abilityId) ? "ability_stone_null" : "skill_stone_null";
 
-                        this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.text = abilityName;
+                        this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.rawText = abilityName;
                         this.equipmentAbilitySelectHudList[abilHudSlot].IconSprite.spriteName = stoneSprite;
                         this.equipmentAbilitySelectHudList[abilHudSlot].NameLabel.color = FF9TextTool.Gray;
                         this.equipmentAbilitySelectHudList[abilHudSlot].APBar.Self.SetActive(false);
@@ -747,22 +747,22 @@ public class EquipUI : UIScene
         switch (this.currentEquipPart)
         {
             case 0:
-                this.equipmentListCaption.text = Localization.Get("WeaponCaption");
+                this.equipmentListCaption.rawText = Localization.Get("WeaponCaption");
                 break;
             case 1:
-                this.equipmentListCaption.text = Localization.Get("HeadCaption");
+                this.equipmentListCaption.rawText = Localization.Get("HeadCaption");
                 break;
             case 2:
-                this.equipmentListCaption.text = Localization.Get("WristCaption");
+                this.equipmentListCaption.rawText = Localization.Get("WristCaption");
                 break;
             case 3:
-                this.equipmentListCaption.text = Localization.Get("ArmorCaption");
+                this.equipmentListCaption.rawText = Localization.Get("ArmorCaption");
                 break;
             case 4:
-                this.equipmentListCaption.text = Localization.Get("AccessoryCaption");
+                this.equipmentListCaption.rawText = Localization.Get("AccessoryCaption");
                 break;
             default:
-                this.equipmentListCaption.text = Localization.Get("WeaponCaption");
+                this.equipmentListCaption.rawText = Localization.Get("WeaponCaption");
                 break;
         }
 
@@ -855,7 +855,7 @@ public class EquipUI : UIScene
             itemListDetailWithIconHUD.NameLabel.gameObject.SetActive(true);
             itemListDetailWithIconHUD.NumberLabel.gameObject.SetActive(true);
             FF9UIDataTool.DisplayItem(equipInventoryListData.ItemData.id, itemListDetailWithIconHUD.IconSprite, itemListDetailWithIconHUD.NameLabel, true);
-            itemListDetailWithIconHUD.NumberLabel.text = equipInventoryListData.ItemData.count.ToString();
+            itemListDetailWithIconHUD.NumberLabel.rawText = equipInventoryListData.ItemData.count.ToString();
             itemListDetailWithIconHUD.Button.Help.Enable = true;
             itemListDetailWithIconHUD.Button.Help.TextKey = String.Empty;
             itemListDetailWithIconHUD.Button.Help.Text = FF9TextTool.ItemHelpDescription(equipInventoryListData.ItemData.id);
@@ -883,8 +883,8 @@ public class EquipUI : UIScene
     private void ClearChangeParameter()
     {
         PLAYER player = FF9StateSystem.Common.FF9.party.member[this.currentPartyIndex];
-        this.characterHud.HPMaxLabel.text = player.max.hp.ToString();
-        this.characterHud.MPMaxLabel.text = player.max.mp.ToString();
+        this.characterHud.HPMaxLabel.rawText = player.max.hp.ToString();
+        this.characterHud.MPMaxLabel.rawText = player.max.mp.ToString();
         this.characterHud.HPMaxLabel.color = FF9TextTool.White;
         this.characterHud.MPMaxLabel.color = FF9TextTool.White;
         for (Int32 i = 0; i < 9; i++)
@@ -1391,14 +1391,15 @@ public class EquipUI : UIScene
         {
             this.Self = go;
             this.PartIconSprite = go.GetChild(0).GetComponent<UISprite>();
-            this.Equipment = new ItemListDetailWithIconHUD();
-            this.Equipment.IconSprite = go.GetChild(2).GetComponent<UISprite>();
-            this.Equipment.NameLabel = go.GetChild(3).GetComponent<UILabel>();
+            this.EquipIconSprite = go.GetChild(2).GetComponent<UISprite>();
+            this.EquipNameLabel = go.GetChild(3).GetComponent<UILabel>();
+            this.EquipNameLabel.fixedAlignment = true;
         }
 
         public GameObject Self;
         public UISprite PartIconSprite;
-        public ItemListDetailWithIconHUD Equipment;
+        public UISprite EquipIconSprite;
+        public UILabel EquipNameLabel;
     }
 
     public enum SubMenu

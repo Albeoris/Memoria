@@ -390,7 +390,7 @@ namespace Memoria.Assets
             foreach (Int32 key in FF9TextTool.fieldText.Keys.ToList())
                 FF9TextTool.fieldText[key] = TextOpCodeModifier.Modify(FF9TextTool.fieldText[key]);
 
-            FF9TextTool.SetTableText(FF9TextTool.ExtractTableText(FF9TextTool.fieldText.Values));
+            FF9TextTool.ClearTableText();
 
             if (FF9TextTool.fieldText.Count == 0)
                 return false;
@@ -447,7 +447,7 @@ namespace Memoria.Assets
                     }
 
                     FF9TextTool.SetFieldText(result);
-                    FF9TextTool.SetTableText(FF9TextTool.ExtractTableText(result));
+                    FF9TextTool.ClearTableText();
                 }
 
                 return true;

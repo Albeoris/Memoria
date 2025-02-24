@@ -3,23 +3,16 @@ using Memoria.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+/*
 namespace Memoria.Assets
 {
     public sealed class DialogLabelFilter
     {
-        public static String PhrasePreOpcodeSymbol(UILabel label, Char[] text, ref Single additionalWidth)
+        public static String PhrasePreOpcodeSymbol(UILabel label, Char[] text, Single additionalWidth)
         {
             DialogLabelFilter filter = new DialogLabelFilter(label, text, additionalWidth);
-            try
-            {
-                filter.PhrasePreOpcodeSymbol();
-                return filter._sb.ToString();
-            }
-            finally
-            {
-                additionalWidth = filter._additionalWidth;
-            }
+            filter.PhrasePreOpcodeSymbol();
+            return filter._sb.ToString();
         }
 
         private readonly Char[] _chars;
@@ -319,4 +312,4 @@ namespace Memoria.Assets
                 _currentWidth += FF9UIDataTool.GetIconSize(tagParameter).x;
         }
     }
-}
+}*/

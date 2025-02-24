@@ -31,7 +31,7 @@ namespace Memoria.Scenes
             set
             {
                 _selectionIndex = value;
-                Label.text = LabelPicker(Selection);
+                Label.rawText = LabelPicker(Selection);
             }
         }
 
@@ -55,7 +55,7 @@ namespace Memoria.Scenes
             DecreaseArrow = control.CreateUIElementForPanel<UISprite>(panel);
             Label = control.CreateUIElementForPanel<UILabel>(panel);
             IncreaseArrow = control.CreateUIElementForPanel<UISprite>(panel);
-            Label.text = labelPicker(ObjectList[0]);
+            Label.rawText = labelPicker(ObjectList[0]);
             Label.alignment = NGUIText.Alignment.Center;
             DecreaseArrow.atlas = FF9UIDataTool.ScreenButtonAtlas;
             IncreaseArrow.atlas = FF9UIDataTool.ScreenButtonAtlas;

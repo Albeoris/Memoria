@@ -303,19 +303,19 @@ public class PartySettingUI : UIScene
         switch (this.info.party_ct)
         {
             case 1:
-                this.helpLabel.text = Localization.Get("PartyHelp1Desp");
+                this.helpLabel.rawText = Localization.Get("PartyHelp1Desp");
                 break;
             case 2:
-                this.helpLabel.text = Localization.Get("PartyHelp2Desp");
+                this.helpLabel.rawText = Localization.Get("PartyHelp2Desp");
                 break;
             case 3:
-                this.helpLabel.text = Localization.Get("PartyHelp3Desp");
+                this.helpLabel.rawText = Localization.Get("PartyHelp3Desp");
                 break;
             case 4:
-                this.helpLabel.text = Localization.Get("PartyHelp4Desp");
+                this.helpLabel.rawText = Localization.Get("PartyHelp4Desp");
                 break;
             default:
-                this.helpLabel.text = Localization.Get("PartyHelp4Desp");
+                this.helpLabel.rawText = Localization.Get("PartyHelp4Desp");
                 break;
         }
     }
@@ -338,7 +338,7 @@ public class PartySettingUI : UIScene
             }
             else
             {
-                characterDetailPartyHUD.EmptyLabel.text = String.Format(Localization.Get("EmptyCharNumber"), hudIndex);
+                characterDetailPartyHUD.EmptyLabel.rawText = String.Format(Localization.Get("EmptyCharNumber"), hudIndex);
                 characterDetailPartyHUD.Content.SetActive(false);
                 characterDetailPartyHUD.EmptyLabel.gameObject.SetActive(true);
             }
